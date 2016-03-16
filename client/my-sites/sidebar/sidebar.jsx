@@ -263,8 +263,7 @@ module.exports = React.createClass( {
 	upgrades: function() {
 		var site = this.getSelectedSite(),
 			domainsLink = '/domains' + this.siteSuffix(),
-			addDomainLink = '/domains/add' + this.siteSuffix(),
-			addDomainButton = '';
+			addDomainLink = '/domains/add' + this.siteSuffix();
 
 		if ( ! config.isEnabled( 'manage/plans' ) ) {
 			return null;
@@ -291,6 +290,8 @@ module.exports = React.createClass( {
 				label={ this.translate( 'Domains' ) }
 				className={ this.itemLinkClass( [ '/domains' ], 'domains' ) }
 				link={ domainsLink }
+				buttonLink={ addDomainLink }
+				buttonLabel={ this.translate( 'Add' ) }
 				onNavigate={ this.onNavigate }
 				icon="globe"
 				preloadSectionName="upgrades" />
