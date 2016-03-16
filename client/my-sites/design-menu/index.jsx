@@ -15,12 +15,14 @@ import Gridicon from 'components/gridicon';
 import layoutFocus from 'lib/layout-focus';
 import * as DesignMenuActions from 'my-sites/design-menu/actions';
 import designToolsById from './design-tools';
+import accept from 'lib/accept';
 
 const debug = debugFactory( 'calypso:design-menu' );
 
 const DesignMenu = React.createClass( {
 
 	propTypes: {
+		isSaved: React.PropTypes.bool,
 		customizations: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object.isRequired,
 		actions: React.PropTypes.object.isRequired,
@@ -40,6 +42,13 @@ const DesignMenu = React.createClass( {
 				return this.props.actions.enterControl( this.props.activeControl );
 			}
 			return this.props.actions.leaveControl();
+		}
+		if ( ! this.props.isSaved ) {
+			return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
+				if ( accepted ) {
+					layoutFocus.set( 'sidebar' );
+				}
+			} );
 		}
 		layoutFocus.set( 'sidebar' );
 	},
@@ -105,10 +114,7 @@ function mapStateToProps( state ) {
 	const { ui, tailor } = state;
 	const siteId = ui.selectedSiteId;
 	const selectedSite = state.sites.items[ siteId ] || {};
-	if ( ! tailor ) {
-		return { selectedSite };
-	}
-	return { selectedSite, activeControl: tailor.activeControl, customizations: tailor.customizations };
+	return { selectedSite, activeControl: tailor.activeControl, customizations: tailor.customizations, isSaved: tailor.isSaved };
 }
 
 function mapDispatchToProps( dispatch ) {
