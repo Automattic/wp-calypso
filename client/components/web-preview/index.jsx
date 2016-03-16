@@ -213,6 +213,12 @@ const WebPreview = React.createClass( {
 		this.setState( { loaded: true } );
 	},
 
+	undoCustomization() {
+		if ( this.props.actions.undoCustomization ) {
+			this.props.actions.undoCustomization();
+		}
+	},
+
 	saveCustomizations() {
 		if ( this.props.actions.saveCustomizations ) {
 			this.props.actions.saveCustomizations();
@@ -222,7 +228,12 @@ const WebPreview = React.createClass( {
 	renderToolBarButtons() {
 		if ( this.props.customizations && this.props.actions.saveCustomizations ) {
 			const saveButtonText = this.props.isCustomizationsSaved ? this.translate( 'Saved' ) : this.translate( 'Save & Publish' );
-			return <Button compact primary disabled={ this.props.isCustomizationsSaved } onClick={ this.saveCustomizations } >{ saveButtonText }</Button>;
+			return (
+				<div>
+					<Button compact onClick={ this.undoCustomization } >{ this.translate( 'Undo last change' ) }</Button>
+					<Button compact primary disabled={ this.props.isCustomizationsSaved } onClick={ this.saveCustomizations } >{ saveButtonText }</Button>
+				</div>
+			);
 		}
 	},
 

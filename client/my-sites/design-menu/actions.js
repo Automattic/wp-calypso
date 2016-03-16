@@ -49,6 +49,10 @@ export function closeDesignMenu() {
 	}
 }
 
+export function undoCustomization() {
+	return { type: ActionTypes.TAILOR_CUSTOMIZATIONS_UNDO };
+}
+
 export function resetDesignTools() {
 	return { type: ActionTypes.TAILOR_RESET };
 }
