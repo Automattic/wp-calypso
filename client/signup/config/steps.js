@@ -40,7 +40,7 @@ module.exports = {
 		stepName: 'user',
 		apiRequestFunction: stepActions.createAccount,
 		providesToken: true,
-		providesDependencies: [ 'bearer_token', 'username' ]
+		providesDependencies: [ 'bearer_token', 'username', '_wp_nonce' ]
 	},
 
 	test: {
@@ -100,13 +100,11 @@ module.exports = {
 			headerText: i18n.translate( 'Create an account for Jetpack' ),
 			subHeaderText: i18n.translate( 'You\'re moments away from connecting Jetpack.' )
 		},
-		providesDependencies: [ 'bearer_token', 'username' ]
+		providesDependencies: [ 'bearer_token', 'username', '_wp_nonce' ]
 	},
 
 	'authorize-site': {
 		stepName: 'authorize-site',
-		props: {
-			headerText: i18n.translate( 'Howdy! Jetpack would like to connect to your WordPress.com account.' ),
-		},
+		dependencies: [ 'bearer_token', 'username', '_wp_nonce' ]
 	}
 };

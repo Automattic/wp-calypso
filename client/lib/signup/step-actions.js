@@ -127,13 +127,15 @@ module.exports = {
 				signup_flow_name: flowName,
 				nux_q_site_type: dependencies.surveySiteType,
 				nux_q_question_primary: dependencies.surveyQuestion,
-				jetpack_redirect: queryArgs.jetpackRedirect
+				jetpack_redirect: queryArgs.jetpackRedirect,
+				_wp_nonce: queryArgs._wp_nonce
 			}
 		), ( error, response ) => {
 			var errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
-				bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
+				bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token },
+				_wp_nonce = error && error.error ? '' : { _wp_nonce: response._wp_nonce };
 
-			callback( errors, assign( {}, { username: userData.username }, bearerToken ) );
+			callback( errors, assign( {}, { username: userData.username }, bearerToken, _wp_nonce ) );
 		} );
 	},
 

@@ -37,6 +37,10 @@ export default React.createClass( {
 			queryArgs.jetpackRedirect = this.props.queryObject.jetpack_redirect;
 		}
 
+		if ( this.props.queryObject && this.props.queryObject._wp_nonce ) {
+			queryArgs._wp_nonce = this.props.queryObject._wp_nonce;
+		}
+
 		const formWithoutPassword = Object.assign( {}, form, {
 			password: Object.assign( {}, form.password, { value: '' } )
 		} );
