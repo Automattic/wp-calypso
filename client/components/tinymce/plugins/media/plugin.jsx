@@ -656,7 +656,7 @@ function mediaButton( editor ) {
 	if ( config.isEnabled( 'desktop' ) ) {
 		const ipc = require( 'electron' ).ipcRenderer; // From Electron
 		editor.on( 'contextmenu', function( ev ) {
-			ipc.send( 'mce-context-menu', ev );
+			ipc.send( 'mce-contextmenu', ev );
 		} );
 	}
 
