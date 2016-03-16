@@ -6,6 +6,12 @@ Lots of tests use `mockery` to mock out the underlying requirements of a module 
 
 Generally, we see `mockery` based mocking as a last resort. We prefer passing dependencies when we can, as `mockery` can be slow and invasive.
 
+## Format:
+```js
+	useMockery( beforeHookCallback, afterHookCallback )
+```
+`beforeHookCallback` and `afterHookCallback` are called with one argument: The `mockery` instance.
+
 ## Usage
 
 ```js
@@ -19,9 +25,8 @@ describe('my test suite', () = {
 		// THINGS REQUIRED HERE WILL NOT HAVE MOCKED DEPENDENCIES
 	} );
 
-	useMockery();
-
-	before( () => {
+	useMockery( mockery => {
+		// attached to before hook
 		mockery.registerMock( 'lib/network', {
 			fetch() {
 				return Promise.resolve( { success: true } );
@@ -29,7 +34,9 @@ describe('my test suite', () = {
 		} );
 		// you can require things that have mocked dependencies now!
 		const myNetworkThing = require( 'thing/that/uses/lib/network' );
-	} );
+	}, mockery => {
+		// attached to after hook
+	});
 
 	it ( 'mockery is alive now', () = {
 		mockery.registerMock( 'lib/best-number', function() {

@@ -31,7 +31,7 @@ describe( 'initial-state', () => {
 		const initialState = require( 'state/initial-state' );
 		createReduxStoreFromPersistedInitialState = initialState.default;
 		MAX_AGE = initialState.MAX_AGE;
-	}, null );
+	} );
 
 	describe( 'createReduxStoreFromPersistedInitialState', () => {
 		describe( 'persist-redux disabled', () => {

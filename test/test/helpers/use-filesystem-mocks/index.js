@@ -3,6 +3,7 @@ import glob from 'glob';
 import mockery from 'mockery';
 import path from 'path';
 import debug from 'debug';
+import partial from 'lodash/partial';
 
 const log = debug( 'calypso:test:quick-mock' );
 
@@ -28,5 +29,5 @@ function findQuickMocks( dirpath ) {
 }
 
 export default function( dirpath ) {
-	useMockery( findQuickMocks.bind( null, dirpath ), null );
+	useMockery( partial( findQuickMocks, dirpath ) );
 }
