@@ -2,6 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:plans-list' ),
+	reject = require( 'lodash/reject' ),
 	store = require( 'store' );
 
 /**
@@ -96,15 +97,13 @@ PlansList.prototype.initialize = function( plans ) {
 };
 
 /**
- * Parse data returned from the API
+ * Parses data retrieved from the API and extracts the list of plans.
  *
- * @param {array} data
- * @return {array} plans
+ * @param {array} data - raw data
+ * @return {array} a list of plans
  **/
 PlansList.prototype.parse = function( data ) {
-	delete data._headers;
-
-	return data;
+	return reject( data, '_headers' );
 };
 
 /**

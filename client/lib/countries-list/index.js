@@ -3,6 +3,7 @@
  */
 var debug = require( 'debug' )( 'calypso:CountriesList' ),
 	inherits = require( 'inherits' ),
+	reject = require( 'lodash/reject' ),
 	store = require( 'store' );
 
 /**
@@ -114,16 +115,13 @@ CountriesList.prototype.initialize = function( data ) {
 };
 
 /**
- * Parses the specified data retrieved from the server and extracts the list of countries.
+ * Parses the specified data retrieved from the API and extracts the list of countries.
  *
- * @param {object} data - raw data
- * @return {object} the list of countries
+ * @param {array} data - raw data
+ * @return {array} a list of countries
  */
 CountriesList.prototype.parse = function( data ) {
-	// Removes useless data
-	delete data._headers;
-
-	return data;
+	return reject( data, '_headers' );
 };
 
 /**
