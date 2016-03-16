@@ -86,12 +86,12 @@ change. Each function receives two arguments:
 # Saving Changes
 
 To save changes, trigger the action `saveCustomizations` from
-`tailor/actions.js`. That will call a series of functions to persist the
+`design-menu/actions.js`. That will call a series of functions to persist the
 customization data to the REST API.
 
 The code expects one function to be defined matching each key in
 `tailor.customizations`. The functions are defined in
-`tailor/save-functions/index.js` and each receives three arguments:
+`design-menu/save-functions/index.js` and each receives three arguments:
 
 1. The Redux dispatcher.
 2. The current customizations object for this ID.

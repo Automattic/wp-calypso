@@ -13,7 +13,7 @@ import debugFactory from 'debug';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import layoutFocus from 'lib/layout-focus';
-import * as TailorActions from 'tailor/actions';
+import * as DesignMenuActions from 'my-sites/design-menu/actions';
 import designToolsById from './design-tools';
 
 const debug = debugFactory( 'calypso:design-menu' );
@@ -113,7 +113,7 @@ function mapStateToProps( state ) {
 
 function mapDispatchToProps( dispatch ) {
 	return {
-		actions: bindActionCreators( TailorActions, dispatch ),
+		actions: bindActionCreators( DesignMenuActions, dispatch ),
 	};
 }
 

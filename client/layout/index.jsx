@@ -34,7 +34,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 
 import { isOffline } from 'state/application/selectors';
 import WebPreview from 'components/web-preview';
-import * as TailorActions from 'tailor/actions';
+import * as DesignMenuActions from 'my-sites/design-menu/actions';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -183,7 +183,7 @@ Layout = React.createClass( {
 						showPreview={ this.props.focus.getCurrent() === 'design' }
 						previewMarkup={ this.props.previewMarkup }
 						customizations={ this.props.customizations }
-						actions={ this.props.tailorActions }
+						actions={ this.props.designMenuActions }
 						isCustomizationsSaved={ this.props.isCustomizationsSaved }
 						onClose={ this.onClosePreview }
 					/>
@@ -212,7 +212,7 @@ function mapStateToProps( state ) {
 
 function mapDispatchToProps( dispatch ) {
 	return {
-		tailorActions: bindActionCreators( TailorActions, dispatch ),
+		designMenuActions: bindActionCreators( DesignMenuActions, dispatch ),
 	}
 }
 
