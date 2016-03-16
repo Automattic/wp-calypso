@@ -6,9 +6,17 @@ var assert = require( 'better-assert' );
 /**
 * Internal dependencies
 */
-var postUtils = require( '../utils' );
+import useFakeDom from 'test/helpers/use-fake-dom';
 
-describe( 'PostUtils', function() {
+describe( 'utils', function() {
+	let postUtils;
+
+	useFakeDom();
+
+	before( () => {
+		postUtils = require( '../utils' );
+	} );
+
 	describe( '#getVisibility', function() {
 		it( 'should return undefined when no post is supplied', function() {
 			assert( postUtils.getVisibility() === undefined );

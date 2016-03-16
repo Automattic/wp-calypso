@@ -7,8 +7,15 @@ var rewire = require( 'rewire' ),
 	sinon = require( 'sinon' ),
 	assign = require( 'lodash/assign' );
 
-describe( 'PostEditStore', function() {
-	var PostEditStore, dispatcherCallback;
+/**
+ * Internal dependencies
+ */
+import useFakeDom from 'test/helpers/use-fake-dom';
+
+describe( 'post-edit-store', function() {
+	let PostEditStore, dispatcherCallback;
+
+	useFakeDom();
 
 	beforeEach( function() {
 		PostEditStore = rewire( '../post-edit-store' );
