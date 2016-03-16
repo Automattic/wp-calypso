@@ -1,8 +1,14 @@
 #!/usr/bin/env node
-const requiredVersion = require( '../package' ).engines.node,
-	semver = require( process.env.SEMVER_GLOBAL_PATH );
+
+const semver = require( 'semver' );
+
+const requiredVersion = require( '../package' ).engines.node;
 
 if ( ! semver.satisfies( process.version, requiredVersion ) ) {
-	console.error( 'wp-calypso requires node ' + requiredVersion + '. Please upgrade! See https://nodejs.org for instructions.' );
+	console.error(
+		'wp-calypso requires node %s (found %s). Please upgrade! See https://nodejs.org for instructions.',
+		requiredVersion,
+		process.version
+	);
 	process.exit( 1 );
 }
