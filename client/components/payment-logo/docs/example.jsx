@@ -15,7 +15,9 @@ const PaymentLogoExamples = React.createClass( {
 	render() {
 		return (
 			<div className="design-assets__group">
-				<h2>PaymentLogo</h2>
+				<h2>
+					<a href="/devdocs/design/paymentlogoexamples">PaymentLogo</a>
+				</h2>
 				<div>
 					<PaymentLogo type="amex" /> { ' ' }
 					<PaymentLogo type="discover" /> { ' ' }
