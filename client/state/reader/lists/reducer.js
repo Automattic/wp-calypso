@@ -12,8 +12,8 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-// import { itemsSchema } from './schema';
-// import { isValidStateWithSchema } from 'state/utils';
+import { itemsSchema } from './schema';
+import { isValidStateWithSchema } from 'state/utils';
 
 /**
  * Tracks all known list objects, indexed by list ID.
@@ -29,10 +29,10 @@ export function items( state = {}, action ) {
 		case SERIALIZE:
 			return state;
 		case DESERIALIZE:
-			//if ( isValidStateWithSchema( state, itemsSchema ) ) {
+			if ( ! isValidStateWithSchema( state, itemsSchema ) ) {
+				return {};
+			}
 			return state;
-			//}
-			//return {};
 	}
 	return state;
 }
