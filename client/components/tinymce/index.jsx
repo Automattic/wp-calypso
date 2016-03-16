@@ -210,7 +210,7 @@ module.exports = React.createClass( {
 
 		let toolbar1 = [ 'wpcom_add_media', 'formatselect', 'bold', 'italic', 'bullist', 'numlist', 'link', 'blockquote', 'alignleft', 'aligncenter', 'alignright', 'spellchecker', 'wp_more', 'wpcom_advanced' ];
 		if ( config.isEnabled( 'post-editor/contact-form' ) ) {
-			toolbar1.splice( 1, 0, 'wpcom_add_contact_form' );
+			toolbar1.splice( toolbar1.length - 1, 0, 'wpcom_add_contact_form' );
 		}
 
 		tinymce.init( {
