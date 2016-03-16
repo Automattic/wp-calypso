@@ -30,7 +30,7 @@ export default function( state = initialState, action ) {
 		case ActionTypes.TAILOR_CUSTOMIZATIONS_SAVED:
 			return assign( {}, state, { isSaved: true } );
 		case ActionTypes.TAILOR_RESET:
-			return assign( {}, state, initialState );
+			return assign( {}, state, { customizations: {}, activeControl: null, isSaved: true } );
 	}
 	return state;
 }
