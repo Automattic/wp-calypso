@@ -89,9 +89,9 @@ describe( '#connections()', () => {
 	} );
 
 	it( 'should accumulate connections for distinct sites', () => {
-		const state = connections( {
+		const state = connections( deepFreeze( {
 			1: { ID: 1, site_ID: 2916284 }
-		}, {
+		} ), {
 			type: PUBLICIZE_CONNECTIONS_RECEIVE,
 			siteId: 77203074,
 			data: {
@@ -106,9 +106,9 @@ describe( '#connections()', () => {
 	} );
 
 	it( 'should discard connections for the same site ID if no longer present', () => {
-		const state = connections( {
+		const state = connections( deepFreeze( {
 			1: { ID: 1, site_ID: 2916284 }
-		}, {
+		} ), {
 			type: PUBLICIZE_CONNECTIONS_RECEIVE,
 			siteId: 2916284,
 			data: {
@@ -123,9 +123,9 @@ describe( '#connections()', () => {
 
 	it( 'should override previous connections of same ID', () => {
 		const connection = { ID: 1, site_ID: 2916284, foo: true };
-		const state = connections( {
+		const state = connections( deepFreeze( {
 			1: { ID: 1, site_ID: 2916284 }
-		}, {
+		} ), {
 			type: PUBLICIZE_CONNECTIONS_RECEIVE,
 			siteId: 2916284,
 			data: {
