@@ -59,7 +59,7 @@ const MxRecord = React.createClass( {
 						isError={ ! isDataValid }
 						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.data }
-						placeholder={ this.translate( 'e.g. mail.your-provider.com', { context: 'MX DNS Record', textOnly: true } ) } />
+						placeholder={ this.translate( 'e.g. %(example)s', { args: { example: 'mail.your-provider.com' } } ) } />
 					{ ! isDataValid ? <FormInputValidation text={ this.translate( 'Invalid Mail Server' ) } isError={ true } /> : null }
 				</FormFieldset>
 

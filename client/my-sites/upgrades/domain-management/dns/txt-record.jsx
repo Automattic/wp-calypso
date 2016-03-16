@@ -56,7 +56,7 @@ const TxtRecord = React.createClass( {
 						name="data"
 						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.data }
-						placeholder={ this.translate( 'e.g. a=b; verification-key=something', { context: 'TXT DNS Record', textOnly: true } ) } />
+						placeholder={ this.translate( 'e.g. %(example)s', { args: { example: 'v=spf1 include:example.com ~all' } } ) } />
 					{ ! isDataValid ? <FormInputValidation text={ this.translate( 'Invalid TXT Record' ) } isError={ true } /> : null }
 				</FormFieldset>
 			</div>

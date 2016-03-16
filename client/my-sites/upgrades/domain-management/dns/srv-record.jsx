@@ -69,7 +69,7 @@ const SrvRecord = React.createClass( {
 						isError={ ! isServiceValid }
 						onChange={ this.props.onChange }
 						value={ service }
-						placeholder={ this.translate( 'e.g. sip', { context: 'SRV Dns Record', textOnly: true } ) } />
+						placeholder={ this.translate( 'e.g. %(example)s', { args: { example: 'sip' } } ) } />
 					{ ! isServiceValid ? <FormInputValidation text={ this.translate( 'Invalid Service' ) } isError={ true } /> : null }
 				</FormFieldset>
 
@@ -113,7 +113,7 @@ const SrvRecord = React.createClass( {
 						isError={ ! isTargetValid }
 						onChange={ this.props.onChange }
 						value={ target }
-						placeholder={ this.translate( 'e.g. sip.your-provider.com', { context: 'SRV Dns Record', textOnly: true } ) } />
+						placeholder={ this.translate( 'e.g. %(example)s', { args: { example: 'sip.your-provider.com' } } ) } />
 					{ ! isTargetValid ? <FormInputValidation text={ this.translate( 'Invalid Target Host' ) } isError={ true } /> : null }
 				</FormFieldset>
 
@@ -124,7 +124,7 @@ const SrvRecord = React.createClass( {
 						isError={ ! isPortValid }
 						onChange={ this.props.onChange }
 						value={ port }
-						placeholder={ this.translate( 'e.g. 5060', { context: 'SRV Dns Record', textOnly: true } ) } />
+						placeholder={ this.translate( 'e.g. %(example)s', { args: { example: '5060' } } ) } />
 					{ ! isPortValid ? <FormInputValidation text={ this.translate( 'Invalid Target Port' ) } isError={ true } /> : null }
 				</FormFieldset>
 			</div>

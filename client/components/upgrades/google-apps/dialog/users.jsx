@@ -57,16 +57,15 @@ var GoogleAppsUsers = React.createClass( {
 	},
 
 	inputsForUser: function( user, index ) {
-		var domain = this.props.domain;
+		const contactText = this.translate( 'contact', { context: 'part of e-mail address', comment: 'As it would be part of an e-mail address contact@example.com' } ),
+			domain = this.props.domain;
 
 		return (
 			<fieldset className="google-apps-dialog__user-fields" key={ index }>
 				<input
 					className={ this.fieldClasses( user.email, 'google-apps-dialog__user-email' ) }
 					type="text"
-					placeholder={ this.translate( 'e.g. contact@%(domain)s', {
-						args: { domain: domain }
-					} ) }
+					placeholder={ this.translate( 'e.g. %(example)s', { args: { example: contactText + '@' + domain } } ) }
 					value={ user.email.value }
 					onChange={ this.updateField.bind( this, index, 'email' ) }
 					onBlur={ this.props.onBlur }

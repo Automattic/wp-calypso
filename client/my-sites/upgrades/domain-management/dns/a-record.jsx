@@ -33,10 +33,10 @@ const ARecord = React.createClass( {
 			{ fieldValues, isValid, onChange, selectedDomainName } = this.props,
 			isNameValid = isValid( 'name' ),
 			isDataValid = isValid( 'data' );
-		let placeholder = this.translate( 'e.g. 123.45.78.9', { context: 'A DNS Record', textOnly: true } );
+		let placeholder = this.translate( 'e.g. %(example)s', { args: { example: '123.45.78.9' } } );
 
 		if ( this.props.fieldValues.type === 'AAAA' ) {
-			placeholder = this.translate( 'e.g. 2001:500:84::b', { context: 'AAAA DNS Record', textOnly: true } );
+			placeholder = this.translate( 'e.g. %(example)s', { args: { example: '2001:500:84::b' } } );
 		}
 
 		return (
