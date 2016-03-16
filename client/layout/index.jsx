@@ -150,6 +150,14 @@ Layout = React.createClass( {
 		this.props.designMenuActions.closeDesignMenu();
 	},
 
+	onPreviewClick( event ) {
+		if ( ! event.target.href ) {
+			return;
+		}
+		event.preventDefault();
+		// TODO: if the href is on the current site, load the href as a preview and fetch markup for that url
+	},
+
 	render: function() {
 		var sectionClass = classnames(
 				'wp',
@@ -194,6 +202,7 @@ Layout = React.createClass( {
 						actions={ this.props.designMenuActions }
 						isCustomizationsSaved={ this.props.isCustomizationsSaved }
 						onClose={ this.onClosePreview }
+						onClick={ this.onPreviewClick }
 					/>
 				}
 			</div>
