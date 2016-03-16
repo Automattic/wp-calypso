@@ -216,6 +216,9 @@
 			}
 		},
 		"sites": {
+			"media-storage": {
+				"test": [ "actions", "reducer", "selectors" ]
+			},
 			"plans": {
 				"test": [ "actions", "reducer" ]
 			},
