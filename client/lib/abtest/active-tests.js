@@ -103,7 +103,7 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
-	readerShorterFeatures: {
+	readerShorterFeatures2: {
 		datestamp: '20160315',
 		variations: {
 			original: 80,
