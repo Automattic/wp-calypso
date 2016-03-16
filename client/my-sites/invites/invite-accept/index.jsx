@@ -86,20 +86,6 @@ let InviteAccept = React.createClass( {
 		return this.state.error || ! this.props.siteId || ! this.props.inviteKey;
 	},
 
-	getErrorTitle() {
-		return this.translate(
-			'Oops, your invite is not valid',
-			{ context: 'Title that is display to users when attempting to accept an invalid invite.' }
-		);
-	},
-
-	getErrorMessage() {
-		return this.translate(
-			"We weren't able to verify that invitation.",
-			{ context: 'Message that is displayed to users when an invitation is invalid.' }
-		);
-	},
-
 	clickedNoticeSiteLink() {
 		analytics.tracks.recordEvent( 'calypso_invite_accept_notice_site_link_click' );
 	},
@@ -157,28 +143,49 @@ let InviteAccept = React.createClass( {
 	},
 
 	renderError() {
-		debug( 'Rendering error: ' + JSON.stringify( this.state.error ) );
-		if ( this.state.error ) {
-			const props = {
-				line: this.translate( 'Would you like to accept the invite with a different account?' ),
-				action: this.translate( 'Switch Accounts' ),
-				actionURL: config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href ),
-				illustration: '/calypso/images/drake/drake-whoops.svg'
-			};
-			switch ( this.state.error.error ) {
+		const { error } = this.state;
+		debug( 'Rendering error: ' + JSON.stringify( error ) );
+
+		let props = {
+			title: this.translate(
+				'Oops, that invite is not valid',
+				{ context: 'Title that is display to users when attempting to accept an invalid invite.' }
+			),
+			line: this.translate(
+				"We weren't able to verify that invitation.",
+				{ context: 'Message that is displayed to users when an invitation is invalid.' }
+			),
+			illustration: '/calypso/images/drake/drake-whoops.svg'
+		};
+
+		if ( error.error && error.message ) {
+			switch ( error.error ) {
 				case 'already_member':
-					return ( <EmptyContent { ... props } title={ this.translate( 'You are already a member of this site.' ) } /> );
-					break;
 				case 'already_subscribed':
-					return ( <EmptyContent { ... props } title={ this.translate( 'You are already a follower on this site.' ) } /> );
+					Object.assign( props, {
+						title: error.message, // "You are already a (follower|member) of this site"
+						line: this.translate( 'Would you like to accept the invite with a different account?' ),
+						action: this.translate( 'Switch Accounts' ),
+						actionURL: config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href ),
+					} );
+					break;
+				case 'unauthorized_created_by_self':
+					Object.assign( props, {
+						line: error.message, // "You can not use an invitation that you have created for someone else."
+						action: this.translate( 'Switch Accounts' ),
+						actionURL: config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href ),
+					} );
+					break;
+				default:
+					Object.assign( props, {
+						line: error.message
+					} );
 					break;
 			}
 		}
+
 		return (
-			<EmptyContent
-				title={ this.getErrorTitle() }
-				line={ this.getErrorMessage() }
-				illustration={ '/calypso/images/drake/drake-whoops.svg' } />
+			<EmptyContent { ...props } />
 		);
 	},
 
