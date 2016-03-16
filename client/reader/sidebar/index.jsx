@@ -8,6 +8,8 @@ import url from 'url';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import startsWith from 'lodash/startsWith';
+import toArray from 'lodash/toArray';
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * Internal Dependencies
@@ -34,8 +36,6 @@ import config from 'config';
 import userSettings from 'lib/user-settings';
 import AppPromo from 'components/app-promo';
 
-var debug = require( 'debug' )( 'calypso:sidebar' );
-
 const ReaderSidebar = React.createClass( {
 
 	mixins: [
@@ -53,7 +53,7 @@ const ReaderSidebar = React.createClass( {
 		// If we're browsing a tag or list, open the sidebar menu
 		this.openExpandableMenuForCurrentTagOrList();
 
-		if ( ! this.props.subscribedLists ) {
+		if ( isEmpty( this.props.subscribedLists ) ) {
 			this.props.requestSubscribedLists();
 		}
 	},
@@ -73,16 +73,14 @@ const ReaderSidebar = React.createClass( {
 
 	getStateFromStores() {
 		const tags = ReaderTagsSubscriptionStore.get();
-		const lists = ReaderListsSubscriptionsStore.get();
 		const teams = ReaderTeams.get();
 
-		if ( ! ( tags && lists && teams ) ) {
+		if ( ! ( tags && teams ) ) {
 			SidebarActions.fetch();
 		}
 
 		return {
 			tags,
-			lists,
 			teams
 		};
 	},
@@ -161,7 +159,6 @@ const ReaderSidebar = React.createClass( {
 	},
 
 	render() {
-		debug( this.props );
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarMenu>
@@ -206,7 +203,7 @@ const ReaderSidebar = React.createClass( {
 				</SidebarMenu>
 
 				<ReaderSidebarLists
-					lists={ this.state.lists }
+					lists={ toArray( this.props.subscribedLists ) }
 					path={ this.props.path }
 					isOpen={ this.props.isListsOpen }
 					onClick={ this.props.toggleListsVisibility }
