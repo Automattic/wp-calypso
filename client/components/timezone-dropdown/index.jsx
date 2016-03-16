@@ -7,11 +7,15 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import wpcom from 'lib/wp';
 import Dropdown from 'components/select-dropdown';
-import i18n from 'lib/mixins/i18n';
 
+/**
+ * Module variables
+ */
 const { Component, PropTypes } = React;
 const noop = () => {};
+const undocumented = wpcom.undocumented();
 
 class TimezoneDropdown extends Component {
 	constructor() {
@@ -19,20 +23,37 @@ class TimezoneDropdown extends Component {
 
 		// bound methods
 		this.onSelect = this.onSelect.bind( this );
+
+		this.state = {
+			timezones: [ { label: '', value: '' } ]
+		};
 	}
 
-	getTimezoneNames() {
-		return i18n.moment.tz.names().map( zone => {
-			return ( {
-				label: zone,
-				value: zone
-			} );
+	componentWillMount() {
+		undocumented.timezones( ( err, zones ) => {
+			if ( err ) {
+				return;
+			}
+
+			let timezones = [];
+
+			for ( let continent in zones.timezones_by_continent ) {
+				let cities = zones.timezones_by_continent[ continent ];
+				cities = [ {
+					label: continent,
+					value: continent,
+					isLabel: true
+				} ].concat( cities, [ null ] );
+
+				timezones = timezones.concat( cities );
+			}
+
+			this.setState( { timezones } );
 		} );
 	}
 
 	onSelect( zone ) {
-		this.setState( { selectedZone: zone.value } );
-		this.props.onSelect( zone.value );
+		this.props.onSelect( zone );
 	}
 
 	render() {
@@ -40,7 +61,7 @@ class TimezoneDropdown extends Component {
 			<Dropdown
 				className="timezone-dropdown"
 				valueLink={ this.props.valueLink }
-				options={ this.getTimezoneNames() }
+				options={ this.state.timezones }
 				selectedText={ this.props.selectedZone }
 				onSelect={ this.onSelect }
 			/>

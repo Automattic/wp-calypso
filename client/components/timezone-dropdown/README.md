@@ -13,7 +13,7 @@ module.exports = React.createClass( {
 	// ...
 	
 	onTimezoneSelect( zone ) {
-		console.log( `timezone selected: %s`, zone );
+		console.log( `timezone selected: %s`, zone.value );
 	},
 
 	render() {
@@ -32,5 +32,8 @@ module.exports = React.createClass( {
 #### Props
 
 `selectedZone` - **optional** String value to define the selected timezone.
-`onSelect` - **optional** Bound function executed when the timezone is
-selected.
+
+`onSelect` - **optional** Called when user selects a timezone from the
+dropdown. An object parameter is passed to the function which has two
+properties: `label` usually used to show the selected timezone to the user and
+`value` which is the normalized timezone value.
