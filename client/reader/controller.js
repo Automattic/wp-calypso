@@ -35,7 +35,7 @@ import userSettings from 'lib/user-settings';
 let __lastTitle = null;
 const activeAbTests = [
 	'readerShorterFeatures2'
-]
+];
 
 function trackPageLoad( path, title, readerView ) {
 	analytics.pageView.record( path, title );
@@ -45,13 +45,20 @@ function trackPageLoad( path, title, readerView ) {
 function trackUpdatesLoaded( key ) {
 	analytics.mc.bumpStat( 'reader_views', key + '_load_new' );
 	analytics.ga.recordEvent( 'Reader', 'Clicked Load New Posts', key );
+	stats.recordTrack( 'calypso_reader_load_new_posts', {
+		section: key
+	} );
 }
 
 function trackScrollPage( path, title, category, readerView, pageNum ) {
 	debug( 'scroll [%s], [%s], [%s], [%d]', path, title, category, pageNum );
 
 	analytics.ga.recordEvent( category, 'Loaded Next Page', 'page', pageNum );
-	stats.recordTrack( 'calypso_reader_infinite_scroll_performed' );
+	stats.recordTrack( 'calypso_reader_infinite_scroll_performed', {
+		path: path,
+		page: pageNum,
+		section: readerView
+	} );
 	analytics.pageView.record( path, title );
 	analytics.mc.bumpStat( {
 		newdash_pageviews: 'scroll',

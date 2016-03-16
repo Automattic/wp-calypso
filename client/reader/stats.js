@@ -1,3 +1,5 @@
+import assign from 'lodash/assign';
+
 import { mc, ga, tracks } from 'analytics';
 
 import SubscriptionStore from 'lib/reader-feed-subscriptions';
@@ -14,6 +16,9 @@ export function recordPermalinkClick( where ) {
 	mc.bumpStat( {
 		reader_actions: 'visited_post_permalink',
 		reader_permalink_source: where
+	} );
+	recordTrack( 'calypso_reader_permalink_click', {
+		source: where
 	} );
 }
 
@@ -84,4 +89,14 @@ export function recordTrack( eventName, eventProperties ) {
 		eventProperties = Object.assign( { subscription_count: subCount }, eventProperties );
 	}
 	tracks.recordEvent( eventName, eventProperties );
+}
+
+export function recordTrackForPost( eventName, post = {}, additionalProps = {} ) {
+	recordTrack( eventName, assign( {
+		blog_id: ! post.is_external && post.site_ID > 0 ? post.site_ID : undefined,
+		post_id: ! post.is_external && post.ID > 0 ? post.ID : undefined,
+		feed_id: post.feed_ID > 0 ? post.feed_ID : undefined,
+		feed_item_id: post.feed_item_ID > 0 ? post.feed_item_ID : undefined,
+		is_jetpack: post.is_jetpack
+	}, additionalProps ) );
 }

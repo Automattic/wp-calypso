@@ -12,11 +12,13 @@ var ListEmptyContent = React.createClass( {
 	recordAction: function() {
 		stats.recordAction( 'clicked_following_on_empty' );
 		stats.recordGaEvent( 'Clicked Following on EmptyContent' );
+		stats.recordTrack( 'calypso_reader_following_on_empty_list_stream_clicked' );
 	},
 
 	recordSecondaryAction: function() {
 		stats.recordAction( 'clicked_discover_on_empty' );
 		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
+		stats.recordTrack( 'calypso_reader_discover_on_empty_list_stream_clicked' );
 	},
 
 	render: function() {

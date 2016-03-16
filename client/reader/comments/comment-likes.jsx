@@ -48,6 +48,10 @@ var CommentLikeButtonContainer = React.createClass( {
 		CommentLikeActions[ liked ? 'likeComment' : 'unlikeComment' ]( this.props.siteId, this.props.commentId );
 		stats.recordAction( liked ? 'liked_comment' : 'unliked_comment' );
 		stats.recordGaEvent( liked ? 'Clicked Comment Like' : 'Clicked Comment Unlike' );
+		stats.recordTrack( 'caplyso_reader_' + ( liked ? 'liked' : 'unliked' ) + '_comment', {
+			blog_id: this.props.siteId,
+			comment_id: this.props.commentId
+		} );
 	},
 
 	render: function() {

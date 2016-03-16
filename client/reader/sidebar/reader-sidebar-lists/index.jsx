@@ -26,12 +26,14 @@ const ReaderSidebarLists = React.createClass( {
 	createList( list ) {
 		stats.recordAction( 'add_list' );
 		stats.recordGaEvent( 'Clicked Create List' );
+		stats.recordTrack( 'calypso_reader_create_list_clicked' );
 		ReaderListsActions.create( list );
 	},
 
 	handleAddClick() {
 		stats.recordAction( 'add_list_open_input' );
 		stats.recordGaEvent( 'Clicked Add List to Open Input' );
+		stats.recordTrack( 'calypso_reader_add_list_clicked' );
 	},
 
 	render() {

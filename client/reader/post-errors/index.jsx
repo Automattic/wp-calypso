@@ -105,10 +105,12 @@ var PostError = React.createClass( {
 			FeedSubscriptionActions.dismissError( error );
 			stats.recordAction( 'dismiss_follow_error' );
 			stats.recordGaEvent( 'Clicked Dismiss Follow Error' );
+			stats.recordTrack( 'calypso_reader_follow_error_dismissed' );
 		} else if ( error.errorType === SiteBlockStoreErrorTypes.UNABLE_TO_BLOCK ) {
 			SiteBlockActions.dismissError( error );
 			stats.recordAction( 'dismiss_block_error' );
 			stats.recordGaEvent( 'Clicked Dismiss Block Error' );
+			stats.recordTrack( 'calypso_reader_block_error_dismissed' );
 		}
 	},
 

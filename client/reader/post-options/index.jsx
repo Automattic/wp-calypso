@@ -83,9 +83,7 @@ const PostOptions = React.createClass( {
 	blockSite() {
 		stats.recordAction( 'blocked_blog' );
 		stats.recordGaEvent( 'Clicked Block Site' );
-		stats.recordTrack( 'calypso_reader_block_site', {
-			blog_id: this.props.post.site_ID
-		} );
+		stats.recordTrackForPost( 'calypso_reader_block_site', this.props.post );
 		SiteBlockActions.block( this.props.post.site_ID );
 		this.props.onBlock();
 	},
@@ -97,6 +95,7 @@ const PostOptions = React.createClass( {
 
 		stats.recordAction( 'report_post' );
 		stats.recordGaEvent( 'Clicked Report Post', 'post_options' );
+		stats.recordTrackForPost( 'calypso_reader_post_reported', this.props.post );
 
 		window.open( 'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.post.URL ), '_blank' );
 	},
@@ -128,6 +127,7 @@ const PostOptions = React.createClass( {
 		} );
 		stats.recordAction( newState ? 'open_post_options_menu' : 'close_post_options_menu' );
 		stats.recordGaEvent( newState ? 'Open Post Options Menu' : 'Close Post Options Menu' );
+		stats.recordTrackForPost( 'calypso_reader_post_options_menu_' + ( newState ? 'opened' : 'closed' ), this.props.post );
 	},
 
 	_closePopoverMenu() {
@@ -149,6 +149,7 @@ const PostOptions = React.createClass( {
 
 		stats.recordAction( 'edit_post' );
 		stats.recordGaEvent( 'Clicked Edit Post', 'post_options' );
+		stats.recordTrackForPost( 'calypso_reader_edit_post_clicked', this.props.post );
 
 		setTimeout( function() { // give the analytics a chance to escape
 			if ( editUrl.indexOf( '//' ) === 0 ) {

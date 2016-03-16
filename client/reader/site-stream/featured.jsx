@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import get from 'lodash/get';
 
 /**
  * Internal Dependencies
@@ -88,7 +87,7 @@ export default React.createClass( {
 
 	handleClick( postData ) {
 		let post = postData.post;
-		stats.recordTrack( 'calypso_reader_clicked_featured_post', { blog_id: post.site_ID, post_id: post.ID } )
+		stats.recordTrackForPost( 'calypso_reader_clicked_featured_post', post );
 		stats.recordAction( 'clicked_featured_post' );
 		stats.recordGaEvent( 'Clicked Featured Post' );
 
