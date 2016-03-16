@@ -35,6 +35,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 import { isOffline } from 'state/application/selectors';
 import WebPreview from 'components/web-preview';
 import * as DesignMenuActions from 'my-sites/design-menu/actions';
+import accept from 'lib/accept';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -139,6 +140,13 @@ Layout = React.createClass( {
 	},
 
 	onClosePreview() {
+		if ( this.props.customizations && ! this.props.isCustomizationsSaved ) {
+			return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
+				if ( accepted ) {
+					this.props.focus.set( 'sidebar' );
+				}
+			} );
+		}
 		this.props.focus.set( 'sidebar' );
 	},
 
