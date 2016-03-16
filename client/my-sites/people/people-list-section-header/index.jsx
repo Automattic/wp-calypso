@@ -88,7 +88,7 @@ export default React.createClass( {
 							onMouseLeave={ this.hideAddTooltip }
 							ref="addPeopleButton"
 							aria-label={ this.translate( 'Invite user', { context: 'button label' } ) }>
-							<Gridicon icon="plus-small" size={ 12 } /><Gridicon icon="user" size={ 18 } />
+							<Gridicon icon="plus-small" size={ 18 } /><Gridicon icon="user" size={ 18 } />
 							<Tooltip
 								isVisible={ this.state.addPeopleTooltip }
 								context={ this.refs && this.refs.addPeopleButton }
