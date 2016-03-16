@@ -101,12 +101,5 @@ module.exports = {
 			subHeaderText: i18n.translate( 'You\'re moments away from connecting Jetpack.' )
 		},
 		providesDependencies: [ 'bearer_token', 'username' ]
-	},
-
-	'authorize-site': {
-		stepName: 'authorize-site',
-		props: {
-			headerText: i18n.translate( 'Howdy! Jetpack would like to connect to your WordPress.com account.' ),
-		},
 	}
 };
