@@ -112,9 +112,23 @@ const WebPreview = React.createClass( {
 				loaded: false,
 			} );
 		}
+		// If the previewMarkup changes, re-render the iframe contents
 		if ( this.props.previewMarkup && this.props.previewMarkup !== prevProps.previewMarkup ) {
 			this.setIframeMarkup( this.props.previewMarkup );
 		}
+		// If the customizations have been removed, restore the original markup
+		if ( this.props.previewMarkup && this.props.customizations && this.props.previewMarkup === prevProps.previewMarkup && prevProps.customizations ) {
+			if ( Object.keys( this.props.customizations ).length === 0 && Object.keys( prevProps.customizations ).length > 0 ) {
+				debug( 'restoring original markup' );
+				this.setIframeMarkup( this.props.previewMarkup );
+			}
+		}
+		// If the previewMarkup is erased, remove the iframe contents
+		if ( ! this.props.previewMarkup && prevProps.previewMarkup ) {
+			debug( 'removing iframe contents' );
+			this.setIframeMarkup( '' );
+		}
+		// Apply customizations
 		if ( this.props.customizations && this.refs.iframe ) {
 			debug( 'updating preview with customizations', this.props.customizations );
 			updatePreviewWithChanges( this.refs.iframe.contentDocument, this.props.customizations );
@@ -146,6 +160,10 @@ const WebPreview = React.createClass( {
 	},
 
 	setIframeMarkup( content ) {
+		if ( ! this.refs.iframe ) {
+			debug( 'no iframe to update' );
+			return;
+		}
 		debug( 'adding markup to iframe', content.length );
 		this.refs.iframe.contentDocument.open();
 		this.refs.iframe.contentDocument.write( content );
