@@ -972,7 +972,6 @@ Undocumented.prototype.updateCreditCard = function( params, fn ) {
 
 /**
  * GET paygate configuration
- *
  * @param {Function} fn The callback function
  * @api public
  */
@@ -1936,6 +1935,16 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/${ exportId }`
 	}, fn );
+}
+
+Undocumented.prototype.timezones = function( params, fn ) {
+	if ( typeof params === 'function' ) {
+		fn = params;
+		params = {};
+	}
+
+	let query = Object.assign( {}, params, { apiNamespace: 'wp' } );
+	return this.wpcom.req.get( '/wpcom/v2/timezones', query, fn );
 }
 
 /**
