@@ -270,6 +270,9 @@
 		"notices": {
 			"test": [ "actions", "reducer" ]
 		},
+		"page": {
+			"test": [ "actions", "reducer" ]
+		},
 		"plugins": {
 			"wporg": {
 				"test": [ "actions", "selectors", "reducer" ]
