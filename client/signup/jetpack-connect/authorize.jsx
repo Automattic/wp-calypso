@@ -1,5 +1,5 @@
 /**
- * Externals dependencies
+ * External dependencies
  */
 import React from 'react';
 import Debug from 'debug';
@@ -7,16 +7,17 @@ import Debug from 'debug';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
+import ConnectHeader from './connect-header';
+import Main from 'components/main';
 import wpcom from 'lib/wp';
 
 /**
  * Module variables
  */
-const debug = new Debug( 'calypso:jetpack-authorize' );
+const debug = new Debug( 'calypso:jetpack-connect-authorize' );
 
-module.exports = React.createClass( {
-	displayName: 'JetpackAuthorizeSite',
+export default React.createClass( {
+	displayName: 'JetpackConnectAuthorize',
 
 	getInitialState() {
 		return {
@@ -26,18 +27,15 @@ module.exports = React.createClass( {
 		};
 	},
 
-	getHeaderText() {
-		return this.translate( 'Howdy! Jetpack would like to connect to your WordPress.com account.' );
-	},
-
-	getSubHeaderText() {
-		return this.translate( 'Because Jetpack is awesome.' );
-	},
-
 	handleSubmit() {
 		const { queryObject } = this.props;
 		debug( 'trying jetpack login', queryObject );
 		this.setState( { isSubmitting: true, authorizeError: false } );
+
+		if ( 1 === this.props.positionInFlow ) {
+			queryObject._wp_nonce = this.props.signupDependencies._wp_nonce;
+		}
+
 		wpcom.undocumented().jetpackLogin( queryObject, this.handleJetpackLoginComplete );
 	},
 
@@ -66,36 +64,36 @@ module.exports = React.createClass( {
 
 	renderErrorMessage() {
 		if ( this.state.authorizeError ) {
-			return <p>Error connecting. Run `localStorage.setItem( 'debug', 'calypso:jetpack-authorize' );` and try again.</p>;
+			return <p>Error connecting. Run `localStorage.setItem( 'debug', 'calypso:jetpack-connect-authorize' );` and try again.</p>;
 		}
 		return null;
 	},
 
-	renderForm() {
+	renderButton() {
 		if ( this.state.authorizeSuccess ) {
 			return <p>Jetpack Connected!</p>;
 		}
 
-		return(
-			<div>
-				<button disabled={ this.state.isSubmitting } onClick={ this.handleSubmit } className="button is-primary">
-					{ this.translate( 'Approve' ) }
-				</button>
-				{ this.renderErrorMessage() }
-			</div>
+		return (
+			<button disabled={ this.state.isSubmitting } onClick={ this.handleSubmit } className="button is-primary">
+				{ this.translate( 'Approve' ) }
+			</button>
 		);
 	},
 
 	render() {
-		return(
-			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				headerText={ this.getHeaderText() }
-				subHeaderText={ this.getSubHeaderText() }
-				positionInFlow={ this.props.positionInFlow }
-				signupProgressStore={ this.props.signupProgressStore }
-				stepContent={ this.renderForm() } />
+		return (
+			<Main className="jetpack-connect">
+
+				<div className="jetpack-connect__site-url-entry-container">
+					<ConnectHeader headerText={ this.translate( 'Connect a self-hosted WordPress' ) }
+						subHeaderText={ this.translate( 'Jetpack would like to connect to your WordPress.com account' ) }
+						step={ 1 }
+						steps={ 3 } />
+					{ this.renderButton() }
+					{ this.renderErrorMessage() }
+				</div>
+			</Main>
 		);
 	}
 } );

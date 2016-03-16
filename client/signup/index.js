@@ -7,6 +7,7 @@ var page = require( 'page' );
  * Internal dependencies
  */
 var controller = require( './controller' ),
+	jetpackConnectController = require( './jetpack-connect/controller' ),
 	adTracking = require( 'analytics/ad-tracking' ),
 	config = require( 'config' );
 
@@ -30,6 +31,12 @@ module.exports = function() {
 	}
 
 	if ( config.isEnabled( 'jetpack/calypso-first-signup-flow' ) ) {
-		page( '/jetpack/connect', controller.jetpackConnect );
+		page( '/jetpack/connect', jetpackConnectController.connect );
+	}
+
+	if ( config.isEnabled( 'jetpack-connect' ) ) {
+		page( '/jetpack/connect/authorize',
+              jetpackConnectController.saveQueryObject,
+              jetpackConnectController.authorize );
 	}
 };
