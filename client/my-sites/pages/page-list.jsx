@@ -16,7 +16,10 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	NoResults = require( 'my-sites/no-results' ),
 	actions = require( 'lib/posts/actions' ),
 	Placeholder = require( './placeholder' ),
+	CompactCard = require( 'components/card/compact' ),
 	mapStatus = require( 'lib/route' ).mapPostStatus;
+
+import Gridicon from 'components/gridicon';
 
 var PageList = React.createClass( {
 
@@ -197,6 +200,20 @@ var Pages = React.createClass({
 		}
 	},
 
+	blogPostsPage: function() {
+		return (
+			<CompactCard className="page" key="blog-posts-page">
+				<span className="page__title" href="">
+					<Gridicon icon="house" size={ 18 } />
+					{ this.translate( 'Blog Posts' ) }
+				</span>
+				<span className="page__info">
+					{ this.translate( 'Your latest posts' ) }
+				</span>
+			</CompactCard>
+		);
+	},
+
 	render: function() {
 		var pages = this.props.posts,
 			rows = [];
@@ -223,6 +240,12 @@ var Pages = React.createClass({
 			if ( this.props.loading ) {
 				this.addLoadingRows( rows, 1 );
 			}
+
+		const site = this.props.sites.getSelectedSite();
+
+		if ( site && site.options && site.options.show_on_front === 'posts' ) {
+			rows.push( this.blogPostsPage() );
+		}
 
 		} else if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
 			rows.push( <div key="page-list-no-results">{ this.getNoContentMessage() }</div> );

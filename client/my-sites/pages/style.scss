@@ -57,11 +57,9 @@
 	font-family: $serif;
 	margin-right: 33px;
 
-	.noticon-home:before {
+	.gridicon {
 		color: $gray;
-		font-size: 24px;
-		margin-left: -3px;
-		margin-right: 4px;
+		margin: 2px 8px -2px 0;
 	}
 }
 
@@ -89,6 +87,14 @@
 	font-size: 12px;
 	max-width: 200px;
 	text-align: left;
+}
+
+.page__info {
+	color: $gray;
+	font-size: 12px;
+	max-width: 300px;
+	float: right;
+	line-height: 24px;
 }
 
 .page__delete-item.popover__menu-item {

@@ -281,7 +281,7 @@ module.exports = React.createClass( {
 					onClick={ this.analyticsEvents.pageTitle }
 					>
 					{ depthIndicator }
-					{ isFrontPage ? <span className="noticon noticon-home" /> : null }
+					{ isFrontPage ? <Gridicon icon="house" size={ 18 } /> : null }
 					{ title }
 				</a>
 				{ this.props.multisite ? <span className="page__site-url">{ this.getSiteDomain() }</span> : null }
