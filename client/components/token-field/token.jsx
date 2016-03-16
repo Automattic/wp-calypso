@@ -57,7 +57,7 @@ export default React.createClass( {
 					className="token-field__remove-token noticon noticon-close-alt"
 					onClick={ ! this.props.disabled && this._onClickRemove } />
 				{ tooltip &&
-					<Tooltip context={ this } status={ status } isVisible={ true } position="bottom">
+					<Tooltip showOnMobile context={ this } status={ status } isVisible={ true } position="bottom">
 						{ tooltip }
 					</Tooltip>
 				}
