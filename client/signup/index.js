@@ -32,9 +32,6 @@ module.exports = function() {
 
 	if ( config.isEnabled( 'jetpack/calypso-first-signup-flow' ) ) {
 		page( '/jetpack/connect', jetpackConnectController.connect );
-	}
-
-	if ( config.isEnabled( 'jetpack-connect' ) ) {
 		page( '/jetpack/connect/authorize',
               jetpackConnectController.saveQueryObject,
               jetpackConnectController.authorize );
