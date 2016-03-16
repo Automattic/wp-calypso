@@ -29,6 +29,8 @@ export default function( state = initialState, action ) {
 			return assign( {}, state, { activeControl: null } );
 		case ActionTypes.TAILOR_CUSTOMIZATIONS_SAVED:
 			return assign( {}, state, { isSaved: true } );
+		case ActionTypes.TAILOR_RESET:
+			return assign( {}, state, initialState );
 	}
 	return state;
 }

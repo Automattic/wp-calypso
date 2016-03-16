@@ -9,6 +9,7 @@ import wpcom from 'lib/wp';
  */
 import * as ActionTypes from 'state/action-types';
 import * as customizationSaveFunctions from './save-functions';
+import layoutFocus from 'lib/layout-focus';
 
 const debug = debugFactory( 'calypso:tailor-actions' );
 
@@ -39,6 +40,17 @@ export function enterControl( controlId ) {
 
 export function leaveControl() {
 	return { type: ActionTypes.TAILOR_CONTROL_LEAVE };
+}
+
+export function closeDesignMenu() {
+	return function( dispatch ) {
+		dispatch( resetDesignTools() );
+		layoutFocus.set( 'sidebar' );
+	}
+}
+
+export function resetDesignTools() {
+	return { type: ActionTypes.TAILOR_RESET };
 }
 
 export function customizationsSaved() {

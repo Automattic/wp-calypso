@@ -143,11 +143,11 @@ Layout = React.createClass( {
 		if ( this.props.customizations && ! this.props.isCustomizationsSaved ) {
 			return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
 				if ( accepted ) {
-					this.props.focus.set( 'sidebar' );
+					this.props.designMenuActions.closeDesignMenu();
 				}
 			} );
 		}
-		this.props.focus.set( 'sidebar' );
+		this.props.designMenuActions.closeDesignMenu();
 	},
 
 	render: function() {

@@ -12,7 +12,6 @@ import debugFactory from 'debug';
  */
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
-import layoutFocus from 'lib/layout-focus';
 import * as DesignMenuActions from 'my-sites/design-menu/actions';
 import designToolsById from './design-tools';
 import accept from 'lib/accept';
@@ -46,11 +45,11 @@ const DesignMenu = React.createClass( {
 		if ( ! this.props.isSaved ) {
 			return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
 				if ( accepted ) {
-					layoutFocus.set( 'sidebar' );
+					this.props.actions.closeDesignMenu();
 				}
 			} );
 		}
-		layoutFocus.set( 'sidebar' );
+		this.props.actions.closeDesignMenu();
 	},
 
 	renderDesignTool( id, componentClass, props = {} ) {
