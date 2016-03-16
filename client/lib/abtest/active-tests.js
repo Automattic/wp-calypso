@@ -70,15 +70,6 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
-	promoteFreeDomain: {
-		datestamp: '20160302',
-		variations: {
-			original: 50,
-			freeDomain: 50
-		},
-		defaultVariation: 'original',
-		excludeSitesWithPaidPlan: true
-	},
 	domainSearchPlaceholderText: {
 		datestamp: '20160304',
 		variations: {
