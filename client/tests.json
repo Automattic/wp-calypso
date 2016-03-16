@@ -144,7 +144,7 @@
 			"test": [ "index" ]
 		},
 		"terms": {
-			"test": [ "actions" ]
+			"test": [ "actions", "category-store", "store", "tag-store" ]
 		},
 		"text-utils": {
 			"test": [ "index" ]
