@@ -28,10 +28,13 @@ import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarTeams from './reader-sidebar-teams';
 import ReaderSidebarHelper from './helper';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
+import { requestSubscribedLists } from 'state/reader/lists/actions';
 import observe from 'lib/mixins/data-observe';
 import config from 'config';
 import userSettings from 'lib/user-settings';
 import AppPromo from 'components/app-promo';
+
+var debug = require( 'debug' )( 'calypso:sidebar' );
 
 const ReaderSidebar = React.createClass( {
 
@@ -49,6 +52,10 @@ const ReaderSidebar = React.createClass( {
 
 		// If we're browsing a tag or list, open the sidebar menu
 		this.openExpandableMenuForCurrentTagOrList();
+
+		if ( ! this.props.subscribedLists ) {
+			this.props.requestSubscribedLists();
+		}
 	},
 
 	componentWillUnmount() {
@@ -154,6 +161,7 @@ const ReaderSidebar = React.createClass( {
 	},
 
 	render() {
+		debug( this.props );
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarMenu>
@@ -223,13 +231,15 @@ export default connect(
 	( state ) => {
 		return {
 			isListsOpen: state.ui.reader.sidebar.isListsOpen,
-			isTagsOpen: state.ui.reader.sidebar.isTagsOpen
+			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,
+			subscribedLists: state.reader.lists.items
 		};
 	},
 	( dispatch ) => {
 		return bindActionCreators( {
 			toggleListsVisibility: toggleReaderSidebarLists,
-			toggleTagsVisibility: toggleReaderSidebarTags
+			toggleTagsVisibility: toggleReaderSidebarTags,
+			requestSubscribedLists: requestSubscribedLists
 		}, dispatch );
 	}
 )( ReaderSidebar );
