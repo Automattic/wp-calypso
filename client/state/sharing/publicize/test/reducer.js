@@ -88,7 +88,24 @@ describe( '#connections()', () => {
 		} );
 	} );
 
-	it( 'should not replace previous connections', () => {
+	it( 'should accumulate connections for distinct sites', () => {
+		const state = connections( {
+			1: { ID: 1, site_ID: 2916284 }
+		}, {
+			type: PUBLICIZE_CONNECTIONS_RECEIVE,
+			siteId: 77203074,
+			data: {
+				connections: [ { ID: 2, site_ID: 77203074 } ]
+			}
+		} );
+
+		expect( state ).to.eql( {
+			1: { ID: 1, site_ID: 2916284 },
+			2: { ID: 2, site_ID: 77203074 }
+		} );
+	} );
+
+	it( 'should discard connections for the same site ID if no longer present', () => {
 		const state = connections( {
 			1: { ID: 1, site_ID: 2916284 }
 		}, {
@@ -100,7 +117,6 @@ describe( '#connections()', () => {
 		} );
 
 		expect( state ).to.eql( {
-			1: { ID: 1, site_ID: 2916284 },
 			2: { ID: 2, site_ID: 2916284 }
 		} );
 	} );
