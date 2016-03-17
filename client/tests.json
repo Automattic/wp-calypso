@@ -220,7 +220,7 @@
 			"test": [ "actions", "reducer" ]
 		},
 		"comments": {
-			"test": [ "actions", "reducer", "selectors" ]
+			"test": [ "actions", "reducer", "selectors", "utils" ]
 		},
 		"current-user": {
 			"test": [ "actions", "reducer", "selectors" ]
@@ -240,7 +240,7 @@
 			"test": [ "actions", "reducer", "selectors" ]
 		},
 		"posts": {
-			"test": [ "actions", "reducer", "selectors" ]
+			"test": [ "actions", "reducer", "selectors", "utils" ]
 		},
 		"receipts": {
 			"test": [ "reducer" ]
@@ -272,6 +272,7 @@
 		"support": {
 			"test": [ "actions", "reducer" ]
 		},
+		"test": [ "index", "initial-state" ],
 		"themes": {
 			"current-theme": {
 				"test": [ "index", "reducer" ]
@@ -305,7 +306,6 @@
 		},
 		"users": {
 			"test": [ "actions", "reducer", "selectors" ]
-		},
-		"test": [ "index", "initial-state" ]
+		}
 	}
 }
