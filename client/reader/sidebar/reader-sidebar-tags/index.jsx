@@ -55,6 +55,7 @@ const ReaderSidebarTags = React.createClass( {
 	handleAddClick() {
 		stats.recordAction( 'follow_topic_open_input' );
 		stats.recordGaEvent( 'Clicked Add Topic to Open Input' );
+		stats.recordTrack( 'calypso_reader_add_tag_clicked' );
 	},
 
 	render() {
