@@ -11,8 +11,6 @@ import { expect } from 'chai';
 import {
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
-	READER_LISTS_REQUEST_SUCCESS,
-	READER_LISTS_REQUEST_FAILURE
 } from 'state/action-types';
 import {
 	receiveLists,

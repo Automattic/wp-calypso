@@ -9,6 +9,9 @@ import keyBy from 'lodash/keyBy';
  */
 import {
 	READER_LISTS_RECEIVE,
+	READER_LISTS_REQUEST,
+	READER_LISTS_REQUEST_SUCCESS,
+	READER_LISTS_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -37,6 +40,29 @@ export function items( state = {}, action ) {
 	return state;
 }
 
+/**
+ * Returns the updated requests state after an action has been dispatched.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function isRequesting( state = false, action ) {
+	switch ( action.type ) {
+		case READER_LISTS_REQUEST:
+		case READER_LISTS_REQUEST_SUCCESS:
+		case READER_LISTS_REQUEST_FAILURE:
+			return READER_LISTS_REQUEST === action.type;
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return false;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
-	items
+	items,
+	isRequesting
 } );

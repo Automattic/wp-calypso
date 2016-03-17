@@ -8,8 +8,6 @@ import url from 'url';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import startsWith from 'lodash/startsWith';
-import toArray from 'lodash/toArray';
-import isEmpty from 'lodash/isEmpty';
 
 /**
  * Internal Dependencies
@@ -30,7 +28,8 @@ import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarTeams from './reader-sidebar-teams';
 import ReaderSidebarHelper from './helper';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
-import { requestSubscribedLists } from 'state/reader/lists/actions';
+import { getSubscribedLists } from 'state/reader/lists/selectors';
+import QueryReaderLists from 'components/data/query-reader-lists';
 import observe from 'lib/mixins/data-observe';
 import config from 'config';
 import userSettings from 'lib/user-settings';
@@ -52,10 +51,6 @@ const ReaderSidebar = React.createClass( {
 
 		// If we're browsing a tag or list, open the sidebar menu
 		this.openExpandableMenuForCurrentTagOrList();
-
-		if ( isEmpty( this.props.subscribedLists ) ) {
-			this.props.requestSubscribedLists();
-		}
 	},
 
 	componentWillUnmount() {
@@ -202,8 +197,9 @@ const ReaderSidebar = React.createClass( {
 					</ul>
 				</SidebarMenu>
 
+				<QueryReaderLists />
 				<ReaderSidebarLists
-					lists={ toArray( this.props.subscribedLists ) }
+					lists={ this.props.subscribedLists }
 					path={ this.props.path }
 					isOpen={ this.props.isListsOpen }
 					onClick={ this.props.toggleListsVisibility }
@@ -229,14 +225,13 @@ export default connect(
 		return {
 			isListsOpen: state.ui.reader.sidebar.isListsOpen,
 			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,
-			subscribedLists: state.reader.lists.items
+			subscribedLists: getSubscribedLists( state )
 		};
 	},
 	( dispatch ) => {
 		return bindActionCreators( {
 			toggleListsVisibility: toggleReaderSidebarLists,
-			toggleTagsVisibility: toggleReaderSidebarTags,
-			requestSubscribedLists: requestSubscribedLists
+			toggleTagsVisibility: toggleReaderSidebarTags
 		}, dispatch );
 	}
 )( ReaderSidebar );
