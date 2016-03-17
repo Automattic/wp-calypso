@@ -15,6 +15,7 @@ import JetpackConnect from './index';
 import jetpackConnectAuthorize from './authorize';
 import { setSection } from 'state/ui/actions';
 import { jetpackAuthorize } from './authorize-action';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Module variables
@@ -57,12 +58,14 @@ export default {
 			hasSidebar: false
 		} ) );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( JetpackConnect, {
 				path: context.path,
+				context: context,
 				locale: context.params.lang
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 

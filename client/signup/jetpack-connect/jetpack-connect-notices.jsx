@@ -10,39 +10,61 @@ export default React.createClass( {
 	},
 
 	getNoticeValues() {
+		window.bbb = this;
 		let noticeValues = {
 			icon: 'trash',
 			status: 'is-warning',
 			text: this.translate( 'That\'s not a real web site' )
 		};
 
+		if ( this.props.noticeType === 'notExists' ) {
+			return noticeValues
+		}
+		if ( this.props.noticeType === 'notWordPress' ) {
+			noticeValues.icon = 'block';
+			noticeValues.text = this.translate( 'That\'s not a WordPress site' );
+			return noticeValues
+		}
 		if ( this.props.noticeType === 'jetpackIsDeactivated' ) {
 			noticeValues.icon = 'block';
 			noticeValues.text = this.translate( 'Jetpack is deactivated' );
+			return noticeValues
 		}
 		if ( this.props.noticeType === 'jetpackIsDisconnected' ) {
 			noticeValues.icon = 'link-break';
 			noticeValues.text = this.translate( 'Jetpack is disconnected' );
+			return noticeValues
 		}
 		if ( this.props.noticeType === 'jetpackIsValid' ) {
 			noticeValues.status = 'is-success';
 			noticeValues.icon = 'plugins';
 			noticeValues.text = this.translate( 'Jetpack is connected' );
+			return noticeValues
 		}
-		if ( this.props.noticeType === 'jetpackNotInstalled' ) {
+		if ( this.props.noticeType === 'notJetpack' ) {
 			noticeValues.status = 'is-noticeType';
 			noticeValues.icon = 'status';
 			noticeValues.text = this.translate( 'Can\'t find Jetpack' );
+			return noticeValues
 		}
-		return noticeValues;
+		if ( this.props.noticeType === 'wordpress.com' ) {
+			noticeValues.status = 'is-warning';
+			noticeValues.icon = 'status';
+			noticeValues.text = this.translate( 'I think that\'s us ¯\\_(ツ)_/¯' );
+			return noticeValues
+		}
+		return;
 	},
 
 	render() {
 		const values = this.getNoticeValues();
-		return (
-			<div className="jetpack-connect__notices-container">
-				<Notice { ...values } onDismissClick={ this.props.onDismissClick } />
-			</div>
-		);
+		if ( values ) {
+			return (
+				<div className="jetpack-connect__notices-container">
+					<Notice { ...values } onDismissClick={ this.props.onDismissClick } />
+				</div>
+			);
+		}
+		return null;
 	}
 } );
