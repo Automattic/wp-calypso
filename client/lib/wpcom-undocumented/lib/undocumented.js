@@ -265,6 +265,18 @@ Undocumented.prototype.disconnectJetpack = function( siteId, fn ) {
 };
 
 /**
+ * Fetches plugin registration keys for WordPress.org sites with paid services
+ *
+ * @param {int} [siteId] The site ID
+ * @param {Function} fn The callback function
+ * @api public
+ */
+Undocumented.prototype.fetchJetpackKeys = function( siteId, fn ) {
+	debug( '/jetpack-blogs/:site_id:/keys query' );
+	this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/keys' }, fn );
+};
+
+/**
  * Test if a Jetpack Site is connected to .com
  *
  * @param {int} [siteId] The site ID

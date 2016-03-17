@@ -42,13 +42,15 @@ module.exports = React.createClass( {
 	},
 
 	componentDidMount() {
+		if ( ! this.props.selectedSite || ! this.props.selectedSite.jetpack || ! this.props.selectedSite.canManage() ) {
+			return;
+		}
 		this.runInstall();
 	},
 
 	runInstall() {
 		let steps = PluginInstallation.start( {
 			site: this.props.selectedSite,
-			plugins: [ 'akismet', 'vaultpress' ]
 		} );
 
 		steps.on( 'data', ( step ) => {

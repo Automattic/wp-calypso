@@ -3,6 +3,7 @@
  */
 import { Readable } from 'stream';
 import inherits from 'inherits';
+import keys from 'lodash/keys';
 
 /**
  * Internal dependencies
@@ -49,7 +50,13 @@ InstallationFlow.prototype._read = function() {
 	}
 	this._hasStarted = true;
 
-	this.installAll( this._initialData.plugins );
+	this._initialData.site.fetchJetpackKeys( ( error, data ) => {
+		if ( error ) {
+			console.warn( error );
+			return;
+		}
+		this.installAll( data.keys );
+	} );
 };
 
 InstallationFlow.prototype._pushStep = function( options ) {
@@ -61,12 +68,13 @@ InstallationFlow.prototype._pushStep = function( options ) {
 };
 
 // Install each plugin sequentially via a recursive callback
-InstallationFlow.prototype.installAll = function( slugs ) {
+InstallationFlow.prototype.installAll = function( plugins ) {
+	let slugs = keys( plugins );
 	let slug;
 	let installNext = () => {
 		if ( slugs.length > 0 ) {
 			slug = slugs.shift();
-			this.install( slug, installNext );
+			this.install( slug, plugins[slug], installNext );
 		} else {
 			this._pushStep( null );
 		}
@@ -75,15 +83,15 @@ InstallationFlow.prototype.installAll = function( slugs ) {
 	installNext();
 }
 
-InstallationFlow.prototype.install = function( slug, next ) {
+InstallationFlow.prototype.install = function( slug, key, next ) {
 	this._pushStep( { name: 'install-plugin', plugin: slug } );
 	let site = this._initialData.site;
-	let plugin = PluginsStore.getSitePlugin( site, slug )
+	let plugin = PluginsStore.getSitePlugin( site, slug );
 	if ( ! plugin && PluginsStore.isFetchingSite( site ) ) {
 		// if the Plugins are still being fetched, we wait. We are not using flux
 		// store events because it would be more messy to handle the one-time-only
 		// callback with bound parameters than to do it this way.
-		return setTimeout( this.install.bind( this, slug, next ), 500 );
+		return setTimeout( this.install.bind( this, slug, key, next ), 500 );
 	};
 	plugin = plugin || { slug: slug };
 	// Install the plugin. `installer` is a promise, so we can wait for the install
@@ -92,9 +100,43 @@ InstallationFlow.prototype.install = function( slug, next ) {
 	installer.then( ( response ) => {
 		if ( 'undefined' !== typeof response.error ) {
 			// @todo Handle failed installs
+			if ( response.error === 'update_fail' ) {
+				console.warn( 'Plugin not up-to-date, cannot continue.' );
+				next();
+			} else {
+				console.warn( response.error );
+			}
+			return;
 		}
-		// @todo Registration keys will be set here.
-		next();
+		this._pushStep( { name: 'configure-plugin', plugin: slug } );
+		// Configure the plugin
+		configureOption( site, plugin, key, next );
+	} );
+}
+
+// Configure the relevant option for each plugin
+function configureOption( site, plugin, key, callback ) {
+	let option = false;
+	switch ( plugin.slug ) {
+		case 'vaultpress':
+			option = 'vaultpress_auto_register';
+			break;
+		case 'akismet':
+			option = 'wordpress_api_key';
+			break;
+		case 'polldaddy':
+			option = 'polldaddy_api_key';
+			break;
+	}
+	if ( ! option ) {
+		callback();
+		return;
+	}
+	site.setOption( { option_name: option, option_value: key }, ( error ) => {
+		if ( error ) {
+			console.warn( error );
+		}
+		callback();
 	} );
 }
 
