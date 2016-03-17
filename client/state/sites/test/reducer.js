@@ -35,7 +35,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should index sites by ID', () => {
-			const state = items( null, {
+			const state = items( undefined, {
 				type: SITE_RECEIVE,
 				site: { ID: 2916284, name: 'WordPress.com Example Blog' }
 			} );
@@ -73,47 +73,54 @@ describe( 'reducer', () => {
 				2916284: { ID: 2916284, name: 'Just You Wait' }
 			} );
 		} );
-		describe( 'persistence', () => {
-			it( 'does not persist state because this is not implemented yet', () => {
-				const original = deepFreeze( {
-					2916284: {
-						ID: 2916284,
-						name: 'WordPress.com Example Blog',
-						somethingDecoratedMe: () => {
-						}
-					}
-				} );
-				const state = items( original, { type: SERIALIZE } );
-				expect( state ).to.eql( {} );
+
+		it( 'should strip invalid keys on the received site object', () => {
+			const state = items( undefined, {
+				type: SITE_RECEIVE,
+				site: {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog',
+					slug: 'example.wordpress.com',
+					updateComputedAttributes() {}
+				}
 			} );
-			it( 'does not load persisted state because this is not implemented yet', () => {
-				const original = deepFreeze( {
-					2916284: {
-						ID: 2916284,
-						name: 'WordPress.com Example Blog'
-					},
-					2916285: {
-						ID: 2916285,
-						name: 'WordPress.com Example Blog 2'
-					}
-				} );
-				const state = items( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
+
+			expect( state ).to.eql( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
 			} );
-			it.skip( 'returns initial state when state is missing required properties', () => {
-				const original = deepFreeze( {
-					2916284: { name: 'WordPress.com Example Blog' }
-				} );
-				const state = items( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
+		} );
+
+		it( 'should persist state', () => {
+			const original = deepFreeze( {
+				2916284: {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog'
+				}
 			} );
-			it.skip( 'returns initial state when state has invalid keys', () => {
-				const original = deepFreeze( {
-					foobar: { name: 'WordPress.com Example Blog' }
-				} );
-				const state = items( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
+			const state = items( original, { type: SERIALIZE } );
+
+			expect( state ).to.eql( original );
+		} );
+
+		it( 'should load valid persisted state', () => {
+			const original = deepFreeze( {
+				2916284: {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog'
+				}
 			} );
+			const state = items( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( original );
+		} );
+
+		it( 'should return initial state when state is invalid', () => {
+			const original = deepFreeze( {
+				2916284: { bad: true }
+			} );
+			const state = items( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

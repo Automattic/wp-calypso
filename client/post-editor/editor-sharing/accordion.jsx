@@ -143,8 +143,9 @@ export default connect(
 		const user = getCurrentUser( state );
 
 		return {
-			connections: site && user ? getSiteUserConnections( state, site.ID, user.ID ) : null,
-			site
+			// [TODO]: Reintroduce selected site from Redux state once needs
+			// have been met for use (e.g. `site.isModuleActive`)
+			connections: site && user ? getSiteUserConnections( state, site.ID, user.ID ) : null
 		};
 	},
 	( dispatch ) => {

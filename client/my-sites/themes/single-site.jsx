@@ -26,7 +26,7 @@ var Main = require( 'components/main' ),
 	ThemeHelpers = require( './helpers' ),
 	actionLabels = require( './action-labels' ),
 	ThemesListSelectors = require( 'state/themes/themes-list/selectors' ),
-	getSelectedSite = require( 'state/ui/selectors' ).getSelectedSite;
+	sites = require( 'lib/sites-list' )();
 
 var ThemesSingleSite = React.createClass( {
 	propTypes: {
@@ -36,11 +36,7 @@ var ThemesSingleSite = React.createClass( {
 		trackScrollPage: React.PropTypes.func,
 		// Connected Props
 		queryParams: React.PropTypes.object,
-		themesList: React.PropTypes.array,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired,
+		themesList: React.PropTypes.array
 	},
 
 	getInitialState: function() {
@@ -51,7 +47,7 @@ var ThemesSingleSite = React.createClass( {
 	},
 
 	togglePreview: function( theme ) {
-		const site = this.props.selectedSite;
+		const site = sites.getSelectedSite();
 		if ( site.jetpack ) {
 			this.props.dispatch( Action.customize( theme, site ) );
 		} else {
@@ -60,7 +56,8 @@ var ThemesSingleSite = React.createClass( {
 	},
 
 	getButtonOptions: function() {
-		const { dispatch, selectedSite: site } = this.props,
+		const { dispatch } = this.props,
+			site = sites.getSelectedSite(),
 			buttonOptions = {
 				preview: {
 					action: theme => this.togglePreview( theme ),
@@ -107,7 +104,7 @@ var ThemesSingleSite = React.createClass( {
 	},
 
 	renderJetpackMessage: function() {
-		var site = this.props.selectedSite;
+		var site = sites.getSelectedSite();
 		return (
 			<EmptyContent title={ this.translate( 'Changing Themes?' ) }
 				line={ this.translate( 'Use your site theme browser to manage themes.' ) }
@@ -119,7 +116,7 @@ var ThemesSingleSite = React.createClass( {
 	},
 
 	render: function() {
-		var site = this.props.selectedSite,
+		var site = sites.getSelectedSite(),
 			isJetpack = site.jetpack,
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
 			buttonOptions = this.getButtonOptions(),
@@ -147,9 +144,9 @@ var ThemesSingleSite = React.createClass( {
 						} ) }
 						onButtonClick={ this.onPreviewButtonClick } />
 				}
-				<ActivatingTheme siteId={ this.props.selectedSite.ID } >
+				<ActivatingTheme siteId={ site.ID } >
 					<ThanksModal
-						site={ this.props.selectedSite }
+						site={ site }
 						clearActivated={ bindActionCreators( Action.clearActivated, this.props.dispatch ) } />
 				</ActivatingTheme>
 				<CurrentThemeData site={ site }>
@@ -187,7 +184,6 @@ var ThemesSingleSite = React.createClass( {
 export default connect(
 	state => ( {
 		queryParams: ThemesListSelectors.getQueryParams( state ),
-		themesList: ThemesListSelectors.getThemesList( state ),
-		selectedSite: getSelectedSite( state ) || false,
+		themesList: ThemesListSelectors.getThemesList( state )
 	} )
 )( ThemesSingleSite );

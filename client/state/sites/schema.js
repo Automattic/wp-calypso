@@ -53,9 +53,6 @@ export const sitesSchema = {
 					}
 				},
 				single_user_site: { type: 'boolean' },
-				domain: { type: 'string' },
-				slug: { type: 'string' },
-				title: { type: 'string' }
 			}
 		}
 	},
