@@ -115,7 +115,7 @@ const RecommendedForYou = React.createClass( {
 			<ListItem key={ itemKey } ref={ itemKey }>
 				<Icon><SiteIcon site={ site } size={ 48 } /></Icon>
 				<Title>
-					<a href={ siteUrl } onclick={ this.trackSiteClick }>{ title }</a>
+					<a href={ siteUrl } onClick={ this.trackSiteClick }>{ title }</a>
 				</Title>
 				<Description>{ decodeEntities( rec.reason ) }</Description>
 				<Actions>
