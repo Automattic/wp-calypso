@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	bindActionCreators = require( 'redux' ).bindActionCreators,
+	connect = require( 'react-redux' ).connect,
 	classnames = require( 'classnames' ),
 	property = require( 'lodash/property' ),
 	sortBy = require( 'lodash/sortBy' );
@@ -23,7 +23,6 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	WelcomeMessage = require( 'nux-welcome/welcome-message' ),
 	analytics = require( 'analytics' ),
 	config = require( 'config' ),
-	connect = require( 'react-redux' ).connect,
 	PulsingDot = require( 'components/pulsing-dot' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	OfflineStatus = require( 'layout/offline-status' ),
@@ -33,9 +32,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
-import WebPreview from 'components/web-preview';
-import * as DesignMenuActions from 'my-sites/design-menu/actions';
-import accept from 'lib/accept';
+import DesignPreview from 'components/design-preview';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -139,25 +136,6 @@ Layout = React.createClass( {
 		);
 	},
 
-	onClosePreview() {
-		if ( this.props.customizations && ! this.props.isCustomizationsSaved ) {
-			return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
-				if ( accepted ) {
-					this.props.designMenuActions.closeDesignMenu();
-				}
-			} );
-		}
-		this.props.designMenuActions.closeDesignMenu();
-	},
-
-	onPreviewClick( event ) {
-		if ( ! event.target.href ) {
-			return;
-		}
-		event.preventDefault();
-		// TODO: if the href is on the current site, load the href as a preview and fetch markup for that url
-	},
-
 	render: function() {
 		var sectionClass = classnames(
 				'wp',
@@ -192,17 +170,9 @@ Layout = React.createClass( {
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
 				{ this.props.section === 'sites' &&
-					<WebPreview
+					<DesignPreview
 						className="layout__design"
-						showExternal={ false }
-						showClose={ false }
 						showPreview={ this.props.focus.getCurrent() === 'design' }
-						previewMarkup={ this.props.previewMarkup }
-						customizations={ this.props.customizations }
-						actions={ this.props.designMenuActions }
-						isCustomizationsSaved={ this.props.isCustomizationsSaved }
-						onClose={ this.onClosePreview }
-						onClick={ this.onPreviewClick }
 					/>
 				}
 			</div>
@@ -211,7 +181,6 @@ Layout = React.createClass( {
 } );
 
 function mapStateToProps( state ) {
-	const { previewMarkup, customizations, isSaved } = state.tailor;
 	const { isLoading, section, hasSidebar, isFullScreen, chunkName } = state.ui;
 	return {
 		isLoading,
@@ -220,20 +189,8 @@ function mapStateToProps( state ) {
 		hasSidebar,
 		isFullScreen,
 		chunkName,
-		previewMarkup,
-		customizations,
-		isCustomizationsSaved: isSaved,
 		isOffline: isOffline( state )
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
-	return {
-		designMenuActions: bindActionCreators( DesignMenuActions, dispatch ),
-	}
-}
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( Layout );
+export default connect( mapStateToProps )( Layout );
