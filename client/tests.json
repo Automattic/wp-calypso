@@ -28,6 +28,9 @@
 			},
 			"form-toggle": {
 				"test": [ "index" ]
+			},
+			"multi-checkbox": {
+				"test": [ "index" ]
 			}
 		}
 	},
