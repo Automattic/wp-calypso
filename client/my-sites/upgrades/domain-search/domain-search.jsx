@@ -46,8 +46,10 @@ var DomainSearch = React.createClass( {
 	},
 
 	componentWillReceiveProps: function() {
-		if ( this.previousSelectedSite !== this.props.sites.getSelectedSite() ) {
-			this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
+		var selectedSite = this.props.sites.getSelectedSite();
+		if ( this.previousSelectedSite !== selectedSite ) {
+			this.props.fetchSitePlans( this.props.sitePlans, selectedSite );
+			this.previousSelectedSite = selectedSite;
 		}
 	},
 

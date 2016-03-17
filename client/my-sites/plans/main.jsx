@@ -150,6 +150,7 @@ var Plans = React.createClass( {
 		if ( this.props.sitePlans.hasLoadedFromServer && currentPlan.freeTrial ) {
 			return (
 				<PlanOverview
+					sitePlans={ this.props.sitePlans }
 					path={ this.props.context.path }
 					cart={ this.props.cart }
 					destinationType={ this.props.context.params.destinationType }
