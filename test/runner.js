@@ -3,12 +3,8 @@ require( 'babel/register' );
 
 const program = require( 'commander' ),
 	Mocha = require( 'mocha' ),
-	Chai = require( 'chai' ),
-	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' ),
-	immutableChai = require( './test/helpers/immutable-chai' ),
-	nock = require( 'nock' ),
-	path = require( 'path' );
+	path = require( 'path' ),
+	boot = require( './boot-test' );
 
 program
 	.usage( '[options] [files]' )
@@ -28,18 +24,8 @@ if ( program.grep ) {
 	mocha.grep( new RegExp( program.grep ) );
 }
 
-mocha.suite.beforeAll( function() {
-	Chai.use( immutableChai );
-	Chai.use( sinonChai );
-	sinon.assert.expose( Chai.assert, { prefix: '' } );
-	nock.disableNetConnect();
-} );
-
-mocha.suite.afterAll( function() {
-	nock.cleanAll();
-	nock.enableNetConnect();
-	nock.restore();
-} );
+mocha.suite.beforeAll( boot.before );
+mocha.suite.afterAll( boot.after );
 
 // we could also discover all the tests using a glob?
 if ( program.args.length ) {
