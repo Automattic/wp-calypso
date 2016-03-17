@@ -14,27 +14,31 @@ export default React.createClass( {
 
 	propTypes: {
 		count: PropTypes.number,
-		onClick: PropTypes.func
+		onClick: PropTypes.func,
+		isJetpack: PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
 			count: 0,
-			onClick: () => {}
+			onClick: () => {},
+			isJetpack: false
 		};
 	},
 
 	render() {
+		const { count, isJetpack, onClick } = this.props;
+
 		return (
 			<Button
 				compact borderless
 				className="drafts-button"
-				onClick={ this.props.onClick }
-				disabled={ ! this.props.count }
+				onClick={ onClick }
+				disabled={ ! count && ! isJetpack }
 				aria-label={ this.translate( 'View all drafts' ) }
 			>
 				<span>{ this.translate( 'Drafts' ) }</span>
-				{ this.props.count ? <Count count={ this.props.count } /> : null }
+				{ count && ! isJetpack ? <Count count={ count } /> : null }
 			</Button>
 		);
 	}
