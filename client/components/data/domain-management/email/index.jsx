@@ -66,7 +66,7 @@ const EmailData = React.createClass( {
 
 	componentWillMount() {
 		this.loadDomainsAndSitePlans();
-		this.props.fetch();
+		this.props.fetchGoogleAppsUsers();
 	},
 
 	componentWillUpdate() {
@@ -115,12 +115,12 @@ export default connect(
 		}
 	},
 	( dispatch, { selectedDomainName, sites } ) => {
-		const fetcher = selectedDomainName
+		const googleAppsUsersFetcher = selectedDomainName
 			? () => fetchByDomain( selectedDomainName )
 			: () => fetchBySiteId( sites.getSelectedSite().ID );
 
 		return {
-			fetch: () => dispatch( fetcher() ),
+			fetchGoogleAppsUsers: () => dispatch( googleAppsUsersFetcher() ),
 			fetchSitePlans: ( sitePlans, site ) => {
 				if ( shouldFetchSitePlans( sitePlans, site ) ) {
 					dispatch( fetchSitePlans( site.ID ) );
