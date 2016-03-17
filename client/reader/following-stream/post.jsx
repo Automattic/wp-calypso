@@ -216,16 +216,23 @@ const Post = React.createClass( {
 			featuredImageClasses = classnames( featuredImageClasses, 'is-shorter-abtest' );
 		}
 
-		return useFeaturedEmbed ?
-			<div ref="featuredEmbed" className="reader__post-featured-video" key="featuredVideo" dangerouslySetInnerHTML={ { __html: featuredEmbed.iframe } } /> : //eslint-disable-line react/no-danger
-			<div className={ featuredImageClasses } onClick={ this.handlePermalinkClick } style={ { maxHeight: maxImageHeight } }>
-				{ featuredSize ?
-					<img className="reader__post-featured-image-image"
-						ref="featuredImage"
-						src={ featuredImage }
-						style={ featuredSize }
-						/> :
-					<img className="reader__post-featured-image-image" src={ featuredImage } />
+		return useFeaturedEmbed
+			? <div
+					ref="featuredEmbed"
+					className="reader__post-featured-video"
+					key="featuredVideo"
+					dangerouslySetInnerHTML={ { __html: featuredEmbed.iframe } } />  //eslint-disable-line react/no-danger
+			: <div
+					className={ featuredImageClasses }
+					onClick={ this.handlePermalinkClick }
+					style={ { maxHeight: maxImageHeight } }>
+				{ featuredSize
+					? <img className="reader__post-featured-image-image"
+							ref="featuredImage"
+							src={ featuredImage }
+							style={ featuredSize }
+						/>
+					: <img className="reader__post-featured-image-image" src={ featuredImage } />
 				}
 			</div>;
 	},
@@ -299,12 +306,8 @@ const Post = React.createClass( {
 	handleCommentButtonClick: function() {
 		stats.recordAction( 'click_comments' );
 		stats.recordGaEvent( 'Clicked Post Comment Button' );
+		stats.recordTrackForPost( 'calypso_reader_post_comments_button_clicked', this.props.post );
 		this.propagateCardClick( { comments: true } );
-	},
-
-	recordTagClick: function() {
-		stats.recordAction( 'click_tag' );
-		stats.recordGaEvent( 'Clicked Tag Link' );
 	},
 
 	_parseEmoji: function() {
@@ -420,27 +423,29 @@ const Post = React.createClass( {
 
 				<PostByline post={ post } site={ this.props.site } />
 
-				{ shouldUseFullExcerpt ?
-					<div key="full-post-inline" className="reader__full-post-content" dangerouslySetInnerHTML={{ __html: post.content }}></div> : //eslint-disable-line react/no-danger
-					<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
+				{ shouldUseFullExcerpt
+					? <div key="full-post-inline" className="reader__full-post-content" dangerouslySetInnerHTML={ { __html: post.content } }></div> //eslint-disable-line react/no-danger
+					: <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 				}
 
-				{ shouldShowExcerptOnly ?
-					<PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
+				{ shouldShowExcerptOnly
+					? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
+					: null }
 
-				{ ! shouldShowExcerptOnly ?
-					<PostImages postImages={ post.content_images || [] } /> : null }
+				{ ! shouldShowExcerptOnly
+					? <PostImages postImages={ post.content_images || [] } />
+					: null }
 
 				{ ( isDiscoverPost && ! isDiscoverSitePick ) ? <DiscoverPostAttribution attribution={ post.discover_metadata.attribution } siteUrl={ discoverSiteUrl } /> : null }
 				{ ( isDiscoverSitePick ) ? <DiscoverSiteAttribution attribution={ post.discover_metadata.attribution } siteUrl={ discoverSiteUrl } /> : null }
 
-				{ this.props.xPostedTo ?
-					<div className="reader__x-post-to">
-						<Gridicon icon="arrow-right" size={ 24 } />
-						<span className="reader__x-post-label">{ this.translate( 'cross-posted to' ) } </span>
-						{ xPostedToContent }
-					</div> :
-					null
+				{ this.props.xPostedTo
+					? <div className="reader__x-post-to">
+							<Gridicon icon="arrow-right" size={ 24 } />
+							<span className="reader__x-post-label">{ this.translate( 'cross-posted to' ) } </span>
+							{ xPostedToContent }
+						</div>
+					: null
 				}
 
 				<ul className="reader__post-footer">

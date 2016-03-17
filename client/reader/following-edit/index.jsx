@@ -236,6 +236,7 @@ const FollowingEdit = React.createClass( {
 		this.setState( { isAttemptingFollow: false } );
 		stats.recordAction( 'dismiss_follow_error' );
 		stats.recordGaEvent( 'Clicked Dismiss Follow Error' );
+		stats.recordTrack( 'calypso_reader_follow_error_dismissed' );
 	},
 
 	handleNewSubscriptionSearch: function( searchString ) {

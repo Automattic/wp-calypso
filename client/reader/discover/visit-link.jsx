@@ -14,7 +14,7 @@ var DiscoverVisitLink = React.createClass( {
 	},
 
 	recordClick: function() {
-		stats.recordPermalinkClick( 'summary_card_site_name' );
+		stats.recordPermalinkClick( 'discover_summary_card_site_name' );
 		stats.recordGaEvent( 'Clicked Discover Permalink' );
 	},
 

@@ -16,7 +16,7 @@ import FollowButton from 'reader/follow-button';
 import RecommendedSites from 'lib/recommended-sites-store/store';
 import { fetchMore } from 'lib/recommended-sites-store/actions';
 import SiteStore from 'lib/reader-site-store';
-import { recordAction, recordGaEvent } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getSiteUrl } from 'reader/route';
 import { decodeEntities } from 'lib/formatting';
 
@@ -96,9 +96,13 @@ const RecommendedForYou = React.createClass( {
 		return 'recommendation-' + rec.blog_id;
 	},
 
-	trackSiteClick() {
+	trackSiteClick( event ) {
+		const clickedUrl = event.currentTarget.getAttribute( 'href' );
 		recordAction( 'click_site_on_recommended_for_you' );
 		recordGaEvent( 'Clicked Site on Recommended For You' );
+		recordTrack( 'calypso_reader_recommended_site_clicked', {
+			clicked_url: clickedUrl
+		} );
 	},
 
 	renderItem( rec ) {
@@ -111,7 +115,7 @@ const RecommendedForYou = React.createClass( {
 			<ListItem key={ itemKey } ref={ itemKey }>
 				<Icon><SiteIcon site={ site } size={ 48 } /></Icon>
 				<Title>
-					<a href={ siteUrl } onclick={ this.trackSiteClick }>{ title }</a>
+					<a href={ siteUrl } onClick={ this.trackSiteClick }>{ title }</a>
 				</Title>
 				<Description>{ decodeEntities( rec.reason ) }</Description>
 				<Actions>

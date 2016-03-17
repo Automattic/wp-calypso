@@ -90,6 +90,9 @@ var ReaderShare = React.createClass( {
 		if ( actionFunc ) {
 			stats.recordAction( 'share_' + action );
 			stats.recordGaEvent( 'Clicked on Share to ' + action );
+			stats.recordTrack( 'calypso_reader_share_action_picked', {
+				action: action
+			} );
 			actionFunc( this.props.post );
 		}
 		this.setState( { showingMenu: false } );

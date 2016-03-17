@@ -87,6 +87,9 @@ var PostImages = React.createClass( {
 
 		stats.recordAction( newState ? 'open_gallery' : 'close_gallery' );
 		stats.recordGaEvent( newState ? 'Clicked Open Gallery' : 'Clicked Close Gallery' );
+		stats.recordTrack( 'calypso_reader_post_gallery_' + ( newState ? 'opened' : 'closed' ), {
+			image_count: this.props.postImages && this.props.postImages.length
+		} );
 
 		this.setState( {
 			viewing: newState

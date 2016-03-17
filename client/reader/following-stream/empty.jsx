@@ -12,11 +12,13 @@ var FollowingEmptyContent = React.createClass( {
 	recordAction: function() {
 		stats.recordAction( 'clicked_discover_on_empty' );
 		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
+		stats.recordTrack( 'calypso_reader_discover_on_empty_stream_clicked' );
 	},
 
 	recordSecondaryAction: function() {
 		stats.recordAction( 'clicked_recommendations_on_empty' );
 		stats.recordGaEvent( 'Clicked Recommendations on EmptyContent' );
+		stats.recordTrack( 'calypso_reader_recommendations_on_empty_stream_clicked' );
 	},
 
 	render: function() {

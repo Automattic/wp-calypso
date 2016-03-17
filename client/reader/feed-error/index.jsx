@@ -10,17 +10,19 @@ import Main from 'components/main';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import EmptyContent from 'components/empty-content';
 import i18n from 'lib/mixins/i18n';
-import { recordAction, recordGaEvent } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 const FeedError = React.createClass( {
 	recordAction() {
-		recordAction( 'clicked_discover_on_empty' );
-		recordGaEvent( 'Clicked Discover on EmptyContent' );
+		recordAction( 'clicked_discover_on_404' );
+		recordGaEvent( 'Clicked Discover on 404' );
+		recordTrack( 'calypso_reader_discover_on_feed_error_clicked' );
 	},
 
 	recordSecondaryAction() {
-		recordAction( 'clicked_recommendations_on_empty' );
-		recordGaEvent( 'Clicked Recommendations on EmptyContent' );
+		recordAction( 'clicked_recommendations_on_404' );
+		recordGaEvent( 'Clicked Recommendations on 404' );
+		recordTrack( 'calypso_reader_recommendations_on_feed_error_clicked' );
 	},
 
 	render() {

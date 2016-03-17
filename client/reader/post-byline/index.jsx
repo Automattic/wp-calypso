@@ -18,6 +18,9 @@ var PostByline = React.createClass( {
 	recordTagClick: function() {
 		stats.recordAction( 'click_tag' );
 		stats.recordGaEvent( 'Clicked Tag Link' );
+		stats.recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
+			tag: this.props.post.primary_tag.slug
+		} );
 	},
 
 	recordDateClick: function() {
@@ -28,6 +31,7 @@ var PostByline = React.createClass( {
 	recordAuthorClick: function() {
 		stats.recordAction( 'click_author' );
 		stats.recordGaEvent( 'Clicked Author Link' );
+		stats.recordTrackForPost( 'calypso_reader_author_link_clicked', this.props.post );
 	},
 
 	renderAuthorName: function() {

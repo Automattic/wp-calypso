@@ -8,6 +8,7 @@ var SiteLink = React.createClass( {
 	recordClick: function() {
 		stats.recordAction( 'visit_blog_feed' );
 		stats.recordGaEvent( 'Clicked Feed Link' );
+		stats.recordTrackForPost( 'calypso_reader_feed_link_clicked', this.props.post );
 	},
 
 	render: function() {
