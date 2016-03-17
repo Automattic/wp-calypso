@@ -67,11 +67,12 @@ var NAV_ITEMS = {
 var UpgradesNavigation = React.createClass( {
 	propTypes: {
 		cart: React.PropTypes.object.isRequired,
-
+		path: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired
+		] ).isRequired,
+		sitePlans: React.PropTypes.object.isRequired
 	},
 
 	getInitialState: function() {
@@ -184,6 +185,7 @@ var UpgradesNavigation = React.createClass( {
 
 		return (
 			<PopoverCart
+				sitePlans={ this.props.sitePlans }
 				cart={ this.props.cart }
 				selectedSite={ this.props.selectedSite }
 				onToggle={ this.toggleCartVisibility }

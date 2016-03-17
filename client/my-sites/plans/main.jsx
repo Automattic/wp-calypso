@@ -167,6 +167,7 @@ var Plans = React.createClass( {
 
 					<div id="plans" className="plans has-sidebar">
 						<UpgradesNavigation
+							sitePlans={ this.props.sitePlans }
 							path={ this.props.context.path }
 							cart={ this.props.cart }
 							selectedSite={ selectedSite } />

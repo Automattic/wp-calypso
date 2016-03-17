@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	connect = require( 'react-redux' ).connect,
 	reject = require( 'lodash/reject' ),
 	classNames = require( 'classnames' );
 
@@ -17,10 +16,7 @@ var CartBody = require( './cart-body' ),
 	CartPlanAd = require( './cart-plan-ad' ),
 	CartTrialAd = require( './cart-trial-ad' ),
 	isCredits = require( 'lib/products-values' ).isCredits,
-	Gridicon = require( 'components/gridicon' ),
-	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
-	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
-	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
+	Gridicon = require( 'components/gridicon' );
 
 var PopoverCart = React.createClass( {
 	propTypes: {
@@ -29,16 +25,13 @@ var PopoverCart = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired,
+		sitePlans: React.PropTypes.object.isRequired,
 		onToggle: React.PropTypes.func.isRequired,
 		closeSectionNavMobilePanel: React.PropTypes.func,
 		visible: React.PropTypes.bool.isRequired,
 		pinned: React.PropTypes.bool.isRequired,
 		showKeepSearching: React.PropTypes.bool.isRequired,
 		onKeepSearchingClick: React.PropTypes.func.isRequired
-	},
-
-	componentDidMount: function() {
-		this.props.fetchSitePlans( this.props.sitePlans, this.props.selectedSite );
 	},
 
 	itemCount: function() {
@@ -156,17 +149,4 @@ var PopoverCart = React.createClass( {
 	}
 } );
 
-module.exports = connect(
-	function( state, props ) {
-		return { sitePlans: getPlansBySite( state, props.selectedSite ) };
-	},
-	function( dispatch ) {
-		return {
-			fetchSitePlans( sitePlans, site ) {
-				if ( shouldFetchSitePlans( sitePlans, site ) ) {
-					dispatch( fetchSitePlans( site.ID ) );
-				}
-			}
-		};
-	}
-)( PopoverCart );
+module.exports = PopoverCart;
