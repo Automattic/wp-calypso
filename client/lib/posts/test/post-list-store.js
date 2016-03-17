@@ -280,7 +280,6 @@ describe( 'post-list-store', () => {
 	} );
 
 	describe( 'QUERY_POSTS', () => {
-		// TODO: figure out why this one fails
 		it( 'should not change cached list if query does not change', () => {
 			dispatchQueryPosts( DEFAULT_POST_LIST_ID, {} );
 			const currentCacheId = defaultPostListStore.getID();
