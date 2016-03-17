@@ -141,8 +141,9 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, formId ) 
 			} );
 
 			if ( isErrored ) {
+				// If there are no validation errors but the form errored, assume that all errored
 				const countErrors = ( error || isEmpty( validationErrors ) || 'object' !== typeof validationErrors )
-					? 0
+					? usernamesOrEmails.length
 					: Object.keys( data.errors ).length;
 
 				if ( countErrors === usernamesOrEmails.length ) {
