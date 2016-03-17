@@ -220,7 +220,7 @@ const EditContactInfoFormCard = React.createClass( {
 				{ ...props }
 				additionalClasses="edit-contact-info-field"
 				disabled={ this.state.formSubmitting || formState.isFieldDisabled( this.state.form, name ) }
-				invalid={ formState.isFieldInvalid( this.state.form, name ) }
+				isError={ formState.isFieldInvalid( this.state.form, name ) }
 				value={ formState.getFieldValue( this.state.form, name ) }
 				onChange={ this.onChange } />
 		);
@@ -289,7 +289,7 @@ const EditContactInfoFormCard = React.createClass( {
 	}
 } );
 
-module.exports =  connect(
+module.exports = connect(
 	null,
 	dispatch => bindActionCreators( { successNotice }, dispatch )
 )( EditContactInfoFormCard );

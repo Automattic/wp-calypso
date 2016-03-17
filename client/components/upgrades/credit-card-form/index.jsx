@@ -25,7 +25,7 @@ const CreditCardForm = React.createClass( {
 		return React.createElement( componentClass, assign( {}, props, {
 			additionalClasses: 'credit-card-form__field',
 			eventFormName: this.props.eventFormName,
-			invalid: this.props.isFieldInvalid( fieldName ),
+			isError: this.props.isFieldInvalid( fieldName ),
 			name: fieldName,
 			onBlur: this.handleFieldChange,
 			onChange: this.handleFieldChange,

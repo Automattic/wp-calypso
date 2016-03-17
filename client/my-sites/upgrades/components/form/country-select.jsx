@@ -11,7 +11,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
-	FocusMixin = require( './focus-mixin.js' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
 	scrollIntoViewport = require( 'lib/scroll-into-viewport' ),
@@ -20,7 +19,7 @@ var analytics = require( 'analytics' ),
 module.exports = React.createClass( {
 	displayName: 'CountrySelect',
 
-	mixins: [ FocusMixin( 'input' ), observe( 'countriesList' ) ],
+	mixins: [ observe( 'countriesList' ) ],
 
 	recordCountrySelectClick() {
 		if ( this.props.eventFormName ) {
@@ -35,10 +34,7 @@ module.exports = React.createClass( {
 	},
 
 	render() {
-		var classes = classNames( this.props.additionalClasses, 'country', {
-				focus: this.state.focus,
-				invalid: this.props.invalid
-			} ),
+		var classes = classNames( this.props.additionalClasses, 'country' ),
 			countriesList = this.props.countriesList.get(),
 			options = [],
 			value = this.props.value;
@@ -71,10 +67,9 @@ module.exports = React.createClass( {
 						value={ value }
 						disabled={ this.props.disabled }
 						ref="input"
-						onBlur={ this.handleBlur }
 						onChange={ this.props.onChange }
 						onClick={ this.recordCountrySelectClick }
-						onFocus={ this.handleFocus } >
+						isError={ this.props.isError } >
 						{ options.map( function( option ) {
 							return <option key={ option.key } value={ option.value || '' } disabled={ option.disabled }>{ option.label }</option>;
 						} ) }
