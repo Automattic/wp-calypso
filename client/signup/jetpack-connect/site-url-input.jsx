@@ -17,26 +17,14 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			value: null,
-			buttonEnabled: false,
-			isSpinning: false
+			value: ''
 		}
 	},
 
-	handleChange( event ) {
-		if ( this.props.isFetching ) {
-			return;
-		}
-
+	onChange( event ) {
 		this.setState( {
 			value: event.target.value
-		} );
-
-		if ( this.state.value != null ) {
-			this.setState( {
-				buttonEnabled: true
-			} );
-		}
+		}, this.props.onChange );
 	},
 
 	renderButtonLabel() {
@@ -55,8 +43,7 @@ export default React.createClass( {
 						size={ 24 }
 						icon="globe" />
 					<FormTextInput
-						value={ this.state.value }
-						onChange={ this.handleChange }
+						onChange={ this.onChange }
 						disabled={ this.props.isFetching }
 						placeholder={ this.translate( 'http://www.yoursite.com' ) } />
 					{ this.props.isFetching
@@ -64,7 +51,7 @@ export default React.createClass( {
 						: null }
 				</div>
 				<Button primary
-					disabled={ ( !Boolean( this.state.value ) || this.props.isFetching ) }
+					disabled={ ( ! this.state.value || this.props.isFetching ) }
 					onClick={ this.props.onClick }>{ this.renderButtonLabel() }</Button>
 			</div>
 		);
