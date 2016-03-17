@@ -26,11 +26,7 @@ function forceTeamA8C( context, next ) {
 
 module.exports = function() {
 	if ( config.isEnabled( 'reader' ) ) {
-		page( '/', controller.loadSubscriptions );
-		page( '/read/*', controller.loadSubscriptions );
-		page( '/tag/*', controller.loadSubscriptions );
-
-		page( '/', updateLastRoute, controller.removePost, controller.sidebar, controller.following );
+		page( '/', controller.loadSubscriptions, controller.initAbTests, updateLastRoute, controller.removePost, controller.sidebar, controller.following );
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/' );
@@ -42,6 +38,7 @@ module.exports = function() {
 		page( '/read/feed', '/' );
 
 		// Feed stream
+		page( '/read/*', controller.loadSubscriptions, controller.initAbTests );
 		page( '/read/blog/feed/:feed_id', controller.legacyRedirects );
 		page( '/read/feeds/:feed_id/posts', controller.incompleteUrlRedirects );
 		page( '/read/feeds/:feed_id', updateLastRoute, controller.prettyRedirects, controller.removePost, controller.sidebar, controller.feedListing );
@@ -62,6 +59,7 @@ module.exports = function() {
 		page( '/read/blogs/:blog/posts/:post', updateLastRoute, controller.blogPost );
 		page.exit( '/read/blogs/:blog/posts/:post', controller.resetTitle );
 
+		page( '/tag/*', controller.loadSubscriptions, controller.initAbTests );
 		page( '/tag/:tag', updateLastRoute, controller.removePost, controller.sidebar, controller.tagListing );
 	}
 
@@ -81,19 +79,20 @@ module.exports = function() {
 	}
 
 	if ( config.isEnabled( 'reader/activities' ) ) {
-		page( '/activities/likes', controller.loadSubscriptions, updateLastRoute, controller.removePost, controller.sidebar, controller.likes );
+		page( '/activities/likes', controller.loadSubscriptions, controller.initAbTests, updateLastRoute, controller.removePost, controller.sidebar, controller.likes );
 	}
 
 	if ( config.isEnabled( 'reader/following-edit' ) ) {
-		page( '/following/edit', controller.loadSubscriptions, updateLastRoute, controller.removePost, controller.sidebar, controller.followingEdit );
+		page( '/following/*', controller.loadSubscriptions, controller.initAbTests );
+		page( '/following/edit', updateLastRoute, controller.removePost, controller.sidebar, controller.followingEdit );
 	}
 
 	if ( config.isEnabled( 'reader/recommendations' ) ) {
-		page( '/recommendations', controller.loadSubscriptions, updateLastRoute, controller.removePost, controller.sidebar, controller.recommendedForYou );
-		page( '/tags', controller.loadSubscriptions, updateLastRoute, controller.removePost, controller.sidebar, controller.recommendedTags );
+		page( '/recommendations', controller.loadSubscriptions, controller.initAbTests, updateLastRoute, controller.removePost, controller.sidebar, controller.recommendedForYou );
+		page( '/tags', controller.loadSubscriptions, controller.initAbTests, updateLastRoute, controller.removePost, controller.sidebar, controller.recommendedTags );
 	}
 
 	if ( config.isEnabled( 'reader/discover' ) ) {
-		page( '/discover', updateLastRoute, controller.loadSubscriptions, controller.removePost, controller.sidebar, controller.discover );
+		page( '/discover', updateLastRoute, controller.loadSubscriptions, controller.initAbTests, controller.removePost, controller.sidebar, controller.discover );
 	}
 };

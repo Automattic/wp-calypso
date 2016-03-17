@@ -127,7 +127,7 @@ const Post = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		this.maxImageHeightVariaton = abtest( 'readerShorterFeatures' );
+		this.maxImageHeightVariaton = abtest( 'readerShorterFeatures2' );
 	},
 
 	componentDidMount: function() {

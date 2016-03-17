@@ -12,7 +12,8 @@ const ReactDom = require( 'react-dom' ),
 /**
  * Internal Dependencies
  */
-const i18n = require( 'lib/mixins/i18n' ),
+const abtest = require( 'lib/abtest' ).abtest,
+	i18n = require( 'lib/mixins/i18n' ),
 	route = require( 'lib/route' ),
 	pageNotifier = require( 'lib/route/page-notifier' ),
 	analytics = require( 'analytics' ),
@@ -31,7 +32,10 @@ import userSettings from 'lib/user-settings';
 
 // This holds the last title set on the page. Removing the overlay doesn't trigger a re-render, so we need a way to
 // reset it
-var __lastTitle = null;
+let __lastTitle = null;
+const activeAbTests = [
+	'readerShorterFeatures2'
+]
 
 function trackPageLoad( path, title, readerView ) {
 	analytics.pageView.record( path, title );
@@ -94,6 +98,11 @@ function setPageTitle( title ) {
 }
 
 module.exports = {
+	initAbTests: function( context, next ) {
+		// spin up the ab tests that are currently active for the reader
+		activeAbTests.forEach( test => abtest( test ) );
+		next();
+	},
 	prettyRedirects: function( context, next ) {
 		// Do we have a 'pretty' site or feed URL?
 		let redirect;
