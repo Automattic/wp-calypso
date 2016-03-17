@@ -36,31 +36,35 @@ describe( 'index', () => {
 	} );
 
 	it( 'should not render anything if there\'s no need', () => {
-		let domain = {
-			name: 'example.com'
+		const props = {
+			domain: {
+				name: 'example.com'
+			},
+			selectedSite: {}
 		};
 
-		let component = TestUtils.renderIntoDocument( <DomainWarnings domain={ domain } /> );
+		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
 		expect( ReactDom.findDOMNode( component ) ).to.be.a( 'null' )
 	} );
 
 	it( 'should render new warning notice if the domain is new', () => {
-		let props = {
+		const props = {
 			domain: {
 				name: 'example.com',
 				registrationMoment: moment(),
 				type: domainTypes.REGISTERED
 			},
-			selectedSite: {domain: 'example.wordpress.com' }
+			selectedSite: { domain: 'example.wordpress.com' }
 		};
 
-		let component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+
 		expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up %(domainName)s for you' );
 	} );
 
 	it( 'should render the highest priority notice when there are others', () => {
-		let props = {
+		const props = {
 			domain: {
 				name: 'example.com',
 				registrationMoment: moment(),
@@ -69,13 +73,13 @@ describe( 'index', () => {
 			selectedSite: { domain: 'example.com' }
 		};
 
-		let component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
 		expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'If you are unable to access your site at %(domainName)s' );
 	} );
 
 	it( 'should render the multi version of the component if more than two domains match the same rule', () => {
-		let props = {
+		const props = {
 			domains: [
 				{ name: '1.com', registrationMoment: moment(), type: domainTypes.REGISTERED },
 				{ name: '2.com', registrationMoment: moment(), type: domainTypes.REGISTERED }
@@ -83,14 +87,14 @@ describe( 'index', () => {
 			selectedSite: { domain: 'example.com' }
 		};
 
-		let component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
 		expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up your new domains for you' );
 	} );
 
 	describe( 'Mutations', () => {
 		it( 'should not mutate domain objects', () => {
-			let props = {
+			const props = {
 				domain: {
 					name: '1.com',
 					registrationMoment: moment( '1999-09-09', 'YYYY-MM-DD' ),
@@ -109,22 +113,26 @@ describe( 'index', () => {
 
 	describe( 'Ruleset filtering', () => {
 		it( 'should only process whitelisted renderers', () => {
-			let props = {
+			const props = {
 				domain: { name: 'example.com' },
-				ruleWhiteList: []
+				ruleWhiteList: [],
+				selectedSite: {}
 			};
 
-			let component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+
 			expect( component.getPipe().length ).to.equal( 0 );
 		} );
 
 		it( 'should not allow running extra functions other than defined in getPipe()', () => {
-			let props = {
+			const props = {
 				domain: { name: 'example.com' },
-				ruleWhiteList: [ 'getDomains' ]
+				ruleWhiteList: [ 'getDomains' ],
+				selectedSite: {}
 			};
 
-			let component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+
 			expect( component.getPipe().length ).to.equal( 0 );
 		} );
 	} );
