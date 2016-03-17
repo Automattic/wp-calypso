@@ -67,7 +67,7 @@ function markDirty( post, oldStatus ) {
 		affectedStatuses = [ post.status, oldStatus ],
 		listStatuses, key, entry, list;
 
-	for( key in _cache ) {
+	for ( key in _cache ) {
 		if ( !_cache.hasOwnProperty( key ) ) {
 			continue;
 		}
@@ -91,11 +91,13 @@ function markDirty( post, oldStatus ) {
 
 		entry.dirty = true;
 	}
-
 }
 
-var PostsListCache = {
-	get: get
+let PostsListCache = {
+	get: get,
+	_reset: function() {
+		_cache = {};
+	}
 };
 
 PostsListCache.dispatchToken = Dispatcher.register( function( payload ) {
@@ -104,7 +106,7 @@ PostsListCache.dispatchToken = Dispatcher.register( function( payload ) {
 
 	Dispatcher.waitFor( [ PostListStore.dispatchToken ] );
 
-	switch( action.type ) {
+	switch ( action.type ) {
 		case 'FETCH_NEXT_POSTS_PAGE':
 			set( PostListStore.get() );
 			break;
@@ -124,7 +126,6 @@ PostsListCache.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 			break;
 	}
-
 } );
 
 module.exports = PostsListCache;

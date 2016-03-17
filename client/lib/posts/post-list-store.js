@@ -398,7 +398,7 @@ export default function( id ) {
 			switch ( action.type ) {
 				case 'QUERY_POSTS':
 					debug( 'QUERY_POSTS', action );
-					queryPosts( action.options );
+					queryPosts( Object.assign( { }, action.options, { postListStoreId: action.postListStoreId } ) );
 					this.emit( 'change' );
 					break;
 				case 'FETCH_NEXT_POSTS_PAGE':

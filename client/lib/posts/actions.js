@@ -291,6 +291,7 @@ PostActions = {
 	 *
 	 * @param {object} attributes post attributes to change before saving
 	 * @param {function} callback receives ( err, post ) arguments
+	 * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
 	 */
 	saveEdited: function( attributes, callback, options ) {
 		var post, postHandle, query, changedAttributes, rawContent, mode, isNew;
