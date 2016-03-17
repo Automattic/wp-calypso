@@ -18,6 +18,9 @@
 			"media-list-data": {
 				"test": [ "utils" ]
 			}
+		},
+		"drop-zone": {
+			"test": [ "index" ]
 		}
 	},
 	"lib": {

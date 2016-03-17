@@ -1,31 +1,18 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )( '<html><body><div id="container"></div></body></html>' );
-
-/**
- * External dependencies
- */
 var expect = require( 'chai' ).expect,
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	TestUtils = require( 'react-addons-test-utils' ),
-	sinon = require( 'sinon' );
-
-/**
- * Internal dependencies
- */
-var DropZone = require( '../' );
-
-/**
- * Module variables
- */
-var Wrapper = React.createClass( {
-	render: function() {
-		return <div>{ this.props.children }</div>;
-	}
-} );
+	sinon = require( 'sinon' ),
+	DropZone = require( '../' ),
+	Wrapper = React.createClass( {
+		render: function() {
+			return <div>{ this.props.children }</div>;
+		}
+	} );
 
 describe( 'DropZone', function() {
 	var container, sandbox;
+	require( 'test/helpers/use-fake-dom' )( '<html><body><div id="container"></div></body></html>' );
 
 	before( function() {
 		DropZone.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
@@ -37,7 +24,9 @@ describe( 'DropZone', function() {
 	} );
 
 	after( function() {
-		delete window.MutationObserver;
+		if ( global.window && global.window.MutationObserver ) {
+			delete global.window.MutationObserver;
+		}
 		delete DropZone.prototype.__reactAutoBindMap.translate;
 	} );
 
