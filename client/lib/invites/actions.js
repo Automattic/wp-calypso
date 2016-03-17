@@ -3,6 +3,7 @@
  */
 import Debug from 'debug';
 import isEmpty from 'lodash/isEmpty';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -125,7 +126,9 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, formId ) 
 			siteId, usernamesOrEmails, role, message
 		} );
 		wpcom.undocumented().sendInvites( siteId, usernamesOrEmails, role, message, ( error, data ) => {
-			const isErrored = !! error || ! isEmpty( data.errors );
+			const validationErrors = get( data, 'errors' );
+			const isErrored = !! error || ! isEmpty( validationErrors );
+
 			Dispatcher.handleServerAction( {
 				type: isErrored ? ActionTypes.RECEIVE_SENDING_INVITES_ERROR : ActionTypes.RECEIVE_SENDING_INVITES_SUCCESS,
 				error,
@@ -138,7 +141,7 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, formId ) 
 			} );
 
 			if ( isErrored ) {
-				const countErrors = ( isEmpty( data.errors ) || 'object' !== typeof data.errors )
+				const countErrors = ( error || isEmpty( validationErrors ) || 'object' !== typeof validationErrors )
 					? 0
 					: Object.keys( data.errors ).length;
 
