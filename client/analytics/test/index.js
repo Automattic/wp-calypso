@@ -21,7 +21,6 @@ function logImageLoads() {
 				return this._src;
 			},
 			set: function( value ) {
-				console.log( 'setting', value );
 				this._src = value;
 				imagesLoaded.push( url.parse( value, true, true ) );
 			}
