@@ -65,7 +65,7 @@ describe( 'themes-last-query reducer', () => {
 			expect( state ).to.eql( fromJS( jsObject ) );
 		} );
 
-		it.skip( 'should ignore loading data with invalid keys ', () => {
+		it( 'should ignore loading data with invalid keys ', () => {
 			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
 				wrongkey: 2123982,
@@ -81,7 +81,7 @@ describe( 'themes-last-query reducer', () => {
 			expect( state ).to.eql( initialState );
 		} );
 
-		it.skip( 'should ignore loading data with invalid values ', () => {
+		it( 'should ignore loading data with invalid values ', () => {
 			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
 				previousSiteId: 2123982,

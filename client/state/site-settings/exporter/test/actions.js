@@ -29,7 +29,7 @@ import {
 	SAMPLE_ADVANCED_SETTINGS,
 	SAMPLE_EXPORT_COMPLETE_RESPONSE,
 	SAMPLE_EXPORT_FAILED_RESPONSE,
-} from './sample-data';
+} from './data';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
