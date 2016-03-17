@@ -6,6 +6,6 @@ const updaterFunctions = [
 	headerImage,
 ];
 
-export default function updatePreviewWithChanges( previewDocument, customizations ) {
+export function updatePreviewWithChanges( previewDocument, customizations ) {
 	updaterFunctions.map( callback => callback( previewDocument, customizations ) );
 }

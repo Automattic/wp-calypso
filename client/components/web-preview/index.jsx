@@ -15,7 +15,7 @@ import Toolbar from './toolbar';
 import touchDetect from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
 import Spinner from 'components/spinner';
-import updatePreviewWithChanges from 'lib/tailor/preview';
+import { updatePreviewWithChanges } from 'lib/web-preview';
 
 const debug = debugModule( 'calypso:web-preview' );
 

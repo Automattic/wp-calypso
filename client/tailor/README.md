@@ -76,7 +76,7 @@ will also be provided with the current value of `tailor.customizations`. If set,
 that object will be passed through a series of functions to update the DOM of
 the preview iframe to match the customizations.
 
-The functions to update the preview are in `lib/tailor/preview/index.js` in the
+The functions to update the preview are in `lib/web-preview/index.js` in the
 array `updaterFunctions`. It's a good idea to make one function for each setting
 change. Each function receives two arguments:
 
