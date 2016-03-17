@@ -8,41 +8,72 @@ import { assert } from 'chai';
  */
 import { CONTACT_FORM_DEFAULT } from '../constants';
 import {
-	EDITOR_CONTACT_FORM_LOAD_FORM,
-	EDITOR_CONTACT_FORM_ADD_DEFAULT_FIELD,
-	EDITOR_CONTACT_FORM_REMOVE_FIELD,
-	EDITOR_CONTACT_FORM_CLEAR_FORM
+	EDITOR_CONTACT_FORM_CLEAR,
+	EDITOR_CONTACT_FORM_LOAD,
+	EDITOR_CONTACT_FORM_FIELD_ADD,
+	EDITOR_CONTACT_FORM_FIELD_REMOVE,
+	EDITOR_CONTACT_FORM_FIELD_UPDATE,
+	EDITOR_CONTACT_FORM_SETTINGS_UPDATE
 } from 'state/action-types';
-import { loadForm, addDefaultField, removeField, clearForm } from '../actions';
+import {
+	formClear,
+	formLoad,
+	fieldAdd,
+	fieldRemove,
+	fieldUpdate,
+	settingsUpdate
+} from '../actions';
 
 describe( 'actions', () => {
 	it( 'should return an action object to signal the initialization of the store', () => {
-		const action = loadForm( CONTACT_FORM_DEFAULT );
+		const action = formLoad( CONTACT_FORM_DEFAULT );
 
 		assert.deepEqual( action, {
-			type: EDITOR_CONTACT_FORM_LOAD_FORM,
+			type: EDITOR_CONTACT_FORM_LOAD,
 			contactForm: CONTACT_FORM_DEFAULT
 		} );
 	} );
 
 	it( 'should return an action object to signal the creation of a new default field', () => {
-		const action = addDefaultField();
+		const action = fieldAdd();
 
-		assert.deepEqual( action, { type: EDITOR_CONTACT_FORM_ADD_DEFAULT_FIELD } );
+		assert.deepEqual( action, { type: EDITOR_CONTACT_FORM_FIELD_ADD } );
 	} );
 
 	it( 'should return an action object to signal the removal of a field by index', () => {
-		const action = removeField( 1 );
+		const action = fieldRemove( 1 );
 
 		assert.deepEqual( action, {
-			type: EDITOR_CONTACT_FORM_REMOVE_FIELD,
+			type: EDITOR_CONTACT_FORM_FIELD_REMOVE,
 			index: 1
 		} );
 	} );
 
 	it( 'should return an action object to signal the removal of the contact form data', () => {
-		const action = clearForm();
+		const action = formClear();
 
-		assert.deepEqual( action, { type: EDITOR_CONTACT_FORM_CLEAR_FORM } );
+		assert.deepEqual( action, { type: EDITOR_CONTACT_FORM_CLEAR } );
+	} );
+
+	it( 'should return an action object to signal the update of a field by index', () => {
+		const action = fieldUpdate( 1, { label: 'Name', type: 'text', required: true } );
+
+		assert.deepEqual( action, {
+			type: EDITOR_CONTACT_FORM_FIELD_UPDATE,
+			index: 1,
+			field: { label: 'Name', type: 'text', required: true }
+		} );
+	} );
+
+	it( 'should return an action object to signal the update of the form settings', () => {
+		const action = settingsUpdate( { to: 'user@example.com', subject: 'this is the subject' } );
+
+		assert.deepEqual( action, {
+			type: EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
+			settings: {
+				to: 'user@example.com',
+				subject: 'this is the subject'
+			}
+		} );
 	} );
 } );

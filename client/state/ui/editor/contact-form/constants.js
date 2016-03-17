@@ -1,20 +1,19 @@
 export const CONTACT_FORM_FIELD_TYPES = {
 	name: 'name',
 	email: 'email',
-	url: 'url',
 	checkbox: 'checkbox',
-	dropdown: 'dropdown',
+	dropdown: 'select',
 	radio: 'radio',
 	text: 'text',
 	textarea: 'textarea',
-	website: 'website'
+	website: 'url'
 };
 
 export const CONTACT_FORM_DEFAULT = {
 	fields: [
 		{ label: 'Name', type: CONTACT_FORM_FIELD_TYPES.name, required: true },
 		{ label: 'Email', type: CONTACT_FORM_FIELD_TYPES.email, required: true },
-		{ label: 'Website', type: CONTACT_FORM_FIELD_TYPES.url },
+		{ label: 'Website', type: CONTACT_FORM_FIELD_TYPES.website },
 		{ label: 'Comment', type: CONTACT_FORM_FIELD_TYPES.textarea, required: true }
 	]
 };

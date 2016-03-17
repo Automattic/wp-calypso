@@ -2,7 +2,6 @@
  * External dependencies
  */
 import pickBy from 'lodash/pickBy';
-import identity from 'lodash/identity';
 
 /**
  * Internal dependencies
@@ -10,7 +9,7 @@ import identity from 'lodash/identity';
 import Shortcode from 'lib/shortcode';
 
 export function serialize( { to, subject, fields = [] } = {} ) {
-	const content = fields.map( ( { label, type, required } ) => {
+	const content = fields.map( ( { label, type, options, required } ) => {
 		if ( ! label || ! type ) {
 			return;
 		}
@@ -18,7 +17,7 @@ export function serialize( { to, subject, fields = [] } = {} ) {
 		let fieldShortcode = {
 			tag: 'contact-field',
 			type: 'self-closing',
-			attrs: { label, type }
+			attrs: pickBy( { label, type, options } )
 		};
 
 		if ( required ) {
@@ -32,7 +31,7 @@ export function serialize( { to, subject, fields = [] } = {} ) {
 		tag: 'contact-form',
 		type: 'closed',
 		content,
-		attrs: pickBy( { to, subject }, identity )
+		attrs: pickBy( { to, subject } )
 	} );
 };
 
@@ -46,16 +45,21 @@ export function deserialize( shortcode ) {
 	if ( parsed ) {
 		return ( { attrs: { named: { to, subject } = {} } = {}, content } ) => {
 			let fields = [];
-			let field;
+			let parsedField;
 
-			while ( content && ( field = Shortcode.next( 'contact-field', content ) ) ) {
-				if ( 'attrs' in field.shortcode ) {
-					fields.push( field.shortcode.attrs.named );
+			while ( content && ( parsedField = Shortcode.next( 'contact-field', content ) ) ) {
+				if ( 'attrs' in parsedField.shortcode ) {
+					const { label, type, options, required } = parsedField.shortcode.attrs.named;
+					let field = pickBy( { label, type, options, required } );
+					if ( 'required' in field ) {
+						field.required = true;
+					}
+					fields.push( field );
 				}
-				content = content.slice( field.index + field.content.length )
+				content = content.slice( parsedField.index + parsedField.content.length )
 			}
 
-			return pickBy( { to, subject, fields }, identity );
+			return pickBy( { to, subject, fields } );
 		}( parsed );
 	}
 

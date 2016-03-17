@@ -2,39 +2,49 @@
  * Internal dependencies
  */
 import {
-	EDITOR_CONTACT_FORM_LOAD_FORM,
-	EDITOR_CONTACT_FORM_ADD_DEFAULT_FIELD,
-	EDITOR_CONTACT_FORM_REMOVE_FIELD,
-	EDITOR_CONTACT_FORM_CLEAR_FORM
+	EDITOR_CONTACT_FORM_CLEAR,
+	EDITOR_CONTACT_FORM_LOAD,
+	EDITOR_CONTACT_FORM_FIELD_ADD,
+	EDITOR_CONTACT_FORM_FIELD_REMOVE,
+	EDITOR_CONTACT_FORM_FIELD_UPDATE,
+	EDITOR_CONTACT_FORM_SETTINGS_UPDATE
 } from 'state/action-types';
 
-/**
- * Returns an action object to be used in signalling that a contact form dialog
- * has to be initialized.
- *
- * @param  {Object} contactForm
- * @return {Object} Action object
- */
-export function loadForm( contactForm ) {
+export function formClear() {
 	return {
-		type: EDITOR_CONTACT_FORM_LOAD_FORM,
+		type: EDITOR_CONTACT_FORM_CLEAR
+	}
+}
+
+export function formLoad( contactForm ) {
+	return {
+		type: EDITOR_CONTACT_FORM_LOAD,
 		contactForm
 	};
 }
 
-export function addDefaultField() {
-	return { type: EDITOR_CONTACT_FORM_ADD_DEFAULT_FIELD };
+export function fieldAdd() {
+	return { type: EDITOR_CONTACT_FORM_FIELD_ADD };
 }
 
-export function removeField( index ) {
+export function fieldRemove( index ) {
 	return {
-		type: EDITOR_CONTACT_FORM_REMOVE_FIELD,
+		type: EDITOR_CONTACT_FORM_FIELD_REMOVE,
 		index
 	}
 }
 
-export function clearForm() {
+export function fieldUpdate( index, field ) {
 	return {
-		type: EDITOR_CONTACT_FORM_CLEAR_FORM
+		type: EDITOR_CONTACT_FORM_FIELD_UPDATE,
+		index,
+		field
+	}
+}
+
+export function settingsUpdate( settings ) {
+	return {
+		type: EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
+		settings
 	}
 }

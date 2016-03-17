@@ -12,7 +12,14 @@ import { Provider } from 'react-redux';
  */
 import Gridicon from 'components/gridicon';
 import ContactFormDialog from './dialog';
-import { loadForm, addDefaultField, removeField, clearForm } from 'state/ui/editor/contact-form/actions';
+import {
+	formClear,
+	formLoad,
+	fieldAdd,
+	fieldRemove,
+	fieldUpdate,
+	settingsUpdate
+} from 'state/ui/editor/contact-form/actions';
 import { serialize, deserialize } from './shortcode-utils';
 
 const wpcomContactForm = editor => {
@@ -32,29 +39,44 @@ const wpcomContactForm = editor => {
 	} );
 
 	editor.addCommand( 'wpcomContactForm', content => {
+		let isEdit = false;
 		if ( content ) {
-			store.dispatch( loadForm( deserialize( content ) ) );
+			store.dispatch( formLoad( deserialize( content ) ) );
+			isEdit = true;
+		} else {
+			store.dispatch( formClear() );
 		}
 
-		function renderModal( visibility = 'show' ) {
+		function renderModal( visibility = 'show', activeTab = 'fields' ) {
 			render(
 				createElement( Provider, { store },
 					createElement( ContactFormDialog, {
 						showDialog: visibility === 'show',
-						onAdd() {
-							store.dispatch( addDefaultField() )
+						activeTab,
+						isEdit,
+						onInsert() {
+							const state = store.getState();
+							editor.execCommand( 'mceInsertContent', false, serialize( state.ui.editor.contactForm ) );
 						},
-						onRemove( index ) {
-							store.dispatch( removeField( index ) );
+						onChangeTabs( tab ) {
+							renderModal( 'show', tab );
 						},
 						onClose() {
-							store.dispatch( clearForm() );
+							store.dispatch( formClear() );
 							editor.focus();
 							renderModal( 'hide' );
 						},
-						onSave() {
-							const state = store.getState();
-							editor.execCommand( 'mceInsertContent', false, serialize( state.ui.editor.contactForm ) );
+						onFieldAdd() {
+							store.dispatch( fieldAdd() )
+						},
+						onFieldRemove( index ) {
+							store.dispatch( fieldRemove( index ) );
+						},
+						onFieldUpdate( index, field ) {
+							store.dispatch( fieldUpdate( index, field ) );
+						},
+						onSettingsUpdate( settings ) {
+							store.dispatch( settingsUpdate( settings ) );
 						}
 					} )
 				),
@@ -72,7 +94,7 @@ const wpcomContactForm = editor => {
 		onPostRender() {
 			this.innerHtml( renderToStaticMarkup(
 				<button type="button" role="presentation">
-					<Gridicon icon="grid" size={ 18 } />
+					<Gridicon icon="mention" />
 				</button>
 			) );
 		}
