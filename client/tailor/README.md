@@ -36,10 +36,11 @@ store under `tailor.activeControl`. If that value is not set (or a component
 matching the ID is not found), it will display the default design tool which is
 a list of all the design tools without a parentId.
 
-All design tools must be registered in the `design-tools.js` file. Each one must
-have a unique ID (used for many things as will be explained below), a `title`,
-and a `componentClass` which is a raw React component that will display the
-panel when rendered.
+All design tools must be registered in the
+`my-sites/design-menu/design-tools/index.js` file. Each one must have a unique
+ID (used for many things as will be explained below), a `title`, and a
+`componentClass` which is a raw React component that will display the panel when
+rendered.
 
 Optionally, a design tool can have a `parentId`, referring to another design
 tool. In that case, the design tool will not be listed by default, and if the
@@ -64,7 +65,7 @@ Design tools should make changes by calling `onChange` and passing an object.
 That object will be merged with the current value of `tailor.customizations` in
 the Redux state tree. The objet passed to `onChange` will actually be saved
 under `tailor.customizations[ designToolId ]` where `designToolId` is the ID of
-the tool from the `design-tools.js` file.
+the tool from the `my-sites/design-menu/design-tools/index.js` file.
 
 The `customizations` object is used to update the preview and to persist changes
 to the API as will be explained below.
