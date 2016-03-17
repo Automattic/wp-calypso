@@ -11,14 +11,13 @@ import difference from 'lodash/difference';
 /**
  * Internal dependencies
  */
-import { getLocalForage } from 'lib/localforage';
+import localforage from 'lib/localforage';
 import { generatePageSeriesKey } from './utils';
 import { RECORDS_LIST_KEY, SYNC_RECORD_NAMESPACE, LIFETIME } from './constants';
 
 /**
  * Module variables
  */
-const localforage = getLocalForage();
 const debug = debugFactory( 'calypso:sync-handler:cache' );
 
 /**
