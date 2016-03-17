@@ -135,8 +135,9 @@
 
 	.card.is-search-result {
 		position: absolute;
-			top: 51px;
+			top: 70px;
 		width: 100%;
+		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .card.is-search-result' );
 
 		&.is-compact {
 			padding: 16px 24px;
