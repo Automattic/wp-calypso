@@ -19,6 +19,7 @@ import InfiniteList from 'components/infinite-list';
 import SubscriptionPlaceholder from './placeholder';
 import SubscriptionListItem from './list-item';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import SearchCard from 'components/search-card';
 import URLSearch from 'lib/mixins/url-search';
 import FollowingEditSubscribeForm from './subscribe-form';
@@ -191,6 +192,30 @@ const FollowingEdit = React.createClass( {
 		this.setState( { openCards: newOpenCards } );
 	},
 
+	handleFeedExport( fileName ) {
+		this.setState( {
+			feedExport: fileName
+		} );
+	},
+
+	handleFeedExportError( error ) {
+		this.setState( {
+			feedExportError: error
+		} );
+	},
+
+	handleFeedImport( data ) {
+		this.setState( {
+			feedImport: data
+		} );
+	},
+
+	handleFeedImportError( error ) {
+		this.setState( {
+			feedImportError: error
+		} );
+	},
+
 	fetchNextPage: function() {
 		if ( this.state.isLastPage ) {
 			return;
@@ -255,6 +280,25 @@ const FollowingEdit = React.createClass( {
 		}
 	},
 
+	dismissFeedExportNotice() {
+		this.setState( {
+			feedExport: null,
+		} );
+	},
+
+	dismissFeedImportNotice() {
+		this.setState( {
+			feedImport: null,
+		} );
+	},
+
+	dismissFeedImportExportError() {
+		this.setState( {
+			feedImportError: null,
+			feedExportError: null
+		} );
+	},
+
 	handleNewSubscriptionSearchClose: function() {
 		this.toggleAddSite();
 
@@ -295,13 +339,15 @@ const FollowingEdit = React.createClass( {
 		}
 
 		const lastError = this.state.lastError;
-		let errorMessage = this.translate( 'Sorry, we couldn\'t find a feed for {{em}}%(url)s{{/em}}.', {
-			args: { url: this.state.searchString },
-			components: { em: <em/> }
-		} );
+		let errorMessage;
 
 		if ( lastError.info && lastError.info === 'already_subscribed' ) {
-			errorMessage = this.translate( "You're already subscribed to that site." );
+			errorMessage = this.translate( 'You\'re already subscribed to that site.' );
+		} else {
+			errorMessage = this.translate( 'Sorry, we couldn\'t find a feed for {{em}}%(url)s{{/em}}.', {
+				args: { url: this.state.searchString },
+				components: { em: <em/> }
+			} );
 		}
 
 		return ( <Notice
@@ -313,16 +359,61 @@ const FollowingEdit = React.createClass( {
 		);
 	},
 
-	renderFeedImportError( error ) {
+	renderFeedExportNotice() {
+		const feedExport = this.state.feedExport;
+		if ( ! feedExport ) return null;
+
+		const message = this.translate( 'Your Followed Sites list has been exported.' );
+		return (
+			<Notice
+				status="is-success"
+				showDismiss={ true }
+				onDismissClick={ this.dismissFeedExportNotice }
+				text={ message }>
+			</Notice>
+		);
+	},
+
+	renderFeedImportNotice() {
+		const feedImport = this.state.feedImport;
+		if ( ! feedImport ) return null;
+
+		const message = this.translate( '{{em}}%(name)s{{/em}} has been imported. Refresh this page to see the new sites you follow.', {
+			args: { name: feedImport.fileName },
+			components: { em: <em/> }
+		} );
+		return (
+			<Notice
+				status="is-success"
+				showDismiss={ false }
+				onDismissClick={ this.dismissFeedImportNotice }
+				text={ message }>
+				<NoticeAction href="#" onClick={ this.refresh }>
+					Refresh
+				</NoticeAction>
+			</Notice>
+		);
+	},
+
+	renderFeedImportExportError() {
+		const error = this.state.feedImportError || this.state.feedExportError;
+		if ( ! error ) return null;
+
+		const message = this.translate( 'Whoops, something went wrong. %(message)s. Please try again.', {
+			args: { message: error.message }
+		} );
 		return (
 			<Notice
 				status="is-error"
-				showDismiss={ true }
-				//onDismissClick={ this.dismissError }
-				>
-				{ error.message }
+				text={ message }
+				onDismissClick={ this.dismissFeedImportExportError }
+				showDismiss={ true }>
 			</Notice>
 		);
+	},
+
+	refresh() {
+		location.reload();
 	},
 
 	toggleAddSite: function() {
@@ -382,6 +473,9 @@ const FollowingEdit = React.createClass( {
 				</MobileBackToSidebar>
 				{ this.renderFollowError() }
 				{ this.renderUnfollowError() }
+				{ this.renderFeedImportNotice() }
+				{ this.renderFeedExportNotice() }
+				{ this.renderFeedImportExportError() }
 
 				<FollowingEditSubscribeForm
 					onSearch={ this.handleNewSubscriptionSearch }
@@ -392,8 +486,12 @@ const FollowingEdit = React.createClass( {
 					ref="feed-search" />
 
 				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
-					<FollowingExportButton />
-					<FollowingImportButton />
+					<FollowingExportButton
+						onExport={ this.handleFeedExport }
+						onError={ this.handleFeedExportError } />
+					<FollowingImportButton
+						onImport={ this.handleFeedImport }
+						onError={ this.handleFeedImportError } />
 					{ ! hasNoSubscriptions ? <FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } /> : null }
 					<Gridicon icon="search" className="following-edit__search" onClick={ this.toggleSearching } />
 				</SectionHeader>
