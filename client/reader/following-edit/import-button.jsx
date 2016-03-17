@@ -15,14 +15,16 @@ import FilePicker from 'components/file-picker';
 
 const FollowingImportButton = React.createClass( {
 	propTypes: {
-		onProgress: React.PropTypes.func,
-		onError: React.PropTypes.func
+		onError: React.PropTypes.func,
+		onImport: React.PropTypes.func,
+		onProgress: React.PropTypes.func
 	},
 
 	getDefaultProps() {
 		return {
-			onProgress: noop,
-			onError: noop
+			onError: noop,
+			onImport: noop,
+			onProgress: noop
 		};
 	},
 
@@ -37,15 +39,16 @@ const FollowingImportButton = React.createClass( {
 		const file = files[0];
 		if ( ! file ) return;
 
-		const req = wpcom.undocumented().importReaderFeed( file, this.onFeedImport );
-		req.upload.onprogress = this.onFeedImportProgress;
+		this.fileName = file.name;
+		const req = wpcom.undocumented().importReaderFeed( file, this.onImport );
+		req.upload.onprogress = this.onImportProgress;
 
 		this.setState( {
 			disabled: true
 		} );
 	},
 
-	onFeedImport( err, data ) {
+	onImport( err, data ) {
 		this.setState( {
 			disabled: false
 		} );
@@ -53,11 +56,13 @@ const FollowingImportButton = React.createClass( {
 		if ( err ) {
 			this.props.onError( err );
 		} else {
-			console.log( 'feed import started', data );
+			// tack on the file name since it will be displayed in the UI
+			data.fileName = this.fileName;
+			this.props.onImport( data );
 		}
 	},
 
-	onFeedImportProgress( event ) {
+	onImportProgress( event ) {
 		this.props.onProgress( event );
 	},
 
