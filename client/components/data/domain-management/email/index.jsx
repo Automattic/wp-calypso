@@ -22,6 +22,10 @@ import {
 	getBySite,
 	isLoaded
 } from 'state/google-apps-users/selectors';
+import { shouldFetchSitePlans } from 'lib/plans';
+import { fetchSitePlans } from 'state/sites/plans/actions';
+import { getPlansBySite } from 'state/sites/plans/selectors';
+
 const user = userFactory();
 
 var stores = [
@@ -37,6 +41,7 @@ function getStateFromStores( props ) {
 		products: props.products,
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
+		sitePlans: props.sitePlans,
 		user: user.get(),
 		googleAppsUsers: props.googleAppsUsers,
 		googleAppsUsersLoaded: props.googleAppsUsersLoaded
@@ -51,6 +56,7 @@ const EmailData = React.createClass( {
 		context: React.PropTypes.object.isRequired,
 		productsList: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string,
+		sitePlans: React.PropTypes.object.isRequired,
 		sites: React.PropTypes.object.isRequired,
 		googleAppsUsers: React.PropTypes.array.isRequired,
 		googleAppsUsersLoaded: React.PropTypes.bool.isRequired
@@ -59,19 +65,20 @@ const EmailData = React.createClass( {
 	mixins: [ observe( 'productsList' ) ],
 
 	componentWillMount() {
-		this.loadDomains();
-		this.props.fetch();
+		this.loadDomainsAndSitePlans();
+		this.props.fetchGoogleAppsUsers();
 	},
 
 	componentWillUpdate() {
-		this.loadDomains();
+		this.loadDomainsAndSitePlans();
 	},
 
-	loadDomains() {
+	loadDomainsAndSitePlans() {
 		const selectedSite = this.props.sites.getSelectedSite();
 
 		if ( this.prevSelectedSite !== selectedSite ) {
 			fetchDomains( selectedSite.ID );
+			this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
 
 			this.prevSelectedSite = selectedSite;
 		}
@@ -89,6 +96,7 @@ const EmailData = React.createClass( {
 				products={ this.props.productsList.get() }
 				selectedDomainName={ this.props.selectedDomainName }
 				selectedSite={ this.props.sites.getSelectedSite() }
+				sitePlans={ this.props.sitePlans }
 				context={ this.props.context } />
 		);
 	}
@@ -102,16 +110,22 @@ export default connect(
 
 		return {
 			googleAppsUsers,
-			googleAppsUsersLoaded: isLoaded( state )
+			googleAppsUsersLoaded: isLoaded( state ),
+			sitePlans: getPlansBySite( state, sites.getSelectedSite() )
 		}
 	},
 	( dispatch, { selectedDomainName, sites } ) => {
-		const fetcher = selectedDomainName
+		const googleAppsUsersFetcher = selectedDomainName
 			? () => fetchByDomain( selectedDomainName )
 			: () => fetchBySiteId( sites.getSelectedSite().ID );
 
 		return {
-			fetch: () => dispatch( fetcher() )
+			fetchGoogleAppsUsers: () => dispatch( googleAppsUsersFetcher() ),
+			fetchSitePlans: ( sitePlans, site ) => {
+				if ( shouldFetchSitePlans( sitePlans, site ) ) {
+					dispatch( fetchSitePlans( site.ID ) );
+				}
+			}
 		}
 	}
 )( EmailData );

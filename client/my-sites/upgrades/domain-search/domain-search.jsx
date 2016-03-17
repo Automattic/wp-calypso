@@ -41,10 +41,16 @@ var DomainSearch = React.createClass( {
 	componentDidMount: function() {
 		this.props.sites.on( 'change', this.checkSiteIsUpgradeable );
 		this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
+
+		this.previousSelectedSite = this.props.sites.getSelectedSite();
 	},
 
 	componentWillReceiveProps: function() {
-		this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
+		var selectedSite = this.props.sites.getSelectedSite();
+		if ( this.previousSelectedSite !== selectedSite ) {
+			this.props.fetchSitePlans( this.props.sitePlans, selectedSite );
+			this.previousSelectedSite = selectedSite;
+		}
 	},
 
 	componentWillUnmount: function() {
@@ -91,7 +97,8 @@ var DomainSearch = React.createClass( {
 						<UpgradesNavigation
 							path={ this.props.context.path }
 							cart={ this.props.cart }
-							selectedSite={ selectedSite } />
+							selectedSite={ selectedSite }
+							sitePlans={ this.props.sitePlans } />
 
 						<RegisterDomainStep
 							path={ this.props.context.path }

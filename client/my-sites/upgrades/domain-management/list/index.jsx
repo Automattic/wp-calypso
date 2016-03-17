@@ -45,7 +45,8 @@ const List = React.createClass( {
 				<UpgradesNavigation
 					path={ this.props.context.path }
 					cart={ this.props.cart }
-					selectedSite={ this.props.selectedSite } />
+					selectedSite={ this.props.selectedSite }
+					sitePlans={ this.props.sitePlans } />
 
 				{ this.domainWarnings() }
 

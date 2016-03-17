@@ -40,16 +40,16 @@ var Plans = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		this.updateSitePlans();
+		this.updateSitePlans( this.props.sitePlans );
 	},
 
-	componentWillReceiveProps: function() {
-		this.updateSitePlans();
+	componentWillReceiveProps: function( nextProps ) {
+		this.updateSitePlans( nextProps.sitePlans );
 	},
 
-	updateSitePlans: function() {
+	updateSitePlans: function( sitePlans ) {
 		var selectedSite = this.props.sites.getSelectedSite();
-		this.props.fetchSitePlans( this.props.sitePlans, selectedSite );
+		this.props.fetchSitePlans( sitePlans, selectedSite );
 	},
 
 	openPlan: function( planId ) {
@@ -150,6 +150,7 @@ var Plans = React.createClass( {
 		if ( this.props.sitePlans.hasLoadedFromServer && currentPlan.freeTrial ) {
 			return (
 				<PlanOverview
+					sitePlans={ this.props.sitePlans }
 					path={ this.props.context.path }
 					cart={ this.props.cart }
 					destinationType={ this.props.context.params.destinationType }
@@ -167,6 +168,7 @@ var Plans = React.createClass( {
 
 					<div id="plans" className="plans has-sidebar">
 						<UpgradesNavigation
+							sitePlans={ this.props.sitePlans }
 							path={ this.props.context.path }
 							cart={ this.props.cart }
 							selectedSite={ selectedSite } />

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var connect = require( 'react-redux' ).connect,
+	React = require( 'react' );
 
 /**
  * Internal dependencies
@@ -10,7 +11,10 @@ var StoreConnection = require( 'components/data/store-connection' ),
 	DomainsStore = require( 'lib/domains/store' ),
 	CartStore = require( 'lib/cart/store' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+	upgradesActions = require( 'lib/upgrades/actions' ),
+	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
+	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans,
+	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite;
 
 var stores = [
 	DomainsStore,
@@ -24,18 +28,18 @@ function getStateFromStores( props ) {
 		domains: ( props.selectedSite ? DomainsStore.getBySite( props.selectedSite.ID ) : null ),
 		products: props.products,
 		selectedDomainName: props.selectedDomainName,
-		selectedSite: props.selectedSite
+		selectedSite: props.selectedSite,
+		sitePlans: props.sitePlans
 	};
 }
 
-module.exports = React.createClass( {
-	displayName: 'DomainManagementData',
-
+var DomainManagementData = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object.isRequired,
 		productsList: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string,
-		sites: React.PropTypes.object.isRequired
+		sites: React.PropTypes.object.isRequired,
+		sitePlans: React.PropTypes.object.isRequired
 	},
 
 	mixins: [ observe( 'productsList' ) ],
@@ -43,6 +47,7 @@ module.exports = React.createClass( {
 	componentWillMount: function() {
 		if ( this.props.sites.getSelectedSite() ) {
 			upgradesActions.fetchDomains( this.props.sites.getSelectedSite().ID );
+			this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
 		}
 
 		this.prevSelectedSite = this.props.sites.getSelectedSite();
@@ -51,6 +56,7 @@ module.exports = React.createClass( {
 	componentWillUpdate: function() {
 		if ( this.prevSelectedSite !== this.props.sites.getSelectedSite() ) {
 			upgradesActions.fetchDomains( this.props.sites.getSelectedSite().ID );
+			this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
 		}
 
 		this.prevSelectedSite = this.props.sites.getSelectedSite();
@@ -65,7 +71,25 @@ module.exports = React.createClass( {
 				products={ this.props.productsList.get() }
 				selectedDomainName={ this.props.selectedDomainName }
 				selectedSite={ this.props.sites.getSelectedSite() }
+				sitePlans={ this.props.sitePlans }
 				context={ this.props.context } />
 		);
 	}
 } );
+
+module.exports = connect(
+	function( state, props ) {
+		return {
+			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() )
+		}
+	},
+	function( dispatch ) {
+		return {
+			fetchSitePlans: ( sitePlans, site ) => {
+				if ( shouldFetchSitePlans( sitePlans, site ) ) {
+					dispatch( fetchSitePlans( site.ID ) );
+				}
+			}
+		}
+	}
+)( DomainManagementData );

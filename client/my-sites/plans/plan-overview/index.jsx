@@ -25,7 +25,8 @@ const PlanOverview = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired
+		] ).isRequired,
+		sitePlans: React.PropTypes.object.isRequired
 	},
 
 	redirectToDefault() {
@@ -55,6 +56,7 @@ const PlanOverview = React.createClass( {
 					<SidebarNavigation />
 
 					<UpgradesNavigation
+						sitePlans={ this.props.sitePlans }
 						cart={ this.props.cart }
 						path={ this.props.path }
 						selectedSite={ this.props.selectedSite } />
