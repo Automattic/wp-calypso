@@ -22,7 +22,7 @@ import DraftsButton from 'post-editor/drafts-button';
 import PostCountsData from 'components/data/post-counts-data';
 import QueryPostTypes from 'components/data/query-post-types';
 
-function EditorSidebarHeader( { typeSlug, type, siteId, showDrafts, toggleDrafts, allPostsUrl, toggleSidebar, isJetpack } ) {
+function EditorSidebarHeader( { typeSlug, type, siteId, showDrafts, toggleDrafts, allPostsUrl, toggleSidebar } ) {
 	const isCustomPostType = ( 'post' !== typeSlug && 'page' !== typeSlug );
 	const className = classnames( 'editor-sidebar__header', {
 		'is-drafts-visible': showDrafts,
@@ -63,7 +63,7 @@ function EditorSidebarHeader( { typeSlug, type, siteId, showDrafts, toggleDrafts
 			) }
 			{ typeSlug === 'post' && siteId && (
 				<PostCountsData siteId={ siteId } status="draft">
-					<DraftsButton onClick={ toggleDrafts } isJetpack={ isJetpack } />
+					<DraftsButton onClick={ toggleDrafts } />
 				</PostCountsData>
 			) }
 			<Button
@@ -77,18 +77,15 @@ function EditorSidebarHeader( { typeSlug, type, siteId, showDrafts, toggleDrafts
 
 export default connect(
 	( state ) => {
-		const site = getSelectedSite( state );
-		const siteId = get( site, 'ID' );
+		const siteId = get( getSelectedSite( state ), 'ID' );
 		const postId = getEditorPostId( state );
-		const isJetpack = get( site, 'jetpack' );
 		const typeSlug = get( getEditedPost( state, siteId, postId ), 'type' );
 
 		return {
 			siteId,
 			typeSlug,
 			type: getPostType( state, siteId, typeSlug ),
-			showDrafts: isEditorDraftsVisible( state ),
-			isJetpack
+			showDrafts: isEditorDraftsVisible( state )
 		};
 	},
 	( dispatch ) => {

@@ -2,44 +2,40 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Count from 'components/count';
+import { getSelectedSite } from 'state/ui/selectors';
+import { translate } from 'lib/mixins/i18n';
 
-export default React.createClass( {
-	displayName: 'EditorDraftsButton',
+function EditorDraftsButton( { count, onClick, jetpack } ) {
+	return (
+		<Button
+			compact borderless
+			className="drafts-button"
+			onClick={ onClick }
+			disabled={ ! count && ! jetpack }
+			aria-label={ translate( 'View all drafts' ) }
+		>
+			<span>{ translate( 'Drafts' ) }</span>
+			{ count && ! jetpack ? <Count count={ count } /> : null }
+		</Button>
+	);
+};
 
-	propTypes: {
-		count: PropTypes.number,
-		onClick: PropTypes.func,
-		isJetpack: PropTypes.bool
-	},
+EditorDraftsButton.propTypes = {
+	count: PropTypes.number,
+	onClick: PropTypes.func,
+	jetpack: PropTypes.bool
+};
 
-	getDefaultProps() {
-		return {
-			count: 0,
-			onClick: () => {},
-			isJetpack: false
-		};
-	},
+export default connect( ( state ) => {
+	const jetpack = get( getSelectedSite( state ), 'jetpack' );
 
-	render() {
-		const { count, isJetpack, onClick } = this.props;
-
-		return (
-			<Button
-				compact borderless
-				className="drafts-button"
-				onClick={ onClick }
-				disabled={ ! count && ! isJetpack }
-				aria-label={ this.translate( 'View all drafts' ) }
-			>
-				<span>{ this.translate( 'Drafts' ) }</span>
-				{ count && ! isJetpack ? <Count count={ count } /> : null }
-			</Button>
-		);
-	}
-} );
+	return { jetpack };
+} )( EditorDraftsButton );
