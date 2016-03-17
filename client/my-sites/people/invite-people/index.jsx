@@ -34,6 +34,7 @@ import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-vali
 import InvitesSentStore from 'lib/invites/stores/invites-sent';
 import analytics from 'analytics';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import EmptyContent from 'components/empty-content';
 
 /**
  * Module variables
@@ -291,6 +292,18 @@ const InvitePeople = React.createClass( {
 	},
 
 	render() {
+		if ( this.props.site && ! get( this.props, 'site.capabilities.promote_users' ) ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ this.translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+					/>
+				</Main>
+			);
+		}
+
 		return (
 			<Main>
 				<SidebarNavigation />
