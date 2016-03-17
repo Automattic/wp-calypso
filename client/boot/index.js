@@ -48,6 +48,14 @@ var config = require( 'config' ),
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
+/*require.include( 'components/select-dropdown' );
+require.include( 'components/select-dropdown/item' );
+require.include( 'lib/screen-title/actions' );
+require.include( 'lib/post-normalizer' );
+require.include( 'components/section-nav/tabs' );
+require.include( 'components/section-nav' );
+*/
+
 function init() {
 	var i18nLocaleStringsObject = null;
 
