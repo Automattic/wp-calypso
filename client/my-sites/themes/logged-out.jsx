@@ -97,11 +97,8 @@ var ThemesLoggedOut = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => Object.assign( {},
-		props,
-		{
-			queryParams: ThemesListSelectors.getQueryParams( state ),
-			themesList: ThemesListSelectors.getThemesList( state )
-		}
-	)
+	state => ( {
+		queryParams: ThemesListSelectors.getQueryParams( state ),
+		themesList: ThemesListSelectors.getThemesList( state )
+	} )
 )( ThemesLoggedOut );

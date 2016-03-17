@@ -58,11 +58,8 @@ const CurrentThemeData = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => Object.assign( {},
-		props,
-		{
-			currentTheme: getCurrentTheme( state, props.site.ID )
-		}
-	),
+	( state, props ) => ( {
+		currentTheme: getCurrentTheme( state, props.site.ID )
+	} ),
 	{ fetchCurrentTheme }
 )( CurrentThemeData );

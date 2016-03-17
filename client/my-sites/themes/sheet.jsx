@@ -168,10 +168,7 @@ export const ThemeSheet = React.createClass( {
 } )
 
 export default connect(
-	( state, props ) => Object.assign( {},
-		props,
-		{
-			selectedSite: getSelectedSite( state ) || false,
-		}
-	)
+	state => ( {
+		selectedSite: getSelectedSite( state ) || false,
+	} )
 )( ThemeSheet );

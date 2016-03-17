@@ -185,12 +185,9 @@ var ThemesSingleSite = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => Object.assign( {},
-		props,
-		{
-			queryParams: ThemesListSelectors.getQueryParams( state ),
-			themesList: ThemesListSelectors.getThemesList( state ),
-			selectedSite: getSelectedSite( state ) || false,
-		}
-	)
+	state => ( {
+		queryParams: ThemesListSelectors.getQueryParams( state ),
+		themesList: ThemesListSelectors.getThemesList( state ),
+		selectedSite: getSelectedSite( state ) || false,
+	} )
 )( ThemesSingleSite );

@@ -54,9 +54,6 @@ const ThemeDetailsData = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => Object.assign( {},
-		props,
-		getThemeDetails( state, props.id )
-	),
+	( state, props ) => getThemeDetails( state, props.id ),
 	{ fetchThemeDetails }
 )( ThemeDetailsData );
