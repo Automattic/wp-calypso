@@ -32,6 +32,7 @@ import { createInviteValidation } from 'lib/invites/actions';
 import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-validation';
 import InvitesSentStore from 'lib/invites/stores/invites-sent';
 import analytics from 'analytics';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
  * Module variables
@@ -271,6 +272,7 @@ const InvitePeople = React.createClass( {
 	render() {
 		return (
 			<Main>
+				<SidebarNavigation />
 				<HeaderCake isCompact onClick={ this.goBack }/>
 				<Card>
 					<form onSubmit={ this.submitForm } >
