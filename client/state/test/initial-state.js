@@ -27,7 +27,7 @@ describe( 'initial-state', () => {
 		configMock.isEnabled = isEnabled;
 		mockery.registerMock( 'lib/user/support-user-interop', { isSupportUserSession: isSupportUserSession } );
 		mockery.registerMock( 'config', configMock );
-		localforage = require( 'localforage' );
+		localforage = require( 'lib/localforage' );
 		const initialState = require( 'state/initial-state' );
 		createReduxStoreFromPersistedInitialState = initialState.default;
 		MAX_AGE = initialState.MAX_AGE;

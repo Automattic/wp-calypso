@@ -9,7 +9,7 @@ import pick from 'lodash/pick';
  */
 import { createReduxStore, reducer } from 'state';
 import { SERIALIZE, DESERIALIZE, SERVER_DESERIALIZE } from 'state/action-types'
-import { getLocalForage } from 'lib/localforage';
+import localforage from 'lib/localforage';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
 import config from 'config';
 
@@ -17,7 +17,6 @@ import config from 'config';
  * Module variables
  */
 const debug = debugModule( 'calypso:state' );
-const localforage = getLocalForage();
 
 const DAY_IN_HOURS = 24;
 const HOUR_IN_MS = 3600000;

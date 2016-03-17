@@ -8,7 +8,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import warn from 'lib/warn';
-import { getLocalForage } from 'lib/localforage';
+import localforage from 'lib/localforage';
 import { isWhitelisted } from './whitelist-handler';
 import { cacheIndex } from './cache-index';
 import { generateKey, generatePageSeriesKey } from './utils';
@@ -16,7 +16,6 @@ import { generateKey, generatePageSeriesKey } from './utils';
 /**
  * Module variables
  */
-const localforage = getLocalForage();
 const debug = debugFactory( 'calypso:sync-handler' );
 
 /**
