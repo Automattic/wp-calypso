@@ -1,5 +1,4 @@
 /* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
 
 /**
  * External dependencies
@@ -17,6 +16,7 @@ require( 'react-tap-event-plugin' )();
 var Accordion = require( '../' );
 
 describe( 'Accordion', function() {
+	require( 'test/helpers/use-fake-dom' )();
 	afterEach( function() {
 		ReactDom.unmountComponentAtNode( document.body );
 	} );

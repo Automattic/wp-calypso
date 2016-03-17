@@ -7,6 +7,9 @@
 			"domain-suggestion": {
 				"test": [ "index" ]
 			}
+		},
+		"accordion": {
+			"test": [ "index" ]
 		}
 	},
 	"lib": {
