@@ -13,6 +13,7 @@ import uniqueId from 'lodash/uniqueId';
 import groupBy from 'lodash/groupBy';
 import filter from 'lodash/filter';
 import pickBy from 'lodash/pickBy';
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * Internal dependencies
@@ -79,8 +80,24 @@ const InvitePeople = React.createClass( {
 		if ( sendInvitesSuccess ) {
 			this.setState( this.resetState() );
 			analytics.tracks.recordEvent( 'calypso_invite_people_form_refresh_initial' );
+			debug( 'Submit successful. Resetting form.' )
 		} else {
-			this.setState( { sendingInvites: false } );
+			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId );
+			const errors = get( sendInvitesErrored, 'errors', {} );
+
+			let updatedState = { sendingInvites: false };
+			if ( ! isEmpty( errors ) && 'object' === typeof errors ) {
+				const errorKeys = Object.keys( errors );
+				Object.assign( updatedState, {
+					usernamesOrEmails: errorKeys,
+					errorToDisplay: errorKeys[0],
+					errors,
+				} );
+			}
+
+			debug( 'Submit errored. Updating state to:  ' + JSON.stringify( updatedState ) );
+
+			this.setState( updatedState );
 			analytics.tracks.recordEvent( 'calypso_invite_people_form_refresh_retry' );
 		}
 	},
