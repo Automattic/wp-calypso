@@ -21,6 +21,11 @@
 		},
 		"drop-zone": {
 			"test": [ "index" ]
+		},
+		"forms": {
+			"counted-textarea": {
+				"test": [ "index" ]
+			}
 		}
 	},
 	"lib": {
