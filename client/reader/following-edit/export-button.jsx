@@ -16,12 +16,16 @@ import Button from 'components/button';
 
 const FollowingExportButton = React.createClass( {
 	propTypes: {
-		onError: React.PropTypes.func
+		onError: React.PropTypes.func,
+		onExport: React.PropTypes.func,
+		saveAs: React.PropTypes.string
 	},
 
 	getDefaultProps() {
 		return {
-			onError: noop
+			onError: noop,
+			onExport: noop,
+			saveAs: 'wpcom-subscriptions.opml'
 		};
 	},
 
@@ -51,7 +55,8 @@ const FollowingExportButton = React.createClass( {
 			this.props.onError( err );
 		} else {
 			const blob = new Blob( [ data.opml ], { type: 'text/xml;charset=utf-8' } );
-			saveAs( blob, 'reader.xml' );
+			saveAs( blob, this.props.saveAs );
+			this.props.onExport( this.props.saveAs );
 		}
 	},
 
