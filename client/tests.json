@@ -25,6 +25,9 @@
 		"forms": {
 			"counted-textarea": {
 				"test": [ "index" ]
+			},
+			"form-toggle": {
+				"test": [ "index" ]
 			}
 		}
 	},
