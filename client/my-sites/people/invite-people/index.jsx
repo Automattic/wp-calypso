@@ -297,7 +297,7 @@ const InvitePeople = React.createClass( {
 				<Main>
 					<SidebarNavigation />
 					<EmptyContent
-						title={ this.translate( 'You are not authorized to view this page' ) }
+						title={ this.translate( 'Oops, only administrators can invite other people' ) }
 						illustration={ '/calypso/images/drake/drake-empty-results.svg' }
 					/>
 				</Main>
