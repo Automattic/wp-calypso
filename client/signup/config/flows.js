@@ -229,7 +229,8 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function filterFlowName( flowName ) {
-	if ( 'headstart' === flowName && 'en' !== getLocaleSlug() ) {
+	const locale = getLocaleSlug();
+	if ( 'headstart' === flowName && 'en' !== locale && 'en-gb' !== locale ) {
 		return 'main';
 	}
 	return flowName;
