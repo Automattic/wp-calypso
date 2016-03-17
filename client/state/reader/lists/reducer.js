@@ -3,6 +3,7 @@
  */
 import { combineReducers } from 'redux';
 import keyBy from 'lodash/keyBy';
+import map from 'lodash/map';
 
 /**
  * Internal dependencies
@@ -41,6 +42,28 @@ export function items( state = {}, action ) {
 }
 
 /**
+ * Tracks which list IDs the current user is subscribed to.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function subscribedLists( state = {}, action ) {
+	switch ( action.type ) {
+		case READER_LISTS_RECEIVE:
+			return Object.assign( {}, state, map( action.lists, 'ID' ) );
+		case SERIALIZE:
+			return state;
+		case DESERIALIZE:
+			// if ( ! isValidStateWithSchema( state, subscriptionsSchema ) ) {
+			// 	return {};
+			// }
+			return state;
+	}
+	return state;
+}
+
+/**
  * Returns the updated requests state after an action has been dispatched.
  *
  * @param  {Object} state  Current state
@@ -64,5 +87,6 @@ export function isRequesting( state = false, action ) {
 
 export default combineReducers( {
 	items,
+	subscribedLists,
 	isRequesting
 } );
