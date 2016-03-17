@@ -8,6 +8,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
  * Internal dependencies
  */
 import application from './application/reducer';
+import jetpackConnect from './jetpack-connect/reducer';
 import notices from './notices/reducer';
 import posts from './posts/reducer';
 import postTypes from './post-types/reducer';
@@ -29,6 +30,7 @@ import reader from './reader/reducer';
  * Module variables
  */
 export const reducer = combineReducers( {
+	jetpackConnect,
 	plugins,
 	application,
 	notices,
