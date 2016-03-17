@@ -16,7 +16,7 @@ const Tailor = React.createClass( {
 	render() {
 		return (
 			<div className="tailor">
-				<div className="tailor__loading"><h1>{ this.translate( 'Loading' ) }</h1></div>
+				<div className="tailor__loading"><h1>Not sure what to do with this page yet.</h1></div>
 			</div>
 		);
 	}
