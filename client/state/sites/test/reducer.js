@@ -33,7 +33,6 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {} );
 		} );
-		} );
 
 		it( 'should index sites by ID', () => {
 			const state = items( undefined, {
