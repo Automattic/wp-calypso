@@ -21,7 +21,6 @@ import config from 'config';
 import { decodeEntities } from 'lib/formatting';
 
 const debug = debugFactory( 'calypso:themes' );
-let themeDetailsCache = new Map();
 
 export function makeElement( ThemesComponent, Head, store, props ) {
 	return(
@@ -42,26 +41,14 @@ export function fetchThemeDetailsData( context, next ) {
 	}
 
 	const themeSlug = context.params.slug;
-	const theme = themeDetailsCache.get( themeSlug );
-
-	if ( theme ) {
-		debug( 'found theme!', theme.id );
-		context.store.dispatch( receiveThemeDetails( theme ) );
-		next();
-	}
 
 	themeSlug && wpcom.undocumented().themeDetails( themeSlug, ( error, data ) => {
 		if ( error ) {
 			debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
 			return;
 		}
-		const themeData = themeDetailsCache.get( themeSlug );
-		if ( ! themeData || ( Date( data.date_updated ) > Date( themeData.date_updated ) ) ) {
-			debug( 'caching', themeSlug );
-			themeDetailsCache.set( themeSlug, data );
-			context.store.dispatch( receiveThemeDetails( data ) );
-			next();
-		}
+		context.store.dispatch( receiveThemeDetails( data ) );
+		next();
 	} );
 } // TODO(ehg): We don't want to hit the endpoint for every req. Debounce based on theme arg?
 
