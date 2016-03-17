@@ -170,6 +170,9 @@
 			}
 		}
 	},
+	"post-editor": {
+		"test": [ "post-editor" ]
+	},
 	"reader": {
 		"route": {
 			"test": [ "index" ]
