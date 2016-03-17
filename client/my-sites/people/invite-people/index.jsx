@@ -201,6 +201,10 @@ const InvitePeople = React.createClass( {
 		event.preventDefault();
 		debug( 'Submitting invite form. State: ' + JSON.stringify( this.state ) );
 
+		if ( this.isSubmitDisabled() ) {
+			return false;
+		}
+
 		const formId = uniqueId();
 		const { usernamesOrEmails, message, role } = this.state;
 
