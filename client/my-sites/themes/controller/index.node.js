@@ -4,7 +4,6 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import omit from 'lodash/omit';
-import debugFactory from 'debug';
 
 /**
  * Internal Dependencies
@@ -15,12 +14,9 @@ import i18n from 'lib/mixins/i18n';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getThemeDetails } from 'state/themes/theme-details/selectors';
 import ClientSideEffects from 'components/client-side-effects';
-import { receiveThemeDetails } from 'state/themes/actions';
-import wpcom from 'lib/wp';
+import { fetchThemeDetails } from 'state/themes/actions';
 import config from 'config';
 import { decodeEntities } from 'lib/formatting';
-
-const debug = debugFactory( 'calypso:themes' );
 
 export function makeElement( ThemesComponent, Head, store, props ) {
 	return(
@@ -42,14 +38,7 @@ export function fetchThemeDetailsData( context, next ) {
 
 	const themeSlug = context.params.slug;
 
-	themeSlug && wpcom.undocumented().themeDetails( themeSlug, ( error, data ) => {
-		if ( error ) {
-			debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
-			return;
-		}
-		context.store.dispatch( receiveThemeDetails( data ) );
-		next();
-	} );
+	themeSlug && context.store.dispatch( fetchThemeDetails( themeSlug, next ) );
 } // TODO(ehg): We don't want to hit the endpoint for every req. Debounce based on theme arg?
 
 export function details( context, next ) {
