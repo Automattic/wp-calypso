@@ -118,7 +118,7 @@ describe( 'reducer', () => {
 				expect( state ).to.eql( {} );
 			} );
 
-			it.skip( 'should ignore loading data with invalid keys ', () => {
+			it( 'should ignore loading data with invalid keys ', () => {
 				const persistedState = Object.freeze( {
 					foo: {
 						ID: 73705554,
@@ -146,7 +146,7 @@ describe( 'reducer', () => {
 				expect( state ).to.eql( {} );
 			} );
 
-			it.skip( 'should ignore loading data with invalid values ', () => {
+			it( 'should ignore loading data with invalid values ', () => {
 				const persistedState = Object.freeze( {
 					foo: {
 						ID: 73705554,

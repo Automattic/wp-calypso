@@ -79,7 +79,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( fromJS( jsObject ) );
 		} );
 
-		it.skip( 'should ignore loading data with invalid keys ', () => {
+		it( 'should ignore loading data with invalid keys ', () => {
 			const jsObject = deepFreeze( {
 				missingKey: true,
 				mood: {
@@ -91,7 +91,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( initialState );
 		} );
 
-		it.skip( 'should ignore loading data with invalid values ', () => {
+		it( 'should ignore loading data with invalid values ', () => {
 			const jsObject = deepFreeze( {
 				mood: 'foo'
 			} );
