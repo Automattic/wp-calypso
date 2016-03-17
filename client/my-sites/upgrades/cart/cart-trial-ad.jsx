@@ -6,6 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { addCurrentPlanToCartAndRedirect, getCurrentPlan, getDayOfTrial } from 'lib/plans';
 import i18n from 'lib/mixins/i18n';
@@ -39,7 +40,7 @@ const CartTrialAd = React.createClass( {
 		}
 
 		return (
-			<div className="popover-cart__cart-trial-ad">
+			<CartAd>
 				{
 					i18n.translate( 'You are currently on day %(days)d of your {{strong}}%(planName)s trial{{/strong}}.', {
 						components: { strong: <strong /> },
@@ -59,7 +60,7 @@ const CartTrialAd = React.createClass( {
 					onClick={ this.addPlanAndRedirect }>
 						{ i18n.translate( 'Upgrade Now' ) }
 				</a>
-			</div>
+			</CartAd>
 		);
 	}
 } );
