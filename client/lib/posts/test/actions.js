@@ -2,6 +2,7 @@
  * External dependencies
  */
 var chai = require( 'chai' ),
+	defer = require( 'lodash/defer' ),
 	expect = chai.expect,
 	sinon = require( 'sinon' ),
 	rewire = require( 'rewire' );
@@ -10,13 +11,13 @@ var chai = require( 'chai' ),
  * Internal dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
+	useFakeDom = require( 'test/helpers/use-fake-dom' ),
 	wpcom = require( 'lib/wp' );
 
-describe( 'PostActions', function() {
+describe( 'actions', function() {
 	let PostActions, PostEditStore, sandbox;
 
-	// TODO: refactor to use auto function
-	require( 'lib/react-test-env-setup' )();
+	useFakeDom();
 
 	before( () => {
 		PostEditStore = require( '../post-edit-store' );
@@ -30,10 +31,6 @@ describe( 'PostActions', function() {
 		sandbox.stub( PostEditStore, 'get' ).returns( {
 			metadata: []
 		} );
-	} );
-
-	after( () => {
-		require( 'lib/react-test-env-setup' ).cleanup();
 	} );
 
 	afterEach( () => {
@@ -179,13 +176,13 @@ describe( 'PostActions', function() {
 
 			PostActions.saveEdited( null, spy );
 
-			setTimeout( function() {
+			defer( () => {
 				expect( spy ).to.have.been.calledOnce;
 				expect( spy.getCall( 0 ).args[ 0 ] ).to.be.an.instanceof( Error );
 				expect( spy.getCall( 0 ).args[ 0 ].message ).to.equal( 'NO_CONTENT' );
 				expect( spy.getCall( 0 ).args[ 1 ] ).to.eql( PostEditStore.get() );
 				done();
-			}, 0 );
+			} );
 		} );
 
 		it( 'should not send a request if there are no changed attributes', function( done ) {
@@ -195,13 +192,13 @@ describe( 'PostActions', function() {
 
 			PostActions.saveEdited( null, spy );
 
-			setTimeout( function() {
+			defer( () => {
 				expect( spy ).to.have.been.calledOnce;
 				expect( spy.getCall( 0 ).args[ 0 ] ).to.be.an.instanceof( Error );
 				expect( spy.getCall( 0 ).args[ 0 ].message ).to.equal( 'NO_CHANGE' );
 				expect( spy.getCall( 0 ).args[ 1 ] ).to.eql( PostEditStore.get() );
 				done();
-			}, 0 );
+			} );
 		} );
 
 		it( 'should normalize attributes and call the API', function( done ) {

@@ -6,9 +6,9 @@ import PostListStore from './post-list-store';
 /**
  * Module variables
  **/
-const _postListStores = {};
+let _postListStores = {};
 
-export default function( storeId ) {
+export default function getStore( storeId ) {
 	const postStoreId = storeId || 'default';
 
 	if ( ! _postListStores[ postStoreId ] ) {
@@ -16,4 +16,8 @@ export default function( storeId ) {
 	}
 
 	return _postListStores[ postStoreId ];
+}
+
+getStore._reset = function() {
+	_postListStores = {};
 }
