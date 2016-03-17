@@ -10,6 +10,9 @@
 		},
 		"accordion": {
 			"test": [ "index" ]
+		},
+		"bulk-select": {
+			"test": [ "index" ]
 		}
 	},
 	"lib": {
