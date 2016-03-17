@@ -19,6 +19,7 @@ export default React.createClass( {
 				<NavigationLink
 					direction="forward"
 					goToNextStep={ this.props.goToNextStep }
+					defaultDependencies={ this.props.defaultDependencies }
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName } />
 			);
