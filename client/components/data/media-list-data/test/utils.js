@@ -6,9 +6,9 @@ var expect = require( 'chai' ).expect;
 /**
  * Internal dependencies
  */
-var utils = require( '../../utils' );
+var utils = require( '../utils' );
 
-describe( 'utils', function() {
+describe( 'Media List Data - utils', function() {
 	describe( '#getMimeBaseTypeFromFilter()', function() {
 		it( 'should return an empty string for an unknown filter', function() {
 			var baseType = utils.getMimeBaseTypeFromFilter( 'unknown' );

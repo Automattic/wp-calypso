@@ -13,6 +13,11 @@
 		},
 		"bulk-select": {
 			"test": [ "index" ]
+		},
+		"data": {
+			"media-list-data": {
+				"test": [ "utils" ]
+			}
 		}
 	},
 	"lib": {
