@@ -13,6 +13,7 @@ import values from 'lodash/values';
 import config from 'config';
 import GalleryView from './gallery-view';
 import EmbedViewManager from './views/embed';
+import * as VideoView from './views/video';
 import ContactFormView from './contact-form-view';
 
 /**
@@ -20,7 +21,8 @@ import ContactFormView from './contact-form-view';
  */
 let views = {
 	gallery: GalleryView,
-	embed: new EmbedViewManager()
+	embed: new EmbedViewManager(),
+	video: VideoView
 };
 
 if ( config.isEnabled( 'post-editor/contact-form' ) ) {
