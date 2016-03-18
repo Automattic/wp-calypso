@@ -27,6 +27,7 @@ const user = userFactory(),
 function getStateFromStores( props ) {
 	return {
 		cart: CartStore.get(),
+		hasLoadedSites: props.hasLoadedSites,
 		purchaseId: props.purchaseId,
 		selectedPurchase: PurchasesStore.getByPurchaseId( parseInt( props.purchaseId, 10 ) ),
 		selectedSite: props.selectedSite,
@@ -57,6 +58,7 @@ const ManagePurchaseData = React.createClass( {
 		return (
 			<StoreConnection
 				component={ this.props.component }
+				hasLoadedSites={ this.props.sites.fetched }
 				isDataLoading={ this.props.isDataLoading }
 				loadingPlaceholder={ this.props.loadingPlaceholder }
 				stores={ stores }
