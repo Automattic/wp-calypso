@@ -211,6 +211,7 @@ const WebPreview = React.createClass( {
 					<Toolbar setDeviceViewport={ this.setDeviceViewport }
 						device={ this.state.device }
 						{ ...this.props }
+						showExternal={ ( this.props.previewMarkup ? false : this.props.showExternal ) }
 						showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this._isMobile }
 					/>
 					<div className="web-preview__placeholder">
