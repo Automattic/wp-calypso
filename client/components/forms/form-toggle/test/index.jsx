@@ -22,7 +22,7 @@ var Wrapper = React.createClass( {
 	}
 } );
 
-describe( 'CompactFormToggle', function() {
+describe( 'index', function() {
 	require( 'test/helpers/use-fake-dom' )();
 	describe( 'rendering', function() {
 		it( 'should have is-compact class', function() {

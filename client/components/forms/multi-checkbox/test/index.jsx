@@ -4,7 +4,7 @@ var assert = require( 'assert' ),
 	TestUtils = require( 'react-addons-test-utils' ),
 	MultiCheckbox = require( '../' );
 
-describe( 'MultiCheckbox', function() {
+describe( 'index', function() {
 	var options = [
 		{ value: 1, label: 'One' },
 		{ value: 2, label: 'Two' }

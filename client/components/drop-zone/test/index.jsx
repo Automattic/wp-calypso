@@ -10,7 +10,7 @@ var expect = require( 'chai' ).expect,
 		}
 	} );
 
-describe( 'DropZone', function() {
+describe( 'index', function() {
 	var container, sandbox;
 	require( 'test/helpers/use-fake-dom' )( '<html><body><div id="container"></div></body></html>' );
 

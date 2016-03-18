@@ -11,7 +11,7 @@ var expect = require( 'chai' ).expect,
  */
 var FormRange = require( '../' );
 
-describe( 'Range', function() {
+describe( 'index', function() {
 	require( 'test/helpers/use-fake-dom' )();
 	afterEach( function() {
 		ReactDom.unmountComponentAtNode( document.body );
