@@ -3,7 +3,11 @@
  */
 import filter from 'lodash/filter';
 import includes from 'lodash/includes';
-import get from 'lodash/get';
+
+/**
+ * Internal dependencies
+ */
+import createSelector from 'lib/create-selector';
 
 /**
  * Returns true if currently requesting Reader lists, or
@@ -22,13 +26,10 @@ export function isRequestingSubscribedLists( state ) {
  * @param  {Object}  state  Global state tree
  * @return {?Object}        Reader lists
  */
-export function getSubscribedLists( state ) {
-	if ( ! get( state, 'reader.lists.items' ) || ! get( state, 'reader.lists.subscribedLists' ) ) {
-		return null;
-	}
-
-	return filter( state.reader.lists.items, ( item ) => {
+export const getSubscribedLists = createSelector(
+	( state ) => filter( state.reader.lists.items, ( item ) => {
 		// Is the user subscribed to this list?
 		return includes( state.reader.lists.subscribedLists, item.ID );
-	} );
-}
+	} ),
+	( state ) => [ state.reader.lists.items ]
+);
