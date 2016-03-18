@@ -63,7 +63,6 @@
 		"post-editor/live-image-updates": true,
 		"press-this": true,
 		"reader": true,
-		"reader/following-edit": true,
 		"reader/full-errors": false,
 		"reader/lists": true,
 		"reader/recommendations": true,

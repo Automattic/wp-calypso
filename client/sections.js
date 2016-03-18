@@ -184,11 +184,16 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 }
 
 if ( config.isEnabled( 'reader' ) ) {
-	readerPaths = [ '/', '/read', '/fresh', '/activities', '/find-friends', '/tag', '/discover' ];
-
-	if ( config.isEnabled( 'reader/following-edit' ) ) {
-		readerPaths.push( '/following' );
-	}
+	readerPaths = [
+		'/',
+		'/read',
+		'/fresh',
+		'/activities',
+		'/find-friends',
+		'/tag',
+		'/discover',
+		'/following'
+	];
 
 	if ( config.isEnabled( 'reader/recommendations' ) ) {
 		readerPaths.push( '/recommendations' );

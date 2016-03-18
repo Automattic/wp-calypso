@@ -94,7 +94,6 @@
 		"post-editor/media-advanced": true,
 		"press-this": true,
 		"reader": true,
-		"reader/following-edit": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
 		"reader/lists": true,
