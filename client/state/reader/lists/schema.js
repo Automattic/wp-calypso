@@ -18,3 +18,11 @@ export const itemsSchema = {
 	},
 	additionalProperties: false
 };
+
+export const subscriptionsSchema = {
+	type: 'object',
+	properties: {
+		type: 'integer',
+	},
+	additionalProperties: false
+};

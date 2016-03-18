@@ -16,7 +16,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { itemsSchema } from './schema';
+import { itemsSchema, subscriptionsSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
 
 /**
@@ -55,9 +55,9 @@ export function subscribedLists( state = {}, action ) {
 		case SERIALIZE:
 			return state;
 		case DESERIALIZE:
-			// if ( ! isValidStateWithSchema( state, subscriptionsSchema ) ) {
-			// 	return {};
-			// }
+			if ( ! isValidStateWithSchema( state, subscriptionsSchema ) ) {
+				return {};
+			}
 			return state;
 	}
 	return state;
