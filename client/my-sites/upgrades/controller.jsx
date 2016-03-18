@@ -191,13 +191,14 @@ module.exports = {
 			context.store
 		);
 
-		ReactDom.render(
+		renderWithReduxStore(
 			(
 				<CartData>
 					<SecondaryCart selectedSite={ sites.getSelectedSite() } />
 				</CartData>
 			),
-			document.getElementById( 'secondary' )
+			document.getElementById( 'secondary' ),
+			context.store
 		);
 	},
 
