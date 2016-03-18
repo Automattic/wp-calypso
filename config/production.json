@@ -64,7 +64,6 @@
 		"press-this": true,
 		"reader": true,
 		"reader/full-errors": false,
-		"reader/lists": true,
 		"reader/recommendations": true,
 		"reader/share": true,
 		"reader/teams": true,

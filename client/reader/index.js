@@ -67,9 +67,7 @@ module.exports = function() {
 		page( '/read/a8c', updateLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
 	}
 
-	if ( config.isEnabled( 'reader/lists' ) ) {
-		page( '/read/list/:user/:list', updateLastRoute, controller.removePost, controller.sidebar, controller.listListing );
-	}
+	page( '/read/list/:user/:list', updateLastRoute, controller.removePost, controller.sidebar, controller.listListing );
 
 	if ( config.isEnabled( 'reader/list-management' ) ) {
 		page( '/read/list/:user/:list/sites', updateLastRoute, controller.removePost, controller.sidebar, controller.listManagementSites );
