@@ -9,7 +9,7 @@ var expect = require( 'chai' ).expect,
 var FeedState = require( '../constants' ).state,
 	FeedStore, FeedStoreActions;
 
-describe( 'FeedStore', function() {
+describe( 'index', function() {
 	var readFeedStub,
 		mockWpcom = {
 			undocumented: function() {
@@ -18,11 +18,9 @@ describe( 'FeedStore', function() {
 		},
 		changeSpy = sinon.spy();
 
+	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+
 	before( function() {
-		mockery.enable( {
-			useCleanCache: true,
-			warnOnUnregistered: false
-		} );
 		mockery.registerAllowable( [ '../', '../actions' ] );
 		mockery.registerMock( 'lib/wp', mockWpcom );
 
@@ -33,7 +31,6 @@ describe( 'FeedStore', function() {
 
 	after( function() {
 		FeedStore.off( 'change', changeSpy );
-		mockery.disable();
 	} );
 
 	beforeEach( function() {
