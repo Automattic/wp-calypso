@@ -1,18 +1,20 @@
 /**
  * External dependencies
  */
-var noop = require( 'lodash/noop' ),
-	React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classNames = require( 'classnames' );
+import noop from 'lodash/noop';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'components/gridicon' ),
-	postUtils = require( 'lib/posts/utils' );
+import Gridicon from 'components/gridicon';
+import postUtils from 'lib/posts/utils';
 
-var StatusLabel = React.createClass( {
+export default React.createClass( {
+	displayName: 'StatusLabel',
+
 	propTypes: {
 		onClick: React.PropTypes.func,
 		post: React.PropTypes.object,
@@ -166,5 +168,3 @@ var StatusLabel = React.createClass( {
 		} );
 	}
 } );
-
-module.exports = StatusLabel;
