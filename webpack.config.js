@@ -83,7 +83,7 @@ webpackConfig = {
 		} ),
 		new HappyPack( {
 			id: 'babel',
-			threads: 1,
+			threads: CPU_COUNT - 1,
 			loaders: [
 				{
 					path: path.resolve( __dirname, 'node_modules/babel-loader/index.js' ),
@@ -102,6 +102,7 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.output.filename = '[name].js';
 } else {
 	webpackConfig.entry.vendor = [ 'react', 'store', 'page', 'wpcom-unpublished', 'jed', 'debug' ];
+	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
 	// webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
 	// 	name: [ 'vendor', 'build-' + CALYPSO_ENV ],
 	// /	minChunks: 3
