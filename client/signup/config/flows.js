@@ -10,6 +10,7 @@ var assign = require( 'lodash/assign' ),
 var config = require( 'config' ),
 	stepConfig = require( './steps' ),
 	user = require( 'lib/user' )();
+import { getLocaleSlug } from 'lib/i18n-utils';
 
 function getCheckoutUrl( dependencies ) {
 	return '/checkout/' + dependencies.siteSlug;
@@ -228,7 +229,8 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function filterFlowName( flowName ) {
-	if ( 'headstart' === flowName && 'production' === config( 'env' ) ) {
+	const locale = getLocaleSlug();
+	if ( 'headstart' === flowName && 'en' !== locale && 'en-gb' !== locale ) {
 		return 'main';
 	}
 	return flowName;
