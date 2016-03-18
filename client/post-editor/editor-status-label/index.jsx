@@ -54,11 +54,11 @@ var StatusLabel = React.createClass( {
 	},
 
 	render: function() {
-		var statusClass = 'post-editor-status-label';
+		var statusClass = 'editor-status-label';
 
 		if ( ! this.props.post ) {
 			return (
-				<button className="post-editor-status-label is-placeholder">
+				<button className="editor-status-label is-placeholder">
 					<strong>
 						{
 							'post' === this.props.type
