@@ -8,6 +8,7 @@ import values from 'lodash/values';
 import noop from 'lodash/noop';
 import some from 'lodash/some';
 import every from 'lodash/every';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -19,6 +20,8 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
 import { canUserDeleteItem } from 'lib/media/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import PlanStorage from 'my-sites/plan-storage';
 
 const MediaModalSecondaryActions = React.createClass( {
 	propTypes: {
@@ -60,6 +63,14 @@ const MediaModalSecondaryActions = React.createClass( {
 		analytics.ga.recordEvent( 'Media', 'Clicked Dialog Edit Button' );
 
 		this.props.onChangeView( ModalViews.DETAIL );
+	},
+
+	navigateToPlans() {
+		analytics.ga.recordEvent( 'Media', 'Clicked Plan Storage Button' );
+		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
+			cta_name: 'plan-media-storage'
+		} );
+		page( `/plans/${ this.props.siteSlug }` );
 	},
 
 	getButtons() {
@@ -162,18 +173,31 @@ const MediaModalSecondaryActions = React.createClass( {
 		} );
 	},
 
+	renderPlanStorage() {
+		if ( this.props.selectedItems.length === 0 ) {
+			return (
+				<PlanStorage
+					onClick={ this.navigateToPlans }
+					siteId={ this.props.site.ID } />
+			);
+		}
+		return null;
+	},
+
 	render() {
 		return (
 			<div className="editor-media-modal__secondary-actions">
 				{ this.renderMobileButtons() }
 				{ this.renderDesktopButtons() }
+				{ this.renderPlanStorage() }
 			</div>
 		);
 	}
 } );
 
-export default connect( ( state ) => {
+export default connect( ( state, ownProps ) => {
 	return {
-		user: getCurrentUser( state )
+		user: getCurrentUser( state ),
+		siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : ''
 	};
 } )( MediaModalSecondaryActions );
