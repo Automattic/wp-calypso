@@ -32,11 +32,9 @@ describe( 'Theme', function() {
 		togglePopoverStub = sinon.stub().returnsArg( 0 );
 		let MockMoreButton = require( '../more-button' );
 		MockMoreButton.prototype.__reactAutoBindMap.togglePopover = togglePopoverStub;
-		MockMoreButton.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
 		mockery.registerMock( './more-button', MockMoreButton );
 
 		Theme = require( '../' );
-		Theme.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
 	} );
 
 	beforeEach( function() {
