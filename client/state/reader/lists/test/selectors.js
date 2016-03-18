@@ -57,7 +57,7 @@ describe( 'selectors', () => {
 			expect( subscribedLists ).to.eql( [] );
 		} );
 
-		it( 'should return an empty array if the user is not subscribed to any lists', () => {
+		it( 'should items in a-z slug order', () => {
 			const subscribedLists = getSubscribedLists( {
 				reader: {
 					lists: {
@@ -65,6 +65,10 @@ describe( 'selectors', () => {
 							123: {
 								ID: 123,
 								slug: 'bananas'
+							},
+							456: {
+								ID: 456,
+								slug: 'ants'
 							}
 						},
 						subscribedLists: [ 123, 456 ]
@@ -72,7 +76,10 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( subscribedLists ).to.eql( [ { ID: 123, slug: 'bananas' } ] );
+			expect( subscribedLists ).to.eql( [
+				{ ID: 456, slug: 'ants'},
+				{ ID: 123, slug: 'bananas' }
+			] );
 		} );
 	} );
 } );
