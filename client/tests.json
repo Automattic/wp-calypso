@@ -236,6 +236,11 @@
 		"receipts": {
 			"test": [ "reducer" ]
 		},
+		"reader": {
+			"lists": {
+				"test": [ "actions", "reducer", "selectors" ]
+			}
+		},
 		"sharing": {
 			"publicize": {
 				"test": [ "actions", "reducer", "selectors" ]
