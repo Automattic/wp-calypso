@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 import debugFactory from 'debug';
@@ -11,6 +12,7 @@ import debugFactory from 'debug';
  */
 import Button from 'components/button';
 import WebPreview from 'components/web-preview';
+import * as PreviewActions from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
 import layoutFocus from 'lib/layout-focus';
@@ -145,9 +147,9 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps() {
+function mapDispatchToProps( dispatch ) {
 	return {
-		actions: {},
+		actions: bindActionCreators( PreviewActions, dispatch ),
 	}
 }
 
