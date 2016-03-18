@@ -1,0 +1,112 @@
+$border-color: #ddd;
+
+.design-menu-controls {
+	width: 299px;
+	height: 100%;
+	border-right: 1px solid $border-color;
+	vertical-align: top;
+	display: inline-block;
+}
+
+.design-menu-controls__top-nav {
+	width: 100%;
+	height: 46px;
+	border-bottom: 1px solid $border-color;
+	padding: 0 10px;
+	box-sizing: border-box;
+	background-color: #fff;
+}
+
+.design-menu-controls__close-button {
+	padding: 10px 10px 10px 0;
+	border-right: 1px solid $border-color;
+	color: #87a6bc;
+}
+
+.design-menu-controls__save-button {
+	float: right;
+	margin-top: 9px;
+}
+
+.design-menu-controls__back-button {
+	float: left;
+	height: 100%;
+	width: 48px;
+	display: flex;
+	align-items: center;
+}
+
+.design-menu-controls__header {
+	width: 100%;
+	height: 77px;
+	border-bottom: 1px solid $border-color;
+	padding: 12px 15px 15px 15px;
+	box-sizing: border-box;
+	background-color: #fff;
+	overflow: hidden;
+}
+
+.design-menu-controls__header__title {
+	font-size: 1.5em;
+	font-weight: 200;
+}
+
+.design-menu-controls__control-list {
+	margin-top: 15px;
+	border-top: 1px solid $border-color;
+}
+
+.design-menu-controls__control-button {
+	width: 100%;
+	height: 46px;
+	background-color: #fff;
+	box-sizing: border-box;
+	overflow: hidden;
+	border-bottom: 1px solid $border-color;
+	padding: 10px 10px 11px 14px;
+	display: flex;
+}
+
+.design-menu-controls__control-button__arrow {
+	margin-left: auto;
+	color: #a8bece;
+}
+
+.design-menu .web-preview {
+	height: 100%;
+	display: inline-block;
+	flex-grow: 1;
+	position: relative;
+}
+
+.design-menu .web-preview__frame {
+	top: 0;
+}
+
+.design-menu .web-preview__content {
+	height: 100vh;
+	position: relative;
+	top: 0;
+}
+
+.design-menu-controls__control {
+	padding: 15px;
+}
+
+.design-menu-controls__header-image-control__image-box {
+	max-width: 269px;
+	min-height: 60px;
+	border: 1px solid $border-color;
+}
+
+.design-menu-controls__header-image-control__buttons {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 10px;
+}
+
+.design-menu-controls__header-image-control__buttons button {
+	flex-grow: 1;
+	margin: 0 2px;
+}
