@@ -40,9 +40,8 @@ const WebPreview = React.createClass( {
 		// Elements to render on the right side of the toolbar
 		children: React.PropTypes.node,
 		// The function to call when the iframe is loaded. Will be passed the iframe document object.
+		// Only called if using previewMarkup.
 		onLoad: React.PropTypes.func,
-		// The function to call when an element is clicked. Will be passed the event.
-		onClick: React.PropTypes.func,
 		// Called when the preview is closed, either via the 'X' button or the escape key
 		onClose: React.PropTypes.func,
 		// Optional loading message to display during loading
@@ -60,7 +59,6 @@ const WebPreview = React.createClass( {
 			showDeviceSwitcher: true,
 			previewUrl: null,
 			previewMarkup: null,
-			onClick: noop,
 			onLoad: noop,
 			onClose: noop,
 		}
@@ -149,11 +147,6 @@ const WebPreview = React.createClass( {
 		this.refs.iframe.contentDocument.close();
 	},
 
-	handleClick( event ) {
-		debug( 'click detected for element', event.target );
-		return this.props.onClick( event );
-	},
-
 	setIframeUrl( iframeUrl ) {
 		// Bail if iframe isn't rendered
 		if ( ! this.shouldRenderIframe() ) {
@@ -189,8 +182,9 @@ const WebPreview = React.createClass( {
 			return;
 		}
 		debug( 'preview loaded:', this.state.iframeUrl );
-		this.props.onLoad( this.refs.iframe.contentDocument );
-		this.refs.iframe.contentDocument.body.onclick = this.handleClick;
+		if ( this.props.previewMarkup ) {
+			this.props.onLoad( this.refs.iframe.contentDocument );
+		}
 		this.setState( { loaded: true } );
 	},
 
