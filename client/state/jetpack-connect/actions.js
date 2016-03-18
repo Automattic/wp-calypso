@@ -7,7 +7,7 @@ const debug = require( 'debug' )( 'calypso:jetpack-connect:actions' );
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { JETPACK_CONNECT_CHECK_URL, JETPACK_CONNECT_CHECK_URL_RECEIVE } from 'state/action-types';
+import { JETPACK_CONNECT_CHECK_URL, JETPACK_CONNECT_CHECK_URL_RECEIVE, JETPACK_CONNECT_DISMISS_URL_STATUS } from 'state/action-types';
 
 /**
  *  Local variables;
@@ -17,6 +17,15 @@ const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 const installURL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 
 export default {
+	dismissUrl( url ) {
+		return ( dispatch ) => {
+			dispatch( {
+				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
+				url: url
+			} );
+		}
+	},
+
 	checkUrl( url ) {
 		return ( dispatch ) => {
 			if ( _fetching[ url ] ) {
@@ -41,10 +50,9 @@ export default {
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
 					url: url,
-					data: data ?  Object.assign.apply( Object, data ) : null,
+					data: data ? Object.assign.apply( Object, data ) : null,
 					error: error
 				} );
-
 			} )
 			.catch( ( error ) => {
 				dispatch( {
@@ -59,7 +67,7 @@ export default {
 	goToRemoteAuth( url ) {
 		window.location = url + authURL;
 	},
-	goToPluginInstall( url) {
+	goToPluginInstall( url ) {
 		window.location = url + installURL;
 	},
 };
