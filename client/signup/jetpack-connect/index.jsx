@@ -16,7 +16,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
-import { goToRemoteAuth, goToPluginInstall, checkUrl as checkUrlAction } from 'state/jetpack-connect/actions';
+import { dismissUrl, goToRemoteAuth, goToPluginInstall, checkUrl } from 'state/jetpack-connect/actions';
 
 const JetpackConnectMain = React.createClass( {
 	displayName: 'JetpackConnectSiteURLStep',
@@ -27,8 +27,8 @@ const JetpackConnectMain = React.createClass( {
 		};
 	},
 
-	closeDialog() {
-		this.setState( { currentUrl: '' } );
+	dismissUrl() {
+		this.props.dismissUrl( this.state.currentUrl );
 	},
 
 	isCurrentUrlFetched() {
@@ -54,16 +54,11 @@ const JetpackConnectMain = React.createClass( {
 
 	onURLChange() {
 		this.setState( { currentUrl: this.getCurrentUrl() } );
+		this.dismissUrl();
 	},
 
 	onURLEnter() {
-		this.props.checkUrlAction( this.state.currentUrl );
-	},
-
-	onDismissClick() {
-		this.setState( {
-			siteStatus: false
-		} );
+		this.props.checkUrl( this.state.currentUrl );
 	},
 
 	installJetpack() {
@@ -73,7 +68,8 @@ const JetpackConnectMain = React.createClass( {
 	getDialogButtons() {
 		return [ {
 			action: 'cancel',
-			label: this.translate( 'Cancel' )
+			label: this.translate( 'Cancel' ),
+			onClick: this.dismissUrl
 		}, {
 			action: 'install',
 			label: this.translate( 'Connect Now' ),
@@ -91,12 +87,8 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	componentDidUpdate() {
-		const status = this.getStatus();
-		if ( status === 'notConnectedJetpack' && this.isCurrentUrlFetched() ) {
+		if ( this.getStatus() === 'notConnectedJetpack' && this.isCurrentUrlFetched() ) {
 			return goToRemoteAuth( this.state.currentUrl );
-		}
-		if ( status === 'notJetpack' && this.isCurrentUrlFetched() ) {
-			return;
 		}
 	},
 
@@ -123,16 +115,19 @@ const JetpackConnectMain = React.createClass( {
 		if ( ! this.checkProperty( 'isJetpackConnected' ) ) {
 			return 'notConnectedJetpack';
 		}
+		if ( this.checkProperty( 'isJetpackConnected' ) ) {
+			return 'alreadyConnected';
+		}
 
 		return false;
 	},
 
 	renderDialog( status ) {
-		if ( status === 'notJetpack' ) {
+		if ( status === 'notJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
 			return (
 				<Dialog
 					isVisible={ true }
-					onClose={ this.closeDialog }
+					onClose={ this.dismissUrl }
 					additionalClassNames="jetpack-connect__wp-admin-dialog"
 					buttons={ this.getDialogButtons() } >
 
@@ -160,8 +155,8 @@ const JetpackConnectMain = React.createClass( {
 						steps={ 3 } />
 
 					<Card className="jetpack-connect__site-url-input-container">
-						{ ! this.isCurrentUrlFetching() && this.isCurrentUrlFetched() && status
-							? <JetpackConnectNotices noticeType={ status } onDismissClick={ this.onDismissClick } />
+						{ ! this.isCurrentUrlFetching() && this.isCurrentUrlFetched() && ! this.props.jetpackConnectSite.isDismissed && status
+							? <JetpackConnectNotices noticeType={ status } onDismissClick={ this.dismissUrl } />
 							: null
 						}
 
@@ -189,5 +184,5 @@ export default connect(
 			jetpackConnectSite: state.jetpackConnect.jetpackConnectSite
 		};
 	},
-	dispatch => bindActionCreators( { checkUrlAction }, dispatch )
+	dispatch => bindActionCreators( { checkUrl, dismissUrl }, dispatch )
 )( JetpackConnectMain );
