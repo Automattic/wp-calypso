@@ -1,3 +1,4 @@
+
 var Dispatcher = require( 'dispatcher' ),
 	wpcom = require( 'lib/wp' ),
 	RECEIVE_TEAMS = require( 'lib/reader-teams/constants' ).action.RECEIVE_TEAMS;
@@ -14,6 +15,7 @@ module.exports = {
 		let batch = wpcom.batch();
 
 		batch.add( '/read/tags' );
+		batch.add( '/read/lists' );
 		batch.add( '/read/teams' );
 
 		isFetching = true;
@@ -22,6 +24,12 @@ module.exports = {
 			if ( error ) {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_READER_TAG_SUBSCRIPTIONS',
+					data: null,
+					error: error
+				} );
+
+				Dispatcher.handleServerAction( {
+					type: 'RECEIVE_READER_LISTS',
 					data: null,
 					error: error
 				} );
@@ -38,6 +46,12 @@ module.exports = {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_READER_TAG_SUBSCRIPTIONS',
 				data: data[ '/read/tags' ],
+				error: error
+			} );
+
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_READER_LISTS',
+				data: data[ '/read/lists' ],
 				error: error
 			} );
 
