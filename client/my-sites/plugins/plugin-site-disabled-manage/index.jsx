@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -9,16 +10,15 @@ import React from 'react';
 import analytics from 'analytics';
 import Button from 'components/button';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
+import { getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors';
 
-module.exports = React.createClass( {
-
-	displayName: 'PluginSiteDisabledManage',
+const PluginSiteDisabledManage = React.createClass( {
 
 	render: function() {
 		const message = this.props.isNetwork ?
 				this.translate( 'Network management disabled' ) :
 				this.translate( 'Management disabled' ),
-			url = this.props.site.getRemoteManagementURL() + '&section=plugins';
+			url = this.props.siteRemoteManagementUrl + '&section=plugins';
 
 		if ( this.props.plugin.slug === 'jetpack' ) {
 			return (
@@ -36,3 +36,9 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state, props ) => ( {
+		siteRemoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, props.site.ID )
+	} )
+)( PluginSiteDisabledManage );
