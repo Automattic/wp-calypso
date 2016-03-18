@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react'
+import { connect } from 'react-redux'
 
 /**
  * Internal dependencies
@@ -9,10 +10,9 @@ import React from 'react'
 import analytics from 'analytics'
 import EmptyContent from 'components/empty-content'
 import FeatureExample from 'components/feature-example'
+import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors'
 
-module.exports = React.createClass( {
-
-	displayName: 'JetpackManageErrorPage',
+const JetpackManageErrorPage = React.createClass( {
 
 	mixins: [ 'pluginsData' ],
 
@@ -38,7 +38,7 @@ module.exports = React.createClass( {
 				action: this.translate( 'Update Jetpack' ),
 				illustration: null,
 				actionURL: ( this.props.site && this.props.site.jetpack )
-					? '../../plugins/jetpack/' + this.props.site.slug
+					? '../../plugins/jetpack/' + this.props.siteSlug
 					: undefined,
 				version: version
 			},
@@ -48,7 +48,7 @@ module.exports = React.createClass( {
 				illustration: '/calypso/images/jetpack/jetpack-manage.svg',
 				action: this.translate( 'Enable Jetpack Manage' ),
 				actionURL: ( this.props.site && this.props.site.jetpack )
-					? this.props.site.getRemoteManagementURL() + ( this.props.section ? '&section=' + this.props.section : '' )
+					? this.props.remoteManagementUrl + ( this.props.section ? '&section=' + this.props.section : '' )
 					: undefined,
 				actionTarget: '_blank'
 			},
@@ -56,7 +56,7 @@ module.exports = React.createClass( {
 				title: this.translate( 'Domains are not available for this site.' ),
 				line: this.translate( 'You can only purchase domains for sites hosted on WordPress.com at this time.' ),
 				action: this.translate( 'View Plans' ),
-				actionURL: '/plans/' + ( this.props.site ? this.props.site.slug : '' )
+				actionURL: '/plans/' + ( this.props.siteSlug || '' )
 			},
 			default: {}
 		};
@@ -82,3 +82,10 @@ module.exports = React.createClass( {
 	}
 
 } );
+
+export default connect(
+	( state, props ) => ( {
+		siteSlug: getSiteSlug( state, props.site.ID ),
+		remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, props.site.ID )
+	} )
+)( JetpackManageErrorPage );
