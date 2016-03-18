@@ -139,6 +139,7 @@ module.exports = {
 			StatsComponent = Insights,
 			twoWeeksAgo = i18n.moment().subtract( 2, 'week' ),
 			siteCreated,
+			postCount,
 			isNux;
 
 		followList = new FollowList();
@@ -188,7 +189,12 @@ module.exports = {
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
-		if ( site.post_count <= 1 &&
+		// Calculate the number of posts created by the user (not Headstarted) to determine if we should show the Insights tab, or the NUX placeholder.
+		postCount = site.post_count;
+		if ( site.options.headstart ) {
+			postCount = site.post_count - site.options.headstart.original.post.length;
+		}
+		if ( postCount <= 1 &&
 				twoWeeksAgo.isBefore( siteCreated ) &&
 				( ! site.jetpack ) ) {
 			isNux = true;
