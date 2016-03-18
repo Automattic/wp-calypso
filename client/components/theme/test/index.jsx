@@ -1,14 +1,17 @@
-require( 'lib/react-test-env-setup' )( '<html><body><div id="container"></div></body></html>' );
-
 /**
  * External dependencies
  */
-var assert = require( 'chai' ).assert,
-	sinon = require( 'sinon' ),
-	mockery = require( 'mockery' ),
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' );
+import { assert } from 'chai';
+import sinon from 'sinon';
+import ReactDom from 'react-dom';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+
+/**
+ * Internal dependencies
+ */
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 var EmptyComponent = React.createClass( {
 	render: function() {
@@ -17,26 +20,23 @@ var EmptyComponent = React.createClass( {
 } );
 
 describe( 'Theme', function() {
-	before( function() {
-		var MockMoreButton;
+	let Theme, togglePopoverStub;
+	let container = React.createElement( 'div', { id: 'container' } );
 
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
+	useFakeDom();
 
+	useMockery( mockery => {
 		mockery.registerMock( 'components/popover/menu', EmptyComponent );
 		mockery.registerMock( 'components/popover/menu-item', EmptyComponent );
 
-		this.togglePopoverStub = sinon.stub().returnsArg( 0 );
-		MockMoreButton = require( '../more-button' );
-		MockMoreButton.prototype.__reactAutoBindMap.togglePopover = this.togglePopoverStub;
+		togglePopoverStub = sinon.stub().returnsArg( 0 );
+		let MockMoreButton = require( '../more-button' );
+		MockMoreButton.prototype.__reactAutoBindMap.togglePopover = togglePopoverStub;
 		MockMoreButton.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
 		mockery.registerMock( './more-button', MockMoreButton );
 
-		this.Theme = require( '../' );
-		this.container = document.getElementById( 'container' );
-		this.Theme.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
+		Theme = require( '../' );
+		Theme.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
 	} );
 
 	beforeEach( function() {
@@ -50,21 +50,12 @@ describe( 'Theme', function() {
 		};
 	} );
 
-	afterEach( function() {
-		ReactDom.unmountComponentAtNode( this.container );
-	} );
-
 	describe( 'rendering', function() {
 		context( 'with default display buttonContents', function() {
 			beforeEach( function() {
 				this.props.onScreenshotClick = sinon.spy();
-
-				this.theme = ReactDom.render(
-					React.createElement( this.Theme, this.props ),
-					this.container
-				);
-
-				this.themeNode = ReactDom.findDOMNode( this.theme );
+				let themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, this.props, container ) );
+				this.themeNode = ReactDom.findDOMNode( themeElement );
 			} );
 
 			it( 'should render a <div> with a className of "theme"', function() {
@@ -96,20 +87,15 @@ describe( 'Theme', function() {
 				assert( more.length === 1, 'More button container not found' );
 				assert( more[0].getElementsByTagName( 'button' ).length === 1, 'More button not found' );
 				TestUtils.Simulate.click( more[0].getElementsByTagName( 'button' )[0] );
-				assert( this.togglePopoverStub.calledOnce, 'More button press does not trigger state toggle' );
+				assert( togglePopoverStub.calledOnce, 'More button press does not trigger state toggle' );
 			} );
 		} );
 
 		context( 'with empty buttonContents', function() {
 			beforeEach( function() {
 				this.props.buttonContents = {};
-
-				this.theme = ReactDom.render(
-					React.createElement( this.Theme, this.props ),
-					this.container
-				);
-
-				this.themeNode = ReactDom.findDOMNode( this.theme );
+				let themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, this.props, container ) );
+				this.themeNode = ReactDom.findDOMNode( themeElement );
 			} );
 
 			it( 'should not render a More button', function() {
@@ -122,12 +108,11 @@ describe( 'Theme', function() {
 
 	context( 'when isPlaceholder is set to true', function() {
 		beforeEach( function() {
-			this.theme = ReactDom.render(
-				React.createElement( this.Theme, { theme: { id: 'placeholder-1', name: 'Loading' }, isPlaceholder: true } ),
-				this.container
+			let themeElement = TestUtils.renderIntoDocument(
+				React.createElement( Theme, { theme: { id: 'placeholder-1', name: 'Loading' }, isPlaceholder: true } ),
+				container
 			);
-
-			this.themeNode = ReactDom.findDOMNode( this.theme );
+			this.themeNode = ReactDom.findDOMNode( themeElement );
 		} );
 
 		it( 'should render a <div> with an is-placeholder class', function() {
@@ -139,12 +124,11 @@ describe( 'Theme', function() {
 	context( 'when the theme has a price', function() {
 		beforeEach( function() {
 			this.props.theme.price = '$50';
-			this.theme = ReactDom.render(
-				React.createElement( this.Theme, this.props ),
-				this.container
+			let themeElement = TestUtils.renderIntoDocument(
+				React.createElement( Theme, this.props ),
+				container
 			);
-
-			this.themeNode = ReactDom.findDOMNode( this.theme );
+			this.themeNode = ReactDom.findDOMNode( themeElement );
 		} );
 
 		it( 'should show a price', function() {
