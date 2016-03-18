@@ -65,7 +65,6 @@
 		"post-editor/live-image-updates": true,
 		"press-this": true,
 		"reader": true,
-		"reader/activities": true,
 		"reader/discover": true,
 		"reader/following-edit": true,
 		"reader/full-errors": true,
