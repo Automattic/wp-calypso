@@ -63,9 +63,7 @@ module.exports = function() {
 		page( '/tag/:tag', updateLastRoute, controller.removePost, controller.sidebar, controller.tagListing );
 	}
 
-	if ( config.isEnabled( 'reader/teams' ) ) {
-		page( '/read/a8c', updateLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
-	}
+	page( '/read/a8c', updateLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
 
 	page( '/read/list/:user/:list', updateLastRoute, controller.removePost, controller.sidebar, controller.listListing );
 
