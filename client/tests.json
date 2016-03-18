@@ -38,6 +38,9 @@
 		},
 		"theme": {
 			"test": [ "index" ]
+		},
+		"themes-list": {
+			"test": [ "index" ]
 		}
 	},
 	"lib": {
