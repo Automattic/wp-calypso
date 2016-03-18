@@ -35,6 +35,9 @@
 			"range": {
 				"test": [ "index" ]
 			}
+		},
+		"theme": {
+			"test": [ "index" ]
 		}
 	},
 	"lib": {
