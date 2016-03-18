@@ -120,7 +120,7 @@ MediaActions.add = function( siteId, files ) {
 			// Generate from string
 			assign( transientMedia, {
 				file: file,
-				extension: path.extname( file ).slice( 1 ),
+				extension: MediaUtils.getFileExtension( file ),
 				mime_type: MediaUtils.getMimeType( file ),
 				title: path.basename( file )
 			} );
@@ -131,7 +131,7 @@ MediaActions.add = function( siteId, files ) {
 				URL: fileUrl,
 				guid: fileUrl,
 				file: file.name,
-				extension: path.extname( file.name ).slice( 1 ),
+				extension: MediaUtils.getFileExtension( file.name ),
 				mime_type: MediaUtils.getMimeType( file.name ),
 				title: path.basename( file.name ),
 				// Size is not an API media property, though can be useful for

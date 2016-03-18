@@ -84,6 +84,40 @@ describe( 'MediaUtils', function() {
 		} );
 	} );
 
+	describe( '#getFileExtension()', function() {
+		it( 'should return undefined for a falsey media value', function() {
+			expect( MediaUtils.getFileExtension() ).to.be.undefined;
+		} );
+
+		it( 'should detect extension from file name', function() {
+			expect( MediaUtils.getFileExtension( 'example.gif' ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should ignore querystring parameters', function() {
+			expect( MediaUtils.getFileExtension( 'example.gif?w=100' ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from HTML5 File object', function() {
+			expect( MediaUtils.getFileExtension( new window.File( [''], 'example.gif' ) ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from object file property', function() {
+			expect( MediaUtils.getFileExtension( { file: 'example.gif' } ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from already computed extension property', function() {
+			expect( MediaUtils.getFileExtension( { extension: 'gif' } ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from object URL property', function() {
+			expect( MediaUtils.getFileExtension( { URL: 'example.gif' } ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from object guid property', function() {
+			expect( MediaUtils.getFileExtension( { guid: 'example.gif' } ) ).to.equal( 'gif' );
+		} );
+	} );
+
 	describe( '#getMimePrefix()', function() {
 		it( 'should return undefined if a mime type can\'t be determined', function() {
 			expect( MediaUtils.getMimePrefix() ).to.be.undefined;
@@ -109,6 +143,10 @@ describe( 'MediaUtils', function() {
 
 		it( 'should detect mime type from string extension', function() {
 			expect( MediaUtils.getMimeType( 'example.gif' ) ).to.equal( 'image/gif' );
+		} );
+
+		it( 'should ignore querystring parameters', function() {
+			expect( MediaUtils.getMimeType( 'example.gif?w=100' ) ).to.equal( 'image/gif' );
 		} );
 
 		it( 'should detect mime type from object file property', function() {
