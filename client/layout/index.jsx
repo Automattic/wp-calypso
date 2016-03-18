@@ -169,7 +169,7 @@ Layout = React.createClass( {
 				<TranslatorLauncher
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
-				{ this.props.section === 'sites' &&
+				{ config.isEnabled( 'design-layout' ) && this.props.section.group === 'sites' &&
 					<DesignPreview
 						className="layout__design"
 						showPreview={ this.props.focus.getCurrent() === 'design' }
