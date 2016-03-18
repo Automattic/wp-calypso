@@ -116,6 +116,24 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
+	renderFeatures() {
+		const themeFeatures = this.props.taxonomies && this.props.taxonomies.features instanceof Array
+		? this.props.taxonomies.features.map( function( item, i ) {
+			return ( <li key={ 'theme-features-item-' + i++ }><span>{ item.name }</span></li> );
+		} ) : [];
+
+		return (
+			<div>
+				<SectionHeader label={ i18n.translate( 'Features' ) } />
+				<Card className="themes__sheet-features">
+					<ul className="theme-features-list">
+						{ themeFeatures }
+					</ul>
+				</Card>
+			</div>
+		);
+	},
+
 	render() {
 		let actionTitle = <span className="themes__sheet-button-placeholder">loading......</span>;
 		if ( this.props.isLoggedIn && this.props.active ) { //FIXME: active ENOENT
@@ -126,11 +144,6 @@ const ThemeSheet = React.createClass( {
 
 		const section = this.validateSection( this.props.section );
 		const { themeContentElement, priceElement } = this.getDangerousElements( section );
-
-		const themeFeatures = this.props.taxonomies && this.props.taxonomies.features instanceof Array
-		? this.props.taxonomies.features.map( function( item, i ) {
-			return ( <li key={ 'theme-features-item-' + i++ }><span>{ item.name }</span></li> );
-		} ) : [];
 
 		return (
 			<Main className="themes__sheet">
@@ -148,12 +161,7 @@ const ThemeSheet = React.createClass( {
 						<div className="themes__sheet-content">
 							{ this.renderSectionNav( section ) }
 							<Card className="themes__sheet-content">{ themeContentElement }</Card>
-							<SectionHeader label={ i18n.translate( 'Features' ) } />
-							<Card className="themes__sheet-features">
-								<ul className="theme-features-list">
-									{ themeFeatures }
-								</ul>
-							</Card>
+							{ this.renderFeatures() }
 						</div>
 					</div>
 					<div className="themes__sheet-column-right">
