@@ -11,7 +11,7 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'Theme', function() {
-	let ReactDom, React, TestUtils, Theme, togglePopoverStub, container;
+	let ReactDom, React, TestUtils, Theme, togglePopoverStub;
 
 	useFakeDom();
 
@@ -19,8 +19,6 @@ describe( 'Theme', function() {
 		ReactDom = require( 'react-dom' );
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
-
-		container = React.createElement( 'div', { id: 'container' } );
 
 		let EmptyComponent = React.createClass( {
 			render: function() {
@@ -56,7 +54,7 @@ describe( 'Theme', function() {
 		context( 'with default display buttonContents', function() {
 			beforeEach( function() {
 				this.props.onScreenshotClick = sinon.spy();
-				let themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, this.props, container ) );
+				let themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, this.props ) );
 				this.themeNode = ReactDom.findDOMNode( themeElement );
 			} );
 
@@ -96,7 +94,7 @@ describe( 'Theme', function() {
 		context( 'with empty buttonContents', function() {
 			beforeEach( function() {
 				this.props.buttonContents = {};
-				let themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, this.props, container ) );
+				let themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, this.props ) );
 				this.themeNode = ReactDom.findDOMNode( themeElement );
 			} );
 
@@ -111,8 +109,7 @@ describe( 'Theme', function() {
 	context( 'when isPlaceholder is set to true', function() {
 		beforeEach( function() {
 			let themeElement = TestUtils.renderIntoDocument(
-				React.createElement( Theme, { theme: { id: 'placeholder-1', name: 'Loading' }, isPlaceholder: true } ),
-				container
+				React.createElement( Theme, { theme: { id: 'placeholder-1', name: 'Loading' }, isPlaceholder: true } )
 			);
 			this.themeNode = ReactDom.findDOMNode( themeElement );
 		} );
@@ -127,8 +124,7 @@ describe( 'Theme', function() {
 		beforeEach( function() {
 			this.props.theme.price = '$50';
 			let themeElement = TestUtils.renderIntoDocument(
-				React.createElement( Theme, this.props ),
-				container
+				React.createElement( Theme, this.props )
 			);
 			this.themeNode = ReactDom.findDOMNode( themeElement );
 		} );
