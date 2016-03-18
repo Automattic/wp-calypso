@@ -50,7 +50,7 @@ var LoggedOutForm = React.createClass( {
 
 	loginUser() {
 		const { userData, bearerToken } = this.state;
-		const extraFields = { jetpack_calypso_login: true, _wp_nonce: this.props.queryObject._wp_nonce };
+		const extraFields = { jetpack_calypso_login: '1', _wp_nonce: this.props.queryObject._wp_nonce };
 		return (
 			<WpcomLoginForm
 				log={ userData.username }
@@ -161,10 +161,10 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { autoConnecting } = this.props;
+		const { autoAuthorizing } = this.props;
 
-		if ( autoConnecting ) {
-			return ( <p>Connecting Jetpack...</p> );
+		if ( autoAuthorizing ) {
+			return ( <p>Authorizing...</p> );
 		}
 
 		return (

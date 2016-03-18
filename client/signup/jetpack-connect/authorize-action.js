@@ -11,7 +11,7 @@ import wpcom from 'lib/wp';
 /**
  * Module variables
  */
-const debug = new Debug( 'calypso:jetpack-connect-authorize' );
+const debug = new Debug( 'calypso:jetpack-connect:authorize' );
 
 export function createAccount( userData, callback ) {
 	wpcom.undocumented().usersNew(
