@@ -135,7 +135,7 @@ describe( 'selectors', () => {
 			expect( path ).to.equal( '/page/example.wordpress.com/413' );
 		} );
 
-		it.only( 'should prefix the type route for custom post types', () => {
+		it( 'should prefix the type route for custom post types', () => {
 			const path = getEditorPath( {
 				sites: {
 					items: {
