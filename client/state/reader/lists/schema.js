@@ -20,9 +20,5 @@ export const itemsSchema = {
 };
 
 export const subscriptionsSchema = {
-	type: 'object',
-	properties: {
-		type: 'integer',
-	},
-	additionalProperties: false
+	type: 'array'
 };

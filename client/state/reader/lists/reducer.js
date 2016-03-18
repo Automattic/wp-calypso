@@ -48,15 +48,15 @@ export function items( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function subscribedLists( state = {}, action ) {
+export function subscribedLists( state = [], action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
-			return Object.assign( {}, state, map( action.lists, 'ID' ) );
+			return map( action.lists, 'ID' );
 		case SERIALIZE:
 			return state;
 		case DESERIALIZE:
 			if ( ! isValidStateWithSchema( state, subscriptionsSchema ) ) {
-				return {};
+				return [];
 			}
 			return state;
 	}
