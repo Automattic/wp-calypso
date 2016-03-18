@@ -11,7 +11,7 @@ var React = require( 'react' ),
  */
 var i18n = require( 'lib/mixins/i18n' );
 
-describe( 'CountedTextarea', function() {
+describe( 'index', function() {
 	var CountedTextarea, renderer;
 
 	before( function() {

@@ -7,6 +7,34 @@
 			"domain-suggestion": {
 				"test": [ "index" ]
 			}
+		},
+		"accordion": {
+			"test": [ "index" ]
+		},
+		"bulk-select": {
+			"test": [ "index" ]
+		},
+		"data": {
+			"media-list-data": {
+				"test": [ "utils" ]
+			}
+		},
+		"drop-zone": {
+			"test": [ "index" ]
+		},
+		"forms": {
+			"counted-textarea": {
+				"test": [ "index" ]
+			},
+			"form-toggle": {
+				"test": [ "index" ]
+			},
+			"multi-checkbox": {
+				"test": [ "index" ]
+			},
+			"range": {
+				"test": [ "index" ]
+			}
 		}
 	},
 	"lib": {

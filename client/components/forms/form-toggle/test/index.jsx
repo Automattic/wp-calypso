@@ -18,13 +18,12 @@ var FormToggle = require( 'components/forms/form-toggle' ),
  */
 var Wrapper = React.createClass( {
 	render: function() {
-		return <div>{this.props.children}</div>;
+		return <div>{ this.props.children }</div>;
 	}
 } );
 
-require( 'lib/react-test-env-setup' )();
-
-describe( 'CompactFormToggle', function() {
+describe( 'index', function() {
+	require( 'test/helpers/use-fake-dom' )();
 	describe( 'rendering', function() {
 		it( 'should have is-compact class', function() {
 			var toggle = TestUtils.renderIntoDocument( <CompactFormToggle /> ),
@@ -37,6 +36,7 @@ describe( 'CompactFormToggle', function() {
 } );
 
 describe( 'FormToggle', function() {
+	require( 'test/helpers/use-fake-dom' )();
 	afterEach( function() {
 		ReactDom.unmountComponentAtNode( document.body );
 	} );

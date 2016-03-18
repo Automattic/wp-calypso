@@ -6,7 +6,7 @@ var expect = require( 'chai' ).expect;
 /**
  * Internal dependencies
  */
-var utils = require( '../../utils' );
+var utils = require( '../utils' );
 
 describe( 'utils', function() {
 	describe( '#getMimeBaseTypeFromFilter()', function() {
