@@ -187,9 +187,7 @@ if ( config.isEnabled( 'reader' ) ) {
 	readerPaths = [
 		'/',
 		'/read',
-		'/fresh',
 		'/activities',
-		'/find-friends',
 		'/tag',
 		'/discover',
 		'/following',
