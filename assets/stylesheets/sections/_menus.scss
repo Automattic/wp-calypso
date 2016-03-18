@@ -744,6 +744,11 @@
 				}
 			  }
 
+			  li.create-new-item input[type=radio] + label {
+			  	color: #87a6bc;
+				font-style: italic;
+			  }
+
 
 				.menu-item-back-button {
 					display: none;

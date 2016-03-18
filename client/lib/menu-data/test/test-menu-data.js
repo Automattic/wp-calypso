@@ -7,7 +7,7 @@ require( 'lib/react-test-env-setup' )();
 var chai = require( 'chai' ),
 	assert = chai.assert,
 	expect = chai.expect,
-	MenuData = require( '../menu-data' ),
+	MenuData = require( '../menu-data' ).default,
 	sinon = require( 'sinon' ),
 	sinonChai = require( 'sinon-chai' ),
 	wp = require( 'lib/wp' ),
@@ -294,29 +294,6 @@ describe( 'MenuData', function() {
 			socks = this.menuData.find( { name: 'Socks' } );
 
 			expect( socks.items ).to.contain( products );
-		} );
-	} );
-
-	describe( 'saveMenu', function () {
-		beforeEach( function () {
-			this.menusUpdateStub = sinon.stub();
-			this.wpcomUndocumentedStub = sinon.stub( wp, 'undocumented', function () {
-				return { menusUpdate: this.menusUpdateStub };
-			}.bind( this ) );
-			this.isValidMenuStub = sinon.stub( this.menuData, 'isValidMenu', function () {
-				return true;
-			} );
-		} );
-		afterEach( function () {
-			this.wpcomUndocumentedStub.restore();
-			this.isValidMenuStub.restore();
-		} );
-
-		it( 'should call interceptSaveForHomepageLink', function () {
-			var spy = sinon.spy( this.menuData, 'interceptSaveForHomepageLink' ),
-				menu = { items: [] };
-			this.menuData.saveMenu( menu );
-			expect( spy ).to.have.been.calledWith( menu );
 		} );
 	} );
 

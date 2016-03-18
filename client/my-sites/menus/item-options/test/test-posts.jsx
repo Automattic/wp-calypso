@@ -22,6 +22,7 @@ describe( 'Posts' , function () {
 
 		beforeEach( function () {
 			this.itemToInject = {};
+			siteMenus.generateNewPageMenuItem = () => ( {} );
 			this.siteMenusStub = sinon.stub( siteMenus, 'generateHomePageMenuItem', function () {
 				return this.itemToInject;
 			}.bind( this ) );
