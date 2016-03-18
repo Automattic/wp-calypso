@@ -3,9 +3,6 @@
  */
 import { assert } from 'chai';
 import sinon from 'sinon';
-import ReactDom from 'react-dom';
-import React from 'react';
-import TestUtils from 'react-addons-test-utils';
 
 /**
  * Internal dependencies
@@ -13,19 +10,24 @@ import TestUtils from 'react-addons-test-utils';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
-var EmptyComponent = React.createClass( {
-	render: function() {
-		return <div/>;
-	}
-} );
-
 describe( 'Theme', function() {
-	let Theme, togglePopoverStub;
-	let container = React.createElement( 'div', { id: 'container' } );
+	let ReactDom, React, TestUtils, Theme, togglePopoverStub, container;
 
 	useFakeDom();
 
 	useMockery( mockery => {
+		ReactDom = require( 'react-dom' );
+		React = require( 'react' );
+		TestUtils = require( 'react-addons-test-utils' );
+
+		container = React.createElement( 'div', { id: 'container' } );
+
+		let EmptyComponent = React.createClass( {
+			render: function() {
+				return <div/>;
+			}
+		} );
+
 		mockery.registerMock( 'components/popover/menu', EmptyComponent );
 		mockery.registerMock( 'components/popover/menu-item', EmptyComponent );
 
