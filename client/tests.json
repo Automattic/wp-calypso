@@ -207,7 +207,7 @@
 		},
 		"reader": {
 			"lists": {
-				"test": [ "actions", "reducer" ]
+				"test": [ "actions", "reducer", "selectors" ]
 			}
 		},
 		"sharing": {

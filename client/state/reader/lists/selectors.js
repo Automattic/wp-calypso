@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import toArray from 'lodash/toArray';
+import filter from 'lodash/filter';
+import includes from 'lodash/includes';
+import get from 'lodash/get';
 
 /**
  * Returns true if currently requesting Reader lists, or
@@ -21,9 +23,12 @@ export function isRequestingSubscribedLists( state ) {
  * @return {?Object}        Reader lists
  */
 export function getSubscribedLists( state ) {
-	if ( ! state.reader.lists.items ) {
+	if ( ! get( state, 'reader.lists.items' ) || ! get( state, 'reader.lists.subscribedLists' ) ) {
 		return null;
 	}
 
-	return toArray( state.reader.lists.items );
+	return filter( state.reader.lists.items, ( item ) => {
+		// Is the user subscribed to this list?
+		return includes( state.reader.lists.subscribedLists, item.ID );
+	} );
 }
