@@ -16,7 +16,7 @@ function getSectionsModule( sections ) {
 			"\tcontroller = require( 'controller' ),",
 			"\preloadHub = require( 'sections-preload' ).hub;",
 			'\n',
-			'var _loadedSections = {};'
+			'var _loadedSections = {};\n'
 		].join( '\n' );
 
 		sections.forEach( function( section ) {
@@ -25,19 +25,35 @@ function getSectionsModule( sections ) {
 				sectionLoaders += splitTemplate( path, section );
 			} );
 		} );
-	} else {
-		dependencies = "var controller = require( 'controller' );\n";
-		sectionLoaders = getRequires( sections );
+
+		return [
+			dependencies,
+			'function preload( section ) {',
+			'	switch ( section ) {',
+			'	' + loadSection,
+			'	}',
+			'}\n',
+			'preloadHub.on( \'preload\', preload );\n',
+			'module.exports = {',
+			'	get: function() {',
+			'		return ' + JSON.stringify( sections ) + ';',
+			'	},',
+			'	load: function() {',
+			'		' + sectionLoaders,
+			'	}',
+			'};'
+		].join( '\n' );
 	}
+
+	dependencies = [
+		"var page = require( 'page' ),",
+		"\tcontroller = require( 'controller' );\n"
+	].join( '\n' );
+
+	sectionLoaders = getRequires( sections );
 
 	return [
 		dependencies,
-		'function preload( section ) {',
-		'	switch ( section ) {',
-		'	' + loadSection,
-		'	}',
-		'}',
-		'preloadHub.on( \'preload\', preload );',
 		'module.exports = {',
 		'	get: function() {',
 		'		return ' + JSON.stringify( sections ) + ';',
@@ -53,23 +69,18 @@ function getRequires( sections ) {
 	var content = '';
 
 	sections.forEach( function( section ) {
-		content += requireTemplate( section.module );
+		content += requireTemplate( section );
 	} );
 
 	return content;
 }
 
 function splitTemplate( path, section ) {
-	var regex, result;
-	if ( path === '/' ) {
-		path = JSON.stringify( path );
-	} else {
-		regex = utils.pathToRegExp( path );
-		path = '/' + regex.toString().slice( 1, -1 ) + '/';
-	}
+	var pathRegex = getPathRegex( path ),
+		result;
 
 	result = [
-		'page( ' + path + ', function( context, next ) {',
+		'page( ' + pathRegex + ', function( context, next ) {',
 		'	if ( _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
 		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 		'		layoutFocus.next();',
@@ -101,8 +112,38 @@ function splitTemplate( path, section ) {
 	return result.join( '\n' );
 }
 
-function requireTemplate( module ) {
-	return 'require( ' + JSON.stringify( module ) + ' )( controller.clientRouter );\n';
+function getPathRegex( pathString ) {
+	var regex;
+
+	if ( pathString === '/' ) {
+		return JSON.stringify( pathString );
+	}
+
+	regex = utils.pathToRegExp( pathString );
+
+	return '/' + regex.toString().slice( 1, -1 ) + '/';
+}
+
+function requireTemplate( section ) {
+	var pathRegex,
+		result = [];
+
+	section.paths.forEach( function( path ) {
+		pathRegex = getPathRegex( path );
+
+		result = result.concat( [
+			'page( ' + pathRegex + ', function( context, next ) {',
+			'	controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
+			'	next();',
+			'} );\n'
+		] );
+	} );
+
+	result.push(
+		'require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );\n\n'
+	);
+
+	return result.join( '\n' );
 }
 
 function singleEnsure( chunkName ) {
