@@ -1,5 +1,7 @@
 /*eslint-disable */
 
+/** @ssr-ready **/
+
 /**
  * Modified from phpjs original to convert to a module
  * https://github.com/kvz/phpjs/tree/af99785b02

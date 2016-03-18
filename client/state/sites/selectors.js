@@ -12,6 +12,7 @@ import includes from 'lodash/includes';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+import versionCompare from 'lib/version-compare';
 
 /**
  * Returns a site object by its ID.
@@ -76,3 +77,22 @@ export function getSiteSlug( state, siteId ) {
 
 	return site.URL.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
 }
+
+/**
+ * Returns the URL for a site's remote Jetpack wp-admin screen, or null if the
+ * site is unknown, or not a Jetpack site.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {?String}       Jetpack site's wp-admin screen
+ */
+export function getJetpackSiteRemoteManagementUrl( state, siteId ) {
+	const site = getSite( state, siteId );
+
+	if ( ! site || ! site.jetpack ) {
+		return null;
+	}
+
+	const configure = versionCompare( site.options.jetpack_version, 3.4 ) ? 'manage' : 'json-api';
+	return site.options.admin_url + 'admin.php?page=jetpack&configure=' + configure;
+};
