@@ -1,39 +1,34 @@
 /**
  * External dependencies
  */
-var assert = require( 'chai' ).assert,
-	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' ),
-	mockery = require( 'mockery' ),
-	sinon = require( 'sinon' );
+import { assert } from 'chai';
 
-function mockComponent( displayName ) {
-	return React.createClass( {
-		displayName,
-		render: () => { return <div/> }
-	} );
-};
+/**
+ * Internal dependencies
+ */
+import useMockery from 'test/helpers/use-mockery';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'ThemesList', function() {
+	let React, TestUtils, ThemesList;
+	useSandbox();
 	this.timeout( 10 * 1000 );
 
-	before( function() {
-		mockery.registerMock( './more-button', mockComponent() );
+	useMockery( mockery => {
+		React = require( 'react' );
+		TestUtils = require( 'react-addons-test-utils' ),
 
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
-
-		this.ThemesList = require( '../' );
-		this.ThemesList.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
+		mockery.registerMock( './more-button', React.createClass( { render: () =>  <div/> } ) );
+		ThemesList = require( '../' );
 	} );
 
 	after( function() {
-		delete this.ThemesList.prototype.__reactAutoBindMap.translate;
+		delete ThemesList.prototype.__reactAutoBindMap.translate;
 	} );
 
 	beforeEach( function() {
+		ThemesList.prototype.__reactAutoBindMap.translate = this.sandbox.stub().returnsArg( 0 );
+
 		this.props = {
 			themes: [
 				{
@@ -51,7 +46,7 @@ describe( 'ThemesList', function() {
 			getButtonOptions: () => {},
 		};
 
-		this.themesList = React.createElement( this.ThemesList, this.props );
+		this.themesList = React.createElement( ThemesList, this.props );
 	} );
 
 	describe( 'propTypes', function() {
@@ -77,7 +72,7 @@ describe( 'ThemesList', function() {
 			beforeEach( function() {
 				var shallowRenderer = TestUtils.createRenderer();
 				this.props.themes = [];
-				this.themesList = React.createElement( this.ThemesList, this.props );
+				this.themesList = React.createElement( ThemesList, this.props );
 
 				shallowRenderer.render( this.themesList );
 				this.themesListElement = shallowRenderer.getRenderOutput();
