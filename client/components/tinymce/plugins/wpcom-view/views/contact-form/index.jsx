@@ -2,11 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import { deserialize } from 'components/tinymce/plugins/contact-form/shortcode-utils';
 
 /**
  * Internal dependecies
  */
 import shortcodeUtils from 'lib/shortcode';
+import renderField from './preview-fields';
 
 export default React.createClass( {
 	statics: {
@@ -32,10 +34,14 @@ export default React.createClass( {
 			editor.execCommand( 'wpcomContactForm', content );
 		}
 	},
+
 	render() {
+		const { fields } = deserialize( this.props.content );
+
 		return (
 			<div className="wpview-content wpview-type-contact-form">
-				<p>This is a placeholder for the form preview.</p>
+				{ [].concat( fields ).map( renderField ) }
+				<button disabled>{ this.translate( 'Submit' ) }</button>
 			</div>
 		);
 	}
