@@ -66,7 +66,6 @@
 		"press-this": true,
 		"reader": true,
 		"reader/full-errors": true,
-		"reader/recommendations": true,
 		"reader/share": true,
 		"reader/teams": true,
 		"rubberband-scroll-disable": false,

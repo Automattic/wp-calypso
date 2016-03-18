@@ -81,10 +81,8 @@ module.exports = function() {
 	page( '/following/*', controller.loadSubscriptions, controller.initAbTests );
 	page( '/following/edit', updateLastRoute, controller.removePost, controller.sidebar, controller.followingEdit );
 
-	if ( config.isEnabled( 'reader/recommendations' ) ) {
-		page( '/recommendations', controller.loadSubscriptions, controller.initAbTests, updateLastRoute, controller.removePost, controller.sidebar, controller.recommendedForYou );
-		page( '/tags', controller.loadSubscriptions, controller.initAbTests, updateLastRoute, controller.removePost, controller.sidebar, controller.recommendedTags );
-	}
+	page( '/recommendations', controller.loadSubscriptions, controller.initAbTests, updateLastRoute, controller.removePost, controller.sidebar, controller.recommendedForYou );
+	page( '/tags', controller.loadSubscriptions, controller.initAbTests, updateLastRoute, controller.removePost, controller.sidebar, controller.recommendedTags );
 
 	page( '/discover', updateLastRoute, controller.loadSubscriptions, controller.initAbTests, controller.removePost, controller.sidebar, controller.discover );
 };

@@ -96,7 +96,6 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
-		"reader/recommendations": true,
 		"reader/share": true,
 		"reader/teams": true,
 		"rubberband-scroll-disable": false,

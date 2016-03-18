@@ -192,13 +192,10 @@ if ( config.isEnabled( 'reader' ) ) {
 		'/find-friends',
 		'/tag',
 		'/discover',
-		'/following'
+		'/following',
+		'/recommendations',
+		'/tags'
 	];
-
-	if ( config.isEnabled( 'reader/recommendations' ) ) {
-		readerPaths.push( '/recommendations' );
-		readerPaths.push( '/tags' );
-	}
 
 	sections.push( {
 		name: 'reader',
