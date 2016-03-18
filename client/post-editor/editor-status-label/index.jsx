@@ -11,6 +11,7 @@ import classNames from 'classnames';
  */
 import Gridicon from 'components/gridicon';
 import postUtils from 'lib/posts/utils';
+import EditorStatusLabelPlaceholder from './placeholder';
 
 export default React.createClass( {
 	displayName: 'StatusLabel',
@@ -56,20 +57,10 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var statusClass = 'editor-status-label';
+		let statusClass = 'editor-status-label';
 
 		if ( ! this.props.post ) {
-			return (
-				<button className="editor-status-label is-placeholder">
-					<strong>
-						{
-							'post' === this.props.type
-								? this.translate( 'Loading Post…' )
-								: this.translate( 'Loading Page…' )
-						}
-					</strong>
-				</button>
-			);
+			return <EditorStatusLabelPlaceholder className={ statusClass } />;
 		}
 
 		statusClass = classNames( statusClass, 'is-' + this.props.post.status );

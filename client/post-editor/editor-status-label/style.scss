@@ -31,10 +31,10 @@
 	&.is-trash strong {
 		color: $orange-fire;
 	}
+}
 
-	&.is-placeholder {
-		padding-left: 0;
-	}
+.editor-status-label__placeholder {
+	padding-left: 0;
 }
 
 .editor-status-label__full-date {
