@@ -16,7 +16,7 @@ import { isBusiness, isPlan, isPremium } from 'lib/products-values';
 import i18n from 'lib/mixins/i18n';
 import { shouldFetchSitePlans } from 'lib/plans';
 
-const CartDomainDiscountAd = React.createClass( {
+const CartPlanDiscountAd = React.createClass( {
 	propTypes: {
 		cart: React.PropTypes.object,
 		sitePlans: React.PropTypes.object
@@ -48,15 +48,15 @@ const CartDomainDiscountAd = React.createClass( {
 
 		return (
 			<CartAd>
-				{
-					i18n.translate(
-						"{{strong}}You're saving %(discount)s!{{/strong}} Your recent domain purchase is " +
-						'deducted from the price (%(fullPrice)s), since the plan includes a free domain.', {
-							args: { discount: plan.formattedDiscount, fullPrice: plan.formattedPrice },
-							components: { strong: <strong /> }
+				<strong>
+					{ i18n.translate( "You're saving %(discount)s!", {
+						args: {
+							discount: plan.formattedDiscount
 						}
-					)
-				}
+					} ) }
+				</strong>
+				{ ' ' }
+				{ plan.discountReason }
 			</CartAd>
 		);
 	}
@@ -77,4 +77,4 @@ export default connect(
 			}
 		}
 	}
-)( CartDomainDiscountAd );
+)( CartPlanDiscountAd );
