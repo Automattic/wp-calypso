@@ -6,6 +6,7 @@ import React from 'react';
 import isEmpty from 'lodash/isEmpty';
 import store from 'store';
 import page from 'page';
+import Debug from 'debug';
 
 /**
  * Internal Dependencies
@@ -18,12 +19,14 @@ import { jetpackAuthorize } from './authorize-action';
 /**
  * Module variables
  */
+const debug = new Debug( 'calypso:jetpack-connect:controller' );
 let queryObject,
-	autoConnecting = false;
+	autoAuthorizing = false;
 
 export default {
 	saveQueryObject( context, next ) {
 		if ( ! isEmpty( context.query ) ) {
+			debug( 'set initial query object', context.query );
 			store.set( 'jetpack_connect_query', context.query );
 			page.redirect( context.pathname );
 			return;
@@ -36,10 +39,12 @@ export default {
 
 	updateNonce( context, next ) {
 		if ( ! isEmpty( context.query ) && context.query.update_nonce ) {
+			debug( 'refreshing nonce', context.query.update_nonce );
 			store.set(
 				'jetpack_connect_query',
 				Object.assign( {}, store.get( 'jetpack_connect_query' ), { _wp_nonce: context.query.update_nonce } )
 			);
+			debug( 'refreshed query object and redirect', store.get( 'jetpack_connect_query' ), context.pathname );
 			page.redirect( context.pathname );
 			return;
 		}
@@ -63,10 +68,11 @@ export default {
 
 	authorize( context ) {
 		if ( store.get( 'jetpack_connect_authorize_after_signup' ) ) {
-			autoConnecting = true;
+			debug( 'auto authorizing', context.query );
+			autoAuthorizing = true;
 			const authorizeCallback = error => {
 				if ( error ) {
-					console.log( error );
+					debug( 'jetpack auto authorize error', error );
 					return;
 				}
 				store.remove( 'jetpack_connect_query' );
@@ -85,7 +91,7 @@ export default {
 				path: context.path,
 				locale: context.params.lang,
 				queryObject: queryObject,
-				autoConnecting: autoConnecting
+				autoAuthorizing: autoAuthorizing
 			} ),
 			document.getElementById( 'primary' )
 		);
