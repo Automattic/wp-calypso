@@ -596,21 +596,21 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagement, {
-				key: 'list-management-sites',
-				list: {
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( listManagement, {
+					key: 'list-management-sites',
 					owner: context.params.user,
-					slug: context.params.list
-				},
-				tab: 'sites',
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				)
-			} ),
+					slug: context.params.list,
+					tab: 'sites',
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						analyticsPageTitle,
+						mcKey
+					)
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},
@@ -626,21 +626,21 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagement, {
-				key: 'list-management-tags',
-				list: {
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( listManagement, {
+					key: 'list-management-tags',
 					owner: context.params.user,
-					slug: context.params.list
-				},
-				tab: 'tags',
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				)
-			} ),
+					slug: context.params.list,
+					tab: 'tags',
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						analyticsPageTitle,
+						mcKey
+					)
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},
@@ -656,14 +656,14 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagement, {
-				key: 'list-management-description-edit',
-				list: {
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( listManagement, {
+					key: 'list-management-description-edit',
 					owner: context.params.user,
-					slug: context.params.list
-				},
-				tab: 'description-edit'
-			} ),
+					slug: context.params.list,
+					tab: 'description-edit'
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},
