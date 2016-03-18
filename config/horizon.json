@@ -68,7 +68,6 @@
 		"post-editor/live-image-updates": true,
 		"press-this": true,
 		"reader": true,
-		"reader/share": true,
 		"reader/teams": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
