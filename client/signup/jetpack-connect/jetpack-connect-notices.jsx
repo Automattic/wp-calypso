@@ -10,7 +10,6 @@ export default React.createClass( {
 	},
 
 	getNoticeValues() {
-		window.bbb = this;
 		let noticeValues = {
 			icon: 'trash',
 			status: 'is-warning',
@@ -25,7 +24,7 @@ export default React.createClass( {
 			noticeValues.text = this.translate( 'That\'s not a WordPress site' );
 			return noticeValues
 		}
-		if ( this.props.noticeType === 'jetpackIsDeactivated' ) {
+		if ( this.props.noticeType === 'notActiveJetpack' ) {
 			noticeValues.icon = 'block';
 			noticeValues.text = this.translate( 'Jetpack is deactivated' );
 			return noticeValues
@@ -47,10 +46,16 @@ export default React.createClass( {
 			noticeValues.text = this.translate( 'Can\'t find Jetpack' );
 			return noticeValues
 		}
+		if ( this.props.noticeType === 'alreadyConnected' ) {
+			noticeValues.status = 'is-success';
+			noticeValues.icon = 'status';
+			noticeValues.text = this.translate( 'This site is already connected!' );
+			return noticeValues
+		}
 		if ( this.props.noticeType === 'wordpress.com' ) {
+			noticeValues.text = this.translate( 'I think that\'s us ¯\\_(ツ)_/¯' );
 			noticeValues.status = 'is-warning';
 			noticeValues.icon = 'status';
-			noticeValues.text = this.translate( 'I think that\'s us ¯\\_(ツ)_/¯' );
 			return noticeValues
 		}
 		return;

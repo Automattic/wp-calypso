@@ -55,6 +55,7 @@ export default {
 				} );
 			} )
 			.catch( ( error ) => {
+				_fetching[ url ] = null;
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
 					url: url,
