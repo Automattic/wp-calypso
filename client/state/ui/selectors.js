@@ -1,6 +1,11 @@
 /** @ssr-ready **/
 
 /**
+ * Internal dependencies
+ */
+import { getSite } from 'state/sites/selectors';
+
+/**
  * Returns the site object for the currently selected site.
  *
  * @param  {Object}  state  Global state tree
@@ -12,7 +17,7 @@ export function getSelectedSite( state ) {
 		return null;
 	}
 
-	return state.sites.items[ siteId ];
+	return getSite( state, siteId );
 }
 
 /**

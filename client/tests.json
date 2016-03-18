@@ -258,7 +258,7 @@
 			"plans": {
 				"test": [ "actions", "reducer" ]
 			},
-			"test": [ "actions", "reducer" ]
+			"test": [ "actions", "reducer", "selectors" ]
 		},
 		"support": {
 			"test": [ "actions", "reducer" ]
