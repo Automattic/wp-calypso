@@ -14,8 +14,7 @@ var config = require( 'config' ),
 
 module.exports = {
 	isEnabled: function() {
-		return config.isEnabled( 'reader/discover' ) &&
-			userUtils.getLocaleSlug() === 'en';
+		return userUtils.getLocaleSlug() === 'en';
 	},
 
 	isDiscoverPost: function( post ) {
