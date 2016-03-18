@@ -8583,6 +8583,9 @@
         }
       }
     },
+    "filesize": {
+      "version": "3.2.1"
+    },
     "blob": {
       "version": "0.0.4"
     }
