@@ -24,9 +24,7 @@ Emitter( SiteStore ); //eslint-disable-line
 
 SiteStore.setMaxListeners( 100 );
 
-function setSite( attributes ) {
-	var site = sites[ attributes.ID ], newSite;
-
+function adaptSite( attributes ) {
 	if ( ! attributes.state ) {
 		attributes.state = State.COMPLETE;
 	}
@@ -53,6 +51,13 @@ function setSite( attributes ) {
 		attributes.slug = attributes.options.unmapped_url.replace( /^https?:\/\//, '' );
 		attributes.domain = attributes.slug;
 	}
+	return attributes;
+}
+
+function setSite( attributes ) {
+	var site = sites[ attributes.ID ], newSite;
+
+	attributes = adaptSite( attributes );
 
 	if ( site ) {
 		newSite = site.mergeDeep( attributes );
@@ -68,6 +73,28 @@ function setSite( attributes ) {
 	sites[ attributes.ID ] = newSite;
 
 	SiteStore.emit( 'change' );
+}
+
+function setManySites( siteList ) {
+	var adaptedSites = siteList.map( adaptSite ),
+		changes = 0;
+	adaptedSites.forEach( function( site ) {
+		var existing = sites[ site.ID ],
+			newSite;
+		if ( existing ) {
+			newSite = existing.mergeDeep( site );
+			if ( newSite === existing ) {
+				return;
+			}
+		} else {
+			newSite = Immutable.fromJS( site );
+		}
+		sites[ site.ID ] = newSite;
+		changes++;
+	} );
+	if ( changes > 0 ) {
+		SiteStore.emit( 'change' );
+	}
 }
 
 SiteStore.dispatchToken = Dispatcher.register( function( payload ) {
@@ -88,6 +115,9 @@ SiteStore.dispatchToken = Dispatcher.register( function( payload ) {
 			} else {
 				setSite( action.data );
 			}
+			break;
+		case SiteStoreActionType.RECEIVE_BULK_UPDATE:
+			setManySites( action.data );
 			break;
 		case FeedStoreActionType.RECEIVE_FETCH:
 			// check to see if the feed fetch had site meta

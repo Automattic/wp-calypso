@@ -11,7 +11,6 @@ const Dispatcher = require( 'dispatcher' ),
 	Immutable = require( 'immutable' ),
 	clone = require( 'lodash/clone' ),
 	map = require( 'lodash/map' ),
-	moment = require( 'moment' ),
 	forEach = require( 'lodash/forEach' );
 
 // Internal Dependencies
@@ -146,14 +145,14 @@ var FeedSubscriptionStore = {
 			_acceptSubscription( subscription, false );
 		} );
 		subscriptions.list = subscriptions.list.sort( function( a, b ) {
-			const aDate = moment( a.get( 'date_subscribed' ) ),
-				bDate = moment( b.get( 'date_subscribed' ) );
+			const aDate = a.get( 'date_subscribed' ),
+				bDate = b.get( 'date_subscribed' );
 
-			if ( aDate.isAfter( bDate ) ) {
+			if ( aDate > bDate ) {
 				return -1;
 			}
 
-			if ( aDate.isBefore( bDate ) ) {
+			if ( aDate < bDate ) {
 				return 1;
 			}
 

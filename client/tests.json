@@ -76,6 +76,9 @@
 				"test": [ "assembler", "store" ]
 			}
 		},
+		"feed-store": {
+			"test": [ "index" ]
+		},
 		"form-state": {
 			"test": [ "index" ]
 		},
