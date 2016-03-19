@@ -18,6 +18,6 @@ export function validateFormFields( fields ) {
 }
 
 export function validateSettingsToEmail( to ) {
-	const emails = !! to ? to.split( ',' ) : [];
+	const emails = to ? to.split( ',' ).map( email => email.trim() ) : [];
 	return every( emails, emailValidator.validate );
 }

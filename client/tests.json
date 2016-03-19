@@ -41,6 +41,13 @@
 		},
 		"themes-list": {
 			"test": [ "index" ]
+		},
+		"tinymce": {
+			"plugins": {
+				"contact-form": {
+					"test": [ "shortcode", "validations" ]
+				}
+			}
 		}
 	},
 	"lib": {
