@@ -18,57 +18,51 @@ var sites = require( 'lib/sites-list' )(),
 	siteMenus = require( 'lib/menu-data' ),
 	titleActions = require( 'lib/screen-title/actions' );
 
-var controller = {
+export function menus( context, next ) {
+	var analyticsPageTitle = 'Menus',
+		basePath = route.sectionify( context.path ),
+		site = sites.getSelectedSite(),
+		baseAnalyticsPath;
 
-	menus: function( context, next ) {
-		var analyticsPageTitle = 'Menus',
-			basePath = route.sectionify( context.path ),
-			site = sites.getSelectedSite(),
-			baseAnalyticsPath;
-
-		if ( site && site.capabilities && ! site.capabilities.edit_theme_options ) {
-			notices.error( i18n.translate( 'You are not authorized to manage settings for this site.' ) );
-			return;
-		}
-
-		titleActions.setTitle( i18n.translate( 'Menus', { textOnly: true } ), { siteID: context.params.site_id } );
-
-		function createJetpackUpgradeMessage() {
-			return React.createElement( MainComponent, null,
-				React.createElement( JetpackManageErrorPage, {
-					template: 'updateJetpack',
-					site: site,
-					version: '3.5',
-					illustration: '/calypso/images/drake/drake-nomenus.svg',
-					secondaryAction: i18n.translate( 'Open Classic Menu Editor' ),
-					secondaryActionURL: site.options.admin_url + 'nav-menus.php',
-					secondaryActionTarget: '_blank'
-				} )
-			);
-		}
-
-		if ( site && site.jetpack && ! site.hasJetpackMenus ) {
-			context.primary = createJetpackUpgradeMessage();
-			return next();
-		}
-
-		if ( site ) {
-			baseAnalyticsPath = basePath + '/:site';
-		} else {
-			baseAnalyticsPath = basePath;
-		}
-
-		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
-
-		context.primary = React.createElement( MenusComponent, {
-			siteMenus: siteMenus,
-			itemTypes: itemTypes,
-			key: siteMenus.siteID,
-			site: site
-		} );
-		next();
+	if ( site && site.capabilities && ! site.capabilities.edit_theme_options ) {
+		notices.error( i18n.translate( 'You are not authorized to manage settings for this site.' ) );
+		return;
 	}
 
-};
+	titleActions.setTitle( i18n.translate( 'Menus', { textOnly: true } ), { siteID: context.params.site_id } );
 
-module.exports = controller;
+	function createJetpackUpgradeMessage() {
+		return React.createElement( MainComponent, null,
+			React.createElement( JetpackManageErrorPage, {
+				template: 'updateJetpack',
+				site: site,
+				version: '3.5',
+				illustration: '/calypso/images/drake/drake-nomenus.svg',
+				secondaryAction: i18n.translate( 'Open Classic Menu Editor' ),
+				secondaryActionURL: site.options.admin_url + 'nav-menus.php',
+				secondaryActionTarget: '_blank'
+			} )
+		);
+	}
+
+	if ( site && site.jetpack && ! site.hasJetpackMenus ) {
+		context.primary = createJetpackUpgradeMessage();
+		return next();
+	}
+
+	if ( site ) {
+		baseAnalyticsPath = basePath + '/:site';
+	} else {
+		baseAnalyticsPath = basePath;
+	}
+
+	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
+
+	context.primary = React.createElement( MenusComponent, {
+		siteMenus: siteMenus,
+		itemTypes: itemTypes,
+		key: siteMenus.siteID,
+		site: site
+	} );
+	next();
+};
