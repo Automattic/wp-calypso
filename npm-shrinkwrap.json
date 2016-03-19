@@ -4631,7 +4631,7 @@
       "version": "1.0.2"
     },
     "localforage": {
-      "version": "1.3.3",
+      "version": "1.4.0",
       "dependencies": {
         "promise": {
           "version": "5.0.0",
