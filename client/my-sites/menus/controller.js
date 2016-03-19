@@ -1,8 +1,7 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+var React = require( 'react' );
 
 /**
  * Internal Dependencies
@@ -21,7 +20,7 @@ var sites = require( 'lib/sites-list' )(),
 
 var controller = {
 
-	menus: function( context ) {
+	menus: function( context, next ) {
 		var analyticsPageTitle = 'Menus',
 			basePath = route.sectionify( context.path ),
 			site = sites.getSelectedSite(),
@@ -34,26 +33,23 @@ var controller = {
 
 		titleActions.setTitle( i18n.translate( 'Menus', { textOnly: true } ), { siteID: context.params.site_id } );
 
-		function renderJetpackUpgradeMessage() {
-			ReactDom.render(
-				React.createElement( MainComponent, null,
-					React.createElement( JetpackManageErrorPage, {
-						template: 'updateJetpack',
-						site: site,
-						version: '3.5',
-						illustration: '/calypso/images/drake/drake-nomenus.svg',
-						secondaryAction: i18n.translate( 'Open Classic Menu Editor' ),
-						secondaryActionURL: site.options.admin_url + 'nav-menus.php',
-						secondaryActionTarget: '_blank'
-					} )
-				),
-				document.getElementById( 'primary' )
+		function createJetpackUpgradeMessage() {
+			return React.createElement( MainComponent, null,
+				React.createElement( JetpackManageErrorPage, {
+					template: 'updateJetpack',
+					site: site,
+					version: '3.5',
+					illustration: '/calypso/images/drake/drake-nomenus.svg',
+					secondaryAction: i18n.translate( 'Open Classic Menu Editor' ),
+					secondaryActionURL: site.options.admin_url + 'nav-menus.php',
+					secondaryActionTarget: '_blank'
+				} )
 			);
 		}
 
 		if ( site && site.jetpack && ! site.hasJetpackMenus ) {
-			renderJetpackUpgradeMessage();
-			return;
+			context.primary = createJetpackUpgradeMessage();
+			return next();
 		}
 
 		if ( site ) {
@@ -64,15 +60,13 @@ var controller = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		ReactDom.render(
-			React.createElement( MenusComponent, {
-				siteMenus: siteMenus,
-				itemTypes: itemTypes,
-				key: siteMenus.siteID,
-				site: site
-			} ),
-			document.getElementById( 'primary' )
-		);
+		context.primary = React.createElement( MenusComponent, {
+			siteMenus: siteMenus,
+			itemTypes: itemTypes,
+			key: siteMenus.siteID,
+			site: site
+		} );
+		next();
 	}
 
 };
