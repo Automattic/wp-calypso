@@ -16,6 +16,7 @@ var MapDomain = React.createClass( {
 
 	propTypes: {
 		analyticsSection: React.PropTypes.string,
+		query: React.PropTypes.string,
 		productsList: React.PropTypes.object.isRequired
 	},
 
@@ -79,6 +80,7 @@ var MapDomain = React.createClass( {
 					onSave={ this.props.onSave }
 					cart={ this.props.cart }
 					products={ this.props.productsList.get() }
+					initialQuery={ this.props.initialQuery }
 					selectedSite={ selectedSite }
 					analyticsSection={ this.props.analyticsSection } />
 			</span>

@@ -20,16 +20,17 @@ var MapDomainStep = React.createClass( {
 
 	propTypes: {
 		products: React.PropTypes.object.isRequired,
+		initialQuery: React.PropTypes.string,
 		analyticsSection: React.PropTypes.string.isRequired
 	},
 
 	getInitialState: function() {
-		return { searchQuery: '' };
+		return { searchQuery: this.props.initialQuery };
 	},
 
 	componentWillMount: function() {
 		if ( this.props.initialState ) {
-			this.setState( this.props.initialState );
+			this.setState( Object.assign( {}, this.props.initialState, this.getInitialState() ) );
 		}
 	},
 
