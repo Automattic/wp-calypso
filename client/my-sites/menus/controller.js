@@ -1,22 +1,22 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal Dependencies
  */
-var getSelectedSite = require( 'client/state/ui/selectors' ).getSelectedSite,
-	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	analytics = require( 'analytics' ),
-	MainComponent = require( 'components/main' ),
-	JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' ),
-	itemTypes = require( 'my-sites/menus/menu-item-types' ),
-	MenusComponent = require( 'my-sites/menus/main' ),
-	notices = require( 'notices' ),
-	siteMenus = require( 'lib/menu-data' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import { getSelectedSite } from 'client/state/ui/selectors';
+import route from 'lib/route';
+import i18n from 'lib/mixins/i18n';
+import analytics from 'analytics';
+import MainComponent from 'components/main';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import itemTypes from 'my-sites/menus/menu-item-types';
+import MenusComponent from 'my-sites/menus/main';
+import notices from 'notices';
+import siteMenus from 'lib/menu-data';
+import titleActions from 'lib/screen-title/actions';
 
 export function menus( context, next ) {
 	var analyticsPageTitle = 'Menus',
