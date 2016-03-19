@@ -215,19 +215,16 @@ var Menus = React.createClass( {
 		}
 
 		return (
-			<Main className="manage-menus">
-				<SidebarNavigation />
-				<JetpackManageErrorPage
-					template="optInManage"
-					title={ this.translate( 'Looking to manage this site\'s menus?' ) }
-					site={ site }
-					section="menus"
-					secondaryAction={ this.translate( 'Open Classic Menu Editor' ) }
-					secondaryActionURL={ site.options.admin_url + 'nav-menus.php' }
-					secondaryActionTarget="_blank"
-					featureExample={ featureExample }
-				/>
-			</Main>
+			<JetpackManageErrorPage
+				template="optInManage"
+				title={ this.translate( 'Looking to manage this site\'s menus?' ) }
+				site={ site }
+				section="menus"
+				secondaryAction={ this.translate( 'Open Classic Menu Editor' ) }
+				secondaryActionURL={ site.options.admin_url + 'nav-menus.php' }
+				secondaryActionTarget="_blank"
+				featureExample={ featureExample }
+			/>
 		);
 	},
 
@@ -275,15 +272,13 @@ var Menus = React.createClass( {
 	},
 
 	render: function() {
-		var site = this.props.site;
-		if ( site && site.jetpack && ! site.canManage() ) {
-			return this.renderJetpackManageDisabledMessage( site );
-		}
+		const { site } = this.props;
+		const jetpackSiteButManageDisabled = site && site.jetpack && ! site.canManage();
 
 		return (
 			<Main className="manage-menus">
 				<SidebarNavigation />
-				{ this.renderMenus() }
+				{ jetpackSiteButManageDisabled ? this.renderJetpackManageDisabledMessage( site ) : this.renderMenus() }
 			</Main>
 		);
 	}
