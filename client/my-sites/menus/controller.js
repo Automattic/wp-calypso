@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
+var getSelectedSite = require( 'client/state/ui/selectors' ).getSelectedSite,
 	route = require( 'lib/route' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	analytics = require( 'analytics' ),
@@ -21,7 +21,7 @@ var sites = require( 'lib/sites-list' )(),
 export function menus( context, next ) {
 	var analyticsPageTitle = 'Menus',
 		basePath = route.sectionify( context.path ),
-		site = sites.getSelectedSite(),
+		site = getSelectedSite( context.store.getState() ),
 		baseAnalyticsPath;
 
 	if ( site && site.capabilities && ! site.capabilities.edit_theme_options ) {
