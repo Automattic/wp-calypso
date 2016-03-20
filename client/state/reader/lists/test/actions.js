@@ -11,10 +11,12 @@ import { expect } from 'chai';
 import {
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
+	READER_LISTS_FOLLOW
 } from 'state/action-types';
 import {
 	receiveLists,
-	requestSubscribedLists
+	requestSubscribedLists,
+	followList
 } from '../actions';
 
 describe( 'actions', () => {
@@ -71,6 +73,27 @@ describe( 'actions', () => {
 						{ ID: 413, title: 'Mango & Feijoa' }
 					]
 				} );
+			} );
+		} );
+	} );
+
+	describe( '#followList()', () => {
+		before( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/read/list/restapitests/testlist' )
+				.reply( 200, {
+					following: true
+				} );
+		} );
+
+		it( 'should dispatch fetch action when thunk triggered', () => {
+			followList( 'restapitests', 'testlist' )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: READER_LISTS_FOLLOW,
+				owner: 'restapitests',
+				slug: 'testlist'
 			} );
 		} );
 	} );
