@@ -33,7 +33,7 @@ import { setEditorPostId } from 'state/ui/editor/actions';
 import { editPost } from 'state/posts/actions';
 
 function getPostID( context ) {
-	if ( ! context.params.post ) {
+	if ( ! context.params.post || 'new' === context.params.post ) {
 		return null;
 	}
 
