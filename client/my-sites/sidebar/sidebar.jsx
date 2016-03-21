@@ -218,9 +218,7 @@ module.exports = React.createClass( {
 	plugins: function() {
 		var site = this.getSelectedSite(),
 			pluginsLink = '/plugins' + this.siteSuffix(),
-			addPluginsLink,
-			noticon,
-			target;
+			addPluginsLink;
 
 		if ( ! config.isEnabled( 'manage/plugins' ) ) {
 			if ( ! this.isSingle() ) {
@@ -230,9 +228,6 @@ module.exports = React.createClass( {
 			if ( site.options ) {
 				pluginsLink = site.options.admin_url + 'plugins.php';
 			}
-
-			target = '_blank';
-			noticon = <span className="noticon noticon-external" />;
 		}
 
 		if ( ! this.props.sites.canManageSelectedOrAll() ) {
@@ -387,9 +382,7 @@ module.exports = React.createClass( {
 	users: function() {
 		var site = this.getSelectedSite(),
 			usersLink = '/people/team' + this.siteSuffix(),
-			addPeopleLink = '/people/new' + this.siteSuffix(),
-			addPeopleTarget = null,
-			addPeopleButton;
+			addPeopleLink = '/people/new' + this.siteSuffix();
 
 		if ( ! site.capabilities ) {
 			return null;
@@ -411,7 +404,6 @@ module.exports = React.createClass( {
 			addPeopleLink = ( site.jetpack )
 				? site.options.admin_url + 'user-new.php'
 				: site.options.admin_url + 'users.php?page=wpcom-invite-users';
-			addPeopleTarget = '_blank';
 		}
 
 		return (
