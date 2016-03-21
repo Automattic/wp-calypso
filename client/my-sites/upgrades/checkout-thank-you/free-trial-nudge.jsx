@@ -11,7 +11,6 @@ import React from 'react';
  */
 import { cartItems } from 'lib/cart-values';
 import { getABTestVariation } from 'lib/abtest';
-import { getPlansBySite } from 'state/sites/plans/selectors';
 import {
 	isBusiness,
 	isDomainMapping,
@@ -21,10 +20,8 @@ import {
 import paths from 'my-sites/plans/paths';
 import PurchaseDetail from 'components/purchase-detail';
 import {
-	fetchSitePlans,
 	refreshSitePlans
 } from 'state/sites/plans/actions';
-import { shouldFetchSitePlans } from 'lib/plans';
 import { startFreeTrial } from 'lib/upgrades/actions';
 import * as upgradesNotices from 'lib/upgrades/notices';
 
@@ -36,10 +33,6 @@ const FreeTrialNudge = React.createClass( {
 			React.PropTypes.object
 		] ).isRequired,
 		sitePlans: React.PropTypes.object.isRequired
-	},
-
-	componentWillMount() {
-		this.props.fetchSitePlans( this.props.sitePlans, this.props.selectedSite );
 	},
 
 	getInitialState() {
@@ -106,18 +99,9 @@ const FreeTrialNudge = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => {
-		return {
-			sitePlans: getPlansBySite( state, props.selectedSite )
-		};
-	},
+	undefined,
 	( dispatch ) => {
 		return {
-			fetchSitePlans( sitePlans, site ) {
-				if ( shouldFetchSitePlans( sitePlans, site ) ) {
-					dispatch( fetchSitePlans( site.ID ) );
-				}
-			},
 			refreshSitePlans: ( siteId ) => {
 				dispatch( refreshSitePlans( siteId ) );
 			}
