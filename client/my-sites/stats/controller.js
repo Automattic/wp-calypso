@@ -4,7 +4,8 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	store = require( 'store' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	get = require( 'lodash/get' );
 
 /**
  * Internal Dependencies
@@ -191,8 +192,8 @@ module.exports = {
 
 		// Calculate the number of posts created by the user (not Headstarted) to determine if we should show the Insights tab, or the NUX placeholder.
 		postCount = site.post_count;
-		if ( site.options.headstart ) {
-			postCount = site.post_count - site.options.headstart.original.post.length;
+		if ( site.options && site.options.headstart ) {
+			postCount = site.post_count - get( site, 'options.headstart.original.post.length', 0 );
 		}
 		if ( postCount <= 1 &&
 				twoWeeksAgo.isBefore( siteCreated ) &&
