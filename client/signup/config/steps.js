@@ -80,21 +80,21 @@ module.exports = {
 	domains: {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.addDomainItemsToCart,
-		providesDependencies: [ 'siteSlug', 'domainItem', 'themeItem' ],
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		delayApiRequestUntilComplete: true
 	},
 
 	'domains-with-plan': {
 		stepName: 'domains-with-plan',
-		apiRequestFunction: stepActions.addDomainAndPlanFreeTrialToCart,
-		providesDependencies: [ 'cartItem', 'domainItem', 'siteSlug', 'themeItem' ],
+		apiRequestFunction: stepActions.addDomainItemsToCartAndStartFreeTrial,
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		delayApiRequestUntilComplete: true
 	},
 
 	'domains-with-theme': {
 		stepName: 'domains-with-theme',
 		apiRequestFunction: stepActions.addDomainItemsToCart,
-		providesDependencies: [ 'siteSlug', 'domainItem', 'themeItem' ],
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		dependencies: [ 'theme' ],
 		delayApiRequestUntilComplete: true
 	},
