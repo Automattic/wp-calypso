@@ -21,31 +21,31 @@ export default React.createClass( {
 				<h2>
 					<a href="/devdocs/design/foldable-card">Foldable Card</a>
 				</h2>
-				<p>
+				<div>
 					<FoldableCard header="This is a foldable card">
 						These are its contents
 					</FoldableCard>
-				</p>
+				</div>
 
-				<p>
+				<div>
 					<FoldableCard header="This is a compact card" compact>
 						I'm tiny! :D
 					</FoldableCard>
-				</p>
-				<p>
+				</div>
+				<div>
 					<FoldableCard header="This is a disabled card" disabled>
 						You can't see me!
 					</FoldableCard>
-				</p>
-				<p>
+				</div>
+				<div>
 					<FoldableCard
 						header="This is a foldable card with a custom action icon"
 						icon="arrow-down"
 						>
 						These are its contents
 					</FoldableCard>
-				</p>
-				<p>
+				</div>
+				<div>
 					<FoldableCard
 						header="This is a compact box with summary"
 						summary="Unexpanded Summary"
@@ -53,23 +53,23 @@ export default React.createClass( {
 						>
 						This is the main content of the card.
 					</FoldableCard>
-				</p>
-				<p>
+				</div>
+				<div>
 					<FoldableCard
 						header={ <div><div>This is a multiline foldable card</div><div><small> with a summary component & a expanded summary component</small></div></div> }
 						summary={ <button className="button">Update</button> }
 						expandedSummary={ <button className="button">Update</button> }>
 						Nothing to see here. Keep walking!
 					</FoldableCard>
-				</p>
-				<p>
+				</div>
+				<div>
 					<FoldableCard
 						header={ <div><div>This is a multiline foldable card</div><div><small> with a summary component & a expanded summary component</small></div></div> }
 						summary={ <Button compact scary>Update</Button> }
 						expandedSummary={ <Button compact scary>Update</Button> }>
 						Nothing to see here. Keep walking!
 					</FoldableCard>
-				</p>
+				</div>
 			</div>
 		);
 	}
