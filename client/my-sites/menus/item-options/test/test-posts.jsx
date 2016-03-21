@@ -7,17 +7,19 @@ import chai from 'chai';
  * Internal Dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-import helpers from 'my-sites/pages/helpers';
 import { useSandbox } from 'test/helpers/use-sinon';
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 describe( 'Posts', function() {
-	let Posts, siteMenus;
+	let Posts, siteMenus, helpers;
 	useFakeDom();
 	useSandbox();
+	useFilesystemMocks( __dirname + '/../../../../lib/menu-data/test' );
 
 	before( function() {
 		Posts = require( '../posts' );
 		siteMenus = require( 'lib/menu-data' );
+		helpers = require( 'my-sites/pages/helpers' );
 	} );
 
 	describe( 'maybeInjectPosts', function() {
