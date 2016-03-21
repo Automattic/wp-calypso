@@ -113,24 +113,39 @@ export default React.createClass( {
 
 	showStepOne() {
 		const { value, label } = this.state.stepOne;
-		analytics.tracks.recordEvent( 'calypso_survey_category_back_click', { category: JSON.stringify( { value, label } ) } );
+		analytics.tracks.recordEvent( 'calypso_survey_category_back_click', {
+			category_id: value,
+			category_label: label
+		} );
 		this.setState( { stepOne: null } );
 	},
 
 	showStepTwo( stepOne ) {
 		const { value, label } = stepOne;
-		analytics.tracks.recordEvent( 'calypso_survey_category_click_level_one', { category: JSON.stringify( { value, label } ) } );
+		analytics.tracks.recordEvent( 'calypso_survey_category_click_level_one', {
+			category_id: value,
+			category_label: label
+		} );
 		this.setState( { stepOne } );
 	},
 
 	handleNextStep( vertical ) {
 		const { value, label } = vertical;
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
-		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', { category: JSON.stringify( { value, label } ) } );
+		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', {
+			category_id: value,
+			category_label: label
+		} );
 		if ( this.state.stepOne ) {
-			analytics.tracks.recordEvent( 'calypso_survey_category_click_level_two', { category: JSON.stringify( { value, label } ) } );
+			analytics.tracks.recordEvent( 'calypso_survey_category_click_level_two', {
+				category_id: value,
+				category_label: label
+			} );
 		} else {
-			analytics.tracks.recordEvent( 'calypso_survey_category_click_level_one', { category: JSON.stringify( { value, label } ) } );
+			analytics.tracks.recordEvent( 'calypso_survey_category_click_level_one', {
+				category_id: value,
+				category_label: label
+			} );
 		}
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value } );
 		this.props.goToNextStep();
