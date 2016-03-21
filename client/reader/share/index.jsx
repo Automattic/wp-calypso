@@ -1,4 +1,5 @@
 var React = require( 'react' ),
+	get = require( 'lodash/get' ),
 	url = require( 'url' ),
 	config = require( 'config' ),
 	classnames = require( 'classnames' );
@@ -43,17 +44,14 @@ var actionMap = {
 		window.open( fackbookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
 	},
 	pressThis: function( post ) {
-		var primarySite = sitesList.getPrimary(), wordpressUrl;
+		var primarySite = sitesList.getPrimary(),
+			wordpressUrl = get( primarySite, 'options.admin_url' );
 
-		if ( ! primarySite ) {
+		if ( ! wordpressUrl ) {
 			return;
 		}
 
-		if ( primarySite.wpcom_url && ! primarySite.jetpack ) {
-			wordpressUrl = url.parse( 'https://' + primarySite.wpcom_url + '/wp-admin/press-this.php' );
-		} else {
-			wordpressUrl = url.parse( url.resolve( primarySite.URL, 'wp-admin/press-this.php' ) );
-		}
+		wordpressUrl = url.parse( url.resolve( primarySite.options.admin_url, 'press-this.php' ) );
 
 		delete wordpressUrl.search;
 		wordpressUrl.query = {
