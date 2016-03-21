@@ -15,6 +15,63 @@ const user = require( 'lib/user' )();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 
+function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeItem } ) {
+	wpcom.undocumented().sitesNew( {
+		blog_name: siteUrl,
+		blog_title: siteUrl,
+		options: {
+			theme: dependencies.theme
+		},
+		validate: false,
+		find_available_url: isPurchasingItem
+	}, function( error, response ) {
+		if ( error ) {
+			callback( error );
+
+			return;
+		}
+
+		const siteSlug = response.blog_details.blogname + '.wordpress.com';
+		const isFreeThemePreselected = themeSlug && ! themeItem;
+		const providedDependencies = {
+			siteSlug,
+			domainItem,
+			themeItem
+		};
+		const addToCartAndProceed = () => {
+			let newCartItems = [];
+
+			if ( domainItem ) {
+				newCartItems = [ ...newCartItems, domainItem ];
+			}
+			if ( googleAppsCartItem ) {
+				newCartItems = [ ...newCartItems, googleAppsCartItem ];
+			}
+			if ( themeItem ) {
+				newCartItems = [ ...newCartItems, themeItem ];
+			}
+
+			if ( newCartItems.length ) {
+				SignupCart.addToCart( siteSlug, newCartItems, function( cartError ) {
+					callback( cartError, providedDependencies );
+				} );
+			} else {
+				callback( [], providedDependencies );
+			}
+		};
+
+		if ( ! user.get() && isFreeThemePreselected ) {
+			setThemeOnSite( addToCartAndProceed, { siteSlug }, { themeSlug } );
+		} else if ( user.get() && isFreeThemePreselected ) {
+			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( this, addToCartAndProceed, { siteSlug }, { themeSlug } ) );
+		} else if ( user.get() ) {
+			fetchSitesAndUser( siteSlug, addToCartAndProceed );
+		} else {
+			addToCartAndProceed();
+		}
+	} );
+}
+
 function fetchSitesUntilSiteAppears( siteSlug, callback ) {
 	sites.once( 'change', function() {
 		if ( ! sites.select( siteSlug ) ) {
@@ -55,62 +112,7 @@ function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
 }
 
 module.exports = {
-	addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeItem } ) {
-		wpcom.undocumented().sitesNew( {
-			blog_name: siteUrl,
-			blog_title: siteUrl,
-			options: {
-				theme: dependencies.theme
-			},
-			validate: false,
-			find_available_url: isPurchasingItem
-		}, function( error, response ) {
-			if ( error ) {
-				callback( error );
-
-				return;
-			}
-
-			const siteSlug = response.blog_details.blogname + '.wordpress.com';
-			const isFreeThemePreselected = themeSlug && ! themeItem;
-			const providedDependencies = {
-				siteSlug,
-				domainItem,
-				themeItem
-			};
-			const addToCartAndProceed = () => {
-				let newCartItems = [];
-
-				if ( domainItem ) {
-					newCartItems = [ ...newCartItems, domainItem ];
-				}
-				if ( googleAppsCartItem ) {
-					newCartItems = [ ...newCartItems, googleAppsCartItem ];
-				}
-				if ( themeItem ) {
-					newCartItems = [ ...newCartItems, themeItem ];
-				}
-
-				if ( newCartItems.length ) {
-					SignupCart.addToCart( siteSlug, newCartItems, function( cartError ) {
-						callback( cartError, providedDependencies );
-					} );
-				} else {
-					callback( [], providedDependencies );
-				}
-			};
-
-			if ( ! user.get() && isFreeThemePreselected ) {
-				setThemeOnSite( addToCartAndProceed, { siteSlug }, { themeSlug } );
-			} else if ( user.get() && isFreeThemePreselected ) {
-				fetchSitesAndUser( siteSlug, setThemeOnSite.bind( this, addToCartAndProceed, { siteSlug }, { themeSlug } ) );
-			} else if ( user.get() ) {
-				fetchSitesAndUser( siteSlug, addToCartAndProceed );
-			} else {
-				addToCartAndProceed();
-			}
-		} );
-	},
+	addDomainItemsToCart: addDomainItemsToCart,
 
 	addPlanToCart( callback, { siteSlug }, { cartItem } ) {
 		if ( isEmpty( cartItem ) ) {
