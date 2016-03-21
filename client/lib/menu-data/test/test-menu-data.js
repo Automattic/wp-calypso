@@ -7,20 +7,29 @@ require( 'lib/react-test-env-setup' )();
 var chai = require( 'chai' ),
 	assert = chai.assert,
 	expect = chai.expect,
-	MenuData = require( '../menu-data' ).default,
 	sinon = require( 'sinon' ),
 	sinonChai = require( 'sinon-chai' ),
-	wp = require( 'lib/wp' ),
 	find = require( 'lodash/find' ),
 	last = require( 'lodash/last' ),
 	cloneDeep = require( 'lodash/cloneDeep' ),
 	get = require( 'lodash/get' ),
-	deepMapValues = require( 'lodash-deep' ).deepMapValues,
-	fixtures = require( './fixtures' );
+	deepMapValues = require( 'lodash-deep' ).deepMapValues;
+
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 chai.use( sinonChai );
 
 describe( 'MenuData', function() {
+	let MenuData, wp, fixtures;
+
+	useFilesystemMocks( __dirname );
+
+	before( function() {
+		MenuData = require( '../menu-data' ).default,
+		wp = require( 'lib/wp' ),
+		fixtures = require( './fixtures' );
+	} );
+
 	beforeEach( function() {
 		this.menuData = new MenuData();
 		this.wpMenusCall = sinon.spy( wp, 'menus' );
