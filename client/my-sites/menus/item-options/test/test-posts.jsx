@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import chai from 'chai';
+import path from 'path';
 
 /**
  * Internal Dependencies
@@ -14,7 +15,9 @@ describe( 'Posts', function() {
 	let Posts, siteMenus, helpers;
 	useFakeDom();
 	useSandbox();
-	useFilesystemMocks( __dirname + '/../../../../lib/menu-data/test' );
+
+	const menuDataPath = path.dirname( require.resolve( 'lib/menu-data' ) );
+	useFilesystemMocks( menuDataPath + '/test' );
 
 	before( function() {
 		Posts = require( '../posts' );
