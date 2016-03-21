@@ -1952,12 +1952,16 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
 		};
 		const parsedUrl = url.parse( targetUrl );
 		const endpointUrl = `/connect/site-info/${ parsedUrl.protocol.slice( 0, -1 ) }/${ parsedUrl.host }`;
-
-		this.wpcom.req.get( `${ endpointUrl }`, {
+		let params = {
 			filters: filters,
-			path: parsedUrl.path,
 			apiVersion: '1.1',
-		}, resolver );
+		};
+
+		if ( parsedUrl.path && parsedUrl.path !== '/' ) {
+			params.path = parsedUrl.path;
+		}
+
+		this.wpcom.req.get( `${ endpointUrl }`, params, resolver );
 	} );
 }
 
