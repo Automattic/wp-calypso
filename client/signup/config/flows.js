@@ -218,10 +218,10 @@ const flows = {
 	},
 
 	'free-trial': {
-		steps: [ 'themes', 'site', 'plans', 'user' ],
+		steps: [ 'themes', 'domains-with-plan', 'user' ],
 		destination: getSiteDestination,
 		description: 'Signup flow for free trials',
-		lastModified: '2015-12-18'
+		lastModified: '2016-03-21'
 	}
 };
 
