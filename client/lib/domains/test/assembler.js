@@ -33,8 +33,7 @@ describe( 'assembler', () => {
 		} ),
 		redirectDomainObject = {
 			autoRenewalDate: undefined,
-			expirationDate: undefined,
-			expirationMoment: undefined,
+			expirationMoment: null,
 			expired: undefined,
 			expirySoon: undefined,
 			googleAppsSubscription: undefined,

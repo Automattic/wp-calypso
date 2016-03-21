@@ -34,7 +34,7 @@ const RegisteredDomain = React.createClass( {
 
 		return (
 			<Property label={ this.translate( 'Expires on' ) }>
-				{ domain.expirationDate }
+				{ domain.expirationMoment.format( 'MMMM D, YYYY' ) }
 			</Property>
 		);
 	},
@@ -67,16 +67,16 @@ const RegisteredDomain = React.createClass( {
 						context: 'An icon label when Privacy Protection is enabled.'
 					} )
 				} );
-			} else {
-				return this.getLabel( {
-					status: 'is-warning',
-					icon: 'notice',
-					href: transferPath,
-					message: this.translate( 'Disabled for Transfer', {
-						context: 'An icon label when Privacy Protection is temporarily disabled for transfer.'
-					} )
-				} );
 			}
+
+			return this.getLabel( {
+				status: 'is-warning',
+				icon: 'notice',
+				href: transferPath,
+				message: this.translate( 'Disabled for Transfer', {
+					context: 'An icon label when Privacy Protection is temporarily disabled for transfer.'
+				} )
+			} );
 		}
 
 		return this.getLabel( {
@@ -142,7 +142,6 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	contactsPrivacyNavItem() {
-
 		const path = paths.domainManagementContactsPrivacy(
 			this.props.selectedSite.domain,
 			this.props.domain.name
