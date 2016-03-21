@@ -2,24 +2,28 @@
  * Tests for menu-data.js
  */
 
-require( 'lib/react-test-env-setup' )();
+/**
+ * External dependencies
+ */
+import { assert, expect } from 'chai';
+import sinon from 'sinon';
+import find from 'lodash/find';
+import last from 'lodash/last';
+import cloneDeep from 'lodash/cloneDeep';
+import get from 'lodash/get';
+import { deepMapValues } from 'lodash-deep';
 
-var chai = require( 'chai' ),
-	assert = chai.assert,
-	expect = chai.expect,
-	sinon = require( 'sinon' ),
-	find = require( 'lodash/find' ),
-	last = require( 'lodash/last' ),
-	cloneDeep = require( 'lodash/cloneDeep' ),
-	get = require( 'lodash/get' ),
-	deepMapValues = require( 'lodash-deep' ).deepMapValues;
-
+/**
+ * Internal dependencies
+ */
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'MenuData', function() {
 	let MenuData, wp, fixtures;
 
 	useFilesystemMocks( __dirname );
+	useFakeDom();
 
 	before( function() {
 		MenuData = require( '../menu-data' ).default,
