@@ -24,11 +24,12 @@ const EditorSticky = React.createClass( {
 	getInitialState: function() {
 		return {
 			tooltip: false
-		}
+		};
 	},
 
 	toggleStickyStatus: function() {
-		var stickyStat, stickyEventLabel;
+		let stickyStat;
+		let stickyEventLabel;
 
 		if ( ! this.props.post.sticky ) {
 			stickyStat = 'advanced_sticky_enabled_toolbar';

@@ -70,7 +70,7 @@ export default React.createClass( {
 				</div>
 				<EditorPostType />
 				<div className="editor-action-bar__last-group">
-					{ this.props.type === 'post' && <EditorSticky post={ this.props.post } /> }
+					{ this.props.post && this.props.type === 'post' && <EditorSticky post={ this.props.post } /> }
 					{ this.renderPostVisibility() }
 					<EditorDeletePost
 						post={ this.props.post }
@@ -91,9 +91,9 @@ export default React.createClass( {
 								isVisible={ this.state.viewLinkTooltip }
 								position="bottom left"
 							>
-								{ this.props.type === 'page' ?
-									this.translate( 'View page' ) :
-									this.translate( 'View post' )
+								{ this.props.type === 'page'
+									? this.translate( 'View page' )
+									: this.translate( 'View post' )
 								}
 							</Tooltip>
 						</a> }
