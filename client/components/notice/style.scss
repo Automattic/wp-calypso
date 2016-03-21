@@ -31,6 +31,10 @@
 	&.is-info {
 		background: $blue-wordpress;
 	}
+
+	@include breakpoint( "<480px" ) {
+		flex-direction: column;
+	}
 }
 
 .notice__icon {
@@ -111,6 +115,11 @@
 	&:hover,
 	&:focus {
 		background: rgba( 255, 255, 255, 0.2 );
+	}
+
+	@include breakpoint( "<480px" ) {
+		margin: 0;
+		justify-content: flex-end;
 	}
 }
 
