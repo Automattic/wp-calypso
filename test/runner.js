@@ -30,6 +30,13 @@ if ( program.whitelist ) {
 	setup.enableWhitelist();
 }
 
+if ( process.env.CIRCLECI ) {
+	console.log( 'Hello Circle!' );
+	// give circle more time by default because containers are slow
+	// why 10 seconds? a guess.
+	mocha.suite.timeout( 10000 );
+}
+
 mocha.suite.beforeAll( boot.before );
 mocha.suite.afterAll( boot.after );
 
