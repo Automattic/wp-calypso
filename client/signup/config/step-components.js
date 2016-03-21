@@ -1,28 +1,28 @@
 /**
  * Internal dependencies
  */
-var UserSignupComponent = require( 'signup/steps/user' ),
-	SiteComponent = require( 'signup/steps/site' ),
-	ThemeSelectionComponent = require( 'signup/steps/theme-selection' ),
+var config = require( 'config' ),
+	DesignTypeComponent = require( 'signup/steps/design-type' ),
+	DomainsStepComponent = require( 'signup/steps/domains' ),
 	PaidPlansOnly = require( 'signup/steps/paid-plans-only' ),
 	PlansStepComponent = require( 'signup/steps/plans' ),
-	DomainsStepComponent = require( 'signup/steps/domains' ),
-	DesignTypeComponent = require( 'signup/steps/design-type' ),
+	SiteComponent = require( 'signup/steps/site' ),
 	SurveyStepComponent = require( 'signup/steps/survey' ),
-	config = require( 'config' );
+	ThemeSelectionComponent = require( 'signup/steps/theme-selection' ),
+	UserSignupComponent = require( 'signup/steps/user' );
 
 module.exports = {
-	themes: ThemeSelectionComponent,
-	site: SiteComponent,
-	user: UserSignupComponent,
-	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
+	'design-type': DesignTypeComponent,
+	domains: DomainsStepComponent,
+	'domains-with-theme': DomainsStepComponent,
+	'jetpack-user': UserSignupComponent,
 	plans: PlansStepComponent,
 	'select-plan': PaidPlansOnly,
-	domains: DomainsStepComponent,
+	site: SiteComponent,
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,
-	'design-type': DesignTypeComponent,
+	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
+	themes: ThemeSelectionComponent,
 	'themes-headstart': ThemeSelectionComponent,
-	'domains-with-theme': DomainsStepComponent,
-	'jetpack-user': UserSignupComponent
+	user: UserSignupComponent
 };
