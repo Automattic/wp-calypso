@@ -72,7 +72,7 @@ module.exports = {
 			const providedDependencies = {
 				siteSlug,
 				domainItem,
-				themeItem,
+				themeItem
 			};
 			const addToCartAndProceed = () => {
 				let newCartItems = [];
