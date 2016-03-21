@@ -211,3 +211,16 @@
 	display: block;
 	margin: 8px 0;
 }
+
+.select-dropdown__label {
+	display: block;
+	color: lighten( $gray, 10% );
+	margin-top: 5px;
+	line-height: 20px;
+
+	label {
+		font-size: 12px;
+		text-transform: uppercase;
+		padding: 0px 16px 0px 16px;
+	}
+}
