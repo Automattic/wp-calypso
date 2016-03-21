@@ -125,8 +125,8 @@ const ThemeSheet = React.createClass( {
 		return (
 			<div>
 				<SectionHeader label={ i18n.translate( 'Features' ) } />
-				<Card className="themes__sheet-features">
-					<ul className="theme-features-list">
+				<Card>
+					<ul className="themes__sheet-features-list">
 						{ themeFeatures }
 					</ul>
 				</Card>
