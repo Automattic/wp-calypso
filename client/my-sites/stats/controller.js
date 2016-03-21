@@ -195,7 +195,7 @@ module.exports = {
 		if ( site.options && site.options.headstart ) {
 			postCount = site.post_count - get( site, 'options.headstart.original.post.length', 0 );
 		}
-		if ( postCount <= 1 &&
+		if ( postCount < 1 &&
 				twoWeeksAgo.isBefore( siteCreated ) &&
 				( ! site.jetpack ) ) {
 			isNux = true;
