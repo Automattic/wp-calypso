@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import debugModule from 'debug';
 import classNames from 'classnames';
+import getOr from 'lodash/get';
 import some from 'lodash/some';
 import find from 'lodash/find';
 import isEmpty from 'lodash/isEmpty';
@@ -13,6 +14,7 @@ import isEmpty from 'lodash/isEmpty';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import pluginsAccessControl from 'my-sites/plugins/access-control';
@@ -31,6 +33,8 @@ import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import FeatureExample from 'components/feature-example';
 import PluginsList from './plugins-list';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+
+import WpcomPluginPanel from 'my-sites/plugins-wpcom';
 
 /**
  * Module variables
@@ -320,6 +324,15 @@ const PluginsMain = React.createClass( {
 
 	render() {
 		const selectedSite = this.props.sites.getSelectedSite();
+
+		if ( config.isEnabled( 'manage/plugins/wpcom' ) && ! getOr( selectedSite, 'jetpack', true ) ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<WpcomPluginPanel />
+				</Main>
+			);
+		}
 
 		if ( this.state.accessError ) {
 			return (
