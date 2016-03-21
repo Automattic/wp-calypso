@@ -30,6 +30,20 @@ describe( 'reducer', () => {
 			themeDescription: 'the best theme ever invented',
 			themeDescriptionLong: 'the plato form of a theme',
 			themeSupportDocumentation: 'support comes from within',
+			themeTaxonomies: {
+				features: [ {
+					term_id: null,
+					name: 'Blog Excerpts',
+					slug: 'blog-excerpts',
+					term_group: '',
+					term_taxonomy_id: 0,
+					taxonomy: '',
+					description: '',
+					parent: 0,
+					count: 0,
+					filter: 'raw'
+				} ]
+			}
 		} );
 
 		expect( state.get( 'mood' ).toJS() ).to.eql( {
@@ -40,6 +54,20 @@ describe( 'reducer', () => {
 			description: 'the best theme ever invented',
 			descriptionLong: 'the plato form of a theme',
 			supportDocumentation: 'support comes from within',
+			taxonomies: {
+				features: [ {
+					term_id: null,
+					name: 'Blog Excerpts',
+					slug: 'blog-excerpts',
+					term_group: '',
+					term_taxonomy_id: 0,
+					taxonomy: '',
+					description: '',
+					parent: 0,
+					count: 0,
+					filter: 'raw'
+				} ]
+			}
 		} );
 	} );
 
