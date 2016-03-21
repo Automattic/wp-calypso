@@ -1,3 +1,5 @@
+const setup = require( 'setup' );
+
 function requireTestFiles( config, path = '' ) {
 	Object.keys( config ).forEach( ( folderName ) => {
 		const folderConfig = config[ folderName ];
@@ -12,5 +14,4 @@ function requireTestFiles( config, path = '' ) {
 	} );
 }
 
-// this assumes that there's a tests.json at the root of NODE_PATH
-requireTestFiles( require( 'tests.json' ) );
+requireTestFiles( setup.getConfig() );
