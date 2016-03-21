@@ -25,7 +25,7 @@ const WebPreview = React.createClass( {
 	propTypes: {
 		// Display the preview
 		showPreview: React.PropTypes.bool,
-		// Show external link button
+		// Show external link button (only if there is a previewUrl)
 		showExternal: React.PropTypes.bool,
 		// Show close button
 		showClose: React.PropTypes.bool,
@@ -205,7 +205,7 @@ const WebPreview = React.createClass( {
 					<Toolbar setDeviceViewport={ this.setDeviceViewport }
 						device={ this.state.device }
 						{ ...this.props }
-						showExternal={ ( this.props.previewMarkup ? false : this.props.showExternal ) }
+						showExternal={ ( this.props.previewUrl ? this.props.showExternal : false ) }
 						showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this._isMobile }
 					/>
 					<div className="web-preview__placeholder">
