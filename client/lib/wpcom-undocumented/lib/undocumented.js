@@ -1183,14 +1183,24 @@ Undocumented.prototype.readListsUpdate = function( query, fn ) {
 
 Undocumented.prototype.followList = function( query, fn ) {
 	var params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/list/:list/follow' );
-	this.wpcom.req.post( '/read/list/' + encodeURIComponent( query.owner ) + '/' + encodeURIComponent( query.slug ) + '/follow', params, fn );
+	debug( '/read/lists/:owner/:slug/follow' );
+	this.wpcom.req.post(
+		'/read/lists/' + encodeURIComponent( query.owner ) + '/' + encodeURIComponent( query.slug ) + '/follow',
+		{ apiVersion: '1.2' },
+		params,
+		fn
+	);
 };
 
 Undocumented.prototype.unfollowList = function( query, fn ) {
 	var params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/list/:list/unfollow' );
-	this.wpcom.req.post( '/read/list/' + encodeURIComponent( query.owner ) + '/' + encodeURIComponent( query.slug ) + '/unfollow', params, fn );
+	debug( '/read/lists/:owner/:slug/unfollow' );
+	this.wpcom.req.post(
+		'/read/lists/' + encodeURIComponent( query.owner ) + '/' + encodeURIComponent( query.slug ) + '/unfollow',
+		{ apiVersion: '1.2' },
+		params,
+		fn
+	);
 };
 
 Undocumented.prototype.readListTags = function( query, fn ) {
