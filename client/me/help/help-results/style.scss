@@ -13,33 +13,22 @@
 
 .help-result {
 	&:hover {
-		background-color: $blue-medium;
-		.help-result__title,
-		.help-result__description {
-			color: $white;
+		.help-result__title {
+			color: $blue-medium;
 		}
-		.help-result__icon-path {
-			fill: $white;
-		}
-	}
-}
-
-.help-result__wrapper {
-	&:hover {
-		background-color: $blue-medium;
 	}
 }
 
 .help-result__icon {
 	position: absolute;
 	margin: -2px 16px 0px -8px;
+	fill: $gray;
 }
 
 .help-result__title {
 	margin: -2px 0px 0px 32px;
 	color: $blue-wordpress;
 	font: 16px/20px $sans;
-	font-weight: 600;
 }
 
 .help-result__description {
