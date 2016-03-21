@@ -3,16 +3,24 @@
  */
 import page from 'page';
 
-/**
- * Internal Dependencies
- */
-import controller from 'my-sites/controller';
-import postsController from './controller';
-
 export default function() {
-	page( '/posts/:author?/:status?/:domain?',
-		controller.siteSelection,
-		controller.navigation,
-		postsController.posts
-	);
+	var loading = false;
+	page( '/posts/:author?/:status?/:domain?', function( context, next ) {
+		if ( loading ) {
+			next();
+			return;
+		}
+		loading = true;
+		require.ensure( ['my-sites/controller', './controller' ], function( req ) {
+			var controller = req( 'my-sites/controller' ),
+				postsController = req( './controller' );
+
+			page( '/posts/:author?/:status?/:domain?',
+				controller.siteSelection,
+				controller.navigation,
+				postsController.posts );
+
+			next();
+		}, 'posts-pages' );
+	} );
 };
