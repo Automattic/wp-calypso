@@ -91,6 +91,9 @@
 		"i18n-utils" : {
 			"test": [ "utils" ]
 		},
+		"menu-data" : {
+			"test" : [ "test-menu-data" ]
+		},
 		"mixins" : {
 			"pageable": {
 				"test": [ "index" ]
