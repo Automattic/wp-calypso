@@ -2,7 +2,8 @@
  * External dependencies
  */
 var expect = require( 'chai' ).expect,
-	map = require( 'lodash/map' );
+	map = require( 'lodash/map' ),
+	useFakeDom = require( 'test/helpers/use-fake-dom' );
 
 /**
  * Internal dependencies
@@ -11,6 +12,8 @@ var JetpackSite = require( 'lib/site/jetpack' ),
 	MediaUtils = require( '../utils' );
 
 describe( 'MediaUtils', function() {
+	useFakeDom();
+
 	describe( '#url()', function() {
 		var media;
 
