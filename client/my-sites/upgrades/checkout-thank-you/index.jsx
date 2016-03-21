@@ -87,9 +87,12 @@ const CheckoutThankYou = React.createClass( {
 		this.refreshSitesAndSitePlansIfPlanPurchased();
 	},
 
+	hasPlanOrDomainRegistration() {
+		return getPurchases( this.props ).some( purchase => isPlan( purchase ) || isDomainRegistration( purchase ) );
+	},
+
 	refreshSitesAndSitePlansIfPlanPurchased() {
-		if ( this.props.receipt.hasLoadedFromServer &&
-			getPurchases( this.props ).some( purchase => isPlan( purchase ) || isDomainRegistration( purchase ) ) ) {
+		if ( this.props.receipt.hasLoadedFromServer && this.hasPlanOrDomainRegistration() ) {
 			// Refresh selected site plans if the user just purchased a plan
 			this.props.refreshSitePlans( this.props.selectedSite.ID );
 

@@ -12,7 +12,7 @@ import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
-import { isBusiness, isPlan, isPremium } from 'lib/products-values';
+import { isBusiness, isPremium } from 'lib/products-values';
 import i18n from 'lib/mixins/i18n';
 import { shouldFetchSitePlans } from 'lib/plans';
 
@@ -30,7 +30,7 @@ const CartPlanDiscountAd = React.createClass( {
 		const { cart, sitePlans } = this.props;
 		let plan;
 
-		if ( ! sitePlans.hasLoadedFromServer || ! cart.hasLoadedFromServer || ! cartItems.getAll( cart ).some( isPlan ) ) {
+		if ( ! sitePlans.hasLoadedFromServer || ! cart.hasLoadedFromServer || ! cartItems.hasPlan( cart ) ) {
 			return null;
 		}
 
