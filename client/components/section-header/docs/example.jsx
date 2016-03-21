@@ -38,6 +38,11 @@ var Cards = React.createClass( {
 						{ this.translate( 'Add' ) }
 					</Button>
 				</SectionHeader>
+
+				<h2>Clickable SectionHeader</h2>
+
+				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 } href="/devdocs/design/section-header">
+				</SectionHeader>
 			</div>
 		);
 	}
