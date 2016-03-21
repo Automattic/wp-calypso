@@ -139,7 +139,7 @@ describe( 'selectors', () => {
 			expect( path ).to.equal( '/page/example.wordpress.com/413' );
 		} );
 
-		it( 'should prefix the type route for custom post types', () => {
+		it( 'should suffix the type route for custom post types', () => {
 			const path = getEditorPath( {
 				sites: {
 					items: {
@@ -157,7 +157,7 @@ describe( 'selectors', () => {
 				}
 			}, 2916284, 120 );
 
-			expect( path ).to.equal( '/type/jetpack-portfolio/example.wordpress.com/120' );
+			expect( path ).to.equal( '/edit/example.wordpress.com/jetpack-portfolio/120' );
 		} );
 
 		it( 'should derive post type from edited post', () => {

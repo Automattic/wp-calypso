@@ -2,6 +2,7 @@
  * External dependencies
  */
 import get from 'lodash/get';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -54,7 +55,7 @@ export function getEditorPath( state, siteId, postId ) {
 	switch ( type ) {
 		case 'post': path = '/post'; break;
 		case 'page': path = '/page'; break;
-		default: path = `/type/${ type }`; break;
+		default: path = `/edit`; break;
 	}
 
 	const siteSlug = getSiteSlug( state, siteId );
@@ -62,6 +63,10 @@ export function getEditorPath( state, siteId, postId ) {
 		path += `/${ siteSlug }`;
 	} else {
 		path += `/${ siteId }`;
+	}
+
+	if ( ! includes( [ 'post', 'page' ], type ) ) {
+		path += `/${ type }`;
 	}
 
 	if ( postId ) {
