@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 require( 'babel/register' );
 
-const program = require( 'commander' ),
+const debug = require( 'debug' )( 'test-runner' ),
+	program = require( 'commander' ),
 	Mocha = require( 'mocha' ),
 	path = require( 'path' ),
 	boot = require( './boot-test' ),
@@ -31,7 +32,7 @@ if ( program.whitelist ) {
 }
 
 if ( process.env.CIRCLECI ) {
-	console.log( 'Hello Circle!' );
+	debug( 'Hello Circle!' );
 	// give circle more time by default because containers are slow
 	// why 10 seconds? a guess.
 	mocha.suite.timeout( 10000 );
