@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -12,13 +13,12 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'ThemesList', function() {
 	let React, TestUtils, ThemesList;
 	useSandbox();
-	this.timeout( 10 * 1000 );
 
 	useMockery( mockery => {
 		React = require( 'react' );
-		TestUtils = require( 'react-addons-test-utils' ),
+		TestUtils = require( 'react-addons-test-utils' );
 
-		mockery.registerMock( './more-button', React.createClass( { render: () =>  <div/> } ) );
+		mockery.registerMock( './more-button', React.createClass( { render: () => <div/> } ) );
 		ThemesList = require( '../' );
 	} );
 
@@ -32,18 +32,21 @@ describe( 'ThemesList', function() {
 		this.props = {
 			themes: [
 				{
+					id: '1',
 					name: 'kubrick',
 					screenshot: '/theme/kubrick/screenshot.png',
 				},
 				{
+					id: '2',
 					name: 'picard',
 					screenshot: '/theme/picard/screenshot.png',
 				}
 			],
 			lastPage: true,
 			loading: false,
-			fetchNextPage: () => {},
-			getButtonOptions: () => {},
+			fetchNextPage: noop,
+			getButtonOptions: noop,
+			onScreenshotClick: noop
 		};
 
 		this.themesList = React.createElement( ThemesList, this.props );
@@ -81,8 +84,6 @@ describe( 'ThemesList', function() {
 			it( 'displays the EmptyContent component', function() {
 				assert( this.themesListElement.type.displayName === 'EmptyContent', 'No EmptyContent' );
 			} );
-
 		} );
 	} );
-
 } );
