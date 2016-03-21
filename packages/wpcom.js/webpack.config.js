@@ -22,12 +22,17 @@ module.exports = {
 					cacheDirectory: true,
 					optional: [ 'runtime' ]
 				}
+			},
+			{
+				test: /\.json$/,
+				exclude: /node_modules/,
+				loader: 'json-loader'
 			}
 		]
 	},
 
 	resolve: {
-		extensions: [ '', '.js' ]
+		extensions: [ '', '.js', '.json' ]
 	},
 
 	devtool: 'sourcemap'

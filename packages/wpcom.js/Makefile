@@ -34,10 +34,13 @@ distclean: clean
 dist: dist/lib dist/test
 	@mkdir -p $@
 
-dist/lib: dist/lib/util
+dist/lib: dist/lib/util dist/lib/runtime
 	@mkdir -p $@
 
 dist/lib/util:
+	@mkdir -p $@
+
+dist/lib/runtime:
 	@mkdir -p $@
 
 dist/test:
@@ -60,9 +63,10 @@ babelify: dist
 		--optional runtime \
 		--out-dir dist/lib/util
 	@$(BABEL) \
-		test \
+		lib/runtime \
 		--optional runtime \
-		--out-dir dist/test
+		--out-dir dist/lib/runtime
+	cp -rf lib/runtime/*.json dist/lib/runtime
 
 node_modules:
 	@NODE_ENV= $(NPM) install
