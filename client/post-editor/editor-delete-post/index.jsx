@@ -12,6 +12,7 @@ import { bindActionCreators } from 'redux';
 import actions from 'lib/posts/actions';
 import accept from 'lib/accept';
 import utils from 'lib/posts/utils';
+import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import Tooltip from 'components/tooltip';
 import { trashPost } from 'state/ui/editor/post/actions';
@@ -87,7 +88,8 @@ const EditorDeletePost = React.createClass( {
 		}
 
 		return (
-			<button
+			<Button
+				borderless
 				className={ classes }
 				onClick={ ! this.state.isTrashing && this.onSendToTrash }
 				onMouseEnter={ () => this.setState( { tooltip: true } ) }
@@ -103,7 +105,7 @@ const EditorDeletePost = React.createClass( {
 				>
 					{ tooltipText }
 				</Tooltip>
-			</button>
+			</Button>
 		);
 	}
 } );

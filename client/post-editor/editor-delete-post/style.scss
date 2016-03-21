@@ -1,9 +1,8 @@
-.editor-delete-post {
+.editor-delete-post.button {
 	color: lighten( $gray, 20% );
-	cursor: pointer;
-	font-size: 13px;
 	margin-left: 12px;
 	transition: color 200ms;
+	padding: 0;
 
 	&:hover {
 		color: $orange-fire;
