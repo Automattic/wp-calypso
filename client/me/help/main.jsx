@@ -65,23 +65,23 @@ module.exports = React.createClass( {
 		return (
 			<div className="help__support-links">
 				<CompactCard className="help__support-link" href="https://support.wordpress.com/" target="__blank">
-					<div>
+					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">{ this.translate( 'All support articles' ) }</h2>
 						<p className="help__support-link-content">{ this.translate( 'Looking to learn more about a feature? Our docs have all the details.' ) }</p>
 					</div>
 				</CompactCard>
 				<CompactCard className="help__support-link" href="https://dailypost.wordpress.com/" target="__blank">
-					<div>
+					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">{ this.translate( 'The Daily Post' ) }</h2>
 						<p className="help__support-link-content">{ this.translate( 'Get daily tips for your blog and connect with others to share your journey.' ) }</p>
 					</div>
 				</CompactCard>
 				<CompactCard className="help__support-link help__support-link-contact" href="/help/contact/">
-					<div>
+					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">{ this.translate( 'Get in touch' ) }</h2>
 						<p className="help__support-link-content">{ this.translate( 'Can\'t find the answer? Drop us a line and we\'ll lend a hand.' ) }</p>
 					</div>
-					<Button primary>{ this.translate( 'Contact Us' ) }</Button>
+					<Button className="help__support-link-button" primary>{ this.translate( 'Contact Us' ) }</Button>
 				</CompactCard>
 		</div>
 		);

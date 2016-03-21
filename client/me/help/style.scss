@@ -2,11 +2,11 @@
 	display: flex;
 }
 
-.help__support-link div {
+.help__support-link .help__support-link-section {
 	padding-right: 32px;
 }
 
-.help__support-link h2 {
+.help__support-link .help__support-link-title {
 	&:hover {
 		color: $blue-medium;
 	}
@@ -16,7 +16,7 @@
 	padding-right: 24px;
 }
 
-.help__support-link-contact div {
+.help__support-link-contact .help__support-link-section {
 	flex-grow: 1;
 }
 	
@@ -24,8 +24,8 @@
 	display: none;
 }
 
-.help__support-link-contact button {
-	flex: 0 0 106px; // make sure that that the width doesn't shrink
+.help__support-link-button {
+	flex: 0 0 106px; // make sure that the width doesn't shrink
 	align-self: center;
 }
 
