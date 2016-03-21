@@ -9,6 +9,7 @@ import React from 'react';
 import EditorAuthor from 'post-editor/editor-author';
 import EditorDeletePost from 'post-editor/editor-delete-post';
 import EditorPostType from 'post-editor/editor-post-type';
+import EditorSticky from 'post-editor/editor-sticky';
 import EditorVisibility from 'post-editor/editor-visibility';
 import Gridicon from 'components/gridicon';
 import utils from 'lib/posts/utils';
@@ -69,6 +70,7 @@ export default React.createClass( {
 				</div>
 				<EditorPostType />
 				<div className="editor-action-bar__last-group">
+					{ this.props.type === 'post' && <EditorSticky post={ this.props.post } /> }
 					{ this.renderPostVisibility() }
 					<EditorDeletePost
 						post={ this.props.post }
