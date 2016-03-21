@@ -1,10 +1,15 @@
+/**
+ * External dependencies
+ */
+import debugFactory from 'debug';
 import head from 'lodash/head';
 import last from 'lodash/last';
 import mergeWith from 'lodash/mergeWith';
 import reduce from 'lodash/reduce';
 import tail from 'lodash/tail';
 
-const files = [];
+const debug = debugFactory( 'test-runner' ),
+	files = [];
 let whitelistConfig;
 
 function enableWhitelist() {
@@ -16,7 +21,7 @@ function addFile( file ) {
 		const pathParts = tail( file.split( '/' ) );
 
 		if ( ! isFileWhitelisted( whitelistConfig, pathParts ) ) {
-			console.log( `Skipping file: ${file}.` );
+			debug( `Skipping file: ${file}.` );
 			return;
 		}
 	}
@@ -40,7 +45,7 @@ function isFileWhitelisted( config, pathParts ) {
 function getConfig() {
 	if ( ! whitelistConfig && files.length === 0 ) {
 		// this assumes that there's a tests.json at the root of NODE_PATH
-		console.log( 'No valid tests provided, loading whitelisted tests.' );
+		debug( 'No tests provided, loading whitelisted tests config.' );
 		return require( 'tests.json' );
 	}
 
