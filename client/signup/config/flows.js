@@ -8,8 +8,10 @@ var assign = require( 'lodash/assign' ),
  * Internal dependencies
  */
 var config = require( 'config' ),
+	plansPaths = require( 'my-sites/plans/paths' ),
 	stepConfig = require( './steps' ),
 	user = require( 'lib/user' )();
+
 import { getLocaleSlug } from 'lib/i18n-utils';
 
 function getCheckoutUrl( dependencies ) {
@@ -18,6 +20,14 @@ function getCheckoutUrl( dependencies ) {
 
 function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+}
+
+function getFreeTrialDestination( dependencies ) {
+	if ( dependenciesContainCartItem( dependencies ) ) {
+		return getCheckoutUrl( dependencies );
+	}
+
+	return plansPaths.plans( dependencies.siteSlug );
 }
 
 function getSiteDestination( dependencies ) {
@@ -219,7 +229,7 @@ const flows = {
 
 	'free-trial': {
 		steps: [ 'themes', 'domains-with-plan', 'user' ],
-		destination: getSiteDestination,
+		destination: getFreeTrialDestination,
 		description: 'Signup flow for free trials',
 		lastModified: '2016-03-21'
 	}
