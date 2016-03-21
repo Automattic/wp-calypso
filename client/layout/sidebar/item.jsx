@@ -9,7 +9,7 @@ import classnames from 'classnames';
  */
 import { isExternal } from 'lib/url';
 import Gridicon from 'components/gridicon';
-import sections from 'sections';
+import { preload } from 'sections-preload';
 
 export default React.createClass( {
 	displayName: 'SidebarItem',
@@ -48,7 +48,7 @@ export default React.createClass( {
 	preload() {
 		if ( ! this._preloaded && this.props.preloadSectionName ) {
 			this._preloaded = true;
-			sections.preload( this.props.preloadSectionName );
+			preload( this.props.preloadSectionName );
 		}
 	},
 
