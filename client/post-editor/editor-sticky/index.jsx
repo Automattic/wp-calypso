@@ -66,14 +66,14 @@ const EditorSticky = React.createClass( {
 				<Tooltip
 					context={ this.refs && this.refs.stickyPostButton }
 					isVisible={ this.state.tooltip }
-					position="bottom"
+					position="bottom left"
 				>
 					{ this.props.post && this.props.post.sticky
 						? <span>{ this.translate( 'Marked as sticky' ) }</span>
 						: <div>
-							{ this.translate( 'Mark post as sticky' ) }
+							{ this.translate( 'Mark as sticky' ) }
 							<span className="editor-sticky__explanation">
-								{ this.translate( 'Displayed at the top' ) }
+								{ this.translate( 'Displayed at top' ) }
 							</span>
 						</div>
 					}
