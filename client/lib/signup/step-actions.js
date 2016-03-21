@@ -15,6 +15,7 @@ const sites = require( 'lib/sites-list' )();
 const user = require( 'lib/user' )();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
+import { startFreeTrial } from 'lib/upgrades/actions';
 
 function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeItem } ) {
 	wpcom.undocumented().sitesNew( {
@@ -33,8 +34,10 @@ function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsC
 		}
 
 		const siteSlug = response.blog_details.blogname + '.wordpress.com';
+		const siteId = response.blog_details.blogid;
 		const isFreeThemePreselected = themeSlug && ! themeItem;
 		const providedDependencies = {
+			siteId,
 			siteSlug,
 			domainItem,
 			themeItem
@@ -82,16 +85,14 @@ function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsC
  * @param {object} dependencies - data provided to the current step
  * @param {object} data - additional data provided by the current step
  */
-function addPlanFreeTrialToCart( callback, dependencies, data ) {
-	const { siteSlug } = dependencies,
-		cartItem = cartItems.planItem( 'value_bundle', true ),
-		providedDependencies = assign( {}, dependencies, { cartItem } );
+function startFreePremiumTrial( callback, dependencies, data ) {
+	const { siteId } = dependencies;
 
-	SignupCart.addToCart( siteSlug, cartItem, function( error ) {
+	startFreeTrial( siteId, cartItems.planItem( 'value_bundle' ), ( error ) => {
 		if ( error ) {
-			callback( error, providedDependencies );
+			callback( error, dependencies );
 		} else {
-			callback( undefined, providedDependencies );
+			callback( error, dependencies, data );
 		}
 	} );
 }
@@ -138,12 +139,12 @@ function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
 module.exports = {
 	addDomainItemsToCart: addDomainItemsToCart,
 
-	addDomainAndPlanFreeTrialToCart( callback, dependencies, data ) {
+	addDomainItemsToCartAndStartFreeTrial( callback, dependencies, data ) {
 		addDomainItemsToCart( ( error, providedDependencies ) => {
 			if ( error ) {
 				callback( error, providedDependencies );
 			} else {
-				addPlanFreeTrialToCart( callback, providedDependencies, data );
+				startFreePremiumTrial( callback, providedDependencies, data );
 			}
 		}, dependencies, data );
 	},
