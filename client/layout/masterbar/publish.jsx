@@ -11,7 +11,7 @@ import MasterbarItem from './item';
 import SitesPopover from 'components/sites-popover';
 import paths from 'lib/paths';
 import viewport from 'lib/viewport';
-import sections from 'sections';
+import { preload } from 'sections-preload';
 
 export default React.createClass( {
 	displayName: 'MasterbarItemNew',
@@ -81,7 +81,7 @@ export default React.createClass( {
 				isActive={ this.props.isActive }
 				tooltip={ this.props.tooltip }
 				className={ classes }
-				preloadSection={ () => sections.preload( 'post-editor' ) }
+				preloadSection={ () => preload( 'post-editor' ) }
 			>
 				{ this.props.children }
 				<SitesPopover
