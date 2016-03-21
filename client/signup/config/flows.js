@@ -5,8 +5,8 @@ var assign = require( 'lodash/assign' ),
 	reject = require( 'lodash/reject' );
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 var config = require( 'config' ),
 	stepConfig = require( './steps' ),
 	user = require( 'lib/user' )();
@@ -72,7 +72,7 @@ const flows = {
 	},
 
 	businessv2: {
-		steps: ['domains', 'user' ],
+		steps: [ 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
@@ -81,7 +81,7 @@ const flows = {
 	},
 
 	premiumv2: {
-		steps: ['domains', 'user' ],
+		steps: [ 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
@@ -222,7 +222,7 @@ const flows = {
 		destination: getSiteDestination,
 		description: 'Signup flow for free trials',
 		lastModified: '2015-12-18'
-	},
+	}
 };
 
 function removeUserStepFromFlow( flow ) {

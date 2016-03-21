@@ -44,7 +44,7 @@ module.exports = {
 	},
 
 	test: {
-		stepName: 'test',
+		stepName: 'test'
 	},
 
 	survey: {
