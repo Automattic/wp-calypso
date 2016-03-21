@@ -22,7 +22,6 @@ import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
 import FreeTrialNudge from './free-trial-nudge'
-import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
 import GoogleAppsDetails from './google-apps-details';
 import HappinessSupport from 'components/happiness-support';
@@ -88,8 +87,12 @@ const CheckoutThankYou = React.createClass( {
 		this.refreshSitesAndSitePlansIfPlanPurchased();
 	},
 
+	hasPlanOrDomainRegistration() {
+		return getPurchases( this.props ).some( purchase => isPlan( purchase ) || isDomainRegistration( purchase ) );
+	},
+
 	refreshSitesAndSitePlansIfPlanPurchased() {
-		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).some( isPlan ) ) {
+		if ( this.props.receipt.hasLoadedFromServer && this.hasPlanOrDomainRegistration() ) {
 			// Refresh selected site plans if the user just purchased a plan
 			this.props.refreshSitePlans( this.props.selectedSite.ID );
 
