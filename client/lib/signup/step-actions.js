@@ -19,10 +19,10 @@ function fetchSitesUntilSiteAppears( siteSlug, callback ) {
 	sites.once( 'change', function() {
 		if ( ! sites.select( siteSlug ) ) {
 			// if the site isn't in the list then bind to change and fetch again again
-			return fetchSitesUntilSiteAppears( siteSlug, callback );
+			fetchSitesUntilSiteAppears( siteSlug, callback );
+		} else {
+			callback();
 		}
-
-		callback();
 	} );
 
 	// this call is deferred because sites.fetching is not set to false until
@@ -44,7 +44,9 @@ function fetchSitesAndUser( siteSlug, onComplete ) {
 
 function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
 	if ( isEmpty( themeSlug ) ) {
-		return defer( callback );
+		defer( callback );
+
+		return;
 	}
 
 	wpcom.undocumented().changeTheme( siteSlug, { theme: themeSlug }, function( errors ) {
@@ -64,7 +66,9 @@ module.exports = {
 			find_available_url: isPurchasingItem
 		}, function( error, response ) {
 			if ( error ) {
-				return callback( error );
+				callback( error );
+
+				return;
 			}
 
 			const siteSlug = response.blog_details.blogname + '.wordpress.com';
@@ -97,30 +101,30 @@ module.exports = {
 			};
 
 			if ( ! user.get() && isFreeThemePreselected ) {
-				return setThemeOnSite( addToCartAndProceed, { siteSlug }, { themeSlug } );
-			}
-
-			if ( user.get() && isFreeThemePreselected ) {
-				return fetchSitesAndUser( siteSlug, setThemeOnSite.bind( this, addToCartAndProceed, { siteSlug }, { themeSlug } ) );
+				setThemeOnSite( addToCartAndProceed, { siteSlug }, { themeSlug } );
+			} else if ( user.get() && isFreeThemePreselected ) {
+				fetchSitesAndUser( siteSlug, setThemeOnSite.bind( this, addToCartAndProceed, { siteSlug }, { themeSlug } ) );
 			} else if ( user.get() ) {
-				return fetchSitesAndUser( siteSlug, addToCartAndProceed );
+				fetchSitesAndUser( siteSlug, addToCartAndProceed );
+			} else {
+				addToCartAndProceed();
 			}
-
-			addToCartAndProceed();
 		} );
 	},
 
 	addPlanToCart( callback, { siteSlug }, { cartItem } ) {
 		if ( isEmpty( cartItem ) ) {
 			// the user selected the free plan
-			return defer( callback );
+			defer( callback );
+
+			return;
 		}
 
 		SignupCart.addToCart( siteSlug, cartItem, callback );
 	},
 
 	createAccount( callback, dependencies, { userData, flowName, queryArgs } ) {
-		return wpcom.undocumented().usersNew( assign(
+		wpcom.undocumented().usersNew( assign(
 			{}, userData, {
 				ab_test_variations: getSavedVariations(),
 				validate: false,
