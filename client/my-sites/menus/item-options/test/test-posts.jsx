@@ -23,10 +23,8 @@ describe( 'Posts', function() {
 	describe( 'maybeInjectPosts', function() {
 		beforeEach( function() {
 			this.itemToInject = {};
-			siteMenus.generateNewPageMenuItem = () => ( {} );
-			this.siteMenusStub = this.sandbox.stub( siteMenus, 'generateHomePageMenuItem', function() {
-				return this.itemToInject;
-			}.bind( this ) );
+			siteMenus.generateNewPageMenuItem = () => {};
+			this.siteMenusStub = this.sandbox.stub( siteMenus, 'generateHomePageMenuItem', () => this.itemToInject );
 		} );
 
 		afterEach( function() {
@@ -34,21 +32,21 @@ describe( 'Posts', function() {
 		} );
 
 		it( 'should inject when the menu type is "page"', function() {
-			var postsNode = new Posts( {posts: [], type: 'page' } ),
-				injectedPosts = postsNode.maybeInjectPosts();
+			const postsNode = new Posts( {posts: [], type: 'page' } );
+			const injectedPosts = postsNode.maybeInjectPosts();
 			chai.expect( injectedPosts[0] ).to.equal( this.itemToInject );
 		} );
 
 		it( 'should not inject when the menu type is not "page"', function() {
-			var postsNode = new Posts( {posts: [], type: 'post' } ),
-				injectedPosts = postsNode.maybeInjectPosts();
+			const postsNode = new Posts( {posts: [], type: 'post' } );
+			const injectedPosts = postsNode.maybeInjectPosts();
 			chai.expect( injectedPosts.length ).to.equal( 0 );
 		} );
 
 		it( 'should inject with pass title to generator when there is a front page set', function() {
-			var isFrontPageStub = this.sandbox.stub( helpers, 'isFrontPage', () => true ),
-				post = {title: 'Test'},
-				postsNode = new Posts( { posts: [post], type: 'page' } );
+			const isFrontPageStub = this.sandbox.stub( helpers, 'isFrontPage', () => true );
+			const post = { title: 'Test' };
+			const postsNode = new Posts( { posts: [post], type: 'page' } );
 			postsNode.maybeInjectPosts();
 			chai.expect( isFrontPageStub ).to.have.been.calledWith( post );
 			chai.expect( this.siteMenusStub ).to.have.been.calledWith( post.title );
