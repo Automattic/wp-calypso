@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-const find = require( 'lodash/find' ),
-	without = require( 'lodash/without' ),
-	mapKeys = require( 'lodash/mapKeys' ),
-	camelCase = require( 'lodash/camelCase' );
+import find from 'lodash/find';
+import without from 'lodash/without';
+import mapKeys from 'lodash/mapKeys';
+import camelCase from 'lodash/camelCase';
 
 /**
  * Internal dependencies
  */
-const domainTypes = require( './constants' ).type,
-	i18n = require( 'lib/mixins/i18n' );
+import {type as domainTypes} from './constants';
+import i18n from 'lib/mixins/i18n';
 
 function createDomainObjects( dataTransferObject ) {
 	let domains = [];
@@ -22,8 +22,7 @@ function createDomainObjects( dataTransferObject ) {
 	domains = dataTransferObject.map( ( domain ) => {
 		return {
 			autoRenewalDate: domain.auto_renewal_date,
-			expirationDate: domain.expiry,
-			expirationMoment: domain.expiry && i18n.moment( domain.expiry, 'MMMM D, YYYY', 'en' ).locale( false ),
+			expirationMoment: domain.expiry ? i18n.moment( domain.expiry ) : null,
 			expired: domain.expired,
 			expirySoon: domain.expiry_soon,
 			googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),

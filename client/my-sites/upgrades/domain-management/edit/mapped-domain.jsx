@@ -31,7 +31,7 @@ const MappedDomain = React.createClass( {
 
 		return (
 			<Property label={ this.translate( 'Mapping expires on' ) }>
-				{ domain.expirationDate }
+				{ domain.expirationMoment.format( 'MMMM D, YYYY' ) }
 			</Property>
 		);
 	},
@@ -91,7 +91,6 @@ const MappedDomain = React.createClass( {
 	},
 
 	dnsRecordsNavItem() {
-
 		const path = paths.domainManagementDns(
 			this.props.selectedSite.domain,
 			this.props.domain.name
