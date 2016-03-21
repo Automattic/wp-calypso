@@ -8,6 +8,7 @@ var page = require( 'page' );
  */
 var sitesController = require( 'my-sites/controller' ),
 	controller = require( './controller' );
+import config from 'config';
 
 module.exports = function() {
 	page( '/post', controller.pressThis, sitesController.siteSelection, sitesController.sites );
@@ -17,4 +18,9 @@ module.exports = function() {
 	page( '/page', sitesController.siteSelection, sitesController.sites );
 	page( '/page/new', () => page.redirect( '/page' ) ); // redirect from beep-beep-boop
 	page( '/page/:site?/:post?', sitesController.siteSelection, sitesController.fetchJetpackSettings, controller.post );
+
+	if ( config.isEnabled( 'manage/custom-post-types' ) ) {
+		page( '/edit/:type', sitesController.siteSelection, sitesController.sites );
+		page( '/edit/:site?/:type/:post?', sitesController.siteSelection, sitesController.fetchJetpackSettings, controller.post );
+	}
 };

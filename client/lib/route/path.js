@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import includes from 'lodash/includes';
+
+/**
  * Internal Dependencies
  */
 var trailingslashit = require( './trailingslashit' ),
@@ -42,7 +47,7 @@ function getSiteFragment( path ) {
 function addSiteFragment( path, site ) {
 	var pieces = sectionify( path ).split( '/' );
 
-	if ( pieces[1] === 'post' || pieces[1] === 'page' ) {
+	if ( includes( [ 'post', 'page', 'edit' ], pieces[ 1 ] ) ) {
 		// New-style URL; change /:section[/:filter/...] into /:section/:site/[:filter/...]
 		pieces.splice( 2, 0, site );
 	} else {

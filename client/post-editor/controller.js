@@ -30,6 +30,8 @@ import {
 	EDITING_MODES
 } from 'state/ui/editor/post/actions';
 import { setEditorPostId } from 'state/ui/editor/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { editPost } from 'state/posts/actions';
 
 function getPostID( context ) {
@@ -42,7 +44,15 @@ function getPostID( context ) {
 }
 
 function determinePostType( context ) {
-	return startsWith( context.path, '/page' ) ? 'page' : 'post';
+	if ( startsWith( context.path, '/post' ) ) {
+		return 'post';
+	}
+
+	if ( startsWith( context.path, '/page' ) ) {
+		return 'page';
+	}
+
+	return context.params.type;
 }
 
 function renderEditor( context, postType ) {
@@ -60,31 +70,14 @@ function renderEditor( context, postType ) {
 	);
 }
 
-function maybeRedirect( context, postType, site ) {
-	const siteId = context.params.site;
-	const postId = context.params.post;
-	const basePath = '/' + postType;
+function maybeRedirect( context ) {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
 
-	if ( ! site ) {
-		page.redirect( basePath );
-		return true;
-	}
-
-	// matches `/post/:siteID/new` or `/page/:siteID/new`
-	if ( 'new' === postId ) {
-		page.redirect( basePath + '/' + site.slug );
-		return true;
-	}
-
-	// if siteId is a number
-	if ( /^\d+$/.test( siteId ) ) {
-		if ( postId ) {
-			// matches `/post/:siteID/:postId` OR `/page/:siteID/:postId`
-			page.redirect( basePath + '/' + site.slug + '/' + postId );
-		} else {
-			// matches `/post/:siteID` OR `/page/:siteID`
-			page.redirect( basePath + '/' + site.slug );
-		}
+	const path = getEditorPath( state, siteId, postId );
+	if ( path !== context.pathname ) {
+		page.redirect( path );
 		return true;
 	}
 
@@ -131,27 +124,41 @@ module.exports = {
 		function startEditing() {
 			const site = sites.getSite( route.getSiteFragment( context.path ) );
 
-			if ( maybeRedirect( context, postType, site ) ) {
-				return;
-			}
-
 			context.store.dispatch( setEditorPostId( postID ) );
 			context.store.dispatch( editPost( { type: postType }, site.ID, postID ) );
 
-			let titleStrings;
-			if ( 'page' === postType ) {
-				titleStrings = {
-					edit: i18n.translate( 'Edit Page', { textOnly: true } ),
-					new: i18n.translate( 'New Page', { textOnly: true } ),
-					ga: 'Page'
-				};
-			} else {
-				titleStrings = {
-					edit: i18n.translate( 'Edit Post', { textOnly: true } ),
-					new: i18n.translate( 'New Post', { textOnly: true } ),
-					ga: 'Post'
-				};
+			if ( maybeRedirect( context ) ) {
+				return;
 			}
+
+			let titleStrings;
+			switch ( postType ) {
+				case 'post':
+					titleStrings = {
+						edit: i18n.translate( 'Edit Post', { textOnly: true } ),
+						new: i18n.translate( 'New Post', { textOnly: true } ),
+						ga: 'Post'
+					};
+					break;
+
+				case 'page':
+					titleStrings = {
+						edit: i18n.translate( 'Edit Page', { textOnly: true } ),
+						new: i18n.translate( 'New Page', { textOnly: true } ),
+						ga: 'Page'
+					};
+					break;
+
+				default:
+					// [TODO]: Improve these strings, notably once page query
+					// component is available for assigning title dynamically.
+					titleStrings = {
+						edit: i18n.translate( 'Edit', { textOnly: true } ),
+						new: i18n.translate( 'New', { textOnly: true } ),
+						ga: 'Custom Post Type'
+					};
+			}
+
 			// We have everything we need to start loading the post for editing,
 			// so kick it off here to minimize time spent waiting for it to load
 			// in the view components
