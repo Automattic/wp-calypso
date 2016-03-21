@@ -199,6 +199,11 @@
 		}
 	},
 	"my-sites": {
+		"menus" : {
+			"item-options" : {
+				"test": [ "test-posts" ]
+			}
+		},
 		"upgrades": {
 			"cart": {
 				"test": [ "cart-buttons" ]
