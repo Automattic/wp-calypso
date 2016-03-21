@@ -6,7 +6,7 @@ Lots of tests use `mockery` to mock out the underlying requirements of a module 
 
 Generally, we see `mockery` based mocking as a last resort. We prefer passing dependencies when we can, as `mockery` can be slow and invasive.
 
-NOTE: It seems that because of the `useCleanCache` setting, any React dependencies (including `react-addons-test-utils`) must be required _after_ the `useMockery()` call.
+When using mockery, to avoid subtle problems it is recommended to require any non-test-utility modules in either the `useMockery` callback or subsequent `before` blocks. For example, because of the `useCleanCache` setting, any React dependencies (including `react-addons-test-utils`) _must_ be required after the `useMockery()` call to avoid invariant errors
 
 ## Format:
 ```js
