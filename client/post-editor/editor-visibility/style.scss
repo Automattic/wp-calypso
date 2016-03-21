@@ -1,8 +1,6 @@
-.editor-visibility {
+.editor-visibility.button {
 	color: lighten( $gray, 20% );
-	height: 26px;
-	overflow: hidden;
-	display: inline;
+	padding: 0;
 	transition: color 200ms;
 
 	&.is-dialog-open,
@@ -14,11 +12,6 @@
 			color: darken( $gray, 10% );
 		}
 	}
-
-	.gridicon {
-		cursor: pointer;
-	}
-
 }
 
 .editor-visibility__dialog{

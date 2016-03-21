@@ -18,6 +18,7 @@ import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import Popover from 'components/popover';
 import touchDetect from 'lib/touch-detect';
@@ -345,7 +346,9 @@ const EditorVisibility = React.createClass( {
 		} );
 
 		return (
-			<div className={ classes }
+			<Button
+				borderless
+				className={ classes }
 				onClick={ this.togglePopover }
 				onMouseEnter={ this.showTooltip }
 				onMouseLeave={ this.hideTooltip }
@@ -417,7 +420,7 @@ const EditorVisibility = React.createClass( {
 						</FormFieldset>
 					</div>
 				</Popover>
-			</div>
+			</Button>
 		);
 	}
 
