@@ -14,6 +14,7 @@ var config = require( 'config' ),
 module.exports = {
 	'design-type': DesignTypeComponent,
 	domains: DomainsStepComponent,
+	'domains-with-plan': DomainsStepComponent,
 	'domains-with-theme': DomainsStepComponent,
 	'jetpack-user': UserSignupComponent,
 	plans: PlansStepComponent,

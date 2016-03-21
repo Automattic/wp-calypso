@@ -84,6 +84,13 @@ module.exports = {
 		delayApiRequestUntilComplete: true
 	},
 
+	'domains-with-plan': {
+		stepName: 'domains-with-plan',
+		apiRequestFunction: stepActions.addDomainAndPlanFreeTrialToCart,
+		providesDependencies: [ 'cartItem', 'domainItem', 'siteSlug', 'themeItem' ],
+		delayApiRequestUntilComplete: true
+	},
+
 	'domains-with-theme': {
 		stepName: 'domains-with-theme',
 		apiRequestFunction: stepActions.addDomainItemsToCart,
