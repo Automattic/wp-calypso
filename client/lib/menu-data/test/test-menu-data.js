@@ -8,7 +8,6 @@ var chai = require( 'chai' ),
 	assert = chai.assert,
 	expect = chai.expect,
 	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' ),
 	find = require( 'lodash/find' ),
 	last = require( 'lodash/last' ),
 	cloneDeep = require( 'lodash/cloneDeep' ),
@@ -16,8 +15,6 @@ var chai = require( 'chai' ),
 	deepMapValues = require( 'lodash-deep' ).deepMapValues;
 
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
-
-chai.use( sinonChai );
 
 describe( 'MenuData', function() {
 	let MenuData, wp, fixtures;
