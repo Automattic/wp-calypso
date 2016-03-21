@@ -21,11 +21,8 @@ function preprocessCartFromServer( cart ) {
 		products: castProductIDsToNumbers( cart.products )
 	} );
 
-	// Get rid of `_headers` data from `wpcom.js` until we actually need to use
-	// it.
-	newCart = omit( newCart, '_headers' );
-
-	return newCart;
+	// Gets rid of headers returned by the API
+	return omit( newCart, '_headers' );
 }
 
 // Add a server response date so we can distinguish between carts with the
