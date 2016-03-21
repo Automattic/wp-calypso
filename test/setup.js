@@ -38,7 +38,7 @@ function isFileWhitelisted( config, pathParts ) {
 }
 
 function getConfig() {
-	if ( files.length === 0 ) {
+	if ( ! whitelistConfig && files.length === 0 ) {
 		// this assumes that there's a tests.json at the root of NODE_PATH
 		console.log( 'No valid tests provided, loading whitelisted tests.' );
 		return require( 'tests.json' );
