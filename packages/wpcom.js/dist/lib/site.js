@@ -8,13 +8,10 @@ var Media = require('./site.media');
 var Comment = require('./site.comment');
 var SiteWordAds = require('./site.wordads');
 var Follow = require('./site.follow');
+var addRuntimeMethods = require('./util/runtime-builder');
+var SiteSettings = require('./site.settings');
+var siteGetMethods = require('./runtime/site.get');
 var debug = require('debug')('wpcom:site');
-
-/**
- * Resources array
- * A list of endpoints with the same structure
- */
-var resources = ['categories', 'comments', 'follows', 'media', 'posts', 'shortcodes', 'embeds', ['pageTemplates', 'page-templates'], ['postTypesList', 'post-types'], ['stats', 'stats'], ['statsClicks', 'stats/clicks'], ['statsComments', 'stats/comments'], ['statsCommentFollowers', 'stats/comment-followers'], ['statsCountryViews', 'stats/country-views'], ['statsFollowers', 'stats/followers'], ['statsPublicize', 'stats/publicize'], ['statsReferrers', 'stats/referrers'], ['statsSearchTerms', 'stats/search-terms'], ['statsStreak', 'stats/streak'], ['statsSummary', 'stats/summary'], ['statsTags', 'stats/tags'], ['statsTopAuthors', 'stats/top-authors'], ['statsTopPosts', 'stats/top-posts'], ['statsVideoPlays', 'stats/video-plays'], ['statsVisits', 'stats/visits'], 'tags', 'users'];
 
 /**
  * Create a Site instance
@@ -34,6 +31,9 @@ function Site(id, wpcom) {
   this._id = encodeURIComponent(id);
 }
 
+// add methods in runtime
+addRuntimeMethods(Site, siteGetMethods);
+
 /**
  * Require site information
  *
@@ -44,45 +44,6 @@ function Site(id, wpcom) {
 Site.prototype.get = function (query, fn) {
   return this.wpcom.req.get('/sites/' + this._id, query, fn);
 };
-
-/**
- * List method builder
- *
- * @param {String} subpath - endpoint sub path
- * @return {String} list method endpoint path
- */
-function list(subpath) {
-  /**
-   * Create and return the <names>List method
-   *
-   * @param {Object} [query] - query object parameter
-   * @param {Function} fn - callback function
-   */
-
-  var listMethod = function listMethod(query, fn) {
-    var path = '/sites/' + this._id + '/' + subpath;
-    return this.wpcom.req.get(path, query, fn);
-  };
-  listMethod._publicAPI = true;
-  return listMethod;
-}
-
-// walk for each resource and create related method
-var i = undefined,
-    res = undefined,
-    isarr = undefined,
-    name = undefined,
-    subpath = undefined;
-for (i = 0; i < resources.length; i++) {
-  res = resources[i];
-  isarr = Array.isArray(res);
-
-  name = isarr ? res[0] : res + 'List';
-  subpath = isarr ? res[1] : res;
-
-  debug('adding method: %o - sub-path: %o - version: %s', 'site.' + name + '()', subpath);
-  Site.prototype[name] = list(subpath);
-}
 
 /**
  * Create a `Post` instance
@@ -204,6 +165,15 @@ Site.prototype.cat = Site.prototype.category = function (slug) {
  */
 Site.prototype.tag = function (slug) {
   return new Tag(slug, this._id, this.wpcom);
+};
+
+/**
+ * Create a `SiteSettings` instance
+ *
+ * @return {SiteSettings} SiteSettings instance
+ */
+Site.prototype.settings = function () {
+  return new SiteSettings(this._id, this.wpcom);
 };
 
 /**
