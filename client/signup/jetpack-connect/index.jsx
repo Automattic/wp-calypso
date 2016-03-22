@@ -97,7 +97,7 @@ const JetpackConnectMain = React.createClass( {
 			return false;
 		}
 
-		if ( this.state.currentUrl.toLowerCase() === 'http://wordpress.com' ) {
+		if ( this.checkProperty( 'isWordPressDotCom' ) ) {
 			return 'wordpress.com';
 		}
 		if ( ! this.checkProperty( 'exists' ) ) {

@@ -44,6 +44,7 @@ export default {
 				wpcom.undocumented().getSiteConnectInfo( url, 'hasJetpack' ),
 				wpcom.undocumented().getSiteConnectInfo( url, 'isJetpackActive' ),
 				wpcom.undocumented().getSiteConnectInfo( url, 'isJetpackConnected' ),
+				wpcom.undocumented().getSiteConnectInfo( url, 'isWordPressDotCom' ),
 			] ).then( ( data, error ) => {
 				_fetching[ url ] = null;
 				debug( 'jetpack-connect state checked for url', url, error, data );
