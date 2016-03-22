@@ -259,13 +259,10 @@ var TokenField = React.createClass( {
 		}
 	},
 
-	_onClick: function( event ) {
-		var inputContainer = this.refs.tokensAndInput;
-		if ( event.target === inputContainer || inputContainer.contains( event.target ) ) {
-			debug( '_onClick activating component' );
-			this.setState( {
-				isActive: true
-			} );
+	_onClick: function() {
+		if ( this.refs.input && ! this.refs.input.hasFocus() ) {
+			debug( '_onClick focusing input' );
+			this.refs.input.focus();
 		}
 	},
 
