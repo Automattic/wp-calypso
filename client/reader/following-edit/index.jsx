@@ -4,6 +4,7 @@ import times from 'lodash/times';
 import trimStart from 'lodash/trimStart';
 import Immutable from 'immutable';
 import debounce from 'lodash/debounce';
+import remove from 'lodash/remove';
 import classnames from 'classnames';
 
 // Internal dependencies
@@ -48,7 +49,8 @@ const FollowingEdit = React.createClass( {
 
 	getInitialState: function() {
 		return Object.assign( {
-			isSearching: !! this.props.search
+			notices: [],
+			isSearching: !! this.props.search,
 		}, this.getStateFromStores() );
 	},
 
@@ -193,25 +195,61 @@ const FollowingEdit = React.createClass( {
 	},
 
 	handleFeedExport( fileName ) {
+		this.dismissFeedExportNotice();
+		if ( this.state.feedExportError ) {
+			this.dismissFeedImportExportError();
+		}
+
+		const notices = this.state.notices;
+		notices.push( 'renderFeedExportNotice' );
+
 		this.setState( {
-			feedExport: fileName
+			feedExport: fileName,
+			notices: notices
 		} );
 	},
 
 	handleFeedExportError( error ) {
+		this.dismissFeedImportExportError();
+		if ( this.state.feedExport ) {
+			this.dismissFeedExportNotice();
+		}
+
+		const notices = this.state.notices;
+		notices.push( 'renderFeedImportExportError' );
+
 		this.setState( {
+			notices: notices,
 			feedExportError: error
 		} );
 	},
 
 	handleFeedImport( data ) {
+		this.dismissFeedImportNotice();
+		if ( this.state.feedImportError ) {
+			this.dismissFeedImportExportError();
+		}
+
+		const notices = this.state.notices;
+		notices.push( 'renderFeedImportNotice' );
+
 		this.setState( {
+			notices: notices,
 			feedImport: data
 		} );
 	},
 
 	handleFeedImportError( error ) {
+		this.dismissFeedImportExportError();
+		if ( this.state.feedImport ) {
+			this.dismissFeedImportNotice();
+		}
+
+		const notices = this.state.notices;
+		notices.push( 'renderFeedImportExportError' );
+
 		this.setState( {
+			notices: notices,
 			feedImportError: error
 		} );
 	},
@@ -281,19 +319,28 @@ const FollowingEdit = React.createClass( {
 	},
 
 	dismissFeedExportNotice() {
+		const notices = this.state.notices;
+		remove( notices, ( f ) => f === 'renderFeedExportNotice' );
 		this.setState( {
-			feedExport: null,
+			notices: notices,
+			feedExport: null
 		} );
 	},
 
 	dismissFeedImportNotice() {
+		const notices = this.state.notices;
+		remove( notices, ( f ) => f ===	'renderFeedImportNotice' );
 		this.setState( {
+			notices: notices,
 			feedImport: null,
 		} );
 	},
 
 	dismissFeedImportExportError() {
+		const notices = this.state.notices;
+		remove( notices, ( f ) => f === 'renderFeedImportExportError' );
 		this.setState( {
+			notices: notices,
 			feedImportError: null,
 			feedExportError: null
 		} );
@@ -431,9 +478,13 @@ const FollowingEdit = React.createClass( {
 	},
 
 	onExistingFeedBlur() {
-		if ( ! this.props.search ) {
+		if ( ! this.state.searchString ) {
 			this.toggleSearching();
 		}
+	},
+
+	renderNotices() {
+		return this.state.notices.map( ( funcName ) => this[funcName]() );
 	},
 
 	render: function() {
@@ -473,9 +524,7 @@ const FollowingEdit = React.createClass( {
 				</MobileBackToSidebar>
 				{ this.renderFollowError() }
 				{ this.renderUnfollowError() }
-				{ this.renderFeedImportNotice() }
-				{ this.renderFeedExportNotice() }
-				{ this.renderFeedImportExportError() }
+				{ this.renderNotices() }
 
 				<FollowingEditSubscribeForm
 					onSearch={ this.handleNewSubscriptionSearch }
