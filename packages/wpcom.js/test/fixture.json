@@ -23,6 +23,12 @@
 
 	"post_comment": "New testing comment",
 
+	"queryDomains": {
+		"query": "flowers",
+		"quantity": 3,
+		"include_wordpressdotcom": true
+	},
+
 	"embed": "http://www.youtube.com/watch?v=JaNH56Vpg-A",
 
 	"media": {

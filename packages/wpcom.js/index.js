@@ -8,6 +8,8 @@ var requestHandler = require( 'wpcom-xhr-request' );
  */
 var Me = require( './lib/me' );
 var Site = require( './lib/site' );
+var Domains = require( './lib/domains' );
+var Domain = require( './lib/domain' );
 var Users = require( './lib/users' );
 var Batch = require( './lib/batch' );
 var Req = require( './lib/util/request' );
@@ -73,59 +75,76 @@ function WPCOM( token, reqHandler ) {
 }
 
 /**
-* Return `Me` object instance
-*
-* @return {Me} Me instance
-*/
+ * Return `Me` object instance
+ *
+ * @return {Me} Me instance
+ */
 WPCOM.prototype.me = function() {
 	return new Me( this );
 };
 
 /**
-* Return `Site` object instance
-*
-* @param {String} id - site identifier
-* @return {Site} Site instance
-*/
+ * Return `Domains` object instance
+ *
+ * @return {Domains} Domains instance
+ */
+WPCOM.prototype.domains = function() {
+	return new Domains( this );
+};
+
+/**
+ * Return `Domain` object instance
+ *
+ * @param {String} domainId - domain identifier
+ * @return {Domain} Domain instance
+ */
+WPCOM.prototype.domain = function( domainId ) {
+	return new Domain( domainId, this );
+};
+
+/**
+ * Return `Site` object instance
+ *
+ * @param {String} id - site identifier
+ * @return {Site} Site instance
+ */
 WPCOM.prototype.site = function( id ) {
 	return new Site( id, this );
 };
 
 /**
-* Return `Users` object instance
-*
-* @return {Users} Users instance
-*/
+ * Return `Users` object instance
+ *
+ * @return {Users} Users instance
+ */
 WPCOM.prototype.users = function() {
 	return new Users( this );
 };
 
-/**
-* Return `Batch` object instance
-*
-* @return {Batch} Batch instance
-* @api public
-*/
+ /**
+ * Return `Batch` object instance
+ *
+ * @return {Batch} Batch instance
+ */
 WPCOM.prototype.batch = function() {
 	return new Batch( this );
 };
 
 /**
-* List Freshly Pressed Posts
-*
-* @param {Object} [query] - optional query object
-* @param {Function} fn - callback function
-* @return {Function} request handler
-* @api public
-*/
+ * List Freshly Pressed Posts
+ *
+ * @param {Object} [query] - query object
+ * @param {Function} fn - callback function
+ * @return {Function} request handler
+ */
 WPCOM.prototype.freshlyPressed = function( query, fn ) {
 	return this.req.get( '/freshly-pressed', query, fn );
 };
 
 /**
-* Expose send-request
-* @TODO: use `this.req` instead of this method
-*/
+ * Expose send-request
+ * @TODO: use `this.req` instead of this method
+ */
 
 WPCOM.prototype.sendRequest = function( params, query, body, fn ) {
 	var msg = 'WARN! Don use `sendRequest() anymore. Use `this.req` method.';
@@ -172,6 +191,6 @@ if ( ! Promise.prototype.timeout ) {
 }
 
 /**
-* Expose `WPCOM` module
-*/
+ * Expose `WPCOM` module
+ */
 module.exports = WPCOM;
