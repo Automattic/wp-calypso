@@ -235,19 +235,21 @@ SitesList.prototype.update = function( sites ) {
  * @param {array} purchases - Array of purchases indexed by site IDs
  */
 SitesList.prototype.updatePlans = function( purchases ) {
-	this.data = this.data.map( function( site ) {
-		var plan;
+	if ( this.data ) {
+		this.data = this.data.map( function( site ) {
+			var plan;
 
-		if ( purchases[ site.ID ] ) {
-			plan = find( purchases[ site.ID ], isPlan );
+			if ( purchases[ site.ID ] ) {
+				plan = find( purchases[ site.ID ], isPlan );
 
-			if ( plan ) {
-				site.set( { plan: plan } );
+				if ( plan ) {
+					site.set( { plan: plan } );
+				}
 			}
-		}
 
-		return site;
-	} );
+			return site;
+		} );
+	}
 };
 
 /**

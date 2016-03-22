@@ -9,20 +9,102 @@ import async from 'async';
 /**
  * Internal dependencies
  */
+import { cartItems } from 'lib/cart-values';
 import wpcom from 'lib/wp' ;
 const sites = require( 'lib/sites-list' )();
 const user = require( 'lib/user' )();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
+import { startFreeTrial } from 'lib/upgrades/actions';
+
+function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeItem } ) {
+	wpcom.undocumented().sitesNew( {
+		blog_name: siteUrl,
+		blog_title: siteUrl,
+		options: {
+			theme: dependencies.theme
+		},
+		validate: false,
+		find_available_url: isPurchasingItem
+	}, function( error, response ) {
+		if ( error ) {
+			callback( error );
+
+			return;
+		}
+
+		const siteSlug = response.blog_details.blogname + '.wordpress.com';
+		const siteId = response.blog_details.blogid;
+		const isFreeThemePreselected = themeSlug && ! themeItem;
+		const providedDependencies = {
+			siteId,
+			siteSlug,
+			domainItem,
+			themeItem
+		};
+		const addToCartAndProceed = () => {
+			let newCartItems = [];
+
+			if ( domainItem ) {
+				newCartItems = [ ...newCartItems, domainItem ];
+			}
+
+			if ( googleAppsCartItem ) {
+				newCartItems = [ ...newCartItems, googleAppsCartItem ];
+			}
+
+			if ( themeItem ) {
+				newCartItems = [ ...newCartItems, themeItem ];
+			}
+
+			if ( newCartItems.length ) {
+				SignupCart.addToCart( siteSlug, newCartItems, function( cartError ) {
+					callback( cartError, providedDependencies );
+				} );
+			} else {
+				callback( undefined, providedDependencies );
+			}
+		};
+
+		if ( ! user.get() && isFreeThemePreselected ) {
+			setThemeOnSite( addToCartAndProceed, { siteSlug }, { themeSlug } );
+		} else if ( user.get() && isFreeThemePreselected ) {
+			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( this, addToCartAndProceed, { siteSlug }, { themeSlug } ) );
+		} else if ( user.get() ) {
+			fetchSitesAndUser( siteSlug, addToCartAndProceed );
+		} else {
+			addToCartAndProceed();
+		}
+	} );
+}
+
+/**
+ * Adds a Premium with free trial to the shopping cart.
+ *
+ * @param {function} callback - function to execute when action completes
+ * @param {object} dependencies - data provided to the current step
+ * @param {object} data - additional data provided by the current step
+ */
+function startFreePremiumTrial( callback, dependencies, data ) {
+	const { siteId } = dependencies;
+
+	startFreeTrial( siteId, cartItems.planItem( 'value_bundle' ), ( error ) => {
+		if ( error ) {
+			callback( error, dependencies );
+		} else {
+			callback( error, dependencies, data );
+		}
+	} );
+}
 
 function fetchSitesUntilSiteAppears( siteSlug, callback ) {
 	sites.once( 'change', function() {
 		if ( ! sites.select( siteSlug ) ) {
 			// if the site isn't in the list then bind to change and fetch again again
-			return fetchSitesUntilSiteAppears( siteSlug, callback );
+			fetchSitesUntilSiteAppears( siteSlug, callback );
+		} else {
+			callback();
 		}
-
-		callback();
 	} );
 
 	// this call is deferred because sites.fetching is not set to false until
@@ -44,7 +126,9 @@ function fetchSitesAndUser( siteSlug, onComplete ) {
 
 function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
 	if ( isEmpty( themeSlug ) ) {
-		return defer( callback );
+		defer( callback );
+
+		return;
 	}
 
 	wpcom.undocumented().changeTheme( siteSlug, { theme: themeSlug }, function( errors ) {
@@ -53,74 +137,31 @@ function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
 }
 
 module.exports = {
-	addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeItem } ) {
-		wpcom.undocumented().sitesNew( {
-			blog_name: siteUrl,
-			blog_title: siteUrl,
-			options: {
-				theme: dependencies.theme
-			},
-			validate: false,
-			find_available_url: isPurchasingItem
-		}, function( error, response ) {
+	addDomainItemsToCart: addDomainItemsToCart,
+
+	addDomainItemsToCartAndStartFreeTrial( callback, dependencies, data ) {
+		addDomainItemsToCart( ( error, providedDependencies ) => {
 			if ( error ) {
-				return callback( error );
+				callback( error, providedDependencies );
+			} else {
+				startFreePremiumTrial( callback, providedDependencies, data );
 			}
-
-			const siteSlug = response.blog_details.blogname + '.wordpress.com';
-			const isFreeThemePreselected = themeSlug && ! themeItem;
-			const providedDependencies = {
-				siteSlug,
-				domainItem,
-				themeItem,
-			};
-			const addToCartAndProceed = () => {
-				let newCartItems = [];
-
-				if ( domainItem ) {
-					newCartItems = [ ...newCartItems, domainItem ];
-				}
-				if ( googleAppsCartItem ) {
-					newCartItems = [ ...newCartItems, googleAppsCartItem ];
-				}
-				if ( themeItem ) {
-					newCartItems = [ ...newCartItems, themeItem ];
-				}
-
-				if ( newCartItems.length ) {
-					SignupCart.addToCart( siteSlug, newCartItems, function( cartError ) {
-						callback( cartError, providedDependencies );
-					} );
-				} else {
-					callback( [], providedDependencies );
-				}
-			};
-
-			if ( ! user.get() && isFreeThemePreselected ) {
-				return setThemeOnSite( addToCartAndProceed, { siteSlug }, { themeSlug } );
-			}
-
-			if ( user.get() && isFreeThemePreselected ) {
-				return fetchSitesAndUser( siteSlug, setThemeOnSite.bind( this, addToCartAndProceed, { siteSlug }, { themeSlug } ) );
-			} else if ( user.get() ) {
-				return fetchSitesAndUser( siteSlug, addToCartAndProceed );
-			}
-
-			addToCartAndProceed();
-		} );
+		}, dependencies, data );
 	},
 
 	addPlanToCart( callback, { siteSlug }, { cartItem } ) {
 		if ( isEmpty( cartItem ) ) {
 			// the user selected the free plan
-			return defer( callback );
+			defer( callback );
+
+			return;
 		}
 
 		SignupCart.addToCart( siteSlug, cartItem, callback );
 	},
 
 	createAccount( callback, dependencies, { userData, flowName, queryArgs } ) {
-		return wpcom.undocumented().usersNew( assign(
+		wpcom.undocumented().usersNew( assign(
 			{}, userData, {
 				ab_test_variations: getSavedVariations(),
 				validate: false,
