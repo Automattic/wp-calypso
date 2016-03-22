@@ -353,6 +353,9 @@
 			"test": [ "actions", "reducer", "selectors" ]
 		},
 		"posts": {
+			"counts": {
+				"test": [ "actions", "reducer", "selectors" ]
+			},
 			"test": [ "actions", "reducer", "selectors", "utils" ]
 		},
 		"receipts": {

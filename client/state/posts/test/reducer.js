@@ -20,7 +20,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import {
+import reducer, {
 	items,
 	queryRequests,
 	queries,
@@ -36,6 +36,18 @@ describe( 'reducer', () => {
 
 	after( () => {
 		console.warn.restore();
+	} );
+
+	it( 'should include expected keys in return value', () => {
+		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'counts',
+			'items',
+			'siteRequests',
+			'queryRequests',
+			'queries',
+			'queriesLastPage',
+			'edits'
+		] );
 	} );
 
 	describe( '#items()', () => {
