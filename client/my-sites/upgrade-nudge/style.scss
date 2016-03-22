@@ -1,0 +1,20 @@
+.upgrade-nudge.button {
+	margin-bottom: 16px;
+	text-align: left;
+	display: inline-flex;
+
+	.gridicon {
+		background: $alert-green;
+		border-radius: 50%;
+		margin-left: 32px;
+		color: $white;
+		padding: 6px;
+		align-self: center;
+	}
+}
+
+.upgrade-nudge__message {
+	color: $gray;
+	font-size: 12px;
+	display: block;
+}
