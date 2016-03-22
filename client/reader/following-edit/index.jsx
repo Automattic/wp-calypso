@@ -538,14 +538,20 @@ const FollowingEdit = React.createClass( {
 					ref="feed-search" />
 
 				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
-					<FollowingExportButton
-						onExport={ this.handleFeedExport }
-						onError={ this.handleFeedExportError } />
+					{ ! hasNoSubscriptions
+							? <FollowingExportButton
+									onExport={ this.handleFeedExport }
+									onError={ this.handleFeedExportError } />
+							: null }
 					<FollowingImportButton
 						onImport={ this.handleFeedImport }
 						onError={ this.handleFeedImportError } />
-					{ ! hasNoSubscriptions ? <FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } /> : null }
-					<Gridicon icon="search" className="following-edit__search" onClick={ this.toggleSearching } />
+					{ ! hasNoSubscriptions
+							? <FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
+							: null }
+					{ ! hasNoSubscriptions
+							? <Gridicon icon="search" className="following-edit__search" onClick={ this.toggleSearching } />
+							: null }
 				</SectionHeader>
 
 				{ ! hasNoSubscriptions ? <SearchCard
