@@ -849,7 +849,9 @@
           "version": "0.2.0",
           "dependencies": {
             "left-pad": {
-              "version": "0.0.3"
+              "version": "0.0.3",
+              "from": "git+https://github.com/Automattic/left-pad-0.0.3#0d758ece0b84137533516d7758b07df8be8a283e",
+              "resolved": "git+https://github.com/Automattic/left-pad-0.0.3#0d758ece0b84137533516d7758b07df8be8a283e"
             }
           }
         },
@@ -1322,7 +1324,9 @@
               "version": "0.2.0",
               "dependencies": {
                 "left-pad": {
-                  "version": "0.0.3"
+                  "version": "0.0.3",
+                  "from": "git+https://github.com/Automattic/left-pad-0.0.3#0d758ece0b84137533516d7758b07df8be8a283e",
+                  "resolved": "git+https://github.com/Automattic/left-pad-0.0.3#0d758ece0b84137533516d7758b07df8be8a283e"
                 }
               }
             },
