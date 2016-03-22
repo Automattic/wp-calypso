@@ -1,32 +1,23 @@
 /**
  * External dependencies
  */
+import find from 'lodash/find';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
+import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import i18n from 'lib/mixins/i18n';
+import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 
-const BusinessPlanDetails = ( { selectedSite } ) => {
+const BusinessPlanDetails = ( { selectedSite, sitePlans } ) => {
+	const plan = find( sitePlans.data, isBusiness );
+
 	return (
 		<div>
-			<PurchaseDetail
-				icon="globe"
-				title={ i18n.translate( 'Get your custom domain' ) }
-				description={
-					i18n.translate(
-						"Replace your site's address, {{em}}%(siteDomain)s{{/em}}, with a custom domain. " +
-						'A free domain is included with your plan.',
-						{
-							args: { siteDomain: selectedSite.domain },
-							components: { em: <em /> }
-						}
-					)
-				}
-				buttonText={ i18n.translate( 'Claim your free domain' ) }
-				href={ '/domains/add/' + selectedSite.slug } />
+			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
 
 			<PurchaseDetail
 				icon="customize"
@@ -49,7 +40,9 @@ BusinessPlanDetails.propTypes = {
 	selectedSite: React.PropTypes.oneOfType( [
 		React.PropTypes.bool,
 		React.PropTypes.object
-	] ).isRequired
+	] ).isRequired,
+	sitePlans: React.PropTypes.object.isRequired
+
 };
 
 export default BusinessPlanDetails;

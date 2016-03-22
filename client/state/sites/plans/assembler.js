@@ -13,6 +13,7 @@ const createSitePlanObject = ( plan ) => {
 		formattedDiscount: plan.formatted_discount,
 		formattedPrice: plan.formatted_price,
 		freeTrial: Boolean( plan.free_trial ),
+		hasDomainCredit: Boolean( plan.has_domain_credit ),
 		id: Number( plan.id ),
 		productName: plan.product_name,
 		productSlug: plan.product_slug,
