@@ -13,7 +13,8 @@ function getSectionsModule( sections ) {
 			"\tReact = require( 'react' ),",
 			"\tLoadingError = require( 'layout/error' ),",
 			"\tclasses = require( 'component-classes' ),",
-			"\tcontroller = require( 'controller' );",
+			"\tcontroller = require( 'controller' ),",
+			"\preloadHub = require( 'sections-preload' ).hub;",
 			'\n',
 			'var _loadedSections = {};'
 		].join( '\n' );
@@ -31,17 +32,18 @@ function getSectionsModule( sections ) {
 
 	return [
 		dependencies,
+		'function preload( section ) {',
+		'	switch ( section ) {',
+		'	' + loadSection,
+		'	}',
+		'}',
+		'preloadHub.on( \'preload\', preload );',
 		'module.exports = {',
 		'	get: function() {',
 		'		return ' + JSON.stringify( sections ) + ';',
 		'	},',
 		'	load: function() {',
 		'		' + sectionLoaders,
-		'	},',
-		'	preload: function( section ) {',
-		'		switch ( section ) {',
-		'		' + loadSection,
-		'		}',
 		'	}',
 		'};'
 	].join( '\n' );
