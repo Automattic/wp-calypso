@@ -35,6 +35,12 @@ describe( 'lib/route', function() {
 			it( 'should return the site when editing a new page', function() {
 				expect( route.getSiteFragment( '/page/example.wordpress.com' ) ).to.equal( 'example.wordpress.com' );
 			} );
+			it( 'should return the site when editing a an existing custom post type', function() {
+				expect( route.getSiteFragment( '/edit/jetpack-portfolio/example.wordpress.com/218' ) ).to.equal( 'example.wordpress.com' );
+			} );
+			it( 'should return the site when editing a new custom post type', function() {
+				expect( route.getSiteFragment( '/edit/jetpack-portfolio/example.wordpress.com' ) ).to.equal( 'example.wordpress.com' );
+			} );
 		} );
 		describe( 'for old-style editor paths', function() {
 			it( 'should return the site when editing an existing post', function() {
@@ -87,6 +93,11 @@ describe( 'lib/route', function() {
 					route.addSiteFragment( '/page', 'example.wordpress.com' )
 				).to.equal( '/page/example.wordpress.com' );
 			} );
+			it( 'should add a site when editing a new custom post type', function() {
+				expect(
+					route.addSiteFragment( '/edit/jetpack-portfolio', 'example.wordpress.com' )
+				).to.equal( '/edit/jetpack-portfolio/example.wordpress.com' );
+			} );
 			it( 'should replace the site when editing a new post', function() {
 				expect(
 					route.addSiteFragment( '/post/notexample.wordpress.com', 'example.wordpress.com' )
@@ -96,6 +107,11 @@ describe( 'lib/route', function() {
 				expect(
 					route.addSiteFragment( '/page/notexample.wordpress.com', 'example.wordpress.com' )
 				).to.equal( '/page/example.wordpress.com' );
+			} );
+			it( 'should replace the site when editing a new custom post type', function() {
+				expect(
+					route.addSiteFragment( '/edit/jetpack-portfolio/notexample.wordpress.com', 'example.wordpress.com' )
+				).to.equal( '/edit/jetpack-portfolio/example.wordpress.com' );
 			} );
 			// These two tests are a bit contrived, but still good to have
 			it( 'should replace the site when editing an existing post', function() {

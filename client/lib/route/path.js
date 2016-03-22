@@ -24,7 +24,7 @@ function getSiteFragment( path ) {
 	var basePath = path.split( '?' )[0],
 		pieces = basePath.split( '/' ),
 		siteOldStyle = pieces[ pieces.length - 1 ],
-		siteNewStyle = pieces[2] || '';
+		siteNewStyle = pieces[ pieces.length - 2 ] || '';
 
 	if ( siteNewStyle.indexOf( '.' ) >= 0 ) {
 		// This is a new-style URL like /:section/:site[/:filter/...]
@@ -49,7 +49,7 @@ function addSiteFragment( path, site ) {
 
 	if ( includes( [ 'post', 'page', 'edit' ], pieces[ 1 ] ) ) {
 		// New-style URL; change /:section[/:filter/...] into /:section/:site/[:filter/...]
-		pieces.splice( 2, 0, site );
+		pieces.splice( 'edit' === pieces[ 1 ] ? pieces.length : 2, 0, site );
 	} else {
 		// Old-style URL; add /:site onto the end
 		pieces.push( site );
