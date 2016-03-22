@@ -18,7 +18,7 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			timezone: 'Tokyo'
+			timezone: 'Africa/Abidjan'
 		};
 	},
 
