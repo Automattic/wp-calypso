@@ -20,6 +20,8 @@ var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
 	jsLoader,
 	webpackConfig;
 
+require( 'server/bundler/remove-parent-modules-monkeypatch' );
+
 webpackConfig = {
 	cache: true,
 	entry: {},
