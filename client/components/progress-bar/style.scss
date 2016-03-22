@@ -5,6 +5,10 @@
 	height: 9px;
 	background-color: lighten( $gray, 20% );
 	border-radius: 4.5px;
+
+	&.is-compact {
+		height: 4px;
+	}
 }
 
 .progress-bar__progress {
