@@ -196,6 +196,27 @@
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
+.themes__sheet-features-list {
+	text-align: center;
+	margin: -0.78em 0;
+	padding: 0;
+
+	li {
+		list-style: none;
+		display: inline-block;
+		background: #E9EFF3;
+		color: $gray-dark;
+		font-size: 0.925em;
+		margin: 0.38em 0.37rem;
+		padding: 0.25em 0.7em;
+		border-radius: 3px;
+
+		span {
+			display: block;
+		}
+	}
+}
+
 @include breakpoint( "<660px" ) {
 	.themes__sheet-columns {
 		flex-direction: column-reverse;

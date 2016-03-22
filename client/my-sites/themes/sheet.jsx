@@ -15,6 +15,7 @@ import page from 'page';
  */
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
+import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -35,6 +36,7 @@ const ThemeSheet = React.createClass( {
 		description: React.PropTypes.string,
 		descriptionLong: React.PropTypes.string,
 		supportDocumentation: React.PropTypes.string,
+		taxonomies: React.PropTypes.object,
 	},
 
 	getDefaultProps() {
@@ -114,6 +116,24 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
+	renderFeatures() {
+		const themeFeatures = this.props.taxonomies && this.props.taxonomies.features instanceof Array
+		? this.props.taxonomies.features.map( function( item, i ) {
+			return ( <li key={ 'theme-features-item-' + i++ }><span>{ item.name }</span></li> );
+		} ) : [];
+
+		return (
+			<div>
+				<SectionHeader label={ i18n.translate( 'Features' ) } />
+				<Card>
+					<ul className="themes__sheet-features-list">
+						{ themeFeatures }
+					</ul>
+				</Card>
+			</div>
+		);
+	},
+
 	render() {
 		let actionTitle = <span className="themes__sheet-button-placeholder">loading......</span>;
 		if ( this.props.isLoggedIn && this.props.active ) { //FIXME: active ENOENT
@@ -141,6 +161,7 @@ const ThemeSheet = React.createClass( {
 						<div className="themes__sheet-content">
 							{ this.renderSectionNav( section ) }
 							<Card className="themes__sheet-content">{ themeContentElement }</Card>
+							{ this.renderFeatures() }
 						</div>
 					</div>
 					<div className="themes__sheet-column-right">
