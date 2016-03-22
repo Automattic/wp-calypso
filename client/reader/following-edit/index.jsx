@@ -413,6 +413,7 @@ const FollowingEdit = React.createClass( {
 		const message = this.translate( 'Your Followed Sites list has been exported.' );
 		return (
 			<Notice
+				key="notice-feed-export"
 				status="is-success"
 				showDismiss={ true }
 				onDismissClick={ this.dismissFeedExportNotice }
@@ -431,6 +432,7 @@ const FollowingEdit = React.createClass( {
 		} );
 		return (
 			<Notice
+				key="notice-feed-import"
 				status="is-success"
 				showDismiss={ false }
 				onDismissClick={ this.dismissFeedImportNotice }
@@ -451,6 +453,7 @@ const FollowingEdit = React.createClass( {
 		} );
 		return (
 			<Notice
+				key="notice-feed-import-export"
 				status="is-error"
 				text={ message }
 				onDismissClick={ this.dismissFeedImportExportError }
