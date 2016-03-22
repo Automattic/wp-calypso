@@ -10,6 +10,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import Site from 'my-sites/site';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import layoutFocus from 'lib/layout-focus';
@@ -124,6 +125,12 @@ const DesignMenu = React.createClass( {
 	},
 
 	render() {
+		// The site object required by Site isn't quite the same as the one in the
+		// Redux store, so we patch it.
+		const site = assign( {}, this.props.selectedSite, {
+			title: this.props.selectedSite.name,
+			domain: this.props.selectedSite.URL.replace( /^https?:\/\//, '' ),
+		} );
 		return (
 			<div className="design-menu">
 				<span className="current-site__switch-sites">
@@ -131,6 +138,9 @@ const DesignMenu = React.createClass( {
 						<Gridicon icon="arrow-left" size={ 18 } />
 						{ this.translate( 'Back' ) }
 					</Button>
+					<Site
+						site={ site }
+					/>
 				</span>
 				{ this.renderDesignTools() }
 			</div>
