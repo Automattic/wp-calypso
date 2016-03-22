@@ -72,12 +72,6 @@ const DesignPreview = React.createClass( {
 		}
 	},
 
-	saveCustomizations() {
-		if ( this.props.actions.saveCustomizations ) {
-			this.props.actions.saveCustomizations();
-		}
-	},
-
 	onLoad( previewDocument ) {
 		this.previewDocument = previewDocument;
 		previewDocument.body.onclick = this.onPreviewClick;
@@ -111,12 +105,10 @@ const DesignPreview = React.createClass( {
 	},
 
 	renderToolBarButtons() {
-		if ( this.props.customizations && this.props.actions.saveCustomizations ) {
-			const saveButtonText = this.props.isCustomizationsSaved ? this.translate( 'Saved' ) : this.translate( 'Save & Publish' );
+		if ( this.props.customizations ) {
 			return (
 				<div>
 					<Button compact onClick={ this.undoCustomization } >{ this.translate( 'Undo last change' ) }</Button>
-					<Button compact primary disabled={ this.props.isCustomizationsSaved } onClick={ this.saveCustomizations } >{ saveButtonText }</Button>
 				</div>
 			);
 		}
