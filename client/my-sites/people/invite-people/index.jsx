@@ -35,6 +35,7 @@ import InvitesSentStore from 'lib/invites/stores/invites-sent';
 import analytics from 'analytics';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import EmptyContent from 'components/empty-content';
+import { userCan } from 'lib/site/utils';
 
 /**
  * Module variables
@@ -292,7 +293,8 @@ const InvitePeople = React.createClass( {
 	},
 
 	render() {
-		if ( this.props.site && ! get( this.props, 'site.capabilities.promote_users' ) ) {
+		const { site } = this.props;
+		if ( site && ! userCan( 'promote_users', site ) ) {
 			return (
 				<Main>
 					<SidebarNavigation />
