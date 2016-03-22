@@ -32,8 +32,11 @@ module.exports = function() {
 
 	if ( config.isEnabled( 'jetpack/calypso-first-signup-flow' ) ) {
 		page( '/jetpack/connect', jetpackConnectController.connect );
-		page( '/jetpack/connect/authorize',
-              jetpackConnectController.saveQueryObject,
-              jetpackConnectController.authorize );
+		page(
+			'/jetpack/connect/authorize',
+			jetpackConnectController.updateNonce,
+			jetpackConnectController.saveQueryObject,
+			jetpackConnectController.authorize
+		);
 	}
 };
