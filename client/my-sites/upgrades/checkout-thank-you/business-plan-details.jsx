@@ -7,6 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import i18n from 'lib/mixins/i18n';
 import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
@@ -16,23 +17,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans } ) => {
 
 	return (
 		<div>
-			{ plan.hasDomainCredit && (
-				<PurchaseDetail
-					icon="globe"
-					title={ i18n.translate( 'Get your custom domain' ) }
-					description={
-						i18n.translate(
-							"Replace your site's address, {{em}}%(siteDomain)s{{/em}}, with a custom domain. " +
-							'A free domain is included with your plan.',
-							{
-								args: { siteDomain: selectedSite.domain },
-								components: { em: <em /> }
-							}
-						)
-					}
-					buttonText={ i18n.translate( 'Claim your free domain' ) }
-					href={ '/domains/add/' + selectedSite.slug } />
-			) }
+			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
 
 			<PurchaseDetail
 				icon="customize"
