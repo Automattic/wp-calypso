@@ -22,7 +22,7 @@ const LayoutLoggedOut = ( {
 		[ 'is-group-' + section.group ]: !! section,
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
-		'has-no-sidebar': true,
+		'has-no-sidebar': ! section.secondary
 	} );
 
 	return (
@@ -41,18 +41,18 @@ const LayoutLoggedOut = ( {
 			</div>
 		</div>
 	);
-}
+};
 
 LayoutLoggedOut.displayName = 'LayoutLoggedOut';
 LayoutLoggedOut.propTypes = {
 	primary: React.PropTypes.element,
 	secondary: React.PropTypes.element,
 	tertiary: React.PropTypes.element,
-	section: React.PropTypes.object,
-}
+	section: React.PropTypes.object
+};
 
 export default connect(
 	state => ( {
-		section: state.ui.section,
+		section: state.ui.section
 	} )
 )( LayoutLoggedOut );

@@ -5,27 +5,29 @@ import i18n from 'lib/mixins/i18n';
 import sections from '../../client/sections';
 import { serverRender } from 'render';
 import { createReduxStore } from 'state';
+import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 
 export default function( expressApp, getDefaultContext ) {
 	sections.get()
 		.filter( section => section.isomorphic )
 		.forEach( section => {
-			sections.require( section.module )( serverRouter( expressApp, getDefaultContext ) );
+			sections.require( section.module )( serverRouter( expressApp, getDefaultContext, section ) );
 		} );
 }
 
-function serverRouter( expressApp, mapExpressToPageContext ) {
+function serverRouter( expressApp, mapExpressToPageContext, section ) {
 	return function( route, ...middlewares ) {
-		expressApp.get( route, combinedMiddlewares( mapExpressToPageContext, middlewares ) );
+		expressApp.get( route, combinedMiddlewares( mapExpressToPageContext, middlewares, section ) );
 	}
 }
 
-function combinedMiddlewares( mapExpressToPageContext, middlewares ) {
+function combinedMiddlewares( mapExpressToPageContext, middlewares, section ) {
 	return function( req, res ) {
 		let context = mapExpressToPageContext( req );
 		context = getEnhancedContext( context, req, res );
 		applyMiddlewares( context, ...[
 			setUpRoute,
+			setSectionMiddlewareFactory( section ),
 			...middlewares,
 			serverRender
 		] );
@@ -41,7 +43,7 @@ function getEnhancedContext( context, req, res ) {
 		query: {},
 		store: createReduxStore(),
 		res,
-		url: req.url,
+		url: req.url
 	} );
 }
 
