@@ -15,7 +15,7 @@ const ControlButton = props => (
 	</div>
 );
 
-const ControlList = React.createClass( {
+const DesignToolList = React.createClass( {
 	propTypes: {
 		activateControl: React.PropTypes.func.isRequired,
 		controls: React.PropTypes.arrayOf( React.PropTypes.shape( {
@@ -42,4 +42,4 @@ const ControlList = React.createClass( {
 	}
 } );
 
-export default ControlList;
+export default DesignToolList;

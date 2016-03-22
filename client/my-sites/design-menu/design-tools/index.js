@@ -10,13 +10,13 @@ import assign from 'lodash/assign';
 import { translate } from 'lib/mixins/i18n';
 import SiteTitleControl from 'my-sites/site-title';
 import HeaderImageControl from 'my-sites/header-image';
-import ControlList from './control-list';
+import DesignToolList from 'my-sites/design-tool-list';
 
 const designToolsById = {
 
 	default: {
 		title: translate( 'Customizing' ),
-		componentClass: ControlList,
+		componentClass: DesignToolList,
 	},
 
 	siteTitle: {
