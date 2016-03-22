@@ -4,6 +4,8 @@
  * External dependencies
  */
 var webpack = require( 'webpack' ),
+	HappyPack = require( 'happypack' ),
+	CPU_COUNT = require( 'os' ).cpus().length,
 	path = require( 'path' );
 
 /**
@@ -11,7 +13,8 @@ var webpack = require( 'webpack' ),
  */
 var config = require( './server/config' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
-	PragmaCheckPlugin = require( 'server/pragma-checker' );
+	PragmaCheckPlugin = require( 'server/pragma-checker' ),
+	TimingPlugin = require( 'server/timing-plugin' );
 
 /**
  * Internal variables
@@ -19,6 +22,8 @@ var config = require( './server/config' ),
 var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
 	jsLoader,
 	webpackConfig;
+
+require( 'server/bundler/remove-parent-modules-monkeypatch' );
 
 webpackConfig = {
 	cache: true,
@@ -76,6 +81,16 @@ webpackConfig = {
 				NODE_ENV: JSON.stringify( config( 'env' ) )
 			}
 		} ),
+		new HappyPack( {
+			id: 'babel',
+			threads: CPU_COUNT - 1,
+			loaders: [
+				{
+					path: path.resolve( __dirname, 'node_modules/babel-loader/index.js' ),
+					query: '?optional[]=runtime'
+				}
+			]
+		} ),
 		new webpack.optimize.OccurenceOrderPlugin( true ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ )
@@ -88,17 +103,29 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 } else {
 	webpackConfig.entry.vendor = [ 'react', 'store', 'page', 'wpcom-unpublished', 'jed', 'debug' ];
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
+	// webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
+	// 	name: [ 'vendor', 'build-' + CALYPSO_ENV ],
+	// /	minChunks: 3
+	//  } ) );
+
 	webpackConfig.plugins.push( new ChunkFileNamePlugin() );
+	//webpackConfig.plugins.push( new TimingPlugin() );
 	// jquery is only needed in the build for the desktop app
 	// see electron bug: https://github.com/atom/electron/issues/254
 	webpackConfig.externals.push( 'jquery' );
 }
 
-jsLoader = {
-	test: /\.jsx?$/,
-	exclude: /node_modules/,
-	loaders: [ 'babel-loader?cacheDirectory&optional[]=runtime' ]
-};
+ jsLoader = {
+ 	test: /\.jsx?$/,
+ 	exclude: /node_modules/,
+ 	loaders: [ 'happypack/loader?id=babel' ]
+ };
+
+// jsLoader = {
+// 	test: /\.jsx?$/,
+// 	exclude: /node_modules/,
+// 	loaders: [ 'babel-loader?optional[]=runtime' ]
+// };
 
 if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.plugins.push( new PragmaCheckPlugin() );
@@ -116,6 +143,6 @@ if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.devtool = false;
 }
 
-webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );
+webpackConfig.module.loaders = webpackConfig.module.loaders.concat( [ jsLoader ] );
 
 module.exports = webpackConfig;

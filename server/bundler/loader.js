@@ -117,6 +117,7 @@ function singleEnsure( chunkName ) {
 
 module.exports = function( content ) {
 	var sections;
+	console.time( 'section-loading' );
 
 	this.cacheable && this.cacheable();
 
@@ -129,5 +130,7 @@ module.exports = function( content ) {
 
 	this.addDependency( 'page' );
 
-	return getSectionsModule( sections );
+	const sectionModule = getSectionsModule( sections );
+	console.timeEnd( 'section-loading' );
+	return sectionModule;
 };

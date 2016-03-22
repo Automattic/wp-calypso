@@ -38,3 +38,4 @@ env-config.sh
 /calypso-strings.php
 cover.html
 .test.log
+.happypack
