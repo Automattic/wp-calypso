@@ -9,14 +9,14 @@ import get from 'lodash/get';
 /**
  * Internal dependencies
  */
-import { translate } from 'lib/mixins/i18n';
+import localize from 'lib/mixins/i18n/localize';
 import { getEditedPost } from 'state/posts/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 
-function EditorPostType( { siteId, isNew, typeSlug, type } ) {
+function EditorPostType( { translate, siteId, isNew, typeSlug, type } ) {
 	let label;
 	switch ( typeSlug ) {
 		case 'page':
@@ -57,6 +57,7 @@ function EditorPostType( { siteId, isNew, typeSlug, type } ) {
 }
 
 EditorPostType.propTypes = {
+	translate: PropTypes.func,
 	siteId: PropTypes.number,
 	isNew: PropTypes.bool,
 	typeSlug: PropTypes.string,
@@ -80,4 +81,4 @@ export default connect( ( state ) => {
 		typeSlug: post.type,
 		type: getPostType( state, site.ID, post.type )
 	} );
-} )( EditorPostType );
+} )( localize( EditorPostType ) );
