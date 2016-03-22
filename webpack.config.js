@@ -33,11 +33,11 @@ webpackConfig = {
 	devtool: '#eval',
 	module: {
 		loaders: [
-			{
-				test: /sections.js$/,
-				exclude: 'node_modules',
-				loader: path.join( __dirname, 'server', 'bundler', 'loader' )
-			},
+			// {
+			// 	test: /sections.js$/,
+			// 	exclude: 'node_modules',
+			// 	loader: path.join( __dirname, 'server', 'bundler', 'loader' )
+			// },
 			{
 				test: /\.json$/,
 				loader: 'json-loader'
@@ -86,8 +86,7 @@ webpackConfig = {
 if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.output.filename = '[name].js';
 } else {
-	webpackConfig.entry.vendor = [ 'react', 'store', 'page', 'wpcom-unpublished', 'jed', 'debug' ];
-	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
+	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'build-' + CALYPSO_ENV ) );
 	webpackConfig.plugins.push( new ChunkFileNamePlugin() );
 	// jquery is only needed in the build for the desktop app
 	// see electron bug: https://github.com/atom/electron/issues/254

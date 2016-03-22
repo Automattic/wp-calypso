@@ -1,7 +1,8 @@
 /**
  * External dependecies
  */
-var webpackMiddleware = require( 'webpack-dev-middleware' ),
+var fs = require( 'fs' ),
+	webpackMiddleware = require( 'webpack-dev-middleware' ),
 	webpack = require( 'webpack' ),
 	chalk = require( 'chalk' );
 
@@ -20,6 +21,7 @@ function middleware( app ) {
 	compiler.plugin( 'done', function( stats ) {
 		built = true;
 		assets = utils.getAssets( stats.toJson() );
+		fs.writeFileSync( 'stats.json', JSON.stringify( stats.toJson() ) );
 		app.set( 'assets', assets );
 
 		// Dequeue and call request handlers

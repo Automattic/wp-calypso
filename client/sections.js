@@ -283,4 +283,39 @@ if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 	} );
 }
 
+sections = [];
+
+if ( config.isEnabled( 'reader' ) ) {
+	readerPaths = [ '/', '/read', '/fresh', '/activities', '/find-friends', '/tag' ];
+
+	if ( config.isEnabled( 'reader/following-edit' ) ) {
+		readerPaths.push( '/following' );
+	}
+
+	if ( config.isEnabled( 'reader/recommendations' ) ) {
+		readerPaths.push( '/recommendations' );
+		readerPaths.push( '/tags' );
+	}
+
+	if ( config.isEnabled( 'reader/discover' ) ) {
+		readerPaths.push( '/discover' );
+	}
+
+	sections.push( {
+		name: 'reader',
+		paths: readerPaths,
+		module: 'reader',
+		secondary: true,
+		group: 'reader'
+	} );
+}
+
+sections.push( {
+	name: 'posts-pages',
+	paths: [ '/posts' ],
+	module: 'my-sites/posts',
+	secondary: true,
+	group: 'sites'
+} );
+
 module.exports = sections;
