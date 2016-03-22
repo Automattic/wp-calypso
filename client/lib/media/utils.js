@@ -63,6 +63,41 @@ var MediaUtils = {
 	},
 
 	/**
+	 * Given a media string, File, or object, returns the file extension.
+	 *
+	 * @example
+	 * getFileExtension( 'example.gif' );
+	 * getFileExtension( { URL: 'https://wordpress.com/example.gif' } );
+	 * getFileExtension( new window.File( [''], 'example.gif' ) );
+	 * // All examples return 'gif'
+	 *
+	 * @param  {(string|File|Object)} media Media object or string
+	 * @return {string}                     File extension
+	 */
+	getFileExtension: function( media ) {
+		let extension;
+
+		if ( ! media ) {
+			return;
+		}
+
+		const isUrl = 'string' === typeof media;
+		const isFileObject = 'File' in window && media instanceof window.File;
+		if ( isUrl ) {
+			const filePath = url.parse( media ).pathname;
+			extension = path.extname( filePath ).slice( 1 );
+		} else if ( isFileObject ) {
+			extension = path.extname( media.name ).slice( 1 );
+		} else if ( media.extension ) {
+			extension = media.extension;
+		} else {
+			extension = path.extname( url.parse( media.URL || media.file || media.guid || '' ).pathname ).slice( 1 );
+		}
+
+		return extension;
+	},
+
+	/**
 	 * Given a media string or object, returns the MIME type prefix.
 	 *
 	 * @example
@@ -103,8 +138,6 @@ var MediaUtils = {
 	 * @return {string}                     Mime type of the media, if known
 	 */
 	getMimeType: function( media ) {
-		var extension;
-
 		if ( ! media ) {
 			return;
 		}
@@ -115,13 +148,7 @@ var MediaUtils = {
 			return media.type;
 		}
 
-		if ( 'string' === typeof media ) {
-			extension = path.extname( media ).slice( 1 );
-		} else if ( media.extension ) {
-			extension = media.extension;
-		} else {
-			extension = path.extname( url.parse( media.URL || media.file || media.guid || '' ).pathname ).slice( 1 );
-		}
+		let extension = MediaUtils.getFileExtension( media );
 
 		if ( ! extension ) {
 			return;

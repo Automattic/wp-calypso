@@ -61,10 +61,6 @@ function setSelectedSite() {
 		return;
 	}
 
-	if ( ! selectedSite.isUpgradeable() ) {
-		return;
-	}
-
 	if ( _synchronizer && _poller ) {
 		PollerPool.remove( _poller );
 		_synchronizer.off( 'change', emitChange );

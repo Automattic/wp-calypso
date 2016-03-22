@@ -13,7 +13,8 @@ function getSectionsModule( sections ) {
 			"\tReact = require( 'react' ),",
 			"\tLoadingError = require( 'layout/error' ),",
 			"\tclasses = require( 'component-classes' ),",
-			"\tcontroller = require( 'controller' );",
+			"\tcontroller = require( 'controller' ),",
+			"\preloadHub = require( 'sections-preload' ).hub;",
 			'\n',
 			'var _loadedSections = {};'
 		].join( '\n' );
@@ -31,17 +32,18 @@ function getSectionsModule( sections ) {
 
 	return [
 		dependencies,
+		'function preload( section ) {',
+		'	switch ( section ) {',
+		'	' + loadSection,
+		'	}',
+		'}',
+		'preloadHub.on( \'preload\', preload );',
 		'module.exports = {',
 		'	get: function() {',
 		'		return ' + JSON.stringify( sections ) + ';',
 		'	},',
 		'	load: function() {',
 		'		' + sectionLoaders,
-		'	},',
-		'	preload: function( section ) {',
-		'		switch ( section ) {',
-		'		' + loadSection,
-		'		}',
 		'	}',
 		'};'
 	].join( '\n' );
@@ -69,7 +71,7 @@ function splitTemplate( path, section ) {
 	result = [
 		'page( ' + path + ', function( context, next ) {',
 		'	if ( _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
-		'		context.store.dispatch( { type: "SET_SECTION", section: ' + JSON.stringify( section ) + ' } );',
+		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 		'		layoutFocus.next();',
 		'		return next();',
 		'	}',
@@ -85,7 +87,7 @@ function splitTemplate( path, section ) {
 		'			return;',
 		'		}',
 		'		context.store.dispatch( { type: "SET_SECTION", isLoading: false } );',
-		'		context.store.dispatch( { type: "SET_SECTION", section: ' + JSON.stringify( section ) + ' } );',
+		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 		'		if ( ! _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
 		'			require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
 		'			_loadedSections[ ' + JSON.stringify( section.module ) + ' ] = true;',

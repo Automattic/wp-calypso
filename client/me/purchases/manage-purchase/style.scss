@@ -223,3 +223,10 @@
 			top: 16px;
 	}
 }
+
+.manage-purchase__contact-support {
+	border-top: solid 1px lighten( $gray, 30% );
+	color: $gray;
+	margin-top: 15px;
+	padding-top: 10px;
+}

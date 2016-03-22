@@ -5,11 +5,14 @@ var assign = require( 'lodash/assign' ),
 	reject = require( 'lodash/reject' );
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 var config = require( 'config' ),
+	plansPaths = require( 'my-sites/plans/paths' ),
 	stepConfig = require( './steps' ),
 	user = require( 'lib/user' )();
+
+import { getLocaleSlug } from 'lib/i18n-utils';
 
 function getCheckoutUrl( dependencies ) {
 	return '/checkout/' + dependencies.siteSlug;
@@ -17,6 +20,14 @@ function getCheckoutUrl( dependencies ) {
 
 function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+}
+
+function getFreeTrialDestination( dependencies ) {
+	if ( dependenciesContainCartItem( dependencies ) ) {
+		return getCheckoutUrl( dependencies );
+	}
+
+	return plansPaths.plans( dependencies.siteSlug );
 }
 
 function getSiteDestination( dependencies ) {
@@ -71,7 +82,7 @@ const flows = {
 	},
 
 	businessv2: {
-		steps: ['domains', 'user' ],
+		steps: [ 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
@@ -80,7 +91,7 @@ const flows = {
 	},
 
 	premiumv2: {
-		steps: ['domains', 'user' ],
+		steps: [ 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
@@ -115,6 +126,13 @@ const flows = {
 		destination: getSiteDestination,
 		description: 'This flow is used for the users who clicked "Create Website" on the two-button homepage.',
 		lastModified: '2016-01-28'
+	},
+
+	newsite: {
+		steps: [ 'survey', 'themes-headstart', 'domains-with-theme', 'plans', 'survey-user' ],
+		destination: getSiteDestination,
+		description: 'Headstarted flow with verticals for EN users clicking "Create Website" on the homepage.',
+		lastModified: '2016-03-21'
 	},
 
 	blog: {
@@ -210,11 +228,11 @@ const flows = {
 	},
 
 	'free-trial': {
-		steps: [ 'themes', 'site', 'plans', 'user' ],
-		destination: getSiteDestination,
+		steps: [ 'themes', 'domains-with-plan', 'user' ],
+		destination: getFreeTrialDestination,
 		description: 'Signup flow for free trials',
-		lastModified: '2015-12-18'
-	},
+		lastModified: '2016-03-21'
+	}
 };
 
 function removeUserStepFromFlow( flow ) {
@@ -228,9 +246,17 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function filterFlowName( flowName ) {
-	if ( 'headstart' === flowName && 'production' === config( 'env' ) ) {
+	const locale = getLocaleSlug();
+	// Only allow the `headstart` flow for EN users.
+	if ( 'headstart' === flowName && 'en' !== locale && 'en-gb' !== locale ) {
 		return 'main';
 	}
+
+	// Headstarted "default" flow (`newsite`) with vertical selection for EN users, coming from the homepage single button.
+	if ( 'website' === flowName && ( 'en' === locale || 'en-gb' === locale ) ) {
+		return 'newsite';
+	}
+
 	return flowName;
 }
 

@@ -30,6 +30,20 @@ describe( 'reducer', () => {
 			themeDescription: 'the best theme ever invented',
 			themeDescriptionLong: 'the plato form of a theme',
 			themeSupportDocumentation: 'support comes from within',
+			themeTaxonomies: {
+				features: [ {
+					term_id: null,
+					name: 'Blog Excerpts',
+					slug: 'blog-excerpts',
+					term_group: '',
+					term_taxonomy_id: 0,
+					taxonomy: '',
+					description: '',
+					parent: 0,
+					count: 0,
+					filter: 'raw'
+				} ]
+			}
 		} );
 
 		expect( state.get( 'mood' ).toJS() ).to.eql( {
@@ -40,12 +54,24 @@ describe( 'reducer', () => {
 			description: 'the best theme ever invented',
 			descriptionLong: 'the plato form of a theme',
 			supportDocumentation: 'support comes from within',
+			taxonomies: {
+				features: [ {
+					term_id: null,
+					name: 'Blog Excerpts',
+					slug: 'blog-excerpts',
+					term_group: '',
+					term_taxonomy_id: 0,
+					taxonomy: '',
+					description: '',
+					parent: 0,
+					count: 0,
+					filter: 'raw'
+				} ]
+			}
 		} );
 	} );
 
 	describe( 'persistence', () => {
-		const initialState = Map();
-
 		it( 'does not persist state because this is not implemented yet', () => {
 			const jsObject = deepFreeze( {
 				mood: {
@@ -77,26 +103,6 @@ describe( 'reducer', () => {
 			} );
 			const state = reducer( jsObject, { type: SERVER_DESERIALIZE } );
 			expect( state ).to.eql( fromJS( jsObject ) );
-		} );
-
-		it.skip( 'should ignore loading data with invalid keys ', () => {
-			const jsObject = deepFreeze( {
-				missingKey: true,
-				mood: {
-					name: 'Mood',
-					author: 'Automattic'
-				}
-			} );
-			const state = reducer( jsObject, { type: DESERIALIZE } );
-			expect( state ).to.eql( initialState );
-		} );
-
-		it.skip( 'should ignore loading data with invalid values ', () => {
-			const jsObject = deepFreeze( {
-				mood: 'foo'
-			} );
-			const state = reducer( jsObject, { type: DESERIALIZE } );
-			expect( state ).to.eql( initialState );
 		} );
 	} );
 } );

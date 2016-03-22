@@ -28,6 +28,8 @@ import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarTeams from './reader-sidebar-teams';
 import ReaderSidebarHelper from './helper';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
+import { getSubscribedLists } from 'state/reader/lists/selectors';
+import QueryReaderLists from 'components/data/query-reader-lists';
 import observe from 'lib/mixins/data-observe';
 import config from 'config';
 import userSettings from 'lib/user-settings';
@@ -66,16 +68,14 @@ const ReaderSidebar = React.createClass( {
 
 	getStateFromStores() {
 		const tags = ReaderTagsSubscriptionStore.get();
-		const lists = ReaderListsSubscriptionsStore.get();
 		const teams = ReaderTeams.get();
 
-		if ( ! ( tags && lists && teams ) ) {
+		if ( ! ( tags && teams ) ) {
 			SidebarActions.fetch();
 		}
 
 		return {
 			tags,
-			lists,
 			teams
 		};
 	},
@@ -197,8 +197,9 @@ const ReaderSidebar = React.createClass( {
 					</ul>
 				</SidebarMenu>
 
+				<QueryReaderLists />
 				<ReaderSidebarLists
-					lists={ this.state.lists }
+					lists={ this.props.subscribedLists }
 					path={ this.props.path }
 					isOpen={ this.props.isListsOpen }
 					onClick={ this.props.toggleListsVisibility }
@@ -223,7 +224,8 @@ export default connect(
 	( state ) => {
 		return {
 			isListsOpen: state.ui.reader.sidebar.isListsOpen,
-			isTagsOpen: state.ui.reader.sidebar.isTagsOpen
+			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,
+			subscribedLists: getSubscribedLists( state )
 		};
 	},
 	( dispatch ) => {

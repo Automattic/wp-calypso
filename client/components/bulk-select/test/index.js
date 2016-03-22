@@ -1,6 +1,3 @@
-
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
@@ -14,7 +11,8 @@ import noop from 'lodash/noop';
  */
 import BulkSelect from '../index';
 
-describe( 'BulkSelect', function() {
+describe( 'index', function() {
+	require( 'test/helpers/use-fake-dom' )();
 	it( 'should have BulkSelect class', function() {
 		const bulkSelect = shallow( <BulkSelect selectedElements={ 0 } totalElements={ 3 } onToggle={ noop } /> );
 		assert.equal( 1, bulkSelect.find( '.bulk-select' ).length );

@@ -7,6 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { isPlan } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
@@ -32,12 +33,15 @@ const CartPlanAd = React.createClass( {
 		}
 
 		return (
-			<div className="cart-plan-ad">{
-				this.translate( 'Get this domain for free when you upgrade to {{strong}}WordPress.com Premium{{/strong}}!', {
-					components: { strong: <strong /> }
-				} )
-			} <a href="" onClick={ this.addToCartAndRedirect }>{ this.translate( 'Upgrade Now' ) }</a>
-			</div>
+			<CartAd>
+				{
+					this.translate( 'Get this domain for free when you upgrade to {{strong}}WordPress.com Premium{{/strong}}!', {
+						components: { strong: <strong /> }
+					} )
+				}
+				{ ' ' }
+				<a href="" onClick={ this.addToCartAndRedirect }>{ this.translate( 'Upgrade Now' ) }</a>
+			</CartAd>
 		);
 	}
 } );

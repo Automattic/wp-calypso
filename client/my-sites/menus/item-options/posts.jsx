@@ -54,6 +54,7 @@ var Posts = React.createClass( {
 		var posts = this.props.posts.slice();
 		if ( this.props.type === 'page' ) {
 			posts.unshift( siteMenus.generateHomePageMenuItem( this.getHomePageTitle() ) );
+			posts.push( siteMenus.generateNewPageMenuItem() );
 		}
 		return posts;
 	},

@@ -9,6 +9,7 @@ var React = require( 'react' ),
  */
 var SelectDropdown = require( 'components/select-dropdown' ),
 	DropdownItem = require( 'components/select-dropdown/item' ),
+	DropdownLabel = require( 'components/select-dropdown/label' ),
 	DropdownSeparator = require( 'components/select-dropdown/separator' );
 
 var SelectDropdownDemo = React.createClass( {
@@ -27,6 +28,7 @@ var SelectDropdownDemo = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			options: [
+				{ value: 'status-options', label: 'Statuses', isLabel: true },
 				{ value: 'published', label: 'Published' },
 				{ value: 'scheduled', label: 'Scheduled' },
 				{ value: 'drafts', label: 'Drafts' },
@@ -64,6 +66,9 @@ var SelectDropdownDemo = React.createClass( {
 					selectedText={ this.state.childSelected }
 					selectedCount={ this.state.selectedCount }
 				>
+
+					<DropdownLabel><strong>Statuses</strong></DropdownLabel>
+
 					<DropdownItem
 						count={ 10 }
 						selected={ this.state.childSelected === 'Published' }

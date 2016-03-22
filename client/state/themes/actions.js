@@ -102,6 +102,7 @@ export function receiveThemeDetails( theme ) {
 		themeDescription: theme.description,
 		themeDescriptionLong: theme.description_long,
 		themeSupportDocumentation: theme.extended ? theme.extended.support_documentation : undefined,
+		themeTaxonomies: theme.taxonomies,
 	};
 };
 

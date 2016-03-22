@@ -4,6 +4,8 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
+import { setSection as setSectionAction } from 'state/ui/actions';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -49,6 +51,14 @@ export function makeLoggedOutLayout( context, next ) {
  */
 export function clientRouter( route, ...middlewares ) {
 	page( route, ...[ ...middlewares, render ] );
+}
+
+export function setSection( section ) {
+	return ( context, next = noop ) => {
+		context.store.dispatch( setSectionAction( section ) );
+
+		next();
+	}
 }
 
 function render( context ) {

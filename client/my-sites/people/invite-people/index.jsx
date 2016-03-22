@@ -13,6 +13,7 @@ import uniqueId from 'lodash/uniqueId';
 import groupBy from 'lodash/groupBy';
 import filter from 'lodash/filter';
 import pickBy from 'lodash/pickBy';
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * Internal dependencies
@@ -33,6 +34,8 @@ import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-vali
 import InvitesSentStore from 'lib/invites/stores/invites-sent';
 import analytics from 'analytics';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import EmptyContent from 'components/empty-content';
+import { userCan } from 'lib/site/utils';
 
 /**
  * Module variables
@@ -79,8 +82,24 @@ const InvitePeople = React.createClass( {
 		if ( sendInvitesSuccess ) {
 			this.setState( this.resetState() );
 			analytics.tracks.recordEvent( 'calypso_invite_people_form_refresh_initial' );
+			debug( 'Submit successful. Resetting form.' )
 		} else {
-			this.setState( { sendingInvites: false } );
+			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId );
+			const errors = get( sendInvitesErrored, 'errors', {} );
+
+			let updatedState = { sendingInvites: false };
+			if ( ! isEmpty( errors ) && 'object' === typeof errors ) {
+				const errorKeys = Object.keys( errors );
+				Object.assign( updatedState, {
+					usernamesOrEmails: errorKeys,
+					errorToDisplay: errorKeys[0],
+					errors,
+				} );
+			}
+
+			debug( 'Submit errored. Updating state to:  ' + JSON.stringify( updatedState ) );
+
+			this.setState( updatedState );
 			analytics.tracks.recordEvent( 'calypso_invite_people_form_refresh_retry' );
 		}
 	},
@@ -201,6 +220,10 @@ const InvitePeople = React.createClass( {
 		event.preventDefault();
 		debug( 'Submitting invite form. State: ' + JSON.stringify( this.state ) );
 
+		if ( this.isSubmitDisabled() ) {
+			return false;
+		}
+
 		const formId = uniqueId();
 		const { usernamesOrEmails, message, role } = this.state;
 
@@ -270,6 +293,19 @@ const InvitePeople = React.createClass( {
 	},
 
 	render() {
+		const { site } = this.props;
+		if ( site && ! userCan( 'promote_users', site ) ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ this.translate( 'Oops, only administrators can invite other people' ) }
+						illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+					/>
+				</Main>
+			);
+		}
+
 		return (
 			<Main>
 				<SidebarNavigation />

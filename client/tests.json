@@ -7,6 +7,40 @@
 			"domain-suggestion": {
 				"test": [ "index" ]
 			}
+		},
+		"accordion": {
+			"test": [ "index" ]
+		},
+		"bulk-select": {
+			"test": [ "index" ]
+		},
+		"data": {
+			"media-list-data": {
+				"test": [ "utils" ]
+			}
+		},
+		"drop-zone": {
+			"test": [ "index" ]
+		},
+		"forms": {
+			"counted-textarea": {
+				"test": [ "index" ]
+			},
+			"form-toggle": {
+				"test": [ "index" ]
+			},
+			"multi-checkbox": {
+				"test": [ "index" ]
+			},
+			"range": {
+				"test": [ "index" ]
+			}
+		},
+		"theme": {
+			"test": [ "index" ]
+		},
+		"themes-list": {
+			"test": [ "index" ]
 		}
 	},
 	"lib": {
@@ -48,11 +82,17 @@
 				"test": [ "assembler", "store" ]
 			}
 		},
+		"feed-store": {
+			"test": [ "index" ]
+		},
 		"form-state": {
 			"test": [ "index" ]
 		},
 		"i18n-utils" : {
 			"test": [ "utils" ]
+		},
+		"menu-data" : {
+			"test" : [ "menu-data" ]
 		},
 		"mixins" : {
 			"pageable": {
@@ -159,6 +199,11 @@
 		}
 	},
 	"my-sites": {
+		"menus" : {
+			"item-options" : {
+				"test": [ "posts" ]
+			}
+		},
 		"upgrades": {
 			"cart": {
 				"test": [ "cart-buttons" ]
@@ -183,7 +228,7 @@
 			"test": [ "actions", "reducer" ]
 		},
 		"comments": {
-			"test": [ "actions", "reducer", "selectors" ]
+			"test": [ "actions", "reducer", "selectors", "utils" ]
 		},
 		"current-user": {
 			"test": [ "actions", "reducer", "selectors" ]
@@ -203,10 +248,15 @@
 			"test": [ "actions", "reducer", "selectors" ]
 		},
 		"posts": {
-			"test": [ "actions", "reducer", "selectors" ]
+			"test": [ "actions", "reducer", "selectors", "utils" ]
 		},
 		"receipts": {
 			"test": [ "reducer" ]
+		},
+		"reader": {
+			"lists": {
+				"test": [ "actions", "reducer", "selectors" ]
+			}
 		},
 		"sharing": {
 			"publicize": {
@@ -225,11 +275,12 @@
 			"plans": {
 				"test": [ "actions", "reducer" ]
 			},
-			"test": [ "actions", "reducer" ]
+			"test": [ "actions", "reducer", "selectors" ]
 		},
 		"support": {
 			"test": [ "actions", "reducer" ]
 		},
+		"test": [ "index", "initial-state" ],
 		"themes": {
 			"current-theme": {
 				"test": [ "index", "reducer" ]
@@ -263,7 +314,6 @@
 		},
 		"users": {
 			"test": [ "actions", "reducer", "selectors" ]
-		},
-		"test": [ "index", "initial-state" ]
+		}
 	}
 }

@@ -2,6 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:stats-data-summary' ),
+	omit = require( 'lodash/omit' ),
 	store = require( 'store' );
 
 /**
@@ -64,17 +65,16 @@ function fetchNewRecord( record ) {
  * Fetch calls undocumnted api method for stats/summary
  *
  * @api public
- *
  */
 StatsDataSummary.prototype.fetch = function( callback ) {
 	var query = {
 		period: this.period,
 		date: this.date
 	};
-	
+
 	wpcom.site( this.siteId ).statsSummary( query, function( error, data ) {
 		// Remove the header response from API, and add in a localized timestamp
-		delete data.headers;
+		data = omit( data, '_headers' );
 		data.updatedAt = new Date().getTime();
 
 		this.data = data;

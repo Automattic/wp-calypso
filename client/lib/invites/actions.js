@@ -2,6 +2,8 @@
  * External dependencies
  */
 import Debug from 'debug';
+import isEmpty from 'lodash/isEmpty';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -124,8 +126,11 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, formId ) 
 			siteId, usernamesOrEmails, role, message
 		} );
 		wpcom.undocumented().sendInvites( siteId, usernamesOrEmails, role, message, ( error, data ) => {
+			const validationErrors = get( data, 'errors' );
+			const isErrored = !! error || ! isEmpty( validationErrors );
+
 			Dispatcher.handleServerAction( {
-				type: error ? ActionTypes.RECEIVE_SENDING_INVITES_ERROR : ActionTypes.RECEIVE_SENDING_INVITES_SUCCESS,
+				type: isErrored ? ActionTypes.RECEIVE_SENDING_INVITES_ERROR : ActionTypes.RECEIVE_SENDING_INVITES_SUCCESS,
 				error,
 				siteId,
 				usernamesOrEmails,
@@ -135,13 +140,31 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, formId ) 
 				data
 			} );
 
-			if ( error ) {
-				dispatch( errorNotice( i18n.translate(
-					'Invitation failed to send',
-					'Invitations failed to send', {
-						count: usernamesOrEmails.length
-					}
-				) ) );
+			if ( isErrored ) {
+				// If there are no validation errors but the form errored, assume that all errored
+				const countErrors = ( error || isEmpty( validationErrors ) || 'object' !== typeof validationErrors )
+					? usernamesOrEmails.length
+					: Object.keys( data.errors ).length;
+
+				if ( countErrors === usernamesOrEmails.length ) {
+					message = i18n.translate(
+						'Invitation failed to send',
+						'Invitations failed to send', {
+							count: countErrors,
+							context: 'Displayed in a notice when all invitations failed to send.'
+						}
+					);
+				} else {
+					message = i18n.translate(
+						'An invitation failed to send',
+						'Some invitations failed to send', {
+							count: countErrors,
+							context: 'Displayed in a notice when some invitations failed to send.'
+						}
+					);
+				}
+
+				dispatch( errorNotice( message ) );
 				analytics.tracks.recordEvent( 'calypso_invite_send_failed' );
 			} else {
 				dispatch( successNotice( i18n.translate(

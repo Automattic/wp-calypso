@@ -4,7 +4,8 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	store = require( 'store' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	get = require( 'lodash/get' );
 
 /**
  * Internal Dependencies
@@ -139,6 +140,7 @@ module.exports = {
 			StatsComponent = Insights,
 			twoWeeksAgo = i18n.moment().subtract( 2, 'week' ),
 			siteCreated,
+			postCount,
 			isNux;
 
 		followList = new FollowList();
@@ -188,7 +190,12 @@ module.exports = {
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
-		if ( site.post_count <= 1 &&
+		// Calculate the number of posts created by the user (not Headstarted) to determine if we should show the Insights tab, or the NUX placeholder.
+		postCount = site.post_count;
+		if ( site.options && site.options.headstart ) {
+			postCount = site.post_count - get( site, 'options.headstart.original.post.length', 0 );
+		}
+		if ( postCount < 1 &&
 				twoWeeksAgo.isBefore( siteCreated ) &&
 				( ! site.jetpack ) ) {
 			isNux = true;

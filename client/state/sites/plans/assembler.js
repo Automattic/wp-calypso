@@ -7,11 +7,13 @@ const createSitePlanObject = ( plan ) => {
 	return {
 		canStartTrial: Boolean( plan.can_start_trial ),
 		currentPlan: Boolean( plan.current_plan ),
+		discountReason: plan.discount_reason,
 		expiry: plan.expiry,
 		expiryMoment: moment( plan.expiry ).startOf( 'day' ),
 		formattedDiscount: plan.formatted_discount,
 		formattedPrice: plan.formatted_price,
 		freeTrial: Boolean( plan.free_trial ),
+		hasDomainCredit: Boolean( plan.has_domain_credit ),
 		id: Number( plan.id ),
 		productName: plan.product_name,
 		productSlug: plan.product_slug,

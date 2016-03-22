@@ -26,7 +26,7 @@ const SiteRedirectDetails = ( { selectedSite, domain } ) => {
 					)
 				}
 				buttonText={ i18n.translate( 'Try it now' ) }
-				href={ `http://${ selectedSite.wpcom_url }` }
+				href={ `${ selectedSite.options.unmapped_url }` }
 				target="_blank" />
 
 			<PurchaseDetail

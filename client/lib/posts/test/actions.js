@@ -41,14 +41,14 @@ describe( 'actions', function() {
 		it( 'should dispatch a post edit with a new metadata value', function() {
 			PostActions.updateMetadata( 'foo', 'bar' );
 
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+			expect( Dispatcher.handleViewAction.calledWithMatch( {
 				type: 'EDIT_POST',
 				post: {
 					metadata: [
 						{ key: 'foo', value: 'bar', operation: 'update' }
 					]
 				}
-			} );
+			} ) ).to.be.true;
 		} );
 
 		it( 'accepts an object of key value pairs', function() {
@@ -57,7 +57,7 @@ describe( 'actions', function() {
 				baz: 'qux'
 			} );
 
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+			expect( Dispatcher.handleViewAction.calledWithMatch( {
 				type: 'EDIT_POST',
 				post: {
 					metadata: [
@@ -65,7 +65,7 @@ describe( 'actions', function() {
 						{ key: 'baz', value: 'qux', operation: 'update' }
 					]
 				}
-			} );
+			} ) ).to.be.true;
 		} );
 
 		it( 'should include metadata already existing on the post object', function() {
@@ -78,7 +78,7 @@ describe( 'actions', function() {
 
 			PostActions.updateMetadata( 'foo', 'bar' );
 
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+			expect( Dispatcher.handleViewAction.calledWithMatch( {
 				type: 'EDIT_POST',
 				post: {
 					metadata: [
@@ -86,7 +86,7 @@ describe( 'actions', function() {
 						{ key: 'foo', value: 'bar', operation: 'update' }
 					]
 				}
-			} );
+			} ) ).to.be.true;
 		} );
 
 		it( 'should include metadata edits made previously', function() {
@@ -99,7 +99,7 @@ describe( 'actions', function() {
 
 			PostActions.updateMetadata( 'foo', 'bar' );
 
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+			expect( Dispatcher.handleViewAction.calledWithMatch( {
 				type: 'EDIT_POST',
 				post: {
 					metadata: [
@@ -107,7 +107,7 @@ describe( 'actions', function() {
 						{ key: 'foo', value: 'bar', operation: 'update' }
 					]
 				}
-			} );
+			} ) ).to.be.true;
 		} );
 
 		it( 'should not duplicate existing metadata edits', function() {
@@ -121,7 +121,7 @@ describe( 'actions', function() {
 
 			PostActions.updateMetadata( 'foo', 'bar' );
 
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+			expect( Dispatcher.handleViewAction.calledWithMatch( {
 				type: 'EDIT_POST',
 				post: {
 					metadata: [
@@ -129,7 +129,7 @@ describe( 'actions', function() {
 						{ key: 'foo', value: 'bar', operation: 'update' }
 					]
 				}
-			} );
+			} ) ).to.be.true;
 		} );
 	} );
 
@@ -143,7 +143,7 @@ describe( 'actions', function() {
 			} );
 			PostActions.deleteMetadata( 'foo' );
 
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+			expect( Dispatcher.handleViewAction.calledWithMatch( {
 				type: 'EDIT_POST',
 				post: {
 					metadata: [
@@ -151,13 +151,13 @@ describe( 'actions', function() {
 						{ key: 'foo', operation: 'delete' }
 					]
 				}
-			} );
+			} ) ).to.be.true;
 		} );
 
 		it( 'should accept an array of metadata keys to delete', function() {
 			PostActions.deleteMetadata( [ 'foo', 'bar' ] );
 
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+			expect( Dispatcher.handleViewAction.calledWithMatch( {
 				type: 'EDIT_POST',
 				post: {
 					metadata: [
@@ -165,7 +165,7 @@ describe( 'actions', function() {
 						{ key: 'bar', operation: 'delete' }
 					]
 				}
-			} );
+			} ) ).to.be.true;
 		} );
 	} );
 
@@ -231,7 +231,7 @@ describe( 'actions', function() {
 
 			PostActions.saveEdited( null, () => {
 				PostActions.__set__( 'normalizeApiAttributes', normalizeOriginal );
-				expect( normalizeSpy ).to.have.been.calledWith( changedAttributes );
+				expect( normalizeSpy.calledWith( changedAttributes ) ).to.be.true;
 				expect( normalizeSpy.returnValues[0] ).to.deep.equal( {
 					ID: 777,
 					site_ID: 123,

@@ -1,30 +1,30 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	Button = require( 'components/button' ),
-	formBase = require( './form-base' ),
-	RelatedContentPreview = require( 'my-sites/site-settings/related-content-preview' ),
-	LanguageSelector = require( 'components/forms/language-selector' ),
-	DisconnectJetpackButton = require( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button' ),
-	SectionHeader = require( 'components/section-header' ),
-	config = require( 'config' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
-	notices = require( 'notices' ),
-	analytics = require( 'analytics' ),
-	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
-	Gridicon = require( 'components/gridicon' ),
-	FormInput = require( 'components/forms/form-text-input' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormRadio = require( 'components/forms/form-radio' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' );
+import Card from 'components/card';
+import Button from 'components/button';
+import formBase from './form-base';
+import RelatedContentPreview from 'my-sites/site-settings/related-content-preview';
+import LanguageSelector from 'components/forms/language-selector';
+import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
+import SectionHeader from 'components/section-header';
+import config from 'config';
+import protectForm from 'lib/mixins/protect-form';
+import notices from 'notices';
+import analytics from 'analytics';
+import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
+import Gridicon from 'components/gridicon';
+import FormInput from 'components/forms/form-text-input';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormRadio from 'components/forms/form-radio';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 module.exports = React.createClass( {
 
@@ -32,7 +32,7 @@ module.exports = React.createClass( {
 
 	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
-	getSettingsFromSite: function( site ) {
+	getSettingsFromSite( site ) {
 		var settings;
 		site = site || this.props.site;
 		settings = {
@@ -62,15 +62,15 @@ module.exports = React.createClass( {
 		return settings;
 	},
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this._showWarning( this.props.site );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this._showWarning( nextProps.site );
 	},
 
-	resetState: function() {
+	resetState() {
 		this.replaceState( {
 			fetchingSettings: true,
 			blogname: '',
@@ -87,7 +87,7 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	siteOptions: function() {
+	siteOptions() {
 		return (
 			<div>
 				<FormFieldset>
@@ -119,7 +119,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	blogAddress: function() {
+	blogAddress() {
 		var site = this.props.site,
 			customAddress = '',
 			addressDescription = '';
@@ -166,11 +166,11 @@ module.exports = React.createClass( {
 		);
 	},
 
-	trackUpgradeClick: function() {
+	trackUpgradeClick() {
 		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'settings_site_address' } );
 	},
 
-	languageOptions: function() {
+	languageOptions() {
 		if ( this.props.site.jetpack ) {
 			return null;
 		}
@@ -194,7 +194,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	visibilityOptions: function() {
+	visibilityOptions() {
 		var site = this.props.site;
 
 		return (
@@ -241,7 +241,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	relatedPostsOptions: function() {
+	relatedPostsOptions() {
 		if ( ! this.state.jetpack_relatedposts_allowed ) {
 			return null;
 		}
@@ -293,7 +293,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	syncNonPublicPostTypes: function() {
+	syncNonPublicPostTypes() {
 		if ( ! config.isEnabled( 'manage/option_sync_non_public_post_stati' ) ) {
 			return null;
 		}
@@ -316,7 +316,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	jetpackDisconnectOption: function() {
+	jetpackDisconnectOption() {
 		var site = this.props.site,
 			disconnectText;
 
@@ -335,7 +335,7 @@ module.exports = React.createClass( {
 				linkDisplay={ false } />;
 	},
 
-	holidaySnowOption: function() {
+	holidaySnowOption() {
 		// Note that years and months below are zero indexed
 		let site = this.props.site,
 			today = this.moment(),
@@ -365,7 +365,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		var site = this.props.site;
 		if ( site.jetpack && ! site.hasMinimumJetpackVersion ) {
 			return this.jetpackDisconnectOption();
@@ -470,7 +470,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	_showWarning: function( site ) {
+	_showWarning( site ) {
 		if ( ! site || ! site.options ) {
 			return;
 		}

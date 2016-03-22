@@ -109,13 +109,15 @@ PostCountsStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case 'RECEIVE_UPDATED_POSTS':
 		case 'RECEIVE_POSTS_PAGE':
 			if ( data && data.meta && data.meta.data && data.meta.data.counts ) {
-				setPostCounts( data.meta.data.counts );
+				const responseSource = data.__sync && data.__sync.responseSource;
+				setPostCounts( responseSource, data.meta.data.counts );
 			}
 			break;
 
 		case 'RECEIVE_POST_COUNTS':
 			if ( data && data.counts && action.siteId ) {
-				setPostCounts( data, action.siteId );
+				const responseSource = data.__sync && data.__sync.responseSource;
+				setPostCounts( responseSource, data, action.siteId );
 			}
 			break;
 
@@ -139,15 +141,21 @@ PostCountsStore.dispatchToken = Dispatcher.register( function( payload ) {
 /**
  * Store post counts
  *
+ * @param {String} responseSource - source of response object; server|local
  * @param {Object} counts - post counts
  * @param {String|Number} siteID - identifier for the site
  * @return {void}
  */
-function setPostCounts( counts, siteID ) {
+function setPostCounts( responseSource, counts, siteID ) {
 	var siteId = getSiteId( siteID );
 
 	if ( isEqual( counts, _counts[ siteId ] ) ) {
 		return debug( 'No changes' );
+	}
+
+	if ( _counts[ siteId ] && responseSource === 'local' ) {
+		debug( 'do not override post-counts with local response data' );
+		return;
 	}
 
 	_counts[ siteId ] = counts.counts;

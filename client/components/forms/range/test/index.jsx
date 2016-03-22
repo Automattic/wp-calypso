@@ -1,5 +1,3 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
@@ -13,7 +11,8 @@ var expect = require( 'chai' ).expect,
  */
 var FormRange = require( '../' );
 
-describe( 'Range', function() {
+describe( 'index', function() {
+	require( 'test/helpers/use-fake-dom' )();
 	afterEach( function() {
 		ReactDom.unmountComponentAtNode( document.body );
 	} );
@@ -28,7 +27,7 @@ describe( 'Range', function() {
 			content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
 
 		expect( content ).to.have.length( 1 );
-		expect( content[0].props.className ).to.contain( 'is-min' );
+		expect( content[0].getAttribute( 'class' ) ).to.contain( 'is-min' );
 	} );
 
 	it( 'should render ending content if passed a `maxContent` prop', function() {
@@ -41,7 +40,7 @@ describe( 'Range', function() {
 			content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
 
 		expect( content ).to.have.length( 1 );
-		expect( content[0].props.className ).to.contain( 'is-max' );
+		expect( content[0].getAttribute( 'class' ) ).to.contain( 'is-max' );
 	} );
 
 	it( 'should render a value label if passed a truthy `showValueLabel` prop', function() {

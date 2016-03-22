@@ -1,23 +1,15 @@
-require( 'lib/react-test-env-setup' )();
-
-/**
- * External dependencies
- */
 var assert = require( 'assert' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' );
+	TestUtils = require( 'react-addons-test-utils' ),
+	MultiCheckbox = require( '../' );
 
-/**
- * Internal dependencies
- */
-var MultiCheckbox = require( '../' );
-
-describe( 'MultiCheckbox', function() {
+describe( 'index', function() {
 	var options = [
 		{ value: 1, label: 'One' },
 		{ value: 2, label: 'Two' }
 	];
+	require( 'test/helpers/use-fake-dom' )();
 
 	afterEach( function() {
 		ReactDom.unmountComponentAtNode( document.body );

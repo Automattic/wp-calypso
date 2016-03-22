@@ -1,57 +1,55 @@
 /**
  * External dependencies
  */
-var assert = require( 'chai' ).assert,
-	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' ),
-	mockery = require( 'mockery' ),
-	sinon = require( 'sinon' );
+import { assert } from 'chai';
+import noop from 'lodash/noop';
 
-function mockComponent( displayName ) {
-	return React.createClass( {
-		displayName,
-		render: () => { return <div/> }
-	} );
-};
+/**
+ * Internal dependencies
+ */
+import useMockery from 'test/helpers/use-mockery';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'ThemesList', function() {
-	this.timeout( 10 * 1000 );
+	let React, TestUtils, ThemesList;
+	useSandbox();
 
-	before( function() {
-		mockery.registerMock( './more-button', mockComponent() );
+	useMockery( mockery => {
+		React = require( 'react' );
+		TestUtils = require( 'react-addons-test-utils' );
 
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
-
-		this.ThemesList = require( '../' );
-		this.ThemesList.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
+		mockery.registerMock( './more-button', React.createClass( { render: () => <div/> } ) );
+		ThemesList = require( '../' );
 	} );
 
 	after( function() {
-		delete this.ThemesList.prototype.__reactAutoBindMap.translate;
+		delete ThemesList.prototype.__reactAutoBindMap.translate;
 	} );
 
 	beforeEach( function() {
+		ThemesList.prototype.__reactAutoBindMap.translate = this.sandbox.stub().returnsArg( 0 );
+
 		this.props = {
 			themes: [
 				{
+					id: '1',
 					name: 'kubrick',
 					screenshot: '/theme/kubrick/screenshot.png',
 				},
 				{
+					id: '2',
 					name: 'picard',
 					screenshot: '/theme/picard/screenshot.png',
 				}
 			],
 			lastPage: true,
 			loading: false,
-			fetchNextPage: () => {},
-			getButtonOptions: () => {},
+			fetchNextPage: noop,
+			getButtonOptions: noop,
+			onScreenshotClick: noop
 		};
 
-		this.themesList = React.createElement( this.ThemesList, this.props );
+		this.themesList = React.createElement( ThemesList, this.props );
 	} );
 
 	describe( 'propTypes', function() {
@@ -77,7 +75,7 @@ describe( 'ThemesList', function() {
 			beforeEach( function() {
 				var shallowRenderer = TestUtils.createRenderer();
 				this.props.themes = [];
-				this.themesList = React.createElement( this.ThemesList, this.props );
+				this.themesList = React.createElement( ThemesList, this.props );
 
 				shallowRenderer.render( this.themesList );
 				this.themesListElement = shallowRenderer.getRenderOutput();
@@ -86,8 +84,6 @@ describe( 'ThemesList', function() {
 			it( 'displays the EmptyContent component', function() {
 				assert( this.themesListElement.type.displayName === 'EmptyContent', 'No EmptyContent' );
 			} );
-
 		} );
 	} );
-
 } );

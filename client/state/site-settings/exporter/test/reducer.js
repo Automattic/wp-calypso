@@ -22,7 +22,7 @@ import {
 import {
 	SAMPLE_ADVANCED_SETTINGS,
 	SAMPLE_ADVANCED_SETTINGS_EMPTY,
-} from './sample-data';
+} from './data';
 import { States } from '../constants';
 
 describe( 'reducer', () => {
