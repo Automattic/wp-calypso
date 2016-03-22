@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import React from 'react';
+import i18n from 'lib/mixins/i18n';
 
 /**
  * Internal dependencies
@@ -47,6 +48,26 @@ class TimezoneDropdown extends Component {
 
 				timezones = timezones.concat( cities );
 			}
+
+			timezones = timezones.concat( [
+				{
+					label: 'UTC',
+					value: 'UTC',
+					isLabel: true
+				},
+				{
+					label: 'UTC',
+					value: 'UTC'
+				},
+				null
+			] );
+
+			timezones = timezones.concat( [
+				{
+					label: i18n.translate( 'Manual Offsets' ),
+					value: 'manual-offsets',
+					isLabel: true
+				} ], zones.manual_utc_offsets );
 
 			this.setState( { timezones } );
 		} );
