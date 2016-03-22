@@ -44,8 +44,6 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'persistence', () => {
-		const initialState = Map();
-
 		it( 'does not persist state because this is not implemented yet', () => {
 			const jsObject = deepFreeze( {
 				mood: {
@@ -77,26 +75,6 @@ describe( 'reducer', () => {
 			} );
 			const state = reducer( jsObject, { type: SERVER_DESERIALIZE } );
 			expect( state ).to.eql( fromJS( jsObject ) );
-		} );
-
-		it( 'should ignore loading data with invalid keys ', () => {
-			const jsObject = deepFreeze( {
-				missingKey: true,
-				mood: {
-					name: 'Mood',
-					author: 'Automattic'
-				}
-			} );
-			const state = reducer( jsObject, { type: DESERIALIZE } );
-			expect( state ).to.eql( initialState );
-		} );
-
-		it( 'should ignore loading data with invalid values ', () => {
-			const jsObject = deepFreeze( {
-				mood: 'foo'
-			} );
-			const state = reducer( jsObject, { type: DESERIALIZE } );
-			expect( state ).to.eql( initialState );
 		} );
 	} );
 } );
