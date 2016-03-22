@@ -2,6 +2,7 @@
  * External dependencies
  */
 import assign from 'lodash/assign';
+import includes from 'lodash/includes';
 import reject from 'lodash/reject';
 
 /**
@@ -255,6 +256,12 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function filterFlowName( flowName ) {
+	const defaultFlows = [ 'main', 'website' ];
+
+	if ( includes( defaultFlows, flowName ) && abtest( 'freeTrialsInSignup' ) === 'enabled' ) {
+		return 'free-trial';
+	}
+
 	const locale = getLocaleSlug();
 	// Only allow the `headstart` flow for EN users.
 	if ( 'headstart' === flowName && 'en' !== locale && 'en-gb' !== locale ) {

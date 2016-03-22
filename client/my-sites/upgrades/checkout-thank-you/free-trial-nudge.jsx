@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { cartItems } from 'lib/cart-values';
-import { getABTestVariation } from 'lib/abtest';
 import {
 	isBusiness,
 	isDomainMapping,
@@ -60,10 +60,6 @@ const FreeTrialNudge = React.createClass( {
 	},
 
 	render() {
-		if ( getABTestVariation( 'freeTrials' ) !== 'offered' ) {
-			return null;
-		}
-
 		if ( ! this.props.purchases.some( isDomainMapping ) && ! this.props.purchases.some( isDomainRegistration ) ) {
 			return null;
 		}
@@ -83,6 +79,10 @@ const FreeTrialNudge = React.createClass( {
 		const premiumPlan = find( this.props.sitePlans.data, isPremium );
 
 		if ( ! premiumPlan.canStartTrial ) {
+			return null;
+		}
+
+		if ( abtest( 'freeTrialNudgeOnThankYouPage' ) === 'disabled' ) {
 			return null;
 		}
 
