@@ -409,7 +409,8 @@ exportMethods = {
 	setLocale: setLocale,
 	reRenderTranslations: reRenderTranslations,
 	setLocaleSlug: setLocaleSlug,
-	getLocaleSlug: getLocaleSlug
+	getLocaleSlug: getLocaleSlug,
+	i18nState: i18nState
 };
 
 // If added as a standalone object, propagate change event

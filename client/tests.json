@@ -95,6 +95,11 @@
 			"test" : [ "menu-data" ]
 		},
 		"mixins" : {
+			"i18n": {
+				"localize": {
+					"test": [ "index" ]
+				}
+			},
 			"pageable": {
 				"test": [ "index" ]
 			},
