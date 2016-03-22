@@ -30,7 +30,7 @@ module.exports = {
 		defaultVariation: 'originalA'
 	},
 	freeTrialsInSignup: {
-		datestamp: '20160322',
+		datestamp: '20160328',
 		variations: {
 			disabled: 85,
 			enabled: 15
@@ -38,7 +38,7 @@ module.exports = {
 		defaultVariation: 'disabled'
 	},
 	freeTrialNudgeOnThankYouPage: {
-		datestamp: '20160322',
+		datestamp: '20160328',
 		variations: {
 			disabled: 50,
 			enabled: 50
