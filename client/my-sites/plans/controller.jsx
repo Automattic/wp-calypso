@@ -12,7 +12,6 @@ var sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	analytics = require( 'analytics' ),
-	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	plans = require( 'lib/plans-list' )(),
 	config = require( 'config' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
@@ -106,7 +105,6 @@ module.exports = {
 			<Main className="plans has-sidebar">
 				<CheckoutData>
 					<PlansCompare
-						enableFreeTrials={ getABTestVariation( 'freeTrials' ) === 'offered' }
 						selectedSite={ site }
 						plans={ plans }
 						features={ features }
