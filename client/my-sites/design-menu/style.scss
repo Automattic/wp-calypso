@@ -51,11 +51,6 @@ $border-color: #ddd;
 	font-weight: 200;
 }
 
-.design-menu-controls__control-list {
-	margin-top: 15px;
-	border-top: 1px solid $border-color;
-}
-
 .design-menu-controls__control-button {
 	width: 100%;
 	height: 46px;
@@ -113,4 +108,9 @@ $border-color: #ddd;
 
 .design-menu .site {
 	background-color: #fff;
+}
+
+.button.design-menu__save {
+	text-align: center;
+	font-size: 14px;
 }

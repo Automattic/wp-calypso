@@ -11,6 +11,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Site from 'my-sites/site';
+import Card from 'components/card';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import layoutFocus from 'lib/layout-focus';
@@ -56,6 +57,10 @@ const DesignMenu = React.createClass( {
 
 	enterDefaultControl() {
 		this.enterControl( null );
+	},
+
+	onSave() {
+		this.props.actions.saveCustomizations();
 	},
 
 	onBack() {
@@ -131,6 +136,7 @@ const DesignMenu = React.createClass( {
 			title: this.props.selectedSite.name,
 			domain: this.props.selectedSite.URL.replace( /^https?:\/\//, '' ),
 		} );
+		const saveButtonText = this.props.isSaved ? this.translate( 'Saved' ) : this.translate( 'Publish Changes' );
 		return (
 			<div className="design-menu">
 				<span className="current-site__switch-sites">
@@ -138,9 +144,10 @@ const DesignMenu = React.createClass( {
 						<Gridicon icon="arrow-left" size={ 18 } />
 						{ this.translate( 'Back' ) }
 					</Button>
-					<Site
-						site={ site }
-					/>
+					<Site site={ site } />
+					<Card className="design-menu__header-buttons">
+						<Button primary compact disabled={ this.props.isSaved } className="design-menu__save" onClick={ this.onSave } >{ saveButtonText }</Button>
+					</Card>
 				</span>
 				{ this.renderDesignTools() }
 			</div>
