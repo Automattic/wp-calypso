@@ -92,7 +92,7 @@
 			"test": [ "utils" ]
 		},
 		"menu-data" : {
-			"test" : [ "test-menu-data" ]
+			"test" : [ "menu-data" ]
 		},
 		"mixins" : {
 			"pageable": {
@@ -201,7 +201,7 @@
 	"my-sites": {
 		"menus" : {
 			"item-options" : {
-				"test": [ "test-posts" ]
+				"test": [ "posts" ]
 			}
 		},
 		"upgrades": {
