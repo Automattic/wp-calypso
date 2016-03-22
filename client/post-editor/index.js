@@ -21,6 +21,7 @@ module.exports = function() {
 
 	if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 		page( '/edit/:type', sitesController.siteSelection, sitesController.sites );
-		page( '/edit/:site?/:type/:post?', sitesController.siteSelection, sitesController.fetchJetpackSettings, controller.post );
+		page( '/edit/:type/new', ( context ) => page.redirect( `/edit/${ context.params.type }` ) );
+		page( '/edit/:type/:site?/:post?', sitesController.siteSelection, sitesController.fetchJetpackSettings, controller.post );
 	}
 };
