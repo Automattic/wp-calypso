@@ -34,6 +34,8 @@ import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-vali
 import InvitesSentStore from 'lib/invites/stores/invites-sent';
 import analytics from 'analytics';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import EmptyContent from 'components/empty-content';
+import { userCan } from 'lib/site/utils';
 
 /**
  * Module variables
@@ -291,6 +293,19 @@ const InvitePeople = React.createClass( {
 	},
 
 	render() {
+		const { site } = this.props;
+		if ( site && ! userCan( 'promote_users', site ) ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ this.translate( 'Oops, only administrators can invite other people' ) }
+						illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+					/>
+				</Main>
+			);
+		}
+
 		return (
 			<Main>
 				<SidebarNavigation />
