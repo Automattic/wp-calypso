@@ -41,6 +41,12 @@ const DesignPreview = React.createClass( {
 		};
 	},
 
+	componentDidMount() {
+		if ( this.props.selectedSiteId && this.props.actions.fetchPreviewMarkup ) {
+			this.props.actions.fetchPreviewMarkup( this.props.selectedSiteId, '' );
+		}
+	},
+
 	componentDidUpdate( prevProps ) {
 		// If the customizations have been removed, restore the original markup
 		if ( this.props.previewMarkup && this.props.customizations && this.props.previewMarkup === prevProps.previewMarkup && prevProps.customizations ) {
