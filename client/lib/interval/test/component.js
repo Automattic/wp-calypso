@@ -98,12 +98,12 @@ describe( 'Interval', function() {
 
 		it( 'Adds the action when mounted', function() {
 			const o = { counter: 0 };
-			const wrapper = mount( <div></div> );
+			mount( <div></div> );
 
 			this.clock.tick( 1000 );
 			assert( 0 === o.counter );
 
-			wrapper.setProps( { children: <Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval> } );
+			mount( <Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval> );
 
 			this.clock.tick( 1000 );
 			assert( 2 === o.counter );
