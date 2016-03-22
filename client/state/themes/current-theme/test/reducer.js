@@ -76,45 +76,5 @@ describe( 'current-theme reducer', () => {
 			const state = reducer( jsObject, { type: SERVER_DESERIALIZE } );
 			expect( state ).to.eql( fromJS( jsObject ) );
 		} );
-
-		it.skip( 'should ignore loading data with invalid keys ', () => {
-			const jsObject = deepFreeze( {
-				missingKey: true,
-				hasActivated: false,
-				currentThemes: {
-					foo: {
-						name: 'my test theme',
-						id: 'testtheme',
-						cost: {
-							currency: 'USD',
-							number: 0,
-							display: ''
-						}
-					}
-				}
-			} );
-			const state = reducer( jsObject, { type: DESERIALIZE } );
-			expect( state ).to.eql( initialState );
-		} );
-
-		it.skip( 'should ignore loading data with invalid values ', () => {
-			const jsObject = deepFreeze( {
-				isActivating: true,
-				hasActivated: 'foo',
-				currentThemes: {
-					123456: {
-						name: 'my test theme',
-						id: 'testtheme',
-						cost: {
-							currency: 'USD',
-							number: 0,
-							display: ''
-						}
-					}
-				}
-			} );
-			const state = reducer( jsObject, { type: DESERIALIZE } );
-			expect( state ).to.eql( initialState );
-		} );
 	} );
 } );
