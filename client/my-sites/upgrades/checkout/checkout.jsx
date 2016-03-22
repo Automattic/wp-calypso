@@ -2,7 +2,6 @@
  * External dependencies
  */
 var connect = require( 'react-redux' ).connect,
-	Dispatcher = require( 'dispatcher' ),
 	forEach = require( 'lodash/forEach' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	isEqual = require( 'lodash/isEqual' ),
@@ -102,8 +101,7 @@ const Checkout = React.createClass( {
 	},
 
 	redirectIfEmptyCart: function() {
-		var redirectTo = '/plans/',
-			renewalItem;
+		var redirectTo = '/plans/';
 
 		if ( ! this.state.previousCart && this.props.planName ) {
 			// the plan hasn't been added to the cart yet
