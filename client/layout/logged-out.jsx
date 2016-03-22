@@ -22,7 +22,7 @@ const LayoutLoggedOut = ( {
 		[ 'is-group-' + section.group ]: !! section,
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
-		'has-no-sidebar': ! section.secondary
+		'has-no-sidebar': true // Logged-out never has a sidebar
 	} );
 
 	return (
