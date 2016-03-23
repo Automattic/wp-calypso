@@ -69,8 +69,8 @@ export function details( context, next ) {
 	const { slug } = context.params;
 	const user = getCurrentUser( context.store.getState() );
 	const themeName = ( getThemeDetails( context.store.getState(), slug ) || false ).name;
-	const title = i18n.translate( '%(theme)s Theme', {
-		args: { theme: themeName },
+	const title = i18n.translate( '%(themeName)s Theme', {
+		args: { themeName: themeName },
 		textOnly: true
 	} );
 	const Head = user
