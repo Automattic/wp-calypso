@@ -31,10 +31,6 @@
 	&.is-info {
 		background: $blue-wordpress;
 	}
-
-	@include breakpoint( "<480px" ) {
-		flex-direction: column;
-	}
 }
 
 .notice__icon {
@@ -45,8 +41,16 @@
 	}
 }
 
-.notice__text {
+.notice__content {
+	display: flex;
 	flex-grow: 1;
+
+	@include breakpoint( "<480px" ) {
+		flex-direction: column;
+	}
+}
+
+.notice__text {
 	font-size: 15px;
 	padding: 11px 24px;
 
