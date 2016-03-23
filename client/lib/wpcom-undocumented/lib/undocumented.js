@@ -1601,6 +1601,17 @@ Undocumented.prototype.deleteEmailForward = function( domain, mailbox, callback 
 	} );
 };
 
+Undocumented.prototype.resendVerificationEmailForward = function( domain, mailbox, callback ) {
+	this.wpcom.req.post( '/domains/' + domain + '/email/' + mailbox + '/resend-verification', {}, {}, function( error, response ) {
+		if ( error ) {
+			callback( error );
+			return;
+		}
+
+		callback( null, response );
+	} );
+};
+
 Undocumented.prototype.nameservers = function( domain, callback ) {
 	this.wpcom.req.get( '/domains/' + domain + '/nameservers', function( error, response ) {
 		if ( error ) {
