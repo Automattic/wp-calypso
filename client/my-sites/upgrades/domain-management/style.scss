@@ -38,13 +38,13 @@
 	}
 
 	.button {
-		margin: 0;
+		margin: 0 0 0 15px;
 
 		&.is-primary {
 			margin: 0 0 15px 0;
 
 			@include breakpoint('>480px') {
-				margin: 0 15px 0 0;
+				margin: 0;
 			}
 
 			@include breakpoint( '<480px' ) {
