@@ -142,11 +142,7 @@ Good:
 }
 ```
 
-The value passed to this mixin is actually a string rather than a pixel value. Accepted values are:
-
-`<480px`, `<660px`, `<960px`, `>480px`, `>660px`, `>960px`, `480px-660px`, `660px-960px`, `480px-960px`.
-
-If you provide any other value to the mixin it will fail and give you a warning in the output from `make run`.
+The value passed to this mixin is actually a string rather than a pixel value. Accepted values are: `"<X"`, `">X"`, or `"X-Y"` — where `X` and `Y` are valid breakpoints, for example `480px`. If you provide any other value to the mixin it will fail and give you a warning in the output from `make run`.
 
 Adding additional breakpoints should not be undertaken lightly.
 
