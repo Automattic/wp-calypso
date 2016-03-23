@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
 
+/**
+ * Internal dependencies
+ */
 import Notice from 'components/notice';
 
 export default React.createClass( {
