@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -14,90 +16,120 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
+import { dismissUrl, goToRemoteAuth, goToPluginInstall, checkUrl } from 'state/jetpack-connect/actions';
 
-/**
- * Constants
- */
-const pluginURL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
-const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true'
-
-export default React.createClass( {
+const JetpackConnectMain = React.createClass( {
 	displayName: 'JetpackConnectSiteURLStep',
 
 	getInitialState() {
 		return {
-			showDialog: false,
-			siteStatus: false,
-			isFetching: false,
+			currentUrl: '',
 		};
 	},
 
-	onCloseDialog() {
-		this.setState( { showDialog: false } );
+	dismissUrl() {
+		this.props.dismissUrl( this.state.currentUrl );
 	},
 
-	onShowDialog() {
-		this.setState( { showDialog: true } );
+	isCurrentUrlFetched() {
+		return this.props.jetpackConnectSite &&
+			this.state.currentUrl === this.props.jetpackConnectSite.url &&
+			this.props.jetpackConnectSite.isFetched;
 	},
 
-	goToPluginInstall() {
-		window.location = this.getCurrentUrl() + pluginURL;
-	},
-
-	goToRemoteAuth() {
-		window.location = this.getCurrentUrl() + authURL;
-	},
-
-	showNotExistsError() {
-		this.setState( { siteStatus: 'notExist', isFetching: false } );
-	},
-
-	checkIfUrlIsReadyForJetpack( url ) {
-		return new Promise( function( resolve, reject ) {
-			// we need to develop the backend endpoint for this check. Meanwhile, it always succeed
-			resolve();
-		} );
+	isCurrentUrlFetching() {
+		return this.state.currentUrl !== '' &&
+			this.props.jetpackConnectSite &&
+			this.state.currentUrl === this.props.jetpackConnectSite.url &&
+			this.props.jetpackConnectSite.isFetching
 	},
 
 	getCurrentUrl() {
 		let url = this.refs.siteUrlInputRef.state.value;
-		if ( url.substr( 0, 4 ) !== 'http' ) {
+		if ( url && url.substr( 0, 4 ) !== 'http' ) {
 			url = 'http://' + url;
 		}
 		return url;
 	},
 
-	onURLEnter() {
-		this.setState( { isFetching: true } );
-		this.checkIfUrlIsReadyForJetpack( this.getCurrentUrl() )
-			.then( this.goToRemoteAuth )
-			.catch( this.showNotExistsError )
+	onURLChange() {
+		this.setState( { currentUrl: this.getCurrentUrl() } );
+		this.dismissUrl();
 	},
 
-	onDismissClick() {
-		this.setState( {
-			siteStatus: false
-		} );
+	onURLEnter() {
+		this.props.checkUrl( this.state.currentUrl );
+	},
+
+	installJetpack() {
+		goToPluginInstall( this.state.currentUrl );
 	},
 
 	getDialogButtons() {
 		return [ {
 			action: 'cancel',
-			label: this.translate( 'Cancel' )
+			label: this.translate( 'Cancel' ),
+			onClick: this.dismissUrl
 		}, {
 			action: 'install',
 			label: this.translate( 'Connect Now' ),
-			onClick: this.goToPluginInstall,
+			onClick: this.installJetpack,
 			isPrimary: true
 		} ];
 	},
 
-	renderDialog() {
-		if ( this.state.showDialog ) {
+	checkProperty( propName ) {
+		return this.state.currentUrl &&
+			this.props.jetpackConnectSite &&
+			this.props.jetpackConnectSite.data &&
+			this.isCurrentUrlFetched() &&
+			this.props.jetpackConnectSite.data[ propName ];
+	},
+
+	componentDidUpdate() {
+		if ( this.getStatus() === 'notConnectedJetpack' && this.isCurrentUrlFetched() ) {
+			return goToRemoteAuth( this.state.currentUrl );
+		}
+	},
+
+	getStatus() {
+		if ( this.state.currentUrl === '' ) {
+			return false;
+		}
+		if ( this.state.currentUrl.toLowerCase() === 'http://wordpress.com' || this.state.currentUrl.toLowerCase() === 'https://wordpress.com' ) {
+			return 'wordpress.com';
+		}
+		if ( this.checkProperty( 'isWordPressDotCom' ) ) {
+			return 'isDotCom';
+		}
+		if ( ! this.checkProperty( 'exists' ) ) {
+			return 'notExists';
+		}
+		if ( ! this.checkProperty( 'isWordPress' ) ) {
+			return 'notWordPress';
+		}
+		if ( ! this.checkProperty( 'hasJetpack' ) ) {
+			return 'notJetpack';
+		}
+		if ( ! this.checkProperty( 'isJetpackActive' ) ) {
+			return 'notActiveJetpack';
+		}
+		if ( ! this.checkProperty( 'isJetpackConnected' ) ) {
+			return 'notConnectedJetpack';
+		}
+		if ( this.checkProperty( 'isJetpackConnected' ) ) {
+			return 'alreadyConnected';
+		}
+
+		return false;
+	},
+
+	renderDialog( status ) {
+		if ( status === 'notJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
 			return (
 				<Dialog
 					isVisible={ true }
-					onClose={ this.onCloseDialog }
+					onClose={ this.dismissUrl }
 					additionalClassNames="jetpack-connect__wp-admin-dialog"
 					buttons={ this.getDialogButtons() } >
 
@@ -113,9 +145,10 @@ export default React.createClass( {
 	},
 
 	render() {
+		const status = this.getStatus();
 		return (
 			<Main className="jetpack-connect">
-				{ this.renderDialog() }
+				{ this.renderDialog( status ) }
 
 				<div className="jetpack-connect__site-url-entry-container">
 					<ConnectHeader headerText={ this.translate( 'Connect a self-hosted WordPress' ) }
@@ -124,16 +157,17 @@ export default React.createClass( {
 						steps={ 3 } />
 
 					<Card className="jetpack-connect__site-url-input-container">
-						{ this.state.siteStatus
-							? <JetpackConnectNotices noticeType={ this.state.siteStatus } onDismissClick={ this.onDismissClick } />
+						{ ! this.isCurrentUrlFetching() && this.isCurrentUrlFetched() && ! this.props.jetpackConnectSite.isDismissed && status
+							? <JetpackConnectNotices noticeType={ status } onDismissClick={ this.dismissUrl } />
 							: null
 						}
 
 						<SiteURLInput ref="siteUrlInputRef"
+							onChange={ this.onURLChange }
 							onClick={ this.onURLEnter }
 							onDismissClick={ this.onDismissClick }
-							isError={ this.state.isError }
-							isFetching={ this.state.isFetching } />
+							isError={ this.getStatus() }
+							isFetching={ this.isCurrentUrlFetching() } />
 					</Card>
 
 					<LoggedOutFormLinks>
@@ -145,3 +179,12 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	state => {
+		return {
+			jetpackConnectSite: state.jetpackConnect.jetpackConnectSite
+		};
+	},
+	dispatch => bindActionCreators( { checkUrl, dismissUrl }, dispatch )
+)( JetpackConnectMain );
