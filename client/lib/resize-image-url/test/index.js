@@ -20,4 +20,10 @@ describe( 'index', function() {
 		var resizedImageUrl = resizeImageUrl( safeImageUrl, { resize: '40,40' } );
 		assert.equal( resizedImageUrl, 'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?resize=40%2C40' );
 	} );
+
+	it( 'should not attempt to resize non-HTTP protocols', function() {
+		var imageUrl = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+		var resizedImageUrl = resizeImageUrl( imageUrl, { resize: '40,40' } );
+		assert.equal( resizedImageUrl, imageUrl );
+	} );
 } );
