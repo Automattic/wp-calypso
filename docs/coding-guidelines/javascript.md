@@ -354,7 +354,7 @@ Use single-quotes for string literals:
 var myStr = 'strings should be contained in single quotes';
 ```
 
-When a string contains single quotes, they need to be escaped with a backslash (\):
+When a string contains single quotes, they need to be escaped with a backslash (\\):
 
 Double quotes can be used in cases where there is a single quote in the string or in JSX attributes.
 
@@ -430,7 +430,7 @@ function isValid() {
 
 ### Arrays
 
-Creating arrays in JavaScript should be done using the shorthand [] constructor rather than the new Array() notation.
+Creating arrays in JavaScript should be done using the shorthand `[]` constructor rather than the `new Array()` notation.
 
 ```js
 var myArray = [];
@@ -540,7 +540,7 @@ If you find that you have many separate rendering functions, or rendering functi
 
 ## ES6
 
-We support and encourage ES6 features thanks to [Babel](https://babeljs.io/) transpilation and the accompanying polyfill. There are still a couple of minor caveats to be aware of [regarding Classes](https://babeljs.io/docs/advanced/caveats/).
+We support and encourage ES6 features thanks to [Babel](https://babeljs.io/) transpilation and the accompanying polyfill. There are still a couple of minor caveats to be aware of [regarding Classes](https://babeljs.io/docs/learn-es2015/#subclassable-built-ins).
 
 ### Let and Const
 
