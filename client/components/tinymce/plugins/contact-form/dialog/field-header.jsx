@@ -22,23 +22,43 @@ export default React.createClass( {
 		if ( this.props.options ) {
 			const count = this.props.options.split( ',' ).length;
 
+			if ( this.props.required ) {
+				return this.translate(
+					'Required field "%(fieldName)s" with %(numOption)d option',
+					'Required field "%(fieldName)s" with %(numOption)d options', {
+						count,
+						args: {
+							fieldName: getLabel( this.props.type ),
+							numOption: count
+						},
+						comment: 'Explains to the user the field settings. If required, type, and how many options it has.'
+					} );
+			}
+
 			return this.translate(
-				'%(required)s %(type)s with %(numOption)d option',
-				'%(required)s %(type)s with %(numOption)d options', {
+				'Optional field "%(fieldName)s" with %(numOption)d option',
+				'Optional field "%(fieldName)s" with %(numOption)d options', {
 					count,
 					args: {
-						required: this.props.required ? this.translate( 'Required' ) : this.translate( 'Optional' ),
-						type: getLabel( this.props.type ),
+						fieldName: getLabel( this.props.type ),
 						numOption: count
 					},
 					comment: 'Explains to the user the field settings. If required, type, and how many options it has.'
 				} );
 		}
 
-		return this.translate( '%(required)s %(type)s', {
+		if ( this.props.required ) {
+			return this.translate( 'Required field "%(fieldName)s"', {
+				args: {
+					fieldName: getLabel( this.props.type )
+				},
+				comment: 'Explain to the user the field settings for fields other than dropdown and select list.'
+			} );
+		}
+
+		return this.translate( 'Optional field "%(fieldName)s"', {
 			args: {
-				required: this.props.required ? this.translate( 'Required' ) : this.translate( 'Optional' ),
-				type: getLabel( this.props.type )
+				fieldName: getLabel( this.props.type )
 			},
 			comment: 'Explain to the user the field settings for fields other than dropdown and select list.'
 		} );
