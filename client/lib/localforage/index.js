@@ -8,7 +8,6 @@ import reduce from 'lodash/reduce';
  * Internal dependencies
  */
 import localforageBypass from './localforage-bypass';
-import { isSupportUserSession } from 'lib/user/support-user-interop';
 
 const config = {
 	name: 'calypso',
@@ -22,15 +21,12 @@ const config = {
 	]
 };
 
-if ( isSupportUserSession() ) {
-	// Only use the bypass driver
-	config.driver = [ localforageBypass._driver ];
-}
-
+let _ready = false;
 // Promise that resolves when our localforage configuration has been applied
 const localForagePromise = localforage.defineDriver( localforageBypass )
 	.then( () => {
 		localforage.config( config );
+		_ready = true;
 		return localforage;
 	} )
 	.catch( ( error ) => console.error( 'Configuring localforage: %s', error ) );
@@ -59,5 +55,13 @@ const localForageProxy = reduce(
 		},
 		{}
 );
+
+localForageProxy.bypass = () => {
+	if ( _ready ) {
+		console.error( 'Cannot bypass localforage after initialization' );
+	} else {
+		config.driver = [ localforageBypass._driver ];
+	}
+}
 
 export default Object.assign( {}, localforage, localForageProxy );
