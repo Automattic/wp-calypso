@@ -131,12 +131,12 @@ export default React.createClass( {
 		const bulkManagement = ! this.state.bulkManagement;
 
 		if ( bulkManagement ) {
+			this.setBulkSelectionState( this.props.plugins, true );
 			this.setState( { bulkManagement } );
 			return this.recordEvent( 'Clicked Manage' );
 		}
 
-		// Unselect all plugins.
-		this.setState( { selectedPlugins: {}, bulkManagement } );
+		this.setState( { bulkManagement } );
 		this.removePluginsNotices();
 		this.recordEvent( 'Clicked Manage Done' );
 	},
