@@ -17,7 +17,6 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		sites: React.PropTypes.object,
-		siteQuerystring: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
 		context: React.PropTypes.object,
 		visible: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
@@ -82,7 +81,7 @@ module.exports = React.createClass( {
 					? <SiteSelector
 							sites={ this.props.sites }
 							siteBasePath="/post"
-							siteQuerystring={ this.props.siteQuerystring }
+							onSiteSelect={ this.props.onSiteSelect }
 							showAddNewSite={ false }
 							indicator={ false }
 							autoFocus={ ! hasTouch() }

@@ -588,7 +588,8 @@ const PostEditor = React.createClass( {
 	},
 
 	onClose: function() {
-		page( this.getAllPostsUrl() );
+		// go back if we can, if not, hit all posts
+		page.back( this.getAllPostsUrl() );
 	},
 
 	getAllPostsUrl: function() {
