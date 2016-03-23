@@ -94,6 +94,9 @@
 		"localforage": {
 			"test": [ "localforage-bypass" ]
 		},
+		"interval" : {
+			"test" : [ "component", "runner" ]
+		},
 		"menu-data" : {
 			"test" : [ "menu-data" ]
 		},
