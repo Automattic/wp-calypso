@@ -82,7 +82,7 @@ export default ( state = initialState, action ) => {
 		case ActionTypes.RECEIVE_THEMES_SERVER_ERROR:
 			return state
 				.setIn( [ 'queryState', 'isFetchingNextPage' ], false )
-				.setIn( [ 'queryState', 'lastPage' ], true );
+				.setIn( [ 'queryState', 'isLastPage' ], true );
 
 		case ActionTypes.ACTIVATED_THEME:
 			// The `active` attribute isn't ever really read, but since
