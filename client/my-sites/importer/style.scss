@@ -38,6 +38,10 @@
 	&.wordpress {
 		background-color: $blue-wordpress;
 	}
+
+	&.medium {
+		background-color: #00AB6C;
+	}
 	
 	@include breakpoint(">960px") {
 		width: 56px;

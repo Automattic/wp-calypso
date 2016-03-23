@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import includes from 'lodash/includes';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -12,8 +13,9 @@ import EmptyContent from 'components/empty-content';
 import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
 import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
+import MediumImporter from 'my-sites/importer/importer-medium';
 import { fetchState } from 'lib/importer/actions';
-import { appStates, WORDPRESS } from 'lib/importer/constants';
+import { appStates, WORDPRESS, MEDIUM } from 'lib/importer/constants';
 
 export default React.createClass( {
 	displayName: 'SiteSettingsImport',
@@ -117,6 +119,10 @@ export default React.createClass( {
 
 				{ this.getImports( WORDPRESS ).map( ( importerStatus, key ) =>
 					<WordPressImporter { ...{ key, site, importerStatus } } /> ) }
+
+				{ config.isEnabled( 'manage/import/medium' ) &&
+					this.getImports( MEDIUM ).map( ( importerStatus, key ) =>
+						<MediumImporter { ...{ key, site, importerStatus } } /> ) }
 
 				<CompactCard href={ adminUrl + 'import.php' } target="_blank">
 					{ this.translate( 'Other importers') }
