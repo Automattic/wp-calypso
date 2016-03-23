@@ -181,6 +181,11 @@ function getDefaultContext( request ) {
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
+	if ( config.isEnabled( 'support-user' ) && request.query.support_user === 'true' ) {
+		context.supportUser = true;
+		context.user = false;
+	}
+
 	if ( config.isEnabled( 'code-splitting' ) ) {
 		chunk = getChunk( request.path );
 

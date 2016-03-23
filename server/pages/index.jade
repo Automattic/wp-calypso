@@ -110,6 +110,11 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				}
 			})();
 
+		if supportUser
+			script.
+				window.supportUser = {
+					readyScripts: []
+				};
 		if user
 			script(type='text/javascript')!='var currentUser = ' + sanitize.jsonStringifyForHtml( user )
 		if app
@@ -120,15 +125,30 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			script(src=i18nLocaleScript)
 		if 'development' === env || isDebug
 			script(src=urls[ 'vendor' ])
-			script(src=urls[ jsFile + '-' + env ])
-			if chunk
-				script(src=urls[ chunk ])
+			if supportUser
+				script!='window.supportUser.readyScripts.push( \'' + urls[ jsFile + '-' + env ] + '\' );'
+				if chunk
+					script!='window.supportUser.readyScripts.push( \'' + urls[ chunk ] + '\' );'
+				script(src=urls[ 'support-user' ])
+			else
+				script(src=urls[ jsFile + '-' + env ])
+				if chunk
+					script(src=urls[ chunk ])
 		else
 			script(src=urls[ 'vendor-min' ])
-			script(src=urls[ jsFile + '-' + env + '-min' ])
-			if chunk
-				script(src=urls[ chunk + '-min' ])
-		script(type='text/javascript')!='window.AppBoot();'
+			if supportUser
+				script!='window.supportUser.readyScripts.push( \'' + urls[ jsFile + '-' + env + '-min' ] + '\' );'
+				if chunk
+					script!='window.supportUser.readyScripts.push( \'' + urls[ chunk + '-min' ] + '\' );'
+
+				script(src=urls[ 'support-user-min' ])
+			else
+				script(src=urls[ jsFile + '-' + env + '-min' ])
+				if chunk
+					script(src=urls[ chunk + '-min' ])
+
+		unless supportUser
+			script(type='text/javascript')!='window.AppBoot();'
 
 		noscript.wpcom-site__global-noscript
 			|Please enable JavaScript in your browser to enjoy WordPress.com.

@@ -45,6 +45,10 @@ const _isSupportUserSession = ( () => {
 		return false;
 	}
 
+	if ( ! window.supportUser ) {
+		return false;
+	}
+
 	const supportUser = store.get( STORAGE_KEY );
 	if ( supportUser && supportUser.user && supportUser.token ) {
 		return true;
@@ -66,7 +70,9 @@ export const rebootNormally = () => {
 	debug( 'Rebooting Calypso normally' );
 
 	store.clear();
-	window.location.reload();
+
+	// This triggers a reboot
+	window.location.search = 'support_user=false';
 };
 
 /**
@@ -82,7 +88,9 @@ export const rebootWithToken = ( user, token ) => {
 	debug( 'Rebooting Calypso with support user' );
 
 	store.set( STORAGE_KEY, { user, token } );
-	window.location.reload();
+
+	// This triggers a reboot
+	window.location.search = 'support_user=true';
 };
 
 // Called when an API call fails due to a token error
@@ -111,6 +119,8 @@ export const boot = () => {
 	reduxStoreReady.then( ( reduxStore ) => {
 		reduxStore.dispatch( supportUserActivate() );
 	} );
+
+	store.remove( STORAGE_KEY );
 };
 
 export const fetchToken = ( user, password ) => {
