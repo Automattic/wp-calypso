@@ -540,7 +540,7 @@ If you find that you have many separate rendering functions, or rendering functi
 
 ## ES6
 
-We support and encourage ES6 features thanks to [Babel](https://babeljs.io/) transpilation and the accompanying polyfill. There are still a couple of minor caveats to be aware of [regarding Classes](https://babeljs.io/docs/advanced/caveats/).
+We support and encourage ES6 features thanks to [Babel](https://babeljs.io/) transpilation and the accompanying polyfill. There are still a couple of minor caveats to be aware of [regarding Classes](https://babeljs.io/docs/learn-es2015/#subclassable-built-ins).
 
 ### Let and Const
 
