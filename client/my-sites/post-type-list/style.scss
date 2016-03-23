@@ -18,6 +18,10 @@
 	width: 80px;
 	margin-right: 12px;
 	overflow: hidden;
+
+	.post-type-list__post-placeholder & {
+		@include placeholder;
+	}
 }
 
 .post-type-list__post-thumbnail {
@@ -41,6 +45,10 @@
 		&:hover {
 			color: darken( $gray, 20% );
 		}
+
+		.post-type-list__post-placeholder & {
+			@include placeholder;
+		}
 	}
 }
 
@@ -51,6 +59,10 @@
 
 .post-type-list__post-meta .post-relative-time-status {
 	margin-bottom: 0;
+
+	.post-type-list__post-placeholder & {
+		@include placeholder;
+	}
 }
 
 .post-type-list__post-meta .post-relative-time-status .gridicon {
