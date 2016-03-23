@@ -25,7 +25,7 @@ export const sitesSchema = {
 					type: 'object',
 					properties: {
 						id: { type: 'number' },
-						sizes: { type: 'array' },
+						sizes: { type: [ 'array', 'object'] },
 						url: { type: 'string' }
 					}
 				},
@@ -52,7 +52,7 @@ export const sitesSchema = {
 						free_trial: { type: 'boolean' }
 					}
 				},
-				single_user_site: { type: 'boolean' },
+				single_user_site: { type: 'boolean' }
 			}
 		}
 	},
