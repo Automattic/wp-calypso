@@ -29,6 +29,11 @@
 	.site__domain {
 		display: none;
 	}
+
+	.site__title::after,
+	.site__domain::after {
+		@include long-content-fade( $color: $gray-light );
+	}
 }
 
 .editor-mobile-navigation__toggle {
