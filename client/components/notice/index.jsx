@@ -117,7 +117,9 @@ export default React.createClass( {
 		return (
 			<div className={ classnames( this.props.className, noticeClass ) }>
 				<Gridicon className="notice__icon" icon={ this.props.icon || this.getIcon() } size={ 24 } />
-				{ this.renderChildren() }
+				<div className="notice__content">
+					{ this.renderChildren() }
+				</div>
 				{ dismiss }
 			</div>
 		);
