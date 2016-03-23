@@ -72,7 +72,7 @@ export default React.createClass( {
 			} );
 			renewLink = renewLinkPlural;
 		}
-		return <Notice status="is-error" showDismiss={false}>{text} {renewLink}</Notice>
+		return <Notice status="is-error" showDismiss={ false }>{ text } { renewLink }</Notice>
 	},
 
 	expiringDomains() {
@@ -95,7 +95,7 @@ export default React.createClass( {
 			} );
 			renewLink = renewLinkPlural;
 		}
-		return <Notice status="is-error" showDismiss={false}>{text} {renewLink}</Notice>;
+		return <Notice status="is-error" showDismiss={ false }>{ text } { renewLink }</Notice>;
 	},
 
 	newDomainsWithPrimary() {
