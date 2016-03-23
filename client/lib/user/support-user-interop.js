@@ -10,6 +10,7 @@ import noop from 'lodash/noop';
 import wpcom from 'lib/wp';
 import config from 'config';
 import store from 'store';
+import localforage from 'lib/localforage';
 import { supportUserTokenFetch, supportUserActivate, supportUserError } from 'state/support/actions';
 
 /**
@@ -98,6 +99,8 @@ export const boot = () => {
 	if ( ! isEnabled() ) {
 		return;
 	}
+
+	localforage.bypass();
 
 	const { user, token } = store.get( STORAGE_KEY );
 	debug( 'Booting Calypso with support user', user );
