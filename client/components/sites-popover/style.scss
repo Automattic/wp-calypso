@@ -27,10 +27,11 @@ $sites-popover-width: 300px;
 }
 
 .sites-popover.has-header .sites-popover__header {
-	margin: 4px 16px;
-	font-size: 14px;
-	color: $blue-dark;
-	border-bottom: 1px solid $blue-dark;
+	border-bottom: 1px solid lighten( $gray, 30% );
+	color: darken( $gray, 10% );
+	font-size: 12px;
+	font-weight: bold;
+	padding: 10px 10px 8px 8px;
 }
 
 .sites-popover .search {
