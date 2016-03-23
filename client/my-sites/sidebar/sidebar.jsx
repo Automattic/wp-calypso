@@ -25,6 +25,8 @@ var AdsUtils = require( 'lib/ads/utils' ),
 	SidebarMenu = require( 'layout/sidebar/menu' ),
 	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' );
 
+import Button from 'components/button';
+
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
 
@@ -620,6 +622,26 @@ module.exports = React.createClass( {
 		);
 	},
 
+	focusContent: function() {
+		this.props.layoutFocus.set( 'content' );
+	},
+
+	addNewWordPress: function() {
+		if ( this.props.user.get().visible_site_count > 1 ) {
+			return null;
+		}
+
+		return (
+			<Button compact borderless
+				className="my-sites-sidebar__add-new-site"
+				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
+				onClick={ this.focusContent }
+			>
+				<Gridicon icon="add-outline" /> { this.translate( 'Add New WordPress' ) }
+			</Button>
+		);
+	},
+
 	render: function() {
 		var publish = !! this.publish(),
 			appearance = ( !! this.themes() || !! this.menus() ),
@@ -688,6 +710,7 @@ module.exports = React.createClass( {
 					</SidebarMenu>
 					: null
 				}
+				{ this.addNewWordPress() }
 			</Sidebar>
 		);
 	}
