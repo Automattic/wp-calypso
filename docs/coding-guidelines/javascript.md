@@ -430,7 +430,7 @@ function isValid() {
 
 ### Arrays
 
-Creating arrays in JavaScript should be done using the shorthand [] constructor rather than the new Array() notation.
+Creating arrays in JavaScript should be done using the shorthand `[]` constructor rather than the `new Array()` notation.
 
 ```js
 var myArray = [];
