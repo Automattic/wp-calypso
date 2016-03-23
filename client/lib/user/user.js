@@ -18,12 +18,7 @@ var store = require( 'store' ),
 var wpcom = require( 'lib/wp' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	userUtils = require( './shared-utils' ),
-	getLocalForage = require( 'lib/localforage' ).getLocalForage;
-
-/**
- * Module variables
- */
-var localforage = getLocalForage();
+	localforage = require( 'lib/localforage' );
 
 /**
  * User component
