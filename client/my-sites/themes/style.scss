@@ -188,6 +188,11 @@
 	padding: 20px;
 	// whilst loading
 	min-height: 900px;
+
+	div {
+		// override inline style in content markup
+		width: auto !important;
+	}
 }
 
 .themes__sheet-placeholder {
