@@ -7,6 +7,7 @@ import includes from 'lodash/includes';
 import omit from 'lodash/omit';
 import map from 'lodash/map';
 import get from 'lodash/get';
+import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import get from 'lodash/get';
 import SidebarItem from 'layout/sidebar/item';
 import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
+import { getEditorPath } from 'state/ui/editor/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import analytics from 'analytics';
@@ -149,7 +151,12 @@ const PublishMenu = React.createClass( {
 
 	getCustomMenuItems() {
 		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page' ] );
-		return map( customPostTypes, function( postType ) {
+		return map( customPostTypes, ( postType, postTypeSlug ) => {
+			let buttonLink;
+			if ( config.isEnabled( 'manage/custom-post-types' ) ) {
+				buttonLink = this.props.postTypeLinks[ postTypeSlug ];
+			}
+
 			return {
 				name: postType.name,
 				label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
@@ -164,9 +171,9 @@ const PublishMenu = React.createClass( {
 				// Required to build the menu item class name. Must be discernible from other
 				// items' paths in the same section for item highlighting to work properly.
 				link: '/types/' + postType.name,
-				buttonLink: '',
 				wpAdminLink: 'edit.php?post_type=' + postType.name,
-				showOnAllMySites: false
+				showOnAllMySites: false,
+				buttonLink
 			};
 		} );
 	},
@@ -190,7 +197,12 @@ const PublishMenu = React.createClass( {
 
 export default connect( ( state ) => {
 	const siteId = get( getSelectedSite( state ), 'ID' );
+	const postTypes = getPostTypes( state, siteId );
+
 	return {
-		postTypes: getPostTypes( state, siteId )
+		postTypes,
+		postTypeLinks: mapValues( postTypes, ( postType, postTypeSlug ) => {
+			return getEditorPath( state, siteId, null, postTypeSlug );
+		} )
 	};
 }, null, null, { pure: false } )( PublishMenu );
