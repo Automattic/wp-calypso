@@ -27,7 +27,10 @@ const EditorMobileNavigation = React.createClass( {
 				<button className="button editor-mobile-navigation__toggle" onClick={ this.toggleSidebar }>
 					{ this.translate( 'Actions' ) }
 				</button>
-				<Gridicon icon="cross" onClick={ this.props.onClose } />
+				<Gridicon
+					icon="cross"
+					onClick={ this.props.onClose }
+					className="editor-mobile-navigation__close" />
 			</div>
 		);
 	}
