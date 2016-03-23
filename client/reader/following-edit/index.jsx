@@ -480,12 +480,6 @@ const FollowingEdit = React.createClass( {
 		}
 	},
 
-	onExistingFeedBlur() {
-		if ( ! this.state.searchString ) {
-			this.toggleSearching();
-		}
-	},
-
 	renderNotices() {
 		return this.state.notices.map( ( funcName ) => this[funcName]() );
 	},
@@ -562,7 +556,6 @@ const FollowingEdit = React.createClass( {
 					placeholder={ searchPlaceholder }
 					onSearch={ this.doSearch }
 					onSearchClose={ this.toggleSearching }
-					onBlur={ this.onExistingFeedBlur }
 					initialValue={ this.props.search }
 					delaySearch={ true }
 					ref="url-search" /> : null }
