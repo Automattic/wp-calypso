@@ -14,6 +14,7 @@ import EditorVisibility from 'post-editor/editor-visibility';
 import Gridicon from 'components/gridicon';
 import utils from 'lib/posts/utils';
 import Tooltip from 'components/tooltip';
+import EditorActionBarViewLabel from './view-label';
 
 export default React.createClass( {
 
@@ -91,10 +92,7 @@ export default React.createClass( {
 								isVisible={ this.state.viewLinkTooltip }
 								position="bottom left"
 							>
-								{ this.props.type === 'page'
-									? this.translate( 'View page' )
-									: this.translate( 'View post' )
-								}
+								<EditorActionBarViewLabel />
 							</Tooltip>
 						</a> }
 				</div>
