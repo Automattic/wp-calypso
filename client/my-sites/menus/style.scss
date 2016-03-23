@@ -194,7 +194,7 @@
 		span {
 			display: block;
 			float: left;
-			max-width: 90%; /* should be less to avoid a bug on touch + <a> tag that auto-closes the area, but ellipsis wouldn't work */
+			max-width: calc( 100% - 20px );
 			text-overflow: ellipsis;
 			overflow: hidden;
 			white-space: nowrap;
@@ -218,6 +218,9 @@
 		font-weight: inherit;
 		width: calc(100% - 40px);
 		margin-right: 40px;
+		@include breakpoint( "<480px" ) {
+			width: 100%;
+		}
 	}
 }
 
@@ -238,6 +241,18 @@
 	}
 }
 
+
+.is-editing-title {
+	@include breakpoint( "<480px" ) {
+		.menus__menu-name {
+			line-height: 41px;
+		}
+
+		.menus__menu-actions {
+			display: none;
+		}
+	}
+}
 
 /**
  * Menu: List
