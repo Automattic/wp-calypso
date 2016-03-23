@@ -1962,6 +1962,46 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
 }
 
 /**
+ * Exports the user's Reader feed as an OPML XML file.
+ * A JSON object is returned with the XML given as a String
+ * in the `opml` field.
+ *
+ * @param {Function} fn           The callback function
+ */
+Undocumented.prototype.exportReaderFeed = function( fn ) {
+	debug( '/read/following/mine/export' );
+	const query = {
+		apiVersion: '1.2',
+	};
+	this.wpcom.req.get( '/read/following/mine/export', query, fn );
+};
+
+/**
+ * Imports given XML file into the user's Reader feed.
+ * XML file is expected to be in OPML format.
+ *
+ * @param {File}     file         The File object to upload
+ * @param {Function} fn           The callback function
+ * @returns {XMLHttpRequest} The XHR instance, to attach `progress`
+ *   listeners to, etc.
+ */
+Undocumented.prototype.importReaderFeed = function( file, fn ) {
+	debug( '/read/following/mine/import' );
+	const params = {
+		path: '/read/following/mine/import',
+		formData: [
+			[ 'import', file ]
+		]
+	};
+	// XXX: kind strange, wpcom.js, that `apiVersion` must be in `query`
+	// *and* pass a `body` of null for this to work properly…
+	const query = {
+		apiVersion: '1.2',
+	};
+	return this.wpcom.req.post( params, query, null, fn );
+};
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;

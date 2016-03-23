@@ -4,10 +4,12 @@ import times from 'lodash/times';
 import trimStart from 'lodash/trimStart';
 import Immutable from 'immutable';
 import debounce from 'lodash/debounce';
+import remove from 'lodash/remove';
 import classnames from 'classnames';
 
 // Internal dependencies
 import Main from 'components/main';
+import Gridicon from 'components/gridicon';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
@@ -18,6 +20,7 @@ import InfiniteList from 'components/infinite-list';
 import SubscriptionPlaceholder from './placeholder';
 import SubscriptionListItem from './list-item';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import SearchCard from 'components/search-card';
 import URLSearch from 'lib/mixins/url-search';
 import FollowingEditSubscribeForm from './subscribe-form';
@@ -26,9 +29,10 @@ import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import smartSetState from 'lib/react-smart-set-state';
 import escapeRegexp from 'escape-string-regexp';
 import FollowingEditSortControls from './sort-controls';
+import FollowingExportButton from './export-button';
+import FollowingImportButton from './import-button';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 const stats = require( 'reader/stats' );
 
 const initialLoadFeedCount = 20;
@@ -45,7 +49,8 @@ const FollowingEdit = React.createClass( {
 
 	getInitialState: function() {
 		return Object.assign( {
-			isAddingOpen: false
+			notices: [],
+			isSearching: !! this.props.search,
 		}, this.getStateFromStores() );
 	},
 
@@ -189,6 +194,66 @@ const FollowingEdit = React.createClass( {
 		this.setState( { openCards: newOpenCards } );
 	},
 
+	handleFeedExport( fileName ) {
+		this.dismissFeedExportNotice();
+		if ( this.state.feedExportError ) {
+			this.dismissFeedImportExportError();
+		}
+
+		const notices = this.state.notices;
+		notices.push( 'renderFeedExportNotice' );
+
+		this.setState( {
+			feedExport: fileName,
+			notices: notices
+		} );
+	},
+
+	handleFeedExportError( error ) {
+		this.dismissFeedImportExportError();
+		if ( this.state.feedExport ) {
+			this.dismissFeedExportNotice();
+		}
+
+		const notices = this.state.notices;
+		notices.push( 'renderFeedImportExportError' );
+
+		this.setState( {
+			notices: notices,
+			feedExportError: error
+		} );
+	},
+
+	handleFeedImport( data ) {
+		this.dismissFeedImportNotice();
+		if ( this.state.feedImportError ) {
+			this.dismissFeedImportExportError();
+		}
+
+		const notices = this.state.notices;
+		notices.push( 'renderFeedImportNotice' );
+
+		this.setState( {
+			notices: notices,
+			feedImport: data
+		} );
+	},
+
+	handleFeedImportError( error ) {
+		this.dismissFeedImportExportError();
+		if ( this.state.feedImport ) {
+			this.dismissFeedImportNotice();
+		}
+
+		const notices = this.state.notices;
+		notices.push( 'renderFeedImportExportError' );
+
+		this.setState( {
+			notices: notices,
+			feedImportError: error
+		} );
+	},
+
 	fetchNextPage: function() {
 		if ( this.state.isLastPage ) {
 			return;
@@ -253,6 +318,34 @@ const FollowingEdit = React.createClass( {
 		}
 	},
 
+	dismissFeedExportNotice() {
+		const notices = this.state.notices;
+		remove( notices, ( f ) => f === 'renderFeedExportNotice' );
+		this.setState( {
+			notices: notices,
+			feedExport: null
+		} );
+	},
+
+	dismissFeedImportNotice() {
+		const notices = this.state.notices;
+		remove( notices, ( f ) => f ===	'renderFeedImportNotice' );
+		this.setState( {
+			notices: notices,
+			feedImport: null,
+		} );
+	},
+
+	dismissFeedImportExportError() {
+		const notices = this.state.notices;
+		remove( notices, ( f ) => f === 'renderFeedImportExportError' );
+		this.setState( {
+			notices: notices,
+			feedImportError: null,
+			feedExportError: null
+		} );
+	},
+
 	handleNewSubscriptionSearchClose: function() {
 		this.toggleAddSite();
 
@@ -293,13 +386,15 @@ const FollowingEdit = React.createClass( {
 		}
 
 		const lastError = this.state.lastError;
-		let errorMessage = this.translate( 'Sorry, we couldn\'t find a feed for {{em}}%(url)s{{/em}}.', {
-			args: { url: this.state.searchString },
-			components: { em: <em/> }
-		} );
+		let errorMessage;
 
 		if ( lastError.info && lastError.info === 'already_subscribed' ) {
-			errorMessage = this.translate( "You're already subscribed to that site." );
+			errorMessage = this.translate( 'You\'re already subscribed to that site.' );
+		} else {
+			errorMessage = this.translate( 'Sorry, we couldn\'t find a feed for {{em}}%(url)s{{/em}}.', {
+				args: { url: this.state.searchString },
+				components: { em: <em/> }
+			} );
 		}
 
 		return ( <Notice
@@ -311,14 +406,82 @@ const FollowingEdit = React.createClass( {
 		);
 	},
 
-	toggleAddSite: function() {
-		this.setState( {
-			isAddingOpen: ! this.state.isAddingOpen
-		} );
+	renderFeedExportNotice() {
+		const feedExport = this.state.feedExport;
+		if ( ! feedExport ) return null;
 
-		if ( ! this.state.isAddingOpen ) {
-			this.refs['feed-search'].focus();
+		const message = this.translate( 'Your Followed Sites list has been exported.' );
+		return (
+			<Notice
+				key="notice-feed-export"
+				status="is-success"
+				showDismiss={ true }
+				onDismissClick={ this.dismissFeedExportNotice }
+				text={ message }>
+			</Notice>
+		);
+	},
+
+	renderFeedImportNotice() {
+		const feedImport = this.state.feedImport;
+		if ( ! feedImport ) return null;
+
+		const message = this.translate( '{{em}}%(name)s{{/em}} has been imported. Refresh this page to see the new sites you follow.', {
+			args: { name: feedImport.fileName },
+			components: { em: <em/> }
+		} );
+		return (
+			<Notice
+				key="notice-feed-import"
+				status="is-success"
+				showDismiss={ false }
+				onDismissClick={ this.dismissFeedImportNotice }
+				text={ message }>
+				<NoticeAction href="#" onClick={ this.refresh }>
+					Refresh
+				</NoticeAction>
+			</Notice>
+		);
+	},
+
+	renderFeedImportExportError() {
+		const error = this.state.feedImportError || this.state.feedExportError;
+		if ( ! error ) return null;
+
+		const message = this.translate( 'Whoops, something went wrong. %(message)s. Please try again.', {
+			args: { message: error.message }
+		} );
+		return (
+			<Notice
+				key="notice-feed-import-export"
+				status="is-error"
+				text={ message }
+				onDismissClick={ this.dismissFeedImportExportError }
+				showDismiss={ true }>
+			</Notice>
+		);
+	},
+
+	refresh() {
+		location.reload();
+	},
+
+	toggleAddSite: function() {
+		this.refs['feed-search'].focus();
+	},
+
+	toggleSearching() {
+		var isSearching = ! this.state.isSearching;
+		this.setState( {
+			isSearching: isSearching
+		} );
+		if ( isSearching ) {
+			this.refs['url-search'].focus();
 		}
+	},
+
+	renderNotices() {
+		return this.state.notices.map( ( funcName ) => this[funcName]() );
 	},
 
 	render: function() {
@@ -347,7 +510,7 @@ const FollowingEdit = React.createClass( {
 		}
 
 		const containerClasses = classnames( {
-			'is-adding': this.state.isAddingOpen,
+			'is-searching': this.state.isSearching,
 			'has-no-subscriptions': hasNoSubscriptions
 		}, 'following-edit' );
 
@@ -358,13 +521,7 @@ const FollowingEdit = React.createClass( {
 				</MobileBackToSidebar>
 				{ this.renderFollowError() }
 				{ this.renderUnfollowError() }
-
-				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
-					{ ! hasNoSubscriptions ? <FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } /> : null }
-					<Button compact primary onClick={ this.toggleAddSite }>
-						{ this.translate( 'Follow Site' ) }
-					</Button>
-				</SectionHeader>
+				{ this.renderNotices() }
 
 				<FollowingEditSubscribeForm
 					onSearch={ this.handleNewSubscriptionSearch }
@@ -374,12 +531,31 @@ const FollowingEdit = React.createClass( {
 					isSearchOpen={ this.state.isAddingOpen }
 					ref="feed-search" />
 
+				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
+					{ ! hasNoSubscriptions
+							? <FollowingExportButton
+									onExport={ this.handleFeedExport }
+									onError={ this.handleFeedExportError } />
+							: null }
+					<FollowingImportButton
+						onImport={ this.handleFeedImport }
+						onError={ this.handleFeedImportError } />
+					{ ! hasNoSubscriptions
+							? <FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
+							: null }
+					{ ! hasNoSubscriptions
+							? <Gridicon icon="search" className="following-edit__search" onClick={ this.toggleSearching } />
+							: null }
+				</SectionHeader>
+
 				{ ! hasNoSubscriptions ? <SearchCard
+					isOpen={ true }
 					key="existingFeedSearch"
-					autoFocus={ true }
+					autoFocus={ false }
 					additionalClasses="following-edit__existing-feed-search"
 					placeholder={ searchPlaceholder }
 					onSearch={ this.doSearch }
+					onSearchClose={ this.toggleSearching }
 					initialValue={ this.props.search }
 					delaySearch={ true }
 					ref="url-search" /> : null }
