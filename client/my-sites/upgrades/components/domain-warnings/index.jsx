@@ -14,6 +14,7 @@ import purchasesPaths from 'me/purchases/paths';
 import domainConstants from 'lib/domains/constants';
 import i18n from 'lib/mixins/i18n';
 import support from 'lib/url/support';
+import paths from 'my-sites/upgrades/paths';
 
 const domainTypes = domainConstants.type;
 const debug = _debug( 'calypso:domain-warnings' );
@@ -37,7 +38,7 @@ export default React.createClass( {
 	},
 
 	getPipe() {
-		let allRules = [ this.expiredDomains, this.expiringDomains, this.newDomainsWithPrimary, this.newDomains ],
+		let allRules = [ this.expiredDomains, this.expiringDomains, this.newDomainsWithPrimary, this.newDomains, this.unverifiedDomains ],
 			rules;
 		if ( ! this.props.ruleWhiteList ) {
 			rules = allRules;
@@ -174,21 +175,35 @@ export default React.createClass( {
 		return <Notice status="is-warning" showDismiss={ false }>{ text }</Notice>;
 	},
 
+	unverifiedDomains() {
+		let notice,
+			domains = this.getDomains().filter( domain => domain.isPendingIcannVerification );
+
+		if ( domains.length === 1 ) {
+			notice = this.translate( 'Urgent! Your domain %(domain)s may be lost forever because your email address is not verified.',
+				{ args: { domain: domains[0].name } } );
+		} else if ( domains.length ) {
+			notice = <div>
+				{ this.translate( 'Urgent! Some of your domains may be lost forever because your email address is not verified:' ) }
+				<ul>{
+					domains.map( domain => <li>{ domain.name }</li> )
+				}</ul>
+			</div>
+		} else {
+			return null;
+		}
+
+		return <Notice status="is-error" showDismiss={ true }>{ notice }</Notice>;
+	},
+
 	componentWillMount: function() {
 		if ( ! this.props.domains || ! this.props.domain ) {
 			debug( 'You need provide either "domains" or "domain" property to this component.' );
 		}
 	},
 	render: function() {
-		let pipe = this.getPipe();
-
-		for ( let renderer of pipe ) {
-			let result = renderer();
-			if ( result ) {
-				return result;
-			}
-		}
-		return null;
+		const notices = this.getPipe().map( renderer => renderer() ).filter( notice => notice );
+		return notices.length ? <div>{ notices }</div> : null;
 	}
 
 } );
