@@ -202,7 +202,7 @@ export default React.createClass( {
 			return null;
 		}
 
-		return <Notice status="is-error" showDismiss={ true }>{ notice }</Notice>;
+		return <Notice status="is-error" showDismiss={ true } className="domain-warnings__unverified-domains" >{ notice }</Notice>;
 	},
 
 	componentWillMount: function() {
