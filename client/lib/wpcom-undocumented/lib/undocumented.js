@@ -1492,7 +1492,7 @@ Undocumented.prototype.getLocaleSuggestions = function( fn ) {
 };
 
 Undocumented.prototype.themes = function( site, query, fn ) {
-	var path = site ? '/sites/' + site.slug + '/themes' : '/themes';
+	var path = site ? '/sites/' + site.ID + '/themes' : '/themes';
 	debug( path );
 	this.wpcom.req.get( path, {
 		search: query.search,
