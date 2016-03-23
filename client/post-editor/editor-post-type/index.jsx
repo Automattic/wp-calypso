@@ -4,7 +4,6 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -15,31 +14,32 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
+import { decodeEntities } from 'lib/formatting';
 
 function EditorPostType( { translate, siteId, isNew, typeSlug, type } ) {
 	let label;
-	switch ( typeSlug ) {
-		case 'page':
-			if ( isNew ) {
-				label = translate( 'New Page' );
-			} else {
-				label = translate( 'Page', { context: 'noun' } );
-			}
-			break;
-		case 'post':
-			if ( isNew ) {
-				label = translate( 'New Post' );
-			} else {
-				label = translate( 'Post', { context: 'noun' } );
-			}
-			break;
-		default:
-			if ( isNew ) {
-				label = get( type, 'labels.new_item' );
-			} else {
-				label = get( type, 'labels.singular_name' );
-			}
-			break;
+	if ( 'page' === typeSlug ) {
+		if ( isNew ) {
+			label = translate( 'New Page' );
+		} else {
+			label = translate( 'Page', { context: 'noun' } );
+		}
+	} else if ( 'post' === typeSlug ) {
+		if ( isNew ) {
+			label = translate( 'New Post' );
+		} else {
+			label = translate( 'Post', { context: 'noun' } );
+		}
+	} else if ( type ) {
+		if ( isNew ) {
+			label = type.labels.new_item;
+		} else {
+			label = type.labels.singular_name;
+		}
+
+		label = decodeEntities( label );
+	} else {
+		label = translate( 'Loading…' );
 	}
 
 	const classes = classnames( 'editor-post-type', {
@@ -51,7 +51,7 @@ function EditorPostType( { translate, siteId, isNew, typeSlug, type } ) {
 			{ siteId && 'page' !== typeSlug && 'post' !== typeSlug && (
 				<QueryPostTypes siteId={ siteId } />
 			) }
-			{ label || translate( 'Loading…' ) }
+			{ label }
 		</span>
 	);
 }
