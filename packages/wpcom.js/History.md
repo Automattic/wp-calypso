@@ -1,4 +1,18 @@
 
+4.8.6 / 2016-03-23
+==================
+
+ * domain.dns: add `/domains/%s/dns` methods
+ * domain.email: add `/domains/%s/email` methods
+ * domain: add `/domains/%s` methods
+ * domains: add `/domains` methods
+ * site.settings: implemented
+ * me: add me.posts() method
+ * process site methods using runtime libs
+ * site: add generic postTypesList method
+ * site: add site.postCounts()
+ * site.wordads: add several methods
+
 4.8.5 / 2016-2-23
 ==================
 
