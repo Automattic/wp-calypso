@@ -54,7 +54,7 @@ export default React.createClass( {
 			pollers.remove( this._poller );
 			this._poller = pollers.add(
 				FollowersStore,
-				FollowersActions.fetchFollowers.bind( FollowersActions, this.props.fetchOptions, true ),
+				FollowersActions.fetchFollowers.bind( FollowersActions, nextProps.fetchOptions, true ),
 				{ leading: false }
 			);
 		}
@@ -62,6 +62,7 @@ export default React.createClass( {
 
 	componentWillUnmount() {
 		FollowersStore.removeListener( 'change', this.refreshFollowers );
+		pollers.remove( this._poller );
 	},
 
 	fetchIfEmpty( fetchOptions ) {
