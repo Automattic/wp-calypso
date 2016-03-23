@@ -354,7 +354,7 @@ Use single-quotes for string literals:
 var myStr = 'strings should be contained in single quotes';
 ```
 
-When a string contains single quotes, they need to be escaped with a backslash (\):
+When a string contains single quotes, they need to be escaped with a backslash (\\):
 
 Double quotes can be used in cases where there is a single quote in the string or in JSX attributes.
 
