@@ -180,13 +180,22 @@ export default React.createClass( {
 			domains = this.getDomains().filter( domain => domain.isPendingIcannVerification );
 
 		if ( domains.length === 1 ) {
-			notice = this.translate( 'Urgent! Your domain %(domain)s may be lost forever because your email address is not verified.',
-				{ args: { domain: domains[0].name } } );
+			let domain = domains[0].name;
+
+			notice = this.translate( 'Urgent! Your domain %(domain)s may be lost forever because your email address is not verified. {{a}}Fix now.{{/a}}',
+				{
+					args: { domain },
+					components: { a: <a href={ paths.domainManagementEdit( this.props.selectedSite.domain, domain ) } />},
+				} );
 		} else if ( domains.length ) {
 			notice = <div>
 				{ this.translate( 'Urgent! Some of your domains may be lost forever because your email address is not verified:' ) }
 				<ul>{
-					domains.map( domain => <li>{ domain.name }</li> )
+					domains.map( ( domain ) => {
+						return <li>
+							{ domain.name } <a href={ paths.domainManagementEdit( this.props.selectedSite.domain, domain.name ) }>{ this.translate( 'Fix now' ) }</a>
+						</li>;
+					} )
 				}</ul>
 			</div>
 		} else {
