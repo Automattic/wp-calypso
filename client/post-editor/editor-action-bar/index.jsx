@@ -14,6 +14,7 @@ import EditorVisibility from 'post-editor/editor-visibility';
 import Gridicon from 'components/gridicon';
 import utils from 'lib/posts/utils';
 import Tooltip from 'components/tooltip';
+import Button from 'components/button';
 import EditorActionBarViewLabel from './view-label';
 
 export default React.createClass( {
@@ -77,14 +78,14 @@ export default React.createClass( {
 						post={ this.props.post }
 						onTrashingPost={ this.props.onTrashingPost }
 					/>
-					{ utils.isPublished( this.props.savedPost ) &&
-						<a
-							className="editor-action-bar__view-link"
+					{ utils.isPublished( this.props.savedPost ) && (
+						<Button
 							href={ this.props.savedPost.URL }
 							target="_blank"
 							onMouseEnter={ () => this.setState( { viewLinkTooltip: true } ) }
 							onMouseLeave={ () => this.setState( { viewLinkTooltip: false } ) }
 							ref="viewLink"
+							borderless
 						>
 							<Gridicon icon="external" />
 							<Tooltip
@@ -94,7 +95,8 @@ export default React.createClass( {
 							>
 								<EditorActionBarViewLabel />
 							</Tooltip>
-						</a> }
+						</Button>
+					) }
 				</div>
 			</div>
 		);

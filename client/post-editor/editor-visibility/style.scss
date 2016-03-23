@@ -1,13 +1,7 @@
 .editor-visibility.button {
-	color: lighten( $gray, 20% );
-	padding: 0;
-	transition: color 200ms;
-
 	&.is-dialog-open,
 	&.is-touch,
 	&:hover {
-		color: darken( $gray, 10% );
-
 		.editor-visibility__label {
 			color: darken( $gray, 10% );
 		}

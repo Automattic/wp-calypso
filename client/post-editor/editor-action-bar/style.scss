@@ -28,10 +28,11 @@
 	text-align: right;
 }
 
-.editor-action-bar__view-link {
+.editor-action-bar .button {
 	color: lighten( $gray, 20% );
 	margin-left: 12px;
 	transition: color 200ms;
+	padding: 0;
 
 	&:hover,
 	&:focus {
