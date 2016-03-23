@@ -4,6 +4,12 @@
 import localforage from 'localforage';
 import reduce from 'lodash/reduce';
 
+/**
+ * Internal dependencies
+ */
+import localforageBypass from './localforage-bypass';
+import { isSupportUserSession } from 'lib/user/support-user-interop';
+
 const config = {
 	name: 'calypso',
 	storeName: 'calypso_store',
@@ -16,11 +22,18 @@ const config = {
 	]
 };
 
+if ( isSupportUserSession() ) {
+	// Only use the bypass driver
+	config.driver = [ localforageBypass._driver ];
+}
+
 // Promise that resolves when our localforage configuration has been applied
-const localForagePromise = new Promise( ( resolve ) => {
-	localforage.config( config );
-	resolve( localforage );
-} );
+const localForagePromise = localforage.defineDriver( localforageBypass )
+	.then( () => {
+		localforage.config( config );
+		return localforage;
+	} )
+	.catch( ( error ) => console.error( 'Configuring localforage: %s', error ) );
 
 // Wraps a function to run after waiting until a promise has resolved.
 // The promise should contain the original object for context.
