@@ -3,7 +3,8 @@ var React = require( 'react' ),
 	defer = require( 'lodash/defer' ),
 	config = require( 'config' ),
 	classnames = require( 'classnames' ),
-	qs = require( 'qs' );
+	qs = require( 'qs' ),
+	page = require( 'page' );
 
 var PopoverMenu = require( 'components/popover/menu' ),
 	PopoverMenuItem = require( 'components/popover/menu-item' ),
@@ -104,6 +105,10 @@ const ReaderShare = React.createClass( {
 		} );
 	},
 
+	killClick( event ) {
+		event.preventDefault();
+	},
+
 	closeMenu() {
 		// have to defer this to let the mouseup / click escape.
 		// If we don't defer and remove the DOM node on this turn of the event loop,
@@ -113,11 +118,11 @@ const ReaderShare = React.createClass( {
 		} );
 	},
 
-	closeWordPressShareMenu() {
-		this.closeMenu();
+	pickSiteToShareTo( slug, event ) {
 		stats.recordAction( 'share_wordpress' );
 		stats.recordGaEvent( 'Clicked on Share to WordPress' );
 		stats.recordTrack( 'calypso_reader_share_to_site' );
+		page( `/post/${slug}?` + buildQuerystringForPost( this.props.post ) );
 	},
 
 	closeExternalShareMenu( action ) {
@@ -149,7 +154,8 @@ const ReaderShare = React.createClass( {
 		}
 		return React.createElement( this.props.tagName, {
 			className: 'reader-share',
-			onClick: this.toggle,
+			onClick: this.killClick,
+			onTouchTap: this.toggle,
 			onTouchStart: this.preloadEditor,
 			onMouseEnter: this.preloadEditor,
 			ref: 'shareButton' },
@@ -164,11 +170,11 @@ const ReaderShare = React.createClass( {
 								key="menu"
 								header={ <div>{ this.translate( 'Share on:' ) }</div> }
 								sites={ sitesList }
-								siteQuerystring={ buildQuerystringForPost( this.props.post ) }
 								context={ this.refs && this.refs.shareButton }
 								visible={ this.state.showingMenu }
 								groups={ true }
-								onClose={ this.closeWordPressShareMenu }
+								onSiteSelect={ this.pickSiteToShareTo }
+								onClose={ this.closeMenu }
 								position={ this.props.position }
 								className="is-reader"/>
 						: <PopoverMenu key="menu" context={ this.refs && this.refs.shareButton }

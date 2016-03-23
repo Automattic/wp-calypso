@@ -334,7 +334,7 @@ FullPostDialog = React.createClass( {
 			}
 
 			if ( shouldShowShare ) {
-				buttons.push( <ShareButton post={ post } position="bottom left" tagName="div" /> );
+				buttons.push( <ShareButton post={ post } position="bottom" tagName="div" /> );
 			}
 		}
 

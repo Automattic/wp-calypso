@@ -29,7 +29,6 @@ export default React.createClass( {
 	propTypes: {
 		sites: React.PropTypes.object,
 		siteBasePath: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
-		siteQuerystring: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
 		showAddNewSite: React.PropTypes.bool,
 		showAllSites: React.PropTypes.bool,
 		indicator: React.PropTypes.bool,
@@ -47,7 +46,6 @@ export default React.createClass( {
 			showAddNewSite: false,
 			showAllSites: false,
 			siteBasePath: false,
-			siteQuerystring: false,
 			indicator: false,
 			hideSelected: false,
 			selected: null,
@@ -78,7 +76,7 @@ export default React.createClass( {
 		}
 
 		// ignore mouse events as the default page() click event will handle navigation
-		if ( this.props.siteBasePath && event.type !== 'mouseup' ) {
+		if ( this.props.siteBasePath && ( ! ( event.type === 'mouseup' || event.type === 'touchend' ) ) ) {
 			page( event.currentTarget.pathname );
 		}
 	},
@@ -154,10 +152,6 @@ export default React.createClass( {
 
 			if ( this.props.siteBasePath ) {
 				siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
-
-				if ( this.props.siteQuerystring ) {
-					siteHref += '?' + this.props.siteQuerystring;
-				}
 			}
 
 			const isSelected = this.isSelected( site );
@@ -229,9 +223,6 @@ export default React.createClass( {
 
 			if ( this.props.siteBasePath ) {
 				siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
-				if ( this.props.siteQuerystring ) {
-					siteHref += '?' + this.props.siteQuerystring;
-				}
 			}
 
 			const isSelected = this.isSelected( site );
@@ -267,9 +258,6 @@ export default React.createClass( {
 
 			if ( this.props.siteBasePath ) {
 				siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
-				if ( this.props.siteQuerystring ) {
-					siteHref += '?' + this.props.siteQuerystring;
-				}
 			}
 
 			return (
