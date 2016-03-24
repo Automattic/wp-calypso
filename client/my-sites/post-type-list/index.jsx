@@ -8,16 +8,16 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import QueryPosts from 'components/data/query-posts';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePostsForQueryIgnoringPage } from 'state/posts/selectors';
 import PostTypePost from './post';
 
-function PostTypeList( { type, siteId, posts } ) {
+function PostTypeList( { query, siteId, posts } ) {
 	return (
 		<div className="post-type-list">
 			<QueryPosts
 				siteId={ siteId }
-				query={ { type } } />
+				query={ query } />
 			<ul className="post-type-list__posts">
 				{ posts && posts.map( ( post ) => (
 					<li key={ post.global_ID }>
@@ -30,18 +30,16 @@ function PostTypeList( { type, siteId, posts } ) {
 }
 
 PostTypeList.propTypes = {
-	type: PropTypes.string.isRequired,
+	query: PropTypes.object,
 	siteId: PropTypes.number,
 	posts: PropTypes.array
 };
 
 export default connect( ( state, ownProps ) => {
-	const site = getSelectedSite( state );
-	const siteId = site ? site.ID : null;
-	const { type } = ownProps;
+	const siteId = getSelectedSiteId( state );
 
 	return {
 		siteId,
-		posts: getSitePostsForQueryIgnoringPage( state, siteId, { type } )
+		posts: getSitePostsForQueryIgnoringPage( state, siteId, ownProps.query )
 	};
 } )( PostTypeList );

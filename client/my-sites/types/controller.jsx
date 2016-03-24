@@ -32,12 +32,15 @@ export function list( context ) {
 	}
 	pageView.record( baseAnalyticsPath, 'Custom Post Type' );
 
-	// Derive type
-	const type = sectionedPath.replace( /^\/types\//, '' );
+	// Construct query arguments
+	const query = {
+		type: sectionedPath.replace( /^\/types\//, '' ),
+		search: context.query.s
+	};
 
 	ReactDom.render(
 		<ReduxProvider store={ context.store }>
-			<Types type={ type } />
+			<Types query={ query } />
 		</ReduxProvider>,
 		document.getElementById( 'primary' )
 	);
