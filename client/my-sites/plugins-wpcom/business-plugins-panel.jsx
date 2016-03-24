@@ -31,8 +31,9 @@ export const BusinessPluginsPanel = React.createClass( {
 			<FoldableCard
 				actionButton={ actionButton }
 				actionButtonExpanded={ actionButton }
+				className="wpcom-business-plugins-panel"
 				expanded={ true }
-				header="Premium Upgrades"
+				header="Business Upgrades"
 			>
 				{ plugins.map( ( { name, supportLink, icon, plan, description } ) =>
 					<BusinessPlugin

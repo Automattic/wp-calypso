@@ -8,7 +8,7 @@ import BusinessPluginsPanel from './business-plugins-panel';
 export const PluginPanel = React.createClass( {
 	render() {
 		return (
-			<div className="pluginPanel">
+			<div className="wpcom-plugin-panel">
 				<InfoHeader />
 				<StandardPluginsPanel />
 				<PremiumPluginsPanel />

@@ -56,12 +56,13 @@ export const StandardPluginsPanel = React.createClass( {
 		const plugins = givenPlugins.length
 			? givenPlugins
 			: defaultPlugins;
-		const actionButton = <div><Gridicon icon="checkmark" /> Active</div>;
+		const actionButton = <div className="wpcom-stanard-plugins-panel__action-button"><Gridicon icon="checkmark" /> Active</div>;
 
 		return (
 			<FoldableCard
 				actionButton={ actionButton }
 				actionButtonExpanded={ actionButton }
+				className="wpcom-standard-plugins-panel"
 				expanded={ true }
 				header="Standard Plugin Suite"
 			>

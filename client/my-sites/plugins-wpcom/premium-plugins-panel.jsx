@@ -38,6 +38,7 @@ export const PremiumPluginsPanel = React.createClass( {
 			<FoldableCard
 				actionButton={ actionButton }
 				actionButtonExpanded={ actionButton }
+				className="wpcom-premium-plugins-panel"
 				expanded={ true }
 				header="Premium Upgrades"
 			>

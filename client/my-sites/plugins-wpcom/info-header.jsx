@@ -5,7 +5,7 @@ import Card from 'components/card';
 export const InfoHeader = React.createClass( {
 	render() {
 		return (
-			<Card>
+			<Card className="wpcom-plugins-info-header">
 				<div>
 					Uploading and installing your own plugins is not
 					available on WordPress.com, but we offer the most
