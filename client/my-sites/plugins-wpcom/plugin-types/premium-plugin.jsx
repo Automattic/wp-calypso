@@ -13,7 +13,7 @@ export const PremiumPlugin = React.createClass( {
 		} = this.props;
 
 		return (
-			<div>
+			<div className="wpcom-premium-plugin">
 				<div>
 					<Gridicon { ...{ icon } } />
 					<a href={ supportLink } target="_blank">{ name }</a>
