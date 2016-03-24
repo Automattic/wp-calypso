@@ -70,7 +70,7 @@ export function details( context, next ) {
 	const user = getCurrentUser( context.store.getState() );
 	const themeName = ( getThemeDetails( context.store.getState(), slug ) || false ).name;
 	const title = i18n.translate( '%(themeName)s Theme', {
-		args: { themeName: themeName }
+		args: { themeName }
 	} );
 	const Head = user
 		? require( 'layout/head' )
