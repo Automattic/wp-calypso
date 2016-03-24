@@ -6,6 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import HappinessSupport from 'components/happiness-support';
 
 export default React.createClass( {
@@ -15,8 +16,9 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2><a href="/devdocs/app-components/happiness-support">HappinessSupport</a></h2>
-
-				<HappinessSupport />
+				<Card>
+					<HappinessSupport />
+				</Card>
 			</div>
 		);
 	}
