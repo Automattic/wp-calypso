@@ -18,7 +18,7 @@ var SignupProgressStore = require( '../progress-store' ),
 
 SignupProgressStore.reset();
 
-describe( 'SignupFlowController', function() {
+describe( 'flow-controller', function() {
 	var signupFlowController;
 
 	afterEach( function() {
@@ -114,25 +114,28 @@ describe( 'SignupFlowController', function() {
 				onComplete: ary( done, 0 )
 			} );
 
-			SignupActions.submitSignupStep( { stepName: 'delayedStep', stepCallback: function() {
-				assert.equal( SignupProgressStore.get().length, 2 );
-			} } );
+			SignupActions.submitSignupStep( {
+				stepName: 'delayedStep', stepCallback: function() {
+					assert.equal( SignupProgressStore.get().length, 2 );
+				}
+			} );
 
 			defer( function() {
 				SignupActions.submitSignupStep( { stepName: 'stepA' } );
 			} );
 		} );
 
-		it( 'should not submit delayed steps if some steps are in-progress',
-			function( done ) {
+		it( 'should not submit delayed steps if some steps are in-progress', function( done ) {
 			signupFlowController = SignupFlowController( {
 				flowName: 'flowWithDelay',
 				onComplete: ary( done, 0 )
 			} );
 
-			SignupActions.submitSignupStep( { stepName: 'delayedStep', stepCallback: function() {
-				assert.equal( SignupProgressStore.get()[ 1 ].status, 'completed' );
-			} } );
+			SignupActions.submitSignupStep( {
+				stepName: 'delayedStep', stepCallback: function() {
+					assert.equal( SignupProgressStore.get()[ 1 ].status, 'completed' );
+				}
+			} );
 
 			defer( function() {
 				// saving the step should not trigger the callback on `delayedStep`…
