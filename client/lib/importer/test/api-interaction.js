@@ -18,6 +18,8 @@ const queuePayload = payload =>
 		.replyWithFile( 200, `${ __dirname }/api-payloads/${ payload }.json` );
 
 describe( 'Importer store', () => {
+	after( () => nock.cleanAll() );
+
 	beforeEach( resetStore );
 
 	describe( 'API integration', () => {
