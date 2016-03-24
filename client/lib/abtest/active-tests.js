@@ -104,5 +104,14 @@ module.exports = {
 		defaultVariation: 'original',
 		allowAnyLocale: true,
 		allowExistingUsers: true
-	}
+	},
+	verticalThemes: {
+		datestamp: '20160324',
+		variations: {
+			original: 25,
+			verticalThemes: 25,
+			notTested: 50
+		},
+		defaultVariation: 'original'
+	},
 };

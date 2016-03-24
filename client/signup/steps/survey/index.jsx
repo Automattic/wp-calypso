@@ -14,6 +14,7 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import BackButton from 'components/header-cake';
 import Gridicon from 'components/gridicon';
+import { getABTestVariation } from 'lib/abtest';
 
 function isSurveyOneStep() {
 	return false;
@@ -129,6 +130,32 @@ export default React.createClass( {
 		this.setState( { stepOne } );
 	},
 
+	getVerticalIdsForCategory( topLevelCategory ) {
+		return this.state.verticalList.reduce( ( match, category_id ) => {
+			if ( category_id.value === topLevelCategory ) {
+				return category_id.stepTwo.map( c => c.value );
+			}
+			return match;
+		}, [] );
+	},
+
+	getThemesForThemeStep( vertical ) {
+		const businessCategories = this.getVerticalIdsForCategory( 'a8c.3' );
+		if ( 'verticalThemes' === getABTestVariation( 'verticalThemes' ) && -1 !== businessCategories.indexOf( vertical ) ) {
+			return [
+				{ name: 'Sela', slug: 'sela' },
+				{ name: 'Gateway', slug: 'gateway' },
+				{ name: 'Motif', slug: 'motif' },
+				{ name: 'Goran', slug: 'goran' },
+				{ name: 'Pique', slug: 'pique' },
+				{ name: 'Edin', slug: 'edin' },
+				{ name: 'Harmonic', slug: 'harmonic' },
+				{ name: 'Sequential', slug: 'sequential' },
+				{ name: 'Big Brother', slug: 'big-brother' },
+			];
+		}
+	},
+
 	handleNextStep( vertical ) {
 		const { value, label } = vertical;
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
@@ -147,7 +174,8 @@ export default React.createClass( {
 				category_label: label
 			} );
 		}
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value } );
+		const themes = this.getThemesForThemeStep( vertical.value );
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value, themes } );
 		this.props.goToNextStep();
 	}
 } );

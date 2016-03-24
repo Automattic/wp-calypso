@@ -10,6 +10,7 @@ var assign = require( 'lodash/assign' ),
 var config = require( 'config' ),
 	plansPaths = require( 'my-sites/plans/paths' ),
 	stepConfig = require( './steps' ),
+	abtest = require( 'lib/abtest' ).abtest,
 	user = require( 'lib/user' )();
 
 import { getLocaleSlug } from 'lib/i18n-utils';
@@ -232,6 +233,13 @@ const flows = {
 		destination: getFreeTrialDestination,
 		description: 'Signup flow for free trials',
 		lastModified: '2016-03-21'
+	},
+
+	'new-vertical-site': {
+		steps: [ 'survey', 'themes-headstart', 'domains-with-theme', 'plans', 'survey-user' ],
+		destination: getSiteDestination,
+		description: 'Test flow showing Headstarted vertical themes for EN users clicking "Create Website" on the homepage.',
+		lastModified: '2016-03-22'
 	}
 };
 
@@ -254,7 +262,7 @@ function filterFlowName( flowName ) {
 
 	// Headstarted "default" flow (`newsite`) with vertical selection for EN users, coming from the homepage single button.
 	if ( 'website' === flowName && ( 'en' === locale || 'en-gb' === locale ) ) {
-		return 'newsite';
+		return ( 'verticalThemes' === abtest( 'verticalThemes' ) ) ? 'new-vertical-site' : 'newsite';
 	}
 
 	return flowName;
