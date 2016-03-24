@@ -1,4 +1,6 @@
 .sidebar {
+	display: flex;
+	flex-direction: column;
 	overflow: auto;
 	padding: 0;
 	background: lighten( $gray, 30% );
