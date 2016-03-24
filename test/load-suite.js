@@ -4,7 +4,7 @@ function requireTestFiles( config, path = '' ) {
 	Object.keys( config ).forEach( ( folderName ) => {
 		const folderConfig = config[ folderName ];
 
-		if ( folderName === 'test' ) {
+		if ( folderName === 'test' && Array.isArray( folderConfig ) ) {
 			folderConfig.forEach( fileName => require( `${path}test/${fileName}` ) );
 		} else {
 			describe( folderName, () => {
