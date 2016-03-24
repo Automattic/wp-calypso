@@ -44,7 +44,7 @@ var NAV_ITEMS = {
 
 	Email: {
 		paths: [ upgradesPaths.domainManagementEmail() ],
-		label: i18n.translate( 'Email' ),
+		label: i18n.translate( 'Google Apps' ),
 		allSitesPath: false
 	},
 
