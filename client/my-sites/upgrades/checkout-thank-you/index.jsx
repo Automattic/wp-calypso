@@ -74,7 +74,9 @@ const CheckoutThankYou = React.createClass( {
 		this.redirectIfThemePurchased();
 
 		if ( this.props.receipt.hasLoadedFromServer && this.hasPlanOrDomainRegistration() ) {
-			this.props.refreshSitePlans( this.props.selectedSite.ID );
+			this.props.refreshSitePlans( this.props.selectedSite );
+		} else if ( shouldFetchSitePlans( this.props.sitePlans, this.props.selectedSite ) ) {
+			this.props.fetchSitePlans( this.props.selectedSite );
 		}
 
 		if ( this.props.receiptId && ! this.props.receipt.hasLoadedFromServer && ! this.props.receipt.isRequesting ) {
@@ -264,19 +266,17 @@ export default connect(
 	},
 	( dispatch ) => {
 		return {
-			activatedTheme: ( meta, site ) => {
+			activatedTheme( meta, site ) {
 				dispatch( activated( meta, site, 'calypstore', true ) );
 			},
-			fetchReceipt: ( receiptId ) => {
+			fetchReceipt( receiptId ) {
 				dispatch( fetchReceipt( receiptId ) );
 			},
-			fetchSitePlans( sitePlans, site ) {
-				if ( shouldFetchSitePlans( sitePlans, site ) ) {
-					dispatch( fetchSitePlans( site.ID ) );
-				}
+			fetchSitePlans( site ) {
+				dispatch( fetchSitePlans( site.ID ) );
 			},
-			refreshSitePlans: ( siteId ) => {
-				dispatch( refreshSitePlans( siteId ) );
+			refreshSitePlans( site ) {
+				dispatch( refreshSitePlans( site.ID ) );
 			}
 		};
 	}
