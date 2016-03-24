@@ -19,6 +19,7 @@ import statsStrings from '../stats-strings';
 import MostPopular from 'my-sites/stats/most-popular';
 import PostPerformance from '../post-performance';
 import touchDetect from 'lib/touch-detect';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 export default React.createClass( {
 	displayName: 'StatsInsights',
@@ -88,6 +89,12 @@ export default React.createClass( {
 						<h3 className="stats-section-title">{ this.translate( 'Other Recent Stats', { context: 'Heading for non periodic site stats' } ) }</h3>
 						<div className="module-list">
 							<div className="module-column">
+								<UpgradeNudge
+									title="Get a domain in Premium plan"
+									message="Sites with custom domain get x% more traffic"
+									icon="stats"
+									event="googleAnalytics-stats-domain-insights"
+								/>
 								<Comments
 									path={ 'comments' }
 									site={ site }
