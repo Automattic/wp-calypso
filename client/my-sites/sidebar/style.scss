@@ -10,7 +10,7 @@
 	width: 100%;
 
 	@include breakpoint( "<660px" ) {
-		padding: 18px 16px 18px 53px;
+		padding: 16px;
 		position: static;
 	}
 }
