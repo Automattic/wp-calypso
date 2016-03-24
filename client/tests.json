@@ -82,6 +82,9 @@
 				"test": [ "assembler", "store" ]
 			}
 		},
+		"features-list": {
+		  "test": [ "index" ]
+		},
 		"feed-store": {
 			"test": [ "index" ]
 		},
