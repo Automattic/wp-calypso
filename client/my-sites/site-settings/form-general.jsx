@@ -59,6 +59,19 @@ module.exports = React.createClass( {
 			if ( site.settings.holidaysnow ) {
 				settings.holidaysnow = site.settings.holidaysnow;
 			}
+
+			// handling `gmt_offset` and `timezone_string` values
+			let gmt_offset = site.settings.gmt_offset;
+
+			if (
+				! settings.timezone_string &&
+				typeof gmt_offset === 'string' &&
+				gmt_offset.length
+			) {
+				settings.timezone_string = 'UTC' +
+					( /\-/.test( gmt_offset ) ? '' : '+' ) +
+					gmt_offset;
+			}
 		}
 
 		return settings;
