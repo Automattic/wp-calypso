@@ -40,7 +40,7 @@ describe('my test suite', () = {
 		// attached to after hook
 	});
 
-	it ( 'mockery is alive now', () = {
+	it ( 'mockery is alive now', () => {
 		mockery.registerMock( 'lib/best-number', function() {
 			return 42;
 		} );
