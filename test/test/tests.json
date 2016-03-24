@@ -1,0 +1,7 @@
+{
+  "helpers" : {
+    "use-nock": {
+      "test": [ "index" ]
+    }
+  }
+}

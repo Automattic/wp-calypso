@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { nock, useNock } from './index.js';
+import { nock, useNock } from '../index.js';
 
 describe( 'useNock', () => {
 	useNock();
