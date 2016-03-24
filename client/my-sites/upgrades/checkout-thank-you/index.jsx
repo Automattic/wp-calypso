@@ -143,10 +143,11 @@ const CheckoutThankYou = React.createClass( {
 			'is-placeholder': ! this.isDataLoaded()
 		} );
 
-		let purchases = null;
-
+		let purchases = null,
+			wasJetpackPlanPurchased = false;
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
+			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 		}
 
 		return (
@@ -159,7 +160,7 @@ const CheckoutThankYou = React.createClass( {
 
 				<Card className="checkout-thank-you__footer">
 					<HappinessSupport
-						isJetpack={ purchases && purchases.some( isJetpackPlan ) }
+						isJetpack={ wasJetpackPlanPurchased }
 						isPlaceholder={ ! this.isDataLoaded() && ! this.isGenericReceipt() } />
 				</Card>
 			</Main>
