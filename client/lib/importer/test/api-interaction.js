@@ -1,7 +1,8 @@
 import { expect } from 'chai';
 import Dispatcher from 'dispatcher';
-import nock from 'nock';
 import partial from 'lodash/partial';
+
+import { nock, useNock } from 'test/helpers/use-nock';
 
 import { fetchState } from '../actions';
 import { actionTypes } from '../constants';
@@ -18,7 +19,7 @@ const queuePayload = payload =>
 		.replyWithFile( 200, `${ __dirname }/api-payloads/${ payload }.json` );
 
 describe( 'Importer store', () => {
-	after( () => nock.cleanAll() );
+	useNock();
 
 	beforeEach( resetStore );
 
