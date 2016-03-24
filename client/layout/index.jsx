@@ -49,8 +49,8 @@ Layout = React.createClass( {
 	_sitesPoller: null,
 
 	componentWillUpdate: function( nextProps ) {
-		if ( this.props.section.name !== nextProps.section.name ) {
-			if ( nextProps.section.name === 'sites' ) {
+		if ( this.props.section.group !== nextProps.section.group ) {
+			if ( nextProps.section.group === 'sites' ) {
 				setTimeout( function() {
 					if ( ! this.isMounted() || this._sitesPoller ) {
 						return;
