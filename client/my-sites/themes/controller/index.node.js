@@ -42,11 +42,11 @@ export function fetchThemeDetailsData( context, next ) {
 	const themeSlug = context.params.slug;
 	const theme = getThemeDetails( context.store.getState(), themeSlug );
 
-	if ( theme ) {
+	if ( Object.keys( theme ).length ) {
 		debug( 'found theme!', theme.id );
 		next();
-	} else {
-		themeSlug && context.store.dispatch( fetchThemeDetails( themeSlug, next ) );
+	} else if ( themeSlug ) {
+		context.store.dispatch( fetchThemeDetails( themeSlug, next ) );
 	}
 } // TODO(ehg): We don't want to hit the endpoint for every req. Debounce based on theme arg?
 
