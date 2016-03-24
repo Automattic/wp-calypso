@@ -13,7 +13,7 @@ export const StandardPlugin = React.createClass( {
 		} = this.props;
 
 		return (
-			<div className="wpcom-standard-plugin">
+			<div className="wpcom-plugins__plugin-item">
 				<div>
 					<Gridicon { ...{ icon } } />
 					<a href={ supportLink } target="_blank">{ name }</a>
