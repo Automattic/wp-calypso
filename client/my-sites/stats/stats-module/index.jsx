@@ -16,6 +16,7 @@ import DatePicker from '../stats-date-picker';
 import Card from 'components/card';
 import StatsModulePlaceholder from './placeholder';
 import SectionHeader from 'components/section-header';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 export default React.createClass( {
 	displayName: 'StatModule',
@@ -107,6 +108,14 @@ export default React.createClass( {
 							<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 							<StatsModulePlaceholder isLoading={ isLoading } />
 							{ statsList }
+							{ this.props.summary && this.props.path === 'searchterms' &&
+								<UpgradeNudge
+									title="Add Google Analytics"
+									message="Upgrade to Premium for Google Analytics integration."
+									feature="google-analytics"
+									event="googleAnalytics-stats-searchterms"
+								/>
+							}
 						</div>
 					</div>
 					{ viewSummary }
