@@ -97,6 +97,9 @@
 		"interval" : {
 			"test" : [ "component", "runner" ]
 		},
+		"importer" : {
+			"test" : [ "api-interaction" ]
+		},
 		"menu-data" : {
 			"test" : [ "menu-data" ]
 		},
