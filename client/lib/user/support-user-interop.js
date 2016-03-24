@@ -12,6 +12,7 @@ import config from 'config';
 import store from 'store';
 import localforage from 'lib/localforage';
 import { supportUserTokenFetch, supportUserActivate, supportUserError } from 'state/support/actions';
+import localStorageBypass from 'lib/support/support-user/localstorage-bypass';
 
 /**
  * Connects the Redux store and the low-level support user functions
@@ -66,7 +67,7 @@ export const rebootNormally = () => {
 
 	debug( 'Rebooting Calypso normally' );
 
-	store.clear();
+	store.remove( STORAGE_KEY );
 	window.location.reload();
 };
 
@@ -104,6 +105,12 @@ export const boot = () => {
 
 	const { user, token } = store.get( STORAGE_KEY );
 	debug( 'Booting Calypso with support user', user );
+	store.remove( STORAGE_KEY );
+
+	// The following keys will not be bypassed as
+	// they are safe to share across user sessions.
+	const allowedKeys = [ STORAGE_KEY, 'debug' ];
+	localStorageBypass( allowedKeys );
 
 	const errorHandler = ( error ) => onTokenError( error );
 
