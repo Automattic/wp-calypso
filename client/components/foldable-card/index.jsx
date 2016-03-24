@@ -26,6 +26,7 @@ var FoldableCard = React.createClass( {
 		onClick: React.PropTypes.func,
 		onClose: React.PropTypes.func,
 		onOpen: React.PropTypes.func,
+		screenReaderText: React.PropTypes.string,
 		summary: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element ] )
 	},
 
@@ -85,10 +86,12 @@ var FoldableCard = React.createClass( {
 			);
 		}
 		if ( this.props.children ) {
-			let iconSize = 24;
+			const iconSize = 24;
+			const screenReaderDefaultText = ( typeof this.translate === 'function' ) ? this.translate( 'More' ) : '';
+			const screenReaderText = this.props.screenReaderText || screenReaderDefaultText;
 			return (
 				<button disabled={ this.props.disabled } className="foldable-card__action foldable-card__expand" onClick={ clickAction }>
-					<span className="screen-reader-text">{ this.translate( 'More' ) }</span>
+					<span className="screen-reader-text">{ screenReaderText }</span>
 					<Gridicon icon={ this.props.icon } size={ iconSize } />
 				</button>
 			);
