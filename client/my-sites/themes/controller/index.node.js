@@ -4,6 +4,7 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import omit from 'lodash/omit';
+import debugFactory from 'debug';
 
 /**
  * Internal Dependencies
@@ -17,6 +18,8 @@ import ClientSideEffects from 'components/client-side-effects';
 import { fetchThemeDetails } from 'state/themes/actions';
 import config from 'config';
 import { decodeEntities } from 'lib/formatting';
+
+const debug = debugFactory( 'calypso:themes' );
 
 export function makeElement( ThemesComponent, Head, store, props ) {
 	return(
@@ -37,8 +40,14 @@ export function fetchThemeDetailsData( context, next ) {
 	}
 
 	const themeSlug = context.params.slug;
+	const theme = getThemeDetails( context.store.getState(), themeSlug );
 
-	themeSlug && context.store.dispatch( fetchThemeDetails( themeSlug, next ) );
+	if ( theme ) {
+		debug( 'found theme!', theme.id );
+		next();
+	} else {
+		themeSlug && context.store.dispatch( fetchThemeDetails( themeSlug, next ) );
+	}
 } // TODO(ehg): We don't want to hit the endpoint for every req. Debounce based on theme arg?
 
 export function details( context, next ) {
