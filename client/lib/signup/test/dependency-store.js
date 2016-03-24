@@ -13,7 +13,7 @@ var SignupProgressStore = require( '../progress-store' ),
 	SignupDependencyStore = require( '../dependency-store' ),
 	SignupActions = require( '../actions' );
 
-describe( 'SignupDependencyStore', function() {
+describe( 'dependency-store', function() {
 	afterEach( function() {
 		SignupProgressStore.reset();
 	} );

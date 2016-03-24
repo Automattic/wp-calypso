@@ -197,6 +197,9 @@
 		"shortcode": {
 			"test": [ "index" ]
 		},
+		"signup": {
+		  "test": [ "dependency-store", "flow-controller", "progress-store" ]
+		},
 		"store": {
 			"test": [ "index" ]
 		},

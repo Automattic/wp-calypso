@@ -20,7 +20,7 @@ import Dispatcher from 'dispatcher';
 var SignupProgressStore = require( '../progress-store' ),
 	SignupActions = require( '../actions' );
 
-describe( 'SignupProgressStore', function() {
+describe( 'progress-store', function() {
 	it( 'should return an empty at first', function() {
 		assert.equal( SignupProgressStore.get().length, 0 );
 	} );
