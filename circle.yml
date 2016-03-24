@@ -25,6 +25,11 @@ test:
         files:
           - server/**/test/*.js
           - server/**/test/*.jsx
+    - NODE_ENV=test make client/config/index.js && MOCHA_FILE=./test-results-tests.xml npm run test-tests -- --reporter=mocha-junit-reporter -w:
+        parallel: true
+        files:
+          - test/test/**/test/*.js
+          - test/test/**/test/*.jsx
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/ && find . -type f -regex  "./test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;:
         parallel: true
