@@ -14,7 +14,8 @@ import supportUrls from 'lib/url/support';
 
 const HappinessSupport = React.createClass( {
 	propTypes: {
-		isJetpack: React.PropTypes.bool
+		isJetpack: React.PropTypes.bool,
+		isPlaceholder: React.PropTypes.bool
 	},
 
 	getInitialState() {
@@ -70,7 +71,7 @@ const HappinessSupport = React.createClass( {
 	render() {
 		const classes = {
 			'happiness-support': true,
-			'is-placeholder': this.props.isJetpack === undefined || this.props.isJetpack === null
+			'is-placeholder': this.props.isPlaceholder
 		};
 
 		return (

@@ -156,7 +156,9 @@ const CheckoutThankYou = React.createClass( {
 				</Card>
 
 				<Card className="checkout-thank-you__footer">
-					<HappinessSupport isJetpack={ purchases && purchases.some( isJetpackPlan ) } />
+					<HappinessSupport
+						isJetpack={ purchases && purchases.some( isJetpackPlan ) }
+						isPlaceholder={ ! this.isDataLoaded() && ! this.isGenericReceipt() } />
 				</Card>
 			</Main>
 		);
