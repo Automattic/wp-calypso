@@ -83,7 +83,6 @@ class TimezoneDropdown extends Component {
 				valueLink={ this.props.valueLink }
 				options={ this.state.timezones }
 				initialSelected={ this.props.selectedZone }
-				selectedText={ this.props.selectedZone }
 				onSelect={ this.onSelect }
 			/>
 		);

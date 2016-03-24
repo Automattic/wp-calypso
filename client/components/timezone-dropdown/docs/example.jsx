@@ -18,13 +18,13 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			timezone: 'Africa/Abidjan'
+			timezone: 'UTC+10'
 		};
 	},
 
-	onTimezoneSelect( zone ) {
-		console.log( 'timezone selected: %o', zone.value );
-		this.setState( { timezone: zone.label } );
+	onTimezoneSelect( timezone ) {
+		console.log( 'current zone: %o', timezone );
+		this.setState( { timezone: timezone.value } );
 	},
 
 	render() {
@@ -34,7 +34,7 @@ export default React.createClass( {
 					<a href="/devdocs/design/timezone-dropdown">TimezoneDropdown</a>
 				</h2>
 
-				<Card style={ { width: '300px', height: '320px', margin: 0 } }>
+				<Card style={ { width: '300px', height: '350px', margin: 0 } }>
 					<TimezoneDropdown
 						selectedZone={ this.state.timezone }
 						onSelect={ this.onTimezoneSelect }
