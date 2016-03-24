@@ -4,6 +4,7 @@
 	"hostname": "calypso.localhost",
 	"port": 3000,
 	"i18n_default_locale_slug": "en",
+	"debug_filter": "calypso:*",
 	"wpcom_user_bootstrap": false,
 	"rtl": false,
 	"jetpack_min_version": "3.3",

@@ -21,6 +21,12 @@ var start = Date.now(),
 console.log( chalk.yellow( '%s booted in %dms - http://%s:%s' ), pkg.name, ( Date.now() ) - start, host, port );
 console.info( chalk.cyan( '\nGetting bundles ready, hold on...' ) );
 
+// Set up the console logging filter for the npm `debug` package
+if ( config( 'env' ) === 'development' && 'undefined' === typeof process.env.DEBUG ) {
+	// Use the default debug filter from the configuration files
+	process.env.DEBUG = config( 'debug_filter' );
+}
+
 server = http.createServer( app );
 
 // The desktop app runs Calypso in a fork.

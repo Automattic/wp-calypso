@@ -114,6 +114,11 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			script(type='text/javascript')!='var currentUser = ' + sanitize.jsonStringifyForHtml( user )
 		if app
 			script(type='text/javascript')!='var app = ' + sanitize.jsonStringifyForHtml( app )
+		if 'development' === env
+			script.
+				if ( window.app && window.app.debugFilter && localStorage ) {
+					localStorage.setItem( 'debug', window.app.debugFilter )
+				}
 		if initialReduxState
 			script(type='text/javascript')!='var initialReduxState = ' + sanitize.jsonStringifyForHtml( initialReduxState )
 		if i18nLocaleScript
