@@ -38,3 +38,9 @@
 		color: darken( $gray, 10% );
 	}
 }
+
+.editor-action-bar__last-group .editor-sticky .gridicon,
+.editor-action-bar__last-group .editor-visibility .gridicon {
+	width: 24px;
+	height: 24px;
+}
