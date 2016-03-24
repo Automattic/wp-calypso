@@ -1,4 +1,4 @@
-var config = require( './config' ), // './' required for wp-desktop Webpack bundling
+var config = require( 'config' ),
 	readerPaths;
 
 var sections;
