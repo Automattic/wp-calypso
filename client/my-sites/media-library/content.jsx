@@ -1,30 +1,35 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	createFragment = require( 'react-addons-create-fragment' ),
-	noop = require( 'lodash/noop' ),
-	head = require( 'lodash/head' ),
-	values = require( 'lodash/values' ),
-	mapValues = require( 'lodash/mapValues' ),
-	groupBy = require( 'lodash/groupBy' ),
-	debounce = require( 'lodash/debounce' ),
-	debug = require( 'debug' )( 'calypso:media-library:content' );
+import React from 'react';
+import createFragment from 'react-addons-create-fragment';
+import noop from 'lodash/noop';
+import head from 'lodash/head';
+import values from 'lodash/values';
+import mapValues from 'lodash/mapValues';
+import groupBy from 'lodash/groupBy';
+import debounce from 'lodash/debounce';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var Notice = require( 'components/notice' ),
-	MediaListData = require( 'components/data/media-list-data' ),
-	MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' ),
-	MediaActions = require( 'lib/media/actions' ),
-	MediaValidationErrors = require( 'lib/media/constants' ).ValidationErrors,
-	PreferencesActions = require( 'lib/preferences/actions' ),
-	isMobile = require( 'lib/viewport' ).isMobile,
-	MediaLibraryHeader = require( './header' ),
-	MediaLibraryList = require( './list' );
+import Notice from 'components/notice';
+import MediaListData from 'components/data/media-list-data';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
+import MediaActions from 'lib/media/actions';
+import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
+import PreferencesActions from 'lib/preferences/actions';
+import { isMobile } from 'lib/viewport';
+import MediaLibraryHeader from './header';
+import MediaLibraryList from './list';
 
-module.exports = React.createClass( {
+/**
+ * Module variables
+ */
+const debug = debugFactory( 'calypso:media-library:content' );
+
+export default React.createClass( {
 	displayName: 'MediaLibraryContent',
 
 	propTypes: {
