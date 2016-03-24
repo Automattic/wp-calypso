@@ -24,11 +24,3 @@
 .plan-storage__button.is-alert .progress-bar__progress {
 	background-color: $alert-red;
 }
-
-.plan-storage__button {
-	display: none;
-
-	@include breakpoint( ">480px" ) {
-		display: inline-block;
-	}
-}
