@@ -69,7 +69,8 @@ export default ( state = initialState, action ) => {
 						.setIn( [ 'queryState', 'isFetchingNextPage' ], false )
 						.update( 'list', add.bind( null, map( action.themes, 'id' ) ) );
 
-				return newState.setIn( [ 'queryState', 'isLastPage' ],
+				return newState.setIn( [ 'queryState', 'error' ], false )
+						.setIn( [ 'queryState', 'isLastPage' ],
 						isActionForLastPage( newState.get( 'list' ), action ) );
 			}
 			return state;
@@ -82,7 +83,8 @@ export default ( state = initialState, action ) => {
 		case ActionTypes.RECEIVE_THEMES_SERVER_ERROR:
 			return state
 				.setIn( [ 'queryState', 'isFetchingNextPage' ], false )
-				.setIn( [ 'queryState', 'isLastPage' ], true );
+				.setIn( [ 'queryState', 'isLastPage' ], true )
+				.setIn( [ 'queryState', 'error' ], true );
 
 		case ActionTypes.ACTIVATED_THEME:
 			// The `active` attribute isn't ever really read, but since

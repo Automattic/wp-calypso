@@ -13,8 +13,9 @@ import { connect } from 'react-redux';
 import { PER_PAGE } from 'state/themes/themes-list/constants';
 import { query, fetchNextPage } from 'state/themes/actions';
 import { hasSiteChanged, isJetpack } from 'state/themes/themes-last-query/selectors';
-import { isLastPage, isFetchingNextPage, getThemesList } from 'state/themes/themes-list/selectors';
+import { isLastPage, isFetchingNextPage, getThemesList, isFetchError } from 'state/themes/themes-list/selectors';
 import { getThemeById } from 'state/themes/themes/selectors';
+import { errorNotice } from 'state/notices/actions';
 
 const ThemesListFetcher = React.createClass( {
 	propTypes: {
@@ -38,6 +39,7 @@ const ThemesListFetcher = React.createClass( {
 		} ).isRequired,
 		query: React.PropTypes.func.isRequired,
 		fetchNextPage: React.PropTypes.func.isRequired,
+		error: React.PropTypes.bool,
 	},
 
 	componentDidMount: function() {
@@ -45,6 +47,9 @@ const ThemesListFetcher = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
+		if ( nextProps.error && nextProps.error !== this.props.error ) {
+			this.props.errorNotice( this.translate( 'There was a problem fetching the themes' ) );
+		}
 		if (
 				nextProps.tier !== this.props.tier || (
 					nextProps.search !== this.props.search && (
@@ -142,7 +147,8 @@ export default connect(
 		lastQuery: {
 			hasSiteChanged: hasSiteChanged( state ),
 			isJetpack: isJetpack( state )
-		}
+		},
+		error: isFetchError( state )
 	} ),
-	{ query, fetchNextPage }
+	{ query, fetchNextPage, errorNotice }
 )( ThemesListFetcher );
