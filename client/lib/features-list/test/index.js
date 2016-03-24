@@ -1,12 +1,18 @@
 global.localStorage = require( 'localStorage' );
 
+/**
+ * External dependencies
+ */
 var assert = require( 'assert' );
 
+/**
+ * Internal dependencies
+ */
 var FeaturesList = require( 'lib/features-list' ),
 	data = require( './data' ),
 	featuresMockedData = data.features;
 
-describe( 'FeaturesList', function() {
+describe( 'index', function() {
 	describe( 'initialize', function() {
 		it( 'should populate the list of features', function() {
 			var featuresList = FeaturesList();
@@ -23,7 +29,6 @@ describe( 'FeaturesList', function() {
 				return feature.title === 'Free Blog';
 			} )[0];
 
-
 			var freeBlogFromMockedData = featuresMockedData.filter( function( feature ) {
 				return feature.title === 'Free Blog';
 			} )[0];
@@ -32,7 +37,5 @@ describe( 'FeaturesList', function() {
 				assert.strictEqual( freeBlog[ prop ], freeBlogFromMockedData[ prop ] );
 			}
 		} );
-
 	} );
-
 } );
