@@ -38,7 +38,8 @@ export default React.createClass( {
 		options: PropTypes.string,
 		required: PropTypes.bool,
 		onUpdate: PropTypes.func.isRequired,
-		onRemove: PropTypes.func.isRequired
+		onRemove: PropTypes.func.isRequired,
+		isExpanded: PropTypes.bool
 	},
 
 	renderOptions() {
@@ -76,12 +77,15 @@ export default React.createClass( {
 				header={ <FieldHeader { ...omit( this.props, [ 'onUpdate' ] ) } /> }
 				summary={ remove }
 				expandedSummary={ remove }
-				icon="pencil">
+				icon="pencil"
+				expanded={ this.props.isExpanded }
+				onOpen={ () => this.props.onUpdate( { isExpanded: true } ) }
+				onClose={ () => this.props.onUpdate( { isExpanded: false } ) }>
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Field Label' ) }</FormLabel>
 					<FormTextInput value={ this.props.label } onChange={ this.onLabelChange } isError={ fielLabelValidationError } />
 					{ fielLabelValidationError && <FormTextValidation isError={ true } text={ this.translate( 'Field Label can not be empty.' ) } /> }
-			</FormFieldset>
+				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Field Type' ) }</FormLabel>

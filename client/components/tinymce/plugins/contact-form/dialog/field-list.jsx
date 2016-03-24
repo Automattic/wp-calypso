@@ -28,7 +28,7 @@ export default React.createClass( {
 						return (
 							<Field
 								key={ index }
-								{ ...{ label, type, options, required } }
+								{ ...field }
 								onRemove={ () => this.props.onFieldRemove( index ) }
 								onUpdate={ newField => this.props.onFieldUpdate( index, newField ) } />
 						);
