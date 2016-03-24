@@ -112,19 +112,23 @@ const olark = {
 	},
 
 	fetchUpgradesCache() {
-		wpcom.req.get( { path: '/me/upgrades' }, ( error, data ) => {
-			if ( error ) {
-				return;
-			}
+		if ( sites.fetched ) {
+			this.setUpgradesCache();
+		} else {
+			sites.once( 'change', this.setUpgradesCache.bind( this ) );
+		}
+	},
 
-			if ( ! this.hasChatEligibleUpgrade( data ) ) {
-				this.storeEligibility( false );
-				return;
-			}
+	setUpgradesCache() {
+		if ( ! this.hasChatEligibleUpgrade() ) {
+			debug( 'User is not eligible for live chat.' )
+			this.storeEligibility( false );
+			return;
+		}
 
-			this.storeEligibility( true );
-			this.emit( 'eligible' );
-		} );
+		debug( 'User is eligible for live chat.' )
+		this.storeEligibility( true );
+		this.emit( 'eligible' );
 	},
 
 	storeEligibility( status ) {
@@ -456,15 +460,15 @@ const olark = {
 		} );
 	},
 
-	hasChatEligibleUpgrade( upgrades ) {
-		return upgrades && upgrades.some( ( upgrade ) => {
+	hasChatEligibleUpgrade() {
+		return sites.data.some( ( site ) => {
 			var userType;
 
-			if ( isBusiness( upgrade ) ) {
+			if ( isBusiness( site.plan ) ) {
 				userType = 'Business';
 			}
 
-			if ( isEnterprise( upgrade ) ) {
+			if ( isEnterprise( site.plan ) ) {
 				userType = 'ENTERPRISE';
 			}
 
