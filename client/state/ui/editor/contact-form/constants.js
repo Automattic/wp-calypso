@@ -20,5 +20,6 @@ export const CONTACT_FORM_DEFAULT = {
 
 export const CONTACT_FORM_DEFAULT_NEW_FIELD = {
 	label: 'Text',
-	type: CONTACT_FORM_FIELD_TYPES.text
+	type: CONTACT_FORM_FIELD_TYPES.text,
+	isExpanded: true
 };
