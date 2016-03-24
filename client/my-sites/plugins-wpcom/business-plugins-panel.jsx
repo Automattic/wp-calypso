@@ -21,7 +21,7 @@ const defaultPlugins = [
 
 export const BusinessPluginsPanel = React.createClass( {
 	render() {
-		const { plugins: givenPlugins  = [] } = this.props;
+		const { plugins: givenPlugins = [] } = this.props;
 		const plugins = givenPlugins.length
 			? givenPlugins
 			: defaultPlugins;
@@ -31,7 +31,7 @@ export const BusinessPluginsPanel = React.createClass( {
 			<FoldableCard
 				actionButton={ actionButton }
 				actionButtonExpanded={ actionButton }
-				className="wpcom-business-plugins-panel"
+				className="wpcom-plugins__business-panel"
 				expanded={ true }
 				header="Business Upgrades"
 			>
@@ -47,6 +47,6 @@ export const BusinessPluginsPanel = React.createClass( {
 
 BusinessPluginsPanel.propTypes = {
 	plugins: PropTypes.array
-}
+};
 
 export default BusinessPluginsPanel;
