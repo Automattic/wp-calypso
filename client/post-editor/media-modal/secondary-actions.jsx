@@ -177,6 +177,7 @@ const MediaModalSecondaryActions = React.createClass( {
 		if ( this.props.selectedItems.length === 0 ) {
 			return (
 				<PlanStorage
+					className="editor-media-modal__plan-storage"
 					onClick={ this.navigateToPlans }
 					siteId={ this.props.site.ID } />
 			);

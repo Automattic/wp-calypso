@@ -322,3 +322,11 @@
 		}
 	}
 }
+
+.editor-media-modal__plan-storage {
+	display: none;
+
+	@include breakpoint( ">480px" ) {
+		display: inline-block;
+	}
+}
