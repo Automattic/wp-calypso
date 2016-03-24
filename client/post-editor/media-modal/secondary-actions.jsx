@@ -73,6 +73,12 @@ const MediaModalSecondaryActions = React.createClass( {
 		page( `/plans/${ this.props.siteSlug }` );
 	},
 
+	countImpression() {
+		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_impression', {
+			cta_name: 'plan-media-storage'
+		} );
+	},
+
 	getButtons() {
 		const {
 			user,
@@ -178,6 +184,7 @@ const MediaModalSecondaryActions = React.createClass( {
 			return (
 				<PlanStorage
 					onClick={ this.navigateToPlans }
+					onMount={ this.countImpression }
 					siteId={ this.props.site.ID } />
 			);
 		}

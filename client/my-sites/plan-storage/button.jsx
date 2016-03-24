@@ -23,12 +23,14 @@ export default React.createClass( {
 		sitePlanName: React.PropTypes.string.isRequired,
 		mediaStorage: React.PropTypes.object,
 		onClick: React.PropTypes.func,
+		onMount: React.PropTypes.func,
 		className: React.PropTypes.string
 	},
 
 	getDefaultProps() {
 		return {
-			onClick: noop
+			onClick: noop,
+			onMount: noop
 		}
 	},
 
@@ -40,6 +42,10 @@ export default React.createClass( {
 		}
 		//This is a fallback if we add a new plan. We ideally want to add any plan levels for proper i18n.
 		return this.translate( '%(planName)s Plan', { args: { planName: this.props.sitePlanName } } );
+	},
+
+	componentDidMount() {
+		this.props.onMount();
 	},
 
 	render() {
