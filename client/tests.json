@@ -91,6 +91,9 @@
 		"i18n-utils" : {
 			"test": [ "utils" ]
 		},
+		"localforage": {
+			"test": [ "localforage-bypass" ]
+		},
 		"menu-data" : {
 			"test" : [ "menu-data" ]
 		},
