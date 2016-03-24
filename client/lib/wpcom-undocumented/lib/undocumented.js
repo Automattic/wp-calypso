@@ -1067,6 +1067,22 @@ Undocumented.prototype.setPrimaryDomain = function( siteId, domain, fn ) {
 	this.wpcom.req.post( '/sites/' + siteId + '/domains/primary', {}, { domain: domain }, fn );
 };
 
+Undocumented.prototype.fetchPreviewMarkup = function( siteId, slug ) {
+	debug( '/sites/:site_id/previews/mine' );
+	return new Promise( ( resolve, reject ) => {
+		const endpoint = `/sites/${siteId}/previews/mine`;
+		const query = { path: slug };
+		this.wpcom.req.get( endpoint, query )
+		.then( response => {
+			if ( ! response.html ) {
+				return reject( new Error( 'No markup received from API' ) );
+			}
+			resolve( response.html );
+		} )
+		.catch( reject );
+	} );
+};
+
 Undocumented.prototype.readFollowing = function( query, fn ) {
 	debug( '/read/following' );
 	query.apiVersion = '1.3';

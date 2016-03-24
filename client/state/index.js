@@ -10,6 +10,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import application from './application/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import notices from './notices/reducer';
+import preview from './preview/reducer';
 import posts from './posts/reducer';
 import postTypes from './post-types/reducer';
 import plugins from './plugins/reducer';
@@ -34,6 +35,7 @@ export const reducer = combineReducers( {
 	plugins,
 	application,
 	notices,
+	preview,
 	posts,
 	postTypes,
 	receipts,
