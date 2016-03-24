@@ -43,8 +43,7 @@ class SelectDropdown extends Component {
 		let initialState = { isOpen: false };
 
 		if ( props.options.length ) {
-			initialState.selected = this.props.initialSelected ||
-				props.options[ 0 ].value;
+			initialState.selected = this.getInitialSelectedItem( props );
 		}
 
 		this.state = initialState;
@@ -79,6 +78,20 @@ class SelectDropdown extends Component {
 				open: this.state.isOpen
 			} );
 		}
+	}
+
+	getInitialSelectedItem( props ) {
+		props = props || this.props;
+
+		if ( props.initialSelected ) {
+			return props.initialSelected;
+		}
+
+		if ( ! props.options.length ) {
+			return;
+		}
+
+		return props.options.find( value => ! value.isLabel ).value;
 	}
 
 	dropdownOptions() {
