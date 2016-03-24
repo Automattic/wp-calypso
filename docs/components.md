@@ -27,7 +27,7 @@ That means a sub-component needs to write its HTML classes using the folder name
 
 ## Syntax
 
-We write classes like `.my-component__element` to indicate the component an element belongs to. Thus, component names (the folder holding the "index.jsx" file) need to be written with a global scope, specific, and clear enough in meaning.
+We write classes like `.my-component__element` to indicate the component an element belongs to. Thus, component names (the folder holding the `index.jsx` file) need to be written with a global scope, specific, and clear enough in meaning.
 
 We avoid vanilla _html_ selectors like `.my-component h1` in favor of `.my-component__title` whenever possible.
 
@@ -51,7 +51,7 @@ Any of these are right approaches, the reason to create a folder should be a mat
 
 ## Reusability
 
-Components are reusable in nature, regardless of where they are placed in the directory structure. This is an important clarification, since we don't place components in folders based on whether they are reusable or not. It's not a requirement for a component to live in `client/components` to be reused. Indeed, we use the `my-sites/site` component to render the current site in the editor, to render the site picker in the sidebar, to render sites in "Me", etc. The pieces that go to "client/components" are those that don't have a natural preference to one of our main section groups and are thus purer UI building blocks.
+Components are reusable in nature, regardless of where they are placed in the directory structure. This is an important clarification, since we don't place components in folders based on whether they are reusable or not. It's not a requirement for a component to live in `client/components` to be reused. Indeed, we use the `my-sites/site` component to render the current site in the editor, to render the site picker in the sidebar, to render sites in "Me", etc. The pieces that go to `client/components` are those that don't have a natural preference to one of our main section groups and are thus purer UI building blocks.
 
 ## Expressiveness
 
