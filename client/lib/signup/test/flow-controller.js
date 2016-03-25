@@ -1,5 +1,3 @@
-global.localStorage = require( 'localStorage' );
-
 /**
  * External dependencies
  */
@@ -8,6 +6,11 @@ var debug = require( 'debug' )( 'calypso:signup-flow-controller:test' ), // esli
 	defer = require( 'lodash/defer' ),
 	ary = require( 'lodash/ary' );
 
+/**
+ * Internal dependencies
+ */
+import useFakeDom from 'test/helpers/use-fake-dom';
+
 describe( 'flow-controller', function() {
 	var SignupProgressStore,
 		SignupDependencyStore,
@@ -15,6 +18,7 @@ describe( 'flow-controller', function() {
 		SignupActions,
 		signupFlowController;
 
+	useFakeDom();
 	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
 
 	before( () => {
