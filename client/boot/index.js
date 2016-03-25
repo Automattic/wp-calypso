@@ -41,6 +41,7 @@ var config = require( 'config' ),
 	setRouteAction = require( 'state/notices/actions' ).setRoute,
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
+	bindTitleToStore = require( 'lib/screen-title' ).subscribeToStore,
 	syncHandler = require( 'lib/wp/sync-handler' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
@@ -165,6 +166,7 @@ function reduxStoreReady( reduxStore ) {
 	let layoutSection, layout, layoutElement, validSections = [];
 
 	bindWpLocaleState( reduxStore );
+	bindTitleToStore( reduxStore );
 
 	supportUser.setReduxStore( reduxStore );
 
