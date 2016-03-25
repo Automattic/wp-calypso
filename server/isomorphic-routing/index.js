@@ -7,26 +7,25 @@ import { serverRender } from 'render';
 import { createReduxStore } from 'state';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 
-export default function( expressApp, getDefaultContext ) {
+export default function( expressApp, setUpRoute ) {
 	sections.get()
 		.filter( section => section.isomorphic )
 		.forEach( section => {
-			sections.require( section.module )( serverRouter( expressApp, getDefaultContext, section ) );
+			sections.require( section.module )( serverRouter( expressApp, setUpRoute, section ) );
 		} );
 }
 
-function serverRouter( expressApp, mapExpressToPageContext, section ) {
+function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
-		expressApp.get( route, combinedMiddlewares( mapExpressToPageContext, middlewares, section ) );
+		expressApp.get( route, setUpRoute, combinedMiddlewares( middlewares, section ) );
 	}
 }
 
-function combinedMiddlewares( mapExpressToPageContext, middlewares, section ) {
+function combinedMiddlewares( middlewares, section ) {
 	return function( req, res ) {
-		let context = mapExpressToPageContext( req );
-		context = getEnhancedContext( context, req, res );
+		let context = getEnhancedContext( req, res );
 		applyMiddlewares( context, ...[
-			setUpRoute,
+			setUpI18n,
 			setSectionMiddlewareFactory( section ),
 			...middlewares,
 			serverRender
@@ -34,12 +33,12 @@ function combinedMiddlewares( mapExpressToPageContext, middlewares, section ) {
 	}
 }
 
-function getEnhancedContext( context, req, res ) {
-	return Object.assign( {}, context, {
+function getEnhancedContext( req, res ) {
+	return Object.assign( {}, req.context, {
 		isLoggedIn: req.cookies.wordpress_logged_in,
 		isServerSide: true,
 		path: req.path,
-		params: Object.assign( {}, context.params, req.params ),
+		params: Object.assign( {}, req.context.params, req.params ),
 		query: {},
 		store: createReduxStore(),
 		res,
@@ -58,7 +57,7 @@ function compose( ...functions ) {
 	), () => {} );
 }
 
-function setUpRoute( context, next ) {
+function setUpI18n( context, next ) {
 	i18n.initialize();
 	next();
 }

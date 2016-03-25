@@ -374,7 +374,7 @@ module.exports = function() {
 
 	app.get( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpRoute, render );
 
-	isomorphicRouting( app, getDefaultContext );
+	isomorphicRouting( app, setUpRoute );
 
 	app.get( '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?/:locale?',
 		setUpRoute,
