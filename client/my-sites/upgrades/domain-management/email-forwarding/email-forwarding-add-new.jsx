@@ -20,6 +20,7 @@ import analyticsMixin from 'lib/mixins/analytics';
 import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { validateAllFields } from 'lib/domains/email-forwarding';
+import supportUrls from 'lib/url/support';
 
 const EmailForwardingAddNew = React.createClass( {
 	propTypes: {
@@ -77,13 +78,20 @@ const EmailForwardingAddNew = React.createClass( {
 				this.recordEvent( 'addNewEmailForwardClick', this.props.selectedDomainName, mailbox, destination, ! Boolean( error ) );
 
 				if ( error ) {
-					notices.error( error.message || this.translate( 'Failed to add email forwarding record. Please try again or contact customer support if error persists.' ) );
+					notices.error( error.message || this.translate( 'Failed to add email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+						{
+							components: {
+								contactSupportLink: <a href={ supportUrls.CONTACT }/>
+							}
+						} )
+					);
 				} else {
 					this.formStateController.resetFields( this.getInitialState().fields );
 
 					notices.success(
-						this.translate( 'Yay, %(email)s has been successfully added!', { args: {
-							email: mailbox + '@' + this.props.selectedDomainName
+						this.translate( '%(email)s has been successfully added! You must confirm your email before it starts working. Please check your inbox for %(destination)s.', { args: {
+							email: mailbox + '@' + this.props.selectedDomainName,
+							destination: destination
 						} } ), {
 							duration: 5000
 						} );
