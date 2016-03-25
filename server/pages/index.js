@@ -192,7 +192,7 @@ function getDefaultContext( request ) {
 	return context;
 }
 
-function renderLoggedOutRoute( req, res ) {
+function setUpLoggedOutRoute( req, res, next ) {
 	var context = getDefaultContext( req ),
 		language;
 
@@ -215,10 +215,11 @@ function renderLoggedOutRoute( req, res ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
 	}
 
-	res.render( 'index.jade', context );
+	req.context = context;
+	next();
 }
 
-function renderLoggedInRoute( req, res ) {
+function setUpLoggedInRoute( req, res, next ) {
 	var redirectUrl, protocol, start, context;
 
 	res.set( {
@@ -302,12 +303,29 @@ function renderLoggedInRoute( req, res ) {
 				}
 			}
 
-			res.render( 'index.jade', context );
+			req.context = context;
+			next();
 		} );
-	} else if ( config.isEnabled( 'desktop' ) ) {
-		res.render( 'desktop.jade', context );
 	} else {
-		res.render( 'index.jade', context );
+		req.context = context;
+		next();
+	}
+}
+
+function setUpRoute( req, res, next ) {
+	if ( req.cookies.wordpress_logged_in ) {
+		// the user is probably logged in
+		setUpLoggedInRoute( req, res, next );
+	} else {
+		setUpLoggedOutRoute( req, res, next );
+	}
+}
+
+function render( req, res ) {
+	if ( config.isEnabled( 'desktop' ) ) {
+		res.render( 'desktop.jade', req.context );
+	} else {
+		res.render( 'index.jade', req.context );
 	}
 }
 
@@ -351,52 +369,30 @@ module.exports = function() {
 	} );
 
 	if ( config.isEnabled( 'login' ) ) {
-		app.get( '/log-in/:lang?', function( req, res ) {
-			renderLoggedOutRoute( req, res );
-		} );
+		app.get( '/log-in/:lang?', setUpLoggedOutRoute, render );
 	}
 
-	app.get( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', function( req, res ) {
-		if ( req.cookies.wordpress_logged_in ) {
-			// the user is probably logged in
-			renderLoggedInRoute( req, res );
-		} else {
-			renderLoggedOutRoute( req, res );
-		}
-	} );
+	app.get( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpRoute, render );
 
 	isomorphicRouting( app, getDefaultContext );
 
-	app.get( '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?/:locale?', function( req, res ) {
-		if ( req.cookies.wordpress_logged_in ) {
-			// the user is probably logged in
-			renderLoggedInRoute( req, res );
-		} else {
-			renderLoggedOutRoute( req, res );
-		}
-	} );
+	app.get( '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?/:locale?',
+		setUpRoute,
+		render
+	);
 
 	if ( config.isEnabled( 'phone_signup' ) ) {
-		app.get( '/phone/:lang?', function( req, res ) {
-			renderLoggedOutRoute( req, res );
-		} );
+		app.get( '/phone/:lang?', setUpLoggedOutRoute, render );
 	}
 
 	if ( config.isEnabled( 'mailing-lists/unsubscribe' ) ) {
-		app.get( '/mailing-lists/unsubscribe', function( req, res ) {
-			if ( req.cookies.wordpress_logged_in ) {
-				// the user is probably logged in
-				renderLoggedInRoute( req, res );
-			} else {
-				renderLoggedOutRoute( req, res );
-			}
-		} );
+		app.get( '/mailing-lists/unsubscribe', setUpRoute, render );
 	}
 
 	if ( config.isEnabled( 'reader/discover' ) && config( 'env' ) !== 'development' ) {
-		app.get( '/discover', function( req, res ) {
+		app.get( '/discover', function( req, res, next ) {
 			if ( req.cookies.wordpress_logged_in ) {
-				renderLoggedInRoute( req, res );
+				setUpLoggedInRoute( req, res, next );
 			} else {
 				res.redirect( config( 'discover_logged_out_redirect_url' ) );
 			}
@@ -404,7 +400,7 @@ module.exports = function() {
 	}
 
 	// catchall path to serve shell for all non-static-file requests (other than auth routes)
-	app.get( '*', renderLoggedInRoute );
+	app.get( '*', setUpLoggedInRoute, render );
 
 	return app;
 };
