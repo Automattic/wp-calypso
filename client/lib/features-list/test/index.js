@@ -1,4 +1,3 @@
-global.localStorage = require( 'localStorage' );
 
 /**
  * External dependencies
@@ -8,11 +7,19 @@ var assert = require( 'assert' );
 /**
  * Internal dependencies
  */
-var FeaturesList = require( 'lib/features-list' ),
-	data = require( './data' ),
-	featuresMockedData = data.features;
+var data = require( './data' ),
+	featuresMockedData = data.features,
+	useFakeDom = require( 'test/helpers/use-fake-dom' );
 
 describe( 'index', function() {
+	let FeaturesList;
+
+	useFakeDom();
+
+	before( () => {
+		FeaturesList = require( 'lib/features-list' );
+	});
+
 	describe( 'initialize', function() {
 		it( 'should populate the list of features', function() {
 			var featuresList = FeaturesList();
