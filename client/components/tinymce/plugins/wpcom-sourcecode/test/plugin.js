@@ -2,9 +2,13 @@
  * External dependencies
  */
 import { expect } from 'chai';
+
+/**
+ * Internal dependencies
+ */
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'plugin', () => {
+describe( 'wpcom-sourcecode', () => {
 	let wrapPre, unwrapPre;
 
 	useMockery( mockery => {
