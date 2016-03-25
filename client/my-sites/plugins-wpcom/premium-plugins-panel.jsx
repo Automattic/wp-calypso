@@ -1,6 +1,9 @@
 import React, { PropTypes } from 'react';
 
 import FoldableCard from 'components/foldable-card';
+import Card from 'components/card';
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 
 import PremiumPlugin from './plugin-types/premium-plugin';
@@ -35,19 +38,22 @@ export const PremiumPluginsPanel = React.createClass( {
 		const actionButton = <div><Gridicon icon="checkmark" /> Active</div>;
 
 		return (
-			<FoldableCard
-				actionButton={ actionButton }
-				actionButtonExpanded={ actionButton }
-				className="wpcom-plugins__premium-panel"
-				expanded={ true }
-				header="Premium Upgrades"
-			>
-				{ plugins.map( ( { name, supportLink, icon, plan, description } ) =>
-					<PremiumPlugin
-						{ ...{ name, key: name, supportLink, icon, plan, description } }
-					/>
-				) }
-			</FoldableCard>
+			<div>
+			<SectionHeader label={ this.translate( 'Premium Upgrades' ) }>
+				<Button compact primary>
+					{ this.translate( 'Purchase' ) }
+				</Button>
+			</SectionHeader>
+			<Card className="wpcom-plugins__premium-panel">
+				<div className="wpcom-plugins__list">
+					{ plugins.map( ( { name, supportLink, icon, plan, description } ) =>
+						<PremiumPlugin
+							{ ...{ name, key: name, supportLink, icon, plan, description } }
+							/>
+					) }
+				</div>
+			</Card>
+			</div>
 		);
 	}
 } );

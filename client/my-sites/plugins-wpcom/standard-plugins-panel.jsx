@@ -1,6 +1,9 @@
 import React, { PropTypes } from 'react';
 
 import FoldableCard from 'components/foldable-card';
+import Card from 'components/card';
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 
 import StandardPlugin from './plugin-types/standard-plugin';
@@ -41,12 +44,6 @@ const defaultPlugins = [
 		supportLink: 'http://support.wordpress.com/contact-form/',
 		category: 'Appearance',
 		description: 'Build contact forms so visitors can get in touch.'
-	},
-	{
-		name: 'Extended Customizer',
-		supportLink: 'https://en.support.wordpress.com/customizer/',
-		category: 'Appearance',
-		description: 'Edit colors and backgrounds.'
 	}
 ];
 
@@ -59,22 +56,29 @@ export const StandardPluginsPanel = React.createClass( {
 		const actionButton = <div className="wpcom-plugins__action-button"><Gridicon icon="checkmark" /> Active</div>;
 
 		return (
-			<FoldableCard
-				actionButton={ actionButton }
-				actionButtonExpanded={ actionButton }
-				className="wpcom-plugins__standard-panel"
-				expanded={ true }
-				header="Standard Plugin Suite"
-			>
-				{ plugins.map( ( { name, supportLink, icon, category, description } ) =>
-					<StandardPlugin
-						{ ...{ name, key: name, supportLink, icon, category, description } }
-					/>
-				) }
-				<div>
-					<Gridicon icon="plus" />View all standard plugins
+			<div>
+			<SectionHeader label={ this.translate( 'Standard Plugin Suite' ) }>
+					<Button compact borderless>
+						<Gridicon icon="checkmark" />
+        		{ this.translate( 'Active' ) }
+        	</Button>
+			</SectionHeader>
+			<Card className="wpcom-plugins__standard-panel">
+				<div className="wpcom-plugins__list">
+					{ plugins.map( ( { name, supportLink, icon, category, description } ) =>
+						<StandardPlugin
+							{ ...{ name, key: name, supportLink, icon, category, description } }
+							/>
+					) }
 				</div>
-			</FoldableCard>
+				<div className="wpcom-plugins__panel-footer">
+					<Button borderless>
+						<Gridicon icon="plus-small" />
+						{ this.translate( 'View all standard plugins' ) }
+					</Button>
+				</div>
+			</Card>
+			</div>
 		);
 	}
 } );
