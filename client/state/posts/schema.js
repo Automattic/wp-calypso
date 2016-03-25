@@ -41,7 +41,7 @@ export const itemsSchema = {
 				tags: { type: 'object' },
 				categories: { type: 'object' },
 				attachments: { type: 'object' },
-				attachment_count: { type: 'integer' },
+				attachment_count: { type: [ 'integer', 'string' ] },
 				metadata: { type: 'array' },
 				meta: { type: 'object' },
 				capabilities: { type: 'object' },
