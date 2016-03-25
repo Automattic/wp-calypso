@@ -37,8 +37,8 @@ function getEnhancedContext( req ) {
 }
 
 function applyMiddlewares( context, ...middlewares ) {
-	const liftedmiddlewares = middlewares.map( middleware => next => middleware( context, next ) );
-	compose( ...liftedmiddlewares )();
+	const liftedMiddlewares = middlewares.map( middleware => next => middleware( context, next ) );
+	compose( ...liftedMiddlewares )();
 }
 
 function compose( ...functions ) {
