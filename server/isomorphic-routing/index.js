@@ -15,7 +15,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 function combinedMiddlewares( middlewares, section ) {
 	return function( req, res, next ) {
 		req.context = getEnhancedContext( req );
-		applyMiddlewares( req.context, ...[
+		applyMiddlewares( req.context, [
 			setUpI18n,
 			setSectionMiddlewareFactory( section ),
 			...middlewares
@@ -36,7 +36,7 @@ function getEnhancedContext( req ) {
 	} );
 }
 
-function applyMiddlewares( context, ...middlewares ) {
+function applyMiddlewares( context, middlewares ) {
 	const liftedMiddlewares = middlewares.map( middleware => next => middleware( context, next ) );
 	compose( ...liftedMiddlewares )();
 }
