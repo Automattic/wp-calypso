@@ -17,32 +17,31 @@ export default function( expressApp, setUpRoute ) {
 
 function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
-		expressApp.get( route, setUpRoute, combinedMiddlewares( middlewares, section ) );
+		expressApp.get( route, setUpRoute, combinedMiddlewares( middlewares, section ), serverRender );
 	}
 }
 
 function combinedMiddlewares( middlewares, section ) {
-	return function( req, res ) {
-		let context = getEnhancedContext( req, res );
-		applyMiddlewares( context, ...[
+	return function( req, res, next ) {
+		req.context = getEnhancedContext( req );
+		applyMiddlewares( req.context, ...[
 			setUpI18n,
 			setSectionMiddlewareFactory( section ),
-			...middlewares,
-			serverRender
+			...middlewares
 		] );
+		next();
 	}
 }
 
-function getEnhancedContext( req, res ) {
+// TODO: Maybe merge into getDefaultContext().
+function getEnhancedContext( req ) {
 	return Object.assign( {}, req.context, {
 		isLoggedIn: req.cookies.wordpress_logged_in,
 		isServerSide: true,
 		path: req.path,
-		params: Object.assign( {}, req.context.params, req.params ),
-		query: {},
-		store: createReduxStore(),
-		res,
-		url: req.url
+		params: req.params,
+		query: {}, // Why?
+		store: createReduxStore()
 	} );
 }
 

@@ -68,12 +68,19 @@ export function render( element, key = JSON.stringify( element ) ) {
 	//todo: render an error?
 }
 
-export function serverRender( context ) {
-	if ( config.isEnabled( 'server-side-rendering' ) ) {
+export function serverRender( req, res ) {
+	const context = req.context;
+
+	if ( config.isEnabled( 'server-side-rendering' ) && context.store && context.layout ) {
 		context.initialReduxState = pick( context.store.getState(), 'ui', 'themes' );
-		const path = url.parse( context.url ).path;
+		const path = url.parse( req.url ).path;
 		const key = JSON.stringify( context.renderedLayout ) + path + JSON.stringify( context.initialReduxState );
 		Object.assign( context, render( context.layout, key ) );
 	}
-	context.res.render( 'index.jade', context );
+
+	if ( config.isEnabled( 'desktop' ) ) {
+		res.render( 'desktop.jade', context );
+	} else {
+		res.render( 'index.jade', context );
+	}
 }

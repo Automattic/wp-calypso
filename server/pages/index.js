@@ -11,7 +11,8 @@ var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
 	sections = require( '../../client/sections' ).get(),
-	isomorphicRouting = require( 'isomorphic-routing' );
+	isomorphicRouting = require( 'isomorphic-routing' ),
+	serverRender = require( 'server/render' ).serverRender;
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -321,14 +322,6 @@ function setUpRoute( req, res, next ) {
 	}
 }
 
-function render( req, res ) {
-	if ( config.isEnabled( 'desktop' ) ) {
-		res.render( 'desktop.jade', req.context );
-	} else {
-		res.render( 'index.jade', req.context );
-	}
-}
-
 module.exports = function() {
 	var app = express();
 
@@ -369,24 +362,24 @@ module.exports = function() {
 	} );
 
 	if ( config.isEnabled( 'login' ) ) {
-		app.get( '/log-in/:lang?', setUpLoggedOutRoute, render );
+		app.get( '/log-in/:lang?', setUpLoggedOutRoute, serverRender );
 	}
 
-	app.get( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpRoute, render );
+	app.get( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpRoute, serverRender );
 
 	isomorphicRouting( app, setUpRoute );
 
 	app.get( '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?/:locale?',
 		setUpRoute,
-		render
+		serverRender
 	);
 
 	if ( config.isEnabled( 'phone_signup' ) ) {
-		app.get( '/phone/:lang?', setUpLoggedOutRoute, render );
+		app.get( '/phone/:lang?', setUpLoggedOutRoute, serverRender );
 	}
 
 	if ( config.isEnabled( 'mailing-lists/unsubscribe' ) ) {
-		app.get( '/mailing-lists/unsubscribe', setUpRoute, render );
+		app.get( '/mailing-lists/unsubscribe', setUpRoute, serverRender );
 	}
 
 	if ( config.isEnabled( 'reader/discover' ) && config( 'env' ) !== 'development' ) {
@@ -400,7 +393,7 @@ module.exports = function() {
 	}
 
 	// catchall path to serve shell for all non-static-file requests (other than auth routes)
-	app.get( '*', setUpLoggedInRoute, render );
+	app.get( '*', setUpLoggedInRoute, serverRender );
 
 	return app;
 };
