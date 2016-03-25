@@ -165,6 +165,17 @@ UndocumentedSite.prototype.removeEmailFollower = function( followerId, callback 
 	}, callback );
 };
 
+UndocumentedSite.prototype.setHomepageSettings = function( homepageData, callback ) {
+	this.wpcom.req.post( {
+		path: '/sites/' + this._id + '/homepage',
+		body: {
+			is_page_on_front: homepageData.isPageOnFront,
+			page_on_front_id: homepageData.pageOnFrontId,
+			page_for_posts_id: homepageData.pageForPostsId,
+		}
+	}, callback );
+}
+
 UndocumentedSite.prototype.setHeaderImage = function( imageData, callback ) {
 	this.wpcom.req.post( {
 		path: '/sites/' + this._id + '/headers/mine',
