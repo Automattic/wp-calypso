@@ -73,7 +73,7 @@ const CheckoutThankYou = React.createClass( {
 	componentDidMount() {
 		this.redirectIfThemePurchased();
 
-		if ( this.props.receipt.hasLoadedFromServer && this.hasPlanOrDomainRegistration() ) {
+		if ( this.props.receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
 			this.props.refreshSitePlans( this.props.selectedSite );
 		} else if ( shouldFetchSitePlans( this.props.sitePlans, this.props.selectedSite ) ) {
 			this.props.fetchSitePlans( this.props.selectedSite );
@@ -91,13 +91,13 @@ const CheckoutThankYou = React.createClass( {
 	componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
 
-		if ( ! this.props.receipt.hasLoadedFromServer && nextProps.receipt.hasLoadedFromServer && this.hasPlanOrDomainRegistration( nextProps ) ) {
+		if ( ! this.props.receipt.hasLoadedFromServer && nextProps.receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct( nextProps ) ) {
 			this.props.refreshSitePlans( this.props.selectedSite.ID );
 		}
 	},
 
-	hasPlanOrDomainRegistration( props = this.props ) {
-		return getPurchases( props ).some( purchase => isPlan( purchase ) || isDomainRegistration( purchase ) );
+	hasPlanOrDomainProduct( props = this.props ) {
+		return getPurchases( props ).some( purchase => isPlan( purchase ) || isDomainProduct( purchase ) );
 	},
 
 	isDataLoaded() {
