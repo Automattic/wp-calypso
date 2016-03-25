@@ -3,13 +3,16 @@
  */
 var assert = require( 'assert' );
 
-/**
- * Internal dependencies
- */
-var flows = require( 'signup/config/flows' ),
-	user = require( 'lib/user' )();
+describe( 'flows', function() {
+	var flows, user;
 
-describe( 'flows.js', function() {
+	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+
+	before( () => {
+		flows = require( 'signup/config/flows' );
+		user = require( 'lib/user' )();
+	} );
+
 	it( 'should return the full flow when the user is not logged in', function() {
 		assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'user', 'site' ] );
 	} );

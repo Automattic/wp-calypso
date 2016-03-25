@@ -251,7 +251,8 @@
 	"signup": {
 	  "config": {
 		"test": [ "index" ]
-	  }
+	  },
+	  "test": [ "flows", "utils" ]
 	},
 	"state": {
 		"application": {

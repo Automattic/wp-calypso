@@ -5,15 +5,18 @@ var debug = require( 'debug' )( 'calypso:client:signup:controller-utils:test' ),
 	sinon = require( 'sinon' ),
 	assert = require( 'assert' );
 
-/**
- * Internal dependencies
- */
-var utils = require( '../utils' ),
-	flows = require( 'signup/config/flows' );
-
 debug( 'start utils test' );
 
 describe( 'utils', function() {
+	var flows, utils;
+
+	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+
+	before( () => {
+		flows = require( 'signup/config/flows' );
+		utils = require( '../utils' );
+	} );
+
 	describe( 'getLocale', function() {
 		it( 'should find the locale anywhere in the params', function() {
 			assert.equal( utils.getLocale( { lang: 'fr' } ), 'fr' );
