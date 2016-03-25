@@ -11,8 +11,8 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 		expressApp.get(
 			route,
 			setUpRoute,
+			setUpI18n,
 			combineMiddlewares(
-				setUpI18n,
 				setSectionMiddlewareFactory( section ),
 				...middlewares
 			),
@@ -52,7 +52,7 @@ function compose( ...functions ) {
 	), () => {} );
 }
 
-function setUpI18n( context, next ) {
+function setUpI18n( req, res, next ) {
 	i18n.initialize();
 	next();
 }
