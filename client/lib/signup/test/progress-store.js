@@ -12,15 +12,17 @@ var debug = require( 'debug' )( 'calypso:signup-progress-store:test' ), // eslin
 	last = require( 'lodash/last' ),
 	defer = require( 'lodash/defer' );
 
-/**
- * Internal dependencies
- */
-import Dispatcher from 'dispatcher';
-
-var SignupProgressStore = require( '../progress-store' ),
-	SignupActions = require( '../actions' );
-
 describe( 'progress-store', function() {
+	var SignupProgressStore, SignupActions, Dispatcher;
+
+	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+
+	before( () => {
+		SignupProgressStore = require( '../progress-store' );
+		SignupActions = require( '../actions' );
+		Dispatcher = require( 'dispatcher' );
+	} );
+
 	it( 'should return an empty at first', function() {
 		assert.equal( SignupProgressStore.get().length, 0 );
 	} );

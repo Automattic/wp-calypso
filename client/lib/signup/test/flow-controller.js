@@ -8,18 +8,22 @@ var debug = require( 'debug' )( 'calypso:signup-flow-controller:test' ), // esli
 	defer = require( 'lodash/defer' ),
 	ary = require( 'lodash/ary' );
 
-/**
- * Internal dependencies
- */
-var SignupProgressStore = require( '../progress-store' ),
-	SignupDependencyStore = require( '../dependency-store' ),
-	SignupFlowController = require( '../flow-controller' ),
-	SignupActions = require( '../actions' );
-
-SignupProgressStore.reset();
-
 describe( 'flow-controller', function() {
-	var signupFlowController;
+	var SignupProgressStore,
+		SignupDependencyStore,
+		SignupFlowController,
+		SignupActions,
+		signupFlowController;
+
+	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+
+	before( () => {
+		SignupProgressStore = require( '../progress-store' );
+		SignupDependencyStore = require( '../dependency-store' );
+		SignupFlowController = require( '../flow-controller' );
+		SignupActions = require( '../actions' );
+		SignupProgressStore.reset();
+	} );
 
 	afterEach( function() {
 		if ( signupFlowController ) {

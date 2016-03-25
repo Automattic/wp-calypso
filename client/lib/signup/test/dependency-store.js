@@ -6,14 +6,19 @@ global.localStorage = require( 'localStorage' );
 var debug = require( 'debug' )( 'calypso:signup-dependency-store:test' ), // eslint-disable-line no-unused-vars
 	assert = require( 'assert' );
 
-/**
- * Internal dependencies
- */
-var SignupProgressStore = require( '../progress-store' ),
-	SignupDependencyStore = require( '../dependency-store' ),
-	SignupActions = require( '../actions' );
-
 describe( 'dependency-store', function() {
+	var SignupProgressStore,
+		SignupDependencyStore,
+		SignupActions;
+
+	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+
+	before( () => {
+		SignupProgressStore = require( '../progress-store' );
+		SignupDependencyStore = require( '../dependency-store' );
+		SignupActions = require( '../actions' );
+	} );
+
 	afterEach( function() {
 		SignupProgressStore.reset();
 	} );
