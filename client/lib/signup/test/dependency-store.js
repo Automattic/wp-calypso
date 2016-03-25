@@ -1,16 +1,20 @@
-global.localStorage = require( 'localStorage' );
-
 /**
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:signup-dependency-store:test' ), // eslint-disable-line no-unused-vars
 	assert = require( 'assert' );
 
+/**
+ * Internal dependencies
+ */
+import useFakeDom from 'test/helpers/use-fake-dom';
+
 describe( 'dependency-store', function() {
 	var SignupProgressStore,
 		SignupDependencyStore,
 		SignupActions;
 
+	useFakeDom();
 	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
 
 	before( () => {
