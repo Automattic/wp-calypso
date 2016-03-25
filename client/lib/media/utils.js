@@ -1,30 +1,32 @@
 /**
  * External dependencies
  */
-var url = require( 'url' ),
-	path = require( 'path' ),
-	photon = require( 'photon' ),
-	includes = require( 'lodash/includes' ),
-	omitBy = require( 'lodash/omitBy' );
+import url from 'url';
+import path from 'path';
+import photon from 'photon';
+import includes from 'lodash/includes';
+import omitBy from 'lodash/omitBy';
 
 /**
  * Internal dependencies
  */
-var resize = require( 'lib/resize-image-url' ),
-	Constants = require( './constants' ),
-	Shortcode = require( 'lib/shortcode' ),
-	MimeTypes = Constants.MimeTypes,
-	ThumbnailSizeDimensions = Constants.ThumbnailSizeDimensions,
-	GalleryColumnedTypes = Constants.GalleryColumnedTypes,
-	GallerySizeableTypes = Constants.GallerySizeableTypes,
-	GalleryDefaultAttrs = Constants.GalleryDefaultAttrs;
+import resize from 'lib/resize-image-url';
+import {
+	MimeTypes,
+	VideoPressFileTypes,
+	ThumbnailSizeDimensions,
+	GalleryColumnedTypes,
+	GallerySizeableTypes,
+	GalleryDefaultAttrs
+} from './constants';
+import Shortcode from 'lib/shortcode';
 
 /**
  * Module variables
  */
-var REGEXP_VIDEOPRESS_GUID = /^[a-z\d]+$/i;
+const REGEXP_VIDEOPRESS_GUID = /^[a-z\d]+$/i;
 
-var MediaUtils = {
+const MediaUtils = {
 	/**
 	 * Given a media object, returns a URL string to that media. Accepts
 	 * optional options to specify photon usage or a maximum image width.
@@ -235,6 +237,28 @@ var MediaUtils = {
 		}
 
 		return site.options.allowed_file_types;
+	},
+
+	/**
+	 * Returns true if the specified item is a valid file in a Premium plan,
+	 * or false otherwise.
+	 *
+	 * @param  {Object}  item Media object
+	 * @param  {Object}  site Site object
+	 * @return {Boolean}      Whether the Premium plan supports the item
+	 */
+	isSupportedFileTypeInPremium: function( item, site ) {
+		if ( ! site || ! item ) {
+			return false;
+		}
+
+		if ( ! MediaUtils.isSiteAllowedFileTypesToBeTrusted( site ) ) {
+			return true;
+		}
+
+		return VideoPressFileTypes.some( function( allowed ) {
+			return allowed.toLowerCase() === item.extension.toLowerCase();
+		} );
 	},
 
 	/**

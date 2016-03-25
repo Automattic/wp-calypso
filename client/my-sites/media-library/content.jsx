@@ -28,12 +28,10 @@ import { isMobile } from 'lib/viewport';
 import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
 import MediaLibraryList from './list';
-
 /**
  * Module variables
  */
 const debug = debugFactory( 'calypso:media-library:content' );
-const STORAGE_ERRORS = [ MediaValidationErrors.NOT_ENOUGH_SPACE, MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT ];
 
 const MediaLibraryContent = React.createClass( {
 	propTypes: {
@@ -122,7 +120,25 @@ const MediaLibraryContent = React.createClass( {
 				args: occurrences.length
 			};
 
+			if ( this.props.site ) {
+				onDismiss = MediaActions.clearValidationErrorsByType.bind( null, this.props.site.ID, errorType );
+			}
+
+			let status = 'is-error';
+			let upgradeNudgeName = undefined;
+			let upgradeNudgeFeature = undefined;
+
 			switch ( errorType ) {
+				case MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN:
+					status = 'is-warning';
+					upgradeNudgeName = 'plan-media-storage-error-video';
+					upgradeNudgeFeature = 'video-upload';
+					message = this.translate(
+						'%d file could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
+						'%d files could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
+						i18nOptions
+					);
+					break;
 				case MediaValidationErrors.FILE_TYPE_UNSUPPORTED:
 					message = this.translate(
 						'%d file could not be uploaded because the file type is not supported.',
@@ -145,6 +161,8 @@ const MediaLibraryContent = React.createClass( {
 					);
 					break;
 				case MediaValidationErrors.NOT_ENOUGH_SPACE:
+					upgradeNudgeName = 'plan-media-storage-error';
+					upgradeNudgeFeature = 'extra-storage';
 					message = this.translate(
 						'%d file could not be uploaded because there is not enough space left.',
 						'%d files could not be uploaded because there is not enough space left.',
@@ -152,6 +170,8 @@ const MediaLibraryContent = React.createClass( {
 					);
 					break;
 				case MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT:
+					upgradeNudgeName = 'plan-media-storage-error';
+					upgradeNudgeFeature = 'extra-storage';
 					message = this.translate(
 						'%d file could not be uploaded because you have reached your plan storage limit.',
 						'%d files could not be uploaded because you have reached your plan storage limit.',
@@ -167,13 +187,9 @@ const MediaLibraryContent = React.createClass( {
 					break;
 			}
 
-			if ( this.props.site ) {
-				onDismiss = MediaActions.clearValidationErrorsByType.bind( null, this.props.site.ID, errorType );
-			}
-
 			return (
-				<Notice status="is-error" text={ message } onDismissClick={ onDismiss } >
-					{ this.renderNoticeAction( errorType ) }
+				<Notice status={ status } text={ message } onDismissClick={ onDismiss } >
+					{ this.renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) }
 				</Notice>
 			);
 		} );
@@ -181,28 +197,29 @@ const MediaLibraryContent = React.createClass( {
 		return createFragment( notices );
 	},
 
-	renderNoticeAction( errorType ) {
-		if ( STORAGE_ERRORS.indexOf( errorType ) === -1 ) {
+	renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) {
+		if ( !upgradeNudgeName ) {
 			return null;
 		}
 		const eventName = 'calypso_upgrade_nudge_impression';
-		const eventProperties = { cta_name: 'plan-media-storage-error' };
+		const eventProperties = {
+			cta_name: upgradeNudgeName,
+			cta_feature: upgradeNudgeFeature
+		};
 		return (
 			<NoticeAction
 				external={ true }
-				href={ `/plans/${ this.props.siteSlug }` }
-				onClick={ this.recordPlansNavigation }>
+				href={ upgradeNudgeFeature ? `/plans/features/${ upgradeNudgeFeature }/${ this.props.siteSlug }` : `/plans/${ this.props.siteSlug }` }
+				onClick={ this.recordPlansNavigation.bind( this, 'plan-media-storage-error', eventProperties ) }>
 				{ this.translate( 'Upgrade Plan' ) }
 				<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 			</NoticeAction>
 		);
 	},
 
-	recordPlansNavigation() {
+	recordPlansNavigation( tracksEvent, tracksData ) {
 		analytics.ga.recordEvent( 'Media', 'Clicked Upload Error Action' );
-		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
-			cta_name: 'plan-media-storage-error'
-		} );
+		analytics.tracks.recordEvent( tracksEvent, tracksData );
 	},
 
 	renderMediaList: function() {
