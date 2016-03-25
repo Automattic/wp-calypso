@@ -5,14 +5,22 @@ var debug = require( 'debug' )( 'calypso:client:signup:controller-utils:test' ),
 	sinon = require( 'sinon' ),
 	assert = require( 'assert' );
 
+/**
+ * Internal dependencies
+ */
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import useMockery from 'test/helpers/use-mockery';
+
 debug( 'start utils test' );
 
 describe( 'utils', function() {
 	var flows, utils;
 
-	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
-
-	before( () => {
+	useFilesystemMocks( __dirname );
+	useMockery( ( mockery ) => {
+		mockery.registerMock( 'lib/abtest', {
+			abtest: () => ''
+		} );
 		flows = require( 'signup/config/flows' );
 		utils = require( '../utils' );
 	} );
