@@ -74,7 +74,7 @@ export function serverRender( req, res ) {
 	if ( config.isEnabled( 'server-side-rendering' ) && context.store && context.layout ) {
 		context.initialReduxState = pick( context.store.getState(), 'ui', 'themes' );
 		const path = url.parse( req.url ).path;
-		const key = JSON.stringify( context.renderedLayout ) + path + JSON.stringify( context.initialReduxState );
+		const key = JSON.stringify( context.layout ) + path + JSON.stringify( context.initialReduxState );
 		Object.assign( context, render( context.layout, key ) );
 	}
 
