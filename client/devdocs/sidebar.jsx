@@ -78,6 +78,13 @@ export default React.createClass( {
 							link="/devdocs/docs/icons.md"
 							selected={ '/devdocs/docs/icons.md' === this.props.path }
 						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="reblog"
+							label="Data Binding"
+							link="/devdocs/data-binding"
+							selected={ '/devdocs/data-binding' === this.props.path }
+						/>
 					</ul>
 				</SidebarMenu>
 			</Sidebar>

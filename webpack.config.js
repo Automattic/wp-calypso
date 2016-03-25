@@ -20,6 +20,8 @@ var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
 	jsLoader,
 	webpackConfig;
 
+var getBabelRelayPlugin = require( 'babel-relay-plugin' );
+
 webpackConfig = {
 	cache: true,
 	entry: {},
@@ -97,7 +99,7 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 jsLoader = {
 	test: /\.jsx?$/,
 	exclude: /node_modules/,
-	loaders: [ 'babel-loader?cacheDirectory&optional[]=runtime' ]
+	loaders: [ 'babel-loader?cacheDirectory&optional[]=runtime&plugins[]=' + path.join(__dirname, 'relayPlugin') ]
 };
 
 if ( CALYPSO_ENV === 'development' ) {

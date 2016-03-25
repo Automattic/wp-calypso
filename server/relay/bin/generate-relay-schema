@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+
+// TODO:
+// POST https://public-api.wordpress.com/rest/v1.1/graphql?query=schema with authentication
