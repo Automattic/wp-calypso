@@ -3,12 +3,21 @@
  */
 var assert = require( 'assert' );
 
+/**
+ * Internal dependencies
+ */
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import useMockery from 'test/helpers/use-mockery';
+
 describe( 'flows', function() {
 	var flows, user;
 
-	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+	useFilesystemMocks( __dirname );
 
-	before( () => {
+	useMockery( ( mockery ) => {
+		mockery.registerMock( 'lib/abtest', {
+			abtest: () => ''
+		} );
 		flows = require( 'signup/config/flows' );
 		user = require( 'lib/user' )();
 	} );
