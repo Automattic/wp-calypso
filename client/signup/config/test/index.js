@@ -8,10 +8,22 @@ import isEmpty from 'lodash/isEmpty';
 /**
  * Internal dependencies
  */
-import flows from '../flows';
-import steps from '../steps';
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import useMockery from 'test/helpers/use-mockery';
 
-describe( 'signup/config', () => {
+describe( 'index', () => {
+	let flows, steps;
+
+	useFilesystemMocks( __dirname );
+
+	useMockery( ( mockery ) => {
+		mockery.registerMock( 'lib/abtest', {
+			abtest: () => ''
+		} );
+		flows = require( '../flows' );
+		steps = require( '../steps' );
+	} );
+
 	it( 'should not have overlapping step/flow names', () => {
 		const overlappingNames = intersection( keys( steps ), keys( flows.getFlows() ) );
 

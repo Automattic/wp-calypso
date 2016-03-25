@@ -197,6 +197,9 @@
 		"shortcode": {
 			"test": [ "index" ]
 		},
+		"signup": {
+		  "test": [ "dependency-store", "flow-controller", "progress-store" ]
+		},
 		"store": {
 			"test": [ "index" ]
 		},
@@ -244,6 +247,12 @@
 		"route": {
 			"test": [ "index" ]
 		}
+	},
+	"signup": {
+	  "config": {
+		"test": [ "index" ]
+	  },
+	  "test": [ "flows", "utils" ]
 	},
 	"state": {
 		"application": {

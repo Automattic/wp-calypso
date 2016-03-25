@@ -1,5 +1,3 @@
-global.localStorage = require( 'localStorage' );
-
 /**
  * External dependencies
  */
@@ -11,15 +9,25 @@ var debug = require( 'debug' )( 'calypso:signup-flow-controller:test' ), // esli
 /**
  * Internal dependencies
  */
-var SignupProgressStore = require( '../progress-store' ),
-	SignupDependencyStore = require( '../dependency-store' ),
-	SignupFlowController = require( '../flow-controller' ),
-	SignupActions = require( '../actions' );
+import useFakeDom from 'test/helpers/use-fake-dom';
 
-SignupProgressStore.reset();
+describe( 'flow-controller', function() {
+	var SignupProgressStore,
+		SignupDependencyStore,
+		SignupFlowController,
+		SignupActions,
+		signupFlowController;
 
-describe( 'SignupFlowController', function() {
-	var signupFlowController;
+	useFakeDom();
+	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+
+	before( () => {
+		SignupProgressStore = require( '../progress-store' );
+		SignupDependencyStore = require( '../dependency-store' );
+		SignupFlowController = require( '../flow-controller' );
+		SignupActions = require( '../actions' );
+		SignupProgressStore.reset();
+	} );
 
 	afterEach( function() {
 		if ( signupFlowController ) {
@@ -114,25 +122,28 @@ describe( 'SignupFlowController', function() {
 				onComplete: ary( done, 0 )
 			} );
 
-			SignupActions.submitSignupStep( { stepName: 'delayedStep', stepCallback: function() {
-				assert.equal( SignupProgressStore.get().length, 2 );
-			} } );
+			SignupActions.submitSignupStep( {
+				stepName: 'delayedStep', stepCallback: function() {
+					assert.equal( SignupProgressStore.get().length, 2 );
+				}
+			} );
 
 			defer( function() {
 				SignupActions.submitSignupStep( { stepName: 'stepA' } );
 			} );
 		} );
 
-		it( 'should not submit delayed steps if some steps are in-progress',
-			function( done ) {
+		it( 'should not submit delayed steps if some steps are in-progress', function( done ) {
 			signupFlowController = SignupFlowController( {
 				flowName: 'flowWithDelay',
 				onComplete: ary( done, 0 )
 			} );
 
-			SignupActions.submitSignupStep( { stepName: 'delayedStep', stepCallback: function() {
-				assert.equal( SignupProgressStore.get()[ 1 ].status, 'completed' );
-			} } );
+			SignupActions.submitSignupStep( {
+				stepName: 'delayedStep', stepCallback: function() {
+					assert.equal( SignupProgressStore.get()[ 1 ].status, 'completed' );
+				}
+			} );
 
 			defer( function() {
 				// saving the step should not trigger the callback on `delayedStep`…

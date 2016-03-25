@@ -1,5 +1,3 @@
-global.localStorage = require( 'localStorage' );
-
 /**
  * External dependencies
  */
@@ -15,12 +13,20 @@ var debug = require( 'debug' )( 'calypso:signup-progress-store:test' ), // eslin
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
-var SignupProgressStore = require( '../progress-store' ),
-	SignupActions = require( '../actions' );
+describe( 'progress-store', function() {
+	var SignupProgressStore, SignupActions, Dispatcher;
 
-describe( 'SignupProgressStore', function() {
+	useFakeDom();
+	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+
+	before( () => {
+		SignupProgressStore = require( '../progress-store' );
+		SignupActions = require( '../actions' );
+		Dispatcher = require( 'dispatcher' );
+	} );
+
 	it( 'should return an empty at first', function() {
 		assert.equal( SignupProgressStore.get().length, 0 );
 	} );

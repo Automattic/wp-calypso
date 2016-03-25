@@ -1,5 +1,3 @@
-global.localStorage = require( 'localStorage' );
-
 /**
  * External dependencies
  */
@@ -9,11 +7,22 @@ var debug = require( 'debug' )( 'calypso:signup-dependency-store:test' ), // esl
 /**
  * Internal dependencies
  */
-var SignupProgressStore = require( '../progress-store' ),
-	SignupDependencyStore = require( '../dependency-store' ),
-	SignupActions = require( '../actions' );
+import useFakeDom from 'test/helpers/use-fake-dom';
 
-describe( 'SignupDependencyStore', function() {
+describe( 'dependency-store', function() {
+	var SignupProgressStore,
+		SignupDependencyStore,
+		SignupActions;
+
+	useFakeDom();
+	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+
+	before( () => {
+		SignupProgressStore = require( '../progress-store' );
+		SignupDependencyStore = require( '../dependency-store' );
+		SignupActions = require( '../actions' );
+	} );
+
 	afterEach( function() {
 		SignupProgressStore.reset();
 	} );
