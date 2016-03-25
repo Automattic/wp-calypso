@@ -14,16 +14,15 @@ import supportUrls from 'lib/url/support';
 
 const HappinessSupport = React.createClass( {
 	propTypes: {
-		isJetpack: React.PropTypes.bool
+		isJetpack: React.PropTypes.bool,
+		isPlaceholder: React.PropTypes.bool
 	},
 
 	getInitialState() {
 		return {
 			user: sample( [
-				{ display_name: 'Andrea', avatar_URL: '//gravatar.com/avatar/e6389004daf6cd236a6fd5a82069b426' },
 				{ display_name: 'Erica', avatar_URL: '//gravatar.com/avatar/066a6509253d682f4e0d05b048b08b2c' },
-				{ display_name: 'Jackie', avatar_URL: '//gravatar.com/avatar/a5eb04ed0c4dbeabf45dc031670ac60f' },
-				{ display_name: 'Siobhan', avatar_URL: '//gravatar.com/avatar/826d5881f45c63c5f7e1271c37e6b2ac' }
+				{ display_name: 'Paolo', avatar_URL: '//gravatar.com/avatar/3cb9afe63d364690c0e188fb16473277' }
 			] )
 		};
 	},
@@ -72,7 +71,7 @@ const HappinessSupport = React.createClass( {
 	render() {
 		const classes = {
 			'happiness-support': true,
-			'is-placeholder': this.props.isJetpack === undefined || this.props.isJetpack === null
+			'is-placeholder': this.props.isPlaceholder
 		};
 
 		return (
