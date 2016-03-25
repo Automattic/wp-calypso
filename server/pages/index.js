@@ -369,13 +369,6 @@ module.exports = function() {
 
 	app.get( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpRoute, serverRender );
 
-	// Isomorphic routing
-	sections
-		.filter( section => section.isomorphic )
-		.forEach( section => {
-			sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
-		} );
-
 	app.get( '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?/:locale?',
 		setUpRoute,
 		serverRender
@@ -398,6 +391,13 @@ module.exports = function() {
 			}
 		} );
 	}
+
+	// Isomorphic routing
+	sections
+		.filter( section => section.isomorphic )
+		.forEach( section => {
+			sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
+		} );
 
 	// catchall path to serve shell for all non-static-file requests (other than auth routes)
 	app.get( '*', setUpLoggedInRoute, serverRender );
