@@ -248,6 +248,11 @@
 			"test": [ "index" ]
 		}
 	},
+	"signup": {
+	  "config": {
+		"test": [ "index" ]
+	  }
+	},
 	"state": {
 		"application": {
 			"test": [ "actions", "reducer" ]

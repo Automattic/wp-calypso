@@ -8,10 +8,18 @@ import isEmpty from 'lodash/isEmpty';
 /**
  * Internal dependencies
  */
-import flows from '../flows';
-import steps from '../steps';
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
-describe( 'signup/config', () => {
+describe( 'index', () => {
+	let flows, steps;
+
+	useFilesystemMocks( __dirname );
+
+	before( () => {
+		flows = require( '../flows' );
+		steps = require( '../steps' );
+	} );
+
 	it( 'should not have overlapping step/flow names', () => {
 		const overlappingNames = intersection( keys( steps ), keys( flows.getFlows() ) );
 
