@@ -35,3 +35,12 @@ export function setHeaderImage( site, url, ID, width, height ) {
 		} );
 	}
 }
+
+export function setHomePageSettings( site, isPageOnFront, pageOnFrontId, pageForPostsId ) {
+	return function() {
+		debug( 'setting home page settings', isPageOnFront, pageOnFrontId, pageForPostsId );
+		wpcom.undocumented().site( site ).setHomePageSettings( { isPageOnFront, pageOnFrontId, pageForPostsId }, function( error, data ) {
+			debug( 'setting home page settings complete', error, data );
+		} );
+	}
+}

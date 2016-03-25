@@ -66,11 +66,11 @@ const designToolsById = {
 			const selectedSite = state.sites.items[ siteId ] || {};
 			const isPageOnFront = selectedSite.options.show_on_front !== 'posts';
 			const pageOnFrontId = selectedSite.options.page_on_front;
-			const blogOnFrontId = selectedSite.options.page_for_posts;
+			const pageForPostsId = selectedSite.options.page_for_posts;
 			if ( state.preview && state.preview.customizations.homePage ) {
-				return assign( { isPageOnFront, pageOnFrontId, blogOnFrontId }, state.preview.customizations.homePage );
+				return assign( { isPageOnFront, pageOnFrontId, pageForPostsId }, state.preview.customizations.homePage );
 			}
-			return { isPageOnFront, pageOnFrontId, blogOnFrontId };
+			return { isPageOnFront, pageOnFrontId, pageForPostsId };
 		}
 	},
 };

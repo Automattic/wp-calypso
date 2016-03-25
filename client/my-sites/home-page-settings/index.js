@@ -17,7 +17,7 @@ export default React.createClass( {
 	propTypes: {
 		isPageOnFront: React.PropTypes.bool,
 		pageOnFrontId: React.PropTypes.number,
-		blogOnFrontId: React.PropTypes.number,
+		pageForPostsId: React.PropTypes.number,
 		onChange: React.PropTypes.func,
 	},
 

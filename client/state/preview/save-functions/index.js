@@ -14,3 +14,8 @@ export function headerImage( dispatch, customizations, siteId ) {
 	}
 	dispatch( actions.removeHeaderImage( siteId ) );
 }
+
+export function homePage( dispatch, customizations, siteId ) {
+	const { isPageOnFront, pageOnFrontId, pageForPostsId } = customizations;
+	dispatch( actions.setHomePageSettings( siteId, { isPageOnFront, pageOnFrontId, pageForPostsId } ) );
+}
