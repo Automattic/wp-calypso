@@ -8,18 +8,23 @@ import { setSection as setSectionMiddlewareFactory } from '../../client/controll
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
-		expressApp.get( route, setUpRoute, combinedMiddlewares( middlewares, section ), serverRender );
+		expressApp.get(
+			route,
+			setUpRoute,
+			combineMiddlewares(
+				setUpI18n,
+				setSectionMiddlewareFactory( section ),
+				...middlewares
+			),
+			serverRender
+		);
 	}
 }
 
-function combinedMiddlewares( middlewares, section ) {
+function combineMiddlewares( ...middlewares ) {
 	return function( req, res, next ) {
 		req.context = getEnhancedContext( req );
-		applyMiddlewares( req.context, [
-			setUpI18n,
-			setSectionMiddlewareFactory( section ),
-			...middlewares
-		] );
+		applyMiddlewares( req.context, middlewares );
 		next();
 	}
 }
