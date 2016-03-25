@@ -34,9 +34,10 @@ function getEnhancedContext( req ) {
 	return Object.assign( {}, req.context, {
 		isLoggedIn: req.cookies.wordpress_logged_in,
 		isServerSide: true,
-		path: req.path,
+		path: req.url,
+		pathname: req.path,
 		params: req.params,
-		query: {}, // Why?
+		query: req.query,
 		store: createReduxStore()
 	} );
 }
