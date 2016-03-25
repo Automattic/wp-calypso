@@ -195,8 +195,16 @@ module.exports = React.createClass( {
 	},
 
 	componentDidMount: function() {
+		this.mounted = true;
+
 		const setup = function( editor ) {
 			this._editor = editor;
+
+			if ( ! this.mounted ) {
+				this.destroyEditor();
+				return;
+			}
+
 			this.bindEditorEvents();
 			editor.on( 'SetTextAreaContent', ( event ) => this.setTextAreaContent( event.content ) );
 
@@ -301,13 +309,22 @@ module.exports = React.createClass( {
 	},
 
 	componentWillUnmount: function() {
+		this.mounted = false;
+
+		window.removeEventListener( 'scroll', this.onScrollPinTools );
+
+		if ( this._editor ) {
+			this.destroyEditor();
+		}
+	},
+
+	destroyEditor() {
 		forEach( EVENTS, function( eventHandler, eventName ) {
 			if ( this.props[ eventHandler ] ) {
 				this._editor.off( eventName, this.props[ eventHandler ] );
 			}
 		}.bind( this ) );
 
-		window.removeEventListener( 'scroll', this.onScrollPinTools );
 		tinymce.remove( this._editor );
 		this._editor = null;
 		autosize.destroy( ReactDom.findDOMNode( this.refs.text ) );
