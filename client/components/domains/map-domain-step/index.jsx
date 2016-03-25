@@ -77,7 +77,8 @@ var MapDomainStep = React.createClass( {
 							placeholder={ this.translate( 'Enter a domain', { textOnly: true } ) }
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
-							onClick={ this.recordInputFocus } />
+							onClick={ this.recordInputFocus }
+							autoFocus />
 						<button className="map-domain-step__go button is-primary"
 								onClick={ this.recordGoButtonClick }>
 							{ this.translate( 'Add', {
