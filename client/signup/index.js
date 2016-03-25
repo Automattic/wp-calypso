@@ -34,9 +34,8 @@ module.exports = function() {
 		page( '/jetpack/connect', jetpackConnectController.connect );
 		page(
 			'/jetpack/connect/authorize',
-			jetpackConnectController.updateNonce,
 			jetpackConnectController.saveQueryObject,
-			jetpackConnectController.authorize
+			jetpackConnectController.authorizeForm
 		);
 	}
 };

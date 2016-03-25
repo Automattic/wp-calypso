@@ -288,24 +288,38 @@ Undocumented.prototype.testConnectionJetpack = function( siteId, fn ) {
 	this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/test-connection' }, fn );
 };
 
-Undocumented.prototype.jetpackLogin = function( queryObject, fn ) {
+Undocumented.prototype.jetpackLogin = function( siteId, nonce, redirectUri, scope, state ) {
 	debug( '/jetpack-blogs/:site_id:/jetpack-login query' );
-	this.wpcom.req.get( { path: '/jetpack-blogs/' + queryObject.client_id + '/jetpack-login' }, {
-		_wp_nonce: queryObject._wp_nonce,
-		redirect_uri: queryObject.redirect_uri,
-		scope: queryObject.scope,
-		state: queryObject.state
-	}, fn );
+	return new Promise( ( resolve, reject ) => {
+		const endpointUrl = '/jetpack-blogs/' + siteId + '/jetpack-login';
+		const params = {
+			_wp_nonce: nonce,
+			redirect_uri: redirectUri,
+			scope: scope,
+			state: state
+		};
+		const resolver = ( error, data ) => {
+			error ? reject( error ) : resolve( data );
+		};
+		this.wpcom.req.get( { path: endpointUrl }, params, resolver );
+	} );
 };
 
-Undocumented.prototype.jetpackAuthorize = function( siteId, code, state, redirect, secret, fn ) {
+Undocumented.prototype.jetpackAuthorize = function( siteId, code, state, redirectUri, secret ) {
 	debug( '/jetpack-blogs/:site_id:/authorize query' );
-	this.wpcom.req.post( { path: '/jetpack-blogs/' + siteId + '/authorize' }, {}, {
-		code: code,
-		state: state,
-		redirect_uri: redirect,
-		secret: secret
-	}, fn );
+	return new Promise( ( resolve, reject ) => {
+		const endpointUrl = '/jetpack-blogs/' + siteId + '/authorize';
+		const params = {
+			code: code,
+			state: state,
+			redirect_uri: redirectUri,
+			secret: secret
+		};
+		const resolver = ( error, data ) => {
+			error ? reject( error ) : resolve( data );
+		};
+		this.wpcom.req.get( { path: endpointUrl }, params, resolver );
+	} );
 };
 
 Undocumented.prototype.invitesList = function( siteId, number, offset, fn ) {

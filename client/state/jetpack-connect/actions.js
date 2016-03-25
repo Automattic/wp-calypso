@@ -7,7 +7,13 @@ const debug = require( 'debug' )( 'calypso:jetpack-connect:actions' );
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { JETPACK_CONNECT_CHECK_URL, JETPACK_CONNECT_CHECK_URL_RECEIVE, JETPACK_CONNECT_DISMISS_URL_STATUS } from 'state/action-types';
+import {
+	JETPACK_CONNECT_CHECK_URL,
+	JETPACK_CONNECT_CHECK_URL_RECEIVE,
+	JETPACK_CONNECT_DISMISS_URL_STATUS,
+	JETPACK_CONNECT_AUTHORIZE,
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE
+} from 'state/action-types';
 
 /**
  *  Local variables;
@@ -72,4 +78,42 @@ export default {
 	goToPluginInstall( url ) {
 		window.location = url + installURL;
 	},
+	createAccount( userData, callback ) {
+		return ( dispatch ) => {
+			wpcom.undocumented().usersNew(
+				userData,
+				( error, data ) => {
+					callback( error, data );
+				}
+			);
+		}
+	},
+	authorize( queryObject ) {
+		return ( dispatch ) => {
+			const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
+			dispatch( {
+				type: JETPACK_CONNECT_AUTHORIZE,
+				queryObject: queryObject
+			} );
+			wpcom.undocumented().jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state ).then( ( data ) => {
+				const { code } = data.code;
+				return wpcom.undocumented().jetpackAuthorize( client_id, code, state, redirect_uri, secret );
+			} ).then( ( data, error ) => {
+				dispatch( {
+					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
+					siteId: client_id,
+					data: data,
+					error: error
+				} );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
+					siteId: client_id,
+					data: null,
+					error: error
+				} );
+			} );
+		}
+	}
 };
