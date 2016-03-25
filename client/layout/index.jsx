@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	connect = require( 'react-redux' ).connect,
 	classnames = require( 'classnames' ),
 	property = require( 'lodash/property' ),
 	sortBy = require( 'lodash/sortBy' );
@@ -22,7 +23,6 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	WelcomeMessage = require( 'nux-welcome/welcome-message' ),
 	analytics = require( 'analytics' ),
 	config = require( 'config' ),
-	connect = require( 'react-redux' ).connect,
 	PulsingDot = require( 'components/pulsing-dot' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	OfflineStatus = require( 'layout/offline-status' ),
@@ -32,6 +32,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
+import DesignPreview from 'my-sites/design-preview';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -168,6 +169,12 @@ Layout = React.createClass( {
 				<TranslatorLauncher
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
+				{ config.isEnabled( 'design-layout' ) && this.props.section.group === 'sites' &&
+					<DesignPreview
+						className="layout__design"
+						showPreview={ this.props.focus.getCurrent() === 'design' }
+					/>
+				}
 			</div>
 		);
 	}
