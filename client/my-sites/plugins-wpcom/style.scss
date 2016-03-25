@@ -1,4 +1,91 @@
+.wpcom-plugins__standard-panel,
+.wpcom-plugins__premium-panel,
+.wpcom-plugins__business-panel {
+	padding: 0;
+}
+
+.wpcom-plugins__list {
+	display: flex;
+	flex-flow: row wrap;
+}
+
+.wpcom-plugins__plugin-item {
+	list-style: none;
+	flex: 1 0 33.33%;
+	box-sizing: border-box;
+	padding: 16px;
+	border-bottom: 1px solid lighten( $gray, 20% );
+	border-right: 1px solid lighten( $gray, 20% );
+	max-width: 33.33%;
+}
+
+// Select every third item
+.wpcom-plugins__plugin-item:nth-child(3n+3) {
+	border-right: none;
+}
+
+// Select last three items
+.wpcom-plugins__plugin-item:nth-last-child(-n+3) {
+	border-bottom: none;
+}
+
+// Special styles for displaying only one plugin
+.wpcom-plugins__business-panel .wpcom-plugins__plugin-item {
+	max-width: none;
+	border: none;
+}
+
+.wpcom-plugins__plugin-item a {
+	color: $gray-dark;
+}
+
+.wpcom-plugins__plugin-icon {
+	width: 40px;
+	height: 40px;
+	background: $blue-wordpress;
+	border-radius: 4px;
+	float: left;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.wpcom-plugins__plugin-icon .gridicon {
+	fill: $white;
+}
+
+.wpcom-plugins__plugin-title,
+.wpcom-plugins__plugin-category,
+.wpcom-plugins__plugin-plan {
+	margin-left: 52px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.wpcom-plugins__plugin-title {
+	font-weight: bold;
+	font-size: 14px;
+}
+
+.wpcom-plugins__plugin-category,
+.wpcom-plugins__plugin-plan {
+	color: $gray;
+	text-transform: uppercase;
+	font-size: 13px;
+}
+
+.wpcom-plugins__plugin-description {
+	font-size: 13px;
+	margin-top: 5px;
+	margin-bottom: 0;
+}
+
 .wpcom-plugins__action-button {
 	margin-top: 6px;
 	margin-right: 6px;
+}
+
+.wpcom-plugins__panel-footer {
+	border-top: 1px solid lighten( $gray, 20% );
 }
