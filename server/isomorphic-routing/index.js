@@ -2,20 +2,11 @@
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import sections from '../../client/sections';
 import { serverRender } from 'render';
 import { createReduxStore } from 'state';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 
-export default function( expressApp, setUpRoute ) {
-	sections.get()
-		.filter( section => section.isomorphic )
-		.forEach( section => {
-			sections.require( section.module )( serverRouter( expressApp, setUpRoute, section ) );
-		} );
-}
-
-function serverRouter( expressApp, setUpRoute, section ) {
+export function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
 		expressApp.get( route, setUpRoute, combinedMiddlewares( middlewares, section ), serverRender );
 	}

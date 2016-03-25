@@ -10,8 +10,8 @@ var express = require( 'express' ),
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
-	sections = require( '../../client/sections' ).get(),
-	isomorphicRouting = require( 'isomorphic-routing' ),
+	sectionsModule = require( '../../client/sections' ),
+	serverRouter = require( 'isomorphic-routing' ).serverRouter,
 	serverRender = require( 'server/render' ).serverRender;
 
 var HASH_LENGTH = 10,
@@ -28,6 +28,8 @@ var staticFiles = [
 ];
 
 var chunksByPath = {};
+
+var sections = sectionsModule.get();
 
 sections.forEach( function( section ) {
 	section.paths.forEach( function( path ) {
@@ -367,7 +369,12 @@ module.exports = function() {
 
 	app.get( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpRoute, serverRender );
 
-	isomorphicRouting( app, setUpRoute );
+	// Isomorphic routing
+	sections
+		.filter( section => section.isomorphic )
+		.forEach( section => {
+			sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
+		} );
 
 	app.get( '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?/:locale?',
 		setUpRoute,
