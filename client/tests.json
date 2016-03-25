@@ -1,5 +1,8 @@
 {
 	"analytics": {
+		"page-view-tracker" : {
+			"test": [ "index" ]
+		},
 		"test": [ "index" ]
 	},
 	"components": {
