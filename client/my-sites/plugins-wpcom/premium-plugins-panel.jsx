@@ -28,7 +28,7 @@ const defaultPlugins = [
 
 export const PremiumPluginsPanel = React.createClass( {
 	render() {
-		const { plugins: givenPlugins  = [] } = this.props;
+		const { plugins: givenPlugins = [] } = this.props;
 		const plugins = givenPlugins.length
 			? givenPlugins
 			: defaultPlugins;
@@ -38,6 +38,7 @@ export const PremiumPluginsPanel = React.createClass( {
 			<FoldableCard
 				actionButton={ actionButton }
 				actionButtonExpanded={ actionButton }
+				className="wpcom-plugins__premium-panel"
 				expanded={ true }
 				header="Premium Upgrades"
 			>
@@ -53,6 +54,6 @@ export const PremiumPluginsPanel = React.createClass( {
 
 PremiumPluginsPanel.propTypes = {
 	plugins: PropTypes.array
-}
+};
 
 export default PremiumPluginsPanel;
