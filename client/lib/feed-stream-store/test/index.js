@@ -2,30 +2,19 @@
  * External Dependencies
  */
 var expect = require( 'chai' ).expect,
-	mockery = require( 'mockery' ),
+	useFilesystemMocks = require( 'test/helpers/use-filesystem-mocks' ),
 	sinon = require( 'sinon' ),
 	set = require( 'lodash/set' );
 
 var PostListStore, FeedPostStore, FeedSubscriptionStore;
 
 describe( 'FeedPostList', function() {
+	useFilesystemMocks( __dirname );
+
 	before( function() {
-		mockery.enable( {
-			useCleanCache: true,
-			warnOnUnregistered: false
-		} );
-		mockery.registerAllowable( '../feed-stream' );
-		mockery.registerMock( 'lib/data-poller', {
-			add: function() {},
-			remove: function() {}
-		} );
 		PostListStore = require( '../feed-stream' );
 		FeedPostStore = require( 'lib/feed-post-store' );
 		FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' );
-	} );
-
-	after( function() {
-		mockery.disable();
 	} );
 
 	it( 'should require an id, a fetcher, a keyMaker', function() {
@@ -207,14 +196,13 @@ describe( 'FeedPostList', function() {
 	describe( 'Filter followed x-posts', function() {
 		var fetcherStub,
 			store,
-			feedPostStoreStub,
 			isFollowingStub,
 			posts,
 			filteredPosts,
 			xPostedTo;
 		beforeEach( function() {
 			fetcherStub = sinon.stub();
-			feedPostStoreStub = sinon.stub( FeedPostStore, 'get' );
+			sinon.stub( FeedPostStore, 'get' );
 			isFollowingStub = sinon.stub( FeedSubscriptionStore, 'getIsFollowingBySiteUrl' );
 			store = new PostListStore( {
 				id: 'test',

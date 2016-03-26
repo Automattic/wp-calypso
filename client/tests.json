@@ -95,6 +95,9 @@
 		"feed-store": {
 			"test": [ "index" ]
 		},
+		"feed-stream-store": {
+			"test": [ "index" ]
+		},
 		"form-state": {
 			"test": [ "index" ]
 		},
