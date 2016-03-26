@@ -312,7 +312,7 @@ module.exports = React.createClass( {
 
 	preventPopoverClose: function( event ) {
 		if ( closest( event.target, '.popover.is-dialog-visible' ) ) {
-			event.preventDefault();
+			return true;
 		}
 	},
 

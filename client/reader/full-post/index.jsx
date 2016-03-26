@@ -6,6 +6,7 @@ var ReactDom = require( 'react-dom' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	defer = require( 'lodash/defer' ),
 	classes = require( 'component-classes' ),
+	closest = require( 'component-closest' ),
 	debug = require( 'debug' )( 'calypso:reader-full-post' ), //eslint-disable-line no-unused-vars
 	moment = require( 'moment' ),
 	omit = require( 'lodash/omit' ),
@@ -298,7 +299,9 @@ FullPostDialog = React.createClass( {
 	},
 
 	handleClickOutside: function( event ) {
-		event.preventDefault();
+		if ( closest( event.target, '.popover' ) ) {
+			return true;
+		}
 	},
 
 	render: function() {
@@ -331,7 +334,7 @@ FullPostDialog = React.createClass( {
 			}
 
 			if ( shouldShowShare ) {
-				buttons.push( <ShareButton post={ post } position="bottom left" tagName="div" /> );
+				buttons.push( <ShareButton post={ post } position="bottom" tagName="div" /> );
 			}
 		}
 

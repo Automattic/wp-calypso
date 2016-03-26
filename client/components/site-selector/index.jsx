@@ -28,6 +28,7 @@ export default React.createClass( {
 
 	propTypes: {
 		sites: React.PropTypes.object,
+		siteBasePath: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
 		showAddNewSite: React.PropTypes.bool,
 		showAllSites: React.PropTypes.bool,
 		indicator: React.PropTypes.bool,
@@ -75,7 +76,7 @@ export default React.createClass( {
 		}
 
 		// ignore mouse events as the default page() click event will handle navigation
-		if ( this.props.siteBasePath && event.type !== 'mouseup' ) {
+		if ( this.props.siteBasePath && ( ! ( event.type === 'mouseup' || event.type === 'touchend' ) ) ) {
 			page( event.currentTarget.pathname );
 		}
 	},

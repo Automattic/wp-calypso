@@ -2,6 +2,7 @@
  * External dependencies
  */
 import clickOutside from 'click-outside';
+import defer from 'lodash/defer';
 import ReactDom from 'react-dom';
 import React from 'react';
 import omit from 'lodash/omit';
@@ -90,25 +91,29 @@ var Popover = React.createClass( {
 				);
 			}
 
+			// this schedules a render, but does not actually render the content
 			ReactDom.render( content, this._container );
 
 			if ( ! prevProps.isVisible ) {
-				const contextNode = ReactDom.findDOMNode( this.props.context );
-				if ( contextNode.nodeType !== Node.ELEMENT_NODE || contextNode.nodeName.toLowerCase() === 'svg' ) {
-					warn(
-						'Popover is attached to a %s element (nodeType %d).  '
-						+ 'This causes problems in IE11 - see 12168-gh-calypso-pre-oss.',
-						contextNode.nodeName,
-						contextNode.nodeType
-					);
-				}
+				// defer showing the content to give it a chance to render
+				defer( () => {
+					const contextNode = ReactDom.findDOMNode( this.props.context );
+					if ( contextNode.nodeType !== Node.ELEMENT_NODE || contextNode.nodeName.toLowerCase() === 'svg' ) {
+						warn(
+							'Popover is attached to a %s element (nodeType %d).  ' +
+							'This causes problems in IE11 - see 12168-gh-calypso-pre-oss.',
+							contextNode.nodeName,
+							contextNode.nodeType
+						);
+					}
 
-				this._tip.position( this.props.position, { auto: false } );
-				this._tip.show( contextNode );
+					this._tip.position( this.props.position, { auto: true } );
+					this._tip.show( contextNode );
 
-				if ( this.props.onShow ) {
-					this.props.onShow();
-				}
+					if ( this.props.onShow ) {
+						this.props.onShow();
+					}
+				} );
 
 				this._setupClickOutside();
 			}
