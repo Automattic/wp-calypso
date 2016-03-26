@@ -49,7 +49,9 @@ function addSiteFragment( path, site ) {
 
 	if ( includes( [ 'post', 'page', 'edit' ], pieces[ 1 ] ) ) {
 		// New-style URL; change /:section[/:filter/...] into /:section/:site/[:filter/...]
-		pieces.splice( 'edit' === pieces[ 1 ] ? pieces.length : 2, 0, site );
+		// /edit/:cpt/:site or /post/:site - /edit has an extra parameter
+		const sitePos = ( 'edit' === pieces[ 1 ] ? 3 : 2 );
+		pieces.splice( sitePos, 0, site );
 	} else {
 		// Old-style URL; add /:site onto the end
 		pieces.push( site );
