@@ -81,6 +81,14 @@ export default React.createClass( {
 		sites.toggleStarred( site.ID );
 	},
 
+	enableStarTooltip() {
+		this.setState( { starTooltip: true } );
+	},
+
+	disableStarTooltip() {
+		this.setState( { starTooltip: false } );
+	},
+
 	renderStar() {
 		const site = this.props.site;
 
@@ -94,8 +102,8 @@ export default React.createClass( {
 			<button
 				className="site__star"
 				onClick={ this.starSite }
-				onMouseEnter={ () => this.setState( { starTooltip: true } ) }
-				onMouseLeave={ () => this.setState( { starTooltip: false } ) }
+				onMouseEnter={ this.enableStarTooltip }
+				onMouseLeave={ this.disableStarTooltip }
 				ref="starButton"
 			>
 				{ isStarred
@@ -144,6 +152,10 @@ export default React.createClass( {
 		this.setState( { showMoreActions: false } );
 	},
 
+	toggleActions() {
+		this.setState( { showMoreActions: ! this.state.showMoreActions } );
+	},
+
 	render() {
 		const site = this.props.site;
 
@@ -165,54 +177,53 @@ export default React.createClass( {
 
 		return (
 			<div className={ siteClass }>
-				{ ! this.state.showMoreActions ?
-					<a className="site__content"
-						href={ this.props.homeLink ? site.URL : this.props.href }
-						target={ this.props.externalLink && ! this.state.showMoreActions && '_blank' }
-						title={ this.props.homeLink
-							? this.translate( 'Visit "%(title)s"', { args: { title: site.title } } )
-							: site.title
-						}
-						onTouchTap={ this.onSelect }
-						onClick={ this.props.onClick }
-						onMouseEnter={ this.props.onMouseEnter }
-						onMouseLeave={ this.props.onMouseLeave }
-						aria-label={
-							this.translate( 'Open site %(domain)s in new tab', {
-								args: { domain: site.domain }
-							} )
-						}
-					>
-						<SiteIcon site={ site } />
-						<div className="site__info">
-							<div className="site__title">
-								{ this.props.site.is_private &&
-									<span className="site__badge">
-										<Gridicon icon="lock" size={ 14 } />
-									</span>
-								}
-								{ site.title }
+				{ ! this.state.showMoreActions
+					? <a className="site__content"
+							href={ this.props.homeLink ? site.URL : this.props.href }
+							target={ this.props.externalLink && ! this.state.showMoreActions && '_blank' }
+							title={ this.props.homeLink
+								? this.translate( 'Visit "%(title)s"', { args: { title: site.title } } )
+								: site.title
+							}
+							onTouchTap={ this.onSelect }
+							onClick={ this.props.onClick }
+							onMouseEnter={ this.props.onMouseEnter }
+							onMouseLeave={ this.props.onMouseLeave }
+							aria-label={
+								this.translate( 'Open site %(domain)s in new tab', {
+									args: { domain: site.domain }
+								} )
+							}
+						>
+							<SiteIcon site={ site } />
+							<div className="site__info">
+								<div className="site__title">
+									{ this.props.site.is_private &&
+										<span className="site__badge">
+											<Gridicon icon="lock" size={ 14 } nonStandardSize />
+										</span>
+									}
+									{ site.title }
+								</div>
+								<div className="site__domain">{ site.domain }</div>
 							</div>
-							<div className="site__domain">{ site.domain }</div>
+							{ this.props.homeLink &&
+								<span className="site__home">
+									<Gridicon icon="house" size={ 18 } />
+								</span>
+							}
+							{ ! this.props.disableStarring && sites.isStarred( this.props.site ) &&
+								<span className="site__badge">
+									<Gridicon icon="star" size={ 18 } />
+								</span>
+							}
+						</a>
+					: <div className="site__content">
+							{ this.renderEditIcon() }
+							<div className="site__actions">
+								{ this.renderStar() }
+							</div>
 						</div>
-						{ this.props.homeLink &&
-							<span className="site__home">
-								<Gridicon icon="house" size={ 18 } />
-							</span>
-						}
-						{ ! this.props.disableStarring && sites.isStarred( this.props.site ) &&
-							<span className="site__badge">
-								<Gridicon icon="star" size={ 18 } />
-							</span>
-						}
-					</a>
-				:
-					<div className="site__content">
-						{ this.renderEditIcon() }
-						<div className="site__actions">
-							{ this.renderStar() }
-						</div>
-					</div>
 				}
 				{ this.props.indicator
 					? <SiteIndicator site={ site } onSelect={ this.props.onSelect } />
@@ -221,7 +232,7 @@ export default React.createClass( {
 				{ this.props.enableActions &&
 					<button
 						className="site__toggle-more-options"
-						onClick={ () => this.setState( { showMoreActions: ! this.state.showMoreActions } ) }
+						onClick={ this.toggleActions }
 					>
 						<Gridicon icon="ellipsis" size={ 24 } />
 					</button>
