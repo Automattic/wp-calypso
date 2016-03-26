@@ -1,15 +1,20 @@
-var debug = require( 'debug' )( 'calypso:like-store:test' ); //eslint-disable-line no-unused-vars
-
 /**
  * External Dependencies
  */
-var expect = require( 'chai' ).expect,
-	Dispatcher = require( 'dispatcher' );
+const expect = require( 'chai' ).expect,
+	useFilesystemMocks = require( 'test/helpers/use-filesystem-mocks' );
 
-var LikeStore = require( '../like-store' ),
-	FeedPostStoreActionType = require( 'lib/feed-post-store/constants' ).action;
+describe( 'index', function() {
+	var Dispatcher, LikeStore, FeedPostStoreActionType;
 
-describe( 'like-store', function() {
+	useFilesystemMocks( __dirname );
+
+	before( () => {
+		LikeStore = require( '../like-store' );
+		FeedPostStoreActionType = require( 'lib/feed-post-store/constants' ).action;
+		Dispatcher = require( 'dispatcher' );
+	} );
+
 	beforeEach( function() {
 		LikeStore._reset();
 	} );
@@ -32,7 +37,7 @@ describe( 'like-store', function() {
 		} );
 
 		// getLikesForPost( site_ID, post_ID )
-		var likes = LikeStore.getLikersForPost( 444, 123 );
+		const likes = LikeStore.getLikersForPost( 444, 123 );
 		expect( likes ).to.be.ok;
 		expect( likes[ 0 ].login ).to.eq( 'bluefuton' );
 		expect( likes ).to.have.lengthOf( 1 );
@@ -52,7 +57,7 @@ describe( 'like-store', function() {
 			error: null
 		} );
 
-		var likeCount = LikeStore.getLikeCountForPost( 444, 123 );
+		const likeCount = LikeStore.getLikeCountForPost( 444, 123 );
 		expect( likeCount ).to.be.ok;
 		expect( likeCount ).to.eq( 9000 );
 	} );
@@ -167,7 +172,6 @@ describe( 'like-store', function() {
 
 		expect( LikeStore.getLikeCountForPost( 1234, 1 ) ).to.eq( 100 );
 		expect( LikeStore.getLikersForPost( 1234, 1 ) ).to.be.null;
-
 	} );
 
 	it( 'should ignore external feed post items', function() {
@@ -186,7 +190,6 @@ describe( 'like-store', function() {
 
 		expect( LikeStore.getLikeCountForPost( 1234, 1 ) ).to.be.null;
 		expect( LikeStore.getLikersForPost( 1234, 1 ) ).to.be.null;
-
 	} );
 
 	it( 'should ignore error feed post items', function() {
@@ -200,7 +203,6 @@ describe( 'like-store', function() {
 
 		expect( LikeStore.getLikeCountForPost( 1234, 1 ) ).to.be.null;
 		expect( LikeStore.getLikersForPost( 1234, 1 ) ).to.be.null;
-
 	} );
 
 	it( 'should ignore feed post items with no count', function() {
@@ -219,7 +221,5 @@ describe( 'like-store', function() {
 
 		expect( LikeStore.getLikeCountForPost( 1234, 1 ) ).to.be.null;
 		expect( LikeStore.getLikersForPost( 1234, 1 ) ).to.be.null;
-
 	} );
-
 } );
