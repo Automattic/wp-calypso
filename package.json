@@ -11,7 +11,7 @@
   "dependencies": {
     "async": "0.9.0",
     "atob": "1.1.2",
-    "autoprefixer": "4.0.0",
+    "autoprefixer": "6.3.5",
     "autosize": "3.0.7",
     "babel": "5.8.12",
     "babel-core": "5.8.12",
@@ -74,6 +74,7 @@
     "path-parser": "1.0.2",
     "phone": "git+https://github.com/Automattic/node-phone.git#1.0.4-9",
     "photon": "2.0.0",
+    "postcss-cli": "2.5.1",
     "q": "1.0.1",
     "qrcode.react": "0.5.2",
     "qs": "4.0.0",
