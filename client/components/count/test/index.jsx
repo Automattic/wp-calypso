@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	ReactInjection = require( 'react/lib/ReactInjection' ),
-	TestUtils = require( 'react-addons-test-utils' ),
-	expect = require( 'chai' ).expect,
-	sinon = require( 'sinon' );
+var expect = require( 'chai' ).expect,
+	sinon = require( 'sinon' ),
+	useMockery = require( 'test/helpers/use-mockery' );
 
 /**
  * Internal dependencies
@@ -13,9 +11,16 @@ var React = require( 'react' ),
 var i18n = require( 'lib/mixins/i18n' );
 
 describe( 'Count', function() {
-	var Count, renderer;
+	var React, ReactInjection, TestUtils, Count, renderer;
+
+	// really only using Mockery for the clean module cache
+	useMockery();
 
 	before( function() {
+		React = require( 'react' );
+		ReactInjection = require( 'react/lib/ReactInjection' );
+		TestUtils = require( 'react-addons-test-utils' );
+
 		i18n.initialize();
 		ReactInjection.Class.injectMixin( i18n.mixin );
 		Count = require( '../' );
@@ -80,19 +85,9 @@ describe( 'Count', function() {
 		expect( result.props.children ).to.equal( '3' );
 	} );
 
-	it( 'should warn when passing something that is not a number', function() {
-		var result, oldWarn;
-
-		// replace console.warn so the warning isn't shown when running the test
-		oldWarn = console.warn;
-		console.warn = function() {};
-
-		sinon.spy( console, 'warn' );
+	it( 'should warn when passing something that is not a number', sinon.test( function() {
+		this.stub( console, 'error' );
 		renderer.render( <Count count={ "17" } /> );
-		expect( console.warn ).to.have.been.called;
-
-		// put back the old console.warn
-		console.warn = oldWarn;
-	} );
-
+		expect( console.error ).to.have.been.called;
+	} ) );
 } );
