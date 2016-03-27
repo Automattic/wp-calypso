@@ -29,6 +29,9 @@
 			"counted-textarea": {
 				"test": [ "index" ]
 			},
+			"form-phone-input": {
+				"test": [ "index" ]
+			},
 			"form-toggle": {
 				"test": [ "index" ]
 			},
