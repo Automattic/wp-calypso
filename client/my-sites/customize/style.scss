@@ -45,6 +45,11 @@
 	color: #2e4453;
 	font-size: 34px;
 	font-weight: 300;
+
+	@include breakpoint( "<660px" ) {
+		background-position: center 70px;
+		font-size: 24px;
+	}
 }
 
 .customizer-loading-panel__muse-status {
