@@ -3,6 +3,9 @@
 		"test": [ "index" ]
 	},
 	"components": {
+		"count": {
+			"test": [ "index" ]
+		},
 		"domains": {
 			"domain-suggestion": {
 				"test": [ "index" ]
