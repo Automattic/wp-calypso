@@ -45,6 +45,9 @@
 		"gravatar": {
 			"test": [ "index" ]
 		},
+		"infinite-list": {
+			"test": [ "scroll-helper" ]
+		},
 		"theme": {
 			"test": [ "index" ]
 		},
