@@ -20,7 +20,7 @@ NPM ?= npm
 BUNDLER ?= $(BIN)/bundler
 SASS ?= $(NODE_BIN)/node-sass --include-path 'client'
 RTLCSS ?= $(NODE_BIN)/rtlcss
-AUTOPREFIXER ?= $(NODE_BIN)/autoprefixer
+AUTOPREFIXER ?= $(NODE_BIN)/autoprefixer -b "last 2 versions, > 1%, Safari >= 8, iOS >= 8, Firefox ESR, Opera 12.1"
 RECORD_ENV ?= $(BIN)/record-env
 GET_I18N ?= $(BIN)/get-i18n
 LIST_ASSETS ?= $(BIN)/list-assets
