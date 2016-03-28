@@ -5,7 +5,6 @@ import page from 'page';
 import React from 'react';
 import times from 'lodash/times';
 import findIndex from 'lodash/findIndex';
-import find from 'lodash/find';
 
 /**
  * Internal dependencies
@@ -168,6 +167,7 @@ const List = React.createClass( {
 			return (
 				<Button
 					disabled={ this.state.settingPrimaryDomain }
+					ref="cancelChangePrimaryButton"
 					borderless
 					compact
 					onClick={ this.disableChangePrimaryDomainMode }>
@@ -229,9 +229,10 @@ const List = React.createClass( {
 		}
 
 		this.recordEvent( 'changePrimary', domain );
-		const currentPrimary = find( this.props.domains.list, { isPrimary: true } ).name;
+		const currentPrimaryIndex = findIndex( this.props.domains.list, { isPrimary: true } ),
+			currentPrimaryName = this.props.domains.list [ currentPrimaryIndex ].name;
 
-		if ( domain.name === currentPrimary ) {
+		if ( domain.name === currentPrimaryName ) {
 			// user clicked the current primary domain
 			this.setState( {
 				changePrimaryDomainModeEnabled: false
@@ -243,25 +244,27 @@ const List = React.createClass( {
 			primaryDomainIndex: index,
 			settingPrimaryDomain: true
 		} );
-		this.setPrimaryDomain( domain.name ).then( () => {
+
+		return this.setPrimaryDomain( domain.name ).then( () => {
 			this.setState( {
 				settingPrimaryDomain: false,
 				changePrimaryDomainModeEnabled: false,
 				notice: {
 					type: PRIMARY_DOMAIN_CHANGE_SUCCESS,
 					domainName: domain.name,
-					previousDomainName: currentPrimary
+					previousDomainName: currentPrimaryName
 				}
 			} );
 		}, error => {
 			this.setState( {
 				settingPrimaryDomain: false,
+				primaryDomainIndex: currentPrimaryIndex,
 				notice: {
 					type: PRIMARY_DOMAIN_CHANGE_FAIL,
 					domainName: domain.name,
 					error
 				}
-			} )
+			} );
 		} );
 	},
 
