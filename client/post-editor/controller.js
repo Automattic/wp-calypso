@@ -196,7 +196,19 @@ module.exports = {
 		if ( sites.initialized ) {
 			startEditing();
 		} else {
-			sites.once( 'change', startEditing );
+			// The site selection flow in the siteSelection route middleware
+			// will cause the change handler here to be invoked before site is
+			// set in Redux store. To account for this, we continue to check
+			// state for site ID to have been set.
+			function startEditingOnSitesInitialized() {
+				if ( getSelectedSiteId( context.store.getState() ) ) {
+					startEditing();
+				} else {
+					sites.once( 'change', startEditingOnSitesInitialized );
+				}
+			}
+
+			sites.once( 'change', startEditingOnSitesInitialized );
 		}
 
 		renderEditor( context, postType );
