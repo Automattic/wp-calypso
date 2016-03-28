@@ -14,17 +14,6 @@
 	}
 }
 
-.plans-compare__free-trial-exception-message {
-	font-size: .8em;
-	font-style: italic;
-	text-align: right;
-	margin-top: 15px;
-
-	@include breakpoint( "<660px" ) {
-		margin: 0;
-	}
-}
-
 .plans-compare {
 	.plan-actions {
 		padding: 16px;

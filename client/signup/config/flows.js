@@ -1,19 +1,21 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/assign' ),
-	reject = require( 'lodash/reject' );
+import assign from 'lodash/assign';
+import includes from 'lodash/includes';
+import reject from 'lodash/reject';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	plansPaths = require( 'my-sites/plans/paths' ),
-	stepConfig = require( './steps' ),
-	abtest = require( 'lib/abtest' ).abtest,
-	user = require( 'lib/user' )();
-
+import { abtest } from 'lib/abtest';
+import config from 'config';
 import { getLocaleSlug } from 'lib/i18n-utils';
+import plansPaths from 'my-sites/plans/paths';
+import stepConfig from './steps';
+import userFactory from 'lib/user';
+
+const user = userFactory();
 
 function getCheckoutUrl( dependencies ) {
 	return '/checkout/' + dependencies.siteSlug;
@@ -254,6 +256,12 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function filterFlowName( flowName ) {
+	const defaultFlows = [ 'main', 'website' ];
+
+	if ( includes( defaultFlows, flowName ) && abtest( 'freeTrialsInSignup' ) === 'enabled' ) {
+		return 'free-trial';
+	}
+
 	const locale = getLocaleSlug();
 	// Only allow the `headstart` flow for EN users.
 	if ( 'headstart' === flowName && 'en' !== locale && 'en-gb' !== locale ) {
@@ -268,16 +276,16 @@ function filterFlowName( flowName ) {
 	return flowName;
 }
 
-module.exports = {
+export default {
 	filterFlowName: filterFlowName,
 
 	defaultFlowName: 'main',
 
-	getFlow: function( flowName ) {
+	getFlow( flowName ) {
 		return user.get() ? removeUserStepFromFlow( flows[ flowName ] ) : flows[ flowName ];
 	},
 
-	getFlows: function() {
+	getFlows() {
 		return flows;
 	}
 };

@@ -2,7 +2,6 @@
  * External dependencies
  */
 var connect = require( 'react-redux' ).connect,
-	find = require( 'lodash/find' ),
 	page = require( 'page' ),
 	React = require( 'react' );
 
@@ -11,21 +10,17 @@ var connect = require( 'react-redux' ).connect,
  */
 var analytics = require( 'analytics' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
-	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan,
 	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans,
 	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
 	Gridicon = require( 'components/gridicon' ),
-	isBusiness = require( 'lib/products-values' ).isBusiness,
 	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
-	isPremium = require( 'lib/products-values' ).isPremium,
 	Main = require( 'components/main' ),
 	Notice = require( 'components/notice' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	paths = require( './paths' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlanOverview = require( './plan-overview' ),
-	preventWidows = require( 'lib/formatting' ).preventWidows,
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
 	transactionStepTypes = require( 'lib/store-transactions/step-types' );
@@ -100,43 +95,6 @@ var Plans = React.createClass( {
 		}
 	},
 
-	renderTrialCopy: function() {
-		var message,
-			businessPlan,
-			premiumPlan;
-
-		if ( ! this.props.sitePlans.hasLoadedFromServer || getABTestVariation( 'freeTrials' ) !== 'offered' ) {
-			return null;
-		}
-
-		businessPlan = find( this.props.sitePlans.data, isBusiness );
-		premiumPlan = find( this.props.sitePlans.data, isPremium );
-
-		if ( businessPlan.canStartTrial && premiumPlan.canStartTrial ) {
-			message = this.translate( 'Try WordPress.com Premium or Business free for 14 days, no credit card required' );
-		}
-
-		if ( businessPlan.canStartTrial && ! premiumPlan.canStartTrial ) {
-			message = this.translate( 'Try WordPress.com Business free for 14 days, no credit card required' );
-		}
-
-		if ( ! businessPlan.canStartTrial && premiumPlan.canStartTrial ) {
-			message = this.translate( 'Try WordPress.com Premium free for 14 days, no credit card required' );
-		}
-
-		if ( ! businessPlan.canStartTrial && ! premiumPlan.canStartTrial ) {
-			return null;
-		}
-
-		return (
-			<div className="plans__trial-copy">
-				<span className="plans__trial-copy-text">
-					{ preventWidows( message, 2 ) }
-				</span>
-			</div>
-		);
-	},
-
 	render: function() {
 		var selectedSite = this.props.sites.getSelectedSite(),
 			hasJpphpBundle,
@@ -173,12 +131,9 @@ var Plans = React.createClass( {
 							cart={ this.props.cart }
 							selectedSite={ selectedSite } />
 
-						{ this.renderTrialCopy() }
-
 						<PlanList
 							site={ selectedSite }
 							plans={ this.props.plans.get() }
-							enableFreeTrials={ getABTestVariation( 'freeTrials' ) === 'offered' }
 							sitePlans={ this.props.sitePlans }
 							onOpen={ this.openPlan }
 							onSelectPlan={ this.props.onSelectPlan }

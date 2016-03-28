@@ -29,13 +29,21 @@ module.exports = {
 		},
 		defaultVariation: 'originalA'
 	},
-	freeTrials: {
-		datestamp: '20160120',
+	freeTrialsInSignup: {
+		datestamp: '20160328',
 		variations: {
-			notOffered: 90,
-			offered: 10
+			disabled: 85,
+			enabled: 15
 		},
-		defaultVariation: 'notOffered'
+		defaultVariation: 'disabled'
+	},
+	freeTrialNudgeOnThankYouPage: {
+		datestamp: '20160328',
+		variations: {
+			disabled: 50,
+			enabled: 50
+		},
+		defaultVariation: 'disabled'
 	},
 	monthlyPlanPricing: {
 		datestamp: '20160118',

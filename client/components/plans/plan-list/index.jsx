@@ -90,7 +90,6 @@ module.exports = React.createClass( {
 						onOpen={ this.openPlan }
 						onSelectPlan={ this.props.onSelectPlan }
 						site={ site }
-						enableFreeTrials={ this.props.enableFreeTrials }
 						cart={ this.props.cart }
 						isSubmitting={ this.props.isSubmitting } />
 				);

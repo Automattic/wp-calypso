@@ -6,14 +6,12 @@ var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
 	find = require( 'lodash/find' ),
 	page = require( 'page' ),
-	property = require( 'lodash/property' ),
 	times = require( 'lodash/times' );
 
 /**
  * Internal dependencies
  */
 var observe = require( 'lib/mixins/data-observe' ),
-	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	Gridicon = require( 'components/gridicon' ),
 	PlanActions = require( 'components/plans/plan-actions' ),
@@ -27,7 +25,6 @@ var observe = require( 'lib/mixins/data-observe' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
 	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
 	Card = require( 'components/card' ),
-	featuresListUtils = require( 'lib/features-list/utils' ),
 	filterPlansBySiteAndProps = require( 'lib/plans' ).filterPlansBySiteAndProps,
 	NavItem = require( 'components/section-nav/item' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
@@ -84,59 +81,6 @@ var PlansCompare = React.createClass( {
 
 		this.recordViewAllPlansClick();
 		page( plansLink );
-	},
-
-	showFreeTrialException: function() {
-		const hasTrial = this.props.selectedSite
-				? this.props.selectedSite.plan.free_trial
-				: false,
-			canStartTrial = this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer
-				? this.props.sitePlans.data.some( property( 'canStartTrial' ) )
-				: false;
-
-		if ( getABTestVariation( 'freeTrials' ) !== 'offered' ) {
-			return false;
-		}
-
-		// always show if the user is currently in trial
-		if ( hasTrial ) {
-			return true;
-		}
-
-		// show if the site is eligible for a trial (it never had a free trial before)
-		// and free trial is enabled for this component
-		if ( canStartTrial && this.props.enableFreeTrials ) {
-			return true;
-		}
-
-		// show if we are in signup and free trial is enabled for this component
-		if ( this.props.isInSignup && this.props.enableFreeTrials ) {
-			return true;
-		}
-
-		return false;
-	},
-
-	freeTrialExceptionMarker: function( feature ) {
-		if ( this.showFreeTrialException() && featuresListUtils.featureNotPartOfTrial( feature ) ) {
-			return '*';
-		}
-
-		return null;
-	},
-
-	freeTrialExceptionMessage: function() {
-		if ( ! this.isDataLoading() &&
-			this.showFreeTrialException() &&
-			this.getFeatures().some( featuresListUtils.featureNotPartOfTrial ) ) {
-			return (
-				<div className="plans-compare__free-trial-exception-message">
-					{ this.translate( '* Not included during the free trial period' ) }
-				</div>
-			);
-		}
-
-		return null;
 	},
 
 	isDataLoading: function() {
@@ -247,7 +191,6 @@ var PlansCompare = React.createClass( {
 								sitePlan={ sitePlan }
 								site={ this.props.selectedSite }
 								cart={ this.props.cart }
-								enableFreeTrials={ this.props.enableFreeTrials }
 								isSubmitting={ this.isSubmitting() }
 								isImageButton />
 							<span className="plans-compare__plan-name">
@@ -316,7 +259,7 @@ var PlansCompare = React.createClass( {
 							className={ classes }
 							key={ plan.product_id }>
 							<div className={ mobileClasses }>
-								{ feature.title } { this.freeTrialExceptionMarker( feature ) }
+								{ feature.title }
 							</div>
 							<div className="plans-compare__cell-content">
 								{ content }
@@ -331,7 +274,6 @@ var PlansCompare = React.createClass( {
 							className="plans-compare__cell"
 							key={ feature.title }>
 							{ feature.title }
-							{ this.freeTrialExceptionMarker( feature ) }
 						</td>
 						{ planFeatures }
 					</tr>
@@ -361,7 +303,6 @@ var PlansCompare = React.createClass( {
 			return (
 				<td className={ classes } key={ plan.product_id }>
 					<PlanActions
-						enableFreeTrials={ this.props.enableFreeTrials }
 						onSelectPlan={ this.props.onSelectPlan }
 						isInSignup={ this.props.isInSignup }
 						plan={ plan }
@@ -459,7 +400,6 @@ var PlansCompare = React.createClass( {
 				{ this.sectionNavigationForMobile() }
 				<Card>
 					{ this.comparisonTable() }
-					{ this.freeTrialExceptionMessage() }
 				</Card>
 			</div>
 		);
