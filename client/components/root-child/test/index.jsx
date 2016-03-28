@@ -1,11 +1,10 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import ReactDom from 'react-dom';
 import React from 'react';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Internal dependencies
@@ -34,6 +33,8 @@ const Greeting = React.createClass( {
 
 describe( 'RootChild', function() {
 	var container;
+
+	useFakeDom();
 
 	before( function() {
 		container = document.createElement( 'div' );

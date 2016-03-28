@@ -48,6 +48,9 @@
 		"infinite-list": {
 			"test": [ "scroll-helper" ]
 		},
+		"root-child": {
+			"test": [ "index" ]
+		},
 		"theme": {
 			"test": [ "index" ]
 		},
