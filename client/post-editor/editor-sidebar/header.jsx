@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import get from 'lodash/get';
 import { translate } from 'lib/mixins/i18n';
-import noop from 'lodash/noop';
 import page from 'page';
 
 /**
@@ -30,20 +29,10 @@ function EditorSidebarHeader( { typeSlug, type, siteId, showDrafts, toggleDrafts
 		'is-drafts-visible': showDrafts,
 		'is-loading': isCustomPostType && ! type
 	} );
-	const useBackButton = page.len > 0;
-	let closeLabel;
-	if ( useBackButton ) {
-		closeLabel = translate( 'Back' );
-	} else {
-		switch ( typeSlug ) {
-			case 'post': closeLabel = translate( 'Posts' ); break;
-			case 'page': closeLabel = translate( 'Pages' ); break;
-			default: closeLabel = get( type, 'labels.menu_name' ) || translate( 'Loading…' );
-		}
-	}
-	const closeButtonAction = useBackButton ? page.back : noop;
-	const closeButtonUrl = useBackButton ? '' : allPostsUrl;
-	const closeButtonAriaLabel = useBackButton ? translate( 'Go back' ) : translate( 'View list of posts' );
+	const closeLabel = translate( 'Back' );
+	const closeButtonAction = page.back.bind( page, allPostsUrl );
+	const closeButtonUrl = '';
+	const closeButtonAriaLabel = translate( 'Go back' );
 
 	return (
 		<div className={ className }>
