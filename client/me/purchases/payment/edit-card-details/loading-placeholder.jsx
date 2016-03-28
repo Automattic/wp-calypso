@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 
@@ -14,41 +14,44 @@ import FormSelect from 'components/forms/form-select';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 import titles from 'me/purchases/titles';
 
-const EditCardDetailsLoadingPlaceholder = React.createClass( {
-	render() {
-		return (
-			<LoadingPlaceholder title={ titles.editCardDetails }>
-				<Card className="edit-card-details__content">
-					<div className="credit-card-form">
-						<div className="credit-card-form__field">
+const EditCardDetailsLoadingPlaceholder = () => {
+	return (
+		<LoadingPlaceholder title={ titles.editCardDetails }>
+			<Card className="edit-card-details__content">
+				<div className="credit-card-form">
+					<div className="credit-card-form__field">
+						<FormTextInput />
+					</div>
+
+					<div className="credit-card-form__field">
+						<FormTextInput />
+					</div>
+
+					<div className="credit-card-form__extras">
+						<div className="credit-card-form__field expiration-date">
 							<FormTextInput />
 						</div>
-						<div className="credit-card-form__field">
+
+						<div className="credit-card-form__field cvv">
 							<FormTextInput />
 						</div>
-						<div className="credit-card-form__extras">
-							<div className="credit-card-form__field expiration-date">
-								<FormTextInput />
-							</div>
-							<div className="credit-card-form__field cvv">
-								<FormTextInput />
-							</div>
-							<div className="credit-card-form__field country">
-								<FormSelect />
-							</div>
-							<div className="credit-card-form__field postal-code">
-								<FormTextInput />
-							</div>
+
+						<div className="credit-card-form__field country">
+							<FormSelect />
+						</div>
+
+						<div className="credit-card-form__field postal-code">
+							<FormTextInput />
 						</div>
 					</div>
-				</Card>
+				</div>
+			</Card>
 
-				<CompactCard className="edit-card-details__footer">
-					<FormButton isPrimary={ false } />
-				</CompactCard>
-			</LoadingPlaceholder>
-		);
-	}
-} );
+			<CompactCard className="edit-card-details__footer">
+				<FormButton isPrimary={ false } />
+			</CompactCard>
+		</LoadingPlaceholder>
+	);
+};
 
 export default EditCardDetailsLoadingPlaceholder;
