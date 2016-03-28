@@ -50,8 +50,12 @@ function removeFullPostDialog() {
 }
 
 function renderPostNotFound() {
+	var sidebarAndPageTitle = i18n.translate( 'Post not found' );
+
+	setPageTitle( sidebarAndPageTitle );
+
 	ReactDom.render(
-		<FeedError />,
+		<FeedError sidebarTitle={ sidebarAndPageTitle } />,
 		document.getElementById( 'primary' )
 	);
 }
