@@ -51,6 +51,9 @@
 		"root-child": {
 			"test": [ "index" ]
 		},
+		"search": {
+			"test": [ "index" ]
+		},
 		"theme": {
 			"test": [ "index" ]
 		},
