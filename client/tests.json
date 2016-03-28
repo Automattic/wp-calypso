@@ -67,6 +67,11 @@
 			"plugins": {
 				"contact-form": {
 					"test": [ "shortcode", "validations" ]
+				},
+				"media": {
+					"restrict-size": {
+						"test": [ "index" ]
+					}
 				}
 			}
 		}
