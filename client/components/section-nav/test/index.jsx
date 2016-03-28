@@ -2,7 +2,7 @@ var assert = require( 'chai' ).assert,
 	sinon = require( 'sinon' ),
 	useMockery = require( 'test/helpers/use-mockery' ),
 	useFakeDom = require( 'test/helpers/use-fake-dom' ),
-	ReactDom,	React, TestUtils, SectionNav;
+	ReactDom, React, TestUtils, SectionNav;
 
 function createComponent( component, props, children ) {
 	var shallowRenderer = TestUtils.createRenderer();
@@ -21,11 +21,7 @@ describe( 'section-nav', function() {
 		TestUtils = require( 'react-addons-test-utils' );
 		require( 'react-tap-event-plugin' )();
 
-		const EMPTY_COMPONENT = React.createClass( {
-			render: function() {
-				return <div />;
-			}
-		} );
+		const EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
 
 		mockery.registerMock( 'components/gridicon', EMPTY_COMPONENT );
 
