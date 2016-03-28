@@ -45,6 +45,10 @@ const PlanFeatures = React.createClass( {
 	render() {
 		const willBeRemoved = isInGracePeriod( this.props.plan );
 
+		if ( ! this.props.selectedSite ) {
+			return null;
+		}
+
 		return (
 			<div>
 				{ ! willBeRemoved && <SectionHeader label={ this.translate( "Your Site's Features" ) } /> }
