@@ -13,16 +13,19 @@ import { setTitle as legacySetTitle } from './actions';
 export function subscribeToStore( store ) {
 	let title = store.getState().page.title;
 	let count = store.getState().page.unreadCount;
+	let siteId = store.getState().ui.selectedSiteId;
 
 	store.subscribe( () => {
 		let nextTitle = store.getState().page.title;
 		let nextCount = store.getState().page.unreadCount;
+		let nextSiteId = store.getState().ui.selectedSiteId;
 
-		if ( nextTitle !== title || nextCount !== count ) {
+		if ( nextTitle !== title || nextCount !== count || nextSiteId !== siteId ) {
 			title = nextTitle;
 			count = nextCount;
+			siteId = nextSiteId;
 
-			legacySetTitle( title, { count: count } );
+			legacySetTitle( title, { siteID: siteId, count: count } );
 		}
 	} );
 }
