@@ -14,7 +14,7 @@ function getSectionsModule( sections ) {
 			"\tLoadingError = require( 'layout/error' ),",
 			"\tclasses = require( 'component-classes' ),",
 			"\tcontroller = require( 'controller' ),",
-			"\preloadHub = require( 'sections-preload' ).hub;",
+			"\tpreloadHub = require( 'sections-preload' ).hub;",
 			'\n',
 			'var _loadedSections = {};\n'
 		].join( '\n' );
@@ -32,8 +32,10 @@ function getSectionsModule( sections ) {
 			'	switch ( section ) {',
 			'	' + loadSection,
 			'	}',
-			'}\n',
-			'preloadHub.on( \'preload\', preload );\n',
+			'}',
+			'\n',
+			"preloadHub.on( 'preload', preload );",
+			'\n',
 			'module.exports = {',
 			'	get: function() {',
 			'		return ' + JSON.stringify( sections ) + ';',
@@ -126,18 +128,18 @@ function getPathRegex( pathString ) {
 
 function requireTemplate( section ) {
 	var pathRegex,
-		result = [];
+		result;
 
-	section.paths.forEach( function( path ) {
+	result = section.paths.reduce( function( acc, path ) {
 		pathRegex = getPathRegex( path );
 
-		result = result.concat( [
+		return acc.concat( [
 			'page( ' + pathRegex + ', function( context, next ) {',
 			'	controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 			'	next();',
 			'} );\n'
 		] );
-	} );
+	}, [] );
 
 	result.push(
 		'require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );\n\n'
