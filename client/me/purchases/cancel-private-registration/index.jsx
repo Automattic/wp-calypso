@@ -22,7 +22,10 @@ import titles from 'me/purchases/titles';
 const CancelPrivateRegistration = React.createClass( {
 	propTypes: {
 		selectedPurchase: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.object.isRequired
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.bool,
+			React.PropTypes.object
+		] ).isRequired
 	},
 
 	getInitialState() {

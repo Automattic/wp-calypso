@@ -17,8 +17,8 @@ const CancelPurchaseLoadingPlaceholder = React.createClass( {
 	propTypes: {
 		purchaseId: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+			React.PropTypes.bool,
+			React.PropTypes.object
 		] ).isRequired
 	},
 
