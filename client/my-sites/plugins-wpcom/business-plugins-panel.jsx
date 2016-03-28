@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 
-import FoldableCard from 'components/foldable-card';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';

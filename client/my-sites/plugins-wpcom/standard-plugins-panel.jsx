@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 
-import FoldableCard from 'components/foldable-card';
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
@@ -58,12 +58,12 @@ export const StandardPluginsPanel = React.createClass( {
 		return (
 			<div>
 			<SectionHeader label={ this.translate( 'Standard Plugin Suite' ) }>
-					<Button compact borderless>
+					<Button className="is-active-plugin" compact borderless>
 						<Gridicon icon="checkmark" />
         		{ this.translate( 'Active' ) }
         	</Button>
 			</SectionHeader>
-			<Card className="wpcom-plugins__standard-panel">
+			<CompactCard className="wpcom-plugins__standard-panel">
 				<div className="wpcom-plugins__list">
 					{ plugins.map( ( { name, supportLink, icon, category, description } ) =>
 						<StandardPlugin
@@ -71,12 +71,9 @@ export const StandardPluginsPanel = React.createClass( {
 							/>
 					) }
 				</div>
-				<div className="wpcom-plugins__panel-footer">
-					<Button borderless>
-						<Gridicon icon="plus-small" />
-						{ this.translate( 'View all standard plugins' ) }
-					</Button>
-				</div>
+			</CompactCard>
+			<Card className="wpcom-plugins__panel-footer" href="#">
+				{ this.translate( 'View all standard plugins' ) }
 			</Card>
 			</div>
 		);

@@ -20,7 +20,7 @@ export const BusinessPlugin = React.createClass( {
 					</div>
 					<div className="wpcom-plugins__plugin-title">{ name }</div>
 					<div className="wpcom-plugins__plugin-plan">{ plan }</div>
-					<div className="wpcom-plugins__plugin-description">{ description }</div>
+					<p className="wpcom-plugins__plugin-description">{ description }</p>
 				</a>
 			</li>
 		);

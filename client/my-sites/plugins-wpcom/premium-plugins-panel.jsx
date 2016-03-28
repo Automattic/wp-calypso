@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 
-import FoldableCard from 'components/foldable-card';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
@@ -19,7 +18,7 @@ const defaultPlugins = [
 		name: 'Custom Design',
 		supportLink: 'https://en.support.wordpress.com/custom-design/',
 		plan: 'Premium',
-		description: 'With Customize you can personalize your blog\'s look and feel with intelligent color tools, custom fonts, and a CSS editor.'
+		description: 'Customize your blog\'s look with custom fonts, a CSS editor, and more.'
 	},
 	{
 		name: 'Video Uploads',
