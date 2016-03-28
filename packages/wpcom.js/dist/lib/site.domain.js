@@ -5,7 +5,6 @@ var _classCallCheck = require('babel-runtime/helpers/class-call-check')['default
 Object.defineProperty(exports, '__esModule', {
 	value: true
 });
-
 /**
  * Module variables
  */
