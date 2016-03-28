@@ -90,6 +90,17 @@ const ReaderShare = React.createClass( {
 		}
 	},
 
+	_deferMenuChange( showing ) {
+		if ( this._closeHandle ) {
+			clearTimeout( this._closeHandle );
+		}
+
+		this._closeHandle = defer( () => {
+			this._closeHandle = null;
+			this.setState( { showingMenu: showing } );
+		} );
+	},
+
 	toggle( event ) {
 		event.preventDefault();
 		if ( ! this.state.showingMenu ) {
@@ -100,9 +111,7 @@ const ReaderShare = React.createClass( {
 				target
 			} );
 		}
-		this._closeHandle = defer( () => {
-			this.setState( { showingMenu: ! this.state.showingMenu } );
-		} );
+		this._deferMenuChange( ! this.state.showingMenu );
 	},
 
 	killClick( event ) {
@@ -113,16 +122,17 @@ const ReaderShare = React.createClass( {
 		// have to defer this to let the mouseup / click escape.
 		// If we don't defer and remove the DOM node on this turn of the event loop,
 		// Chrome (at least) will not fire the click
-		this._closeHandle = defer( () => {
-			this.setState( { showingMenu: false } );
-		} );
+		if ( this.isMounted() ) {
+			this._deferMenuChange( false );
+		}
 	},
 
-	pickSiteToShareTo( slug, event ) {
+	pickSiteToShareTo( slug ) {
 		stats.recordAction( 'share_wordpress' );
 		stats.recordGaEvent( 'Clicked on Share to WordPress' );
 		stats.recordTrack( 'calypso_reader_share_to_site' );
 		page( `/post/${slug}?` + buildQuerystringForPost( this.props.post ) );
+		return true;
 	},
 
 	closeExternalShareMenu( action ) {

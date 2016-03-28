@@ -37,7 +37,8 @@ export default React.createClass( {
 		selected: React.PropTypes.string,
 		hideSelected: React.PropTypes.bool,
 		filter: React.PropTypes.func,
-		groups: React.PropTypes.bool
+		groups: React.PropTypes.bool,
+		onSiteSelect: React.PropTypes.func
 	},
 
 	getDefaultProps() {
@@ -67,7 +68,7 @@ export default React.createClass( {
 
 	onSiteSelect( siteSlug, event ) {
 		this.closeSelector();
-		this.props.onSiteSelect( siteSlug );
+		const handledByHost = this.props.onSiteSelect( siteSlug );
 		this.props.onClose( event );
 
 		let node = ReactDom.findDOMNode( this.refs.selector );
@@ -76,7 +77,18 @@ export default React.createClass( {
 		}
 
 		// ignore mouse events as the default page() click event will handle navigation
-		if ( this.props.siteBasePath && ( ! ( event.type === 'mouseup' ) ) ) {
+		// You'll likely wonder what's going on here. Why mouseup, and not click or touchend?
+		// The underlying thing generating the click is a my-sites/site, which is using onTouchTap
+		// onTouchTap is listening for either mouseup or touchend, depending on the device.
+		// the Site handles the event and then prevents it. In the case of mouseup, this does nothing,
+		// but for touchend, it cancels the subsequent click.
+		// This bit of code is an attempt to make up for that cancellation of touchend. It simulates the navigation
+		// that would have happened
+		// But some hosts of this component can properly handle selection and want to call into page themselves (or so
+		// any number of things ). handledByHost gives them the chance to avoid the simulated navigation,
+		// even for touchend
+		if ( ! handledByHost && this.props.siteBasePath && ( ! ( event.type === 'mouseup' ) ) ) {
+			// why pathname and not patnname + search? unsure. This currently strips querystrings.
 			page( event.currentTarget.pathname );
 		}
 	},
