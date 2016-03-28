@@ -64,13 +64,13 @@ const designToolsById = {
 		mapStateToProps: state => {
 			const siteId = state.ui.selectedSiteId;
 			const selectedSite = state.sites.items[ siteId ] || {};
-			const isPageOnFront = selectedSite.options.show_on_front !== 'posts';
+			const isPageOnFront = selectedSite.options.show_on_front === 'page';
 			const pageOnFrontId = selectedSite.options.page_on_front;
 			const pageForPostsId = selectedSite.options.page_for_posts;
 			if ( state.preview && state.preview.customizations.homePage ) {
-				return assign( { isPageOnFront, pageOnFrontId, pageForPostsId }, state.preview.customizations.homePage );
+				return assign( { site: selectedSite, isPageOnFront, pageOnFrontId, pageForPostsId }, state.preview.customizations.homePage );
 			}
-			return { isPageOnFront, pageOnFrontId, pageForPostsId };
+			return { site: selectedSite, isPageOnFront, pageOnFrontId, pageForPostsId };
 		}
 	},
 };

@@ -17,5 +17,5 @@ export function headerImage( dispatch, customizations, siteId ) {
 
 export function homePage( dispatch, customizations, siteId ) {
 	const { isPageOnFront, pageOnFrontId, pageForPostsId } = customizations;
-	dispatch( actions.setHomePageSettings( siteId, { isPageOnFront, pageOnFrontId, pageForPostsId } ) );
+	dispatch( actions.setHomePageSettings( siteId, isPageOnFront, pageOnFrontId, pageForPostsId ) );
 }
