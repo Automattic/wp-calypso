@@ -14,12 +14,13 @@ import jetpackConnectAuthorizeForm from './authorize-form';
 import { setSection } from 'state/ui/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { JETPACK_CONNECT_QUERY_SET, JETPACK_CONNECT_QUERY_UPDATE } from 'state/action-types';
+import userFactory from 'lib/user';
 
 /**
  * Module variables
  */
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
-let autoAuthorize = false;
+const userModule = userFactory();
 
 export default {
 	saveQueryObject( context, next ) {
@@ -55,30 +56,17 @@ export default {
 	},
 
 	authorizeForm( context ) {
-		/*if ( store.get( 'jetpack_connect_authorize_after_signup' ) ) {
-			debug( 'auto authorizing', context.query );
-			autoAuthorizing = true;
-			const authorizeCallback = error => {
-				if ( error ) {
-					debug( 'jetpack auto authorize error', error );
-					return;
-				}
-				store.remove( 'jetpack_connect_query' );
-				page( '/' );
-			}
-			store.remove( 'jetpack_connect_authorize_after_signup' );
-			jetpackAuthorize( queryObject, authorizeCallback );
-		}*/
-
 		context.store.dispatch( setSection( 'jetpackConnect', {
 			hasSidebar: false
 		} ) );
+
+		userModule.fetch();
 
 		renderWithReduxStore(
 			React.createElement( jetpackConnectAuthorizeForm, {
 				path: context.path,
 				locale: context.params.lang,
-				autoAuthorize: autoAuthorize
+				userModule: userModule
 			} ),
 			document.getElementById( 'primary' ),
 			context.store

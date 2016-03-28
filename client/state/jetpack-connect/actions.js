@@ -12,7 +12,9 @@ import {
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_AUTHORIZE,
-	JETPACK_CONNECT_AUTHORIZE_RECEIVE
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
+	JETPACK_CONNECT_CREATE_ACCOUNT,
+	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE
 } from 'state/action-types';
 
 /**
@@ -78,12 +80,21 @@ export default {
 	goToPluginInstall( url ) {
 		window.location = url + installURL;
 	},
-	createAccount( userData, callback ) {
+	createAccount( userData ) {
 		return ( dispatch ) => {
+			dispatch( {
+				type: JETPACK_CONNECT_CREATE_ACCOUNT,
+				userData: userData
+			} );
 			wpcom.undocumented().usersNew(
 				userData,
 				( error, data ) => {
-					callback( error, data );
+					dispatch( {
+						type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
+						userData: userData,
+						data: data,
+						error: error
+					} );
 				}
 			);
 		}

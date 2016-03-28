@@ -9,6 +9,8 @@ import {
 	JETPACK_CONNECT_QUERY_UPDATE,
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
+	JETPACK_CONNECT_CREATE_ACCOUNT,
+	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -44,11 +46,18 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_AUTHORIZE:
 			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false } );
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
-			return Object.assign( {}, state, { isAuthorizing: false, authorizeError: action.error, authorizeSuccess: action.data } );
+			return Object.assign( {}, state, { isAuthorizing: false, authorizeError: action.error, authorizeSuccess: action.data, autoAuthorize: false } );
 		case JETPACK_CONNECT_QUERY_SET:
 			return Object.assign( {}, defaultAuthorizeState, { queryObject: action.queryObject } );
 		case JETPACK_CONNECT_QUERY_UPDATE:
 			return Object.assign( {}, state, { queryObject: Object.assign( {}, state.queryObject, { [ action.property ]: action.value } ) } );
+		case JETPACK_CONNECT_CREATE_ACCOUNT:
+			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, autoAuthorize: true } );
+		case JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE:
+			if ( action.error ) {
+				return Object.assign( {}, state, { isAuthorizing: false, authorizeSuccess: false, authorizeError: true, autoAuthorize: false } );
+			}
+			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, autoAuthorize: true, userData: action.userData, bearerToken: action.data.bearer_token } );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return state;

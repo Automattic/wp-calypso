@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import store from 'store';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 const debug = require( 'debug' )( 'calypso:jetpack-connect:authorize-form' );
@@ -16,45 +15,28 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
-import _user from 'lib/user';
 import config from 'config';
 import { createAccount, authorize } from 'state/jetpack-connect/actions';
 import JetpackConnectNotices from './jetpack-connect-notices';
+import observe from 'lib/mixins/data-observe';
+import userUtilities from 'lib/user/utils';
 
 /**
  * Module variables
  */
-const userModule = _user();
-
 const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
 
-	getInitialState() {
-		return { error: false, userData: false, bearerToken: false, isSubmitting: false };
+	submitForm( form, userData ) {
+		this.props.createAccount( userData );
 	},
 
-	submitForm( form, userData ) {
-		this.setState( { submitting: true } );
-
-		const createAccountCallback = ( error, data ) => {
-			if ( error ) {
-				this.setState( { submitting: false } );
-			} else if ( data.bearer_token ) {
-				this.setState( { userData, bearerToken: data.bearer_token } );
-			}
-		};
-
-		store.set( 'jetpack_connect_authorize_after_signup', '1' );
-
-		createAccount(
-			userData,
-			createAccountCallback
-		);
+	isSubmitting() {
+		return this.props.jetpackConnectAuthorize && this.props.jetpackConnectAuthorize.isAuthorizing;
 	},
 
 	loginUser() {
-		const { userData, bearerToken } = this.state;
-		const { queryObject } = this.props.jetpackConnectAuthorize;
+		const { queryObject, userData, bearerToken } = this.props.jetpackConnectAuthorize;
 		const extraFields = { jetpack_calypso_login: '1', _wp_nonce: queryObject._wp_nonce };
 		return (
 			<WpcomLoginForm
@@ -77,17 +59,18 @@ const LoggedOutForm = React.createClass( {
 	},
 
 	render() {
+		const { userData } = this.props.jetpackConnectAuthorize;
 		return (
 			<div>
 				<SignupForm
 					getRedirectToAfterLoginUrl={ window.location.href }
-					disabled={ this.state.isSubmitting }
-					submitting={ this.state.isSubmitting }
+					disabled={ this.isSubmitting() }
+					submitting={ this.isSubmitting() }
 					save={ this.save }
 					submitForm={ this.submitForm }
 					submitButtonText={ this.translate( 'Sign Up and Connect Jetpack' ) }
 					footerLink={ this.renderFooterLink() } />
-				{ this.state.userData && this.loginUser() }
+				{ userData && this.loginUser() }
 			</div>
 		);
 	}
@@ -96,9 +79,21 @@ const LoggedOutForm = React.createClass( {
 const LoggedInForm = React.createClass( {
 	displayName: 'LoggedInForm',
 
+	componentWillMount() {
+		const { autoAuthorize, queryObject } = this.props.jetpackConnectAuthorize;
+		debug( 'Checking for auto-auth on mount', autoAuthorize );
+		if ( autoAuthorize ) {
+			this.props.authorize( queryObject );
+		}
+	},
+
 	handleSubmit() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		this.props.authorize( queryObject );
+	},
+
+	handleSignOut() {
+		userUtilities.logout( window.location.href );
 	},
 
 	isAuthorizing() {
@@ -121,14 +116,17 @@ const LoggedInForm = React.createClass( {
 	},
 
 	renderFormControls() {
-		const { queryObject, isAuthorizing } = this.props.jetpackConnectAuthorize;
+		const { queryObject, isAuthorizing, autoAuthorize, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		const loginUrl = config( 'login_url' ) + '?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) + '&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
-		const logoutUrl = config( 'login_url' ) + '?action=logout&redirect_to=' + encodeURIComponent( window.location.href );
 
-		if ( this.props.autoAuthorize ) {
+		if ( autoAuthorize ) {
 			return isAuthorizing
 				? <p>{ this.translate( 'Authorizing your Jetpack connection' ) }</p>
 				: null
+		}
+
+		if ( authorizeSuccess ) {
+			return null;
 		}
 
 		return (
@@ -140,7 +138,7 @@ const LoggedInForm = React.createClass( {
 					<LoggedOutFormLinkItem href={ loginUrl }>
 						{ this.translate( 'Sign in as a different user' ) }
 					</LoggedOutFormLinkItem>
-					<LoggedOutFormLinkItem href={ logoutUrl }>
+					<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
 						{ this.translate( 'Create a new account' ) }
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
@@ -161,13 +159,10 @@ const LoggedInForm = React.createClass( {
 
 const JetpackConnectAuthorizeForm = React.createClass( {
 	displayName: 'JetpackConnectAuthorizeForm',
-
-	getInitialState() {
-		return ( { user: userModule.get() } );
-	},
-
+	mixins: [ observe( 'userModule' ) ],
 	renderForm() {
-		const { user } = this.state;
+		const { userModule } = this.props;
+		let user = userModule.get();
 		return ( user )
 			? <LoggedInForm { ...this.props } user={ user } />
 			: <LoggedOutForm { ...this.props } />
