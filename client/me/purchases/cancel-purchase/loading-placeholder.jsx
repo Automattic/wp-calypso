@@ -6,9 +6,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import Button from 'components/button';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 import { managePurchase } from 'me/purchases/paths';
 import titles from 'me/purchases/titles';

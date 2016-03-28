@@ -9,8 +9,8 @@ import React from 'react';
  */
 import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
-import { getPurchase, isDataLoading } from '../utils';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
+import { getPurchase, isDataLoading } from '../utils';
 import Gridicon from 'components/gridicon';
 import { isDomainRegistration, isPlan } from 'lib/products-values';
 import notices from 'notices';

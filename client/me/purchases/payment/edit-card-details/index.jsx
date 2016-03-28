@@ -19,6 +19,7 @@ import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
 import forOwn from 'lodash/forOwn';
 import HeaderCake from 'components/header-cake' ;
+import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
 import kebabCase from 'lodash/kebabCase';
 import Main from 'components/main';
 import mapKeys from 'lodash/mapKeys';
@@ -28,7 +29,6 @@ import titles from 'me/purchases/titles';
 import { validateCardDetails } from 'lib/credit-card-details';
 import ValidationErrorList from 'notices/validation-error-list';
 import wpcomFactory from 'lib/wp';
-import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
 
 const wpcom = wpcomFactory.undocumented();
 

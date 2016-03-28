@@ -1,12 +1,12 @@
 /**
  * External Dependencies
- **/
-import toArray from 'lodash/toArray';
+ */
 import fromPairs from 'lodash/fromPairs';
+import toArray from 'lodash/toArray';
 
 /**
  * Internal Dependencies
- **/
+ */
 import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();

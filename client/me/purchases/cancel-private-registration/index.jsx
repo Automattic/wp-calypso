@@ -12,12 +12,12 @@ import Button from 'components/button';
 import { cancelPrivateRegistration } from 'lib/upgrades/actions';
 import Card from 'components/card';
 import HeaderCake from 'components/header-cake';
+import { isDataLoading, goToManagePurchase, recordPageView } from '../utils';
 import { isRefundable } from 'lib/purchases';
 import Main from 'components/main';
-import paths from '../paths';
 import Notice from 'components/notice';
+import paths from '../paths';
 import titles from 'me/purchases/titles';
-import { goToManagePurchase, isDataLoading, recordPageView } from '../utils';
 
 const CancelPrivateRegistration = React.createClass( {
 	getInitialState() {

@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import paths from '../../paths';
 import CompactCard from 'components/card/compact';
-import Notice from 'components/notice';
 import {
 	getName,
 	isExpired,
 	isExpiring,
-	isRenewing,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isRenewing,
 	purchaseType,
 	showCreditCardExpiringWarning
 } from 'lib/purchases';
+import Notice from 'components/notice';
+import paths from '../../paths';
 
 const PurchaseItem = React.createClass( {
 	propTypes: {
