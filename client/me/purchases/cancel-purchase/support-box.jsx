@@ -10,7 +10,7 @@ import analytics from 'analytics';
 
 const CancelPurchaseSupportBox = React.createClass( {
 	propTypes: {
-		purchase: React.PropTypes.object.isRequired,
+		purchase: React.PropTypes.object.isRequired
 	},
 
 	trackClickContactSupport() {
