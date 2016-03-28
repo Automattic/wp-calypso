@@ -93,7 +93,12 @@ const LoggedInForm = React.createClass( {
 	},
 
 	handleSignOut() {
-		userUtilities.logout( window.location.href );
+		const { queryObject } = this.props.jetpackConnectAuthorize;
+		let redirect = window.location.href + '?';
+		for ( const prop in queryObject ) {
+			redirect += prop + '=' + encodeURIComponent( queryObject[ prop ] ) + '&';
+		}
+		userUtilities.logout( redirect );
 	},
 
 	isAuthorizing() {
