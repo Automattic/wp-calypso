@@ -41,6 +41,20 @@ describe( 'wpcom.site', function() {
 	} );
 
 	describe( 'wpcom.site.lists', function() {
+		describe( 'wpcom.site.domainsList', function() {
+			it( 'should request domains list', done => {
+				site.domainsList()
+					.then( list => {
+						// list object data testing
+						assert.equal( 'object', typeof list );
+						assert.equal( 'object', typeof list.domains );
+						assert.ok( list.domains instanceof Array );
+						done();
+					} )
+					.catch( done );
+			} );
+		} );
+
 		describe( 'wpcom.site.postsList', function() {
 			it( 'should request posts list', done => {
 				site.postsList()
