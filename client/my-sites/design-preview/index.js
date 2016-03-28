@@ -62,7 +62,14 @@ const DesignPreview = React.createClass( {
 		// Apply customizations
 		if ( this.props.customizations && this.previewDocument ) {
 			debug( 'updating preview with customizations', this.props.customizations );
-			updatePreviewWithChanges( this.previewDocument, this.props.customizations );
+			updatePreviewWithChanges( this.previewDocument, this.props.customizations, this.reloadPreview );
+		}
+	},
+
+	reloadPreview() {
+		if ( this.props.selectedSiteId && this.props.actions.fetchPreviewMarkup ) {
+			debug( 'reloading preview with customizations', this.props.customizations );
+			this.props.actions.fetchPreviewMarkup( this.props.selectedSiteId, '', this.props.customizations );
 		}
 	},
 

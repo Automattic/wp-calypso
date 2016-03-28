@@ -38,8 +38,9 @@ export default React.createClass( {
 
 	handleChangeIsPageOnFront( event ) {
 		const isPageOnFront = event.target.value === 'page';
+		const pageOnFrontId = this.state.pageOnFrontId;
 		this.setState( { isPageOnFront } );
-		this.props.onChange( { isPageOnFront } );
+		this.props.onChange( { isPageOnFront, pageOnFrontId } );
 	},
 
 	handleChangePageOnFront( post ) {

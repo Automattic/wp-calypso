@@ -12,10 +12,22 @@ import * as customizationSaveFunctions from './save-functions';
 
 const debug = debugFactory( 'calypso:preivew-actions' );
 
-export function fetchPreviewMarkup( site, slug ) {
+export function fetchPreviewMarkup( site, slug, customizations ) {
 	return function( dispatch ) {
-		debug( 'fetching preview markup', site, slug );
-		wpcom.undocumented().fetchPreviewMarkup( site, slug )
+		const postData = {};
+		if ( customizations ) {
+			if ( customizations.homePage && customizations.homePage.hasOwnProperty( 'isPageOnFront' ) ) {
+				postData.show_on_front = customizations.homePage.isPageOnFront ? 'page' : 'posts';
+				if ( customizations.homePage.pageOnFrontId ) {
+					postData.page_on_front = customizations.homePage.pageOnFrontId;
+				}
+				if ( customizations.homePage.pageForPostsId ) {
+					postData.page_for_posts = customizations.homePage.pageForPostsId;
+				}
+			}
+		}
+		debug( 'fetching preview markup', site, slug, customizations, 'postData', postData );
+		wpcom.undocumented().fetchPreviewMarkup( site, slug, postData )
 		.then( markup => dispatch( gotMarkup( markup ) ) );
 		// TODO: handle errors
 	}
