@@ -2,7 +2,7 @@
  * Oauth login page, used in WordPress Desktop App
  */
 
-.is-section-login {
+.is-section-auth {
 	background: $blue-wordpress;
 	height: 100%;
 
@@ -21,6 +21,10 @@
 
 	.wp-primary {
 		height: 100%;
+	}
+
+	.masterbar {
+		display: none;
 	}
 }
 
