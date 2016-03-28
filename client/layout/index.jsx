@@ -20,6 +20,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	EmailVerificationNotice = require( 'components/email-verification/email-verification-notice' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
 	WelcomeMessage = require( 'nux-welcome/welcome-message' ),
+	GuidesTours = require( 'guidestours' ),
 	analytics = require( 'analytics' ),
 	config = require( 'config' ),
 	connect = require( 'react-redux' ).connect,
@@ -152,6 +153,7 @@ Layout = React.createClass( {
 
 		return (
 			<div className={ sectionClass }>
+				{ config.isEnabled( 'guidestours' ) ? <GuidesTours /> : null }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }

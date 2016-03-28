@@ -1,0 +1,60 @@
+.guidestours__step {
+	position: fixed;
+	width: 400px;
+	z-index: z-index( 'root', '.web-preview' );
+}
+
+// variables for the guidestours__pointer
+$animation-speed: 2s;
+$size: 10px;
+$zoom-scale: 5; // the multiplier determining the size of the animated rings
+
+@keyframes guidestours__pointer__animation {
+	0% {
+		transform: scale( .2 );
+		opacity: 1;
+	}
+}
+
+.guidestours__pointer {
+	position: fixed;
+	z-index: z-index( 'root', '.web-preview' );
+	width: $size;
+	height: $size;
+	pointer-events: none;
+}
+
+.guidestours__pointer__center,
+.guidestours__pointer__ring,
+.guidestours__pointer__ring:before,
+.guidestours__pointer__ring:after {
+	position: absolute;
+		top: 0;
+		right: 0;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	z-index: 1;
+}
+
+.guidestours__pointer__center {
+	background: #fff;
+	border: 1px solid #a8bece;
+	box-shadow: 0 1px 2px rgba( 79, 116, 142, .3 );
+}
+
+.guidestours__pointer__ring:before,
+.guidestours__pointer__ring:after {
+	content: "";
+	top: ( -1 * $zoom-scale * $size / 2 ) + ( $size / 2 ) + 1;
+	left: ( -1 * $zoom-scale * $size / 2 ) + ( $size / 2 ) - 1;
+	width: $size * $zoom-scale;
+	height: $size * $zoom-scale;
+	background-image: radial-gradient( rgb( 0, 170, 220 ), #fff );
+	opacity: 0;
+	animation: guidestours__pointer__animation $animation-speed ease-in-out infinite;
+}
+
+.guidestours__pointer__ring:after {
+	animation-delay: #{ $animation-speed / 4 };
+}
