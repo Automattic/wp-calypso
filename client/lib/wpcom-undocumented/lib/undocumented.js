@@ -1068,11 +1068,29 @@ Undocumented.prototype.setPrimaryDomain = function( siteId, domain, fn ) {
 	this.wpcom.req.post( '/sites/' + siteId + '/domains/primary', {}, { domain: domain }, fn );
 };
 
-Undocumented.prototype.fetchPreviewMarkup = function( siteId, slug ) {
+/**
+ * Fetch preview markup for a site
+ *
+ * @param {int} siteId The site ID
+ * @param {string} slug Optional. The theme slug to preview
+ * @param {object} postData Optional. The customization data to send
+ * @return {Promise} A Promise to resolve when complete
+ */
+Undocumented.prototype.fetchPreviewMarkup = function( siteId, slug, postData ) {
 	debug( '/sites/:site_id/previews/mine' );
 	return new Promise( ( resolve, reject ) => {
 		const endpoint = `/sites/${siteId}/previews/mine`;
 		const query = { path: slug };
+		if ( postData && Object.keys( postData ).length > 0 ) {
+			return this.wpcom.req.post( endpoint, query, { customized: postData } )
+			.then( response => {
+				if ( ! response.html ) {
+					return reject( new Error( 'No markup received from API' ) );
+				}
+				resolve( response.html );
+			} )
+			.catch( reject );
+		}
 		this.wpcom.req.get( endpoint, query )
 		.then( response => {
 			if ( ! response.html ) {
