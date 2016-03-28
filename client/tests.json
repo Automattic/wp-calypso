@@ -72,6 +72,9 @@
 					"restrict-size": {
 						"test": [ "index" ]
 					}
+				},
+				"wpcom-sourcecode": {
+					"test": [ "plugin" ]
 				}
 			}
 		}
