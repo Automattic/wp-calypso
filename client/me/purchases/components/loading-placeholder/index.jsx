@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import classNames from 'classnames';
 import page from 'page';
 import React from 'react';
 
@@ -24,7 +24,7 @@ const LoadingPlaceholder = React.createClass( {
 
 	render() {
 		return (
-			<Main className={ classnames( 'loading-placeholder', this.props.className ) }>
+			<Main className={ classNames( 'loading-placeholder', this.props.className ) }>
 				<HeaderCake className="loading-placeholder__header" onClick={ this.goBack }>
 					{ this.props.title }
 				</HeaderCake>
