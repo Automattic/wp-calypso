@@ -36,6 +36,9 @@
 				"test": [ "index" ]
 			}
 		},
+		"section-nav": {
+			"test": [ "index" ]
+		},
 		"theme": {
 			"test": [ "index" ]
 		},
