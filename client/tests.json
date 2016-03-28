@@ -100,6 +100,9 @@
 		"credit-card-details" : {
 			"test": [ "index" ]
 		},
+		"comment-store": {
+			"test": [ "index" ]
+		},
 		"comment-like-store": {
 			"test": [ "comment-like-store" ]
 		},
