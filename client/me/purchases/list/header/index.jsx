@@ -20,7 +20,7 @@ const PurchasesHeader = React.createClass( {
 	},
 
 	render() {
-		var activeSection = this.props.section;
+		const activeSection = this.props.section;
 
 		return(
 			<SectionNav selectedText={ this.getSelectedText( activeSection ) }>
