@@ -80,6 +80,9 @@
 		},
 		"token-field": {
 			"test": [ "index" ]
+		},
+		"track-input-changes": {
+			"test": [ "index" ]
 		}
 	},
 	"lib": {
