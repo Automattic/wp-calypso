@@ -5,6 +5,7 @@ import React from 'react';
 import store from 'store';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+const debug = require( 'debug' )( 'calypso:jetpack-connect:authorize-form' );
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import WpcomLoginForm from 'signup/wpcom-login-form';
 import _user from 'lib/user';
 import config from 'config';
 import { createAccount, authorize } from 'state/jetpack-connect/actions';
+import JetpackConnectNotices from './jetpack-connect-notices';
 
 /**
  * Module variables
@@ -94,32 +96,43 @@ const LoggedOutForm = React.createClass( {
 const LoggedInForm = React.createClass( {
 	displayName: 'LoggedInForm',
 
-	getInitialState() {
-		return { isSubmitting: false, authorizeError: false, authorizeSuccess: false };
-	},
-
 	handleSubmit() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
-		this.setState( { isSubmitting: true, authorizeError: false } );
-		authorize( queryObject );
+		this.props.authorize( queryObject );
 	},
 
 	isAuthorizing() {
 		return this.props.jetpackConnectAuthorize && this.props.jetpackConnectAuthorize.isAuthorizing;
 	},
 
-	render() {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
+	dismissNotice() {
+		debug( 'Notice dissmissed' );
+	},
+
+	renderNotices() {
+		const { authorizeSuccess, authorizeError } = this.props.jetpackConnectAuthorize;
+		if ( authorizeSuccess ) {
+			return <JetpackConnectNotices noticeType="authorizeSuccess" onDismissClick={ this.dismissNotice } />;
+		}
+		if ( authorizeError ) {
+			return <JetpackConnectNotices noticeType="authorizeError" onDismissClick={ this.dismissNotice } />;
+		}
+		return null;
+	},
+
+	renderFormControls() {
+		const { queryObject, isAuthorizing } = this.props.jetpackConnectAuthorize;
 		const loginUrl = config( 'login_url' ) + '?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) + '&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
 		const logoutUrl = config( 'login_url' ) + '?action=logout&redirect_to=' + encodeURIComponent( window.location.href );
 
-		if ( this.state.authorizeSuccess ) {
-			return <p>{ this.translate( 'Jetpack connected!' ) }</p>;
+		if ( this.props.autoAuthorize ) {
+			return isAuthorizing
+				? <p>{ this.translate( 'Authorizing your Jetpack connection' ) }</p>
+				: null
 		}
 
 		return (
 			<div>
-				<p>{ this.translate( 'Connecting as %(user)s', { args: { user: this.props.user.display_name } } ) }</p>
 				<button disabled={ this.isAuthorizing() } onClick={ this.handleSubmit } className="button is-primary">
 					{ this.translate( 'Approve' ) }
 				</button>
@@ -130,7 +143,17 @@ const LoggedInForm = React.createClass( {
 					<LoggedOutFormLinkItem href={ logoutUrl }>
 						{ this.translate( 'Create a new account' ) }
 					</LoggedOutFormLinkItem>
-			</LoggedOutFormLinks>
+				</LoggedOutFormLinks>
+			</div>
+		);
+	},
+
+	render() {
+		return (
+			<div>
+				<p>{ this.translate( 'Connecting as %(user)s', { args: { user: this.props.user.display_name } } ) }</p>
+				{ this.renderNotices() }
+				{ this.renderFormControls() }
 			</div>
 		);
 	}

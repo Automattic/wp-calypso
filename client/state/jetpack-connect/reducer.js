@@ -7,10 +7,19 @@ import {
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_QUERY_UPDATE,
+	JETPACK_CONNECT_AUTHORIZE,
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
 import { combineReducers } from 'redux';
+
+const defaultAuthorizeState = {
+	queryObject: {},
+	isAuthorizing: false,
+	authorizeSuccess: false,
+	authorizeError: false
+};
 
 export function jetpackConnectSite( state = {}, action ) {
 	switch ( action.type ) {
@@ -32,8 +41,12 @@ export function jetpackConnectSite( state = {}, action ) {
 
 export function jetpackConnectAuthorize( state = {}, action ) {
 	switch ( action.type ) {
+		case JETPACK_CONNECT_AUTHORIZE:
+			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false } );
+		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
+			return Object.assign( {}, state, { isAuthorizing: false, authorizeError: action.error, authorizeSuccess: action.data } );
 		case JETPACK_CONNECT_QUERY_SET:
-			return Object.assign( {}, state, { queryObject: action.queryObject } );
+			return Object.assign( {}, defaultAuthorizeState, { queryObject: action.queryObject } );
 		case JETPACK_CONNECT_QUERY_UPDATE:
 			return Object.assign( {}, state, { queryObject: Object.assign( {}, state.queryObject, { [ action.property ]: action.value } ) } );
 		case SERIALIZE:

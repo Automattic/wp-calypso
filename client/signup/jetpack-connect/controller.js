@@ -19,6 +19,7 @@ import { JETPACK_CONNECT_QUERY_SET, JETPACK_CONNECT_QUERY_UPDATE } from 'state/a
  * Module variables
  */
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
+let autoAuthorize = false;
 
 export default {
 	saveQueryObject( context, next ) {
@@ -76,7 +77,8 @@ export default {
 		renderWithReduxStore(
 			React.createElement( jetpackConnectAuthorizeForm, {
 				path: context.path,
-				locale: context.params.lang
+				locale: context.params.lang,
+				autoAuthorize: autoAuthorize
 			} ),
 			document.getElementById( 'primary' ),
 			context.store

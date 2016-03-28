@@ -318,7 +318,7 @@ Undocumented.prototype.jetpackAuthorize = function( siteId, code, state, redirec
 		const resolver = ( error, data ) => {
 			error ? reject( error ) : resolve( data );
 		};
-		this.wpcom.req.get( { path: endpointUrl }, params, resolver );
+		this.wpcom.req.post( { path: endpointUrl }, params, resolver );
 	} );
 };
 

@@ -91,13 +91,13 @@ export default {
 	authorize( queryObject ) {
 		return ( dispatch ) => {
 			const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
+			debug( 'Authorizing', _wp_nonce, redirect_uri, scope, state );
 			dispatch( {
 				type: JETPACK_CONNECT_AUTHORIZE,
 				queryObject: queryObject
 			} );
 			wpcom.undocumented().jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state ).then( ( data ) => {
-				const { code } = data.code;
-				return wpcom.undocumented().jetpackAuthorize( client_id, code, state, redirect_uri, secret );
+				return wpcom.undocumented().jetpackAuthorize( client_id, data.code, state, redirect_uri, secret );
 			} ).then( ( data, error ) => {
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
@@ -107,6 +107,7 @@ export default {
 				} );
 			} )
 			.catch( ( error ) => {
+				debug( 'Authorize error', error );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 					siteId: client_id,
