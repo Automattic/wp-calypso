@@ -23,9 +23,9 @@ import paths from '../../paths';
 
 const PurchaseItem = React.createClass( {
 	propTypes: {
-		slug: React.PropTypes.string,
+		isPlaceholder: React.PropTypes.bool,
 		purchase: React.PropTypes.object,
-		isPlaceholder: React.PropTypes.bool
+		slug: React.PropTypes.string
 	},
 
 	renewsOrExpiresOn() {

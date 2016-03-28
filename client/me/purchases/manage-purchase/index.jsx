@@ -67,6 +67,7 @@ function isDataLoading( props ) {
 
 const ManagePurchase = React.createClass( {
 	propTypes: {
+		destinationType: React.PropTypes.string,
 		hasLoadedSites: React.PropTypes.bool.isRequired,
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
@@ -74,7 +75,6 @@ const ManagePurchase = React.createClass( {
 			React.PropTypes.bool,
 			React.PropTypes.undefined
 		] ),
-		destinationType: React.PropTypes.string,
 		user: React.PropTypes.object.isRequired
 	},
 

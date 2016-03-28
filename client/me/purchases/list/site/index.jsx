@@ -13,10 +13,10 @@ import SectionHeader from 'components/section-header';
 
 const PurchasesSite = React.createClass( {
 	propTypes: {
-		slug: React.PropTypes.string,
+		isPlaceholder: React.PropTypes.bool,
 		name: React.PropTypes.string,
 		purchases: React.PropTypes.array,
-		isPlaceholder: React.PropTypes.bool
+		slug: React.PropTypes.string
 	},
 
 	placeholders() {
