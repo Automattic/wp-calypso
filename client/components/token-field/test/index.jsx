@@ -1,13 +1,11 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
 const expect = require( 'chai' ).expect,
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' ),
-	mockery = require( 'mockery' );
+	useFakeDom = require( 'test/helpers/use-fake-dom' ),
+	useMockery = require( 'test/helpers/use-mockery' );
+
+var ReactDom, React, TestUtils, EMPTY_COMPONENT;
 
 /**
  * Internal dependencies
@@ -32,12 +30,6 @@ const keyCodes = {
 const charCodes = {
 	comma: 44
 };
-
-const EMPTY_COMPONENT = React.createClass( {
-	render: function() {
-		return <div />;
-	}
-} );
 
 describe( 'TokenField', function() {
 	var reactContainer, wrapper, tokenFieldNode, textInputNode, TokenFieldWrapper;
@@ -92,21 +84,21 @@ describe( 'TokenField', function() {
 		return selectedSuggestions[0] || null;
 	}
 
-	before( function() {
-		reactContainer = document.createElement( 'div' );
-		document.body.appendChild( reactContainer );
+	useFakeDom.withContainer();
+
+	useMockery( mockery => {
+		ReactDom = require( 'react-dom' );
+		React = require( 'react' );
+		TestUtils = require( 'react-addons-test-utils' );
+
+		EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
 
 		mockery.registerMock( 'components/tooltip', EMPTY_COMPONENT );
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
 		TokenFieldWrapper = require( './lib/token-field-wrapper' );
 	} );
 
-	after( function() {
-		mockery.disable();
-		mockery.deregisterAll();
+	before( function() {
+		reactContainer = useFakeDom.getContainer();
 	} );
 
 	beforeEach( function() {
@@ -233,7 +225,7 @@ describe( 'TokenField', function() {
 				expect( getSelectedSuggestion() ).to.equal( null );
 				expect( getTokensHTML() ).to.deep.equal( [ 'foo', 'bar', 'it' ] );
 				done();
-			}, 110 );
+			}, 50 );
 		} );
 	} );
 

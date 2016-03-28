@@ -1,15 +1,12 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
 import ReactDom from 'react-dom';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils'
-import chai from 'chai';
+import { expect } from 'chai';
 import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Internal dependencies
@@ -19,8 +16,6 @@ var TrackInputChanges = require( '../' );
 /**
  * Module variables
  */
-const expect = chai.use( sinonChai ).expect;
-
 const spies = {
 	onNewValue: null,
 	onChange: null,
@@ -42,20 +37,30 @@ const DummyInput = React.createClass( {
 } );
 
 describe( 'TrackInputChanges#onNewValue', function() {
-	let tree, dummyInput;
+	let tree, dummyInput, container;
+
+	useFakeDom.withContainer();
+
+	before( () => {
+		container = useFakeDom.getContainer();
+	} );
+
+	afterEach( () => {
+		ReactDom.unmountComponentAtNode( container );
+	} );
 
 	beforeEach( function() {
-		for ( var spy in spies ) {
+		for ( let spy in spies ) {
 			spies[ spy ] = sinon.spy();
 		}
 		tree = ReactDom.render(
 			<TrackInputChanges onNewValue={ spies.onNewValue }>
 				<DummyInput
-					onChange={ spies.onChange}
+					onChange={ spies.onChange }
 					onBlur={ spies.onBlur }
 				/>
 			</TrackInputChanges>,
-			document.body
+			container
 		);
 		dummyInput = TestUtils.findRenderedComponentWithType( tree, DummyInput );
 		// Rendering appears to trigger a 'change' event on the input
@@ -106,15 +111,15 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		expect( () => ReactDom.render(
 			<TrackInputChanges onNewValue={ spies.onNewValue }>
 				<DummyInput
-					onChange={ spies.onChange}
+					onChange={ spies.onChange }
 					onBlur={ spies.onBlur }
 				/>
 				<DummyInput
-					onChange={ spies.onChange}
+					onChange={ spies.onChange }
 					onBlur={ spies.onBlur }
 				/>
 			</TrackInputChanges>,
-			document.body
+			container
 		) ).to.throw( 'Invariant Violation' );
 	} );
 } );

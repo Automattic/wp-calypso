@@ -2,26 +2,17 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
+import useMockery from 'test/helpers/use-mockery';
 
-describe( 'wpcom-sourcecode', () => {
+describe( 'plugin', () => {
 	let wrapPre, unwrapPre;
 
-	before( () => {
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
+	useMockery( mockery => {
 		mockery.registerMock( 'tinymce/tinymce', {} );
 
 		const plugin = require( '../plugin' );
 		wrapPre = plugin.wrapPre;
 		unwrapPre = plugin.unwrapPre;
-	} );
-
-	after( () => {
-		mockery.deregisterAll();
-		mockery.disable();
 	} );
 
 	describe( '#wrapPre()', () => {

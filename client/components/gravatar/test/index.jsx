@@ -1,10 +1,3 @@
-/**
- * Pass in a react-generated html string to remove react-specific attributes
- * to make it easier to compare to expected html structure
- */
-function stripReactAttributes( string ) {
-	return string.replace( /\sdata\-(reactid|react\-checksum)\=\"[^\"]+\"/g, '' );
-}
 
 /**
  * External dependencies
@@ -18,11 +11,20 @@ var assert = require( 'assert' ),
  */
 var Gravatar = require( '../' );
 
-describe( 'Gravatar', function() {
+/**
+ * Pass in a react-generated html string to remove react-specific attributes
+ * to make it easier to compare to expected html structure
+ * @param {string} string react-generated html
+ * @return {string} HTML without react attributes
+ */
+function stripReactAttributes( string ) {
+	return string.replace( /\sdata\-(reactid|react\-checksum)\=\"[^\"]+\"/g, '' );
+}
 
+describe( 'Gravatar', function() {
 	var bobTester = {
-		avatar_URL: "https://0.gravatar.com/avatar/cf55adb1a5146c0a11a808bce7842f7b?s=96&d=identicon",
-		display_name: "Bob The Tester"
+		avatar_URL: 'https://0.gravatar.com/avatar/cf55adb1a5146c0a11a808bce7842f7b?s=96&d=identicon',
+		display_name: 'Bob The Tester'
 	};
 
 	describe( 'rendering', function() {
@@ -48,7 +50,7 @@ describe( 'Gravatar', function() {
 		} );
 
 		it( 'should serve a default image if no avatar_URL available', function() {
-			var noImageTester = { display_name: "Bob The Tester" },
+			var noImageTester = { display_name: 'Bob The Tester' },
 				gravatar = <Gravatar user={ noImageTester } />,
 				expectedResultString = '<img alt="Bob The Tester" class="gravatar" src="https://www.gravatar.com/avatar/0?s=96&amp;d=mm" width="32" height="32"/>';
 
@@ -64,7 +66,7 @@ describe( 'Gravatar', function() {
 
 		// I believe jetpack sites could have custom avatars, so can't assume it's always a gravatar
 		it( 'should promote non-secure avatar urls to secure', function() {
-			var nonSecureTester = { avatar_URL: "http://www.example.com/avatar" },
+			var nonSecureTester = { avatar_URL: 'http://www.example.com/avatar' },
 				gravatar = <Gravatar user={ nonSecureTester } />,
 				expectedResultString = '<img class="gravatar" src="https://i2.wp.com/www.example.com/avatar?resize=96%2C96" width="32" height="32"/>';
 

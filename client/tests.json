@@ -3,6 +3,9 @@
 		"test": [ "index" ]
 	},
 	"components": {
+		"count": {
+			"test": [ "index" ]
+		},
 		"domains": {
 			"domain-suggestion": {
 				"test": [ "index" ]
@@ -26,6 +29,9 @@
 			"counted-textarea": {
 				"test": [ "index" ]
 			},
+			"form-phone-input": {
+				"test": [ "index" ]
+			},
 			"form-toggle": {
 				"test": [ "index" ]
 			},
@@ -35,6 +41,21 @@
 			"range": {
 				"test": [ "index" ]
 			}
+		},
+		"gravatar": {
+			"test": [ "index" ]
+		},
+		"infinite-list": {
+			"test": [ "scroll-helper" ]
+		},
+		"root-child": {
+			"test": [ "index" ]
+		},
+		"search": {
+			"test": [ "index" ]
+		},
+		"section-nav": {
+			"test": [ "index" ]
 		},
 		"theme": {
 			"test": [ "index" ]
@@ -46,8 +67,22 @@
 			"plugins": {
 				"contact-form": {
 					"test": [ "shortcode", "validations" ]
+				},
+				"media": {
+					"restrict-size": {
+						"test": [ "index" ]
+					}
+				},
+				"wpcom-sourcecode": {
+					"test": [ "plugin" ]
 				}
 			}
+		},
+		"token-field": {
+			"test": [ "index" ]
+		},
+		"track-input-changes": {
+			"test": [ "index" ]
 		}
 	},
 	"lib": {
