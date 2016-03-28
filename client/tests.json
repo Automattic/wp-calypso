@@ -36,6 +36,11 @@
 				"test": [ "index" ]
 			}
 		},
+
+		"gravatar": {
+			"test": [ "index" ]
+		},
+
 		"theme": {
 			"test": [ "index" ]
 		},
