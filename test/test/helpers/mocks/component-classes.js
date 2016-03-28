@@ -7,11 +7,7 @@ function MockComponentClasses() {
 		MockComponentClasses.prototype[ key ] = noop;
 	} );
 
-export default {
-	before( mockery ) {
-		mockery.registerMock( 'component-classes', MockComponentClasses )
-	},
-	after( mockery ) {
-		mockery.deregisterMock( 'component-classes' )
-	}
+export default ( mockery ) => {
+	mockery.registerMock( 'component-classes', MockComponentClasses );
+	return MockComponentClasses;
 }

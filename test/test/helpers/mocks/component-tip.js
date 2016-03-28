@@ -10,13 +10,8 @@ function MockTip() {}
 		MockTip.prototype[ key ] = noop;
 	} );
 
-export default {
-	before( mockery ) {
-		debug( 'Registering mock' );
-		mockery.registerMock( 'component-tip', MockTip )
-	},
-	after( mockery ) {
-		debug( 'Deregistering mock' );
-		mockery.deregisterMock( 'component-tip' );
-	}
+export default ( mockery ) => {
+	debug( 'Registering mock' );
+	mockery.registerMock( 'component-tip', MockTip );
+	return MockTip;
 }

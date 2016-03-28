@@ -8,8 +8,7 @@ const i18n = {
 	numberFormat: toString
 };
 
-export default {
-	before: ( mockery ) => mockery.registerMock( 'lib/mixins/i18n', i18n ),
-	after: ( mockery ) => mockery.deregisterMock( 'lib/mixins/i18n' ),
-	i18n
-}
+export default ( mockery ) => {
+	mockery.registerMock( 'lib/mixins/i18n', i18n );
+	return i18n;
+};

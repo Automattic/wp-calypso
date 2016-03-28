@@ -2,30 +2,32 @@ import deepFreeze from 'deep-freeze';
 import assert from 'assert';
 
 describe( 'upgrades/domain-management/list', function() {
-	const mockComponentClasses = require( 'test/helpers/mocks/component-classes' ),
-		mockComponentTip = require( 'test/helpers/mocks/component-tip' ),
-		sinonWrapper = require( 'test/helpers/use-sinon' ).useSandbox(),
-		mockI18n = require( 'test/helpers/mocks/i18n' ),
-		i18n = mockI18n.i18n;
-
-	const mocks = [ mockComponentClasses, mockComponentTip, mockI18n ];
+	const sinonWrapper = require( 'test/helpers/use-sinon' ).useSandbox();
 
 	let React,
 		ReactDom,
 		ReactInjection,
 		DomainList,
 		TestUtils,
+		i18n,
 		noticeTypes,
 		component;
 
 	require( 'test/helpers/use-fake-dom' )( '<div id="main" />' );
 	require( 'test/helpers/use-mockery' )(
 		mockery => {
+			require( 'test/helpers/mocks/component-classes' )( mockery );
+			require( 'test/helpers/mocks/component-tip' )( mockery );
+			require( 'test/helpers/mocks/data-poller' )( mockery );
+			i18n = require( 'test/helpers/mocks/i18n' )( mockery );
+
 			React = require( 'react' );
 			ReactDom = require( 'react-dom' );
 			TestUtils = require( 'react-addons-test-utils' );
-			ReactInjection = require( 'react/lib/ReactInjection' );
+
 			noticeTypes = require( '../constants' );
+
+			ReactInjection = require( 'react/lib/ReactInjection' );
 			ReactInjection.Class.injectMixin( i18n );
 
 			const EMPTY_COMPONENT = React.createClass( {
@@ -33,11 +35,8 @@ describe( 'upgrades/domain-management/list', function() {
 					return <div />;
 				}
 			} );
-
 			mockery.registerMock( 'components/section-nav', EMPTY_COMPONENT );
-			mocks.forEach( m => m.before( mockery ) );
-		},
-		mockery => mocks.forEach( m => m.after( mockery ) )
+		}
 	);
 
 	const selectedSite = deepFreeze( {
@@ -86,7 +85,7 @@ describe( 'upgrades/domain-management/list', function() {
 		} );
 
 		it( 'should list two domains', () => {
-			assert( [].slice.call( ReactDom.findDOMNode( component ).querySelectorAll( '.domain-management-list-item' ), 2 ) );
+			assert.equal( [].slice.call( ReactDom.findDOMNode( component ).querySelectorAll( '.domain-management-list-item' ) ).length, 2 );
 		} );
 	} );
 
@@ -159,9 +158,8 @@ describe( 'upgrades/domain-management/list', function() {
 					component.handleUpdatePrimaryDomain( 0, defaultProps.domains.list[ 0 ] );
 					assert( component.state.settingPrimaryDomain );
 					assert( component.state.primaryDomainIndex === 0 );
-					assert( setPrimaryDomainStub.calledWith( defaultProps.domains.list[ 0 ].name ), '#setPrimaryDomain should be called with' +
-						' the' +
-						' domain name' );
+					assert( setPrimaryDomainStub.calledWith( defaultProps.domains.list[ 0 ].name ),
+						'#setPrimaryDomain should be called with the domain name' );
 					setPrimaryDomainResolve();
 					setTimeout( () => {
 						assert( ! component.state.settingPrimaryDomain, 'Setting Primary Domain should be false' );
