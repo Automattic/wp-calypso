@@ -130,11 +130,20 @@
 		"feed-store": {
 			"test": [ "index" ]
 		},
+		"feed-stream-store": {
+			"test": [ "index" ]
+		},
+		"follow-list": {
+			"test": [ "index" ]
+		},
 		"form-state": {
 			"test": [ "index" ]
 		},
 		"i18n-utils" : {
 			"test": [ "utils" ]
+		},
+		"like-store": {
+			"test": [ "index" ]
 		},
 		"localforage": {
 			"test": [ "localforage-bypass" ]
