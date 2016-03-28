@@ -59,7 +59,7 @@ function canEditPaymentDetails( purchase ) {
  * because this page can be rendered without a selected site.
  *
  * @param {object} props The props passed to `ManagePurchase`
- * @return {bool} Whether or not the data is loading
+ * @return {boolean} Whether or not the data is loading
  */
 function isDataLoading( props ) {
 	return ! props.hasLoadedSites || ! props.selectedPurchase.hasLoadedFromServer;
