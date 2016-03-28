@@ -10,6 +10,7 @@ import intersection from 'lodash/intersection';
  * Internal Dependencies
  **/
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import purchasesPaths from 'me/purchases/paths';
 import domainConstants from 'lib/domains/constants';
 import i18n from 'lib/mixins/i18n';
@@ -175,20 +176,25 @@ export default React.createClass( {
 		return <Notice status="is-warning" showDismiss={ false } key="new-domains">{ text }</Notice>;
 	},
 
-	unverifiedDomains() {
-		let notice,
-			domains = this.getDomains().filter( domain => domain.isPendingIcannVerification );
+	unverifiedDomainNotice( domain ) {
+		return (
+			<Notice
+				status="is-error"
+				showDismiss={ false }
+				className="domain-warnings__unverified-domains"
+				key="unverified-domains"
+				text={ this.translate( 'Urgent! Your domain %(domain)s may be lost forever because your email address is not verified.', { args: { domain } } ) }>
 
-		if ( domains.length === 1 ) {
-			let domain = domains[0].name;
+				<NoticeAction href={ paths.domainManagementEdit( this.props.selectedSite.domain, domain ) }>
+					{ this.translate( 'Fix now' ) }
+				</NoticeAction>
+			</Notice>
+		);
+	},
 
-			notice = this.translate( 'Urgent! Your domain %(domain)s may be lost forever because your email address is not verified. {{a}}Fix now.{{/a}}',
-				{
-					args: { domain },
-					components: { a: <a href={ paths.domainManagementEdit( this.props.selectedSite.domain, domain ) } />},
-				} );
-		} else if ( domains.length ) {
-			notice = <div>
+	unverifiedDomainsNotice( domains ) {
+		return (
+			<Notice status="is-error" showDismiss={ false } className="domain-warnings__unverified-domains" key="unverified-domains">
 				{ this.translate( 'Urgent! Some of your domains may be lost forever because your email address is not verified:' ) }
 				<ul>{
 					domains.map( ( domain ) => {
@@ -197,12 +203,19 @@ export default React.createClass( {
 						</li>;
 					} )
 				}</ul>
-			</div>
-		} else {
-			return null;
-		}
+			</Notice>
+		);
+	},
 
-		return <Notice status="is-error" showDismiss={ true } className="domain-warnings__unverified-domains" key="unverified-domains">{ notice }</Notice>;
+	unverifiedDomains() {
+		let domains = this.getDomains().filter( domain => domain.isPendingIcannVerification );
+
+		if ( domains.length === 1 ) {
+			return this.unverifiedDomainNotice( domains[0].name );
+		} else if ( domains.length ) {
+			return this.unverifiedDomainsNotice( domains );
+		}
+		return null;
 	},
 
 	componentWillMount: function() {
