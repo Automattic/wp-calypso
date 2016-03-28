@@ -67,7 +67,7 @@ function isDataLoading( props ) {
 
 const ManagePurchase = React.createClass( {
 	propTypes: {
-		cart: React.PropTypes.object.isRequired,
+		hasLoadedSites: React.PropTypes.bool.isRequired,
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,

@@ -20,6 +20,11 @@ import paths from '../paths';
 import titles from 'me/purchases/titles';
 
 const CancelPrivateRegistration = React.createClass( {
+	propTypes: {
+		selectedPurchase: React.PropTypes.object.isRequired,
+		selectedSite: React.PropTypes.object.isRequired
+	},
+
 	getInitialState() {
 		return {
 			disabled: false,

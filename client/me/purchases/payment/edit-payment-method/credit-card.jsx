@@ -18,7 +18,8 @@ import { successNotice } from 'state/notices/actions';
 const EditPaymentMethodCreditCard = React.createClass( {
 	propTypes: {
 		selectedPurchase: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.object.isRequired
+		selectedSite: React.PropTypes.object.isRequired,
+		successNotice: React.PropTypes.object.isRequired
 	},
 
 	getInitialState() {

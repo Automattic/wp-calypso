@@ -16,7 +16,10 @@ import titles from 'me/purchases/titles';
 const ConfirmCancelPurchaseLoadingPlaceholder = React.createClass( {
 	propTypes: {
 		purchaseId: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.object.isRequired
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.bool,
+			React.PropTypes.object
+		] ).isRequired
 	},
 
 	render() {

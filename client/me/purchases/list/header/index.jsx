@@ -12,6 +12,10 @@ import paths from '../../paths.js';
 import SectionNav from 'components/section-nav';
 
 const PurchasesHeader = React.createClass( {
+	propTypes: {
+		section: React.PropTypes.string.isRequired
+	},
+
 	getSelectedText( activeSection ) {
 		if ( activeSection === 'purchases' ) {
 			return this.translate( 'Purchases' );

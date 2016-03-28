@@ -21,6 +21,7 @@ import titles from 'me/purchases/titles';
 
 const ConfirmCancelPurchase = React.createClass( {
 	propTypes: {
+		purchaseId: React.PropTypes.string.isRequired,
 		selectedPurchase: React.PropTypes.object,
 		selectedSite: React.PropTypes.object
 	},
