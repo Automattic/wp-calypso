@@ -1,3 +1,10 @@
+
+4.9.1 / 2016-03-28
+==================
+
+ * site.plugin: add basic site plugins structure
+ * site.domain: add basic site domain structure
+
 4.9.0 / 2016-03-28
 ==================
 
