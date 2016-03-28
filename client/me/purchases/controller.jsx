@@ -59,6 +59,26 @@ function setTitle( ...title ) {
 }
 
 export default {
+	cancelPrivateRegistration( context ) {
+		setTitle(
+			titles.cancelPrivateRegistration
+		);
+
+		recordPageView(
+			paths.cancelPrivateRegistration(),
+			'Cancel Private Registration'
+		);
+
+		sites.setSelectedSite( context.params.site );
+
+		renderPage(
+			<ManagePurchaseData
+				component={ CancelPrivateRegistration }
+				purchaseId={ context.params.purchaseId }
+				sites={ sites } />
+		);
+	},
+
 	cancelPurchase( context ) {
 		setTitle(
 			titles.cancelPurchase
@@ -76,26 +96,6 @@ export default {
 				component={ CancelPurchase }
 				isDataLoading={ isDataLoading }
 				loadingPlaceholder={ CancelPurchaseLoadingPlaceholder }
-				purchaseId={ context.params.purchaseId }
-				sites={ sites } />
-		);
-	},
-
-	cancelPrivateRegistration( context ) {
-		setTitle(
-			titles.cancelPrivateRegistration
-		);
-
-		recordPageView(
-			paths.cancelPrivateRegistration(),
-			'Cancel Private Registration'
-		);
-
-		sites.setSelectedSite( context.params.site );
-
-		renderPage(
-			<ManagePurchaseData
-				component={ CancelPrivateRegistration }
 				purchaseId={ context.params.purchaseId }
 				sites={ sites } />
 		);
