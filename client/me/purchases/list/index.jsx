@@ -66,11 +66,7 @@ const PurchasesList = React.createClass( {
 			return true;
 		}
 
-		if ( ! this.props.sites.initialized ) {
-			return true;
-		}
-
-		return false;
+		return ! this.props.sites.initialized;
 	},
 
 	render() {
