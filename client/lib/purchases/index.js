@@ -11,7 +11,11 @@ import moment from 'moment';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import { isDomainRegistration, isTheme, isPlan } from 'lib/products-values';
+import {
+	isDomainRegistration,
+	isPlan,
+	isTheme
+} from 'lib/products-values';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;

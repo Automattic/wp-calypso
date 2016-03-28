@@ -38,7 +38,7 @@ import { getDetailsUrl as getThemeDetailsUrl } from 'my-sites/themes/helpers';
 import { getPurchase, getSelectedSite, goToList, recordPageView } from '../utils';
 import { googleAppsSettingsUrl } from 'lib/google-apps';
 import HeaderCake from 'components/header-cake';
-import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
+import { isDomainProduct, isDomainRegistration, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -462,14 +462,26 @@ const ManagePurchase = React.createClass( {
 		const purchase = getPurchase( this.props );
 
 		if ( isExpiring( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
-			return this.translate( 'Expires on' );
+			if ( isDomainRegistration( purchase ) ) {
+				return this.translate( 'Domain expires on' );
+			}
+
+			return this.translate( 'Subscription expires on' );
 		}
 
 		if ( isExpired( purchase ) ) {
-			return this.translate( 'Expired on' );
+			if ( isDomainRegistration( purchase ) ) {
+				return this.translate( 'Domain expired on' );
+			}
+
+			return this.translate( 'Subscription expired on' );
 		}
 
-		return this.translate( 'Auto-renews on' );
+		if ( isDomainRegistration( purchase ) ) {
+			return this.translate( 'Domain auto-renews on' );
+		}
+
+		return this.translate( 'Subscription auto-renews on' );
 	},
 
 	renderRenewsOrExpiresOn() {
@@ -536,17 +548,23 @@ const ManagePurchase = React.createClass( {
 			return null;
 		}
 
-		const translateArgs = {
-			args: { purchaseName: getName( purchase ) }
-		};
+		let text;
+
+		if ( isRefundable( purchase ) ) {
+			if ( isDomainRegistration( purchase ) ) {
+				text = this.translate( 'Cancel Domain and Refund' );
+			} else {
+				text = this.translate( 'Cancel Subscription and Refund' );
+			}
+		} else if ( isDomainRegistration( purchase ) ) {
+			text = this.translate( 'Cancel Domain' );
+		} else {
+			text = this.translate( 'Cancel Subscription' );
+		}
 
 		return (
 			<CompactCard href={ paths.cancelPurchase( this.props.selectedSite.slug, id ) }>
-				{
-					isRefundable( purchase )
-					? this.translate( 'Cancel and Refund %(purchaseName)s', translateArgs )
-					: this.translate( 'Cancel %(purchaseName)s', translateArgs )
-				}
+				{ text }
 			</CompactCard>
 		);
 	},
