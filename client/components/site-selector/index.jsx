@@ -76,7 +76,7 @@ export default React.createClass( {
 		}
 
 		// ignore mouse events as the default page() click event will handle navigation
-		if ( this.props.siteBasePath && ( ! ( event.type === 'mouseup' || event.type === 'touchend' ) ) ) {
+		if ( this.props.siteBasePath && ( ! ( event.type === 'mouseup' ) ) ) {
 			page( event.currentTarget.pathname );
 		}
 	},
