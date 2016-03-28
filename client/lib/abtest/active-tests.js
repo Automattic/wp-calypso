@@ -45,15 +45,6 @@ module.exports = {
 		},
 		defaultVariation: 'yearly'
 	},
-	plansFeatureList: {
-		datestamp: '20160215',
-		variations: {
-			list: 33,
-			andMore: 33,
-			description: 34
-		},
-		defaultVariation: 'description'
-	},
 	checkoutFooter: {
 		datestamp: '20160215',
 		variations: {
