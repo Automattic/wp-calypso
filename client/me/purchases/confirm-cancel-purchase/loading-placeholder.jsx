@@ -13,32 +13,31 @@ import CompactCard from 'components/card/compact';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 import titles from 'me/purchases/titles';
 
-const ConfirmCancelPurchaseLoadingPlaceholder = React.createClass( {
-	propTypes: {
-		purchaseId: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.object
-		] ).isRequired
-	},
+const ConfirmCancelPurchaseLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {
+	return (
+		<LoadingPlaceholder
+			title={ titles.confirmCancelPurchase }
+			path={ cancelPurchase( selectedSite.slug, purchaseId ) }>
+			<Card className="confirm-cancel-purchase-loading-placeholder__card">
+				<h2 className="loading-placeholder__content confirm-cancel-purchase-loading-placeholder__header" />
+				<div className="loading-placeholder__content confirm-cancel-purchase-loading-placeholder__subheader" />
+				<div className="loading-placeholder__content confirm-cancel-purchase-loading-placeholder__reason" />
+				<div className="loading-placeholder__content confirm-cancel-purchase-loading-placeholder__reason" />
+			</Card>
 
-	render() {
-		return (
-			<LoadingPlaceholder
-				title={ titles.confirmCancelPurchase }
-				path={ cancelPurchase( this.props.selectedSite.slug, this.props.purchaseId ) }>
-				<Card className="confirm-cancel-purchase-loading-placeholder__card">
-					<h2 className="loading-placeholder__content confirm-cancel-purchase-loading-placeholder__header" />
-					<div className="loading-placeholder__content confirm-cancel-purchase-loading-placeholder__subheader" />
-					<div className="loading-placeholder__content confirm-cancel-purchase-loading-placeholder__reason" />
-					<div className="loading-placeholder__content confirm-cancel-purchase-loading-placeholder__reason" />
-				</Card>
-				<CompactCard>
-					<Button className="confirm-cancel-purchase-loading-placeholder__cancel-button" />
-				</CompactCard>
-			</LoadingPlaceholder>
-		);
-	}
-} );
+			<CompactCard>
+				<Button className="confirm-cancel-purchase-loading-placeholder__cancel-button" />
+			</CompactCard>
+		</LoadingPlaceholder>
+	);
+};
+
+ConfirmCancelPurchaseLoadingPlaceholder.propTypes = {
+	purchaseId: React.PropTypes.string.isRequired,
+	selectedSite: React.PropTypes.oneOfType( [
+		React.PropTypes.bool,
+		React.PropTypes.object
+	] ).isRequired
+};
 
 export default ConfirmCancelPurchaseLoadingPlaceholder;
