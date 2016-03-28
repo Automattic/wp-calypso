@@ -1,19 +1,8 @@
 var assert = require( 'chai' ).assert,
 	sinon = require( 'sinon' ),
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	mockery = require( 'mockery' ),
-	TestUtils = require( 'react-addons-test-utils' ),
-	SectionNav;
-
-var EMPTY_COMPONENT = React.createClass( {
-	render: function() {
-		return <div />;
-	}
-} );
-
-require( 'lib/react-test-env-setup' )( '<html><body><script></script><div id="container"></div></body></html>' );
-require( 'react-tap-event-plugin' )();
+	useMockery = require( 'test/helpers/use-mockery' ),
+	useFakeDom = require( 'test/helpers/use-fake-dom' ),
+	ReactDom,	React, TestUtils, SectionNav;
 
 function createComponent( component, props, children ) {
 	var shallowRenderer = TestUtils.createRenderer();
@@ -22,19 +11,26 @@ function createComponent( component, props, children ) {
 	);
 	return shallowRenderer.getRenderOutput();
 }
+
 describe( 'section-nav', function() {
-	before( function() {
+	useFakeDom( '<html><body><script></script><div id="container"></div></body></html>' );
+
+	useMockery( mockery => {
+		ReactDom = require( 'react-dom' );
+		React = require( 'react' );
+		TestUtils = require( 'react-addons-test-utils' );
+		require( 'react-tap-event-plugin' )();
+
+		const EMPTY_COMPONENT = React.createClass( {
+			render: function() {
+				return <div />;
+			}
+		} );
+
 		mockery.registerMock( 'components/gridicon', EMPTY_COMPONENT );
-		mockery.enable();
-		mockery.warnOnUnregistered( false );
 
 		SectionNav = require( '../' );
-	} ),
-
-	after( function() {
-		mockery.deregisterMock( 'components/gridicon' );
-		mockery.disable();
-	} ),
+	} );
 
 	describe( 'rendering', function() {
 		before( function() {
