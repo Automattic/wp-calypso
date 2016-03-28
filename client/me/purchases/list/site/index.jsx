@@ -8,44 +8,45 @@ import times from 'lodash/times';
 /**
  * Internal dependencies
  */
+import i18n from 'lib/mixins/i18n';
 import PurchaseItem from '../item';
 import SectionHeader from 'components/section-header';
 
-const PurchasesSite = React.createClass( {
-	propTypes: {
-		isPlaceholder: React.PropTypes.bool,
-		name: React.PropTypes.string,
-		purchases: React.PropTypes.array,
-		slug: React.PropTypes.string
-	},
+const PurchasesSite = ( { isPlaceholder, name, purchases, slug } ) => {
+	let items, label = name;
 
-	placeholders() {
-		return times( 2, index => <PurchaseItem isPlaceholder key={ index } /> );
-	},
+	if ( isPlaceholder ) {
+		items = times( 2, index => (
+			<PurchaseItem
+				isPlaceholder key={ index } />
+		) );
 
-	render() {
-		const { isPlaceholder } = this.props,
-			classes = classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } );
-
-		return (
-			<div className={ classes }>
-				<SectionHeader label={ isPlaceholder ? this.translate( 'Loading…' ) : this.props.name }>
-					<span className="purchases-site__slug">{ this.props.slug }</span>
-				</SectionHeader>
-				{
-					isPlaceholder ?
-					this.placeholders() :
-					this.props.purchases.map( purchase => (
-						<PurchaseItem
-							key={ purchase.id }
-							slug={ this.props.slug }
-							purchase={ purchase } />
-						)
-					)
-				}
-			</div>
-		);
+		label = i18n.translate( 'Loading…' );
+	} else {
+		items = purchases.map( purchase => (
+			<PurchaseItem
+				key={ purchase.id }
+				slug={ slug }
+				purchase={ purchase } />
+		) );
 	}
-} );
+
+	return (
+		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
+			<SectionHeader label={ label }>
+				<span className="purchases-site__slug">{ slug }</span>
+			</SectionHeader>
+
+			{ items }
+		</div>
+	);
+};
+
+PurchasesSite.propTypes = {
+	isPlaceholder: React.PropTypes.bool,
+	name: React.PropTypes.string,
+	purchases: React.PropTypes.array,
+	slug: React.PropTypes.string
+};
 
 export default PurchasesSite;
