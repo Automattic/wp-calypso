@@ -9,6 +9,7 @@ var Comment = require('./site.comment');
 var SiteWordAds = require('./site.wordads');
 var Follow = require('./site.follow');
 var addRuntimeMethods = require('./util/runtime-builder');
+var SiteDomain = require('./site.domain');
 var SiteSettings = require('./site.settings');
 var siteGetMethods = require('./runtime/site.get');
 var debug = require('debug')('wpcom:site');
@@ -174,6 +175,15 @@ Site.prototype.tag = function (slug) {
  */
 Site.prototype.settings = function () {
   return new SiteSettings(this._id, this.wpcom);
+};
+
+/**
+ * Create a `SiteDomain` instance
+ *
+ * @return {SiteDomain} SiteDomain instance
+ */
+Site.prototype.domain = function () {
+  return new SiteDomain(this._id, this.wpcom);
 };
 
 /**
