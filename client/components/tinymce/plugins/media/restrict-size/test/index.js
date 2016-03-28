@@ -7,12 +7,14 @@ import rewire from 'rewire';
 /**
  * Internal dependencies
  */
-import setupTestEnv from 'lib/react-test-env-setup';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'restrictSize', () => {
 	let restrictSize;
+
+	useFakeDom();
+
 	before( () => {
-		setupTestEnv();
 		restrictSize = rewire( '../' );
 	} );
 
