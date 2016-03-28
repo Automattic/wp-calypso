@@ -9,6 +9,7 @@ var Comment = require( './site.comment' );
 var SiteWordAds = require( './site.wordads' );
 var Follow = require( './site.follow' );
 var addRuntimeMethods = require( './util/runtime-builder' );
+var SitePlugin = require( './site.plugin' );
 var SiteDomain = require( './site.domain' );
 var SiteSettings = require( './site.settings' );
 var siteGetMethods = require( './runtime/site.get' );
@@ -145,6 +146,16 @@ Site.prototype.comment = function( id ) {
  */
 Site.prototype.follow = function() {
 	return new Follow( this._id, this.wpcom );
+};
+
+/**
+ * Create a `SitePlugin` instance
+ *
+ * @param {String} id - plugin identifier
+ * @return {SitePlugin} SitePlugin instance
+ */
+Site.prototype.plugin = function( id ) {
+	return new SitePlugin( id, this._id, this.wpcom );
 };
 
 /**

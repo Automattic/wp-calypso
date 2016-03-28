@@ -6,6 +6,7 @@
 	{ "name": "domainsList", "subpath": "domains" },
 	{ "name": "followsList", "subpath": "follows" },
 	{ "name": "mediaList", "subpath":  "media" },
+	{ "name": "pluginsList", "subpath":  "plugins" },
 	{ "name": "pageTemplates", "subpath": "page-templates" },
 	{ "name": "postsList", "subpath": "posts" },
 	{ "name": "postTypesList", "subpath": "post-types" },
