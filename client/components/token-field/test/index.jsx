@@ -5,7 +5,7 @@ const expect = require( 'chai' ).expect,
 	useFakeDom = require( 'test/helpers/use-fake-dom' ),
 	useMockery = require( 'test/helpers/use-mockery' );
 
-var ReactDom,	React, TestUtils, EMPTY_COMPONENT;
+var ReactDom, React, TestUtils, EMPTY_COMPONENT;
 
 /**
  * Internal dependencies
@@ -84,25 +84,21 @@ describe( 'TokenField', function() {
 		return selectedSuggestions[0] || null;
 	}
 
-	useFakeDom();
+	useFakeDom.withContainer();
 
 	useMockery( mockery => {
 		ReactDom = require( 'react-dom' );
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
 
-		EMPTY_COMPONENT = React.createClass( {
-			render: function() {
-				return <div />;
-			}
-		} )
+		EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
+
 		mockery.registerMock( 'components/tooltip', EMPTY_COMPONENT );
 		TokenFieldWrapper = require( './lib/token-field-wrapper' );
 	} );
 
 	before( function() {
-		reactContainer = document.createElement( 'div' );
-		document.body.appendChild( reactContainer );
+		reactContainer = useFakeDom.getContainer();
 	} );
 
 	beforeEach( function() {

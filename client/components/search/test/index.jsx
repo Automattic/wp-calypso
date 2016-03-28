@@ -15,11 +15,7 @@ describe( 'Search', function() {
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
 
-		EMPTY_COMPONENT = React.createClass( {
-			render: function() {
-				return <div />;
-			}
-		} );
+		EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
 
 		mockery.registerMock( 'analytics', {} );
 		mockery.registerMock( 'lib/mixins/i18n', { translate: noop } );

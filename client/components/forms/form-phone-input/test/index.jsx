@@ -2,7 +2,8 @@
  * External dependencies
  */
 var expect = require( 'chai' ).expect,
-	useFakeDom = require( 'test/helpers/use-fake-dom' ),
+	useFakeDom = require( 'test/helpers/use-fake-dom' ).withContainer,
+	getContainer = require( 'test/helpers/use-fake-dom' ).getContainer,
 	useMockery = require( 'test/helpers/use-mockery' );
 
 describe( 'FormPhoneInput', function() {
@@ -26,8 +27,7 @@ describe( 'FormPhoneInput', function() {
 		i18n.initialize();
 		ReactInjection.Class.injectMixin( i18n.mixin );
 		FormPhoneInput = require( 'components/forms/form-phone-input' );
-		container = document.createElement( 'div' );
-		document.body.appendChild( container );
+		container = getContainer();
 	} );
 
 	afterEach( function() {

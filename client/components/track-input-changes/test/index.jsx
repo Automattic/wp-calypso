@@ -39,10 +39,10 @@ const DummyInput = React.createClass( {
 describe( 'TrackInputChanges#onNewValue', function() {
 	let tree, dummyInput, container;
 
-	useFakeDom( '<html><head></head><body><div id="container"></div></body></html>' );
+	useFakeDom.withContainer();
 
 	before( () => {
-		container = document.getElementById( 'container' );
+		container = useFakeDom.getContainer();
 	} );
 
 	afterEach( () => {
