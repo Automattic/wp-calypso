@@ -881,7 +881,7 @@ Undocumented.prototype.deleteSite = function( siteId, fn ) {
  * @param {Function} fn Method to invoke when request is complete
  */
 Undocumented.prototype.createConnection = function( keyringConnectionId, siteId, externalUserId, options, fn ) {
-	var body, url;
+	var body, path;
 
 	// Method overloading: Optional `options`
 	if ( 'undefined' === typeof fn && 'function' === typeof options ) {
@@ -899,12 +899,11 @@ Undocumented.prototype.createConnection = function( keyringConnectionId, siteId,
 		body.external_user_ID = externalUserId;
 	}
 
-	url = siteId ? '/sites/' + siteId + '/publicize-connections/new' : '/me/publicize-connections/new';
-	this.wpcom.req.post( {
-		path: url,
-		body: body,
-		apiVersion: '1.1'
-	}, fn );
+	path = siteId
+		? '/sites/' + siteId + '/publicize-connections/new'
+		: '/me/publicize-connections/new';
+
+	this.wpcom.req.post( { path, body, apiVersion: '1.1' }, fn );
 };
 
 /**
@@ -916,18 +915,18 @@ Undocumented.prototype.createConnection = function( keyringConnectionId, siteId,
  * @param {Function} fn Function to invoke when request is complete
  */
 Undocumented.prototype.updateConnection = function( siteId, connectionId, data, fn ) {
-	var url;
+	var path;
 
 	if ( siteId ) {
 		debug( '/sites/:site_id:/publicize-connections/:connection_id: query' );
-		url = '/sites/' + siteId + '/publicize-connections/' + connectionId;
+		path = '/sites/' + siteId + '/publicize-connections/' + connectionId;
 	} else {
 		debug( '/me/publicize-connections/:connection_id: query' );
-		url = '/me/publicize-connections/' + connectionId;
+		path = '/me/publicize-connections/' + connectionId;
 	}
 
 	this.wpcom.req.post( {
-		path: url,
+		path: path,
 		body: data,
 		apiVersion: '1.1'
 	}, fn );
@@ -976,13 +975,15 @@ Undocumented.prototype.updateCreditCard = function( params, fn ) {
 
 /**
  * GET paygate configuration
+ *
+ * @param {Object} query - query parameters
  * @param {Function} fn The callback function
  * @api public
  */
-Undocumented.prototype.paygateConfiguration = function( data, fn ) {
+Undocumented.prototype.paygateConfiguration = function( query, fn ) {
 	debug( '/me/paygate-configuration query' );
 
-	this.wpcom.req.get( '/me/paygate-configuration', data, fn );
+	this.wpcom.req.get( '/me/paygate-configuration', query, fn );
 };
 
 /**
@@ -1889,6 +1890,7 @@ Undocumented.prototype.submitKayakoTicket = function( subject, message, locale, 
 /**
  * Get the olark configuration for the current user
  *
+ * @param {Object} client - current user
  * @param {Function} fn The callback function
  * @api public
  */
@@ -1940,10 +1942,10 @@ Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
 /**
  * Check the status of an export
  *
- * @param {int}       siteId            The site ID
- * @param {Object}    exportId          Export ID (for future use)
- * @param {Function}  fn                The callback function
- * @returns {Promise}
+ * @param {Number|String} siteId - The site ID
+ * @param {Object} exportId - Export ID (for future use)
+ * @param {Function} fn - The callback function
+ * @returns {Promise}  promise
  */
 Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
 	return this.wpcom.req.get( {
@@ -1965,9 +1967,9 @@ Undocumented.prototype.timezones = function( params, fn ) {
 /**
  * Check different info about WordPress and Jetpack status on a url
  *
- * @param {String}    targetUrl          The url of the site to check
- * @param {String}    filters            Comma separated string with the filters to run
- * @returns {Promise}
+ * @param {String} targetUrl - The url of the site to check
+ * @param {String} filters - Comma separated string with the filters to run
+ * @returns {Promise}  promise
  */
 Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
 	return new Promise( ( resolve, reject ) => {
