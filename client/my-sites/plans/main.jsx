@@ -157,12 +157,12 @@ const Plans = React.createClass( {
 } );
 
 export default connect(
-	function mapStateToProps( state, props ) {
+	( state, props ) => {
 		return {
 			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() )
 		};
 	},
-	function mapDispatchToProps( dispatch ) {
+	( dispatch ) => {
 		return {
 			fetchSitePlans( sitePlans, site ) {
 				if ( shouldFetchSitePlans( sitePlans, site ) ) {
