@@ -4,7 +4,7 @@
 import React from 'react';
 
 const JetpackPlanDetails = React.createClass( {
-	render: function() {
+	render() {
 		return (
 			<div>
 				<p>{ this.props.plan.description }</p>

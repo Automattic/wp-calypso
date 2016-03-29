@@ -21,7 +21,7 @@ const plans = plansFactory();
 const sites = sitesFactory();
 
 export default {
-	plans: function( context ) {
+	plans( context ) {
 		const Plans = require( 'my-sites/plans/main' ),
 			CheckoutData = require( 'components/data/checkout' ),
 			MainComponent = require( 'components/main' ),
@@ -76,7 +76,7 @@ export default {
 		);
 	},
 
-	plansCompare: function( context ) {
+	plansCompare( context ) {
 		const PlansCompare = require( 'components/plans/plans-compare' ),
 			Main = require( 'components/main' ),
 			CheckoutData = require( 'components/data/checkout' ),
@@ -118,7 +118,7 @@ export default {
 		);
 	},
 
-	redirectToCheckout: function( context ) {
+	redirectToCheckout( context ) {
 		// this route is deprecated, use `/checkout/:site/:plan` to link to plan checkout
 		page.redirect( `/checkout/${ context.params.domain }/${ context.params.plan }` );
 	}

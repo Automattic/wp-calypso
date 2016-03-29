@@ -30,33 +30,33 @@ const Plans = React.createClass( {
 
 	mixins: [ observe( 'sites', 'plans' ) ],
 
-	getInitialState: function() {
+	getInitialState() {
 		return { openPlan: '' };
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.updateSitePlans( this.props.sitePlans );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.updateSitePlans( nextProps.sitePlans );
 	},
 
-	updateSitePlans: function( sitePlans ) {
+	updateSitePlans( sitePlans ) {
 		const selectedSite = this.props.sites.getSelectedSite();
 
 		this.props.fetchSitePlans( sitePlans, selectedSite );
 	},
 
-	openPlan: function( planId ) {
+	openPlan( planId ) {
 		this.setState( { openPlan: planId === this.state.openPlan ? '' : planId } );
 	},
 
-	recordComparePlansClick: function() {
+	recordComparePlansClick() {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Compare Plans Link' );
 	},
 
-	comparePlansLink: function() {
+	comparePlansLink() {
 		const selectedSite = this.props.sites.getSelectedSite();
 		let url = '/plans/compare',
 			compareString = this.translate( 'Compare Plans' );
@@ -95,7 +95,7 @@ const Plans = React.createClass( {
 		}
 	},
 
-	render: function() {
+	render() {
 		const selectedSite = this.props.sites.getSelectedSite();
 		let hasJpphpBundle,
 			currentPlan;
