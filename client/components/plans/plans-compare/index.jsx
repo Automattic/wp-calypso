@@ -30,8 +30,6 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 
 const PlansCompare = React.createClass( {
-	displayName: 'PlansCompare',
-
 	mixins: [
 		observe( 'features', 'plans' )
 	],
