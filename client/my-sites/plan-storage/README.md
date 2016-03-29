@@ -18,6 +18,7 @@ will query media storage limits for you.
 
 * `siteId`: A site ID (required)
 * `onClick`: An on click handler that is fired when the plan button is clicked.
+* `onMount`: An on mount click handler that is called in componentDidMount.
 * `className`: A string that adds additional class names to this component.
 
 
@@ -57,6 +58,7 @@ export default connect( ( state, ownProps ) => {
 * `sitePlanName`: A plan name ( Free or Premium ) (required)
 * `mediaStorage`: Media Storage limits for a given site. If this is not provided, the button will not render.
 * `onClick`: An on click handler that is fired when the plan storage button is clicked.
+* `onMount`: An on mount click handler that is called in componentDidMount.
 * `className`: A string that adds additional class names to this component.
 
 

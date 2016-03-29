@@ -20,12 +20,14 @@ const PlanStorage = React.createClass( {
 		className: React.PropTypes.string,
 		mediaStorage: React.PropTypes.object,
 		siteId: React.PropTypes.number.isRequired,
+		onMount: React.PropTypes.func,
 		onClick: React.PropTypes.func
 	},
 
 	getDefaultProps() {
 		return {
-			onClick: noop
+			onClick: noop,
+			onMount: noop
 		}
 	},
 
@@ -40,6 +42,7 @@ const PlanStorage = React.createClass( {
 				<PlanStorageButton
 					sitePlanName={ this.props.site.plan.product_name_short }
 					mediaStorage={ this.props.mediaStorage }
+					onMount={ this.props.onMount }
 					onClick={ this.props.onClick }
 				/>
 			</div>
