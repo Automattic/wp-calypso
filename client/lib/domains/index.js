@@ -97,9 +97,12 @@ function canRedirect( siteId, domainName, onComplete ) {
 }
 
 function getPrimaryDomain( siteId, onComplete ) {
-	wpcom.undocumented().getPrimaryDomain( siteId, function( serverError, data ) {
-		onComplete( serverError, data );
-	} );
+	wpcom
+		.site( siteId )
+		.domain()
+		.getPrimary( function( serverError, data ) {
+			onComplete( serverError, data );
+		} );
 }
 
 function getFixedDomainSearch( domainName ) {

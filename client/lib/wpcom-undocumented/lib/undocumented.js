@@ -1048,18 +1048,6 @@ Undocumented.prototype.exampleDomainSuggestions = function( fn ) {
 };
 
 /**
- * GET primary domain for blog
- *
- * @param {int} siteId The site ID
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.getPrimaryDomain = function( siteId, fn ) {
-	debug( '/sites/:site_id/domains/primary' );
-	this.wpcom.req.get( '/sites/' + siteId + '/domains/primary', fn );
-};
-
-/**
  * Update primary domain for blog
  *
  * @param {int} siteId The site ID
