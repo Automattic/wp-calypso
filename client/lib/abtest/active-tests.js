@@ -21,14 +21,6 @@ module.exports = {
 		defaultVariation: 'noNotice',
 		allowAnyLocale: true
 	},
-	plansPageBusinessAATest: {
-		datestamp: '20160108',
-		variations: {
-			originalA: 50,
-			originalB: 50
-		},
-		defaultVariation: 'originalA'
-	},
 	freeTrialsInSignup: {
 		datestamp: '20160328',
 		variations: {

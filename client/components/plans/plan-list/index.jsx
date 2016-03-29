@@ -7,7 +7,6 @@ import times from 'lodash/times';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import Card from 'components/card';
 import { filterPlansBySiteAndProps } from 'lib/plans';
 import { getCurrentPlan } from 'lib/plans';
@@ -49,7 +48,9 @@ const PlanList = React.createClass( {
 			} );
 
 			return (
-				<div className="plan-list">{ plansList }</div>
+				<div className="plan-list">
+					{ plansList }
+				</div>
 			);
 		}
 
@@ -95,14 +96,11 @@ const PlanList = React.createClass( {
 			} );
 		}
 
-		let aaMarkup;
-		if ( abtest( 'plansPageBusinessAATest' ) === 'originalA' ) {
-			aaMarkup = plansList;
-		} else {
-			aaMarkup = plansList;
-		}
-
-		return <div className="plan-list">{ aaMarkup }</div>;
+		return (
+			<div className="plan-list">
+				{ plansList }
+			</div>
+		);
 	}
 } );
 
