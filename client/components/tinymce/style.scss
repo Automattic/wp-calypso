@@ -41,7 +41,9 @@
 		& > .mce-toolbar-grp,
 		&:after {
 			position: fixed;
-				top: 47px;
+                top: 47px;
+            border-left-width: 0;
+            border-right-width: 0;
 		}
 
 		& > .mce-toolbar-grp {
