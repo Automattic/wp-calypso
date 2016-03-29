@@ -129,11 +129,12 @@ describe( 'selectors', () => {
 		it( 'should return an empty object if no state is present', () => {
 			const tourState = getGuidesTourState( {
 				ui: {
-					guidesTour: false
+					shouldShow: false,
+					guidesTour: false,
 				}
 			} );
 
-			expect( tourState ).to.deep.equal( { stepConfig: false } );
+			expect( tourState ).to.deep.equal( { shouldShow: false, stepConfig: false } );
 		} );
 
 		it( 'should include the config of the current tour step', () => {
@@ -148,7 +149,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			const stepConfig = guidesToursConfig.get()[ 'sidebar' ];
+			const stepConfig = guidesToursConfig.get().sidebar;
 
 			expect( tourState ).to.deep.equal( Object.assign( {}, tourState, {
 				stepConfig
