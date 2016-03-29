@@ -5,6 +5,11 @@ import classNames from 'classnames';
 import React from 'react';
 
 const PlanHeader = React.createClass( {
+	propTypes: {
+		isPlaceholder: React.PropTypes.bool,
+		text: React.PropTypes.string
+	},
+
 	render() {
 		const classes = classNames( {
 			'plan-header': true,
