@@ -7,46 +7,51 @@ import React from 'react';
  * Internal Dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import { getSubscriptionEndDate, isRefundable } from 'lib/purchases';
+import { getName, isRefundable } from 'lib/purchases';
+import { isDomainRegistration } from 'lib/products-values';
 
 const CancelPurchaseRefundInformation = ( { purchase } ) => {
-	const { priceText, refundPeriodInDays } = purchase,
-		refundsSupportLink = <a href="https://support.wordpress.com/refunds/" target="_blank" />;
+	const { refundPeriodInDays } = purchase;
+
+	let text;
 
 	if ( isRefundable( purchase ) ) {
-		return (
-			<p>{ i18n.translate(
-				'Yes! You are canceling this purchase within the %(refundPeriodInDays)d day refund period. ' +
-				'Once you confirm, your card will be refunded %(priceText)s. {{a}}Learn more{{/a}}.',
+		if ( isDomainRegistration( purchase ) ) {
+			text = i18n.translate(
+				'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
+				"you'll receive a refund and it will be removed from your site immediately.",
 				{
-					args: {
-						refundPeriodInDays,
-						priceText
-					},
-					components: {
-						a: refundsSupportLink
-					},
-					context: 'priceText is of the form "[currency-symbol][amount] [currency-code]" i.e. "$20 USD"'
+					args: { refundPeriodInDays }
 				}
-			) }</p>
+			);
+		} else {
+			text = i18n.translate(
+				'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
+				"you'll receive a refund and it will be removed from your site immediately.",
+				{
+					args: { refundPeriodInDays }
+				}
+			);
+		}
+	} else if ( isDomainRegistration( purchase ) ) {
+		text = i18n.translate(
+			'When you cancel your domain, it will remain registered and active until the registration expires, ' +
+			'at which point it will be automatically removed from your site.'
+		);
+	} else {
+		text = i18n.translate(
+			"When you cancel your subscription, you'll be able to use %(productName)s until your subscription expires. " +
+			'Once it expires, it will be automatically removed from your site.',
+			{
+				args: {
+					productName: getName( purchase )
+				}
+			}
 		);
 	}
 
 	return (
-		<p>{ i18n.translate(
-			'You are canceling after the %(refundPeriodInDays)d day refund period, so you will not receive a refund. ' +
-			'Canceling will prevent automatic renewal, and we will leave this purchase active until %(subscriptionEndDate)s. ' +
-			'{{a}}Learn more.{{/a}}',
-			{
-				args: {
-					subscriptionEndDate: getSubscriptionEndDate( purchase ),
-					refundPeriodInDays
-				},
-				components: {
-					a: refundsSupportLink
-				}
-			}
-		) }</p>
+		<p className="cancel-purchase__refund-information">{ text }</p>
 	);
 };
 

@@ -10,6 +10,7 @@ import React from 'react';
 import Button from 'components/button';
 import { cancelPurchase } from 'lib/upgrades/actions';
 import { getName, getSubscriptionEndDate, isRefundable } from 'lib/purchases';
+import { isDomainRegistration } from 'lib/products-values';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 
@@ -74,27 +75,35 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	render() {
-		const { purchase } = this.props,
-			purchaseName = getName( purchase );
+		const { purchase } = this.props;
+
+		let text, onClick;
 
 		if ( isRefundable( purchase ) ) {
-			return (
-				<Button type="button"
-					onClick={ this.goToCancelConfirmation }>
-					{ this.translate( 'Cancel and Refund %(purchaseName)s', {
-						args: { purchaseName }
-					} ) }
-				</Button>
-			);
+			onClick = this.goToCancelConfirmation;
+
+			if ( isDomainRegistration( purchase ) ) {
+				text = this.translate( 'Cancel Domain and Refund' );
+			} else {
+				text = this.translate( 'Cancel Subscription and Refund' );
+			}
+		} else {
+			onClick = this.cancelPurchase;
+
+			if ( isDomainRegistration( purchase ) ) {
+				text = this.translate( 'Cancel Domain' );
+			} else {
+				text = this.translate( 'Cancel Subscription' );
+			}
 		}
 
 		return (
-			<Button type="button"
+			<Button
+				className="cancel-purchase__button"
 				disabled={ this.state.disabled }
-				onClick={ this.cancelPurchase }>
-				{ this.translate( 'Cancel %(purchaseName)s', {
-					args: { purchaseName }
-				} ) }
+				onClick={ onClick }
+				primary>
+				{ text }
 			</Button>
 		);
 	}

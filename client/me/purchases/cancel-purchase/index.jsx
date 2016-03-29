@@ -9,15 +9,16 @@ import React from 'react';
  */
 import Card from 'components/card';
 import CancelPurchaseButton from './button';
-import CancelPurchaseProductInformation from './product-information';
 import CancelPurchaseRefundInformation from './refund-information';
-import CancelPurchaseSupportBox from './support-box';
 import CompactCard from 'components/card/compact';
 import { getName, isCancelable } from 'lib/purchases';
 import { getPurchase, getSelectedSite, goToManagePurchase, recordPageView } from 'me/purchases/utils';
 import HeaderCake from 'components/header-cake';
+import { isDomainRegistration } from 'lib/products-values';
 import Main from 'components/main';
 import paths from '../paths';
+import ProductLink from 'me/purchases/product-link';
+import supportPaths from 'lib/url/support';
 import titles from 'me/purchases/titles';
 
 const CancelPurchase = React.createClass( {
@@ -68,7 +69,25 @@ const CancelPurchase = React.createClass( {
 			return null;
 		}
 
-		const purchase = getPurchase( this.props );
+		const purchase = getPurchase( this.props ),
+			purchaseName = getName( purchase ),
+			{ priceText, siteName, domain: siteDomain } = purchase;
+
+		let heading;
+
+		if ( isDomainRegistration( purchase ) ) {
+			heading = this.translate( 'Cancel %(purchaseName)s', {
+				args: {
+					purchaseName
+				}
+			} );
+		} else {
+			heading = this.translate( 'Cancel Your %(purchaseName)s Subscription', {
+				args: {
+					purchaseName
+				}
+			} );
+		}
 
 		return (
 			<Main className="cancel-purchase">
@@ -78,38 +97,36 @@ const CancelPurchase = React.createClass( {
 
 				<Card className="cancel-purchase__card">
 					<h2>
-						{ this.translate( 'Cancel %(purchaseName)s', {
-							args: {
-								purchaseName: getName( purchase )
-							}
-						} ) }
+						{ heading }
 					</h2>
 
 					<div className="cancel-purchase__info">
-						<CancelPurchaseSupportBox purchase={ purchase } />
+						<CancelPurchaseRefundInformation purchase={ purchase } />
 
-						<div className="cancel-purchase__content">
-							<div className="cancel-purchase__section">
-								<strong className="cancel-purchase__section-header">{ this.translate( 'What am I canceling?' ) }</strong>
-
-								<CancelPurchaseProductInformation
-									purchase={ purchase }
-									selectedSite={ this.props.selectedSite } />
-							</div>
-
-							<hr />
-
-							<div className="cancel-purchase__section">
-								<strong className="cancel-purchase__section-header">{ this.translate( 'Do I get a refund?' ) }</strong>
-
-								<CancelPurchaseRefundInformation
-									purchase={ purchase } />
-							</div>
-						</div>
+						<strong className="cancel-purchase__support-information">
+							{ this.translate( 'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}', {
+								components: {
+									contactLink: <a href={ supportPaths.CONTACT } />
+								}
+							} ) }
+						</strong>
 					</div>
 				</Card>
 
+				<CompactCard className="cancel-purchase__product-information">
+					<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
+					<div className="cancel-purchase__site-title">{ siteName || siteDomain }</div>
+					<ProductLink
+						selectedPurchase={ purchase }
+						selectedSite={ this.props.selectedSite } />
+				</CompactCard>
 				<CompactCard className="cancel-purchase__footer">
+					<div className="cancel-purchase__refund-amount">
+						{ this.translate( '%(priceText)s to be refunded', {
+							args: { priceText },
+							context: 'priceText is of the form "[currency-symbol][amount]" i.e. "$20"'
+						} ) }
+					</div>
 					<CancelPurchaseButton
 						purchase={ purchase }
 						selectedSite={ this.props.selectedSite } />

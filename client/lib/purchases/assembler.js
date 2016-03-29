@@ -31,7 +31,7 @@ function createPurchaseObject( purchase ) {
 		isRefundable: Boolean( purchase.is_refundable ),
 		isRenewable: Boolean( purchase.is_renewable ),
 		meta: purchase.meta,
-		priceText: `${ purchase.currency_symbol }${ purchase.amount } ${ purchase.currency_code }`,
+		priceText: `${ purchase.currency_symbol }${ purchase.amount }`,
 		payment: {
 			name: purchase.payment_name,
 			type: purchase.payment_type,

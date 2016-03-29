@@ -33,10 +33,7 @@ import {
 	purchaseType,
 	showCreditCardExpiringWarning
 } from 'lib/purchases';
-import { domainManagementEdit } from 'my-sites/upgrades/paths';
-import { getDetailsUrl as getThemeDetailsUrl } from 'my-sites/themes/helpers';
 import { getPurchase, getSelectedSite, goToList, recordPageView } from '../utils';
-import { googleAppsSettingsUrl } from 'lib/google-apps';
 import HeaderCake from 'components/header-cake';
 import { isDomainProduct, isDomainRegistration, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
 import Main from 'components/main';
@@ -44,6 +41,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import paths from '../paths';
 import PaymentLogo from 'components/payment-logo';
+import ProductLink from 'me/purchases/product-link';
 import RemovePurchase from '../remove-purchase';
 import supportPaths from 'lib/url/support';
 import titles from 'me/purchases/titles';
@@ -313,46 +311,6 @@ const ManagePurchase = React.createClass( {
 		} );
 	},
 
-	renderProductLink() {
-		const selectedSite = getSelectedSite( this.props ),
-			purchase = getPurchase( this.props );
-		let url, text;
-
-		if ( ! selectedSite ) {
-			return null;
-		}
-
-		if ( isPlan( purchase ) ) {
-			url = '/plans/compare';
-			text = this.translate( 'View Plan Features' );
-		}
-
-		if ( isDomainProduct( purchase ) || isSiteRedirect( purchase ) ) {
-			url = domainManagementEdit( selectedSite.slug, purchase.meta );
-			text = this.translate( 'Domain Settings' );
-		}
-
-		if ( isGoogleApps( purchase ) ) {
-			url = googleAppsSettingsUrl( purchase.meta );
-			text = this.translate( 'Google Apps Settings' );
-		}
-
-		if ( isTheme( purchase ) ) {
-			url = getThemeDetailsUrl( { id: purchase.meta }, { slug: purchase.domain } );
-			text = this.translate( 'Theme Details' );
-		}
-
-		if ( url && text ) {
-			return (
-				<a href={ url }>
-					{ text }
-				</a>
-			);
-		}
-
-		return null;
-	},
-
 	renderPaymentInfo() {
 		const purchase = getPurchase( this.props );
 
@@ -617,7 +575,9 @@ const ManagePurchase = React.createClass( {
 			purchaseTypeText = purchaseType( purchase );
 			siteName = purchase.siteName;
 			siteDomain = purchase.domain;
-			productLink = this.renderProductLink();
+			productLink = (
+				<ProductLink selectedPurchase={ purchase } selectedSite={ this.props.selectedSite } />
+			);
 			price = this.renderPrice();
 			renewsOrExpiresOnLabel = this.renderRenewsOrExpiresOnLabel();
 			renewsOrExpiresOn = this.renderRenewsOrExpiresOn();
