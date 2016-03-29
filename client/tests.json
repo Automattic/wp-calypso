@@ -282,11 +282,22 @@
 		},
 		"upgrades": {
 			"cart": {
-				"test": [ "cart-buttons" ]
+				"test": [
+					"cart-buttons"
+				]
 			},
 			"components": {
 				"domain-warnings": {
-					"test": [ "index" ]
+					"test": [
+						"index"
+					]
+				}
+			},
+			"domain-management": {
+				"list": {
+					"test": [
+						"index"
+					]
 				}
 			}
 		}

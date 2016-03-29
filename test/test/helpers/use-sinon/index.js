@@ -43,15 +43,17 @@ export function useFakeTimers( now = 0, clockCallback = noop ) {
  *
  * @param  {Object|Function} config The configuration to use, or a callback that is invoked with the sandbox instance
  * @param  {Function} sandboxCallback A callback function that is invoked with the sandbox instance
+ * @returns { {sandbox: Object} } Object with .sandbox property that points to the current sandbox instance
  */
 export function useSandbox( config, sandboxCallback = noop ) {
+	const wrapper = {};
 	if ( isFunction( config ) && sandboxCallback === noop ) {
 		sandboxCallback = config;
 		config = undefined;
 	}
 
 	before( function() {
-		this.sandbox = sinon.sandbox.create( config );
+		wrapper.sandbox = this.sandbox = sinon.sandbox.create( config );
 		sandboxCallback( this.sandbox );
 	} );
 
@@ -59,6 +61,8 @@ export function useSandbox( config, sandboxCallback = noop ) {
 		if ( this.sandbox ) {
 			this.sandbox.restore();
 			this.sandbox = null;
+			wrapper.sandbox = null;
 		}
 	} );
+	return wrapper;
 }

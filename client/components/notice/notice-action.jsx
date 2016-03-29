@@ -14,7 +14,8 @@ export default React.createClass( {
 	propTypes: {
 		href: React.PropTypes.string,
 		onClick: React.PropTypes.func,
-		external: React.PropTypes.bool
+		external: React.PropTypes.bool,
+		icon: React.PropTypes.string
 	},
 
 	getDefaultProps() {
@@ -37,6 +38,7 @@ export default React.createClass( {
 		return (
 			<a {...attributes} >
 				<span>{ this.props.children }</span>
+				{ this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
 				{ this.props.external && <Gridicon icon="external" size={ 24 } /> }
 			</a>
 		);

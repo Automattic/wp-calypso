@@ -3,6 +3,7 @@
  */
 import debugFactory from 'debug';
 import update from 'react-addons-update';
+import sortBy from 'lodash/sortBy';
 
 /**
  * Internal dependencies
@@ -82,6 +83,13 @@ function reducer( state, payload ) {
 			} );
 
 		case UpgradesActionTypes.PRIMARY_DOMAIN_SET_COMPLETED:
+			return updateSiteState( state, siteId, {
+				settingPrimaryDomain: false,
+				list: sortBy( getBySite( state, siteId ).list.map( domain => {
+					return Object.assign( {}, domain, { isPrimary: domain.name === action.domainName } );
+				} ), domain => ! domain.isPrimary )
+			} );
+
 		case UpgradesActionTypes.PRIMARY_DOMAIN_SET_FAILED:
 			return updateSiteState( state, siteId, {
 				settingPrimaryDomain: false

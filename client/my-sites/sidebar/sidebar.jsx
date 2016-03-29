@@ -66,12 +66,12 @@ module.exports = React.createClass( {
 	},
 
 	isSingle: function() {
-		return this.props.sites.selected || this.props.sites.get().length === 1;
+		return !! ( this.props.sites.getSelectedSite() || this.props.sites.get().length === 1 );
 	},
 
 	getSingleSiteDomain: function() {
 		if ( this.props.sites.selected ) {
-			return this.props.sites.selected;
+			return this.getSelectedSite().slug;
 		}
 
 		return this.props.sites.getPrimary().slug;
