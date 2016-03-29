@@ -9,6 +9,10 @@
 		opacity: 1;
 	}
 
+	&.is-requesting {
+		display: none;
+	}
+
 	@include breakpoint( "<660px" ) {
 		display: none;
 	}

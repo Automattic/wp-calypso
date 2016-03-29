@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 
 /**
@@ -12,6 +13,7 @@ import {
 	getEditorLastDraftSiteId,
 	getEditorLastDraftPostId
 } from 'state/ui/editor/last-draft/selectors';
+import { isRequestingSitePost } from 'state/posts/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import { decodeEntities } from 'lib/formatting';
@@ -30,6 +32,7 @@ const ResumeEditing = React.createClass( {
 	propTypes: {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
+		requesting: PropTypes.bool,
 		draft: PropTypes.object,
 		editPath: PropTypes.string,
 		section: PropTypes.string,
@@ -42,13 +45,17 @@ const ResumeEditing = React.createClass( {
 	},
 
 	render() {
-		const { siteId, postId, draft, editPath, section, translate } = this.props;
+		const { siteId, postId, requesting, draft, editPath, section, translate } = this.props;
 		if ( ! draft || 'post-editor' === section ) {
 			return null;
 		}
 
+		const classes = classnames( 'resume-editing', {
+			'is-requesting': requesting
+		} );
+
 		return (
-			<a href={ editPath } onClick={ this.trackAnalytics } className="resume-editing">
+			<a href={ editPath } onClick={ this.trackAnalytics } className={ classes }>
 				<QueryPosts siteId={ siteId } postId={ postId } />
 				<span className="resume-editing__label">
 					{ translate( 'Continue Editing' ) }
@@ -69,6 +76,7 @@ export default connect( ( state ) => {
 	return {
 		siteId,
 		postId,
+		requesting: isRequestingSitePost( state, siteId, postId ),
 		draft: getEditorLastDraftPost( state ),
 		editPath: getEditorPath( state, siteId, postId ),
 		section: getSectionName( state )
