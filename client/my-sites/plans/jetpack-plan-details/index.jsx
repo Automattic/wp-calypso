@@ -3,9 +3,7 @@
  */
 var React = require( 'react' );
 
-module.exports = React.createClass( {
-	displayName: 'JetpackPlanDetails',
-
+const JetpackPlanDetails = React.createClass( {
 	render: function() {
 		return (
 			<div>
@@ -19,3 +17,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default JetpackPlanDetails;

@@ -3,9 +3,7 @@
  */
 var React = require( 'react' );
 
-module.exports = React.createClass( {
-	displayName: 'WpcomPlanPrice',
-
+const WpcomPlanPrice = React.createClass( {
 	render: function() {
 		return (
 			<div className={ this.props.hasDiscount ? "wpcom-plan-price wpcom-plan-price__discount" : "wpcom-plan-price" }>
@@ -17,3 +15,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default WpcomPlanPrice;

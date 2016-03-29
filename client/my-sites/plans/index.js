@@ -12,7 +12,7 @@ var adTracking = require( 'analytics/ad-tracking' ),
 	paths = require( './paths' ),
 	plansController = require( './controller' );
 
-module.exports = function() {
+export default function() {
 	if ( config.isEnabled( 'manage/plans' ) ) {
 		page(
 			'/plans',

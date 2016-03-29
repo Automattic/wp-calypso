@@ -3,9 +3,7 @@
  */
 var React = require( 'react' );
 
-module.exports = React.createClass( {
-	displayName: 'WpcomPlanDetails',
-
+const WpcomPlanDetails = React.createClass( {
 	render: function() {
 		return (
 			<div>
@@ -16,3 +14,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default WpcomPlanDetails;

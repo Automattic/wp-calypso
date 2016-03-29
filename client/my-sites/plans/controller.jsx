@@ -17,7 +17,7 @@ var analytics = require( 'analytics' ),
 	sites = require( 'lib/sites-list' )(),
 	titleActions = require( 'lib/screen-title/actions' );
 
-module.exports = {
+export default {
 	plans: function( context ) {
 		var Plans = require( 'my-sites/plans/main' ),
 			CheckoutData = require( 'components/data/checkout' ),
