@@ -10,7 +10,7 @@ import sample from 'lodash/sample';
  */
 import Button from 'components/button';
 import Gravatar from 'components/gravatar';
-import supportUrls from 'lib/url/support';
+import support from 'lib/url/support';
 
 const HappinessSupport = React.createClass( {
 	propTypes: {
@@ -28,11 +28,11 @@ const HappinessSupport = React.createClass( {
 	},
 
 	renderContactButton() {
-		let url = supportUrls.CONTACT,
+		let url = support.CALYPSO_CONTACT,
 			target = '';
 
 		if ( this.props.isJetpack ) {
-			url = supportUrls.JETPACK_CONTACT_SUPPORT;
+			url = support.JETPACK_CONTACT_SUPPORT;
 			target = '_blank';
 		}
 
@@ -55,10 +55,10 @@ const HappinessSupport = React.createClass( {
 	},
 
 	renderSupportButton() {
-		let url = supportUrls.SUPPORT_ROOT;
+		let url = support.SUPPORT_ROOT;
 
 		if ( this.props.isJetpack ) {
-			url = supportUrls.JETPACK_SUPPORT;
+			url = support.JETPACK_SUPPORT;
 		}
 
 		return (

@@ -12,6 +12,7 @@ import SpinnerButton from './spinner-button';
 import Interval, { EVERY_SECOND } from 'lib/interval';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import support from 'lib/url/support';
 
 export default React.createClass( {
 	displayName: 'Exporter',
@@ -75,7 +76,7 @@ export default React.createClass( {
 					showDismiss={ false }
 					text={ this.translate( 'There was a problem preparing your export file. Please check your connection and try again, or contact support.' ) }
 				>
-					<NoticeAction href={ '/help/contact' }>
+					<NoticeAction href={ support.CALYPSO_CONTACT }>
 						{ this.translate( 'Get Help' ) }
 					</NoticeAction>
 				</Notice>

@@ -13,7 +13,7 @@ import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import notices from 'notices';
 import { successNotice } from 'state/notices/actions';
-import supportUrls from 'lib/url/support';
+import support from 'lib/url/support';
 import * as upgradesActions from 'lib/upgrades/actions';
 
 const EmailForwardingItem = React.createClass( {
@@ -33,7 +33,7 @@ const EmailForwardingItem = React.createClass( {
 				notices.error( error.message || this.translate( 'Failed to delete email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 					{
 						components: {
-							contactSupportLink: <a href={ supportUrls.CONTACT }/>
+							contactSupportLink: <a href={ support.CALYPSO_CONTACT }/>
 						}
 					} )
 				);
@@ -64,7 +64,7 @@ const EmailForwardingItem = React.createClass( {
 				notices.error( this.translate( 'Failed to resend verification email for email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 					{
 						components: {
-							contactSupportLink: <a href={ supportUrls.CONTACT }/>
+							contactSupportLink: <a href={ support.CALYPSO_CONTACT }/>
 						}
 					} )
 				);

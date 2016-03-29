@@ -34,7 +34,7 @@ const Unlocked = React.createClass( {
 			siteId: this.props.selectedSite.ID
 		}, ( error ) => {
 			if ( error ) {
-				const contactLink = <a href={ support.CONTACT } target="_blank"/>;
+				const contactLink = <a href={ support.CALYPSO_CONTACT } target="_blank"/>;
 				let errorMessage;
 
 				switch ( error.error ) {

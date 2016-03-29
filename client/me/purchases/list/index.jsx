@@ -14,6 +14,7 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import Notice from 'components/notice';
 import PurchasesHeader from './header';
 import PurchasesSite from './site';
+import support from 'lib/url/support';
 
 const PurchasesList = React.createClass( {
 	propTypes: {
@@ -46,7 +47,7 @@ const PurchasesList = React.createClass( {
 				'Please {{a}}contact support{{/a}} for more information.',
 				{
 					components: {
-						a: <a href="https://support.wordpress.com/" />
+						a: <a href={ support.CALYPSO_CONTACT } />
 					}
 				}
 			);
