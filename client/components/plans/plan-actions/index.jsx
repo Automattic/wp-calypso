@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	page = require( 'page' );
+var classNames = require( 'classnames' ),
+	page = require( 'page' ),
+	React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
-	cartValues = require( 'lib/cart-values' ),
 	cartItems = cartValues.cartItems,
+	cartValues = require( 'lib/cart-values' ),
 	config = require( 'config' ),
-	productsValues = require( 'lib/products-values' ),
-	isFreePlan = productsValues.isFreePlan,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
+	isFreePlan = productsValues.isFreePlan,
+	productsValues = require( 'lib/products-values' ),
 	puchasesPaths = require( 'me/purchases/paths' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 

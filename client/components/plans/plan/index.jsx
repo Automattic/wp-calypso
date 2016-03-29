@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	find = require( 'lodash/find' );
+var classNames = require( 'classnames' ),
+	find = require( 'lodash/find' ),
+	React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
+	Card = require( 'components/card' ),
 	Gridicon = require( 'components/gridicon' ),
 	JetpackPlanDetails = require( 'my-sites/plans/jetpack-plan-details' ),
 	PlanActions = require( 'components/plans/plan-actions' ),
+	PlanDiscountMessage = require( 'components/plans/plan-discount-message' ),
 	PlanHeader = require( 'components/plans/plan-header' ),
 	PlanPrice = require( 'components/plans/plan-price' ),
-	PlanDiscountMessage = require( 'components/plans/plan-discount-message' ),
-	Card = require( 'components/card' ),
 	WpcomPlanDetails = require( 'my-sites/plans/wpcom-plan-details' );
 
 module.exports = React.createClass( {

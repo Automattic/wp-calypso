@@ -1,35 +1,35 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
+var classNames = require( 'classnames' ),
 	connect = require( 'react-redux' ).connect,
 	find = require( 'lodash/find' ),
 	page = require( 'page' ),
+	React = require( 'react' ),
 	times = require( 'lodash/times' );
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
+var analytics = require( 'analytics' ),
+	Card = require( 'components/card' ),
+	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
+	filterPlansBySiteAndProps = require( 'lib/plans' ).filterPlansBySiteAndProps,
+	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
 	Gridicon = require( 'components/gridicon' ),
+	HeaderCake = require( 'components/header-cake' ),
+	isBusiness = require( 'lib/products-values' ).isBusiness,
+	isFreePlan = require( 'lib/products-values' ).isFreePlan,
+	isPremium = require( 'lib/products-values' ).isPremium,
+	NavItem = require( 'components/section-nav/item' ),
+	NavTabs = require( 'components/section-nav/tabs' ),
+	observe = require( 'lib/mixins/data-observe' ),
 	PlanActions = require( 'components/plans/plan-actions' ),
 	PlanHeader = require( 'components/plans/plan-header' ),
 	PlanPrice = require( 'components/plans/plan-price' ),
-	analytics = require( 'analytics' ),
-	HeaderCake = require( 'components/header-cake' ),
-	isFreePlan = require( 'lib/products-values' ).isFreePlan,
-	isBusiness = require( 'lib/products-values' ).isBusiness,
-	isPremium = require( 'lib/products-values' ).isPremium,
-	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
-	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
-	Card = require( 'components/card' ),
-	filterPlansBySiteAndProps = require( 'lib/plans' ).filterPlansBySiteAndProps,
-	NavItem = require( 'components/section-nav/item' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
 	SectionNav = require( 'components/section-nav' ),
 	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans,
+	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	transactionStepTypes = require( 'lib/store-transactions/step-types' );
 
 var PlansCompare = React.createClass( {

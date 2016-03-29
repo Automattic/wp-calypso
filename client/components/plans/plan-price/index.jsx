@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isUndefined = require( 'lodash/isUndefined' );
+var isUndefined = require( 'lodash/isUndefined' ),
+	React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
-
 var WpcomPlanPrice = require( 'my-sites/plans/wpcom-plan-price' );
 
 module.exports = React.createClass( {

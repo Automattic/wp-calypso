@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+var classNames = require( 'classnames' ),
+	React = require( 'react' );
 
 module.exports = React.createClass( {
 	displayName: 'PlanHeader',

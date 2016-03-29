@@ -7,12 +7,12 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Plan = require( 'components/plans/plan' ),
+var abtest = require( 'lib/abtest' ).abtest,
 	Card = require( 'components/card' ),
-	abtest = require( 'lib/abtest' ).abtest,
-	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
 	filterPlansBySiteAndProps = require( 'lib/plans' ).filterPlansBySiteAndProps,
-	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan;
+	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan,
+	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
+	Plan = require( 'components/plans/plan' );
 
 module.exports = React.createClass( {
 	displayName: 'PlanList',
