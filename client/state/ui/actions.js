@@ -3,7 +3,8 @@
  */
 import {
 	SELECTED_SITE_SET,
-	SET_SECTION
+	SET_SECTION,
+	SHOW_GUIDESTOUR,
 } from 'state/action-types';
 
 /**
@@ -40,4 +41,19 @@ export function setSection( section, options = {} ) {
 	}
 	options.hasSidebar = ( options.hasSidebar === false ) ? false : true;
 	return options;
+}
+
+/**
+ * Returns an action object which will be used to hide or show a specific tour.
+ *
+ * @param {Object} options Options object, see fn signature.
+ * @return {Object} Action object
+ */
+export function showGuidesTour( { shouldShow = false, tour = 'main', siteId = null } ) {
+	return {
+		type: SHOW_GUIDESTOUR,
+		shouldShow,
+		tour,
+		siteId,
+	}
 }

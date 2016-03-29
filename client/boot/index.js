@@ -25,6 +25,7 @@ var config = require( 'config' ),
 	user = require( 'lib/user' )(),
 	receiveUser = require( 'state/users/actions' ).receiveUser,
 	setCurrentUserId = require( 'state/current-user/actions' ).setCurrentUserId,
+	showGuidesTour = require( 'state/ui/actions' ).showGuidesTour,
 	sites = require( 'lib/sites-list' )(),
 	superProps = require( 'analytics/super-props' ),
 	i18n = require( 'lib/mixins/i18n' ),
@@ -245,12 +246,17 @@ function reduxStoreReady( reduxStore ) {
 			layoutFocus.next();
 		}
 
-		// If `?welcome` is present show the welcome message
-		if ( context.querystring === 'welcome' && context.pathname.indexOf( '/me/next' ) === -1 ) {
+		// If `?welcome` is present, and `?tour` isn't, show the welcome message
+		if ( ! context.query.tour && context.querystring === 'welcome' && context.pathname.indexOf( '/me/next' ) === -1 ) {
 			// show welcome message, persistent for full sized screens
 			nuxWelcome.setWelcome( viewport.isDesktop() );
 		} else {
 			nuxWelcome.clearTempWelcome();
+		}
+
+		// If `?tour` is present, show the guides tour
+		if ( config.isEnabled( 'guidestours' ) && context.query.tour ) {
+			context.store.dispatch( showGuidesTour( { shouldShow: true, tour: context.query.tour } ) );
 		}
 
 		// Bump general stat tracking overall Newdash usage

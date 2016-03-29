@@ -10,7 +10,8 @@ import {
 	SELECTED_SITE_SET,
 	SET_SECTION,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
+	SHOW_GUIDESTOUR,
 } from 'state/action-types';
 import editor from './editor/reducer';
 import reader from './reader/reducer';
@@ -76,14 +77,28 @@ export function isLoading( state = false, action ) {
 	return state;
 }
 
+export function guidesTour( state = {}, action ) {
+	switch ( action.type ) {
+		case SHOW_GUIDESTOUR:
+			return {
+				shouldShow: action.shouldShow,
+				tour: action.tour,
+				stepName: action.stepName,
+				siteId: action.siteId,
+			};
+	}
+	return state;
+}
+
 const reducer = combineReducers( {
 	section,
 	isLoading,
 	hasSidebar,
 	selectedSiteId,
 	recentlySelectedSiteIds,
+	guidesTour,
 	editor,
-	reader
+	reader,
 } );
 
 export default function( state, action ) {
