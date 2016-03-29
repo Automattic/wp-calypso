@@ -1,6 +1,6 @@
 .resume-editing {
 	margin: 0 16px;
-	opacity: 0.6;
+	opacity: 0.8;
 	text-align: right;
 	text-decoration: none;
 	transition: opacity 150ms;
@@ -11,6 +11,12 @@
 
 	@include breakpoint( "<660px" ) {
 		display: none;
+	}
+
+	.site-icon {
+		display: inline-block;
+		margin-right: 8px;
+		vertical-align: bottom;
 	}
 }
 

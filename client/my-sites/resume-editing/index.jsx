@@ -18,6 +18,13 @@ import { decodeEntities } from 'lib/formatting';
 import analytics from 'analytics';
 import localize from 'lib/mixins/i18n/localize';
 import QueryPosts from 'components/data/query-posts';
+import SiteIcon from 'components/site-icon';
+import sitesList from 'lib/sites-list';
+
+/**
+ * Module variables
+ */
+const sites = sitesList();
 
 const ResumeEditing = React.createClass( {
 	propTypes: {
@@ -47,6 +54,7 @@ const ResumeEditing = React.createClass( {
 					{ translate( 'Continue Editing' ) }
 				</span>
 				<span className="resume-editing__post-title">
+					<SiteIcon size={ 14 } site={ sites.getSite( siteId ) } />
 					{ draft.title ? decodeEntities( draft.title ) : translate( 'Untitled' ) }
 				</span>
 			</a>
