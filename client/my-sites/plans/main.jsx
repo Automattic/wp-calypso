@@ -30,6 +30,17 @@ const Plans = React.createClass( {
 
 	mixins: [ observe( 'sites', 'plans' ) ],
 
+	propTypes: {
+		cart: React.PropTypes.object.isRequired,
+		context: React.PropTypes.object.isRequired,
+		destinationType: React.PropTypes.string,
+		plans: React.PropTypes.object.isRequired,
+		fetchSitePlans: React.PropTypes.func.isRequired,
+		sites: React.PropTypes.object.isRequired,
+		sitePlans: React.PropTypes.object.isRequired,
+		transaction: React.PropTypes.object.isRequired
+	},
+
 	getInitialState() {
 		return { openPlan: '' };
 	},

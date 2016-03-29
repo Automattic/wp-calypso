@@ -4,6 +4,12 @@
 import React from 'react';
 
 const WpcomPlanDetails = React.createClass( {
+	propTypes: {
+		comparePlansUrl: React.PropTypes.string.isRequired,
+		handleLearnMoreClick: React.PropTypes.func.isRequired,
+		plan: React.PropTypes.object.isRequired
+	},
+
 	render() {
 		return (
 			<div>

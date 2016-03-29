@@ -4,6 +4,10 @@
 import React from 'react';
 
 const JetpackPlanDetails = React.createClass( {
+	propTypes: {
+		plan: React.PropTypes.object.isRequired
+	},
+	
 	render() {
 		return (
 			<div>
