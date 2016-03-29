@@ -169,7 +169,8 @@ module.exports = React.createClass( {
 	},
 
 	mappingForm: function() {
-		const initialState = this.props.step ? this.props.step.mappingForm : undefined;
+		const initialState = this.props.step ? this.props.step.mappingForm : undefined,
+			initialQuery = this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
 
 		return (
 			<div className="domains-step__section-wrapper">
@@ -180,6 +181,7 @@ module.exports = React.createClass( {
 					onAddMapping={ this.handleAddMapping.bind( this, 'mappingForm' ) }
 					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
 					productsList={ productsList }
+					initialQuery={ initialQuery }
 					analyticsSection="signup" />
 			</div>
 		);

@@ -11,7 +11,8 @@ var React = require( 'react' ),
 	times = require( 'lodash/times' ),
 	compact = require( 'lodash/compact' ),
 	noop = require( 'lodash/noop' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	qs = require( 'qs' );
 
 /**
  * Internal dependencies
@@ -384,14 +385,14 @@ var RegisterDomainStep = React.createClass( {
 	},
 
 	goToMapDomainStep: function( event ) {
+		const query = qs.stringify( { initialQuery: this.state.lastQuery.trim() } );
+		let mapDomainPath = `${this.props.basePath}/mapping`;
+		if ( this.props.selectedSite ) {
+			mapDomainPath += `/${ this.props.selectedSite.slug }?${ query }`;
+		}
+
 		event.preventDefault();
-
 		this.recordEvent( 'mapDomainButtonClick', this.props.analyticsSection );
-
-		let mapDomainPath = this.props.selectedSite ?
-			this.props.basePath + '/mapping/' + this.props.selectedSite.slug :
-			this.props.basePath + '/mapping';
-
 		page( mapDomainPath );
 	},
 

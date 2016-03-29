@@ -20,16 +20,17 @@ var MapDomainStep = React.createClass( {
 
 	propTypes: {
 		products: React.PropTypes.object.isRequired,
+		initialQuery: React.PropTypes.string,
 		analyticsSection: React.PropTypes.string.isRequired
 	},
 
 	getInitialState: function() {
-		return { searchQuery: '' };
+		return { searchQuery: this.props.initialQuery };
 	},
 
 	componentWillMount: function() {
 		if ( this.props.initialState ) {
-			this.setState( this.props.initialState );
+			this.setState( Object.assign( {}, this.props.initialState, this.getInitialState() ) );
 		}
 	},
 
@@ -76,7 +77,8 @@ var MapDomainStep = React.createClass( {
 							placeholder={ this.translate( 'Enter a domain', { textOnly: true } ) }
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
-							onClick={ this.recordInputFocus } />
+							onClick={ this.recordInputFocus }
+							autoFocus />
 						<button className="map-domain-step__go button is-primary"
 								onClick={ this.recordGoButtonClick }>
 							{ this.translate( 'Add', {
