@@ -19,12 +19,12 @@ import PlanPrice from 'components/plans/plan-price';
 import WpcomPlanDetails from 'my-sites/plans/wpcom-plan-details' ;
 
 const Plan = React.createClass( {
-	handleLearnMoreClick: function() {
+	handleLearnMoreClick() {
 		window.scrollTo( 0, 0 );
 		this.recordLearnMoreClick();
 	},
 
-	recordLearnMoreClick: function() {
+	recordLearnMoreClick() {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Learn More Link', 'Product ID', this.props.plan.product_id );
 
 		if ( this.props.isInSignup ) {
@@ -35,14 +35,14 @@ const Plan = React.createClass( {
 		}
 	},
 
-	getComparePlansUrl: function() {
+	getComparePlansUrl() {
 		const site = this.props.site,
 			siteSuffix = site ? site.slug : '';
 
 		return this.props.comparePlansUrl ? this.props.comparePlansUrl : '/plans/compare/' + siteSuffix;
 	},
 
-	getDescription: function() {
+	getDescription() {
 		const { plan, site } = this.props;
 
 		if ( this.isPlaceholder() ) {
@@ -69,21 +69,21 @@ const Plan = React.createClass( {
 		);
 	},
 
-	showDetails: function() {
+	showDetails() {
 		if ( 'function' === typeof ( this.props.onOpen ) ) {
 			this.props.onOpen( this.props.plan.product_id );
 		}
 	},
 
-	selectedSiteHasPlan: function() {
+	selectedSiteHasPlan() {
 		return this.props.site && this.props.site.plan.product_id === this.props.plan.product_id;
 	},
 
-	isPlaceholder: function() {
+	isPlaceholder() {
 		return this.props.placeholder;
 	},
 
-	getProductSlug: function() {
+	getProductSlug() {
 		if ( this.isPlaceholder() ) {
 			return;
 		}
@@ -91,7 +91,7 @@ const Plan = React.createClass( {
 		return this.props.plan.product_slug;
 	},
 
-	getClassNames: function() {
+	getClassNames() {
 		const classObject = {
 			plan: true,
 			'is-active': this.props.open,
@@ -107,7 +107,7 @@ const Plan = React.createClass( {
 		return classNames( classObject );
 	},
 
-	getSitePlan: function() {
+	getSitePlan() {
 		if ( this.isPlaceholder() || ! this.props.site ) {
 			return;
 		}
@@ -115,7 +115,7 @@ const Plan = React.createClass( {
 		return find( this.props.sitePlans.data, { productSlug: this.getProductSlug() } );
 	},
 
-	getPlanDiscountMessage: function() {
+	getPlanDiscountMessage() {
 		if ( this.isPlaceholder() || this.props.hideDiscountMessage ) {
 			return;
 		}
@@ -129,7 +129,7 @@ const Plan = React.createClass( {
 		);
 	},
 
-	getBadge: function() {
+	getBadge() {
 		if ( this.props.site && ! this.props.site.jetpack ) {
 			if ( this.props.site.plan.product_slug === this.getProductSlug() ) {
 				return (
@@ -139,7 +139,7 @@ const Plan = React.createClass( {
 		}
 	},
 
-	getProductName: function() {
+	getProductName() {
 		if ( this.isPlaceholder() ) {
 			return;
 		}
@@ -147,7 +147,7 @@ const Plan = React.createClass( {
 		return this.props.plan.product_name_short;
 	},
 
-	getPlanTagline: function() {
+	getPlanTagline() {
 		if ( this.isPlaceholder() ) {
 			return;
 		}
@@ -155,7 +155,7 @@ const Plan = React.createClass( {
 		return this.props.plan.tagline;
 	},
 
-	getPlanPrice: function() {
+	getPlanPrice() {
 		const isAllMySites = ! this.props.site && ! this.props.isInSignup;
 
 		if ( isAllMySites ) {
@@ -172,7 +172,7 @@ const Plan = React.createClass( {
 		);
 	},
 
-	getPlanActions: function() {
+	getPlanActions() {
 		return (
 			<PlanActions
 				plan={ this.props.plan }
@@ -186,7 +186,7 @@ const Plan = React.createClass( {
 		);
 	},
 
-	getImagePlanAction: function() {
+	getImagePlanAction() {
 		return (
 			<PlanActions
 				plan={ this.props.plan }
@@ -201,7 +201,7 @@ const Plan = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		return (
 			<Card className={ this.getClassNames() } key={ this.getProductSlug() } onClick={ this.showDetails }>
 				{ this.getPlanDiscountMessage() }

@@ -36,21 +36,21 @@ const PlansCompare = React.createClass( {
 		observe( 'features', 'plans' )
 	],
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.props.fetchSitePlans( nextProps.sitePlans, nextProps.selectedSite );
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return { selectedPlan: 'premium' }
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			isInSignup: false
 		};
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		analytics.tracks.recordEvent( 'calypso_plans_compare', {
 			is_in_signup: this.props.isInSignup
 		} );
@@ -60,11 +60,11 @@ const PlansCompare = React.createClass( {
 		}
 	},
 
-	recordViewAllPlansClick: function() {
+	recordViewAllPlansClick() {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked View All Plans' );
 	},
 
-	goBack: function() {
+	goBack() {
 		if ( this.props.backUrl ) {
 			return page( this.props.backUrl );
 		}
@@ -80,7 +80,7 @@ const PlansCompare = React.createClass( {
 		page( plansLink );
 	},
 
-	isDataLoading: function() {
+	isDataLoading() {
 		if ( ! this.props.features.get() ) {
 			return true;
 		}
@@ -100,7 +100,7 @@ const PlansCompare = React.createClass( {
 		return true;
 	},
 
-	isSelected: function( plan ) {
+	isSelected( plan ) {
 		if ( this.state.selectedPlan === 'free' ) {
 			return isFreePlan( plan );
 		}
@@ -114,7 +114,7 @@ const PlansCompare = React.createClass( {
 		}
 	},
 
-	isSubmitting: function() {
+	isSubmitting() {
 		if ( ! this.props.transaction ) {
 			return false;
 		}
@@ -122,7 +122,7 @@ const PlansCompare = React.createClass( {
 		return this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST
 	},
 
-	getColumnCount: function() {
+	getColumnCount() {
 		if ( ! this.props.selectedSite ) {
 			return 4;
 		}
@@ -130,7 +130,7 @@ const PlansCompare = React.createClass( {
 		return this.props.selectedSite.jetpack ? 3 : 4;
 	},
 
-	getFeatures: function() {
+	getFeatures() {
 		const plans = this.getPlans();
 
 		return this.props.features.get().filter( function( feature ) {
@@ -140,7 +140,7 @@ const PlansCompare = React.createClass( {
 		} );
 	},
 
-	getPlans: function() {
+	getPlans() {
 		return filterPlansBySiteAndProps(
 			this.props.plans.get(),
 			this.props.selectedSite,
@@ -148,13 +148,13 @@ const PlansCompare = React.createClass( {
 		);
 	},
 
-	getSitePlan: function( plan ) {
+	getSitePlan( plan ) {
 		return this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer
 			? find( this.props.sitePlans.data, { productSlug: plan.product_slug } )
 			: undefined;
 	},
 
-	getTableHeader: function() {
+	getTableHeader() {
 		let planElements;
 
 		if ( this.isDataLoading() ) {
@@ -210,7 +210,7 @@ const PlansCompare = React.createClass( {
 		);
 	},
 
-	getTableFeatureRows: function() {
+	getTableFeatureRows() {
 		let rows;
 
 		if ( this.isDataLoading() ) {
@@ -284,7 +284,7 @@ const PlansCompare = React.createClass( {
 		return rows;
 	},
 
-	getTableActionRow: function() {
+	getTableActionRow() {
 		if ( this.isDataLoading() ) {
 			return null;
 		}
@@ -318,7 +318,7 @@ const PlansCompare = React.createClass( {
 		);
 	},
 
-	comparisonTable: function() {
+	comparisonTable() {
 		return (
 			<table className="plans-compare__table">
 				<thead>
@@ -332,7 +332,7 @@ const PlansCompare = React.createClass( {
 		);
 	},
 
-	setPlan: function( name ) {
+	setPlan( name ) {
 		this.setState( { selectedPlan: name } );
 	},
 
@@ -376,7 +376,7 @@ const PlansCompare = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		const classes = classNames( this.props.className, 'plans-compare', {
 				'is-placeholder': this.isDataLoading(),
 				'is-jetpack-site': this.props.selectedSite && this.props.selectedSite.jetpack

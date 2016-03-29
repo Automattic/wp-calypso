@@ -18,7 +18,7 @@ import * as upgradesActions from 'lib/upgrades/actions';
 const PlanActions = React.createClass( {
 	propTypes: { plan: React.PropTypes.object },
 
-	getButtons: function() {
+	getButtons() {
 		if ( this.props.isImageButton ) {
 			return this.getImageButton();
 		}
@@ -55,7 +55,7 @@ const PlanActions = React.createClass( {
 		}
 	},
 
-	getInternalButtons: function() {
+	getInternalButtons() {
 		if ( ! this.props.cart.hasLoadedFromServer || ! this.props.site ) {
 			return null;
 		}
@@ -63,7 +63,7 @@ const PlanActions = React.createClass( {
 		return this.upgradeActions();
 	},
 
-	freePlanButton: function() {
+	freePlanButton() {
 		return (
 			<div>
 				<button className="button is-primary plan-actions__upgrade-button"
@@ -75,7 +75,7 @@ const PlanActions = React.createClass( {
 		);
 	},
 
-	upgradeActions: function() {
+	upgradeActions() {
 		if ( isFreePlan( this.props.plan ) ) {
 			return this.freePlanButton();
 		}
@@ -102,19 +102,19 @@ const PlanActions = React.createClass( {
 		);
 	},
 
-	recordUpgradeNowClick: function() {
+	recordUpgradeNowClick() {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Upgrade Now Link', 'Product ID', this.props.plan.product_id );
 	},
 
-	recordUpgradeNowButton: function() {
+	recordUpgradeNowButton() {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Upgrade Now Button', 'Product ID', this.props.plan.product_id );
 	},
 
-	getCartItem: function( properties ) {
+	getCartItem( properties ) {
 		return cartItems.getItemForPlan( this.props.plan, properties );
 	},
 
-	handleSelectPlan: function( event ) {
+	handleSelectPlan( event ) {
 		event.preventDefault();
 
 		if ( this.props.isSubmitting ) {
@@ -144,7 +144,7 @@ const PlanActions = React.createClass( {
 		page( '/checkout/' + this.props.site.slug );
 	},
 
-	canSelectPlan: function() {
+	canSelectPlan() {
 		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
 			return false;
 		}
@@ -162,7 +162,7 @@ const PlanActions = React.createClass( {
 		return true;
 	},
 
-	getImageButton: function() {
+	getImageButton() {
 		const classes = classNames( 'plan-actions__illustration', this.props.plan.product_slug );
 
 		if ( ! this.canSelectPlan( this.props.plan ) ) {
@@ -176,17 +176,17 @@ const PlanActions = React.createClass( {
 		);
 	},
 
-	downgradeMessage: function() {
+	downgradeMessage() {
 		return (
 			<small className="plan-actions__trial-period">{ this.translate( 'Contact support to downgrade your plan.' ) }</small>
 		);
 	},
 
-	siteHasThisPlan: function() {
+	siteHasThisPlan() {
 		return ! this.props.isInSignup && this.props.site && this.props.site.plan.product_id === this.props.plan.product_id;
 	},
 
-	managePlanButton: function() {
+	managePlanButton() {
 		if ( this.planHasCost() ) {
 			const link = purchasesPaths.managePurchase( this.props.site.slug, this.props.sitePlan.id );
 
@@ -196,7 +196,7 @@ const PlanActions = React.createClass( {
 		}
 	},
 
-	freePlanExpiration: function() {
+	freePlanExpiration() {
 		if ( ! this.planHasCost() ) {
 			return (
 				<span className="plan-actions__plan-expiration">{ this.translate( 'Never expires', { context: 'Expiration info for free plan in /plans/' } ) }</span>
@@ -204,11 +204,11 @@ const PlanActions = React.createClass( {
 		}
 	},
 
-	recordCurrentPlanClick: function() {
+	recordCurrentPlanClick() {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Current Plan' );
 	},
 
-	getCurrentPlanHint: function() {
+	getCurrentPlanHint() {
 		return (
 			<div>
 				<span className="plan-actions__current-plan-label" onClick={ this.recordCurrentPlanClick }>
@@ -218,15 +218,15 @@ const PlanActions = React.createClass( {
 		);
 	},
 
-	planHasCost: function() {
+	planHasCost() {
 		return this.props.plan.cost > 0;
 	},
 
-	placeholder: function() {
+	placeholder() {
 		return <span className="button plan-actions__upgrade-button" />;
 	},
 
-	getContent: function() {
+	getContent() {
 		if ( this.props.isPlaceholder ) {
 			return this.placeholder();
 		}
@@ -238,7 +238,7 @@ const PlanActions = React.createClass( {
 		return this.getButtons();
 	},
 
-	render: function() {
+	render() {
 		const classes = classNames( {
 			'plan-actions': true,
 			'is-placeholder': this.props.isPlaceholder,

@@ -15,15 +15,15 @@ import { isJpphpBundle } from 'lib/products-values'
 import Plan from 'components/plans/plan';
 
 const PlanList = React.createClass( {
-	getInitialState: function() {
+	getInitialState() {
 		return { openPlan: '' };
 	},
 
-	openPlan: function( planId ) {
+	openPlan( planId ) {
 		this.setState( { openPlan: planId === this.state.openPlan ? '' : planId } );
 	},
 
-	render: function() {
+	render() {
 		const isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
 			site = this.props.site;
 
