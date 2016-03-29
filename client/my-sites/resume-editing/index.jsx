@@ -12,6 +12,7 @@ import {
 	getEditorLastDraftSiteId,
 	getEditorLastDraftPostId
 } from 'state/ui/editor/last-draft/selectors';
+import { getEditorPath } from 'state/ui/editor/selectors';
 import { decodeEntities } from 'lib/formatting';
 import QueryPosts from 'components/data/query-posts';
 
@@ -19,29 +20,34 @@ const ResumeEditing = React.createClass( {
 	propTypes: {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
-		draft: PropTypes.object
+		draft: PropTypes.object,
+		editPath: PropTypes.string
 	},
 
 	render: function() {
-		const { siteId, postId, draft } = this.props;
+		const { siteId, postId, draft, editPath } = this.props;
 		if ( ! draft ) {
 			return null;
 		}
 
 		return (
-			<div className="resume-editing">
+			<a href={ editPath } className="resume-editing">
 				<QueryPosts siteId={ siteId } postId={ postId } />
 				<span className="resume-editing__label">{ this.translate( 'Continue Editing' ) }</span>
 				<span className="resume-editing__post-title">{ decodeEntities( draft.title ) }</span>
-			</div>
+			</a>
 		);
 	}
 } );
 
 export default connect( ( state ) => {
+	const siteId = getEditorLastDraftSiteId( state );
+	const postId = getEditorLastDraftPostId( state );
+
 	return {
-		siteId: getEditorLastDraftSiteId( state ),
-		postId: getEditorLastDraftPostId( state ),
-		draft: getEditorLastDraftPost( state )
+		siteId,
+		postId,
+		draft: getEditorLastDraftPost( state ),
+		editPath: getEditorPath( state, siteId, postId )
 	};
 } )( ResumeEditing );
