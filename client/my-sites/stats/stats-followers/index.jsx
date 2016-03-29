@@ -16,9 +16,7 @@ var toggle = require( '../mixin-toggle' ),
 	ErrorPanel = require( '../stats-error' ),
 	analytics = require( 'analytics' ),
 	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' ),
-	SectionHeader = require( 'components/section-header' ),
-	Button = require( 'components/button' );
+	SectionHeader = require( 'components/section-header' );
 
 module.exports = React.createClass( {
 	displayName: 'StatModuleFollowers',
@@ -155,9 +153,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.translate( 'Followers' ) }>
-					<Button compact borderless href={ summaryPageLink }><Gridicon icon="chevron-right" /></Button>
-				</SectionHeader>
+				<SectionHeader label={ this.translate( 'Followers' ) } href={ summaryPageLink } />
 				<Card className={ classNames.apply( null, classes ) }>
 					<div className="followers">
 						<div className="module-content">

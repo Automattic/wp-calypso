@@ -14,9 +14,7 @@ import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import Emojify from 'components/emojify';
 import actions from 'lib/posts/actions';
-import Button from 'components/button';
 import SectionHeader from 'components/section-header';
-import Gridicon from 'components/gridicon';
 
 const PostListStore = new PostListStoreFactory;
 
@@ -163,10 +161,7 @@ export default React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.translate( 'Latest Post Summary' ) }>
-					<Button href={ summaryUrl } borderless compact><Gridicon icon="chevron-right" /></Button>
-				</SectionHeader>
-
+				<SectionHeader label={ this.translate( 'Latest Post Summary' ) } href={ summaryUrl } />
 				<Card className={ cardClass }>
 					<div className="module-content-text">
 						{ post

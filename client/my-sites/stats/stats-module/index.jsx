@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 import classNames from 'classnames';
 
 /**
@@ -16,9 +15,7 @@ import DownloadCsv from '../stats-download-csv';
 import DatePicker from '../stats-date-picker';
 import Card from 'components/card';
 import StatsModulePlaceholder from './placeholder';
-import Gridicon from 'components/gridicon';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 
 export default React.createClass( {
 	displayName: 'StatModule',
@@ -43,18 +40,16 @@ export default React.createClass( {
 		this.setState( { noData: nextProps.dataList.isEmpty() } );
 	},
 
-	viewAllHandler( event ) {
+	viewAll() {
 		var summaryPageLink;
 
 		if ( this.props.period && this.props.path && this.props.site ) {
 			summaryPageLink = '/stats/' + this.props.period.period + '/' + this.props.path + '/' + this.props.site.slug + '?startDate=' + this.props.date;
 
-			event.preventDefault();
-
 			if ( this.props.beforeNavigate ) {
 				this.props.beforeNavigate();
 			}
-			page( summaryPageLink );
+			return summaryPageLink;
 		}
 	},
 
@@ -66,14 +61,10 @@ export default React.createClass( {
 		return ( <DatePicker period={ this.props.period.period } date={ this.props.period.startOf } summary={ true } /> );
 	},
 
-	renderViewAllButton() {
+	getHref() {
 		// Some modules do not have view all abilities
 		if ( ! this.props.summary && this.props.period ) {
-			return (
-				<Button compact borderless onClick={ this.viewAllHandler }>
-					<Gridicon icon="chevron-right" />
-				</Button>
-			);
+			return this.viewAll();
 		}
 
 		return null;
@@ -116,10 +107,10 @@ export default React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.getModuleLabel() }>
-					{ ! summary
-						? this.renderViewAllButton()
-						: ( <DownloadCsv period={ period } path={ path } site={ site } dataList={ dataList } /> ) }
+				<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? this.getHref() : null }>
+					{ summary
+						? ( <DownloadCsv period={ period } path={ path } site={ site } dataList={ dataList } /> )
+						: null }
 				</SectionHeader>
 				<Card compact className={ classes }>
 					<div className={ className }>

@@ -9,10 +9,8 @@ import React, { PropTypes } from 'react';
 import observe from 'lib/mixins/data-observe';
 import route from 'lib/route';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
-import Button from 'components/button';
 import SectionHeader from 'components/section-header';
 
 export default React.createClass( {
@@ -50,9 +48,7 @@ export default React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ title }>
-					<Button borderless compact href={ headerPath }><Gridicon icon="chevron-right" /></Button>
-				</SectionHeader>
+				<SectionHeader label={ title } href={ headerPath } />
 				<Card key={ site.ID } className="stats__overview stats-module is-site-overview">
 					<StatsTabs borderless>
 						<StatsTab

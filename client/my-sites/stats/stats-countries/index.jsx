@@ -20,7 +20,6 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsListLegend from '../stats-list/legend';
 import Gridicon from 'components/gridicon';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 
 export default React.createClass( {
 	displayName: 'StatCountries',
@@ -91,20 +90,14 @@ export default React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.getModuleLabel() }>
-					{ ! this.props.summary
-						? ( <Button
-								compact
-								borderless
-								href={ summaryPageLink }
-								>
-								<Gridicon icon="chevron-right" />
-							</Button> )
-						: ( <DownloadCsv
+				<SectionHeader label={ this.getModuleLabel() } href={ ! this.props.summary ? summaryPageLink : null }>
+					{ this.props.summary
+						? ( <DownloadCsv
 								period={ this.props.period }
 								path={ this.props.path }
 								site={ this.props.site }
-								dataList={ this.props.dataList } /> ) }
+								dataList={ this.props.dataList } /> )
+						: null }
 				</SectionHeader>
 					<Card className={ classNames.apply( null, classes ) }>
 						<div className="countryviews">
