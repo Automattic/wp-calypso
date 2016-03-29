@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import Dispatcher from 'dispatcher';
 import page from 'page';
 import React from 'react';
@@ -10,7 +11,6 @@ import React from 'react';
  */
 import { cancelSitePlanTrial } from 'state/sites/plans/actions';
 import CompactCard from 'components/card/compact';
-import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { isInGracePeriod } from 'lib/plans';

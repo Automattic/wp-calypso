@@ -6,11 +6,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { isBusiness } from 'lib/products-values';
+import { isInGracePeriod } from 'lib/plans';
 import PlanFeature from '../plan-feature';
 import PlanProgress from '../plan-progress';
 import SectionHeader from 'components/section-header';
-import { isBusiness } from 'lib/products-values';
-import { isInGracePeriod } from 'lib/plans';
 
 const PlanFeatures = React.createClass( {
 	propTypes: {

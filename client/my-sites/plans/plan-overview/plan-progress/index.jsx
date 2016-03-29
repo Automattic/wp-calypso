@@ -8,7 +8,12 @@ import React from 'react';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import { getCurrentTrialPeriodInDays, getDaysUntilExpiry, getDaysUntilUserFacingExpiry, isInGracePeriod } from 'lib/plans';
+import {
+	getCurrentTrialPeriodInDays,
+	getDaysUntilExpiry,
+	getDaysUntilUserFacingExpiry,
+	isInGracePeriod
+} from 'lib/plans';
 import ProgressBar from 'components/progress-bar';
 
 const PlanProgress = React.createClass( {

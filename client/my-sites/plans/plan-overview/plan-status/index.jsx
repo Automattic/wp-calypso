@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
 import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -14,9 +14,9 @@ import CompactCard from 'components/card/compact';
 import config from 'config';
 import Gridicon from 'components/gridicon';
 import { getDaysUntilUserFacingExpiry, isInGracePeriod } from 'lib/plans';
+import { isBusiness, isPremium } from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanProgress from '../plan-progress';
-import { isPremium, isBusiness } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
 
 const PlanStatus = React.createClass( {
