@@ -29,7 +29,7 @@ export default {
 			site = sites.getSelectedSite(),
 			analyticsPageTitle = 'Plans',
 			basePath = route.sectionify( context.path );
-		var analyticsBasePath;
+		let analyticsBasePath;
 
 		// Don't show plans for Jetpack sites
 		if ( site && site.jetpack && ! config.isEnabled( 'manage/jetpack-plans' ) ) {
@@ -85,7 +85,7 @@ export default {
 			analyticsPageTitle = 'Plans > Compare',
 			site = sites.getSelectedSite(),
 			basePath = route.sectionify( context.path );
-		var baseAnalyticsPath;
+		let baseAnalyticsPath;
 
 		if ( site && ! site.isUpgradeable() ) {
 			return page.redirect( '/plans/compare' );

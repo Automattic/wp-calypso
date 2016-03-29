@@ -58,9 +58,8 @@ const Plans = React.createClass( {
 
 	comparePlansLink: function() {
 		const selectedSite = this.props.sites.getSelectedSite();
-		var url = '/plans/compare';
-
-		var compareString = this.translate( 'Compare Plans' );
+		let url = '/plans/compare',
+			compareString = this.translate( 'Compare Plans' );
 
 		if ( selectedSite.jetpack ) {
 			compareString = this.translate( 'Compare Options' );
@@ -97,8 +96,8 @@ const Plans = React.createClass( {
 	},
 
 	render: function() {
-		const selectedSite = this.props.sites.getSelectedSite(); 
-		var hasJpphpBundle,
+		const selectedSite = this.props.sites.getSelectedSite();
+		let hasJpphpBundle,
 			currentPlan;
 
 		if ( this.props.sitePlans.hasLoadedFromServer ) {
