@@ -5,6 +5,11 @@ import React from 'react';
 import url from 'url';
 import classNames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'components/gridicon';
+
 const SiteIcon = React.createClass( {
 	getDefaultProps() {
 		return {
@@ -38,7 +43,7 @@ const SiteIcon = React.createClass( {
 	},
 
 	render() {
-		var iconSrc, iconClasses, style, noticonStyle;
+		var iconSrc, iconClasses, style;
 
 		// Set the site icon path if it's available
 		iconSrc = ( this.props.site && this.props.site.icon ) ? this.getIconSrcURL( this.props.site.icon.img ) : null;
@@ -52,22 +57,15 @@ const SiteIcon = React.createClass( {
 		style = {
 			height: this.props.size,
 			width: this.props.size,
-			lineHeight: this.props.size + 'px'
-		};
-
-		// @todo have a Noticon component, or Gridicon component
-		noticonStyle = {
-			color: '#fff',
-			fontSize: ( this.props.size / 1.2 ) + 'px',
 			lineHeight: this.props.size + 'px',
-			width: this.props.size
+			fontSize: this.props.size + 'px'
 		};
 
 		return (
 			<div className={ iconClasses } style={ style }>
 				{ iconSrc
 					? <img className="site-icon__img" src={ iconSrc } />
-					: <span className="noticon noticon-website" style={ noticonStyle } />
+					: <Gridicon icon="globe" size={ Math.round( this.props.size / 1.3 ) } />
 				}
 			</div>
 		);
