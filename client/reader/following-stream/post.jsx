@@ -23,6 +23,7 @@ const
 	Card = require( 'components/card' ),
 	CommentButton = require( 'components/comment-button' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
+	EmbedContainer = require( 'components/embed-container' ),
 	LikeButton = require( 'reader/like-button' ),
 	ObserveWindowSizeMixin = require( 'lib/mixins/observe-window-resize' ),
 	PostHeader = require( 'reader/post-header' ),
@@ -424,7 +425,13 @@ const Post = React.createClass( {
 				<PostByline post={ post } site={ this.props.site } />
 
 				{ shouldUseFullExcerpt
-					? <div key="full-post-inline" className="reader__full-post-content" dangerouslySetInnerHTML={ { __html: post.content } }></div> //eslint-disable-line react/no-danger
+					? <EmbedContainer>
+							<div key="full-post-inline"
+								className="reader__full-post-content"
+								dangerouslySetInnerHTML={ // eslint-disable-line react/no-danger
+									{ __html: post.content }
+								} />
+						</EmbedContainer>
 					: <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 				}
 

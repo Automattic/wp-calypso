@@ -528,7 +528,7 @@ normalizePost.content = {
 		}
 
 		// if there are any galleries in the post, skip it
-		if ( post.__contentDOM.querySelector( '.gallery, .tiled-gallery' ) ) {
+		if ( post.__contentDOM.querySelector( '.gallery, .tiled-gallery, .instagram-media' ) ) {
 			callback();
 			return;
 		}
