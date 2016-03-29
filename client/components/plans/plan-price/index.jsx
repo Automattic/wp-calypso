@@ -68,8 +68,7 @@ module.exports = React.createClass( {
 			<WpcomPlanPrice
 				getPrice={ this.getPrice }
 				hasDiscount={ hasDiscount }
-				periodLabel={ periodLabel }
-				plan={ plan } />
+				periodLabel={ periodLabel } />
 		);
 	}
 } );
