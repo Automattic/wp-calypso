@@ -20,8 +20,8 @@ const PlanOverview = React.createClass( {
 	propTypes: {
 		cart: React.PropTypes.object.isRequired,
 		destinationType: React.PropTypes.string,
-		plan: React.PropTypes.object.isRequired,
 		path: React.PropTypes.string.isRequired,
+		plan: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
