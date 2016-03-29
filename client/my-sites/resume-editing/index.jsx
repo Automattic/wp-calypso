@@ -15,6 +15,7 @@ import {
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import { decodeEntities } from 'lib/formatting';
+import analytics from 'analytics';
 import localize from 'lib/mixins/i18n/localize';
 import QueryPosts from 'components/data/query-posts';
 
@@ -28,14 +29,19 @@ const ResumeEditing = React.createClass( {
 		translate: PropTypes.func
 	},
 
-	render: function() {
+	trackAnalytics() {
+		analytics.ga.recordEvent( 'Master Bar', 'Resumed Editing' );
+		analytics.mc.bumpStat( 'calypso_edit_via', 'masterbar_resume_editing' );
+	},
+
+	render() {
 		const { siteId, postId, draft, editPath, section, translate } = this.props;
 		if ( ! draft || 'post-editor' === section ) {
 			return null;
 		}
 
 		return (
-			<a href={ editPath } className="resume-editing">
+			<a href={ editPath } onClick={ this.trackAnalytics } className="resume-editing">
 				<QueryPosts siteId={ siteId } postId={ postId } />
 				<span className="resume-editing__label">
 					{ translate( 'Continue Editing' ) }
