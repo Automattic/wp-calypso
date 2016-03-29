@@ -1,4 +1,3 @@
-
 /**
  * External Dependencies
  */
@@ -83,7 +82,7 @@ class TimezoneDropdown extends Component {
 				className="timezone-dropdown"
 				valueLink={ this.props.valueLink }
 				options={ this.state.timezones }
-				selectedText={ this.props.selectedZone }
+				initialSelected={ this.props.selectedZone }
 				onSelect={ this.onSelect }
 			/>
 		);

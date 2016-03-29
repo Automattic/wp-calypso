@@ -18,13 +18,13 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			timezone: 'Tokyo'
+			timezone: 'UTC+10'
 		};
 	},
 
-	onTimezoneSelect( zone ) {
-		console.log( 'timezone selected: %o', zone.value );
-		this.setState( { timezone: zone.label } );
+	onTimezoneSelect( timezone ) {
+		console.log( 'current zone: %o', timezone );
+		this.setState( { timezone: timezone.value } );
 	},
 
 	render() {

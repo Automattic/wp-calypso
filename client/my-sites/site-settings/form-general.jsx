@@ -25,6 +25,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import TimezoneDropdown from 'components/timezone-dropdown';
 
 module.exports = React.createClass( {
 
@@ -33,9 +34,9 @@ module.exports = React.createClass( {
 	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	getSettingsFromSite( site ) {
-		var settings;
 		site = site || this.props.site;
-		settings = {
+
+		const settings = {
 			blogname: site.name,
 			blogdescription: site.description,
 			fetchingSettings: site.fetchingSettings
@@ -45,6 +46,7 @@ module.exports = React.createClass( {
 			settings.lang_id = site.settings.lang_id;
 			settings.blog_public = site.settings.blog_public;
 			settings.admin_url = site.settings.admin_url;
+			settings.timezone_string = site.settings.timezone_string;
 			settings.jetpack_relatedposts_allowed = site.settings.jetpack_relatedposts_allowed;
 			settings.jetpack_sync_non_public_post_stati = site.settings.jetpack_sync_non_public_post_stati;
 
@@ -56,6 +58,19 @@ module.exports = React.createClass( {
 
 			if ( site.settings.holidaysnow ) {
 				settings.holidaysnow = site.settings.holidaysnow;
+			}
+
+			// handling `gmt_offset` and `timezone_string` values
+			let gmt_offset = site.settings.gmt_offset;
+
+			if (
+				! settings.timezone_string &&
+				typeof gmt_offset === 'string' &&
+				gmt_offset.length
+			) {
+				settings.timezone_string = 'UTC' +
+					( /\-/.test( gmt_offset ) ? '' : '+' ) +
+					gmt_offset;
 			}
 		}
 
@@ -76,6 +91,7 @@ module.exports = React.createClass( {
 			blogname: '',
 			blogdescription: '',
 			lang_id: '',
+			timezone_string: '',
 			blog_public: '',
 			admin_url: '',
 			jetpack_relatedposts_allowed: false,
@@ -85,6 +101,18 @@ module.exports = React.createClass( {
 			jetpack_sync_non_public_post_stati: false,
 			holidaysnow: false
 		} );
+	},
+
+	onTimezoneSelect( timezone ) {
+		this.setState( { timezone_string: timezone.value } );
+	},
+
+	onRecordEvent( eventAction ) {
+		return this.recordEvent.bind( this, eventAction );
+	},
+
+	onRecordEventOnce( key, eventAction ) {
+		return this.recordEventOnce.bind( this, key, eventAction );
 	},
 
 	siteOptions() {
@@ -98,9 +126,10 @@ module.exports = React.createClass( {
 						type="text"
 						valueLink={ this.linkState( 'blogname' ) }
 						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Clicked Site Title Field' ) }
-						onKeyPress={ this.recordEventOnce.bind( this, 'typedTitle', 'Typed in Site Title Field' ) } />
+						onClick={ this.onRecordEvent( 'Clicked Site Title Field' ) }
+						onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) } />
 				</FormFieldset>
+
 				<FormFieldset>
 					<FormLabel htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</FormLabel>
 					<FormInput
@@ -109,10 +138,27 @@ module.exports = React.createClass( {
 						id="blogdescription"
 						valueLink={ this.linkState( 'blogdescription' ) }
 						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Clicked Site Site Tagline Field' ) }
-						onKeyPress={ this.recordEventOnce.bind( this, 'typedTagline', 'Typed in Site Site Tagline Field' ) } />
+						onClick={ this.onRecordEvent( 'Clicked Site Site Tagline Field' ) }
+						onKeyPress={ this.onRecordEventOnce( 'typedTagline', 'Typed in Site Site Tagline Field' ) } />
 					<FormSettingExplanation>
 						{ this.translate( 'In a few words, explain what this site is about.' ) }
+					</FormSettingExplanation>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel htmlFor="blogtimezone">
+						{ this.translate( 'Site Timezone' ) }
+					</FormLabel>
+
+					<TimezoneDropdown
+						valueLink={ this.linkState( 'timezone_string' ) }
+						selectedZone={ this.linkState( 'timezone_string' ).value }
+						disabled={ this.state.fetchingSettings }
+						onSelect={ this.onTimezoneSelect }
+					/>
+
+					<FormSettingExplanation>
+						{ this.translate( 'Choose a city in your timezone.' ) };
 					</FormSettingExplanation>
 				</FormFieldset>
 			</div>
@@ -183,7 +229,7 @@ module.exports = React.createClass( {
 					languages={ config( 'languages' ) }
 					valueLink={ this.linkState( 'lang_id' ) }
 					disabled={ this.state.fetchingSettings }
-					onClick={ this.recordEvent.bind( this, 'Clicked Language Field' ) } />
+					onClick={ this.onRecordEvent( 'Clicked Language Field' ) } />
 				<FormSettingExplanation>
 					{ this.translate( 'Language this blog is primarily written in.' ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
@@ -206,7 +252,7 @@ module.exports = React.createClass( {
 						checked={ 1 === parseInt( this.state.blog_public, 10 ) }
 						onChange={ this.handleRadio }
 						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) } />
+						onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ this.translate( 'Allow search engines to index this site' ) }</span>
 				</FormLabel>
 
@@ -217,7 +263,7 @@ module.exports = React.createClass( {
 						checked={ 0 === parseInt( this.state.blog_public, 10 ) }
 						onChange={ this.handleRadio }
 						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) } />
+						onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ this.translate( 'Discourage search engines from indexing this site' ) }</span>
 					<FormSettingExplanation className="inside-list is-indented">
 						{ this.translate( 'Note: This option does not block access to your site — it is up to search engines to honor your request.' ) }
@@ -232,7 +278,7 @@ module.exports = React.createClass( {
 							checked={ - 1 === parseInt( this.state.blog_public, 10 ) }
 							onChange={ this.handleRadio }
 							disabled={ this.state.fetchingSettings }
-							onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) } />
+							onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
 						<span>{ this.translate( 'I would like my site to be private, visible only to users I choose' ) }</span>
 					</FormLabel>
 				}
@@ -257,7 +303,7 @@ module.exports = React.createClass( {
 								className="tog"
 								checked={ 0 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) }
 								onChange={ this.handleRadio }
-								onClick={ this.recordEvent.bind( this, 'Clicked Related Posts Radio Button' ) } />
+								onClick={ this.onRecordEvent( 'Clicked Related Posts Radio Button' ) } />
 							<span>{ this.translate( 'Hide related content after posts' ) }</span>
 						</FormLabel>
 					</li>
@@ -269,7 +315,7 @@ module.exports = React.createClass( {
 								className="tog"
 								checked={ 1 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) }
 								onChange={ this.handleRadio }
-								onClick={ this.recordEvent.bind( this, 'Clicked Related Posts Radio Button' ) } />
+								onClick={ this.onRecordEvent( 'Clicked Related Posts Radio Button' ) } />
 							<span>{ this.translate( 'Show related content after posts' ) }</span>
 						</FormLabel>
 						<ul id="settings-reading-relatedposts-customize" className={ 1 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) ? null : 'disabled-block' }>

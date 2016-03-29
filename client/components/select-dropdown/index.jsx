@@ -55,9 +55,16 @@ class SelectDropdown extends Component {
 		} );
 	}
 
-	componentWillReceiveProps() {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.state.isOpen ) {
 			this.closeDropdown();
+		}
+
+		if (
+			typeof this.state.selected !== 'undefined' &&
+			this.props.initialSelected !== nextProps.initialSelected
+		) {
+			this.setState( { selected: nextProps.initialSelected } );
 		}
 	}
 
