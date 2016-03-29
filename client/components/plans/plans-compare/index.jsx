@@ -133,8 +133,8 @@ const PlansCompare = React.createClass( {
 	getFeatures() {
 		const plans = this.getPlans();
 
-		return this.props.features.get().filter( function( feature ) {
-			return plans.some( function( plan ) {
+		return this.props.features.get().filter( ( feature ) => {
+			return plans.some( ( plan ) => {
 				return feature[ plan.product_id ];
 			} );
 		} );
@@ -158,7 +158,7 @@ const PlansCompare = React.createClass( {
 		let planElements;
 
 		if ( this.isDataLoading() ) {
-			planElements = times( this.getColumnCount(), function( n ) {
+			planElements = times( this.getColumnCount(), ( n ) => {
 				if ( n === 0 ) {
 					return <th className="plans-compare__header-cell" key={ n } />;
 				}
@@ -168,13 +168,13 @@ const PlansCompare = React.createClass( {
 						<div className="plans-compare__header-cell-placeholder" />
 					</th>
 				);
-			}.bind( this ) );
+			} );
 		} else {
 			const plans = this.getPlans();
 
 			planElements = [ <th className="plans-compare__header-cell" key="placeholder" /> ];
 
-			planElements = planElements.concat( plans.map( function( plan ) {
+			planElements = planElements.concat( plans.map( ( plan ) => {
 				const sitePlan = this.getSitePlan( plan ),
 					classes = classNames( 'plans-compare__header-cell', {
 						'is-selected': this.isSelected( plan )
@@ -202,7 +202,7 @@ const PlansCompare = React.createClass( {
 						</PlanHeader>
 					</th>
 				);
-			}.bind( this ) ) );
+			} ) );
 		}
 
 		return (
@@ -214,8 +214,8 @@ const PlansCompare = React.createClass( {
 		let rows;
 
 		if ( this.isDataLoading() ) {
-			rows = times( 8, function( i ) {
-				const cells = times( this.getColumnCount(), function( n ) {
+			rows = times( 8, ( i ) => {
+				const cells = times( this.getColumnCount(), ( n ) => {
 					const classes = classNames( 'plans-compare__cell-placeholder', {
 						'is-plan-specific': n !== 0
 					} );
@@ -225,18 +225,18 @@ const PlansCompare = React.createClass( {
 							<div className={ classes } />
 						</td>
 					);
-				}.bind( this ) );
+				} );
 
 				return (
 					<tr className="plans-compare__row" key={ i }>{ cells }</tr>
 				);
-			}.bind( this ) );
+			} );
 		} else {
 			const plans = this.getPlans(),
 				features = this.getFeatures();
 
-			rows = features.map( function( feature ) {
-				const planFeatures = plans.map( function( plan ) {
+			rows = features.map( ( feature ) => {
+				const planFeatures = plans.map( ( plan ) => {
 					const classes = classNames( 'plans-compare__cell', 'is-plan-specific', {
 							'is-selected': this.isSelected( plan )
 						} ),
@@ -266,7 +266,7 @@ const PlansCompare = React.createClass( {
 							</div>
 						</td>
 					);
-				}.bind( this ) );
+				} );
 
 				return (
 					<tr className="plans-compare__row" key={ feature.title }>
@@ -278,7 +278,7 @@ const PlansCompare = React.createClass( {
 						{ planFeatures }
 					</tr>
 				);
-			}.bind( this ) );
+			} );
 		}
 
 		return rows;
@@ -293,7 +293,7 @@ const PlansCompare = React.createClass( {
 
 		let cells = [ <td className="plans-compare__action-cell" key="placeholder" /> ];
 
-		cells = cells.concat( plans.map( function( plan ) {
+		cells = cells.concat( plans.map( ( plan ) => {
 			const sitePlan = this.getSitePlan( plan ),
 				classes = classNames( 'plans-compare__action-cell', {
 					'is-selected': this.isSelected( plan )
@@ -311,7 +311,7 @@ const PlansCompare = React.createClass( {
 						cart={ this.props.cart } />
 				</td>
 			);
-		}.bind( this ) ) );
+		} ) );
 
 		return (
 			<tr>{ cells }</tr>

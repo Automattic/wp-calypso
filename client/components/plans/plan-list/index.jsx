@@ -38,7 +38,7 @@ const PlanList = React.createClass( {
 		}
 
 		if ( plans.length === 0 || isLoadingSitePlans ) {
-			plansList = times( numberOfPlaceholders, function( n ) {
+			plansList = times( numberOfPlaceholders, ( n ) => {
 				return (
 					<Plan
 						className={ className }
@@ -46,7 +46,7 @@ const PlanList = React.createClass( {
 						isInSignup={ this.props.isInSignup }
 						key={ `plan-${ n }` } />
 				);
-			}.bind( this ) );
+			} );
 
 			return (
 				<div className="plan-list">{ plansList }</div>
@@ -76,7 +76,7 @@ const PlanList = React.createClass( {
 		if ( plans.length > 0 ) {
 			plans = filterPlansBySiteAndProps( plans, site, this.props.hideFreePlan );
 
-			plansList = plans.map( function( plan ) {
+			plansList = plans.map( ( plan ) => {
 				return (
 					<Plan
 						plan={ plan }
@@ -92,7 +92,7 @@ const PlanList = React.createClass( {
 						cart={ this.props.cart }
 						isSubmitting={ this.props.isSubmitting } />
 				);
-			}, this );
+			} );
 		}
 
 		let aaMarkup;
