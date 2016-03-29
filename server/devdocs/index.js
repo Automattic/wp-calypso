@@ -59,18 +59,18 @@ function listDocs( filePaths ) {
 				title: doc.title,
 				snippet: defaultSnippet( doc )
 			};
-		} else {
-			return {
-				path: path,
-				title: 'Not found: ' + path,
-				snippet: ''
-			};
 		}
+
+		return {
+			path: path,
+			title: 'Not found: ' + path,
+			snippet: ''
+		};
 	} );
 	return results;
 }
 
-/**
+/*
  * Extract a snippet from a document, capturing text either side of
  * any term(s) featured in a whitespace-delimited search query.
  * We look for up to 3 matches in a document and concatenate them.
@@ -102,9 +102,9 @@ function makeSnippet( doc, query ) {
 
 	if ( snippets.length ) {
 		return '...' + snippets.join( ' ... ' ) + '...';
-	} else {
-		return defaultSnippet( doc );
-	}
+	};
+
+	return defaultSnippet( doc );
 }
 
 function escapeRegexString( str ) {
