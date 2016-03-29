@@ -18,7 +18,7 @@ ENV NODE_VERSION 4.3.0
 
 RUN     wget https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz && \
           tar -zxf node-v$NODE_VERSION-linux-x64.tar.gz -C /usr/local && \
-          ln -sf node-v$NODE_VERSION-linux-x64 /usr/local/node && \
+          ln -sf /usr/local/node-v$NODE_VERSION-linux-x64 /usr/local/node && \
           ln -sf /usr/local/node/bin/npm /usr/local/bin/ && \
           ln -sf /usr/local/node/bin/node /usr/local/bin/ && \
           rm node-v$NODE_VERSION-linux-x64.tar.gz
