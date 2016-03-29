@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-var classNames = require( 'classnames' ),
-	find = require( 'lodash/find' ),
-	React = require( 'react' );
+import classNames from 'classnames';
+import find from 'lodash/find';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' ),
-	JetpackPlanDetails = require( 'my-sites/plans/jetpack-plan-details' ),
-	PlanActions = require( 'components/plans/plan-actions' ),
-	PlanDiscountMessage = require( 'components/plans/plan-discount-message' ),
-	PlanHeader = require( 'components/plans/plan-header' ),
-	PlanPrice = require( 'components/plans/plan-price' ),
-	WpcomPlanDetails = require( 'my-sites/plans/wpcom-plan-details' );
+import analytics from 'analytics';
+import Card from 'components/card';
+import Gridicon from 'components/gridicon';
+import JetpackPlanDetails from 'my-sites/plans/jetpack-plan-details';
+import PlanActions from 'components/plans/plan-actions';
+import PlanDiscountMessage from 'components/plans/plan-discount-message';
+import PlanHeader from 'components/plans/plan-header';
+import PlanPrice from 'components/plans/plan-price';
+import WpcomPlanDetails from 'my-sites/plans/wpcom-plan-details' ;
 
 module.exports = React.createClass( {
 	displayName: 'Plan',
@@ -127,7 +127,7 @@ module.exports = React.createClass( {
 				plan={ this.props.plan }
 				sitePlan={ this.getSitePlan() }
 				site={ this.props.site }
-				showMostPopularMessage={ true }/>
+				showMostPopularMessage={ true } />
 		);
 	},
 

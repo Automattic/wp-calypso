@@ -1,36 +1,33 @@
 /**
  * External dependencies
  */
-var classNames = require( 'classnames' ),
-	connect = require( 'react-redux' ).connect,
-	find = require( 'lodash/find' ),
-	page = require( 'page' ),
-	React = require( 'react' ),
-	times = require( 'lodash/times' );
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import find from 'lodash/find';
+import page from 'page';
+import React from 'react';
+import times from 'lodash/times';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	Card = require( 'components/card' ),
-	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
-	filterPlansBySiteAndProps = require( 'lib/plans' ).filterPlansBySiteAndProps,
-	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
-	Gridicon = require( 'components/gridicon' ),
-	HeaderCake = require( 'components/header-cake' ),
-	isBusiness = require( 'lib/products-values' ).isBusiness,
-	isFreePlan = require( 'lib/products-values' ).isFreePlan,
-	isPremium = require( 'lib/products-values' ).isPremium,
-	NavItem = require( 'components/section-nav/item' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	PlanActions = require( 'components/plans/plan-actions' ),
-	PlanHeader = require( 'components/plans/plan-header' ),
-	PlanPrice = require( 'components/plans/plan-price' ),
-	SectionNav = require( 'components/section-nav' ),
-	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans,
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	transactionStepTypes = require( 'lib/store-transactions/step-types' );
+import analytics from 'analytics';
+import Card from 'components/card';
+import { fetchSitePlans } from 'state/sites/plans/actions';
+import { filterPlansBySiteAndProps, shouldFetchSitePlans } from 'lib/plans';
+import { getPlansBySite } from 'state/sites/plans/selectors';
+import Gridicon from 'components/gridicon';
+import HeaderCake from 'components/header-cake';
+import { isBusiness, isFreePlan, isPremium } from 'lib/products-values';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import observe from 'lib/mixins/data-observe';
+import PlanActions from 'components/plans/plan-actions';
+import PlanHeader from 'components/plans/plan-header';
+import PlanPrice from 'components/plans/plan-price';
+import SectionNav from 'components/section-nav';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 
 var PlansCompare = React.createClass( {
 	displayName: 'PlansCompare',
@@ -122,7 +119,7 @@ var PlansCompare = React.createClass( {
 			return false;
 		}
 
-		return this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST
+		return this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST
 	},
 
 	getColumnCount: function() {

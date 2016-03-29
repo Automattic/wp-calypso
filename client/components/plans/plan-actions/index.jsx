@@ -1,23 +1,19 @@
 /**
  * External dependencies
  */
-var classNames = require( 'classnames' ),
-	page = require( 'page' ),
-	React = require( 'react' );
+import classNames from 'classnames';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	cartItems = cartValues.cartItems,
-	cartValues = require( 'lib/cart-values' ),
-	config = require( 'config' ),
-	isBusiness = productsValues.isBusiness,
-	isEnterprise = productsValues.isEnterprise,
-	isFreePlan = productsValues.isFreePlan,
-	productsValues = require( 'lib/products-values' ),
-	puchasesPaths = require( 'me/purchases/paths' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import analytics from 'analytics';
+import { cartItems } from 'lib/cart-values';
+import config from 'config';
+import { isBusiness, isEnterprise, isFreePlan } from 'lib/products-values';
+import purchasesPaths from 'me/purchases/paths';
+import * as upgradesActions from 'lib/upgrades/actions';
 
 var PlanActions = React.createClass( {
 	propTypes: { plan: React.PropTypes.object },
@@ -195,7 +191,7 @@ var PlanActions = React.createClass( {
 	managePlanButton: function() {
 		var link;
 		if ( this.planHasCost() ) {
-			link = puchasesPaths.managePurchase( this.props.site.slug, this.props.sitePlan.id );
+			link = purchasesPaths.managePurchase( this.props.site.slug, this.props.sitePlan.id );
 			return (
 				<a href={ link } className="button plan-actions__upgrade-button">{ this.translate( 'Manage Plan', { context: 'Link to current plan from /plans/' } ) }</a>
 			);

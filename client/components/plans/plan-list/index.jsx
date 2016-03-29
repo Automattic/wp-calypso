@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	times = require( 'lodash/times' );
+import React from 'react';
+import times from 'lodash/times';
 
 /**
  * Internal dependencies
  */
-var abtest = require( 'lib/abtest' ).abtest,
-	Card = require( 'components/card' ),
-	filterPlansBySiteAndProps = require( 'lib/plans' ).filterPlansBySiteAndProps,
-	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan,
-	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
-	Plan = require( 'components/plans/plan' );
+import { abtest } from 'lib/abtest';
+import Card from 'components/card';
+import { filterPlansBySiteAndProps } from 'lib/plans';
+import { getCurrentPlan } from 'lib/plans';
+import { isJpphpBundle } from 'lib/products-values'
+import Plan from 'components/plans/plan';
 
 module.exports = React.createClass( {
 	displayName: 'PlanList',

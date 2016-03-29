@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var productsValues = require( 'lib/products-values' );
+import { isBusiness, isPremium } from 'lib/products-values';
 
 module.exports = React.createClass( {
 	displayName: 'PlanDiscountMessage',
@@ -14,13 +14,13 @@ module.exports = React.createClass( {
 	showMostPopularMessage: function() {
 		return (
 			this.props.showMostPopularMessage &&
-			productsValues.isPremium( this.props.plan ) &&
+			isPremium( this.props.plan ) &&
 			this.props.plan.product_id !== ( this.props.site && this.props.site.plan.product_id )
 		);
 	},
 
 	mostPopularPlan: function() {
-		var hasBusiness = this.props.site && productsValues.isBusiness( this.props.site.plan );
+		var hasBusiness = this.props.site && isBusiness( this.props.site.plan );
 
 		return (
 			hasBusiness ? null : <div className="plan-discount-message">{ this.translate( 'Our most popular plan' ) }</div>
