@@ -95,6 +95,19 @@ describe( 'index', () => {
 		expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up your new domains for you' );
 	} );
 
+	it( 'should render a warning for misconfigured mapped domains', () => {
+		const props = {
+			domains: [
+				{ name: '1.com', hasZone: false, type: domainTypes.MAPPED }
+			],
+			selectedSite: { domain: '1.com' }
+		};
+
+		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+
+		expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'name server records should be configured' );
+	} );
+
 	describe( 'Mutations', () => {
 		it( 'should not mutate domain objects', () => {
 			const props = {
