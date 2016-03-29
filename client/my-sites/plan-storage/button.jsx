@@ -72,6 +72,7 @@ export default React.createClass( {
 					value={ percent }
 					total={ 100 }
 					compact={ true } />
+				{ this.props.children }
 			</Button>
 		);
 	}
