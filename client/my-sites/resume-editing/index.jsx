@@ -15,6 +15,7 @@ import {
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import { decodeEntities } from 'lib/formatting';
+import localize from 'lib/mixins/i18n/localize';
 import QueryPosts from 'components/data/query-posts';
 
 const ResumeEditing = React.createClass( {
@@ -23,11 +24,12 @@ const ResumeEditing = React.createClass( {
 		postId: PropTypes.number,
 		draft: PropTypes.object,
 		editPath: PropTypes.string,
-		section: PropTypes.string
+		section: PropTypes.string,
+		translate: PropTypes.func
 	},
 
 	render: function() {
-		const { siteId, postId, draft, editPath, section } = this.props;
+		const { siteId, postId, draft, editPath, section, translate } = this.props;
 		if ( ! draft || 'post-editor' === section ) {
 			return null;
 		}
@@ -35,8 +37,12 @@ const ResumeEditing = React.createClass( {
 		return (
 			<a href={ editPath } className="resume-editing">
 				<QueryPosts siteId={ siteId } postId={ postId } />
-				<span className="resume-editing__label">{ this.translate( 'Continue Editing' ) }</span>
-				<span className="resume-editing__post-title">{ decodeEntities( draft.title ) }</span>
+				<span className="resume-editing__label">
+					{ translate( 'Continue Editing' ) }
+				</span>
+				<span className="resume-editing__post-title">
+					{ draft.title ? decodeEntities( draft.title ) : translate( 'Untitled' ) }
+				</span>
 			</a>
 		);
 	}
@@ -53,4 +59,4 @@ export default connect( ( state ) => {
 		editPath: getEditorPath( state, siteId, postId ),
 		section: getSectionName( state )
 	};
-} )( ResumeEditing );
+} )( localize( ResumeEditing ) );
