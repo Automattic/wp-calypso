@@ -80,9 +80,7 @@ export default React.createClass( {
 		const wrongMappedDomains = this.getDomains().filter( domain =>
 			domain.type === domainTypes.MAPPED && ! domain.hasZone );
 
-		let learnMoreLink = ( <a
-			href="https://support.wordpress.com/domains/change-name-servers"
-			target="_blank">{ this.translate( 'Learn more.' ) }</a> ),
+		let learnMoreLink,
 			text;
 
 		if ( wrongMappedDomains.length === 0 ) {
@@ -92,12 +90,18 @@ export default React.createClass( {
 				args: { domainName: wrongMappedDomains[0].name },
 				context: 'Mapped domain notice with NS records pointing to somewhere else'
 			} );
+			learnMoreLink = ( <a
+				href={ support.DOMAIN_HELPER_PREFIX + wrongMappedDomains[ 0 ].name }
+				target="_blank">{ this.translate( 'Learn more.' ) }</a> );
 		} else {
 			text = this.translate( 'Some of your domains\' name server records should be configured', {
 				context: 'Mapped domain notice with NS records pointing to somewhere else'
 			} );
+			learnMoreLink = ( <a
+				href={ support.MAP_EXISTING_DOMAIN_UPDATE_DNS }
+				target="_blank">{ this.translate( 'Learn more.' ) }</a> );
 		}
-		return <Notice status="is-error" showDismiss={ false } key="wrong-ns-mapped-domain" >{ text } { learnMoreLink }</Notice>;
+		return <Notice status="is-warning" showDismiss={ false } key="wrong-ns-mapped-domain" >{ text } { learnMoreLink }</Notice>;
 	},
 
 	expiredDomains() {

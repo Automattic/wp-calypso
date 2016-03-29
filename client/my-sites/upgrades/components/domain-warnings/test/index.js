@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
+import assert from 'assert';
 import identity from 'lodash/identity';
 import moment from 'moment';
 import ReactDom from 'react-dom';
@@ -105,7 +106,29 @@ describe( 'index', () => {
 
 		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-		expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'name server records should be configured' );
+		const domNode = ReactDom.findDOMNode( component ),
+			textContent = domNode.textContent;
+		const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+		expect( textContent ).to.contain( 'name server records should be configured' );
+
+		assert( links.some( link => link.href === 'https://support.wordpress.com/domain-helper/?host=1.com' ) );
+	} );
+
+	it( 'should render the correct support url for multiple misconfigured mapped domains', () => {
+		const props = {
+			domains: [
+				{ name: '1.com', hasZone: false, type: domainTypes.MAPPED },
+				{ name: '2.com', hasZone: false, type: domainTypes.MAPPED }
+			],
+			selectedSite: { domain: '1.com' }
+		};
+
+		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+
+		const domNode = ReactDom.findDOMNode( component ),
+			links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+
+		assert( links.some( link => link.href === 'https://support.wordpress.com/domains/map-existing-domain#2-ask-your-domain-provider-to-update-your-dns-settings' ) );
 	} );
 
 	describe( 'Mutations', () => {
