@@ -14,9 +14,7 @@ import { getCurrentPlan } from 'lib/plans';
 import { isJpphpBundle } from 'lib/products-values'
 import Plan from 'components/plans/plan';
 
-module.exports = React.createClass( {
-	displayName: 'PlanList',
-
+var PlanList = React.createClass( {
 	getInitialState: function() {
 		return { openPlan: '' };
 	},
@@ -106,3 +104,5 @@ module.exports = React.createClass( {
 		return <div className="plan-list">{ aaMarkup }</div>;
 	}
 } );
+
+export default PlanList;

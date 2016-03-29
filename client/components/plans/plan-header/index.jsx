@@ -4,9 +4,7 @@
 import classNames from 'classnames';
 import React from 'react';
 
-module.exports = React.createClass( {
-	displayName: 'PlanHeader',
-
+var PlanHeader = React.createClass( {
 	render: function() {
 		var classes = classNames( {
 			'plan-header': true,
@@ -22,3 +20,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default PlanHeader;

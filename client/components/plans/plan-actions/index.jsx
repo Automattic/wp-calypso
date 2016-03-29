@@ -255,4 +255,4 @@ var PlanActions = React.createClass( {
 	}
 } );
 
-module.exports = PlanActions;
+export default PlanActions;

@@ -8,9 +8,7 @@ import React from 'react';
  */
 import { isBusiness, isPremium } from 'lib/products-values';
 
-module.exports = React.createClass( {
-	displayName: 'PlanDiscountMessage',
-
+var PlanDiscountMessage = React.createClass( {
 	showMostPopularMessage: function() {
 		return (
 			this.props.showMostPopularMessage &&
@@ -48,3 +46,5 @@ module.exports = React.createClass( {
 		return false;
 	}
 } );
+
+export default PlanDiscountMessage;

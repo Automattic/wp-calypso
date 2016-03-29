@@ -10,9 +10,7 @@ import React from 'react';
 import { abtest } from 'lib/abtest';
 import WpcomPlanPrice from 'my-sites/plans/wpcom-plan-price';
 
-module.exports = React.createClass( {
-	displayName: 'PlanPrice',
-
+var PlanPrice = React.createClass( {
 	getFormattedPrice: function( plan ) {
 		let rawPrice, formattedPrice;
 
@@ -71,3 +69,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default PlanPrice;

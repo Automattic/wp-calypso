@@ -403,7 +403,7 @@ var PlansCompare = React.createClass( {
 	}
 } );
 
-module.exports = connect(
+export default connect(
 	function mapStateToProps( state, props ) {
 		return {
 			sitePlans: getPlansBySite( state, props.selectedSite )

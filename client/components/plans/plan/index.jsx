@@ -18,9 +18,7 @@ import PlanHeader from 'components/plans/plan-header';
 import PlanPrice from 'components/plans/plan-price';
 import WpcomPlanDetails from 'my-sites/plans/wpcom-plan-details' ;
 
-module.exports = React.createClass( {
-	displayName: 'Plan',
-
+var Plan = React.createClass( {
 	handleLearnMoreClick: function() {
 		window.scrollTo( 0, 0 );
 		this.recordLearnMoreClick();
@@ -224,3 +222,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default Plan;
