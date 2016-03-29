@@ -19,7 +19,7 @@ const user = User();
 export default React.createClass( {
 	displayName: 'StatsAllTime',
 
-	mixins: [observe( 'allTimeList' ) ],
+	mixins: [ observe( 'allTimeList' ) ],
 
 	propTypes: {
 		allTimeList: PropTypes.object.isRequired
