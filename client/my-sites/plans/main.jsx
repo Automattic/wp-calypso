@@ -25,7 +25,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 
-var Plans = React.createClass( {
+const Plans = React.createClass( {
 	displayName: 'Plans',
 
 	mixins: [ observe( 'sites', 'plans' ) ],
@@ -43,7 +43,8 @@ var Plans = React.createClass( {
 	},
 
 	updateSitePlans: function( sitePlans ) {
-		var selectedSite = this.props.sites.getSelectedSite();
+		const selectedSite = this.props.sites.getSelectedSite();
+
 		this.props.fetchSitePlans( sitePlans, selectedSite );
 	},
 
@@ -56,8 +57,8 @@ var Plans = React.createClass( {
 	},
 
 	comparePlansLink: function() {
-		var url = '/plans/compare',
-			selectedSite = this.props.sites.getSelectedSite();
+		const selectedSite = this.props.sites.getSelectedSite();
+		var url = '/plans/compare';
 
 		var compareString = this.translate( 'Compare Plans' );
 
@@ -96,8 +97,8 @@ var Plans = React.createClass( {
 	},
 
 	render: function() {
-		var selectedSite = this.props.sites.getSelectedSite(),
-			hasJpphpBundle,
+		const selectedSite = this.props.sites.getSelectedSite(); 
+		var hasJpphpBundle,
 			currentPlan;
 
 		if ( this.props.sitePlans.hasLoadedFromServer ) {

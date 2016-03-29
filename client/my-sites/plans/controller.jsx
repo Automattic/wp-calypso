@@ -22,14 +22,14 @@ const sites = sitesFactory();
 
 export default {
 	plans: function( context ) {
-		var Plans = require( 'my-sites/plans/main' ),
+		const Plans = require( 'my-sites/plans/main' ),
 			CheckoutData = require( 'components/data/checkout' ),
 			MainComponent = require( 'components/main' ),
 			EmptyContentComponent = require( 'components/empty-content' ),
 			site = sites.getSelectedSite(),
 			analyticsPageTitle = 'Plans',
-			basePath = route.sectionify( context.path ),
-			analyticsBasePath;
+			basePath = route.sectionify( context.path );
+		var analyticsBasePath;
 
 		// Don't show plans for Jetpack sites
 		if ( site && site.jetpack && ! config.isEnabled( 'manage/jetpack-plans' ) ) {
@@ -77,15 +77,15 @@ export default {
 	},
 
 	plansCompare: function( context ) {
-		var PlansCompare = require( 'components/plans/plans-compare' ),
+		const PlansCompare = require( 'components/plans/plans-compare' ),
 			Main = require( 'components/main' ),
 			CheckoutData = require( 'components/data/checkout' ),
 			features = require( 'lib/features-list' )(),
 			productsList = require( 'lib/products-list' )(),
 			analyticsPageTitle = 'Plans > Compare',
 			site = sites.getSelectedSite(),
-			basePath = route.sectionify( context.path ),
-			baseAnalyticsPath;
+			basePath = route.sectionify( context.path );
+		var baseAnalyticsPath;
 
 		if ( site && ! site.isUpgradeable() ) {
 			return page.redirect( '/plans/compare' );
