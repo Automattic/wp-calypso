@@ -39,6 +39,12 @@ var MediaUtils = {
 			return media.URL;
 		}
 
+		// We've found that some media can be corrupt with an unusable URL.
+		// Return early so attempts to parse the URL don't result in an error.
+		if ( ! media.URL ) {
+			return;
+		}
+
 		options = options || {};
 
 		if ( options.photon ) {
@@ -53,7 +59,7 @@ var MediaUtils = {
 			return media.thumbnails[ options.size ];
 		}
 
-		if ( media.URL && options.maxWidth ) {
+		if ( options.maxWidth ) {
 			return resize( media.URL, {
 				w: options.maxWidth
 			} );
