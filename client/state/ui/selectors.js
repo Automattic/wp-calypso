@@ -1,6 +1,11 @@
 /** @ssr-ready **/
 
 /**
+ * External dependencies
+ */
+import get from 'lodash/get';
+
+/**
  * Internal dependencies
  */
 import { getSite } from 'state/sites/selectors';
@@ -28,4 +33,14 @@ export function getSelectedSite( state ) {
  */
 export function getSelectedSiteId( state ) {
 	return state.ui.selectedSiteId;
+}
+
+/**
+ * Returns the current section name.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {?String}       Current section name
+ */
+export function getSectionName( state ) {
+	return get( state.ui.section, 'name', null );
 }
