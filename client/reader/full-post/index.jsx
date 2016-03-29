@@ -23,6 +23,7 @@ var analytics = require( 'analytics' ),
 	CommentStore = require( 'lib/comment-store/comment-store' ),
 	Dialog = require( 'components/dialog' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
+	EmbedContainer = require( 'components/embed-container' ),
 	ExternalLink = require( 'components/external-link' ),
 	LikeButton = require( 'reader/like-button' ),
 	PostByline = require( 'reader/post-byline' ),
@@ -220,9 +221,11 @@ FullPostView = React.createClass( {
 
 					<PostByline post={ post } site={ site } icon={ true }/>
 
-					{ post.use_excerpt ?
-						<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } /> :
-						<div className="reader__full-post-content" dangerouslySetInnerHTML={{ __html: post.content }}></div> //eslint-disable-line react/no-danger
+					{ post.use_excerpt
+						? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
+						: <EmbedContainer>
+								<div className="reader__full-post-content" dangerouslySetInnerHTML={ { __html: post.content } } />
+							</EmbedContainer>
 					}
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
