@@ -57,6 +57,7 @@ import {
 	setPostPublished,
 	resetRawContent
 } from 'state/ui/editor/post/actions';
+import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
 import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
@@ -827,6 +828,12 @@ const PostEditor = React.createClass( {
 			basePath = '/post';
 		}
 
+		if ( 'draft' === post.status ) {
+			this.props.setEditorLastDraft( post.site_ID, post.ID );
+		} else {
+			this.props.resetEditorLastDraft();
+		}
+
 		// make sure the history entry has the post ID in it, but don't dispatch
 		page.replace(
 			basePath + '/' + this.props.sites.getSite( post.site_ID ).slug + '/' + post.ID,
@@ -922,7 +929,9 @@ export default connect(
 			autosave,
 			setPostPrivate,
 			setPostPublished,
-			resetRawContent
+			resetRawContent,
+			setEditorLastDraft,
+			resetEditorLastDraft
 		}, dispatch );
 	},
 	null,
