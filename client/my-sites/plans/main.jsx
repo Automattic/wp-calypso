@@ -26,8 +26,6 @@ import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 
 const Plans = React.createClass( {
-	displayName: 'Plans',
-
 	mixins: [ observe( 'sites', 'plans' ) ],
 
 	propTypes: {
