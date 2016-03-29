@@ -29,9 +29,12 @@ const MappedDomain = React.createClass( {
 			);
 		}
 
+		const expirationMessage = domain.expirationMoment && domain.expirationMoment.format( 'MMMM D, YYYY' ) ||
+			<em>{ this.translate( 'Never Expires', { context: 'Expiration detail for a mapped domain' } ) }</em>;
+
 		return (
 			<Property label={ this.translate( 'Mapping expires on' ) }>
-				{ domain.expirationMoment.format( 'MMMM D, YYYY' ) }
+				{ expirationMessage }
 			</Property>
 		);
 	},
@@ -79,7 +82,7 @@ const MappedDomain = React.createClass( {
 
 	emailNavItem() {
 		const path = paths.domainManagementEmail(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
 
@@ -92,7 +95,7 @@ const MappedDomain = React.createClass( {
 
 	dnsRecordsNavItem() {
 		const path = paths.domainManagementDns(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
 
