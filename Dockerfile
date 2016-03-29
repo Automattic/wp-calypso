@@ -18,11 +18,12 @@ ENV NODE_VERSION 4.3.0
 
 RUN     wget https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz && \
           tar -zxf node-v$NODE_VERSION-linux-x64.tar.gz -C /usr/local && \
-          ln -sf node-v$NODE_VERSION-linux-x64 /usr/local/node && \
+          ln -sf /usr/local/node-v$NODE_VERSION-linux-x64 /usr/local/node && \
           ln -sf /usr/local/node/bin/npm /usr/local/bin/ && \
           ln -sf /usr/local/node/bin/node /usr/local/bin/ && \
           rm node-v$NODE_VERSION-linux-x64.tar.gz
 
+# This npmrc was created by env-config.sh. Local testing will need to create an empty one.
 RUN     mkdir /usr/local/node/etc && cp /usr/local/etc/npmrc /usr/local/node/etc/npmrc
 
 ENV     NODE_PATH /calypso/server:/calypso/client
