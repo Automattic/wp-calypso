@@ -16,13 +16,15 @@ const user = require( 'lib/user' )();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import { startFreeTrial } from 'lib/upgrades/actions';
+import { getLocaleSlug } from 'lib/i18n-utils';
 
 function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeItem } ) {
 	wpcom.undocumented().sitesNew( {
 		blog_name: siteUrl,
 		blog_title: siteUrl,
 		options: {
-			theme: dependencies.theme
+			theme: dependencies.theme,
+			locale: getLocaleSlug()
 		},
 		validate: false,
 		find_available_url: isPurchasingItem
