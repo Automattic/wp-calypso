@@ -4,14 +4,15 @@
 import { RECORDS_LIST_KEY } from '../constants';
 
 /**
- * Keys
+ * Keys -- these have been pre-generated using generateKey and generatePageSeriesKey
  */
 export const postListKey = 'sync-record-c8234aa4facc43d9bf2a2ef4037c595200f282f2';
 export const postListNextPageKey = 'sync-record-e1e623dc2933ed96ead4b0508b053660cd4542c3';
-export const postListDifferentKey = 'sync-record-5c73482c2934a7f40601935c92e734748026fe70';
+export const postListDifferentSiteKey = 'sync-record-47c8614e439761ed4406915f31bc16b06ce5181e';
+export const postListWithSearchKey = 'sync-record-5c73482c2934a7f40601935c92e734748026fe70';
 
 export const postListPageSeriesKey = 'sync-record-c8234aa4facc43d9bf2a2ef4037c595200f282f2';
-export const postListPageSeriesKeyDifferent = 'sync-record-5c73482c2934a7f40601935c92e734748026fe70';
+export const postListDifferentPageSeriesKey = 'sync-record-5c73482c2934a7f40601935c92e734748026fe70';
 
 /*
  * Request Parameters
@@ -24,21 +25,26 @@ export const postListParams = {
 	query: 'status=publish%2Cprivate&order_by=date&order=DESC&author=6617482&type=post&site_visibility=visible&meta=counts',
 };
 
-export const postListParamsDifferentOrder = {
+// the same query parameters but in a different order
+export const postListDifferentOrderParams = {
 	apiVersion: '1.1',
 	method: 'GET',
 	path: '/sites/bobinprogress.wordpress.com/posts',
 	query: 'order_by=date&order=DESC&author=6617482&type=post&site_visibility=visible&meta=counts&status=publish%2Cprivate',
 };
 
-export const postListParamsNextPage = {
+// the same parameters, but with a page_handle
+export const postListNextPageParams = {
 	apiVersion: '1.1',
 	method: 'GET',
 	path: '/sites/bobinprogress.wordpress.com/posts',
 	query: 'status=publish%2Cprivate&order_by=date&order=DESC&author=6617482&type=post&site_visibility=visible&meta=counts&page_handle=2014-11-24T13%3A39%3A39-08%3A00%26id=1307',
 };
 
-export const postListParamsDifferent = Object.assign( {}, postListParams, { query: 'filter=test' } );
+// the same post-list request but against a different site
+export const postListDifferentSiteParams = Object.assign( {}, postListParams, { path: '/sites/bobinprogress2.wordpress.com/posts' } );
+
+export const postListWithSearchParams = Object.assign( {}, postListParams, { query: 'search=test' } );
 
 export const nonWhiteListedRequest = {
 	apiVersion: '1.1',
@@ -63,7 +69,7 @@ export const postListResponseBody = {
 	],
 };
 
-export const postListResponseBodyNextPage = {
+export const postListNextPageResponseBody = {
 	found: 3,
 	meta: {
 		data: {},
@@ -77,7 +83,19 @@ export const postListResponseBodyNextPage = {
 	],
 };
 
-export const postListResponseBodyDifferent = {
+export const postListDifferentSiteResponseBody = {
+	found: 1,
+	meta: {
+		data: {},
+		links: {},
+		next_page: 'value=2015-11-24T13%3A39%3A39-08%3A00&id=1234',
+	},
+	posts: [
+		{ ID: 1234 }
+	],
+}
+
+export const postListWithSearchResponseBody = {
 	found: 2,
 	meta: {
 		data: {},
@@ -90,7 +108,7 @@ export const postListResponseBodyDifferent = {
 	],
 };
 
-export const postListResponseBodyFresh = {
+export const postListFreshResponseBody = {
 	found: 3,
 	meta: {
 		data: {},
@@ -104,7 +122,7 @@ export const postListResponseBodyFresh = {
 	]
 }
 
-export const postListResponseBodyNoHandle = Object.assign( {}, postListResponseBody, { meta: {} } );
+export const postListNoHandleResponseBody = Object.assign( {}, postListResponseBody, { meta: {} } );
 
 /*
  * Local Data
@@ -120,24 +138,34 @@ export const postListLocalRecord = {
 	params: Object.assign( {}, postListParams ),
 };
 
-export const postListLocalRecordNextPage = {
+export const postListNextPageLocalRecord = {
 	__sync: {
 		key: postListNextPageKey,
 		synced: 1457329263679,
 		syncing: false,
 	},
-	body: postListResponseBodyNextPage,
-	params: Object.assign( {}, postListParamsNextPage ),
+	body: postListNextPageResponseBody,
+	params: Object.assign( {}, postListNextPageParams ),
 };
 
-export const postListLocalRecordDifferent = {
+export const postListDifferentSiteLocalRecord = {
 	__sync: {
-		key: postListDifferentKey,
+		key: postListDifferentSiteKey,
 		synced: 1457329263679,
 		syncing: false,
 	},
-	body: postListResponseBodyDifferent,
-	params: Object.assign( {}, postListParamsDifferent ),
+	body: postListDifferentSiteResponseBody,
+	params: Object.assign( {}, postListDifferentSiteParams ),
+}
+
+export const postListWithSearchLocalRecord = {
+	__sync: {
+		key: postListWithSearchKey,
+		synced: 1457329263679,
+		syncing: false,
+	},
+	body: postListWithSearchResponseBody,
+	params: Object.assign( {}, postListWithSearchParams ),
 };
 
 export const recordsList = [
@@ -152,15 +180,15 @@ export const recordsList = [
 		timestamp: 1457329263835,
 	},
 	{
-		key: postListDifferentKey,
-		pageSeriesKey: postListPageSeriesKeyDifferent,
+		key: postListWithSearchKey,
+		pageSeriesKey: postListDifferentPageSeriesKey,
 		timestamp: 1457329442428,
 	},
 ];
 
 export const localDataFull = {
 	[ postListKey ]: postListLocalRecord,
-	[ postListNextPageKey ]: postListLocalRecordNextPage,
-	[ postListDifferentKey ]: postListLocalRecordDifferent,
+	[ postListNextPageKey ]: postListNextPageLocalRecord,
+	[ postListWithSearchKey ]: postListWithSearchLocalRecord,
 	[ RECORDS_LIST_KEY ]: recordsList,
 }

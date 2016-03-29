@@ -11,7 +11,7 @@ import warn from 'lib/warn';
 import localforage from 'lib/localforage';
 import { isWhitelisted } from './whitelist-handler';
 import { cacheIndex } from './cache-index';
-import { generateKey, generatePageSeriesKey } from './utils';
+import { generateKey, generatePageSeriesKey, normalizeRequestParams } from './utils';
 
 /**
  * Module variables
@@ -242,13 +242,14 @@ export class SyncHandler {
 	storeRecord( requestKey, data ) {
 		debug( 'storing data in %o requestKey\n', requestKey );
 		let pageSeriesKey;
+		const reqParams = normalizeRequestParams( data.params );
 		if ( data && data.body && data.body.meta && data.body.meta.next_page ) {
 			pageSeriesKey = generatePageSeriesKey( data.params );
 		}
 
 		// add this record to history
 		return cacheIndex
-			.addItem( requestKey, pageSeriesKey )
+			.addItem( requestKey, reqParams, pageSeriesKey )
 				.then( localforage.setItem( requestKey, data ) );
 	}
 
@@ -260,8 +261,8 @@ export class SyncHandler {
 	}
 }
 
-export const pruneRecordsFrom = lifetime => {
-	return cacheIndex.pruneRecordsFrom( lifetime );
+export const pruneStaleRecords = lifetime => {
+	return cacheIndex.pruneStaleRecords( lifetime );
 }
 
 export const clearAll = () => {

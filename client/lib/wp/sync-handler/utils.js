@@ -44,3 +44,16 @@ export const generatePageSeriesKey = ( reqParams ) => {
 	const paramsWithoutPage = Object.assign( {}, reqParams, { query: qs.stringify( queryParams ) } );
 	return generateKey( paramsWithoutPage );
 }
+
+/**
+ * generate normalized reqestParams object
+ * @param {Object} reqParams - request parameters
+ * @return {Object} - request params in a more usable format
+ */
+export const normalizeRequestParams = ( reqParams ) => {
+	const query = qs.parse( reqParams.query );
+	const normalizedParams = Object.assign( {}, reqParams, { query } );
+	delete normalizedParams.supports_args;
+	delete normalizedParams.supports_progress;
+	return normalizedParams;
+}
