@@ -3,7 +3,6 @@ import React, { PropTypes } from 'react';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 
 import BusinessPlugin from './plugin-types/business-plugin';
 
@@ -22,21 +21,18 @@ export const BusinessPluginsPanel = React.createClass( {
 		const plugins = givenPlugins.length
 			? givenPlugins
 			: defaultPlugins;
-		const actionButton = <div><Gridicon icon="checkmark" /> Active</div>;
 
 		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Business Upgrades' ) }>
-					<Button compact primary>
-        		{ this.translate( 'Purchase' ) }
-        	</Button>
+					<Button compact primary>{ this.translate( 'Purchase' ) }</Button>
 				</SectionHeader>
 				<Card className="wpcom-plugins__business-panel">
 					<div className="wpcom-plugins__list">
 						{ plugins.map( ( { name, supportLink, icon, plan, description } ) =>
 							<BusinessPlugin
 								{ ...{ name, key: name, supportLink, icon, plan, description } }
-								/>
+							/>
 						) }
 					</div>
 				</Card>

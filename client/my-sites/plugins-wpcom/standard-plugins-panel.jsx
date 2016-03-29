@@ -53,28 +53,26 @@ export const StandardPluginsPanel = React.createClass( {
 		const plugins = givenPlugins.length
 			? givenPlugins
 			: defaultPlugins;
-		const actionButton = <div className="wpcom-plugins__action-button"><Gridicon icon="checkmark" /> Active</div>;
 
 		return (
 			<div>
-			<SectionHeader label={ this.translate( 'Standard Plugin Suite' ) }>
+				<SectionHeader label={ this.translate( 'Standard Plugin Suite' ) }>
 					<Button className="is-active-plugin" compact borderless>
-						<Gridicon icon="checkmark" />
-        		{ this.translate( 'Active' ) }
-        	</Button>
-			</SectionHeader>
-			<CompactCard className="wpcom-plugins__standard-panel">
-				<div className="wpcom-plugins__list">
-					{ plugins.map( ( { name, supportLink, icon, category, description } ) =>
-						<StandardPlugin
-							{ ...{ name, key: name, supportLink, icon, category, description } }
+						<Gridicon icon="checkmark" />{ this.translate( 'Active' ) }
+					</Button>
+				</SectionHeader>
+				<CompactCard className="wpcom-plugins__standard-panel">
+					<div className="wpcom-plugins__list">
+						{ plugins.map( ( { name, supportLink, icon, category, description } ) =>
+							<StandardPlugin
+								{ ...{ name, key: name, supportLink, icon, category, description } }
 							/>
-					) }
-				</div>
-			</CompactCard>
-			<Card className="wpcom-plugins__panel-footer" href="#">
-				{ this.translate( 'View all standard plugins' ) }
-			</Card>
+						) }
+					</div>
+				</CompactCard>
+				<Card className="wpcom-plugins__panel-footer" href="#">
+					{ this.translate( 'View all standard plugins' ) }
+				</Card>
 			</div>
 		);
 	}
