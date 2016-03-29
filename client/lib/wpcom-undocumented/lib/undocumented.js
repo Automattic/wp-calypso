@@ -1954,8 +1954,8 @@ Undocumented.prototype.timezones = function( params, fn ) {
 		params = {};
 	}
 
-	let query = Object.assign( {}, params, { apiNamespace: 'wp' } );
-	return this.wpcom.req.get( '/wpcom/v2/timezones', query, fn );
+	let query = Object.assign( {}, params, { apiNamespace: 'wpcom/v2' } );
+	return this.wpcom.req.get( '/timezones', query, fn );
 }
 
 /**
