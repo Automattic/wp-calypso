@@ -145,9 +145,9 @@ const Plans = React.createClass( {
 							plans={ this.props.plans.get() }
 							sitePlans={ this.props.sitePlans }
 							onOpen={ this.openPlan }
-							onSelectPlan={ this.props.onSelectPlan }
 							cart={ this.props.cart }
 							isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST } />
+
 						{ ! hasJpphpBundle && this.comparePlansLink() }
 					</div>
 				</Main>
