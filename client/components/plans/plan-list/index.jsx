@@ -27,7 +27,7 @@ const PlanList = React.createClass( {
 		const isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
 			site = this.props.site;
 
-		var className = '',
+		let className = '',
 			plans = this.props.plans,
 			numberOfPlaceholders = 3,
 			plansList;

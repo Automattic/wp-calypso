@@ -76,8 +76,6 @@ const PlanActions = React.createClass( {
 	},
 
 	upgradeActions: function() {
-		var label;
-
 		if ( isFreePlan( this.props.plan ) ) {
 			return this.freePlanButton();
 		}
@@ -86,10 +84,10 @@ const PlanActions = React.createClass( {
 			return null;
 		}
 
+		let label = this.translate( 'Upgrade Now' );
+
 		if ( this.props.sitePlan && this.props.sitePlan.freeTrial ) {
 			label = this.translate( 'Purchase Now' );
-		} else {
-			label = this.translate( 'Upgrade Now' );
 		}
 
 		return (
@@ -191,7 +189,7 @@ const PlanActions = React.createClass( {
 	managePlanButton: function() {
 		if ( this.planHasCost() ) {
 			const link = purchasesPaths.managePurchase( this.props.site.slug, this.props.sitePlan.id );
-			
+
 			return (
 				<a href={ link } className="button plan-actions__upgrade-button">{ this.translate( 'Manage Plan', { context: 'Link to current plan from /plans/' } ) }</a>
 			);

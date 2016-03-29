@@ -65,12 +65,12 @@ const PlansCompare = React.createClass( {
 	},
 
 	goBack: function() {
-		const selectedSite = this.props.selectedSite;
-		var plansLink = '/plans';
-
 		if ( this.props.backUrl ) {
 			return page( this.props.backUrl );
 		}
+
+		const selectedSite = this.props.selectedSite;
+		let plansLink = '/plans';
 
 		if ( selectedSite ) {
 			plansLink += '/' + selectedSite.slug;
@@ -155,7 +155,7 @@ const PlansCompare = React.createClass( {
 	},
 
 	getTableHeader: function() {
-		var planElements;
+		let planElements;
 
 		if ( this.isDataLoading() ) {
 			planElements = times( this.getColumnCount(), function( n ) {
@@ -211,7 +211,7 @@ const PlansCompare = React.createClass( {
 	},
 
 	getTableFeatureRows: function() {
-		var rows;
+		let rows;
 
 		if ( this.isDataLoading() ) {
 			rows = times( 8, function( i ) {
@@ -243,8 +243,8 @@ const PlansCompare = React.createClass( {
 						mobileClasses = classNames( 'plans-compare__feature-title-mobile', {
 							'is-available': feature[ plan.product_id ]
 						} );
-					
-					var content;
+
+					let content;
 
 					if ( typeof feature[ plan.product_id ] === 'boolean' && feature[ plan.product_id ] ) {
 						content = <Gridicon icon="checkmark-circle" size={ 24 } />;
@@ -285,14 +285,13 @@ const PlansCompare = React.createClass( {
 	},
 
 	getTableActionRow: function() {
-		var cells;
-
 		if ( this.isDataLoading() ) {
 			return null;
 		}
 
 		const plans = this.getPlans();
-		cells = [ <td className="plans-compare__action-cell" key="placeholder" /> ];
+
+		let cells = [ <td className="plans-compare__action-cell" key="placeholder" /> ];
 
 		cells = cells.concat( plans.map( function( plan ) {
 			const sitePlan = this.getSitePlan( plan ),
@@ -344,7 +343,7 @@ const PlansCompare = React.createClass( {
 			business: this.translate( 'Business' )
 		};
 
-		var freeOption = (
+		let freeOption = (
 				<NavItem
 					onClick={ this.setPlan.bind( this, 'free' ) }
 					selected={ 'free' === this.state.selectedPlan }>
@@ -383,7 +382,7 @@ const PlansCompare = React.createClass( {
 				'is-jetpack-site': this.props.selectedSite && this.props.selectedSite.jetpack
 			} );
 
-		var compareString = this.translate( 'Compare Plans' );
+		let compareString = this.translate( 'Compare Plans' );
 
 		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
 			compareString = this.translate( 'Compare Options' );
