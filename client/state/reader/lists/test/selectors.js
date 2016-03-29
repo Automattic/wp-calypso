@@ -7,18 +7,46 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	isRequestingList,
 	isRequestingSubscribedLists,
 	getSubscribedLists,
-	getListByOwnerAndSlug
+	getListByOwnerAndSlug,
+	isSubscribedByOwnerAndSlug
 } from '../selectors';
 
 describe( 'selectors', () => {
+	describe( '#isRequestingList()', () => {
+		it( 'should return false if not fetching', () => {
+			const isRequesting = isRequestingList( {
+				reader: {
+					lists: {
+						isRequestingList: false
+					}
+				}
+			} );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return true if fetching', () => {
+			const isRequesting = isRequestingList( {
+				reader: {
+					lists: {
+						isRequestingList: true
+					}
+				}
+			} );
+
+			expect( isRequesting ).to.be.true;
+		} );
+	} );
+
 	describe( '#isRequestingSubscribedLists()', () => {
 		it( 'should return false if not fetching', () => {
 			const isRequesting = isRequestingSubscribedLists( {
 				reader: {
 					lists: {
-						isRequesting: false
+						isRequestingLists: false
 					}
 				}
 			} );
@@ -30,7 +58,7 @@ describe( 'selectors', () => {
 			const isRequesting = isRequestingSubscribedLists( {
 				reader: {
 					lists: {
-						isRequesting: true
+						isRequestingLists: true
 					}
 				}
 			} );
@@ -120,6 +148,43 @@ describe( 'selectors', () => {
 				owner: 'restapitests',
 				slug: 'bananas'
 			} );
+		} );
+	} );
+
+	describe( '#isSubscribedByOwnerAndSlug()', () => {
+		it( 'should return false if the list does not exist', () => {
+			const isSubscribed = isSubscribedByOwnerAndSlug( {
+				reader: {
+					lists: {},
+					subscribedLists: []
+				}
+			}, 'restapitests', 'bananas' );
+
+			expect( isSubscribed ).to.eql( false );
+		} );
+
+		it( 'should return true if the owner and slug match a subscribed list', () => {
+			const isSubscribed = isSubscribedByOwnerAndSlug( {
+				reader: {
+					lists: {
+						items: {
+							123: {
+								ID: 123,
+								owner: 'restapitests',
+								slug: 'bananas'
+							},
+							456: {
+								ID: 456,
+								owner: 'restapitests',
+								slug: 'ants'
+							}
+						},
+						subscribedLists: [ 123 ]
+					}
+				}
+			}, 'restapitests', 'bananas' );
+
+			expect( isSubscribed ).to.eql( true );
 		} );
 	} );
 } );

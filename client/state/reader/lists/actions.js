@@ -3,6 +3,9 @@
  */
 import wpcom from 'lib/wp';
 import {
+	READER_LIST_REQUEST,
+	READER_LIST_REQUEST_SUCCESS,
+	READER_LIST_REQUEST_FAILURE,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
 	READER_LISTS_REQUEST_SUCCESS,
@@ -16,8 +19,7 @@ import {
 } from 'state/action-types';
 
 /**
- * Returns an action object to be used in signalling that list objects have
- * been received.
+ * Returns an action object to signal that list objects have been received.
  *
  * @param  {Array}  lists Lists received
  * @return {Object}       Action object
@@ -52,6 +54,42 @@ export function requestSubscribedLists() {
 					dispatch( receiveLists( data.lists ) );
 					dispatch( {
 						type: READER_LISTS_REQUEST_SUCCESS,
+						data
+					} );
+					resolve();
+				}
+			} );
+		} );
+	};
+}
+
+/**
+ * Triggers a network request to fetch a single Reader list.
+ *
+ * @param  {String}  owner List owner
+ * @param  {String}  slug List slug
+ * @return {Function}        Action thunk
+ */
+export function requestList( owner, slug ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: READER_LIST_REQUEST,
+		} );
+
+		const query = { owner, slug };
+
+		return new Promise( ( resolve, reject ) => {
+			wpcom.undocumented().readList( query, ( error, data ) => {
+				if ( error ) {
+					dispatch( {
+						type: READER_LIST_REQUEST_FAILURE,
+						error
+					} );
+					reject();
+				} else {
+					dispatch( receiveLists( [ data.list ] ) );
+					dispatch( {
+						type: READER_LIST_REQUEST_SUCCESS,
 						data
 					} );
 					resolve();

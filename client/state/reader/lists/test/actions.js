@@ -9,12 +9,14 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	READER_LIST_REQUEST,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
 	READER_LISTS_FOLLOW
 } from 'state/action-types';
 import {
 	receiveLists,
+	requestList,
 	requestSubscribedLists,
 	followList
 } from '../actions';
@@ -38,6 +40,39 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: READER_LISTS_RECEIVE,
 				lists
+			} );
+		} );
+	} );
+
+	describe( '#requestList()', () => {
+		before( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.get( '/rest/v1.2/read/lists/listowner/listslug' )
+				.reply( 200, {
+					list: {
+						ID: 123,
+						title: 'My test list'
+					}
+				} );
+		} );
+
+		it( 'should dispatch fetch action when thunk triggered', () => {
+			requestList()( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: READER_LIST_REQUEST
+			} );
+		} );
+
+		it( 'should dispatch lists receive action when request completes', () => {
+			return requestList( 'listowner', 'listslug' )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: READER_LISTS_RECEIVE,
+					lists: [
+						{ ID: 123, title: 'My test list' }
+					]
+				} );
 			} );
 		} );
 	} );

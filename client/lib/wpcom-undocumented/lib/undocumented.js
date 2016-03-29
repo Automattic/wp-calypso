@@ -1150,7 +1150,7 @@ Undocumented.prototype.readList = function( query, fn ) {
 	var params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/list' );
 	params.apiVersion = '1.2';
-	this.wpcom.req.get( '/read/list/' + query.owner + '/' + query.slug, params, fn );
+	this.wpcom.req.get( '/read/lists/' + query.owner + '/' + query.slug, params, fn );
 };
 
 Undocumented.prototype.readListPosts = function( query, fn ) {
