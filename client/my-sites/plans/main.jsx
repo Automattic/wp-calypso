@@ -11,7 +11,6 @@ var connect = require( 'react-redux' ).connect,
 var analytics = require( 'analytics' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
 	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan,
-	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans,
 	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
 	Gridicon = require( 'components/gridicon' ),
 	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
@@ -21,9 +20,10 @@ var analytics = require( 'analytics' ),
 	paths = require( './paths' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlanOverview = require( './plan-overview' ),
+	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans,
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
-	transactionStepTypes = require( 'lib/store-transactions/step-types' );
+	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
+	UpgradesNavigation = require( 'my-sites/upgrades/navigation' );
 
 var Plans = React.createClass( {
 	displayName: 'Plans',

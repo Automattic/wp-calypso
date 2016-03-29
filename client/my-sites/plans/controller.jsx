@@ -2,23 +2,22 @@
  * External Dependencies
  */
 var page = require( 'page' ),
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+	React = require( 'react' ),
+	ReactDom = require( 'react-dom' );
 
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	analytics = require( 'analytics' ),
-	plans = require( 'lib/plans-list' )(),
+var analytics = require( 'analytics' ),
 	config = require( 'config' ),
+	i18n = require( 'lib/mixins/i18n' ),
+	plans = require( 'lib/plans-list' )(),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
+	route = require( 'lib/route' ),
+	sites = require( 'lib/sites-list' )(),
 	titleActions = require( 'lib/screen-title/actions' );
 
 module.exports = {
-
 	plans: function( context ) {
 		var Plans = require( 'my-sites/plans/main' ),
 			CheckoutData = require( 'components/data/checkout' ),
