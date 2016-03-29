@@ -48,7 +48,7 @@ const PlanPrice = React.createClass( {
 
 	render() {
 		let periodLabel;
-		const { plan, site, sitePlan: details } = this.props,
+		const { plan, sitePlan: details } = this.props,
 			hasDiscount = details && details.rawDiscount > 0;
 
 		if ( this.props.isPlaceholder ) {

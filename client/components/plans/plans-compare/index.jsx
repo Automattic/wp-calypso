@@ -195,8 +195,7 @@ const PlansCompare = React.createClass( {
 							</span>
 							<PlanPrice
 								plan={ plan }
-								sitePlan={ sitePlan }
-								site={ this.props.selectedSite } />
+								sitePlan={ sitePlan } />
 						</PlanHeader>
 					</th>
 				);
