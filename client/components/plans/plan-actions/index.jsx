@@ -154,11 +154,9 @@ const PlanActions = React.createClass( {
 				return false;
 			}
 
-			if ( this.planHasCost() && ! isBusiness( this.props.site.plan ) ) {
-				return true;
-			}
-			return false;
+			return this.planHasCost() && ! isBusiness( this.props.site.plan );
 		}
+
 		return true;
 	},
 
