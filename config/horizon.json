@@ -75,7 +75,6 @@
 		"post-editor/insert-menu": true,
 		"press-this": true,
 		"preview-layout": true,
-		"preview-endpoint": false,
 		"reader": true,
 		"reader/related-posts": true,
 		"reader/search": true,
