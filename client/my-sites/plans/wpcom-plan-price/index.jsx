@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 const WpcomPlanPrice = React.createClass( {
 	render: function() {

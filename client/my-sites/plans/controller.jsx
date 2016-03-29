@@ -1,21 +1,24 @@
 /**
  * External Dependencies
  */
-var page = require( 'page' ),
-	React = require( 'react' ),
-	ReactDom = require( 'react-dom' );
+import page from 'page';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal Dependencies
  */
-var analytics = require( 'analytics' ),
-	config = require( 'config' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	plans = require( 'lib/plans-list' )(),
-	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
-	route = require( 'lib/route' ),
-	sites = require( 'lib/sites-list' )(),
-	titleActions = require( 'lib/screen-title/actions' );
+import analytics from 'analytics';
+import config from 'config';
+import i18n from 'lib/mixins/i18n';
+import plansFactory from 'lib/plans-list';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import route from 'lib/route';
+import sitesFactory from 'lib/sites-list';
+import titleActions from 'lib/screen-title/actions';
+
+const plans = plansFactory();
+const sites = sitesFactory();
 
 export default {
 	plans: function( context ) {

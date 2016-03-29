@@ -1,29 +1,29 @@
 /**
  * External dependencies
  */
-var connect = require( 'react-redux' ).connect,
-	page = require( 'page' ),
-	React = require( 'react' );
+import { connect } from 'react-redux';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
-	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan,
-	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
-	Gridicon = require( 'components/gridicon' ),
-	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
-	Main = require( 'components/main' ),
-	Notice = require( 'components/notice' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	paths = require( './paths' ),
-	PlanList = require( 'components/plans/plan-list' ),
-	PlanOverview = require( './plan-overview' ),
-	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans,
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
-	UpgradesNavigation = require( 'my-sites/upgrades/navigation' );
+import analytics from 'analytics';
+import { fetchSitePlans } from 'state/sites/plans/actions';
+import { getCurrentPlan } from 'lib/plans';
+import { getPlansBySite } from 'state/sites/plans/selectors';
+import Gridicon from 'components/gridicon';
+import { isJpphpBundle } from 'lib/products-values';
+import Main from 'components/main';
+import Notice from 'components/notice';
+import observe from 'lib/mixins/data-observe';
+import paths from './paths';
+import PlanList from 'components/plans/plan-list' ;
+import PlanOverview from './plan-overview';
+import { shouldFetchSitePlans } from 'lib/plans';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
+import UpgradesNavigation from 'my-sites/upgrades/navigation';
 
 var Plans = React.createClass( {
 	displayName: 'Plans',
@@ -138,7 +138,7 @@ var Plans = React.createClass( {
 							onOpen={ this.openPlan }
 							onSelectPlan={ this.props.onSelectPlan }
 							cart={ this.props.cart }
-							isSubmitting={ this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST } />
+							isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST } />
 						{ ! hasJpphpBundle && this.comparePlansLink() }
 					</div>
 				</Main>

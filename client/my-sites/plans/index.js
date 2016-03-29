@@ -1,29 +1,29 @@
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var adTracking = require( 'analytics/ad-tracking' ),
-	config = require( 'config' ),
-	controller = require( 'my-sites/controller' ),
-	paths = require( './paths' ),
-	plansController = require( './controller' );
+import config from 'config';
+import controller from 'my-sites/controller';
+import paths from './paths';
+import plansController from './controller';
+import { retarget } from 'analytics/ad-tracking';
 
 export default function() {
 	if ( config.isEnabled( 'manage/plans' ) ) {
 		page(
 			'/plans',
-			adTracking.retarget,
+			retarget,
 			controller.siteSelection,
 			controller.sites
 		);
 
 		page(
 			'/plans/compare',
-			adTracking.retarget,
+			retarget,
 			controller.siteSelection,
 			controller.navigation,
 			plansController.plansCompare
@@ -31,7 +31,7 @@ export default function() {
 
 		page(
 			'/plans/compare/:domain',
-			adTracking.retarget,
+			retarget,
 			controller.siteSelection,
 			controller.navigation,
 			plansController.plansCompare
@@ -39,14 +39,14 @@ export default function() {
 
 		page(
 			'/plans/select/:plan/:domain',
-			adTracking.retarget,
+			retarget,
 			controller.siteSelection,
 			plansController.redirectToCheckout
 		);
 
 		page(
 			paths.plansDestination(),
-			adTracking.retarget,
+			retarget,
 			controller.siteSelection,
 			controller.navigation,
 			plansController.plans
