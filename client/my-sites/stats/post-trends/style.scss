@@ -171,13 +171,6 @@
 	}
 }
 
-@include breakpoint( "<1040px" ) {
-
-	.post-trends__year {
-
-	}
-}
-
 .post-trends__key-container {
 	@include clear-fix;
 	padding-top: 10px;
