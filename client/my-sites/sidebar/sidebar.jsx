@@ -109,11 +109,11 @@ module.exports = React.createClass( {
 	stats: function() {
 		var site = this.getSelectedSite();
 
-		if ( ! site.capabilities ) {
+		if ( site && ! site.capabilities ) {
 			return null;
 		}
 
-		if ( site.capabilities && ! site.capabilities.view_stats ) {
+		if ( site && site.capabilities && ! site.capabilities.view_stats ) {
 			return null;
 		}
 

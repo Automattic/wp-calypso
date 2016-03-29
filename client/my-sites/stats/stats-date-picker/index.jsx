@@ -8,7 +8,10 @@ export default React.createClass( {
 
 	propTypes: {
 		period: PropTypes.string.isRequired,
-		date: PropTypes.object.isRequired,
+		date: PropTypes.oneOfType( [
+			PropTypes.object.isRequired,
+			PropTypes.string.isRequired
+		] ),
 		summary: PropTypes.bool
 	},
 
