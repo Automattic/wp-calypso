@@ -81,7 +81,7 @@ describe( 'actions', () => {
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/read/list/restapitests/testlist' )
+				.post( '/rest/v1.2/read/lists/restapitests/testlist/follow' )
 				.reply( 200, {
 					following: true
 				} );

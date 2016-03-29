@@ -8,7 +8,8 @@ import { expect } from 'chai';
  */
 import {
 	isRequestingSubscribedLists,
-	getSubscribedLists
+	getSubscribedLists,
+	getListByOwnerAndSlug
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -57,7 +58,7 @@ describe( 'selectors', () => {
 			expect( subscribedLists ).to.eql( [] );
 		} );
 
-		it( 'should items in a-z slug order', () => {
+		it( 'should retrieve items in a-z slug order', () => {
 			const subscribedLists = getSubscribedLists( {
 				reader: {
 					lists: {
@@ -80,6 +81,45 @@ describe( 'selectors', () => {
 				{ ID: 456, slug: 'ants'},
 				{ ID: 123, slug: 'bananas' }
 			] );
+		} );
+	} );
+
+	describe( '#getListByOwnerAndSlug()', () => {
+		it( 'should return undefined if the list does not exist', () => {
+			const list = getListByOwnerAndSlug( {
+				reader: {
+					lists: {}
+				}
+			}, 'restapitests', 'bananas' );
+
+			expect( list ).to.eql( undefined );
+		} );
+
+		it( 'should return a list if the owner and slug match', () => {
+			const list = getListByOwnerAndSlug( {
+				reader: {
+					lists: {
+						items: {
+							123: {
+								ID: 123,
+								owner: 'restapitests',
+								slug: 'bananas'
+							},
+							456: {
+								ID: 456,
+								owner: 'restapitests',
+								slug: 'ants'
+							}
+						}
+					}
+				}
+			}, 'restapitests', 'bananas' );
+
+			expect( list ).to.eql( {
+				ID: 123,
+				owner: 'restapitests',
+				slug: 'bananas'
+			} );
 		} );
 	} );
 } );
