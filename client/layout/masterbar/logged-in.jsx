@@ -88,7 +88,7 @@ export default React.createClass( {
 				>
 					{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
-				<ResumeEditing />
+				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
 				<Publish
 					sites={ this.props.sites }
 					user={ this.props.user }
