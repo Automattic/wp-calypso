@@ -8,7 +8,7 @@ import React from 'react';
  */
 import { isBusiness, isPremium } from 'lib/products-values';
 
-var PlanDiscountMessage = React.createClass( {
+const PlanDiscountMessage = React.createClass( {
 	showMostPopularMessage: function() {
 		return (
 			this.props.showMostPopularMessage &&
@@ -18,7 +18,7 @@ var PlanDiscountMessage = React.createClass( {
 	},
 
 	mostPopularPlan: function() {
-		var hasBusiness = this.props.site && isBusiness( this.props.site.plan );
+		const hasBusiness = this.props.site && isBusiness( this.props.site.plan );
 
 		return (
 			hasBusiness ? null : <div className="plan-discount-message">{ this.translate( 'Our most popular plan' ) }</div>
@@ -30,7 +30,7 @@ var PlanDiscountMessage = React.createClass( {
 	},
 
 	planDiscountMessage: function() {
-		var message = this.translate( 'Get %(discount)s off your first year', {
+		const message = this.translate( 'Get %(discount)s off your first year', {
 			args: { discount: this.props.sitePlan.formattedDiscount }
 		} );
 

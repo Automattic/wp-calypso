@@ -15,7 +15,7 @@ import { isBusiness, isEnterprise, isFreePlan } from 'lib/products-values';
 import purchasesPaths from 'me/purchases/paths';
 import * as upgradesActions from 'lib/upgrades/actions';
 
-var PlanActions = React.createClass( {
+const PlanActions = React.createClass( {
 	propTypes: { plan: React.PropTypes.object },
 
 	getButtons: function() {
@@ -189,9 +189,9 @@ var PlanActions = React.createClass( {
 	},
 
 	managePlanButton: function() {
-		var link;
 		if ( this.planHasCost() ) {
-			link = purchasesPaths.managePurchase( this.props.site.slug, this.props.sitePlan.id );
+			const link = purchasesPaths.managePurchase( this.props.site.slug, this.props.sitePlan.id );
+			
 			return (
 				<a href={ link } className="button plan-actions__upgrade-button">{ this.translate( 'Manage Plan', { context: 'Link to current plan from /plans/' } ) }</a>
 			);
@@ -241,7 +241,7 @@ var PlanActions = React.createClass( {
 	},
 
 	render: function() {
-		var classes = classNames( {
+		const classes = classNames( {
 			'plan-actions': true,
 			'is-placeholder': this.props.isPlaceholder,
 			'is-image-button': this.props.isImageButton

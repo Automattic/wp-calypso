@@ -18,7 +18,7 @@ import PlanHeader from 'components/plans/plan-header';
 import PlanPrice from 'components/plans/plan-price';
 import WpcomPlanDetails from 'my-sites/plans/wpcom-plan-details' ;
 
-var Plan = React.createClass( {
+const Plan = React.createClass( {
 	handleLearnMoreClick: function() {
 		window.scrollTo( 0, 0 );
 		this.recordLearnMoreClick();
@@ -36,7 +36,7 @@ var Plan = React.createClass( {
 	},
 
 	getComparePlansUrl: function() {
-		var site = this.props.site,
+		const site = this.props.site,
 			siteSuffix = site ? site.slug : '';
 
 		return this.props.comparePlansUrl ? this.props.comparePlansUrl : '/plans/compare/' + siteSuffix;
@@ -92,7 +92,7 @@ var Plan = React.createClass( {
 	},
 
 	getClassNames: function() {
-		var classObject = {
+		const classObject = {
 			plan: true,
 			'is-active': this.props.open,
 			'is-current-plan': this.selectedSiteHasPlan()
@@ -156,7 +156,8 @@ var Plan = React.createClass( {
 	},
 
 	getPlanPrice: function() {
-		var isAllMySites = ! this.props.site && ! this.props.isInSignup;
+		const isAllMySites = ! this.props.site && ! this.props.isInSignup;
+
 		if ( isAllMySites ) {
 			return;
 		}

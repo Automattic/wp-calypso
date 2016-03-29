@@ -29,7 +29,7 @@ import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 
-var PlansCompare = React.createClass( {
+const PlansCompare = React.createClass( {
 	displayName: 'PlansCompare',
 
 	mixins: [
@@ -65,8 +65,8 @@ var PlansCompare = React.createClass( {
 	},
 
 	goBack: function() {
-		var selectedSite = this.props.selectedSite,
-			plansLink = '/plans';
+		const selectedSite = this.props.selectedSite;
+		var plansLink = '/plans';
 
 		if ( this.props.backUrl ) {
 			return page( this.props.backUrl );
@@ -131,7 +131,7 @@ var PlansCompare = React.createClass( {
 	},
 
 	getFeatures: function() {
-		var plans = this.getPlans();
+		const plans = this.getPlans();
 
 		return this.props.features.get().filter( function( feature ) {
 			return plans.some( function( plan ) {
@@ -155,7 +155,7 @@ var PlansCompare = React.createClass( {
 	},
 
 	getTableHeader: function() {
-		var plans, planElements;
+		var planElements;
 
 		if ( this.isDataLoading() ) {
 			planElements = times( this.getColumnCount(), function( n ) {
@@ -170,14 +170,16 @@ var PlansCompare = React.createClass( {
 				);
 			}.bind( this ) );
 		} else {
-			plans = this.getPlans();
+			const plans = this.getPlans();
+
 			planElements = [ <th className="plans-compare__header-cell" key="placeholder" /> ];
 
 			planElements = planElements.concat( plans.map( function( plan ) {
-				var sitePlan = this.getSitePlan( plan ),
+				const sitePlan = this.getSitePlan( plan ),
 					classes = classNames( 'plans-compare__header-cell', {
 						'is-selected': this.isSelected( plan )
 					} );
+
 				return (
 					<th className={ classes } key={ plan.product_slug }>
 						<PlanHeader key={ plan.product_slug }>
@@ -209,12 +211,12 @@ var PlansCompare = React.createClass( {
 	},
 
 	getTableFeatureRows: function() {
-		var plans, features, rows;
+		var rows;
 
 		if ( this.isDataLoading() ) {
 			rows = times( 8, function( i ) {
-				var cells = times( this.getColumnCount(), function( n ) {
-					var classes = classNames( 'plans-compare__cell-placeholder', {
+				const cells = times( this.getColumnCount(), function( n ) {
+					const classes = classNames( 'plans-compare__cell-placeholder', {
 						'is-plan-specific': n !== 0
 					} );
 
@@ -230,18 +232,19 @@ var PlansCompare = React.createClass( {
 				);
 			}.bind( this ) );
 		} else {
-			plans = this.getPlans();
-			features = this.getFeatures();
+			const plans = this.getPlans(),
+				features = this.getFeatures();
 
 			rows = features.map( function( feature ) {
-				var planFeatures = plans.map( function( plan ) {
-					var classes = classNames( 'plans-compare__cell', 'is-plan-specific', {
+				const planFeatures = plans.map( function( plan ) {
+					const classes = classNames( 'plans-compare__cell', 'is-plan-specific', {
 							'is-selected': this.isSelected( plan )
 						} ),
 						mobileClasses = classNames( 'plans-compare__feature-title-mobile', {
 							'is-available': feature[ plan.product_id ]
-						} ),
-						content;
+						} );
+					
+					var content;
 
 					if ( typeof feature[ plan.product_id ] === 'boolean' && feature[ plan.product_id ] ) {
 						content = <Gridicon icon="checkmark-circle" size={ 24 } />;
@@ -282,17 +285,17 @@ var PlansCompare = React.createClass( {
 	},
 
 	getTableActionRow: function() {
-		var plans, cells;
+		var cells;
 
 		if ( this.isDataLoading() ) {
 			return null;
 		}
 
-		plans = this.getPlans();
+		const plans = this.getPlans();
 		cells = [ <td className="plans-compare__action-cell" key="placeholder" /> ];
 
 		cells = cells.concat( plans.map( function( plan ) {
-			var sitePlan = this.getSitePlan( plan ),
+			const sitePlan = this.getSitePlan( plan ),
 				classes = classNames( 'plans-compare__action-cell', {
 					'is-selected': this.isSelected( plan )
 				} );
@@ -335,12 +338,13 @@ var PlansCompare = React.createClass( {
 	},
 
 	sectionNavigationForMobile() {
-		var text = {
-				free: this.translate( 'Free' ),
-				premium: this.translate( 'Premium' ),
-				business: this.translate( 'Business' )
-			},
-			freeOption = (
+		const text = {
+			free: this.translate( 'Free' ),
+			premium: this.translate( 'Premium' ),
+			business: this.translate( 'Business' )
+		};
+
+		var freeOption = (
 				<NavItem
 					onClick={ this.setPlan.bind( this, 'free' ) }
 					selected={ 'free' === this.state.selectedPlan }>
@@ -374,11 +378,12 @@ var PlansCompare = React.createClass( {
 	},
 
 	render: function() {
-		var compareString = this.translate( 'Compare Plans' ),
-			classes = classNames( this.props.className, 'plans-compare', {
+		const classes = classNames( this.props.className, 'plans-compare', {
 				'is-placeholder': this.isDataLoading(),
 				'is-jetpack-site': this.props.selectedSite && this.props.selectedSite.jetpack
 			} );
+
+		var compareString = this.translate( 'Compare Plans' );
 
 		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
 			compareString = this.translate( 'Compare Options' );

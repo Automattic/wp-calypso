@@ -4,9 +4,9 @@
 import classNames from 'classnames';
 import React from 'react';
 
-var PlanHeader = React.createClass( {
+const PlanHeader = React.createClass( {
 	render: function() {
-		var classes = classNames( {
+		const classes = classNames( {
 			'plan-header': true,
 			'is-placeholder': this.props.isPlaceholder
 		} );

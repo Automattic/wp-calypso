@@ -14,7 +14,7 @@ import { getCurrentPlan } from 'lib/plans';
 import { isJpphpBundle } from 'lib/products-values'
 import Plan from 'components/plans/plan';
 
-var PlanList = React.createClass( {
+const PlanList = React.createClass( {
 	getInitialState: function() {
 		return { openPlan: '' };
 	},
@@ -24,13 +24,13 @@ var PlanList = React.createClass( {
 	},
 
 	render: function() {
+		const isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
+			site = this.props.site;
+
 		var className = '',
 			plans = this.props.plans,
-			isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
 			numberOfPlaceholders = 3,
-			site = this.props.site,
-			plansList,
-			currentPlan;
+			plansList;
 
 		if ( this.props.hideFreePlan || ( site && site.jetpack ) ) {
 			numberOfPlaceholders = 2;
@@ -56,7 +56,8 @@ var PlanList = React.createClass( {
 		if ( ! this.props.isInSignup ) {
 			// check if this site was registered via the JPPHP "Jetpack Start" program
 			// if so, we want to display a message that this plan is managed via the hosting partner
-			currentPlan = getCurrentPlan( this.props.sitePlans.data );
+			const currentPlan = getCurrentPlan( this.props.sitePlans.data );
+
 			if ( isJpphpBundle( currentPlan ) ) {
 				return (
 					<Card>

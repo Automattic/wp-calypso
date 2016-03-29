@@ -10,7 +10,7 @@ import React from 'react';
 import { abtest } from 'lib/abtest';
 import WpcomPlanPrice from 'my-sites/plans/wpcom-plan-price';
 
-var PlanPrice = React.createClass( {
+const PlanPrice = React.createClass( {
 	getFormattedPrice: function( plan ) {
 		let rawPrice, formattedPrice;
 
@@ -36,7 +36,7 @@ var PlanPrice = React.createClass( {
 	},
 
 	getPrice: function() {
-		var standardPrice = this.getFormattedPrice( this.props.plan ),
+		const standardPrice = this.getFormattedPrice( this.props.plan ),
 			discountedPrice = this.getFormattedPrice( this.props.sitePlan );
 
 		if ( this.props.sitePlan && this.props.sitePlan.rawDiscount > 0 ) {
