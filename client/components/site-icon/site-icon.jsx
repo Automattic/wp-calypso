@@ -1,14 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	url = require( 'url' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import url from 'url';
+import classNames from 'classnames';
 
-module.exports = React.createClass( {
-	displayName: 'SiteIcon',
-
-	getDefaultProps: function() {
+const SiteIcon = React.createClass( {
+	getDefaultProps() {
 		return {
 			// Cache a larger image so there's no need to download different
 			// assets to display the site icons in different contexts.
@@ -23,12 +21,12 @@ module.exports = React.createClass( {
 		size: React.PropTypes.number
 	},
 
-	imgSizeParam: function( host ) {
+	imgSizeParam( host ) {
 		return host && host.indexOf( 'gravatar.com' ) === -1 ? 'w' : 's';
 	},
 
-	getIconSrcURL: function( imgURL ) {
-		var parsed = url.parse( imgURL, true , true ),
+	getIconSrcURL( imgURL ) {
+		var parsed = url.parse( imgURL, true, true ),
 			sizeParam = this.imgSizeParam( parsed.host );
 
 		parsed.query[sizeParam] = this.props.imgSize;
@@ -39,7 +37,7 @@ module.exports = React.createClass( {
 		return url.format( parsed );
 	},
 
-	render: function() {
+	render() {
 		var iconSrc, iconClasses, style, noticonStyle;
 
 		// Set the site icon path if it's available
@@ -67,12 +65,13 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ iconClasses } style={ style }>
-				{ iconSrc ?
-					<img className="site-icon__img" src={ iconSrc } />
-				:
-					<span className="noticon noticon-website" style={ noticonStyle } />
+				{ iconSrc
+					? <img className="site-icon__img" src={ iconSrc } />
+					: <span className="noticon noticon-website" style={ noticonStyle } />
 				}
 			</div>
 		);
 	}
 } );
+
+export default SiteIcon;
