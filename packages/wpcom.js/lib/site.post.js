@@ -1,231 +1,253 @@
 /**
  * Module dependencies.
  */
-var Like = require( './site.post.like' );
-var Reblog = require( './site.post.reblog' );
-var Comment = require( './site.comment' );
-var debug = require( 'debug' )( 'wpcom:post' );
+import Like from './site.post.like';
+import Reblog from './site.post.reblog';
+import Comment from './site.comment';
+import Subscriber from './site.post.subscriber';
+import runtimeBuilder from './util/runtime-builder';
+import sitePostGetMethods from './runtime/site.post.get.json';
+import debugFactory from 'debug';
 
 /**
- * Post methods
- *
- * @param {String} id - post id
- * @param {String} sid site id
- * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * Module vars
  */
-function Post( id, sid, wpcom ) {
-	if ( ! ( this instanceof Post ) ) {
-		return new Post( id, sid, wpcom );
-	}
-
-	this.wpcom = wpcom;
-	this._sid = sid;
-
-	// set `id` and/or `slug` properties
-	id = id || {};
-	if ( 'object' !== typeof id ) {
-		this._id = id;
-	} else {
-		this._id = id.id;
-		this._slug = id.slug;
-	}
-}
+const debug = debugFactory( 'wpcom:post' );
+const root = '/sites';
 
 /**
- * Set post `id`
- *
- * @param {String} id - site id
+ * SitePost class
  */
-Post.prototype.id = function( id ) {
-	this._id = id;
-};
+class SitePost {
+	/**
+	 * SitePost methods
+	 *
+	 * @param {String} id - post id
+	 * @param {String} sid site id
+	 * @param {WPCOM} wpcom - wpcom instance
+	 * @return {Null} null
+	 */
+	constructor( id, sid, wpcom ) {
+		if ( ! ( this instanceof SitePost ) ) {
+			return new SitePost( id, sid, wpcom );
+		}
 
-/**
- * Set post `slug`
- *
- * @param {String} slug - site slug
- */
-Post.prototype.slug = function( slug ) {
-	this._slug = slug;
-};
+		this.wpcom = wpcom;
+		this._sid = sid;
+		this.path = `${root}/${this._sid}/posts`;
 
-/**
- * Get post
- *
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Post.prototype.get = function( query, fn ) {
-	if ( ! this._id && this._slug ) {
-		return this.getBySlug( query, fn );
-	}
-
-	let path = '/sites/' + this._sid + '/posts/' + this._id;
-	return this.wpcom.req.get( path, query, fn );
-};
-
-/**
- * Get post by slug
- *
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Post.prototype.getBySlug = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/posts/slug:' + this._slug;
-	return this.wpcom.req.get( path, query, fn );
-};
-
-/**
- * Add post
- *
- * @param {Object} [query] - query object parameter
- * @param {Object} body - body object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Post.prototype.add = function( query, body, fn ) {
-	if ( undefined === fn ) {
-		if ( undefined === body ) {
-			body = query;
-			query = {};
-		} else if ( 'function' === typeof body ) {
-			fn = body;
-			body = query;
-			query = {};
+		// set `id` and/or `slug` properties
+		id = id || {}
+		if ( 'object' !== typeof id ) {
+			this._id = id;
+		} else {
+			this._id = id.id;
+			this._slug = id.slug;
 		}
 	}
 
-	let path = '/sites/' + this._sid + '/posts/new';
+	/**
+	 * Set post `id`
+	 *
+	 * @param {String} id - site id
+	 */
+	id( id ) {
+		this._id = id;
+	}
 
-	return this.wpcom.req.post( path, query, body )
-		.then( data => {
-			// update POST object
-			this._id = data.ID;
-			debug( 'Set post _id: %s', this._id );
+	/**
+	 * Set post `slug`
+	 *
+	 * @param {String} slug - site slug
+	 */
+	slug( slug ) {
+		this._slug = slug;
+	}
 
-			this._slug = data.slug;
-			debug( 'Set post _slug: %s', this._slug );
+	/**
+	 * Get post url path
+	 *
+	 * @return {String} post path
+	 */
 
-			if ( 'function' === typeof fn ) {
-				fn( null, data );
-			} else {
-				return Promise.resolve( data );
+	getPostPath() {
+		return `${this.path}/${this._id}`;
+	}
+
+	/**
+	 * Get post
+	 *
+	 * @param {Object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @return {Function} request handler
+	 */
+	get( query, fn ) {
+		if ( ! this._id && this._slug ) {
+			return this.getBySlug( query, fn );
+		}
+
+		return this.wpcom.req.get( this.getPostPath(), query, fn );
+	}
+
+	/**
+	 * Get post by slug
+	 *
+	 * @param {Object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @return {Function} request handler
+	 */
+	getBySlug( query, fn ) {
+		return this.wpcom.req.get( `${this.path}/slug:${this._slug}`, query, fn );
+	}
+
+	/**
+	 * Add post
+	 *
+	 * @param {Object} [query] - query object parameter
+	 * @param {Object} body - body object parameter
+	 * @param {Function} fn - callback function
+	 * @return {Function} request handler
+	 */
+	add( query, body, fn ) {
+		if ( undefined === fn ) {
+			if ( undefined === body ) {
+				body = query;
+				query = {}
+			} else if ( 'function' === typeof body ) {
+				fn = body;
+				body = query;
+				query = {}
 			}
-		} )
-		.catch( err => {
-			if ( 'function' === typeof fn ) {
-				fn( err );
-			} else {
-				return Promise.reject( err );
-			}
-		} );
-};
+		}
 
-/**
- * Edit post
- *
- * @param {Object} [query] - query object parameter
- * @param {Object} body - body object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Post.prototype.update = function( query, body, fn ) {
-	var path = '/sites/' + this._sid + '/posts/' + this._id;
-	return this.wpcom.req.put( path, query, body, fn );
-};
+		return this.wpcom.req.post( `${this.path}/new`, query, body )
+			.then( data => {
+				// update POST object
+				this._id = data.ID;
+				debug( 'Set post _id: %s', this._id );
 
-/**
- * Delete post
- *
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- */
-Post.prototype.del =
-Post.prototype.delete = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/posts/' + this._id + '/delete';
-	return this.wpcom.req.del( path, query, fn );
-};
+				this._slug = data.slug;
+				debug( 'Set post _slug: %s', this._slug );
 
-/**
- * Restore post
- *
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Post.prototype.restore = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/posts/' + this._id + '/restore';
-	return this.wpcom.req.put( path, query, null, fn );
-};
+				if ( 'function' === typeof fn ) {
+					fn( null, data );
+				} else {
+					return Promise.resolve( data );
+				}
+			} )
+			.catch( err => {
+				if ( 'function' === typeof fn ) {
+					fn( err );
+				} else {
+					return Promise.reject( err );
+				}
+			} );
+	}
 
-/**
- * Get post likes list
- *
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Post.prototype.likesList = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/posts/' + this._id + '/likes';
-	return this.wpcom.req.get( path, query, fn );
-};
+	/**
+	 * Edit post
+	 *
+	 * @param {Object} [query] - query object parameter
+	 * @param {Object} body - body object parameter
+	 * @param {Function} fn - callback function
+	 * @return {Function} request handler
+	 */
+	update( query, body, fn ) {
+		return this.wpcom.req.put( this.getPostPath(), query, body, fn );
+	}
 
-/**
- * Search within a site for related posts
- *
- * @param {Object} body - body object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Post.prototype.related = function( body, fn ) {
-	var path = '/sites/' + this._sid + '/posts/' + this._id + '/related';
-	return this.wpcom.req.put( path, body, null, fn );
-};
+	/**
+	 * Delete post
+	 *
+	 * @param {Object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @return {Promise} Promise
+	 */
+	delete( query, fn ) {
+		const path = `${this.getPostPath()}/delete`;
+		return this.wpcom.req.del( path, query, fn );
+	}
 
-/**
- * Create a `Like` instance
- *
- * @return {Like} Like instance
- */
-Post.prototype.like = function() {
-	return new Like( this._id, this._sid, this.wpcom );
-};
+	/**
+	 * Restore post
+	 *
+	 * @param {Object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @return {Function} request handler
+	 */
+	restore( query, fn ) {
+		return this.wpcom.req.put( `${this.getPostPath()}/restore`, query, null, fn );
+	}
 
-/**
- * Create a `Reblog` instance
- *
- * @return {Reblog} Reblog instance
- */
-Post.prototype.reblog = function() {
-	return new Reblog( this._id, this._sid, this.wpcom );
-};
+	/**
+	 * Search within a site for related posts
+	 *
+	 * @param {Object} body - body object parameter
+	 * @param {Function} fn - callback function
+	 * @return {Function} request handler
+	 */
+	related( body, fn ) {
+		return this.wpcom.req.put( `${this.getPostPath()}/related`, body, null, fn );
+	}
 
-/**
- * Create a `Comment` instance
- *
- * @param {String} [cid] - comment id
- * @return {Comment} Comment instance
- */
-Post.prototype.comment = function( cid ) {
-	return new Comment( cid, this._id, this._sid, this.wpcom );
-};
+	/**
+	 * Create a `Comment` instance
+	 *
+	 * @param {String} [cid] - comment id
+	 * @return {Comment} Comment instance
+	 */
+	comment( cid ) {
+		return new Comment( cid, this._id, this._sid, this.wpcom );
+	}
 
-/**
- * Return recent comments
- *
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Post.prototype.comments = function( query, fn ) {
-	var comment = new Comment( null, this._id, this._sid, this.wpcom );
-	return comment.replies( query, fn );
-};
+	/**
+	 * Return recent comments
+	 *
+	 * @param {Object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @return {Function} request handler
+	 */
+	comments( query, fn ) {
+		var comment = new Comment( null, this._id, this._sid, this.wpcom );
+		return comment.replies( query, fn );
+	}
 
-/**
- * Expose `Post` module
- */
-module.exports = Post;
+	/**
+	 * Create a `Like` instance
+	 *
+	 * @return {Like} Like instance
+	 */
+	like() {
+		return new Like( this._id, this._sid, this.wpcom );
+	}
+
+	/**
+	 * Create a `Reblog` instance
+	 *
+	 * @return {Reblog} Reblog instance
+	 */
+	reblog() {
+		return new Reblog( this._id, this._sid, this.wpcom );
+	}
+
+	/**
+	 * Return a `Subscriber` instance.
+	 *
+	 * *Example:*
+	 *    // Create a Subscriber instance of a post
+	 *    var post = wpcom.site( 'en.blog.wordpress.com' ).post( 1234 );
+	 *    var subs = post.subscriber();
+	 *
+	 * @return {Subscriber} Subscriber instance
+	 */
+	subscriber() {
+		return new Subscriber( this._id, this._sid, this.wpcom );
+	};
+}
+
+// add methods in runtime
+runtimeBuilder( SitePost, sitePostGetMethods, ( item, ctx ) => {
+	return `/sites/${ctx._sid}/posts/${ctx._id}/${item.subpath}`;
+} );
+
+export default SitePost;

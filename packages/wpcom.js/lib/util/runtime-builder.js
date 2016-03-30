@@ -1,7 +1,16 @@
 /**
- * Module dependencies
+ * Build a generic method
+ *
+ * @param {Object} methodParams - method methodParams
+ * @param {Function} buildPath - function called to build method path
+ * @return {String} method path
  */
-import methodBuilder from './runtime-method';
+const methodBuilder = ( methodParams, buildPath ) => {
+	return function( query, fn ) {
+		const path = buildPath( methodParams, this );
+		return this.wpcom.req.get( path, query, fn );
+	};
+}
 
 /**
  * Add methods to the given Class in the
@@ -9,10 +18,14 @@ import methodBuilder from './runtime-method';
  *
  * @param {*} Class - class to extend
  * @param {Array} list - methods list
+ * @param {Function} buildPath - function to build the method endpoint path
  */
-export default function( Class, list ) {
-	list.forEach( item => {
-		item = 'object' === typeof item ? item : { name: item }
-		Class.prototype[ item.name ] = methodBuilder( item.name, item.subpath );
+export default function( Class, list, buildPath ) {
+	list.forEach( methodParams => {
+		methodParams = 'object' === typeof methodParams
+			? methodParams
+			: { name: methodParams }
+
+		Class.prototype[ methodParams.name ] = methodBuilder( methodParams, buildPath );
 	} );
 };
