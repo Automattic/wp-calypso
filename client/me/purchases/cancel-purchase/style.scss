@@ -67,24 +67,27 @@
 	font-weight: 400;
 }
 
-.cancel-purchase__refund-amount {
-	color: $alert-green;
-	float: left;
-	font-size: 14px;
-	margin: 8px 0 0 0;
+.cancel-purchase__footer {
+	align-items: baseline;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
 
-	@include breakpoint( "<960px" ) {
-		margin: 0 0 5px 0;
+	&:after {
+		display:none;
 	}
 }
 
-.cancel-purchase__button {
-	@include breakpoint( "<960px" ) {
-		width: 100%;
-	}
+.cancel-purchase__refund-amount {
+	color: $alert-green;
+	font-size: 14px;
+	margin: 0;
+	padding: 0 10px 5px 0;
+}
 
-	@include breakpoint( ">960px" ) {
-		float: right;
+.cancel-purchase__button {
+	@include breakpoint( "<660px" ) {
+		width: 100%;
 	}
 }
 
