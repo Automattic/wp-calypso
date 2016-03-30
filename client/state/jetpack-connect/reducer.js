@@ -48,7 +48,8 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
 			return Object.assign( {}, state, { isAuthorizing: false, authorizeError: action.error, authorizeSuccess: action.data, autoAuthorize: false } );
 		case JETPACK_CONNECT_QUERY_SET:
-			return Object.assign( {}, defaultAuthorizeState, { queryObject: action.queryObject } );
+			const queryObject = Object.assign( {}, action.queryObject );
+			return Object.assign( {}, defaultAuthorizeState, { queryObject: queryObject } );
 		case JETPACK_CONNECT_QUERY_UPDATE:
 			return Object.assign( {}, state, { queryObject: Object.assign( {}, state.queryObject, { [ action.property ]: action.value } ) } );
 		case JETPACK_CONNECT_CREATE_ACCOUNT:

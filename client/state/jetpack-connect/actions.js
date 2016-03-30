@@ -7,6 +7,7 @@ const debug = require( 'debug' )( 'calypso:jetpack-connect:actions' );
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+import { tracks } from 'analytics';
 import {
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
@@ -82,6 +83,7 @@ export default {
 	},
 	createAccount( userData ) {
 		return ( dispatch ) => {
+			tracks.recordEvent( 'jetpack_connect_create_account' );
 			dispatch( {
 				type: JETPACK_CONNECT_CREATE_ACCOUNT,
 				userData: userData
@@ -89,6 +91,11 @@ export default {
 			wpcom.undocumented().usersNew(
 				userData,
 				( error, data ) => {
+					if ( error ) {
+						tracks.recordEvent( 'jetpack_connect_create_account_error', { error: error.code } );
+					} else {
+						tracks.recordEvent( 'jetpack_connect_create_account_success' );
+					}
 					dispatch( {
 						type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 						userData: userData,
@@ -103,6 +110,7 @@ export default {
 		return ( dispatch ) => {
 			const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
 			debug( 'Authorizing', _wp_nonce, redirect_uri, scope, state );
+			tracks.recordEvent( 'jetpack_connect_authorize' );
 			dispatch( {
 				type: JETPACK_CONNECT_AUTHORIZE,
 				queryObject: queryObject
@@ -110,6 +118,7 @@ export default {
 			wpcom.undocumented().jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state ).then( ( data ) => {
 				return wpcom.undocumented().jetpackAuthorize( client_id, data.code, state, redirect_uri, secret );
 			} ).then( ( data, error ) => {
+				tracks.recordEvent( 'jetpack_connect_authorize_success' );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 					siteId: client_id,
@@ -119,6 +128,7 @@ export default {
 			} )
 			.catch( ( error ) => {
 				debug( 'Authorize error', error );
+				tracks.recordEvent( 'jetpack_connect_authorize_error', { error: error.code } );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 					siteId: client_id,

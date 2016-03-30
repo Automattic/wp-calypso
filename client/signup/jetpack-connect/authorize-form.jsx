@@ -28,6 +28,7 @@ const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
 
 	submitForm( form, userData ) {
+		debug( 'submiting new account', form, userData );
 		this.props.createAccount( userData );
 	},
 
@@ -131,6 +132,9 @@ const LoggedInForm = React.createClass( {
 		}
 
 		if ( authorizeSuccess ) {
+			if ( queryObject.redirect_after_auth ) {
+				window.location.href = queryObject.redirect_after_auth;
+			}
 			return null;
 		}
 
