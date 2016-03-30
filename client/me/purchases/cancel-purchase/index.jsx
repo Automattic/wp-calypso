@@ -11,7 +11,7 @@ import Card from 'components/card';
 import CancelPurchaseButton from './button';
 import CancelPurchaseRefundInformation from './refund-information';
 import CompactCard from 'components/card/compact';
-import { getName, isCancelable } from 'lib/purchases';
+import { getName, isCancelable, isRefundable } from 'lib/purchases';
 import { getPurchase, getSelectedSite, goToManagePurchase, recordPageView } from 'me/purchases/utils';
 import HeaderCake from 'components/header-cake';
 import { isDomainRegistration } from 'lib/products-values';
@@ -64,6 +64,30 @@ const CancelPurchase = React.createClass( {
 		page.redirect( redirectPath );
 	},
 
+	renderFooterText() {
+		const purchase = getPurchase( this.props ),
+			{ priceText, renewDate } = purchase;
+
+		if ( isRefundable( purchase ) ) {
+			return this.translate( '%(priceText)s to be refunded', {
+				args: { priceText },
+				context: 'priceText is of the form "[currency-symbol][amount]" i.e. "$20"'
+			} );
+		}
+
+		const renewalDate = this.moment( renewDate ).format( 'LL' );
+
+		if ( isDomainRegistration( purchase ) ) {
+			return this.translate( 'Domain will be removed on %(renewalDate)s', {
+				args: { renewalDate }
+			} );
+		}
+
+		return this.translate( 'Subscription will be removed on %(renewalDate)s', {
+			args: { renewalDate }
+		} );
+	},
+
 	render() {
 		if ( ! this.isDataValid() ) {
 			return null;
@@ -71,7 +95,7 @@ const CancelPurchase = React.createClass( {
 
 		const purchase = getPurchase( this.props ),
 			purchaseName = getName( purchase ),
-			{ priceText, siteName, domain: siteDomain } = purchase;
+			{ siteName, domain: siteDomain } = purchase;
 
 		let heading;
 
@@ -122,10 +146,7 @@ const CancelPurchase = React.createClass( {
 				</CompactCard>
 				<CompactCard className="cancel-purchase__footer">
 					<div className="cancel-purchase__refund-amount">
-						{ this.translate( '%(priceText)s to be refunded', {
-							args: { priceText },
-							context: 'priceText is of the form "[currency-symbol][amount]" i.e. "$20"'
-						} ) }
+						{ this.renderFooterText( this.props ) }
 					</div>
 					<CancelPurchaseButton
 						purchase={ purchase }
