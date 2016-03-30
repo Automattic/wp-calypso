@@ -1,25 +1,26 @@
 /**
  * External Dependencies
  */
-import ReactDom from 'react-dom';
 import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal Dependencies
  */
 import analytics from 'analytics';
-import ConfirmCancelPurchase from './confirm-cancel-purchase';
-import ConfirmCancelPurchaseLoadingPlaceholder from './confirm-cancel-purchase/loading-placeholder';
+import CancelPrivateRegistration from './cancel-private-registration';
 import CancelPurchase from './cancel-purchase';
 import CancelPurchaseLoadingPlaceholder from './cancel-purchase/loading-placeholder';
-import CancelPrivateRegistration from './cancel-private-registration';
+import ConfirmCancelPurchase from './confirm-cancel-purchase';
+import ConfirmCancelPurchaseLoadingPlaceholder from './confirm-cancel-purchase/loading-placeholder';
 import EditCardDetails from './payment/edit-card-details';
 import EditCardDetailsData from 'components/data/purchases/edit-card-details';
 import EditCardDetailsLoadingPlaceholder from './payment/edit-card-details/loading-placeholder';
 import EditPaymentMethod from './payment/edit-payment-method';
+import { isDataLoading } from './utils';
 import Main from 'components/main';
-import ManagePurchaseData from 'components/data/purchases/manage-purchase';
 import ManagePurchase from './manage-purchase';
+import ManagePurchaseData from 'components/data/purchases/manage-purchase';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
 import paths from './paths';
 import PurchasesData from 'components/data/purchases';
@@ -29,7 +30,6 @@ import sitesFactory from 'lib/sites-list';
 import titleActions from 'lib/screen-title/actions';
 import titles from './titles';
 import userFactory from 'lib/user';
-import { isDataLoading } from './utils';
 
 const sites = sitesFactory();
 const user = userFactory();
@@ -59,6 +59,26 @@ function setTitle( ...title ) {
 }
 
 export default {
+	cancelPrivateRegistration( context ) {
+		setTitle(
+			titles.cancelPrivateRegistration
+		);
+
+		recordPageView(
+			paths.cancelPrivateRegistration(),
+			'Cancel Private Registration'
+		);
+
+		sites.setSelectedSite( context.params.site );
+
+		renderPage(
+			<ManagePurchaseData
+				component={ CancelPrivateRegistration }
+				purchaseId={ context.params.purchaseId }
+				sites={ sites } />
+		);
+	},
+
 	cancelPurchase( context ) {
 		setTitle(
 			titles.cancelPurchase
@@ -76,26 +96,6 @@ export default {
 				component={ CancelPurchase }
 				isDataLoading={ isDataLoading }
 				loadingPlaceholder={ CancelPurchaseLoadingPlaceholder }
-				purchaseId={ context.params.purchaseId }
-				sites={ sites } />
-		);
-	},
-
-	cancelPrivateRegistration( context ) {
-		setTitle(
-			titles.cancelPrivateRegistration
-		);
-
-		recordPageView(
-			paths.cancelPrivateRegistration(),
-			'Cancel Private Registration'
-		);
-
-		sites.setSelectedSite( context.params.site );
-
-		renderPage(
-			<ManagePurchaseData
-				component={ CancelPrivateRegistration }
 				purchaseId={ context.params.purchaseId }
 				sites={ sites } />
 		);

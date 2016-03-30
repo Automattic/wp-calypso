@@ -13,12 +13,12 @@ import CancelPurchaseProductInformation from './product-information';
 import CancelPurchaseRefundInformation from './refund-information';
 import CancelPurchaseSupportBox from './support-box';
 import CompactCard from 'components/card/compact';
+import { getName, isCancelable } from 'lib/purchases';
+import { getPurchase, getSelectedSite, goToManagePurchase, recordPageView } from 'me/purchases/utils';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import paths from '../paths';
 import titles from 'me/purchases/titles';
-import { getName, isCancelable } from 'lib/purchases';
-import { getPurchase, getSelectedSite, goToManagePurchase, recordPageView } from 'me/purchases/utils';
 
 const CancelPurchase = React.createClass( {
 	propTypes: {

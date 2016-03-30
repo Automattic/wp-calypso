@@ -1,9 +1,9 @@
 /**
  * External Dependencies
- **/
+ */
 import page from 'page';
-import ReactDom from 'react-dom';
 import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal Dependencies
@@ -12,17 +12,21 @@ import analytics from 'analytics';
 import Card from 'components/card';
 import ConfirmCancelPurchaseLoadingPlaceholder from './loading-placeholder';
 import HeaderCake from 'components/header-cake';
+import { getPurchase, goToCancelPurchase, recordPageView } from '../utils';
 import loadEndpointForm from './load-endpoint-form';
 import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import titles from 'me/purchases/titles';
-import { getPurchase, goToCancelPurchase, recordPageView } from '../utils';
 
 const ConfirmCancelPurchase = React.createClass( {
 	propTypes: {
-		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.object
+		purchaseId: React.PropTypes.string.isRequired,
+		selectedPurchase: React.PropTypes.object.isRequired,
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.bool,
+			React.PropTypes.object
+		] ).isRequired
 	},
 
 	getInitialState() {

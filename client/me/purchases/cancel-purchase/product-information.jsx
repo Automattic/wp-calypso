@@ -7,10 +7,10 @@ import React from 'react';
  * Internal Dependencies
  */
 import { domainManagementEdit } from 'my-sites/upgrades/paths';
+import { getDetailsUrl as getThemeDetailsUrl } from 'my-sites/themes/helpers';
 import { googleAppsSettingsUrl } from 'lib/google-apps';
 import Gridicon from 'components/gridicon';
 import { isBusiness, isGoogleApps, isPlan, isTheme } from 'lib/products-values';
-import { getDetailsUrl as getThemeDetailsUrl } from 'my-sites/themes/helpers';
 
 const CancelPurchaseProductInformation = React.createClass( {
 	propTypes: {

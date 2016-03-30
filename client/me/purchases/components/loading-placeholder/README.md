@@ -12,7 +12,6 @@ const MyComponentLoadingPlaceholder = React.createClass( {
 	render() {
 		return (
 			<LoadingPlaceholder
-				className="my-component-loading-placeholder"
 				title={ this.translate( 'Header title' ) }>
 				<Card>
 					{ this.translate( 'Loading…' ) }
@@ -26,6 +25,5 @@ const MyComponentLoadingPlaceholder = React.createClass( {
 
 ## Props
 
-* `className` - **optional** Add a custom class property.
 * `path` - **optional** Add a path where back button should lead to.
 * `title` - Add a header title.

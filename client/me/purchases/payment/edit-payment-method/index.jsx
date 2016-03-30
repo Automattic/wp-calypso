@@ -6,13 +6,13 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import EditPaymentMethodPaypal from './paypal';
 import EditPaymentMethodCreditCard from './credit-card';
+import EditPaymentMethodPaypal from './paypal';
 import HeaderCake from 'components/header-cake';
+import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
 import { isPaidWithCreditCard, isPaidWithPaypal } from 'lib/purchases';
 import Main from 'components/main';
 import titles from 'me/purchases/titles';
-import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
 
 const EditPaymentMethod = React.createClass( {
 	propTypes: {

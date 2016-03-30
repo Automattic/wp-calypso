@@ -16,6 +16,12 @@ import PurchasesHeader from './header';
 import PurchasesSite from './site';
 
 const PurchasesList = React.createClass( {
+	propTypes: {
+		noticeType: React.PropTypes.string,
+		purchases: React.PropTypes.object.isRequired,
+		sites: React.PropTypes.object.isRequired
+	},
+
 	renderNotice() {
 		const { noticeType } = this.props;
 
@@ -60,11 +66,7 @@ const PurchasesList = React.createClass( {
 			return true;
 		}
 
-		if ( ! this.props.sites.initialized ) {
-			return true;
-		}
-
-		return false;
+		return ! this.props.sites.initialized;
 	},
 
 	render() {

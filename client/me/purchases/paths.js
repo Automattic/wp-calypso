@@ -39,12 +39,12 @@ function editPaymentMethod( siteName, purchaseId ) {
 }
 
 export default {
+	cancelPrivateRegistration,
 	cancelPurchase,
 	confirmCancelPurchase,
-	cancelPrivateRegistration,
 	editCardDetails,
-	editSpecificCardDetails,
 	editPaymentMethod,
+	editSpecificCardDetails,
 	list,
 	listNotice,
 	managePurchase,

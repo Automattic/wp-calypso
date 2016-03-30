@@ -11,23 +11,9 @@ import React from 'react';
 import analytics from 'analytics';
 import Button from 'components/button';
 import Card from 'components/card';
-import CompactCard from 'components/card/compact';
 import { cartItems } from 'lib/cart-values';
+import CompactCard from 'components/card/compact';
 import config from 'config';
-import { domainManagementEdit } from 'my-sites/upgrades/paths';
-import { googleAppsSettingsUrl } from 'lib/google-apps';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { getDetailsUrl as getThemeDetailsUrl } from 'my-sites/themes/helpers';
-import paths from '../paths';
-import PaymentLogo from 'components/payment-logo';
-import RemovePurchase from '../remove-purchase';
-import supportPaths from 'lib/url/support';
-import titles from 'me/purchases/titles';
-import VerticalNavItem from 'components/vertical-nav/item';
-import * as upgradesActions from 'lib/upgrades/actions';
 import {
 	creditCardExpiresBeforeSubscription,
 	getName,
@@ -36,19 +22,33 @@ import {
 	isCancelable,
 	isExpired,
 	isExpiring,
+	isIncludedWithPlan,
+	isOneTimePurchase,
 	isPaidWithCreditCard,
 	isRedeemable,
 	isRefundable,
 	isRenewable,
 	isRenewing,
-	isIncludedWithPlan,
-	isOneTimePurchase,
 	paymentLogoType,
 	purchaseType,
-	showCreditCardExpiringWarning,
+	showCreditCardExpiringWarning
 } from 'lib/purchases';
+import { domainManagementEdit } from 'my-sites/upgrades/paths';
+import { getDetailsUrl as getThemeDetailsUrl } from 'my-sites/themes/helpers';
 import { getPurchase, getSelectedSite, goToList, recordPageView } from '../utils';
+import { googleAppsSettingsUrl } from 'lib/google-apps';
+import HeaderCake from 'components/header-cake';
 import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
+import Main from 'components/main';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+import paths from '../paths';
+import PaymentLogo from 'components/payment-logo';
+import RemovePurchase from '../remove-purchase';
+import supportPaths from 'lib/url/support';
+import titles from 'me/purchases/titles';
+import VerticalNavItem from 'components/vertical-nav/item';
+import * as upgradesActions from 'lib/upgrades/actions';
 
 function canEditPaymentDetails( purchase ) {
 	return config.isEnabled( 'upgrades/credit-cards' ) && ! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase );
@@ -59,7 +59,7 @@ function canEditPaymentDetails( purchase ) {
  * because this page can be rendered without a selected site.
  *
  * @param {object} props The props passed to `ManagePurchase`
- * @return {bool} Whether or not the data is loading
+ * @return {boolean} Whether or not the data is loading
  */
 function isDataLoading( props ) {
 	return ! props.hasLoadedSites || ! props.selectedPurchase.hasLoadedFromServer;
@@ -67,14 +67,14 @@ function isDataLoading( props ) {
 
 const ManagePurchase = React.createClass( {
 	propTypes: {
-		cart: React.PropTypes.object.isRequired,
+		destinationType: React.PropTypes.string,
+		hasLoadedSites: React.PropTypes.bool.isRequired,
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool,
 			React.PropTypes.undefined
 		] ),
-		destinationType: React.PropTypes.string,
 		user: React.PropTypes.object.isRequired
 	},
 

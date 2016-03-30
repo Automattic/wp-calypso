@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
 import page from 'page';
 import React from 'react';
 
@@ -13,7 +12,6 @@ import Main from 'components/main';
 
 const LoadingPlaceholder = React.createClass( {
 	propTypes: {
-		className: React.PropTypes.string,
 		path: React.PropTypes.string,
 		title: React.PropTypes.string.isRequired
 	},
@@ -24,7 +22,7 @@ const LoadingPlaceholder = React.createClass( {
 
 	render() {
 		return (
-			<Main className={ classnames( 'loading-placeholder', this.props.className ) }>
+			<Main className="loading-placeholder">
 				<HeaderCake className="loading-placeholder__header" onClick={ this.goBack }>
 					{ this.props.title }
 				</HeaderCake>
