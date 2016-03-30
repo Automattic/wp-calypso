@@ -192,7 +192,7 @@ var RegisterDomainStep = React.createClass( {
 					placeholder={ placeholderText }
 					autoFocus={ true }
 					delaySearch={ true }
-					delayTimeout={ 2000 }
+					delayTimeout={ 500 }
 				/>
 				{ exampleDomains }
 			</div>
