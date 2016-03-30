@@ -69,6 +69,18 @@ export default React.createClass( {
 			noticeValues.icon = 'status';
 			return noticeValues
 		}
+		if ( this.props.noticeType === 'authorizeError' ) {
+			noticeValues.text = this.translate( 'Error authorizing your site. Please contact support.' );
+			noticeValues.status = 'is-error';
+			noticeValues.icon = 'notice';
+			return noticeValues
+		}
+		if ( this.props.noticeType === 'authorizeSuccess' ) {
+			noticeValues.text = this.translate( 'Jetpack connection complete.' );
+			noticeValues.status = 'is-success';
+			noticeValues.icon = 'checkmark-circle';
+			return noticeValues
+		}
 		return;
 	},
 
