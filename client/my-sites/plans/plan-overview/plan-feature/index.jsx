@@ -45,8 +45,8 @@ PlanFeature.propTypes = {
 		href: React.PropTypes.string.isRequired
 	} ),
 	description: React.PropTypes.string.isRequired,
-	removalMessage: React.PropTypes.string,
 	heading: React.PropTypes.string.isRequired,
+	removalMessage: React.PropTypes.string,
 	willBeRemoved: React.PropTypes.bool.isRequired
 };
 

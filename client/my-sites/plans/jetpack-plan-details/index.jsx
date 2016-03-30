@@ -1,21 +1,24 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
-module.exports = React.createClass( {
-	displayName: 'JetpackPlanDetails',
+const JetpackPlanDetails = ( { plan } ) => {
+	return (
+		<div>
+			<p>{ plan.description }</p>
 
-	render: function() {
-		return (
-			<div>
-				<p>{ this.props.plan.description }</p>
-				<ul>
-					<li>{ this.props.plan.feature_1 }</li>
-					<li>{ this.props.plan.feature_2 }</li>
-					<li>{ this.props.plan.feature_3 }</li>
-				</ul>
-			</div>
-		);
-	}
-} );
+			<ul>
+				<li>{ plan.feature_1 }</li>
+				<li>{ plan.feature_2 }</li>
+				<li>{ plan.feature_3 }</li>
+			</ul>
+		</div>
+	);
+};
+
+JetpackPlanDetails.propTypes = {
+	plan: React.PropTypes.object.isRequired
+};
+
+export default JetpackPlanDetails;

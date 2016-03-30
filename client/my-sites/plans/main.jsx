@@ -1,65 +1,74 @@
 /**
  * External dependencies
  */
-var connect = require( 'react-redux' ).connect,
-	page = require( 'page' ),
-	React = require( 'react' );
+import { connect } from 'react-redux';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
-	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan,
-	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans,
-	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
-	Gridicon = require( 'components/gridicon' ),
-	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
-	Main = require( 'components/main' ),
-	Notice = require( 'components/notice' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	paths = require( './paths' ),
-	PlanList = require( 'components/plans/plan-list' ),
-	PlanOverview = require( './plan-overview' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
-	transactionStepTypes = require( 'lib/store-transactions/step-types' );
+import analytics from 'analytics';
+import { fetchSitePlans } from 'state/sites/plans/actions';
+import { getCurrentPlan } from 'lib/plans';
+import { getPlansBySite } from 'state/sites/plans/selectors';
+import Gridicon from 'components/gridicon';
+import { isJpphpBundle } from 'lib/products-values';
+import Main from 'components/main';
+import Notice from 'components/notice';
+import observe from 'lib/mixins/data-observe';
+import paths from './paths';
+import PlanList from 'components/plans/plan-list' ;
+import PlanOverview from './plan-overview';
+import { shouldFetchSitePlans } from 'lib/plans';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
+import UpgradesNavigation from 'my-sites/upgrades/navigation';
 
-var Plans = React.createClass( {
-	displayName: 'Plans',
-
+const Plans = React.createClass( {
 	mixins: [ observe( 'sites', 'plans' ) ],
 
-	getInitialState: function() {
+	propTypes: {
+		cart: React.PropTypes.object.isRequired,
+		context: React.PropTypes.object.isRequired,
+		destinationType: React.PropTypes.string,
+		plans: React.PropTypes.object.isRequired,
+		fetchSitePlans: React.PropTypes.func.isRequired,
+		sites: React.PropTypes.object.isRequired,
+		sitePlans: React.PropTypes.object.isRequired,
+		transaction: React.PropTypes.object.isRequired
+	},
+
+	getInitialState() {
 		return { openPlan: '' };
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.updateSitePlans( this.props.sitePlans );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.updateSitePlans( nextProps.sitePlans );
 	},
 
-	updateSitePlans: function( sitePlans ) {
-		var selectedSite = this.props.sites.getSelectedSite();
+	updateSitePlans( sitePlans ) {
+		const selectedSite = this.props.sites.getSelectedSite();
+
 		this.props.fetchSitePlans( sitePlans, selectedSite );
 	},
 
-	openPlan: function( planId ) {
+	openPlan( planId ) {
 		this.setState( { openPlan: planId === this.state.openPlan ? '' : planId } );
 	},
 
-	recordComparePlansClick: function() {
+	recordComparePlansClick() {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Compare Plans Link' );
 	},
 
-	comparePlansLink: function() {
-		var url = '/plans/compare',
-			selectedSite = this.props.sites.getSelectedSite();
-
-		var compareString = this.translate( 'Compare Plans' );
+	comparePlansLink() {
+		const selectedSite = this.props.sites.getSelectedSite();
+		let url = '/plans/compare',
+			compareString = this.translate( 'Compare Plans' );
 
 		if ( selectedSite.jetpack ) {
 			compareString = this.translate( 'Compare Options' );
@@ -95,9 +104,9 @@ var Plans = React.createClass( {
 		}
 	},
 
-	render: function() {
-		var selectedSite = this.props.sites.getSelectedSite(),
-			hasJpphpBundle,
+	render() {
+		const selectedSite = this.props.sites.getSelectedSite();
+		let hasJpphpBundle,
 			currentPlan;
 
 		if ( this.props.sitePlans.hasLoadedFromServer ) {
@@ -136,9 +145,9 @@ var Plans = React.createClass( {
 							plans={ this.props.plans.get() }
 							sitePlans={ this.props.sitePlans }
 							onOpen={ this.openPlan }
-							onSelectPlan={ this.props.onSelectPlan }
 							cart={ this.props.cart }
-							isSubmitting={ this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST } />
+							isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST } />
+
 						{ ! hasJpphpBundle && this.comparePlansLink() }
 					</div>
 				</Main>
@@ -147,13 +156,13 @@ var Plans = React.createClass( {
 	}
 } );
 
-module.exports = connect(
-	function mapStateToProps( state, props ) {
+export default connect(
+	( state, props ) => {
 		return {
 			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() )
 		};
 	},
-	function mapDispatchToProps( dispatch ) {
+	( dispatch ) => {
 		return {
 			fetchSitePlans( sitePlans, site ) {
 				if ( shouldFetchSitePlans( sitePlans, site ) ) {

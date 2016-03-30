@@ -1,33 +1,35 @@
 /**
  * External Dependencies
  */
-var page = require( 'page' ),
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+import page from 'page';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	analytics = require( 'analytics' ),
-	plans = require( 'lib/plans-list' )(),
-	config = require( 'config' ),
-	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
-	titleActions = require( 'lib/screen-title/actions' );
+import analytics from 'analytics';
+import config from 'config';
+import i18n from 'lib/mixins/i18n';
+import plansFactory from 'lib/plans-list';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import route from 'lib/route';
+import sitesFactory from 'lib/sites-list';
+import titleActions from 'lib/screen-title/actions';
 
-module.exports = {
+const plans = plansFactory();
+const sites = sitesFactory();
 
-	plans: function( context ) {
-		var Plans = require( 'my-sites/plans/main' ),
+export default {
+	plans( context ) {
+		const Plans = require( 'my-sites/plans/main' ),
 			CheckoutData = require( 'components/data/checkout' ),
 			MainComponent = require( 'components/main' ),
 			EmptyContentComponent = require( 'components/empty-content' ),
 			site = sites.getSelectedSite(),
 			analyticsPageTitle = 'Plans',
-			basePath = route.sectionify( context.path ),
-			analyticsBasePath;
+			basePath = route.sectionify( context.path );
+		let analyticsBasePath;
 
 		// Don't show plans for Jetpack sites
 		if ( site && site.jetpack && ! config.isEnabled( 'manage/jetpack-plans' ) ) {
@@ -74,16 +76,16 @@ module.exports = {
 		);
 	},
 
-	plansCompare: function( context ) {
-		var PlansCompare = require( 'components/plans/plans-compare' ),
+	plansCompare( context ) {
+		const PlansCompare = require( 'components/plans/plans-compare' ),
 			Main = require( 'components/main' ),
 			CheckoutData = require( 'components/data/checkout' ),
 			features = require( 'lib/features-list' )(),
 			productsList = require( 'lib/products-list' )(),
 			analyticsPageTitle = 'Plans > Compare',
 			site = sites.getSelectedSite(),
-			basePath = route.sectionify( context.path ),
-			baseAnalyticsPath;
+			basePath = route.sectionify( context.path );
+		let baseAnalyticsPath;
 
 		if ( site && ! site.isUpgradeable() ) {
 			return page.redirect( '/plans/compare' );
@@ -116,7 +118,7 @@ module.exports = {
 		);
 	},
 
-	redirectToCheckout: function( context ) {
+	redirectToCheckout( context ) {
 		// this route is deprecated, use `/checkout/:site/:plan` to link to plan checkout
 		page.redirect( `/checkout/${ context.params.domain }/${ context.params.plan }` );
 	}
