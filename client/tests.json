@@ -130,6 +130,9 @@
 				"test": [ "assembler", "store" ]
 			}
 		},
+		"email-followers": {
+		  "test": [ "store" ]
+		},
 		"features-list": {
 		  "test": [ "index" ]
 		},
