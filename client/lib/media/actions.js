@@ -173,6 +173,11 @@ MediaActions.add = function( siteId, files ) {
 				Dispatcher.handleServerAction( Object.assign( action, {
 					data: data.media[ 0 ]
 				} ) );
+				// also refetch media limits
+				Dispatcher.handleServerAction( {
+					type: 'FETCH_MEDIA_LIMITS',
+					siteId: siteId
+				} );
 			} ).catch( ( error ) => {
 				Dispatcher.handleServerAction( Object.assign( action, { error } ) );
 			} );
@@ -236,6 +241,11 @@ MediaActions.delete = function( siteId, item ) {
 			error: error,
 			siteId: siteId,
 			data: data
+		} );
+		// also refetch storage limits
+		Dispatcher.handleServerAction( {
+			type: 'FETCH_MEDIA_LIMITS',
+			siteId: siteId
 		} );
 	} );
 };
