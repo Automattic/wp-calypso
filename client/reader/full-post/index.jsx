@@ -214,6 +214,7 @@ FullPostView = React.createClass( {
 					{ hasFeaturedImage
 						? <div className="full-post__featured-image">
 								<img src={ this.props.post.canonical_image.uri } height={ this.props.post.canonical_image.height } width={ 	this.props.post.canonical_image.width } />
+								<div className="full-post__featured-image-caption">Sample caption <a href="#">and link</a></div>
 							</div>
 						: null }
 
