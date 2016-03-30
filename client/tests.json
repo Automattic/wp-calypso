@@ -307,6 +307,9 @@
 					"test": [
 						"index"
 					]
+				},
+				"edit": {
+					"test": [ "test-mapped-domain" ]
 				}
 			}
 		}
