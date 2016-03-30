@@ -11,6 +11,7 @@ import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import notices from 'notices';
 import utils from './utils';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Constants
@@ -140,10 +141,10 @@ const MainComponent = React.createClass( {
 	render() {
 		var headingLabel = this.state.isSubscribed
 								? this.translate( 'You\'re subscribed' )
-								: this.translate( 'We\'ve unsubscribed your\xa0email.' ),
+								: this.translate( 'We\'ve unsubscribed your email.' ),
 			messageLabel = this.state.isSubscribed
-								? this.translate( 'We\'ll send you updates for this mailing\xa0list.' )
-								: this.translate( 'You will no longer receive updates for this mailing\xa0list.' );
+								? this.translate( 'We\'ll send you updates for this mailing list.' )
+								: this.translate( 'You will no longer receive updates for this mailing list.' );
 
 		return(
 			<div className="mailing-lists">
@@ -152,8 +153,8 @@ const MainComponent = React.createClass( {
 					{ this.state.isSubscribed
 						? null
 						: <Gridicon icon="cross" size={ 24 } /> }
-					<h1>{ headingLabel }</h1>
-					<p>{ messageLabel }</p>
+					<h1>{ preventWidows( headingLabel, 2 ) }</h1>
+					<p>{ preventWidows( messageLabel, 2 ) }</p>
 				</div>
 
 				<Card className="mailing-lists__details">
