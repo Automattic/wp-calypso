@@ -55,7 +55,7 @@ function init() {
 	debug( 'Starting Calypso. Let\'s do this.' );
 
 	// prune sync-handler records more than two days old
-	syncHandler.pruneRecordsFrom( '2 days' );
+	syncHandler.pruneStaleRecords( '2 days' );
 
 	// Initialize i18n
 	if ( window.i18nLocaleStrings ) {

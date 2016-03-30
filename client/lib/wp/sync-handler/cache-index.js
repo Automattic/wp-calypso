@@ -60,13 +60,18 @@ export const cacheIndex = {
 	 * If the pair key-timestamp already exists it will be updated.
 	 *
 	 * @param {String} key - record key
-	 * @param {String} [pageSeriesKey] - key for records in a given page-series
+	 * @param {Object} reqParams - request parameters
+	 * @param {String} [pageSeriesKey] - key for records in a page-series (page 1, page 2, etc.)
 	 * @return {Promise} promise
 	 */
-	addItem( key, pageSeriesKey = null ) {
+	addItem( key, reqParams, pageSeriesKey = null ) {
 		return this.getAllExcluding( key ).then( records => {
 			debug( '\n\nadding %o record', key, pageSeriesKey, records );
-			const record = { key, timestamp: Date.now() };
+			const record = {
+				key,
+				reqParams,
+				timestamp: Date.now()
+			};
 			if ( pageSeriesKey ) {
 				record.pageSeriesKey = pageSeriesKey
 			}
@@ -102,67 +107,72 @@ export const cacheIndex = {
 		} );
 	},
 
+	/**
+	 * Removes individual records and updates the records-list Object
+	 * @param  {Object} data - list of items in the form { removeList: [], retainList: [] }
+	 * @return {Promise} - resolves with original data parameter
+	 */
 	removeRecordsByList( data ) {
 		debug( 'removeRecordsByList()', data );
 		return new Promise( ( resolve ) => {
-			const { removedRecords, retainedRecords } = data;
-			if ( ! removedRecords.length ) {
+			const { removeList, retainList } = data;
+			if ( ! removeList.length ) {
 				debug( 'No records to remove' );
 				resolve();
 			}
-			const droppedPromises = removedRecords.map( item => localforage.removeItem( item.key ) );
-			const recordsListPromise = localforage.setItem( RECORDS_LIST_KEY, retainedRecords )
+			const droppedPromises = removeList.map( item => localforage.removeItem( item.key ) );
+			const recordsListPromise = localforage.setItem( RECORDS_LIST_KEY, retainList )
 			return Promise.all( [ ...droppedPromises, recordsListPromise ] )
 			.then( () => {
-				debug( '%o records removed', removedRecords.length )
+				debug( '%o records removed', removeList.length )
 				resolve();
 			} );
 		} );
 	},
 
-	dropOlderThan( lifetime ) {
-		const dropElders = records => {
-			const removedRecords = filter( records, rec => {
+	findStaleRecords( lifetime ) {
+		const constructRecordsList = records => {
+			const removeList = filter( records, rec => {
 				return Date.now() - lifetime > rec.timestamp;
 			} );
 
 			return {
-				removedRecords,
-				retainedRecords: difference( records, removedRecords )
+				removeList,
+				retainList: difference( records, removeList )
 			}
 		};
 
 		return new Promise( ( resolve, reject ) => {
 			this.getAll()
-			.then( dropElders )
+			.then( constructRecordsList )
 			.then( resolve )
 			.catch( reject );
 		} );
 	},
 
 	/**
-	 * Prune old records depending of the given lifetime
+	 * Prune old records older than the given lifetime
 	 *
 	 * @param {Number|String} lifetime - lifetime (ms or natural string)
 	 * @return {Promise} promise
 	 */
-	pruneRecordsFrom( lifetime = LIFETIME ) {
+	pruneStaleRecords( lifetime = LIFETIME ) {
 		lifetime = typeof lifetime === 'number'
 			? lifetime
 			: ms( lifetime );
 
 		debug( 'start to prune records older than %s', ms( lifetime, { long: true } ) );
 
-		return this.dropOlderThan( lifetime ).then( this.removeRecordsByList );
+		return this.findStaleRecords( lifetime ).then( this.removeRecordsByList );
 	},
 
-	dropPageSeries( pageSeriesKey ) {
+	findPageSeriesRecords( pageSeriesKey ) {
 		debug( 'dropPageSeries()' );
 		const pickPageSeries = ( records ) => {
-			const removedRecords = filter( records, record => record.pageSeriesKey === pageSeriesKey );
+			const removeList = filter( records, record => record.pageSeriesKey === pageSeriesKey );
 			const combinedResponse = {
-				removedRecords,
-				retainedRecords: difference( records, removedRecords ),
+				removeList,
+				retainList: difference( records, removeList ),
 			};
 			debug( 'pickPageSeries()', combinedResponse );
 			return combinedResponse;
@@ -179,6 +189,35 @@ export const cacheIndex = {
 	clearPageSeries( reqParams ) {
 		const pageSeriesKey = generatePageSeriesKey( reqParams );
 		debug( 'clearPageSeries()', pageSeriesKey );
-		return this.dropPageSeries( pageSeriesKey ).then( this.removeRecordsByList );
+		return this.findPageSeriesRecords( pageSeriesKey ).then( this.removeRecordsByList );
+	},
+
+	/**
+	 * clear records that pass a filter on normalized reqParams object
+	 * @param  {Function} paramsFilter - filter function that accepts reqParams object
+	 * @returns {Promise} - promise
+	 */
+	clearRecordsByParamFilter( paramsFilter ) {
+		debug( 'clearRecordsByParamFilter()', filter );
+		const findRecordsByFilter = ( records ) => {
+			const removeList = filter( records, ( record ) => {
+				if ( ! record.reqParams ) {
+					return false;
+				}
+				return( paramsFilter( record.reqParams ) );
+			} );
+			const combinedResponse = {
+				removeList,
+				retainList: difference( records, removeList )
+			}
+			debug( 'findRecordsByFilter()', combinedResponse );
+			return combinedResponse;
+		}
+		return new Promise( ( resolve, reject ) => {
+			this.getAll().then( records => {
+				const combinedResponse = findRecordsByFilter( records );
+				this.removeRecordsByList( combinedResponse ).then( resolve ).catch( reject );
+			} );
+		} );
 	}
 }

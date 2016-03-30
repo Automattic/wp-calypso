@@ -9,6 +9,7 @@ import ms from 'ms';
  * Internal dependencies
  */
 import { RECORDS_LIST_KEY } from '../constants';
+import { normalizeRequestParams } from '../utils';
 import * as testData from './data';
 import localforageMock from './localforage-mock';
 
@@ -86,9 +87,10 @@ describe( 'cache-index', () => {
 					}
 				}, ( err ) => done( err ) );
 		} );
-		it( 'should store a pageSeriesKey when passed as second parameter', ( done ) => {
-			const { postListKey, postListPageSeriesKey } = testData;
-			return cacheIndex.addItem( postListKey, postListPageSeriesKey )
+		it( 'should store a pageSeriesKey when passed as third parameter', ( done ) => {
+			const { postListKey, postListParams, postListPageSeriesKey } = testData;
+			const normalizedParams = normalizeRequestParams( postListParams );
+			return cacheIndex.addItem( postListKey, normalizedParams, postListPageSeriesKey )
 				.then( () => {
 					try {
 						const currentIndex = localforageMock.getLocalData()[ RECORDS_LIST_KEY ];
@@ -121,25 +123,25 @@ describe( 'cache-index', () => {
 		} );
 	} );
 
-	describe( '#pruneRecordsFrom', () => {
+	describe( '#pruneStaleRecords', () => {
 		it( 'should prune old records', ( done ) => {
 			const {
 				postListKey,
-				postListDifferentKey,
+				postListWithSearchKey,
 				postListLocalRecord,
-				postListLocalRecordDifferent,
+				postListWithSearchLocalRecord,
 			} = testData;
 			const now = Date.now();
 			const yesterday = now - ms( '1 day' );
 			setLocalData( {
 				[ postListKey ]: postListLocalRecord,
-				[ postListDifferentKey ]: postListLocalRecordDifferent,
+				[ postListWithSearchKey ]: postListWithSearchLocalRecord,
 				[ RECORDS_LIST_KEY ]: [
 					{ key: postListKey, timestamp: now },
-					{ key: postListDifferentKey, timestamp: yesterday },
+					{ key: postListWithSearchKey, timestamp: yesterday },
 				]
 			} );
-			return cacheIndex.pruneRecordsFrom( '1 hour' )
+			return cacheIndex.pruneStaleRecords( '1 hour' )
 				.then( () => {
 					try {
 						const freshData = localData();
@@ -147,7 +149,7 @@ describe( 'cache-index', () => {
 						expect( currentIndex ).to.eql( [ { key: postListKey, timestamp: now } ] );
 						expect( freshData ).to.have.property( postListKey, postListLocalRecord );
 						expect( freshData ).to.have.property( RECORDS_LIST_KEY );
-						expect( freshData ).to.not.have.property( postListDifferentKey );
+						expect( freshData ).to.not.have.property( postListWithSearchKey );
 						done();
 					} catch ( err ) {
 						done( err );
@@ -178,30 +180,66 @@ describe( 'cache-index', () => {
 			const {
 				postListKey,
 				postListNextPageKey,
-				postListDifferentKey,
+				postListWithSearchKey,
 				postListPageSeriesKey,
-				postListPageSeriesKeyDifferent,
+				postListDifferentPageSeriesKey,
 				postListLocalRecord,
-				postListParamsNextPage,
-				postListLocalRecordNextPage,
+				postListNextPageParams,
+				postListNextPageLocalRecord,
 			} = testData;
 			const now = Date.now();
 			setLocalData( {
 				someOtherRecord: 1,
 				[ postListKey ]: postListLocalRecord,
-				[ postListNextPageKey ]: postListLocalRecordNextPage,
-				[ postListDifferentKey ]: Object.assign( {}, postListLocalRecord ),
+				[ postListNextPageKey ]: postListNextPageLocalRecord,
+				[ postListWithSearchKey ]: Object.assign( {}, postListLocalRecord ),
 				[ RECORDS_LIST_KEY ]: [
 					{ key: postListKey, pageSeriesKey: postListPageSeriesKey, timestamp: now },
 					{ key: postListNextPageKey, pageSeriesKey: postListPageSeriesKey, timestamp: now },
-					{ key: postListDifferentKey, pageSerieKey: postListPageSeriesKeyDifferent, timestamp: now },
+					{ key: postListWithSearchKey, pageSerieKey: postListDifferentPageSeriesKey, timestamp: now },
 				]
 			} );
-			return cacheIndex.clearPageSeries( postListParamsNextPage )
+			return cacheIndex.clearPageSeries( postListNextPageParams )
 				.then( () => {
 					try {
 						const freshData = localData();
-						expect( freshData ).to.eql( { someOtherRecord: 1, [ postListDifferentKey ]: postListLocalRecord, [ RECORDS_LIST_KEY ]: [ { key: postListDifferentKey, pageSerieKey: postListPageSeriesKeyDifferent, timestamp: now } ] } );
+						expect( freshData ).to.eql( { someOtherRecord: 1, [ postListWithSearchKey ]: postListLocalRecord, [ RECORDS_LIST_KEY ]: [ { key: postListWithSearchKey, pageSerieKey: postListDifferentPageSeriesKey, timestamp: now } ] } );
+						done();
+					} catch ( err ) {
+						done( err );
+					}
+				}, ( err ) => done( err ) );
+		} );
+	} );
+	describe( '#clearRecordsByParamFilter', () => {
+		it( 'should clear records with reqParams that matches filter and leave other records intact', ( done ) => {
+			const {
+				postListKey,
+				postListParams,
+				postListLocalRecord,
+				postListDifferentSiteKey,
+				postListDifferentSiteParams,
+				postListDifferentSiteLocalRecord
+			} = testData;
+			const now = Date.now();
+			setLocalData( {
+				[ postListKey ]: postListLocalRecord,
+				[ postListDifferentSiteKey ]: postListDifferentSiteLocalRecord,
+				[ RECORDS_LIST_KEY ]: [
+					{ key: postListKey, reqParams: postListParams, pageSeriesKey: 'doesnotmatter', timestamp: now },
+					{ key: postListDifferentSiteKey, reqParams: postListDifferentSiteParams, pageSeriesKey: 'stilldoesnotmatter', timestamp: now }
+				]
+			} );
+			const matchSiteFilter = ( reqParams ) => {
+				return reqParams.path === '/sites/bobinprogress2.wordpress.com/posts';
+			}
+			return cacheIndex.clearRecordsByParamFilter( matchSiteFilter )
+				.then( () => {
+					try {
+						const freshData = localData();
+						expect( freshData ).to.have.property( postListKey );
+						expect( freshData ).to.not.have.property( postListDifferentSiteKey );
+						expect( freshData[ RECORDS_LIST_KEY ].length ).to.eql( 1 );
 						done();
 					} catch ( err ) {
 						done( err );

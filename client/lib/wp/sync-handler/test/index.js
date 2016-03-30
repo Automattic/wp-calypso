@@ -73,35 +73,35 @@ describe( 'sync-handler', () => {
 			postListParams,
 			postListLocalRecord,
 			postListResponseBody,
-			postListResponseBodyFresh
+			postListFreshResponseBody
 		} = testData;
 		const callback = sinon.spy();
 		setLocalData( {
 			[ postListKey ]: postListLocalRecord
 		} );
-		responseData[ postListKey ] = postListResponseBodyFresh;
+		responseData[ postListKey ] = postListFreshResponseBody;
 		wpcom( postListParams, callback );
 		expect( callback ).to.have.been.calledTwice;
 		expect( callback.calledWith( null, postListResponseBody ) );
-		expect( callback.calledWith( null, postListResponseBodyFresh ) );
+		expect( callback.calledWith( null, postListFreshResponseBody ) );
 	} );
 	it( 'should store cacheIndex records with matching pageSeriesKey for paginated responses', ( done ) => {
 		const {
 			postListKey,
 			postListNextPageKey,
 			postListParams,
-			postListParamsNextPage,
+			postListNextPageParams,
 			postListResponseBody,
-			postListResponseBodyNextPage,
+			postListNextPageResponseBody,
 		} = testData;
 		responseData = {
 			[ postListKey ]: postListResponseBody,
-			[ postListNextPageKey ]: postListResponseBodyNextPage,
+			[ postListNextPageKey ]: postListNextPageResponseBody,
 		};
 		wpcom( postListParams, () => {} );
 		setTimeout( () => {
 			try {
-				wpcom( postListParamsNextPage, () => {} );
+				wpcom( postListNextPageParams, () => {} );
 				setTimeout( () => {
 					try {
 						const freshData = localforageMock.getLocalData();
@@ -123,11 +123,11 @@ describe( 'sync-handler', () => {
 		const {
 			postListParams,
 			postListLocalRecord,
-			postListResponseBodyFresh,
+			postListFreshResponseBody,
 			postListKey,
 		} = testData;
 		setLocalData( { [ postListKey ]: postListLocalRecord } );
-		responseData[ postListKey ] = postListResponseBodyFresh;
+		responseData[ postListKey ] = postListFreshResponseBody;
 		sinon.spy( cacheIndex, 'clearPageSeries' );
 		wpcom( postListParams, () => {} );
 		setTimeout( () => {
@@ -163,9 +163,9 @@ describe( 'sync-handler', () => {
 			expect( key1 ).to.not.equal( key2 );
 		} );
 		it( 'should return the same key if parameters are in different order', () => {
-			const { postListParams, postListParamsDifferentOrder } = testData;
+			const { postListParams, postListDifferentOrderParams } = testData;
 			const key1 = generateKey( postListParams );
-			const key2 = generateKey( postListParamsDifferentOrder );
+			const key2 = generateKey( postListDifferentOrderParams );
 			expect( typeof key1 ).to.equal( 'string' );
 			expect( key1 ).to.equal( key2 );
 		} );
@@ -173,8 +173,8 @@ describe( 'sync-handler', () => {
 
 	describe( 'hasPaginationChanged', () => {
 		it( 'should return false if requestResponse has no page handle', () => {
-			const { postListResponseBodyNoHandle } = testData;
-			const result = hasPaginationChanged( postListResponseBodyNoHandle, null );
+			const { postListNoHandleResponseBody } = testData;
+			const result = hasPaginationChanged( postListNoHandleResponseBody, null );
 			expect( result ).to.equal( false );
 		} );
 		it( 'should return false for call with identical response', () => {
@@ -184,8 +184,8 @@ describe( 'sync-handler', () => {
 			expect( result ).to.equal( false );
 		} );
 		it( 'should return true if page handle is different', () => {
-			const { postListResponseBody, postListResponseBodyFresh } = testData;
-			const result = hasPaginationChanged( postListResponseBody, postListResponseBodyFresh );
+			const { postListResponseBody, postListFreshResponseBody } = testData;
+			const result = hasPaginationChanged( postListResponseBody, postListFreshResponseBody );
 			expect( result ).to.equal( true );
 		} );
 		it( 'should return false with empty local response', () => {

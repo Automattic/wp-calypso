@@ -9,6 +9,7 @@ import debugFactory from 'debug';
  */
 import sitesFactory from 'lib/sites-list';
 import Dispatcher from 'dispatcher';
+import { cacheIndex } from 'lib/wp/sync-handler/cache-index';
 
 let cache = {};
 const _canonicalCache = {};
@@ -86,6 +87,21 @@ function markDirty( post, oldStatus ) {
 
 		entry.dirty = true;
 	}
+
+	// clear api cache for records with matching site/status
+	cacheIndex.clearRecordsByParamFilter( ( reqParams ) => {
+		const siteIdentifiers = affectedSites.slice( 0, -1 ); // remove the `false` value from above
+		const affectedPaths = [ '/me/posts', ...siteIdentifiers.map( status => `/sites/${status}/posts` ) ]; // construct matching api routes
+		const recordStatuses = ( reqParams.query && reqParams.query.status ) ? reqParams.query.status.split( ',' ) : [];
+		const intersectingStatuses = intersection( recordStatuses, affectedStatuses );
+		if ( affectedPaths.indexOf( reqParams.path ) === -1 ) {
+			return false;
+		}
+		if ( ! intersectingStatuses.length ) {
+			return false;
+		}
+		return true;
+	} );
 }
 
 function isListKeyFresh( listKey ) {
