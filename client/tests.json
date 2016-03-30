@@ -295,6 +295,9 @@
 		"signup": {
 		  "test": [ "dependency-store", "flow-controller", "progress-store" ]
 		},
+		"site": {
+			"test": [ "index", "utils" ]
+		},
 		"store": {
 			"test": [ "index" ]
 		},
