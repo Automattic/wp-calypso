@@ -809,6 +809,59 @@ describe( 'index', function() {
 				}
 			);
 		} );
+		it( 'detects special instagram embed', function( done ) {
+			normalizer(
+				{
+					content: '<blockquote class="instagram-media"><div></div></blockquote>'
+				},
+				[
+					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+				], function( err, normalized ) {
+					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-instagram' );
+					done( err );
+				}
+			);
+		} );
+		it( 'detects special twitter embed', function( done ) {
+			normalizer(
+				{
+					content: '<blockquote class="twitter-video"><div></div></blockquote>'
+				},
+				[
+					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+				], function( err, normalized ) {
+					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-twitter' );
+					done( err );
+				}
+			);
+		} );
+		// skipping for now because jsdom doesn't like namespaced elements
+		it.skip( 'detects special facebook post embed', function( done ) {
+			normalizer(
+				{
+					content: '<fb:post data-href="http://facebook.com"></fb:post>'
+				},
+				[
+					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+				], function( err, normalized ) {
+					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-facebook' );
+					done( err );
+				}
+			);
+		} );
+		it( 'detects special facebook embed', function( done ) {
+			normalizer(
+				{
+					content: '<div class="fb-video"><div></div></div>'
+				},
+				[
+					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+				], function( err, normalized ) {
+					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-facebook' );
+					done( err );
+				}
+			);
+		} );
 		it( 'empty content does not set the array', function( done ) {
 			normalizer(
 				{

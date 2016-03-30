@@ -15,8 +15,9 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:components:embed-container' );
 
 const embedsToLookFor = {
-	'blockquote[class^="instagram-"': embedInstagram,
-	'blockquote[class^="twitter-"]': embedTwitter
+	'blockquote[class^="instagram-"]': embedInstagram,
+	'blockquote[class^="twitter-"]': embedTwitter,
+	'fb\\\:post, [class^=fb-]': embedFacebook
 };
 
 function processEmbeds( domNode ) {
@@ -86,6 +87,37 @@ function embedTwitter( domNode ) {
 
 	twitterLoader.then(
 		embedTwitter.bind( null, domNode ),
+		debug.bind( null, 'Could not load twitter platform' )
+	);
+}
+
+let fbLoader;
+function embedFacebook( domNode ) {
+	debug( 'processing twitter for', domNode );
+	if ( domNode.hasAttribute( 'data-wpcom-embed-processed' ) ) {
+		return; // already marked for processing
+	}
+
+	domNode.setAttribute( 'data-wpcom-embed-processed', '1' );
+
+	if ( typeof fb !== 'undefined' ) {
+		return;
+	}
+
+	if ( ! fbLoader ) {
+		fbLoader = new Promise( function( resolve, reject ) {
+			loadScript( 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.2', function( err ) {
+				if ( err ) {
+					reject( err );
+				} else {
+					resolve();
+				}
+			} );
+		} );
+	}
+
+	fbLoader.then(
+		embedFacebook.bind( null, domNode ),
 		debug.bind( null, 'Could not load twitter platform' )
 	);
 }

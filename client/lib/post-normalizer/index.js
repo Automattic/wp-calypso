@@ -712,11 +712,6 @@ normalizePost.content = {
 			} );
 		} );
 
-		if ( ! embeds.length ) {
-			callback();
-			return;
-		}
-
 		post.content_embeds = map( embeds, function( iframe ) {
 			var node = iframe,
 				embedType = null,
@@ -765,6 +760,27 @@ normalizePost.content = {
 				height: height
 			};
 		} );
+
+		const funnyEmbedSelectors = {
+			'blockquote[class^="instagram-"]': 'instagram',
+			'blockquote[class^="twitter-"]': 'twitter',
+			'fb\\\:post': 'facebook',
+			'[class^="fb-"]': 'facebook'
+		};
+
+		forOwn( funnyEmbedSelectors, function( type, selector ) {
+			const funnyEmbeds = toArray( post.__contentDOM.querySelectorAll( selector ) );
+			forEach( funnyEmbeds, function( node ) {
+				post.content_embeds.push( {
+					type: 'special-' + type,
+					content: node.outerHTML
+				} )
+			} );
+		} );
+
+		if ( post.content_embeds.length === 0 ) {
+			delete post.content_embeds;
+		}
 
 		callback();
 	},

@@ -10,7 +10,9 @@ const ReactDom = require( 'react-dom' ),
 	classes = require( 'component-classes' ),
 	//debug = require( 'debug' )( 'calypso:reader:following:post' ),
 	head = require( 'lodash/head' ),
+	filter = require( 'lodash/filter' ),
 	forOwn = require( 'lodash/forOwn' ),
+	startsWith = require( 'lodash/startsWith' ),
 	twemoji = require( 'twemoji' ),
 	get = require( 'lodash/get' ),
 	page = require( 'page' );
@@ -171,7 +173,9 @@ const Post = React.createClass( {
 
 	featuredImageComponent: function( post ) {
 		var featuredImage = ( post.canonical_image && post.canonical_image.uri ),
-			featuredEmbed = head( post.content_embeds ),
+			featuredEmbed = head( filter( post.content_embeds, ( embed ) => {
+				return ! startsWith( embed.type, 'special-' )
+			} ) ),
 			maxWidth = Math.min( 653, window.innerWidth ),
 			featuredSize, useFeaturedEmbed;
 

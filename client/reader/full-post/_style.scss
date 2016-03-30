@@ -224,7 +224,9 @@
 	}
 
 	iframe[class^="twitter-"],
-	iframe[class^="instagram-"] {
+	iframe[class^="instagram-"],
+	.fb_iframe_widget {
+		display: block;
 		margin: 24px auto !important;
 	}
 
