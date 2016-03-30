@@ -12,30 +12,30 @@ import config from 'config';
 import FollowingStream from 'reader/following-stream';
 import EmptyContent from './empty';
 import StreamHeader from 'reader/stream-header';
-import { followList } from 'state/reader/lists/actions';
+import { followList, unfollowList } from 'state/reader/lists/actions';
 import { getListByOwnerAndSlug, isSubscribedByOwnerAndSlug } from 'state/reader/lists/selectors';
 import QueryReaderList from 'components/data/query-reader-list';
 
 const stats = require( 'reader/stats' );
-const debug = require( 'debug' )( 'calypso:list-stream' );
 
 const ListStream = React.createClass( {
-	// toggleFollowing: function( isFollowing ) {
-	// 	var list = ReaderLists.get( this.props.list.owner, this.props.list.slug );
-	// 	ReaderListActions[ isFollowing ? 'follow' : 'unfollow' ]( list.owner, list.slug );
 
-	// 	// @todo isFollowing is opposite of expected value
-	// 	if ( isFollowing ) {
-	// 		this.props.followList( list.owner, list.slug );
-	// 	}
+	toggleFollowing( isNotFollowing ) {
+		const list = this.props.list;
 
-	// 	stats.recordAction( isFollowing ? 'followed_list' : 'unfollowed_list' );
-	// 	stats.recordGaEvent( isFollowing ? 'Clicked Follow List' : 'Clicked Unfollow List', this.props.list.owner + ':' + this.props.list.slug );
-	// 	stats.recordTrack( isFollowing ? 'calypso_reader_reader_list_followed' : 'calypso_reader_reader_list_unfollowed', {
-	// 		list_owner: list.owner,
-	// 		list_slug: list.slug
-	// 	} );
-	// },
+		if ( isNotFollowing ) {
+			this.props.followList( list.owner, list.slug );
+		} else {
+			this.props.unfollowList( list.owner, list.slug );
+		}
+
+		stats.recordAction( isNotFollowing ? 'followed_list' : 'unfollowed_list' );
+		stats.recordGaEvent( isNotFollowing ? 'Clicked Follow List' : 'Clicked Unfollow List', list.owner + ':' + list.slug );
+		stats.recordTrack( isNotFollowing ? 'calypso_reader_reader_list_followed' : 'calypso_reader_reader_list_unfollowed', {
+			list_owner: list.owner,
+			list_slug: list.slug
+		} );
+	},
 
 	render() {
 		var list = this.props.list,
@@ -58,8 +58,6 @@ const ListStream = React.createClass( {
 		if ( this.props.setPageTitle ) {
 			this.props.setPageTitle( title );
 		}
-
-		debug( this.props );
 
 		return (
 			<FollowingStream { ...this.props } store={ this.props.postStore } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ shouldShowFollow }>
@@ -89,7 +87,8 @@ export default connect(
 	},
 	( dispatch ) => {
 		return bindActionCreators( {
-			followList
+			followList,
+			unfollowList
 		}, dispatch );
 	}
 )( ListStream );

@@ -87,7 +87,6 @@ export function requestList( owner, slug ) {
 					} );
 					reject();
 				} else {
-					dispatch( receiveLists( [ data.list ] ) );
 					dispatch( {
 						type: READER_LIST_REQUEST_SUCCESS,
 						data
@@ -127,8 +126,50 @@ export function followList( owner, slug ) {
 					} );
 					reject();
 				} else {
+					dispatch( receiveLists( [ data.list ] ) );
 					dispatch( {
 						type: READER_LISTS_FOLLOW_SUCCESS,
+						owner,
+						slug,
+						data
+					} );
+					resolve();
+				}
+			} );
+		} );
+	};
+}
+
+/**
+ * Triggers a network request to unfollow a list.
+ *
+ * @param  {String}  owner List owner
+ * @param  {String}  slug List slug
+ * @return {Function} Action promise
+ */
+export function unfollowList( owner, slug ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: READER_LISTS_UNFOLLOW,
+			owner,
+			slug
+		} );
+
+		const query = { owner, slug };
+
+		return new Promise( ( resolve, reject ) => {
+			wpcom.undocumented().unfollowList( query, ( error, data ) => {
+				if ( error || ! ( data && ! data.following ) ) {
+					dispatch( {
+						type: READER_LISTS_UNFOLLOW_FAILURE,
+						owner,
+						slug,
+						error
+					} );
+					reject();
+				} else {
+					dispatch( {
+						type: READER_LISTS_UNFOLLOW_SUCCESS,
 						owner,
 						slug,
 						data

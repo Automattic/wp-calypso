@@ -4,6 +4,8 @@
 import { combineReducers } from 'redux';
 import keyBy from 'lodash/keyBy';
 import map from 'lodash/map';
+import union from 'lodash/union';
+import filter from 'lodash/filter';
 
 /**
  * Internal dependencies
@@ -16,8 +18,9 @@ import {
 	READER_LISTS_REQUEST,
 	READER_LISTS_REQUEST_SUCCESS,
 	READER_LISTS_REQUEST_FAILURE,
+	READER_LISTS_UNFOLLOW_SUCCESS,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
 import { itemsSchema, subscriptionsSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
@@ -33,6 +36,8 @@ export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
 			return Object.assign( {}, state, keyBy( action.lists, 'ID' ) );
+		case READER_LIST_REQUEST_SUCCESS:
+			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
 		case SERIALIZE:
 			return state;
 		case DESERIALIZE:
@@ -54,7 +59,12 @@ export function items( state = {}, action ) {
 export function subscribedLists( state = [], action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
-			return map( action.lists, 'ID' );
+			return union( state, map( action.lists, 'ID' ) );
+		case READER_LISTS_UNFOLLOW_SUCCESS:
+			// Remove the unfollowed list ID from subscribedLists
+			return filter( state, ( listId ) => {
+				return listId !== action.data.list.ID;
+			} );
 		case SERIALIZE:
 			return state;
 		case DESERIALIZE:

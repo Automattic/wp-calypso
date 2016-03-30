@@ -12,13 +12,15 @@ import {
 	READER_LIST_REQUEST,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
-	READER_LISTS_FOLLOW
+	READER_LISTS_FOLLOW,
+	READER_LISTS_UNFOLLOW
 } from 'state/action-types';
 import {
 	receiveLists,
 	requestList,
 	requestSubscribedLists,
-	followList
+	followList,
+	unfollowList
 } from '../actions';
 
 describe( 'actions', () => {
@@ -62,17 +64,6 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: READER_LIST_REQUEST
-			} );
-		} );
-
-		it( 'should dispatch lists receive action when request completes', () => {
-			return requestList( 'listowner', 'listslug' )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: READER_LISTS_RECEIVE,
-					lists: [
-						{ ID: 123, title: 'My test list' }
-					]
-				} );
 			} );
 		} );
 	} );
@@ -127,6 +118,27 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: READER_LISTS_FOLLOW,
+				owner: 'restapitests',
+				slug: 'testlist'
+			} );
+		} );
+	} );
+
+	describe( '#unfollowList()', () => {
+		before( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.2/read/lists/restapitests/testlist/unfollow' )
+				.reply( 200, {
+					following: false
+				} );
+		} );
+
+		it( 'should dispatch fetch action when thunk triggered', () => {
+			unfollowList( 'restapitests', 'testlist' )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: READER_LISTS_UNFOLLOW,
 				owner: 'restapitests',
 				slug: 'testlist'
 			} );
