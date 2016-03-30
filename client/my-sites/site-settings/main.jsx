@@ -68,7 +68,11 @@ module.exports = React.createClass( {
 	getSections: function() {
 		var site = this.state.site;
 		return {
-			general: <GeneralSettings site={ site } />,
+			general: (
+				<GeneralSettings
+					site={ site }
+					purchases={ this.props.purchases } />
+			),
 			writing: <WritingSettings site={ site } />,
 			discussion: <DiscussionSettings site={ site } />,
 			security: <SiteSecurity site={ site } />,

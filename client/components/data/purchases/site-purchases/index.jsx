@@ -28,18 +28,11 @@ function getStateFromStores() {
 }
 
 const SitePurchasesData = React.createClass( {
-	propTypes: {
-		component: React.PropTypes.func.isRequired
-	},
-
 	shouldFetchPurchases() {
 		const purchases = PurchasesStore.get(),
 			selectedSite = sites.getSelectedSite();
 
-		return selectedSite &&
-			selectedSite !== this.previousSelectedSite &&
-			! purchases.isFetching &&
-			! purchases.hasLoadedFromServer;
+		return selectedSite && ! purchases.isFetching && ! purchases.hasLoadedFromServer;
 	},
 
 	componentWillMount() {
@@ -51,7 +44,7 @@ const SitePurchasesData = React.createClass( {
 	},
 
 	componentWillReceiveProps() {
-		if ( this.shouldFetchPurchases() ) {
+		if ( this.shouldFetchPurchases() || sites.getSelectedSite() !== this.previousSelectedSite ) {
 			fetchSitePurchases( sites.getSelectedSite().ID );
 
 			this.previousSelectedSite = sites.getSelectedSite();
@@ -61,9 +54,10 @@ const SitePurchasesData = React.createClass( {
 	render() {
 		return (
 			<StoreConnection
-				component={ this.props.component }
 				stores={ stores }
-				getStateFromStores={ getStateFromStores } />
+				getStateFromStores={ getStateFromStores }>
+				{ this.props.children }
+			</StoreConnection>
 		);
 	}
 } );

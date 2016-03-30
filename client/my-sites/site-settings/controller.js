@@ -14,6 +14,7 @@ var sites = require( 'lib/sites-list' )(),
 	config = require( 'config' ),
 	analytics = require( 'analytics' ),
 	titlecase = require( 'to-title-case' ),
+	SitePurchasesData = require( 'components/data/purchases/site-purchases' ),
 	SiteSettingsComponent = require( 'my-sites/site-settings/main' ),
 	DeleteSite = require( './delete-site' ),
 	StartOver = require( './start-over' ),
@@ -66,13 +67,14 @@ module.exports = {
 		}
 
 		ReactDom.render(
-			React.createElement( SiteSettingsComponent, {
-				context: context,
-				sites: sites,
-				subsection: context.params.subsection,
-				section: context.params.section,
-				path: context.path
-			} ),
+			<SitePurchasesData>
+				<SiteSettingsComponent
+					context={ context }
+					sites={ sites }
+					subsection={ context.params.subsection }
+					section={ context.params.section }
+					path={ context.path } />
+			</SitePurchasesData>,
 			document.getElementById( 'primary' )
 		);
 

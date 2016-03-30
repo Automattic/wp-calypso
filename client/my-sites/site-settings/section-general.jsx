@@ -24,7 +24,9 @@ module.exports = React.createClass({
 			<div className="general-settings">
 				<GeneralForm site={ site } />
 				{ ( config.isEnabled( 'manage/site-settings/delete-site' ) && ! site.jetpack && ! site.is_vip ) ?
-				<DeleteSiteOptions site={ this.props.site } />
+				<DeleteSiteOptions
+					site={ this.props.site }
+					purchases={ this.props.purchases } />
 				: null }
 			</div>
 		);

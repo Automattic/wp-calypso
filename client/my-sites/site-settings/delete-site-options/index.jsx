@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:site-settings' ),
 	filter = require( 'lodash/filter' );
 
 /**
@@ -11,8 +10,6 @@ var React = require( 'react' ),
 var CompactCard = require( 'components/card/compact' ),
 	purchasesPaths = require( 'me/purchases/paths' ),
 	PurchasesStore = require( 'lib/purchases/store' ),
-	UpgradesActions = require( 'lib/upgrades/actions' ),
-	pollers = require( 'lib/data-poller' ),
 	notices = require( 'notices' ),
 	config = require( 'config' ),
 	Dialog = require( 'components/dialog' );
@@ -21,6 +18,7 @@ module.exports = React.createClass( {
 	displayName: 'DeleteSite',
 
 	propTypes: {
+		purchases: React.PropTypes.object.isRequired,
 		site: React.PropTypes.object.isRequired
 	},
 
@@ -31,25 +29,9 @@ module.exports = React.createClass( {
 		};
 	},
 
-	componentWillMount: function() {
-		debug( 'Mounting DeleteSite React component.' );
-	},
-
-	componentDidMount: function() {
-		PurchasesStore.on( 'change', this._updateSitePurchases );
-		this._poller = pollers.add( PurchasesStore, UpgradesActions.fetchSitePurchases.bind( UpgradesActions, this.props.site.ID ), { interval: 60000, leading: true } );
-	},
-
-	componentWillUnmount: function() {
-		pollers.remove( this._poller );
-		PurchasesStore.off( 'change', this._updateSitePurchases );
-	},
-
 	componentWillReceiveProps: function( nextProps ) {
-		if ( nextProps.site.ID !== this.props.site.ID ) {
-			pollers.remove( this._poller );
-			this._poller = pollers.add( PurchasesStore, UpgradesActions.fetchSitePurchases.bind( UpgradesActions, nextProps.site.ID ), { interval: 60000, leading: true } );
-			this._updateSitePurchases( nextProps.site.ID );
+		if ( nextProps.purchases.error ) {
+			notices.error( nextProps.purchases.error );
 		}
 	},
 
@@ -67,7 +49,7 @@ module.exports = React.createClass( {
 			deleteSite: this.translate( 'Delete Site' )
 		};
 
-		if ( ! this.state.sitePurchases.hasLoadedFromServer ) {
+		if ( this.props.purchases.isFetching ) {
 			return null;
 		}
 
@@ -101,7 +83,7 @@ module.exports = React.createClass( {
 						<p className="delete-site-options__section-desc">{ this.translate( 'Keep your URL and site active, but remove the content.' ) }</p>
 					</div>
 				</CompactCard>
-				<CompactCard href={ deleteSiteLink } onClick={ this._checkForSubscriptions } className="delete-site-options__link">
+				<CompactCard href={ deleteSiteLink } onClick={ this.checkForSubscriptions } className="delete-site-options__link">
 					<div className="delete-site-options__content">
 						<h2 className="delete-site-options__section-title">{ strings.deleteSite }</h2>
 						<p className="delete-site-options__section-desc">{ this.translate( 'All your posts, images, data, and this site\'s address ({{siteAddress /}}) will be gone forever.', {
@@ -114,7 +96,7 @@ module.exports = React.createClass( {
 						}</p>
 					</div>
 				</CompactCard>
-				<Dialog isVisible={ this.state.showDialog } buttons={ dialogButtons } onClose={ this._onDialogClose } className="delete-site-options__dialog">
+				<Dialog isVisible={ this.state.showDialog } buttons={ dialogButtons } onClose={ this.closeDialog } className="delete-site-options__dialog">
 					<h1>{ this.translate( 'Premium Upgrades' ) }</h1>
 					<p>{ this.translate( 'You have active premium upgrades on your site. Please cancel your upgrades prior to deleting your site.' ) }</p>
 				</Dialog>
@@ -122,31 +104,18 @@ module.exports = React.createClass( {
 		);
 	},
 
-	_updateSitePurchases: function( siteId = this.props.site.ID ) {
-		if ( PurchasesStore.get().error ) {
-			notices.error( PurchasesStore.get().error );
-		}
-
-		this.setState( {
-			sitePurchases: PurchasesStore.getBySite( siteId )
-		} );
-	},
-
-	_checkForSubscriptions: function( event ) {
-		var activeSubscriptions = filter( this.state.sitePurchases.data, 'active' );
+	checkForSubscriptions: function( event ) {
+		var activeSubscriptions = filter( this.props.purchases.data, 'active' );
 
 		if ( ! activeSubscriptions.length ) {
 			return true;
 		}
+
 		event.preventDefault();
-		this.setState( {
-			showDialog: true
-		} );
+		this.setState( { showDialog: true } );
 	},
 
-	_onDialogClose: function() {
-		this.setState( {
-			showDialog: false
-		} );
+	closeDialog: function() {
+		this.setState( { showDialog: false } );
 	}
 } );
