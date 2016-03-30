@@ -369,10 +369,10 @@ const PostEditor = React.createClass( {
 					</div>
 					<div className="post-editor__sidebar">
 						<EditorSidebarHeader
-							allPostsUrl={ this.getAllPostsUrl() }
-							toggleSidebar={ this.toggleSidebar } />
-						{ this.props.showDrafts
-							? <DraftList { ...this.props }
+							allPostsUrl={ this.getAllPostsUrl() } />
+						{ this.props.showDrafts ?
+							<DraftList
+								sites={ this.props.sites }
 								onTitleClick={ this.toggleSidebar }
 								showAllActionsMenu={ false }
 								siteID={ site ? site.ID : null }
