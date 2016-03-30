@@ -89,6 +89,9 @@
 		"test": [ "doc" ]
 	},
 	"lib": {
+		"ads": {
+			"test": [ "stores" ]
+		},
 		"auth-code-request-store": {
 			"test": [ "index" ]
 		},
