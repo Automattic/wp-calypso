@@ -4,13 +4,13 @@ export const countsSchema = {
 		'^[0-9]+$': {
 			type: 'object',
 			patternProperties: {
-				'^[A-Za-z0-9]+$': {
+				'^[\\w-]+$': {
 					type: 'object',
 					patternProperties: {
 						'^(all|mine)$': {
 							type: 'object',
 							patternProperties: {
-								'^[A-Za-z0-9]+$': {
+								'^\\w+$': {
 									type: 'integer'
 								}
 							},
