@@ -1,368 +1,475 @@
+var _createClass = require('babel-runtime/helpers/create-class')['default'];
+
+var _classCallCheck = require('babel-runtime/helpers/class-call-check')['default'];
+
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
+Object.defineProperty(exports, '__esModule', {
+	value: true
+});
 /**
  * Module dependencies.
  */
-var Post = require('./site.post');
-var Category = require('./site.category');
-var Tag = require('./site.tag');
-var Media = require('./site.media');
-var Comment = require('./site.comment');
-var SiteWordAds = require('./site.wordads');
-var Follow = require('./site.follow');
-var addRuntimeMethods = require('./util/runtime-builder');
-var SitePlugin = require('./site.plugin');
-var SiteDomain = require('./site.domain');
-var SiteSettings = require('./site.settings');
-var siteGetMethods = require('./runtime/site.get.json');
-var debug = require('debug')('wpcom:site');
+
+var _sitePost = require('./site.post');
+
+var _sitePost2 = _interopRequireDefault(_sitePost);
+
+var _siteCategory = require('./site.category');
+
+var _siteCategory2 = _interopRequireDefault(_siteCategory);
+
+var _siteTag = require('./site.tag');
+
+var _siteTag2 = _interopRequireDefault(_siteTag);
+
+var _siteMedia = require('./site.media');
+
+var _siteMedia2 = _interopRequireDefault(_siteMedia);
+
+var _siteComment = require('./site.comment');
+
+var _siteComment2 = _interopRequireDefault(_siteComment);
+
+var _siteWordads = require('./site.wordads');
+
+var _siteWordads2 = _interopRequireDefault(_siteWordads);
+
+var _siteFollow = require('./site.follow');
+
+var _siteFollow2 = _interopRequireDefault(_siteFollow);
+
+var _sitePlugin = require('./site.plugin');
+
+var _sitePlugin2 = _interopRequireDefault(_sitePlugin);
+
+var _siteDomain = require('./site.domain');
+
+var _siteDomain2 = _interopRequireDefault(_siteDomain);
+
+var _siteSettings = require('./site.settings');
+
+var _siteSettings2 = _interopRequireDefault(_siteSettings);
+
+var _utilRuntimeBuilder = require('./util/runtime-builder');
+
+var _utilRuntimeBuilder2 = _interopRequireDefault(_utilRuntimeBuilder);
+
+var _runtimeSiteGetJson = require('./runtime/site.get.json');
+
+var _runtimeSiteGetJson2 = _interopRequireDefault(_runtimeSiteGetJson);
+
+var _debug = require('debug');
+
+var _debug2 = _interopRequireDefault(_debug);
 
 /**
- * Create a Site instance
- *
- * @param {String} id - site id
- * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * Module vars
  */
-function Site(id, wpcom) {
-  if (!(this instanceof Site)) {
-    return new Site(id, wpcom);
-  }
-
-  this.wpcom = wpcom;
-
-  debug('set %o site id', id);
-  this._id = encodeURIComponent(id);
-}
-
-// add methods in runtime
-addRuntimeMethods(Site, siteGetMethods);
+var debug = (0, _debug2['default'])('wpcom:site');
+var root = '/sites';
 
 /**
- * Require site information
- *
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
+ * Site class
  */
-Site.prototype.get = function (query, fn) {
-  return this.wpcom.req.get('/sites/' + this._id, query, fn);
-};
 
-/**
- * Create a `Post` instance
- *
- * @param {String} id - post id
- * @return {Post} Post instance
- */
-Site.prototype.post = function (id) {
-  return new Post(id, this._id, this.wpcom);
-};
+var Site = (function () {
+	/**
+  * Create a Site instance
+  *
+  * @param {String} id - site id
+  * @param {WPCOM} wpcom - wpcom instance
+  * @return {Null} null
+  */
 
-/**
- * Add a new blog post
- *
- * @param {Object} body - body object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Site.prototype.addPost = function (body, fn) {
-  var post = new Post(null, this._id, this.wpcom);
-  return post.add(body, fn);
-};
+	function Site(id, wpcom) {
+		_classCallCheck(this, Site);
 
-/**
- * Delete a blog post
- *
- * @param {String} id - post id
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Site.prototype.deletePost = function (id, fn) {
-  var post = new Post(id, this._id, this.wpcom);
-  return post['delete'](fn);
-};
+		if (!(this instanceof Site)) {
+			return new Site(id, wpcom);
+		}
 
-/**
- * Create a `Media` instance
- *
- * @param {String} id - post id
- * @return {Media} Media instance
- */
-Site.prototype.media = function (id) {
-  return new Media(id, this._id, this.wpcom);
-};
+		this.wpcom = wpcom;
 
-/**
- * Add a media from a file
- *
- * @param {Object} [query] - query object parameter
- * @param {Array|String} files - media files to add
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Site.prototype.addMediaFiles = function (query, files, fn) {
-  var media = new Media(null, this._id, this.wpcom);
-  return media.addFiles(query, files, fn);
-};
+		debug('set %o site id', id);
+		this._id = encodeURIComponent(id);
+		this.path = root + '/' + this._id;
+	}
 
-/**
- * Add a new media from url
- *
- * @param {Object} [query] - query object parameter
- * @param {Array|String} files - media files to add
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Site.prototype.addMediaUrls = function (query, files, fn) {
-  var media = new Media(null, this._id, this.wpcom);
-  return media.addUrls(query, files, fn);
-};
+	// add methods in runtime
 
-/**
- * Delete a blog media
- *
- * @param {String} id - media id
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Site.prototype.deleteMedia = function (id, fn) {
-  var media = new Media(id, this._id, this.wpcom);
-  return media.del(fn);
-};
+	/**
+  * Require site information
+  *
+  * @param {Object} [query] - query object parameter
+  * @param {Function} fn - callback function
+  * @return {Function} request handler
+  */
 
-/**
- * Create a `Comment` instance
- *
- * @param {String} id - comment id
- * @return {Comment} Comment instance
- */
-Site.prototype.comment = function (id) {
-  return new Comment(id, null, this._id, this.wpcom);
-};
+	_createClass(Site, [{
+		key: 'get',
+		value: function get(query, fn) {
+			return this.wpcom.req.get(this.path, query, fn);
+		}
 
-/**
- * Create a `Follow` instance
- *
- * @return {Follow} Follow instance
- */
-Site.prototype.follow = function () {
-  return new Follow(this._id, this.wpcom);
-};
+		/**
+   * Create a `Post` instance
+   *
+   * @param {String} id - post id
+   * @return {Post} Post instance
+   */
+	}, {
+		key: 'post',
+		value: function post(id) {
+			return new _sitePost2['default'](id, this._id, this.wpcom);
+		}
 
-/**
- * Create a `SitePlugin` instance
- *
- * @param {String} id - plugin identifier
- * @return {SitePlugin} SitePlugin instance
- */
-Site.prototype.plugin = function (id) {
-  return new SitePlugin(id, this._id, this.wpcom);
-};
+		/**
+   * Add a new blog post
+   *
+   * @param {Object} body - body object parameter
+   * @param {Function} fn - callback function
+   * @return {Function} request handler
+   */
+	}, {
+		key: 'addPost',
+		value: function addPost(body, fn) {
+			var post = new _sitePost2['default'](null, this._id, this.wpcom);
+			return post.add(body, fn);
+		}
 
-/**
- * Create a `Category` instance
- * Set `cat` alias
- *
- * @param {String} [slug] - category slug
- * @return {Category} Category instance
- */
-Site.prototype.cat = Site.prototype.category = function (slug) {
-  return new Category(slug, this._id, this.wpcom);
-};
+		/**
+   * Delete a blog post
+   *
+   * @param {String} id - post id
+   * @param {Function} fn - callback function
+   * @return {Function} request handler
+   */
+	}, {
+		key: 'deletePost',
+		value: function deletePost(id, fn) {
+			var post = new _sitePost2['default'](id, this._id, this.wpcom);
+			return post['delete'](fn);
+		}
 
-/**
- * Create a `Tag` instance
- *
- * @param {String} [slug] - tag slug
- * @return {Tag} Tag instance
- */
-Site.prototype.tag = function (slug) {
-  return new Tag(slug, this._id, this.wpcom);
-};
+		/**
+   * Create a `Media` instance
+   *
+   * @param {String} id - post id
+   * @return {Media} Media instance
+   */
+	}, {
+		key: 'media',
+		value: function media(id) {
+			return new _siteMedia2['default'](id, this._id, this.wpcom);
+		}
 
-/**
- * Create a `SiteSettings` instance
- *
- * @return {SiteSettings} SiteSettings instance
- */
-Site.prototype.settings = function () {
-  return new SiteSettings(this._id, this.wpcom);
-};
+		/**
+   * Add a media from a file
+   *
+   * @param {Object} [query] - query object parameter
+   * @param {Array|String} files - media files to add
+   * @param {Function} fn - callback function
+   * @return {Function} request handler
+   */
+	}, {
+		key: 'addMediaFiles',
+		value: function addMediaFiles(query, files, fn) {
+			var media = new _siteMedia2['default'](null, this._id, this.wpcom);
+			return media.addFiles(query, files, fn);
+		}
 
-/**
- * Create a `SiteDomain` instance
- *
- * @return {SiteDomain} SiteDomain instance
- */
-Site.prototype.domain = function () {
-  return new SiteDomain(this._id, this.wpcom);
-};
+		/**
+   * Add a new media from url
+   *
+   * @param {Object} [query] - query object parameter
+   * @param {Array|String} files - media files to add
+   * @param {Function} fn - callback function
+   * @return {Function} request handler
+   */
+	}, {
+		key: 'addMediaUrls',
+		value: function addMediaUrls(query, files, fn) {
+			var media = new _siteMedia2['default'](null, this._id, this.wpcom);
+			return media.addUrls(query, files, fn);
+		}
 
-/**
- * Get number of posts in the post type groups by post status
- *
- * *Example:*
- *   // Get number post of pages
- *    wpcom
- *    .site( 'my-blog.wordpress.com' )
- *    .postCounts( 'page', function( err, data ) {
- *      // `counts` data object
- *    } );
- *
- * @param {String} type - post type
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Site.prototype.postCounts = function (type, query, fn) {
-  if (type === undefined) type = 'post';
+		/**
+   * Delete a blog media
+   *
+   * @param {String} id - media id
+   * @param {Function} fn - callback function
+   * @return {Function} request handler
+   */
+	}, {
+		key: 'deleteMedia',
+		value: function deleteMedia(id, fn) {
+			var media = new _siteMedia2['default'](id, this._id, this.wpcom);
+			return media.del(fn);
+		}
 
-  if ('function' === typeof query) {
-    fn = query;
-    query = {};
-  }
+		/**
+   * Create a `Comment` instance
+   *
+   * @param {String} id - comment id
+   * @return {Comment} Comment instance
+   */
+	}, {
+		key: 'comment',
+		value: function comment(id) {
+			return new _siteComment2['default'](id, null, this._id, this.wpcom);
+		}
 
-  var path = '/sites/' + this._id + '/post-counts/' + type;
-  return this.wpcom.req.get(path, query, fn);
-};
+		/**
+   * Create a `Follow` instance
+   *
+   * @return {Follow} Follow instance
+   */
+	}, {
+		key: 'follow',
+		value: function follow() {
+			return new _siteFollow2['default'](this._id, this.wpcom);
+		}
 
-/**
- * Get a rendered shortcode for a site.
- *
- * Note: The current user must have publishing access.
- *
- * @param {String} url - shortcode url
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Site.prototype.renderShortcode = function (url, query, fn) {
-  if ('string' !== typeof url) {
-    throw new TypeError('expected a url String');
-  }
+		/**
+   * Create a `SitePlugin` instance
+   *
+   * @param {String} id - plugin identifier
+   * @return {SitePlugin} SitePlugin instance
+   */
+	}, {
+		key: 'plugin',
+		value: function plugin(id) {
+			return new _sitePlugin2['default'](id, this._id, this.wpcom);
+		}
 
-  if ('function' === typeof query) {
-    fn = query;
-    query = {};
-  }
+		/**
+   * Create a `Category` instance
+   * Set `cat` alias
+   *
+   * @param {String} [slug] - category slug
+   * @return {Category} Category instance
+   */
+	}, {
+		key: 'category',
+		value: function category(slug) {
+			return new _siteCategory2['default'](slug, this._id, this.wpcom);
+		}
 
-  query = query || {};
-  query.shortcode = url;
+		/**
+   * Create a `Tag` instance
+   *
+   * @param {String} [slug] - tag slug
+   * @return {Tag} Tag instance
+   */
+	}, {
+		key: 'tag',
+		value: function tag(slug) {
+			return new _siteTag2['default'](slug, this._id, this.wpcom);
+		}
 
-  var path = '/sites/' + this._id + '/shortcodes/render';
+		/**
+   * Create a `SiteSettings` instance
+   *
+   * @return {SiteSettings} SiteSettings instance
+   */
+	}, {
+		key: 'settings',
+		value: function settings() {
+			return new _siteSettings2['default'](this._id, this.wpcom);
+		}
 
-  return this.wpcom.req.get(path, query, fn);
-};
+		/**
+   * Create a `SiteDomain` instance
+   *
+   * @return {SiteDomain} SiteDomain instance
+   */
+	}, {
+		key: 'domain',
+		value: function domain() {
+			return new _siteDomain2['default'](this._id, this.wpcom);
+		}
 
-/**
- * Get a rendered embed for a site.
- *
- * Note: The current user must have publishing access.
- *
- * @param {String} url - embed url
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Site.prototype.renderEmbed = function (url, query, fn) {
-  if ('string' !== typeof url) {
-    throw new TypeError('expected an embed String');
-  }
+		/**
+   * Get number of posts in the post type groups by post status
+   *
+   * *Example:*
+   *   // Get number post of pages
+   *    wpcom
+   *    .site( 'my-blog.wordpress.com' )
+   *    .postCounts( 'page', function( err, data ) {
+   *      // `counts` data object
+   *    } );
+   *
+   * @param {String} type - post type
+   * @param {Object} [query] - query object parameter
+   * @param {Function} fn - callback function
+   * @return {Function} request handler
+   */
+	}, {
+		key: 'postCounts',
+		value: function postCounts(type, query, fn) {
+			if (type === undefined) type = 'post';
 
-  if ('function' === typeof query) {
-    fn = query;
-    query = {};
-  }
+			if ('function' === typeof query) {
+				fn = query;
+				query = {};
+			}
 
-  query = query || {};
-  query.embed_url = url;
+			return this.wpcom.req.get(this.path + '/post-counts/' + type, query, fn);
+		}
 
-  var path = '/sites/' + this._id + '/embeds/render';
-  return this.wpcom.req.get(path, query, fn);
-};
+		/**
+   * Get a rendered shortcode for a site.
+   *
+   * Note: The current user must have publishing access.
+   *
+   * @param {String} url - shortcode url
+   * @param {Object} [query] - query object parameter
+   * @param {Function} fn - callback function
+   * @return {Function} request handler
+   */
+	}, {
+		key: 'renderShortcode',
+		value: function renderShortcode(url, query, fn) {
+			if ('string' !== typeof url) {
+				throw new TypeError('expected a url String');
+			}
 
-/**
- * Mark a referrering domain as spam
- *
- * @param {String} domain - domain
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Site.prototype.statsReferrersSpamNew = function (domain, fn) {
-  var path = '/sites/' + this._id + '/stats/referrers/spam/new';
-  var body = { domain: domain };
+			if ('function' === typeof query) {
+				fn = query;
+				query = {};
+			}
 
-  return this.wpcom.req.post(path, body, null, fn);
-};
+			query = query || {};
+			query.shortcode = url;
 
-/**
- * Remove referrering domain from spam
- *
- * @param {String} domain - domain
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Site.prototype.statsReferrersSpamDelete = function (domain, fn) {
-  var path = '/sites/' + this._id + '/stats/referrers/spam/delete';
-  var body = { domain: domain };
+			return this.wpcom.req.get(this.path + '/shortcodes/render', query, fn);
+		}
 
-  return this.wpcom.req.post(path, body, null, fn);
-};
+		/**
+   * Get a rendered embed for a site.
+   *
+   * Note: The current user must have publishing access.
+   *
+   * @param {String} url - embed url
+   * @param {Object} [query] - query object parameter
+   * @param {Function} fn - callback function
+   * @return {Function} request handler
+   */
+	}, {
+		key: 'renderEmbed',
+		value: function renderEmbed(url, query, fn) {
+			if ('string' !== typeof url) {
+				throw new TypeError('expected an embed String');
+			}
 
-/**
- * Get detailed stats about a VideoPress video
- *
- * @param {String} videoId - video id
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Site.prototype.statsVideo = function (videoId, query, fn) {
-  var path = '/sites/' + this._id + '/stats/video/' + videoId;
+			if ('function' === typeof query) {
+				fn = query;
+				query = {};
+			}
 
-  if ('function' === typeof query) {
-    fn = query;
-    query = {};
-  }
+			query = query || {};
+			query.embed_url = url;
 
-  return this.wpcom.req.get(path, query, fn);
-};
+			return this.wpcom.req.get(this.path + '/embeds/render', query, fn);
+		}
 
-/**
- * Get detailed stats about a particular post
- *
- * @param {String} postId - post id
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Site.prototype.statsPostViews = function (postId, query, fn) {
-  var path = '/sites/' + this._id + '/stats/post/' + postId;
+		/**
+   * Mark a referrering domain as spam
+   *
+   * @param {String} domain - domain
+   * @param {Function} fn - callback function
+   * @return {Function} request handler
+   */
+	}, {
+		key: 'statsReferrersSpamNew',
+		value: function statsReferrersSpamNew(domain, fn) {
+			var path = this.path + '/stats/referrers/spam/new';
+			return this.wpcom.req.post(path, { domain: domain }, null, fn);
+		}
 
-  if ('function' === typeof query) {
-    fn = query;
-    query = {};
-  }
+		/**
+   * Remove referrering domain from spam
+   *
+   * @param {String} domain - domain
+   * @param {Function} fn - callback function
+   * @return {Function} request handler
+   */
+	}, {
+		key: 'statsReferrersSpamDelete',
+		value: function statsReferrersSpamDelete(domain, fn) {
+			var path = this.path + '/stats/referrers/spam/delete';
+			return this.wpcom.req.post(path, { domain: domain }, null, fn);
+		}
 
-  return this.wpcom.req.get(path, query, fn);
-};
+		/**
+   * Get detailed stats about a VideoPress video
+   *
+   * @param {String} videoId - video id
+   * @param {Object} [query] - query object parameter
+   * @param {Function} fn - callback function
+   * @return {Function} request handler
+   */
+	}, {
+		key: 'statsVideo',
+		value: function statsVideo(videoId, query, fn) {
+			var path = this.path + '/stats/video/' + videoId;
 
-/**
- * Return a `SiteWordAds` instance.
- *
- * *Example:*
- *    // Create a SiteWordAds instance
- *
- *    var wordAds = wpcom
- *      .site( 'my-blog.wordpress.com' )
- *      .wordAds();
- *
- * @return {SiteWordAds} SiteWordAds instance
- */
-Site.prototype.wordAds = function () {
-  return new SiteWordAds(this._id, this.wpcom);
-};
+			if ('function' === typeof query) {
+				fn = query;
+				query = {};
+			}
 
-/**
- * Expose `Site` module
- */
-module.exports = Site;
+			return this.wpcom.req.get(path, query, fn);
+		}
+
+		/**
+   * Get detailed stats about a particular post
+   *
+   * @param {String} postId - post id
+   * @param {Object} [query] - query object parameter
+   * @param {Function} fn - callback function
+   * @return {Function} request handler
+   */
+	}, {
+		key: 'statsPostViews',
+		value: function statsPostViews(postId, query, fn) {
+			var path = this.path + '/stats/post/' + postId;
+
+			if ('function' === typeof query) {
+				fn = query;
+				query = {};
+			}
+
+			return this.wpcom.req.get(path, query, fn);
+		}
+
+		/**
+   * Return a `SiteWordAds` instance.
+   *
+   * *Example:*
+   *    // Create a SiteWordAds instance
+   *
+   *    var wordAds = wpcom
+   *      .site( 'my-blog.wordpress.com' )
+   *      .wordAds();
+   *
+   * @return {SiteWordAds} SiteWordAds instance
+   */
+	}, {
+		key: 'wordAds',
+		value: function wordAds() {
+			return new _siteWordads2['default'](this._id, this.wpcom);
+		}
+	}]);
+
+	return Site;
+})();
+
+(0, _utilRuntimeBuilder2['default'])(Site, _runtimeSiteGetJson2['default'], function (methodParams, ctx) {
+	return '/sites/' + ctx._id + '/' + methodParams.subpath;
+});
+
+exports['default'] = Site;
+module.exports = exports['default'];
