@@ -16,6 +16,7 @@ import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import support from 'lib/url/support';
 
 describe( 'index', () => {
 	let DomainWarnings;
@@ -37,98 +38,157 @@ describe( 'index', () => {
 		delete Notice.prototype.translate;
 	} );
 
-	it( 'should not render anything if there\'s no need', () => {
-		const props = {
-			domain: {
-				name: 'example.com'
-			},
-			selectedSite: {}
-		};
+	describe( 'rules', () => {
+		it( 'should not render anything if there\'s no need', () => {
+			const props = {
+				domain: {
+					name: 'example.com'
+				},
+				selectedSite: {}
+			};
 
-		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-		expect( ReactDom.findDOMNode( component ) ).to.be.a( 'null' );
+			expect( ReactDom.findDOMNode( component ) ).to.be.a( 'null' )
+		} );
+
+		it( 'should render the highest priority notice when there are others', () => {
+			const props = {
+				domain: {
+					name: 'example.com',
+					registrationMoment: moment(),
+					type: domainTypes.REGISTERED,
+					currentUserCanManage: true
+				},
+				selectedSite: { domain: 'example.com' }
+			};
+
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+
+			expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'If you are unable to access your site at %(domainName)s' );
+		} );
 	} );
 
-	it( 'should render new warning notice if the domain is new', () => {
-		const props = {
-			domain: {
-				name: 'example.com',
-				registrationMoment: moment(),
-				type: domainTypes.REGISTERED,
-				currentUserCanManage: true
-			},
-			selectedSite: { domain: 'example.wordpress.com' }
-		};
+	describe( 'newDomain', () => {
+		it( 'should render new warning notice if the domain is new', () => {
+			const props = {
+				domain: {
+					name: 'example.com',
+					registrationMoment: moment(),
+					type: domainTypes.REGISTERED,
+					currentUserCanManage: true
+				},
+				selectedSite: { domain: 'example.wordpress.com' }
+			};
 
-		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-		expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up %(domainName)s for you' );
-	} );
+			expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up %(domainName)s for you' );
+		} );
 
-	it( 'should render the highest priority notice when there are others', () => {
-		const props = {
-			domain: {
-				name: 'example.com',
-				registrationMoment: moment(),
-				type: domainTypes.REGISTERED,
-				currentUserCanManage: true
-			},
-			selectedSite: { domain: 'example.com' }
-		};
-
-		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
-
-		expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'If you are unable to access your site at %(domainName)s' );
-	} );
-
-	it( 'should render the multi version of the component if more than two domains match the same rule', () => {
-		const props = {
-			domains: [
+		it( 'should render the multi version of the component if more than two domains match the same rule', () => {
+			const props = {
+				domains: [
 				{ name: '1.com', registrationMoment: moment(), type: domainTypes.REGISTERED, currentUserCanManage: true },
 				{ name: '2.com', registrationMoment: moment(), type: domainTypes.REGISTERED, currentUserCanManage: true },
-			],
-			selectedSite: { domain: 'example.com' }
-		};
+				],
+				selectedSite: { domain: 'example.com' }
+			};
 
-		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-		expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up your new domains for you' );
+			expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up your new domains for you' );
+		} );
 	} );
 
-	it( 'should render a warning for misconfigured mapped domains', () => {
-		const props = {
-			domains: [
-				{ name: '1.com', hasZone: false, type: domainTypes.MAPPED }
-			],
-			selectedSite: { domain: '1.com' }
-		};
+	describe( 'mapped domain with wrong NS', () => {
+		it( 'should render a warning for misconfigured mapped domains', () => {
+			const props = {
+				domains: [
+					{ name: '1.com', hasZone: false, type: domainTypes.MAPPED }
+				],
+				selectedSite: { domain: '1.com' }
+			};
 
-		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-		const domNode = ReactDom.findDOMNode( component ),
-			textContent = domNode.textContent;
-		const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
-		expect( textContent ).to.contain( 'name server records should be configured' );
+			const domNode = ReactDom.findDOMNode( component ),
+				textContent = domNode.textContent,
+				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-		assert( links.some( link => link.href === 'https://support.wordpress.com/domain-helper/?host=1.com' ) );
-	} );
+			expect( textContent ).to.contain( 'name server records should be configured' );
+			assert( links.some( link => link.href === 'https://support.wordpress.com/domain-helper/?host=1.com' ) );
+		} );
 
-	it( 'should render the correct support url for multiple misconfigured mapped domains', () => {
-		const props = {
-			domains: [
-				{ name: '1.com', hasZone: false, type: domainTypes.MAPPED },
-				{ name: '2.com', hasZone: false, type: domainTypes.MAPPED }
-			],
-			selectedSite: { domain: '1.com' }
-		};
+		it( 'should render the correct support url for multiple misconfigured mapped domains', () => {
+			const props = {
+				domains: [
+					{ name: '1.com', hasZone: false, type: domainTypes.MAPPED },
+					{ name: '2.com', hasZone: false, type: domainTypes.MAPPED }
+				],
+				selectedSite: { domain: '1.com' }
+			};
 
-		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-		const domNode = ReactDom.findDOMNode( component ),
-			links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const domNode = ReactDom.findDOMNode( component ),
+				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-		assert( links.some( link => link.href === 'https://support.wordpress.com/domains/map-existing-domain#2-ask-your-domain-provider-to-update-your-dns-settings' ) );
+			assert( links.some( link => link.href === support.MAP_EXISTING_DOMAIN_UPDATE_DNS ) );
+		} );
+
+		it( 'should show a subdomain mapping related message for one misconfigured subdomain', () => {
+			const props = {
+				domains: [
+					{ name: 'blog.example.com', hasZone: false, type: domainTypes.MAPPED }
+				],
+				selectedSite: { domain: 'blog.example.com' }
+			};
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+
+			const domNode = ReactDom.findDOMNode( component ),
+				textContent = domNode.textContent,
+				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+
+			expect( textContent ).to.contain( 'CNAME records should be configured' );
+			assert( links.some( link => link.href === support.MAP_SUBDOMAIN ) );
+		} );
+
+		it( 'should show a subdomain mapping related message for multiple misconfigured subdomains', () => {
+			const props = {
+				domains: [
+					{ name: 'blog.example.com', hasZone: false, type: domainTypes.MAPPED },
+					{ name: 'blog.mygroovysite.com', hasZone: false, type: domainTypes.MAPPED }
+				],
+				selectedSite: { domain: 'blog.example.com' }
+			};
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+
+			const domNode = ReactDom.findDOMNode( component ),
+				textContent = domNode.textContent,
+				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+
+			expect( textContent ).to.contain( 'Some of your domains\' CNAME records should be configured' );
+			assert( links.some( link => link.href === support.MAP_SUBDOMAIN ) );
+		} );
+
+		it( 'should show a subdomain mapping related message for multiple misconfigured subdomains and domains mixed', () => {
+			const props = {
+				domains: [
+					{ name: 'blog.example.com', hasZone: false, type: domainTypes.MAPPED },
+					{ name: 'mygroovysite.com', hasZone: false, type: domainTypes.MAPPED }
+				],
+				selectedSite: { domain: 'blog.example.com' }
+			};
+			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+
+			const domNode = ReactDom.findDOMNode( component ),
+				textContent = domNode.textContent,
+				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+
+			expect( textContent ).to.contain( 'Some of your domains\' name server records should be configured' );
+			assert( links.some( link => link.href === support.MAP_EXISTING_DOMAIN_UPDATE_DNS ) );
+		} );
 	} );
 
 	describe( 'Mutations', () => {

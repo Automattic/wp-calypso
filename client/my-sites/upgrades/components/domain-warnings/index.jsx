@@ -5,6 +5,8 @@ import React from 'react';
 import _debug from 'debug';
 import moment from 'moment';
 import intersection from 'lodash/intersection';
+import map from 'lodash/map';
+import every from 'lodash/every';
 
 /**
  * Internal Dependencies
@@ -14,6 +16,7 @@ import NoticeAction from 'components/notice/notice-action';
 import PendingGappsTosNotice from './pending-gapps-tos-notice';
 import purchasesPaths from 'me/purchases/paths';
 import domainConstants from 'lib/domains/constants';
+import { isSubdomain } from 'lib/domains';
 import support from 'lib/url/support';
 import paths from 'my-sites/upgrades/paths';
 import { hasPendingGoogleAppsUsers } from 'lib/domains';
@@ -54,14 +57,14 @@ export default React.createClass( {
 
 	getPipe() {
 		let allRules = [
-			this.expiredDomains,
-			this.expiringDomains,
-			this.unverifiedDomains,
-			this.pendingGappsTosAcceptanceDomains,
-			this.wrongNSMappedDomains,
-			this.newDomains
-		], rules;
-		
+				this.expiredDomains,
+				this.expiringDomains,
+				this.unverifiedDomains,
+				this.pendingGappsTosAcceptanceDomains,
+				this.wrongNSMappedDomains,
+				this.newDomains
+			], rules;
+
 		if ( ! this.props.ruleWhiteList ) {
 			rules = allRules;
 		} else {
@@ -80,28 +83,40 @@ export default React.createClass( {
 		const wrongMappedDomains = this.getDomains().filter( domain =>
 			domain.type === domainTypes.MAPPED && ! domain.hasZone );
 
-		let learnMoreLink,
+		let learnMoreUrl,
 			text;
 
 		if ( wrongMappedDomains.length === 0 ) {
 			return null;
-		} else if ( wrongMappedDomains.length === 1 ) {
-			text = this.translate( '%(domainName)s\'s name server records should be configured', {
-				args: { domainName: wrongMappedDomains[0].name },
-				context: 'Mapped domain notice with NS records pointing to somewhere else'
+		}
+
+		if ( wrongMappedDomains.length === 1 ) {
+			const domain = wrongMappedDomains[ 0 ];
+			if ( isSubdomain( domain.name ) ) {
+				text = this.translate( '%(domainName)s\'s CNAME records should be configured', {
+					args: { domainName: domain.name },
+					context: 'Notice for mapped subdomain that has CNAME records need to set up'
+				} );
+				learnMoreUrl = support.MAP_SUBDOMAIN;
+			} else {
+				text = this.translate( '%(domainName)s\'s name server records should be configured', {
+					args: { domainName: domain.name },
+					context: 'Notice for mapped domain notice with NS records pointing to somewhere else'
+				} );
+				learnMoreUrl = support.DOMAIN_HELPER_PREFIX + domain.name;
+			}
+		} else if ( every( map( wrongMappedDomains, 'name' ), isSubdomain ) ) {
+			text = this.translate( 'Some of your domains\' CNAME records should be configured', {
+				context: 'Notice for mapped subdomain that has CNAME records need to set up'
 			} );
-			learnMoreLink = ( <a
-				href={ support.DOMAIN_HELPER_PREFIX + wrongMappedDomains[ 0 ].name }
-				target="_blank">{ this.translate( 'Learn more.' ) }</a> );
+			learnMoreUrl = support.MAP_SUBDOMAIN;
 		} else {
 			text = this.translate( 'Some of your domains\' name server records should be configured', {
 				context: 'Mapped domain notice with NS records pointing to somewhere else'
 			} );
-			learnMoreLink = ( <a
-				href={ support.MAP_EXISTING_DOMAIN_UPDATE_DNS }
-				target="_blank">{ this.translate( 'Learn more.' ) }</a> );
+			learnMoreUrl = support.MAP_EXISTING_DOMAIN_UPDATE_DNS;
 		}
-		return <Notice status="is-warning" showDismiss={ false } key="wrong-ns-mapped-domain" >{ text } { learnMoreLink }</Notice>;
+		return <Notice status="is-warning" showDismiss={ false } key="wrong-ns-mapped-domain" >{ text } <a href={ learnMoreUrl }>{ this.translate( 'Learn more.' ) }</a></Notice>;
 	},
 
 	expiredDomains() {
