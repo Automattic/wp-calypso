@@ -145,6 +145,9 @@
 		"follow-list": {
 			"test": [ "index" ]
 		},
+		"followers": {
+			"test": [ "store" ]
+		},
 		"form-state": {
 			"test": [ "index" ]
 		},

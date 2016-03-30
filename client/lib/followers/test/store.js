@@ -8,12 +8,13 @@ var assert = require( 'chai' ).assert;
  */
 var actions = require( './lib/mock-actions' ),
 	site = require( './lib/mock-site' ),
-	options = { siteId: site.ID };
-
-require( 'lib/react-test-env-setup' )();
+	options = { siteId: site.ID },
+	useFakeDom = require( 'test/helpers/use-fake-dom' );
 
 describe( 'WPCOM Followers Store', function() {
 	var Dispatcher, FollowersStore;
+
+	useFakeDom();
 
 	beforeEach( function() {
 		Dispatcher = require( 'dispatcher' );
