@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { setTitle as legacySetTitle } from './actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Given a Redux store instance, subscribes to the store, updating the page
@@ -13,12 +14,14 @@ import { setTitle as legacySetTitle } from './actions';
 export function subscribeToStore( store ) {
 	let title = store.getState().page.title;
 	let count = store.getState().page.unreadCount;
-	let siteId = store.getState().ui.selectedSiteId;
+	let siteId = getSelectedSiteId( store.getState() );
 
 	store.subscribe( () => {
-		let nextTitle = store.getState().page.title;
-		let nextCount = store.getState().page.unreadCount;
-		let nextSiteId = store.getState().ui.selectedSiteId;
+		const state = store.getState();
+
+		let nextTitle = state.page.title;
+		let nextCount = state.page.unreadCount;
+		let nextSiteId = getSelectedSiteId( state );
 
 		if ( nextTitle !== title || nextCount !== count || nextSiteId !== siteId ) {
 			title = nextTitle;
