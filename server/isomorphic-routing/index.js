@@ -2,54 +2,49 @@
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import sections from '../../client/sections';
 import { serverRender } from 'render';
 import { createReduxStore } from 'state';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 
-export default function( expressApp, getDefaultContext ) {
-	sections.get()
-		.filter( section => section.isomorphic )
-		.forEach( section => {
-			sections.require( section.module )( serverRouter( expressApp, getDefaultContext, section ) );
-		} );
-}
-
-function serverRouter( expressApp, mapExpressToPageContext, section ) {
+export function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
-		expressApp.get( route, combinedMiddlewares( mapExpressToPageContext, middlewares, section ) );
-	}
-}
-
-function combinedMiddlewares( mapExpressToPageContext, middlewares, section ) {
-	return function( req, res ) {
-		let context = mapExpressToPageContext( req );
-		context = getEnhancedContext( context, req, res );
-		applyMiddlewares( context, ...[
+		expressApp.get(
+			route,
 			setUpRoute,
-			setSectionMiddlewareFactory( section ),
-			...middlewares,
+			setUpI18n,
+			combineMiddlewares(
+				setSectionMiddlewareFactory( section ),
+				...middlewares
+			),
 			serverRender
-		] );
+		);
 	}
 }
 
-function getEnhancedContext( context, req, res ) {
-	return Object.assign( {}, context, {
+function combineMiddlewares( ...middlewares ) {
+	return function( req, res, next ) {
+		req.context = getEnhancedContext( req );
+		applyMiddlewares( req.context, middlewares );
+		next();
+	}
+}
+
+// TODO: Maybe merge into getDefaultContext().
+function getEnhancedContext( req ) {
+	return Object.assign( {}, req.context, {
 		isLoggedIn: req.cookies.wordpress_logged_in,
 		isServerSide: true,
-		path: req.path,
-		params: Object.assign( {}, context.params, req.params ),
-		query: {},
-		store: createReduxStore(),
-		res,
-		url: req.url
+		path: req.url,
+		pathname: req.path,
+		params: req.params,
+		query: req.query,
+		store: createReduxStore()
 	} );
 }
 
-function applyMiddlewares( context, ...middlewares ) {
-	const liftedmiddlewares = middlewares.map( middleware => next => middleware( context, next ) );
-	compose( ...liftedmiddlewares )();
+function applyMiddlewares( context, middlewares ) {
+	const liftedMiddlewares = middlewares.map( middleware => next => middleware( context, next ) );
+	compose( ...liftedMiddlewares )();
 }
 
 function compose( ...functions ) {
@@ -58,7 +53,7 @@ function compose( ...functions ) {
 	), () => {} );
 }
 
-function setUpRoute( context, next ) {
+function setUpI18n( req, res, next ) {
 	i18n.initialize();
 	next();
 }
