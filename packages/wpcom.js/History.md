@@ -1,4 +1,18 @@
 
+4.9.3 / 2016-03-30
+==================
+
+ * site.post.subscriber: implemented
+ * site.post: add post methods in the runtime
+ * runtime-build: refact -> pass pathBuilder function
+ * site.post: ES6ify
+ * site: ES6ify
+
+4.9.2 / 2016-03-27
+==================
+
+ * Fix requiring a JSON file
+
 4.9.1 / 2016-03-28
 ==================
 
