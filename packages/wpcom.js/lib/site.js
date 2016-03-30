@@ -12,7 +12,7 @@ var addRuntimeMethods = require( './util/runtime-builder' );
 var SitePlugin = require( './site.plugin' );
 var SiteDomain = require( './site.domain' );
 var SiteSettings = require( './site.settings' );
-var siteGetMethods = require( './runtime/site.get' );
+var siteGetMethods = require( './runtime/site.get.json' );
 var debug = require( 'debug' )( 'wpcom:site' );
 
 /**
