@@ -1,18 +1,25 @@
-require( 'lib/react-test-env-setup' )();
 
 /**
  * External Dependencies
  */
-var expect = require( 'chai' ).expect;
+var expect = require( 'chai' ).expect,
+	useFileSystemMocks = require( 'test/helpers/use-filesystem-mocks' ),
+	useFakeDom = require( 'test/helpers/use-fake-dom' );
 
-// Internal Deps
-var	Dispatcher = require( 'dispatcher' ),
-	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
-	FeedPostActionType = require( 'lib/feed-post-store/constants' ).action;
-
-var FeedPostStore = require( '../' );
+var	Dispatcher, FeedStreamActionType, FeedPostActionType, FeedPostStore;
 
 describe( 'feed-post-store', function() {
+	useFakeDom();
+	useFileSystemMocks( __dirname );
+
+	before( () => {
+		Dispatcher = require( 'dispatcher' );
+		FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action;
+		FeedPostActionType = require( 'lib/feed-post-store/constants' ).action;
+
+		FeedPostStore = require( '../' );
+	} );
+
 	beforeEach( function() {
 		FeedPostStore._reset();
 	} );
@@ -115,7 +122,6 @@ describe( 'feed-post-store', function() {
 			blogId: 4,
 			postId: 3
 		} ) ).to.be.ok;
-
 	} );
 
 	it( 'should accept a post without a feed ID', function() {
@@ -140,5 +146,4 @@ describe( 'feed-post-store', function() {
 			postId: 3
 		} ) ).to.be.ok;
 	} );
-
 } );

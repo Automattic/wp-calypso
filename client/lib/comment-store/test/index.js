@@ -4,16 +4,24 @@ var debug = require( 'debug' )( 'calypso:comment-store:test' ); //eslint-disable
  * External Dependencies
  */
 var expect = require( 'chai' ).expect,
-	Dispatcher = require( 'dispatcher' );
-
-var CommentStore = require( '../comment-store' ),
-	FeedPostStoreActionTypes = require( 'lib/feed-post-store/constants' ).action,
-	CommentStates = require( 'lib/comment-store/constants' ).state;
+	useFilesystemMocks = require( 'test/helpers/use-filesystem-mocks' );
 
 // Non-existent site ID
 const siteId = 91234567890;
 
 describe( 'comment-store', function() {
+	let Dispatcher, CommentStore, FeedPostStoreActionTypes, CommentStates;
+
+	useFilesystemMocks( __dirname );
+
+	before( () => {
+		Dispatcher = require( 'dispatcher' );
+
+		CommentStore = require( '../comment-store' );
+		FeedPostStoreActionTypes = require( 'lib/feed-post-store/constants' ).action;
+		CommentStates = require( 'lib/comment-store/constants' ).state;
+	} );
+
 	beforeEach( function() {
 		CommentStore._reset();
 	} );

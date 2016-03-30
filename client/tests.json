@@ -103,6 +103,9 @@
 		"credit-card-details" : {
 			"test": [ "index" ]
 		},
+		"comment-store": {
+			"test": [ "index" ]
+		},
 		"comment-like-store": {
 			"test": [ "comment-like-store" ]
 		},
@@ -129,6 +132,9 @@
 		},
 		"features-list": {
 		  "test": [ "index" ]
+		},
+		"feed-post-store": {
+			"test": [ "index" ]
 		},
 		"feed-store": {
 			"test": [ "index" ]
