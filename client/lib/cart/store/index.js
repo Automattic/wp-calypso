@@ -22,8 +22,6 @@ var UpgradesActionTypes = require( 'lib/upgrades/constants' ).action,
 	applyCoupon = cartValues.applyCoupon,
 	cartItems = cartValues.cartItems;
 
-var POLLING_INTERVAL = 5000;
-
 var _selectedSiteID = null,
 	_synchronizer = null,
 	_poller = null;
@@ -71,7 +69,7 @@ function setSelectedSite() {
 	_synchronizer = cartSynchronizer( selectedSite.ID, wpcom );
 	_synchronizer.on( 'change', emitChange );
 
-	_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ), { interval: POLLING_INTERVAL } );
+	_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
 }
 
 function emitChange() {
