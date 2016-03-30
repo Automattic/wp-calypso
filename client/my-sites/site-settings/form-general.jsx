@@ -158,7 +158,7 @@ module.exports = React.createClass( {
 					/>
 
 					<FormSettingExplanation>
-						{ this.translate( 'Choose a city in your timezone.' ) };
+						{ this.translate( 'Choose a city in your timezone.' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
 			</div>
