@@ -14,6 +14,7 @@ import page from 'page';
  * Internal dependencies
  */
 import analytics from 'analytics';
+import TrackComponentView from 'analytics/track-component-view';
 import { Views as ModalViews } from './constants';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
@@ -175,11 +176,15 @@ const MediaModalSecondaryActions = React.createClass( {
 
 	renderPlanStorage() {
 		if ( this.props.selectedItems.length === 0 ) {
+			const eventName = 'calypso_upgrade_nudge_impression';
+			const eventProperties = { cta_name: 'plan-media-storage' };
 			return (
 				<PlanStorage
 					className="editor-media-modal__plan-storage"
 					onClick={ this.navigateToPlans }
-					siteId={ this.props.site.ID } />
+					siteId={ this.props.site.ID } >
+					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+				</PlanStorage>
 			);
 		}
 		return null;

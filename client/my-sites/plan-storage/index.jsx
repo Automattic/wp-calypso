@@ -40,8 +40,9 @@ const PlanStorage = React.createClass( {
 				<PlanStorageButton
 					sitePlanName={ this.props.site.plan.product_name_short }
 					mediaStorage={ this.props.mediaStorage }
-					onClick={ this.props.onClick }
-				/>
+					onClick={ this.props.onClick } >
+					{ this.props.children }
+				</PlanStorageButton>
 			</div>
 		);
 	}
