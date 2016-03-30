@@ -46,7 +46,7 @@ export function requestPostCounts( siteId, postType ) {
 		return wpcom.undocumented().site( siteId ).postCounts( {
 			type: postType
 		} ).then( ( data ) => {
-			dispatch( receivePostCounts( siteId, postType, data.body.counts ) );
+			dispatch( receivePostCounts( siteId, postType, data.counts ) );
 			dispatch( {
 				type: POST_COUNTS_REQUEST_SUCCESS,
 				siteId,
