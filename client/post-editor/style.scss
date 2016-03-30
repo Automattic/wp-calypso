@@ -49,10 +49,6 @@
 	}
 }
 
-.post-editor__sidebar {
-	@extend .sidebar;
-}
-
 .editor__header,
 .editor .mce-container-body,
 .editor .tinymce {
@@ -135,14 +131,6 @@
 		right: 16px;
 	width: 160px;
 	z-index: z-index( 'root', '.editor__switch-mode' );
-
-	.focus-sidebar & {
-		z-index: auto;
-
-		@include breakpoint( ">660px" ) {
-			z-index: z-index( 'root', '.editor__switch-mode' );
-		}
-	}
 
 	@include breakpoint( ">960px" ) {
 		right: 32px;

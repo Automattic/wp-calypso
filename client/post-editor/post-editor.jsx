@@ -18,9 +18,7 @@ const actions = require( 'lib/posts/actions' ),
 	route = require( 'lib/route' ),
 	PostEditStore = require( 'lib/posts/post-edit-store' ),
 	EditorActionBar = require( 'post-editor/editor-action-bar' ),
-	EditorDrawer = require( 'post-editor/editor-drawer' ),
 	FeaturedImage = require( 'post-editor/editor-featured-image' ),
-	EditorGroundControl = require( 'post-editor/editor-ground-control' ),
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
 	NoticeAction = require( 'components/notice/notice-action' ),
@@ -34,7 +32,6 @@ const actions = require( 'lib/posts/actions' ),
 	layoutFocus = require( 'lib/layout-focus' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	DraftList = require( 'my-sites/drafts/draft-list' ),
 	PreferencesActions = require( 'lib/preferences/actions' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
@@ -59,7 +56,7 @@ import {
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
-import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
+import EditorSidebar from 'post-editor/editor-sidebar';
 
 const messages = {
 	post: {
@@ -396,43 +393,26 @@ const PostEditor = React.createClass( {
 							/>
 							: null }
 					</div>
-					<div className="post-editor__sidebar">
-						<EditorSidebarHeader
-							allPostsUrl={ this.getAllPostsUrl() } />
-						{ this.props.showDrafts ?
-							<DraftList
-								sites={ this.props.sites }
-								onTitleClick={ this.toggleSidebar }
-								showAllActionsMenu={ false }
-								siteID={ site ? site.ID : null }
-								selectedId={ this.state.post && this.state.post.ID || null }
-							/>
-						: <div>
-							<EditorGroundControl
-								savedPost={ this.state.savedPost }
-								post={ this.state.post }
-								isNew={ this.state.isNew }
-								isDirty={ this.state.isDirty }
-								isSaveBlocked={ this.state.isSaveBlocked }
-								hasContent={ this.state.hasContent }
-								isSaving={ this.state.isSaving }
-								isPublishing={ this.state.isPublishing }
-								onSave={ this.onSave }
-								onPreview={ this.onPreview }
-								onPublish={ this.onPublish }
-								onTrashingPost={ this.onTrashingPost }
-								site={ site }
-								type={ this.props.type }
-							/>
-							<EditorDrawer
-								type={ this.props.type }
-								site={ site }
-								post={ this.state.post }
-								isNew={ this.state.isNew }
-							/>
-
-						</div> }
-					</div>
+					<EditorSidebar
+						allPostsUrl={ this.getAllPostsUrl() }
+						sites={ this.props.sites }
+						onTitleClick={ this.toggleSidebar }
+						savedPost={ this.state.savedPost }
+						post={ this.state.post }
+						isNew={ this.state.isNew }
+						isDirty={ this.state.isDirty }
+						isSaveBlocked={ this.state.isSaveBlocked }
+						hasContent={ this.state.hasContent }
+						isSaving={ this.state.isSaving }
+						isPublishing={ this.state.isPublishing }
+						onSave={ this.onSave }
+						onPreview={ this.onPreview }
+						onPublish={ this.onPublish }
+						onTrashingPost={ this.onTrashingPost }
+						site={ site }
+						type={ this.props.type }
+						showDrafts={ this.props.showDrafts }
+						/>
 				</div>
 				{ isTrashed
 					? <RestorePostDialog

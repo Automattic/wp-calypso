@@ -1,3 +1,7 @@
+.post-editor__sidebar {
+	@extend .sidebar;
+}
+
 .editor-sidebar__header {
 	display: flex;
 	flex-shrink: 0;
