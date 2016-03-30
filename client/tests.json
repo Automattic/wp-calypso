@@ -86,7 +86,7 @@
 		}
 	},
 	"devdocs": {
-		"test": [ "doc-test" ]
+		"test": [ "doc" ]
 	},
 	"lib": {
 		"auth-code-request-store": {
