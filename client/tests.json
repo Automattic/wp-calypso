@@ -151,6 +151,9 @@
 		"form-state": {
 			"test": [ "index" ]
 		},
+		"happiness-engineers": {
+			"test": [ "actions", "store" ]
+		},
 		"i18n-utils" : {
 			"test": [ "utils" ]
 		},

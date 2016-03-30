@@ -3,10 +3,15 @@
  */
 var assert = require( 'chai' ).assert;
 
-require( 'lib/react-test-env-setup' )();
+/**
+ * Internal dependencies
+ */
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Happiness engineers actions', function() {
-	var HappinessEngineersActions;
+	let HappinessEngineersActions;
+
+	useFakeDom();
 
 	beforeEach( function() {
 		HappinessEngineersActions = require( 'lib/happiness-engineers/actions' );
