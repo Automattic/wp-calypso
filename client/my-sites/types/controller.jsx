@@ -34,7 +34,8 @@ export function list( context ) {
 
 	// Construct query arguments
 	const query = {
-		type: sectionedPath.replace( /^\/types\//, '' ),
+		type: context.params.type,
+		status: context.params.status || 'publish',
 		search: context.query.s
 	};
 
