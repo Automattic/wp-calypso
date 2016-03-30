@@ -114,7 +114,6 @@ module.exports = {
 		var Insights = require( 'my-sites/stats/insights' ),
 			StatsList = require( 'lib/stats/stats-list' ),
 			StatsSummaryList = require( 'lib/stats/summary-list' ),
-			NuxInsights = require( 'my-sites/stats/nux/insights' ),
 			FollowList = require( 'lib/follow-list' ),
 			site,
 			siteId = context.params.site_id,
@@ -137,11 +136,7 @@ module.exports = {
 			startDate = i18n.moment().subtract( 1, 'year' ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
 			endDate = i18n.moment().endOf( 'month' ).format( 'YYYY-MM-DD' ),
 			momentSiteZone = i18n.moment(),
-			StatsComponent = Insights,
-			twoWeeksAgo = i18n.moment().subtract( 2, 'week' ),
-			siteCreated,
-			postCount,
-			isNux;
+			StatsComponent = Insights;
 
 		followList = new FollowList();
 
@@ -174,7 +169,6 @@ module.exports = {
 			momentSiteZone = i18n.moment().utcOffset( site.options.gmt_offset );
 			summaryDate = momentSiteZone.format( 'YYYY-MM-DD' );
 			summarySites.push( { ID: siteId, date: summaryDate } );
-			siteCreated = i18n.moment( site.options.created_at );
 		}
 
 		allTimeList = new StatsList( { siteID: siteId, statType: 'stats' } );
@@ -190,20 +184,6 @@ module.exports = {
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
-		// Calculate the number of posts created by the user (not Headstarted) to determine if we should show the Insights tab, or the NUX placeholder.
-		postCount = site.post_count;
-		if ( site.options && site.options.headstart ) {
-			postCount = site.post_count - get( site, 'options.headstart.original.post.length', 0 );
-		}
-		if ( postCount < 1 &&
-				twoWeeksAgo.isBefore( siteCreated ) &&
-				( ! site.jetpack ) ) {
-			isNux = true;
-		}
-
-		if ( isNux ) {
-			StatsComponent = NuxInsights;
-		}
 
 		ReactDom.render(
 			React.createElement( StatsComponent, {
@@ -302,7 +282,6 @@ module.exports = {
 			queryOptions = context.query,
 			FollowList = require( 'lib/follow-list' ),
 			SiteStatsComponent = require( 'my-sites/stats/site' ),
-			NuxSite = require( 'my-sites/stats/nux/site' ),
 			StatsList = require( 'lib/stats/stats-list' ),
 			filters = getSiteFilters.bind( null, siteId ),
 			activeFilter = false,
@@ -345,10 +324,7 @@ module.exports = {
 			basePath = route.sectionify( context.path ),
 			baseAnalyticsPath,
 			chartQuantity = 10,
-			siteComponent,
-			twoWeeksAgo = i18n.moment().subtract( 2, 'week' ),
-			siteCreated,
-			isNux;
+			siteComponent;
 
 		titleActions.setTitle( i18n.translate( 'Stats', { textOnly: true } ) );
 
@@ -475,20 +451,6 @@ module.exports = {
 			publicizeList = new StatsList( { siteID: siteId, statType: 'statsPublicize', domain: currentSite.slug } );
 
 			siteComponent = SiteStatsComponent;
-
-			if ( currentSite && currentSite.options ) {
-				siteCreated = i18n.moment( currentSite.options.created_at );
-			}
-
-			if ( currentSite.post_count <= 1 &&
-					twoWeeksAgo.isBefore( siteCreated ) &&
-					( ! currentSite.jetpack ) ) {
-				isNux = true;
-			}
-
-			if ( isNux ) {
-				siteComponent = NuxSite;
-			}
 
 			ReactDom.render(
 				React.createElement( siteComponent, {
