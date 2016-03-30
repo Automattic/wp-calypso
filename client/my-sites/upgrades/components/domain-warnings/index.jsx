@@ -10,10 +10,12 @@ import intersection from 'lodash/intersection';
  * Internal Dependencies
  **/
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import purchasesPaths from 'me/purchases/paths';
 import domainConstants from 'lib/domains/constants';
 import i18n from 'lib/mixins/i18n';
 import support from 'lib/url/support';
+import paths from 'my-sites/upgrades/paths';
 
 const domainTypes = domainConstants.type;
 const debug = _debug( 'calypso:domain-warnings' );
@@ -37,7 +39,7 @@ export default React.createClass( {
 	},
 
 	getPipe() {
-		let allRules = [ this.expiredDomains, this.expiringDomains, this.newDomainsWithPrimary, this.newDomains ],
+		let allRules = [ this.expiredDomains, this.expiringDomains, this.newDomainsWithPrimary, this.newDomains, this.unverifiedDomains ],
 			rules;
 		if ( ! this.props.ruleWhiteList ) {
 			rules = allRules;
@@ -71,7 +73,7 @@ export default React.createClass( {
 			} );
 			renewLink = renewLinkPlural;
 		}
-		return <Notice status="is-error" showDismiss={false}>{text} {renewLink}</Notice>
+		return <Notice status="is-error" showDismiss={ false } key="expired-domains">{ text } { renewLink }</Notice>
 	},
 
 	expiringDomains() {
@@ -94,7 +96,7 @@ export default React.createClass( {
 			} );
 			renewLink = renewLinkPlural;
 		}
-		return <Notice status="is-error" showDismiss={false}>{text} {renewLink}</Notice>;
+		return <Notice status="is-error" showDismiss={ false } key="expiring-domains">{ text } { renewLink }</Notice>;
 	},
 
 	newDomainsWithPrimary() {
@@ -141,7 +143,7 @@ export default React.createClass( {
 			);
 		}
 
-		return <Notice status="is-warning" showDismiss={ false }>{ text }</Notice>;
+		return <Notice status="is-warning" showDismiss={ false } key="new-domains-with-primary">{ text }</Notice>;
 	},
 
 	newDomains() {
@@ -171,7 +173,49 @@ export default React.createClass( {
 				}
 			);
 		}
-		return <Notice status="is-warning" showDismiss={ false }>{ text }</Notice>;
+		return <Notice status="is-warning" showDismiss={ false } key="new-domains">{ text }</Notice>;
+	},
+
+	unverifiedDomainNotice( domain ) {
+		return (
+			<Notice
+				status="is-error"
+				showDismiss={ false }
+				className="domain-warnings__unverified-domains"
+				key="unverified-domains"
+				text={ this.translate( 'Urgent! Your domain %(domain)s may be lost forever because your email address is not verified.', { args: { domain } } ) }>
+
+				<NoticeAction href={ paths.domainManagementEdit( this.props.selectedSite.domain, domain ) }>
+					{ this.translate( 'Fix now' ) }
+				</NoticeAction>
+			</Notice>
+		);
+	},
+
+	unverifiedDomainsNotice( domains ) {
+		return (
+			<Notice status="is-error" showDismiss={ false } className="domain-warnings__unverified-domains" key="unverified-domains">
+				{ this.translate( 'Urgent! Some of your domains may be lost forever because your email address is not verified:' ) }
+				<ul>{
+					domains.map( ( domain ) => {
+						return <li key={ domain.name }>
+							{ domain.name } <a href={ paths.domainManagementEdit( this.props.selectedSite.domain, domain.name ) }>{ this.translate( 'Fix now' ) }</a>
+						</li>;
+					} )
+				}</ul>
+			</Notice>
+		);
+	},
+
+	unverifiedDomains() {
+		let domains = this.getDomains().filter( domain => domain.isPendingIcannVerification );
+
+		if ( domains.length === 1 ) {
+			return this.unverifiedDomainNotice( domains[0].name );
+		} else if ( domains.length ) {
+			return this.unverifiedDomainsNotice( domains );
+		}
+		return null;
 	},
 
 	componentWillMount: function() {
@@ -180,15 +224,8 @@ export default React.createClass( {
 		}
 	},
 	render: function() {
-		let pipe = this.getPipe();
-
-		for ( let renderer of pipe ) {
-			let result = renderer();
-			if ( result ) {
-				return result;
-			}
-		}
-		return null;
+		const notices = this.getPipe().map( renderer => renderer() ).filter( notice => notice );
+		return notices.length ? <div>{ notices }</div> : null;
 	}
 
 } );
