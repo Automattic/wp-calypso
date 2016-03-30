@@ -32,7 +32,7 @@ module.exports = React.createClass( {
 						</div>
 						<p><strong>{ this.translate( 'Mac' ) }</strong><br />
 						{ this.translate( 'Requires 10.11 or newer' ) }</p>
-						<Button href="https://desktop.wordpress.com/d/osx?ref=getapps">{ this.translate( 'Download' ) }</Button>
+						<Button href="https://apps.wordpress.com/d/osx?ref=getapps">{ this.translate( 'Download' ) }</Button>
 					</section>
 
 					<section className="get-apps__app">
@@ -41,7 +41,7 @@ module.exports = React.createClass( {
 						</div>
 						<p><strong>{ this.translate( 'Windows' ) }</strong><br />
 						{ this.translate( 'Requires 7 or newer' ) }</p>
-						<Button href="https://desktop.wordpress.com/d/windows?ref=getapps">{ this.translate( 'Download' ) }</Button>
+						<Button href="https://apps.wordpress.com/d/windows?ref=getapps">{ this.translate( 'Download' ) }</Button>
 					</section>
 
 					<section className="get-apps__app">
@@ -50,7 +50,7 @@ module.exports = React.createClass( {
 						</div>
 						<p><strong>{ this.translate( 'Linux' ) }</strong><br />
 						{ this.translate( 'Choose your distribution' ) }</p>
-						<Button href="https://desktop.wordpress.com/d/linux?ref=getapps">{ this.translate( '.TAR.GZ' ) }</Button> <Button href="https://desktop.wordpress.com/d/linux-deb?ref=getapps">{ this.translate( '.DEB' ) }</Button>
+						<Button href="https://apps.wordpress.com/d/linux?ref=getapps">{ this.translate( '.TAR.GZ' ) }</Button> <Button href="https://apps.wordpress.com/d/linux-deb?ref=getapps">{ this.translate( '.DEB' ) }</Button>
 					</section>
 
 				</Card>
