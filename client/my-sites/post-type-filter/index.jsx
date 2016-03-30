@@ -1,34 +1,142 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import map from 'lodash/map';
+import find from 'lodash/find';
 
 /**
  * Internal dependencies
  */
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getAllPostCounts } from 'state/posts/counts/selectors';
 import UrlSearch from 'lib/mixins/url-search';
+import QueryPostCounts from 'components/data/query-post-counts';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 
-export default React.createClass( {
+const PostTypeFilter = React.createClass( {
 	mixins: [ UrlSearch ],
 
+	propTypes: {
+		siteId: PropTypes.number,
+		query: PropTypes.object,
+		counts: PropTypes.object
+	},
+
+	getDefaultProps() {
+		return {
+			query: {}
+		};
+	},
+
+	getNavItems() {
+		const { query, siteSlug, counts } = this.props;
+
+		return map( counts, ( count, status ) => {
+			if ( ! count ) {
+				return;
+			}
+
+			let label;
+			switch ( status ) {
+				case 'publish':
+					label = this.translate( 'Published', {
+						context: 'Filter label for posts list'
+					} );
+					break;
+
+				case 'draft':
+					label = this.translate( 'Drafts', {
+						context: 'Filter label for posts list'
+					} );
+					break;
+
+				case 'future':
+					label = this.translate( 'Scheduled', {
+						context: 'Filter label for posts list'
+					} );
+					break;
+
+				case 'trash':
+					label = this.translate( 'Trashed', {
+						context: 'Filter label for posts list'
+					} );
+					break;
+			}
+
+			let pathStatus;
+			if ( 'publish' !== status ) {
+				pathStatus = status;
+			}
+
+			return {
+				count,
+				key: `filter-${ status }`,
+				path: [
+					'/types',
+					query.type,
+					pathStatus,
+					siteSlug
+				].filter( Boolean ).join( '/' ),
+				selected: query.status === status,
+				children: label
+			};
+		} ).filter( Boolean );
+	},
+
 	render() {
+		const { siteId, query, counts } = this.props;
+		const navItems = this.getNavItems();
+		const selectedItem = find( navItems, 'selected' ) || {};
+
 		return (
-			<SectionNav>
-				<NavTabs>
-					<NavItem selected={ true }>
-						{ this.translate( 'Published', { context: 'Filter label for posts list' } ) }
-					</NavItem>
-				</NavTabs>
-				<Search
-					pinned={ true }
-					onSearch={ this.doSearch }
-					placeholder={ this.translate( 'Search…' ) }
-					delaySearch={ true } />
-			</SectionNav>
+			<div>
+				{ siteId && (
+					<QueryPostCounts
+						siteId={ siteId }
+						type={ query.type } />
+				) }
+				<SectionNav
+					selectedText={ selectedItem.children }
+					selectedCount={ selectedItem.count }>
+					{ counts && [
+						<NavTabs
+							key="tabs"
+							label={ this.translate( 'Status', { context: 'Filter group label for tabs' } ) }
+							selectedText={ selectedItem.children }
+							selectedCount={ selectedItem.count }>
+							{ map( navItems, ( props ) => <NavItem { ...props } /> ) }
+						</NavTabs>,
+						<Search
+							key="search"
+							pinned={ true }
+							onSearch={ this.doSearch }
+							placeholder={ this.translate( 'Search…' ) }
+							delaySearch={ true } />
+					] }
+				</SectionNav>
+			</div>
 		);
 	}
 } );
+
+export default connect( ( state, ownProps ) => {
+	const siteId = getSelectedSiteId( state );
+	const props = {
+		siteId,
+		siteSlug: getSiteSlug( state, siteId )
+	};
+
+	if ( ! ownProps.query ) {
+		return props;
+	}
+
+	return Object.assign( props, {
+		counts: getAllPostCounts( state, siteId, ownProps.query.type )
+	} );
+} )( PostTypeFilter );

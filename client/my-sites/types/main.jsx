@@ -13,7 +13,7 @@ import PostTypeList from 'my-sites/post-type-list';
 export default function Types( { query } ) {
 	return (
 		<Main>
-			<PostTypeFilter />
+			<PostTypeFilter query={ query } />
 			<PostTypeList query={ query } />
 		</Main>
 	);
