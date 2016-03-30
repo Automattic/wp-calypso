@@ -1493,7 +1493,7 @@ Undocumented.prototype.getLocaleSuggestions = function( fn ) {
 Undocumented.prototype.themes = function( site, query, fn ) {
 	var path = site ? '/sites/' + site.ID + '/themes' : '/themes';
 	debug( path );
-	this.wpcom.req.get( path, {
+	return this.wpcom.req.get( path, {
 		search: query.search,
 		tier: query.tier,
 		page: query.page,
@@ -1505,7 +1505,7 @@ Undocumented.prototype.themes = function( site, query, fn ) {
 Undocumented.prototype.themeDetails = function( themeId, fn ) {
 	const path = `/themes/${ themeId }`;
 	debug( '/themes/:theme_id' );
-	this.wpcom.req.get( path, {
+	return this.wpcom.req.get( path, {
 		apiVersion: '1.1',
 		extended: 'true',
 	}, fn );
@@ -1513,12 +1513,12 @@ Undocumented.prototype.themeDetails = function( themeId, fn ) {
 
 Undocumented.prototype.activeTheme = function( siteId, fn ) {
 	debug( '/sites/:site_id/themes/mine' );
-	this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
+	return this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
 };
 
 Undocumented.prototype.activateTheme = function( theme, siteId, fn ) {
 	debug( '/sites/:site_id/themes/mine' );
-	this.wpcom.req.post( {
+	return this.wpcom.req.post( {
 		path: '/sites/' + siteId + '/themes/mine',
 		body: { theme: theme.id }
 	}, fn );
@@ -1745,7 +1745,7 @@ Undocumented.prototype.updateWhois = function( domainName, whois, fn ) {
  */
 Undocumented.prototype.changeTheme = function( siteSlug, data, fn ) {
 	debug( '/site/:site_id/themes/mine' );
-	this.wpcom.req.post( {
+	return this.wpcom.req.post( {
 		path: '/sites/' + siteSlug + '/themes/mine',
 		body: data
 	}, fn );

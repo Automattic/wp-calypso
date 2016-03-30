@@ -23,18 +23,15 @@ export function fetchThemes( site ) {
 	return ( dispatch, getState ) => {
 		const queryParams = getQueryParams( getState() );
 		const startTime = new Date().getTime();
-		const callback = ( error, data ) => {
-			debug( 'Received themes data', data );
-			if ( error ) {
-				dispatch( receiveServerError( error ) );
-			} else {
-				const responseTime = ( new Date().getTime() ) - startTime;
-				dispatch( receiveThemes( data, site, queryParams, responseTime ) );
-			}
-		};
 
 		debug( 'Query params', queryParams );
-		wpcom.undocumented().themes( site, queryParams, callback );
+
+		wpcom.undocumented().themes( site, queryParams )
+			.then( themes => {
+				const responseTime = ( new Date().getTime() ) - startTime;
+				dispatch( receiveThemes( themes, site, queryParams, responseTime ) );
+			} )
+			.catch( error => receiveServerError( error ) );
 	}
 }
 
@@ -61,33 +58,30 @@ export function incrementThemesPage( site ) {
 
 export function fetchCurrentTheme( site ) {
 	return dispatch => {
-		const callback = ( error, data ) => {
-			debug( 'Received current theme', data );
-			if ( ! error ) {
+		wpcom.undocumented().activeTheme( site.ID )
+			.then( theme => {
+				debug( 'Received current theme', theme );
 				dispatch( {
 					type: ActionTypes.RECEIVE_CURRENT_THEME,
 					site: site,
-					themeId: data.id,
-					themeName: data.name,
-					themeCost: data.cost
-				} );
-			}
-		};
-		wpcom.undocumented().activeTheme( site.ID, callback );
+					themeId: theme.id,
+					themeName: theme.name,
+					themeCost: theme.cost
+				} )
+			} ); // TODO: add .catch() error handler
 	};
 }
 
 export function fetchThemeDetails( id ) {
 	return dispatch => {
-		const callback = ( error, data ) => {
-			debug( 'Received theme details', data );
-			if ( error ) {
-				dispatch( receiveServerError( error ) );
-			} else {
-				dispatch( receiveThemeDetails( data ) );
-			}
-		};
-		wpcom.undocumented().themeDetails( id, callback );
+		wpcom.undocumented().themeDetails( id )
+			.then( themeDetails => {
+				debug( 'Received theme details', themeDetails );
+				dispatch( receiveThemeDetails( themeDetails ) )
+			} )
+			.catch( error => {
+				dispatch( receiveServerError( error ) )
+			} );
 	}
 }
 
@@ -147,21 +141,19 @@ export function receiveThemes( data, site, queryParams, responseTime ) {
 
 export function activate( theme, site, source = 'unknown' ) {
 	return dispatch => {
-		const callback = err => {
-			if ( err ) {
-				dispatch( receiveServerError( err ) );
-			} else {
-				dispatch( activated( theme, site, source ) );
-			}
-		};
-
 		dispatch( {
 			type: ActionTypes.ACTIVATE_THEME,
 			theme: theme,
 			site: site
 		} );
 
-		wpcom.undocumented().activateTheme( theme, site.ID, callback );
+		wpcom.undocumented().activateTheme( theme, site.ID )
+			.then( () => {
+				dispatch( activated( theme, site, source ) );
+			} )
+			.catch( error => {
+				dispatch( receiveServerError( error ) );
+			} );
 	}
 }
 
