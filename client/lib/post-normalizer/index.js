@@ -527,8 +527,8 @@ normalizePost.content = {
 			throw new Error( 'this transform must be used as part of withContentDOM' );
 		}
 
-		// if there are any galleries in the post, skip it
-		if ( post.__contentDOM.querySelector( '.gallery, .tiled-gallery, .instagram-media' ) ) {
+		// if there are any specials in the post, skip it
+		if ( post.__contentDOM.querySelector( '.gallery, .tiled-gallery, blockquote[class^="instagram-"], blockquote[class^="twitter-"]' ) ) {
 			callback();
 			return;
 		}

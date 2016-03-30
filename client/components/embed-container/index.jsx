@@ -15,7 +15,8 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:components:embed-container' );
 
 const embedsToLookFor = {
-	'blockquote.instagram-media': embedInstagram
+	'blockquote[class^="instagram-"': embedInstagram,
+	'blockquote[class^="twitter-"]': embedTwitter
 };
 
 function processEmbeds( domNode ) {
@@ -54,6 +55,38 @@ function embedInstagram( domNode ) {
 	instagramLoader.then(
 		embedInstagram.bind( null, domNode ),
 		debug.bind( null, 'Could not load instagram platform' )
+	);
+}
+
+let twitterLoader;
+function embedTwitter( domNode ) {
+	debug( 'processing twitter for', domNode );
+	if ( domNode.hasAttribute( 'data-wpcom-embed-processed' ) ) {
+		return; // already marked for processing
+	}
+
+	domNode.setAttribute( 'data-wpcom-embed-processed', '1' );
+
+	if ( typeof twttr !== 'undefined' ) {
+		global.twttr.widgets.load( domNode );
+		return;
+	}
+
+	if ( ! twitterLoader ) {
+		twitterLoader = new Promise( function( resolve, reject ) {
+			loadScript( 'https://platform.twitter.com/widgets.js', function( err ) {
+				if ( err ) {
+					reject( err );
+				} else {
+					resolve();
+				}
+			} );
+		} );
+	}
+
+	twitterLoader.then(
+		embedTwitter.bind( null, domNode ),
+		debug.bind( null, 'Could not load twitter platform' )
 	);
 }
 
