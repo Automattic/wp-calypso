@@ -48,6 +48,7 @@
 		"manage/edit-user": true,
 		"manage/export": true,
 		"manage/import": true,
+		"manage/import/medium": true,
 		"manage/jetpack": true,
 		"manage/jetpack-plans": true,
 		"manage/media": true,
