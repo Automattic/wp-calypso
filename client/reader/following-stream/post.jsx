@@ -205,7 +205,7 @@ const Post = React.createClass( {
 			featuredSize = this.getFeaturedSize( maxWidth );
 		}
 
-		let featuredImageClasses = classnames( 'reader__post-featured-image' );
+		let featuredImageClasses = classnames( 'reader__post-featured-image', 'has-caption' );
 
 		const maxImageHeight = ( {
 			fifty: '50vh',
@@ -235,6 +235,7 @@ const Post = React.createClass( {
 						/>
 					: <img className="reader__post-featured-image-image" src={ featuredImage } />
 				}
+			<div className="reader__post-featured-image-caption">Sample caption <a href="#">and link</a></div>
 			</div>;
 	},
 

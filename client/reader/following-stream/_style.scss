@@ -228,9 +228,30 @@
 		}
 	}
 
+	&.has-caption {
+		border-bottom: 0;
+	}
+
 	// This helps avoid some random whitespace below YourTube embeds.
 	iframe {
 		display: block;
+	}
+}
+
+// Featured image captions
+.reader__post-featured-image-caption {
+	margin: 0;
+	padding: 8px 24px;
+    width: calc( 100% - 48px);
+	border-top: 1px solid lighten( $gray, 20 );
+	background-color: $gray-light;
+	font-size: 11px;
+	font-family: $sans;
+	color: darken( $gray, 10 );
+	position: relative;
+
+	@include breakpoint( "<480px" ) {
+		padding: 8px 16px;
 	}
 }
 
