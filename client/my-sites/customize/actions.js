@@ -33,7 +33,7 @@ var CustomizeActions = {
 			page( '/checkout/' + site.slug );
 
 			Dispatcher.handleViewAction( {
-				type: 'PURCHASE_THEME_WITH_CUSTOMIZER',
+				type: 'THEME_PURCHASE_WITH_CUSTOMIZER',
 				id: id,
 				site: site
 			} );
@@ -52,7 +52,7 @@ var CustomizeActions = {
 		themeActivated( id, site, 'customizer' );
 
 		Dispatcher.handleViewAction( {
-			type: 'ACTIVATED_THEME_WITH_CUSTOMIZER',
+			type: 'THEME_ACTIVATED_WITH_CUSTOMIZER',
 			id: id,
 			site: site
 		} );

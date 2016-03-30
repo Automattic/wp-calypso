@@ -6,8 +6,15 @@ import { fromJS } from 'immutable';
 /**
  * Internal dependencies
  */
-import ActionTypes from '../action-types';
-import { DESERIALIZE, SERIALIZE, SERVER_DESERIALIZE } from 'state/action-types';
+import {
+	DESERIALIZE,
+	SERIALIZE,
+	SERVER_DESERIALIZE,
+	THEME_ACTIVATE,
+	THEME_ACTIVATED,
+	THEME_CLEAR_ACTIVATED,
+	THEME_RECEIVE_CURRENT
+} from 'state/action-types';
 
 export const initialState = fromJS( {
 	isActivating: false,
@@ -17,20 +24,20 @@ export const initialState = fromJS( {
 
 export default ( state = initialState, action ) => {
 	switch ( action.type ) {
-		case ActionTypes.RECEIVE_CURRENT_THEME:
+		case THEME_RECEIVE_CURRENT:
 			return state.setIn( [ 'currentThemes', action.site.ID ], {
 				name: action.themeName,
 				id: action.themeId,
 				cost: action.themeCost
 			} );
-		case ActionTypes.ACTIVATE_THEME:
+		case THEME_ACTIVATE:
 			return state.set( 'isActivating', true );
-		case ActionTypes.ACTIVATED_THEME:
+		case THEME_ACTIVATED:
 			return state
 				.set( 'isActivating', false )
 				.set( 'hasActivated', true )
 				.setIn( [ 'currentThemes', action.site.ID ], action.theme );
-		case ActionTypes.CLEAR_ACTIVATED_THEME:
+		case THEME_CLEAR_ACTIVATED:
 			return state.set( 'hasActivated', false );
 		case DESERIALIZE:
 			return initialState;

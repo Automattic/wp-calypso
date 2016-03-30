@@ -7,9 +7,17 @@ import uniq from 'lodash/uniq'
 /**
  * Internal dependencies
  */
-import ActionTypes from '../action-types';
 import { PER_PAGE } from './constants';
-import { DESERIALIZE, SERIALIZE, SERVER_DESERIALIZE } from 'state/action-types';
+import {
+	DESERIALIZE,
+	SERIALIZE,
+	SERVER_DESERIALIZE,
+	THEME_ACTIVATED,
+	THEMES_INCREMENT_PAGE,
+	THEMES_QUERY,
+	THEMES_RECEIVE,
+	THEMES_RECEIVE_SERVER_ERROR,
+} from 'state/action-types';
 
 const defaultQuery = fromJS( {
 	search: '',
@@ -57,10 +65,10 @@ function isActionForLastPage( list, action ) {
 
 export default ( state = initialState, action ) => {
 	switch ( action.type ) {
-		case ActionTypes.QUERY_THEMES:
+		case THEMES_QUERY:
 			return query( state, action.params );
 
-		case ActionTypes.RECEIVE_THEMES:
+		case THEMES_RECEIVE:
 			if (
 				( action.queryParams.id === state.getIn( [ 'query', 'id' ] ) ) ||
 				action.wasJetpack
@@ -75,18 +83,18 @@ export default ( state = initialState, action ) => {
 			}
 			return state;
 
-		case ActionTypes.INCREMENT_THEMES_PAGE:
+		case THEMES_INCREMENT_PAGE:
 			return state
 				.setIn( [ 'queryState', 'isFetchingNextPage' ], true )
 				.updateIn( [ 'query', 'page' ], page => page + 1 );
 
-		case ActionTypes.RECEIVE_THEMES_SERVER_ERROR:
+		case THEMES_RECEIVE_SERVER_ERROR:
 			return state
 				.setIn( [ 'queryState', 'isFetchingNextPage' ], false )
 				.setIn( [ 'queryState', 'isLastPage' ], true )
 				.setIn( [ 'queryState', 'error' ], true );
 
-		case ActionTypes.ACTIVATED_THEME:
+		case THEME_ACTIVATED:
 			// The `active` attribute isn't ever really read, but since
 			// `createReducerStore()` only emits a `change` event when the new
 			// state is different from the old one, we need something to change

@@ -7,8 +7,13 @@ import transform from 'lodash/transform';
 /**
  * Internal dependencies
  */
-import ActionTypes from '../action-types';
-import { DESERIALIZE, SERIALIZE, SERVER_DESERIALIZE } from 'state/action-types';
+import {
+	DESERIALIZE,
+	SERIALIZE,
+	SERVER_DESERIALIZE,
+	THEME_ACTIVATED,
+	THEMES_RECEIVE
+} from 'state/action-types';
 
 export const initialState = fromJS( {
 	themes: {},
@@ -29,14 +34,14 @@ function setActiveTheme( themeId, themes ) {
 
 export default ( state = initialState, action ) => {
 	switch ( action.type ) {
-		case ActionTypes.RECEIVE_THEMES:
+		case THEMES_RECEIVE:
 			const isNewSite = action.isJetpack && ( action.siteId !== state.get( 'currentSiteId' ) );
 			return state
 				.update( 'themes', themes => isNewSite ? new Map() : themes )
 				.set( 'currentSiteId', action.siteId )
 				.update( 'themes', add.bind( null, action.themes ) );
 
-		case ActionTypes.ACTIVATED_THEME:
+		case THEME_ACTIVATED:
 			return state.update( 'themes', setActiveTheme.bind( null, action.theme.id ) );
 		case DESERIALIZE:
 			return initialState;

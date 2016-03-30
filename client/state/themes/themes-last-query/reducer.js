@@ -6,8 +6,13 @@ import { fromJS } from 'immutable';
 /**
  * Internal dependencies
  */
-import ActionTypes from '../action-types';
-import { DESERIALIZE, SERIALIZE, SERVER_DESERIALIZE } from 'state/action-types';
+import {
+	DESERIALIZE,
+	SERIALIZE,
+	SERVER_DESERIALIZE,
+	THEMES_INCREMENT_PAGE,
+	THEMES_QUERY
+} from 'state/action-types';
 
 export const initialState = fromJS( {
 	previousSiteId: 0,
@@ -18,10 +23,9 @@ export const initialState = fromJS( {
 
 export default ( state = initialState, action ) => {
 	switch ( action.type ) {
-		case ActionTypes.QUERY_THEMES:
+		case THEMES_QUERY:
 			return state.set( 'lastParams', action.params );
-
-		case ActionTypes.INCREMENT_THEMES_PAGE:
+		case THEMES_INCREMENT_PAGE:
 			return state
 				.set( 'previousSiteId', state.get( 'currentSiteId' ) )
 				.set( 'currentSiteId', action.site.ID )
