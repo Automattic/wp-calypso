@@ -84,7 +84,8 @@ export default React.createClass( {
 			domain.type === domainTypes.MAPPED && ! domain.hasZone );
 
 		let learnMoreUrl,
-			text;
+			text,
+			offendingList = null;
 
 		if ( wrongMappedDomains.length === 0 ) {
 			return null;
@@ -105,18 +106,21 @@ export default React.createClass( {
 				} );
 				learnMoreUrl = support.DOMAIN_HELPER_PREFIX + domain.name;
 			}
-		} else if ( every( map( wrongMappedDomains, 'name' ), isSubdomain ) ) {
-			text = this.translate( 'Some of your domains\' CNAME records should be configured', {
-				context: 'Notice for mapped subdomain that has CNAME records need to set up'
-			} );
-			learnMoreUrl = support.MAP_SUBDOMAIN;
 		} else {
-			text = this.translate( 'Some of your domains\' name server records should be configured', {
-				context: 'Mapped domain notice with NS records pointing to somewhere else'
-			} );
-			learnMoreUrl = support.MAP_EXISTING_DOMAIN_UPDATE_DNS;
+			offendingList = <ul>{ wrongMappedDomains.map( domain => <li key={ domain.name }>{ domain.name }</li> ) }</ul>;
+			if ( every( map( wrongMappedDomains, 'name' ), isSubdomain ) ) {
+				text = this.translate( 'Some of your domains\' CNAME records should be configured', {
+					context: 'Notice for mapped subdomain that has CNAME records need to set up'
+				} );
+				learnMoreUrl = support.MAP_SUBDOMAIN;
+			} else {
+				text = this.translate( 'Some of your domains\' name server records should be configured', {
+					context: 'Mapped domain notice with NS records pointing to somewhere else'
+				} );
+				learnMoreUrl = support.MAP_EXISTING_DOMAIN_UPDATE_DNS;
+			}
 		}
-		return <Notice status="is-warning" showDismiss={ false } key="wrong-ns-mapped-domain" >{ text } <a href={ learnMoreUrl }>{ this.translate( 'Learn more.' ) }</a></Notice>;
+		return <Notice status="is-warning" className="domain-warnings-notice" showDismiss={ false } key="wrong-ns-mapped-domain">{ text } <a href={ learnMoreUrl }>{ this.translate( 'Learn more.' ) }</a>{ offendingList }</Notice>;
 	},
 
 	expiredDomains() {
@@ -231,7 +235,7 @@ export default React.createClass( {
 			<Notice
 				status="is-error"
 				showDismiss={ false }
-				className="domain-warnings__unverified-domains"
+				className="domain-warnings-notice"
 				key="unverified-domains"
 				text={ this.translate( 'Urgent! Your domain %(domain)s may be lost forever because your email address is not verified.', { args: { domain } } ) }>
 
@@ -244,7 +248,7 @@ export default React.createClass( {
 
 	unverifiedDomainsNotice( domains ) {
 		return (
-			<Notice status="is-error" showDismiss={ false } className="domain-warnings__unverified-domains" key="unverified-domains">
+			<Notice status="is-error" showDismiss={ false } className="domain-warnings-notice" key="unverified-domains">
 				{ this.translate( 'Urgent! Some of your domains may be lost forever because your email address is not verified:' ) }
 				<ul>{
 					domains.map( ( domain ) => {
