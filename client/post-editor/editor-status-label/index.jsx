@@ -1,18 +1,21 @@
 /**
  * External dependencies
  */
-var noop = require( 'lodash/noop' ),
-	React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classNames = require( 'classnames' );
+import noop from 'lodash/noop';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'components/gridicon' ),
-	postUtils = require( 'lib/posts/utils' );
+import Gridicon from 'components/gridicon';
+import postUtils from 'lib/posts/utils';
+import EditorStatusLabelPlaceholder from './placeholder';
 
-var StatusLabel = React.createClass( {
+export default React.createClass( {
+	displayName: 'StatusLabel',
+
 	propTypes: {
 		onClick: React.PropTypes.func,
 		post: React.PropTypes.object,
@@ -54,20 +57,10 @@ var StatusLabel = React.createClass( {
 	},
 
 	render: function() {
-		var statusClass = 'post-editor-status-label';
+		let statusClass = 'editor-status-label';
 
 		if ( ! this.props.post ) {
-			return (
-				<button className="post-editor-status-label is-placeholder">
-					<strong>
-						{
-							'post' === this.props.type
-								? this.translate( 'Loading Post…' )
-								: this.translate( 'Loading Page…' )
-						}
-					</strong>
-				</button>
-			);
+			return <EditorStatusLabelPlaceholder className={ statusClass } />;
 		}
 
 		statusClass = classNames( statusClass, 'is-' + this.props.post.status );
@@ -166,5 +159,3 @@ var StatusLabel = React.createClass( {
 		} );
 	}
 } );
-
-module.exports = StatusLabel;

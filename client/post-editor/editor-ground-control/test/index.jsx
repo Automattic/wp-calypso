@@ -48,7 +48,7 @@ describe( 'EditorGroundControl', function() {
 		mockery.registerMock( 'components/popover', MOCK_COMPONENT );
 		mockery.registerMock( 'my-sites/site', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/edit-post-status', MOCK_COMPONENT );
-		mockery.registerMock( 'post-editor/status-label', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-status-label', MOCK_COMPONENT );
 		mockery.registerMock( 'components/sticky-panel', MOCK_COMPONENT );
 		mockery.registerMock( 'components/post-schedule', MOCK_COMPONENT );
 		EditorGroundControl = require( '../' ).WrappedComponent;
