@@ -183,13 +183,6 @@ const flows = {
 		lastModified: null
 	},
 
-	'delta-new': {
-		steps: [ 'themes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'A copy of the `main` flow for the delta-new landing campaign',
-		lastModified: '2016-03-01'
-	},
-
 	'site-user': {
 		steps: [ 'site', 'user' ],
 		destination: '/me/next?welcome',
