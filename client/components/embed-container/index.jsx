@@ -5,8 +5,10 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import PureMixin from 'react-pure-render/mixin';
+import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
 import forOwn from 'lodash/forOwn';
+import noop from 'lodash/noop';
 
 import { loadScript } from 'lib/load-script';
 
@@ -24,27 +26,25 @@ const embedsToLookFor = {
 function processEmbeds( domNode ) {
 	forOwn( embedsToLookFor, ( fn, embedSelector ) => {
 		let nodes = domNode.querySelectorAll( embedSelector );
-		forEach( nodes, fn );
+		forEach( filter( nodes, nodeNeedsProcessing ), fn );
 	} );
 }
 
-let instagramLoader;
-function embedInstagram( domNode ) {
-	debug( 'processing instagram for', domNode );
+function nodeNeedsProcessing( domNode ) {
 	if ( domNode.hasAttribute( 'data-wpcom-embed-processed' ) ) {
-		return; // already marked for processing
+		return false; // already marked for processing
 	}
 
 	domNode.setAttribute( 'data-wpcom-embed-processed', '1' );
+	return true;
+}
 
-	if ( typeof instgrm !== 'undefined' ) {
-		global.instgrm.Embeds.process();
-		return;
-	}
-
-	if ( ! instagramLoader ) {
-		instagramLoader = new Promise( function( resolve, reject ) {
-			loadScript( 'https://platform.instagram.com/en_US/embeds.js', function( err ) {
+let loaders = {};
+function loadAndRun( scriptUrl, callback ) {
+	let loader = loaders[ scriptUrl ];
+	if ( ! loader ) {
+		loader = new Promise( function( resolve, reject ) {
+			loadScript( scriptUrl, function( err ) {
 				if ( err ) {
 					reject( err );
 				} else {
@@ -52,86 +52,47 @@ function embedInstagram( domNode ) {
 				}
 			} );
 		} );
+		loaders[ scriptUrl ] = loader;
 	}
-
-	instagramLoader.then(
-		embedInstagram.bind( null, domNode ),
-		debug.bind( null, 'Could not load instagram platform' )
-	);
+	loader.then( callback, function( err ) {
+		debug( 'error loading ' + scriptUrl, err );
+		loaders[ scriptUrl ] = null;
+	} );
 }
 
-let twitterLoader;
-function embedTwitter( domNode ) {
-	debug( 'processing twitter for', domNode );
-	if ( domNode.hasAttribute( 'data-wpcom-embed-processed' ) ) {
-		return; // already marked for processing
+function embedInstagram( domNode ) {
+	debug( 'processing instagram for', domNode );
+	if ( typeof instgrm !== 'undefined' ) {
+		global.instgrm.Embeds.process();
+		return;
 	}
 
-	domNode.setAttribute( 'data-wpcom-embed-processed', '1' );
+	loadAndRun( 'https://platform.instagram.com/en_US/embeds.js', embedInstagram.bind( null, domNode ) );
+}
+
+function embedTwitter( domNode ) {
+	debug( 'processing twitter for', domNode );
 
 	if ( typeof twttr !== 'undefined' ) {
 		global.twttr.widgets.load( domNode );
 		return;
 	}
 
-	if ( ! twitterLoader ) {
-		twitterLoader = new Promise( function( resolve, reject ) {
-			loadScript( 'https://platform.twitter.com/widgets.js', function( err ) {
-				if ( err ) {
-					reject( err );
-				} else {
-					resolve();
-				}
-			} );
-		} );
-	}
-
-	twitterLoader.then(
-		embedTwitter.bind( null, domNode ),
-		debug.bind( null, 'Could not load twitter platform' )
-	);
+	loadAndRun( 'https://platform.twitter.com/widgets.js', embedTwitter.bind( null, domNode ) );
 }
 
-let fbLoader;
 function embedFacebook( domNode ) {
 	debug( 'processing facebook for', domNode );
-	if ( domNode.hasAttribute( 'data-wpcom-embed-processed' ) ) {
-		return; // already marked for processing
-	}
-
-	domNode.setAttribute( 'data-wpcom-embed-processed', '1' );
-
 	if ( typeof fb !== 'undefined' ) {
 		return;
 	}
 
-	if ( ! fbLoader ) {
-		fbLoader = new Promise( function( resolve, reject ) {
-			loadScript( 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.2', function( err ) {
-				if ( err ) {
-					reject( err );
-				} else {
-					resolve();
-				}
-			} );
-		} );
-	}
-
-	fbLoader.then(
-		embedFacebook.bind( null, domNode ),
-		debug.bind( null, 'Could not load facebook platform' )
-	);
+	loadAndRun( 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.2', noop );
 }
 
 let tumblrLoader;
 function embedTumblr( domNode ) {
 	debug( 'processing tumblr for', domNode );
-	if ( domNode.hasAttribute( 'data-wpcom-embed-processed' ) ) {
-		return; // already marked for processing
-	}
-
-	domNode.setAttribute( 'data-wpcom-embed-processed', '1' );
-
 	if ( tumblrLoader ) {
 		return;
 	}
