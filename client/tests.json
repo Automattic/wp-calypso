@@ -301,6 +301,9 @@
 		"site-roles": {
 			"test": [ "store" ]
 		},
+		"sites-list": {
+			"test": [ "index", "log-store" ]
+		},
 		"store": {
 			"test": [ "index" ]
 		},
