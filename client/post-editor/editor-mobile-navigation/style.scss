@@ -10,13 +10,17 @@
 	}
 }
 
-.editor-mobile-navigation__close {
+.editor-mobile-navigation__icon {
 	cursor: pointer;
 	margin-right: 4px;
 	padding: 8px;
 
 	&:hover {
-		cursor: button;
+		fill: $gray-dark;
+	}
+
+	&.is-selected {
+		cursor: default;
 		fill: $gray-dark;
 	}
 }

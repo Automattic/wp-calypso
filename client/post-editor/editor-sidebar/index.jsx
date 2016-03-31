@@ -16,8 +16,6 @@ import SidebarFooter from 'layout/sidebar/footer';
 export default React.createClass( {
 	displayName: 'EditorSidebar',
 
-	mixins: [ PureRenderMixin ],
-
 	propTypes: {
 		allPostsUrl: PropTypes.string,
 		sites: PropTypes.array,
