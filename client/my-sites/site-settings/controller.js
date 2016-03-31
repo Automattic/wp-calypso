@@ -14,6 +14,7 @@ var sites = require( 'lib/sites-list' )(),
 	config = require( 'config' ),
 	analytics = require( 'analytics' ),
 	titlecase = require( 'to-title-case' ),
+	SitePurchasesData = require( 'components/data/purchases/site-purchases' ),
 	SiteSettingsComponent = require( 'my-sites/site-settings/main' ),
 	DeleteSite = require( './delete-site' ),
 	StartOver = require( './start-over' ),
@@ -66,13 +67,14 @@ module.exports = {
 		}
 
 		ReactDom.render(
-			React.createElement( SiteSettingsComponent, {
-				context: context,
-				sites: sites,
-				subsection: context.params.subsection,
-				section: context.params.section,
-				path: context.path
-			} ),
+			<SitePurchasesData>
+				<SiteSettingsComponent
+					context={ context }
+					sites={ sites }
+					subsection={ context.params.subsection }
+					section={ context.params.section }
+					path={ context.path } />
+			</SitePurchasesData>,
 			document.getElementById( 'primary' )
 		);
 
@@ -88,24 +90,22 @@ module.exports = {
 
 	importSite: function( context ) {
 		ReactDom.render(
-			React.createElement( SiteSettingsComponent, {
-				context: context,
-				sites: sites,
-				section: 'import',
-				path: context.path
-			} ),
+			<SiteSettingsComponent
+				context={ context }
+				sites={ sites }
+				section="import"
+				path={ context.path } />,
 			document.getElementById( 'primary' )
 		);
 	},
 
 	exportSite: function( context ) {
 		ReactDom.render(
-			React.createElement( SiteSettingsComponent, {
-				context: context,
-				sites: sites,
-				section: 'export',
-				path: context.path
-			} ),
+			<SiteSettingsComponent
+				context={ context }
+				sites={ sites }
+				section="export"
+				path={ context.path } />,
 			document.getElementById( 'primary' )
 		);
 	},
@@ -127,11 +127,12 @@ module.exports = {
 		}
 
 		ReactDom.render(
-			React.createElement( DeleteSite, {
-				context: context,
-				sites: sites,
-				path: context.path
-			} ),
+			<SitePurchasesData>
+				<DeleteSite
+					context={ context }
+					sites={ sites }
+					path={ context.path } />
+			</SitePurchasesData>,
 			document.getElementById( 'primary' )
 		);
 	},
@@ -153,11 +154,10 @@ module.exports = {
 		}
 
 		ReactDom.render(
-			React.createElement( StartOver, {
-				context: context,
-				sites: sites,
-				path: context.path
-			} ),
+			<StartOver
+				context={ context }
+				sites={ sites }
+				path={ context.path } />,
 			document.getElementById( 'primary' )
 		);
 	},
