@@ -40,19 +40,6 @@ export default React.createClass( {
 		this.setState( { noData: nextProps.dataList.isEmpty() } );
 	},
 
-	viewAll() {
-		var summaryPageLink;
-
-		if ( this.props.period && this.props.path && this.props.site ) {
-			summaryPageLink = '/stats/' + this.props.period.period + '/' + this.props.path + '/' + this.props.site.slug + '?startDate=' + this.props.date;
-
-			if ( this.props.beforeNavigate ) {
-				this.props.beforeNavigate();
-			}
-			return summaryPageLink;
-		}
-	},
-
 	getModuleLabel() {
 		if ( ! this.props.summary ) {
 			return this.props.moduleStrings.title;
@@ -63,8 +50,8 @@ export default React.createClass( {
 
 	getHref() {
 		// Some modules do not have view all abilities
-		if ( ! this.props.summary && this.props.period ) {
-			return this.viewAll();
+		if ( ! this.props.summary && this.props.period && this.props.path && this.props.site ) {
+			return '/stats/' + this.props.period.period + '/' + this.props.path + '/' + this.props.site.slug + '?startDate=' + this.props.date;
 		}
 
 		return null;

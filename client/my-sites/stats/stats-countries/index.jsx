@@ -2,13 +2,12 @@
  * External dependencies
  */
 
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import toggle from '../mixin-toggle';
 import Geochart from '../geochart';
 import StatsList from '../stats-list';
 import observe from 'lib/mixins/data-observe';
@@ -24,7 +23,19 @@ import SectionHeader from 'components/section-header';
 export default React.createClass( {
 	displayName: 'StatCountries',
 
-	mixins: [ toggle( 'Countries' ), observe( 'dataList' ) ],
+	mixins: [ observe( 'dataList' ) ],
+
+	propTypes: {
+		summary: PropTypes.bool,
+		dataList: PropTypes.object,
+		path: PropTypes.string,
+		period: PropTypes.object,
+		site: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.boolean
+		] ),
+		date: PropTypes.string
+	},
 
 	data( nextProps ) {
 		var props = nextProps || this.props;
@@ -53,34 +64,33 @@ export default React.createClass( {
 			[
 				this.translate( 'Country' ).toString(),
 				this.translate( 'Views' ).toString()
-			] ],
-			data = this.data(),
-			hasError = this.props.dataList.isError(),
-			noData = this.props.dataList.isEmpty(),
-			isLoading = this.props.dataList.isLoading(),
-			viewSummary;
+			] ];
 
-		const classes = [
+		let data = this.data();
+		let viewSummary;
+
+		const { dataList, period, site, date, summary, path } = this.props;
+		const hasError = dataList.isError();
+		const noData = dataList.isEmpty();
+		const isLoading = dataList.isLoading();
+		const summaryPageLink = '/stats/' + period.period + '/countryviews/' + site.slug + '?startDate=' + date;
+		const classes = classNames(
 			'stats-module',
 			'is-countries',
 			{
-				summary: this.props.summary,
+				summary: summary,
 				'is-loading': isLoading,
 				'has-no-data': noData,
 				'is-showing-error': hasError || noData
 			}
-		];
+		);
 
 		// Loop countries and build array for geochart
 		data.forEach( function( country ) {
 			mapData.push( [ country.label, country.value ] );
 		} );
 
-		const summaryPageLink = '/stats/' + this.props.period.period + '/countryviews/' + this.props.site.slug + '?startDate=' + this.props.date;
-		const geochart = <Geochart data={ mapData } dataList={ this.props.dataList } />;
-		const countries = <StatsList moduleName={ this.props.path } data={ data } />;
-
-		if ( ! this.props.summary && this.props.dataList.response.viewAll ) {
+		if ( ! summary && dataList.response.viewAll ) {
 			viewSummary = (
 				<div key="view-all" className="module-expand">
 					<a href={ summaryPageLink }>{ this.translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }<span className="right"></span></a>
@@ -90,16 +100,16 @@ export default React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.getModuleLabel() } href={ ! this.props.summary ? summaryPageLink : null }>
+				<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? summaryPageLink : null }>
 					{ this.props.summary
 						? ( <DownloadCsv
-								period={ this.props.period }
-								path={ this.props.path }
-								site={ this.props.site }
-								dataList={ this.props.dataList } /> )
+								period={ period }
+								path={ path }
+								site={ site }
+								dataList={ dataList } /> )
 						: null }
 				</SectionHeader>
-					<Card className={ classNames.apply( null, classes ) }>
+					<Card className={ classes }>
 						<div className="countryviews">
 							<div className="module-content">
 								<div className="module-content-text module-content-text-info">
@@ -112,11 +122,11 @@ export default React.createClass( {
 									? <ErrorPanel className="is-empty-message" message={ this.translate( 'No countries recorded' ) } />
 									: null }
 
-								{ geochart }
+								<Geochart data={ mapData } dataList={ dataList } />
 								<StatsModulePlaceholder className="is-block" isLoading={ isLoading } />
 								<StatsListLegend value={ this.translate( 'Views' ) } label={ this.translate( 'Country' ) } />
 								<StatsModulePlaceholder isLoading={ isLoading } />
-								{ countries }
+								<StatsList moduleName={ path } data={ data } />
 								{ hasError
 									? <ErrorPanel className={ 'network-error' } />
 									: null }
