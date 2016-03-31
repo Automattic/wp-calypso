@@ -213,14 +213,6 @@
 		height: auto;
 		display: inline;
 		margin: auto;
-
-		&.emoji, &.wp-smiley  {
-			height: 1em;
-			width: 1em;
-			margin: 0;
-			padding: 0 0.2em;
-			vertical-align: -0.1em;
-		}
 	}
 
 	@include breakpoint( ">660px" ) {
