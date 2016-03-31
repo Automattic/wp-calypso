@@ -29,6 +29,10 @@ module.exports = React.createClass( {
 		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, this.props.locale ) );
 	},
 
+	getMapDomainUrl: function() {
+		return signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'mapping', this.props.locale );
+	},
+
 	getInitialState: function() {
 		return { products: productsList.get() };
 	},
@@ -158,6 +162,7 @@ module.exports = React.createClass( {
 				products={ this.state.products }
 				buttonLabel={ this.translate( 'Select' ) }
 				basePath={ this.props.path }
+				mapDomainUrl={ this.getMapDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
 				offerMappingOption
