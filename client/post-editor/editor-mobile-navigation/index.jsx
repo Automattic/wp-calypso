@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -12,12 +13,24 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 const EditorMobileNavigation = React.createClass( {
 
+	getInitialState: function() {
+		return {
+			sidebarOpen: false
+		};
+	},
+
 	openSidebar: function() {
-		this.props.setLayoutFocus( 'sidebar' );
+		if ( ! this.state.sidebarOpen ) {
+			this.props.setLayoutFocus( 'sidebar' );
+			this.setState( { sidebarOpen: true } );
+		}
 	},
 
 	closeSidebar: function() {
-		this.props.setLayoutFocus( 'content' );
+		if ( this.state.sidebarOpen ) {
+			this.props.setLayoutFocus( 'content' );
+			this.setState( { sidebarOpen: false } );
+		}
 	},
 
 	render: function() {
@@ -30,15 +43,19 @@ const EditorMobileNavigation = React.createClass( {
 				<Gridicon
 					icon="chevron-left"
 					onClick={ this.props.onClose }
-					className="editor-mobile-navigation__close" />
+					className="editor-mobile-navigation__icon" />
 				<Gridicon
 					icon="pencil"
 					onClick={ this.closeSidebar }
-					className="editor-mobile-navigation__close" />
+					className={ classnames( 'editor-mobile-navigation__icon', {
+						'is-selected': ! this.state.sidebarOpen
+					} ) } />
 				<Gridicon
 					icon="cog"
 					onClick={ this.openSidebar }
-					className="editor-mobile-navigation__close" />
+					className={ classnames( 'editor-mobile-navigation__icon', {
+						'is-selected': this.state.sidebarOpen
+					} ) } />
 			</div>
 		);
 	}
