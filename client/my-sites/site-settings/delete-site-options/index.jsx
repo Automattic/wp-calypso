@@ -8,11 +8,10 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var CompactCard = require( 'components/card/compact' ),
-	purchasesPaths = require( 'me/purchases/paths' ),
+	DeleteSiteWarningDialog = require( 'my-sites/site-settings/delete-site-warning-dialog' ),
 	PurchasesStore = require( 'lib/purchases/store' ),
 	notices = require( 'notices' ),
-	config = require( 'config' ),
-	Dialog = require( 'components/dialog' );
+	config = require( 'config' );
 
 module.exports = React.createClass( {
 	displayName: 'DeleteSite',
@@ -24,6 +23,7 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
+			showDialog: false,
 			showStartOverDialog: false,
 			sitePurchases: PurchasesStore.getBySite( this.props.site.ID )
 		};
@@ -41,7 +41,7 @@ module.exports = React.createClass( {
 			startOverLink = '/settings/start-over/' + selectedSite.slug,
 			deleteSiteLink = '/settings/delete-site/' + selectedSite.slug,
 			changeAddressLinkText = this.translate( 'Register a new domain or change your site\'s address.' ),
-			strings, dialogButtons;
+			strings;
 
 		strings = {
 			changeSiteAddress: this.translate( 'Change Site Address' ),
@@ -56,13 +56,6 @@ module.exports = React.createClass( {
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
 			changeAddressLinkText = this.translate( 'Change your site\'s address.' );
 		}
-
-		dialogButtons = [
-			{ action: 'dismiss', label: this.translate( 'Dismiss' ) },
-			<a className="button is-primary" href={ purchasesPaths.list() }>{
-				this.translate( 'Manage Purchases', { context: 'button label' } )
-			}</a>
-		];
 
 		return (
 			<div className="delete-site-options">
@@ -96,10 +89,9 @@ module.exports = React.createClass( {
 						}</p>
 					</div>
 				</CompactCard>
-				<Dialog isVisible={ this.state.showDialog } buttons={ dialogButtons } onClose={ this.closeDialog } className="delete-site-options__dialog">
-					<h1>{ this.translate( 'Premium Upgrades' ) }</h1>
-					<p>{ this.translate( 'You have active premium upgrades on your site. Please cancel your upgrades prior to deleting your site.' ) }</p>
-				</Dialog>
+				<DeleteSiteWarningDialog
+					isVisible={ this.state.showDialog }
+					onClose={ this.closeDialog } />
 			</div>
 		);
 	},
