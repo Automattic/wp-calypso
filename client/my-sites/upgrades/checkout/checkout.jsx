@@ -163,7 +163,7 @@ const Checkout = React.createClass( {
 			} );
 		}
 
-		return `/checkout/${ this.props.sites.getSelectedSite().slug }/${ receiptId }/thank-you`;
+		return `/checkout/thank-you/${ this.props.sites.getSelectedSite().slug }/${ receiptId }`;
 	},
 
 	content: function() {

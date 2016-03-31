@@ -228,7 +228,7 @@ module.exports = function() {
 
 	if ( config.isEnabled( 'upgrades/checkout' ) ) {
 		page(
-			'/checkout/:site/:receiptId?/thank-you',
+			'/checkout/thank-you/:site/:receiptId?',
 			controller.siteSelection,
 			upgradesController.checkoutThankYou
 		);
