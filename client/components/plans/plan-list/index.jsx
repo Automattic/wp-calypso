@@ -12,7 +12,11 @@ var Plan = require( 'components/plans/plan' ),
 	abtest = require( 'lib/abtest' ).abtest,
 	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
 	filterPlansBySiteAndProps = require( 'lib/plans' ).filterPlansBySiteAndProps,
-	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan;
+	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan,
+	config = require( 'config' ),
+	ComparisonTable = require( 'components/comparison-table' ),
+	ComparisonColumn = require( 'components/comparison-table/comparison-column' ),
+	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
 	displayName: 'PlanList',
@@ -23,6 +27,90 @@ module.exports = React.createClass( {
 
 	openPlan: function( planId ) {
 		this.setState( { openPlan: planId === this.state.openPlan ? '' : planId } );
+	},
+
+	getMockFeatures: function() {
+		return {
+			domain: {
+				description: 'Your own domain',
+				free: null,
+				personal: '1 Year Free',
+				pro: '1 Year Free',
+				business: '1 Year Free'
+			},
+			advertising: {
+				description: 'Advertising vouchers',
+				free: false,
+				personal: false,
+				pro: '$150 value',
+				business: '$300 value'
+			},
+			google: {
+				description: 'Google Apps',
+				free: false,
+				personal: false,
+				pro: 'Email only',
+				business: 'All services'
+			},
+			prioritySupport: {
+				description: 'Priority Support',
+				free: false,
+				personal: false,
+				pro: false,
+				business: '24/7 live chat'
+			},
+			design: {
+				header: true,
+				description: 'Design'
+			},
+			themes: {
+				description: '150+ High quality themes',
+				free: true,
+				personal: true,
+				pro: true,
+				business: true
+			},
+			customization: {
+				description: 'Standard Customization',
+				free: true,
+				personal: true,
+				pro: true,
+				business: true
+			},
+			premiumThemes: {
+				description: 'Free premium themes',
+				free: false,
+				personal: false,
+				pro: true,
+				business: true
+			},
+			advancedCustomization: {
+				description: 'Advanced Customization',
+				free: false,
+				personal: false,
+				pro: true,
+				business: true
+			},
+			designReviewService: {
+				description: 'Design Review Service',
+				free: false,
+				personal: false,
+				pro: false,
+				business: true
+			},
+			storageUploads: {
+				header: true,
+				description: 'Storage & Uploads'
+			},
+			storageSpace: {
+				description: 'Storage Space',
+				free: '500 Mb',
+				personal: '1 Gb',
+				pro: '5 Gb',
+				business: 'Unlimited'
+			},
+
+		}
 	},
 
 	render: function() {
@@ -103,6 +191,62 @@ module.exports = React.createClass( {
 			aaMarkup = plansList;
 		}
 
-		return <div className="plan-list">{ aaMarkup }</div>;
+		if( ! config.isEnabled( 'jetpack/calypso-first-signup-flow' ) )
+			return <div className="plan-list">{ aaMarkup }</div>;
+		else {
+			return (
+				<ComparisonTable
+					featuresList={ this.getMockFeatures() }
+					columns={ 4 }>
+
+					<ComparisonColumn
+						featuresList={ this.getMockFeatures() }
+						descriptionColumn={ true }
+						>
+						<div>
+							<Gridicon icon="wordpress" size={ 24 } />
+							<h2>{ this.translate( 'Yearly Savings Plans' ) }</h2>
+							<p>{ this.translate( 'Plans are billed annually and have a 30-day money back guarantee' ) }</p>
+						</div>
+
+					</ComparisonColumn>
+
+					<ComparisonColumn
+						featuresList={ this.getMockFeatures() }
+						comparisonID="free"
+						name={ this.translate( 'Free' ) }
+						description={ this.translate( 'Just Getting Started' ) }
+						price={ 0 }
+						currentPlan={ true }
+						></ComparisonColumn>
+
+					<ComparisonColumn
+						featuresList={ this.getMockFeatures() }
+						comparisonID="personal"
+						name={ this.translate( 'Personal' ) }
+						description={ this.translate( 'Just getting started' ) }
+						price={ 5.99 }
+						></ComparisonColumn>
+
+					<ComparisonColumn
+						featuresList={ this.getMockFeatures() }
+						comparisonID="pro"
+						name={ this.translate( 'Pro' ) }
+						description={ this.translate( 'Just getting started' ) }
+						price={ 12.99 }
+						popular={ true }
+						></ComparisonColumn>
+
+					<ComparisonColumn
+						featuresList={ this.getMockFeatures() }
+						comparisonID="business"
+						name={ this.translate( 'Business' ) }
+						description={ this.translate( 'Just getting started' ) }
+						price={ 24.99 }
+						></ComparisonColumn>
+
+				</ComparisonTable>
+			);
+		}
 	}
 } );
