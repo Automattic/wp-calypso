@@ -17,7 +17,8 @@ const debug = debugFactory( 'calypso:components:embed-container' );
 const embedsToLookFor = {
 	'blockquote[class^="instagram-"]': embedInstagram,
 	'blockquote[class^="twitter-"]': embedTwitter,
-	'fb\\\:post, [class^=fb-]': embedFacebook
+	'fb\\\:post, [class^=fb-]': embedFacebook,
+	'[class^=tumblr-]': embedTumblr
 };
 
 function processEmbeds( domNode ) {
@@ -93,7 +94,7 @@ function embedTwitter( domNode ) {
 
 let fbLoader;
 function embedFacebook( domNode ) {
-	debug( 'processing twitter for', domNode );
+	debug( 'processing facebook for', domNode );
 	if ( domNode.hasAttribute( 'data-wpcom-embed-processed' ) ) {
 		return; // already marked for processing
 	}
@@ -118,8 +119,36 @@ function embedFacebook( domNode ) {
 
 	fbLoader.then(
 		embedFacebook.bind( null, domNode ),
-		debug.bind( null, 'Could not load twitter platform' )
+		debug.bind( null, 'Could not load facebook platform' )
 	);
+}
+
+let tumblrLoader;
+function embedTumblr( domNode ) {
+	debug( 'processing tumblr for', domNode );
+	if ( domNode.hasAttribute( 'data-wpcom-embed-processed' ) ) {
+		return; // already marked for processing
+	}
+
+	domNode.setAttribute( 'data-wpcom-embed-processed', '1' );
+
+	if ( tumblrLoader ) {
+		return;
+	}
+
+	// tumblr just wants us to load this script, over and over and over
+	tumblrLoader = true;
+
+	function removeScript() {
+		forEach( document.querySelectorAll( 'script[src="https://secure.assets.tumblr.com/post.js"]' ), function( el ) {
+			el.parentNode.removeChild( el );
+		} );
+		tumblrLoader = false;
+	}
+
+	setTimeout( function() {
+		loadScript( 'https://secure.assets.tumblr.com/post.js', removeScript );
+	}, 30 );
 }
 
 export default React.createClass( {
