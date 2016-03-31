@@ -7,14 +7,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Site from 'blocks/site';
 import Gridicon from 'components/gridicon';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 const EditorMobileNavigation = React.createClass( {
 
-	toggleSidebar: function() {
+	openSidebar: function() {
 		this.props.setLayoutFocus( 'sidebar' );
+	},
+
+	closeSidebar: function() {
+		this.props.setLayoutFocus( 'content' );
 	},
 
 	render: function() {
@@ -24,13 +27,17 @@ const EditorMobileNavigation = React.createClass( {
 
 		return (
 			<div className="editor-mobile-navigation">
-				<Site indicator={ false } site={ this.props.site } />
-				<button className="button editor-mobile-navigation__toggle" onClick={ this.toggleSidebar }>
-					{ this.translate( 'Actions' ) }
-				</button>
 				<Gridicon
-					icon="cross"
+					icon="chevron-left"
 					onClick={ this.props.onClose }
+					className="editor-mobile-navigation__close" />
+				<Gridicon
+					icon="pencil"
+					onClick={ this.closeSidebar }
+					className="editor-mobile-navigation__close" />
+				<Gridicon
+					icon="cog"
+					onClick={ this.openSidebar }
 					className="editor-mobile-navigation__close" />
 			</div>
 		);
