@@ -1,22 +1,39 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-const Gridicon = require( 'components/gridicon' ),
-	layoutFocus = require( 'lib/layout-focus' );
+import Gridicon from 'components/gridicon';
+import layoutFocus from 'lib/layout-focus';
 
-const EditorMobileNavigation = React.createClass( {
+export default React.createClass( {
+	displayName: 'EditorMobileNavigation',
+
+	mixins: [ PureRenderMixin ],
+
+	getInitialState: function() {
+		return {
+			sidebarOpen: false
+		};
+	},
 
 	openSidebar: function() {
-		layoutFocus.set( 'sidebar' );
+		if ( ! this.state.sidebarOpen ) {
+			layoutFocus.set( 'sidebar' );
+			this.setState( { sidebarOpen: true } );
+		}
 	},
 
 	closeSidebar: function() {
-		layoutFocus.set( 'content' );
+		if ( this.state.sidebarOpen ) {
+			layoutFocus.set( 'content' );
+			this.setState( { sidebarOpen: false } );
+		}
 	},
 
 	render: function() {
@@ -29,18 +46,20 @@ const EditorMobileNavigation = React.createClass( {
 				<Gridicon
 					icon="chevron-left"
 					onClick={ this.props.onClose }
-					className="editor-mobile-navigation__close" />
+					className="editor-mobile-navigation__icon" />
 				<Gridicon
 					icon="pencil"
 					onClick={ this.closeSidebar }
-					className="editor-mobile-navigation__close" />
+					className={ classnames( 'editor-mobile-navigation__icon', {
+						'is-selected': ! this.state.sidebarOpen
+					} ) } />
 				<Gridicon
 					icon="cog"
 					onClick={ this.openSidebar }
-					className="editor-mobile-navigation__close" />
+					className={ classnames( 'editor-mobile-navigation__icon', {
+						'is-selected': this.state.sidebarOpen
+					} ) } />
 			</div>
 		);
 	}
 } );
-
-module.exports = EditorMobileNavigation;
