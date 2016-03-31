@@ -88,9 +88,7 @@ function init() {
 	} );
 }
 
-function setUpContext( layout, reduxStore ) {
-	// Pass the layout so that it is available to all page handlers
-	// and add query and hash objects onto context object
+function setUpContext( reduxStore ) {
 	page( '*', function( context, next ) {
 		var parsed = url.parse( location.href, true );
 
@@ -163,7 +161,7 @@ function boot() {
 }
 
 function reduxStoreReady( reduxStore ) {
-	let layoutSection, layout, layoutElement, validSections = [];
+	let layoutSection, layoutElement, validSections = [];
 
 	bindWpLocaleState( reduxStore );
 	bindTitleToStore( reduxStore );
@@ -203,7 +201,7 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/network-connection' ).init( reduxStore );
 	}
 
-	layout = renderWithReduxStore(
+	renderWithReduxStore(
 		layoutElement,
 		document.getElementById( 'wpcom' ),
 		reduxStore
@@ -219,7 +217,7 @@ function reduxStoreReady( reduxStore ) {
 		window.history.replaceState( null, document.title, window.location.pathname );
 	}
 
-	setUpContext( layout, reduxStore );
+	setUpContext( reduxStore );
 	page( '*', require( 'lib/route/normalize' ) );
 
 	// warn against navigating from changed, unsaved forms
