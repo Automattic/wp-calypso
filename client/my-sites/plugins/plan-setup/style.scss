@@ -1,0 +1,72 @@
+$vaultpress-red: #ac0300;
+$akismet-green:  #7C992E;
+$polldaddy-red:  #D45458;
+
+.plan-setup {
+	margin: 0 auto;
+	max-width: 500px;
+}
+
+.plan-setup__header {
+	@extend %heading;
+	margin-bottom: 2em;
+	text-align: center;
+}
+
+.plan-setup__plugin-header {
+	margin-bottom: 0;
+
+	&.vaultpress {
+		color: white;
+		background-color: $vaultpress-red;
+	}
+	&.akismet {
+		color: white;
+		background-color: $akismet-green;
+	}
+	&.polldaddy {
+		color: white;
+		background-color: $polldaddy-red;
+	}
+}
+
+.plan-setup__status {
+	display: flex;
+	flex-wrap: wrap;
+
+	.plan-setup__status-name {
+		flex: 1;
+	}
+
+	.gridicon,
+	.spinner {
+		flex: 0 0 24px;
+	}
+
+	.plan-setup__error,
+	.plan-setup__message {
+		flex: 1 0 100%;
+		margin-top: 8px;
+	}
+
+	.gridicons-checkmark-circle {
+		color: $alert-green;
+	}
+
+	.plan-setup__error,
+	.gridicons-notice {
+		color: $alert-red;
+	}
+}
+
+.plan-setup__action {
+	background-color: lighten($gray, 35%);
+
+	.plan-setup__action-content {
+		line-height: 40px;
+	}
+
+	.button {
+		float: right;
+	}
+}
