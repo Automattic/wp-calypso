@@ -13,7 +13,9 @@ export const ValidationErrors = keyMirror( {
 	FILE_TYPE_UNSUPPORTED: null,
 	SERVER_ERROR: null,
 	UPLOAD_VIA_URL_404: null,
-	EXCEEDS_MAX_UPLOAD_SIZE: null
+	EXCEEDS_MAX_UPLOAD_SIZE: null,
+	EXCEEDS_PLAN_STORAGE_LIMIT: null,
+	NOT_ENOUGH_SPACE: null
 } );
 
 export const ThumbnailSizeDimensions = {

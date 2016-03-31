@@ -254,6 +254,42 @@ describe( 'MediaValidationStore', function() {
 			expect( errors ).to.eql( [ MediaValidationErrors.UPLOAD_VIA_URL_404 ] );
 		} );
 
+		it( 'should detect a not enough space error from received item', function() {
+			var errors;
+
+			dispatchReceiveMediaItem( {
+				error: {
+					statusCode: 400,
+					errors: [ {
+						error: 'upload_error',
+						file: 'https://wordpress.com/hifive.gif',
+						message: 'Not enough space to upload. 20 KB needed.'
+					} ]
+				}
+			} );
+			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
+
+			expect( errors ).to.eql( [ MediaValidationErrors.NOT_ENOUGH_SPACE ] );
+		} );
+
+		it( 'should detect an exceeds plan storage limit error from received item', function() {
+			var errors;
+
+			dispatchReceiveMediaItem( {
+				error: {
+					statusCode: 400,
+					errors: [ {
+						error: 'upload_error',
+						file: 'https://wordpress.com/hifive.gif',
+						message: 'You have used your space quota. Please delete files before uploading.'
+					} ]
+				}
+			} );
+			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
+
+			expect( errors ).to.eql( [ MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT ] );
+		} );
+
 		it( 'should detect general server error from received item', function() {
 			var errors;
 

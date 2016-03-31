@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import createFragment from 'react-addons-create-fragment';
 import noop from 'lodash/noop';
 import head from 'lodash/head';
@@ -14,13 +15,17 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import analytics from 'analytics';
+import TrackComponentView from 'analytics/track-component-view';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import MediaListData from 'components/data/media-list-data';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaActions from 'lib/media/actions';
 import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
 import PreferencesActions from 'lib/preferences/actions';
 import { isMobile } from 'lib/viewport';
+import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
 import MediaLibraryList from './list';
 
@@ -28,10 +33,9 @@ import MediaLibraryList from './list';
  * Module variables
  */
 const debug = debugFactory( 'calypso:media-library:content' );
+const STORAGE_ERRORS = [ MediaValidationErrors.NOT_ENOUGH_SPACE, MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT ];
 
-export default React.createClass( {
-	displayName: 'MediaLibraryContent',
-
+const MediaLibraryContent = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		preferences: React.PropTypes.object,
@@ -58,10 +62,10 @@ export default React.createClass( {
 		// number of items per row.
 		var scaleChoices = [
 			1 / 12 - 0.006,
-			1 /  8 - 0.01,
-			1 /  6 - 0.01,
-			1 /  4 - 0.01,
-			1 /  3 - 0.01
+			1 / 8 - 0.01,
+			1 / 6 - 0.01,
+			1 / 4 - 0.01,
+			1 / 3 - 0.01
 		].map( function( scale ) {
 			return Math.round( 1000 * scale ) / 1000;
 		} );
@@ -121,28 +125,42 @@ export default React.createClass( {
 			switch ( errorType ) {
 				case MediaValidationErrors.FILE_TYPE_UNSUPPORTED:
 					message = this.translate(
-						'The file could not be uploaded because the file type is not supported.',
+						'%d file could not be uploaded because the file type is not supported.',
 						'%d files could not be uploaded because their file types are unsupported.',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.UPLOAD_VIA_URL_404:
 					message = this.translate(
-						'The file could not be uploaded because no image exists at the specified URL.',
+						'%d file could not be uploaded because no image exists at the specified URL.',
 						'%d files could not be uploaded because no images exist at the specified URLs',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE:
 					message = this.translate(
-						'The file could not be uploaded because it exceeds the maximum upload size.',
+						'%d file could not be uploaded because it exceeds the maximum upload size.',
 						'%d files could not be uploaded because they exceed the maximum upload size.',
+						i18nOptions
+					);
+					break;
+				case MediaValidationErrors.NOT_ENOUGH_SPACE:
+					message = this.translate(
+						'%d file could not be uploaded because there is not enough space left.',
+						'%d files could not be uploaded because there is not enough space left.',
+						i18nOptions
+					);
+					break;
+				case MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT:
+					message = this.translate(
+						'%d file could not be uploaded because you have reached your plan storage limit.',
+						'%d files could not be uploaded because you have reached your plan storage limit.',
 						i18nOptions
 					);
 					break;
 				default:
 					message = this.translate(
-						'The file could not be uploaded because an error occurred while uploading.',
+						'%d file could not be uploaded because an error occurred while uploading.',
 						'%d files could not be uploaded because errors occurred while uploading.',
 						i18nOptions
 					);
@@ -154,13 +172,37 @@ export default React.createClass( {
 			}
 
 			return (
-				<Notice status="is-error" onDismissClick={ onDismiss }>
-					{ message }
+				<Notice status="is-error" text={ message } onDismissClick={ onDismiss } >
+					{ this.renderNoticeAction( errorType ) }
 				</Notice>
 			);
 		} );
 
 		return createFragment( notices );
+	},
+
+	renderNoticeAction( errorType ) {
+		if ( STORAGE_ERRORS.indexOf( errorType ) === -1 ) {
+			return null;
+		}
+		const eventName = 'calypso_upgrade_nudge_impression';
+		const eventProperties = { cta_name: 'plan-media-storage-error' };
+		return (
+			<NoticeAction
+				external={ true }
+				href={ `/plans/${ this.props.siteSlug }` }
+				onClick={ this.recordPlansNavigation }>
+				{ this.translate( 'Upgrade Plan' ) }
+				<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+			</NoticeAction>
+		);
+	},
+
+	recordPlansNavigation() {
+		analytics.ga.recordEvent( 'Media', 'Clicked Upload Error Action' );
+		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
+			cta_name: 'plan-media-storage-error'
+		} );
 	},
 
 	renderMediaList: function() {
@@ -203,3 +245,9 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state, ownProps ) => {
+	return {
+		siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : ''
+	};
+}, null, null, { pure: false } )( MediaLibraryContent );

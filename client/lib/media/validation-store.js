@@ -106,18 +106,20 @@ function receiveServerError( siteId, itemId, errors ) {
 	ensureErrorsObjectForSite( siteId );
 
 	_errors[ siteId ][ itemId ] = errors.map( ( error ) => {
-		let errorType;
-
 		switch ( error.error ) {
 			case 'http_404':
-				errorType = MediaValidationErrors.UPLOAD_VIA_URL_404;
-				break;
+				return MediaValidationErrors.UPLOAD_VIA_URL_404;
+			case 'upload_error':
+				if ( error.message.indexOf( 'Not enough space to upload' ) === 0 ) {
+					return MediaValidationErrors.NOT_ENOUGH_SPACE;
+				}
+				if ( error.message.indexOf( 'You have used your space quota' ) === 0 ) {
+					return MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT
+				}
+				return MediaValidationErrors.SERVER_ERROR;
 			default:
-				errorType = MediaValidationErrors.SERVER_ERROR;
-				break;
+				return MediaValidationErrors.SERVER_ERROR;
 		}
-
-		return errorType;
 	} );
 }
 
