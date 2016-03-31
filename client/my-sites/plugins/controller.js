@@ -146,13 +146,14 @@ function renderPluginsBrowser( context, siteUrl ) {
 	);
 }
 
-function renderProvisionPlugins() {
+function renderProvisionPlugins( context ) {
 	const site = sites.getSelectedSite();
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( PlanSetup, {
 			selectedSite: site,
 		} ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -246,8 +247,8 @@ const controller = {
 		next();
 	},
 
-	setupPlugins() {
-		renderProvisionPlugins();
+	setupPlugins( context ) {
+		renderProvisionPlugins( context );
 	}
 };
 
