@@ -29,13 +29,14 @@ import {
 	isRefundable,
 	isRenewable,
 	isRenewing,
+	isSubscription,
 	paymentLogoType,
 	purchaseType,
 	showCreditCardExpiringWarning
 } from 'lib/purchases';
 import { getPurchase, getSelectedSite, goToList, recordPageView } from '../utils';
 import HeaderCake from 'components/header-cake';
-import { isDomainProduct, isDomainRegistration, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
+import { isDomainRegistration } from 'lib/products-values';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -424,7 +425,13 @@ const ManagePurchase = React.createClass( {
 				return this.translate( 'Domain expires on' );
 			}
 
-			return this.translate( 'Subscription expires on' );
+			if ( isSubscription( purchase ) ) {
+				return this.translate( 'Subscription expires on' );
+			}
+
+			if ( isOneTimePurchase( purchase ) ) {
+				return this.translate( 'Expires on' );
+			}
 		}
 
 		if ( isExpired( purchase ) ) {
@@ -432,14 +439,28 @@ const ManagePurchase = React.createClass( {
 				return this.translate( 'Domain expired on' );
 			}
 
-			return this.translate( 'Subscription expired on' );
+			if ( isSubscription( purchase ) ) {
+				return this.translate( 'Subscription expired on' );
+			}
+
+			if ( isOneTimePurchase( purchase ) ) {
+				return this.translate( 'Expired on' );
+			}
 		}
 
 		if ( isDomainRegistration( purchase ) ) {
 			return this.translate( 'Domain auto-renews on' );
 		}
 
-		return this.translate( 'Subscription auto-renews on' );
+		if ( isSubscription( purchase ) ) {
+			return this.translate( 'Subscription auto-renews on' );
+		}
+
+		if ( isOneTimePurchase( purchase ) ) {
+			return this.translate( 'Auto-renews on' );
+		}
+
+		return null;
 	},
 
 	renderRenewsOrExpiresOn() {
@@ -511,13 +532,23 @@ const ManagePurchase = React.createClass( {
 		if ( isRefundable( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				text = this.translate( 'Cancel Domain and Refund' );
-			} else {
+			}
+
+			if ( isSubscription( purchase ) ) {
 				text = this.translate( 'Cancel Subscription and Refund' );
 			}
-		} else if ( isDomainRegistration( purchase ) ) {
-			text = this.translate( 'Cancel Domain' );
+
+			if ( isOneTimePurchase( purchase ) ) {
+				text = this.translate( 'Cancel and Refund' );
+			}
 		} else {
-			text = this.translate( 'Cancel Subscription' );
+			if ( isDomainRegistration( purchase ) ) {
+				text = this.translate( 'Cancel Domain' );
+			}
+
+			if ( isSubscription( purchase ) ) {
+				text = this.translate( 'Cancel Subscription' );
+			}
 		}
 
 		return (

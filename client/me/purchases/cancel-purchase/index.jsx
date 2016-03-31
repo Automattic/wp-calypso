@@ -11,7 +11,7 @@ import Card from 'components/card';
 import CancelPurchaseButton from './button';
 import CancelPurchaseRefundInformation from './refund-information';
 import CompactCard from 'components/card/compact';
-import { getName, isCancelable, isRefundable } from 'lib/purchases';
+import { getName, isCancelable, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
 import { getPurchase, getSelectedSite, goToManagePurchase, recordPageView } from 'me/purchases/utils';
 import HeaderCake from 'components/header-cake';
 import { isDomainRegistration } from 'lib/products-values';
@@ -99,17 +99,15 @@ const CancelPurchase = React.createClass( {
 
 		let heading;
 
-		if ( isDomainRegistration( purchase ) ) {
+		if ( isDomainRegistration( purchase ) || isOneTimePurchase( purchase ) ) {
 			heading = this.translate( 'Cancel %(purchaseName)s', {
-				args: {
-					purchaseName
-				}
+				args: { purchaseName }
 			} );
-		} else {
+		}
+
+		if ( isSubscription( purchase ) ) {
 			heading = this.translate( 'Cancel Your %(purchaseName)s Subscription', {
-				args: {
-					purchaseName
-				}
+				args: { purchaseName }
 			} );
 		}
 

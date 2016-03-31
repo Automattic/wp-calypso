@@ -7,7 +7,7 @@ import React from 'react';
  * Internal Dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import { getName, isRefundable } from 'lib/purchases';
+import { getName, isRefundable, isSubscription, isOneTimePurchase } from 'lib/purchases';
 import { isDomainRegistration } from 'lib/products-values';
 
 const CancelPurchaseRefundInformation = ( { purchase } ) => {
@@ -24,9 +24,21 @@ const CancelPurchaseRefundInformation = ( { purchase } ) => {
 					args: { refundPeriodInDays }
 				}
 			);
-		} else {
+		}
+
+		if ( isSubscription( purchase ) ) {
 			text = i18n.translate(
-				'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
+				'When you cancel your subscription within %(refundPeriodInDays)d days of purchasing, ' +
+				"you'll receive a refund and it will be removed from your site immediately.",
+				{
+					args: { refundPeriodInDays }
+				}
+			);
+		}
+
+		if ( isOneTimePurchase( purchase ) ) {
+			text = i18n.translate(
+				'When you cancel this purchase within %(refundPeriodInDays)d days of purchasing, ' +
 				"you'll receive a refund and it will be removed from your site immediately.",
 				{
 					args: { refundPeriodInDays }

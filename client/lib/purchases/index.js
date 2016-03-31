@@ -12,8 +12,14 @@ import moment from 'moment';
  */
 import i18n from 'lib/mixins/i18n';
 import {
+	isCustomDesign,
+	isDomainMapping,
 	isDomainRegistration,
+	isEnterprise,
+	isNoAds,
 	isPlan,
+	isSiteRedirect,
+	isSpaceUpgrade,
 	isTheme
 } from 'lib/products-values';
 
@@ -167,6 +173,20 @@ function isRenewing( purchase ) {
 	return includes( [ 'active', 'autoRenewing' ], purchase.expiryStatus );
 }
 
+function isSubscription( purchase ) {
+	const subscriptionFunctions = [
+		isCustomDesign,
+		isDomainMapping,
+		isEnterprise,
+		isNoAds,
+		isPlan,
+		isSiteRedirect,
+		isSpaceUpgrade
+	];
+
+	return subscriptionFunctions.some( fn => fn( purchase ) );
+}
+
 function isPaidWithCreditCard( purchase ) {
 	return 'credit_card' === purchase.payment.type && hasCreditCardData( purchase );
 }
@@ -247,6 +267,7 @@ export {
 	isRemovable,
 	isRenewable,
 	isRenewing,
+	isSubscription,
 	paymentLogoType,
 	purchaseType,
 	shouldFetchPurchases,

@@ -9,7 +9,7 @@ import React from 'react';
  */
 import Button from 'components/button';
 import { cancelPurchase } from 'lib/upgrades/actions';
-import { getName, getSubscriptionEndDate, isRefundable } from 'lib/purchases';
+import { getName, getSubscriptionEndDate, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
 import { isDomainRegistration } from 'lib/products-values';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
@@ -84,15 +84,23 @@ const CancelPurchaseButton = React.createClass( {
 
 			if ( isDomainRegistration( purchase ) ) {
 				text = this.translate( 'Cancel Domain and Refund' );
-			} else {
+			}
+
+			if ( isSubscription( purchase ) ) {
 				text = this.translate( 'Cancel Subscription and Refund' );
+			}
+
+			if ( isOneTimePurchase( purchase ) ) {
+				text = this.translate( 'Cancel and Refund' );
 			}
 		} else {
 			onClick = this.cancelPurchase;
 
 			if ( isDomainRegistration( purchase ) ) {
 				text = this.translate( 'Cancel Domain' );
-			} else {
+			}
+
+			if ( isSubscription( purchase ) ) {
 				text = this.translate( 'Cancel Subscription' );
 			}
 		}
