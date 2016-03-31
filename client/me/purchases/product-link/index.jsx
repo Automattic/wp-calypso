@@ -6,6 +6,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
+import config from 'config';
 import { domainManagementEdit } from 'my-sites/upgrades/paths';
 import { getDetailsUrl as getThemeDetailsUrl } from 'my-sites/themes/helpers';
 import { googleAppsSettingsUrl } from 'lib/google-apps';
@@ -13,7 +14,9 @@ import i18n from 'lib/mixins/i18n';
 import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
 
 const ProductLink = ( { selectedPurchase, selectedSite } ) => {
-	let url, text;
+	let props = {},
+		url,
+		text;
 
 	if ( ! selectedSite ) {
 		return <span />;
@@ -37,11 +40,15 @@ const ProductLink = ( { selectedPurchase, selectedSite } ) => {
 	if ( isTheme( selectedPurchase ) ) {
 		url = getThemeDetailsUrl( { id: selectedPurchase.meta }, { slug: selectedPurchase.domain } );
 		text = i18n.translate( 'Theme Details' );
+
+		if ( ! config.isEnabled( 'manage/themes/details' ) ) {
+			props = { target: '_blank' };
+		}
 	}
 
 	if ( url && text ) {
 		return (
-			<a className="product-link" href={ url }>
+			<a className="product-link" href={ url } { ...props }>
 				{ text }
 			</a>
 		);
