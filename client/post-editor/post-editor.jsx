@@ -293,8 +293,10 @@ const PostEditor = React.createClass( {
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
 				<div className="post-editor__inner">
+					<EditorMobileNavigation
+						site={ site }
+						onClose={ this.onClose } />
 					<div className="post-editor__content">
-						<EditorMobileNavigation site={ site } onClose={ this.onClose } />
 						<div className="editor">
 							<EditorActionBar
 								isNew={ this.state.isNew }

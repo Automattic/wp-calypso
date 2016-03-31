@@ -6,14 +6,17 @@ const React = require( 'react' );
 /**
  * Internal dependencies
  */
-const Site = require( 'my-sites/site' ),
-	Gridicon = require( 'components/gridicon' ),
+const Gridicon = require( 'components/gridicon' ),
 	layoutFocus = require( 'lib/layout-focus' );
 
 const EditorMobileNavigation = React.createClass( {
 
-	toggleSidebar: function() {
+	openSidebar: function() {
 		layoutFocus.set( 'sidebar' );
+	},
+
+	closeSidebar: function() {
+		layoutFocus.set( 'content' );
 	},
 
 	render: function() {
@@ -23,13 +26,17 @@ const EditorMobileNavigation = React.createClass( {
 
 		return (
 			<div className="editor-mobile-navigation">
-				<Site indicator={ false } site={ this.props.site } />
-				<button className="button editor-mobile-navigation__toggle" onClick={ this.toggleSidebar }>
-					{ this.translate( 'Actions' ) }
-				</button>
 				<Gridicon
-					icon="cross"
+					icon="chevron-left"
 					onClick={ this.props.onClose }
+					className="editor-mobile-navigation__close" />
+				<Gridicon
+					icon="pencil"
+					onClick={ this.closeSidebar }
+					className="editor-mobile-navigation__close" />
+				<Gridicon
+					icon="cog"
+					onClick={ this.openSidebar }
 					className="editor-mobile-navigation__close" />
 			</div>
 		);
