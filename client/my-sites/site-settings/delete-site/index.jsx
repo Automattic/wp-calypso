@@ -4,7 +4,8 @@
 var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:my-sites:site-settings' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	property = require( 'lodash/property' );
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ var HeaderCake = require( 'components/header-cake' ),
 	ActionPanelFooter = require( 'my-sites/site-settings/action-panel/footer' ),
 	Button = require( 'components/button' ),
 	Dialog = require( 'components/dialog' ),
+	DeleteSiteWarningDialog = require( 'my-sites/site-settings/delete-site-warning-dialog' ),
 	config = require( 'config' ),
 	Gridicon = require( 'components/gridicon' ),
 	notices = require( 'notices' ),
@@ -32,9 +34,10 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			showDialog: false,
+			showConfirmDialog: false,
 			confirmDomain: '',
-			site: this.props.sites.getSelectedSite()
+			site: this.props.sites.getSelectedSite(),
+			showWarningDialog: false
 		};
 	},
 
@@ -78,7 +81,7 @@ module.exports = React.createClass( {
 
 		deleteButtons = [
 			<Button
-				onClick={ this._closeDialog }>{
+				onClick={ this.closeConfirmDialog }>{
 					this.translate( 'Cancel' )
 			}</Button>,
 			<Button
@@ -165,14 +168,16 @@ module.exports = React.createClass( {
 					<ActionPanelFooter>
 						<Button
 							scary
-							disabled={ ! this.state.site }
-							onClick={ this._showDialog }>
+							disabled={ ! this.state.site || this.props.purchases.isFetching }
+							onClick={ this.handleDeleteSiteClick }>
 							<Gridicon icon="trash" />
 							{ strings.deleteSite }
 						</Button>
 					</ActionPanelFooter>
-
-					<Dialog isVisible={ this.state.showDialog } buttons={ deleteButtons } className="delete-site__confirm-dialog">
+					<DeleteSiteWarningDialog
+						isVisible={ this.state.showWarningDialog }
+						onClose={ this.closeWarningDialog } />
+					<Dialog isVisible={ this.state.showConfirmDialog } buttons={ deleteButtons } className="delete-site__confirm-dialog">
 						<h1 className="delete-site__confirm-header">{ strings.confirmDeleteSite }</h1>
 						<p className="delete-site__confirm-paragraph">{
 							this.translate( 'Please type in {{warn}}%(siteAddress)s{{/warn}} in the field below to confirm. Your site will then be gone forever.', {
@@ -191,12 +196,30 @@ module.exports = React.createClass( {
 		);
 	},
 
-	_showDialog: function() {
-		this.setState( { showDialog: true } );
+	handleDeleteSiteClick: function( event ) {
+		var hasActiveSubscriptions;
+
+		event.preventDefault();
+
+		if ( ! this.props.purchases.hasLoadedFromServer ) {
+			return;
+		}
+
+		hasActiveSubscriptions = this.props.purchases.data.filter( property( 'active' ) ).length > 0;
+
+		if ( hasActiveSubscriptions ) {
+			this.setState( { showWarningDialog: true } );
+		} else {
+			this.setState( { showConfirmDialog: true } );
+		}
 	},
 
-	_closeDialog: function() {
-		this.setState( { showDialog: false } );
+	closeConfirmDialog: function() {
+		this.setState( { showConfirmDialog: false } );
+	},
+
+	closeWarningDialog: function() {
+		this.setState( { showWarningDialog: false } );
 	},
 
 	_goBack: function() {
@@ -207,7 +230,7 @@ module.exports = React.createClass( {
 	_deleteSite: function() {
 		var siteDomain = this.state.site.domain;
 
-		this.setState( { showDialog: false } );
+		this.setState( { showConfirmDialog: false } );
 
 		notices.success(
 			this.translate( '{{strong}}%(siteDomain)s{{/strong}} is being deleted.', {

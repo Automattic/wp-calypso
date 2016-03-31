@@ -129,11 +129,12 @@ module.exports = {
 		}
 
 		ReactDom.render(
-			React.createElement( DeleteSite, {
-				context: context,
-				sites: sites,
-				path: context.path
-			} ),
+			<SitePurchasesData>
+				<DeleteSite
+					context={ context }
+					sites={ sites }
+					path={ context.path } />
+			</SitePurchasesData>,
 			document.getElementById( 'primary' )
 		);
 	},
