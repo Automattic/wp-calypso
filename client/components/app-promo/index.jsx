@@ -69,7 +69,7 @@ export default React.createClass( {
 			return null;
 		}
 
-		var promo_link = 'https://desktop.wordpress.com/?ref=promo_' + this.props.location + '_' + this.state.promo_item.promo_code;
+		var promo_link = 'https://apps.wordpress.com/desktop/?ref=promo_' + this.props.location + '_' + this.state.promo_item.promo_code;
 		var element = (
 			<div className="app-promo">
 				<span tabIndex="0" className="app-promo__dismiss" onClick={ this.dismiss } >
@@ -77,7 +77,7 @@ export default React.createClass( {
 					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
 				</span>
 				<a onClick={ this.recordClickEvent } className="app-promo__link" title="Try the desktop app!" href={ promo_link } target="_blank">
-					<img className="app-promo__icon" src="https://s0.wp.com/wp-content/themes/a8c/desktop/i/icon.png" width="32" height="32" alt="WordPress Desktop Icon" />
+					<img className="app-promo__icon" src="/calypso/images/reader/promo-app-icon.png" width="32" height="32" alt="WordPress Desktop Icon" />
 					{ this.state.promo_item.message }
 				</a>
 			</div>
