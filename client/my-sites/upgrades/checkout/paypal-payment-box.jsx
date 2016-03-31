@@ -128,7 +128,7 @@ module.exports = React.createClass( {
 				<div className="payment-box-section">
 					<CountrySelect
 						additionalClasses="checkout-field"
-						name='country'
+						name="country"
 						label={ this.translate( 'Country', { textOnly: true } ) }
 						countriesList={ this.props.countriesList }
 						value={ this.state.country }
@@ -149,7 +149,7 @@ module.exports = React.createClass( {
 
 				<div className="payment-box-actions">
 					<div className="pay-button">
-						<button type='submit' className="button is-primary button-pay" disabled={ this.state.formDisabled }>
+						<button type="submit" className="button is-primary button-pay" disabled={ this.state.formDisabled }>
 							{ this.renderButtonText() }
 						</button>
 						<SubscriptionText cart={ this.props.cart } />
