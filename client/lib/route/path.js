@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import includes from 'lodash/includes';
+
+/**
  * Internal Dependencies
  */
 var trailingslashit = require( './trailingslashit' ),
@@ -16,23 +21,27 @@ var statsLocationsByTab = {
 };
 
 function getSiteFragment( path ) {
-	var basePath = path.split( '?' )[0],
-		pieces = basePath.split( '/' ),
-		siteOldStyle = pieces[ pieces.length - 1 ],
-		siteNewStyle = pieces[2] || '';
+	const basePath = path.split( '?' )[0];
+	const pieces = basePath.split( '/' );
 
-	if ( siteNewStyle.indexOf( '.' ) >= 0 ) {
-		// This is a new-style URL like /:section/:site[/:filter/...]
-		return siteNewStyle;
-	} else if ( siteOldStyle.indexOf( '.' ) >= 0 ) {
-		// This is an old-style URL like /:section/:filter/:site
-		return siteOldStyle;
-	} else if ( siteNewStyle && ! isNaN( siteNewStyle ) ) {
-		// Allow numeric site IDs in /:section/:site[/:filter/...]
-		return parseInt( siteNewStyle, 10 );
-	} else if ( siteOldStyle && ! isNaN( siteOldStyle ) ) {
-		// Allow numeric site IDs in /:section/:filter/:site
-		return parseInt( siteOldStyle, 10 );
+	// There are 2 URL positions where we should look for the site fragment:
+	// last (most sections) and second to last (the editor, since post ID can
+	// come last).
+	const maybeSiteInEditor = pieces[ pieces.length - 2 ] || '';
+	const maybeSiteOther = pieces[ pieces.length - 1 ] || '';
+
+	if ( maybeSiteInEditor.indexOf( '.' ) >= 0 ) {
+		// This is an editor-style URL like /post/:site/:id or /edit/:cpt/:site/:id
+		return maybeSiteInEditor;
+	} else if ( maybeSiteOther.indexOf( '.' ) >= 0 ) {
+		// This is a URL like /:section/:filter/:site
+		return maybeSiteOther;
+	} else if ( maybeSiteInEditor && ! isNaN( maybeSiteInEditor ) ) {
+		// Allow numeric site IDs in editor URLs
+		return parseInt( maybeSiteInEditor, 10 );
+	} else if ( maybeSiteOther && ! isNaN( maybeSiteOther ) ) {
+		// Allow numeric site IDs in other URLs
+		return parseInt( maybeSiteOther, 10 );
 	} else {
 		// No site fragment here
 		return false;
@@ -40,13 +49,15 @@ function getSiteFragment( path ) {
 }
 
 function addSiteFragment( path, site ) {
-	var pieces = sectionify( path ).split( '/' );
+	const pieces = sectionify( path ).split( '/' );
 
-	if ( pieces[1] === 'post' || pieces[1] === 'page' ) {
-		// New-style URL; change /:section[/:filter/...] into /:section/:site/[:filter/...]
-		pieces.splice( 2, 0, site );
+	if ( includes( [ 'post', 'page', 'edit' ], pieces[ 1 ] ) ) {
+		// Editor-style URL; insert the site as either the 2nd or 3rd piece of
+		// the URL ( '/post/:site' or '/edit/:cpt/:site' )
+		const sitePos = ( 'edit' === pieces[ 1 ] ? 3 : 2 );
+		pieces.splice( sitePos, 0, site );
 	} else {
-		// Old-style URL; add /:site onto the end
+		// Somewhere else in Calypso; add /:site onto the end
 		pieces.push( site );
 	}
 

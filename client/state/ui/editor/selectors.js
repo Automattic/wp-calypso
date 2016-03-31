@@ -7,7 +7,7 @@ import get from 'lodash/get';
  * Internal dependencies
  */
 import { getSiteSlug } from 'state/sites/selectors';
-import { getSitePost } from 'state/posts/selectors';
+import { getEditedPost } from 'state/posts/selectors';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.
@@ -48,13 +48,13 @@ export function isEditorDraftsVisible( state ) {
  * @return {String}        Editor URL path
  */
 export function getEditorPath( state, siteId, postId ) {
-	const type = get( getSitePost( state, siteId, postId ), 'type', 'post' );
+	const type = get( getEditedPost( state, siteId, postId ), 'type', 'post' );
 
 	let path;
 	switch ( type ) {
 		case 'post': path = '/post'; break;
 		case 'page': path = '/page'; break;
-		default: path = `/type/${ type }`; break;
+		default: path = `/edit/${ type }`; break;
 	}
 
 	const siteSlug = getSiteSlug( state, siteId );
