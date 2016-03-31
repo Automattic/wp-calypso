@@ -20,7 +20,7 @@
 		"help": true,
 		"login": false,
 		"mailing-lists/unsubscribe": true,
-		"manage/add-people": false,
+		"manage/add-people": true,
 		"manage/ads": true,
 		"manage/ads/jetpack": true,
 		"manage/customize": true,
