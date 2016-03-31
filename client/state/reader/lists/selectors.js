@@ -63,7 +63,7 @@ export function getListByOwnerAndSlug( state, owner, slug ) {
 	}
 
 	return find( state.reader.lists.items, ( list ) => {
-		return list.owner === owner && list.slug === slug
+		return decodeURIComponent( list.owner ) === owner && decodeURIComponent( list.slug ) === slug
 	} );
 }
 
