@@ -63,6 +63,9 @@ export default {
 					data: data ? Object.assign.apply( Object, data ) : null,
 					error: error
 				} );
+				if( ! error ) {
+					wpcom.undocumented().storeJetpackConnectUrl( url );
+				}
 			} )
 			.catch( ( error ) => {
 				_fetching[ url ] = null;
