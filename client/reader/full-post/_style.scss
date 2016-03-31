@@ -215,6 +215,13 @@
 		margin: auto;
 	}
 
+	iframe[class^="twitter-"],
+	iframe[class^="instagram-"],
+	.fb_iframe_widget {
+		display: block;
+		margin: 24px auto !important;
+	}
+
 	@include breakpoint( ">660px" ) {
 		.alignleft {
 			max-width: 100%;

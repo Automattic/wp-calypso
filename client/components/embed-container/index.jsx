@@ -5,8 +5,10 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import PureMixin from 'react-pure-render/mixin';
+import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
 import forOwn from 'lodash/forOwn';
+import noop from 'lodash/noop';
 
 import { loadScript } from 'lib/load-script';
 
@@ -15,33 +17,34 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:components:embed-container' );
 
 const embedsToLookFor = {
-	'blockquote.instagram-media': embedInstagram
+	'blockquote[class^="instagram-"]': embedInstagram,
+	'blockquote[class^="twitter-"]': embedTwitter,
+	'fb\\\:post, [class^=fb-]': embedFacebook,
+	'[class^=tumblr-]': embedTumblr
 };
 
 function processEmbeds( domNode ) {
 	forOwn( embedsToLookFor, ( fn, embedSelector ) => {
 		let nodes = domNode.querySelectorAll( embedSelector );
-		forEach( nodes, fn );
+		forEach( filter( nodes, nodeNeedsProcessing ), fn );
 	} );
 }
 
-let instagramLoader;
-function embedInstagram( domNode ) {
-	debug( 'processing instagram for', domNode );
+function nodeNeedsProcessing( domNode ) {
 	if ( domNode.hasAttribute( 'data-wpcom-embed-processed' ) ) {
-		return; // already marked for processing
+		return false; // already marked for processing
 	}
 
 	domNode.setAttribute( 'data-wpcom-embed-processed', '1' );
+	return true;
+}
 
-	if ( typeof instgrm !== 'undefined' ) {
-		global.instgrm.Embeds.process();
-		return;
-	}
-
-	if ( ! instagramLoader ) {
-		instagramLoader = new Promise( function( resolve, reject ) {
-			loadScript( 'https://platform.instagram.com/en_US/embeds.js', function( err ) {
+let loaders = {};
+function loadAndRun( scriptUrl, callback ) {
+	let loader = loaders[ scriptUrl ];
+	if ( ! loader ) {
+		loader = new Promise( function( resolve, reject ) {
+			loadScript( scriptUrl, function( err ) {
 				if ( err ) {
 					reject( err );
 				} else {
@@ -49,12 +52,64 @@ function embedInstagram( domNode ) {
 				}
 			} );
 		} );
+		loaders[ scriptUrl ] = loader;
+	}
+	loader.then( callback, function( err ) {
+		debug( 'error loading ' + scriptUrl, err );
+		loaders[ scriptUrl ] = null;
+	} );
+}
+
+function embedInstagram( domNode ) {
+	debug( 'processing instagram for', domNode );
+	if ( typeof instgrm !== 'undefined' ) {
+		global.instgrm.Embeds.process();
+		return;
 	}
 
-	instagramLoader.then(
-		embedInstagram.bind( null, domNode ),
-		debug.bind( null, 'Could not load instagram platform' )
-	);
+	loadAndRun( 'https://platform.instagram.com/en_US/embeds.js', embedInstagram.bind( null, domNode ) );
+}
+
+function embedTwitter( domNode ) {
+	debug( 'processing twitter for', domNode );
+
+	if ( typeof twttr !== 'undefined' ) {
+		global.twttr.widgets.load( domNode );
+		return;
+	}
+
+	loadAndRun( 'https://platform.twitter.com/widgets.js', embedTwitter.bind( null, domNode ) );
+}
+
+function embedFacebook( domNode ) {
+	debug( 'processing facebook for', domNode );
+	if ( typeof fb !== 'undefined' ) {
+		return;
+	}
+
+	loadAndRun( 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.2', noop );
+}
+
+let tumblrLoader;
+function embedTumblr( domNode ) {
+	debug( 'processing tumblr for', domNode );
+	if ( tumblrLoader ) {
+		return;
+	}
+
+	// tumblr just wants us to load this script, over and over and over
+	tumblrLoader = true;
+
+	function removeScript() {
+		forEach( document.querySelectorAll( 'script[src="https://secure.assets.tumblr.com/post.js"]' ), function( el ) {
+			el.parentNode.removeChild( el );
+		} );
+		tumblrLoader = false;
+	}
+
+	setTimeout( function() {
+		loadScript( 'https://secure.assets.tumblr.com/post.js', removeScript );
+	}, 30 );
 }
 
 export default React.createClass( {
