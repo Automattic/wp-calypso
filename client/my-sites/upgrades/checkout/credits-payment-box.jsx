@@ -9,9 +9,7 @@ var React = require( 'react' ),
  */
 var PayButton = require( './pay-button' ),
 	PaymentBox = require( './payment-box' ),
-	CartCoupon = require( 'my-sites/upgrades/cart/cart-coupon' ),
-	TermsOfService = require( './terms-of-service' ),
-	{ isSidebarHiddenForCart } = require( 'lib/cart-values' );
+	TermsOfService = require( './terms-of-service' );
 
 var CreditsPaymentBox = React.createClass( {
 	content: function() {
@@ -36,8 +34,6 @@ var CreditsPaymentBox = React.createClass( {
 						}
 					</span>
 				</div>
-
-				{ isSidebarHiddenForCart( cart ) && <CartCoupon cart={ cart } /> }
 
 				<TermsOfService />
 				<div className="payment-box-actions">

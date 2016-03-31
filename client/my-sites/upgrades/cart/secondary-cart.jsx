@@ -12,18 +12,13 @@ var CartBody = require( 'my-sites/upgrades/cart/cart-body' ),
 	CartPlanAd = require( './cart-plan-ad' ),
 	CartPlanDiscountAd = require( './cart-plan-discount-ad' ),
 	Sidebar = require( 'layout/sidebar' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	{ isSidebarHiddenForCart } = require( 'lib/cart-values' );
+	observe = require( 'lib/mixins/data-observe' );
 
 var SecondaryCart = React.createClass( {
 	mixins: [ CartMessagesMixin, observe( 'sites' ) ],
 
 	render: function() {
 		const { cart, selectedSite } = this.props;
-
-		if ( isSidebarHiddenForCart( cart ) ) {
-			return null;
-		}
 
 		return (
 			<Sidebar className="secondary-cart">

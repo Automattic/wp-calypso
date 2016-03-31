@@ -10,8 +10,7 @@ var update = require( 'react-addons-update' ),
  * Internal dependencies
  */
 var cartItems = require( './cart-items' ),
-	productsValues = require( 'lib/products-values' ),
-	{ abtest } = require( 'lib/abtest' );
+	productsValues = require( 'lib/products-values' );
 
 /**
  * Create a new empty cart.
@@ -36,10 +35,6 @@ function applyCoupon( coupon ) {
 			is_coupon_applied: { $set: false }
 		} );
 	};
-}
-
-function isSidebarHiddenForCart( cart ) {
-	return cart.hasLoadedFromServer && cart.products.length === 1 && abtest( 'sidebarOnCheckoutOfOneProduct' ) === 'hidden';
 }
 
 function canRemoveFromCart( cart, cartItem ) {
@@ -147,7 +142,6 @@ function isPayPalExpressEnabled( cart ) {
 
 module.exports = {
 	applyCoupon,
-	isSidebarHiddenForCart,
 	canRemoveFromCart,
 	cartItems,
 	emptyCart,

@@ -11,7 +11,6 @@ var PayButton = require( './pay-button' ),
 	CreditCardSelector = require( './credit-card-selector' ),
 	TermsOfService = require( './terms-of-service' ),
 	PaymentBox = require( './payment-box' ),
-	CartCoupon = require( 'my-sites/upgrades/cart/cart-coupon' ),
 	analytics = require( 'analytics' ),
 	cartValues = require( 'lib/cart-values' );
 
@@ -38,8 +37,6 @@ var CreditCardPaymentBox = React.createClass( {
 					countriesList={ this.props.countriesList }
 					initialCard={ this.props.initialCard }
 					transaction={ this.props.transaction } />
-
-				{ cartValues.isSidebarHiddenForCart( cart ) && <CartCoupon cart={ cart } /> }
 
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) } />
