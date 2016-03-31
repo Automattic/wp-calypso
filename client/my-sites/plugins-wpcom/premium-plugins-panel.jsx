@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 
-import FoldableCard from 'components/foldable-card';
-import Gridicon from 'components/gridicon';
+import Card from 'components/card';
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
 
 import PremiumPlugin from './plugin-types/premium-plugin';
 
@@ -16,7 +17,7 @@ const defaultPlugins = [
 		name: 'Custom Design',
 		supportLink: 'https://en.support.wordpress.com/custom-design/',
 		plan: 'Premium',
-		description: 'With Customize you can personalize your blog\'s look and feel with intelligent color tools, custom fonts, and a CSS editor.'
+		description: 'Customize your blog\'s look with custom fonts, a CSS editor, and more.'
 	},
 	{
 		name: 'Video Uploads',
@@ -32,22 +33,22 @@ export const PremiumPluginsPanel = React.createClass( {
 		const plugins = givenPlugins.length
 			? givenPlugins
 			: defaultPlugins;
-		const actionButton = <div><Gridicon icon="checkmark" /> Active</div>;
 
 		return (
-			<FoldableCard
-				actionButton={ actionButton }
-				actionButtonExpanded={ actionButton }
-				className="wpcom-plugins__premium-panel"
-				expanded={ true }
-				header="Premium Upgrades"
-			>
-				{ plugins.map( ( { name, supportLink, icon, plan, description } ) =>
-					<PremiumPlugin
-						{ ...{ name, key: name, supportLink, icon, plan, description } }
-					/>
-				) }
-			</FoldableCard>
+			<div>
+				<SectionHeader label={ this.translate( 'Premium Upgrades' ) }>
+					<Button compact primary>{ this.translate( 'Purchase' ) }</Button>
+				</SectionHeader>
+				<Card className="wpcom-plugins__premium-panel">
+					<div className="wpcom-plugins__list">
+						{ plugins.map( ( { name, supportLink, icon, plan, description } ) =>
+							<PremiumPlugin
+								{ ...{ name, key: name, supportLink, icon, plan, description } }
+							/>
+						) }
+					</div>
+				</Card>
+			</div>
 		);
 	}
 } );

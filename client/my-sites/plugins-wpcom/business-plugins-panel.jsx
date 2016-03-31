@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 
-import FoldableCard from 'components/foldable-card';
-import Gridicon from 'components/gridicon';
+import Card from 'components/card';
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
 
 import BusinessPlugin from './plugin-types/business-plugin';
 
@@ -10,12 +11,7 @@ const defaultPlugins = [
 		name: 'Google Analytics',
 		supportLink: 'https://en.support.wordpress.com/google-analytics/',
 		plan: 'Business',
-		description: (
-			<div>
-				Advanced features to complement <a href="http://wordpress.com/">WordPress.com stats</a>.
-				Funnel reports, goal conversion, and more.
-			</div>
-		)
+		description: 'Advanced features to complement WordPress.com stats. Funnel reports, goal conversion, and more.'
 	}
 ];
 
@@ -25,22 +21,22 @@ export const BusinessPluginsPanel = React.createClass( {
 		const plugins = givenPlugins.length
 			? givenPlugins
 			: defaultPlugins;
-		const actionButton = <div><Gridicon icon="checkmark" /> Active</div>;
 
 		return (
-			<FoldableCard
-				actionButton={ actionButton }
-				actionButtonExpanded={ actionButton }
-				className="wpcom-plugins__business-panel"
-				expanded={ true }
-				header="Business Upgrades"
-			>
-				{ plugins.map( ( { name, supportLink, icon, plan, description } ) =>
-					<BusinessPlugin
-						{ ...{ name, key: name, supportLink, icon, plan, description } }
-					/>
-				) }
-			</FoldableCard>
+			<div>
+				<SectionHeader label={ this.translate( 'Business Upgrades' ) }>
+					<Button compact primary>{ this.translate( 'Purchase' ) }</Button>
+				</SectionHeader>
+				<Card className="wpcom-plugins__business-panel">
+					<div className="wpcom-plugins__list">
+						{ plugins.map( ( { name, supportLink, icon, plan, description } ) =>
+							<BusinessPlugin
+								{ ...{ name, key: name, supportLink, icon, plan, description } }
+							/>
+						) }
+					</div>
+				</Card>
+			</div>
 		);
 	}
 } );

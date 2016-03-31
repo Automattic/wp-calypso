@@ -1,6 +1,9 @@
 import React, { PropTypes } from 'react';
 
-import FoldableCard from 'components/foldable-card';
+import Card from 'components/card';
+import CompactCard from 'components/card/compact';
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 
 import StandardPlugin from './plugin-types/standard-plugin';
@@ -41,12 +44,6 @@ const defaultPlugins = [
 		supportLink: 'http://support.wordpress.com/contact-form/',
 		category: 'Appearance',
 		description: 'Build contact forms so visitors can get in touch.'
-	},
-	{
-		name: 'Extended Customizer',
-		supportLink: 'https://en.support.wordpress.com/customizer/',
-		category: 'Appearance',
-		description: 'Edit colors and backgrounds.'
 	}
 ];
 
@@ -56,25 +53,27 @@ export const StandardPluginsPanel = React.createClass( {
 		const plugins = givenPlugins.length
 			? givenPlugins
 			: defaultPlugins;
-		const actionButton = <div className="wpcom-plugins__action-button"><Gridicon icon="checkmark" /> Active</div>;
 
 		return (
-			<FoldableCard
-				actionButton={ actionButton }
-				actionButtonExpanded={ actionButton }
-				className="wpcom-plugins__standard-panel"
-				expanded={ true }
-				header="Standard Plugin Suite"
-			>
-				{ plugins.map( ( { name, supportLink, icon, category, description } ) =>
-					<StandardPlugin
-						{ ...{ name, key: name, supportLink, icon, category, description } }
-					/>
-				) }
-				<div>
-					<Gridicon icon="plus" />View all standard plugins
-				</div>
-			</FoldableCard>
+			<div>
+				<SectionHeader label={ this.translate( 'Standard Plugin Suite' ) }>
+					<Button className="is-active-plugin" compact borderless>
+						<Gridicon icon="checkmark" />{ this.translate( 'Active' ) }
+					</Button>
+				</SectionHeader>
+				<CompactCard className="wpcom-plugins__standard-panel">
+					<div className="wpcom-plugins__list">
+						{ plugins.map( ( { name, supportLink, icon, category, description } ) =>
+							<StandardPlugin
+								{ ...{ name, key: name, supportLink, icon, category, description } }
+							/>
+						) }
+					</div>
+				</CompactCard>
+				<Card className="wpcom-plugins__panel-footer" href="#">
+					{ this.translate( 'View all standard plugins' ) }
+				</Card>
+			</div>
 		);
 	}
 } );
