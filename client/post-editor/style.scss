@@ -31,8 +31,14 @@
 	margin: 0;
 	backface-visibility: hidden;
 	perspective: 1000;
+	display: none;
+
+	.focus-content & {
+		display: block;
+	}
 
 	@include breakpoint( ">660px" ) {
+		display: block;
 		backface-visibility: visible;
 		perspective: none;
 	}

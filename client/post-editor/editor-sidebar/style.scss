@@ -1,5 +1,18 @@
 .post-editor__sidebar {
 	@extend .sidebar;
+
+	@include breakpoint( "<660px" ) {
+		position: relative;
+		top: 0;
+		left: 0;
+		max-height: none;
+		display: none;
+
+		.focus-sidebar & {
+			display: block;
+			transform: none;
+		}
+	}
 }
 
 .editor-sidebar__header {

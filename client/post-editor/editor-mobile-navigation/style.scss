@@ -1,8 +1,8 @@
 .editor-mobile-navigation {
 	color: $gray;
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	justify-content: flex-start;
+	align-items: flex-start;
 	background-color: $gray-light;
 
 	@include breakpoint( ">660px" ) {
@@ -20,23 +20,3 @@
 		fill: $gray-dark;
 	}
 }
-
-.editor-mobile-navigation .site {
-	.site__title {
-		padding: 6px 0;
-	}
-
-	.site__domain {
-		display: none;
-	}
-
-	.site__title::after,
-	.site__domain::after {
-		@include long-content-fade( $color: $gray-light );
-	}
-}
-
-.editor-mobile-navigation__toggle {
-	margin-right: 8px;
-}
-
