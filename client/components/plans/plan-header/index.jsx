@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import classNames from 'classnames';
+import React from 'react';
 
-module.exports = React.createClass( {
-	displayName: 'PlanHeader',
+const PlanHeader = React.createClass( {
+	propTypes: {
+		isPlaceholder: React.PropTypes.bool,
+		text: React.PropTypes.string
+	},
 
-	render: function() {
-		var classes = classNames( {
+	render() {
+		const classes = classNames( {
 			'plan-header': true,
 			'is-placeholder': this.props.isPlaceholder
 		} );
@@ -22,3 +25,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default PlanHeader;

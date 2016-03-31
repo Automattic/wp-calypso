@@ -1,38 +1,35 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	times = require( 'lodash/times' );
+import React from 'react';
+import times from 'lodash/times';
 
 /**
  * Internal dependencies
  */
-var Plan = require( 'components/plans/plan' ),
-	Card = require( 'components/card' ),
-	abtest = require( 'lib/abtest' ).abtest,
-	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
-	filterPlansBySiteAndProps = require( 'lib/plans' ).filterPlansBySiteAndProps,
-	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan;
+import Card from 'components/card';
+import { filterPlansBySiteAndProps } from 'lib/plans';
+import { getCurrentPlan } from 'lib/plans';
+import { isJpphpBundle } from 'lib/products-values'
+import Plan from 'components/plans/plan';
 
-module.exports = React.createClass( {
-	displayName: 'PlanList',
-
-	getInitialState: function() {
+const PlanList = React.createClass( {
+	getInitialState() {
 		return { openPlan: '' };
 	},
 
-	openPlan: function( planId ) {
+	openPlan( planId ) {
 		this.setState( { openPlan: planId === this.state.openPlan ? '' : planId } );
 	},
 
-	render: function() {
-		var className = '',
+	render() {
+		const isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
+			site = this.props.site;
+
+		let className = '',
 			plans = this.props.plans,
-			isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
 			numberOfPlaceholders = 3,
-			site = this.props.site,
-			plansList,
-			currentPlan;
+			plansList;
 
 		if ( this.props.hideFreePlan || ( site && site.jetpack ) ) {
 			numberOfPlaceholders = 2;
@@ -40,7 +37,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( plans.length === 0 || isLoadingSitePlans ) {
-			plansList = times( numberOfPlaceholders, function( n ) {
+			plansList = times( numberOfPlaceholders, ( n ) => {
 				return (
 					<Plan
 						className={ className }
@@ -48,17 +45,20 @@ module.exports = React.createClass( {
 						isInSignup={ this.props.isInSignup }
 						key={ `plan-${ n }` } />
 				);
-			}.bind( this ) );
+			} );
 
 			return (
-				<div className="plan-list">{ plansList }</div>
+				<div className="plan-list">
+					{ plansList }
+				</div>
 			);
 		}
 
 		if ( ! this.props.isInSignup ) {
 			// check if this site was registered via the JPPHP "Jetpack Start" program
 			// if so, we want to display a message that this plan is managed via the hosting partner
-			currentPlan = getCurrentPlan( this.props.sitePlans.data );
+			const currentPlan = getCurrentPlan( this.props.sitePlans.data );
+
 			if ( isJpphpBundle( currentPlan ) ) {
 				return (
 					<Card>
@@ -77,7 +77,7 @@ module.exports = React.createClass( {
 		if ( plans.length > 0 ) {
 			plans = filterPlansBySiteAndProps( plans, site, this.props.hideFreePlan );
 
-			plansList = plans.map( function( plan ) {
+			plansList = plans.map( ( plan ) => {
 				return (
 					<Plan
 						plan={ plan }
@@ -93,16 +93,15 @@ module.exports = React.createClass( {
 						cart={ this.props.cart }
 						isSubmitting={ this.props.isSubmitting } />
 				);
-			}, this );
+			} );
 		}
 
-		let aaMarkup;
-		if ( abtest( 'plansPageBusinessAATest' ) === 'originalA' ) {
-			aaMarkup = plansList;
-		} else {
-			aaMarkup = plansList;
-		}
-
-		return <div className="plan-list">{ aaMarkup }</div>;
+		return (
+			<div className="plan-list">
+				{ plansList }
+			</div>
+		);
 	}
 } );
+
+export default PlanList;

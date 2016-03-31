@@ -1,32 +1,30 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	find = require( 'lodash/find' );
+import classNames from 'classnames';
+import find from 'lodash/find';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	Gridicon = require( 'components/gridicon' ),
-	JetpackPlanDetails = require( 'my-sites/plans/jetpack-plan-details' ),
-	PlanActions = require( 'components/plans/plan-actions' ),
-	PlanHeader = require( 'components/plans/plan-header' ),
-	PlanPrice = require( 'components/plans/plan-price' ),
-	PlanDiscountMessage = require( 'components/plans/plan-discount-message' ),
-	Card = require( 'components/card' ),
-	WpcomPlanDetails = require( 'my-sites/plans/wpcom-plan-details' );
+import analytics from 'analytics';
+import Card from 'components/card';
+import Gridicon from 'components/gridicon';
+import JetpackPlanDetails from 'my-sites/plans/jetpack-plan-details';
+import PlanActions from 'components/plans/plan-actions';
+import PlanDiscountMessage from 'components/plans/plan-discount-message';
+import PlanHeader from 'components/plans/plan-header';
+import PlanPrice from 'components/plans/plan-price';
+import WpcomPlanDetails from 'my-sites/plans/wpcom-plan-details' ;
 
-module.exports = React.createClass( {
-	displayName: 'Plan',
-
-	handleLearnMoreClick: function() {
+const Plan = React.createClass( {
+	handleLearnMoreClick() {
 		window.scrollTo( 0, 0 );
 		this.recordLearnMoreClick();
 	},
 
-	recordLearnMoreClick: function() {
+	recordLearnMoreClick() {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Learn More Link', 'Product ID', this.props.plan.product_id );
 
 		if ( this.props.isInSignup ) {
@@ -37,14 +35,14 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getComparePlansUrl: function() {
-		var site = this.props.site,
+	getComparePlansUrl() {
+		const site = this.props.site,
 			siteSuffix = site ? site.slug : '';
 
 		return this.props.comparePlansUrl ? this.props.comparePlansUrl : '/plans/compare/' + siteSuffix;
 	},
 
-	getDescription: function() {
+	getDescription() {
 		const { plan, site } = this.props;
 
 		if ( this.isPlaceholder() ) {
@@ -71,21 +69,21 @@ module.exports = React.createClass( {
 		);
 	},
 
-	showDetails: function() {
+	showDetails() {
 		if ( 'function' === typeof ( this.props.onOpen ) ) {
 			this.props.onOpen( this.props.plan.product_id );
 		}
 	},
 
-	selectedSiteHasPlan: function() {
+	selectedSiteHasPlan() {
 		return this.props.site && this.props.site.plan.product_id === this.props.plan.product_id;
 	},
 
-	isPlaceholder: function() {
+	isPlaceholder() {
 		return this.props.placeholder;
 	},
 
-	getProductSlug: function() {
+	getProductSlug() {
 		if ( this.isPlaceholder() ) {
 			return;
 		}
@@ -93,8 +91,8 @@ module.exports = React.createClass( {
 		return this.props.plan.product_slug;
 	},
 
-	getClassNames: function() {
-		var classObject = {
+	getClassNames() {
+		const classObject = {
 			plan: true,
 			'is-active': this.props.open,
 			'is-current-plan': this.selectedSiteHasPlan()
@@ -109,7 +107,7 @@ module.exports = React.createClass( {
 		return classNames( classObject );
 	},
 
-	getSitePlan: function() {
+	getSitePlan() {
 		if ( this.isPlaceholder() || ! this.props.site ) {
 			return;
 		}
@@ -117,7 +115,7 @@ module.exports = React.createClass( {
 		return find( this.props.sitePlans.data, { productSlug: this.getProductSlug() } );
 	},
 
-	getPlanDiscountMessage: function() {
+	getPlanDiscountMessage() {
 		if ( this.isPlaceholder() || this.props.hideDiscountMessage ) {
 			return;
 		}
@@ -127,11 +125,11 @@ module.exports = React.createClass( {
 				plan={ this.props.plan }
 				sitePlan={ this.getSitePlan() }
 				site={ this.props.site }
-				showMostPopularMessage={ true }/>
+				showMostPopularMessage={ true } />
 		);
 	},
 
-	getBadge: function() {
+	getBadge() {
 		if ( this.props.site && ! this.props.site.jetpack ) {
 			if ( this.props.site.plan.product_slug === this.getProductSlug() ) {
 				return (
@@ -141,7 +139,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getProductName: function() {
+	getProductName() {
 		if ( this.isPlaceholder() ) {
 			return;
 		}
@@ -149,7 +147,7 @@ module.exports = React.createClass( {
 		return this.props.plan.product_name_short;
 	},
 
-	getPlanTagline: function() {
+	getPlanTagline() {
 		if ( this.isPlaceholder() ) {
 			return;
 		}
@@ -157,8 +155,9 @@ module.exports = React.createClass( {
 		return this.props.plan.tagline;
 	},
 
-	getPlanPrice: function() {
-		var isAllMySites = ! this.props.site && ! this.props.isInSignup;
+	getPlanPrice() {
+		const isAllMySites = ! this.props.site && ! this.props.isInSignup;
+
 		if ( isAllMySites ) {
 			return;
 		}
@@ -168,12 +167,11 @@ module.exports = React.createClass( {
 				plan={ this.props.plan }
 				isPlaceholder={ this.isPlaceholder() }
 				isInSignup={ this.props.isInSignup }
-				sitePlan={ this.getSitePlan() }
-				site={ this.props.site } />
+				sitePlan={ this.getSitePlan() } />
 		);
 	},
 
-	getPlanActions: function() {
+	getPlanActions() {
 		return (
 			<PlanActions
 				plan={ this.props.plan }
@@ -187,7 +185,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	getImagePlanAction: function() {
+	getImagePlanAction() {
 		return (
 			<PlanActions
 				plan={ this.props.plan }
@@ -202,7 +200,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		return (
 			<Card className={ this.getClassNames() } key={ this.getProductSlug() } onClick={ this.showDetails }>
 				{ this.getPlanDiscountMessage() }
@@ -224,3 +222,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default Plan;

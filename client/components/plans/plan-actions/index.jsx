@@ -1,28 +1,24 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	page = require( 'page' );
+import classNames from 'classnames';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	cartValues = require( 'lib/cart-values' ),
-	cartItems = cartValues.cartItems,
-	config = require( 'config' ),
-	productsValues = require( 'lib/products-values' ),
-	isFreePlan = productsValues.isFreePlan,
-	isBusiness = productsValues.isBusiness,
-	isEnterprise = productsValues.isEnterprise,
-	puchasesPaths = require( 'me/purchases/paths' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import analytics from 'analytics';
+import { cartItems } from 'lib/cart-values';
+import config from 'config';
+import { isBusiness, isEnterprise, isFreePlan } from 'lib/products-values';
+import purchasesPaths from 'me/purchases/paths';
+import * as upgradesActions from 'lib/upgrades/actions';
 
-var PlanActions = React.createClass( {
+const PlanActions = React.createClass( {
 	propTypes: { plan: React.PropTypes.object },
 
-	getButtons: function() {
+	getButtons() {
 		if ( this.props.isImageButton ) {
 			return this.getImageButton();
 		}
@@ -59,7 +55,7 @@ var PlanActions = React.createClass( {
 		}
 	},
 
-	getInternalButtons: function() {
+	getInternalButtons() {
 		if ( ! this.props.cart.hasLoadedFromServer || ! this.props.site ) {
 			return null;
 		}
@@ -67,7 +63,7 @@ var PlanActions = React.createClass( {
 		return this.upgradeActions();
 	},
 
-	freePlanButton: function() {
+	freePlanButton() {
 		return (
 			<div>
 				<button className="button is-primary plan-actions__upgrade-button"
@@ -79,9 +75,7 @@ var PlanActions = React.createClass( {
 		);
 	},
 
-	upgradeActions: function() {
-		var label;
-
+	upgradeActions() {
 		if ( isFreePlan( this.props.plan ) ) {
 			return this.freePlanButton();
 		}
@@ -90,10 +84,10 @@ var PlanActions = React.createClass( {
 			return null;
 		}
 
+		let label = this.translate( 'Upgrade Now' );
+
 		if ( this.props.sitePlan && this.props.sitePlan.freeTrial ) {
 			label = this.translate( 'Purchase Now' );
-		} else {
-			label = this.translate( 'Upgrade Now' );
 		}
 
 		return (
@@ -108,19 +102,19 @@ var PlanActions = React.createClass( {
 		);
 	},
 
-	recordUpgradeNowClick: function() {
+	recordUpgradeNowClick() {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Upgrade Now Link', 'Product ID', this.props.plan.product_id );
 	},
 
-	recordUpgradeNowButton: function() {
+	recordUpgradeNowButton() {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Upgrade Now Button', 'Product ID', this.props.plan.product_id );
 	},
 
-	getCartItem: function( properties ) {
+	getCartItem( properties ) {
 		return cartItems.getItemForPlan( this.props.plan, properties );
 	},
 
-	handleSelectPlan: function( event ) {
+	handleSelectPlan( event ) {
 		event.preventDefault();
 
 		if ( this.props.isSubmitting ) {
@@ -150,7 +144,7 @@ var PlanActions = React.createClass( {
 		page( '/checkout/' + this.props.site.slug );
 	},
 
-	canSelectPlan: function() {
+	canSelectPlan() {
 		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
 			return false;
 		}
@@ -160,15 +154,13 @@ var PlanActions = React.createClass( {
 				return false;
 			}
 
-			if ( this.planHasCost() && ! isBusiness( this.props.site.plan ) ) {
-				return true;
-			}
-			return false;
+			return this.planHasCost() && ! isBusiness( this.props.site.plan );
 		}
+
 		return true;
 	},
 
-	getImageButton: function() {
+	getImageButton() {
 		const classes = classNames( 'plan-actions__illustration', this.props.plan.product_slug );
 
 		if ( ! this.canSelectPlan( this.props.plan ) ) {
@@ -182,27 +174,27 @@ var PlanActions = React.createClass( {
 		);
 	},
 
-	downgradeMessage: function() {
+	downgradeMessage() {
 		return (
 			<small className="plan-actions__trial-period">{ this.translate( 'Contact support to downgrade your plan.' ) }</small>
 		);
 	},
 
-	siteHasThisPlan: function() {
+	siteHasThisPlan() {
 		return ! this.props.isInSignup && this.props.site && this.props.site.plan.product_id === this.props.plan.product_id;
 	},
 
-	managePlanButton: function() {
-		var link;
+	managePlanButton() {
 		if ( this.planHasCost() ) {
-			link = puchasesPaths.managePurchase( this.props.site.slug, this.props.sitePlan.id );
+			const link = purchasesPaths.managePurchase( this.props.site.slug, this.props.sitePlan.id );
+
 			return (
 				<a href={ link } className="button plan-actions__upgrade-button">{ this.translate( 'Manage Plan', { context: 'Link to current plan from /plans/' } ) }</a>
 			);
 		}
 	},
 
-	freePlanExpiration: function() {
+	freePlanExpiration() {
 		if ( ! this.planHasCost() ) {
 			return (
 				<span className="plan-actions__plan-expiration">{ this.translate( 'Never expires', { context: 'Expiration info for free plan in /plans/' } ) }</span>
@@ -210,11 +202,11 @@ var PlanActions = React.createClass( {
 		}
 	},
 
-	recordCurrentPlanClick: function() {
+	recordCurrentPlanClick() {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Current Plan' );
 	},
 
-	getCurrentPlanHint: function() {
+	getCurrentPlanHint() {
 		return (
 			<div>
 				<span className="plan-actions__current-plan-label" onClick={ this.recordCurrentPlanClick }>
@@ -224,15 +216,15 @@ var PlanActions = React.createClass( {
 		);
 	},
 
-	planHasCost: function() {
+	planHasCost() {
 		return this.props.plan.cost > 0;
 	},
 
-	placeholder: function() {
+	placeholder() {
 		return <span className="button plan-actions__upgrade-button" />;
 	},
 
-	getContent: function() {
+	getContent() {
 		if ( this.props.isPlaceholder ) {
 			return this.placeholder();
 		}
@@ -244,8 +236,8 @@ var PlanActions = React.createClass( {
 		return this.getButtons();
 	},
 
-	render: function() {
-		var classes = classNames( {
+	render() {
+		const classes = classNames( {
 			'plan-actions': true,
 			'is-placeholder': this.props.isPlaceholder,
 			'is-image-button': this.props.isImageButton
@@ -259,4 +251,4 @@ var PlanActions = React.createClass( {
 	}
 } );
 
-module.exports = PlanActions;
+export default PlanActions;

@@ -1,20 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isUndefined = require( 'lodash/isUndefined' );
+import isUndefined from 'lodash/isUndefined';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
+import WpcomPlanPrice from 'my-sites/plans/wpcom-plan-price';
 
-var WpcomPlanPrice = require( 'my-sites/plans/wpcom-plan-price' );
-
-module.exports = React.createClass( {
-	displayName: 'PlanPrice',
-
-	getFormattedPrice: function( plan ) {
+const PlanPrice = React.createClass( {
+	getFormattedPrice( plan ) {
 		let rawPrice, formattedPrice;
 
 		if ( plan ) {
@@ -38,8 +35,8 @@ module.exports = React.createClass( {
 		return this.translate( 'Loading' );
 	},
 
-	getPrice: function() {
-		var standardPrice = this.getFormattedPrice( this.props.plan ),
+	getPrice() {
+		const standardPrice = this.getFormattedPrice( this.props.plan ),
 			discountedPrice = this.getFormattedPrice( this.props.sitePlan );
 
 		if ( this.props.sitePlan && this.props.sitePlan.rawDiscount > 0 ) {
@@ -49,9 +46,9 @@ module.exports = React.createClass( {
 		return ( <span>{ standardPrice }</span> );
 	},
 
-	render: function() {
+	render() {
 		let periodLabel;
-		const { plan, site, sitePlan: details } = this.props,
+		const { plan, sitePlan: details } = this.props,
 			hasDiscount = details && details.rawDiscount > 0;
 
 		if ( this.props.isPlaceholder ) {
@@ -72,3 +69,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default PlanPrice;
