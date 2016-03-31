@@ -10,8 +10,10 @@ import ReactDom from 'react-dom';
  */
 import analytics from 'analytics';
 import Card from 'components/card';
+import { clearPurchases } from 'lib/upgrades/actions';
 import ConfirmCancelPurchaseLoadingPlaceholder from './loading-placeholder';
 import HeaderCake from 'components/header-cake';
+import { getName } from 'lib/purchases';
 import { getPurchase, goToCancelPurchase, recordPageView } from '../utils';
 import loadEndpointForm from './load-endpoint-form';
 import Main from 'components/main';
@@ -64,18 +66,27 @@ const ConfirmCancelPurchase = React.createClass( {
 
 	handleSubmit( error, response ) {
 		if ( error ) {
-			notices.error( error.message );
+			notices.error( error.message || this.translate( 'Unable to cancel your purchase. Please try again later or contact support.' ) );
+
 			return;
 		}
 
-		notices.success( response.message, { persistent: true } );
+		const purchase = getPurchase( this.props ),
+			purchaseName = getName( purchase );
+
+		notices.success(
+			this.translate( '%(purchaseName)s was successfully cancelled and refunded.', {
+				args: { purchaseName }
+			} ), { persistent: true } );
+
+		clearPurchases();
 
 		analytics.tracks.recordEvent(
 			'calypso_purchases_cancel_form_submit',
 			{ product_slug: getPurchase( this.props ).productSlug }
 		);
 
-		page.redirect( paths.list() );
+		page.redirect( paths.list( this.props.selectedSite.slug ) );
 	},
 
 	render() {
