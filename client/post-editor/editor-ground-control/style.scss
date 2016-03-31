@@ -38,10 +38,13 @@
 	margin: 0 4px 8px;
 }
 
-.editor-ground-control__publish-button {
+.editor-publish-button {
+	@extend .is-primary;
+
 	border-radius: 4px 0 0 4px;
 	flex-grow: 1;
 }
+
 .editor-ground-control__time-button {
 	border-radius: 0 4px 4px 0;
 	padding-left: 8px;
