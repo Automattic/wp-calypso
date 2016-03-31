@@ -54,7 +54,10 @@ export default React.createClass( {
 
 	componentWillMount() {
 		PostListStore.on( 'change', this.onPostsChange );
-		queryPosts( this.props.site.ID );
+		const site = this.props.site;
+		if ( site && site.ID ) {
+			queryPosts( site.ID );
+		}
 		PostStatsStore.on( 'change', this.onViewsChange );
 	},
 

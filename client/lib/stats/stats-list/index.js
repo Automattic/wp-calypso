@@ -171,11 +171,17 @@ StatsList.prototype.fetch = function() {
 	var wpcomSite,
 		options = this.options,
 		postIdEndpoints = [ 'statsVideo', 'statsPostViews' ];
+	const siteIdOrDomain = this.siteID || options.domain;
+
+	if ( ! siteIdOrDomain ) {
+		// Never try to fetch stats for a site without a site or domain
+		return;
+	}
 
 	if ( this.isDocumentedEndpoint ) {
-		wpcomSite = wpcom.site( this.siteID );
+		wpcomSite = wpcom.site( siteIdOrDomain );
 	} else {
-		wpcomSite = wpcom.undocumented().site( this.siteID );
+		wpcomSite = wpcom.undocumented().site( siteIdOrDomain );
 	}
 
 	// statsPostViews && statsVideo expect just the post.ID as a param
