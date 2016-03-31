@@ -90,24 +90,22 @@ module.exports = {
 
 	importSite: function( context ) {
 		ReactDom.render(
-			React.createElement( SiteSettingsComponent, {
-				context: context,
-				sites: sites,
-				section: 'import',
-				path: context.path
-			} ),
+			<SiteSettingsComponent
+				context={ context }
+				sites={ sites }
+				section="import"
+				path={ context.path } />,
 			document.getElementById( 'primary' )
 		);
 	},
 
 	exportSite: function( context ) {
 		ReactDom.render(
-			React.createElement( SiteSettingsComponent, {
-				context: context,
-				sites: sites,
-				section: 'export',
-				path: context.path
-			} ),
+			<SiteSettingsComponent
+				context={ context }
+				sites={ sites }
+				section="export"
+				path={ context.path } />,
 			document.getElementById( 'primary' )
 		);
 	},
@@ -156,11 +154,10 @@ module.exports = {
 		}
 
 		ReactDom.render(
-			React.createElement( StartOver, {
-				context: context,
-				sites: sites,
-				path: context.path
-			} ),
+			<StartOver
+				context={ context }
+				sites={ sites }
+				path={ context.path } />,
 			document.getElementById( 'primary' )
 		);
 	},
