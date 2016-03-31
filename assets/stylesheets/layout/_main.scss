@@ -281,10 +281,14 @@ html.iframed {
 }
 
 /* Emoji and smileys */
-.emoji,
-.wp-smiley {
+img.emoji,
+img.wp-smiley {
 	height: 1em;
 	max-height: 1em;
+	display: inline;
+	margin: 0;
+	padding: 0 0.2em;
+	vertical-align: -0.1em;
 }
 
 
