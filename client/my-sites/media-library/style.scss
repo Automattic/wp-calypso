@@ -95,6 +95,10 @@
 	}
 }
 
+.media-library__list {
+	padding: 0 16px;
+}
+
 .media-library__list-item:hover .media-library__list-item-edit {
 	opacity: 1;
 }
