@@ -89,6 +89,9 @@
 		"test": [ "doc" ]
 	},
 	"lib": {
+		"ads": {
+			"test": [ "stores" ]
+		},
 		"auth-code-request-store": {
 			"test": [ "index" ]
 		},
@@ -130,6 +133,9 @@
 				"test": [ "assembler", "store" ]
 			}
 		},
+		"email-followers": {
+		  "test": [ "store" ]
+		},
 		"features-list": {
 		  "test": [ "index" ]
 		},
@@ -145,8 +151,14 @@
 		"follow-list": {
 			"test": [ "index" ]
 		},
+		"followers": {
+			"test": [ "store" ]
+		},
 		"form-state": {
 			"test": [ "index" ]
+		},
+		"happiness-engineers": {
+			"test": [ "actions", "store" ]
 		},
 		"i18n-utils" : {
 			"test": [ "utils" ]

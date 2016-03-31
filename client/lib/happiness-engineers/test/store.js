@@ -6,12 +6,13 @@ var assert = require( 'chai' ).assert;
 /**
  * Internal dependencies
  */
-var actions = require( './lib/mock-actions' );
-
-require( 'lib/react-test-env-setup' )();
+import actions from './lib/mock-actions';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Happiness engineers Store', function() {
-	var Dispatcher, HappinessEngineersStore;
+	let Dispatcher, HappinessEngineersStore;
+
+	useFakeDom();
 
 	beforeEach( function() {
 		Dispatcher = require( 'dispatcher' );

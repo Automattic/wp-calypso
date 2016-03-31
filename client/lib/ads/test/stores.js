@@ -1,20 +1,19 @@
 /**
  * External dependencies
  */
-const assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-const site = require( './lib/mock-site' ),
-	actions = require( './lib/mock-actions' );
-
-require( 'lib/react-test-env-setup' )();
+import actions from './lib/mock-actions';
+import site from './lib/mock-site';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Ads Stores; EarningsStore, SettingsStore, TosStore', function() {
-	var Dispatcher, EarningsStore, SettingsStore, TosStore;
+	let Dispatcher, EarningsStore, SettingsStore, TosStore;
 
-	this.timeout( 5000 );
+	useFakeDom();
 
 	before( function() {
 		Dispatcher = require( 'dispatcher' );
