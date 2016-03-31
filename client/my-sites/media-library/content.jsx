@@ -41,6 +41,7 @@ const MediaLibraryContent = React.createClass( {
 		preferences: React.PropTypes.object,
 		mediaValidationErrors: React.PropTypes.object,
 		filter: React.PropTypes.string,
+		filterRequiresUpgrade: React.PropTypes.bool,
 		search: React.PropTypes.string,
 		containerWidth: React.PropTypes.number,
 		single: React.PropTypes.bool,
@@ -217,6 +218,7 @@ const MediaLibraryContent = React.createClass( {
 						key={ 'list-' + ( [ this.props.site.ID, this.props.search, this.props.filter ].join() ) }
 						site={ this.props.site }
 						filter={ this.props.filter }
+						filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
 						search={ this.props.search }
 						containerWidth={ this.props.containerWidth }
 						mediaScale={ this.getMediaScale() }
@@ -232,13 +234,15 @@ const MediaLibraryContent = React.createClass( {
 	render: function() {
 		return (
 			<div className="media-library__content">
-				<MediaLibraryHeader
-					site={ this.props.site }
-					filter={ this.props.filter }
-					mediaScale={ this.getMediaScale() }
-					mediaScaleChoices={ this.props.mediaScaleChoices }
-					onMediaScaleChange={ this.onMediaScaleChange }
-					onAddMedia={ this.props.onAddMedia } />
+				{ ! this.props.filterRequiresUpgrade &&
+					<MediaLibraryHeader
+						site={ this.props.site }
+						filter={ this.props.filter }
+						mediaScale={ this.getMediaScale() }
+						mediaScaleChoices={ this.props.mediaScaleChoices }
+						onMediaScaleChange={ this.onMediaScaleChange }
+						onAddMedia={ this.props.onAddMedia } />
+				}
 				{ this.renderErrors() }
 				{ this.renderMediaList() }
 			</div>

@@ -90,6 +90,20 @@ module.exports = React.createClass( {
 		this.props.onAddMedia();
 	},
 
+	filterRequiresUpgrade: function() {
+		const { filter, site } = this.props;
+		switch ( filter ) {
+			case 'audio':
+				return ! ( site && site.options.upgraded_filetypes_enabled || site.jetpack );
+				break;
+			case 'videos':
+				return ! ( site && site.options.videopress_enabled || site.jetpack );
+				break;
+		}
+
+		return false;
+	},
+
 	renderDropZone: function() {
 		return (
 			<MediaLibraryDropZone
@@ -107,6 +121,7 @@ module.exports = React.createClass( {
 			<Content
 				site={ this.props.site }
 				filter={ this.props.filter }
+				filterRequiresUpgrade={ this.filterRequiresUpgrade() }
 				search={ this.props.search }
 				containerWidth={ this.props.containerWidth }
 				single={ this.props.single }
@@ -134,6 +149,7 @@ module.exports = React.createClass( {
 				<FilterBar
 					site={ this.props.site }
 					filter={ this.props.filter }
+					filterRequiresUpgrade={ this.filterRequiresUpgrade() }
 					enabledFilters={ this.props.enabledFilters }
 					search={ this.props.search }
 					onFilterChange={ this.props.onFilterChange }
