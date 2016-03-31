@@ -57,6 +57,7 @@ export default React.createClass( {
 		this.formStateController = formState.Controller( {
 			fieldNames: this.fieldNames,
 			loadFunction: wpcom.getDomainContactInformation.bind( wpcom ),
+			sanitizerFunction: this.trimWhitespace,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
 			onError: this.handleFormControllerError
@@ -69,10 +70,19 @@ export default React.createClass( {
 		analytics.pageView.record( '/checkout/domain-contact-information', 'Checkout > Domain Contact Information' );
 	},
 
-	validate( fieldNames, onComplete ) {
+	trimWhitespace( fieldValues, onComplete ) {
+		const trimmedFieldValues = Object.assign( {}, fieldValues );
+		this.fieldNames.forEach( ( fieldName ) => {
+			trimmedFieldValues[ fieldName ] = fieldValues[ fieldName ].trim();
+		} );
+
+		onComplete( trimmedFieldValues );
+	},
+
+	validate( fieldValues, onComplete ) {
 		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
 
-		wpcom.validateDomainContactInformation( fieldNames, domainNames, ( error, data ) => {
+		wpcom.validateDomainContactInformation( fieldValues, domainNames, ( error, data ) => {
 			const messages = data && data.messages || {};
 			onComplete( error, messages );
 		} );
