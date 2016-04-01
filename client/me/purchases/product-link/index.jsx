@@ -23,7 +23,7 @@ const ProductLink = ( { selectedPurchase, selectedSite } ) => {
 	}
 
 	if ( isPlan( selectedPurchase ) ) {
-		url = '/plans/compare';
+		url = '/plans/compare/' + selectedSite.slug;
 		text = i18n.translate( 'View Plan Features' );
 	}
 
