@@ -15,6 +15,7 @@ export const items = {
 					map_meta_cap: { type: 'boolean' },
 					capabilities: { type: 'object' },
 					api_queryable: { type: 'boolean' },
+					hierarchical: { type: 'boolean' },
 					supports: { type: 'object' }
 				}
 			}
