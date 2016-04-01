@@ -4,48 +4,52 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
-import { setSection as setSectionAction } from 'state/ui/actions';
-import noop from 'lodash/noop';
+import page from 'page';
 
 /**
- * Internal dependencies
+ * Internal Dependencies
  */
-import page from 'page';
+import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
+import layoutFocus from 'lib/layout-focus';
+import nuxWelcome from 'layout/nux-welcome';
+import translatorInvitation from 'layout/community-translator/invitation-utils';
+import { makeLayoutMiddleware } from './index.node.js';
 import { getCurrentUser } from 'state/current-user/selectors';
+import userFactory from 'lib/user';
+import sitesFactory from 'lib/sites-list';
 import debugFactory from 'debug';
 
+/**
+ * Re-export
+ */
+export { setSection } from './index.node.js';
+
+const user = userFactory();
+const sites = sitesFactory();
 const debug = debugFactory( 'calypso:controller' );
 
-/**
- * @param { object } context -- Middleware context
- * @param { function } next -- Call next middleware in chain
-*/
-export function makeLayout( context, next ) {
-	const isLoggedIn = !! getCurrentUser( context.store.getState() );
-	if ( ! isLoggedIn ) {
-		context.layout = makeLoggedOutLayout( context );
-	} // TODO: else { makeLoggedInLayout( context ); }
-	next();
-}
-
-/**
- * @param { object } context -- Middleware context
- * @returns { object } `LoggedOutLayout` element
- *
- * Return a `LayoutLoggedOut` element, using `context.primary`,
- * `context.secondary`, and `context.tertiary` to populate it.
-*/
-function makeLoggedOutLayout( context ) {
-	const { store, primary, secondary, tertiary } = context;
-	return (
-		<ReduxProvider store={ store }>
-			<LayoutLoggedOut primary={ primary }
+export const ReduxWrappedLayout = ( { store, primary, secondary, tertiary } ) => (
+	<ReduxProvider store={ store }>
+		{ getCurrentUser( store.getState() )
+			? <Layout primary={ primary }
 				secondary={ secondary }
-				tertiary={ tertiary } />
-		</ReduxProvider>
-	);
-}
+				tertiary={ tertiary }
+				user={ user }
+				sites={ sites }
+				focus={ layoutFocus }
+				nuxWelcome={ nuxWelcome }
+				translatorInvitation={ translatorInvitation }
+			/>
+			: <LayoutLoggedOut primary={ primary }
+				secondary={ secondary }
+				tertiary={ tertiary }
+				focus={ layoutFocus } />
+		}
+	</ReduxProvider>
+);
+
+export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 
 /**
  * Isomorphic routing helper, client side
@@ -63,14 +67,6 @@ function makeLoggedOutLayout( context ) {
  */
 export function clientRouter( route, ...middlewares ) {
 	page( route, ...middlewares, render );
-}
-
-export function setSection( section ) {
-	return ( context, next = noop ) => {
-		context.store.dispatch( setSectionAction( section ) );
-
-		next();
-	};
 }
 
 function render( context ) {

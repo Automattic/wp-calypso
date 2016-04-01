@@ -5,6 +5,7 @@ require( 'lib/local-storage' )();
  * External dependencies
  */
 var React = require( 'react' ),
+	ReactDom = require( 'react-dom' ),
 	store = require( 'store' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
 	some = require( 'lodash/some' ),
@@ -38,24 +39,19 @@ var config = require( 'config' ),
 	sites = require( 'lib/sites-list' )(),
 	superProps = require( 'lib/analytics/super-props' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
-	translatorInvitation = require( 'layout/community-translator/invitation-utils' ),
 	nuxWelcome = require( 'layout/nux-welcome' ),
 	emailVerification = require( 'components/email-verification' ),
 	viewport = require( 'lib/viewport' ),
 	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
 	pushNotificationsInit = require( 'state/push-notifications/actions' ).init,
-	sections = require( 'sections' ),
 	touchDetect = require( 'lib/touch-detect' ),
 	setRouteAction = require( 'state/ui/actions' ).setRoute,
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	syncHandler = require( 'lib/wp/sync-handler' ),
-	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
-	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
-	// The following components require the i18n mixin, so must be required after i18n is initialized
-	Layout;
+	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
 
 import { getSelectedSiteId, getSectionName, isSectionIsomorphic } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -179,17 +175,15 @@ function boot() {
 }
 
 function renderLayout( reduxStore ) {
-	const props = {};
+	const Layout = require( 'controller' ).ReduxWrappedLayout;
 
-	if ( user.get() ) {
-		Object.assign( props, { user, sites, nuxWelcome, translatorInvitation } );
-	}
+	const layoutElement = React.createElement( Layout, {
+		store: reduxStore
+	} );
 
-	Layout = require( 'layout' );
-	renderWithReduxStore(
-		React.createElement( Layout, props ),
-		document.getElementById( 'wpcom' ),
-		reduxStore
+	ReactDom.render(
+		layoutElement,
+		document.getElementById( 'wpcom' )
 	);
 
 	debug( 'Main layout rendered.' );
@@ -328,6 +322,7 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	// Load the application modules for the various sections and features
+	const sections = require( 'sections' );
 	sections.load();
 
 	// delete any lingering local storage data from signup
