@@ -6,7 +6,6 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import get from 'lodash/get';
-import { translate } from 'lib/mixins/i18n';
 import page from 'page';
 
 /**
@@ -16,12 +15,13 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getEditorPostId, isEditorDraftsVisible } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
+import localize from 'lib/mixins/i18n/localize';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import DraftsButton from 'post-editor/drafts-button';
 import PostCountsData from 'components/data/post-counts-data';
 
-function EditorSidebarHeader( { type, siteId, showDrafts, toggleDrafts, allPostsUrl, toggleSidebar } ) {
+function EditorSidebarHeader( { translate, type, siteId, showDrafts, toggleDrafts, allPostsUrl, toggleSidebar } ) {
 	const className = classnames( 'editor-sidebar__header', {
 		'is-drafts-visible': showDrafts
 	} );
@@ -83,4 +83,4 @@ export default connect(
 			toggleDrafts: toggleEditorDraftsVisible
 		}, dispatch );
 	}
-)( EditorSidebarHeader );
+)( localize( EditorSidebarHeader ) );
