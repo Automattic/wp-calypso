@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 import Site from '..';
 
@@ -22,34 +23,28 @@ describe( 'Calypso Site', () => {
 		} );
 
 		it( 'change event fires on attribute change', () => {
-			let called = false;
-			site.once( 'change', () => {
-				called = true;
-			} );
+			let changeCallback = sinon.spy();
+			site.on( 'change', changeCallback );
 			site.set( { name: 'Goodbye' } );
-			expect( called ).to.be.true;
+			expect( changeCallback.called ).to.be.true;
 		} );
 
 		it( "change doesn't fire when setting attribute to same value", () => {
-			let called = false;
-			site.once( 'change', () => {
-				called = true;
-			} );
+			let changeCallback = sinon.spy();
+			site.once( 'change', changeCallback );
 			site.set( { name: 'Hello' } );
-			expect( called ).to.be.false;
+			expect( changeCallback.called ).to.be.false;
 		} );
 
 		it( "change doesn't fire when attribute is set to an object with identical data", () => {
-			let called = false;
+			let changeCallback = sinon.spy();
 			let nestedObj = {
 				name: 'Hello, again.',
 				description: 'Still hunting bugs.'
 			}
 			site.set( { nestedObj } );
 
-			site.once( 'change', () => {
-				called = true;
-			} );
+			site.once( 'change', changeCallback );
 
 			site.set( {
 				nestedObj: {
@@ -57,18 +52,16 @@ describe( 'Calypso Site', () => {
 					description: 'Still hunting bugs.'
 				}
 			} );
-			expect( called ).to.be.false;
+			expect( changeCallback.called ).to.be.false;
 		} );
 
 		it( "change doesn't fire when attribute is set to an array with identical data", () => {
-			let called = false;
+			let changeCallback = sinon.spy();
 			site.set( { arr: [ 1, 2, 3 ] } );
 
-			site.once( 'change', () => {
-				 called = true;
-			} );
+			site.once( 'change', changeCallback );
 			site.set( { arr: [ 1, 2, 3 ] } );
-			expect( called ).to.be.false;
+			expect( changeCallback.called ).to.be.false;
 		} );
 	} );
 } );
