@@ -7,8 +7,12 @@ import { Map, fromJS } from 'immutable';
 /**
  * Internal dependencies
  */
-import { RECEIVE_THEME_DETAILS } from '../../action-types';
-import { DESERIALIZE, SERIALIZE, SERVER_DESERIALIZE } from '../../../action-types';
+import {
+	DESERIALIZE,
+	SERIALIZE,
+	SERVER_DESERIALIZE,
+	THEME_DETAILS_RECEIVE
+} from 'state/action-types';
 import reducer from '../reducer';
 import deepFreeze from 'deep-freeze';
 
@@ -21,7 +25,7 @@ describe( 'reducer', () => {
 
 	it( 'should set theme details for the given ID', () => {
 		const state = reducer( undefined, {
-			type: RECEIVE_THEME_DETAILS,
+			type: THEME_DETAILS_RECEIVE,
 			themeId: 'mood',
 			themeName: 'Mood',
 			themeAuthor: 'Automattic',

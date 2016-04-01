@@ -1,26 +1,26 @@
 import { assert } from 'chai';
 import { createStore } from 'redux';
 
-import ActionTypes from '../../action-types';
+import { THEME_ACTIVATED, THEMES_RECEIVE } from 'state/action-types';
 import reducer from '../reducer';
 
 describe( 'themes', () => {
 	const actionReceiveThemes = {
-		type: ActionTypes.RECEIVE_THEMES,
+		type: THEMES_RECEIVE,
 		themes: [
 			{ id: 'bold-news', active: true },
 			{ id: 'picard' }
 		]
 	};
 	const actionReceiveMoreThemes = {
-		type: ActionTypes.RECEIVE_THEMES,
+		type: THEMES_RECEIVE,
 		themes: [
 			{ id: 'picard' },
 			{ id: 'hue' }
 		]
 	};
 	const actionThemeActivated = {
-		type: ActionTypes.ACTIVATED_THEME,
+		type: THEME_ACTIVATED,
 		theme: { id: 'picard' }
 	};
 
@@ -58,7 +58,7 @@ describe( 'themes', () => {
 		} );
 	} );
 
-	context( 'when ACTIVATED_THEME is received', () => {
+	context( 'when THEME_ACTIVATED is received', () => {
 		beforeEach( () => {
 			store.dispatch( actionReceiveThemes );
 		} );

@@ -11,7 +11,23 @@ const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no
 /**
  * Internal dependencies
  */
-import ActionTypes from './action-types';
+import {
+	THEME_ACTIVATE,
+	THEME_ACTIVATED,
+	THEME_CLEAR_ACTIVATED,
+	THEME_CUSTOMIZE,
+	THEME_DETAILS_RECEIVE,
+	THEME_DETAILS,
+	THEME_PREVIEW,
+	THEME_PURCHASE,
+	THEME_RECEIVE_CURRENT,
+	THEME_SIGNUP_WITH,
+	THEME_SUPPORT,
+	THEMES_INCREMENT_PAGE,
+	THEMES_QUERY,
+	THEMES_RECEIVE,
+	THEMES_RECEIVE_SERVER_ERROR,
+} from '../action-types';
 import ThemeHelpers from 'my-sites/themes/helpers';
 import { getCurrentTheme } from './current-theme/selectors';
 import { isJetpack } from './themes-last-query/selectors';
@@ -44,14 +60,14 @@ export function fetchNextPage( site ) {
 
 export function query( params ) {
 	return {
-		type: ActionTypes.QUERY_THEMES,
+		type: THEMES_QUERY,
 		params: params
 	};
 }
 
 export function incrementThemesPage( site ) {
 	return {
-		type: ActionTypes.INCREMENT_THEMES_PAGE,
+		type: THEMES_INCREMENT_PAGE,
 		site: site
 	}
 }
@@ -62,7 +78,7 @@ export function fetchCurrentTheme( site ) {
 			.then( theme => {
 				debug( 'Received current theme', theme );
 				dispatch( {
-					type: ActionTypes.RECEIVE_CURRENT_THEME,
+					type: THEME_RECEIVE_CURRENT,
 					site: site,
 					themeId: theme.id,
 					themeName: theme.name,
@@ -87,7 +103,7 @@ export function fetchThemeDetails( id ) {
 
 export function receiveThemeDetails( theme ) {
 	return {
-		type: ActionTypes.RECEIVE_THEME_DETAILS,
+		type: THEME_DETAILS_RECEIVE,
 		themeId: theme.id,
 		themeName: theme.name,
 		themeAuthor: theme.author,
@@ -102,7 +118,7 @@ export function receiveThemeDetails( theme ) {
 
 export function receiveServerError( error ) {
 	return {
-		type: ActionTypes.RECEIVE_THEMES_SERVER_ERROR,
+		type: THEMES_RECEIVE_SERVER_ERROR,
 		error: error
 	};
 }
@@ -127,7 +143,7 @@ export function receiveThemes( data, site, queryParams, responseTime ) {
 		}
 
 		dispatch( {
-			type: ActionTypes.RECEIVE_THEMES,
+			type: THEMES_RECEIVE,
 			siteId: site.ID,
 			isJetpack: !! site.jetpack,
 			wasJetpack: isJetpack( getState() ),
@@ -142,7 +158,7 @@ export function receiveThemes( data, site, queryParams, responseTime ) {
 export function activate( theme, site, source = 'unknown' ) {
 	return dispatch => {
 		dispatch( {
-			type: ActionTypes.ACTIVATE_THEME,
+			type: THEME_ACTIVATE,
 			theme: theme,
 			site: site
 		} );
@@ -167,7 +183,7 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 		}
 
 		defer( () => dispatch( {
-			type: ActionTypes.ACTIVATED_THEME,
+			type: THEME_ACTIVATED,
 			theme,
 			site,
 			meta: {
@@ -188,7 +204,7 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 
 export function clearActivated() {
 	return {
-		type: ActionTypes.CLEAR_ACTIVATED_THEME
+		type: THEME_CLEAR_ACTIVATED
 	};
 };
 
@@ -197,7 +213,7 @@ export function signup( theme ) {
 		const signupUrl = ThemeHelpers.getSignupUrl( theme );
 
 		dispatch( {
-			type: ActionTypes.SIGNUP_WITH_THEME,
+			type: THEME_SIGNUP_WITH,
 			theme
 		} );
 
@@ -213,7 +229,7 @@ export function details( theme, site ) {
 		const detailsUrl = ThemeHelpers.getDetailsUrl( theme, site );
 
 		dispatch( {
-			type: ActionTypes.THEME_DETAILS,
+			type: THEME_DETAILS,
 			theme: theme
 		} );
 
@@ -227,7 +243,7 @@ export function support( theme, site ) {
 		const supportUrl = ThemeHelpers.getSupportUrl( theme, site );
 
 		dispatch( {
-			type: ActionTypes.THEME_SUPPORT,
+			type: THEME_SUPPORT,
 			theme: theme
 		} );
 
@@ -240,7 +256,7 @@ export function preview( theme, site ) {
 		const previewUrl = ThemeHelpers.getPreviewUrl( theme, site );
 
 		dispatch( {
-			type: ActionTypes.PREVIEW_THEME,
+			type: THEME_PREVIEW,
 			site: site
 		} );
 
@@ -253,7 +269,7 @@ export function customize( theme, site ) {
 		const customizeUrl = ThemeHelpers.getCustomizeUrl( theme, site );
 
 		dispatch( {
-			type: ActionTypes.THEME_CUSTOMIZE,
+			type: THEME_CUSTOMIZE,
 			site: site.id
 		} );
 
@@ -272,7 +288,7 @@ export function purchase( theme, site, source = 'unknown' ) {
 			page( '/checkout/' + site.slug );
 
 			dispatch( {
-				type: ActionTypes.PURCHASE_THEME,
+				type: THEME_PURCHASE,
 				id: theme.id,
 				site: site
 			} );

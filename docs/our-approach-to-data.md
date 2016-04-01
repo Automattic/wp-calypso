@@ -313,7 +313,7 @@ similar to:
 ```javascript
 export default ( state = defaultState, action ) => {
 	switch ( action.type ) {
-		case RECEIVE_THEMES:
+		case THEMES_RECEIVE:
 		//...
 		case SERIALIZE:
 			return state.toJS();
@@ -326,7 +326,7 @@ instead of returning a plain object, we create an Immutable.js instance:
 ```javascript
 export default ( state = defaultState, action ) => {
 	switch ( action.type ) {
-		case RECEIVE_THEMES:
+		case THEMES_RECEIVE:
 		//...
 		case DESERIALIZE:
 			return fromJS( state );
@@ -384,7 +384,7 @@ section of the tree with our default state.
 ```javascript
 export default ( state = defaultState, action ) => {
 	switch ( action.type ) {
-		case RECEIVE_THEMES:
+		case THEMES_RECEIVE:
 		//...
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, itemsSchema ) ) {

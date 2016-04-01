@@ -1,12 +1,16 @@
 import { assert } from 'chai';
 import { createStore } from 'redux';
 
-import ActionTypes from '../../action-types';
+import {
+	THEMES_INCREMENT_PAGE,
+	THEMES_QUERY,
+	THEMES_RECEIVE
+} from 'state/action-types';
 import reducer from '../reducer';
 
 describe( 'themes-list', () => {
 	const actionReceiveThemes = {
-		type: ActionTypes.RECEIVE_THEMES,
+		type: THEMES_RECEIVE,
 		queryParams: {
 			id: 1
 		},
@@ -18,7 +22,7 @@ describe( 'themes-list', () => {
 	};
 
 	const actionReceiveMoreThemes = {
-		type: ActionTypes.RECEIVE_THEMES,
+		type: THEMES_RECEIVE,
 		queryParams: {
 			id: 1
 		},
@@ -29,7 +33,7 @@ describe( 'themes-list', () => {
 	};
 
 	const actionReceiveEvenMoreThemes = {
-		type: ActionTypes.RECEIVE_THEMES,
+		type: THEMES_RECEIVE,
 		queryParams: {
 			id: 2
 		},
@@ -40,7 +44,7 @@ describe( 'themes-list', () => {
 	};
 
 	const actionQueryThemes = {
-		type: ActionTypes.QUERY_THEMES,
+		type: THEMES_QUERY,
 		params: {
 			search: 'picard',
 			perPage: 50,
@@ -49,7 +53,7 @@ describe( 'themes-list', () => {
 	};
 
 	const actionQueryAnotherTheme = {
-		type: ActionTypes.QUERY_THEMES,
+		type: THEMES_QUERY,
 		params: {
 			search: 'worf',
 			perPage: 50,
@@ -58,7 +62,7 @@ describe( 'themes-list', () => {
 	};
 
 	const actionIncrementPage = {
-		type: ActionTypes.INCREMENT_THEMES_PAGE
+		type: THEMES_INCREMENT_PAGE
 	};
 
 	let store;

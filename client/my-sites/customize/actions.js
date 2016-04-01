@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-var defer = require( 'lodash/defer' );
+import defer from 'lodash/defer';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	page = require( 'page' ),
-	wpcom = require( 'lib/wp' ),
-	CartActions = require( 'lib/upgrades/actions' ),
-	ThemeHelper = require( '../themes/helpers' ),
-	themeItem = require( 'lib/cart-values/cart-items' ).themeItem;
+import Dispatcher from 'dispatcher';
+import page from 'page';
+import wpcom from 'lib/wp';
+import CartActions from 'lib/upgrades/actions';
+import ThemeHelper from '../themes/helpers';
+import { themeItem } from 'lib/cart-values/cart-items';
 
 var CustomizeActions = {
 	fetchMuseCustomizations: function( site ) {
@@ -33,7 +33,7 @@ var CustomizeActions = {
 			page( '/checkout/' + site.slug );
 
 			Dispatcher.handleViewAction( {
-				type: 'PURCHASE_THEME_WITH_CUSTOMIZER',
+				type: 'THEME_PURCHASE_WITH_CUSTOMIZER',
 				id: id,
 				site: site
 			} );
@@ -52,7 +52,7 @@ var CustomizeActions = {
 		themeActivated( id, site, 'customizer' );
 
 		Dispatcher.handleViewAction( {
-			type: 'ACTIVATED_THEME_WITH_CUSTOMIZER',
+			type: 'THEME_ACTIVATED_WITH_CUSTOMIZER',
 			id: id,
 			site: site
 		} );

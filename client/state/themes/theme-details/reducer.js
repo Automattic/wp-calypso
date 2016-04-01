@@ -6,12 +6,16 @@ import { Map, fromJS } from 'immutable';
 /**
  * Internal dependencies
  */
-import ActionTypes from '../action-types';
-import { DESERIALIZE, SERIALIZE, SERVER_DESERIALIZE } from '../../action-types';
+import {
+	DESERIALIZE,
+	SERIALIZE,
+	SERVER_DESERIALIZE,
+	THEME_DETAILS_RECEIVE
+} from 'state/action-types';
 
 export default ( state = Map(), action ) => {
 	switch ( action.type ) {
-		case ActionTypes.RECEIVE_THEME_DETAILS:
+		case THEME_DETAILS_RECEIVE:
 			return state
 				.set( action.themeId, Map( {
 					name: action.themeName,
