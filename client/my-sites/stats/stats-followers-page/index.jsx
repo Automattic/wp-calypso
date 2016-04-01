@@ -16,7 +16,6 @@ var StatsList = require( '../stats-list' ),
 	analytics = require( 'analytics' ),
 	Card = require( 'components/card' ),
 	SectionHeader = require( 'components/section-header' ),
-	Gridicon = require( 'components/gridicon' ),
 	Button = require( 'components/button' );
 
 module.exports = React.createClass( {
@@ -77,7 +76,6 @@ module.exports = React.createClass( {
 			startIndex,
 			endIndex,
 			emailExportUrl,
-			emailExportLink,
 			itemType,
 			classes;
 
@@ -154,7 +152,7 @@ module.exports = React.createClass( {
 			<div className="followers">
 				<SectionHeader label={ this.translate( 'Followers' ) }>
 					{ emailExportUrl
-				 		? ( <Button compact href={ emailExportUrl }>{ this.translate( 'Download Data as CSV' ) }</Button> )
+						? ( <Button compact href={ emailExportUrl }>{ this.translate( 'Download Data as CSV' ) }</Button> )
 						: null }
 				</SectionHeader>
 				<Card className={ classNames( classes ) }>
