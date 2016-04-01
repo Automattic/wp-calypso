@@ -66,12 +66,12 @@ const CancelPurchase = React.createClass( {
 
 	renderFooterText() {
 		const purchase = getPurchase( this.props ),
-			{ priceText, renewDate } = purchase;
+			{ refundText, renewDate } = purchase;
 
 		if ( isRefundable( purchase ) ) {
-			return this.translate( '%(priceText)s to be refunded', {
-				args: { priceText },
-				context: 'priceText is of the form "[currency-symbol][amount]" i.e. "$20"'
+			return this.translate( '%(refundText)s to be refunded', {
+				args: { refundText },
+				context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"'
 			} );
 		}
 

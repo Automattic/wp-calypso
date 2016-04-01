@@ -41,6 +41,7 @@ function createPurchaseObject( purchase ) {
 		productId: Number( purchase.product_id ),
 		productName: purchase.product_name,
 		productSlug: purchase.product_slug,
+		refundText: `${ purchase.refund_currency_symbol }${ purchase.refund_amount }`,
 		refundPeriodInDays: purchase.refund_period_in_days,
 		renewDate: purchase.renew_date,
 		// only generate a moment if `renewDate` is present and positive
