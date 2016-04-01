@@ -12,7 +12,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getEditorPostId, isEditorDraftsVisible } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
@@ -69,7 +69,7 @@ function EditorSidebarHeader( { type, siteId, showDrafts, toggleDrafts, allPosts
 
 export default connect(
 	( state ) => {
-		const siteId = get( getSelectedSite( state ), 'ID' );
+		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 
 		return {
