@@ -19,8 +19,8 @@ describe( 'Viewers Store', () => {
 	before( () => {
 		Dispatcher = require( 'dispatcher' );
 		RolesStore = require( '../store' );
-		actions = require( './lib/mock-actions' );
-		site = require( './lib/mock-site' );
+		actions = require( './mocks/lib/actions' );
+		site = require( './fixtures/site' );
 		siteId = site.ID;
 	} );
 

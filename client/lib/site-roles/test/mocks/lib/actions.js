@@ -1,5 +1,5 @@
-var site = require( './mock-site' ),
-	mockRoles = require( './mock-roles' );
+var site = require( '../../fixtures/site' ),
+	mockRoles = require( '../../fixtures/roles' );
 
 module.exports = {
 	fetchedRoles: {
