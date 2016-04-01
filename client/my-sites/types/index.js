@@ -15,7 +15,7 @@ export default function() {
 		return;
 	}
 
-	page( '/types/:type/:site', siteSelection, navigation, list );
+	page( '/types/:type/:status?/:site', siteSelection, navigation, list );
 	page( '/types/:type', siteSelection, sites );
 	page( '/types', redirect );
 };

@@ -53,27 +53,15 @@ describe( 'actions', () => {
 				.persist()
 				.get( '/wpcom/v2/sites/2916284/post-counts/post' )
 				.reply( 200, {
-					body: {
-						counts: {
-							all: { publish: 2 },
-							mine: { publish: 1 }
-						}
-					},
-					status: 200,
-					headers: {
-						Allow: 'GET'
+					counts: {
+						all: { publish: 2 },
+						mine: { publish: 1 }
 					}
 				} )
 				.get( '/wpcom/v2/sites/2916284/post-counts/foo' )
 				.reply( 404, {
-					body: {
-						code: 'unknown_post_type',
-						message: 'Unknown post type requested'
-					},
-					status: 404,
-					headers: {
-						Allow: 'GET'
-					}
+					code: 'unknown_post_type',
+					message: 'Unknown post type requested'
 				} );
 		} );
 
@@ -117,7 +105,7 @@ describe( 'actions', () => {
 					type: POST_COUNTS_REQUEST_FAILURE,
 					siteId: 2916284,
 					postType: 'foo',
-					error: sinon.match( { body: { code: 'unknown_post_type' } } )
+					error: sinon.match( { code: 'unknown_post_type' } )
 				} );
 			} );
 		} );
