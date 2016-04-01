@@ -1,9 +1,4 @@
 .editor-sticky.button {
-	color: lighten( $gray, 20% );
-	margin-right: 12px;
-	padding: 0;
-	transition: color 200ms;
-
 	&.is-sticky {
 		color: $orange-jazzy;
 	}
