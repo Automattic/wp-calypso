@@ -1,16 +1,18 @@
-require( 'lib/react-test-env-setup' )();
-
-
 /**
  * External dependencies
  */
 var chai = require( 'chai' ),
 	expect = chai.expect;
 
-/** Internal dependencies */
-var highlight = require( '../' );
+/**
+ * Internal dependencies
+ */
+import highlight from '../';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'highlight', function() {
+
+	useFakeDom();
 
 	context( 'unit test', function() {
 

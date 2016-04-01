@@ -163,6 +163,9 @@
 		"help-search": {
 			"test": [ "store" ]
 		},
+		"highlight": {
+			"test": [ "index" ]
+		},
 		"i18n-utils" : {
 			"test": [ "utils" ]
 		},
