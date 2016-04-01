@@ -160,6 +160,9 @@
 		"happiness-engineers": {
 			"test": [ "actions", "store" ]
 		},
+		"help-search": {
+			"test": [ "store" ]
+		},
 		"i18n-utils" : {
 			"test": [ "utils" ]
 		},
