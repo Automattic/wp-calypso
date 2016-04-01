@@ -14,7 +14,6 @@ import wpcom from 'lib/wp';
 import analytics from 'analytics';
 import emitter from 'lib/mixins/emitter';
 import userModule from 'lib/user';
-import { isBusiness, isEnterprise } from 'lib/products-values';
 import olarkApi from 'lib/olark-api';
 import notices from 'notices';
 import olarkEvents from 'lib/olark-events';
@@ -30,7 +29,6 @@ const sites = sitesModule();
 const user = userModule();
 const wpcomUndocumented = wpcom.undocumented();
 const DAY_IN_SECONDS = 86400;
-const DAY_IN_MILLISECONDS = DAY_IN_SECONDS * 1000;
 
 /**
  * Loads the Olark store so that it can start receiving actions
@@ -60,9 +58,6 @@ const olark = {
 			this.getOlarkConfiguration()
 				.then( ( configuration ) => this.configureOlark( configuration ) )
 				.catch( ( error ) => this.handleError( error ) );
-		} else {
-			this.once( 'eligible', this.configureOlark.bind( this ) );
-			this.checkChatEligibility();
 		}
 	},
 
@@ -90,49 +85,6 @@ const olark = {
 				resolve( configuration );
 			} );
 		} );
-	},
-
-	checkChatEligibility() {
-		var now = new Date().getTime(),
-			data = store.get( this.eligibilityKey );
-
-		if ( 'undefined' === typeof data ) {
-			this.fetchUpgradesCache();
-		} else {
-			// Our cache is old, so refetch and bail.
-			if ( data.lastChecked + DAY_IN_MILLISECONDS < now ) {
-				this.fetchUpgradesCache();
-				return;
-			}
-
-			if ( now > data.lastChecked && data.userIsEligible === true ) {
-				this.emit( 'eligible' );
-			}
-		}
-	},
-
-	fetchUpgradesCache() {
-		if ( sites.fetched ) {
-			this.setUpgradesCache();
-		} else {
-			sites.once( 'change', this.setUpgradesCache.bind( this ) );
-		}
-	},
-
-	setUpgradesCache() {
-		if ( ! this.hasChatEligibleUpgrade() ) {
-			debug( 'User is not eligible for live chat.' )
-			this.storeEligibility( false );
-			return;
-		}
-
-		debug( 'User is eligible for live chat.' )
-		this.storeEligibility( true );
-		this.emit( 'eligible' );
-	},
-
-	storeEligibility( status ) {
-		store.set( this.eligibilityKey, { userIsEligible: status, lastChecked: new Date().getTime() } );
 	},
 
 	configureOlark: function( wpcomOlarkConfig = {} ) {
@@ -457,27 +409,6 @@ const olark = {
 					this.deleteLivechatActiveCookie();
 				}
 			} );
-		} );
-	},
-
-	hasChatEligibleUpgrade() {
-		return sites.data.some( ( site ) => {
-			var userType;
-
-			if ( isBusiness( site.plan ) ) {
-				userType = 'Business';
-			}
-
-			if ( isEnterprise( site.plan ) ) {
-				userType = 'ENTERPRISE';
-			}
-
-			if ( ! userType ) {
-				return false;
-			}
-
-			this.userType = userType;
-			return true;
 		} );
 	}
 };
