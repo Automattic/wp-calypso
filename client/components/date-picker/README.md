@@ -14,7 +14,7 @@ module.exports = React.createClass( {
 
 	// ...
 
-	this.onSelect: function( date ) {
+	this.onSelectDay: function( date ) {
 		this.setState( { date: date } );
 	},
 
@@ -35,7 +35,7 @@ module.exports = React.createClass( {
 			<DatePicker
 				initialMonth = { new Date( '2015-07-01' ) }
 				events= { events }
-				onSelect= { this.onSelect }
+				onSelectDay= { this.onSelectDay }
 				selectedDay= { this.state.date } >
 			</DatePicker>
 		);
@@ -61,8 +61,8 @@ is selected.
 
 `className` - **optional** Add a custom class property.
 
-`onSelect` - **optional**
+`onSelectDay` - **optional** Called when day is selected by user.
 
-`onMonthChange` - **optional**
+`onMonthChange` - **optional** Called when month is changed by user.
 
 ------------
