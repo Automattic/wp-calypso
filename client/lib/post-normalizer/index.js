@@ -603,7 +603,7 @@ normalizePost.content = {
 						}
 						imgSrc.url = safeImageURL( imgSrc.url );
 						return imgSrc;
-					} );
+					} ).filter( imgSrc => imgSrc.url );
 					image.setAttribute( 'srcset', srcset.stringify( imgSrcSet ) );
 				}
 
