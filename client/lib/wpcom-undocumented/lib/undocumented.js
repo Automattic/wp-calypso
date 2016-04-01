@@ -290,26 +290,16 @@ Undocumented.prototype.testConnectionJetpack = function( siteId, fn ) {
 
 Undocumented.prototype.jetpackLogin = function( siteId, _wp_nonce, redirect_uri, scope, state ) {
 	debug( '/jetpack-blogs/:site_id:/jetpack-login query' );
-	return new Promise( ( resolve, reject ) => {
-		const endpointUrl = '/jetpack-blogs/' + siteId + '/jetpack-login';
-		const params = { _wp_nonce, redirect_uri, scope, state };
-		const resolver = ( error, data ) => {
-			error ? reject( error ) : resolve( data );
-		};
-		this.wpcom.req.get( { path: endpointUrl }, params, resolver );
-	} );
+	const endpointUrl = '/jetpack-blogs/' + siteId + '/jetpack-login';
+	const params = { _wp_nonce, redirect_uri, scope, state };
+	return this.wpcom.req.get( { path: endpointUrl }, params );
 };
 
 Undocumented.prototype.jetpackAuthorize = function( siteId, code, state, redirect_uri, secret ) {
 	debug( '/jetpack-blogs/:site_id:/authorize query' );
-	return new Promise( ( resolve, reject ) => {
-		const endpointUrl = '/jetpack-blogs/' + siteId + '/authorize';
-		const params = { code, state, redirect_uri, secret };
-		const resolver = ( error, data ) => {
-			error ? reject( error ) : resolve( data );
-		};
-		this.wpcom.req.post( { path: endpointUrl }, params, resolver );
-	} );
+	const endpointUrl = '/jetpack-blogs/' + siteId + '/authorize';
+	const params = { code, state, redirect_uri, secret };
+	return this.wpcom.req.post( { path: endpointUrl }, params );
 };
 
 Undocumented.prototype.invitesList = function( siteId, number, offset, fn ) {
@@ -1970,40 +1960,29 @@ Undocumented.prototype.timezones = function( params, fn ) {
  * @returns {Promise}
  */
 Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
-	return new Promise( ( resolve, reject ) => {
-		const resolver = ( error, data ) => {
-			error ? reject( error ) : resolve( data );
-		};
-		const parsedUrl = url.parse( targetUrl );
-		const endpointUrl = `/connect/site-info/${ parsedUrl.protocol.slice( 0, -1 ) }/${ parsedUrl.host }`;
-		let params = {
-			filters: filters,
-			apiVersion: '1.1',
-		};
+	const parsedUrl = url.parse( targetUrl );
+	const endpointUrl = `/connect/site-info/${ parsedUrl.protocol.slice( 0, -1 ) }/${ parsedUrl.host }`;
+	let params = {
+		filters: filters,
+		apiVersion: '1.1',
+	};
 
-		if ( parsedUrl.path && parsedUrl.path !== '/' ) {
-			params.path = parsedUrl.path;
-		}
+	if ( parsedUrl.path && parsedUrl.path !== '/' ) {
+		params.path = parsedUrl.path;
+	}
 
-		this.wpcom.req.get( `${ endpointUrl }`, params, resolver );
-	} );
+	return this.wpcom.req.get( `${ endpointUrl }`, params );
 }
 
 /**
  * Post an url to be stored under user's settings, so we can know that they have started a jetpack-connect flow for that site
  *
- * @param {String}    url          The url of the site to store
+ * @param {String} targetUrl          The url of the site to store
  * @returns {Promise}
  */
-Undocumented.prototype.storeJetpackConnectUrl = function( url ) {
-	return new Promise( ( resolve, reject ) => {
-		const resolver = ( error, data ) => {
-			error ? reject( error ) : resolve( data );
-		};
-
-		this.wpcom.req.post( { path: '/me/settings' }, {}, {
-			jetpack_connect: url
-		}, resolver );
+Undocumented.prototype.storeJetpackConnectUrl = function( targetUrl ) {
+	return this.wpcom.req.post( { path: '/me/settings' }, {}, {
+		jetpack_connect: targetUrl
 	} );
 }
 
