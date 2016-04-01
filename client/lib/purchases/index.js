@@ -11,7 +11,11 @@ import moment from 'moment';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import { isDomainRegistration, isTheme, isPlan } from 'lib/products-values';
+import {
+	isDomainRegistration,
+	isPlan,
+	isTheme
+} from 'lib/products-values';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -79,8 +83,8 @@ function hasPrivateRegistration( purchase ) {
  * Also returns true for purchases whether or not they are after the refund period.
  * Purchases included with a plan can't be cancelled.
  *
- * @param {Object} purchase
- * @return {boolean}
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @return {boolean} whether the purchase is cancelable
  */
 function isCancelable( purchase ) {
 	if ( isIncludedWithPlan( purchase ) ) {
@@ -133,8 +137,8 @@ function isRedeemable( purchase ) {
  * Domains and domain mappings can be refunded up to 48 hours.
  * Purchases included with plan can't be refunded.
  *
- * @param {Object} purchase
- * @return {boolean}
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @return {boolean} if the purchase is refundable
  */
 function isRefundable( purchase ) {
 	return purchase.isRefundable;
@@ -144,7 +148,7 @@ function isRefundable( purchase ) {
  * Checks whether the specified purchase can be removed from a user account.
  * Purchases included with a plan can't be removed.
  *
- * @param {Object} purchase
+ * @param {Object} purchase - the purchase with which we are concerned
  * @return {boolean} true if the purchase can be removed, false otherwise
  */
 function isRemovable( purchase ) {
@@ -161,6 +165,15 @@ function isRenewable( purchase ) {
 
 function isRenewing( purchase ) {
 	return includes( [ 'active', 'autoRenewing' ], purchase.expiryStatus );
+}
+
+function isSubscription( purchase ) {
+	const nonSubscriptionFunctions = [
+		isDomainRegistration,
+		isOneTimePurchase
+	];
+
+	return ! nonSubscriptionFunctions.some( fn => fn( purchase ) );
 }
 
 function isPaidWithCreditCard( purchase ) {
@@ -243,6 +256,7 @@ export {
 	isRemovable,
 	isRenewable,
 	isRenewing,
+	isSubscription,
 	paymentLogoType,
 	purchaseType,
 	shouldFetchPurchases,
