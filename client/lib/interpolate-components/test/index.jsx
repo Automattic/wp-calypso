@@ -227,7 +227,7 @@ describe( 'interpolate-components', () => {
 				mixedString: 'here is: {{x}}baba {{y}}willie{{/y}}{{/x}}',
 				components: {
 					x: <CustomComponentClass />,
-					y: <CustomComponentClass intro='Hey!' />
+					y: <CustomComponentClass intro="Hey!" />
 				}
 			} );
 			const instance = <span>{ interpolatedComponent }</span>;

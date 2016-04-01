@@ -169,6 +169,9 @@
 		"i18n-utils" : {
 			"test": [ "utils" ]
 		},
+		"interpolate-components" : {
+			"test": [ "index" ]
+		},
 		"like-store": {
 			"test": [ "index" ]
 		},
