@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -66,6 +66,16 @@ function EditorSidebarHeader( { translate, type, siteId, showDrafts, toggleDraft
 		</div>
 	);
 }
+
+EditorSidebarHeader.propTypes = {
+	translate: PropTypes.func,
+	type: PropTypes.string,
+	siteId: PropTypes.number,
+	showDrafts: PropTypes.bool,
+	toggleDrafts: PropTypes.func,
+	allPostsUrl: PropTypes.string,
+	toggleSidebar: PropTypes.func
+};
 
 export default connect(
 	( state ) => {
