@@ -1966,7 +1966,7 @@
       "version": "2.3.0"
     },
     "component-classes": {
-      "version": "1.2.1",
+      "version": "1.2.6",
       "dependencies": {
         "component-indexof": {
           "version": "0.0.3"
