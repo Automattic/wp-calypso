@@ -1990,6 +1990,24 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
 }
 
 /**
+ * Post an url to be stored under user's settings, so we can know that they have started a jetpack-connect flow for that site
+ *
+ * @param {String}    url          The url of the site to store
+ * @returns {Promise}
+ */
+Undocumented.prototype.storeJetpackConnectUrl = function( url ) {
+	return new Promise( ( resolve, reject ) => {
+		const resolver = ( error, data ) => {
+			error ? reject( error ) : resolve( data );
+		};
+
+		this.wpcom.req.post( { path: '/me/settings' }, {}, {
+			jetpack_connect: url
+		}, resolver );
+	} );
+}
+
+/**
  * Exports the user's Reader feed as an OPML XML file.
  * A JSON object is returned with the XML given as a String
  * in the `opml` field.
