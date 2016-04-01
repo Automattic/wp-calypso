@@ -10,12 +10,29 @@ import { bindActionCreators } from 'redux';
  */
 import { isRequestingMediaStorage } from 'state/sites/media-storage/selectors';
 import { requestMediaStorage } from 'state/sites/media-storage/actions';
+// until we port media over to redux:
+import MediaStore from 'lib/media/store';
 
 class QueryMediaStorage extends Component {
-	componentWillMount() {
-		if ( ! this.props.requestingMediaStorage && this.props.siteId ) {
-			this.props.requestMediaStorage( this.props.siteId );
+
+	constructor( props ) {
+		super( props );
+		this.requestStorage = this.requestStorage.bind( this );
+	}
+
+	requestStorage( props = this.props ) {
+		if ( ! props.requestingMediaStorage && props.siteId ) {
+			props.requestMediaStorage( props.siteId );
 		}
+	}
+
+	componentWillMount() {
+		this.requestStorage();
+		MediaStore.on( 'fetch-media-limits', this.requestStorage );
+	}
+
+	componentWillUnmount() {
+		MediaStore.off( 'fetch-media-limits', this.requestStorage );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -24,8 +41,7 @@ class QueryMediaStorage extends Component {
 			( this.props.siteId === nextProps.siteId ) ) {
 			return;
 		}
-
-		nextProps.requestMediaStorage( nextProps.siteId );
+		this.requestStorage( nextProps );
 	}
 
 	render() {
