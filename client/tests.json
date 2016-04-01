@@ -172,6 +172,14 @@
 		"interpolate-components" : {
 			"test": [ "index" ]
 		},
+		"invites" : {
+			"reducers": {
+				"test": [ "invites-create-validation" ]
+			},
+			"stores": {
+				"test": [ "invites-list" ]
+			}
+		},
 		"like-store": {
 			"test": [ "index" ]
 		},
