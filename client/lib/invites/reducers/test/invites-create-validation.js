@@ -1,5 +1,6 @@
-require( 'lib/react-test-env-setup' )();
-
+/**
+ * External dependencies
+ */
 const assert = require( 'chai' ).assert;
 
 /**
@@ -22,7 +23,7 @@ describe( 'Invites Create Validation Store', () => {
 			}
 		},
 		success: [ 'testuser', 'test2@gmail.com' ]
-	}
+	};
 
 	const actions = {
 		receiveValidaton: {

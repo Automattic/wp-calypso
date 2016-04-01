@@ -6,9 +6,7 @@ var assert = require( 'chai' ).assert;
 /**
  * Internal dependencies
  */
-var actions = require( './lib/mock-actions' );
-
-require( 'lib/react-test-env-setup' )();
+import actions from './lib/mock-actions';
 
 describe( 'Help search Store', function() {
 	var Dispatcher, HelpSearchStore;

@@ -160,8 +160,25 @@
 		"happiness-engineers": {
 			"test": [ "actions", "store" ]
 		},
+		"help-search": {
+			"test": [ "store" ]
+		},
+		"highlight": {
+			"test": [ "index" ]
+		},
 		"i18n-utils" : {
 			"test": [ "utils" ]
+		},
+		"interpolate-components" : {
+			"test": [ "index" ]
+		},
+		"invites" : {
+			"reducers": {
+				"test": [ "invites-create-validation" ]
+			},
+			"stores": {
+				"test": [ "invites-list" ]
+			}
 		},
 		"like-store": {
 			"test": [ "index" ]
