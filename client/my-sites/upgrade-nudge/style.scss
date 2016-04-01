@@ -11,6 +11,13 @@
 		padding: 6px;
 		align-self: center;
 	}
+
+	&.is-full-width {
+		width:100%;
+		@include breakpoint( ">660px" ) {
+			max-width: 420px;
+		}
+	}
 }
 
 .upgrade-nudge__message {
