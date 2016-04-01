@@ -74,6 +74,7 @@
 
 @mixin plans-collapsed() {
 	.plans-compare__cell {
+		border-width: 1px;
 		&:not(.is-selected) {
 			display: none;
 		}
@@ -137,6 +138,29 @@
 .plans-compare__row {
 	&:nth-child(odd) {
 		background: $gray-light;
+	}
+
+	&.is-highlighted {
+		background-color: rgba($alert-yellow, 0.1);
+		td {
+			border-style: solid;
+			border-color: $alert-yellow;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+		}
+
+		td:first-child {
+			border-left-width: 1px;
+		}
+
+		td:last-child {
+			border-right-width: 1px;
+		}
+
+		& > *:not(:last-child):not(:first-child) {
+			border-left-width: 0;
+			border-right-width: 0;
+		}
 	}
 }
 

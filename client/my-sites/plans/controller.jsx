@@ -110,6 +110,7 @@ export default {
 						selectedSite={ site }
 						plans={ plans }
 						features={ features }
+						product={ context.params.product }
 						productsList={ productsList } />
 				</CheckoutData>
 			</Main>,

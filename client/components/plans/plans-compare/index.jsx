@@ -28,6 +28,7 @@ import PlanPrice from 'components/plans/plan-price';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
+import { isEnabled } from 'config';
 
 const PlansCompare = React.createClass( {
 	mixins: [
@@ -265,8 +266,12 @@ const PlansCompare = React.createClass( {
 					);
 				} );
 
+				const classes = classNames( 'plans-compare__row', {
+					'is-highlighted': isEnabled( 'manage/plans/compare-highlight' ) && this.props.product && this.props.product.toLowerCase() === feature.product_slug.split( '/' )[0].toLowerCase()
+				} );
+
 				return (
-					<tr className="plans-compare__row" key={ feature.title }>
+					<tr className={ classes } key={ feature.title }>
 						<td
 							className="plans-compare__cell"
 							key={ feature.title }>
