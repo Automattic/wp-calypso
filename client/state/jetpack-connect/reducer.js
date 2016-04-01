@@ -52,7 +52,11 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_AUTHORIZE:
 			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false } );
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
-			return Object.assign( {}, state, { isAuthorizing: false, authorizeError: action.error, authorizeSuccess: action.data, autoAuthorize: false } );
+			if ( ! action.error ) {
+				const { plans_url } = action.data;
+				return Object.assign( {}, state, { isAuthorizing: false, authorizeError: false, authorizeSuccess: true, autoAuthorize: false, plansURL: plans_url } );
+			}
+			return Object.assign( {}, state, { isAuthorizing: false, authorizeError: action.error, authorizeSuccess: false, autoAuthorize: false } );
 		case JETPACK_CONNECT_QUERY_SET:
 			const queryObject = Object.assign( {}, action.queryObject );
 			return Object.assign( {}, defaultAuthorizeState, { queryObject: queryObject } );
