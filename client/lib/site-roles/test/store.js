@@ -7,14 +7,12 @@ import { assert } from 'chai';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Viewers Store', () => {
 	let Dispatcher, RolesStore;
 	let actions, site, siteId;
 
 	useMockery();
-	useFakeDom();
 
 	before( () => {
 		Dispatcher = require( 'dispatcher' );
