@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import wpcomFactory from 'wpcom-unpublished';
+import wpcomFactory from 'wpcom';
 import inherits from 'inherits';
 import assign from 'lodash/assign';
 import debugFactory from 'debug';
