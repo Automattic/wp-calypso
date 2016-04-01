@@ -62,7 +62,7 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	installJetpack() {
-		goToPluginInstall( this.state.currentUrl );
+		this.props.goToPluginInstall( this.state.currentUrl );
 	},
 
 	getDialogButtons() {
@@ -87,9 +87,18 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	componentDidUpdate() {
-		if ( this.getStatus() === 'notConnectedJetpack' && this.isCurrentUrlFetched() ) {
-			return goToRemoteAuth( this.state.currentUrl );
+		if ( this.getStatus() === 'notConnectedJetpack' &&
+			this.isCurrentUrlFetched() &&
+			! this.props.jetpackConnectSite.isRedirecting
+		) {
+			return this.props.goToRemoteAuth( this.state.currentUrl );
 		}
+	},
+
+	isRedirecting() {
+		return this.props.jetpackConnectSite &&
+			this.props.jetpackConnectSite.isRedirecting &&
+			this.isCurrentUrlFetched();
 	},
 
 	getStatus() {
@@ -145,6 +154,7 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	render() {
+		window.bbb = this;
 		const status = this.getStatus();
 		return (
 			<Main className="jetpack-connect">
@@ -167,7 +177,7 @@ const JetpackConnectMain = React.createClass( {
 							onClick={ this.onURLEnter }
 							onDismissClick={ this.onDismissClick }
 							isError={ this.getStatus() }
-							isFetching={ this.isCurrentUrlFetching() } />
+							isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() } />
 					</Card>
 
 					<LoggedOutFormLinks>
@@ -186,5 +196,5 @@ export default connect(
 			jetpackConnectSite: state.jetpackConnect.jetpackConnectSite
 		};
 	},
-	dispatch => bindActionCreators( { checkUrl, dismissUrl }, dispatch )
+	dispatch => bindActionCreators( { checkUrl, dismissUrl, goToRemoteAuth, goToPluginInstall }, dispatch )
 )( JetpackConnectMain );
