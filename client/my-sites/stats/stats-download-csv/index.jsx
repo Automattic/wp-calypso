@@ -10,6 +10,7 @@ import { saveAs } from 'browser-filesaver';
 import titlecase from 'to-title-case';
 import analytics from 'analytics';
 import Gridicon from 'components/gridicon';
+import Button from 'components/button';
 
 module.exports = React.createClass( {
 	displayName: 'StatsDownloadCsv',
@@ -53,13 +54,9 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className="module-content-text">
-				<a href="#" onClick={ this.downloadCsv }>
-					<Gridicon icon="cloud-download" />
-					<span className="label">{ this.translate( 'Download data as CSV', { context: 'Action shown in stats to download data as csv.' } ) }
-					</span>
-				</a>
-			</div>
+			<Button compact onClick={ this.downloadCsv }>
+					<Gridicon icon="cloud-download" /> { this.translate( 'Download data as CSV', { context: 'Action shown in stats to download data as csv.' } ) }
+			</Button>
 		);
 	}
 } );

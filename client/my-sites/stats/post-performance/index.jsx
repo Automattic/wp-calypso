@@ -10,12 +10,11 @@ import classNames from 'classnames';
 import Card from 'components/card';
 import PostListStoreFactory from 'lib/posts/post-list-store-factory';
 import PostStatsStore from 'lib/post-stats/store';
-import StatsModuleHeader from '../stats-module/header';
-import StatsModuleContent from '../stats-module/content-text';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import Emojify from 'components/emojify';
 import actions from 'lib/posts/actions';
+import SectionHeader from 'components/section-header';
 
 const PostListStore = new PostListStoreFactory;
 
@@ -161,36 +160,35 @@ export default React.createClass( {
 		}
 
 		return (
-			<Card className={ cardClass }>
-				<StatsModuleHeader
-					showActions={ false }
-					titleLink={ summaryUrl }
-					title={ this.translate( 'Latest Post Summary' ) } />
-				<StatsModuleContent>
-					{ post
-						? (
-							<p>
-								{ this.translate(
-									'It\'s been %(timeLapsed)s since {{href}}{{postTitle/}}{{/href}} was published. Here\'s how the post has performed so far\u2026',
-									{
-										args: {
-											timeLapsed: postTime.fromNow( true )
-										},
-										components: {
-											href: <a href={ post.URL } target="_blank" />,
-											postTitle: <Emojify>{ postTitle }</Emojify>
-										},
-										context: 'Stats: Sentence showing how much time has passed since the last post, and how the stats are'
-									} )
-								}
-							</p>
-						) : null
-					}
-				</StatsModuleContent>
-				<StatsTabs>
-					{ this.buildTabs( summaryUrl ) }
-				</StatsTabs>
-			</Card>
+			<div>
+				<SectionHeader label={ this.translate( 'Latest Post Summary' ) } href={ summaryUrl } />
+				<Card className={ cardClass }>
+					<div className="module-content-text">
+						{ post
+							? (
+								<p>
+									{ this.translate(
+										'It\'s been %(timeLapsed)s since {{href}}{{postTitle/}}{{/href}} was published. Here\'s how the post has performed so far\u2026',
+										{
+											args: {
+												timeLapsed: postTime.fromNow( true )
+											},
+											components: {
+												href: <a href={ post.URL } target="_blank" />,
+												postTitle: <Emojify>{ postTitle }</Emojify>
+											},
+											context: 'Stats: Sentence showing how much time has passed since the last post, and how the stats are'
+										} )
+									}
+								</p>
+							) : null
+						}
+					</div>
+					<StatsTabs>
+						{ this.buildTabs( summaryUrl ) }
+					</StatsTabs>
+				</Card>
+			</div>
 		);
 	}
 } );

@@ -111,7 +111,7 @@ module.exports = {
 	},
 
 	insights: function( context, next ) {
-		var Insights = require( 'my-sites/stats/insights' ),
+		var Insights = require( 'my-sites/stats/stats-insights' ),
 			StatsList = require( 'lib/stats/stats-list' ),
 			StatsSummaryList = require( 'lib/stats/summary-list' ),
 			FollowList = require( 'lib/follow-list' ),

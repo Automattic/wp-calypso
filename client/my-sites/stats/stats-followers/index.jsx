@@ -2,8 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:module-followers' );
+	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -15,15 +14,14 @@ var toggle = require( '../mixin-toggle' ),
 	StatsList = require( '../stats-list' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	ErrorPanel = require( '../stats-error' ),
-	skeleton = require( '../mixin-skeleton' ),
 	analytics = require( 'analytics' ),
 	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' );
+	SectionHeader = require( 'components/section-header' );
 
 module.exports = React.createClass( {
 	displayName: 'StatModuleFollowers',
 
-	mixins: [ toggle( 'Followers' ), skeleton( 'data' ), observe( 'wpcomFollowersList', 'emailFollowersList' ) ],
+	mixins: [ toggle( 'Followers' ), observe( 'wpcomFollowersList', 'emailFollowersList' ) ],
 
 	data: function( list ) {
 		if ( list && this.props[ list ] ) {
@@ -50,12 +48,12 @@ module.exports = React.createClass( {
 
 		if ( filter !== this.state.activeFilter ) {
 			switch ( filter ) {
-			case 'wpcom-followers':
-				gaEvent = 'Clicked By WordPress.com Followers Toggle';
-				break;
-			case 'email-followers':
-				gaEvent = 'Clicked Email Followers Toggle';
-				break;
+				case 'wpcom-followers':
+					gaEvent = 'Clicked By WordPress.com Followers Toggle';
+					break;
+				case 'email-followers':
+					gaEvent = 'Clicked Email Followers Toggle';
+					break;
 			}
 
 			if ( gaEvent ) {
@@ -89,20 +87,15 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		debug( 'Rendering stats followers module' );
-
 		var wpcomData = this.data( 'wpcomFollowersList' ),
 			emailData = this.data( 'emailFollowersList' ),
 			noData = this.props.wpcomFollowersList.isEmpty( 'subscribers' ) && this.props.emailFollowersList.isEmpty( 'subscribers' ),
 			hasError = ( this.props.wpcomFollowersList.isError() || this.props.emailFollowersList.isError() ),
-			infoIcon = this.state.showInfo ? 'info' : 'info-outline',
 			isLoading = this.props.wpcomFollowersList.isLoading() || this.props.emailFollowersList.isLoading(),
 			wpcomFollowers,
 			emailFollowers,
 			wpcomTotalFollowers,
 			emailTotalFollowers,
-			moduleHeaderTitle,
-			moduleToggle,
 			summaryPageLink,
 			viewSummary,
 			activeFilter,
@@ -121,9 +114,7 @@ module.exports = React.createClass( {
 			'is-followers',
 			activeFilterClass,
 			{
-				'is-expanded': this.state.showModule,
 				'is-loading': isLoading,
-				'is-showing-info': this.state.showInfo,
 				'has-no-data': noData,
 				'is-showing-error': hasError || noData
 			}
@@ -137,11 +128,11 @@ module.exports = React.createClass( {
 		}
 
 		if ( wpcomData && wpcomData.subscribers ) {
-			wpcomFollowers = <StatsList moduleName='wpcomFollowers' data={ wpcomData.subscribers } followList={ this.props.followList } />;
+			wpcomFollowers = <StatsList moduleName="wpcomFollowers" data={ wpcomData.subscribers } followList={ this.props.followList } />;
 		}
 
 		if ( emailData && emailData.subscribers ) {
-			emailFollowers = <StatsList moduleName='EmailFollowers' data={ emailData.subscribers } />;
+			emailFollowers = <StatsList moduleName="EmailFollowers" data={ emailData.subscribers } />;
 		}
 
 		if ( wpcomData && wpcomData.total ) {
@@ -152,79 +143,49 @@ module.exports = React.createClass( {
 			emailTotalFollowers = <p>{ this.translate( 'Total Email Followers' ) }: { this.numberFormat( emailData.total ) }</p>;
 		}
 
-		if ( ! this.props.summary ) {
-			moduleToggle = (
-				<li className="module-header-action toggle-services">
-					<a href="#" className="module-header-action-link" aria-label={ this.translate( 'Expand or collapse panel', { context: 'Stats panel action' } ) } title={ this.translate( 'Expand or collapse panel', { context: 'Stats panel action' } ) } onClick={ this.toggleModule }>
-						<Gridicon icon="chevron-down" />
-					</a>
-				</li>
-				);
-		}
-
-		moduleHeaderTitle = (
-			<h4 className="module-header-title"><a href={ summaryPageLink }>{ this.translate( 'Followers' ) }</a></h4>
-			);
-
 		if ( ( wpcomData && wpcomData.viewAll ) || ( emailData && emailData.viewAll ) ) {
 			viewSummary = (
-				<div key='view-all' className='module-expand'>
+				<div key="view-all" className="module-expand">
 					<a href={ summaryPageLink }>{ this.translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }<span className="right"></span></a>
 				</div>
 				);
 		}
 
 		return (
-			<Card className={ classNames.apply( null, classes ) }>
-				<div className="followers">
-					<div className="module-header">
-						{ moduleHeaderTitle }
-						<ul className="module-header-actions">
-							<li className="module-header-action toggle-info">
-								<a href="#" className="module-header-action-link" aria-label={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) } title={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) } onClick={ this.toggleInfo } >
-									<Gridicon icon={ infoIcon } />
-								</a>
-							</li>
-							{ moduleToggle }
-						</ul>
-					</div>
+			<div>
+				<SectionHeader label={ this.translate( 'Followers' ) } href={ summaryPageLink } />
+				<Card className={ classNames.apply( null, classes ) }>
+					<div className="followers">
+						<div className="module-content">
+							{ noData && ! hasError ? <ErrorPanel className="is-empty-message" message={ this.translate( 'No followers' ) } /> : null }
 
-					<div className="module-content">
-						<div className="module-content-text module-content-text-info">
-							<p>{ this.translate( 'Keep track of your overall number of followers, and how long each one has been following your site.' ) }</p>
-							<ul className="documentation">
-								<li><a href="http://en.support.wordpress.com/followers/" target="_blank"><Gridicon icon="folder" /> { this.translate( 'About Followers' ) }</a></li>
-							</ul>
-						</div>
+							{ this.filterSelect() }
 
-						{ noData && ! hasError ? <ErrorPanel className='is-empty-message' message={ this.translate( 'No followers' ) } /> : null }
-
-						{ this.filterSelect() }
-
-						<div className="tab-content wpcom-followers stats-async-metabox-wrapper">
-							<div className="module-content-text module-content-text-stat">
-								{ wpcomTotalFollowers }
-							</div>
-							<StatsListLegend value={ this.translate( 'Since' ) } label={ this.translate( 'Follower' ) } />
-							{ wpcomFollowers }
-							{ this.props.wpcomFollowersList.isError() ? <ErrorPanel className="is-error" /> : null }
-						</div>
-
-						<div className="tab-content email-followers stats-async-metabox-wrapper">
-							<div className="module-content-text module-content-text-stat">
-								{ emailTotalFollowers }
+							<div className="tab-content wpcom-followers stats-async-metabox-wrapper">
+								<div className="module-content-text module-content-text-stat">
+									{ wpcomTotalFollowers }
+								</div>
+								<StatsListLegend value={ this.translate( 'Since' ) } label={ this.translate( 'Follower' ) } />
+								{ wpcomFollowers }
+								{ this.props.wpcomFollowersList.isError() ? <ErrorPanel className="is-error" /> : null }
 							</div>
 
-							<StatsListLegend value={ this.translate( 'Since' ) } label={ this.translate( 'Follower' ) } />
-							{ emailFollowers }
-							{ this.props.emailFollowersList.isError() ? <ErrorPanel className={ 'network-error' } /> : null }
-						</div>
+							<div className="tab-content email-followers stats-async-metabox-wrapper">
+								<div className="module-content-text module-content-text-stat">
+									{ emailTotalFollowers }
+								</div>
 
-						<StatsModulePlaceholder isLoading={ isLoading } />
+								<StatsListLegend value={ this.translate( 'Since' ) } label={ this.translate( 'Follower' ) } />
+								{ emailFollowers }
+								{ this.props.emailFollowersList.isError() ? <ErrorPanel className={ 'network-error' } /> : null }
+							</div>
+
+							<StatsModulePlaceholder isLoading={ isLoading } />
+						</div>
+						{ viewSummary }
 					</div>
-					{ viewSummary }
-				</div>
-			</Card>
+				</Card>
+			</div>
 		);
 	}
 } );

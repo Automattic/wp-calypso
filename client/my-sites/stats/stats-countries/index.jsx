@@ -1,147 +1,140 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var toggle = require( '../mixin-toggle' ),
-	Geochart = require( '../geochart' ),
-	StatsList = require( '../stats-list' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	skeleton = require( '../mixin-skeleton' ),
-	DownloadCsv = require( '../stats-download-csv' ),
-	DatePicker = require( '../stats-date-picker' ),
-	ErrorPanel = require( '../stats-error' ),
-	Card = require( 'components/card' ),
-	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
-	StatsListLegend = require( '../stats-list/legend' ),
-	Gridicon = require( 'components/gridicon' );
+import Geochart from '../geochart';
+import StatsList from '../stats-list';
+import observe from 'lib/mixins/data-observe';
+import DownloadCsv from '../stats-download-csv';
+import DatePicker from '../stats-date-picker';
+import ErrorPanel from '../stats-error';
+import Card from 'components/card';
+import StatsModulePlaceholder from '../stats-module/placeholder';
+import StatsListLegend from '../stats-list/legend';
+import Gridicon from 'components/gridicon';
+import SectionHeader from 'components/section-header';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StatCountries',
 
-	mixins: [ toggle( 'Countries' ), skeleton( 'data' ), observe( 'dataList' ) ],
+	mixins: [ observe( 'dataList' ) ],
 
-	data: function( nextProps ) {
+	propTypes: {
+		summary: PropTypes.bool,
+		dataList: PropTypes.object,
+		path: PropTypes.string,
+		period: PropTypes.object,
+		site: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.boolean
+		] ),
+		date: PropTypes.string
+	},
+
+	data( nextProps ) {
 		var props = nextProps || this.props;
 
 		return props.dataList.response.data;
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return { noData: this.props.dataList.isEmpty() };
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.setState( { noData: nextProps.dataList.isEmpty() } );
 	},
 
-	render: function() {
-		var countries,
-			mapData = [
-				[
-					this.translate( 'Country' ).toString(),
-					this.translate( 'Views' ).toString()
-				]
-			],
-			data = this.data(),
-			hasError = this.props.dataList.isError(),
-			noData = this.props.dataList.isEmpty(),
-			infoIcon = this.state.showInfo ? 'info' : 'info-outline',
-			isLoading = this.props.dataList.isLoading(),
-			moduleHeaderTitle,
-			summaryPageLink,
-			viewSummary,
-			geochart,
-			moduleToggle,
-			classes;
+	getModuleLabel() {
+		if ( ! this.props.summary ) {
+			return this.translate( 'Countries' );
+		}
 
-		classes = [
+		return ( <DatePicker period={ this.props.period.period } date={ this.props.period.startOf } summary={ true } /> );
+	},
+
+	render() {
+		let mapData = [
+			[
+				this.translate( 'Country' ).toString(),
+				this.translate( 'Views' ).toString()
+			] ];
+
+		let data = this.data();
+		let viewSummary;
+
+		const { dataList, period, site, date, summary, path } = this.props;
+		const hasError = dataList.isError();
+		const noData = dataList.isEmpty();
+		const isLoading = dataList.isLoading();
+		const summaryPageLink = '/stats/' + period.period + '/countryviews/' + site.slug + '?startDate=' + date;
+		const classes = classNames(
 			'stats-module',
 			'is-countries',
 			{
-				'is-expanded': this.state.showModule,
-				summary: this.props.summary,
+				summary: summary,
 				'is-loading': isLoading,
-				'is-showing-info': this.state.showInfo,
 				'has-no-data': noData,
 				'is-showing-error': hasError || noData
 			}
-		];
+		);
 
 		// Loop countries and build array for geochart
 		data.forEach( function( country ) {
 			mapData.push( [ country.label, country.value ] );
 		} );
 
-		summaryPageLink = '/stats/' + this.props.period.period + '/countryviews/' + this.props.site.slug + '?startDate=' + this.props.date;
-
-		if ( ! this.props.summary ) {
-			moduleHeaderTitle = (
-				<h4 className="module-header-title"><a href={ summaryPageLink }>{ this.translate( 'Countries' ) }</a></h4>
+		if ( ! summary && dataList.response.viewAll ) {
+			viewSummary = (
+				<div key="view-all" className="module-expand">
+					<a href={ summaryPageLink }>{ this.translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }<span className="right"></span></a>
+				</div>
 			);
-			moduleToggle = (
-				<li className="module-header-action toggle-services">
-					<a href="#" className="module-header-action-link" aria-label={ this.translate( 'Expand or collapse panel', { textOnly: true, context: 'Stats panel action' } ) } title={ this.translate( 'Expand or collapse panel', { textOnly: true, context: 'Stats panel action' } ) } onClick={ this.toggleModule }>
-						<Gridicon icon="chevron-down" />
-					</a>
-				</li>
-			);
-
-			if ( this.props.dataList.response.viewAll ) {
-				viewSummary = (
-					<div key="view-all" className="module-expand">
-						<a href={ summaryPageLink }>{ this.translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }<span className="right"></span></a>
-					</div>
-				);
-			}
-		} else {
-			moduleHeaderTitle = <DatePicker period={ this.props.period.period } date={ this.props.period.startOf } summary={ true } />;
 		}
 
-		geochart = <Geochart data={ mapData } dataList={ this.props.dataList } />;
-
-		countries = <StatsList moduleName={ this.props.path } data={ data } />;
-
 		return (
-			<Card className={ classNames.apply( null, classes ) }>
-				<div className="countryviews">
-					<div className="module-header">
-						{ moduleHeaderTitle }
-						<ul className="module-header-actions">
-							<li className="module-header-action toggle-info">
-								<a href="#" className="module-header-action-link" aria-label={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) } title={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) } onClick={ this.toggleInfo } >
-									<Gridicon icon={ infoIcon } />
-								</a>
-							</li>
-							{ moduleToggle }
-						</ul>
-					</div>
-					<div className="module-content">
-						<div className="module-content-text module-content-text-info">
-							<p>{ this.translate( 'Explore the list to see which countries and regions generate the most traffic to your site.' ) }</p>
-							<ul className="documentation">
-								<li><a href="http://en.support.wordpress.com/stats/#views-by-country" target="_blank"><Gridicon icon="info-outline" /> { this.translate( 'About Countries' ) }</a></li>
-							</ul>
-						</div>
-						{ ( noData && ! hasError ) ? <ErrorPanel className="is-empty-message" message={ this.translate( 'No countries recorded' ) } /> : null }
+			<div>
+				<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? summaryPageLink : null }>
+					{ this.props.summary
+						? ( <DownloadCsv
+								period={ period }
+								path={ path }
+								site={ site }
+								dataList={ dataList } /> )
+						: null }
+				</SectionHeader>
+					<Card className={ classes }>
+						<div className="countryviews">
+							<div className="module-content">
+								<div className="module-content-text module-content-text-info">
+									<p>{ this.translate( 'Explore the list to see which countries and regions generate the most traffic to your site.' ) }</p>
+									<ul className="documentation">
+										<li><a href="http://en.support.wordpress.com/stats/#views-by-country" target="_blank"><Gridicon icon="info-outline" /> { this.translate( 'About Countries' ) }</a></li>
+									</ul>
+								</div>
+								{ ( noData && ! hasError )
+									? <ErrorPanel className="is-empty-message" message={ this.translate( 'No countries recorded' ) } />
+									: null }
 
-						{ geochart }
-						<StatsModulePlaceholder className="is-block" isLoading={ isLoading } />
-						<StatsListLegend value={ this.translate( 'Views' ) } label={ this.translate( 'Country' ) } />
-						<StatsModulePlaceholder isLoading={ isLoading } />
-						{ countries }
-						{ this.props.summary
-							? <DownloadCsv period={ this.props.period } path={ this.props.path } site={ this.props.site } dataList={ this.props.dataList } />
-							: null }
-						{ hasError ? <ErrorPanel className={ 'network-error' } /> : null }
-					</div>
-					{ viewSummary }
-				</div>
-			</Card>
+								<Geochart data={ mapData } dataList={ dataList } />
+								<StatsModulePlaceholder className="is-block" isLoading={ isLoading } />
+								<StatsListLegend value={ this.translate( 'Views' ) } label={ this.translate( 'Country' ) } />
+								<StatsModulePlaceholder isLoading={ isLoading } />
+								<StatsList moduleName={ path } data={ data } />
+								{ hasError
+									? <ErrorPanel className={ 'network-error' } />
+									: null }
+							</div>
+							{ viewSummary }
+						</div>
+					</Card>
+			</div>
 		);
 	}
 } );
