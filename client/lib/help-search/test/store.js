@@ -7,12 +7,9 @@ var assert = require( 'chai' ).assert;
  * Internal dependencies
  */
 import actions from './lib/mock-actions';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Help search Store', function() {
 	var Dispatcher, HelpSearchStore;
-
-	useFakeDom();
 
 	beforeEach( function() {
 		Dispatcher = require( 'dispatcher' );
