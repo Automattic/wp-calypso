@@ -16,7 +16,8 @@ var StatsList = require( '../stats-list' ),
 	analytics = require( 'analytics' ),
 	Card = require( 'components/card' ),
 	SectionHeader = require( 'components/section-header' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	Button = require( 'components/button' );
 
 module.exports = React.createClass( {
 	displayName: 'StatModuleFollowersPage',
@@ -147,24 +148,15 @@ module.exports = React.createClass( {
 
 		if ( 'email' === this.props.followType ) {
 			emailExportUrl = 'https://dashboard.wordpress.com/wp-admin/index.php?page=stats&blog=' + this.props.site.ID + '&blog_subscribers=csv&type=email';
-
-			emailExportLink = (
-				<div className="module-content-text">
-					<ul className="documentation">
-						<li>
-							<a href={ emailExportUrl } target="_blank" onClick={ this.recordDownloadClick }>
-								<Gridicon icon="cloud-download" />
-								{ this.translate( 'Download all email followers as CSV', { context: 'Action shown in stats followers module to download all email followers.' } ) }
-							</a>
-						</li>
-					</ul>
-				</div>
-			);
 		}
 
 		return (
 			<div className="followers">
-				<SectionHeader label={ this.translate( 'Followers' ) } />
+				<SectionHeader label={ this.translate( 'Followers' ) }>
+					{ emailExportUrl
+				 		? ( <Button compact href={ emailExportUrl }>{ this.translate( 'Download Data as CSV' ) }</Button> )
+						: null }
+				</SectionHeader>
 				<Card className={ classNames( classes ) }>
 					<div className="module-content">
 						{ this.filterSelect() }
@@ -184,8 +176,6 @@ module.exports = React.createClass( {
 						<StatsModulePlaceholder isLoading={ isLoading } />
 
 						{ pagination }
-
-						{ emailExportLink }
 					</div>
 				</Card>
 			</div>
