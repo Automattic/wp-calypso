@@ -409,7 +409,7 @@ PostActions = {
 	trash: function( post, callback ) {
 		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
 
-		postHandle.del( PostActions.receiveUpdate.bind( null, callback ) );
+		postHandle.delete( PostActions.receiveUpdate.bind( null, callback ) );
 	},
 
 	/**
