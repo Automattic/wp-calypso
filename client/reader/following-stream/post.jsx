@@ -50,6 +50,7 @@ const
 	DiscoverSiteAttribution = require( 'reader/discover/site-attribution' ),
 	DiscoverHelper = require( 'reader/discover/helper' ),
 	FeedPostStore = require( 'lib/feed-post-store' ),
+	FeedPostStoreActions = require( 'lib/feed-post-store/actions' ),
 	Gridicon = require( 'components/gridicon' ),
 	smartSetState = require( 'lib/react-smart-set-state' );
 
@@ -335,6 +336,12 @@ const Post = React.createClass( {
 		}
 	},
 
+	maybeMarkPostSeen: function( liked ) {
+		if ( liked ) {
+			FeedPostStoreActions.markSeen( this.props.post );
+		}
+	},
+
 	render: function() {
 		var post = this.props.post,
 			site = this.state.siteish,
@@ -463,7 +470,7 @@ const Post = React.createClass( {
 					<PostPermalink siteName={ siteName } postUrl={ post.URL } />
 					{ ( shouldShowShare ) ? <Share post={ post } /> : null }
 					{ ( shouldShowComments ) ? <CommentButton onClick={ this.handleCommentButtonClick } commentCount={ commentCount } /> : null }
-					{ ( shouldShowLikes ) ? <LikeButton siteId={ likeSiteId } postId={ likePostId } /> : null }
+					{ ( shouldShowLikes ) ? <LikeButton siteId={ likeSiteId } postId={ likePostId } onLikeToggle={ this.maybeMarkPostSeen } /> : null }
 					<li className="reader__post-options"><PostOptions post={ post } site={ this.state.site } /></li>
 				</ul>
 			</Card>
