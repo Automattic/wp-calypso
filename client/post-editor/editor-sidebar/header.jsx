@@ -14,20 +14,16 @@ import page from 'page';
  */
 import { getSelectedSite } from 'state/ui/selectors';
 import { getEditedPost } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
 import { getEditorPostId, isEditorDraftsVisible } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import DraftsButton from 'post-editor/drafts-button';
 import PostCountsData from 'components/data/post-counts-data';
-import QueryPostTypes from 'components/data/query-post-types';
 
-function EditorSidebarHeader( { typeSlug, type, siteId, showDrafts, toggleDrafts, allPostsUrl, toggleSidebar } ) {
-	const isCustomPostType = ( 'post' !== typeSlug && 'page' !== typeSlug );
+function EditorSidebarHeader( { type, siteId, showDrafts, toggleDrafts, allPostsUrl, toggleSidebar } ) {
 	const className = classnames( 'editor-sidebar__header', {
-		'is-drafts-visible': showDrafts,
-		'is-loading': isCustomPostType && ! type
+		'is-drafts-visible': showDrafts
 	} );
 	const closeLabel = translate( 'Back' );
 	const closeButtonAction = page.back.bind( page, allPostsUrl );
@@ -36,9 +32,6 @@ function EditorSidebarHeader( { typeSlug, type, siteId, showDrafts, toggleDrafts
 
 	return (
 		<div className={ className }>
-			{ isCustomPostType && (
-				<QueryPostTypes siteId={ siteId } />
-			) }
 			{ showDrafts && (
 				<Button
 					compact borderless
@@ -60,7 +53,7 @@ function EditorSidebarHeader( { typeSlug, type, siteId, showDrafts, toggleDrafts
 					{ closeLabel }
 				</Button>
 			) }
-			{ typeSlug === 'post' && siteId && (
+			{ type === 'post' && siteId && (
 				<PostCountsData siteId={ siteId } status="draft">
 					<DraftsButton onClick={ toggleDrafts } />
 				</PostCountsData>
@@ -78,12 +71,10 @@ export default connect(
 	( state ) => {
 		const siteId = get( getSelectedSite( state ), 'ID' );
 		const postId = getEditorPostId( state );
-		const typeSlug = get( getEditedPost( state, siteId, postId ), 'type' );
 
 		return {
 			siteId,
-			typeSlug,
-			type: getPostType( state, siteId, typeSlug ),
+			type: get( getEditedPost( state, siteId, postId ), 'type' ),
 			showDrafts: isEditorDraftsVisible( state )
 		};
 	},
