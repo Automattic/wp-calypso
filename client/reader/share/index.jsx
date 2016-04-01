@@ -159,9 +159,7 @@ const ReaderShare = React.createClass( {
 				'ignore-click': true,
 				'is-active': this.state.showingMenu
 			} );
-		if ( ! config.isEnabled( 'reader/share' ) ) {
-			return null;
-		}
+
 		return React.createElement( this.props.tagName, {
 			className: 'reader-share',
 			onClick: this.killClick,

@@ -197,20 +197,16 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 }
 
 if ( config.isEnabled( 'reader' ) ) {
-	readerPaths = [ '/', '/read', '/fresh', '/activities', '/find-friends', '/tag' ];
-
-	if ( config.isEnabled( 'reader/following-edit' ) ) {
-		readerPaths.push( '/following' );
-	}
-
-	if ( config.isEnabled( 'reader/recommendations' ) ) {
-		readerPaths.push( '/recommendations' );
-		readerPaths.push( '/tags' );
-	}
-
-	if ( config.isEnabled( 'reader/discover' ) ) {
-		readerPaths.push( '/discover' );
-	}
+	readerPaths = [
+		'/',
+		'/read',
+		'/activities',
+		'/tag',
+		'/discover',
+		'/following',
+		'/recommendations',
+		'/tags'
+	];
 
 	sections.push( {
 		name: 'reader',

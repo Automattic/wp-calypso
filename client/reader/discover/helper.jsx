@@ -8,14 +8,12 @@ var find = require( 'lodash/find' ),
 /**
  * Internal Dependencies
  */
-var config = require( 'config' ),
-	userUtils = require( 'lib/user/utils' ),
+var userUtils = require( 'lib/user/utils' ),
 	readerRoute = require( 'reader/route' );
 
 module.exports = {
 	isEnabled: function() {
-		return config.isEnabled( 'reader/discover' ) &&
-			userUtils.getLocaleSlug() === 'en';
+		return userUtils.getLocaleSlug() === 'en';
 	},
 
 	isDiscoverPost: function( post ) {
