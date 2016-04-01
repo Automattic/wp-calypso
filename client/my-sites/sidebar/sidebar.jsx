@@ -168,6 +168,7 @@ module.exports = React.createClass( {
 
 		return (
 			<SidebarItem
+				tipTarget="themes"
 				label={ this.translate( 'Themes' ) }
 				className={ this.itemLinkClass( '/design', 'themes' ) }
 				link={ themesLink }
@@ -206,6 +207,7 @@ module.exports = React.createClass( {
 
 		return (
 			<SidebarItem
+				tipTarget="menus"
 				label={ this.translate( 'Menus' ) }
 				className={ this.itemLinkClass( '/menus', 'menus' ) }
 				link={ menusLink }

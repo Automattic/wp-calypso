@@ -63,6 +63,7 @@ export default React.createClass( {
 		return (
 			<Masterbar>
 				<Stats
+					tipTarget="my-sites"
 					icon={ this.wordpressIcon() }
 					onClick={ this.clickMySites }
 					isActive={ this.isActive( 'sites' ) }
@@ -75,6 +76,7 @@ export default React.createClass( {
 					}
 				</Stats>
 				<Item
+					tipTarget="reader"
 					url="/"
 					icon="reader"
 					onClick={ this.clickReader }

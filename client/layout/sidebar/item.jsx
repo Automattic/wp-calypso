@@ -57,7 +57,7 @@ export default React.createClass( {
 		const classes = classnames( this.props.className, { selected: this.props.selected } );
 
 		return (
-			<li className={ classes }>
+			<li className={ classes } data-tip-target={ this.props.tipTarget } >
 				<a
 					onClick={ this.props.onNavigate }
 					href={ this.props.link }

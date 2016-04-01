@@ -49,6 +49,7 @@ export default React.createClass( {
 
 		return (
 			<a
+				data-tip-target={ this.props.tipTarget }
 				href={ this.props.url }
 				onClick={ this.props.onClick }
 				title={ this.props.tooltip }
