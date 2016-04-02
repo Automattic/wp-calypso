@@ -1,0 +1,25 @@
+.confirm-cancel-domain {
+	// the following is a hack so the dropdown selector is not cropped when it overflows its container
+	margin-bottom: 300px;
+
+	.button-primary,
+	input[type=submit] {
+		@extend .button;
+		margin: 10px 0 !important;
+		font-size: inherit !important;
+		display: block !important;
+	}
+
+	h3, h4 {
+		@extend .form-section-heading;
+
+		&:first-of-type {
+			margin-top: 10px;
+		}
+	}
+
+	.confirm-cancel-domain__help_message,
+	.confirm-cancel-domain__confirm_container {
+		margin-top: 20px;
+	}
+}

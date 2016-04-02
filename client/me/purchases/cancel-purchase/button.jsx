@@ -97,7 +97,7 @@ const CancelPurchaseButton = React.createClass( {
 		const { id } = this.props.purchase,
 			{ slug } = this.props.selectedSite;
 
-		page( paths.confirmCancelPurchase( slug, id ) );
+		page( paths.confirmCancelDomain( slug, id ) );
 	},
 
 	cancelPurchase() {

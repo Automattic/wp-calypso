@@ -11,8 +11,7 @@ import analytics from 'analytics';
 import CancelPrivateRegistration from './cancel-private-registration';
 import CancelPurchase from './cancel-purchase';
 import CancelPurchaseLoadingPlaceholder from './cancel-purchase/loading-placeholder';
-import ConfirmCancelPurchase from './confirm-cancel-purchase';
-import ConfirmCancelPurchaseLoadingPlaceholder from './confirm-cancel-purchase/loading-placeholder';
+import ConfirmCancelDomain from './confirm-cancel-domain';
 import EditCardDetails from './payment/edit-card-details';
 import EditCardDetailsData from 'components/data/purchases/edit-card-details';
 import EditCardDetailsLoadingPlaceholder from './payment/edit-card-details/loading-placeholder';
@@ -101,13 +100,13 @@ export default {
 		);
 	},
 
-	confirmCancelPurchase( context ) {
+	confirmCancelDomain( context ) {
 		setTitle(
-			titles.confirmCancelPurchase
+			titles.confirmCancelDomain
 		);
 
 		recordPageView(
-			paths.confirmCancelPurchase(),
+			paths.confirmCancelDomain(),
 			'Confirm Cancel Purchase'
 		);
 
@@ -115,9 +114,7 @@ export default {
 
 		renderPage(
 			<ManagePurchaseData
-				component={ ConfirmCancelPurchase }
-				isDataLoading={ isDataLoading }
-				loadingPlaceholder={ ConfirmCancelPurchaseLoadingPlaceholder }
+				component={ ConfirmCancelDomain }
 				purchaseId={ context.params.purchaseId }
 				sites={ sites } />
 		);

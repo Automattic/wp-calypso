@@ -1831,15 +1831,6 @@ Undocumented.prototype.cancelPurchase = function( purchaseId, fn ) {
 	}, fn );
 };
 
-Undocumented.prototype.getCancellationPageHTML = function( purchaseId, productId, fn ) {
-	debug( 'upgrades/{purchaseId}/cancel_form?product_id={productId}' );
-
-	this.wpcom.req.get( {
-		path: `/upgrades/${purchaseId}/cancel_form`,
-		body: { client_timezone_offset: moment().format( 'Z' ) }
-	}, { product_id: productId }, fn );
-};
-
 Undocumented.prototype.cancelAndRefundPurchase = function( purchaseId, data, fn ) {
 	debug( 'upgrades/{purchaseId}/cancel' );
 

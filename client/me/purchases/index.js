@@ -26,10 +26,10 @@ export default function() {
 	);
 
 	page(
-		paths.confirmCancelPurchase(),
+		paths.confirmCancelDomain(),
 		meController.sidebar,
 		controller.noSitesMessage,
-		controller.confirmCancelPurchase
+		controller.confirmCancelDomain
 	);
 
 	page(
