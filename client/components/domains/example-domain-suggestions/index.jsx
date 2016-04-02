@@ -81,7 +81,6 @@ module.exports = React.createClass( {
 
 	render: function() {
 		let examples, mappingInformation;
-		const mappingUrl = this.props.path + '/mapping';
 
 		if ( ! isEmpty( this.props.products ) ) {
 			mappingInformation = this.translate(
@@ -92,7 +91,7 @@ module.exports = React.createClass( {
 					},
 
 					components: {
-						mappingLink: <a onClick={ this.handleClickMappingLink } href={ mappingUrl } />,
+						mappingLink: <a onClick={ this.handleClickMappingLink } href={ this.props.mapDomainUrl } />,
 						strong: <strong />
 					}
 				}

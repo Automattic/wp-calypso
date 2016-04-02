@@ -75,7 +75,7 @@ var DomainSearchResults = React.createClass( {
 						className="domain-search-results__domain-availability-copy"
 						status="is-warning"
 						showDismiss={ false }>
-						{ domainUnavailableMessage} { mappingOffer }
+						{ domainUnavailableMessage } { mappingOffer }
 					</Notice>
 				);
 			}
@@ -130,7 +130,12 @@ var DomainSearchResults = React.createClass( {
 			}, this );
 
 			if ( this.props.offerMappingOption ) {
-				mappingOffer = <DomainMappingSuggestion onButtonClick={ this.props.onClickMapping } products={ this.props.products } cart={ this.props.cart } />;
+				mappingOffer = (
+					<DomainMappingSuggestion
+						onButtonClick={ this.props.onClickMapping }
+						products={ this.props.products }
+						cart={ this.props.cart } />
+				);
 			}
 		} else {
 			suggestionElements = this.placeholders();

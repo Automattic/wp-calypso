@@ -157,10 +157,13 @@ var RegisterDomainStep = React.createClass( {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
-			return <ExampleDomainSuggestions
-				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				path={ this.props.path }
-				products={ this.props.products } />;
+			return (
+				<ExampleDomainSuggestions
+					onClickExampleSuggestion={ this.handleClickExampleSuggestion }
+					mapDomainUrl={ this.getMapDomainUrl() }
+					path={ this.props.path }
+					products={ this.props.products } />
+			);
 		}
 
 		return this.initialSuggestions();
@@ -359,7 +362,12 @@ var RegisterDomainStep = React.createClass( {
 			// the search returned no results
 
 			if ( this.props.showExampleSuggestions ) {
-				return <ExampleDomainSuggestions path={ this.props.path } products={ this.props.products } />;
+				return (
+					<ExampleDomainSuggestions
+						mapDomainUrl={ this.getMapDomainUrl() }
+						path={ this.props.path }
+						products={ this.props.products } />
+				);
 			}
 
 			suggestions = this.state.defaultSuggestions;
@@ -384,16 +392,28 @@ var RegisterDomainStep = React.createClass( {
 		);
 	},
 
-	goToMapDomainStep: function( event ) {
-		const query = qs.stringify( { initialQuery: this.state.lastQuery.trim() } );
-		let mapDomainPath = `${this.props.basePath}/mapping`;
-		if ( this.props.selectedSite ) {
-			mapDomainPath += `/${ this.props.selectedSite.slug }?${ query }`;
+	getMapDomainUrl: function() {
+		let mapDomainUrl;
+
+		if ( this.props.mapDomainUrl ) {
+			mapDomainUrl = this.props.mapDomainUrl;
+		} else {
+			const query = qs.stringify( { initialQuery: this.state.lastQuery.trim() } );
+			mapDomainUrl = `${this.props.basePath}/mapping`;
+			if ( this.props.selectedSite ) {
+				mapDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;
+			}
 		}
 
+		return mapDomainUrl;
+	},
+
+	goToMapDomainStep: function( event ) {
 		event.preventDefault();
+
 		this.recordEvent( 'mapDomainButtonClick', this.props.analyticsSection );
-		page( mapDomainPath );
+
+		page( this.getMapDomainUrl() );
 	},
 
 	addRemoveDomainToCart: function( suggestion, event ) {
