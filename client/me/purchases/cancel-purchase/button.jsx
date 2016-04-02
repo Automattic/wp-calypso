@@ -9,15 +9,12 @@ import React from 'react';
  */
 import analytics from 'analytics';
 import Button from 'components/button';
-import { cancelPurchase } from 'lib/upgrades/actions';
+import { cancelAndRefundPurchase, cancelPurchase } from 'lib/upgrades/actions';
 import Dialog from 'components/dialog';
 import { getName, getSubscriptionEndDate, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
 import { isDomainRegistration } from 'lib/products-values';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
-import wp from 'lib/wp';
-
-const wpcom = wp.undocumented();
 
 const CancelPurchaseButton = React.createClass( {
 	propTypes: {
@@ -41,7 +38,7 @@ const CancelPurchaseButton = React.createClass( {
 		} );
 	},
 
-	closeDialog( action ) {
+	closeDialog() {
 		this.setState( {
 			showDialog: false
 		} );
@@ -60,7 +57,7 @@ const CancelPurchaseButton = React.createClass( {
 					label: this.translate( 'Yes, Cancel Now' ),
 					isPrimary: true,
 					disabled: this.state.submitting,
-					onClick: this.submitCancelPurchase
+					onClick: this.submitCancelAndRefundPurchase
 				},
 			];
 
@@ -160,12 +157,12 @@ const CancelPurchaseButton = React.createClass( {
 		page.redirect( paths.list() );
 	},
 
-	submitCancelPurchase() {
+	submitCancelAndRefundPurchase() {
 		this.setState( {
 			submitting: true
 		} );
 
-		wpcom.cancelAndRefundPurchase( this.props.purchase.id, null, this.handleSubmit );
+		cancelAndRefundPurchase( this.props.purchase.id, null, this.handleSubmit );
 	},
 
 	render() {
