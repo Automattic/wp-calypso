@@ -210,6 +210,7 @@ function isCandidateForContentImage( imageUrl ) {
 
 const bannedUrlParts = [
 	'feeds.feedburner.com',
+	'feeds.wordpress.com/',
 	'.feedsportal.com',
 	'wp-includes',
 	'wp-content/themes',
