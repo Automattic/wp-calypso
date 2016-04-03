@@ -43,8 +43,8 @@ export default React.createClass( {
 			<div className="post-editor__sidebar">
 				<EditorSidebarHeader
 					allPostsUrl={ this.props.allPostsUrl } />
-				{ this.props.showDrafts ?
-					<DraftList
+				{ this.props.showDrafts
+					? <DraftList
 						sites={ this.props.sites }
 						onTitleClick={ this.props.onTitleClick }
 						showAllActionsMenu={ false }
