@@ -44,8 +44,8 @@ export default React.createClass( {
 			<div className="post-editor__sidebar">
 				<EditorSidebarHeader
 					allPostsUrl={ this.props.allPostsUrl } />
-				{ this.props.showDrafts ?
-					<AsyncLoad
+				{ this.props.showDrafts
+					? <AsyncLoad
 						require="my-sites/drafts/draft-list"
 						sites={ this.props.sites }
 						onTitleClick={ this.props.onTitleClick }
