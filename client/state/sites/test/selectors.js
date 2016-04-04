@@ -6,7 +6,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSite, getSiteCollisions, isSiteConflicting, getSiteSlug } from '../selectors';
+import {
+	getSite,
+	getSiteCollisions,
+	isSiteConflicting,
+	getSiteSlug,
+	getJetpackSiteRemoteManagementUrl
+} from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getSite()', () => {
@@ -178,6 +184,58 @@ describe( 'selectors', () => {
 			}, 77203199 );
 
 			expect( slug ).to.equal( 'testtwosites2014.wordpress.com::path::to::site' );
+		} );
+	} );
+
+	describe( '#getJetpackSiteRemoteManagementUrl()', () => {
+		beforeEach( () => {
+			getSiteCollisions.memoizedSelector.cache.clear();
+		} );
+
+		it( 'should return null if the site is not known', () => {
+			const remoteManagementUrl = getJetpackSiteRemoteManagementUrl( {
+				sites: {
+					items: {}
+				}
+			}, 2916284 );
+
+			expect( remoteManagementUrl ).to.be.null;
+		} );
+
+		it( 'should return null if the site is not a Jetpack site', () => {
+			const remoteManagementUrl = getJetpackSiteRemoteManagementUrl( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							jetpack: false,
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( remoteManagementUrl ).to.be.null;
+		} );
+
+		it( 'should return the URL for a Jetpack site\'s remote wp-admin screen', () => {
+			const remoteManagementUrl = getJetpackSiteRemoteManagementUrl( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								admin_url: 'https://example.com/wp-admin/',
+								jetpack_version: '3.9.4'
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( remoteManagementUrl ).to.equal( 'https://example.com/wp-admin/admin.php?page=jetpack&configure=manage' );
 		} );
 	} );
 } );

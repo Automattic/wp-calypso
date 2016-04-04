@@ -745,6 +745,8 @@ module.exports = {
 		if ( log.error.error !== 'unauthorized_full_access' ) {
 			return null;
 		}
+		// TODO: Use client/state/sites/selectors#getJetpackSiteRemoteManagementUrl()
+		// as soon as this is connected to Redux.
 		remoteManagementUrl = log.site.options.admin_url + 'admin.php?page=jetpack&configure=json-api';
 		if ( versionCompare( log.site.options.jetpack_version, 3.4 ) >= 0 ) {
 			remoteManagementUrl = log.site.options.admin_url + 'admin.php?page=jetpack&configure=manage';
