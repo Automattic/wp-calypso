@@ -6,7 +6,7 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import stats from 'lib/posts/stats';
+import { recordEvent } from 'lib/posts/stats';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
 
@@ -41,8 +41,8 @@ export default React.createClass( {
 		};
 		const buttonState = this.getButtonState();
 		const eventString = postUtils.isPage( this.props.post ) ? pageEvents[ buttonState ] : postEvents[ buttonState ];
-		stats.recordEvent( eventString );
-		stats.recordEvent( 'Clicked Primary Button' );
+		recordEvent( eventString );
+		recordEvent( 'Clicked Primary Button' );
 	},
 
 	getButtonState: function() {
