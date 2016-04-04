@@ -7,6 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { useNock } from 'test/helpers/use-nock';
 import { geocode } from '../';
 
 /**
@@ -15,16 +16,14 @@ import { geocode } from '../';
 const TEST_ADDRESS = '1600 Amphitheatre Parkway, Mountain View, CA';
 
 describe( 'geocoding', () => {
+	useNock();
+
 	before( () => {
 		nock( 'https://maps.googleapis.com' )
 			.persist()
 			.get( '/maps/api/geocode/json' )
 			.query( { address: TEST_ADDRESS } )
 			.reply( 200, { results: [ 1, 2, 3 ], status: 'OK' } );
-	} );
-
-	after( () => {
-		nock.restore();
 	} );
 
 	describe( '#geocode()', () => {
