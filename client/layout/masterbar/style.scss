@@ -84,11 +84,13 @@ $autobar-height: 20px;
 }
 
 .masterbar__item-logo {
+	padding-left: 0;
+
 	svg {
-		height: 30px;
-		width: 180px;
+		height: 24px;
+		width: 164px;
 		position: relative;
-			top: 9px;
+			top: 7px;
 			left: -4px;
 	}
 
@@ -96,7 +98,7 @@ $autobar-height: 20px;
 		.masterbar__item-content {
 			display: block;
 			margin: 0 auto;
-			width: 28px;
+			width: 30px;
 			overflow: hidden;
 		}
 	}
