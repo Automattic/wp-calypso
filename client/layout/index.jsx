@@ -160,7 +160,7 @@ Layout = React.createClass( {
 
 		return (
 			<div className={ sectionClass }>
-				{ config.isEnabled( 'guidestours' ) ? <GuidesTours /> : null }
+				{ config.isEnabled( 'guidestours' ) && this.props.shouldShowGuidesTour ? <GuidesTours /> : null }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
@@ -184,12 +184,13 @@ Layout = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const { isLoading, section } = state.ui;
+		const { isLoading, section, guidesTour } = state.ui;
 		return {
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
 			section,
-			isOffline: isOffline( state )
+			isOffline: isOffline( state ),
+			shouldShowGuidesTour: guidesTour.shouldShow,
 		};
 	}
 )( Layout );

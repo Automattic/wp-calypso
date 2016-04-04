@@ -175,6 +175,7 @@ export default class GuidesTours extends Component {
 	}
 
 	quit() {
+		//TODO: should we dispatch a showGuidesTour action here instead?
 		this.setState( { currentStep: null } );
 	}
 
