@@ -18,7 +18,7 @@ useNock();
 ```js
 import useNock, { nock } from 'test/helpers/use-nock';
 //or
-import { useNock, nock } from 'text/helpers/use-nock';
+import { useNock, nock } from 'test/helpers/use-nock';
 //or
 import useNock from 'test/helpers/use-nock';
 import nock from 'nock';
