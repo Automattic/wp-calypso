@@ -118,6 +118,27 @@ describe( 'wpcom.site.post', function() {
 		} );
 	} );
 
+	describe( 'wpcom.site.post.del', function() {
+		it( 'should delete the post using del()', done => {
+			let test_post;
+			site.addPost( fixture.post )
+				.then( data_post => {
+					test_post = data_post;
+					return data_post;
+				} )
+				.then( ( data_post ) => {
+					return site.post( data_post.ID ).del();
+				} )
+				.then( data => {
+					assert.ok( data );
+					assert.equal( test_post.ID, data.ID );
+
+					done();
+				} )
+				.catch( done );
+		} );
+	} );
+
 	describe( 'wpcom.site.post.restore', function() {
 		it( 'should restore a post from trash', done => {
 			var post = site.post();

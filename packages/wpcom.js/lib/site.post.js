@@ -169,6 +169,17 @@ class SitePost {
 	}
 
 	/**
+	 * Del post, alias of Delete
+	 *
+	 * @param {Object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @return {Promise} Promise
+	 */
+	del( query, fn ) {
+		return this.delete( query, fn );
+	}
+
+	/**
 	 * Restore post
 	 *
 	 * @param {Object} [query] - query object parameter

@@ -224,6 +224,19 @@ var SitePost = (function () {
 		}
 
 		/**
+   * Del post, alias of Delete
+   *
+   * @param {Object} [query] - query object parameter
+   * @param {Function} fn - callback function
+   * @return {Promise} Promise
+   */
+	}, {
+		key: 'del',
+		value: function del(query, fn) {
+			return this['delete'](query, fn);
+		}
+
+		/**
    * Restore post
    *
    * @param {Object} [query] - query object parameter
