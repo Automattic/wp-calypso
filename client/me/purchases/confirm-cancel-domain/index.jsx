@@ -15,6 +15,7 @@ import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
 import FormButton from 'components/forms/form-button';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
+import FormSectionHeading from 'components/forms/form-section-heading';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
 import { isDomainRegistration } from 'lib/products-values';
@@ -63,11 +64,11 @@ const ConfirmCancelDomain = React.createClass( {
 			return false;
 		}
 
-		if ( [ 'other_host', 'transfer' ].indexOf( selectedReason.value ) >= 0 ) {
-			return false;
-		}
+		return [ 'other_host', 'transfer' ].indexOf( selectedReason.value ) === -1;
+	},
 
-		return true;
+	goToCancelPurchase() {
+		goToCancelPurchase( this.props );
 	},
 
 	onSubmit( event ) {
@@ -127,7 +128,7 @@ const ConfirmCancelDomain = React.createClass( {
 		} );
 	},
 
-	renderHelpDialog() {
+	renderHelpMessage() {
 		const selectedReason = this.state.selectedReason;
 
 		if ( ! selectedReason ) {
@@ -135,12 +136,12 @@ const ConfirmCancelDomain = React.createClass( {
 		}
 
 		return (
-			<div className="confirm-cancel-domain__help_message">
+			<div className="confirm-cancel-domain__help-message">
 				<p>
 					{ selectedReason.helpMessage }
 				</p>
 				{ selectedReason.showTextarea &&
-				<FormTextarea onChange={ this.onMessageChange } rows="5" cols="60" /> }
+				<FormTextarea className="confirm-cancel-domain__reason-details" onChange={ this.onMessageChange } /> }
 			</div>
 		);
 	},
@@ -151,11 +152,9 @@ const ConfirmCancelDomain = React.createClass( {
 		}
 
 		return (
-			<div className="confirm-cancel-domain__confirm_container">
+			<div className="confirm-cancel-domain__confirm-container">
 				<FormLabel>
-					<FormCheckbox name="confirm"
-							checked={ this.state.confirmed }
-							onChange={ this.onConfirmationChange } />
+					<FormCheckbox checked={ this.state.confirmed } onChange={ this.onConfirmationChange } />
 					<span>
 						{ this.translate(
 							'I understand that canceling means that I may {{strong}}lose this domain forever{{/strong}}.', {
@@ -177,7 +176,7 @@ const ConfirmCancelDomain = React.createClass( {
 
 		if ( this.state.submitting ) {
 			return (
-				<FormButton disabled={ true } >
+				<FormButton isPrimary={ true } disabled={ true } >
 					{ this.translate( 'Cancelling Domain…' ) }
 				</FormButton>
 			);
@@ -188,14 +187,14 @@ const ConfirmCancelDomain = React.createClass( {
 
 		if ( selectedReason && 'misspelled' === selectedReason.value ) {
 			return (
-				<FormButton onClick={ this.onSubmit } disabled={ ! confirmed } >
+				<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed } >
 					{ this.translate( 'Cancel Anyway' ) }
 				</FormButton>
 			);
 		}
 
 		return (
-			<FormButton onClick={ this.onSubmit } disabled={ ! confirmed } >
+			<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed } >
 				{ this.translate( 'Cancel Domain' ) }
 			</FormButton>
 		);
@@ -219,11 +218,13 @@ const ConfirmCancelDomain = React.createClass( {
 
 		return (
 			<Main className="confirm-cancel-domain">
-				<HeaderCake onClick={ goToCancelPurchase.bind( null, this.props ) }>
+				<HeaderCake onClick={ this.goToCancelPurchase }>
 					{ titles.confirmCancelDomain }
 				</HeaderCake>
 				<Card>
-					<h3>{ this.translate( 'Canceling %(domain)s', { args: { domain } } ) }</h3>
+					<FormSectionHeading className="is-primary">
+						{ this.translate( 'Canceling %(domain)s', { args: { domain } } ) }
+					</FormSectionHeading>
 					<p>
 						{ this.translate(
 							'Since domain cancellation can cause your site to stop working, ' +
@@ -232,15 +233,15 @@ const ConfirmCancelDomain = React.createClass( {
 						) }
 					</p>
 					<SelectDropdown
-							className="confirm-cancel-domain__reasons_dropdown"
-							key="confirm-cancel-domain__reasons_dropdown"
+							className="confirm-cancel-domain__reasons-dropdown"
+							key="confirm-cancel-domain__reasons-dropdown"
 							selectedText={ selectedReason
 											? selectedReason.label
 											: this.translate( 'Please let us know why you wish to cancel.' ) }
 							options={ cancellationReasons }
 							onSelect={ this.onReasonChange } >
 					</SelectDropdown>
-					{ this.renderHelpDialog() }
+					{ this.renderHelpMessage() }
 					{ this.renderConfirmationCheckbox() }
 					{ this.renderSubmitButton() }
 				</Card>
