@@ -186,7 +186,12 @@ function removePurchase( purchaseId, userId, onComplete ) {
 	} );
 }
 
+function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
+	wpcom.cancelAndRefundPurchase( purchaseId, data, onComplete );
+}
+
 export {
+	cancelAndRefundPurchase,
 	cancelPurchase,
 	cancelPrivateRegistration,
 	clearPurchases,
