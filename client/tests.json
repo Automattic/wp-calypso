@@ -157,6 +157,9 @@
 		"form-state": {
 			"test": [ "index" ]
 		},
+		"geocoding": {
+			"test": [ "index" ]
+		},
 		"happiness-engineers": {
 			"test": [ "actions", "store" ]
 		},
