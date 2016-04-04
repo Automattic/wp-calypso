@@ -136,7 +136,6 @@ User.prototype.fetch = function() {
 			}
 			return;
 		}
-		console.log(data);
 
 		var userData = userUtils.filterUserObject( data );
 
