@@ -151,6 +151,18 @@
 	}
 }
 
+.full-post__featured-image-caption {
+	padding: 8px;
+	font-size: 11px;
+	font-family: $sans;
+	color: darken( $gray, 10 );
+	text-align: left;
+
+	a {
+		text-decoration: none;
+	}
+}
+
 .reader__full-post-content {
 	@extend %content-font;
 	margin: 0;
