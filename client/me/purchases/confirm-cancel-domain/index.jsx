@@ -9,8 +9,8 @@ import React from 'react';
  */
 import analytics from 'analytics';
 import cancellationReasons from './cancellation-reasons';
+import { cancelAndRefundPurchase } from 'lib/upgrades/actions';
 import Card from 'components/card';
-import { clearPurchases } from 'lib/upgrades/actions';
 import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
 import FormButton from 'components/forms/form-button';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -26,9 +26,6 @@ import notices from 'notices';
 import paths from 'me/purchases/paths';
 import titles from 'me/purchases/titles';
 import SelectDropdown from 'components/select-dropdown';
-import wp from 'lib/wp';
-
-const wpcom = wp.undocumented();
 
 const ConfirmCancelDomain = React.createClass( {
 	propTypes: {
@@ -98,7 +95,7 @@ const ConfirmCancelDomain = React.createClass( {
 
 		this.setState( { submitting: true } );
 
-		wpcom.cancelAndRefundPurchase( purchase.id, data, ( error ) => {
+		cancelAndRefundPurchase( purchase.id, data, ( error ) => {
 			this.setState( { submitting: false } );
 
 			if ( error ) {
@@ -110,10 +107,9 @@ const ConfirmCancelDomain = React.createClass( {
 			notices.success(
 				this.translate( '%(purchaseName)s was successfully cancelled and refunded.', {
 					args: { purchaseName }
-				} ), { persistent: true }
+				} ),
+				{ persistent: true }
 			);
-
-			clearPurchases();
 
 			analytics.tracks.recordEvent(
 				'calypso_domain_cancel_form_submit',
