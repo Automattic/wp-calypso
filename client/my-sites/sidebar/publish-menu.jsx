@@ -17,6 +17,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import analytics from 'analytics';
+import { decodeEntities } from 'lib/formatting';
 
 const PublishMenu = React.createClass( {
 	propTypes: {
@@ -151,7 +152,7 @@ const PublishMenu = React.createClass( {
 		return map( customPostTypes, function( postType ) {
 			return {
 				name: postType.name,
-				label: get( postType.labels, 'menu_name', postType.label ),
+				label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
 				className: postType.name,
 				config: 'manage/custom-post-types',
 				queryable: postType.api_queryable,

@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import localize from 'lib/mixins/i18n/localize';
+import { decodeEntities } from 'lib/formatting';
 import { getEditedPost } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -21,7 +22,7 @@ function EditorActionBarViewLabel( { translate, siteId, typeSlug, type } ) {
 	} else if ( 'post' === typeSlug ) {
 		label = translate( 'View post' );
 	} else if ( type ) {
-		label = type.labels.view_item;
+		label = decodeEntities( type.labels.view_item );
 	} else {
 		label = translate( 'View', { context: 'verb' } );
 	}
