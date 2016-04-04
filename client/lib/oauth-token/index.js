@@ -2,6 +2,7 @@
  * External dependencies
  */
 import cookie from 'cookie';
+import store from 'store';
 
 /**
  * Module variables
@@ -14,6 +15,12 @@ export function getToken() {
 
 	if ( typeof cookies[TOKEN_NAME] !== 'undefined' ) {
 		return cookies[TOKEN_NAME];
+	}
+
+	const token = store.get( 'wpcom_token' );
+
+	if ( token ) {
+		return token;
 	}
 
 	return false;

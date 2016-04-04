@@ -308,8 +308,6 @@ function reduxStoreReady( reduxStore ) {
 		//page( '*', require( 'auth/controller' ).checkToken );
 	}
 
-	console.log(config.isEnabled('oauth'));
-
 	// Load the application modules for the various sections and features
 	sections.load();
 
