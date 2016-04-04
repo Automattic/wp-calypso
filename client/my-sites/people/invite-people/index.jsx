@@ -309,7 +309,9 @@ const InvitePeople = React.createClass( {
 		return (
 			<Main>
 				<SidebarNavigation />
-				<HeaderCake isCompact onClick={ this.goBack }/>
+				<HeaderCake isCompact onClick={ this.goBack }>
+					{ this.translate( 'Invite People' ) }
+				</HeaderCake>
 				<Card>
 					<form onSubmit={ this.submitForm } >
 						<FormFieldset>
