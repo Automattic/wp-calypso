@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 import { connect } from 'react-redux';
 import each from 'lodash/each';
 import pick from 'lodash/pick';
@@ -9,17 +9,17 @@ import pick from 'lodash/pick';
 /**
  * Internal dependencies
  */
-var formBase = require( './form-base' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
-	config = require( 'config' ),
-	PressThisLink = require( './press-this-link' ),
-	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
-	FormSelect = require( 'components/forms/form-select' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	SectionHeader = require( 'components/section-header' ),
-	Card = require( 'components/card' ),
-	Button = require( 'components/button' );
+import formBase from './form-base';
+import protectForm from 'lib/mixins/protect-form';
+import config from 'config';
+import PressThisLink from './press-this-link';
+import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
+import FormSelect from 'components/forms/form-select';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import SectionHeader from 'components/section-header';
+import Card from 'components/card';
+import Button from 'components/button';
 import { requestPostTypes } from 'state/post-types/actions';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
 
