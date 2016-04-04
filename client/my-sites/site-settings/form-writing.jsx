@@ -2,6 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' );
+import each from 'lodash/each';
+import pick from 'lodash/pick';
 
 /**
  * Internal dependencies
@@ -17,6 +19,7 @@ var formBase = require( './form-base' ),
 	SectionHeader = require( 'components/section-header' ),
 	Card = require( 'components/card' ),
 	Button = require( 'components/button' );
+import CustomPostTypeFieldset from './custom-post-types-fieldset';
 
 module.exports = React.createClass( {
 
@@ -28,7 +31,9 @@ module.exports = React.createClass( {
 		var writingAttributes = [
 				'default_category',
 				'post_categories',
-				'default_post_format'
+				'default_post_format',
+				'jetpack_testimonial',
+				'jetpack_portfolio'
 			],
 			settings = {};
 
@@ -52,6 +57,16 @@ module.exports = React.createClass( {
 			post_categories: [],
 			default_post_format: '',
 		} );
+	},
+
+	setCustomPostTypeSetting( revision ) {
+		this.setState( revision );
+
+		each( revision, ( value, key ) => {
+			this.linkState( key ).requestChange( value );
+		} );
+
+		this.markChanged();
 	},
 
 	render: function() {
@@ -102,6 +117,13 @@ module.exports = React.createClass( {
 							<option value="audio">{ this.translate( 'Audio', { context: 'Post format' } ) }</option>
 						</FormSelect>
 					</FormFieldset>
+
+					<CustomPostTypeFieldset
+						requestingSettings={ this.state.fetchingSettings }
+						value={ pick( this.state, 'jetpack_testimonial', 'jetpack_portfolio' ) }
+						onChange={ this.setCustomPostTypeSetting }
+						recordEvent={ this.recordEvent }
+						className="has-divider is-top-only" />
 
 					{ config.isEnabled( 'press-this' ) &&
 						<FormFieldset className="has-divider is-top-only">
