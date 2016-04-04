@@ -10,12 +10,11 @@ import { bindActionCreators } from 'redux';
  */
 const MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' ),
 	EditorMediaModal = require( 'post-editor/media-modal' ),
-	EditorDrawerWell = require( 'post-editor/editor-drawer-well' ),
 	PostActions = require( 'lib/posts/actions' ),
 	PostUtils = require( 'lib/posts/utils' ),
 	stats = require( 'lib/posts/stats' ),
-	AccordionSection = require( 'components/accordion/section' ),
 	EditorFeaturedImagePreviewContainer = require( './preview-container' );
+import Button from 'components/button';
 import {
 	setFeaturedImage,
 	removeFeaturedImage
@@ -28,15 +27,17 @@ const EditorFeaturedImage = React.createClass( {
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
 		setFeaturedImage: React.PropTypes.func,
-		removeFeaturedImage: React.PropTypes.func
+		removeFeaturedImage: React.PropTypes.func,
+		selecting: React.PropTypes.bool,
+		onImageSelected: React.PropTypes.func
 	},
 
 	getDefaultProps: function() {
 		return {
-			editable: false,
 			maxWidth: 450,
 			setFeaturedImage: () => {},
-			removeFeaturedImage: () => {}
+			removeFeaturedImage: () => {},
+			onImageSelected: () => {}
 		};
 	},
 
@@ -54,6 +55,7 @@ const EditorFeaturedImage = React.createClass( {
 
 	setImage: function( items ) {
 		this.toggleMediaModal( 'hide' );
+		this.props.onImageSelected();
 
 		if ( ! items || ! items.length ) {
 			return;
@@ -70,18 +72,6 @@ const EditorFeaturedImage = React.createClass( {
 		stats.recordEvent( 'Featured image set' );
 	},
 
-	removeImage: function() {
-		this.props.removeFeaturedImage();
-
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		PostActions.edit( {
-			featured_image: ''
-		} );
-
-		stats.recordStat( 'featured_image_removed' );
-		stats.recordEvent( 'Featured image removed' );
-	},
-
 	renderMediaModal: function() {
 		if ( ! this.props.site ) {
 			return;
@@ -90,7 +80,7 @@ const EditorFeaturedImage = React.createClass( {
 		return (
 			<MediaLibrarySelectedData siteId={ this.props.site.ID }>
 				<EditorMediaModal
-					visible={ this.state.isSelecting }
+					visible={ this.props.selecting || this.state.isSelecting }
 					onClose={ this.setImage }
 					site={ this.props.site }
 					labels={ { confirm: this.translate( 'Set Featured Image' ) } }
@@ -125,25 +115,14 @@ const EditorFeaturedImage = React.createClass( {
 			'is-assigned': !! PostUtils.getFeaturedImageId( this.props.post )
 		} );
 
-		if ( this.props.editable ) {
-			return (
-				<AccordionSection className={ classes }>
-					{ this.renderMediaModal() }
-					<EditorDrawerWell
-						icon="image"
-						label={ this.translate( 'Set Featured Image' ) }
-						onClick={ () => this.toggleMediaModal( 'show' ) }
-						onRemove={ this.removeImage }>
-						{ this.renderCurrentImage() }
-					</EditorDrawerWell>
-				</AccordionSection>
-			);
-		}
-
 		return (
-			<div className={ classes }>
+			<Button
+				onClick={ () => this.toggleMediaModal( 'show' ) }
+				borderless
+				className={ classes }>
+				{ this.renderMediaModal() }
 				{ this.renderCurrentImage() }
-			</div>
+			</Button>
 		);
 	}
 } );
