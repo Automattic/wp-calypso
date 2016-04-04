@@ -107,7 +107,7 @@ export default {
 
 		recordPageView(
 			paths.confirmCancelDomain(),
-			'Confirm Cancel Purchase'
+			'Confirm Cancel Domain'
 		);
 
 		sites.setSelectedSite( context.params.site );
