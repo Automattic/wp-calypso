@@ -43,8 +43,7 @@ export default React.createClass( {
 		site: React.PropTypes.object,
 		user: React.PropTypes.object,
 		userUtils: React.PropTypes.object,
-		type: React.PropTypes.string,
-		setDate: React.PropTypes.func
+		type: React.PropTypes.string
 	},
 
 	mixins: [ PureRenderMixin ],
@@ -362,6 +361,7 @@ export default React.createClass( {
 					<div className="editor-ground-control__publish-combo">
 						<EditorPublishButton
 							{ ...this.props }
+							needsVerification={ this.state.needsVerification }
 							tabIndex={ 5 }
 						/>
 						{ siteUtils.userCan( 'publish_posts', this.props.site ) &&
