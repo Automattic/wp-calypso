@@ -150,6 +150,7 @@ const EditorLocation = React.createClass( {
 				<EditorDrawerWell
 					icon="location"
 					label={ buttonText }
+					empty={ ! this.props.coordinates }
 					onClick={ this.geolocate }
 					onRemove={ this.clear }
 					disabled={ this.state.locating }>
