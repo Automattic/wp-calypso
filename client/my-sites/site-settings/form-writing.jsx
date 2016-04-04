@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' );
+import { connect } from 'react-redux';
 import each from 'lodash/each';
 import pick from 'lodash/pick';
 
@@ -19,12 +20,10 @@ var formBase = require( './form-base' ),
 	SectionHeader = require( 'components/section-header' ),
 	Card = require( 'components/card' ),
 	Button = require( 'components/button' );
+import { requestPostTypes } from 'state/post-types/actions';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
 
-module.exports = React.createClass( {
-
-	displayName: 'SiteSettingsFormWriting',
-
+const SiteSettingsFormWriting = React.createClass( {
 	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	getSettingsFromSite: function( site ) {
@@ -57,6 +56,14 @@ module.exports = React.createClass( {
 			post_categories: [],
 			default_post_format: '',
 		} );
+	},
+
+	onSaveComplete() {
+		if ( ! this.props.site ) {
+			return;
+		}
+
+		this.props.requestPostTypes( this.props.site.ID );
 	},
 
 	setCustomPostTypeSetting( revision ) {
@@ -150,3 +157,9 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect( null, {
+	requestPostTypes
+}, null, {
+	pure: false
+} )( SiteSettingsFormWriting );
