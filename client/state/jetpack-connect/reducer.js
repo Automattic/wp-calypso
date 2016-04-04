@@ -11,6 +11,7 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
+	JETPACK_CONNECT_REDIRECT,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -35,6 +36,11 @@ export function jetpackConnectSite( state = {}, action ) {
 		case JETPACK_CONNECT_DISMISS_URL_STATUS:
 			if ( action.url === state.url ) {
 				return Object.assign( {}, state, { isDismissed: true } );
+			}
+			return state;
+		case JETPACK_CONNECT_REDIRECT:
+			if ( action.url === state.url ) {
+				return Object.assign( {}, state, { isRedirecting: true } );
 			}
 			return state;
 	}

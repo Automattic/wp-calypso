@@ -15,7 +15,8 @@ import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
-	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE
+	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
+	JETPACK_CONNECT_REDIRECT
 } from 'state/action-types';
 
 /**
@@ -63,7 +64,7 @@ export default {
 					data: data ? Object.assign.apply( Object, data ) : null,
 					error: error
 				} );
-				if( ! error ) {
+				if ( ! error ) {
 					wpcom.undocumented().storeJetpackConnectUrl( url );
 				}
 			} )
@@ -79,10 +80,22 @@ export default {
 		}
 	},
 	goToRemoteAuth( url ) {
-		window.location = url + authURL;
+		return ( dispatch ) => {
+			dispatch( {
+				type: JETPACK_CONNECT_REDIRECT,
+				url: url
+			} );
+			window.location = url + authURL;
+		};
 	},
 	goToPluginInstall( url ) {
-		window.location = url + installURL;
+		return ( dispatch ) => {
+			dispatch( {
+				type: JETPACK_CONNECT_REDIRECT,
+				url: url
+			} );
+			window.location = url + installURL;
+		};
 	},
 	createAccount( userData ) {
 		return ( dispatch ) => {
