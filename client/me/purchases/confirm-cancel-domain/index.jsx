@@ -17,6 +17,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
+import { isDomainRegistration } from 'lib/products-values';
 import { getPurchase, goToCancelPurchase, recordPageView } from '../utils';
 import { getName as getDomainName } from 'lib/purchases';
 import Main from 'components/main';
@@ -207,8 +208,13 @@ const ConfirmCancelDomain = React.createClass( {
 				selectedSite={ this.props.selectedSite } />;
 		}
 
-		const purchase = getPurchase( this.props ),
-			domain = getDomainName( purchase ),
+		const purchase = getPurchase( this.props );
+
+		if ( ! isDomainRegistration( purchase ) ) {
+			return;
+		}
+
+		const domain = getDomainName( purchase ),
 			selectedReason = this.state.selectedReason;
 
 		return (
