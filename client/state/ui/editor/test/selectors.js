@@ -184,5 +184,24 @@ describe( 'selectors', () => {
 
 			expect( path ).to.equal( '/edit/jetpack-portfolio/example.wordpress.com' );
 		} );
+
+		it( 'should allow overriding the fallback post type for unknown post', () => {
+			const path = getEditorPath( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.wordpress.com'
+						}
+					}
+				},
+				posts: {
+					items: {},
+					edits: {}
+				}
+			}, 2916284, null, 'jetpack-portfolio' );
+
+			expect( path ).to.equal( '/edit/jetpack-portfolio/example.wordpress.com' );
+		} );
 	} );
 } );
