@@ -85,7 +85,7 @@ export default React.createClass( {
 		if ( ! summary && dataList.response.viewAll ) {
 			viewSummary = (
 				<div key="view-all" className="module-expand">
-					<a href="#" onClick={ this.viewAllHandler }>{ this.translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }<span className="right"></span></a>
+					<a href={ this.getHref() }>{ this.translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }<span className="right"></span></a>
 				</div>
 			);
 		}
