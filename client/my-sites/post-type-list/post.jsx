@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 
 /**
@@ -15,9 +16,11 @@ import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import resizeImageUrl from 'lib/resize-image-url';
 
-function PostTypePost( { post, editUrl } ) {
+export function PostTypeListPost( { post, editUrl, className } ) {
+	const classes = classnames( 'post-type-list__post', className )
+
 	return (
-		<Card compact className="post-type-list__post">
+		<Card compact className={ classes }>
 			<div className="post-type-list__post-detail">
 				{ post.featured_image && (
 					<div className="post-type-list__post-thumbnail-wrapper">
@@ -47,9 +50,10 @@ function PostTypePost( { post, editUrl } ) {
 	);
 }
 
-PostTypePost.propTypes = {
-	globalId: PropTypes.string.isRequired,
-	post: PropTypes.object
+PostTypeListPost.propTypes = {
+	globalId: PropTypes.string,
+	post: PropTypes.object,
+	className: PropTypes.string
 };
 
 export default connect( ( state, ownProps ) => {
@@ -59,4 +63,4 @@ export default connect( ( state, ownProps ) => {
 		post,
 		editUrl: getEditorPath( state, state.ui.selectedSiteId, post.ID )
 	};
-} )( PostTypePost );
+} )( PostTypeListPost );
