@@ -157,6 +157,9 @@
 		"form-state": {
 			"test": [ "index" ]
 		},
+		"formatting": {
+			"test": [ "index" ]
+		},
 		"geocoding": {
 			"test": [ "index" ]
 		},
