@@ -80,7 +80,7 @@
 
 .translator-invitation__actions {
 	flex-grow: 100%;
-	> .button:last-child {
+	> :last-child {
 		margin-right: 0;
 	}
 }
