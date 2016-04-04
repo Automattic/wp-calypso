@@ -90,6 +90,7 @@ module.exports = {
 
 		// Fetch user and redirect to /sites on success.
 		const user = userFactory();
+		user.fetching = false;
 		user.fetch();
 		user.on( 'change', function() {
 			setTimeout( function() {
