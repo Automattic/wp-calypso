@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
+import sinon from 'sinon';
 import cloneDeep from 'lodash/cloneDeep';
 import forEach from 'lodash/forEach';
 
@@ -13,6 +14,8 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'SitesList', () => {
 	let SitesList, Site, data;
+	let sitesList, originalData, initializedSites;
+
 	useMockery();
 	useFakeDom();
 
@@ -22,16 +25,14 @@ describe( 'SitesList', () => {
 		data = require( './fixtures/data' );
 	} );
 
+	beforeEach( () => {
+		originalData = cloneDeep( data.original );
+		sitesList = SitesList();
+		sitesList.initialize( originalData );
+		initializedSites = sitesList.get();
+	} );
+
 	describe( 'initialization', () => {
-		let sitesList, originalData, initializedSites;
-
-		beforeEach( () => {
-			originalData = cloneDeep( data.original );
-			sitesList = SitesList();
-			sitesList.initialize( originalData );
-			initializedSites = sitesList.get();
-		} );
-
 		it( 'should create the correct number of sites', () => {
 			assert.equal( initializedSites.length, originalData.length );
 		} );
@@ -43,8 +44,8 @@ describe( 'SitesList', () => {
 		} );
 
 		it( 'should set attributes properly', () => {
-			let site = initializedSites[ 0 ];
-			let origSite = originalData[ 0 ];
+			const site = initializedSites[ 0 ];
+			const origSite = originalData[ 0 ];
 
 			forEach( origSite, ( value, prop ) => {
 				assert.deepEqual( value, site[ prop ] );
@@ -59,18 +60,16 @@ describe( 'SitesList', () => {
 	} );
 
 	describe( 'updating', () => {
-		let sitesList, originalData, updatedData, originalList;
+		let updatedData, originalList;
 
-		beforeEach( () => {
-			originalData = cloneDeep( data.original );
+		before( () => {
 			updatedData = cloneDeep( data.updated );
-			sitesList = SitesList();
 			originalList = sitesList.initialize( originalData );
 		} );
 
 		it( 'updating should not create new Site instances', () => {
 			sitesList.update( updatedData );
-			let updatedList = sitesList.get();
+			const updatedList = sitesList.get();
 
 			forEach( originalList, ( site, index ) => {
 				assert.strictEqual( site, updatedList[ index ] );
@@ -79,9 +78,8 @@ describe( 'SitesList', () => {
 
 		it( 'should update attributes properly', () => {
 			sitesList.update( updatedData );
-
-			let site = sitesList.get()[ 0 ];
-			let updatedSite = updatedData[ 0 ];
+			const site = sitesList.get()[ 0 ];
+			const updatedSite = updatedData[ 0 ];
 
 			forEach( updatedSite, ( updatedValue, prop ) => {
 				assert.deepEqual( updatedValue, site[ prop ] );
@@ -91,20 +89,15 @@ describe( 'SitesList', () => {
 
 	describe( 'change propagation', () => {
 		it( 'should trigger change when site is updated', () => {
-			let sitesList = SitesList();
-			let called = false;
-			let originalData = cloneDeep( data.original );
-			let siteId = originalData[0].ID;
-			let site;
+			const siteId = originalData[0].ID;
+			const changeCallback = sinon.spy();
 
 			sitesList.initialize( cloneDeep( data.original ) );
-			sitesList.once( 'change', () => {
-				called = true;
-			} );
+			sitesList.once( 'change', changeCallback );
 
-			site = sitesList.getSite( siteId );
+			const site = sitesList.getSite( siteId );
 			site.set( { description: 'Calypso rocks!' } );
-			assert.isTrue( called );
+			assert.isTrue( changeCallback.called );
 		} );
 	} );
 } );

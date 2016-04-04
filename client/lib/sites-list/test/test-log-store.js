@@ -3,15 +3,8 @@
  */
 import { assert } from 'chai';
 
-/**
- * Internal dependencies
- */
-import useMockery from 'test/helpers/use-mockery';
-
 describe( 'Sites Log Store', () => {
 	let Dispatcher, LogStore, actions;
-
-	useMockery();
 
 	before( () => {
 		Dispatcher = require( 'dispatcher' );

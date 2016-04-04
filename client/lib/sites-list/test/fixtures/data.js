@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep';
 
-export let original = [
+export const original = [
 	{
 		'ID': 77203074,
 		'name': 'Just You Wait',
@@ -259,7 +259,7 @@ export let original = [
 	}
 ];
 
-export let updated = cloneDeep( original );
+export const updated = cloneDeep( original );
 
 updated[0].name = 'Checkout this new name';
 

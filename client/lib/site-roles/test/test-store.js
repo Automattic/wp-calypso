@@ -34,7 +34,7 @@ describe( 'Viewers Store', () => {
 
 	describe( 'Get Roles', () => {
 		it( 'Should return empty object when there are no roles', () => {
-			let roles = RolesStore.getRoles( siteId );
+			const roles = RolesStore.getRoles( siteId );
 
 			assert.isObject( roles );
 			assert.lengthOf( Object.keys( roles ), 0, 'roles is empty' );
@@ -42,7 +42,7 @@ describe( 'Viewers Store', () => {
 
 		it( 'Should return an object of role objects when there are roles', () => {
 			Dispatcher.handleServerAction( actions.fetchedRoles );
-			let roles = RolesStore.getRoles( siteId );
+			const roles = RolesStore.getRoles( siteId );
 
 			assert.isObject( roles );
 			assert.notDeepEqual( Object.keys( roles ), [], 'roles is not empty' );
