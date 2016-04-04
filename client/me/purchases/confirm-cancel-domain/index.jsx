@@ -19,7 +19,7 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
 import { isDomainRegistration } from 'lib/products-values';
-import { getPurchase, goToCancelPurchase, recordPageView } from '../utils';
+import { getPurchase, goToCancelPurchase, isDataLoading, recordPageView } from '../utils';
 import { getName as getDomainName } from 'lib/purchases';
 import Main from 'components/main';
 import notices from 'notices';
@@ -53,8 +53,18 @@ const ConfirmCancelDomain = React.createClass( {
 		recordPageView( 'confirm_cancel_domain', this.props );
 	},
 
-	isDataLoading() {
-		return ( ! this.props.selectedSite || ! this.props.selectedPurchase.hasLoadedFromServer );
+	componentDidMount() {
+		this.ensurePurchaseIsADomainRegistration( this.props );
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		this.ensurePurchaseIsADomainRegistration( nextProps );
+	},
+
+	ensurePurchaseIsADomainRegistration( props ) {
+		if ( ! isDataLoading( props ) && ! isDomainRegistration( getPurchase( props ) ) ) {
+			page.redirect( paths.list() );
+		}
 	},
 
 	isValidReasonToCancel() {
@@ -201,19 +211,14 @@ const ConfirmCancelDomain = React.createClass( {
 	},
 
 	render() {
-		if ( this.isDataLoading() ) {
+		if ( isDataLoading( this.props ) ) {
 			return <ConfirmCancelDomainLoadingPlaceholder
 				purchaseId={ this.props.purchaseId }
 				selectedSite={ this.props.selectedSite } />;
 		}
 
-		const purchase = getPurchase( this.props );
-
-		if ( ! isDomainRegistration( purchase ) ) {
-			return;
-		}
-
-		const domain = getDomainName( purchase ),
+		const purchase = getPurchase( this.props ),
+			domain = getDomainName( purchase ),
 			selectedReason = this.state.selectedReason;
 
 		return (
