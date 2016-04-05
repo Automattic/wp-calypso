@@ -215,18 +215,16 @@ module.exports = {
 
 	feedDiscovery: function( context, next ) {
 		var FeedStore = require( 'lib/feed-store' ),
-			FeedStoreActions = require( 'lib/feed-store/actions' ),
-			ActionType = require( 'lib/feed-store/constants' ).action;
+			FeedStoreActions = require( 'lib/feed-store/actions' );
 
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
 			FeedStoreActions.discover( context.params.feed_id );
-			FeedStore.on('change', function() {
+			FeedStore.on( 'change', function() {
 				var feedId = FeedStore.getByUrl( context.params.feed_id );
 				if ( feedId ) {
 					page.redirect( `/read/feeds/${feedId}` );
 				}
-			});
-
+			} );
 		} else {
 			next();
 		}
