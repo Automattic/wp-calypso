@@ -18,8 +18,8 @@ function cancelPurchase( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/cancel';
 }
 
-function confirmCancelPurchase( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/confirm-cancel';
+function confirmCancelDomain( siteName, purchaseId ) {
+	return managePurchase( siteName, purchaseId ) + '/confirm-cancel-domain';
 }
 
 function cancelPrivateRegistration( siteName, purchaseId ) {
@@ -41,7 +41,7 @@ function editPaymentMethod( siteName, purchaseId ) {
 export default {
 	cancelPrivateRegistration,
 	cancelPurchase,
-	confirmCancelPurchase,
+	confirmCancelDomain,
 	editCardDetails,
 	editPaymentMethod,
 	editSpecificCardDetails,

@@ -56,6 +56,7 @@ export default {
 	SUPPORT_ROOT: `${root}/`,
 	TRANSFER_DOMAIN_REGISTRATION: `${root}/transfer-domain-registration`,
 	TWITTER_TIMELINE_WIDGET: `${root}/widgets/twitter-timeline-widget`,
+	UPDATE_NAMESERVERS: `${root}/domains/domain-management/#update-nameservers`,
 	USERS: `${root}/category/users`,
 	USER_ROLES: `${root}/user-roles`,
 	VIDEOS: `${root}/videos`
