@@ -1,96 +1,53 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	shallowEqual = require( 'react-pure-render/shallowEqual' ),
-	config = require( 'config' );
+import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
-var FollowingStream = require( 'reader/following-stream' ),
-	EmptyContent = require( './empty' ),
-	ReaderLists = require( 'lib/reader-lists/lists' ),
-	ReaderListActions = require( 'lib/reader-lists/actions' ),
-	ReaderListSubscriptions = require( 'lib/reader-lists/subscriptions' ),
-	StreamHeader = require( 'reader/stream-header' ),
-	stats = require( 'reader/stats' );
+import FollowingStream from 'reader/following-stream';
+import EmptyContent from './empty';
+import StreamHeader from 'reader/stream-header';
+import { followList, unfollowList } from 'state/reader/lists/actions';
+import { getListByOwnerAndSlug, isSubscribedByOwnerAndSlug } from 'state/reader/lists/selectors';
+import QueryReaderList from 'components/data/query-reader-list';
 
-var FeedStream = React.createClass( {
+const stats = require( 'reader/stats' );
 
-	getInitialState: function() {
-		return {
-			title: this.getTitle(),
-			subscribed: this.isSubscribed()
-		};
-	},
+const ListStream = React.createClass( {
 
-	componentDidMount: function() {
-		ReaderLists.on( 'change', this.updateState );
-		ReaderListSubscriptions.on( 'change', this.updateState );
-	},
+	toggleFollowing( isFollowRequested ) {
+		const list = this.props.list;
 
-	componentWillUnmount: function() {
-		ReaderLists.off( 'change', this.updateState );
-		ReaderListSubscriptions.off( 'change', this.updateState );
-	},
-
-	componentWillReceiveProps: function( nextProps ) {
-		if ( ! shallowEqual( nextProps.list, this.props.list ) ) {
-			this.updateState( nextProps );
+		if ( isFollowRequested ) {
+			this.props.followList( list.owner, list.slug );
+		} else {
+			this.props.unfollowList( list.owner, list.slug );
 		}
-	},
 
-	updateState: function( props ) {
-		props = props || this.props;
-		let newState = {
-			title: this.getTitle( props ),
-			subscribed: this.isSubscribed( props )
-		};
-		if ( newState.title !== this.state.title || newState.subscribed !== this.state.subscribed ) {
-			this.setState( newState );
-		}
-	},
-
-	getTitle: function( props ) {
-		props = props || this.props;
-		let list = ReaderLists.get( props.list.owner, props.list.slug );
-		if ( ! list ) {
-			ReaderListActions.fetchList( props.list.owner, props.list.slug );
-			return this.translate( 'Loading List' );
-		}
-		return list.title || list.slug;
-	},
-
-	isSubscribed: function( props ) {
-		props = props || this.props;
-		let list = ReaderLists.get( props.list.owner, props.list.slug );
-		if ( ! list ) {
-			return false;
-		}
-		return ReaderListSubscriptions.isSubscribed( list.owner, list.slug );
-	},
-
-	toggleFollowing: function( isFollowing ) {
-		var list = ReaderLists.get( this.props.list.owner, this.props.list.slug );
-		ReaderListActions[ isFollowing ? 'follow' : 'unfollow' ]( list.owner, list.slug );
-		stats.recordAction( isFollowing ? 'followed_list' : 'unfollowed_list' );
-		stats.recordGaEvent( isFollowing ? 'Clicked Follow List' : 'Clicked Unfollow List', this.props.list.owner + ':' + this.props.list.slug );
-		stats.recordTrack( isFollowing ? 'calypso_reader_reader_list_followed' : 'calypso_reader_reader_list_unfollowed', {
+		stats.recordAction( isFollowRequested ? 'followed_list' : 'unfollowed_list' );
+		stats.recordGaEvent( isFollowRequested ? 'Clicked Follow List' : 'Clicked Unfollow List', list.owner + ':' + list.slug );
+		stats.recordTrack( isFollowRequested ? 'calypso_reader_reader_list_followed' : 'calypso_reader_reader_list_unfollowed', {
 			list_owner: list.owner,
 			list_slug: list.slug
 		} );
 	},
 
-	render: function() {
-		var list = ReaderLists.get( this.props.list.owner, this.props.list.slug ),
+	render() {
+		var list = this.props.list,
 			shouldShowFollow = ( list && ! list.is_owner ),
 			shouldShowEdit = ! shouldShowFollow,
 			editUrl = null,
 			emptyContent = ( <EmptyContent /> ),
-			description;
+			title = this.translate( 'Loading list' );
 
 		if ( list ) {
+			title = list.title;
+
 			editUrl = `https://wordpress.com/read/list/${ list.owner }/${ list.slug }/edit`;
 
 			if ( config.isEnabled( 'reader/list-management' ) ) {
@@ -99,18 +56,19 @@ var FeedStream = React.createClass( {
 		}
 
 		if ( this.props.setPageTitle ) {
-			this.props.setPageTitle( this.state.title );
+			this.props.setPageTitle( title );
 		}
 
 		return (
-			<FollowingStream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ shouldShowFollow }>
+			<FollowingStream { ...this.props } store={ this.props.postStore } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ shouldShowFollow }>
+				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<StreamHeader
 					isPlaceholder={ ! list }
 					icon={ <svg className="gridicon gridicon__list" height="32" width="32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M9 19h10v-2H9v2zm0-6h10v-2H9v2zm0-8v2h10V5H9zm-3-.5c-.828 0-1.5.672-1.5 1.5S5.172 7.5 6 7.5 7.5 6.828 7.5 6 6.828 4.5 6 4.5zm0 6c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5zm0 6c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5z"/></g></svg> }
-					title={ this.state.title }
+					title={ title }
 					description={ list && list.description }
 					showFollow={ shouldShowFollow }
-					following={ this.state.subscribed }
+					following={ this.props.isSubscribed }
 					onFollowToggle={ this.toggleFollowing }
 					showEdit={ shouldShowEdit }
 					editUrl={ editUrl } />
@@ -120,4 +78,19 @@ var FeedStream = React.createClass( {
 
 } );
 
-module.exports = FeedStream;
+export default connect(
+	( state, ownProps ) => {
+		const owner = encodeURIComponent( ownProps.owner );
+		const slug = encodeURIComponent( ownProps.slug );
+		return {
+			list: getListByOwnerAndSlug( state, owner, slug ),
+			isSubscribed: isSubscribedByOwnerAndSlug( state, owner, slug )
+		};
+	},
+	( dispatch ) => {
+		return bindActionCreators( {
+			followList,
+			unfollowList
+		}, dispatch );
+	}
+)( ListStream );
