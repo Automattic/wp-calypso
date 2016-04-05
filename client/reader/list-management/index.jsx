@@ -35,7 +35,7 @@ const ListManagement = React.createClass( {
 	render() {
 		return (
 			<Main className={ 'list-management-' + this.props.tab }>
-				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
+				{ ! this.props.list ? <QueryReaderList owner={ this.props.owner } slug={ this.props.slug } /> : null }
 				<Navigation selected={ this.props.tab } list={ this.props.list } />
 				{ this.renderTabContent() }
 			</Main>
@@ -45,7 +45,8 @@ const ListManagement = React.createClass( {
 
 export default connect(
 	( state, ownProps ) => {
-		const { owner, slug } = ownProps;
+		const owner = encodeURIComponent( ownProps.owner );
+		const slug = encodeURIComponent( ownProps.slug );
 		return {
 			list: getListByOwnerAndSlug( state, owner, slug )
 		};

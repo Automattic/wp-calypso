@@ -1,6 +1,7 @@
 // External dependencies
 import React from 'react';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
 
 // Internal dependencies
@@ -12,17 +13,13 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-import ReaderListsActions from 'lib/reader-lists/actions';
-import ReaderListsStore from 'lib/reader-lists/lists';
-import smartSetState from 'lib/react-smart-set-state';
 import Notice from 'components/notice';
+import { updateListDetails, dismissListNotice, updateTitle, updateDescription } from 'state/reader/lists/actions';
+import { isUpdatedList, hasError } from 'state/reader/lists/selectors';
 
 const debug = debugModule( 'calypso:reader:list-management' );
 
 const ListManagementDescriptionEdit = React.createClass( {
-
-	mixins: [ LinkedStateMixin ],
-	smartSetState: smartSetState,
 
 	propTypes: {
 		list: React.PropTypes.shape( {
@@ -31,28 +28,10 @@ const ListManagementDescriptionEdit = React.createClass( {
 		} )
 	},
 
-	getInitialState() {
-		return Object.assign( {
-			title: '',
-			description: '',
-		}, this.getStateFromStores( this.props ) );
-	},
-
-	getStateFromStores( props ) {
-		const list = props.list;
-		const currentState = {};
-		if ( list && list.ID ) {
-			currentState.ID = list.ID;
-			currentState.title = list.title,
-			currentState.description = list.description;
-			currentState.lastListError = ReaderListsStore.getLastError(),
-			currentState.isUpdated = ReaderListsStore.isUpdated( list.ID );
-		}
-		return currentState;
-	},
-
 	componentWillReceiveProps( nextProps ) {
-		this.smartSetState( this.getStateFromStores( nextProps ) );
+		if ( nextProps.list.ID !== this.props.list.ID ) {
+			this.handleDismissNotice();
+		}
 	},
 
 	componentWillUnmount() {
@@ -60,25 +39,20 @@ const ListManagementDescriptionEdit = React.createClass( {
 	},
 
 	handleFormSubmit() {
-		ReaderListsActions.dismissNotice(
-			this.props.list.ID
-		);
-
-		const params = {
-			ID: this.props.list.ID,
-			owner: this.props.list.owner,
-			slug: this.props.list.slug,
-			title: this.state.title,
-			description: this.state.description
-		};
-
-		ReaderListsActions.update( params );
+		this.handleDismissNotice();
+		this.props.updateListDetails( this.props.list );
 	},
 
 	handleDismissNotice() {
-		ReaderListsActions.dismissNotice(
-			this.props.list.ID
-		);
+		this.props.dismissListNotice( this.props.list.ID );
+	},
+
+	onTitleChange( event ) {
+		this.props.updateTitle( this.props.list.ID, event.target.value );
+	},
+
+	onDescriptionChange( event ) {
+		this.props.updateDescription( this.props.list.ID, event.target.value );
 	},
 
 	render() {
@@ -87,11 +61,17 @@ const ListManagementDescriptionEdit = React.createClass( {
 		}
 
 		let notice = null;
-		if ( this.state.isUpdated ) {
+		if ( this.props.isUpdatedList ) {
 			notice = <Notice status="is-success" text={ this.translate( 'List details saved successfully.' ) } onDismissClick={ this.handleDismissNotice } />;
 		}
 
-		const isTitleMissing = ! this.state.title || this.state.title.length < 1;
+		if ( this.props.hasError ) {
+			notice = <Notice status="is-error" text={ this.translate( 'Sorry, there was a problem saving your list details.' ) } onDismissClick={ this.handleDismissNotice } />;
+		}
+
+		const isTitleMissing = ! this.props.list.title || this.props.list.title.length < 1;
+
+		debug( this.props );
 
 		return (
 			<div className="list-management-description-edit">
@@ -109,7 +89,8 @@ const ListManagementDescriptionEdit = React.createClass( {
 							required
 							className={ isTitleMissing ? 'is-error' : '' }
 							placeholder=""
-							valueLink={ this.linkState( 'title' ) } />
+							onChange={ this.onTitleChange }
+							value={ this.props.list ? this.props.list.title : '' } />
 						{ isTitleMissing ? <FormInputValidation isError text={ this.translate( 'Title is a required field.' ) } /> : '' }
 					</FormFieldset>
 					<FormFieldset>
@@ -119,7 +100,8 @@ const ListManagementDescriptionEdit = React.createClass( {
 							name="list-description"
 							id="list-description"
 							placeholder=""
-							valueLink={ this.linkState( 'description' ) }></FormTextarea>
+							onChange={ this.onDescriptionChange }
+							value={ this.props.list ? this.props.list.description : '' }></FormTextarea>
 					</FormFieldset>
 
 					<FormButtonsBar>
@@ -131,4 +113,19 @@ const ListManagementDescriptionEdit = React.createClass( {
 	}
 } );
 
-export default ListManagementDescriptionEdit;
+export default connect(
+	( state, ownProps ) => {
+		return {
+			isUpdatedList: isUpdatedList( state, ownProps.list.ID ),
+			hasError: hasError( state, ownProps.list.ID )
+		};
+	},
+	( dispatch ) => {
+		return bindActionCreators( {
+			updateListDetails,
+			dismissListNotice,
+			updateTitle,
+			updateDescription
+		}, dispatch );
+	}
+)( ListManagementDescriptionEdit );

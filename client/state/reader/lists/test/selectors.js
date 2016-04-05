@@ -10,8 +10,10 @@ import {
 	isRequestingList,
 	isRequestingSubscribedLists,
 	getSubscribedLists,
+	isUpdatedList,
 	getListByOwnerAndSlug,
-	isSubscribedByOwnerAndSlug
+	isSubscribedByOwnerAndSlug,
+	hasError
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -112,6 +114,32 @@ describe( 'selectors', () => {
 		} );
 	} );
 
+	describe( '#isUpdatedList()', () => {
+		it( 'should return false if list has not been updated', () => {
+			const isUpdated = isUpdatedList( {
+				reader: {
+					lists: {
+						updatedLists: []
+					}
+				}
+			}, 123 );
+
+			expect( isUpdated ).to.be.false;
+		} );
+
+		it( 'should return true if the list has been updated', () => {
+			const isUpdated = isUpdatedList( {
+				reader: {
+					lists: {
+						updatedLists: [ 123, 456 ]
+					}
+				}
+			}, 123 );
+
+			expect( isUpdated ).to.be.true;
+		} );
+	} );
+
 	describe( '#getListByOwnerAndSlug()', () => {
 		it( 'should return undefined if the list does not exist', () => {
 			const list = getListByOwnerAndSlug( {
@@ -185,6 +213,32 @@ describe( 'selectors', () => {
 			}, 'restapitests', 'bananas' );
 
 			expect( isSubscribed ).to.eql( true );
+		} );
+	} );
+
+	describe( '#hasError()', () => {
+		it( 'should return false if there is no error for the list', () => {
+			const result = hasError( {
+				reader: {
+					lists: {
+						errors: { 123: 400 }
+					}
+				}
+			}, 456 );
+
+			expect( result ).to.be.false;
+		} );
+
+		it( 'should return true if the list has an error', () => {
+			const result = hasError( {
+				reader: {
+					lists: {
+						errors: { 123: 400 }
+					}
+				}
+			}, 123 );
+
+			expect( result ).to.be.true;
 		} );
 	} );
 } );
