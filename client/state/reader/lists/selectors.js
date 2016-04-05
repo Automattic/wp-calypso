@@ -58,12 +58,15 @@ export const getSubscribedLists = createSelector(
  * @return {?Object}        Reader list
  */
 export function getListByOwnerAndSlug( state, owner, slug ) {
-	if ( ! has( state, 'reader.lists.items' ) ) {
+	if ( ! has( state, 'reader.lists.items' ) || ! owner || ! slug ) {
 		return;
 	}
 
+	const preparedOwner = owner.toLowerCase();
+	const preparedSlug = slug.toLowerCase();
+
 	return find( state.reader.lists.items, ( list ) => {
-		return decodeURIComponent( list.owner ) === owner && decodeURIComponent( list.slug ) === slug
+		return list.owner === preparedOwner && list.slug === preparedSlug
 	} );
 }
 
