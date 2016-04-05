@@ -8,9 +8,11 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import toggle from '../mixin-toggle';
 import Geochart from '../geochart';
 import StatsList from '../stats-list';
 import observe from 'lib/mixins/data-observe';
+import skeleton from '../mixin-skeleton';
 import DownloadCsv from '../stats-download-csv';
 import DatePicker from '../stats-date-picker';
 import ErrorPanel from '../stats-error';
@@ -19,6 +21,7 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsListLegend from '../stats-list/legend';
 import Gridicon from 'components/gridicon';
 import SectionHeader from 'components/section-header';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 export default React.createClass( {
 	displayName: 'StatCountries',
@@ -127,6 +130,16 @@ export default React.createClass( {
 								<StatsListLegend value={ this.translate( 'Views' ) } label={ this.translate( 'Country' ) } />
 								<StatsModulePlaceholder isLoading={ isLoading } />
 								<StatsList moduleName={ path } data={ data } />
+								{ this.props.summary && <div className="module-content-text nudge" key="nudge">
+									<UpgradeNudge
+										className="is-full-width"
+										title="Add Google Analytics"
+										message="Upgrade to Premium for Google Analytics integration."
+										event="googleAnalytics-stats-countries"
+										feature="google-analytics"
+										icon="stats"
+									/>
+								</div>  }
 								{ hasError
 									? <ErrorPanel className={ 'network-error' } />
 									: null }
