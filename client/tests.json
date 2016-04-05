@@ -253,6 +253,9 @@
 		"plans-list": {
 			"test": [ "index" ]
 		},
+		"popup-monitor": {
+			"test": [ "index" ]
+		},
 		"post-formats": {
 			"test": [ "actions", "store" ]
 		},
