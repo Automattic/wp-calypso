@@ -64,11 +64,4 @@ export default function() {
 		controller.noSitesMessage,
 		controller.managePurchase
 	);
-
-	page(
-		paths.managePurchaseDestination(),
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.managePurchase
-	);
 };

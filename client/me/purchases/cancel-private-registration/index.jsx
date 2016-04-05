@@ -15,6 +15,7 @@ import HeaderCake from 'components/header-cake';
 import { isDataLoading, goToManagePurchase, recordPageView } from '../utils';
 import { isRefundable } from 'lib/purchases';
 import Main from 'components/main';
+import notices from 'notices';
 import Notice from 'components/notice';
 import paths from '../paths';
 import titles from 'me/purchases/titles';
@@ -47,7 +48,7 @@ const CancelPrivateRegistration = React.createClass( {
 		// We call blur on the cancel button to remove the blue outline that shows up when you click on the button
 		event.target.blur();
 
-		const { id } = this.props.selectedPurchase.data;
+		const { id, meta: domain } = this.props.selectedPurchase.data;
 
 		this.setState( {
 			disabled: true,
@@ -61,7 +62,11 @@ const CancelPrivateRegistration = React.createClass( {
 			} );
 
 			if ( success ) {
-				page( paths.managePurchaseDestination( this.props.selectedSite.slug, id, 'canceled-private-registration' ) );
+				notices.success( this.translate( 'You have successfully canceled private registration for %(domain)s.', {
+					args: { domain }
+				} ), { persistent: true } );
+
+				page( paths.managePurchase( this.props.selectedSite.slug, id ) );
 			}
 		} );
 	},

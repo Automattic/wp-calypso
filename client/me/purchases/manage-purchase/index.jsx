@@ -210,43 +210,6 @@ const ManagePurchase = React.createClass( {
 		}
 	},
 
-	renderPathNotice() {
-		if ( isDataLoading( this.props ) || ! this.props.destinationType ) {
-			return;
-		}
-
-		const purchase = getPurchase( this.props );
-		let text;
-
-		if ( 'thank-you' === this.props.destinationType ) {
-			text = this.translate( '%(purchaseName)s has been renewed and will now auto renew in the future. {{a}}Learn more{{/a}}', {
-				args: {
-					purchaseName: getName( purchase )
-				},
-				components: {
-					a: <a href="https://support.wordpress.com/auto-renewal/" target="_blank" />
-				}
-			} );
-		}
-
-		if ( 'canceled-private-registration' === this.props.destinationType ) {
-			text = this.translate( 'You have successfully canceled private registration for %(domain)s.', {
-				args: {
-					domain: purchase.meta
-				}
-			} );
-		}
-
-		return (
-			<Notice
-				className="manage-purchase__path-notice"
-				showDismiss={ false }
-				status="is-success">
-				{ text }
-			</Notice>
-		);
-	},
-
 	handleRenew() {
 		const purchase = getPurchase( this.props ),
 			renewItem = cartItems.getRenewalItemFromProduct( purchase, {
@@ -673,7 +636,6 @@ const ManagePurchase = React.createClass( {
 
 		return (
 			<span>
-				{ this.renderPathNotice() }
 				<Main className="manage-purchase">
 					<HeaderCake onClick={ goToList }>
 						{ titles.managePurchase }

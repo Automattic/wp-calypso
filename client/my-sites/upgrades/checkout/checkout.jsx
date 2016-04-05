@@ -23,7 +23,9 @@ var analytics = require( 'analytics' ),
 	SecurePaymentForm = require( './secure-payment-form' ),
 	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
 	upgradesActions = require( 'lib/upgrades/actions' ),
-	transactionStepTypes = require( 'lib/store-transactions/step-types' );
+	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
+	notices = require( 'notices' ),
+	supportPaths = require( 'lib/url/support' );
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'cards', 'productsList' ) ],
@@ -141,7 +143,19 @@ const Checkout = React.createClass( {
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			renewalItem = cartItems.getRenewalItems( this.props.cart )[ 0 ];
 
-			return purchasePaths.managePurchaseDestination( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId, 'thank-you' );
+			notices.success(
+				this.translate( '%(productName)s has been renewed and will now auto renew in the future. {{a}}Learn more{{/a}}', {
+					args: {
+						productName: renewalItem.product_name
+					},
+					components: {
+						a: <a href={ supportPaths.AUTO_RENEWAL } target="_blank" />
+					}
+				} ),
+				{ persistent: true }
+			);
+
+			return purchasePaths.managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
 		} else if ( cartItems.hasFreeTrial( this.props.cart ) ) {
 			this.props.clearSitePlans( this.props.sites.getSelectedSite().ID );
 

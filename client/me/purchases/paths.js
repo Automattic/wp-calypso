@@ -10,10 +10,6 @@ function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
 	return list() + `/${ siteName }/${ purchaseId }`;
 }
 
-function managePurchaseDestination( siteName = ':site', purchaseId = ':purchaseId', destinationType = ':destinationType?' ) {
-	return managePurchase( siteName, purchaseId ) + `/${ destinationType }`;
-}
-
 function cancelPurchase( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/cancel';
 }
@@ -47,6 +43,5 @@ export default {
 	editSpecificCardDetails,
 	list,
 	listNotice,
-	managePurchase,
-	managePurchaseDestination
+	managePurchase
 };
