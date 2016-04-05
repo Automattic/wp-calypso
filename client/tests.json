@@ -89,6 +89,9 @@
 		"test": [ "doc" ]
 	},
 	"lib": {
+		"accept": {
+			"test": [ "index" ]
+		},
 		"ads": {
 			"test": [ "stores" ]
 		},
