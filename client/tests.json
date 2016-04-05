@@ -274,6 +274,9 @@
 		"react-pass-to-children": {
 			"test": [ "index" ]
 		},
+		"react-test-env-setup": {
+			"test": [ "index" ]
+		},
 		"reader-comment-email-subscriptions": {
 			"test": [ "index" ]
 		},

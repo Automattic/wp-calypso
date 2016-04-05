@@ -1,22 +1,16 @@
 /**
  * External dependencies
  */
-var jsdom = require( 'jsdom' ).jsdom,
-	expect = require( 'chai' ).expect;
+import { jsdom } from 'jsdom';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var setupEnvironment = require( '../' );
+import setupEnvironment, { cleanup } from '../';
 
-describe( 'react-test-env-setupEnvironment', function() {
-	afterEach( function() {
-		delete global.window;
-		delete global.document;
-		delete global.navigator;
-		delete global.localStorage;
-		delete global.XMLHttpRequest;
-	} );
+describe( 'react-test-env-setup', function() {
+	afterEach( cleanup );
 
 	it( 'should accept an empty set of parameters', function() {
 		setupEnvironment();
