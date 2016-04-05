@@ -38,18 +38,36 @@
 	margin: 0 4px 8px;
 }
 
-.editor-publish-button {
+.editor-ground-control .editor-publish-button {
 	@extend .is-primary;
 
 	border-radius: 4px 0 0 4px;
 	flex-grow: 1;
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
 }
 
 .editor-ground-control__time-button {
-	border-radius: 0 4px 4px 0;
-	padding-left: 8px;
-	padding-right: 8px;
-	margin-left: -1px;
+	@include breakpoint( ">660px" ) {
+		@include is-primary;
+
+		border-radius: 0 4px 4px 0;
+		padding-left: 8px;
+		padding-right: 8px;
+		margin-left: -1px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		width: 100%;
+	}
+}
+
+.editor-ground-control__time-button__label {
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
 }
 
 .editor-ground-control__save.button.is-link,
