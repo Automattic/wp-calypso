@@ -20,18 +20,18 @@ const stats = require( 'reader/stats' );
 
 const ListStream = React.createClass( {
 
-	toggleFollowing( isNotFollowing ) {
+	toggleFollowing( isFollowRequested ) {
 		const list = this.props.list;
 
-		if ( isNotFollowing ) {
+		if ( isFollowRequested ) {
 			this.props.followList( list.owner, list.slug );
 		} else {
 			this.props.unfollowList( list.owner, list.slug );
 		}
 
-		stats.recordAction( isNotFollowing ? 'followed_list' : 'unfollowed_list' );
-		stats.recordGaEvent( isNotFollowing ? 'Clicked Follow List' : 'Clicked Unfollow List', list.owner + ':' + list.slug );
-		stats.recordTrack( isNotFollowing ? 'calypso_reader_reader_list_followed' : 'calypso_reader_reader_list_unfollowed', {
+		stats.recordAction( isFollowRequested ? 'followed_list' : 'unfollowed_list' );
+		stats.recordGaEvent( isFollowRequested ? 'Clicked Follow List' : 'Clicked Unfollow List', list.owner + ':' + list.slug );
+		stats.recordTrack( isFollowRequested ? 'calypso_reader_reader_list_followed' : 'calypso_reader_reader_list_unfollowed', {
 			list_owner: list.owner,
 			list_slug: list.slug
 		} );
