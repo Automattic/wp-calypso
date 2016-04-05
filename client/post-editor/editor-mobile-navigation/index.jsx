@@ -57,22 +57,24 @@ export default React.createClass( {
 
 		return (
 			<div className="editor-mobile-navigation">
-				<Gridicon
-					icon="chevron-left"
-					onClick={ this.props.onClose }
-					className="editor-mobile-navigation__icon" />
-				<Gridicon
-					icon="pencil"
-					onClick={ this.closeSidebar }
-					className={ classnames( 'editor-mobile-navigation__icon', {
-						'is-selected': ! this.state.sidebarOpen
-					} ) } />
-				<Gridicon
-					icon="cog"
-					onClick={ this.openSidebar }
-					className={ classnames( 'editor-mobile-navigation__icon', {
-						'is-selected': this.state.sidebarOpen
-					} ) } />
+				<div className="editor-mobile-navigation__actions">
+					<Gridicon
+						icon="chevron-left"
+						onClick={ this.props.onClose }
+						className="editor-mobile-navigation__icon separator-right" />
+					<Gridicon
+						icon="pencil"
+						onClick={ this.closeSidebar }
+						className={ classnames( 'editor-mobile-navigation__icon', {
+							'is-selected': ! this.state.sidebarOpen
+						} ) } />
+					<Gridicon
+						icon="cog"
+						onClick={ this.openSidebar }
+						className={ classnames( 'editor-mobile-navigation__icon', 'separator-right', {
+							'is-selected': this.state.sidebarOpen
+						} ) } />
+				</div>
 				<EditorPublishButton { ...this.props } />
 			</div>
 		);

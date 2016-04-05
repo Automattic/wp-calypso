@@ -1,19 +1,24 @@
 .editor-mobile-navigation {
 	color: $gray;
 	display: flex;
-	justify-content: flex-start;
-	align-items: flex-start;
-	background-color: $gray-light;
+	justify-content: space-between;
+	align-items: center;
+	background-color: $white;
+	border-bottom: 1px lighten( $gray, 20% ) solid;
 
 	@include breakpoint( ">660px" ) {
 		display: none;
 	}
 }
 
+.editor-mobile-navigation__actions {
+	display: inline;
+	line-height: 0;
+}
+
 .editor-mobile-navigation__icon {
 	cursor: pointer;
-	margin-right: 4px;
-	padding: 8px;
+	padding: 15px;
 
 	&:hover {
 		fill: $gray-dark;
@@ -23,4 +28,12 @@
 		cursor: default;
 		fill: $gray-dark;
 	}
+
+	&.separator-right {
+		border-right: 1px lighten( $gray, 20% ) solid;
+	}
+}
+
+.editor-mobile-navigation .editor-publish-button {
+	margin-right: 12px;
 }
