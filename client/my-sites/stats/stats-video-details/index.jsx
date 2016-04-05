@@ -10,13 +10,10 @@ var React = require( 'react' ),
 var StatsList = require( '../stats-list' ),
 	StatsListLegend = require( '../stats-list/legend' ),
 	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
-	skeleton = require( '../mixin-skeleton' ),
 	Card = require( 'components/card' );
 
 module.exports = React.createClass( {
 	displayName: 'StatModuleVideoDetails',
-
-	mixins: [ skeleton( 'data' ) ],
 
 	data: function( nextProps ) {
 		var props = nextProps || this.props;

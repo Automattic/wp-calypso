@@ -7,8 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var toggle = require( '../mixin-toggle' ),
-	StatsListLegend = require( '../stats-list/legend' ),
+var StatsListLegend = require( '../stats-list/legend' ),
 	StatsModuleSelectDropdown = require( '../stats-module/select-dropdown' ),
 	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
 	StatsList = require( '../stats-list' ),
@@ -21,7 +20,7 @@ var toggle = require( '../mixin-toggle' ),
 module.exports = React.createClass( {
 	displayName: 'StatModuleFollowers',
 
-	mixins: [ toggle( 'Followers' ), observe( 'wpcomFollowersList', 'emailFollowersList' ) ],
+	mixins: [ observe( 'wpcomFollowersList', 'emailFollowersList' ) ],
 
 	data: function( list ) {
 		if ( list && this.props[ list ] ) {

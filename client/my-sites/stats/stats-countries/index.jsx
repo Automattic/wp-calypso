@@ -8,11 +8,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import toggle from '../mixin-toggle';
 import Geochart from '../geochart';
 import StatsList from '../stats-list';
 import observe from 'lib/mixins/data-observe';
-import skeleton from '../mixin-skeleton';
 import DownloadCsv from '../stats-download-csv';
 import DatePicker from '../stats-date-picker';
 import ErrorPanel from '../stats-error';
