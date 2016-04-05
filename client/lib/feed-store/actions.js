@@ -28,7 +28,30 @@ const FeedStoreActions = {
 			error: error,
 			data: data
 		} );
-	}
+	},
+
+	discover: function( feedUrl ) {
+		const key = requestKey( feedUrl );
+
+		if ( inflight.requestInflight( key ) ) {
+			return;
+		}
+
+		wpcom.undocumented().discoverFeed(
+			{ url: feedUrl },
+			inflight.requestTracker( key, FeedStoreActions.receiveFeedDiscover.bind( FeedStoreActions, feedUrl ) )
+		);
+	},
+
+	receiveFeedDiscover: function( feedUrl, error, data ) {
+		Dispatcher.handleServerAction( {
+			type: ActionType.RECEIVE_DISCOVER,
+			feedUrl: feedUrl,
+			error: error,
+			data: data
+		} );
+	},
+
 };
 
 module.exports = FeedStoreActions;

@@ -11,9 +11,14 @@ var ActionType = require( './constants' ).action,
 	decodeEntities = require( 'lib/formatting' ).decodeEntities;
 
 var feeds = {},
+	feedsByUrl = {},
 	FeedStore = {
 		get: function( feedId ) {
 			return feeds[ feedId ];
+		},
+
+		getByUrl: function( feedUrl ) {
+			return feedsByUrl[ feedUrl ];
 		}
 	},
 	FeedRecord = Immutable.Record( { // eslint-disable-line new-cap
@@ -89,6 +94,17 @@ function receiveFeeds( newFeeds ) {
 	} ) );
 }
 
+function discoverFeeds( data, feedUrl ) {
+	if ( typeof data !== 'undefined' ) {
+		data.feeds.map( function( feed ) {
+			if ( feed.feed_ID ) {
+				feedsByUrl[ feedUrl ] = feed.feed_ID;
+				FeedStore.emit( 'change' );
+			}
+		} );
+	}
+}
+
 Emitter( FeedStore ); // eslint-disable-line new-cap
 
 FeedStore.setMaxListeners( 100 );
@@ -110,6 +126,9 @@ FeedStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 		case ActionType.RECEIVE_BULK_UPDATE:
 			receiveFeeds( action.data );
+			break;
+		case ActionType.RECEIVE_DISCOVER:
+			discoverFeeds( action.data, action.feedUrl );
 			break;
 	}
 } );
