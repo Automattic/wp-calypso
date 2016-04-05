@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import map from 'lodash/map';
 import find from 'lodash/find';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -38,7 +39,7 @@ const PostTypeFilter = React.createClass( {
 		const { query, siteSlug, counts } = this.props;
 
 		return map( counts, ( count, status ) => {
-			if ( ! count ) {
+			if ( ! count && ! includes( [ 'publish', 'draft' ], status ) ) {
 				return;
 			}
 
