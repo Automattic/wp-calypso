@@ -136,9 +136,9 @@ const Checkout = React.createClass( {
 		var renewalItem,
 			receiptId = ':receiptId';
 
-		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
-			clearPurchases();
+		clearPurchases();
 
+		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			renewalItem = cartItems.getRenewalItems( this.props.cart )[ 0 ];
 
 			return purchasePaths.managePurchaseDestination( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId, 'thank-you' );
