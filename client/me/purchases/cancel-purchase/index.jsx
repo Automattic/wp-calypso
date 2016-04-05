@@ -18,7 +18,7 @@ import { isDomainRegistration } from 'lib/products-values';
 import Main from 'components/main';
 import paths from '../paths';
 import ProductLink from 'me/purchases/product-link';
-import supportPaths from 'lib/url/support';
+import support from 'lib/url/support';
 import titles from 'me/purchases/titles';
 
 const CancelPurchase = React.createClass( {
@@ -128,7 +128,7 @@ const CancelPurchase = React.createClass( {
 						<strong className="cancel-purchase__support-information">
 							{ this.translate( 'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}', {
 								components: {
-									contactLink: <a href={ supportPaths.CONTACT } />
+									contactLink: <a href={ support.CALYPSO_CONTACT } />
 								}
 							} ) }
 						</strong>

@@ -20,7 +20,7 @@ import analyticsMixin from 'lib/mixins/analytics';
 import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { validateAllFields } from 'lib/domains/email-forwarding';
-import supportUrls from 'lib/url/support';
+import support from 'lib/url/support';
 
 const EmailForwardingAddNew = React.createClass( {
 	propTypes: {
@@ -81,7 +81,7 @@ const EmailForwardingAddNew = React.createClass( {
 					notices.error( error.message || this.translate( 'Failed to add email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 						{
 							components: {
-								contactSupportLink: <a href={ supportUrls.CONTACT }/>
+								contactSupportLink: <a href={ support.CALYPSO_CONTACT }/>
 							}
 						} )
 					);

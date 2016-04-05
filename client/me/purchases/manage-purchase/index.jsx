@@ -44,7 +44,7 @@ import paths from '../paths';
 import PaymentLogo from 'components/payment-logo';
 import ProductLink from 'me/purchases/product-link';
 import RemovePurchase from '../remove-purchase';
-import supportPaths from 'lib/url/support';
+import support from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import VerticalNavItem from 'components/vertical-nav/item';
 import * as upgradesActions from 'lib/upgrades/actions';
@@ -126,7 +126,7 @@ const ManagePurchase = React.createClass( {
 					},
 					components: {
 						strong: <strong />,
-						contactSupportLink: <a href={ supportPaths.CONTACT } />
+						contactSupportLink: <a href={ support.CALYPSO_CONTACT } />
 					}
 				} ) }
 			</div>

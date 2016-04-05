@@ -12,7 +12,7 @@ export default {
 	CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS: `${root}/domains/change-name-servers/#finding-out-your-new-name-server`,
 	COMMENTS: `${root}/category/comments`,
 	COMMUNITY_TRANSLATOR: `${root}/community-translator`,
-	CONTACT: `https://wordpress.com/help/contact`,
+	CALYPSO_CONTACT: `/help/contact`,
 	CUSTOM_DNS: `${root}/domains/custom-dns`,
 	DOMAINS: `${root}/domains`,
 	EMAIL_FORWARDING: `${root}/email-forwarding`,

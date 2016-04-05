@@ -11,7 +11,8 @@ var Notice = require( 'components/notice' ),
 	Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	eventRecorder = require( 'me/event-recorder' );
+	eventRecorder = require( 'me/event-recorder' ),
+	support = require( 'lib/url/support' );
 
 module.exports = React.createClass( {
 
@@ -68,7 +69,7 @@ module.exports = React.createClass( {
 				components: {
 					supportLink: (
 						<a
-							href="https://support.wordpress.com/contact/"
+							href={ support.CALYPSO_CONTACT }
 							onClick={ this.recordClickEvent( 'No Backup Codes Contact Support Link' ) }
 						/>
 					)
