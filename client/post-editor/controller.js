@@ -31,8 +31,8 @@ import {
 } from 'state/ui/editor/post/actions';
 import { setEditorPostId } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
-import { editPost } from 'state/posts/actions';
+import { getEditorPostId, getEditorPath, isEditorNewPost } from 'state/ui/editor/selectors';
+import { editPost, resetPostEdits } from 'state/posts/actions';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -237,4 +237,14 @@ module.exports = {
 		page.redirect( redirectWithParams );
 		return false;
 	},
+
+	resetNewPostEdits( context, next ) {
+		const state = context.store.getState();
+		if ( isEditorNewPost( state ) ) {
+			const siteId = getSelectedSiteId( state );
+			context.store.dispatch( resetPostEdits( siteId ) )
+		}
+
+		next();
+	}
 };
