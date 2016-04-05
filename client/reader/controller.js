@@ -12,7 +12,7 @@ const ReactDom = require( 'react-dom' ),
 /**
  * Internal Dependencies
  */
-const abtest = require( 'lib/abtest' ).abtest,
+const abtest = require( 'lib/abtest' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	route = require( 'lib/route' ),
 	pageNotifier = require( 'lib/route/page-notifier' ),
@@ -34,7 +34,7 @@ import userSettings from 'lib/user-settings';
 // reset it
 let __lastTitle = null;
 const activeAbTests = [
-	'readerShorterFeatures2'
+	// active tests would go here
 ];
 
 function trackPageLoad( path, title, readerView ) {

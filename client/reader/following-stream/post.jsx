@@ -21,7 +21,6 @@ const ReactDom = require( 'react-dom' ),
  * Internal Dependencies
  */
 const
-	abtest = require( 'lib/abtest' ).abtest,
 	Card = require( 'components/card' ),
 	CommentButton = require( 'components/comment-button' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
@@ -129,10 +128,6 @@ const Post = React.createClass( {
 		};
 	},
 
-	componentWillMount: function() {
-		this.maxImageHeightVariaton = abtest( 'readerShorterFeatures2' );
-	},
-
 	componentDidMount: function() {
 		this.updateFeatureSize();
 		this.checkSiteNameForOverflow();
@@ -209,18 +204,6 @@ const Post = React.createClass( {
 			featuredSize = this.getFeaturedSize( maxWidth );
 		}
 
-		let featuredImageClasses = classnames( 'reader__post-featured-image' );
-
-		const maxImageHeight = ( {
-			fifty: '50vh',
-			twentyfive: '25vh',
-			original: null
-		} ) [ this.maxImageHeightVariaton ];
-
-		if ( maxImageHeight ) {
-			featuredImageClasses = classnames( featuredImageClasses, 'is-shorter-abtest' );
-		}
-
 		return useFeaturedEmbed
 			? <div
 					ref="featuredEmbed"
@@ -228,9 +211,8 @@ const Post = React.createClass( {
 					key="featuredVideo"
 					dangerouslySetInnerHTML={ { __html: featuredEmbed.iframe } } />  //eslint-disable-line react/no-danger
 			: <div
-					className={ featuredImageClasses }
-					onClick={ this.handlePermalinkClick }
-					style={ { maxHeight: maxImageHeight } }>
+					className="reader__post-featured-image"
+					onClick={ this.handlePermalinkClick }>
 				{ featuredSize
 					? <img className="reader__post-featured-image-image"
 							ref="featuredImage"

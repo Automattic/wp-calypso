@@ -77,17 +77,6 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
-	readerShorterFeatures2: {
-		datestamp: '20160315',
-		variations: {
-			original: 80,
-			fifty: 10,
-			twentyfive: 10
-		},
-		defaultVariation: 'original',
-		allowAnyLocale: true,
-		allowExistingUsers: true
-	},
 	verticalThemes: {
 		datestamp: '20160324',
 		variations: {
