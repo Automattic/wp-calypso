@@ -30,7 +30,51 @@
 	}
 }
 
-// variables for the guidestours__bullseye
+.guidestours__choice-button-row {
+	button {
+		width: 48%;
+	}
+	button:nth-child(1) {
+		margin-right: 4%;
+	}
+	button.guidestours__secondary-button {
+		background: $gray-light;
+		color: darken( $gray, 20% );
+	}
+}
+
+.guidestours__single-button-row {
+	button {
+		width: 100%;
+	}
+}
+
+.guidestours__external-link,
+.guidestours__bullseye-instructions {
+	p {
+		color: darken( $gray, 10 );
+		margin-bottom: 0;
+		font-style: italic;
+	}
+
+	.gridicon {
+		position: relative;
+		top: 7px;
+	}
+
+	.external-link {
+		border-top: 1px solid $gray-light;
+		display: block;
+		padding-top: 8px;
+		margin-top: 16px;
+	}
+}
+
+.guidestours__bullseye-instructions {
+	margin-top: -7px;
+}
+
+// the bullseye used for showing an action step's target
 $animation-speed: 2s;
 $size: 10px;
 $zoom-scale: 5; // the multiplier determining the size of the animated rings
@@ -85,46 +129,33 @@ $zoom-scale: 5; // the multiplier determining the size of the animated rings
 	animation-delay: #{ $animation-speed / 4 };
 }
 
-.guidestours__choice-button-row {
-	button {
-		width: 48%;
+// the overlay with animation present when showing a bullseye
+@keyframes guidestours__overlay-animation {
+	0%, 100% {
+		opacity: 0.4;
 	}
-	button:nth-child(1) {
-		margin-right: 4%;
-	}
-	button.guidestours__secondary-button {
-		background: $gray-light;
-		color: darken( $gray, 20% );
+
+	50% {
+		opacity: 0.7
 	}
 }
 
-.guidestours__single-button-row {
-	button {
-		width: 100%;
-	}
+.guidestours__overlay,
+.guidestours__overlay:hover,
+.guidestours__overlay:focus,
+.guidestours__overlay:visited,
+.guidestours__overlay:active {
+	box-shadow: 0 0 0 9999px rgba( $gray-light, 0.8 );
+	transition: box-shadow 300ms ease-in-out;
+	z-index: z-index( 'root', '.guidestours__overlay' );
 }
 
-.guidestours__external-link,
-.guidestours__bullseye-instructions {
-	p {
-		color: darken( $gray, 10 );
-		margin-bottom: 0;
-		font-style: italic;
-	}
-
-	.gridicon {
-		position: relative;
-		top: 7px;
-	}
-
-	.external-link {
-		border-top: 1px solid $gray-light;
-		display: block;
-		padding-top: 8px;
-		margin-top: 16px;
-	}
-}
-
-.guidestours__bullseye-instructions {
-	margin-top: -7px;
+.guidestours__overlay:before {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	content: " ";
+	margin-left: -15px;
+	animation: guidestours__overlay-animation 3s ease-in-out 300ms infinite;
+	opacity: 0.4;
 }

@@ -55,6 +55,7 @@ export default class GuidesTours extends Component {
 
 	quit() {
 		//TODO: should we dispatch a showGuidesTour action here instead?
+		this.currentTarget && this.currentTarget.classList.remove( 'guidestours__overlay' );
 		this.setState( { currentStep: null } );
 	}
 
