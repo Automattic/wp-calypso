@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
+import { nock, useNock } from 'test/helpers/use-nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -24,14 +24,12 @@ import {
 } from '../actions';
 
 describe( 'actions', () => {
+	useNock();
+
 	const spy = sinon.spy();
 
 	beforeEach( () => {
 		spy.reset();
-	} );
-
-	after( () => {
-		nock.cleanAll();
 	} );
 
 	describe( '#receiveLists()', () => {
@@ -49,7 +47,6 @@ describe( 'actions', () => {
 	describe( '#requestList()', () => {
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
 				.get( '/rest/v1.2/read/lists/listowner/listslug' )
 				.reply( 200, {
 					list: {
@@ -106,7 +103,6 @@ describe( 'actions', () => {
 	describe( '#followList()', () => {
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
 				.post( '/rest/v1.2/read/lists/restapitests/testlist/follow' )
 				.reply( 200, {
 					following: true
@@ -127,7 +123,6 @@ describe( 'actions', () => {
 	describe( '#unfollowList()', () => {
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
 				.post( '/rest/v1.2/read/lists/restapitests/testlist/unfollow' )
 				.reply( 200, {
 					following: false
