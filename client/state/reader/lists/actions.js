@@ -76,7 +76,7 @@ export function requestList( owner, slug ) {
 			type: READER_LIST_REQUEST,
 		} );
 
-		const query = { owner, slug };
+		const query = createQuery( owner, slug );
 
 		return new Promise( ( resolve, reject ) => {
 			wpcom.undocumented().readList( query, ( error, data ) => {
@@ -113,7 +113,7 @@ export function followList( owner, slug ) {
 			slug
 		} );
 
-		const query = { owner, slug };
+		const query = createQuery( owner, slug );
 
 		return new Promise( ( resolve, reject ) => {
 			wpcom.undocumented().followList( query, ( error, data ) => {
@@ -155,7 +155,7 @@ export function unfollowList( owner, slug ) {
 			slug
 		} );
 
-		const query = { owner, slug };
+		const query = createQuery( owner, slug );
 
 		return new Promise( ( resolve, reject ) => {
 			wpcom.undocumented().unfollowList( query, ( error, data ) => {
@@ -179,4 +179,10 @@ export function unfollowList( owner, slug ) {
 			} );
 		} );
 	};
+}
+
+function createQuery( owner, slug ) {
+	const preparedOwner = decodeURIComponent( owner );
+	const preparedSlug = decodeURIComponent( slug );
+	return { owner: preparedOwner, slug: preparedSlug };
 }
