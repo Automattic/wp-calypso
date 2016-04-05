@@ -198,6 +198,9 @@
 		"importer" : {
 			"test" : [ "api-interaction" ]
 		},
+		"keyboard-shortcuts" : {
+			"test" : [ "index", "key-bindings" ]
+		},
 		"menu-data" : {
 			"test" : [ "menu-data" ]
 		},
