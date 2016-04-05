@@ -38,11 +38,46 @@
 		z-index: z-index( 'reader-card-follow-button-parent', '.reader__card.card .follow-button' );
 		padding-right: 0;
 
+		.follow-button__label {
+			color: $gray;
+		}
+
+		&:hover {
+			background: none;
+
+			.gridicon {
+				fill: $blue-medium;
+			}
+
+			.follow-button__label {
+				cursor: pointer;
+				color: $blue-medium;
+			}
+		}
+
 		@include breakpoint( "<480px" ) {
 			top: 0;
 			right: 8px;
 		}
+	}
 
+	.follow-button.is-following {
+		.follow-button__label {
+			color: $alert-green;
+		}
+
+		&:hover {
+			background: none;
+
+			.gridicon {
+				fill: lighten( $gray, 10% );
+			}
+
+			.follow-button__label {
+				cursor: pointer;
+				color: lighten( $gray, 10% );
+			}
+		}
 	}
 
 	.reader-post-byline {
