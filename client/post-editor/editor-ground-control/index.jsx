@@ -186,6 +186,10 @@ export default React.createClass( {
 			! this.props.isSaveBlocked;
 	},
 
+	canSchedulePost: function() {
+		return siteUtils.userCan( 'publish_posts', this.props.site );
+	},
+
 	toggleAdvancedStatus: function() {
 		this.setState( { showAdvanceStatus: ! this.state.showAdvanceStatus } );
 	},
@@ -286,10 +290,10 @@ export default React.createClass( {
 							{ ...this.props }
 							tabIndex={ 5 }
 						/>
-						{ siteUtils.userCan( 'publish_posts', this.props.site ) &&
+						{ this.canSchedulePost() &&
 							<button
 								ref="schedulePost"
-								className="editor-ground-control__time-button button is-primary"
+								className="editor-ground-control__time-button button"
 								onClick={ this.toggleSchedulePopover }
 								onMouseEnter={ this.showDateTooltip }
 								onMouseLeave={ this.hideDateTooltip }
@@ -301,11 +305,14 @@ export default React.createClass( {
 									? <Gridicon icon="scheduled" size={ 18 } />
 									: <Gridicon icon="calendar" size={ 18 } />
 								}
+								<span className="editor-ground-control__time-button__label">
+									{ this.translate( 'Schedule' ) }
+								</span>
 							</button>
 						}
 						{ this.renderDateTooltip() }
 					</div>
-					{ siteUtils.userCan( 'publish_posts', this.props.site ) &&
+					{ this.canSchedulePost() &&
 						this.schedulePostPopover()
 					}
 				</div>

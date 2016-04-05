@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classnames from 'classnames';
 
@@ -10,9 +10,23 @@ import classnames from 'classnames';
  */
 import Gridicon from 'components/gridicon';
 import layoutFocus from 'lib/layout-focus';
+import EditorPublishButton from 'post-editor/editor-publish-button';
 
 export default React.createClass( {
 	displayName: 'EditorMobileNavigation',
+
+	propTypes: {
+		site: PropTypes.object,
+		post: PropTypes.object,
+		savedPost: PropTypes.object,
+		onSave: PropTypes.function,
+		onPublish: PropTypes.function,
+		tabIndex: PropTypes.number,
+		isPublishing: PropTypes.bool,
+		isSaveBlocked: PropTypes.bool,
+		hasContent: PropTypes.bool,
+		onClose: PropTypes.function
+	},
 
 	mixins: [ PureRenderMixin ],
 
@@ -59,6 +73,7 @@ export default React.createClass( {
 					className={ classnames( 'editor-mobile-navigation__icon', {
 						'is-selected': this.state.sidebarOpen
 					} ) } />
+				<EditorPublishButton { ...this.props } />
 			</div>
 		);
 	}
