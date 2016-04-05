@@ -330,7 +330,7 @@
 			"test": [ "index" ]
 		},
 		"tree-convert": {
-			"test": [ "tree-convert" ]
+			"test": [ "index" ]
 		},
 		"wp": {
 			"localization": {
