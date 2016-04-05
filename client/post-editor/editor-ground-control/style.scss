@@ -65,6 +65,8 @@
 }
 
 .editor-ground-control__time-button__label {
+	padding-left: 8px;
+
 	@include breakpoint( ">660px" ) {
 		display: none;
 	}
