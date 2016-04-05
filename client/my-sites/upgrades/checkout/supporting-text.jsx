@@ -9,8 +9,7 @@ var cartValues = require( 'lib/cart-values' ),
 	support = require( 'lib/url/support' ),
 	getRefundPolicy = cartValues.getRefundPolicy,
 	cartItems = cartValues.cartItems,
-	hasFreeTrial = cartItems.hasFreeTrial,
-	abtest = require( 'lib/abtest' ).abtest;
+	hasFreeTrial = cartItems.hasFreeTrial;
 
 var SupportingText = React.createClass( {
 
@@ -72,17 +71,7 @@ var SupportingText = React.createClass( {
 	},
 
 	render: function() {
-		if ( abtest( 'checkoutFooter' ) === 'noFooter' ) {
 			return null;
-		}
-
-		return hasFreeTrial( this.props.cart )
-		? null : (
-				<ul className="supporting-text">
-					{ this.creditCardSupportingText() }
-					{ this.liveChatSupportingText() }
-				</ul>
-			);
 	}
 
 } );
