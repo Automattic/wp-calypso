@@ -179,7 +179,7 @@ function warn() {
 	if ( config( 'env' ) === 'production' ) {
 		return;
 	}
-	if ( window && window.console && window.console.warn ) {
+	if ( 'undefined' !== typeof window && window.console && window.console.warn ) {
 		window.console.warn.apply( window.console, arguments );
 	}
 }

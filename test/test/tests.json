@@ -1,7 +1,10 @@
 {
-  "helpers" : {
-    "use-nock": {
-      "test": [ "index" ]
-    }
-  }
+	"helpers" : {
+		"use-i18n": {
+			"test": [ "index" ]
+		},
+		"use-nock": {
+			"test": [ "index" ]
+		}
+	}
 }
