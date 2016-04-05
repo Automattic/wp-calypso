@@ -12,7 +12,11 @@ export const PluginsList = React.createClass( {
 	} ),
 
 	goBack() {
-		return this.selectPlugin( null );
+		/* For development work only */
+		const siteSlug = window.location.pathname.split( '/' ).pop();
+
+		window.location = `/plugins/${ siteSlug }`;
+		/* End development work section */
 	},
 
 	selectPlugin( selectedPlugin ) {
@@ -40,7 +44,7 @@ export const PluginsList = React.createClass( {
 
 		return (
 			<div className="wpcom-plugins-list">
-				<HeaderCake onClick={ this.goBack() }>Standard Plugins</HeaderCake>
+				<HeaderCake onClick={ this.goBack }>Standard Plugins</HeaderCake>
 					{ standardPlugins.map( plugin =>
 						<div
 							key={ plugin.name }

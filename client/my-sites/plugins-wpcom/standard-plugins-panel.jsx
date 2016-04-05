@@ -32,9 +32,6 @@ export const StandardPluginsPanel = React.createClass( {
 						) }
 					</div>
 				</CompactCard>
-				<Card className="wpcom-plugins__panel-footer" href="#">
-					{ this.translate( 'View all standard plugins' ) }
-				</Card>
 			</div>
 		);
 	}

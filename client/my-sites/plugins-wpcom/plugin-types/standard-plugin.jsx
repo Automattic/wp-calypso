@@ -13,16 +13,16 @@ export const StandardPlugin = React.createClass( {
 		} = this.props;
 
 		return (
-			<li className="wpcom-plugins__plugin-item">
+			<div className="wpcom-plugins__plugin-item">
+				<div className="wpcom-plugins__plugin-icon">
+					<Gridicon { ...{ icon } } />
+				</div>
 				<a href={ supportLink } target="_blank">
-					<div className="wpcom-plugins__plugin-icon">
-						<Gridicon { ...{ icon } } />
-					</div>
 					<div className="wpcom-plugins__plugin-title">{ name }</div>
-					<div className="wpcom-plugins__plugin-category">{ category }</div>
-					<p className="wpcom-plugins__plugin-description">{ description }</p>
 				</a>
-			</li>
+				<div className="wpcom-plugins__plugin-category">{ category }</div>
+				<p className="wpcom-plugins__plugin-description">{ description }</p>
+			</div>
 		);
 	}
 } );
