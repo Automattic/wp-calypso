@@ -19,9 +19,8 @@ import localize from 'lib/mixins/i18n/localize';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import DraftsButton from 'post-editor/drafts-button';
-import PostCountsData from 'components/data/post-counts-data';
 
-function EditorSidebarHeader( { translate, type, siteId, showDrafts, toggleDrafts, allPostsUrl, toggleSidebar } ) {
+function EditorSidebarHeader( { translate, type, showDrafts, toggleDrafts, allPostsUrl, toggleSidebar } ) {
 	const className = classnames( 'editor-sidebar__header', {
 		'is-drafts-visible': showDrafts
 	} );
@@ -53,10 +52,8 @@ function EditorSidebarHeader( { translate, type, siteId, showDrafts, toggleDraft
 					{ closeLabel }
 				</Button>
 			) }
-			{ type === 'post' && siteId && (
-				<PostCountsData siteId={ siteId } status="draft">
-					<DraftsButton onClick={ toggleDrafts } />
-				</PostCountsData>
+			{ type === 'post' && (
+				<DraftsButton onClick={ toggleDrafts } />
 			) }
 			<Button
 				onClick={ toggleSidebar }
@@ -70,7 +67,6 @@ function EditorSidebarHeader( { translate, type, siteId, showDrafts, toggleDraft
 EditorSidebarHeader.propTypes = {
 	translate: PropTypes.func,
 	type: PropTypes.string,
-	siteId: PropTypes.number,
 	showDrafts: PropTypes.bool,
 	toggleDrafts: PropTypes.func,
 	allPostsUrl: PropTypes.string,
@@ -83,7 +79,6 @@ export default connect(
 		const postId = getEditorPostId( state );
 
 		return {
-			siteId,
 			type: get( getEditedPost( state, siteId, postId ), 'type' ),
 			showDrafts: isEditorDraftsVisible( state )
 		};

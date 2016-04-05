@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSite, getSiteCollisions, isSiteConflicting, getSiteSlug } from '../selectors';
+import { getSite, getSiteCollisions, isSiteConflicting, isJetpackSite, getSiteSlug } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getSite()', () => {
@@ -107,6 +107,42 @@ describe( 'selectors', () => {
 			}, 77203199 );
 
 			expect( isConflicting ).to.be.true;
+		} );
+	} );
+
+	describe( '#isJetpackSite()', () => {
+		it( 'should return null if the site is not known', () => {
+			const jetpackSite = isJetpackSite( {
+				sites: {
+					items: {}
+				}
+			}, 77203074 );
+
+			expect( jetpackSite ).to.be.null;
+		} );
+
+		it( 'it should return true if the site is a jetpack site', () => {
+			const jetpackSite = isJetpackSite( {
+				sites: {
+					items: {
+						77203074: { ID: 77203074, URL: 'https://example.net', jetpack: true }
+					}
+				}
+			}, 77203074 );
+
+			expect( jetpackSite ).to.be.true;
+		} );
+
+		it( 'it should return false if the site is not a jetpack site', () => {
+			const jetpackSite = isJetpackSite( {
+				sites: {
+					items: {
+						77203074: { ID: 77203074, URL: 'https://example.worpdress.com', jetpack: false }
+					}
+				}
+			}, 77203074 );
+
+			expect( jetpackSite ).to.be.false;
 		} );
 	} );
 
