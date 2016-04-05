@@ -15,6 +15,7 @@ import {
 } from 'state/posts/selectors';
 import PostTypeListPost from './post';
 import PostTypeListPostPlaceholder from './post-placeholder';
+import PostTypeListEmptyContent from './empty-content';
 
 function PostTypeList( { query, siteId, posts, requesting } ) {
 	return (
@@ -22,6 +23,11 @@ function PostTypeList( { query, siteId, posts, requesting } ) {
 			<QueryPosts
 				siteId={ siteId }
 				query={ query } />
+			{ posts && ! posts.length && ! requesting && (
+				<PostTypeListEmptyContent
+					type={ query.type }
+					status={ query.status } />
+			) }
 			<ul className="post-type-list__posts">
 				{ requesting && (
 					<li><PostTypeListPostPlaceholder /></li>
