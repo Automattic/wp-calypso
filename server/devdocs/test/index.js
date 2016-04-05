@@ -68,7 +68,7 @@ describe( 'devdocs', () => {
 			( err, res ) => {
 				expect( err ).to.be.null;
 				expect( res.statusCode ).to.equal( 200 );
-				expect( res.text ).to.contain( '<a href="CONTRIBUTING.md">' );
+				expect( res.text ).to.contain( '<a href="./.github/CONTRIBUTING.md">' );
 				done();
 			} );
 	} );

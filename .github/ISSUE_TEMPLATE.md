@@ -1,10 +1,10 @@
 <!-- Thanks for contributing to Calypso! Pick a clear title ("Editor: add spell check") and proceed. -->
 
 #### Steps to reproduce
-1. Starting at URL: 
-2. 
-3. 
-4. 
+1. Starting at URL:
+2.
+3.
+4.
 
 #### What I expected
 
@@ -24,7 +24,7 @@ PLEASE NOTE
 - If requesting a new feature, explain why you'd like to see it added.
 
 Docs & troubleshooting:
-https://github.com/Automattic/wp-calypso/blob/master/CONTRIBUTING.md
+https://github.com/Automattic/wp-calypso/blob/master/.github/CONTRIBUTING.md
 https://github.com/Automattic/wp-calypso/blob/master/docs/troubleshooting.md
 
 Helpful tips for screenshots:
