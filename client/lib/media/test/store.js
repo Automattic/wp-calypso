@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	rewire = require( 'rewire' ),
-	sinon = require( 'sinon' );
+import { expect } from 'chai';
+import rewire from 'rewire';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' );
+import useFakeDom from 'test/helpers/use-fake-dom';
+import Dispatcher from 'dispatcher';
 
 var DUMMY_SITE_ID = 1,
 	DUMMY_MEDIA_ID = 10,
@@ -20,6 +21,8 @@ var DUMMY_SITE_ID = 1,
 
 describe( 'MediaStore', function() {
 	var sandbox, MediaStore, handler;
+
+	useFakeDom();
 
 	before( function() {
 		sandbox = sinon.sandbox.create();

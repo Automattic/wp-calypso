@@ -204,6 +204,9 @@
 		"keyboard-shortcuts" : {
 			"test" : [ "index", "key-bindings" ]
 		},
+		"media": {
+			"test": [ "actions", "library-selected-store", "list-store", "store", "utils", "validation-store" ]
+		},
 		"menu-data" : {
 			"test" : [ "menu-data" ]
 		},

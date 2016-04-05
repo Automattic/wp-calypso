@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	rewire = require( 'rewire' ),
-	assign = require( 'lodash/assign' ),
-	sinon = require( 'sinon' );
+import { expect } from 'chai';
+import rewire from 'rewire';
+import assign from 'lodash/assign';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	MediaStore = require( '../store' );
+import useFakeDom from 'test/helpers/use-fake-dom';
+import Dispatcher from 'dispatcher';
 
 var DUMMY_SITE_ID = 1,
 	DUMMY_OBJECTS = {
@@ -22,9 +22,13 @@ var DUMMY_SITE_ID = 1,
 	DUMMY_TRANSIENT_MEDIA_OBJECT = DUMMY_OBJECTS[ 'media-1' ];
 
 describe( 'MediaLibrarySelectedStore', function() {
-	var sandbox, MediaLibrarySelectedStore, handler;
+	let sandbox, MediaLibrarySelectedStore, handler, MediaStore;
+
+	useFakeDom();
 
 	before( function() {
+		MediaStore = require( '../store' );
+
 		sandbox = sinon.sandbox.create();
 		sandbox.spy( Dispatcher, 'register' );
 		sandbox.stub( Dispatcher, 'waitFor' ).returns( true );
