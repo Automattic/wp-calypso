@@ -10,6 +10,7 @@ import sinon from 'sinon';
  */
 import {
 	POST_EDIT,
+	POST_EDITS_RESET,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -696,6 +697,42 @@ describe( 'reducer', () => {
 					},
 					'': {
 						title: 'Unrelated'
+					}
+				}
+			} );
+		} );
+
+		it( 'should ignore reset edits action when discarded site doesn\'t exist', () => {
+			const original = deepFreeze( {} );
+			const state = edits( original, {
+				type: POST_EDITS_RESET,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should discard edits when reset edits action dispatched', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					841: {
+						title: 'Hello World'
+					},
+					'': {
+						title: 'Ribs & Chicken'
+					}
+				}
+			} ), {
+				type: POST_EDITS_RESET,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken'
 					}
 				}
 			} );

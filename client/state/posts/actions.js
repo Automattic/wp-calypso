@@ -4,6 +4,7 @@
 import wpcom from 'lib/wp';
 import {
 	POST_EDIT,
+	POST_EDITS_RESET,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -140,4 +141,20 @@ export function editPost( post, siteId, postId ) {
 		siteId,
 		postId
 	};
+}
+
+/**
+ * Returns an action object to be used in signalling that any post edits for
+ * the specified post should be discarded.
+ *
+ * @param  {Number} siteId Site ID
+ * @param  {Number} postId Post ID
+ * @return {Object}        Action object
+ */
+export function resetPostEdits( siteId, postId ) {
+	return {
+		type: POST_EDITS_RESET,
+		siteId,
+		postId
+	}
 }
