@@ -311,7 +311,10 @@ const EditorGroundControl = React.createClass( {
 									: <Gridicon icon="calendar" size={ 18 } />
 								}
 								<span className="editor-ground-control__time-button__label">
-									{ this.translate( 'Schedule' ) }
+									{ postUtils.isFutureDated( this.props.post )
+										? this.moment( this.props.post.date ).calendar()
+										: this.translate( 'Choose date' )
+									}
 								</span>
 							</button>
 						}
