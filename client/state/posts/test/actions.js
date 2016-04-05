@@ -10,6 +10,7 @@ import { expect } from 'chai';
  */
 import {
 	POST_EDIT,
+	POST_EDITS_RESET,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -24,7 +25,8 @@ import {
 	requestSitePosts,
 	requestSitePost,
 	requestPosts,
-	editPost
+	editPost,
+	resetPostEdits
 } from '../actions';
 
 describe( 'actions', () => {
@@ -257,6 +259,18 @@ describe( 'actions', () => {
 				siteId: 2916284,
 				postId: 413,
 				post: { title: 'Hello World' }
+			} );
+		} );
+	} );
+
+	describe( '#resetPostEdits()', () => {
+		it( 'should return an action object', () => {
+			const action = resetPostEdits( 2916284 );
+
+			expect( action ).to.eql( {
+				type: POST_EDITS_RESET,
+				siteId: 2916284,
+				postId: undefined
 			} );
 		} );
 	} );
