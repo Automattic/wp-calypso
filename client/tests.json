@@ -295,6 +295,20 @@
 		"signup": {
 		  "test": [ "dependency-store", "flow-controller", "progress-store" ]
 		},
+		"site": {
+			"test": [ "test", "test-utils" ]
+		},
+		"site-roles": {
+			"test": [ "test-store" ]
+		},
+		"sites-list": {
+			"test": [ "test", "test-log-store" ]
+		},
+		"stats": {
+			"stats-list": {
+				"test": [ "test-stats-list", "test-stats-parser" ]
+			}
+		},
 		"store": {
 			"test": [ "index" ]
 		},

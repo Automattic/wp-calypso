@@ -1,4 +1,6 @@
-var original = [
+import cloneDeep from 'lodash/cloneDeep';
+
+export const original = [
 	{
 		'ID': 77203074,
 		'name': 'Just You Wait',
@@ -257,7 +259,7 @@ var original = [
 	}
 ];
 
-var updated = original.slice();
+export const updated = cloneDeep( original );
 
 updated[0].name = 'Checkout this new name';
 
@@ -314,9 +316,3 @@ updated.push( {
 	},
 	'user_can_manage': true
 } );
-
-
-
-exports.original = original;
-exports.updated = updated;
-

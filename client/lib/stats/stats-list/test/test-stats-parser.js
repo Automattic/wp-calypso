@@ -1,65 +1,77 @@
-require( 'lib/react-test-env-setup' )();
+/**
+ * External dependencies
+ */
+import { assert } from 'chai';
+import map from 'lodash/map';
 
-// External Dependencies
-var assert = require('chai').assert;
+/**
+ * Internal dependencies
+ */
+import useMockery from 'test/helpers/use-mockery';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
-var statsParser = require( '../stats-parser' )(),
-	data = require( './data' ),
-	dataSets = [ 'statsClicks', 'statsTags' ];
+describe( 'StatsParser', () => {
+	let statsParser, data;
 
-// helper functions
-describe( 'StatsParser', function() {
+	useMockery();
+	useFakeDom();
 
-	dataSets.forEach( function( statType ) {
-		it( 'should have a ' + statType + ' function', function() {
-			assert.typeOf( statsParser[ statType ], 'function', 'It should have the function' );
+	before( () => {
+		statsParser = require( '../stats-parser' )();
+		data = require( './fixtures/data' );
+	} );
+
+	describe( 'stat types', () => {
+		it( 'should have a statsClicks function', () => {
+			assert.isFunction( statsParser.statsClicks, 'it should have a statsClick function' );
 		} );
-	}, this );
 
-	describe( 'statsClicks', function() {
-		it( 'should parse a clicks response properly', function() {
-			var mockContext = { options: { period: 'day', date: '2014-09-12' } }, // we have to pass in some context to calculate start of period on this call
-				response = statsParser.statsClicks.call( mockContext, data.successResponses.statsClicks.body );
-			assert.equal( response.data.length, 10 );
+		it( 'should have a statsTags function', () => {
+			assert.isFunction( statsParser.statsTags, 'it should have a statsTag function' );
+		} );
+	} );
 
+	describe( 'statsClicks', () => {
+		it( 'should parse a clicks response properly', () => {
+			// we have to pass in some context to calculate start of period on this call
+			const mockContext = { options: { period: 'day', date: '2014-09-12' } };
+			const response = statsParser.statsClicks.call( mockContext, data.successResponses.statsClicks.body );
+
+			assert.lengthOf( response.data, 10 );
 			assert.equal( response.data[ 0 ].label, 'example.com' );
 			assert.equal( response.data[ 0 ].value, 126 );
 			assert.isNull( response.data[ 0 ].children );
 			assert.isNull( response.data[ 0 ].icon );
 
-			assert.equal( response.data[ 2 ].children.length, 3 ); // check a record with children
+			assert.lengthOf( response.data[ 2 ].children, 3 ); // check a record with children
 		} );
 	} );
 
-	describe( 'statsTags', function() {
-		it( 'should parse tags response properly', function() {
-			var response = statsParser.statsTags( data.successResponses.statsTags.body ),
-			item = response.data[ 2 ];
+	describe( 'statsTags', () => {
+		it( 'should parse tags response properly', () => {
+			const response = statsParser.statsTags( data.successResponses.statsTags.body );
+			const item = response.data[ 2 ];
 
-			assert.equal( response.data.length, 9 );
+			assert.lengthOf( response.data, 9 );
 
 			// tags labels are arrays of labels, right?
-			assert.typeOf( item.label, 'array', 'Label should be array' );
-			assert.equal( item.label.map( function( label ) { return label.label; } ).join( ' ' ), 'supertag supertag-transition' );
-			assert.equal( item.label.map( function( label ) { return label.labelIcon; } ).join( ' ' ), 'tag tag' );
-			assert.equal( item.label[0].link, null );
+			assert.isArray( item.label, 'Label should be array' );
+			assert.deepEqual( map( item.label, 'label' ), [ 'supertag', 'supertag-transition' ] );
+			assert.deepEqual( map( item.label, 'labelIcon' ), [ 'tag', 'tag' ] );
+			assert.isNull( item.label[0].link );
 			assert.equal( item.value, 480 );
-
 		} );
 	} );
 
-	describe( 'statsCountryViews', function() {
-		it( 'should parse countryViews payload properly', function() {
-			var mockContext = { options: { period: 'day', date: '2014-09-12' } },
-				response = statsParser.statsCountryViews.call( mockContext, data.successResponses.statsCountryViews.body ),
-				item = response.data[ 0 ];
+	describe( 'statsCountryViews', () => {
+		it( 'should parse countryViews payload properly', () => {
+			const mockContext = { options: { period: 'day', date: '2014-09-12' } };
+			const response = statsParser.statsCountryViews.call( mockContext, data.successResponses.statsCountryViews.body );
+			const item = response.data[ 0 ];
 
-			assert.equal( response.data.length, 5 );
+			assert.lengthOf( response.data, 5 );
 			assert.equal( item.label, 'United States' );
 			assert.equal( item.value, 54 );
-
-
 		} );
 	} );
-	
 } );

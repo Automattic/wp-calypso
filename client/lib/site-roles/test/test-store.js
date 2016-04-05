@@ -1,52 +1,52 @@
 /**
  * External dependencies
  */
-var assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-var actions = require( './lib/mock-actions' ),
-	site = require( './lib/mock-site' ),
-	siteId = site.ID;
+import useMockery from 'test/helpers/use-mockery';
 
-require( 'lib/react-test-env-setup' )();
+describe( 'Viewers Store', () => {
+	let Dispatcher, RolesStore;
+	let actions, site, siteId;
 
-describe( 'Viewers Store', function() {
-	var Dispatcher, RolesStore;
+	useMockery();
 
-	beforeEach( function() {
+	before( () => {
 		Dispatcher = require( 'dispatcher' );
 		RolesStore = require( '../store' );
+		actions = require( './mocks/lib/actions' );
+		site = require( './fixtures/site' );
+		siteId = site.ID;
 	} );
 
-	describe( 'Shape of store', function() {
-		it( 'Store should be an object', function() {
+	describe( 'Shape of store', () => {
+		it( 'Store should be an object', () => {
 			assert.isObject( RolesStore );
 		} );
 
-		it( 'Store should have method getRoles', function() {
+		it( 'Store should have method getRoles', () => {
 			assert.isFunction( RolesStore.getRoles );
 		} );
 	} );
 
-	describe( 'Get Roles', function() {
-		it( 'Should return empty object when there are no roles', function() {
-			var roles = RolesStore.getRoles( siteId );
+	describe( 'Get Roles', () => {
+		it( 'Should return empty object when there are no roles', () => {
+			const roles = RolesStore.getRoles( siteId );
 
 			assert.isObject( roles );
-			assert( 0 === Object.keys( roles ).length, 'roles is empty' );
+			assert.lengthOf( Object.keys( roles ), 0, 'roles is empty' );
 		} );
 
-		it( 'Should return an object of role objects when there are roles', function() {
-			var roles;
-
+		it( 'Should return an object of role objects when there are roles', () => {
 			Dispatcher.handleServerAction( actions.fetchedRoles );
-			roles = RolesStore.getRoles( siteId );
+			const roles = RolesStore.getRoles( siteId );
 
 			assert.isObject( roles );
-			assert( 0 !== Object.keys( roles ).length, 'roles is not empty' );
-			assert.isObject( roles[ Object.keys( roles )[0] ] );
+			assert.notDeepEqual( Object.keys( roles ), [], 'roles is not empty' );
+			assert.isObject( roles[ Object.keys( roles )[ 0 ] ] );
 		} );
 	} );
 } );

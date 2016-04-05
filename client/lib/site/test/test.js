@@ -1,101 +1,65 @@
-var assert = require( 'assert' );
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import sinon from 'sinon';
 
-var Site = require( '../' );
+import Site from '..';
 
-describe( 'Calypso Site', function() {
-	describe( 'setting attributes', function() {
+describe( 'Calypso Site', () => {
+	describe( 'setting attributes', () => {
+		const mockSiteData = {
+			ID: 1234,
+			name: 'Hello',
+			description: 'Hunting bugs is fun.'
+		}
 
-		it( 'attribute changed', function() {
-			var site = Site( {
-				ID: 1234,
-				name: 'Hello',
-				description: 'Hunting bugs is fun.'
-			} );
-
+		it( 'attribute changed', () => {
+			const site = Site( mockSiteData );
 			site.set( { name: 'Goodbye' } );
-
-			assert( site.name === 'Goodbye' );
+			expect( site.name ).to.equal( 'Goodbye' );
 		} );
 
-		it( 'change event fires on attribute change', function() {
-			var called = false,
-				site;
-
-			site = Site( {
-				ID: 1234,
-				name: 'Hello',
-				description: 'Hunting bugs is fun.'
-			} );
-
-			site.once( 'change', function() {
-				called = true;
-			} );
-
+		it( 'change event fires on attribute change', () => {
+			const changeCallback = sinon.spy();
+			const site = Site( mockSiteData );
+			site.on( 'change', changeCallback );
 			site.set( { name: 'Goodbye' } );
-
-			assert( called === true );
+			expect( changeCallback.called ).to.be.true;
 		} );
 
-		it( "change doesn't fire when setting attribute to same value", function() {
-			var called = false,
-				site;
-
-			site = Site( {
-				ID: 1234,
-				name: 'Hello',
-				description: 'Hunting bugs is fun.'
-			} );
-
-			site.once( 'change', function() {
-				called = true;
-			} );
-
+		it( "change doesn't fire when setting attribute to same value", () => {
+			const changeCallback = sinon.spy();
+			const site = Site( mockSiteData );
+			site.once( 'change', changeCallback );
 			site.set( { name: 'Hello' } );
-
-			assert( called === false );
+			expect( changeCallback.called ).to.be.false;
 		} );
 
-		it( "change doesn't fire when attribute is set to an object with identical data", function() {
-			var called = false,
-				site;
-
-			site = Site( {
-				ID: 1234,
-				obj: {
-					name: 'Hello',
-					description: 'Hunting bugs is fun.'
-				}
+		it( "change doesn't fire when attribute is set to an object with identical data", () => {
+			const changeCallback = sinon.spy();
+			const nestedSiteData = Object.assign( {}, mockSiteData, {
+				name: 'Hello, again',
+				description: 'Still hunting bugs.'
 			} );
 
-			site.once( 'change', function() {
-				called = true;
+			const site = Site( nestedSiteData );
+			site.set( {
+				name: 'Hello, again',
+				description: 'Still hunting bugs.'
 			} );
 
-			site.set( { obj: {
-					name: 'Hello',
-					description: 'Hunting bugs is fun.'
-				}
-			} );
-
-			assert( called === false );
+			site.once( 'change', changeCallback );
+			expect( changeCallback.called ).to.be.false;
 		} );
 
-		it( "change doesn't fire when attribute is set to an array with identical data", function() {
-			var called = false,
-				site;
+		it( "change doesn't fire when attribute is set to an array with identical data", () => {
+			const changeCallback = sinon.spy();
+			const site = Site( Object.assign( {}, mockSiteData, { arr: [ 1, 2, 3 ] } ) );
 
-			site = Site( {
-				ID: 1234,
-				arr: [ 1, 2, 3 ]
-			} );
-
-			site.once( 'change', function() {
-				called = true;
-			} );
-
+			site.once( 'change', changeCallback );
 			site.set( { arr: [ 1, 2, 3 ] } );
-
-			assert( called === false );
+			expect( changeCallback.called ).to.be.false;
 		} );
 	} );
 } );

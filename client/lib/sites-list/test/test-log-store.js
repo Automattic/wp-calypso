@@ -1,26 +1,28 @@
-var assert = require( 'assert' ),
-	actions = require( 'lib/mock-actions' );
+/**
+ * External dependencies
+ */
+import { assert } from 'chai';
 
-describe( 'Sites Log Store', function() {
-	var Dispatcher, LogStore;
+describe( 'Sites Log Store', () => {
+	let Dispatcher, LogStore, actions;
 
-	beforeEach( function() {
+	before( () => {
 		Dispatcher = require( 'dispatcher' );
 		LogStore = require( '../log-store' );
+		actions = require( './mocks/lib/actions' );
 	} );
 
-	it( 'should initialize with no Errors', function() {
-		assert.equal( LogStore.getErrors().length, 0 );
+	it( 'should initialize with no Errors', () => {
+		assert.lengthOf( LogStore.getErrors(), 0 );
 	} );
 
-	it( 'logs an update error', function() {
+	it( 'logs an update error', () => {
 		Dispatcher.handleServerAction( actions.disconnectedSiteError );
-		assert.equal( LogStore.getErrors().length, 1 );
+		assert.lengthOf( LogStore.getErrors(), 1 );
 	} );
 
-	it( 'removing an error notice deletes an error', function() {
+	it( 'removing an error notice deletes an error', () => {
 		Dispatcher.handleServerAction( actions.removeNotices );
-		assert.equal( LogStore.getErrors().length, 0 );
+		assert.lengthOf( LogStore.getErrors(), 0 );
 	} );
-
 } );

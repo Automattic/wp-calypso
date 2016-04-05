@@ -1,104 +1,103 @@
-global.localStorage = require( 'localStorage' );
+/**
+ * External dependencies
+ */
+import { assert } from 'chai';
+import sinon from 'sinon';
+import cloneDeep from 'lodash/cloneDeep';
+import forEach from 'lodash/forEach';
 
-var assert = require( 'assert' );
+/**
+ * Internal dependencies
+ */
+import useMockery from 'test/helpers/use-mockery';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
-var SitesList = require( 'lib/sites-list/list' ),
-	Site = require( 'lib/site' ),
-	data = require( './data' ),
-	original = data.original,
-	updated = data.updated;
+describe( 'SitesList', () => {
+	let SitesList, Site, data;
+	let sitesList, originalData, initializedSites;
 
-describe( 'SitesList', function() {
-	describe( 'initialization', function() {
-		it( 'should create Site objects', function() {
-			var sitesList = SitesList();
+	useMockery();
+	useFakeDom();
 
-			sitesList.initialize( original.slice() );
+	before( () => {
+		Site = require( 'lib/site' );
+		SitesList = require( '../list' );
+		data = require( './fixtures/data' );
+	} );
 
-			assert( sitesList.get().length === original.length );
+	beforeEach( () => {
+		originalData = cloneDeep( data.original );
+		sitesList = SitesList();
+		sitesList.initialize( originalData );
+		initializedSites = sitesList.get();
+	} );
 
-			sitesList.get().forEach( function( site ) {
-				assert( site instanceof Site );
-			} );
-
+	describe( 'initialization', () => {
+		it( 'should create the correct number of sites', () => {
+			assert.equal( initializedSites.length, originalData.length );
 		} );
 
-		it( 'should set attributes properly', function() {
-			var sitesList = SitesList(),
-				site, origSite;
-			sitesList.initialize( original.slice() );
-
-			site = sitesList.get()[0];
-			origSite = original[0];
-
-			for ( var prop in origSite ) {
-				assert( site[ prop ] ===  origSite[ prop ] );
-
-			}
+		it( 'should create Site objects', () => {
+			forEach( initializedSites, site => {
+				assert.instanceOf( site, Site )
+			} );
 		} );
 
-		it( 'should add change handlers', function() {
-			var sitesList = SitesList();
+		it( 'should set attributes properly', () => {
+			const site = initializedSites[ 0 ];
+			const origSite = originalData[ 0 ];
 
-			sitesList.initialize( original.slice() );
-			assert( sitesList.get().length, original.length );
-			sitesList.get().forEach( function( site ) {
-				assert( site.listeners( 'change' ) );
+			forEach( origSite, ( value, prop ) => {
+				assert.deepEqual( value, site[ prop ] );
 			} );
+		} );
 
+		it( 'should add change handlers', () => {
+			forEach( initializedSites, ( site ) => {
+				assert.isDefined( site.listeners( 'change' ) );
+			} );
 		} );
 	} );
 
-	describe( 'updating', function() {
-		it( 'updating should not create new Site instances', function() {
-			var sitesList = SitesList(),
-				originalList, updatedList;
+	describe( 'updating', () => {
+		let updatedData, originalList;
 
-			sitesList.initialize( original.slice() );
+		before( () => {
+			updatedData = cloneDeep( data.updated );
+			originalList = sitesList.initialize( originalData );
+		} );
 
-			originalList = sitesList.get();
-			sitesList.update( updated.slice() );
-			updatedList = sitesList.get();
+		it( 'updating should not create new Site instances', () => {
+			sitesList.update( updatedData );
+			const updatedList = sitesList.get();
 
-			originalList.forEach( function( site, index ) {
-				assert( site === updatedList[index ] );
+			forEach( originalList, ( site, index ) => {
+				assert.strictEqual( site, updatedList[ index ] );
 			} );
 		} );
 
-		it( 'should update attributes properly', function() {
-			var sitesList = SitesList(),
-				site, updatedSite;
-			sitesList.initialize( original.slice() );
+		it( 'should update attributes properly', () => {
+			sitesList.update( updatedData );
+			const site = sitesList.get()[ 0 ];
+			const updatedSite = updatedData[ 0 ];
 
-			sitesList.update( updated.slice() );
-
-			site = sitesList.get()[0];
-			updatedSite = updated[0];
-
-			for ( var prop in updatedSite ) {
-				assert( site[ prop ] ===  updatedSite[ prop ] );
-
-			}
-		} );
-
-
-	} );
-
-	describe( 'change propagation', function() {
-		it( 'should trigger change when site is updated', function() {
-			var sitesList = SitesList(),
-				site, called = false;
-
-			sitesList.initialize( original.slice() );
-			sitesList.once( 'change', function() {
-				called = true;
+			forEach( updatedSite, ( updatedValue, prop ) => {
+				assert.deepEqual( updatedValue, site[ prop ] );
 			} );
-
-			site = sitesList.getSite( 77203074 );
-			site.set( { 'description': 'Calypso rocks!' } );
-			assert( called );
-
 		} );
 	} );
 
+	describe( 'change propagation', () => {
+		it( 'should trigger change when site is updated', () => {
+			const siteId = originalData[0].ID;
+			const changeCallback = sinon.spy();
+
+			sitesList.initialize( cloneDeep( data.original ) );
+			sitesList.once( 'change', changeCallback );
+
+			const site = sitesList.getSite( siteId );
+			site.set( { description: 'Calypso rocks!' } );
+			assert.isTrue( changeCallback.called );
+		} );
+	} );
 } );
