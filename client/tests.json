@@ -329,6 +329,9 @@
 		"text-utils": {
 			"test": [ "index" ]
 		},
+		"tree-convert": {
+			"test": [ "tree-convert" ]
+		},
 		"wp": {
 			"localization": {
 				"test": [ "index" ]
