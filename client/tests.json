@@ -296,17 +296,17 @@
 		  "test": [ "dependency-store", "flow-controller", "progress-store" ]
 		},
 		"site": {
-			"test": [ "test", "test-utils" ]
+			"test": [ "index", "utils" ]
 		},
 		"site-roles": {
-			"test": [ "test-store" ]
+			"test": [ "store" ]
 		},
 		"sites-list": {
-			"test": [ "test", "test-log-store" ]
+			"test": [ "index", "log-store" ]
 		},
 		"stats": {
 			"stats-list": {
-				"test": [ "test-stats-list", "test-stats-parser" ]
+				"test": [ "index", "stats-parser" ]
 			}
 		},
 		"store": {
