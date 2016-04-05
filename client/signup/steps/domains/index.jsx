@@ -168,8 +168,7 @@ module.exports = React.createClass( {
 				offerMappingOption
 				analyticsSection="signup"
 				includeWordPressDotCom
-				showExampleSuggestions
-				isInSigup />
+				showExampleSuggestions />
 		);
 	},
 
