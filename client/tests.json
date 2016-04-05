@@ -216,6 +216,9 @@
 		"media": {
 			"test": [ "actions", "library-selected-store", "list-store", "store", "utils", "validation-store" ]
 		},
+		"media-serialization": {
+			"test": [ "index" ]
+		},
 		"menu-data" : {
 			"test" : [ "menu-data" ]
 		},
