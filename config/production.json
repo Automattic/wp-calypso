@@ -57,7 +57,6 @@
 		"me/trophies": false,
 		"muse": true,
 		"olark": true,
-		"olark_use_wpcom_configuration": true,
 		"perfmon": true,
 		"persist-redux": true,
 		"post-editor/author-selector": true,

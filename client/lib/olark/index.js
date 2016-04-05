@@ -54,11 +54,9 @@ const olark = {
 	initialize() {
 		debug( 'Initializing Olark Live Chat' );
 
-		if ( config.isEnabled( 'olark_use_wpcom_configuration' ) ) {
-			this.getOlarkConfiguration()
-				.then( ( configuration ) => this.configureOlark( configuration ) )
-				.catch( ( error ) => this.handleError( error ) );
-		}
+		this.getOlarkConfiguration()
+			.then( ( configuration ) => this.configureOlark( configuration ) )
+			.catch( ( error ) => this.handleError( error ) );
 	},
 
 	handleError: function( error ) {

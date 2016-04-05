@@ -57,7 +57,6 @@
 		"muse": true,
 		"oauth": true,
 		"olark": true,
-		"olark_use_wpcom_configuration": true,
 		"persist-redux": true,
 		"phone_signup": true,
 		"post-editor/author-selector": true,
