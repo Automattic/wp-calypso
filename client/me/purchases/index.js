@@ -55,9 +55,7 @@ export default function() {
 
 	page(
 		paths.listNotice(),
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.list
+		controller.listNotice
 	);
 
 	page(
