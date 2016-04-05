@@ -109,6 +109,9 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var name = this.getProductName();
+		if ( this.props.cartItem.bill_period && this.props.cartItem.bill_period !== -1 ) {
+			name += ' - ' + this.translate( 'annual subscription' );
+		}
 
 		return (
 			<li className="cart-item">
