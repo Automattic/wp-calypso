@@ -251,10 +251,9 @@ var RegisterDomainStep = React.createClass( {
 					} );
 				},
 				callback => {
-					if ( abtest( 'domainSearchResultsCount' ) === 'moreResults' ) {
-						SUGGESTION_QUANTITY = 10;
-					}
-
+					
+					SUGGESTION_QUANTITY = 10;
+					
 					const params = {
 						quantity: SUGGESTION_QUANTITY,
 						includeWordPressDotCom: this.props.includeWordPressDotCom
