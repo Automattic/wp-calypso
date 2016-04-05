@@ -192,6 +192,13 @@ export const PostEditor = React.createClass( {
 				<div className="post-editor__inner">
 					<EditorMobileNavigation
 						site={ site }
+						post={ this.state.post }
+						savedPost={ this.state.savedPost }
+						onSave={ this.onSave }
+						onPublish={ this.onPublish }
+						isPublishing={ this.state.isPublishing }
+						isSaveBlocked={ this.state.isSaveBlocked }
+						hasContent={ this.state.hasContent }
 						onClose={ this.onClose } />
 					<div className="post-editor__content">
 						<div className="editor">
