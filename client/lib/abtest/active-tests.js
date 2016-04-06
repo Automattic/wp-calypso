@@ -45,14 +45,6 @@ module.exports = {
 		},
 		defaultVariation: 'yearly'
 	},
-	checkoutFooter: {
-		datestamp: '20160215',
-		variations: {
-			original: 50,
-			noFooter: 50
-		},
-		defaultVariation: 'original'
-	},
 	domainSearchResultsCount: {
 		datestamp: '20160223',
 		variations: {

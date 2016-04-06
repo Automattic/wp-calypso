@@ -14,7 +14,6 @@ var CreditCardPaymentBox = require( './credit-card-payment-box' ),
 	CreditsPaymentBox = require( './credits-payment-box' ),
 	FreeCartPaymentBox = require( './free-cart-payment-box' ),
 	PaymentBox = require( './payment-box.jsx' ),
-	SupportingText = require( './supporting-text' ),
 	storeTransactions = require( 'lib/store-transactions' ),
 	cartValues = require( 'lib/cart-values' ),
 	isPaidForFullyInCredits = cartValues.isPaidForFullyInCredits,
@@ -134,7 +133,6 @@ var SecurePaymentForm = React.createClass( {
 					onToggle={ this.selectPaymentBox }
 					redirectTo={ this.props.redirectTo } />
 
-				<SupportingText cart={ this.props.cart } />
 			</div>
 		);
 	},
