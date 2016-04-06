@@ -10,11 +10,13 @@ import React from 'react';
 import analytics from 'analytics';
 import Button from 'components/button';
 import { cancelAndRefundPurchase, cancelPurchase } from 'lib/upgrades/actions';
+import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
 import { getName, getSubscriptionEndDate, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
 import { isDomainRegistration } from 'lib/products-values';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
+import { refreshSitePlans } from 'state/sites/plans/actions';
 
 const CancelPurchaseButton = React.createClass( {
 	propTypes: {
@@ -101,14 +103,15 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	cancelPurchase() {
-		const { purchase } = this.props,
-			{ id } = purchase;
+		const { purchase } = this.props;
 
 		this.toggleDisabled();
 
-		cancelPurchase( id, ( success ) => {
+		cancelPurchase( purchase.id, ( success ) => {
 			const purchaseName = getName( purchase ),
 				subscriptionEndDate = getSubscriptionEndDate( purchase );
+
+			this.props.refreshSitePlans( purchase.siteId );
 
 			if ( success ) {
 				notices.success( this.translate(
@@ -148,6 +151,8 @@ const CancelPurchaseButton = React.createClass( {
 		}
 
 		notices.success( response.message, { persistent: true } );
+
+		this.props.refreshSitePlans( this.props.purchase.siteId );
 
 		analytics.tracks.recordEvent(
 			'calypso_purchases_cancel_form_submit',
@@ -212,4 +217,13 @@ const CancelPurchaseButton = React.createClass( {
 	}
 } );
 
-export default CancelPurchaseButton;
+export default connect(
+	null,
+	( dispatch ) => {
+		return {
+			refreshSitePlans( siteId ) {
+				dispatch( refreshSitePlans( siteId ) );
+			}
+		};
+	}
+)( CancelPurchaseButton );

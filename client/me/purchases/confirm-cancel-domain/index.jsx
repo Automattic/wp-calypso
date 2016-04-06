@@ -12,6 +12,7 @@ import cancellationReasons from './cancellation-reasons';
 import { cancelAndRefundPurchase } from 'lib/upgrades/actions';
 import Card from 'components/card';
 import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
+import { connect } from 'react-redux';
 import FormButton from 'components/forms/form-button';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
@@ -24,8 +25,9 @@ import { getName as getDomainName } from 'lib/purchases';
 import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
-import titles from 'me/purchases/titles';
+import { refreshSitePlans } from 'state/sites/plans/actions';
 import SelectDropdown from 'components/select-dropdown';
+import titles from 'me/purchases/titles';
 
 const ConfirmCancelDomain = React.createClass( {
 	propTypes: {
@@ -110,6 +112,8 @@ const ConfirmCancelDomain = React.createClass( {
 				} ),
 				{ persistent: true }
 			);
+
+			this.props.refreshSitePlans( purchase.siteId );
 
 			analytics.tracks.recordEvent(
 				'calypso_domain_cancel_form_submit',
@@ -251,4 +255,13 @@ const ConfirmCancelDomain = React.createClass( {
 	}
 } );
 
-export default ConfirmCancelDomain;
+export default connect(
+	null,
+	( dispatch ) => {
+		return {
+			refreshSitePlans( siteId ) {
+				dispatch( refreshSitePlans( siteId ) );
+			}
+		};
+	}
+)( ConfirmCancelDomain );

@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import React from 'react';
-import ReactDom from 'react-dom';
 
 /**
  * Internal Dependencies
@@ -25,6 +24,7 @@ import paths from './paths';
 import PurchasesData from 'components/data/purchases';
 import PurchasesHeader from './list/header';
 import PurchasesList from './list';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import sitesFactory from 'lib/sites-list';
 import titleActions from 'lib/screen-title/actions';
 import titles from './titles';
@@ -44,10 +44,11 @@ function recordPageView( path, ...title ) {
 	);
 }
 
-function renderPage( component ) {
-	ReactDom.render(
+function renderPage( context, component ) {
+	renderWithReduxStore(
 		component,
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -71,6 +72,7 @@ export default {
 		sites.setSelectedSite( context.params.site );
 
 		renderPage(
+			context,
 			<ManagePurchaseData
 				component={ CancelPrivateRegistration }
 				purchaseId={ context.params.purchaseId }
@@ -91,6 +93,7 @@ export default {
 		sites.setSelectedSite( context.params.site );
 
 		renderPage(
+			context,
 			<ManagePurchaseData
 				component={ CancelPurchase }
 				isDataLoading={ isDataLoading }
@@ -113,6 +116,7 @@ export default {
 		sites.setSelectedSite( context.params.site );
 
 		renderPage(
+			context,
 			<ManagePurchaseData
 				component={ ConfirmCancelDomain }
 				purchaseId={ context.params.purchaseId }
@@ -133,6 +137,7 @@ export default {
 		sites.setSelectedSite( context.params.site );
 
 		renderPage(
+			context,
 			<EditCardDetailsData
 				cardId={ context.params.cardId }
 				component={ EditCardDetails }
@@ -155,6 +160,7 @@ export default {
 		sites.setSelectedSite( context.params.site );
 
 		renderPage(
+			context,
 			<ManagePurchaseData
 				component={ EditPaymentMethod }
 				purchaseId={ context.params.purchaseId }
@@ -170,6 +176,7 @@ export default {
 		);
 
 		renderPage(
+			context,
 			<PurchasesData
 				component={ PurchasesList }
 				noticeType={ context.params.noticeType }
@@ -190,6 +197,7 @@ export default {
 		sites.setSelectedSite( context.params.site );
 
 		renderPage(
+			context,
 			<ManagePurchaseData
 				component={ ManagePurchase }
 				purchaseId={ context.params.purchaseId }
@@ -211,6 +219,7 @@ export default {
 		);
 
 		renderPage(
+			context,
 			<Main>
 				<PurchasesHeader section={ 'purchases' } />
 				<NoSitesMessage />
