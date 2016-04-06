@@ -18,6 +18,7 @@ import WPOAuth from 'wpcom-oauth';
 import userFactory from 'lib/user';
 import Main from 'components/main';
 import Button from 'components/button';
+import WordPressLogo from 'components/wordpress-logo';
 
 module.exports = {
 
@@ -73,6 +74,7 @@ module.exports = {
 		// Extract this into a component...
 		ReactDom.render( (
 			<Main className="auth">
+				<WordPressLogo size={ 140 } />
 				<Button href={ authUrl }>Authorize</Button>
 			</Main>
 		), document.getElementById( 'primary' ) );
@@ -88,6 +90,13 @@ module.exports = {
 		if ( context.hash && context.hash.expires_in ) {
 			store.set( 'wpcom_token_expires_in', context.hash.expires_in );
 		}
+
+		// Extract this into a component...
+		ReactDom.render( (
+			<Main className="auth">
+				Success
+			</Main>
+		), document.getElementById( 'primary' ) );
 
 		// Fetch user and redirect to /sites on success.
 		const user = userFactory();
