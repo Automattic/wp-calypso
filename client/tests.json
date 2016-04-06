@@ -394,6 +394,18 @@
 		}
 	},
 	"post-editor": {
+		"editor-discussion": {
+			"test": [ "index" ]
+		},
+		"editor-ground-control": {
+			"test": [ "index" ]
+		},
+		"editor-sharing": {
+			"test": [ "publicize-connection" ]
+		},
+		"editor-taxonomies": {
+			"test": [ "accordion" ]
+		},
 		"media-modal": {
 			"test": [ "index", "markup", "preload-image" ]
 		},

@@ -1,30 +1,25 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' ),
-	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' ),
-	mockery = require( 'mockery' ),
-	chai = require( 'chai' ),
-	noop = require( 'lodash/noop' ),
-	expect = chai.expect;
+import ReactDom from 'react-dom';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+import sinon from 'sinon';
+import mockery from 'mockery';
+import { expect } from 'chai';
+import noop from 'lodash/noop';
 
-chai.use( sinonChai );
-const MOCK_COMPONENT = React.createClass( {
-	render: function() {
-		return null;
-	}
-} );
+/**
+ * Internal dependencies
+ */
+import EmptyComponent from 'test/helpers/react/empty-component';
+import useMockery from 'test/helpers/use-mockery';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Module variables
  */
-var DUMMY_SITE = {
+const DUMMY_SITE = {
 	options: {
 		default_comment_status: true,
 		default_ping_status: false
@@ -34,13 +29,12 @@ var DUMMY_SITE = {
 describe( 'EditorDiscussion', function() {
 	var editPost, EditorDiscussion;
 
+	useMockery();
+	useFakeDom();
+
 	before( function() {
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
 		editPost = sinon.spy();
-		mockery.registerMock( 'components/info-popover', MOCK_COMPONENT );
+		mockery.registerMock( 'components/info-popover', EmptyComponent );
 		mockery.registerMock( 'lib/posts/actions', {
 			edit: editPost
 		} );

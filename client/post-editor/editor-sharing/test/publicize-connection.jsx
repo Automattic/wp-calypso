@@ -1,17 +1,14 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	expect = require( 'chai' ).expect;
+import { shallow } from 'enzyme';
+import React from 'react';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var PublicizeConnection = require( '../../publicize-connection' ).WrappedComponent;
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Module variables
@@ -26,8 +23,12 @@ var CONNECTION = {
 };
 
 describe( 'PublicizeConnection', function() {
-	beforeEach( function() {
-		ReactDom.unmountComponentAtNode( document.body );
+	let PublicizeConnection;
+
+	useFakeDom();
+
+	before( () => {
+		PublicizeConnection = require( '../publicize-connection' ).WrappedComponent;
 	} );
 
 	describe( '#isConnectionSkipped()', function() {
@@ -40,12 +41,11 @@ describe( 'PublicizeConnection', function() {
 				]
 			};
 
-			tree = ReactDom.render(
+			tree = shallow(
 				<PublicizeConnection
 					post={ post }
-					connection={ CONNECTION } />,
-				document.body
-			);
+					connection={ CONNECTION } />
+			).instance();
 
 			expect( tree.isConnectionSkipped() ).to.equal( true );
 		} );
@@ -60,12 +60,11 @@ describe( 'PublicizeConnection', function() {
 				]
 			};
 
-			tree = ReactDom.render(
+			tree = shallow(
 				<PublicizeConnection
 					post={ post }
-					connection={ CONNECTION } />,
-				document.body
-			);
+					connection={ CONNECTION } />
+			).instance();
 
 			expect( tree.isConnectionSkipped() ).to.equal( false );
 		} );
@@ -81,12 +80,11 @@ describe( 'PublicizeConnection', function() {
 				]
 			};
 
-			tree = ReactDom.render(
+			tree = shallow(
 				<PublicizeConnection
 					post={ post }
-					connection={ CONNECTION } />,
-				document.body
-			);
+					connection={ CONNECTION } />
+			).instance();
 
 			expect( tree.isConnectionDone() ).to.equal( true );
 		} );
@@ -101,12 +99,11 @@ describe( 'PublicizeConnection', function() {
 				]
 			};
 
-			tree = ReactDom.render(
+			tree = shallow(
 				<PublicizeConnection
 					post={ post }
-					connection={ CONNECTION } />,
-				document.body
-			);
+					connection={ CONNECTION } />
+			).instance();
 
 			expect( tree.isConnectionDone() ).to.equal( false );
 		} );
