@@ -45,14 +45,6 @@ module.exports = {
 		},
 		defaultVariation: 'yearly'
 	},
-	domainSearchResultsCount: {
-		datestamp: '20160223',
-		variations: {
-			original: 50,
-			moreResults: 50
-		},
-		defaultVariation: 'original'
-	},
 	privacyCheckbox: {
 		datestamp: '20160310',
 		variations: {
