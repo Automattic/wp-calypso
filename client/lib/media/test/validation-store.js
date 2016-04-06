@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	assign = require( 'lodash/assign' ),
-	rewire = require( 'rewire' ),
-	mockery = require( 'mockery' ),
-	sinon = require( 'sinon' );
+import { expect } from 'chai';
+import assign from 'lodash/assign';
+import rewire from 'rewire';
+import mockery from 'mockery';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	MediaValidationErrors = require( '../constants' ).ValidationErrors;
+import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Module variables
@@ -20,9 +19,14 @@ var DUMMY_SITE_ID = 1,
 	DUMMY_MEDIA_OBJECT = { ID: 100, title: 'Image', extension: 'exe' };
 
 describe( 'MediaValidationStore', function() {
-	var sandbox, MediaValidationStore, handler;
+	let sandbox, MediaValidationStore, handler, Dispatcher, MediaValidationErrors;
+
+	useMockery();
 
 	before( function() {
+		Dispatcher = require( 'dispatcher' );
+		MediaValidationErrors = require( '../constants' ).ValidationErrors;
+
 		// Sinon
 		sandbox = sinon.sandbox.create();
 		sandbox.spy( Dispatcher, 'register' );

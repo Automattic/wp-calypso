@@ -1,23 +1,18 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-var sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' ),
-	expect = require( 'chai' ).use( sinonChai ).expect,
-	rewire = require( 'rewire' ),
-	assign = require( 'lodash/assign' ),
-	isPlainObject = require( 'lodash/isPlainObject' ),
-	mockery = require( 'mockery' );
+import sinon from 'sinon';
+import { expect } from 'chai';
+import rewire from 'rewire';
+import assign from 'lodash/assign';
+import isPlainObject from 'lodash/isPlainObject';
+import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	PostEditStore = require( 'lib/posts/post-edit-store' ),
-	MediaListStore = require( '../list-store' );
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Module variables
@@ -39,10 +34,17 @@ var DUMMY_SITE_ID = 1,
 	DUMMY_QUERY = { mime_type: 'audio/' };
 
 describe( 'MediaActions', function() {
-	var mediaGet, mediaList, mediaAdd, mediaAddUrls, mediaUpdate, mediaDelete, MediaActions, sandbox;
+	let mediaGet, mediaList, mediaAdd, mediaAddUrls, mediaUpdate, mediaDelete,
+		MediaActions, sandbox, Dispatcher, PostEditStore, MediaListStore;
+
+	useFakeDom();
+	useMockery();
 
 	before( function() {
-		mockery.enable( { warnOnReplace: false, warnOnUnregistered: false } );
+		Dispatcher = require( 'dispatcher' );
+		PostEditStore = require( 'lib/posts/post-edit-store' );
+		MediaListStore = require( '../list-store' );
+
 		mockery.registerMock( './library-selected-store', {
 			getAll: function() {
 				return [ DUMMY_ITEM ];
