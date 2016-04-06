@@ -92,6 +92,11 @@ export default React.createClass( {
 		if ( ! this.isMounted() ) {
 			return;
 		}
+
+		if ( ! this.needsFax() ) {
+			delete form.fax;
+		}
+
 		this.setState( { form } );
 	},
 
@@ -136,7 +141,7 @@ export default React.createClass( {
 		};
 	},
 
-	showFax() {
+	needsFax() {
 		return formState.getFieldValue( this.state.form, 'countryCode' ) === 'NL' && cartItems.hasNlTld( this.props.cart );
 	},
 
@@ -206,7 +211,7 @@ export default React.createClass( {
 					countriesList={ countriesList }
 					{ ...fieldProps( 'country-code' ) }/>
 
-				{ this.showFax() && <Input label={ this.translate( 'Fax', { textOnly } ) } { ...fieldProps( 'fax' ) }/> }
+				{ this.needsFax() && <Input label={ this.translate( 'Fax', { textOnly } ) } { ...fieldProps( 'fax' ) }/> }
 				<Input label={ this.translate( 'Address', { textOnly } ) } { ...fieldProps( 'address-1' ) }/>
 
 				<HiddenInput
