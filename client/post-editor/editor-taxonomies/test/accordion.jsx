@@ -1,80 +1,52 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	ReactInjection = require( 'react/lib/ReactInjection' ),
-	mockery = require( 'mockery' ),
-	expect = require( 'chai' ).expect,
-	noop = require( 'lodash/noop' ),
-	TestUtils = require( 'react-addons-test-utils' );
+import React from 'react';
+import mockery from 'mockery';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var common = require( 'lib/terms/test/common' ),
-	CategoryListData = require( 'components/data/category-list-data' ),
-	TagListData = require( 'components/data/tag-list-data' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	TaxonomiesAccordion;
-
-var MOCK_COMPONENT = React.createClass( {
-	render: function() {
-		return null;
-	}
-} );
-
-mockery.enable( {
-	warnOnReplace: false,
-	warnOnUnregistered: false
-} );
-
-mockery.registerMock( 'components/info-popover', MOCK_COMPONENT );
-mockery.registerMock( 'components/tooltip', MOCK_COMPONENT );
-mockery.registerMock( 'component-classes', function() {
-	return { add: noop, toggle: noop, remove: noop }
-} );
-mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
-mockery.registerSubstitute( 'query', 'component-query' );
-// TODO: REDUX - add proper tests when whole post-editor is reduxified
-mockery.registerMock( 'react-redux', {
-	connect: () => component => component
-} );
-i18n.initialize();
-ReactInjection.Class.injectMixin( i18n.mixin );
-TaxonomiesAccordion = require( 'post-editor/editor-taxonomies/accordion' );
-common.dispatchReceiveCategoryTerms();
+import EmptyComponent from 'test/helpers/react/empty-component';
+import useMockery from 'test/helpers/use-mockery';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useI18n from 'test/helpers/use-i18n';
 
 describe( 'EditorTaxonomiesAccordion', function() {
-	var accordion, wrapper;
+	let shallow, common, categoryStore, tagStore, i18n, TaxonomiesAccordion, accordion;
+
+	useMockery();
+	useFakeDom();
+	useI18n();
+
+	before( () => {
+		mockery.registerMock( 'post-editor/editor-categories', EmptyComponent );
+		mockery.registerMock( 'post-editor/editor-tags', EmptyComponent );
+		mockery.registerMock( 'components/info-popover', EmptyComponent );
+
+		shallow = require( 'enzyme' ).shallow;
+		common = require( 'lib/terms/test/common' );
+		categoryStore = require( 'lib/terms/category-store-factory' )( 'default' );
+		tagStore = require( 'lib/terms/tag-store' );
+		i18n = require( 'lib/mixins/i18n' );
+
+		TaxonomiesAccordion = require( 'post-editor/editor-taxonomies/accordion' );
+		TaxonomiesAccordion.prototype.__reactAutoBindMap.translate = i18n.translate;
+
+		common.dispatchReceiveCategoryTerms();
+		common.dispatchReceiveTagTerms();
+	} );
 
 	function render( postTaxonomiesProps ) {
-		unmount();
-		wrapper = ReactDom.render(
-			<CategoryListData siteId={ common.TEST_SITE_ID }>
-				<TagListData siteId={ common.TEST_SITE_ID }>
-					<TaxonomiesAccordion
-						site={ { ID: common.TEST_SITE_ID } }
-						post={ postTaxonomiesProps }
-					/>
-				</TagListData>
-			</CategoryListData>,
-			document.body
-		);
-		accordion = TestUtils.scryRenderedComponentsWithType( wrapper, TaxonomiesAccordion )[0];
+		accordion = shallow(
+			<TaxonomiesAccordion
+				site={ { ID: common.TEST_SITE_ID } }
+				post={ postTaxonomiesProps }
+				categories={ categoryStore.all( common.TEST_SITE_ID ) }
+				tags={ tagStore.all( common.TEST_SITE_ID ) } />
+		).instance();
 	}
-
-	function unmount() {
-		if ( wrapper ) {
-			ReactDom.unmountComponentAtNode( document.body );
-			wrapper = null;
-		}
-	}
-
-	afterEach( unmount );
 
 	describe( 'taxonomies subtitle', function() {
 		it( 'should display one top-level category name', function() {
