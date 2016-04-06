@@ -236,7 +236,11 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		if ( ! this.props.sites.hasSiteWithPlugins() ) {
+		if ( ! config.isEnabled( 'manage/plugins/wpcom' ) && ! this.props.sites.hasSiteWithPlugins() ) {
+			return null;
+		}
+
+		if ( config.isEnabled( 'manage/plugins/wpcom' ) && ( ! this.isSingle() && this.hasJetpackSites() ) ) {
 			return null;
 		}
 
