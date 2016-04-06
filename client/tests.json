@@ -192,6 +192,9 @@
 		"like-store": {
 			"test": [ "index" ]
 		},
+		"local-list": {
+			"test": [ "index" ]
+		},
 		"localforage": {
 			"test": [ "localforage-bypass" ]
 		},
