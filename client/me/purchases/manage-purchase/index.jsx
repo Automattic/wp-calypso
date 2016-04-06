@@ -622,6 +622,7 @@ const ManagePurchase = React.createClass( {
 				{ cancelPrivateRegistrationNavItem }
 
 				<RemovePurchase
+					hasLoadedSites={ this.props.hasLoadedSites }
 					selectedSite={ this.props.selectedSite }
 					selectedPurchase={ this.props.selectedPurchase }
 					user={ this.props.user } />

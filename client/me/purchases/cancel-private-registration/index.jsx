@@ -22,11 +22,12 @@ import titles from 'me/purchases/titles';
 
 const CancelPrivateRegistration = React.createClass( {
 	propTypes: {
+		hasLoadedSites: React.PropTypes.bool.isRequired,
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.bool,
 			React.PropTypes.object
-		] ).isRequired
+		] )
 	},
 
 	getInitialState() {
@@ -37,18 +38,18 @@ const CancelPrivateRegistration = React.createClass( {
 	},
 
 	componentWillMount() {
-		this.redirectIfPurchaseIsInvalid();
+		this.redirectIfDataIsInvalid();
 
 		recordPageView( 'cancel_private_registration', this.props );
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		this.redirectIfPurchaseIsInvalid( nextProps );
+		this.redirectIfDataIsInvalid( nextProps );
 
 		recordPageView( 'cancel_private_registration', this.props, nextProps );
 	},
 
-	redirectIfPurchaseIsInvalid( props = this.props ) {
+	redirectIfDataIsInvalid( props = this.props ) {
 		if ( ! this.isDataValid( props ) ) {
 			page.redirect( paths.list() );
 		}
@@ -169,7 +170,7 @@ const CancelPrivateRegistration = React.createClass( {
 				</p>
 			);
 
-		if ( ! isDataLoading( this.props ) ) {
+		if ( ! isDataLoading( this.props ) && this.isDataValid() ) {
 			notice = this.renderNotice();
 			button = this.renderButton();
 			descriptionText = this.renderDescriptionText();

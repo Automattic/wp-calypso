@@ -29,6 +29,7 @@ function getStateFromStores( props ) {
 		card: StoredCardsStore.getByCardId( parseInt( props.cardId, 10 ) ),
 		isEditingSpecificCard: Boolean( props.cardId ),
 		countriesList: CountriesList.forPayments(),
+		hasLoadedSites: props.hasLoadedSites,
 		selectedPurchase: PurchasesStore.getByPurchaseId( parseInt( props.purchaseId, 10 ) ),
 		selectedSite: props.selectedSite
 	};
@@ -38,7 +39,7 @@ function isDataLoading( state ) {
 	return (
 		state.card.isFetching ||
 		! state.selectedPurchase.hasLoadedFromServer ||
-		! state.selectedSite
+		! state.hasLoadedSites
 	);
 }
 
@@ -66,6 +67,7 @@ const EditCardDetailsData = React.createClass( {
 				cardId={ this.props.cardId }
 				component={ this.props.component }
 				getStateFromStores={ getStateFromStores }
+				hasLoadedSites={ this.props.sites.fetched }
 				isDataLoading={ isDataLoading }
 				loadingPlaceholder={ this.props.loadingPlaceholder }
 				purchaseId={ this.props.purchaseId }
