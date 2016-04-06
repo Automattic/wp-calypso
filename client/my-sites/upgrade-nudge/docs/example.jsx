@@ -19,7 +19,9 @@ export default React.createClass( {
 					<a href="/devdocs/app-components/upgrade-nudge">Upgrade Nudges</a>
 				</h2>
 				<div>
-					<UpgradeNudge />
+					<UpgradeNudge 
+						feature="domain"
+					/>
 				</div>
 				<div>
 					<UpgradeNudge
