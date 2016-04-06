@@ -11,12 +11,15 @@ import reduce from 'lodash/reduce';
 import keyBy from 'lodash/keyBy';
 import merge from 'lodash/merge';
 import mapValues from 'lodash/mapValues';
+import findKey from 'lodash/findKey';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
  */
 import PostQueryManager from 'lib/query-manager/post';
 import {
+	POST_DELETE,
 	POST_EDIT,
 	POST_EDITS_RESET,
 	POST_REQUEST,
@@ -49,12 +52,36 @@ export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case POSTS_RECEIVE:
 			return Object.assign( {}, state, keyBy( action.posts, 'global_ID' ) );
+
+		case POST_DELETE:
+			const globalId = findKey( state, {
+				ID: action.postId,
+				site_ID: action.siteId
+			} );
+
+			if ( ! globalId ) {
+				break;
+			}
+
+			// Posts and pages are first sent to trash before being permanently
+			// deleted. Therefore, only omit if already trashed or custom type.
+			const post = state[ globalId ];
+			if ( 'trash' === post.status || ! includes( [ 'post', 'page' ], post.type ) ) {
+				return omit( state, globalId );
+			}
+
+			return merge( {}, state, {
+				[ globalId ]: { status: 'trash' }
+			} );
+
 		case SERIALIZE:
 			return state;
+
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, itemsSchema ) ) {
 				return state;
 			}
+
 			return {};
 	}
 	return state;
@@ -126,7 +153,7 @@ export function queryRequests( state = {}, action ) {
  */
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
-		case POSTS_REQUEST_SUCCESS:
+		case POSTS_REQUEST_SUCCESS: {
 			const { siteId, query, posts } = action;
 			if ( ! state[ siteId ] ) {
 				state[ siteId ] = new PostQueryManager();
@@ -140,6 +167,26 @@ export function queries( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ siteId ]: nextPosts
 			} );
+		}
+
+		case POST_DELETE: {
+			if ( ! state[ action.siteId ] ) {
+				return state;
+			}
+
+			const nextPosts = state[ action.siteId ].receive( {
+				ID: action.postId,
+				status: 'trash'
+			}, { patch: true } );
+
+			if ( nextPosts === state[ action.siteId ] ) {
+				return state;
+			}
+
+			return Object.assign( {}, state, {
+				[ action.siteId ]: nextPosts
+			} );
+		}
 
 		case SERIALIZE:
 			return mapValues( state, ( queryManager ) => queryManager.toJSON() );
