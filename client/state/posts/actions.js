@@ -3,6 +3,9 @@
  */
 import wpcom from 'lib/wp';
 import {
+	POST_DELETE,
+	POST_DELETE_SUCCESS,
+	POST_DELETE_FAILURE,
 	POST_EDIT,
 	POST_EDITS_RESET,
 	POST_REQUEST,
@@ -160,5 +163,38 @@ export function resetPostEdits( siteId, postId ) {
 		type: POST_EDITS_RESET,
 		siteId,
 		postId
-	}
+	};
+}
+
+/**
+ * Returns an action thunk which, when dispatched, triggers a network request
+ * to delete the specified post.
+ *
+ * @param  {Number}   siteId Site ID
+ * @param  {Number}   postId Post ID
+ * @return {Function}        Action thunk
+ */
+export function deletePost( siteId, postId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: POST_DELETE,
+			siteId,
+			postId
+		} );
+
+		return wpcom.site( siteId ).post( postId ).delete().then( () => {
+			dispatch( {
+				type: POST_DELETE_SUCCESS,
+				siteId,
+				postId
+			} );
+		} ).catch( ( error ) => {
+			dispatch( {
+				type: POST_DELETE_FAILURE,
+				siteId,
+				postId,
+				error
+			} );
+		} );
+	};
 }
