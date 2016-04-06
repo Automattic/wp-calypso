@@ -12,8 +12,8 @@ import Button from 'components/button';
 import { cancelPrivateRegistration } from 'lib/upgrades/actions';
 import Card from 'components/card';
 import HeaderCake from 'components/header-cake';
-import { isDataLoading, goToManagePurchase, recordPageView } from '../utils';
-import { isRefundable } from 'lib/purchases';
+import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
+import { hasPrivateRegistration, isRefundable } from 'lib/purchases';
 import Main from 'components/main';
 import notices from 'notices';
 import Notice from 'components/notice';
@@ -37,11 +37,32 @@ const CancelPrivateRegistration = React.createClass( {
 	},
 
 	componentWillMount() {
+		this.redirectIfPurchaseIsInvalid();
+
 		recordPageView( 'cancel_private_registration', this.props );
 	},
 
 	componentWillReceiveProps( nextProps ) {
+		this.redirectIfPurchaseIsInvalid( nextProps );
+
 		recordPageView( 'cancel_private_registration', this.props, nextProps );
+	},
+
+	redirectIfPurchaseIsInvalid( props = this.props ) {
+		if ( ! this.isDataValid( props ) ) {
+			page.redirect( paths.list() );
+		}
+	},
+
+	isDataValid( props = this.props ) {
+		if ( isDataLoading( props ) ) {
+			return true;
+		}
+
+		const { selectedSite } = props,
+			purchase = getPurchase( props );
+
+		return selectedSite && purchase && hasPrivateRegistration( purchase );
 	},
 
 	cancel( event ) {
