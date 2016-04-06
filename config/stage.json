@@ -60,7 +60,6 @@
 		"muse": true,
 		"notifications2beta": true,
 		"olark": true,
-		"olark_use_wpcom_configuration": true,
 		"perfmon": true,
 		"persist-redux": true,
 		"post-editor/live-image-updates": true,

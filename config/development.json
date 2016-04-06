@@ -89,7 +89,6 @@
 		"network-connection": true,
 		"notifications2beta": true,
 		"olark": true,
-		"olark_use_wpcom_configuration": true,
 		"perfmon": false,
 		"persist-redux": true,
 		"phone_signup": true,
