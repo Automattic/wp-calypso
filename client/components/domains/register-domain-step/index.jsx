@@ -31,7 +31,7 @@ var wpcom = require( 'lib/wp' ).undocumented(),
 	abtest = require( 'lib/abtest' ).abtest;
 
 // max amount of domain suggestions we should fetch/display
-var SUGGESTION_QUANTITY = 4,
+var SUGGESTION_QUANTITY = 10,
 	INITIAL_SUGGESTION_QUANTITY = 2;
 
 var RegisterDomainStep = React.createClass( {
@@ -251,8 +251,6 @@ var RegisterDomainStep = React.createClass( {
 					} );
 				},
 				callback => {
-					
-					SUGGESTION_QUANTITY = 10;
 					
 					const params = {
 						quantity: SUGGESTION_QUANTITY,
