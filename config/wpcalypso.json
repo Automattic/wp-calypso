@@ -72,7 +72,6 @@
 		"persist-redux": true,
 		"phone_signup": true,
 		"post-editor/live-image-updates": true,
-		"post-editor/contact-form": true,
 		"press-this": true,
 		"reader": true,
 		"reader/full-errors": true,
