@@ -61,7 +61,7 @@ const ConfirmCancelDomain = React.createClass( {
 	},
 
 	redirectIfDataIsInvalid( props ) {
-		if ( isDataLoading( props ) ) {
+		if ( isDataLoading( props ) || this.state.submitting ) {
 			return null;
 		}
 
