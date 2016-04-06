@@ -43,7 +43,7 @@ CancelPurchaseLoadingPlaceholder.propTypes = {
 	selectedSite: React.PropTypes.oneOfType( [
 		React.PropTypes.bool,
 		React.PropTypes.object
-	] ).isRequired
+	] )
 };
 
 export default CancelPurchaseLoadingPlaceholder;

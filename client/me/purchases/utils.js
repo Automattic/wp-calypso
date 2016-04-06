@@ -43,7 +43,7 @@ function goToManagePurchase( props ) {
 }
 
 function isDataLoading( props ) {
-	return ( ! props.selectedSite || ! props.selectedPurchase.hasLoadedFromServer );
+	return ! props.hasLoadedSites || ! props.selectedPurchase.hasLoadedFromServer;
 }
 
 function recordPageView( trackingSlug, props, nextProps = null ) {
