@@ -908,13 +908,18 @@ $color-print: #f8f8f8;
 		border-radius: 50%;
 		border: 0;
 		box-shadow: none;
-		padding: 8px;
+		padding: 7px;
 		position: relative;
 		top: -2px;
 		line-height: 1;
 		width: auto;
 		height: auto;
 		margin-bottom: 0;
+	}
+
+	&.style-icon.is-custom {
+		padding: 8px;
+		top: 2px;
 	}
 }
 
@@ -926,7 +931,7 @@ $color-print: #f8f8f8;
 	}
 }
 
-&.style-text .sharing-buttons-preview-button__glyph,
+&.style-text .social-logo,
 &.style-text .sharing-buttons-preview-button__custom-icon,
 &.style-icon .sharing-buttons-preview-button__service {
 	display: none;
@@ -941,26 +946,26 @@ $color-print: #f8f8f8;
 	line-height: 1;
 }
 
-.sharing-buttons-preview-button__glyph {
+.sharing-buttons-preview-button .social-logo {
 	vertical-align: top;
 	position: relative;
-	top: 3px;
+	top: 2px;
 	text-align: center;
 }
 
-.sharing-buttons-preview-button.style-icon .sharing-buttons-preview-button__glyph {
+.sharing-buttons-preview-button.style-icon .social-logo {
 	top: 0;
 	color: $white;
 }
 
-.sharing-buttons-preview-button.style-icon.share-email .sharing-buttons-preview-button__glyph,
-.sharing-buttons-preview-button.style-icon.share-print .sharing-buttons-preview-button__glyph {
+.sharing-buttons-preview-button.style-icon.share-email .social-logo,
+.sharing-buttons-preview-button.style-icon.share-print .social-logo {
 	color: #777;
 }
 
 .sharing-buttons-preview-button__custom-icon {
 	display: inline-block;
-	vertical-align: top;
+	vertical-align: text-bottom;
 	width: 16px;
 	height: 16px;
 	background-position: left center;
