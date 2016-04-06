@@ -73,7 +73,11 @@ export default React.createClass( {
 	trimWhitespace( fieldValues, onComplete ) {
 		const trimmedFieldValues = Object.assign( {}, fieldValues );
 		this.fieldNames.forEach( ( fieldName ) => {
-			trimmedFieldValues[ fieldName ] = fieldValues[ fieldName ] && fieldValues[ fieldName ].trim();
+			if ( typeof fieldValues[ fieldName ] === 'string' ) {
+				trimmedFieldValues[ fieldName ] = fieldValues[ fieldName ].trim();
+			} else {
+				trimmedFieldValues[ fieldName ] = fieldValues[ fieldName ];
+			}
 		} );
 
 		onComplete( trimmedFieldValues );
