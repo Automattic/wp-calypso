@@ -1,30 +1,28 @@
 /**
  * External dependencies
  */
-var sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' ),
-	expect = require( 'chai' ).use( sinonChai ).expect,
-	memoize = require( 'lodash/memoize' );
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var preloadImage = require( '../../preload-image' );
+import useFakeDom from 'test/helpers/use-fake-dom';
+import { useSandbox } from 'test/helpers/use-sinon';
+import preloadImage from '../preload-image';
 
 describe( '#preloadImage()', function() {
-	var Image = sinon.stub();
+	let sandbox, Image;
+
+	useFakeDom();
+	useSandbox( ( _sandbox ) => sandbox = _sandbox );
 
 	before( function() {
-		global.window = { Image: Image };
+		Image = sandbox.stub( global.window, 'Image' );
 	} );
 
 	beforeEach( function() {
-		Image.reset();
-		preloadImage.cache = new memoize.Cache();
-	} );
-
-	after( function() {
-		delete global.window;
+		sandbox.reset();
+		preloadImage.cache.clear();
 	} );
 
 	it( 'should load an image', function() {
