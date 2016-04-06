@@ -3,6 +3,10 @@
  */
 import { getUser } from 'state/users/selectors';
 
+export function getCurrentUserId( state ) {
+	return state.currentUser.id;
+}
+
 /**
  * Returns the user object for the current user.
  *
@@ -10,11 +14,12 @@ import { getUser } from 'state/users/selectors';
  * @return {?Object}        Current user
  */
 export function getCurrentUser( state ) {
-	if ( ! state.currentUser.id ) {
+	const userId = getCurrentUserId( state );
+	if ( ! userId ) {
 		return null;
 	}
 
-	return getUser( state, state.currentUser.id );
+	return getUser( state, userId );
 }
 
 /**
