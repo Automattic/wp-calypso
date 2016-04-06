@@ -360,6 +360,9 @@
 		}
 	},
 	"my-sites": {
+		"media-library": {
+			"test": [ "list" ]
+		},
 		"menus" : {
 			"item-options" : {
 				"test": [ "posts" ]
@@ -391,6 +394,9 @@
 		}
 	},
 	"post-editor": {
+		"media-modal": {
+			"test": [ "index", "markup", "preload-image" ]
+		},
 		"test": [ "post-editor" ]
 	},
 	"reader": {

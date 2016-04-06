@@ -1,30 +1,27 @@
-/* eslint-disable vars-on-top */
-
 /**
  * External dependencies
  */
-var ReactDomServer = require( 'react-dom/server' ),
-	chai = require( 'chai' ),
-	expect = chai.expect,
-	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' );
-
-chai.use( sinonChai );
+import ReactDomServer from 'react-dom/server';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var markup = require( '../../markup' ),
-	sites = require( 'lib/sites-list' )();
+import useFakeDom from 'test/helpers/use-fake-dom';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'markup', function() {
-	var sandbox;
+	let sandbox, markup, sites;
 
-	beforeEach( function() {
-		sandbox = sinon.sandbox.create();
+	useFakeDom();
+	useSandbox( ( _sandbox ) => sandbox = _sandbox );
+
+	before( () => {
+		markup = require( '../markup' );
+		sites = require( 'lib/sites-list' )();
 	} );
 
-	afterEach( function() {
+	beforeEach( () => {
 		sandbox.restore();
 	} );
 

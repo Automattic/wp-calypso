@@ -1,55 +1,50 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	ReactInjection = require( 'react/lib/ReactInjection' ),
-	mockery = require( 'mockery' ),
-	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' ),
-	expect = require( 'chai' ).use( sinonChai ).expect;
+import React from 'react';
+import { shallow } from 'enzyme';
+import mockery from 'mockery';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var ModalViews = require( '../../constants' ).Views,
-	i18n = require( 'lib/mixins/i18n' ),
-	EditorMediaModal;
+import useMockery from 'test/helpers/use-mockery';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useI18n from 'test/helpers/use-i18n';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 /**
  * Module variables
  */
-var DUMMY_SITE = { ID: 1 },
-	DUMMY_MEDIA = [
-		{ ID: 100, date: '2015-06-19T11:36:09-04:00' },
-		{ ID: 200, date: '2015-06-19T09:36:09-04:00' }
-	],
-	EMPTY_COMPONENT;
-
-EMPTY_COMPONENT = React.createClass( {
+const DUMMY_SITE = { ID: 1 };
+const DUMMY_MEDIA = [
+	{ ID: 100, date: '2015-06-19T11:36:09-04:00' },
+	{ ID: 200, date: '2015-06-19T09:36:09-04:00' }
+];
+const EMPTY_COMPONENT = React.createClass( {
 	render: function() {
 		return <div />;
 	}
 } );
 
 describe( 'EditorMediaModal', function() {
-	var sandbox, deleteMedia, accept;
+	let sandbox, i18n, ModalViews, deleteMedia, accept, EditorMediaModal;
+
+	useMockery();
+	useFakeDom();
+	useI18n();
+	useSandbox( ( _sandbox ) => sandbox = _sandbox );
 
 	before( function() {
-		// i18n
-		i18n.initialize();
-		ReactInjection.Class.injectMixin( i18n.mixin );
+		ModalViews = require( '../constants' ).Views;
+		i18n = require( 'lib/mixins/i18n' );
 
 		// Sinon
-		sandbox = sinon.sandbox.create();
 		deleteMedia = sandbox.stub();
 		accept = sandbox.stub().callsArgWithAsync( 1, true );
 
 		// Mockery
-		mockery.enable( { warnOnReplace: false, warnOnUnregistered: false } );
 		mockery.registerMock( 'my-sites/media-library', EMPTY_COMPONENT );
 		mockery.registerMock( './detail', EMPTY_COMPONENT );
 		mockery.registerMock( './gallery', EMPTY_COMPONENT );
@@ -60,28 +55,21 @@ describe( 'EditorMediaModal', function() {
 		mockery.registerMock( 'component-closest', {} );
 		mockery.registerMock( 'lib/media/actions', { delete: deleteMedia } );
 
-		EditorMediaModal = require( '../../' );
+		EditorMediaModal = require( '../' );
+		EditorMediaModal.prototype.__reactAutoBindMap.translate = i18n.translate;
 	} );
 
 	beforeEach( function() {
 		sandbox.reset();
-		ReactDom.unmountComponentAtNode( document.body );
-	} );
-
-	after( function() {
-		mockery.deregisterAll();
-		mockery.disable();
-		sandbox.restore();
 	} );
 
 	it( 'should prompt to delete a single item from the list view', function( done ) {
 		var media = DUMMY_MEDIA.slice( 0, 1 ),
 			tree;
 
-		tree = ReactDom.render(
-			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ media } />,
-			document.body
-		);
+		tree = shallow(
+			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ media } />
+		).instance();
 		tree.deleteMedia();
 
 		expect( accept ).to.have.been.calledWith( 'Are you sure you want to permanently delete this item?' );
@@ -92,10 +80,9 @@ describe( 'EditorMediaModal', function() {
 	} );
 
 	it( 'should prompt to delete multiple items from the list view', function( done ) {
-		var tree = ReactDom.render(
-			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } />,
-			document.body
-		);
+		var tree = shallow(
+			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } />
+		).instance();
 		tree.deleteMedia();
 
 		expect( accept ).to.have.been.calledWith( 'Are you sure you want to permanently delete these items?' );
@@ -109,10 +96,9 @@ describe( 'EditorMediaModal', function() {
 		var media = DUMMY_MEDIA[ 0 ],
 			tree;
 
-		tree = ReactDom.render(
-			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ [ media ] } />,
-			document.body
-		);
+		tree = shallow(
+			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ [ media ] } />
+		).instance();
 		tree.setView( ModalViews.DETAIL );
 		tree.deleteMedia();
 
@@ -124,10 +110,9 @@ describe( 'EditorMediaModal', function() {
 	} );
 
 	it( 'should prompt to delete a single item from the detail view, even when multiple selected', function( done ) {
-		var tree = ReactDom.render(
-			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } />,
-			document.body
-		);
+		var tree = shallow(
+			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } />
+		).instance();
 		tree.setView( ModalViews.DETAIL );
 		tree.deleteMedia();
 
@@ -139,10 +124,9 @@ describe( 'EditorMediaModal', function() {
 	} );
 
 	it( 'should return to the list view after deleting the only item in detail view', function( done ) {
-		var tree = ReactDom.render(
-			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA.slice( 0, 1 ) } />,
-			document.body
-		);
+		var tree = shallow(
+			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA.slice( 0, 1 ) } />
+		).instance();
 		tree.setView( ModalViews.DETAIL );
 		tree.deleteMedia();
 
@@ -153,10 +137,9 @@ describe( 'EditorMediaModal', function() {
 	} );
 
 	it( 'should revert to an earlier media item when the last item is deleted from detail view', function( done ) {
-		var tree = ReactDom.render(
-			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } />,
-			document.body
-		);
+		var tree = shallow(
+			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } />
+		).instance();
 		tree.setView( ModalViews.DETAIL );
 		tree.setDetailSelectedIndex( 1 );
 		tree.deleteMedia();
