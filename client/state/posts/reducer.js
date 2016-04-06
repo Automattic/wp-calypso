@@ -4,16 +4,20 @@
 import { combineReducers } from 'redux';
 import get from 'lodash/get';
 import set from 'lodash/set';
+import omit from 'lodash/omit';
 import omitBy from 'lodash/omitBy';
 import isEqual from 'lodash/isEqual';
 import reduce from 'lodash/reduce';
 import keyBy from 'lodash/keyBy';
 import merge from 'lodash/merge';
+import findKey from 'lodash/findKey';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
  */
 import {
+	POST_DELETE,
 	POST_EDIT,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
@@ -45,12 +49,36 @@ export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case POSTS_RECEIVE:
 			return Object.assign( {}, state, keyBy( action.posts, 'global_ID' ) );
+
+		case POST_DELETE:
+			const globalId = findKey( state, {
+				ID: action.postId,
+				site_ID: action.siteId
+			} );
+
+			if ( ! globalId ) {
+				break;
+			}
+
+			// Posts and pages are first sent to trash before being permanently
+			// deleted. Therefore, only omit if already trashed or custom type.
+			const post = state[ globalId ];
+			if ( 'trash' === post.status || ! includes( [ 'post', 'page' ], post.type ) ) {
+				return omit( state, globalId );
+			}
+
+			return merge( {}, state, {
+				[ globalId ]: { status: 'trash' }
+			} );
+
 		case SERIALIZE:
 			return state;
+
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, itemsSchema ) ) {
 				return state;
 			}
+
 			return {};
 	}
 	return state;
