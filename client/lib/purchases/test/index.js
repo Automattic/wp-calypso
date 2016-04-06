@@ -46,10 +46,6 @@ describe( 'index', () => {
 		} );
 	} );
 	describe( '#isCancelable', () => {
-		it( 'should not be cancelable when cancelation period is expired', () => {
-			expect( isCancelable( DOMAIN_PURCHASE_CANCELATION_PERIOD_EXPIRED ) ).to.be.false;
-		} );
-
 		it( 'should not be cancelable when the purchase is included in a plan', () => {
 			expect( isCancelable( DOMAIN_PURCHASE_INCLUDED_IN_PLAN ) ).to.be.false;
 		} );

@@ -87,10 +87,6 @@ function hasPrivateRegistration( purchase ) {
  * @return {boolean} whether the purchase is cancelable
  */
 function isCancelable( purchase ) {
-	if ( ! purchase.isCancelable ) {
-		return false;
-	}
-
 	if ( isIncludedWithPlan( purchase ) ) {
 		return false;
 	}
