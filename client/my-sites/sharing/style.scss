@@ -12,6 +12,9 @@ $color-pinterest: #cc2127;
 $color-pocket: #ee4256;
 $color-email: #f8f8f8;
 $color-print: #f8f8f8;
+$color-skype: #00AFF0;
+$color-telegram: #0088cc;
+$color-whatsapp: #43d854;
 
 .foldable-card.sharing-service {
 
@@ -997,7 +1000,11 @@ $color-print: #f8f8f8;
 @include sharing-button-service( "pinterest", $color-pinterest );
 @include sharing-button-service( "pocket", $color-pocket );
 @include sharing-button-service( "email", $color-email );
-@include sharing-button-service( "print", $color-email );
+@include sharing-button-service( "print", $color-print );
+@include sharing-button-service( "skype", $color-skype );
+@include sharing-button-service( "telegram", $color-telegram );
+@include sharing-button-service( "whatsapp", $color-whatsapp );
+
 
 .sharing-buttons-preview__panel {
 	position: relative;
