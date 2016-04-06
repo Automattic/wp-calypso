@@ -3,17 +3,19 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import get from 'lodash/get';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Count from 'components/count';
-import { getSelectedSite } from 'state/ui/selectors';
+import QueryPostCounts from 'components/data/query-post-counts';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getAllPostCount } from 'state/posts/counts/selectors';
 import { translate } from 'lib/mixins/i18n';
 
-function EditorDraftsButton( { count, onClick, jetpack } ) {
+function EditorDraftsButton( { count, onClick, jetpack, siteId } ) {
 	return (
 		<Button
 			compact borderless
@@ -22,6 +24,9 @@ function EditorDraftsButton( { count, onClick, jetpack } ) {
 			disabled={ ! count && ! jetpack }
 			aria-label={ translate( 'View all drafts' ) }
 		>
+			{ siteId && (
+				<QueryPostCounts siteId={ siteId } type="post" />
+			) }
 			<span>{ translate( 'Drafts' ) }</span>
 			{ count && ! jetpack ? <Count count={ count } /> : null }
 		</Button>
@@ -31,11 +36,16 @@ function EditorDraftsButton( { count, onClick, jetpack } ) {
 EditorDraftsButton.propTypes = {
 	count: PropTypes.number,
 	onClick: PropTypes.func,
-	jetpack: PropTypes.bool
+	jetpack: PropTypes.bool,
+	siteId: PropTypes.number
 };
 
 export default connect( ( state ) => {
-	const jetpack = get( getSelectedSite( state ), 'jetpack' );
+	const siteId = getSelectedSiteId( state );
 
-	return { jetpack };
+	return {
+		jetpack: isJetpackSite( state, siteId ),
+		count: getAllPostCount( state, siteId, 'post', 'draft' ),
+		siteId
+	};
 } )( EditorDraftsButton );
