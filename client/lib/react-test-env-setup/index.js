@@ -42,6 +42,11 @@ module.exports.cleanup = function() {
 	delete global.navigator;
 	delete global.Element;
 	delete global.history;
-	delete global.localStorage;
+	if ( global.localStorage ) {
+		if ( global.localStorage.clear ) {
+			global.localStorage.clear();
+		}
+		delete global.localStorage;
+	}
 	delete global.XMLHttpRequest;
 };
