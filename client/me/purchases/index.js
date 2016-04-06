@@ -55,20 +55,11 @@ export default function() {
 
 	page(
 		paths.listNotice(),
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.list
+		controller.listNotice
 	);
 
 	page(
 		paths.managePurchase(),
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.managePurchase
-	);
-
-	page(
-		paths.managePurchaseDestination(),
 		meController.sidebar,
 		controller.noSitesMessage,
 		controller.managePurchase
