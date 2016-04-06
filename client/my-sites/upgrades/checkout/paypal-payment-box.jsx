@@ -14,7 +14,6 @@ var analytics = require( 'analytics' ),
 	Input = require( 'my-sites/upgrades/components/form/input' ),
 	notices = require( 'notices' ),
 	PaymentBox = require( './payment-box' ),
-	CartCoupon = require( 'my-sites/upgrades/cart/cart-coupon' ),
 	SubscriptionText = require( './subscription-text' ),
 	TermsOfService = require( './terms-of-service' ),
 	wpcom = require( 'lib/wp' ).undocumented();
@@ -129,7 +128,7 @@ module.exports = React.createClass( {
 				<div className="payment-box-section">
 					<CountrySelect
 						additionalClasses="checkout-field"
-						name='country'
+						name="country"
 						label={ this.translate( 'Country', { textOnly: true } ) }
 						countriesList={ this.props.countriesList }
 						value={ this.state.country }
@@ -145,14 +144,12 @@ module.exports = React.createClass( {
 						eventFormName="Checkout Form" />
 				</div>
 
-				{ cartValues.isSidebarHiddenForCart( this.props.cart ) && <CartCoupon cart={ this.props.cart } /> }
-
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />
 
 				<div className="payment-box-actions">
 					<div className="pay-button">
-						<button type='submit' className="button is-primary button-pay" disabled={ this.state.formDisabled }>
+						<button type="submit" className="button is-primary button-pay" disabled={ this.state.formDisabled }>
 							{ this.renderButtonText() }
 						</button>
 						<SubscriptionText cart={ this.props.cart } />

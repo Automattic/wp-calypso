@@ -11,7 +11,6 @@ var PayButton = require( './pay-button' ),
 	CreditCardSelector = require( './credit-card-selector' ),
 	TermsOfService = require( './terms-of-service' ),
 	PaymentBox = require( './payment-box' ),
-	CartCoupon = require( 'my-sites/upgrades/cart/cart-coupon' ),
 	analytics = require( 'analytics' ),
 	cartValues = require( 'lib/cart-values' );
 
@@ -39,8 +38,6 @@ var CreditCardPaymentBox = React.createClass( {
 					initialCard={ this.props.initialCard }
 					transaction={ this.props.transaction } />
 
-				{ cartValues.isSidebarHiddenForCart( cart ) && <CartCoupon cart={ cart } /> }
-
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) } />
 
@@ -49,9 +46,10 @@ var CreditCardPaymentBox = React.createClass( {
 						cart={ this.props.cart }
 						transactionStep={ this.props.transactionStep } />
 
-					{ cartValues.isPayPalExpressEnabled( cart ) ?
-						<a className="credit-card-payment-box__switch-link" href="" onClick={ this.handleToggle }>{ this.translate( 'or use PayPal' ) }</a>
-					: null }
+					{ cartValues.isPayPalExpressEnabled( cart )
+						? <a className="credit-card-payment-box__switch-link" href="" onClick={ this.handleToggle }>{ this.translate( 'or use PayPal' ) }</a>
+						: null
+					}
 				</div>
 			</form>
 		);

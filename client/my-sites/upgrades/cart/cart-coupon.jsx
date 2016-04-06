@@ -82,12 +82,12 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className="form">
+			<form onSubmit={ this.applyCoupon }>
 				<input type="text" placeholder={ this.translate( 'Enter Coupon Code', { textOnly: true } ) } onChange={ this.handleCouponInput } value={ this.state.couponInputValue } />
-				<button type="button" className="button" onClick={ this.applyCoupon }>
+				<button type="submit" className="button">
 					{ this.translate( 'Apply' ) }
 				</button>
-			</div>
+			</form>
 		);
 	},
 
