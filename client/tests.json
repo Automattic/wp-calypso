@@ -216,6 +216,9 @@
 		"media": {
 			"test": [ "actions", "library-selected-store", "list-store", "store", "utils", "validation-store" ]
 		},
+		"media-serialization": {
+			"test": [ "index" ]
+		},
 		"menu-data" : {
 			"test" : [ "menu-data" ]
 		},
@@ -250,6 +253,9 @@
 		"plans-list": {
 			"test": [ "index" ]
 		},
+		"popup-monitor": {
+			"test": [ "index" ]
+		},
 		"post-formats": {
 			"test": [ "actions", "store" ]
 		},
@@ -269,6 +275,9 @@
 			"test": [ "assembler", "index", "store" ]
 		},
 		"react-pass-to-children": {
+			"test": [ "index" ]
+		},
+		"react-test-env-setup": {
 			"test": [ "index" ]
 		},
 		"reader-comment-email-subscriptions": {

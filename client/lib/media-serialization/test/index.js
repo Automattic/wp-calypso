@@ -1,5 +1,3 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
@@ -8,10 +6,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import useFakeDom from 'test/helpers/use-fake-dom';
 import { deserialize } from '../';
 import { MediaTypes } from '../constants';
 
 describe( 'MediaSerialization', function() {
+	useFakeDom();
+
 	describe( '#deserialize()', function() {
 		it( 'should parse a caption shortcode string containing an image', function() {
 			const parsed = deserialize( '[caption id="attachment_1627" align="aligncenter" width="660"]<img class="size-full wp-image-1627" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" /> Ceramic[/caption]' );
