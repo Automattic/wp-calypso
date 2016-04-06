@@ -84,7 +84,7 @@ var PayButton = React.createClass( {
 			}
 
 			if ( cartItems.hasRenewalItem( this.props.cart ) ) {
-				return this.translate( 'Purchase %(price)s subscription', {
+				return this.translate( 'Renew subscription - %(price)s', {
 					args: { price: cart.total_cost_display },
 					context: 'Renew button on /checkout'
 				} );
