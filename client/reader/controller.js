@@ -100,6 +100,34 @@ function setPageTitle( title ) {
 	titleActions.setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) );
 }
 
+function renderFeedStream( context ) {
+	var FeedStream = require( 'reader/feed-stream' ),
+		basePath = '/read/feeds/:feed_id',
+		fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + context.params.feed_id,
+		feedStore = feedStreamFactory( 'feed:' + context.params.feed_id ),
+		mcKey = 'blog';
+
+	ReactDom.render(
+		React.createElement( FeedStream, {
+			key: 'feed-' + context.params.feed_id,
+			store: feedStore,
+			feedId: context.params.feed_id,
+			setPageTitle: setPageTitle,
+			trackScrollPage: trackScrollPage.bind(
+				null,
+				basePath,
+				fullAnalyticsPageTitle,
+				analyticsPageTitle,
+				mcKey
+			),
+			onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+			suppressSiteNameLink: true,
+			showBack: userHasHistory( context )
+		} ),
+		document.getElementById( 'primary' )
+	);
+}
+
 module.exports = {
 	initAbTests: function( context, next ) {
 		// spin up the ab tests that are currently active for the reader
@@ -219,10 +247,13 @@ module.exports = {
 
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
 			FeedStoreActions.discover( context.params.feed_id );
+
 			FeedStore.on( 'change', function() {
 				var feedId = FeedStore.getByUrl( context.params.feed_id );
+
 				if ( feedId ) {
-					page.redirect( `/read/feeds/${feedId}` );
+					context.params.feed_id = feedId;
+					renderFeedStream( context );
 				}
 			} );
 		} else {
@@ -244,25 +275,7 @@ module.exports = {
 			feed_id: context.params.feed_id
 		} );
 
-		ReactDom.render(
-			React.createElement( FeedStream, {
-				key: 'feed-' + context.params.feed_id,
-				store: feedStore,
-				feedId: context.params.feed_id,
-				setPageTitle: setPageTitle,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				suppressSiteNameLink: true,
-				showBack: userHasHistory( context )
-			} ),
-			document.getElementById( 'primary' )
-		);
+		renderFeedStream( context );
 	},
 
 	blogListing: function( context ) {
