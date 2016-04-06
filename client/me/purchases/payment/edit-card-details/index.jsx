@@ -36,8 +36,12 @@ const EditCardDetails = React.createClass( {
 	propTypes: {
 		card: React.PropTypes.object.isRequired,
 		countriesList: React.PropTypes.object.isRequired,
+		isEditingSpecificCard: React.PropTypes.bool.isRequired,
 		selectedPurchase: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.object.isRequired
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.object,
+			React.PropTypes.bool
+		] ),
 	},
 
 	getInitialState() {
@@ -70,6 +74,8 @@ const EditCardDetails = React.createClass( {
 	},
 
 	componentWillMount() {
+		this.redirectIfDataIsInvalid();
+
 		recordPageView( 'edit_card_details', this.props );
 
 		let fields = formState.createNullFieldValues( this.fieldNames );
@@ -84,6 +90,10 @@ const EditCardDetails = React.createClass( {
 		} );
 
 		this.setState( { form: this.formStateController.getInitialState() } );
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		this.redirectIfDataIsInvalid( nextProps );
 	},
 
 	validate( formValues, onComplete ) {
@@ -187,6 +197,24 @@ const EditCardDetails = React.createClass( {
 			paygateToken: token,
 			purchaseId: this.props.selectedPurchase.data.id
 		};
+	},
+
+	redirectIfDataIsInvalid( props = this.props ) {
+		if ( ! this.isDataValid( props ) ) {
+			page( paths.list() );
+		}
+	},
+
+	isDataValid( props = this.props ) {
+		if ( isDataLoading( props ) ) {
+			return true;
+		}
+
+		const purchase = getPurchase( props ),
+			{ selectedSite } = props,
+			card = props.isEditingSpecificCard ? props.card.data : true;
+
+		return purchase && card && selectedSite;
 	},
 
 	isFieldInvalid( name ) {

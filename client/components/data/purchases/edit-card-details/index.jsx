@@ -27,6 +27,7 @@ const stores = [
 function getStateFromStores( props ) {
 	return {
 		card: StoredCardsStore.getByCardId( parseInt( props.cardId, 10 ) ),
+		isEditingSpecificCard: Boolean( props.cardId ),
 		countriesList: CountriesList.forPayments(),
 		selectedPurchase: PurchasesStore.getByPurchaseId( parseInt( props.purchaseId, 10 ) ),
 		selectedSite: props.selectedSite
