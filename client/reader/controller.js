@@ -262,8 +262,7 @@ module.exports = {
 	},
 
 	feedListing: function( context ) {
-		var FeedStream = require( 'reader/feed-stream' ),
-			basePath = '/read/feeds/:feed_id',
+		var basePath = '/read/feeds/:feed_id',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + context.params.feed_id,
 			feedStore = feedStreamFactory( 'feed:' + context.params.feed_id ),
 			mcKey = 'blog';
