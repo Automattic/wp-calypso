@@ -195,6 +195,9 @@
 		"local-list": {
 			"test": [ "index" ]
 		},
+		"local-storage": {
+			"test": [ "index" ]
+		},
 		"localforage": {
 			"test": [ "localforage-bypass" ]
 		},
