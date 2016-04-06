@@ -48,19 +48,6 @@ function stripHTML( string ) {
 }
 
 /**
- * Converts a unicode-encoded character to its string equivalent. This is
- * especially useful in converting characters typically used in CSS `content`
- * properties to text for use in a React view.
- *
- * @param {string} character A unicode-encoded character
- * @example unicodeToString( '\\f2665' ) // -> ♥
- * @return {string} String equivalent of unicode character
- */
-function unicodeToString( character ) {
-	return String.fromCharCode( '0x' + character.replace( /^\\/, '' ) );
-}
-
-/**
  * Prevent widows by replacing spaces between the last `wordsToKeep` words in the text with non-breaking spaces
  * @param  {string} text        the text to work on
  * @param  {number} wordsToKeep the number of words to keep together
@@ -341,7 +328,6 @@ module.exports = {
 	decodeEntities: decodeEntities,
 	interpose: interpose,
 	stripHTML: stripHTML,
-	unicodeToString: unicodeToString,
 	preventWidows: preventWidows,
 	wpautop: wpautop,
 	removep: removep,
