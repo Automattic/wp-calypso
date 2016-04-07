@@ -17,22 +17,23 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:controller' );
 
 /**
- * @param { object } context -- Middleware context
- * @param { function } next -- Call next middleware in chain
+ * @param { object } -- `primary`, `secondary`, and `tertiary` functions, or null
+ * @return { function } -- Middlware that creates a logged-out layout in `context.layout`
  *
  * Produce a `LayoutLoggedOut` element in `context.layout`, using
- * `context.primary`, `context.secondary`, and `context.tertiary` to populate it.
+ * `primary`, `secondary`, and `tertiary` functions to populate it.
 */
-export function makeLoggedOutLayout( context, next ) {
-	const { store, primary, secondary, tertiary } = context;
-	context.layout = (
-		<ReduxProvider store={ store }>
-			<LayoutLoggedOut primary={ primary }
-				secondary={ secondary }
-				tertiary={ tertiary } />
-		</ReduxProvider>
-	);
-	next();
+export function makeLoggedOutLayout( { primary = noop, secondary = noop, tertiary = noop } = {} ) {
+	return ( context, next ) => {
+		context.layout = (
+			<ReduxProvider store={ context.store }>
+				<LayoutLoggedOut primary={ primary ? primary( context ) : null }
+					secondary={ secondary ? secondary( context ) : null }
+					tertiary={ tertiary ? tertiary( context ) : null } />
+			</ReduxProvider>
+		);
+		next();
+	};
 };
 
 /**

@@ -19,8 +19,8 @@ const designRoutes = isLoggedIn
 		'/design/type/:tier/:site_id': [ singleSite, navigation, siteSelection ],
 	}
 	: {
-		'/design': [ loggedOut, makeLoggedOutLayout ],
-		'/design/type/:tier': [ loggedOut, makeLoggedOutLayout ]
+		'/design': [ makeLoggedOutLayout( { primary: loggedOut } ) ],
+		'/design/type/:tier': [ makeLoggedOutLayout( { primary: loggedOut } ) ]
 	};
 
 const themesRoutes = isLoggedIn
@@ -28,7 +28,7 @@ const themesRoutes = isLoggedIn
 		'/theme/:slug/:section?/:site_id?': [ details ],
 	}
 	: {
-		'/theme/:slug/:section?': [ details, makeLoggedOutLayout ],
+		'/theme/:slug/:section?': [ makeLoggedOutLayout( { primary: details, secondary: null } ) ],
 	};
 
 const routes = Object.assign( {},
