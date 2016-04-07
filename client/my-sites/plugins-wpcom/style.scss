@@ -61,6 +61,10 @@
 
 .wpcom-plugins__plugin-item a {
 	color: $gray-dark;
+	
+	&:hover .wpcom-plugins__plugin-icon {
+		background: $blue-medium;
+	}
 }
 
 .wpcom-plugins__plugin-icon {
