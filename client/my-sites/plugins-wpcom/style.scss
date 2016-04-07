@@ -4,6 +4,19 @@
 	padding: 0;
 }
 
+// Disabled styles for not activated plans
+.wpcom-plugins__premium-panel.is-disabled,
+.wpcom-plugins__business-panel.is-disabled {
+	.wpcom-plugins__plugin-item {
+		opacity: 0.35;
+	}
+}
+
+.wpcom-plugin-panel .section-header {
+	border-bottom: 2px solid $blue-medium;
+	margin-bottom: 0;
+}
+
 .wpcom-plugins__list {
 	display: flex;
 	flex-flow: row wrap;
@@ -53,7 +66,7 @@
 .wpcom-plugins__plugin-icon {
 	width: 40px;
 	height: 40px;
-	background: $blue-wordpress;
+	background: $gray;
 	float: left;
 	display: flex;
 	justify-content: center;
@@ -99,6 +112,15 @@
 	}
 }
 
+.wpcom-plugins-expanded .section-header {
+	border-bottom: none;
+}
+
 .wpcom-plugin-panel .notice__icon {
 	flex-shrink: 0; // Prevent the notice icon from shrinking
+}
+
+.wpcom-plugin-panel__panel-footer {
+	padding-top: 14px;
+	padding-bottom: 14px;
 }

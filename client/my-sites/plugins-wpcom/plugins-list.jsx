@@ -14,7 +14,7 @@ export const PluginsList = React.createClass( {
 		const backHref = `/plugins/${ siteSlug }`;
 
 		return (
-			<div className="wpcom-plugin-panel wpcom-plugins-list">
+			<div className="wpcom-plugin-panel wpcom-plugins-expanded">
 				<HeaderCake backHref={ backHref } onClick={ noop }>Standard Plugins</HeaderCake>
 				<StandardPluginsPanel />
 			</div>
