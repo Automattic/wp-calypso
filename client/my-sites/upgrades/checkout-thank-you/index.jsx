@@ -64,7 +64,7 @@ const CheckoutThankYou = React.createClass( {
 	propTypes: {
 		productsList: React.PropTypes.object.isRequired,
 		receiptId: React.PropTypes.number,
-		productSlug: React.PropTypes.string.isRequired,
+		selectedFeature: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.bool,
 			React.PropTypes.object
