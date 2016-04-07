@@ -96,6 +96,7 @@ export default React.createClass( {
 					{ this.translate( 'New Post' ) }
 				</Publish>
 				<Item
+					tipTarget="me"
 					url="/me"
 					icon="user-circle"
 					isActive={ this.isActive( 'me' ) }
