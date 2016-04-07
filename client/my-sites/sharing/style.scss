@@ -1003,7 +1003,7 @@ $color-whatsapp: #43d854;
 @include sharing-button-service( "print", $color-print );
 @include sharing-button-service( "skype", $color-skype );
 @include sharing-button-service( "telegram", $color-telegram );
-@include sharing-button-service( "whatsapp", $color-whatsapp );
+@include sharing-button-service( "jetpack-whatsapp", $color-whatsapp );
 
 
 .sharing-buttons-preview__panel {
