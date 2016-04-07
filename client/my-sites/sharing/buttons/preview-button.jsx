@@ -36,6 +36,7 @@ module.exports = React.createClass( {
 			'google-plus-1': 'google-plus-alt',
 			pinterest: 'pinterest-alt',
 			tumblr: 'tumblr-alt',
+			'jetpack-whatsapp': 'whatsapp',
 			'press-this': 'wordpress',
 			twitter: 'twitter-alt',
 			more: 'share'
