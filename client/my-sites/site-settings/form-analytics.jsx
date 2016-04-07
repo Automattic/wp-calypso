@@ -11,10 +11,10 @@ import debugFactory from 'debug';
 import formBase from './form-base';
 import productsValues from 'lib/products-values';
 import protectForm from 'lib/mixins/protect-form';
-import analytics from 'analytics';
 import Card from 'components/card';
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';
+import ExternalLink from 'components/external-link';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
@@ -129,12 +129,13 @@ module.exports = React.createClass( {
 							onClick={ this.onClickAnalyticsInput }
 							onKeyPress={ this.onKeyPressAnalyticsInput }
 						/>
-						<p className="settings-explanation">
-							<a href="https://support.google.com/analytics/answer/1032385?hl=en" target="_blank">{
-							this.translate( 'Where can I find my Tracking ID?' )
-						}
-							</a>
-						</p>
+						<ExternalLink
+							icon={ true }
+							href="https://support.google.com/analytics/answer/1032385?hl=en"
+							target="_blank"
+						>
+							{ this.translate( 'Where can I find my Tracking ID?' ) }
+						</ExternalLink>
 					</fieldset>
 					<p>
 						{ this.translate(
@@ -160,10 +161,6 @@ module.exports = React.createClass( {
 				</Card>
 			</form>
 		);
-	},
-
-	trackUpgradeClick() {
-		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'google_analytics' } );
 	},
 
 	isEnabled() {
