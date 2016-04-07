@@ -34,15 +34,15 @@ describe( 'EditorMediaModal', function() {
 	useMockery();
 	useFakeDom();
 	useI18n();
-	useSandbox( ( _sandbox ) => sandbox = _sandbox );
+	useSandbox( ( newSandbox ) => {
+		sandbox = newSandbox;
+		deleteMedia = sandbox.stub();
+		accept = sandbox.stub().callsArgWithAsync( 1, true );
+	} );
 
 	before( function() {
 		ModalViews = require( '../constants' ).Views;
 		i18n = require( 'lib/mixins/i18n' );
-
-		// Sinon
-		deleteMedia = sandbox.stub();
-		accept = sandbox.stub().callsArgWithAsync( 1, true );
 
 		// Mockery
 		mockery.registerMock( 'my-sites/media-library', EMPTY_COMPONENT );
@@ -57,10 +57,6 @@ describe( 'EditorMediaModal', function() {
 
 		EditorMediaModal = require( '../' );
 		EditorMediaModal.prototype.__reactAutoBindMap.translate = i18n.translate;
-	} );
-
-	beforeEach( function() {
-		sandbox.reset();
 	} );
 
 	it( 'should prompt to delete a single item from the list view', function( done ) {

@@ -14,14 +14,12 @@ describe( '#preloadImage()', function() {
 	let sandbox, Image;
 
 	useFakeDom();
-	useSandbox( ( _sandbox ) => sandbox = _sandbox );
-
-	before( function() {
+	useSandbox( ( newSandbox ) => {
+		sandbox = newSandbox;
 		Image = sandbox.stub( global.window, 'Image' );
 	} );
 
 	beforeEach( function() {
-		sandbox.reset();
 		preloadImage.cache.clear();
 	} );
 
