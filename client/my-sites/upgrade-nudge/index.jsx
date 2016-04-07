@@ -13,6 +13,8 @@ import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import analytics from 'analytics';
 import sitesList from 'lib/sites-list';
+import { getValidFeatureKeys, hasFeature } from 'lib/plans';
+import { isFreePlan } from 'lib/products-values';
 
 const sites = sitesList();
 
@@ -29,13 +31,7 @@ export default React.createClass( {
 		href: React.PropTypes.string,
 		jetpack: React.PropTypes.bool,
 		compact: React.PropTypes.bool,
-		feature: React.PropTypes.oneOf( [
-			false,
-			'google-analytics',
-			'domain',
-			'premium-theme',
-			'custom-css'
-		] ),
+		feature: React.PropTypes.oneOf( [ false, ...getValidFeatureKeys() ] ),
 	},
 
 	getDefaultProps() {
@@ -75,7 +71,11 @@ export default React.createClass( {
 		const site = sites.getSelectedSite();
 		let href = this.props.href;
 
-		if ( site && site.plan && site.plan.product_name_short !== 'Free' ) {
+		if ( site && this.props.feature ) {
+			if ( hasFeature( this.props.feature, site.siteID ) ) {
+				return null;
+			}
+		} else if ( site && ! isFreePlan( site.plan ) ) {
 			return null;
 		}
 
