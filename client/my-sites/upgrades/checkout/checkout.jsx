@@ -12,6 +12,7 @@ var connect = require( 'react-redux' ).connect,
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
+	isValidFeatureKey = require( 'lib/plans' ).isValidFeatureKey,
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	clearPurchases = require( 'lib/upgrades/actions/purchases' ).clearPurchases,
 	DomainDetailsForm = require( './domain-details-form' ),
@@ -29,6 +30,10 @@ var analytics = require( 'analytics' ),
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'cards', 'productsList' ) ],
+
+	propTypes: {
+		selectedFeature: React.PropTypes.string
+	},
 
 	getInitialState: function() {
 		return { previousCart: null };
@@ -171,7 +176,13 @@ const Checkout = React.createClass( {
 			} );
 		}
 
-		return `/checkout/thank-you/${ this.props.sites.getSelectedSite().slug }/${ receiptId }`;
+		let redirectPath = `/checkout/thank-you/${ this.props.sites.getSelectedSite().slug }/${ receiptId }`;
+
+		if ( this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature ) ) {
+			redirectPath += '?feature=' + this.props.selectedFeature;
+		}
+
+		return redirectPath;
 	},
 
 	content: function() {

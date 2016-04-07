@@ -189,6 +189,7 @@ const PlansCompare = React.createClass( {
 								sitePlan={ sitePlan }
 								site={ this.props.selectedSite }
 								cart={ this.props.cart }
+								selectedFeature={ this.props.selectedFeature }
 								isSubmitting={ this.isSubmitting() }
 								isImageButton />
 							<span className="plans-compare__plan-name">
@@ -309,6 +310,7 @@ const PlansCompare = React.createClass( {
 						plan={ plan }
 						site={ this.props.selectedSite }
 						sitePlan={ sitePlan }
+						selectedFeature={ this.props.selectedFeature }
 						isSubmitting={ this.isSubmitting() }
 						cart={ this.props.cart } />
 				</td>
