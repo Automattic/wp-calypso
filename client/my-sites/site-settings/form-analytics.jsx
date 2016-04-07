@@ -10,9 +10,7 @@ var React = require( 'react' ),
  */
 var formBase = require( './form-base' ),
 	productsValues = require( 'lib/products-values' ),
-	config = require( 'config' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
-	EmptyContent = require( 'components/empty-content' ),
 	analytics = require( 'analytics' ),
 	Card = require( 'components/card' ),
 	Button = require( 'components/button' ),
@@ -122,7 +120,7 @@ module.exports = React.createClass( {
 							value={ this.state.wga.code }
 							onChange={ this.handleCodeChange }
 							placeholder={ placeholderText }
-							disabled={ this.state.fetchingSettings }
+							disabled={ this.state.fetchingSettings || ! this.isEnabled() }
 							onClick={ this.onClickAnalyticsInput }
 							onKeyPress={ this.onKeyPressAnalyticsInput }
 						/>
@@ -157,29 +155,12 @@ module.exports = React.createClass( {
 		);
 	},
 
-	upgradePrompt: function() {
-		var plansLink = '/plans/';
-
-		if ( config.isEnabled( 'manage/plans' ) ) {
-			plansLink += this.props.site.domain;
-		} else {
-			plansLink += this.props.site.ID;
-		}
-
-		return (
-			<EmptyContent
-				illustration="/calypso/images/drake/drake-whoops.svg"
-				title={ this.translate( 'Want to use Google Analytics on your site?', { context: 'site setting upgrade' } ) }
-				line={ this.translate( 'Support for Google Analytics is now available with WordPress.com Business.', { context: 'site setting upgrade' } ) }
-				action={ this.translate( 'Upgrade Now', { context: 'site setting upgrade' } ) }
-				actionURL={ plansLink }
-				isCompact={ true }
-				actionCallback={ this.trackUpgradeClick } />
-		);
-	},
-
 	trackUpgradeClick: function() {
 		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'google_analytics' } );
+	},
+
+	isEnabled: function() {
+		return productsValues.isBusiness( this.props.site.plan ) || productsValues.isEnterprise( this.props.site.plan );
 	},
 
 	render: function() {
@@ -189,10 +170,6 @@ module.exports = React.createClass( {
 			return null;
 		}
 		// Only show Google Analytics for business users.
-		if ( productsValues.isBusiness( this.props.site.plan ) || productsValues.isEnterprise( this.props.site.plan ) ) {
-			return this.form();
-		}
-
-		return this.upgradePrompt();
+		return this.form();
 	}
 } );
