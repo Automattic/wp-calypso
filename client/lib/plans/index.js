@@ -24,6 +24,10 @@ export function getValidFeatureKeys() {
 	return Object.keys( featuresList );
 }
 
+export function isValidFeatureKey( feature ) {
+	return !! featuresList[ feature ];
+}
+
 export function getSitePlanSlug( siteID ) {
 	var site;
 	if ( siteID ) {
