@@ -1,0 +1,29 @@
+.feature-analytics__title {
+	font-size: 25px;
+	color: $gray-dark;
+	text-align: center;
+	margin: 24px 0 0;
+}
+
+.feature-analytics__description {
+	font-size: 18px;
+	color: $gray;
+	text-align: center;
+	margin: 12px auto 24px;
+	display: block;
+	max-width: 480px;
+	font-weight: 300;
+}
+
+.feature-analytics__logo {
+	margin: 48px auto 48px;
+	text-align: center;
+}
+
+.feature-analytics__ilustration {
+	margin: 0 -24px -16px;
+
+	svg {
+		vertical-align: bottom;
+	}
+}
