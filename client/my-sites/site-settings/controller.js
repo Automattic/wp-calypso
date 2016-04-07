@@ -44,7 +44,7 @@ module.exports = {
 		site = sites.getSelectedSite();
 
 		// if site loaded, but user cannot manage site, redirect
-		if ( ! utils.userCan( 'manage_options', site ) ) {
+		if ( site && ! utils.userCan( 'manage_options', site ) ) {
 			page.redirect( '/stats' );
 			return;
 		}
@@ -71,7 +71,6 @@ module.exports = {
 				<SiteSettingsComponent
 					context={ context }
 					sites={ sites }
-					subsection={ context.params.subsection }
 					section={ context.params.section }
 					path={ context.path } />
 			</SitePurchasesData>,
@@ -80,9 +79,6 @@ module.exports = {
 
 		// analytics tracking
 		if ( 'undefined' !== typeof context.params.section ) {
-			analyticsPageTitle += ' > ' + titlecase( context.params.section );
-		}
-		if ( 'undefined' !== typeof context.params.subsection ) {
 			analyticsPageTitle += ' > ' + titlecase( context.params.section );
 		}
 		analytics.pageView.record( basePath + '/:site', analyticsPageTitle );
