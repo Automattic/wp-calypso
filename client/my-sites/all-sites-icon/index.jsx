@@ -9,7 +9,7 @@ import union from 'lodash/union';
  */
 import SiteIcon from 'components/site-icon';
 
-const MAX_ICONS = 4;
+const MAX_ICONS = 10;
 
 export default React.createClass( {
 	displayName: 'AllSitesIcon',
@@ -31,7 +31,7 @@ export default React.createClass( {
 	getIcons() {
 		let sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, MAX_ICONS );
 		return sites.map( function( site ) {
-			return <SiteIcon site={ site } key={ site.ID + '-icon' } size={ 16 } />;
+			return <SiteIcon site={ site } key={ site.ID + '-icon' } size={ 14 } />;
 		} );
 	},
 

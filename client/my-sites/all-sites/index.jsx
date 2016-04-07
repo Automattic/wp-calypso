@@ -46,11 +46,11 @@ export default React.createClass( {
 		return (
 			<div className={ allSitesClass }>
 				<a className="site__content" href={ this.props.href } onTouchTap={ this.onSelect }>
+					{ this.props.showCount && <Count count={ user.get().visible_site_count } /> }
 					<div className="site__info">
-						{ this.props.showCount && <Count count={ user.get().visible_site_count } /> }
 						<span className="site__title">{ this.translate( 'All My Sites' ) }</span>
+						<AllSitesIcon sites={ this.props.sites.get() } />
 					</div>
-					<AllSitesIcon sites={ this.props.sites.get() } />
 				</a>
 			</div>
 		);
