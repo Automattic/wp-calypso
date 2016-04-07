@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 
-import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
@@ -11,10 +10,12 @@ import standardPlugins from './standard-plugins';
 
 export const StandardPluginsPanel = React.createClass( {
 	render() {
-		const { plugins: givenPlugins = [] } = this.props;
-		const plugins = givenPlugins.length
-			? givenPlugins
-			: standardPlugins;
+		const {
+			displayCount,
+			plugins: givenPlugins = standardPlugins
+		} = this.props;
+		
+		const plugins = givenPlugins.slice( 0, displayCount );
 
 		return (
 			<div>
@@ -38,6 +39,7 @@ export const StandardPluginsPanel = React.createClass( {
 } );
 
 StandardPluginsPanel.propTypes = {
+	displayCount: PropTypes.number,
 	plugins: PropTypes.array
 };
 

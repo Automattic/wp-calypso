@@ -17,7 +17,7 @@ export const PluginPanel = React.createClass( {
 		return (
 			<div className="wpcom-plugin-panel">
 				<InfoHeader />
-				<StandardPluginsPanel />
+				<StandardPluginsPanel displayCount={ 6 } />
 				<Card className="wpcom-plugin-panel__panel-footer" href={ standardPluginsLink }>
 					{ this.translate( 'View all standard plugins' ) }
 				</Card>

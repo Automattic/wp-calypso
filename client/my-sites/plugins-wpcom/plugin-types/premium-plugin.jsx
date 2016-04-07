@@ -14,14 +14,14 @@ export const PremiumPlugin = React.createClass( {
 
 		return (
 			<div className="wpcom-plugins__plugin-item">
-				<div className="wpcom-plugins__plugin-icon">
-					<Gridicon { ...{ icon } } />
-				</div>
 				<a href={ supportLink } target="_blank">
+					<div className="wpcom-plugins__plugin-icon">
+						<Gridicon { ...{ icon } } />
+					</div>
 					<div className="wpcom-plugins__plugin-title">{ name }</div>
+					<div className="wpcom-plugins__plugin-plan">{ plan }</div>
+					<p className="wpcom-plugins__plugin-description">{ description }</p>
 				</a>
-				<div className="wpcom-plugins__plugin-plan">{ plan }</div>
-				<p className="wpcom-plugins__plugin-description">{ description }</p>
 			</div>
 		);
 	}
