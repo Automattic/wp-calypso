@@ -1,15 +1,33 @@
+.upgrade-nudge.card {
+	border-left: 3px solid $alert-yellow;
+	display: flex;
+	margin: 16px 0;
+
+	.upgrade-nudge__title {
+		font-size: 18px;
+	}
+
+	.button {
+		margin-left: auto;
+	}
+}
+
+.upgrade-nudge__icon {
+	background: $alert-yellow;
+	border-radius: 50%;
+	margin-right: 16px;
+	color: $white;
+	padding: 6px;
+	align-self: center;
+}
+
 .upgrade-nudge.button {
 	margin-bottom: 16px;
 	text-align: left;
 	display: inline-flex;
 
-	.gridicon {
+	.upgrade-nudge__icon {
 		background: $alert-green;
-		border-radius: 50%;
-		margin-left: 32px;
-		color: $white;
-		padding: 6px;
-		align-self: center;
 	}
 
 	&.is-full-width {
@@ -18,6 +36,10 @@
 			max-width: 420px;
 		}
 	}
+}
+
+.upgrade-nudge__title {
+	color: $gray-dark;
 }
 
 .upgrade-nudge__message {

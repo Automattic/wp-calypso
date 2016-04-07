@@ -9,6 +9,7 @@ import noop from 'lodash/noop';
  * Internal dependencies
  */
 import Button from 'components/button';
+import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import analytics from 'analytics';
 import sitesList from 'lib/sites-list';
@@ -27,6 +28,7 @@ export default React.createClass( {
 		event: React.PropTypes.string,
 		href: React.PropTypes.string,
 		jetpack: React.PropTypes.bool,
+		compact: React.PropTypes.bool,
 		feature: React.PropTypes.oneOf( [
 			false,
 			'google-analytics',
@@ -43,12 +45,13 @@ export default React.createClass( {
 			icon: 'star',
 			event: null,
 			jetpack: false,
-			feature: false
+			feature: false,
+			compact: false
 		}
 	},
 
 	handleClick() {
-		if ( this.props.event ) {
+		if ( this.props.event || this.props.feature ) {
 			analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
 				cta_name: this.props.event,
 				cta_feature: this.props.feature
@@ -58,7 +61,7 @@ export default React.createClass( {
 	},
 
 	componentDidMount() {
-		if ( this.props.event ) {
+		if ( this.props.event || this.props.feature ) {
 			analytics.tracks.recordEvent( 'calypso_upgrade_nudge_impression', {
 				cta_name: this.props.event,
 				cta_feature: this.props.feature
@@ -68,6 +71,7 @@ export default React.createClass( {
 
 	render() {
 		const classes = classNames( this.props.className, 'upgrade-nudge' );
+
 		const site = sites.getSelectedSite();
 		let href = this.props.href;
 
@@ -83,12 +87,29 @@ export default React.createClass( {
 			href = '/plans/' + site.slug;
 
 			if ( this.props.feature ) {
-				href += '?feature=' + this.props.feature
+				href += '/feature/' + this.props.feature
 			}
 		}
 
+		if ( this.props.compact ) {
+			return (
+				<Button className={ classes } onClick={ this.handleClick } href={ href }>
+					<Gridicon className="upgrade-nudge__icon" icon={ this.props.icon } />
+					<div className="upgrade-nudge__info">
+						<span className="upgrade-nudge__title">
+							{ this.props.title || this.translate( 'Upgrade to Premium' ) }
+						</span>
+						<span className="upgrade-nudge__message" >
+							{ this.props.message }
+						</span>
+					</div>
+				</Button>
+			);
+		}
+
 		return (
-			<Button className={ classes } onClick={ this.handleClick } href={ href }>
+			<Card compact className={ classes } onClick={ this.handleClick } href={ href }>
+				<Gridicon className="upgrade-nudge__icon" icon={ this.props.icon } />
 				<div className="upgrade-nudge__info">
 					<span className="upgrade-nudge__title">
 						{ this.props.title || this.translate( 'Upgrade to Premium' ) }
@@ -97,8 +118,7 @@ export default React.createClass( {
 						{ this.props.message }
 					</span>
 				</div>
-				<Gridicon icon={ this.props.icon } />
-			</Button>
+			</Card>
 		);
 	}
 } );
