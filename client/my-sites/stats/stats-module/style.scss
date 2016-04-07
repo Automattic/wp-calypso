@@ -238,6 +238,10 @@ ul.module-header-actions {
 	}
 }
 
+.module-content .upgrade-nudge.card {
+	 margin: 16px;
+}
+
 // Module Content Text
 
 .module-content-text {
@@ -346,10 +350,6 @@ ul.module-header-actions {
 				padding-bottom: 12px;
 			}
 		}
-	}
-
-	&.nudge {
-		text-align:left;
 	}
 }
 
