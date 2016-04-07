@@ -1,5 +1,3 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
@@ -12,6 +10,7 @@ import TestUtils from 'react-addons-test-utils';
  * Internal dependencies
  */
 import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Dirty Linked State Mixin', function() {
 	const DirtyLinkedForm = React.createClass( {
@@ -31,15 +30,22 @@ describe( 'Dirty Linked State Mixin', function() {
 			);
 		}
 	} );
-	var form, fooInput, barInput;
+	let form, fooInput, barInput, reactContainer;
+
+	useFakeDom.withContainer();
+
+	before( () => {
+		reactContainer = useFakeDom.getContainer();
+	} );
+
 	beforeEach( function() {
-		form = ReactDom.render( <DirtyLinkedForm />, document.body );
+		form = ReactDom.render( <DirtyLinkedForm />, reactContainer );
 		fooInput = ReactDom.findDOMNode( form ).querySelector( '.foo' );
 		barInput = ReactDom.findDOMNode( form ).querySelector( '.bar' );
 	} );
 
 	afterEach( function() {
-		ReactDom.unmountComponentAtNode( document.body );
+		ReactDom.unmountComponentAtNode( reactContainer );
 	} );
 
 	it( 'initially has default state', function( ) {

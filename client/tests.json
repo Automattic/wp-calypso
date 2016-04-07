@@ -226,6 +226,9 @@
 			"data-observe": {
 				"test": [ "index" ]
 			},
+			"dirty-linked-state": {
+				"test": [ "index" ]
+			},
 			"i18n": {
 				"localize": {
 					"test": [ "index" ]
