@@ -1,20 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	notices = require( 'notices' ),
-	debug = require( 'debug' )( 'calypso:my-sites:site-settings' );
+import React from 'react';
+import notices from 'notices';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var formBase = require( './form-base' ),
-	productsValues = require( 'lib/products-values' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
-	analytics = require( 'analytics' ),
-	Card = require( 'components/card' ),
-	Button = require( 'components/button' ),
-	SectionHeader = require( 'components/section-header' );
+import formBase from './form-base';
+import productsValues from 'lib/products-values';
+import protectForm from 'lib/mixins/protect-form';
+import analytics from 'analytics';
+import Card from 'components/card';
+import Button from 'components/button';
+import SectionHeader from 'components/section-header';
+
+const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
 module.exports = React.createClass( {
 
@@ -22,13 +24,13 @@ module.exports = React.createClass( {
 
 	mixins: [ protectForm.mixin, formBase ],
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			isCodeValid: true
 		};
 	},
 
-	resetState: function() {
+	resetState() {
 		this.replaceState( {
 			wga: {
 				code: null
@@ -38,14 +40,14 @@ module.exports = React.createClass( {
 		debug( 'resetting state' );
 	},
 
-	getSettingsFromSite: function( siteInstance ) {
-		var site = siteInstance || this.props.site,
-			settings = {
-				wga: {
-					code: ''
-				},
-				fetchingSettings: site.fetchingSettings
-			};
+	getSettingsFromSite( siteInstance ) {
+		const site = siteInstance || this.props.site;
+		const settings = {
+			wga: {
+				code: ''
+			},
+			fetchingSettings: site.fetchingSettings
+		};
 
 		if ( site.settings ) {
 			debug( 'site settings fetched' );
@@ -55,14 +57,14 @@ module.exports = React.createClass( {
 		return settings;
 	},
 
-	isCodeValid: function( code ) {
+	isCodeValid( code ) {
 		return ! code || code.match( /^UA-\d+-\d+$/i );
 	},
 
-	handleCodeChange: function( event ) {
-		var code = event.target.value,
-			notice = this.state.notice,
-			isCodeValid = this.isCodeValid( code );
+	handleCodeChange( event ) {
+		const code = event.target.value;
+		const isCodeValid = this.isCodeValid( code );
+		let notice = this.state.notice;
 
 		if ( ! isCodeValid && ! notice ) {
 			notice = notices.error( this.translate( 'Invalid Google Analytics Tracking ID.' ) );
@@ -80,7 +82,7 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	isSubmitButtonDisabled: function() {
+	isSubmitButtonDisabled() {
 		return this.state.fetchingSettings || this.state.submittingForm || ! this.state.isCodeValid;
 	},
 
@@ -92,7 +94,7 @@ module.exports = React.createClass( {
 		this.recordEventOnce( 'typedAnalyticsKey', 'Typed In Analytics Key Field' );
 	},
 
-	form: function() {
+	form() {
 		var placeholderText = '';
 
 		if ( this.state.fetchingSettings ) {
@@ -106,8 +108,11 @@ module.exports = React.createClass( {
 						compact
 						disabled={ this.isSubmitButtonDisabled() }
 						onClick={ this.submitForm }
-						>
-						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
+						>{
+							this.state.submittingForm
+									? this.translate( 'Saving…' )
+									: this.translate( 'Save Settings' )
+						}
 					</Button>
 				</SectionHeader>
 				<Card className="analytics-settings">
@@ -124,10 +129,12 @@ module.exports = React.createClass( {
 							onClick={ this.onClickAnalyticsInput }
 							onKeyPress={ this.onKeyPressAnalyticsInput }
 						/>
-						<p className="settings-explanation"><a href="https://support.google.com/analytics/answer/1032385?hl=en" target="_blank">{
+						<p className="settings-explanation">
+							<a href="https://support.google.com/analytics/answer/1032385?hl=en" target="_blank">{
 							this.translate( 'Where can I find my Tracking ID?' )
 						}
-						</a></p>
+							</a>
+						</p>
 					</fieldset>
 					<p>
 						{ this.translate(
@@ -155,15 +162,15 @@ module.exports = React.createClass( {
 		);
 	},
 
-	trackUpgradeClick: function() {
+	trackUpgradeClick() {
 		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'google_analytics' } );
 	},
 
-	isEnabled: function() {
+	isEnabled() {
 		return productsValues.isBusiness( this.props.site.plan ) || productsValues.isEnterprise( this.props.site.plan );
 	},
 
-	render: function() {
+	render() {
 		// we need to check that site has loaded first... a placeholder would be better,
 		// but returning null is better than a fatal error for now
 		if ( ! this.props.site ) {
