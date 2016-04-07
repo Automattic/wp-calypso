@@ -8,7 +8,7 @@ export const InfoHeader = React.createClass( {
 		return (
 			<Notice
 				showDismiss={ false }
-				text={ "Uploading and installing your own plugins is not available on WordPress.com, but we offer the most essential ones below." }
+				text={ "Your site comes pre-installed with a wide variety of plugins. Uploading your own plugins is not available on WordPress.com." }
 			>
 				<NoticeAction href="https://en.support.wordpress.com/plugins/">
 					{ "Learn More" }
