@@ -250,6 +250,9 @@
 		"notification-settings-store" : {
 			"test": [ "index" ]
 		},
+		"oauth-store" : {
+			"test": [ "index" ]
+		},
 		"olark-store" : {
 			"test": [ "index" ]
 		},
