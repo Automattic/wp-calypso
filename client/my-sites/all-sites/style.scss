@@ -3,12 +3,11 @@
 	display: flex;
 	flex: 1 0 auto;
 	justify-content: space-between;
-	padding: 0;
+	padding: 6px 0;
 	position: relative;
 }
 
-.all-sites .count {
-	position: absolute;
-		right: 16px;
-		top: 24px;
+.all-sites .site__title {
+	display: inline;
+	margin-left: 8px;
 }
