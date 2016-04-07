@@ -43,7 +43,7 @@ function goToManagePurchase( props ) {
 }
 
 function isDataLoading( props ) {
-	return ( ! props.selectedSite || ! props.selectedPurchase.hasLoadedFromServer );
+	return ! props.hasLoadedSites || ! props.selectedPurchase.hasLoadedFromServer;
 }
 
 function recordPageView( trackingSlug, props, nextProps = null ) {
@@ -57,7 +57,13 @@ function recordPageView( trackingSlug, props, nextProps = null ) {
 		return null;
 	}
 
-	const { productSlug } = getPurchase( nextProps || props );
+	const purchase = getPurchase( nextProps || props );
+
+	if ( ! purchase ) {
+		return null;
+	}
+
+	const { productSlug } = purchase;
 
 	analytics.tracks.recordEvent( `calypso_${ trackingSlug }_purchase_view`, { product_slug: productSlug } );
 }

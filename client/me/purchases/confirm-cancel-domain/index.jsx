@@ -36,7 +36,7 @@ const ConfirmCancelDomain = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.bool,
 			React.PropTypes.object
-		] ).isRequired
+		] )
 	},
 
 	getInitialState() {
@@ -53,15 +53,21 @@ const ConfirmCancelDomain = React.createClass( {
 	},
 
 	componentDidMount() {
-		this.ensurePurchaseIsADomainRegistration( this.props );
+		this.redirectIfDataIsInvalid( this.props );
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		this.ensurePurchaseIsADomainRegistration( nextProps );
+		this.redirectIfDataIsInvalid( nextProps );
 	},
 
-	ensurePurchaseIsADomainRegistration( props ) {
-		if ( ! isDataLoading( props ) && ! isDomainRegistration( getPurchase( props ) ) ) {
+	redirectIfDataIsInvalid( props ) {
+		if ( isDataLoading( props ) || this.state.submitting ) {
+			return null;
+		}
+
+		const purchase = getPurchase( props );
+
+		if ( ! purchase || ! isDomainRegistration( purchase ) || ! props.selectedSite ) {
 			page.redirect( paths.list() );
 		}
 	},

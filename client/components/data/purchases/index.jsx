@@ -21,6 +21,7 @@ const user = userFactory(),
 
 function getStateFromStores( props ) {
 	return {
+		hasLoadedSites: props.hasLoadedSites,
 		noticeType: props.noticeType,
 		purchases: PurchasesStore.getByUser( user.get().ID ),
 		sites: props.sites
@@ -47,6 +48,7 @@ const PurchasesData = React.createClass( {
 			<StoreConnection
 				component={ this.props.component }
 				noticeType={ this.props.noticeType }
+				hasLoadedSites={ this.props.sites.fetched }
 				sites={ this.props.sites }
 				stores={ stores }
 				getStateFromStores={ getStateFromStores } />
