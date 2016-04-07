@@ -13,11 +13,6 @@ test:
           - client/**/*.jsx
           - server/**/*.js
           - server/**/*.jsx
-    - NODE_ENV=test ./bin/run-tests:
-        parallel: true
-        files:
-          - client/**/Makefile
-          - server/**/Makefile
     - MOCHA_FILE=./test-results-client.xml npm run test-client -- --reporter=mocha-junit-reporter:
         parallel: true
         files:
