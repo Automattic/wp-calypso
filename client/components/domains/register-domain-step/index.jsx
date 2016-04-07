@@ -109,7 +109,7 @@ var RegisterDomainStep = React.createClass( {
 
 		initialQuery = this.props.selectedSite.domain.split( '.' )[ 0 ];
 
-		wpcom.fetchDomainSuggestions( initialQuery, { quantity: SUGGESTION_QUANTITY }, function( error, suggestions ) {
+		wpcom.fetchDomainSuggestions( initialQuery, { quantity: SUGGESTION_QUANTITY, vendor: abtest( 'domainSuggestionVendor' ) }, function( error, suggestions ) {
 			if ( ! this.isMounted() ) {
 				return;
 			}
@@ -251,10 +251,10 @@ var RegisterDomainStep = React.createClass( {
 					} );
 				},
 				callback => {
-					
 					const params = {
 						quantity: SUGGESTION_QUANTITY,
-						includeWordPressDotCom: this.props.includeWordPressDotCom
+						includeWordPressDotCom: this.props.includeWordPressDotCom,
+						vendor: abtest( 'domainSuggestionVendor' )
 					};
 
 					wpcom.fetchDomainSuggestions( domain, params, ( error, domainSuggestions ) => {
