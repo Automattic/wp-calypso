@@ -16,6 +16,8 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';
 import titleActions from 'lib/screen-title/actions';
+import get from 'lodash/get';
+import { isValidFeatureKey } from 'lib/plans';
 
 const plans = plansFactory();
 const sites = sitesFactory();
@@ -120,9 +122,12 @@ export default {
 
 	features( context ) {
 		const domain = context.params.domain;
-		const comparePath = domain ? `/plans/compare/${ domain }` : '/plans/compare';
+		const feature = get( context, 'params.feature' );
+		let comparePath = domain ? `/plans/compare/${ domain }` : '/plans/compare';
 
-		// check against feature enum
+		if ( isValidFeatureKey( feature ) ) {
+			comparePath += '?feature=' + feature;
+		}
 
 		// otherwise redirect to the compare page if not found
 		page.redirect( comparePath );
