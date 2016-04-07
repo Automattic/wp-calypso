@@ -145,22 +145,7 @@ module.exports = React.createClass( {
 					</FormSettingExplanation>
 				</FormFieldset>
 
-				<FormFieldset>
-					<FormLabel htmlFor="blogtimezone">
-						{ this.translate( 'Site Timezone' ) }
-					</FormLabel>
-
-					<TimezoneDropdown
-						valueLink={ this.linkState( 'timezone_string' ) }
-						selectedZone={ this.linkState( 'timezone_string' ).value }
-						disabled={ this.state.fetchingSettings }
-						onSelect={ this.onTimezoneSelect }
-					/>
-
-					<FormSettingExplanation>
-						{ this.translate( 'Choose a city in your timezone.' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
+				{ this.renderTimezoneDropdown() }
 			</div>
 		);
 	},
@@ -407,6 +392,31 @@ module.exports = React.createClass( {
 						</FormLabel>
 					</li>
 				</ul>
+			</FormFieldset>
+		);
+	},
+
+	renderTimezoneDropdown() {
+		if ( this.props.site.jetpack ) {
+			return;
+		}
+
+		return (
+			<FormFieldset>
+				<FormLabel htmlFor="blogtimezone">
+					{ this.translate( 'Site Timezone' ) }
+				</FormLabel>
+
+				<TimezoneDropdown
+					valueLink={ this.linkState( 'timezone_string' ) }
+					selectedZone={ this.linkState( 'timezone_string' ).value }
+					disabled={ this.state.fetchingSettings }
+					onSelect={ this.onTimezoneSelect }
+				/>
+
+				<FormSettingExplanation>
+					{ this.translate( 'Choose a city in your timezone.' ) }
+				</FormSettingExplanation>
 			</FormFieldset>
 		);
 	},
