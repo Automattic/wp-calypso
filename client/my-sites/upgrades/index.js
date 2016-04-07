@@ -227,11 +227,19 @@ module.exports = function() {
 	);
 
 	if ( config.isEnabled( 'upgrades/checkout' ) ) {
-		page(
-			'/checkout/thank-you/:site/:receiptId?',
-			controller.siteSelection,
-			upgradesController.checkoutThankYou
-		);
+		if ( config.isEnabled( 'upgrades/product-nudge-success' ) ) {
+			page(
+				'/checkout/thank-you/:product/:site/:receiptId?',
+				controller.siteSelection,
+				upgradesController.checkoutThankYou
+			);
+		} else {
+			page(
+				'/checkout/thank-you/:site/:receiptId?',
+				controller.siteSelection,
+				upgradesController.checkoutThankYou
+			);
+		}
 
 		page(
 			'/checkout/features/:feature/:domain/:plan_name?',
