@@ -39,14 +39,6 @@ export default function() {
 		);
 
 		page(
-			'/plans/compare/:product/:domain',
-			retarget,
-			controller.siteSelection,
-			controller.navigation,
-			plansController.plansCompare
-		);
-
-		page(
 			'/plans/select/:plan/:domain',
 			retarget,
 			controller.siteSelection,
