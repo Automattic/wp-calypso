@@ -227,14 +227,6 @@ module.exports = function() {
 	);
 
 	if ( config.isEnabled( 'upgrades/checkout' ) ) {
-		if ( config.isEnabled( 'upgrades/product-nudge-success' ) ) {
-			page(
-				'/checkout/thank-you/feature/:product/:site/:receiptId?',
-				controller.siteSelection,
-				upgradesController.checkoutThankYou
-			);
-		}
-
 		page(
 			'/checkout/thank-you/:site/:receiptId?',
 			controller.siteSelection,

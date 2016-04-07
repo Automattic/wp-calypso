@@ -14,14 +14,14 @@ import { isPremium } from 'lib/products-values';
 import paths from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
 
-const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedProduct } ) => {
+const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/',
 		customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + selectedSite.slug : adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href ),
 		plan = find( sitePlans.data, isPremium );
 
 	return (
 		<div>
-			{ ! selectedProduct &&
+			{ ! selectedFeature &&
 				<PurchaseDetail
 					icon="customize"
 					title={ i18n.translate( 'Customize your theme' ) }

@@ -12,12 +12,12 @@ import i18n from 'lib/mixins/i18n';
 import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 
-const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedProduct } ) => {
+const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 	const plan = find( sitePlans.data, isBusiness );
 
 	return (
 		<div>
-			{ ! selectedProduct &&
+			{ ! selectedFeature &&
 				<PurchaseDetail
 					icon="customize"
 					title={ i18n.translate( 'Find a new theme' ) }

@@ -46,7 +46,7 @@ import Main from 'components/main';
 import plansPaths from 'my-sites/plans/paths';
 import PremiumPlanDetails from './premium-plan-details';
 import PurchaseDetail from 'components/purchase-detail';
-import { shouldFetchSitePlans } from 'lib/plans';
+import { isValidFeatureKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
 import upgradesPaths from 'my-sites/upgrades/paths';
 
@@ -203,7 +203,7 @@ const CheckoutThankYou = React.createClass( {
 	productRelatedMessages() {
 		const { selectedSite, sitePlans } = this.props,
 			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
-		const productSlug = this.props.productSlug && this.props.productSlug.split( '/' )[0].toLowerCase();
+		const selectedFeature = this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature );
 
 		if ( ! this.isDataLoaded() ) {
 			return (
@@ -249,10 +249,10 @@ const CheckoutThankYou = React.createClass( {
 							purchases={ purchases }
 							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
 							selectedSite={ selectedSite }
-							selectedProduct={ {
+							selectedFeature={ {
 								title: 'Google Analytics Integration',
 								plans: [ 'premium', 'business' ]
-							} } // findProductBySlugArtur( product_slug )
+							} } // findFeatureBySlugArtur( selectedFeature )
 							sitePlans={ sitePlans } />
 
 						<FreeTrialNudge
