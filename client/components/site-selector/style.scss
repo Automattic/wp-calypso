@@ -59,6 +59,11 @@
 					@include long-content-fade( $color: $gray-light );
 				}
 			}
+
+			.count {
+				border-color: $blue-medium;
+				color: $blue-medium;
+			}
 		}
 	}
 }

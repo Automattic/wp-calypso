@@ -5,10 +5,20 @@
 	justify-content: space-between;
 	padding: 0;
 	position: relative;
+
+	.site__content {
+		padding: 13px 4px 13px 16px
+	}
 }
 
 .all-sites .count {
-	position: absolute;
-		right: 16px;
-		top: 24px;
+	align-items: center;
+	align-self: center;
+	border-radius: 4px;
+	display: inline-flex;
+	margin-right: 16px;
+	padding: 0;
+	height: 34px;
+	width: 34px;
+	justify-content: center;
 }
