@@ -13,12 +13,13 @@ import productsValues from 'lib/products-values';
 import protectForm from 'lib/mixins/protect-form';
 import Card from 'components/card';
 import Button from 'components/button';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'SiteSettingsFormAnalytics',
 
@@ -100,6 +101,7 @@ module.exports = React.createClass( {
 		if ( this.state.fetchingSettings ) {
 			placeholderText = this.translate( 'Loading' );
 		}
+
 		return (
 			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
 				<SectionHeader label={ this.translate( 'Analytics Settings' ) }>
@@ -116,6 +118,7 @@ module.exports = React.createClass( {
 					</Button>
 				</SectionHeader>
 				<Card className="analytics-settings">
+					{ this.renderNudge() }
 					<fieldset>
 						<label htmlFor="wgaCode">{ this.translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }</label>
 						<input
@@ -165,6 +168,24 @@ module.exports = React.createClass( {
 
 	isEnabled() {
 		return productsValues.isBusiness( this.props.site.plan ) || productsValues.isEnterprise( this.props.site.plan );
+	},
+
+	renderNudge() {
+		if ( this.isEnabled() ) {
+			return;
+		}
+
+		debug( 'Google analitics is not enabled. adding nudge ...' );
+
+		return (
+			<UpgradeNudge
+				title={ this.translate( 'Add Google Analytics' ) }
+				message={ this.translate( 'Upgrade to the business plan and include your own analytics tracking ID.' ) }
+				feature="google-analytics"
+				event="google_analytics_notice"
+				icon="stats-alt"
+			/>
+		);
 	},
 
 	render() {
