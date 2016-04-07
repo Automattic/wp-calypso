@@ -2,9 +2,8 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import ReactDom from 'react-dom';
+import { mount } from 'enzyme';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
 
 /**
  * Internal dependencies
@@ -30,31 +29,23 @@ describe( 'Dirty Linked State Mixin', function() {
 			);
 		}
 	} );
-	let form, fooInput, barInput, reactContainer;
+	let form, fooInput, barInput;
 
-	useFakeDom.withContainer();
-
-	before( () => {
-		reactContainer = useFakeDom.getContainer();
-	} );
+	useFakeDom();
 
 	beforeEach( function() {
-		form = ReactDom.render( <DirtyLinkedForm />, reactContainer );
-		fooInput = ReactDom.findDOMNode( form ).querySelector( '.foo' );
-		barInput = ReactDom.findDOMNode( form ).querySelector( '.bar' );
-	} );
-
-	afterEach( function() {
-		ReactDom.unmountComponentAtNode( reactContainer );
+		form = mount( <DirtyLinkedForm /> );
+		fooInput = form.find( '.foo' );
+		barInput = form.find( '.bar' );
 	} );
 
 	it( 'initially has default state', function( ) {
-		expect( form.state ).to.deep.equal( { foo: 'default foo', bar: 'default bar' } );
+		expect( form.state() ).to.deep.equal( { foo: 'default foo', bar: 'default bar' } );
 	} );
 
 	it( 'adds a modified field to dirtyFields', function() {
-		TestUtils.Simulate.change( fooInput, { target: { value: 'new value' } } );
-		expect( form.state ).to.deep.equal( {
+		fooInput.simulate( 'change', { target: { value: 'new value' } } );
+		expect( form.state() ).to.deep.equal( {
 			foo: 'new value',
 			bar: 'default bar',
 			dirtyFields: [ 'foo' ]
@@ -62,9 +53,9 @@ describe( 'Dirty Linked State Mixin', function() {
 	} );
 
 	it( 'when a field is modified multiple times, the dirty field is only added once', function() {
-		TestUtils.Simulate.change( fooInput, { target: { value: 'new value' } } );
-		TestUtils.Simulate.change( fooInput, { target: { value: 'updated value' } } );
-		expect( form.state ).to.deep.equal( {
+		fooInput.simulate( 'change', { target: { value: 'new value' } } );
+		fooInput.simulate( 'change', { target: { value: 'updated value' } } );
+		expect( form.state() ).to.deep.equal( {
 			foo: 'updated value',
 			bar: 'default bar',
 			dirtyFields: [ 'foo' ]
@@ -72,10 +63,10 @@ describe( 'Dirty Linked State Mixin', function() {
 	} );
 
 	it( 'can have multiple dirty fields', function() {
-		TestUtils.Simulate.change( fooInput, { target: { value: 'new value' } } );
-		TestUtils.Simulate.change( fooInput, { target: { value: 'updated value' } } );
-		TestUtils.Simulate.change( barInput, { target: { value: 'so many bars' } } );
-		expect( form.state ).to.deep.equal( {
+		fooInput.simulate( 'change', { target: { value: 'new value' } } );
+		fooInput.simulate( 'change', { target: { value: 'updated value' } } );
+		barInput.simulate( 'change', { target: { value: 'so many bars' } } );
+		expect( form.state() ).to.deep.equal( {
 			foo: 'updated value',
 			bar: 'so many bars',
 			dirtyFields: [ 'foo', 'bar' ]
