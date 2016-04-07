@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 var Dispatcher = require( 'dispatcher' ),
 	expect = require( 'chai' ).expect,
 	sinon = require( 'sinon' );
@@ -9,18 +8,21 @@ var Dispatcher = require( 'dispatcher' ),
 /**
  * Internal dependencies
  */
-var oAuthToken = require( 'lib/oauth-token' ),
-	testConstants = require( '../constants' );
+import { actions } from '../constants';
+import * as oAuthToken from 'lib/oauth-token';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'oAuthStore', function() {
-	var oAuthStore;
+	let oAuthStore;
+
+	useFakeDom();
 
 	beforeEach( function() {
 		oAuthStore = require( 'lib/oauth-store' );
 	} );
 
 	it( 'is in progress when attempting login', function() {
-		Dispatcher.handleViewAction( { type: testConstants.actions.AUTH_LOGIN } );
+		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: true,
@@ -31,9 +33,9 @@ describe( 'oAuthStore', function() {
 	} );
 
 	it( 'is no longer in progress when login fails', function() {
-		Dispatcher.handleViewAction( { type: testConstants.actions.AUTH_LOGIN } );
+		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
 		Dispatcher.handleViewAction( {
-			type: testConstants.actions.RECEIVE_AUTH_LOGIN,
+			type: actions.RECEIVE_AUTH_LOGIN,
 			error: { message: 'error' },
 			data: false
 		} );
@@ -47,9 +49,9 @@ describe( 'oAuthStore', function() {
 	} );
 
 	it( 'requires OTP for a 2FA account', function() {
-		Dispatcher.handleViewAction( { type: testConstants.actions.AUTH_LOGIN } );
+		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
 		Dispatcher.handleViewAction( {
-			type: testConstants.actions.RECEIVE_AUTH_LOGIN,
+			type: actions.RECEIVE_AUTH_LOGIN,
 			error: true,
 			data: {
 				body: {
@@ -68,9 +70,9 @@ describe( 'oAuthStore', function() {
 	} );
 
 	it( 'requires OTP for a 2FA account when OTP is wrong', function() {
-		Dispatcher.handleViewAction( { type: testConstants.actions.AUTH_LOGIN } );
+		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
 		Dispatcher.handleViewAction( {
-			type: testConstants.actions.RECEIVE_AUTH_LOGIN,
+			type: actions.RECEIVE_AUTH_LOGIN,
 			error: true,
 			data: {
 				body: {
@@ -88,16 +90,13 @@ describe( 'oAuthStore', function() {
 		} );
 	} );
 
-	it( 'sets OAuth token when login is correct', function() {
-		var before = global.document;
+	it( 'sets OAuth token when login is correct', sinon.test( function() {
+		this.stub( global.document.location, 'replace' );
+		this.stub( oAuthToken, 'setToken' );
 
-		global.document = { location: { replace: sinon.stub() } };
-
-		sinon.stub( oAuthToken, 'setToken' );
-
-		Dispatcher.handleViewAction( { type: testConstants.actions.AUTH_LOGIN } );
+		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
 		Dispatcher.handleViewAction( {
-			type: testConstants.actions.RECEIVE_AUTH_LOGIN,
+			type: actions.RECEIVE_AUTH_LOGIN,
 			error: false,
 			data: {
 				body: {
@@ -106,10 +105,10 @@ describe( 'oAuthStore', function() {
 			}
 		} );
 
-		expect( oAuthToken ).to.have.been.calledOnce;
-		expect( oAuthToken.setToken.calledWith( 'token' ) ).to.be.true;
+		expect( oAuthToken.setToken ).to.have.been.calledOnce;
+		expect( oAuthToken.setToken ).to.have.been.calledWith( 'token' );
 		expect( global.document.location.replace ).to.have.been.calledOnce;
-		expect( global.document.location.replace.calledWith( '/' ) ).to.be.true;
+		expect( global.document.location.replace ).to.have.been.calledWith( '/' );
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: true,
@@ -117,9 +116,5 @@ describe( 'oAuthStore', function() {
 			errorMessage: false,
 			errorLevel: false
 		} );
-
-		oAuthToken.setToken.restore();
-
-		global.document = before;
-	} );
+	} ) );
 } );

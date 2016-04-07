@@ -223,6 +223,12 @@
 			"test" : [ "menu-data" ]
 		},
 		"mixins" : {
+			"data-observe": {
+				"test": [ "index" ]
+			},
+			"dirty-linked-state": {
+				"test": [ "index" ]
+			},
 			"i18n": {
 				"localize": {
 					"test": [ "index" ]
@@ -242,6 +248,9 @@
 			"test": [ "index" ]
 		},
 		"notification-settings-store" : {
+			"test": [ "index" ]
+		},
+		"oauth-store" : {
 			"test": [ "index" ]
 		},
 		"olark-store" : {
