@@ -130,14 +130,14 @@ export default React.createClass( {
 								<StatsListLegend value={ this.translate( 'Views' ) } label={ this.translate( 'Country' ) } />
 								<StatsModulePlaceholder isLoading={ isLoading } />
 								<StatsList moduleName={ path } data={ data } />
-								{ this.props.summary && <div className="module-content-text nudge" key="nudge">
+								{ this.props.summary &&
 									<UpgradeNudge
 										title="Add Google Analytics"
 										message="Upgrade to Premium for Google Analytics integration."
 										event="googleAnalytics-stats-countries"
 										feature="google-analytics"
 									/>
-								</div>  }
+								}
 								{ hasError
 									? <ErrorPanel className={ 'network-error' } />
 									: null }
