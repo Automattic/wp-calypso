@@ -13,7 +13,7 @@ export const PluginsList = React.createClass( {
 		/* end development-only section */
 
 		return (
-			<div className="wpcom-plugins-list">
+			<div className="wpcom-plugin-panel wpcom-plugins-list">
 				<HeaderCake backHref={ backHref } onClick={ noop }>Standard Plugins</HeaderCake>
 				<StandardPluginsPanel />
 			</div>
