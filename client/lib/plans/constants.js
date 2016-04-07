@@ -19,6 +19,9 @@ export const featuresList = {
 	'unlimited-premium-themes': {
 		plans: [ 'business-bundle' ]
 	},
+	'video-upload': {
+		plans: [ 'value_bundle', 'business-bundle' ]
+	},
 	'custom-design': {
 		plans: [ 'value_bundle', 'business-bundle' ]
 	}
