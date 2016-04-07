@@ -118,6 +118,16 @@ export default {
 		);
 	},
 
+	features( context ) {
+		const domain = context.params.domain;
+		const comparePath = domain ? `/plans/compare/${ domain }` : '/plans/compare';
+
+		// check against feature enum
+
+		// otherwise redirect to the compare page if not found
+		page.redirect( comparePath );
+	},
+
 	redirectToCheckout( context ) {
 		// this route is deprecated, use `/checkout/:site/:plan` to link to plan checkout
 		page.redirect( `/checkout/${ context.params.domain }/${ context.params.plan }` );
