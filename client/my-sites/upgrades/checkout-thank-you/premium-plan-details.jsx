@@ -14,7 +14,9 @@ import { isPremium } from 'lib/products-values';
 import paths from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
 
-const PremiumPlanDetails = ( { selectedSite, sitePlans } ) => {
+const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedProduct } ) => {
+	console.log( selectedProduct );
+
 	const adminUrl = selectedSite.URL + '/wp-admin/',
 		customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + selectedSite.slug : adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href ),
 		plan = find( sitePlans.data, isPremium );
@@ -57,6 +59,7 @@ PremiumPlanDetails.propTypes = {
 		React.PropTypes.bool,
 		React.PropTypes.object
 	] ).isRequired,
+	selectedProduct: React.PropTypes.object,
 	sitePlans: React.PropTypes.object.isRequired
 };
 

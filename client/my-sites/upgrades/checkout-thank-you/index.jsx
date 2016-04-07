@@ -64,6 +64,7 @@ const CheckoutThankYou = React.createClass( {
 	propTypes: {
 		productsList: React.PropTypes.object.isRequired,
 		receiptId: React.PropTypes.number,
+		productSlug: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.bool,
 			React.PropTypes.object
@@ -202,6 +203,7 @@ const CheckoutThankYou = React.createClass( {
 	productRelatedMessages() {
 		const { selectedSite, sitePlans } = this.props,
 			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
+		const productSlug = this.props.productSlug.split( '/' )[0].toLowerCase();
 
 		if ( ! this.isDataLoaded() ) {
 			return (
@@ -247,6 +249,7 @@ const CheckoutThankYou = React.createClass( {
 							purchases={ purchases }
 							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
 							selectedSite={ selectedSite }
+							selectedProduct={ productSlug } // findProductBySlugArtur( product_slug )
 							sitePlans={ sitePlans } />
 
 						<FreeTrialNudge

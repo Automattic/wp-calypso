@@ -12,7 +12,8 @@ import i18n from 'lib/mixins/i18n';
 import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 
-const BusinessPlanDetails = ( { selectedSite, sitePlans } ) => {
+const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedProduct } ) => {
+	console.log( selectedProduct );
 	const plan = find( sitePlans.data, isBusiness );
 
 	return (
@@ -41,6 +42,7 @@ BusinessPlanDetails.propTypes = {
 		React.PropTypes.bool,
 		React.PropTypes.object
 	] ).isRequired,
+	selectedProduct: React.PropTypes.object,
 	sitePlans: React.PropTypes.object.isRequired
 
 };
