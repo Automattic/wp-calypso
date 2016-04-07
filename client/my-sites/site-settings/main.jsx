@@ -89,15 +89,11 @@ module.exports = React.createClass( {
 			selectedText = strings[ section ],
 			settingsSection = this.getSections();
 
-		if ( ! site ) {
-			return null;
-		}
-
 		return (
 			<section className="site-settings">
 				<div className="main main-column" role="main">
 					<SidebarNavigation />
-					{ ! this.props.subsection ?
+					{ site ?
 					<SectionNav selectedText={ selectedText }>
 						<NavTabs>
 							<NavItem path={ '/settings/general/' + site.slug } selected={ section === 'general' }>{ strings.general }</NavItem>
@@ -117,8 +113,8 @@ module.exports = React.createClass( {
 							: null }
 						</NavTabs>
 					</SectionNav>
-					: null }
-					{ settingsSection[ this.props.section ] }
+					: <SectionNav /> }
+					{ site && settingsSection[ this.props.section ] }
 				</div>
 			</section>
 		);
