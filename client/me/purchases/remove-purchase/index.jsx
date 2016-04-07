@@ -182,7 +182,7 @@ const RemovePurchase = React.createClass( {
 	},
 
 	render() {
-		if ( isDataLoading( this.props ) ) {
+		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
 			return null;
 		}
 

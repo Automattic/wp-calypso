@@ -12,8 +12,8 @@ import Button from 'components/button';
 import { cancelPrivateRegistration } from 'lib/upgrades/actions';
 import Card from 'components/card';
 import HeaderCake from 'components/header-cake';
-import { isDataLoading, goToManagePurchase, recordPageView } from '../utils';
-import { isRefundable } from 'lib/purchases';
+import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
+import { hasPrivateRegistration, isRefundable } from 'lib/purchases';
 import Main from 'components/main';
 import notices from 'notices';
 import Notice from 'components/notice';
@@ -22,11 +22,12 @@ import titles from 'me/purchases/titles';
 
 const CancelPrivateRegistration = React.createClass( {
 	propTypes: {
+		hasLoadedSites: React.PropTypes.bool.isRequired,
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.bool,
 			React.PropTypes.object
-		] ).isRequired
+		] )
 	},
 
 	getInitialState() {
@@ -37,11 +38,32 @@ const CancelPrivateRegistration = React.createClass( {
 	},
 
 	componentWillMount() {
+		this.redirectIfDataIsInvalid();
+
 		recordPageView( 'cancel_private_registration', this.props );
 	},
 
 	componentWillReceiveProps( nextProps ) {
+		this.redirectIfDataIsInvalid( nextProps );
+
 		recordPageView( 'cancel_private_registration', this.props, nextProps );
+	},
+
+	redirectIfDataIsInvalid( props = this.props ) {
+		if ( ! this.isDataValid( props ) ) {
+			page.redirect( paths.list() );
+		}
+	},
+
+	isDataValid( props = this.props ) {
+		if ( isDataLoading( props ) ) {
+			return true;
+		}
+
+		const { selectedSite } = props,
+			purchase = getPurchase( props );
+
+		return selectedSite && purchase && hasPrivateRegistration( purchase );
 	},
 
 	cancel( event ) {
@@ -148,7 +170,7 @@ const CancelPrivateRegistration = React.createClass( {
 				</p>
 			);
 
-		if ( ! isDataLoading( this.props ) ) {
+		if ( ! isDataLoading( this.props ) && this.isDataValid() ) {
 			notice = this.renderNotice();
 			button = this.renderButton();
 			descriptionText = this.renderDescriptionText();
