@@ -38,6 +38,7 @@ $z-layers: (
 		'.site-icon.is-blank .noticon': 0,
 		'.chart__bar-section.is-spacer': 0,
 		'.gear-dropdown:after': 0,
+		'.plan-card__ribbon': 1,
 		'.reader__featured-post-title': 1,
 		'.reader-list-gap__button': 1,
 		'.post-trends__title': 1,
@@ -132,6 +133,10 @@ $z-layers: (
 		'.fullscreen-fader': 200000,
 		'.guidestours__step': 201000,
 		'#habla_window_div.habla_window_div_base': 99999999 //olark
+	),
+	'.plan-card__ribbon': (
+		'.plan-card__ribbon-title::before': -1,
+		'.plan-card__ribbon-title::after': -1
 	),
 	'.environment-badge': (
 		'.environment-badge .environment::before': -1,
