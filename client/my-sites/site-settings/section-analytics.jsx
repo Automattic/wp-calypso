@@ -1,27 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:site-settings' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var AnalyticsForm = require( 'my-sites/site-settings/form-analytics' ),
-	Card = require( 'components/card' );
+import AnalyticsForm from 'my-sites/site-settings/form-analytics';
 
-module.exports = React.createClass({
+export default React.createClass( {
 	displayName: 'SiteSettingsAnalytics',
 
-	componentWillMount: function() {
-		debug( 'Mounting SiteSettingsAnalytics React component.' );
-	},
-
-	render: function() {
-
+	render() {
 		return (
 			<AnalyticsForm site={ this.props.site } />
 		);
-
 	}
-});
+} );
