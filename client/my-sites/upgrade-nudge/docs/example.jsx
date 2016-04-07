@@ -19,8 +19,9 @@ export default React.createClass( {
 					<a href="/devdocs/app-components/upgrade-nudge">Upgrade Nudges</a>
 				</h2>
 				<div>
-					<UpgradeNudge 
+					<UpgradeNudge
 						feature="domain"
+						href="#"
 					/>
 				</div>
 				<div>
@@ -28,6 +29,7 @@ export default React.createClass( {
 						title="This is a title"
 						message="This is a custom message"
 						icon="customize"
+						compact
 					/>
 				</div>
 			</div>

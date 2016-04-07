@@ -132,12 +132,10 @@ export default React.createClass( {
 								<StatsList moduleName={ path } data={ data } />
 								{ this.props.summary && <div className="module-content-text nudge" key="nudge">
 									<UpgradeNudge
-										className="is-full-width"
 										title="Add Google Analytics"
 										message="Upgrade to Premium for Google Analytics integration."
 										event="googleAnalytics-stats-countries"
 										feature="google-analytics"
-										icon="stats"
 									/>
 								</div>  }
 								{ hasError
