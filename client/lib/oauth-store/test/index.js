@@ -10,9 +10,12 @@ var Dispatcher = require( 'dispatcher' ),
  */
 import { actions } from '../constants';
 import * as oAuthToken from 'lib/oauth-token';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'oAuthStore', function() {
 	let oAuthStore;
+
+	useFakeDom();
 
 	beforeEach( function() {
 		oAuthStore = require( 'lib/oauth-store' );
@@ -88,14 +91,7 @@ describe( 'oAuthStore', function() {
 	} );
 
 	it( 'sets OAuth token when login is correct', sinon.test( function() {
-		const originalDocument = global.document,
-			replaceSpy = this.spy();
-
-		global.document = {
-			location: {
-				replace: replaceSpy
-			}
-		};
+		this.stub( global.document.location, 'replace' );
 		this.stub( oAuthToken, 'setToken' );
 
 		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
@@ -111,8 +107,8 @@ describe( 'oAuthStore', function() {
 
 		expect( oAuthToken.setToken ).to.have.been.calledOnce;
 		expect( oAuthToken.setToken ).to.have.been.calledWith( 'token' );
-		expect( replaceSpy ).to.have.been.calledOnce;
-		expect( replaceSpy ).to.have.been.calledWith( '/' );
+		expect( global.document.location.replace ).to.have.been.calledOnce;
+		expect( global.document.location.replace ).to.have.been.calledWith( '/' );
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: true,
@@ -120,7 +116,5 @@ describe( 'oAuthStore', function() {
 			errorMessage: false,
 			errorLevel: false
 		} );
-
-		global.document = originalDocument;
 	} ) );
 } );
