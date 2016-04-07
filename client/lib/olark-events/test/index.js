@@ -1,11 +1,23 @@
 /**
  * Internal dependencies
  */
-import './lib/mock-olark.js';
-import olarkEvents from 'lib/olark-events';
+import olarkMock from './mock/olark';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Olark events', () => {
+	let olarkEvents;
+
+	useFakeDom();
+
 	before( () => {
+		/**
+		 * Defining the global window and window.olark object here will prevent the real olark api located at lib/olark-api
+		 * from being created because it will generate a bunch of javascript errors about missing window and
+		 * window.document. If you look at that code it checks if window.olark already exists before it tries to
+		 * create it.
+		 */
+		global.window.olark = olarkMock;
+		olarkEvents = require( 'lib/olark-events' );
 		olarkEvents.initialize();
 
 		// emit a fake api.chat.onReady event
@@ -17,7 +29,6 @@ describe( 'Olark events', () => {
 		olarkEvents.on( 'api.chat.onReady', () => {
 			done();
 		} );
-		setTimeout( () => done( 'Did not trigger' ), 20 );
 	} );
 
 	// Test that nested event listener callbacks for the api.chat.onReady event will always be executed if the event has already fired.
@@ -28,6 +39,5 @@ describe( 'Olark events', () => {
 				done();
 			} );
 		} );
-		setTimeout( () => done( 'Did not trigger' ), 20 );
 	} );
 } );

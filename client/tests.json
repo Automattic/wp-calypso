@@ -253,6 +253,9 @@
 		"oauth-store" : {
 			"test": [ "index" ]
 		},
+		"olark-events" : {
+			"test": [ "index" ]
+		},
 		"olark-store" : {
 			"test": [ "index" ]
 		},
