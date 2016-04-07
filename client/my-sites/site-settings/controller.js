@@ -44,7 +44,7 @@ module.exports = {
 		site = sites.getSelectedSite();
 
 		// if site loaded, but user cannot manage site, redirect
-		if ( ! utils.userCan( 'manage_options', site ) ) {
+		if ( site && ! utils.userCan( 'manage_options', site ) ) {
 			page.redirect( '/stats' );
 			return;
 		}
