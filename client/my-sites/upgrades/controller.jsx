@@ -165,7 +165,8 @@ module.exports = {
 			SecondaryCart = require( './cart/secondary-cart' ),
 			storedCards = require( 'lib/stored-cards' )(),
 			basePath = route.sectionify( context.path ),
-			planName = context.params.plan_name;
+			planName = context.params.plan_name,
+			selectedFeature = context.query.feature;
 
 		if ( 'thank-you' === planName ) {
 			return;
@@ -185,6 +186,7 @@ module.exports = {
 						planName={ planName }
 						plans={ plansList }
 						productsList={ productsList }
+						selectedFeature={ selectedFeature }
 						sites={ sites } />
 				</CheckoutData>
 			),
