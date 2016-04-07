@@ -4,6 +4,8 @@
 import find from 'lodash/find';
 import page from 'page';
 import moment from 'moment';
+import get from 'lodash/get';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -14,6 +16,31 @@ import {
 	isFreeJetpackPlan,
 	isJetpackPlan
 } from 'lib/products-values';
+import { featuresList } from './constants';
+import SitesList from 'lib/sites-list';
+const sitesList = SitesList();
+
+export function getValidFeatureKeys() {
+	return Object.keys( featuresList );
+}
+
+export function getSitePlanSlug( siteID ) {
+	var site;
+	if ( siteID ) {
+		site = sitesList.getSite( siteID );
+	} else {
+		site = sitesList.getSelectedSite();
+	}
+	return get( site, 'plan.product_slug' );
+}
+
+export function hasFeature( feature, siteID ) {
+	if ( ! featuresList[ feature ] ) {
+		return false;
+	}
+	const plan = getSitePlanSlug( siteID );
+	return includes( featuresList[ feature ].plans, plan );
+}
 
 export function addCurrentPlanToCartAndRedirect( sitePlans, selectedSite ) {
 	addItem( cartItems.planItem( getCurrentPlan( sitePlans.data ).productSlug ) );
