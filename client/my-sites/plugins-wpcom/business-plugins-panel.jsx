@@ -10,6 +10,7 @@ const defaultPlugins = [
 	{
 		name: 'Google Analytics',
 		supportLink: 'https://en.support.wordpress.com/google-analytics/',
+		icon: 'stats',
 		plan: 'Business',
 		description: 'Advanced features to complement WordPress.com stats. Funnel reports, goal conversion, and more.'
 	}
@@ -24,10 +25,10 @@ export const BusinessPluginsPanel = React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.translate( 'Business Upgrades' ) }>
+				<SectionHeader label={ this.translate( 'Business Plan Upgrades' ) }>
 					<Button compact primary>{ this.translate( 'Purchase' ) }</Button>
 				</SectionHeader>
-				<Card className="wpcom-plugins__business-panel">
+				<Card className="wpcom-plugins__business-panel is-disabled">
 					<div className="wpcom-plugins__list">
 						{ plugins.map( ( { name, supportLink, icon, plan, description } ) =>
 							<BusinessPlugin
