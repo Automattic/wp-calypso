@@ -109,7 +109,7 @@ export default React.createClass( {
 
 		return (
 			<Card compact className={ classes } onClick={ this.handleClick } href={ href }>
-				<Gridicon className="upgrade-nudge__icon" icon={ this.props.icon } />
+				<Gridicon className="upgrade-nudge__icon" icon={ this.props.icon } size={ 18 } />
 				<div className="upgrade-nudge__info">
 					<span className="upgrade-nudge__title">
 						{ this.props.title || this.translate( 'Upgrade to Premium' ) }
