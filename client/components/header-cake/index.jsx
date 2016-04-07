@@ -19,7 +19,8 @@ export default React.createClass( {
 	propTypes: {
 		onClick: PropTypes.func.isRequired,
 		onTitleClick: PropTypes.func,
-		backText: PropTypes.string
+		backText: PropTypes.string,
+		backHref: PropTypes.string,
 	},
 
 	getDefaultProps() {
@@ -29,7 +30,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { backText } = this.props;
+		const { backText, backHref } = this.props;
 		const classes = classNames(
 			'header-cake',
 			this.props.className,
@@ -40,11 +41,11 @@ export default React.createClass( {
 
 		return (
 			<Card className={ classes }>
-				<HeaderCakeBack text={ backText } onClick={ this.props.onClick } />
+				<HeaderCakeBack text={ backText } href={ backHref } onClick={ this.props.onClick } />
 				<div className="header-cake__title" onClick={ this.props.onTitleClick }>
 					{ this.props.children }
 				</div>
-				<HeaderCakeBack text={ backText } spacer />
+				<HeaderCakeBack text={ backText } href={ backHref } spacer />
 			</Card>
 		);
 	}

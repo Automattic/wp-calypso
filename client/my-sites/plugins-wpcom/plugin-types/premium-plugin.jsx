@@ -13,7 +13,7 @@ export const PremiumPlugin = React.createClass( {
 		} = this.props;
 
 		return (
-			<li className="wpcom-plugins__plugin-item">
+			<div className="wpcom-plugins__plugin-item">
 				<a href={ supportLink } target="_blank">
 					<div className="wpcom-plugins__plugin-icon">
 						<Gridicon { ...{ icon } } />
@@ -22,7 +22,7 @@ export const PremiumPlugin = React.createClass( {
 					<div className="wpcom-plugins__plugin-plan">{ plan }</div>
 					<p className="wpcom-plugins__plugin-description">{ description }</p>
 				</a>
-			</li>
+			</div>
 		);
 	}
 } );
