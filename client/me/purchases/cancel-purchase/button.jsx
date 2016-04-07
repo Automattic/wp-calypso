@@ -133,8 +133,16 @@ const CancelPurchaseButton = React.createClass( {
 						args: { purchaseName }
 					}
 				) );
-				this.toggleDisabled();
+				this.cancellationFailed();
 			}
+		} );
+	},
+
+	cancellationFailed() {
+		this.closeDialog();
+
+		this.setState( {
+			submitting: false
 		} );
 	},
 
@@ -147,6 +155,9 @@ const CancelPurchaseButton = React.createClass( {
 	handleSubmit( error, response ) {
 		if ( error ) {
 			notices.error( error.message );
+
+			this.cancellationFailed();
+
 			return;
 		}
 
