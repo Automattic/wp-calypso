@@ -203,7 +203,7 @@ const CheckoutThankYou = React.createClass( {
 	productRelatedMessages() {
 		const { selectedSite, sitePlans } = this.props,
 			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
-		const productSlug = this.props.productSlug.split( '/' )[0].toLowerCase();
+		const productSlug = this.props.productSlug && this.props.productSlug.split( '/' )[0].toLowerCase();
 
 		if ( ! this.isDataLoaded() ) {
 			return (
