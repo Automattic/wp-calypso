@@ -112,6 +112,7 @@
 		"upgrades/in-app-purchase": false,
 		"upgrades/paypal": true,
 		"upgrades/premium-themes": true,
+		"upgrades/nudge-success": true,
 		"vip": false,
 		"vip/backups": true,
 		"vip/billing": true,
