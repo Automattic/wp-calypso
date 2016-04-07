@@ -40,6 +40,72 @@ export const standardPlugins = [
 		supportLink: 'https://en.support.wordpress.com/customizer/',
 		category: 'Appearance',
 		description: 'Edit colors and backgrounds.'
+	},
+	{
+		name: 'Extended Widgets',
+		supportLink: 'https://en.support.wordpress.com/category/widgets-sidebars/',
+		category: 'Appearance',
+		description: 'Eventbrite, Flickr, Google Calendar, and more.'
+	},
+	{
+		name: 'Akismet',
+		supportLink: 'http://akismet.com/',
+		category: 'Security',
+		description: 'Advanced anti-spam security.'
+	},
+	{
+		name: 'Backup',
+		supportLink: 'https://en.support.wordpress.com/export/#backups',
+		category: 'Security',
+		description: '24/7 backup of your entire site.'
+	},
+	{
+		name: 'Photon CDN',
+		supportLink: 'https://jetpack.com/support/photon/',
+		category: 'Performance',
+		description: 'Faster image loading and editing.'
+	},
+	{
+		name: 'Extended Shortcodes',
+		supportLink: 'https://en.support.wordpress.com/shortcodes/',
+		category: 'Misc',
+		description: 'YouTube, Twitter, Instagram, Spotify, and more.'
+	},
+	{
+		name: 'Importer',
+		supportLink: 'http://support.wordpress.com/import/',
+		category: 'Misc',
+		description: 'Import your blog content from a variety of other blogging platforms.'
+	},
+	{
+		name: 'Infinite Scroll',
+		supportLink: 'https://en.support.wordpress.com/infinite-scroll/',
+		category: 'Appearance',
+		description: 'Load more posts when you reach the bottom of a page.'
+	},
+	{
+		name: 'Related Posts',
+		supportLink: 'https://en.support.wordpress.com/related-posts/',
+		category: 'Appearance',
+		description: 'Pulls relevant content from your blog to display at the bottom of your posts.'
+	},
+	{
+		name: 'Email Subscriptions',
+		supportLink: 'https://en.support.wordpress.com/widgets/follow-blog-widget/',
+		category: 'Misc',
+		description: 'Enables your readers to sign up to receive your posts via email.'
+	},
+	{
+		name: 'Markdown',
+		supportLink: 'https://en.support.wordpress.com/markdown/',
+		category: 'Misc',
+		description: 'Text formatting using a lightweight markup language. '
+	},
+	{
+		name: 'Advanced Commenting',
+		supportLink: 'https://en.support.wordpress.com/category/comments/',
+		category: 'Misc',
+		description: 'Comment likes, user mentions, notifications, and more.'
 	}
 ];
 
