@@ -94,9 +94,7 @@ node_modules: package.json | node-version
 	@touch node_modules
 
 test: build
-	@npm run test-client
-	@npm run test-server
-	@npm run test-tests
+	@$(NPM) test
 
 lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint mixedindentlint
 	@$(NPM) run lint
