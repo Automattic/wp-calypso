@@ -84,11 +84,12 @@ export default React.createClass( {
 		}
 
 		if ( ! this.props.href && site ) {
-			href = '/plans/' + site.slug;
+			href = '/plans/';
 
 			if ( this.props.feature ) {
-				href += '/feature/' + this.props.feature
+				href += 'features/' + this.props.feature + '/';
 			}
+			href += site.slug;
 		}
 
 		if ( this.props.compact ) {
