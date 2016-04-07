@@ -7,6 +7,7 @@ import React, { PropTypes } from 'react';
  * Internal Dependencies
  */
 import layoutFocus from 'lib/layout-focus';
+import Gridicon from 'components/gridicon';
 
 class SidebarNavigation extends React.Component {
 	toggleSidebar( event ) {
@@ -18,10 +19,12 @@ class SidebarNavigation extends React.Component {
 		return (
 			<header className="current-section">
 				<a onTouchTap={ this.toggleSidebar } className={ this.props.linkClassName }>
+					<Gridicon icon="chevron-left" />
 					{ this.props.children }
-					<p className={ 'current-section__' + this.props.sectionName + '-title' }>{ this.props.sectionTitle }</p>
-					<h1 className="current-section__section-title">{ this.props.title }</h1>
-					<span className="noticon noticon-collapse" />
+					<div>
+						<p className={ 'current-section__' + this.props.sectionName + '-title' }>{ this.props.sectionTitle }</p>
+						<h1 className="current-section__section-title">{ this.props.title }</h1>
+					</div>
 				</a>
 			</header>
 		);
