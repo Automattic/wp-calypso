@@ -88,7 +88,7 @@ const wpcomContactForm = editor => {
 	} );
 
 	editor.addButton( 'wpcom_add_contact_form', {
-		classes: 'btn wpcom-button contact-form',
+		classes: 'btn wpcom-icon-button contact-form',
 		title: i18n.translate( 'Add Contact Form' ),
 		cmd: 'wpcomContactForm',
 		onPostRender() {
