@@ -1,16 +1,17 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 
 import HeaderCake from 'components/header-cake';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 import StandardPluginsPanel from './standard-plugins-panel';
 
 export const PluginsList = React.createClass( {
 	render() {
-		/* development-only code - don't deploy! */
-		const siteSlug = window.location.pathname.split( '/' ).pop();
+		const { siteSlug } = this.props;
 		const backHref = `/plugins/${ siteSlug }`;
-		/* end development-only section */
 
 		return (
 			<div className="wpcom-plugin-panel wpcom-plugins-list">
@@ -21,4 +22,8 @@ export const PluginsList = React.createClass( {
 	}
 } );
 
-export default PluginsList;
+const mapStateToProps = state => ( {
+	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
+} );
+
+export default connect( mapStateToProps )( PluginsList );

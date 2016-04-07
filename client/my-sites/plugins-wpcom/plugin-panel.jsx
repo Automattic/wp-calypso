@@ -1,6 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import Card from 'components/card';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 import InfoHeader from './info-header';
 import StandardPluginsPanel from './standard-plugins-panel';
@@ -9,10 +12,8 @@ import BusinessPluginsPanel from './business-plugins-panel';
 
 export const PluginPanel = React.createClass( {
 	render() {
-		/* For development purposes only */
-		const siteSlug = window.location.pathname.split( '/' ).pop();
+		const { siteSlug } = this.props;
 		const standardPluginsLink = `/plugins/standard/${ siteSlug }`;
-		/* End development section */
 
 		return (
 			<div className="wpcom-plugin-panel">
@@ -28,4 +29,8 @@ export const PluginPanel = React.createClass( {
 	}
 } );
 
-export default PluginPanel;
+const mapStateToProps = state => ( {
+	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
+} );
+
+export default connect( mapStateToProps )( PluginPanel );
