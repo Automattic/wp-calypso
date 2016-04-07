@@ -223,6 +223,9 @@
 			"test" : [ "menu-data" ]
 		},
 		"mixins" : {
+			"data-observe": {
+				"test": [ "index" ]
+			},
 			"i18n": {
 				"localize": {
 					"test": [ "index" ]
