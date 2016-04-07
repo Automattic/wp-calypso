@@ -21,10 +21,13 @@ export default React.createClass( {
 	displayName: 'SiteSettingsImport',
 
 	propTypes: {
-		site: PropTypes.shape( {
-			slug: PropTypes.string.isRequired,
-			title: PropTypes.string.isRequired
-		} )
+		site: React.PropTypes.oneOfType( [
+			React.PropTypes.bool,
+			PropTypes.shape( {
+				slug: PropTypes.string.isRequired,
+				title: PropTypes.string.isRequired
+			} )
+		] )
 	},
 
 	componentDidMount: function() {

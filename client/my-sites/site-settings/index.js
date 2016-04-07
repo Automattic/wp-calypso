@@ -18,8 +18,6 @@ module.exports = function() {
 
 	if ( config.isEnabled( 'manage/import' ) ) {
 		page( '/settings/import/:site_id', controller.siteSelection, controller.navigation, settingsController.importSite );
-		page( '/settings/import/:subsection/:site_id', controller.siteSelection, controller.navigation, settingsController.importSite );
-		page( '/settings/import/:subsection(upload)/:importerID/:site_id', controller.siteSelection, controller.navigation, settingsController.importSite );
 	}
 	if ( config.isEnabled( 'manage/export' ) ) {
 		page( '/settings/export/:site_id', controller.siteSelection, controller.navigation, settingsController.exportSite );
@@ -29,6 +27,5 @@ module.exports = function() {
 		page( '/settings/start-over/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.startOver );
 	}
 	page( '/settings/:section/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
-	page( '/settings/:section/:subsection/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
 	page( '/settings/:section', settingsController.legacyRedirects, controller.siteSelection, controller.sites );
 };
