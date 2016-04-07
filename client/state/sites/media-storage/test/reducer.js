@@ -26,9 +26,6 @@ describe( 'reducer', () => {
 
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;
-	} );
-
-	before( () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
