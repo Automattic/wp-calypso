@@ -29,6 +29,7 @@ import PluginSections from 'my-sites/plugins/plugin-sections';
 import pluginsAccessControl from 'my-sites/plugins/access-control';
 import EmptyContent from 'components/empty-content';
 import FeatureExample from 'components/feature-example'
+import WpcomPluginsList from 'my-sites/plugins-wpcom/plugins-list';
 
 /**
  * Module variables
@@ -301,10 +302,7 @@ const SinglePlugin = React.createClass( {
 			return (
 				<MainComponent>
 					<SidebarNavigation />
-					<EmptyContent
-						title={ this.translate( 'Oops! Not supported' ) }
-						line={ this.translate( 'This site doesn\'t support installing plugins. Switch to a self-hosted site to install and manage plugins' ) }
-						illustration={ '/calypso/images/drake/drake-whoops.svg' } />
+					<WpcomPluginsList />
 				</MainComponent>
 			);
 		}
