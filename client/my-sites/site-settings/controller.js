@@ -71,7 +71,6 @@ module.exports = {
 				<SiteSettingsComponent
 					context={ context }
 					sites={ sites }
-					subsection={ context.params.subsection }
 					section={ context.params.section }
 					path={ context.path } />
 			</SitePurchasesData>,
@@ -80,9 +79,6 @@ module.exports = {
 
 		// analytics tracking
 		if ( 'undefined' !== typeof context.params.section ) {
-			analyticsPageTitle += ' > ' + titlecase( context.params.section );
-		}
-		if ( 'undefined' !== typeof context.params.subsection ) {
 			analyticsPageTitle += ' > ' + titlecase( context.params.section );
 		}
 		analytics.pageView.record( basePath + '/:site', analyticsPageTitle );
