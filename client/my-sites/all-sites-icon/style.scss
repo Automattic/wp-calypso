@@ -3,12 +3,8 @@
  */
 
 .all-sites-icon {
-	margin: -8px 12px -8px -8px;
+	margin: 0 8px 0 0;
 	position: relative;
-		left: 0;
-		top: 0;
-	height: 50px;
-	width: 50px;
 
 	.site-icon.is-blank::before {
 		display: none;
@@ -42,7 +38,8 @@
 	background: $gray;
 	border: none;
 	margin-right: 0;
-	position: absolute;
+	display: inline-block;
+	vertical-align: middle;
 }
 
 // Shape with one icon
