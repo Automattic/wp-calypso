@@ -13,19 +13,18 @@ import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 
 const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedProduct } ) => {
-	console.log( selectedProduct );
 	const plan = find( sitePlans.data, isBusiness );
 
 	return (
 		<div>
-			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
-
-			<PurchaseDetail
-				icon="customize"
-				title={ i18n.translate( 'Find a new theme' ) }
-				description={ i18n.translate( 'All our premium themes are now available at no extra cost. Try them out now.' ) }
-				buttonText={ i18n.translate( 'Browse premium themes' ) }
-				href={ '/design/' + selectedSite.slug } />
+			{ ! selectedProduct &&
+				<PurchaseDetail
+					icon="customize"
+					title={ i18n.translate( 'Find a new theme' ) }
+					description={ i18n.translate( 'All our premium themes are now available at no extra cost. Try them out now.' ) }
+					buttonText={ i18n.translate( 'Browse premium themes' ) }
+					href={ '/design/' + selectedSite.slug } />
+			}
 
 			<PurchaseDetail
 				icon="stats-alt"
@@ -33,6 +32,8 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedProduct } ) => 
 				description={ i18n.translate( 'Connect to Google Analytics for the perfect complement to WordPress.com stats.' ) }
 				buttonText={ i18n.translate( 'Connect Google Analytics' ) }
 				href={ '/settings/analytics/' + selectedSite.slug } />
+
+			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
 		</div>
 	);
 };

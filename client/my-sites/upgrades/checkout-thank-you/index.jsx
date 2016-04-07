@@ -249,7 +249,10 @@ const CheckoutThankYou = React.createClass( {
 							purchases={ purchases }
 							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
 							selectedSite={ selectedSite }
-							selectedProduct={ productSlug } // findProductBySlugArtur( product_slug )
+							selectedProduct={ {
+								title: 'Google Analytics Integration',
+								plans: [ 'premium', 'business' ]
+							} } // findProductBySlugArtur( product_slug )
 							sitePlans={ sitePlans } />
 
 						<FreeTrialNudge

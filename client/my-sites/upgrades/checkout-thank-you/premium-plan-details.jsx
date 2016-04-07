@@ -15,28 +15,26 @@ import paths from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
 
 const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedProduct } ) => {
-	console.log( selectedProduct );
-
 	const adminUrl = selectedSite.URL + '/wp-admin/',
 		customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + selectedSite.slug : adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href ),
 		plan = find( sitePlans.data, isPremium );
 
 	return (
 		<div>
-			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
-
-			<PurchaseDetail
-				icon="customize"
-				title={ i18n.translate( 'Customize your theme' ) }
-				description={
-					i18n.translate(
-						"You now have direct control over your site's fonts and colors in the customizer. " +
-						"Change your site's entire look in a few clicks."
-					)
-				}
-				buttonText={ i18n.translate( 'Start customizing' ) }
-				href={ customizeLink }
-				target={ config.isEnabled( 'manage/customize' ) ? undefined : '_blank' } />
+			{ ! selectedProduct &&
+				<PurchaseDetail
+					icon="customize"
+					title={ i18n.translate( 'Customize your theme' ) }
+					description={
+						i18n.translate(
+							"You now have direct control over your site's fonts and colors in the customizer. " +
+							"Change your site's entire look in a few clicks."
+						)
+					}
+					buttonText={ i18n.translate( 'Start customizing' ) }
+					href={ customizeLink }
+					target={ config.isEnabled( 'manage/customize' ) ? undefined : '_blank' } />
+			}
 
 			<PurchaseDetail
 				icon="image-multiple"
@@ -49,6 +47,8 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedProduct } ) => {
 				}
 				buttonText={ i18n.translate( 'Start a new post' ) }
 				href={ paths.newPost( selectedSite ) } />
+
+			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
 
 		</div>
 	);
