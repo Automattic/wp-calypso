@@ -32,7 +32,7 @@ const SitePurchasesData = React.createClass( {
 		const purchases = PurchasesStore.get(),
 			selectedSite = sites.getSelectedSite();
 
-		return selectedSite && ! purchases.isFetching && ! purchases.hasLoadedFromServer;
+		return selectedSite && ! purchases.isFetchingSitePurchases && ! purchases.hasLoadedSitePurchasesFromServer;
 	},
 
 	componentWillMount() {

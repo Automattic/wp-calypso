@@ -22,7 +22,7 @@ const PurchasesList = React.createClass( {
 	},
 
 	isDataLoading() {
-		if ( this.props.purchases.isFetching && ! this.props.purchases.hasLoadedFromServer ) {
+		if ( this.props.purchases.isFetchingUserPurchases && ! this.props.purchases.hasLoadedUserPurchasesFromServer ) {
 			return true;
 		}
 
@@ -36,7 +36,7 @@ const PurchasesList = React.createClass( {
 			content = <PurchasesSite isPlaceholder />;
 		}
 
-		if ( this.props.purchases.hasLoadedFromServer && this.props.purchases.data.length ) {
+		if ( this.props.purchases.hasLoadedUserPurchasesFromServer && this.props.purchases.data.length ) {
 			content = getPurchasesBySite( this.props.purchases.data, this.props.sites.get() ).map(
 				site => (
 					<PurchasesSite
@@ -48,7 +48,7 @@ const PurchasesList = React.createClass( {
 			);
 		}
 
-		if ( this.props.purchases.hasLoadedFromServer && ! this.props.purchases.data.length ) {
+		if ( this.props.purchases.hasLoadedUserPurchasesFromServer && ! this.props.purchases.data.length ) {
 			content = (
 				<CompactCard className="purchases-list__no-content">
 					<EmptyContent

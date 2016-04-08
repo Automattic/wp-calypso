@@ -49,7 +49,7 @@ module.exports = React.createClass( {
 			deleteSite: this.translate( 'Delete Site' )
 		};
 
-		if ( this.props.purchases.isFetching ) {
+		if ( this.props.purchases.isFetchingSitePurchases ) {
 			return null;
 		}
 

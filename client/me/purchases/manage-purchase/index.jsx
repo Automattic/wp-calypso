@@ -61,7 +61,7 @@ function canEditPaymentDetails( purchase ) {
  * @return {boolean} Whether or not the data is loading
  */
 function isDataLoading( props ) {
-	return ! props.hasLoadedSites || ! props.selectedPurchase.hasLoadedFromServer;
+	return ! props.hasLoadedSites || ! props.selectedPurchase.hasLoadedUserPurchasesFromServer;
 }
 
 const ManagePurchase = React.createClass( {
