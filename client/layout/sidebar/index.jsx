@@ -11,8 +11,6 @@ import classNames from 'classnames';
 var SidebarFooter = require( 'layout/sidebar/footer' );
 import Button from 'components/button';
 
-import ExternalLink from 'components/external-link';
-
 export default React.createClass( {
 	displayName: 'Sidebar',
 
@@ -26,9 +24,8 @@ export default React.createClass( {
 			<ul className={ classNames( 'sidebar', this.props.className ) } onClick={ this.props.onClick }>
 				{ this.props.children }
 				<SidebarFooter>
-					<li><ExternalLink icon={ false } href="https://en.support.wordpress.com/" target="_blank">{ this.translate( 'Help' ) }</ExternalLink></li>
-					<li><ExternalLink icon={ false } href="https://en.wordpress.com/tos/" target="_blank">{ this.translate( 'Terms' ) }</ExternalLink></li>
-					<li><ExternalLink icon={ false } href="https://automattic.com/privacy/" target="_blank">{ this.translate( 'Privacy' ) }</ExternalLink></li>
+					{ this.props.footerButton }
+					<li><Button compact borderless href="https://en.support.wordpress.com/" target="_blank">{ this.translate( 'Help' ) }</Button></li>
 				</SidebarFooter>
 			</ul>
 		);

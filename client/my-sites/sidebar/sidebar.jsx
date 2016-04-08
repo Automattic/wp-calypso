@@ -632,13 +632,15 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<Button compact borderless
-				className="my-sites-sidebar__add-new-site"
-				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
-				onClick={ this.focusContent }
-			>
-				<Gridicon icon="add-outline" /> { this.translate( 'Add New WordPress' ) }
-			</Button>
+			<li>
+				<Button compact borderless
+					className="my-sites-sidebar__add-new-site"
+					href={ config( 'signup_url' ) + '?ref=calypso-selector' }
+					onClick={ this.focusContent }
+				>
+					<Gridicon icon="add-outline" /> { this.translate( 'Add New Site' ) }
+				</Button>
+			</li>
 		);
 	},
 
@@ -649,7 +651,7 @@ module.exports = React.createClass( {
 			vip = !! this.vip();
 
 		return (
-			<Sidebar>
+			<Sidebar footerButton={ this.addNewWordPress() }>
 				<CurrentSite
 					sites={ this.props.sites }
 					siteCount={ this.props.user.get().visible_site_count }
@@ -710,7 +712,6 @@ module.exports = React.createClass( {
 					</SidebarMenu>
 					: null
 				}
-				{ this.addNewWordPress() }
 			</Sidebar>
 		);
 	}
