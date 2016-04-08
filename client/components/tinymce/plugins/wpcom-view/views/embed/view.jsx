@@ -4,12 +4,14 @@
 import ReactDom from 'react-dom';
 import React, { Component, PropTypes } from 'react';
 import { Container } from 'flux/utils';
+import pick from 'lodash/pick';
 
 /**
  * Internal dependencies
  */
 import ResizableIframe from 'components/resizable-iframe';
 import EmbedsStore from 'lib/embeds/store';
+import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
 
 class EmbedView extends Component {
 	static getStores() {
@@ -79,9 +81,9 @@ class EmbedView extends Component {
 			return;
 		}
 
+		const markup = generateEmbedFrameMarkup( pick( this.state, 'body', 'scripts', 'styles' ) );
 		iframe.contentDocument.open();
-		iframe.contentDocument.write( this.state.body );
-		iframe.contentDocument.body.style.margin = 0;
+		iframe.contentDocument.write( markup );
 		iframe.contentDocument.body.style.width = '100%';
 		iframe.contentDocument.body.style.overflow = 'hidden';
 		iframe.contentDocument.close();
