@@ -4,26 +4,58 @@ main.main.wide {
 
 .comparison-table__wrapper {
 	display: flex;
+	padding:0;
 }
 
 .comparison-table__column-wrapper {
 	flex: 1;
+	border-right: lighten( $gray, 30% ) solid 1px;
+
+	&:last-of-type {
+		border-right: 0px;
+	}
 
 	&.description-column {
 		max-width: 220px;
+
+		.comparison-table__cell {
+			text-align: left;
+		}
 	}
 
 }
 
 .comparison-table__header {
-	height: 200px;
+	height: 175px;
+
 	.button {
+		width: 100%;
+		margin-top: 16px;
 		display: block;
 	}
 }
 
 .comparison-table__cell {
-	border-top: $gray solid 1px;
-	height: 50px;
+	border-top: lighten( $gray, 30% ) solid 1px;
 	width: 100%;
+	text-align: center;
+	padding: 0 16px;
+	vertical-align: middle;
+	font-size: 14px;
+	line-height: 50px;
+
+	.gridicon {
+		position: relative;
+		top: 3px;
+	}
+
+	span {
+		line-height: 20px;
+	}
+}
+
+.comparison-table__header-wrapper {
+	text-align: center;
+	padding: 0px 16px;
+
 }

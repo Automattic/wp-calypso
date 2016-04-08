@@ -10,16 +10,16 @@ export default React.createClass( {
 			let content = this.props.feature[ this.props.id ];
 			console.log( typeof content );
 			if( typeof content === 'boolean' && content === true ) {
-				return ( <Gridicon icon="checkmark" /> )
+				return ( <Gridicon icon="checkmark" size={ 18 } /> )
 			}
-			if( typeof content === 'boolean' && content === false ) {
-				return ( ' ' );
+			if( typeof content === 'boolean' && content === false || this.props.feature.header ) {
+				return ( <span>&nbsp;</span> );
 			}
 
 			return content;
 		}
 
-		return this.props.feature.description;
+		return ( <span>{ this.props.feature.description }</span> );
 	},
 
 	render() {

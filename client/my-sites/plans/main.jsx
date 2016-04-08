@@ -111,7 +111,7 @@ const Plans = React.createClass( {
 		return [
 			{ 	name: 'domain',
 				description: 'Your own domain',
-				free: null,
+				free: false,
 				personal: '1 Year Free',
 				pro: '1 Year Free',
 				business: '1 Year Free'

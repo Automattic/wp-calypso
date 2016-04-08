@@ -29,7 +29,7 @@ export default React.createClass( {
 
 	tableHeader() {
 		return (
-			<div>
+			<div className="comparison-table__header-wrapper">
 				<h2>{ this.props.name }</h2>
 				<p>{ this.props.description }</p>
 				<span className="table-header__currency">{ this.props.currency }</span>
