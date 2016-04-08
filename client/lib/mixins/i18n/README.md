@@ -1,7 +1,7 @@
 I18n
 ============
 
-This mixin is automatically added to all React components and enables translations by adding a [`translate` method](#translate-method) to the host module. We also expose an `updateLocale` method that can be used to manually set a particular language preference for translations, although this happens automatically if the `localeSlug` on the User object changes. When added to a React component, this mixin also takes care of forcing an update to the component if the language preference changes for any reason.
+This mixin is automatically added to all React components and enables translations by adding a [`translate` method](#translate-method) to the host module. It is recommeded to call the `initialize` method on app startup. (See the [boot source](../../../boot/index.js) for an example.) After startup, you may call the `setLocaleSlug` method to manually set a particular language preference for translations, although this happens automatically if the `localeSlug` on the User object changes. When added to a React component, this mixin also takes care of forcing an update to the component if the language preference changes for any reason.
 
 You can also use this mixin as a standalone object if you want to use it outside of React. You will need to respond to 'change' events yourself. [See standalone usage](#standalone-usage).
 
