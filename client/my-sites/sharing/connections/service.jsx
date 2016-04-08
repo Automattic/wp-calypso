@@ -258,7 +258,8 @@ module.exports = React.createClass( {
 				clickableHeader
 				compact
 				summary={ action }
-				expandedSummary={ action } >
+				expandedSummary={ action }
+				screenReaderText={ this.translate( 'More' ) } >
 				{ content }
 			</FoldableCard>
 		);

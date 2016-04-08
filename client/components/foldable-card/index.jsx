@@ -42,7 +42,8 @@ var FoldableCard = React.createClass( {
 			onClose: noop,
 			cardKey: '',
 			icon: 'chevron-down',
-			isExpanded: false
+			isExpanded: false,
+			screenReaderText: '',
 		};
 	},
 
@@ -87,11 +88,9 @@ var FoldableCard = React.createClass( {
 		}
 		if ( this.props.children ) {
 			const iconSize = 24;
-			const screenReaderDefaultText = ( typeof this.translate === 'function' ) ? this.translate( 'More' ) : '';
-			const screenReaderText = this.props.screenReaderText || screenReaderDefaultText;
 			return (
 				<button disabled={ this.props.disabled } className="foldable-card__action foldable-card__expand" onClick={ clickAction }>
-					<span className="screen-reader-text">{ screenReaderText }</span>
+					<span className="screen-reader-text">{ this.props.screenReaderText }</span>
 					<Gridicon icon={ this.props.icon } size={ iconSize } />
 				</button>
 			);
