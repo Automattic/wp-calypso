@@ -35,6 +35,10 @@ export default function( context ) {
 		page.back( '/plans/' + ( context.params.domain || '' ) );
 	}
 
+	function checkoutBusinessPlan() {
+		page( '/checkout/' + context.params.domain + '/business' );
+	}
+
 	const site = sites.getSelectedSite();
 
 	renderWithReduxStore(
@@ -76,6 +80,7 @@ export default function( context ) {
 						title={ businessTitle }
 						line={ businessLine }
 						buttonName={ businessButton }
+						onClick={ checkoutBusinessPlan }
 						currentPlan={ false }
 						popularRibbon={ true } >
 						<PlanCardItem highlight={ true } >
