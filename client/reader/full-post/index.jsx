@@ -18,8 +18,7 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal Dependencies
  */
-var analytics = require( 'analytics' ),
-	CommentButton = require( 'components/comment-button' ),
+var CommentButton = require( 'components/comment-button' ),
 	CommentStore = require( 'lib/comment-store/comment-store' ),
 	Dialog = require( 'components/dialog' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
@@ -54,7 +53,7 @@ var analytics = require( 'analytics' ),
 
 import PostExcerpt from 'components/post-excerpt';
 
-var loadingPost = {
+let loadingPost = {
 		URL: '',
 		title: 'hi there',
 		author: {
@@ -77,21 +76,6 @@ var loadingPost = {
 		content: '<p>Error Loading Post</p>'
 	},
 	FullPostView, FullPostDialog, FullPostContainer;
-
-function readerPageView( blogId, blogUrl, postId, isPrivate ) {
-	debug( 'reader page view: %s (%d): %d [private:%s]', blogUrl, blogId, postId, isPrivate );
-	let params = {
-		ref: 'http://wordpress.com/',
-		reader: 1,
-		host: blogUrl.replace( /.*?:\/\//g, '' ),
-		blog: blogId,
-		post: postId
-	};
-	if ( isPrivate ) {
-		params.priv = 1;
-	}
-	analytics.mc.bumpStatWithPageView( params );
-}
 
 /**
  * The content of a FullPostView
@@ -159,7 +143,6 @@ FullPostView = React.createClass( {
 				post.canonical_image &&
 				! ( post.display_type & DISPLAY_TYPES.CANONICAL_IN_CONTENT ),
 			articleClasses = [ 'reader__full-post' ],
-			postContent,
 			shouldShowExcerptOnly = ( post.use_excerpt ? post.use_excerpt : false ),
 			siteName = utils.siteNameFromSiteAndPost( site, post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
@@ -444,15 +427,12 @@ FullPostContainer = React.createClass( {
 
 	attemptToSendPageView: function() {
 		var post = this.state.post,
-			site = this.state.site,
-			isNotAdmin = ! ( site && site.getIn( [ 'capabilities', 'manage_options' ], false ) );
+			site = this.state.site;
 
-		if ( ! this.hasSentPageView &&
-				post &&
-				site && site.get( 'state' ) === SiteState.COMPLETE ) {
-			if ( site.get( 'is_private' ) || isNotAdmin ) {
-				readerPageView( site.get( 'ID' ), site.get( 'URL' ), post.ID, site.get( 'is_private' ) );
-			}
+		if ( post && post._state !== 'pending' &&
+			site && site.get( 'state' ) === SiteState.COMPLETE &&
+			! this.hasSentPageView ) {
+			PostStoreActions.markSeen( this.state.post );
 			this.hasSentPageView = true;
 		}
 

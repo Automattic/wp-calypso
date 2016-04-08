@@ -1,14 +1,19 @@
 import assign from 'lodash/assign';
+import debugFactory from 'debug';
 
 import { mc, ga, tracks } from 'analytics';
 
 import SubscriptionStore from 'lib/reader-feed-subscriptions';
 
+const debug = debugFactory( 'calypso:reader:stats' );
+
 export function recordAction( action ) {
+	debug( 'reader action', action );
 	mc.bumpStat( 'reader_actions', action );
 }
 
 export function recordGaEvent( action, label, value ) {
+	debug( 'reader ga event', ...arguments );
 	ga.recordEvent( 'Reader', action, label, value );
 }
 
@@ -84,6 +89,7 @@ export function recordUnfollow( url ) {
 }
 
 export function recordTrack( eventName, eventProperties ) {
+	debug( 'reader track', ...arguments );
 	const subCount = SubscriptionStore.getTotalSubscriptions();
 	if ( subCount != null ) {
 		eventProperties = Object.assign( { subscription_count: subCount }, eventProperties );
@@ -99,4 +105,19 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 		feed_item_id: post.feed_item_ID > 0 ? post.feed_item_ID : undefined,
 		is_jetpack: post.is_jetpack
 	}, additionalProps ) );
+}
+
+export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
+	let params = {
+		ref: 'http://wordpress.com/',
+		reader: 1,
+		host: blogUrl.replace( /.*?:\/\//g, '' ),
+		blog: blogId,
+		post: postId
+	};
+	if ( isPrivate ) {
+		params.priv = 1;
+	}
+	debug( 'reader page view for post', params );
+	mc.bumpStatWithPageView( params );
 }
