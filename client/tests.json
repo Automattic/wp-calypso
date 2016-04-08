@@ -383,6 +383,17 @@
 				"test": [ "posts" ]
 			}
 		},
+		"plugins" : {
+			"plugin-action" : {
+				"test": [ "index" ]
+			},
+			"plugin-activate-toggle" : {
+				"test": [ "index" ]
+			},
+			"plugin-autoupdate-toggle" : {
+				"test": [ "index" ]
+			}
+		},
 		"upgrades": {
 			"cart": {
 				"test": [
