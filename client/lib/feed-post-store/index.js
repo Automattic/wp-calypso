@@ -18,7 +18,10 @@ var Dispatcher = require( 'dispatcher' ),
 	normalizationRules = require( './normalization-rules' ),
 	FeedPostActionType = require( './constants' ).action,
 	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
-	ReaderSiteBlockActionType = require( 'lib/reader-site-blocks/constants' ).action;
+	ReaderSiteBlockActionType = require( 'lib/reader-site-blocks/constants' ).action,
+	SiteStore = require( 'lib/reader-site-store' ),
+	SiteState = require( 'lib/reader-site-store/constants' ).state,
+	stats = require( 'reader/stats' );
 
 var _posts = {},
 	_postsForBlogs = {},
@@ -98,6 +101,9 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 			break;
 
+		case FeedPostActionType.MARK_FEED_POST_SEEN:
+			markPostSeen( action.data.post, action.data.source );
+			break;
 		case ReaderSiteBlockActionType.BLOCK_SITE:
 			markBlockedSitePosts( action.siteId, true );
 			break;
@@ -190,9 +196,9 @@ function receivePostFromPage( newPost ) {
 		// 1.3 style
 		setPost( newPost.ID, assign( {}, newPost, { _state: 'minimal' } ) );
 	} else if ( newPost.site_ID && ! _postsForBlogs[ blogKey( {
-				blogId: newPost.site_ID,
-				postId: newPost.ID
-			} ) ] ) {
+		blogId: newPost.site_ID,
+		postId: newPost.ID
+	} ) ] ) {
 		setPost( null, assign( {}, newPost, { _state: 'minimal' } ) );
 	}
 }
@@ -270,6 +276,32 @@ function normalizePost( feedId, postId, post ) {
 			} );
 		}
 	} );
+}
+
+function markPostSeen( post ) {
+	if ( ! post ) {
+		return;
+	}
+	const originalPost = post;
+
+	if ( ! post._seen ) {
+		post = Object.assign( { _seen: true }, post );
+	}
+
+	if ( post.site_ID ) {
+		// they have a site ID, let's try to push a page view
+		const site = SiteStore.get( post.site_ID );
+		const isNotAdmin = ! ( site && site.getIn( [ 'capabilities', 'manage_options' ], false ) )
+		if ( site && site.get( 'state' ) === SiteState.COMPLETE ) {
+			if ( site.get( 'is_private' ) || isNotAdmin ) {
+				stats.pageViewForPost( site.get( 'ID' ), site.get( 'URL' ), post.ID, site.get( 'is_private' ) );
+			}
+		}
+	}
+
+	if ( originalPost !== post ) {
+		setPost( post.feed_item_ID, post );
+	}
 }
 
 function markBlockedSitePosts( siteId, isSiteBlocked ) {

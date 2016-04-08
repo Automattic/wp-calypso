@@ -12,6 +12,9 @@ var ReaderLikeButton = React.createClass( {
 			blog_id: this.props.siteId,
 			post_id: this.props.postId
 		} );
+		if ( this.props.onLikeToggle ) {
+			this.props.onLikeToggle( liked );
+		}
 	},
 
 	render: function() {

@@ -1,8 +1,9 @@
 // External Dependencies
-var assign = require( 'lodash/assign' );
+const assign = require( 'lodash/assign' ),
+	defer = require( 'lodash/defer' );
 
 // Internal dependencies
-var Dispatcher = require( 'dispatcher' ),
+const Dispatcher = require( 'dispatcher' ),
 	ACTION = require( './constants' ).action,
 	PostBatcher = require( './post-batch-fetcher' );
 
@@ -82,8 +83,18 @@ FeedPostActions = {
 			data: data,
 			error: error
 		}, postKey ) );
-	}
+	},
 
+	markSeen: function( post, source ) {
+		defer( function() {
+			Dispatcher.handleViewAction( {
+				type: ACTION.MARK_FEED_POST_SEEN,
+				data: {
+					post, source
+				}
+			} )
+		} );
+	}
 };
 
 module.exports = FeedPostActions;
