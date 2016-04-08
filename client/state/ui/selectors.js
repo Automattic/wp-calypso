@@ -34,8 +34,10 @@ export function getSelectedSiteId( state ) {
 export function getGuidesTourState( state ) {
 	const { shouldShow, stepName = '' } = state.ui.guidesTour;
 	const stepConfig = guidesToursConfig[ stepName ] || false;
+	const shouldReallyShow = shouldShow && !! getSelectedSiteId( state );
 	return Object.assign( {}, state.ui.guidesTour, {
 		stepConfig,
-		showPreview: shouldShow && stepConfig.showPreview,
+		shouldShow: shouldReallyShow,
+		showPreview: shouldReallyShow && stepConfig.showPreview,
 	} );
 }
