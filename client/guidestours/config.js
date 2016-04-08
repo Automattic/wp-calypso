@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -18,6 +20,7 @@ const config = {
 		} ),
 		type: 'GuidesFirstStep',
 		next: 'my-sites',
+		showPreview: true,
 	},
 	'my-sites': {
 		target: 'my-sites',
@@ -33,6 +36,7 @@ const config = {
 		linkLabel: i18n.translate( 'Learn more about Posts and Pages' ),
 		linkUrl: 'https://en.support.wordpress.com/post-vs-page/',
 		next: 'reader',
+		showPreview: true,
 	},
 	reader: {
 		target: 'reader',
