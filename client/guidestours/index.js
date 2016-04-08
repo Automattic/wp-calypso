@@ -32,6 +32,14 @@ export default class GuidesTours extends Component {
 		this.updateTarget( this.state.currentStep );
 	}
 
+	shouldComponentUpdate( nextProps, nextState ) {
+		if ( this.state.currentStep === nextState.currentStep &&
+			this.state.target === nextState.target ) {
+			return false;
+		}
+		return true;
+	}
+
 	componentWillUpdate( nextProps, nextState ) {
 		this.updateTarget( nextState.currentStep );
 	}
