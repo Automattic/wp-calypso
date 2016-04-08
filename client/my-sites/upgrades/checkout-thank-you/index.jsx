@@ -64,7 +64,7 @@ const CheckoutThankYou = React.createClass( {
 	propTypes: {
 		productsList: React.PropTypes.object.isRequired,
 		receiptId: React.PropTypes.number,
-		selectedFeature: React.PropTypes.string.isRequired,
+		selectedFeature: React.PropTypes.string,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.bool,
 			React.PropTypes.object
@@ -249,10 +249,7 @@ const CheckoutThankYou = React.createClass( {
 							purchases={ purchases }
 							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
 							selectedSite={ selectedSite }
-							selectedFeature={ {
-								title: 'Google Analytics Integration',
-								plans: [ 'premium', 'business' ]
-							} } // findFeatureBySlugArtur( selectedFeature )
+							selectedFeature={ selectedFeature }
 							sitePlans={ sitePlans } />
 
 						<FreeTrialNudge

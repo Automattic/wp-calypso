@@ -59,7 +59,7 @@ PremiumPlanDetails.propTypes = {
 		React.PropTypes.bool,
 		React.PropTypes.object
 	] ).isRequired,
-	selectedProduct: React.PropTypes.object,
+	selectedFeature: React.PropTypes.object,
 	sitePlans: React.PropTypes.object.isRequired
 };
 
