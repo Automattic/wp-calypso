@@ -4,6 +4,7 @@
 import { combineReducers } from 'redux';
 import get from 'lodash/get';
 import set from 'lodash/set';
+import omit from 'lodash/omit';
 import omitBy from 'lodash/omitBy';
 import isEqual from 'lodash/isEqual';
 import reduce from 'lodash/reduce';
@@ -15,6 +16,7 @@ import merge from 'lodash/merge';
  */
 import {
 	POST_EDIT,
+	POST_EDITS_RESET,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -196,6 +198,15 @@ export function edits( state = {}, action ) {
 				[ action.siteId ]: {
 					[ action.postId || '' ]: action.post
 				}
+			} );
+
+		case POST_EDITS_RESET:
+			if ( ! state.hasOwnProperty( action.siteId ) ) {
+				break;
+			}
+
+			return Object.assign( {}, state, {
+				[ action.siteId ]: omit( state[ action.siteId ], action.postId || '' )
 			} );
 
 		case SERIALIZE:
