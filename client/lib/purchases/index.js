@@ -44,13 +44,13 @@ function getPurchasesBySite( purchases, sites ) {
 				 * there will be no site with this ID in `sites`, so
 				 * we fall back on the domain. */
 				slug: siteObject ? siteObject.slug : currentValue.domain,
-				title: currentValue.siteName ? currentValue.siteName : currentValue.domain,
+				title: currentValue.siteName || currentValue.domain || '',
 				purchases: [ currentValue ]
 			} );
 		}
 
 		return result;
-	}, [] );
+	}, [] ).sort( ( a, b ) => a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1 );
 }
 
 function getName( purchase ) {
