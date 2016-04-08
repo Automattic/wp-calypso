@@ -50,7 +50,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="table-header">
+			<div className="comparison-table__header">
 				{ this.props.children
 					? this.props.children
 					: this.tableHeader()}

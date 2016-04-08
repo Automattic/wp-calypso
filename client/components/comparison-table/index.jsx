@@ -15,7 +15,8 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			featuresList: null,
-			columns: 1
+			columns: 1,
+			descriptionColumn: true
 		};
 	},
 

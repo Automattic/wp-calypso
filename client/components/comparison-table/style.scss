@@ -1,3 +1,29 @@
 main.main.wide {
 	max-width: 100%;
 }
+
+.comparison-table__wrapper {
+	display: flex;
+}
+
+.comparison-table__column-wrapper {
+	flex: 1;
+
+	&.description-column {
+		max-width: 220px;
+	}
+
+}
+
+.comparison-table__header {
+	height: 200px;
+	.button {
+		display: block;
+	}
+}
+
+.comparison-table__cell {
+	border-top: $gray solid 1px;
+	height: 50px;
+	width: 100%;
+}

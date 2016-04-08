@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 
 import TableHeader from 'components/comparison-table/table-header';
 import TableCell from 'components/comparison-table/table-cell';
+import classNames from 'classnames';
 
 export default React.createClass( {
 	displayName: 'ComparisonTableColumn',
@@ -32,22 +33,30 @@ export default React.createClass( {
 
 	renderComparisonCells() {
 		let cells = [];
-		let featureID = this.props.comparisonID;
+		const featureID = this.props.comparisonID;
+		const descriptionColumn = this.props.descriptionColumn;
 		this.props.featuresList.forEach( function( feature, i ) {
-			cells.push( <TableCell key={ i  + '-' + feature.toString() } id={ featureID } feature={ feature }></TableCell> );
+			cells.push(
+				<TableCell
+					key={ i  + '-' + feature.name }
+					descriptionColumn={ descriptionColumn }
+					id={ featureID }
+					feature={ feature }>
+				</TableCell> );
 			} );
 		return cells;
 	},
 
 	render() {
+		let classes = classNames( 'comparison-table__column-wrapper', { 'description-column': this.props.descriptionColumn } );
 		return (
-			<div className="table-column__wrapper">
+			<div className={ classes }>
 				<TableHeader
 					price={ this.props.price }
 					name={ this.props.name }
 					description={ this.props.description }
 					currentPlan={ this.props.currentPlan }
-					popular={ this.props.popular} >
+					popular={ this.props.popular } >
 					{ this.props.descriptionColumn
 					 	? ( this.props.children )
 					 	: null
