@@ -129,10 +129,6 @@ $zoom-scale: 5; // the multiplier determining the size of the animated rings
 	margin-top: -7px;
 }
 
-.is-guidestour-preview-active .wp-section {
-	visibility: hidden;
-}
-
 .guidestour-preview .web-preview__backdrop {
 	display: none;
 }
@@ -153,5 +149,4 @@ $zoom-scale: 5; // the multiplier determining the size of the animated rings
 
 .guidestour-preview.web-preview {
 	top: 47px;
-	left: 273px;
 }
