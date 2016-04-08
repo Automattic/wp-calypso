@@ -56,18 +56,27 @@ module.exports = React.createClass( {
 	getInitialState: function() {
 		return {
 			showingForm: false,
-			lastError: false
+			lastError: false,
+			showPopoverMenu: false
 		};
 	},
 
-	showAddWordPress: function( event ) {
-		event.preventDefault();
-		this.setState( { showingForm: 'wordpress' } );
+	showAddWordPress: function() {
+		this.setState( { showingForm: 'wordpress', showPopoverMenu: false } );
 	},
 
-	showAddOther: function( event ) {
-		event.preventDefault();
-		this.setState( { showingForm: 'other' } );
+	showAddOther: function() {
+		this.setState( { showingForm: 'other', showPopoverMenu: false } );
+	},
+
+	showPopoverMenu: function() {
+		this.setState( {
+			showPopoverMenu: ! this.state.showPopoverMenu
+		} );
+	},
+
+	closePopoverMenu: function() {
+		this.setState( { showPopoverMenu: false } );
 	},
 
 	hideForms: function() {
@@ -201,7 +210,10 @@ module.exports = React.createClass( {
 						userProfileLinks={ this.props.userProfileLinks }
 						showingForm={ !! this.state.showingForm }
 						onShowAddOther={ this.showAddOther }
-						onShowAddWordPress={ this.showAddWordPress } />
+						showPopoverMenu={ this.state.showPopoverMenu }
+						onShowAddWordPress={ this.showAddWordPress }
+						onShowPopoverMenu={ this.showPopoverMenu }
+						onClosePopoverMenu={ this.closePopoverMenu }/>
 				</SectionHeader>
 				<Card>
 					{ !! this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }

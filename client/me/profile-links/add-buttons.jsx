@@ -1,51 +1,66 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 // Internal dependencies
-var Button = require( 'components/button' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	Gridicon = require( 'components/gridicon' );
+import Button from 'components/button';
+import observe from 'lib/mixins/data-observe';
+import eventRecorder from 'me/event-recorder';
+import Gridicon from 'components/gridicon';
+import PopoverMenu from 'components/popover/menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'AddProfileLinksButtons',
 
 	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
 
 	propTypes: {
-		showingForm: React.PropTypes.bool
+		showingForm: React.PropTypes.bool,
+		showPopoverMenu: React.PropTypes.bool
 	},
 
-	getDefaultProps: function() {
-		return{
+	getDefaultProps() {
+		return {
 			showingForm: false
 		};
 	},
 
-	render: function() {
+	getInitialState() {
+		return {
+			popoverPosition: 'top'
+		};
+	},
+
+	render() {
 		return(
 			<div>
-				<Button
-					compact
-					disabled={ this.props.showingForm }
-					onClick={ this.recordClickEvent( 'Add Other Site Button', this.props.onShowAddOther ) }
-				>
-					<Gridicon icon="plus-small" size={ 18 } />
-					{ this.translate( 'Add URL' ) }
-				</Button>
+
+				<PopoverMenu
+					isVisible={ this.props.showPopoverMenu }
+					onClose={ this.props.onClosePopoverMenu }
+					position={ this.state.popoverPosition }
+					context={ this.refs && this.refs.popoverMenuButton }
+					>
+					<PopoverMenuItem
+						onClick={ this.recordClickEvent( 'Add a WordPress Site Button', this.props.onShowAddWordPress ) }>
+						{ this.translate( 'Add WordPress Site' ) }
+					</PopoverMenuItem>
+					<PopoverMenuItem
+						onClick={ this.recordClickEvent( 'Add Other Site Button', this.props.onShowAddOther ) }>
+						{ this.translate( 'Add URL' ) }
+					</PopoverMenuItem>
+				</PopoverMenu>
 
 				<Button
 					compact
-					disabled={ this.props.showingForm }
-					primary
-					className="add-buttons__add-wp-site"
-					onClick={ this.recordClickEvent( 'Add a WordPress Site Button', this.props.onShowAddWordPress ) }
-				>
-					<Gridicon icon="plus-small" size={ 18 } />
-					{ this.translate( 'Add WordPress Site' ) }
+					ref="popoverMenuButton"
+					className="popover-icon"
+					onClick={ this.props.onShowPopoverMenu }>
+						<Gridicon icon="add-outline" />
+						{ this.translate( 'Add' ) }
 				</Button>
 			</div>
 		);
