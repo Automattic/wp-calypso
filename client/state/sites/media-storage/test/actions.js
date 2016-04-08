@@ -21,15 +21,11 @@ import {
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
-	let spy;
-	let sandbox;
-
-	beforeEach( () => {
-		spy = sandbox.spy();
-	} );
+	let sandbox, spy;
 
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;
+		spy = sandbox.spy();
 	} );
 
 	describe( '#receiveMediaStorage()', () => {

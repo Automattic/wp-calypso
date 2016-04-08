@@ -1,11 +1,11 @@
 import assert from 'assert';
+import sinon from 'sinon';
 
 describe( 'domain-management/edit/mapped-domain', () => {
 	let React,
 		MappedDomain,
 		i18n,
 		props,
-		sinonWrapper,
 		TestUtils;
 
 	before( () => {
@@ -22,7 +22,6 @@ describe( 'domain-management/edit/mapped-domain', () => {
 	} );
 
 	require( 'test/helpers/use-fake-dom' ).withContainer();
-	sinonWrapper = require( 'test/helpers/use-sinon' ).useSandbox();
 
 	require( 'test/helpers/use-mockery' )( mockery => {
 		React = require( 'react' );
@@ -41,10 +40,10 @@ describe( 'domain-management/edit/mapped-domain', () => {
 		assert( out );
 	} );
 
-	it( 'should use selectedSite.slug for URLs', () => {
+	it( 'should use selectedSite.slug for URLs', sinon.test( function() {
 		const paths = require( 'my-sites/upgrades/paths' );
-		const dnsStub = sinonWrapper.sandbox.stub( paths, 'domainManagementDns' );
-		const emailStub = sinonWrapper.sandbox.stub( paths, 'domainManagementEmail' );
+		const dnsStub = this.stub( paths, 'domainManagementDns' );
+		const emailStub = this.stub( paths, 'domainManagementEmail' );
 
 		const renderer = TestUtils.createRenderer();
 		renderer.render( <MappedDomain { ...props } /> );
@@ -52,5 +51,5 @@ describe( 'domain-management/edit/mapped-domain', () => {
 
 		assert( dnsStub.calledWith( 'neverexpires.wordpress.com', 'neverexpires.com' ) );
 		assert( emailStub.calledWith( 'neverexpires.wordpress.com', 'neverexpires.com' ) );
-	} );
+	} ) );
 } );

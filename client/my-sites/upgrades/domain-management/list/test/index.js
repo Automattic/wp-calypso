@@ -1,9 +1,15 @@
+/**
+ * External dependencies
+ */
 import deepFreeze from 'deep-freeze';
 import assert from 'assert';
 
-describe( 'upgrades/domain-management/list', function() {
-	const sinonWrapper = require( 'test/helpers/use-sinon' ).useSandbox();
+/**
+ * Internal dependencies
+ */
+import { useSandbox } from 'test/helpers/use-sinon';
 
+describe( 'upgrades/domain-management/list', function() {
 	let React,
 		ReactDom,
 		ReactInjection,
@@ -11,7 +17,10 @@ describe( 'upgrades/domain-management/list', function() {
 		TestUtils,
 		i18n,
 		noticeTypes,
-		component;
+		component,
+		sandbox;
+
+	useSandbox( newSandbox => sandbox = newSandbox );
 
 	require( 'test/helpers/use-fake-dom' )( '<div id="main" />' );
 	require( 'test/helpers/use-mockery' )(
@@ -141,7 +150,7 @@ describe( 'upgrades/domain-management/list', function() {
 					setPrimaryDomainResolve,
 					setPrimaryDomainReject;
 				beforeEach( () => {
-					setPrimaryDomainStub = sinonWrapper.sandbox.stub( component, 'setPrimaryDomain' ).returns( new Promise( ( resolve, reject ) => {
+					setPrimaryDomainStub = sandbox.stub( component, 'setPrimaryDomain' ).returns( new Promise( ( resolve, reject ) => {
 						setPrimaryDomainResolve = resolve;
 						setPrimaryDomainReject = reject;
 					} ) );
