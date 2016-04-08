@@ -3,13 +3,11 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' );
+import React from 'react'
+import classnames from 'classnames';
 
-module.exports = React.createClass( {
-	displayName: 'Main',
-
-	render: function() {
+const Main = React.createClass( {
+	render() {
 		return (
 			<main className={ classnames( this.props.className, 'main' ) } role="main">
 				{ this.props.children }
@@ -17,3 +15,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default Main;

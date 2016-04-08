@@ -256,7 +256,10 @@ function reduxStoreReady( reduxStore ) {
 
 		// If `?tour` is present, show the guides tour
 		if ( config.isEnabled( 'guidestours' ) && context.query.tour ) {
-			context.store.dispatch( showGuidesTour( { shouldShow: true, tour: context.query.tour } ) );
+			context.store.dispatch( showGuidesTour( {
+				shouldShow: true,
+				tour: context.query.tour,
+			} ) );
 		}
 
 		// Bump general stat tracking overall Newdash usage
