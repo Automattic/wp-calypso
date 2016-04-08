@@ -236,14 +236,6 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		if ( ! config.isEnabled( 'manage/plugins/wpcom' ) && ! this.props.sites.hasSiteWithPlugins() ) {
-			return null;
-		}
-
-		if ( config.isEnabled( 'manage/plugins/wpcom' ) && ( ! this.isSingle() && this.hasJetpackSites() ) ) {
-			return null;
-		}
-
 		if ( ( this.isSingle() && site.jetpack ) || ( ! this.isSingle() && this.hasJetpackSites() ) ) {
 			addPluginsLink = '/plugins/browse' + this.siteSuffix();
 		}
