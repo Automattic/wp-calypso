@@ -1,8 +1,18 @@
 /**
+ * External dependencies
+ */
+import get from 'lodash/get';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+import { translate } from 'lib/mixins/i18n';
+import { successNotice, errorNotice } from 'state/notices/actions';
 import {
+	POST_DELETE,
+	POST_DELETE_SUCCESS,
+	POST_DELETE_FAILURE,
 	POST_EDIT,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
@@ -139,5 +149,46 @@ export function editPost( post, siteId, postId ) {
 		post,
 		siteId,
 		postId
+	};
+}
+
+export function deletePost( siteId, postId, showNotice = false ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: POST_DELETE,
+			siteId,
+			postId
+		} );
+
+		return wpcom.site( siteId ).post( postId ).delete().then( ( data ) => {
+			dispatch( {
+				type: POST_DELETE_SUCCESS,
+				siteId,
+				postId
+			} );
+
+			if ( showNotice ) {
+				let message;
+				if ( 'trash' === get( data, 'status' ) ) {
+					message = translate( 'Post successfully moved to trash' );
+				} else {
+					message = translate( 'Post successfully deleted' );
+				}
+
+				dispatch( successNotice( message, { duration: 6000 } ) );
+			}
+		} ).catch( ( error ) => {
+			dispatch( {
+				type: POST_DELETE_FAILURE,
+				siteId,
+				postId,
+				error
+			} );
+
+			if ( showNotice ) {
+				const message = translate( 'An error occurred while trashing the post' );
+				dispatch( errorNotice( message, { duration: 6000 } ) );
+			}
+		} );
 	};
 }

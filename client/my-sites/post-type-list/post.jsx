@@ -12,12 +12,11 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 import { getPost } from 'state/posts/selectors';
 import Card from 'components/card';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
-import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import resizeImageUrl from 'lib/resize-image-url';
+import PostTypeListPostActions from './post-actions';
 
-export function PostTypeListPost( { post, editUrl, className } ) {
-	const classes = classnames( 'post-type-list__post', className )
+export function PostTypeListPost( { globalId, post, editUrl, className } ) {
+	const classes = classnames( 'post-type-list__post', className );
 
 	return (
 		<Card compact className={ classes }>
@@ -41,11 +40,7 @@ export function PostTypeListPost( { post, editUrl, className } ) {
 					</div>
 				</div>
 			</div>
-			<div className="post-type-list__post-actions">
-				<Button href={ post.URL } target="_blank" borderless>
-					<Gridicon icon="external" />
-				</Button>
-			</div>
+			<PostTypeListPostActions globalId={ globalId } />
 		</Card>
 	);
 }

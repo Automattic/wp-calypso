@@ -3,11 +3,13 @@
  */
 import { combineReducers } from 'redux';
 import merge from 'lodash/merge';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
  */
 import {
+	POST_COUNT_INCREMENT,
 	POST_COUNTS_RECEIVE,
 	POST_COUNTS_REQUEST,
 	POST_COUNTS_REQUEST_SUCCESS,
@@ -63,6 +65,27 @@ export function counts( state = {}, action ) {
 					[ action.postType ]: action.counts
 				}
 			} );
+
+		case POST_COUNT_INCREMENT: {
+			const { siteId, postType, isMine, status, increment } = action;
+			const nextCounts = {
+				all: {
+					[ status ]: Math.max( 0, get( state, [ siteId, postType, 'all', status ], 0 ) + increment )
+				}
+			};
+
+			if ( isMine ) {
+				nextCounts.mine = {
+					[ status ]: Math.max( 0, get( state, [ siteId, postType, 'mine', status ], 0 ) + increment )
+				};
+			}
+
+			return merge( {}, state, {
+				[ siteId ]: {
+					[ postType ]: nextCounts
+				}
+			} );
+		}
 
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, countsSchema ) ) {

@@ -3,6 +3,7 @@
  */
 import wpcom from 'lib/wp';
 import {
+	POST_COUNT_INCREMENT,
 	POST_COUNTS_RECEIVE,
 	POST_COUNTS_REQUEST,
 	POST_COUNTS_REQUEST_SUCCESS,
@@ -60,5 +61,16 @@ export function requestPostCounts( siteId, postType ) {
 				error
 			} );
 		} );
+	};
+}
+
+export function incrementPostCount( siteId, postType, status, isMine, increment ) {
+	return {
+		type: POST_COUNT_INCREMENT,
+		siteId,
+		postType,
+		status,
+		isMine,
+		increment
 	};
 }
