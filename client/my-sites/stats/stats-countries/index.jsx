@@ -133,7 +133,7 @@ export default React.createClass( {
 								{ this.props.summary &&
 									<UpgradeNudge
 										title="Add Google Analytics"
-										message="Upgrade to Premium for Google Analytics integration."
+										message="Upgrade to Business for Google Analytics integration."
 										event="googleAnalytics-stats-countries"
 										feature="google-analytics"
 									/>
