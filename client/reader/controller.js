@@ -243,7 +243,8 @@ module.exports = {
 
 	feedDiscovery: function( context, next ) {
 		var FeedStore = require( 'lib/feed-store' ),
-			FeedStoreActions = require( 'lib/feed-store/actions' );
+			FeedStoreActions = require( 'lib/feed-store/actions' ),
+			FeedError = require( 'reader/feed-error' );
 
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
 			FeedStoreActions.discover( context.params.feed_id );
@@ -254,6 +255,11 @@ module.exports = {
 				if ( feedId ) {
 					context.params.feed_id = feedId;
 					renderFeedStream( context );
+				} else if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
+					ReactDom.render(
+						React.createElement( FeedError ),
+						document.getElementById( 'primary' )
+					);
 				}
 			} );
 		} else {
