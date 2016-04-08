@@ -62,6 +62,12 @@ export default function() {
 		);
 
 		page(
+			'/plans/features/google-analytics',
+			retarget,
+			controller.sites
+		);
+
+		page(
 			'/plans/features/:feature/:domain',
 			retarget,
 			controller.siteSelection,
