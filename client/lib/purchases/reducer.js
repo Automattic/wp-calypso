@@ -16,8 +16,10 @@ import { action as ActionTypes } from 'lib/upgrades/constants';
 const initialState = {
 	data: [],
 	error: null,
-	isFetching: false,
-	hasLoadedFromServer: false
+	isFetchingSitePurchases: false,
+	isFetchingUserPurchases: false,
+	hasLoadedSitePurchasesFromServer: false,
+	hasLoadedUserPurchasesFromServer: false
 };
 
 function updatePurchaseById( state, id, properties ) {
@@ -99,21 +101,44 @@ const reducer = ( state, payload ) => {
 
 	switch ( action.type ) {
 		case ActionTypes.PURCHASES_REMOVE:
-			return assign( {}, state, { data: [], hasLoadedFromServer: false } );
-
+			return assign( {}, state, {
+				data: [],
+				hasLoadedSitePurchasesFromServer: false,
+				hasLoadedUserPurchasesFromServer: false
+			} );
 		case ActionTypes.PURCHASE_REMOVE:
+			return assign( {}, state, {
+				data: [],
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false
+			} );
 		case ActionTypes.PURCHASES_SITE_FETCH:
+			return assign( {}, state, { isFetchingSitePurchases: true } );
 		case ActionTypes.PURCHASES_USER_FETCH:
-			return assign( {}, state, { isFetching: true } );
+			return assign( {}, state, { isFetchingUserPurchases: true } );
 
 		case ActionTypes.PURCHASE_REMOVE_COMPLETED:
+			return assign( {}, state, {
+				data: updatePurchases( state.data, action ),
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true
+			} );
 		case ActionTypes.PURCHASES_SITE_FETCH_COMPLETED:
+			return assign( {}, state, {
+				data: updatePurchases( state.data, action ),
+				error: null,
+				isFetchingSitePurchases: false,
+				hasLoadedSitePurchasesFromServer: true
+			} );
 		case ActionTypes.PURCHASES_USER_FETCH_COMPLETED:
 			return assign( {}, state, {
 				data: updatePurchases( state.data, action ),
 				error: null,
-				isFetching: false,
-				hasLoadedFromServer: true
+				isFetchingUserPurchases: false,
+				hasLoadedUserPurchasesFromServer: true
 			} );
 
 		case ActionTypes.PURCHASE_REMOVE_FAILED:

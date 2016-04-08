@@ -23,8 +23,10 @@ describe( 'store', () => {
 		expect( PurchasesStore.get() ).to.be.eql( {
 			data: [],
 			error: null,
-			hasLoadedFromServer: false,
-			isFetching: false
+			isFetchingSitePurchases: false,
+			isFetchingUserPurchases: false,
+			hasLoadedSitePurchasesFromServer: false,
+			hasLoadedUserPurchasesFromServer: false
 		} );
 	} );
 
@@ -36,8 +38,10 @@ describe( 'store', () => {
 		expect( PurchasesStore.get() ).to.be.eql( {
 			data: [],
 			error: null,
-			hasLoadedFromServer: false,
-			isFetching: true
+			isFetchingSitePurchases: false,
+			isFetchingUserPurchases: true,
+			hasLoadedSitePurchasesFromServer: false,
+			hasLoadedUserPurchasesFromServer: false
 		} );
 	} );
 
@@ -59,8 +63,10 @@ describe( 'store', () => {
 					{ id: 3, siteId, userId },
 					{ id: 1, siteId, userId } ],
 				error: null,
-				hasLoadedFromServer: true,
-				isFetching: false
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true
 			} );
 
 			done();
@@ -89,8 +95,10 @@ describe( 'store', () => {
 				newPurchase // purchase with ID 3 was removed, `newPurchase` was added
 			],
 			error: null,
-			hasLoadedFromServer: true,
-			isFetching: false
+			isFetchingSitePurchases: false,
+			isFetchingUserPurchases: false,
+			hasLoadedSitePurchasesFromServer: true,
+			hasLoadedUserPurchasesFromServer: true
 		} );
 
 		defer( () => {
@@ -106,8 +114,10 @@ describe( 'store', () => {
 					newPurchase // the new purchase was not removed because it has a different `siteId`
 				],
 				error: null,
-				hasLoadedFromServer: true,
-				isFetching: false
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true
 			} );
 
 			done();
@@ -123,8 +133,10 @@ describe( 'store', () => {
 		expect( PurchasesStore.getByPurchaseId( 2 ) ).to.be.eql( {
 			data: { id: 2, siteId, userId },
 			error: null,
-			hasLoadedFromServer: true,
-			isFetching: false
+			isFetchingSitePurchases: false,
+			isFetchingUserPurchases: false,
+			hasLoadedSitePurchasesFromServer: true,
+			hasLoadedUserPurchasesFromServer: true
 		} );
 	} );
 
@@ -143,8 +155,10 @@ describe( 'store', () => {
 				userId
 			},
 			error: null,
-			hasLoadedFromServer: true,
-			isFetching: false
+			isFetchingSitePurchases: false,
+			isFetchingUserPurchases: false,
+			hasLoadedSitePurchasesFromServer: true,
+			hasLoadedUserPurchasesFromServer: true
 		} );
 	} );
 
@@ -171,8 +185,10 @@ describe( 'store', () => {
 				userId
 			},
 			error: null,
-			hasLoadedFromServer: true,
-			isFetching: false
+			isFetchingSitePurchases: false,
+			isFetchingUserPurchases: false,
+			hasLoadedSitePurchasesFromServer: true,
+			hasLoadedUserPurchasesFromServer: true
 		} );
 	} );
 } );

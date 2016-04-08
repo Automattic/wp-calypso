@@ -168,7 +168,7 @@ module.exports = React.createClass( {
 					<ActionPanelFooter>
 						<Button
 							scary
-							disabled={ ! this.state.site || this.props.purchases.isFetching }
+							disabled={ ! this.state.site || this.props.purchases.isFetchingSitePurchases }
 							onClick={ this.handleDeleteSiteClick }>
 							<Gridicon icon="trash" />
 							{ strings.deleteSite }
@@ -201,7 +201,7 @@ module.exports = React.createClass( {
 
 		event.preventDefault();
 
-		if ( ! this.props.purchases.hasLoadedFromServer ) {
+		if ( ! this.props.purchases.hasLoadedSitePurchasesFromServer ) {
 			return;
 		}
 
