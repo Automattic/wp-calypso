@@ -100,6 +100,7 @@ export default React.createClass( {
 					}
 					summary={ exportButton }
 					expandedSummary={ exportButton }
+					screenReaderText={ this.translate( 'More' ) }
 					>
 					<AdvancedSettings
 						postType={ postType }
