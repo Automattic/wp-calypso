@@ -176,13 +176,9 @@ const Checkout = React.createClass( {
 			} );
 		}
 
-		let redirectPath = `/checkout/thank-you/${ this.props.sites.getSelectedSite().slug }/${ receiptId }`;
-
-		if ( this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature ) ) {
-			redirectPath += '?feature=' + this.props.selectedFeature;
-		}
-
-		return redirectPath;
+		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
+			? `/checkout/thank-you/features/${this.props.selectedFeature}/${ this.props.sites.getSelectedSite().slug }/${ receiptId }`
+			: `/checkout/thank-you/${ this.props.sites.getSelectedSite().slug }/${ receiptId }`;
 	},
 
 	content: function() {
