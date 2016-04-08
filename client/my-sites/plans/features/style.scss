@@ -63,3 +63,19 @@
 		color: $blue-medium;
 	}
 }
+
+.feature-analytics__plan-compare {
+	@include breakpoint( ">660px" ) {
+		display: flex;
+		justify-content: center;
+	}
+}
+
+.feature-analytics__plan-free,
+.feature-analytics__plan-business {
+	margin: 16px;
+
+	@include breakpoint( "<660px" ) {
+		width: auto;
+	}
+}

@@ -43,19 +43,22 @@ export default function( context ) {
 
 	renderWithReduxStore(
 		<Main>
-			<HeaderCake onClick={ goBack }>Google Analytics</HeaderCake>
+			<HeaderCake onClick={ goBack }>{ i18n.translate( 'Google Analytics' ) }</HeaderCake>
 			<Card compact>
+				{ /*eslint-disable react/no-danger*/ }
 				<div className="feature-analytics__logo" dangerouslySetInnerHTML={{ __html: svgLogo }} />
-				<h1 className="feature-analytics__title">Use Google Analytics with Business</h1>
+				<h1 className="feature-analytics__title">{ i18n.translate( 'Use Google Analytics with Business' ) }</h1>
+				{ /*eslint-disable react/no-danger*/ }
 				<span className="feature-analytics__description">
-					Upgrade to Business to use your own Google Analytics, get a custom domain, and much more.
+					{ i18n.translate( 'Upgrade to Business to use your own Google Analytics, get a custom domain, and much more.' ) }
 				</span>
 				<div className="feature-analytics__ilustration" dangerouslySetInnerHTML={{ __html: svgIllustration }} />
 			</Card>
 			{ site && site.plan && site.plan.product_name_short === 'Business'
-				? <Card href={ '/settings/analytics/' + site.slug }>Configure Google Analytics</Card>
-				: <Card compact>
+				? <Card href={ '/settings/analytics/' + site.slug }>{ i18n.translate( 'Configure Google Analytics' ) }</Card>
+				: <Card compact className="feature-analytics__plan-compare">
 					<PlanCard
+						className="feature-analytics__plan-free"
 						title={ freeTitle }
 						line={ freeLine }
 						buttonName={ freeButton }
@@ -77,6 +80,7 @@ export default function( context ) {
 						</PlanCardItem>
 					</PlanCard>
 					<PlanCard
+						className="feature-analytics__plan-business"
 						title={ businessTitle }
 						line={ businessLine }
 						buttonName={ businessButton }
@@ -103,15 +107,15 @@ export default function( context ) {
 			}
 			<div className="feature-analytics__footer">
 				<div className="feature-analytics__refunds">
-					<span className="feature-analytics__footer-title">Easy Refunds</span>
+					<span className="feature-analytics__footer-title">{ i18n.translate( 'Easy Refunds' ) }</span>
 					<span className="feature-analytics__footer-info">
-						You can cancel within 30 days for a full refund. No questions asked.
+						{ i18n.translate( 'You can cancel within 30 days for a full refund. No questions asked.' ) }
 					</span>
 				</div>
 				<a className="feature-analytics__support" href="/help">
-					<span className="feature-analytics__footer-title">Get Support</span>
+					<span className="feature-analytics__footer-title">{ i18n.translate( 'Get Support' ) }</span>
 					<span className="feature-analytics__footer-info">
-						Need help? Our Happiness Engineers can help you set up your site & answer questions.
+						{ i18n.translate( 'Need help? Our Happiness Engineers can help you set up your site & answer questions.' ) }
 					</span>
 				</a>
 			</div>
