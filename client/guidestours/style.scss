@@ -128,3 +128,30 @@ $zoom-scale: 5; // the multiplier determining the size of the animated rings
 .guidestours__bullseye-instructions {
 	margin-top: -7px;
 }
+
+.is-guidestour-preview-active .wp-section {
+	visibility: hidden;
+}
+
+.guidestour-preview .web-preview__backdrop {
+	display: none;
+}
+
+.guidestour-preview .web-preview__toolbar {
+	display: none;
+}
+
+/*
+ * We don't want the preview container to get in the way of the masterbar, so
+ * we take the 47px `top` bump from `.web-preview__content` to `.web-preview`.
+ */
+
+.guidestour-preview .web-preview__content,
+.guidestour-preview .web-preview__placeholder {
+	top: 0px;
+}
+
+.guidestour-preview.web-preview {
+	top: 47px;
+	left: 273px;
+}
