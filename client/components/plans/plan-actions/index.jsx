@@ -142,13 +142,11 @@ const PlanActions = React.createClass( {
 		if ( this.props.onSelectPlan ) {
 			return this.props.onSelectPlan( cartItem );
 		}
-
-		let checkoutPath = '/checkout/' + this.props.site.slug;
 		upgradesActions.addItem( cartItem );
 
-		if ( this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature ) ) {
-			checkoutPath += '?feature=' + this.props.selectedFeature;
-		}
+		const checkoutPath = this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
+			? `/checkout/features/${this.props.selectedFeature}/${ this.props.site.slug }`
+			: `/checkout/${ this.props.site.slug }`;
 
 		page( checkoutPath );
 	},

@@ -166,7 +166,7 @@ module.exports = {
 			storedCards = require( 'lib/stored-cards' )(),
 			basePath = route.sectionify( context.path ),
 			planName = context.params.plan_name,
-			selectedFeature = context.query.feature;
+			selectedFeature = context.params.feature;
 
 		if ( 'thank-you' === planName ) {
 			return;
