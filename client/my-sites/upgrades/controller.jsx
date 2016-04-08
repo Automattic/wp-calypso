@@ -221,7 +221,7 @@ module.exports = {
 				<CheckoutThankYouComponent
 					productsList={ productsList }
 					receiptId={ receiptId }
-					selectedFeature={ context.query.feature }
+					selectedFeature={ context.params.feature }
 					selectedSite={ sites.getSelectedSite() } />
 			),
 			document.getElementById( 'primary' ),

@@ -241,6 +241,12 @@ module.exports = function() {
 		);
 
 		page(
+			'/checkout/thank-you/features/:feature/:site/:receiptId?',
+			controller.siteSelection,
+			upgradesController.checkoutThankYou
+		);
+
+		page(
 			'/checkout/:domain/:plan_name?',
 			adTracking.retarget,
 			controller.siteSelection,

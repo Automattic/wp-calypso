@@ -28,6 +28,12 @@ export function isValidFeatureKey( feature ) {
 	return !! featuresList[ feature ];
 }
 
+export function getFeatureByKey( feature ) {
+	return featuresList.hasOwnProperty( feature )
+		? featuresList[ feature ]
+		: null;
+}
+
 export function getSitePlanSlug( siteID ) {
 	var site;
 	if ( siteID ) {
