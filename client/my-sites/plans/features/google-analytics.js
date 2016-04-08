@@ -34,6 +34,20 @@ export default function( context ) {
 			</Card>
 			<Card compact>
 			</Card>
+			<div className="feature-analytics__footer">
+				<div className="feature-analytics__refunds">
+					<span className="feature-analytics__footer-title">Easy Refunds</span>
+					<span className="feature-analytics__footer-info">
+						You can cancel within 30 days for a full refund. No questions asked.
+					</span>
+				</div>
+				<a className="feature-analytics__support" href="/help">
+					<span className="feature-analytics__footer-title">Get Support</span>
+					<span className="feature-analytics__footer-info">
+						Need help? Our Happiness Engineers can help you set up your site & answer questions.
+					</span>
+				</a>
+			</div>
 		</Main>,
 		document.getElementById( 'primary' ),
 		context.store
