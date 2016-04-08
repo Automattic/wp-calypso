@@ -14,7 +14,7 @@ describe( 'markup', function() {
 	let sandbox, markup, sites;
 
 	useFakeDom();
-	useSandbox( ( _sandbox ) => sandbox = _sandbox );
+	useSandbox( ( newSandbox ) => sandbox = newSandbox );
 
 	before( () => {
 		markup = require( '../markup' );

@@ -16,7 +16,7 @@ describe( 'PostEditor', function() {
 	let sandbox, TestUtils, PostEditor, SitesList, PostEditStore;
 
 	useFakeDom();
-	useSandbox( ( _sandbox ) => sandbox = _sandbox );
+	useSandbox( ( newSandbox ) => sandbox = newSandbox );
 	useMockery();
 
 	before( () => {
