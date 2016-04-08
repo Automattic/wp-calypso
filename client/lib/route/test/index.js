@@ -95,6 +95,11 @@ describe( 'lib/route', function() {
 					route.getSiteFragment( '/edit/jetpack-portfolio/2916284/new' )
 				).to.equal( 2916284 );
 			} );
+			it( 'should not return a non-safe numeric site', () => {
+				expect(
+					route.getSiteFragment( '/edit/jetpack-portfolio/1000000000000000000000/new' )
+				).to.be.false;
+			} );
 		} );
 		describe( 'for listing paths', function() {
 			it( 'should return false when there is no site yet', function() {
@@ -143,6 +148,11 @@ describe( 'lib/route', function() {
 					route.getSiteFragment( '/pages/drafts/2916284' )
 				).to.equal( 2916284 );
 			} );
+			it( 'should not return a non-safe numeric site', () => {
+				expect(
+					route.getSiteFragment( '/pages/drafts/1000000000000000000000' )
+				).to.be.false;
+			} );
 		} );
 		describe( 'for stats paths', function() {
 			it( 'should return false when there is no site yet', function() {
@@ -160,6 +170,11 @@ describe( 'lib/route', function() {
 				expect(
 					route.getSiteFragment( '/stats/day/2916284' )
 				).to.equal( 2916284 );
+			} );
+			it( 'should not return a non-safe numeric site', () => {
+				expect(
+					route.getSiteFragment( '/stats/day/1000000000000000000000' )
+				).to.be.false;
 			} );
 		} );
 	} );

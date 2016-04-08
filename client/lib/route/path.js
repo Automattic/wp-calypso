@@ -25,27 +25,26 @@ function getSiteFragment( path ) {
 	const pieces = basePath.split( '/' );
 
 	// There are 2 URL positions where we should look for the site fragment:
-	// last (most sections) and second to last (the editor, since post ID can
-	// come last).
-	const maybeSiteInEditor = pieces[ pieces.length - 2 ] || '';
-	const maybeSiteOther = pieces[ pieces.length - 1 ] || '';
+	// last (most sections) and second-to-last (post ID is last in editor)
 
-	if ( maybeSiteInEditor.indexOf( '.' ) >= 0 ) {
-		// This is an editor-style URL like /post/:site/:id or /edit/:cpt/:site/:id
-		return maybeSiteInEditor;
-	} else if ( maybeSiteOther.indexOf( '.' ) >= 0 ) {
-		// This is a URL like /:section/:filter/:site
-		return maybeSiteOther;
-	} else if ( maybeSiteInEditor && ! isNaN( maybeSiteInEditor ) ) {
-		// Allow numeric site IDs in editor URLs
-		return parseInt( maybeSiteInEditor, 10 );
-	} else if ( maybeSiteOther && ! isNaN( maybeSiteOther ) ) {
-		// Allow numeric site IDs in other URLs
-		return parseInt( maybeSiteOther, 10 );
-	} else {
-		// No site fragment here
-		return false;
+	// Check last and second-to-last piece for site slug
+	for ( let i = 2; i > 0; i-- ) {
+		const piece = pieces[ pieces.length - i ];
+		if ( piece && -1 !== piece.indexOf( '.' ) ) {
+			return piece;
+		}
 	}
+
+	// Check last and second-to-last piece for numeric site ID
+	for ( let i = 2; i > 0; i-- ) {
+		const piece = parseInt( pieces[ pieces.length - i ], 10 );
+		if ( Number.isSafeInteger( piece ) ) {
+			return piece;
+		}
+	}
+
+	// No site fragment here
+	return false;
 }
 
 function addSiteFragment( path, site ) {
