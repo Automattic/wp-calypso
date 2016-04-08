@@ -39,7 +39,7 @@ export default function() {
 		);
 
 		page(
-			'/plans/compare/:product/:domain',
+			'/plans/compare/:feature/:domain',
 			retarget,
 			controller.siteSelection,
 			controller.navigation,
