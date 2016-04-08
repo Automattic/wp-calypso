@@ -1020,6 +1020,7 @@ Undocumented.prototype.fetchDomainSuggestions = function( searchQuery, functionP
 		query: searchQuery,
 		quantity: functionParams.quantity,
 		include_wordpressdotcom: functionParams.includeWordPressDotCom,
+		vendor: functionParams.vendor,
 	};
 
 	this.wpcom.req.get( '/domains/suggestions', query, function( error, response ) {
