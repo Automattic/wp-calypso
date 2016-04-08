@@ -23,6 +23,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
 	WelcomeMessage = require( 'nux-welcome/welcome-message' ),
 	GuidesTours = require( 'guidestours' ),
+	GuidesPreview = require( 'guidestours/preview' ),
 	analytics = require( 'analytics' ),
 	config = require( 'config' ),
 	connect = require( 'react-redux' ).connect,
@@ -35,6 +36,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
+import { getSelectedSite, getGuidesTourState } from 'state/ui/selectors';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -151,7 +153,8 @@ Layout = React.createClass( {
 				`is-section-${this.props.section.name}`,
 				`focus-${this.props.focus.getCurrent()}`,
 				{ 'is-support-user': this.props.isSupportUser },
-				{ 'has-no-sidebar': ! this.props.section.secondary }
+				{ 'has-no-sidebar': ! this.props.section.secondary },
+				{ 'is-guidestour-preview-active': this.props.shouldShowGuidesPreview }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -170,6 +173,8 @@ Layout = React.createClass( {
 					{ this.renderWelcome() }
 					{ this.renderEmailVerificationNotice() }
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
+					<GuidesPreview showPreview={ this.props.shouldShowGuidesPreview }
+							selectedSite={ this.props.selectedSite } />
 					<div id="primary" className="wp-primary wp-section" />
 					<div id="secondary" className="wp-secondary" />
 				</div>
@@ -184,13 +189,16 @@ Layout = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const { isLoading, section, guidesTour } = state.ui;
+		const { isLoading, section } = state.ui;
+		const tourState = getGuidesTourState( state );
 		return {
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
 			section,
 			isOffline: isOffline( state ),
-			shouldShowGuidesTour: guidesTour.shouldShow,
+			selectedSite: getSelectedSite( state ),
+			shouldShowGuidesTour: tourState.shouldShow,
+			shouldShowGuidesPreview: tourState.showPreview,
 		};
 	}
 )( Layout );
