@@ -267,7 +267,7 @@ const PlansCompare = React.createClass( {
 				} );
 
 				const classes = classNames( 'plans-compare__row', {
-					'is-highlighted': isEnabled( 'manage/plans/compare-highlight' ) && this.props.product && this.props.product.toLowerCase() === feature.product_slug.split( '/' )[0].toLowerCase()
+					'is-highlighted': this.props.product && this.props.product.toLowerCase() === feature.product_slug.split( '/' )[0].toLowerCase()
 				} );
 
 				return (
