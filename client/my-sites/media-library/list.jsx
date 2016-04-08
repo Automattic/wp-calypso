@@ -16,6 +16,7 @@ var MediaActions = require( 'lib/media/actions' ),
 	ListItem = require( './list-item' ),
 	ListNoResults = require( './list-no-results' ),
 	ListNoContent = require( './list-no-content' ),
+	ListPlanPromo = require( './list-plan-promo' ),
 	InfiniteList = require( 'components/infinite-list' ),
 	user = require( 'lib/user' )();
 
@@ -27,6 +28,7 @@ module.exports = React.createClass( {
 		media: React.PropTypes.arrayOf( React.PropTypes.object ),
 		mediaLibrarySelectedItems: React.PropTypes.arrayOf( React.PropTypes.object ),
 		filter: React.PropTypes.string,
+		filterRequiresUpgrade: React.PropTypes.bool.isRequired,
 		search: React.PropTypes.string,
 		containerWidth: React.PropTypes.number,
 		rowPadding: React.PropTypes.number,
@@ -194,6 +196,12 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var onFetchNextPage;
+
+		if ( this.props.filterRequiresUpgrade ) {
+			return (
+				<ListPlanPromo site={ this.props.site } filter={ this.props.filter } />
+			);
+		}
 
 		if ( ! this.props.mediaHasNextPage && this.props.media && 0 === this.props.media.length ) {
 			return React.createElement( this.props.search ? ListNoResults : ListNoContent, {
