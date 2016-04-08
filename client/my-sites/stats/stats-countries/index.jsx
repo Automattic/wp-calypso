@@ -132,8 +132,8 @@ export default React.createClass( {
 								<StatsList moduleName={ path } data={ data } />
 								{ this.props.summary &&
 									<UpgradeNudge
-										title="Add Google Analytics"
-										message="Upgrade to Premium for Google Analytics integration."
+										title={ this.translate( 'Add Google Analytics' ) }
+										message={ this.translate( 'Upgrade to a Business Plan for Google Analytics integration.' ) }
 										event="googleAnalytics-stats-countries"
 										feature="google-analytics"
 									/>
