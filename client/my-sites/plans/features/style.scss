@@ -27,3 +27,39 @@
 		vertical-align: bottom;
 	}
 }
+
+.feature-analytics__footer {
+	border-top: 1px solid lighten( $gray, 20 );
+	border-bottom: 1px solid lighten( $gray, 20 );
+	margin: 48px 0;
+	padding: 16px;
+	display: flex;
+}
+
+.feature-analytics__footer-title {
+	font-size: 15px;
+	font-weight: 600;
+	color: darken( $gray, 20% );
+	display: block;
+}
+
+.feature-analytics__refunds,
+.feature-analytics__support {
+	width: 50%;
+	text-align: center;
+	padding: 8px 24px;
+}
+
+.feature-analytics__footer-info {
+	font-size: 12px;
+	color: $gray;
+	display: block;
+	margin-top: 8px;
+}
+
+.feature-analytics__support:hover {
+	.feature-analytics__footer-info,
+	.feature-analytics__footer-title {
+		color: $blue-medium;
+	}
+}
