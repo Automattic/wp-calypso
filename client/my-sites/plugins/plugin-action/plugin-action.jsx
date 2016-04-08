@@ -27,7 +27,7 @@ module.exports = React.createClass( {
 			return (
 				<label
 					className="plugin-action__label"
-					ref={ this.props.disabledInfo ? 'disabledInfoLabel' : null }
+					ref="disabledInfoLabel"
 					onClick={ this.handleAction }
 					htmlFor={ this.props.htmlFor }
 					key="renderDisabledInfoLabel"
