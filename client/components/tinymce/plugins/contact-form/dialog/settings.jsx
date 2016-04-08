@@ -42,14 +42,11 @@ export default React.createClass( {
 				<SectionHeader label={ this.translate( 'Contact Form Notification Settings' ) } />
 				<Card>
 					<p>
-						{ this.translate(
-							'If you don’t make any changes here, feedback will be sent to the author of the %(postType)s and the subject will be the name of this %(postType)s.',
-							{
-								args: {
-									postType: this.props.postType === 'post' ? this.translate( 'post' ) : this.translate( 'page' )
-								}
-							}
-						) }
+					{
+						this.props.postType === 'post'
+						? this.translate( 'If you don’t make any changes here, feedback will be sent to the author of the post and the subject will be the name of this post.' )
+						: this.translate( 'If you don’t make any changes here, feedback will be sent to the author of the page and the subject will be the name of this page.' )
+					}
 					</p>
 
 					<FormFieldset>

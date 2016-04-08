@@ -38,7 +38,7 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 
 			<PurchaseDetail
 				icon="time"
-				title={ i18n.translate( 'When will it be ready?' ) }
+				title={ i18n.translate( 'When will it be ready?', { comment: '"it" refers to a domain' } ) }
 				description={ i18n.translate( 'Your domain should start working immediately, but may be unreliable during the first 72 hours.' ) }
 				buttonText={ i18n.translate( 'Learn more about your domain' ) }
 				href={ supportUrls.REGISTER_DOMAIN }
