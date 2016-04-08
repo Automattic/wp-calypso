@@ -1,21 +1,28 @@
 /**
  * External dependencies
  */
-var assert = require( 'assert' ),
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' );
+import assert from 'assert';
+import mockery from 'mockery';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
 
 /**
  * Internal dependencies
  */
-var PluginAction = require( '../plugin-action' );
-
-require( 'lib/react-test-env-setup' )();
+import EmptyComponent from 'test/helpers/react/empty-component';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'PluginAction', function() {
-	afterEach( function() {
-		ReactDom.unmountComponentAtNode( document.body );
+	let PluginAction;
+
+	useFakeDom();
+	useMockery();
+
+	before( () => {
+		mockery.registerMock( 'components/info-popover', EmptyComponent );
+
+		PluginAction = require( '../plugin-action' );
 	} );
 
 	describe( 'rendering with form toggle', function() {
