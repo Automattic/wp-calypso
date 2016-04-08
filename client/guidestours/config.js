@@ -29,6 +29,7 @@ const config = {
 		placement: 'below',
 		text: i18n.translate( "First things first. Up here, you'll find tools for managing your site's content and design." ),
 		next: 'posts-pages',
+		showPreview: true,
 	},
 	'posts-pages': {
 		text: i18n.translate( "Posts aren't Pages. Would you like to know more?" ),
@@ -36,7 +37,6 @@ const config = {
 		linkLabel: i18n.translate( 'Learn more about Posts and Pages' ),
 		linkUrl: 'https://en.support.wordpress.com/post-vs-page/',
 		next: 'reader',
-		showPreview: true,
 	},
 	reader: {
 		target: 'reader',
