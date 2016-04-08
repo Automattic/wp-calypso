@@ -234,6 +234,13 @@ module.exports = function() {
 		);
 
 		page(
+			'/checkout/features/:feature/:domain/:plan_name?',
+			adTracking.retarget,
+			controller.siteSelection,
+			upgradesController.checkout
+		);
+
+		page(
 			'/checkout/:domain/:plan_name?',
 			adTracking.retarget,
 			controller.siteSelection,

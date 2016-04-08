@@ -13,10 +13,14 @@ import { cartItems } from 'lib/cart-values';
 import config from 'config';
 import { isBusiness, isEnterprise, isFreePlan } from 'lib/products-values';
 import purchasesPaths from 'me/purchases/paths';
+import { isValidFeatureKey } from 'lib/plans';
 import * as upgradesActions from 'lib/upgrades/actions';
 
 const PlanActions = React.createClass( {
-	propTypes: { plan: React.PropTypes.object },
+	propTypes: {
+		plan: React.PropTypes.object,
+		selectedFeature: React.PropTypes.string
+	},
 
 	getButtons() {
 		if ( this.props.isImageButton ) {
@@ -138,10 +142,13 @@ const PlanActions = React.createClass( {
 		if ( this.props.onSelectPlan ) {
 			return this.props.onSelectPlan( cartItem );
 		}
-
 		upgradesActions.addItem( cartItem );
 
-		page( '/checkout/' + this.props.site.slug );
+		const checkoutPath = this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
+			? `/checkout/features/${this.props.selectedFeature}/${ this.props.site.slug }`
+			: `/checkout/${ this.props.site.slug }`;
+
+		page( checkoutPath );
 	},
 
 	canSelectPlan() {
