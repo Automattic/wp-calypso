@@ -11,6 +11,7 @@ import EditorGroundControl from 'post-editor/editor-ground-control';
 import AsyncLoad from 'components/async-load';
 import EditorSidebarHeader from './header';
 import SidebarFooter from 'layout/sidebar/footer';
+import EditorActionBar from 'post-editor/editor-action-bar';
 
 export default React.createClass( {
 	displayName: 'EditorSidebar',
@@ -54,6 +55,15 @@ export default React.createClass( {
 						selectedId={ this.props.post ? this.props.post.ID : null }
 					/>
 					: <div>
+					<EditorActionBar
+						isNew={ this.props.isNew }
+						onTrashingPost={ this.props.onTrashingPost }
+						onPrivatePublish={ this.props.onPublish }
+						post={ this.props.post }
+						savedPost={ this.props.savedPost }
+						site={ this.props.site }
+						type={ this.props.type }
+					/>
 					<EditorGroundControl
 						hasContent={ this.props.hasContent }
 						isDirty={ this.props.isDirty }
