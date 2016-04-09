@@ -36,7 +36,7 @@ JS_FILES := $(shell \
 	find . \
 		-not \( -path './.git' -prune \) \
 		-not \( -path './build' -prune \) \
-		-not \( -path './node_modules' -prune \) \
+		-not \( -name 'node_modules' -prune \) \
 		-not \( -path './public' -prune \) \
 		-type f \
 		\( -name '*.js' -or -name '*.jsx' \) \
@@ -45,7 +45,7 @@ MD_FILES := $(shell \
 	find . \
 		-not \( -path './.git' -prune \) \
 		-not \( -path './build' -prune \) \
-		-not \( -path './node_modules' -prune \) \
+		-not \( -name 'node_modules' -prune \) \
 		-not \( -path './public' -prune \) \
 		-type f \
 		-name '*.md' \
