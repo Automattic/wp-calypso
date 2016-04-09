@@ -72,6 +72,15 @@ export default function( context ) {
 						<PlanCardItem unavailable={ true } >
 							{ i18n.translate( 'Google Analytics' ) }
 						</PlanCardItem>
+						<PlanCardItem unavailable={ true } >
+							{ i18n.translate( 'Unlimited Storage' ) }
+						</PlanCardItem>
+						<PlanCardItem unavailable={ true } >
+							{ i18n.translate( 'Unlimited Premium Themes' ) }
+						</PlanCardItem>
+						<PlanCardItem unavailable={ true } >
+							{ i18n.translate( 'Live Chat Support' ) }
+						</PlanCardItem>
 						<PlanCardItem unavailable={ ! isPremium } >
 							{ i18n.translate( 'Custom Domain' ) }
 						</PlanCardItem>
@@ -95,6 +104,15 @@ export default function( context ) {
 						popularRibbon={ true } >
 						<PlanCardItem highlight={ true } >
 							{ i18n.translate( 'Google Analytics' ) }
+						</PlanCardItem>
+						<PlanCardItem>
+							{ i18n.translate( 'Unlimited Storage' ) }
+						</PlanCardItem>
+						<PlanCardItem>
+							{ i18n.translate( 'Unlimited Premium Themes' ) }
+						</PlanCardItem>
+						<PlanCardItem>
+							{ i18n.translate( 'Live Chat Support' ) }
 						</PlanCardItem>
 						<PlanCardItem>
 							{ i18n.translate( 'Custom Domain' ) }
