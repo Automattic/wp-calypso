@@ -14,27 +14,27 @@ import { isPremium } from 'lib/products-values';
 import paths from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
 
-const PremiumPlanDetails = ( { selectedSite, sitePlans } ) => {
+const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/',
 		customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + selectedSite.slug : adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href ),
 		plan = find( sitePlans.data, isPremium );
 
 	return (
 		<div>
-			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
-
-			<PurchaseDetail
-				icon="customize"
-				title={ i18n.translate( 'Customize your theme' ) }
-				description={
-					i18n.translate(
-						"You now have direct control over your site's fonts and colors in the customizer. " +
-						"Change your site's entire look in a few clicks."
-					)
-				}
-				buttonText={ i18n.translate( 'Start customizing' ) }
-				href={ customizeLink }
-				target={ config.isEnabled( 'manage/customize' ) ? undefined : '_blank' } />
+			{ ! selectedFeature &&
+				<PurchaseDetail
+					icon="customize"
+					title={ i18n.translate( 'Customize your theme' ) }
+					description={
+						i18n.translate(
+							"You now have direct control over your site's fonts and colors in the customizer. " +
+							"Change your site's entire look in a few clicks."
+						)
+					}
+					buttonText={ i18n.translate( 'Start customizing' ) }
+					href={ customizeLink }
+					target={ config.isEnabled( 'manage/customize' ) ? undefined : '_blank' } />
+			}
 
 			<PurchaseDetail
 				icon="image-multiple"
@@ -48,6 +48,8 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans } ) => {
 				buttonText={ i18n.translate( 'Start a new post' ) }
 				href={ paths.newPost( selectedSite ) } />
 
+			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
+
 		</div>
 	);
 };
@@ -57,6 +59,7 @@ PremiumPlanDetails.propTypes = {
 		React.PropTypes.bool,
 		React.PropTypes.object
 	] ).isRequired,
+	selectedFeature: React.PropTypes.object,
 	sitePlans: React.PropTypes.object.isRequired
 };
 

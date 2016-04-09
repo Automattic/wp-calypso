@@ -46,7 +46,7 @@ import Main from 'components/main';
 import plansPaths from 'my-sites/plans/paths';
 import PremiumPlanDetails from './premium-plan-details';
 import PurchaseDetail from 'components/purchase-detail';
-import { shouldFetchSitePlans } from 'lib/plans';
+import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
 import upgradesPaths from 'my-sites/upgrades/paths';
 
@@ -64,6 +64,7 @@ const CheckoutThankYou = React.createClass( {
 	propTypes: {
 		productsList: React.PropTypes.object.isRequired,
 		receiptId: React.PropTypes.number,
+		selectedFeature: React.PropTypes.string,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.bool,
 			React.PropTypes.object
@@ -247,6 +248,7 @@ const CheckoutThankYou = React.createClass( {
 							purchases={ purchases }
 							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
 							selectedSite={ selectedSite }
+							selectedFeature={ getFeatureByKey( this.props.selectedFeature ) }
 							sitePlans={ sitePlans } />
 
 						<FreeTrialNudge
