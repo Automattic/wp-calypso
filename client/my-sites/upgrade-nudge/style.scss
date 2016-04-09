@@ -2,9 +2,10 @@
 	border-left: 3px solid $alert-yellow;
 	display: flex;
 	margin: 16px 0;
+	padding: 12px 16px;
 
 	.upgrade-nudge__title {
-		font-size: 18px;
+		font-size: 14px;
 	}
 
 	.button {
@@ -40,6 +41,7 @@
 
 .upgrade-nudge__title {
 	color: $gray-dark;
+	font-weight: 500;
 }
 
 .upgrade-nudge__message {
