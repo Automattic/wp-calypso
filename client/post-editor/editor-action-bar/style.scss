@@ -2,40 +2,42 @@
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
-	justify-content: flex-start;
+	justify-content: space-between;
 	align-content: flex-start;
-	align-items: stretch;
+	align-items: center;
 	margin-bottom: 24px;
-	padding: 12px 12px 8px;
+	padding: 12px 16px 8px;
 
 	@include breakpoint( "<660px" ) {
-		margin-bottom: 16px;
+		margin-bottom: 8px;
 	}
 }
 
-.editor-action-bar__first-group {
-	flex-grow: 1;
-	flex-shrink: 0;
-	flex-basis: auto;
-	flex: 1 0;
+.post-editor__content .editor-action-bar {
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
 }
 
-.editor-action-bar__last-group {
-	flex-grow: 1;
-	flex-shrink: 0;
-	flex-basis: auto;
-	flex: 1 0;
-	text-align: right;
+.post-editor__sidebar .editor-action-bar {
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
 }
 
 .editor-action-bar .button {
-	color: lighten( $gray, 20% );
-	margin-left: 12px;
+	color: darken( $gray, 10% );
+	background: transparent;
+	margin-left: 18px;
 	transition: color 200ms;
 	padding: 0;
 
 	&:hover,
 	&:focus {
 		color: darken( $gray, 10% );
+	}
+
+	@include breakpoint( ">660px" ) {
+		color: lighten( $gray, 20% );
 	}
 }
