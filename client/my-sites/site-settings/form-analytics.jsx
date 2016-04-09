@@ -1,36 +1,40 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	notices = require( 'notices' ),
-	debug = require( 'debug' )( 'calypso:my-sites:site-settings' );
+import React from 'react';
+import notices from 'notices';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var formBase = require( './form-base' ),
-	productsValues = require( 'lib/products-values' ),
-	config = require( 'config' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
-	EmptyContent = require( 'components/empty-content' ),
-	analytics = require( 'analytics' ),
-	Card = require( 'components/card' ),
-	Button = require( 'components/button' ),
-	SectionHeader = require( 'components/section-header' );
+import formBase from './form-base';
+import productsValues from 'lib/products-values';
+import protectForm from 'lib/mixins/protect-form';
+import Card from 'components/card';
+import Button from 'components/button';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
+import SectionHeader from 'components/section-header';
+import ExternalLink from 'components/external-link';
+import EmptyContent from 'components/empty-content';
+import { abtest } from 'lib/abtest';
+import analytics from 'analytics';
 
-module.exports = React.createClass( {
+const debug = debugFactory( 'calypso:my-sites:site-settings' );
+
+export default React.createClass( {
 
 	displayName: 'SiteSettingsFormAnalytics',
 
 	mixins: [ protectForm.mixin, formBase ],
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			isCodeValid: true
 		};
 	},
 
-	resetState: function() {
+	resetState() {
 		this.replaceState( {
 			wga: {
 				code: null
@@ -40,14 +44,14 @@ module.exports = React.createClass( {
 		debug( 'resetting state' );
 	},
 
-	getSettingsFromSite: function( siteInstance ) {
-		var site = siteInstance || this.props.site,
-			settings = {
-				wga: {
-					code: ''
-				},
-				fetchingSettings: site.fetchingSettings
-			};
+	getSettingsFromSite( siteInstance ) {
+		const site = siteInstance || this.props.site;
+		const settings = {
+			wga: {
+				code: ''
+			},
+			fetchingSettings: site.fetchingSettings
+		};
 
 		if ( site.settings ) {
 			debug( 'site settings fetched' );
@@ -57,14 +61,14 @@ module.exports = React.createClass( {
 		return settings;
 	},
 
-	isCodeValid: function( code ) {
+	isCodeValid( code ) {
 		return ! code || code.match( /^UA-\d+-\d+$/i );
 	},
 
-	handleCodeChange: function( event ) {
-		var code = event.target.value,
-			notice = this.state.notice,
-			isCodeValid = this.isCodeValid( code );
+	handleCodeChange( event ) {
+		const code = event.target.value;
+		const isCodeValid = this.isCodeValid( code );
+		let notice = this.state.notice;
 
 		if ( ! isCodeValid && ! notice ) {
 			notice = notices.error( this.translate( 'Invalid Google Analytics Tracking ID.' ) );
@@ -82,7 +86,7 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	isSubmitButtonDisabled: function() {
+	isSubmitButtonDisabled() {
 		return this.state.fetchingSettings || this.state.submittingForm || ! this.state.isCodeValid;
 	},
 
@@ -94,12 +98,46 @@ module.exports = React.createClass( {
 		this.recordEventOnce( 'typedAnalyticsKey', 'Typed In Analytics Key Field' );
 	},
 
-	form: function() {
+	getUpgradeLink() {
+		if ( ! this.props.site || ! this.props.site.domain ) {
+			return '/plans';
+		}
+		const plansVariant = abtest( 'contextualGoogleAnalyticsNudge' );
+		let upgradeLink;
+		switch ( plansVariant ) {
+			case 'settingsDisabledFeature':
+				upgradeLink = `/plans/features/google-analytics/${ this.props.site.domain }`;
+				break;
+			case 'settingsDisabledPlansCompare':
+				upgradeLink = `/plans/compare/google-analytics/${ this.props.site.domain }`;
+				break;
+			case 'settingsDisabledPlans':
+			case 'drake':
+			default:
+				upgradeLink = `/plans/${ this.props.site.domain }`;
+		}
+		return upgradeLink;
+	},
+
+	form() {
 		var placeholderText = '';
 
 		if ( this.state.fetchingSettings ) {
 			placeholderText = this.translate( 'Loading' );
 		}
+
+		if ( abtest( 'contextualGoogleAnalyticsNudge' ) === 'drake' ) {
+			const upgradeLink = this.getUpgradeLink();
+			return <EmptyContent
+				illustration="/calypso/images/drake/drake-whoops.svg"
+				title={ this.translate( 'Want to use Google Analytics on your site?', { context: 'site setting upgrade' } ) }
+				line={ this.translate( 'Support for Google Analytics is now available with WordPress.com Business.', { context: 'site setting upgrade' } ) }
+				action={ this.translate( 'Upgrade Now', { context: 'site setting upgrade' } ) }
+				actionURL={ upgradeLink }
+				isCompact={ true }
+				actionCallback={ this.trackUpgradeClick } />;
+		}
+
 		return (
 			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
 				<SectionHeader label={ this.translate( 'Analytics Settings' ) }>
@@ -108,11 +146,15 @@ module.exports = React.createClass( {
 						compact
 						disabled={ this.isSubmitButtonDisabled() }
 						onClick={ this.submitForm }
-						>
-						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
+						>{
+							this.state.submittingForm
+									? this.translate( 'Saving…' )
+									: this.translate( 'Save Settings' )
+						}
 					</Button>
 				</SectionHeader>
 				<Card className="analytics-settings">
+					{ this.renderNudge() }
 					<fieldset>
 						<label htmlFor="wgaCode">{ this.translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }</label>
 						<input
@@ -122,14 +164,17 @@ module.exports = React.createClass( {
 							value={ this.state.wga.code }
 							onChange={ this.handleCodeChange }
 							placeholder={ placeholderText }
-							disabled={ this.state.fetchingSettings }
+							disabled={ this.state.fetchingSettings || ! this.isEnabled() }
 							onClick={ this.onClickAnalyticsInput }
 							onKeyPress={ this.onKeyPressAnalyticsInput }
 						/>
-						<p className="settings-explanation"><a href="https://support.google.com/analytics/answer/1032385?hl=en" target="_blank">{
-							this.translate( 'Where can I find my Tracking ID?' )
-						}
-						</a></p>
+						<ExternalLink
+							icon={ true }
+							href="https://support.google.com/analytics/answer/1032385?hl=en"
+							target="_blank"
+						>
+							{ this.translate( 'Where can I find my Tracking ID?' ) }
+						</ExternalLink>
 					</fieldset>
 					<p>
 						{ this.translate(
@@ -157,24 +202,29 @@ module.exports = React.createClass( {
 		);
 	},
 
-	upgradePrompt: function() {
-		var plansLink = '/plans/';
+	isEnabled() {
+		return productsValues.isBusiness( this.props.site.plan ) || productsValues.isEnterprise( this.props.site.plan );
+	},
 
-		if ( config.isEnabled( 'manage/plans' ) ) {
-			plansLink += this.props.site.domain;
-		} else {
-			plansLink += this.props.site.ID;
+	renderNudge() {
+		if ( this.isEnabled() ) {
+			return;
 		}
+		const abtestVariant = abtest( 'contextualGoogleAnalyticsNudge' );
+		const eventName = `google_analytics_${ abtestVariant }`;
+		const upgradeLink = this.getUpgradeLink();
+
+		debug( 'Google analitics is not enabled. adding nudge ...' );
 
 		return (
-			<EmptyContent
-				illustration="/calypso/images/drake/drake-whoops.svg"
-				title={ this.translate( 'Want to use Google Analytics on your site?', { context: 'site setting upgrade' } ) }
-				line={ this.translate( 'Support for Google Analytics is now available with WordPress.com Business.', { context: 'site setting upgrade' } ) }
-				action={ this.translate( 'Upgrade Now', { context: 'site setting upgrade' } ) }
-				actionURL={ plansLink }
-				isCompact={ true }
-				actionCallback={ this.trackUpgradeClick } />
+			<UpgradeNudge
+				title={ this.translate( 'Add Google Analytics' ) }
+				message={ this.translate( 'Upgrade to the business plan and include your own analytics tracking ID.' ) }
+				feature="google-analytics"
+				event={ eventName }
+				href={ upgradeLink }
+				icon="stats-alt"
+			/>
 		);
 	},
 
@@ -182,17 +232,13 @@ module.exports = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'google_analytics' } );
 	},
 
-	render: function() {
+	render() {
 		// we need to check that site has loaded first... a placeholder would be better,
 		// but returning null is better than a fatal error for now
 		if ( ! this.props.site ) {
 			return null;
 		}
 		// Only show Google Analytics for business users.
-		if ( productsValues.isBusiness( this.props.site.plan ) || productsValues.isEnterprise( this.props.site.plan ) ) {
-			return this.form();
-		}
-
-		return this.upgradePrompt();
+		return this.form();
 	}
 } );
