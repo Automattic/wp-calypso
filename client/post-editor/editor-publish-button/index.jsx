@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -17,28 +16,26 @@ export const EditorPublishButton = React.createClass( {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		savedPost: PropTypes.object,
-		onSave: PropTypes.function,
-		onPublish: PropTypes.function,
+		onSave: PropTypes.func,
+		onPublish: PropTypes.func,
 		tabIndex: PropTypes.number,
 		isPublishing: PropTypes.bool,
 		isSaveBlocked: PropTypes.bool,
 		hasContent: PropTypes.bool
 	},
 
-	mixins: [ PureRenderMixin ],
-
 	trackClick: function() {
 		const postEvents = {
 			update: 'Clicked Update Post Button',
 			schedule: 'Clicked Schedule Post Button',
 			requestReview: 'Clicked Request-Review Post Button',
-			publish: 'Clicked Publish Post Button',
+			publish: 'Clicked Publish Post Button'
 		};
 		const pageEvents = {
 			update: 'Clicked Update Page Button',
 			schedule: 'Clicked Schedule Page Button',
 			requestReview: 'Clicked Request-Review Page Button',
-			publish: 'Clicked Publish Page Button',
+			publish: 'Clicked Publish Page Button'
 		};
 		const buttonState = this.getButtonState();
 		const eventString = postUtils.isPage( this.props.post ) ? pageEvents[ buttonState ] : postEvents[ buttonState ];
@@ -76,13 +73,16 @@ export const EditorPublishButton = React.createClass( {
 	},
 
 	getButtonLabel: function() {
-		const buttonLabels = {
-			update: this.props.translate( 'Update' ),
-			schedule: this.props.translate( 'Schedule' ),
-			publish: this.props.translate( 'Publish' ),
-			requestReview: this.props.translate( 'Submit for Review' )
-		};
-		return buttonLabels[ this.getButtonState() ];
+		switch ( this.getButtonState() ) {
+			case 'update':
+				return this.props.translate( 'Update' );
+			case 'schedule':
+				return this.props.translate( 'Schedule' );
+			case 'publish':
+				return this.props.translate( 'Publish' );
+			case 'requestReview':
+				return this.props.translate( 'Submit for Review' );
+		}
 	},
 
 	onClick: function() {

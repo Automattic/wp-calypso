@@ -34,6 +34,7 @@ export default React.createClass( {
 		isSaving: React.PropTypes.bool,
 		onPreview: React.PropTypes.func,
 		onPublish: React.PropTypes.func,
+		onSave: React.PropTypes.func,
 		onSaveDraft: React.PropTypes.func,
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
@@ -287,8 +288,15 @@ export default React.createClass( {
 					</button>
 					<div className="editor-ground-control__publish-combo">
 						<EditorPublishButton
-							{ ...this.props }
+							site={ this.props.site }
+							post={ this.props.post }
+							savedPost={ this.props.savedPost }
+							onSave={ this.props.onSave }
+							onPublish={ this.props.onPublish }
 							tabIndex={ 5 }
+							isPublishing={ this.props.isPublishing }
+							isSaveBlocked={ this.props.isSaveBlocked }
+							hasContent={ this.props.hasContent }
 						/>
 						{ this.canSchedulePost() &&
 							<button
@@ -308,7 +316,7 @@ export default React.createClass( {
 								<span className="editor-ground-control__time-button__label">
 									{ postUtils.isFutureDated( this.props.post )
 										? this.moment( this.props.post.date ).calendar()
-										: this.translate( 'Choose date' )
+										: this.translate( 'Choose Date' )
 									}
 								</span>
 							</button>
