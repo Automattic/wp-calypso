@@ -418,13 +418,22 @@ module.exports = function() {
 
 	// Isomorphic routing
 	sections
-		.filter( section => section.isomorphic )
 		.forEach( section => {
-			sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
+			section.paths.forEach( path => {
+				const pathRegex = utils.pathToRegExp( path );
+
+				if ( ! section.isomorphic ) {
+					app.get( pathRegex, setUpLoggedInRoute, serverRender );
+				}
+			} );
+
+			if ( section.isomorphic ) {
+				sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
+			}
 		} );
 
-	// catchall path to serve shell for all non-static-file requests (other than auth routes)
-	app.get( '*', setUpLoggedInRoute, serverRender );
+	// catchall to render 404 for all routes not whitelisted in client/sections
+	app.get( '*', render404 );
 
 	return app;
 };
