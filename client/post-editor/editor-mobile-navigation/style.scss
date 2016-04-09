@@ -1,5 +1,4 @@
 .editor-mobile-navigation {
-	color: $gray;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -16,21 +15,24 @@
 	line-height: 0;
 }
 
+.editor-mobile-navigation__tabs {
+	display: inline-block;
+	border-left: 1px lighten( $gray, 20% ) solid;
+	border-right: 1px lighten( $gray, 20% ) solid;
+}
+
 .editor-mobile-navigation__icon {
 	cursor: pointer;
-	padding: 15px;
+	padding: 4px 12px;
+	color: lighten( $gray, 10% );
 
 	&:hover {
-		fill: $gray-dark;
+		color: $gray-dark;
 	}
 
 	&.is-selected {
 		cursor: default;
-		fill: $gray-dark;
-	}
-
-	&.separator-right {
-		border-right: 1px lighten( $gray, 20% ) solid;
+		color: $gray-dark;
 	}
 }
 

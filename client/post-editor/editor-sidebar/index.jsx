@@ -17,7 +17,7 @@ export default React.createClass( {
 
 	propTypes: {
 		allPostsUrl: PropTypes.string,
-		sites: PropTypes.array,
+		sites: PropTypes.object,
 		onTitleClick: PropTypes.func,
 		savedPost: PropTypes.object,
 		post: PropTypes.object,
@@ -35,7 +35,8 @@ export default React.createClass( {
 		user: PropTypes.object,
 		userUtils: PropTypes.object,
 		type: PropTypes.string,
-		showDrafts: PropTypes.bool
+		showDrafts: PropTypes.bool,
+		onMoreInfoAboutEmailVerify: PropTypes.func
 	},
 
 	render() {
@@ -53,9 +54,30 @@ export default React.createClass( {
 						selectedId={ this.props.post ? this.props.post.ID : null }
 					/>
 					: <div>
-					<EditorGroundControl { ...this.props } />
-					<EditorDrawer { ...this.props } />
-					<SidebarFooter />
+					<EditorGroundControl
+						hasContent={ this.props.hasContent }
+						isDirty={ this.props.isDirty }
+						isSaveBlocked={ this.props.isSaveBlocked }
+						isPublishing={ this.props.isPublishing }
+						isSaving={ this.props.isSaving }
+						onPreview={ this.props.onPreview }
+						onPublish={ this.props.onPublish }
+						onSave={ this.props.onSave }
+						onSaveDraft={ this.props.onSaveDraft }
+						post={ this.props.post }
+						savedPost={ this.props.savedPost }
+						site={ this.props.site }
+						user={ this.props.user }
+						userUtils={ this.props.userUtils }
+						type={ this.props.type }
+						onMoreInfoAboutEmailVerify={ this.props.onMoreInfoAboutEmailVerify }
+					/>
+					<EditorDrawer
+						site={ this.props.site }
+						post={ this.props.post }
+						isNew={ this.props.isNew }
+						type={ this.props.type }
+					/>
 				</div> }
 			</div>
 		);

@@ -292,6 +292,7 @@ export const PostEditor = React.createClass( {
 						userUtils={ this.props.userUtils }
 						type={ this.props.type }
 						showDrafts={ this.props.showDrafts }
+						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						/>
 				</div>
 				{ isTrashed
