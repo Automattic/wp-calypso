@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -15,11 +14,9 @@ import EditorSidebarHeader from './header';
 export default React.createClass( {
 	displayName: 'EditorSidebar',
 
-	mixins: [ PureRenderMixin ],
-
 	propTypes: {
 		allPostsUrl: PropTypes.string,
-		sites: PropTypes.array,
+		sites: PropTypes.object,
 		onTitleClick: PropTypes.func,
 		savedPost: PropTypes.object,
 		post: PropTypes.object,
@@ -52,8 +49,30 @@ export default React.createClass( {
 						selectedId={ this.props.post ? this.props.post.ID : null }
 					/>
 					: <div>
-					<EditorGroundControl { ...this.props } />
-					<EditorDrawer { ...this.props } />
+					<EditorGroundControl
+						hasContent={ this.props.hasContent }
+						isDirty={ this.props.isDirty }
+						isSaveBlocked={ this.props.isSaveBlocked }
+						isPublishing={ this.props.isPublishing }
+						isSaving={ this.props.isSaving }
+						onPreview={ this.props.onPreview }
+						onPublish={ this.props.onPublish }
+						onSave={ this.props.onSave }
+						onSaveDraft={ this.props.onSaveDraft }
+						post={ this.props.post }
+						setDate={ this.props.setDate }
+						savedPost={ this.props.savedPost }
+						site={ this.props.site }
+						type={ this.props.type }
+					/>
+					<EditorDrawer
+						site={ this.props.site }
+						post={ this.props.post }
+						postTypes={ this.props.postTypes }
+						isNew={ this.props.isNew }
+						setExcerpt={ this.props.setExcerpt }
+						type={ this.props.type }
+					/>
 				</div> }
 			</div>
 		);

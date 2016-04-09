@@ -51,7 +51,7 @@
 
 .editor-ground-control__time-button {
 	@include breakpoint( ">660px" ) {
-		@include is-primary;
+		@include button-is-primary;
 
 		border-radius: 0 4px 4px 0;
 		padding-left: 8px;

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classnames from 'classnames';
 
 /**
@@ -11,6 +10,7 @@ import classnames from 'classnames';
 import Gridicon from 'components/gridicon';
 import layoutFocus from 'lib/layout-focus';
 import EditorPublishButton from 'post-editor/editor-publish-button';
+import Button from 'components/button';
 
 export default React.createClass( {
 	displayName: 'EditorMobileNavigation',
@@ -19,16 +19,14 @@ export default React.createClass( {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		savedPost: PropTypes.object,
-		onSave: PropTypes.function,
-		onPublish: PropTypes.function,
+		onSave: PropTypes.func,
+		onPublish: PropTypes.func,
 		tabIndex: PropTypes.number,
 		isPublishing: PropTypes.bool,
 		isSaveBlocked: PropTypes.bool,
 		hasContent: PropTypes.bool,
-		onClose: PropTypes.function
+		onClose: PropTypes.func
 	},
-
-	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
 		return {
@@ -58,24 +56,38 @@ export default React.createClass( {
 		return (
 			<div className="editor-mobile-navigation">
 				<div className="editor-mobile-navigation__actions">
-					<Gridicon
-						icon="chevron-left"
-						onClick={ this.props.onClose }
-						className="editor-mobile-navigation__icon separator-right" />
-					<Gridicon
-						icon="pencil"
-						onClick={ this.closeSidebar }
-						className={ classnames( 'editor-mobile-navigation__icon', {
-							'is-selected': ! this.state.sidebarOpen
-						} ) } />
-					<Gridicon
-						icon="cog"
-						onClick={ this.openSidebar }
-						className={ classnames( 'editor-mobile-navigation__icon', 'separator-right', {
-							'is-selected': this.state.sidebarOpen
-						} ) } />
+					<Button borderless onClick={ this.props.onClose }>
+						<Gridicon
+							icon="chevron-left"
+							className="editor-mobile-navigation__icon" />
+					</Button>
+					<div className="editor-mobile-navigation__tabs">
+						<Button borderless onClick={ this.closeSidebar }>
+							<Gridicon
+								icon="pencil"
+								className={ classnames( 'editor-mobile-navigation__icon', {
+									'is-selected': ! this.state.sidebarOpen
+								} ) } />
+						</Button>
+						<Button borderless onClick={ this.openSidebar }>
+							<Gridicon
+								icon="cog"
+								className={ classnames( 'editor-mobile-navigation__icon', {
+									'is-selected': this.state.sidebarOpen
+								} ) } />
+						</Button>
+					</div>
 				</div>
-				<EditorPublishButton { ...this.props } />
+				<EditorPublishButton
+					site={ this.props.site }
+					post={ this.props.post }
+					savedPost={ this.props.savedPost }
+					onSave={ this.props.onSave }
+					onPublish={ this.props.onPublish }
+					isPublishing={ this.props.isPublishing }
+					isSaveBlocked={ this.props.isSaveBlocked }
+					hasContent={ this.props.hasContent }
+				/>
 			</div>
 		);
 	}

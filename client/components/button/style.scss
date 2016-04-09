@@ -102,7 +102,7 @@ button {
 }
 
 // Primary buttons
-@mixin is-primary {
+@mixin button-is-primary {
 	background: $blue-medium;
 	border-color: $blue-wordpress;
 	color: $white;
@@ -124,7 +124,7 @@ button {
 }
 
 .button.is-primary {
-	@include is-primary;
+	@include button-is-primary;
 }
 
 // Scary buttons
