@@ -73,7 +73,10 @@ export default React.createClass( {
 				aria-label={ this.translate( 'Show advanced status details' ) }
 				aria-pressed={ !! this.props.advancedStatus }
 			>
-				<Gridicon icon="cog" size={ 16 } />
+				{ this.props.advancedStatus
+					? <Gridicon icon="chevron-up" size={ 18 } />
+					: <Gridicon icon="chevron-down" size={ 18 } />
+				}
 				{ this.renderLabel() }
 			</button>
 		);
