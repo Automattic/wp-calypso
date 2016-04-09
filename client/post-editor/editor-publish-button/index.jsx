@@ -17,8 +17,8 @@ export default React.createClass( {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		savedPost: PropTypes.object,
-		onSave: PropTypes.function,
-		onPublish: PropTypes.function,
+		onSave: PropTypes.func,
+		onPublish: PropTypes.func,
 		tabIndex: PropTypes.number,
 		isPublishing: PropTypes.bool,
 		isSaveBlocked: PropTypes.bool,
@@ -31,13 +31,13 @@ export default React.createClass( {
 			update: 'Clicked Update Post Button',
 			schedule: 'Clicked Schedule Post Button',
 			requestReview: 'Clicked Request-Review Post Button',
-			publish: 'Clicked Publish Post Button',
+			publish: 'Clicked Publish Post Button'
 		};
 		const pageEvents = {
 			update: 'Clicked Update Page Button',
 			schedule: 'Clicked Schedule Page Button',
 			requestReview: 'Clicked Request-Review Page Button',
-			publish: 'Clicked Publish Page Button',
+			publish: 'Clicked Publish Page Button'
 		};
 		const buttonState = this.getButtonState();
 		const eventString = postUtils.isPage( this.props.post ) ? pageEvents[ buttonState ] : postEvents[ buttonState ];
@@ -75,13 +75,16 @@ export default React.createClass( {
 	},
 
 	getButtonLabel: function() {
-		const buttonLabels = {
-			update: this.translate( 'Update' ),
-			schedule: this.translate( 'Schedule' ),
-			publish: this.translate( 'Publish' ),
-			requestReview: this.translate( 'Submit for Review' )
-		};
-		return buttonLabels[ this.getButtonState() ];
+		switch ( this.getButtonState() ) {
+			case 'update':
+				return this.translate( 'Update' );
+			case 'schedule':
+				return this.translate( 'Schedule' );
+			case 'publish':
+				return this.translate( 'Publish' );
+			case 'requestReview':
+				return this.translate( 'Submit for Review' );
+		}
 	},
 
 	onClick: function() {
