@@ -259,7 +259,7 @@ module.exports = React.createClass( {
 
 	upgrades: function() {
 		var site = this.getSelectedSite(),
-			domainsLink = '/domains' + this.siteSuffix(),
+			domainsLink = '/domains/manage' + this.siteSuffix(),
 			addDomainLink = '/domains/add' + this.siteSuffix();
 
 		if ( ! config.isEnabled( 'manage/plans' ) ) {
