@@ -339,6 +339,12 @@ function setUpRoute( req, res, next ) {
 	}
 }
 
+function render404( request, response ) {
+	response.status( 404 ).render( '404.jade', {
+		urls: generateStaticUrls( request )
+	} );
+}
+
 module.exports = function() {
 	var app = express();
 
@@ -372,11 +378,7 @@ module.exports = function() {
 		res.redirect( redirectUrl );
 	} );
 
-	app.get( '/calypso/?*', function( request, response ) {
-		response.status( 404 ).render( '404.jade', {
-			urls: generateStaticUrls( request )
-		} );
-	} );
+	app.get( '/calypso/?*', render404 );
 
 	if ( config.isEnabled( 'login' ) ) {
 		app.get( '/log-in/:lang?', setUpLoggedOutRoute, serverRender );
