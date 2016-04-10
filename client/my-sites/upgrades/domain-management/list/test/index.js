@@ -3,6 +3,7 @@
  */
 import deepFreeze from 'deep-freeze';
 import assert from 'assert';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -38,6 +39,7 @@ describe( 'upgrades/domain-management/list', function() {
 
 			ReactInjection = require( 'react/lib/ReactInjection' );
 			ReactInjection.Class.injectMixin( i18n );
+			ReactInjection.Class.injectMixin( { moment } );
 
 			const EMPTY_COMPONENT = React.createClass( {
 				render() {
