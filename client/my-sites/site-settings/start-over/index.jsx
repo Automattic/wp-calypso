@@ -15,7 +15,8 @@ var HeaderCake = require( 'components/header-cake' ),
 	ActionPanelFigure = require( 'my-sites/site-settings/action-panel/figure' ),
 	ActionPanelFooter = require( 'my-sites/site-settings/action-panel/footer' ),
 	Button = require ( 'components/button' ),
-	Gridicon = require ( 'components/gridicon' );
+	Gridicon = require ( 'components/gridicon' ),
+	support = require('lib/url/support');
 
 module.exports = React.createClass( {
 
@@ -58,6 +59,15 @@ module.exports = React.createClass( {
 						<p>{
 							this.translate( 'This will keep your site and URL active, but give you a fresh start on your content ' +
 								'creation. Just contact us to have your current content cleared out.' )
+						}</p>
+						<p>{
+							this.translate( 'Alternatively, you can delete all content from your site by following {{link}}the steps here{{/link}}.',
+							{
+								components: {
+									link: <a href={ support.EMPTY_SITE } target="_blank" />
+								}
+							}
+						)
 						}</p>
 					</ActionPanelBody>
 					<ActionPanelFooter>
