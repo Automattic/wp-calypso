@@ -46,7 +46,7 @@ describe( 'PluginActivateToggle', function() {
 	it( 'should render the component', function() {
 		const wrapper = mount( <PluginActivateToggle { ...fixtures } /> );
 
-		expect( wrapper.find( '.plugin-action' ) ).to.have.length( 1 );
+		expect( wrapper.find( '.plugin-action' ) ).to.have.lengthOf( 1 );
 	} );
 
 	it( 'should register an event when the subcomponent action is executed', function() {

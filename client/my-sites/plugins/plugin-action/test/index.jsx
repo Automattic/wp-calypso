@@ -30,19 +30,19 @@ describe( 'PluginAction', function() {
 		it( 'should have plugin-action class', function() {
 			const wrapper = shallow( <PluginAction /> );
 
-			expect( wrapper.find( '.plugin-action' ) ).to.have.length( 1 );
+			expect( wrapper.find( '.plugin-action' ) ).to.have.lengthOf( 1 );
 		} );
 
 		it( 'should render compact form toggle when no children passed', function() {
 			const wrapper = mount( <PluginAction /> );
 
-			expect( wrapper.find( '.form-toggle' ) ).to.have.length( 1 );
+			expect( wrapper.find( '.form-toggle' ) ).to.have.lengthOf( 1 );
 		} );
 
 		it( 'should render a plugin action label', function() {
 			const wrapper = shallow( <PluginAction label="hello"><span /></PluginAction> );
 
-			expect( wrapper.find( '.plugin-action__label' ) ).to.have.length( 1 );
+			expect( wrapper.find( '.plugin-action__label' ) ).to.have.lengthOf( 1 );
 		} );
 	} );
 
@@ -50,7 +50,7 @@ describe( 'PluginAction', function() {
 		it( 'should not render a form toggle when children exist', function() {
 			const wrapper = mount( <PluginAction><span /></PluginAction> );
 
-			expect( wrapper.find( '.form-toggle' ) ).to.have.length( 0 );
+			expect( wrapper.find( '.form-toggle' ) ).to.have.lengthOf( 0 );
 		} );
 
 		it( 'should render child within plugin-action__children container', function() {
@@ -64,7 +64,7 @@ describe( 'PluginAction', function() {
 		it( 'should render a plugin action label', function() {
 			const wrapper = mount( <PluginAction label="hello"><span /></PluginAction> );
 
-			expect( wrapper.find( '.plugin-action__label' ) ).to.have.length( 1 );
+			expect( wrapper.find( '.plugin-action__label' ) ).to.have.lengthOf( 1 );
 		} );
 	} );
 } );
