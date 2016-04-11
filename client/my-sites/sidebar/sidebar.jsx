@@ -26,6 +26,7 @@ var AdsUtils = require( 'lib/ads/utils' ),
 	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' );
 
 import Button from 'components/button';
+import SidebarFooter from 'layout/sidebar/footer';
 
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
@@ -632,15 +633,13 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<li>
-				<Button compact borderless
-					className="my-sites-sidebar__add-new-site"
-					href={ config( 'signup_url' ) + '?ref=calypso-selector' }
-					onClick={ this.focusContent }
-				>
-					<Gridicon icon="add-outline" /> { this.translate( 'Add New Site' ) }
-				</Button>
-			</li>
+			<Button compact borderless
+				className="my-sites-sidebar__add-new-site"
+				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
+				onClick={ this.focusContent }
+			>
+				<Gridicon icon="add-outline" /> { this.translate( 'Add New Site' ) }
+			</Button>
 		);
 	},
 
@@ -651,7 +650,7 @@ module.exports = React.createClass( {
 			vip = !! this.vip();
 
 		return (
-			<Sidebar footerButton={ this.addNewWordPress() }>
+			<Sidebar>
 				<CurrentSite
 					sites={ this.props.sites }
 					siteCount={ this.props.user.get().visible_site_count }
@@ -712,6 +711,9 @@ module.exports = React.createClass( {
 					</SidebarMenu>
 					: null
 				}
+				<SidebarFooter>
+					{ this.addNewWordPress() }
+				</SidebarFooter>
 			</Sidebar>
 		);
 	}
