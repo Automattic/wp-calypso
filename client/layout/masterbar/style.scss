@@ -84,11 +84,23 @@ $autobar-height: 20px;
 }
 
 .masterbar__item-logo {
-	font-size: 17px;
-	font-weight: 300;
+	padding-left: 0;
 
-	.tld {
-		color: rgba(255, 255, 255, 0.6);
+	.masterbar__wpcom-logo {
+		height: 24px;
+		width: 164px;
+		position: relative;
+			top: 7px;
+			left: -4px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		.masterbar__item-content {
+			display: block;
+			margin: 0 auto;
+			width: 30px;
+			overflow: hidden;
+		}
 	}
 }
 
