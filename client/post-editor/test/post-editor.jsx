@@ -13,7 +13,7 @@ import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'PostEditor', function() {
-	let sandbox, TestUtils, PostEditor, SitesList, PostEditStore;
+	let sandbox, TestUtils, PostEditor, SitesList, Site, PostEditStore;
 
 	useFakeDom();
 	useSandbox( ( newSandbox ) => sandbox = newSandbox );
@@ -52,6 +52,7 @@ describe( 'PostEditor', function() {
 		mockery.registerMock( 'post-editor/invalid-url-dialog', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/restore-post-dialog', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-sidebar/header', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/verify-email-dialog', MOCK_COMPONENT );
 		mockery.registerMock( './editor-preview', MOCK_COMPONENT );
 		mockery.registerMock( 'my-sites/drafts/draft-list', MOCK_COMPONENT );
 		mockery.registerMock( 'lib/layout-focus', { set() {} } );
@@ -62,6 +63,7 @@ describe( 'PostEditor', function() {
 		} );
 
 		SitesList = require( 'lib/sites-list/list' );
+		Site = require( 'lib/site' );
 		PostEditStore = require( 'lib/posts/post-edit-store' );
 		PostEditor = require( '../post-editor' );
 		PostEditor.prototype.translate = ( string ) => string;
@@ -156,6 +158,50 @@ describe( 'PostEditor', function() {
 			tree.onEditedPostChange();
 
 			expect( tree.refs.editor.setEditorContent ).to.not.have.been.called;
+		} );
+	} );
+
+	describe( 'onPublish', function() {
+		it( 'should show verify email dialog if email is not verified', function() {
+			const user = { email_verified: false };
+			user.get = () => user;
+
+			const tree = TestUtils.renderIntoDocument(
+				<PostEditor
+					preferences={ {} }
+					sites={ new SitesList() }
+					user={ user }
+				/>
+			);
+
+			tree.setState( { post: { site_ID: 1 } } );
+			tree.onPublish();
+
+			expect( tree.state.showVerifyEmailDialog ).to.equal( true );
+		} );
+
+		it( 'should not show verify email dialog if site is VIP', function() {
+			const user = { email_verified: false };
+			user.get = () => user;
+
+			const sites = new SitesList();
+			sites.initialize( [
+				new Site( { ID: 1, is_vip: true } )
+			] );
+
+			const tree = TestUtils.renderIntoDocument(
+				<PostEditor
+					preferences={ {} }
+					sites={ sites }
+					user={ user }
+				/>
+			);
+
+			tree.refs.editor.getContent = () => '';
+			tree.setState( { post: { site_ID: 1 } } );
+			tree.onPublish();
+
+			expect( tree.state.showVerifyEmailDialog ).to.equal( false );
 		} );
 	} );
 } );

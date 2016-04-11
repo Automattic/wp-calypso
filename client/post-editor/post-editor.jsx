@@ -37,6 +37,7 @@ const actions = require( 'lib/posts/actions' ),
 	DraftList = require( 'my-sites/drafts/draft-list' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
+	VerifyEmailDialog = require( 'post-editor/verify-email-dialog' ),
 	utils = require( 'lib/posts/utils' ),
 	EditorPreview = require( './editor-preview' ),
 	stats = require( 'lib/posts/stats' ),
@@ -185,6 +186,7 @@ const PostEditor = React.createClass( {
 			isSaving: false,
 			isPublishing: false,
 			notice: false,
+			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
 			isTitleFocused: false
@@ -424,6 +426,13 @@ const PostEditor = React.createClass( {
 						onRestore={ this.onSaveTrashed }
 					/>
 				: null }
+				{ this.state.showVerifyEmailDialog
+					? <VerifyEmailDialog
+						user={ this.props.user }
+						onClose={ this.closeVerifyEmailDialog }
+						onTryAgain={ this.onPublishAfterVerify }
+					/>
+				: null }
 				{ isInvalidURL
 					? <InvalidURLDialog
 						post={ this.state.post }
@@ -460,6 +469,10 @@ const PostEditor = React.createClass( {
 
 	closeAutosaveDialog: function() {
 		this.setState( { showAutosaveDialog: false } );
+	},
+
+	closeVerifyEmailDialog: function() {
+		this.setState( { showVerifyEmailDialog: false } );
 	},
 
 	getMessage: function( name ) {
@@ -736,8 +749,36 @@ const PostEditor = React.createClass( {
 		}
 	},
 
+	onPublishAfterVerify: function() {
+		var user = this.props.user;
+
+		user.off( 'change', this.onPublish );
+		user.once( 'change', this.onPublish );
+
+		user.fetch();
+	},
+
+	needsVerification: function( user, site ) {
+		// do not allow publish for unverified e-mails,
+		// but allow if the site is VIP
+		return !user.email_verified && !( site && site.is_vip );
+	},
+
 	onPublish: function() {
 		var edits = { status: 'publish' };
+		var post = this.state.post;
+		var user = this.props.user.get();
+		var site = this.props.sites.getSite( post.site_ID );
+
+		if ( this.needsVerification( user, site ) ) {
+			this.setState( {
+				showVerifyEmailDialog: true
+			} );
+
+			return;
+		}
+
+		this.setState( { showVerifyEmailDialog: false } );
 
 		// determine if this is a private publish
 		if ( utils.isPrivate( this.state.post ) ) {
