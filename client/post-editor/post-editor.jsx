@@ -242,6 +242,8 @@ const PostEditor = React.createClass( {
 		this.debouncedSaveRawContent = debounce( this.saveRawContent, 200 );
 		this.debouncedAutosave = debounce( throttle( this.autosave, 20000 ), 3000 );
 		this.recordedDefaultEditorMode = false;
+		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
+		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 	},
 
 	componentDidMount: function() {
@@ -356,13 +358,13 @@ const PostEditor = React.createClass( {
 								<SegmentedControl className="editor__switch-mode" compact={ true }>
 									<SegmentedControlItem
 										selected={ mode === 'tinymce' }
-										onClick={ this.switchEditorMode.bind( this, 'tinymce' ) }
+										onClick={ this.switchEditorVisualMode }
 										title={ this.translate( 'Edit with a visual editor' ) }>
 										{ this.translate( 'Visual', { context: 'Editor writing mode' } ) }
 									</SegmentedControlItem>
 									<SegmentedControlItem
 										selected={ mode === 'html' }
-										onClick={ this.switchEditorMode.bind( this, 'html' ) }
+										onClick={ this.switchEditorHtmlMode }
 										title={ this.translate( 'Edit the raw HTML code' ) }>
 										HTML
 									</SegmentedControlItem>
