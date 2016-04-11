@@ -10,6 +10,12 @@
 	z-index: z-index( 'root', '.is-group-editor::before' );
 }
 
+@include breakpoint( "<660px" ) {
+	.is-group-editor.focus-sidebar::before {
+		background-color: lighten( $gray, 30% );
+	}
+}
+
 .is-group-editor .wp-content {
 	padding: 0;
 }

@@ -3,9 +3,8 @@
 
 	@include breakpoint( "<660px" ) {
 		position: relative;
-		top: 0;
-		left: 0;
-		max-height: none;
+		  top: 0;
+		  left: 0;
 		display: none;
 
 		.focus-sidebar & {
