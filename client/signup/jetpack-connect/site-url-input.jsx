@@ -34,6 +34,12 @@ export default React.createClass( {
 		return( this.translate( 'Connecting…' ) )
 	},
 
+	maybeClickIfEnter( ev ) {
+		if ( 13 === ev.keyCode ) {
+			this.props.onClick();
+		}
+	},
+
 	render() {
 		return (
 			<div>
@@ -45,7 +51,8 @@ export default React.createClass( {
 					<FormTextInput
 						onChange={ this.onChange }
 						disabled={ this.props.isFetching }
-						placeholder={ this.translate( 'http://www.yoursite.com' ) } />
+						placeholder={ this.translate( 'http://www.yoursite.com' ) }
+						onKeyUp={ this.maybeClickIfEnter } />
 					{ this.props.isFetching
 						? ( <Spinner duration={ 30 } /> )
 						: null }
