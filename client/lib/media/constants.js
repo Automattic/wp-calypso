@@ -11,6 +11,7 @@ import keyMirror from 'key-mirror';
  */
 export const ValidationErrors = keyMirror( {
 	FILE_TYPE_UNSUPPORTED: null,
+	FILE_TYPE_NOT_IN_PLAN: null,
 	SERVER_ERROR: null,
 	UPLOAD_VIA_URL_404: null,
 	EXCEEDS_MAX_UPLOAD_SIZE: null,
@@ -32,6 +33,18 @@ export const ThumbnailSizeDimensions = {
 		height: 1024
 	}
 };
+
+export const VideoPressFileTypes = [
+	'ogv',
+	'mp4',
+	'm4v',
+	'mov',
+	'wmv',
+	'avi',
+	'mpg',
+	'3gp',
+	'3g2'
+];
 
 export const GalleryColumnedTypes = [ 'default', 'circle', 'square' ];
 export const GallerySizeableTypes = [ 'default' ];
