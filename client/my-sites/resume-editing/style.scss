@@ -33,9 +33,20 @@
 }
 
 .resume-editing__post-title {
+	position: relative;
+	overflow: hidden;
 	color: $white;
 	display: block;
+	max-width: 25vw;
+	white-space: nowrap;
 	font-family: $serif;
 	font-size: 14px;
 	line-height: 1;
+
+	&::after {
+		@include long-content-fade( $size: 24px, $color: $blue-wordpress );
+		left: 25vw;
+		right: auto;
+		margin-left: -24px;
+	}
 }
