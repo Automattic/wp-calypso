@@ -10,6 +10,12 @@
 	z-index: z-index( 'root', '.is-group-editor::before' );
 }
 
+@include breakpoint( "<660px" ) {
+	.is-group-editor.focus-sidebar::before {
+		background-color: lighten( $gray, 30% );
+	}
+}
+
 .is-group-editor .layout__content {
 	padding: 47px 0 0;
 }
