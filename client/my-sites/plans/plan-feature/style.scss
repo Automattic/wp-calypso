@@ -1,11 +1,11 @@
-.feature-analytics__title {
+.plan-feature__title {
 	font-size: 25px;
 	color: $gray-dark;
 	text-align: center;
 	margin: 24px 0 0;
 }
 
-.feature-analytics__description {
+.plan-feature__description {
 	font-size: 18px;
 	color: $gray;
 	text-align: center;
@@ -15,12 +15,12 @@
 	font-weight: 300;
 }
 
-.feature-analytics__logo {
+.plan-feature__logo {
 	margin: 48px auto 48px;
 	text-align: center;
 }
 
-.feature-analytics__ilustration {
+.plan-feature__ilustration {
 	margin: 0 -24px -16px;
 
 	svg {
@@ -28,7 +28,7 @@
 	}
 }
 
-.feature-analytics__footer {
+.plan-feature__footer {
 	border-top: 1px solid lighten( $gray, 20 );
 	border-bottom: 1px solid lighten( $gray, 20 );
 	margin: 48px 0;
@@ -36,43 +36,43 @@
 	display: flex;
 }
 
-.feature-analytics__footer-title {
+.plan-feature__footer-title {
 	font-size: 15px;
 	font-weight: 600;
 	color: darken( $gray, 20% );
 	display: block;
 }
 
-.feature-analytics__refunds,
-.feature-analytics__support {
+.plan-feature__refunds,
+.plan-feature__support {
 	width: 50%;
 	text-align: center;
 	padding: 8px 24px;
 }
 
-.feature-analytics__footer-info {
+.plan-feature__footer-info {
 	font-size: 12px;
 	color: $gray;
 	display: block;
 	margin-top: 8px;
 }
 
-.feature-analytics__support:hover {
-	.feature-analytics__footer-info,
-	.feature-analytics__footer-title {
+.plan-feature__support:hover {
+	.plan-feature__footer-info,
+	.plan-feature__footer-title {
 		color: $blue-medium;
 	}
 }
 
-.feature-analytics__plan-compare {
+.plan-feature__plan-compare {
 	@include breakpoint( ">660px" ) {
 		display: flex;
 		justify-content: center;
 	}
 }
 
-.feature-analytics__plan-free,
-.feature-analytics__plan-business {
+.plan-feature__plan-current,
+.plan-feature__plan-upgraded {
 	margin: 16px;
 
 	@include breakpoint( "<660px" ) {
