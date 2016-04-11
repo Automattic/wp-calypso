@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -18,6 +20,7 @@ const config = {
 		} ),
 		type: 'GuidesFirstStep',
 		next: 'my-sites',
+		showPreview: true,
 	},
 	'my-sites': {
 		target: 'my-sites',
@@ -26,6 +29,7 @@ const config = {
 		placement: 'below',
 		text: i18n.translate( "First things first. Up here, you'll find tools for managing your site's content and design." ),
 		next: 'posts-pages',
+		showPreview: true,
 	},
 	'posts-pages': {
 		text: i18n.translate( "Posts aren't Pages. Would you like to know more?" ),

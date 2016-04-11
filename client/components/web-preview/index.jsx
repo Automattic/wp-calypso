@@ -47,7 +47,9 @@ const WebPreview = React.createClass( {
 		// Optional loading message to display during loading
 		loadingMessage: React.PropTypes.string,
 		// The iframe's title element, used for accessibility purposes
-		iframeTitle: React.PropTypes.string
+		iframeTitle: React.PropTypes.string,
+		// A CSS style object
+		style: React.PropTypes.object,
 	},
 
 	mixins: [ PureRenderMixin ],
@@ -61,6 +63,7 @@ const WebPreview = React.createClass( {
 			previewMarkup: null,
 			onLoad: noop,
 			onClose: noop,
+			style: {},
 		}
 	},
 
@@ -199,7 +202,7 @@ const WebPreview = React.createClass( {
 		} );
 
 		return (
-			<div className={ className }>
+			<div className={ className } style={ this.props.style }>
 				<div className="web-preview__backdrop" onClick={ this.props.onClose } />
 				<div className="web-preview__content">
 					<Toolbar setDeviceViewport={ this.setDeviceViewport }

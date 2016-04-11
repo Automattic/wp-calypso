@@ -4,6 +4,7 @@
  * Internal dependencies
  */
 import { getSite } from 'state/sites/selectors';
+import guidesToursConfig from 'guidestours/config';
 
 /**
  * Returns the site object for the currently selected site.
@@ -28,4 +29,15 @@ export function getSelectedSite( state ) {
  */
 export function getSelectedSiteId( state ) {
 	return state.ui.selectedSiteId;
+}
+
+export function getGuidesTourState( state ) {
+	const { shouldShow, stepName = '' } = state.ui.guidesTour;
+	const stepConfig = guidesToursConfig[ stepName ] || false;
+	const shouldReallyShow = shouldShow && !! getSelectedSiteId( state );
+	return Object.assign( {}, state.ui.guidesTour, {
+		stepConfig,
+		shouldShow: shouldReallyShow,
+		showPreview: shouldReallyShow && stepConfig.showPreview,
+	} );
 }
