@@ -151,6 +151,16 @@ const olark = {
 		}
 	},
 
+	updateOlarkGroupAndEligibility() {
+		this.getOlarkConfiguration()
+			.then( ( configuration ) => {
+				const isUserEligible = ( 'undefined' === typeof configuration.isUserEligible ) ? true : configuration.isUserEligible;
+				olarkApi( 'api.chat.setOperatorGroup', { group: configuration.group } );
+				olarkActions.setUserEligibility( isUserEligible );
+			} )
+			.catch( ( error ) => this.handleError( error ) );
+	},
+
 	syncStoreWithExpandedState() {
 		// We query the dom here because there is no other 100% accurate way to figure this out. Olark does not
 		// provide initial events for api.box.onExpand when the api.box.show event is fired.
@@ -413,3 +423,4 @@ const olark = {
 
 emitter( olark );
 olark.initialize();
+module.exports = olark;
