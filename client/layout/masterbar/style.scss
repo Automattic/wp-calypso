@@ -139,10 +139,6 @@ $autobar-height: 20px;
 	.is-support-user &.is-active {
 		color: $white;
 	}
-
-	@include breakpoint( ">480px" ) {
-		margin-left: auto;
-	}
 }
 
 .masterbar__item-me {
@@ -233,5 +229,11 @@ $autobar-height: 20px;
 	}
 	80% {
 		transform: scale(1.1);
+	}
+}
+
+.masterbar__reader {
+	@include breakpoint( ">480px" ) {
+		margin-right: auto;
 	}
 }
