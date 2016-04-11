@@ -15,6 +15,8 @@ var	FormButton = require( 'components/forms/form-button' ),
 	config = require( 'config' ),
 	Notice = require( 'components/notice' );
 
+import { saveAs } from 'browser-filesaver';
+
 module.exports = React.createClass( {
 
 	displayName: 'Security2faBackupCodesList',
@@ -59,6 +61,15 @@ module.exports = React.createClass( {
 
 		this.setState( { lastError: false } );
 		return true;
+	},
+
+	saveCodesToFile: function( event ) {
+		event.preventDefault();
+
+		const { user_login } = this.props.userSettings.settings;
+		const backupCodes = this.props.backupCodes.join( '\n' );
+		const toSave = new Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
+		saveAs( toSave, `${user_login}-backup-codes.txt` );
 	},
 
 	onPrint: function( event ) {
@@ -213,6 +224,17 @@ module.exports = React.createClass( {
 						disabled={ this.getSubmitDisabled() }
 					>
 						{ this.translate( 'All Finished!', { context: 'The user presses the All Finished button at the end of Two-Step setup.' } ) }
+					</FormButton>
+
+					<FormButton
+						className="security-2fa-backup-codes-list__save"
+						isPrimary={ false }
+						onClick={ function( event ) {
+							analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Save Backup Codes Button' );
+							this.saveCodesToFile( event );
+						}.bind( this ) }
+					>
+						{ this.translate( 'Save', { context: 'The user presses the save button during Two-Step setup to save their backup codes to disk.' } ) }
 					</FormButton>
 
 					<FormButton
