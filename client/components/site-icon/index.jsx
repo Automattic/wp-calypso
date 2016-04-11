@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	url = require( 'url' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import url from 'url';
+import classNames from 'classnames';
 
-module.exports = React.createClass( {
-	displayName: 'SiteIcon',
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'components/gridicon';
 
-	getDefaultProps: function() {
+const SiteIcon = React.createClass( {
+	getDefaultProps() {
 		return {
 			// Cache a larger image so there's no need to download different
 			// assets to display the site icons in different contexts.
@@ -23,12 +26,12 @@ module.exports = React.createClass( {
 		size: React.PropTypes.number
 	},
 
-	imgSizeParam: function( host ) {
+	imgSizeParam( host ) {
 		return host && host.indexOf( 'gravatar.com' ) === -1 ? 'w' : 's';
 	},
 
-	getIconSrcURL: function( imgURL ) {
-		var parsed = url.parse( imgURL, true , true ),
+	getIconSrcURL( imgURL ) {
+		var parsed = url.parse( imgURL, true, true ),
 			sizeParam = this.imgSizeParam( parsed.host );
 
 		parsed.query[sizeParam] = this.props.imgSize;
@@ -39,8 +42,8 @@ module.exports = React.createClass( {
 		return url.format( parsed );
 	},
 
-	render: function() {
-		var iconSrc, iconClasses, style, noticonStyle;
+	render() {
+		var iconSrc, iconClasses, style;
 
 		// Set the site icon path if it's available
 		iconSrc = ( this.props.site && this.props.site.icon ) ? this.getIconSrcURL( this.props.site.icon.img ) : null;
@@ -54,25 +57,19 @@ module.exports = React.createClass( {
 		style = {
 			height: this.props.size,
 			width: this.props.size,
-			lineHeight: this.props.size + 'px'
-		};
-
-		// @todo have a Noticon component, or Gridicon component
-		noticonStyle = {
-			color: '#fff',
-			fontSize: ( this.props.size / 1.2 ) + 'px',
 			lineHeight: this.props.size + 'px',
-			width: this.props.size
+			fontSize: this.props.size + 'px'
 		};
 
 		return (
 			<div className={ iconClasses } style={ style }>
-				{ iconSrc ?
-					<img className="site-icon__img" src={ iconSrc } />
-				:
-					<span className="noticon noticon-website" style={ noticonStyle } />
+				{ iconSrc
+					? <img className="site-icon__img" src={ iconSrc } />
+					: <Gridicon icon="globe" size={ Math.round( this.props.size / 1.3 ) } />
 				}
 			</div>
 		);
 	}
 } );
+
+export default SiteIcon;

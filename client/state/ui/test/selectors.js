@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId } from '../selectors';
+import { getSelectedSite, getSelectedSiteId, getSectionName } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getSelectedSite()', () => {
@@ -55,6 +55,34 @@ describe( 'selectors', () => {
 			} );
 
 			expect( selected ).to.eql( 2916284 );
+		} );
+	} );
+
+	describe( '#getSectionName()', () => {
+		it( 'should return null if no section is assigned', () => {
+			const sectionName = getSectionName( {
+				ui: {
+					section: false
+				}
+			} );
+
+			expect( sectionName ).to.be.null;
+		} );
+
+		it( 'should return the name of the current section', () => {
+			const sectionName = getSectionName( {
+				ui: {
+					section: {
+						name: 'post-editor',
+						paths: [ '/post', '/page' ],
+						module: 'post-editor',
+						group: 'editor',
+						secondary: true
+					}
+				}
+			} );
+
+			expect( sectionName ).to.equal( 'post-editor' );
 		} );
 	} );
 } );

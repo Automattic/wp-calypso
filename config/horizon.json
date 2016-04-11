@@ -69,6 +69,7 @@
 		"post-editor/live-image-updates": true,
 		"press-this": true,
 		"reader": true,
+		"resume-editing": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,

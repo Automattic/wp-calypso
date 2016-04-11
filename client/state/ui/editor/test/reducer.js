@@ -14,6 +14,7 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'postId',
 			'showDrafts',
+			'lastDraft',
 			'media',
 			'contactForm'
 		] );
