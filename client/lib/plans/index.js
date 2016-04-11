@@ -25,6 +25,10 @@ export function getPlan( plan ) {
 	return plansList[ plan ];
 }
 
+export function getPlanCheckoutSlug( plan ) {
+	return getPlan( plan ).planCheckoutSlug;
+}
+
 export function getValidFeatureKeys() {
 	return Object.keys( featuresList );
 }
