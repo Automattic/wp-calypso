@@ -30,7 +30,7 @@ import i18n from 'lib/mixins/i18n';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import { getValueFromProgressStore, mergeFormWithValue } from 'signup/utils';
+import { getValueFromProgressStore, mergeFormWithValue, getFlowSteps } from 'signup/utils';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -68,14 +68,16 @@ export default React.createClass( {
 	},
 
 	autoFillUsername( form ) {
+		const steps = getFlowSteps( this.props.flowName );
+		const domainSteps = steps.filter( step => step.match( /^domain/ ) );
+		let domainName = getValueFromProgressStore( {
+			stepName: domainSteps[0] || null,
+			fieldName: 'siteUrl',
+			signupProgressStore: this.props.signupProgressStore
+		} );
 		const siteName = getValueFromProgressStore( {
 			stepName: 'site',
 			fieldName: 'site',
-			signupProgressStore: this.props.signupProgressStore
-		} );
-		let domainName = getValueFromProgressStore( {
-			stepName: 'domains',
-			fieldName: 'siteUrl',
 			signupProgressStore: this.props.signupProgressStore
 		} );
 		if ( domainName ) {
