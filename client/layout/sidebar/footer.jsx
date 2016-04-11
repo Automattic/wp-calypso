@@ -3,8 +3,19 @@
  */
 import React from 'react';
 
-const SidebarFooter = ( { children, onClick } ) => (
-	<ul className="sidebar__footer" onClick={ onClick }>{ children }</ul>
+/**
+ * Internal dependencies
+ */
+import Button from 'components/button';
+import localize from 'lib/mixins/i18n/localize';
+
+const SidebarFooter = ( { translate, children } ) => (
+	<div className="sidebar__footer">
+		{ children }
+		<Button compact borderless href="https://en.support.wordpress.com/" target="_blank">
+			{ translate( 'Help' ) }
+		</Button>
+	</div>
 );
 
-export default SidebarFooter;
+export default localize( SidebarFooter );
