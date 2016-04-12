@@ -42,6 +42,15 @@
 	opacity: 1;
 }
 
+.layout__preview.web-preview.is-visible,
+.layout__preview.web-preview {
+	left: 0;
+	.web-preview__content {
+		top: 0;
+		transform: scale( 1 );
+	}
+}
+
 .wpcom-site__global-noscript {
 	position: fixed;
 	bottom: 0;
