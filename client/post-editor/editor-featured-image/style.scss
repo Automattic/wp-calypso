@@ -33,7 +33,22 @@
 	transform: translate( -50%, -50% );
 }
 
+.editor-featured-image__preview .image-preloader {
+	overflow: hidden;
+}
+
+.editor-featured-image__preview .spinner-line {
+	margin: 0;
+}
+
+.editor-featured-image__preview.has-assigned-height .spinner-line {
+	position: absolute;
+		top: 50%;
+		left: 0;
+		right: 0;
+	transform: translateY( -50% );
+}
+
 .editor-featured-image__preview .spinner__border {
 	fill: transparent;
 }
-
