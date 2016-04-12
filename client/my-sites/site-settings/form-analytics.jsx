@@ -126,7 +126,7 @@ export default React.createClass( {
 			placeholderText = this.translate( 'Loading' );
 		}
 
-		if ( abtest( 'contextualGoogleAnalyticsNudge' ) === 'drake' ) {
+		if ( abtest( 'contextualGoogleAnalyticsNudge' ) === 'drake' && ! this.isEnabled() ) {
 			const upgradeLink = this.getUpgradeLink();
 			return <EmptyContent
 				illustration="/calypso/images/drake/drake-whoops.svg"
