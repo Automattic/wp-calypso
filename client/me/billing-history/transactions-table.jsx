@@ -84,7 +84,7 @@ var TransactionsTable = React.createClass( {
 		}
 
 		return (
-			<table className="transactions">
+			<table className="billing-history__transactions">
 				{ header }
 				<tbody>{ this.renderRows() }</tbody>
 			</table>
@@ -127,16 +127,16 @@ var TransactionsTable = React.createClass( {
 	renderRows: function() {
 		if ( ! this.state.transactions ) {
 			return (
-				<tr className="transactions__no-results">
-					<td className="no-results-cell" colSpan="3">{ this.translate( 'Loading…' ) }</td>
+				<tr className="billing-history__no-results">
+					<td className="billing-history__no-results-cell" colSpan="3">{ this.translate( 'Loading…' ) }</td>
 				</tr>
 			);
 		}
 
 		if ( isEmpty( this.state.transactions ) ) {
 			return (
-				<tr className="transactions__no-results">
-					<td className="no-results-cell" colSpan="3">{ this.props.emptyTableText }</td>
+				<tr className="billing-history__no-results">
+					<td className="billing-history__no-results-cell" colSpan="3">{ this.props.emptyTableText }</td>
 				</tr>
 			);
 		}
@@ -145,17 +145,17 @@ var TransactionsTable = React.createClass( {
 			var date = tableRows.formatDate( transaction.date );
 
 			return (
-				<tr key={ transaction.id } className="transaction">
+				<tr key={ transaction.id } className="billing-history__transaction">
 					<td className="date">{ date }</td>
-					<td className="trans-app">
-						<div className="trans-wrap">
-							<div className="service-description">
-								<div className="service-name">{ this.serviceName( transaction ) }</div>
+					<td className="billing-history__trans-app">
+						<div className="billing-history__trans-wrap">
+							<div className="billing-history__service-description">
+								<div className="billing-history__service-name">{ this.serviceName( transaction ) }</div>
 								{ this.props.transactionRenderer.call( this, transaction ) }
 							</div>
 						</div>
 					</td>
-					<td className="amount">{ transaction.amount }</td>
+					<td className="billing-history__amount">{ transaction.amount }</td>
 				</tr>
 			);
 		}, this );
