@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	connect = require( 'react-redux' ).connect,
 	classnames = require( 'classnames' ),
 	property = require( 'lodash/property' ),
 	sortBy = require( 'lodash/sortBy' );
@@ -25,7 +26,6 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	GuidedTours = require( 'layout/guided-tours' ),
 	analytics = require( 'lib/analytics' ),
 	config = require( 'config' ),
-	connect = require( 'react-redux' ).connect,
 	PulsingDot = require( 'components/pulsing-dot' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	OfflineStatus = require( 'layout/offline-status' ),
