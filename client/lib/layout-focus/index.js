@@ -28,7 +28,7 @@ var layoutFocus = {
 
 	// These are the three structural areas
 	// of the main body of Calypso
-	_areas: [ 'content', 'sidebar', 'sites' ],
+	_areas: [ 'content', 'sidebar', 'sites', 'preview' ],
 
 	getCurrent: function() {
 		return this._current || 'content';
