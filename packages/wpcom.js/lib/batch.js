@@ -1,52 +1,51 @@
-/**
- * Create a `Batch` instance
- *
- * @param {WPCOM} wpcom - wpcom instance
- * @return {null} null
- * @api public
- */
-function Batch( wpcom ) {
-	if ( ! ( this instanceof Batch ) ) {
-		return new Batch( wpcom );
+class Batch {
+	/**
+	 * Create a `Batch` instance
+	 *
+	 * @param {WPCOM} wpcom - wpcom instance
+	 * @return {null} null
+	 */
+	constructor( wpcom ) {
+		if ( ! ( this instanceof Batch ) ) {
+			return new Batch( wpcom );
+		}
+
+		this.wpcom = wpcom;
+		this.urls = [];
 	}
 
-	this.wpcom = wpcom;
-	this.urls = [];
-}
-
-/**
- * Add url to batch requests
- *
- * @param {String} url - endpoint url
- * @return {Batch} batch instance
- * @api public
- */
-Batch.prototype.add = function( url ) {
-	this.urls.push( url );
-	return this;
-};
-
-/**
- * Run the batch request
- *
- * @param {Object} [query] - optional query parameter
- * @param {Function} fn - callback
- * @return {Function} request handler
- * @api public
- */
-Batch.prototype.run = function( query = {}, fn ) {
-	if ( 'function' === typeof query ) {
-		fn = query;
-		query = {};
+	/**
+	 * Add url to batch requests
+	 *
+	 * @param {String} url - endpoint url
+	 * @return {Batch} batch instance
+	 */
+	add( url ) {
+		this.urls.push( url );
+		return this;
 	}
 
-	// add urls to query object
-	query.urls = this.urls;
+	/**
+	 * Run the batch request
+	 *
+	 * @param {Object} [query] - optional query parameter
+	 * @param {Function} fn - callback
+	 * @return {Promise} Promise
+	 */
+	run( query = {}, fn ) {
+		if ( 'function' === typeof query ) {
+			fn = query;
+			query = {}
+		}
 
-	return this.wpcom.req.get( '/batch', query, fn );
+		// add urls to query object
+		query.urls = this.urls;
+
+		return this.wpcom.req.get( '/batch', query, fn );
+	}
 };
 
 /**
  * Expose `Batch` module
  */
-module.exports = Batch;
+export default Batch;
