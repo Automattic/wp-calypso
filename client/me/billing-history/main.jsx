@@ -21,6 +21,8 @@ var observe = require( 'lib/mixins/data-observe' ),
 	SectionHeader = require( 'components/section-header' ),
 	puchasesPaths = require( 'me/purchases/paths' );
 
+import Main from 'components/main';
+
 module.exports = React.createClass( {
 	displayName: 'BillingHistory',
 
@@ -39,13 +41,12 @@ module.exports = React.createClass( {
 		const hasBillingHistory = ! isEmpty( data.billingHistory );
 
 		return (
-
-			<div id="billing-history-wrapper" className="main">
+			<Main className="billing-history">
 				<MeSidebarNavigation />
 				<PurchasesHeader section={ 'billing' } />
 				<SectionHeader label={ this.translate( 'Receipts' ) } />
-				<Card id="billing-history-content">
-					<div className="billing-history-header">
+				<Card id="billing-history__content">
+					<div className="billing-history__header">
 						<p>
 							{
 								this.translate(
@@ -59,22 +60,18 @@ module.exports = React.createClass( {
 							}
 						</p>
 					</div>
-
 					<BillingHistoryTable transactions={ data.billingHistory } />
 				</Card>
-
 				{ hasBillingHistory &&
 					<div>
 						<SectionHeader label={ this.translate( 'Upcoming Charges' ) } />
-						<Card id="upcoming-charges">
+						<Card className="billing-history__upcoming-charges">
 							<UpcomingChargesTable sites={ this.props.sites } transactions={ data.upcomingCharges } />
 						</Card>
 					</div> }
-
 				{ config.isEnabled( 'upgrades/credit-cards' ) &&
 					<CreditCards cards={ storedCards } /> }
-
-			</div>
+			</Main>
 		);
 	}
 } );
