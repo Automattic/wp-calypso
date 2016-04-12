@@ -49,6 +49,8 @@ import QueryPreferences from 'components/data/query-preferences';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
+import Site from 'my-sites/site';
+import StatusLabel from 'post-editor/editor-status-label';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -214,6 +216,18 @@ export const PostEditor = React.createClass( {
 							<EditorNotice
 								{ ...this.state.notice }
 								onDismissClick={ this.onNoticeClick } />
+							<div className="editor__site">
+								<Site
+									site={ site }
+									indicator={ false }
+									homeLink={ true }
+									externalLink={ true }
+								/>
+								<StatusLabel
+									post={ this.state.savedPost }
+									type={ this.props.type }
+								/>
+							</div>
 							<FeaturedImage
 								site={ site }
 								post={ this.state.post }
