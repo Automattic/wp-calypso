@@ -39,8 +39,17 @@
 		padding: 8px;
 	}
 
-	.all-sites-icon {
-		display: inline-block;
+	.count {
+		display: inline-flex;
+		width: 32px;
+		height: 32px;
+		border-radius: 4px;
+		margin-right: 8px;
+		align-items: center;
+		align-self: center;
+		justify-content: center;
+		padding: 0;
+		vertical-align: top;
 	}
 
 	.plugin-install-button__install {

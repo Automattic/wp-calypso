@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var FoldableCard = require( 'components/foldable-card' ),
 	CompactCard = require( 'components/card/compact' ),
-	AllSitesIcon = require( 'my-sites/all-sites-icon' ),
+	Count = require( 'components/count' ),
 	PluginsLog = require( 'lib/plugins/log-store' ),
 	PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' ),
 	PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' ),
@@ -46,7 +46,7 @@ module.exports = React.createClass( {
 	renderMultisiteHeader: function() {
 		return (
 			<div className="plugin-site-network__header">
-				<AllSitesIcon sites={ this.props.secondarySites } />
+				<Count count={ this.props.secondarySites.length } />
 				<div className="plugin-site-network__header_info">
 					<div className="site__title">{ this.translate( '%(mainSiteName)s\'s Network', {
 						args: {
