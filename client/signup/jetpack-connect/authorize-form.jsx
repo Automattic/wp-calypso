@@ -131,7 +131,7 @@ const LoggedInForm = React.createClass( {
 	},
 
 	renderFormControls() {
-		const { queryObject, isAuthorizing, autoAuthorize, authorizeSuccess, plansURL } = this.props.jetpackConnectAuthorize;
+		const { queryObject, isAuthorizing, autoAuthorize, authorizeSuccess, plansURL, siteReceived } = this.props.jetpackConnectAuthorize;
 		const loginUrl = config( 'login_url' ) + '?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) + '&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
 
 		if ( autoAuthorize ) {
@@ -141,7 +141,7 @@ const LoggedInForm = React.createClass( {
 		}
 
 		if ( authorizeSuccess ) {
-			if ( plansURL ) {
+			if ( siteReceived && plansURL ) {
 				page( plansURL );
 			}
 			return null;
