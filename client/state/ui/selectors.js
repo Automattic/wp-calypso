@@ -8,7 +8,9 @@ import get from 'lodash/get';
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { getSite } from 'state/sites/selectors';
+import guidesToursConfig from 'guidestours/config';
 
 /**
  * Returns the site object for the currently selected site.
@@ -44,3 +46,24 @@ export function getSelectedSiteId( state ) {
 export function getSectionName( state ) {
 	return get( state.ui.section, 'name', null );
 }
+
+/**
+ * Returns the current state for Guided Tours.
+ *
+ * This includes the raw state from state/ui/guidesTour, but also the available
+ * configuration (`stepConfig`) for the currently active tour step, if one is
+ * active.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {Object}        Current Guided Tours state
+ */
+const getRawGuidesTourState = state => get( state, 'ui.guidesTour', false );
+export const getGuidesTourState = createSelector(
+	state => {
+		const tourState = getRawGuidesTourState( state );
+		const { stepName = '' } = tourState;
+		const stepConfig = guidesToursConfig[ stepName ] || false;
+		return Object.assign( {}, tourState, { stepConfig } );
+	},
+	getRawGuidesTourState
+);

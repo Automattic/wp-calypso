@@ -5,6 +5,7 @@ import {
 	SELECTED_SITE_SET,
 	SET_SECTION,
 	SHOW_GUIDESTOUR,
+	UPDATE_GUIDESTOUR,
 } from 'state/action-types';
 
 /**
@@ -56,4 +57,11 @@ export function showGuidesTour( { shouldShow = false, tour = 'main', siteId = nu
 		tour,
 		siteId,
 	}
+}
+
+export function nextGuidesTourStep( stepName ) {
+	return {
+		type: UPDATE_GUIDESTOUR,
+		stepName,
+	};
 }
