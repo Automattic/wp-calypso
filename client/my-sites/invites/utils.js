@@ -134,13 +134,27 @@ export default {
 	},
 
 	getRedirectAfterAccept( invite ) {
+		const readerPath = '/';
+		const postsListPath = '/posts/' + invite.site.ID;
+
+		if ( get( invite, 'site.is_vip' ) ) {
+			switch ( invite.role ) {
+				case 'viewer':
+				case 'follower':
+					return get( invite, 'site.URL' ) || readerPath
+					break;
+				default:
+					return get( invite, 'site.admin_url' ) || postsListPath;
+			}
+		}
+
 		switch ( invite.role ) {
 			case 'viewer':
 			case 'follower':
-				return '/';
+				return readerPath;
 				break;
 			default:
-				return '/posts/' + invite.site.ID;
+				return postsListPath;
 		}
 	}
 };

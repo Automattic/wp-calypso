@@ -108,7 +108,9 @@ export function acceptInvite( invite, callback ) {
 						error: error.error
 					} );
 				} else {
-					dispatch( successNotice( ... acceptedNotice( invite ) ) );
+					if ( ! get( invite, 'site.is_vip' ) ) {
+						dispatch( successNotice( ... acceptedNotice( invite ) ) );
+					}
 					analytics.tracks.recordEvent( 'calypso_invite_accepted' );
 				}
 				if ( typeof callback === 'function' ) {
