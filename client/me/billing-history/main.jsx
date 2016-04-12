@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classes = require( 'component-classes' ),
 	isEmpty = require( 'lodash/isEmpty' );
 
 /**
@@ -27,14 +26,6 @@ module.exports = React.createClass( {
 	displayName: 'BillingHistory',
 
 	mixins: [ observe( 'billingData', 'sites' ), eventRecorder ],
-
-	componentWillMount: function() {
-		classes( document.body ).add( 'billing-history-page' );
-	},
-
-	componentWillUnmount: function() {
-		classes( document.body ).remove( 'billing-history-page' );
-	},
 
 	render: function() {
 		var data = this.props.billingData.get();

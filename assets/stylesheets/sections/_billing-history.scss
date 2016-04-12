@@ -530,18 +530,8 @@
 }
 
 @media print {
-	#overlay-header,
-	#primary,
-	.receipt-links {
+	#secondary,
+	.billing-history__receipt-links {
 		display: none;
-	}
-
-	.billing-history-page {
-		.wp-overlay .overlay-content,
-		.wp-content {
-			margin: 0 auto;
-			max-width: none;
-			width: 100%;
-		}
 	}
 }
