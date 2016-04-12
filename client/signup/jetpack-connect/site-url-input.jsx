@@ -34,8 +34,8 @@ export default React.createClass( {
 		return( this.translate( 'Connecting…' ) )
 	},
 
-	maybeClickIfEnter( ev ) {
-		if ( 13 === ev.keyCode ) {
+	maybeClickIfEnter( event ) {
+		if ( 13 === event.keyCode ) {
 			this.props.onClick();
 		}
 	},
