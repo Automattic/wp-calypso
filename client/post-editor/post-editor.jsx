@@ -57,6 +57,8 @@ import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-d
 import { isEditorDraftsVisible } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
 import EditorSidebar from 'post-editor/editor-sidebar';
+import Site from 'my-sites/site';
+import StatusLabel from 'post-editor/editor-status-label';
 
 const messages = {
 	post: {
@@ -346,6 +348,18 @@ const PostEditor = React.createClass( {
 								site={ site }
 								type={ this.props.type }
 							/>
+							<div className="editor__site">
+								<Site
+									site={ site }
+									indicator={ false }
+									homeLink={ true }
+									externalLink={ true }
+								/>
+								<StatusLabel
+									post={ this.state.savedPost }
+									type={ this.props.type }
+								/>
+							</div>
 							<FeaturedImage
 								site={ site }
 								post={ this.state.post }
