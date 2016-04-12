@@ -181,6 +181,17 @@ const ReaderSidebar = React.createClass( {
 								) : null
 						}
 
+						{ config.isEnabled( 'reader/search' ) &&
+							(
+								<li className={ ReaderSidebarHelper.itemLinkClass( '/read/search', this.props.path, { 'sidebar-streams__search': true } ) }>
+									<a href="/read/search">
+										<Gridicon icon="search" size={ 24 } />
+										<span className="menu-link-text">{ this.translate( 'Search' ) }</span>
+									</a>
+								</li>
+							)
+						}
+
 						<li className={ ReaderSidebarHelper.itemLinkClassStartsWithOneOf( [ '/recommendations', '/tags' ], this.props.path, { 'sidebar-streams__recommendations': true } ) }>
 							<a href="/recommendations">
 								<Gridicon icon="thumbs-up" size={ 24 } />
