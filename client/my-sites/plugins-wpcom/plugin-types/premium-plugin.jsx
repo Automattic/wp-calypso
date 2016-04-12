@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import noop from 'lodash/noop';
 
 import Gridicon from 'components/gridicon';
 
@@ -9,12 +10,13 @@ export const PremiumPlugin = React.createClass( {
 			icon = 'plugins',
 			name,
 			plan,
+			onClick = noop,
 			supportLink
 		} = this.props;
 
 		return (
 			<div className="wpcom-plugins__plugin-item">
-				<a href={ supportLink } target="_blank">
+				<a onClick={ onClick } href={ supportLink } target="_blank">
 					<div className="wpcom-plugins__plugin-icon">
 						<Gridicon { ...{ icon } } />
 					</div>
@@ -32,6 +34,7 @@ PremiumPlugin.propTypes = {
 	supportLink: PropTypes.string.isRequired,
 	icon: PropTypes.string,
 	plan: PropTypes.string.isRequired,
+	onClick: PropTypes.func,
 	description: PropTypes.string.isRequired
 };
 
