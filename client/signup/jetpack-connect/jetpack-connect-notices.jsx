@@ -47,6 +47,11 @@ export default React.createClass( {
 			noticeValues.text = this.translate( 'Jetpack is deactivated' );
 			return noticeValues
 		}
+		if ( this.props.noticeType === 'outdatedJetpack' ) {
+			noticeValues.icon = 'block';
+			noticeValues.text = this.translate( 'You need to update Jetpack before connecting' );
+			return noticeValues
+		}
 		if ( this.props.noticeType === 'jetpackIsDisconnected' ) {
 			noticeValues.icon = 'link-break';
 			noticeValues.text = this.translate( 'Jetpack is disconnected' );
