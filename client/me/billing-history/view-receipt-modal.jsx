@@ -11,8 +11,11 @@ var React = require( 'react' ),
  */
 var tableRows = require( './table-rows' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	Overlay = require( 'components/overlay' ),
 	eventRecorder = require( 'me/event-recorder' );
+
+import Card from 'components/card';
+import Main from 'components/main';
+import HeaderCake from 'components/header-cake';
 
 module.exports = React.createClass( {
 	displayName: 'ViewReceiptModal',
@@ -20,18 +23,15 @@ module.exports = React.createClass( {
 	mixins: [ observe( 'billingData' ), eventRecorder ],
 
 	render: function() {
-		var transaction = this.props.transaction,
-			secondary = {
-				title: this.translate( 'Close' ),
-				defaultBack: '/me/billing'
-			};
-
 		return (
-			<div className="wp-overlay fade-background">
-				<Overlay primary={ false } secondary={ secondary } hideSelectedSite={ true }>
-					{ this.renderContent( transaction ) }
-				</Overlay>
-			</div>
+			<Main>
+				<HeaderCake backHref="/me/billing">
+					{ this.translate( 'Billing History' ) }
+				</HeaderCake>
+				<Card>
+					{ this.renderContent( this.props.transaction ) }
+				</Card>
+			</Main>
 		);
 	},
 

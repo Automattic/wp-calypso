@@ -37,7 +37,7 @@ export default {
 
 			renderWithReduxStore(
 				React.createElement( ViewReceiptModal, { transaction: billingData.getTransaction( transactionId ) } ),
-				document.getElementById( 'tertiary' ),
+				document.getElementById( 'primary' ),
 				context.store
 			);
 		} else {
