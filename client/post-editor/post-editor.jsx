@@ -21,8 +21,7 @@ const actions = require( 'lib/posts/actions' ),
 	FeaturedImage = require( 'post-editor/editor-featured-image' ),
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
-	NoticeAction = require( 'components/notice/notice-action' ),
-	Notice = require( 'components/notice' ),
+	EditorNotice = require( 'post-editor/editor-notice' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	TinyMCE = require( 'components/tinymce' ),
 	EditorWordCount = require( 'post-editor/editor-word-count' ),
@@ -219,7 +218,7 @@ const PostEditor = React.createClass( {
 		return assign( {}, state, {
 			isSaving: false,
 			isPublishing: false,
-			notice: false,
+			notice: {},
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
 			isTitleFocused: false
@@ -271,31 +270,9 @@ const PostEditor = React.createClass( {
 		this.hideDrafts();
 	},
 
-	renderNotice: function() {
-		var arrowLink;
-
-		if ( ! this.state.notice || ! this.state.notice.text ) {
-			return;
-		}
-
-		if ( this.state.notice.link ) {
-			arrowLink = (
-				<NoticeAction href={ this.state.notice.link } external={ true }>
-					{ this.state.notice.action }
-				</NoticeAction>
-			);
-		}
-
-		return (
-			<Notice
-				status={ 'is-' + this.state.notice.type }
-				showDismiss={ this.state.notice.type === 'success' ? false : true }
-				onDismissClick={ this.onNoticeClick }
-				className="post-editor__notice"
-				text={ this.state.notice.text }>
-				{ arrowLink }
-			</Notice>
-		);
+	hideNotice: function( event ) {
+		event && event.preventDefault();
+		this.setState( { notice: {} } );
 	},
 
 	toggleSidebar: function() {
@@ -336,7 +313,8 @@ const PostEditor = React.createClass( {
 						isSaveBlocked={ this.state.isSaveBlocked }
 						hasContent={ this.state.hasContent }
 						onClose={ this.onClose }
-						layoutFocus={ layoutFocus }/>
+						layoutFocus={ layoutFocus }
+						onTabChange={ this.hideNotice } />
 					<div className="post-editor__content">
 						<div className="editor">
 							<EditorActionBar
@@ -364,7 +342,10 @@ const PostEditor = React.createClass( {
 								site={ site }
 								post={ this.state.post }
 								maxWidth={ 1462 } />
-							{ this.renderNotice() }
+							<EditorNotice
+								{ ...this.state.notice }
+								onDismissClick={ this.hideNotice }
+							/>
 							<div className="editor__header">
 								<EditorTitleContainer
 									onChange={ this.debouncedAutosave }
@@ -427,6 +408,7 @@ const PostEditor = React.createClass( {
 						site={ site }
 						type={ this.props.type }
 						showDrafts={ this.props.showDrafts }
+						notice={ this.state.notice }
 						/>
 					{ this.iframePreviewEnabled() ?
 						<EditorPreview
@@ -491,11 +473,6 @@ const PostEditor = React.createClass( {
 	getMessage: function( name ) {
 		var type = this.props.type === 'page' ? 'page' : 'post';
 		return typeof messages[ type ][ name ] === 'function' ? messages[ type ][ name ].apply( this ) : null;
-	},
-
-	onNoticeClick: function( event ) {
-		event.preventDefault();
-		this.setState( { notice: false } );
 	},
 
 	onEditedPostChange: function() {
@@ -864,7 +841,7 @@ const PostEditor = React.createClass( {
 
 			window.scrollTo( 0, 0 );
 		} else {
-			nextState.notice = null;
+			nextState.notice = {};
 		}
 
 		this.setState( nextState );

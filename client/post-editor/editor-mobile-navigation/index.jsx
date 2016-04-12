@@ -28,15 +28,22 @@ export default React.createClass( {
 		isSaveBlocked: PropTypes.bool,
 		hasContent: PropTypes.bool,
 		onClose: PropTypes.func,
+		onTabChange: PropTypes.func,
 		layoutFocus: PropTypes.object
 	},
 
 	openSidebar: function() {
-		this.props.layoutFocus.set( 'sidebar' );
+		if ( this.props.layoutFocus.getCurrent() !== 'sidebar' ) {
+			this.props.layoutFocus.set( 'sidebar' );
+			this.props.onTabChange();
+		}
 	},
 
 	closeSidebar: function() {
-		this.props.layoutFocus.set( 'content' );
+		if ( this.props.layoutFocus.getCurrent() !== 'content' ) {
+			this.props.layoutFocus.set( 'content' );
+			this.props.onTabChange();
+		}
 	},
 
 	render: function() {
