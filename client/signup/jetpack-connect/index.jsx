@@ -22,7 +22,7 @@ import versionCompare from 'lib/version-compare';
 const JetpackConnectMain = React.createClass( {
 	displayName: 'JetpackConnectSiteURLStep',
 
-	MINIMUM_JETPACK_VERSION: '4.0',
+	MINIMUM_JETPACK_VERSION: '3.9.6',
 
 	getInitialState() {
 		return {
