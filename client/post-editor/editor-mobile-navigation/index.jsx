@@ -26,15 +26,22 @@ const EditorMobileNavigation = React.createClass( {
 		isPublishing: PropTypes.bool,
 		isSaveBlocked: PropTypes.bool,
 		hasContent: PropTypes.bool,
+		onTabChange: PropTypes.func,
 		onClose: PropTypes.func
 	},
 
 	openSidebar: function() {
-		this.props.setLayoutFocus( 'sidebar' );
+		if ( 'sidebar' !== this.props.currentLayoutFocus ) {
+			this.props.setLayoutFocus( 'sidebar' );
+			this.props.onTabChange();
+		}
 	},
 
 	closeSidebar: function() {
-		this.props.setLayoutFocus( 'content' );
+		if ( 'content' !== this.props.currentLayoutFocus ) {
+			this.props.setLayoutFocus( 'content' );
+			this.props.onTabChange();
+		}
 	},
 
 	render: function() {
