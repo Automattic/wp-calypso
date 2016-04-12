@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	omit = require( 'lodash/omit' ),
-	noop = require( 'lodash/noop' );
+import React from 'react';
+import omit from 'lodash/omit';
+import noop from 'lodash/noop';
 
 /**
- * Module variables
+ * Constants
  */
-var LoadStatus = {
+const LoadStatus = {
 	PENDING: 'PENDING',
 	LOADING: 'LOADING',
 	LOADED: 'LOADED',
 	FAILED: 'FAILED'
 };
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ImagePreloader',
 
 	propTypes: {
@@ -26,28 +26,28 @@ module.exports = React.createClass( {
 		onError: React.PropTypes.func
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			status: LoadStatus.PENDING
 		};
 	},
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.createLoader();
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.src !== this.props.src ) {
 			this.createLoader( nextProps );
 		}
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		this.destroyLoader();
 	},
 
-	createLoader: function( nextProps ) {
-		var src = ( nextProps || this.props ).src;
+	createLoader( nextProps ) {
+		const src = ( nextProps || this.props ).src;
 
 		this.destroyLoader();
 
@@ -61,7 +61,7 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	destroyLoader: function() {
+	destroyLoader() {
 		if ( ! this.image ) {
 			return;
 		}
@@ -71,7 +71,7 @@ module.exports = React.createClass( {
 		delete this.image;
 	},
 
-	onLoadComplete: function( event ) {
+	onLoadComplete( event ) {
 		this.destroyLoader();
 
 		if ( event.type !== 'load' ) {
@@ -89,8 +89,8 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	render: function() {
-		var children, imageProps;
+	render() {
+		let children, imageProps;
 
 		switch ( this.state.status ) {
 			case LoadStatus.LOADING:
