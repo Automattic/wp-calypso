@@ -2,12 +2,21 @@
 	padding: 16px;
 	margin-bottom: 0;
 	transition: 0.3s box-shadow;
+
+	@include breakpoint( "<660px" ) {
+		padding-top: 0;
+	}
 }
 
 .editor-ground-control .site {
 	margin: -16px;
 	margin-bottom: 0;
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
 }
+
 .editor-ground-control__separator {
 	margin: 0 -16px;
 	background: lighten( $gray, 30 );
