@@ -212,7 +212,7 @@ export default React.createClass( {
 			return(
 				<AllSites
 					key="selector-all-sites"
-					sites={ this.props.sites }
+					sites={ this.props.sites.get() }
 					href={ allSitesPath }
 					onSelect={ this.onSiteSelect.bind( this, null ) }
 					isSelected={ ! this.props.sites.selected }
