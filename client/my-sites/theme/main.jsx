@@ -82,7 +82,7 @@ const ThemeSheet = React.createClass( {
 				<span className="themes__sheet-bar-title">{ title }</span>
 				<span className="themes__sheet-bar-tag">{ tag }</span>
 			</div>
-		)
+		);
 	},
 
 	renderScreenshot() {
@@ -172,6 +172,6 @@ const ThemeSheet = React.createClass( {
 			</Main>
 		);
 	}
-} )
+} );
 
 export default connect()( ThemeSheet );

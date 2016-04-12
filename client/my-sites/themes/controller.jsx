@@ -8,13 +8,8 @@ import analytics from 'lib/analytics';
 import i18n from 'lib/mixins/i18n';
 import trackScrollPage from 'lib/track-scroll-page';
 import buildTitle from 'lib/screen-title/utils';
-import { getAnalyticsData } from '../helpers';
-import { makeElement } from './index.node.js';
-
-/**
- * Re-export
- */
-export { details } from './index.node.js';
+import { getAnalyticsData } from './helpers';
+import { makeElement } from 'my-sites/theme/controller';
 
 function getProps( context ) {
 	const { tier, site_id: siteId } = context.params;
