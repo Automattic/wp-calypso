@@ -243,7 +243,7 @@ var Pages = React.createClass({
 
 		const site = this.props.sites.getSelectedSite();
 
-		if ( site && site.options && site.options.show_on_front === 'posts' ) {
+		if ( this.props.status === 'published' && site && site.options && site.options.show_on_front === 'posts' ) {
 			rows.push( this.blogPostsPage() );
 		}
 
