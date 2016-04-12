@@ -51,6 +51,10 @@ var _siteSettings = require('./site.settings');
 
 var _siteSettings2 = _interopRequireDefault(_siteSettings);
 
+var _siteTaxonomy = require('./site.taxonomy');
+
+var _siteTaxonomy2 = _interopRequireDefault(_siteTaxonomy);
+
 var _utilRuntimeBuilder = require('./util/runtime-builder');
 
 var _utilRuntimeBuilder2 = _interopRequireDefault(_utilRuntimeBuilder);
@@ -266,6 +270,18 @@ var Site = (function () {
 		key: 'tag',
 		value: function tag(slug) {
 			return new _siteTag2['default'](slug, this._id, this.wpcom);
+		}
+
+		/**
+   * Create a `Taxonomy` instance
+   *
+   * @param {String} [slug] - taxonomy slug
+   * @return {SiteTaxonomy} SiteTaxonomy instance
+   */
+	}, {
+		key: 'taxonomy',
+		value: function taxonomy(slug) {
+			return new _siteTaxonomy2['default'](slug, this._id, this.wpcom);
 		}
 
 		/**

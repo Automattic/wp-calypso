@@ -11,6 +11,7 @@ import Follow from './site.follow';
 import SitePlugin from './site.plugin';
 import SiteDomain from './site.domain';
 import SiteSettings from './site.settings';
+import SiteTaxonomy from './site.taxonomy';
 import runtimeBuilder from './util/runtime-builder';
 import siteGetMethods from './runtime/site.get.json';
 import debugFactory from 'debug';
@@ -185,6 +186,16 @@ class Site {
 	 */
 	tag( slug ) {
 		return new Tag( slug, this._id, this.wpcom );
+	}
+
+	/**
+	 * Create a `Taxonomy` instance
+	 *
+	 * @param {String} [slug] - taxonomy slug
+	 * @return {SiteTaxonomy} SiteTaxonomy instance
+	 */
+	taxonomy( slug ) {
+		return new SiteTaxonomy( slug, this._id, this.wpcom );
 	}
 
 	/**
