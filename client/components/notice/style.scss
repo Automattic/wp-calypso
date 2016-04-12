@@ -3,7 +3,7 @@
 	position: relative;
 	margin-bottom: 24px;
 	border-radius: 1px;
-	background: $gray-light;
+	background: lighten( $gray, 30 );
 	box-sizing: border-box;
 	font-size: 14px;
 	animation: appear .3s ease-in-out;
