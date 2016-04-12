@@ -1091,6 +1091,12 @@ Undocumented.prototype.readFeedPost = function( query, fn ) {
 	this.wpcom.req.get( '/read/feed/' + encodeURIComponent( query.feedId ) + '/posts/' + encodeURIComponent( query.postId ), params, fn );
 };
 
+Undocumented.prototype.readSearch = function( query, fn ) {
+	debug( '/read/search', query );
+	const params = Object.assign( { apiVersion: '1.2' }, query );
+	this.wpcom.req.get( '/read/search', params, fn );
+};
+
 Undocumented.prototype.readTag = function( query, fn ) {
 	var params = omit( query, 'slug' );
 	debug( '/read/tag/' + query.slug );
