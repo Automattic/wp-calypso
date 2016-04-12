@@ -116,6 +116,7 @@ class GuidesActionStep extends Component {
 		if ( onNext && target.addEventListener ) {
 			target.addEventListener( 'click', onNext );
 		}
+		target && target.classList.add( 'guidestours__overlay' );
 	}
 
 	removeTargetListener() {
@@ -123,6 +124,7 @@ class GuidesActionStep extends Component {
 		if ( onNext && target.removeEventListener ) {
 			target.removeEventListener( 'click', onNext );
 		}
+		target && target.classList.remove( 'guidestours__overlay' );
 	}
 
 	getBullseyePosition() {
