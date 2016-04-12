@@ -15,6 +15,8 @@ var React = require( 'react' ),
 var tableRows = require( './table-rows' ),
 	eventRecorder = require( 'me/event-recorder' );
 
+import SearchCard from 'components/search-card';
+
 module.exports = React.createClass( {
 	displayName: 'TransactionsHeader',
 
@@ -50,32 +52,23 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<thead>
-				<tr className="header-row">
-					<th className="date header-column">{ this.renderDatePopover() }</th>
-					<th className="trans-app header-column">{ this.renderAppsPopover() }</th>
-					<th className="search-field header-column">
-						<div className="thead-wrap">
-							<form className="search-form" onSubmit={ this.preventEnterKeySubmission }>
-								<input
-									className="search_terms"
-									type="search"
-									placeholder={ this.translate( 'Search…', { textOnly: true } ) }
-									onChange={ this.handleNewSearch }
-									onFocus={ this.recordFocusEvent( 'Billing History Search Field' ) }
-									value={ this.state.searchValue } />
-							</form>
-							<div className="noticon noticon-close-alt reset-search"></div>
-						</div>
-					</th>
+				<tr className="billing-history__header-row">
+					<th className="billing-history__date billing-history__header-column">{ this.renderDatePopover() }</th>
+					<th className="billing-history__trans-app billing-history__header-column">{ this.renderAppsPopover() }</th>
+					<th className="billing-history__search-field billing-history__header-column" />
 				</tr>
+				<SearchCard
+					placeholder={ this.translate( 'Search…', { textOnly: true } ) }
+					onSearch={ this.onSearch }
+					onFocus={ this.recordFocusEvent( 'Billing History Search Field' ) }
+				/>
 			</thead>
 		);
 	},
 
-	handleNewSearch: function( event ) {
-		var newSearch = event.target.value;
-		this.setState( { searchValue: newSearch } );
-		this.setFilter( { search: newSearch } );
+	onSearch: function( terms ) {
+		this.setState( { searchValue: terms } );
+		this.setFilter( { search: terms } );
 	},
 
 	setFilter: function( filter ) {
