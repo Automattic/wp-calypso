@@ -38,10 +38,10 @@ class GuidesFirstStep extends Component {
 
 		const { text, onNext, onQuit } = this.props;
 		return (
-			<Card className="guidestours__step" style={ stepCoords } >
+			<Card className="guidestours__step guidestours__step-first" style={ stepCoords } >
 				<p>{ text }</p>
 				<div className="guidestours__choice-button-row">
-					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
+					<Button onClick={ onNext } primary>{ this.props.translate( "Let's do it!" ) }</Button>
 					<Button onClick={ onQuit } >
 						{ this.props.translate( 'No, thanks.' ) }
 					</Button>

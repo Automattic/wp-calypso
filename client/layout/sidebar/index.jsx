@@ -14,7 +14,7 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<ul className={ classNames( 'sidebar', this.props.className ) } onClick={ this.props.onClick }>
+			<ul className={ classNames( 'sidebar', this.props.className ) } onClick={ this.props.onClick } data-tip-target="sidebar">
 				{ this.props.children }
 			</ul>
 		);

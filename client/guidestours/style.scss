@@ -3,7 +3,7 @@
 	width: 410px;
 	z-index: z-index( 'root', '.guidestours__step' );
 	border: 1px solid lighten( $gray, 10 );
-	box-shadow: 0px 10px 23px 0px rgba( 0, 0, 0, 0.50 );
+	box-shadow: 1px 2px 3px 0px rgba( $gray-dark, 0.3 );
 	border-radius: 4px;
 	padding-top: 19px;
 	font-size: 14px;
@@ -27,6 +27,24 @@
 	.gridicon[height="18"] {
 		position: relative;
 		top: 3px;
+	}
+}
+
+.guidestours__step-first {
+	animation-duration: 900ms;
+	animation-name: guidestours__step-slidein;
+	animation-timing-function: ease-in-out;
+	animation-delay: 2s;
+	animation-fill-mode: both;
+}
+
+@keyframes guidestours__step-slidein {
+	0% {
+		transform: translateX( 200% );
+	}
+
+	100% {
+		transform: translateX( 0 );
 	}
 }
 
