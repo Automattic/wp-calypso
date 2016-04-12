@@ -109,7 +109,7 @@ describe( 'selectors', () => {
 			const tourState = getGuidesTourState( {
 				ui: {
 					guidesTour: {
-						stepName: 'my-sites',
+						stepName: 'sidebar',
 						shouldShow: true,
 						tour: 'main',
 						siteId: 2916284,
@@ -117,7 +117,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			const stepConfig = guidesToursConfig.get()[ 'my-sites' ];
+			const stepConfig = guidesToursConfig.get()[ 'sidebar' ];
 
 			expect( tourState ).to.deep.equal( Object.assign( {}, tourState, {
 				stepConfig
