@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import noop from 'lodash/noop';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
@@ -19,14 +18,15 @@ export default React.createClass( {
 	propTypes: {
 		onClick: React.PropTypes.func,
 		post: React.PropTypes.object,
-		type: React.PropTypes.string
+		type: React.PropTypes.string,
+		advancedStatus: React.PropTypes.bool
 	},
 
 	mixins: [ PureRenderMixin ],
 
 	getDefaultProps: function() {
 		return {
-			onClick: noop,
+			onClick: null,
 			post: null,
 			advancedStatus: false,
 			type: 'post'
@@ -64,6 +64,14 @@ export default React.createClass( {
 		}
 
 		statusClass = classNames( statusClass, 'is-' + this.props.post.status );
+
+		if ( ! this.props.onClick ) {
+			return (
+				<span className={ classNames( statusClass, 'is-plain' ) }>
+					{ this.renderLabel() }
+				</span>
+			);
+		}
 
 		return (
 			<button
