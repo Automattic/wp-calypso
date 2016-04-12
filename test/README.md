@@ -42,14 +42,14 @@ state
 
 ### How to run single test runner
 
-You can run all tests with `npm test`.
+You can run all tests from root folder with `npm test` command.
 
 We provide three single test runners because of different node path rules applied. They contain files located in:
 * `client/` folder
 * `server/` folder
 * `test/` folder
 
-We have an `npm run` script for each: `npm run test-client`, `npm run test-server` and `npm run test-tests`. You can pass a filename or set of files to these scripts to isolate your test run to just your set of files.
+We have an `npm run` script for each of them: `npm run test-client`, `npm run test-server` and `npm run test-tests`. You can pass a filename or set of files to these scripts to isolate your test run to just your set of files.
 
 Example for client:
 
