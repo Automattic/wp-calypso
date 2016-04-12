@@ -432,106 +432,23 @@
 		margin: 16px 0;
 
 		@include breakpoint( ">480px" ) {
-			float: left;
+			float: right;
 			margin: 0 1%;
 		}
 	}
 }
 
-@include breakpoint( "<480px" ) {
-	.billing-history-page {
-		thead {
-			display: block;
-		}
-
-		.transactions {
-			display: block;
-			max-width: 100%;
-
-			thead {
-				margin: 0 -16px;
-			}
-
-			.transaction {
-				display: inline-block;
-				height: auto;
-				padding: 1em;
-
-				&:first-of-type {
-					border-top: none;
-				}
-			}
-
-			.header-row {
-				display: block;
-				height: auto !important;
-				padding: .5em 0;
-
-				.date, .trans-app {
-					display: none;
-				}
-
-				.search-field {
-					display: block;
-					padding-top: 0;
-					width: 100%;
-				}
-
-				.search-form {
-					text-align: center;
-
-					.search_terms {
-						margin: 0;
-						width: 80%;
-					}
-				}
-			}
-
-			tbody {
-				td {
-					display: inline-block;
-					width: 100%;
-					padding: 0 !important;
-
-					&.amount {
-						text-align: left;
-					}
-
-					&.date {
-						font-weight: 600;
-					}
-				}
-			}
-		}
-
-		.view-receipt-wrapper {
-			.app-overview {
-				h2 {
-					small {
-						display: block;
-					}
-				}
-			}
-
-			dl {
-				padding: 0 30px;
-
-				dt {
-					text-align: left;
-					width: 50%;
-				}
-
-				dd {
-					width: 50%;
-				}
-			}
-		}
-	}
+.billing-history__receipt-card.card.is-compact {
+	padding: 16px 0;
 }
 
 @media print {
-	#secondary,
-	.billing-history__receipt-links {
-		display: none;
+	.is-section-billing {
+		#secondary,
+		.masterbar,
+		.billing-history__receipt-links,
+		.header-cake.card {
+			display: none;
+		}
 	}
 }

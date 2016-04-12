@@ -32,7 +32,7 @@ module.exports = React.createClass( {
 				<HeaderCake backHref="/me/billing">
 					{ this.translate( 'Billing History' ) }
 				</HeaderCake>
-				<Card compact>
+				<Card compact className="billing-history__receipt-card">
 					<div className="billing-history__app-overview">
 						<img src={ transaction.icon } title={ transaction.service } />
 						<h2> {
