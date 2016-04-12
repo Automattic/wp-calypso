@@ -9,14 +9,16 @@ export default React.createClass( {
 	propTypes: {
 		descriptionColumn: PropTypes.bool,
 		featuresList: PropTypes.array,
-		columns: PropTypes.number
+		columns: PropTypes.number,
+		showHeader: PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
 			featuresList: null,
 			columns: 1,
-			descriptionColumn: true
+			descriptionColumn: true,
+			showHeader: true
 		};
 	},
 

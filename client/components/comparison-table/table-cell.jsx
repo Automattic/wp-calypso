@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 
 import Gridicon from 'components/gridicon';
+import classNames from 'classnames';
 
 export default React.createClass( {
 	displayName: 'ComparisonTableCell',
@@ -8,7 +9,7 @@ export default React.createClass( {
 	renderFeatureContent() {
 		if( ! this.props.descriptionColumn ) {
 			let content = this.props.feature[ this.props.id ];
-			console.log( typeof content );
+
 			if( typeof content === 'boolean' && content === true ) {
 				return ( <Gridicon icon="checkmark" size={ 18 } /> )
 			}
@@ -16,16 +17,21 @@ export default React.createClass( {
 				return ( <span>&nbsp;</span> );
 			}
 
-			return content;
+			return ( <span> { content }</span> );
 		}
 
 		return ( <span>{ this.props.feature.description }</span> );
 	},
 
 	render() {
+		const isHeader = this.props.feature.header;
+		const classes = classNames( {
+			'comparison-table__cell': true,
+			'is-header': isHeader
+			} );
 
 		return (
-			<div className="comparison-table__cell">{ this.renderFeatureContent() }</div>
+			<div className={ classes }>{ this.renderFeatureContent() }</div>
 		);
 	}
 } );

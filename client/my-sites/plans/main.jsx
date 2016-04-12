@@ -27,6 +27,7 @@ import { shouldFetchSitePlans } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
+import WordPressLogo from 'components/wordpress-logo';
 
 const Plans = React.createClass( {
 	mixins: [ observe( 'sites', 'plans' ) ],
@@ -234,9 +235,9 @@ const Plans = React.createClass( {
 
 									<TableColumn
 										featuresList={ this.getMockFeatures() }
-										descriptionColumn={ true }>
+										descriptionColumn >
 										<div>
-											<Gridicon icon="edit" size={ 24 } />
+											<WordPressLogo />
 											<h2>{ this.translate( 'Yearly Savings Plans' ) }</h2>
 											<p>{ this.translate( 'Plans are billed annually and have a 30-day money back guarantee' ) }</p>
 										</div>
@@ -247,7 +248,7 @@ const Plans = React.createClass( {
 										name={ this.translate( 'Free' ) }
 										description={ this.translate( 'Just Getting Started' ) }
 										price={ 0 }
-										currentPlan={ true }
+										currentPlan
 										>
 									</TableColumn>
 									<TableColumn
