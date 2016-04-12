@@ -24,11 +24,19 @@ const config = {
 		type: 'GuidesActionStep',
 		icon: 'my-sites',
 		placement: 'below',
-		text: i18n.translate( "First things first. Up here, you'll find tools for managing your site's content and design." ),
+		text: i18n.translate( "{{strong}}First things first.{{/strong}} Up here, you'll find tools for managing your site's content and design.", {
+			components: {
+				strong: <strong />,
+			}
+		} ),
 		next: 'posts-pages',
 	},
 	'posts-pages': {
-		text: i18n.translate( "Posts aren't Pages. Would you like to know more?" ),
+		text: i18n.translate( "{{strong}}Posts{{/strong}} aren't the same thing as {{strong}}Pages{{/strong}}. Would you like to know more?", {
+			components: {
+				strong: <strong />,
+			}
+		} ),
 		type: 'GuidesLinkStep',
 		linkLabel: i18n.translate( 'Learn more about Posts and Pages' ),
 		linkUrl: 'https://en.support.wordpress.com/post-vs-page/',
@@ -39,7 +47,11 @@ const config = {
 		type: 'GuidesActionStep',
 		icon: 'reader',
 		placement: 'beside',
-		text: i18n.translate( "This is the Reader. It shows you fresh posts from other sites you're following." ),
+		text: i18n.translate( "This is the {{strong}}Reader{{/strong}}. It shows you fresh posts from other sites you're following.", {
+			components: {
+				strong: <strong />,
+			}
+		} ),
 		next: 'finish'
 	},
 	finish: {
