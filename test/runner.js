@@ -1,11 +1,21 @@
 #!/usr/bin/env node
+var files;
+
 require( 'babel/register' );
 
+/**
+ * External dependencies
+ */
 const debug = require( 'debug' )( 'test-runner' ),
-	program = require( 'commander' ),
+	glob = require( 'glob' ),
 	Mocha = require( 'mocha' ),
 	path = require( 'path' ),
-	boot = require( './boot-test' ),
+	program = require( 'commander' );
+
+/**
+ * Internal dependencies
+ */
+const boot = require( './boot-test' ),
 	setup = require( './setup' );
 
 program
@@ -41,12 +51,11 @@ if ( process.env.CIRCLECI ) {
 mocha.suite.beforeAll( boot.before );
 mocha.suite.afterAll( boot.after );
 
-// we could also discover all the tests using a glob?
-if ( program.args.length ) {
-	program.args.forEach( function( file ) {
-		setup.addFile( file );
-	} );
+files = program.args;
+if ( files.length === 0 && ! process.env.CIRCLECI ) {
+	files = glob.sync( process.env.TEST_ROOT + '/**/test/*.@(js|jsx)' );
 }
+files.forEach( setup.addFile );
 
 mocha.addFile( path.join( __dirname, 'load-suite.js' ) );
 

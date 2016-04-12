@@ -124,9 +124,9 @@
   },
   "scripts": {
     "test": "make test",
-    "test-client": "NODE_ENV=test NODE_PATH=test:client test/runner.js",
-    "test-server": "NODE_ENV=test NODE_PATH=test:server:client test/runner.js",
-    "test-tests": "NODE_ENV=test NODE_PATH=test:test/test:client test/runner.js",
+    "test-client": "NODE_ENV=test NODE_PATH=test:client TEST_ROOT=client test/runner.js",
+    "test-server": "NODE_ENV=test NODE_PATH=test:server:client TEST_ROOT=server test/runner.js",
+    "test-test": "NODE_ENV=test NODE_PATH=test:client TEST_ROOT=test test/runner.js",
     "lint": "bin/run-lint"
   },
   "devDependencies": {

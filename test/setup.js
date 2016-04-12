@@ -32,7 +32,7 @@ function isFileWhitelisted( config, pathParts ) {
 	const folder = head( pathParts );
 
 	if ( config[ folder ] ) {
-		if ( folder === 'test' ) {
+		if ( folder === 'test' && Array.isArray( config[ folder ] ) ) {
 			return ( config[ folder ].indexOf( getFileName( pathParts ) ) !== false );
 		}
 
@@ -43,16 +43,6 @@ function isFileWhitelisted( config, pathParts ) {
 }
 
 function getConfig() {
-	if ( ! whitelistConfig && files.length === 0 ) {
-		// this assumes that there's a tests.json at the root of NODE_PATH
-		debug( 'No tests provided, loading whitelisted tests config.' );
-		return require( 'tests.json' );
-	}
-
-	return filesToConfig();
-}
-
-function filesToConfig() {
 	return reduce( files, ( config, file ) => {
 		const fileConfig = fileToConfig( tail( file.split( '/' ) ) );
 
@@ -67,7 +57,7 @@ function filesToConfig() {
 function fileToConfig( pathParts, folderConfig = {} ) {
 	const folder = head( pathParts );
 
-	if ( folder === 'test' ) {
+	if ( folder === 'test' && pathParts.length === 2 ) {
 		folderConfig[ folder ] = [ getFileName( pathParts ) ];
 	} else {
 		folderConfig[ folder ] = fileToConfig( tail( pathParts ) );
