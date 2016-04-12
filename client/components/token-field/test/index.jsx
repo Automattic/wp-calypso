@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import defer from 'lodash/defer';
 import map from 'lodash/map';
 import { expect } from 'chai';
 import React from 'react';
@@ -44,7 +43,7 @@ describe( 'TokenField', function() {
 	function sendKeyDown( keyCode, shiftKey ) {
 		tokenFieldNode.simulate( 'keyDown', {
 			keyCode: keyCode,
-			shiftKey: !! shiftKey
+			shiftKey: ! ! shiftKey
 		} );
 	}
 
@@ -104,7 +103,7 @@ describe( 'TokenField', function() {
 		wrapper = mount( <TokenFieldWrapper /> );
 		tokenFieldNode = wrapper.ref( 'tokenField' );
 		textInputNode = tokenFieldNode.find( '.token-field__input' );
-		textInputNode.simulate( 'focus' )
+		textInputNode.simulate( 'focus' );
 	} );
 
 	describe( 'displaying tokens', function() {
@@ -192,8 +191,7 @@ describe( 'TokenField', function() {
 			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.matchingSuggestions.at );
 		} );
 
-		it( 'should manage the selected suggestion based on both keyboard and mouse events', function( done ) {
-			var hoverSuggestion;
+		it( 'should manage the selected suggestion based on both keyboard and mouse events', test( function() {
 			setText( 't' );
 			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.matchingSuggestions.t );
 			expect( getSelectedSuggestion() ).to.equal( null );
@@ -201,23 +199,24 @@ describe( 'TokenField', function() {
 			expect( getSelectedSuggestion() ).to.deep.equal( [ '', 't', 'he' ] );
 			sendKeyDown( keyCodes.downArrow ); // 'to'
 			expect( getSelectedSuggestion() ).to.deep.equal( [ '', 't', 'o' ] );
-			hoverSuggestion = tokenFieldNode.find( '.token-field__suggestion' ).at( 5 ); // 'it'
+
+			const hoverSuggestion = tokenFieldNode.find( '.token-field__suggestion' ).at( 5 ); // 'it'
 			expect( getSuggestionNodeHTML( hoverSuggestion ) ).to.deep.equal( [ 'i', 't', '' ] );
+
 			// before sending a hover event, we need to wait for
 			// SuggestionList#_scrollingIntoView to become false
-			setTimeout( function() {
-				hoverSuggestion.simulate( 'mouseEnter' );
-				expect( getSelectedSuggestion() ).to.deep.equal( [ 'i', 't', '' ] );
-				sendKeyDown( keyCodes.upArrow );
-				expect( getSelectedSuggestion() ).to.deep.equal( [ 'wi', 't', 'h' ] );
-				sendKeyDown( keyCodes.upArrow );
-				expect( getSelectedSuggestion() ).to.deep.equal( [ '', 't', 'his' ] );
-				hoverSuggestion.simulate( 'click' );
-				expect( getSelectedSuggestion() ).to.equal( null );
-				expect( getTokensHTML() ).to.deep.equal( [ 'foo', 'bar', 'it' ] );
-				done();
-			}, 50 );
-		} );
+			this.clock.tick( 100 );
+
+			hoverSuggestion.simulate( 'mouseEnter' );
+			expect( getSelectedSuggestion() ).to.deep.equal( [ 'i', 't', '' ] );
+			sendKeyDown( keyCodes.upArrow );
+			expect( getSelectedSuggestion() ).to.deep.equal( [ 'wi', 't', 'h' ] );
+			sendKeyDown( keyCodes.upArrow );
+			expect( getSelectedSuggestion() ).to.deep.equal( [ '', 't', 'his' ] );
+			hoverSuggestion.simulate( 'click' );
+			expect( getSelectedSuggestion() ).to.equal( null );
+			expect( getTokensHTML() ).to.deep.equal( [ 'foo', 'bar', 'it' ] );
+		} ) );
 	} );
 
 	describe( 'adding tokens', function() {
@@ -225,7 +224,7 @@ describe( 'TokenField', function() {
 			setText( 'baz' );
 			sendKeyDown( keyCodes.tab );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
-			expect( textInputNode.props().value ).to.equal( '' );
+			expect( textInputNode.prop( 'value' ) ).to.equal( '' );
 		} );
 
 		it( 'should not allow adding blank tokens with Tab', function() {
@@ -243,7 +242,7 @@ describe( 'TokenField', function() {
 			setText( 'baz' );
 			sendKeyDown( keyCodes.enter );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
-			expect( textInputNode.props().value ).to.equal( '' );
+			expect( textInputNode.prop( 'value' ) ).to.equal( '' );
 		} );
 
 		it( 'should not allow adding blank tokens with Enter', function() {
@@ -274,7 +273,7 @@ describe( 'TokenField', function() {
 			sendKeyDown( keyCodes.comma, true );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar' ] );
 			// The text input does not register the < keypress when it is sent this way.
-			expect( textInputNode.props().value ).to.equal( 'baz' );
+			expect( textInputNode.prop( 'value' ) ).to.equal( 'baz' );
 		} );
 
 		it( 'should trim token values when adding', function() {
@@ -283,7 +282,7 @@ describe( 'TokenField', function() {
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
 		} );
 
-		function testOnBlur( initialText, selectSuggestion, expectedSuggestion, expectedTokens, done ) {
+		function testOnBlur( initialText, selectSuggestion, expectedSuggestion, expectedTokens, clock ) {
 			setText( initialText );
 			if ( selectSuggestion ) {
 				sendKeyDown( keyCodes.downArrow ); // 'the'
@@ -293,7 +292,7 @@ describe( 'TokenField', function() {
 
 			function testSavedState( isActive ) {
 				expect( wrapper.state( 'tokens' ) ).to.deep.equal( expectedTokens );
-				expect( textInputNode.props().value ).to.equal( '' );
+				expect( textInputNode.prop( 'value' ) ).to.equal( '' );
 				expect( getSelectedSuggestion() ).to.equal( null );
 				expect( tokenFieldNode.find( 'div' ).first().hasClass( 'is-active' ) ).to.equal( isActive );
 			}
@@ -302,83 +301,80 @@ describe( 'TokenField', function() {
 			textInputNode.simulate( 'blur' );
 
 			// After blur, need to wait for TokenField#_blurTimeoutID
-			defer( function() {
-				testSavedState( false );
-				textInputNode.simulate( 'focus' );
-				testSavedState( true );
-				done();
-			} );
+			clock.tick( 10 );
+
+			testSavedState( false );
+			textInputNode.simulate( 'focus' );
+			testSavedState( true );
 		}
 
-		it( 'should add the current text when the input field loses focus', function( done ) {
+		it( 'should add the current text when the input field loses focus', test( function() {
 			testOnBlur(
 				't',                   // initialText
 				false,                 // selectSuggestion
 				null,                  // expectedSuggestion
 				[ 'foo', 'bar', 't' ], // expectedTokens
-				done
+				this.clock
 			);
-		} );
+		} ) );
 
-		it( 'should add the suggested token when the (non-blank) input field loses focus', function( done ) {
+		it( 'should add the suggested token when the (non-blank) input field loses focus', test( function() {
 			testOnBlur(
 				't',                    // initialText
 				true,                   // selectSuggestion
 				[ '', 't', 'o' ],       // expectedSuggestion
 				[ 'foo', 'bar', 'to' ], // expectedTokens
-				done
+				this.clock
 			);
-		} );
+		} ) );
 
-		it( 'should not add the suggested token when the (blank) input field loses focus', function( done ) {
+		it( 'should not add the suggested token when the (blank) input field loses focus', test( function() {
 			testOnBlur(
 				'',               // initialText
 				true,             // selectSuggestion
 				'of',             // expectedSuggestion
 				[ 'foo', 'bar' ], // expectedTokens
-				done
+				this.clock
 			);
-		} );
+		} ) );
 
 		// Firefox on OS X first sends a blur event, then a click event as the
-		// mouse is released.  These two tests ensure that the component
+		// mouse is released. These two tests ensure that the component
 		// activates correctly in this situation.
-
-		it( 'should allow clicking on the field in Firefox (click event from input container)', test( function( done ) {
+		it( 'should allow clicking on the field in Firefox (click event from input container)', test( function() {
 			textInputNode.simulate( 'blur' );
-			setTimeout( function() {
-				// The click event comes from here the first time you click to
-				// activate the token field.
-				tokenFieldNode.find( '.token-field__input-container' ).simulate( 'click' );
-				expect( tokenFieldNode.find( 'div' ).first().hasClass( 'is-active' ) ).to.equal( true );
-				done();
-			}, 50 ); // 50ms is a fast click
+
 			this.clock.tick( 50 );
+
+			// The click event comes from here the first time you click to
+			// activate the token field.
+			tokenFieldNode.find( '.token-field__input-container' ).simulate( 'click' );
+			expect( tokenFieldNode.find( 'div' ).first().hasClass( 'is-active' ) ).to.equal( true );
 		} ) );
 
-		it( 'should allow clicking on the field in Firefox (click event from <input>)', test( function( done ) {
+		it( 'should allow clicking on the field in Firefox (click event from <input>)', test( function() {
 			textInputNode.simulate( 'blur' );
-			setTimeout( function() {
-				// The click event comes from here if you click on the token
-				// field when it is already active.
-				textInputNode.simulate( 'click' );
-				expect( tokenFieldNode.find( 'div' ).first().hasClass( 'is-active' ) ).to.equal( true );
-				done();
-			}, 50 ); // 50ms is a fast click
+
 			this.clock.tick( 50 );
+
+			// The click event comes from here if you click on the token
+			// field when it is already active.
+			textInputNode.simulate( 'click' );
+			expect( tokenFieldNode.find( 'div' ).first().hasClass( 'is-active' ) ).to.equal( true );
 		} ) );
 
-		it( 'should not lose focus when a suggestion is clicked', function( done ) {
+		it( 'should not lose focus when a suggestion is clicked', test( function() {
 			// prevents regression of https://github.com/Automattic/wp-calypso/issues/1884
 
 			textInputNode.simulate( 'blur', {
 				relatedTarget: document.querySelector( '.token-field__suggestion' )
 			} );
-			defer( function() {
-				expect( tokenFieldNode.find( 'div' ).first().hasClass( 'is-active' ) ).to.equal( true );
-				done();
-			} ); // wait for setState call
-		} );
+
+			// wait for setState call
+			this.clock.tick( 10 );
+
+			expect( tokenFieldNode.find( 'div' ).first().hasClass( 'is-active' ) ).to.equal( true );
+		} ) );
 
 		it( 'should add tokens in the middle of the current tokens', function() {
 			sendKeyDown( keyCodes.leftArrow );
