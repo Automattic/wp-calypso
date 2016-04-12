@@ -392,15 +392,6 @@ const PostEditor = React.createClass( {
 								onTextEditorChange={ this.onEditorContentChange } />
 						</div>
 						<EditorWordCount />
-						{ this.iframePreviewEnabled()
-							? <EditorPreview
-								showPreview={ this.state.showPreview }
-								onClose={ this.onPreviewClose }
-								isSaving={ this.state.isSaving || this.state.isAutosaving }
-								isLoading={ this.state.isLoading }
-								previewUrl={ this.state.previewUrl }
-							/>
-							: null }
 					</div>
 					<EditorSidebar
 						allPostsUrl={ this.getAllPostsUrl() }
@@ -422,6 +413,16 @@ const PostEditor = React.createClass( {
 						type={ this.props.type }
 						showDrafts={ this.props.showDrafts }
 						/>
+					{ this.iframePreviewEnabled() ?
+						<EditorPreview
+							showPreview={ this.state.showPreview }
+							onClose={ this.onPreviewClose }
+							isSaving={ this.state.isSaving || this.state.isAutosaving }
+							isLoading={ this.state.isLoading }
+							previewUrl={ this.state.previewUrl }
+
+						/>
+						: null }
 				</div>
 				{ isTrashed
 					? <RestorePostDialog
@@ -705,14 +706,10 @@ const PostEditor = React.createClass( {
 			// to avoid a weird UX we clear the iframe when (auto)saving
 			// so we need to delay opening it a bit to avoid flickering
 			setTimeout( function() {
-				this.setState( { showPreview: true }, function() {
-					layoutFocus.set( 'content' );
-				} );
+				this.setState({ showPreview: true });
 			}.bind( this ), 150 );
 		} else {
-			this.setState( { showPreview: true }, function() {
-				layoutFocus.set( 'content' );
-			} );
+			this.setState({ showPreview: true });
 		}
 	},
 
