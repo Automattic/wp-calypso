@@ -53,6 +53,9 @@ When you open http://calypso.localhost:3000 in your browser and you encounter so
 ### I can see only big **W** logo!
 ![Only logo](https://cldup.com/8TZOLiD6WC-2000x2000.png)
 
+### It runs, but I'm not seeing any of my changes
+Webpack may be having issues with watching - [see their documentation on troubleshooting watching](https://webpack.github.io/docs/troubleshooting.html#watching).
+
 #### Domain other than calypso.localhost
 Please remember to access Calypso via **http://calypso.localhost:3000**
 
