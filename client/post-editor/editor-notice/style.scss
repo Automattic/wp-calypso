@@ -1,0 +1,18 @@
+.post-editor-notice {
+	margin: 0;
+
+	@include breakpoint( ">660px" ) {
+		margin: -24px 0 24px;
+	}
+
+	.notice__text {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: inline-block;
+
+		a {
+			text-decoration: underline;
+			background-image: none;
+		}
+	}
+}

@@ -115,25 +115,6 @@
 	display: none;
 }
 
-.post-editor__notice {
-	margin: -24px 0 24px;
-
-	@include breakpoint( ">480px" ) {
-		margin-bottom: 24px;
-	}
-
-	.notice__text {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		display: inline-block;
-
-		a {
-			text-decoration: underline;
-			background-image: none;
-		}
-	}
-}
-
 // Component <Editor>
 .editor {
 	position: relative;
