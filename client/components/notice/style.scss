@@ -34,6 +34,7 @@
 }
 
 .notice__icon {
+	flex-shrink: 0;
 	padding: 13px 0 13px 16px;
 
 	@include breakpoint( "<660px" ) {
@@ -72,6 +73,7 @@
 // "X" for dismissing a notice
 .notice__dismiss {
 	display: flex;
+		flex-shrink: 0;
 	padding: 11px 16px;
 	cursor: pointer;
 	color: $gray;
@@ -98,12 +100,13 @@
 
 // specificity for general `a` elements within notice is too great
 .notice a.notice__action {
+	display: flex;
+		align-items: center;
+		flex-shrink: 0;
 	background: rgba( 0, 0, 0, 0.2 );
 	box-sizing: border-box;
 	color: $white;
 	cursor: pointer;
-	display: flex;
-		align-items: center;
 	font-size: 15px;
 	font-weight: 400;
 	margin-left: auto; // forces the element to the right;
