@@ -112,18 +112,18 @@ module.exports = React.createClass( {
 		} else {
 			noticeText = ( <div>
 				<p>
-					<strong>{ this.translate( 'Please verify your email address' ) }</strong>
+					<strong>{ this.translate( 'Please confirm your email address' ) }</strong>
 				</p>
 				<p>
 					{ this.translate(
-						'To post and keep using WordPress.com you need to validate your email address. ' +
+						'To post and keep using WordPress.com you need to confirm your email address. ' +
 						'Please click the link in the email we sent at %(email)s.',
 						{ args: { email: user.email } }
 					) }
 				</p>
 				<p>
 					{ this.translate(
-						'{{requestButton}}Re-send your activation email{{/requestButton}} ' +
+						'{{requestButton}}Re-send your confirmation email{{/requestButton}} ' +
 						'or {{changeButton}}change the email address on your account{{/changeButton}}.', {
 							components: {
 								requestButton: <button className="button is-link" onClick={ this.sendVerificationEmail } />,
@@ -134,13 +134,13 @@ module.exports = React.createClass( {
 			</div> );
 		}
 
-		return <Notice text={ noticeText } status={ noticeStatus } showDismiss={ false } className="email-verification-notice" />;
+		return <Notice text={ noticeText } icon="notice" status={ noticeStatus } onDismissClick={ this.dismissNotice } className="email-verification-notice" />;
 	},
 
 	verifiedNotice: function() {
 		var noticeText = isEmpty( sites.get() )
-			? this.translate( "You've successfully verified your email address." )
-			: this.translate( "Email verified! Now that you've confirmed your email address you can publish posts on your blog." );
+			? this.translate( "You've successfully confirmed your email address." )
+			: this.translate( "Email confirmed! Now that you've confirmed your email address you can publish posts on your blog." );
 
 		return (
 			<Notice status="is-success" onDismissClick={ this.dismissNotice } className="email-verification-notice">

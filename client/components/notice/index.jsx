@@ -17,7 +17,7 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			duration: 0,
-			status: 'is-info',
+			status: null,
 			showDismiss: true,
 			className: '',
 			onDismissClick: noop
