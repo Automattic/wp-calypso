@@ -160,6 +160,10 @@ export const PostEditor = React.createClass( {
 		}
 	},
 
+	hideNotice: function() {
+		this.setState( { notice: null } );
+	},
+
 	toggleSidebar: function() {
 		this.hideDrafts();
 		this.props.setLayoutFocus( 'content' );
@@ -201,7 +205,8 @@ export const PostEditor = React.createClass( {
 						isPublishing={ this.state.isPublishing }
 						isSaveBlocked={ this.state.isSaveBlocked }
 						hasContent={ this.state.hasContent }
-						onClose={ this.onClose }/>
+						onClose={ this.onClose }
+						onTabChange={ this.hideNotice } />
 					<div className="post-editor__content">
 						<div className="editor">
 							<EditorActionBar
@@ -232,6 +237,10 @@ export const PostEditor = React.createClass( {
 								site={ site }
 								post={ this.state.post }
 								maxWidth={ 1462 } />
+							<EditorNotice
+								{ ...this.state.notice }
+								onDismissClick={ this.hideNotice }
+							/>
 							<div className="editor__header">
 								<EditorTitleContainer
 									onChange={ this.debouncedAutosave }
@@ -297,6 +306,7 @@ export const PostEditor = React.createClass( {
 						type={ this.props.type }
 						showDrafts={ this.props.showDrafts }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
+						notice={ this.state.notice }
 						/>
 					{ this.iframePreviewEnabled() ?
 						<EditorPreview
@@ -364,7 +374,7 @@ export const PostEditor = React.createClass( {
 
 	onNoticeClick: function( event ) {
 		event.preventDefault();
-		this.setState( { notice: null } );
+		this.hideNotice();
 	},
 
 	onEditedPostChange: function() {
@@ -718,7 +728,7 @@ export const PostEditor = React.createClass( {
 
 			window.scrollTo( 0, 0 );
 		} else {
-			nextState.notice = null;
+			nextState.notice = {};
 		}
 
 		this.setState( nextState );
