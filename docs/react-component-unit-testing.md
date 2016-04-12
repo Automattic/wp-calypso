@@ -4,17 +4,14 @@ Calypso has a lot of React UI components. (Try for example running `find -name *
 
 ## [Getting started](#getting-started)
 
-To run all current tests, run `make test` in the root source folder. You can also run individual tests by TODO: figure out how.
-
-An easy way to find existing tests, to see how they were done or otherwise, is to run TODO: figure out how to search. Searching the Calypso Github repository also works.
+To run all current tests, run `npm test` in the root source folder. You can also run individual tests. Check [How to run single test runner](https://github.com/Automattic/wp-calypso/blob/master/test/README.md#how-to-run-single-test-runner) documentation for more details.
 
 Going through the current tests is a good way to get ideas for how different kinds of things can be tested.
 
 ### [Set up a test environment](#setting-up-environment)
 
-TODO: Add reference to single runner.
-
-...
+It's highly possible that your tests will require to have DOM environment configured to work properly. We provide test helper that does all work for you.
+Check [Use fake DOM](https://github.com/Automattic/wp-calypso/tree/master/test/test/helpers/use-fake-dom) helper documentation to learn how to simulate DOM existence.
 
 ### [What to test?](#what-to-test)
 
