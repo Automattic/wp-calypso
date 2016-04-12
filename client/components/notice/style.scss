@@ -191,7 +191,6 @@
 // Compact notices
 .notice.is-compact {
 	border-radius: 2px;
-	color: $white;
 	display: inline-flex;
 	flex-wrap: nowrap;
 	min-height: 20px;
@@ -200,6 +199,13 @@
 	text-decoration: none;
 	text-transform: none;
 	vertical-align: middle;
+
+	&.is-success,
+	&.is-error,
+	&.is-warning,
+	&.is-info {
+		color: $white;
+	}
 
 	.notice__text {
 		font-size: 12px;
