@@ -12,9 +12,9 @@ var path = require( 'path' ),
  * Returns the server HTTP request handler "app".
  *
  * @api public
+ * @returns { object } Express app
  */
 function setup() {
-
 	var app = express(),
 		assets,
 		devdocs,
