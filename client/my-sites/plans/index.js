@@ -11,7 +11,7 @@ import controller from 'my-sites/controller';
 import paths from './paths';
 import plansController from './controller';
 import { retarget } from 'analytics/ad-tracking';
-import googleAnalyticsLandingPage from './features/google-analytics';
+import googleAnalyticsLandingPage from './plan-feature/google-analytics';
 
 export default function() {
 	if ( config.isEnabled( 'manage/plans' ) ) {
