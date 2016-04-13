@@ -15,7 +15,7 @@ test:
         files:
           - client/**/Makefile
           - server/**/Makefile
-    - NODE_ENV=test make client/config/index.js && MOCHA_FILE=./test-results-client.xml npm run test-client -- --reporter=mocha-junit-reporter -w:
+    - NODE_ENV=test make client/config/index.js && MOCHA_FILE=./test-results-client.xml npm run test-client -- --reporter=mocha-junit-reporter:
         parallel: true
         files:
           - client/**/test/*.js

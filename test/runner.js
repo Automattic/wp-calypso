@@ -21,8 +21,7 @@ const boot = require( './boot-test' ),
 program
 	.usage( '[options] [files]' )
 	.option( '-R, --reporter <name>', 'specify the reporter to use', 'spec' )
-	.option( '-g, --grep <pattern>', 'only run tests matching <pattern>' )
-	.option( '-w, --whitelist', 'only run whitelisted tests when using a glob' );
+	.option( '-g, --grep <pattern>', 'only run tests matching <pattern>' );
 
 program.name = 'runner';
 
@@ -37,10 +36,6 @@ if ( program.grep ) {
 	mocha.grep( new RegExp( program.grep ) );
 }
 
-if ( program.whitelist ) {
-	setup.enableWhitelist();
-}
-
 if ( process.env.CIRCLECI ) {
 	debug( 'Hello Circle!' );
 	// give circle more time by default because containers are slow
@@ -50,6 +45,11 @@ if ( process.env.CIRCLECI ) {
 
 mocha.suite.beforeAll( boot.before );
 mocha.suite.afterAll( boot.after );
+
+// TODO: remove whitelist logic once we migrate client folder
+if ( process.env.TEST_ROOT === 'client' ) {
+	setup.enableWhitelist();
+}
 
 files = program.args;
 if ( files.length === 0 && ! process.env.CIRCLECI ) {
