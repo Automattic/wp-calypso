@@ -101,7 +101,7 @@ Events should be categorized by the section they are in. Examples are `Posts`, `
 
 ## Tracks Naming Conventions
 
-Event names should be prefixed by `calypso_` to make it easy to easy to identify when analyzing the data with our various analytics tools.
+Event names should be prefixed by `calypso_` to make it easy to identify when analyzing the data with our various analytics tools.
 
 Each token in the event and property names should be separated by an underscore (`_`), not spaces or dashes.
 
