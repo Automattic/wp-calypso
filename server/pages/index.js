@@ -8,7 +8,6 @@ var express = require( 'express' ),
 	debug = require( 'debug' )( 'calypso:pages' );
 
 var config = require( 'config' ),
-	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
 	sectionsModule = require( '../../client/sections' ),
 	serverRouter = require( 'isomorphic-routing' ).serverRouter,
@@ -136,7 +135,6 @@ function getDefaultContext( request ) {
 		urls: generateStaticUrls( request ),
 		user: false,
 		env: CALYPSO_ENV,
-		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
 		isDebug: request.query.debug !== undefined ? true : false,
 		badge: false,
