@@ -83,7 +83,7 @@ export default React.createClass( {
 			return noticeValues
 		}
 		if ( this.props.noticeType === 'authorizeSuccess' ) {
-			noticeValues.text = this.translate( 'Jetpack connection complete.' );
+			noticeValues.text = this.translate( 'Jetpack connected! Searching for available upgrades.' );
 			noticeValues.status = 'is-success';
 			noticeValues.icon = 'checkmark-circle';
 			return noticeValues
