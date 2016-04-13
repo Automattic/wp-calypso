@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 import curry from 'lodash/curry';
 import isFunction from 'lodash/isFunction';
 import merge from 'lodash/merge';
