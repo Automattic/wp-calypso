@@ -61,6 +61,9 @@ const mapDispatchToProps = {
 
 ## API
 
+`composeAnalytics :: [ Object ] -> Object`<br />
+`composeAnalytics( ...analytics )`: Combines analytics actions by themselves into one mutli-analytic-tracking action.
+
 `withAnalytics :: Object -> ( Object | function ) -> ( Object | function )`<br />
 `withAnalytics( analytics, action )`: Combines analytics action with other action. Can be called with two arguments, which returns a new action, or with only an `analytics` action, which returns a new function of a single argument taking an action. This curried form is useful for reusing a single analytics action with multiple other actions. 
 

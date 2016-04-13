@@ -2,7 +2,10 @@ import flowRight from 'lodash/flowRight';
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
+import { ANALYTICS_MULTI_TRACK } from 'state/action-types';
+
 import {
+	composeAnalytics,
 	withAnalytics,
 	bumpStat
 } from '../actions.js';
@@ -28,12 +31,25 @@ describe( 'middleware', () => {
 		} );
 
 		it( 'should compose multiple analytics calls', () => {
-			const composite = withAnalytics(
+			const composite = composeAnalytics(
 				bumpStat( 'spline_types', 'ocean' ),
 				bumpStat( 'spline_types', 'river' )
 			);
 
+			expect( composite.type ).to.equal( ANALYTICS_MULTI_TRACK );
 			expect( composite.meta.analytics ).to.have.lengthOf( 2 );
+		} );
+
+		it( 'should compose multiple analytics calls without other actions', () => {
+			const composite = composeAnalytics(
+				bumpStat( 'spline_types', 'ocean' ),
+				bumpStat( 'spline_types', 'river' )
+			);
+			const testAction = { type: 'RETICULATE_SPLINES' };
+			const actual = withAnalytics( composite, testAction );
+
+			expect( actual.type ).to.equal( testAction.type );
+			expect( actual.meta.analytics ).to.have.lengthOf( 2 );
 		} );
 
 		it( 'should compose multiple analytics calls with normal actions', () => {

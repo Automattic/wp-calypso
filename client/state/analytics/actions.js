@@ -4,9 +4,11 @@ import curry from 'lodash/curry';
 import get from 'lodash/get';
 import isFunction from 'lodash/isFunction';
 import merge from 'lodash/merge';
+import property from 'lodash/property';
 
 import {
 	ANALYTICS_EVENT_RECORD,
+	ANALYTICS_MULTI_TRACK,
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP
 } from 'state/action-types';
@@ -20,6 +22,13 @@ const joinAnalytics = ( analytics, action ) =>
 	isFunction( action )
 		? dispatch => { dispatch( analytics ); action( dispatch ); }
 		: merge( {}, action, { meta: { analytics: mergedMetaData( analytics, action ) } } );
+
+export const composeAnalytics = ( ...analytics ) => ( {
+	type: ANALYTICS_MULTI_TRACK,
+	meta: {
+		analytics: analytics.map( property( 'meta.analytics' ) )
+	}
+} );
 
 export const withAnalytics = curry( joinAnalytics );
 
