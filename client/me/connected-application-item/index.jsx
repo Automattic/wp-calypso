@@ -205,8 +205,7 @@ export default React.createClass( {
 				expandedSummary={ this.summary() }
 				clickableHeader
 				compact
-				className={ classes }
-				screenReaderText={ this.translate( 'More' ) }>
+				className={ classes }>
 				{ this.renderDetail() }
 			</FoldableCard>
 		);

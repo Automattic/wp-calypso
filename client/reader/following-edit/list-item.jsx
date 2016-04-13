@@ -125,7 +125,6 @@ const SubscriptionListItem = React.createClass( {
 				header={ cardHeader }
 				className={ this.props.classNames }
 				expanded={ isCardExpanded }
-				screenReaderText={ this.translate( 'More' ) }
 			>
 				{ isFollowing ? <FollowingEditNotificationSettings subscription={ subscription } isEmailBlocked={ this.props.isEmailBlocked } /> : null }
 			</FoldableCard>
