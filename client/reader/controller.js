@@ -101,34 +101,6 @@ function setPageTitle( title ) {
 	titleActions.setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) );
 }
 
-function renderFeedStream( context ) {
-	var FeedStream = require( 'reader/feed-stream' ),
-		basePath = '/read/feeds/:feed_id',
-		fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + context.params.feed_id,
-		feedStore = feedStreamFactory( 'feed:' + context.params.feed_id ),
-		mcKey = 'blog';
-
-	ReactDom.render(
-		React.createElement( FeedStream, {
-			key: 'feed-' + context.params.feed_id,
-			store: feedStore,
-			feedId: context.params.feed_id,
-			setPageTitle: setPageTitle,
-			trackScrollPage: trackScrollPage.bind(
-				null,
-				basePath,
-				fullAnalyticsPageTitle,
-				analyticsPageTitle,
-				mcKey
-			),
-			onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-			suppressSiteNameLink: true,
-			showBack: userHasHistory( context )
-		} ),
-		document.getElementById( 'primary' )
-	);
-}
-
 function renderFeedError() {
 	var FeedError = require( 'reader/feed-error' );
 
@@ -263,8 +235,7 @@ module.exports = {
 					feedId = FeedUrlStore.get( context.params.feed_id );
 
 					if ( feedId ) {
-						context.params.feed_id = feedId;
-						renderFeedStream( context );
+						page.redirect( `/read/feeds/${feedId}` );
 					} else {
 						renderFeedError();
 					}
@@ -278,7 +249,8 @@ module.exports = {
 	},
 
 	feedListing: function( context ) {
-		var basePath = '/read/feeds/:feed_id',
+		var FeedStream = require( 'reader/feed-stream' ),
+			basePath = '/read/feeds/:feed_id',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + context.params.feed_id,
 			feedStore = feedStreamFactory( 'feed:' + context.params.feed_id ),
 			mcKey = 'blog';
@@ -290,7 +262,25 @@ module.exports = {
 			feed_id: context.params.feed_id
 		} );
 
-		renderFeedStream( context );
+		ReactDom.render(
+			React.createElement( FeedStream, {
+				key: 'feed-' + context.params.feed_id,
+				store: feedStore,
+				feedId: context.params.feed_id,
+				setPageTitle: setPageTitle,
+				trackScrollPage: trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				),
+				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+				suppressSiteNameLink: true,
+				showBack: userHasHistory( context )
+			} ),
+			document.getElementById( 'primary' )
+		);
 	},
 
 	blogListing: function( context ) {
