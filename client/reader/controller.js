@@ -244,13 +244,14 @@ module.exports = {
 	feedDiscovery: function( context, next ) {
 		var FeedStore = require( 'lib/feed-store' ),
 			FeedStoreActions = require( 'lib/feed-store/actions' ),
-			FeedError = require( 'reader/feed-error' );
+			FeedError = require( 'reader/feed-error' ),
+			FeedUrlCache = require( 'lib/feed-url-cache' );
 
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
 			FeedStoreActions.discover( context.params.feed_id );
 
 			FeedStore.on( 'change', function() {
-				var feedId = FeedStore.getByUrl( context.params.feed_id );
+				var feedId = FeedUrlCache.get( context.params.feed_id );
 
 				if ( feedId ) {
 					context.params.feed_id = feedId;

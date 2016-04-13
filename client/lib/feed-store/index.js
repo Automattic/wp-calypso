@@ -8,17 +8,13 @@ var ActionType = require( './constants' ).action,
 	State = require( './constants' ).state,
 	Dispatcher = require( 'dispatcher' ),
 	Emitter = require( 'lib/mixins/emitter' ),
-	decodeEntities = require( 'lib/formatting' ).decodeEntities;
+	decodeEntities = require( 'lib/formatting' ).decodeEntities,
+	FeedUrlCache = require( 'lib/feed-url-cache' );
 
 var feeds = {},
-	feedsByUrl = {},
 	FeedStore = {
 		get: function( feedId ) {
 			return feeds[ feedId ];
-		},
-
-		getByUrl: function( feedUrl ) {
-			return feedsByUrl[ feedUrl ];
 		}
 	},
 	FeedRecord = Immutable.Record( { // eslint-disable-line new-cap
@@ -98,7 +94,7 @@ function discoverFeeds( data, feedUrl ) {
 	if ( typeof data !== 'undefined' ) {
 		data.feeds.map( function( feed ) {
 			if ( feed.feed_ID ) {
-				feedsByUrl[ feedUrl ] = feed.feed_ID;
+				FeedUrlCache.set( feedUrl, feed.feed_ID );
 				FeedStore.emit( 'change' );
 			}
 		} );
