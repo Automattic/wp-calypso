@@ -37,7 +37,7 @@
 	pointer-events: auto;
 
 	@include breakpoint( ">660px" ) {
-		display: inline-flex;
+		display: flex;
 		border-radius: 20px;
 		overflow: hidden;
 		margin-bottom: 24px;
