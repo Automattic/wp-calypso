@@ -21,7 +21,8 @@ export default React.createClass( {
 			onSelect: function() {},
 			href: null,
 			isSelected: false,
-			showCount: true
+			showCount: true,
+			domain: ''
 		};
 	},
 
@@ -32,7 +33,8 @@ export default React.createClass( {
 		isSelected: React.PropTypes.bool,
 		showCount: React.PropTypes.bool,
 		count: React.PropTypes.number,
-		title: React.PropTypes.string
+		title: React.PropTypes.string,
+		domain: React.PropTypes.string
 	},
 
 	onSelect( event ) {
@@ -58,6 +60,7 @@ export default React.createClass( {
 					{ this.props.showCount && this.renderCount() }
 					<div className="site__info">
 						<span className="site__title">{ title }</span>
+						{ this.props.domain && <span className="site__domain">{ this.props.domain }</span> }
 						<AllSitesIcon sites={ this.props.sites } />
 					</div>
 				</a>

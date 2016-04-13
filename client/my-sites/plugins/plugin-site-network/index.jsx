@@ -49,6 +49,7 @@ module.exports = React.createClass( {
 				<AllSites
 					sites={ this.props.secondarySites }
 					count={ this.props.secondarySites.length }
+					domain={ this.props.site.domain }
 					title={ this.translate( '%(mainSiteName)s\'s Network', {
 						args: {
 							mainSiteName: this.props.site.name
