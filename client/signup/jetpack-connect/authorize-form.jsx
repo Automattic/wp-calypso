@@ -94,16 +94,17 @@ const LoggedInForm = React.createClass( {
 	},
 
 	componentDidUpdate() {
-		const { authorizeSuccess, queryObject } = this.props.jetpackConnectAuthorize;
-		if ( authorizeSuccess ) {
-			Notices.success(
-				this.translate( 'Authorization complete. Use the buttons below to upgrade your site.' ),
+		const { authorizeSuccess, queryObject, siteReceived, plansURL } = this.props.jetpackConnectAuthorize;
+		if ( authorizeSuccess && siteReceived && plansURL ) {
+			Notices.info(
+				this.translate( 'We thought you would enjoy these upgrades.' ),
 				{
-					button: this.translate( 'Go to site' ),
+					button: this.translate( 'Skip upgrade and return to your site' ),
 					href: queryObject.redirect_after_auth,
 					persistent: true
 				}
 			);
+			page( plansURL );
 		}
 	},
 
@@ -126,15 +127,18 @@ const LoggedInForm = React.createClass( {
 	},
 
 	renderNotices() {
-		const { authorizeError } = this.props.jetpackConnectAuthorize;
+		const { authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		if ( authorizeError ) {
 			return <JetpackConnectNotices noticeType="authorizeError" />;
+		}
+		if ( authorizeSuccess ) {
+			return <JetpackConnectNotices noticeType="authorizeSuccess" />;
 		}
 		return null;
 	},
 
 	renderFormControls() {
-		const { queryObject, isAuthorizing, autoAuthorize, authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		const { isAuthorizing, autoAuthorize, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 
 		if ( autoAuthorize ) {
 			return isAuthorizing
@@ -143,9 +147,6 @@ const LoggedInForm = React.createClass( {
 		}
 
 		if ( authorizeSuccess ) {
-			if ( siteReceived && plansURL ) {
-				page( plansURL );
-			}
 			return null;
 		}
 
@@ -180,7 +181,7 @@ const LoggedInForm = React.createClass( {
 		return (
 			<div className="jetpack-connect-logged-in-form">
 				<Card>
-					<Gravatar user={ this.props.user } size={ 128 } />
+					<Gravatar user={ this.props.user } size={ 64 } />
 					<p className="jetpack-connect-logged-in-form__user-text">{
 						this.translate( 'Connecting as {{strong}}%(user)s{{/strong}}', {
 							args: { user: this.props.user.display_name },
