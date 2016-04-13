@@ -420,6 +420,21 @@ Context.prototype.skip = function() {
 };
 
 /**
+ * Allow a number of retries on failed tests
+ *
+ * @api private
+ * @param {number} n
+ * @return {Context} self
+ */
+Context.prototype.retries = function(n) {
+  if (!arguments.length) {
+    return this.runnable().retries();
+  }
+  this.runnable().retries(n);
+  return this;
+};
+
+/**
  * Inspect the context void of `._runnable`.
  *
  * @api private
@@ -559,7 +574,7 @@ module.exports = function(suite) {
      * acting as a thunk.
      */
 
-    context.it = context.specify = function(title, fn) {
+    var it = context.it = context.specify = function(title, fn) {
       var suite = suites[0];
       if (suite.pending) {
         fn = null;
@@ -575,7 +590,7 @@ module.exports = function(suite) {
      */
 
     context.it.only = function(title, fn) {
-      var test = context.it(title, fn);
+      var test = it(title, fn);
       var reString = '^' + escapeRe(test.fullTitle()) + '$';
       mocha.grep(new RegExp(reString));
       return test;
@@ -587,6 +602,13 @@ module.exports = function(suite) {
 
     context.xit = context.xspecify = context.it.skip = function(title) {
       context.it(title);
+    };
+
+    /**
+     * Number of attempts to retry.
+     */
+    context.it.retries = function(n) {
+      context.retries(n);
     };
   });
 };
@@ -664,6 +686,15 @@ module.exports = function(suites, context) {
        */
       skip: function(title) {
         context.test(title);
+      },
+
+      /**
+       * Number of retry attempts
+       *
+       * @param {string} n
+       */
+      retries: function(n) {
+        context.retries(n);
       }
     }
   };
@@ -725,7 +756,7 @@ module.exports = function(suite) {
       } else {
         suite = Suite.create(suites[0], key);
         suites.unshift(suite);
-        visit(obj[key]);
+        visit(obj[key], file);
         suites.shift();
       }
     }
@@ -830,6 +861,7 @@ module.exports = function(suite) {
     };
 
     context.test.skip = common.test.skip;
+    context.test.retries = common.test.retries;
   });
 };
 
@@ -937,6 +969,7 @@ module.exports = function(suite) {
     };
 
     context.test.skip = common.test.skip;
+    context.test.retries = common.test.retries;
   });
 };
 
@@ -1006,6 +1039,7 @@ function image(name) {
  *   - `reporter` reporter instance, defaults to `mocha.reporters.spec`
  *   - `globals` array of accepted globals
  *   - `timeout` timeout in milliseconds
+ *   - `retries` number of times to retry failed tests
  *   - `bail` bail on the first test failure
  *   - `slow` milliseconds to wait before considering a test slow
  *   - `ignoreLeaks` ignore global leaks
@@ -1031,6 +1065,9 @@ function Mocha(options) {
   this.reporter(options.reporter, options.reporterOptions);
   if (typeof options.timeout !== 'undefined' && options.timeout !== null) {
     this.timeout(options.timeout);
+  }
+  if (typeof options.retries !== 'undefined' && options.retries !== null) {
+    this.retries(options.retries);
   }
   this.useColors(options.useColors);
   if (options.enableTimeouts !== null) {
@@ -1153,14 +1190,13 @@ Mocha.prototype.ui = function(name) {
 Mocha.prototype.loadFiles = function(fn) {
   var self = this;
   var suite = this.suite;
-  var pending = this.files.length;
   this.files.forEach(function(file) {
     file = path.resolve(file);
     suite.emit('pre-require', global, file, self);
     suite.emit('require', require(file), file, self);
     suite.emit('post-require', global, file, self);
-    --pending || (fn && fn());
   });
+  fn && fn();
 };
 
 /**
@@ -1313,6 +1349,18 @@ Mocha.prototype.useInlineDiffs = function(inlineDiffs) {
  */
 Mocha.prototype.timeout = function(timeout) {
   this.suite.timeout(timeout);
+  return this;
+};
+
+/**
+ * Set the number of times to retry failed tests.
+ *
+ * @param {Number} retry times
+ * @return {Mocha}
+ * @api public
+ */
+Mocha.prototype.retries = function(n) {
+  this.suite.retries(n);
   return this;
 };
 
@@ -2121,13 +2169,13 @@ function Doc(runner) {
 
   runner.on('pass', function(test) {
     console.log('%s  <dt>%s</dt>', indent(), utils.escape(test.title));
-    var code = utils.escape(utils.clean(test.fn.toString()));
+    var code = utils.escape(utils.clean(test.body));
     console.log('%s  <dd><pre><code>%s</code></pre></dd>', indent(), code);
   });
 
   runner.on('fail', function(test, err) {
     console.log('%s  <dt class="error">%s</dt>', indent(), utils.escape(test.title));
-    var code = utils.escape(utils.clean(test.fn.toString()));
+    var code = utils.escape(utils.clean(test.fn.body));
     console.log('%s  <dd class="error"><pre><code>%s</code></pre></dd>', indent(), code);
     console.log('%s  <dd class="error">%s</dd>', indent(), utils.escape(err));
   });
@@ -2396,7 +2444,10 @@ function HTML(runner) {
   });
 
   runner.on('fail', function(test) {
-    if (test.type === 'hook') {
+    // For type = 'test' its possible that the test failed due to multiple
+    // done() calls. So report the issue here.
+    if (test.type === 'hook'
+      || test.type === 'test') {
       runner.emit('test end', test);
     }
   });
@@ -2464,7 +2515,7 @@ function HTML(runner) {
         pre.style.display = pre.style.display === 'none' ? 'block' : 'none';
       });
 
-      var pre = fragment('<pre><code>%e</code></pre>', utils.clean(test.fn.toString()));
+      var pre = fragment('<pre><code>%e</code></pre>', utils.clean(test.body));
       el.appendChild(pre);
       pre.style.display = 'none';
     }
@@ -2762,6 +2813,7 @@ function coverage(filename, data) {
 function clean(test) {
   return {
     duration: test.duration,
+    currentRetry: test.currentRetry(),
     fullTitle: test.fullTitle(),
     title: test.title
   };
@@ -2826,7 +2878,8 @@ function clean(test) {
   return {
     title: test.title,
     fullTitle: test.fullTitle(),
-    duration: test.duration
+    duration: test.duration,
+    currentRetry: test.currentRetry()
   };
 }
 
@@ -2904,6 +2957,7 @@ function clean(test) {
     title: test.title,
     fullTitle: test.fullTitle(),
     duration: test.duration,
+    currentRetry: test.currentRetry(),
     err: errorJSON(test.err || {})
   };
 }
@@ -3171,7 +3225,7 @@ function Markdown(runner) {
   });
 
   runner.on('pass', function(test) {
-    var code = utils.clean(test.fn.toString());
+    var code = utils.clean(test.body);
     buf += test.title + '.\n';
     buf += '\n```js\n';
     buf += code + '\n';
@@ -3740,7 +3794,7 @@ function title(test) {
 }
 
 },{"./base":17}],34:[function(require,module,exports){
-(function (global){
+(function (process,global){
 /**
  * Module dependencies.
  */
@@ -3750,6 +3804,8 @@ var utils = require('../utils');
 var inherits = utils.inherits;
 var fs = require('fs');
 var escape = utils.escape;
+var mkdirp = require('mkdirp');
+var path = require('path');
 
 /**
  * Save timer references to avoid Sinon interfering (see GH-237).
@@ -3786,6 +3842,7 @@ function XUnit(runner, options) {
     if (!fs.createWriteStream) {
       throw new Error('file output not supported in browser');
     }
+    mkdirp.sync(path.dirname(options.reporterOptions.output));
     self.fileStream = fs.createWriteStream(options.reporterOptions.output);
   }
 
@@ -3849,6 +3906,8 @@ XUnit.prototype.done = function(failures, fn) {
 XUnit.prototype.write = function(line) {
   if (this.fileStream) {
     this.fileStream.write(line + '\n');
+  } else if (typeof process === 'object' && process.stdout) {
+    process.stdout.write(line + '\n');
   } else {
     console.log(line);
   }
@@ -3911,8 +3970,8 @@ function cdata(str) {
   return '<![CDATA[' + escape(str) + ']]>';
 }
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../utils":39,"./base":17,"fs":41}],35:[function(require,module,exports){
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../utils":39,"./base":17,"_process":51,"fs":41,"mkdirp":70,"path":41}],35:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -3968,6 +4027,8 @@ function Runnable(title, fn) {
   this._enableTimeouts = true;
   this.timedOut = false;
   this._trace = new Error('done() called multiple times');
+  this._retries = -1;
+  this._currentRetry = 0;
 }
 
 /**
@@ -4045,6 +4106,30 @@ Runnable.prototype.skip = function() {
 };
 
 /**
+ * Set number of retries.
+ *
+ * @api private
+ */
+Runnable.prototype.retries = function(n) {
+  if (!arguments.length) {
+    return this._retries;
+  }
+  this._retries = n;
+};
+
+/**
+ * Get current retry
+ *
+ * @api private
+ */
+Runnable.prototype.currentRetry = function(n) {
+  if (!arguments.length) {
+    return this._currentRetry;
+  }
+  this._currentRetry = n;
+};
+
+/**
  * Return the full title generated by recursively concatenating the parent's
  * full title.
  *
@@ -4114,6 +4199,9 @@ Runnable.prototype.resetTimeout = function() {
  * @param {string[]} globals
  */
 Runnable.prototype.globals = function(globals) {
+  if (!arguments.length) {
+    return this._allowedGlobals;
+  }
   this._allowedGlobals = globals;
 };
 
@@ -4205,6 +4293,9 @@ Runnable.prototype.run = function(fn) {
       result
         .then(function() {
           done();
+          // Return null so libraries like bluebird do not warn about
+          // subsequently constructed Promises.
+          return null;
         },
         function(reason) {
           done(reason || new Error('Promise rejected with no or falsy reason'));
@@ -4255,6 +4346,7 @@ var stackFilter = utils.stackTraceFilter();
 var stringify = utils.stringify;
 var type = utils.type;
 var undefinedError = utils.undefinedError;
+var isArray = utils.isArray;
 
 /**
  * Non-enumerable globals.
@@ -4746,8 +4838,12 @@ Runner.prototype.runTests = function(suite, fn) {
       return;
     }
 
+    function parentPending(suite) {
+      return suite.pending || (suite.parent && parentPending(suite.parent));
+    }
+
     // pending
-    if (test.pending) {
+    if (test.pending || parentPending(test.parent)) {
       self.emit('pending', test);
       self.emit('test end', test);
       return next();
@@ -4767,10 +4863,19 @@ Runner.prototype.runTests = function(suite, fn) {
       self.currentRunnable = self.test;
       self.runTest(function(err) {
         test = self.test;
-
         if (err) {
+          var retry = test.currentRetry();
           if (err instanceof Pending) {
+            test.pending = true;
             self.emit('pending', test);
+          } else if (retry < test.retries()) {
+            var clonedTest = test.clone();
+            clonedTest.currentRetry(retry + 1);
+            tests.unshift(clonedTest);
+
+            // Early return + hook trigger so that it doesn't
+            // increment the count wrong
+            return self.hookUp('afterEach', next);
           } else {
             self.fail(test, err);
           }
@@ -4861,6 +4966,10 @@ Runner.prototype.runSuite = function(suite, fn) {
       // mark that the afterAll block has been called once
       // and so can be skipped if there is an error in it.
       afterAllHookCalled = true;
+
+      // remove reference to test
+      delete self.test;
+
       self.hook('afterAll', function() {
         self.emit('suite end', suite);
         fn(errSuite);
@@ -4948,6 +5057,44 @@ Runner.prototype.uncaught = function(err) {
 };
 
 /**
+ * Cleans up the references to all the deferred functions
+ * (before/after/beforeEach/afterEach) and tests of a Suite.
+ * These must be deleted otherwise a memory leak can happen,
+ * as those functions may reference variables from closures,
+ * thus those variables can never be garbage collected as long
+ * as the deferred functions exist.
+ *
+ * @param {Suite} suite
+ */
+function cleanSuiteReferences(suite) {
+  function cleanArrReferences(arr) {
+    for (var i = 0; i < arr.length; i++) {
+      delete arr[i].fn;
+    }
+  }
+
+  if (isArray(suite._beforeAll)) {
+    cleanArrReferences(suite._beforeAll);
+  }
+
+  if (isArray(suite._beforeEach)) {
+    cleanArrReferences(suite._beforeEach);
+  }
+
+  if (isArray(suite._afterAll)) {
+    cleanArrReferences(suite._afterAll);
+  }
+
+  if (isArray(suite._afterEach)) {
+    cleanArrReferences(suite._afterEach);
+  }
+
+  for (var i = 0; i < suite.tests.length; i++) {
+    delete suite.tests[i].fn;
+  }
+}
+
+/**
  * Run the root suite and invoke `fn(failures)`
  * on completion.
  *
@@ -4977,6 +5124,9 @@ Runner.prototype.run = function(fn) {
   }
 
   debug('start');
+
+  // references cleanup to avoid memory leaks
+  this.on('suite end', cleanSuiteReferences);
 
   // callback
   this.on('end', function() {
@@ -5143,6 +5293,7 @@ function Suite(title, parentContext) {
   this._enableTimeouts = true;
   this._slow = 75;
   this._bail = false;
+  this._retries = -1;
   this.delayed = false;
 }
 
@@ -5162,6 +5313,7 @@ Suite.prototype.clone = function() {
   debug('clone');
   suite.ctx = this.ctx;
   suite.timeout(this.timeout());
+  suite.retries(this.retries());
   suite.enableTimeouts(this.enableTimeouts());
   suite.slow(this.slow());
   suite.bail(this.bail());
@@ -5187,6 +5339,22 @@ Suite.prototype.timeout = function(ms) {
   }
   debug('timeout %d', ms);
   this._timeout = parseInt(ms, 10);
+  return this;
+};
+
+/**
+ * Set number of times to retry a failed test.
+ *
+ * @api private
+ * @param {number|string} n
+ * @return {Suite|number} for chaining
+ */
+Suite.prototype.retries = function(n) {
+  if (!arguments.length) {
+    return this._retries;
+  }
+  debug('retries %d', n);
+  this._retries = parseInt(n, 10) || 0;
   return this;
 };
 
@@ -5262,6 +5430,7 @@ Suite.prototype.beforeAll = function(title, fn) {
   var hook = new Hook(title, fn);
   hook.parent = this;
   hook.timeout(this.timeout());
+  hook.retries(this.retries());
   hook.enableTimeouts(this.enableTimeouts());
   hook.slow(this.slow());
   hook.ctx = this.ctx;
@@ -5291,6 +5460,7 @@ Suite.prototype.afterAll = function(title, fn) {
   var hook = new Hook(title, fn);
   hook.parent = this;
   hook.timeout(this.timeout());
+  hook.retries(this.retries());
   hook.enableTimeouts(this.enableTimeouts());
   hook.slow(this.slow());
   hook.ctx = this.ctx;
@@ -5320,6 +5490,7 @@ Suite.prototype.beforeEach = function(title, fn) {
   var hook = new Hook(title, fn);
   hook.parent = this;
   hook.timeout(this.timeout());
+  hook.retries(this.retries());
   hook.enableTimeouts(this.enableTimeouts());
   hook.slow(this.slow());
   hook.ctx = this.ctx;
@@ -5349,6 +5520,7 @@ Suite.prototype.afterEach = function(title, fn) {
   var hook = new Hook(title, fn);
   hook.parent = this;
   hook.timeout(this.timeout());
+  hook.retries(this.retries());
   hook.enableTimeouts(this.enableTimeouts());
   hook.slow(this.slow());
   hook.ctx = this.ctx;
@@ -5367,6 +5539,7 @@ Suite.prototype.afterEach = function(title, fn) {
 Suite.prototype.addSuite = function(suite) {
   suite.parent = this;
   suite.timeout(this.timeout());
+  suite.retries(this.retries());
   suite.enableTimeouts(this.enableTimeouts());
   suite.slow(this.slow());
   suite.bail(this.bail());
@@ -5385,6 +5558,7 @@ Suite.prototype.addSuite = function(suite) {
 Suite.prototype.addTest = function(test) {
   test.parent = this;
   test.timeout(this.timeout());
+  test.retries(this.retries());
   test.enableTimeouts(this.enableTimeouts());
   test.slow(this.slow());
   test.ctx = this.ctx;
@@ -5472,12 +5646,27 @@ function Test(title, fn) {
   Runnable.call(this, title, fn);
   this.pending = !fn;
   this.type = 'test';
+  this.body = (fn || '').toString();
 }
 
 /**
  * Inherit from `Runnable.prototype`.
  */
 inherits(Test, Runnable);
+
+Test.prototype.clone = function() {
+  var test = new Test(this.title, this.fn);
+  test.timeout(this.timeout());
+  test.slow(this.slow());
+  test.enableTimeouts(this.enableTimeouts());
+  test.retries(this.retries());
+  test.currentRetry(this.currentRetry());
+  test.globals(this.globals());
+  test.parent = this.parent;
+  test.file = this.file;
+  test.ctx = this.ctx;
+  return test;
+};
 
 },{"./runnable":35,"./utils":39}],39:[function(require,module,exports){
 (function (process,Buffer){
@@ -5670,6 +5859,8 @@ var isArray = typeof Array.isArray === 'function' ? Array.isArray : function(obj
   return Object.prototype.toString.call(obj) === '[object Array]';
 };
 
+exports.isArray = isArray;
+
 /**
  * Buffer.prototype.toJSON polyfill.
  *
@@ -5744,7 +5935,7 @@ exports.slug = function(str) {
 exports.clean = function(str) {
   str = str
     .replace(/\r\n?|[\n\u2028\u2029]/g, '\n').replace(/^\uFEFF/, '')
-    .replace(/^function *\(.*\)\s*{|\(.*\) *=> *{?/, '')
+    .replace(/^function *\(.*\)\s*\{|\(.*\) *=> *\{?/, '')
     .replace(/\s+\}$/, '');
 
   var spaces = str.match(/^\n?( *)/)[1].length;
@@ -6081,7 +6272,7 @@ exports.canonicalize = function(value, stack) {
       canonicalizedObj = value;
       break;
     default:
-      canonicalizedObj = value.toString();
+      canonicalizedObj = value + '';
   }
 
   return canonicalizedObj;
@@ -12250,6 +12441,108 @@ function growl(msg, options, fn) {
 
 }).call(this,require('_process'))
 },{"_process":51,"child_process":41,"fs":41,"os":50,"path":41}],70:[function(require,module,exports){
+(function (process){
+var path = require('path');
+var fs = require('fs');
+var _0777 = parseInt('0777', 8);
+
+module.exports = mkdirP.mkdirp = mkdirP.mkdirP = mkdirP;
+
+function mkdirP (p, opts, f, made) {
+    if (typeof opts === 'function') {
+        f = opts;
+        opts = {};
+    }
+    else if (!opts || typeof opts !== 'object') {
+        opts = { mode: opts };
+    }
+    
+    var mode = opts.mode;
+    var xfs = opts.fs || fs;
+    
+    if (mode === undefined) {
+        mode = _0777 & (~process.umask());
+    }
+    if (!made) made = null;
+    
+    var cb = f || function () {};
+    p = path.resolve(p);
+    
+    xfs.mkdir(p, mode, function (er) {
+        if (!er) {
+            made = made || p;
+            return cb(null, made);
+        }
+        switch (er.code) {
+            case 'ENOENT':
+                mkdirP(path.dirname(p), opts, function (er, made) {
+                    if (er) cb(er, made);
+                    else mkdirP(p, opts, cb, made);
+                });
+                break;
+
+            // In the case of any other error, just see if there's a dir
+            // there already.  If so, then hooray!  If not, then something
+            // is borked.
+            default:
+                xfs.stat(p, function (er2, stat) {
+                    // if the stat fails, then that's super weird.
+                    // let the original error be the failure reason.
+                    if (er2 || !stat.isDirectory()) cb(er, made)
+                    else cb(null, made);
+                });
+                break;
+        }
+    });
+}
+
+mkdirP.sync = function sync (p, opts, made) {
+    if (!opts || typeof opts !== 'object') {
+        opts = { mode: opts };
+    }
+    
+    var mode = opts.mode;
+    var xfs = opts.fs || fs;
+    
+    if (mode === undefined) {
+        mode = _0777 & (~process.umask());
+    }
+    if (!made) made = null;
+
+    p = path.resolve(p);
+
+    try {
+        xfs.mkdirSync(p, mode);
+        made = made || p;
+    }
+    catch (err0) {
+        switch (err0.code) {
+            case 'ENOENT' :
+                made = sync(path.dirname(p), opts, made);
+                sync(p, opts, made);
+                break;
+
+            // In the case of any other error, just see if there's a dir
+            // there already.  If so, then hooray!  If not, then something
+            // is borked.
+            default:
+                var stat;
+                try {
+                    stat = xfs.statSync(p);
+                }
+                catch (err1) {
+                    throw err0;
+                }
+                if (!stat.isDirectory()) throw err0;
+                break;
+        }
+    }
+
+    return made;
+};
+
+}).call(this,require('_process'))
+},{"_process":51,"fs":41,"path":41}],71:[function(require,module,exports){
 (function (process,global){
 /**
  * Shim process.stdout.
@@ -12410,8 +12703,8 @@ Mocha.process = process;
  * Expose mocha.
  */
 
-window.Mocha = Mocha;
-window.mocha = mocha;
+global.Mocha = Mocha;
+global.mocha = mocha;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../":1,"_process":51,"browser-stdout":40}]},{},[70]);
+},{"../":1,"_process":51,"browser-stdout":40}]},{},[71]);
