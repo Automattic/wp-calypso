@@ -81,14 +81,16 @@ module.exports = React.createClass( {
 		return (
 			<Sidebar>
 				<ProfileGravatar user={ this.props.user.get() } />
-				<FormButton
-					className="me-sidebar__menu__signout"
-					isPrimary={ false }
-					onClick={ this.onSignOut }
-					title={ this.translate( 'Sign out of WordPress.com', { textOnly: true } ) }
-				>
-					{ this.translate( 'Sign Out' ) }
-				</FormButton>
+				<div>
+					<FormButton
+						className="me-sidebar__menu__signout"
+						isPrimary={ false }
+						onClick={ this.onSignOut }
+						title={ this.translate( 'Sign out of WordPress.com', { textOnly: true } ) }
+					>
+						{ this.translate( 'Sign Out' ) }
+					</FormButton>
+				</div>
 				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Profile' ) }</SidebarHeading>
 					<ul>
