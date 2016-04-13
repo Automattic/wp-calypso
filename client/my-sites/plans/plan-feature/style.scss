@@ -63,19 +63,3 @@
 		color: $blue-medium;
 	}
 }
-
-.plan-feature__plan-compare {
-	@include breakpoint( ">660px" ) {
-		display: flex;
-		justify-content: center;
-	}
-}
-
-.plan-feature__plan-current,
-.plan-feature__plan-upgraded {
-	margin: 16px;
-
-	@include breakpoint( "<660px" ) {
-		width: auto;
-	}
-}
