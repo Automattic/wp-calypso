@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import page from 'page';
 const debug = require( 'debug' )( 'calypso:jetpack-connect:authorize-form' );
 
 /**
@@ -20,6 +21,7 @@ import { createAccount, authorize } from 'state/jetpack-connect/actions';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
+import Notices from 'notices';
 
 /**
  * Module variables
@@ -88,6 +90,20 @@ const LoggedInForm = React.createClass( {
 		}
 	},
 
+	componentDidUpdate() {
+		const { authorizeSuccess, queryObject } = this.props.jetpackConnectAuthorize;
+		if ( authorizeSuccess ) {
+			Notices.success(
+				this.translate( 'Authorization complete. Use the buttons below to upgrade your site.' ),
+				{
+					button: this.translate( 'Go to site' ),
+					href: queryObject.redirect_after_auth,
+					persistent: true
+				}
+			);
+		}
+	},
+
 	handleSubmit() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		this.props.authorize( queryObject );
@@ -106,23 +122,16 @@ const LoggedInForm = React.createClass( {
 		return this.props.jetpackConnectAuthorize && this.props.jetpackConnectAuthorize.isAuthorizing;
 	},
 
-	dismissNotice() {
-		debug( 'Notice dissmissed' );
-	},
-
 	renderNotices() {
-		const { authorizeSuccess, authorizeError } = this.props.jetpackConnectAuthorize;
-		if ( authorizeSuccess ) {
-			return <JetpackConnectNotices noticeType="authorizeSuccess" onDismissClick={ this.dismissNotice } />;
-		}
+		const { authorizeError } = this.props.jetpackConnectAuthorize;
 		if ( authorizeError ) {
-			return <JetpackConnectNotices noticeType="authorizeError" onDismissClick={ this.dismissNotice } />;
+			return <JetpackConnectNotices noticeType="authorizeError" />;
 		}
 		return null;
 	},
 
 	renderFormControls() {
-		const { queryObject, isAuthorizing, autoAuthorize, authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		const { queryObject, isAuthorizing, autoAuthorize, authorizeSuccess, plansURL, siteReceived } = this.props.jetpackConnectAuthorize;
 		const loginUrl = config( 'login_url' ) + '?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) + '&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
 
 		if ( autoAuthorize ) {
@@ -132,8 +141,8 @@ const LoggedInForm = React.createClass( {
 		}
 
 		if ( authorizeSuccess ) {
-			if ( queryObject.redirect_after_auth ) {
-				window.location.href = queryObject.redirect_after_auth;
+			if ( siteReceived && plansURL ) {
+				page( plansURL );
 			}
 			return null;
 		}

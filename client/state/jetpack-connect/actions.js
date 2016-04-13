@@ -8,12 +8,14 @@ const debug = require( 'debug' )( 'calypso:jetpack-connect:actions' );
  */
 import wpcom from 'lib/wp';
 import { tracks } from 'analytics';
+import Dispatcher from 'dispatcher';
 import {
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT
@@ -131,15 +133,28 @@ export default {
 				type: JETPACK_CONNECT_AUTHORIZE,
 				queryObject: queryObject
 			} );
-			wpcom.undocumented().jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state ).then( ( data ) => {
+			wpcom.undocumented().jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state )
+			.then( ( data ) => {
 				return wpcom.undocumented().jetpackAuthorize( client_id, data.code, state, redirect_uri, secret );
-			} ).then( ( data, error ) => {
+			} )
+			.then( ( data ) => {
 				tracks.recordEvent( 'jetpack_connect_authorize_success' );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 					siteId: client_id,
 					data: data,
-					error: error
+					error: null
+				} );
+				return wpcom.me().sites( { site_visibility: 'all' } );
+			} )
+			.then( ( data ) => {
+				dispatch( {
+					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+					data: data
+				} );
+				Dispatcher.handleViewAction( {
+					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+					data: data
 				} );
 			} )
 			.catch( ( error ) => {
