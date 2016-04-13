@@ -10,8 +10,8 @@ Going through the current tests is a good way to get ideas for how different kin
 
 ### [Set up a test environment](#setting-up-environment)
 
-It's highly possible that your tests will require to have DOM environment configured to work properly. We provide test helper that does all work for you.
-Check [Use fake DOM](https://github.com/Automattic/wp-calypso/tree/master/test/test/helpers/use-fake-dom) helper documentation to learn how to simulate DOM existence.
+It's very possible that your tests will assume the existence of a browser environment to work properly.
+Refer to the [Use fake DOM](https://github.com/Automattic/wp-calypso/tree/master/test/test/helpers/use-fake-dom) test helper documentation to learn how to configure an emulated DOM for your test.
 
 ### [What to test?](#what-to-test)
 
