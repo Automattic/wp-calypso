@@ -13,7 +13,6 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
-import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import sectionsModule from '../../client/sections';
 import { serverRouter } from 'isomorphic-routing';
@@ -124,7 +123,6 @@ function getDefaultContext( request ) {
 		urls: generateStaticUrls( request ),
 		user: false,
 		env: CALYPSO_ENV,
-		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
 		isDebug: request.query.debug !== undefined ? true : false,
 		badge: false,
