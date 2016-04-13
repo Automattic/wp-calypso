@@ -9,15 +9,11 @@ var React = require( 'react' ),
  */
 var Main = require( 'components/main' ),
 	HappinessEngineers = require( 'me/help/help-happiness-engineers' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	HelpSearch = require( './help-search' ),
-	ExternalLink = require( 'components/external-link' ),
-	Card = require( 'components/card' ),
 	CompactCard = require( 'components/card/compact' ),
 	Button = require( 'components/button' ),
 	SectionHeader = require( 'components/section-header' ),
-	Gridicon = require( 'components/gridicon' ),
 	HelpResult = require( './help-results/item' );
 
 module.exports = React.createClass( {
@@ -60,7 +56,7 @@ module.exports = React.createClass( {
 			</div>
 		);
 	},
-	
+
 	getSupportLinks: function() {
 		return (
 			<div className="help__support-links">
