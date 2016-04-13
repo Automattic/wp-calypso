@@ -64,8 +64,7 @@ module.exports = React.createClass( {
 			<FoldableCard compact
 				className="plugin-site-network"
 				header={ this.renderMultisiteHeader() }
-				actionButton={ this.renderInstallButton() }
-				screenReaderText={ this.translate( 'More' ) } >
+				actionButton={ this.renderInstallButton() } >
 			</FoldableCard>
 		);
 	},
@@ -90,7 +89,6 @@ module.exports = React.createClass( {
 				header={ this.renderMultisiteHeader() }
 				summary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ false }/> }
 				expandedSummary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ true }/> }
-				screenReaderText={ this.translate( 'More' ) }
 				>
 				<div>
 					{ this.renderPluginActions() }

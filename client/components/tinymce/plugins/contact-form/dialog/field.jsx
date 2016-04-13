@@ -76,8 +76,7 @@ export default React.createClass( {
 				header={ <FieldHeader { ...omit( this.props, [ 'onUpdate' ] ) } /> }
 				summary={ remove }
 				expandedSummary={ remove }
-				icon="pencil"
-				screenReaderText={ this.translate( 'Edit' ) }>
+				icon="pencil">
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Field Label' ) }</FormLabel>
 					<FormTextInput value={ this.props.label } onChange={ this.onLabelChange } isError={ fielLabelValidationError } />

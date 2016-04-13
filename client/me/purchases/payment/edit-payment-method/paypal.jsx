@@ -80,7 +80,7 @@ const EditPaymentMethodPaypal = React.createClass( {
 
 	renderCard() {
 		return (
-			<FoldableCard header={ this.renderHeader() } screenReaderText={ this.translate( 'More' ) }>
+			<FoldableCard header={ this.renderHeader() }>
 				<div className="edit-payment-method__details is-paypal">
 					<strong>{ this.translate( 'Name on Account', { context: 'Input field description', comment: 'PayPal account' } ) }</strong>
 					<span>{ getPurchase( this.props ).payment.name }</span>

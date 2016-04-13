@@ -107,7 +107,7 @@ const EditPaymentMethodCreditCard = React.createClass( {
 		const { payment } = getPurchase( this.props );
 
 		return (
-			<FoldableCard header={ this.renderHeader() } screenReaderText={ this.translate( 'More' ) }>
+			<FoldableCard header={ this.renderHeader() }>
 				<div className="edit-payment-method__details">
 					<strong>{ this.translate( 'Name on Card', { context: 'Input field description', comment: 'Credit card' } ) }</strong>
 					<span>{ payment.name }</span>
