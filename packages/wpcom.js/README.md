@@ -43,6 +43,16 @@ Include `dist/wpcom.js`.
 </script>
 ```
 
+**If bundling your project with webpack**, you may need to add this to your main `webpack.config.js` file to avoid `Cannot resolve module fs` errors when bundling.
+
+```
+node: {
+	fs: 'empty'
+},
+```
+
+This instructs webpack to mock the `fs` module.
+
 ### Authentication
 
 Not all requests require a REST API token. For example, listing posts on a
@@ -95,8 +105,8 @@ More pre-made examples are in the [`examples/`](./examples/) directory.
 
 ## Test
 
-The `token` and `site` vars must be given to testing scripts either using 
-`TOKEN` and `SITE` environment vars respectively or through of a 
+The `token` and `site` vars must be given to testing scripts either using
+`TOKEN` and `SITE` environment vars respectively or through of a
 config.json file into `test/` folder like bellow:
 
 ```json
