@@ -34,7 +34,7 @@ export default React.createClass( {
 		return( this.translate( 'Connecting…' ) )
 	},
 
-	maybeClickIfEnter( event ) {
+	handleKeyPress( event ) {
 		if ( 13 === event.keyCode ) {
 			this.props.onClick();
 		}
@@ -52,7 +52,7 @@ export default React.createClass( {
 						onChange={ this.onChange }
 						disabled={ this.props.isFetching }
 						placeholder={ this.translate( 'http://www.yoursite.com' ) }
-						onKeyUp={ this.maybeClickIfEnter } />
+						onKeyUp={ this.handleKeyPress } />
 					{ this.props.isFetching
 						? ( <Spinner duration={ 30 } /> )
 						: null }
