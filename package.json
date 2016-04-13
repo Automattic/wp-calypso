@@ -118,8 +118,8 @@
     "xgettext-js": "0.3.0"
   },
   "engines": {
-    "node": "4.3.0",
-    "npm": "2.14.12"
+    "node": "5.10.1",
+    "npm": "3.8.3"
   },
   "scripts": {
     "test": "make test",

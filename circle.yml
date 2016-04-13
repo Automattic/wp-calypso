@@ -1,6 +1,6 @@
 machine:
   node:
-    version: 4.3.0
+    version: 5.10.1
 test:
   override:
     - npm run lint -- :
