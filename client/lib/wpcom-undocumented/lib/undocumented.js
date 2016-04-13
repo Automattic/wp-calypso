@@ -1086,7 +1086,7 @@ Undocumented.prototype.readFeed = function( query, fn ) {
 
 Undocumented.prototype.discoverFeed = function( query, fn ) {
 	debug( '/read/feed' );
-	this.wpcom.req.get( '/read/feed/', query, fn );
+	return this.wpcom.req.get( '/read/feed/', query, fn );
 };
 
 Undocumented.prototype.readFeedPosts = function( query, fn ) {
