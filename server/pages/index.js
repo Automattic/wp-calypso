@@ -229,7 +229,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 					console.log( 'API Error: ' + errorMessage );
 
-					res.status( 500 ).render( '500.jade', context );
+					res.status( 500 ).render( '500', context );
 				}
 
 				return;
@@ -284,7 +284,7 @@ function setUpRoute( req, res, next ) {
 }
 
 function render404( request, response ) {
-	response.status( 404 ).render( '404.jade', {
+	response.status( 404 ).render( '404', {
 		urls: generateStaticUrls( request )
 	} );
 }

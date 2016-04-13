@@ -97,8 +97,8 @@ export function serverRender( req, res ) {
 	context.head = { title, metas, links };
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		res.render( 'desktop.jade', context );
+		res.render( 'desktop', context );
 	} else {
-		res.render( 'index.jade', context );
+		res.render( 'index', context );
 	}
 }
