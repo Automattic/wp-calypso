@@ -7,13 +7,13 @@ var assert = require( 'assert' );
 /**
  * site.follow
  */
-describe( 'wpcom.site.taxonomy', function() {
+describe( 'wpcom.site.taxonomy', () => {
 	// Global instances
 	var wpcom = util.wpcom();
 	var site = wpcom.site( util.site() );
 	var taxonomy = site.taxonomy( 'category' );
 
-	describe( 'wpcom.site.taxonomy.termsList', function( done ) {
+	describe( 'wpcom.site.taxonomy.termsList', () => {
 		it( 'should return a list of terms', done => {
 			taxonomy.termsList()
 				.then( data => {

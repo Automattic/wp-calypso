@@ -1,13 +1,13 @@
 /**
  * Module dependencies
  */
-import util from './util';
-import assert from 'assert';
+var util = require( './util' );
+var assert = require( 'assert' );
 
 /**
  * site.taxonomy.term
  */
-describe( 'wpcom.site.taxonomy.term', function() {
+describe( 'wpcom.site.taxonomy.term', () => {
 	// Global instances
 	const wpcom = util.wpcom();
 	const site = wpcom.site( util.site() );
@@ -33,7 +33,7 @@ describe( 'wpcom.site.taxonomy.term', function() {
 			.catch( done );
 	} );
 
-	describe( 'wpcom.site.taxonomy.term.get', function( done ) {
+	describe( 'wpcom.site.taxonomy.term.get', () => {
 		it( 'should return term details', done => {
 			taxonomy.term( testTerm.slug ).get()
 				.then( data => {
@@ -61,7 +61,7 @@ describe( 'wpcom.site.taxonomy.term', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.taxonomy.term.add', done => {
+	describe( 'wpcom.site.taxonomy.term.add', () => {
 		it( 'should create a new term', done => {
 			taxonomy.term().add( { name: 'chunky bacon', parent: testTerm.ID, description: 'I LOVE BACON MOAR' } )
 				.then( data => {
@@ -76,7 +76,7 @@ describe( 'wpcom.site.taxonomy.term', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.taxonomy.term.update', done => {
+	describe( 'wpcom.site.taxonomy.term.update', () => {
 		it( 'should update the term', done => {
 			taxonomy.term( testTermTwo.slug ).update( { parent: 0, description: 'I LOVE RIBS AND BACON' } )
 				.then( data => {
@@ -90,7 +90,7 @@ describe( 'wpcom.site.taxonomy.term', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.taxonomy.term.delete', done => {
+	describe( 'wpcom.site.taxonomy.term.delete', () => {
 		it( 'should update the term', done => {
 			taxonomy.term( testTermTwo.slug ).delete()
 				.then( data => {
