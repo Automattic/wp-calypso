@@ -10,7 +10,7 @@ import CountriesList from 'lib/countries-list';
 import { fetchStoredCards, fetchUserPurchases } from 'lib/upgrades/actions';
 import observe from 'lib/mixins/data-observe';
 import PurchasesStore from 'lib/purchases/store';
-import { shouldFetchPurchases } from 'lib/purchases';
+import { shouldFetchUserPurchases } from 'lib/purchases';
 import StoreConnection from 'components/data/store-connection';
 import StoredCardsStore from 'lib/purchases/stored-cards/store';
 import userFactory from 'lib/user';
@@ -38,7 +38,7 @@ function getStateFromStores( props ) {
 function isDataLoading( state ) {
 	return (
 		state.card.isFetching ||
-		! state.selectedPurchase.hasLoadedFromServer ||
+		! state.selectedPurchase.hasLoadedUserPurchasesFromServer ||
 		! state.hasLoadedSites
 	);
 }
@@ -56,7 +56,7 @@ const EditCardDetailsData = React.createClass( {
 
 	componentWillMount() {
 		fetchStoredCards();
-		if ( shouldFetchPurchases( PurchasesStore.get() ) ) {
+		if ( shouldFetchUserPurchases( PurchasesStore.get() ) ) {
 			fetchUserPurchases( user.get().ID );
 		}
 	},
