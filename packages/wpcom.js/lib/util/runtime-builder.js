@@ -1,4 +1,14 @@
 /**
+ * Module dependencies
+ */
+import debugFactory from 'debug';
+
+/**
+ * Module vars
+ */
+const debug = debugFactory( 'wpcom:runtime' );
+
+/**
  * Build a generic method
  *
  * @param {Object} methodParams - method methodParams
@@ -26,6 +36,7 @@ export default function( Class, list, buildPath ) {
 			? methodParams
 			: { name: methodParams }
 
+		debug( 'Adding %o', methodParams.name );
 		Class.prototype[ methodParams.name ] = methodBuilder( methodParams, buildPath );
 	} );
 };

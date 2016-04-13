@@ -1,5 +1,5 @@
 /**
- * Module variables
+ * Module vars
  */
 const root = '/sites';
 

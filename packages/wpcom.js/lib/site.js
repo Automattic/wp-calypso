@@ -1,17 +1,18 @@
 /**
  * Module dependencies.
  */
-import Post from './site.post';
 import Category from './site.category';
-import Tag from './site.tag';
-import Media from './site.media';
 import Comment from './site.comment';
-import SiteWordAds from './site.wordads';
 import Follow from './site.follow';
-import SitePlugin from './site.plugin';
+import Media from './site.media';
+import Post from './site.post';
+import Tag from './site.tag';
 import SiteDomain from './site.domain';
+import SitePlugin from './site.plugin';
 import SiteSettings from './site.settings';
 import SiteTaxonomy from './site.taxonomy';
+import SiteWordAds from './site.wordads';
+
 import runtimeBuilder from './util/runtime-builder';
 import siteGetMethods from './runtime/site.get.json';
 import debugFactory from 'debug';
@@ -160,11 +161,11 @@ class Site {
 	/**
 	 * Create a `SitePlugin` instance
 	 *
-	 * @param {String} id - plugin identifier
+	 * @param {String} slug - plugin identifier
 	 * @return {SitePlugin} SitePlugin instance
 	 */
-	plugin( id ) {
-		return new SitePlugin( id, this._id, this.wpcom );
+	plugin( slug ) {
+		return new SitePlugin( slug, this._id, this.wpcom );
 	}
 
 	/**
