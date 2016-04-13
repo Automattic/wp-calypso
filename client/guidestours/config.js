@@ -11,6 +11,10 @@ import React from 'react';
 import Gridicon from 'components/gridicon';
 import i18n from 'lib/mixins/i18n';
 
+if ( ! i18n.i18nState.localeSlug ) {
+	i18n.initialize();
+}
+
 const config = {
 	init: {
 		text: i18n.translate( '{{strong}}Need a hand?{{/strong}} We\'d love to show you around the place, and give you some ideas for what to do next.', {
