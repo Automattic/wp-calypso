@@ -375,6 +375,7 @@ module.exports = React.createClass( {
 				showHowCanWeHelpField: showKayakoVariation || showChatVariation,
 				showHowYouFeelField: showKayakoVariation || showChatVariation,
 				showSiteField: ( showKayakoVariation || showChatVariation ) && ( sites.get().length > 1 ),
+			  	showHelpLanguagePrompt: showHelpLanguagePrompt,
 				valueLink: { value: savedContactForm, requestChange: ( contactForm ) => savedContactForm = contactForm }
 			},
 			showChatVariation && {
