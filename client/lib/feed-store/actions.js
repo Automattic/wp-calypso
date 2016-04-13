@@ -28,7 +28,7 @@ const FeedStoreActions = {
 			error: error,
 			data: data
 		} );
-	},
+	}
 };
 
 module.exports = FeedStoreActions;
