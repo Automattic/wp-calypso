@@ -19,8 +19,6 @@ var Sidebar = require( 'layout/sidebar' ),
 	FormButton = require( 'components/forms/form-button' ),
 	userUtilities = require( 'lib/user/utils' );
 
-import SidebarFooter from 'layout/sidebar/footer';
-
 module.exports = React.createClass( {
 
 	displayName: 'MeSidebar',
@@ -162,7 +160,6 @@ module.exports = React.createClass( {
 						/>
 					</ul>
 				</SidebarMenu>
-				<SidebarFooter />
 			</Sidebar>
 		);
 	},
