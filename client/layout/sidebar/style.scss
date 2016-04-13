@@ -44,12 +44,18 @@
 .sidebar {
 	margin: 0;
 
+	div {
+		flex-shrink: 0;	// prevents items from squishing together under their initial height in Safari
+	}
+
 	ul {
+		flex-shrink: 0;
 		list-style: none;
 		margin: 0;
 	}
 
 	li {
+		flex-shrink: 0;
 		position: relative;
 	}
 }
