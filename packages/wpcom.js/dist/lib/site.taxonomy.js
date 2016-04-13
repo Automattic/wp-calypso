@@ -33,11 +33,11 @@ var SiteTaxonomy = (function () {
 		_classCallCheck(this, SiteTaxonomy);
 
 		if (!siteId) {
-			throw new Error('`siteId` is not correctly defined');
+			throw new TypeError('`siteId` is not correctly defined');
 		}
 
 		if (!taxonomy) {
-			throw new Error('`taxonomy` is not correctly defined');
+			throw new TypeError('`taxonomy` is not correctly defined');
 		}
 
 		if (!(this instanceof SiteTaxonomy)) {

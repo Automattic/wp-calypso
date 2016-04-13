@@ -12,7 +12,6 @@ var Batch = (function () {
   *
   * @param {WPCOM} wpcom - wpcom instance
   * @return {null} null
-  * @api public
   */
 
 	function Batch(wpcom) {
@@ -31,7 +30,6 @@ var Batch = (function () {
   *
   * @param {String} url - endpoint url
   * @return {Batch} batch instance
-  * @api public
   */
 
 	_createClass(Batch, [{
@@ -47,7 +45,6 @@ var Batch = (function () {
    * @param {Object} [query] - optional query parameter
    * @param {Function} fn - callback
    * @return {Promise} Promise
-   * @api public
    */
 	}, {
 		key: 'run',

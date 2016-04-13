@@ -5,7 +5,7 @@ import util from './util';
 import assert from 'assert';
 
 /**
- * site.follow
+ * site.taxonomy.term
  */
 describe( 'wpcom.site.taxonomy.term', function() {
 	// Global instances
