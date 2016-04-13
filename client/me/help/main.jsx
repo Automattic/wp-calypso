@@ -2,12 +2,13 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
-
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
+	debug = require( 'debug' )( 'calypso:help-search' );
 /**
  * Internal dependencies
  */
 var Main = require( 'components/main' ),
+	analytics = require( 'analytics' ),
 	HappinessEngineers = require( 'me/help/help-happiness-engineers' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	HelpSearch = require( './help-search' ),
@@ -22,37 +23,43 @@ module.exports = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	getHelpfulArticles: function() {
-		const resultItemWP = {
-			link: 'https://en.support.wordpress.com/com-vs-org/',
-			title: this.translate( 'WordPress.com and WordPress.org' ),
-			description: this.translate( 'Learn about the differences between a fully hosted WordPress.com site and a self-hosted WordPress.org site.' )
-		};
-
-		const resultItemDomains = {
-			link: 'https://en.support.wordpress.com/all-about-domains/',
-			title: this.translate( 'All About Domains' ),
-			description: this.translate( 'Set up your domain whether it’s registered with WordPress.com or elsewhere.' )
-		};
-
-		const resultItemStart = {
-			link: 'https://en.support.wordpress.com/start/',
-			title: this.translate( 'Get Started' ),
-			description: this.translate( 'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.' )
-		};
-
-		const resultItemPrivate = {
-			link: 'https://en.support.wordpress.com/settings/privacy-settings/',
-			title: this.translate( 'Privacy Settings' ),
-			description: this.translate( 'Limit your site’s visibility or make it completely private.' )
-		};
+		const helpfulResults = [
+			{
+				link: 'https://en.support.wordpress.com/com-vs-org/',
+				title: this.translate( 'WordPress.com and WordPress.org' ),
+				description: this.translate( 'Learn about the differences between a fully hosted WordPress.com site and a self-hosted WordPress.org site.' )
+			},
+			{
+				link: 'https://en.support.wordpress.com/all-about-domains/',
+				title: this.translate( 'All About Domains' ),
+				description: this.translate( 'Set up your domain whether it’s registered with WordPress.com or elsewhere.' )
+			},
+			{
+				link: 'https://en.support.wordpress.com/start/',
+				title: this.translate( 'Get Started' ),
+				description: this.translate( 'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.' )
+			},
+			{
+				link: 'https://en.support.wordpress.com/settings/privacy-settings/',
+				title: this.translate( 'Privacy Settings' ),
+				description: this.translate( 'Limit your site’s visibility or make it completely private.' )
+			}
+		];
 
 		return (
 			<div className="help-results">
-				<SectionHeader label={ this.translate( 'Most Helpful Articles' ) }/>
-				<HelpResult key={ resultItemWP.link } helpLink={ resultItemWP } iconTypeDescription="book" />
-				<HelpResult key={ resultItemDomains.link } helpLink={ resultItemDomains } iconTypeDescription="book" />
-				<HelpResult key={ resultItemStart.link } helpLink={ resultItemStart } iconTypeDescription="book" />
-				<HelpResult key={ resultItemPrivate.link } helpLink={ resultItemPrivate } iconTypeDescription="book" />
+				<SectionHeader label={ this.translate( 'Most Helpful Articles' ) } />
+				{ helpfulResults.map( ( result, index ) => {
+					const trackClick = () => {
+						debug( 'Suggested result click: ', result.link );
+						analytics.tracks.recordEvent( 'calypso_help_suggested_result_click', {
+							link: result.link,
+							position: index
+						} );
+					};
+
+					return <HelpResult key={ result.link } helpLink={ result } iconTypeDescription="book" onClick={ trackClick } />
+				} ) }
 			</div>
 		);
 	},
