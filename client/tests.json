@@ -449,6 +449,9 @@
 	  "test": [ "flows", "utils" ]
 	},
 	"state": {
+		"analytics": {
+			"test": [ "actions", "middleware" ]
+		},
 		"application": {
 			"test": [ "actions", "reducer" ]
 		},
