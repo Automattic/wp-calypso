@@ -322,6 +322,9 @@
 		"resize-image-url": {
 			"test": [ "index" ]
 		},
+		"route": {
+			"test": [ "index" ]
+		},
 		"safe-image-url": {
 			"test": [ "index" ]
 		},
