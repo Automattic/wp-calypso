@@ -1,6 +1,5 @@
 // External Dependencies
-var Immutable = require( 'immutable' ),
-	forEach = require( 'lodash/forEach' ),
+var forEach = require( 'lodash/forEach' ),
 	isEmpty = require( 'lodash/isEmpty' );
 
 // Internal Dependencies

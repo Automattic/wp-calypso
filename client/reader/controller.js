@@ -253,13 +253,14 @@ module.exports = {
 
 	feedDiscovery: function( context, next ) {
 		var FeedUrlStore = require( 'lib/feed-url-store' ),
-			FeedUrlStoreActions = require( 'lib/feed-url-store/actions' );
+			FeedUrlStoreActions = require( 'lib/feed-url-store/actions' ),
+			feedId;
 
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
 			FeedUrlStoreActions.discover( context.params.feed_id, function( error, data ) {
 				if ( ! error && ! isEmpty( data.feeds ) ) {
 					FeedUrlStore.receiveFeeds( context.params.feed_id, data.feeds );
-					var feedId = FeedUrlStore.get( context.params.feed_id );
+					feedId = FeedUrlStore.get( context.params.feed_id );
 
 					if ( feedId ) {
 						context.params.feed_id = feedId;
