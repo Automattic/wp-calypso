@@ -19,6 +19,7 @@ import ReaderListsStore from 'lib/reader-lists/lists';
 import ReaderTeams from 'lib/reader-teams';
 import Sidebar from 'layout/sidebar';
 import SidebarActions from 'lib/reader-sidebar/actions';
+import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import Gridicon from 'components/gridicon';
@@ -226,6 +227,7 @@ const ReaderSidebar = React.createClass( {
 					currentTag={ this.state.currentTag } />
 
 				{ this.renderAppPromo() }
+				<SidebarFooter />
 			</Sidebar>
 		);
 	}
