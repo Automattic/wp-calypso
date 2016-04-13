@@ -178,7 +178,7 @@ const CancelPurchaseButton = React.createClass( {
 			submitting: true
 		} );
 
-		cancelAndRefundPurchase( this.props.purchase.id, null, this.handleSubmit );
+		cancelAndRefundPurchase( this.props.purchase.id, { product_id: this.props.purchase.productId }, this.handleSubmit );
 	},
 
 	render() {
