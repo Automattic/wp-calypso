@@ -1,17 +1,22 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect;
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var route = require( '../index' );
+import useFakeDom from 'test/helpers/use-fake-dom';
 
-describe( 'lib/route', function() {
+describe( 'route', function() {
+	let route;
+
+	useFakeDom();
+
+	before( function() {
+		route = require( '../' );
+	} );
+
 	describe( 'getSiteFragment', function() {
 		describe( 'for the root path', function() {
 			it( 'should return false', function() {
