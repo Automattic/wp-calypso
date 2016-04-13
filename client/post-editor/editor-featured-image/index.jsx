@@ -15,6 +15,7 @@ const MediaLibrarySelectedData = require( 'components/data/media-library-selecte
 	stats = require( 'lib/posts/stats' ),
 	EditorFeaturedImagePreviewContainer = require( './preview-container' );
 import Button from 'components/button';
+import Gridicon from 'components/gridicon';
 import {
 	setFeaturedImage,
 	removeFeaturedImage
@@ -121,7 +122,12 @@ const EditorFeaturedImage = React.createClass( {
 				borderless
 				className={ classes }>
 				{ this.renderMediaModal() }
-				{ this.renderCurrentImage() }
+				<div className="editor-featured-image__current-image">
+					{ this.renderCurrentImage() }
+					<Gridicon
+						icon="pencil"
+						className="editor-featured-image__edit-icon" />
+				</div>
 			</Button>
 		);
 	}
