@@ -1,26 +1,27 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	sinon = require( 'sinon' );
+import { expect } from 'chai';
+import sinon from 'sinon';
+import rewire from 'rewire';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	PreferencesConstants = require( '../constants' );
+import Dispatcher from 'dispatcher';
+import { USER_SETTING_KEY } from '../constants';
 
 describe( 'PreferencesStore', function() {
-	var PreferencesStore, handler;
+	let PreferencesStore, handler;
 
 	before( function() {
 		sinon.spy( Dispatcher, 'register' );
+		PreferencesStore = rewire( '../store' );
+		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
 	beforeEach( function() {
-		delete require.cache[ require.resolve( '../store' ) ];
-		PreferencesStore = require( '../store' );
-		handler = Dispatcher.register.lastCall.args[ 0 ];
+		PreferencesStore.__set__( '_preferences', undefined );
 	} );
 
 	after( function() {
@@ -28,13 +29,12 @@ describe( 'PreferencesStore', function() {
 	} );
 
 	function dispatchReceivePreferences( preferences ) {
-		var data = {};
-		data[ PreferencesConstants.USER_SETTING_KEY ] = preferences;
-
 		handler( {
 			action: {
 				type: 'RECEIVE_ME_SETTINGS',
-				data: data
+				data: {
+					[ USER_SETTING_KEY ]: preferences
+				}
 			}
 		} );
 	}
