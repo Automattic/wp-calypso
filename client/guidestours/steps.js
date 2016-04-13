@@ -42,7 +42,7 @@ class GuidesFirstStep extends Component {
 				<p>{ text }</p>
 				<div className="guidestours__choice-button-row">
 					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
-					<Button onClick={ onQuit } className="guidestours__secondary-button">
+					<Button onClick={ onQuit } >
 						{ this.props.translate( 'No, thanks.' ) }
 					</Button>
 				</div>
