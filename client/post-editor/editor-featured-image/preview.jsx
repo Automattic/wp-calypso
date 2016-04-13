@@ -110,7 +110,8 @@ const EditorFeaturedImagePreview = React.createClass( {
 				<ImagePreloader
 					placeholder={ placeholder }
 					src={ this.src() }
-					onLoad={ this.clearState } />
+					onLoad={ this.clearState }
+					className="editor-featured-image__preview-image" />
 			</div>
 		);
 	}
