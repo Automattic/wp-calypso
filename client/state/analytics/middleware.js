@@ -20,19 +20,21 @@ const pageViewServices = {
 
 const statBump = ( { group, name } ) => analytics.mc.bumpStat( group, name );
 
-export const dispatcher = ( { meta: { analytics: { type, payload } } } ) => {
-	const { service = 'default' } = payload;
+export const dispatcher = ( { meta: { analytics } } ) => {
+	analytics.forEach( ( { type, payload } ) => {
+		const { service = 'default' } = payload;
 
-	switch ( type ) {
-		case ANALYTICS_EVENT_RECORD:
-			return invoke( eventServices, service, payload );
+		switch ( type ) {
+			case ANALYTICS_EVENT_RECORD:
+				return invoke( eventServices, service, payload );
 
-		case ANALYTICS_PAGE_VIEW_RECORD:
-			return invoke( pageViewServices, service, payload );
+			case ANALYTICS_PAGE_VIEW_RECORD:
+				return invoke( pageViewServices, service, payload );
 
-		case ANALYTICS_STAT_BUMP:
-			return statBump( payload );
-	}
+			case ANALYTICS_STAT_BUMP:
+				return statBump( payload );
+		}
+	} )
 };
 
 export const analyticsMiddleware = () => next => action => {
