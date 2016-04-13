@@ -11,8 +11,8 @@ import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
 import page from 'page';
-import PlanCard from 'my-sites/plan-card';
-import PlanCardItem from 'my-sites/plan-card/item';
+import PlanCompareCard from 'my-sites/plan-compare-card';
+import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 import i18n from 'lib/mixins/i18n';
 import sitesList from 'lib/sites-list';
 import {
@@ -97,26 +97,26 @@ export default function( context ) {
 			</Card>
 			{ successCard ||
 				<Card compact className="plan-feature__plan-compare">
-					<PlanCard
+					<PlanCompareCard
 						className="plan-feature__plan-current"
 						title={ getPlan( planSlug ).getTitle() }
 						line={ getPlan( planSlug ).getPriceTitle() }
 						buttonName={ i18n.translate( 'Your Plan' ) }
 						currentPlan={ true } >
-						<PlanCardItem highlight={ true } >
+						<PlanCompareCardItem highlight={ true } >
 							{ currentFeatureTitle }
-						</PlanCardItem>
+						</PlanCompareCardItem>
 						{
-							featuresToShow.map( feature => <PlanCardItem
+							featuresToShow.map( feature => <PlanCompareCardItem
 									key={ feature }
 									unavailable={ ! planHasFeature( planSlug, feature ) }
 								>
 									{ getFeatureTitle( feature ) }
-								</PlanCardItem>
+								</PlanCompareCardItem>
 							)
 						}
-					</PlanCard>
-					<PlanCard
+					</PlanCompareCard>
+					<PlanCompareCard
 						className="plan-feature__plan-upgraded"
 						title={ getPlan( upgradedPlan ).getTitle() }
 						line={ getPlan( upgradedPlan ).getPriceTitle() }
@@ -124,19 +124,19 @@ export default function( context ) {
 						onClick={ checkoutPlan }
 						currentPlan={ false }
 						popularRibbon={ true } >
-						<PlanCardItem highlight={ true } >
+						<PlanCompareCardItem highlight={ true } >
 							{ getFeatureTitle( upgradedFeature ) }
-						</PlanCardItem>
+						</PlanCompareCardItem>
 						{
-							featuresToShow.map( feature => <PlanCardItem
+							featuresToShow.map( feature => <PlanCompareCardItem
 									key={ feature }
 									unavailable={ ! planHasFeature( upgradedPlan, feature ) }
 								>
 									{ getFeatureTitle( feature ) }
-								</PlanCardItem>
+								</PlanCompareCardItem>
 							)
 						}
-					</PlanCard>
+					</PlanCompareCard>
 				</Card>
 			}
 			<FeatureFooter />
