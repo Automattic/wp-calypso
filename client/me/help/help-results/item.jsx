@@ -17,8 +17,10 @@ module.exports = React.createClass( {
 
 	onClick: function( event ) {
 		if ( this.props.helpLink.disabled ) {
-			event.preventDefault();
+			return event.preventDefault();
 		}
+
+		this.props.onClick && this.props.onClick( event );
 	},
 
 	getResultIcon: function() {
