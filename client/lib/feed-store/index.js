@@ -8,8 +8,7 @@ var ActionType = require( './constants' ).action,
 	State = require( './constants' ).state,
 	Dispatcher = require( 'dispatcher' ),
 	Emitter = require( 'lib/mixins/emitter' ),
-	decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	FeedUrlCache = require( 'lib/feed-url-cache' );
+	decodeEntities = require( 'lib/formatting' ).decodeEntities;
 
 var feeds = {},
 	FeedStore = {
@@ -90,17 +89,6 @@ function receiveFeeds( newFeeds ) {
 	} ) );
 }
 
-function discoverFeeds( data, feedUrl ) {
-	if ( typeof data !== 'undefined' ) {
-		data.feeds.map( function( feed ) {
-			if ( feed.feed_ID ) {
-				FeedUrlCache.set( feedUrl, feed.feed_ID );
-				FeedStore.emit( 'change' );
-			}
-		} );
-	}
-}
-
 Emitter( FeedStore ); // eslint-disable-line new-cap
 
 FeedStore.setMaxListeners( 100 );
@@ -122,9 +110,6 @@ FeedStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 		case ActionType.RECEIVE_BULK_UPDATE:
 			receiveFeeds( action.data );
-			break;
-		case ActionType.RECEIVE_DISCOVER:
-			discoverFeeds( action.data, action.feedUrl );
 			break;
 	}
 } );

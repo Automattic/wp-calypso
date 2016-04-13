@@ -6,6 +6,7 @@ const ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	debug = require( 'debug' )( 'calypso:reader:controller' ),
 	trim = require( 'lodash/trim' ),
+	isEmpty = require( 'lodash/isEmpty' ),
 	moment = require( 'moment' ),
 	ReduxProvider = require( 'react-redux' ).Provider;
 
@@ -128,6 +129,15 @@ function renderFeedStream( context ) {
 	);
 }
 
+function renderFeedError() {
+	var FeedError = require( 'reader/feed-error' );
+
+	ReactDom.render(
+		React.createElement( FeedError ),
+		document.getElementById( 'primary' )
+	);
+}
+
 module.exports = {
 	initAbTests: function( context, next ) {
 		// spin up the ab tests that are currently active for the reader
@@ -242,25 +252,23 @@ module.exports = {
 	},
 
 	feedDiscovery: function( context, next ) {
-		var FeedStore = require( 'lib/feed-store' ),
-			FeedStoreActions = require( 'lib/feed-store/actions' ),
-			FeedError = require( 'reader/feed-error' ),
-			FeedUrlCache = require( 'lib/feed-url-cache' );
+		var FeedUrlStore = require( 'lib/feed-url-store' ),
+			FeedUrlStoreActions = require( 'lib/feed-url-store/actions' );
 
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
-			FeedStoreActions.discover( context.params.feed_id );
+			FeedUrlStoreActions.discover( context.params.feed_id, function( error, data ) {
+				if ( ! error && ! isEmpty( data.feeds ) ) {
+					FeedUrlStore.receiveFeeds( context.params.feed_id, data.feeds );
+					var feedId = FeedUrlStore.get( context.params.feed_id );
 
-			FeedStore.on( 'change', function() {
-				var feedId = FeedUrlCache.get( context.params.feed_id );
-
-				if ( feedId ) {
-					context.params.feed_id = feedId;
-					renderFeedStream( context );
-				} else if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
-					ReactDom.render(
-						React.createElement( FeedError ),
-						document.getElementById( 'primary' )
-					);
+					if ( feedId ) {
+						context.params.feed_id = feedId;
+						renderFeedStream( context );
+					} else {
+						renderFeedError();
+					}
+				} else {
+					renderFeedError();
 				}
 			} );
 		} else {
