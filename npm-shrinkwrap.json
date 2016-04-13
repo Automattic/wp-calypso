@@ -3763,13 +3763,183 @@
       "version": "2.0.1"
     },
     "webpack": {
-      "version": "1.12.6",
+      "version": "1.12.15",
       "dependencies": {
+        "clone": {
+          "version": "1.0.2"
+        },
+        "enhanced-resolve": {
+          "version": "0.9.1"
+        },
+        "interpret": {
+          "version": "0.6.6"
+        },
+        "node-libs-browser": {
+          "version": "0.5.3",
+          "dependencies": {
+            "assert": {
+              "version": "1.3.0"
+            },
+            "browserify-zlib": {
+              "version": "0.1.4",
+              "dependencies": {
+                "pako": {
+                  "version": "0.2.8"
+                }
+              }
+            },
+            "buffer": {
+              "version": "3.6.0",
+              "dependencies": {
+                "base64-js": {
+                  "version": "0.0.8"
+                },
+                "isarray": {
+                  "version": "1.0.0"
+                },
+                "ieee754": {
+                  "version": "1.1.6"
+                }
+              }
+            },
+            "console-browserify": {
+              "version": "1.1.0",
+              "dependencies": {
+                "date-now": {
+                  "version": "0.1.4"
+                }
+              }
+            },
+            "constants-browserify": {
+              "version": "0.0.1"
+            },
+            "crypto-browserify": {
+              "version": "3.2.8",
+              "dependencies": {
+                "pbkdf2-compat": {
+                  "version": "2.0.1"
+                },
+                "ripemd160": {
+                  "version": "0.2.0"
+                },
+                "sha.js": {
+                  "version": "2.2.6"
+                }
+              }
+            },
+            "domain-browser": {
+              "version": "1.1.7"
+            },
+            "http-browserify": {
+              "version": "1.7.0",
+              "dependencies": {
+                "Base64": {
+                  "version": "0.2.1"
+                }
+              }
+            },
+            "https-browserify": {
+              "version": "0.0.0"
+            },
+            "readable-stream": {
+              "version": "1.1.13"
+            },
+            "os-browserify": {
+              "version": "0.1.2"
+            },
+            "path-browserify": {
+              "version": "0.0.0"
+            },
+            "process": {
+              "version": "0.11.2"
+            },
+            "punycode": {
+              "version": "1.4.1"
+            },
+            "querystring-es3": {
+              "version": "0.2.1"
+            },
+            "stream-browserify": {
+              "version": "1.0.0",
+              "dependencies": {
+                "readable-stream": {
+                  "version": "1.1.13"
+                }
+              }
+            },
+            "timers-browserify": {
+              "version": "1.4.2"
+            },
+            "tty-browserify": {
+              "version": "0.0.0"
+            },
+            "url": {
+              "version": "0.10.3",
+              "dependencies": {
+                "querystring": {
+                  "version": "0.2.0"
+                },
+                "punycode": {
+                  "version": "1.3.2"
+                }
+              }
+            },
+            "vm-browserify": {
+              "version": "0.0.4"
+            }
+          }
+        },
+        "optimist": {
+          "version": "0.6.1",
+          "dependencies": {
+            "minimist": {
+              "version": "0.0.10"
+            }
+          }
+        },
+        "supports-color": {
+          "version": "3.1.2",
+          "dependencies": {
+            "has-flag": {
+              "version": "1.0.0"
+            }
+          }
+        },
+        "tapable": {
+          "version": "0.1.10"
+        },
+        "watchpack": {
+          "version": "0.2.9"
+        },
+        "webpack-core": {
+          "version": "0.6.8",
+          "dependencies": {
+            "source-list-map": {
+              "version": "0.1.6"
+            },
+            "source-map": {
+              "version": "0.4.4"
+            }
+          }
+        },
         "async": {
           "version": "1.5.2"
         },
         "esprima": {
           "version": "2.7.2"
+        },
+        "memory-fs": {
+          "version": "0.3.0",
+          "dependencies": {
+            "errno": {
+              "version": "0.1.4",
+              "dependencies": {
+                "prr": {
+                  "version": "0.0.0"
+                }
+              }
+            }
+          }
         }
       }
     },

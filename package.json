@@ -110,7 +110,7 @@
     "uglify-js": "2.6.1",
     "valid-url": "1.0.9",
     "walk": "2.3.4",
-    "webpack": "1.12.6",
+    "webpack": "1.12.15",
     "webpack-dev-middleware": "1.2.0",
     "wpcom": "4.9.3",
     "wpcom-proxy-request": "1.0.5",
