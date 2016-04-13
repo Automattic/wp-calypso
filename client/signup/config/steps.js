@@ -12,15 +12,6 @@ import i18n from 'lib/mixins/i18n';
 module.exports = {
 	themes: {
 		stepName: 'themes',
-		apiRequestFunction: stepActions.setThemeOnSite,
-		dependencies: [ 'siteSlug' ]
-	},
-
-	'themes-headstart': {
-		stepName: 'themes-headstart',
-		props: {
-			useHeadstart: true
-		},
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'theme' ]
 	},
@@ -81,6 +72,7 @@ module.exports = {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.addDomainItemsToCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+		dependencies: [ 'theme' ],
 		delayApiRequestUntilComplete: true
 	},
 
@@ -88,14 +80,14 @@ module.exports = {
 		stepName: 'domains-with-plan',
 		apiRequestFunction: stepActions.addDomainItemsToCartAndStartFreeTrial,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+		dependencies: [ 'theme' ],
 		delayApiRequestUntilComplete: true
 	},
 
-	'domains-with-theme': {
-		stepName: 'domains-with-theme',
+	'domains-without-theme': {
+		stepName: 'domains-without-theme',
 		apiRequestFunction: stepActions.addDomainItemsToCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-		dependencies: [ 'theme' ],
 		delayApiRequestUntilComplete: true
 	},
 

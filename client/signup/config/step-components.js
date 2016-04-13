@@ -15,7 +15,7 @@ module.exports = {
 	'design-type': DesignTypeComponent,
 	domains: DomainsStepComponent,
 	'domains-with-plan': DomainsStepComponent,
-	'domains-with-theme': DomainsStepComponent,
+	'domains-without-theme': DomainsStepComponent,
 	'jetpack-user': UserSignupComponent,
 	plans: PlansStepComponent,
 	'select-plan': PaidPlansOnly,
@@ -24,6 +24,5 @@ module.exports = {
 	'survey-user': UserSignupComponent,
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
 	themes: ThemeSelectionComponent,
-	'themes-headstart': ThemeSelectionComponent,
 	user: UserSignupComponent
 };
