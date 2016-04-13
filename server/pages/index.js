@@ -266,7 +266,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 					console.log( 'API Error: ' + errorMessage );
 
-					res.status( 500 ).render( '500.jade', context );
+					res.status( 500 ).render( '500', context );
 				}
 
 				return;
@@ -358,7 +358,7 @@ module.exports = function() {
 	} );
 
 	app.get( '/calypso/?*', function( request, response ) {
-		response.status( 404 ).render( '404.jade', {
+		response.status( 404 ).render( '404', {
 			urls: generateStaticUrls( request )
 		} );
 	} );
