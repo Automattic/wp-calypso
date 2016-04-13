@@ -62,7 +62,7 @@ export const getGuidesTourState = createSelector(
 	state => {
 		const tourState = getRawGuidesTourState( state );
 		const { stepName = '' } = tourState;
-		const stepConfig = guidesToursConfig[ stepName ] || false;
+		const stepConfig = guidesToursConfig.get()[ stepName ] || false;
 		return Object.assign( {}, tourState, { stepConfig } );
 	},
 	getRawGuidesTourState
