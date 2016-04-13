@@ -24,7 +24,7 @@ import HappinessSupport from 'components/happiness-support/docs/example';
 import ThemesListExample from 'components/themes-list/docs/example';
 import PlanStorage from 'my-sites/plan-storage/docs/example';
 import UpgradeNudge from 'my-sites/upgrade-nudge/docs/example';
-import PlanCard from 'my-sites/plan-card/docs/example';
+import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 
 export default React.createClass( {
 
@@ -70,7 +70,7 @@ export default React.createClass( {
 					<Theme />
 					<ThemesListExample />
 					<UpgradeNudge />
-					<PlanCard />
+					<PlanCompareCard />
 				</Collection>
 			</div>
 		);

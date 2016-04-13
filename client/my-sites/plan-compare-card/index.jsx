@@ -15,7 +15,7 @@ import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 
-	displayName: 'PlanCard',
+	displayName: 'PlanCompareCard',
 
 	propTypes: {
 		className: PropTypes.string,
@@ -42,31 +42,31 @@ export default React.createClass( {
 	},
 
 	render() {
-		const classes = classNames( this.props.className, 'plan-card' );
-		const buttonClasses = classNames( 'plan-card__button', {
+		const classes = classNames( this.props.className, 'plan-compare-card' );
+		const buttonClasses = classNames( 'plan-compare-card__button', {
 			'is-current': this.props.currentPlan
 		} );
 		return (
 			<div className={ classes } >
-				{ this.props.popularRibbon && <div className="plan-card__ribbon">
-					<span className="plan-card__ribbon-title">{ this.translate( 'popular' ) }</span>
+				{ this.props.popularRibbon && <div className="plan-compare-card__ribbon">
+					<span className="plan-compare-card__ribbon-title">{ this.translate( 'popular' ) }</span>
 				</div> }
-				<Card className="plan-card__header">
-					<div className="plan-card__title">{ this.props.title }</div>
-					<div className="plan-card__line">{ this.props.line }</div>
+				<Card className="plan-compare-card__header">
+					<div className="plan-compare-card__title">{ this.props.title }</div>
+					<div className="plan-compare-card__line">{ this.props.line }</div>
 				</Card>
-				<Card className="plan-card__features">
-					<ul className="plan-card__features-list">
+				<Card className="plan-compare-card__features">
+					<ul className="plan-compare-card__features-list">
 						{ this.props.children }
 					</ul>
 				</Card>
-				<Card className="plan-card__actions">
+				<Card className="plan-compare-card__actions">
 					<Button
 						className={ buttonClasses }
 						disabled={ this.props.currentPlan }
 						primary={ ! this.props.currentPlan }
 						onClick={ this.buttonClick }>
-						{ this.props.currentPlan && <Gridicon className="plan-card__button-checkmark" icon="checkmark" /> }
+						{ this.props.currentPlan && <Gridicon className="plan-compare-card__button-checkmark" icon="checkmark" /> }
 						{ this.props.buttonName }
 					</Button>
 				</Card>
