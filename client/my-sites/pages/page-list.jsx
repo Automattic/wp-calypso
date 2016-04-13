@@ -5,6 +5,8 @@ var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	omit = require( 'lodash/omit' );
 
+import get from 'lodash/get';
+
 /**
  * Internal dependencies
  */
@@ -241,11 +243,11 @@ var Pages = React.createClass({
 				this.addLoadingRows( rows, 1 );
 			}
 
-		const site = this.props.sites.getSelectedSite();
+			const site = this.props.sites.getSelectedSite();
 
-		if ( site && site.options && site.options.show_on_front === 'posts' ) {
-			rows.push( this.blogPostsPage() );
-		}
+			if ( this.props.status === 'published' && get( site, 'options.show_on_front' ) === 'posts' ) {
+				rows.push( this.blogPostsPage() );
+			}
 
 		} else if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
 			rows.push( <div key="page-list-no-results">{ this.getNoContentMessage() }</div> );
