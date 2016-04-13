@@ -75,7 +75,7 @@ export default {
 		next();
 	},
 
-	start( context ) {
+	start( context, next ) {
 		var basePath = route.sectionify( context.path ),
 			flowName = utils.getFlowName( context.params ),
 			stepName = utils.getStepName( context.params ),
@@ -83,13 +83,11 @@ export default {
 
 		analytics.pageView.record( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName );
 
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		layoutFocus.set( 'content' );
 
 		titleActions.setTitle( i18n.translate( 'Create an account' ) );
 
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
+		context.primary = React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( SignupComponent, {
 					path: context.path,
 					refParameter,
@@ -99,9 +97,13 @@ export default {
 					stepName: stepName,
 					stepSectionName: stepSectionName
 				} )
-			),
-			document.getElementById( 'primary' )
 		);
+		context.secondary = null;
+
+		// TODO: will not be necessary once we have a boot/layout middleware
+		context.focus = layoutFocus;
+
+		next();
 	},
 
 	phoneSignup( context ) {

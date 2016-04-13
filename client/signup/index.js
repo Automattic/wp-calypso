@@ -9,33 +9,46 @@ var page = require( 'page' );
 var controller = require( './controller' ),
 	jetpackConnectController = require( './jetpack-connect/controller' ),
 	adTracking = require( 'analytics/ad-tracking' ),
-	config = require( 'config' );
+	config = require( 'config' ),
+	Layout = require( 'layout' );
 
-module.exports = function() {
+import { makeLayout } from 'controller';
+
+// TODO: temporary, will be replaced with a proper boot/layout middleware
+let setLayoutComponent = function( context, next ) {
+	context.layoutComponent = Layout;
+	next();
+};
+
+module.exports = function( router ) {
 	if ( config.isEnabled( 'phone_signup' ) ) {
-		page( '/phone/:lang?', controller.phoneSignup );
+		router( '/phone/:lang?', controller.phoneSignup, setLayoutComponent, makeLayout );
 	}
 
-	page(
+	router(
 		'/start/:flowName?/:stepName?/:stepSectionName?/:lang?',
 		adTracking.retarget,
 		controller.saveRefParameter,
 		controller.saveQueryObject,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,
-		controller.start
+		controller.start,
+		setLayoutComponent,
+		makeLayout
 	);
 
 	if ( config.isEnabled( 'login' ) ) {
-		page( '/log-in/:lang?', controller.login );
+		router( '/log-in/:lang?', controller.login, setLayoutComponent, makeLayout );
 	}
 
 	if ( config.isEnabled( 'jetpack/calypso-first-signup-flow' ) ) {
-		page( '/jetpack/connect', jetpackConnectController.connect );
-		page(
+		router( '/jetpack/connect', jetpackConnectController.connect, setLayoutComponent, makeLayout );
+		router(
 			'/jetpack/connect/authorize',
 			jetpackConnectController.saveQueryObject,
-			jetpackConnectController.authorizeForm
+			jetpackConnectController.authorizeForm,
+			setLayoutComponent,
+			makeLayout
 		);
 	}
 };
