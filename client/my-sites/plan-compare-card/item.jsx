@@ -11,7 +11,7 @@ import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 
-	displayName: 'PlanCardItem',
+	displayName: 'PlanCompareCardItem',
 
 	propTypes: {
 		highlight: PropTypes.bool,
@@ -26,14 +26,14 @@ export default React.createClass( {
 	},
 
 	render() {
-		const classes = classNames( this.props.className, 'plan-card-item', {
+		const classes = classNames( this.props.className, 'plan-compare-card-item', {
 			'is-highlight': this.props.highlight,
 			'is-unavailable': this.props.unavailable
 		} );
 		const showCheckmark = this.props.highlight || ! this.props.unavailable;
 		return (
 			<li className={ classes }>
-				{ showCheckmark && <Gridicon className="grid-card-item__checkmark" size={ 18 } icon="checkmark" /> }
+				{ showCheckmark && <Gridicon className="plan-compare-card-item__checkmark" size={ 18 } icon="checkmark" /> }
 				{ this.props.children }
 			</li>
 		);

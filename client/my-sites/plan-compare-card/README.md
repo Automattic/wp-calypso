@@ -1,4 +1,4 @@
-Plan Card
+Plan Compare Card
 ==============
 
 This component is used to display a current or next plan, highlighting the features you choose.
@@ -6,50 +6,50 @@ This component is used to display a current or next plan, highlighting the featu
 #### Usage:
 
 ```javascript
-	<PlanCard
+	<PlanCompareCard
 		title="Free Plan"
 		line="Free for life"
 		buttonName="Your Plan"
 		currentPlan={ true }>
-		<PlanCardItem highlight={ true }>
+		<PlanCompareCardItem highlight={ true }>
 			3GB Space
-		</PlanCardItem>
-		<PlanCardItem unavailable={ true }>
+		</PlanCompareCardItem>
+		<PlanCompareCardItem unavailable={ true }>
 			Custom Domain
-		</PlanCardItem>
-		<PlanCardItem unavailable={ true }>
+		</PlanCompareCardItem>
+		<PlanCompareCardItem unavailable={ true }>
 			No Ads
-		</PlanCardItem>
-		<PlanCardItem unavailable={ true }>
+		</PlanCompareCardItem>
+		<PlanCompareCardItem unavailable={ true }>
 			Custom Design
-		</PlanCardItem>
-		<PlanCardItem unavailable={ true }>
+		</PlanCompareCardItem>
+		<PlanCompareCardItem unavailable={ true }>
 			VideoPress
-		</PlanCardItem>
-	</PlanCard>
+		</PlanCompareCardItem>
+	</PlanCompareCard>
 	
-	<PlanCard
+	<PlanCompareCard
 		title="Premium"
 		line="$99 per year"
 		buttonName="Upgrade"
 		currentPlan={ false }
 		popularRibbon={ true }>
-		<PlanCardItem highlight={ true }>
+		<PlanCompareCardItem highlight={ true }>
 			13GB Space
-		</PlanCardItem>
-		<PlanCardItem>
+		</PlanCompareCardItem>
+		<PlanCompareCardItem>
 			Custom Domain
-		</PlanCardItem>
-		<PlanCardItem>
+		</PlanCompareCardItem>
+		<PlanCompareCardItem>
 			No Ads
-		</PlanCardItem>
-		<PlanCardItem>
+		</PlanCompareCardItem>
+		<PlanCompareCardItem>
 			Custom Design
-		</PlanCardItem>
-		<PlanCardItem>
+		</PlanCompareCardItem>
+		<PlanCompareCardItem>
 			VideoPress
-		</PlanCardItem>
-	</PlanCard>
+		</PlanCompareCardItem>
+	</PlanCompareCard>
 }
 ```
 
