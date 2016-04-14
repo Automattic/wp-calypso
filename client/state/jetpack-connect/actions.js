@@ -20,6 +20,7 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT
 } from 'state/action-types';
+import userFactory from 'lib/user';
 
 /**
  *  Local variables;
@@ -27,6 +28,7 @@ import {
 let _fetching = {};
 const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 const installURL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
+const userModule = userFactory();
 
 export default {
 	dismissUrl( url ) {
@@ -127,7 +129,7 @@ export default {
 	authorize( queryObject ) {
 		return ( dispatch ) => {
 			const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
-			debug( 'Authorizing', _wp_nonce, redirect_uri, scope, state );
+			debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
 			tracks.recordEvent( 'jetpack_connect_authorize' );
 			dispatch( {
 				type: JETPACK_CONNECT_AUTHORIZE,
@@ -135,19 +137,24 @@ export default {
 			} );
 			wpcom.undocumented().jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state )
 			.then( ( data ) => {
+				debug( 'Jetpack login complete. Trying Jetpack authorize.', data );
 				return wpcom.undocumented().jetpackAuthorize( client_id, data.code, state, redirect_uri, secret );
 			} )
 			.then( ( data ) => {
 				tracks.recordEvent( 'jetpack_connect_authorize_success' );
+				debug( 'Jetpack authorize complete. Updating sites list.', data );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 					siteId: client_id,
 					data: data,
 					error: null
 				} );
+				// Update the user now that we are fully connected.
+				userModule.fetch();
 				return wpcom.me().sites( { site_visibility: 'all' } );
 			} )
 			.then( ( data ) => {
+				debug( 'Sites list updated!', data );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 					data: data

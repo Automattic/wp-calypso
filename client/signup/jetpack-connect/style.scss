@@ -69,3 +69,24 @@
 	}
 
 }
+
+.jetpack-connect__authorize-form {
+	.jetpack-connect__authorize-form-header {
+		text-align: center;
+	}
+}
+
+.jetpack-connect-logged-in-form {
+	.jetpack-connect-logged-in-form__user-text {
+		text-align: center;
+	}
+
+	.gravatar {
+		display: block;
+		margin: 0 auto 8px auto;
+	}
+
+	.button {
+		width: 100%;
+	}
+}
