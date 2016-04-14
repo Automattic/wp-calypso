@@ -229,11 +229,6 @@ module.exports = {
 		next();
 	},
 
-	removeOverlay: function( context, next ) {
-		ReactDom.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
-		next();
-	},
-
 	jetPackWarning: function( context, next ) {
 		var Main = require( 'components/main' ),
 			JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' ),
