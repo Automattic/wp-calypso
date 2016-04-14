@@ -1,5 +1,9 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import has from 'lodash/has';
 import noop from 'lodash/noop';
+
+import { recordTracksEvent } from 'state/analytics/actions';
 
 import Gridicon from 'components/gridicon';
 
@@ -38,4 +42,10 @@ PremiumPlugin.propTypes = {
 	description: PropTypes.string.isRequired
 };
 
-export default PremiumPlugin;
+const mapDispatchToProps = ( dispatch, props ) => ( {
+	onClick: has( props, 'onClick' )
+		? props.onClick
+		: () => dispatch( recordTracksEvent( 'wpcom_plugin_clicked', props.name ) )
+} );
+
+export default connect( null, mapDispatchToProps )( PremiumPlugin );
