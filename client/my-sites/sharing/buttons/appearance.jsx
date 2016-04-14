@@ -9,7 +9,7 @@ var React = require( 'react' );
 var ButtonsPreview = require( './preview' ),
 	ButtonsPreviewPlaceholder = require( './preview-placeholder' ),
 	ButtonsStyle = require( './style' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsAppearance',

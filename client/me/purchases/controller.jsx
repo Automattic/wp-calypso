@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import CancelPrivateRegistration from './cancel-private-registration';
 import CancelPurchase from './cancel-purchase';
 import CancelPurchaseLoadingPlaceholder from './cancel-purchase/loading-placeholder';

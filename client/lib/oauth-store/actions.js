@@ -9,7 +9,7 @@ import request from 'superagent';
 import Dispatcher from 'dispatcher';
 import { actions } from './constants';
 import { errors as errorTypes } from './constants';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 export function login( username, password, auth_code ) {
 	Dispatcher.handleViewAction( {

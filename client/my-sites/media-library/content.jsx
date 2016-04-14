@@ -15,7 +15,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import TrackComponentView from 'analytics/track-component-view';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';

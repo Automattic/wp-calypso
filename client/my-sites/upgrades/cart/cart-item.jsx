@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	canRemoveFromCart = require( 'lib/cart-values' ).canRemoveFromCart,
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	getIncludedDomain = cartItems.getIncludedDomain,

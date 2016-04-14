@@ -7,7 +7,7 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';

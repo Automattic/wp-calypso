@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var productsList = require( 'lib/products-list' )(),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	featuresList = require( 'lib/features-list' )(),
 	plansList = require( 'lib/plans-list' )(),
 	PlanList = require( 'components/plans/plan-list' ),

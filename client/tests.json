@@ -1,10 +1,4 @@
 {
-	"analytics": {
-		"page-view-tracker" : {
-			"test": [ "index" ]
-		},
-		"test": [ "index" ]
-	},
 	"components": {
 		"count": {
 			"test": [ "index" ]
@@ -92,6 +86,12 @@
 		"test": [ "doc" ]
 	},
 	"lib": {
+		"analytics": {
+			"page-view-tracker" : {
+				"test": [ "index" ]
+			},
+			"test": [ "index" ]
+		},
 		"accept": {
 			"test": [ "index" ]
 		},

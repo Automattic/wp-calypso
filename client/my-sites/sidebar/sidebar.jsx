@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	classNames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:my-sites:sidebar' ),
 	has = require( 'lodash/has' ),

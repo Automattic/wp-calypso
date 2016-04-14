@@ -5,7 +5,7 @@ import { mount } from 'enzyme';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
-import PageViewTracker from 'analytics/page-view-tracker/component';
+import PageViewTracker from 'lib/analytics/page-view-tracker/component';
 
 describe( 'PageViewTracker', () => {
 	let clock;

@@ -8,7 +8,7 @@ import noop from 'lodash/noop';
  * Internal dependencies
  */
 import config from 'config';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import PostEditStore from 'lib/posts/post-edit-store';
 import utils from 'lib/posts/utils';
 import SitesList from 'lib/sites-list';

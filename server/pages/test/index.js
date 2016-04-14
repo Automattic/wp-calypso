@@ -18,7 +18,7 @@ describe( 'index', function() {
 		useMockery();
 
 		before( function() {
-			mockery.registerMock( 'analytics', noop );
+			mockery.registerMock( 'lib/analytics', noop );
 
 			const LayoutLoggedOut = require( 'layout/logged-out' );
 			this.LayoutLoggedOutFactory = React.createFactory( LayoutLoggedOut );

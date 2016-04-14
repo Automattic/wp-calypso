@@ -16,7 +16,7 @@ import SectionHeader from 'components/section-header';
 import config from 'config';
 import protectForm from 'lib/mixins/protect-form';
 import notices from 'notices';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
 import Gridicon from 'components/gridicon';
 import FormInput from 'components/forms/form-text-input';

@@ -8,7 +8,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	StoredCard = require( './stored-card' ),
 	NewCardForm = require( './new-card-form' ),
 	storeTransactions = require( 'lib/store-transactions' ),

@@ -12,7 +12,7 @@ import classNames from 'classnames';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 export default React.createClass( {

@@ -14,7 +14,7 @@ import HelpResults from 'me/help/help-results';
 import NoResults from 'my-sites/no-results';
 import SearchCard from 'components/search-card';
 import CompactCard from 'components/card/compact';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
 	displayName: 'HelpSearch',

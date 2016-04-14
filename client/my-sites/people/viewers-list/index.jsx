@@ -15,7 +15,7 @@ var PeopleListItem = require( 'my-sites/people/people-list-item' ),
 	InfiniteList = require( 'components/infinite-list' ),
 	ViewersData = require( 'components/data/viewers-data' ),
 	EmptyContent = require( 'components/empty-content' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	accept = require( 'lib/accept' );
 
 let Viewers = React.createClass( {

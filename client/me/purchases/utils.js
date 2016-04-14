@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import paths from './paths';
 
 function getPurchase( props ) {

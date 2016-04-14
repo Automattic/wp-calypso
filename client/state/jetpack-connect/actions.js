@@ -7,7 +7,7 @@ const debug = require( 'debug' )( 'calypso:jetpack-connect:actions' );
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { tracks } from 'analytics';
+import { tracks } from 'lib/analytics';
 import Dispatcher from 'dispatcher';
 import {
 	JETPACK_CONNECT_CHECK_URL,

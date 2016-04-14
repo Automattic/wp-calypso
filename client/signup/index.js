@@ -8,7 +8,7 @@ var page = require( 'page' );
  */
 var controller = require( './controller' ),
 	jetpackConnectController = require( './jetpack-connect/controller' ),
-	adTracking = require( 'analytics/ad-tracking' ),
+	adTracking = require( 'lib/analytics/ad-tracking' ),
 	config = require( 'config' );
 
 module.exports = function() {
