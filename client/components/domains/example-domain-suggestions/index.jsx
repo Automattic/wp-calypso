@@ -10,7 +10,7 @@ import classNames from 'classnames';
  */
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 import { abtest } from 'lib/abtest';
 

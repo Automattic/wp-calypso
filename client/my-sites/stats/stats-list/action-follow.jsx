@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var observe = require( 'lib/mixins/data-observe' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {

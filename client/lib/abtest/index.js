@@ -12,7 +12,7 @@ var debug = require( 'debug' )( 'calypso:abtests' ),
  * Internal dependencies
  */
 var activeTests = require( './active-tests' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	user = require( 'lib/user' )(),
 	wpcom = require( 'lib/wp' ),

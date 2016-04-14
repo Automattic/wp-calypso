@@ -8,7 +8,7 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' );
+var analytics = require( 'lib/analytics' );
 
 var MenuName = React.createClass({
 

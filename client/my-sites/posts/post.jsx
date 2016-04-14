@@ -18,7 +18,7 @@ var Card = require( 'components/card' ),
 	PostTotalViews = require( 'my-sites/posts/post-total-views' ),
 	utils = require( 'lib/posts/utils' ),
 	updatePostStatus = require( 'lib/mixins/update-post-status' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Posts', eventAction );

@@ -10,7 +10,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
 	scrollIntoViewport = require( 'lib/scroll-into-viewport' ),

@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Button from 'components/button';
 import { cancelAndRefundPurchase, cancelPurchase } from 'lib/upgrades/actions';
 import { connect } from 'react-redux';

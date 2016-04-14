@@ -18,7 +18,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 
 const PublishMenu = React.createClass( {

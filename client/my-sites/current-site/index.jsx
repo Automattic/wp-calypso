@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var AllSites = require( 'my-sites/all-sites' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	Button = require( 'components/button' ),
 	Card = require( 'components/card' ),
 	Notice = require( 'components/notice' ),

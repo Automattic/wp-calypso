@@ -8,7 +8,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Card from 'components/card';
 import CommentTab from './comment-tab';
 import StatsErrorPanel from '../stats-error';

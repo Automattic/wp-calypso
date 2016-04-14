@@ -10,7 +10,7 @@ var PluginsActions = require( 'lib/plugins/actions' ),
 	PluginsLog = require( 'lib/plugins/log-store' ),
 	PluginAction = require( 'my-sites/plugins/plugin-action/plugin-action' ),
 	DisconnectJetpackButton = require( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 

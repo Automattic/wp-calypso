@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Button from 'components/button';
 import Card from 'components/card';
 import { cartItems } from 'lib/cart-values';

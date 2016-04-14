@@ -20,7 +20,7 @@ import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
 import notices from 'notices';
 import siteList from 'lib/sites-list';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 /**
  * Module variables

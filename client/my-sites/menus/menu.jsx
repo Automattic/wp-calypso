@@ -14,7 +14,7 @@ var protectForm = require( 'lib/mixins/protect-form' ),
 	MenuItemList = require( './menu-item-list' ),
 	MenuDeleteButton = require ( './menu-delete-button' ),
 	MenuSaveButton = require( './menus-save-button' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 /**
  * Renders one menu

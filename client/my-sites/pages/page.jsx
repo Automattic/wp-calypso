@@ -16,7 +16,7 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	SiteIcon = require( 'components/site-icon' ),
 	helpers = require( './helpers' ),
 	i18n = require( 'lib/mixins/i18n' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	utils = require( 'lib/posts/utils' );
 
 function recordEvent( eventAction ) {

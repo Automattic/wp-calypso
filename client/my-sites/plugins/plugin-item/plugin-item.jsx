@@ -17,7 +17,7 @@ var CompactCard = require( 'components/card/compact' ),
 	Count = require( 'components/count' ),
 	Notice = require( 'components/notice' ),
 	PluginNotices = require( 'lib/plugins/notices' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 

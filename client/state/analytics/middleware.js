@@ -1,4 +1,4 @@
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import has from 'lodash/has';
 import invoke from 'lodash/invoke';
 

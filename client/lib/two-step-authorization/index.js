@@ -12,7 +12,7 @@ var emitter = require( 'lib/mixins/emitter' ),
 	applicationPasswords = require( 'lib/application-passwords-data' ),
 	connectedApplications = require( 'lib/connected-applications-data' ),
 	profileLinks = require( 'lib/user-profile-links' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 /*
  * Initialize TwoStepAuthorization with defaults

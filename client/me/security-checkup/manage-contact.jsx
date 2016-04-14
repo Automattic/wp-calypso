@@ -10,7 +10,7 @@ var React = require( 'react' ),
  */
 var FormButton = require( 'components/forms/form-button' ),
 	Notice = require( 'components/notice' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 var views = keyMirror( {
 	VIEWING: null,

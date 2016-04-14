@@ -12,7 +12,7 @@ const controller = require( 'my-sites/controller' ),
 	SiftScience = require( 'lib/siftscience' ),
 	config = require( 'config' ),
 	paths = require( './paths' ),
-	adTracking = require( 'analytics/ad-tracking' );
+	adTracking = require( 'lib/analytics/ad-tracking' );
 
 function registerMultiPage( { paths, handlers } ) {
 	paths.forEach( path => page( path, ...handlers ) );
