@@ -7,7 +7,7 @@ Use this component to automatically record page views when they are loaded. Ther
 ### Immediate Page View Tracking
 
 ```js
-import PageViewTracker from 'analytics/page-view-tracker';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 render() {
     return (
