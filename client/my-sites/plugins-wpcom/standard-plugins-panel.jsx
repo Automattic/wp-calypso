@@ -14,7 +14,7 @@ export const StandardPluginsPanel = React.createClass( {
 			displayCount,
 			plugins: givenPlugins = standardPlugins
 		} = this.props;
-		
+
 		const plugins = givenPlugins.slice( 0, displayCount );
 
 		return (
@@ -26,9 +26,9 @@ export const StandardPluginsPanel = React.createClass( {
 				</SectionHeader>
 				<CompactCard className="wpcom-plugins__standard-panel">
 					<div className="wpcom-plugins__list">
-						{ plugins.map( ( { name, supportLink, icon, category, description } ) =>
+						{ plugins.map( ( { name, descriptionLink, icon, category, description } ) =>
 							<StandardPlugin
-								{ ...{ name, key: name, supportLink, icon, category, description } }
+								{ ...{ name, key: name, descriptionLink, icon, category, description } }
 							/>
 						) }
 					</div>

@@ -13,7 +13,7 @@ data = {
     {
       name: // String
       icon: // Gridicon slug
-      supportLink: // URL
+      descriptionLink: // URL
       category: // String classifying type of plugin functionality
       description: // React element or string description of plugin
     }
@@ -22,7 +22,7 @@ data = {
     {
       name: // String
       plan: // String - indicates on which plan this plugin becomes available
-      supportLink: // URL
+      descriptionLink: // URL
       description: // React element or string description of plugin
       isActivated: // bool  
     }
@@ -31,7 +31,7 @@ data = {
     {
       name: // String
       plan: // String - indicates on which plan this plugin becomes available
-      supportLink: // URL
+      descriptionLink: // URL
       description: // React element or string description of plugin
       isActivated: // bool  
     }
