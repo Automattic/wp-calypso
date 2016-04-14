@@ -6,16 +6,11 @@ import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 
 import StandardPlugin from './plugin-types/standard-plugin';
-import standardPlugins from './standard-plugins';
 
 export const StandardPluginsPanel = React.createClass( {
 	render() {
-		const {
-			displayCount,
-			plugins: givenPlugins = standardPlugins
-		} = this.props;
-
-		const plugins = givenPlugins.slice( 0, displayCount );
+		const { displayCount, plugins } = this.props;
+		const shownPlugins = plugins.slice( 0, displayCount );
 
 		return (
 			<div>
@@ -24,9 +19,10 @@ export const StandardPluginsPanel = React.createClass( {
 						<Gridicon icon="checkmark" />{ this.translate( 'Active' ) }
 					</Button>
 				</SectionHeader>
+
 				<CompactCard className="wpcom-plugins__standard-panel">
 					<div className="wpcom-plugins__list">
-						{ plugins.map( ( { name, descriptionLink, icon, category, description } ) =>
+						{ shownPlugins.map( ( { name, descriptionLink, icon, category, description } ) =>
 							<StandardPlugin
 								{ ...{ name, key: name, descriptionLink, icon, category, description } }
 							/>

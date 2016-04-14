@@ -15,6 +15,7 @@ export const BusinessPluginsPanel = React.createClass( {
 				<SectionHeader label={ this.translate( 'Business Plan Upgrades' ) }>
 					<Button compact primary>{ this.translate( 'Purchase' ) }</Button>
 				</SectionHeader>
+
 				<Card className="wpcom-plugins__business-panel is-disabled">
 					<div className="wpcom-plugins__list">
 						{ plugins.map( ( { name, descriptionLink, icon, plan, description } ) =>
