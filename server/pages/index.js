@@ -12,7 +12,7 @@ var config = require( 'config' ),
 	utils = require( 'bundler/utils' ),
 	sectionsModule = require( '../../client/sections' ),
 	serverRouter = require( 'isomorphic-routing' ).serverRouter,
-	serverRender = require( 'server/render' ).serverRender;
+	serverRender = require( 'render' ).serverRender;
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
