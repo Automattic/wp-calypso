@@ -44,6 +44,9 @@ export function jetpackConnectSite( state = {}, action ) {
 				return Object.assign( {}, state, { isRedirecting: true } );
 			}
 			return state;
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
 	}
 	return state;
 }
