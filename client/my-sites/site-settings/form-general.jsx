@@ -26,6 +26,7 @@ import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import TimezoneDropdown from 'components/timezone-dropdown';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 module.exports = React.createClass( {
 
@@ -182,7 +183,10 @@ module.exports = React.createClass( {
 
 		return (
 			<FormFieldset className="has-divider">
-				<FormLabel htmlFor="blogaddress">{ this.translate( 'Site Address' ) }</FormLabel>
+				<FormLabel htmlFor="blogaddress">
+					{ this.translate( 'Site Address' ) }
+				</FormLabel>
+
 				<div className="blogaddress-settings">
 					<FormInput
 						name="blogaddress"
@@ -193,6 +197,7 @@ module.exports = React.createClass( {
 					{ customAddress }
 				</div>
 				{ addressDescription }
+				{ this.renderDomainNudge() }
 			</FormFieldset>
 		);
 	},
@@ -418,6 +423,17 @@ module.exports = React.createClass( {
 					{ this.translate( 'Choose a city in your timezone.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
+		);
+	},
+
+	renderDomainNudge() {
+		return (
+			<UpgradeNudge
+				title={ this.translate( 'Add A Custom Domain' ) }
+				message={ this.translate( 'Upgrade now and get a free custom domain.' ) }
+				href={ `/domains/manage/${ this.props.site.slug }` }
+				icon="star"
+			/>
 		);
 	},
 
