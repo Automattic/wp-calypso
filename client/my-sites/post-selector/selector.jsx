@@ -14,7 +14,7 @@ import get from 'lodash/get';
  * Internal dependencies
  */
 import NoResults from './no-results';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Search from './search';
 import { decodeEntities } from 'lib/formatting';
 import {

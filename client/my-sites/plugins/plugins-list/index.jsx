@@ -12,7 +12,7 @@ import range from 'lodash/range';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import acceptDialog from 'lib/accept';
 import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';

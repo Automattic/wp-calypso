@@ -13,7 +13,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import TrackComponentView from 'analytics/track-component-view';
 import { Views as ModalViews } from './constants';
 import PopoverMenu from 'components/popover/menu';

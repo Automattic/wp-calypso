@@ -8,7 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var	FormButton = require( 'components/forms/form-button' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	FormButtonBar = require( 'components/forms/form-buttons-bar' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),

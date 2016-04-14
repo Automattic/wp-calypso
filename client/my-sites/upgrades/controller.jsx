@@ -8,7 +8,7 @@ var page = require( 'page' ),
 /**
  * Internal Dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
 	i18n = require( 'lib/mixins/i18n' ),

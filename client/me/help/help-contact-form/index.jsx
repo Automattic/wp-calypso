@@ -9,7 +9,7 @@ import isEqual from 'lodash/isEqual';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import FormLabel from 'components/forms/form-label';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';

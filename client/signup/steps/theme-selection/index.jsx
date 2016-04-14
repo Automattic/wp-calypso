@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	SignupActions = require( 'lib/signup/actions' ),
 	ThemesList = require( 'components/themes-list' ),
 	StepWrapper = require( 'signup/step-wrapper' ),

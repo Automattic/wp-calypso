@@ -15,7 +15,7 @@ import sitesList from 'lib/sites-list';
 import PeopleList from './main';
 import EditTeamMember from './edit-team-member-form';
 import layoutFocus from 'lib/layout-focus';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import UsersStore from 'lib/users/store';
 import UsersActions from 'lib/users/actions';

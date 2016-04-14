@@ -4,7 +4,7 @@
 import React from 'react';
 import Gridicon from 'components/gridicon';
 
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import store from 'store';
 import userUtils from 'lib/user/utils';
 import viewport from 'lib/viewport';

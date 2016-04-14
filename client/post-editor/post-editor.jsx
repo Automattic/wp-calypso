@@ -43,7 +43,7 @@ const actions = require( 'lib/posts/actions' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	EditorPreview = require( './editor-preview' ),
 	stats = require( 'lib/posts/stats' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 import {
 	setContent,

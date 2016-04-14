@@ -9,7 +9,7 @@ import { Provider } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import DnsData from 'components/data/domain-management/dns' ;
 import DomainManagement from './domain-management';
 import DomainManagementData from 'components/data/domain-management';

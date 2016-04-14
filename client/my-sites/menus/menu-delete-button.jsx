@@ -8,7 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var siteMenus = require( 'lib/menu-data' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	notices = require( 'notices' );
 
 var MenuDeleteButton = React.createClass( {

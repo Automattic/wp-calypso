@@ -6,7 +6,7 @@ var debug = require( 'debug' )( 'calypso:my-sites:plugins:actions' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	Dispatcher = require( 'dispatcher' ),
 	utils = require( 'lib/site/utils' ),
 	wpcom = require( 'lib/wp' ).undocumented();

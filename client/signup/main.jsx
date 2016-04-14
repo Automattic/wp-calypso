@@ -33,7 +33,7 @@ import flows from './config/flows';
 import WpcomLoginForm from './wpcom-login-form';
 import userModule from 'lib/user';
 const user = userModule();
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import SignupProcessingScreen from 'signup/processing-screen';
 import utils from './utils';
 import * as oauthToken from 'lib/oauth-token';

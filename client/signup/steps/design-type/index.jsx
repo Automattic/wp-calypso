@@ -8,7 +8,7 @@ import React from 'react';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import getThemes from './themes-map';
 import Card from 'components/card';
 

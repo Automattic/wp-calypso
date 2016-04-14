@@ -10,7 +10,7 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	MediaActions = require( 'lib/media/actions' ),
 	ClipboardButtonInput = require( 'components/clipboard-button-input' ),

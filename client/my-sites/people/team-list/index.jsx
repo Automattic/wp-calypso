@@ -15,7 +15,7 @@ var Card = require( 'components/card' ),
 	InfiniteList = require( 'components/infinite-list' ),
 	deterministicStringify = require( 'lib/deterministic-stringify' ),
 	NoResults = require( 'my-sites/no-results' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' );
 
 /**

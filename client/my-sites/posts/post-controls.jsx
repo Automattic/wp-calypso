@@ -11,7 +11,7 @@ var React = require( 'react' ),
 var config = require( 'config' ),
 	utils = require( 'lib/posts/utils' ),
 	Gridicon = require( 'components/gridicon'),
-	recordEvent = require( 'analytics' ).ga.recordEvent;
+	recordEvent = require( 'lib/analytics' ).ga.recordEvent;
 
 module.exports = React.createClass( {
 	displayName: 'PostControls',
