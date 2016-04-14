@@ -99,13 +99,11 @@
 }
 
 // specificity for general `a` elements within notice is too great
-.notice a.notice__action {
+a.notice__action {
 	display: flex;
 		align-items: center;
 		flex-shrink: 0;
-	background: rgba( 0, 0, 0, 0.2 );
 	box-sizing: border-box;
-	color: $white;
 	cursor: pointer;
 	font-size: 15px;
 	font-weight: 400;
@@ -113,6 +111,14 @@
 	padding: 13px 16px;
 	text-decoration: none;
 	white-space: nowrap;
+
+	.is-success &,
+	.is-error &,
+	.is-warning &,
+	.is-info & {
+		background: rgba( 0, 0, 0, 0.2 );
+		color: $white;
+	}
 
 	.gridicon {
 		margin-left: 8px;
