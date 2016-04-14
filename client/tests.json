@@ -280,6 +280,9 @@
 		"posts": {
 			"test": [ "actions", "post-edit-store", "post-list-store", "utils" ]
 		},
+		"preferences": {
+			"test": [ "actions", "store" ]
+		},
 		"purchases": {
 			"stored-cards": {
 				"test": [ "assembler", "store" ]
