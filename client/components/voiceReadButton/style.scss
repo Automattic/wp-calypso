@@ -1,0 +1,39 @@
+.voice-read-button {
+	color: lighten( $gray, 10 );
+	list-style-type: none;
+	padding: 4px 4px 4px 27px;
+	position: relative;
+
+	&:hover {
+		color: $blue-light;
+		cursor: pointer;
+	}
+
+	.voice-read-button__label-count {
+		margin-right: 4px;
+	}
+
+	.voice-read-button__label-status {
+
+		@include breakpoint( "<480px" ) {
+			display: none;
+		}
+	}
+}
+
+.voice-read-button__icon {
+	fill: lighten( $gray, 10% );
+	position: absolute;
+		left: 0;
+		top: 3px;
+
+	&:hover {
+		fill: $blue-light;
+	}
+}
+
+.voice-read-button__icon_unicode {
+	font-size: 18px;
+	top: -1px;
+	left: 4px;
+}

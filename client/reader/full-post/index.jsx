@@ -49,7 +49,8 @@ var CommentButton = require( 'components/comment-button' ),
 	DiscoverVisitLink = require( 'reader/discover/visit-link' ),
 	readerRoute = require( 'reader/route' ),
 	showReaderFullPost = require( 'state/ui/reader/fullpost/actions' ).showReaderFullPost,
-	smartSetState = require( 'lib/react-smart-set-state' );
+	smartSetState = require( 'lib/react-smart-set-state' ),
+	VoiceReadButton = require( 'components/voiceReadButton' );
 
 import PostExcerpt from 'components/post-excerpt';
 
@@ -314,6 +315,8 @@ FullPostDialog = React.createClass( {
 			if ( shouldShowLikes ) {
 				buttons.push( <LikeButton key="like-button" siteId={ post.site_ID } postId={ post.ID } tagName="div" forceCounter={ true } /> );
 			}
+
+			buttons.push( <VoiceReadButton key="voiceReadButton" tagName="div" post={ post } /> );
 
 			if ( shouldShowComments ) {
 				buttons.push( <CommentButton key="comment-button" commentCount={ this.props.commentCount } onClick={ this.handleCommentButtonClick } tagName="div" /> );

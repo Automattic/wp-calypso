@@ -51,7 +51,8 @@ const
 	FeedPostStore = require( 'lib/feed-post-store' ),
 	FeedPostStoreActions = require( 'lib/feed-post-store/actions' ),
 	Gridicon = require( 'components/gridicon' ),
-	smartSetState = require( 'lib/react-smart-set-state' );
+	smartSetState = require( 'lib/react-smart-set-state' ),
+	VoiceReadButton = require( 'components/voiceReadButton' );
 
 const Post = React.createClass( {
 
@@ -450,6 +451,7 @@ const Post = React.createClass( {
 
 				<ul className="reader__post-footer">
 					<PostPermalink siteName={ siteName } postUrl={ post.URL } />
+					<VoiceReadButton post={ post } />
 					{ ( shouldShowShare ) ? <Share post={ post } /> : null }
 					{ ( shouldShowComments ) ? <CommentButton onClick={ this.handleCommentButtonClick } commentCount={ commentCount } /> : null }
 					{ ( shouldShowLikes ) ? <LikeButton siteId={ likeSiteId } postId={ likePostId } onLikeToggle={ this.maybeMarkPostSeen } /> : null }
