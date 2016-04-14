@@ -13,7 +13,7 @@ var SSR_READY = '/** @ssr-ready **/';
 var IGNORED_MODULES = [
 	'config', // Different modules on client & server
 	'lib/wp', // Different modules on client & server
-	'analytics', // nooped on the server until we develop an isomorphic version
+	'lib/analytics', // nooped on the server until we develop an isomorphic version
 	'lib/route', // nooped on the server until we can extract the isomorphic bits
 	'lib/upgrades/actions', // nooped on the server as it still uses the singleton Flux architecture
 	'lib/mixins/i18n', // ignore this until we make it work properly on the server
