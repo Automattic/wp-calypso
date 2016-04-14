@@ -154,7 +154,6 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	render() {
-		window.bbb = this;
 		const status = this.getStatus();
 		return (
 			<Main className="jetpack-connect">
