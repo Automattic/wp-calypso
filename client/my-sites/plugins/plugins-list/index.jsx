@@ -43,7 +43,7 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			disconnectJetpackDialog: false,
-			bulkManagement: false,
+			bulkManagementActive: false,
 			selectedPlugins: {}
 		};
 	},
@@ -128,17 +128,17 @@ export default React.createClass( {
 
 	// Actions
 	toggleBulkManagement() {
-		const bulkManagement = ! this.state.bulkManagement;
+		const activateBulkManagement = ! this.state.bulkManagementActive;
 
-		if ( bulkManagement ) {
+		if ( activateBulkManagement ) {
 			this.setBulkSelectionState( this.props.plugins, true );
-			this.setState( { bulkManagement } );
-			return this.recordEvent( 'Clicked Manage' );
+			this.setState( { bulkManagementActive: true } );
+			this.recordEvent( 'Clicked Manage' );
+		} else {
+			this.setState( { bulkManagementActive: false } );
+			this.removePluginsNotices();
+			this.recordEvent( 'Clicked Manage Done' );
 		}
-
-		this.setState( { bulkManagement } );
-		this.removePluginsNotices();
-		this.recordEvent( 'Clicked Manage Done' );
 	},
 
 	removePluginsNotices() {
@@ -319,7 +319,7 @@ export default React.createClass( {
 	// Renders
 	render() {
 		const itemListClasses = classNames( 'list-cards-compact', 'plugins-list', {
-			'is-bulk-editing': this.state.bulkManagement
+			'is-bulk-editing': this.state.bulkManagementActive
 		} );
 
 		if ( this.props.isPlaceholder ) {
@@ -338,7 +338,7 @@ export default React.createClass( {
 		return (
 			<div className="plugins-list" >
 				<PluginsListHeader label={ this.props.header }
-					isBulkManagementActive={ !! this.state.bulkManagement }
+					isBulkManagementActive={ this.state.bulkManagementActive }
 					sites={ this.props.sites }
 					plugins={ this.props.plugins }
 					selected={ this.getSelected() }
@@ -374,7 +374,7 @@ export default React.createClass( {
 				errors={ this.state.notices.errors.filter( log => log.plugin && log.plugin.slug === plugin.slug ) }
 				notices={ this.state.notices }
 				isSelected={ this.isSelected( plugin ) }
-				isSelectable={ this.state.bulkManagement }
+				isSelectable={ this.state.bulkManagementActive }
 				onClick={ selectThisPlugin }
 				selectedSite={ this.props.selectedSite }
 				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() } />
