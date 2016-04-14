@@ -9,11 +9,10 @@ import page from 'page';
  */
 import meController from 'me/controller';
 import controller from './controller';
-import removeOverlay from 'lib/remove-overlay';
 
 export default function() {
 	if ( config.isEnabled( 'me/billing-history' ) ) {
-		page( '/me/billing', removeOverlay, meController.sidebar, controller.billingHistory );
-		page( '/me/billing/:transaction_id', meController.sidebar, controller.billingHistory );
+		page( '/me/billing', meController.sidebar, controller.billingHistory );
+		page( '/me/billing/:transaction_id', meController.sidebar, controller.transaction );
 	}
 };

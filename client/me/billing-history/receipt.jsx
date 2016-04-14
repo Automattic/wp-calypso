@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	closest = require( 'component-closest' ),
 	defer = require( 'lodash/defer' ),
 	titleCase = require( 'to-title-case' );
 
@@ -11,87 +10,59 @@ var React = require( 'react' ),
  */
 var tableRows = require( './table-rows' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	Overlay = require( 'components/overlay' ),
 	eventRecorder = require( 'me/event-recorder' );
 
+import Card from 'components/card';
+import Main from 'components/main';
+import HeaderCake from 'components/header-cake';
+
 module.exports = React.createClass( {
-	displayName: 'ViewReceiptModal',
+	displayName: 'BillingReceipt',
 
 	mixins: [ observe( 'billingData' ), eventRecorder ],
 
 	render: function() {
-		var transaction = this.props.transaction,
-			secondary = {
-				title: this.translate( 'Close' ),
-				defaultBack: '/me/billing'
-			};
+		const transaction = this.props.transaction;
+		const title = this.translate( 'Visit %(url)s', { args: { url: transaction.url } } );
+		const serviceLink = <a href={ transaction.url } title={ title }/>;
 
 		return (
-			<div className="wp-overlay fade-background">
-				<Overlay primary={ false } secondary={ secondary } hideSelectedSite={ true }>
-					{ this.renderContent( transaction ) }
-				</Overlay>
-			</div>
-		);
-	},
-
-	close: function() {
-		defer( this.props.onClose );
-	},
-
-	closeOutside: function( event ) {
-		if ( closest( event.target, '.nd-modal' ) && event.target.tagName !== 'A' ) {
-			event.preventDefault();
-		}
-
-		this.close();
-	},
-
-	printReceipt: function( event ) {
-		event.preventDefault();
-
-		window.print();
-	},
-
-	renderContent: function( transaction ) {
-		var title = this.translate( 'Visit %(url)s', { args: { url: transaction.url } } ),
-			serviceLink = <a href={ transaction.url } title={ title }/>;
-
-		return (
-			<div className="view-receipt-wrapper">
-				<div className="app-overview">
-					<img src={ transaction.icon } title={ transaction.service } />
-					<h2> {
-						this.translate( '{{link}}%(service)s{{/link}} {{small}}by %(organization)s{{/small}}',
-							{
-								components: {
-									link: serviceLink,
-									small: <small/>
-								},
-								args: {
-									service: transaction.service,
-									organization: transaction.org,
-								},
-								comment: 'This string is "Service by Organization". The {{link}} and {{small}} add html styling and attributes. Screenshot: https://cloudup.com/isX-WEFYlOs'
-							} )
-						}
-						<div className="transaction-date">{ tableRows.formatDate( transaction.date ) }</div>
-					</h2>
-				</div>
-
-				<ul className="receipt-details group">
-					<li>
-						<strong>{ this.translate( 'Receipt ID' ) }</strong>
-						<span>{ transaction.id }</span>
-					</li>
-					{ this.ref() }
-					{ this.paymentMethod() }
-					{ transaction.cc_num !== 'XXXX' ? this.renderBillingDetails( transaction ) : null }
-				</ul>
-
-				{ this.renderLineItems( transaction ) }
-
-				<div className="receipt-links">
+			<Main>
+				<HeaderCake backHref="/me/billing">
+					{ this.translate( 'Billing History' ) }
+				</HeaderCake>
+				<Card compact className="billing-history__receipt-card">
+					<div className="billing-history__app-overview">
+						<img src={ transaction.icon } title={ transaction.service } />
+						<h2> {
+							this.translate( '{{link}}%(service)s{{/link}} {{small}}by %(organization)s{{/small}}',
+								{
+									components: {
+										link: serviceLink,
+										small: <small/>
+									},
+									args: {
+										service: transaction.service,
+										organization: transaction.org,
+									},
+									comment: 'This string is "Service by Organization". The {{link}} and {{small}} add html styling and attributes. Screenshot: https://cloudup.com/isX-WEFYlOs'
+								} )
+							}
+							<div className="billing-history__transaction-date">{ tableRows.formatDate( transaction.date ) }</div>
+						</h2>
+					</div>
+					<ul className="billing-history__receipt-details group">
+						<li>
+							<strong>{ this.translate( 'Receipt ID' ) }</strong>
+							<span>{ transaction.id }</span>
+						</li>
+						{ this.ref() }
+						{ this.paymentMethod() }
+						{ transaction.cc_num !== 'XXXX' ? this.renderBillingDetails( transaction ) : null }
+					</ul>
+					{ this.renderLineItems( transaction ) }
+				</Card>
+				<Card compact className="billing-history__receipt-links">
 					<a href={ transaction.support } className="button is-primary" onClick={ this.recordClickEvent( 'Contact {appName} Support in Billing History Receipt' ) }>
 						{ this.translate( 'Contact %(transactionService)s Support', {
 							args: {
@@ -107,9 +78,14 @@ module.exports = React.createClass( {
 					>
 						{ this.translate( 'Print Receipt' ) }
 					</a>
-				</div>
-			</div>
+				</Card>
+			</Main>
 		);
+	},
+
+	printReceipt: function( event ) {
+		event.preventDefault();
+		window.print();
 	},
 
 	ref: function() {
@@ -149,7 +125,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<li className="billing-details">
+			<li className="billing-history__billing-details">
 				<strong>{ this.translate( 'Billing Details' ) }</strong>
 				<div contentEditable="true">{ transaction.cc_name }</div>
 				<div contentEditable="true">{ transaction.cc_email }</div>
@@ -163,12 +139,12 @@ module.exports = React.createClass( {
 		items = transaction.items.map( function( item ) {
 			return (
 				<tr key={ item.id }>
-					<td className="receipt-item-name">
+					<td className="billing-history__receipt-item-name">
 						<span>{ item.variation }</span>
 						<small>({ item.type })</small><br />
 						<em>{ item.domain }</em>
 					</td>
-					<td className={ 'receipt-amount ' + transaction.credit }>
+					<td className={ 'billing-history__receipt-amount ' + transaction.credit }>
 						{ item.amount }
 						{ transaction.credit ? creditBadge : '' }
 					</td>
@@ -176,24 +152,24 @@ module.exports = React.createClass( {
 			);
 		} );
 
-		creditBadge = <span className="credit-badge">{ this.translate( 'Refund' ) }</span>;
+		creditBadge = <span className="billing-history__credit-badge">{ this.translate( 'Refund' ) }</span>;
 
 		return (
-			<div className="receipt">
+			<div className="billing-history__receipt">
 				<h4>{ this.translate( 'Order Summary' ) }</h4>
-				<table className="receipt-line-items">
+				<table className="billing-history__receipt-line-items">
 					<thead>
 						<tr>
-							<th className="receipt-desc">{ this.translate( 'Description' ) }</th>
-							<th className="receipt-amount">{ this.translate( 'Amount' ) }</th>
+							<th className="billing-history__receipt-desc">{ this.translate( 'Description' ) }</th>
+							<th className="billing-history__receipt-amount">{ this.translate( 'Amount' ) }</th>
 						</tr>
 					</thead>
 					<tfoot>
 						<tr>
-							<td className="receipt-desc">
+							<td className="billing-history__receipt-desc">
 								<strong>{ this.translate( 'Total' ) }:</strong>
 							</td>
-							<td className={ 'receipt-amount total-amount ' + transaction.credit }>
+							<td className={ 'billing-history__receipt-amount billing-history__total-amount ' + transaction.credit }>
 								{ transaction.amount }
 							</td>
 						</tr>

@@ -19,9 +19,7 @@ const sites = sitesFactory();
 export default {
 	billingHistory( context ) {
 		const BillingHistoryComponent = require( './main' );
-		const ViewReceiptModal = require( './view-receipt-modal' );
 		const billingData = require( 'lib/billing-history-data' );
-		const transactionId = context.params.transaction_id;
 		const basePath = route.sectionify( context.path );
 
 		titleActions.setTitle( i18n.translate( 'Billing History', { textOnly: true } ) );
@@ -32,16 +30,28 @@ export default {
 			context.store
 		);
 
+		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Billing History' );
+	},
+
+	transaction( context ) {
+		const Receipt = require( './receipt' );
+		const billingData = require( 'lib/billing-history-data' );
+		const transactionId = context.params.transaction_id;
+		const basePath = route.sectionify( context.path );
+
+		// Initialize billing data
+		billingData.get();
+
+		titleActions.setTitle( i18n.translate( 'Billing History', { textOnly: true } ) );
+
 		if ( transactionId ) {
 			analytics.pageView.record( basePath + '/receipt', ANALYTICS_PAGE_TITLE + ' > Billing History > Receipt' );
 
 			renderWithReduxStore(
-				React.createElement( ViewReceiptModal, { transaction: billingData.getTransaction( transactionId ) } ),
-				document.getElementById( 'tertiary' ),
+				React.createElement( Receipt, { transaction: billingData.getTransaction( transactionId ) } ),
+				document.getElementById( 'primary' ),
 				context.store
 			);
-		} else {
-			analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Billing History' );
 		}
 	}
 };
