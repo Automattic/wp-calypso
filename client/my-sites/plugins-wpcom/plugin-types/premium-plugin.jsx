@@ -42,10 +42,18 @@ PremiumPlugin.propTypes = {
 	description: PropTypes.string.isRequired
 };
 
+const trackClick = name => recordTracksEvent(
+	'calypso_plugin_wpcom_click',
+	{
+		plugin_name: name,
+		plugin_plan: 'premium'
+	}
+);
+
 const mapDispatchToProps = ( dispatch, props ) => ( {
 	onClick: has( props, 'onClick' )
 		? props.onClick
-		: () => dispatch( recordTracksEvent( 'wpcom_plugin_clicked', props.name ) )
+		: () => dispatch( trackClick( props.name ) )
 } );
 
 export default connect( null, mapDispatchToProps )( PremiumPlugin );
