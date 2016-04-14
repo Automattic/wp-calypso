@@ -17,9 +17,9 @@ import { defaultBusinessPlugins } from './default-plugins';
  * Interpolate the given plugin propagating `siteSlug` value
  */
 const linkInterpolator = siteSlug => plugin => {
-	const { supportLink: link } = plugin;
-	const supportLink = link.replace( '{siteSlug}', siteSlug );
-	return Object.assign( {}, plugin, { supportLink } );
+	const { descriptionLink: link } = plugin;
+	const descriptionLink = link.replace( '{siteSlug}', siteSlug );
+	return Object.assign( {}, plugin, { descriptionLink } );
 }
 
 export const PluginPanel = React.createClass( {
