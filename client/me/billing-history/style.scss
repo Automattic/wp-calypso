@@ -150,7 +150,7 @@
 	}
 }
 
-.popped .filter-popover-content {
+.filter-popover.is-popped .filter-popover-content {
 	display: block;
 }
 
@@ -245,22 +245,17 @@
 		border-color: rgba(0,0,0,0.05);
 	}
 
-	&:after {
-		display: inline-block;
-		content: '\f431';
-		font-family: Noticons;
-		color: $blue-wordpress;
-		margin-left: 5px;
-		position: relative;
-		top: 2px;
+	.gridicon {
+		margin-left: 4px;
+		vertical-align: bottom;
 	}
 }
 
-.popped	.filter-popover-toggle {
-		background-color: rgba(0,0,0,0.1);
-		border-color: rgba(0,0,0,0.05);
-		box-shadow: 0 1px 0 rgba(255,255,255,0.4);
-	}
+.filter-popover.is-popped .filter-popover-toggle {
+	background-color: rgba(0,0,0,0.1);
+	border-color: rgba(0,0,0,0.05);
+	box-shadow: 0 1px 0 rgba(255,255,255,0.4);
+}
 
 // View Receipt
 .billing-history__app-overview {
