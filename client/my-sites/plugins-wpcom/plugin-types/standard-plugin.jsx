@@ -51,7 +51,7 @@ const trackClick = name => recordTracksEvent(
 );
 
 const mapDispatchToProps = ( dispatch, props ) => ( {
-	onClick: get( props, 'onClick', () => dispatch( trackClick( props.name  ) ) )
+	onClick: get( props, 'onClick', () => dispatch( trackClick( props.name ) ) )
 } );
 
 export default connect( null, mapDispatchToProps )( StandardPlugin );
