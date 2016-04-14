@@ -6,7 +6,7 @@ Object.defineProperty(exports, '__esModule', {
 	value: true
 });
 /**
- * Module variables
+ * Module vars
  */
 var root = '/sites';
 

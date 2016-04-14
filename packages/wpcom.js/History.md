@@ -1,4 +1,11 @@
 
+4.9.5 / 2016-14-04
+==================
+
+* site.taxonomy and site.taxonomy.term implemented
+* site.plugin updates
+* various test cleanup
+
 4.9.4 / 2016-04-04
 ==================
 

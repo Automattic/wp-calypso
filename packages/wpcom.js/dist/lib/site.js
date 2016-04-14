@@ -11,41 +11,37 @@ Object.defineProperty(exports, '__esModule', {
  * Module dependencies.
  */
 
-var _sitePost = require('./site.post');
-
-var _sitePost2 = _interopRequireDefault(_sitePost);
-
 var _siteCategory = require('./site.category');
 
 var _siteCategory2 = _interopRequireDefault(_siteCategory);
-
-var _siteTag = require('./site.tag');
-
-var _siteTag2 = _interopRequireDefault(_siteTag);
-
-var _siteMedia = require('./site.media');
-
-var _siteMedia2 = _interopRequireDefault(_siteMedia);
 
 var _siteComment = require('./site.comment');
 
 var _siteComment2 = _interopRequireDefault(_siteComment);
 
-var _siteWordads = require('./site.wordads');
-
-var _siteWordads2 = _interopRequireDefault(_siteWordads);
-
 var _siteFollow = require('./site.follow');
 
 var _siteFollow2 = _interopRequireDefault(_siteFollow);
 
-var _sitePlugin = require('./site.plugin');
+var _siteMedia = require('./site.media');
 
-var _sitePlugin2 = _interopRequireDefault(_sitePlugin);
+var _siteMedia2 = _interopRequireDefault(_siteMedia);
+
+var _sitePost = require('./site.post');
+
+var _sitePost2 = _interopRequireDefault(_sitePost);
+
+var _siteTag = require('./site.tag');
+
+var _siteTag2 = _interopRequireDefault(_siteTag);
 
 var _siteDomain = require('./site.domain');
 
 var _siteDomain2 = _interopRequireDefault(_siteDomain);
+
+var _sitePlugin = require('./site.plugin');
+
+var _sitePlugin2 = _interopRequireDefault(_sitePlugin);
 
 var _siteSettings = require('./site.settings');
 
@@ -54,6 +50,10 @@ var _siteSettings2 = _interopRequireDefault(_siteSettings);
 var _siteTaxonomy = require('./site.taxonomy');
 
 var _siteTaxonomy2 = _interopRequireDefault(_siteTaxonomy);
+
+var _siteWordads = require('./site.wordads');
+
+var _siteWordads2 = _interopRequireDefault(_siteWordads);
 
 var _utilRuntimeBuilder = require('./util/runtime-builder');
 
@@ -238,13 +238,13 @@ var Site = (function () {
 		/**
    * Create a `SitePlugin` instance
    *
-   * @param {String} id - plugin identifier
+   * @param {String} slug - plugin identifier
    * @return {SitePlugin} SitePlugin instance
    */
 	}, {
 		key: 'plugin',
-		value: function plugin(id) {
-			return new _sitePlugin2['default'](id, this._id, this.wpcom);
+		value: function plugin(slug) {
+			return new _sitePlugin2['default'](slug, this._id, this.wpcom);
 		}
 
 		/**

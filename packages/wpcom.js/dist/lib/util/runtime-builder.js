@@ -1,6 +1,21 @@
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
+/**
+ * Module dependencies
+ */
+
+var _debug = require('debug');
+
+var _debug2 = _interopRequireDefault(_debug);
+
+/**
+ * Module vars
+ */
+var debug = (0, _debug2['default'])('wpcom:runtime');
+
 /**
  * Build a generic method
  *
@@ -28,6 +43,7 @@ exports['default'] = function (Class, list, buildPath) {
   list.forEach(function (methodParams) {
     methodParams = 'object' === typeof methodParams ? methodParams : { name: methodParams };
 
+    debug('Adding %o', methodParams.name);
     Class.prototype[methodParams.name] = methodBuilder(methodParams, buildPath);
   });
 };
