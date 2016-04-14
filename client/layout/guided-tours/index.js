@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import scrollTo from 'lib/scroll-to';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
@@ -63,6 +64,9 @@ class GuidedTours extends Component {
 	}
 
 	quit( options = {} ) {
+		const container = query( '#secondary .sidebar' )[ 0 ];
+		scrollTo( { y: 0, container: container } );
+
 		this.currentTarget && this.currentTarget.classList.remove( 'guided-tours__overlay' );
 		this.props.quitGuidedTour( Object.assign( {
 			stepName: this.props.tourState.stepName

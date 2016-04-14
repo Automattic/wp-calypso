@@ -11,22 +11,40 @@ import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'components/gridicon';
-import { posToCss, getStepPosition, getBullseyePosition, targetForSlug } from './positioning';
+import { posToCss, getStepPosition, getBullseyePosition, getOverlayStyle, getScrollDiff, targetForSlug, getScrolledRect, query } from './positioning';
 
 class BasicStep extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = { stepPosition: null, targetRect: null };
+	}
+
+	componentWillMount() {
+		const container = query( '#secondary .sidebar' )[ 0 ];
+		const scrollY = getScrollDiff( this.props.targetSlug, container );
+		const targetRect = getScrolledRect( { targetSlug: this.props.targetSlug, scrollY: scrollY } );
+
+		this.setState( { stepPosition: posToCss( getStepPosition( this.props ) ) } );
+		this.setState( { targetRect: targetRect } );
+	}
+
 	render() {
-		const stepPos = getStepPosition( this.props );
-		const stepCoords = posToCss( stepPos );
+		if ( !this.state.stepPosition ) {
+			return null;
+		}
 
 		const { text, onNext, onQuit } = this.props;
 		return (
-			<Card className="guided-tours__step" style={ stepCoords } >
-				<p>{ text }</p>
-				<div className="guided-tours__choice-button-row">
-					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
-					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
-				</div>
-			</Card>
+			<div>
+				<Overlay targetRect={ this.state.targetRect } />
+				<Card className="guided-tours__step" style={ this.state.stepPosition } >
+					<p>{ text }</p>
+					<div className="guided-tours__choice-button-row">
+						<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
+						<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
+					</div>
+				</Card>
+			</div>
 		);
 	}
 }
@@ -95,6 +113,20 @@ class LinkStep extends Component {
 }
 
 class ActionStep extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = { stepPosition: null, targetRect: null };
+	}
+
+	componentWillMount() {
+		const container = query( '#secondary .sidebar' )[ 0 ];
+		const scrollY = getScrollDiff( this.props.targetSlug, container );
+		const targetRect = getScrolledRect( { targetSlug: this.props.targetSlug, scrollY: scrollY } );
+
+		this.setState( { stepPosition: posToCss( getStepPosition( this.props ) ) } );
+		this.setState( { targetRect: targetRect } );
+	}
+
 	componentDidMount() {
 		this.addTargetListener();
 	}
@@ -118,7 +150,6 @@ class ActionStep extends Component {
 		if ( onNext && target.addEventListener ) {
 			target.addEventListener( 'click', onNext );
 		}
-		target && target.classList.add( 'guided-tours__overlay' );
 	}
 
 	removeTargetListener() {
@@ -128,31 +159,35 @@ class ActionStep extends Component {
 		if ( onNext && target.removeEventListener ) {
 			target.removeEventListener( 'click', onNext );
 		}
-		target && target.classList.remove( 'guided-tours__overlay' );
 	}
 
 	render() {
-		const stepPos = getStepPosition( this.props );
-		const bullseyePos = getBullseyePosition( this.props );
-		const stepCoords = posToCss( stepPos );
-		const pointerCoords = posToCss( bullseyePos );
+		if ( !this.state.stepPosition ) {
+			return null;
+		}
 
 		const { text } = this.props;
 
+		const bullseyePos = getBullseyePosition( this.props );
+		const pointerCoords = posToCss( bullseyePos );
+
 		return (
-			<Card className="guided-tours__step" style={ stepCoords } >
-				<p>{ text }</p>
+			<div>
+				<Overlay targetRect={ this.state.targetRect } />
+				<Card className="guided-tours__step" style={ this.state.stepPosition } >
+					<p>{ text }</p>
 				<div className="guided-tours__bullseye-instructions">
-					<p>
-						{ this.props.translate( 'Click the {{gridicon/}} to continue…', {
-							components: {
-								gridicon: <Gridicon icon={ this.props.icon } size={ 24 } />
-							}
-						} ) }
-					</p>
-				</div>
+						<p>
+							{ this.props.translate( 'Click the {{gridicon/}} to continue…', {
+								components: {
+									gridicon: <Gridicon icon={ this.props.icon } size={ 24 } />
+								}
+							} ) }
+						</p>
+					</div>
 				<Pointer style={ pointerCoords } />
-			</Card>
+				</Card>
+			</div>
 		);
 	}
 }
@@ -237,6 +272,26 @@ class Pointer extends Component {
 
 Pointer.propTypes = {
 	style: PropTypes.object.isRequired,
+};
+
+class Overlay extends Component {
+	render() {
+		const { targetRect } = this.props;
+		const overlayStyle = getOverlayStyle( { rect: targetRect } );
+
+		return (
+			<div className="guided-tours__overlay-container">
+				<div className="guided-tours__overlay" style={ overlayStyle.top } />
+				<div className="guided-tours__overlay" style={ overlayStyle.left } />
+				<div className="guided-tours__overlay" style={ overlayStyle.right } />
+				<div className="guided-tours__overlay" style={ overlayStyle.bottom } />
+			</div>
+		);
+	}
+}
+
+Overlay.propTypes = {
+	targetRect: PropTypes.object.isRequired,
 };
 
 export default {
