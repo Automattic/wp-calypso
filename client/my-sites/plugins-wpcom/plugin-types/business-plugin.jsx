@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import has from 'lodash/has';
+import get from 'lodash/get';
 import noop from 'lodash/noop';
 
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -54,9 +54,7 @@ const trackClick = name => recordTracksEvent(
 );
 
 const mapDispatchToProps = ( dispatch, props ) => ( {
-	onClick: has( props, 'onClick' )
-		? props.onClick
-		: () => dispatch( trackClick( props.name ) )
+	onClick: get( props, 'onClick', () => dispatch( trackClick( props.name ) ) )
 } );
 
 export default connect( null, mapDispatchToProps )( BusinessPlugin );
