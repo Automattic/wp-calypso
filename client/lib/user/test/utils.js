@@ -13,7 +13,7 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 describe( 'UserUtils', () => {
 	let UserUtils, user, configMock;
 
-  useFakeDom();
+	useFakeDom();
 
 	useMockery( mockery => {
 		configMock = sinon.stub();
@@ -31,7 +31,7 @@ describe( 'UserUtils', () => {
 	} );
 
 	context( 'without logout url', () => {
-		before( () =>  {
+		before( () => {
 			configMock.isEnabled
 				.withArgs( 'always_use_logout_url' )
 				.returns( false );
