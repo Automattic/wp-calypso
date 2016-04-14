@@ -1,6 +1,7 @@
 // Transactions Table
 .billing-history__transactions {
 	border-collapse: collapse;
+	margin: 0;
 }
 
 .billing-history__no-results {
@@ -13,7 +14,7 @@
 }
 
 .billing-history__transactions thead {
-	background-color: $gray-light;
+	border-bottom: 1px solid lighten( $gray, 30% );
 }
 
 .billing-history__transactions thead .header-row {
@@ -60,6 +61,10 @@
 	font-size: 14px;
 	height: 66px;
 	border-bottom: 1px solid lighten( $gray, 30% );
+
+	&:last-child {
+		border-bottom: none;
+	}
 }
 
 .billing-history__header-row {
@@ -68,7 +73,7 @@
 
 .billing-history__transaction td {
 	vertical-align: top;
-	padding: 10px 0;
+	padding: 16px 24px;
 }
 
 .billing-history__transactions tbody .billing-history__date {
@@ -83,7 +88,6 @@
 
 .billing-history__transactions tbody .billing-history__amount {
 	text-align: right;
-	padding: 12px;
 	width: 110px;
 }
 
@@ -123,7 +127,7 @@
 .filter-popover {
 	position: relative;
 	display: inline-block;
-	padding: 4px 12px;
+	padding: 8px;
 	vertical-align: top;
 }
 
@@ -229,9 +233,12 @@
 .filter-popover-toggle {
 	padding: 5px 10px;
 	border-radius: 3px;
+	color: $gray;
+	font-size: 13px;
 	cursor: pointer;
 	border-radius: 3px;
 	border: 1px solid transparent;
+	text-transform: uppercase;
 
 	&:hover {
 		background-color: $white;
@@ -440,6 +447,15 @@
 
 .billing-history__receipt-card.card.is-compact {
 	padding: 16px 0;
+}
+
+.billing-history__receipts.card,
+.billing-history__upcoming-charges.card {
+	padding: 0;
+}
+
+.billing-history .search-card.card {
+	margin: 0;
 }
 
 @media print {
