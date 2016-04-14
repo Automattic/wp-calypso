@@ -4,9 +4,11 @@
  * External dependencies
  */
 import page from 'page';
+import conforms from 'lodash/conforms';
 import defer from 'lodash/defer';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
+import property from 'lodash/property';
 
 /**
  * Internal dependencies
@@ -30,6 +32,10 @@ import {
 } from '../action-types';
 import ThemeHelpers from 'my-sites/themes/helpers';
 import { getCurrentTheme } from './current-theme/selectors';
+import {
+	recordTracksEvent,
+	withAnalytics
+} from 'state/analytics/actions';
 import { isJetpack } from './themes-last-query/selectors';
 import { getQueryParams } from './themes-list/selectors';
 import { getThemeById } from './themes/selectors';
@@ -123,35 +129,39 @@ export function receiveServerError( error ) {
 	};
 }
 
+const isFirstPageOfSearch = conforms( {
+	search: a => undefined !== a,
+	page: a => a === 1
+} );
+
 export function receiveThemes( data, site, queryParams, responseTime ) {
 	return ( dispatch, getState ) => {
-		let meta = {};
-
-		if ( queryParams.search && queryParams.page === 1 ) {
-			meta = {
-				analytics: {
-					type: 'calypso_themeshowcase_search',
-					payload: {
-						search_term: queryParams.search || null,
-						tier: queryParams.tier,
-						response_time_in_ms: responseTime,
-						result_count: data.found,
-						results_first_page: data.themes.map( theme => theme.id )
-					}
-				}
-			}
-		}
-
-		dispatch( {
+		const themeAction = {
 			type: THEMES_RECEIVE,
 			siteId: site.ID,
 			isJetpack: !! site.jetpack,
 			wasJetpack: isJetpack( getState() ),
 			themes: data.themes,
 			found: data.found,
-			queryParams: queryParams,
-			meta
-		} );
+			queryParams: queryParams
+		};
+
+		const trackShowcaseSearch = recordTracksEvent(
+			'calypso_themeshowcase_search',
+			{
+				search_term: queryParams.search || null,
+				tier: queryParams.tier,
+				response_time_in_ms: responseTime,
+				result_count: data.found,
+				results_first_page: data.themes.map( property( 'id' ) )
+			}
+		);
+
+		const action = isFirstPageOfSearch( queryParams )
+			? withAnalytics( trackShowcaseSearch, themeAction )
+			: themeAction;
+
+		dispatch( action );
 	}
 }
 
@@ -182,23 +192,24 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 			theme = getThemeById( getState(), theme );
 		}
 
-		defer( () => dispatch( {
+		const action = {
 			type: THEME_ACTIVATED,
 			theme,
-			site,
-			meta: {
-				analytics: {
-					type: 'calypso_themeshowcase_theme_activate',
-					payload: {
-						theme: theme.id,
-						previous_theme: previousTheme.id,
-						source: source,
-						purchased: purchased,
-						search_term: queryParams.get( 'search' ) || null
-					}
-				}
+			site
+		};
+
+		const trackThemeActivation = recordTracksEvent(
+			'calypso_themeshowcase_theme_activate',
+			{
+				theme: theme.id,
+				previous_theme: previousTheme.id,
+				source: source,
+				purchased: purchased,
+				search_term: queryParams.get( 'search' ) || null
 			}
-		} ) );
+		);
+
+		defer( () => dispatch( withAnalytics( trackThemeActivation, action ) ) );
 	}
 };
 
