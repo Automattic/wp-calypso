@@ -11,9 +11,9 @@ import debugModule from 'debug';
  * Internal dependencies
  */
 import userModule from 'lib/user';
-import { ga as googleAnalytics } from 'analytics';
+import { ga as googleAnalytics } from 'lib/analytics';
 import Gridicon from 'components/gridicon';
-import { tracks } from 'analytics';
+import { tracks } from 'lib/analytics';
 import config from 'config';
 import preferencesActions from 'lib/preferences/actions';
 import Button from 'components/button';
