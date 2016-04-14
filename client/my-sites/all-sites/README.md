@@ -10,7 +10,7 @@ var AllSites = require( 'my-sites/all-sites' );
 
 render: function() {
 	return (
-		<AllSites sites={ sitesListObject } />
+		<AllSites sites={ sitesArray } />
 	);
 }
 ```
