@@ -6,7 +6,14 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId, getSectionName } from '../selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSectionName,
+	getGuidesTourState,
+} from '../selectors';
+import guidesToursConfig from 'guidestours/config';
+import useI18n from 'test/helpers/use-i18n';
 
 describe( 'selectors', () => {
 	describe( '#getSelectedSite()', () => {
@@ -83,6 +90,38 @@ describe( 'selectors', () => {
 			} );
 
 			expect( sectionName ).to.equal( 'post-editor' );
+		} );
+	} );
+
+	describe( '#getGuidesTourState()', () => {
+		useI18n();
+		it( 'should return an empty object if no state is present', () => {
+			const tourState = getGuidesTourState( {
+				ui: {
+					guidesTour: false
+				}
+			} );
+
+			expect( tourState ).to.deep.equal( { stepConfig: false } );
+		} );
+
+		it( 'should include the config of the current tour step', () => {
+			const tourState = getGuidesTourState( {
+				ui: {
+					guidesTour: {
+						stepName: 'my-sites',
+						shouldShow: true,
+						tour: 'main',
+						siteId: 2916284,
+					}
+				}
+			} );
+
+			const stepConfig = guidesToursConfig.get()[ 'my-sites' ];
+
+			expect( tourState ).to.deep.equal( Object.assign( {}, tourState, {
+				stepConfig
+			} ) );
 		} );
 	} );
 } );
