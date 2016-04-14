@@ -202,11 +202,34 @@ export function errors( state = {}, action ) {
 	return state;
 }
 
+/**
+ * A missing list is one that's been requested, but we couldn't find (API response 404-ed).
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function missingLists( state = false, action ) {
+	switch ( action.type ) {
+		case READER_LIST_REQUEST_FAILURE:
+			if ( ! action.error || action.error.statusCode !== 404 ) {
+				return state;
+			}
+			return union( state, [ { owner: action.owner, slug: action.slug } ] );
+		case SERIALIZE:
+		case DESERIALIZE:
+			return state;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	items,
 	subscribedLists,
 	updatedLists,
 	isRequestingList,
 	isRequestingLists,
-	errors
+	errors,
+	missingLists
 } );

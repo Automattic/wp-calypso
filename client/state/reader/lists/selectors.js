@@ -114,3 +114,20 @@ export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
 	}
 	return includes( state.reader.lists.subscribedLists, list.ID );
 }
+
+/**
+ * Check if the requested list is missing (i.e. API 404ed when requesting it)
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {String}  owner  List owner
+ * @param  {String}  slug  List slug
+ * @return {Boolean} Is the list missing?
+ */
+export function isMissingByOwnerAndSlug( state, owner, slug ) {
+	const preparedOwner = owner.toLowerCase();
+	const preparedSlug = slug.toLowerCase();
+
+	return !! find( state.reader.lists.missingLists, ( list ) => {
+		return list.owner === preparedOwner && list.slug === preparedSlug
+	} );
+}
