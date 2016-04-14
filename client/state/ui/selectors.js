@@ -4,6 +4,7 @@
  * External dependencies
  */
 import get from 'lodash/get';
+import memoize from 'lodash/memoize';
 
 /**
  * Internal dependencies
@@ -11,6 +12,8 @@ import get from 'lodash/get';
 import createSelector from 'lib/create-selector';
 import { getSite } from 'state/sites/selectors';
 import guidesToursConfig from 'guidestours/config';
+
+const getToursConfig = memoize( () => guidesToursConfig.get() );
 
 /**
  * Returns the site object for the currently selected site.
@@ -62,7 +65,7 @@ export const getGuidesTourState = createSelector(
 	state => {
 		const tourState = getRawGuidesTourState( state );
 		const { stepName = '' } = tourState;
-		const stepConfig = guidesToursConfig.get()[ stepName ] || false;
+		const stepConfig = getToursConfig()[ stepName ] || false;
 		return Object.assign( {}, tourState, { stepConfig } );
 	},
 	getRawGuidesTourState
