@@ -28,15 +28,7 @@ var staticFiles = [
 	{ path: 'style-rtl.css' }
 ];
 
-var chunksByPath = {};
-
 var sections = sectionsModule.get();
-
-sections.forEach( function( section ) {
-	section.paths.forEach( function( path ) {
-		chunksByPath[ path ] = section.name;
-	} );
-} );
 
 // TODO: Move into an `app.get()` route handler (e.g. next to language setting),
 // and pass the bootstrap locale as a parameter.
