@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	closest = require( 'component-closest' ),
 	defer = require( 'lodash/defer' ),
 	titleCase = require( 'to-title-case' );
 
@@ -18,7 +17,7 @@ import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 
 module.exports = React.createClass( {
-	displayName: 'ViewReceiptModal',
+	displayName: 'BillingReceipt',
 
 	mixins: [ observe( 'billingData' ), eventRecorder ],
 
@@ -84,21 +83,8 @@ module.exports = React.createClass( {
 		);
 	},
 
-	close: function() {
-		defer( this.props.onClose );
-	},
-
-	closeOutside: function( event ) {
-		if ( closest( event.target, '.nd-modal' ) && event.target.tagName !== 'A' ) {
-			event.preventDefault();
-		}
-
-		this.close();
-	},
-
 	printReceipt: function( event ) {
 		event.preventDefault();
-
 		window.print();
 	},
 

@@ -34,7 +34,7 @@ export default {
 	},
 
 	transaction( context ) {
-		const ViewReceiptModal = require( './view-receipt-modal' );
+		const Receipt = require( './receipt' );
 		const billingData = require( 'lib/billing-history-data' );
 		const transactionId = context.params.transaction_id;
 		const basePath = route.sectionify( context.path );
@@ -48,7 +48,7 @@ export default {
 			analytics.pageView.record( basePath + '/receipt', ANALYTICS_PAGE_TITLE + ' > Billing History > Receipt' );
 
 			renderWithReduxStore(
-				React.createElement( ViewReceiptModal, { transaction: billingData.getTransaction( transactionId ) } ),
+				React.createElement( Receipt, { transaction: billingData.getTransaction( transactionId ) } ),
 				document.getElementById( 'primary' ),
 				context.store
 			);
