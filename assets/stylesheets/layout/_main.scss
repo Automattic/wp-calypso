@@ -50,7 +50,7 @@
 	padding: 6px;
 
 	color: $white;
-	background: rgba( 46, 68, 83, 0.8 );
+	background: rgba( $gray-dark, 0.8 );
 	text-align: center;
 }
 
@@ -159,7 +159,7 @@ h1,h2,h3,h4,h5,h6 {
 	clear: both;
 }
 hr {
-	background: #ccc;
+	background: lighten( $gray, 20% );
 	border: 0;
 	height: 1px;
 	margin-bottom: 1.5em;
@@ -196,7 +196,7 @@ dfn, cite, em, i {
 }
 blockquote {
 	margin: 10px 0 0 0;
-	background: #f7f7f7;
+	background: $gray-light;
 	padding: 10px 10px 1px;
 	border-radius: 2px;
 }
@@ -204,7 +204,7 @@ address {
 	margin: 0 0 1.5em;
 }
 pre {
-	background: #eee;
+	background: $gray-light;
 	font-family: $monospace;
 	font-size: 15px;
 	line-height: 1.6;
@@ -217,11 +217,11 @@ code, kbd, tt, var {
 	font: 15px $code;
 }
 abbr, acronym {
-	border-bottom: 1px dotted #666;
+	border-bottom: 1px dotted darken( $gray, 20% );
 	cursor: help;
 }
 mark, ins {
-	background: #fff9c0;
+	background: lighten( $alert-yellow, 23% );
 	text-decoration: none;
 }
 small {
@@ -551,7 +551,7 @@ body.newdash div.wordpress-com-extension-promo {
 		a {
 			text-decoration: none;
 			display: inline-block;
-			color: black;
+			color: $gray-dark;
 
 			&:hover {
 				transform: scale( 1.1 );
@@ -580,8 +580,8 @@ body.newdash div.wordpress-com-extension-promo {
 		}
 		&.branch-name {
 			text-transform: inherit;
-			background-color: #272727;
-			color: #F1F1F1;
+			background-color: $gray-dark;
+			color: $white;
 		}
 	}
 
