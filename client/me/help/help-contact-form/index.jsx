@@ -240,7 +240,7 @@ module.exports = React.createClass( {
 
 				{ showHelpLanguagePrompt && (
 					<div className="help-contact-form__help-language-prompt">
-						<FormLabel>{ this.translate( 'Note: The response will be in English.' ) }</FormLabel>
+						{ this.translate( 'Note: Support is only available in English at the moment.' ) }
 					</div>
 				) }
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>{ buttonLabel }</FormButton>
