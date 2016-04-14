@@ -30,13 +30,12 @@ class GuidesTours extends Component {
 
 	componentDidMount() {
 		const { stepConfig } = this.props.tourState;
-		this.tipTargets = this.getTipTargets();
 		this.updateTarget( stepConfig );
 	}
 
 	shouldComponentUpdate( nextProps ) {
 		return this.props.tourState !== nextProps.tourState;
-	}
+		}
 
 	componentWillUpdate( nextProps ) {
 		const { stepConfig } = nextProps.tourState;
@@ -44,6 +43,7 @@ class GuidesTours extends Component {
 	}
 
 	updateTarget( step ) {
+		this.tipTargets = this.getTipTargets();
 		this.currentTarget = step && step.target
 			? this.tipTargets[ step.target ]
 			: null;

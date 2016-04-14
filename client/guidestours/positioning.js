@@ -28,6 +28,10 @@ const dialogPositioners = {
 		x: middle( left, right ) - DIALOG_WIDTH / 2,
 		y: MASTERBAR_HEIGHT / 2,
 	} ),
+	right: () => ( {
+		x: document.documentElement.clientWidth - DIALOG_WIDTH - ( 3 * DIALOG_PADDING ),
+		y: MASTERBAR_HEIGHT + ( 3 * DIALOG_PADDING ),
+	} ),
 };
 
 export const query = selector =>
