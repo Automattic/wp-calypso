@@ -6,7 +6,7 @@ import assign from 'lodash/assign';
 /**
  * Internal dependencies
  */
-import { recordAddToCart } from 'analytics/ad-tracking';
+import { recordAddToCart } from 'lib/analytics/ad-tracking';
 import { action as ActionTypes } from '../constants';
 import Dispatcher from 'dispatcher';
 import { cartItems } from 'lib/cart-values';
