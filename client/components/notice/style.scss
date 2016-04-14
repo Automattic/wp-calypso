@@ -116,9 +116,13 @@ a.notice__action {
 	.is-error &,
 	.is-warning &,
 	.is-info & {
-		background: rgba( 0, 0, 0, 0.2 );
 		color: $white;
 	}
+
+	.is-success & { background: darken( $alert-green, 15 ); }
+	.is-error & { background: darken( $alert-red, 15 ); }
+	.is-warning & { background: darken( $alert-yellow, 15 ); }
+	.is-info & { background: darken( $blue-wordpress, 15 ); }
 
 	.gridicon {
 		margin-left: 8px;
