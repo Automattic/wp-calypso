@@ -65,8 +65,8 @@ module.exports = {
 	domainSuggestionVendor: {
 		datestamp: '20160408',
 		variations: {
-			namegen: 95,
-			domainsbot: 5,
+			namegen: 75,
+			domainsbot: 25,
 		},
 		defaultVariation: 'namegen'
 	},
