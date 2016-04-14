@@ -49,7 +49,7 @@ We provide three single test runners because of different node path rules applie
 * `server/` folder
 * `test/` folder
 
-We have an `npm run` script for each of them: `npm run test-client`, `npm run test-server` and `npm run test-tests`. You can pass a filename or set of files to these scripts to isolate your test run to just your set of files.
+We have an `npm run` script for each of them: `npm run test-client`, `npm run test-server` and `npm run test-test`. You can pass a filename or set of files to these scripts to isolate your test run to just your set of files.
 
 Example for client:
 
@@ -63,7 +63,7 @@ Example for client:
 > # run single test suite from server folder
 > npm run test-server server/config/test/parser.js
 > # run single test suite from test folder
-> npm run test-tests test/helpers/use-nock/test/index.js
+> npm run test-test test/helpers/use-nock/test/index.js
 ```
 
 ### How to run specified suite or test-case
