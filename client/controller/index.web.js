@@ -10,7 +10,7 @@ export { setSection } from './index.node.js';
 
 export function makeLayout( context, next ) {
 	const { store, primary, secondary, tertiary } = context;
-	const { user, sites, focus, nuxWelcome, translationInvitation } = context;
+	const { user, sites, focus, nuxWelcome, translatorInvitation } = context;
 	const Layout = context.layoutComponent;
 
 	context.layout = (
@@ -22,7 +22,7 @@ export function makeLayout( context, next ) {
 				sites={ sites }
 				focus={ focus }
 				nuxWelcome={ nuxWelcome }
-				translationInvitation={ translationInvitation }
+				translatorInvitation={ translatorInvitation }
 			/>
 		</ReduxProvider>
 	);

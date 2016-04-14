@@ -100,9 +100,6 @@ export default {
 		);
 		context.secondary = null;
 
-		// TODO: will not be necessary once we have a boot/layout middleware
-		context.focus = layoutFocus;
-
 		next();
 	},
 

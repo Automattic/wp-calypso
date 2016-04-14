@@ -13,16 +13,11 @@ var controller = require( './controller' ),
 	Layout = require( 'layout' );
 
 import { makeLayout } from 'controller';
-
-// TODO: temporary, will be replaced with a proper boot/layout middleware
-let setLayoutComponent = function( context, next ) {
-	context.layoutComponent = Layout;
-	next();
-};
+import { addLayoutToContext } from 'boot';
 
 module.exports = function( router ) {
 	if ( config.isEnabled( 'phone_signup' ) ) {
-		router( '/phone/:lang?', controller.phoneSignup, setLayoutComponent, makeLayout );
+		router( '/phone/:lang?', controller.phoneSignup, addLayoutToContext, makeLayout );
 	}
 
 	router(
@@ -33,21 +28,21 @@ module.exports = function( router ) {
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,
 		controller.start,
-		setLayoutComponent,
+		addLayoutToContext,
 		makeLayout
 	);
 
 	if ( config.isEnabled( 'login' ) ) {
-		router( '/log-in/:lang?', controller.login, setLayoutComponent, makeLayout );
+		router( '/log-in/:lang?', controller.login, addLayoutToContext, makeLayout );
 	}
 
 	if ( config.isEnabled( 'jetpack/calypso-first-signup-flow' ) ) {
-		router( '/jetpack/connect', jetpackConnectController.connect, setLayoutComponent, makeLayout );
+		router( '/jetpack/connect', jetpackConnectController.connect, addLayoutToContext, makeLayout );
 		router(
 			'/jetpack/connect/authorize',
 			jetpackConnectController.saveQueryObject,
 			jetpackConnectController.authorizeForm,
-			setLayoutComponent,
+			addLayoutToContext,
 			makeLayout
 		);
 	}

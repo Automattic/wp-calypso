@@ -161,6 +161,20 @@ function boot() {
 	createReduxStoreFromPersistedInitialState( reduxStoreReady );
 }
 
+export function addLayoutToContext( context, next ) {
+	context.layoutComponent = require( 'layout' );
+	context.focus = layoutFocus;
+
+	if ( user.get() ) {
+		context.user = user;
+		context.sites = sites;
+		context.nuxWelcome = nuxWelcome;
+		context.translatorInvitation = translatorInvitation;
+	}
+
+	next();
+}
+
 function reduxStoreReady( reduxStore ) {
 	let layoutSection, layoutElement, validSections = [];
 
