@@ -17,7 +17,7 @@ describe( 'Search', function() {
 
 		EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
 
-		mockery.registerMock( 'analytics', {} );
+		mockery.registerMock( 'lib/analytics', {} );
 		mockery.registerMock( 'lib/mixins/i18n', { translate: noop } );
 		mockery.registerMock( 'components/gridicon', EMPTY_COMPONENT );
 	} );

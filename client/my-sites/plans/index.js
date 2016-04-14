@@ -10,7 +10,7 @@ import config from 'config';
 import controller from 'my-sites/controller';
 import paths from './paths';
 import plansController from './controller';
-import { retarget } from 'analytics/ad-tracking';
+import { retarget } from 'lib/analytics/ad-tracking';
 import googleAnalyticsLandingPage from './plan-feature/google-analytics';
 
 export default function() {

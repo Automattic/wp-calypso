@@ -15,7 +15,7 @@ var Follow = require( './action-follow' ),
 	Spam = require( './action-spam' ),
 	Emojify = require( 'components/emojify' ),
 	titlecase = require( 'to-title-case' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {

@@ -11,7 +11,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { activated } from 'state/themes/actions';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import BusinessPlanDetails from './business-plan-details';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';

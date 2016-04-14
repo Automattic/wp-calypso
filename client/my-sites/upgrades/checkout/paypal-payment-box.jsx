@@ -8,7 +8,7 @@ var assign = require( 'lodash/assign' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	cartValues = require( 'lib/cart-values' ),
 	CountrySelect = require( 'my-sites/upgrades/components/form/country-select' ),
 	Input = require( 'my-sites/upgrades/components/form/input' ),

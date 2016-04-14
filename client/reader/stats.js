@@ -1,7 +1,7 @@
 import assign from 'lodash/assign';
 import debugFactory from 'debug';
 
-import { mc, ga, tracks } from 'analytics';
+import { mc, ga, tracks } from 'lib/analytics';
 
 import SubscriptionStore from 'lib/reader-feed-subscriptions';
 

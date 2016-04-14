@@ -8,7 +8,7 @@ import omit from 'lodash/omit';
  * Internal dependencies
  */
 import notices from 'notices';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
 

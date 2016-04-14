@@ -18,7 +18,7 @@ import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
 import EmptyContent from 'components/empty-content';
 import { abtest } from 'lib/abtest';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
 

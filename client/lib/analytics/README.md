@@ -22,7 +22,7 @@ Automatticians may refer to internal documentation for more information about MC
 
 ```js
 // require the module
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 ```
 

@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var config = require( 'config' ),
 	route = require( 'lib/route' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Welcome Box', eventAction );

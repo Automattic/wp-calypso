@@ -8,7 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Main = require( 'components/main' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	HappinessEngineers = require( 'me/help/help-happiness-engineers' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	HelpSearch = require( './help-search' ),

@@ -10,7 +10,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	Card = require( 'components/card' ),
 	PluginCardHeader = require( 'my-sites/plugins/plugin-card-header' ),
 	SectionNav = require( 'components/section-nav' ),

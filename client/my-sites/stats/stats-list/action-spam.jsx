@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var wpcom = require( 'lib/wp' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
