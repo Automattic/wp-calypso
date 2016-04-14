@@ -10,6 +10,10 @@
  *  - https://wpcalypso.wordpress.com/devdocs/docs/our-approach-to-data.md#actions
  */
 
+export const ANALYTICS_EVENT_RECORD = 'ANALYTICS_EVENT_RECORD';
+export const ANALYTICS_MULTI_TRACK = 'ANALYTICS_MULTI_TRACK';
+export const ANALYTICS_PAGE_VIEW_RECORD = 'ANALYTICS_PAGE_VIEW_RECORD';
+export const ANALYTICS_STAT_BUMP = 'ANALYTICS_STAT_BUMP';
 export const CONNECTION_LOST = 'CONNECTION_LOST';
 export const CONNECTION_RESTORED = 'CONNECTION_RESTORED';
 export const COMMENTS_COUNT_RECEIVE = 'COMMENTS_COUNT_RECEIVE';
