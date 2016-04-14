@@ -2,6 +2,10 @@
 	padding: 8px;
 	margin: 0;
 
+	.foldable-card__main {
+		display: block;
+	}
+
 	&.is-compact .foldable-card__header {
 		padding: 16px;
 	}
@@ -106,4 +110,10 @@
 		right: 16px;
 	width: 215px;
 	line-height: 32px;
+}
+
+.plugin-site-network .all-sites {
+	width: auto;
+	display: block;
+	margin: -16px auto -16px -16px;
 }
