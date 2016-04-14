@@ -19,10 +19,14 @@ import SiteURLInput from './site-url-input';
 import { dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation, checkUrl } from 'state/jetpack-connect/actions';
 import versionCompare from 'lib/version-compare';
 
+
+/**
+ * Constants
+ */
+const MINIMUM_JETPACK_VERSION = '3.9.6';
+
 const JetpackConnectMain = React.createClass( {
 	displayName: 'JetpackConnectSiteURLStep',
-
-	MINIMUM_JETPACK_VERSION: '3.9.6',
 
 	getInitialState() {
 		return {
@@ -143,7 +147,7 @@ const JetpackConnectMain = React.createClass( {
 			return 'notJetpack';
 		}
 		const jetpackVersion = this.checkProperty( 'jetpackVersion' );
-		if ( jetpackVersion && versionCompare( jetpackVersion, this.MINIMUM_JETPACK_VERSION, '<' ) ) {
+		if ( jetpackVersion && versionCompare( jetpackVersion, MINIMUM_JETPACK_VERSION, '<' ) ) {
 			return 'outdatedJetpack';
 		}
 		if ( ! this.checkProperty( 'isJetpackActive' ) ) {
