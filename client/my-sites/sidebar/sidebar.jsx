@@ -12,7 +12,8 @@ var analytics = require( 'analytics' ),
 /**
  * Internal dependencies
  */
-var AdsUtils = require( 'lib/ads/utils' ),
+var abtest = require( 'lib/abtest' ).abtest,
+	AdsUtils = require( 'lib/ads/utils' ),
 	config = require( 'config' ),
 	CurrentSite = require( 'my-sites/current-site' ),
 	getCustomizeUrl = require( '../themes/helpers' ).getCustomizeUrl,
@@ -167,6 +168,21 @@ module.exports = React.createClass( {
 			themesLink = '/design' + this.siteSuffix();
 		} else {
 			themesLink = '/design';
+		}
+
+		if ( abtest( 'swapButtonsMySiteSidebar' ) === 'swap' ) {
+			return (
+				<SidebarItem
+					tipTarget="themes"
+					label={ this.translate( 'Customize' ) }
+					className={ this.itemLinkClass( '/design', 'themes' ) }
+					link={ getCustomizeUrl( null, site ) }
+					buttonLink={ themesLink }
+					buttonLabel={ this.translate( 'Themes' ) }
+					onNavigate={ this.onNavigate }
+					icon={ 'themes' }
+					preloadSectionName="themes" />
+			);
 		}
 
 		return (
