@@ -18,7 +18,7 @@ var Sites = React.createClass( {
 					<a href="/devdocs/app-components/sites">Site and All Sites</a>
 				</h2>
 				<Site site={ sites.getPrimary() } />
-				<AllSites sites={ sites } />
+				<AllSites sites={ sites.get() } />
 			</div>
 		);
 	}
