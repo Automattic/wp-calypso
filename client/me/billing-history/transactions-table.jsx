@@ -15,6 +15,8 @@ var TransactionsHeader = require( './transactions-header' ),
 	tableRows = require( './table-rows' ),
 	eventRecorder = require( 'me/event-recorder' );
 
+import SearchCard from 'components/search-card';
+
 var TransactionsTable = React.createClass( {
 	displayName: 'TransactionsTable',
 
@@ -73,6 +75,10 @@ var TransactionsTable = React.createClass( {
 		} );
 	},
 
+	onSearch: function( terms ) {
+		this.filterTransactions( { search: terms } );
+	},
+
 	render: function() {
 		var header;
 
@@ -84,10 +90,16 @@ var TransactionsTable = React.createClass( {
 		}
 
 		return (
-			<table className="billing-history__transactions">
-				{ header }
-				<tbody>{ this.renderRows() }</tbody>
-			</table>
+			<div>
+				<SearchCard
+					placeholder={ this.translate( 'Search all receipts…', { textOnly: true } ) }
+					onSearch={ this.onSearch }
+				/>
+				<table className="billing-history__transactions">
+					{ header }
+					<tbody>{ this.renderRows() }</tbody>
+				</table>
+			</div>
 		);
 	},
 

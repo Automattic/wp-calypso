@@ -16,7 +16,6 @@ var tableRows = require( './table-rows' ),
 	eventRecorder = require( 'me/event-recorder' );
 
 import Gridicon from 'components/gridicon';
-import SearchCard from 'components/search-card';
 
 module.exports = React.createClass( {
 	displayName: 'TransactionsHeader',
@@ -52,26 +51,14 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div>
-				<SearchCard
-					placeholder={ this.translate( 'Search all Receipts…', { textOnly: true } ) }
-					onSearch={ this.onSearch }
-					onFocus={ this.recordFocusEvent( 'Billing History Search Field' ) }
-				/>
-				<thead>
-					<tr className="billing-history__header-row">
-						<th className="billing-history__date billing-history__header-column">{ this.renderDatePopover() }</th>
-						<th className="billing-history__trans-app billing-history__header-column">{ this.renderAppsPopover() }</th>
-						<th className="billing-history__search-field billing-history__header-column" />
-					</tr>
-				</thead>
-			</div>
+			<thead>
+				<tr className="billing-history__header-row">
+					<th className="billing-history__date billing-history__header-column">{ this.renderDatePopover() }</th>
+					<th className="billing-history__trans-app billing-history__header-column">{ this.renderAppsPopover() }</th>
+					<th className="billing-history__search-field billing-history__header-column" />
+				</tr>
+			</thead>
 		);
-	},
-
-	onSearch: function( terms ) {
-		this.setState( { searchValue: terms } );
-		this.setFilter( { search: terms } );
 	},
 
 	setFilter: function( filter ) {
