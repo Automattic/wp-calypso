@@ -15,6 +15,7 @@ import NoResults from 'my-sites/no-results';
 import SearchCard from 'components/search-card';
 import CompactCard from 'components/card/compact';
 import analytics from 'lib/analytics';
+import olarkStore from 'lib/olark-store';
 
 module.exports = React.createClass( {
 	displayName: 'HelpSearch',
@@ -77,6 +78,9 @@ module.exports = React.createClass( {
 			);
 		}
 
+		const supportLocale = olarkStore.get().locale;
+		const localizedForumUrl = 'https://' + supportLocale + '.forums.wordpress.com';
+
 		return (
 			<div>
 				<HelpResults
@@ -90,7 +94,7 @@ module.exports = React.createClass( {
 					helpLinks={ this.state.helpLinks.wordpress_forum_links }
 					footer={ this.translate( 'See more from Community Forum…' ) }
 					iconTypeDescription="comment"
-					searchLink={ 'https://en.forums.wordpress.com/search.php?search=' + this.state.searchQuery } />
+					searchLink={ localizedForumUrl + '/search.php?search=' + this.state.searchQuery } />
 				<HelpResults
 					header={ this.translate( 'Jetpack Documentation' ) }
 					helpLinks={ this.state.helpLinks.jetpack_support_links }
