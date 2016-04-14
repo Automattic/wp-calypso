@@ -81,4 +81,12 @@ module.exports = {
 		defaultVariation: 'drake',
 		allowExistingUsers: true,
 	},
+	swapButtonsMySiteSidebar: {
+		datestamp: '20160414',
+		variations: {
+			original: 50,
+			swap: 50
+		},
+		defaultVariation: 'original'
+	},
 };
