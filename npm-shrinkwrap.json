@@ -6539,35 +6539,6 @@
     "redux": {
       "version": "3.0.4"
     },
-    "redux-analytics": {
-      "version": "0.3.0",
-      "dependencies": {
-        "flux-standard-action": {
-          "version": "0.6.1",
-          "dependencies": {
-            "lodash.isplainobject": {
-              "version": "3.2.0",
-              "dependencies": {
-                "lodash._basefor": {
-                  "version": "3.0.3"
-                },
-                "lodash.isarguments": {
-                  "version": "3.0.8"
-                },
-                "lodash.keysin": {
-                  "version": "3.0.8",
-                  "dependencies": {
-                    "lodash.isarray": {
-                      "version": "3.0.4"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "redux-thunk": {
       "version": "1.0.0"
     },
