@@ -197,8 +197,13 @@ module.exports = React.createClass( {
 			];
 
 		const {
-			formDescription, buttonLabel, showHowCanWeHelpField,
-			showHowYouFeelField, showSubjectField, showSiteField, showHelpLanguagePrompt,
+			formDescription,
+			buttonLabel,
+			showHowCanWeHelpField,
+			showHowYouFeelField,
+			showSubjectField,
+			showSiteField,
+			showHelpLanguagePrompt,
 		} = this.props;
 
 		return (
@@ -239,9 +244,9 @@ module.exports = React.createClass( {
 				<FormTextarea valueLink={ this.linkState( 'message' ) } placeholder={ this.translate( 'Please be descriptive' ) }></FormTextarea>
 
 				{ showHelpLanguagePrompt && (
-					<div className="help-contact-form__help-language-prompt">
+					<strong className="help-contact-form__help-language-prompt">
 						{ this.translate( 'Note: Support is only available in English at the moment.' ) }
-					</div>
+					</strong>
 				) }
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>{ buttonLabel }</FormButton>
 			</div>

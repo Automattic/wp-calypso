@@ -345,7 +345,7 @@ module.exports = React.createClass( {
 		const showChatVariation = olark.isUserEligible && olark.isOperatorAvailable;
 		const showKayakoVariation = ! showChatVariation && ( olark.details.isConversing || olark.isUserEligible );
 		const showForumsVariation = ! ( showChatVariation || showKayakoVariation );
-		const showHelpLanguagePrompt = olark.locale !== i18n.getLocaleSlug();
+		const showHelpLanguagePrompt = ( olark.locale !== i18n.getLocaleSlug() );
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
