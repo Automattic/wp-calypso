@@ -162,6 +162,7 @@
 		}
 
 		&.is-valid {
+
 			.gridicon {
 				fill: $blue-medium;
 
@@ -169,6 +170,10 @@
 				&:active {
 					cursor: pointer;
 				}
+			}
+
+			.reader-list-item__icon .gridicon {
+				fill: $white;
 			}
 
 			.follow-button {
