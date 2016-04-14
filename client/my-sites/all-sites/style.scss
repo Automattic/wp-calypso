@@ -9,6 +9,11 @@
 	.site__content {
 		padding: 13px 4px 13px 16px
 	}
+
+	.site__domain {
+		display: inline-block;
+		margin-right: 8px;
+	}
 }
 
 .all-sites .count {
@@ -16,9 +21,9 @@
 	align-self: center;
 	border-radius: 4px;
 	display: inline-flex;
-	margin-right: 16px;
+	margin-right: 8px;
 	padding: 0;
-	height: 34px;
-	width: 34px;
+	height: 32px;
+	width: 32px;
 	justify-content: center;
 }

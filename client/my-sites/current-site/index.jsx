@@ -177,7 +177,7 @@ module.exports = React.createClass( {
 						externalLink={ true }
 						onSelect={ this.trackHomepageClick }
 						ref="site" />
-					: <AllSites sites={ this.props.sites } />
+					: <AllSites sites={ this.props.sites.get() } />
 				}
 				{ this.getSiteNotices( site ) }
 			</Card>
