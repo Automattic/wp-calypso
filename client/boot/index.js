@@ -104,7 +104,6 @@ function setUpContext( reduxStore ) {
 		}
 
 		// set `context.query`
-		// debugger
 		const querystringStart = context.canonicalPath.indexOf( '?' );
 		if ( querystringStart !== -1 ) {
 			context.query = qs.parse( context.canonicalPath.substring( querystringStart + 1 ) );
