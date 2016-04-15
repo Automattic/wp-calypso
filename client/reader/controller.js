@@ -461,8 +461,8 @@ module.exports = {
 				React.createElement( ListStream, {
 					key: 'tag-' + context.params.user + '-' + context.params.list,
 					postStore: listStore,
-					owner: context.params.user,
-					slug: context.params.list,
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
 					setPageTitle: setPageTitle,
 					trackScrollPage: trackScrollPage.bind(
 						null,
@@ -599,8 +599,8 @@ module.exports = {
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( listManagement, {
 					key: 'list-management-sites',
-					owner: context.params.user,
-					slug: context.params.list,
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
 					tab: 'sites',
 					trackScrollPage: trackScrollPage.bind(
 						null,
@@ -629,8 +629,8 @@ module.exports = {
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( listManagement, {
 					key: 'list-management-tags',
-					owner: context.params.user,
-					slug: context.params.list,
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
 					tab: 'tags',
 					trackScrollPage: trackScrollPage.bind(
 						null,
@@ -659,8 +659,8 @@ module.exports = {
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( listManagement, {
 					key: 'list-management-description-edit',
-					owner: context.params.user,
-					slug: context.params.list,
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
 					tab: 'description-edit'
 				} )
 			),
