@@ -75,7 +75,7 @@ export default {
 		next();
 	},
 
-	start( context ) {
+	start( context, next ) {
 		var basePath = route.sectionify( context.path ),
 			flowName = utils.getFlowName( context.params ),
 			stepName = utils.getStepName( context.params ),
@@ -83,13 +83,11 @@ export default {
 
 		analytics.pageView.record( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName );
 
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		layoutFocus.set( 'content' );
 
 		titleActions.setTitle( i18n.translate( 'Create an account' ) );
 
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
+		context.primary = React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( SignupComponent, {
 					path: context.path,
 					refParameter,
@@ -99,12 +97,13 @@ export default {
 					stepName: stepName,
 					stepSectionName: stepSectionName
 				} )
-			),
-			document.getElementById( 'primary' )
 		);
+		context.secondary = null;
+
+		next();
 	},
 
-	phoneSignup( context ) {
+	phoneSignup( context, next ) {
 		var PhoneSignupComponent = require( 'signup/phone-signup-form' ),
 			countriesList = require( 'lib/countries-list' ).forSms(),
 			basePath = route.sectionify( context.path );
@@ -113,17 +112,17 @@ export default {
 
 		titleActions.setTitle( i18n.translate( 'Create an account' ) );
 
-		ReactDom.render(
-			React.createElement( PhoneSignupComponent, {
-				path: context.path,
-				countriesList: countriesList,
-				locale: context.params.lang
-			} ),
-			document.getElementById( 'primary' )
-		);
+		context.primary = React.createElement( PhoneSignupComponent, {
+			path: context.path,
+			countriesList: countriesList,
+			locale: context.params.lang
+		} );
+		context.secondary = null;
+
+		next();
 	},
 
-	login( context ) {
+	login( context, next ) {
 		var LogInComponent = require( 'signup/log-in-form' ),
 			basePath = route.sectionify( context.path );
 
@@ -131,12 +130,12 @@ export default {
 
 		titleActions.setTitle( i18n.translate( 'Log in to your WordPress.com account' ) );
 
-		ReactDom.render(
-			React.createElement( LogInComponent, {
-				path: context.path,
-				locale: context.params.lang
-			} ),
-			document.getElementById( 'primary' )
-		);
+		context.primary = React.createElement( LogInComponent, {
+			path: context.path,
+			locale: context.params.lang
+		} );
+		context.secondary = null;
+
+		next();
 	}
 };

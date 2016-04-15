@@ -37,7 +37,6 @@ var config = require( 'config' ),
 	emailVerification = require( 'components/email-verification' ),
 	viewport = require( 'lib/viewport' ),
 	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
-	sections = require( 'sections' ),
 	touchDetect = require( 'lib/touch-detect' ),
 	setRouteAction = require( 'state/notices/actions' ).setRoute,
 	accessibleFocus = require( 'lib/accessible-focus' ),
@@ -47,8 +46,9 @@ var config = require( 'config' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
-	// The following components require the i18n mixin, so must be required after i18n is initialized
-	Layout;
+	// The following dependencies require the i18n mixin, so must be required after i18n is initialized
+	Layout,
+	sections;
 
 function init() {
 	var i18nLocaleStringsObject = null;
@@ -287,6 +287,7 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	// Load the application modules for the various sections and features
+	sections = require( 'sections' );
 	sections.load();
 
 	// delete any lingering local storage data from signup
