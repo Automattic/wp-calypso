@@ -20,6 +20,18 @@ function get() {
 			} ),
 			type: 'GuidesFirstStep',
 			placement: 'right',
+			next: 'my-sites',
+		},
+		'my-sites': {
+			target: 'my-sites',
+			type: 'GuidesActionStep',
+			icon: 'my-sites',
+			placement: 'below',
+			text: i18n.translate( "{{strong}}First things first.{{/strong}} Up here, you'll find tools for managing your site's content and design.", {
+				components: {
+					strong: <strong />,
+				}
+			} ),
 			next: 'sidebar',
 		},
 		sidebar: {
