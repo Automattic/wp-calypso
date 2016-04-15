@@ -142,6 +142,9 @@
 		"email-followers": {
 		  "test": [ "store" ]
 		},
+		"embed-frame-markup": {
+			"test": [ "index" ]
+		},
 		"features-list": {
 		  "test": [ "index" ]
 		},
