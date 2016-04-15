@@ -9,13 +9,14 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import PlanStorage from '../index';
 import PlanStorageButton from '../button';
+import PlanStorageBar from '../bar';
 import sitesList from 'lib/sites-list';
 
 const sites = sitesList();
 
 export default React.createClass( {
 
-	displayName: 'PlanStorageExample',
+	displayName: 'PlanStorage',
 
 	mixins: [ PureRenderMixin ],
 
@@ -44,7 +45,7 @@ export default React.createClass( {
 					<a href="/devdocs/app-components/plan-storage">Plan Storage</a>
 				</h2>
 				<div>
-					<PlanStorage siteId={ sites.getPrimary().ID } />
+					<PlanStorage siteId={ sites.getPrimary().ID } type="button" />
 				</div>
 				<div>
 					<PlanStorageButton
@@ -60,6 +61,28 @@ export default React.createClass( {
 				</div>
 				<div>
 					<PlanStorageButton
+						sitePlanName={ plans.premium }
+						mediaStorage={ mediaStorage.red }
+					/>
+				</div>
+				<br />
+				<div>
+					<PlanStorage siteId={ sites.getPrimary().ID } type="bar" />
+				</div>
+				<div>
+					<PlanStorageBar
+						sitePlanName={ plans.free }
+						mediaStorage={ mediaStorage.green }
+					/>
+				</div>
+				<div>
+					<PlanStorageBar
+						sitePlanName={ plans.free }
+						mediaStorage={ mediaStorage.yellow }
+					/>
+				</div>
+				<div>
+					<PlanStorageBar
 						sitePlanName={ plans.premium }
 						mediaStorage={ mediaStorage.red }
 					/>
