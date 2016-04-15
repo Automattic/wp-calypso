@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
+import config from 'config';
 import WpcomPlanPrice from 'my-sites/plans/wpcom-plan-price';
 
 const PlanPrice = React.createClass( {
@@ -24,7 +24,7 @@ const PlanPrice = React.createClass( {
 				return this.translate( 'Free', { context: 'Zero cost product price' } );
 			}
 
-			if ( abtest( 'monthlyPlanPricing' ) === 'monthly' && this.props.isInSignup ) {
+			if ( config.isEnabled( 'monthly-plan-pricing' ) ) {
 				const monthlyPrice = +( rawPrice / 12 ).toFixed( 2 );
 				formattedPrice = formattedPrice.replace( rawPrice, monthlyPrice );
 			}
@@ -55,7 +55,7 @@ const PlanPrice = React.createClass( {
 			return <div className="plan-price is-placeholder" />;
 		}
 
-		if ( abtest( 'monthlyPlanPricing' ) === 'monthly' && this.props.isInSignup && plan.raw_price !== 0 ) {
+		if ( config.isEnabled( 'monthly-plan-pricing' ) && plan.raw_price !== 0 ) {
 			periodLabel = this.translate( 'per month, billed yearly' );
 		} else {
 			periodLabel = hasDiscount ? this.translate( 'due today when you upgrade' ) : plan.bill_period_label

@@ -37,14 +37,6 @@ module.exports = {
 		},
 		defaultVariation: 'disabled'
 	},
-	monthlyPlanPricing: {
-		datestamp: '20160118',
-		variations: {
-			yearly: 50,
-			monthly: 50
-		},
-		defaultVariation: 'yearly'
-	},
 	privacyCheckbox: {
 		datestamp: '20160310',
 		variations: {
