@@ -26,7 +26,14 @@ import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import TimezoneDropdown from 'components/timezone-dropdown';
+import { isFreePlan as siteHasFreePlan } from 'lib/products-values';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { hasCustomDomain as siteHasCustomDomain } from 'lib/site/utils';
+
+/**
+ * Module vars
+ */
+const CUSTOM_DOMAIN = 'custom-domain';
 
 module.exports = React.createClass( {
 
@@ -424,11 +431,21 @@ module.exports = React.createClass( {
 	},
 
 	renderDomainNudge() {
+		// do not nudge if the site already has a custom domain
+		if ( siteHasCustomDomain( this.props.site ) ) {
+			return;
+		}
+
+		// render nudge if the site plan is not free
+		if ( ! siteHasFreePlan( this.props.site.plan ) ) {
+			return;
+		}
+
 		return (
 			<UpgradeNudge
 				title={ this.translate( 'Add A Custom Domain' ) }
 				message={ this.translate( 'Upgrade now and get a free custom domain.' ) }
-				href={ `/domains/manage/${ this.props.site.slug }` }
+				feature={ CUSTOM_DOMAIN }
 				icon="star"
 			/>
 		);
