@@ -4,14 +4,24 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
+/**
+ * Internal Dependencies
+ */
+import Layout from 'layout';
+import layoutFocus from 'lib/layout-focus';
+import nuxWelcome from 'nux-welcome';
+import translatorInvitation from 'layout/community-translator/invitation-utils';
+var user = require( 'lib/user' )(),
+	sites = require( 'lib/sites-list' )();
+
 export { makeLoggedOutLayout } from './index.node.js';
 export { clientRouter } from './index.node.js';
 export { setSection } from './index.node.js';
 
 export function makeLayout( context, next ) {
 	const { store, primary, secondary, tertiary } = context;
-	const { user, sites, focus, nuxWelcome, translatorInvitation } = context;
-	const Layout = context.layoutComponent;
+
+	// TODO: only supply logged-in props if user.get()
 
 	context.layout = (
 		<ReduxProvider store={ store }>
@@ -20,7 +30,7 @@ export function makeLayout( context, next ) {
 				tertiary={ tertiary }
 				user={ user }
 				sites={ sites }
-				focus={ focus }
+				focus={ layoutFocus }
 				nuxWelcome={ nuxWelcome }
 				translatorInvitation={ translatorInvitation }
 			/>

@@ -37,7 +37,7 @@ var config = require( 'config' ),
 	emailVerification = require( 'components/email-verification' ),
 	viewport = require( 'lib/viewport' ),
 	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
-	sections = require( 'sections' ),
+	sections,
 	touchDetect = require( 'lib/touch-detect' ),
 	setRouteAction = require( 'state/notices/actions' ).setRoute,
 	accessibleFocus = require( 'lib/accessible-focus' ),
@@ -159,20 +159,6 @@ function boot() {
 	translatorJumpstart.init();
 
 	createReduxStoreFromPersistedInitialState( reduxStoreReady );
-}
-
-export function addLayoutToContext( context, next ) {
-	context.layoutComponent = require( 'layout' );
-	context.focus = layoutFocus;
-
-	if ( user.get() ) {
-		context.user = user;
-		context.sites = sites;
-		context.nuxWelcome = nuxWelcome;
-		context.translatorInvitation = translatorInvitation;
-	}
-
-	next();
 }
 
 function reduxStoreReady( reduxStore ) {
@@ -298,6 +284,7 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	// Load the application modules for the various sections and features
+	sections = require( 'sections' );
 	sections.load();
 
 	// delete any lingering local storage data from signup
