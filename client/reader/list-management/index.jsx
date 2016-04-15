@@ -45,10 +45,8 @@ const ListManagement = React.createClass( {
 
 export default connect(
 	( state, ownProps ) => {
-		const owner = encodeURIComponent( ownProps.owner );
-		const slug = encodeURIComponent( ownProps.slug );
 		return {
-			list: getListByOwnerAndSlug( state, owner, slug )
+			list: getListByOwnerAndSlug( state, ownProps.owner, ownProps.slug )
 		};
 	}
 )( ListManagement );
