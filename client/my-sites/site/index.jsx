@@ -9,7 +9,6 @@ import noop from 'lodash/noop';
  * Internal dependencies
  */
 import SiteIcon from 'components/site-icon';
-import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import SiteIndicator from 'my-sites/site-indicator';
 import { getCustomizeUrl } from 'my-sites/themes/helpers';
@@ -139,8 +138,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<Button
-				borderless
+			<a
 				className="site__cog"
 				href={ `/settings/general/${ site.slug }` }
 				onMouseEnter={ this.enableCogTooltip }
@@ -155,7 +153,7 @@ export default React.createClass( {
 				>
 					{ this.translate( 'Site settings' ) }
 				</Tooltip>
-			</Button>
+			</a>
 		);
 	},
 
