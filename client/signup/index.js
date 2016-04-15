@@ -9,9 +9,8 @@ var page = require( 'page' );
 var controller = require( './controller' ),
 	jetpackConnectController = require( './jetpack-connect/controller' ),
 	adTracking = require( 'analytics/ad-tracking' ),
-	config = require( 'config' );
-
-import { makeLayout } from 'controller';
+	config = require( 'config' ),
+	makeLayout = require( 'controller' ).makeLayout;
 
 module.exports = function( router ) {
 	if ( config.isEnabled( 'phone_signup' ) ) {
