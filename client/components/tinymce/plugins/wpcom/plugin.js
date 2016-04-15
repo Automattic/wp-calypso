@@ -632,7 +632,7 @@ function wpcomPlugin( editor ) {
 
 				if ( event.type === 'hide' || event.type === 'blur' ) {
 					activeToolbar = false;
-				} else if ( event.type === 'resizewindow' || event.type === 'scroll' ) {
+				} else if ( event.type === 'resizewindow' || event.type === 'scrollwindow' ) {
 					clearTimeout( timeout );
 
 					timeout = setTimeout( function() {
