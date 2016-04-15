@@ -190,6 +190,8 @@
 
 .site__edit-icon-text {
 	animation: appear .3s ease-in-out;
+	font-size: 10px;
+	max-width: 60px;
 }
 
 .site__edit-icon,
@@ -219,6 +221,15 @@
 
 	.gridicons-star {
 		color: $alert-yellow;
+	}
+}
+
+a.site__cog {
+	color: $gray;
+	line-height: 0;
+
+	&:hover {
+		color: darken( $gray, 20% );
 	}
 }
 
