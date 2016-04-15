@@ -44,7 +44,8 @@
 .sidebar {
 	margin: 0;
 
-	div {
+	.current-site,
+	.sidebar__footer {
 		flex-shrink: 0;	// prevents items from squishing together under their initial height in Safari
 	}
 
