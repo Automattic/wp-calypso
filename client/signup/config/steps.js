@@ -84,8 +84,8 @@ module.exports = {
 		delayApiRequestUntilComplete: true
 	},
 
-	'domains-without-theme': {
-		stepName: 'domains-without-theme',
+	'domains-only': {
+		stepName: 'domains-only',
 		apiRequestFunction: stepActions.addDomainItemsToCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		delayApiRequestUntilComplete: true

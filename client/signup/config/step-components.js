@@ -15,7 +15,7 @@ module.exports = {
 	'design-type': DesignTypeComponent,
 	domains: DomainsStepComponent,
 	'domains-with-plan': DomainsStepComponent,
-	'domains-without-theme': DomainsStepComponent,
+	'domains-only': DomainsStepComponent,
 	'jetpack-user': UserSignupComponent,
 	plans: PlansStepComponent,
 	'select-plan': PaidPlansOnly,
