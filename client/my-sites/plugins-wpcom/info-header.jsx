@@ -7,6 +7,7 @@ export const InfoHeader = React.createClass( {
 	render() {
 		return (
 			<Notice
+				status="is-info"
 				showDismiss={ false }
 				text={ "Your site comes pre-installed with a wide variety of plugins. Uploading your own plugins is not available on WordPress.com." }
 			>
