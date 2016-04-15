@@ -32,6 +32,8 @@ import Button from 'components/button';
 import SidebarFooter from 'layout/sidebar/footer';
 import DraftsButton from 'post-editor/drafts-button';
 import Tooltip from 'components/tooltip';
+import { isPremium, isBusiness } from 'lib/products-values';
+import { abtest } from 'lib/abtest';
 
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
@@ -343,7 +345,17 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		const planLink = '/plans' + this.siteSuffix();
+
+		let planLink = '/plans' + this.siteSuffix();
+
+		//Show plan details for upgraded sites
+		if (
+			abtest( 'sidebarPlanLink' ) === 'plans/my-plan' &&
+			site &&
+			( isPremium( site.plan ) || isBusiness( site.plan ) )
+		) {
+			planLink = '/plans/my-plan' + this.siteSuffix();
+		}
 
 		let linkClass = 'upgrades-nudge';
 
