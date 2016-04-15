@@ -89,7 +89,6 @@ export function guidesTour( state = {}, action ) {
 				shouldDelay: action.shouldDelay,
 				shouldReallyShow: ( action.shouldShow || state.shouldShow ) && ! action.shouldDelay,
 				tour: action.tour,
-				siteId: action.siteId,
 			};
 		case UPDATE_GUIDESTOUR:
 			return Object.assign( {}, state, omit( action, 'type' ) );
