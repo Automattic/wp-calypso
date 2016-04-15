@@ -222,6 +222,15 @@
 	}
 }
 
+.site__cog {
+	color: $gray;
+	line-height: 0;
+
+	&:hover {
+		color: darken( $gray, 20% );
+	}
+}
+
 .site__badge {
 	color: $gray;
 	padding-right: 4px;
