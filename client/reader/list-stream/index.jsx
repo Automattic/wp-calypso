@@ -61,7 +61,7 @@ const ListStream = React.createClass( {
 		}
 
 		if ( this.props.isMissing ) {
-			return <ListMissing />;
+			return <ListMissing owner={ this.props.owner } slug={ this.props.slug } />;
 		}
 
 		return (
