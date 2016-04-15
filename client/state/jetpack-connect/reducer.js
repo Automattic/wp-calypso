@@ -58,11 +58,11 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
 			if ( ! action.error ) {
 				const { plans_url } = action.data;
-				return Object.assign( {}, state, { isAuthorizing: false, authorizeError: false, authorizeSuccess: true, autoAuthorize: false, plansURL: plans_url, siteReceived: false } );
+				return Object.assign( {}, state, { authorizeError: false, authorizeSuccess: true, autoAuthorize: false, plansURL: plans_url, siteReceived: false } );
 			}
 			return Object.assign( {}, state, { isAuthorizing: false, authorizeError: action.error, authorizeSuccess: false, autoAuthorize: false } );
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST:
-			return Object.assign( {}, state, { siteReceived: true } );
+			return Object.assign( {}, state, { siteReceived: true, isAuthorizing: false } );
 		case JETPACK_CONNECT_QUERY_SET:
 			const queryObject = Object.assign( {}, action.queryObject );
 			return Object.assign( {}, defaultAuthorizeState, { queryObject: queryObject } );
