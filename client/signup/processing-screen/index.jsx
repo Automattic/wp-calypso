@@ -10,7 +10,8 @@ var React = require( 'react' ),
 	find = require( 'lodash/find' ),
 	reject = require( 'lodash/reject' ),
 	filter = require( 'lodash/filter' ),
-	pick = require( 'lodash/pick' );
+	pick = require( 'lodash/pick' ),
+	Card = require( 'components/card' );
 
 /**
  * Internal dependencies
@@ -62,14 +63,16 @@ module.exports = React.createClass( {
 
 		return (
 			<div>
-				<div className="signup-processing-screen__processing-text">
-					<div className="signup-processing-screen__processing-illustration"></div>
-					<div className="signup-processing-screen__processing-step-heading">
-						{ this.translate( 'Almost done!' ) }
-					</div>
+				<header className="step-header">
+					<h1 className="step-header__title">{ this.translate( 'Almost done!' ) }</h1>
+				</header>
+				
+				<Card className="signup-processing-screen__steps">
+					<img className="signup-processing-screen__illustration" src="/calypso/images/posts/illustration-posts.svg" />
 					{ stepMarkup }
-					<div className="signup-processing-screen__loader">{ this.translate( 'Loading…' ) }</div>
-				</div>
+				</Card>
+				
+				<div className="signup-processing-screen__loader">{ this.translate( 'Loading…' ) }</div>
 			</div>
 		);
 	}
