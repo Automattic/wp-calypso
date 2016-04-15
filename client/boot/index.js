@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	ReactDom = require( 'react-dom' ),
 	store = require( 'store' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
 	some = require( 'lodash/some' ),
@@ -31,7 +32,6 @@ var config = require( 'config' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	perfmon = require( 'lib/perfmon' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
-	translatorInvitation = require( 'layout/community-translator/invitation-utils' ),
 	layoutFocus = require( 'lib/layout-focus' ),
 	nuxWelcome = require( 'nux-welcome' ),
 	emailVerification = require( 'components/email-verification' ),
@@ -43,7 +43,6 @@ var config = require( 'config' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	bindTitleToStore = require( 'lib/screen-title' ).subscribeToStore,
 	syncHandler = require( 'lib/wp/sync-handler' ),
-	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
 	// The following dependencies require the i18n mixin, so must be required after i18n is initialized
@@ -169,8 +168,6 @@ function reduxStoreReady( reduxStore ) {
 
 	supportUser.setReduxStore( reduxStore );
 
-	Layout = require( 'layout' );
-
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
 		// Inject these here
@@ -179,19 +176,15 @@ function reduxStoreReady( reduxStore ) {
 		// Set current user in Redux store
 		reduxStore.dispatch( receiveUser( user.get() ) );
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
-
-		// Create layout instance with current user prop
-		layoutElement = React.createElement( Layout, {
-			user: user,
-			sites: sites,
-			focus: layoutFocus,
-			nuxWelcome: nuxWelcome,
-			translatorInvitation: translatorInvitation
-		} );
 	} else {
 		analytics.setSuperProps( superProps );
-		layoutElement = React.createElement( Layout, { focus: layoutFocus } );
 	}
+
+	Layout = require( 'controller' ).ReduxWrappedLayout;
+
+	layoutElement = React.createElement( Layout, {
+		store: reduxStore
+	} );
 
 	if ( config.isEnabled( 'perfmon' ) ) {
 		// Record time spent watching slowly-flashing divs
@@ -202,10 +195,9 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/network-connection' ).init( reduxStore );
 	}
 
-	renderWithReduxStore(
+	ReactDom.render(
 		layoutElement,
-		document.getElementById( 'wpcom' ),
-		reduxStore
+		document.getElementById( 'wpcom' )
 	);
 
 	debug( 'Main layout rendered.' );

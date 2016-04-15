@@ -43,7 +43,7 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, tertiary } ) =>
 				nuxWelcome={ nuxWelcome }
 				translatorInvitation={ translatorInvitation }
 			/>
-			: <Layout focus={ layoutFocus } />
+			: <Layout focus={ layoutFocus } /* FIXME: Don't we need LayoutLoggedOut here? */ />
 		}
 	</ReduxProvider>
 );
