@@ -12,7 +12,17 @@ const defaultPlugins = [
 		supportLink: 'https://en.support.wordpress.com/google-analytics/',
 		icon: 'stats',
 		plan: 'Business',
-		description: 'Advanced features to complement WordPress.com stats. Funnel reports, goal conversion, and more.'
+		description: 'Advanced features to complement you site stats. Funnel reports, goal conversion, and more.'
+	},
+	{
+		name: 'Comming Soon',
+		plan: 'Business',
+		description: 'More plugins and features are coming soon...'
+	},
+	{
+		name: 'Coming Soon',
+		plan: 'Business',
+		description: 'More plugins and features are coming soon...'
 	}
 ];
 
