@@ -21,11 +21,20 @@ export { setSection } from './index.node.js';
 export function makeLayout( context, next ) {
 	const { store, primary, secondary, tertiary } = context;
 
-	// TODO: only supply logged-in props if user.get()
-
 	context.layout = (
-		<ReduxProvider store={ store }>
-			<Layout primary={ primary }
+		<ReduxWrappedLayout store={ store }
+			primary={ primary }
+			secondary={ secondary }
+			tertiary={ tertiary }
+		/>
+	);
+	next();
+};
+
+export const ReduxWrappedLayout = ( { store, primary, secondary, tertiary } ) => (
+	<ReduxProvider store={ store }>
+		{ user.get()
+			? <Layout primary={ primary }
 				secondary={ secondary }
 				tertiary={ tertiary }
 				user={ user }
@@ -34,7 +43,7 @@ export function makeLayout( context, next ) {
 				nuxWelcome={ nuxWelcome }
 				translatorInvitation={ translatorInvitation }
 			/>
-		</ReduxProvider>
-	);
-	next();
-};
+			: <Layout focus={ layoutFocus } />
+		}
+	</ReduxProvider>
+);
