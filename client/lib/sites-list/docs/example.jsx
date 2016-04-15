@@ -10,6 +10,8 @@ var Site = require( 'my-sites/site' ),
 	AllSites = require( 'my-sites/all-sites' ),
 	sites = require( 'lib/sites-list' )();
 
+import Card from 'components/card';
+
 var Sites = React.createClass( {
 	render: function() {
 		return (
@@ -17,8 +19,12 @@ var Sites = React.createClass( {
 				<h2>
 					<a href="/devdocs/app-components/sites">Site and All Sites</a>
 				</h2>
-				<Site site={ sites.getPrimary() } />
-				<AllSites sites={ sites.get() } />
+				<Card style={ { padding: 0 } }>
+					<Site site={ sites.getPrimary() } />
+				</Card>
+				<Card style={ { padding: 0 } }>
+					<AllSites sites={ sites.get() } />
+				</Card>
 			</div>
 		);
 	}
