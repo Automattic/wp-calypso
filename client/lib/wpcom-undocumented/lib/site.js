@@ -166,8 +166,25 @@ UndocumentedSite.prototype.removeEmailFollower = function( followerId, callback 
 	}, callback );
 };
 
+UndocumentedSite.prototype.removeLogo = function( callback ) {
+	return this.wpcom.req.post( {
+		path: '/sites/' + this._id + '/logo/delete',
+		body: {}
+	}, callback );
+}
+
+UndocumentedSite.prototype.setLogo = function( data, callback ) {
+	return this.wpcom.req.post( {
+		path: '/sites/' + this._id + '/logo',
+		body: {
+			id: data.id,
+			url: data.url,
+		}
+	}, callback );
+}
+
 UndocumentedSite.prototype.setHomePageSettings = function( homePageData, callback ) {
-	this.wpcom.req.post( {
+	return this.wpcom.req.post( {
 		path: '/sites/' + this._id + '/homepage',
 		body: {
 			is_page_on_front: homePageData.isPageOnFront,
@@ -178,21 +195,21 @@ UndocumentedSite.prototype.setHomePageSettings = function( homePageData, callbac
 }
 
 UndocumentedSite.prototype.setHeaderImage = function( imageData, callback ) {
-	this.wpcom.req.post( {
+	return this.wpcom.req.post( {
 		path: '/sites/' + this._id + '/headers/mine',
 		body: { url: imageData.url, attachment_id: imageData.ID, width: imageData.width, height: imageData.height }
 	}, callback );
 }
 
 UndocumentedSite.prototype.removeHeaderImage = function( callback ) {
-	this.wpcom.req.post( {
+	return this.wpcom.req.post( {
 		path: '/sites/' + this._id + '/headers/mine',
 		body: { remove: true }
 	}, callback );
 }
 
 UndocumentedSite.prototype.getMuseCustomizations = function( callback ) {
-	this.wpcom.req.get( '/sites/' + this._id + '/customizations', callback );
+	return this.wpcom.req.get( '/sites/' + this._id + '/customizations', callback );
 };
 
 UndocumentedSite.prototype.setOption = function( query, callback ) {
