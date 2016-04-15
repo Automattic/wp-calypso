@@ -15,8 +15,8 @@
 @import 'shared/welcome';                      // welcome messages
 @import 'shared/infinite-scroll-end';          // Last page marker once infinite scroll has reached end
 
-// Layouts
-@import 'layout/main';                         // global layout and responsive styles
+// Main
+@import 'main';                                // global layout and responsive styles
 @import 'layout/detail-page';                  // detail page styles
 
 // Sections
