@@ -46,8 +46,10 @@ var FeedLookup = {
 		feedId = new Promise( ( resolve, reject ) => {
 			discover( feedUrl )
 				.then( function( response ) {
+					var feed;
+
 					if ( ! isEmpty( response.feeds ) ) {
-						var feed = head( response.feeds );
+						feed = head( response.feeds );
 
 						if ( ! isEmpty( feed.feed_ID ) ) {
 							resolve( feed.feed_ID );
