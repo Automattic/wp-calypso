@@ -7,9 +7,12 @@ var isEmpty = require( 'lodash/isEmpty' ),
 var inflight = require( 'lib/inflight' ),
 	wpcom = require( 'lib/wp' );
 
+var FeedLookupCache,
+	FeedLookup;
+
 const cache = lruCache( 10 );
 
-var FeedLookupCache = {
+FeedLookupCache = {
 	get: function( url ) {
 		return cache.get( url );
 	},
@@ -35,7 +38,7 @@ function discover( feedUrl ) {
 	);
 };
 
-var FeedLookup = {
+FeedLookup = {
 	get: function( feedUrl ) {
 		var feedId = FeedLookupCache.get( feedUrl );
 
