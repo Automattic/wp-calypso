@@ -10,3 +10,11 @@
 	padding: 8px 24px;
 	min-height: 40px;
 }
+
+.me-sidebar__menu__signout-wrapper {
+	flex-shrink: 0;	// these are required for the flexed sidebar to not implode in Safari
+}
+
+.profile-gravatar {
+	flex-shrink: 0;
+}
