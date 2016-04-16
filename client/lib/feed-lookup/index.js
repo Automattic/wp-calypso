@@ -1,6 +1,5 @@
 // External Dependencies
-var forEach = require( 'lodash/forEach' ),
-	isEmpty = require( 'lodash/isEmpty' ),
+var isEmpty = require( 'lodash/isEmpty' ),
 	head = require( 'lodash/head' ),
 	lruCache = require( 'lru-cache' );
 
@@ -14,7 +13,7 @@ var FeedLookupCache = {
 	get: function( url ) {
 		return cache.get( url );
 	},
-	
+
 	set: function( url, id ) {
 		cache.set( url, id );
 	}
