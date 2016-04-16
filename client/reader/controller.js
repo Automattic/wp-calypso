@@ -224,25 +224,17 @@ module.exports = {
 	},
 
 	feedDiscovery: function( context, next ) {
-		var FeedUrlStore = require( 'lib/feed-url-store' ),
-			FeedUrlStoreActions = require( 'lib/feed-url-store/actions' ),
+		var FeedLookup = require( 'lib/feed-lookup' ),
 			feedId;
 
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
-			FeedUrlStoreActions.discover( context.params.feed_id, function( error, data ) {
-				if ( ! error && ! isEmpty( data.feeds ) ) {
-					FeedUrlStore.receiveFeeds( context.params.feed_id, data.feeds );
-					feedId = FeedUrlStore.get( context.params.feed_id );
-
-					if ( feedId ) {
-						page.redirect( `/read/feeds/${feedId}` );
-					} else {
-						renderFeedError();
-					}
-				} else {
+			FeedLookup.get( context.params.feed_id )
+				.then( function( feedId ) {
+					page.redirect( `/read/feeds/${feedId}` );
+				} )
+				.catch( function( error ) {
 					renderFeedError();
-				}
-			} );
+				} );
 		} else {
 			next();
 		}
