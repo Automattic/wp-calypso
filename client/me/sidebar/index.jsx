@@ -79,7 +79,7 @@ module.exports = React.createClass( {
 		return (
 			<Sidebar>
 				<ProfileGravatar user={ this.props.user.get() } />
-				<div>
+				<div className="me-sidebar__menu__signout-wrapper">
 					<FormButton
 						className="me-sidebar__menu__signout"
 						isPrimary={ false }
