@@ -1,22 +1,30 @@
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 
 import BusinessPlugin from './plugin-types/business-plugin';
+import PurchaseButton from './purchase-button';
 
 export const BusinessPluginsPanel = React.createClass( {
 	render() {
-		const { plugins } = this.props;
+		const {
+			isActive = false,
+			plugins
+		} = this.props;
+
+		const cardClasses = classNames( 'wpcom-plugins__business-panel', {
+			'is-disabled': ! isActive
+		} );
 
 		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Business Plan Upgrades' ) }>
-					<Button compact primary>{ this.translate( 'Purchase' ) }</Button>
+					<PurchaseButton { ...{ isActive } } />
 				</SectionHeader>
 
-				<Card className="wpcom-plugins__business-panel is-disabled">
+				<Card className={ cardClasses }>
 					<div className="wpcom-plugins__list">
 						{ plugins.map( ( { name, descriptionLink, icon, plan, description } ) =>
 							<BusinessPlugin

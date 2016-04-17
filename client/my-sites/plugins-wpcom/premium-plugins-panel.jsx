@@ -1,22 +1,29 @@
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 
 import PremiumPlugin from './plugin-types/premium-plugin';
 
 export const PremiumPluginsPanel = React.createClass( {
 	render() {
-		const { plugins } = this.props;
+		const {
+			isActive = false,
+			plugins = []
+		} = this.props;
+
+		const cardClasses = classNames( 'wpcom-plugins__premium-panel', {
+			'is-disabled': ! isActive
+		} );
 
 		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Premium Plan Upgrades' ) }>
-					<Button compact primary>{ this.translate( 'Purchase' ) }</Button>
+					<PurchaseButton { ...{ isActive } } />
 				</SectionHeader>
 
-				<Card className="wpcom-plugins__premium-panel is-disabled">
+				<Card className={ cardClasses }>
 					<div className="wpcom-plugins__list">
 						{ plugins.map( ( { name, descriptionLink, icon, plan, description } ) =>
 							<PremiumPlugin
