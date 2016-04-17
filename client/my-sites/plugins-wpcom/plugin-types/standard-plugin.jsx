@@ -1,5 +1,9 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import get from 'lodash/get';
 import noop from 'lodash/noop';
+
+import { recordTracksEvent } from 'state/analytics/actions';
 
 import Gridicon from 'components/gridicon';
 
@@ -38,4 +42,16 @@ StandardPlugin.propTypes = {
 	supportLink: PropTypes.string.isRequired
 };
 
-export default StandardPlugin;
+const trackClick = name => recordTracksEvent(
+	'calypso_plugin_wpcom_click',
+	{
+		plugin_name: name,
+		plugin_plan: 'standard'
+	}
+);
+
+const mapDispatchToProps = ( dispatch, props ) => ( {
+	onClick: get( props, 'onClick', () => dispatch( trackClick( props.name ) ) )
+} );
+
+export default connect( null, mapDispatchToProps )( StandardPlugin );
