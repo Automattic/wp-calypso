@@ -142,8 +142,8 @@ describe( 'utils', () => {
 
 			before( () => {
 				reducer = createReducer( {
-					[SERIALIZE]: state => overriddenState,
-					[DESERIALIZE]: state => overriddenState
+					[SERIALIZE]: () => overriddenState,
+					[DESERIALIZE]: () => overriddenState
 				} );
 			} );
 

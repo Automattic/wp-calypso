@@ -13,7 +13,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { isValidStateWithSchema } from 'state/utils';
+import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { idSchema, capabilitiesSchema } from './schema';
 
 /**
@@ -23,22 +23,9 @@ import { idSchema, capabilitiesSchema } from './schema';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function id( state = null, action ) {
-	switch ( action.type ) {
-		case CURRENT_USER_ID_SET:
-			state = action.userId;
-			break;
-		case SERIALIZE:
-			return state;
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, idSchema ) ) {
-				return state;
-			}
-			return null;
-	}
-
-	return state;
-}
+export const id = createReducer( {
+	[CURRENT_USER_ID_SET]: ( state, action ) => action.userId
+}, null, idSchema );
 
 /**
  * Returns the updated capabilities state after an action has been dispatched.
