@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import debugModule from 'debug';
+import find from 'lodash/find';
 
 /**
  * Internal Dependencies
@@ -12,8 +13,7 @@ import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { removeNotice } from 'state/notices/actions'
+import { removeNotice } from 'state/notices/actions';
 
 const debug = debugModule( 'calypso:notices' );
 
@@ -28,7 +28,9 @@ const NoticesList = React.createClass( {
 		notices: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.array
-		] )
+		] ),
+		storeNotices: React.PropTypes.array,
+		removeNotice: React.PropTypes.func,
 	},
 
 	getDefaultProps() {
@@ -42,7 +44,10 @@ const NoticesList = React.createClass( {
 		debug( 'Mounting Global Notices React component.' );
 	},
 
-	removeNotice( notice ) {
+	handleOldDismissClick( noticeId ) {
+		const noticesRaw = this.props.notices[ this.props.id ] || [];
+		const notice = find( noticesRaw, { noticeId } );
+
 		if ( notice ) {
 			notices.removeNotice( notice );
 		}
@@ -50,45 +55,56 @@ const NoticesList = React.createClass( {
 
 	render() {
 		const noticesRaw = this.props.notices[ this.props.id ] || [];
-		let noticesList = noticesRaw.map( function( notice, index ) {
-				return (
-					<Notice
-						key={ 'notice-old-' + index }
-						status={ notice.status }
-						duration={ notice.duration || null }
-						text={ notice.text }
-						isCompact={ notice.isCompact }
-						onDismissClick={ this.removeNotice.bind( this, notice ) }
-						showDismiss={ notice.showDismiss }
+		let noticesList = noticesRaw.map( ( notice ) => {
+			return (
+				<Notice
+					noticeId={ notice.noticeId }
+					key={ 'notice-old-' + notice.noticeId }
+					status={ notice.status }
+					duration={ notice.duration }
+					text={ notice.text }
+					isCompact={ notice.isCompact }
+					onDismissClick={ this.handleOldDismissClick }
+					showDismiss={ notice.showDismiss }
+				>
+				{ notice.button &&
+					<NoticeAction
+						href={ notice.href }
+						onClick={ notice.onClick }
 					>
-						{ notice.button &&
-							<NoticeAction
-								href={ notice.href }
-								onClick={ notice.onClick }
-							>
-								{ notice.button }
-							</NoticeAction> }
-						</Notice>
-				);
-			}, this );
+						{ notice.button }
+					</NoticeAction>
+				}
+				</Notice>
+			);
+		} );
 
 		//This is an interim solution for displaying both notices from redux store
 		//and from the old component. When all notices are moved to redux store, this component
 		//needs to be updated.
-		noticesList = noticesList.concat( this.props.storeNotices.map( function( notice, index ) {
+		noticesList = noticesList.concat( this.props.storeNotices.map( ( notice ) => {
 			return (
-				<div className='global-notices__notice'>
-					<Notice
-						key={ 'notice-' + index }
-						status={ notice.status }
-						duration = { notice.duration || null }
-						showDismiss={ notice.showDismiss }
-						onDismissClick={ this.props.removeNotice.bind( this, notice.noticeId ) }
-						text={ notice.text }>
-					</Notice>
-				</div>
+				<Notice
+					noticeId={ notice.id }
+					key={ 'notice-' + notice.id }
+					status={ notice.status }
+					duration = { notice.duration }
+					showDismiss={ notice.showDismiss }
+					onDismissClick={ this.props.removeNotice }
+					text={ notice.text }
+					icon={ notice.icon }
+				>
+				{ notice.button &&
+					<NoticeAction
+						href={ notice.href }
+						onClick={ notice.onClick }
+					>
+						{ notice.button }
+					</NoticeAction>
+				}
+				</Notice>
 			);
-		}, this ) );
+		} ) );
 
 		if ( ! noticesList.length ) {
 			return null;
@@ -108,5 +124,5 @@ export default connect(
 			storeNotices: state.notices.items
 		};
 	},
-	dispatch => bindActionCreators( { removeNotice }, dispatch )
+	{ removeNotice }
 )( NoticesList );

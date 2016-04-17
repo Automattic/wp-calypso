@@ -20,14 +20,23 @@ export function removeNotice( noticeId ) {
 }
 
 function createNotice( status, text, options = {} ) {
+	const noticeId = options.id || uniqueId();
+	const closeFn = removeNotice.bind( noticeId );
 	const notice = {
-		noticeId: options.id || uniqueId(),
-		duration: options.duration,
+		id: noticeId,
+		icon: options.icon || null,
+		duration: parseInt( options.duration ) || null,
+		button: options.button,
+		onClick: ( event ) => {
+			if ( typeof options.onClick === 'function' ) {
+				return options.onClick( event, closeFn );
+			}
+		},
 		showDismiss: ( typeof options.showDismiss === 'boolean' ? options.showDismiss : true ),
 		isPersistent: options.isPersistent || false,
 		displayOnNextPage: options.displayOnNextPage || false,
 		status: status,
-		text: text
+		text: text,
 	};
 
 	return {

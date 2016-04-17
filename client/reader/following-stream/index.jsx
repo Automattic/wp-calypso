@@ -3,6 +3,7 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
+	connect = require( 'react-redux' ).connect,
 	classnames = require( 'classnames' ),
 	noop = require( 'lodash/noop' ),
 	times = require( 'lodash/times' );
@@ -32,10 +33,14 @@ var Main = require( 'components/main' ),
 	CommentStore = require( 'lib/comment-store/comment-store' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	scrollTo = require( 'lib/scroll-to' ),
-	XPostHelper = require( 'reader/xpost-helper' );
+	XPostHelper = require( 'reader/xpost-helper' ),
+	infoNotice = require( 'state/notices/actions' ).infoNotice,
+	removeNotice = require( 'state/notices/actions' ).removeNotice;
 
 const GUESSED_POST_HEIGHT = 600,
 	HEADER_OFFSET_TOP = 46;
+
+const READER_STREAM_NOTICE_ID = 'reader-stream-notice';
 
 function cardClassForPost( post ) {
 	if ( post.display_type & DISPLAY_TYPES.X_POST ) {
@@ -60,7 +65,13 @@ module.exports = React.createClass( {
 		showFollowInHeader: React.PropTypes.bool,
 		onUpdatesShown: React.PropTypes.func,
 		emptyContent: React.PropTypes.object,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
+		infoNotice: React.PropTypes.func,
+		removeNotice: React.PropTypes.func,
+	},
+
+	contextTypes: {
+		store: React.PropTypes.object.isRequired,
 	},
 
 	getDefaultProps: function() {
@@ -97,6 +108,39 @@ module.exports = React.createClass( {
 				this.showSelectedPost( { replaceHistory: true } );
 			}
 		}
+
+		if ( prevState.updateCount !== this.state.updateCount ) {
+			if ( this.state.updateCount > 0 ) {
+				this.updateNotice( this.state.updateCount );
+			} else {
+				this.removeNotice();
+			}
+		}
+	},
+
+	updateNotice: function( count ) {
+		let countString = count >= 40 ? '40+' : ( '' + count );
+
+		this.context.store.dispatch(
+			infoNotice(
+				this.translate( '%s new post', '%s new posts', { args: [ countString ], count: count } ),
+				{
+					id: READER_STREAM_NOTICE_ID,
+					icon: 'arrow-up',
+					showDismiss: false,
+					button: this.translate( 'Update' ),
+					onClick: ( event, closeFn ) => {
+						event.preventDefault();
+						this.handleUpdateClick();
+						closeFn();
+					}
+				}
+			)
+		);
+	},
+
+	removeNotice: function() {
+		this.context.store.dispatch( removeNotice( READER_STREAM_NOTICE_ID ) );
 	},
 
 	_popstate: function() {
@@ -438,7 +482,6 @@ module.exports = React.createClass( {
 					<h1>{ this.props.listName }</h1>
 				</MobileBackToSidebar>
 
-				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
 				{ this.props.children }
 				{ body }
 			</Main>

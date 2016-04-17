@@ -5,6 +5,8 @@ var debug = require( 'debug' )( 'calypso:notices' );
 
 var Emitter = require( 'lib/mixins/emitter' );
 
+var uniqueId = require( 'lodash/uniqueId' );
+
 debug( 'initializing notices' );
 
 var list = { containerNames: {} };
@@ -29,6 +31,7 @@ const notices = {
 
 		list[ container ] = [];
 		var noticeObject = {
+			noticeId: options.id || uniqueId(),
 			type: options.type || 'message',
 			status: status,
 			text: text,

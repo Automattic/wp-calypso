@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import findIndex from 'lodash/findIndex';
 
 /**
  * Internal dependencies
@@ -17,9 +18,19 @@ import {
 export function items( state = [], action ) {
 	switch ( action.type ) {
 		case NEW_NOTICE:
-			return [ action.notice, ...state ];
+			const oldNoticeIndex = findIndex( state, { id: action.notice.id } );
+
+			if ( oldNoticeIndex === -1 ) {
+				return [ action.notice, ...state ];
+			}
+
+			return [
+				...state.slice( 0, oldNoticeIndex ),
+				action.notice,
+				...state.slice( oldNoticeIndex + 1 )
+			];
 		case REMOVE_NOTICE:
-			return state.filter( ( notice ) => ( notice.noticeId !== action.noticeId ) );
+			return state.filter( ( notice ) => ( notice.id !== action.noticeId ) );
 		case SET_ROUTE:
 			return state.filter( notice => {
 				const show = notice.isPersistent || notice.displayOnNextPage;

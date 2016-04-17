@@ -84,9 +84,11 @@ const devdocs = {
 	// UI components
 	design: function( context ) {
 		ReactDom.render(
-			React.createElement( DesignAssetsComponent, {
-				component: context.params.component
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( DesignAssetsComponent, {
+					component: context.params.component
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},

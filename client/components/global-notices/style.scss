@@ -32,15 +32,15 @@
 
 .global-notices .notice {
 	flex-wrap: nowrap;
+	margin-top: 1px;
 	margin-bottom: 0;
 	text-align: left;
 	pointer-events: auto;
 
 	@include breakpoint( ">660px" ) {
-		display: inline-flex;
+		display: flex;
 		border-radius: 20px;
 		overflow: hidden;
-		margin-bottom: 24px;
 	}
 }
 
