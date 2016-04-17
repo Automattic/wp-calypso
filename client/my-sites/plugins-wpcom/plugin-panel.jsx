@@ -9,6 +9,7 @@ import InfoHeader from './info-header';
 import StandardPluginsPanel from './standard-plugins-panel';
 import PremiumPluginsPanel from './premium-plugins-panel';
 import BusinessPluginsPanel from './business-plugins-panel';
+import PageViewTracker from 'client/analytics/page-view-tracker';
 
 export const PluginPanel = React.createClass( {
 	render() {
@@ -17,6 +18,7 @@ export const PluginPanel = React.createClass( {
 
 		return (
 			<div className="wpcom-plugin-panel">
+				<PageViewTracker path="/plugins/:site" title="Plugins > WPCOM Site" />
 				<InfoHeader />
 				<StandardPluginsPanel displayCount={ 6 } />
 				<Card className="wpcom-plugin-panel__panel-footer" href={ standardPluginsLink }>
