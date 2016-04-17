@@ -6,7 +6,6 @@ const ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	debug = require( 'debug' )( 'calypso:reader:controller' ),
 	trim = require( 'lodash/trim' ),
-	isEmpty = require( 'lodash/isEmpty' ),
 	moment = require( 'moment' ),
 	ReduxProvider = require( 'react-redux' ).Provider;
 
@@ -224,15 +223,14 @@ module.exports = {
 	},
 
 	feedDiscovery: function( context, next ) {
-		var FeedLookup = require( 'lib/feed-lookup' ),
-			feedId;
+		var FeedLookup = require( 'lib/feed-lookup' );
 
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
 			FeedLookup.get( context.params.feed_id )
 				.then( function( feedId ) {
 					page.redirect( `/read/feeds/${feedId}` );
 				} )
-				.catch( function( error ) {
+				.catch( function() {
 					renderFeedError();
 				} );
 		} else {
