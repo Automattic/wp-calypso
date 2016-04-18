@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
@@ -18,5 +18,9 @@ export const PurchaseButton = React.createClass( {
 		return <Button compact primary>{ this.translate( 'Purchase' ) }</Button>;
 	}
 } );
+
+PurchaseButton.propTypes = {
+	isActive: PropTypes.bool.isRequired
+};
 
 export default PurchaseButton;

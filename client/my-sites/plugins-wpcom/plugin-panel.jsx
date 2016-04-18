@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import get from 'lodash/get';
 
 import Card from 'components/card';
 import {
@@ -71,7 +72,7 @@ export const PluginPanel = React.createClass( {
 } );
 
 const mapStateToProps = state => ( {
-	plan: getSelectedSite( state ).plan,
+	plan: get( getSelectedSite( state ), 'plan', {} ),
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
 } );
 
