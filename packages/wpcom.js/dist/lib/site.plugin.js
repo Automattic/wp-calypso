@@ -59,29 +59,29 @@ var SitePlugin = (function () {
 		}
 
 		/**
-   * config the plugin
+   * Update the plugin configuration
    *
    * @param {Object} [query] - query object parameter
-   * @param {Object} config - plugin config object
+   * @param {Object} body - plugin body object
    * @param {Function} [fn] - callback function
    * @return {Promise} Promise
    */
-	}, {
-		key: 'config',
-		value: function config(query, _config, fn) {
-			return this.wpcom.req.put(this.pluginPath, query, _config, fn);
-		}
 	}, {
 		key: 'update',
+		value: function update(query, body, fn) {
+			return this.wpcom.req.put(this.pluginPath, query, body, fn);
+		}
+	}, {
+		key: 'updateVersion',
 
 		/**
-   * Update the plugin
+   * Update the plugin version
    *
    * @param {Object} [query] - query object parameter
    * @param {Function} [fn] - callback function
    * @return {Promise} Promise
    */
-		value: function update(query, fn) {
+		value: function updateVersion(query, fn) {
 			return this.wpcom.req.put(this.pluginPath + '/update', query, fn);
 		}
 	}, {
@@ -115,33 +115,33 @@ var SitePlugin = (function () {
 
 		/**
    * Activate the plugin
-   * This method is a shorthand of config()
+   * This method is a shorthand of update()
    *
    * @param {Object} [query] - query object parameter
    * @param {Function} [fn] - callback function
    * @return {Promise} Promise
    */
 		value: function activate(query, fn) {
-			return this.config(query, { active: true }, fn);
+			return this.update(query, { active: true }, fn);
 		}
 	}, {
 		key: 'deactivate',
 
 		/**
    * Deactivate the plugin
-   * This method is a shorthand of config()
+   * This method is a shorthand of update()
    *
    * @param {Object} [query] - query object parameter
    * @param {Function} [fn] - callback function
    * @return {Promise} Promise
    */
 		value: function deactivate(query, fn) {
-			return this.config(query, { active: false }, fn);
+			return this.update(query, { active: false }, fn);
 		}
 
 		/**
    * Enable plugin autoupdate
-   * This method is a shorthand of config()
+   * This method is a shorthand of update()
    *
    * @param {Object} [query] - query object parameter
    * @param {Function} [fn] - callback function
@@ -150,12 +150,12 @@ var SitePlugin = (function () {
 	}, {
 		key: 'enableAutoupdate',
 		value: function enableAutoupdate(query, fn) {
-			return this.config(query, { autoupdate: true }, fn);
+			return this.update(query, { autoupdate: true }, fn);
 		}
 
 		/**
    * Disable plugin autoupdate
-   * This method is a shorthand of config()
+   * This method is a shorthand of update()
    *
    * @param {Object} [query] - query object parameter
    * @param {Function} [fn] - callback function
@@ -164,7 +164,7 @@ var SitePlugin = (function () {
 	}, {
 		key: 'disableAutoupdate',
 		value: function disableAutoupdate(query, fn) {
-			return this.config(query, { autoupdate: false }, fn);
+			return this.update(query, { autoupdate: false }, fn);
 		}
 	}]);
 
