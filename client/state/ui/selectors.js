@@ -52,3 +52,15 @@ export function getSectionName( state ) {
 export function isSectionLoading( state ) {
 	return state.ui.isLoading;
 }
+
+/*
+ * Returns true if the current section is isomorphic.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {bool}    True if current section is isomorphic
+ *
+ * @see client/sections
+ */
+export function isSectionIsomorphic( state ) {
+	return get( state.ui.section, 'isomorphic', false );
+}
