@@ -1,8 +1,56 @@
-import analytics from 'lib/analytics';
-import PageViewTracker from './component';
+import React, { PropTypes } from 'react';
+import flowRight from 'lodash/flowRight';
+import has from 'lodash/has';
+import noop from 'lodash/noop';
+import { connect } from 'react-redux';
+import { recordPageView } from 'state/analytics/actions';
 
-const recorder = ( path, title ) => analytics.pageView.record( path, title );
+export const PageViewTracker = React.createClass( {
+	getInitialState: () => ( {
+		timer: null
+	} ),
 
-const Tracker = PageViewTracker( recorder );
+	componentDidMount() {
+		this.queuePageView();
+	},
 
-export default Tracker;
+	componentWillUnmount() {
+		clearTimeout( this.state.timer );
+	},
+
+	queuePageView() {
+		const {
+			delay = 0,
+			path,
+			recorder = noop,
+			title
+		} = this.props;
+
+		if ( this.state.timer ) {
+			return;
+		}
+
+		if ( ! delay ) {
+			return recorder( path, title );
+		}
+
+		this.setState( {
+			timer: setTimeout( () => recorder( path, title ), delay )
+		} );
+	},
+
+	render: () => null
+} );
+
+PageViewTracker.propTypes = {
+	delay: PropTypes.number,
+	path: PropTypes.string.isRequired,
+	recorder: PropTypes.func,
+	title: PropTypes.string.isRequired
+};
+
+const mapDispatchToProps = dispatch => ( {
+	recorder: flowRight( dispatch, recordPageView )
+} );
+
+export default connect( null, mapDispatchToProps )( PageViewTracker );
