@@ -19,11 +19,13 @@ import {
 } from './default-plugins';
 
 /*
- * Interpolate the given plugin propagating `siteSlug` value
+ *replacements e.g. { siteSlug: 'mytestblog.wordpress.com', siteId: 12345 }
  */
-const linkInterpolator = siteSlug => plugin => {
+const linkInterpolator = replacements => plugin => {
 	const { descriptionLink: link } = plugin;
-	const descriptionLink = link.replace( '{siteSlug}', siteSlug );
+	const descriptionLink = Object.keys( replacements )
+		.reduce( ( s, r ) => s.replace( new RegExp( `{${ r }}` ), replacements[ r ] ), link );
+
 	return Object.assign( {}, plugin, { descriptionLink } );
 }
 
@@ -32,7 +34,7 @@ export const PluginPanel = React.createClass( {
 		const { siteSlug } = this.props;
 		const standardPluginsLink = `/plugins/standard/${ siteSlug }`;
 
-		const interpolateLink = linkInterpolator( siteSlug );
+		const interpolateLink = linkInterpolator( { siteSlug } );
 
 		const standardPlugins = defaultStandardPlugins.map( interpolateLink );
 		const premiumPlugins = defaultPremiumPlugins.map( interpolateLink );
