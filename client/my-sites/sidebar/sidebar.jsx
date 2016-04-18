@@ -9,6 +9,8 @@ var analytics = require( 'lib/analytics' ),
 	React = require( 'react' ),
 	startsWith = require( 'lodash/startsWith' );
 
+import page from 'page';
+
 /**
  * Internal dependencies
  */
@@ -663,6 +665,10 @@ module.exports = React.createClass( {
 		);
 	},
 
+	onDraftsClick: function() {
+		page( '/posts/drafts' + this.siteSuffix() );
+	},
+
 	render: function() {
 		var publish = !! this.publish(),
 			appearance = ( !! this.themes() || !! this.menus() ),
@@ -709,7 +715,7 @@ module.exports = React.createClass( {
 									onMouseLeave={ () => this.setState( { draftsTooltip: false } ) }
 									ref="draftsButton"
 								>
-									<DraftsButton hideText />
+									<DraftsButton hideText onClick={ this.onDraftsClick } />
 									<Tooltip
 										context={ this.refs && this.refs.draftsButton }
 										isVisible={ this.state.draftsTooltip }
