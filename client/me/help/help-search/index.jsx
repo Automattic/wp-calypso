@@ -15,7 +15,7 @@ import NoResults from 'my-sites/no-results';
 import SearchCard from 'components/search-card';
 import CompactCard from 'components/card/compact';
 import analytics from 'lib/analytics';
-import olarkStore from 'lib/olark-store';
+import { getLocaleSlug } from 'lib/mixins/i18n';
 
 module.exports = React.createClass( {
 	displayName: 'HelpSearch',
@@ -78,7 +78,7 @@ module.exports = React.createClass( {
 			);
 		}
 
-		const supportLocale = olarkStore.get().locale;
+		const supportLocale = getLocaleSlug();
 		const localizedForumUrl = 'https://' + supportLocale + '.forums.wordpress.com';
 
 		return (
