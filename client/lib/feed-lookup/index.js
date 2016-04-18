@@ -7,8 +7,6 @@ var isEmpty = require( 'lodash/isEmpty' ),
 var inflight = require( 'lib/inflight' ),
 	wpcom = require( 'lib/wp' );
 
-var FeedLookup;
-
 const cache = lruCache( 10 );
 
 function requestKey( feedId ) {
@@ -27,38 +25,36 @@ function discover( feedUrl ) {
 	);
 };
 
-FeedLookup = {
-	get: function( feedUrl ) {
-		var feedId = cache.get( feedUrl );
+function feedLookup( feedUrl ) {
+	var feedId = cache.get( feedUrl );
 
-		if ( feedId ) {
-			return feedId;
-		}
-
-		feedId = new Promise( ( resolve, reject ) => {
-			discover( feedUrl )
-				.then( function( response ) {
-					var feed;
-
-					if ( ! isEmpty( response.feeds ) ) {
-						feed = head( response.feeds );
-
-						if ( ! isEmpty( feed.feed_ID ) ) {
-							resolve( feed.feed_ID );
-						}
-					}
-
-					reject();
-				} )
-				.catch( function( error ) {
-					reject( error );
-				} );
-		} );
-
-		cache.set( feedUrl, feedId );
-
+	if ( feedId ) {
 		return feedId;
 	}
+
+	feedId = new Promise( ( resolve, reject ) => {
+		discover( feedUrl )
+			.then( function( response ) {
+				var feed;
+
+				if ( ! isEmpty( response.feeds ) ) {
+					feed = head( response.feeds );
+
+					if ( ! isEmpty( feed.feed_ID ) ) {
+						resolve( feed.feed_ID );
+					}
+				}
+
+				reject();
+			} )
+			.catch( function( error ) {
+				reject( error );
+			} );
+	} );
+
+	cache.set( feedUrl, feedId );
+
+	return feedId;
 }
 
-module.exports = FeedLookup;
+module.exports = feedLookup;

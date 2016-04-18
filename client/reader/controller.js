@@ -223,10 +223,10 @@ module.exports = {
 	},
 
 	feedDiscovery: function( context, next ) {
-		var FeedLookup = require( 'lib/feed-lookup' );
+		var feedLookup = require( 'lib/feed-lookup' );
 
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
-			FeedLookup.get( context.params.feed_id )
+			feedLookup( context.params.feed_id )
 				.then( function( feedId ) {
 					page.redirect( `/read/feeds/${feedId}` );
 				} )
