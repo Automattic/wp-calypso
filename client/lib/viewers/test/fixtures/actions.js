@@ -1,6 +1,6 @@
-var site = require( './mock-site' ),
-	viewerData = require( './mock-viewers-1' ),
-	moreViewerData = require( './mock-viewers-2' );
+var site = require( './site' ),
+	viewerData = require( './viewers-1' ),
+	moreViewerData = require( './viewers-2' );
 
 module.exports = {
 	fetchedViewersEmpty: {
