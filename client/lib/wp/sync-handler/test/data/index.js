@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { RECORDS_LIST_KEY } from '../constants';
+import { RECORDS_LIST_KEY } from '../../constants';
 
 /**
  * Keys -- these have been pre-generated using generateKey and generatePageSeriesKey
