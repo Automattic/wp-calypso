@@ -1,10 +1,10 @@
-var site = require( './mock-site' ),
-	usersData = require( './mock-users-data' ),
-	moreUsersData = require( './mock-more-users-data' ),
-	deletedUserData = require( './mock-deleted-user-data' ),
-	updatedUserData = require( './mock-updated-single-user' ),
-	singleUserData = require( './mock-single-user' ),
-	pollingUsersData = require( './mock-polling-users-data' );
+const site = require( './site' ),
+	usersData = require( './users' ),
+	moreUsersData = require( './more-users' ),
+	deletedUserData = require( './deleted-user' ),
+	updatedUserData = require( './updated-single-user' ),
+	singleUserData = require( './single-user' ),
+	pollingUsersData = require( './polling-users' );
 
 module.exports = {
 	fetched: {

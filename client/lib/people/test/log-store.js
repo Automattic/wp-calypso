@@ -5,7 +5,7 @@ var assert = require( 'chai' ).assert;
 
 var site = require( './lib/mock-site' ),
 	actions = require( './lib/mock-actions' ),
-	userActions = require( 'lib/users/test/lib/mock-actions' );
+	userActions = require( 'lib/users/test/fixtures/actions' );
 
 require( 'lib/react-test-env-setup' )();
 

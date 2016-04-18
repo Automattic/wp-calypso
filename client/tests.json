@@ -374,6 +374,18 @@
 		"tree-convert": {
 			"test": [ "index" ]
 		},
+		"user": {
+			"test": [ "utils" ]
+		},
+		"user-settings": {
+			"test": [ "index" ]
+		},
+		"users": {
+			"test": [ "store" ]
+		},
+		"viewers": {
+			"test": [ "store" ]
+		},
 		"wp": {
 			"localization": {
 				"test": [ "index" ]
