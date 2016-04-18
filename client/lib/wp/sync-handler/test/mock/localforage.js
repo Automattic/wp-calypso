@@ -7,7 +7,9 @@ const debug = debugFactory( 'calypso:sync-handler:localforage-mock' );
 let localData = {};
 
 export default {
-	defineDriver() { return Promise.resolve() },
+	defineDriver() {
+		return Promise.resolve();
+	},
 	setItem( key, data ) {
 		return new Promise( resolve => {
 			debug( 'setItem: %o, (%o)', key, data );
@@ -41,5 +43,5 @@ export default {
 	setLocalData( newData ) {
 		localData = newData;
 	},
-	config() {},
+	config() {}
 };
