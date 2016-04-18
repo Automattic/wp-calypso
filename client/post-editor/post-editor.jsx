@@ -5,7 +5,6 @@ const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:post-editor' ),
 	page = require( 'page' ),
-	classnames = require( 'classnames' ),
 	debounce = require( 'lodash/debounce' ),
 	throttle = require( 'lodash/throttle' ),
 	assign = require( 'lodash/assign' );
@@ -311,19 +310,13 @@ const PostEditor = React.createClass( {
 			isInvalidURL = this.state.loadingError,
 			isPage,
 			isTrashed,
-			hasAutosave,
-			headerClass;
+			hasAutosave;
 
 		if ( this.state.post ) {
 			isPage = utils.isPage( this.state.post );
 			isTrashed = this.state.post.status === 'trash';
 			hasAutosave = ( this.state.post.meta && this.state.post.meta.data && this.state.post.meta.data.autosave );
 		}
-
-		headerClass = classnames( 'editor__header', {
-			'is-pinned': this.state.pinned
-		} );
-
 		return (
 			<div className="post-editor">
 				<div className="post-editor__inner">
@@ -344,7 +337,7 @@ const PostEditor = React.createClass( {
 								post={ this.state.post }
 								maxWidth={ 1462 } />
 							{ this.renderNotice() }
-							<div className={ headerClass }>
+							<div className="editor__header">
 								<EditorTitleContainer
 									onChange={ this.debouncedAutosave }
 									tabIndex={ 1 } />
@@ -380,8 +373,7 @@ const PostEditor = React.createClass( {
 								onChange={ this.onEditorContentChange }
 								onKeyUp={ this.debouncedSaveRawContent }
 								onFocus={ this.onEditorFocus }
-								onTextEditorChange={ this.onEditorContentChange }
-								onTogglePin={ this.onTogglePin } />
+								onTextEditorChange={ this.onEditorContentChange } />
 						</div>
 						<EditorWordCount />
 						{ this.iframePreviewEnabled()
@@ -489,12 +481,6 @@ const PostEditor = React.createClass( {
 	onNoticeClick: function( event ) {
 		event.preventDefault();
 		this.setState( { notice: false } );
-	},
-
-	onTogglePin: function( state ) {
-		this.setState( {
-			pinned: state === 'pin'
-		} );
 	},
 
 	onEditedPostChange: function() {

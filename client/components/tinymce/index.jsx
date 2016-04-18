@@ -151,8 +151,7 @@ module.exports = React.createClass( {
 		tabIndex: React.PropTypes.number,
 		isNew: React.PropTypes.bool,
 		onTextEditorChange: React.PropTypes.func,
-		onKeyUp: React.PropTypes.func,
-		onTogglePin: React.PropTypes.func
+		onKeyUp: React.PropTypes.func
 	},
 
 	contextTypes: {
@@ -362,9 +361,6 @@ module.exports = React.createClass( {
 
 		this._pinned = newPinned;
 		editor.dom.toggleClass( editor.getContainer(), 'is-pinned', newPinned );
-		if ( this.props.onTogglePin ) {
-			this.props.onTogglePin( newPinned ? 'pin' : 'unpin' );
-		}
 	},
 
 	toggleEditor: function( options = { autofocus: true } ) {
