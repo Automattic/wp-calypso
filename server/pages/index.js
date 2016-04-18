@@ -8,7 +8,6 @@ var express = require( 'express' ),
 	debug = require( 'debug' )( 'calypso:pages' );
 
 var config = require( 'config' ),
-	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
 	sectionsModule = require( '../../client/sections' ),
 	serverRouter = require( 'isomorphic-routing' ).serverRouter,
@@ -136,7 +135,6 @@ function getDefaultContext( request ) {
 		urls: generateStaticUrls( request ),
 		user: false,
 		env: CALYPSO_ENV,
-		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
 		isDebug: request.query.debug !== undefined ? true : false,
 		badge: false,
@@ -266,7 +264,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 					console.log( 'API Error: ' + errorMessage );
 
-					res.status( 500 ).render( '500.jade', context );
+					res.status( 500 ).render( '500', context );
 				}
 
 				return;
@@ -358,7 +356,7 @@ module.exports = function() {
 	} );
 
 	app.get( '/calypso/?*', function( request, response ) {
-		response.status( 404 ).render( '404.jade', {
+		response.status( 404 ).render( '404', {
 			urls: generateStaticUrls( request )
 		} );
 	} );

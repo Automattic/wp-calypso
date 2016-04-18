@@ -6,26 +6,35 @@ var path = require( 'path' ),
 	config = require( 'config' ),
 	express = require( 'express' ),
 	morgan = require( 'morgan' ),
-	pages = require( 'pages' );
+	pages = require( 'pages' ),
+	ReactEngine = require( 'express-react-views' );
+
+var CALYPSO_ENV = process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development';
 
 /**
  * Returns the server HTTP request handler "app".
  *
  * @api public
+ * @returns { object } Express app
  */
 function setup() {
-
 	var app = express(),
 		assets,
 		devdocs,
 		api,
-		bundler;
+		bundler,
+		engine;
 
 	// for nginx
 	app.enable( 'trust proxy' );
 
 	// template engine
-	app.set( 'view engine', 'jade' );
+	engine = ReactEngine.createEngine( {
+		transformViews: true,
+		beautify: CALYPSO_ENV === 'development'
+	} );
+	app.engine( '.jsx', engine );
+	app.set( 'view engine', 'jsx' );
 
 	if ( 'development' === config( 'env' ) ) {
 		// only do `make build` upon every request in "development"
