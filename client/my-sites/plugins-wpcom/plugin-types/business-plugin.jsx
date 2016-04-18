@@ -7,6 +7,17 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 import Gridicon from 'components/gridicon';
 
+/**
+ * Detect if the given url is a fully formed url
+ *
+ * @param {String} url - url to check
+ * @return {Boolean} True if it's a fully formed url
+ */
+
+const hasHttpProtocol = url => {
+	return /^https?:\/\//.test( url );
+};
+
 export const BusinessPlugin = React.createClass( {
 	render() {
 		const {
@@ -15,12 +26,14 @@ export const BusinessPlugin = React.createClass( {
 			name,
 			plan,
 			onClick = noop,
-			supportLink
+			descriptionLink,
 		} = this.props;
+
+		const target = hasHttpProtocol( descriptionLink ) ? '_blank' : '_self';
 
 		return (
 			<div className="wpcom-plugins__plugin-item">
-				<a onClick={ onClick } href={ supportLink } target="_blank">
+				<a onClick={ onClick } href={ descriptionLink } target={ target }>
 					<div className="wpcom-plugins__plugin-icon">
 						<Gridicon { ...{ icon } } />
 					</div>
@@ -35,7 +48,7 @@ export const BusinessPlugin = React.createClass( {
 
 BusinessPlugin.propTypes = {
 	name: PropTypes.string.isRequired,
-	supportLink: PropTypes.string.isRequired,
+	descriptionLink: PropTypes.string.isRequired,
 	icon: PropTypes.string,
 	onClick: PropTypes.func,
 	plan: PropTypes.string.isRequired,
