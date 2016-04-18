@@ -78,8 +78,7 @@ module.exports = React.createClass( {
 			);
 		}
 
-		const supportLocale = getLocaleSlug();
-		const localizedForumUrl = 'https://' + supportLocale + '.forums.wordpress.com';
+		const localizedForumUrl = 'https://' + getLocaleSlug() + '.forums.wordpress.com';
 
 		return (
 			<div>
