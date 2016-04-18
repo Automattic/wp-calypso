@@ -42,25 +42,25 @@ class SitePlugin {
 	}
 
 	/**
-	 * config the plugin
+	 * Update the plugin configuration
 	 *
 	 * @param {Object} [query] - query object parameter
-	 * @param {Object} config - plugin config object
+	 * @param {Object} body - plugin body object
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
-	config( query, config, fn ) {
-		return this.wpcom.req.put( this.pluginPath, query, config, fn );
+	update( query, body, fn ) {
+		return this.wpcom.req.put( this.pluginPath, query, body, fn );
 	};
 
 	/**
-	 * Update the plugin
+	 * Update the plugin version
 	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
-	update( query, fn ) {
+	updateVersion( query, fn ) {
 		return this.wpcom.req.put( `${ this.pluginPath }/update`, query, fn );
 	};
 
@@ -88,50 +88,50 @@ class SitePlugin {
 
 	/**
 	 * Activate the plugin
-	 * This method is a shorthand of config()
+	 * This method is a shorthand of update()
 	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
 	activate( query, fn ) {
-		return this.config( query, { active: true }, fn );
+		return this.update( query, { active: true }, fn );
 	};
 
 	/**
 	 * Deactivate the plugin
-	 * This method is a shorthand of config()
+	 * This method is a shorthand of update()
 	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
 	deactivate( query, fn ) {
-		return this.config( query, { active: false }, fn );
+		return this.update( query, { active: false }, fn );
 	}
 
 	/**
 	 * Enable plugin autoupdate
-	 * This method is a shorthand of config()
+	 * This method is a shorthand of update()
 	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
 	enableAutoupdate( query, fn ) {
-		return this.config( query, { autoupdate: true }, fn );
+		return this.update( query, { autoupdate: true }, fn );
 	}
 
 	/**
 	 * Disable plugin autoupdate
-	 * This method is a shorthand of config()
+	 * This method is a shorthand of update()
 	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @return {Promise} Promise
 	 */
 	disableAutoupdate( query, fn ) {
-		return this.config( query, { autoupdate: false }, fn );
+		return this.update( query, { autoupdate: false }, fn );
 	};
 }
 
