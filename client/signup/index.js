@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-var page = require( 'page' );
-
-/**
  * Internal dependencies
  */
 var controller = require( './controller' ),

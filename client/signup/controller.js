@@ -1,7 +1,6 @@
 /**
  * External Dependencies
  */
-import ReactDom from 'react-dom';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
