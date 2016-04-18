@@ -216,11 +216,6 @@ module.exports = React.createClass( {
 
 		this.localize();
 
-		let toolbar1 = [ 'wpcom_add_media', 'formatselect', 'bold', 'italic', 'bullist', 'numlist', 'link', 'blockquote', 'alignleft', 'aligncenter', 'alignright', 'spellchecker', 'wp_more', 'wpcom_advanced' ];
-		if ( config.isEnabled( 'post-editor/contact-form' ) ) {
-			toolbar1.splice( toolbar1.length - 1, 0, 'wpcom_add_contact_form' );
-		}
-
 		tinymce.init( {
 			selector: '#' + this._id,
 			skin_url: '//s1.wp.com/wp-includes/js/tinymce/skins/lightgray',
@@ -291,7 +286,7 @@ module.exports = React.createClass( {
 			// future, we should calculate from the rendered editor bounds.
 			autoresize_min_height: Math.max( document.documentElement.clientHeight - 300, 300 ),
 
-			toolbar1: toolbar1.join(),
+			toolbar1: 'wpcom_add_media,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_add_contact_form,wpcom_advanced',
 			toolbar2: 'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',
 			toolbar4: '',
