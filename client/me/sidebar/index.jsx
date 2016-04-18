@@ -79,9 +79,9 @@ module.exports = React.createClass( {
 		return (
 			<Sidebar>
 				<ProfileGravatar user={ this.props.user.get() } />
-				<div>
+				<div className="me-sidebar__signout">
 					<FormButton
-						className="me-sidebar__menu__signout"
+						className="me-sidebar__signout-button"
 						isPrimary={ false }
 						onClick={ this.onSignOut }
 						title={ this.translate( 'Sign out of WordPress.com', { textOnly: true } ) }
