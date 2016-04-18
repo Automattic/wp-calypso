@@ -128,10 +128,6 @@
 .editor__header {
 	position: relative;
 	padding-bottom: 27px;
-
-	&.is-pinned {
-		visibility: none;
-	}
 }
 
 .editor__switch-mode {
