@@ -58,11 +58,11 @@ webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '', '.json', '.js', '.jsx' ],
-		root: [ path.join( __dirname, 'client' ), path.join( __dirname, 'node_modules' ) ],
+		root: [ path.join( __dirname, 'client' ) ],
 		modulesDirectories: [ 'node_modules' ]
 	},
 	resolveLoader: {
-		root: [ path.join( __dirname, 'node_modules' ) ]
+		root: [ __dirname ]
 	},
 	node: {
 		console: false,
