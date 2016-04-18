@@ -110,7 +110,7 @@
     "uglify-js": "2.6.1",
     "valid-url": "1.0.9",
     "walk": "2.3.4",
-    "webpack": "1.12.6",
+    "webpack": "1.12.15",
     "webpack-dev-middleware": "1.2.0",
     "wpcom": "4.9.3",
     "wpcom-proxy-request": "1.0.5",
@@ -118,8 +118,8 @@
     "xgettext-js": "0.3.0"
   },
   "engines": {
-    "node": "4.3.0",
-    "npm": "2.14.12"
+    "node": "5.10.1",
+    "npm": "3.8.3"
   },
   "scripts": {
     "test": "make test",
