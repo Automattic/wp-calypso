@@ -14,7 +14,7 @@ import Gridicon from 'components/gridicon';
  * @return {Boolean} True if it's a fully formed url
  */
 
-const isFullyFormedURL = url => {
+const hasHttpProtocol = url => {
 	return /^https?:\/\//.test( url );
 };
 
@@ -29,7 +29,7 @@ export const BusinessPlugin = React.createClass( {
 			descriptionLink,
 		} = this.props;
 
-		const target = isFullyFormedURL( descriptionLink ) ? '_blank' : '_self';
+		const target = hasHttpProtocol( descriptionLink ) ? '_blank' : '_self';
 
 		return (
 			<div className="wpcom-plugins__plugin-item">
