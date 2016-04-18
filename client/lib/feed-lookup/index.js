@@ -32,24 +32,16 @@ function feedLookup( feedUrl ) {
 		return feedId;
 	}
 
-	feedId = new Promise( ( resolve, reject ) => {
-		discover( feedUrl )
-			.then( function( response ) {
-				var feed;
+	feedId = discover( feedUrl ).then( function( response ) {
+		var feed;
 
-				if ( ! isEmpty( response.feeds ) ) {
-					feed = head( response.feeds );
+		if ( ! isEmpty( response.feeds ) ) {
+			feed = head( response.feeds );
 
-					if ( ! isEmpty( feed.feed_ID ) ) {
-						resolve( feed.feed_ID );
-					}
-				}
-
-				reject();
-			} )
-			.catch( function( error ) {
-				reject( error );
-			} );
+			if ( ! isEmpty( feed.feed_ID ) ) {
+				return feed.feed_ID;
+			}
+		}
 	} );
 
 	cache.set( feedUrl, feedId );
