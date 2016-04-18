@@ -17,6 +17,7 @@ var IGNORED_MODULES = [
 	'lib/route', // nooped on the server until we can extract the isomorphic bits
 	'lib/upgrades/actions', // nooped on the server as it still uses the singleton Flux architecture
 	'lib/mixins/i18n', // ignore this until we make it work properly on the server
+	'lib/mixins/i18n/localize', // ignore this until we make it work properly on the server
 ];
 
 function PragmaCheckPlugin( options ) {
@@ -37,6 +38,7 @@ function scanDependencies( module, compilation ) {
 		if ( includes( dep.module.request, 'babel-loader' ) &&
 				dep.module._source &&
 				! includes( IGNORED_MODULES, dep.request ) &&
+				! includes( IGNORED_MODULES, dep.module.rawRequest ) &&
 				! includes( dep.module._source._value, SSR_READY ) ) {
 			compilation.errors.push( PLUGIN_TITLE + ': ' + module.rawRequest + ', dependency ' + dep.module.rawRequest + ' is not ' + SSR_READY );
 		}

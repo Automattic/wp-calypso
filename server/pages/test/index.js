@@ -12,10 +12,12 @@ import noop from 'lodash/noop';
  * Internal dependencies
  */
 import { createReduxStore } from 'state';
+import useI18n from 'test/helpers/use-i18n';
 
 describe( 'index', function() {
 	context( 'when trying to renderToString() LayoutLoggedOut ', function() {
 		useMockery();
+		useI18n();
 
 		before( function() {
 			mockery.registerMock( 'lib/analytics', noop );

@@ -10,7 +10,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
-	MasterbarMinimal = require( 'layout/masterbar/minimal' ),
+	MasterbarLoggedOut = require( 'layout/masterbar/logged-out' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	GlobalNotices = require( 'components/global-notices' ),
 	notices = require( 'notices' ),
@@ -102,7 +102,7 @@ Layout = React.createClass( {
 		}
 
 		if ( ! this.props.user ) {
-			return <MasterbarMinimal url="/" />;
+			return <MasterbarLoggedOut/>;
 		}
 
 		return (
