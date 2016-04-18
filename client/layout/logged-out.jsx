@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MasterbarMinimal from 'layout/masterbar/minimal';
+import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 
 const LayoutLoggedOut = ( {
 	primary,
@@ -27,7 +27,7 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classes }>
-			<MasterbarMinimal url="/" />
+			<MasterbarLoggedOut/>
 			<div id="content" className="wp-content">
 				<div id="primary" className="wp-primary wp-section">
 					{ primary }
