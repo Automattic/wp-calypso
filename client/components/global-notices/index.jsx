@@ -97,8 +97,8 @@ const NoticesList = React.createClass( {
 		noticesList = noticesList.concat( this.props.storeNotices.map( ( notice ) => {
 			return (
 				<Notice
-					noticeId={ notice.id }
-					key={ 'notice-' + notice.id }
+					noticeId={ notice.noticeId }
+					key={ 'notice-' + notice.noticeId }
 					status={ notice.status }
 					duration = { notice.duration }
 					showDismiss={ notice.showDismiss }

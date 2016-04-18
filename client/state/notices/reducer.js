@@ -18,7 +18,7 @@ import {
 export function items( state = [], action ) {
 	switch ( action.type ) {
 		case NEW_NOTICE:
-			const oldNoticeIndex = findIndex( state, { id: action.notice.id } );
+			const oldNoticeIndex = findIndex( state, { noticeId: action.notice.noticeId } );
 
 			if ( oldNoticeIndex === -1 ) {
 				return [ action.notice, ...state ];
@@ -30,7 +30,7 @@ export function items( state = [], action ) {
 				...state.slice( oldNoticeIndex + 1 )
 			];
 		case REMOVE_NOTICE:
-			return state.filter( ( notice ) => ( notice.id !== action.noticeId ) );
+			return state.filter( ( notice ) => ( notice.noticeId !== action.noticeId ) );
 		case SET_ROUTE:
 			return state.filter( notice => {
 				const show = notice.isPersistent || notice.displayOnNextPage;

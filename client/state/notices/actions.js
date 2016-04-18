@@ -23,7 +23,7 @@ function createNotice( status, text, options = {} ) {
 	const noticeId = options.id || uniqueId();
 	const closeFn = removeNotice.bind( noticeId );
 	const notice = {
-		id: noticeId,
+		noticeId,
 		icon: options.icon || null,
 		duration: parseInt( options.duration ) || null,
 		button: options.button,
