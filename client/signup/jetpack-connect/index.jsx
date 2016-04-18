@@ -69,7 +69,6 @@ const JetpackConnectMain = React.createClass( {
 		this.props.goToPluginActivation( this.state.currentUrl );
 	},
 
-
 	getDialogButtons( status ) {
 		const buttons = [ {
 			action: 'cancel',
