@@ -2,7 +2,11 @@
 	padding-top: 16px;
 }
 
-.form-button.me-sidebar__menu__signout {
+.me-sidebar__signout {
+	flex-shrink: 0;	// these are required for the flexed sidebar to not implode in Safari
+}
+
+.me-sidebar__signout-button.form-button {
 	display: block;
 	float: none;
 	margin: 0 auto;
@@ -11,10 +15,6 @@
 	min-height: 40px;
 }
 
-.me-sidebar__menu__signout-wrapper {
-	flex-shrink: 0;	// these are required for the flexed sidebar to not implode in Safari
-}
-
-.profile-gravatar {
+.sidebar .profile-gravatar {
 	flex-shrink: 0;
 }
