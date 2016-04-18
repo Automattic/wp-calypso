@@ -29,3 +29,15 @@ export function getSelectedSite( state ) {
 export function getSelectedSiteId( state ) {
 	return state.ui.selectedSiteId;
 }
+
+/**
+ * Returns the current section.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {?Object}       Current section
+ *
+ * @see client/sections
+ */
+export function getSection( state ) {
+	return state.ui.section;
+}

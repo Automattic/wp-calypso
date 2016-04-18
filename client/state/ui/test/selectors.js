@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId } from '../selectors';
+import { getSelectedSite, getSelectedSiteId, getSection } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getSelectedSite()', () => {
@@ -55,6 +55,36 @@ describe( 'selectors', () => {
 			} );
 
 			expect( selected ).to.eql( 2916284 );
+		} );
+	} );
+
+	describe( '#getSection()', () => {
+		it( 'should return false if there is no section currently selected', () => {
+			const selected = getSection( {
+				ui: {
+					section: false
+				}
+			} );
+
+			expect( selected ).to.be.false;
+		} );
+
+		it( 'should return current section object', () => {
+			const section = {
+				enableLoggedOut: true,
+				group: 'sites',
+				isomorphic: true,
+				module: 'my-sites/themes',
+				name: 'themes',
+				paths: [ '/design' ],
+				secondary: false
+			};
+
+			const selected = getSection( {
+				ui: { section }
+			} );
+
+			expect( selected ).to.eql( section );
 		} );
 	} );
 } );

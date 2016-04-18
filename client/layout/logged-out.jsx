@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import MasterbarMinimal from 'layout/masterbar/minimal';
+import { getSection } from 'state/ui/selectors';
 
 const LayoutLoggedOut = ( {
 	primary,
@@ -53,6 +54,6 @@ LayoutLoggedOut.propTypes = {
 
 export default connect(
 	state => ( {
-		section: state.ui.section
+		section: getSection( state )
 	} )
 )( LayoutLoggedOut );
