@@ -48,7 +48,7 @@ const NoticesList = React.createClass( {
 		return {
 			id: 'overlay-notices',
 			notices: Object.freeze( [] ),
-			animation: { enter: 'fade-up', leave: 'fade-down' }
+			animation: { enter: 'fade', leave: 'fade' }
 		};
 	},
 
