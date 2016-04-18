@@ -27,6 +27,7 @@ var config = require( 'config' ),
 	receiveUser = require( 'state/users/actions' ).receiveUser,
 	setCurrentUserId = require( 'state/current-user/actions' ).setCurrentUserId,
 	showGuidesTour = require( 'state/ui/actions' ).showGuidesTour,
+	isSectionIsomorphic = require( 'state/ui/selectors' ).isSectionIsomorphic,
 	sites = require( 'lib/sites-list' )(),
 	superProps = require( 'lib/analytics/super-props' ),
 	i18n = require( 'lib/mixins/i18n' ),
@@ -160,7 +161,8 @@ function boot() {
 }
 
 function reduxStoreReady( reduxStore ) {
-	let layoutSection, layoutElement, validSections = [];
+	let layoutSection, layoutElement, validSections = [],
+		isIsomorphic = isSectionIsomorphic( reduxStore.getState() );
 
 	bindWpLocaleState( reduxStore );
 	bindTitleToStore( reduxStore );
@@ -179,12 +181,6 @@ function reduxStoreReady( reduxStore ) {
 		analytics.setSuperProps( superProps );
 	}
 
-	Layout = require( 'controller' ).ReduxWrappedLayout;
-
-	layoutElement = React.createElement( Layout, {
-		store: reduxStore
-	} );
-
 	if ( config.isEnabled( 'perfmon' ) ) {
 		// Record time spent watching slowly-flashing divs
 		perfmon();
@@ -194,12 +190,25 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/network-connection' ).init( reduxStore );
 	}
 
-	ReactDom.render(
-		layoutElement,
-		document.getElementById( 'wpcom' )
-	);
+	// Render Layout only for non-isomorphic sections, unless logged-in.
+	// Isomorphic sections will take care of rendering their Layout last themselves,
+	// unless in logged-in mode, where we can't do that yet.
+	// TODO: Remove the ! user.get() check once isomorphic sections render their
+	// Layout themselves when logged in.
+	if ( ! isIsomorphic || user.get() ) {
+		Layout = require( 'controller' ).ReduxWrappedLayout;
 
-	debug( 'Main layout rendered.' );
+		layoutElement = React.createElement( Layout, {
+			store: reduxStore
+		} );
+
+		ReactDom.render(
+			layoutElement,
+			document.getElementById( 'wpcom' )
+		);
+
+		debug( 'Main layout rendered.' );
+	}
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
 	// This needs to be done before the page.js router is started and can be removed when the legacy version is retired
