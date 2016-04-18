@@ -18,7 +18,7 @@ module.exports = {
 	},
 
 	isDiscoverPost: function( post ) {
-		return !! ( post.discover_metadata || post.site_ID == config( 'discover_blog_id' ) ); //eslint-disable-line eqeqeq
+		return !! ( post.discover_metadata || post.site_ID === config( 'discover_blog_id' ) );
 	},
 
 	isDiscoverSitePick: function( post ) {
