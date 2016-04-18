@@ -10,7 +10,6 @@ import values from 'lodash/values';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import GalleryView from './gallery-view';
 import EmbedViewManager from './views/embed';
 import ContactFormView from './views/contact-form';
@@ -20,12 +19,9 @@ import ContactFormView from './views/contact-form';
  */
 let views = {
 	gallery: GalleryView,
-	embed: new EmbedViewManager()
+	embed: new EmbedViewManager(),
+	contactForm: ContactFormView
 };
-
-if ( config.isEnabled( 'post-editor/contact-form' ) ) {
-	views.contactForm = ContactFormView;
-}
 
 const components = mapValues( views, ( view ) => {
 	if ( 'function' === typeof view.getComponent ) {
