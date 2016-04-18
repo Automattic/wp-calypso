@@ -389,6 +389,9 @@
 		"wp": {
 			"localization": {
 				"test": [ "index" ]
+			},
+			"sync-handler": {
+				"test": [ "cache-index", "index" ]
 			}
 		},
 		"wpcom-xhr-wrapper": {
