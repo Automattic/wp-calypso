@@ -28,12 +28,20 @@ var abtest = require( 'lib/abtest' ).abtest,
 
 import Button from 'components/button';
 import SidebarFooter from 'layout/sidebar/footer';
+import DraftsButton from 'post-editor/drafts-button';
+import Tooltip from 'components/tooltip';
 
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
 
 	componentDidMount: function() {
 		debug( 'The sidebar React component is mounted.' );
+	},
+
+	getInitialState: function() {
+		return {
+			draftsTooltip: false
+		};
 	},
 
 	onNavigate: function() {
@@ -692,7 +700,26 @@ module.exports = React.createClass( {
 
 				{ publish
 					? <SidebarMenu>
-						<SidebarHeading>{ this.translate( 'Publish' ) }</SidebarHeading>
+						<SidebarHeading>
+							{ this.translate( 'Publish' ) }
+							{ config.isEnabled( 'sidebar-drafts-count' ) &&
+								<div
+									className="sidebar__drafts-button"
+									onMouseEnter={ () => this.setState( { draftsTooltip: true } ) }
+									onMouseLeave={ () => this.setState( { draftsTooltip: false } ) }
+									ref="draftsButton"
+								>
+									<DraftsButton hideText />
+									<Tooltip
+										context={ this.refs && this.refs.draftsButton }
+										isVisible={ this.state.draftsTooltip }
+										position="top"
+									>
+										{ this.translate( 'Drafts' ) }
+									</Tooltip>
+								</div>
+							}
+						</SidebarHeading>
 						{ this.publish() }
 					</SidebarMenu>
 					: null
