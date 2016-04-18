@@ -152,7 +152,7 @@ const JetpackConnectMain = React.createClass( {
 		return false;
 	},
 
-	renderInstallDialog( status ) {
+	renderDialog( status ) {
 		if ( status === 'notJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
 			return (
 				<Dialog
@@ -193,7 +193,7 @@ const JetpackConnectMain = React.createClass( {
 		const status = this.getStatus();
 		return (
 			<Main className="jetpack-connect">
-				{ this.renderInstallDialog( status ) }
+				{ this.renderDialog( status ) }
 
 				<div className="jetpack-connect__site-url-entry-container">
 					<ConnectHeader headerText={ this.translate( 'Connect a self-hosted WordPress' ) }
