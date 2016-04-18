@@ -37,16 +37,46 @@ var Notices = React.createClass( {
 				</div>
 				<div>
 					<Notice
+						text="I'm a notice with no status and an action."
+						showDismiss={ false }
+						isCompact={ this.state.compactNotices ? true : null }>
+						<NoticeAction href="#">
+							{ "Update" }
+						</NoticeAction>
+					</Notice>
+				</div>
+				<div>
+					<Notice
 						status="is-info"
 						text="I'm an `is-info` notice with custom icon."
 						icon="heart"
 						isCompact={ this.state.compactNotices ? true : null } />
 				</div>
 				<div>
+					<Notice
+						status="is-info"
+						showDismiss={ false }
+						text="I'm an `is-info` notice with custom icon and an action."
+						icon="heart"
+						isCompact={ this.state.compactNotices ? true : null }>
+						<NoticeAction href="#">
+							{ "Update" }
+						</NoticeAction>
+					</Notice>
+				</div>
+				<div>
 					<Notice status="is-success" text="I'm an `is-success` notice." isCompact={ this.state.compactNotices ? true : null } />
 				</div>
 				<div>
-					<Notice status="is-error" text="I'm an `is-error` notice." isCompact={ this.state.compactNotices ? true : null } />
+					<Notice
+						status="is-error"
+						showDismiss={ false }
+						text="I'm an `is-error` notice."
+						isCompact={ this.state.compactNotices ? true : null }>
+						<NoticeAction href="#">
+							{ "Update" }
+						</NoticeAction>
+					</Notice>
 				</div>
 				<div>
 					<Notice
