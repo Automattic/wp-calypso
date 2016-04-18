@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import debugModule from 'debug';
 import find from 'lodash/find';
 
@@ -17,6 +18,12 @@ import { removeNotice } from 'state/notices/actions';
 
 const debug = debugModule( 'calypso:notices' );
 
+const ANIMATIONS = [
+	'fade',
+	'fade-left', 'fade-right', 'fade-up', 'fade-down',
+	'zoom',
+];
+
 const NoticesList = React.createClass( {
 
 	displayName: 'NoticesList',
@@ -24,19 +31,24 @@ const NoticesList = React.createClass( {
 	mixins: [ observe( 'notices' ) ],
 
 	propTypes: {
-		id: React.PropTypes.string,
-		notices: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.array
+		id: PropTypes.string,
+		notices: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.array
 		] ),
-		storeNotices: React.PropTypes.array,
-		removeNotice: React.PropTypes.func,
+		storeNotices: PropTypes.array,
+		removeNotice: PropTypes.func,
+		animation: PropTypes.shape( {
+			enter: PropTypes.oneOf( ANIMATIONS ),
+			leave: PropTypes.oneOf( ANIMATIONS )
+		} )
 	},
 
 	getDefaultProps() {
 		return {
 			id: 'overlay-notices',
-			notices: Object.freeze( [] )
+			notices: Object.freeze( [] ),
+			animation: { enter: 'fade-up', leave: 'fade-down' }
 		};
 	},
 
@@ -106,13 +118,15 @@ const NoticesList = React.createClass( {
 			);
 		} ) );
 
-		if ( ! noticesList.length ) {
-			return null;
-		}
-
 		return (
 			<div id={ this.props.id } className="global-notices">
+				<ReactCSSTransitionGroup
+					transitionName={ { enter: `notice-${this.props.animation.enter}-enter`, leave: `notice-${this.props.animation.leave}-leave` } }
+					transitionEnterTimeout={ 300 }
+					transitionLeaveTimeout={ 300 }
+				>
 				{ noticesList }
+				</ReactCSSTransitionGroup>
 			</div>
 		);
 	}
