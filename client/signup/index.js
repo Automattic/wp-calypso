@@ -30,7 +30,7 @@ module.exports = function() {
 		page( '/log-in/:lang?', controller.login );
 	}
 
-	if ( config.isEnabled( 'jetpack/calypso-first-signup-flow' ) ) {
+	if ( config.isEnabled( 'jetpack/connect' ) ) {
 		page( '/jetpack/connect', jetpackConnectController.connect );
 		page(
 			'/jetpack/connect/authorize',
