@@ -52,7 +52,7 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, tertiary } ) =>
 			: <Layout primary={ primary }
 				secondary={ secondary }
 				tertiary={ tertiary }
-				focus={ layoutFocus } /* FIXME: Don't we need LayoutLoggedOut here? */ />
+				focus={ layoutFocus } />
 		}
 	</ReduxProvider>
 );
