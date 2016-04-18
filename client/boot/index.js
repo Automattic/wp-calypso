@@ -181,7 +181,8 @@ function renderLayout( reduxStore ) {
 }
 
 function reduxStoreReady( reduxStore ) {
-	let layoutSection, validSections = [];
+	let layoutSection, validSections = [],
+		isIsomorphic = isSectionIsomorphic( reduxStore.getState() );
 
 	bindWpLocaleState( reduxStore );
 	bindTitleToStore( reduxStore );
@@ -209,7 +210,14 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/network-connection' ).init( reduxStore );
 	}
 
-	renderLayout( reduxStore );
+	// Render Layout only for non-isomorphic sections, unless logged-in.
+	// Isomorphic sections will take care of rendering their Layout last themselves,
+	// unless in logged-in mode, where we can't do that yet.
+	// TODO: Remove the ! user.get() check once isomorphic sections render their
+	// Layout themselves when logged in.
+	if ( ! isIsomorphic || user.get() ) {
+		renderLayout( reduxStore );
+	}
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
 	// This can be removed when the legacy version is retired.
