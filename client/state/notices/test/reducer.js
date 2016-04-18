@@ -48,6 +48,20 @@ describe( 'reducer', () => {
 			] );
 		} );
 
+		it( 'should properly replace old notice with new notice that has the same ID', () => {
+			const notices = [
+				{ noticeId: 1 },
+				{ noticeId: 2 },
+				{ noticeId: 3 }
+			];
+			const notice = { noticeId: 2, text: 'Example Notice Text' };
+			const state = items( notices, {
+				type: NEW_NOTICE,
+				notice: notice
+			} );
+			expect( state ).to.eql( [ notices[0], notice, notices[2] ] );
+		} );
+
 		it( 'never persists state', () => {
 			const notices = [
 				{ noticeId: 1 },
