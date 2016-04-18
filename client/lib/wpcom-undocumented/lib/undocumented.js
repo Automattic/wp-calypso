@@ -17,8 +17,7 @@ var Site = require( './site' ),
 	Me = require( './me' ),
 	MailingList = require( './mailing-list' ),
 	config = require( 'config' ),
-	i18n = require( 'lib/i18n-utils' ),
-	moment = require( 'moment' );
+	i18n = require( 'lib/i18n-utils' );
 
 /**
  * Some endpoints are restricted by OAuth client IDs and secrets
@@ -1978,10 +1977,11 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
 }
 
 /**
- * Post an url to be stored under user's settings, so we can know that they have started a jetpack-connect flow for that site
+ * Post an url to be stored under user's settings,
+ * so we can know that they have started a jetpack-connect flow for that site
  *
  * @param {String} targetUrl          The url of the site to store
- * @returns {Promise}
+ * @returns {Promise} Promise
  */
 Undocumented.prototype.storeJetpackConnectUrl = function( targetUrl ) {
 	return this.wpcom.req.post( { path: '/me/settings' }, {}, {
