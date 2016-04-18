@@ -166,3 +166,34 @@ export function isCurrentSitePlan( state, siteId, planProductId ) {
 
 	return sitePlan.product_id === planProductId;
 }
+/**
+ * Get primary site
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Object}         Site
+ **/
+export function getPrimarySite( state ) {
+	// need to figure out best way to retrieve primary site
+	// since this attribute doesn't exist by default
+	return filter( state.sites.items, ( site ) => site.primary ).shift();
+}
+
+/**
+ * Get public sites
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Object}         Object with sites
+ **/
+export function getPublicSites( state ) {
+	return filter( state.sites.items, ( site ) => ! site.is_private );
+}
+
+/**
+ * Get visible sites
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Object}         Object with sites
+ **/
+export function getVisibleSites( state ) {
+	return filter( state.sites.items, ( site ) => site.visible );
+}
