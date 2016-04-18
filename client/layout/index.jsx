@@ -68,7 +68,10 @@ Layout = React.createClass( {
 		// connected props
 		isLoading: React.PropTypes.bool,
 		isSupportUser: React.PropTypes.bool,
-		section: React.PropTypes.object,
+		section: React.PropTypes.oneOfType( [
+			React.PropTypes.bool,
+			React.PropTypes.object,
+		] ),
 		isOffline: React.PropTypes.bool,
 	},
 
