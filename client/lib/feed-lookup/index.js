@@ -7,20 +7,9 @@ var isEmpty = require( 'lodash/isEmpty' ),
 var inflight = require( 'lib/inflight' ),
 	wpcom = require( 'lib/wp' );
 
-var FeedLookupCache,
-	FeedLookup;
+var FeedLookup;
 
 const cache = lruCache( 10 );
-
-FeedLookupCache = {
-	get: function( url ) {
-		return cache.get( url );
-	},
-
-	set: function( url, id ) {
-		cache.set( url, id );
-	}
-};
 
 function requestKey( feedId ) {
 	return `feed-lookup-${feedId}`;
@@ -40,7 +29,7 @@ function discover( feedUrl ) {
 
 FeedLookup = {
 	get: function( feedUrl ) {
-		var feedId = FeedLookupCache.get( feedUrl );
+		var feedId = cache.get( feedUrl );
 
 		if ( feedId ) {
 			return feedId;
@@ -66,7 +55,7 @@ FeedLookup = {
 				} );
 		} );
 
-		FeedLookupCache.set( feedUrl, feedId );
+		cache.set( feedUrl, feedId );
 
 		return feedId;
 	}
