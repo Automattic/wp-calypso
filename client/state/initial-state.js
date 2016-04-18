@@ -62,13 +62,23 @@ function loadInitialStateFailed( error ) {
 	return createReduxStore();
 }
 
-function persistOnChange( reduxStore ) {
+export function persistOnChange( reduxStore, serializeState = serialize ) {
+	let state;
+
 	reduxStore.subscribe( function() {
-		localforage.setItem( 'redux-state', serialize( reduxStore.getState() ) )
+		const nextState = reduxStore.getState();
+		if ( state && nextState === state ) {
+			return;
+		}
+
+		state = nextState;
+
+		localforage.setItem( 'redux-state', serializeState( state ) )
 			.catch( ( setError ) => {
 				debug( 'failed to set redux-store state', setError );
 			} );
 	} );
+
 	return reduxStore;
 }
 
