@@ -1,4 +1,9 @@
 
+4.9.6 / 2016-04-18
+==================
+
+ * SitePlugin: rename methods: updateVersion() and update()
+
 4.9.5 / 2016-14-04
 ==================
 
