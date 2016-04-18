@@ -55,6 +55,7 @@
 		"me/security/checkup": true,
 		"me/trophies": false,
 		"muse": true,
+		"monthly-plan-pricing": true,
 		"oauth": true,
 		"olark": true,
 		"persist-redux": true,
