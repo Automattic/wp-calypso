@@ -6,47 +6,21 @@ import Button from 'components/button';
 
 import PremiumPlugin from './plugin-types/premium-plugin';
 
-const defaultPlugins = [
-	{
-		name: 'No Advertising',
-		supportLink: 'https://en.support.wordpress.com/no-ads/',
-		icon: 'block',
-		plan: 'Premium',
-		description: 'Remove all ads from your site.'
-	},
-	{
-		name: 'Custom Design',
-		supportLink: 'https://en.support.wordpress.com/custom-design/',
-		icon: 'customize',
-		plan: 'Premium',
-		description: 'Customize your blog\'s look with custom fonts, a CSS editor, and more.'
-	},
-	{
-		name: 'Video Uploads',
-		supportLink: 'https://en.support.wordpress.com/videopress/',
-		icon: 'video-camera',
-		plan: 'Premium',
-		description: 'Upload and host your video files on your site with VideoPress.'
-	}
-];
-
 export const PremiumPluginsPanel = React.createClass( {
 	render() {
-		const { plugins: givenPlugins = [] } = this.props;
-		const plugins = givenPlugins.length
-			? givenPlugins
-			: defaultPlugins;
+		const { plugins } = this.props;
 
 		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Premium Plan Upgrades' ) }>
 					<Button compact primary>{ this.translate( 'Purchase' ) }</Button>
 				</SectionHeader>
+
 				<Card className="wpcom-plugins__premium-panel is-disabled">
 					<div className="wpcom-plugins__list">
-						{ plugins.map( ( { name, supportLink, icon, plan, description } ) =>
+						{ plugins.map( ( { name, descriptionLink, icon, plan, description } ) =>
 							<PremiumPlugin
-								{ ...{ name, key: name, supportLink, icon, plan, description } }
+								{ ...{ name, key: name, descriptionLink, icon, plan, description } }
 							/>
 						) }
 					</div>
