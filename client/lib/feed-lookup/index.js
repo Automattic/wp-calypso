@@ -26,13 +26,13 @@ function discover( feedUrl ) {
 };
 
 function feedLookup( feedUrl ) {
-	var feedId = cache.get( feedUrl );
+	var promiseForFeedId = cache.get( feedUrl );
 
-	if ( feedId ) {
-		return feedId;
+	if ( promiseForFeedId ) {
+		return promiseForFeedId;
 	}
 
-	feedId = discover( feedUrl ).then( function( response ) {
+	promiseForFeedId = discover( feedUrl ).then( function( response ) {
 		var feed;
 
 		if ( ! isEmpty( response.feeds ) ) {
@@ -44,9 +44,9 @@ function feedLookup( feedUrl ) {
 		}
 	} );
 
-	cache.set( feedUrl, feedId );
+	cache.set( feedUrl, promiseForFeedId );
 
-	return feedId;
+	return promiseForFeedId;
 }
 
 module.exports = feedLookup;
