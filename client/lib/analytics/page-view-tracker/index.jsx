@@ -49,10 +49,8 @@ PageViewTracker.propTypes = {
 	title: PropTypes.string.isRequired
 };
 
-const mapDispatchToProps = ( dispatch, props ) => ( {
-	recorder: has( props, 'recorder' )
-		? props.recorder
-		: flowRight( dispatch, recordPageView )
+const mapDispatchToProps = dispatch => ( {
+	recorder: flowRight( dispatch, recordPageView )
 } );
 
 export default connect( null, mapDispatchToProps )( PageViewTracker );
