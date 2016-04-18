@@ -17,7 +17,7 @@ function discover( feedUrl ) {
 	const key = requestKey( feedUrl );
 
 	if ( inflight.requestInflight( key ) ) {
-		return;
+		return cache.get( feedUrl );
 	}
 
 	return wpcom.undocumented().discoverFeed(
