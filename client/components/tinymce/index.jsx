@@ -20,9 +20,6 @@ require( 'tinymce/plugins/paste/plugin.js' );
 require( 'tinymce/plugins/tabfocus/plugin.js' );
 require( 'tinymce/plugins/textcolor/plugin.js' );
 
-// TinyMCE plugins copied from .org
-require( './plugins/wptextpattern/plugin.js' );
-
 // TinyMCE plugins that we've forked or written ourselves
 import wpcomPlugin from './plugins/wpcom/plugin.js';
 import wpcomAutoresizePlugin from './plugins/wpcom-autoresize/plugin.js';
@@ -40,6 +37,7 @@ import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugi
 import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
 import contactFormPlugin from './plugins/contact-form/plugin';
 import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
+import wptextpatternPlugin from './plugins/wptextpattern/plugin';
 
 [
 	wpcomPlugin,
@@ -57,7 +55,8 @@ import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
 	editorButtonAnalyticsPlugin,
 	calypsoAlertPlugin,
 	contactFormPlugin,
-	afterTheDeadlinePlugin
+	afterTheDeadlinePlugin,
+	wptextpatternPlugin
 ].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
