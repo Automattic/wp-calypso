@@ -10,6 +10,7 @@ var webpack = require( 'webpack' ),
  * Internal dependencies
  */
 var config = require( './server/config' ),
+	sections = require( './client/sections' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
 	PragmaCheckPlugin = require( 'server/pragma-checker' );
 
@@ -19,6 +20,8 @@ var config = require( './server/config' ),
 var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
 	jsLoader,
 	webpackConfig;
+
+const sectionCount = sections.length;
 
 webpackConfig = {
 	cache: true,
@@ -93,8 +96,8 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
 		children: true,
-		minChunks: 5,
-		name: 'build-' + CALYPSO_ENV
+		minChunks: Math.floor( sectionCount * 0.25 ),
+		async: true
 	} ) );
 	webpackConfig.plugins.push( new ChunkFileNamePlugin() );
 	// jquery is only needed in the build for the desktop app
