@@ -101,6 +101,15 @@ function setPageTitle( title ) {
 	titleActions.setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) );
 }
 
+function renderFeedError() {
+	var FeedError = require( 'reader/feed-error' );
+
+	ReactDom.render(
+		React.createElement( FeedError ),
+		document.getElementById( 'primary' )
+	);
+}
+
 module.exports = {
 	initAbTests: function( context, next ) {
 		// spin up the ab tests that are currently active for the reader
@@ -212,6 +221,22 @@ module.exports = {
 			} ),
 			document.getElementById( 'primary' )
 		);
+	},
+
+	feedDiscovery: function( context, next ) {
+		var feedLookup = require( 'lib/feed-lookup' );
+
+		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
+			feedLookup( context.params.feed_id )
+				.then( function( feedId ) {
+					page.redirect( `/read/feeds/${feedId}` );
+				} )
+				.catch( function() {
+					renderFeedError();
+				} );
+		} else {
+			next();
+		}
 	},
 
 	feedListing: function( context ) {
