@@ -81,4 +81,14 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
+	guidedTours: {
+		datestamp: '20160418',
+		variations: {
+			original: 96,
+			guided: 2,
+			calypsoOnly: 2,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
 };

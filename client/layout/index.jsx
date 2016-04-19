@@ -35,6 +35,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
+import { getGuidesTourState } from 'state/ui/selectors';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -160,7 +161,7 @@ Layout = React.createClass( {
 
 		return (
 			<div className={ sectionClass }>
-				{ config.isEnabled( 'guidestours' ) && this.props.shouldShowGuidesTour ? <GuidesTours /> : null }
+				{ config.isEnabled( 'guidestours' ) && this.props.tourState.shouldShow ? <GuidesTours /> : null }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
@@ -184,13 +185,13 @@ Layout = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const { isLoading, section, guidesTour } = state.ui;
+		const { isLoading, section } = state.ui;
 		return {
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
 			section,
 			isOffline: isOffline( state ),
-			shouldShowGuidesTour: guidesTour.shouldShow,
+			tourState: getGuidesTourState( state ),
 		};
 	}
 )( Layout );

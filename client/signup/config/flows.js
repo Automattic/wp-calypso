@@ -11,6 +11,7 @@ import reject from 'lodash/reject';
 import { abtest } from 'lib/abtest';
 import config from 'config';
 import { getLocaleSlug } from 'lib/i18n-utils';
+import { isOutsideCalypso } from 'lib/url';
 import plansPaths from 'my-sites/plans/paths';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
@@ -269,8 +270,44 @@ function filterFlowName( flowName ) {
 	return flowName;
 }
 
+function filterDestination( destination, dependencies, flowName ) {
+	if ( config.isEnabled( 'guidestours' ) ) {
+		return getGuidedToursDestination( destination, dependencies, flowName );
+	}
+
+	return destination;
+}
+
+function getGuidedToursDestination( destination, dependencies, flowName ) {
+	const guidedToursVariant = abtest( 'guidedTours' );
+	const tourName = 'main';
+	const disabledFlows = [ 'account', 'site-user', 'jetpack' ];
+	const siteSlug = dependencies.siteSlug;
+	const baseUrl = `/stats/${ siteSlug }`;
+
+	// TODO(ehg): Build the query arg properly, so we don't have problems with
+	// destinations that already have query strings in
+	function getVariantUrl( variant ) {
+		const external = isOutsideCalypso( destination );
+		const variantUrls = {
+			original: destination,
+			guided: external ? `${ baseUrl }?tour=${ tourName }` : `${ destination }?tour=${ tourName }`,
+			calypsoOnly: external ? baseUrl : destination,
+		}
+
+		return variantUrls[ variant ] || variantUrls.original;
+	}
+
+	if ( includes( disabledFlows, flowName ) || ! siteSlug ) {
+		return destination;
+	}
+
+	return getVariantUrl( guidedToursVariant );
+}
+
 export default {
-	filterFlowName: filterFlowName,
+	filterFlowName,
+	filterDestination,
 
 	defaultFlowName: 'main',
 
