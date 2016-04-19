@@ -1,45 +1,25 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:my-sites:plugins:actions' ),
-	defer = require( 'lodash/defer' );
+import debugFactory from 'debug';
+import defer from 'lodash/defer';
+
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	Dispatcher = require( 'dispatcher' ),
-	utils = require( 'lib/site/utils' ),
-	wpcom = require( 'lib/wp' );
+import analytics from 'lib/analytics';
+import Dispatcher from 'dispatcher';
+import utils from 'lib/site/utils';
+import wpcom from 'lib/wp';
 
-var _actionsQueueBySite = {},
-	PluginsActions;
+/**
+ * Module vars
+ */
+const debug = debugFactory( 'calypso:my-sites:plugins:actions' );
+let _actionsQueueBySite = {};
 
-function queueSitePluginActionAsPromise( action, siteId, pluginId, callback ) {
-	var promise = new Promise( function( resolve, reject ) {
-		queueSitePluginAction( action, siteId, pluginId, function( error, data ) {
-			if ( callback ) {
-				callback( error, data );
-			}
-			if ( error ) {
-				reject( error );
-			}
-			resolve( data );
-		} );
-	} );
-
-	return promise;
-}
-
-function getSolvedPromise( dataToPass ) {
-	return new Promise( resolve => resolve( dataToPass ) );
-}
-
-function getRejectedPromise( errorToPass ) {
-	return new Promise( ( resolve, reject ) => reject( errorToPass ) );
-}
-
-function queueSitePluginAction( action, siteId, pluginId, callback ) {
-	let next = function( nextCallback, error, data ) {
+const queueSitePluginAction = ( action, siteId, pluginId, callback ) => {
+	let next = ( nextCallback, error, data ) => {
 		let nextAction;
 
 		if ( nextCallback ) {
@@ -66,7 +46,31 @@ function queueSitePluginAction( action, siteId, pluginId, callback ) {
 		_actionsQueueBySite[ siteId ] = [];
 		action( next.bind( this, callback ) );
 	}
-}
+};
+
+const queueSitePluginActionAsPromise = ( action, siteId, pluginId, callback ) => {
+	var promise = new Promise( ( resolve, reject ) => {
+		queueSitePluginAction( action, siteId, pluginId, ( error, data ) => {
+			if ( callback ) {
+				callback( error, data );
+			}
+			if ( error ) {
+				reject( error );
+			}
+			resolve( data );
+		} );
+	} );
+
+	return promise;
+};
+
+const getSolvedPromise = ( dataToPass ) => {
+	return new Promise( resolve => resolve( dataToPass ) );
+};
+
+const getRejectedPromise = ( errorToPass ) => {
+	return new Promise( ( resolve, reject ) => reject( errorToPass ) );
+};
 
 /**
  * Return plugin id depending if the site is a jetpack site
@@ -108,7 +112,7 @@ const getPluginBoundMethod = ( site, pluginId, method ) => {
 	return handler[ method ].bind( handler );
 };
 
-function recordEvent( eventType, plugin, site, error ) {
+const recordEvent = ( eventType, plugin, site, error ) => {
 	if ( error ) {
 		analytics.tracks.recordEvent( eventType + '_error', {
 			site: site.ID,
@@ -123,25 +127,12 @@ function recordEvent( eventType, plugin, site, error ) {
 		plugin: plugin.slug
 	} );
 	analytics.mc.bumpStat( eventType, 'succeeded' );
-}
+};
 
-function processAutoupdates( site, plugins ) {
-	if ( site.canAutoupdateFiles &&
-		site.jetpack &&
-		site.canManage() &&
-		utils.userCan( 'manage_options', site )
-	) {
-		plugins.forEach( function( plugin ) {
-			if ( plugin.update && plugin.autoupdate ) {
-				autoupdatePlugin( site, plugin );
-			}
-		} );
-	}
-}
-
-// Updates a plugin without launching the events that notifies the user that an update is going on.
+// Updates a plugin without launching the events that notifies
+// the user that an update is going on.
 // Used for updating plugins automatically on the background.
-function autoupdatePlugin( site, plugin ) {
+const autoupdatePlugin = ( site, plugin ) => {
 	Dispatcher.handleViewAction( {
 		type: 'AUTOUPDATE_PLUGIN',
 		action: 'AUTOUPDATE_PLUGIN',
@@ -168,17 +159,31 @@ function autoupdatePlugin( site, plugin ) {
 		} );
 		recordEvent( 'calypso_plugin_updated_automatic', plugin, site, error );
 	} );
-}
+};
 
-PluginsActions = {
-	removePluginsNotices: function( logs ) {
+const processAutoupdates = ( site, plugins ) => {
+	if ( site.canAutoupdateFiles &&
+		site.jetpack &&
+		site.canManage() &&
+		utils.userCan( 'manage_options', site )
+	) {
+		plugins.forEach( plugin => {
+			if ( plugin.update && plugin.autoupdate ) {
+				autoupdatePlugin( site, plugin );
+			}
+		} );
+	}
+};
+
+const PluginsActions = {
+	removePluginsNotices: logs => {
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_PLUGINS_NOTICES',
 			logs: logs
 		} );
 	},
 
-	fetchSitePlugins: function( site ) {
+	fetchSitePlugins: site => {
 		if ( ! utils.userCan( 'manage_options', site ) || ! site.jetpack ) {
 			defer( () => {
 				Dispatcher.handleViewAction( {
@@ -211,7 +216,7 @@ PluginsActions = {
 		}
 	},
 
-	updatePlugin: function( site, plugin ) {
+	updatePlugin: ( site, plugin ) => {
 		debug( 'updatePlugin', site, plugin );
 
 		// There doesn't seem to be anything to update
@@ -232,7 +237,7 @@ PluginsActions = {
 		} );
 
 		const boundUpdate = getPluginBoundMethod( site, plugin.id, 'updateVersion' );
-		queueSitePluginAction( boundUpdate, site.ID, plugin.id, function( error, data ) {
+		queueSitePluginAction( boundUpdate, site.ID, plugin.id, ( error, data ) => {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_UPDATED_PLUGIN',
 				action: 'UPDATE_PLUGIN',
@@ -245,7 +250,7 @@ PluginsActions = {
 		} );
 	},
 
-	installPlugin: function( site, plugin ) {
+	installPlugin: ( site, plugin ) => {
 		if ( ! site.canUpdateFiles ) {
 			return getRejectedPromise( 'Error: Can\'t update files on the site' );
 		}
@@ -277,7 +282,7 @@ PluginsActions = {
 			return queueSitePluginActionAsPromise( bound, site.ID, pluginData.id );
 		};
 
-		const dispatchMessage = function( type, responseData, error ) {
+		const dispatchMessage = ( type, responseData, error ) => {
 			var message = {
 				type: type,
 				action: 'INSTALL_PLUGIN',
@@ -295,12 +300,12 @@ PluginsActions = {
 			recordEvent( 'calypso_plugin_installed', plugin, site, error );
 		};
 
-		const manageSuccess = function( responseData ) {
+		const manageSuccess = responseData => {
 			dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', responseData );
 			return responseData;
 		};
 
-		const manageError = function( error ) {
+		const manageError = error => {
 			if ( error.name === 'PluginAlreadyInstalledError' ) {
 				if ( site.isMainNetworkSite() ) {
 					return update( plugin )
@@ -342,7 +347,7 @@ PluginsActions = {
 			.catch( manageError );
 	},
 
-	removePlugin: function( site, plugin ) {
+	removePlugin: ( site, plugin ) => {
 		if ( ! site.canUpdateFiles || ! utils.userCan( 'manage_options', site ) ) {
 			return;
 		}
@@ -399,7 +404,7 @@ PluginsActions = {
 			.catch( error => dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', null, error ) );
 	},
 
-	activatePlugin: function( site, plugin ) {
+	activatePlugin: ( site, plugin ) => {
 		Dispatcher.handleViewAction( {
 			type: 'ACTIVATE_PLUGIN',
 			action: 'ACTIVATE_PLUGIN',
@@ -411,7 +416,7 @@ PluginsActions = {
 		const pluginHandler = getPluginHandler( site, pluginId );
 		const activate = pluginHandler.activate.bind( pluginHandler );
 
-		queueSitePluginAction( activate, site.ID, pluginId, function( error, data ) {
+		queueSitePluginAction( activate, site.ID, pluginId, ( error, data ) => {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_ACTIVATED_PLUGIN',
 				action: 'ACTIVATE_PLUGIN',
@@ -447,7 +452,7 @@ PluginsActions = {
 		} );
 	},
 
-	deactivatePlugin: function( site, plugin ) {
+	deactivatePlugin: ( site, plugin ) => {
 		Dispatcher.handleViewAction( {
 			type: 'DEACTIVATE_PLUGIN',
 			action: 'DEACTIVATE_PLUGIN',
@@ -460,7 +465,7 @@ PluginsActions = {
 		const deactivate = pluginHandler.deactivate.bind( pluginHandler );
 
 		// make the API Request
-		queueSitePluginAction( deactivate, site.ID, pluginId, function( error, data ) {
+		queueSitePluginAction( deactivate, site.ID, pluginId, ( error, data ) => {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_DEACTIVATED_PLUGIN',
 				action: 'DEACTIVATE_PLUGIN',
@@ -491,7 +496,7 @@ PluginsActions = {
 		} );
 	},
 
-	togglePluginActivation: function( site, plugin ) {
+	togglePluginActivation: ( site, plugin ) => {
 		if ( ! utils.userCan( 'manage_options', site ) ) {
 			return;
 		}
@@ -504,7 +509,7 @@ PluginsActions = {
 		}
 	},
 
-	enableAutoUpdatesPlugin: function( site, plugin ) {
+	enableAutoUpdatesPlugin: ( site, plugin ) => {
 		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
 			return;
 		}
@@ -533,7 +538,7 @@ PluginsActions = {
 		} );
 	},
 
-	disableAutoUpdatesPlugin: function( site, plugin ) {
+	disableAutoUpdatesPlugin: ( site, plugin ) => {
 		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
 			return;
 		}
@@ -547,7 +552,7 @@ PluginsActions = {
 
 		// make the API Request
 		const disableAA = getPluginBoundMethod( site, plugin.id, 'disableAutoupdate' );
-		queueSitePluginAction( disableAA, site.ID, plugin.id, function( error, data ) {
+		queueSitePluginAction( disableAA, site.ID, plugin.id, ( error, data ) => {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN',
 				action: 'DISABLE_AUTOUPDATE_PLUGIN',
@@ -560,10 +565,11 @@ PluginsActions = {
 		} );
 	},
 
-	togglePluginAutoUpdate: function( site, plugin ) {
+	togglePluginAutoUpdate: ( site, plugin ) => {
 		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
 			return;
 		}
+
 		if ( ! plugin.autoupdate ) {
 			PluginsActions.enableAutoUpdatesPlugin( site, plugin );
 		} else {
@@ -571,7 +577,7 @@ PluginsActions = {
 		}
 	},
 
-	removePluginUpdateInfo: function( site, plugin ) {
+	removePluginUpdateInfo: ( site, plugin ) => {
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_PLUGINS_UPDATE_INFO',
 			site: site,
@@ -579,7 +585,7 @@ PluginsActions = {
 		} );
 	},
 
-	resetQueue: function() {
+	resetQueue: () => {
 		_actionsQueueBySite = {};
 	}
 };
