@@ -19,6 +19,7 @@ import ExternalLink from 'components/external-link';
 import EmptyContent from 'components/empty-content';
 import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
@@ -128,14 +129,21 @@ export default React.createClass( {
 
 		if ( abtest( 'contextualGoogleAnalyticsNudge' ) === 'drake' && ! this.isEnabled() ) {
 			const upgradeLink = this.getUpgradeLink();
-			return <EmptyContent
-				illustration="/calypso/images/drake/drake-whoops.svg"
-				title={ this.translate( 'Want to use Google Analytics on your site?', { context: 'site setting upgrade' } ) }
-				line={ this.translate( 'Support for Google Analytics is now available with WordPress.com Business.', { context: 'site setting upgrade' } ) }
-				action={ this.translate( 'Upgrade Now', { context: 'site setting upgrade' } ) }
-				actionURL={ upgradeLink }
-				isCompact={ true }
-				actionCallback={ this.trackUpgradeClick } />;
+			const eventName = 'calypso_empty_content_component_impression';
+			const eventProperties = { empty_content_name: 'google_analytics_drake' };
+			return (
+				<div>
+					<EmptyContent
+					illustration="/calypso/images/drake/drake-whoops.svg"
+					title={ this.translate( 'Want to use Google Analytics on your site?', { context: 'site setting upgrade' } ) }
+					line={ this.translate( 'Support for Google Analytics is now available with WordPress.com Business.', { context: 'site setting upgrade' } ) }
+					action={ this.translate( 'Upgrade Now', { context: 'site setting upgrade' } ) }
+					actionURL={ upgradeLink }
+					isCompact={ true }
+					actionCallback={ this.trackUpgradeClick } />
+					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+				</div>
+			);
 		}
 
 		return (
@@ -228,7 +236,7 @@ export default React.createClass( {
 		);
 	},
 
-	trackUpgradeClick: function() {
+	trackUpgradeClick() {
 		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'google_analytics' } );
 	},
 
