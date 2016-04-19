@@ -28,39 +28,40 @@ function toolbarPin( editor ) {
 	}
 
 	/**
+	 * Updates the pinned state, toggling the container class as appropriate.
+	 *
+	 * @param {Boolean} toBePinned Whether toolbar should be pinned
+	 */
+	function togglePinned( toBePinned ) {
+		isPinned = toBePinned;
+		editor.dom.toggleClass( container, 'is-pinned', isPinned );
+	}
+
+	/**
 	 * Checks whether the current pinned state of the editor should change,
 	 * toggling the class as determined by the current viewport compared to the
 	 * top edge of the container.
 	 */
-	function pinToolbarOnScroll() {
+	const pinToolbarOnScroll = throttle( () => {
 		if ( ! container ) {
 			return;
 		}
 
-		if ( ! isWithinBreakpoint( '>660px' ) ) {
-			// We might be here due to a window resize to a small viewport
-			isPinned = false;
-		} else if ( isPinned && window.scrollY < container.offsetTop ) {
+		if ( isPinned && window.scrollY < container.offsetTop ) {
 			// Scroll doesn't reach container top and should be unpinned
-			isPinned = false;
+			togglePinned( false );
 		} else if ( ! isPinned && window.scrollY > container.offsetTop ) {
 			// Scroll exceeds container top and should be pinned
-			isPinned = true;
-		} else {
-			// If we've reached this point, assume that no change is necessary
-			return;
+			togglePinned( true );
 		}
-
-		editor.dom.toggleClass( container, 'is-pinned', isPinned );
-	}
-	const maybePinToolbarOnScroll = throttle( pinToolbarOnScroll, 50 );
+	}, 50 );
 
 	/**
 	 * Binds or unbinds the scroll event from the global window object, since
 	 * pinning behavior is restricted to larger viewports whilst the visual
 	 * editing mode is active.
 	 */
-	function bindScroll( event ) {
+	const maybeBindScroll = throttle( ( event ) => {
 		const isVisual = ! editor.isHidden();
 		const shouldBind = 'remove' !== event.type && isVisual && isWithinBreakpoint( '>660px' );
 
@@ -70,28 +71,22 @@ function toolbarPin( editor ) {
 		}
 
 		const eventBindFn = ( shouldBind ? 'add' : 'remove' ) + 'EventListener';
-		window[ eventBindFn ]( 'scroll', maybePinToolbarOnScroll );
+		window[ eventBindFn ]( 'scroll', pinToolbarOnScroll );
 
 		isMonitoringScroll = shouldBind;
 		if ( isMonitoringScroll ) {
 			setContainer();
-		}
-	}
-	const maybeBindScroll = throttle( bindScroll, 200 );
 
-	editor.on( 'init show hide remove', maybeBindScroll );
-
-	let isLargeViewport = isWithinBreakpoint( '>660px' );
-	window.addEventListener( 'resize', () => {
-		const wasLargeViewport = isLargeViewport;
-		isLargeViewport = isWithinBreakpoint( '>660px' );
-		if ( wasLargeViewport !== isLargeViewport ) {
-			bindScroll();
+			// May need to pin if resizing from small to large viewport
 			pinToolbarOnScroll();
 		} else {
-			maybeBindScroll();
+			// Reset to default when not monitoring scroll
+			togglePinned( false );
 		}
-	} );
+	}, 200 );
+
+	editor.on( 'init show hide remove', maybeBindScroll );
+	window.addEventListener( 'resize', maybeBindScroll );
 }
 
 export default function() {
