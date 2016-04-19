@@ -411,7 +411,7 @@ module.exports = React.createClass({
 					transitionLeaveTimeout={ 300 }>
 					{ this.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
-				{ this.state.showComments && <Comments post={ this.props.post } /> }
+				{ this.state.showComments && <Comments post={ this.props.post } onCommentsUpdate={ () => {} } /> }
 			</Card>
 		);
 
