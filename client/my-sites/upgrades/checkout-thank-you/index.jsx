@@ -3,6 +3,7 @@
  */
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import defer from 'lodash/defer';
 import find from 'lodash/find';
 import page from 'page';
 import React from 'react';
@@ -17,6 +18,7 @@ import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouHeader from './header';
+import config from 'config';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
@@ -49,6 +51,7 @@ import PurchaseDetail from 'components/purchase-detail';
 import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
 import upgradesPaths from 'my-sites/upgrades/paths';
+import { showGuidesTour } from 'state/ui/actions';
 
 function getPurchases( props ) {
 	return props.receipt.data.purchases;
@@ -72,6 +75,7 @@ const CheckoutThankYou = React.createClass( {
 	},
 
 	componentDidMount() {
+		config.isEnabled( 'guidestours' ) && defer( () => this.props.undelayGuidesTour() );
 		this.redirectIfThemePurchased();
 
 		if ( this.props.receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
@@ -282,6 +286,9 @@ export default connect(
 			},
 			refreshSitePlans( site ) {
 				dispatch( refreshSitePlans( site.ID ) );
+			},
+			undelayGuidesTour() {
+				dispatch( showGuidesTour( { shouldDelay: false } ) );
 			}
 		};
 	}
