@@ -43,7 +43,6 @@ var DraftList = React.createClass( {
 				siteID={ this.props.siteID }
 				status="draft,pending"
 				withImages={ true }
-				withCounts={ true }
 				onTitleClick={ this.props.onTitleClick }
 			>
 				<Drafts
