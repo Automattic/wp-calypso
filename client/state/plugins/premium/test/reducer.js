@@ -249,7 +249,7 @@ const finishedSiteWithError = [
 		name: 'Polldaddy',
 		key: 'pd-api-key',
 		status: {
-			start: false,
+			start: true,
 			install: false,
 			activate: true,
 			config: null,
@@ -259,7 +259,7 @@ const finishedSiteWithError = [
 	}
 ]
 
-describe.only( 'premium reducer', () => {
+describe( 'premium reducer', () => {
 	describe( 'isRequesting', () => {
 		it( 'should track when fetches start', () => {
 			const state = isRequesting( undefined, {
