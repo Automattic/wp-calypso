@@ -3990,22 +3990,24 @@
       "version": "1.2.0"
     },
     "wpcom": {
-      "version": "4.9.3",
+      "version": "4.9.7",
       "dependencies": {
         "babel": {
-          "version": "5.8.38"
-        },
-        "commander": {
-          "version": "2.9.0"
-        },
-        "glob": {
-          "version": "5.0.15"
-        },
-        "lodash": {
-          "version": "3.10.1"
-        },
-        "source-map": {
-          "version": "0.5.3"
+          "version": "5.8.38",
+          "dependencies": {
+            "commander": {
+              "version": "2.9.0"
+            },
+            "glob": {
+              "version": "5.0.15"
+            },
+            "lodash": {
+              "version": "3.10.1"
+            },
+            "source-map": {
+              "version": "0.5.3"
+            }
+          }
         }
       }
     },
