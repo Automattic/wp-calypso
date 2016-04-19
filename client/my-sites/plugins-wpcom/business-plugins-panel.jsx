@@ -11,7 +11,7 @@ export const BusinessPluginsPanel = React.createClass( {
 	render() {
 		const {
 			isActive = false,
-			plugins
+			plugins = []
 		} = this.props;
 
 		const cardClasses = classNames( 'wpcom-plugins__business-panel', {

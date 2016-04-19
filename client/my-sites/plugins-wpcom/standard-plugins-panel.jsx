@@ -9,7 +9,11 @@ import StandardPlugin from './plugin-types/standard-plugin';
 
 export const StandardPluginsPanel = React.createClass( {
 	render() {
-		const { displayCount, plugins } = this.props;
+		const {
+			displayCount,
+			plugins = []
+		} = this.props;
+
 		const shownPlugins = plugins.slice( 0, displayCount );
 
 		return (

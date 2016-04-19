@@ -44,7 +44,9 @@ export const PluginPanel = React.createClass( {
 			plan,
 			siteSlug
 		} = this.props;
+		
 		const standardPluginsLink = `/plugins/standard/${ siteSlug }`;
+
 		const hasBusiness = isBusiness( plan ) || isEnterprise( plan );
 		const hasPremium = hasBusiness || isPremium( plan );
 

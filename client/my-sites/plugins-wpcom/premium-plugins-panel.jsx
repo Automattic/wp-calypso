@@ -5,6 +5,7 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 
 import PremiumPlugin from './plugin-types/premium-plugin';
+import PurchaseButton from './purchase-button';
 
 export const PremiumPluginsPanel = React.createClass( {
 	render() {
