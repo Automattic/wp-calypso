@@ -272,7 +272,7 @@ module.exports = React.createClass({
 							} )
 						}
 						title={ commentTitle }
-						onClick={ this.onCommentsClick }
+						onClick={ this.toggleComments }
 					>
 					<Gridicon icon="comment" size={ 24 } />
 
@@ -369,7 +369,7 @@ module.exports = React.createClass({
 		return this.props.sites.getSite( this.props.post.site_ID );
 	},
 
-	onCommentsClick: function() {
+	toggleComments: function() {
 		this.setState( {
 			showComments: ! this.state.showComments
 		} );
