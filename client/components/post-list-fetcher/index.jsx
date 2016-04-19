@@ -38,10 +38,6 @@ function queryPosts( props ) {
 		after: props.after
 	};
 
-	if ( props.withCounts ) {
-		query.meta = 'counts';
-	}
-
 	// This is to avoid dispatching during a dispatch.
 	// Not ideal nor a best practice
 	if ( Dispatcher.isDispatching() ) {
@@ -75,7 +71,6 @@ function shouldQueryPosts( props, nextProps ) {
 		props.author !== nextProps.author ||
 		props.search !== nextProps.search ||
 		props.excludeTree !== nextProps.excludeTree ||
-		props.withCounts !== nextProps.withCounts ||
 		props.orderBy !== nextProps.orderBy ||
 		props.order !== nextProps.order ||
 		props.number !== nextProps.number ||
@@ -95,7 +90,6 @@ PostListFetcher = React.createClass( {
 		search: React.PropTypes.string,
 		siteID: React.PropTypes.any,
 		withImages: React.PropTypes.bool,
-		withCounts: React.PropTypes.bool,
 		excludeTree: React.PropTypes.number,
 		orderBy: React.PropTypes.oneOf(
 			[ 'title', 'date', 'modified', 'comment_count', 'ID' ]

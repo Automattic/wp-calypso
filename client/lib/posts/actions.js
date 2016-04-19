@@ -531,22 +531,6 @@ PostActions = {
 			post: data
 		} );
 		callback( error, data );
-	},
-
-	fetchCounts: function( siteId, options ) {
-		Dispatcher.handleViewAction( {
-			type: 'FETCH_POST_COUNTS',
-			siteId: siteId
-		} );
-
-		wpcom.undocumented().site( siteId ).postCounts( options, function( error, data ) {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_POST_COUNTS',
-				error: error,
-				data: data,
-				siteId: siteId
-			} );
-		} );
 	}
 };
 
