@@ -74,7 +74,7 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, tertiary } ) =>
  * divs.
  */
 export function clientRouter( route, ...middlewares ) {
-	page( route, ...[ ...middlewares, render ] );
+	page( route, ...middlewares, render );
 }
 
 function render( context ) {
