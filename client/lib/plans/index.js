@@ -56,7 +56,7 @@ export function planHasFeature( plan, feature ) {
 }
 
 export function hasFeature( feature, siteID ) {
-	return planHasFeature( feature, getSitePlanSlug( siteID ) );
+	return planHasFeature( getSitePlanSlug( siteID ), feature );
 }
 
 export function addCurrentPlanToCartAndRedirect( sitePlans, selectedSite ) {
