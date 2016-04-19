@@ -436,7 +436,7 @@ const Post = React.createClass( {
 					? <PostImages postImages={ post.content_images || [] } />
 					: null }
 
-				{ ( isDiscoverPost && ! isDiscoverSitePick ) ? <DiscoverPostAttribution attribution={ post.discover_metadata.attribution } siteUrl={ discoverSiteUrl } /> : null }
+				{ ( isDiscoverPost && post.discover_metadata && ! isDiscoverSitePick ) ? <DiscoverPostAttribution attribution={ post.discover_metadata.attribution } siteUrl={ discoverSiteUrl } /> : null }
 				{ ( isDiscoverSitePick ) ? <DiscoverSiteAttribution attribution={ post.discover_metadata.attribution } siteUrl={ discoverSiteUrl } /> : null }
 
 				{ this.props.xPostedTo
