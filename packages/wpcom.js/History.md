@@ -1,4 +1,12 @@
 
+4.9.7 / 2016-04-19
+==================
+
+ * test: add site.wpcomPlugin() tests
+ * SiteWPComPlugin: add Class
+ * test: add site.wpcomPluginsList() test
+ * Site: add wpcomPluginsList() method
+
 4.9.6 / 2016-04-18
 ==================
 
