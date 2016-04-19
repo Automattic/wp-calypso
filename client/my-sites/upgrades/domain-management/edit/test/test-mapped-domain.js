@@ -17,7 +17,8 @@ describe( 'domain-management/edit/mapped-domain', () => {
 			domain: {
 				name: 'neverexpires.com',
 				expirationMoment: null
-			}
+			},
+			settingPrimaryDomain: false
 		};
 	} );
 
