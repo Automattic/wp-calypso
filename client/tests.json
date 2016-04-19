@@ -271,6 +271,9 @@
 		"plans-list": {
 			"test": [ "index" ]
 		},
+	  "phone-validation": {
+			"test": [ "index" ]
+		},
 		"popup-monitor": {
 			"test": [ "index" ]
 		},
