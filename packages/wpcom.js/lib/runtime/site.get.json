@@ -28,5 +28,6 @@
 	{ "name": "statsVideoPlays", "subpath": "stats/video-plays" },
 	{ "name": "statsVisits", "subpath": "stats/visits" },
 	{ "name": "tagsList", "subpath": "tags" },
-	{ "name": "usersList", "subpath": "users" }
+	{ "name": "usersList", "subpath": "users" },
+	{ "name": "wpcomPluginsList", "subpath": "wpcom-plugins" }
 ]

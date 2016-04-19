@@ -55,6 +55,10 @@ var _siteWordads = require('./site.wordads');
 
 var _siteWordads2 = _interopRequireDefault(_siteWordads);
 
+var _siteWpcomPlugin = require('./site.wpcom-plugin');
+
+var _siteWpcomPlugin2 = _interopRequireDefault(_siteWpcomPlugin);
+
 var _utilRuntimeBuilder = require('./util/runtime-builder');
 
 var _utilRuntimeBuilder2 = _interopRequireDefault(_utilRuntimeBuilder);
@@ -245,6 +249,18 @@ var Site = (function () {
 		key: 'plugin',
 		value: function plugin(slug) {
 			return new _sitePlugin2['default'](slug, this._id, this.wpcom);
+		}
+
+		/**
+   * Create a `SiteWPComPlugin` instance
+   *
+   * @param {String} slug - plugin identifier
+   * @return {SiteWPComPlugin} SiteWPComPlugin instance
+   */
+	}, {
+		key: 'wpcomPlugin',
+		value: function wpcomPlugin(slug) {
+			return new _siteWpcomPlugin2['default'](slug, this._id, this.wpcom);
 		}
 
 		/**

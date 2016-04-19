@@ -12,6 +12,7 @@ import SitePlugin from './site.plugin';
 import SiteSettings from './site.settings';
 import SiteTaxonomy from './site.taxonomy';
 import SiteWordAds from './site.wordads';
+import SiteWPComPlugin from './site.wpcom-plugin';
 
 import runtimeBuilder from './util/runtime-builder';
 import siteGetMethods from './runtime/site.get.json';
@@ -166,6 +167,16 @@ class Site {
 	 */
 	plugin( slug ) {
 		return new SitePlugin( slug, this._id, this.wpcom );
+	}
+
+	/**
+	 * Create a `SiteWPComPlugin` instance
+	 *
+	 * @param {String} slug - plugin identifier
+	 * @return {SiteWPComPlugin} SiteWPComPlugin instance
+	 */
+	wpcomPlugin( slug ) {
+		return new SiteWPComPlugin( slug, this._id, this.wpcom );
 	}
 
 	/**

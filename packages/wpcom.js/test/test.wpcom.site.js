@@ -474,6 +474,19 @@ describe( 'wpcom.site', function() {
 					.catch( done );
 			} );
 		} );
+
+		describe( 'wpcom.site.wpcomPluginsList', function() {
+			it( 'should request wpcom plugins list', done => {
+				wpcom
+				.site( fixture.site_business )
+				.wpcomPluginsList()
+					.then( list => {
+						assert.ok( list.plugins instanceof Array );
+						done();
+					} )
+					.catch( done );
+			} );
+		} );
 	} );
 
 	describe( 'wpcom.site.get', function() {
