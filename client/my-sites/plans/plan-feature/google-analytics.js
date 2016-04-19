@@ -61,7 +61,7 @@ export default function( context ) {
 	if ( planSlug === 'business-bundle' ) {
 		comparisonCard = ( <Card href={ '/settings/analytics/' + site.slug }>{ i18n.translate( 'Configure Google Analytics' ) }</Card> );
 	} else if ( site.jetpack ) {
-		comparisonCard = ( <Card href={ site.URL + '/wp-admin' }>{ i18n.translate( 'Your site is a Jetpack site hosted on your own serwer. Most likely you can configue Google Analytics in your admin panel.' ) }</Card> );
+		comparisonCard = ( <Card href={ site.URL + '/wp-admin' }>{ i18n.translate( 'Your site is a Jetpack site hosted on your own server. Most likely you can configue Google Analytics in your admin panel.' ) }</Card> );
 	} else {
 		comparisonCard = (
 			<FeatureComparison>
