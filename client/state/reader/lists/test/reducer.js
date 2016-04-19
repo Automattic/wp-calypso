@@ -12,12 +12,15 @@ import {
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_UPDATE_TITLE,
-	READER_LIST_UPDATE_DESCRIPTION
+	READER_LIST_UPDATE_DESCRIPTION,
+	READER_LIST_REQUEST_SUCCESS,
+	READER_LIST_REQUEST_FAILURE
 } from 'state/action-types';
 
 import {
 	items,
-	updatedLists
+	updatedLists,
+	missingLists
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -125,6 +128,90 @@ describe( 'reducer', () => {
 			state = updatedLists( null, {
 				type: READER_LIST_DISMISS_NOTICE,
 				listId: 841
+			} );
+
+			expect( state ).to.eql( [] );
+		} );
+	} );
+
+	describe( '#missingLists()', () => {
+		it( 'should default to an empty array', () => {
+			const state = missingLists( undefined, {} );
+			expect( state ).to.eql( [] );
+		} );
+
+		it( 'should store new missing lists in the case of a 404', () => {
+			const state = missingLists( undefined, {
+				type: READER_LIST_REQUEST_FAILURE,
+				error: {
+					statusCode: 404
+				},
+				owner: 'lister',
+				slug: 'banana'
+			} );
+
+			expect( state ).to.eql( [
+				{ owner: 'lister', slug: 'banana'}
+			] );
+		} );
+
+		it( 'should not store new missing lists in the case of a different error', () => {
+			const state = missingLists( undefined, {
+				type: READER_LIST_REQUEST_FAILURE,
+				error: {
+					statusCode: 400
+				},
+				owner: 'lister',
+				slug: 'banana'
+			} );
+
+			expect( state ).to.eql( [] );
+		} );
+
+		it( 'should remove a missing list if a successful lists response is received', () => {
+			const initialState = missingLists( undefined, {
+				type: READER_LIST_REQUEST_FAILURE,
+				error: {
+					statusCode: 404
+				},
+				owner: 'lister',
+				slug: 'banana'
+			} );
+
+			expect( initialState ).to.eql( [
+				{ owner: 'lister', slug: 'banana'}
+			] );
+
+			const state = missingLists( initialState, {
+				type: READER_LISTS_RECEIVE,
+				lists: [
+					{ ID: 841, title: 'Hello World', owner: 'lister', slug: 'banana' },
+					{ ID: 413, title: 'Mangos and feijoas', owner: 'lister', slug: 'mango' }
+				]
+			} );
+
+			expect( state ).to.eql( [] );
+		} );
+
+		it( 'should remove a missing list if a successful single list response is received', () => {
+			const initialState = missingLists( undefined, {
+				type: READER_LIST_REQUEST_FAILURE,
+				error: {
+					statusCode: 404
+				},
+				owner: 'lister',
+				slug: 'banana'
+			} );
+
+			expect( initialState ).to.eql( [
+				{ owner: 'lister', slug: 'banana'}
+			] );
+
+			const state = missingLists( initialState, {
+				type: READER_LIST_REQUEST_SUCCESS,
+				data: {
+					list: { ID: 841, title: 'Hello World', owner: 'lister', slug: 'banana' }
+				}
 			} );
 
 			expect( state ).to.eql( [] );
