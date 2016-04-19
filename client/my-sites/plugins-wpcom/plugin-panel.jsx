@@ -44,7 +44,7 @@ export const PluginPanel = React.createClass( {
 			plan,
 			siteSlug
 		} = this.props;
-		
+
 		const standardPluginsLink = `/plugins/standard/${ siteSlug }`;
 
 		const hasBusiness = isBusiness( plan ) || isEnterprise( plan );
@@ -66,8 +66,8 @@ export const PluginPanel = React.createClass( {
 					{ this.translate( 'View all standard plugins' ) }
 				</Card>
 
-				<PremiumPluginsPanel plugins={ premiumPlugins } isActive={ hasPremium }/>
-				<BusinessPluginsPanel plugins={ businessPlugins } isActive={ hasBusiness }/>
+				<PremiumPluginsPanel plugins={ premiumPlugins } isActive={ hasPremium } slug={ siteSlug } />
+				<BusinessPluginsPanel plugins={ businessPlugins } isActive={ hasBusiness } slug={ siteSlug } />
 			</div>
 		);
 	}
