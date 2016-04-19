@@ -6,7 +6,77 @@ var pluginsInstallCalls = 0,
 	pluginsRemoveCalls = 0,
 	lastRequestParams = null,
 	deactivatedCallbacks = false,
+
+	wpcomPluginMock = {
+		deactivate: function( callback ) {
+			pluginsDeactivateCalls++;
+			callback();
+		},
+
+		delete: function( site, plugin, callback ) {
+			pluginsRemoveCalls++;
+			callback();
+		},
+
+	},
+
+	pluginMock = {
+		activate: function( callback ) {
+			pluginsActivateCalls++;
+			callback();
+		},
+
+		deactivate: function( callback ) {
+			pluginsDeactivateCalls++;
+			callback();
+		},
+
+		enableAutoupdate: function( callback ) {
+			pluginsAutoupdateCalls++;
+			callback();
+		},
+
+		disableAutoupdate: function( callback ) {
+			pluginsDisableAutoupdateCalls++;
+			callback();
+		},
+
+		delete: function( site, plugin, callback ) {
+			pluginsRemoveCalls++;
+			callback();
+		},
+
+		install: function( callback ) {
+			pluginsInstallCalls++;
+
+			if ( ! deactivatedCallbacks ) {
+				callback( null, {
+					code: 200,
+					headers: [ { name: 'Content-Type', value: 'application/json' } ],
+					body: {}
+				} );
+			}
+		}
+	},
+
+	siteMock = {
+		plugin: function( pluginId ) {
+			console.log( 'Create %s plugin', pluginId );
+			return pluginMock;
+		},
+
+		wpcomPlugin: function( pluginId ) {
+			console.log( 'Create %s wpcom plugin', pluginId );
+			return wpcomPluginMock;
+		}
+	},
+
 	mock = {
+		site: function( siteId ) {
+			console.log( 'Create %s site', siteId );
+			return siteMock;
+		},
+
 		reset: function() {
 			pluginsAutoupdateCalls = 0;
 			pluginsActivateCalls = 0;
@@ -30,54 +100,9 @@ var pluginsInstallCalls = 0,
 			};
 		},
 
-		pluginsInstall: function( site, plugin, callback ) {
-			pluginsInstallCalls++;
-			lastRequestParams = {
-				site: site,
-				plugin: plugin
-			};
-			if ( ! deactivatedCallbacks ) {
-				callback( null, {
-					code: 200,
-					headers: [ { name: 'Content-Type', value: 'application/json' } ],
-					body: {}
-				} );
-			}
-		},
-
-		pluginsActivate: function( site, plugin, callback ) {
-			pluginsActivateCalls++;
-			callback();
-		},
-
-		enableAutoupdates: function( site, plugin, callback ) {
-			pluginsAutoupdateCalls++;
-			callback();
-		},
-
-		pluginsDeactivate: function( site, plugin, callback ) {
-			pluginsDeactivateCalls++;
-			callback();
-		},
-
-		disableAutoupdates: function( site, plugin, callback ) {
-			pluginsDisableAutoupdateCalls++;
-			callback();
-		},
-
-		deactivateWpcomPlugin: function() {
-			pluginsDeactivateCalls++;
-		},
-
-		pluginsDelete: function( site, plugin, callback ) {
-			pluginsRemoveCalls++;
-			callback();
-		},
-
 		undocumented: function() {
 			return mock;
 		}
-
 	};
 
 module.exports = mock;
