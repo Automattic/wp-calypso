@@ -51,18 +51,6 @@ export function getSectionName( state ) {
 }
 
 /**
- * Returns true if the current section is isomorphic.
- *
- * @param  {Object}  state Global state tree
- * @return {bool}    True if current section is isomorphic
- *
- * @see client/sections
- */
-export function isSectionIsomorphic( state ) {
-	return get( state.ui.section, 'isomorphic', false );
-}
-
-/**
  * Returns the current state for Guided Tours.
  *
  * This includes the raw state from state/ui/guidesTour, but also the available
