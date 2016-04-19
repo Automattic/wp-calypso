@@ -43,6 +43,7 @@ module.exports = React.createClass( {
 		} );
 		return (
 			<div className={ classes }>
+				{ this.props.children }
 				{ this.renderBar() }
 			</div>
 		);

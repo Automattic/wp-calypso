@@ -24,3 +24,70 @@
 .plan-storage__button.is-alert .progress-bar__progress {
 	background-color: $alert-red;
 }
+
+.plan-storage-bar {
+	height: 40px;
+	border-radius: 20px 0 0 20px;
+	background-color: $white;
+	border: 1px solid lighten( $gray, 20% );
+	border-right: none;
+	box-shadow: 0 4px 0 0 rgba( $gray, 0.10 );
+	margin-bottom: 80px;
+}
+
+.plan-storage-bar .progress-bar__progress {
+	min-width: 20px;
+	border-radius: 20px 0 0 20px;
+	height: 40px;
+	margin-left: -1px;
+	margin-top: -1px;
+}
+
+.plan-storage-bar .progress-bar__progress {
+	background-color: rgba( $alert-green, 0.10 );
+	border: 1px solid rgba( $alert-green, 0.62 );
+}
+
+.plan-storage-bar.is-warn .progress-bar__progress {
+	background-color: rgba( $alert-yellow, 0.10 );
+	border: 1px solid rgba( $alert-yellow, 0.62 );
+}
+
+.plan-storage-bar.is-alert .progress-bar__progress {
+	background-color: rgba( $alert-red, 0.10 );
+	border: 1px solid rgba( $alert-red, 0.62 );
+}
+
+.plan-storage-bar__tick {
+	display: inline-block;
+	height: 50px;
+	width: 1px;
+	border-right: 1px solid lighten( $gray, 20% );
+	position: relative;
+}
+
+.plan-storage-bar__tick-shadow {
+	display: inline-block;
+	height: 40px;
+	width: 6px;
+	background: rgba( $gray, 0.10 );
+}
+
+.plan-storage-bar__label.is-premium,
+.plan-storage-bar__tick.is-premium {
+	left: 60%;
+}
+
+.plan-storage-bar__label.is-free,
+.plan-storage-bar__tick.is-free {
+	left: 13.8%;
+}
+
+.plan-storage-bar__label {
+	margin-top: 10px;
+	transform: translateX( -50% );
+	text-align: center;
+	position: absolute;
+	font-size: 12px;
+	color: $gray;
+}
