@@ -126,7 +126,7 @@ module.exports = React.createClass( {
 					id: READER_STREAM_NOTICE_ID,
 					icon: 'arrow-up',
 					showDismiss: false,
-					className: READER_STREAM_NOTICE_ID,
+					className: 'reader__update-notice',
 					button: this.translate( 'Update' ),
 					onClick: ( event, closeFn ) => {
 						event.preventDefault();
