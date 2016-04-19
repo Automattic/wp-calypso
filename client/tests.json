@@ -262,8 +262,11 @@
 		"olark-store" : {
 			"test": [ "index" ]
 		},
-		"paths" : {
+		"paths": {
 			"test": [ "index" ]
+		},
+		"people": {
+			"test": [ "log-store" ]
 		},
 		"plans-list": {
 			"test": [ "index" ]
