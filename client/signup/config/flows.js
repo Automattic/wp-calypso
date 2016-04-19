@@ -86,7 +86,7 @@ const flows = {
 	},
 
 	businessv2: {
-		steps: [ 'domains-without-theme', 'user' ],
+		steps: [ 'domains-only', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
@@ -95,7 +95,7 @@ const flows = {
 	},
 
 	premiumv2: {
-		steps: [ 'domains-without-theme', 'user' ],
+		steps: [ 'domains-only', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
@@ -104,7 +104,7 @@ const flows = {
 	},
 
 	'with-theme': {
-		steps: [ 'domains-without-theme', 'plans', 'user' ],
+		steps: [ 'domains-only', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'Preselect a theme to activate/buy from an external source',
 		lastModified: '2016-01-27'
