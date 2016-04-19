@@ -178,6 +178,9 @@
 					position: relative;
 					top: 6px;
 				}
+				&:hover {
+					color: $blue-medium;
+				}
 			}
 			span {
 				display: inline-block;
@@ -346,4 +349,13 @@
 	.post__quote {
 		font-family: $sans;
 	}
+}
+
+.post__comments {
+	cursor: pointer;
+}
+
+.post .comments {
+	margin: 0;
+	padding: 0 0 24px 16px;
 }
