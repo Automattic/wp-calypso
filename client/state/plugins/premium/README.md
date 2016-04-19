@@ -14,17 +14,18 @@ Get a list of plugins to auto-install for a given site. Plugin information retur
 ```js
 import { fetchInstallInstructions } from 'state/plugins/premium/actions';
 
-dispatch( fetchInstallInstructions( 106093271 ) );
+fetchInstallInstructions( 106093271 );
 ```
 
-### `installPlugin( plugin: object, siteId: number )`
+### `installPlugin( plugin: object, siteId: object )`
 
-Start the install process for a plugin. Plugin object should have `key` and `slug`.
+Start the install process for a plugin. Plugin object should be pulled from the [PluginsStore](https://github.com/Automattic/wp-calypso/tree/master/client/lib/plugins).
 
 ```js
 import { installPlugin } from 'state/plugins/premium/actions';
 
-dispatch( installPlugin( { key: 'my-api-key', slug: 'akismet' }, 106093271 ) );
+let plugin = PluginsStore.getSitePlugin( site, 'vaultpress' );
+installPlugin( plugin, site );
 ```
 
 ## Reducer
