@@ -11,7 +11,7 @@ export const InfoHeader = React.createClass( {
 				showDismiss={ false }
 				text={ "Your site comes pre-installed with a wide variety of plugins. Uploading your own plugins is not available on WordPress.com." }
 			>
-				<NoticeAction href="https://en.support.wordpress.com/plugins/">
+				<NoticeAction href="https://en.support.wordpress.com/plugins/" external="true">
 					{ "Learn More" }
 				</NoticeAction>
 			</Notice>
