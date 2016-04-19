@@ -1,4 +1,4 @@
-var site = require( './mock-site' );
+var site = require( './site' );
 
 module.exports = {
 	unauthorizedFetchingUsers: {
