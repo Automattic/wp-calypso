@@ -35,6 +35,7 @@ function createNotice( status, text, options = {} ) {
 		showDismiss: ( typeof options.showDismiss === 'boolean' ? options.showDismiss : true ),
 		isPersistent: options.isPersistent || false,
 		displayOnNextPage: options.displayOnNextPage || false,
+		className: options.className || null,
 		status: status,
 		text: text,
 	};

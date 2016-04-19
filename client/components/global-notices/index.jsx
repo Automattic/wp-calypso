@@ -103,6 +103,7 @@ const NoticesList = React.createClass( {
 					duration = { notice.duration }
 					showDismiss={ notice.showDismiss }
 					onDismissClick={ this.props.removeNotice }
+					className={ notice.className }
 					text={ notice.text }
 					icon={ notice.icon }
 				>

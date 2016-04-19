@@ -3,7 +3,6 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	connect = require( 'react-redux' ).connect,
 	classnames = require( 'classnames' ),
 	noop = require( 'lodash/noop' ),
 	times = require( 'lodash/times' );
@@ -28,7 +27,6 @@ var Main = require( 'components/main' ),
 	PostUnavailable = require( './post-unavailable' ),
 	PostPlaceholder = require( './post-placeholder' ),
 	PostStore = require( 'lib/feed-post-store' ),
-	UpdateNotice = require( 'reader/update-notice' ),
 	PostBlocked = require( './post-blocked' ),
 	CommentStore = require( 'lib/comment-store/comment-store' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
@@ -128,6 +126,7 @@ module.exports = React.createClass( {
 					id: READER_STREAM_NOTICE_ID,
 					icon: 'arrow-up',
 					showDismiss: false,
+					className: READER_STREAM_NOTICE_ID,
 					button: this.translate( 'Update' ),
 					onClick: ( event, closeFn ) => {
 						event.preventDefault();
