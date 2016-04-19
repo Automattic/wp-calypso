@@ -279,7 +279,10 @@
 			"test": [ "index" ]
 		},
 		"plugins": {
-			"test": [ "actions", "log-store", "store", "utils" ]
+			"test": [ "actions", "log-store", "store", "utils" ],
+			"wporg-data": {
+				"test": [ "actions", "list-store" ]
+			}
 		},
 		"popup-monitor": {
 			"test": [ "index" ]
