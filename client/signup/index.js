@@ -1,39 +1,41 @@
 /**
+ * External dependencies
+ */
+var page = require( 'page' );
+
+/**
  * Internal dependencies
  */
 var controller = require( './controller' ),
 	jetpackConnectController = require( './jetpack-connect/controller' ),
 	adTracking = require( 'lib/analytics/ad-tracking' ),
-	config = require( 'config' ),
-	makeLayout = require( 'controller' ).makeLayout;
+	config = require( 'config' );
 
-module.exports = function( router ) {
+module.exports = function() {
 	if ( config.isEnabled( 'phone_signup' ) ) {
-		router( '/phone/:lang?', controller.phoneSignup, makeLayout );
+		page( '/phone/:lang?', controller.phoneSignup );
 	}
 
-	router(
+	page(
 		'/start/:flowName?/:stepName?/:stepSectionName?/:lang?',
 		adTracking.retarget,
 		controller.saveRefParameter,
 		controller.saveQueryObject,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,
-		controller.start,
-		makeLayout
+		controller.start
 	);
 
 	if ( config.isEnabled( 'login' ) ) {
-		router( '/log-in/:lang?', controller.login, makeLayout );
+		page( '/log-in/:lang?', controller.login );
 	}
 
 	if ( config.isEnabled( 'jetpack/calypso-first-signup-flow' ) ) {
-		router( '/jetpack/connect', jetpackConnectController.connect, makeLayout );
-		router(
+		page( '/jetpack/connect', jetpackConnectController.connect );
+		page(
 			'/jetpack/connect/authorize',
 			jetpackConnectController.saveQueryObject,
-			jetpackConnectController.authorizeForm,
-			makeLayout
+			jetpackConnectController.authorizeForm
 		);
 	}
 };

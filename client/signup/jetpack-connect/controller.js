@@ -39,25 +39,37 @@ export default {
 		next();
 	},
 
-	connect( context, next ) {
-		context.primary = React.createElement( JetpackConnect, {
-			path: context.path,
-			context: context,
-			locale: context.params.lang
-		} );
+	connect( context ) {
+		context.store.dispatch( setSection( 'jetpackConnect', {
+			hasSidebar: false
+		} ) );
 
-		next();
+		renderWithReduxStore(
+			React.createElement( JetpackConnect, {
+				path: context.path,
+				context: context,
+				locale: context.params.lang
+			} ),
+			document.getElementById( 'primary' ),
+			context.store
+		);
 	},
 
-	authorizeForm( context, next ) {
+	authorizeForm( context ) {
+		context.store.dispatch( setSection( 'jetpackConnect', {
+			hasSidebar: false
+		} ) );
+
 		userModule.fetch();
 
-		context.primary = React.createElement( jetpackConnectAuthorizeForm, {
-			path: context.path,
-			locale: context.params.lang,
-			userModule: userModule
-		} );
-
-		next();
+		renderWithReduxStore(
+			React.createElement( jetpackConnectAuthorizeForm, {
+				path: context.path,
+				locale: context.params.lang,
+				userModule: userModule
+			} ),
+			document.getElementById( 'primary' ),
+			context.store
+		);
 	}
 };
