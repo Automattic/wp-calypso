@@ -45,7 +45,6 @@ export default {
 			context: context,
 			locale: context.params.lang
 		} );
-		context.secondary = null;
 
 		next();
 	},
@@ -58,7 +57,6 @@ export default {
 			locale: context.params.lang,
 			userModule: userModule
 		} );
-		context.secondary = null;
 
 		next();
 	}

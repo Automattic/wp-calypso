@@ -97,7 +97,6 @@ export default {
 					stepSectionName: stepSectionName
 				} )
 		);
-		context.secondary = null;
 
 		next();
 	},
@@ -116,7 +115,6 @@ export default {
 			countriesList: countriesList,
 			locale: context.params.lang
 		} );
-		context.secondary = null;
 
 		next();
 	},
@@ -133,7 +131,6 @@ export default {
 			path: context.path,
 			locale: context.params.lang
 		} );
-		context.secondary = null;
 
 		next();
 	}
