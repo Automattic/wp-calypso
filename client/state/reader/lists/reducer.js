@@ -8,6 +8,7 @@ import union from 'lodash/union';
 import filter from 'lodash/filter';
 import get from 'lodash/get';
 import omit from 'lodash/omit';
+import find from 'lodash/find';
 
 /**
  * Internal dependencies
@@ -202,11 +203,45 @@ export function errors( state = {}, action ) {
 	return state;
 }
 
+/**
+ * A missing list is one that's been requested, but we couldn't find (API response 404-ed).
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function missingLists( state = [], action ) {
+	switch ( action.type ) {
+		case READER_LISTS_RECEIVE:
+			// Remove any valid lists from missingLists
+			return filter( state, ( list ) => {
+				return ! find( action.lists, { owner: list.owner, slug: list.slug } );
+			} );
+		case READER_LIST_REQUEST_SUCCESS:
+			// Remove any valid lists from missingLists
+			return filter( state, ( list ) => {
+				return action.data.list.owner !== list.owner && action.data.list.slug !== list.slug;
+			} );
+		case READER_LIST_REQUEST_FAILURE:
+			// Add lists that have failed with a 404 to missingLists
+			if ( ! action.error || action.error.statusCode !== 404 ) {
+				return state;
+			}
+			return union( state, [ { owner: action.owner, slug: action.slug } ] );
+		case SERIALIZE:
+		case DESERIALIZE:
+			return state;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	items,
 	subscribedLists,
 	updatedLists,
 	isRequestingList,
 	isRequestingLists,
-	errors
+	errors,
+	missingLists
 } );

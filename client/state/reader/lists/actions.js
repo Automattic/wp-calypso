@@ -89,7 +89,9 @@ export function requestList( owner, slug ) {
 				if ( error ) {
 					dispatch( {
 						type: READER_LIST_REQUEST_FAILURE,
-						error
+						error,
+						owner,
+						slug
 					} );
 					reject();
 				} else {

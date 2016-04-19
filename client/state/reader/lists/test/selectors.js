@@ -13,7 +13,8 @@ import {
 	isUpdatedList,
 	getListByOwnerAndSlug,
 	isSubscribedByOwnerAndSlug,
-	hasError
+	hasError,
+	isMissingByOwnerAndSlug
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -146,7 +147,7 @@ describe( 'selectors', () => {
 				reader: {
 					lists: {}
 				}
-			}, 'restapitests', 'bananas' );
+			}, 'lister', 'bananas' );
 
 			expect( list ).to.eql( undefined );
 		} );
@@ -158,22 +159,22 @@ describe( 'selectors', () => {
 						items: {
 							123: {
 								ID: 123,
-								owner: 'restapitests',
+								owner: 'lister',
 								slug: 'bananas'
 							},
 							456: {
 								ID: 456,
-								owner: 'restapitests',
+								owner: 'lister',
 								slug: 'ants'
 							}
 						}
 					}
 				}
-			}, 'restapitests', 'bananas' );
+			}, 'lister', 'bananas' );
 
 			expect( list ).to.eql( {
 				ID: 123,
-				owner: 'restapitests',
+				owner: 'lister',
 				slug: 'bananas'
 			} );
 		} );
@@ -186,7 +187,7 @@ describe( 'selectors', () => {
 					lists: {},
 					subscribedLists: []
 				}
-			}, 'restapitests', 'bananas' );
+			}, 'lister', 'bananas' );
 
 			expect( isSubscribed ).to.eql( false );
 		} );
@@ -198,19 +199,19 @@ describe( 'selectors', () => {
 						items: {
 							123: {
 								ID: 123,
-								owner: 'restapitests',
+								owner: 'lister',
 								slug: 'bananas'
 							},
 							456: {
 								ID: 456,
-								owner: 'restapitests',
+								owner: 'lister',
 								slug: 'ants'
 							}
 						},
 						subscribedLists: [ 123 ]
 					}
 				}
-			}, 'restapitests', 'bananas' );
+			}, 'lister', 'bananas' );
 
 			expect( isSubscribed ).to.eql( true );
 		} );
@@ -239,6 +240,32 @@ describe( 'selectors', () => {
 			}, 123 );
 
 			expect( result ).to.be.true;
+		} );
+	} );
+
+	describe( '#isMissingByOwnerAndSlug()', () => {
+		it( 'should return false if the missing list does not exist', () => {
+			const isMissing = isMissingByOwnerAndSlug( {
+				reader: {
+					lists: {
+						missingLists: []
+					}
+				}
+			}, 'lister', 'bananas' );
+
+			expect( isMissing ).to.eql( false );
+		} );
+
+		it( 'should return true if the owner and slug match a missing list', () => {
+			const isMissing = isMissingByOwnerAndSlug( {
+				reader: {
+					lists: {
+						missingLists: [ { owner: 'lister', slug: 'bananas' } ]
+					}
+				}
+			}, 'lister', 'bananas' );
+
+			expect( isMissing ).to.eql( true );
 		} );
 	} );
 } );
