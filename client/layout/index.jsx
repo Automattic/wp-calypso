@@ -51,6 +51,25 @@ Layout = React.createClass( {
 
 	_sitesPoller: null,
 
+	propTypes: {
+		primary: React.PropTypes.element,
+		secondary: React.PropTypes.element,
+		tertiary: React.PropTypes.element,
+		sites: React.PropTypes.object,
+		user: React.PropTypes.object,
+		nuxWelcome: React.PropTypes.object,
+		translatorInvitation: React.PropTypes.object,
+		focus: React.PropTypes.object,
+		// connected props
+		isLoading: React.PropTypes.bool,
+		isSupportUser: React.PropTypes.bool,
+		section: React.PropTypes.oneOfType( [
+			React.PropTypes.bool,
+			React.PropTypes.object,
+		] ),
+		isOffline: React.PropTypes.bool,
+	},
+
 	componentWillUpdate: function( nextProps ) {
 		if ( this.props.section.group !== nextProps.section.group ) {
 			if ( nextProps.section.group === 'sites' ) {
@@ -170,10 +189,16 @@ Layout = React.createClass( {
 					{ this.renderWelcome() }
 					{ this.renderEmailVerificationNotice() }
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
-					<div id="primary" className="wp-primary wp-section" />
-					<div id="secondary" className="wp-secondary" />
+					<div id="primary" className="wp-primary wp-section">
+						{ this.props.primary }
+					</div>
+					<div id="secondary" className="wp-secondary">
+						{ this.props.secondary }
+					</div>
 				</div>
-				<div id="tertiary" />
+				<div id="tertiary">
+					{ this.props.tertiary }
+				</div>
 				<TranslatorLauncher
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
