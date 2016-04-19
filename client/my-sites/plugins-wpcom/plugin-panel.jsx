@@ -1,9 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import get from 'lodash/get';
 
 import Card from 'components/card';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId
+} from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import {
+	isPremium,
+	isBusiness,
+	isEnterprise
+} from 'lib/products-values';
 
 import InfoHeader from './info-header';
 
@@ -31,8 +40,15 @@ const linkInterpolator = replacements => plugin => {
 
 export const PluginPanel = React.createClass( {
 	render() {
-		const { siteSlug } = this.props;
+		const {
+			plan,
+			siteSlug
+		} = this.props;
+		
 		const standardPluginsLink = `/plugins/standard/${ siteSlug }`;
+
+		const hasBusiness = isBusiness( plan ) || isEnterprise( plan );
+		const hasPremium = hasBusiness || isPremium( plan );
 
 		const interpolateLink = linkInterpolator( { siteSlug } );
 
@@ -50,14 +66,15 @@ export const PluginPanel = React.createClass( {
 					{ this.translate( 'View all standard plugins' ) }
 				</Card>
 
-				<PremiumPluginsPanel plugins={ premiumPlugins } />
-				<BusinessPluginsPanel plugins={ businessPlugins } />
+				<PremiumPluginsPanel plugins={ premiumPlugins } isActive={ hasPremium }/>
+				<BusinessPluginsPanel plugins={ businessPlugins } isActive={ hasBusiness }/>
 			</div>
 		);
 	}
 } );
 
 const mapStateToProps = state => ( {
+	plan: get( getSelectedSite( state ), 'plan', {} ),
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
 } );
 
