@@ -278,6 +278,9 @@
 	  "phone-validation": {
 			"test": [ "index" ]
 		},
+		"plugins": {
+			"test": [ "actions", "log-store", "store", "utils" ]
+		},
 		"popup-monitor": {
 			"test": [ "index" ]
 		},
