@@ -461,8 +461,8 @@ module.exports = {
 				React.createElement( ListStream, {
 					key: 'tag-' + context.params.user + '-' + context.params.list,
 					postStore: listStore,
-					owner: context.params.user,
-					slug: context.params.list,
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
 					setPageTitle: setPageTitle,
 					trackScrollPage: trackScrollPage.bind(
 						null,
@@ -596,21 +596,21 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagement, {
-				key: 'list-management-sites',
-				list: {
-					owner: context.params.user,
-					slug: context.params.list
-				},
-				tab: 'sites',
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				)
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( listManagement, {
+					key: 'list-management-sites',
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
+					tab: 'sites',
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						analyticsPageTitle,
+						mcKey
+					)
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},
@@ -626,21 +626,21 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagement, {
-				key: 'list-management-tags',
-				list: {
-					owner: context.params.user,
-					slug: context.params.list
-				},
-				tab: 'tags',
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				)
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( listManagement, {
+					key: 'list-management-tags',
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
+					tab: 'tags',
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						analyticsPageTitle,
+						mcKey
+					)
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},
@@ -656,14 +656,14 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagement, {
-				key: 'list-management-description-edit',
-				list: {
-					owner: context.params.user,
-					slug: context.params.list
-				},
-				tab: 'description-edit'
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( listManagement, {
+					key: 'list-management-description-edit',
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
+					tab: 'description-edit'
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},

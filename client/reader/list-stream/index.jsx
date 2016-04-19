@@ -80,11 +80,9 @@ const ListStream = React.createClass( {
 
 export default connect(
 	( state, ownProps ) => {
-		const owner = encodeURIComponent( ownProps.owner );
-		const slug = encodeURIComponent( ownProps.slug );
 		return {
-			list: getListByOwnerAndSlug( state, owner, slug ),
-			isSubscribed: isSubscribedByOwnerAndSlug( state, owner, slug )
+			list: getListByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
+			isSubscribed: isSubscribedByOwnerAndSlug( state, ownProps.owner, ownProps.slug )
 		};
 	},
 	( dispatch ) => {
