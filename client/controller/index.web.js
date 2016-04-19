@@ -17,12 +17,14 @@ import userFactory from 'lib/user';
 import sitesFactory from 'lib/sites-list';
 import debugFactory from 'debug';
 
+/**
+ * Re-export
+ */
+export { makeLoggedOutLayout, setSection } from './index.node.js';
+
 const user = userFactory();
 const sites = sitesFactory();
 const debug = debugFactory( 'calypso:controller' );
-
-export { makeLoggedOutLayout } from './index.node.js';
-export { setSection } from './index.node.js';
 
 export function makeLayout( context, next ) {
 	const { store, primary, secondary, tertiary } = context;
