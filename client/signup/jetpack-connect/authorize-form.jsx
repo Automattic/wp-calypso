@@ -24,10 +24,27 @@ import userUtilities from 'lib/user/utils';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
+import i18n from 'lib/mixins/i18n';
 
 /**
  * Module variables
  */
+const renderFormHeader = ( site, isConnected = false ) => {
+	const headerText = ( isConnected )
+		? i18n.translate( 'You are connected!' )
+		: i18n.translate( 'Connect your self-hosted WordPress' );
+	const subHeaderText = ( isConnected )
+		? i18n.translate( 'The power of WordPress.com is yours to command.' )
+		: i18n.translate( 'Jetpack would like to connect to your WordPress.com account' );
+	return(
+		<div>
+			<ConnectHeader headerText={ headerText }
+					subHeaderText={ subHeaderText } />
+			<CompactCard className="jetpack-connect__authorize-form-header">{ site }</CompactCard>
+		</div>
+	);
+};
+
 const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
 
@@ -65,9 +82,10 @@ const LoggedOutForm = React.createClass( {
 
 	render() {
 		const { userData } = this.props.jetpackConnectAuthorize;
+		const { site } = this.props.jetpackConnectAuthorize.queryObject
 		return (
 			<div>
-				{ this.props.renderFormHeader() }
+				{ renderFormHeader( site ) }
 				<SignupForm
 					getRedirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.isSubmitting() }
@@ -190,9 +208,10 @@ const LoggedInForm = React.createClass( {
 
 	render() {
 		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		const { site } = this.props.jetpackConnectAuthorize.queryObject
 		return (
 			<div className="jetpack-connect-logged-in-form">
-				{ this.props.renderFormHeader( authorizeSuccess ) }
+				{ renderFormHeader( site, authorizeSuccess ) }
 				<Card>
 					<Gravatar user={ this.props.user } size={ 64 } />
 					<p className="jetpack-connect-logged-in-form__user-text">{ this.getUserText() }</p>
@@ -210,28 +229,11 @@ const LoggedInForm = React.createClass( {
 const JetpackConnectAuthorizeForm = React.createClass( {
 	displayName: 'JetpackConnectAuthorizeForm',
 	mixins: [ observe( 'userModule' ) ],
-	renderFormHeader( isConnected = false ) {
-		const { site } = this.props.jetpackConnectAuthorize.queryObject;
-		const headerText = ( isConnected )
-			? this.translate( 'You are connected!' )
-			: this.translate( 'Connect your self-hosted WordPress' );
-		const subHeaderText = ( isConnected )
-			? this.translate( 'The power of WordPress.com is yours to command.' )
-			: this.translate( 'Jetpack would like to connect to your WordPress.com account' );
-		return(
-			<div>
-				<ConnectHeader headerText={ headerText }
-						subHeaderText={ subHeaderText } />
-				<CompactCard className="jetpack-connect__authorize-form-header">{ site }</CompactCard>
-			</div>
-		);
-	},
 	renderForm() {
 		const { userModule } = this.props;
 		let user = userModule.get();
 		const props = Object.assign( {}, this.props, {
-			user: user,
-			renderFormHeader: this.renderFormHeader
+			user: user
 		} )
 		return ( user )
 			? <LoggedInForm { ...props } />
