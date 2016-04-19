@@ -11,6 +11,7 @@ import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
 import page from 'page';
+import FeatureComparison from 'my-sites/feature-comparison';
 import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 import i18n from 'lib/mixins/i18n';
@@ -63,9 +64,8 @@ export default function( context ) {
 		comparisonCard = ( <Card href={ site.URL + '/wp-admin' }>{ i18n.translate( 'Your site is a Jetpack site hosted on your own serwer. Most likely you can configue Google Analytics in your admin panel.' ) }</Card> );
 	} else {
 		comparisonCard = (
-			<Card compact className="plan-feature__plan-compare">
+			<FeatureComparison>
 				<PlanCompareCard
-					className="plan-feature__plan-current"
 					title={ getPlan( planSlug ).getTitle() }
 					line={ getPlan( planSlug ).getPriceTitle() }
 					buttonName={ i18n.translate( 'Your Plan' ) }
@@ -84,7 +84,6 @@ export default function( context ) {
 					}
 				</PlanCompareCard>
 				<PlanCompareCard
-					className="plan-feature__plan-upgraded"
 					title={ getPlan( 'business-bundle' ).getTitle() }
 					line={ getPlan( 'business-bundle' ).getPriceTitle() }
 					buttonName={ i18n.translate( 'Upgrade' ) }
@@ -100,7 +99,7 @@ export default function( context ) {
 						</PlanCompareCardItem> )
 					}
 				</PlanCompareCard>
-			</Card>
+			</FeatureComparison>
 		);
 	}
 

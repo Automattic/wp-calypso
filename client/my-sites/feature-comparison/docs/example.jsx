@@ -7,12 +7,13 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
-import PlanCompareCard from '../index';
-import PlanCompareCardItem from '../item';
+import FeatureComparison from '../index';
+import PlanCompareCard from 'my-sites/plan-compare-card/index';
+import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 
 export default React.createClass( {
 
-	displayName: 'PlanCompareCard',
+	displayName: 'FeatureComparison',
 
 	mixins: [ PureRenderMixin ],
 
@@ -20,9 +21,9 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/plan-compare-card">Plan Compare Card</a>
+					<a href="/devdocs/app-components/feature-comparison">Feature Comparison</a>
 				</h2>
-				<div>
+				<FeatureComparison>
 					<PlanCompareCard
 						title="Free Plan"
 						line="Free for life"
@@ -44,7 +45,29 @@ export default React.createClass( {
 							VideoPress
 						</PlanCompareCardItem>
 					</PlanCompareCard>
-				</div>
+					<PlanCompareCard
+						title="Premium"
+						line="$99 per year"
+						buttonName="Upgrade"
+						currentPlan={ false }
+						popularRibbon={ true }>
+						<PlanCompareCardItem highlight={ true }>
+							13GB Space
+						</PlanCompareCardItem>
+						<PlanCompareCardItem>
+							Custom Domain
+						</PlanCompareCardItem>
+						<PlanCompareCardItem>
+							No Ads
+						</PlanCompareCardItem>
+						<PlanCompareCardItem>
+							Custom Design
+						</PlanCompareCardItem>
+						<PlanCompareCardItem>
+							VideoPress
+						</PlanCompareCardItem>
+					</PlanCompareCard>
+				</FeatureComparison>
 			</div>
 		);
 	}
