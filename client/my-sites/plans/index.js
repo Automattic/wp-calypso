@@ -12,6 +12,7 @@ import paths from './paths';
 import plansController from './controller';
 import { retarget } from 'lib/analytics/ad-tracking';
 import googleAnalyticsLandingPage from './plan-feature/google-analytics';
+import yourPlan from './current-plan/controller';
 
 export default function() {
 	if ( config.isEnabled( 'manage/plans' ) ) {
@@ -29,6 +30,16 @@ export default function() {
 			controller.navigation,
 			plansController.plansCompare
 		);
+
+		if ( config.isEnabled( 'manage/plans/my-plan' ) ) {
+			page(
+				'/plans/my-plan/:site',
+				retarget,
+				controller.siteSelection,
+				controller.navigation,
+				yourPlan
+			);
+		}
 
 		page(
 			'/plans/compare/:domain',
