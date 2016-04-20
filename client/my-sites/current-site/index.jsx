@@ -2,8 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:current-site' ),
-	url = require( 'url' );
+	debug = require( 'debug' )( 'calypso:my-sites:current-site' );
 
 /**
  * Internal dependencies
@@ -12,16 +11,12 @@ var AllSites = require( 'my-sites/all-sites' ),
 	analytics = require( 'lib/analytics' ),
 	Button = require( 'components/button' ),
 	Card = require( 'components/card' ),
-	Notice = require( 'components/notice' ),
-	NoticeAction = require( 'components/notice/notice-action' ),
 	layoutFocus = require( 'lib/layout-focus' ),
 	Site = require( 'my-sites/site' ),
 	Gridicon = require( 'components/gridicon' ),
-	config = require( 'config' ),
 	UpgradesActions = require( 'lib/upgrades/actions' ),
 	DomainsStore = require( 'lib/domains/store' ),
-	DomainWarnings = require( 'my-sites/upgrades/components/domain-warnings' ),
-	paths = require( 'my-sites/upgrades/paths' );
+	DomainWarnings = require( 'my-sites/upgrades/components/domain-warnings' );
 
 import SiteNotice from './notice';
 
@@ -90,26 +85,6 @@ module.exports = React.createClass( {
 		return this.props.sites.getSelectedSite();
 	},
 
-	getSiteRedirectNotice: function( site ) {
-		if ( ! ( site.options && site.options.is_redirect ) ) {
-			return null;
-		}
-		const { hostname } = url.parse( site.URL );
-		return (
-			<Notice
-				showDismiss={ false }
-				isCompact={ true }
-				text={ this.translate( 'Redirects to {{a}}%(url)s{{/a}}', {
-					args: { url: hostname },
-					components: { a: <a href={ site.URL }/> }
-				} ) }>
-				<NoticeAction href={ paths.domainManagementList( site.domain ) }>
-					{ this.translate( 'Edit' ) }
-				</NoticeAction>
-			</Notice>
-		);
-	},
-
 	getDomainExpirationNotices: function() {
 		let domainStore = this.state.domainsStore.getBySite( this.getSelectedSite().ID ),
 			domains = domainStore && domainStore.list || [];
@@ -121,11 +96,10 @@ module.exports = React.createClass( {
 		);
 	},
 
-	getSiteNotices: function( site ) {
+	getSiteNotices: function() {
 		return (
 			<div>
 				{ this.getDomainExpirationNotices() }
-				{ this.getSiteRedirectNotice( site ) }
 			</div>
 		);
 	},
