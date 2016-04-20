@@ -16,7 +16,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
-import { dismissUrl, goToRemoteAuth, goToPluginInstall, checkUrl } from 'state/jetpack-connect/actions';
+import { dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation, checkUrl } from 'state/jetpack-connect/actions';
 
 const JetpackConnectMain = React.createClass( {
 	displayName: 'JetpackConnectSiteURLStep',
@@ -65,17 +65,36 @@ const JetpackConnectMain = React.createClass( {
 		this.props.goToPluginInstall( this.state.currentUrl );
 	},
 
-	getDialogButtons() {
-		return [ {
+	activateJetpack() {
+		this.props.goToPluginActivation( this.state.currentUrl );
+	},
+
+	getDialogButtons( status ) {
+		const buttons = [ {
 			action: 'cancel',
 			label: this.translate( 'Cancel' ),
 			onClick: this.dismissUrl
-		}, {
-			action: 'install',
-			label: this.translate( 'Connect Now' ),
-			onClick: this.installJetpack,
-			isPrimary: true
 		} ];
+
+		if ( status === 'notJetpack' ) {
+			buttons.push( {
+				action: 'install',
+				label: this.translate( 'Connect Now' ),
+				onClick: this.installJetpack,
+				isPrimary: true
+			} );
+		}
+
+		if ( status === 'notActiveJetpack' ) {
+			buttons.push( {
+				action: 'activate',
+				label: this.translate( 'Activate' ),
+				onClick: this.activateJetpack,
+				isPrimary: true
+			} );
+		}
+
+		return buttons;
 	},
 
 	checkProperty( propName ) {
@@ -140,7 +159,7 @@ const JetpackConnectMain = React.createClass( {
 					isVisible={ true }
 					onClose={ this.dismissUrl }
 					additionalClassNames="jetpack-connect__wp-admin-dialog"
-					buttons={ this.getDialogButtons() } >
+					buttons={ this.getDialogButtons( status ) } >
 
 					<h1>{ this.translate( 'Hold on there, Sparky.' ) }</h1>
 					<img className="jetpack-connect__install-wp-admin"
@@ -148,6 +167,23 @@ const JetpackConnectMain = React.createClass( {
 						width={ 400 }
 						height={ 294 } />
 					<p>{ this.translate( 'We need to send you to your WordPress install so you can approve the Jetpack installation. Click the button in the bottom-right corner on the next screen to continue.' ) }</p>
+				</Dialog>
+			);
+		};
+		if ( status === 'notActiveJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
+			return (
+				<Dialog
+					isVisible={ true }
+					onClose={ this.dismissUrl }
+					additionalClassNames="jetpack-connect__wp-admin-dialog"
+					buttons={ this.getDialogButtons( status ) } >
+
+					<h1>{ this.translate( 'Hold on there, Sparky.' ) }</h1>
+					<img className="jetpack-connect__activate-wp-admin"
+						src="/calypso/images/jetpack/activate-wp-admin.png"
+						width={ 400 }
+						height={ 294 } />
+					<p>{ this.translate( 'Your jetpack seems to be inactive! We need to send you to your WordPress install so you can activate it before completing the connection.' ) }</p>
 				</Dialog>
 			);
 		};
@@ -195,5 +231,5 @@ export default connect(
 			jetpackConnectSite: state.jetpackConnect.jetpackConnectSite
 		};
 	},
-	dispatch => bindActionCreators( { checkUrl, dismissUrl, goToRemoteAuth, goToPluginInstall }, dispatch )
+	dispatch => bindActionCreators( { checkUrl, dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
 )( JetpackConnectMain );
