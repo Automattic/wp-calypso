@@ -47,10 +47,10 @@ function toolbarPin( editor ) {
 			return;
 		}
 
-		if ( isPinned && window.scrollY < container.offsetTop ) {
+		if ( isPinned && window.pageYOffset < container.offsetTop ) {
 			// Scroll doesn't reach container top and should be unpinned
 			togglePinned( false );
-		} else if ( ! isPinned && window.scrollY > container.offsetTop ) {
+		} else if ( ! isPinned && window.pageYOffset > container.offsetTop ) {
 			// Scroll exceeds container top and should be pinned
 			togglePinned( true );
 		}
