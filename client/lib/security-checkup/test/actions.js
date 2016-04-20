@@ -16,7 +16,7 @@ chai.use( sinonChai );
  */
 const Dispatcher = require( 'dispatcher' ),
 	analytics = require( 'lib/analytics' ),
-	testConstants = require( './constants' ),
+	testConstants = require( './fixtures/constants' ),
 	actions = require( '../constants' ).actions,
 	undocumentedMe = require( 'lib/wpcom-undocumented/lib/me' ),
 	SecurityCheckupActions = require( '../actions' );
