@@ -1,21 +1,20 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-var assert = require( 'assert' ),
-	ReactDomServer = require( 'react-dom/server' ),
-	React = require( 'react' );
+import assert from 'assert';
+import React from 'react';
+import ReactDomServer from 'react-dom/server';
 
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	data = require( './data.js' ),
-	translate = i18n.translate,
-	numberFormat = i18n.numberFormat,
-	moment = i18n.moment;
+import data from './data';
+import i18n, {
+	moment,
+	numberFormat,
+	translate
+} from 'lib/mixins/i18n';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Pass in a react-generated html string to remove react-specific attributes
@@ -27,9 +26,13 @@ function stripReactAttributes( string ) {
 	return string.replace( /\sdata\-(reactid|react\-checksum)\=\"[^\"]+\"/g, '' );
 }
 
-i18n.initialize( data.locale );
-
 describe( 'I18n', function() {
+	useFakeDom();
+
+	before( () => {
+		i18n.initialize( data.locale );
+	} );
+
 	describe( 'translate()', function() {
 		describe( 'passing a string', function() {
 			it( 'should find a simple translation', function() {
@@ -134,7 +137,7 @@ describe( 'I18n', function() {
 
 		describe( 'with mixed components', function() {
 			it( 'should handle sprintf and compoment interpolation together', function() {
-				var input = React.DOM.input(),
+				const input = React.DOM.input(),
 					expectedResultString = '<span><span>foo </span><input/><span> bar</span></span>',
 					placeholder = 'bar',
 					translatedComponent = translate( 'foo {{ input /}} %(placeholder)s', {
