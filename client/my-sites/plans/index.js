@@ -12,6 +12,7 @@ import paths from './paths';
 import plansController from './controller';
 import { retarget } from 'lib/analytics/ad-tracking';
 import googleAnalyticsLandingPage from './plan-feature/google-analytics';
+import moreStorageLandingPage from './plan-feature/more-storage';
 
 export default function() {
 	if ( config.isEnabled( 'manage/plans' ) ) {
@@ -63,6 +64,20 @@ export default function() {
 
 		page(
 			'/plans/features/google-analytics',
+			retarget,
+			controller.sites
+		);
+
+		page(
+			'/plans/features/more-storage/:domain',
+			retarget,
+			controller.siteSelection,
+			controller.navigation,
+			moreStorageLandingPage
+		);
+
+		page(
+			'/plans/features/more-storage',
 			retarget,
 			controller.sites
 		);
