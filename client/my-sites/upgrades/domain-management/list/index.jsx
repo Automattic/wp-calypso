@@ -20,7 +20,7 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Gridicon from 'components/gridicon'
+import Gridicon from 'components/gridicon';
 import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
 import DomainListNotice from './domain-list-notice';
 import {
@@ -38,7 +38,7 @@ const List = React.createClass( {
 			changePrimaryDomainModeEnabled: false,
 			primaryDomainIndex: -1,
 			notice: null
-		}
+		};
 	},
 
 	domainWarnings() {
@@ -126,7 +126,7 @@ const List = React.createClass( {
 					domainName: previousDomainName,
 					error
 				}
-			} )
+			} );
 		} );
 		const previousDomainIndex = findIndex( this.props.domains.list, { name: previousDomainName } );
 
@@ -180,7 +180,7 @@ const List = React.createClass( {
 				{ this.changePrimaryButton() }
 				{ this.addDomainButton() }
 			</div>
-		)
+		);
 	},
 
 	changePrimaryButton() {
@@ -219,7 +219,7 @@ const List = React.createClass( {
 				} else {
 					reject( error );
 				}
-			} )
+			} );
 		} );
 	},
 
