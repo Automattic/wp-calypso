@@ -15,7 +15,8 @@ var DomainRegistrationSuggestion = React.createClass( {
 	propTypes: {
 		cart: React.PropTypes.object,
 		suggestion: React.PropTypes.object,
-		onButtonClick: React.PropTypes.func
+		onButtonClick: React.PropTypes.func,
+		withPlansOnly: React.PropTypes.bool
 	},
 
 	buttonLabel: function( isAdded ) {
@@ -40,7 +41,7 @@ var DomainRegistrationSuggestion = React.createClass( {
 			domainFlag = null;
 
 		if ( suggestion.domain_name ) {
-			domainFlag = <DomainSuggestionFlag domain={ suggestion.domain_name }/>
+			domainFlag = <DomainSuggestionFlag domain={ suggestion.domain_name }/>;
 		}
 
 		if ( isAdded ) {
@@ -58,6 +59,7 @@ var DomainRegistrationSuggestion = React.createClass( {
 					buttonLabel={ this.buttonLabel( isAdded ) }
 					isAdded={ isAdded }
 					cart={ this.props.cart }
+					withPlansOnly={ this.props.withPlansOnly }
 					onButtonClick={ this.props.onButtonClick }>
 				<h3>
 					{ domainName }

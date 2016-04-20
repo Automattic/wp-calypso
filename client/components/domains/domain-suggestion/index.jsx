@@ -19,13 +19,8 @@ var DomainSuggestion = React.createClass( {
 		onButtonClick: React.PropTypes.func,
 		price: React.PropTypes.string,
 		cart: React.PropTypes.object,
-		isAdded: React.PropTypes.bool.isRequired
-	},
-
-	formatPrice: function( price ) {
-		// remove trailing zeroes from the price
-		price = price ? price.replace( /\.00$/, '' ) : price;
-		return price;
+		isAdded: React.PropTypes.bool.isRequired,
+		withPlansOnly: React.PropTypes.bool
 	},
 
 	renderButton: function() {
@@ -33,7 +28,7 @@ var DomainSuggestion = React.createClass( {
 		if ( this.props.isAdded ) {
 			buttonContent = <Gridicon icon="checkmark" ref="checkmark" />;
 		} else {
-			buttonContent = this.props.buttonLabel;
+			buttonContent = this.props.withPlansOnly && ! this.props.price ? this.translate( 'Select' ) : this.props.buttonLabel;
 		}
 		return (
 			<button ref="button" className={ 'button ' + this.props.buttonClasses } onClick={ this.props.onButtonClick }>
@@ -44,18 +39,19 @@ var DomainSuggestion = React.createClass( {
 
 	render: function() {
 		var classes = classNames( 'domain-suggestion', 'card', 'is-compact', {
-				'is-placeholder': this.props.isLoading,
-				'is-added': this.props.isAdded
-			}, this.props.extraClasses );
+			'is-placeholder': this.props.isLoading,
+			'is-added': this.props.isAdded
+		}, this.props.extraClasses );
 
 		return (
 			<div className={ classes }>
 				<div className="domain-suggestion__content">
 					{ this.props.children }
 					<DomainProductPrice
+						withPlansOnly={ this.props.withPlansOnly }
 						isLoading={ this.props.isLoading }
 						price={ this.props.price }
-						cart={ this.props.cart } />
+						cart={ this.props.cart }/>
 				</div>
 				<div className="domain-suggestion__action">
 					{ this.renderButton() }

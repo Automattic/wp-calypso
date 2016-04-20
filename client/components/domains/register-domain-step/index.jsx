@@ -79,6 +79,7 @@ var RegisterDomainStep = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] ),
 		basePath: React.PropTypes.string.isRequired,
 		suggestion: React.PropTypes.string
+		withPlansOnly: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -344,6 +345,7 @@ var RegisterDomainStep = React.createClass( {
 			domainRegistrationSuggestions = suggestions.map( function( suggestion ) {
 				return (
 					<DomainRegistrationSuggestion
+						withPlansOnly={ this.props.withPlansOnly }
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
@@ -411,6 +413,7 @@ var RegisterDomainStep = React.createClass( {
 				selectedSite={ this.props.selectedSite }
 				offerMappingOption={ this.props.offerMappingOption }
 				placeholderQuantity={ SUGGESTION_QUANTITY }
+				withPlansOnly={ this.props.withPlansOnly }
 				cart={ this.props.cart } />
 		);
 	},
