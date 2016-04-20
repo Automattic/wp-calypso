@@ -16,248 +16,10 @@ import {
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ERROR
 } from 'state/action-types';
-
 import { isRequesting, plugins } from '../reducer';
 
-const initSite = [
-	{
-		slug: 'vaultpress',
-		name: 'VaultPress',
-		key: 'vp-api-key',
-		status: {
-			start: false,
-			install: null,
-			activate: null,
-			config: null,
-			done: false,
-		},
-		error: null
-	}, {
-		slug: 'akismet',
-		name: 'Akismet',
-		key: 'ak-api-key',
-		status: {
-			start: false,
-			install: null,
-			activate: null,
-			config: null,
-			done: false,
-		},
-		error: null
-	}, {
-		slug: 'polldaddy',
-		name: 'Polldaddy',
-		key: 'pd-api-key',
-		status: {
-			start: false,
-			install: null,
-			activate: null,
-			config: null,
-			done: false,
-		},
-		error: null
-	}
-];
-
-const installingSite = [
-	{
-		slug: 'vaultpress',
-		name: 'VaultPress',
-		key: 'vp-api-key',
-		status: {
-			start: false,
-			install: false,
-			activate: false,
-			config: false,
-			done: true,
-		},
-		error: null
-	}, {
-		slug: 'akismet',
-		name: 'Akismet',
-		key: 'ak-api-key',
-		status: {
-			start: true,
-			install: true,
-			activate: null,
-			config: null,
-			done: false,
-		},
-		error: null
-	}, {
-		slug: 'polldaddy',
-		name: 'Polldaddy',
-		key: 'pd-api-key',
-		status: {
-			start: false,
-			install: null,
-			activate: null,
-			config: null,
-			done: false,
-		},
-		error: null
-	}
-];
-
-const activatingSite = [
-	{
-		slug: 'vaultpress',
-		name: 'VaultPress',
-		key: 'vp-api-key',
-		status: {
-			start: false,
-			install: false,
-			activate: false,
-			config: false,
-			done: true,
-		},
-		error: null
-	}, {
-		slug: 'akismet',
-		name: 'Akismet',
-		key: 'ak-api-key',
-		status: {
-			start: true,
-			install: false,
-			activate: true,
-			config: null,
-			done: false,
-		},
-		error: null
-	}, {
-		slug: 'polldaddy',
-		name: 'Polldaddy',
-		key: 'pd-api-key',
-		status: {
-			start: false,
-			install: null,
-			activate: null,
-			config: null,
-			done: false,
-		},
-		error: null
-	}
-];
-
-const configuringSite = [
-	{
-		slug: 'vaultpress',
-		name: 'VaultPress',
-		key: 'vp-api-key',
-		status: {
-			start: false,
-			install: false,
-			activate: false,
-			config: false,
-			done: true,
-		},
-		error: null
-	}, {
-		slug: 'akismet',
-		name: 'Akismet',
-		key: 'ak-api-key',
-		status: {
-			start: true,
-			install: false,
-			activate: false,
-			config: true,
-			done: false,
-		},
-		error: null
-	}, {
-		slug: 'polldaddy',
-		name: 'Polldaddy',
-		key: 'pd-api-key',
-		status: {
-			start: false,
-			install: null,
-			activate: null,
-			config: null,
-			done: false,
-		},
-		error: null
-	}
-];
-
-const finishedSite = [
-	{
-		slug: 'vaultpress',
-		name: 'VaultPress',
-		key: 'vp-api-key',
-		status: {
-			start: false,
-			install: false,
-			activate: false,
-			config: false,
-			done: true,
-		},
-		error: null
-	}, {
-		slug: 'akismet',
-		name: 'Akismet',
-		key: 'ak-api-key',
-		status: {
-			start: true,
-			install: false,
-			activate: false,
-			config: false,
-			done: true,
-		},
-		error: null
-	}, {
-		slug: 'polldaddy',
-		name: 'Polldaddy',
-		key: 'pd-api-key',
-		status: {
-			start: false,
-			install: null,
-			activate: null,
-			config: null,
-			done: false,
-		},
-		error: null
-	}
-];
-
-const finishedSiteWithError = [
-	{
-		slug: 'vaultpress',
-		name: 'VaultPress',
-		key: 'vp-api-key',
-		status: {
-			start: false,
-			install: false,
-			activate: false,
-			config: false,
-			done: true,
-		},
-		error: null
-	}, {
-		slug: 'akismet',
-		name: 'Akismet',
-		key: 'ak-api-key',
-		status: {
-			start: false,
-			install: false,
-			activate: false,
-			config: false,
-			done: true,
-		},
-		error: null
-	}, {
-		slug: 'polldaddy',
-		name: 'Polldaddy',
-		key: 'pd-api-key',
-		status: {
-			start: true,
-			install: false,
-			activate: true,
-			config: null,
-			done: false,
-		},
-		error: { name: 'ErrorCode', message: 'Something went wrong.' }
-	}
-]
+// Example state data
+import { initSite, installingSite, activatingSite, configuringSite, finishedPluginSite, siteWithError } from './examples';
 
 describe( 'premium reducer', () => {
 	describe( 'isRequesting', () => {
@@ -398,7 +160,7 @@ describe( 'premium reducer', () => {
 				siteId: 'one.site',
 				slug: 'akismet',
 			} );
-			expect( state ).to.deep.equal( { 'one.site': finishedSite } );
+			expect( state ).to.deep.equal( { 'one.site': finishedPluginSite } );
 		} );
 
 		it( 'should track any errors when installing a plugin', () => {
@@ -447,7 +209,7 @@ describe( 'premium reducer', () => {
 				slug: 'polldaddy',
 				error: { name: 'ErrorCode', message: 'Something went wrong.' }
 			} );
-			expect( state ).to.deep.equal( { 'one.site': finishedSiteWithError } );
+			expect( state ).to.deep.equal( { 'one.site': siteWithError } );
 		} );
 	} );
 } );

@@ -8,119 +8,13 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import selectors from '../selectors';
+// Example state data
+import { initSite, installingSite, finishedSite } from './examples';
 
 const plugins = deepFreeze( {
-	'start.site': [ {
-		slug: 'vaultpress',
-		name: 'VaultPress',
-		key: 'vp-api-key',
-		status: {
-			start: false,
-			install: null,
-			activate: null,
-			config: null,
-			done: false,
-		},
-		error: null
-	}, {
-		slug: 'akismet',
-		name: 'Akismet',
-		key: 'ak-api-key',
-		status: {
-			start: false,
-			install: null,
-			activate: null,
-			config: null,
-			done: false,
-		},
-		error: null
-	}, {
-		slug: 'polldaddy',
-		name: 'Polldaddy',
-		key: 'pd-api-key',
-		status: {
-			start: false,
-			install: null,
-			activate: null,
-			config: null,
-			done: false,
-		},
-		error: null
-	} ],
-	'installing.site': [ {
-		slug: 'vaultpress',
-		name: 'VaultPress',
-		key: 'vp-api-key',
-		status: {
-			start: false,
-			install: false,
-			activate: false,
-			config: false,
-			done: true,
-		},
-		error: null
-	}, {
-		slug: 'akismet',
-		name: 'Akismet',
-		key: 'ak-api-key',
-		status: {
-			start: true,
-			install: true,
-			activate: null,
-			config: null,
-			done: false,
-		},
-		error: null
-	}, {
-		slug: 'polldaddy',
-		name: 'Polldaddy',
-		key: 'pd-api-key',
-		status: {
-			start: false,
-			install: null,
-			activate: null,
-			config: null,
-			done: false,
-		},
-		error: null
-	} ],
-	'finished.site': [ {
-		slug: 'vaultpress',
-		name: 'VaultPress',
-		key: 'vp-api-key',
-		status: {
-			start: false,
-			install: false,
-			activate: false,
-			config: false,
-			done: true,
-		},
-		error: null
-	}, {
-		slug: 'akismet',
-		name: 'Akismet',
-		key: 'ak-api-key',
-		status: {
-			start: false,
-			install: false,
-			activate: false,
-			config: false,
-			done: true,
-		},
-		error: null
-	}, {
-		slug: 'polldaddy',
-		name: 'Polldaddy',
-		key: 'pd-api-key',
-		status: {
-			start: false,
-			install: false,
-			activate: false,
-			config: false,
-			done: false,
-		},
-		error: { name: 'ErrorCode', message: 'Something went wrong.' }
-	} ],
+	'start.site': initSite,
+	'installing.site': installingSite,
+	'finished.site': finishedSite,
 } );
 
 const isRequesting = deepFreeze( {
