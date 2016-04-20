@@ -302,7 +302,8 @@ const PostEditor = React.createClass( {
 						isPublishing={ this.state.isPublishing }
 						isSaveBlocked={ this.state.isSaveBlocked }
 						hasContent={ this.state.hasContent }
-						onClose={ this.onClose } />
+						onClose={ this.onClose }
+						layoutFocus={ layoutFocus }/>
 					<div className="post-editor__content">
 						<div className="editor">
 							<EditorActionBar

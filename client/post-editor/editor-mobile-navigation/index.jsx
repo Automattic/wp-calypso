@@ -8,12 +8,14 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
-import layoutFocus from 'lib/layout-focus';
 import EditorPublishButton from 'post-editor/editor-publish-button';
 import Button from 'components/button';
+import observe from 'lib/mixins/data-observe';
 
 export default React.createClass( {
 	displayName: 'EditorMobileNavigation',
+
+	mixins: [ observe( 'layoutFocus' ) ],
 
 	propTypes: {
 		site: PropTypes.object,
@@ -25,27 +27,16 @@ export default React.createClass( {
 		isPublishing: PropTypes.bool,
 		isSaveBlocked: PropTypes.bool,
 		hasContent: PropTypes.bool,
-		onClose: PropTypes.func
-	},
-
-	getInitialState: function() {
-		return {
-			sidebarOpen: false
-		};
+		onClose: PropTypes.func,
+		layoutFocus: PropTypes.object
 	},
 
 	openSidebar: function() {
-		if ( ! this.state.sidebarOpen ) {
-			layoutFocus.set( 'sidebar' );
-			this.setState( { sidebarOpen: true } );
-		}
+		this.props.layoutFocus.set( 'sidebar' );
 	},
 
 	closeSidebar: function() {
-		if ( this.state.sidebarOpen ) {
-			layoutFocus.set( 'content' );
-			this.setState( { sidebarOpen: false } );
-		}
+		this.props.layoutFocus.set( 'content' );
 	},
 
 	render: function() {
@@ -66,14 +57,14 @@ export default React.createClass( {
 							<Gridicon
 								icon="pencil"
 								className={ classnames( 'editor-mobile-navigation__icon', {
-									'is-selected': ! this.state.sidebarOpen
+									'is-selected': this.props.layoutFocus.getCurrent() === 'content'
 								} ) } />
 						</Button>
 						<Button borderless onClick={ this.openSidebar }>
 							<Gridicon
 								icon="cog"
 								className={ classnames( 'editor-mobile-navigation__icon', {
-									'is-selected': this.state.sidebarOpen
+									'is-selected': this.props.layoutFocus.getCurrent() === 'sidebar'
 								} ) } />
 						</Button>
 					</div>
