@@ -83,7 +83,7 @@ describe( 'upgrades/domain-management/list', function() {
 	}
 
 	beforeEach( function() {
-		DomainList = require( '../' );
+		DomainList = require( '../' ).List;
 	} );
 
 	describe( 'regular cases', function() {

@@ -82,4 +82,14 @@ module.exports = {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
+	domainCreditsInfoNotice: {
+		datestamp: '20160420',
+		variations: {
+			showNotice: 90,
+			original: 10
+		},
+		defaultVariation: 'showNotice',
+		allowExistingUsers: true,
+		allowAnyLocale: true
+	}
 };

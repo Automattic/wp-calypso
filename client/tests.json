@@ -553,7 +553,7 @@
 				"test": [ "actions", "reducer", "selectors" ]
 			},
 			"plans": {
-				"test": [ "actions", "reducer" ]
+				"test": [ "actions", "reducer", "selectors" ]
 			},
 			"test": [ "actions", "reducer", "selectors" ]
 		},

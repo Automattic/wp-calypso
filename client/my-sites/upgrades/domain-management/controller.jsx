@@ -49,7 +49,7 @@ module.exports = {
 
 		renderWithReduxStore(
 			<DomainManagementData
-				component={ DomainManagement.List }
+				component={ DomainManagement.List.default }
 				context={ pageContext }
 				productsList={ productsList }
 				sites={ sites } />,
