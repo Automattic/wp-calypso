@@ -8,6 +8,7 @@ import { assert } from 'chai' ;
  */
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import { useFakeTimers } from 'test/helpers/use-sinon';
 
 import plugins from './fixtures/plugins';
 import site from './fixtures/site';
@@ -281,6 +282,9 @@ describe( 'Plugins Store', () => {
 		} );
 
 		describe( 'Successfully Plugin Update', () => {
+			// just eat the timer sets, we're not testing that part yet
+			useFakeTimers();
+
 			beforeEach( () => {
 				Dispatcher.handleViewAction( actions.updatedPlugin );
 				HelloDolly = PluginsStore.getSitePlugin( site, 'hello-dolly' );
