@@ -16,12 +16,25 @@ import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 import i18n from 'lib/mixins/i18n';
 import sitesList from 'lib/sites-list';
+
+import {
+	PLAN_BUSINESS,
+	FEATURE_CUSTOM_DESIGN,
+	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_LIVE_CHAT_SUPPORT,
+	FEATURE_NO_ADS,
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	FEATURE_UNLIMITED_STORAGE,
+	FEATURE_VIDEO_UPLOADS
+} from 'lib/plans/constants';
+
 import {
 	getFeatureTitle,
 	getSitePlanSlug,
 	planHasFeature,
 	getPlan
 } from 'lib/plans';
+
 import PlanFeatureFooter from './footer';
 
 const sites = sitesList();
@@ -48,17 +61,17 @@ export default function( context ) {
 	}
 
 	const featuresToShow = [
-		'unlimited-storage',
-		'unlimited-premium-themes',
-		'live-chat-support',
-		'custom-domain',
-		'no-ads',
-		'custom-design',
-		'video-upload'
+		FEATURE_UNLIMITED_STORAGE,
+		FEATURE_UNLIMITED_PREMIUM_THEMES,
+		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_NO_ADS,
+		FEATURE_CUSTOM_DESIGN,
+		FEATURE_VIDEO_UPLOADS
 	];
 
 	let comparisonCard;
-	if ( planSlug === 'business-bundle' ) {
+	if ( planSlug === PLAN_BUSINESS ) {
 		comparisonCard = ( <Card href={ '/settings/analytics/' + site.slug }>{ i18n.translate( 'Configure Google Analytics' ) }</Card> );
 	} else if ( site.jetpack ) {
 		comparisonCard = ( <Card href={ site.URL + '/wp-admin' }>{ i18n.translate( 'Your site is a Jetpack site hosted on your own server. Most likely you can configure Google Analytics in your admin panel.' ) }</Card> );
@@ -84,8 +97,8 @@ export default function( context ) {
 					}
 				</PlanCompareCard>
 				<PlanCompareCard
-					title={ getPlan( 'business-bundle' ).getTitle() }
-					line={ getPlan( 'business-bundle' ).getPriceTitle() }
+					title={ getPlan( PLAN_BUSINESS ).getTitle() }
+					line={ getPlan( PLAN_BUSINESS ).getPriceTitle() }
 					buttonName={ i18n.translate( 'Upgrade' ) }
 					onClick={ checkoutBusinessPlan }
 					currentPlan={ false }
