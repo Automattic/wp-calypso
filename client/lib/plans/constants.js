@@ -3,15 +3,18 @@ import i18n from 'lib/mixins/i18n';
 export const plansList = {
 	'free_plan': {
 		getTitle: () => i18n.translate( 'Free' ),
-		getPriceTitle: () => i18n.translate( 'Free for life' )
+		getPriceTitle: () => i18n.translate( 'Free for life' ),
+		planCheckoutSlug: ''
 	},
 	'value_bundle': {
 		getTitle: () => i18n.translate( 'Premium' ),
-		getPriceTitle: () => i18n.translate( '$99 per year' )
+		getPriceTitle: () => i18n.translate( '$99 per year' ),
+		planCheckoutSlug: 'premium'
 	},
 	'business-bundle': {
 		getTitle: () => i18n.translate( 'Business' ),
-		getPriceTitle: () => i18n.translate( '$299 per year' )
+		getPriceTitle: () => i18n.translate( '$299 per year' ),
+		planCheckoutSlug: 'business'
 	},
 	'jetpack_free': {},
 	'jetpack_business': {}
@@ -30,6 +33,10 @@ export const featuresList = {
 	'unlimited-storage': {
 		getTitle: () => i18n.translate( 'Unlimited Storage' ),
 		plans: [ 'business-bundle' ]
+	},
+	'more-storage': {
+		getTitle: () => i18n.translate( '13GB Storage' ),
+		plans: allPaidPlans
 	},
 	'custom-domain': {
 		getTitle: () => i18n.translate( 'Custom Domain' ),
