@@ -30,6 +30,7 @@ env-config.sh
 /public/style*.css.map
 /public/editor*.css
 /server/devdocs/search-index.js
+/server/devdocs/usage-counts.js
 /server/bundler/assets-*.json
 
 *.rdb
