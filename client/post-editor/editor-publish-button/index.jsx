@@ -9,6 +9,7 @@ import React, { PropTypes } from 'react';
 import { recordEvent } from 'lib/posts/stats';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
+import Button from 'components/button';
 
 export default React.createClass( {
 	displayName: 'EditorPublishButton',
@@ -112,14 +113,15 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<button
-				className="editor-publish-button button"
+			<Button
+				className="editor-publish-button"
+				primary={ true }
 				onClick={ this.onClick }
 				disabled={ ! this.isEnabled() }
 				tabIndex={ this.props.tabIndex }
 			>
 				{ this.getButtonLabel() }
-			</button>
+			</Button>
 		);
 	}
 } );
