@@ -10,6 +10,7 @@ import classnames from 'classnames';
  */
 import Gridicon from 'components/gridicon';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import EditorPublishButton from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 
@@ -28,24 +29,12 @@ const EditorMobileNavigation = React.createClass( {
 		onClose: PropTypes.func
 	},
 
-	getInitialState: function() {
-		return {
-			sidebarOpen: false
-		};
-	},
-
 	openSidebar: function() {
-		if ( ! this.state.sidebarOpen ) {
-			this.props.setLayoutFocus( 'sidebar' );
-			this.setState( { sidebarOpen: true } );
-		}
+		this.props.setLayoutFocus( 'sidebar' );
 	},
 
 	closeSidebar: function() {
-		if ( this.state.sidebarOpen ) {
-			this.props.setLayoutFocus( 'content' );
-			this.setState( { sidebarOpen: false } );
-		}
+		this.props.setLayoutFocus( 'content' );
 	},
 
 	render: function() {
@@ -66,14 +55,14 @@ const EditorMobileNavigation = React.createClass( {
 							<Gridicon
 								icon="pencil"
 								className={ classnames( 'editor-mobile-navigation__icon', {
-									'is-selected': ! this.state.sidebarOpen
+									'is-selected': 'content' === this.props.currentLayoutFocus
 								} ) } />
 						</Button>
 						<Button borderless onClick={ this.openSidebar }>
 							<Gridicon
 								icon="cog"
 								className={ classnames( 'editor-mobile-navigation__icon', {
-									'is-selected': this.state.sidebarOpen
+									'is-selected': 'sidebar' === this.props.currentLayoutFocus
 								} ) } />
 						</Button>
 					</div>
@@ -93,4 +82,7 @@ const EditorMobileNavigation = React.createClass( {
 	}
 } );
 
-module.exports = connect( null, { setLayoutFocus } )( EditorMobileNavigation );
+module.exports = connect(
+	( state ) => ( { currentLayoutFocus: getCurrentLayoutFocus( state ) } ),
+	{ setLayoutFocus }
+)( EditorMobileNavigation );
