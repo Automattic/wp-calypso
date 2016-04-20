@@ -20,6 +20,7 @@ import EmptyContent from 'components/empty-content';
 import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
@@ -230,7 +231,7 @@ export default React.createClass( {
 			<UpgradeNudge
 				title={ this.translate( 'Add Google Analytics' ) }
 				message={ this.translate( 'Upgrade to the business plan and include your own analytics tracking ID.' ) }
-				feature="google-analytics"
+				feature={ FEATURE_GOOGLE_ANALYTICS }
 				event={ eventName }
 				href={ upgradeLink }
 				icon="stats-alt"
