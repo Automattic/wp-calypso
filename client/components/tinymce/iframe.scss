@@ -36,6 +36,17 @@ code {
 	padding: 4px 8px;
 }
 
+pre {
+	background: lighten( $gray, 34% );
+	font-family: $code;
+	padding: 8px;
+
+	code {
+		background: none;
+		padding: 0;
+	}
+}
+
 // Images and captions
 img {
 	max-width: 100%;
