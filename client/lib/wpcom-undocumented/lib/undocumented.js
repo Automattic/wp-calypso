@@ -17,8 +17,7 @@ var Site = require( './site' ),
 	Me = require( './me' ),
 	MailingList = require( './mailing-list' ),
 	config = require( 'config' ),
-	i18n = require( 'lib/i18n-utils' ),
-	moment = require( 'moment' );
+	i18n = require( 'lib/i18n-utils' );
 
 /**
  * Some endpoints are restricted by OAuth client IDs and secrets
@@ -56,48 +55,6 @@ Undocumented.prototype.me = function() {
 
 Undocumented.prototype.mailingList = function( category ) {
 	return new MailingList( category, this.wpcom );
-};
-
-/*
- * Plugins data from the site with id siteId
- *
- * @param {int} [siteId]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.plugins = function( siteId, fn ) {
-	debug( '/sites/:site_id:/plugins query' );
-	this.wpcom.req.get( '/sites/' + siteId + '/plugins', fn );
-};
-
-/*
- * Activate the plugin with pluginSlug on the site with id siteId
- *
- * @param {int} [siteId]
- * @param {string} [pluginSlug]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.pluginsActivate = function( siteId, pluginSlug, fn ) {
-	debug( '/sites/:site_id:/plugins/:plugin_slug query' );
-	this.wpcom.req.post( { path: '/sites/' + siteId + '/plugins/' + encodeURIComponent( pluginSlug ) }, {}, {
-		active: true
-	}, fn );
-};
-
-/*
- * Deactivate the plugin with pluginSlug on the site with id siteId
- *
- * @param {int} [siteId]
- * @param {string} [pluginSlug]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.pluginsDeactivate = function( siteId, pluginSlug, fn ) {
-	debug( '/sites/:site_id:/plugins/:plugin_slug query' );
-	this.wpcom.req.post( { path: '/sites/' + siteId + '/plugins/' + encodeURIComponent( pluginSlug ) }, {}, {
-		active: false
-	}, fn );
 };
 
 /*
@@ -148,79 +105,6 @@ Undocumented.prototype.jetpackModulesDeactivate = function( siteId, moduleSlug, 
 Undocumented.prototype.updateWordPressCore = function( siteId, fn ) {
 	debug( '/sites/:site_id:/core/update query' );
 	this.wpcom.req.post( { path: '/sites/' + siteId + '/core/update' }, fn );
-};
-
-/**
- * Update the plugin with the pluginSlug on the site with id siteId
- *
- * @param {int} [siteId] The site ID
- * @param {string} [pluginSlug] The slug for the plugin
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.pluginsUpdate = function( siteId, pluginSlug, fn ) {
-	debug( '/sites/:site_id:/plugins/:plugin_slug/update query' );
-	this.wpcom.req.post( { path: '/sites/' + siteId + '/plugins/' + encodeURIComponent( pluginSlug ) + '/update' }, fn );
-};
-
-/**
- * Install the plugin with the pluginSlug on the site with id siteId
- *
- * @param {int} [siteId] The site ID
- * @param {string} [pluginSlug] The slug for the plugin
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.pluginsInstall = function( siteId, pluginSlug, fn ) {
-	debug( '/sites/:site_id:/plugins/:plugin_slug/install query' );
-	this.wpcom.req.post( {
-		path: '/sites/' + siteId + '/plugins/' + encodeURIComponent( pluginSlug ) + '/install',
-		method: 'post'
-	}, fn );
-};
-
-/**
- * Remove the plugin with the pluginSlug on the site with id siteId
- *
- * @param {int} [siteId] The Site ID
- * @param {string} [pluginSlug] The slug for the plugin
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.pluginsDelete = function( siteId, pluginSlug, fn ) {
-	debug( '/sites/:site_id:/plugins/:plugin_slug/delete query' );
-	this.wpcom.req.post( {
-		path: '/sites/' + siteId + '/plugins/' + encodeURIComponent( pluginSlug ) + '/delete',
-		method: 'post'
-	}, fn );
-};
-
-/**
- * Enable autoupdates on plugin with pluginSlug on the site with siteId
- * @param {int} [siteId] The site ID
- * @param {string} [pluginSlug] The slug for the plugin
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.enableAutoupdates = function( siteId, pluginSlug, fn ) {
-	debug( '/sites/:site_id:/plugins/:plugin_slug query' );
-	this.wpcom.req.post( { path: '/sites/' + siteId + '/plugins/' + encodeURIComponent( pluginSlug ) }, {}, {
-		autoupdate: true
-	}, fn );
-};
-
-/**
- * Disable autoupdates on plugin with pluginSlug on the site with siteId
- * @param {int} [siteId] The site ID
- * @param {string} [pluginSlug] The slug for the plugin
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.disableAutoupdates = function( siteId, pluginSlug, fn ) {
-	debug( '/sites/:site_id:/plugins/:plugin_slug query' );
-	this.wpcom.req.post( { path: '/sites/' + siteId + '/plugins/' + encodeURIComponent( pluginSlug ) }, {}, {
-		autoupdate: false
-	}, fn );
 };
 
 /**
@@ -1529,46 +1413,6 @@ Undocumented.prototype.activateTheme = function( theme, siteId, fn ) {
 	}, fn );
 };
 
-/*
- * Retrieve plugins data from the .com site with id siteId
- *
- * @param {int} [siteId]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.wpcomPlugins = function( siteId, fn ) {
-	debug( '/sites/:site_id:/wpcom-plugins query' );
-	this.wpcom.req.get( '/sites/' + siteId + '/wpcom-plugins', fn );
-};
-
-/*
- * Activate the .com plugin for the given site.
- *
- * @param {int} [siteId]
- * @param {string} [pluginSlug]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.activateWpcomPlugin = function( siteId, pluginSlug, fn ) {
-	debug( '/sites/:site_id:/wpcom-plugins/:plugin_slug query' );
-	this.wpcom.req.post( { path: '/sites/' + siteId + '/wpcom-plugins/' + encodeURIComponent( pluginSlug ) },
-		{}, { active: true }, fn );
-};
-
-/*
- * Deactivate the .com plugin for the given site.
- *
- * @param {int} [siteId]
- * @param {string} [pluginSlug]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.deactivateWpcomPlugin = function( siteId, pluginSlug, fn ) {
-	debug( '/sites/:site_id:/wpcom-plugins/:plugin_slug query' );
-	this.wpcom.req.post( { path: '/sites/' + siteId + '/wpcom-plugins/' + encodeURIComponent( pluginSlug ) },
-		{}, { active: false }, fn );
-};
-
 Undocumented.prototype.emailForwards = function( domain, callback ) {
 	this.wpcom.req.get( '/domains/' + domain + '/email', function( error, response ) {
 		if ( error ) {
@@ -1655,7 +1499,7 @@ Undocumented.prototype.deleteDns = function( domain, record, fn ) {
 };
 
 Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
-	this.wpcom.req.get( '/domains/' + domainName + '/status', fn )
+	this.wpcom.req.get( '/domains/' + domainName + '/status', fn );
 };
 
 Undocumented.prototype.requestTransferCode = function( options, fn ) {
@@ -1943,7 +1787,7 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/${ exportId }`
 	}, fn );
-}
+};
 
 Undocumented.prototype.timezones = function( params, fn ) {
 	if ( typeof params === 'function' ) {
@@ -1953,7 +1797,7 @@ Undocumented.prototype.timezones = function( params, fn ) {
 
 	let query = Object.assign( {}, params, { apiNamespace: 'wpcom/v2' } );
 	return this.wpcom.req.get( '/timezones', query, fn );
-}
+};
 
 /**
  * Check different info about WordPress and Jetpack status on a url
@@ -1975,19 +1819,20 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
 	}
 
 	return this.wpcom.req.get( `${ endpointUrl }`, params );
-}
+};
 
 /**
- * Post an url to be stored under user's settings, so we can know that they have started a jetpack-connect flow for that site
+ * Post an url to be stored under user's settings,
+ * so we can know that they have started a jetpack-connect flow for that site
  *
  * @param {String} targetUrl          The url of the site to store
- * @returns {Promise}
+ * @returns {Promise} Promise
  */
 Undocumented.prototype.storeJetpackConnectUrl = function( targetUrl ) {
 	return this.wpcom.req.post( { path: '/me/settings' }, {}, {
 		jetpack_connect: targetUrl
 	} );
-}
+};
 
 /**
  * Exports the user's Reader feed as an OPML XML file.
