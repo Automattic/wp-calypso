@@ -129,7 +129,6 @@ module.exports = React.createClass( {
 						onClick={ this.onRecordEvent( 'Clicked Site Title Field' ) }
 						onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) } />
 				</FormFieldset>
-
 				<FormFieldset>
 					<FormLabel htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</FormLabel>
 					<FormInput
@@ -144,8 +143,6 @@ module.exports = React.createClass( {
 						{ this.translate( 'In a few words, explain what this site is about.' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
-
-				{ this.renderTimezoneDropdown() }
 			</div>
 		);
 	},
@@ -396,7 +393,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderTimezoneDropdown() {
+	timezoneDropdown() {
 		if ( this.props.site.jetpack ) {
 			return;
 		}
@@ -448,6 +445,7 @@ module.exports = React.createClass( {
 						{ this.siteOptions() }
 						{ this.blogAddress() }
 						{ this.languageOptions() }
+						{ this.timezoneDropdown() }
 						{ this.holidaySnowOption() }
 					</form>
 				</Card>
