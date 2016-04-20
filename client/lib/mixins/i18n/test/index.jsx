@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var assert = require( 'assert' ),
-	ReactDomServer = require( 'react-dom/server' ),
-	React = require( 'react' );
+import assert from 'assert';
+import React from 'react';
+import ReactDomServer from 'react-dom/server';
 
 /**
  * Internal dependencies
@@ -137,7 +137,7 @@ describe( 'I18n', function() {
 
 		describe( 'with mixed components', function() {
 			it( 'should handle sprintf and compoment interpolation together', function() {
-				var input = React.DOM.input(),
+				const input = React.DOM.input(),
 					expectedResultString = '<span><span>foo </span><input/><span> bar</span></span>',
 					placeholder = 'bar',
 					translatedComponent = translate( 'foo {{ input /}} %(placeholder)s', {
