@@ -1,6 +1,6 @@
-var actions = require( '../constants' ).actions;
+import { actions } from '../../constants';
 
-var EMAIL = 'test@example.com',
+const EMAIL = 'test@example.com',
 	PHONE_COUNTRY = 'US',
 	PHONE_COUNTRY_NUMERIC = '+1',
 	PHONE_NUMBER = '8772738550',
@@ -12,7 +12,7 @@ var EMAIL = 'test@example.com',
 		numberFull: PHONE_NUMBER_FULL
 	};
 
-module.exports = {
+export default {
 	DUMMY_EMAIL: EMAIL,
 	DUMMY_PHONE_COUNTRY: PHONE_COUNTRY,
 	DUMMY_PHONE_NUMBER: PHONE_NUMBER,

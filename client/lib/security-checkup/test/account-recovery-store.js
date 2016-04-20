@@ -15,7 +15,7 @@ chai.use( sinonChai );
  * Internal dependencies
  */
 const Dispatcher = require( 'dispatcher' ),
-	testConstants = require( './constants' ),
+	testConstants = require( './fixtures/constants' ),
 	undocumentedMe = require( 'lib/wpcom-undocumented/lib/me' );
 
 describe( 'AccountRecoveryStore', function() {

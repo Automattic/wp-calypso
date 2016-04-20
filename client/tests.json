@@ -350,6 +350,9 @@
 		"scroll-to": {
 			"test": [ "index" ]
 		},
+		"security-checkup": {
+			"test": [ "account-recovery-store", "actions" ]
+		},
 		"shortcode": {
 			"test": [ "index" ]
 		},
