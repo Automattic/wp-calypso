@@ -1,5 +1,3 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
@@ -9,33 +7,40 @@ import sinon from 'sinon';
 /**
  * Internal Dependencies
  */
-const scrollTo = require( '../' ); // needs window so import must be sync
+import useFakeDom from 'test/helpers/use-fake-dom';
 
-describe( 'scroll-to', function() {
-	beforeEach( function() {
+describe( 'scroll-to', () => {
+	let scrollTo;
+
+	useFakeDom();
+
+	before( () => {
+		scrollTo = require( '..' );
 		sinon.spy( window, 'scrollTo' );
 	} );
-	afterEach( function() {
-		window.scrollTo.restore();
+
+	afterEach( () => {
+		window.scrollTo.reset();
 	} );
-	it( 'window position x', function( done ) {
+
+	it( 'window position x', done => {
 		scrollTo( {
 			x: 500,
 			y: 300,
 			duration: 1,
-			onComplete: function() {
+			onComplete: () => {
 				expect( window.scrollTo.lastCall.args[0] ).to.equal( 500 );
 				expect( window.scrollTo.lastCall.args[1] ).to.equal( 300 );
 				done();
 			}
 		} );
 	} );
-	it( 'window position y', function( done ) {
+	it( 'window position y', done => {
 		scrollTo( {
 			x: 0,
 			y: 100,
 			duration: 1,
-			onComplete: function() {
+			onComplete: () => {
 				expect( window.scrollTo.lastCall.args[0] ).to.equal( 0 );
 				expect( window.scrollTo.lastCall.args[1] ).to.equal( 100 );
 				done();

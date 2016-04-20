@@ -343,6 +343,9 @@
 		"safe-protocol-url": {
 			"test": [ "index" ]
 		},
+		"scroll-to": {
+			"test": [ "index" ]
+		},
 		"shortcode": {
 			"test": [ "index" ]
 		},
