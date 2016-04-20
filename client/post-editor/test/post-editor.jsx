@@ -45,6 +45,7 @@ describe( 'PostEditor', function() {
 		mockery.registerMock( 'post-editor/editor-title/container', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-page-slug', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-media-advanced', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-mobile-navigation', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-author', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-visibility', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-word-count', MOCK_COMPONENT );
