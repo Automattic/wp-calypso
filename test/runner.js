@@ -6,8 +6,7 @@ require( 'babel/register' );
 /**
  * External dependencies
  */
-const debug = require( 'debug' )( 'test-runner' ),
-	glob = require( 'glob' ),
+const glob = require( 'glob' ),
 	Mocha = require( 'mocha' ),
 	path = require( 'path' ),
 	program = require( 'commander' );
@@ -36,20 +35,8 @@ if ( program.grep ) {
 	mocha.grep( new RegExp( program.grep ) );
 }
 
-if ( process.env.CIRCLECI ) {
-	debug( 'Hello Circle!' );
-	// give circle more time by default because containers are slow
-	// why 10 seconds? a guess.
-	mocha.suite.timeout( 10000 );
-}
-
 mocha.suite.beforeAll( boot.before );
 mocha.suite.afterAll( boot.after );
-
-// TODO: remove whitelist logic once we migrate client folder
-if ( process.env.TEST_ROOT === 'client' ) {
-	setup.enableWhitelist();
-}
 
 files = program.args;
 if ( files.length === 0 && ! process.env.CIRCLECI ) {

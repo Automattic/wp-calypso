@@ -1,45 +1,16 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
 import head from 'lodash/head';
 import last from 'lodash/last';
 import mergeWith from 'lodash/mergeWith';
 import reduce from 'lodash/reduce';
 import tail from 'lodash/tail';
 
-const debug = debugFactory( 'test-runner' ),
-	files = [];
-let whitelistConfig;
-
-function enableWhitelist() {
-	whitelistConfig = require( 'tests.json' );
-}
+const files = [];
 
 function addFile( file ) {
-	if ( whitelistConfig ) {
-		const pathParts = tail( file.split( '/' ) );
-
-		if ( ! isFileWhitelisted( whitelistConfig, pathParts ) ) {
-			debug( `Skipping file: ${file}.` );
-			return;
-		}
-	}
 	files.push( file );
-}
-
-function isFileWhitelisted( config, pathParts ) {
-	const folder = head( pathParts );
-
-	if ( config[ folder ] ) {
-		if ( folder === 'test' && Array.isArray( config[ folder ] ) ) {
-			return ( config[ folder ].indexOf( getFileName( pathParts ) ) !== false );
-		}
-
-		return isFileWhitelisted( config[ folder ], tail( pathParts ) );
-	}
-
-	return false;
 }
 
 function getConfig() {
@@ -73,7 +44,6 @@ function getFileName( pathParts ) {
 }
 
 module.exports = {
-	enableWhitelist,
 	addFile,
 	getConfig
 };
