@@ -2,6 +2,9 @@ machine:
   node:
     version: 5.10.1
 test:
+  pre:
+    - NODE_ENV=test make client/config/index.js:
+        parallel: true
   override:
     - npm run lint -- :
         parallel: true
@@ -10,22 +13,22 @@ test:
           - client/**/*.jsx
           - server/**/*.js
           - server/**/*.jsx
-    - NODE_ENV=test make client/config/index.js && NODE_ENV=test ./bin/run-tests:
+    - NODE_ENV=test ./bin/run-tests:
         parallel: true
         files:
           - client/**/Makefile
           - server/**/Makefile
-    - NODE_ENV=test make client/config/index.js && MOCHA_FILE=./test-results-client.xml npm run test-client -- --reporter=mocha-junit-reporter -w:
+    - MOCHA_FILE=./test-results-client.xml npm run test-client -- --reporter=mocha-junit-reporter:
         parallel: true
         files:
           - client/**/test/*.js
           - client/**/test/*.jsx
-    - NODE_ENV=test make client/config/index.js && MOCHA_FILE=./test-results-server.xml npm run test-server -- --reporter=mocha-junit-reporter -w:
+    - MOCHA_FILE=./test-results-server.xml npm run test-server -- --reporter=mocha-junit-reporter:
         parallel: true
         files:
           - server/**/test/*.js
           - server/**/test/*.jsx
-    - NODE_ENV=test make client/config/index.js && MOCHA_FILE=./test-results-tests.xml npm run test-tests -- --reporter=mocha-junit-reporter -w:
+    - MOCHA_FILE=./test-results-test.xml npm run test-test -- --reporter=mocha-junit-reporter:
         parallel: true
         files:
           - test/test/**/test/*.js
