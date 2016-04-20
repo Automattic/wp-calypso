@@ -152,21 +152,14 @@ module.exports = React.createClass( {
 	},
 
 	blogAddress() {
-		var site = this.props.site,
-			customAddress = '',
-			addressDescription = '';
+		var { site } = this.props;
+		let addressDescription = '';
 
 		if ( site.jetpack ) {
 			return null;
 		}
 
 		if ( config.isEnabled( 'upgrades/domain-search' ) ) {
-			customAddress = (
-				<Button href={ '/domains/add/' + site.slug } onClick={ this.trackUpgradeClick }>
-					<Gridicon icon="plus" /> { this.translate( 'Add a Custom Address', { context: 'Site address, domain' } ) }
-				</Button>
-			);
-
 			addressDescription =
 				<FormSettingExplanation>
 					{
@@ -194,7 +187,7 @@ module.exports = React.createClass( {
 						id="blogaddress"
 						value={ this.props.site.domain }
 						disabled="disabled" />
-					{ customAddress }
+					{ this.renderCustomAddress() }
 				</div>
 				{ addressDescription }
 				{ this.renderDomainNudge() }
@@ -423,6 +416,22 @@ module.exports = React.createClass( {
 					{ this.translate( 'Choose a city in your timezone.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
+		);
+	},
+
+	renderCustomAddress() {
+		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
+			return null;
+		}
+
+		return (
+			<Button
+				href={ `/domains/add/'${ this.props.site.slug }` }
+				onClick={ this.trackUpgradeClick }
+			>
+				<Gridicon icon="plus" />
+				{ this.translate( 'Add a Custom Address', { context: 'Site address, domain' } ) }
+			</Button>
 		);
 	},
 
