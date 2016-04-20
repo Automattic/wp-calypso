@@ -1,4 +1,4 @@
-const actions = require( '../constants' ).actions;
+import { actions } from '../../constants';
 
 const EMAIL = 'test@example.com',
 	PHONE_COUNTRY = 'US',
