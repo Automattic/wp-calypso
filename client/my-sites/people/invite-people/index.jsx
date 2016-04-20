@@ -82,7 +82,7 @@ const InvitePeople = React.createClass( {
 		if ( sendInvitesSuccess ) {
 			this.setState( this.resetState() );
 			analytics.tracks.recordEvent( 'calypso_invite_people_form_refresh_initial' );
-			debug( 'Submit successful. Resetting form.' )
+			debug( 'Submit successful. Resetting form.' );
 		} else {
 			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId );
 			const errors = get( sendInvitesErrored, 'errors', {} );
@@ -335,7 +335,7 @@ const InvitePeople = React.createClass( {
 						<RoleSelect
 							id="role"
 							name="role"
-							key="role"
+							key={ this.props.site.ID }
 							includeFollower
 							siteId={ this.props.site.ID }
 							onChange={ this.onRoleChange }
