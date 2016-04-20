@@ -76,3 +76,19 @@
 .current-site .site__badge {
 	padding-right: 8px;
 }
+
+.current-site .notice.is-compact {
+	display: flex;
+	margin: 0 -8px;
+	padding: 0 0 0 4px;
+
+	.notice__text {
+		width: 100%;
+		display: flex;
+		line-height: 1.3;
+	}
+
+	.notice__action {
+		margin-left: auto;
+	}
+}

@@ -23,6 +23,8 @@ var AllSites = require( 'my-sites/all-sites' ),
 	DomainWarnings = require( 'my-sites/upgrades/components/domain-warnings' ),
 	paths = require( 'my-sites/upgrades/paths' );
 
+import SiteNotice from './notice';
+
 module.exports = React.createClass( {
 	displayName: 'CurrentSite',
 
@@ -180,6 +182,7 @@ module.exports = React.createClass( {
 					: <AllSites sites={ this.props.sites.get() } />
 				}
 				{ this.getSiteNotices( site ) }
+				<SiteNotice site={ site } />
 			</Card>
 		);
 	}
