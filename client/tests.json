@@ -1,4 +1,7 @@
 {
+	"auth": {
+		"test": [ "login" ]
+	},
 	"components": {
 		"count": {
 			"test": [ "index" ]
