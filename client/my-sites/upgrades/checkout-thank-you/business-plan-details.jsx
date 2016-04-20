@@ -17,6 +17,8 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 
 	return (
 		<div>
+			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
+
 			{ ! selectedFeature &&
 				<PurchaseDetail
 					icon="customize"
@@ -32,8 +34,6 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 				description={ i18n.translate( 'Connect to Google Analytics for the perfect complement to WordPress.com stats.' ) }
 				buttonText={ i18n.translate( 'Connect Google Analytics' ) }
 				href={ '/settings/analytics/' + selectedSite.slug } />
-
-			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
 		</div>
 	);
 };
