@@ -38,32 +38,22 @@ module.exports = React.createClass( {
 				{ name: 'Harmonic', slug: 'harmonic' },
 			],
 
-			useHeadstart: false
+			useHeadstart: true,
 		};
 	},
 
 	handleScreenshotClick: function( theme ) {
 		var themeSlug = theme.id;
 
-		if ( true === this.props.useHeadstart && themeSlug ) {
-			analytics.tracks.recordEvent( 'calypso_signup_theme_select', { theme: themeSlug, headstart: true } );
+		analytics.tracks.recordEvent( 'calypso_signup_theme_select', { theme: themeSlug, headstart: true } );
 
-			SignupActions.submitSignupStep( {
-				stepName: this.props.stepName,
-				processingMessage: this.translate( 'Adding your theme' ),
-				themeSlug
-			}, null, {
-				theme: 'pub/' + themeSlug
-			} );
-		} else {
-			analytics.tracks.recordEvent( 'calypso_signup_theme_select', { theme: themeSlug, headstart: false } );
-
-			SignupActions.submitSignupStep( {
-				stepName: this.props.stepName,
-				processingMessage: this.translate( 'Adding your theme' ),
-				themeSlug
-			} );
-		}
+		SignupActions.submitSignupStep( {
+			stepName: this.props.stepName,
+			processingMessage: this.translate( 'Adding your theme' ),
+			themeSlug
+		}, null, {
+			theme: 'pub/' + themeSlug
+		} );
 
 		this.props.goToNextStep();
 	},
