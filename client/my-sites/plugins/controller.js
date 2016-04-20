@@ -5,6 +5,7 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	page = require( 'page' ),
 	some = require( 'lodash/some' ),
+	includes = require( 'lodash/includes' ),
 	capitalize = require( 'lodash/capitalize' );
 
 /**
@@ -147,7 +148,16 @@ controller = {
 
 	plugins: function( filter, context ) {
 		var basePath = route.sectionify( context.path ),
-			siteUrl = route.getSiteFragment( context.path );
+			siteUrl = route.getSiteFragment( context.path ),
+			site = sites.getSelectedSite();
+
+		if ( siteUrl && ( ( site.jetpack && ! includes( jetpackFilters, filter ) ) || ( ! site.jetpack && ! includes( wpcomFilters, filter ) ) ) ) {
+			page.redirect( '/plugins/' + siteUrl );
+			return;
+		} else if ( ! siteUrl && ! includes( jetpackFilters, filter ) ) {
+			page.redirect( '/plugins/' );
+			return;
+		}
 
 		context.params.pluginFilter = filter;
 		basePath = basePath.replace( '/' + filter, '' );
@@ -156,10 +166,16 @@ controller = {
 	},
 
 	plugin: function( context ) {
-		var siteUrl = route.getSiteFragment( context.path );
+		var siteUrl = route.getSiteFragment( context.path ),
+			site = sites.getSelectedSite();
 
 		if ( siteUrl && context.params.plugin && context.params.plugin === siteUrl.toString() ) {
 			controller.plugins( 'all', context );
+			return;
+		}
+
+		if ( siteUrl && ! site.jetpack ) {
+			page.redirect( '/plugins/' + siteUrl );
 			return;
 		}
 

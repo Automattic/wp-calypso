@@ -206,7 +206,7 @@ PluginsStore = {
 			return [];
 		}
 
-		if ( plugins.filter && !! pluginFilter ) {
+		if ( plugins.filter && !! pluginFilter && _filters[ pluginFilter ] ) {
 			plugins = plugins.filter( _filters[ pluginFilter ] );
 		}
 		return plugins;
