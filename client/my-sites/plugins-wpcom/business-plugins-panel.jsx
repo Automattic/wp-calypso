@@ -3,7 +3,6 @@ import classNames from 'classnames';
 
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-
 import BusinessPlugin from './plugin-types/business-plugin';
 import PurchaseButton from './purchase-button';
 
@@ -11,7 +10,8 @@ export const BusinessPluginsPanel = React.createClass( {
 	render() {
 		const {
 			isActive = false,
-			plugins = []
+			plugins = [],
+			slug
 		} = this.props;
 
 		const cardClasses = classNames( 'wpcom-plugins__business-panel', {
@@ -21,7 +21,7 @@ export const BusinessPluginsPanel = React.createClass( {
 		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Business Plan Upgrades' ) }>
-					<PurchaseButton { ...{ isActive } } />
+					<PurchaseButton { ...{ isActive, slug } } />
 				</SectionHeader>
 
 				<Card className={ cardClasses }>

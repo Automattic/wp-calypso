@@ -3,7 +3,6 @@ import classNames from 'classnames';
 
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-
 import PremiumPlugin from './plugin-types/premium-plugin';
 import PurchaseButton from './purchase-button';
 
@@ -11,7 +10,8 @@ export const PremiumPluginsPanel = React.createClass( {
 	render() {
 		const {
 			isActive = false,
-			plugins = []
+			plugins = [],
+			slug
 		} = this.props;
 
 		const cardClasses = classNames( 'wpcom-plugins__premium-panel', {
@@ -21,7 +21,7 @@ export const PremiumPluginsPanel = React.createClass( {
 		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Premium Plan Upgrades' ) }>
-					<PurchaseButton { ...{ isActive } } />
+					<PurchaseButton { ...{ isActive, slug } } />
 				</SectionHeader>
 
 				<Card className={ cardClasses }>
