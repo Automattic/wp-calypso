@@ -43,7 +43,7 @@ export default React.createClass( {
 			jetpack: false,
 			feature: false,
 			compact: false
-		}
+		};
 	},
 
 	handleClick() {
@@ -69,7 +69,7 @@ export default React.createClass( {
 		const classes = classNames( this.props.className, 'upgrade-nudge' );
 
 		const site = sites.getSelectedSite();
-		let href = this.props.href;
+		let { href } = this.props;
 
 		if ( site && this.props.feature ) {
 			if ( hasFeature( this.props.feature, site.siteID ) ) {

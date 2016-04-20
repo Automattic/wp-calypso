@@ -211,13 +211,15 @@ export default React.createClass( {
 	},
 
 	isEnabled() {
-		return productsValues.isBusiness( this.props.site.plan ) || productsValues.isEnterprise( this.props.site.plan );
+		return productsValues.isBusiness( this.props.site.plan ) ||
+			productsValues.isEnterprise( this.props.site.plan );
 	},
 
 	renderNudge() {
 		if ( this.isEnabled() ) {
 			return;
 		}
+
 		const abtestVariant = abtest( 'contextualGoogleAnalyticsNudge' );
 		const eventName = `google_analytics_${ abtestVariant }`;
 		const upgradeLink = this.getUpgradeLink();

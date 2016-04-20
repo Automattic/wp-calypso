@@ -29,11 +29,7 @@ import TimezoneDropdown from 'components/timezone-dropdown';
 import { isFreePlan as siteHasFreePlan } from 'lib/products-values';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { hasCustomDomain as siteHasCustomDomain } from 'lib/site/utils';
-
-/**
- * Module vars
- */
-const CUSTOM_DOMAIN = 'custom-domain';
+import { CUSTOM_DOMAIN } from 'lib/plans/constants';
 
 module.exports = React.createClass( {
 
