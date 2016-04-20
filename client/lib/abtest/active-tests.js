@@ -45,15 +45,6 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
-	verticalThemes: {
-		datestamp: '20160324',
-		variations: {
-			original: 25,
-			verticalThemes: 25,
-			notTested: 50
-		},
-		defaultVariation: 'original'
-	},
 	domainSuggestionVendor: {
 		datestamp: '20160408',
 		variations: {
