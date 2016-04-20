@@ -229,13 +229,6 @@ const flows = {
 		destination: getFreeTrialDestination,
 		description: 'Signup flow for free trials',
 		lastModified: '2016-03-21'
-	},
-
-	'new-vertical-site': {
-		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
-		destination: getSiteDestination,
-		description: 'Test flow showing Headstarted vertical themes for EN users clicking "Create Website" on the homepage.',
-		lastModified: '2016-03-22'
 	}
 };
 
@@ -264,7 +257,7 @@ function filterFlowName( flowName ) {
 
 	// Headstarted "default" flow (`newsite`) with vertical selection for EN users, coming from the homepage single button.
 	if ( 'website' === flowName && ( 'en' === locale || 'en-gb' === locale ) ) {
-		return ( 'verticalThemes' === abtest( 'verticalThemes' ) ) ? 'new-vertical-site' : 'newsite';
+		return 'newsite';
 	}
 
 	return flowName;
@@ -293,7 +286,7 @@ function getGuidedToursDestination( destination, dependencies, flowName ) {
 			original: destination,
 			guided: external ? `${ baseUrl }?tour=${ tourName }` : `${ destination }?tour=${ tourName }`,
 			calypsoOnly: external ? baseUrl : destination,
-		}
+		};
 
 		return variantUrls[ variant ] || variantUrls.original;
 	}
