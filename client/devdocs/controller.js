@@ -14,6 +14,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import DocsComponent from './main';
 import SingleDocComponent from './doc';
 import DesignAssetsComponent from './design';
+import DataBindingComponent from './data-binding';
 import AppComponents from './design/app-components';
 import Typography from './design/typography';
 import DevWelcome from './welcome';
@@ -86,6 +87,16 @@ const devdocs = {
 		ReactDom.render(
 			React.createElement( DesignAssetsComponent, {
 				component: context.params.component
+			} ),
+			document.getElementById( 'primary' )
+		);
+	},
+
+	// UI components
+	databinding: function( context ) {
+		ReactDom.render(
+			React.createElement( DataBindingComponent, {
+				// component: context.params.component
 			} ),
 			document.getElementById( 'primary' )
 		);

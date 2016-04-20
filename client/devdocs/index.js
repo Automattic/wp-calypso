@@ -18,6 +18,7 @@ export default function() {
 		page( '/devdocs/app-components/:component?', controller.sidebar, controller.appComponents );
 		page( '/devdocs/start', controller.pleaseLogIn );
 		page( '/devdocs/welcome', controller.sidebar, controller.welcome );
+		page( '/devdocs/data-binding', controller.sidebar, controller.databinding );
 		page( '/devdocs/:path*', controller.sidebar, controller.singleDoc );
 	}
 };
