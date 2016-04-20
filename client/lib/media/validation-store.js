@@ -14,6 +14,7 @@ import emitter from 'lib/mixins/emitter';
 import Sites from 'lib/sites-list';
 import MediaUtils from './utils';
 import { ValidationErrors as MediaValidationErrors } from './constants';
+import { PLAN_FREE } from 'lib/plans/constants';
 
 /**
  * Module variables
@@ -59,7 +60,7 @@ function validateItem( siteId, item ) {
 	}
 
 	if ( ! MediaUtils.isSupportedFileTypeForSite( item, site ) ) {
-		if ( get( site, 'plan.product_slug' ) === 'free_plan' && MediaUtils.isSupportedFileTypeInPremium( item, site ) ) {
+		if ( get( site, 'plan.product_slug' ) === PLAN_FREE && MediaUtils.isSupportedFileTypeInPremium( item, site ) ) {
 			itemErrors.push( MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN );
 		} else {
 			itemErrors.push( MediaValidationErrors.FILE_TYPE_UNSUPPORTED );
@@ -118,7 +119,7 @@ function receiveServerError( siteId, itemId, errors ) {
 					return MediaValidationErrors.NOT_ENOUGH_SPACE;
 				}
 				if ( error.message.indexOf( 'You have used your space quota' ) === 0 ) {
-					return MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT
+					return MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT;
 				}
 				return MediaValidationErrors.SERVER_ERROR;
 			default:
