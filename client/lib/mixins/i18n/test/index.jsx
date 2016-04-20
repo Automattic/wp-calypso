@@ -1,6 +1,3 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
@@ -11,11 +8,13 @@ var assert = require( 'assert' ),
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	data = require( './data.js' ),
-	translate = i18n.translate,
-	numberFormat = i18n.numberFormat,
-	moment = i18n.moment;
+import data from './data';
+import i18n, {
+	moment,
+	numberFormat,
+	translate
+} from 'lib/mixins/i18n';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Pass in a react-generated html string to remove react-specific attributes
@@ -27,9 +26,13 @@ function stripReactAttributes( string ) {
 	return string.replace( /\sdata\-(reactid|react\-checksum)\=\"[^\"]+\"/g, '' );
 }
 
-i18n.initialize( data.locale );
-
 describe( 'I18n', function() {
+	useFakeDom();
+
+	before( () => {
+		i18n.initialize( data.locale );
+	} );
+
 	describe( 'translate()', function() {
 		describe( 'passing a string', function() {
 			it( 'should find a simple translation', function() {
