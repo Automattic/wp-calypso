@@ -90,8 +90,6 @@ function install( site, plugin, dispatch ) {
 function update( site, plugin, dispatch ) {
 	wpcom.pluginsUpdate( site.ID, plugin.id, ( error ) => {
 		if ( error ) {
-			console.log( plugin.slug );
-			console.log( 'Update Failed', error.name );
 			dispatch( {
 				type: PLUGIN_SETUP_ERROR,
 				siteId: site.ID,
@@ -122,7 +120,6 @@ function update( site, plugin, dispatch ) {
 function activate( site, plugin, dispatch ) {
 	wpcom.pluginsActivate( site.ID, plugin.id, ( error, data ) => {
 		if ( error && error.name !== 'ActivationErrorError' ) {
-			console.log( 'Activate Failed:', plugin.id, error.name );
 			dispatch( {
 				type: PLUGIN_SETUP_ERROR,
 				siteId: site.ID,
