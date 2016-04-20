@@ -157,9 +157,9 @@ module.exports = {
 		let redirect;
 		// Have we arrived at a URL ending in /posts? Redirect to feed stream/blog stream
 		if ( context.path.match( /^\/read\/feeds\/([0-9]+)\/posts$/i ) ) {
-			redirect = `/read/feeds/${context.params.feed_id}`
+			redirect = `/read/feeds/${context.params.feed_id}`;
 		} else if ( context.path.match( /^\/read\/blogs\/([0-9]+)\/posts$/i ) ) {
-			redirect = `/read/blogs/${context.params.blog_id}`
+			redirect = `/read/blogs/${context.params.blog_id}`;
 		}
 
 		if ( redirect ) {
@@ -726,5 +726,32 @@ module.exports = {
 			} ),
 			document.getElementById( 'primary' )
 		);
-	}
+	},
+
+	start( context ) {
+		const startComponent = require( 'reader/reader-start' ),
+			basePath = '/read/start',
+			fullAnalyticsPageTitle = analyticsPageTitle + ' > Start',
+			mcKey = 'start';
+
+		setPageTitle( i18n.translate( 'Start' ) );
+
+		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
+		ReactDom.render(
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( startComponent, {
+					key: 'start',
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						analyticsPageTitle,
+						mcKey
+					)
+				} )
+			),
+			document.getElementById( 'primary' )
+		);
+	},
 };

@@ -77,6 +77,10 @@ module.exports = function() {
 		page( '/read/list/:user/:list/followers', updateLastRoute, controller.removePost, controller.sidebar, controller.listManagementFollowers );
 	}
 
+	if ( config.isEnabled( 'reader/start' ) ) {
+		page( '/read/start', updateLastRoute, controller.removePost, controller.sidebar, controller.start );
+	}
+
 	page( '/activities/likes', controller.loadSubscriptions, controller.initAbTests, updateLastRoute, controller.removePost, controller.sidebar, controller.likes );
 
 	page( '/following/*', controller.loadSubscriptions, controller.initAbTests );
