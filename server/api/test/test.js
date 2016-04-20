@@ -6,23 +6,23 @@ var expect = require( 'chai' ).expect,
 	request = require( 'superagent' ),
 	supertest = require( 'supertest' );
 
-/**
- * Internal dependencies
- */
-var config = require( 'config' ),
-	app = require( '../' )(),
-	localRequest = supertest( app );
-
 if ( process.env.NODE_ENV === 'desktop' ) {
 	describe( 'api', function() {
-		var sandbox = sinon.sandbox.create();
+		const sandbox = sinon.sandbox.create();
+		let app, config, localRequest;
+
+		before( () => {
+			config = require( 'config' );
+			app = require( '../' )();
+			localRequest = supertest( app );
+		} );
 
 		afterEach( function() {
 			sandbox.restore();
 		} );
 
 		it( 'should return package version', function( done ) {
-			var version = require( '../../../package.json' ).version
+			const version = require( '../../../package.json' ).version;
 
 			localRequest.get( '/version' )
 				.expect( 200, { version: version }, done );
