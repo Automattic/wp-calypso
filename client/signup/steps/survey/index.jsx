@@ -14,6 +14,7 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import BackButton from 'components/header-cake';
 import Gridicon from 'components/gridicon';
+import i18n from 'lib/mixins/i18n';
 import { getABTestVariation } from 'lib/abtest';
 
 function isSurveyOneStep() {
@@ -39,6 +40,15 @@ export default React.createClass( {
 		return {
 			stepOne: null,
 			verticalList: verticals.get()
+		}
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.locale !== nextProps.locale ) {
+			this.setState( {
+				verticalList: verticals.get()
+			} );
+			i18n.reRenderTranslations();
 		}
 	},
 
