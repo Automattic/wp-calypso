@@ -139,6 +139,10 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderFeaturedImage: function() {
+		if ( ! this.currentPostTypeSupports( 'thumbnail' ) ) {
+			return;
+		}
+
 		return (
 			<Accordion
 				title={ this.translate( 'Featured Image' ) }
