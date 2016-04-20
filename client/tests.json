@@ -233,6 +233,7 @@
 				"test": [ "index" ]
 			},
 			"i18n": {
+				"test": [ "index" ],
 				"localize": {
 					"test": [ "index" ]
 				}
