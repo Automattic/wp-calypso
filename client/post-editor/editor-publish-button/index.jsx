@@ -10,6 +10,7 @@ import localize from 'lib/mixins/i18n/localize';
 import stats from 'lib/posts/stats';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
+import Button from 'components/button';
 
 export const EditorPublishButton = React.createClass( {
 	propTypes: {
@@ -111,14 +112,15 @@ export const EditorPublishButton = React.createClass( {
 
 	render: function() {
 		return (
-			<button
-				className="editor-publish-button button"
+			<Button
+				className="editor-publish-button"
+				primary={ true }
 				onClick={ this.onClick }
 				disabled={ ! this.isEnabled() }
 				tabIndex={ this.props.tabIndex }
 			>
 				{ this.getButtonLabel() }
-			</button>
+			</Button>
 		);
 	}
 } );
