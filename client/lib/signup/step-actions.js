@@ -13,7 +13,7 @@ import { cartItems } from 'lib/cart-values';
 import wpcom from 'lib/wp' ;
 const sites = require( 'lib/sites-list' )();
 const user = require( 'lib/user' )();
-import { getSavedVariations } from 'lib/abtest';
+import { getSavedVariations, abtest } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import { startFreeTrial } from 'lib/upgrades/actions';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
@@ -47,7 +47,11 @@ function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsC
 			let newCartItems = [];
 
 			if ( domainItem ) {
-				newCartItems = [ ...newCartItems, domainItem ];
+				if ( abtest( 'domainsWithPlansOnly' ) === 'plansOnly' ) {
+					newCartItems = [ ...newCartItems, domainItem, cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) ];
+				} else {
+					newCartItems = [ ...newCartItems, domainItem ];
+				}
 			}
 
 			if ( googleAppsCartItem ) {
