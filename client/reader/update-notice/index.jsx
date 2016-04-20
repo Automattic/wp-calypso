@@ -47,10 +47,10 @@ var UpdateNotice = React.createClass( {
 		} );
 
 		return (
-			<div className={ counterClasses } onTouchTap={ this.handleClick } >
+			<a className={ counterClasses } onTouchTap={ this.handleClick } >
 				<Gridicon icon="arrow-up" size={ 18 } />
 				{ this.translate( '%s new post', '%s new posts', { args: [ this.countString() ], count: this.props.count } ) }
-			</div>
+			</a>
 		);
 	},
 
