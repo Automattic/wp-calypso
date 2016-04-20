@@ -3,33 +3,36 @@
  * External dependencies
  */
 
-import chai, { expect } from 'chai';
-import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
-
-chai.use( sinonChai );
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
 
 import useFakeDom from 'test/helpers/use-fake-dom';
+import { useSandbox } from 'test/helpers/use-sinon';
 import useI18n from 'test/helpers/use-i18n';
-import testConstants from './fixtures/constants';
 
 import Dispatcher from 'dispatcher';
-import analytics from 'lib/analytics';
 import undocumentedMe from 'lib/wpcom-undocumented/lib/me';
 
-import { actions } from '../constants';
-import SecurityCheckupActions from '../actions';
-
-const sandbox = sinon.sandbox.create();
-
 describe( 'SecurityCheckupActions', () => {
+	let sandbox, actions, SecurityCheckupActions, testConstants, analytics;
+
+	useSandbox( sandy => {
+		sandbox = sandy;
+	} );
+
 	useFakeDom();
 
 	useI18n();
+
+	before( () => {
+		actions = require( '../constants' ).actions;
+		SecurityCheckupActions = require( '../actions' );
+		testConstants = require( './fixtures/constants' );
+		analytics = require( 'lib/analytics' );
+	} );
 
 	beforeEach( () => {
 		sandbox.stub( Dispatcher, 'handleServerAction' );
