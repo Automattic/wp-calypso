@@ -38,6 +38,7 @@ import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
 import contactFormPlugin from './plugins/contact-form/plugin';
 import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
 import wptextpatternPlugin from './plugins/wptextpattern/plugin';
+import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 
 [
 	wpcomPlugin,
@@ -56,7 +57,8 @@ import wptextpatternPlugin from './plugins/wptextpattern/plugin';
 	calypsoAlertPlugin,
 	contactFormPlugin,
 	afterTheDeadlinePlugin,
-	wptextpatternPlugin
+	wptextpatternPlugin,
+	toolbarPinPlugin
 ].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
@@ -118,6 +120,7 @@ const PLUGINS = [
 	'wpcom/editorbuttonanalytics',
 	'wpcom/calypsoalert',
 	'wpcom/tabindex',
+	'wpcom/toolbarpin',
 	'wpcom/contactform',
 	'wpcom/sourcecode',
 ];
@@ -151,8 +154,7 @@ module.exports = React.createClass( {
 		tabIndex: React.PropTypes.number,
 		isNew: React.PropTypes.bool,
 		onTextEditorChange: React.PropTypes.func,
-		onKeyUp: React.PropTypes.func,
-		onTogglePin: React.PropTypes.func
+		onKeyUp: React.PropTypes.func
 	},
 
 	contextTypes: {
@@ -173,8 +175,6 @@ module.exports = React.createClass( {
 	},
 
 	_editor: null,
-
-	_pinned: false,
 
 	componentWillMount: function() {
 		this._id = 'tinymce-' + _instance;
@@ -207,7 +207,6 @@ module.exports = React.createClass( {
 			this.bindEditorEvents();
 			editor.on( 'SetTextAreaContent', ( event ) => this.setTextAreaContent( event.content ) );
 
-			window.addEventListener( 'scroll', this.onScrollPinTools );
 			if ( ! viewport.isMobile() ) {
 				editor.once( 'PostRender', this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } ) );
 			}
@@ -304,9 +303,6 @@ module.exports = React.createClass( {
 
 	componentWillUnmount: function() {
 		this.mounted = false;
-
-		window.removeEventListener( 'scroll', this.onScrollPinTools );
-
 		if ( this._editor ) {
 			this.destroyEditor();
 		}
@@ -340,31 +336,6 @@ module.exports = React.createClass( {
 				}
 			}
 		}.bind( this ) );
-	},
-
-	onScrollPinTools: function() {
-		const editor = this._editor;
-		if ( ! editor || this.props.mode === 'html' ) {
-			return;
-		}
-
-		const container = editor.getContainer();
-		const rect = container.getBoundingClientRect();
-
-		let newPinned;
-		if ( ! this._pinned && rect.top < 46 && viewport.isWithinBreakpoint( '>660px' ) ) {
-			newPinned = true;
-		} else if ( this._pinned && window.pageYOffset < 164 ) {
-			newPinned = false;
-		} else {
-			return;
-		}
-
-		this._pinned = newPinned;
-		editor.dom.toggleClass( editor.getContainer(), 'is-pinned', newPinned );
-		if ( this.props.onTogglePin ) {
-			this.props.onTogglePin( newPinned ? 'pin' : 'unpin' );
-		}
 	},
 
 	toggleEditor: function( options = { autofocus: true } ) {
