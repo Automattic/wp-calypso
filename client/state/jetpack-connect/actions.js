@@ -28,6 +28,7 @@ import userFactory from 'lib/user';
 let _fetching = {};
 const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 const installURL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
+const activateURL = '/wp-admin/plugins.php';
 const userModule = userFactory();
 
 export default {
@@ -99,6 +100,15 @@ export default {
 				url: url
 			} );
 			window.location = url + installURL;
+		};
+	},
+	goToPluginActivation( url ) {
+		return ( dispatch ) => {
+			dispatch( {
+				type: JETPACK_CONNECT_REDIRECT,
+				url: url
+			} );
+			window.location = url + activateURL;
 		};
 	},
 	createAccount( userData ) {
