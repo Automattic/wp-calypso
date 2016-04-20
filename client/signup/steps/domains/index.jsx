@@ -16,6 +16,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
 	Notice = require( 'components/notice' ),
+	abtest = require( 'lib/abtest' ).abtest,
 	signupUtils = require( 'signup/utils' );
 
 module.exports = React.createClass( {
@@ -154,19 +155,21 @@ module.exports = React.createClass( {
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 
+		const isPlansOnlyTest = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 		return (
 			<RegisterDomainStep
 				path={ this.props.path }
 				initialState={ initialState }
 				onAddDomain={ this.handleAddDomain }
 				products={ this.state.products }
-				buttonLabel={ this.translate( 'Select' ) }
+				buttonLabel={ isPlansOnlyTest ? this.translate( 'Upgrade' ) : this.translate( 'Select' ) }
 				basePath={ this.props.path }
 				mapDomainUrl={ this.getMapDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
 				offerMappingOption
 				analyticsSection="signup"
+				withPlansOnly={ isPlansOnlyTest }
 				includeWordPressDotCom
 				showExampleSuggestions />
 		);
