@@ -3,7 +3,6 @@
 	{ "name": "commentsList", "subpath": "comments" },
 	{ "name": "domainsList", "subpath": "domains" },
 	{ "name": "embedsList", "subpath": "embeds" },
-	{ "name": "embedsList", "subpath": "embeds" },
 	{ "name": "followsList", "subpath": "follows" },
 	{ "name": "mediaList", "subpath":  "media" },
 	{ "name": "pageTemplates", "subpath": "page-templates" },
