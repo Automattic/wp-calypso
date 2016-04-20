@@ -1,41 +1,48 @@
-require( 'lib/react-test-env-setup' )();
-require( 'lib/mixins/i18n' ).initialize();
 
 /**
  * External dependencies
  */
-const chai = require( 'chai' ),
-	expect = chai.expect,
-	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' );
+
+import chai, { expect } from 'chai';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 
 chai.use( sinonChai );
 
 /**
  * Internal dependencies
  */
-const Dispatcher = require( 'dispatcher' ),
-	analytics = require( 'lib/analytics' ),
-	testConstants = require( './fixtures/constants' ),
-	actions = require( '../constants' ).actions,
-	undocumentedMe = require( 'lib/wpcom-undocumented/lib/me' ),
-	SecurityCheckupActions = require( '../actions' );
+
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useI18n from 'test/helpers/use-i18n';
+import testConstants from './fixtures/constants';
+
+import Dispatcher from 'dispatcher';
+import analytics from 'lib/analytics';
+import undocumentedMe from 'lib/wpcom-undocumented/lib/me';
+
+import { actions } from '../constants';
+import SecurityCheckupActions from '../actions';
 
 const sandbox = sinon.sandbox.create();
 
-describe( 'SecurityCheckupActions', function() {
-	beforeEach( function() {
+describe( 'SecurityCheckupActions', () => {
+	useFakeDom();
+
+	useI18n();
+
+	beforeEach( () => {
 		sandbox.stub( Dispatcher, 'handleServerAction' );
 		sandbox.stub( Dispatcher, 'handleViewAction' );
 		sandbox.stub( analytics.tracks, 'recordEvent' );
 	} );
 
-	afterEach( function() {
+	afterEach( () => {
 		sandbox.restore();
 	} );
 
-	describe( 'dismissPhoneNotice()', function() {
-		it( 'should dispatch a ViewAction', function() {
+	describe( 'dismissPhoneNotice()', () => {
+		it( 'should dispatch a ViewAction', () => {
 			SecurityCheckupActions.dismissPhoneNotice();
 
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
@@ -44,8 +51,8 @@ describe( 'SecurityCheckupActions', function() {
 		} );
 	} );
 
-	describe( 'dismissEmailNotice()', function() {
-		it( 'should dispatch a ViewAction', function() {
+	describe( 'dismissEmailNotice()', () => {
+		it( 'should dispatch a ViewAction', () => {
 			SecurityCheckupActions.dismissEmailNotice();
 
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
@@ -54,13 +61,13 @@ describe( 'SecurityCheckupActions', function() {
 		} );
 	} );
 
-	describe( 'updateEmail()', function() {
-		beforeEach( function() {
+	describe( 'updateEmail()', () => {
+		beforeEach( () => {
 			sandbox.stub( undocumentedMe.prototype, 'updateAccountRecoveryEmail' )
 				.callsArgWithAsync( 1, null, testConstants.DUMMY_UPDATE_EMAIL_RESPONSE );
 		} );
 
-		it( 'should dispatch a ViewAction', function() {
+		it( 'should dispatch a ViewAction', () => {
 			SecurityCheckupActions.updateEmail( testConstants.DUMMY_EMAIL );
 
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
@@ -69,16 +76,16 @@ describe( 'SecurityCheckupActions', function() {
 			} );
 		} );
 
-		it( 'should call the WP.com REST API', function() {
+		it( 'should call the WP.com REST API', () => {
 			SecurityCheckupActions.updateEmail( testConstants.DUMMY_EMAIL );
 
 			expect( undocumentedMe.prototype.updateAccountRecoveryEmail ).to.have.been.calledWith( testConstants.DUMMY_EMAIL );
 		} );
 
-		it( 'should dispatch a ServerAction', function( done ) {
+		it( 'should dispatch a ServerAction', done => {
 			SecurityCheckupActions.updateEmail( testConstants.DUMMY_EMAIL );
 
-			process.nextTick( function() {
+			process.nextTick( () => {
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 					type: actions.RECEIVE_UPDATED_ACCOUNT_RECOVERY_EMAIL,
 					email: testConstants.DUMMY_EMAIL,
@@ -91,13 +98,13 @@ describe( 'SecurityCheckupActions', function() {
 		} );
 	} );
 
-	describe( 'deleteEmail()', function() {
-		beforeEach( function() {
+	describe( 'deleteEmail()', () => {
+		beforeEach( () => {
 			sandbox.stub( undocumentedMe.prototype, 'deleteAccountRecoveryEmail' )
 				.callsArgWithAsync( 0, null, testConstants.DUMMY_DELETE_EMAIL_RESPONSE );
 		} );
 
-		it( 'should dispatch a ViewAction', function() {
+		it( 'should dispatch a ViewAction', () => {
 			SecurityCheckupActions.deleteEmail();
 
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
@@ -105,16 +112,16 @@ describe( 'SecurityCheckupActions', function() {
 			} );
 		} );
 
-		it( 'should call the WP.com REST API', function() {
+		it( 'should call the WP.com REST API', () => {
 			SecurityCheckupActions.deleteEmail();
 
 			expect( undocumentedMe.prototype.deleteAccountRecoveryEmail ).to.have.been.called;
 		} );
 
-		it( 'should dispatch a ServerAction', function( done ) {
+		it( 'should dispatch a ServerAction', done => {
 			SecurityCheckupActions.deleteEmail();
 
-			process.nextTick( function() {
+			process.nextTick( () => {
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 					type: actions.RECEIVE_DELETED_ACCOUNT_RECOVERY_EMAIL,
 					data: testConstants.DUMMY_DELETE_EMAIL_RESPONSE,
@@ -126,13 +133,13 @@ describe( 'SecurityCheckupActions', function() {
 		} );
 	} );
 
-	describe( 'updatePhone()', function() {
-		beforeEach( function() {
+	describe( 'updatePhone()', () => {
+		beforeEach( () => {
 			sandbox.stub( undocumentedMe.prototype, 'updateAccountRecoveryPhone' )
 				.callsArgWithAsync( 2, null, testConstants.DUMMY_UPDATE_PHONE_RESPONSE );
 		} );
 
-		it( 'should dispatch a ViewAction', function() {
+		it( 'should dispatch a ViewAction', () => {
 			SecurityCheckupActions.updatePhone( testConstants.DUMMY_PHONE );
 
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
@@ -141,7 +148,7 @@ describe( 'SecurityCheckupActions', function() {
 			} );
 		} );
 
-		it( 'should call the WP.com REST API', function() {
+		it( 'should call the WP.com REST API', () => {
 			SecurityCheckupActions.updatePhone( testConstants.DUMMY_PHONE );
 
 			expect( undocumentedMe.prototype.updateAccountRecoveryPhone ).to.have.been.calledWith(
@@ -150,7 +157,7 @@ describe( 'SecurityCheckupActions', function() {
 			);
 		} );
 
-		it( 'should dispatch a ServerAction', function( done ) {
+		it( 'should dispatch a ServerAction', done => {
 			SecurityCheckupActions.updatePhone( testConstants.DUMMY_PHONE );
 
 			process.nextTick( function() {
@@ -166,13 +173,13 @@ describe( 'SecurityCheckupActions', function() {
 		} );
 	} );
 
-	describe( 'deletePhone()', function() {
-		beforeEach( function() {
+	describe( 'deletePhone()', () => {
+		beforeEach( () => {
 			sandbox.stub( undocumentedMe.prototype, 'deleteAccountRecoveryPhone' )
 				.callsArgWithAsync( 0, null, testConstants.DUMMY_DELETE_PHONE_RESPONSE );
 		} );
 
-		it( 'should dispatch a ViewAction', function() {
+		it( 'should dispatch a ViewAction', () => {
 			SecurityCheckupActions.deletePhone();
 
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
@@ -180,16 +187,16 @@ describe( 'SecurityCheckupActions', function() {
 			} );
 		} );
 
-		it( 'should call the WP.com REST API', function() {
+		it( 'should call the WP.com REST API', () => {
 			SecurityCheckupActions.deletePhone();
 
 			expect( undocumentedMe.prototype.deleteAccountRecoveryPhone ).to.have.been.called;
 		} );
 
-		it( 'should dispatch a ServerAction', function( done ) {
+		it( 'should dispatch a ServerAction', done => {
 			SecurityCheckupActions.deletePhone();
 
-			process.nextTick( function() {
+			process.nextTick( () => {
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 					type: actions.RECEIVE_DELETED_ACCOUNT_RECOVERY_PHONE,
 					data: testConstants.DUMMY_DELETE_PHONE_RESPONSE,
