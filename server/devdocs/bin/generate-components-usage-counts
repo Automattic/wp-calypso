@@ -1,0 +1,125 @@
+#!/usr/bin/env node
+
+/**
+ * This script generates a usage counts for the dependecies of a list of modules.
+ * It accepts a newline-delimited list of .js and|or .jsx files
+ * as its input, and writes the index to server/devdocs/usage-counts.js
+ */
+
+var async = require( 'async' ),
+  fs = require( 'fs' ),
+  fspath = require( 'path' ),
+  precinct = require( 'precinct' ),
+  root = fspath.dirname( fspath.join( __dirname, '..', '..' ) );
+
+function main() {
+  // extract list of files to index and remove leading ./'s
+  var fileList = process.
+    argv.
+    splice( 2, process.argv.length ).
+    map( function ( fileWithPath ) {
+      return fileWithPath.replace( /^\.\//, '' );
+    } );
+
+  if ( fileList.length === 0 ) {
+    process.stderr.write( 'You must pass a list of files to process (try "make server/devdocs/usage-counts.js"' );
+    process.exit( 1 );
+  }
+
+  getModulesWithDependencies( root, fileList ).
+    then(  function ( modulesWithDependencies ) {
+      var stats = generateStats( modulesWithDependencies );
+      writeStats( stats, 'server/devdocs/usage-counts.js' );
+      process.exit( 0 );
+    } ).
+    catch( function ( error ) {
+      console.error( "An error occurred while processing the files: \n\t", error );
+      process.exit( 1 );
+    } );
+}
+
+/**
+ * Calculate the modules dependencies.
+ * Produces an object that has the following structure:
+ * {
+ *  'A': [dep1, dep2, dep3, ...],
+ *  'B': [dep1, dep2, dep3, ...]
+ * }
+ * @param {string} root BasePath to resolve the files' path
+ * @param {Array} fileList A list of file names
+ * @returns {Promise}
+ */
+
+function getModulesWithDependencies( root, fileList ) {
+  return new Promise( function ( resolve, reject ) {
+    var results = {};
+
+    async.each(
+      fileList,
+      function ( fileWithPath, next ) {
+        fs.readFile(
+          fspath.join( root, fileWithPath ),
+          { encoding: 'utf8' },
+          function ( err, data ) {
+            if ( err ) {
+              return next( err );
+            }
+            // get the dependencies
+            results[ fileWithPath ] = precinct( data );
+            next( null );
+          }
+        );
+      },
+      function ( err ) {
+        if ( err ) {
+          return reject( err );
+        }
+
+        resolve( results );
+      }
+    );
+  } );
+}
+
+/**
+ * Given an object of modules with dependencies
+ * generate a stats object with the usage counts:
+ * {
+ *  'A': { count: 2 },
+ *  'B': { count: 10 }
+ * }
+ * @param {object} modules An object of modules with dependencies
+ * @returns {object} An object with the usage stats for each dependency
+ */
+function generateStats( modules ) {
+  return Object.keys( modules ).reduce( function ( target, moduleName ) {
+    var deps = modules[ moduleName ];
+    deps.forEach( function ( dependency ) {
+      if ( ! target[ dependency ] ) {
+        target[ dependency ] = { count: 0 };
+      }
+      target[ dependency ].count += 1;
+    } );
+    return target;
+  }, {} );
+}
+
+function writeStats( stats, statsPath ) {
+  var js = 'module.exports.stats = ' + jsFromJSON( JSON.stringify( stats, null, "\t" ) ) + ';';
+  fs.writeFileSync( fspath.join( root, statsPath ), js );
+}
+
+/**
+ * Some characters in JSON are invalid in JS. Replace them with ones that are.
+ *
+ * @copyright (c) 2009-2014 TJ Holowaychuk <tj@vision-media.ca>.
+ * @license See CREDITS.md.
+ * @see https://github.com/strongloop/express/blob/b78bd3d1fd6caf8228a1875078fecce936cb2e46/lib/response.js#L293
+ */
+function jsFromJSON( json ) {
+  // some characters in JSON are invalid in JS
+  // lifted from https://github.com/strongloop/express/blob/b78bd3d1fd6caf8228a1875078fecce936cb2e46/lib/response.js#L293
+  return json.replace( /\u2028/g, '\\u2028' ).replace( /\u2029/g, '\\u2029' );
+}
+
+main();

@@ -25,6 +25,7 @@ RECORD_ENV ?= $(BIN)/record-env
 GET_I18N ?= $(BIN)/get-i18n
 LIST_ASSETS ?= $(BIN)/list-assets
 ALL_DEVDOCS_JS ?= server/devdocs/bin/generate-devdocs-index
+USAGE_COUNT_JS ?= server/devdocs/bin/generate-components-usage-counts
 
 # files used as prereqs
 SASS_FILES := $(shell \
@@ -50,6 +51,21 @@ MD_FILES := $(shell \
 		-type f \
 		-name '*.md' \
 	| sed 's/ /\\ /g' \
+)
+UI_FILES = $(shell \
+	find client \
+		-not \( -path 'client/boot/*' -prune \) \
+		-not \( -path 'client/components/data/*' -prune \) \
+		-not \( -path 'client/config/*' -prune \) \
+		-not \( -path 'client/dispatcher/*' -prune \) \
+		-not \( -path 'client/guidestour/*' -prune \) \
+		-not \( -path 'client/lib/*' -prune \) \
+		-not \( -path 'client/state/*' -prune \) \
+		-not \( -path '*docs/*' -prune \) \
+		-not \( -path '*test/*' -prune \) \
+		-not \( -path '*/controller.js*' -prune \) \
+		-type f \
+		\( -name '*.js' -or -name '*.jsx' \) \
 )
 CLIENT_CONFIG_FILE := client/config/index.js
 
@@ -134,6 +150,9 @@ public/editor.css: node_modules $(SASS_FILES)
 
 server/devdocs/search-index.js: $(MD_FILES) $(ALL_DEVDOCS_JS)
 	@$(ALL_DEVDOCS_JS) $(MD_FILES)
+
+server/devdocs/usage-counts.js: $(UI_FILES) $(USAGE_COUNT_JS)
+	@$(USAGE_COUNT_JS) $(UI_FILES)
 
 build-server: install
 	@mkdir -p build

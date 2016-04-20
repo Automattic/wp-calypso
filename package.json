@@ -75,6 +75,7 @@
     "phone": "git+https://github.com/Automattic/node-phone.git#1.0.4-9",
     "photon": "2.0.0",
     "postcss-cli": "2.5.1",
+    "precinct": "2.5.1",
     "q": "1.0.1",
     "qrcode.react": "0.5.2",
     "qs": "4.0.0",
