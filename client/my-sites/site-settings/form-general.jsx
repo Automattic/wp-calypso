@@ -26,10 +26,17 @@ import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import TimezoneDropdown from 'components/timezone-dropdown';
-import { isFreePlan as siteHasFreePlan } from 'lib/products-values';
+import { isFreePlan as siteIsFreePlan } from 'lib/products-values';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { hasCustomDomain as siteHasCustomDomain } from 'lib/site/utils';
+import { abtest } from 'lib/abtest';
 import { CUSTOM_DOMAIN } from 'lib/plans/constants';
+
+/**
+ * Module vars
+ */
+const ABTEST_NAME = 'addCustomDomainOnSiteSettingsPage';
+const EVENT_NAME_PREFIX = 'custom-domain_site-settings_';
 
 module.exports = React.createClass( {
 
@@ -189,8 +196,9 @@ module.exports = React.createClass( {
 						disabled="disabled" />
 					{ this.renderCustomAddress() }
 				</div>
+
 				{ addressDescription }
-				{ this.renderDomainNudge() }
+				{ this.renderUpgradePlanNudge() }
 			</FormFieldset>
 		);
 	},
@@ -421,7 +429,7 @@ module.exports = React.createClass( {
 
 	renderCustomAddress() {
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			return null;
+			return;
 		}
 
 		return (
@@ -435,22 +443,34 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderDomainNudge() {
+	renderUpgradePlanNudge() {
 		// do not nudge if the site already has a custom domain
+		// @TODO: wait query-site-domains data component
 		if ( siteHasCustomDomain( this.props.site ) ) {
 			return;
 		}
 
 		// render nudge if the site plan is not free
-		if ( ! siteHasFreePlan( this.props.site.plan ) ) {
+		if ( ! siteIsFreePlan( this.props.site.plan ) ) {
 			return;
 		}
 
+		const abtestVariant = abtest( ABTEST_NAME );
+
+		if ( abtestVariant !== 'byUpgradePlanNudge' ) {
+			return;
+		}
+
+		const eventName = `${ EVENT_NAME_PREFIX }${ abtestVariant }`;
+		const title = this.translate( 'Get a free Custom Domain' );
+		const desc = this.translate( 'Custom domains are free when you upgrade to a Premium or Business plan' );
+
 		return (
 			<UpgradeNudge
-				title={ this.translate( 'Add A Custom Domain' ) }
-				message={ this.translate( 'Upgrade now and get a free custom domain.' ) }
+				title={ title }
+				message={ desc }
 				feature={ CUSTOM_DOMAIN }
+				event={ eventName }
 				icon="star"
 			/>
 		);
