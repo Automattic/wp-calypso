@@ -16,6 +16,7 @@ const user = require( 'lib/user' )();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import { startFreeTrial } from 'lib/upgrades/actions';
+import { PLAN_PREMIUM } from 'lib/plans/constants';
 
 function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeItem } ) {
 	wpcom.undocumented().sitesNew( {
@@ -88,7 +89,7 @@ function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsC
 function startFreePremiumTrial( callback, dependencies, data ) {
 	const { siteId } = dependencies;
 
-	startFreeTrial( siteId, cartItems.planItem( 'value_bundle' ), ( error ) => {
+	startFreeTrial( siteId, cartItems.planItem( PLAN_PREMIUM ), ( error ) => {
 		if ( error ) {
 			callback( error, dependencies );
 		} else {
