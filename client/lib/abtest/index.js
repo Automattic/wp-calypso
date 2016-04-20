@@ -18,6 +18,8 @@ var activeTests = require( './active-tests' ),
 	wpcom = require( 'lib/wp' ),
 	sites = require( 'lib/sites-list' )();
 
+import { PLAN_FREE } from 'lib/plans/constants';
+
 function ABTest( name ) {
 	if ( ! ( this instanceof ABTest ) ) {
 		return new ABTest( name );
@@ -116,7 +118,7 @@ ABTest.prototype.isEligibleForAbTest = function() {
 		return false;
 	}
 
-	if ( this.excludeSitesWithPaidPlan && selectedSite && selectedSite.plan.product_slug !== 'free_plan' ) {
+	if ( this.excludeSitesWithPaidPlan && selectedSite && selectedSite.plan.product_slug !== PLAN_FREE ) {
 		debug( '%s: Site with paid plan detected when excludeSitesWithPaidPlan is set to true', this.experimentId );
 		return false;
 	}
@@ -165,7 +167,7 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
 
 ABTest.prototype.hasRegisteredBeforeTestBegan = function() {
 	return user.get() && i18n.moment( user.get().date ).isBefore( this.startDate );
-}
+};
 
 ABTest.prototype.getSavedVariation = function() {
 	return getSavedVariations()[ this.experimentId ] || null;
