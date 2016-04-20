@@ -1,4 +1,4 @@
-var plugins = require( './mock-plugins' );
+var plugins = require( './plugins' );
 module.exports = {
 	ID: 91234567890,
 	URL: 'http://example.com/site1',

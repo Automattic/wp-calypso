@@ -1,8 +1,8 @@
-var plugins = require( './mock-plugins' ),
-	updatePluginsList = require( 'lib/mock-plugins-updated' ),
-	site = require( './mock-site' ),
-	multiSite = require( './mock-multi-site' ),
-	updatePluginData = require( 'lib/mock-updated-plugin' );
+var plugins = require( './plugins' ),
+	updatePluginsList = require( './plugins-updated' ),
+	site = require( './site' ),
+	multiSite = require( './multi-site' ),
+	updatePluginData = require( './updated-plugin' );
 
 module.exports = {
 	// Fetch Data
