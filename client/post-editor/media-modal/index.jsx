@@ -169,18 +169,19 @@ module.exports = React.createClass( {
 	},
 
 	confirmDeleteMedia: function( accepted ) {
-		var toDelete = this.props.mediaLibrarySelectedItems;
+		const { site, mediaLibrarySelectedItems } = this.props;
 
-		if ( ! this.props.site || ! accepted ) {
+		if ( ! site || ! accepted ) {
 			return;
 		}
 
+		let toDelete = mediaLibrarySelectedItems;
 		if ( ModalViews.DETAIL === this.state.activeView ) {
-			toDelete = MediaUtils.sortItemsByDate( toDelete )[ this.state.detailSelectedIndex ];
+			toDelete = toDelete[ this.state.detailSelectedIndex ];
 			this.setNextAvailableDetailView();
 		}
 
-		MediaActions.delete( this.props.site.ID, toDelete );
+		MediaActions.delete( site.ID, toDelete );
 		analytics.mc.bumpStat( 'editor_media_actions', 'delete_media' );
 	},
 
@@ -252,10 +253,8 @@ module.exports = React.createClass( {
 			MediaActions.setLibrarySelectedItems( site.ID, items );
 		}
 
-		// The detail view sorts items by dates, so to ensure proper selected
-		// index is set, first sort the selected set
-		const sortedItems = MediaUtils.sortItemsByDate( items );
-		this.setDetailSelectedIndex( findIndex( sortedItems, { ID: item.ID } ) );
+		// Find and set detail selected index for the edited item
+		this.setDetailSelectedIndex( findIndex( items, { ID: item.ID } ) );
 
 		analytics.mc.bumpStat( 'editor_media_actions', 'edit_button_contextual' );
 		analytics.ga.recordEvent( 'Media', 'Clicked Contextual Edit Button' );
