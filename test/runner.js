@@ -39,7 +39,7 @@ mocha.suite.beforeAll( boot.before );
 mocha.suite.afterAll( boot.after );
 
 files = program.args;
-if ( files.length === 0 && ! process.env.CIRCLECI ) {
+if ( files.length === 0 ) {
 	files = glob.sync( process.env.TEST_ROOT + '/**/test/*.@(js|jsx)' );
 }
 files.forEach( setup.addFile );
