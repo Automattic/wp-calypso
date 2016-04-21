@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react'
+import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'components/gridicon';
-import { posToCss, bullseyePositioners, getStepPosition } from './positioning';
+import { posToCss, getStepPosition, getBullseyePosition, targetForSlug } from './positioning';
 
 class GuidesBasicStep extends Component {
 	render() {
@@ -112,7 +112,9 @@ class GuidesActionStep extends Component {
 	}
 
 	addTargetListener() {
-		const { target = false, onNext } = this.props;
+		const { targetSlug = false, onNext } = this.props;
+		const target = targetForSlug( targetSlug );
+
 		if ( onNext && target.addEventListener ) {
 			target.addEventListener( 'click', onNext );
 		}
@@ -120,25 +122,18 @@ class GuidesActionStep extends Component {
 	}
 
 	removeTargetListener() {
-		const { target = false, onNext } = this.props;
+		const { targetSlug = false, onNext } = this.props;
+		const target = targetForSlug( targetSlug );
+
 		if ( onNext && target.removeEventListener ) {
 			target.removeEventListener( 'click', onNext );
 		}
 		target && target.classList.remove( 'guidestours__overlay' );
 	}
 
-	getBullseyePosition() {
-		const { placement = 'center', target } = this.props;
-		const rect = target
-			? target.getBoundingClientRect()
-			: global.window.document.body.getBoundingClientRect();
-
-		return bullseyePositioners[ placement ]( rect );
-	}
-
 	render() {
 		const stepPos = getStepPosition( this.props );
-		const bullseyePos = this.getBullseyePosition();
+		const bullseyePos = getBullseyePosition( this.props );
 		const stepCoords = posToCss( stepPos );
 		const pointerCoords = posToCss( bullseyePos );
 
@@ -163,7 +158,7 @@ class GuidesActionStep extends Component {
 }
 
 GuidesBasicStep.propTypes = {
-	target: PropTypes.object,
+	targetSlug: PropTypes.string,
 	placement: PropTypes.string,
 	// text can be a translated string or a translated string with components
 	text: PropTypes.oneOfType( [
@@ -176,7 +171,7 @@ GuidesBasicStep.propTypes = {
 };
 
 GuidesActionStep.propTypes = {
-	target: PropTypes.object.isRequired,
+	targetSlug: PropTypes.string.isRequired,
 	placement: PropTypes.string,
 	// text can be a translated string or a translated string with components
 	text: PropTypes.oneOfType( [
@@ -189,7 +184,7 @@ GuidesActionStep.propTypes = {
 };
 
 GuidesLinkStep.propTypes = {
-	target: PropTypes.object,
+	targetSlug: PropTypes.string,
 	placement: PropTypes.string,
 	// text can be a translated string or a translated string with components
 	text: PropTypes.oneOfType( [
@@ -204,7 +199,7 @@ GuidesLinkStep.propTypes = {
 };
 
 GuidesFirstStep.propTypes = {
-	target: PropTypes.object,
+	targetSlug: PropTypes.string,
 	placement: PropTypes.string,
 	// text can be a translated string or a translated string with components
 	text: PropTypes.oneOfType( [
@@ -217,7 +212,7 @@ GuidesFirstStep.propTypes = {
 };
 
 GuidesFinishStep.propTypes = {
-	target: PropTypes.object,
+	targetSlug: PropTypes.string,
 	placement: PropTypes.string,
 	// text can be a translated string or a translated string with components
 	text: PropTypes.oneOfType( [
