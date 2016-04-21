@@ -145,19 +145,39 @@ function renderProvisionPlugins() {
 }
 
 controller = {
+	validateFilters: function( filter, context, next ) {
+		const wpcomFilters = [ 'standard', 'business', 'premium' ];
+		const siteUrl = route.getSiteFragment( context.path );
+		const site = sites.getSelectedSite();
+		filter || ( filter = context.params.plugin );
+
+		// bail if /plugins/:site_id?
+		if ( siteUrl && filter.toLowerCase() === siteUrl.toString().toLowerCase() ) {
+			next();
+			return;
+		}
+
+		/* When site URL is present, bail if
+		 * - the plugin parameter is not on the WordPress.com list for a WordPress.com site.
+		 * or
+		 * - the plugin parameter is on the WordPress.com list for a Jetpack site.
+		 * if no site URL is provided, bail if a WordPress.com filter was provided.
+		 * Only Jetpack plugins should work when no URL is provided.
+		 */
+		if ( siteUrl && ( ( ! site.jetpack && ! includes( [ 'all' ].concat( wpcomFilters ), filter.toLowerCase() ) ) || ( site.jetpack && includes( wpcomFilters, filter.toLowerCase() ) ) ) ) {
+			page.redirect( '/plugins/' + siteUrl );
+			return;
+		} else if ( ! siteUrl && includes( wpcomFilters, filter.toLowerCase() ) ) {
+			page.redirect( '/plugins' );
+			return;
+		}
+
+		next();
+	},
 
 	plugins: function( filter, context ) {
 		var basePath = route.sectionify( context.path ),
-			siteUrl = route.getSiteFragment( context.path ),
-			site = sites.getSelectedSite();
-
-		if ( siteUrl && ( ( site.jetpack && ! includes( jetpackFilters, filter ) ) || ( ! site.jetpack && ! includes( wpcomFilters, filter ) ) ) ) {
-			page.redirect( '/plugins/' + siteUrl );
-			return;
-		} else if ( ! siteUrl && ! includes( jetpackFilters, filter ) ) {
-			page.redirect( '/plugins/' );
-			return;
-		}
+			siteUrl = route.getSiteFragment( context.path );
 
 		context.params.pluginFilter = filter;
 		basePath = basePath.replace( '/' + filter, '' );
@@ -166,16 +186,10 @@ controller = {
 	},
 
 	plugin: function( context ) {
-		var siteUrl = route.getSiteFragment( context.path ),
-			site = sites.getSelectedSite();
+		var siteUrl = route.getSiteFragment( context.path );
 
 		if ( siteUrl && context.params.plugin && context.params.plugin === siteUrl.toString() ) {
 			controller.plugins( 'all', context );
-			return;
-		}
-
-		if ( siteUrl && ! site.jetpack ) {
-			page.redirect( '/plugins/' + siteUrl );
 			return;
 		}
 
