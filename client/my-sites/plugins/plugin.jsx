@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import debugModule from 'debug';
 import page from 'page';
 import uniq from 'lodash/uniq';
-import config from 'config';
+import upperFirst from 'lodash/upperFirst';
 
 /**
  * Internal dependencies
@@ -28,7 +28,7 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginSections from 'my-sites/plugins/plugin-sections';
 import pluginsAccessControl from 'my-sites/plugins/access-control';
 import EmptyContent from 'components/empty-content';
-import FeatureExample from 'components/feature-example'
+import FeatureExample from 'components/feature-example';
 import WpcomPluginsList from 'my-sites/plugins-wpcom/plugins-list';
 
 /**
@@ -115,7 +115,7 @@ const SinglePlugin = React.createClass( {
 	},
 
 	updatePageTitle() {
-		const pageTitle = this.state.plugin ? this.state.plugin.name : this.props.pluginSlug;
+		const pageTitle = upperFirst( this.state.plugin ? this.state.plugin.name : this.props.pluginSlug );
 		if ( _currentPageTitle === pageTitle ) {
 			return;
 		}
