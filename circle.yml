@@ -13,11 +13,11 @@ test:
           - client/**/*.jsx
           - server/**/*.js
           - server/**/*.jsx
-    - MOCHA_FILE=./test-results-client.xml npm run test-client -- --reporter=mocha-junit-reporter:
+    - MOCHA_FILE=./test-results-client.xml npm run test-client -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
         parallel: true
-    - MOCHA_FILE=./test-results-server.xml npm run test-server -- --reporter=mocha-junit-reporter:
+    - MOCHA_FILE=./test-results-server.xml npm run test-server -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
         parallel: true
-    - MOCHA_FILE=./test-results-test.xml npm run test-test -- --reporter=mocha-junit-reporter:
+    - MOCHA_FILE=./test-results-test.xml npm run test-test -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
         parallel: true
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/ && find . -type f -regex  "./test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;:
