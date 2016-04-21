@@ -1,44 +1,15 @@
 ## Single test runner
 
-Single test runner loads only test files that are listed in `tests.json` file in top level directory. Configuration reflects folders structure.
+### How to add a new test file
 
-### Extending tests.json
+Single test runner supports automatic test discovery. You only need to put your test file into `test` subfolder next to file under test.
+Runner uses this `glob` pattern `@(client|server|test)/**/test/*.@(js|jsx)` to find test files.
 
-Config file location: `client/tests.json`
+We should use the same name for test file like we named test we want to cover with tests.
 
-Example folder: `client/state/plugins/wporg/test/`
-
-Test files we want to add to the runner:
-* `actions`
-* `selectors`
-* `reducer.js`
-
-It translates into the following code in the config file:
-```js
-{
-	"state": {
-		"plugins": {
-			"wporg": {
-				"test": [ "actions", "selectors", "reducer" ]
-			}
-		}
-}
-```
-
-Test output for added files:
-```
-...
-state
-	plugins
-		wporg
-			reducer (taken from describe inside the file)
-				√ Test name
-			test-actions
-				√ Test name
-			test-selectors
-				√ Test name
-...
-```
+If we ever need to add non-test files to `test` folder we should put them on a deeper level. Common choices are:
+* `test/mocks/name.js` for test mocks
+* `test/fixtures/name.js` for test data
 
 ### How to run single test runner
 
