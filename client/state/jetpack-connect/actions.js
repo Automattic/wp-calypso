@@ -39,7 +39,7 @@ export default {
 				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
 				url: url
 			} );
-		}
+		};
 	},
 
 	checkUrl( url ) {
@@ -87,7 +87,7 @@ export default {
 					error: error
 				} );
 			} );
-		}
+		};
 	},
 	goToRemoteAuth( url ) {
 		return ( dispatch ) => {
@@ -139,7 +139,7 @@ export default {
 					} );
 				}
 			);
-		}
+		};
 	},
 	authorize( queryObject ) {
 		return ( dispatch ) => {
@@ -189,6 +189,6 @@ export default {
 					error: error
 				} );
 			} );
-		}
+		};
 	}
 };
