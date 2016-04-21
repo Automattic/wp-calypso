@@ -9,7 +9,8 @@ import { expect } from 'chai';
 import {
 	getPlansBySite,
 	getPlansBySiteId,
-	hasDomainCredit
+	hasDomainCredit,
+	isRequestingSitePlans
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -48,7 +49,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#hasDomainCredit()', () => {
-		it( 'should return if plan has domain credit', () => {
+		it( 'should return true if plan has domain credit', () => {
 			const state = {
 				sites: {
 					plans: {
@@ -65,6 +66,33 @@ describe( 'selectors', () => {
 
 			expect( hasDomainCredit( state, 77203074 ) ).to.equal( true );
 			expect( hasDomainCredit( state, 2916284 ) ).to.equal( false );
+		} );
+	} );
+	describe( '#isRequestingSitePlans()', () => {
+		it( 'should return true if we are fetching plans', () => {
+			const state = {
+				sites: {
+					plans: {
+						2916284: {
+							data: null,
+							error: null,
+							hasLoadedFromServer: false,
+							isRequesting: true
+						},
+						77203074: {
+							data: null,
+							error: null,
+							hasLoadedFromServer: false,
+							isRequesting: false
+						}
+
+					}
+				}
+			};
+
+			expect( isRequestingSitePlans( state, 2916284 ) ).to.equal( true );
+			expect( isRequestingSitePlans( state, 77203074 ) ).to.equal( false );
+			expect( isRequestingSitePlans( state, 'unknown' ) ).to.equal( false );
 		} );
 	} );
 } );

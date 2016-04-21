@@ -1,22 +1,21 @@
 /**
  * External dependencies
  */
-var connect = require( 'react-redux' ).connect,
-	React = require( 'react' );
+import { connect } from 'react-redux';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var StoreConnection = require( 'components/data/store-connection' ),
-	DomainsStore = require( 'lib/domains/store' ),
-	CartStore = require( 'lib/cart/store' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	upgradesActions = require( 'lib/upgrades/actions' ),
-	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
-	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans,
-	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite;
+import StoreConnection from 'components/data/store-connection';
+import DomainsStore from 'lib/domains/store';
+import CartStore from 'lib/cart/store';
+import observe from 'lib/mixins/data-observe';
+import * as upgradesActions from 'lib/upgrades/actions';
+import QueryPlans from 'components/data/query-plans';
+import { getPlansBySite } from 'state/sites/plans/selectors';
 
-var stores = [
+const stores = [
 	DomainsStore,
 	CartStore
 ];
@@ -33,7 +32,7 @@ function getStateFromStores( props ) {
 	};
 }
 
-var DomainManagementData = React.createClass( {
+const DomainManagementData = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object.isRequired,
 		productsList: React.PropTypes.object.isRequired,
@@ -47,7 +46,6 @@ var DomainManagementData = React.createClass( {
 	componentWillMount: function() {
 		if ( this.props.sites.getSelectedSite() ) {
 			upgradesActions.fetchDomains( this.props.sites.getSelectedSite().ID );
-			this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
 		}
 
 		this.prevSelectedSite = this.props.sites.getSelectedSite();
@@ -56,40 +54,37 @@ var DomainManagementData = React.createClass( {
 	componentWillUpdate: function() {
 		if ( this.prevSelectedSite !== this.props.sites.getSelectedSite() ) {
 			upgradesActions.fetchDomains( this.props.sites.getSelectedSite().ID );
-			this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
 		}
 
 		this.prevSelectedSite = this.props.sites.getSelectedSite();
 	},
 
 	render: function() {
+		const selectedSite = this.props.sites.getSelectedSite();
 		return (
-			<StoreConnection
-				component={ this.props.component }
-				stores={ stores }
-				getStateFromStores={ getStateFromStores }
-				products={ this.props.productsList.get() }
-				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() }
-				sitePlans={ this.props.sitePlans }
-				context={ this.props.context } />
+			<div>
+				<StoreConnection
+					component={ this.props.component }
+					stores={ stores }
+					getStateFromStores={ getStateFromStores }
+					products={ this.props.productsList.get() }
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSite={ this.props.sites.getSelectedSite() }
+					sitePlans={ this.props.sitePlans }
+					context={ this.props.context } />
+				{
+					selectedSite &&
+					<QueryPlans siteId={ selectedSite.ID } />
+				}
+			</div>
 		);
 	}
 } );
 
-module.exports = connect(
+export default connect(
 	function( state, props ) {
 		return {
 			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() )
-		}
-	},
-	function( dispatch ) {
-		return {
-			fetchSitePlans: ( sitePlans, site ) => {
-				if ( shouldFetchSitePlans( sitePlans, site ) ) {
-					dispatch( fetchSitePlans( site.ID ) );
-				}
-			}
-		}
+		};
 	}
 )( DomainManagementData );

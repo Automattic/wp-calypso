@@ -30,3 +30,8 @@ export function hasDomainCredit( state, siteId ) {
 	}
 	return null;
 }
+
+export function isRequestingSitePlans( state, siteId ) {
+	const plans = getPlansBySiteId( state, siteId );
+	return plans.isRequesting;
+}
