@@ -51,6 +51,16 @@ export function getSectionName( state ) {
 }
 
 /**
+ * Returns whether a section is loading.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {Boolean}       Whether the section is loading
+ */
+export function isSectionLoading( state ) {
+	return state.ui.isLoading;
+}
+
+/**
  * Returns the current state for Guided Tours.
  *
  * This includes the raw state from state/ui/guidesTour, but also the available
@@ -61,6 +71,7 @@ export function getSectionName( state ) {
  * @return {Object}        Current Guided Tours state
  */
 const getRawGuidesTourState = state => get( state, 'ui.guidesTour', false );
+
 export const getGuidesTourState = createSelector(
 	state => {
 		const tourState = getRawGuidesTourState( state );
@@ -68,8 +79,8 @@ export const getGuidesTourState = createSelector(
 		const stepConfig = getToursConfig()[ stepName ] || false;
 		return Object.assign( {}, tourState, {
 			stepConfig,
-			shouldShow: shouldReallyShow || false,
+			shouldShow: !!( ! isSectionLoading( state ) && shouldReallyShow ),
 		} );
 	},
-	getRawGuidesTourState
+	state => [ getRawGuidesTourState( state ), isSectionLoading( state ) ]
 );
