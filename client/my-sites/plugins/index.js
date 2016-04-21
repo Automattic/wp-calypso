@@ -10,13 +10,6 @@ var controller = require( 'my-sites/controller' ),
 	config = require( 'config' ),
 	pluginsController = require( './controller' );
 
-/**
- * Module variables
- */
-var pluginFilters = config.isEnabled( 'manage/plugins/wpcom' )
-	? [ 'active', 'inactive', 'updates', 'standard', 'premium', 'business' ]
-	: [ 'active', 'inactive', 'updates' ];
-
 module.exports = function() {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
 		page( '/plugins/setup', controller.siteSelection, controller.navigation, pluginsController.setupPlugins );
@@ -29,7 +22,7 @@ module.exports = function() {
 
 		page( '/plugins', controller.siteSelection, controller.navigation, pluginsController.plugins.bind( null, 'all' ) );
 
-		pluginFilters.forEach( function( filter ) {
+		[ 'active', 'inactive', 'updates' ].forEach( function( filter ) {
 			page( '/plugins/' + filter + '/:site_id?', controller.siteSelection, controller.navigation, pluginsController.jetpackCanUpdate.bind( null, filter ), pluginsController.plugins.bind( null, filter ) );
 		} );
 
