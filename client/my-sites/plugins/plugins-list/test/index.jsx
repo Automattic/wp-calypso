@@ -43,7 +43,7 @@ describe( 'PluginsList', () => {
 		PluginsList = require( '../' );
 	} );
 
-	describe.only( 'rendering bulk actions', function() {
+	describe( 'rendering bulk actions', function() {
 		let renderedPluginsList, plugins, props;
 
 		before( () => {
