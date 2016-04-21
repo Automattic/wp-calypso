@@ -249,17 +249,6 @@ function filterFlowName( flowName ) {
 		return 'free-trial';
 	}
 
-	const locale = getLocaleSlug();
-	// Only allow the `headstart` flow for EN users.
-	if ( 'headstart' === flowName && 'en' !== locale && 'en-gb' !== locale ) {
-		return 'main';
-	}
-
-	// Headstarted "default" flow (`newsite`) with vertical selection for EN users, coming from the homepage single button.
-	if ( 'website' === flowName && ( 'en' === locale || 'en-gb' === locale ) ) {
-		return 'newsite';
-	}
-
 	return flowName;
 }
 
