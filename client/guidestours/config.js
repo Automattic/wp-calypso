@@ -53,8 +53,7 @@ function get() {
 			next: 'finish',
 		},
 		finish: {
-			target: 'me',
-			placement: 'beside',
+			placement: 'center',
 			text: i18n.translate( "{{strong}}That's it!{{/strong}} Now that you know a few of the basics, feel free to wander around.", {
 				components: {
 					strong: <strong />,
@@ -64,9 +63,9 @@ function get() {
 			linkLabel: i18n.translate( 'Get the Most from WordPress.com' ),
 			linkUrl: 'https://learn.wordpress.com',
 		}
-	}
+	};
 }
 
 export default {
 	get,
-}
+};
