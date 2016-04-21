@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Button from 'components/button';
 import Card from 'components/card';
 import { cartItems } from 'lib/cart-values';
@@ -61,7 +61,7 @@ function canEditPaymentDetails( purchase ) {
  * @return {boolean} Whether or not the data is loading
  */
 function isDataLoading( props ) {
-	return ! props.hasLoadedSites || ! props.selectedPurchase.hasLoadedFromServer;
+	return ! props.hasLoadedSites || ! props.selectedPurchase.hasLoadedUserPurchasesFromServer;
 }
 
 const ManagePurchase = React.createClass( {

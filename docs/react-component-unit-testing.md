@@ -4,27 +4,14 @@ Calypso has a lot of React UI components. (Try for example running `find -name *
 
 ## [Getting started](#getting-started)
 
-To run all current tests, run `make test` in the root source folder. You can also run individual tests by going into their folder and running `make test` there.
-
-An easy way to find existing tests, to see how they were done or otherwise, is to run `find -name Makefile` under the folder from which you want to find the tests. This works because Makefiles are almost exclusively used for setting up a test environment for a folder. Searching the Calypso Github repository also works.
+To run all current tests, run `npm test` in the root source folder. You can also run individual tests. Check [How to run single test runner](https://github.com/Automattic/wp-calypso/blob/master/test/README.md#how-to-run-single-test-runner) documentation for more details.
 
 Going through the current tests is a good way to get ideas for how different kinds of things can be tested.
 
 ### [Set up a test environment](#setting-up-environment)
-Tests are currently set up using Makefiles. If the component you're testing uses jsx syntax (which a lot of the React code uses, read more about it [here](https://facebook.github.io/react/docs/jsx-in-depth.html)) and hence is named .jsx, the --compilers flag with the jsx:jsx-require-extension option is needed. Otherwise you should leave it out.
-```
-REPORTER ?= spec
-MOCHA ?= ../../../node_modules/.bin/mocha
 
-test:
-     @NODE_ENV=test NODE_PATH=test:../../ $(MOCHA) --compilers jsx:babel/register --reporter $(REPORTER)
-
-.PHONY: test
-```
-
-
-Put this next to your component in a file named Makefile. Then make a test folder next to it and place your tests there. Now your tests should be runnable both from your component's folder and from all folders above it.
-
+It's very possible that your tests will assume the existence of a browser environment to work properly.
+Refer to the [Use fake DOM](https://github.com/Automattic/wp-calypso/tree/master/test/test/helpers/use-fake-dom) test helper documentation to learn how to configure an emulated DOM for your test.
 
 ### [What to test?](#what-to-test)
 

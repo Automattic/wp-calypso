@@ -2,14 +2,12 @@
  * External Dependencies
  */
 import page from 'page';
-import ReactDom from 'react-dom';
 import React from 'react';
-import { Provider } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import DnsData from 'components/data/domain-management/dns' ;
 import DomainManagement from './domain-management';
 import DomainManagementData from 'components/data/domain-management';
@@ -51,7 +49,7 @@ module.exports = {
 
 		renderWithReduxStore(
 			<DomainManagementData
-				component={ DomainManagement.List }
+				component={ DomainManagement.List.default }
 				context={ pageContext }
 				productsList={ productsList }
 				sites={ sites } />,
@@ -80,7 +78,7 @@ module.exports = {
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
-		)
+		);
 	},
 
 	domainManagementPrimaryDomain: function( pageContext ) {
@@ -102,7 +100,7 @@ module.exports = {
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
-		)
+		);
 	},
 
 	domainManagementContactsPrivacy( pageContext ) {
@@ -125,7 +123,7 @@ module.exports = {
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
-		)
+		);
 	},
 
 	domainManagementEditContactInfo( pageContext ) {
@@ -148,7 +146,7 @@ module.exports = {
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
-		)
+		);
 	},
 
 	domainManagementEmail( pageContext ) {
@@ -192,7 +190,7 @@ module.exports = {
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
-		)
+		);
 	},
 
 	domainManagementDns( pageContext ) {
@@ -213,7 +211,7 @@ module.exports = {
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
-		)
+		);
 	},
 	domainManagementNameServers( pageContext ) {
 		setTitle(
@@ -233,7 +231,7 @@ module.exports = {
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
-		)
+		);
 	},
 
 	domainManagementPrivacyProtection( pageContext ) {
@@ -256,7 +254,7 @@ module.exports = {
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
-		)
+		);
 	},
 
 	domainManagementAddGoogleApps( pageContext ) {
@@ -279,7 +277,7 @@ module.exports = {
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
-		)
+		);
 	},
 
 	domainManagementRedirectSettings( pageContext ) {
@@ -300,7 +298,7 @@ module.exports = {
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
-		)
+		);
 	},
 
 	domainManagementIndex() {
@@ -320,6 +318,6 @@ module.exports = {
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
-		)
+		);
 	}
 };

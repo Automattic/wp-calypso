@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import page from 'page';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import InviteFormHeader from 'my-sites/invites/invite-form-header';
 import { acceptInvite } from 'lib/invites/actions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 let InviteAcceptLoggedIn = React.createClass( {
 
@@ -28,10 +29,12 @@ let InviteAcceptLoggedIn = React.createClass( {
 	accept() {
 		this.setState( { submitting: true } );
 		this.props.acceptInvite( this.props.invite, error => {
-			if ( ! error ) {
-				page( this.props.redirectTo );
-			} else {
+			if ( error ) {
 				this.setState( { submitting: false } );
+			} else if ( get( this.props, 'invite.site.is_vip' ) ) {
+				window.location.href = this.props.redirectTo;
+			} else {
+				page( this.props.redirectTo );
 			}
 		} );
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );

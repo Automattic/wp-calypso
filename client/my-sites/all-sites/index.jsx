@@ -21,20 +21,29 @@ export default React.createClass( {
 			onSelect: function() {},
 			href: null,
 			isSelected: false,
-			showCount: true
+			showCount: true,
+			domain: ''
 		};
 	},
 
 	propTypes: {
-		sites: React.PropTypes.object.isRequired,
+		sites: React.PropTypes.array,
 		onSelect: React.PropTypes.func,
 		href: React.PropTypes.string,
 		isSelected: React.PropTypes.bool,
-		showCount: React.PropTypes.bool
+		showCount: React.PropTypes.bool,
+		count: React.PropTypes.number,
+		title: React.PropTypes.string,
+		domain: React.PropTypes.string
 	},
 
 	onSelect( event ) {
 		this.props.onSelect( event );
+	},
+
+	renderCount() {
+		const count = this.props.count || user.get().visible_site_count;
+		return <Count count={ count } />;
 	},
 
 	render() {
@@ -43,13 +52,16 @@ export default React.createClass( {
 			'is-selected': this.props.isSelected
 		} );
 
+		const title = this.props.title || this.translate( 'All My Sites' );
+
 		return (
 			<div className={ allSitesClass }>
 				<a className="site__content" href={ this.props.href } onTouchTap={ this.onSelect }>
-					{ this.props.showCount && <Count count={ user.get().visible_site_count } /> }
+					{ this.props.showCount && this.renderCount() }
 					<div className="site__info">
-						<span className="site__title">{ this.translate( 'All My Sites' ) }</span>
-						<AllSitesIcon sites={ this.props.sites.get() } />
+						<span className="site__title">{ title }</span>
+						{ this.props.domain && <span className="site__domain">{ this.props.domain }</span> }
+						<AllSitesIcon sites={ this.props.sites } />
 					</div>
 				</a>
 			</div>

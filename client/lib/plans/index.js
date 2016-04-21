@@ -6,6 +6,7 @@ import page from 'page';
 import moment from 'moment';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
+import invoke from 'lodash/invoke';
 
 /**
  * Internal dependencies
@@ -16,9 +17,14 @@ import {
 	isFreeJetpackPlan,
 	isJetpackPlan
 } from 'lib/products-values';
-import { featuresList } from './constants';
+import { featuresList, plansList } from './constants';
+import { PLAN_FREE } from 'lib/plans/constants';
 import SitesList from 'lib/sites-list';
 const sitesList = SitesList();
+
+export function getPlan( plan ) {
+	return plansList[ plan ];
+}
 
 export function getValidFeatureKeys() {
 	return Object.keys( featuresList );
@@ -29,9 +35,11 @@ export function isValidFeatureKey( feature ) {
 }
 
 export function getFeatureByKey( feature ) {
-	return featuresList.hasOwnProperty( feature )
-		? featuresList[ feature ]
-		: null;
+	return featuresList[ feature ];
+}
+
+export function getFeatureTitle( feature ) {
+	return invoke( featuresList, [ feature, 'getTitle' ] );
 }
 
 export function getSitePlanSlug( siteID ) {
@@ -44,12 +52,12 @@ export function getSitePlanSlug( siteID ) {
 	return get( site, 'plan.product_slug' );
 }
 
+export function planHasFeature( plan, feature ) {
+	return includes( get( featuresList, [ feature, 'plans' ] ), plan );
+}
+
 export function hasFeature( feature, siteID ) {
-	if ( ! featuresList[ feature ] ) {
-		return false;
-	}
-	const plan = getSitePlanSlug( siteID );
-	return includes( featuresList[ feature ].plans, plan );
+	return planHasFeature( getSitePlanSlug( siteID ), feature );
 }
 
 export function addCurrentPlanToCartAndRedirect( sitePlans, selectedSite ) {
@@ -70,34 +78,34 @@ export function getCurrentTrialPeriodInDays( plan ) {
 	}
 
 	return userFacingExpiryMoment.diff( subscribedDayMoment, 'days' );
-};
+}
 
 export function getDayOfTrial( plan ) {
 	const { subscribedDayMoment } = plan;
 
 	// we return the difference plus one day so that the first day is day 1 instead of day 0
 	return moment().startOf( 'day' ).diff( subscribedDayMoment, 'days' ) + 1;
-};
+}
 
 export function getDaysUntilUserFacingExpiry( plan ) {
 	const { userFacingExpiryMoment } = plan;
 
 	return userFacingExpiryMoment.diff( moment().startOf( 'day' ), 'days' );
-};
+}
 
 export function getDaysUntilExpiry( plan ) {
 	const { expiryMoment } = plan;
 
 	return expiryMoment.diff( moment().startOf( 'day' ), 'days' );
-};
+}
 
 export function isInGracePeriod( plan ) {
 	return getDaysUntilUserFacingExpiry( plan ) <= 0;
-};
+}
 
 export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isRequesting && selectedSite;
-};
+}
 
 export function filterPlansBySiteAndProps( plans, site, hideFreePlan ) {
 	return plans.filter( function( plan ) {
@@ -105,10 +113,10 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan ) {
 			return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan );
 		}
 
-		if ( hideFreePlan && 'free_plan' === plan.product_slug ) {
+		if ( hideFreePlan && PLAN_FREE === plan.product_slug ) {
 			return false;
 		}
 
 		return ! isJetpackPlan( plan );
 	} );
-};
+}

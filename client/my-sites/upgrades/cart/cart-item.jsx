@@ -1,24 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	canRemoveFromCart = require( 'lib/cart-values' ).canRemoveFromCart,
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	getIncludedDomain = cartItems.getIncludedDomain,
-	isCredits = require( 'lib/products-values' ).isCredits,
-	isDomainProduct = require( 'lib/products-values' ).isDomainProduct,
-	isGoogleApps = require( 'lib/products-values' ).isGoogleApps,
-	upgradesActions = require( 'lib/upgrades/actions' ),
-	abtest = require( 'lib/abtest' ).abtest,
-	{ isPremium, isBusiness } = require( 'lib/products-values' ),
-	isTheme = require( 'lib/products-values' ).isTheme;
+import analytics from 'lib/analytics';
+import { canRemoveFromCart, cartItems } from 'lib/cart-values';
+import {
+	isCredits,
+	isDomainProduct,
+	isGoogleApps,
+	isTheme
+} from 'lib/products-values';
+import * as upgradesActions from 'lib/upgrades/actions';
+import config from 'config';
 
-module.exports = React.createClass( {
+const getIncludedDomain = cartItems.getIncludedDomain;
+
+export default React.createClass( {
 	displayName: 'CartItem',
 
 	removeFromCart: function( event ) {
@@ -55,12 +56,8 @@ module.exports = React.createClass( {
 	},
 
 	monthlyPrice: function() {
-		const { cost, currency } = this.props.cartItem,
-			isInSignup = this.props.cartItem.extra && this.props.cartItem.extra.context === 'signup';
-		if ( ! isInSignup ||
-				! ( isPremium( this.props.cartItem ) || isBusiness( this.props.cartItem ) ) ||
-				abtest( 'monthlyPlanPricing' ) === 'yearly' ||
-				cost === 0 ) {
+		const { cost, currency } = this.props.cartItem;
+		if ( ! config.isEnabled( 'monthly-plan-pricing' ) || cost === 0 ) {
 			return null;
 		}
 

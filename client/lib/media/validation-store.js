@@ -1,25 +1,27 @@
 /**
  * External dependencies
  */
-var mapValues = require( 'lodash/mapValues' ),
-	without = require( 'lodash/without' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	pickBy = require( 'lodash/pickBy' );
-
+import mapValues from 'lodash/mapValues';
+import without from 'lodash/without';
+import isEmpty from 'lodash/isEmpty';
+import pickBy from 'lodash/pickBy';
+import get from 'lodash/get';
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	sites = require( 'lib/sites-list' )(),
-	MediaUtils = require( './utils' ),
-	MediaValidationErrors = require( './constants' ).ValidationErrors;
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
+import Sites from 'lib/sites-list';
+import MediaUtils from './utils';
+import { ValidationErrors as MediaValidationErrors } from './constants';
+import { PLAN_FREE } from 'lib/plans/constants';
 
 /**
  * Module variables
  */
-var MediaValidationStore = {},
-	_errors;
+const MediaValidationStore = {};
+const _errors = {};
+const sites = Sites();
 
 /**
  * Errors are represented as an object, mapping a site to an object of items
@@ -38,7 +40,6 @@ var MediaValidationStore = {},
  * @type {Object}
  * @private
  */
-_errors = {};
 
 emitter( MediaValidationStore );
 
@@ -59,7 +60,11 @@ function validateItem( siteId, item ) {
 	}
 
 	if ( ! MediaUtils.isSupportedFileTypeForSite( item, site ) ) {
-		itemErrors.push( MediaValidationErrors.FILE_TYPE_UNSUPPORTED );
+		if ( get( site, 'plan.product_slug' ) === PLAN_FREE && MediaUtils.isSupportedFileTypeInPremium( item, site ) ) {
+			itemErrors.push( MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN );
+		} else {
+			itemErrors.push( MediaValidationErrors.FILE_TYPE_UNSUPPORTED );
+		}
 	}
 
 	if ( true === MediaUtils.isExceedingSiteMaxUploadSize( item.size, site ) ) {
@@ -114,7 +119,7 @@ function receiveServerError( siteId, itemId, errors ) {
 					return MediaValidationErrors.NOT_ENOUGH_SPACE;
 				}
 				if ( error.message.indexOf( 'You have used your space quota' ) === 0 ) {
-					return MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT
+					return MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT;
 				}
 				return MediaValidationErrors.SERVER_ERROR;
 			default:

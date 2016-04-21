@@ -33,7 +33,7 @@ import flows from './config/flows';
 import WpcomLoginForm from './wpcom-login-form';
 import userModule from 'lib/user';
 const user = userModule();
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import SignupProcessingScreen from 'signup/processing-screen';
 import utils from './utils';
 import * as oauthToken from 'lib/oauth-token';
@@ -90,18 +90,18 @@ const Signup = React.createClass( {
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
 			onComplete: function( dependencies, destination ) {
-				var timeSinceLoading = this.state.loadingScreenStartTime ?
-					Date.now() - this.state.loadingScreenStartTime :
-					undefined;
+				const timeSinceLoading = this.state.loadingScreenStartTime
+					? Date.now() - this.state.loadingScreenStartTime
+					: undefined;
+				const filteredDestination = utils.getDestination( destination, dependencies, this.props.flowName );
 
 				if ( timeSinceLoading && timeSinceLoading < MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED ) {
 					return delay(
-						this.handleFlowComplete.bind( this, dependencies, destination ),
+						this.handleFlowComplete.bind( this, dependencies, filteredDestination ),
 						MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED - timeSinceLoading
 					);
 				}
-
-				return this.handleFlowComplete( dependencies, destination );
+				return this.handleFlowComplete( dependencies, filteredDestination );
 			}.bind( this )
 		} );
 

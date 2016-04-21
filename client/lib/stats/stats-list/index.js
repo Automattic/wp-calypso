@@ -10,7 +10,7 @@ var Emitter = require( 'lib/mixins/emitter'),
 var wpcom = require( 'lib/wp' ),
 	LocalList = require( 'lib/local-list' ),
 	statsParser = require( './stats-parser' )(),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 var responseHandler,
 	buildExportArray,

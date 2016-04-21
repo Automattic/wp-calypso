@@ -45,7 +45,6 @@
 }
 
 .global-notices .notice__icon {
-	flex-shrink: 0;
 
 	@include breakpoint( ">660px" ) {
 		padding: 8px 0 8px 16px;
@@ -64,7 +63,6 @@
 }
 
 .global-notices .notice a.notice__action {
-	flex-shrink: 0;
 
 	@include breakpoint( ">660px" ) {
 		font-size: 14px;

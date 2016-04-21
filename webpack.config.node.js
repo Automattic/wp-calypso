@@ -68,7 +68,8 @@ module.exports = {
 	},
 	resolve: {
 		extensions: [ '', '.json', '.js', '.jsx' ],
-		modulesDirectories: [ 'node_modules', path.join( __dirname, 'server' ), path.join( __dirname, 'client' ), __dirname ]
+		root: [ path.join( __dirname, 'server' ), path.join( __dirname, 'client' ), __dirname ],
+		modulesDirectories: [ 'node_modules' ]
 	},
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,
@@ -79,10 +80,9 @@ module.exports = {
 	plugins: [
 		// Require source-map-support at the top, so we get source maps for the bundle
 		new webpack.BannerPlugin( 'require( "source-map-support" ).install();', { raw: true, entryOnly: false } ),
-		new webpack.NormalModuleReplacementPlugin( /^analytics$/, 'lodash/noop' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^lib\/analytics$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib\/upgrades\/actions$/, 'lodash/noop' ), // Uses Flux dispatcher
 		new webpack.NormalModuleReplacementPlugin( /^lib\/route$/, 'lodash/noop' ) // Depends too much on page.js
 	],
 	externals: getExternals()
 };
-

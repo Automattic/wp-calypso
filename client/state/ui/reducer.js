@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -12,6 +13,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 	SHOW_GUIDESTOUR,
+	UPDATE_GUIDESTOUR,
 } from 'state/action-types';
 import editor from './editor/reducer';
 import reader from './reader/reducer';
@@ -80,12 +82,17 @@ export function isLoading( state = false, action ) {
 export function guidesTour( state = {}, action ) {
 	switch ( action.type ) {
 		case SHOW_GUIDESTOUR:
+			const { stepName = 'init' } = action;
 			return {
+				stepName,
 				shouldShow: action.shouldShow,
+				shouldDelay: action.shouldDelay,
+				shouldReallyShow: ( action.shouldShow || state.shouldShow ) && ! action.shouldDelay,
 				tour: action.tour,
-				stepName: action.stepName,
 				siteId: action.siteId,
 			};
+		case UPDATE_GUIDESTOUR:
+			return Object.assign( {}, state, omit( action, 'type' ) );
 	}
 	return state;
 }

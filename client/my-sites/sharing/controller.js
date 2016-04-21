@@ -14,7 +14,7 @@ var sites = require( 'lib/sites-list' )(),
 	i18n = require( 'lib/mixins/i18n' ),
 	notices = require( 'notices' ),
 	route = require( 'lib/route' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	analyticsPageTitle = 'Sharing';
 

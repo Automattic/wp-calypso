@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import cancellationReasons from './cancellation-reasons';
 import { cancelAndRefundPurchase } from 'lib/upgrades/actions';
 import Card from 'components/card';

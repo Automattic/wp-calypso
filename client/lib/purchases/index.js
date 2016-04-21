@@ -44,13 +44,13 @@ function getPurchasesBySite( purchases, sites ) {
 				 * there will be no site with this ID in `sites`, so
 				 * we fall back on the domain. */
 				slug: siteObject ? siteObject.slug : currentValue.domain,
-				title: currentValue.siteName ? currentValue.siteName : currentValue.domain,
+				title: currentValue.siteName || currentValue.domain || '',
 				purchases: [ currentValue ]
 			} );
 		}
 
 		return result;
-	}, [] );
+	}, [] ).sort( ( a, b ) => a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1 );
 }
 
 function getName( purchase ) {
@@ -224,8 +224,8 @@ function purchaseType( purchase ) {
 	return null;
 }
 
-function shouldFetchPurchases( purchases ) {
-	return ! purchases.hasLoadedFromServer && ! purchases.isFetching;
+function shouldFetchUserPurchases( purchases ) {
+	return ! purchases.hasLoadedUserPurchasesFromServer && ! purchases.isFetchingUserPurchases;
 }
 
 function showCreditCardExpiringWarning( purchase ) {
@@ -259,6 +259,6 @@ export {
 	isSubscription,
 	paymentLogoType,
 	purchaseType,
-	shouldFetchPurchases,
+	shouldFetchUserPurchases,
 	showCreditCardExpiringWarning,
 }

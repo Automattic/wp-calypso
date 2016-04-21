@@ -7,7 +7,8 @@ const ReactDom = require( 'react-dom' ),
 	debug = require( 'debug' )( 'calypso:reader:controller' ),
 	trim = require( 'lodash/trim' ),
 	moment = require( 'moment' ),
-	ReduxProvider = require( 'react-redux' ).Provider;
+	ReduxProvider = require( 'react-redux' ).Provider,
+	qs = require( 'qs' );
 
 /**
  * Internal Dependencies
@@ -16,7 +17,7 @@ const abtest = require( 'lib/abtest' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	route = require( 'lib/route' ),
 	pageNotifier = require( 'lib/route/page-notifier' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	config = require( 'config' ),
 	feedStreamFactory = require( 'lib/feed-stream-store' ),
 	FeedStreamStoreActions = require( 'lib/feed-stream-store/actions' ),
@@ -85,7 +86,7 @@ function userHasHistory( context ) {
 
 function ensureStoreLoading( store, context ) {
 	if ( store.getPage() === 1 ) {
-		if ( context.query.at ) {
+		if ( context && context.query && context.query.at ) {
 			const startDate = moment( context.query.at );
 			if ( startDate.isValid() ) {
 				store.startDate = startDate.format();
@@ -98,6 +99,15 @@ function ensureStoreLoading( store, context ) {
 
 function setPageTitle( title ) {
 	titleActions.setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) );
+}
+
+function renderFeedError() {
+	var FeedError = require( 'reader/feed-error' );
+
+	ReactDom.render(
+		React.createElement( FeedError ),
+		document.getElementById( 'primary' )
+	);
 }
 
 module.exports = {
@@ -211,6 +221,22 @@ module.exports = {
 			} ),
 			document.getElementById( 'primary' )
 		);
+	},
+
+	feedDiscovery: function( context, next ) {
+		var feedLookup = require( 'lib/feed-lookup' );
+
+		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
+			feedLookup( context.params.feed_id )
+				.then( function( feedId ) {
+					page.redirect( `/read/feeds/${feedId}` );
+				} )
+				.catch( function() {
+					renderFeedError();
+				} );
+		} else {
+			next();
+		}
 	},
 
 	feedListing: function( context ) {
@@ -395,6 +421,51 @@ module.exports = {
 		);
 	},
 
+	search: function( context ) {
+		var SearchStream = require( 'reader/search-stream' ),
+			basePath = '/read/search',
+			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
+			searchSlug = context.query.q,
+			mcKey = 'search';
+
+		let store;
+		if ( searchSlug ) {
+			store = feedStreamFactory( 'search:' + searchSlug ),
+			ensureStoreLoading( store, context );
+		}
+
+		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+		stats.recordTrack( 'calypso_reader_search_loaded', searchSlug && {
+			query: searchSlug
+		} );
+
+		ReactDom.render(
+			React.createElement( SearchStream, {
+				key: 'search',
+				store: store,
+				query: searchSlug,
+				setPageTitle: setPageTitle,
+				trackScrollPage: trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				),
+				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+				showBack: false,
+				onQueryChange: function( newValue ) {
+					let searchUrl = '/read/search';
+					if ( newValue ) {
+						searchUrl += '?' + qs.stringify( { q: newValue } );
+					}
+					page.replace( searchUrl );
+				}
+			} ),
+			document.getElementById( 'primary' )
+		);
+	},
+
 	listListing: function( context ) {
 		var ListStream = require( 'reader/list-stream' ),
 			basePath = '/read/list/:owner/:slug',
@@ -415,8 +486,8 @@ module.exports = {
 				React.createElement( ListStream, {
 					key: 'tag-' + context.params.user + '-' + context.params.list,
 					postStore: listStore,
-					owner: context.params.user,
-					slug: context.params.list,
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
 					setPageTitle: setPageTitle,
 					trackScrollPage: trackScrollPage.bind(
 						null,
@@ -550,21 +621,21 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagement, {
-				key: 'list-management-sites',
-				list: {
-					owner: context.params.user,
-					slug: context.params.list
-				},
-				tab: 'sites',
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				)
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( listManagement, {
+					key: 'list-management-sites',
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
+					tab: 'sites',
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						analyticsPageTitle,
+						mcKey
+					)
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},
@@ -580,21 +651,21 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagement, {
-				key: 'list-management-tags',
-				list: {
-					owner: context.params.user,
-					slug: context.params.list
-				},
-				tab: 'tags',
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				)
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( listManagement, {
+					key: 'list-management-tags',
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
+					tab: 'tags',
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						analyticsPageTitle,
+						mcKey
+					)
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},
@@ -610,14 +681,14 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagement, {
-				key: 'list-management-description-edit',
-				list: {
-					owner: context.params.user,
-					slug: context.params.list
-				},
-				tab: 'description-edit'
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( listManagement, {
+					key: 'list-management-description-edit',
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
+					tab: 'description-edit'
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},

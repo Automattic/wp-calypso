@@ -14,7 +14,7 @@ import Gridicon from 'components/gridicon';
 import Version from 'components/version';
 import PluginRatings from 'my-sites/plugins/plugin-ratings/';
 import versionCompare from 'lib/version-compare';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 export default React.createClass( {
 	_WPORG_PLUGINS_URL: 'wordpress.org/plugins/',

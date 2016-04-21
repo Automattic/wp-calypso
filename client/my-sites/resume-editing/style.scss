@@ -1,0 +1,52 @@
+.resume-editing {
+	margin: 0 16px;
+	opacity: 0.8;
+	text-align: right;
+	text-decoration: none;
+	transition: opacity 150ms;
+
+	&:hover {
+		opacity: 1;
+	}
+
+	&.is-requesting {
+		display: none;
+	}
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
+
+	.site-icon {
+		display: inline-block;
+		margin-right: 8px;
+		vertical-align: bottom;
+	}
+}
+
+.resume-editing__label {
+	color: $white;
+	font-size: 10px;
+	font-weight: 500;
+	opacity: 0.7;
+	text-transform: uppercase;
+}
+
+.resume-editing__post-title {
+	position: relative;
+	overflow: hidden;
+	color: $white;
+	display: block;
+	max-width: 25vw;
+	white-space: nowrap;
+	font-family: $serif;
+	font-size: 14px;
+	line-height: 1;
+
+	&::after {
+		@include long-content-fade( $size: 24px, $color: $blue-wordpress );
+		left: 25vw;
+		right: auto;
+		margin-left: -24px;
+	}
+}

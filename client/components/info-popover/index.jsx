@@ -9,7 +9,7 @@ import React from 'react';
 import Popover from 'components/popover';
 import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 export default React.createClass( {
 

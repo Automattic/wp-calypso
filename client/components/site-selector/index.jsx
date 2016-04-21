@@ -10,7 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import AllSites from 'my-sites/all-sites';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import Site from 'my-sites/site';
@@ -212,7 +212,7 @@ export default React.createClass( {
 			return(
 				<AllSites
 					key="selector-all-sites"
-					sites={ this.props.sites }
+					sites={ this.props.sites.get() }
 					href={ allSitesPath }
 					onSelect={ this.onSiteSelect.bind( this, null ) }
 					isSelected={ ! this.props.sites.selected }

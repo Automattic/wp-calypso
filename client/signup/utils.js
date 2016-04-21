@@ -97,6 +97,11 @@ function getNextStepName( flowName, currentStepName ) {
 	return flow.steps[ indexOf( flow.steps, currentStepName ) + 1 ];
 }
 
+function getFlowSteps( flowName ) {
+	const flow = flows.getFlow( flowName );
+	return flow.steps;
+}
+
 function getValueFromProgressStore( { signupProgressStore, stepName, fieldName } ) {
 	const siteStepProgress = find(
 		signupProgressStore,
@@ -114,8 +119,13 @@ function mergeFormWithValue( { form, fieldName, fieldValue} ) {
 	return form;
 }
 
+function getDestination( destination, dependencies, flowName ) {
+	return flows.filterDestination( destination, dependencies, flowName );
+}
+
 module.exports = {
 	getFlowName: getFlowName,
+	getFlowSteps: getFlowSteps,
 	getStepName: getStepName,
 	getLocale: getLocale,
 	getStepSectionName: getStepSectionName,
@@ -124,5 +134,6 @@ module.exports = {
 	getPreviousStepName: getPreviousStepName,
 	getNextStepName: getNextStepName,
 	getValueFromProgressStore: getValueFromProgressStore,
+	getDestination: getDestination,
 	mergeFormWithValue: mergeFormWithValue
 };

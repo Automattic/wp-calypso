@@ -38,11 +38,11 @@ class GuidesFirstStep extends Component {
 
 		const { text, onNext, onQuit } = this.props;
 		return (
-			<Card className="guidestours__step" style={ stepCoords } >
+			<Card className="guidestours__step guidestours__step-first" style={ stepCoords } >
 				<p>{ text }</p>
 				<div className="guidestours__choice-button-row">
-					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
-					<Button onClick={ onQuit } className="guidestours__secondary-button">
+					<Button onClick={ onNext } primary>{ this.props.translate( "Let's do it!" ) }</Button>
+					<Button onClick={ onQuit } >
 						{ this.props.translate( 'No, thanks.' ) }
 					</Button>
 				</div>
@@ -116,6 +116,7 @@ class GuidesActionStep extends Component {
 		if ( onNext && target.addEventListener ) {
 			target.addEventListener( 'click', onNext );
 		}
+		target && target.classList.add( 'guidestours__overlay' );
 	}
 
 	removeTargetListener() {
@@ -123,6 +124,7 @@ class GuidesActionStep extends Component {
 		if ( onNext && target.removeEventListener ) {
 			target.removeEventListener( 'click', onNext );
 		}
+		target && target.classList.remove( 'guidestours__overlay' );
 	}
 
 	getBullseyePosition() {

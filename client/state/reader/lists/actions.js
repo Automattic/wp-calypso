@@ -3,9 +3,15 @@
  */
 import wpcom from 'lib/wp';
 import {
+	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_REQUEST,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
+	READER_LIST_UPDATE,
+	READER_LIST_UPDATE_SUCCESS,
+	READER_LIST_UPDATE_FAILURE,
+	READER_LIST_UPDATE_TITLE,
+	READER_LIST_UPDATE_DESCRIPTION,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
 	READER_LISTS_REQUEST_SUCCESS,
@@ -83,7 +89,9 @@ export function requestList( owner, slug ) {
 				if ( error ) {
 					dispatch( {
 						type: READER_LIST_REQUEST_FAILURE,
-						error
+						error,
+						owner,
+						slug
 					} );
 					reject();
 				} else {
@@ -177,6 +185,98 @@ export function unfollowList( owner, slug ) {
 					resolve();
 				}
 			} );
+		} );
+	};
+}
+
+/**
+ * Triggers a network request to update a list's details.
+ *
+ * @param  {Object}  list List details to save
+ * @return {Function} Action promise
+ */
+export function updateListDetails( list ) {
+	if ( ! list || ! list.owner || ! list.slug || ! list.title ) {
+		throw new Error( 'List owner, slug and title are required' );
+	}
+
+	const preparedOwner = decodeURIComponent( list.owner );
+	const preparedSlug = decodeURIComponent( list.slug );
+	const preparedList = Object.assign( {}, list, { owner: preparedOwner, slug: preparedSlug } );
+
+	return ( dispatch ) => {
+		dispatch( {
+			type: READER_LIST_UPDATE,
+			list
+		} );
+
+		return new Promise( ( resolve, reject ) => {
+			wpcom.undocumented().readListsUpdate( preparedList, ( error, data ) => {
+				if ( error ) {
+					dispatch( {
+						type: READER_LIST_UPDATE_FAILURE,
+						list,
+						error
+					} );
+					reject( error );
+				} else {
+					dispatch( {
+						type: READER_LIST_UPDATE_SUCCESS,
+						list,
+						data
+					} );
+					resolve();
+				}
+			} );
+		} );
+	};
+}
+
+/**
+ * Trigger an action to dismiss a list update notice.
+ *
+ * @param  {Integer}  listId List ID
+ * @return {Function} Action thunk
+ */
+export function dismissListNotice( listId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: READER_LIST_DISMISS_NOTICE,
+			listId
+		} );
+	};
+}
+
+/**
+ * Trigger an action to update a list title.
+ *
+ * @param  {Integer}  listId List ID
+ * @param  {String}  newTitle List title
+ * @return {Function} Action thunk
+ */
+export function updateTitle( listId, newTitle ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: READER_LIST_UPDATE_TITLE,
+			listId,
+			title: newTitle
+		} );
+	};
+}
+
+/**
+ * Trigger an action to update a list description.
+ *
+ * @param  {Integer}  listId List ID
+ * @param  {String}  newDescription List description
+ * @return {Function} Action thunk
+ */
+export function updateDescription( listId, newDescription ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: READER_LIST_UPDATE_DESCRIPTION,
+			listId,
+			description: newDescription
 		} );
 	};
 }

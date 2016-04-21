@@ -28,6 +28,8 @@ var Main = require( 'components/main' ),
 	ThemesListSelectors = require( 'state/themes/themes-list/selectors' ),
 	sites = require( 'lib/sites-list' )();
 
+import UpgradeNudge from 'my-sites/upgrade-nudge';
+
 var ThemesSingleSite = React.createClass( {
 	propTypes: {
 		siteId: React.PropTypes.string,
@@ -154,6 +156,12 @@ var ThemesSingleSite = React.createClass( {
 						site={ site }
 						canCustomize={ site && site.isCustomizable() } />
 				</CurrentThemeData>
+				<UpgradeNudge
+					title={ this.translate( 'Get Custom Design with Premium' ) }
+					message={ this.translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
+					feature="custom-design"
+					event="themes_custom_design"
+				/>
 				{ isJetpack && ! jetpackEnabled
 				? this.renderJetpackMessage()
 				: <ThemesSelection search={ this.props.search }

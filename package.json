@@ -92,7 +92,6 @@
     "react-redux": "4.0.1",
     "react-tap-event-plugin": "0.2.1",
     "redux": "3.0.4",
-    "redux-analytics": "0.3.0",
     "redux-thunk": "1.0.0",
     "rtlcss": "1.6.1",
     "sanitize-html": "1.11.1",
@@ -103,7 +102,7 @@
     "store": "1.3.16",
     "striptags": "2.1.1",
     "superagent": "1.2.0",
-    "tinymce": "4.2.8",
+    "tinymce": "4.3.8",
     "to-title-case": "0.1.5",
     "tv4": "1.2.7",
     "tween.js": "16.3.1",
@@ -111,22 +110,22 @@
     "uglify-js": "2.6.1",
     "valid-url": "1.0.9",
     "walk": "2.3.4",
-    "webpack": "1.12.6",
+    "webpack": "1.12.15",
     "webpack-dev-middleware": "1.2.0",
-    "wpcom": "4.9.3",
+    "wpcom": "4.9.7",
     "wpcom-proxy-request": "1.0.5",
     "wpcom-xhr-request": "0.5.0",
     "xgettext-js": "0.3.0"
   },
   "engines": {
-    "node": ">=4.3.0",
-    "npm": "2.14.12"
+    "node": "5.10.1",
+    "npm": "3.8.3"
   },
   "scripts": {
     "test": "make test",
-    "test-client": "NODE_ENV=test NODE_PATH=test:client test/runner.js",
-    "test-server": "NODE_ENV=test NODE_PATH=test:server:client test/runner.js",
-    "test-tests": "NODE_ENV=test NODE_PATH=test:test/test:client test/runner.js",
+    "test-client": "NODE_ENV=test NODE_PATH=test:client TEST_ROOT=client test/runner.js",
+    "test-server": "NODE_ENV=test NODE_PATH=test:server:client TEST_ROOT=server test/runner.js",
+    "test-test": "NODE_ENV=test NODE_PATH=test:client TEST_ROOT=test test/runner.js",
     "lint": "bin/run-lint"
   },
   "devDependencies": {

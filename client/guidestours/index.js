@@ -2,11 +2,13 @@
  * External dependencies
  */
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import guideConfig from './config';
+import { getSelectedSite, getGuidesTourState } from 'state/ui/selectors';
+import { nextGuidesTourStep } from 'state/ui/actions';
 import { query } from './positioning';
 import {
 	GuidesBasicStep,
@@ -16,11 +18,10 @@ import {
 	GuidesActionStep,
 } from './steps';
 
-export default class GuidesTours extends Component {
+class GuidesTours extends Component {
 	constructor() {
 		super();
 		this.bind( 'next', 'quit' );
-		this.state = { currentStep: guideConfig.init };
 	}
 
 	bind( ...methods ) {
@@ -28,15 +29,21 @@ export default class GuidesTours extends Component {
 	}
 
 	componentDidMount() {
-		this.tipTargets = this.getTipTargets();
-		this.updateTarget( this.state.currentStep );
+		const { stepConfig } = this.props.tourState;
+		this.updateTarget( stepConfig );
 	}
 
-	componentWillUpdate( nextProps, nextState ) {
-		this.updateTarget( nextState.currentStep );
+	shouldComponentUpdate( nextProps ) {
+		return this.props.tourState !== nextProps.tourState;
+		}
+
+	componentWillUpdate( nextProps ) {
+		const { stepConfig } = nextProps.tourState;
+		this.updateTarget( stepConfig );
 	}
 
 	updateTarget( step ) {
+		this.tipTargets = this.getTipTargets();
 		this.currentTarget = step && step.target
 			? this.tipTargets[ step.target ]
 			: null;
@@ -50,16 +57,19 @@ export default class GuidesTours extends Component {
 	}
 
 	next() {
-		this.setState( { currentStep: guideConfig[ this.state.currentStep.next ] } );
+		const nextStepName = this.props.tourState.stepConfig.next;
+		this.props.nextGuidesTourStep( nextStepName );
 	}
 
 	quit() {
-		//TODO: should we dispatch a showGuidesTour action here instead?
-		this.setState( { currentStep: null } );
+		this.currentTarget && this.currentTarget.classList.remove( 'guidestours__overlay' );
+		this.props.nextGuidesTourStep( null );
 	}
 
 	render() {
-		if ( ! this.state.currentStep ) {
+		const { stepConfig } = this.props.tourState;
+
+		if ( ! stepConfig ) {
 			return null;
 		}
 
@@ -68,13 +78,13 @@ export default class GuidesTours extends Component {
 			GuidesActionStep,
 			GuidesLinkStep,
 			GuidesFinishStep,
-		}[ this.state.currentStep.type ] || GuidesBasicStep;
+		}[ stepConfig.type ] || GuidesBasicStep;
 
 		return (
-			<div>
+			<div className="guidestours">
 				<StepComponent
-					{ ...this.state.currentStep }
-					key={ this.state.target }
+					{ ...stepConfig }
+					key={ stepConfig.target }
 					target={ this.currentTarget }
 					onNext={ this.next }
 					onQuit={ this.quit } />
@@ -82,3 +92,10 @@ export default class GuidesTours extends Component {
 		);
 	}
 }
+
+export default connect( ( state ) => ( {
+	selectedSite: getSelectedSite( state ),
+	tourState: getGuidesTourState( state ),
+} ), {
+	nextGuidesTourStep,
+} )( GuidesTours );

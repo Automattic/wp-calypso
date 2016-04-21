@@ -11,6 +11,7 @@ import reject from 'lodash/reject';
 import { abtest } from 'lib/abtest';
 import config from 'config';
 import { getLocaleSlug } from 'lib/i18n-utils';
+import { isOutsideCalypso } from 'lib/url';
 import plansPaths from 'my-sites/plans/paths';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
@@ -85,7 +86,7 @@ const flows = {
 	},
 
 	businessv2: {
-		steps: [ 'domains', 'user' ],
+		steps: [ 'domains-only', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
@@ -94,7 +95,7 @@ const flows = {
 	},
 
 	premiumv2: {
-		steps: [ 'domains', 'user' ],
+		steps: [ 'domains-only', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
@@ -103,7 +104,7 @@ const flows = {
 	},
 
 	'with-theme': {
-		steps: [ 'domains', 'plans', 'user' ],
+		steps: [ 'domains-only', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'Preselect a theme to activate/buy from an external source',
 		lastModified: '2016-01-27'
@@ -132,7 +133,7 @@ const flows = {
 	},
 
 	newsite: {
-		steps: [ 'survey', 'themes-headstart', 'domains-with-theme', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
 		description: 'Headstarted flow with verticals for EN users clicking "Create Website" on the homepage.',
 		lastModified: '2016-03-21'
@@ -191,7 +192,7 @@ const flows = {
 	},
 
 	headstart: {
-		steps: [ 'themes-headstart', 'domains-with-theme', 'plans', 'user' ],
+		steps: [ 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'Regular flow but with Headstart enabled to pre-populate site content',
 		lastModified: '2015-02-01'
@@ -228,13 +229,6 @@ const flows = {
 		destination: getFreeTrialDestination,
 		description: 'Signup flow for free trials',
 		lastModified: '2016-03-21'
-	},
-
-	'new-vertical-site': {
-		steps: [ 'survey', 'themes-headstart', 'domains-with-theme', 'plans', 'survey-user' ],
-		destination: getSiteDestination,
-		description: 'Test flow showing Headstarted vertical themes for EN users clicking "Create Website" on the homepage.',
-		lastModified: '2016-03-22'
 	}
 };
 
@@ -263,14 +257,50 @@ function filterFlowName( flowName ) {
 
 	// Headstarted "default" flow (`newsite`) with vertical selection for EN users, coming from the homepage single button.
 	if ( 'website' === flowName && ( 'en' === locale || 'en-gb' === locale ) ) {
-		return ( 'verticalThemes' === abtest( 'verticalThemes' ) ) ? 'new-vertical-site' : 'newsite';
+		return 'newsite';
 	}
 
 	return flowName;
 }
 
+function filterDestination( destination, dependencies, flowName ) {
+	if ( config.isEnabled( 'guidestours' ) ) {
+		return getGuidedToursDestination( destination, dependencies, flowName );
+	}
+
+	return destination;
+}
+
+function getGuidedToursDestination( destination, dependencies, flowName ) {
+	const guidedToursVariant = abtest( 'guidedTours' );
+	const tourName = 'main';
+	const disabledFlows = [ 'account', 'site-user', 'jetpack' ];
+	const siteSlug = dependencies.siteSlug;
+	const baseUrl = `/stats/${ siteSlug }`;
+
+	// TODO(ehg): Build the query arg properly, so we don't have problems with
+	// destinations that already have query strings in
+	function getVariantUrl( variant ) {
+		const external = isOutsideCalypso( destination );
+		const variantUrls = {
+			original: destination,
+			guided: external ? `${ baseUrl }?tour=${ tourName }` : `${ destination }?tour=${ tourName }`,
+			calypsoOnly: external ? baseUrl : destination,
+		};
+
+		return variantUrls[ variant ] || variantUrls.original;
+	}
+
+	if ( includes( disabledFlows, flowName ) || ! siteSlug ) {
+		return destination;
+	}
+
+	return getVariantUrl( guidedToursVariant );
+}
+
 export default {
-	filterFlowName: filterFlowName,
+	filterFlowName,
+	filterDestination,
 
 	defaultFlowName: 'main',
 

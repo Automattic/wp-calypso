@@ -4,15 +4,17 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import mockery from 'mockery';
+import { createStore } from 'redux';
 
 /**
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'initial-state', () => {
-	let localforage, createReduxStoreFromPersistedInitialState, MAX_AGE,
+	let localforage, createReduxStoreFromPersistedInitialState, persistOnChange, MAX_AGE,
 		isSwitchedUser = false,
 		isReduxEnabled = false,
 		isEnabled = () => isReduxEnabled,
@@ -30,6 +32,7 @@ describe( 'initial-state', () => {
 		localforage = require( 'lib/localforage' );
 		const initialState = require( 'state/initial-state' );
 		createReduxStoreFromPersistedInitialState = initialState.default;
+		persistOnChange = initialState.persistOnChange;
 		MAX_AGE = initialState.MAX_AGE;
 	} );
 
@@ -278,6 +281,62 @@ describe( 'initial-state', () => {
 					expect( state._timestamp ).to.equal( undefined );
 				} );
 			} );
+		} );
+	} );
+
+	describe( '#persistOnChange()', () => {
+		let sandbox, store;
+
+		useSandbox( ( _sandbox ) => sandbox = _sandbox );
+
+		before( () => {
+			sandbox.stub( localforage, 'setItem' ).returns( Promise.resolve() );
+		} );
+
+		beforeEach( () => {
+			sandbox.reset();
+
+			store = persistOnChange(
+				createStore( ( state, { data: nextState } ) => nextState ),
+				( state ) => state
+			);
+		} );
+
+		it( 'should persist state for first dispatch', () => {
+			store.dispatch( {
+				type: 'foo',
+				data: 1
+			} );
+
+			expect( localforage.setItem ).to.have.been.calledOnce;
+		} );
+
+		it( 'should persist state for changed state', () => {
+			store.dispatch( {
+				type: 'foo',
+				data: 1
+			} );
+
+			store.dispatch( {
+				type: 'foo',
+				data: 2
+			} );
+
+			expect( localforage.setItem ).to.have.been.calledTwice;
+		} );
+
+		it( 'should not persist state for unchanged state', () => {
+			store.dispatch( {
+				type: 'foo',
+				data: 1
+			} );
+
+			store.dispatch( {
+				type: 'foo',
+				data: 1
+			} );
+
+			expect( localforage.setItem ).to.have.been.calledOnce;
 		} );
 	} );
 } );

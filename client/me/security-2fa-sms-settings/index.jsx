@@ -17,7 +17,7 @@ var countriesList = require( 'lib/countries-list' ).forSms(),
 	Notice = require( 'components/notice' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 

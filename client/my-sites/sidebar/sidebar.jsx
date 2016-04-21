@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	classNames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:my-sites:sidebar' ),
 	has = require( 'lodash/has' ),
@@ -9,10 +9,13 @@ var analytics = require( 'analytics' ),
 	React = require( 'react' ),
 	startsWith = require( 'lodash/startsWith' );
 
+import page from 'page';
+
 /**
  * Internal dependencies
  */
-var AdsUtils = require( 'lib/ads/utils' ),
+var abtest = require( 'lib/abtest' ).abtest,
+	AdsUtils = require( 'lib/ads/utils' ),
 	config = require( 'config' ),
 	CurrentSite = require( 'my-sites/current-site' ),
 	getCustomizeUrl = require( '../themes/helpers' ).getCustomizeUrl,
@@ -25,11 +28,22 @@ var AdsUtils = require( 'lib/ads/utils' ),
 	SidebarMenu = require( 'layout/sidebar/menu' ),
 	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' );
 
+import Button from 'components/button';
+import SidebarFooter from 'layout/sidebar/footer';
+import DraftsButton from 'post-editor/drafts-button';
+import Tooltip from 'components/tooltip';
+
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
 
 	componentDidMount: function() {
 		debug( 'The sidebar React component is mounted.' );
+	},
+
+	getInitialState: function() {
+		return {
+			draftsTooltip: false
+		};
 	},
 
 	onNavigate: function() {
@@ -164,6 +178,21 @@ module.exports = React.createClass( {
 			themesLink = '/design' + this.siteSuffix();
 		} else {
 			themesLink = '/design';
+		}
+
+		if ( abtest( 'swapButtonsMySiteSidebar' ) === 'swap' ) {
+			return (
+				<SidebarItem
+					tipTarget="themes"
+					label={ this.translate( 'Customize' ) }
+					className={ this.itemLinkClass( '/design', 'themes' ) }
+					link={ getCustomizeUrl( null, site ) }
+					buttonLink={ themesLink }
+					buttonLabel={ this.translate( 'Themes' ) }
+					onNavigate={ this.onNavigate }
+					icon={ 'themes' }
+					preloadSectionName="themes" />
+			);
 		}
 
 		return (
@@ -616,6 +645,30 @@ module.exports = React.createClass( {
 		);
 	},
 
+	focusContent: function() {
+		this.props.layoutFocus.set( 'content' );
+	},
+
+	addNewWordPress: function() {
+		if ( this.props.user.get().visible_site_count > 1 ) {
+			return null;
+		}
+
+		return (
+			<Button compact borderless
+				className="my-sites-sidebar__add-new-site"
+				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
+				onClick={ this.focusContent }
+			>
+				<Gridicon icon="add-outline" /> { this.translate( 'Add New Site' ) }
+			</Button>
+		);
+	},
+
+	onDraftsClick: function() {
+		page( '/posts/drafts' + this.siteSuffix() );
+	},
+
 	render: function() {
 		var publish = !! this.publish(),
 			appearance = ( !! this.themes() || !! this.menus() ),
@@ -653,7 +706,26 @@ module.exports = React.createClass( {
 
 				{ publish
 					? <SidebarMenu>
-						<SidebarHeading>{ this.translate( 'Publish' ) }</SidebarHeading>
+						<SidebarHeading>
+							{ this.translate( 'Publish' ) }
+							{ config.isEnabled( 'sidebar-drafts-count' ) &&
+								<div
+									className="sidebar__drafts-button"
+									onMouseEnter={ () => this.setState( { draftsTooltip: true } ) }
+									onMouseLeave={ () => this.setState( { draftsTooltip: false } ) }
+									ref="draftsButton"
+								>
+									<DraftsButton hideText onClick={ this.onDraftsClick } />
+									<Tooltip
+										context={ this.refs && this.refs.draftsButton }
+										isVisible={ this.state.draftsTooltip }
+										position="top"
+									>
+										{ this.translate( 'Drafts' ) }
+									</Tooltip>
+								</div>
+							}
+						</SidebarHeading>
 						{ this.publish() }
 					</SidebarMenu>
 					: null
@@ -684,6 +756,9 @@ module.exports = React.createClass( {
 					</SidebarMenu>
 					: null
 				}
+				<SidebarFooter>
+					{ this.addNewWordPress() }
+				</SidebarFooter>
 			</Sidebar>
 		);
 	}

@@ -58,7 +58,7 @@ let middleware = [ thunkMiddleware ];
 if ( typeof window === 'object' ) {
 	middleware = [
 		...middleware,
-		require( './themes/middlewares.js' ).analyticsMiddleware
+		require( './analytics/middleware.js' ).analyticsMiddleware
 	];
 }
 

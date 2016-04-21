@@ -1,9 +1,6 @@
 {
-	"analytics": {
-		"page-view-tracker" : {
-			"test": [ "index" ]
-		},
-		"test": [ "index" ]
+	"auth": {
+		"test": [ "login" ]
 	},
 	"components": {
 		"count": {
@@ -92,6 +89,12 @@
 		"test": [ "doc" ]
 	},
 	"lib": {
+		"analytics": {
+			"page-view-tracker" : {
+				"test": [ "index" ]
+			},
+			"test": [ "index" ]
+		},
 		"accept": {
 			"test": [ "index" ]
 		},
@@ -141,6 +144,9 @@
 		},
 		"email-followers": {
 		  "test": [ "store" ]
+		},
+		"embed-frame-markup": {
+			"test": [ "index" ]
 		},
 		"features-list": {
 		  "test": [ "index" ]
@@ -230,6 +236,7 @@
 				"test": [ "index" ]
 			},
 			"i18n": {
+				"test": [ "index" ],
 				"localize": {
 					"test": [ "index" ]
 				}
@@ -259,11 +266,23 @@
 		"olark-store" : {
 			"test": [ "index" ]
 		},
-		"paths" : {
+		"paths": {
 			"test": [ "index" ]
+		},
+		"people": {
+			"test": [ "log-store" ]
 		},
 		"plans-list": {
 			"test": [ "index" ]
+		},
+	  "phone-validation": {
+			"test": [ "index" ]
+		},
+		"plugins": {
+			"test": [ "actions", "log-store", "store", "utils" ],
+			"wporg-data": {
+				"test": [ "actions", "list-store" ]
+			}
 		},
 		"popup-monitor": {
 			"test": [ "index" ]
@@ -279,6 +298,9 @@
 		},
 		"posts": {
 			"test": [ "actions", "post-edit-store", "post-list-store", "utils" ]
+		},
+		"preferences": {
+			"test": [ "actions", "store" ]
 		},
 		"purchases": {
 			"stored-cards": {
@@ -322,11 +344,20 @@
 		"resize-image-url": {
 			"test": [ "index" ]
 		},
+		"route": {
+			"test": [ "index" ]
+		},
 		"safe-image-url": {
 			"test": [ "index" ]
 		},
 		"safe-protocol-url": {
 			"test": [ "index" ]
+		},
+		"scroll-to": {
+			"test": [ "index" ]
+		},
+		"security-checkup": {
+			"test": [ "account-recovery-store", "actions" ]
 		},
 		"shortcode": {
 			"test": [ "index" ]
@@ -365,9 +396,24 @@
 		"tree-convert": {
 			"test": [ "index" ]
 		},
+		"user": {
+			"test": [ "utils" ]
+		},
+		"user-settings": {
+			"test": [ "index" ]
+		},
+		"users": {
+			"test": [ "store" ]
+		},
+		"viewers": {
+			"test": [ "store" ]
+		},
 		"wp": {
 			"localization": {
 				"test": [ "index" ]
+			},
+			"sync-handler": {
+				"test": [ "cache-index", "index" ]
 			}
 		},
 		"wpcom-xhr-wrapper": {
@@ -449,6 +495,9 @@
 	  "test": [ "flows", "utils" ]
 	},
 	"state": {
+		"analytics": {
+			"test": [ "actions", "middleware" ]
+		},
 		"application": {
 			"test": [ "actions", "reducer" ]
 		},
@@ -504,7 +553,7 @@
 				"test": [ "actions", "reducer", "selectors" ]
 			},
 			"plans": {
-				"test": [ "actions", "reducer" ]
+				"test": [ "actions", "reducer", "selectors" ]
 			},
 			"test": [ "actions", "reducer", "selectors" ]
 		},
@@ -533,6 +582,9 @@
 			"editor": {
 				"contact-form": {
 					"test": [ "actions", "reducer" ]
+				},
+				"last-draft": {
+					"test": [ "actions", "reducer", "selectors" ]
 				},
 				"test": [ "actions", "reducer", "selectors" ]
 			},

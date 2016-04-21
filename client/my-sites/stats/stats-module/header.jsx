@@ -7,7 +7,7 @@ import React, { PropTypes } from 'react';
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 
 export default React.createClass( {

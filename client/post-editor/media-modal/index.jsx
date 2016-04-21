@@ -14,7 +14,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var MediaLibrary = require( 'my-sites/media-library' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	PostActions = require( 'lib/posts/actions' ),
 	PostStats = require( 'lib/posts/stats' ),
 	MediaModalSecondaryActions = require( './secondary-actions' ),

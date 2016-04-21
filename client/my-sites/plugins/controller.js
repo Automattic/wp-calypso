@@ -14,7 +14,7 @@ var route = require( 'lib/route' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	notices = require( 'notices' ),
 	sites = require( 'lib/sites-list' )(),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	PlanSetup = require( './plan-setup' ),
 	PluginListComponent = require( './main' ),
 	PluginComponent = require( './plugin' ),
@@ -28,7 +28,40 @@ var route = require( 'lib/route' ),
  */
 var lastPluginsListVisited,
 	lastPluginsQuerystring,
-	controller;
+	controller,
+	pluginFilterTitles = {
+		defaultTitle() {
+			return i18n.translate( 'Plugins', { textOnly: true } );
+		},
+		// WordPress.com
+		standard() {
+			return i18n.translate( 'Standard Plugins', { textOnly: true } );
+		},
+		premium() {
+			return i18n.translate( 'Premium Plugins', { textOnly: true } );
+		},
+		business() {
+			return i18n.translate( 'Business Plugins', { textOnly: true } );
+		},
+		// JetPack Sites
+		active() {
+			return i18n.translate( 'Active Plugins', { textOnly: true } );
+		},
+		inactive() {
+			return i18n.translate( 'Inactive Plugins', { textOnly: true } );
+		},
+		updates() {
+			return i18n.translate( 'Plugin Updates', { textOnly: true } );
+		}
+	};
+
+function getTitle( filter ) {
+	if ( pluginFilterTitles.hasOwnProperty( filter ) ) {
+		return pluginFilterTitles[filter];
+	}
+
+	return pluginFilterTitles.defaultTitle;
+}
 
 function renderSinglePlugin( context, siteUrl ) {
 	var pluginSlug = decodeURIComponent( context.params.plugin ),
@@ -77,7 +110,7 @@ function renderPluginList( context, basePath, siteUrl ) {
 
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
 	lastPluginsQuerystring = context.querystring;
-	titleActions.setTitle( i18n.translate( 'Plugins', { textOnly: true } ), { siteID: siteUrl } );
+	titleActions.setTitle( getTitle( context.params.pluginFilter )(), { siteID: siteUrl } );
 
 	renderWithReduxStore(
 		React.createElement( PluginListComponent, {

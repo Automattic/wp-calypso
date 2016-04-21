@@ -3,7 +3,7 @@
 	position: relative;
 	margin-bottom: 24px;
 	border-radius: 1px;
-	background: $gray-light;
+	background: lighten( $gray, 30 );
 	box-sizing: border-box;
 	font-size: 14px;
 	animation: appear .3s ease-in-out;
@@ -34,6 +34,7 @@
 }
 
 .notice__icon {
+	flex-shrink: 0;
 	padding: 13px 0 13px 16px;
 
 	@include breakpoint( "<660px" ) {
@@ -72,6 +73,7 @@
 // "X" for dismissing a notice
 .notice__dismiss {
 	display: flex;
+		flex-shrink: 0;
 	padding: 11px 16px;
 	cursor: pointer;
 	color: $gray;
@@ -97,19 +99,30 @@
 }
 
 // specificity for general `a` elements within notice is too great
-.notice a.notice__action {
-	background: rgba( 0, 0, 0, 0.2 );
-	box-sizing: border-box;
-	color: $white;
-	cursor: pointer;
+a.notice__action {
 	display: flex;
 		align-items: center;
+		flex-shrink: 0;
+	box-sizing: border-box;
+	cursor: pointer;
 	font-size: 15px;
 	font-weight: 400;
 	margin-left: auto; // forces the element to the right;
 	padding: 13px 16px;
 	text-decoration: none;
 	white-space: nowrap;
+
+	.is-success &,
+	.is-error &,
+	.is-warning &,
+	.is-info & {
+		color: $white;
+	}
+
+	.is-success & { background: darken( $alert-green, 15 ); }
+	.is-error & { background: darken( $alert-red, 15 ); }
+	.is-warning & { background: darken( $alert-yellow, 15 ); }
+	.is-info & { background: darken( $blue-wordpress, 15 ); }
 
 	.gridicon {
 		margin-left: 8px;
@@ -191,7 +204,6 @@
 // Compact notices
 .notice.is-compact {
 	border-radius: 2px;
-	color: $white;
 	display: inline-flex;
 	flex-wrap: nowrap;
 	min-height: 20px;
@@ -200,6 +212,13 @@
 	text-decoration: none;
 	text-transform: none;
 	vertical-align: middle;
+
+	&.is-success,
+	&.is-error,
+	&.is-warning,
+	&.is-info {
+		color: $white;
+	}
 
 	.notice__text {
 		font-size: 12px;

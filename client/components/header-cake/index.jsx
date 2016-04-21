@@ -17,7 +17,7 @@ export default React.createClass( {
 	displayName: 'HeaderCake',
 
 	propTypes: {
-		onClick: PropTypes.func.isRequired,
+		onClick: PropTypes.func,
 		onTitleClick: PropTypes.func,
 		backText: PropTypes.string,
 		backHref: PropTypes.string,

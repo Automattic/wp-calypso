@@ -12,15 +12,22 @@ export default React.createClass( {
 	displayName: 'JetpackConnectNotices',
 
 	propTypes: {
-		noticeType: PropTypes.string
+		noticeType: PropTypes.string,
+		siteUrl: PropTypes.string
 	},
 
 	getNoticeValues() {
 		let noticeValues = {
 			icon: 'trash',
 			status: 'is-warning',
-			text: this.translate( 'That\'s not a real web site' )
+			text: this.translate( 'That\'s not a real web site' ),
+			showDismiss: false
 		};
+
+		if ( this.props.onDismissClick ) {
+			noticeValues.onDismissClick = this.props.onDismissClick;
+			noticeValues.showDismiss = true;
+		}
 
 		if ( this.props.noticeType === 'notExists' ) {
 			return noticeValues
@@ -75,12 +82,6 @@ export default React.createClass( {
 			noticeValues.icon = 'notice';
 			return noticeValues
 		}
-		if ( this.props.noticeType === 'authorizeSuccess' ) {
-			noticeValues.text = this.translate( 'Jetpack connection complete.' );
-			noticeValues.status = 'is-success';
-			noticeValues.icon = 'checkmark-circle';
-			return noticeValues
-		}
 		return;
 	},
 
@@ -89,7 +90,7 @@ export default React.createClass( {
 		if ( values ) {
 			return (
 				<div className="jetpack-connect__notices-container">
-					<Notice { ...values } onDismissClick={ this.props.onDismissClick } />
+					<Notice { ...values } />
 				</div>
 			);
 		}

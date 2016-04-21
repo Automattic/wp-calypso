@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var AllSites = require( 'my-sites/all-sites' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	Button = require( 'components/button' ),
 	Card = require( 'components/card' ),
 	Notice = require( 'components/notice' ),
@@ -128,37 +128,18 @@ module.exports = React.createClass( {
 		);
 	},
 
-	focusContent: function() {
-		layoutFocus.set( 'content' );
-	},
-
-	addNewWordPressButton: function() {
-		return (
-			<span className="current-site__add-new-site">
-				<Button compact borderless
-					href={ config( 'signup_url' ) + '?ref=calypso-selector' }
-					onClick={ this.focusContent }
-				>
-					<Gridicon icon="add-outline" /> { this.translate( 'Add New WordPress' ) }
-				</Button>
-			</span>
-		);
-	},
-
 	trackHomepageClick: function() {
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site' );
 	},
 
 	render: function() {
-		var site,
-			hasOneSite = this.props.siteCount === 1;
+		let site;
 
 		if ( ! this.props.sites.initialized ) {
 			return (
 				<Card className="current-site is-loading">
-					{ hasOneSite
-						? this.addNewWordPressButton()
-						: <span className="current-site__switch-sites">&nbsp;</span>
+					{ this.props.siteCount > 1 &&
+						<span className="current-site__switch-sites">&nbsp;</span>
 					}
 					<div className="site">
 						<a className="site__content">
@@ -180,9 +161,8 @@ module.exports = React.createClass( {
 
 		return (
 			<Card className="current-site">
-				{ hasOneSite
-					? this.addNewWordPressButton()
-					: <span className="current-site__switch-sites">
+				{ this.props.siteCount > 1 &&
+					<span className="current-site__switch-sites">
 						<Button compact borderless onClick={ this.switchSites }>
 							<Gridicon icon="arrow-left" size={ 18 } />
 							{ this.translate( 'Switch Site' ) }
@@ -197,7 +177,7 @@ module.exports = React.createClass( {
 						externalLink={ true }
 						onSelect={ this.trackHomepageClick }
 						ref="site" />
-					: <AllSites sites={ this.props.sites } />
+					: <AllSites sites={ this.props.sites.get() } />
 				}
 				{ this.getSiteNotices( site ) }
 			</Card>

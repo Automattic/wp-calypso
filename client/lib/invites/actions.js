@@ -11,7 +11,7 @@ import get from 'lodash/get';
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
 import { action as ActionTypes } from 'lib/invites/constants';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { acceptedNotice } from 'my-sites/invites/utils';
 import i18n from 'lib/mixins/i18n';
@@ -108,7 +108,9 @@ export function acceptInvite( invite, callback ) {
 						error: error.error
 					} );
 				} else {
-					dispatch( successNotice( ... acceptedNotice( invite ) ) );
+					if ( ! get( invite, 'site.is_vip' ) ) {
+						dispatch( successNotice( ... acceptedNotice( invite ) ) );
+					}
 					analytics.tracks.recordEvent( 'calypso_invite_accepted' );
 				}
 				if ( typeof callback === 'function' ) {

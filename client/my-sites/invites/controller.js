@@ -5,6 +5,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import store from 'store';
 import page from 'page';
+import get from 'lodash/get';
 
 /**
  * Internal Dependencies
@@ -55,6 +56,8 @@ export function acceptInvite( context ) {
 		const acceptInviteCallback = error => {
 			if ( error ) {
 				page( window.location.href );
+			} else if ( get( acceptedInvite, 'site.is_vip' ) ) {
+				window.location.href = getRedirectAfterAccept( acceptedInvite );
 			} else {
 				page( getRedirectAfterAccept( acceptedInvite ) );
 			}

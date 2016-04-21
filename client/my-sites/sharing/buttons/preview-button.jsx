@@ -8,7 +8,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	SocialLogo = require( 'components/social-logo' );
 
 module.exports = React.createClass( {

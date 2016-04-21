@@ -13,7 +13,7 @@ import ThemesSearchCard from './themes-search-card';
 import ThemesData from 'components/data/themes-list-fetcher';
 import ThemesList from 'components/themes-list';
 import StickyPanel from 'components/sticky-panel';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import urlSearch from 'lib/mixins/url-search';
 import config from 'config';

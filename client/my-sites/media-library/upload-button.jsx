@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	noop = require( 'lodash/noop' ),
-	classNames = require( 'classnames' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import noop from 'lodash/noop';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	MediaActions = require( 'lib/media/actions' ),
-	MediaUtils = require( 'lib/media/utils' );
+import analytics from 'lib/analytics';
+import MediaActions from 'lib/media/actions';
+import MediaUtils from 'lib/media/utils';
+import uniq from 'lodash/uniq';
+import { VideoPressFileTypes } from 'lib/media/constants';
 
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryUploadButton',
@@ -52,8 +54,9 @@ module.exports = React.createClass( {
 		if ( ! MediaUtils.isSiteAllowedFileTypesToBeTrusted( this.props.site ) ) {
 			return null;
 		}
+		const allowedFileTypesForSite = MediaUtils.getAllowedFileTypesForSite( this.props.site );
 
-		return MediaUtils.getAllowedFileTypesForSite( this.props.site ).map( ( type ) => `.${type}` ).join();
+		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) ).map( ( type ) => `.${type}` ).join();
 	},
 
 	render: function() {

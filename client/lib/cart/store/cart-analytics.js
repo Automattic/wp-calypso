@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	difference = require( 'lodash/difference' );
 

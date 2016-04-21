@@ -20,20 +20,20 @@ var React = require( 'react' ),
 // lib/local-storage must be run before lib/user
 var config = require( 'config' ),
 	localStoragePolyfill = require( 'lib/local-storage' )(), //eslint-disable-line
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	route = require( 'lib/route' ),
 	user = require( 'lib/user' )(),
 	receiveUser = require( 'state/users/actions' ).receiveUser,
 	setCurrentUserId = require( 'state/current-user/actions' ).setCurrentUserId,
 	showGuidesTour = require( 'state/ui/actions' ).showGuidesTour,
 	sites = require( 'lib/sites-list' )(),
-	superProps = require( 'analytics/super-props' ),
+	superProps = require( 'lib/analytics/super-props' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	perfmon = require( 'lib/perfmon' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
 	translatorInvitation = require( 'layout/community-translator/invitation-utils' ),
 	layoutFocus = require( 'lib/layout-focus' ),
-	nuxWelcome = require( 'nux-welcome' ),
+	nuxWelcome = require( 'layout/nux-welcome' ),
 	emailVerification = require( 'components/email-verification' ),
 	viewport = require( 'lib/viewport' ),
 	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
@@ -211,14 +211,19 @@ function reduxStoreReady( reduxStore ) {
 	debug( 'Main layout rendered.' );
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
-	// This needs to be done before the page.js router is started and can be removed when the legacy version is retired
-	if ( window && [ '?sb', '?sp' ].indexOf( window.location.search ) !== -1 ) {
-		layoutSection = ( window.location.search === '?sb' ) ? 'sidebar' : 'sites';
-		layoutFocus.set( layoutSection );
-		window.history.replaceState( null, document.title, window.location.pathname );
-	}
+	// This can be removed when the legacy version is retired.
+	page( '*', function( context, next ) {
+		if ( [ 'sb', 'sp' ].indexOf( context.querystring ) !== -1 ) {
+			layoutSection = ( context.querystring === 'sb' ) ? 'sidebar' : 'sites';
+			layoutFocus.set( layoutSection );
+			page.redirect( context.pathname );
+		}
+
+		next();
+	} );
 
 	setUpContext( reduxStore );
+
 	page( '*', require( 'lib/route/normalize' ) );
 
 	// warn against navigating from changed, unsaved forms
@@ -256,7 +261,11 @@ function reduxStoreReady( reduxStore ) {
 
 		// If `?tour` is present, show the guides tour
 		if ( config.isEnabled( 'guidestours' ) && context.query.tour ) {
-			context.store.dispatch( showGuidesTour( { shouldShow: true, tour: context.query.tour } ) );
+			context.store.dispatch( showGuidesTour( {
+				shouldShow: true,
+				shouldDelay: /^\/(checkout|plans\/select)/.test( path ),
+				tour: context.query.tour,
+			} ) );
 		}
 
 		// Bump general stat tracking overall Newdash usage

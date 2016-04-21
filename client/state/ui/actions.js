@@ -5,6 +5,7 @@ import {
 	SELECTED_SITE_SET,
 	SET_SECTION,
 	SHOW_GUIDESTOUR,
+	UPDATE_GUIDESTOUR,
 } from 'state/action-types';
 
 /**
@@ -49,11 +50,19 @@ export function setSection( section, options = {} ) {
  * @param {Object} options Options object, see fn signature.
  * @return {Object} Action object
  */
-export function showGuidesTour( { shouldShow = false, tour = 'main', siteId = null } ) {
+export function showGuidesTour( { shouldShow, shouldDelay = false, tour = 'main', siteId = null } ) {
 	return {
 		type: SHOW_GUIDESTOUR,
 		shouldShow,
+		shouldDelay,
 		tour,
 		siteId,
 	}
+}
+
+export function nextGuidesTourStep( stepName ) {
+	return {
+		type: UPDATE_GUIDESTOUR,
+		stepName,
+	};
 }

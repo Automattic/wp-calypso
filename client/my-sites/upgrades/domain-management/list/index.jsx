@@ -5,6 +5,7 @@ import page from 'page';
 import React from 'react';
 import times from 'lodash/times';
 import findIndex from 'lodash/findIndex';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -20,7 +21,7 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Gridicon from 'components/gridicon'
+import Gridicon from 'components/gridicon';
 import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
 import DomainListNotice from './domain-list-notice';
 import {
@@ -29,8 +30,14 @@ import {
 	PRIMARY_DOMAIN_REVERT_FAIL,
 	PRIMARY_DOMAIN_REVERT_SUCCESS
 } from './constants';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+import { hasDomainCredit } from 'state/sites/plans/selectors';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { abtest } from 'lib/abtest';
 
-const List = React.createClass( {
+export const List = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'list' ) ],
 
 	getInitialState() {
@@ -38,7 +45,7 @@ const List = React.createClass( {
 			changePrimaryDomainModeEnabled: false,
 			primaryDomainIndex: -1,
 			notice: null
-		}
+		};
 	},
 
 	domainWarnings() {
@@ -48,6 +55,36 @@ const List = React.createClass( {
 				selectedSite={ this.props.selectedSite }
 				ruleWhiteList={ [ 'newDomainsWithPrimary', 'newDomains', 'unverifiedDomains' ] } />;
 		}
+	},
+
+	domainCreditsInfoNotice() {
+		if ( ! this.props.hasDomainCredit ) {
+			return null;
+		}
+
+		if ( abtest( 'domainCreditsInfoNotice' ) === 'showNotice' ) {
+			const eventName = 'calypso_domain_credit_reminder_impression';
+			const eventProperties = { cta_name: 'domain_info_notice' };
+			return (
+				<Notice
+					status="is-info"
+					showDismiss={ false }
+					text={ this.translate( 'You have an unused domain credit!' ) }
+					icon="globe">
+					<NoticeAction onClick={ this.props.clickClaimDomainNotice } href={ `/domains/add/${ this.props.selectedSite.slug }` }>
+						{ this.translate( 'Claim Free Domain' ) }
+						<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+					</NoticeAction>
+				</Notice>
+			);
+		}
+
+		//otherwise still track what happens when we don't show a notice
+		const eventName = 'calypso_domain_credit_reminder_no_impression';
+		const eventProperties = { cta_name: 'domain_info_notice' };
+		return (
+			<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+		);
 	},
 
 	render() {
@@ -66,6 +103,8 @@ const List = React.createClass( {
 					selectedSite={ this.props.selectedSite }
 					sitePlans={ this.props.sitePlans } />
 				{ this.domainWarnings() }
+
+				{ this.domainCreditsInfoNotice() }
 
 				<SectionHeader label={ headerText }>
 					{ this.headerButtons() }
@@ -126,7 +165,7 @@ const List = React.createClass( {
 					domainName: previousDomainName,
 					error
 				}
-			} )
+			} );
 		} );
 		const previousDomainIndex = findIndex( this.props.domains.list, { name: previousDomainName } );
 
@@ -142,8 +181,7 @@ const List = React.createClass( {
 
 	clickAddDomain() {
 		this.recordEvent( 'addDomainClick' );
-
-		page( '/domains/add/' + this.props.selectedSite.slug );
+		page( `/domains/add/${ this.props.selectedSite.slug }` );
 	},
 
 	enableChangePrimaryDomainMode() {
@@ -180,7 +218,7 @@ const List = React.createClass( {
 				{ this.changePrimaryButton() }
 				{ this.addDomainButton() }
 			</div>
-		)
+		);
 	},
 
 	changePrimaryButton() {
@@ -219,7 +257,7 @@ const List = React.createClass( {
 				} else {
 					reject( error );
 				}
-			} )
+			} );
 		} );
 	},
 
@@ -295,4 +333,17 @@ const List = React.createClass( {
 	}
 } );
 
-export default List;
+export default connect( ( state, ownProps ) => {
+	return {
+		hasDomainCredit: hasDomainCredit( state, ownProps.selectedSite.ID )
+	};
+}, ( dispatch ) => {
+	return {
+		clickClaimDomainNotice: () => dispatch( recordTracksEvent(
+			'calypso_domain_credit_reminder_click',
+			{
+				cta_name: 'domain_info_notice'
+			}
+		) )
+	};
+} )( List );

@@ -282,7 +282,7 @@ function mediaButton( editor ) {
 	}
 
 	editor.addButton( 'wpcom_add_media', {
-		classes: 'btn wpcom-button media',
+		classes: 'btn wpcom-icon-button media',
 
 		title: i18n.translate( 'Add Media' ),
 

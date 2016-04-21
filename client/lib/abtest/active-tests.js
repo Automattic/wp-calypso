@@ -37,14 +37,6 @@ module.exports = {
 		},
 		defaultVariation: 'disabled'
 	},
-	monthlyPlanPricing: {
-		datestamp: '20160118',
-		variations: {
-			yearly: 50,
-			monthly: 50
-		},
-		defaultVariation: 'yearly'
-	},
 	privacyCheckbox: {
 		datestamp: '20160310',
 		variations: {
@@ -53,20 +45,11 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
-	verticalThemes: {
-		datestamp: '20160324',
-		variations: {
-			original: 25,
-			verticalThemes: 25,
-			notTested: 50
-		},
-		defaultVariation: 'original'
-	},
 	domainSuggestionVendor: {
 		datestamp: '20160408',
 		variations: {
-			namegen: 95,
-			domainsbot: 5,
+			namegen: 75,
+			domainsbot: 25,
 		},
 		defaultVariation: 'namegen'
 	},
@@ -81,4 +64,32 @@ module.exports = {
 		defaultVariation: 'drake',
 		allowExistingUsers: true,
 	},
+	swapButtonsMySiteSidebar: {
+		datestamp: '20160414',
+		variations: {
+			original: 50,
+			swap: 50
+		},
+		defaultVariation: 'original'
+	},
+	guidedTours: {
+		datestamp: '20160418',
+		variations: {
+			original: 96,
+			guided: 2,
+			calypsoOnly: 2,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
+	domainCreditsInfoNotice: {
+		datestamp: '20160420',
+		variations: {
+			showNotice: 90,
+			original: 10
+		},
+		defaultVariation: 'showNotice',
+		allowExistingUsers: true,
+		allowAnyLocale: true
+	}
 };

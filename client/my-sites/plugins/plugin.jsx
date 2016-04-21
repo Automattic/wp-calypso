@@ -12,7 +12,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import PluginSiteList from 'my-sites/plugins/plugin-site-list';
 import HeaderCake from 'components/header-cake';
 import PluginMeta from 'my-sites/plugins/plugin-meta';

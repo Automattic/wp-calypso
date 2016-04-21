@@ -1,6 +1,7 @@
 // External dependencies
 import React from 'react';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
 
 // Internal dependencies
@@ -12,17 +13,16 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-import ReaderListsActions from 'lib/reader-lists/actions';
-import ReaderListsStore from 'lib/reader-lists/lists';
-import smartSetState from 'lib/react-smart-set-state';
 import Notice from 'components/notice';
+import { updateListDetails, dismissListNotice, updateTitle, updateDescription } from 'state/reader/lists/actions';
+import { isUpdatedList, hasError } from 'state/reader/lists/selectors';
+import protectForm from 'lib/mixins/protect-form';
 
 const debug = debugModule( 'calypso:reader:list-management' );
 
 const ListManagementDescriptionEdit = React.createClass( {
 
-	mixins: [ LinkedStateMixin ],
-	smartSetState: smartSetState,
+	mixins: [ protectForm.mixin ],
 
 	propTypes: {
 		list: React.PropTypes.shape( {
@@ -31,54 +31,35 @@ const ListManagementDescriptionEdit = React.createClass( {
 		} )
 	},
 
-	getInitialState() {
-		return Object.assign( {
-			title: '',
-			description: '',
-		}, this.getStateFromStores( this.props ) );
-	},
-
-	getStateFromStores( props ) {
-		const list = props.list;
-		const currentState = {};
-		if ( list && list.ID ) {
-			currentState.ID = list.ID;
-			currentState.title = list.title,
-			currentState.description = list.description;
-			currentState.lastListError = ReaderListsStore.getLastError(),
-			currentState.isUpdated = ReaderListsStore.isUpdated( list.ID );
-		}
-		return currentState;
-	},
-
 	componentWillReceiveProps( nextProps ) {
-		this.smartSetState( this.getStateFromStores( nextProps ) );
+		if ( nextProps.list.ID !== this.props.list.ID ) {
+			this.handleDismissNotice();
+		}
 	},
 
 	componentWillUnmount() {
 		this.handleDismissNotice();
 	},
 
-	handleFormSubmit() {
-		ReaderListsActions.dismissNotice(
-			this.props.list.ID
-		);
-
-		const params = {
-			ID: this.props.list.ID,
-			owner: this.props.list.owner,
-			slug: this.props.list.slug,
-			title: this.state.title,
-			description: this.state.description
-		};
-
-		ReaderListsActions.update( params );
+	handleFormSubmit( event ) {
+		event.preventDefault();
+		this.handleDismissNotice();
+		this.props.updateListDetails( this.props.list );
+		this.markSaved();
 	},
 
 	handleDismissNotice() {
-		ReaderListsActions.dismissNotice(
-			this.props.list.ID
-		);
+		this.props.dismissListNotice( this.props.list.ID );
+	},
+
+	onTitleChange( event ) {
+		this.markChanged();
+		this.props.updateTitle( this.props.list.ID, event.target.value );
+	},
+
+	onDescriptionChange( event ) {
+		this.markChanged();
+		this.props.updateDescription( this.props.list.ID, event.target.value );
 	},
 
 	render() {
@@ -87,48 +68,71 @@ const ListManagementDescriptionEdit = React.createClass( {
 		}
 
 		let notice = null;
-		if ( this.state.isUpdated ) {
+		if ( this.props.isUpdatedList ) {
 			notice = <Notice status="is-success" text={ this.translate( 'List details saved successfully.' ) } onDismissClick={ this.handleDismissNotice } />;
 		}
 
-		const isTitleMissing = ! this.state.title || this.state.title.length < 1;
+		if ( this.props.hasError ) {
+			notice = <Notice status="is-error" text={ this.translate( 'Sorry, there was a problem saving your list details.' ) } onDismissClick={ this.handleDismissNotice } />;
+		}
+
+		const isTitleMissing = ! this.props.list.title || this.props.list.title.length < 1;
 
 		return (
 			<div className="list-management-description-edit">
 				{ notice }
 				<Card>
-					<FormFieldset>
-						<FormLabel htmlFor="list-title">Title</FormLabel>
-						<FormTextInput
-							autoCapitalize="off"
-							autoComplete="on"
-							autoCorrect="off"
-							id="list-title"
-							name="list-title"
-							ref="listTitle"
-							required
-							className={ isTitleMissing ? 'is-error' : '' }
-							placeholder=""
-							valueLink={ this.linkState( 'title' ) } />
-						{ isTitleMissing ? <FormInputValidation isError text={ this.translate( 'Title is a required field.' ) } /> : '' }
-					</FormFieldset>
-					<FormFieldset>
-						<FormLabel htmlFor="list-description">Description</FormLabel>
-						<FormTextarea
-							ref="listDescription"
-							name="list-description"
-							id="list-description"
-							placeholder=""
-							valueLink={ this.linkState( 'description' ) }></FormTextarea>
-					</FormFieldset>
+					<form onSubmit={ this.handleFormSubmit }>
+						<FormFieldset>
+							<FormLabel htmlFor="list-title">Title</FormLabel>
+							<FormTextInput
+								autoCapitalize="off"
+								autoComplete="on"
+								autoCorrect="off"
+								id="list-title"
+								name="list-title"
+								ref="listTitle"
+								required
+								className={ isTitleMissing ? 'is-error' : '' }
+								placeholder=""
+								onChange={ this.onTitleChange }
+								value={ this.props.list ? this.props.list.title : '' } />
+							{ isTitleMissing ? <FormInputValidation isError text={ this.translate( 'Title is a required field.' ) } /> : '' }
+						</FormFieldset>
+						<FormFieldset>
+							<FormLabel htmlFor="list-description">Description</FormLabel>
+							<FormTextarea
+								ref="listDescription"
+								name="list-description"
+								id="list-description"
+								placeholder=""
+								onChange={ this.onDescriptionChange }
+								value={ this.props.list ? this.props.list.description : '' }></FormTextarea>
+						</FormFieldset>
 
-					<FormButtonsBar>
-						<FormButton disabled={ isTitleMissing } onClick={ this.handleFormSubmit }>{ this.translate( 'Save Changes' ) }</FormButton>
-					</FormButtonsBar>
+						<FormButtonsBar>
+							<FormButton disabled={ isTitleMissing }>{ this.translate( 'Save Changes' ) }</FormButton>
+						</FormButtonsBar>
+					</form>
 				</Card>
 			</div>
 		);
 	}
 } );
 
-export default ListManagementDescriptionEdit;
+export default connect(
+	( state, ownProps ) => {
+		return {
+			isUpdatedList: isUpdatedList( state, ownProps.list.ID ),
+			hasError: hasError( state, ownProps.list.ID )
+		};
+	},
+	( dispatch ) => {
+		return bindActionCreators( {
+			updateListDetails,
+			dismissListNotice,
+			updateTitle,
+			updateDescription
+		}, dispatch );
+	}
+)( ListManagementDescriptionEdit );

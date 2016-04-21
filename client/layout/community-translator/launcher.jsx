@@ -10,7 +10,7 @@ var React = require( 'react' ),
 var translator = require( 'lib/translator-jumpstart' ),
 	localStorageHelper = require( 'store' ),
 	Dialog = require( 'components/dialog' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 	displayName: 'TranslatorLauncher',

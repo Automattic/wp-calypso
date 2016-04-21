@@ -41,7 +41,7 @@ module.exports = function() {
 		page( '/read/*', controller.loadSubscriptions, controller.initAbTests );
 		page( '/read/blog/feed/:feed_id', controller.legacyRedirects );
 		page( '/read/feeds/:feed_id/posts', controller.incompleteUrlRedirects );
-		page( '/read/feeds/:feed_id', updateLastRoute, controller.prettyRedirects, controller.removePost, controller.sidebar, controller.feedListing );
+		page( '/read/feeds/:feed_id', updateLastRoute, controller.prettyRedirects, controller.removePost, controller.sidebar, controller.feedDiscovery, controller.feedListing );
 		page.exit( '/read/feeds/:feed_id', controller.resetTitle );
 
 		// Feed full post
@@ -64,6 +64,9 @@ module.exports = function() {
 	}
 
 	page( '/read/a8c', updateLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
+	if ( config.isEnabled( 'reader/search' ) ) {
+		page( '/read/search', updateLastRoute, controller.removePost, controller.sidebar, controller.search );
+	}
 
 	page( '/read/list/:user/:list', updateLastRoute, controller.removePost, controller.sidebar, controller.listListing );
 

@@ -17,7 +17,7 @@ import PaymentBox from './payment-box';
 import { cartItems } from 'lib/cart-values';
 import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
 import { forDomainRegistrations as statesListForDomainRegistrations } from 'lib/states-list';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
 import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails } from 'lib/upgrades/actions';
 import FormButton from 'components/forms/form-button';

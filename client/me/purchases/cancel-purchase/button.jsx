@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Button from 'components/button';
 import { cancelAndRefundPurchase, cancelPurchase } from 'lib/upgrades/actions';
 import { connect } from 'react-redux';
@@ -178,7 +178,7 @@ const CancelPurchaseButton = React.createClass( {
 			submitting: true
 		} );
 
-		cancelAndRefundPurchase( this.props.purchase.id, null, this.handleSubmit );
+		cancelAndRefundPurchase( this.props.purchase.id, { product_id: this.props.purchase.productId }, this.handleSubmit );
 	},
 
 	render() {

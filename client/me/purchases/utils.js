@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import paths from './paths';
 
 function getPurchase( props ) {
@@ -43,7 +43,7 @@ function goToManagePurchase( props ) {
 }
 
 function isDataLoading( props ) {
-	return ! props.hasLoadedSites || ! props.selectedPurchase.hasLoadedFromServer;
+	return ! props.hasLoadedSites || ! props.selectedPurchase.hasLoadedUserPurchasesFromServer;
 }
 
 function recordPageView( trackingSlug, props, nextProps = null ) {
@@ -52,7 +52,7 @@ function recordPageView( trackingSlug, props, nextProps = null ) {
 	}
 
 	if ( nextProps &&
-		( props.selectedPurchase.hasLoadedFromServer || ! nextProps.selectedPurchase.hasLoadedFromServer ) ) {
+		( props.selectedPurchase.hasLoadedUserPurchasesFromServer || ! nextProps.selectedPurchase.hasLoadedUserPurchasesFromServer ) ) {
 		// only record the page view the first time the purchase loads from the server
 		return null;
 	}
