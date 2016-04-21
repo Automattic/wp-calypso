@@ -18,7 +18,8 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-	JETPACK_CONNECT_REDIRECT
+	JETPACK_CONNECT_REDIRECT,
+	JETPACK_CONNECT_STORE_SESSION
 } from 'state/action-types';
 import userFactory from 'lib/user';
 
@@ -70,7 +71,11 @@ export default {
 					error: error
 				} );
 				if ( ! error ) {
-					wpcom.undocumented().storeJetpackConnectUrl( url );
+					debug( 'jetpack-connect store correct session', url, error, data );
+					dispatch( {
+						type: JETPACK_CONNECT_STORE_SESSION,
+						url: url
+					} );
 				}
 			} )
 			.catch( ( error ) => {
