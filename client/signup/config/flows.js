@@ -132,13 +132,6 @@ const flows = {
 		lastModified: '2016-01-28'
 	},
 
-	newsite: {
-		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
-		destination: getSiteDestination,
-		description: 'Headstarted flow with verticals for EN users clicking "Create Website" on the homepage.',
-		lastModified: '2016-03-21'
-	},
-
 	blog: {
 		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
@@ -247,17 +240,6 @@ function filterFlowName( flowName ) {
 
 	if ( includes( defaultFlows, flowName ) && abtest( 'freeTrialsInSignup' ) === 'enabled' ) {
 		return 'free-trial';
-	}
-
-	const locale = getLocaleSlug();
-	// Only allow the `headstart` flow for EN users.
-	if ( 'headstart' === flowName && 'en' !== locale && 'en-gb' !== locale ) {
-		return 'main';
-	}
-
-	// Headstarted "default" flow (`newsite`) with vertical selection for EN users, coming from the homepage single button.
-	if ( 'website' === flowName && ( 'en' === locale || 'en-gb' === locale ) ) {
-		return 'newsite';
 	}
 
 	return flowName;
