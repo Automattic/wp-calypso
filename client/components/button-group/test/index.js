@@ -1,6 +1,3 @@
-
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
@@ -11,10 +8,11 @@ import sinon from 'sinon';
 
 describe( 'ButtonGroup', function() {
 	let sandbox, ButtonGroup, Button;
+
 	beforeEach( function() {
 		sandbox = sinon.sandbox.create();
-		sandbox.stub( console, 'error');
-		sandbox.stub( console, 'log');
+		sandbox.stub( console, 'error' );
+		sandbox.stub( console, 'log' );
 
 		ButtonGroup = require( '../index' );
 		Button = require( 'components/button' );
@@ -22,7 +20,7 @@ describe( 'ButtonGroup', function() {
 
 	afterEach( function() {
 		sandbox.restore();
-	})
+	} );
 
 	it( 'should have ButtonGroup class', function() {
 		const buttonGroup = shallow( <ButtonGroup /> );
@@ -35,9 +33,8 @@ describe( 'ButtonGroup', function() {
 	} );
 
 	it( 'should throw an error if any of the children is not a <Button>', function() {
-		const buttonGroup = (
-			<ButtonGroup><div id="test">test</div></ButtonGroup>
-		);
+		shallow( <ButtonGroup><div id="test">test</div></ButtonGroup> );
+
 		sinon.assert.calledWithExactly( console.error, 'Warning: Failed propType: All children elements should be a Button.' );
 	} );
 } );

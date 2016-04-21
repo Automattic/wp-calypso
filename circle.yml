@@ -15,19 +15,10 @@ test:
           - server/**/*.jsx
     - MOCHA_FILE=./test-results-client.xml npm run test-client -- --reporter=mocha-junit-reporter:
         parallel: true
-        files:
-          - client/**/test/*.js
-          - client/**/test/*.jsx
     - MOCHA_FILE=./test-results-server.xml npm run test-server -- --reporter=mocha-junit-reporter:
         parallel: true
-        files:
-          - server/**/test/*.js
-          - server/**/test/*.jsx
     - MOCHA_FILE=./test-results-test.xml npm run test-test -- --reporter=mocha-junit-reporter:
         parallel: true
-        files:
-          - test/test/**/test/*.js
-          - test/test/**/test/*.jsx
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/ && find . -type f -regex  "./test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;:
         parallel: true
