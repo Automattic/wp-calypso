@@ -31,6 +31,11 @@
 	&.is-info {
 		background: $blue-wordpress;
 	}
+
+	// Update
+	&.is-update {
+		background: $orange-jazzy;
+	}
 }
 
 .notice__icon {
@@ -173,7 +178,8 @@
 	&.is-success, // TODO fix this in pre-oss to be less bad
 	&.is-error,
 	&.is-warning,
-	&.is-info {
+	&.is-info,
+	&.is-update {
 		color: $white;
 
 		a,

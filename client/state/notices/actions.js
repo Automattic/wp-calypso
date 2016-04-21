@@ -57,3 +57,4 @@ export const successNotice = createNotice.bind( null, 'is-success' );
 export const errorNotice = createNotice.bind( null, 'is-error' );
 export const infoNotice = createNotice.bind( null, 'is-info' );
 export const warningNotice = createNotice.bind( null, 'is-warning' );
+export const updateNotice = createNotice.bind( null, 'is-update' );

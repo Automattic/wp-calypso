@@ -32,7 +32,7 @@ var Main = require( 'components/main' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	scrollTo = require( 'lib/scroll-to' ),
 	XPostHelper = require( 'reader/xpost-helper' ),
-	infoNotice = require( 'state/notices/actions' ).infoNotice,
+	updateNotice = require( 'state/notices/actions' ).updateNotice,
 	removeNotice = require( 'state/notices/actions' ).removeNotice;
 
 const GUESSED_POST_HEIGHT = 600,
@@ -64,7 +64,7 @@ module.exports = React.createClass( {
 		onUpdatesShown: React.PropTypes.func,
 		emptyContent: React.PropTypes.object,
 		className: React.PropTypes.string,
-		infoNotice: React.PropTypes.func,
+		updateNotice: React.PropTypes.func,
 		removeNotice: React.PropTypes.func,
 	},
 
@@ -120,13 +120,11 @@ module.exports = React.createClass( {
 		let countString = count >= 40 ? '40+' : ( '' + count );
 
 		this.context.store.dispatch(
-			infoNotice(
+			updateNotice(
 				this.translate( '%s new post', '%s new posts', { args: [ countString ], count: count } ),
 				{
 					id: READER_STREAM_NOTICE_ID,
-					icon: 'arrow-up',
 					showDismiss: false,
-					className: 'reader__update-notice',
 					button: this.translate( 'Update' ),
 					onClick: ( event, closeFn ) => {
 						event.preventDefault();

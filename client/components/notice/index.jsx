@@ -15,6 +15,7 @@ const statusIcons = {
 	'is-success': 'checkmark',
 	'is-error': 'notice',
 	'is-warning': 'notice',
+	'is-update': 'arrow-up',
 };
 
 export default React.createClass( {
