@@ -32,12 +32,13 @@ important that your node_modules is deleted before you do this to be sure to pic
 
 - Install [shonkwrap](https://github.com/skybet/shonkwrap) globally: `npm install -g shonkwrap`. This package attempts
 to remove the from/resolved fields if possible.
+- (Optional) Modify package.json. For example: `npm install --save lodash@4.11.1` or `npm uninstall --save left-pad`
 - Run `make distclean` to delete local node_modules
 - Delete your local copy of npm-shrinkwrap.json.
 - Run `npm install`
 - Verify that Calypso works as expected and that tests pass.
 - Run `shonkwrap --dev`
-- Commit the new npm-shrinkwrap.json
+- Commit the new npm-shrinkwrap.json and any changes to package.json
 
 ## Testing
 
