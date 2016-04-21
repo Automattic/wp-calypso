@@ -105,7 +105,7 @@ const PlansSetup = React.createClass( {
 					{ 'Installing your new plugins' }
 				</Card>
 				<CompactCard>
-					{ 'Here\'s some info about setting up your new Business Plan. You can also manually install the plugins by following this help doc(?).' }
+					{ this.translate( 'Here\'s some info about setting up your new %(plan)s Plan. You can also manually install the plugins by following this help doc(?).', { args: { plan: site.plan.product_name_short } } ) }
 				</CompactCard>
 				<CompactCard className="plan-setup__action">
 					<Button primary onClick={ this.onNextClick( nextPlugin.slug ) }>{ 'Let\'s go!' }</Button>
@@ -268,7 +268,7 @@ const PlansSetup = React.createClass( {
 
 		return (
 			<div>
-				<h1 className="plan-setup__header">{ this.translate( 'Setting up your Business Plan' ) }</h1>
+				<h1 className="plan-setup__header">{ this.translate( 'Setting up your %(plan)s Plan', { args: { plan: site.plan.product_name_short } } ) }</h1>
 				{ content }
 			</div>
 		);
