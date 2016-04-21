@@ -178,7 +178,7 @@ const LoggedInForm = React.createClass( {
 
 	isCalypsoStartedConnection() {
 		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
-		if ( this.props.jetpackConnectSessions[ site ] ) {
+		if ( this.props.jetpackConnectSessions && this.props.jetpackConnectSessions[ site ] ) {
 			const currentTime = ( new Date() ).getTime();
 			const oneDay = 24 * 60 * 60;
 			return ( currentTime - this.props.jetpackConnectSessions[ site ] < oneDay );
