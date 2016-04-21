@@ -372,17 +372,20 @@ module.exports = React.createClass( {
 
 		return (
 			<li className={ this.itemLinkClass( [ '/plans' ], linkClass ) }>
-				<a onClick={ this.trackUpgradeClick } href={ planLink }>
+				<a onClick={ this.trackUpgradeClick.bind( this, planLink ) } href={ planLink }>
 					<Gridicon icon="clipboard" size={ 24 } />
 					<span className="menu-link-text">{ this.translate( 'Plan', { context: 'noun' } ) }</span>
 				</a>
-				<a href={ planLink } className="plan-name" onClick={ this.trackUpgradeClick }>{ planName }</a>
+				<a href={ planLink } className="plan-name" onClick={ this.trackUpgradeClick.bind( this, planLink ) }>{ planName }</a>
 			</li>
 		);
 	},
 
-	trackUpgradeClick: function() {
-		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'sidebar_upgrade_default' } );
+	trackUpgradeClick: function( planLink ) {
+		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
+			cta_name: 'sidebar_upgrade_default',
+			path: planLink
+		} );
 		this.onNavigate();
 	},
 
