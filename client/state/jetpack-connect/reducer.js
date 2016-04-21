@@ -29,7 +29,8 @@ const defaultAuthorizeState = {
 export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_STORE_SESSION:
-			return Object.assign( {}, state, { [ action.url ]:  ( new Date() ).getTime() } );
+			const noProtocolUrl = action.url.replace( /.*?:\/\//g, '' );
+			return Object.assign( {}, state, { [ noProtocolUrl ]:  ( new Date() ).getTime() } );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return state;
