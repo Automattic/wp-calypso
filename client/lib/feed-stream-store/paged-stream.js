@@ -42,7 +42,7 @@ var PagedStream = function( spec ) {
 		errors: [],
 		fetcher: spec.fetcher,
 		page: 1,
-		perPage: 20,
+		perPage: spec.perPage || 10,
 		query: spec.query,
 		selectedIndex: -1,
 		orderBy: 'date',
@@ -170,10 +170,10 @@ assign( PagedStream.prototype, {
 	},
 
 	onNextPageFetch: function( params ) {
-		params.offset = this.page * this.perPage;
+		params.offset = ( this.page - 1 ) * this.perPage;
 		params.before = undefined;
 		params.after = undefined;
-		params.number = 5;
+		params.number = this.perPage;
 	},
 
 	getLastItemWithDate: function() {
