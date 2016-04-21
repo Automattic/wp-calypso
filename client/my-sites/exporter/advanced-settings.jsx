@@ -68,7 +68,7 @@ const AdvancedSettings = React.createClass( {
 				<h1 className="exporter__advanced-settings-title">
 					{ this.translate( 'Select specific content to export' ) }
 				</h1>
-				<p>
+				<p className="exporter__advanced-settings-description">
 					{ this.translate(
 						'Use the options below to select a specific content ' +
 						'type to download. You can select Posts, Pages, ' +
