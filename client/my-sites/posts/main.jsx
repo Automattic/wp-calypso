@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' );
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,7 +15,16 @@ var PostsNavigation = require( './posts-navigation' ),
 	Main = require( 'components/main' ),
 	notices = require( 'notices' );
 
-module.exports = React.createClass( {
+import QueryPosts from 'components/data/query-posts';
+import Draft from 'my-sites/draft';
+import { getSelectedSite } from 'state/ui/selectors';
+import {
+	getSitePostsForQueryIgnoringPage,
+	isRequestingSitePostsForQuery
+} from 'state/posts/selectors';
+import SectionHeader from 'components/section-header';
+
+const PostsMain = React.createClass( {
 
 	displayName: 'Posts',
 
@@ -30,11 +40,29 @@ module.exports = React.createClass( {
 		this._setWarning( selectedSite );
 	},
 
+	renderDraft: function( draft ) {
+		if ( ! draft ) {
+			return null;
+		}
+
+		return <Draft key={ draft.global_ID } post={ draft } sites={ this.props.sites } />;
+	},
+
 	render: function() {
+		const site = this.props.sites.getSelectedSite();
 		return (
 			<Main className="posts">
 				<SidebarNavigation />
 				<PostsNavigation { ...this.props } />
+				<div className="posts__recent-drafts">
+					<QueryPosts
+						siteId={ site && site.ID }
+						query={ this.props.query } />
+					{ this.props.drafts &&
+						<SectionHeader label={ this.translate( 'Most Recent Drafts' ) } />
+					}
+					{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
+				</div>
 				<PostList { ...this.props } />
 			</Main>
 		);
@@ -50,3 +78,21 @@ module.exports = React.createClass( {
 	}
 
 } );
+
+export default connect( ( state ) => {
+	const selectedSite = getSelectedSite( state );
+	const siteId = selectedSite.ID;
+	const query = {
+		type: 'post',
+		lastPage: true,
+		status: 'draft',
+		number: 3,
+		order_by: 'modified'
+	};
+
+	return {
+		drafts: getSitePostsForQueryIgnoringPage( state, siteId, query ),
+		loading: isRequestingSitePostsForQuery( state, siteId, query ),
+		query: query
+	};
+} )( PostsMain );
