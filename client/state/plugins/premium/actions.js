@@ -193,7 +193,11 @@ export default {
 
 			wpcom.fetchJetpackKeys( siteId, ( error, data ) => {
 				if ( error ) {
-					console.warn( error );
+					dispatch( {
+						type: PLUGIN_SETUP_RECEIVE_INSTRUCTIONS,
+						siteId,
+						data: [],
+					} );
 					return;
 				}
 

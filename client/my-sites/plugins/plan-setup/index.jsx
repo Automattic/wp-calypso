@@ -256,6 +256,15 @@ const PlansSetup = React.createClass( {
 			return null;
 		}
 
+		let plugins = PremiumSelectors.getPluginsForSite( this.props.plugins, site.ID );
+		if ( ! plugins.length ) {
+			return (
+				<div>
+					<h1 className="plan-setup__header">{ this.translate( 'Nothing to do here…' ) }</h1>
+				</div>
+			);
+		}
+
 		let content;
 		let plugin = PremiumSelectors.getActivePlugin( this.props.plugins, site.ID );
 		if ( plugin ) {
