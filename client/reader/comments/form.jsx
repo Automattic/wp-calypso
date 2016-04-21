@@ -33,9 +33,14 @@ var PostCommentForm = React.createClass( {
 	},
 
 	componentDidUpdate: function() {
-		const commentTextNode = this.refs.commentText,
-			commentText = this.getCommentText(),
-			currentHeight = parseInt( commentTextNode.style.height, 10 ) || 0;
+		const commentTextNode = this.refs.commentText;
+
+		if ( ! commentTextNode ) {
+			return;
+		}
+
+		const commentText = this.getCommentText();
+		const currentHeight = parseInt( commentTextNode.style.height, 10 ) || 0;
 		commentTextNode.style.height = commentText.length ? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px' : null;
 	},
 
