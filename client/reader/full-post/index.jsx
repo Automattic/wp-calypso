@@ -149,7 +149,7 @@ FullPostView = React.createClass( {
 			discoverSiteUrl,
 			discoverSiteName;
 
-		if ( isDiscoverPost ) {
+		if ( isDiscoverPost && post.discover_metadata ) {
 			discoverSiteUrl = DiscoverHelper.getSiteUrl( post );
 			discoverSiteName = post.discover_metadata.attribution.blog_name;
 		}
@@ -212,7 +212,7 @@ FullPostView = React.createClass( {
 					}
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
-					{ isDiscoverPost ? <DiscoverVisitLink siteName={ discoverSiteName } siteUrl={ discoverSiteUrl } /> : null }
+					{ discoverSiteName && discoverSiteUrl ? <DiscoverVisitLink siteName={ discoverSiteName } siteUrl={ discoverSiteUrl } /> : null }
 					{ this.props.shouldShowComments ? <PostCommentList ref="commentList" post={ post } onCommentsUpdate={ this.checkForCommentAnchor } /> : null }
 				</article>
 			</div>
