@@ -10,7 +10,6 @@ import reject from 'lodash/reject';
  */
 import { abtest } from 'lib/abtest';
 import config from 'config';
-import { getLocaleSlug } from 'lib/i18n-utils';
 import { isOutsideCalypso } from 'lib/url';
 import plansPaths from 'my-sites/plans/paths';
 import stepConfig from './steps';
