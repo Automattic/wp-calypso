@@ -11,6 +11,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import cloneDeepWith from 'lodash/cloneDeepWith';
 import findIndex from 'lodash/findIndex';
 import iteratee from 'lodash/iteratee';
+import isArray from 'lodash/isArray';
 
 /**
  * Internal dependencies
@@ -38,6 +39,18 @@ var NEWPAGE_MENU_ITEM_ID = -100;
 
 export function isInjectedNewPageItem( content ) {
 	return content.content_id === NEWPAGE_MENU_ITEM_ID;
+}
+
+function deepFilterInjectedNewPageItems( menuObject, found = [] ) {
+	if ( isInjectedNewPageItem( menuObject ) ) {
+		found.push( menuObject );
+	}
+
+	isArray( menuObject.items ) && menuObject.items.forEach(
+		item => deepFilterInjectedNewPageItems( item, found )
+	);
+
+	return found;
 }
 
 /**
@@ -464,9 +477,8 @@ MenuData.prototype.saveMenu = function( menu, callback ) {
 	/*
 	Because of how postEditStore works, we need to fire promises one after another.
 	 */
-	menu.items.filter(
-		isInjectedNewPageItem
-	).reduce(
+	deepFilterInjectedNewPageItems( menu )
+	.reduce(
 		( previousNewPagePromise, menuItem ) => previousNewPagePromise.then( () => self.createNewPagePromise( menuItem, self.siteID ) ),
 		Promise.resolve()
 	)
