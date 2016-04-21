@@ -29,16 +29,13 @@ const defaultAuthorizeState = {
 export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_STORE_SESSION:
-			var newstate = Object.assign( {}, state, { [ action.url ]:  ( new Date() ).getTime() } );
-			console.log(newstate);
-			return newstate;
+			return Object.assign( {}, state, { [ action.url ]:  ( new Date() ).getTime() } );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return state;
 	}
 	return state;
 }
-
 
 export function jetpackConnectSite( state = {}, action ) {
 	switch ( action.type ) {
