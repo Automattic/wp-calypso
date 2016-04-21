@@ -13,6 +13,7 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
+	JETPACK_CONNECT_STORE_SESSION,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -24,6 +25,20 @@ const defaultAuthorizeState = {
 	authorizeSuccess: false,
 	authorizeError: false
 };
+
+export function jetpackConnectSessions( state = {}, action ) {
+	switch ( action.type ) {
+		case JETPACK_CONNECT_STORE_SESSION:
+			var newstate = Object.assign( {}, state, { [ action.url ]:  ( new Date() ).getTime() } );
+			console.log(newstate);
+			return newstate;
+		case SERIALIZE:
+		case DESERIALIZE:
+			return state;
+	}
+	return state;
+}
+
 
 export function jetpackConnectSite( state = {}, action ) {
 	switch ( action.type ) {
@@ -84,5 +99,6 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 
 export default combineReducers( {
 	jetpackConnectSite,
-	jetpackConnectAuthorize
+	jetpackConnectAuthorize,
+	jetpackConnectSessions,
 } );
