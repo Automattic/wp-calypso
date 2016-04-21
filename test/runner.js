@@ -21,6 +21,8 @@ const boot = require( './boot-test' ),
 program
 	.usage( '[options] [files]' )
 	.option( '-R, --reporter <name>', 'specify the reporter to use', 'spec' )
+	.option( '-t, --node-total <n>', 'specify the node total to use', parseInt )
+	.option( '-i, --node-index <n>', 'specify the node index to use', parseInt )
 	.option( '-g, --grep <pattern>', 'only run tests matching <pattern>' );
 
 program.name = 'runner';
@@ -46,14 +48,12 @@ if ( process.env.CIRCLECI ) {
 mocha.suite.beforeAll( boot.before );
 mocha.suite.afterAll( boot.after );
 
-// TODO: remove whitelist logic once we migrate client folder
-if ( process.env.TEST_ROOT === 'client' ) {
-	setup.enableWhitelist();
-}
-
 files = program.args;
-if ( files.length === 0 && ! process.env.CIRCLECI ) {
+if ( files.length === 0 ) {
 	files = glob.sync( process.env.TEST_ROOT + '/**/test/*.@(js|jsx)' );
+	if ( program.nodeTotal > 1 ) {
+		files = files.filter( ( file, index ) => index % program.nodeTotal === program.nodeIndex );
+	}
 }
 files.forEach( setup.addFile );
 
