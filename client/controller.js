@@ -6,15 +6,20 @@ import ReactDom from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
 import { setSection as setSectionAction } from 'state/ui/actions';
 import noop from 'lodash/noop';
+import page from 'page';
+import isEmpty from 'lodash/isEmpty';
+import pathToRegexp from 'path-to-regexp';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import page from 'page';
 import LayoutLoggedOut from 'layout/logged-out';
-import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:controller' );
+
+let routes = [];
+let routeMatcher = pathToRegexp( routes );
 
 /**
  * @param { object } context -- Middleware context
@@ -33,7 +38,7 @@ export function makeLoggedOutLayout( context, next ) {
 		</ReduxProvider>
 	);
 	next();
-};
+}
 
 /**
  * Isomorphic routing helper, client side
@@ -50,6 +55,8 @@ export function makeLoggedOutLayout( context, next ) {
  * divs.
  */
 export function clientRouter( route, ...middlewares ) {
+	routes.push( route );
+	routeMatcher = pathToRegexp( routes );
 	page( route, ...[ ...middlewares, render ] );
 }
 
@@ -58,7 +65,7 @@ export function setSection( section ) {
 		context.store.dispatch( setSectionAction( section ) );
 
 		next();
-	}
+	};
 }
 
 function render( context ) {
@@ -102,4 +109,12 @@ function renderSecondary( context ) {
 			document.getElementById( 'secondary' )
 		);
 	}
+}
+
+export function isIsomorphicRoute( path ) {
+	return routeMatcher.exec( path );
+}
+
+export function previousLayoutIsSingleTree() {
+	return ! isEmpty( document.getElementsByClassName( 'wp-singletree-layout' ) );
 }

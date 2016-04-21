@@ -47,6 +47,8 @@ var config = require( 'config' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
+	isIsomorphicRoute = require( 'controller' ).isIsomorphicRoute,
+	previousLayoutIsSingleTree = require( 'controller' ).previousLayoutIsSingleTree,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
@@ -359,6 +361,20 @@ function reduxStoreReady( reduxStore ) {
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
 		require( 'lib/rubberband-scroll-disable' )( document.body );
 	}
+
+	/*
+	 * Layouts with differing React mount-points will not reconcile correctly,
+	 * so remove an existing single-tree layout by re-rendering if necessary.
+	 *
+	 * TODO (@seear): React 15's new reconciliation algo may make this unnecessary
+	 */
+	page( '*', function( context, next ) {
+		if ( ! isIsomorphicRoute( context.path ) && previousLayoutIsSingleTree() ) {
+			debug( 'Re-rendering multi-tree layout' );
+			renderLayout( context.store );
+		}
+		next();
+	} );
 
 	detectHistoryNavigation.start();
 	page.start();
