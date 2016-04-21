@@ -149,10 +149,10 @@ controller = {
 		const wpcomFilters = [ 'standard', 'business', 'premium' ];
 		const siteUrl = route.getSiteFragment( context.path );
 		const site = sites.getSelectedSite();
-		filter || ( filter = context.params.plugin );
+		const appliedFilter = ( filter ? filter : context.params.plugin ).toLowerCase();
 
 		// bail if /plugins/:site_id?
-		if ( siteUrl && filter.toLowerCase() === siteUrl.toString().toLowerCase() ) {
+		if ( siteUrl && appliedFilter === siteUrl.toString().toLowerCase() ) {
 			next();
 			return;
 		}
@@ -164,10 +164,10 @@ controller = {
 		 * if no site URL is provided, bail if a WordPress.com filter was provided.
 		 * Only Jetpack plugins should work when no URL is provided.
 		 */
-		if ( siteUrl && ( ( ! site.jetpack && ! includes( [ 'all' ].concat( wpcomFilters ), filter.toLowerCase() ) ) || ( site.jetpack && includes( wpcomFilters, filter.toLowerCase() ) ) ) ) {
+		if ( siteUrl && ( ( ! site.jetpack && ! includes( [ 'all' ].concat( wpcomFilters ), appliedFilter ) ) || ( site.jetpack && includes( wpcomFilters, appliedFilter ) ) ) ) {
 			page.redirect( '/plugins/' + siteUrl );
 			return;
-		} else if ( ! siteUrl && includes( wpcomFilters, filter.toLowerCase() ) ) {
+		} else if ( ! siteUrl && includes( wpcomFilters, appliedFilter ) ) {
 			page.redirect( '/plugins' );
 			return;
 		}
