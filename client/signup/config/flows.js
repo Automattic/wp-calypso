@@ -132,13 +132,6 @@ const flows = {
 		lastModified: '2016-01-28'
 	},
 
-	newsite: {
-		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
-		destination: getSiteDestination,
-		description: 'Headstarted flow with verticals for EN users clicking "Create Website" on the homepage.',
-		lastModified: '2016-03-21'
-	},
-
 	blog: {
 		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
