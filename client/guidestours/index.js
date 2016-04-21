@@ -91,7 +91,7 @@ class GuidesTours extends Component {
 				<StepComponent
 					{ ...stepConfig }
 					key={ stepConfig.target }
-					target={ this.currentTarget }
+					targetSlug={ stepConfig.target }
 					onNext={ this.next }
 					onQuit={ this.quit }
 					onFinish={ this.finish } />
