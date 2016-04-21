@@ -13,7 +13,7 @@ import useI18n from 'test/helpers/use-i18n';
 import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe.skip( 'index', function() {
+describe( 'index', function() {
 	let React,
 		ReactDom,
 		ReactInjection,
@@ -106,14 +106,14 @@ describe.skip( 'index', function() {
 				assert( ReactDom.findDOMNode( component ).querySelector( '.domain-management-list__change-primary-button' ) );
 			} );
 
-			it.skip( 'should enable upon clicking the button', () => {
+			it( 'should enable upon clicking the button', () => {
 				const button = ReactDom.findDOMNode( component ).querySelector( '.domain-management-list__change-primary-button' );
 				TestUtils.Simulate.click( button );
 				assert( component.state.changePrimaryDomainModeEnabled );
 			} );
 		} );
 
-		describe.skip( 'when enabled', () => {
+		describe( 'when enabled', () => {
 			beforeEach( () => {
 				component = renderWithProps();
 				const button = ReactDom.findDOMNode( component ).querySelector( '.domain-management-list__change-primary-button' );
@@ -139,7 +139,7 @@ describe.skip( 'index', function() {
 				assert.equal( component.state.primaryDomainIndex, primaryDomainIndex );
 			} );
 
-			describe.skip( '#handleUpdatePrimaryDomain', () => {
+			describe( '#handleUpdatePrimaryDomain', () => {
 				let setPrimaryDomainStub,
 					setPrimaryDomainResolve,
 					setPrimaryDomainReject;

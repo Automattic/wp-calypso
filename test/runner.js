@@ -6,7 +6,8 @@ require( 'babel/register' );
 /**
  * External dependencies
  */
-const glob = require( 'glob' ),
+const debug = require( 'debug' )( 'test-runner' ),
+	glob = require( 'glob' ),
 	Mocha = require( 'mocha' ),
 	path = require( 'path' ),
 	program = require( 'commander' );
@@ -35,6 +36,13 @@ const mocha = new Mocha( {
 
 if ( program.grep ) {
 	mocha.grep( new RegExp( program.grep ) );
+}
+
+if ( process.env.CIRCLECI ) {
+	debug( 'Hello Circle!' );
+	// give circle more time by default because containers are slow
+	// why 10 seconds? a guess.
+	mocha.suite.timeout( 10000 );
 }
 
 mocha.suite.beforeAll( boot.before );
