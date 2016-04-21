@@ -348,6 +348,7 @@ module.exports = React.createClass( {
 
 		//Show plan details for upgraded sites
 		if (
+			config.isEnabled( 'manage/plans/my-plan' ) &&
 			abtest( 'sidebarPlanLink' ) === 'plans/my-plan' &&
 			site &&
 			( isPremium( site.plan ) || isBusiness( site.plan ) )
