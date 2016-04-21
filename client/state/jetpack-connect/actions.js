@@ -21,12 +21,13 @@ import {
 	JETPACK_CONNECT_REDIRECT
 } from 'state/action-types';
 import userFactory from 'lib/user';
+import config from 'config';
 
 /**
  *  Local variables;
  */
 let _fetching = {};
-const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
+const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + config( 'env' );
 const installURL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const activateURL = '/wp-admin/plugins.php';
 const userModule = userFactory();
@@ -38,7 +39,7 @@ export default {
 				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
 				url: url
 			} );
-		}
+		};
 	},
 
 	checkUrl( url ) {
@@ -82,7 +83,7 @@ export default {
 					error: error
 				} );
 			} );
-		}
+		};
 	},
 	goToRemoteAuth( url ) {
 		return ( dispatch ) => {
@@ -134,7 +135,7 @@ export default {
 					} );
 				}
 			);
-		}
+		};
 	},
 	authorize( queryObject ) {
 		return ( dispatch ) => {
@@ -184,6 +185,6 @@ export default {
 					error: error
 				} );
 			} );
-		}
+		};
 	}
 };
