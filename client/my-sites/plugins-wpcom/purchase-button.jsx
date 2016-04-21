@@ -2,16 +2,13 @@ import React, { PropTypes } from 'react';
 
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
-import page from 'page';
 
 export const PurchaseButton = React.createClass( {
-	showPlansPage() {
-		const { slug } = this.props;
-		page( `/plans/${ slug }` );
-	},
-
 	render() {
-		const { isActive } = this.props;
+		const {
+			href,
+			isActive
+		} = this.props;
 
 		if ( isActive ) {
 			return (
@@ -21,11 +18,16 @@ export const PurchaseButton = React.createClass( {
 			);
 		}
 
-		return <Button compact primary onClick={ this.showPlansPage }>{ this.translate( 'Purchase' ) }</Button>;
+		return (
+			<Button compact primary { ...{ href } }>
+				{ this.translate( 'Purchase' ) }
+			</Button>
+		);
 	}
 } );
 
 PurchaseButton.propTypes = {
+	href: PropTypes.string.isRequired,
 	isActive: PropTypes.bool.isRequired
 };
 
