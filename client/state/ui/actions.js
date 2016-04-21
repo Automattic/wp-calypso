@@ -13,6 +13,8 @@ import {
 	recordTracksEvent,
 } from 'state/analytics/actions';
 
+import guidesConfig from 'guidestours/config';
+
 /**
  * Returns an action object to be used in signalling that a site has been set
  * as selected.
@@ -64,6 +66,7 @@ export function showGuidesTour( { shouldShow, shouldDelay = false, tour = 'main'
 	};
 
 	const trackEvent = recordTracksEvent( 'calypso_guided_tours_show', {
+		tour_version: guidesConfig.version,
 		tour,
 	} );
 
@@ -82,6 +85,7 @@ export function quitGuidesTour( { tour = 'main', stepName, finished } ) {
 
 	const trackEvent = recordTracksEvent( `calypso_guided_tours_${ finished ? 'finished' : 'quit' }`, {
 		step: stepName,
+		tour_version: guidesConfig.version,
 		tour,
 	} );
 
@@ -95,6 +99,7 @@ export function nextGuidesTourStep( { tour = 'main', stepName } ) {
 
 	const trackEvent = recordTracksEvent( 'calypso_guided_tours_next_step', {
 		step: stepName,
+		tour_version: guidesConfig.version,
 		tour,
 	} );
 
