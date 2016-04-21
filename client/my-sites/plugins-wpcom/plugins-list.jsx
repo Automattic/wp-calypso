@@ -8,6 +8,8 @@ import { getSiteSlug } from 'state/sites/selectors';
 
 import StandardPluginsPanel from './standard-plugins-panel';
 
+import { defaultStandardPlugins } from './default-plugins';
+
 export const PluginsList = React.createClass( {
 	render() {
 		const { siteSlug } = this.props;
@@ -16,7 +18,7 @@ export const PluginsList = React.createClass( {
 		return (
 			<div className="wpcom-plugin-panel wpcom-plugins-expanded">
 				<HeaderCake backHref={ backHref } onClick={ noop }>Standard Plugins</HeaderCake>
-				<StandardPluginsPanel />
+				<StandardPluginsPanel plugins={ defaultStandardPlugins } />
 			</div>
 		);
 	}
