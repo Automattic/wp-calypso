@@ -66,7 +66,7 @@ const LoggedOutForm = React.createClass( {
 				authorization={ 'Bearer ' + bearerToken }
 				extraFields={ extraFields }
 				redirectTo={ window.location.href } />
-		)
+		);
 	},
 
 	renderFooterLink() {
@@ -82,7 +82,7 @@ const LoggedOutForm = React.createClass( {
 
 	render() {
 		const { userData } = this.props.jetpackConnectAuthorize;
-		const { site } = this.props.jetpackConnectAuthorize.queryObject
+		const { site } = this.props.jetpackConnectAuthorize.queryObject;
 		return (
 			<div>
 				{ renderFormHeader( site ) }
@@ -106,7 +106,7 @@ const LoggedInForm = React.createClass( {
 	componentWillMount() {
 		const { autoAuthorize, queryObject } = this.props.jetpackConnectAuthorize;
 		debug( 'Checking for auto-auth on mount', autoAuthorize );
-		if ( autoAuthorize ) {
+		if ( autoAuthorize || this.isCalypsoStartedConnection() ) {
 			this.props.authorize( queryObject );
 		}
 	},
@@ -176,6 +176,16 @@ const LoggedInForm = React.createClass( {
 		return text;
 	},
 
+	isCalypsoStartedConnection() {
+		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
+		if ( this.props.jetpackConnectSessions && this.props.jetpackConnectSessions[ site ] ) {
+			const currentTime = ( new Date() ).getTime();
+			const oneDay = 24 * 60 * 60;
+			return ( currentTime - this.props.jetpackConnectSessions[ site ] < oneDay );
+		}
+		return false;
+	},
+
 	renderFooterLinks() {
 		const { queryObject, authorizeSuccess, isAuthorizing } = this.props.jetpackConnectAuthorize;
 		const loginUrl = config( 'login_url' ) + '?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) + '&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
@@ -208,7 +218,7 @@ const LoggedInForm = React.createClass( {
 
 	render() {
 		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
-		const { site } = this.props.jetpackConnectAuthorize.queryObject
+		const { site } = this.props.jetpackConnectAuthorize.queryObject;
 		return (
 			<div className="jetpack-connect-logged-in-form">
 				{ renderFormHeader( site, authorizeSuccess ) }
@@ -234,10 +244,12 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		let user = userModule.get();
 		const props = Object.assign( {}, this.props, {
 			user: user
-		} )
-		return ( user )
-			? <LoggedInForm { ...props } />
-			: <LoggedOutForm { ...props } />
+		} );
+		return (
+			( user )
+				? <LoggedInForm { ...props } />
+				: <LoggedOutForm { ...props } />
+		);
 	},
 	render() {
 		return (
@@ -253,7 +265,8 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 export default connect(
 	state => {
 		return {
-			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize
+			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
+			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions
 		};
 	},
 	dispatch => bindActionCreators( { authorize, createAccount }, dispatch )
