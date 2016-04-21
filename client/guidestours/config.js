@@ -68,4 +68,5 @@ function get() {
 
 export default {
 	get,
+	version: '20160421',
 };
