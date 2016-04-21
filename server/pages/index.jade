@@ -122,11 +122,13 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			script(src=urls[ 'vendor' ])
 			script(src=urls[ jsFile + '-' + env ])
 			if chunk
+				script(src=urls[ '_commons' ])
 				script(src=urls[ chunk ])
 		else
 			script(src=urls[ 'vendor-min' ])
 			script(src=urls[ jsFile + '-' + env + '-min' ])
 			if chunk
+				script(src=urls[ '_commons-min' ])
 				script(src=urls[ chunk + '-min' ])
 		script(type='text/javascript')!='window.AppBoot();'
 

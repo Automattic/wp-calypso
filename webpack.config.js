@@ -97,7 +97,8 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
 		children: true,
 		minChunks: Math.floor( sectionCount * 0.25 ),
-		async: true
+		async: true,
+		filename: 'commons.[hash].js'
 	} ) );
 	webpackConfig.plugins.push( new ChunkFileNamePlugin() );
 	// jquery is only needed in the build for the desktop app
