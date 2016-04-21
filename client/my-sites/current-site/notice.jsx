@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import url from 'url';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,10 +11,10 @@ import url from 'url';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import paths from 'my-sites/upgrades/paths';
+import { hasDomainCredit } from 'state/sites/plans/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
-export default React.createClass( {
-	displayName: 'SiteNotice',
-
+const SiteNotice = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object
 	},
@@ -45,17 +46,44 @@ export default React.createClass( {
 		);
 	},
 
+	domainCreditNotice() {
+		if ( ! this.props.hasDomainCredit ) {
+			return null;
+		}
+
+		return (
+			<Notice isCompact status="is-success" icon="info-outline">
+				{ this.translate( 'Unused domain credit' ) }
+				<NoticeAction
+					onClick={ this.props.clickClaimDomainNotice }
+					href={ `/domains/add/${ this.props.site.slug }` }
+				>
+					{ this.translate( 'Claim' ) }
+				</NoticeAction>
+			</Notice>
+		);
+	},
+
 	render() {
 		return (
 			<div className="site__notices">
 				{ this.getSiteRedirectNotice( this.props.site ) }
-				<Notice isCompact status="is-success" icon="info-outline">
-					{ this.translate( 'Unused domain credit' ) }
-					<NoticeAction>
-						Claim
-					</NoticeAction>
-				</Notice>
+				{ this.domainCreditNotice() }
 			</div>
 		);
 	}
 } );
+
+export default connect( ( state, ownProps ) => {
+	return {
+		hasDomainCredit: hasDomainCredit( state, ownProps.site.ID )
+	};
+}, ( dispatch ) => {
+	return {
+		clickClaimDomainNotice: () => dispatch( recordTracksEvent(
+			'calypso_domain_credit_reminder_click', {
+				cta_name: 'current_site_domain_notice'
+			}
+		) )
+	};
+} )( SiteNotice );
