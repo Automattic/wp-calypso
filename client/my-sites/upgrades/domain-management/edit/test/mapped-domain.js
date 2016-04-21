@@ -1,10 +1,19 @@
+/**
+ * External dependencies
+ */
 import assert from 'assert';
 import sinon from 'sinon';
 
-describe( 'domain-management/edit/mapped-domain', () => {
+/**
+ * Internal dependencies
+ */
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useI18n from 'test/helpers/use-i18n';
+import useMockery from 'test/helpers/use-mockery';
+
+describe( 'mapped-domain', () => {
 	let React,
 		MappedDomain,
-		i18n,
 		props,
 		TestUtils;
 
@@ -22,14 +31,16 @@ describe( 'domain-management/edit/mapped-domain', () => {
 		};
 	} );
 
-	require( 'test/helpers/use-fake-dom' ).withContainer();
+	useFakeDom.withContainer();
+	useMockery();
+	useI18n();
 
-	require( 'test/helpers/use-mockery' )( mockery => {
+	before( () => {
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
-		i18n = require( 'test/helpers/mocks/i18n' )( mockery );
+
 		const ReactInjection = require( 'react/lib/ReactInjection' );
-		ReactInjection.Class.injectMixin( i18n );
+		ReactInjection.Class.injectMixin( require( 'lib/mixins/i18n' ).mixin );
 		MappedDomain = require( '../mapped-domain.jsx' );
 	} );
 
