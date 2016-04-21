@@ -5,6 +5,7 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	page = require( 'page' ),
 	some = require( 'lodash/some' ),
+	includes = require( 'lodash/includes' ),
 	capitalize = require( 'lodash/capitalize' );
 
 /**
@@ -144,6 +145,35 @@ function renderProvisionPlugins() {
 }
 
 controller = {
+	validateFilters: function( filter, context, next ) {
+		const wpcomFilter = 'standard';
+		const siteUrl = route.getSiteFragment( context.path );
+		const site = sites.getSelectedSite();
+		const appliedFilter = ( filter ? filter : context.params.plugin ).toLowerCase();
+
+		// bail if /plugins/:site_id?
+		if ( siteUrl && appliedFilter === siteUrl.toString().toLowerCase() ) {
+			next();
+			return;
+		}
+
+		/* When site URL is present, bail if
+		 * - the plugin parameter is not on the WordPress.com list for a WordPress.com site.
+		 * or
+		 * - the plugin parameter is on the WordPress.com list for a Jetpack site.
+		 * if no site URL is provided, bail if a WordPress.com filter was provided.
+		 * Only Jetpack plugins should work when no URL is provided.
+		 */
+		if ( siteUrl && ( ( ! site.jetpack && ! includes( [ 'all', wpcomFilter ], appliedFilter ) ) || ( site.jetpack && appliedFilter === wpcomFilter ) ) ) {
+			page.redirect( '/plugins/' + siteUrl );
+			return;
+		} else if ( ! siteUrl && appliedFilter === wpcomFilter ) {
+			page.redirect( '/plugins' );
+			return;
+		}
+
+		next();
+	},
 
 	plugins: function( filter, context ) {
 		var basePath = route.sectionify( context.path ),
