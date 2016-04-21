@@ -10,8 +10,8 @@ export const BusinessPluginsPanel = React.createClass( {
 	render() {
 		const {
 			isActive = false,
-			plugins = [],
-			slug
+			purchaseLink,
+			plugins = []
 		} = this.props;
 
 		const cardClasses = classNames( 'wpcom-plugins__business-panel', {
@@ -21,7 +21,7 @@ export const BusinessPluginsPanel = React.createClass( {
 		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Business Plan Upgrades' ) }>
-					<PurchaseButton { ...{ isActive, slug } } />
+					<PurchaseButton { ...{ isActive, href: purchaseLink } } />
 				</SectionHeader>
 
 				<Card className={ cardClasses }>
@@ -39,6 +39,8 @@ export const BusinessPluginsPanel = React.createClass( {
 } );
 
 BusinessPluginsPanel.propTypes = {
+	isActive: PropTypes.bool,
+	purchaseLink: PropTypes.string.isRequired,
 	plugins: PropTypes.array
 };
 
