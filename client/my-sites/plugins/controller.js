@@ -146,7 +146,7 @@ function renderProvisionPlugins() {
 
 controller = {
 	validateFilters: function( filter, context, next ) {
-		const wpcomFilters = [ 'standard', 'business', 'premium' ];
+		const wpcomFilter = 'standard';
 		const siteUrl = route.getSiteFragment( context.path );
 		const site = sites.getSelectedSite();
 		const appliedFilter = ( filter ? filter : context.params.plugin ).toLowerCase();
@@ -164,10 +164,10 @@ controller = {
 		 * if no site URL is provided, bail if a WordPress.com filter was provided.
 		 * Only Jetpack plugins should work when no URL is provided.
 		 */
-		if ( siteUrl && ( ( ! site.jetpack && ! includes( [ 'all' ].concat( wpcomFilters ), appliedFilter ) ) || ( site.jetpack && includes( wpcomFilters, appliedFilter ) ) ) ) {
+		if ( siteUrl && ( ( ! site.jetpack && ! includes( [ 'all', wpcomFilter ], appliedFilter ) ) || ( site.jetpack && appliedFilter === wpcomFilter ) ) ) {
 			page.redirect( '/plugins/' + siteUrl );
 			return;
-		} else if ( ! siteUrl && includes( wpcomFilters, appliedFilter ) ) {
+		} else if ( ! siteUrl && appliedFilter === wpcomFilter ) {
 			page.redirect( '/plugins' );
 			return;
 		}
