@@ -56,13 +56,13 @@ class GuidesFinishStep extends Component {
 		const stepPos = getStepPosition( this.props );
 		const stepCoords = posToCss( stepPos );
 
-		const { text, onQuit, linkUrl, linkLabel } = this.props;
+		const { text, onFinish, linkUrl, linkLabel } = this.props;
 
 		return (
 			<Card className="guidestours__step" style={ stepCoords } >
 				<p>{ text }</p>
 				<div className="guidestours__single-button-row">
-					<Button onClick={ onQuit } primary>{ this.props.translate( 'Finish Tour' ) }</Button>
+					<Button onClick={ onFinish } primary>{ this.props.translate( 'Finish Tour' ) }</Button>
 				</div>
 				<div className="guidestours__external-link">
 					<ExternalLink target="_blank" icon={ true } href={ linkUrl }>{ linkLabel }</ExternalLink>
@@ -164,18 +164,69 @@ class GuidesActionStep extends Component {
 
 GuidesBasicStep.propTypes = {
 	target: PropTypes.object,
-	type: PropTypes.string,
+	placement: PropTypes.string,
 	// text can be a translated string or a translated string with components
-	// attached
 	text: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.array
 	] ),
-	placement: PropTypes.string,
 	next: PropTypes.string,
-	style: PropTypes.object,
 	onNext: PropTypes.func.isRequired,
 	onQuit: PropTypes.func.isRequired,
+};
+
+GuidesActionStep.propTypes = {
+	target: PropTypes.object.isRequired,
+	placement: PropTypes.string,
+	// text can be a translated string or a translated string with components
+	text: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.array
+	] ),
+	next: PropTypes.string,
+	onNext: PropTypes.func.isRequired,
+	onQuit: PropTypes.func.isRequired,
+};
+
+GuidesLinkStep.propTypes = {
+	target: PropTypes.object,
+	placement: PropTypes.string,
+	// text can be a translated string or a translated string with components
+	text: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.array
+	] ),
+	linkLabel: PropTypes.string,
+	linkUrl: PropTypes.string,
+	next: PropTypes.string,
+	onNext: PropTypes.func.isRequired,
+	onQuit: PropTypes.func.isRequired,
+};
+
+GuidesFirstStep.propTypes = {
+	target: PropTypes.object,
+	placement: PropTypes.string,
+	// text can be a translated string or a translated string with components
+	text: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.array
+	] ),
+	next: PropTypes.string,
+	onNext: PropTypes.func.isRequired,
+	onQuit: PropTypes.func.isRequired,
+};
+
+GuidesFinishStep.propTypes = {
+	target: PropTypes.object,
+	placement: PropTypes.string,
+	// text can be a translated string or a translated string with components
+	text: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.array
+	] ),
+	linkLabel: PropTypes.string,
+	linkUrl: PropTypes.string,
+	onFinish: PropTypes.func.isRequired,
 };
 
 class GuidesPointer extends Component {

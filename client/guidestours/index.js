@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSite, getGuidesTourState } from 'state/ui/selectors';
-import { nextGuidesTourStep } from 'state/ui/actions';
+import { nextGuidesTourStep, quitGuidesTour } from 'state/ui/actions';
 import { query } from './positioning';
 import {
 	GuidesBasicStep,
@@ -21,7 +21,7 @@ import {
 class GuidesTours extends Component {
 	constructor() {
 		super();
-		this.bind( 'next', 'quit' );
+		this.bind( 'next', 'quit', 'finish' );
 	}
 
 	bind( ...methods ) {
@@ -35,7 +35,7 @@ class GuidesTours extends Component {
 
 	shouldComponentUpdate( nextProps ) {
 		return this.props.tourState !== nextProps.tourState;
-		}
+	}
 
 	componentWillUpdate( nextProps ) {
 		const { stepConfig } = nextProps.tourState;
@@ -58,12 +58,18 @@ class GuidesTours extends Component {
 
 	next() {
 		const nextStepName = this.props.tourState.stepConfig.next;
-		this.props.nextGuidesTourStep( nextStepName );
+		this.props.nextGuidesTourStep( { stepName: nextStepName } );
 	}
 
-	quit() {
+	quit( options = {} ) {
 		this.currentTarget && this.currentTarget.classList.remove( 'guidestours__overlay' );
-		this.props.nextGuidesTourStep( null );
+		this.props.quitGuidesTour( Object.assign( {
+			stepName: this.props.tourState.stepName
+		}, options ) );
+	}
+
+	finish() {
+		this.quit( { finished: true } );
 	}
 
 	render() {
@@ -87,7 +93,8 @@ class GuidesTours extends Component {
 					key={ stepConfig.target }
 					target={ this.currentTarget }
 					onNext={ this.next }
-					onQuit={ this.quit } />
+					onQuit={ this.quit }
+					onFinish={ this.finish } />
 			</div>
 		);
 	}
@@ -98,4 +105,5 @@ export default connect( ( state ) => ( {
 	tourState: getGuidesTourState( state ),
 } ), {
 	nextGuidesTourStep,
+	quitGuidesTour,
 } )( GuidesTours );

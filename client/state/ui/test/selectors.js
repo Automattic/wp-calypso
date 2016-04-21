@@ -113,7 +113,6 @@ describe( 'selectors', () => {
 						stepName: 'sidebar',
 						shouldShow: true,
 						tour: 'main',
-						siteId: 2916284,
 					}
 				}
 			} );
