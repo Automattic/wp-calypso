@@ -171,7 +171,8 @@ Layout = React.createClass( {
 				`is-section-${this.props.section.name}`,
 				`focus-${this.props.focus.getCurrent()}`,
 				{ 'is-support-user': this.props.isSupportUser },
-				{ 'has-no-sidebar': ! this.props.section.secondary }
+				{ 'has-no-sidebar': ! this.props.section.secondary },
+				{ 'wp-singletree-layout': this.props.primary }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
