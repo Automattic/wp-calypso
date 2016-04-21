@@ -12,6 +12,10 @@ var StatUpdateIndicator = require( 'components/stat-update-indicator' ),
 	Gridicon = require( 'components/gridicon'),
 	HEARTBEAT_IN_SECONDS = 60;
 
+import sitesList from 'lib/sites-list';
+
+const sites = sitesList();
+
 var PostTotalViews = React.createClass( {
 
 	propTypes: {
@@ -80,8 +84,10 @@ var PostTotalViews = React.createClass( {
 			viewsTitle = this.translate( 'Total Views' );
 		}
 
+		const site = sites.getSite( siteId );
+
 		return (
-			<a href={ '/stats/post/' + postId + '/' + siteId }
+			<a href={ '/stats/post/' + postId + '/' + site.slug }
 				className={ classNames( {
 					'post__total-views': true,
 					'is-empty': ! viewsCountDisplay
