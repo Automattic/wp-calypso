@@ -42,6 +42,7 @@
 	color: $gray-dark;
 	font-weight: 600;
 	resize: none;
+	-ms-overflow-y: hidden !important;
 
 	&:focus {
 		box-shadow: none;
