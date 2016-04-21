@@ -5,8 +5,9 @@ var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' ),
-	i18n = require( 'i18n-calypso' ),
-	ReactRedux = require( 'react-redux' );
+	i18n = require( 'i18n-calypso' );
+
+import { Provider } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -77,7 +78,7 @@ module.exports = {
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
 		ReactDom.render(
-			React.createElement( ReactRedux.Provider, { store: context.store },
+			React.createElement( Provider, { store: context.store },
 				React.createElement( Posts, {
 					context: context,
 					siteID: siteID,
