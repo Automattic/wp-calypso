@@ -3,12 +3,14 @@
  */
 import findIndex from 'lodash/findIndex';
 import isUndefined from 'lodash/isUndefined';
+import reject from 'lodash/reject';
 import update from 'react-addons-update';
 
 /**
  * Internal dependencies
  */
 import { action as ActionTypes } from 'lib/upgrades/constants';
+import { addMissingWpcomRecords, removeDuplicateWpcomRecords } from './';
 
 function updateDomainState( state, domainName, dns ) {
 	const command = {
@@ -28,7 +30,12 @@ function addDns( state, domainName, record ) {
 	return update( state, {
 		[ domainName ]: {
 			isSubmittingForm: { $set: true },
-			records: { $push: [ newRecord ] }
+			records: {
+				$apply: ( records ) => {
+					const added = records.concat( [ newRecord ] );
+					return removeDuplicateWpcomRecords( domainName, added );
+				}
+			}
 		}
 	} );
 }
@@ -41,7 +48,17 @@ function deleteDns( state, domainName, record ) {
 	}
 
 	const command = {
-		[ domainName ]: { records: { $splice: [ [ index, 1 ] ] } }
+		[ domainName ]: {
+			records: {
+				$apply: ( records ) => {
+					const deleted = reject( records, ( _, current ) => {
+						return index === current;
+					} );
+
+					return addMissingWpcomRecords( domainName, deleted );
+				}
+			}
+		}
 	};
 
 	return update( state, command );
