@@ -8,9 +8,9 @@ import { expect } from 'chai';
 */
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useI18n from 'test/helpers/use-i18n';
 
 import { sites } from './fixtures';
-import i18n from 'lib/mixins/i18n';
 
 describe( 'PluginsList', () => {
 	let React, testRenderer, PluginsList, siteListMock;
@@ -28,14 +28,15 @@ describe( 'PluginsList', () => {
 		mockery.registerMock( 'lib/sites-list', () => siteListMock );
 	} );
 
+	useI18n();
+
 	before( () => {
 		React = require( 'react' );
 
 		const TestUtils = require( 'react-addons-test-utils' ),
 			ReactInjection = require( 'react/lib/ReactInjection' );
 
-		i18n.initialize();
-		ReactInjection.Class.injectMixin( i18n.mixin );
+		ReactInjection.Class.injectMixin( require( 'lib/mixins/i18n' ).mixin );
 
 		testRenderer = TestUtils.renderIntoDocument;
 
@@ -43,7 +44,7 @@ describe( 'PluginsList', () => {
 		PluginsList = require( '../' );
 	} );
 
-	describe.only( 'rendering bulk actions', function() {
+	describe( 'rendering bulk actions', function() {
 		let renderedPluginsList, plugins, props;
 
 		before( () => {
@@ -58,7 +59,7 @@ describe( 'PluginsList', () => {
 				selectedSite: sites[ 0 ],
 				isPlaceholder: false,
 				pluginUpdateCount: plugins.length
-			}
+			};
 		} );
 
 		beforeEach( () => {
