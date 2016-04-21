@@ -20,7 +20,7 @@ import {
 	taxonomiesSchema
 } from './schema';
 
-export function taxonomies( state = {}, action ) {
+export function taxonomyTerms( state = {}, action ) {
 	switch ( action.type ) {
 		case TERMS_RECEIVE:
 			const currentTaxonomyTermIds = get( state, [ action.siteId, action.taxonomy ], [] );
@@ -47,13 +47,13 @@ export function taxonomies( state = {}, action ) {
 
 /**
  * Returns the updated terms state after an action has been dispatched.
- * The state reflects a mapping of site ID, and taxonomy to terms
+ * The state reflects a mapping of site ID to terms
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function terms( state = {}, action ) {
+export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case TERMS_RECEIVE:
 			return merge( {}, state, {
@@ -72,6 +72,6 @@ export function terms( state = {}, action ) {
 }
 
 export default combineReducers( {
-	taxonomies,
-	terms
+	taxonomyTerms,
+	items
 } );

@@ -14,8 +14,8 @@ import {
 	TERMS_RECEIVE
 } from 'state/action-types';
 import reducer, {
-	terms,
-	taxonomies
+	items,
+	taxonomyTerms
 } from '../reducer';
 
 /**
@@ -41,19 +41,19 @@ describe( 'reducer', () => {
 
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'taxonomies', 'terms'
+			'taxonomyTerms', 'items'
 		] );
 	} );
 
-	describe( '#terms()', () => {
+	describe( '#items()', () => {
 		it( 'should default to an empty object', () => {
-			const state = terms( undefined, {} );
+			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should add received terms', () => {
-			const state = terms( undefined, {
+			const state = items( undefined, {
 				type: TERMS_RECEIVE,
 				siteId: 777,
 				taxonomy: 'jetpack-portfolio',
@@ -70,7 +70,7 @@ describe( 'reducer', () => {
 				777: keyedTestTerms
 			} );
 
-			const state = terms( original, {
+			const state = items( original, {
 				type: TERMS_RECEIVE,
 				siteId: 777,
 				taxonomy: 'amazing-taxonomy',
@@ -87,13 +87,13 @@ describe( 'reducer', () => {
 
 	describe( '#taxonomies()', () => {
 		it( 'should default to an empty object', () => {
-			const state = taxonomies( undefined, {} );
+			const state = taxonomyTerms( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should add received term IDs by taxonomy', () => {
-			const state = taxonomies( undefined, {
+			const state = taxonomyTerms( undefined, {
 				type: TERMS_RECEIVE,
 				siteId: 777,
 				taxonomy: 'jetpack-portfolio',
@@ -114,7 +114,7 @@ describe( 'reducer', () => {
 				}
 			} );
 
-			const state = taxonomies( original, {
+			const state = taxonomyTerms( original, {
 				type: TERMS_RECEIVE,
 				siteId: 777,
 				taxonomy: 'amazing-taxonomy',
@@ -135,7 +135,7 @@ describe( 'reducer', () => {
 				}
 			} );
 
-			const state = taxonomies( original, {
+			const state = taxonomyTerms( original, {
 				type: TERMS_RECEIVE,
 				siteId: 777,
 				taxonomy: 'not-the-best-taxonomy-a-tribute',
