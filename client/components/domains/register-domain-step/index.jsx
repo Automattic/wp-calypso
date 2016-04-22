@@ -78,7 +78,7 @@ var RegisterDomainStep = React.createClass( {
 		products: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] ),
 		basePath: React.PropTypes.string.isRequired,
-		suggestion: React.PropTypes.string
+		suggestion: React.PropTypes.string,
 		withPlansOnly: React.PropTypes.bool
 	},
 
@@ -349,6 +349,7 @@ var RegisterDomainStep = React.createClass( {
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
+						buttonLabel={ this.props.buttonLabel }
 						onButtonClick={ this.addRemoveDomainToCart.bind( null, suggestion ) } />
 				);
 			}, this );
@@ -356,6 +357,8 @@ var RegisterDomainStep = React.createClass( {
 			domainMappingSuggestion = (
 				<DomainMappingSuggestion
 					onButtonClick={ this.goToMapDomainStep }
+					withPlansOnly={ this.props.withPlansOnly }
+					buttonLabel={ this.props.mappingSuggestionLabel }
 					cart={ this.props.cart }
 					products={ this.props.products } />
 				);
@@ -408,6 +411,7 @@ var RegisterDomainStep = React.createClass( {
 				onAddMapping={ onAddMapping }
 				onClickResult={ this.addRemoveDomainToCart }
 				onClickMapping={ this.goToMapDomainStep }
+				mappingSuggestionLabel={ this.translate( 'Upgrade' ) }
 				suggestions={ suggestions }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
@@ -439,7 +443,17 @@ var RegisterDomainStep = React.createClass( {
 
 		this.recordEvent( 'mapDomainButtonClick', this.props.analyticsSection );
 
+		if ( this.props.withPlansOnly ) {
+			this.addPremiumPlanToCart();
+		}
+
 		page( this.getMapDomainUrl() );
+	},
+
+	addPremiumPlanToCart() {
+		if ( ! cartItems.hasPremiumPlan( this.props.cart ) ) {
+			upgradesActions.addItem( cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) );
+		}
 	},
 
 	addRemoveDomainToCart: function( suggestion, event ) {
@@ -452,7 +466,13 @@ var RegisterDomainStep = React.createClass( {
 		}
 
 		if ( ! cartItems.hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
-			upgradesActions.addDomainToCart( suggestion );
+			if ( this.props.withPlansOnly ) {
+				this.addPremiumPlanToCart();
+			}
+			upgradesActions.addItem( cartItems.domainRegistration( {
+				domain: suggestion.domain_name,
+				productSlug: suggestion.product_slug
+			} ) );
 
 			if ( abtest( 'multiDomainRegistrationV1' ) === 'popupCart' ) {
 				upgradesActions.openCartPopup( { showKeepSearching: true } );

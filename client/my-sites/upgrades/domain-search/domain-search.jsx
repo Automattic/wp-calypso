@@ -113,7 +113,7 @@ var DomainSearch = React.createClass( {
 							offerMappingOption
 							basePath={ this.props.basePath }
 							withPlansOnly={ withPlansOnlyTestActive && ! selectedSiteHasPlan }
-							buttonLabel={ this.translate( 'Upgrade' ) }
+							buttonLabel={ withPlansOnlyTestActive && ! selectedSiteHasPlan ? this.translate( 'Upgrade' ) : null }
 							products={ this.props.productsList.get() } />
 					</div>
 				</span>
