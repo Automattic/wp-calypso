@@ -308,6 +308,7 @@ const PostEditor = React.createClass( {
 		var site = this.props.sites.getSelectedSite() || undefined,
 			mode = this.getEditorMode(),
 			isInvalidURL = this.state.loadingError,
+			siteURL = site ? site.URL + '/' : null,
 			isPage,
 			isTrashed,
 			hasAutosave;
@@ -344,11 +345,11 @@ const PostEditor = React.createClass( {
 								{ this.state.post && isPage && site
 									? <EditorPageSlug
 										slug={ this.state.post.slug }
-										path={ this.state.post.URL && ( this.state.post.URL !== site.URL + '/' )
+										path={ this.state.post.URL && ( this.state.post.URL !== siteURL )
 											? utils.getPagePath( this.state.post )
-											: site.URL + '/'
+											: siteURL
 										}
-									/>
+										/>
 									: null
 								}
 								<SegmentedControl className="editor__switch-mode" compact={ true }>
