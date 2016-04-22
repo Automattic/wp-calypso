@@ -22,12 +22,13 @@ import {
 	JETPACK_CONNECT_STORE_SESSION
 } from 'state/action-types';
 import userFactory from 'lib/user';
+import config from 'config';
 
 /**
  *  Local variables;
  */
 let _fetching = {};
-const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
+const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + config( 'env' );
 const installURL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const activateURL = '/wp-admin/plugins.php';
 const userModule = userFactory();
