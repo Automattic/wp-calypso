@@ -60,19 +60,17 @@ function getStoreForFeed( storeId ) {
 }
 
 function getStoreForTag( storeId ) {
-	var tagSlug = storeId.split( ':' )[ 1 ],
-		fetcher = function( query, callback ) {
-			query.tag = tagSlug;
-			wpcomUndoc.readTagPosts( query, callback );
-		};
+	const slug = storeId.split( ':' )[ 1 ];
+	const fetcher = function( query, callback ) {
+		query.tag = slug;
+		wpcomUndoc.readTagPosts( query, callback );
+	};
 
-	return new FeedStream( {
+	return new PagedStream( {
 		id: storeId,
 		fetcher: fetcher,
 		keyMaker: siteKeyMaker,
-		onGapFetch: limitSiteParams,
-		onUpdateFetch: limitSiteParams,
-		dateProperty: 'tagged_on'
+		perPage: 5
 	} );
 }
 
