@@ -2,6 +2,17 @@
 	max-width: 400px;
 }
 
+.jetpack-connect-wide {
+	max-width: 100%;
+	text-align: center;
+
+	.button {
+		margin-top: 16px;
+		width: 320px;
+	}
+}
+
+
 .jetpack-connect__site-url-entry-container {
 	max-width: 400px;
 }
@@ -89,4 +100,41 @@
 	.button {
 		width: 100%;
 	}
+}
+
+.jetpack-connect__install {
+
+}
+
+.jetpack-connect__install-steps {
+	display: flex;
+	justify-content: center;
+}
+
+.jetpack-connect__install-step {
+	display: inline-block;
+	margin: 8px;
+	height: 400px;
+	width: 360px;
+}
+
+.jetpack-connect__install-step-title {
+	font-size: 20px;
+	text-align: left;
+}
+
+.jetpack-connect__install-step-text {
+	color: $gray;
+	font-size: 12px;
+	margin: 8px 0;
+	text-align: left;
+}
+
+.jetpack-connect__example {
+	background: #333;
+	bottom: 16px;
+	color: #FFF;
+	height: 248px;
+	position: absolute;
+	width: 312px;
 }
