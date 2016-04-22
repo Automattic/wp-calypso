@@ -150,15 +150,10 @@ a.notice__action {
 		font-weight: 600;
 
 		// Medium text underline hack
-		background-image: linear-gradient(to bottom, rgba(0,0,0,0) 75%, #fff 50%);
+		background-image: linear-gradient(to bottom, rgba(0,0,0,0) 50%, #fff 50%);
 		background-repeat: repeat-x;
 		background-size: 2px 2px;
-		background-position: 0 1.14em; // ~18/15
-
-		@media not all, only screen and (min-resolution: 2dppx), only screen and (-webkit-min-device-pixel-ratio: 2) {
-			background-image: linear-gradient(to bottom, rgba(0,0,0,0) 75%, #fff 75%);
-			background-repeat: repeat-x;
-		}
+		background-position: 0 1em;
 	}
 
 	ul {
