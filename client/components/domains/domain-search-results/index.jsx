@@ -134,6 +134,8 @@ var DomainSearchResults = React.createClass( {
 			if ( this.props.offerMappingOption ) {
 				mappingOffer = (
 					<DomainMappingSuggestion
+						withPlansOnly={ this.props.withPlansOnly }
+						buttonLabel={ this.props.mappingSuggestionLabel }
 						onButtonClick={ this.props.onClickMapping }
 						products={ this.props.products }
 						cart={ this.props.cart } />

@@ -18,6 +18,8 @@ var observe = require( 'lib/mixins/data-observe' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
 	Main = require( 'components/main' ),
+	abtest = require( 'lib/abtest' ).abtest,
+	isPlan = require( 'lib/products-values' ).isPlan,
 	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
 
 var DomainSearch = React.createClass( {
@@ -74,6 +76,8 @@ var DomainSearch = React.createClass( {
 			classes = classnames( 'main-column', {
 				'domain-search-page-wrapper': this.state.domainRegistrationAvailable
 			} ),
+			withPlansOnlyTestActive = abtest( 'domainsWithPlansOnly' ) === 'plansOnly',
+			selectedSiteHasPlan = !! selectedSite && isPlan( selectedSite.plan ),
 			content;
 
 		if ( ! this.state.domainRegistrationAvailable ) {
@@ -108,6 +112,8 @@ var DomainSearch = React.createClass( {
 							selectedSite={ selectedSite }
 							offerMappingOption
 							basePath={ this.props.basePath }
+							withPlansOnly={ withPlansOnlyTestActive && ! selectedSiteHasPlan }
+							buttonLabel={ this.translate( 'Upgrade' ) }
 							products={ this.props.productsList.get() } />
 					</div>
 				</span>

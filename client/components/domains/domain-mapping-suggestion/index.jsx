@@ -10,7 +10,7 @@ var DomainSuggestion = require( 'components/domains/domain-suggestion' );
 
 var DomainMappingSuggestion = React.createClass( {
 	render: function() {
-		var buttonLabel = this.translate( 'Map it', {
+		var buttonLabel = this.props.buttonLabel || this.translate( 'Map it', {
 			context: 'Go to the flow to add a domain mapping'
 		} );
 
@@ -22,6 +22,7 @@ var DomainMappingSuggestion = React.createClass( {
 					buttonLabel={ buttonLabel }
 					cart={ this.props.cart }
 					isAdded={ false }
+					withPlansOnly={ this.props.withPlansOnly }
 					onButtonClick={ this.props.onButtonClick }>
 				<div className="domain-mapping-suggestion__domain-description">
 					<h3>
