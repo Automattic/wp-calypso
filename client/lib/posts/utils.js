@@ -62,7 +62,7 @@ var utils = {
 	},
 
 	isPublished: function( post ) {
-		return post && ( post.status === 'publish' || post.status === 'private' );
+		return post && ( post.status === 'publish' || post.status === 'private' || this.isBackDatedPublished( post ) );
 	},
 
 	isPrivate: function( post ) {
@@ -79,6 +79,14 @@ var utils = {
 		}
 
 		return post.modified;
+	},
+
+	isBackDatedPublished: function( post ) {
+		if ( ! post || post.status !== 'future' ) {
+			return false;
+		}
+
+		return moment( post.date ).isBefore( moment() );
 	},
 
 	isFutureDated: function( post ) {

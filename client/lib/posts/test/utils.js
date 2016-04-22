@@ -67,6 +67,30 @@ describe( 'utils', function() {
 		} );
 	} );
 
+	describe( '#isBackDatePublished', function() {
+		it( 'should return false when no post is supplied', function() {
+			assert( ! postUtils.isBackDatedPublished() );
+		} );
+
+		it( 'should return false when status !== future', function() {
+			assert( ! postUtils.isBackDatedPublished( { status: 'draft' } ) );
+		} );
+
+		it( 'should return false when status === future and date is in future', function() {
+			const tenMinutes = 1000 * 60;
+			const postDate = +new Date() + tenMinutes;
+
+			assert( ! postUtils.isBackDatedPublished( { status: 'future', date: postDate } ) );
+		} );
+
+		it( 'should return true when status === future and date is in the past', function() {
+			const tenMinutes = 1000 * 60;
+			const postDate = +new Date() - tenMinutes;
+
+			assert( postUtils.isBackDatedPublished( { status: 'future', date: postDate } ) );
+		} );
+	} );
+
 	describe( '#removeSlug', function() {
 		it( 'should return undefined when no path is supplied', function() {
 			assert( postUtils.removeSlug() === undefined );
