@@ -42,6 +42,9 @@ __after__:
 
 ```js
 page( /^\/me(\/.*)?$/, function( context, next ) {
+	// For the 404 handler in client/boot. If not set to true, show 404 (no section matched).
+	context.sectionRouteMatched = true;
+	
 	if ( _loadedSections[ 'me' ] ) {
 		// section is already loaded so go ahead with things
 		return next();
@@ -55,6 +58,9 @@ page( /^\/me(\/.*)?$/, function( context, next ) {
 		if ( !_loadedSections[ 'me' ] ) {
 			require( 'me' )();
 			_loadedSections[ 'me' ] = true;
+			
+			// 404 handler for asynchronously loaded section routes.
+			page( /^\/me(\/.*)?$/, show404 );
 		}
 
 		// continue working through all the route handlers looking for matches

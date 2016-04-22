@@ -47,6 +47,7 @@ var config = require( 'config' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
+	show404 = require( 'lib/router-helper' ).show404,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
@@ -360,6 +361,21 @@ function reduxStoreReady( reduxStore ) {
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
 		require( 'lib/rubberband-scroll-disable' )( document.body );
 	}
+
+	// 404 handler. Do not put any routes below this one.
+	page( '*', function( context, next ) {
+		if ( config.isEnabled( 'code-splitting' ) ) {
+			if ( ! context.sectionRouteMatched ) {
+				show404( context );
+
+				return;
+			}
+
+			next();
+		} else {
+			show404( context );
+		}
+	} );
 
 	detectHistoryNavigation.start();
 	page.start();
