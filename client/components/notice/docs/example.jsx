@@ -49,6 +49,9 @@ var Notices = React.createClass( {
 					<Notice status="is-error" text="I'm an `is-error` notice." isCompact={ this.state.compactNotices ? true : null } />
 				</div>
 				<div>
+					<Notice status="is-update" text="I'm an `is-update` notice." isCompact={ this.state.compactNotices ? true : null } />
+				</div>
+				<div>
 					<Notice
 						status="is-warning"
 						icon="mention"

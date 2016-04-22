@@ -42,6 +42,7 @@ this.props.successNotice(
 * `errorNotice()`
 * `infoNotice()`
 * `warningNotice()`
+* `updateNotice()`
 
 ## Options
 
