@@ -43,22 +43,22 @@ export default React.createClass( {
 				<h2>
 					<a href="/devdocs/app-components/plan-storage">Plan Storage</a>
 				</h2>
-				<div>
+				<div style={ { marginBottom: 16 } }>
 					<PlanStorage siteId={ sites.getPrimary().ID } />
 				</div>
-				<div>
+				<div style={ { marginBottom: 16 } }>
 					<PlanStorageButton
 						sitePlanName={ plans.free }
 						mediaStorage={ mediaStorage.green }
 					/>
 				</div>
-				<div>
+				<div style={ { marginBottom: 16 } }>
 					<PlanStorageButton
 						sitePlanName={ plans.free }
 						mediaStorage={ mediaStorage.yellow }
 					/>
 				</div>
-				<div>
+				<div style={ { marginBottom: 16 } }>
 					<PlanStorageButton
 						sitePlanName={ plans.premium }
 						mediaStorage={ mediaStorage.red }
