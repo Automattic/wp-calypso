@@ -198,10 +198,10 @@ const flows = {
 	},
 
 	layout: {
-		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
-		description: 'Theme trifurcation flow',
-		lastModified: '2015-12-14'
+		description: 'Signup flow with homepage pattern selection (Triforce) step',
+		lastModified: '2016-04-21'
 	},
 
 	developer: {
@@ -239,6 +239,10 @@ function filterFlowName( flowName ) {
 
 	if ( includes( defaultFlows, flowName ) && abtest( 'freeTrialsInSignup' ) === 'enabled' ) {
 		return 'free-trial';
+	}
+
+	if ( includes( defaultFlows, flowName ) && 'triforce' === abtest( 'triforce' ) ) {
+		return 'layout';
 	}
 
 	return flowName;
