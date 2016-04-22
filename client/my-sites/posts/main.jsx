@@ -22,6 +22,7 @@ import {
 	isRequestingSitePostsForQuery
 } from 'state/posts/selectors';
 import SectionHeader from 'components/section-header';
+import { sectionify } from 'lib/route/path';
 
 const PostsMain = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
@@ -36,6 +37,21 @@ const PostsMain = React.createClass( {
 		this.setWarning( selectedSite );
 	},
 
+	mostRecentDrafts() {
+		const site = this.props.sites.getSelectedSite();
+		return (
+			<div className="posts__recent-drafts">
+				<QueryPosts
+					siteId={ site && site.ID }
+					query={ this.props.draftsQuery } />
+				{ this.props.drafts &&
+					<SectionHeader label={ this.translate( 'Most Recent Drafts' ) } />
+				}
+				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
+			</div>
+		);
+	},
+
 	renderDraft( draft ) {
 		if ( ! draft ) {
 			return null;
@@ -45,20 +61,12 @@ const PostsMain = React.createClass( {
 	},
 
 	render() {
-		const site = this.props.sites.getSelectedSite();
+		const path = sectionify( this.props.context.path );
 		return (
 			<Main className="posts">
 				<SidebarNavigation />
 				<PostsNavigation { ...this.props } />
-				<div className="posts__recent-drafts">
-					<QueryPosts
-						siteId={ site && site.ID }
-						query={ this.props.query } />
-					{ this.props.drafts &&
-						<SectionHeader label={ this.translate( 'Most Recent Drafts' ) } />
-					}
-					{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
-				</div>
+				{ path === '/posts' && this.mostRecentDrafts() }
 				<PostList { ...this.props } />
 			</Main>
 		);
@@ -78,7 +86,7 @@ const PostsMain = React.createClass( {
 export default connect( ( state ) => {
 	const selectedSite = getSelectedSite( state );
 	const siteId = selectedSite.ID;
-	const query = {
+	const draftsQuery = {
 		type: 'post',
 		lastPage: true,
 		status: 'draft',
@@ -87,8 +95,8 @@ export default connect( ( state ) => {
 	};
 
 	return {
-		drafts: getSitePostsForQueryIgnoringPage( state, siteId, query ),
-		loading: isRequestingSitePostsForQuery( state, siteId, query ),
-		query: query
+		drafts: getSitePostsForQueryIgnoringPage( state, siteId, draftsQuery ),
+		loadingDrafts: isRequestingSitePostsForQuery( state, siteId, draftsQuery ),
+		draftsQuery: draftsQuery
 	};
 } )( PostsMain );
