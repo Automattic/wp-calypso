@@ -31,6 +31,8 @@
 }
 
 .sites-dropdown.is-open .sites-dropdown__wrapper {
+	position: relative;
+	z-index: z-index( 'root', '.sites-dropdown.is-open .sites-dropdown__wrapper' );
 	margin: 0;
 }
 
