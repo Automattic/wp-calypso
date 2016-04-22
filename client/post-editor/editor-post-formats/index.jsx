@@ -4,6 +4,7 @@
 const React = require( 'react' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -33,6 +34,18 @@ const EditorPostFormats = React.createClass( {
 			setPostFormat: () => {},
 			value: 'standard'
 		};
+	},
+
+	getSelectedPostFormat: function() {
+		var validSlugs = this.getPostFormats().map( function( postFormat ) {
+			return postFormat.slug;
+		} );
+
+		if ( includes( validSlugs, this.props.value ) ) {
+			return this.props.value;
+		}
+
+		return 'standard';
 	},
 
 	getPostFormats: function() {
@@ -77,6 +90,8 @@ const EditorPostFormats = React.createClass( {
 	},
 
 	renderPostFormats: function() {
+		var selectedFormat = this.getSelectedPostFormat();
+
 		return this.getPostFormats().map( function( postFormat ) {
 			return (
 				<li key={ postFormat.slug } className="editor-post-formats__format">
@@ -84,11 +99,11 @@ const EditorPostFormats = React.createClass( {
 						<FormRadio
 							name="format"
 							value={ postFormat.slug }
-							checked={ postFormat.slug === this.props.value }
+							checked={ postFormat.slug === selectedFormat }
 							onChange={ this.onChange } />
 						<span className="editor-post-formats__format-label">
 							<span className={ 'editor-post-formats__format-icon' } >
-								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 20 } />
+								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 18 } />
 							</span>
 							{ postFormat.label }
 						</span>
