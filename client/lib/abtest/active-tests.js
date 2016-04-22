@@ -91,5 +91,14 @@ module.exports = {
 		defaultVariation: 'showNotice',
 		allowExistingUsers: true,
 		allowAnyLocale: true
+	},
+	triforce: {
+		datestamp: '20160421',
+		variations: {
+			original: 30,
+			triforce: 30,
+			notTested: 40
+		},
+		defaultVariation: 'original'
 	}
 };
