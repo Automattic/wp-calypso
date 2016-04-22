@@ -13,7 +13,7 @@ import {
 	recordTracksEvent,
 } from 'state/analytics/actions';
 
-import guidesConfig from 'guidestours/config';
+import guidesConfig from 'layout/guided-tours/config';
 
 /**
  * Returns an action object to be used in signalling that a site has been set

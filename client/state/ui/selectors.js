@@ -11,7 +11,7 @@ import memoize from 'lodash/memoize';
  */
 import createSelector from 'lib/create-selector';
 import { getSite } from 'state/sites/selectors';
-import guidesToursConfig from 'guidestours/config';
+import guidesToursConfig from 'layout/guided-tours/config';
 
 const getToursConfig = memoize( () => guidesToursConfig.get() );
 

@@ -12,7 +12,7 @@ import {
 	getSectionName,
 	getGuidesTourState,
 } from '../selectors';
-import guidesToursConfig from 'guidestours/config';
+import guidesToursConfig from 'layout/guided-tours/config';
 import useI18n from 'test/helpers/use-i18n';
 
 describe( 'selectors', () => {
