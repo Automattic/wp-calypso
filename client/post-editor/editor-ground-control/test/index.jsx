@@ -181,7 +181,7 @@ describe( 'EditorGroundControl', function() {
 				/>
 			).instance();
 
-			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Publish' );
+			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Update' );
 		} );
 
 		it( 'should return Publish if the post is a draft', function() {
@@ -377,24 +377,24 @@ describe( 'EditorGroundControl', function() {
 			expect( onSave ).to.have.been.calledWith( 'future' );
 		} );
 
-		it( 'should publish a scheduled post dated in past', function() {
+		it( 'should update a scheduled post dated in past', function() {
 			var now = moment( new Date() ),
 				lastMonth = now.month( now.month() - 1 ).format(),
-				onPublish = sinon.spy(),
+				onSave = sinon.spy(),
 				tree;
 
 			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'future', date: lastMonth } }
 					post={ { title: 'change', status: 'future', date: lastMonth } }
-					onPublish={ onPublish }
+					onSave={ onSave }
 					site={ MOCK_SITE }
 				/>
 			).instance();
 
 			tree.onPrimaryButtonClick();
 
-			expect( onPublish ).to.have.been.called;
+			expect( onSave ).to.have.been.called;
 		} );
 
 		it( 'should update a published post that has changed status', function() {
