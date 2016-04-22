@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import ConnectHeader from './connect-header';
 import Dialog from 'components/dialog';
@@ -17,6 +18,9 @@ import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
 import { dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation, checkUrl } from 'state/jetpack-connect/actions';
+import JetpackExampleInstall from './exampleComponents/jetpack-install';
+import JetpackExampleActivate from './exampleComponents/jetpack-activate';
+import JetpackExampleConnect from './exampleComponents/jetpack-connect';
 import versionCompare from 'lib/version-compare';
 
 
@@ -48,7 +52,7 @@ const JetpackConnectMain = React.createClass( {
 		return this.state.currentUrl !== '' &&
 			this.props.jetpackConnectSite &&
 			this.state.currentUrl === this.props.jetpackConnectSite.url &&
-			this.props.jetpackConnectSite.isFetching
+			this.props.jetpackConnectSite.isFetching;
 	},
 
 	getCurrentUrl() {
@@ -180,7 +184,7 @@ const JetpackConnectMain = React.createClass( {
 					<p>{ this.translate( 'We need to send you to your WordPress install so you can approve the Jetpack installation. Click the button in the bottom-right corner on the next screen to continue.' ) }</p>
 				</Dialog>
 			);
-		};
+		}
 		if ( status === 'notActiveJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
 			return (
 				<Dialog
@@ -197,10 +201,79 @@ const JetpackConnectMain = React.createClass( {
 					<p>{ this.translate( 'Your jetpack seems to be inactive! We need to send you to your WordPress install so you can activate it before completing the connection.' ) }</p>
 				</Dialog>
 			);
-		};
+		}
 	},
 
-	render() {
+	renderFooter() {
+		return (
+			<LoggedOutFormLinks>
+				<LoggedOutFormLinkItem href="http://jetpack.com">{ this.translate( 'Install Jetpack Manually' ) }</LoggedOutFormLinkItem>
+				<LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
+			</LoggedOutFormLinks>
+		);
+	},
+
+	renderSiteInput( status ) {
+		return (
+			<Card className="jetpack-connect__site-url-input-container">
+				{ ! this.isCurrentUrlFetching() && this.isCurrentUrlFetched() && ! this.props.jetpackConnectSite.isDismissed && status
+					? <JetpackConnectNotices noticeType={ status } onDismissClick={ this.dismissUrl } />
+					: null
+				}
+
+				<SiteURLInput ref="siteUrlInputRef"
+					onChange={ this.onURLChange }
+					onClick={ this.onURLEnter }
+					onDismissClick={ this.onDismissClick }
+					isError={ this.getStatus() }
+					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() } />
+			</Card>
+		);
+	},
+
+	renderSingleStep( title, text, example ) {
+		return (
+			<Card className="jetpack-connect__install-step">
+				<div className="jetpack-connect__install-step-title">
+					{ title }
+				</div>
+				<div className="jetpack-connect__install-step-text">
+					{ text }
+				</div>
+				{ example }
+			</Card>
+		);
+	},
+
+	renderInstallSteps() {
+		return (
+			<div className="jetpack-connect__install-steps">
+				{
+					this.renderSingleStep(
+						this.translate( '1. Install Jetpack' ),
+						this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s dashboard to install Jetpack. Click the blue install button.' ),
+						<JetpackExampleInstall />
+					)
+				}
+				{
+					this.renderSingleStep(
+						this.translate( '2. Activate Jetpack' ),
+						this.translate( 'Once the plugin is installed, you\'ll need to click this tiny blue \'Activate\' link from your plugins list page.' ),
+						<JetpackExampleActivate />
+					)
+				}
+				{
+					this.renderSingleStep(
+						this.translate( '3. Connect Jetpack' ),
+						this.translate( 'Once the plugin is activated you\'ll click this blue \'Connect\' button to complete the connection.' ),
+						<JetpackExampleConnect />
+					)
+				}
+			</div>
+		);
+	},
+
+	renderSiteEntry() {
 		const status = this.getStatus();
 		return (
 			<Main className="jetpack-connect">
@@ -212,27 +285,36 @@ const JetpackConnectMain = React.createClass( {
 						step={ 1 }
 						steps={ 3 } />
 
-					<Card className="jetpack-connect__site-url-input-container">
-						{ ! this.isCurrentUrlFetching() && this.isCurrentUrlFetched() && ! this.props.jetpackConnectSite.isDismissed && status
-							? <JetpackConnectNotices noticeType={ status } onDismissClick={ this.dismissUrl } />
-							: null
-						}
-
-						<SiteURLInput ref="siteUrlInputRef"
-							onChange={ this.onURLChange }
-							onClick={ this.onURLEnter }
-							onDismissClick={ this.onDismissClick }
-							isError={ this.getStatus() }
-							isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() } />
-					</Card>
-
-					<LoggedOutFormLinks>
-						<LoggedOutFormLinkItem href="http://jetpack.com">{ this.translate( 'Install Jetpack Manually' ) }</LoggedOutFormLinkItem>
-						<LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
-					</LoggedOutFormLinks>
+					{ this.renderSiteInput( status ) }
+					{ this.renderFooter() }
 				</div>
 			</Main>
 		);
+	},
+
+	renderInstallInstructions() {
+		return (
+			<Main className="jetpack-connect-wide">
+				<div className="jetpack-connect__install">
+					<ConnectHeader headerText={ this.translate( 'Ready for installation' ) }
+						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
+						step={ 1 }
+						steps={ 3 } />
+
+					{ this.renderInstallSteps() }
+					<Button onClick={ this.installJetpack } primary>{ this.translate( 'Install Jetpack' ) }</Button>
+				</div>
+			</Main>
+		);
+	},
+
+	render() {
+		const status = this.getStatus();
+		if ( status === 'notJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
+			return this.renderInstallInstructions();
+		}
+		return this.renderSiteEntry();
+		//	return this.renderInstallInstructions();
 	}
 } );
 
