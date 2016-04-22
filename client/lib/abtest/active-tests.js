@@ -24,8 +24,9 @@ module.exports = {
 	freeTrialsInSignup: {
 		datestamp: '20160328',
 		variations: {
-			disabled: 85,
-			enabled: 15
+			disabled: 40,
+			enabled: 15,
+			notTested: 45
 		},
 		defaultVariation: 'disabled'
 	},
@@ -95,9 +96,9 @@ module.exports = {
 	triforce: {
 		datestamp: '20160421',
 		variations: {
-			original: 30,
-			triforce: 30,
-			notTested: 40
+			original: 45,
+			triforce: 45,
+			notTested: 10
 		},
 		defaultVariation: 'original'
 	}
