@@ -1,20 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var PostsNavigation = require( './posts-navigation' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	PostList = require( './post-list' ),
-	config = require( 'config' ),
-	Main = require( 'components/main' ),
-	notices = require( 'notices' );
-
+import PostsNavigation from './posts-navigation';
+import observe from 'lib/mixins/data-observe';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import PostList from './post-list';
+import config from 'config';
+import Main from 'components/main';
+import notices from 'notices';
 import QueryPosts from 'components/data/query-posts';
 import Draft from 'my-sites/draft';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -25,22 +24,19 @@ import {
 import SectionHeader from 'components/section-header';
 
 const PostsMain = React.createClass( {
-
-	displayName: 'Posts',
-
 	mixins: [ observe( 'sites' ) ],
 
-	componentWillMount: function() {
-		var selectedSite = this.props.sites.getSelectedSite();
-		this._setWarning( selectedSite );
+	componentWillMount() {
+		const selectedSite = this.props.sites.getSelectedSite();
+		this.setWarning( selectedSite );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
-		var selectedSite = nextProps.sites.getSelectedSite();
-		this._setWarning( selectedSite );
+	componentWillReceiveProps( nextProps ) {
+		const selectedSite = nextProps.sites.getSelectedSite();
+		this.setWarning( selectedSite );
 	},
 
-	renderDraft: function( draft ) {
+	renderDraft( draft ) {
 		if ( ! draft ) {
 			return null;
 		}
@@ -48,7 +44,7 @@ const PostsMain = React.createClass( {
 		return <Draft key={ draft.global_ID } post={ draft } sites={ this.props.sites } />;
 	},
 
-	render: function() {
+	render() {
 		const site = this.props.sites.getSelectedSite();
 		return (
 			<Main className="posts">
@@ -68,7 +64,7 @@ const PostsMain = React.createClass( {
 		);
 	},
 
-	_setWarning: function( selectedSite ) {
+	setWarning( selectedSite ) {
 		if ( selectedSite && selectedSite.jetpack && ! selectedSite.hasMinimumJetpackVersion ) {
 			notices.warning(
 				this.translate( 'Jetpack %(version)s is required to take full advantage of all post editing features.', { args: { version: config( 'jetpack_min_version' ) } } ),
