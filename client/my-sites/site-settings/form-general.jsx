@@ -27,7 +27,7 @@ import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import TimezoneDropdown from 'components/timezone-dropdown';
-import QuerySiteDomains from 'query-components/site-domains';
+import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDomainsBySite } from 'state/sites/domains/selectors';
 
 const FormGeneral = React.createClass( {
