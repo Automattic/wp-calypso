@@ -11,6 +11,7 @@ var React = require( 'react' ),
 	times = require( 'lodash/times' ),
 	compact = require( 'lodash/compact' ),
 	noop = require( 'lodash/noop' ),
+	startsWith = require( 'lodash/startsWith' ),
 	page = require( 'page' ),
 	qs = require( 'qs' );
 
@@ -31,11 +32,45 @@ var wpcom = require( 'lib/wp' ).undocumented(),
 	abtest = require( 'lib/abtest' ).abtest;
 
 // max amount of domain suggestions we should fetch/display
-var SUGGESTION_QUANTITY = 10,
+const SUGGESTION_QUANTITY = 10,
 	INITIAL_SUGGESTION_QUANTITY = 2;
 
+const analytics = analyticsMixin( 'registerDomain' );
+
+let searchQueue = [],
+	searchStackTimer = null;
+
+function processSearchQueue() {
+	const queue = searchQueue.slice();
+	window.clearTimeout( searchStackTimer );
+	searchStackTimer = null;
+	searchQueue = [];
+
+	outerLoop:
+		for ( let i = 0; i < queue.length; i++ ) {
+			for ( let k = i + 1; k < queue.length; k++ ) {
+				if ( startsWith( queue[ k ].query, queue[ i ].query ) ) {
+					continue outerLoop;
+				}
+			}
+			reportSearch( queue[ i ] );
+		}
+}
+
+function reportSearch( { query, section } ) {
+	analytics.recordEvent( 'searchFormSubmit', query, section );
+}
+
+function enqueueSearch( search ) {
+	searchQueue.push( search );
+	if ( searchStackTimer ) {
+		window.clearTimeout( searchStackTimer );
+	}
+	searchStackTimer = window.setTimeout( processSearchQueue, 10000 );
+}
+
 var RegisterDomainStep = React.createClass( {
-	mixins: [ analyticsMixin( 'registerDomain' ) ],
+	mixins: [ analytics ],
 
 	propTypes: {
 		cart: React.PropTypes.object,
@@ -43,7 +78,7 @@ var RegisterDomainStep = React.createClass( {
 		products: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] ),
 		basePath: React.PropTypes.string.isRequired,
-		suggestion: React.PropTypes.string,
+		suggestion: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {
@@ -90,6 +125,11 @@ var RegisterDomainStep = React.createClass( {
 			this.focusSearchCard();
 			this.fetchDefaultSuggestions();
 		}
+	},
+
+	componentWillUnmount() {
+		// Don't wait for the timeout if the user is navigating away
+		processSearchQueue();
 	},
 
 	focusSearchCard: function() {
@@ -215,7 +255,7 @@ var RegisterDomainStep = React.createClass( {
 			return;
 		}
 
-		this.recordEvent( 'searchFormSubmit', searchQuery, this.props.analyticsSection );
+		enqueueSearch( { query: searchQuery, section: this.props.analyticsSection } );
 
 		this.setState( {
 			lastDomainSearched: domain,
