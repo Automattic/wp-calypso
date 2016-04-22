@@ -19,15 +19,19 @@ import ImportSettings from './section-import';
 import ExportSettings from './section-export';
 import SiteSecurity from './section-security';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import i18n from 'lib/mixins/i18n';
 
 /**
  * Module vars
  */
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
-export class SiteSettings extends Component {
+export class SiteSettingsComponent extends Component {
 	constructor( props ) {
 		super( props );
+
+		// bound methods
+		this.updateSite = this.updateSite.bind( this );
 
 		this.state = {
 			site: this.props.sites.getSelectedSite()
@@ -48,7 +52,7 @@ export class SiteSettings extends Component {
 		let path = '/settings/import';
 
 		if ( site.jetpack ) {
-			return site.options.admin_url + 'import.php';
+			return `${ site.options.admin_url }import.php`;
 		}
 
 		return [ path, site.slug ].join( '/' );
@@ -63,18 +67,20 @@ export class SiteSettings extends Component {
 
 	getStrings() {
 		return {
-			general: this.translate( 'General', { context: 'settings screen' } ),
-			writing: this.translate( 'Writing', { context: 'settings screen' } ),
-			discussion: this.translate( 'Discussion', { context: 'settings screen' } ),
-			analytics: this.translate( 'Analytics', { context: 'settings screen' } ),
-			security: this.translate( 'Security', { context: 'settings screen' } ),
-			import: this.translate( 'Import', { context: 'settings screen' } ),
-			export: this.translate( 'Export', { context: 'settings screen' } ),
+			general: i18n.translate( 'General', { context: 'settings screen' } ),
+			writing: i18n.translate( 'Writing', { context: 'settings screen' } ),
+			discussion: i18n.translate( 'Discussion', { context: 'settings screen' } ),
+			analytics: i18n.translate( 'Analytics', { context: 'settings screen' } ),
+			security: i18n.translate( 'Security', { context: 'settings screen' } ),
+			'import': i18n.translate( 'Import', { context: 'settings screen' } ),
+			'export': i18n.translate( 'Export', { context: 'settings screen' } ),
 		};
 	}
 
 	getSections() {
-		var { site, purchases, context } = this.state;
+		const { site } = this.state;
+		const { purchases, context } = this.props;
+
 		return {
 			general: (
 				<GeneralSettings
@@ -85,13 +91,15 @@ export class SiteSettings extends Component {
 			discussion: <DiscussionSettings site={ site } />,
 			security: <SiteSecurity site={ site } />,
 			analytics: <AnalyticsSettings site={ site } />,
-			import: <ImportSettings site={ site } />,
-			export: <ExportSettings site={ site } store={ context.store } />
+			'import': <ImportSettings site={ site } />,
+			'export': <ExportSettings site={ site } store={ context.store } />
 		};
 	}
 
 	renderSectioNav() {
-		const { site, section } = site;
+		const { site } = this.state;
+		const { section } = this.props;
+
 		const strings = this.getStrings();
 		const selectedText = strings[ section ];
 
@@ -162,7 +170,8 @@ export class SiteSettings extends Component {
 	}
 
 	render() {
-		var { site, section } = this.state.site;
+		const { site } = this.state;
+		const { section } = this.props;
 		const settingsSection = this.getSections();
 
 		return (
@@ -177,11 +186,17 @@ export class SiteSettings extends Component {
 		);
 	}
 
-	_pdateSite() {
+	updateSite() {
 		this.setState( { site: this.props.sites.getSelectedSite() } );
 	}
 }
 
-SiteSettings.propTypes = {
-	site: PropTypes.object
+SiteSettingsComponent.propTypes = {
+	section: PropTypes.string,
+	site: PropTypes.object,
+	sites: PropTypes.object
+};
+
+SiteSettingsComponent.defaultProps = {
+	posts: 'general'
 };
