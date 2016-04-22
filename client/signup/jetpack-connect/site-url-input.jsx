@@ -22,8 +22,9 @@ export default React.createClass( {
 	},
 
 	onChange( event ) {
+		const url = event.target.value;
 		this.setState( {
-			value: event.target.value
+			value: url.replace(/\/$/, "")
 		}, this.props.onChange );
 	},
 
