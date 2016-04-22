@@ -989,7 +989,7 @@ Undocumented.prototype.readTags = function( fn ) {
 Undocumented.prototype.readTagPosts = function( query, fn ) {
 	var params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );
-	params.apiVersion = '1.2';
+	params.apiVersion = '1.3';
 	this.wpcom.req.get( '/read/tags/' + encodeURIComponent( query.tag ) + '/posts', params, fn );
 };
 
