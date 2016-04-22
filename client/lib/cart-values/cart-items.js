@@ -27,6 +27,7 @@ var productsValues = require( 'lib/products-values' ),
 	isGoogleApps = productsValues.isGoogleApps,
 	isNoAds = productsValues.isNoAds,
 	isPlan = productsValues.isPlan,
+	isPremium = productsValues.isPremium,
 	isPrivateRegistration = productsValues.isPrivateRegistration,
 	isSiteRedirect = productsValues.isSiteRedirect,
 	isSpaceUpgrade = productsValues.isSpaceUpgrade,
@@ -190,6 +191,10 @@ function hasFreeTrial( cart ) {
  */
 function hasPlan( cart ) {
 	return some( getAll( cart ), isPlan );
+}
+
+function hasPremiumPlan( cart ) {
+	return some( getAll( cart ), isPremium );
 }
 
 function hasDomainCredit( cart ) {
@@ -704,6 +709,7 @@ module.exports = {
 	hasOnlyProductsOf,
 	hasOnlyRenewalItems,
 	hasPlan,
+	hasPremiumPlan,
 	hasProduct,
 	hasRenewableSubscription,
 	hasRenewalItem,
