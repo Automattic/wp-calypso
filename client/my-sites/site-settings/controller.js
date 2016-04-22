@@ -1,37 +1,56 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	page = require( 'page' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import page from 'page';
 
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	config = require( 'config' ),
-	analytics = require( 'lib/analytics' ),
-	titlecase = require( 'to-title-case' ),
-	SitePurchasesData = require( 'components/data/purchases/site-purchases' ),
-	SiteSettingsComponent = require( 'my-sites/site-settings/main' ),
-	DeleteSite = require( './delete-site' ),
-	StartOver = require( './start-over' ),
-	utils = require( 'lib/site/utils' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import sitesFactory from 'lib/sites-list';
+import route from 'lib/route';
+import i18n from 'lib/mixins/i18n';
+import config from 'config';
+import analytics from 'lib/analytics';
+import titlecase from 'to-title-case';
+import SitePurchasesData from 'components/data/purchases/site-purchases';
+import { SiteSettingsComponent } from 'my-sites/site-settings/main';
+import DeleteSite from './delete-site';
+import StartOver from './start-over';
+import utils from 'lib/site/utils';
+import titleActions from 'lib/screen-title/actions';
+
+/**
+ * Module vars
+ */
+const sites = sitesFactory();
 
 function canDeleteSite( site ) {
-	return site.capabilities && site.capabilities.manage_options && ! site.jetpack && ! site.is_vip;
+	if ( ! site.capabilities || ! site.capabilities.manage_options ) {
+		// Current user doesn't have manage options to delete the site
+		return false;
+	}
+
+	// Current user can't delete a jetpack site
+	if ( site.jetpack ) {
+		return false;
+	}
+
+	if ( site.is_vip ) {
+		// Current user can't delete a VIP site
+		return false;
+	}
+
+	return true;
 }
 
 module.exports = {
-
-	redirectToGeneral: function() {
+	redirectToGeneral() {
 		page.redirect( '/settings/general' );
 	},
 
-	siteSettings: function( context ) {
+	siteSettings( context ) {
 		var analyticsPageTitle = 'Site Settings',
 			basePath = route.sectionify( context.path ),
 			fiveMinutes = 5 * 60 * 1000,
@@ -84,7 +103,7 @@ module.exports = {
 		analytics.pageView.record( basePath + '/:site', analyticsPageTitle );
 	},
 
-	importSite: function( context ) {
+	importSite( context ) {
 		ReactDom.render(
 			<SiteSettingsComponent
 				context={ context }
@@ -95,7 +114,7 @@ module.exports = {
 		);
 	},
 
-	exportSite: function( context ) {
+	exportSite( context ) {
 		ReactDom.render(
 			<SiteSettingsComponent
 				context={ context }
@@ -106,7 +125,7 @@ module.exports = {
 		);
 	},
 
-	deleteSite: function( context ) {
+	deleteSite( context ) {
 		var site = sites.getSelectedSite();
 
 		if ( sites.initialized ) {
@@ -133,7 +152,7 @@ module.exports = {
 		);
 	},
 
-	startOver: function( context ) {
+	startOver( context ) {
 		var site = sites.getSelectedSite();
 
 		if ( sites.initialized ) {
@@ -158,7 +177,7 @@ module.exports = {
 		);
 	},
 
-	legacyRedirects: function( context, next ) {
+	legacyRedirects( context, next ) {
 		var section = context.params.section,
 			redirectMap;
 		if ( ! context ) {
@@ -181,7 +200,7 @@ module.exports = {
 		next();
 	},
 
-	setScroll: function( context, next ) {
+	setScroll( context, next ) {
 		window.scroll( 0, 0 );
 		next();
 	}
