@@ -213,7 +213,7 @@ var Notifications = React.createClass({
 		widgetURL += '?locale=' + localeSlug;
 
 		// cache buster
-		widgetURL += '&' + now.getFullYear() + ( now.getMonth() + 1 ) + now.getDate() + ( now.getHours() + 1 );
+		widgetURL += '&' + now.getFullYear() + ( now.getMonth() + 1 ) + now.getDate() + ( now.getHours() + 10 );
 
 		if ( this.state.widescreen && this.props.visible ) {
 			frameClasses.push( 'widescreen' );
