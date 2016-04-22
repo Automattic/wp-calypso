@@ -66,7 +66,6 @@ babelify: dist
 		lib/runtime \
 		--optional runtime \
 		--out-dir dist/lib/runtime
-	cp -rf lib/runtime/*.json dist/lib/runtime
 
 node_modules:
 	@NODE_ENV= $(NPM) install

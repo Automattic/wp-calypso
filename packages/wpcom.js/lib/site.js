@@ -13,9 +13,8 @@ import SiteSettings from './site.settings';
 import SiteTaxonomy from './site.taxonomy';
 import SiteWordAds from './site.wordads';
 import SiteWPComPlugin from './site.wpcom-plugin';
-
+import siteGetMethods from './runtime/site.get';
 import runtimeBuilder from './util/runtime-builder';
-import siteGetMethods from './runtime/site.get.json';
 import debugFactory from 'debug';
 
 /**

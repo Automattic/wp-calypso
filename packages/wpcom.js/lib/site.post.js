@@ -6,7 +6,7 @@ import Reblog from './site.post.reblog';
 import Comment from './site.comment';
 import Subscriber from './site.post.subscriber';
 import runtimeBuilder from './util/runtime-builder';
-import sitePostGetMethods from './runtime/site.post.get.json';
+import sitePostGetMethods from './runtime/site.post.get';
 import debugFactory from 'debug';
 
 /**

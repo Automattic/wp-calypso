@@ -16,6 +16,7 @@ var Users = require('./lib/users');
 var Batch = require('./lib/batch');
 var Req = require('./lib/util/request');
 var sendRequest = require('./lib/util/send-request');
+var Pinghub = require('./lib/util/pinghub');
 var debug = require('debug')('wpcom');
 
 /**
@@ -71,6 +72,9 @@ function WPCOM(token, reqHandler) {
 
 	// Add Req instance
 	this.req = new Req(this);
+
+	// Add Pinghub instance
+	this.pinghub = new Pinghub(this);
 
 	// Default api version;
 	this.apiVersion = '1.1';

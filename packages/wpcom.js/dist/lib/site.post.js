@@ -33,9 +33,9 @@ var _utilRuntimeBuilder = require('./util/runtime-builder');
 
 var _utilRuntimeBuilder2 = _interopRequireDefault(_utilRuntimeBuilder);
 
-var _runtimeSitePostGetJson = require('./runtime/site.post.get.json');
+var _runtimeSitePostGet = require('./runtime/site.post.get');
 
-var _runtimeSitePostGetJson2 = _interopRequireDefault(_runtimeSitePostGetJson);
+var _runtimeSitePostGet2 = _interopRequireDefault(_runtimeSitePostGet);
 
 var _debug = require('debug');
 
@@ -330,7 +330,7 @@ var SitePost = (function () {
 	return SitePost;
 })();
 
-(0, _utilRuntimeBuilder2['default'])(SitePost, _runtimeSitePostGetJson2['default'], function (item, ctx) {
+(0, _utilRuntimeBuilder2['default'])(SitePost, _runtimeSitePostGet2['default'], function (item, ctx) {
 	return '/sites/' + ctx._sid + '/posts/' + ctx._id + '/' + item.subpath;
 });
 
