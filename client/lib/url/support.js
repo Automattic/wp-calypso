@@ -17,6 +17,7 @@ export default {
 	DOMAINS: `${root}/domains`,
 	EMAIL_FORWARDING: `${root}/email-forwarding`,
 	EMAIL_VALIDATION_AND_VERIFICATION: `${root}/domains/register-domain/#email-validation-and-verification`,
+	EMPTY_SITE: `${root}/empty-site/`,
 	ENABLE_DISABLE_COMMENTS: `${root}/enable-disable-comments`,
 	EVENTBRITE: `${root}/eventbrite`,
 	EVENTBRITE_EVENT_CALENDARLISTING_WIDGET: `${root}/widgets/eventbrite-event-calendarlisting-widget`,
