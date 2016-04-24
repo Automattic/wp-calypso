@@ -51,7 +51,7 @@ export default React.createClass( {
 	},
 
 	getDomains() {
-		return this.props.domains || [ this.props.domain ]
+		return this.props.domains || [ this.props.domain ];
 	},
 
 	expiredDomains() {
@@ -73,7 +73,7 @@ export default React.createClass( {
 			} );
 			renewLink = renewLinkPlural;
 		}
-		return <Notice status="is-error" showDismiss={ false } key="expired-domains">{ text } { renewLink }</Notice>
+		return <Notice status="is-error" showDismiss={ false } key="expired-domains">{ text } { renewLink }</Notice>;
 	},
 
 	expiringDomains() {
