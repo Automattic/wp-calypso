@@ -36,8 +36,8 @@ function main() {
 
 	getModulesWithDependencies( root, fileList )
 		.then(  function ( modulesWithDependencies ) {
-			var stats = generateStats( modulesWithDependencies );
-			writeStats( stats, 'server/devdocs/usage-counts.js' );
+			var usageCounts = generateUsageCounts( modulesWithDependencies );
+			saveUsageCounts( usageCounts, 'server/devdocs/usage-counts.json' );
 			process.exit( 0 );
 		} )
 		.catch( function ( error ) {
@@ -135,7 +135,7 @@ function getDependencies( code ) {
  * @param {object} modules An object of modules with dependencies
  * @returns {object} An object with the usage stats for each dependency
  */
-function generateStats( modules ) {
+function generateUsageCounts( modules ) {
 	return Object.keys( modules ).reduce( function ( target, moduleName ) {
 		var deps = modules[ moduleName ];
 		deps.forEach( function ( dependency ) {
@@ -148,9 +148,9 @@ function generateStats( modules ) {
 	}, {} );
 }
 
-function writeStats( stats, statsPath ) {
-	var js = 'module.exports.stats = ' + jsFromJSON( JSON.stringify( stats, null, "\t" ) ) + ';';
-	fs.writeFileSync( fspath.join( root, statsPath ), js );
+function saveUsageCounts( usageCounts, filePath ) {
+	var json = jsFromJSON( JSON.stringify( usageCounts, null, "\t" ) );
+	fs.writeFileSync( fspath.join( root, filePath ), json );
 }
 
 /**
