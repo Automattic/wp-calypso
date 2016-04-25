@@ -7,7 +7,21 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 import Gridicon from 'components/gridicon';
 
+const hasHttpProtocol = url => ( /^https?:\/\//.test( url ) );
+
 export const PremiumPlugin = React.createClass( {
+	getInitialState() {
+		return { isUnderMouse: false };
+	},
+
+	startHover() {
+		this.setState( { isUnderMouse: true } );
+	},
+
+	stopHover() {
+		this.setState( { isUnderMouse: false } );
+	},
+
 	render() {
 		const {
 			description,
@@ -18,11 +32,29 @@ export const PremiumPlugin = React.createClass( {
 			descriptionLink
 		} = this.props;
 
+		const { isUnderMouse } = this.state;
+
+		const isExternalLink = hasHttpProtocol( descriptionLink );
+
+		const target = isExternalLink
+			? '_blank'
+			: '_self';
+
+		const linkIcon = ( isExternalLink && isUnderMouse )
+			? 'external'
+			: icon;
+
 		return (
 			<div className="wpcom-plugins__plugin-item">
-				<a onClick={ onClick } href={ descriptionLink } target="_blank">
+				<a
+					href={ descriptionLink }
+					onClick={ onClick }
+					onMouseEnter={ this.startHover }
+					onMouseLeave={ this.stopHover }
+					target={ target }
+				>
 					<div className="wpcom-plugins__plugin-icon">
-						<Gridicon { ...{ icon } } />
+						<Gridicon icon={ linkIcon } />
 					</div>
 					<div className="wpcom-plugins__plugin-title">{ name }</div>
 					<div className="wpcom-plugins__plugin-plan">{ plan }</div>

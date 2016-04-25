@@ -7,18 +7,21 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 import Gridicon from 'components/gridicon';
 
-/**
- * Detect if the given url is a fully formed url
- *
- * @param {String} url - url to check
- * @return {Boolean} True if it's a fully formed url
- */
-
-const hasHttpProtocol = url => {
-	return /^https?:\/\//.test( url );
-};
+const hasHttpProtocol = url => ( /^https?:\/\//.test( url ) );
 
 export const BusinessPlugin = React.createClass( {
+	getInitialState() {
+		return { isUnderMouse: false };
+	},
+
+	startHover() {
+		this.setState( { isUnderMouse: true } );
+	},
+
+	stopHover() {
+		this.setState( { isUnderMouse: false } );
+	},
+
 	render() {
 		const {
 			description,
@@ -29,13 +32,29 @@ export const BusinessPlugin = React.createClass( {
 			descriptionLink,
 		} = this.props;
 
-		const target = hasHttpProtocol( descriptionLink ) ? '_blank' : '_self';
+		const { isUnderMouse } = this.state;
+
+		const isExternalLink = hasHttpProtocol( descriptionLink );
+
+		const target = isExternalLink
+			? '_blank'
+			: '_self';
+
+		const linkIcon = ( isExternalLink && isUnderMouse )
+			? 'external'
+			: icon;
 
 		return (
 			<div className="wpcom-plugins__plugin-item">
-				<a onClick={ onClick } href={ descriptionLink } target={ target }>
+				<a
+					href={ descriptionLink }
+					onClick={ onClick }
+					onMouseEnter={ this.startHover }
+					onMouseLeave={ this.stopHover }
+					target={ target }
+				>
 					<div className="wpcom-plugins__plugin-icon">
-						<Gridicon { ...{ icon } } />
+						<Gridicon icon={ linkIcon } />
 					</div>
 					<div className="wpcom-plugins__plugin-title">{ name }</div>
 					<div className="wpcom-plugins__plugin-plan">{ plan }</div>
