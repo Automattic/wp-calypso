@@ -11,7 +11,7 @@ var async = require( 'async' ),
 	fspath = require( 'path' ),
 	root = fspath.dirname( fspath.join( __dirname, '..', '..' ) ),
 
-	// Copyright (c) 2014-present, Facebook, Inc. See CREDITS.md#facebook/node-haste
+	// Copyright (c) 2014-present, Facebook, Inc. See CREDITS.md#facebook/node-hastemodules
 	replacePatterns = {
 		BLOCK_COMMENT_RE: /(?:\/\*(.|\n)*?\*\/)|(\/\/.+(\n|$))/g,
 		LINE_COMMENT_RE: /\/\/.+(\n|$)/g,
@@ -106,7 +106,7 @@ function getDependencies( code ) {
 			deps.push(dep);
 		}
 	}
-
+	// foo
 	code
 		.replace( replacePatterns.BLOCK_COMMENT_RE, '' )
 		.replace( replacePatterns.LINE_COMMENT_RE, '' )
