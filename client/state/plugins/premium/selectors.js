@@ -4,14 +4,14 @@ import filter from 'lodash/filter';
 const isRequesting = function( state, siteId ) {
 	// if the `isRequesting` attribute doesn't exist yet,
 	// we assume we are still launching the fetch action, so it's true
-	if ( typeof state[ siteId ] === 'undefined' ) {
+	if ( typeof state.plugins.premium.isRequesting[ siteId ] === 'undefined' ) {
 		return true;
 	}
-	return state[ siteId ];
+	return state.plugins.premium.isRequesting[ siteId ];
 };
 
 const getPluginsForSite = function( state, siteId ) {
-	let pluginList = state[ siteId ];
+	let pluginList = state.plugins.premium.plugins[ siteId ];
 	if ( typeof pluginList === 'undefined' ) {
 		return [];
 	}
