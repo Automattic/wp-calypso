@@ -9,14 +9,14 @@
 
 .step-header__title {
 	font-size: 24px;
-	font-weight: 200;
+	//font-weight: 200;
 	margin: 0 0 5px 0;
 }
 
 .step-header__subtitle {
-	color: $gray;
+	color: darken( $gray, 20 );
 	font-size: 14px;
-	font-weight: 300;
+	//font-weight: 300;
 
 	@include breakpoint( "<480px" ) {
 		margin: 0;
