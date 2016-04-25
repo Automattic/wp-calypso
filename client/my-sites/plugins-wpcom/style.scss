@@ -10,6 +10,10 @@
 	.wpcom-plugins__plugin-item {
 		opacity: 0.5;
 	}
+	
+	.wpcom-plugins__plugin-icon {
+		background: $gray;
+	}
 }
 
 .wpcom-plugin-panel .section-header {
@@ -70,7 +74,7 @@
 .wpcom-plugins__plugin-icon {
 	width: 40px;
 	height: 40px;
-	background: $gray;
+	background: $alert-green;
 	float: left;
 	display: flex;
 	justify-content: center;
