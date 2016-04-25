@@ -10,6 +10,7 @@ import { recordAddToCart } from 'lib/analytics/ad-tracking';
 import { action as ActionTypes } from '../constants';
 import Dispatcher from 'dispatcher';
 import { cartItems } from 'lib/cart-values';
+import { abtest } from 'lib/abtest';
 
 // We need to load the CartStore to make sure the store is registered with the
 // dispatcher even though it's not used directly here
@@ -47,7 +48,8 @@ function addItem( item ) {
 function addItems( items ) {
 	const extendedItems = items.map( ( item ) => {
 		const extra = assign( {}, item.extra, {
-			context: 'calypstore'
+			context: 'calypstore',
+			withPlansOnly: abtest( 'domainsWithPlansOnly' ) === 'plansOnly' ? 'yes' : ''
 		} );
 
 		return assign( {}, item, { extra } );

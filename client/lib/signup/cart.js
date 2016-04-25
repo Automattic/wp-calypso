@@ -8,6 +8,7 @@ var forEach = require( 'lodash/forEach' );
  */
 var wpcom = require( 'lib/wp' ),
 	productsList = require( 'lib/products-list' )(),
+	abtest = require( 'lib/abtest' ).abtest,
 	cartValues = require( 'lib/cart-values' ),
 	cartItems = cartValues.cartItems;
 
@@ -25,7 +26,11 @@ module.exports = {
 			let newCart = data;
 
 			forEach( newCartItems, function( cartItem ) {
-				cartItem.extra = Object.assign( cartItem.extra || {}, { context: 'signup' } );
+				cartItem.extra = Object.assign( cartItem.extra || {}, {
+					context: 'signup',
+					// no boolean below, they are casted to strings somewhere down the line
+					withPlansOnly: abtest( 'domainsWithPlansOnly' ) === 'plansOnly' ? 'yes' : ''
+				} );
 				const addFunction = cartItems.add( cartItem );
 
 				newCart = cartValues.fillInAllCartItemAttributes( addFunction( newCart ), productsList.get() );
