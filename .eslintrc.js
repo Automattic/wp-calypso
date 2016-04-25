@@ -74,7 +74,7 @@ module.exports = {
 			':': 'before'
 		} } ],
 		'padded-blocks': [ 1, 'never' ],
-		'quote-props': [ 1, 'as-needed' ],
+		'quote-props': [ 1, 'as-needed', { 'keywords': true } ],
 		'quotes': [ 1, 'single', 'avoid-escape' ],
 		'semi': 1,
 		'semi-spacing': 1,
