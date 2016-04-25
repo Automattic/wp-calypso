@@ -25,7 +25,7 @@ RECORD_ENV ?= $(BIN)/record-env
 GET_I18N ?= $(BIN)/get-i18n
 LIST_ASSETS ?= $(BIN)/list-assets
 ALL_DEVDOCS_JS ?= server/devdocs/bin/generate-devdocs-index
-USAGE_COUNTS_JS ?= server/devdocs/bin/generate-modules-usage-counts
+USAGE_COUNTS_JS ?= server/devdocs/bin/generate-modules-usage-counts.js
 
 # files used as prereqs
 SASS_FILES := $(shell \
