@@ -67,7 +67,7 @@ describe( 'utils', function() {
 		} );
 	} );
 
-	describe( '#isBackDatePublished', function() {
+	describe( '#isBackDatedPublished', function() {
 		it( 'should return false when no post is supplied', function() {
 			assert( ! postUtils.isBackDatedPublished() );
 		} );
@@ -78,14 +78,14 @@ describe( 'utils', function() {
 
 		it( 'should return false when status === future and date is in future', function() {
 			const tenMinutes = 1000 * 60;
-			const postDate = +new Date() + tenMinutes;
+			const postDate = Date.now() + tenMinutes;
 
 			assert( ! postUtils.isBackDatedPublished( { status: 'future', date: postDate } ) );
 		} );
 
 		it( 'should return true when status === future and date is in the past', function() {
 			const tenMinutes = 1000 * 60;
-			const postDate = +new Date() - tenMinutes;
+			const postDate = Date.now() - tenMinutes;
 
 			assert( postUtils.isBackDatedPublished( { status: 'future', date: postDate } ) );
 		} );
