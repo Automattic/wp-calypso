@@ -68,11 +68,11 @@ export const defaultStandardPlugins = [
 		description: i18n.translate( 'Advanced anti-spam security.' )
 	},
 	{
-		name: i18n.translate( 'Backup' ),
+		name: i18n.translate( 'Backup & Export' ),
 		descriptionLink: 'https://en.support.wordpress.com/export/#backups',
 		icon: 'lock',
 		category: 'Security',
-		description: i18n.translate( '24/7 backup of your entire site.' )
+		description: i18n.translate( '24/7 backup of your entire site. Export everything.' )
 	},
 	{
 		name: i18n.translate( 'Photon CDN' ),
@@ -100,7 +100,7 @@ export const defaultStandardPlugins = [
 		descriptionLink: 'https://en.support.wordpress.com/infinite-scroll/',
 		icon: 'posts',
 		category: 'Appearance',
-		description: i18n.translate( 'Load more posts when you reach the bottom of a page.' )
+		description: i18n.translate( 'Load more posts when you reach the bottom of a page on your site.' )
 	},
 	{
 		name: i18n.translate( 'Related Posts' ),
@@ -141,7 +141,7 @@ export const defaultPremiumPlugins = [
 		descriptionLink: 'https://en.support.wordpress.com/no-ads/',
 		icon: 'block',
 		plan: 'Premium',
-		description: i18n.translate( 'Remove all ads from your site.' )
+		description: i18n.translate( 'Remove WordPress.com ads from your site.' )
 	},
 	{
 		name: i18n.translate( 'Custom Design' ),
