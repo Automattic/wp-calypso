@@ -18,7 +18,7 @@
 		"code-splitting": true,
 		"community-translator": true,
 		"desktop-promo": true,
-		"guidestours": true,
+		"guided-tours": true,
 		"help": true,
 		"jetpack_core_inline_update": true,
 		"mailing-lists/unsubscribe": true,

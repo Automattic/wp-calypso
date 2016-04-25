@@ -7,18 +7,18 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getGuidesTourState } from 'state/ui/selectors';
-import { nextGuidesTourStep, quitGuidesTour } from 'state/ui/actions';
+import { getSelectedSite, getGuidedTourState } from 'state/ui/selectors';
+import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/actions';
 import { query } from './positioning';
 import {
-	GuidesBasicStep,
-	GuidesFirstStep,
-	GuidesLinkStep,
-	GuidesFinishStep,
-	GuidesActionStep,
+	BasicStep,
+	FirstStep,
+	LinkStep,
+	FinishStep,
+	ActionStep,
 } from './steps';
 
-class GuidesTours extends Component {
+class GuidedTours extends Component {
 	constructor() {
 		super();
 		this.bind( 'next', 'quit', 'finish' );
@@ -58,12 +58,12 @@ class GuidesTours extends Component {
 
 	next() {
 		const nextStepName = this.props.tourState.stepConfig.next;
-		this.props.nextGuidesTourStep( { stepName: nextStepName } );
+		this.props.nextGuidedTourStep( { stepName: nextStepName } );
 	}
 
 	quit( options = {} ) {
-		this.currentTarget && this.currentTarget.classList.remove( 'guidestours__overlay' );
-		this.props.quitGuidesTour( Object.assign( {
+		this.currentTarget && this.currentTarget.classList.remove( 'guided-tours__overlay' );
+		this.props.quitGuidedTour( Object.assign( {
 			stepName: this.props.tourState.stepName
 		}, options ) );
 	}
@@ -80,14 +80,14 @@ class GuidesTours extends Component {
 		}
 
 		const StepComponent = {
-			GuidesFirstStep,
-			GuidesActionStep,
-			GuidesLinkStep,
-			GuidesFinishStep,
-		}[ stepConfig.type ] || GuidesBasicStep;
+			FirstStep,
+			ActionStep,
+			LinkStep,
+			FinishStep,
+		}[ stepConfig.type ] || BasicStep;
 
 		return (
-			<div className="guidestours">
+			<div className="guided-tours">
 				<StepComponent
 					{ ...stepConfig }
 					key={ stepConfig.target }
@@ -102,8 +102,8 @@ class GuidesTours extends Component {
 
 export default connect( ( state ) => ( {
 	selectedSite: getSelectedSite( state ),
-	tourState: getGuidesTourState( state ),
+	tourState: getGuidedTourState( state ),
 } ), {
-	nextGuidesTourStep,
-	quitGuidesTour,
-} )( GuidesTours );
+	nextGuidedTourStep,
+	quitGuidedTour,
+} )( GuidedTours );

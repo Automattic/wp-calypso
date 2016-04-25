@@ -25,7 +25,7 @@ var config = require( 'config' ),
 	user = require( 'lib/user' )(),
 	receiveUser = require( 'state/users/actions' ).receiveUser,
 	setCurrentUserId = require( 'state/current-user/actions' ).setCurrentUserId,
-	showGuidesTour = require( 'state/ui/actions' ).showGuidesTour,
+	showGuidedTour = require( 'state/ui/actions' ).showGuidedTour,
 	sites = require( 'lib/sites-list' )(),
 	superProps = require( 'lib/analytics/super-props' ),
 	i18n = require( 'lib/mixins/i18n' ),
@@ -259,9 +259,9 @@ function reduxStoreReady( reduxStore ) {
 			nuxWelcome.clearTempWelcome();
 		}
 
-		// If `?tour` is present, show the guides tour
-		if ( config.isEnabled( 'guidestours' ) && context.query.tour ) {
-			context.store.dispatch( showGuidesTour( {
+		// If `?tour` is present, show the guided tour
+		if ( config.isEnabled( 'guided-tours' ) && context.query.tour ) {
+			context.store.dispatch( showGuidedTour( {
 				shouldShow: true,
 				shouldDelay: /^\/(checkout|plans\/select)/.test( path ),
 				tour: context.query.tour,
