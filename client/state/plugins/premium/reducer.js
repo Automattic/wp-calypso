@@ -7,27 +7,32 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	PLUGIN_SETUP_FETCH_INSTRUCTIONS,
-	PLUGIN_SETUP_RECEIVE_INSTRUCTIONS,
+	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
+	PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
 	PLUGIN_SETUP_START,
 	PLUGIN_SETUP_INSTALL,
 	PLUGIN_SETUP_ACTIVATE,
 	PLUGIN_SETUP_CONFIGURE,
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ALL_FINISH,
-	PLUGIN_SETUP_ERROR
+	PLUGIN_SETUP_ERROR,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
 
 /*
  * Tracks the requesting state for premium plugin "instructions" (the list
  * of plugins and API keys) on a per-site index.
  */
-export function isRequesting( state = false, action ) {
+export function isRequesting( state = {}, action ) {
 	switch ( action.type ) {
-		case PLUGIN_SETUP_FETCH_INSTRUCTIONS:
+		case PLUGIN_SETUP_INSTRUCTIONS_FETCH:
 			return Object.assign( {}, state, { [ action.siteId ]: true } );
-		case PLUGIN_SETUP_RECEIVE_INSTRUCTIONS:
+		case PLUGIN_SETUP_INSTRUCTIONS_RECEIVE:
 			return Object.assign( {}, state, { [ action.siteId ]: false } );
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
 		default:
 			return state;
 	}
@@ -39,7 +44,7 @@ export function isRequesting( state = false, action ) {
  */
 export function plugins( state = {}, action ) {
 	switch ( action.type ) {
-		case PLUGIN_SETUP_RECEIVE_INSTRUCTIONS:
+		case PLUGIN_SETUP_INSTRUCTIONS_RECEIVE:
 			return Object.assign( {}, state, { [ action.siteId ]: action.data } );
 		case PLUGIN_SETUP_START:
 		case PLUGIN_SETUP_INSTALL:
@@ -54,6 +59,9 @@ export function plugins( state = {}, action ) {
 				} );
 			}
 			return state;
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
 		default:
 			return state;
 	}
@@ -64,7 +72,7 @@ export function plugins( state = {}, action ) {
  */
 function pluginsForSite( state = [], action ) {
 	switch ( action.type ) {
-		case PLUGIN_SETUP_RECEIVE_INSTRUCTIONS:
+		case PLUGIN_SETUP_INSTRUCTIONS_RECEIVE:
 			return action.data;
 		case PLUGIN_SETUP_START:
 		case PLUGIN_SETUP_INSTALL:
