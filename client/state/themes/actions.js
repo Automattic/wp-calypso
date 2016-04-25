@@ -94,14 +94,16 @@ export function fetchCurrentTheme( site ) {
 	};
 }
 
-export function fetchThemeDetails( id ) {
+export function fetchThemeDetails( id, callback = function() {} ) {
 	return dispatch => {
 		wpcom.undocumented().themeDetails( id )
 			.then( themeDetails => {
 				debug( 'Received theme details', themeDetails );
 				dispatch( receiveThemeDetails( themeDetails ) )
+				callback();
 			} )
 			.catch( error => {
+				debug( `Error fetching theme ${ id } details: `, error.message || error );
 				dispatch( receiveServerError( error ) )
 			} );
 	}
