@@ -282,10 +282,10 @@ module.exports = React.createClass( {
 					disabled={ this.disableForm() } />
 
 				<FormSettingExplanation>
-					{ this.translate( 'Password is not required if you use public key authentication.' ) }
-					<a onClick={ this._onShowDialog } href="#">
-						{ this.translate( 'Get your public key string.' ) }
-					</a>
+					{ this.translate(
+						'Password is not required if you use public key authentication. {{a}}Get your public key string.{{/a}}',
+						{ components: { a: <a onClick={ this._onShowDialog } href="#" /> } }
+					) }
 				</FormSettingExplanation>
 				{ footerContents }
 			</form>
