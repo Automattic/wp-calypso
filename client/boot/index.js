@@ -161,15 +161,30 @@ function boot() {
 	createReduxStoreFromPersistedInitialState( reduxStoreReady );
 }
 
+function renderLayout( reduxStore ) {
+	let props = { focus: layoutFocus };
+
+	if ( user.get() ) {
+		Object.assign( props, {}, { user, sites, nuxWelcome, translatorInvitation } );
+	}
+
+	Layout = require( 'layout' );
+	renderWithReduxStore(
+		React.createElement( Layout, props ),
+		document.getElementById( 'wpcom' ),
+		reduxStore
+	);
+
+	debug( 'Main layout rendered.' );
+}
+
 function reduxStoreReady( reduxStore ) {
-	let layoutSection, layoutElement, validSections = [];
+	let layoutSection, validSections = [];
 
 	bindWpLocaleState( reduxStore );
 	bindTitleToStore( reduxStore );
 
 	supportUser.setReduxStore( reduxStore );
-
-	Layout = require( 'layout' );
 
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
@@ -179,18 +194,8 @@ function reduxStoreReady( reduxStore ) {
 		// Set current user in Redux store
 		reduxStore.dispatch( receiveUser( user.get() ) );
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
-
-		// Create layout instance with current user prop
-		layoutElement = React.createElement( Layout, {
-			user: user,
-			sites: sites,
-			focus: layoutFocus,
-			nuxWelcome: nuxWelcome,
-			translatorInvitation: translatorInvitation
-		} );
 	} else {
 		analytics.setSuperProps( superProps );
-		layoutElement = React.createElement( Layout, { focus: layoutFocus } );
 	}
 
 	if ( config.isEnabled( 'perfmon' ) ) {
@@ -202,13 +207,7 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/network-connection' ).init( reduxStore );
 	}
 
-	renderWithReduxStore(
-		layoutElement,
-		document.getElementById( 'wpcom' ),
-		reduxStore
-	);
-
-	debug( 'Main layout rendered.' );
+	renderLayout( reduxStore );
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
 	// This can be removed when the legacy version is retired.
