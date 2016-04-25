@@ -7,8 +7,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getGuidedTourState } from 'state/ui/selectors';
-import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/actions';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
+import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
 import { query } from './positioning';
 import {
 	BasicStep,
