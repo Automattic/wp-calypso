@@ -140,21 +140,21 @@ export const defaultPremiumPlugins = [
 		name: i18n.translate( 'No Advertising' ),
 		descriptionLink: 'https://en.support.wordpress.com/no-ads/',
 		icon: 'block',
-		plan: 'Premium',
+		category: 'Premium',
 		description: i18n.translate( 'Remove WordPress.com ads from your site.' )
 	},
 	{
 		name: i18n.translate( 'Custom Design' ),
 		descriptionLink: 'https://en.support.wordpress.com/custom-design/',
 		icon: 'customize',
-		plan: 'Premium',
+		category: 'Premium',
 		description: i18n.translate( 'Customize your blog\'s look with custom fonts, a CSS editor, and more.' )
 	},
 	{
 		name: i18n.translate( 'Video Uploads' ),
 		descriptionLink: 'https://en.support.wordpress.com/videopress/',
 		icon: 'video-camera',
-		plan: 'Premium',
+		category: 'Premium',
 		description: i18n.translate( 'Upload and host your video files on your site with VideoPress.' )
 	}
 ];
@@ -165,9 +165,9 @@ export const defaultPremiumPlugins = [
 export const defaultBusinessPlugins = [
 	{
 		name: i18n.translate( 'Google Analytics' ),
-		descriptionLink: '/plans/features/google-analytics/{siteSlug}',
+		descriptionLink: '/categorys/features/google-analytics/{siteSlug}',
 		icon: 'stats',
-		plan: 'Business',
+		category: 'Business',
 		description: i18n.translate( 'Advanced features to complement WordPress.com stats. Funnel reports, goal conversion, and more.' )
 	}
 ];

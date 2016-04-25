@@ -1,15 +1,11 @@
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
-import get from 'lodash/get';
 import noop from 'lodash/noop';
-
-import { recordTracksEvent } from 'state/analytics/actions';
 
 import Gridicon from 'components/gridicon';
 
 const hasHttpProtocol = url => ( /^https?:\/\//.test( url ) );
 
-export const PremiumPlugin = React.createClass( {
+export const Plugin = React.createClass( {
 	getInitialState() {
 		return { isUnderMouse: false };
 	},
@@ -24,10 +20,10 @@ export const PremiumPlugin = React.createClass( {
 
 	render() {
 		const {
+			category,
 			description,
 			icon = 'plugins',
 			name,
-			plan,
 			onClick = noop,
 			descriptionLink
 		} = this.props;
@@ -57,7 +53,7 @@ export const PremiumPlugin = React.createClass( {
 						<Gridicon icon={ linkIcon } />
 					</div>
 					<div className="wpcom-plugins__plugin-title">{ name }</div>
-					<div className="wpcom-plugins__plugin-plan">{ plan }</div>
+					<div className="wpcom-plugins__plugin-category">{ category }</div>
 					<p className="wpcom-plugins__plugin-description">{ description }</p>
 				</a>
 			</div>
@@ -65,25 +61,13 @@ export const PremiumPlugin = React.createClass( {
 	}
 } );
 
-PremiumPlugin.propTypes = {
-	name: PropTypes.string.isRequired,
-	descriptionLink: PropTypes.string.isRequired,
+Plugin.propTypes = {
+	category: PropTypes.string.isRequired,
+	description: PropTypes.string.isRequired,
 	icon: PropTypes.string,
-	plan: PropTypes.string.isRequired,
+	name: PropTypes.string.isRequired,
 	onClick: PropTypes.func,
-	description: PropTypes.string.isRequired
+	descriptionLink: PropTypes.string.isRequired
 };
 
-const trackClick = name => recordTracksEvent(
-	'calypso_plugin_wpcom_click',
-	{
-		plugin_name: name,
-		plugin_plan: 'premium'
-	}
-);
-
-const mapDispatchToProps = ( dispatch, props ) => ( {
-	onClick: get( props, 'onClick', () => dispatch( trackClick( props.name ) ) )
-} );
-
-export default connect( null, mapDispatchToProps )( PremiumPlugin );
+export default Plugin;
