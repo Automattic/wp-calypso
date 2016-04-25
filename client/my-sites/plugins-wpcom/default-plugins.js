@@ -124,7 +124,7 @@ export const defaultStandardPlugins = [
 		description: i18n.translate( 'Text formatting using a lightweight markup language. ' )
 	},
 	{
-		name: i18n.translate( 'Advanced Commenting' ),
+		name: i18n.translate( 'Advanced Comments' ),
 		descriptionLink: 'https://en.support.wordpress.com/category/comments/',
 		icon: 'comment',
 		category: 'Misc',
