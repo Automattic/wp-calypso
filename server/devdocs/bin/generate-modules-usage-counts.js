@@ -22,10 +22,12 @@ var async = require( 'async' ),
 
 function main() {
 	// extract list of files to index and remove leading ./'s
-	var fileList = process.
+	var fileList;
+
+	fileList = process.
 		argv.
 		splice( 2, process.argv.length ).
-		map( function ( fileWithPath ) {
+		map( function( fileWithPath ) {
 			return fileWithPath.replace( /^\.\//, '' );
 		} );
 
@@ -35,12 +37,12 @@ function main() {
 	}
 
 	getModulesWithDependencies( root, fileList )
-		.then(  function ( modulesWithDependencies ) {
+		.then( function( modulesWithDependencies ) {
 			var usageCounts = generateUsageCounts( modulesWithDependencies );
 			saveUsageCounts( usageCounts, 'server/devdocs/usage-counts.json' );
 			process.exit( 0 );
 		} )
-		.catch( function ( error ) {
+		.catch( function( error ) {
 			console.error( "An error occurred while processing the files: \n\t", error );
 			process.exit( 1 );
 		} );
@@ -59,21 +61,23 @@ function main() {
  */
 
 function getModulesWithDependencies( root, fileList ) {
-	return new Promise( function ( resolve, reject ) {
+	return new Promise( function( resolve, reject ) {
 		var modulesWithDeps = {};
 
 		async.each(
 			fileList,
-			function ( fileWithPath, next ) {
+			function( fileWithPath, next ) {
 				fs.readFile(
 					fspath.join( root, fileWithPath ),
 					{ encoding: 'utf8' },
-					function ( err, data ) {
+					function( err, data ) {
+						var deps;
+
 						if ( err ) {
 							return next( err );
 						}
 						// get the dependencies
-						var deps = getDependencies( data );
+						deps = getDependencies( data );
 						if ( deps.length ) {
 							modulesWithDeps[ fileWithPath ] = deps;
 						}
@@ -81,7 +85,7 @@ function getModulesWithDependencies( root, fileList ) {
 					}
 				);
 			},
-			function ( err ) {
+			function( err ) {
 				if ( err ) {
 					return reject( err );
 				}
@@ -95,30 +99,33 @@ function getModulesWithDependencies( root, fileList ) {
 /**
  * Extract all required modules from a `code` string.
  * Copyright (c) 2014-present, Facebook, Inc. See CREDITS.md#facebook/node-haste
+ *
+ * @param {string} code The source code string to parse
+ * @returns {array} An array of required modules, if any
  */
 function getDependencies( code ) {
-	var cache = Object.create(null);
+	var cache = Object.create( null );
 	var deps = [];
 
 	function addDependency( dep ) {
 		if ( !cache[ dep ] ) {
 			cache[ dep ] = true;
-			deps.push(dep);
+			deps.push( dep );
 		}
 	}
-	// foo
+
 	code
 		.replace( replacePatterns.BLOCK_COMMENT_RE, '' )
 		.replace( replacePatterns.LINE_COMMENT_RE, '' )
-		.replace( replacePatterns.IMPORT_RE, function ( match, pre, quot, dep, post ) {
+		.replace( replacePatterns.IMPORT_RE, function( match, pre, quot, dep ) {
 			addDependency( dep );
 			return match;
 		} )
-		.replace( replacePatterns.EXPORT_RE, function ( match, pre, quot, dep, post ) {
+		.replace( replacePatterns.EXPORT_RE, function( match, pre, quot, dep ) {
 			addDependency( dep );
 			return match;
 		} )
-		.replace( replacePatterns.REQUIRE_RE, function ( match, pre, quot, dep, post ) {
+		.replace( replacePatterns.REQUIRE_RE, function( match, pre, quot, dep ) {
 			addDependency( dep );
 		} );
 
@@ -136,9 +143,9 @@ function getDependencies( code ) {
  * @returns {object} An object with the usage stats for each dependency
  */
 function generateUsageCounts( modules ) {
-	return Object.keys( modules ).reduce( function ( target, moduleName ) {
+	return Object.keys( modules ).reduce( function( target, moduleName ) {
 		var deps = modules[ moduleName ];
-		deps.forEach( function ( dependency ) {
+		deps.forEach( function( dependency ) {
 			if ( ! target[ dependency ] ) {
 				target[ dependency ] = { count: 0 };
 			}
@@ -159,6 +166,8 @@ function saveUsageCounts( usageCounts, filePath ) {
  * @copyright (c) 2009-2014 TJ Holowaychuk <tj@vision-media.ca>.
  * @license See CREDITS.md.
  * @see https://github.com/strongloop/express/blob/b78bd3d1fd6caf8228a1875078fecce936cb2e46/lib/response.js#L293
+ * @param {string} json Input json string
+ * @returns {string} Sanitized json string
  */
 function jsFromJSON( json ) {
 	// some characters in JSON are invalid in JS
