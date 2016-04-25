@@ -21,6 +21,7 @@ import { dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation, ch
 import JetpackExampleInstall from './exampleComponents/jetpack-install';
 import JetpackExampleActivate from './exampleComponents/jetpack-activate';
 import JetpackExampleConnect from './exampleComponents/jetpack-connect';
+import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
 
 
@@ -231,44 +232,18 @@ const JetpackConnectMain = React.createClass( {
 		);
 	},
 
-	renderSingleStep( title, text, example ) {
-		return (
-			<Card className="jetpack-connect__install-step">
-				<div className="jetpack-connect__install-step-title">
-					{ title }
-				</div>
-				<div className="jetpack-connect__install-step-text">
-					{ text }
-				</div>
-				{ example }
-			</Card>
-		);
-	},
-
 	renderInstallSteps() {
 		return (
 			<div className="jetpack-connect__install-steps">
-				{
-					this.renderSingleStep(
-						this.translate( '1. Install Jetpack' ),
-						this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s dashboard to install Jetpack. Click the blue install button.' ),
-						<JetpackExampleInstall />
-					)
-				}
-				{
-					this.renderSingleStep(
-						this.translate( '2. Activate Jetpack' ),
-						this.translate( 'Once the plugin is installed, you\'ll need to click this tiny blue \'Activate\' link from your plugins list page.' ),
-						<JetpackExampleActivate />
-					)
-				}
-				{
-					this.renderSingleStep(
-						this.translate( '3. Connect Jetpack' ),
-						this.translate( 'Once the plugin is activated you\'ll click this blue \'Connect\' button to complete the connection.' ),
-						<JetpackExampleConnect />
-					)
-				}
+				<JetpackInstallStep title={ this.translate( '1. Install Jetpack' ) }
+					text={ this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s dashboard to install Jetpack. Click the blue install button.' ) }
+					example={ <JetpackExampleInstall /> } />
+				<JetpackInstallStep title={ this.translate( '2. Activate Jetpack' ) }
+					text={ this.translate( 'Once the plugin is installed, you\'ll need to click this tiny blue \'Activate\' link from your plugins list page.' ) }
+					example={ <JetpackExampleActivate /> } />
+				<JetpackInstallStep title={ this.translate( '3. Connect Jetpack' ) }
+					text={ this.translate( 'Once the plugin is activated you\'ll click this blue \'Connect\' button to complete the connection.' ) }
+					example={ <JetpackExampleConnect /> } />
 			</div>
 		);
 	},
@@ -313,8 +288,8 @@ const JetpackConnectMain = React.createClass( {
 		if ( status === 'notJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
 			return this.renderInstallInstructions();
 		}
+//		return this.renderInstallInstructions();
 		return this.renderSiteEntry();
-		//	return this.renderInstallInstructions();
 	}
 } );
 
