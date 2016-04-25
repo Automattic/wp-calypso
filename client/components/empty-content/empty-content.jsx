@@ -90,7 +90,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		const action = this.props.action && this.primaryAction();
-		const secondaryAction = this.props.secondaryActino && this.secondaryAction();
+		const secondaryAction = this.props.secondaryAction && this.secondaryAction();
 		const illustration = this.props.illustration && <img src={ this.props.illustration } width={ this.props.illustrationWidth } className="empty-content__illustration" />;
 
 		return (
