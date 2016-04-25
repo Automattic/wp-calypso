@@ -15,8 +15,22 @@ import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import Spinner from 'components/spinner';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import { fetchInstallInstructions, startPlugin, installPlugin, finishAllPlugins } from 'state/plugins/premium/actions';
-import PremiumSelectors from 'state/plugins/premium/selectors';
+// Redux actions & selectors
+import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	fetchInstallInstructions,
+	startPlugin,
+	installPlugin,
+	finishAllPlugins
+} from 'state/plugins/premium/actions';
+import {
+	getPluginsForSite,
+	getActivePlugin,
+	getNextPlugin,
+	isFinished,
+	isRequesting
+} from 'state/plugins/premium/selectors';
+// Store required to get the plugin meta information like ID, etc.
 import PluginsStore from 'lib/plugins/store';
 
 const helpLinks = {
@@ -41,7 +55,7 @@ const PlansSetup = React.createClass( {
 	},
 
 	componentDidMount() {
-		this.props.fetchInstallInstructions( this.props.selectedSite.ID );
+		this.props.fetchInstallInstructions( this.props.siteId );
 	},
 
 	renderNoManageWarning() {
@@ -96,8 +110,8 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderStart() {
-		let site = this.props.selectedSite;
-		let nextPlugin = PremiumSelectors.getNextPlugin( this.props.plugins, site.ID );
+		const site = this.props.selectedSite;
+		const nextPlugin = this.props.nextPlugin;
 
 		return (
 			<div className="plan-setup">
@@ -116,9 +130,8 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderFinish() {
-		let site = this.props.selectedSite;
-		let plugins = PremiumSelectors.getPluginsForSite( this.props.plugins, site.ID );
-		let pluginsContent = plugins.map( ( item, key ) => {
+		const plugins = this.props.plugins;
+		const pluginsContent = plugins.map( ( item, key ) => {
 			let errorContent;
 			if ( item.error !== null ) {
 				errorContent = (
@@ -165,8 +178,7 @@ const PlansSetup = React.createClass( {
 
 	renderPlugin( plugin ) {
 		let actionContent, errorContent, errorActionContent;
-		let site = this.props.selectedSite;
-		let nextPlugin = PremiumSelectors.getNextPlugin( this.props.plugins, site.ID );
+		const nextPlugin = this.props.nextPlugin;
 
 		if ( plugin.error !== null ) {
 			errorActionContent = (
@@ -176,7 +188,7 @@ const PlansSetup = React.createClass( {
 			);
 		}
 
-		if ( PremiumSelectors.isFinished( this.props.plugins, site.ID ) ) {
+		if ( this.props.isFinished ) {
 			actionContent = (
 				<div>
 					{ errorActionContent }
@@ -244,7 +256,7 @@ const PlansSetup = React.createClass( {
 	},
 
 	render() {
-		let site = this.props.selectedSite;
+		const site = this.props.selectedSite;
 		if ( ! site || ! site.jetpack ) {
 			return this.renderNoJetpackSiteSelected();
 		}
@@ -252,12 +264,11 @@ const PlansSetup = React.createClass( {
 			return this.renderNoManageWarning();
 		}
 
-		if ( PremiumSelectors.isRequesting( this.props.isRequesting, site.ID ) ) {
+		if ( this.props.isRequesting ) {
 			return null;
 		}
 
-		let plugins = PremiumSelectors.getPluginsForSite( this.props.plugins, site.ID );
-		if ( ! plugins.length ) {
+		if ( ! this.props.plugins.length ) {
 			return (
 				<div>
 					<h1 className="plan-setup__header">{ this.translate( 'Nothing to do here…' ) }</h1>
@@ -266,10 +277,10 @@ const PlansSetup = React.createClass( {
 		}
 
 		let content;
-		let plugin = PremiumSelectors.getActivePlugin( this.props.plugins, site.ID );
+		let plugin = this.props.activePlugin;
 		if ( plugin ) {
 			content = this.renderPlugin( plugin );
-		} else if ( PremiumSelectors.isFinished( this.props.plugins, site.ID ) ) {
+		} else if ( this.props.isFinished ) {
 			content = this.renderFinish();
 		} else {
 			content = this.renderStart();
@@ -287,7 +298,16 @@ const PlansSetup = React.createClass( {
 
 export default connect(
 	state => {
-		return state.plugins.premium
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			isRequesting: isRequesting( state, siteId ),
+			plugins: getPluginsForSite( state, siteId ),
+			activePlugin: getActivePlugin( state, siteId ),
+			nextPlugin: getNextPlugin( state, siteId ),
+			isFinished: isFinished( state, siteId ),
+			siteId
+		};
 	},
 	dispatch => bindActionCreators( { fetchInstallInstructions, startPlugin, installPlugin, finishAllPlugins }, dispatch )
 )( PlansSetup );
