@@ -60,8 +60,7 @@ function main() {
 
 function getModulesWithDependencies( root, fileList ) {
 	return new Promise( function ( resolve, reject ) {
-		var filesContent = {},
-		dependencies = {};
+		var modulesWithDeps = {};
 
 		async.each(
 			fileList,
@@ -74,7 +73,10 @@ function getModulesWithDependencies( root, fileList ) {
 							return next( err );
 						}
 						// get the dependencies
-						filesContent[ fileWithPath ] = data;
+						var deps = getDependencies( data );
+						if ( deps.length ) {
+							modulesWithDeps[ fileWithPath ] = deps;
+						}
 						next( null );
 					}
 				);
@@ -83,15 +85,8 @@ function getModulesWithDependencies( root, fileList ) {
 				if ( err ) {
 					return reject( err );
 				}
-				Object.keys( filesContent ).reduce(function ( target, module ) {
-					var deps = getDependencies( filesContent[ module ] );
-					if ( deps.length ) {
-						target[ module ] = deps;
-					}
-					return target;
-				} , dependencies );
 
-				return resolve( dependencies );
+				return resolve( modulesWithDeps );
 			}
 		);
 	} );
