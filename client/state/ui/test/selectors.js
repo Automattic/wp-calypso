@@ -10,9 +10,9 @@ import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSectionName,
-	getGuidesTourState,
+	getGuidedTourState,
 } from '../selectors';
-import guidesToursConfig from 'layout/guided-tours/config';
+import guidedToursConfig from 'layout/guided-tours/config';
 import useI18n from 'test/helpers/use-i18n';
 
 describe( 'selectors', () => {
@@ -93,13 +93,13 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getGuidesTourState()', () => {
+	describe( '#getGuidedTourState()', () => {
 		useI18n();
 		it( 'should return an empty object if no state is present', () => {
-			const tourState = getGuidesTourState( {
+			const tourState = getGuidedTourState( {
 				ui: {
 					shouldShow: false,
-					guidesTour: false,
+					guidedTour: false,
 				}
 			} );
 
@@ -107,9 +107,9 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should include the config of the current tour step', () => {
-			const tourState = getGuidesTourState( {
+			const tourState = getGuidedTourState( {
 				ui: {
-					guidesTour: {
+					guidedTour: {
 						stepName: 'sidebar',
 						shouldShow: true,
 						tour: 'main',
@@ -117,7 +117,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			const stepConfig = guidesToursConfig.get().sidebar;
+			const stepConfig = guidedToursConfig.get().sidebar;
 
 			expect( tourState ).to.deep.equal( Object.assign( {}, tourState, {
 				stepConfig

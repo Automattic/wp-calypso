@@ -11,9 +11,9 @@ import memoize from 'lodash/memoize';
  */
 import createSelector from 'lib/create-selector';
 import { getSite } from 'state/sites/selectors';
-import guidesToursConfig from 'layout/guided-tours/config';
+import guidedToursConfig from 'layout/guided-tours/config';
 
-const getToursConfig = memoize( () => guidesToursConfig.get() );
+const getToursConfig = memoize( () => guidedToursConfig.get() );
 
 /**
  * Returns the site object for the currently selected site.
@@ -63,18 +63,18 @@ export function isSectionLoading( state ) {
 /**
  * Returns the current state for Guided Tours.
  *
- * This includes the raw state from state/ui/guidesTour, but also the available
+ * This includes the raw state from state/ui/guidedTour, but also the available
  * configuration (`stepConfig`) for the currently active tour step, if one is
  * active.
  *
  * @param  {Object}  state Global state tree
  * @return {Object}        Current Guided Tours state
  */
-const getRawGuidesTourState = state => get( state, 'ui.guidesTour', false );
+const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 
-export const getGuidesTourState = createSelector(
+export const getGuidedTourState = createSelector(
 	state => {
-		const tourState = getRawGuidesTourState( state );
+		const tourState = getRawGuidedTourState( state );
 		const { shouldReallyShow, stepName = '' } = tourState;
 		const stepConfig = getToursConfig()[ stepName ] || false;
 		return Object.assign( {}, tourState, {
@@ -82,5 +82,5 @@ export const getGuidesTourState = createSelector(
 			shouldShow: !!( ! isSectionLoading( state ) && shouldReallyShow ),
 		} );
 	},
-	state => [ getRawGuidesTourState( state ), isSectionLoading( state ) ]
+	state => [ getRawGuidedTourState( state ), isSectionLoading( state ) ]
 );

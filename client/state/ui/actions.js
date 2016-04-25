@@ -4,8 +4,8 @@
 import {
 	SELECTED_SITE_SET,
 	SET_SECTION,
-	SHOW_GUIDESTOUR,
-	UPDATE_GUIDESTOUR,
+	SHOW_GUIDED_TOUR,
+	UPDATE_GUIDED_TOUR,
 } from 'state/action-types';
 
 import {
@@ -13,7 +13,7 @@ import {
 	recordTracksEvent,
 } from 'state/analytics/actions';
 
-import guidesConfig from 'layout/guided-tours/config';
+import guidedToursConfig from 'layout/guided-tours/config';
 
 /**
  * Returns an action object to be used in signalling that a site has been set
@@ -57,25 +57,25 @@ export function setSection( section, options = {} ) {
  * @param {Object} options Options object, see fn signature.
  * @return {Object} Action object
  */
-export function showGuidesTour( { shouldShow, shouldDelay = false, tour = 'main' } ) {
+export function showGuidedTour( { shouldShow, shouldDelay = false, tour = 'main' } ) {
 	const showAction = {
-		type: SHOW_GUIDESTOUR,
+		type: SHOW_GUIDED_TOUR,
 		shouldShow,
 		shouldDelay,
 		tour,
 	};
 
 	const trackEvent = recordTracksEvent( 'calypso_guided_tours_show', {
-		tour_version: guidesConfig.version,
+		tour_version: guidedToursConfig.version,
 		tour,
 	} );
 
 	return withAnalytics( trackEvent, showAction );
 }
 
-export function quitGuidesTour( { tour = 'main', stepName, finished } ) {
+export function quitGuidedTour( { tour = 'main', stepName, finished } ) {
 	const quitAction = {
-		type: UPDATE_GUIDESTOUR,
+		type: UPDATE_GUIDED_TOUR,
 		shouldShow: false,
 		shouldReallyShow: false,
 		shouldDelay: false,
@@ -85,21 +85,21 @@ export function quitGuidesTour( { tour = 'main', stepName, finished } ) {
 
 	const trackEvent = recordTracksEvent( `calypso_guided_tours_${ finished ? 'finished' : 'quit' }`, {
 		step: stepName,
-		tour_version: guidesConfig.version,
+		tour_version: guidedToursConfig.version,
 		tour,
 	} );
 
 	return withAnalytics( trackEvent, quitAction );
 }
-export function nextGuidesTourStep( { tour = 'main', stepName } ) {
+export function nextGuidedTourStep( { tour = 'main', stepName } ) {
 	const nextAction = {
-		type: UPDATE_GUIDESTOUR,
+		type: UPDATE_GUIDED_TOUR,
 		stepName,
 	};
 
 	const trackEvent = recordTracksEvent( 'calypso_guided_tours_next_step', {
 		step: stepName,
-		tour_version: guidesConfig.version,
+		tour_version: guidedToursConfig.version,
 		tour,
 	} );
 
