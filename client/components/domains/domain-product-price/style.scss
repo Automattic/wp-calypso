@@ -23,6 +23,10 @@
 		opacity: .6;
 	}
 
+	.domain-product-price__premium-text {
+		cursor: pointer;
+	}
+
 	.domain-product-price__free-text {
 		color: $alert-green;
 		display: block;
@@ -61,3 +65,38 @@
 		}
 	}
 }
+.domain-product-price__popover.tip {
+	width: 300px;
+
+	.tip-inner {
+		max-width: 300px !important;
+	}
+}
+.domain-product-price__popover-content {
+	text-align: left;
+	padding: 20px;
+
+	h3 {
+		color: darken( $gray, 20% );
+		font-size: 20pt;
+	}
+	h5 {
+		color: darken( $gray, 10% );
+		font-size: 11pt;
+		margin-bottom: 10px;
+	}
+	.domain-product-price__popover-items {
+		list-style: none;
+		margin: 0;
+		font-size: 11pt;
+		li {
+			line-height: 1.9em;
+			color: darken( $gray, 20% );
+		}
+		.gridicon {
+			color: $alert-green;
+			vertical-align: middle;
+		}
+	}
+}
+
