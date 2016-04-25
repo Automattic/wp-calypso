@@ -1,7 +1,7 @@
 /**
 * External dependencies
 */
-let wpcom = require( 'lib/wp' ).undocumented();
+const wpcom = require( 'lib/wp' ).undocumented();
 import keys from 'lodash/keys';
 
 /**
@@ -9,7 +9,7 @@ import keys from 'lodash/keys';
  */
 import Dispatcher from 'dispatcher';
 import {
-	PLUGIN_SETUP_FETCH_INSTRUCTIONS,
+	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 	PLUGIN_SETUP_RECEIVE_INSTRUCTIONS,
 	PLUGIN_SETUP_START,
 	PLUGIN_SETUP_INSTALL,
@@ -23,12 +23,12 @@ import {
 /**
  *  Local variables;
  */
-let _fetching = {};
+const _fetching = {};
 
 function normalizePluginInstructions( data ) {
-	let _plugins = data.keys;
+	const _plugins = data.keys;
 	return keys( _plugins ).map( ( key ) => {
-		let plugin = _plugins[key];
+		const plugin = _plugins[key];
 		return {
 			slug: plugin.slug,
 			name: plugin.name,
@@ -186,7 +186,7 @@ export default {
 
 			setTimeout( () => {
 				dispatch( {
-					type: PLUGIN_SETUP_FETCH_INSTRUCTIONS,
+					type: PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 					siteId,
 				} );
 			}, 1 );
