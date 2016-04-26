@@ -59,6 +59,7 @@ var DomainRegistrationSuggestion = React.createClass( {
 					buttonLabel={ this.buttonLabel( isAdded ) }
 					isAdded={ isAdded }
 					cart={ this.props.cart }
+					products={ this.props.products }
 					withPlansOnly={ this.props.withPlansOnly }
 					onButtonClick={ this.props.onButtonClick }>
 				<h3>

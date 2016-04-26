@@ -44,15 +44,17 @@ var DomainProductPrice = React.createClass( {
 						className="domain-product-price__popover popover"
 						position="bottom left">
 						<div className="domain-product-price__popover-content">
-							<h3>Premium</h3>
-							<h5>$99 / year</h5>
+							<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
+							<h5>{ this.priceMessage( this.props.products.value_bundle.cost_display ) }</h5>
 							<ul className="domain-product-price__popover-items">
-								<li><Gridicon icon="checkmark-circle" size={ 18 }/> A custom domain</li>
-								<li><Gridicon icon="checkmark-circle" size={ 18 }/> Advanced design customization</li>
-								<li><Gridicon icon="checkmark-circle" size={ 18 }/> 13GB of space for file and media</li>
-								<li><Gridicon icon="checkmark-circle" size={ 18 }/> Video Uploads</li>
-								<li><Gridicon icon="checkmark-circle" size={ 18 }/> No Ads</li>
-								<li><Gridicon icon="checkmark-circle" size={ 18 }/> Email and live chat support</li>
+								{ [
+									this.translate( 'A custom domain' ),
+									this.translate( 'Advanced design customization' ),
+									this.translate( '13GB of space for file and media' ),
+									this.translate( 'Video Uploads' ),
+									this.translate( 'No Ads' ),
+									this.translate( 'Email and live chat support' )
+								].map( ( message, i ) => <li key={ i }><Gridicon icon="checkmark-circle" size={ 18 }/> { message }</li> ) }
 							</ul>
 						</div>
 					</Popover>
@@ -61,16 +63,19 @@ var DomainProductPrice = React.createClass( {
 		}
 		return null;
 	},
+	priceMessage( price ) {
+		return this.translate( '%(cost)s {{small}}/year{{/small}}', {
+			args: { cost: price },
+			components: { small: <small /> }
+		} );
+	},
 	priceText() {
 		if ( ! this.props.price ) {
 			return this.translate( 'Free' );
 		} else if ( this.props.withPlansOnly ) {
 			return null;
 		}
-		return this.translate( '%(cost)s {{small}}/year{{/small}}', {
-			args: { cost: this.props.price },
-			components: { small: <small /> }
-		} );
+		return this.priceMessage( this.props.price );
 	},
 	render: function() {
 		var freeWithPlan = this.props.cart && this.props.cart.hasLoadedFromServer && this.props.cart.next_domain_is_free && ! this.props.isFinalPrice,
