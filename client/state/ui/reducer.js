@@ -12,8 +12,8 @@ import {
 	SET_SECTION,
 	SERIALIZE,
 	DESERIALIZE,
-	SHOW_GUIDESTOUR,
-	UPDATE_GUIDESTOUR,
+	SHOW_GUIDED_TOUR,
+	UPDATE_GUIDED_TOUR,
 } from 'state/action-types';
 import editor from './editor/reducer';
 import reader from './reader/reducer';
@@ -79,9 +79,9 @@ export function isLoading( state = false, action ) {
 	return state;
 }
 
-export function guidesTour( state = {}, action ) {
+export function guidedTour( state = {}, action ) {
 	switch ( action.type ) {
-		case SHOW_GUIDESTOUR:
+		case SHOW_GUIDED_TOUR:
 			const { stepName = 'init' } = action;
 			return {
 				stepName,
@@ -90,7 +90,7 @@ export function guidesTour( state = {}, action ) {
 				shouldReallyShow: ( action.shouldShow || state.shouldShow ) && ! action.shouldDelay,
 				tour: action.tour,
 			};
-		case UPDATE_GUIDESTOUR:
+		case UPDATE_GUIDED_TOUR:
 			return Object.assign( {}, state, omit( action, 'type' ) );
 	}
 	return state;
@@ -102,7 +102,7 @@ const reducer = combineReducers( {
 	hasSidebar,
 	selectedSiteId,
 	recentlySelectedSiteIds,
-	guidesTour,
+	guidedTour,
 	editor,
 	reader,
 } );
