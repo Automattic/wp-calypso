@@ -20,6 +20,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	Main = require( 'components/main' ),
 	abtest = require( 'lib/abtest' ).abtest,
 	isPlan = require( 'lib/products-values' ).isPlan,
+	cartItems = require( 'lib/cart-values/cart-items' ),
 	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
 
 var DomainSearch = React.createClass( {
@@ -112,8 +113,9 @@ var DomainSearch = React.createClass( {
 							selectedSite={ selectedSite }
 							offerMappingOption
 							basePath={ this.props.basePath }
-							withPlansOnly={ withPlansOnlyTestActive && ! selectedSiteHasPlan }
-							buttonLabel={ withPlansOnlyTestActive && ! selectedSiteHasPlan ? this.translate( 'Upgrade' ) : null }
+							buttonLabel={ withPlansOnlyTestActive &&
+								! cartItems.isNextDomainFree( this.props.cart ) &&
+								! selectedSiteHasPlan ? this.translate( 'Upgrade' ) : null }
 							products={ this.props.productsList.get() } />
 					</div>
 				</span>
