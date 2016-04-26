@@ -15,7 +15,7 @@ import page from 'page';
  * Internal dependencies
  */
 var abtest = require( 'lib/abtest' ).abtest,
-	AdsUtils = require( 'lib/ads/utils' ),
+  AdsUtils = require( 'lib/ads/utils' ),
 	config = require( 'config' ),
 	CurrentSite = require( 'my-sites/current-site' ),
 	getCustomizeUrl = require( '../themes/helpers' ).getCustomizeUrl,
@@ -180,24 +180,6 @@ module.exports = React.createClass( {
 			themesLink = '/design' + this.siteSuffix();
 		} else {
 			themesLink = '/design';
-		}
-
-		if ( abtest( 'swapButtonsMySiteSidebar' ) === 'swap' ) {
-			return (
-				<SidebarItem
-					tipTarget="themes"
-					label={ this.translate( 'Customize' ) }
-					className={ this.itemLinkClass( '/design', 'themes' ) }
-					link={ getCustomizeUrl( null, site ) }
-					onNavigate={ this.onNavigate }
-					icon={ 'themes' }
-					preloadSectionName="customize"
-				>
-					<SidebarButton href={ themesLink } preloadSectionName="themes">
-						{ this.translate( 'Themes' ) }
-					</SidebarButton>
-				</SidebarItem>
-			);
 		}
 
 		return (
