@@ -47,7 +47,7 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	renderCancelConfirmationDialog() {
-		const { domain, priceText } = this.props.purchase,
+		const { domain, refundText } = this.props.purchase,
 			purchaseName = getName( this.props.purchase ),
 			buttons = [
 				{
@@ -83,7 +83,7 @@ const CancelPurchaseButton = React.createClass( {
 							args: {
 								purchaseName,
 								domain,
-								priceText
+								priceText: refundText
 							},
 							components: {
 								em: <em />
