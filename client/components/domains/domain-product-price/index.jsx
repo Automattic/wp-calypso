@@ -17,7 +17,7 @@ var DomainProductPrice = React.createClass( {
 			return <span className="domain-product-price__free-text">{ this.translate( 'Free with your plan' ) }</span>;
 		} else if ( this.props.withPlansOnly && this.props.price ) {
 			return (
-				<small className="domain-product-price__premium-text" ref="subMessage" onClick={ this.showPopoverByClick } onMouseEnter={ this.showPopoverByHover } onMouseLeave={ this.hidePopoverByHover }>
+				<small className="domain-product-price__premium-text" ref="subMessage">
 					{ this.translate( 'Included in the Premium Plan' ) } <Gridicon icon="lock" size={ 12 }/>
 					<PremiumPopover
 						context={ this.refs && this.refs.subMessage }

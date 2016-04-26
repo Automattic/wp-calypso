@@ -74,7 +74,7 @@ export default React.createClass( {
 				className={ classNames( this.props.className, 'premium-popover popover' ) }>
 				<div className="premium-popover__content">
 					<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
-					<h5>{ this.priceMessage( this.props.products.value_bundle.cost_display ) }</h5>
+					<h5>{ this.props.products ? this.priceMessage( this.props.products.value_bundle.cost_display ) : this.translate( 'Loading' ) }</h5>
 					<ul className="premium-popover__items">
 						{ [
 							this.translate( 'A custom domain' ),
