@@ -171,6 +171,9 @@ function numberFormat( number ) {
 		decPoint = options.decPoint || i18nState.numberFormatSettings.decimal_point || '.',
 		thousandsSep = options.thousandsSep || i18nState.numberFormatSettings.thousands_sep || ',';
 
+	// quick fix for &nbsp; issue
+	thousandsSep = thousandsSep === '&nbsp;' ? ' ' : thousandsSep;
+
 	return numberFormatPHPJS( number, decimals, decPoint, thousandsSep );
 }
 
