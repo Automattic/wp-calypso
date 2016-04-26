@@ -22,7 +22,6 @@ var DomainMappingSuggestion = React.createClass( {
 					buttonLabel={ buttonLabel }
 					cart={ this.props.cart }
 					isAdded={ false }
-					withPlansOnly={ this.props.withPlansOnly }
 					onButtonClick={ this.props.onButtonClick }>
 				<div className="domain-mapping-suggestion__domain-description">
 					<h3>

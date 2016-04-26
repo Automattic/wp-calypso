@@ -7,23 +7,28 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var PremiumPopover = require( 'components/plans/premium-popover' );
+var PremiumPopover = require( 'components/plans/premium-popover' ),
+	abtest = require( 'lib/abtest' ).abtest;
+
+const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 
 var DomainProductPrice = React.createClass( {
 	subMessage() {
 		var freeWithPlan = this.props.cart && this.props.cart.hasLoadedFromServer && this.props.cart.next_domain_is_free && ! this.props.isFinalPrice;
 		if ( freeWithPlan ) {
 			return <span className="domain-product-price__free-text">{ this.translate( 'Free with your plan' ) }</span>;
-		} else if ( this.props.withPlansOnly && this.props.price ) {
-			return (
-				<small className="domain-product-price__premium-text" ref="subMessage">
-					{ this.translate( 'Included in WordPress.com Premium' ) }
-					<PremiumPopover
-						context={ this.refs && this.refs.subMessage }
-						bindContextEvents
-						position="bottom left" />
-				</small>
-			);
+		} else {
+			if ( domainsWithPlansOnlyTestEnabled && this.props.price ) {
+						return (
+							<small className="domain-product-price__premium-text" ref="subMessage">
+								{ this.translate( 'Included in WordPress.com Premium' ) }
+								<PremiumPopover
+									context={ this.refs && this.refs.subMessage }
+									bindContextEvents
+									position="bottom left" />
+							</small>
+						);
+					}
 		}
 		return null;
 	},
@@ -36,7 +41,7 @@ var DomainProductPrice = React.createClass( {
 	priceText() {
 		if ( ! this.props.price ) {
 			return this.translate( 'Free' );
-		} else if ( this.props.withPlansOnly && ! this.isFreeWithPlan() ) {
+		} else if ( domainsWithPlansOnlyTestEnabled && ! this.isFreeWithPlan() ) {
 			return null;
 		}
 		return this.priceMessage( this.props.price );
@@ -48,7 +53,7 @@ var DomainProductPrice = React.createClass( {
 	render: function() {
 		const classes = classNames( 'domain-product-price', {
 				'is-free-domain': this.isFreeWithPlan(),
-				'is-with-plans-only': this.props.withPlansOnly,
+				'is-with-plans-only': domainsWithPlansOnlyTestEnabled,
 				'is-placeholder': this.props.isLoading
 			} );
 

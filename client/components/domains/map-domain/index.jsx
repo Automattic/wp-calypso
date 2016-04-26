@@ -74,7 +74,6 @@ var MapDomain = React.createClass( {
 				</HeaderCake>
 
 				<MapDomainStep
-					withPlansOnly={ this.props.withPlansOnly }
 					initialState={ this.props.initialState }
 					onAddDomain={ this.props.onAddDomain }
 					onAddMapping={ this.props.onAddMapping }

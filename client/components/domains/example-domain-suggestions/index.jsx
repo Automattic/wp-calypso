@@ -11,7 +11,10 @@ import classNames from 'classnames';
 import Card from 'components/card';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
+import { abtest } from 'lib/abtest';
 import PremiumPopover from 'components/plans/premium-popover';
+
+const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 
 module.exports = React.createClass( {
 	displayName: 'ExampleDomainSuggestions',
@@ -49,7 +52,7 @@ module.exports = React.createClass( {
 			return this.translate( 'Free' );
 		}
 
-		if ( cost && this.props.withPlansOnly ) {
+		if ( cost && domainsWithPlansOnlyTestEnabled ) {
 			return (
 				<span className="example-domain-suggestions__premium-price" ref="premiumPrice">
 					{ this.translate( 'Included in Premium Plan' ) }
@@ -99,7 +102,7 @@ module.exports = React.createClass( {
 				mappingLink: <a onClick={ this.handleClickMappingLink } href={ this.props.mapDomainUrl } />,
 				strong: <strong />
 			};
-			if ( this.props.withPlansOnly ) {
+			if ( domainsWithPlansOnlyTestEnabled ) {
 				mappingInformation = this.translate(
 					'{{strong}}Already own a domain?{{/strong}} {{mappingLink}}Map it.{{/mappingLink}}',
 					{ components }
