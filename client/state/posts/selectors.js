@@ -116,7 +116,7 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
 		return lastPage;
 	}
 
-	return lastPage === ( query.page || DEFAULT_POST_QUERY.page );
+	return ( query.page || DEFAULT_POST_QUERY.page ) >= lastPage;
 }
 
 /**

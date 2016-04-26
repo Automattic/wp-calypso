@@ -263,6 +263,18 @@ describe( 'selectors', () => {
 
 			expect( isLastPage ).to.be.true;
 		} );
+
+		it( 'should return true if the query value is greater than the last page', () => {
+			const isLastPage = isSitePostsLastPageForQuery( {
+				posts: {
+					queriesLastPage: {
+						'2916284:{"search":"hello"}': 4
+					}
+				}
+			}, 2916284, { search: 'Hello', page: 6 } );
+
+			expect( isLastPage ).to.be.true;
+		} );
 	} );
 
 	describe( '#getSitePostsForQueryIgnoringPage()', () => {
