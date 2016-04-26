@@ -674,6 +674,10 @@ function getIncludedDomain( cartItem ) {
 	return cartItem.extra && cartItem.extra.includedDomain;
 }
 
+function isNextDomainFree( cart ) {
+	return !! ( cart && cart.next_domain_is_free );
+}
+
 module.exports = {
 	add,
 	addPrivacyToAllDomains,
@@ -699,6 +703,7 @@ module.exports = {
 	getSiteRedirects,
 	googleApps,
 	googleAppsExtraLicenses,
+	isNextDomainFree,
 	hasDomainCredit,
 	hasDomainInCart,
 	hasDomainMapping,

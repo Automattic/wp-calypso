@@ -8,6 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var PremiumPopover = require( 'components/plans/premium-popover' ),
+	cartItems = require( 'lib/cart-values/cart-items' ),
 	abtest = require( 'lib/abtest' ).abtest;
 
 const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
@@ -41,18 +42,14 @@ var DomainProductPrice = React.createClass( {
 	priceText() {
 		if ( ! this.props.price ) {
 			return this.translate( 'Free' );
-		} else if ( domainsWithPlansOnlyTestEnabled && ! this.isFreeWithPlan() ) {
+		} else if ( domainsWithPlansOnlyTestEnabled && ! cartItems.isNextDomainFree( this.props.cart ) ) {
 			return null;
 		}
 		return this.priceMessage( this.props.price );
 	},
-	isFreeWithPlan() {
-		return this.props.cart && this.props.cart.hasLoadedFromServer &&
-			this.props.cart.next_domain_is_free && ! this.props.isFinalPrice;
-	},
 	render: function() {
 		const classes = classNames( 'domain-product-price', {
-				'is-free-domain': this.isFreeWithPlan(),
+				'is-free-domain': cartItems.isNextDomainFree( this.props.cart ),
 				'is-with-plans-only': domainsWithPlansOnlyTestEnabled,
 				'is-placeholder': this.props.isLoading
 			} );
