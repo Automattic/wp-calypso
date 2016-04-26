@@ -176,17 +176,10 @@ var MapDomainStep = React.createClass( {
 	},
 
 	addMappingToCart: function( domain ) {
-		this.addPremiumPlanToCart();
 		upgradesActions.addItem( cartItems.domainMapping( { domain: domain } ) );
 
 		if ( this.isMounted() ) {
 			page( '/checkout/' + this.props.selectedSite.slug );
-		}
-	},
-
-	addPremiumPlanToCart() {
-		if ( ! cartItems.hasPremiumPlan( this.props.cart ) ) {
-			upgradesActions.addItem( cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) );
 		}
 	},
 
