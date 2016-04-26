@@ -14,6 +14,8 @@ import paths from 'my-sites/upgrades/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QueryPlans from 'components/data/query-plans';
+import { abtest } from 'lib/abtest';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 const SiteNotice = React.createClass( {
 	propTypes: {
@@ -52,16 +54,28 @@ const SiteNotice = React.createClass( {
 			return null;
 		}
 
+		if ( abtest( 'domainCreditsInfoNotice' ) === 'showNotice' ) {
+			const eventName = 'calypso_domain_credit_reminder_impression';
+			const eventProperties = { cta_name: 'current_site_domain_notice' };
+			return (
+				<Notice isCompact status="is-success" icon="info-outline">
+					{ this.translate( 'Unused domain credit' ) }
+					<NoticeAction
+						onClick={ this.props.clickClaimDomainNotice }
+						href={ `/domains/add/${ this.props.site.slug }` }
+					>
+						{ this.translate( 'Claim' ) }
+						<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+					</NoticeAction>
+				</Notice>
+			);
+		}
+
+		//otherwise still track what happens when we don't show a notice
+		const eventName = 'calypso_domain_credit_reminder_no_impression';
+		const eventProperties = { cta_name: 'current_site_domain_notice' };
 		return (
-			<Notice isCompact status="is-success" icon="info-outline">
-				{ this.translate( 'Unused domain credit' ) }
-				<NoticeAction
-					onClick={ this.props.clickClaimDomainNotice }
-					href={ `/domains/add/${ this.props.site.slug }` }
-				>
-					{ this.translate( 'Claim' ) }
-				</NoticeAction>
-			</Notice>
+			<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 		);
 	},
 
