@@ -101,5 +101,15 @@ module.exports = {
 			notTested: 10
 		},
 		defaultVariation: 'original'
+	},
+	planPricing: {
+		datestamp: '20160426',
+		variations: {
+			monthly: 90,
+			annual: 10
+		},
+		defaultVariation: 'monthly',
+		allowExistingUsers: true,
+		allowAnyLocale: true
 	}
 };
