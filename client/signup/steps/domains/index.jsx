@@ -188,6 +188,7 @@ module.exports = React.createClass( {
 					onAddMapping={ this.handleAddMapping.bind( this, 'mappingForm' ) }
 					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
 					productsList={ productsList }
+					withPlansOnly={ abtest( 'domainsWithPlansOnly' ) === 'plansOnly' }
 					initialQuery={ initialQuery }
 					analyticsSection="signup" />
 			</div>
