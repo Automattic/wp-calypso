@@ -41,6 +41,8 @@ import PlanFeatureFooter from './footer';
 const sites = sitesList();
 
 export default function( context ) {
+	window.scrollTo( 0, 0 );
+
 	const site = sites.getSelectedSite();
 	const planSlug = ( site && site.ID ) ? getSitePlanSlug( site.ID ) : PLAN_FREE;
 
