@@ -20,11 +20,14 @@
 		font-weight: 600;
 	}
 
-	h5 {
+	.wpcom-plan-price {
 		color: $gray;
 		font-size: 12px;
 		font-style: italic;
 		margin: 0;
+	}
+	.wpcom-plan-price__billing-period {
+		display: block;
 	}
 
 	.premium-popover__items {

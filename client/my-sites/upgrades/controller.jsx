@@ -98,20 +98,21 @@ module.exports = {
 		} );
 
 		analytics.pageView.record( basePath, 'Domain Search > Domain Mapping' );
-
-		ReactDom.render(
+		renderWithReduxStore(
 			(
 				<Main>
 					<CartData>
 						<MapDomain
 							withPlansOnly={ abtest( 'domainsWithPlansOnly' ) === 'plansOnly' }
+							store={ context.store }
 							productsList={ productsList }
 							initialQuery={ context.query.initialQuery }
 							sites={ sites } />
 					</CartData>
 				</Main>
 			),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 

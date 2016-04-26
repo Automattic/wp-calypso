@@ -9,10 +9,8 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
-import CompactCard from 'components/card/compact';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
-import { abtest } from 'lib/abtest';
 import PremiumPopover from 'components/plans/premium-popover';
 
 module.exports = React.createClass( {
@@ -57,7 +55,6 @@ module.exports = React.createClass( {
 					{ this.translate( 'Included in Premium Plan' ) }
 					<PremiumPopover
 						context={ this.refs && this.refs.premiumPrice }
-						products={ this.props.products }
 						position="bottom left"
 						bindContextEvents
 					/>
