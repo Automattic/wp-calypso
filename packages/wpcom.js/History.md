@@ -1,4 +1,10 @@
 
+4.9.11 / 2016-04-26
+==================
+
+ * re-build dist/
+ * Enable support for post types taxonomies endpoint
+
 4.9.10 / 2016-04-22
 ===================
 
