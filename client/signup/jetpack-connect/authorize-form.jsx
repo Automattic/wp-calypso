@@ -135,8 +135,11 @@ const LoggedInForm = React.createClass( {
 
 	renderNotices() {
 		const { authorizeError } = this.props.jetpackConnectAuthorize;
-		if ( authorizeError ) {
+		if ( authorizeError && authorizeError.message.indexOf( 'already_connected' ) < 0 ) {
 			return <JetpackConnectNotices noticeType="authorizeError" />;
+		}
+		if ( authorizeError && authorizeError.message.indexOf( 'already_connected' ) >= 0 ) {
+			return <JetpackConnectNotices noticeType="alreadyConnected" />;
 		}
 		return null;
 	},
