@@ -350,6 +350,7 @@ var RegisterDomainStep = React.createClass( {
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
 						buttonLabel={ this.props.buttonLabel }
+						products={ this.props.products }
 						onButtonClick={ this.addRemoveDomainToCart.bind( null, suggestion ) } />
 				);
 			}, this );
