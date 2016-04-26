@@ -7,8 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'components/gridicon' ),
-	PremiumPopover = require( 'components/plans/premium-popover' );
+var PremiumPopover = require( 'components/plans/premium-popover' );
 
 var DomainProductPrice = React.createClass( {
 	subMessage() {
@@ -18,7 +17,7 @@ var DomainProductPrice = React.createClass( {
 		} else if ( this.props.withPlansOnly && this.props.price ) {
 			return (
 				<small className="domain-product-price__premium-text" ref="subMessage">
-					{ this.translate( 'Included in the Premium Plan' ) } <Gridicon icon="lock" size={ 12 }/>
+					{ this.translate( 'Included in WordPress.com Premium' ) }
 					<PremiumPopover
 						context={ this.refs && this.refs.subMessage }
 						bindContextEvents
@@ -45,7 +44,8 @@ var DomainProductPrice = React.createClass( {
 	},
 	render: function() {
 		var freeWithPlan = this.props.cart && this.props.cart.hasLoadedFromServer && this.props.cart.next_domain_is_free && ! this.props.isFinalPrice,
-			classes = classNames( 'domain-product-price', { 'is-free-domain': freeWithPlan }, {
+			withPlansOnly = this.props.withPlansOnly,
+			classes = classNames( 'domain-product-price', { 'is-free-domain': freeWithPlan, 'is-with-plans-only': withPlansOnly }, {
 				'is-placeholder': this.props.isLoading
 			} );
 

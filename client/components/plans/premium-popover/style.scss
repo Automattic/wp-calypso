@@ -5,29 +5,37 @@
 		max-width: 300px !important;
 	}
 }
+
 .premium-popover__content {
 	text-align: left;
 	padding: 20px;
 
 	h3 {
 		color: darken( $gray, 20% );
-		font-size: 20pt;
+		font-size: 17px;
 	}
+
 	h5 {
 		color: darken( $gray, 10% );
-		font-size: 11pt;
+		font-size: 14px;
+		font-style: italic;
 		margin-bottom: 10px;
 	}
+
 	.premium-popover__items {
 		list-style: none;
 		margin: 0;
-		font-size: 11pt;
+		font-size: 12px;
+
 		li {
 			line-height: 1.9em;
 			color: darken( $gray, 20% );
+			margin: 5px 0;
 		}
+
 		.gridicon {
 			color: $alert-green;
+			margin: 0 4px 0 0;
 			vertical-align: middle;
 		}
 	}
