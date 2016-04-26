@@ -97,8 +97,25 @@ const messages = {
 				comment: 'Editor: Message displayed when a post is published privately, with a link to the site it was published on.'
 			} );
 		},
+		scheduled: function() {
+			var site = this.props.sites.getSelectedSite();
+
+			if ( ! site ) {
+				return i18n.translate( 'Post scheduled!' );
+			}
+
+			return i18n.translate( 'Post scheduled on {{siteLink/}}!', {
+				components: {
+					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
+				},
+				comment: 'Editor: Message displayed when a post is scheduled, with a link to the site it was published on.'
+			} );
+		},
 		view: function() {
 			return i18n.translate( 'View Post' );
+		},
+		viewPreview: function() {
+			return i18n.translate( 'View Preview' );
 		},
 		updated: function() {
 			var site = this.props.sites.getSelectedSite();
@@ -150,8 +167,25 @@ const messages = {
 				comment: 'Editor: Message displayed when a page is published privately, with a link to the site it was published on.'
 			} );
 		},
+		scheduled: function() {
+			var site = this.props.sites.getSelectedSite();
+
+			if ( ! site ) {
+				return i18n.translate( 'Page scheduled!' );
+			}
+
+			return i18n.translate( 'Page scheduled on {{siteLink/}}!', {
+				components: {
+					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
+				},
+				comment: 'Editor: Message displayed when a Page is scheduled, with a link to the site it was published on.'
+			} );
+		},
 		view: function() {
 			return i18n.translate( 'View Page' );
+		},
+		viewPreview: function() {
+			return i18n.translate( 'View Preview' );
 		},
 		updated: function() {
 			var site = this.props.sites.getSelectedSite();
@@ -569,12 +603,17 @@ const PostEditor = React.createClass( {
 				if ( error && 'NO_CHANGE' !== error.message ) {
 					this.onSaveDraftFailure( error );
 				} else {
+					if ( this.state.post.status === 'future' ) {
+						this.setState( {
+							isAutosaving: true
+						} );
+					}
+
 					this.onSaveDraftSuccess();
 				}
 			}.bind( this );
 		}
 		this.props.autosave( callback );
-
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.autosave( callback );
 	},
@@ -739,6 +778,12 @@ const PostEditor = React.createClass( {
 				this.getMessage( 'view' ),
 				this.state.post.URL
 			);
+		} else if ( 'future' === this.state.post.status && ! this.state.isAutosaving ) {
+			this.onSaveSuccess(
+				this.getMessage( 'scheduled' ),
+				this.getMessage( 'viewPreview' ),
+				this.state.previewUrl
+			);
 		} else {
 			this.onSaveSuccess();
 		}
@@ -834,7 +879,8 @@ const PostEditor = React.createClass( {
 
 		nextState = {
 			isSaving: false,
-			isPublishing: false
+			isPublishing: false,
+			isAutosaving: false
 		};
 
 		if ( message ) {
@@ -854,7 +900,7 @@ const PostEditor = React.createClass( {
 	},
 
 	getEditorMode: function() {
-		var editorMode = 'tinymce'
+		var editorMode = 'tinymce';
 		if ( this.props.preferences ) {
 			if ( this.props.preferences[ 'editor-mode' ] ) {
 				editorMode = this.props.preferences[ 'editor-mode' ];
