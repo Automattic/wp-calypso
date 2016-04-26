@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	page = require( 'page' ),
 	times = require( 'lodash/times' ),
@@ -11,10 +11,13 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),
+const DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),
 	DomainMappingSuggestion = require( 'components/domains/domain-mapping-suggestion' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
+	abtest = require( 'lib/abtest' ).abtest,
 	upgradesActions = require( 'lib/upgrades/actions' );
+
+const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 
 var DomainSearchResults = React.createClass( {
 	isDomainUnavailable: function() {
@@ -59,10 +62,20 @@ var DomainSearchResults = React.createClass( {
 				);
 		} else if ( this.props.suggestions && this.props.suggestions.length !== 0 && this.isDomainUnavailable() ) {
 			if ( this.props.products.domain_map && this.props.lastDomainError.code === 'not_available_but_mappable' ) {
-				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}', {
-					args: { domain: lastDomainSearched, cost: this.props.products.domain_map.cost_display },
-					components: { a: <a href="#" onClick={ this.addMappingAndRedirect } />, small: <small /> }
-				} );
+				const components = { a: <a href="#" onClick={ this.addMappingAndRedirect }/>, small: <small /> };
+				if ( domainsWithPlansOnlyTestEnabled ) {
+					mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
+						' with WordPress.com Premium.{{/small}}', {
+							args: { domain: lastDomainSearched },
+							components
+						}
+					);
+				} else {
+					mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}', {
+						args: { domain: lastDomainSearched, cost: this.props.products.domain_map.cost_display },
+						components
+					} );
+				}
 			}
 
 			const domainUnavailableMessage = this.translate( '%(domain)s is taken.', {

@@ -104,7 +104,8 @@ module.exports = React.createClass( {
 			};
 			if ( domainsWithPlansOnlyTestEnabled ) {
 				mappingInformation = this.translate(
-					'{{strong}}Already own a domain?{{/strong}} {{mappingLink}}Map it.{{/mappingLink}}',
+					'{{strong}}Already own a domain?{{/strong}} {{mappingLink}}Map it{{/mappingLink}} with WordPress.com' +
+					' Premium.',
 					{ components }
 				);
 			} else {
