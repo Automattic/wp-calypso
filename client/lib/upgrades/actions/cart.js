@@ -10,6 +10,7 @@ import { recordAddToCart } from 'lib/analytics/ad-tracking';
 import { action as ActionTypes } from '../constants';
 import Dispatcher from 'dispatcher';
 import { cartItems } from 'lib/cart-values';
+import { isDomainMapping, isDomainRegistration } from 'lib/products-values';
 import { abtest } from 'lib/abtest';
 
 // We need to load the CartStore to make sure the store is registered with the
@@ -46,10 +47,15 @@ function addItem( item ) {
 }
 
 function addItems( items ) {
+	const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
+	const shouldBundleWithPremiumPlan = items.some( item => isDomainRegistration( item ) || isDomainMapping( item ) );
+	if ( shouldBundleWithPremiumPlan && domainsWithPlansOnlyTestEnabled ) {
+		items = [ cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) ].concat( items );
+	}
 	const extendedItems = items.map( ( item ) => {
 		const extra = assign( {}, item.extra, {
 			context: 'calypstore',
-			withPlansOnly: abtest( 'domainsWithPlansOnly' ) === 'plansOnly' ? 'yes' : ''
+			withPlansOnly: domainsWithPlansOnlyTestEnabled ? 'yes' : ''
 		} );
 
 		return assign( {}, item, { extra } );

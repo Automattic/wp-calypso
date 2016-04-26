@@ -168,12 +168,7 @@ function isDomainRegistration( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	if ( typeof product.is_domain_registration === 'undefined' ) {
-		throw new Error( 'The `is_domain_registration` product attribute is ' +
-		'required to use this function.' );
-	}
-
-	return product.is_domain_registration;
+	return !! product.is_domain_registration;
 }
 
 function isDomainMapping( product ) {

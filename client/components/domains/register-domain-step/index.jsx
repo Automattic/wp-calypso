@@ -445,17 +445,7 @@ var RegisterDomainStep = React.createClass( {
 
 		this.recordEvent( 'mapDomainButtonClick', this.props.analyticsSection );
 
-		if ( this.props.withPlansOnly ) {
-			this.addPremiumPlanToCart();
-		}
-
 		page( this.getMapDomainUrl() );
-	},
-
-	addPremiumPlanToCart() {
-		if ( ! cartItems.hasPremiumPlan( this.props.cart ) ) {
-			upgradesActions.addItem( cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) );
-		}
 	},
 
 	addRemoveDomainToCart: function( suggestion, event ) {
@@ -468,9 +458,6 @@ var RegisterDomainStep = React.createClass( {
 		}
 
 		if ( ! cartItems.hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
-			if ( this.props.withPlansOnly ) {
-				this.addPremiumPlanToCart();
-			}
 			upgradesActions.addItem( cartItems.domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug
