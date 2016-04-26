@@ -35,7 +35,8 @@ var wpcom = require( 'lib/wp' ).undocumented(),
 const SUGGESTION_QUANTITY = 10,
 	INITIAL_SUGGESTION_QUANTITY = 2;
 
-const analytics = analyticsMixin( 'registerDomain' );
+const analytics = analyticsMixin( 'registerDomain' ),
+	domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 
 let searchQueue = [],
 	searchStackTimer = null;
@@ -203,7 +204,6 @@ var RegisterDomainStep = React.createClass( {
 					onClickExampleSuggestion={ this.handleClickExampleSuggestion }
 					mapDomainUrl={ this.getMapDomainUrl() }
 					path={ this.props.path }
-					withPlansOnly={ this.props.withPlansOnly }
 					products={ this.props.products } />
 			);
 		}
@@ -346,7 +346,6 @@ var RegisterDomainStep = React.createClass( {
 			domainRegistrationSuggestions = suggestions.map( function( suggestion ) {
 				return (
 					<DomainRegistrationSuggestion
-						withPlansOnly={ this.props.withPlansOnly }
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
@@ -358,8 +357,7 @@ var RegisterDomainStep = React.createClass( {
 			domainMappingSuggestion = (
 				<DomainMappingSuggestion
 					onButtonClick={ this.goToMapDomainStep }
-					withPlansOnly={ this.props.withPlansOnly }
-					buttonLabel={ this.props.withPlansOnly && this.translate( 'Upgrade' ) }
+					buttonLabel={ domainsWithPlansOnlyTestEnabled && this.translate( 'Upgrade' ) }
 					cart={ this.props.cart }
 					products={ this.props.products } />
 				);
@@ -395,7 +393,6 @@ var RegisterDomainStep = React.createClass( {
 					<ExampleDomainSuggestions
 						mapDomainUrl={ this.getMapDomainUrl() }
 						path={ this.props.path }
-						withPlansOnly={ this.props.withPlansOnly }
 						products={ this.props.products } />
 				);
 			}
@@ -419,7 +416,6 @@ var RegisterDomainStep = React.createClass( {
 				selectedSite={ this.props.selectedSite }
 				offerMappingOption={ this.props.offerMappingOption }
 				placeholderQuantity={ SUGGESTION_QUANTITY }
-				withPlansOnly={ this.props.withPlansOnly }
 				cart={ this.props.cart } />
 		);
 	},

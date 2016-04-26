@@ -8,6 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var DomainProductPrice = require( 'components/domains/domain-product-price' ),
+	abtest = require( 'lib/abtest' ).abtest,
 	Gridicon = require( 'components/gridicon' );
 
 var DomainSuggestion = React.createClass( {
@@ -28,7 +29,7 @@ var DomainSuggestion = React.createClass( {
 		if ( this.props.isAdded ) {
 			buttonContent = <Gridicon icon="checkmark" ref="checkmark" />;
 		} else {
-			buttonContent = this.props.withPlansOnly && ! this.props.price ? this.translate( 'Select' ) : this.props.buttonLabel;
+			buttonContent = abtest( 'domainsWithPlansOnly' ) === 'plansOnly' && ! this.props.price ? this.translate( 'Select' ) : this.props.buttonLabel;
 		}
 		return (
 			<button ref="button" className={ 'button ' + this.props.buttonClasses } onClick={ this.props.onButtonClick }>
@@ -48,7 +49,6 @@ var DomainSuggestion = React.createClass( {
 				<div className="domain-suggestion__content">
 					{ this.props.children }
 					<DomainProductPrice
-						withPlansOnly={ this.props.withPlansOnly }
 						isLoading={ this.props.isLoading }
 						price={ this.props.price }
 						cart={ this.props.cart }/>

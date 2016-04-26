@@ -55,7 +55,6 @@ var DomainSearchResults = React.createClass( {
 					key={ availableDomain.domain_name }
 					buttonLabel={ this.props.buttonLabel }
 					cart={ this.props.cart }
-					withPlansOnly={ this.props.withPlansOnly }
 					onButtonClick={ this.props.onClickResult.bind( null, availableDomain ) } />
 				);
 		} else if ( this.props.suggestions && this.props.suggestions.length !== 0 && this.isDomainUnavailable() ) {
@@ -126,7 +125,6 @@ var DomainSearchResults = React.createClass( {
 						key={ suggestion.domain_name }
 						buttonLabel={ this.props.buttonLabel }
 						cart={ this.props.cart }
-						withPlansOnly={ this.props.withPlansOnly }
 						onButtonClick={ this.props.onClickResult.bind( null, suggestion ) } />
 				);
 			}, this );
@@ -134,7 +132,6 @@ var DomainSearchResults = React.createClass( {
 			if ( this.props.offerMappingOption ) {
 				mappingOffer = (
 					<DomainMappingSuggestion
-						withPlansOnly={ this.props.withPlansOnly }
 						buttonLabel={ this.props.mappingSuggestionLabel }
 						onButtonClick={ this.props.onClickMapping }
 						products={ this.props.products }
