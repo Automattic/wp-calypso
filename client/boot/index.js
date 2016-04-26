@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	ReactDom = require( 'react-dom' ),
 	store = require( 'store' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
 	some = require( 'lodash/some' ),
@@ -31,24 +32,22 @@ var config = require( 'config' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	perfmon = require( 'lib/perfmon' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
-	translatorInvitation = require( 'layout/community-translator/invitation-utils' ),
 	layoutFocus = require( 'lib/layout-focus' ),
 	nuxWelcome = require( 'layout/nux-welcome' ),
 	emailVerification = require( 'components/email-verification' ),
 	viewport = require( 'lib/viewport' ),
 	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
-	sections = require( 'sections' ),
 	touchDetect = require( 'lib/touch-detect' ),
 	setRouteAction = require( 'state/notices/actions' ).setRoute,
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	bindTitleToStore = require( 'lib/screen-title' ).subscribeToStore,
 	syncHandler = require( 'lib/wp/sync-handler' ),
-	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
-	// The following components require the i18n mixin, so must be required after i18n is initialized
-	Layout;
+	// The following dependencies require the i18n mixin, so must be required after i18n is initialized
+	Layout,
+	sections;
 
 function init() {
 	var i18nLocaleStringsObject = null;
@@ -169,8 +168,6 @@ function reduxStoreReady( reduxStore ) {
 
 	supportUser.setReduxStore( reduxStore );
 
-	Layout = require( 'layout' );
-
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
 		// Inject these here
@@ -179,19 +176,15 @@ function reduxStoreReady( reduxStore ) {
 		// Set current user in Redux store
 		reduxStore.dispatch( receiveUser( user.get() ) );
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
-
-		// Create layout instance with current user prop
-		layoutElement = React.createElement( Layout, {
-			user: user,
-			sites: sites,
-			focus: layoutFocus,
-			nuxWelcome: nuxWelcome,
-			translatorInvitation: translatorInvitation
-		} );
 	} else {
 		analytics.setSuperProps( superProps );
-		layoutElement = React.createElement( Layout, { focus: layoutFocus } );
 	}
+
+	Layout = require( 'controller' ).ReduxWrappedLayout;
+
+	layoutElement = React.createElement( Layout, {
+		store: reduxStore
+	} );
 
 	if ( config.isEnabled( 'perfmon' ) ) {
 		// Record time spent watching slowly-flashing divs
@@ -202,10 +195,9 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/network-connection' ).init( reduxStore );
 	}
 
-	renderWithReduxStore(
+	ReactDom.render(
 		layoutElement,
-		document.getElementById( 'wpcom' ),
-		reduxStore
+		document.getElementById( 'wpcom' )
 	);
 
 	debug( 'Main layout rendered.' );
@@ -293,6 +285,7 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	// Load the application modules for the various sections and features
+	sections = require( 'sections' );
 	sections.load();
 
 	// delete any lingering local storage data from signup
@@ -360,6 +353,8 @@ function reduxStoreReady( reduxStore ) {
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
 		require( 'lib/rubberband-scroll-disable' )( document.body );
 	}
+
+	page( '*', require( 'controller' ).maybeUnmountLayout );
 
 	detectHistoryNavigation.start();
 	page.start();
