@@ -12,6 +12,14 @@
 		font-size: 14px;
 	}
 
+	&.is-with-plans-only {
+		flex: 1 1 280px;
+
+		small {
+			font-size: 12px;
+		}
+	}
+
 	.map-domain-step & {
 		@include breakpoint( "<660px" ) {
 			padding-bottom: 5px;
