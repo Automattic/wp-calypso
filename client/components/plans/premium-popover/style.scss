@@ -26,13 +26,18 @@
 		font-style: italic;
 		margin: 0;
 	}
+
 	.wpcom-plan-price__billing-period {
-		display: block;
+		color: lighten( $gray, 10% );
+
+		&:before {
+			content: ' ';
+		}
 	}
 
 	.premium-popover__items {
 		background: lighten( $gray, 35% );
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid lighten( $gray, 30% );
 		border-radius: 0 0 4px 4px;
 		font-size: 14px;
 		list-style: none;
