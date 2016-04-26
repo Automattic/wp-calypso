@@ -359,7 +359,7 @@ var RegisterDomainStep = React.createClass( {
 				<DomainMappingSuggestion
 					onButtonClick={ this.goToMapDomainStep }
 					withPlansOnly={ this.props.withPlansOnly }
-					buttonLabel={ this.props.mappingSuggestionLabel }
+					buttonLabel={ this.props.withPlansOnly && this.translate( 'Upgrade' ) }
 					cart={ this.props.cart }
 					products={ this.props.products } />
 				);

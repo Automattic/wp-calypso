@@ -36,15 +36,19 @@ var DomainProductPrice = React.createClass( {
 	priceText() {
 		if ( ! this.props.price ) {
 			return this.translate( 'Free' );
-		} else if ( this.props.withPlansOnly ) {
+		} else if ( this.props.withPlansOnly && ! this.isFreeWithPlan() ) {
 			return null;
 		}
 		return this.priceMessage( this.props.price );
 	},
+	isFreeWithPlan() {
+		return this.props.cart && this.props.cart.hasLoadedFromServer &&
+			this.props.cart.next_domain_is_free && ! this.props.isFinalPrice;
+	},
 	render: function() {
-		var freeWithPlan = this.props.cart && this.props.cart.hasLoadedFromServer && this.props.cart.next_domain_is_free && ! this.props.isFinalPrice,
-			withPlansOnly = this.props.withPlansOnly,
-			classes = classNames( 'domain-product-price', { 'is-free-domain': freeWithPlan, 'is-with-plans-only': withPlansOnly }, {
+		const classes = classNames( 'domain-product-price', {
+				'is-free-domain': this.isFreeWithPlan(),
+				'is-with-plans-only': this.props.withPlansOnly,
 				'is-placeholder': this.props.isLoading
 			} );
 
