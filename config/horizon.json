@@ -69,6 +69,7 @@
 		"persist-redux": true,
 		"phone_signup": false,
 		"post-editor/live-image-updates": true,
+		"post-editor/image-reorientation": false,
 		"press-this": true,
 		"reader": true,
 		"resume-editing": true,

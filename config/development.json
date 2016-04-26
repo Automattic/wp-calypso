@@ -95,6 +95,7 @@
 		"post-editor-github-link": false,
 		"post-editor/live-image-updates": true,
 		"post-editor/media-advanced": true,
+		"post-editor/image-reorientation": true,
 		"press-this": true,
 		"reader": true,
 		"reader/full-errors": true,
