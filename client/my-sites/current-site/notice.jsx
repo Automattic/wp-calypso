@@ -13,6 +13,7 @@ import NoticeAction from 'components/notice/notice-action';
 import paths from 'my-sites/upgrades/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import QueryPlans from 'components/data/query-plans';
 
 const SiteNotice = React.createClass( {
 	propTypes: {
@@ -68,6 +69,7 @@ const SiteNotice = React.createClass( {
 		return (
 			<div className="site__notices">
 				{ this.getSiteRedirectNotice( this.props.site ) }
+				<QueryPlans siteId={ this.props.site.ID } />
 				{ this.domainCreditNotice() }
 			</div>
 		);
