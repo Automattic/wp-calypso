@@ -20,7 +20,6 @@ var DomainSuggestion = React.createClass( {
 		price: React.PropTypes.string,
 		cart: React.PropTypes.object,
 		isAdded: React.PropTypes.bool.isRequired,
-		products: React.PropTypes.object,
 		withPlansOnly: React.PropTypes.bool
 	},
 
@@ -49,7 +48,6 @@ var DomainSuggestion = React.createClass( {
 				<div className="domain-suggestion__content">
 					{ this.props.children }
 					<DomainProductPrice
-						products={ this.props.products }
 						withPlansOnly={ this.props.withPlansOnly }
 						isLoading={ this.props.isLoading }
 						price={ this.props.price }

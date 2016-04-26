@@ -21,7 +21,6 @@ var DomainProductPrice = React.createClass( {
 					<PremiumPopover
 						context={ this.refs && this.refs.subMessage }
 						bindContextEvents
-						products={ this.props.products }
 						position="bottom left" />
 				</small>
 			);

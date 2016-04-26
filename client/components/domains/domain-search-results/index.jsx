@@ -56,7 +56,6 @@ var DomainSearchResults = React.createClass( {
 					buttonLabel={ this.props.buttonLabel }
 					cart={ this.props.cart }
 					withPlansOnly={ this.props.withPlansOnly }
-					products={ this.props.products } 
 					onButtonClick={ this.props.onClickResult.bind( null, availableDomain ) } />
 				);
 		} else if ( this.props.suggestions && this.props.suggestions.length !== 0 && this.isDomainUnavailable() ) {
@@ -128,7 +127,6 @@ var DomainSearchResults = React.createClass( {
 						buttonLabel={ this.props.buttonLabel }
 						cart={ this.props.cart }
 						withPlansOnly={ this.props.withPlansOnly }
-						products={ this.props.products }
 						onButtonClick={ this.props.onClickResult.bind( null, suggestion ) } />
 				);
 			}, this );
