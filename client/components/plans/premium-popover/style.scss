@@ -8,29 +8,38 @@
 
 .premium-popover__content {
 	text-align: left;
-	padding: 20px;
+
+	.premium-popover__header {
+		padding: 24px;
+		text-align: center;
+	}
 
 	h3 {
-		color: darken( $gray, 20% );
-		font-size: 17px;
+		color: $gray-dark;
+		font-size: 16px;
+		font-weight: 600;
 	}
 
 	h5 {
-		color: darken( $gray, 10% );
-		font-size: 14px;
+		color: $gray;
+		font-size: 12px;
 		font-style: italic;
-		margin-bottom: 10px;
+		margin: 0;
 	}
 
 	.premium-popover__items {
+		background: lighten( $gray, 35% );
+		border-top: 1px solid $gray-light;
+		border-radius: 0 0 4px 4px;
+		font-size: 14px;
 		list-style: none;
 		margin: 0;
-		font-size: 12px;
+		padding: 24px;
 
 		li {
 			line-height: 1.9em;
-			color: darken( $gray, 20% );
-			margin: 5px 0;
+			color: $gray;
+			margin: 0;
 		}
 
 		.gridicon {

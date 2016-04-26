@@ -73,8 +73,10 @@ export default React.createClass( {
 				isVisible={ this.isVisible() }
 				className={ classNames( this.props.className, 'premium-popover popover' ) }>
 				<div className="premium-popover__content">
-					<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
-					<h5>{ this.props.products ? this.priceMessage( this.props.products.value_bundle.cost_display ) : this.translate( 'Loading' ) }</h5>
+					<div className="premium-popover__header">
+						<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
+						<h5>{ this.props.products ? this.priceMessage( this.props.products.value_bundle.cost_display ) : this.translate( 'Loading' ) }</h5>
+					</div>
 					<ul className="premium-popover__items">
 						{ [
 							this.translate( 'A custom domain' ),
@@ -83,7 +85,7 @@ export default React.createClass( {
 							this.translate( 'Video Uploads' ),
 							this.translate( 'No Ads' ),
 							this.translate( 'Email and live chat support' )
-						].map( ( message, i ) => <li key={ i }><Gridicon icon="checkmark-circle" size={ 18 }/> { message }</li> ) }
+						].map( ( message, i ) => <li key={ i }><Gridicon icon="checkmark" size={ 18 }/> { message }</li> ) }
 					</ul>
 				</div>
 			</Popover>
