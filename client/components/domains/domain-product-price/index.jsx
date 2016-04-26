@@ -8,27 +8,9 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Gridicon = require( 'components/gridicon' ),
-	Popover = require( 'components/popover' );
+	PremiumPopover = require( 'components/plans/premium-popover' );
 
 var DomainProductPrice = React.createClass( {
-	getInitialState() {
-		return {
-			popoverVisibleByClick: false,
-			popoverVisibleByHover: false
-		};
-	},
-	hidePopover() {
-		this.setState( { popoverVisibleByClick: false, popoverVisibleByHover: false } );
-	},
-	showPopoverByClick() {
-		this.setState( { popoverVisibleByClick: true } );
-	},
-	showPopoverByHover() {
-		this.setState( { popoverVisibleByHover: true } );
-	},
-	hidePopoverByHover() {
-		this.setState( { popoverVisibleByHover: false } );
-	},
 	subMessage() {
 		var freeWithPlan = this.props.cart && this.props.cart.hasLoadedFromServer && this.props.cart.next_domain_is_free && ! this.props.isFinalPrice;
 		if ( freeWithPlan ) {
@@ -37,27 +19,11 @@ var DomainProductPrice = React.createClass( {
 			return (
 				<small className="domain-product-price__premium-text" ref="subMessage" onClick={ this.showPopoverByClick } onMouseEnter={ this.showPopoverByHover } onMouseLeave={ this.hidePopoverByHover }>
 					{ this.translate( 'Included in the Premium Plan' ) } <Gridicon icon="lock" size={ 12 }/>
-					<Popover
+					<PremiumPopover
 						context={ this.refs && this.refs.subMessage }
-						isVisible={ this.state.popoverVisibleByClick || this.state.popoverVisibleByHover }
-						onClose={ this.hidePopover }
-						className="domain-product-price__popover popover"
-						position="bottom left">
-						<div className="domain-product-price__popover-content">
-							<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
-							<h5>{ this.priceMessage( this.props.products.value_bundle.cost_display ) }</h5>
-							<ul className="domain-product-price__popover-items">
-								{ [
-									this.translate( 'A custom domain' ),
-									this.translate( 'Advanced design customization' ),
-									this.translate( '13GB of space for file and media' ),
-									this.translate( 'Video Uploads' ),
-									this.translate( 'No Ads' ),
-									this.translate( 'Email and live chat support' )
-								].map( ( message, i ) => <li key={ i }><Gridicon icon="checkmark-circle" size={ 18 }/> { message }</li> ) }
-							</ul>
-						</div>
-					</Popover>
+						bindContextEvents
+						products={ this.props.products }
+						position="bottom left" />
 				</small>
 			);
 		}

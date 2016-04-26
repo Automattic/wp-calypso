@@ -203,6 +203,7 @@ var RegisterDomainStep = React.createClass( {
 					onClickExampleSuggestion={ this.handleClickExampleSuggestion }
 					mapDomainUrl={ this.getMapDomainUrl() }
 					path={ this.props.path }
+					withPlansOnly={ this.props.withPlansOnly }
 					products={ this.props.products } />
 			);
 		}
@@ -395,6 +396,7 @@ var RegisterDomainStep = React.createClass( {
 					<ExampleDomainSuggestions
 						mapDomainUrl={ this.getMapDomainUrl() }
 						path={ this.props.path }
+						withPlansOnly={ this.props.withPlansOnly }
 						products={ this.props.products } />
 				);
 			}
