@@ -82,6 +82,10 @@
 	margin: 0 -8px;
 	padding: 0 0 0 4px;
 
+	@include breakpoint( "<660px" ) {
+		padding: 0 24px;
+	}
+
 	.notice__text {
 		width: 100%;
 		display: flex;
