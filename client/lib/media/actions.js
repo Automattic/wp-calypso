@@ -114,7 +114,9 @@ MediaActions.add = function( siteId, files ) {
 			'transient': true,
 			// Assign a date such that the first item will be the oldest at the
 			// time of upload, as this is expected order when uploads finish
-			date: new Date( baseTime - ( files.length - i ) ).toISOString()
+			date: new Date( baseTime - ( files.length - i ) ).toISOString(),
+			// Keep a reference to the original file
+			original: file
 		};
 
 		if ( 'string' === typeof file ) {
