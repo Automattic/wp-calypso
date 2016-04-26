@@ -11,6 +11,7 @@ import SiteDomain from './site.domain';
 import SitePlugin from './site.plugin';
 import SiteSettings from './site.settings';
 import SiteTaxonomy from './site.taxonomy';
+import SitePostType from './site.post-type';
 import SiteWordAds from './site.wordads';
 import SiteWPComPlugin from './site.wpcom-plugin';
 import siteGetMethods from './runtime/site.get';
@@ -207,6 +208,16 @@ class Site {
 	 */
 	taxonomy( slug ) {
 		return new SiteTaxonomy( slug, this._id, this.wpcom );
+	}
+
+	/**
+	 * Create a `SitePostType` instance
+	 *
+	 * @param {String} [slug] - post type slug
+	 * @return {SitePostType} SitePostType instance
+	 */
+	postType( slug ) {
+		return new SitePostType( slug, this._id, this.wpcom );
 	}
 
 	/**

@@ -51,6 +51,10 @@ var _siteTaxonomy = require('./site.taxonomy');
 
 var _siteTaxonomy2 = _interopRequireDefault(_siteTaxonomy);
 
+var _sitePostType = require('./site.post-type');
+
+var _sitePostType2 = _interopRequireDefault(_sitePostType);
+
 var _siteWordads = require('./site.wordads');
 
 var _siteWordads2 = _interopRequireDefault(_siteWordads);
@@ -298,6 +302,18 @@ var Site = (function () {
 		key: 'taxonomy',
 		value: function taxonomy(slug) {
 			return new _siteTaxonomy2['default'](slug, this._id, this.wpcom);
+		}
+
+		/**
+   * Create a `SitePostType` instance
+   *
+   * @param {String} [slug] - post type slug
+   * @return {SitePostType} SitePostType instance
+   */
+	}, {
+		key: 'postType',
+		value: function postType(slug) {
+			return new _sitePostType2['default'](slug, this._id, this.wpcom);
 		}
 
 		/**
