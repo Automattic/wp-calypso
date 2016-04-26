@@ -9,6 +9,7 @@ import { MediaTypes } from '../constants';
 const REGEXP_IMG_CLASS_SIZE = /\bsize-(\w+)\b/;
 const REGEXP_IMG_CLASS_ID = /\bwp-image-((media-)?\d+)\b/;
 const REGEXP_IMG_CLASS_ALIGN = /\balign(left|center|right|none)\b/;
+const REGEXP_IMG_TRANSIENCE = /^(blob|data):/;
 
 /**
  * Given an <img /> HTMLElement, returns an object of parsed attributes.
@@ -21,7 +22,7 @@ function parseImage( node, _parsed ) {
 	_parsed.type = MediaTypes.IMAGE;
 	_parsed.media.URL = node.getAttribute( 'src' );
 	_parsed.media.alt = node.getAttribute( 'alt' );
-	_parsed.media.transient = ( 0 === ( _parsed.media.URL || '' ).indexOf( 'blob:' ) );
+	_parsed.media.transient = REGEXP_IMG_TRANSIENCE.test( _parsed.media.URL );
 
 	// Parse dimensions
 	[ 'width', 'height' ].forEach( ( dimension ) => {
