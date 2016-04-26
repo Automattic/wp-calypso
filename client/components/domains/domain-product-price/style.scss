@@ -5,14 +5,14 @@
 	font-weight: 600;
 
 	@include breakpoint( ">660px" ) {
-		min-width: 125px
+		min-width: 130px;
 	}
 
 	@include breakpoint( "<660px" ) {
 		font-size: 14px;
 	}
 
-	&.is-with-plans-only {
+	&.is-with-plans-only:not( .is-free-domain ) {
 		flex: 1 1 280px;
 
 		small {
