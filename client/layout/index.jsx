@@ -22,7 +22,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	EmailVerificationNotice = require( 'components/email-verification/email-verification-notice' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
 	WelcomeMessage = require( 'layout/nux-welcome/welcome-message' ),
-	GuidesTours = require( 'layout/guided-tours' ),
+	GuidedTours = require( 'layout/guided-tours' ),
 	analytics = require( 'lib/analytics' ),
 	config = require( 'config' ),
 	connect = require( 'react-redux' ).connect,
@@ -35,7 +35,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
-import { getGuidesTourState } from 'state/ui/selectors';
+import { getGuidedTourState } from 'state/ui/selectors';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -161,7 +161,7 @@ Layout = React.createClass( {
 
 		return (
 			<div className={ sectionClass }>
-				{ config.isEnabled( 'guidestours' ) && this.props.tourState.shouldShow ? <GuidesTours /> : null }
+				{ config.isEnabled( 'guided-tours' ) && this.props.tourState.shouldShow ? <GuidedTours /> : null }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
@@ -191,7 +191,7 @@ export default connect(
 			isSupportUser: state.support.isSupportUser,
 			section,
 			isOffline: isOffline( state ),
-			tourState: getGuidesTourState( state ),
+			tourState: getGuidedTourState( state ),
 		};
 	}
 )( Layout );

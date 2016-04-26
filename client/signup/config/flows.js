@@ -249,7 +249,7 @@ function filterFlowName( flowName ) {
 }
 
 function filterDestination( destination, dependencies, flowName ) {
-	if ( config.isEnabled( 'guidestours' ) ) {
+	if ( config.isEnabled( 'guided-tours' ) ) {
 		return getGuidedToursDestination( destination, dependencies, flowName );
 	}
 

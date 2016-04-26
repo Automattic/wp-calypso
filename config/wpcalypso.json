@@ -19,7 +19,7 @@
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": false,
-		"guidestours": true,
+		"guided-tours": true,
 		"help": true,
 		"jetpack_core_inline_update": true,
 		"keyboard-shortcuts": true,

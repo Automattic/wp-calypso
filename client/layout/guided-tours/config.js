@@ -18,13 +18,13 @@ function get() {
 					strong: <strong />,
 				}
 			} ),
-			type: 'GuidesFirstStep',
+			type: 'FirstStep',
 			placement: 'right',
 			next: 'my-sites',
 		},
 		'my-sites': {
 			target: 'my-sites',
-			type: 'GuidesActionStep',
+			type: 'ActionStep',
 			icon: 'my-sites',
 			placement: 'below',
 			text: i18n.translate( "{{strong}}First things first.{{/strong}} Up here, you'll find tools for managing your site's content and design.", {
@@ -36,7 +36,7 @@ function get() {
 		},
 		sidebar: {
 			text: i18n.translate( 'The sidebar menu lets you navigate around, and will adapt to give you the tools you need when you need them.' ),
-			type: 'GuidesBasicStep',
+			type: 'BasicStep',
 			target: 'sidebar',
 			placement: 'beside',
 			next: 'themes',
@@ -47,7 +47,7 @@ function get() {
 					strong: <strong />,
 				}
 			} ),
-			type: 'GuidesBasicStep',
+			type: 'BasicStep',
 			target: 'themes',
 			placement: 'below',
 			next: 'finish',
@@ -59,7 +59,7 @@ function get() {
 					strong: <strong />,
 				}
 			} ),
-			type: 'GuidesFinishStep',
+			type: 'FinishStep',
 			linkLabel: i18n.translate( 'Get the Most from WordPress.com' ),
 			linkUrl: 'https://learn.wordpress.com',
 		}

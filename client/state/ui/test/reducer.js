@@ -8,11 +8,11 @@ import { expect } from 'chai';
  */
 import {
 	SELECTED_SITE_SET,
-	SHOW_GUIDESTOUR,
+	SHOW_GUIDED_TOUR,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import reducer, { selectedSiteId, guidesTour } from '../reducer';
+import reducer, { selectedSiteId, guidedTour } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should refuse to persist any state', () => {
@@ -57,16 +57,16 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#guidesTour()', () => {
+	describe( '#guidedTour()', () => {
 		it( 'should default to an empty object', () => {
-			const state = guidesTour( undefined, {} );
+			const state = guidedTour( undefined, {} );
 
 			expect( state ).to.be.empty;
 		} );
 
 		it( 'should set a tour to be shown', () => {
-			const state = guidesTour( undefined, {
-				type: SHOW_GUIDESTOUR,
+			const state = guidedTour( undefined, {
+				type: SHOW_GUIDED_TOUR,
 				shouldShow: true,
 				tour: 'foo',
 			} );
