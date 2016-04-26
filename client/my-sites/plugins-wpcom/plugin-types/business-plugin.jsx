@@ -29,7 +29,7 @@ export const BusinessPlugin = React.createClass( {
 			descriptionLink,
 		} = this.props;
 
-		const target = hasHttpProtocol( descriptionLink ) ? '_blank' : '_self';
+		const target = hasHttpProtocol( descriptionLink ) ? '_blank' : null;
 
 		return (
 			<div className="wpcom-plugins__plugin-item">
