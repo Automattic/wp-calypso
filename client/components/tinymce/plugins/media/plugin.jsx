@@ -141,6 +141,10 @@ function mediaButton( editor ) {
 			return;
 		}
 
+		if ( PostEditStore.isSaveBlocked( 'MEDIA_MODAL_IMAGE_TRANSFORMATION' ) ) {
+			return;
+		}
+
 		isVisualEditMode = ! editor.isHidden();
 
 		if ( isVisualEditMode ) {
