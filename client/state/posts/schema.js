@@ -64,3 +64,14 @@ export const queriesSchema = {
 	},
 	additionalProperties: false
 };
+
+export const queriesLastPageSchema = {
+	type: 'object',
+	patternProperties: {
+		// Queries are JSON strings, optionally prepended by a site ID
+		'^(\\d+:)?\\{[^\\}]*\\}$': {
+			type: 'number'
+		}
+	},
+	additionalProperties: false
+};

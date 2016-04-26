@@ -426,19 +426,30 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'never persists state', () => {
+		it( 'should persist state', () => {
 			const original = deepFreeze( {
 				'2916284:{"search":"hello"}': 1
 			} );
 			const state = queriesLastPage( original, { type: SERIALIZE } );
-			expect( state ).to.eql( {} );
+
+			expect( state ).to.eql( original );
 		} );
 
-		it( 'never loads persisted state', () => {
+		it( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
 				'2916284:{"search":"hello"}': 1
 			} );
 			const state = queriesLastPage( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( original );
+		} );
+
+		it( 'should not load invalid persisted state', () => {
+			const original = deepFreeze( {
+				'2916284:{"search":"hello"}': 'bad'
+			} );
+			const state = queriesLastPage( original, { type: DESERIALIZE } );
+
 			expect( state ).to.eql( {} );
 		} );
 	} );
