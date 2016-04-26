@@ -238,6 +238,16 @@ $autobar-height: 20px;
 	}
 }
 
+.masterbar__item-title {
+	span {
+		text-transform: uppercase;
+	}
+
+	.masterbar__item-content {
+		display: block;
+	}
+}
+
 .masterbar__login-links {
 	display: flex;
 	margin-left: auto;
