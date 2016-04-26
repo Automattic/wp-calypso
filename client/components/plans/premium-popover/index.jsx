@@ -20,6 +20,8 @@ import PlansList from 'lib/plans-list';
 const plansList = PlansList();
 const sitesList = SitesList();
 
+let exclusiveViewLock = null;
+
 const PremiumPopover = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object,
@@ -44,7 +46,9 @@ const PremiumPopover = React.createClass( {
 		this.props.fetchSitePlans( nextProps.sitePlans, nextProps.selectedSite );
 	},
 	isVisible() {
-		return this.props.isVisible || this.state.visibleByClick || this.state.visibleByHover;
+		return ( this.props.isVisible || this.state.visibleByClick || this.state.visibleByHover ) && (
+				! exclusiveViewLock || exclusiveViewLock === this
+			);
 	},
 	priceMessage( price ) {
 		return this.translate( '%(cost)s {{small}}/year{{/small}}', {
@@ -55,29 +59,57 @@ const PremiumPopover = React.createClass( {
 	getSitePlan() {
 		return ( this.props.sitePlans.data || [] ).find( plan => plan.product_slug === 'value_bundle' );
 	},
-	componentDidUpdate() {
-		if ( this.state.shouldBindEvents && this.props.context ) {
+	componentDidUpdate( oldProps ) {
+		if ( oldProps.context !== this.props.context ) {
+			this.unbindContextEvents( oldProps.context );
+		}
+
+		if ( this.state.shouldBindEvents ) {
 			this.bindContextEvents();
-			this.setState( { shouldBindEvents: false } );
+		}
+	},
+	componentWillUnmount() {
+		this.unbindContextEvents();
+		if ( exclusiveViewLock === this ) {
+			exclusiveViewLock = null;
+		}
+	},
+	handleClick() {
+		exclusiveViewLock = this;
+		this.setState( { visibleByClick: true } );
+	},
+	handleMouseEnter() {
+		this.setState( { visibleByHover: true } );
+	},
+	handleMouseLeave() {
+		this.setState( { visibleByHover: false } );
+	},
+	unbindContextEvents( elm = this.props.context ) {
+		if ( elm ) {
+			elm.removeEventListener( 'click', this.handleClick );
+			elm.removeEventListener( 'mouseenter', this.handleMouseEnter );
+			elm.removeEventListener( 'mouseleave', this.handleMouseLeave );
 		}
 	},
 	bindContextEvents() {
 		const elm = this.props.context;
-		elm.addEventListener( 'click', () => {
-			this.setState( { visibleByClick: true } );
-		} );
-		elm.addEventListener( 'mouseenter', () => {
-			this.setState( { visibleByHover: true } );
-		} );
-		elm.addEventListener( 'mouseleave', () => {
-			this.setState( { visibleByHover: false } );
-		} );
+		if ( elm ) {
+			elm.addEventListener( 'click', this.handleClick );
+			elm.addEventListener( 'mouseenter', this.handleMouseEnter );
+			elm.addEventListener( 'mouseleave', this.handleMouseLeave );
+			this.setState( { shouldBindEvents: false } );
+		}
 	},
 	onClose( event ) {
+		if ( exclusiveViewLock === this ) {
+			exclusiveViewLock = null;
+		}
+
 		this.setState( {
 			visibleByClick: false,
 			visibleByHover: false
 		} );
+
 		if ( this.props.onClose ) {
 			return this.props.onClose( event );
 		}
