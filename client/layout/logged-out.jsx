@@ -28,7 +28,7 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classes }>
-			<MasterbarLoggedOut/>
+			<MasterbarLoggedOut title={ section.title } />
 			<div id="content" className="wp-content">
 				<div id="primary" className="wp-primary wp-section">
 					{ primary }
