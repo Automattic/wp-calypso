@@ -1,25 +1,35 @@
 .signup__email-confirmation {
 	max-width: 400px;
-	padding: 32px;
 	border-radius: 3px;
+	margin: 0 auto;
+	padding-top: 16px;
+}
+
+.email-confirmation__reminder {
+	text-align: center;
+	max-width: 400px;
+	padding: 0 32px;
+	margin: 48px auto 16px auto;
+	color: darken( $gray, 10 );
 }
 
 .email-confirmation__step {
 	position: relative;
-	margin-left: 122px;
-	min-height: 90px;
+	margin-left: 80px;
+	min-height: 70px;
 	padding-top: 16px;
 	box-sizing: border-box;
 }
 
 .email-confirmation__step-illustration {
 	position: absolute;
-		top: -2px;
-		left: -122px;
+		top: 10px;
+		left: -80px;
+	width: 60px;
 }
 
 .email-confirmation__step-title {
-	font-size: 18px;
+	font-size: 16px;
 	font-weight: 600;
 	color: darken( $gray, 30 );
 }
@@ -28,17 +38,25 @@
 	font-size: 15px;
 	margin-bottom: 0;
 	color: $gray;
+	width: 250px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	@include breakpoint( "<480px" ) {
+		width: 180px;
+	}
 }
 
 .email-confirmation__then {
 	display: block;
 	padding-top: 8px;
 	padding-bottom: 8px;
-	padding-left: 24px;
+	padding-left: 32px;
 	box-sizing: border-box;
-	margin-left: 122px - 24px;
+	margin-left: 48px;
 	position: relative;
-	color: $gray;
+	color: lighten( $gray, 10 );
 
 	&:before {
 		content: '';
@@ -48,8 +66,8 @@
 		border-radius: 100%;
 		background: lighten( $gray, 10 );
 		position: absolute;
-			top: 14px;
-			left: -57px;
+			top: 16px;
+			left: -21px;
 	}
 
 	&:after {
@@ -64,23 +82,12 @@
 	}
 }
 
-
-
-.signup__processing {
-	color: darken( $gray, 20% );
-	font-size: 16px;
-	transition: all .5s ease-in-out;
-	margin-bottom: 16px;
+.email-confirmation__waiting {
 	position: relative;
 	padding-left: 32px;
-    max-width: 180px;
-    margin-left: auto;
-    margin-right: auto;
-
-	@include breakpoint( "<660px" ) {
-		margin-left: 24px;
-		margin-right: 24px;
-	}
+	box-sizing: border-box;
+	width: 170px;
+	margin: 0 auto 24px auto;
 
 	&:before {
 		position: absolute;
@@ -91,48 +98,33 @@
 		height: 24px;
 		width: 24px;
 		transform: scale( 0.7 );
+		animation: processing 2.5s infinite linear;
+		background: $white;
+		border-radius: 100%;
+		z-index: 1;
+		box-shadow: 0 0 0 1px lighten( $gray, 20 ),
+			0 0 8px 1px $blue-medium;
 	}
 
-	&.is-pending {
-		color: lighten( $gray, 10 );
-
-		&:before {
-			transform: scale( 0.3 );
-			background: $gray;
-			border-radius: 100%;
-		}
+	&:after {
+		position: absolute;
+			top: 0;
+			left: 0;
+		display: block;
+		content: '';
+		height: 24px;
+		width: 24px;
+		border-radius: 100%;
+		opacity: 0.3;
+		background: lighten( $gray, 10 );
+		animation: processing-bg 2s infinite linear;
 	}
+}
 
-	&.is-processing {
-		font-weight: bold;
-
-		&:before {
-			animation: processing 2.5s infinite linear;
-			background: $white;
-			border-radius: 100%;
-			z-index: 1;
-			box-shadow: 0 0 0 1px lighten( $gray, 20 ),
-				0 0 8px 1px $blue-medium;
-		}
-
-		&:after {
-			position: absolute;
-				top: 0;
-				left: 0;
-			display: block;
-			content: '';
-			height: 24px;
-			width: 24px;
-			border-radius: 100%;
-			opacity: 0.3;
-			background: lighten( $gray, 10 );
-			animation: processing-bg 2s infinite linear;
-		}
-	}
-
-	&.is-complete {
-		opacity: 0;
-	}
+.email-confirmation__continue {
+	margin: 0 auto 24px auto;
+	min-width: 220px;
+	display: block;
 }
 
 @keyframes processing {
