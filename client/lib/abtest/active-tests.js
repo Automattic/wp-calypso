@@ -94,7 +94,7 @@ module.exports = {
 		allowAnyLocale: true
 	},
 	domainsWithPlansOnly: {
-		datestamp: '20200101',
+		datestamp: '20160427',
 		variations: {
 			original: 50,
 			plansOnly: 50
