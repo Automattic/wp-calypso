@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import rewire from 'rewire';
 import assign from 'lodash/assign';
 import find from 'lodash/find';
 import sinon from 'sinon';
@@ -11,7 +10,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-import Dispatcher from 'dispatcher';
+import useMockery from 'test/helpers/use-mockery';
 
 var DUMMY_SITE_ID = 1,
 	DUMMY_MEDIA_ID = 10,
@@ -22,12 +21,14 @@ var DUMMY_SITE_ID = 1,
 	};
 
 describe( 'MediaListStore', function() {
-	let sandbox, MediaListStore, handler, MediaStore;
+	let Dispatcher, sandbox, MediaListStore, handler, MediaStore;
 
 	useFakeDom();
+	useMockery();
 
 	before( function() {
 		MediaStore = require( '../store' );
+		Dispatcher = require( 'dispatcher' );
 
 		sandbox = sinon.sandbox.create();
 		sandbox.spy( Dispatcher, 'register' );
@@ -38,13 +39,13 @@ describe( 'MediaListStore', function() {
 			}
 		} );
 
-		MediaListStore = rewire( '../list-store' );
+		MediaListStore = require( '../list-store' );
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
 	beforeEach( function() {
-		MediaListStore.__set__( '_media', {} );
-		MediaListStore.__set__( '_activeQueries', {} );
+		MediaListStore._media = {};
+		MediaListStore._activeQueries = {};
 	} );
 
 	after( function() {
@@ -166,14 +167,14 @@ describe( 'MediaListStore', function() {
 
 	describe( '#getNextPageQuery()', function() {
 		it( 'should include default parameters if no query provided', function() {
-			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql( MediaListStore.__get__( 'DEFAULT_QUERY' ) );
+			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql( MediaListStore.DEFAULT_QUERY );
 		} );
 
 		it( 'should include page_handle if the previous response included next_page meta', function() {
 			dispatchReceiveMediaItems();
 
 			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql( {
-				number: MediaListStore.__get__( 'DEFAULT_QUERY' ).number,
+				number: MediaListStore.DEFAULT_QUERY.number,
 				page_handle: DUMMY_MEDIA_RESPONSE.meta.next_page
 			} );
 		} );
@@ -185,7 +186,7 @@ describe( 'MediaListStore', function() {
 			dispatchReceiveMediaItems();
 
 			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql( assign( {
-				number: MediaListStore.__get__( 'DEFAULT_QUERY' ).number,
+				number: MediaListStore.DEFAULT_QUERY.number,
 				page_handle: DUMMY_MEDIA_RESPONSE.meta.next_page
 			}, query ) );
 		} );
@@ -196,7 +197,7 @@ describe( 'MediaListStore', function() {
 			dispatchSetQuery( { query: query } );
 
 			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql( assign( {}, query, {
-				number: MediaListStore.__get__( 'DEFAULT_QUERY' ).number,
+				number: MediaListStore.DEFAULT_QUERY.number,
 				page_handle: undefined
 			} ) );
 		} );
@@ -250,7 +251,7 @@ describe( 'MediaListStore', function() {
 		var isItemMatchingQuery;
 
 		before( function() {
-			isItemMatchingQuery = MediaListStore.__get__( 'isItemMatchingQuery' );
+			isItemMatchingQuery = MediaListStore.isItemMatchingQuery;
 		} );
 
 		it( 'should return true if no query exists for site', function() {
@@ -342,7 +343,7 @@ describe( 'MediaListStore', function() {
 		it( 'should ignore received items where the query does not match', function() {
 			dispatchFetchMedia();
 			dispatchSetQuery( { query: { mime_type: 'audio/' } } );
-			dispatchReceiveMediaItems( { query: MediaListStore.__get__( 'DEFAULT_QUERY' ) } );
+			dispatchReceiveMediaItems( { query: MediaListStore.DEFAULT_QUERY } );
 
 			expect( MediaListStore.getAll( DUMMY_SITE_ID ) ).to.be.undefined;
 		} );
@@ -355,7 +356,7 @@ describe( 'MediaListStore', function() {
 		} );
 
 		it( 'should re-add an item when REMOVE_MEDIA_ITEM errors and includes data', function() {
-			MediaListStore.__get__( 'ensureActiveQueryForSiteId' )( DUMMY_SITE_ID );
+			MediaListStore.ensureActiveQueryForSiteId( DUMMY_SITE_ID );
 			dispatchRemoveMediaItem( { error: true } );
 
 			expect( MediaListStore.getAllIds( DUMMY_SITE_ID ) ).to.not.be.empty;
