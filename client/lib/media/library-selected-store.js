@@ -13,24 +13,25 @@ var MediaStore = require( './store' ),
 /**
  * Module variables
  */
-var _media = {},
-	MediaLibrarySelectedStore = {};
+const MediaLibrarySelectedStore = {
+	_media: {}
+};
 
 function ensureSelectedItemsForSiteId( siteId ) {
-	if ( siteId in _media ) {
+	if ( siteId in MediaLibrarySelectedStore._media ) {
 		return;
 	}
 
-	_media[ siteId ] = [];
+	MediaLibrarySelectedStore._media[ siteId ] = [];
 }
 
 function setSelectedItems( siteId, items ) {
-	_media[ siteId ] = map( items, 'ID' );
+	MediaLibrarySelectedStore._media[ siteId ] = map( items, 'ID' );
 }
 
 function addSingle( siteId, item ) {
 	ensureSelectedItemsForSiteId( siteId );
-	_media[ siteId ].push( item.ID );
+	MediaLibrarySelectedStore._media[ siteId ].push( item.ID );
 }
 
 function receiveSingle( siteId, item, itemId ) {
@@ -40,17 +41,17 @@ function receiveSingle( siteId, item, itemId ) {
 		itemId = item.ID;
 	}
 
-	if ( ! itemId || ! ( siteId in _media ) ) {
+	if ( ! itemId || ! ( siteId in MediaLibrarySelectedStore._media ) ) {
 		return;
 	}
 
-	index = _media[ siteId ].indexOf( itemId );
+	index = MediaLibrarySelectedStore._media[ siteId ].indexOf( itemId );
 	if ( -1 === index ) {
 		return;
 	}
 
 	// Replace existing index if one exists
-	_media[ siteId ].splice( index, 1, item.ID );
+	MediaLibrarySelectedStore._media[ siteId ].splice( index, 1, item.ID );
 }
 
 function receiveMany( siteId, items ) {
@@ -62,13 +63,13 @@ function receiveMany( siteId, items ) {
 function removeSingle( siteId, item ) {
 	var index;
 
-	if ( ! ( siteId in _media ) ) {
+	if ( ! ( siteId in MediaLibrarySelectedStore._media ) ) {
 		return;
 	}
 
-	index = _media[ siteId ].indexOf( item.ID );
+	index = MediaLibrarySelectedStore._media[ siteId ].indexOf( item.ID );
 	if ( -1 !== index ) {
-		_media[ siteId ].splice( index, 1 );
+		MediaLibrarySelectedStore._media[ siteId ].splice( index, 1 );
 	}
 }
 
@@ -79,11 +80,11 @@ MediaLibrarySelectedStore.get = function( siteId, itemId ) {
 };
 
 MediaLibrarySelectedStore.getAll = function( siteId ) {
-	if ( ! ( siteId in _media ) ) {
+	if ( ! ( siteId in MediaLibrarySelectedStore._media ) ) {
 		return [];
 	}
 
-	return _media[ siteId ].map( function( itemId ) {
+	return MediaLibrarySelectedStore._media[ siteId ].map( function( itemId ) {
 		return MediaStore.get( siteId, itemId );
 	} );
 };
