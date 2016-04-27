@@ -289,7 +289,8 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 	},
 
 	render() {
-		if ( ! this.isCalypsoStartedConnection() ) {
+		const { isAuthorizing, authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
+		if ( ! this.isCalypsoStartedConnection() && ! isAuthorizing && ! authorizeSuccess && ! siteReceived ) {
 			return this.renderRedirectView();
 		}
 		return (
