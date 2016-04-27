@@ -68,7 +68,7 @@ export default React.createClass( {
 					<span className="menu-link-text">{ this.props.label }</span>
 					{ isExternalLink ? <span className="noticon noticon-external" /> : null }
 				</a>
-				{ this.renderButton( this.props.buttonLink ) }
+				{ this.renderButton( this.props.buttonLink ) || this.props.children }
 			</li>
 		);
 	}
