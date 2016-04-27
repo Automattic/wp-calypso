@@ -472,18 +472,16 @@ MenuData.prototype.saveMenu = function( menu, callback ) {
 
 	debug( 'saveMenu', menu );
 
-	const self = this;
-
 	/*
 	Because of how postEditStore works, we need to fire promises one after another.
 	 */
 	deepFilterInjectedNewPageItems( menu )
 	.reduce(
-		( previousNewPagePromise, menuItem ) => previousNewPagePromise.then( () => self.createNewPagePromise( menuItem, self.siteID ) ),
+		( previousNewPagePromise, menuItem ) => previousNewPagePromise.then( () => this.createNewPagePromise( menuItem, this.siteID ) ),
 		Promise.resolve()
 	)
 	.catch( error => {
-		self.emit( 'error', i18n.translate( 'There was a problem saving your menu.' ) );
+		this.emit( 'error', i18n.translate( 'There was a problem saving your menu.' ) );
 		debug( 'Error', error );
 	} )
 	.then( this.sendMenuToApi.bind( this, menu, callback ) );
