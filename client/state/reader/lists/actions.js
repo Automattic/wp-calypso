@@ -50,20 +50,20 @@ export function requestSubscribedLists() {
 
 		return new Promise( ( resolve, reject ) => {
 			wpcom.undocumented().readLists( ( error, data ) => {
-				if ( error ) {
-					dispatch( {
-						type: READER_LISTS_REQUEST_FAILURE,
-						error
-					} );
-					reject();
-				} else {
-					dispatch( receiveLists( data.lists ) );
-					dispatch( {
-						type: READER_LISTS_REQUEST_SUCCESS,
-						data
-					} );
-					resolve();
-				}
+				error ? reject( error ) : resolve( data );
+			} );
+		} )
+		.then( ( data ) => {
+			dispatch( receiveLists( data.lists ) );
+			dispatch( {
+				type: READER_LISTS_REQUEST_SUCCESS,
+				data
+			} );
+		} )
+		.catch( ( error ) => {
+			dispatch( {
+				type: READER_LISTS_REQUEST_FAILURE,
+				error
 			} );
 		} );
 	};
@@ -86,21 +86,19 @@ export function requestList( owner, slug ) {
 
 		return new Promise( ( resolve, reject ) => {
 			wpcom.undocumented().readList( query, ( error, data ) => {
-				if ( error ) {
-					dispatch( {
-						type: READER_LIST_REQUEST_FAILURE,
-						error,
-						owner,
-						slug
-					} );
-					reject();
-				} else {
-					dispatch( {
-						type: READER_LIST_REQUEST_SUCCESS,
-						data
-					} );
-					resolve();
-				}
+				error ? reject( error ) : resolve( data );
+			} );
+		} )
+		.then( ( data ) => {
+			dispatch( {
+				type: READER_LIST_REQUEST_SUCCESS,
+				data
+			} );
+		} )
+		.catch( ( error ) => {
+			dispatch( {
+				type: READER_LIST_REQUEST_FAILURE,
+				error
 			} );
 		} );
 	};
@@ -125,24 +123,20 @@ export function followList( owner, slug ) {
 
 		return new Promise( ( resolve, reject ) => {
 			wpcom.undocumented().followList( query, ( error, data ) => {
-				if ( error || ! ( data && data.following ) ) {
-					dispatch( {
-						type: READER_LISTS_FOLLOW_FAILURE,
-						owner,
-						slug,
-						error
-					} );
-					reject();
-				} else {
-					dispatch( receiveLists( [ data.list ] ) );
-					dispatch( {
-						type: READER_LISTS_FOLLOW_SUCCESS,
-						owner,
-						slug,
-						data
-					} );
-					resolve();
-				}
+				error ? reject( error ) : resolve( data );
+			} );
+		} )
+		.then( ( data ) => {
+			dispatch( receiveLists( [ data.list ] ) );
+			dispatch( {
+				type: READER_LISTS_FOLLOW_SUCCESS,
+				data
+			} );
+		} )
+		.catch( ( error ) => {
+			dispatch( {
+				type: READER_LISTS_FOLLOW_FAILURE,
+				error
 			} );
 		} );
 	};
@@ -167,23 +161,19 @@ export function unfollowList( owner, slug ) {
 
 		return new Promise( ( resolve, reject ) => {
 			wpcom.undocumented().unfollowList( query, ( error, data ) => {
-				if ( error || ! ( data && ! data.following ) ) {
-					dispatch( {
-						type: READER_LISTS_UNFOLLOW_FAILURE,
-						owner,
-						slug,
-						error
-					} );
-					reject();
-				} else {
-					dispatch( {
-						type: READER_LISTS_UNFOLLOW_SUCCESS,
-						owner,
-						slug,
-						data
-					} );
-					resolve();
-				}
+				error ? reject( error ) : resolve( data );
+			} );
+		} )
+		.then( ( data ) => {
+			dispatch( {
+				type: READER_LISTS_UNFOLLOW_SUCCESS,
+				data
+			} );
+		} )
+		.catch( ( error ) => {
+			dispatch( {
+				type: READER_LISTS_UNFOLLOW_FAILURE,
+				error
 			} );
 		} );
 	};
