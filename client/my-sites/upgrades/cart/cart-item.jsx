@@ -59,10 +59,10 @@ export default React.createClass( {
 		const { cost, currency } = this.props.cartItem;
 
 		if ( typeof cost === 'undefined' ) {
-			return this.translate( 'Loading price' );
+			return null;
 		}
 
-		if ( abtest( 'planPricing' ) === 'annual' || cost === 0 ) {
+		if ( abtest( 'planPricing' ) === 'annual' || cost <= 0 ) {
 			return null;
 		}
 

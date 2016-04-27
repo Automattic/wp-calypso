@@ -56,8 +56,8 @@ const PlanPrice = React.createClass( {
 		}
 
 		if ( ! plan ) {
-			periodLabel = this.translate( 'Loading' );
-		} else if ( abtest( 'planPricing' ) === 'monthly' && plan.raw_price !== 0 ) {
+			periodLabel = '';
+		} else if ( abtest( 'planPricing' ) === 'monthly' && plan.raw_price > 0 ) {
 			periodLabel = this.translate( 'per month, billed yearly' );
 		} else {
 			periodLabel = hasDiscount ? this.translate( 'due today when you upgrade' ) : plan.bill_period_label;
