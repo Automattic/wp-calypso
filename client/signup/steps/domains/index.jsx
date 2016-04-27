@@ -19,6 +19,8 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	abtest = require( 'lib/abtest' ).abtest,
 	signupUtils = require( 'signup/utils' );
 
+const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
+
 module.exports = React.createClass( {
 	displayName: 'DomainsStep',
 
@@ -109,7 +111,23 @@ module.exports = React.createClass( {
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ), [], { domainItem } );
 
+		if ( domainsWithPlansOnlyTestEnabled && isPurchasingItem ) {
+			this.submitPlansStepWithPremium();
+		}
+
 		this.props.goToNextStep();
+	},
+
+	submitPlansStepWithPremium() {
+		const premiumPlan = cartItems.premiumPlan( 'value_bundle', {} );
+		SignupActions.submitSignupStep( {
+			processingMessage: this.translate( 'Adding your plan' ),
+			stepName: 'plans',
+			stepSectionName: this.props.stepSectionName,
+			cartItem: premiumPlan
+		}, [], {
+			cartItem: premiumPlan
+		} );
 	},
 
 	handleAddMapping: function( sectionName, domain, state ) {
@@ -124,6 +142,10 @@ module.exports = React.createClass( {
 			siteUrl: domain,
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ) );
+
+		if ( domainsWithPlansOnlyTestEnabled ) {
+			this.submitPlansStepWithPremium();
+		}
 
 		this.props.goToNextStep();
 	},
