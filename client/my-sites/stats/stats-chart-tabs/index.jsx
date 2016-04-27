@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 
-var ElementChart = require( 'components/chart' ),
-	Legend = require( 'components/chart/legend' ),
-	StatTabs = require( '../stats-tabs' ),
-	analytics = require( 'lib/analytics' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
-	Card = require( 'components/card' );
+import ElementChart from 'components/chart';
+import Legend from 'components/chart/legend';
+import StatTabs from '../stats-tabs';
+import analytics from 'lib/analytics';
+import observe from 'lib/mixins/data-observe';
+import StatsModulePlaceholder from '../stats-module/placeholder';
+import Card from 'components/card';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StatModuleChartTabs',
 
 	mixins: [ observe( 'visitsList', 'activeTabVisitsList' ) ],
