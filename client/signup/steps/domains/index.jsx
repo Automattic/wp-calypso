@@ -16,7 +16,10 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
 	Notice = require( 'components/notice' ),
+	abtest = require( 'lib/abtest' ).abtest,
 	signupUtils = require( 'signup/utils' );
+
+const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 
 module.exports = React.createClass( {
 	displayName: 'DomainsStep',
@@ -108,7 +111,23 @@ module.exports = React.createClass( {
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ), [], { domainItem } );
 
+		if ( domainsWithPlansOnlyTestEnabled && isPurchasingItem ) {
+			this.submitPlansStepWithPremium();
+		}
+
 		this.props.goToNextStep();
+	},
+
+	submitPlansStepWithPremium() {
+		const premiumPlan = cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } );
+		SignupActions.submitSignupStep( {
+			processingMessage: this.translate( 'Adding your plan' ),
+			stepName: 'plans',
+			stepSectionName: this.props.stepSectionName,
+			cartItem: premiumPlan
+		}, [], {
+			cartItem: premiumPlan
+		} );
 	},
 
 	handleAddMapping: function( sectionName, domain, state ) {
@@ -123,6 +142,10 @@ module.exports = React.createClass( {
 			siteUrl: domain,
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ) );
+
+		if ( domainsWithPlansOnlyTestEnabled ) {
+			this.submitPlansStepWithPremium();
+		}
 
 		this.props.goToNextStep();
 	},
@@ -154,19 +177,21 @@ module.exports = React.createClass( {
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 
+		const isPlansOnlyTest = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 		return (
 			<RegisterDomainStep
 				path={ this.props.path }
 				initialState={ initialState }
 				onAddDomain={ this.handleAddDomain }
 				products={ this.state.products }
-				buttonLabel={ this.translate( 'Select' ) }
+				buttonLabel={ isPlansOnlyTest ? this.translate( 'Upgrade' ) : this.translate( 'Select' ) }
 				basePath={ this.props.path }
 				mapDomainUrl={ this.getMapDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
 				offerMappingOption
 				analyticsSection="signup"
+				withPlansOnly={ isPlansOnlyTest }
 				includeWordPressDotCom
 				showExampleSuggestions />
 		);
@@ -185,6 +210,7 @@ module.exports = React.createClass( {
 					onAddMapping={ this.handleAddMapping.bind( this, 'mappingForm' ) }
 					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
 					productsList={ productsList }
+					withPlansOnly={ abtest( 'domainsWithPlansOnly' ) === 'plansOnly' }
 					initialQuery={ initialQuery }
 					analyticsSection="signup" />
 			</div>

@@ -9,10 +9,12 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
-import CompactCard from 'components/card/compact';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 import { abtest } from 'lib/abtest';
+import PremiumPopover from 'components/plans/premium-popover';
+
+const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 
 module.exports = React.createClass( {
 	displayName: 'ExampleDomainSuggestions',
@@ -50,6 +52,19 @@ module.exports = React.createClass( {
 			return this.translate( 'Free' );
 		}
 
+		if ( cost && domainsWithPlansOnlyTestEnabled ) {
+			return (
+				<span className="example-domain-suggestions__premium-price" ref="premiumPrice">
+					{ this.translate( 'Included in Premium Plan' ) }
+					<PremiumPopover
+						context={ this.refs && this.refs.premiumPrice }
+						position="bottom left"
+						bindContextEvents
+					/>
+				</span>
+			);
+		}
+
 		return this.translate( 'Starting at %(cost)s {{small}}/ year{{/small}}', {
 			args: {
 				cost: cost
@@ -83,19 +98,27 @@ module.exports = React.createClass( {
 		let examples, mappingInformation;
 
 		if ( ! isEmpty( this.props.products ) ) {
-			mappingInformation = this.translate(
-				'{{strong}}Already own a domain?{{/strong}} ' +
-				'{{mappingLink}}Map it{{/mappingLink}} for %(mappingCost)s.', {
-					args: {
-						mappingCost: this.props.products.domain_map.cost_display
-					},
-
-					components: {
-						mappingLink: <a onClick={ this.handleClickMappingLink } href={ this.props.mapDomainUrl } />,
-						strong: <strong />
+			const components = {
+				mappingLink: <a onClick={ this.handleClickMappingLink } href={ this.props.mapDomainUrl } />,
+				strong: <strong />
+			};
+			if ( domainsWithPlansOnlyTestEnabled ) {
+				mappingInformation = this.translate(
+					'{{strong}}Already own a domain?{{/strong}} {{mappingLink}}Map it{{/mappingLink}} with WordPress.com' +
+					' Premium.',
+					{ components }
+				);
+			} else {
+				mappingInformation = this.translate(
+					'{{strong}}Already own a domain?{{/strong}} ' +
+					'{{mappingLink}}Map it{{/mappingLink}} for %(mappingCost)s.', {
+						args: {
+							mappingCost: this.props.products.domain_map.cost_display
+						},
+						components
 					}
-				}
-			);
+				);
+			}
 		} else {
 			mappingInformation = this.translate( 'Loading…' );
 		}
