@@ -42,8 +42,8 @@ export default React.createClass( {
 							className="devdocs__navigation-item"
 							icon="pencil"
 							label="Contributing"
-							link="/devdocs/CONTRIBUTING.md"
-							selected={ '/devdocs/CONTRIBUTING.md' === this.props.path }
+							link="/devdocs/.github/CONTRIBUTING.md"
+							selected={ '/devdocs/.github/CONTRIBUTING.md' === this.props.path }
 						/>
 					</ul>
 				</SidebarMenu>
