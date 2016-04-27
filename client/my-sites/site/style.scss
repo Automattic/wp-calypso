@@ -10,15 +10,6 @@
 	padding: 0;
 	position: relative;
 
-	&.is-redirect {
-		.site__title::before {
-			@include noticon( '\f458', 16px );
-			color: $gray;
-			margin: 0 3px 2px 0;
-			vertical-align: bottom;
-		}
-	}
-
 	&.is-loading {
 		.site-icon {
 			animation: pulse-light 0.8s ease-in-out infinite;

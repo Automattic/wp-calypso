@@ -239,6 +239,11 @@ export default React.createClass( {
 											<Gridicon icon="lock" size={ 14 } nonStandardSize />
 										</span>
 									}
+									{ site.options && site.options.is_redirect &&
+										<span className="site__badge">
+											<Gridicon icon="block" size={ 14 } nonStandardSize />
+										</span>
+									}
 									{ site.title }
 								</div>
 								<div className="site__domain">{ site.domain }</div>
