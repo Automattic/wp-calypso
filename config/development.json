@@ -36,7 +36,7 @@
 		"devdocs/redirect-loggedout-homepage": true,
 		"guided-tours": true,
 		"help": true,
-		"jetpack/calypso-first-signup-flow": true,
+		"jetpack/connect": true,
 		"jetpack_core_inline_update": true,
 		"keyboard-shortcuts": true,
 		"login": true,

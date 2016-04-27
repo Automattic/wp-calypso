@@ -58,7 +58,7 @@ export default React.createClass( {
 				<StepHeader
 					headerText={ this.headerText() }
 					subHeaderText={ this.subHeaderText() }>
-					{ config.isEnabled( 'jetpack/calypso-first-signup-flow' )
+					{ config.isEnabled( 'jetpack/connect' )
 						? ( this.props.headerButton )
 						: null }
 				</StepHeader>
