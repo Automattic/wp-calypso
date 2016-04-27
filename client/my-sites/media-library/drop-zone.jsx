@@ -18,18 +18,14 @@ module.exports = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		fullScreen: React.PropTypes.bool,
-		onBeforeAddMedia: React.PropTypes.func,
 		onAddMedia: React.PropTypes.func,
-		onAfterAddMedia: React.PropTypes.func,
 		trackStats: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
 		return {
 			fullScreen: true,
-			onBeforeAddMedia: noop,
 			onAddMedia: noop,
-			onAfterAddMedia: noop,
 			trackStats: true
 		};
 	},
@@ -39,13 +35,9 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		this.props.onBeforeAddMedia( files )
-			.then(() => {
-				MediaActions.clearValidationErrors( this.props.site.ID );
-				MediaActions.add( this.props.site.ID, files );
-				return this.props.onAddMedia();
-			})
-			.then( () => this.props.onAfterAddMedia() );
+		MediaActions.clearValidationErrors( this.props.site.ID );
+		MediaActions.add( this.props.site.ID, files );
+		this.props.onAddMedia();
 
 		if ( this.props.trackStats ) {
 			analytics.mc.bumpStat( 'editor_upload_via', 'drop' );
