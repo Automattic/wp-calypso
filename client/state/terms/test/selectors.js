@@ -38,15 +38,15 @@ describe( 'selectors', () => {
 		it( 'should return array of matching terms for site taxonomy combo', () => {
 			const terms = getSiteTaxonomyTerms( {
 				terms: {
-					'777': {
+					777: {
 						'jetpack-portfolio': {
 							111: {
-								'ID': 111,
-								'name': 'Chicken and a biscuit'
+								ID: 111,
+								name: 'Chicken and a biscuit'
 							},
 							112: {
-								'ID': 112,
-								'name': 'Ribs'
+								ID: 112,
+								name: 'Ribs'
 							}
 						}
 					}
@@ -55,11 +55,11 @@ describe( 'selectors', () => {
 
 			expect( terms ).to.eql( [
 				{
-					'ID': 111,
-					'name': 'Chicken and a biscuit' 
-				},{
-					'ID': 112,
-					'name': 'Ribs'
+					ID: 111,
+					name: 'Chicken and a biscuit'
+				}, {
+					ID: 112,
+					name: 'Ribs'
 				}
 			] );
 		} );
