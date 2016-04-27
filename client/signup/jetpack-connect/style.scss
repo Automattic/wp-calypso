@@ -90,3 +90,15 @@
 		width: 100%;
 	}
 }
+
+
+.jetpack-connect__redirecting {
+	width: 100%;
+	z-index: 3;
+	height: 100%;
+	background: $border-ultra-light-gray; // This is the color of the background on the old jetpack connection screen, and we need to replicate it to avoid color jumps on the redirection
+	position: fixed;
+		top: 0;
+		left: 0;
+	z-index: z-index( 'root', '.jetpack-connect__redirect' );
+}
