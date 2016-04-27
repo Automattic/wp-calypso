@@ -84,6 +84,7 @@ export default React.createClass( {
 					ref="input"
 					autofocus={ this.props.autofocus }
 					disabled={ this.props.disabled }
+					maxLength={ this.props.maxLength }
 					onChange={ this.props.onChange }
 					onClick={ this.recordFieldClick }
 					isError={ this.props.isError } />
