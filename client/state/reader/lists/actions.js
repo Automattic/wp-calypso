@@ -86,7 +86,16 @@ export function requestList( owner, slug ) {
 
 		return new Promise( ( resolve, reject ) => {
 			wpcom.undocumented().readList( query, ( error, data ) => {
-				error ? reject( error ) : resolve( data );
+				if ( error ) {
+					const errorInfo = {
+						error,
+						owner,
+						slug
+					};
+					reject( errorInfo );
+				} else {
+					resolve( data );
+				}
 			} );
 		} )
 		.then( ( data ) => {
@@ -95,10 +104,12 @@ export function requestList( owner, slug ) {
 				data
 			} );
 		} )
-		.catch( ( error ) => {
+		.catch( ( errorInfo ) => {
 			dispatch( {
 				type: READER_LIST_REQUEST_FAILURE,
-				error
+				error: errorInfo.error,
+				owner: errorInfo.owner,
+				slug: errorInfo.slug
 			} );
 		} );
 	};
