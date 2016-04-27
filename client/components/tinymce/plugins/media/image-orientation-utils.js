@@ -28,7 +28,7 @@ export function getImageOrientation( file ) {
 /**
  * Change the orientation of an image
  *
- * @returns { Blob } Blob containing the re-orientated image
+ * @returns { string } Blob URL pointing to the re-oriented image
  *
  * @param { string } url --  The image URL
  * @param { int } orientation -- Desired orientation
@@ -43,7 +43,9 @@ export function changeImageOrientation( url, orientation, options = {} ) {
           if ( 'error' === res.type ) {
             reject( new Error( 'Unable to change image orientation' ) );
           } else {
-            res.toBlob( blob => resolve( blob ) );
+            res.toBlob( blob => {
+              resolve( loadImage.createObjectURL( blob ) );
+            });
           }
         },
         assign( { orientation: orientation }, options )

@@ -161,8 +161,8 @@ export default React.createClass( {
 						return changeImageOrientation( selectedItem.URL, orientation, {
 								maxWidth: editor.getBody().clientWidth
 							} )
-							.then( blob => {
-								selectedItem.URL = URL.createObjectURL( blob );
+							.then( url => {
+								selectedItem.URL = url;
 								return selectedItem;
 							} )
 							.catch( error => {
