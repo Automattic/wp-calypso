@@ -9,6 +9,7 @@ import filter from 'lodash/filter';
 import get from 'lodash/get';
 import omit from 'lodash/omit';
 import find from 'lodash/find';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -223,8 +224,8 @@ export function missingLists( state = [], action ) {
 				return action.data.list.owner !== list.owner && action.data.list.slug !== list.slug;
 			} );
 		case READER_LIST_REQUEST_FAILURE:
-			// Add lists that have failed with a 404 to missingLists
-			if ( ! action.error || action.error.statusCode !== 404 ) {
+			// Add lists that have failed with a 403 or 404 to missingLists
+			if ( ! action.error || ! includes( [ 403, 404 ], action.error.statusCode ) ) {
 				return state;
 			}
 			return union( state, [ { owner: action.owner, slug: action.slug } ] );
