@@ -177,10 +177,10 @@ const flows = {
 	},
 
 	'domains-with-premium': {
-		steps: [ 'themes', 'domains', 'user' ],
+		steps: [ 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'Test for domains with plans only',
-		lastModified: '2016-04-20'
+		lastModified: '2016-04-27'
 	},
 
 	'site-user': {
