@@ -3,7 +3,6 @@
  */
 import { combineReducers } from 'redux';
 import merge from 'lodash/merge';
-import uniq from 'lodash/uniq';
 import get from 'lodash/get';
 import keyBy from 'lodash/keyBy';
 
@@ -16,34 +15,8 @@ import {
 } from 'state/action-types';
 import { isValidStateWithSchema } from 'state/utils';
 import {
-	termsSchema,
-	taxonomiesSchema
+	termsSchema
 } from './schema';
-
-export function taxonomyTerms( state = {}, action ) {
-	switch ( action.type ) {
-		case TERMS_RECEIVE:
-			const currentTaxonomyTermIds = get( state, [ action.siteId, action.taxonomy ], [] );
-			// This feels a bit odd to me, but uncertain of best way to handle paginated data?
-			// Perhaps a new action.type TERMS_PAGE_RECIEVE?
-			const newTaxonomyTermIds = uniq( currentTaxonomyTermIds.concat( action.terms.map( ( term ) => term.ID ) ) );
-			const newState = {
-				[ action.siteId ]: {
-					[ action.taxonomy ]: newTaxonomyTermIds
-				}
-			};
-			return merge( {}, state, newState );
-
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, taxonomiesSchema ) ) {
-				return state;
-			}
-
-			return {};
-	}
-
-	return state;
-}
 
 /**
  * Returns the updated terms state after an action has been dispatched.
@@ -56,8 +29,17 @@ export function taxonomyTerms( state = {}, action ) {
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case TERMS_RECEIVE:
+			const existingSiteTaxonomies = get( state, [ action.siteId ], {} );
+			const existingTaxonomyTerms = get( state, [ action.siteId, action.taxonomy ], {} );
+
+			const newTaxonomyTerms = merge( {}, existingTaxonomyTerms, keyBy( action.terms, 'ID' ) );
+
+			const newSiteTaxonomies = merge( {}, existingSiteTaxonomies, {
+				[ action.taxonomy ]: newTaxonomyTerms
+			} );
+
 			return merge( {}, state, {
-				[ action.siteId ]: keyBy( action.terms, 'ID' )
+				[ action.siteId ]: newSiteTaxonomies
 			} );
 
 		case DESERIALIZE:
@@ -72,6 +54,5 @@ export function items( state = {}, action ) {
 }
 
 export default combineReducers( {
-	taxonomyTerms,
 	items
 } );
