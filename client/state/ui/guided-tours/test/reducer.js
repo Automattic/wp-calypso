@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	SHOW_GUIDED_TOUR,
+	GUIDED_TOUR_SHOW,
 } from 'state/action-types';
 import { guidedTour } from '../reducer';
 
@@ -21,7 +21,7 @@ describe( 'reducer', () => {
 
 		it( 'should set a tour to be shown', () => {
 			const state = guidedTour( undefined, {
-				type: SHOW_GUIDED_TOUR,
+				type: GUIDED_TOUR_SHOW,
 				shouldShow: true,
 				tour: 'foo',
 			} );
