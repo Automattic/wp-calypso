@@ -4,8 +4,8 @@
 import {
 	SELECTED_SITE_SET,
 	SET_SECTION,
-	SHOW_GUIDED_TOUR,
-	UPDATE_GUIDED_TOUR,
+	GUIDED_TOUR_SHOW,
+	GUIDED_TOUR_UPDATE,
 } from 'state/action-types';
 
 import {
@@ -59,7 +59,7 @@ export function setSection( section, options = {} ) {
  */
 export function showGuidedTour( { shouldShow, shouldDelay = false, tour = 'main' } ) {
 	const showAction = {
-		type: SHOW_GUIDED_TOUR,
+		type: GUIDED_TOUR_SHOW,
 		shouldShow,
 		shouldDelay,
 		tour,
@@ -75,7 +75,7 @@ export function showGuidedTour( { shouldShow, shouldDelay = false, tour = 'main'
 
 export function quitGuidedTour( { tour = 'main', stepName, finished } ) {
 	const quitAction = {
-		type: UPDATE_GUIDED_TOUR,
+		type: GUIDED_TOUR_UPDATE,
 		shouldShow: false,
 		shouldReallyShow: false,
 		shouldDelay: false,
@@ -93,7 +93,7 @@ export function quitGuidedTour( { tour = 'main', stepName, finished } ) {
 }
 export function nextGuidedTourStep( { tour = 'main', stepName } ) {
 	const nextAction = {
-		type: UPDATE_GUIDED_TOUR,
+		type: GUIDED_TOUR_UPDATE,
 		stepName,
 	};
 
