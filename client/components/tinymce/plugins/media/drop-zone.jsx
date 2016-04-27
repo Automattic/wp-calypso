@@ -3,7 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import noop from 'lodash/noop';
-import loadImage from 'blueimp-load-image';
 import debugModule from 'debug';
 import config from 'config';
 
@@ -21,6 +20,10 @@ import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaValidationStore from 'lib/media/validation-store';
 import markup from 'post-editor/media-modal/markup';
 import MediaStore from 'lib/media/store';
+import {
+	getImageOrientation,
+	changeImageOrientation
+} from './image-orientation-utils';
 
 const debug = debugModule( 'calypso:media' );
 
@@ -113,7 +116,7 @@ export default React.createClass( {
 		// finishes.
 		// Once re-orientation completes, we can unblock saving (handled in `afterInsertMedia`)
 		if ( isSingleImage ) {
-			return this._getImageOrientation( files[0] )
+			return getImageOrientation( files[0] )
 				.then( orientation => {
 					if ( orientation > 1 ) {
 						PostActions.blockSave( 'MEDIA_MODAL_IMAGE_TRANSFORMATION' );
@@ -126,7 +129,7 @@ export default React.createClass( {
 	},
 
 	insertMedia() {
-		const { sites, onInsertMedia, onRenderModal } = this.props;
+		const { editor, sites, onInsertMedia, onRenderModal } = this.props;
 		const site = sites.getSelectedSite();
 
 		if ( ! site ) {
@@ -154,13 +157,28 @@ export default React.createClass( {
 					// changes are necessary.
 					if ( orientation > 1 ) {
 						debug( 'Image orientation: %d', orientation );
-						return this._modifyImageOrientation( selectedItem, orientation );
+
+						return changeImageOrientation( selectedItem.URL, orientation, {
+								maxWidth: editor.getBody().clientWidth
+							} )
+							.then( blob => {
+								selectedItem.URL = URL.createObjectURL( blob );
+								return selectedItem;
+							} )
+							.catch( error => {
+								debug( error );
+								// If an error occured, while unfortunate, we can still
+		            // proceed and simply use the unaltered image. Of course,
+		            // this will mean that the image orientation will not be
+		            // fixed when previewing.
+								return selectedItem;
+							} )
 					}
 					return Promise.resolve( selectedItem );
 				}
 
 				// Read Exif data first to determine orientation.
-				return this._getImageOrientation( selectedItem.original )
+				return getImageOrientation( selectedItem.original )
 					.then( handleImageOrientation )
 					.then( result => onInsertMedia( markup.get( result ) ) )
 					.then( () => MediaActions.setLibrarySelectedItems( site.ID, [] ) )
@@ -206,65 +224,6 @@ export default React.createClass( {
 				onAddMedia={ this.insertMedia }
 				onAfterAddMedia={ this.afterInsertMedia } />
 		);
-	},
-
-	_getImageOrientation( file ) {
-		// Attempt to retrieve orientation from cache
-		this._orientationCache = this._orientationCache || {};
-		const name = file.name;
-		const orientation = this._orientationCache[ name ];
-		if ( orientation ) {
-		  return Promise.resolve( orientation );
-		}
-
-		return new Promise ( resolve => {
-			loadImage.parseMetaData( file, data => {
-				let orientation = data.exif ? data.exif.get( 'Orientation' ) : -1;
-				this._orientationCache[ name ] = orientation;
-				resolve( orientation );
-			}, {
-				// Save on computation by disabling the following Exif properties
-				// (Although technically all Exif data is stored in the first 256 KiB,
-				// so it's really not that *big* of a deal)
-				disableExifThumbnail: true,
-				disableExifSub: true,
-				disableExifGps: true
-			} );
-		} );
-	},
-
-	_modifyImageOrientation( media, orientation ) {
-		// Use `loadImage` do create a new image with the specified orientation.
-		// Behind the scenes, `loadImage` does the following:
-		// 		1. Create a canvas
-		// 		2. Change the orientation
-		//  	3. Assign the resulting data URI to the image
-		const { editor } = this.props;
-		return new Promise( resolve => {
-			loadImage(
-					media.URL,
-					res => {
-						if ( 'error' === res.type ) {
-							// If an error occured, while unfortunate, we can still
-							// proceed and simply use the unaltered image. Of course,
-							// this will mean that the image orientation will not be
-							// fixed when previewing.
-							debug( 'Failed to orient image. Defaulting to unaltered state' );
-						} else {
-							media.URL = res.toDataURL()
-						}
-						resolve( media )
-					}, {
-						orientation: orientation,
-						// Limit the width of the resulting image to the width of
-						// TinyMCE's body. This will result in the constructed image
-						// to be of a *reasonable* file size, otherwise large images
-						// will have debilitatingly large data URIs, which will
-						// adversely affect UX.
-						maxWidth: editor.getBody().clientWidth
-					}
-			);
-		} );
 	}
 
 } );
