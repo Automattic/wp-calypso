@@ -29,6 +29,7 @@ var abtest = require( 'lib/abtest' ).abtest,
 	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' );
 
 import Button from 'components/button';
+import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
 import DraftsButton from 'post-editor/drafts-button';
 import Tooltip from 'components/tooltip';
@@ -187,25 +188,31 @@ module.exports = React.createClass( {
 					label={ this.translate( 'Customize' ) }
 					className={ this.itemLinkClass( '/design', 'themes' ) }
 					link={ getCustomizeUrl( null, site ) }
-					buttonLink={ themesLink }
-					buttonLabel={ this.translate( 'Themes' ) }
 					onNavigate={ this.onNavigate }
 					icon={ 'themes' }
-					preloadSectionName="themes" />
+					preloadSectionName="customize"
+				>
+					<SidebarButton href={ themesLink } preloadSectionName="themes">
+						{ this.translate( 'Themes' ) }
+					</SidebarButton>
+				</SidebarItem>
 			);
 		}
 
 		return (
 			<SidebarItem
-				tipTarget="themes"
 				label={ this.translate( 'Themes' ) }
+				tipTarget="themes"
 				className={ this.itemLinkClass( '/design', 'themes' ) }
 				link={ themesLink }
-				buttonLink={ getCustomizeUrl( null, site ) }
-				buttonLabel={ this.translate( 'Customize' ) }
 				onNavigate={ this.onNavigate }
-				icon={ 'themes' }
-				preloadSectionName="themes" />
+				icon="themes"
+				preloadSectionName="themes"
+			>
+				<SidebarButton href={ getCustomizeUrl( null, site ) } preloadSectionName="customize">
+					{ this.translate( 'Customize' ) }
+				</SidebarButton>
+			</SidebarItem>
 		);
 	},
 
@@ -278,11 +285,14 @@ module.exports = React.createClass( {
 				label={ this.translate( 'Plugins' ) }
 				className={ this.itemLinkClass( '/plugins', 'plugins' ) }
 				link={ pluginsLink }
-				buttonLink={ addPluginsLink }
-				buttonLabel={ this.translate( 'Add' ) }
 				onNavigate={ this.onNavigate }
 				icon="plugins"
-				preloadSectionName="plugins" />
+				preloadSectionName="plugins"
+			>
+				<SidebarButton href={ addPluginsLink }>
+					{ this.translate( 'Add' ) }
+				</SidebarButton>
+			</SidebarItem>
 		);
 	},
 
@@ -316,11 +326,14 @@ module.exports = React.createClass( {
 				label={ this.translate( 'Domains' ) }
 				className={ this.itemLinkClass( [ '/domains' ], 'domains' ) }
 				link={ domainsLink }
-				buttonLink={ addDomainLink }
-				buttonLabel={ this.translate( 'Add' ) }
 				onNavigate={ this.onNavigate }
 				icon="globe"
-				preloadSectionName="upgrades" />
+				preloadSectionName="upgrades"
+			>
+				<SidebarButton href={ addDomainLink }>
+					{ this.translate( 'Add' ) }
+				</SidebarButton>
+			</SidebarItem>
 		);
 	},
 
@@ -442,11 +455,14 @@ module.exports = React.createClass( {
 				label={ this.translate( 'People' ) }
 				className={ this.itemLinkClass( '/people', 'users' ) }
 				link={ usersLink }
-				buttonLink={ addPeopleLink }
-				buttonLabel={ this.translate( 'Add' ) }
 				onNavigate={ this.onNavigate }
 				icon="user"
-				preloadSectionName="people" />
+				preloadSectionName="people"
+			>
+				<SidebarButton href={ addPeopleLink }>
+					{ this.translate( 'Add' ) }
+				</SidebarButton>
+			</SidebarItem>
 		);
 	},
 

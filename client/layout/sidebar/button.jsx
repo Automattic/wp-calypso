@@ -13,7 +13,7 @@ export default React.createClass( {
 	displayName: 'SidebarButton',
 
 	propTypes: {
-		href: React.PropTypes.string.isRequired,
+		href: React.PropTypes.string,
 		onClick: React.PropTypes.func,
 		preloadSectionName: React.PropTypes.string
 	},
@@ -28,13 +28,18 @@ export default React.createClass( {
 	},
 
 	render() {
+		if ( ! this.props.href ) {
+			return null;
+		}
+
 		return (
 			<a
-				rel={ isExternal( this.props.href ) && 'external' }
+				rel={ isExternal( this.props.href ) ? 'external' : null }
 				onClick={ this.props.onClick }
 				href={ this.props.href }
-				target={ isExternal( this.props.href ) && '_blank' }
+				target={ isExternal( this.props.href ) ? '_blank' : null }
 				className="sidebar__button"
+				onMouseEnter={ this.preload }
 			>
 				{ this.props.children || this.translate( 'Add' ) }
 			</a>
