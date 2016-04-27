@@ -24,31 +24,31 @@ export function isValidStateWithSchema( state, schema, checkForCycles = false, b
 	return result.valid;
 }
 
-export function createReducer( actionReducers, defaultState = null, schema = null ) {
-	const defaultActionReducers = {
+export function createReducer( initialState = null, handlers = {}, schema = null ) {
+	const defaultHandlers = {
 		[SERIALIZE]: ( state ) => {
 			if ( schema !== null ) {
 				return state;
 			}
 
-			return defaultState;
+			return initialState;
 		},
 		[DESERIALIZE]: ( state ) => {
 			if ( schema !== null && isValidStateWithSchema( state, schema ) ) {
 				return state;
 			}
 
-			return defaultState;
+			return initialState;
 		}
 	};
 
-	actionReducers = Object.assign( {}, defaultActionReducers, actionReducers );
+	handlers = Object.assign( {}, defaultHandlers, handlers );
 
-	return ( state = defaultState, action ) => {
+	return ( state = initialState, action ) => {
 		const { type } = action;
 
-		if ( actionReducers[ type ] ) {
-			return actionReducers[ type ]( state, action );
+		if ( handlers.hasOwnProperty( type ) ) {
+			return handlers[ type ]( state, action );
 		}
 
 		return state;

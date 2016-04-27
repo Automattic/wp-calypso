@@ -16,7 +16,7 @@ import { testSchema } from './mocks/schema';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'utils', () => {
-	const initialState = deepFreeze( {
+	const currentState = deepFreeze( {
 			test: [ 'one', 'two', 'three' ]
 		} ),
 		actionSerialize = { type: SERIALIZE },
@@ -43,8 +43,8 @@ describe( 'utils', () => {
 				const invalidAction = {};
 
 				expect(
-					reducer( initialState, invalidAction )
-				).to.be.deep.equal( initialState );
+					reducer( currentState, invalidAction )
+				).to.be.deep.equal( currentState );
 			} );
 
 			it( 'should return initial state when unknown action type passed', () => {
@@ -53,47 +53,47 @@ describe( 'utils', () => {
 				};
 
 				expect(
-					reducer( initialState, unknownAction )
-				).to.be.deep.equal( initialState );
+					reducer( currentState, unknownAction )
+				).to.be.deep.equal( currentState );
 			} );
 
 			it( 'should return default null state when serialize action type passed', () => {
 				expect(
-					reducer( initialState, actionSerialize )
+					reducer( currentState, actionSerialize )
 				).to.be.null;
 			} );
 
 			it( 'should return default null state when deserialize action type passed', () => {
 				expect(
-					reducer( initialState, actionDeserialize )
+					reducer( currentState, actionDeserialize )
 				).to.be.null;
 			} );
 		} );
 
 		context( 'with reducers and default state provided', () => {
-			const defaultState = {},
+			const initialState = {},
 				TEST_ADD = 'TEST_ADD';
 
 			before( () => {
-				reducer = createReducer( {
+				reducer = createReducer( initialState, {
 					[TEST_ADD]: ( state, action ) => {
 						return {
 							test: [ ...state.test, action.value ]
 						};
 					}
-				}, defaultState );
+				} );
 			} );
 
 			it( 'should return default {} state when SERIALIZE action type passed', () => {
 				expect(
-					reducer( initialState, actionSerialize )
-				).to.be.equal( defaultState );
+					reducer( currentState, actionSerialize )
+				).to.be.equal( initialState );
 			} );
 
 			it( 'should return default {} state when DESERIALIZE action type passed', () => {
 				expect(
-					reducer( initialState, actionDeserialize )
-				).to.be.equal( defaultState );
+					reducer( currentState, actionDeserialize )
+				).to.be.equal( initialState );
 			} );
 
 			it( 'should add new value to test array when acc action passed', () => {
@@ -102,9 +102,9 @@ describe( 'utils', () => {
 					value: 'four'
 				};
 
-				const newState = reducer( initialState, addAction );
+				const newState = reducer( currentState, addAction );
 
-				expect( newState ).to.not.equal( initialState );
+				expect( newState ).to.not.equal( currentState );
 				expect( newState ).to.be.eql( {
 					test: [ 'one', 'two', 'three', 'four' ]
 				} );
@@ -112,28 +112,28 @@ describe( 'utils', () => {
 		} );
 
 		context( 'with schema provided', () => {
-			const defaultState = {};
+			const initialState = {};
 
 			before( () => {
-				reducer = createReducer( {}, defaultState, testSchema );
+				reducer = createReducer( initialState, {}, testSchema );
 			} );
 
 			it( 'should return initial state when serialize action type passed', () => {
 				expect(
-					reducer( initialState, actionSerialize )
-				).to.be.deep.equal( initialState );
+					reducer( currentState, actionSerialize )
+				).to.be.deep.equal( currentState );
 			} );
 
 			it( 'should return initial state when valid initial state and deserialize action type passed', () => {
 				expect(
-					reducer( initialState, actionDeserialize )
-				).to.be.deep.equal( initialState );
+					reducer( currentState, actionDeserialize )
+				).to.be.deep.equal( currentState );
 			} );
 
 			it( 'should return default state when invalid initial state and deserialize action type passed', () => {
 				expect(
 					reducer( { invalid: 'state' }, actionDeserialize )
-				).to.be.deep.equal( defaultState );
+				).to.be.deep.equal( initialState );
 			} );
 		} );
 
@@ -141,7 +141,7 @@ describe( 'utils', () => {
 			const overriddenState = { overridden: 'state' };
 
 			before( () => {
-				reducer = createReducer( {
+				reducer = createReducer( null, {
 					[SERIALIZE]: () => overriddenState,
 					[DESERIALIZE]: () => overriddenState
 				} );
@@ -149,13 +149,13 @@ describe( 'utils', () => {
 
 			it( 'should return overridden state when serialize action type passed', () => {
 				expect(
-					reducer( initialState, actionSerialize )
+					reducer( currentState, actionSerialize )
 				).to.be.deep.equal( overriddenState );
 			} );
 
 			it( 'should return overridden state when deserialize action type passed', () => {
 				expect(
-					reducer( initialState, actionDeserialize )
+					reducer( currentState, actionDeserialize )
 				).to.be.deep.equal( overriddenState );
 			} );
 		} );

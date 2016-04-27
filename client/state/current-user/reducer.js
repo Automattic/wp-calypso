@@ -23,9 +23,9 @@ import { idSchema, capabilitiesSchema } from './schema';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const id = createReducer( {
+export const id = createReducer( null, {
 	[CURRENT_USER_ID_SET]: ( state, action ) => action.userId
-}, null, idSchema );
+}, idSchema );
 
 /**
  * Returns the updated capabilities state after an action has been dispatched.
