@@ -216,11 +216,12 @@ export default React.createClass( {
 					{ ...fieldProps( 'country-code' ) }/>
 
 				{ this.needsFax() && <Input label={ this.translate( 'Fax', { textOnly } ) } { ...fieldProps( 'fax' ) }/> }
-				<Input label={ this.translate( 'Address', { textOnly } ) } { ...fieldProps( 'address-1' ) }/>
+				<Input label={ this.translate( 'Address', { textOnly } ) } maxLength={ 40 } { ...fieldProps( 'address-1' ) }/>
 
 				<HiddenInput
 					label={ this.translate( 'Address Line 2', { textOnly } ) }
 					text={ this.translate( '+ Add Address Line 2', { textOnly } ) }
+					maxLength={ 40 }
 					{ ...fieldProps( 'address-2' ) }/>
 
 				<Input label={ this.translate( 'City', { textOnly } ) } { ...fieldProps( 'city' ) }/>
