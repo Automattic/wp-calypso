@@ -15,7 +15,7 @@ import {
 	isTheme
 } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
-import config from 'config';
+import { abtest } from 'lib/abtest';
 
 const getIncludedDomain = cartItems.getIncludedDomain;
 
@@ -57,7 +57,7 @@ export default React.createClass( {
 
 	monthlyPrice: function() {
 		const { cost, currency } = this.props.cartItem;
-		if ( ! config.isEnabled( 'monthly-plan-pricing' ) || cost === 0 ) {
+		if ( abtest( 'planPricing' ) === 'annual' || cost === 0 ) {
 			return null;
 		}
 
@@ -93,7 +93,7 @@ export default React.createClass( {
 		if ( isGoogleApps( this.props.cartItem ) && this.props.cartItem.extra.google_apps_users ) {
 			info = this.props.cartItem.extra.google_apps_users.map( user => <div>{ user.email }</div> );
 		} else if ( isCredits( this.props.cartItem ) ) {
-			info = null
+			info = null;
 		} else if ( getIncludedDomain( this.props.cartItem ) ) {
 			info = getIncludedDomain( this.props.cartItem );
 		} else if ( isTheme( this.props.cartItem ) ) {
