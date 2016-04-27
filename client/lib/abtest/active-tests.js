@@ -94,13 +94,13 @@ module.exports = {
 		allowAnyLocale: true
 	},
 	domainsWithPlansOnly: {
-		datestamp: '20000101',
+		datestamp: '20200101',
 		variations: {
 			original: 50,
 			plansOnly: 50
 		},
 		defaultVariation: 'original',
-		allowExistingUsers: true
+		allowExistingUsers: false
 	},
 	triforce: {
 		datestamp: '20160421',
