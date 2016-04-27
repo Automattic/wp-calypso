@@ -24,6 +24,7 @@ import untrailingslashit from 'lib/route/untrailingslashit';
 import trailingslashit from 'lib/route/trailingslashit';
 import { isFrontPage } from 'my-sites/pages/helpers';
 import Traverser from 'lib/tree-convert/tree-traverser';
+import TreeConvert from 'lib/tree-convert';
 import { decodeEntities } from 'lib/formatting';
 import postEditStore from 'lib/posts/actions';
 
@@ -39,18 +40,6 @@ var NEWPAGE_MENU_ITEM_ID = -100;
 
 export function isInjectedNewPageItem( content ) {
 	return content.content_id === NEWPAGE_MENU_ITEM_ID;
-}
-
-function deepFilterInjectedNewPageItems( menuObject, found = [] ) {
-	if ( isInjectedNewPageItem( menuObject ) ) {
-		found.push( menuObject );
-	}
-
-	isArray( menuObject.items ) && menuObject.items.forEach(
-		item => deepFilterInjectedNewPageItems( item, found )
-	);
-
-	return found;
 }
 
 /**
@@ -475,8 +464,8 @@ MenuData.prototype.saveMenu = function( menu, callback ) {
 	//We will create new pages if need be, and then save edited menu
 	//Post edit store requires the promises te be sequential, so we need to build a chain.
 	//1. Filter injected 'create new page' items
-	deepFilterInjectedNewPageItems( menu )
-	//2. Chain all primisses with calls creating a new page
+	TreeConvert().untreeify( menu.items ).filter( isInjectedNewPageItem )
+	//2. Chain all promisses with calls creating a new page
 	.reduce(
 		( previousNewPagePromise, menuItem ) => previousNewPagePromise.then( () => this.createNewPagePromise( menuItem, this.siteID ) ),
 		Promise.resolve()
