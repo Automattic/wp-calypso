@@ -180,7 +180,7 @@ const LoggedInForm = React.createClass( {
 		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
 		if ( this.props.jetpackConnectSessions && this.props.jetpackConnectSessions[ site ] ) {
 			const currentTime = ( new Date() ).getTime();
-			const oneDay = 24 * 60 * 60;
+			const oneDay = 24 * 60 * 60 * 1000;
 			return ( currentTime - this.props.jetpackConnectSessions[ site ] < oneDay );
 		}
 		return false;
