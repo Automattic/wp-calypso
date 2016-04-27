@@ -11,6 +11,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import cloneDeepWith from 'lodash/cloneDeepWith';
 import findIndex from 'lodash/findIndex';
 import iteratee from 'lodash/iteratee';
+import isArray from 'lodash/isArray';
 
 /**
  * Internal dependencies
@@ -38,6 +39,18 @@ var NEWPAGE_MENU_ITEM_ID = -100;
 
 export function isInjectedNewPageItem( content ) {
 	return content.content_id === NEWPAGE_MENU_ITEM_ID;
+}
+
+function deepFilterInjectedNewPageItems( menuObject, found = [] ) {
+	if ( isInjectedNewPageItem( menuObject ) ) {
+		found.push( menuObject );
+	}
+
+	isArray( menuObject.items ) && menuObject.items.forEach(
+		item => deepFilterInjectedNewPageItems( item, found )
+	);
+
+	return found;
 }
 
 /**
@@ -459,21 +472,20 @@ MenuData.prototype.saveMenu = function( menu, callback ) {
 
 	debug( 'saveMenu', menu );
 
-	const self = this;
-
-	/*
-	Because of how postEditStore works, we need to fire promises one after another.
-	 */
-	menu.items.filter(
-		isInjectedNewPageItem
-	).reduce(
-		( previousNewPagePromise, menuItem ) => previousNewPagePromise.then( () => self.createNewPagePromise( menuItem, self.siteID ) ),
+	//We will create new pages if need be, and then save edited menu
+	//Post edit store requires the promises te be sequential, so we need to build a chain.
+	//1. Filter injected 'create new page' items
+	deepFilterInjectedNewPageItems( menu )
+	//2. Chain all primisses with calls creating a new page
+	.reduce(
+		( previousNewPagePromise, menuItem ) => previousNewPagePromise.then( () => this.createNewPagePromise( menuItem, this.siteID ) ),
 		Promise.resolve()
 	)
 	.catch( error => {
-		self.emit( 'error', i18n.translate( 'There was a problem saving your menu.' ) );
+		this.emit( 'error', i18n.translate( 'There was a problem saving your menu.' ) );
 		debug( 'Error', error );
 	} )
+	//3. Save menu
 	.then( this.sendMenuToApi.bind( this, menu, callback ) );
 };
 
