@@ -11,11 +11,12 @@ import merge from 'lodash/merge';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	DESERIALIZE,
+	SERIALIZE,
 	TERMS_RECEIVE
 } from 'state/action-types';
 import reducer, {
-	items,
-	taxonomyTerms
+	items
 } from '../reducer';
 
 /**
@@ -41,11 +42,46 @@ describe( 'reducer', () => {
 
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'taxonomyTerms', 'items'
+			'items'
 		] );
 	} );
 
 	describe( '#items()', () => {
+		it( 'should persist state', () => {
+			const original = deepFreeze( {
+				777: {
+					'jetpack-portfolio': keyedTestTerms
+				}
+			} );
+			const state = items( original, { type: SERIALIZE } );
+
+			expect( state ).to.eql( original );
+		} );
+
+		it( 'should load valid persisted state', () => {
+			const original = deepFreeze( {
+				777: {
+					'jetpack-portfolio': keyedTestTerms
+				}
+			} );
+			const state = items( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( original );
+		} );
+
+		it( 'should not load invalid persisted state', () => {
+			const original = deepFreeze( {
+				777: {
+					'jetpack-portfolio': {
+						111: {}
+					}
+				}
+			} );
+			const state = items( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {} );
+		} );
+
 		it( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
@@ -61,13 +97,40 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				777: keyedTestTerms
+				777: {
+					'jetpack-portfolio': keyedTestTerms
+				}
+			} );
+		} );
+
+		it( 'should accumulate received terms by taxonomy', () => {
+			const original = deepFreeze( {
+				777: {
+					'jetpack-portfolio': keyedTestTerms
+				}
+			} );
+
+			const state = items( original, {
+				type: TERMS_RECEIVE,
+				siteId: 777,
+				taxonomy: 'jetpack-portfolio',
+				terms: moreTerms
+			} );
+
+			const expectedTerms = merge( {}, keyedTestTerms, keyedMoreTerms );
+
+			expect( state ).to.eql( {
+				777: {
+					'jetpack-portfolio': expectedTerms
+				}
 			} );
 		} );
 
 		it( 'should add additional terms', () => {
 			const original = deepFreeze( {
-				777: keyedTestTerms
+				777: {
+					'jetpack-portfolio': keyedTestTerms
+				}
 			} );
 
 			const state = items( original, {
@@ -77,75 +140,10 @@ describe( 'reducer', () => {
 				terms: moreTerms
 			} );
 
-			const expectedState = merge( {}, keyedTestTerms, keyedMoreTerms );
-
-			expect( state ).to.eql( {
-				777: expectedState
-			} );
-		} );
-	} );
-
-	describe( '#taxonomies()', () => {
-		it( 'should default to an empty object', () => {
-			const state = taxonomyTerms( undefined, {} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should add received term IDs by taxonomy', () => {
-			const state = taxonomyTerms( undefined, {
-				type: TERMS_RECEIVE,
-				siteId: 777,
-				taxonomy: 'jetpack-portfolio',
-				terms: testTerms
-			} );
-
 			expect( state ).to.eql( {
 				777: {
-					'jetpack-portfolio': [ 111, 123 ]
-				}
-			} );
-		} );
-
-		it( 'should add additional term IDs by taxonomy', () => {
-			const original = deepFreeze( {
-				777: {
-					'amazing-taxonomy': [ 111, 112 ]
-				}
-			} );
-
-			const state = taxonomyTerms( original, {
-				type: TERMS_RECEIVE,
-				siteId: 777,
-				taxonomy: 'amazing-taxonomy',
-				terms: moreTerms
-			} );
-
-			expect( state ).to.eql( {
-				777: {
-					'amazing-taxonomy': [ 111, 112, 99, 100 ]
-				}
-			} );
-		} );
-
-		it( 'should add additional term IDs to correct taxonomy', () => {
-			const original = deepFreeze( {
-				777: {
-					'amazing-taxonomy': [ 111, 112 ]
-				}
-			} );
-
-			const state = taxonomyTerms( original, {
-				type: TERMS_RECEIVE,
-				siteId: 777,
-				taxonomy: 'not-the-best-taxonomy-a-tribute',
-				terms: moreTerms
-			} );
-
-			expect( state ).to.eql( {
-				777: {
-					'amazing-taxonomy': [ 111, 112 ],
-					'not-the-best-taxonomy-a-tribute': [ 99, 100 ]
+					'amazing-taxonomy': keyedMoreTerms,
+					'jetpack-portfolio': keyedTestTerms
 				}
 			} );
 		} );

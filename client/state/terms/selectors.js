@@ -2,19 +2,22 @@
  * External dependencies
  */
 import get from 'lodash/get';
+import values from 'lodash/values';
 
 /**
- * Returns term IDs for a site, filtered by taxonomy.
+ * Returns terms for a site, filtered by taxonomy.
  *
  * @param  {Object} state    Global state tree
  * @param  {Number} siteId   Site ID
  * @param  {String} taxonomy Taxonomy slug
  * @return {Array}           Terms
  */
-export function getSiteTaxonomyTermIds( state, siteId, taxonomy ) {
-	return get( state.site.taxonomies, [ siteId, taxonomy ], [] );
-}
+export function getSiteTaxonomyTerms( state, siteId, taxonomy ) {
+	const terms = get( state.terms, [ siteId, taxonomy ], null );
 
-export function getSiteTaxonomies( state, siteId ) {
-	return get( state.site.taxonomies, [ siteId ], {} );
+	if ( ! terms ) {
+		return null;
+	}
+
+	return values( terms );
 }
