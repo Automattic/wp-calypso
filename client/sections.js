@@ -15,7 +15,8 @@ sections = [
 		name: 'customize',
 		paths: [ '/customize' ],
 		module: 'my-sites/customize',
-		group: 'sites'
+		group: 'sites',
+		secondary: true,
 	},
 	{
 		name: 'me',

@@ -13,37 +13,37 @@ import ExternalLink from 'components/external-link';
 import Gridicon from 'components/gridicon';
 import { posToCss, getStepPosition, getBullseyePosition, targetForSlug } from './positioning';
 
-class GuidesBasicStep extends Component {
+class BasicStep extends Component {
 	render() {
 		const stepPos = getStepPosition( this.props );
 		const stepCoords = posToCss( stepPos );
 
 		const { text, onNext, onQuit } = this.props;
 		return (
-			<Card className="guidestours__step" style={ stepCoords } >
+			<Card className="guided-tours__step" style={ stepCoords } >
 				<p>{ text }</p>
-				<div className="guidestours__choice-button-row">
+				<div className="guided-tours__choice-button-row">
 					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
-					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later.' ) }</Button>
+					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
 				</div>
 			</Card>
 		);
 	}
 }
 
-class GuidesFirstStep extends Component {
+class FirstStep extends Component {
 	render() {
 		const stepPos = getStepPosition( this.props );
 		const stepCoords = posToCss( stepPos );
 
 		const { text, onNext, onQuit } = this.props;
 		return (
-			<Card className="guidestours__step guidestours__step-first" style={ stepCoords } >
+			<Card className="guided-tours__step guided-tours__step-first" style={ stepCoords } >
 				<p>{ text }</p>
-				<div className="guidestours__choice-button-row">
+				<div className="guided-tours__choice-button-row">
 					<Button onClick={ onNext } primary>{ this.props.translate( "Let's do it!" ) }</Button>
 					<Button onClick={ onQuit } >
-						{ this.props.translate( 'No, thanks.' ) }
+						{ this.props.translate( 'No, thanks' ) }
 					</Button>
 				</div>
 			</Card>
@@ -51,7 +51,7 @@ class GuidesFirstStep extends Component {
 	}
 }
 
-class GuidesFinishStep extends Component {
+class FinishStep extends Component {
 	render() {
 		const stepPos = getStepPosition( this.props );
 		const stepCoords = posToCss( stepPos );
@@ -59,12 +59,12 @@ class GuidesFinishStep extends Component {
 		const { text, onFinish, linkUrl, linkLabel } = this.props;
 
 		return (
-			<Card className="guidestours__step" style={ stepCoords } >
+			<Card className="guided-tours__step" style={ stepCoords } >
 				<p>{ text }</p>
-				<div className="guidestours__single-button-row">
-					<Button onClick={ onFinish } primary>{ this.props.translate( 'Finish Tour' ) }</Button>
+				<div className="guided-tours__single-button-row">
+					<Button onClick={ onFinish } primary>{ this.props.translate( "We're all done!" ) }</Button>
 				</div>
-				<div className="guidestours__external-link">
+				<div className="guided-tours__external-link">
 					<ExternalLink target="_blank" icon={ true } href={ linkUrl }>{ linkLabel }</ExternalLink>
 				</div>
 			</Card>
@@ -72,7 +72,7 @@ class GuidesFinishStep extends Component {
 	}
 }
 
-class GuidesLinkStep extends Component {
+class LinkStep extends Component {
 	render() {
 		const stepPos = getStepPosition( this.props );
 		const stepCoords = posToCss( stepPos );
@@ -80,13 +80,13 @@ class GuidesLinkStep extends Component {
 		const { text, onNext, onQuit, linkUrl, linkLabel } = this.props;
 
 		return (
-			<Card className="guidestours__step" style={ stepCoords } >
+			<Card className="guided-tours__step" style={ stepCoords } >
 				<p>{ text }</p>
-				<div className="guidestours__choice-button-row">
+				<div className="guided-tours__choice-button-row">
 					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
-					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later.' ) }</Button>
+					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
 				</div>
-				<div className="guidestours__external-link">
+				<div className="guided-tours__external-link">
 					<ExternalLink target="_blank" icon={ true } href={ linkUrl }>{ linkLabel }</ExternalLink>
 				</div>
 			</Card>
@@ -94,7 +94,7 @@ class GuidesLinkStep extends Component {
 	}
 }
 
-class GuidesActionStep extends Component {
+class ActionStep extends Component {
 	componentDidMount() {
 		this.addTargetListener();
 	}
@@ -118,7 +118,7 @@ class GuidesActionStep extends Component {
 		if ( onNext && target.addEventListener ) {
 			target.addEventListener( 'click', onNext );
 		}
-		target && target.classList.add( 'guidestours__overlay' );
+		target && target.classList.add( 'guided-tours__overlay' );
 	}
 
 	removeTargetListener() {
@@ -128,7 +128,7 @@ class GuidesActionStep extends Component {
 		if ( onNext && target.removeEventListener ) {
 			target.removeEventListener( 'click', onNext );
 		}
-		target && target.classList.remove( 'guidestours__overlay' );
+		target && target.classList.remove( 'guided-tours__overlay' );
 	}
 
 	render() {
@@ -140,9 +140,9 @@ class GuidesActionStep extends Component {
 		const { text } = this.props;
 
 		return (
-			<Card className="guidestours__step" style={ stepCoords } >
+			<Card className="guided-tours__step" style={ stepCoords } >
 				<p>{ text }</p>
-				<div className="guidestours__bullseye-instructions">
+				<div className="guided-tours__bullseye-instructions">
 					<p>
 						{ this.props.translate( 'Click the {{gridicon/}} to continue…', {
 							components: {
@@ -151,13 +151,13 @@ class GuidesActionStep extends Component {
 						} ) }
 					</p>
 				</div>
-				<GuidesPointer style={ pointerCoords } />
+				<Pointer style={ pointerCoords } />
 			</Card>
 		);
 	}
 }
 
-GuidesBasicStep.propTypes = {
+BasicStep.propTypes = {
 	targetSlug: PropTypes.string,
 	placement: PropTypes.string,
 	// text can be a translated string or a translated string with components
@@ -170,7 +170,7 @@ GuidesBasicStep.propTypes = {
 	onQuit: PropTypes.func.isRequired,
 };
 
-GuidesActionStep.propTypes = {
+ActionStep.propTypes = {
 	targetSlug: PropTypes.string.isRequired,
 	placement: PropTypes.string,
 	// text can be a translated string or a translated string with components
@@ -183,7 +183,7 @@ GuidesActionStep.propTypes = {
 	onQuit: PropTypes.func.isRequired,
 };
 
-GuidesLinkStep.propTypes = {
+LinkStep.propTypes = {
 	targetSlug: PropTypes.string,
 	placement: PropTypes.string,
 	// text can be a translated string or a translated string with components
@@ -198,7 +198,7 @@ GuidesLinkStep.propTypes = {
 	onQuit: PropTypes.func.isRequired,
 };
 
-GuidesFirstStep.propTypes = {
+FirstStep.propTypes = {
 	targetSlug: PropTypes.string,
 	placement: PropTypes.string,
 	// text can be a translated string or a translated string with components
@@ -211,7 +211,7 @@ GuidesFirstStep.propTypes = {
 	onQuit: PropTypes.func.isRequired,
 };
 
-GuidesFinishStep.propTypes = {
+FinishStep.propTypes = {
 	targetSlug: PropTypes.string,
 	placement: PropTypes.string,
 	// text can be a translated string or a translated string with components
@@ -224,26 +224,25 @@ GuidesFinishStep.propTypes = {
 	onFinish: PropTypes.func.isRequired,
 };
 
-class GuidesPointer extends Component {
+class Pointer extends Component {
 	render() {
 		return (
-			<div className="guidestours__bullseye" style={ this.props.style }>
-				<div className="guidestours__bullseye-ring" />
-				<div className="guidestours__bullseye-center" />
+			<div className="guided-tours__bullseye" style={ this.props.style }>
+				<div className="guided-tours__bullseye-ring" />
+				<div className="guided-tours__bullseye-center" />
 			</div>
 		);
 	}
 }
 
-GuidesPointer.propTypes = {
+Pointer.propTypes = {
 	style: PropTypes.object.isRequired,
 };
 
 export default {
-	GuidesBasicStep: localize( GuidesBasicStep ),
-	GuidesLinkStep: localize( GuidesLinkStep ),
-	GuidesActionStep: localize( GuidesActionStep ),
-	GuidesFirstStep: localize( GuidesFirstStep ),
-	GuidesFinishStep: localize( GuidesFinishStep ),
-}
-
+	BasicStep: localize( BasicStep ),
+	LinkStep: localize( LinkStep ),
+	ActionStep: localize( ActionStep ),
+	FirstStep: localize( FirstStep ),
+	FinishStep: localize( FinishStep ),
+};

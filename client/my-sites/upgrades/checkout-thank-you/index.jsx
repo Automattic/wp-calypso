@@ -51,7 +51,7 @@ import PurchaseDetail from 'components/purchase-detail';
 import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
 import upgradesPaths from 'my-sites/upgrades/paths';
-import { showGuidesTour } from 'state/ui/actions';
+import { showGuidedTour } from 'state/ui/guided-tours/actions';
 
 function getPurchases( props ) {
 	return props.receipt.data.purchases;
@@ -75,7 +75,7 @@ const CheckoutThankYou = React.createClass( {
 	},
 
 	componentDidMount() {
-		config.isEnabled( 'guidestours' ) && defer( () => this.props.undelayGuidesTour() );
+		config.isEnabled( 'guided-tours' ) && defer( () => this.props.undelayGuidedTour() );
 		this.redirectIfThemePurchased();
 
 		if ( this.props.receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
@@ -287,8 +287,8 @@ export default connect(
 			refreshSitePlans( site ) {
 				dispatch( refreshSitePlans( site.ID ) );
 			},
-			undelayGuidesTour() {
-				dispatch( showGuidesTour( { shouldDelay: false } ) );
+			undelayGuidedTour() {
+				dispatch( showGuidedTour( { shouldDelay: false } ) );
 			}
 		};
 	}

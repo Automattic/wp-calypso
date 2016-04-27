@@ -110,12 +110,13 @@ const EditorGroundControl = React.createClass( {
 		const buttonState = this.getPrimaryButtonState();
 		const eventString = postUtils.isPage( this.props.post ) ? pageEvents[ buttonState ] : postEvents[ buttonState ];
 		stats.recordEvent( eventString );
-		stats.recordEvent( 'Clicked Primary Button' )
+		stats.recordEvent( 'Clicked Primary Button' );
 	},
 
 	getPrimaryButtonState: function() {
 		if (
 			postUtils.isPublished( this.props.savedPost ) &&
+			! postUtils.isBackDatedPublished( this.props.savedPost ) &&
 			! postUtils.isFutureDated( this.props.post ) ||
 			(
 				this.props.savedPost &&
@@ -184,7 +185,7 @@ const EditorGroundControl = React.createClass( {
 				onDateChange={ this.setPostDate }
 				onMonthChange={ this.setCurrentMonth }>
 			</PostSchedule>
-		)
+		);
 	},
 
 	schedulePostPopover: function() {
@@ -253,7 +254,7 @@ const EditorGroundControl = React.createClass( {
 	isPrimaryButtonEnabled: function() {
 		return ! this.props.isPublishing &&
 			! this.props.isSaveBlocked &&
-			this.props.hasContent
+			this.props.hasContent;
 	},
 
 	toggleAdvancedStatus: function() {
@@ -267,7 +268,9 @@ const EditorGroundControl = React.createClass( {
 			return this.props.onSave( 'future' );
 		}
 
-		if ( postUtils.isPublished( this.props.savedPost ) ) {
+		if ( postUtils.isPublished( this.props.savedPost ) &&
+			! postUtils.isBackDatedPublished( this.props.savedPost )
+		) {
 			return this.props.onSave();
 		}
 

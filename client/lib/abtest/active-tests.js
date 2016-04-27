@@ -65,6 +65,24 @@ module.exports = {
 		defaultVariation: 'drake',
 		allowExistingUsers: true,
 	},
+	statsTabsLikesNudge: {
+		datestamp: '20160427',
+		variations: {
+			dataInformedBelowChart: 10,
+			noNudge: 90
+		},
+		defaultVariation: 'noNudge',
+		allowExistingUsers: true
+	},
+	themesHeaderNudge: {
+		datestamp: '20160427',
+		variations: {
+			themes_custom_design: 90,
+			themes_premium_theme_more_traffic: 10
+		},
+		defaultVariation: 'themes_custom_design',
+		allowExistingUsers: true,
+	},
 	swapButtonsMySiteSidebar: {
 		datestamp: '20160414',
 		variations: {
@@ -101,5 +119,15 @@ module.exports = {
 			notTested: 10
 		},
 		defaultVariation: 'original'
+	},
+	planPricing: {
+		datestamp: '20160426',
+		variations: {
+			monthly: 90,
+			annual: 10
+		},
+		defaultVariation: 'monthly',
+		allowExistingUsers: true,
+		allowAnyLocale: true
 	}
 };

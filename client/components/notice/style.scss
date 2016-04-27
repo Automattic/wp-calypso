@@ -31,6 +31,17 @@
 	&.is-info {
 		background: $blue-wordpress;
 	}
+
+	&.is-success, // TODO fix this in pre-oss to be less bad
+	&.is-error,
+	&.is-warning,
+	&.is-info {
+		color: $white;
+
+		.notice__dismiss {
+			color: $white;
+		}
+	}
 }
 
 .notice__icon {
@@ -62,6 +73,29 @@
 
 	@include breakpoint( ">660px" ) {
 		padding: 13px;
+	}
+
+	a {
+		text-decoration: underline;
+	}
+
+	ul {
+		margin-bottom: 0;
+		margin-left: 0;
+	}
+
+	li {
+		margin-left: 2em;
+		margin-top: 0.5em;
+	}
+
+	p {
+		margin-bottom: 0;
+		margin-top: 0.5em;
+
+		&:first-child {
+			margin-top: 0;
+		}
 	}
 }
 
@@ -140,67 +174,6 @@ a.notice__action {
 	}
 }
 
-// General styles for html elements
-// rendered inside a notice
-.notice {
-
-	a,
-	button.is-link {
-		line-height: 1.4285;
-		font-weight: 600;
-
-		// Medium text underline hack
-		background-image: linear-gradient(to bottom, rgba(0,0,0,0) 75%, #fff 50%);
-		background-repeat: repeat-x;
-		background-size: 2px 2px;
-		background-position: 0 1.14em; // ~18/15
-
-		@media not all, only screen and (min-resolution: 2dppx), only screen and (-webkit-min-device-pixel-ratio: 2) {
-			background-image: linear-gradient(to bottom, rgba(0,0,0,0) 75%, #fff 75%);
-			background-repeat: repeat-x;
-		}
-	}
-
-	ul {
-		margin-bottom: 0;
-		margin-left: 0;
-	}
-
-	li {
-		margin-left: 2em;
-		margin-top: 0.5em;
-	}
-
-	p {
-		margin-bottom: 0;
-		margin-top: 0.5em;
-
-		&:first-child {
-			margin-top: 0;
-		}
-	}
-
-	&.is-success, // TODO fix this in pre-oss to be less bad
-	&.is-error,
-	&.is-warning,
-	&.is-info {
-		color: $white;
-
-		a,
-		button.is-link {
-			color: rgba( $white, 0.85 );
-
-			&:hover {
-				color: $white;
-			}
-		}
-
-		.notice__dismiss {
-			color: $white;
-		}
-	}
-}
-
 // Compact notices
 .notice.is-compact {
 	border-radius: 2px;
@@ -231,8 +204,8 @@ a.notice__action {
 		flex-shrink: 0;
 		margin: 0 0 0 8px;
 		padding: 0;
-		width: 14px;
-		height: 14px;
+		width: 18px;
+		height: 18px;
 		vertical-align: middle;
 	}
 

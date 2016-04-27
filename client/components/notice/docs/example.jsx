@@ -31,9 +31,10 @@ var Notices = React.createClass( {
 
 				<div>
 					<Notice
-						text="I'm a notice with no status."
 						showDismiss={ false }
-						isCompact={ this.state.compactNotices ? true : null } />
+						isCompact={ this.state.compactNotices ? true : null }>
+						I'm a notice with no status and <a>a link</a>.
+					</Notice>
 				</div>
 				<div>
 					<Notice

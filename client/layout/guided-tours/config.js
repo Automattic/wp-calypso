@@ -18,13 +18,13 @@ function get() {
 					strong: <strong />,
 				}
 			} ),
-			type: 'GuidesFirstStep',
+			type: 'FirstStep',
 			placement: 'right',
 			next: 'my-sites',
 		},
 		'my-sites': {
 			target: 'my-sites',
-			type: 'GuidesActionStep',
+			type: 'ActionStep',
 			icon: 'my-sites',
 			placement: 'below',
 			text: i18n.translate( "{{strong}}First things first.{{/strong}} Up here, you'll find tools for managing your site's content and design.", {
@@ -35,19 +35,19 @@ function get() {
 			next: 'sidebar',
 		},
 		sidebar: {
-			text: i18n.translate( 'The sidebar menu lets you navigate around, and will adapt to give you the tools you need when you need them.' ),
-			type: 'GuidesBasicStep',
+			text: i18n.translate( 'This menu lets you navigate around, and will adapt to give you the tools you need when you need them.' ),
+			type: 'BasicStep',
 			target: 'sidebar',
 			placement: 'beside',
 			next: 'themes',
 		},
 		themes: {
-			text: i18n.translate( "Change your {{strong}}Theme{{/strong}} to choose a new layout, or {{strong}}Customize{{/strong}} your theme's colors, font, and more.", {
+			text: i18n.translate( "Change your {{strong}}Theme{{/strong}} to choose a new layout, or {{strong}}Customize{{/strong}} your theme's colors, fonts, and more.", {
 				components: {
 					strong: <strong />,
 				}
 			} ),
-			type: 'GuidesBasicStep',
+			type: 'BasicStep',
 			target: 'themes',
 			placement: 'below',
 			next: 'finish',
@@ -59,8 +59,8 @@ function get() {
 					strong: <strong />,
 				}
 			} ),
-			type: 'GuidesFinishStep',
-			linkLabel: i18n.translate( 'Get the Most from WordPress.com' ),
+			type: 'FinishStep',
+			linkLabel: i18n.translate( 'Learn more about WordPress.com' ),
 			linkUrl: 'https://learn.wordpress.com',
 		}
 	};
