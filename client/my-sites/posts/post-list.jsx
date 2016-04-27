@@ -282,7 +282,7 @@ var Posts = React.createClass( {
 
 		return (
 			<div>
-				{ posts.length && this.props.sites.initialized && ! this.props.statusSlug ?
+				{ posts.length && this.props.sites.getSelectedSite() && ! this.props.statusSlug ?
 					<UpgradeNudge
 						title={ this.translate( 'No Ads with WordPress.com Premium' ) }
 						message={ this.translate( 'Disable all ads in your site.' ) }
