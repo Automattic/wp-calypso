@@ -16,7 +16,7 @@ var DocService = require( './service' ),
 var DEFAULT_FILES = [
 		'docs/guide/index.md',
 		'README.md',
-		'CONTRIBUTING.md',
+		'.github/CONTRIBUTING.md',
 		'docs/coding-guidelines.md',
 		'client/lib/mixins/i18n/README.md',
 		'docs/coding-guidelines/javascript.md',
