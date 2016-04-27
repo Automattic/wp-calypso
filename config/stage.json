@@ -20,6 +20,7 @@
 		"desktop-promo": true,
 		"guided-tours": true,
 		"help": true,
+		"jetpack/connect": true,
 		"jetpack_core_inline_update": true,
 		"mailing-lists/unsubscribe": true,
 		"manage/add-people": true,
