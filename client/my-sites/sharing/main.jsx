@@ -79,7 +79,7 @@ module.exports = React.createClass( {
 				</SectionNav>
 				<UpgradeNudge
 					title={ this.translate( 'No Ads with WordPress.com Premium' ) }
-					message={ this.translate( 'Disable all ads in your site.' ) }
+					message={ this.translate( 'Prevent ads from showing on your site.' ) }
 					feature="no-adverts"
 					event="sharing_no_ads"
 				/>
