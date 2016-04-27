@@ -18,6 +18,7 @@ import receipts from './receipts/reducer';
 import sharing from './sharing/reducer';
 import sites from './sites/reducer';
 import siteSettings from './site-settings/reducer';
+import stats from './stats/reducer';
 import support from './support/reducer';
 import themes from './themes/reducer';
 import users from './users/reducer';
@@ -42,6 +43,7 @@ export const reducer = combineReducers( {
 	sharing,
 	sites,
 	siteSettings,
+	stats,
 	support,
 	themes,
 	users,
