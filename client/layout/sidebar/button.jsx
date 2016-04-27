@@ -15,7 +15,8 @@ export default React.createClass( {
 	propTypes: {
 		href: React.PropTypes.string,
 		onClick: React.PropTypes.func,
-		preloadSectionName: React.PropTypes.string
+		preloadSectionName: React.PropTypes.string,
+		children: React.PropTypes.node
 	},
 
 	_preloaded: false,
