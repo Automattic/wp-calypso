@@ -2,6 +2,7 @@
  * External dependencies
  */
 import loadImage from 'blueimp-load-image';
+import 'blueimp-canvas-to-blob';
 import assign from 'lodash/assign';
 
 /**
