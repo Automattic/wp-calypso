@@ -19,6 +19,8 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
+	JETPACK_CONNECT_ACTIVATE_MANAGE,
+	JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_STORE_SESSION,
@@ -208,7 +210,6 @@ export default {
 			} );
 		};
 	},
-
 	validateSSONonce( siteId, ssoNonce ) {
 		return ( dispatch ) => {
 			debug( 'Attempting to validate SSO for ' + siteId );
@@ -230,7 +231,6 @@ export default {
 			} );
 		};
 	},
-
 	authorizeSSO( siteId, ssoNonce ) {
 		return ( dispatch ) => {
 			debug( 'Attempting to authorize SSO for ' + siteId );
@@ -248,6 +248,32 @@ export default {
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 					error: pick( error, [ 'error', 'status', 'message' ] )
+				} );
+			} );
+		};
+	},
+	activateManage( blogId, state, secret ) {
+		return ( dispatch ) => {
+			debug( 'Activating manage', blogId );
+			dispatch( {
+				type: JETPACK_CONNECT_ACTIVATE_MANAGE,
+				blogId: blogId
+			} );
+			wpcom.undocumented().activateManage( blogId, state, secret )
+			.then( ( data ) => {
+				debug( 'Manage activated!', data );
+				dispatch( {
+					type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
+					data: data,
+					error: null
+				} );
+			} )
+			.catch( ( error ) => {
+				debug( 'Manage activation error', error );
+				dispatch( {
+					type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
+					data: null,
+					error: error
 				} );
 			} );
 		};
