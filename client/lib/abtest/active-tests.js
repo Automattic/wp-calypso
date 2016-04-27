@@ -65,6 +65,15 @@ module.exports = {
 		defaultVariation: 'drake',
 		allowExistingUsers: true,
 	},
+	statsTabsLikesNudge: {
+		datestamp: '20160427',
+		variations: {
+			dataInformedBelowChart: 10,
+			noNudge: 90
+		},
+		defaultVariation: 'noNudge',
+		allowExistingUsers: true
+	},
 	swapButtonsMySiteSidebar: {
 		datestamp: '20160414',
 		variations: {

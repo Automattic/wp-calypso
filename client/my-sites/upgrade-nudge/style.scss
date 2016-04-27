@@ -11,6 +11,10 @@
 	.button {
 		margin-left: auto;
 	}
+
+	&.is-no-margin {
+		margin: 0;
+	}
 }
 
 .upgrade-nudge__icon {
