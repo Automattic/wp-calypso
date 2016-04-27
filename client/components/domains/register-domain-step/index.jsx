@@ -28,6 +28,7 @@ var wpcom = require( 'lib/wp' ).undocumented(),
 	ExampleDomainSuggestions = require( 'components/domains/example-domain-suggestions' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
+	{ isPlan } = require( 'lib/products-values' ),
 	cartItems = require( 'lib/cart-values/cart-items' ),
 	abtest = require( 'lib/abtest' ).abtest;
 
@@ -358,6 +359,7 @@ var RegisterDomainStep = React.createClass( {
 				<DomainMappingSuggestion
 					onButtonClick={ this.goToMapDomainStep }
 					buttonLabel={ domainsWithPlansOnlyTestEnabled &&
+						! ( this.props.selectedSite && isPlan( this.props.selectedSite.plan ) ) &&
 						! cartItems.isNextDomainFree( this.props.cart ) && this.translate( 'Upgrade' ) }
 					cart={ this.props.cart }
 					products={ this.props.products } />
