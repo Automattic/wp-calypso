@@ -51,7 +51,7 @@ import PurchaseDetail from 'components/purchase-detail';
 import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
 import upgradesPaths from 'my-sites/upgrades/paths';
-import { showGuidedTour } from 'state/ui/actions';
+import { showGuidedTour } from 'state/ui/guided-tours/actions';
 
 function getPurchases( props ) {
 	return props.receipt.data.purchases;
