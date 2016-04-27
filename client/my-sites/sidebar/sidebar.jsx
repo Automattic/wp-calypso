@@ -346,7 +346,7 @@ module.exports = React.createClass( {
 
 		let planLink = '/plans' + this.siteSuffix();
 
-		//Show plan details for upgraded sites
+		// Show plan details for upgraded sites
 		if (
 			config.isEnabled( 'manage/plans/my-plan' ) &&
 			abtest( 'sidebarPlanLink' ) === 'plans/my-plan' &&
