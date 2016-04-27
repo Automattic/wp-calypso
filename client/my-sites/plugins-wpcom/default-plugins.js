@@ -68,11 +68,11 @@ export const defaultStandardPlugins = [
 		description: i18n.translate( 'Advanced anti-spam security.' )
 	},
 	{
-		name: i18n.translate( 'Backup' ),
+		name: i18n.translate( 'Backup & Export' ),
 		descriptionLink: 'https://en.support.wordpress.com/export/#backups',
 		icon: 'lock',
 		category: 'Security',
-		description: i18n.translate( '24/7 backup of your entire site.' )
+		description: i18n.translate( '24/7 backup of your entire site. Export everything.' )
 	},
 	{
 		name: i18n.translate( 'Photon CDN' ),
@@ -100,7 +100,7 @@ export const defaultStandardPlugins = [
 		descriptionLink: 'https://en.support.wordpress.com/infinite-scroll/',
 		icon: 'posts',
 		category: 'Appearance',
-		description: i18n.translate( 'Load more posts when you reach the bottom of a page.' )
+		description: i18n.translate( 'Load more posts when you reach the bottom of a page on your site.' )
 	},
 	{
 		name: i18n.translate( 'Related Posts' ),
@@ -124,7 +124,7 @@ export const defaultStandardPlugins = [
 		description: i18n.translate( 'Text formatting using a lightweight markup language. ' )
 	},
 	{
-		name: i18n.translate( 'Advanced Commenting' ),
+		name: i18n.translate( 'Advanced Comments' ),
 		descriptionLink: 'https://en.support.wordpress.com/category/comments/',
 		icon: 'comment',
 		category: 'Misc',
@@ -140,21 +140,21 @@ export const defaultPremiumPlugins = [
 		name: i18n.translate( 'No Advertising' ),
 		descriptionLink: 'https://en.support.wordpress.com/no-ads/',
 		icon: 'block',
-		plan: 'Premium',
-		description: i18n.translate( 'Remove all ads from your site.' )
+		category: 'Premium',
+		description: i18n.translate( 'Remove WordPress.com ads from your site.' )
 	},
 	{
 		name: i18n.translate( 'Custom Design' ),
 		descriptionLink: 'https://en.support.wordpress.com/custom-design/',
 		icon: 'customize',
-		plan: 'Premium',
+		category: 'Premium',
 		description: i18n.translate( 'Customize your blog\'s look with custom fonts, a CSS editor, and more.' )
 	},
 	{
 		name: i18n.translate( 'Video Uploads' ),
 		descriptionLink: 'https://en.support.wordpress.com/videopress/',
 		icon: 'video-camera',
-		plan: 'Premium',
+		category: 'Premium',
 		description: i18n.translate( 'Upload and host your video files on your site with VideoPress.' )
 	}
 ];
@@ -165,9 +165,9 @@ export const defaultPremiumPlugins = [
 export const defaultBusinessPlugins = [
 	{
 		name: i18n.translate( 'Google Analytics' ),
-		descriptionLink: '/plans/features/google-analytics/{siteSlug}',
+		descriptionLink: '/categorys/features/google-analytics/{siteSlug}',
 		icon: 'stats',
-		plan: 'Business',
+		category: 'Business',
 		description: i18n.translate( 'Advanced features to complement WordPress.com stats. Funnel reports, goal conversion, and more.' )
 	}
 ];
