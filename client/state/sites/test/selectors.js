@@ -6,7 +6,14 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSite, getSiteCollisions, isSiteConflicting, isJetpackSite, getSiteSlug } from '../selectors';
+import {
+	getSite,
+	getSiteCollisions,
+	isSiteConflicting,
+	isJetpackSite,
+	getSiteSlug,
+	isRequestingSites
+} from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getSite()', () => {
@@ -214,6 +221,36 @@ describe( 'selectors', () => {
 			}, 77203199 );
 
 			expect( slug ).to.equal( 'testtwosites2014.wordpress.com::path::to::site' );
+		} );
+	} );
+
+	describe( '#isRequestingSites()', () => {
+		it( 'should return fetching sites state', () => {
+			const state = {
+				sites: {
+					fetchingItems: {
+						all: true
+					}
+				}
+			};
+			const emptyState = {
+				sites: {
+					fetchingItems: {
+
+					}
+				}
+			};
+			const falseState = {
+				sites: {
+					fetchingItems: {
+						all: false
+					}
+				}
+			};
+
+			expect( isRequestingSites( state ) ).to.equal( true );
+			expect( isRequestingSites( emptyState ) ).to.equal( false );
+			expect( isRequestingSites( falseState ) ).to.equal( false );
 		} );
 	} );
 } );
