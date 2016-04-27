@@ -18,6 +18,7 @@ var analytics = require( 'lib/analytics' ),
 	setSection = require( 'state/ui/actions' ).setSection,
 	plansList = require( 'lib/plans-list' )(),
 	productsList = require( 'lib/products-list' )(),
+	abtest = require( 'lib/abtest' ).abtest,
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
 
 module.exports = {
@@ -97,19 +98,21 @@ module.exports = {
 		} );
 
 		analytics.pageView.record( basePath, 'Domain Search > Domain Mapping' );
-
-		ReactDom.render(
+		renderWithReduxStore(
 			(
 				<Main>
 					<CartData>
 						<MapDomain
+							withPlansOnly={ abtest( 'domainsWithPlansOnly' ) === 'plansOnly' }
+							store={ context.store }
 							productsList={ productsList }
 							initialQuery={ context.query.initialQuery }
 							sites={ sites } />
 					</CartData>
 				</Main>
 			),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
