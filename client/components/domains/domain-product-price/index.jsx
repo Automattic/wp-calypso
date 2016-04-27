@@ -16,13 +16,14 @@ var PremiumPopover = require( 'components/plans/premium-popover' ),
 const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 
 var DomainProductPrice = React.createClass( {
-	subMessage() {
-		const selectedSite = sitesList.getSelectedSite(),
-			shouldShowPremiumMessage = domainsWithPlansOnlyTestEnabled && ! ( selectedSite && isPlan( selectedSite.plan ) ) && this.props.price;
+	shouldShowPremiumMessage: function() {
+		const selectedSite = sitesList.getSelectedSite();
+		return domainsWithPlansOnlyTestEnabled && ! ( selectedSite && isPlan( selectedSite.plan ) ) && this.props.price;
+	}, subMessage() {
 		var freeWithPlan = this.props.cart && this.props.cart.hasLoadedFromServer && this.props.cart.next_domain_is_free && ! this.props.isFinalPrice;
 		if ( freeWithPlan ) {
 			return <span className="domain-product-price__free-text">{ this.translate( 'Free with your plan' ) }</span>;
-		} else if ( shouldShowPremiumMessage ) {
+		} else if ( this.shouldShowPremiumMessage() ) {
 			return (
 				<small className="domain-product-price__premium-text" ref="subMessage">
 					{ this.translate( 'Included in WordPress.com Premium' ) }
@@ -53,7 +54,7 @@ var DomainProductPrice = React.createClass( {
 	render: function() {
 		const classes = classNames( 'domain-product-price', {
 				'is-free-domain': cartItems.isNextDomainFree( this.props.cart ),
-				'is-with-plans-only': domainsWithPlansOnlyTestEnabled,
+				'is-with-plans-only': this.shouldShowPremiumMessage(),
 				'is-placeholder': this.props.isLoading
 			} );
 
