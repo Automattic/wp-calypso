@@ -248,7 +248,8 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 	mixins: [ observe( 'userModule' ) ],
 
 	componentWillMount() {
-		if ( ! this.isCalypsoStartedConnection() ) {
+		const { isAuthorizing, authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
+		if ( ! this.isCalypsoStartedConnection() && ! isAuthorizing && ! authorizeSuccess && ! siteReceived ) {
 			const url = this.props.jetpackConnectAuthorize.queryObject.old_auth_url;
 			if ( url ) {
 				window.location = url;
