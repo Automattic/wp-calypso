@@ -9,27 +9,29 @@ var React = require( 'react' ),
  */
 var PremiumPopover = require( 'components/plans/premium-popover' ),
 	cartItems = require( 'lib/cart-values/cart-items' ),
+	sitesList = require( 'lib/sites-list' )(),
+	isPlan = require( 'lib/products-values' ).isPlan,
 	abtest = require( 'lib/abtest' ).abtest;
 
 const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 
 var DomainProductPrice = React.createClass( {
 	subMessage() {
+		const selectedSite = sitesList.getSelectedSite(),
+			shouldShowPremiumMessage = domainsWithPlansOnlyTestEnabled && ! ( selectedSite && isPlan( selectedSite.plan ) ) && this.props.price;
 		var freeWithPlan = this.props.cart && this.props.cart.hasLoadedFromServer && this.props.cart.next_domain_is_free && ! this.props.isFinalPrice;
 		if ( freeWithPlan ) {
 			return <span className="domain-product-price__free-text">{ this.translate( 'Free with your plan' ) }</span>;
-		} else {
-			if ( domainsWithPlansOnlyTestEnabled && this.props.price ) {
-						return (
-							<small className="domain-product-price__premium-text" ref="subMessage">
-								{ this.translate( 'Included in WordPress.com Premium' ) }
-								<PremiumPopover
-									context={ this.refs && this.refs.subMessage }
-									bindContextEvents
-									position="bottom left" />
-							</small>
-						);
-					}
+		} else if ( shouldShowPremiumMessage ) {
+			return (
+				<small className="domain-product-price__premium-text" ref="subMessage">
+					{ this.translate( 'Included in WordPress.com Premium' ) }
+					<PremiumPopover
+						context={ this.refs && this.refs.subMessage }
+						bindContextEvents
+						position="bottom left"/>
+				</small>
+			);
 		}
 		return null;
 	},
@@ -40,9 +42,10 @@ var DomainProductPrice = React.createClass( {
 		} );
 	},
 	priceText() {
+		const selectedSite = sitesList.getSelectedSite();
 		if ( ! this.props.price ) {
 			return this.translate( 'Free' );
-		} else if ( domainsWithPlansOnlyTestEnabled && ! cartItems.isNextDomainFree( this.props.cart ) ) {
+		} else if ( domainsWithPlansOnlyTestEnabled && ! cartItems.isNextDomainFree( this.props.cart ) && ( ! selectedSite || ! isPlan( selectedSite.plan ) ) ) {
 			return null;
 		}
 		return this.priceMessage( this.props.price );

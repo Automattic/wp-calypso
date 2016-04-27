@@ -10,8 +10,10 @@ import { recordAddToCart } from 'lib/analytics/ad-tracking';
 import { action as ActionTypes } from '../constants';
 import Dispatcher from 'dispatcher';
 import { cartItems } from 'lib/cart-values';
-import { isDomainMapping, isDomainRegistration } from 'lib/products-values';
+import { isDomainMapping, isDomainRegistration, isPlan } from 'lib/products-values';
 import { abtest } from 'lib/abtest';
+import SitesList from 'lib/sites-list';
+const sitesList = SitesList();
 
 // We need to load the CartStore to make sure the store is registered with the
 // dispatcher even though it's not used directly here
@@ -47,9 +49,15 @@ function addItem( item ) {
 }
 
 function addItems( items ) {
-	const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
-	const shouldBundleWithPremiumPlan = items.some( item => isDomainRegistration( item ) || isDomainMapping( item ) );
-	if ( shouldBundleWithPremiumPlan && domainsWithPlansOnlyTestEnabled ) {
+	const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly',
+		selectedSite = sitesList.getSelectedSite();
+	let hasItemRequiresBundle = items.some( item => isDomainRegistration( item ) || isDomainMapping( item ) );
+
+	if ( selectedSite ) {
+		hasItemRequiresBundle = hasItemRequiresBundle && ! isPlan( selectedSite.plan );
+	}
+
+	if ( hasItemRequiresBundle && domainsWithPlansOnlyTestEnabled ) {
 		items = [ cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) ].concat( items );
 	}
 	const extendedItems = items.map( ( item ) => {
