@@ -46,6 +46,11 @@ function renderNavigation( context, allSitesPath, siteBasePath ) {
 }
 
 function removeSidebar( context ) {
+	context.store.dispatch( uiActions.setSection( {
+		group: 'sites',
+		secondary: false
+	} ) );
+
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 }
 
@@ -263,11 +268,7 @@ module.exports = {
 		 * Sites is rendered on #primary but it doesn't expect a sidebar to exist
 		 * so section needs to be set explicitly and #secondary cleaned up
 		 */
-		context.store.dispatch( uiActions.setSection( {
-			group: 'sites',
-			secondary: false
-		} ) );
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		removeSidebar( context );
 		layoutFocus.set( 'content' );
 
 		// This path sets the URL to be visited once a site is selected
