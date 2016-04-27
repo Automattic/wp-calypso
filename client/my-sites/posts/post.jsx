@@ -404,6 +404,7 @@ module.exports = React.createClass({
 					onTrash={ this.trashPost }
 					onDelete={ this.deletePost }
 					onRestore={ this.restorePost }
+					site={ site }
 				/>
 				<ReactCSSTransitionGroup
 					transitionName="updated-trans"
