@@ -119,7 +119,7 @@ module.exports = React.createClass( {
 	},
 
 	submitPlansStepWithPremium() {
-		const premiumPlan = cartItems.premiumPlan( 'value_bundle', {} );
+		const premiumPlan = cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } );
 		SignupActions.submitSignupStep( {
 			processingMessage: this.translate( 'Adding your plan' ),
 			stepName: 'plans',
