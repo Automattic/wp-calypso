@@ -45,6 +45,8 @@ const renderFormHeader = ( site, isConnected = false ) => {
 	);
 };
 
+const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
+
 const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
 
@@ -271,8 +273,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
 		if ( this.props.jetpackConnectSessions && this.props.jetpackConnectSessions[ site ] ) {
 			const currentTime = ( new Date() ).getTime();
-			const oneDay = 24 * 60 * 60;
-			return ( currentTime - this.props.jetpackConnectSessions[ site ] < oneDay );
+			return ( currentTime - this.props.jetpackConnectSessions[ site ] < JETPACK_CONNECT_TTL );
 		}
 
 		return false;
