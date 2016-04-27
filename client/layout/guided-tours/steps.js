@@ -24,7 +24,7 @@ class BasicStep extends Component {
 				<p>{ text }</p>
 				<div className="guided-tours__choice-button-row">
 					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
-					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later.' ) }</Button>
+					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
 				</div>
 			</Card>
 		);
@@ -43,7 +43,7 @@ class FirstStep extends Component {
 				<div className="guided-tours__choice-button-row">
 					<Button onClick={ onNext } primary>{ this.props.translate( "Let's do it!" ) }</Button>
 					<Button onClick={ onQuit } >
-						{ this.props.translate( 'No, thanks.' ) }
+						{ this.props.translate( 'No, thanks' ) }
 					</Button>
 				</div>
 			</Card>
@@ -62,7 +62,7 @@ class FinishStep extends Component {
 			<Card className="guided-tours__step" style={ stepCoords } >
 				<p>{ text }</p>
 				<div className="guided-tours__single-button-row">
-					<Button onClick={ onFinish } primary>{ this.props.translate( 'Finish Tour' ) }</Button>
+					<Button onClick={ onFinish } primary>{ this.props.translate( "We're all done!" ) }</Button>
 				</div>
 				<div className="guided-tours__external-link">
 					<ExternalLink target="_blank" icon={ true } href={ linkUrl }>{ linkLabel }</ExternalLink>
@@ -84,7 +84,7 @@ class LinkStep extends Component {
 				<p>{ text }</p>
 				<div className="guided-tours__choice-button-row">
 					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
-					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later.' ) }</Button>
+					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
 				</div>
 				<div className="guided-tours__external-link">
 					<ExternalLink target="_blank" icon={ true } href={ linkUrl }>{ linkLabel }</ExternalLink>
