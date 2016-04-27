@@ -97,7 +97,7 @@ module.exports = React.createClass( {
 			} );
 
 			if ( config.isEnabled( 'manage/stats' ) ) {
-				statsURL = '/stats/post/' + post.ID + '/' + post.site_ID;
+				statsURL = '/stats/post/' + post.ID + '/' + this.props.site.slug;
 			} else {
 				statsURL = '//wordpress.com/my-stats/?view=post&post=' + post.ID + '&blog=' + post.site_ID;
 			}
