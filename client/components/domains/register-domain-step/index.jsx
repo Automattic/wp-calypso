@@ -414,7 +414,8 @@ var RegisterDomainStep = React.createClass( {
 				onClickResult={ this.addRemoveDomainToCart }
 				onClickMapping={ this.goToMapDomainStep }
 				mappingSuggestionLabel={ domainsWithPlansOnlyTestEnabled &&
-					! cartItems.isNextDomainFree( this.props.cart ) && this.translate( 'Upgrade' ) }
+						! ( this.props.selectedSite && isPlan( this.props.selectedSite.plan ) ) &&
+						! cartItems.isNextDomainFree( this.props.cart ) && this.translate( 'Upgrade' ) }
 				suggestions={ suggestions }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
