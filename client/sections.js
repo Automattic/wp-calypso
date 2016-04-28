@@ -258,6 +258,14 @@ if ( config.isEnabled( 'reader' ) ) {
 		secondary: true,
 		group: 'reader'
 	} );
+
+	sections.push( {
+		name: 'reader-list',
+		paths: [ '/read/list' ],
+		module: 'reader/list',
+		secondary: true,
+		group: 'reader'
+	} );
 }
 
 if ( config.isEnabled( 'devdocs' ) ) {
