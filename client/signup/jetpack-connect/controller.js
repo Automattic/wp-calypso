@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import ReactDom from 'react-dom';
 import React from 'react';
 import isEmpty from 'lodash/isEmpty';
 import page from 'page';
@@ -40,6 +41,7 @@ export default {
 	},
 
 	connect( context ) {
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setSection( 'jetpackConnect', {
 			hasSidebar: false
 		} ) );
@@ -56,6 +58,7 @@ export default {
 	},
 
 	authorizeForm( context ) {
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setSection( 'jetpackConnect', {
 			hasSidebar: false
 		} ) );
