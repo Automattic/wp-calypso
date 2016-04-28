@@ -32,11 +32,15 @@
 		background: $blue-wordpress;
 	}
 
-	&.is-success, // TODO fix this in pre-oss to be less bad
+	&.is-success,
 	&.is-error,
 	&.is-warning,
 	&.is-info {
 		color: $white;
+
+		.notice__text a {
+			color: $white;
+		}
 
 		.notice__dismiss {
 			color: $white;
