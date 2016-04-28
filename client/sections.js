@@ -231,6 +231,14 @@ if ( config.isEnabled( 'reader' ) ) {
 	} );
 
 	sections.push( {
+		name: 'reader-tags',
+		paths: [ '/tags', '/tag' ],
+		module: 'reader/tag-stream',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	sections.push( {
 		name: 'reader-activities',
 		paths: [ '/activities' ],
 		module: 'reader/liked-stream',

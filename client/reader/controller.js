@@ -5,7 +5,6 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
 import debugFactory from 'debug';
-import trim from 'lodash/trim';
 import moment from 'moment';
 import { Provider as ReduxProvider } from 'react-redux';
 import qs from 'qs';
@@ -390,45 +389,6 @@ module.exports = {
 	removePost: function( context, next ) {
 		context.store.dispatch( hideReaderFullPost() );
 		next();
-	},
-
-	tagListing: function( context ) {
-		var TagStream = require( 'reader/tag-stream' ),
-			basePath = '/tag/:slug',
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag,
-			tagSlug = trim( context.params.tag )
-				.toLowerCase()
-				.replace( /\s+/g, '-' )
-				.replace( /-{2,}/g, '-' ),
-			encodedTag = encodeURIComponent( tagSlug ).toLowerCase(),
-			tagStore = feedStreamFactory( 'tag:' + tagSlug ),
-			mcKey = 'topic';
-
-		ensureStoreLoading( tagStore, context );
-
-		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		recordTrack( 'calypso_reader_tag_loaded', {
-			tag: tagSlug
-		} );
-
-		ReactDom.render(
-			React.createElement( TagStream, {
-				key: 'tag-' + encodedTag,
-				store: tagStore,
-				tag: encodedTag,
-				setPageTitle: setPageTitle,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				showBack: userHasHistory( context )
-			} ),
-			document.getElementById( 'primary' )
-		);
 	},
 
 	search: function( context ) {

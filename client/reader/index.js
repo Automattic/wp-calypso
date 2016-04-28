@@ -48,9 +48,6 @@ module.exports = function() {
 		page( '/read/post/id/:blog_id/:post_id', controller.legacyRedirects );
 		page( '/read/blogs/:blog/posts/:post', controller.updateLastRoute, controller.blogPost );
 		page.exit( '/read/blogs/:blog/posts/:post', controller.resetTitle );
-
-		page( '/tag/*', controller.loadSubscriptions, controller.initAbTests );
-		page( '/tag/:tag', controller.updateLastRoute, controller.removePost, controller.sidebar, controller.tagListing );
 	}
 
 	page( '/read/a8c', controller.updateLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
@@ -69,6 +66,4 @@ module.exports = function() {
 
 	page( '/following/*', controller.loadSubscriptions, controller.initAbTests );
 	page( '/following/edit', controller.updateLastRoute, controller.removePost, controller.sidebar, controller.followingEdit );
-
-	page( '/tags', controller.loadSubscriptions, controller.initAbTests, controller.updateLastRoute, controller.removePost, controller.sidebar, controller.recommendedTags );
 };
