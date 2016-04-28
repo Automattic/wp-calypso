@@ -281,7 +281,7 @@ function mediaButton( editor ) {
 		renderDropZone( { visible: event.type === 'dragend' } );
 	}
 
-	editor.addCommand( 'wpcom_add_media', () => {
+	editor.addCommand( 'wpcomAddMedia', () => {
 		var selectedSite = sites.getSelectedSite();
 		if ( selectedSite ) {
 			MediaActions.clearValidationErrors( selectedSite.ID );
@@ -295,7 +295,7 @@ function mediaButton( editor ) {
 
 	editor.addButton( 'wpcom_add_media', {
 		classes: 'btn wpcom-icon-button media',
-		cmd: 'wpcom_add_media',
+		cmd: 'wpcomAddMedia',
 		title: i18n.translate( 'Add Media' ),
 		onPostRender: function() {
 			this.innerHtml( ReactDomServer.renderToStaticMarkup(
