@@ -48,8 +48,8 @@ module.exports = {
 	sidebarPlanLinkMyPlan: {
 		datestamp: '20160101',
 		variations: {
-			plans: 75,
-			'plans/my-plan': 25,
+			plans: 50,
+			'plans/my-plan': 50,
 		},
 		defaultVariation: 'plans',
 		allowExistingUsers: true,
