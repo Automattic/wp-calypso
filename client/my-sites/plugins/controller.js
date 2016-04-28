@@ -22,6 +22,7 @@ import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
 import titleActions from 'lib/screen-title/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import { setSection } from 'state/ui/actions';
 
 /**
  * Module variables
@@ -148,6 +149,11 @@ function renderPluginsBrowser( context, siteUrl ) {
 
 function renderProvisionPlugins( context ) {
 	const site = sites.getSelectedSite();
+
+	const section = context.store.getState().ui.section;
+	context.store.dispatch( setSection( Object.assign( {}, section, { secondary: false } ) ) );
+	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+
 	renderWithReduxStore(
 		React.createElement( PlanSetup, {
 			selectedSite: site,
