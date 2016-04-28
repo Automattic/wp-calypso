@@ -26,15 +26,14 @@
 
 	.gridicon {
 		background: white;
-		border-radius: 50%;
 		color: $alert-yellow;
 		height: 48px;
-		padding: 21px;
+		margin: 21px 0 0 21px;
 		width: 48px;
 
 		@include breakpoint( ">660px" ) {
 			height: 72px;
-			padding: 30px;
+			margin: 30px 0 0 30px;
 			width: 72px;
 		}
 	}
