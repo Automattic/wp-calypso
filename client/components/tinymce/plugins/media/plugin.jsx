@@ -281,28 +281,28 @@ function mediaButton( editor ) {
 		renderDropZone( { visible: event.type === 'dragend' } );
 	}
 
+	editor.addCommand( 'wpcom_add_media', () => {
+		var selectedSite = sites.getSelectedSite();
+		if ( selectedSite ) {
+			MediaActions.clearValidationErrors( selectedSite.ID );
+		}
+
+		renderModal( {
+			visible: true,
+			initialActiveView: MediaModalViews.LIST
+		} );
+	} );
+
 	editor.addButton( 'wpcom_add_media', {
 		classes: 'btn wpcom-icon-button media',
-
+		cmd: 'wpcom_add_media',
 		title: i18n.translate( 'Add Media' ),
-
 		onPostRender: function() {
 			this.innerHtml( ReactDomServer.renderToStaticMarkup(
 				<button type="button" role="presentation" tabIndex="-1">
 					<Gridicon icon="image-multiple" size={ 20 } nonStandardSize />
 				</button>
 			) );
-		},
-		onclick: function() {
-			var selectedSite = sites.getSelectedSite();
-			if ( selectedSite ) {
-				MediaActions.clearValidationErrors( selectedSite.ID );
-			}
-
-			renderModal( {
-				visible: true,
-				initialActiveView: MediaModalViews.LIST
-			} );
 		}
 	} );
 
