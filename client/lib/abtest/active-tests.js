@@ -92,7 +92,7 @@ module.exports = {
 		defaultVariation: 'original'
 	},
 	guidedTours: {
-		datestamp: '20160418',
+		datestamp: '20160428',
 		variations: {
 			original: 96,
 			guided: 2,
