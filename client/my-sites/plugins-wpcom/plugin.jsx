@@ -34,7 +34,7 @@ export const Plugin = React.createClass( {
 
 		const target = isExternalLink
 			? '_blank'
-			: '_self';
+			: null;
 
 		const linkIcon = ( isExternalLink && isUnderMouse )
 			? 'external'

@@ -165,7 +165,7 @@ export const defaultPremiumPlugins = [
 export const defaultBusinessPlugins = [
 	{
 		name: i18n.translate( 'Google Analytics' ),
-		descriptionLink: '/categorys/features/google-analytics/{siteSlug}',
+		descriptionLink: '/plans/features/google-analytics/{siteSlug}',
 		icon: 'stats',
 		category: 'Business',
 		description: i18n.translate( 'Advanced features to complement WordPress.com stats. Funnel reports, goal conversion, and more.' )
