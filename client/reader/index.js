@@ -54,13 +54,4 @@ module.exports = function() {
 	if ( config.isEnabled( 'reader/search' ) ) {
 		page( '/read/search', controller.updateLastRoute, controller.removePost, controller.sidebar, controller.search );
 	}
-
-	page( '/read/list/:user/:list', controller.updateLastRoute, controller.removePost, controller.sidebar, controller.listListing );
-
-	if ( config.isEnabled( 'reader/list-management' ) ) {
-		page( '/read/list/:user/:list/sites', controller.updateLastRoute, controller.removePost, controller.sidebar, controller.listManagementSites );
-		page( '/read/list/:user/:list/tags', controller.updateLastRoute, controller.removePost, controller.sidebar, controller.listManagementTags );
-		page( '/read/list/:user/:list/edit', controller.updateLastRoute, controller.removePost, controller.sidebar, controller.listManagementDescriptionEdit );
-		page( '/read/list/:user/:list/followers', controller.updateLastRoute, controller.removePost, controller.sidebar, controller.listManagementFollowers );
-	}
 };
