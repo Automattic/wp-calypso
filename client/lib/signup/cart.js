@@ -29,7 +29,7 @@ module.exports = {
 				cartItem.extra = Object.assign( cartItem.extra || {}, {
 					context: 'signup',
 					// no boolean below, they are casted to strings somewhere down the line
-					withPlansOnly: abtest( 'domainsWithPlansOnly' ) === 'plansOnly' ? 'yes' : ''
+					withPlansOnly: abtest( 'domainsWithPlansOnly' ) === 'plansOnly' && abtest( 'freeTrialsInSignup' ) !== 'enabled' ? 'yes' : ''
 				} );
 				const addFunction = cartItems.add( cartItem );
 
