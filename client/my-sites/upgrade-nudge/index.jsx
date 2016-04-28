@@ -56,8 +56,28 @@ export default React.createClass( {
 		this.props.onClick();
 	},
 
+	shouldDisplay( site ) {
+		if ( site && this.props.feature ) {
+			if ( hasFeature( this.props.feature, site.siteID ) ) {
+				return false;
+			}
+		} else if ( site && ! isFreePlan( site.plan ) ) {
+			return false;
+		}
+
+		if ( ! this.props.jetpack && site.jetpack || this.props.jetpack && ! site.jetpack ) {
+			return false;
+		}
+
+		return true;
+	},
+
 	componentDidMount() {
-		if ( this.props.event || this.props.feature ) {
+		const site = sites.getSelectedSite();
+		if (
+			this.shouldDisplay( site ) &&
+			( this.props.event || this.props.feature )
+		) {
 			analytics.tracks.recordEvent( 'calypso_upgrade_nudge_impression', {
 				cta_name: this.props.event,
 				cta_feature: this.props.feature
@@ -71,15 +91,7 @@ export default React.createClass( {
 		const site = sites.getSelectedSite();
 		let href = this.props.href;
 
-		if ( site && this.props.feature ) {
-			if ( hasFeature( this.props.feature, site.siteID ) ) {
-				return null;
-			}
-		} else if ( site && ! isFreePlan( site.plan ) ) {
-			return null;
-		}
-
-		if ( ! this.props.jetpack && site.jetpack || this.props.jetpack && ! site.jetpack ) {
+		if ( ! this.shouldDisplay( site ) ) {
 			return null;
 		}
 
