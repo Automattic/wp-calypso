@@ -27,6 +27,12 @@ import Gravatar from 'components/gravatar';
 import i18n from 'lib/mixins/i18n';
 
 /**
+ * Constants
+ */
+
+const STATS_PAGE = '/stats/insights/';
+
+/**
  * Module variables
  */
 const renderFormHeader = ( site, isConnected = false ) => {
@@ -189,6 +195,17 @@ const LoggedInForm = React.createClass( {
 		return false;
 	},
 
+	getRedirectionTarget() {
+		const { queryObject } = this.props.jetpackConnectAuthorize;
+		if ( this.isCalypsoStartedConnection() ) {
+			const site = this.props.jetpackConnectAuthorize.queryObject.site;
+			const siteSlug = site.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+			return STATS_PAGE + siteSlug;
+		}
+
+		return queryObject.redirect_after_auth;
+	},
+
 	renderFooterLinks() {
 		const { queryObject, authorizeSuccess, isAuthorizing } = this.props.jetpackConnectAuthorize;
 		const loginUrl = config( 'login_url' ) + '?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) + '&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
@@ -200,7 +217,7 @@ const LoggedInForm = React.createClass( {
 		if ( authorizeSuccess ) {
 			return (
 				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem href={ queryObject.redirect_after_auth }>
+					<LoggedOutFormLinkItem href={ this.getRedirectionTarget() }>
 						{ this.translate( 'I\'m not interested in upgrades' ) }
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
