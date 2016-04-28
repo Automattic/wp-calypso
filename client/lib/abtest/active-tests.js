@@ -136,5 +136,15 @@ module.exports = {
 		defaultVariation: 'monthly',
 		allowExistingUsers: true,
 		allowAnyLocale: true
+	},
+	wpcomPluginsInSidebar: {
+		datestamp: '20160428',
+		variations: {
+			showPlugins: 90,
+			hidePlugins: 10
+		},
+		defaultVariation: 'showPlugins',
+		allowExistingUsers: true,
+		allowAnyLocale: true
 	}
 };
