@@ -11,6 +11,7 @@ import times from 'lodash/times';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
 import { fetchSitePlans } from 'state/sites/plans/actions';
@@ -250,6 +251,10 @@ const PlansCompare = React.createClass( {
 
 					if ( typeof feature[ plan.product_id ] === 'string' ) {
 						content = feature[ plan.product_id ];
+
+						if ( abtest( 'freePlanStorageLimit' ) === 'limited' && content === '3GB' ) {
+							content = '150MB';
+						}
 					}
 
 					return (
