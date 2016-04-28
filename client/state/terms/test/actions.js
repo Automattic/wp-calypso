@@ -23,10 +23,10 @@ import {
  * Module Variables
  */
 const testTerms = [
-	{ ID: 777, name: 'Chicken', slug: 'chicken', description: 'cornel sanders', post_count: 1, number: 0 },
+	{ ID: 777, name: 'Chicken', slug: 'chicken', description: 'His Majesty Colonel Sanders', post_count: 1, number: 0 },
 	{ ID: 778, name: 'Ribs', slug: 'ribs', description: 'i want my baby back * 3 ribs', post_count: 100, number: 0 },
 ];
-const siteId = 771234;
+const siteId = 2916284;
 const taxonomyName = 'jetpack-testimonials';
 
 describe( 'actions', () => {

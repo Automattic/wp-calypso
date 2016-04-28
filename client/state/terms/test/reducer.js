@@ -49,7 +49,7 @@ describe( 'reducer', () => {
 	describe( '#items()', () => {
 		it( 'should persist state', () => {
 			const original = deepFreeze( {
-				777: {
+				2916284: {
 					'jetpack-portfolio': keyedTestTerms
 				}
 			} );
@@ -60,7 +60,7 @@ describe( 'reducer', () => {
 
 		it( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
-				777: {
+				2916284: {
 					'jetpack-portfolio': keyedTestTerms
 				}
 			} );
@@ -71,7 +71,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
-				777: {
+				2916284: {
 					'jetpack-portfolio': {
 						111: {}
 					}
@@ -91,13 +91,13 @@ describe( 'reducer', () => {
 		it( 'should add received terms', () => {
 			const state = items( undefined, {
 				type: TERMS_RECEIVE,
-				siteId: 777,
+				siteId: 2916284,
 				taxonomy: 'jetpack-portfolio',
 				terms: testTerms
 			} );
 
 			expect( state ).to.eql( {
-				777: {
+				2916284: {
 					'jetpack-portfolio': keyedTestTerms
 				}
 			} );
@@ -105,14 +105,14 @@ describe( 'reducer', () => {
 
 		it( 'should accumulate received terms by taxonomy', () => {
 			const original = deepFreeze( {
-				777: {
+				2916284: {
 					'jetpack-portfolio': keyedTestTerms
 				}
 			} );
 
 			const state = items( original, {
 				type: TERMS_RECEIVE,
-				siteId: 777,
+				siteId: 2916284,
 				taxonomy: 'jetpack-portfolio',
 				terms: moreTerms
 			} );
@@ -120,7 +120,7 @@ describe( 'reducer', () => {
 			const expectedTerms = merge( {}, keyedTestTerms, keyedMoreTerms );
 
 			expect( state ).to.eql( {
-				777: {
+				2916284: {
 					'jetpack-portfolio': expectedTerms
 				}
 			} );
@@ -128,20 +128,20 @@ describe( 'reducer', () => {
 
 		it( 'should add additional terms', () => {
 			const original = deepFreeze( {
-				777: {
+				2916284: {
 					'jetpack-portfolio': keyedTestTerms
 				}
 			} );
 
 			const state = items( original, {
 				type: TERMS_RECEIVE,
-				siteId: 777,
+				siteId: 2916284,
 				taxonomy: 'amazing-taxonomy',
 				terms: moreTerms
 			} );
 
 			expect( state ).to.eql( {
-				777: {
+				2916284: {
 					'amazing-taxonomy': keyedMoreTerms,
 					'jetpack-portfolio': keyedTestTerms
 				}
