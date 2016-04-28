@@ -273,8 +273,14 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		if ( ! config.isEnabled( 'manage/plugins/wpcom' ) && ! this.props.sites.hasSiteWithPlugins() ) {
-			return null;
+		if ( ! this.props.sites.hasSiteWithPlugins() ) {
+			if ( ! config.isEnabled( 'manage/plugins/wpcom' ) ) {
+				return null;
+			}
+
+			if ( abtest( 'wpcomPluginsInSidebar' ) === 'hidePlugins' ) {
+				return null;
+			}
 		}
 
 		if ( ( this.isSingle() && site.jetpack ) || ( ! this.isSingle() && this.hasJetpackSites() ) ) {
