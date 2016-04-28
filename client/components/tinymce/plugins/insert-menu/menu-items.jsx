@@ -21,17 +21,13 @@ export default [
 	{
 		name: 'insert_media_item',
 		icon: 'add-image',
-		item: <GridiconButton icon="image-multiple" label={ 'Add Media' } />
+		item: <GridiconButton icon="image-multiple" label={ 'Add Media' } />,
+		cmd: 'wpcomAddMedia'
 	},
 	{
 		name: 'insert_contact_form',
 		icon: 'mention',
 		item: <GridiconButton icon="mention" label={ 'Add Contact Form' } />,
 		cmd: 'wpcomContactForm'
-	},
-	{
-		name: 'insert_instragram_item',
-		icon: 'instagram',
-		item: <SocialLogoButton icon="instagram" label={ 'Instagram Widget' } />
 	}
 ];

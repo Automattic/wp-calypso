@@ -13,15 +13,16 @@ const initialize = editor => {
 			classes: 'wpcom-insert-menu__menu-item',
 			cmd: item.cmd,
 			onPostRender() {
-				this.innerHtml( renderToString( item.item ) )
+				this.innerHtml( renderToString( item.item ) );
 			}
 		} )
 	);
 
 	editor.addButton( 'wpcom_insert_menu', {
-		type: 'menubutton',
+		type: 'splitbutton',
 		title: 'Insert content',
 		classes: 'btn wpcom-insert-menu insert-menu',
+		cmd: menuItems[0].cmd,
 		menu: menuItems.map( ( { name } ) => editor.menuItems[ name ] ),
 		onPostRender() {
 			const parentNode = this.$el[0].children[0];
