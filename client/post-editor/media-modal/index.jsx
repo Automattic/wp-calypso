@@ -20,6 +20,7 @@ var MediaLibrary = require( 'my-sites/media-library' ),
 	MediaModalSecondaryActions = require( './secondary-actions' ),
 	MediaModalDetail = require( './detail' ),
 	MediaModalGallery = require( './gallery' ),
+	MediaModalImageEditor = require( './image-editor' ),
 	MediaActions = require( 'lib/media/actions' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	Dialog = require( 'components/dialog' ),
@@ -138,6 +139,7 @@ module.exports = React.createClass( {
 			case ModalViews.LIST: stat = 'view_list'; break;
 			case ModalViews.DETAIL: stat = 'view_detail'; break;
 			case ModalViews.GALLERY: stat = 'view_gallery'; break;
+			case ModalViews.IMAGE_EDITOR: stat = 'view_edit'; break;
 		}
 
 		if ( stat ) {
@@ -199,6 +201,23 @@ module.exports = React.createClass( {
 	onAddMedia: function() {
 		PostStats.recordStat( 'media_explorer_upload' );
 		PostStats.recordEvent( 'Upload Media' );
+	},
+
+	onAddAndEditImage: function() {
+		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
+
+		this.setView( ModalViews.IMAGE_EDITOR );
+	},
+
+	onImageEditorClose: function() {
+		const item = this.props.mediaLibrarySelectedItems[ this.state.detailSelectedIndex ];
+
+		if ( item ) {
+			this.setView( ModalViews.DETAIL );
+			return;
+		}
+
+		this.setView( ModalViews.LIST );
 	},
 
 	onFilterChange: function( filter ) {
@@ -270,6 +289,10 @@ module.exports = React.createClass( {
 			selectedItems = this.props.mediaLibrarySelectedItems,
 			buttons;
 
+		if ( ModalViews.IMAGE_EDITOR === this.state.activeView ) {
+			return;
+		}
+
 		buttons = [
 			<MediaModalSecondaryActions
 				site={ this.props.site }
@@ -324,6 +347,7 @@ module.exports = React.createClass( {
 						enabledFilters={ this.props.enabledFilters }
 						search={ this.state.search }
 						onAddMedia={ this.onAddMedia }
+						onAddAndEditImage={ this.onAddAndEditImage }
 						onFilterChange={ this.onFilterChange }
 						onScaleChange={ this.onScaleChange }
 						onSearch={ this.onSearch }
@@ -341,7 +365,8 @@ module.exports = React.createClass( {
 						items={ this.props.mediaLibrarySelectedItems }
 						selectedIndex={ this.state.detailSelectedIndex }
 						onSelectedIndexChange={ this.setDetailSelectedIndex }
-						onChangeView={ this.setView } />
+						onChangeView={ this.setView }
+						onEdit={ this.setView.bind( this, ModalViews.IMAGE_EDITOR ) } />
 				);
 				break;
 
@@ -353,6 +378,16 @@ module.exports = React.createClass( {
 						settings={ this.state.gallerySettings }
 						onUpdateSettings={ ( gallerySettings ) => this.setState( { gallerySettings } ) }
 						onChangeView={ this.setView } />
+				);
+				break;
+
+			case ModalViews.IMAGE_EDITOR:
+				content = (
+					<MediaModalImageEditor
+						site={ this.props.site }
+						items={ this.props.mediaLibrarySelectedItems }
+						selectedIndex={ this.state.detailSelectedIndex }
+						onImageEditorClose={ this.onImageEditorClose } />
 				);
 				break;
 		}

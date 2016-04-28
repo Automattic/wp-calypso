@@ -127,6 +127,7 @@ module.exports = React.createClass( {
 				single={ this.props.single }
 				scrollable={ this.props.scrollable }
 				onAddMedia={ this.onAddMedia }
+				onAddAndEditImage={ this.props.onAddAndEditImage }
 				onMediaScaleChange={ this.props.onScaleChange }
 				onEditItem={ this.props.onEditItem } />
 		);
