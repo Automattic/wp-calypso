@@ -37,6 +37,7 @@ let __lastTitle = null;
 const activeAbTests = [
 	// active tests would go here
 ];
+let lastRoute = null;
 
 function trackPageLoad( path, title, readerView ) {
 	analytics.pageView.record( path, title );
@@ -150,6 +151,14 @@ module.exports = {
 			page.redirect( `/read/blogs/${context.params.blog_id}/posts/${context.params.post_id}` );
 		}
 
+		next();
+	},
+
+	updateLastRoute( context, next ) {
+		if ( lastRoute ) {
+			context.lastRoute = lastRoute;
+		}
+		lastRoute = context.path;
 		next();
 	},
 
@@ -585,29 +594,6 @@ module.exports = {
 			} ),
 			document.getElementById( 'primary' )
 		);
-	},
-
-	recommendedForYou: function() {
-		const RecommendedForYou = require( 'reader/recommendations/for-you' ),
-			basePath = '/recommendations',
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Recommended Sites For You',
-			mcKey = 'recommendations_for_you';
-
-		ReactDom.render(
-			React.createElement( RecommendedForYou, {
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				)
-			} ),
-			document.getElementById( 'primary' )
-		);
-
-		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		setPageTitle( i18n.translate( 'Recommended Sites For You' ) );
 	},
 
 	listManagementSites: function( context ) {
