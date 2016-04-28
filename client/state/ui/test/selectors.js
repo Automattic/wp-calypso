@@ -10,6 +10,7 @@ import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSectionName,
+	isSectionIsomorphic,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -87,6 +88,36 @@ describe( 'selectors', () => {
 			} );
 
 			expect( sectionName ).to.equal( 'post-editor' );
+		} );
+	} );
+
+	describe( '#isSectionIsomorphic()', () => {
+		it( 'should return false if there is no section currently selected', () => {
+			const selected = isSectionIsomorphic( {
+				ui: {
+					section: false
+				}
+			} );
+
+			expect( selected ).to.be.false;
+		} );
+
+		it( 'should return true if current section is isomorphic', () => {
+			const section = {
+				enableLoggedOut: true,
+				group: 'sites',
+				isomorphic: true,
+				module: 'my-sites/themes',
+				name: 'themes',
+				paths: [ '/design' ],
+				secondary: false
+			};
+
+			const selected = isSectionIsomorphic( {
+				ui: { section }
+			} );
+
+			expect( selected ).to.be.true;
 		} );
 	} );
 } );

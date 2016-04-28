@@ -12,7 +12,7 @@ var React = require( 'react' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
-	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies
@@ -47,6 +47,8 @@ var config = require( 'config' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
+	isSectionIsomorphic = require( 'state/ui/selectors' ).isSectionIsomorphic,
+	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
@@ -161,15 +163,30 @@ function boot() {
 	createReduxStoreFromPersistedInitialState( reduxStoreReady );
 }
 
+function renderLayout( reduxStore ) {
+	let props = { focus: layoutFocus };
+
+	if ( user.get() ) {
+		Object.assign( props, {}, { user, sites, nuxWelcome, translatorInvitation } );
+	}
+
+	Layout = require( 'layout' );
+	renderWithReduxStore(
+		React.createElement( Layout, props ),
+		document.getElementById( 'wpcom' ),
+		reduxStore
+	);
+
+	debug( 'Main layout rendered.' );
+}
+
 function reduxStoreReady( reduxStore ) {
-	let layoutSection, layoutElement, validSections = [];
+	let layoutSection, validSections = [];
 
 	bindWpLocaleState( reduxStore );
 	bindTitleToStore( reduxStore );
 
 	supportUser.setReduxStore( reduxStore );
-
-	Layout = require( 'layout' );
 
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
@@ -179,18 +196,8 @@ function reduxStoreReady( reduxStore ) {
 		// Set current user in Redux store
 		reduxStore.dispatch( receiveUser( user.get() ) );
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
-
-		// Create layout instance with current user prop
-		layoutElement = React.createElement( Layout, {
-			user: user,
-			sites: sites,
-			focus: layoutFocus,
-			nuxWelcome: nuxWelcome,
-			translatorInvitation: translatorInvitation
-		} );
 	} else {
 		analytics.setSuperProps( superProps );
-		layoutElement = React.createElement( Layout, { focus: layoutFocus } );
 	}
 
 	if ( config.isEnabled( 'perfmon' ) ) {
@@ -202,13 +209,7 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/network-connection' ).init( reduxStore );
 	}
 
-	renderWithReduxStore(
-		layoutElement,
-		document.getElementById( 'wpcom' ),
-		reduxStore
-	);
-
-	debug( 'Main layout rendered.' );
+	renderLayout( reduxStore );
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
 	// This can be removed when the legacy version is retired.
@@ -360,6 +361,25 @@ function reduxStoreReady( reduxStore ) {
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
 		require( 'lib/rubberband-scroll-disable' )( document.body );
 	}
+
+	/*
+	 * Layouts with differing React mount-points will not reconcile correctly,
+	 * so remove an existing single-tree layout by re-rendering if necessary.
+	 *
+	 * TODO (@seear): React 15's new reconciliation algo may make this unnecessary
+	 */
+	page( '*', function( context, next ) {
+		const sectionNotIsomorphic = ! isSectionIsomorphic( context.store.getState() );
+		const previousLayoutIsSingleTree = ! isEmpty(
+			document.getElementsByClassName( 'wp-singletree-layout' )
+		);
+
+		if ( sectionNotIsomorphic && previousLayoutIsSingleTree ) {
+			debug( 'Re-rendering multi-tree layout' );
+			renderLayout( context.store );
+		}
+		next();
+	} );
 
 	detectHistoryNavigation.start();
 	page.start();
