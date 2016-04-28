@@ -115,14 +115,15 @@ const SinglePlugin = React.createClass( {
 	},
 
 	updatePageTitle() {
-		const pageTitle = upperFirst( this.state.plugin ? this.state.plugin.name : this.props.pluginSlug );
+		const pageTitle = this.state.plugin ? this.state.plugin.name : this.props.pluginSlug;
 		if ( _currentPageTitle === pageTitle ) {
 			return;
 		}
 		_currentPageTitle = pageTitle;
 		this.pluginRefreshTimeout = setTimeout( () => {
-			this.props.onPluginRefresh( this.translate( '%(pluginName)s Plugin', {
-				args: { pluginName: _currentPageTitle },
+			this.props.onPluginRefresh( this.translate( '%(pluginName)s Plugin', '%(pluginName)s Plugins', {
+				count: pageTitle.toLowerCase() !== 'standard' | 0,
+				args: { pluginName: upperFirst( _currentPageTitle ) },
 				textOnly: true,
 				context: 'Page title: Plugin detail'
 			} ) );
