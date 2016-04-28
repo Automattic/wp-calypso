@@ -47,7 +47,7 @@ function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsC
 			let newCartItems = [];
 
 			if ( domainItem ) {
-				if ( abtest( 'domainsWithPlansOnly' ) === 'plansOnly' ) {
+				if ( abtest( 'domainsWithPlansOnly' ) === 'plansOnly' && abtest( 'freeTrialsInSignup' ) !== 'enabled' ) {
 					newCartItems = [ ...newCartItems, domainItem, cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) ];
 				} else {
 					newCartItems = [ ...newCartItems, domainItem ];

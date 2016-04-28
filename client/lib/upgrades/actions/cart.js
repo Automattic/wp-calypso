@@ -50,20 +50,21 @@ function addItem( item ) {
 
 function addItems( items ) {
 	const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly',
+		freeTrialsEnabled = abtest( 'freeTrialsInSignup' ) === 'enabled',
 		selectedSite = sitesList.getSelectedSite();
-	let hasItemRequiresBundle = items.some( item => isDomainRegistration( item ) || isDomainMapping( item ) );
+	let shouldBundleWithPremium = items.some( item => isDomainRegistration( item ) || isDomainMapping( item ) ) && ! freeTrialsEnabled && domainsWithPlansOnlyTestEnabled;
 
 	if ( selectedSite ) {
-		hasItemRequiresBundle = hasItemRequiresBundle && ! isPlan( selectedSite.plan );
+		shouldBundleWithPremium = shouldBundleWithPremium && ! isPlan( selectedSite.plan );
 	}
 
-	if ( hasItemRequiresBundle && domainsWithPlansOnlyTestEnabled ) {
+	if ( shouldBundleWithPremium ) {
 		items = [ cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) ].concat( items );
 	}
 	const extendedItems = items.map( ( item ) => {
 		const extra = assign( {}, item.extra, {
 			context: 'calypstore',
-			withPlansOnly: domainsWithPlansOnlyTestEnabled ? 'yes' : ''
+			withPlansOnly: domainsWithPlansOnlyTestEnabled && ! freeTrialsEnabled ? 'yes' : ''
 		} );
 
 		return assign( {}, item, { extra } );
