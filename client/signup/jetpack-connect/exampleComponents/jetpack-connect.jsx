@@ -6,7 +6,7 @@ export default React.createClass( {
 	render() {
 		return (
 			<div className="jetpack-connect__example">
-				something something connect
+				<img src="https://cldup.com/SCpc70YLh9-3000x3000.png" />
 			</div>
 		);
 	}
