@@ -13,7 +13,7 @@ import {
 describe( 'selectors', () => {
 	describe( '#getSiteTaxonomyTerms()', () => {
 		it( 'should return null if no site exists', () => {
-			const terms = getSiteTaxonomyTerms( {}, 777, 'jetpack-portfolio' );
+			const terms = getSiteTaxonomyTerms( {}, 2916284, 'jetpack-portfolio' );
 
 			expect( terms ).to.be.null;
 		} );
@@ -21,7 +21,7 @@ describe( 'selectors', () => {
 		it( 'should return null if no taxonomies exist for site', () => {
 			const terms = getSiteTaxonomyTerms( {
 				terms: {
-					777: {
+					2916284: {
 						'jetpack-portfolio': {
 							111: {
 								ID: 111,
@@ -30,7 +30,7 @@ describe( 'selectors', () => {
 						}
 					}
 				}
-			}, 777, 'jetpack-testimonials' );
+			}, 2916284, 'jetpack-testimonials' );
 
 			expect( terms ).to.be.null;
 		} );
@@ -38,7 +38,7 @@ describe( 'selectors', () => {
 		it( 'should return array of matching terms for site taxonomy combo', () => {
 			const terms = getSiteTaxonomyTerms( {
 				terms: {
-					777: {
+					2916284: {
 						'jetpack-portfolio': {
 							111: {
 								ID: 111,
@@ -51,7 +51,7 @@ describe( 'selectors', () => {
 						}
 					}
 				}
-			}, 777, 'jetpack-portfolio' );
+			}, 2916284, 'jetpack-portfolio' );
 
 			expect( terms ).to.eql( [
 				{
