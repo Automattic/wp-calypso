@@ -71,7 +71,6 @@ export function fetchingItems( state = {}, action ) {
 				all: action.type === SITES_REQUEST
 			} );
 		case SERIALIZE:
-			return {};
 		case DESERIALIZE:
 			return {};
 	}
