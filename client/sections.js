@@ -203,7 +203,6 @@ if ( config.isEnabled( 'reader' ) ) {
 		'/read',
 		'/activities',
 		'/tag',
-		'/discover',
 		'/following',
 		'/tags'
 	];
@@ -220,6 +219,14 @@ if ( config.isEnabled( 'reader' ) ) {
 		name: 'reader-recomendations',
 		paths: [ '/recommendations' ],
 		module: 'reader/recommendations',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	sections.push( {
+		name: 'discover',
+		paths: [ '/discover' ],
+		module: 'reader/discover',
 		secondary: true,
 		group: 'reader'
 	} );
