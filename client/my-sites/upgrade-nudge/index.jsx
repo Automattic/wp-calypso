@@ -16,6 +16,7 @@ import sitesList from 'lib/sites-list';
 import { getValidFeatureKeys, hasFeature } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { abtest } from 'lib/abtest';
 
 const sites = sitesList();
 
@@ -81,6 +82,15 @@ export default React.createClass( {
 
 		if ( ! this.shouldDisplay( site ) ) {
 			return null;
+		}
+
+		if ( abtest( 'nudges' ) === 'hideAll' ) {
+			return (
+				<TrackComponentView eventName={ 'calypso_upgrade_nudge_hide' } eventProperties={ {
+					cta_name: this.props.event,
+					cta_feature: this.props.feature
+				} } />
+			);
 		}
 
 		if ( ! this.props.href && site ) {
