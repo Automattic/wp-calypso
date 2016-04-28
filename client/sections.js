@@ -201,7 +201,6 @@ if ( config.isEnabled( 'reader' ) ) {
 	readerPaths = [
 		'/',
 		'/read',
-		'/activities',
 		'/tag',
 		'/following',
 		'/tags'
@@ -227,6 +226,14 @@ if ( config.isEnabled( 'reader' ) ) {
 		name: 'discover',
 		paths: [ '/discover' ],
 		module: 'reader/discover',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	sections.push( {
+		name: 'reader-activities',
+		paths: [ '/activities' ],
+		module: 'reader/liked-stream',
 		secondary: true,
 		group: 'reader'
 	} );

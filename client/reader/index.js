@@ -67,8 +67,6 @@ module.exports = function() {
 		page( '/read/list/:user/:list/followers', controller.updateLastRoute, controller.removePost, controller.sidebar, controller.listManagementFollowers );
 	}
 
-	page( '/activities/likes', controller.loadSubscriptions, controller.initAbTests, controller.updateLastRoute, controller.removePost, controller.sidebar, controller.likes );
-
 	page( '/following/*', controller.loadSubscriptions, controller.initAbTests );
 	page( '/following/edit', controller.updateLastRoute, controller.removePost, controller.sidebar, controller.followingEdit );
 

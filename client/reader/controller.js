@@ -545,35 +545,6 @@ module.exports = {
 		);
 	},
 
-	likes: function( context ) {
-		var LikedPostsStream = require( 'reader/liked-stream' ),
-			basePath = route.sectionify( context.path ),
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > My Likes',
-			likedPostsStore = feedStreamFactory( 'likes' ),
-			mcKey = 'postlike';
-
-		ensureStoreLoading( likedPostsStore, context );
-
-		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-
-		ReactDom.render(
-			React.createElement( LikedPostsStream, {
-				key: 'liked',
-				store: likedPostsStore,
-				setPageTitle: setPageTitle,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
-			} ),
-			document.getElementById( 'primary' )
-		);
-	},
-
 	followingEdit: function( context ) {
 		var FollowingEdit = require( 'reader/following-edit' ),
 			basePath = route.sectionify( context.path ),
