@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import rewire from 'rewire';
 import assign from 'lodash/assign';
 import sinon from 'sinon';
 
@@ -37,12 +36,12 @@ describe( 'MediaLibrarySelectedStore', function() {
 				return DUMMY_OBJECTS[ itemId ];
 			}
 		} );
-		MediaLibrarySelectedStore = rewire( '../library-selected-store' );
+		MediaLibrarySelectedStore = require( '../library-selected-store' );
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
 	beforeEach( function() {
-		MediaLibrarySelectedStore.__set__( '_media', {} );
+		MediaLibrarySelectedStore._media = {};
 	} );
 
 	after( function() {
@@ -133,7 +132,7 @@ describe( 'MediaLibrarySelectedStore', function() {
 			dispatchSetLibrarySelectedItems();
 			dispatchRemoveMediaItem();
 
-			expect( MediaLibrarySelectedStore.__get__( '_media' )[ DUMMY_SITE_ID ] ).to.be.empty;
+			expect( MediaLibrarySelectedStore._media[ DUMMY_SITE_ID ] ).to.be.empty;
 		} );
 	} );
 } );

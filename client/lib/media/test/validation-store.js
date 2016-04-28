@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import assign from 'lodash/assign';
-import rewire from 'rewire';
 import mockery from 'mockery';
 import sinon from 'sinon';
 
@@ -47,12 +46,12 @@ describe( 'MediaValidationStore', function() {
 		} );
 
 		// Load store
-		MediaValidationStore = rewire( '../validation-store' );
+		MediaValidationStore = require( '../validation-store' );
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
 	beforeEach( function() {
-		MediaValidationStore.__set__( '_errors', {} );
+		MediaValidationStore._errors = {};
 	} );
 
 	after( function() {
@@ -94,19 +93,19 @@ describe( 'MediaValidationStore', function() {
 		var validateItem;
 
 		before( function() {
-			validateItem = MediaValidationStore.__get__( 'validateItem' );
+			validateItem = MediaValidationStore.validateItem;
 		} );
 
 		it( 'should have no effect for a valid file', function() {
 			validateItem( DUMMY_SITE_ID, Object.assign( {}, DUMMY_MEDIA_OBJECT, { extension: 'gif' } ) );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {} );
+			expect( MediaValidationStore._errors ).to.eql( {} );
 		} );
 
 		it( 'should set an error array for an invalid file', function() {
 			validateItem( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {
+			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {
 					[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ]
 				}
@@ -116,7 +115,7 @@ describe( 'MediaValidationStore', function() {
 		it( 'should set an error array for a file exceeding acceptable size', function() {
 			validateItem( DUMMY_SITE_ID, Object.assign( {}, DUMMY_MEDIA_OBJECT, { size: 2048, extension: 'gif' } ) );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {
+			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {
 					[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE ]
 				}
@@ -126,7 +125,7 @@ describe( 'MediaValidationStore', function() {
 		it( 'should accumulate multiple validation errors', function() {
 			validateItem( DUMMY_SITE_ID, Object.assign( {}, DUMMY_MEDIA_OBJECT, { size: 2048 } ) );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {
+			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {
 					[ DUMMY_MEDIA_OBJECT.ID ]: [
 						MediaValidationErrors.FILE_TYPE_UNSUPPORTED,
@@ -141,7 +140,7 @@ describe( 'MediaValidationStore', function() {
 		var clearValidationErrors;
 
 		before( function() {
-			clearValidationErrors = MediaValidationStore.__get__( 'clearValidationErrors' );
+			clearValidationErrors = MediaValidationStore.clearValidationErrors;
 		} );
 
 		it( 'should remove validation errors for a single item on a given site', function() {
@@ -149,7 +148,7 @@ describe( 'MediaValidationStore', function() {
 
 			clearValidationErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {
+			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {}
 			} );
 		} );
@@ -159,7 +158,7 @@ describe( 'MediaValidationStore', function() {
 
 			clearValidationErrors( DUMMY_SITE_ID );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {} );
+			expect( MediaValidationStore._errors ).to.eql( {} );
 		} );
 	} );
 
@@ -167,7 +166,7 @@ describe( 'MediaValidationStore', function() {
 		var clearValidationErrorsByType;
 
 		before( function() {
-			clearValidationErrorsByType = MediaValidationStore.__get__( 'clearValidationErrorsByType' );
+			clearValidationErrorsByType = MediaValidationStore.clearValidationErrorsByType;
 		} );
 
 		it( 'should remove errors for all items containing that error type on a given site', function() {
@@ -180,7 +179,7 @@ describe( 'MediaValidationStore', function() {
 
 			clearValidationErrorsByType( DUMMY_SITE_ID, MediaValidationErrors.FILE_TYPE_UNSUPPORTED );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {
+			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {}
 			} );
 		} );

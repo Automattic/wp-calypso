@@ -19,8 +19,9 @@ import { PLAN_FREE } from 'lib/plans/constants';
 /**
  * Module variables
  */
-const MediaValidationStore = {};
-const _errors = {};
+const MediaValidationStore = {
+	_errors: {}
+};
 const sites = Sites();
 
 /**
@@ -44,14 +45,14 @@ const sites = Sites();
 emitter( MediaValidationStore );
 
 function ensureErrorsObjectForSite( siteId ) {
-	if ( siteId in _errors ) {
+	if ( siteId in MediaValidationStore._errors ) {
 		return;
 	}
 
-	_errors[ siteId ] = {};
+	MediaValidationStore._errors[ siteId ] = {};
 }
 
-function validateItem( siteId, item ) {
+MediaValidationStore.validateItem = function( siteId, item ) {
 	var site = sites.getSite( siteId ),
 		itemErrors = [];
 
@@ -73,21 +74,21 @@ function validateItem( siteId, item ) {
 
 	if ( itemErrors.length ) {
 		ensureErrorsObjectForSite( siteId );
-		_errors[ siteId ][ item.ID ] = itemErrors;
+		MediaValidationStore._errors[ siteId ][ item.ID ] = itemErrors;
 	}
-}
+};
 
-function clearValidationErrors( siteId, itemId ) {
-	if ( ! ( siteId in _errors ) ) {
+MediaValidationStore.clearValidationErrors = function( siteId, itemId ) {
+	if ( ! ( siteId in MediaValidationStore._errors ) ) {
 		return;
 	}
 
 	if ( itemId ) {
-		delete _errors[ siteId ][ itemId ];
+		delete MediaValidationStore._errors[ siteId ][ itemId ];
 	} else {
-		delete _errors[ siteId ];
+		delete MediaValidationStore._errors[ siteId ];
 	}
-}
+};
 
 /**
  * Update the errors object for a site by picking only items where errors still
@@ -96,21 +97,21 @@ function clearValidationErrors( siteId, itemId ) {
  * @param {Number}               siteId    The site ID
  * @param {MediaValidationError} errorType The error type to remove
  */
-function clearValidationErrorsByType( siteId, errorType ) {
-	if ( ! ( siteId in _errors ) ) {
+MediaValidationStore.clearValidationErrorsByType = function( siteId, errorType ) {
+	if ( ! ( siteId in MediaValidationStore._errors ) ) {
 		return;
 	}
 
-	_errors[ siteId ] = pickBy(
-		mapValues( _errors[ siteId ], ( errors ) => without( errors, errorType ) ),
+	MediaValidationStore._errors[ siteId ] = pickBy(
+		mapValues( MediaValidationStore._errors[ siteId ], ( errors ) => without( errors, errorType ) ),
 		( errors ) => ! isEmpty( errors )
 	);
-}
+};
 
 function receiveServerError( siteId, itemId, errors ) {
 	ensureErrorsObjectForSite( siteId );
 
-	_errors[ siteId ][ itemId ] = errors.map( ( error ) => {
+	MediaValidationStore._errors[ siteId ][ itemId ] = errors.map( ( error ) => {
 		switch ( error.error ) {
 			case 'http_404':
 				return MediaValidationErrors.UPLOAD_VIA_URL_404;
@@ -129,15 +130,15 @@ function receiveServerError( siteId, itemId, errors ) {
 }
 
 MediaValidationStore.getAllErrors = function( siteId ) {
-	return _errors[ siteId ] || {};
+	return MediaValidationStore._errors[ siteId ] || {};
 };
 
 MediaValidationStore.getErrors = function( siteId, itemId ) {
-	if ( ! ( siteId in _errors ) ) {
+	if ( ! ( siteId in MediaValidationStore._errors ) ) {
 		return [];
 	}
 
-	return _errors[ siteId ][ itemId ] || [];
+	return MediaValidationStore._errors[ siteId ][ itemId ] || [];
 };
 
 MediaValidationStore.hasErrors = function( siteId, itemId ) {
@@ -162,7 +163,7 @@ MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
 			errors = items.reduce( function( memo, item ) {
 				var itemErrors;
 
-				validateItem( action.siteId, item );
+				MediaValidationStore.validateItem( action.siteId, item );
 
 				itemErrors = MediaValidationStore.getErrors( action.siteId, item.ID );
 				if ( itemErrors.length ) {
@@ -201,9 +202,9 @@ MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 
 			if ( action.errorType ) {
-				clearValidationErrorsByType( action.siteId, action.errorType );
+				MediaValidationStore.clearValidationErrorsByType( action.siteId, action.errorType );
 			} else {
-				clearValidationErrors( action.siteId, action.itemId );
+				MediaValidationStore.clearValidationErrors( action.siteId, action.itemId );
 			}
 
 			MediaValidationStore.emit( 'change' );
