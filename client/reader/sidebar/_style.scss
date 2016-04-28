@@ -33,7 +33,7 @@
 				color: $gray-dark;
 			}
 
-			.add-new {
+			.sidebar__button {
 				background-color: darken( $gray, 10% );
 				color: $white;
 			}
@@ -142,7 +142,7 @@
 	}
 
 	.sidebar__menu-item {
-		a.add-new {
+		a.sidebar__button {
 			margin-top: 5px;
 
 			@include breakpoint( "<660px" ) {
