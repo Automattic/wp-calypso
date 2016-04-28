@@ -57,7 +57,12 @@ export default React.createClass( {
 
 	monthlyPrice: function() {
 		const { cost, currency } = this.props.cartItem;
-		if ( abtest( 'planPricing' ) === 'annual' || cost === 0 ) {
+
+		if ( typeof cost === 'undefined' ) {
+			return null;
+		}
+
+		if ( abtest( 'planPricing' ) === 'annual' || cost <= 0 ) {
 			return null;
 		}
 
