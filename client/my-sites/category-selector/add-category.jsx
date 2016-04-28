@@ -65,6 +65,12 @@ module.exports = React.createClass( {
 		this.setState( {
 			showDialog: true,
 			selectedParent: []
+		}, () => {
+			// much like components/dialog/dialog-base.jsx
+			// we need a short timeout here to wait for css transitions to finish
+			setTimeout( () => {
+				ReactDom.findDOMNode( this.refs.categoryName ).focus();
+			}, 20 );
 		} );
 	},
 
@@ -128,8 +134,12 @@ module.exports = React.createClass( {
 		return ! error;
 	},
 
-	validateInput: function() {
-		this.isValid();
+	validateInput: function( event ) {
+		if ( 13 === event.keyCode ) {
+			this.saveCategory();
+		} else {
+			this.isValid();
+		}
 	},
 
 	saveCategory: function() {
