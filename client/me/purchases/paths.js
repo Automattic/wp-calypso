@@ -26,10 +26,6 @@ function editCardDetails( siteName, purchaseId ) {
 	return editPaymentMethod( siteName, purchaseId ) + `/edit`;
 }
 
-function editSpecificCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
-	return editPaymentMethod( siteName, purchaseId ) + `/edit/${ cardId }`;
-}
-
 function editPaymentMethod( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/payment';
 }
@@ -40,7 +36,6 @@ export default {
 	confirmCancelDomain,
 	editCardDetails,
 	editPaymentMethod,
-	editSpecificCardDetails,
 	list,
 	listNotice,
 	managePurchase
