@@ -31,15 +31,13 @@ export default function() {
 			plansController.plansCompare
 		);
 
-		if ( config.isEnabled( 'manage/plans/my-plan' ) ) {
-			page(
-				'/plans/my-plan/:site',
-				retarget,
-				controller.siteSelection,
-				controller.navigation,
-				yourPlan
-			);
-		}
+		page(
+			'/plans/my-plan/:site',
+			retarget,
+			controller.siteSelection,
+			controller.navigation,
+			yourPlan
+		);
 
 		page(
 			'/plans/compare/:domain',
