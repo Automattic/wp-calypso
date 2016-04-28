@@ -16,6 +16,7 @@
 		"code-splitting": true,
 		"community-translator": true,
 		"desktop-promo": true,
+		"guided-tours": true,
 		"help": true,
 		"mailing-lists/unsubscribe": true,
 		"manage/add-people": true,
