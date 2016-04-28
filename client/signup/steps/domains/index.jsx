@@ -111,11 +111,20 @@ module.exports = React.createClass( {
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ), [], { domainItem } );
 
-		if ( domainsWithPlansOnlyTestEnabled && isPurchasingItem ) {
+		if ( domainsWithPlansOnlyTestEnabled && isPurchasingItem && abtest( 'freeTrialsInSignup' ) !== 'enabled' ) {
 			this.submitPlansStepWithPremium();
-		}
+			const plansIndex = this.props.steps.indexOf( 'plans' );
+			if ( plansIndex === this.props.steps.length - 1 || plansIndex === -1 ) {
+				// if plans is the last step or not in the flow, this'll finish the flow
+				this.props.goToNextStep();
+			} else {
+				// skip plans step
 
-		this.props.goToNextStep();
+				this.props.goToStep( this.props.steps[ plansIndex + 1 ] );
+			}
+		} else {
+			this.props.goToNextStep();
+		}
 	},
 
 	submitPlansStepWithPremium() {
@@ -143,7 +152,7 @@ module.exports = React.createClass( {
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ) );
 
-		if ( domainsWithPlansOnlyTestEnabled ) {
+		if ( domainsWithPlansOnlyTestEnabled && abtest( 'freeTrialsInSignup' ) !== 'enabled' ) {
 			this.submitPlansStepWithPremium();
 		}
 
