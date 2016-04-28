@@ -40,13 +40,6 @@ export default function() {
 	);
 
 	page(
-		paths.editSpecificCardDetails(),
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.editCardDetails
-	);
-
-	page(
 		paths.list(),
 		meController.sidebar,
 		controller.noSitesMessage,
