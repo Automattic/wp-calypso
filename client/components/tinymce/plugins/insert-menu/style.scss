@@ -1,0 +1,31 @@
+.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu button {
+	padding-right: 20px;
+}
+
+.mce-container .mce-wpcom-insert-menu .mce-caret {
+	padding-left: 12px;
+}
+
+.wpcom-insert-menu__menu-icon {
+	fill: $gray;
+
+	&:hover {
+		fill: $blue-medium;
+	}
+}
+
+.mce-container .wpcom-insert-menu__menu-label {
+	color: darken( $gray, 30% );
+	display: inline-block;
+	font-family: $sans;
+	margin-left: 4px;
+	margin-top: 2px;
+
+	&:hover {
+		color: $blue-medium;
+	}
+}
+
+.mce-container.mce-menu .mce-container-body .mce-wpcom-insert-menu__menu-item {
+	margin-left: -6px;
+}
