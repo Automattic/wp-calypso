@@ -13,6 +13,7 @@ import SummaryChart from '../stats-summary-chart';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
 import HeaderCake from 'components/header-cake';
+import { decodeEntities } from 'lib/formatting';
 
 export default React.createClass( {
 	displayName: 'StatsPostDetail',
@@ -44,7 +45,7 @@ export default React.createClass( {
 
 		if ( postOnRecord ) {
 			if ( typeof post.post_title === 'string' && post.post_title.length ) {
-				title = <Emojify>{ post.post_title }</Emojify>;
+				title = <Emojify>{ decodeEntities( post.post_title ) }</Emojify>;
 			}
 		}
 
