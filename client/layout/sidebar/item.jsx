@@ -18,8 +18,6 @@ export default React.createClass( {
 		label: React.PropTypes.string.isRequired,
 		className: React.PropTypes.string,
 		link: React.PropTypes.string.isRequired,
-		buttonLink: React.PropTypes.string,
-		buttonLabel: React.PropTypes.string,
 		onNavigate: React.PropTypes.func,
 		icon: React.PropTypes.string,
 		selected: React.PropTypes.bool,
@@ -27,23 +25,6 @@ export default React.createClass( {
 	},
 
 	_preloaded: false,
-
-	renderButton( link ) {
-		if ( ! link ) {
-			return null;
-		}
-
-		return (
-			<a
-				rel={ isExternal( link ) ? 'external' : null }
-				onClick={ this.props.onNavigate }
-				href={ link }
-				target={ isExternal( link ) ? '_blank' : null }
-				className="add-new">
-				{ this.props.buttonLabel || this.translate( 'Add' ) }
-			</a>
-		);
-	},
 
 	preload() {
 		if ( ! this._preloaded && this.props.preloadSectionName ) {
@@ -68,7 +49,7 @@ export default React.createClass( {
 					<span className="menu-link-text">{ this.props.label }</span>
 					{ isExternalLink ? <span className="noticon noticon-external" /> : null }
 				</a>
-				{ this.renderButton( this.props.buttonLink ) }
+				{ this.props.children }
 			</li>
 		);
 	}

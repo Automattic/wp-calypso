@@ -13,6 +13,7 @@ import mapValues from 'lodash/mapValues';
  * Internal dependencies
  */
 import SidebarItem from 'layout/sidebar/item';
+import SidebarButton from 'layout/sidebar/button';
 import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
@@ -141,11 +142,14 @@ const PublishMenu = React.createClass( {
 				label={ menuItem.label }
 				className={ className }
 				link={ link }
-				buttonLink={ menuItem.buttonLink }
 				onNavigate={ this.onNavigate.bind( this, menuItem.name ) }
 				icon={ icon }
 				preloadSectionName={ preload }
-			/>
+			>
+				<SidebarButton href={ menuItem.buttonLink } preloadSectionName="post-editor">
+					{ this.translate( 'Add' ) }
+				</SidebarButton>
+			</SidebarItem>
 		);
 	},
 
