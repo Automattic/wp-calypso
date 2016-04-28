@@ -250,6 +250,14 @@ if ( config.isEnabled( 'reader' ) ) {
 		secondary: true,
 		group: 'reader'
 	} );
+
+	sections.push( {
+		name: 'reader-search',
+		paths: [ '/read/search' ],
+		module: 'reader/search',
+		secondary: true,
+		group: 'reader'
+	} );
 }
 
 if ( config.isEnabled( 'devdocs' ) ) {

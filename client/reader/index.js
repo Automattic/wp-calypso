@@ -51,7 +51,4 @@ module.exports = function() {
 	}
 
 	page( '/read/a8c', controller.updateLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
-	if ( config.isEnabled( 'reader/search' ) ) {
-		page( '/read/search', controller.updateLastRoute, controller.removePost, controller.sidebar, controller.search );
-	}
 };

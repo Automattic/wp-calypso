@@ -7,7 +7,6 @@ import page from 'page';
 import debugFactory from 'debug';
 import moment from 'moment';
 import { Provider as ReduxProvider } from 'react-redux';
-import qs from 'qs';
 
 /**
  * Internal Dependencies
@@ -387,51 +386,6 @@ module.exports = {
 	removePost: function( context, next ) {
 		context.store.dispatch( hideReaderFullPost() );
 		next();
-	},
-
-	search: function( context ) {
-		var SearchStream = require( 'reader/search-stream' ),
-			basePath = '/read/search',
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
-			searchSlug = context.query.q,
-			mcKey = 'search';
-
-		let store;
-		if ( searchSlug ) {
-			store = feedStreamFactory( 'search:' + searchSlug ),
-			ensureStoreLoading( store, context );
-		}
-
-		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		recordTrack( 'calypso_reader_search_loaded', searchSlug && {
-			query: searchSlug
-		} );
-
-		ReactDom.render(
-			React.createElement( SearchStream, {
-				key: 'search',
-				store: store,
-				query: searchSlug,
-				setPageTitle: setPageTitle,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				showBack: false,
-				onQueryChange: function( newValue ) {
-					let searchUrl = '/read/search';
-					if ( newValue ) {
-						searchUrl += '?' + qs.stringify( { q: newValue } );
-					}
-					page.replace( searchUrl );
-				}
-			} ),
-			document.getElementById( 'primary' )
-		);
 	},
 
 	readA8C: function( context ) {
