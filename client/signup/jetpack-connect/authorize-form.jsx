@@ -25,6 +25,7 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 import i18n from 'lib/mixins/i18n';
+import Gridicon from 'components/gridicon';
 
 /**
  * Constants
@@ -207,8 +208,8 @@ const LoggedInForm = React.createClass( {
 		const { queryObject, authorizeSuccess, isAuthorizing } = this.props.jetpackConnectAuthorize;
 		const loginUrl = config( 'login_url' ) + '?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) + '&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
 		let backToWpAdminLink = (
-			<LoggedOutFormLinkItem href={ queryObject.redirect_after_auth }>
-				{ this.translate( 'Cancel and go back to my site' ) }
+			<LoggedOutFormLinkItem icon={ true } href={ queryObject.redirect_after_auth }>
+				{ this.translate( 'Cancel and go back to my site' ) } <Gridicon size={ 18 } icon="external" />
 			</LoggedOutFormLinkItem>
 		);
 
