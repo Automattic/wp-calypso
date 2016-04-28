@@ -214,6 +214,13 @@ const flows = {
 		destination: getFreeTrialDestination,
 		description: 'Signup flow for free trials',
 		lastModified: '2016-03-21'
+	},
+
+	'vertical-site': {
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
+		destination: getSiteDestination,
+		description: 'The flow showing different themes for each vertical to the users who clicked "Create Website" on the homepage.',
+		lastModified: '2016-04-28'
 	}
 };
 
@@ -240,6 +247,10 @@ function filterFlowName( flowName ) {
 
 	if ( includes( defaultFlows, flowName ) && 'notTested' === getABTestVariation( 'freeTrialsInSignup' ) && 'triforce' === abtest( 'triforce' ) ) {
 		return 'layout';
+	}
+
+	if ( includes( defaultFlows, flowName ) && 'notTested' === getABTestVariation( 'freeTrialsInSignup' ) && 'notTested' === getABTestVariation( 'triforce' ) && 'verticalThemes' === abtest( 'verticalThemes' ) ) {
+		return 'vertical-site';
 	}
 
 	return flowName;

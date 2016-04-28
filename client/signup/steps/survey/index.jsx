@@ -14,6 +14,8 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import BackButton from 'components/header-cake';
 import Gridicon from 'components/gridicon';
+import getThemes from './themes-map';
+import { getABTestVariation } from 'lib/abtest';
 
 function isSurveyOneStep() {
 	return false;
@@ -31,14 +33,14 @@ export default React.createClass( {
 		return {
 			surveySiteType: 'site',
 			isOneStep: isSurveyOneStep()
-		}
+		};
 	},
 
 	getInitialState() {
 		return {
 			stepOne: null,
 			verticalList: verticals.get()
-		}
+		};
 	},
 
 	renderStepTwoVertical( vertical ) {
@@ -46,7 +48,7 @@ export default React.createClass( {
 			event.preventDefault();
 			event.stopPropagation();
 			this.handleNextStep( vertical );
-		}
+		};
 		return (
 			<Card className="survey-step__vertical" key={ vertical.value } href="#" onClick={ stepTwoClickHandler }>
 				<label className="survey-step__label">{ vertical.label }</label>
@@ -60,11 +62,11 @@ export default React.createClass( {
 			event.preventDefault();
 			event.stopPropagation();
 			if ( this.props.isOneStep ) {
-				this.handleNextStep( vertical )
+				this.handleNextStep( vertical );
 				return;
 			}
 			this.showStepTwo( vertical );
-		}
+		};
 		return (
 			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ stepOneClickHandler }>
 				<Gridicon icon={ icon } className="survey-step__vertical__icon"/>
@@ -129,6 +131,40 @@ export default React.createClass( {
 		this.setState( { stepOne } );
 	},
 
+	getVerticalIdsForCategory( topLevelCategory ) {
+		return this.state.verticalList.reduce( ( match, category_id ) => {
+			if ( category_id.value === topLevelCategory ) {
+				return category_id.stepTwo.map( c => c.value );
+			}
+			return match;
+		}, [] );
+	},
+
+	getThemesForThemeStep( vertical ) {
+		const healthCategories = this.getVerticalIdsForCategory( 'a8c.7' );
+		const writingCategories = this.getVerticalIdsForCategory( 'a8c.1.1' );
+		const educationCategories = this.getVerticalIdsForCategory( 'a8c.5' );
+		const familyCategories = this.getVerticalIdsForCategory( 'a8c.9' );
+		const artsCategories = this.getVerticalIdsForCategory( 'a8c.1' );
+		const businessCategories = this.getVerticalIdsForCategory( 'a8c.3' );
+		if ( 'verticalThemes' === getABTestVariation( 'verticalThemes' ) ) {
+			if ( -1 !== healthCategories.indexOf( vertical ) ) {
+				vertical = 'healthAndWellness';
+			} else if ( -1 !== writingCategories.indexOf( vertical ) ) {
+				vertical = 'writingAndBooks';
+			} else if ( -1 !== educationCategories.indexOf( vertical ) ) {
+				vertical = 'educationAndOrganizations';
+			} else if ( -1 !== familyCategories.indexOf( vertical ) ) {
+				vertical = 'familyHomeAndLifestyle';
+			} else if ( -1 !== artsCategories.indexOf( vertical ) ) {
+				vertical = 'artsAndEntertainment';
+			} else if ( -1 !== businessCategories.indexOf( vertical ) ) {
+				vertical = 'businessAndServices';
+			}
+			return getThemes( vertical );
+		}
+	},
+
 	handleNextStep( vertical ) {
 		const { value, label } = vertical;
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
@@ -147,7 +183,8 @@ export default React.createClass( {
 				category_label: label
 			} );
 		}
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value } );
+		const themes = this.getThemesForThemeStep( vertical.value );
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value, themes } );
 		this.props.goToNextStep();
 	}
 } );
