@@ -199,7 +199,7 @@ const ManagePurchase = React.createClass( {
 								},
 								components: {
 									a: canEditPaymentDetails( purchase )
-										? <a href={ paths.editCardDetails( this.props.selectedSite.slug, id, creditCard.id ) } />
+										? <a href={ paths.editCardDetails( this.props.selectedSite.slug, id ) } />
 										: <span />
 								}
 							}
@@ -336,11 +336,9 @@ const ManagePurchase = React.createClass( {
 			);
 		}
 
-		const { id, payment: { creditCard } } = purchase;
-
 		return (
 			<li>
-				<a href={ paths.editCardDetails( this.props.selectedSite.slug, id, creditCard.id ) }>
+				<a href={ paths.editCardDetails( this.props.selectedSite.slug, purchase.id ) }>
 					{ paymentDetails }
 				</a>
 			</li>
@@ -459,19 +457,15 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderEditPaymentMethodNavItem() {
-		const purchase = getPurchase( this.props ),
-			{ id, payment } = purchase;
-
 		if ( ! getSelectedSite( this.props ) ) {
 			return null;
 		}
 
-		let path = paths.editCardDetails( this.props.selectedSite.slug, id );
-		if ( isPaidWithCreditCard( purchase ) ) {
-			path = paths.editSpecificCardDetails( this.props.selectedSite.slug, id, payment.creditCard.id );
-		}
+		const purchase = getPurchase( this.props );
 
 		if ( canEditPaymentDetails( purchase ) ) {
+			const path = paths.editCardDetails( this.props.selectedSite.slug, purchase.id );
+
 			return (
 				<CompactCard href={ path }>
 					{ this.translate( 'Edit Payment Method' ) }
