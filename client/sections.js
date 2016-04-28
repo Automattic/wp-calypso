@@ -200,10 +200,7 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 if ( config.isEnabled( 'reader' ) ) {
 	readerPaths = [
 		'/',
-		'/read',
-		'/tag',
-		'/following',
-		'/tags'
+		'/read'
 	];
 
 	sections.push( {
@@ -226,6 +223,14 @@ if ( config.isEnabled( 'reader' ) ) {
 		name: 'discover',
 		paths: [ '/discover' ],
 		module: 'reader/discover',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	sections.push( {
+		name: 'reader-following',
+		paths: [ '/following' ],
+		module: 'reader/following',
 		secondary: true,
 		group: 'reader'
 	} );
