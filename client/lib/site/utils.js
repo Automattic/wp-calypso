@@ -64,6 +64,10 @@ export default {
 		}
 	},
 
+	hasCustomDomain( site ) {
+		return ! ( /[a-zA-Z]\.wordpress\.com$/.test( site.domain ) );
+	},
+
 	getSiteFileModDisableReason( site, action = 'modifyFiles' ) {
 		if ( ! site || ! site.options || ! site.options.file_mod_disabled ) {
 			return;
