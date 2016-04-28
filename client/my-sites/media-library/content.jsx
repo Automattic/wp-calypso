@@ -211,7 +211,7 @@ const MediaLibraryContent = React.createClass( {
 			<NoticeAction
 				external={ true }
 				href={ upgradeNudgeFeature ? `/plans/features/${ upgradeNudgeFeature }/${ this.props.siteSlug }` : `/plans/${ this.props.siteSlug }` }
-				onClick={ this.recordPlansNavigation.bind( this, 'plan-media-storage-error', eventProperties ) }>
+				onClick={ this.recordPlansNavigation.bind( this, 'calypso_upgrade_nudge_cta_click', eventProperties ) }>
 				{ this.translate( 'Upgrade Plan' ) }
 				<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 			</NoticeAction>
