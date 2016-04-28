@@ -12,7 +12,7 @@ var React = require( 'react' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
-	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies
@@ -47,8 +47,8 @@ var config = require( 'config' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
-	isIsomorphicRoute = require( 'controller' ).isIsomorphicRoute,
-	previousLayoutIsSingleTree = require( 'controller' ).previousLayoutIsSingleTree,
+	isSectionIsomorphic = require( 'state/ui/selectors' ).isSectionIsomorphic,
+	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
@@ -369,7 +369,12 @@ function reduxStoreReady( reduxStore ) {
 	 * TODO (@seear): React 15's new reconciliation algo may make this unnecessary
 	 */
 	page( '*', function( context, next ) {
-		if ( ! isIsomorphicRoute( context.path ) && previousLayoutIsSingleTree() ) {
+		const sectionNotIsomorphic = ! isSectionIsomorphic( context.store.getState() );
+		const previousLayoutIsSingleTree = ! isEmpty(
+			document.getElementsByClassName( 'wp-singletree-layout' )
+		);
+
+		if ( sectionNotIsomorphic && previousLayoutIsSingleTree ) {
 			debug( 'Re-rendering multi-tree layout' );
 			renderLayout( context.store );
 		}
