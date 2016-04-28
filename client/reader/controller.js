@@ -1,35 +1,36 @@
 /**
  * External Dependencies
  */
-const ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	page = require( 'page' ),
-	debug = require( 'debug' )( 'calypso:reader:controller' ),
-	trim = require( 'lodash/trim' ),
-	moment = require( 'moment' ),
-	ReduxProvider = require( 'react-redux' ).Provider,
-	qs = require( 'qs' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import page from 'page';
+import debugFactory from 'debug';
+import trim from 'lodash/trim';
+import moment from 'moment';
+import { Provider as ReduxProvider } from 'react-redux';
+import qs from 'qs';
 
 /**
  * Internal Dependencies
  */
-const abtest = require( 'lib/abtest' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	route = require( 'lib/route' ),
-	pageNotifier = require( 'lib/route/page-notifier' ),
-	analytics = require( 'lib/analytics' ),
-	config = require( 'config' ),
-	feedStreamFactory = require( 'lib/feed-stream-store' ),
-	FeedStreamStoreActions = require( 'lib/feed-stream-store/actions' ),
-	analyticsPageTitle = 'Reader',
-	TitleStore = require( 'lib/screen-title/store' ),
-	titleActions = require( 'lib/screen-title/actions' ),
-	hideReaderFullPost = require( 'state/ui/reader/fullpost/actions' ).hideReaderFullPost,
-	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
-	readerRoute = require( 'reader/route' ),
-	stats = require( 'reader/stats' );
+import abtest from 'lib/abtest';
+import i18n from 'lib/mixins/i18n';
+import route from 'lib/route';
+import pageNotifier from 'lib/route/page-notifier';
+import analytics from 'lib/analytics';
+import feedStreamFactory from 'lib/feed-stream-store';
+import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
+import TitleStore from 'lib/screen-title/store';
+import titleActions from 'lib/screen-title/actions';
+import { hideReaderFullPost } from 'state/ui/reader/fullpost/actions';
+import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
+import readerRoute from 'reader/route';
+import { recordTrack } from 'reader/stats';
 
 import userSettings from 'lib/user-settings';
+
+const debug = debugFactory( 'calypso:reader:controller' );
+const analyticsPageTitle = 'Reader';
 
 // This holds the last title set on the page. Removing the overlay doesn't trigger a re-render, so we need a way to
 // reset it
@@ -47,7 +48,7 @@ function trackPageLoad( path, title, readerView ) {
 function trackUpdatesLoaded( key ) {
 	analytics.mc.bumpStat( 'reader_views', key + '_load_new' );
 	analytics.ga.recordEvent( 'Reader', 'Clicked Load New Posts', key );
-	stats.recordTrack( 'calypso_reader_load_new_posts', {
+	recordTrack( 'calypso_reader_load_new_posts', {
 		section: key
 	} );
 }
@@ -56,7 +57,7 @@ function trackScrollPage( path, title, category, readerView, pageNum ) {
 	debug( 'scroll [%s], [%s], [%s], [%d]', path, title, category, pageNum );
 
 	analytics.ga.recordEvent( category, 'Loaded Next Page', 'page', pageNum );
-	stats.recordTrack( 'calypso_reader_infinite_scroll_performed', {
+	recordTrack( 'calypso_reader_infinite_scroll_performed', {
 		path: path,
 		page: pageNum,
 		section: readerView
@@ -210,7 +211,7 @@ module.exports = {
 		ensureStoreLoading( followingStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		stats.recordTrack( 'calypso_reader_following_loaded' );
+		recordTrack( 'calypso_reader_following_loaded' );
 
 		setPageTitle( i18n.translate( 'Following' ) );
 
@@ -258,7 +259,7 @@ module.exports = {
 		ensureStoreLoading( feedStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		stats.recordTrack( 'calypso_reader_blog_preview', {
+		recordTrack( 'calypso_reader_blog_preview', {
 			feed_id: context.params.feed_id
 		} );
 
@@ -293,7 +294,7 @@ module.exports = {
 		ensureStoreLoading( feedStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		stats.recordTrack( 'calypso_reader_blog_preview', {
+		recordTrack( 'calypso_reader_blog_preview', {
 			blog_id: context.params.blog_id
 		} );
 
@@ -406,7 +407,7 @@ module.exports = {
 		ensureStoreLoading( tagStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		stats.recordTrack( 'calypso_reader_tag_loaded', {
+		recordTrack( 'calypso_reader_tag_loaded', {
 			tag: tagSlug
 		} );
 
@@ -444,7 +445,7 @@ module.exports = {
 		}
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		stats.recordTrack( 'calypso_reader_search_loaded', searchSlug && {
+		recordTrack( 'calypso_reader_search_loaded', searchSlug && {
 			query: searchSlug
 		} );
 
@@ -485,7 +486,7 @@ module.exports = {
 		ensureStoreLoading( listStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		stats.recordTrack( 'calypso_reader_list_loaded', {
+		recordTrack( 'calypso_reader_list_loaded', {
 			list_owner: context.params.user,
 			list_slug: context.params.list
 		} );
@@ -675,41 +676,6 @@ module.exports = {
 					tab: 'description-edit'
 				} )
 			),
-			document.getElementById( 'primary' )
-		);
-	},
-
-	discover: function( context ) {
-		var blogId = config( 'discover_blog_id' ),
-			SiteStream = require( 'reader/site-stream' ),
-			basePath = route.sectionify( context.path ),
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Site > ' + blogId,
-			feedStore = feedStreamFactory( 'site:' + blogId ),
-			mcKey = 'discover';
-
-		titleActions.setTitle( 'Discover' );
-
-		ensureStoreLoading( feedStore, context );
-
-		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		stats.recordTrack( 'calypso_reader_discover_viewed' );
-
-		ReactDom.render(
-			React.createElement( SiteStream, {
-				key: 'site-' + blogId,
-				store: feedStore,
-				siteId: blogId,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				suppressSiteNameLink: true,
-				showBack: false
-			} ),
 			document.getElementById( 'primary' )
 		);
 	}
