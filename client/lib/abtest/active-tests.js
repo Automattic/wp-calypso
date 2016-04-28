@@ -45,7 +45,7 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
-	sidebarPlanLink: {
+	sidebarPlanLinkMyPlan: {
 		datestamp: '20160101',
 		variations: {
 			plans: 75,

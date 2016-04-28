@@ -348,7 +348,7 @@ module.exports = React.createClass( {
 
 		// Show plan details for upgraded sites
 		if (
-			abtest( 'sidebarPlanLink' ) === 'plans/my-plan' &&
+			abtest( 'sidebarPlanLinkMyPlan' ) === 'plans/my-plan' &&
 			site &&
 			( isPremium( site.plan ) || isBusiness( site.plan ) )
 		) {
@@ -383,7 +383,7 @@ module.exports = React.createClass( {
 	trackUpgradeClick: function() {
 		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
 			cta_name: 'sidebar_upgrade_default',
-			cta_landing: abtest( 'sidebarPlanLink' )
+			cta_landing: abtest( 'sidebarPlanLinkMyPlan' )
 		} );
 		this.onNavigate();
 	},
