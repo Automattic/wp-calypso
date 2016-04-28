@@ -247,14 +247,16 @@ const Signup = React.createClass( {
 		var flowSteps = flows.getFlow( this.props.flowName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
-			nextStepSection = this.state.progress[ currentStepIndex + 1 ] ?
-				this.state.progress[ currentStepIndex + 1 ].stepSectionName :
-				'';
+			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
+			nextStepSection = nextProgressItem && nextProgressItem.stepSectionName || '';
+		this.goToStep( nextStepName, nextStepSection );
+	},
 
+	goToStep( stepName, stepSection ) {
 		clearInterval( this.windowScroller );
 
-		if ( ! this.isEveryStepSubmitted() && nextStepName ) {
-			page( utils.getStepUrl( this.props.flowName, nextStepName, nextStepSection, this.props.locale ) );
+		if ( ! this.isEveryStepSubmitted() && stepName ) {
+			page( utils.getStepUrl( this.props.flowName, stepName, stepSection, this.props.locale ) );
 		} else if ( this.isEveryStepSubmitted() ) {
 			this.goToFirstInvalidStep();
 		}
@@ -311,8 +313,10 @@ const Signup = React.createClass( {
 					<CurrentComponent
 						path={ this.props.path }
 						step={ currentStepProgress }
+						steps={ flows.getFlow( this.props.flowName ).steps }
 						stepName={ this.props.stepName }
 						goToNextStep={ this.goToNextStep }
+						goToStep={ this.goToStep }
 						flowName={ this.props.flowName }
 						signupProgressStore={ this.state.progress }
 						signupDependencies={ this.state.dependencies }
