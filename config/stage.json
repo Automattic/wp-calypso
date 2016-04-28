@@ -65,6 +65,7 @@
 		"olark": true,
 		"perfmon": true,
 		"persist-redux": true,
+		"post-editor/insert-menu": true,
 		"press-this": true,
 		"reader": true,
 		"reader/full-errors": true,
