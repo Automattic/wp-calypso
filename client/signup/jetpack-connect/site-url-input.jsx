@@ -11,6 +11,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import Gridicon from 'components/gridicon';
 import Spinner from 'components/spinner';
+import untrailingslashit from 'lib/route/untrailingslashit';
 
 export default React.createClass( {
 	displayName: 'JetpackConnectSiteURLInput',
@@ -18,12 +19,12 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			value: ''
-		}
+		};
 	},
 
 	onChange( event ) {
 		this.setState( {
-			value: event.target.value
+			value: untrailingslashit( event.target.value )
 		}, this.props.onChange );
 	},
 
@@ -31,7 +32,7 @@ export default React.createClass( {
 		if ( ! this.props.isFetching ) {
 			return( this.translate( 'Connect Now' ) );
 		}
-		return( this.translate( 'Connecting…' ) )
+		return( this.translate( 'Connecting…' ) );
 	},
 
 	handleKeyPress( event ) {
