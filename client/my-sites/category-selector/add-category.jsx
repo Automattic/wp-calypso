@@ -65,12 +65,6 @@ module.exports = React.createClass( {
 		this.setState( {
 			showDialog: true,
 			selectedParent: []
-		}, () => {
-			// much like components/dialog/dialog-base.jsx
-			// we need a short timeout here to wait for css transitions to finish
-			setTimeout( () => {
-				ReactDom.findDOMNode( this.refs.categoryName ).focus();
-			}, 20 );
 		} );
 	},
 
@@ -180,10 +174,20 @@ module.exports = React.createClass( {
 				<Button borderless compact={ true } onClick={ this.openDialog }>
 					<Gridicon icon="folder" /> { addCategoryString }
 				</Button>
-				<Dialog isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this.closeDialog } additionalClassNames="category-selector__add-category-dialog">
+				<Dialog
+					autoFocus={ false }
+					isVisible={ this.state.showDialog }
+					buttons={ buttons }
+					onClose={ this.closeDialog }
+					additionalClassNames="category-selector__add-category-dialog">
 					<FormSectionHeading>{ addCategoryString }</FormSectionHeading>
 					<FormFieldset>
-						<FormTextInput placeholder={ this.translate( 'New category name' ) } ref="categoryName" isError={ isError } onKeyUp={ this.validateInput } />
+						<FormTextInput
+							autoFocus={ this.state.showDialog }
+							placeholder={ this.translate( 'New category name' ) }
+							ref="categoryName"
+							isError={ isError }
+							onKeyUp={ this.validateInput } />
 						{ isError ? <FormInputValidation isError={ true } text={ this.state.error } /> : null }
 					</FormFieldset>
 					<FormFieldset>
