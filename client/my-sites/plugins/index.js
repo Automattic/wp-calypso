@@ -12,8 +12,8 @@ var controller = require( 'my-sites/controller' ),
 
 module.exports = function() {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
-		page( '/plugins/setup', controller.siteSelection, controller.navigation, pluginsController.setupPlugins );
-		page( '/plugins/setup/:site', controller.siteSelection, controller.navigation, pluginsController.setupPlugins );
+		page( '/plugins/setup', controller.siteSelection, pluginsController.setupPlugins );
+		page( '/plugins/setup/:site', controller.siteSelection, pluginsController.setupPlugins );
 	}
 
 	if ( config.isEnabled( 'manage/plugins' ) ) {
