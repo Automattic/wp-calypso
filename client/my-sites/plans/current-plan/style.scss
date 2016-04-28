@@ -20,7 +20,7 @@
 
 	@include breakpoint( ">660px" ) {
 		height: 132px;
-		margin-right: 16px;
+		margin: 12px;
 		width: 132px;
 	}
 
@@ -34,7 +34,6 @@
 
 		@include breakpoint( ">660px" ) {
 			height: 72px;
-			padding: 30px;
 			width: 72px;
 		}
 	}
