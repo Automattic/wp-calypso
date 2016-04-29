@@ -29,6 +29,7 @@ import reducer, {
 	siteRequests,
 	edits
 } from '../reducer';
+import PostQueryManager from 'lib/query-manager/post';
 
 describe( 'reducer', () => {
 	before( () => {
@@ -259,15 +260,24 @@ describe( 'reducer', () => {
 				]
 			} );
 
-			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-			} );
+			expect( state ).to.have.keys( [ '2916284' ] );
+			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
+			expect( state[ 2916284 ].getData( { search: 'Hello' } ) ).to.eql( [
+				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+			] );
 		} );
 
 		it( 'should accumulate query request success', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-			} );
+			const original = deepFreeze( queries( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Hello' },
+				found: 1,
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+				]
+			} ) );
+
 			const state = queries( original, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -277,34 +287,44 @@ describe( 'reducer', () => {
 				]
 			} );
 
-			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
-				'2916284:{"search":"hello w"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-			} );
+			expect( state ).to.have.keys( [ '2916284' ] );
+			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
+			expect( state[ 2916284 ].data.queries ).to.have.keys( [
+				'{"search":"Hello"}',
+				'{"search":"Hello W"}'
+			] );
 		} );
 
 		it( 'should persist state', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-			} );
+			const original = deepFreeze( queries( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Hello' },
+				found: 1,
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+				]
+			} ) );
 
 			const state = queries( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+				2916284: '{"data":{"items":{"841":{"ID":841,"site_ID":2916284,"global_ID":"3d097cb7c5473c169bba0eb8e3c6cb64","title":"Hello World"}},"queries":{"{\\"search\\":\\"Hello\\"}":[841]}},"options":{"itemKey":"ID"}}'
 			} );
 		} );
 
 		it( 'should load persisted state', () => {
 			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+				2916284: '{"data":{"items":{"841":{"ID":841,"site_ID":2916284,"global_ID":"3d097cb7c5473c169bba0eb8e3c6cb64","title":"Hello World"}},"queries":{"{\\"search\\":\\"Hello\\"}":[841]}},"options":{"itemKey":"ID"}}'
 			} );
 
 			const state = queries( original, { type: DESERIALIZE } );
 
-			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-			} );
+			expect( state ).to.have.keys( [ '2916284' ] );
+			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
+			expect( state[ 2916284 ].getData( { search: 'Hello' } ) ).to.eql( [
+				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+			] );
 		} );
 
 		it( 'should not load invalid persisted state', () => {
