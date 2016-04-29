@@ -22,7 +22,10 @@ import TitleStore from 'lib/screen-title/store';
 import titleActions from 'lib/screen-title/actions';
 import { hideReaderFullPost } from 'state/ui/reader/fullpost/actions';
 import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
-import readerRoute from 'reader/route';
+import {
+	getPrettyFeedUrl,
+	getPrettySiteUrl
+} from 'reader/route';
 import { recordTrack } from 'reader/stats';
 
 const debug = debugFactory( 'calypso:reader:controller' );
@@ -114,13 +117,14 @@ module.exports = {
 		activeAbTests.forEach( test => abtest( test ) );
 		next();
 	},
+
 	prettyRedirects: function( context, next ) {
 		// Do we have a 'pretty' site or feed URL?
 		let redirect;
 		if ( context.params.blog_id ) {
-			redirect = readerRoute.getPrettySiteUrl( context.params.blog_id );
+			redirect = getPrettySiteUrl( context.params.blog_id );
 		} else if ( context.params.feed_id ) {
-			redirect = readerRoute.getPrettyFeedUrl( context.params.feed_id );
+			redirect = getPrettyFeedUrl( context.params.feed_id );
 		}
 
 		if ( redirect ) {
