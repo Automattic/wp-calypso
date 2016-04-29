@@ -1,9 +1,9 @@
 export const DOMAIN_NAME = 'dummy.com';
 
 export const RECORD_A = {
-	data: '',
+	data: '12.34.56.78',
 	id: '23466069',
-	name: 'dummy.com.',
+	name: 'test',
 	type: 'A'
 };
 
