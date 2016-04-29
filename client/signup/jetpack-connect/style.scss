@@ -2,6 +2,17 @@
 	max-width: 400px;
 }
 
+.jetpack-connect-wide {
+	max-width: 100%;
+	text-align: center;
+
+	.button {
+		margin-top: 16px;
+		width: 320px;
+	}
+}
+
+
 .jetpack-connect__site-url-entry-container {
 	max-width: 400px;
 }
@@ -93,4 +104,42 @@
 	.logged-out-form__links .gridicon {
 		top: 2px;
 	}
+}
+
+.jetpack-connect__install-steps {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	flex-wrap: wrap;
+
+	@include breakpoint( ">660px" ) {
+		flex-direction: row;
+	}
+}
+
+.jetpack-connect__install-step {
+	display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		align-items: center;
+	margin: 0;
+	max-width: 360px;
+	min-width: 320px;
+
+	@include breakpoint( ">660px" ) {
+		margin: 8px;
+	}
+}
+
+.jetpack-connect__install-step-title {
+	font-size: 20px;
+	text-align: left;
+}
+
+.jetpack-connect__install-step-text {
+	color: $gray;
+	font-size: 12px;
+	margin: 8px 0;
+	text-align: left;
+	flex-grow: 2;
 }

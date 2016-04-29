@@ -8,17 +8,20 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import ConnectHeader from './connect-header';
-import Dialog from 'components/dialog';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
 import { dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation, checkUrl } from 'state/jetpack-connect/actions';
+import JetpackExampleInstall from './exampleComponents/jetpack-install';
+import JetpackExampleActivate from './exampleComponents/jetpack-activate';
+import JetpackExampleConnect from './exampleComponents/jetpack-connect';
+import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
-
 
 /**
  * Constants
@@ -48,7 +51,7 @@ const JetpackConnectMain = React.createClass( {
 		return this.state.currentUrl !== '' &&
 			this.props.jetpackConnectSite &&
 			this.state.currentUrl === this.props.jetpackConnectSite.url &&
-			this.props.jetpackConnectSite.isFetching
+			this.props.jetpackConnectSite.isFetching;
 	},
 
 	getCurrentUrl() {
@@ -74,34 +77,6 @@ const JetpackConnectMain = React.createClass( {
 
 	activateJetpack() {
 		this.props.goToPluginActivation( this.state.currentUrl );
-	},
-
-	getDialogButtons( status ) {
-		const buttons = [ {
-			action: 'cancel',
-			label: this.translate( 'Cancel' ),
-			onClick: this.dismissUrl
-		} ];
-
-		if ( status === 'notJetpack' ) {
-			buttons.push( {
-				action: 'install',
-				label: this.translate( 'Connect Now' ),
-				onClick: this.installJetpack,
-				isPrimary: true
-			} );
-		}
-
-		if ( status === 'notActiveJetpack' ) {
-			buttons.push( {
-				action: 'activate',
-				label: this.translate( 'Activate' ),
-				onClick: this.activateJetpack,
-				isPrimary: true
-			} );
-		}
-
-		return buttons;
 	},
 
 	checkProperty( propName ) {
@@ -163,76 +138,106 @@ const JetpackConnectMain = React.createClass( {
 		return false;
 	},
 
-	renderDialog( status ) {
-		if ( status === 'notJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
-			return (
-				<Dialog
-					isVisible={ true }
-					onClose={ this.dismissUrl }
-					additionalClassNames="jetpack-connect__wp-admin-dialog"
-					buttons={ this.getDialogButtons( status ) } >
-
-					<h1>{ this.translate( 'Hold on there, Sparky.' ) }</h1>
-					<img className="jetpack-connect__install-wp-admin"
-						src="/calypso/images/jetpack/install-wp-admin.svg"
-						width={ 400 }
-						height={ 294 } />
-					<p>{ this.translate( 'We need to send you to your WordPress install so you can approve the Jetpack installation. Click the button in the bottom-right corner on the next screen to continue.' ) }</p>
-				</Dialog>
-			);
-		};
-		if ( status === 'notActiveJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
-			return (
-				<Dialog
-					isVisible={ true }
-					onClose={ this.dismissUrl }
-					additionalClassNames="jetpack-connect__wp-admin-dialog"
-					buttons={ this.getDialogButtons( status ) } >
-
-					<h1>{ this.translate( 'Hold on there, Sparky.' ) }</h1>
-					<img className="jetpack-connect__activate-wp-admin"
-						src="/calypso/images/jetpack/activate-wp-admin.png"
-						width={ 400 }
-						height={ 294 } />
-					<p>{ this.translate( 'Your jetpack seems to be inactive! We need to send you to your WordPress install so you can activate it before completing the connection.' ) }</p>
-				</Dialog>
-			);
-		};
+	renderFooter() {
+		return (
+			<LoggedOutFormLinks>
+				<LoggedOutFormLinkItem href="http://jetpack.com">{ this.translate( 'Install Jetpack Manually' ) }</LoggedOutFormLinkItem>
+				<LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
+			</LoggedOutFormLinks>
+		);
 	},
 
-	render() {
+	renderSiteInput( status ) {
+		return (
+			<Card className="jetpack-connect__site-url-input-container">
+				{ ! this.isCurrentUrlFetching() && this.isCurrentUrlFetched() && ! this.props.jetpackConnectSite.isDismissed && status
+					? <JetpackConnectNotices noticeType={ status } onDismissClick={ this.dismissUrl } />
+					: null
+				}
+
+				<SiteURLInput ref="siteUrlInputRef"
+					onChange={ this.onURLChange }
+					onClick={ this.onURLEnter }
+					onDismissClick={ this.onDismissClick }
+					isError={ this.getStatus() }
+					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() } />
+			</Card>
+		);
+	},
+
+	renderSiteEntry() {
 		const status = this.getStatus();
 		return (
 			<Main className="jetpack-connect">
-				{ this.renderDialog( status ) }
-
 				<div className="jetpack-connect__site-url-entry-container">
 					<ConnectHeader headerText={ this.translate( 'Connect a self-hosted WordPress' ) }
 						subHeaderText={ this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect to your self-hosted WordPress site.' ) }
 						step={ 1 }
 						steps={ 3 } />
 
-					<Card className="jetpack-connect__site-url-input-container">
-						{ ! this.isCurrentUrlFetching() && this.isCurrentUrlFetched() && ! this.props.jetpackConnectSite.isDismissed && status
-							? <JetpackConnectNotices noticeType={ status } onDismissClick={ this.dismissUrl } />
-							: null
-						}
-
-						<SiteURLInput ref="siteUrlInputRef"
-							onChange={ this.onURLChange }
-							onClick={ this.onURLEnter }
-							onDismissClick={ this.onDismissClick }
-							isError={ this.getStatus() }
-							isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() } />
-					</Card>
-
-					<LoggedOutFormLinks>
-						<LoggedOutFormLinkItem href="http://jetpack.com">{ this.translate( 'Install Jetpack Manually' ) }</LoggedOutFormLinkItem>
-						<LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
-					</LoggedOutFormLinks>
+					{ this.renderSiteInput( status ) }
+					{ this.renderFooter() }
 				</div>
 			</Main>
 		);
+	},
+
+	renderInstallInstructions() {
+		return (
+			<Main className="jetpack-connect-wide">
+				<div className="jetpack-connect__install">
+					<ConnectHeader headerText={ this.translate( 'Ready for installation' ) }
+						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
+						step={ 1 }
+						steps={ 3 } />
+					<div className="jetpack-connect__install-steps">
+						<JetpackInstallStep title={ this.translate( '1. Install Jetpack' ) }
+							text={ this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s dashboard to install Jetpack. Click the blue install button.' ) }
+							example={ <JetpackExampleInstall /> } />
+						<JetpackInstallStep title={ this.translate( '2. Activate Jetpack' ) }
+							text={ this.translate( 'Once the plugin is installed, you\'ll need to click this tiny blue \'Activate\' link from your plugins list page.' ) }
+							example={ <JetpackExampleActivate /> } />
+						<JetpackInstallStep title={ this.translate( '3. Connect Jetpack' ) }
+							text={ this.translate( 'Once the plugin is activated you\'ll click this green \'Connect\' button to complete the connection.' ) }
+							example={ <JetpackExampleConnect /> } />
+					</div>
+					<Button onClick={ this.installJetpack } primary>{ this.translate( 'Install Jetpack' ) }</Button>
+				</div>
+			</Main>
+		);
+	},
+
+	renderActivateInstructions() {
+		return (
+			<Main className="jetpack-connect-wide">
+				<div className="jetpack-connect__install">
+					<ConnectHeader headerText={ this.translate( 'Ready for installation' ) }
+						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
+						step={ 1 }
+						steps={ 3 } />
+					<div className="jetpack-connect__install-steps">
+						<JetpackInstallStep title={ this.translate( '1. Activate Jetpack' ) }
+							text={ this.translate( 'You need to click this tiny blue \'Activate\' link from your plugins list page.' ) }
+							example={ <JetpackExampleActivate /> } />
+						<JetpackInstallStep title={ this.translate( '2. Connect Jetpack' ) }
+							text={ this.translate( 'Once the plugin is activated you\'ll click this green \'Connect\' button to complete the connection.' ) }
+							example={ <JetpackExampleConnect /> } />
+					</div>
+					<Button onClick={ this.activateJetpack } primary>{ this.translate( 'Activate Jetpack' ) }</Button>
+				</div>
+			</Main>
+		);
+	},
+
+	render() {
+		const status = this.getStatus();
+		if ( status === 'notJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
+			return this.renderInstallInstructions();
+		}
+		if ( status === 'notActiveJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
+			return this.renderActivateInstructions();
+		}
+		return this.renderSiteEntry();
 	}
 } );
 
