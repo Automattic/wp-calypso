@@ -64,14 +64,11 @@ export const getSitePost = createSelector(
  * @return {?Array}         Posts for the post query
  */
 export function getSitePostsForQuery( state, siteId, query ) {
-	const serializedQuery = getSerializedPostsQuery( query, siteId );
-	if ( ! state.posts.queries[ serializedQuery ] ) {
+	if ( ! state.posts.queries[ siteId ] ) {
 		return null;
 	}
 
-	return state.posts.queries[ serializedQuery ].map( ( globalId ) => {
-		return getPost( state, globalId );
-	} ).filter( Boolean );
+	return state.posts.queries[ siteId ].getData( query );
 }
 
 /**

@@ -10,10 +10,12 @@ import isEqual from 'lodash/isEqual';
 import reduce from 'lodash/reduce';
 import keyBy from 'lodash/keyBy';
 import merge from 'lodash/merge';
+import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies
  */
+import PostQueryManager from 'lib/query-manager/post';
 import {
 	POST_EDIT,
 	POST_EDITS_RESET,
@@ -125,14 +127,28 @@ export function queryRequests( state = {}, action ) {
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
 		case POSTS_REQUEST_SUCCESS:
-			const serializedQuery = getSerializedPostsQuery( action.query, action.siteId );
+			const { siteId, query, posts } = action;
+			if ( ! state[ siteId ] ) {
+				state[ siteId ] = new PostQueryManager();
+			}
+
+			const nextPosts = state[ siteId ].receive( posts, { query } );
+			if ( nextPosts === state[ siteId ] ) {
+				return state;
+			}
+
 			return Object.assign( {}, state, {
-				[ serializedQuery ]: action.posts.map( ( post ) => post.global_ID )
+				[ siteId ]: nextPosts
 			} );
+
+		case SERIALIZE:
+			return mapValues( state, ( queryManager ) => queryManager.toJSON() );
 
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, queriesSchema ) ) {
-				return state;
+				return mapValues( state, ( serializedQuery ) => {
+					return PostQueryManager.parse( serializedQuery );
+				} );
 			}
 
 			return {};
