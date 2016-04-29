@@ -5,9 +5,9 @@
 .jetpack-connect-wide {
 	max-width: 100%;
 	text-align: center;
+	margin-bottom: 24px;
 
 	.button {
-		margin-top: 16px;
 		width: 320px;
 	}
 }
@@ -52,7 +52,7 @@
 		}
 
 		.form-text-input {
-			padding-left: 36px;
+			padding-left: 40px;
 		}
 
 		.spinner {
@@ -121,48 +121,34 @@
 	display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		align-items: center;
-	margin: 0;
-	max-width: 360px;
 	min-width: 320px;
+	text-align: left;
+
+	@include breakpoint( ">480px" ) {
+		max-width: 360px;
+	}
 
 	@include breakpoint( ">660px" ) {
-		margin: 8px;
+		margin: 0 8px 16px 8px;
 	}
 }
 
 .jetpack-connect__install-step-title {
-	font-size: 20px;
-	text-align: left;
-}
-
-.jetpack-connect__install-step-text {
-	color: $gray;
-	font-size: 12px;
-	margin: 8px 0;
-	text-align: left;
-	flex-grow: 2;
-}
-
-
-.jetpack-connect__install-step-title {
 	font-size: 21px;
 	font-weight: 300;
-	text-align: left;
 }
 
 .jetpack-connect__install-step-text {
 	color: $gray;
 	font-size: 12px;
 	margin: 8px 0 16px 0;
-	text-align: left;
+	flex-grow: 2;
 }
 
 .jetpack-connect__browser-chrome {
 	padding: 8px;
 	background-color: lighten( $gray, 30% );
 	border-radius: 8px 8px 0 0;
-	text-align: left;
 }
 
 .jetpack-connect__browser-chrome-dot {
