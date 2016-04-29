@@ -95,9 +95,7 @@ function renderPluginList( context, basePath, siteUrl ) {
 	);
 
 	if ( search ) {
-		analytics
-		.ga
-		.recordEvent( 'Plugins', 'Search', 'Search term', search );
+		analytics.ga.recordEvent( 'Plugins', 'Search', 'Search term', search );
 	}
 
 	const analyticsPageTitle = 'Plugins' +
@@ -171,26 +169,17 @@ const controller = {
 			return;
 		}
 
-		/* When site URL is present, bail if
-		 * - the plugin parameter is not on the WordPress.com list for a WordPress.com site.
-		 * or
-		 * - the plugin parameter is on the WordPress.com list for a Jetpack site.
-		 * if no site URL is provided, bail if a WordPress.com filter was provided.
-		 * Only Jetpack plugins should work when no URL is provided.
-		 */
-		if (
-			siteUrl &&
-			(
-				(
-					! site.jetpack &&
-					! includes( [ 'all', wpcomFilter ], appliedFilter )
-				) ||
-				(
-					site.jetpack &&
-					appliedFilter === wpcomFilter
-				)
-			)
-		) {
+		// When site URL is present, bail if ...
+		//
+		// ... the plugin parameter is not on the WordPress.com list for a WordPress.com site.
+		const pluginIsNotInList = ! site.jetpack && ! includes( [ 'all', wpcomFilter ], appliedFilter );
+
+		// ... or the plugin parameter is on the WordPress.com list for a Jetpack site.
+		// if no site URL is provided, bail if a WordPress.com filter was provided.
+		//  Only Jetpack plugins should work when no URL is provided.
+		const onlyJetPack = site.jetpack && appliedFilter === wpcomFilter;
+
+		if ( siteUrl && ( pluginIsNotInList || onlyJetPack ) ) {
 			page.redirect( '/plugins/' + siteUrl );
 			return;
 		} else if ( ! siteUrl && appliedFilter === wpcomFilter ) {
