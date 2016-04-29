@@ -23,6 +23,7 @@ import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import { signup } from 'state/themes/actions';
 import i18n from 'lib/mixins/i18n';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -145,6 +146,8 @@ const ThemeSheet = React.createClass( {
 		const section = this.validateSection( this.props.section );
 		const { themeContentElement, priceElement } = this.getDangerousElements( section );
 
+		console.log( 'selected site:', this.props.selectedSite );
+
 		return (
 			<Main className="themes__sheet">
 				{ this.renderBar() }
@@ -174,4 +177,6 @@ const ThemeSheet = React.createClass( {
 	}
 } );
 
-export default connect()( ThemeSheet );
+export default connect( ( state ) => ( {
+	selectedSite: getSelectedSite( state ),
+} ) )( ThemeSheet );
