@@ -23,7 +23,6 @@ import JetpackExampleConnect from './exampleComponents/jetpack-connect';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
 
-
 /**
  * Constants
  */
@@ -199,7 +198,7 @@ const JetpackConnectMain = React.createClass( {
 							text={ this.translate( 'Once the plugin is installed, you\'ll need to click this tiny blue \'Activate\' link from your plugins list page.' ) }
 							example={ <JetpackExampleActivate /> } />
 						<JetpackInstallStep title={ this.translate( '3. Connect Jetpack' ) }
-							text={ this.translate( 'Once the plugin is activated you\'ll click this blue \'Connect\' button to complete the connection.' ) }
+							text={ this.translate( 'Once the plugin is activated you\'ll click this green \'Connect\' button to complete the connection.' ) }
 							example={ <JetpackExampleConnect /> } />
 					</div>
 					<Button onClick={ this.installJetpack } primary>{ this.translate( 'Install Jetpack' ) }</Button>
@@ -221,7 +220,7 @@ const JetpackConnectMain = React.createClass( {
 							text={ this.translate( 'You need to click this tiny blue \'Activate\' link from your plugins list page.' ) }
 							example={ <JetpackExampleActivate /> } />
 						<JetpackInstallStep title={ this.translate( '2. Connect Jetpack' ) }
-							text={ this.translate( 'Once the plugin is activated you\'ll click this blue \'Connect\' button to complete the connection.' ) }
+							text={ this.translate( 'Once the plugin is activated you\'ll click this green \'Connect\' button to complete the connection.' ) }
 							example={ <JetpackExampleConnect /> } />
 					</div>
 					<Button onClick={ this.activateJetpack } primary>{ this.translate( 'Activate Jetpack' ) }</Button>
