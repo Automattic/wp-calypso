@@ -6,6 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { connect } from 'react-redux';
 import Card from 'components/card';
 import Button from 'components/button';
 import formBase from './form-base';
@@ -26,9 +27,10 @@ import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import TimezoneDropdown from 'components/timezone-dropdown';
+import QuerySiteDomains from 'query-components/site-domains';
+import { getDomainsBySite } from 'state/sites/domains/selectors';
 
-module.exports = React.createClass( {
-
+const FormGeneral = React.createClass( {
 	displayName: 'SiteSettingsFormGeneral',
 
 	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
@@ -426,6 +428,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ this.state.fetchingSettings ? 'is-loading' : '' }>
+				{ site && <QuerySiteDomains siteId={ site.ID } /> }
 				<SectionHeader label={ this.translate( 'Site Profile' ) }>
 					<Button
 						compact={ true }
@@ -541,3 +544,12 @@ module.exports = React.createClass( {
 		}
 	}
 } );
+
+// connect exposing `domains` props
+export default connect( ( state, ownProps ) => {
+	const { site } = ownProps;
+
+	return {
+		domains: getDomainsBySite( state, site )
+	};
+} )( FormGeneral );
