@@ -195,7 +195,7 @@ const LoggedInForm = React.createClass( {
 
 	getRedirectionTarget() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
-		if ( this.isCalypsoStartedConnection() ) {
+		if ( this.props.calypsoStartedConnection ) {
 			const site = this.props.jetpackConnectAuthorize.queryObject.site;
 			const siteSlug = site.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
 			return STATS_PAGE + siteSlug;
@@ -283,8 +283,8 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		} );
 		return (
 			( user )
-				? <LoggedInForm { ...props } />
-				: <LoggedOutForm { ...props } />
+				? <LoggedInForm { ...props } calypsoStartedConnection={ this.isCalypsoStartedConnection() } />
+				: <LoggedOutForm { ...props } calypsoStartedConnection={ this.isCalypsoStartedConnection() } />
 		);
 	},
 	render() {
