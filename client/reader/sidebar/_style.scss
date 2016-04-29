@@ -120,6 +120,19 @@
 			.sidebar__menu-item {
 				opacity: 1;
 				transform: translateY( 0 );
+
+				.add-new {
+					background: $white;
+					border: 1px solid lighten( $gray, 20% );
+					border-radius: 3px;
+					color: darken( $gray, 10% );
+					font-size: 11px;
+					padding: 6px 7px;
+					position: absolute;
+						top: 2px;
+						right: 8px;
+					text-transform: none;
+				}
 			}
 		}
 
@@ -142,6 +155,7 @@
 	}
 
 	.sidebar__menu-item {
+
 		a.sidebar__button {
 			margin-top: 5px;
 
@@ -153,10 +167,6 @@
 
 	.sidebar__menu-item-label {
 		padding: 8px 16px 8px 55px;
-
-		@include breakpoint( "<660px" ) {
-			padding: 18px 16px 18px 24px;
-		}
 	}
 
 	.sidebar__menu-add-button {
