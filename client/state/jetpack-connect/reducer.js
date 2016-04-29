@@ -1,4 +1,9 @@
 /**
+ * External dependencis
+ */
+ import isEmpty from 'lodash/isEmpty';
+
+/**
  * Internal dependencies
  */
 import {
@@ -30,7 +35,7 @@ export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_STORE_SESSION:
 			const noProtocolUrl = action.url.replace( /.*?:\/\//g, '' );
-			return Object.assign( {}, state, { [ noProtocolUrl ]:  ( new Date() ).getTime() } );
+			return Object.assign( {}, state, { [ noProtocolUrl ]: ( new Date() ).getTime() } );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return state;
@@ -69,7 +74,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_AUTHORIZE:
 			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false } );
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
-			if ( ! action.error ) {
+			if ( isEmpty( action.error ) ) {
 				const { plans_url } = action.data;
 				return Object.assign( {}, state, { authorizeError: false, authorizeSuccess: true, autoAuthorize: false, plansURL: plans_url, siteReceived: false } );
 			}
@@ -84,7 +89,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
 			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, autoAuthorize: true } );
 		case JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE:
-			if ( action.error ) {
+			if ( ! isEmpty( action.error ) ) {
 				return Object.assign( {}, state, { isAuthorizing: false, authorizeSuccess: false, authorizeError: true, autoAuthorize: false } );
 			}
 			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, autoAuthorize: true, userData: action.userData, bearerToken: action.data.bearer_token } );
