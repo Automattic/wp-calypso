@@ -22,7 +22,8 @@ var Dialog = require( 'components/dialog' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	InfoPopover = require( 'components/info-popover' ),
 	FormLegend = require( 'components/forms/form-legend' ),
-	FormFieldset = require( 'components/forms/form-fieldset' );
+	FormFieldset = require( 'components/forms/form-fieldset' ),
+	viewport = require( 'lib/viewport' );
 
 /**
  * Component
@@ -183,7 +184,7 @@ module.exports = React.createClass( {
 					<FormSectionHeading>{ addCategoryString }</FormSectionHeading>
 					<FormFieldset>
 						<FormTextInput
-							autoFocus={ this.state.showDialog }
+							autoFocus={ this.state.showDialog && ! viewport.isMobile() }
 							placeholder={ this.translate( 'New category name' ) }
 							ref="categoryName"
 							isError={ isError }
