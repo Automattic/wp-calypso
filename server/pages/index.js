@@ -372,6 +372,11 @@ module.exports = function() {
 		app.get( '/log-in/:lang?', setUpLoggedOutRoute, serverRender );
 	}
 
+	if ( config.isEnabled( 'jetpack/connect' ) ) {
+		app.get( '/jetpack/connect', setUpLoggedOutRoute, serverRender );
+		app.get( '/jetpack/connect/authorize', setUpLoggedOutRoute, serverRender );
+	}
+
 	app.get( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpRoute, serverRender );
 
 	app.get( '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?/:locale?',
