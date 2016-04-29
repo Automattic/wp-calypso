@@ -17,7 +17,6 @@ import UpgradeNudge from 'my-sites/upgrade-nudge';
 import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
 import { abtest } from 'lib/abtest';
-import analytics from 'lib/analytics';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
@@ -209,10 +208,6 @@ export default React.createClass( {
 				icon="stats-alt"
 			/>
 		);
-	},
-
-	trackUpgradeClick() {
-		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'google_analytics' } );
 	},
 
 	render() {
