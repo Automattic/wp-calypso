@@ -193,13 +193,13 @@ const JetpackConnectMain = React.createClass( {
 					<div className="jetpack-connect__install-steps">
 						<JetpackInstallStep title={ this.translate( '1. Install Jetpack' ) }
 							text={ this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s dashboard to install Jetpack. Click the blue install button.' ) }
-							example={ <JetpackExampleInstall /> } />
+							example={ <JetpackExampleInstall url={ this.state.currentUrl } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Activate Jetpack' ) }
 							text={ this.translate( 'Once the plugin is installed, you\'ll need to click this tiny blue \'Activate\' link from your plugins list page.' ) }
-							example={ <JetpackExampleActivate /> } />
+							example={ <JetpackExampleActivate url={ this.state.currentUrl } /> } />
 						<JetpackInstallStep title={ this.translate( '3. Connect Jetpack' ) }
 							text={ this.translate( 'Once the plugin is activated you\'ll click this green \'Connect\' button to complete the connection.' ) }
-							example={ <JetpackExampleConnect /> } />
+							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
 					</div>
 					<Button onClick={ this.installJetpack } primary>{ this.translate( 'Install Jetpack' ) }</Button>
 				</div>
@@ -218,10 +218,10 @@ const JetpackConnectMain = React.createClass( {
 					<div className="jetpack-connect__install-steps">
 						<JetpackInstallStep title={ this.translate( '1. Activate Jetpack' ) }
 							text={ this.translate( 'You need to click this tiny blue \'Activate\' link from your plugins list page.' ) }
-							example={ <JetpackExampleActivate /> } />
+							example={ <JetpackExampleActivate url={ this.state.currentUrl } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Connect Jetpack' ) }
 							text={ this.translate( 'Once the plugin is activated you\'ll click this green \'Connect\' button to complete the connection.' ) }
-							example={ <JetpackExampleConnect /> } />
+							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
 					</div>
 					<Button onClick={ this.activateJetpack } primary>{ this.translate( 'Activate Jetpack' ) }</Button>
 				</div>

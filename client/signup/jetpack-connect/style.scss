@@ -143,3 +143,42 @@
 	text-align: left;
 	flex-grow: 2;
 }
+
+
+.jetpack-connect__install-step-title {
+	font-size: 21px;
+	font-weight: 300;
+	text-align: left;
+}
+
+.jetpack-connect__install-step-text {
+	color: $gray;
+	font-size: 12px;
+	margin: 8px 0 16px 0;
+	text-align: left;
+}
+
+.jetpack-connect__browser-chrome {
+	padding: 8px;
+	background-color: lighten( $gray, 30% );
+	border-radius: 8px 8px 0 0;
+	text-align: left;
+}
+
+.jetpack-connect__browser-chrome-dot {
+	display: inline-block;
+	margin-right: 8px;
+	background-color: lighten( $gray, 10% );
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+}
+
+.jetpack-connect__example .site-address-container {
+	margin-top: 8px;
+}
+.jetpack-connect__site-url-input-container .site-address-container .jetpack-connect__browser-chrome-url {
+	height: 40px;
+	font-size: 12px;
+	color: $gray;
+}
