@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 // Internal dependencies
 import Main from 'components/main';
 import Button from 'components/button';
-import Card from 'components/card';
+import PostCard from './post-card';
+import SiteCard from './site-card';
 
 const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-unused-vars
 
@@ -20,12 +21,8 @@ const ReaderStart = React.createClass( {
 				</header>
 				<p>{ this.translate( 'Follow these great new reads!' ) }</p>
 
-				<Card>
-					site card
-				</Card>
-				<Card>
-					post card
-				</Card>
+				<PostCard />
+				<SiteCard />
 			</Main>
 		);
 	}
@@ -38,3 +35,4 @@ export default connect(
 		};
 	}
 )( ReaderStart );
+
