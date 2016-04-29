@@ -104,8 +104,9 @@ module.exports = React.createClass( {
 		);
 	},
 
-	trackHomepageClick: function() {
+	previewSite: function( event ) {
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site' );
+		this.props.onClick && this.props.onClick( event );
 	},
 
 	render: function() {
@@ -151,7 +152,8 @@ module.exports = React.createClass( {
 						homeLink={ true }
 						enableActions={ true }
 						externalLink={ true }
-						onSelect={ this.trackHomepageClick }
+						onClick={ this.previewSite }
+						onSelect={ this.previewSite }
 						ref="site" />
 					: <AllSites sites={ this.props.sites.get() } />
 				}
