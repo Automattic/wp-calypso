@@ -63,15 +63,6 @@ module.exports = {
 		},
 		defaultVariation: 'namegen'
 	},
-	statsTabsLikesNudge: {
-		datestamp: '20160427',
-		variations: {
-			dataInformedBelowChart: 10,
-			noNudge: 90
-		},
-		defaultVariation: 'noNudge',
-		allowExistingUsers: true
-	},
 	themesHeaderNudge: {
 		datestamp: '20160427',
 		variations: {
