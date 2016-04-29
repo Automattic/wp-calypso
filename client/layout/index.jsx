@@ -151,6 +151,7 @@ Layout = React.createClass( {
 				<DesignPreview
 					className="layout__preview"
 					showPreview={ this.props.focus.getCurrent() === 'preview' }
+					defaultViewportDevice="computer"
 				/>
 			);
 		}
