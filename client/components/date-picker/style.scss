@@ -152,6 +152,10 @@ $date-picker_nav_button_size: 20px;
 	display: table-header-group;
 }
 
+.DayPicker-WeekdaysRow {
+	display: table-row;
+}
+
 .DayPicker-Weekday {
 	display: table-cell;
 	padding: 15px 0 10px;
@@ -160,6 +164,11 @@ $date-picker_nav_button_size: 20px;
 	font-weight: 600;
 	color: lighten( $gray, 20% );
 	text-transform: uppercase;
+
+	abbr {
+		border-bottom: none;
+		cursor: auto;
+	}
 }
 
 .DayPicker-Body {
