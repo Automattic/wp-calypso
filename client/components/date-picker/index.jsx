@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	DayPicker = require( 'react-day-picker' ),
-	merge = require( 'lodash/merge' ),
-	noop = require( 'lodash/noop' );
+import React from 'react';
+import DayPicker from 'react-day-picker';
+import merge from 'lodash/merge';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
-var DayItem = require( 'components/date-picker/day' );
+import DayItem from 'components/date-picker/day';
 
 /* Internal dependencies
  */
