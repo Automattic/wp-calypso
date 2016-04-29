@@ -13,6 +13,7 @@ import React from 'react';
  */
 import { activated } from 'state/themes/actions';
 import analytics from 'lib/analytics';
+import abtest from 'lib/abtest';
 import BusinessPlanDetails from './business-plan-details';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
@@ -75,7 +76,9 @@ const CheckoutThankYou = React.createClass( {
 	},
 
 	componentDidMount() {
-		config.isEnabled( 'guided-tours' ) && defer( () => this.props.undelayGuidedTour() );
+		if ( config.isEnabled( 'guided-tours' ) && abtest( 'guidedTours' === 'guided' ) ) {
+			defer( () => this.props.undelayGuidedTour() );
+		}
 		this.redirectIfThemePurchased();
 
 		if ( this.props.receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
