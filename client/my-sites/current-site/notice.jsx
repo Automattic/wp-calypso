@@ -92,7 +92,7 @@ const SiteNotice = React.createClass( {
 
 export default connect( ( state, ownProps ) => {
 	return {
-		hasDomainCredit: hasDomainCredit( state, ownProps.site.ID )
+		hasDomainCredit: !! ownProps.site && hasDomainCredit( state, ownProps.site.ID )
 	};
 }, ( dispatch ) => {
 	return {

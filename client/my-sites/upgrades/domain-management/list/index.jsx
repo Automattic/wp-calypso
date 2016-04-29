@@ -335,7 +335,7 @@ export const List = React.createClass( {
 
 export default connect( ( state, ownProps ) => {
 	return {
-		hasDomainCredit: hasDomainCredit( state, ownProps.selectedSite.ID )
+		hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, ownProps.selectedSite.ID )
 	};
 }, ( dispatch ) => {
 	return {
