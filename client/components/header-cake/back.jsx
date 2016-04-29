@@ -41,10 +41,22 @@ export default React.createClass( {
 		};
 	},
 
+	hideText( text ) {
+		const windowWidth = viewport.getWindowInnerWidth();
+
+		if (
+			windowWidth <= HIDE_BACK_CRITERIA.windowWidth &&
+			text.length >= HIDE_BACK_CRITERIA.characterLength ||
+			windowWidth <= 300
+		) {
+			return true;
+		}
+
+		return false;
+	},
+
 	render() {
 		const { text = i18n.translate( 'Back' ), href, onClick, spacer } = this.props;
-		const windowWidth = viewport.getWindowInnerWidth();
-		const hideText = windowWidth <= HIDE_BACK_CRITERIA.windowWidth && text.length >= HIDE_BACK_CRITERIA.characterLength || windowWidth <= 300;
 		const linkClasses = classNames( {
 			'header-cake__back': true,
 			'is-spacer': spacer
@@ -53,7 +65,10 @@ export default React.createClass( {
 		return (
 			<a className={ linkClasses } href={ href } onClick={ onClick }>
 				<Gridicon icon="chevron-left" size={ 18 } />
-				{ ! hideText && <span className="header-cake__back-text">{ text }</span> }
+				{
+					! this.hideText( text ) &&
+					<span className="header-cake__back-text">{ text }</span>
+				}
 			</a>
 		);
 	},
