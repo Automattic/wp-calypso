@@ -121,7 +121,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className='date-picker_container' >
+			<div className="date-picker_container">
 				<DayPicker
 					ref="daypicker"
 					className="date-picker"
