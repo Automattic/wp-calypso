@@ -1,9 +1,33 @@
-.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu button {
-	padding-right: 20px;
+.post-editor,
+.mce-inline-toolbar-grp {
+
+	.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu:hover,
+	.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu:focus {
+		border-color: lighten( $gray, 20%);
+	}
+	
+	.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu {
+		margin: 4px 2px;
+		border-right: 1px solid lighten( $gray, 30% );
+	}
 }
 
-.mce-container .mce-wpcom-insert-menu .mce-caret {
-	padding-left: 12px;
+.mce-toolbar .mce-btn.mce-insert-menu button:first-child {
+	padding: 2px 4px;
+}
+
+.mce-splitbtn.mce-insert-menu .mce-open.mce-active {
+	background-color: $white;
+	outline: 0;
+}
+
+.mce-btn.mce-insert-menu span {
+	padding-left: 0;
+}
+
+.mce-toolbar .mce-btn.mce-insert-menu .mce-open {
+	padding-right: 10px;
+	padding-left: 8px;
 }
 
 .wpcom-insert-menu__menu-icon {
@@ -18,7 +42,7 @@
 	color: darken( $gray, 30% );
 	display: inline-block;
 	font-family: $sans;
-	margin-left: 4px;
+	margin-left: 8px;
 	margin-top: 2px;
 
 	&:hover {
