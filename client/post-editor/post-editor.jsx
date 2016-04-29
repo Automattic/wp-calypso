@@ -766,12 +766,19 @@ const PostEditor = React.createClass( {
 		user.fetch();
 	},
 
+	needsVerification: function( user, site ) {
+		// do not allow publish for unverified e-mails,
+		// but allow if the site is VIP
+		return !user.email_verified && !( site && site.is_vip );
+	},
+
 	onPublish: function() {
 		var edits = { status: 'publish' };
-		var userInfo = this.props.user.get();
+		var post = this.state.post;
+		var user = this.props.user.get();
+		var site = this.props.sites.getSite( post.site_ID );
 
-		// do not allow publish for unverified e-mails
-		if ( ! userInfo.email_verified ) {
+		if ( this.needsVerification( user, site ) ) {
 			this.setState( {
 				showVerifyEmailDialog: true
 			} );
@@ -888,7 +895,7 @@ const PostEditor = React.createClass( {
 	},
 
 	getEditorMode: function() {
-		var editorMode = 'tinymce'
+		var editorMode = 'tinymce';
 		if ( this.props.preferences ) {
 			if ( this.props.preferences[ 'editor-mode' ] ) {
 				editorMode = this.props.preferences[ 'editor-mode' ];
