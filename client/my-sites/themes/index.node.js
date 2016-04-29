@@ -29,5 +29,5 @@ const routes = Object.assign( {},
 export default function( router ) {
 	Object.keys( routes ).forEach( route => {
 		router( route, ...routes[ route ] );
-	} )
-};
+	} );
+}

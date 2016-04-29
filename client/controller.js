@@ -50,7 +50,7 @@ export function makeLoggedOutLayout( context, next ) {
  * divs.
  */
 export function clientRouter( route, ...middlewares ) {
-	page( route, ...[ ...middlewares, render ] );
+	page( route, ...middlewares, render );
 }
 
 export function setSection( section ) {

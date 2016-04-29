@@ -53,7 +53,7 @@ export function isSectionLoading( state ) {
 	return state.ui.isLoading;
 }
 
-/*
+/**
  * Returns true if the current section is isomorphic.
  *
  * @param  {Object}  state Global state tree
