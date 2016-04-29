@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { SyncHandler } from './sync-handler';
+import { SyncHandler, syncOptOut } from './sync-handler';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:wp' );
 
@@ -39,6 +39,10 @@ if ( config.isEnabled( 'oauth' ) ) {
 		}
 		debug( 'Proxy now running in "access all user\'s blogs" mode' );
 	} );
+}
+
+if ( addSyncHandlerWrapper ) {
+	wpcom = syncOptOut( wpcom );
 }
 
 if ( config.isEnabled( 'support-user' ) ) {
