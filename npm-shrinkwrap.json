@@ -3990,7 +3990,7 @@
       "version": "1.2.0"
     },
     "wpcom": {
-      "version": "4.9.7",
+      "version": "4.9.10",
       "dependencies": {
         "babel": {
           "version": "5.8.38",
