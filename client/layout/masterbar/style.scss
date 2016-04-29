@@ -41,16 +41,23 @@ $autobar-height: 20px;
 	height: $masterbar-height;
 	line-height: $masterbar-height;
 	padding: 0 15px;
-	cursor: pointer;
 	text-decoration: none;
+	cursor: default;
 	transition: all 150ms ease-in;
 
 	&:visited {
 		color: $white;
 	}
 
+	&[href] {
+		cursor: pointer;
+	}
+
 	.masterbar__item-content {
 		color: $white;
+	}
+
+	.gridicon + .masterbar__item-content {
 		padding: 0 0 0 6px;
 	}
 
@@ -84,29 +91,48 @@ $autobar-height: 20px;
 }
 
 .masterbar__item-logo {
-	padding-left: 0;
+	flex: 0 0 auto;
+	padding: 0 0 0 8px;
 
 	.masterbar__wpcom-logo {
 		height: 24px;
 		width: 164px;
 		position: relative;
-			top: 7px;
+			top: 6px;
 			left: -4px;
 	}
 
-	&.is-loggedOut {
-		.masterbar__item-content {
-			margin: 0 5px;
-		}
-	}
-
 	@include breakpoint( "<480px" ) {
+		& {
+			margin-right: 10px;
+		}
+
 		.masterbar__item-content {
 			display: block;
 			margin: 0 auto;
 			width: 30px;
 			overflow: hidden;
 		}
+	}
+
+	&:hover,
+	&:focus {
+		background: transparent;
+	}
+}
+
+.masterbar__item-title {
+	flex: 0 0 auto;
+	padding-left: 0;
+	text-transform: uppercase;
+
+	.masterbar__item-content {
+		display: block;
+	}
+
+	&:hover,
+	&:focus {
+		background: transparent;
 	}
 }
 
@@ -158,7 +184,7 @@ $autobar-height: 20px;
 		border: 2px solid $white;
 	}
 
-	.masterbar__item-content {
+	.gridicon + .masterbar__item-content {
 		padding: 0;
 	}
 
@@ -174,7 +200,7 @@ $autobar-height: 20px;
 		margin-right: 0;
 	}
 
-	.masterbar__item-content {
+	.gridicon + .masterbar__item-content {
 		padding: 0;
 
 		@include breakpoint( "<480px" ) {
@@ -235,16 +261,6 @@ $autobar-height: 20px;
 	}
 	80% {
 		transform: scale(1.1);
-	}
-}
-
-.masterbar__item-title {
-	span {
-		text-transform: uppercase;
-	}
-
-	.masterbar__item-content {
-		display: block;
 	}
 }
 
