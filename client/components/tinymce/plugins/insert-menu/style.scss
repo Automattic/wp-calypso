@@ -50,6 +50,11 @@
 	}
 }
 
+.mce-container.mce-menu .mce-container-body {
+	padding: 0 16px;
+	box-sizing: border-box;
+}
+
 .mce-container.mce-menu .mce-container-body .mce-wpcom-insert-menu__menu-item {
-	margin-left: -6px;
+	padding: 9px 0;
 }
