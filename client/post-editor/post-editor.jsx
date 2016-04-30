@@ -309,6 +309,7 @@ const PostEditor = React.createClass( {
 							</div>
 							<EditorNotice
 								{ ...this.state.notice }
+								layoutFocus={ layoutFocus }
 								onDismissClick={ this.hideNotice }
 							/>
 							<FeaturedImage
@@ -377,7 +378,6 @@ const PostEditor = React.createClass( {
 						site={ site }
 						type={ this.props.type }
 						showDrafts={ this.props.showDrafts }
-						notice={ this.state.notice }
 						/>
 					{ this.iframePreviewEnabled()
 						? <EditorPreview

@@ -20,6 +20,7 @@ export default React.createClass( {
 		type: PropTypes.string,
 		link: PropTypes.string,
 		action: PropTypes.string,
+		layoutFocus: PropTypes.object.isRequired,
 		onDismissClick: PropTypes.func
 	},
 
@@ -28,6 +29,13 @@ export default React.createClass( {
 			text: null,
 			onDismissClick: noop
 		};
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ! this.props.text && nextProps.text ) {
+			// If we are showing a notice that didn't exist before, switch to the main editor view to show it
+			this.props.layoutFocus.set( 'content' );
+		}
 	},
 
 	render() {
