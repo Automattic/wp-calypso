@@ -69,15 +69,16 @@
 		display: none;
 	}
 
+	.site__content {
+		padding-top: 12px;
+		padding-bottom: 12px;
+	}
+
 	.site__title,
 	.site__domain {
 		&::after {
 			@include long-content-fade( $color: lighten( $gray, 30% ) );
 		}
-	}
-
-	.site__home {
-		background: lighten( $gray, 30% );
 	}
 
 	.editor-status-label {
