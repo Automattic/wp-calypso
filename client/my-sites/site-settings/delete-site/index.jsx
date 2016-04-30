@@ -74,7 +74,7 @@ module.exports = React.createClass( {
 	render: function() {
 		var site = this.state.site,
 			adminURL = site.options && site.options.admin_url ? site.options.admin_url : '',
-			exportLink = config.isEnabled( 'manage/export' ) ? '/settings/export/' + site.slug : adminURL + 'export.php',
+			exportLink = config.isEnabled( 'manage/export' ) ? '/settings/export/' + site.slug : adminURL + 'tools.php?page=export-choices',
 			exportTarget = config.isEnabled( 'manage/export' ) ? undefined : '_blank',
 			deleteDisabled = ( typeof this.state.confirmDomain !== 'string' || this.state.confirmDomain.replace( /\s/g, '' ) !== site.domain ),
 			deleteButtons, strings;
