@@ -16,7 +16,8 @@ const	FormButton = require( 'components/forms/form-button' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	config = require( 'config' ),
-	Notice = require( 'components/notice' );
+	Notice = require( 'components/notice' ),
+	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
 
@@ -229,7 +230,7 @@ module.exports = React.createClass( {
 						isPrimary={ false }
 						onClick={ this.saveCodesToFile }
 					>
-						{ this.translate( 'Save', { context: 'The user presses the save button during Two-Step setup to save their backup codes to disk.' } ) }
+						<Gridicon icon="cloud-download" />
 					</FormButton>
 
 					<FormButton
