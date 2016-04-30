@@ -12,7 +12,6 @@ import AsyncLoad from 'components/async-load';
 import EditorSidebarHeader from './header';
 import SidebarFooter from 'layout/sidebar/footer';
 import EditorActionBar from 'post-editor/editor-action-bar';
-import EditorNotice from 'post-editor/editor-notice';
 
 export default React.createClass( {
 	displayName: 'EditorSidebar',
@@ -38,8 +37,7 @@ export default React.createClass( {
 		userUtils: PropTypes.object,
 		type: PropTypes.string,
 		showDrafts: PropTypes.bool,
-		onMoreInfoAboutEmailVerify: PropTypes.func,
-		notice: PropTypes.object
+		onMoreInfoAboutEmailVerify: PropTypes.func
 	},
 
 	render() {
@@ -66,7 +64,6 @@ export default React.createClass( {
 						site={ this.props.site }
 						type={ this.props.type }
 					/>
-					<EditorNotice { ...this.props.notice } />
 					<EditorGroundControl
 						hasContent={ this.props.hasContent }
 						isDirty={ this.props.isDirty }

@@ -12,12 +12,6 @@
 			transform: none;
 		}
 	}
-
-	@include breakpoint( ">660px" ) {
-		.post-editor-notice {
-			display: none;
-		}
-	}
 }
 
 .editor-sidebar__header {
