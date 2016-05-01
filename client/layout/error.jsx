@@ -10,7 +10,7 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	EmptyContent = require( 'components/empty-content' );
 
 var LoadingError = React.createClass( {

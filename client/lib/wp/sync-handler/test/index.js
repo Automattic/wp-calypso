@@ -1,29 +1,26 @@
 /**
  * External dependencies
  */
+import defer from 'lodash/defer';
 import { expect } from 'chai';
-import sinon from 'sinon';
-import mockery from 'mockery';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
 import { generateKey } from '../utils';
 import * as testData from './data';
-import localforageMock from './localforage-mock';
+import localforageMock from './mock/localforage';
 import { RECORDS_LIST_KEY } from '../constants';
+import useMockery from 'test/helpers/use-mockery';
 
 let wpcom, SyncHandler, hasPaginationChanged, responseData, cacheIndex;
 
 const setLocalData = data => localforageMock.setLocalData( data );
 
 describe( 'sync-handler', () => {
-	before( () => {
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
-		mockery.registerSubstitute( 'localforage', 'lib/wp/sync-handler/test/localforage-mock' );
+	useMockery( ( mockery ) => {
+		mockery.registerMock( 'localforage', localforageMock );
 		( { cacheIndex } = require( '../cache-index' ) );
 		const handlerMock = ( params, callback ) => {
 			const key = generateKey( params );
@@ -33,14 +30,12 @@ describe( 'sync-handler', () => {
 		( { SyncHandler, hasPaginationChanged } = require( '../' ) );
 		wpcom = new SyncHandler( handlerMock );
 	} );
+
 	beforeEach( () => {
 		responseData = {};
 		setLocalData( {} );
 	} );
-	after( function() {
-		mockery.disable();
-		mockery.deregisterSubstitute( 'localforage' );
-	} );
+
 	it( 'should call callback with local response', () => {
 		const {
 			postListKey,
@@ -48,26 +43,29 @@ describe( 'sync-handler', () => {
 			postListLocalRecord,
 			postListResponseBody
 		} = testData;
-		const callback = sinon.spy();
+		const callback = spy();
 		setLocalData( {
 			[ postListKey ]: postListLocalRecord
 		} );
 		wpcom( postListParams, callback );
 		expect( callback.calledWith( null, postListResponseBody ) );
 	} );
-	it( 'should call callback with request response', () => {
+	it( 'should call callback with request response', ( done ) => {
 		const {
 			postListKey,
 			postListParams,
 			postListResponseBody
 		} = testData;
-		const callback = sinon.spy();
+		const callback = spy();
 		responseData[ postListKey ] = postListResponseBody;
 		wpcom( postListParams, callback );
-		expect( callback ).to.have.been.calledOnce;
-		expect( callback.calledWith( null, postListResponseBody ) );
+		defer( () => {
+			expect( callback ).to.have.been.calledOnce;
+			expect( callback.calledWith( null, postListResponseBody ) );
+			done();
+		} );
 	} );
-	it( 'should call callback twice with local and request responses', () => {
+	it( 'should call callback twice with local and request responses', ( done ) => {
 		const {
 			postListKey,
 			postListParams,
@@ -75,15 +73,18 @@ describe( 'sync-handler', () => {
 			postListResponseBody,
 			postListFreshResponseBody
 		} = testData;
-		const callback = sinon.spy();
+		const callback = spy();
 		setLocalData( {
 			[ postListKey ]: postListLocalRecord
 		} );
 		responseData[ postListKey ] = postListFreshResponseBody;
 		wpcom( postListParams, callback );
-		expect( callback ).to.have.been.calledTwice;
-		expect( callback.calledWith( null, postListResponseBody ) );
-		expect( callback.calledWith( null, postListFreshResponseBody ) );
+		defer( () => {
+			expect( callback ).to.have.been.calledTwice;
+			expect( callback.calledWith( null, postListResponseBody ) );
+			expect( callback.calledWith( null, postListFreshResponseBody ) );
+			done();
+		} );
 	} );
 	it( 'should store cacheIndex records with matching pageSeriesKey for paginated responses', ( done ) => {
 		const {
@@ -99,10 +100,10 @@ describe( 'sync-handler', () => {
 			[ postListNextPageKey ]: postListNextPageResponseBody,
 		};
 		wpcom( postListParams, () => {} );
-		setTimeout( () => {
+		defer( () => {
 			try {
 				wpcom( postListNextPageParams, () => {} );
-				setTimeout( () => {
+				defer( () => {
 					try {
 						const freshData = localforageMock.getLocalData();
 						const firstRecord = freshData[ RECORDS_LIST_KEY ][ 0 ];
@@ -113,11 +114,11 @@ describe( 'sync-handler', () => {
 					} catch ( err ) {
 						done( err );
 					}
-				}, 0 );
+				} );
 			} catch ( err ) {
 				done( err );
 			}
-		}, 0 );
+		} );
 	} );
 	it( 'should call clearPageSeries when getting a response with an updated page_handle', ( done ) => {
 		const {
@@ -128,9 +129,9 @@ describe( 'sync-handler', () => {
 		} = testData;
 		setLocalData( { [ postListKey ]: postListLocalRecord } );
 		responseData[ postListKey ] = postListFreshResponseBody;
-		sinon.spy( cacheIndex, 'clearPageSeries' );
+		spy( cacheIndex, 'clearPageSeries' );
 		wpcom( postListParams, () => {} );
-		setTimeout( () => {
+		defer( () => {
 			try {
 				expect( cacheIndex.clearPageSeries.called ).to.be.true;
 				cacheIndex.clearPageSeries.restore();
@@ -138,7 +139,7 @@ describe( 'sync-handler', () => {
 			} catch ( err ) {
 				done( err );
 			}
-		}, 0 );
+		} );
 	} );
 
 	describe( 'generateKey', () => {

@@ -22,6 +22,8 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	route = require( 'lib/route' ),
 	mapStatus = route.mapPostStatus;
 
+import UpgradeNudge from 'my-sites/upgrade-nudge';
+
 var GUESSED_POST_HEIGHT = 250;
 
 var PostList = React.createClass( {
@@ -277,8 +279,17 @@ var Posts = React.createClass( {
 				</div>
 			);
 		}
+
 		return (
 			<div>
+				{ posts.length && this.props.sites.getSelectedSite() && ! this.props.statusSlug ?
+					<UpgradeNudge
+						title={ this.translate( 'No Ads with WordPress.com Premium' ) }
+						message={ this.translate( 'Prevent ads from showing on your site.' ) }
+						feature="no-adverts"
+						event="published_posts_no_ads"
+					/>
+				: null }
 				{ postList }
 				{ this.props.lastPage && posts.length ? <div className="infinite-scroll-end" /> : null }
 			</div>

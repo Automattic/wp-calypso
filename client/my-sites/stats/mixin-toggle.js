@@ -8,7 +8,7 @@ var store = require( 'store' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' );
 
 module.exports = function() {

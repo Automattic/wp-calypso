@@ -14,7 +14,7 @@ var ServiceTip = require( './service-tip' ),
 	notices = require( 'notices' ),
 	sites = require( 'lib/sites-list' )(),
 	serviceConnections = require( './service-connections' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	FoldableCard = require( 'components/foldable-card' ),
 	SocialLogo = require( 'components/social-logo' );
 

@@ -192,24 +192,26 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 			theme = getThemeById( getState(), theme );
 		}
 
-		const action = {
-			type: THEME_ACTIVATED,
-			theme,
-			site
-		};
+		defer( () => {
+			const action = {
+				type: THEME_ACTIVATED,
+				theme,
+				site
+			};
 
-		const trackThemeActivation = recordTracksEvent(
-			'calypso_themeshowcase_theme_activate',
-			{
-				theme: theme.id,
-				previous_theme: previousTheme.id,
-				source: source,
-				purchased: purchased,
-				search_term: queryParams.get( 'search' ) || null
-			}
-		);
+			const trackThemeActivation = recordTracksEvent(
+				'calypso_themeshowcase_theme_activate',
+				{
+					theme: theme.id,
+					previous_theme: previousTheme.id,
+					source: source,
+					purchased: purchased,
+					search_term: queryParams.get( 'search' ) || null
+				}
+			);
 
-		defer( () => dispatch( withAnalytics( trackThemeActivation, action ) ) );
+			dispatch( withAnalytics( trackThemeActivation, action ) );
+		} );
 	}
 };
 

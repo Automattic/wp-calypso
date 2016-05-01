@@ -63,7 +63,8 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			showActions: false,
-			starTooltip: false
+			starTooltip: false,
+			cogTooltip: false
 		};
 	},
 
@@ -87,6 +88,14 @@ export default React.createClass( {
 
 	disableStarTooltip() {
 		this.setState( { starTooltip: false } );
+	},
+
+	enableCogTooltip() {
+		this.setState( { cogTooltip: true } );
+	},
+
+	disableCogTooltip() {
+		this.setState( { cogTooltip: false } );
 	},
 
 	renderStar() {
@@ -118,6 +127,33 @@ export default React.createClass( {
 					{ this.translate( 'Star this site' ) }
 				</Tooltip>
 			</button>
+		);
+	},
+
+	renderCog() {
+		const site = this.props.site;
+
+		if ( ! site ) {
+			return null;
+		}
+
+		return (
+			<a
+				className="site__cog"
+				href={ `/settings/general/${ site.slug }` }
+				onMouseEnter={ this.enableCogTooltip }
+				onMouseLeave={ this.disableCogTooltip }
+				ref="cogButton"
+			>
+				<Gridicon icon="cog" />
+				<Tooltip
+					context={ this.refs && this.refs.cogButton }
+					isVisible={ this.state.cogTooltip }
+					position="bottom"
+				>
+					{ this.translate( 'Site settings' ) }
+				</Tooltip>
+			</a>
 		);
 	},
 
@@ -203,6 +239,11 @@ export default React.createClass( {
 											<Gridicon icon="lock" size={ 14 } nonStandardSize />
 										</span>
 									}
+									{ site.options && site.options.is_redirect &&
+										<span className="site__badge">
+											<Gridicon icon="block" size={ 14 } nonStandardSize />
+										</span>
+									}
 									{ site.title }
 								</div>
 								<div className="site__domain">{ site.domain }</div>
@@ -222,6 +263,7 @@ export default React.createClass( {
 							{ this.renderEditIcon() }
 							<div className="site__actions">
 								{ this.renderStar() }
+								{ this.renderCog() }
 							</div>
 						</div>
 				}

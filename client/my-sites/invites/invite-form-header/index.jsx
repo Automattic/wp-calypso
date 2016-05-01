@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 export default React.createClass( {
 	displayName: 'InviteFormHeader',

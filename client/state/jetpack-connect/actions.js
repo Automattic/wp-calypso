@@ -7,7 +7,7 @@ const debug = require( 'debug' )( 'calypso:jetpack-connect:actions' );
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { tracks } from 'analytics';
+import { tracks } from 'lib/analytics';
 import Dispatcher from 'dispatcher';
 import {
 	JETPACK_CONNECT_CHECK_URL,
@@ -18,15 +18,20 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-	JETPACK_CONNECT_REDIRECT
+	JETPACK_CONNECT_REDIRECT,
+	JETPACK_CONNECT_STORE_SESSION
 } from 'state/action-types';
+import userFactory from 'lib/user';
+import config from 'config';
 
 /**
  *  Local variables;
  */
 let _fetching = {};
-const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
+const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + config( 'env' );
 const installURL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
+const activateURL = '/wp-admin/plugins.php';
+const userModule = userFactory();
 
 export default {
 	dismissUrl( url ) {
@@ -35,7 +40,7 @@ export default {
 				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
 				url: url
 			} );
-		}
+		};
 	},
 
 	checkUrl( url ) {
@@ -67,7 +72,11 @@ export default {
 					error: error
 				} );
 				if ( ! error ) {
-					wpcom.undocumented().storeJetpackConnectUrl( url );
+					debug( 'jetpack-connect store correct session', url, error, data );
+					dispatch( {
+						type: JETPACK_CONNECT_STORE_SESSION,
+						url: url
+					} );
 				}
 			} )
 			.catch( ( error ) => {
@@ -79,7 +88,7 @@ export default {
 					error: error
 				} );
 			} );
-		}
+		};
 	},
 	goToRemoteAuth( url ) {
 		return ( dispatch ) => {
@@ -97,6 +106,15 @@ export default {
 				url: url
 			} );
 			window.location = url + installURL;
+		};
+	},
+	goToPluginActivation( url ) {
+		return ( dispatch ) => {
+			dispatch( {
+				type: JETPACK_CONNECT_REDIRECT,
+				url: url
+			} );
+			window.location = url + activateURL;
 		};
 	},
 	createAccount( userData ) {
@@ -122,12 +140,12 @@ export default {
 					} );
 				}
 			);
-		}
+		};
 	},
 	authorize( queryObject ) {
 		return ( dispatch ) => {
 			const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
-			debug( 'Authorizing', _wp_nonce, redirect_uri, scope, state );
+			debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
 			tracks.recordEvent( 'jetpack_connect_authorize' );
 			dispatch( {
 				type: JETPACK_CONNECT_AUTHORIZE,
@@ -135,19 +153,24 @@ export default {
 			} );
 			wpcom.undocumented().jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state )
 			.then( ( data ) => {
+				debug( 'Jetpack login complete. Trying Jetpack authorize.', data );
 				return wpcom.undocumented().jetpackAuthorize( client_id, data.code, state, redirect_uri, secret );
 			} )
 			.then( ( data ) => {
 				tracks.recordEvent( 'jetpack_connect_authorize_success' );
+				debug( 'Jetpack authorize complete. Updating sites list.', data );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 					siteId: client_id,
 					data: data,
 					error: null
 				} );
+				// Update the user now that we are fully connected.
+				userModule.fetch();
 				return wpcom.me().sites( { site_visibility: 'all' } );
 			} )
 			.then( ( data ) => {
+				debug( 'Sites list updated!', data );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 					data: data
@@ -167,6 +190,6 @@ export default {
 					error: error
 				} );
 			} );
-		}
+		};
 	}
 };

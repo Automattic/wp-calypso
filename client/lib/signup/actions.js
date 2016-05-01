@@ -7,7 +7,7 @@ import defer from 'lodash/defer';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 const SignupActions = {
 	fetchCachedSignup() {

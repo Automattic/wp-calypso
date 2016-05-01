@@ -8,7 +8,7 @@ import filter from 'lodash/filter';
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import SharingServicesGroup from './services-group';
 import AccountDialog from './account-dialog';
 import serviceConnections from './service-connections';

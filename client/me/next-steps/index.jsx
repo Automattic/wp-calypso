@@ -12,7 +12,7 @@ var NextStepsBox = require( './next-steps-box' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	steps = require( './steps' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	productsValues = require( 'lib/products-values' ),
 	sites = require( 'lib/sites-list' )();
 

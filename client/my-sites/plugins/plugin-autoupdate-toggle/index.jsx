@@ -10,7 +10,7 @@ var PluginsActions = require( 'lib/plugins/actions' ),
 	PluginsLog = require( 'lib/plugins/log-store' ),
 	PluginAction = require( 'my-sites/plugins/plugin-action/plugin-action' ),
 	ExternalLink = require( 'components/external-link' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	utils = require( 'lib/site/utils' );
 
 module.exports = React.createClass( {

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
 import ms from 'ms';
 
 /**
@@ -11,7 +10,8 @@ import ms from 'ms';
 import { RECORDS_LIST_KEY } from '../constants';
 import { normalizeRequestParams } from '../utils';
 import * as testData from './data';
-import localforageMock from './localforage-mock';
+import localforageMock from './mock/localforage';
+import useMockery from 'test/helpers/use-mockery';
 
 let cacheIndex;
 
@@ -20,18 +20,9 @@ const setLocalData = data => localforageMock.setLocalData( data );
 const clearLocal = () => setLocalData( {} );
 
 describe( 'cache-index', () => {
-	before( () => {
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
-		mockery.registerSubstitute( 'localforage', 'lib/wp/sync-handler/test/localforage-mock' );
+	useMockery( ( mockery ) => {
+		mockery.registerMock( 'localforage', localforageMock );
 		( { cacheIndex } = require( '../cache-index' ) );
-	} );
-
-	after( function() {
-		mockery.disable();
-		mockery.deregisterSubstitute( 'localforage' );
 	} );
 
 	beforeEach( clearLocal ); // also do inside nested blocks with >1 test
@@ -211,6 +202,7 @@ describe( 'cache-index', () => {
 				}, ( err ) => done( err ) );
 		} );
 	} );
+
 	describe( '#clearRecordsByParamFilter', () => {
 		it( 'should clear records with reqParams that matches filter and leave other records intact', ( done ) => {
 			const {
@@ -232,7 +224,7 @@ describe( 'cache-index', () => {
 			} );
 			const matchSiteFilter = ( reqParams ) => {
 				return reqParams.path === '/sites/bobinprogress2.wordpress.com/posts';
-			}
+			};
 			return cacheIndex.clearRecordsByParamFilter( matchSiteFilter )
 				.then( () => {
 					try {

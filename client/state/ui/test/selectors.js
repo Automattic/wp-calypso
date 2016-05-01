@@ -10,10 +10,8 @@ import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSectionName,
-	getGuidesTourState,
+	isSectionIsomorphic,
 } from '../selectors';
-import guidesToursConfig from 'guidestours/config';
-import useI18n from 'test/helpers/use-i18n';
 
 describe( 'selectors', () => {
 	describe( '#getSelectedSite()', () => {
@@ -93,35 +91,33 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getGuidesTourState()', () => {
-		useI18n();
-		it( 'should return an empty object if no state is present', () => {
-			const tourState = getGuidesTourState( {
+	describe( '#isSectionIsomorphic()', () => {
+		it( 'should return false if there is no section currently selected', () => {
+			const selected = isSectionIsomorphic( {
 				ui: {
-					guidesTour: false
+					section: false
 				}
 			} );
 
-			expect( tourState ).to.deep.equal( { stepConfig: false } );
+			expect( selected ).to.be.false;
 		} );
 
-		it( 'should include the config of the current tour step', () => {
-			const tourState = getGuidesTourState( {
-				ui: {
-					guidesTour: {
-						stepName: 'sidebar',
-						shouldShow: true,
-						tour: 'main',
-						siteId: 2916284,
-					}
-				}
+		it( 'should return true if current section is isomorphic', () => {
+			const section = {
+				enableLoggedOut: true,
+				group: 'sites',
+				isomorphic: true,
+				module: 'my-sites/themes',
+				name: 'themes',
+				paths: [ '/design' ],
+				secondary: false
+			};
+
+			const selected = isSectionIsomorphic( {
+				ui: { section }
 			} );
 
-			const stepConfig = guidesToursConfig.get()[ 'sidebar' ];
-
-			expect( tourState ).to.deep.equal( Object.assign( {}, tourState, {
-				stepConfig
-			} ) );
+			expect( selected ).to.be.true;
 		} );
 	} );
 } );

@@ -21,12 +21,10 @@ var FollowButtons = React.createClass( {
 				<h2>
 					<a href="/devdocs/app-component/follow-buttons">Follow Button</a>
 				</h2>
-				<Card>
-					<span>Default:</span>
+				<Card compact>
 					<FollowButton following={ false } />
 				</Card>
-				<Card>
-					<span>Following:</span>
+				<Card compact>
 					<FollowButton following={ true } />
 				</Card>
 			</div>

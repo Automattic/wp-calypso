@@ -11,7 +11,7 @@ import times from 'lodash/times';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Card from 'components/card';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { filterPlansBySiteAndProps, shouldFetchSitePlans } from 'lib/plans';

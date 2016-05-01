@@ -12,7 +12,7 @@
 
 .plan-compare-card__features {
 	padding: 16px 24px;
-	background-color: $gray-super-light;
+	background-color: lighten($gray, 35%);
 	font-size: 14px;
 	color: $gray;
 }
@@ -103,7 +103,6 @@
 	width: 100px;
 	display: block;
 	background: $blue-medium;
-	box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
 	position: absolute;
 	top: 19px;
 	right: -21px;
@@ -121,7 +120,8 @@
 .plan-compare-card__ribbon .plan-compare-card__ribbon-title::after {
 	content: "";
 	position: absolute;
-	right: 0px; top: 100%;
+	right: 0;
+	top: 100%;
 	z-index: z-index( '.plan-compare-card__ribbon', '.plan-compare-card__ribbon-title::after' );
 	border-left: 3px solid transparent;
 	border-right: 3px solid $blue-dark;

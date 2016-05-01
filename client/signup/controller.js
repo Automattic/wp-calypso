@@ -14,7 +14,7 @@ import isEmpty from 'lodash/isEmpty';
 import i18n from 'lib/mixins/i18n';
 import config from 'config';
 import route from 'lib/route';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import layoutFocus from 'lib/layout-focus';
 import SignupComponent from './main';
 import utils from './utils';

@@ -10,7 +10,7 @@ import includes from 'lodash/includes';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import SiteInfo from 'my-sites/site';
 
 export default React.createClass( {

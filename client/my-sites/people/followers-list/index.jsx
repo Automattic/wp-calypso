@@ -23,7 +23,7 @@ var PeopleListItem = require( 'my-sites/people/people-list-item' ),
 	EmailFollowersStore = require( 'lib/email-followers/store' ),
 	deterministicStringify = require( 'lib/deterministic-stringify' ),
 	accept = require( 'lib/accept' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 const maxFollowers = 1000;
 

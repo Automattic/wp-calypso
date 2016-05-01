@@ -18,7 +18,9 @@ var Card = require( 'components/card' ),
 	PostTotalViews = require( 'my-sites/posts/post-total-views' ),
 	utils = require( 'lib/posts/utils' ),
 	updatePostStatus = require( 'lib/mixins/update-post-status' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
+
+import Comments from 'reader/comments';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Posts', eventAction );
@@ -44,7 +46,8 @@ module.exports = React.createClass({
 
 	getInitialState: function() {
 		return {
-			showMoreOptions: false
+			showMoreOptions: false,
+			showComments: false
 		};
 	},
 
@@ -262,16 +265,14 @@ module.exports = React.createClass({
 			if ( showComments ) {
 				commentMeta = (
 					<a
-						href={ commentHref }
 						className={
 							classNames( {
 								post__comments: true,
 								"is-empty": ! commentCountDisplay
 							} )
 						}
-						target="_blank"
 						title={ commentTitle }
-						onClick={ this.analyticsEvents.commentIconClick }
+						onClick={ this.toggleComments }
 					>
 					<Gridicon icon="comment" size={ 24 } />
 
@@ -368,6 +369,13 @@ module.exports = React.createClass({
 		return this.props.sites.getSite( this.props.post.site_ID );
 	},
 
+	toggleComments: function() {
+		this.setState( {
+			showComments: ! this.state.showComments
+		} );
+		this.analyticsEvents.commentIconClick();
+	},
+
 	render: function() {
 
 		var site = this.getSite();
@@ -396,6 +404,7 @@ module.exports = React.createClass({
 					onTrash={ this.trashPost }
 					onDelete={ this.deletePost }
 					onRestore={ this.restorePost }
+					site={ site }
 				/>
 				<ReactCSSTransitionGroup
 					transitionName="updated-trans"
@@ -403,6 +412,7 @@ module.exports = React.createClass({
 					transitionLeaveTimeout={ 300 }>
 					{ this.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
+				{ this.state.showComments && <Comments post={ this.props.post } onCommentsUpdate={ () => {} } /> }
 			</Card>
 		);
 

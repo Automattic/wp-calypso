@@ -20,7 +20,7 @@ var CreditCardPaymentBox = require( './credit-card-payment-box' ),
 	isFree = cartValues.isFree,
 	hasFreeTrial = cartValues.cartItems.hasFreeTrial,
 	countriesList = require( 'lib/countries-list' ).forPayments(),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	TransactionStepsMixin = require( './transaction-steps-mixin' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 

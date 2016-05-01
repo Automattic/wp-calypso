@@ -10,43 +10,35 @@ and therefore need to avoid adding the `from` and `resolved` fields that `npm sh
 
 See also: [shrinkwrap docs](https://docs.npmjs.com/cli/shrinkwrap)
 
-## Modifying Dependencies
+## npm 3
 
-We use clingwrap to avoid creating huge diffs in npm-shrinkwrap.json. clingwrap also removes
-`from` and `resolved` fields which is expected. If you need to update a package that is not published with npm, 
-use the `Bumping Sub-Dependencies in all Packages` instructions instead.
+npm 3 [resolves dependencies differently](https://docs.npmjs.com/how-npm-works/npm3) than npm 2. Specifically:
+- the position in the directory structure no longer predicts the type (primary, secondary, etc) a dependency is
+- dependency resolution depends on install order, or the order in which things are installed will change the node_modules 
+directory tree structure
 
-- Install [clingwrap](https://github.com/goodeggs/clingwrap) globally: `npm install -g clingwrap`
-- Update your desired package, e.g. `npm install lodash@4.0.0 --save`
-- Clingwrap your updated package `clingwrap lodash`
-- Verify that Calypso works as expected and that tests pass.
-- Commit the updated package.json and npm-shrinkwrap.json
+With the upgrade to npm 3, if we make any dependency changes in package.json, we need to regenerate the entire 
+npm-shrinkwrap.json file.
 
-## Bumping Sub-Dependencies in a Single Package
+Before generating the npm-shrinkwrap.json:
+- Make sure your node/npm version matches the versions listed in package.json under engines
+- Delete your local node_modules
+- Delete your local copy of npm-shrinkwrap.json before running `npm install`
 
-Periodically, we'll want to bump our package sub-dependencies to pick up bugfixes.  To update sub-dependencies in a 
-single module, (with lodash as an example) :
-
-- Remove only that package in node_modules `rm -rf node_modules/lodash`
-- Install the same version `npm install lodash@4.0.0 --save`
-- Clingwrap the package `clingwrap lodash`
-- Verify that Calypso works as expected and that tests pass.
-- Commit the changes to npm-shrinkwrap.json.
-
-## Bumping Sub-Dependencies in all Packages
-
-We may also choose to update all package sub-dependencies. This will result in a large diff that is too big to review, 
-so testing instructions should ensure that a clean install works and Calypso runs and tests correctly. It's very 
+Testing instructions should ensure that a clean install works and Calypso runs and tests correctly. It's very 
 important that your node_modules is deleted before you do this to be sure to pick up the latest versions.
+
+## Generating npm-shrinkwrap.json
 
 - Install [shonkwrap](https://github.com/skybet/shonkwrap) globally: `npm install -g shonkwrap`. This package attempts
 to remove the from/resolved fields if possible.
+- (Optional) Modify package.json. For example: `npm install --save lodash@4.11.1` or `npm uninstall --save left-pad`
 - Run `make distclean` to delete local node_modules
 - Delete your local copy of npm-shrinkwrap.json.
 - Run `npm install`
 - Verify that Calypso works as expected and that tests pass.
 - Run `shonkwrap --dev`
-- Commit the new npm-shrinkwrap.json
+- Commit the new npm-shrinkwrap.json and any changes to package.json
 
 ## Testing
 

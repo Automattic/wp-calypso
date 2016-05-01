@@ -7,7 +7,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' );
+var analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 	recordEvent: function() {

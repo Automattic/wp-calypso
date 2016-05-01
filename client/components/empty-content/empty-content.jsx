@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:components:emptyContent' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import debugFactory from 'debug';
+import classNames from 'classnames';
+
+const debug = debugFactory( 'calypso:components:emptyContent' );
 
 module.exports = React.createClass( {
 
@@ -87,19 +89,9 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var action, secondaryAction, illustration;
-
-		if ( this.props.action ) {
-			action = this.primaryAction();
-		}
-
-		if ( this.props.secondaryAction ) {
-			secondaryAction = this.secondaryAction();
-		}
-
-		if ( this.props.illustration ) {
-			illustration = <img src={ this.props.illustration } width={ this.props.illustrationWidth } className="empty-content__illustration" />;
-		}
+		const action = this.props.action && this.primaryAction();
+		const secondaryAction = this.props.secondaryAction && this.secondaryAction();
+		const illustration = this.props.illustration && <img src={ this.props.illustration } width={ this.props.illustrationWidth } className="empty-content__illustration" />;
 
 		return (
 			<div className={ classNames( 'empty-content', this.props.className, { 'is-compact': this.props.isCompact, 'has-title-only': this.props.title && ! this.props.line } ) }>

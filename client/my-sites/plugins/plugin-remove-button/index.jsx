@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import accept from 'lib/accept';
 import Gridicon from 'components/gridicon';
 import PluginsLog from 'lib/plugins/log-store';

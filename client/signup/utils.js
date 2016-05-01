@@ -119,6 +119,10 @@ function mergeFormWithValue( { form, fieldName, fieldValue} ) {
 	return form;
 }
 
+function getDestination( destination, dependencies, flowName ) {
+	return flows.filterDestination( destination, dependencies, flowName );
+}
+
 module.exports = {
 	getFlowName: getFlowName,
 	getFlowSteps: getFlowSteps,
@@ -130,5 +134,6 @@ module.exports = {
 	getPreviousStepName: getPreviousStepName,
 	getNextStepName: getNextStepName,
 	getValueFromProgressStore: getValueFromProgressStore,
+	getDestination: getDestination,
 	mergeFormWithValue: mergeFormWithValue
 };

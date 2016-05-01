@@ -11,11 +11,12 @@ import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { isPlan } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
+import { PLAN_PREMIUM } from 'lib/plans/constants';
 
 const CartPlanAd = React.createClass( {
 	addToCartAndRedirect( event ) {
 		event.preventDefault();
-		upgradesActions.addItem( cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) );
+		upgradesActions.addItem( cartItems.premiumPlan( PLAN_PREMIUM, { isFreeTrial: false } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	},
 	shouldDisplayAd() {

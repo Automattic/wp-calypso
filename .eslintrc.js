@@ -33,6 +33,7 @@ module.exports = {
 		'no-dupe-keys': 2,
 		'no-else-return': 1,
 		'no-empty': 1,
+		'no-extra-semi': 1,
 		// Flux stores use switch case fallthrough
 		'no-fallthrough': 0,
 		'no-lonely-if': 1,
@@ -73,8 +74,9 @@ module.exports = {
 			':': 'before'
 		} } ],
 		'padded-blocks': [ 1, 'never' ],
-		'quote-props': [ 1, 'as-needed' ],
+		'quote-props': [ 1, 'as-needed', { 'keywords': true } ],
 		'quotes': [ 1, 'single', 'avoid-escape' ],
+		'semi': 1,
 		'semi-spacing': 1,
 		'space-after-keywords': [ 1, 'always' ],
 		'space-before-blocks': [ 1, 'always' ],

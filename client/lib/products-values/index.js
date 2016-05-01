@@ -168,12 +168,7 @@ function isDomainRegistration( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	if ( typeof product.is_domain_registration === 'undefined' ) {
-		throw new Error( 'The `is_domain_registration` product attribute is ' +
-		'required to use this function.' );
-	}
-
-	return product.is_domain_registration;
+	return !! product.is_domain_registration;
 }
 
 function isDomainMapping( product ) {
@@ -218,6 +213,10 @@ function isDependentProduct( product, dependentProduct ) {
 
 	slug = isDomainRegistration( product ) ? 'domain' : product.product_slug;
 	dependentSlug = isDomainRegistration( dependentProduct ) ? 'domain' : dependentProduct.product_slug;
+
+	if ( ( product.extra && dependentProduct.extra ) && ( product.extra.withPlansOnly === 'yes' || dependentProduct.extra.withPlansOnly === 'yes' ) ) {
+		return isPlan( product ) && ( isDomainRegistration( dependentProduct ) || isDomainMapping( dependentProduct ) );
+	}
 
 	return (
 		productDependencies[ slug ] &&

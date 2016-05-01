@@ -50,6 +50,35 @@ export const getSubscribedLists = createSelector(
 );
 
 /**
+ * Returns true if the specified list has been marked as updated.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Integer}  listId  List ID
+ * @return {Boolean}        Whether lists are being requested
+ */
+export function isUpdatedList( state, listId ) {
+	if ( ! has( state, 'reader.lists.updatedLists' ) ) {
+		return false;
+	}
+	return includes( state.reader.lists.updatedLists, listId );
+}
+
+/**
+ * Returns true if the specified list has an error recorded.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Integer}  listId  List ID
+ * @return {Boolean}        Whether list has an error
+ */
+export function hasError( state, listId ) {
+	if ( ! has( state, 'reader.lists.errors' ) ) {
+		return false;
+	}
+
+	return listId in state.reader.lists.errors;
+}
+
+/**
  * Returns information about a single Reader list.
  *
  * @param  {Object}  state  Global state tree
@@ -84,4 +113,21 @@ export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
 		return false;
 	}
 	return includes( state.reader.lists.subscribedLists, list.ID );
+}
+
+/**
+ * Check if the requested list is missing (i.e. API 404ed when requesting it)
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {String}  owner  List owner
+ * @param  {String}  slug  List slug
+ * @return {Boolean} Is the list missing?
+ */
+export function isMissingByOwnerAndSlug( state, owner, slug ) {
+	const preparedOwner = owner.toLowerCase();
+	const preparedSlug = slug.toLowerCase();
+
+	return !! find( state.reader.lists.missingLists, ( list ) => {
+		return list.owner === preparedOwner && list.slug === preparedSlug
+	} );
 }

@@ -11,7 +11,7 @@ var siteMenus = require( 'lib/menu-data' ),
 		OptionList = require( './option-list' ),
 		Options = require( './options' ),
 		observe = require( 'lib/mixins/data-observe' ),
-		analytics = require( 'analytics' );
+		analytics = require( 'lib/analytics' );
 
 /**
  * Component

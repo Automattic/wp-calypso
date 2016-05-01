@@ -47,7 +47,9 @@ if ( config.isEnabled( 'support-user' ) ) {
 
 // expose wpcom global var only in development
 if ( 'development' === config( 'env' ) ) {
+	let wpcomPKG = require( 'wpcom/package' );
 	window.wpcom = wpcom;
+	window.wpcom.__version = wpcomPKG.version;
 }
 
 // Inject localization helpers to `wpcom` instance

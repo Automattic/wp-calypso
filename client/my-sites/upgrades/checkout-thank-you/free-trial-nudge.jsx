@@ -19,11 +19,10 @@ import {
 } from 'lib/products-values';
 import paths from 'my-sites/plans/paths';
 import PurchaseDetail from 'components/purchase-detail';
-import {
-	refreshSitePlans
-} from 'state/sites/plans/actions';
+import { refreshSitePlans } from 'state/sites/plans/actions';
 import { startFreeTrial } from 'lib/upgrades/actions';
 import * as upgradesNotices from 'lib/upgrades/notices';
+import { PLAN_PREMIUM } from 'lib/plans/constants';
 
 const FreeTrialNudge = React.createClass( {
 	propTypes: {
@@ -46,7 +45,7 @@ const FreeTrialNudge = React.createClass( {
 
 		this.setState( { isSubmitting: true } );
 
-		startFreeTrial( this.props.selectedSite.ID, cartItems.planItem( 'value_bundle' ), ( error ) => {
+		startFreeTrial( this.props.selectedSite.ID, cartItems.planItem( PLAN_PREMIUM ), ( error ) => {
 			if ( error ) {
 				this.setState( { isSubmitting: false } );
 

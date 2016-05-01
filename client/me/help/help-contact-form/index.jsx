@@ -9,7 +9,7 @@ import isEqual from 'lodash/isEqual';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import FormLabel from 'components/forms/form-label';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
@@ -39,6 +39,7 @@ module.exports = React.createClass( {
 		showHowYouFeelField: React.PropTypes.bool,
 		showSubjectField: React.PropTypes.bool,
 		showSiteField: React.PropTypes.bool,
+		showHelpLanguagePrompt: React.PropTypes.bool,
 		siteFilter: React.PropTypes.func,
 		siteList: React.PropTypes.object,
 		disabled: React.PropTypes.bool,
@@ -55,6 +56,7 @@ module.exports = React.createClass( {
 			showHowYouFeelField: false,
 			showSubjectField: false,
 			showSiteField: false,
+			showHelpLanguagePrompt: false,
 			disabled: false,
 			valueLink: {
 				value: null,
@@ -194,7 +196,15 @@ module.exports = React.createClass( {
 				{ value: 'panicked', label: this.translate( 'Panicked' ) }
 			];
 
-		const { formDescription, buttonLabel, showHowCanWeHelpField, showHowYouFeelField, showSubjectField, showSiteField } = this.props;
+		const {
+			formDescription,
+			buttonLabel,
+			showHowCanWeHelpField,
+			showHowYouFeelField,
+			showSubjectField,
+			showSiteField,
+			showHelpLanguagePrompt,
+		} = this.props;
 
 		return (
 			<div className="help-contact-form">
@@ -233,6 +243,11 @@ module.exports = React.createClass( {
 				<FormLabel>{ this.translate( 'What are you trying to do?' ) }</FormLabel>
 				<FormTextarea valueLink={ this.linkState( 'message' ) } placeholder={ this.translate( 'Please be descriptive' ) }></FormTextarea>
 
+				{ showHelpLanguagePrompt && (
+					<strong className="help-contact-form__help-language-prompt">
+						{ this.translate( 'Note: Support is only available in English at the moment.' ) }
+					</strong>
+				) }
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>{ buttonLabel }</FormButton>
 			</div>
 		);

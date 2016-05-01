@@ -698,7 +698,8 @@ normalizePost.content = {
 			'cloudup.com',
 			'soundcloud.com',
 			'8tracks.com',
-			'spotify.com'
+			'spotify.com',
+			'me.sh'
 		];
 
 		// hosts that we trust that don't work in a sandboxed iframe

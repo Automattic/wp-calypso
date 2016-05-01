@@ -11,7 +11,7 @@ var connect = require( 'react-redux' ).connect,
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	isValidFeatureKey = require( 'lib/plans' ).isValidFeatureKey,
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	clearPurchases = require( 'lib/upgrades/actions/purchases' ).clearPurchases,

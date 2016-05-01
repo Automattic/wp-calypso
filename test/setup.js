@@ -1,58 +1,19 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
 import head from 'lodash/head';
 import last from 'lodash/last';
 import mergeWith from 'lodash/mergeWith';
 import reduce from 'lodash/reduce';
 import tail from 'lodash/tail';
 
-const debug = debugFactory( 'test-runner' ),
-	files = [];
-let whitelistConfig;
-
-function enableWhitelist() {
-	whitelistConfig = require( 'tests.json' );
-}
+const files = [];
 
 function addFile( file ) {
-	if ( whitelistConfig ) {
-		const pathParts = tail( file.split( '/' ) );
-
-		if ( ! isFileWhitelisted( whitelistConfig, pathParts ) ) {
-			debug( `Skipping file: ${file}.` );
-			return;
-		}
-	}
 	files.push( file );
 }
 
-function isFileWhitelisted( config, pathParts ) {
-	const folder = head( pathParts );
-
-	if ( config[ folder ] ) {
-		if ( folder === 'test' ) {
-			return ( config[ folder ].indexOf( getFileName( pathParts ) ) !== false );
-		}
-
-		return isFileWhitelisted( config[ folder ], tail( pathParts ) );
-	}
-
-	return false;
-}
-
 function getConfig() {
-	if ( ! whitelistConfig && files.length === 0 ) {
-		// this assumes that there's a tests.json at the root of NODE_PATH
-		debug( 'No tests provided, loading whitelisted tests config.' );
-		return require( 'tests.json' );
-	}
-
-	return filesToConfig();
-}
-
-function filesToConfig() {
 	return reduce( files, ( config, file ) => {
 		const fileConfig = fileToConfig( tail( file.split( '/' ) ) );
 
@@ -67,7 +28,7 @@ function filesToConfig() {
 function fileToConfig( pathParts, folderConfig = {} ) {
 	const folder = head( pathParts );
 
-	if ( folder === 'test' ) {
+	if ( folder === 'test' && pathParts.length === 2 ) {
 		folderConfig[ folder ] = [ getFileName( pathParts ) ];
 	} else {
 		folderConfig[ folder ] = fileToConfig( tail( pathParts ) );
@@ -83,7 +44,6 @@ function getFileName( pathParts ) {
 }
 
 module.exports = {
-	enableWhitelist,
 	addFile,
 	getConfig
 };

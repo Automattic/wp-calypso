@@ -94,6 +94,12 @@ $autobar-height: 20px;
 			left: -4px;
 	}
 
+	&.is-loggedOut {
+		.masterbar__item-content {
+			margin: 0 5px;
+		}
+	}
+
 	@include breakpoint( "<480px" ) {
 		.masterbar__item-content {
 			display: block;
@@ -229,6 +235,17 @@ $autobar-height: 20px;
 	}
 	80% {
 		transform: scale(1.1);
+	}
+}
+
+.masterbar__login-links {
+	display: flex;
+	margin-left: auto;
+	margin-right: 5px;
+
+	.masterbar__item-content {
+		display: block;
+		padding-left: 0;
 	}
 }
 

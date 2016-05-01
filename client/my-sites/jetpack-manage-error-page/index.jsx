@@ -6,7 +6,7 @@ import React from 'react'
 /**
  * Internal dependencies
  */
-import analytics from 'analytics'
+import analytics from 'lib/analytics'
 import EmptyContent from 'components/empty-content'
 import FeatureExample from 'components/feature-example'
 

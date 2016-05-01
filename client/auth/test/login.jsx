@@ -1,31 +1,37 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-
-const ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	expect = require( 'chai' ).expect,
-	sinon = require( 'sinon' ),
-	ReactInjection = require( 'react/lib/ReactInjection' ),
-	TestUtils = require( 'react-addons-test-utils' );
+import { expect } from 'chai';
+import identity from 'lodash/identity';
+import { stub } from 'sinon';
 
 /**
  * Internal dependencies
  */
-const AuthActions = require( 'lib/oauth-store/actions' );
-
-// Handle initialization here instead of in `before()` to avoid timeouts. See client/post-editor/test/post-editor.jsx
-i18n.initialize();
-ReactInjection.Class.injectMixin( i18n.mixin );
-
-let Login = require( '../login.jsx' );
-const page = ReactDom.render( <Login />, document.body );
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'LoginTest', function() {
+	let Login, loginStub, page, React, ReactDom, ReactInjection, TestUtils;
+
+	useFakeDom.withContainer();
+	useMockery( ( mockery ) => {
+		loginStub = stub();
+		mockery.registerMock( 'lib/oauth-store/actions', {
+			login: loginStub
+		} );
+	} );
+
+	before( () => {
+		React = require( 'react' );
+		ReactDom = require( 'react-dom' );
+		ReactInjection = require( 'react/lib/ReactInjection' );
+		TestUtils = require( 'react-addons-test-utils' );
+		ReactInjection.Class.injectMixin( { translate: identity } );
+		Login = require( '../login.jsx' );
+		page = ReactDom.render( <Login />, useFakeDom.getContainer() );
+	} );
+
 	it( 'OTP is not present on first render', function( done ) {
 		page.setState( { requires2fa: false }, function() {
 			expect( page.refs.auth_code ).to.be.undefined;
@@ -60,15 +66,11 @@ describe( 'LoginTest', function() {
 	it( 'submits login form', function( done ) {
 		var submit = TestUtils.findRenderedDOMComponentWithTag( page, 'form' );
 
-		sinon.stub( AuthActions, 'login' );
-
 		page.setState( { login: 'user', password: 'pass', auth_code: 'otp' }, function() {
 			TestUtils.Simulate.submit( submit );
 
-			expect( AuthActions.login ).to.have.been.calledOnce;
-			expect( AuthActions.login.calledWith( 'user', 'pass', 'otp' ) ).to.be.true;
-
-			AuthActions.login.restore();
+			expect( loginStub ).to.have.been.calledOnce;
+			expect( loginStub.calledWith( 'user', 'pass', 'otp' ) ).to.be.true;
 			done();
 		} );
 	} );

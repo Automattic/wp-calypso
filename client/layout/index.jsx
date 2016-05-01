@@ -10,7 +10,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
-	MasterbarMinimal = require( 'layout/masterbar/minimal' ),
+	MasterbarLoggedOut = require( 'layout/masterbar/logged-out' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	GlobalNotices = require( 'components/global-notices' ),
 	notices = require( 'notices' ),
@@ -21,9 +21,9 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	PreferencesData = require( 'components/data/preferences-data' ),
 	EmailVerificationNotice = require( 'components/email-verification/email-verification-notice' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
-	WelcomeMessage = require( 'nux-welcome/welcome-message' ),
-	GuidesTours = require( 'guidestours' ),
-	analytics = require( 'analytics' ),
+	WelcomeMessage = require( 'layout/nux-welcome/welcome-message' ),
+	GuidedTours = require( 'layout/guided-tours' ),
+	analytics = require( 'lib/analytics' ),
 	config = require( 'config' ),
 	connect = require( 'react-redux' ).connect,
 	PulsingDot = require( 'components/pulsing-dot' ),
@@ -35,6 +35,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
+import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -101,7 +102,7 @@ Layout = React.createClass( {
 		}
 
 		if ( ! this.props.user ) {
-			return <MasterbarMinimal url="/" />;
+			return <MasterbarLoggedOut/>;
 		}
 
 		return (
@@ -160,7 +161,7 @@ Layout = React.createClass( {
 
 		return (
 			<div className={ sectionClass }>
-				{ config.isEnabled( 'guidestours' ) && this.props.shouldShowGuidesTour ? <GuidesTours /> : null }
+				{ config.isEnabled( 'guided-tours' ) && this.props.tourState.shouldShow ? <GuidedTours /> : null }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
@@ -184,13 +185,13 @@ Layout = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const { isLoading, section, guidesTour } = state.ui;
+		const { isLoading, section } = state.ui;
 		return {
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
 			section,
 			isOffline: isOffline( state ),
-			shouldShowGuidesTour: guidesTour.shouldShow,
+			tourState: getGuidedTourState( state ),
 		};
 	}
 )( Layout );

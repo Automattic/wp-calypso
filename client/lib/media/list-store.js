@@ -17,27 +17,28 @@ var Dispatcher = require( 'dispatcher' ),
 /**
  * Module variables
  */
-var _media = {},
-	_activeQueries = {},
-	MediaListStore = {},
+const MediaListStore = {
+		_activeQueries: {},
+		DEFAULT_QUERY: Object.freeze( { number: 20 } ),
+		_media: {}
+	},
 	DEFAULT_ACTIVE_QUERY = Object.freeze( { isFetchingNextPage: false } ),
-	DEFAULT_QUERY = Object.freeze( { number: 20 } ),
 	SAME_QUERY_IGNORE_PARAMS = Object.freeze( [ 'number', 'page_handle' ] );
 
 function sortItemsByDate( siteId ) {
 	var sortedItems;
 
-	if ( ! ( siteId in _media ) ) {
+	if ( ! ( siteId in MediaListStore._media ) ) {
 		return;
 	}
 
 	sortedItems = MediaUtils.sortItemsByDate( MediaListStore.getAll( siteId ) );
-	_media[ siteId ] = map( sortedItems, 'ID' );
+	MediaListStore._media[ siteId ] = map( sortedItems, 'ID' );
 }
 
 function ensureMediaForSiteId( siteId ) {
-	if ( ! ( siteId in _media ) ) {
-		_media[ siteId ] = [];
+	if ( ! ( siteId in MediaListStore._media ) ) {
+		MediaListStore._media[ siteId ] = [];
 	}
 }
 
@@ -49,25 +50,25 @@ function receiveSingle( siteId, item, itemId ) {
 	if ( itemId ) {
 		// When updating an existing item, account for the case where the ID
 		// has changed by replacing its existing ID in the array
-		existingIndex = _media[ siteId ].indexOf( itemId );
+		existingIndex = MediaListStore._media[ siteId ].indexOf( itemId );
 		if ( -1 !== existingIndex ) {
-			_media[ siteId ].splice( existingIndex, 1, item.ID );
+			MediaListStore._media[ siteId ].splice( existingIndex, 1, item.ID );
 		}
-	} else if ( -1 === _media[ siteId ].indexOf( item.ID ) && isItemMatchingQuery( siteId, item ) ) {
-		_media[ siteId ].push( item.ID );
+	} else if ( -1 === MediaListStore._media[ siteId ].indexOf( item.ID ) && MediaListStore.isItemMatchingQuery( siteId, item ) ) {
+		MediaListStore._media[ siteId ].push( item.ID );
 	}
 }
 
 function removeSingle( siteId, item ) {
 	var index;
 
-	if ( ! ( siteId in _media ) ) {
+	if ( ! ( siteId in MediaListStore._media ) ) {
 		return;
 	}
 
-	index = _media[ siteId ].indexOf( item.ID );
+	index = MediaListStore._media[ siteId ].indexOf( item.ID );
 	if ( -1 !== index ) {
-		_media[ siteId ].splice( index, 1 );
+		MediaListStore._media[ siteId ].splice( index, 1 );
 	}
 }
 
@@ -79,28 +80,28 @@ function receivePage( siteId, items ) {
 	} );
 }
 
-function ensureActiveQueryForSiteId( siteId ) {
-	if ( ! ( siteId in _activeQueries ) ) {
-		_activeQueries[ siteId ] = assign( {}, DEFAULT_ACTIVE_QUERY );
+MediaListStore.ensureActiveQueryForSiteId = function( siteId ) {
+	if ( ! ( siteId in MediaListStore._activeQueries ) ) {
+		MediaListStore._activeQueries[ siteId ] = assign( {}, DEFAULT_ACTIVE_QUERY );
 	}
-}
+};
 
 function updateActiveQuery( siteId, query ) {
 	query = omit( query, 'page_handle' );
-	ensureActiveQueryForSiteId( siteId );
+	MediaListStore.ensureActiveQueryForSiteId( siteId );
 
 	if ( ! isQuerySame( siteId, query ) ) {
-		delete _media[ siteId ];
-		delete _activeQueries[ siteId ].nextPageHandle;
-		_activeQueries[ siteId ].isFetchingNextPage = false;
+		delete MediaListStore._media[ siteId ];
+		delete MediaListStore._activeQueries[ siteId ].nextPageHandle;
+		MediaListStore._activeQueries[ siteId ].isFetchingNextPage = false;
 	}
 
-	_activeQueries[ siteId ].query = query;
+	MediaListStore._activeQueries[ siteId ].query = query;
 }
 
 function updateActiveQueryStatus( siteId, status ) {
-	ensureActiveQueryForSiteId( siteId );
-	assign( _activeQueries[ siteId ], status );
+	MediaListStore.ensureActiveQueryForSiteId( siteId );
+	assign( MediaListStore._activeQueries[ siteId ], status );
 }
 
 function getNextPageMetaFromResponse( response ) {
@@ -108,24 +109,24 @@ function getNextPageMetaFromResponse( response ) {
 }
 
 function isQuerySame( siteId, query ) {
-	if ( ! ( siteId in _activeQueries ) ) {
+	if ( ! ( siteId in MediaListStore._activeQueries ) ) {
 		return false;
 	}
 
 	return isEqual(
 		omit( query, SAME_QUERY_IGNORE_PARAMS ),
-		omit( _activeQueries[ siteId ].query, SAME_QUERY_IGNORE_PARAMS )
+		omit( MediaListStore._activeQueries[ siteId ].query, SAME_QUERY_IGNORE_PARAMS )
 	);
 }
 
-function isItemMatchingQuery( siteId, item ) {
+MediaListStore.isItemMatchingQuery = function( siteId, item ) {
 	var query, matches;
 
-	if ( ! ( siteId in _activeQueries ) ) {
+	if ( ! ( siteId in MediaListStore._activeQueries ) ) {
 		return true;
 	}
 
-	query = omit( _activeQueries[ siteId ].query, SAME_QUERY_IGNORE_PARAMS );
+	query = omit( MediaListStore._activeQueries[ siteId ].query, SAME_QUERY_IGNORE_PARAMS );
 
 	if ( ! Object.keys( query ).length ) {
 		return true;
@@ -148,7 +149,7 @@ function isItemMatchingQuery( siteId, item ) {
 	}
 
 	return matches;
-}
+};
 
 emitter( MediaListStore );
 
@@ -157,7 +158,7 @@ MediaListStore.get = function( siteId, postId ) {
 };
 
 MediaListStore.getAllIds = function( siteId ) {
-	return _media[ siteId ];
+	return MediaListStore._media[ siteId ];
 };
 
 MediaListStore.getAll = function( siteId ) {
@@ -169,21 +170,21 @@ MediaListStore.getAll = function( siteId ) {
 };
 
 MediaListStore.getNextPageQuery = function( siteId ) {
-	if ( ! ( siteId in _activeQueries ) ) {
-		return DEFAULT_QUERY;
+	if ( ! ( siteId in MediaListStore._activeQueries ) ) {
+		return MediaListStore.DEFAULT_QUERY;
 	}
 
-	return assign( {}, DEFAULT_QUERY, {
-		page_handle: _activeQueries[ siteId ].nextPageHandle
-	}, _activeQueries[ siteId ].query );
+	return assign( {}, MediaListStore.DEFAULT_QUERY, {
+		page_handle: MediaListStore._activeQueries[ siteId ].nextPageHandle
+	}, MediaListStore._activeQueries[ siteId ].query );
 };
 
 MediaListStore.hasNextPage = function( siteId ) {
-	return ! ( siteId in _activeQueries ) || null !== _activeQueries[ siteId ].nextPageHandle;
+	return ! ( siteId in MediaListStore._activeQueries ) || null !== MediaListStore._activeQueries[ siteId ].nextPageHandle;
 };
 
 MediaListStore.isFetchingNextPage = function( siteId ) {
-	return siteId in _activeQueries && _activeQueries[ siteId ].isFetchingNextPage;
+	return siteId in MediaListStore._activeQueries && MediaListStore._activeQueries[ siteId ].isFetchingNextPage;
 };
 
 MediaListStore.dispatchToken = Dispatcher.register( function( payload ) {

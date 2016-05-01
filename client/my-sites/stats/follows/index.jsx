@@ -10,7 +10,7 @@ import page from 'page';
 import observe from 'lib/mixins/data-observe';
 import Followers from '../stats-followers-page';
 import HeaderCake from 'components/header-cake';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 export default React.createClass( {
 	displayName: 'StatsFollows',

@@ -34,7 +34,7 @@ export default {
 					type: 'RECEIVE_EMBED',
 					siteId: siteId,
 					url: url,
-					body: data ? data.result : null,
+					data: data,
 					error: error
 				} );
 			} else {

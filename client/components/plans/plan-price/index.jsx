@@ -24,7 +24,7 @@ const PlanPrice = React.createClass( {
 				return this.translate( 'Free', { context: 'Zero cost product price' } );
 			}
 
-			if ( abtest( 'monthlyPlanPricing' ) === 'monthly' && this.props.isInSignup ) {
+			if ( abtest( 'planPricing' ) === 'monthly' ) {
 				const monthlyPrice = +( rawPrice / 12 ).toFixed( 2 );
 				formattedPrice = formattedPrice.replace( rawPrice, monthlyPrice );
 			}
@@ -55,10 +55,12 @@ const PlanPrice = React.createClass( {
 			return <div className="plan-price is-placeholder" />;
 		}
 
-		if ( abtest( 'monthlyPlanPricing' ) === 'monthly' && this.props.isInSignup && plan.raw_price !== 0 ) {
+		if ( ! plan ) {
+			periodLabel = '';
+		} else if ( abtest( 'planPricing' ) === 'monthly' && plan.raw_price > 0 ) {
 			periodLabel = this.translate( 'per month, billed yearly' );
 		} else {
-			periodLabel = hasDiscount ? this.translate( 'due today when you upgrade' ) : plan.bill_period_label
+			periodLabel = hasDiscount ? this.translate( 'due today when you upgrade' ) : plan.bill_period_label;
 		}
 
 		return (

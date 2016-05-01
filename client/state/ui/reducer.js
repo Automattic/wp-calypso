@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -12,10 +11,9 @@ import {
 	SET_SECTION,
 	SERIALIZE,
 	DESERIALIZE,
-	SHOW_GUIDESTOUR,
-	UPDATE_GUIDESTOUR,
 } from 'state/action-types';
 import editor from './editor/reducer';
+import guidedTour from './guided-tours/reducer';
 import reader from './reader/reducer';
 
 /**
@@ -79,29 +77,13 @@ export function isLoading( state = false, action ) {
 	return state;
 }
 
-export function guidesTour( state = {}, action ) {
-	switch ( action.type ) {
-		case SHOW_GUIDESTOUR:
-			const { stepName = 'init' } = action;
-			return {
-				stepName,
-				shouldShow: action.shouldShow,
-				tour: action.tour,
-				siteId: action.siteId,
-			};
-		case UPDATE_GUIDESTOUR:
-			return Object.assign( {}, state, omit( action, 'type' ) );
-	}
-	return state;
-}
-
 const reducer = combineReducers( {
 	section,
 	isLoading,
 	hasSidebar,
 	selectedSiteId,
 	recentlySelectedSiteIds,
-	guidesTour,
+	guidedTour,
 	editor,
 	reader,
 } );

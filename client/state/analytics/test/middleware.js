@@ -20,7 +20,7 @@ describe( 'middleware', () => {
 		let dispatch;
 
 		useMockery( mockery => {
-			mockery.registerMock( 'analytics', analyticsMock( mock ) );
+			mockery.registerMock( 'lib/analytics', analyticsMock( mock ) );
 
 			dispatch = require( '../middleware.js' ).dispatcher;
 		} );

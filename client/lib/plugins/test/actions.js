@@ -1,110 +1,109 @@
 /**
  * External dependencies
  */
-var assert = require( 'chai' ).assert,
-	mockery = require( 'mockery' );
+
+import { assert } from 'chai';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
-var mockedWpcom = require( 'lib/mock-wpcom' ),
-	mockedSite = require( 'lib/mock-site' );
+import useMockery from 'test/helpers/use-mockery';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import siteData from './fixtures/site';
+import mockedWpcom from './mocks/wpcom';
 
-describe( 'WPcom Data Actions', function() {
-	var actions;
+describe( 'WPcom Data Actions', () => {
+	let actions;
 
-	before( function() {
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
+	useMockery( mockery => {
 		mockery.registerMock( 'lib/wp', mockedWpcom );
 	} );
 
-	after( function() {
-		mockery.disable();
-	} );
-
-	beforeEach( function() {
+	beforeEach( () => {
 		actions = require( 'lib/plugins/actions' );
 		actions.resetQueue();
 		mockedWpcom.undocumented().reset();
 	} );
 
-	it( 'Actions should be an object', function() {
+	useFakeDom();
+
+	it( 'Actions should be an object', () => {
 		assert.isObject( actions );
 	} );
 
-	it( 'Actions should have method installPlugin', function() {
+	it( 'Actions should have method installPlugin', () => {
 		assert.isFunction( actions.installPlugin );
 	} );
 
-	it( 'when installing a plugin, it should send a install request to .com', function( done ) {
-		actions.installPlugin( mockedSite, 'test', function() {} ).then( function() {
-			assert.equal( mockedWpcom.getActivity().pluginsInstallCalls, 1 );
-			done();
-		} ).catch( done );
+	it( 'when installing a plugin, it should send a install request to .com', done => {
+		actions.installPlugin( siteData, 'test', noop )
+			.then( () => {
+				assert.equal( mockedWpcom.getActivity().pluginsInstallCalls, 1 );
+				done();
+			} )
+			.catch( done );
 	} );
 
-	it( 'when installing a plugin, it should send an activate request to .com', function( done ) {
-		actions.installPlugin( mockedSite, 'test', function() {} ).then( function() {
-			assert.equal( mockedWpcom.getActivity().pluginsActivateCalls, 1 );
-			done();
-		} ).catch( done );
+	it( 'when installing a plugin, it should send an activate request to .com', done => {
+		actions.installPlugin( siteData, 'test', noop )
+			.then( () => {
+				assert.equal( mockedWpcom.getActivity().pluginsActivateCalls, 1 );
+				done();
+			} )
+			.catch( done );
 	} );
 
-	it( 'when installing a plugin, it should not send a request to .com when the site doesn\'t allow us to update its files', function() {
-		actions.installPlugin( { canUpdateFiles: false }, 'test', function() {} );
+	it( 'when installing a plugin, it should not send a request to .com when the site doesn\'t allow us to update its files', () => {
+		actions.installPlugin( { canUpdateFiles: false }, 'test', noop );
 		assert.equal( mockedWpcom.getActivity().pluginsInstallCalls, 0 );
 	} );
 
-	it( 'when installing a plugin, it should return a rejected promise if the site files can\'t be updated', function( done ) {
-		actions.installPlugin( { canUpdateFiles: false, capabilities: { manage_options: true }, }, 'test', function() {} )
-			.then( function() {
-				done( 'Promise should be rejected' )
-			} ).catch( function() {
-				done()
-			} );
+	it( 'when installing a plugin, it should return a rejected promise if the site files can\'t be updated', done => {
+		actions.installPlugin( { canUpdateFiles: false, capabilities: { manage_options: true }, }, 'test', noop )
+			.then( () => done( 'Promise should be rejected' ) )
+			.catch( () => done() );
 	} );
 
-	it( 'when installing a plugin, it should return a rejected promise if user can\'t manage the site', function( done ) {
-		actions.installPlugin( { canUpdateFiles: false, capabilities: { manage_options: true }, }, 'test', function() {} )
-			.then( function() {
-				done( 'Promise should be rejected' )
-			} ).catch( function() {
-				done()
-			} );
+	it( 'when installing a plugin, it should return a rejected promise if user can\'t manage the site', done => {
+		actions.installPlugin( { canUpdateFiles: false, capabilities: { manage_options: true }, }, 'test', noop )
+			.then( () => done( 'Promise should be rejected' ) )
+			.catch( () => done() );
 	} );
 
-	it( 'Actions should have method removePlugin', function() {
+	it( 'Actions should have method removePlugin', () => {
 		assert.isFunction( actions.removePlugin );
 	} );
 
-	it( 'when removing a plugin, it should send a remove request to .com', function( done ) {
+	it( 'when removing a plugin, it should send a remove request to .com', done => {
 		actions.removePlugin( {
 			canUpdateFiles: true,
 			user_can_manage: true,
 			capabilities: { manage_options: true },
-		}, {}, function() {} ).then( function() {
-			assert.equal( mockedWpcom.getActivity().pluginsRemoveCalls, 1 );
-			done();
-		} ).catch( done );
+		}, {}, noop )
+			.then( () => {
+				assert.equal( mockedWpcom.getActivity().pluginsRemoveCalls, 1 );
+				done();
+			} )
+			.catch( done );
 	} );
 
-	it( 'when removing a plugin, it should send an deactivate request to .com', function( done ) {
+	it( 'when removing a plugin, it should send an deactivate request to .com', done => {
 		actions.removePlugin( {
 			canUpdateFiles: true,
 			user_can_manage: true,
 			capabilities: { manage_options: true },
 			jetpack: true
-		}, { active: true }, function() {} ).then( function() {
+		}, { active: true }, noop )
+		.then( () => {
 			assert.equal( mockedWpcom.getActivity().pluginsDeactivateCalls, 1 );
 			done();
-		} ).catch( done );
+		} )
+		.catch( done );
 	} );
 
-	it( 'when removing a plugin, it should not send a request to .com when the site doesn\'t allow us to update its files', function() {
-		actions.removePlugin( { canUpdateFiles: false }, {}, function() {} );
+	it( 'when removing a plugin, it should not send a request to .com when the site doesn\'t allow us to update its files', () => {
+		actions.removePlugin( { canUpdateFiles: false }, {}, noop );
 		assert.equal( mockedWpcom.getActivity().pluginsRemoveCalls, 0 );
 	} );
 } );

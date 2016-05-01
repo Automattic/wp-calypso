@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' );
+var analytics = require( 'lib/analytics' );
 
 /**
  * Target tap/click zone for choosing the placing of a new or moved item.

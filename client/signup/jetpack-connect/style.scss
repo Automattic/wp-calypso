@@ -2,6 +2,17 @@
 	max-width: 400px;
 }
 
+.jetpack-connect-wide {
+	max-width: 100%;
+	text-align: center;
+
+	.button {
+		margin-top: 16px;
+		width: 320px;
+	}
+}
+
+
 .jetpack-connect__site-url-entry-container {
 	max-width: 400px;
 }
@@ -68,4 +79,106 @@
 		}
 	}
 
+}
+
+.jetpack-connect__authorize-form {
+	.jetpack-connect__authorize-form-header {
+		text-align: center;
+	}
+}
+
+.jetpack-connect-logged-in-form {
+	.jetpack-connect-logged-in-form__user-text {
+		text-align: center;
+	}
+
+	.gravatar {
+		display: block;
+		margin: 0 auto 8px auto;
+	}
+
+	.button {
+		width: 100%;
+	}
+
+	.logged-out-form__links .gridicon {
+		top: 2px;
+	}
+}
+
+.jetpack-connect__install-steps {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	flex-wrap: wrap;
+
+	@include breakpoint( ">660px" ) {
+		flex-direction: row;
+	}
+}
+
+.jetpack-connect__install-step {
+	display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		align-items: center;
+	margin: 0;
+	max-width: 360px;
+	min-width: 320px;
+
+	@include breakpoint( ">660px" ) {
+		margin: 8px;
+	}
+}
+
+.jetpack-connect__install-step-title {
+	font-size: 20px;
+	text-align: left;
+}
+
+.jetpack-connect__install-step-text {
+	color: $gray;
+	font-size: 12px;
+	margin: 8px 0;
+	text-align: left;
+	flex-grow: 2;
+}
+
+
+.jetpack-connect__install-step-title {
+	font-size: 21px;
+	font-weight: 300;
+	text-align: left;
+}
+
+.jetpack-connect__install-step-text {
+	color: $gray;
+	font-size: 12px;
+	margin: 8px 0 16px 0;
+	text-align: left;
+}
+
+.jetpack-connect__browser-chrome {
+	padding: 8px;
+	background-color: lighten( $gray, 30% );
+	border-radius: 8px 8px 0 0;
+	text-align: left;
+}
+
+.jetpack-connect__browser-chrome-dot {
+	display: inline-block;
+	margin-right: 8px;
+	background-color: lighten( $gray, 10% );
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+}
+
+.jetpack-connect__example .site-address-container {
+	margin-top: 8px;
+}
+.jetpack-connect__site-url-input-container .site-address-container .jetpack-connect__browser-chrome-url {
+	height: 40px;
+	font-size: 12px;
+	color: $gray;
 }

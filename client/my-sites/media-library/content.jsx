@@ -15,8 +15,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
-import TrackComponentView from 'analytics/track-component-view';
+import analytics from 'lib/analytics';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import MediaListData from 'components/data/media-list-data';
@@ -211,7 +211,7 @@ const MediaLibraryContent = React.createClass( {
 			<NoticeAction
 				external={ true }
 				href={ upgradeNudgeFeature ? `/plans/features/${ upgradeNudgeFeature }/${ this.props.siteSlug }` : `/plans/${ this.props.siteSlug }` }
-				onClick={ this.recordPlansNavigation.bind( this, 'plan-media-storage-error', eventProperties ) }>
+				onClick={ this.recordPlansNavigation.bind( this, 'calypso_upgrade_nudge_cta_click', eventProperties ) }>
 				{ this.translate( 'Upgrade Plan' ) }
 				<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 			</NoticeAction>

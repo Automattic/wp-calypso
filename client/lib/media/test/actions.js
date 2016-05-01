@@ -3,7 +3,6 @@
  */
 import sinon from 'sinon';
 import { expect } from 'chai';
-import rewire from 'rewire';
 import assign from 'lodash/assign';
 import isPlainObject from 'lodash/isPlainObject';
 import mockery from 'mockery';
@@ -65,7 +64,7 @@ describe( 'MediaActions', function() {
 						return {
 							get: mediaGet.bind( [ siteId, mediaId ].join() ),
 							update: mediaUpdate.bind( [ siteId, mediaId ].join() ),
-							delete: mediaDelete.bind( [ siteId, mediaId ].join() )
+							'delete': mediaDelete.bind( [ siteId, mediaId ].join() )
 						};
 					}
 				};
@@ -84,7 +83,7 @@ describe( 'MediaActions', function() {
 			return isPlainObject( obj );
 		} );
 
-		MediaActions = rewire( '../actions' );
+		MediaActions = require( '../actions' );
 	} );
 
 	beforeEach( function() {
@@ -97,7 +96,7 @@ describe( 'MediaActions', function() {
 		mediaAddUrls = sandbox.stub().returns( Promise.resolve( DUMMY_API_RESPONSE ) );
 		mediaUpdate = sandbox.stub().callsArgWithAsync( 1, null, DUMMY_API_RESPONSE );
 		mediaDelete = sandbox.stub().callsArgWithAsync( 0, null, DUMMY_API_RESPONSE );
-		MediaActions.__set__( '_fetching', {} );
+		MediaActions._fetching = {};
 		window.FileList = function() {};
 		window.URL = { createObjectURL: sandbox.stub() };
 	} );
@@ -129,7 +128,7 @@ describe( 'MediaActions', function() {
 		it( 'should call to the WordPress.com REST API', function( done ) {
 			Dispatcher.handleViewAction.restore();
 			sandbox.stub( Dispatcher, 'handleViewAction', function() {
-				expect( MediaActions.__get__( '_fetching' ) ).to.have.all.keys( [ [ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join() ] );
+				expect( MediaActions._fetching ).to.have.all.keys( [ [ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join() ] );
 			} );
 
 			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
@@ -246,7 +245,7 @@ describe( 'MediaActions', function() {
 				data: {
 					ID: 'media-1',
 					file: DUMMY_UPLOAD.name,
-					transient: true
+					'transient': true
 				}
 			} );
 		} );

@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	DropZone = require( 'components/drop-zone' ),
 	MediaActions = require( 'lib/media/actions' ),
 	userCan = require( 'lib/site/utils' ).userCan;

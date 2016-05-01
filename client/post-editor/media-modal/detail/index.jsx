@@ -60,7 +60,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		const items = MediaUtils.sortItemsByDate( this.props.items );
+		const { items } = this.props;
 
 		return (
 			<div className="editor-media-modal-detail">

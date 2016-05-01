@@ -11,7 +11,7 @@ import store from 'store';
  */
 import sitesModule from 'lib/sites-list';
 import wpcom from 'lib/wp';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import emitter from 'lib/mixins/emitter';
 import userModule from 'lib/user';
 import olarkApi from 'lib/olark-api';

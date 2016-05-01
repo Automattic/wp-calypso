@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import { preventWidows } from 'lib/formatting';
 
 /**

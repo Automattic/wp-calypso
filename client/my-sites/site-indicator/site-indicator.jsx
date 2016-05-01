@@ -12,7 +12,7 @@ import noop from 'lodash/noop';
 import Gridicon from 'components/gridicon';
 import ProgressIndicator from 'components/progress-indicator';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import { userCan } from 'lib/site/utils';
 
 export default React.createClass( {

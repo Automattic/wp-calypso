@@ -17,7 +17,7 @@ import { isRequestingSitePost } from 'state/posts/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import { decodeEntities } from 'lib/formatting';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import localize from 'lib/mixins/i18n/localize';
 import QueryPosts from 'components/data/query-posts';
 import SiteIcon from 'components/site-icon';

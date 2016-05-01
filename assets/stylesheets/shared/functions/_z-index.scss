@@ -92,6 +92,7 @@ $z-layers: (
 		'.search.is-pinned': 170,
 		'.select-dropdown.is-open .select-dropdown__container': 170,
 		'.accessible-focus .select-dropdown.is-open .select-dropdown__container': 170,
+		'.sites-dropdown.is-open .sites-dropdown__wrapper' : 170,
 		'.popover.editor-visibility__popover': 179,
 		'.feature-example__gradient': 179,
 		'.global-notices': 179,
@@ -131,8 +132,8 @@ $z-layers: (
 		'popover.is-dialog-visible': 100300,
 		'body .webui-popover': 100300,
 		'.fullscreen-fader': 200000,
-		'.guidestours__overlay': 200050,
-		'.guidestours__step': 201000,
+		'.guided-tours__overlay': 200050,
+		'.guided-tours__step': 201000,
 		'#habla_window_div.habla_window_div_base': 99999999 //olark
 	),
 	'.plan-compare-card__ribbon': (

@@ -11,7 +11,7 @@ const React = require( 'react' ),
  */
 const CompactCard = require( 'components/card/compact' ),
 	PeopleProfile = require( 'my-sites/people/people-profile' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	config = require( 'config' );
 
 export default React.createClass( {

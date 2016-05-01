@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	stats = require( 'reader/stats' ),
 	SiteBlockActions = require( 'lib/reader-site-blocks/actions' ),
 	Card = require( 'components/card' );

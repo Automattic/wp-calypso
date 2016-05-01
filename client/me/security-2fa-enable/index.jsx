@@ -17,7 +17,7 @@ var FormButton = require( 'components/forms/form-button' ),
 	Notice = require( 'components/notice' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	constants = require( 'me/constants' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' );
 

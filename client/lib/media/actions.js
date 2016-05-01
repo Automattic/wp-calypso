@@ -21,8 +21,9 @@ var Dispatcher = require( 'dispatcher' ),
 /**
  * Module variables
  */
-var MediaActions = {},
-	_fetching = {};
+const MediaActions = {
+	_fetching: {}
+};
 
 /**
  * Constants
@@ -39,11 +40,11 @@ MediaActions.setQuery = function( siteId, query ) {
 
 MediaActions.fetch = function( siteId, itemId ) {
 	var fetchKey = [ siteId, itemId ].join();
-	if ( _fetching[ fetchKey ] ) {
+	if ( MediaActions._fetching[ fetchKey ] ) {
 		return;
 	}
 
-	_fetching[ fetchKey ] = true;
+	MediaActions._fetching[ fetchKey ] = true;
 	Dispatcher.handleViewAction( {
 		type: 'FETCH_MEDIA_ITEM',
 		siteId: siteId,
@@ -59,7 +60,7 @@ MediaActions.fetch = function( siteId, itemId ) {
 			data: data
 		} );
 
-		delete _fetching[ fetchKey ];
+		delete MediaActions._fetching[ fetchKey ];
 	} );
 };
 
@@ -110,7 +111,7 @@ MediaActions.add = function( siteId, files ) {
 		const id = uniqueId( 'media-' );
 		const transientMedia = {
 			ID: id,
-			transient: true,
+			'transient': true,
 			// Assign a date such that the first item will be the oldest at the
 			// time of upload, as this is expected order when uploads finish
 			date: new Date( baseTime - ( files.length - i ) ).toISOString()

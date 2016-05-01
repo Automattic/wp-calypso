@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import page from 'page';
 import startsWith from 'lodash/startsWith';

@@ -1,83 +1,146 @@
-.signup-processing-screen__processing-text {
-	text-align: center;
-
-	.noticon-checkmark {
-		font-size: 24px;
-	}
-}
-
-.signup-processing-screen__processing-illustration {
-	background: url( '/calypso/images/posts/illustration-posts.svg' ) no-repeat center center;
-	background-size: cover;
-	display: block;
-	height: 300px;
-	margin-left: auto;
-	margin-right: auto;
-	width: 300px;
+.signup-processing-screen__steps {
+	margin: 0 auto;
+	min-width: 200px;
+	max-width: 450px;
+	min-height: 140px + 48px;
+	padding-left: 188px;
+	position: relative;
 
 	@include breakpoint( "<660px" ) {
-		height: 200px;
-		margin-bottom: 20px;
-		margin-top: 20px;
-		width: 200px;
-	}
-
-	img {
-		max-width: 100%;
+		padding-left: 0;
 	}
 }
 
-.signup-processing-screen__processing-step-heading {
-	font-size: 24px;
-	margin-bottom: 10px;
+.signup-processing-screen__illustration {
+	width: 140px;
+	height: 140px;
+	margin: 0 auto;
+	display: block;
+	position: absolute;
+		top: 24px;
+		left: 24px;
+
+	@include breakpoint( "<660px" ) {
+		position: relative;
+			top: auto;
+			left: auto;
+		margin-bottom: 32px;
+	}
 }
 
 .signup-processing-screen__processing-step {
 	color: darken( $gray, 20% );
 	font-size: 16px;
-	margin-bottom: 5px;
-	margin-left: -20px;
-	transition: opacity .5s ease-in-out;
+	transition: all .5s ease-in-out;
+	margin-bottom: 16px;
+	position: relative;
+	padding-left: 32px;
+
+	@include breakpoint( "<660px" ) {
+		margin-left: 24px;
+		margin-right: 24px;
+	}
+
+	&:last-child {
+		margin-bottom: 0;
+
+		@include breakpoint( "<660px" ) {
+			margin-bottom: 24px;
+		}
+	}
+
+	&:before {
+		position: absolute;
+			top: 0;
+			left: 0;
+		display: block;
+		content: '';
+		height: 24px;
+		width: 24px;
+		transform: scale( 0.7 );
+	}
 
 	&.is-pending {
-		color: lighten( $gray, 20% );
+		color: lighten( $gray, 10 );
+
+		&:before {
+			transform: scale( 0.3 );
+			background: $gray;
+			border-radius: 100%;
+		}
 	}
 
 	&.is-processing {
+		font-weight: bold;
+		animation: pulse 3s infinite ease-in-out;
+
 		&:before {
-			animation: scaleout 1.5s infinite ease-in-out;
-			background-color: #333;
+			//background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3QgeD0iMCIgZmlsbD0ibm9uZSIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ii8+PHBhdGggZmlsbD0iIzRmNzQ4ZSIgZD0iTTIzLjUgMTMuNWwtMy4wODYgMy4wODZMMTkgMThsLTQuNS00LjUgMS40MTQtMS40MTRMMTggMTQuMTcyVjEyYzAtMy4zMDgtMi42OTItNi02LTZWNGM0LjQxOCAwIDggMy41ODIgOCA4djIuMTcybDIuMDg2LTIuMDg2TDIzLjUgMTMuNXpNNiAxMlY5LjgyOGwyLjA4NiAyLjA4Nkw5LjUgMTAuNSA1IDYgMy41ODYgNy40MTQuNSAxMC41bDEuNDE0IDEuNDE0TDQgOS44MjhWMTJjMCA0LjQxOCAzLjU4MiA4IDggOHYtMmMtMy4zMDggMC02LTIuNjkyLTYtNnoiLz48L3N2Zz4=);
+			animation: processing 2.5s infinite linear;
+			background: $white;
 			border-radius: 100%;
+			z-index: 1;
+			box-shadow: 0 0 0 1px lighten( $gray, 20 ),
+				0 0 8px 1px $blue-medium;
+		}
+
+		&:after {
+			position: absolute;
+				top: 0;
+				left: 0;
+			display: block;
 			content: '';
-			display: inline-block;
-			height: 15px;
-			margin-right: 5px;
-			margin-top: -3px;
-			vertical-align: middle;
-			width: 15px;
-			z-index: z-index( 'root', '.signup-processing-screen__processing-step.is-processing:before' );
+			height: 24px;
+			width: 24px;
+			border-radius: 100%;
+			opacity: 0.3;
+			background: lighten( $gray, 10 );
+			animation: processing-bg 2s infinite linear;
 		}
 	}
 
 	&.is-complete {
-		opacity: .7;
+		color: $alert-green;
 
 		&:before {
-			animation: none;
-			background: none;
-			@include noticon( '\f418', 18px );
-			vertical-align: middle;
+			background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3QgeD0iMCIgZmlsbD0idHJhbnNwYXJlbnQiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIvPjxwYXRoIGZpbGw9IiM0QUI4NjUiIGQ9Ik05IDE5LjQxNGwtNi43MDctNi43MDcgMS40MTQtMS40MTRMOSAxNi41ODYgMjAuMjkzIDUuMjkzbDEuNDE0IDEuNDE0Ii8+PC9zdmc+);
 		}
 	}
 }
 
-@keyframes scaleout {
+@keyframes processing {
+	0%, 100% {
+		transform: scale( 0.3 );
+	}
+	60% {
+		transform: scale( 0.5 );
+	}
+}
+
+@keyframes processing-bg {
+	0%, 100% {
+		transform: scale( 0.6 );
+	}
+	50% {
+		transform: scale( 1 );
+	}
+}
+
+@keyframes spin {
 	0% {
-		transform: scale(0.0);
+		transform: rotate(0);
 	}
 	100% {
-		transform: scale(1.0);
-		opacity: 0;
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes pulse {
+	0%, 80%, 100% {
+		opacity: 0.75;
+	}
+	40% {
+		opacity: 1;
 	}
 }
 

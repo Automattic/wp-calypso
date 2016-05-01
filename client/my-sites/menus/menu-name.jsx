@@ -8,7 +8,7 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' );
+var analytics = require( 'lib/analytics' );
 
 var MenuName = React.createClass({
 
@@ -30,7 +30,11 @@ var MenuName = React.createClass({
 			analytics.ga.recordEvent( 'Menus', 'Clicked Edit Menu Title' );
 		}
 
-		this.setState( { editing: ! editing } );
+		const newEditingState = ! editing;
+		this.setState( { editing: newEditingState } );
+		if ( this.props.onTitleEdit ) {
+			this.props.onTitleEdit( newEditingState );
+		}
 	},
 
 	updateName: function( newValue ) {
@@ -40,6 +44,10 @@ var MenuName = React.createClass({
 		} );
 		if ( this.props.onChange ) {
 			this.props.onChange( newValue );
+		}
+
+		if ( this.props.onTitleEdit ) {
+			this.props.onTitleEdit( false );
 		}
 	},
 

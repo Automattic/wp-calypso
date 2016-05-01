@@ -11,7 +11,7 @@ import noop from 'lodash/noop';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import sitesList from 'lib/sites-list';
 import { getValidFeatureKeys, hasFeature } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';

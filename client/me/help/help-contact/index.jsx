@@ -20,7 +20,8 @@ import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
 import notices from 'notices';
 import siteList from 'lib/sites-list';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
+import i18n from 'lib/i18n-utils';
 
 /**
  * Module variables
@@ -344,6 +345,7 @@ module.exports = React.createClass( {
 		const showChatVariation = olark.isUserEligible && olark.isOperatorAvailable;
 		const showKayakoVariation = ! showChatVariation && ( olark.details.isConversing || olark.isUserEligible );
 		const showForumsVariation = ! ( showChatVariation || showKayakoVariation );
+		const showHelpLanguagePrompt = ( olark.locale !== i18n.getLocaleSlug() );
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
@@ -375,6 +377,7 @@ module.exports = React.createClass( {
 				showHowCanWeHelpField: showKayakoVariation || showChatVariation,
 				showHowYouFeelField: showKayakoVariation || showChatVariation,
 				showSiteField: ( showKayakoVariation || showChatVariation ) && ( sites.get().length > 1 ),
+				showHelpLanguagePrompt: showHelpLanguagePrompt,
 				valueLink: { value: savedContactForm, requestChange: ( contactForm ) => savedContactForm = contactForm }
 			},
 			showChatVariation && {

@@ -48,10 +48,11 @@
 }
 
 .profile-link__title {
+	color: $gray-dark;
 	float: left;
 	font-size: 13px;
+	font-weight: 400;
 	line-height: 1.4;
-	text-decoration: underline;
 	overflow: hidden;
 	white-space: nowrap;
 	text-decoration: none;
@@ -63,7 +64,6 @@
 
 .profile-link__url {
 	font-size: 11px;
-	font-style: italic;
 	line-height: 1.4;
 	color: $gray;
 	float: left;

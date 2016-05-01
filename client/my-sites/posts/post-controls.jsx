@@ -11,7 +11,7 @@ var React = require( 'react' ),
 var config = require( 'config' ),
 	utils = require( 'lib/posts/utils' ),
 	Gridicon = require( 'components/gridicon'),
-	recordEvent = require( 'analytics' ).ga.recordEvent;
+	recordEvent = require( 'lib/analytics' ).ga.recordEvent;
 
 module.exports = React.createClass( {
 	displayName: 'PostControls',
@@ -97,7 +97,7 @@ module.exports = React.createClass( {
 			} );
 
 			if ( config.isEnabled( 'manage/stats' ) ) {
-				statsURL = '/stats/post/' + post.ID + '/' + post.site_ID;
+				statsURL = '/stats/post/' + post.ID + '/' + this.props.site.slug;
 			} else {
 				statsURL = '//wordpress.com/my-stats/?view=post&post=' + post.ID + '&blog=' + post.site_ID;
 			}

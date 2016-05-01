@@ -12,7 +12,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	ButtonsAppearance = require( './appearance' ),
 	ButtonsOptions = require( './options' ),
 	notices = require( 'notices' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	protectForm = require( 'lib/mixins/protect-form' ).mixin;
 
 module.exports = React.createClass( {

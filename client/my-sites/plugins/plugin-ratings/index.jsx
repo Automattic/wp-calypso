@@ -7,7 +7,7 @@ import React from 'react';
  */
 import ProgressBar from 'components/progress-bar';
 import Rating from 'components/rating';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 /**
  * Constants

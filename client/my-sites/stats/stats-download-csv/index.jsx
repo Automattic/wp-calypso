@@ -8,7 +8,7 @@ import { saveAs } from 'browser-filesaver';
  * Internal dependencies
  */
 import titlecase from 'to-title-case';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 

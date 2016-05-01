@@ -10,7 +10,7 @@ a given section's `controller.js` only on the client side.
 
 ```js
 // In `my-sites/foo/controller.js`:
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 function recordPageView() {
   analytics.pageView.record( '/foo', 'Foo' );

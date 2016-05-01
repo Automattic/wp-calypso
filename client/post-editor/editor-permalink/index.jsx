@@ -41,6 +41,10 @@ var EditorPermalink = React.createClass( {
 		}
 	},
 
+	componentWillUnmount: function() {
+		clearTimeout( this.dismissCopyConfirmation );
+	},
+
 	showPopover: function() {
 		this.setState( {
 			showPopover: ! this.state.showPopover,

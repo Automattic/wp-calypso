@@ -15,7 +15,7 @@ import classNames from 'classnames';
  */
 import wpcom from 'lib/wp';
 import config from 'config';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import ValidationFieldset from 'signup/validation-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormPasswordInput from 'components/forms/form-password-input';

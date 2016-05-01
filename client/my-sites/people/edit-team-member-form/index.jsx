@@ -30,7 +30,7 @@ var Main = require( 'components/main' ),
 	DeleteUser = require( 'my-sites/people/delete-user' ),
 	PeopleNotices = require( 'my-sites/people/people-notices' ),
 	PeopleLog = require( 'lib/people/log-store' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	RoleSelect = require( 'my-sites/people/role-select' );
 
 /**

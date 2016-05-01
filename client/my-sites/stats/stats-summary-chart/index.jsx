@@ -13,7 +13,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	StatsTabs = require( '../stats-tabs' ),
 	StatsTab = require( '../stats-tabs/tab' ),
 	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	Card = require( 'components/card' );
 
 module.exports = React.createClass( {

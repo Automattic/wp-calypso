@@ -8,7 +8,7 @@ import merge from 'lodash/merge';
  * Internal dependencies
  */
 import invitationUtils from './invitation-utils';
-import { ga as googleAnalytics } from 'analytics';
+import { ga as googleAnalytics } from 'lib/analytics';
 import Gridicon from 'components/gridicon';
 
 export default React.createClass( {

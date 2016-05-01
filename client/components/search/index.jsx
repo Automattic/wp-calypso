@@ -12,7 +12,7 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Spinner from 'components/spinner';
 import Gridicon from 'components/gridicon';
 import { isMobile } from 'lib/viewport';

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react'
-import analytics from 'analytics'
+import analytics from 'lib/analytics'
 
 /**
  * Internal dependencies

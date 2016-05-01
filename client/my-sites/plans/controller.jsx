@@ -8,7 +8,7 @@ import ReactDom from 'react-dom';
 /**
  * Internal Dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import config from 'config';
 import i18n from 'lib/mixins/i18n';
 import plansFactory from 'lib/plans-list';

@@ -16,6 +16,8 @@ var SectionNav = require( 'components/section-nav' ),
 	utils = require( 'lib/site/utils' ),
 	sites = require( 'lib/sites-list' )();
 
+import UpgradeNudge from 'my-sites/upgrade-nudge';
+
 module.exports = React.createClass( {
 	displayName: 'Sharing',
 
@@ -75,6 +77,12 @@ module.exports = React.createClass( {
 						}, this ) }
 					</NavTabs>
 				</SectionNav>
+				<UpgradeNudge
+					title={ this.translate( 'No Ads with WordPress.com Premium' ) }
+					message={ this.translate( 'Prevent ads from showing on your site.' ) }
+					feature="no-adverts"
+					event="sharing_no_ads"
+				/>
 				{ this.props.contentComponent }
 			</Main>
 		);

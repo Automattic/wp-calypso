@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' );
+var analytics = require( 'lib/analytics' );
 
 module.exports = {
 	recordEvent: function( eventAction ) {

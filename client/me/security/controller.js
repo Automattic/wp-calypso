@@ -7,7 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import i18n from 'lib/mixins/i18n';
 import notices from 'notices';
 import userSettings from 'lib/user-settings';

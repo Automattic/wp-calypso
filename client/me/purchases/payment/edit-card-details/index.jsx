@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import camelCase from 'lodash/camelCase';
 import Card from 'components/card';
 import { clearPurchases } from 'lib/upgrades/actions/purchases';

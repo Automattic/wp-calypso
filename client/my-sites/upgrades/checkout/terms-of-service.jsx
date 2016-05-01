@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	support = require( 'lib/url/support' ),
 	Gridicon = require( 'components/gridicon' );
 

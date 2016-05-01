@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	serviceConnections = require( './service-connections' );
 
 module.exports = React.createClass( {

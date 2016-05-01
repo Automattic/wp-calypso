@@ -15,22 +15,13 @@
 @import 'shared/welcome';                      // welcome messages
 @import 'shared/infinite-scroll-end';          // Last page marker once infinite scroll has reached end
 
-// Layouts
-@import 'layout/main';                         // global layout and responsive styles
-@import 'layout/detail-page';                  // detail page styles
+// Main
+@import 'main';                                // global layout and responsive styles
 
 // Sections
-@import 'sections/posts';                      // posts section styles
 @import 'sections/updated-confirmation';       // confirmation boxes for posts/pages
-@import 'sections/posts-controls';             // posts controls styles
-@import 'sections/post-relative-time-status';  // post relative time styles
-@import 'sections/upgrades';                   // upgrades page styles
 @import 'sections/notifications';              // notifications styles
-@import 'sections/checkout';                   // Checkout styles
 @import 'sections/domain-search';              // Domain Search styles
-@import 'sections/plugins';                    // manage plugins for Jetpack sites
-@import 'sections/translator';                 // community translator
-@import 'sections/nux-welcome';                // persistent welcome for new users
 
 // Components
 @import 'components';

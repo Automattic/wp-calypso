@@ -7,7 +7,7 @@ import debounce from 'lodash/debounce';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
 import TrackInputChanges from 'components/track-input-changes';

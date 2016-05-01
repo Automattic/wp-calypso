@@ -210,6 +210,7 @@ module.exports = React.createClass( {
 			this.props.store.off( 'change', this.updateState );
 			nextProps.store.on( 'change', this.updateState );
 			this.updateState( nextProps.store );
+			this._list && this._list.reset();
 		}
 	},
 

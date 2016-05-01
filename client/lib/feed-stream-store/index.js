@@ -86,7 +86,8 @@ function getStoreForSearch( storeId ) {
 	return new PagedStream( {
 		id: storeId,
 		fetcher: fetcher,
-		keyMaker: siteKeyMaker
+		keyMaker: siteKeyMaker,
+		perPage: 5
 	} );
 }
 

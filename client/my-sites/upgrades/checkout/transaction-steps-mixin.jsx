@@ -11,8 +11,8 @@ var React = require( 'react' ), // eslint-disable-line no-unused-vars
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	adTracking = require( 'analytics/ad-tracking' ),
+var analytics = require( 'lib/analytics' ),
+	adTracking = require( 'lib/analytics/ad-tracking' ),
 	isFree = require( 'lib/cart-values' ).isFree,
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	upgradesNotices = require( 'lib/upgrades/notices' ),

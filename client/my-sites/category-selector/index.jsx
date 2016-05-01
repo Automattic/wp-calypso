@@ -16,7 +16,7 @@ var ReactDom = require( 'react-dom' ),
  * Internal dependencies
  */
 var NoResults = require( './no-results' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	Search = require( './search' );
 
 /**

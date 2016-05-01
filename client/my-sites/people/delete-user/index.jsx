@@ -20,7 +20,7 @@ const Card = require( 'components/card' ),
 	UsersActions = require( 'lib/users/actions' ),
 	Gravatar = require( 'components/gravatar' ),
 	accept = require( 'lib/accept' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 	displayName: 'DeleteUser',

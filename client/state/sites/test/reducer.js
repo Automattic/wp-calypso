@@ -8,8 +8,16 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { SITE_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
-import reducer, { items } from '../reducer';
+import {
+	SITE_RECEIVE,
+	SITES_RECEIVE,
+	SITES_REQUEST,
+	SITES_REQUEST_FAILURE,
+	SITES_REQUEST_SUCCESS,
+	SERIALIZE,
+	DESERIALIZE
+} from 'state/action-types';
+import reducer, { items, fetchingItems } from '../reducer';
 
 describe( 'reducer', () => {
 	before( function() {
@@ -21,10 +29,52 @@ describe( 'reducer', () => {
 
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'fetchingItems',
 			'items',
 			'mediaStorage',
 			'plans'
 		] );
+	} );
+
+	describe( '#fetchingItems()', () => {
+		it( 'should default an empty object', () => {
+			const state = fetchingItems( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+		it( 'should update fetching state on fetch', () => {
+			const state = fetchingItems( undefined, {
+				type: SITES_REQUEST
+			} );
+			expect( state ).to.eql( { all: true } );
+		} );
+		it( 'should update fetching state on success', () => {
+			const original = { all: true };
+			const state = fetchingItems( original, {
+				type: SITES_REQUEST_SUCCESS
+			} );
+			expect( state ).to.eql( { all: false } );
+		} );
+		it( 'should update fetching state on failure', () => {
+			const original = { all: true };
+			const state = fetchingItems( original, {
+				type: SITES_REQUEST_FAILURE
+			} );
+			expect( state ).to.eql( { all: false } );
+		} );
+		it( 'should never persist state', () => {
+			const original = { all: true };
+			const state = fetchingItems( original, {
+				type: SERIALIZE
+			} );
+			expect( state ).to.eql( {} );
+		} );
+		it( 'should never load persisted state', () => {
+			const original = { all: true };
+			const state = fetchingItems( original, {
+				type: DESERIALIZE
+			} );
+			expect( state ).to.eql( {} );
+		} );
 	} );
 
 	describe( '#items()', () => {
@@ -32,6 +82,36 @@ describe( 'reducer', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
+		} );
+
+		it( 'can receive all sites', () => {
+			const state = items( undefined, {
+				type: SITES_RECEIVE,
+				sites: [
+					{ ID: 2916284, name: 'WordPress.com Example Blog' },
+					{ ID: 77203074, name: 'Another test site' }
+				]
+			} );
+			expect( state ).to.eql( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
+				77203074: { ID: 77203074, name: 'Another test site' }
+			} );
+		} );
+
+		it( 'overwrites sites when all sites are received', () => {
+			const original = deepFreeze( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
+				77203074: { ID: 77203074, name: 'Another test site' }
+			} );
+			const state = items( original, {
+				type: SITES_RECEIVE,
+				sites: [
+					{ ID: 77203074, name: 'A Bowl of Pho' }
+				]
+			} );
+			expect( state ).to.eql( {
+				77203074: { ID: 77203074, name: 'A Bowl of Pho' }
+			} );
 		} );
 
 		it( 'should index sites by ID', () => {
@@ -86,7 +166,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', slug: 'example.wordpress.com' }
 			} );
 		} );
 

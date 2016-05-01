@@ -13,9 +13,10 @@ import { cartItems } from 'lib/cart-values';
 import wpcom from 'lib/wp' ;
 const sites = require( 'lib/sites-list' )();
 const user = require( 'lib/user' )();
-import { getSavedVariations } from 'lib/abtest';
+import { getSavedVariations, abtest } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import { startFreeTrial } from 'lib/upgrades/actions';
+import { PLAN_PREMIUM } from 'lib/plans/constants';
 
 function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeItem } ) {
 	wpcom.undocumented().sitesNew( {
@@ -46,7 +47,11 @@ function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsC
 			let newCartItems = [];
 
 			if ( domainItem ) {
-				newCartItems = [ ...newCartItems, domainItem ];
+				if ( abtest( 'domainsWithPlansOnly' ) === 'plansOnly' && abtest( 'freeTrialsInSignup' ) !== 'enabled' ) {
+					newCartItems = [ ...newCartItems, domainItem, cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) ];
+				} else {
+					newCartItems = [ ...newCartItems, domainItem ];
+				}
 			}
 
 			if ( googleAppsCartItem ) {
@@ -88,7 +93,7 @@ function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsC
 function startFreePremiumTrial( callback, dependencies, data ) {
 	const { siteId } = dependencies;
 
-	startFreeTrial( siteId, cartItems.planItem( 'value_bundle' ), ( error ) => {
+	startFreeTrial( siteId, cartItems.planItem( PLAN_PREMIUM ), ( error ) => {
 		if ( error ) {
 			callback( error, dependencies );
 		} else {

@@ -7,7 +7,7 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import observe from 'lib/mixins/data-observe';
 import PostActions from 'lib/posts/actions';
 import MediaDropZone from 'my-sites/media-library/drop-zone';

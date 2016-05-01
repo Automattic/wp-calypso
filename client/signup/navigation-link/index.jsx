@@ -7,7 +7,7 @@ import find from 'lodash/find';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Gridicon from 'components/gridicon';
 import { submitSignupStep } from 'lib/signup/actions';
 import signupUtils from 'signup/utils';

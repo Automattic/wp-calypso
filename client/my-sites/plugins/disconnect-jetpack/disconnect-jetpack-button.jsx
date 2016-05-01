@@ -10,7 +10,7 @@ import classNames from 'classnames';
  */
 import Button from 'components/button';
 import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 export default React.createClass( {
 

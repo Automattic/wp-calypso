@@ -5,7 +5,7 @@ import React from 'react';
 import debounce from 'lodash/debounce';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 /**
  * Internal dependencies

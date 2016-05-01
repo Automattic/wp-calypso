@@ -16,7 +16,7 @@ import WpcomLoginForm from 'signup/wpcom-login-form';
 import config from 'config';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import { errorNotice } from 'state/notices/actions';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';

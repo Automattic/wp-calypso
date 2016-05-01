@@ -13,7 +13,7 @@ var ButtonsLabelEditor = require( './label-editor' ),
 	ButtonsPreviewAction = require( './preview-action' ),
 	ButtonsTray = require( './tray'),
 	decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreview',

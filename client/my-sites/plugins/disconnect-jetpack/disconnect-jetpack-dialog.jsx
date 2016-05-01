@@ -9,7 +9,7 @@ var page = require( 'page' ),
  */
 var sites = require( 'lib/sites-list' )(),
 	Dialog = require( 'components/dialog' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	SitesListActions = require( 'lib/sites-list/actions' );
 
 module.exports = React.createClass( {

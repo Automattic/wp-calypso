@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 
 module.exports = React.createClass( {

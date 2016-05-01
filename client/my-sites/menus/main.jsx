@@ -19,7 +19,7 @@ var protectForm = require( 'lib/mixins/protect-form' ),
 	MenuSaveButton = require( './menus-save-button' ),
 	EmptyContent = require( 'components/empty-content' ),
 	LoadingPlaceholder = require( './loading-placeholder' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
 
 var Menus = React.createClass( {

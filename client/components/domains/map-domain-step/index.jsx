@@ -67,7 +67,9 @@ var MapDomainStep = React.createClass( {
 						</p>
 					</div>
 
-					<DomainProductPrice price={ price } cart={ this.props.cart } />
+					<DomainProductPrice
+						price={ price }
+						cart={ this.props.cart } />
 
 					<fieldset>
 						<input
@@ -204,6 +206,7 @@ var MapDomainStep = React.createClass( {
 
 			case 'restricted_domain':
 				message = this.translate( 'Sorry but WordPress.com domains cannot be mapped to a WordPress.com blog.' );
+				break;
 
 			case 'blacklisted_domain':
 				message = this.translate( 'Sorry but %(domain)s cannot be mapped to a WordPress.com blog.', {

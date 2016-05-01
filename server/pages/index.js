@@ -12,7 +12,7 @@ var config = require( 'config' ),
 	utils = require( 'bundler/utils' ),
 	sectionsModule = require( '../../client/sections' ),
 	serverRouter = require( 'isomorphic-routing' ).serverRouter,
-	serverRender = require( 'server/render' ).serverRender;
+	serverRender = require( 'render' ).serverRender;
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -83,9 +83,14 @@ function generateStaticUrls( request ) {
 	assets = request.app.get( 'assets' );
 
 	assets.forEach( function( asset ) {
-		urls[ asset.name ] = asset.url;
+		let name = asset.name;
+		if ( ! name ) {
+			// this is for auto-generated chunks that don't have names, like the commons chunk
+			name = asset.url.replace( /\/calypso\/(\w+)\..*/, '_$1' );
+		}
+		urls[ name ] = asset.url;
 		if ( config( 'env' ) !== 'development' ) {
-			urls[ asset.name + '-min' ] = asset.url.replace( '.js', '.min.js' );
+			urls[ name + '-min' ] = asset.url.replace( '.js', '.min.js' );
 		}
 	} );
 
@@ -365,6 +370,11 @@ module.exports = function() {
 
 	if ( config.isEnabled( 'login' ) ) {
 		app.get( '/log-in/:lang?', setUpLoggedOutRoute, serverRender );
+	}
+
+	if ( config.isEnabled( 'jetpack/connect' ) ) {
+		app.get( '/jetpack/connect', setUpRoute, serverRender );
+		app.get( '/jetpack/connect/authorize', setUpRoute, serverRender );
 	}
 
 	app.get( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpRoute, serverRender );

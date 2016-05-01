@@ -9,6 +9,7 @@ var debug = require( 'debug' )( 'calypso:client:signup:controller-utils:test' ),
  * Internal dependencies
  */
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import useI18n from 'test/helpers/use-i18n';
 import useMockery from 'test/helpers/use-mockery';
 
 debug( 'start utils test' );
@@ -17,6 +18,7 @@ describe( 'utils', function() {
 	var flows, utils;
 
 	useFilesystemMocks( __dirname );
+	useI18n();
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/abtest', {
 			abtest: () => ''

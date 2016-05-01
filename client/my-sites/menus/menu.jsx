@@ -10,11 +10,13 @@ var React = require( 'react' ),
 var protectForm = require( 'lib/mixins/protect-form' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	assign = require( 'lodash/assign' ),
+	classNames = require( 'classnames' ),
 	MenuName = require( './menu-name' ),
 	MenuItemList = require( './menu-item-list' ),
 	MenuDeleteButton = require ( './menu-delete-button' ),
 	MenuSaveButton = require( './menus-save-button' ),
-	analytics = require( 'analytics' );
+	MenuRevertButton = require( './menus-revert-button' ),
+	analytics = require( 'lib/analytics' );
 
 /**
  * Renders one menu
@@ -30,7 +32,8 @@ var Menu = React.createClass( {
 			moveState: {},
 			addState: {},
 			confirmDeleteItem: null,
-			editItemId: null
+			editItemId: null,
+			editingTitle: false
 		};
 	},
 
@@ -206,6 +209,10 @@ var Menu = React.createClass( {
 			</div> : null;
 	},
 
+	updateTitleEditing: function( editing ) {
+		this.setState( { editingTitle: editing } );
+	},
+
 	render: function() {
 		var menuName, menuItemList;
 
@@ -215,6 +222,7 @@ var Menu = React.createClass( {
 					<MenuName
 						className="is-editable"
 						value={ this.props.selectedMenu.name }
+						onTitleEdit={ this.updateTitleEditing }
 						onChange={ this.setMenuName } />
 				</h2>
 			);
@@ -233,15 +241,21 @@ var Menu = React.createClass( {
 			);
 		}
 
+		const classes = classNames( {
+			'menus__menu-header': true,
+			'is-editing-title': this.state.editingTitle
+		} );
+
 		return (
 			<div>
-				<div className="menus__menu-header">
+				<div className={ classes }>
 					{ menuName }
 					<div className="menus__menu-actions">
 						<MenuDeleteButton selectedMenu={ this.props.selectedMenu }
 								selectedLocation={ this.props.selectedLocation }
 								setBusy={ this.props.setBusy }
 								confirmDiscard={ this.props.confirmDiscard } />
+						<MenuRevertButton menuData={ this.props.siteMenus } />
 						<MenuSaveButton menuData={ this.props.siteMenus }
 								selectedMenu={ this.props.selectedMenu } />
 					</div>

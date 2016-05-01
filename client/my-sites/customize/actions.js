@@ -9,7 +9,7 @@ import defer from 'lodash/defer';
 import Dispatcher from 'dispatcher';
 import page from 'page';
 import wpcom from 'lib/wp';
-import CartActions from 'lib/upgrades/actions';
+import { addItem } from 'lib/upgrades/actions/cart';
 import ThemeHelper from '../themes/helpers';
 import { themeItem } from 'lib/cart-values/cart-items';
 
@@ -25,7 +25,7 @@ var CustomizeActions = {
 	},
 
 	purchase: function( id, site ) {
-		CartActions.addItem( themeItem( id, 'customizer' ) );
+		addItem( themeItem( id, 'customizer' ) );
 
 		ThemeHelper.trackClick( 'customizer', 'purchase' );
 

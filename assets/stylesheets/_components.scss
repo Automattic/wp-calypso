@@ -75,6 +75,7 @@
 @import 'components/plans/plan-list/style';
 @import 'components/plans/plan-price/style';
 @import 'components/plans/plans-compare/style';
+@import 'components/plans/premium-popover/style';
 @import 'components/popover/style';
 @import 'components/post-excerpt/style';
 @import 'components/post-schedule/style';
@@ -116,9 +117,10 @@
 @import 'components/vertical-nav/item/style';
 @import 'components/web-preview/style';
 @import 'devdocs/style';
-@import 'guidestours/style';
+@import 'layout/guided-tours/style';
 @import 'layout/community-translator/style';
 @import 'layout/masterbar/style';
+@import 'layout/nux-welcome/style';
 @import 'layout/offline-status/style';
 @import 'layout/sidebar/style';
 @import 'lib/accept/style';
@@ -187,6 +189,7 @@
 @import 'my-sites/draft/style';
 @import 'my-sites/drafts/style';
 @import 'my-sites/exporter/style';
+@import 'my-sites/feature-comparison/style';
 @import 'my-sites/invites/invite-form-header/style';
 @import 'my-sites/invites/invite-header/style';
 @import 'my-sites/invites/invite-accept-logged-in/style';
@@ -204,6 +207,7 @@
 @import 'my-sites/plan-storage/style';
 @import 'my-sites/plans/style';
 @import 'my-sites/plans/plan-feature/style';
+@import 'my-sites/plans/current-plan/style';
 @import 'my-sites/plans/plan-overview/style';
 @import 'my-sites/plans/plan-overview/plan-feature/style';
 @import 'my-sites/plans/plan-overview/plan-progress/style';
@@ -211,8 +215,10 @@
 @import 'my-sites/plans/plan-overview/plan-status/style';
 @import 'my-sites/plans/jetpack-plan-details/style';
 @import 'my-sites/post/post-image/style';
+@import 'my-sites/post-relative-time-status/style';
 @import 'my-sites/post-selector/style';
 @import 'my-sites/post-type-list/style';
+@import 'my-sites/posts/style';
 @import 'my-sites/plugins/featured-plugins/style';
 @import 'my-sites/plugins/style';
 @import 'my-sites/plugins/plugin-action/style';

@@ -5,7 +5,6 @@ const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:post-editor' ),
 	page = require( 'page' ),
-	classnames = require( 'classnames' ),
 	debounce = require( 'lodash/debounce' ),
 	throttle = require( 'lodash/throttle' ),
 	assign = require( 'lodash/assign' );
@@ -43,7 +42,7 @@ const actions = require( 'lib/posts/actions' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	EditorPreview = require( './editor-preview' ),
 	stats = require( 'lib/posts/stats' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 import {
 	setContent,
@@ -242,6 +241,8 @@ const PostEditor = React.createClass( {
 		this.debouncedSaveRawContent = debounce( this.saveRawContent, 200 );
 		this.debouncedAutosave = debounce( throttle( this.autosave, 20000 ), 3000 );
 		this.recordedDefaultEditorMode = false;
+		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
+		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 	},
 
 	componentDidMount: function() {
@@ -307,21 +308,16 @@ const PostEditor = React.createClass( {
 		var site = this.props.sites.getSelectedSite() || undefined,
 			mode = this.getEditorMode(),
 			isInvalidURL = this.state.loadingError,
+			siteURL = site ? site.URL + '/' : null,
 			isPage,
 			isTrashed,
-			hasAutosave,
-			headerClass;
+			hasAutosave;
 
 		if ( this.state.post ) {
 			isPage = utils.isPage( this.state.post );
 			isTrashed = this.state.post.status === 'trash';
 			hasAutosave = ( this.state.post.meta && this.state.post.meta.data && this.state.post.meta.data.autosave );
 		}
-
-		headerClass = classnames( 'editor__header', {
-			'is-pinned': this.state.pinned
-		} );
-
 		return (
 			<div className="post-editor">
 				<div className="post-editor__inner">
@@ -342,27 +338,30 @@ const PostEditor = React.createClass( {
 								post={ this.state.post }
 								maxWidth={ 1462 } />
 							{ this.renderNotice() }
-							<div className={ headerClass }>
+							<div className="editor__header">
 								<EditorTitleContainer
 									onChange={ this.debouncedAutosave }
 									tabIndex={ 1 } />
-								{ this.state.post && isPage && site ?
-									<EditorPageSlug
+								{ this.state.post && isPage && site
+									? <EditorPageSlug
 										slug={ this.state.post.slug }
-										path={ this.state.post.URL ? utils.getPagePath( this.state.post ) : site.URL + '/' }
-									/> :
-									null
+										path={ this.state.post.URL && ( this.state.post.URL !== siteURL )
+											? utils.getPagePath( this.state.post )
+											: siteURL
+										}
+										/>
+									: null
 								}
 								<SegmentedControl className="editor__switch-mode" compact={ true }>
 									<SegmentedControlItem
 										selected={ mode === 'tinymce' }
-										onClick={ this.switchEditorMode.bind( this, 'tinymce' ) }
+										onClick={ this.switchEditorVisualMode }
 										title={ this.translate( 'Edit with a visual editor' ) }>
 										{ this.translate( 'Visual', { context: 'Editor writing mode' } ) }
 									</SegmentedControlItem>
 									<SegmentedControlItem
 										selected={ mode === 'html' }
-										onClick={ this.switchEditorMode.bind( this, 'html' ) }
+										onClick={ this.switchEditorHtmlMode }
 										title={ this.translate( 'Edit the raw HTML code' ) }>
 										HTML
 									</SegmentedControlItem>
@@ -378,27 +377,25 @@ const PostEditor = React.createClass( {
 								onChange={ this.onEditorContentChange }
 								onKeyUp={ this.debouncedSaveRawContent }
 								onFocus={ this.onEditorFocus }
-								onTextEditorChange={ this.onEditorContentChange }
-								onTogglePin={ this.onTogglePin } />
+								onTextEditorChange={ this.onEditorContentChange } />
 						</div>
 						<EditorWordCount />
-						{ this.iframePreviewEnabled() ?
-							<EditorPreview
+						{ this.iframePreviewEnabled()
+							? <EditorPreview
 								showPreview={ this.state.showPreview }
 								onClose={ this.onPreviewClose }
 								isSaving={ this.state.isSaving || this.state.isAutosaving }
 								isLoading={ this.state.isLoading }
 								previewUrl={ this.state.previewUrl }
-
 							/>
-						: null }
+							: null }
 					</div>
 					<div className="post-editor__sidebar">
 						<EditorSidebarHeader
 							allPostsUrl={ this.getAllPostsUrl() }
 							toggleSidebar={ this.toggleSidebar } />
-						{ this.props.showDrafts ?
-							<DraftList { ...this.props }
+						{ this.props.showDrafts
+							? <DraftList { ...this.props }
 								onTitleClick={ this.toggleSidebar }
 								showAllActionsMenu={ false }
 								siteID={ site ? site.ID : null }
@@ -431,21 +428,21 @@ const PostEditor = React.createClass( {
 						</div> }
 					</div>
 				</div>
-				{ isTrashed ?
-					<RestorePostDialog
+				{ isTrashed
+					? <RestorePostDialog
 						post={ this.state.post }
 						onClose={ this.onClose }
 						onRestore={ this.onSaveTrashed }
 					/>
 				: null }
-				{ isInvalidURL ?
-					<InvalidURLDialog
+				{ isInvalidURL
+					? <InvalidURLDialog
 						post={ this.state.post }
 						onClose={ this.onClose }
 					/>
 				: null }
-				{ hasAutosave && this.state.showAutosaveDialog ?
-					<RestorePostDialog
+				{ hasAutosave && this.state.showAutosaveDialog
+					? <RestorePostDialog
 						post={ this.state.post }
 						onRestore={ this.restoreAutosave }
 						onClose={ this.closeAutosaveDialog }
@@ -458,22 +455,22 @@ const PostEditor = React.createClass( {
 
 	restoreAutosave: function() {
 		var edits,
-			autosave = this.state.post.meta.data.autosave;
+			autosaveData = this.state.post.meta.data.autosave;
 
 		this.setState( { showAutosaveDialog: false, isLoadingAutosave: true } );
 
 		edits = {
-			title: autosave.title,
-			excerpt: autosave.excerpt,
-			content: autosave.content
+			title: autosaveData.title,
+			excerpt: autosaveData.excerpt,
+			content: autosaveData.content
 		};
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( edits );
 
-		this.props.setTitle( autosave.title );
-		this.props.setExcerpt( autosave.excerpt );
-		this.props.setContent( autosave.content );
+		this.props.setTitle( autosaveData.title );
+		this.props.setExcerpt( autosaveData.excerpt );
+		this.props.setContent( autosaveData.content );
 	},
 
 	closeAutosaveDialog: function() {
@@ -488,12 +485,6 @@ const PostEditor = React.createClass( {
 	onNoticeClick: function( event ) {
 		event.preventDefault();
 		this.setState( { notice: false } );
-	},
-
-	onTogglePin: function( state ) {
-		this.setState( {
-			pinned: state === 'pin'
-		} );
 	},
 
 	onEditedPostChange: function() {
@@ -792,9 +783,9 @@ const PostEditor = React.createClass( {
 	},
 
 	onPublishSuccess: function() {
-		const publishedMessage = utils.isPrivate( this.state.savedPost ) ?
-			this.getMessage( 'publishedPrivately' ) :
-			this.getMessage( 'published' );
+		const publishedMessage = utils.isPrivate( this.state.savedPost )
+			? this.getMessage( 'publishedPrivately' )
+			: this.getMessage( 'published' );
 
 		this.onSaveSuccess(
 			publishedMessage,

@@ -184,6 +184,22 @@ describe( 'EditorGroundControl', function() {
 			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Publish' );
 		} );
 
+		it( 'should return Update if the post was originally published and is scheduled with date in the past', function() {
+			var now = moment(),
+				lastMonth = now.month( now.month() - 1 ).format(),
+				tree;
+
+			tree = shallow(
+				<EditorGroundControl
+					savedPost={ { status: 'publish', date: lastMonth } }
+					post={ { title: 'change', status: 'future', date: lastMonth } }
+					site={ MOCK_SITE }
+				/>
+			).instance();
+
+			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Update' );
+		} );
+
 		it( 'should return Publish if the post is a draft', function() {
 			var tree = shallow(
 				<EditorGroundControl
@@ -405,6 +421,26 @@ describe( 'EditorGroundControl', function() {
 				<EditorGroundControl
 					savedPost={ { status: 'publish' } }
 					post={ { title: 'change', status: 'draft' } }
+					onSave={ onSave }
+					site={ MOCK_SITE }
+				/>
+			).instance();
+
+			tree.onPrimaryButtonClick();
+
+			expect( onSave ).to.have.been.called;
+		} );
+
+		it( 'should update a published post scheduled in the past', function() {
+			var now = moment( new Date() ),
+				lastMonth = now.month( now.month() - 1 ).format(),
+				onSave = sinon.spy(),
+				tree;
+
+			tree = shallow(
+				<EditorGroundControl
+					savedPost={ { status: 'publish' } }
+					post={ { title: 'change', status: 'future', date: lastMonth } }
 					onSave={ onSave }
 					site={ MOCK_SITE }
 				/>

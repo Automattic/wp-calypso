@@ -189,25 +189,21 @@ if ( firstCondition() && secondCondition() &&
 
 ## Assignments and Globals
 
-### Declaring Variables With `var`
+### Variable Declarations
 
-Each function should begin with a single comma-delimited var statement that declares any local variables necessary. If a function does not declare a variable using var, that variable can leak into an outer scope (which is frequently the global scope, a worst-case scenario), and can unwittingly refer to and modify that data.
+When possible, variables should be declared using a `const` declaration. Use 
+`let` only when you anticipate that the variable value will be reassigned 
+during runtime. `var` should not be used in any new code.
 
-Assignments within the var statement should be listed on individual lines, while declarations can be grouped on a single line. Any additional lines should be indented with an additional tab. Objects and functions that occupy more than a handful of lines should be assigned outside of the var statement, to avoid over-indentation.
+Note that `const` does not protect against mutations to an object, so do not
+use it as an indicator of immutability.
 
+```javascript
+const foo = {};
+foo.bar = true;
 
-```js
-// Good
-var k, m, length,
-    // Indent subsequent lines by one tab
-    value = 'WordPress';
-
-// Bad
-var foo = true;
-var bar = false;
-var a;
-var b;
-var c;
+let counter = 0;
+counter++;
 ```
 
 ### Globals

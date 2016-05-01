@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import JetpackPlanDetails from 'my-sites/plans/jetpack-plan-details';

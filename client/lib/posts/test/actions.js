@@ -27,6 +27,7 @@ describe( 'actions', function() {
 	} );
 
 	beforeEach( () => {
+		sandbox.stub( Dispatcher, 'handleServerAction' );
 		sandbox.stub( Dispatcher, 'handleViewAction' );
 		sandbox.stub( PostEditStore, 'get' ).returns( {
 			metadata: []

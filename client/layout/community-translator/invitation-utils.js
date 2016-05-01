@@ -22,7 +22,7 @@ var translator = require( 'lib/translator-jumpstart' ),
 	preferencesActions = require( 'lib/preferences/actions' ),
 	notices = require( 'notices' ),
 	abModule = require( 'lib/abtest' ),
-	tracks = require( 'analytics' ).tracks;
+	tracks = require( 'lib/analytics' ).tracks;
 
 var invitationUtils, userPromise, userSettingsPromise, preferencesPromise,
 	invitePromise,

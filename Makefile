@@ -25,6 +25,7 @@ RECORD_ENV ?= $(BIN)/record-env
 GET_I18N ?= $(BIN)/get-i18n
 LIST_ASSETS ?= $(BIN)/list-assets
 ALL_DEVDOCS_JS ?= server/devdocs/bin/generate-devdocs-index
+USAGE_COUNTS_JS ?= server/devdocs/bin/generate-modules-usage-counts.js
 
 # files used as prereqs
 SASS_FILES := $(shell \
@@ -50,6 +51,13 @@ MD_FILES := $(shell \
 		-type f \
 		-name '*.md' \
 	| sed 's/ /\\ /g' \
+)
+USAGE_COUNTS_FILES = $(shell \
+	find client \
+		-not \( -path '*/docs/*' -prune \) \
+		-not \( -path '*/test/*' -prune \) \
+		-type f \
+		\( -name '*.js' -or -name '*.jsx' \) \
 )
 CLIENT_CONFIG_FILE := client/config/index.js
 
@@ -93,12 +101,8 @@ node_modules: package.json | node-version
 	@$(NPM) install
 	@touch node_modules
 
-# run `make test` in all discovered Makefiles
 test: build
-	@npm run test-client
-	@npm run test-server
-	@npm run test-tests
-	@$(BIN)/run-all-tests
+	@$(NPM) test
 
 lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint mixedindentlint
 	@$(NPM) run lint
@@ -138,6 +142,9 @@ public/editor.css: node_modules $(SASS_FILES)
 
 server/devdocs/search-index.js: $(MD_FILES) $(ALL_DEVDOCS_JS)
 	@$(ALL_DEVDOCS_JS) $(MD_FILES)
+
+server/devdocs/usage-counts.json: $(USAGE_COUNTS_FILES) $(USAGE_COUNTS_JS)
+	@$(USAGE_COUNTS_JS) $(USAGE_COUNTS_FILES)
 
 build-server: install
 	@mkdir -p build

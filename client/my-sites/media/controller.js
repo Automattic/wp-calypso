@@ -10,7 +10,7 @@ var ReactDom = require( 'react-dom' ),
 var sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
 	i18n = require( 'lib/mixins/i18n' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	titleActions = require( 'lib/screen-title/actions' );
 
 module.exports = {

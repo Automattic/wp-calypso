@@ -1,20 +1,30 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:plans-list' ),
-	reject = require( 'lodash/reject' ),
-	store = require( 'store' );
+import debugFactory from 'debug';
+import reject from 'lodash/reject';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	Emitter = require( 'lib/mixins/emitter' );
+import wpcom from 'lib/wp';
+import Emitter from 'lib/mixins/emitter';
+import {
+	PLAN_FREE,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS
+} from 'lib/plans/constants';
+
+/**
+ * Module vars
+ */
+const debug = debugFactory( 'calypso:plans-list' );
 
 /**
  * PlansList component
  *
- * @api public
+ * @return { PlansList } PlansList instance
  */
 function PlansList() {
 	if ( ! ( this instanceof PlansList ) ) {
@@ -32,15 +42,17 @@ Emitter( PlansList.prototype );
 /**
  * Set up a mapping from product_slug to a pretty path
  */
-var pathToSlugMapping = {
-	'beginner': 'free_plan',
-	'premium':  'value_bundle',
-	'business': 'business-bundle'
+const pathToSlugMapping = {
+	beginner: PLAN_FREE,
+	premium: PLAN_PREMIUM,
+	business: PLAN_BUSINESS
 };
 
 /**
  * Get list of plans from current object or store,
  * trigger fetch on first request to update stale data
+ *
+ * @return {Object} list of plans object
  */
 PlansList.prototype.get = function() {
 	var data;
@@ -84,12 +96,13 @@ PlansList.prototype.fetch = function() {
 
 		this.emit( 'change' );
 		store.set( 'PlansList', plans );
-
 	}.bind( this ) );
 };
 
 /**
  * Initialize data with Plan objects
+ *
+ * @param {Object} plans - plans data object
  **/
 PlansList.prototype.initialize = function( plans ) {
 	this.data = plans;
@@ -108,13 +121,18 @@ PlansList.prototype.parse = function( data ) {
 
 /**
  * Update plans list
- **/
+ *
+ * @param {Object} plans - plans data object
+ */
 PlansList.prototype.update = function( plans ) {
 	this.data = plans;
 };
 
 /**
  * Map the plan path to the product_slug
+ *
+ * @param {String} path - plan path
+ * @return {String} plan
  */
 PlansList.prototype.getSlugFromPath = function( path ) {
 	return pathToSlugMapping[ path ];
@@ -122,6 +140,9 @@ PlansList.prototype.getSlugFromPath = function( path ) {
 
 /**
  * Map the product_slug to the plan path
+ *
+ * @param {String} slug - product path
+ * @return {String} plan
  */
 PlansList.prototype.getPathFromSlug = function( slug ) {
 	return Object.keys( pathToSlugMapping ).filter( function( path ) {
@@ -131,14 +152,16 @@ PlansList.prototype.getPathFromSlug = function( slug ) {
 	} );
 };
 
-// Save the plans to memory to save them being fetched from the store every time the user switches sites
-var _plans;
+// Save the plans to memory to save them being fetched
+// from the store every time the user switches sites
+let _plans;
 
 /**
  * Expose `PlansList`
+ *
+ * @return {PlansList} plans list instance
  */
 module.exports = function() {
-
 	if ( ! _plans ) {
 		_plans = new PlansList();
 	}

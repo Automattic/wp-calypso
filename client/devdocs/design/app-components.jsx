@@ -25,6 +25,7 @@ import ThemesListExample from 'components/themes-list/docs/example';
 import PlanStorage from 'my-sites/plan-storage/docs/example';
 import UpgradeNudge from 'my-sites/upgrade-nudge/docs/example';
 import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
+import FeatureComparison from 'my-sites/feature-comparison/docs/example';
 
 export default React.createClass( {
 
@@ -71,6 +72,7 @@ export default React.createClass( {
 					<ThemesListExample />
 					<UpgradeNudge />
 					<PlanCompareCard />
+					<FeatureComparison />
 				</Collection>
 			</div>
 		);

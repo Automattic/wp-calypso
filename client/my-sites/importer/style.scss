@@ -11,11 +11,11 @@
 }
 
 .importer__section-title {
-	margin-bottom: 1em;
-
-	font-size: 24px;
-	font-weight: 200;
+	font-size: 21px;
+	font-weight: 300;
+	line-height: 24px;
 	color: $gray-dark;
+	margin-bottom: 16px;
 }
 
 .importer__section-description {
@@ -42,7 +42,7 @@
 	&.medium {
 		background-color: #00AB6C;
 	}
-	
+
 	@include breakpoint(">960px") {
 		width: 56px;
 		height: 56px;
@@ -58,7 +58,7 @@
 
 .importer__service-title {
 	font-size: 21px;
-	font-weight: 200;
+	font-weight: 300;
 	color: $gray;
 
 	@include breakpoint(">480px") {

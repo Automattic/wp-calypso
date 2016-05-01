@@ -7,7 +7,7 @@ import throttle from 'lodash/throttle';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 const loadScript = require( 'lib/load-script' ).loadScript;
 
 export default React.createClass( {

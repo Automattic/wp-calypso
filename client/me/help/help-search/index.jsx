@@ -14,7 +14,8 @@ import HelpResults from 'me/help/help-results';
 import NoResults from 'my-sites/no-results';
 import SearchCard from 'components/search-card';
 import CompactCard from 'components/card/compact';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
+import { getLocaleSlug } from 'lib/mixins/i18n';
 
 module.exports = React.createClass( {
 	displayName: 'HelpSearch',
@@ -77,6 +78,8 @@ module.exports = React.createClass( {
 			);
 		}
 
+		const localizedForumUrl = 'https://' + getLocaleSlug() + '.forums.wordpress.com';
+
 		return (
 			<div>
 				<HelpResults
@@ -90,7 +93,7 @@ module.exports = React.createClass( {
 					helpLinks={ this.state.helpLinks.wordpress_forum_links }
 					footer={ this.translate( 'See more from Community Forum…' ) }
 					iconTypeDescription="comment"
-					searchLink={ 'https://en.forums.wordpress.com/search.php?search=' + this.state.searchQuery } />
+					searchLink={ localizedForumUrl + '/search.php?search=' + this.state.searchQuery } />
 				<HelpResults
 					header={ this.translate( 'Jetpack Documentation' ) }
 					helpLinks={ this.state.helpLinks.jetpack_support_links }

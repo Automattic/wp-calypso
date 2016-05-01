@@ -10,6 +10,7 @@ var webpack = require( 'webpack' ),
  * Internal dependencies
  */
 var config = require( './server/config' ),
+	sections = require( './client/sections' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
 	PragmaCheckPlugin = require( 'server/pragma-checker' );
 
@@ -19,6 +20,8 @@ var config = require( './server/config' ),
 var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
 	jsLoader,
 	webpackConfig;
+
+const sectionCount = sections.length;
 
 webpackConfig = {
 	cache: true,
@@ -58,11 +61,11 @@ webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '', '.json', '.js', '.jsx' ],
-		root: [ path.join( __dirname, 'client' ), path.join( __dirname, 'node_modules' ) ],
+		root: [ path.join( __dirname, 'client' ) ],
 		modulesDirectories: [ 'node_modules' ]
 	},
 	resolveLoader: {
-		root: [ path.join( __dirname, 'node_modules' ) ]
+		root: [ __dirname ]
 	},
 	node: {
 		console: false,
@@ -91,6 +94,12 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 } else {
 	webpackConfig.entry.vendor = [ 'react', 'store', 'page', 'wpcom', 'jed', 'debug' ];
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
+	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
+		children: true,
+		minChunks: Math.floor( sectionCount * 0.25 ),
+		async: true,
+		filename: 'commons.[hash].js'
+	} ) );
 	webpackConfig.plugins.push( new ChunkFileNamePlugin() );
 	// jquery is only needed in the build for the desktop app
 	// see electron bug: https://github.com/atom/electron/issues/254

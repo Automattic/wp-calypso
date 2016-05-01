@@ -8,21 +8,21 @@ var expect = require( 'chai' ).expect,
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' );
+import useI18n from 'test/helpers/use-i18n';
 
 describe( 'Count', function() {
 	var React, ReactInjection, TestUtils, Count, renderer;
 
 	// really only using Mockery for the clean module cache
 	useMockery();
+	useI18n();
 
 	before( function() {
 		React = require( 'react' );
 		ReactInjection = require( 'react/lib/ReactInjection' );
 		TestUtils = require( 'react-addons-test-utils' );
 
-		i18n.initialize();
-		ReactInjection.Class.injectMixin( i18n.mixin );
+		ReactInjection.Class.injectMixin( require( 'lib/mixins/i18n' ).mixin );
 		Count = require( '../' );
 	} );
 

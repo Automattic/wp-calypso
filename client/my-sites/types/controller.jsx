@@ -10,7 +10,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import { getSiteFragment, sectionify } from 'lib/route';
-import { pageView } from 'analytics';
+import { pageView } from 'lib/analytics';
 import { setTitle } from 'lib/screen-title/actions';
 import Types from './main';
 

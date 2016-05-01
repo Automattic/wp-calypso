@@ -9,7 +9,7 @@ import some from 'lodash/some';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import Card from 'components/card';
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';

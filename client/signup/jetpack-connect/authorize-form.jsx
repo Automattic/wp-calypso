@@ -21,11 +21,39 @@ import { createAccount, authorize } from 'state/jetpack-connect/actions';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
-import Notices from 'notices';
+import Card from 'components/card';
+import CompactCard from 'components/card/compact';
+import Gravatar from 'components/gravatar';
+import i18n from 'lib/mixins/i18n';
+import Gridicon from 'components/gridicon';
+
+/**
+ * Constants
+ */
+
+const STATS_PAGE = '/stats/insights/';
 
 /**
  * Module variables
  */
+const renderFormHeader = ( site, isConnected = false ) => {
+	const headerText = ( isConnected )
+		? i18n.translate( 'You are connected!' )
+		: i18n.translate( 'Connect your self-hosted WordPress' );
+	const subHeaderText = ( isConnected )
+		? i18n.translate( 'The power of WordPress.com is yours to command.' )
+		: i18n.translate( 'Jetpack would like to connect to your WordPress.com account' );
+	return(
+		<div>
+			<ConnectHeader headerText={ headerText }
+					subHeaderText={ subHeaderText } />
+			<CompactCard className="jetpack-connect__authorize-form-header">{ site }</CompactCard>
+		</div>
+	);
+};
+
+const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
+
 const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
 
@@ -47,7 +75,7 @@ const LoggedOutForm = React.createClass( {
 				authorization={ 'Bearer ' + bearerToken }
 				extraFields={ extraFields }
 				redirectTo={ window.location.href } />
-		)
+		);
 	},
 
 	renderFooterLink() {
@@ -63,8 +91,10 @@ const LoggedOutForm = React.createClass( {
 
 	render() {
 		const { userData } = this.props.jetpackConnectAuthorize;
+		const { site } = this.props.jetpackConnectAuthorize.queryObject;
 		return (
 			<div>
+				{ renderFormHeader( site ) }
 				<SignupForm
 					getRedirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.isSubmitting() }
@@ -85,28 +115,18 @@ const LoggedInForm = React.createClass( {
 	componentWillMount() {
 		const { autoAuthorize, queryObject } = this.props.jetpackConnectAuthorize;
 		debug( 'Checking for auto-auth on mount', autoAuthorize );
-		if ( autoAuthorize ) {
+		if ( autoAuthorize || this.props.calypsoStartedConnection ) {
 			this.props.authorize( queryObject );
 		}
 	},
 
-	componentDidUpdate() {
-		const { authorizeSuccess, queryObject } = this.props.jetpackConnectAuthorize;
-		if ( authorizeSuccess ) {
-			Notices.success(
-				this.translate( 'Authorization complete. Use the buttons below to upgrade your site.' ),
-				{
-					button: this.translate( 'Go to site' ),
-					href: queryObject.redirect_after_auth,
-					persistent: true
-				}
-			);
-		}
-	},
-
 	handleSubmit() {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
-		this.props.authorize( queryObject );
+		const { queryObject, siteReceived, plansURL } = this.props.jetpackConnectAuthorize;
+		if ( siteReceived && plansURL ) {
+			page( plansURL );
+		} else {
+			this.props.authorize( queryObject );
+		}
 	},
 
 	handleSignOut() {
@@ -124,52 +144,118 @@ const LoggedInForm = React.createClass( {
 
 	renderNotices() {
 		const { authorizeError } = this.props.jetpackConnectAuthorize;
-		if ( authorizeError ) {
+		if ( authorizeError && authorizeError.message.indexOf( 'already_connected' ) < 0 ) {
 			return <JetpackConnectNotices noticeType="authorizeError" />;
+		}
+		if ( authorizeError && authorizeError.message.indexOf( 'already_connected' ) >= 0 ) {
+			return <JetpackConnectNotices noticeType="alreadyConnected" />;
 		}
 		return null;
 	},
 
-	renderFormControls() {
-		const { queryObject, isAuthorizing, autoAuthorize, authorizeSuccess, plansURL, siteReceived } = this.props.jetpackConnectAuthorize;
-		const loginUrl = config( 'login_url' ) + '?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) + '&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
+	getButtonText() {
+		const { isAuthorizing, authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
 
-		if ( autoAuthorize ) {
-			return isAuthorizing
-				? <p>{ this.translate( 'Authorizing your Jetpack connection' ) }</p>
-				: null
+		if ( siteReceived ) {
+			return this.translate( 'Browse Available Upgrades' );
 		}
 
 		if ( authorizeSuccess ) {
-			if ( siteReceived && plansURL ) {
-				page( plansURL );
-			}
+			return this.translate( 'Searching Available Upgrades' );
+		}
+
+		if ( isAuthorizing ) {
+			return this.translate( 'Authorizing' );
+		}
+
+		return this.translate( 'Approve' );
+	},
+
+	getUserText() {
+		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		let text = this.translate( 'Connecting as {{strong}}%(user)s{{/strong}}', {
+			args: { user: this.props.user.display_name },
+			components: { strong: <strong /> }
+		} );
+
+		if ( authorizeSuccess ) {
+			text = this.translate( 'Connected as {{strong}}%(user)s{{/strong}}', {
+				args: { user: this.props.user.display_name },
+				components: { strong: <strong /> }
+			} );
+		}
+
+		return text;
+	},
+
+	isWaitingForConfirmation() {
+		const { isAuthorizing, authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
+		return !( isAuthorizing || authorizeSuccess || siteReceived );
+	},
+
+	getRedirectionTarget() {
+		const { queryObject } = this.props.jetpackConnectAuthorize;
+		if ( this.props.calypsoStartedConnection ) {
+			const site = this.props.jetpackConnectAuthorize.queryObject.site;
+			const siteSlug = site.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+			return STATS_PAGE + siteSlug;
+		}
+
+		return queryObject.redirect_after_auth;
+	},
+
+	renderFooterLinks() {
+		const { queryObject, authorizeSuccess, isAuthorizing } = this.props.jetpackConnectAuthorize;
+		const loginUrl = config( 'login_url' ) + '?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) + '&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
+		let backToWpAdminLink = (
+			<LoggedOutFormLinkItem icon={ true } href={ queryObject.redirect_after_auth }>
+				{ this.translate( 'Cancel and go back to my site' ) } <Gridicon size={ 18 } icon="external" />
+			</LoggedOutFormLinkItem>
+		);
+
+		if ( isAuthorizing ) {
 			return null;
 		}
 
-		return (
-			<div>
-				<button disabled={ this.isAuthorizing() } onClick={ this.handleSubmit } className="button is-primary">
-					{ this.translate( 'Approve' ) }
-				</button>
+		if ( authorizeSuccess ) {
+			return (
 				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem href={ loginUrl }>
-						{ this.translate( 'Sign in as a different user' ) }
-					</LoggedOutFormLinkItem>
-					<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
-						{ this.translate( 'Create a new account' ) }
+					{ ! this.props.calypsoStartedConnection && this.isWaitingForConfirmation() ? backToWpAdminLink : null }
+					<LoggedOutFormLinkItem href={ this.getRedirectionTarget() }>
+						{ this.translate( 'I\'m not interested in upgrades' ) }
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
-			</div>
+			);
+		}
+
+		return(
+			<LoggedOutFormLinks>
+				{ ! this.props.calypsoStartedConnection && this.isWaitingForConfirmation() ? backToWpAdminLink : null }
+				<LoggedOutFormLinkItem href={ loginUrl }>
+					{ this.translate( 'Sign in as a different user' ) }
+				</LoggedOutFormLinkItem>
+				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
+					{ this.translate( 'Create a new account' ) }
+				</LoggedOutFormLinkItem>
+			</LoggedOutFormLinks>
 		);
 	},
 
 	render() {
+		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		const { site } = this.props.jetpackConnectAuthorize.queryObject;
 		return (
-			<div>
-				<p>{ this.translate( 'Connecting as %(user)s', { args: { user: this.props.user.display_name } } ) }</p>
-				{ this.renderNotices() }
-				{ this.renderFormControls() }
+			<div className="jetpack-connect-logged-in-form">
+				{ renderFormHeader( site, authorizeSuccess ) }
+				<Card>
+					<Gravatar user={ this.props.user } size={ 64 } />
+					<p className="jetpack-connect-logged-in-form__user-text">{ this.getUserText() }</p>
+					{ this.renderNotices() }
+					<button disabled={ this.isAuthorizing() } onClick={ this.handleSubmit } className="button is-primary">
+						{ this.getButtonText() }
+					</button>
+				</Card>
+				{ this.renderFooterLinks() }
 			</div>
 		);
 	}
@@ -178,22 +264,33 @@ const LoggedInForm = React.createClass( {
 const JetpackConnectAuthorizeForm = React.createClass( {
 	displayName: 'JetpackConnectAuthorizeForm',
 	mixins: [ observe( 'userModule' ) ],
+
+	isCalypsoStartedConnection() {
+		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
+		if ( this.props.jetpackConnectSessions && this.props.jetpackConnectSessions[ site ] ) {
+			const currentTime = ( new Date() ).getTime();
+			return ( currentTime - this.props.jetpackConnectSessions[ site ] < JETPACK_CONNECT_TTL );
+		}
+
+		return false;
+	},
+
 	renderForm() {
 		const { userModule } = this.props;
 		let user = userModule.get();
-		return ( user )
-			? <LoggedInForm { ...this.props } user={ user } />
-			: <LoggedOutForm { ...this.props } />
+		const props = Object.assign( {}, this.props, {
+			user: user
+		} );
+		return (
+			( user )
+				? <LoggedInForm { ...props } calypsoStartedConnection={ this.isCalypsoStartedConnection() } />
+				: <LoggedOutForm { ...props } calypsoStartedConnection={ this.isCalypsoStartedConnection() } />
+		);
 	},
-
 	render() {
 		return (
 			<Main className="jetpack-connect">
-				<div className="jetpack-connect__site-url-entry-container">
-					<ConnectHeader headerText={ this.translate( 'Connect a self-hosted WordPress' ) }
-						subHeaderText={ this.translate( 'Jetpack would like to connect to your WordPress.com account' ) }
-						step={ 1 }
-						steps={ 3 } />
+				<div className="jetpack-connect__authorize-form">
 					{ this.renderForm() }
 				</div>
 			</Main>
@@ -204,7 +301,8 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 export default connect(
 	state => {
 		return {
-			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize
+			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
+			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions
 		};
 	},
 	dispatch => bindActionCreators( { authorize, createAccount }, dispatch )

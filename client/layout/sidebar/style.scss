@@ -44,7 +44,8 @@
 .sidebar {
 	margin: 0;
 
-	div {
+	.current-site,
+	.sidebar__footer {
 		flex-shrink: 0;	// prevents items from squishing together under their initial height in Safari
 	}
 
@@ -66,6 +67,7 @@
 	font-weight: 600;
 	font-size: 12px;
 	margin: 16px 8px 6px 14px;
+	display: flex;
 }
 
 // Menu Links
@@ -141,26 +143,6 @@
 		}
 	}
 
-	a.add-new {
-		padding: 2px 8px 3px 8px;
-		height: 24px;
-		margin: 11px 8px 0 0;
-		line-height: 18px;
-		background-color: $gray-light;
-		color: darken( $gray, 20% );
-		font-size: 11px;
-		font-weight: 600;
-		border-radius: 3px;
-		border: 1px solid lighten( $gray, 20% );
-
-		@include breakpoint( "<660px" ) {
-			font-size: 14px;
-			height: 35px;
-			padding: 8px 16px;
-			margin: 10px 10px 0 0;
-		}
-	}
-
 	a.plan-name {
 		padding: 3px 8px 4px 8px;
 		position: absolute;
@@ -220,6 +202,31 @@
 	}
 }
 
+a.sidebar__button {
+	display: flex;
+	position: relative;
+	box-sizing: border-box;
+	white-space: nowrap;
+	overflow: hidden;
+	padding: 2px 8px 3px 8px;
+	height: 24px;
+	margin: 11px 8px 0 0;
+	line-height: 18px;
+	background-color: $gray-light;
+	color: darken( $gray, 20% );
+	font-size: 11px;
+	font-weight: 600;
+	border-radius: 3px;
+	border: 1px solid lighten( $gray, 20% );
+
+	@include breakpoint( "<660px" ) {
+		font-size: 14px;
+		height: 35px;
+		padding: 8px 16px;
+		margin: 10px 10px 0 0;
+	}
+}
+
 
 // Selected Menu
 @include breakpoint( ">660px" ) {
@@ -237,7 +244,7 @@
 			}
 		}
 
-		a.add-new {
+		.sidebar__button {
 			color: darken( $gray, 30% );
 			border: 1px solid darken( $gray, 10% );
 		}
@@ -273,7 +280,7 @@
 					rgba( $gray-light, 1 ) 50% );
 			}
 
-			&.add-new {
+			&.sidebar__button {
 				background-color: $white;
 				color: $gray-dark;
 			}
@@ -297,7 +304,7 @@
 					rgba( $gray-light, 1 ) 50% );
 			}
 
-			&.add-new {
+			&.sidebar__button {
 				background-color: $white;
 				color: $gray-dark;
 			}
@@ -310,7 +317,7 @@
 }
 
 .notouch .sidebar__menu li:not(.selected) a {
-	&.add-new:hover {
+	&.sidebar__button:hover {
 		color: $blue-medium;
 	}
 }
@@ -346,3 +353,28 @@
 
 }
 
+.sidebar__drafts-button {
+	margin-left: auto;
+}
+
+.layout.is-group-sites .sidebar .drafts-button.button.is-borderless {
+	color: darken( $gray, 10% );
+	line-height: 0;
+	padding: 0;
+	margin: 0;
+	text-transform: none;
+
+	.count {
+		color: darken( $gray, 10% );
+	}
+
+	&:hover {
+		color: $blue-medium;
+
+		.count {
+			background: $blue-medium;
+			border-color: $blue-medium;
+			color: $white;
+		}
+	}
+}

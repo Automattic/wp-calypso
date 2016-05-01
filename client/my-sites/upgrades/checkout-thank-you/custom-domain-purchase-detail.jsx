@@ -19,7 +19,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite } ) => {
 					"Replace your site's address, {{em}}%(siteDomain)s{{/em}}, with a custom domain. " +
 					'A free domain is included with your plan.',
 					{
-						args: { siteDomain: selectedSite.domain },
+						args: { siteDomain: selectedSite.slug },
 						components: { em: <em /> }
 					}
 				)

@@ -11,7 +11,7 @@ var PayButton = require( './pay-button' ),
 	CreditCardSelector = require( './credit-card-selector' ),
 	TermsOfService = require( './terms-of-service' ),
 	PaymentBox = require( './payment-box' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	cartValues = require( 'lib/cart-values' );
 
 var CreditCardPaymentBox = React.createClass( {

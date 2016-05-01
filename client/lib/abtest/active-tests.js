@@ -24,8 +24,9 @@ module.exports = {
 	freeTrialsInSignup: {
 		datestamp: '20160328',
 		variations: {
-			disabled: 85,
-			enabled: 15
+			disabled: 40,
+			enabled: 15,
+			notTested: 45
 		},
 		defaultVariation: 'disabled'
 	},
@@ -37,14 +38,6 @@ module.exports = {
 		},
 		defaultVariation: 'disabled'
 	},
-	monthlyPlanPricing: {
-		datestamp: '20160118',
-		variations: {
-			yearly: 50,
-			monthly: 50
-		},
-		defaultVariation: 'yearly'
-	},
 	privacyCheckbox: {
 		datestamp: '20160310',
 		variations: {
@@ -53,14 +46,14 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
-	verticalThemes: {
-		datestamp: '20160324',
+	sidebarPlanLinkMyPlan: {
+		datestamp: '20160101',
 		variations: {
-			original: 25,
-			verticalThemes: 25,
-			notTested: 50
+			plans: 50,
+			'plans/my-plan': 50,
 		},
-		defaultVariation: 'original'
+		defaultVariation: 'plans',
+		allowExistingUsers: true,
 	},
 	domainSuggestionVendor: {
 		datestamp: '20160408',
@@ -70,15 +63,88 @@ module.exports = {
 		},
 		defaultVariation: 'namegen'
 	},
-	contextualGoogleAnalyticsNudge: {
-		datestamp: '20160409',
+	statsTabsLikesNudge: {
+		datestamp: '20160427',
 		variations: {
-			drake: 25,
-			settingsDisabledPlans: 25,
-			settingsDisabledPlansCompare: 25,
-			settingsDisabledFeature: 25,
+			dataInformedBelowChart: 10,
+			noNudge: 90
 		},
-		defaultVariation: 'drake',
+		defaultVariation: 'noNudge',
+		allowExistingUsers: true
+	},
+	themesHeaderNudge: {
+		datestamp: '20160427',
+		variations: {
+			themes_custom_design: 90,
+			themes_premium_theme_more_traffic: 10
+		},
+		defaultVariation: 'themes_custom_design',
 		allowExistingUsers: true,
 	},
+	swapButtonsMySiteSidebar: {
+		datestamp: '20160414',
+		variations: {
+			original: 50,
+			swap: 50
+		},
+		defaultVariation: 'original'
+	},
+	guidedTours: {
+		datestamp: '20160428',
+		variations: {
+			original: 96,
+			guided: 2,
+			calypsoOnly: 2
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true
+	},
+	domainCreditsInfoNotice: {
+		datestamp: '20160420',
+		variations: {
+			showNotice: 90,
+			original: 10
+		},
+		defaultVariation: 'showNotice',
+		allowExistingUsers: true,
+		allowAnyLocale: true
+	},
+	domainsWithPlansOnly: {
+		datestamp: '20160427',
+		variations: {
+			original: 50,
+			plansOnly: 50
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: false
+	},
+	triforce: {
+		datestamp: '20160421',
+		variations: {
+			original: 45,
+			triforce: 45,
+			notTested: 10
+		},
+		defaultVariation: 'original'
+	},
+	planPricing: {
+		datestamp: '20160426',
+		variations: {
+			monthly: 90,
+			annual: 10
+		},
+		defaultVariation: 'monthly',
+		allowExistingUsers: true,
+		allowAnyLocale: true
+	},
+	wpcomPluginsInSidebar: {
+		datestamp: '20160428',
+		variations: {
+			showPlugins: 90,
+			hidePlugins: 10
+		},
+		defaultVariation: 'showPlugins',
+		allowExistingUsers: true,
+		allowAnyLocale: true
+	}
 };

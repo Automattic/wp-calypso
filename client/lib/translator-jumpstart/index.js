@@ -13,7 +13,7 @@ var config = require( 'config' ),
 	userSettings = require( 'lib/user-settings' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	isMobile = require( 'lib/viewport' ).isMobile,
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	hasTouch = require( 'lib/touch-detect' ).hasTouch;
 
 /**

@@ -11,9 +11,10 @@ import config from 'config';
  */
 import FollowingStream from 'reader/following-stream';
 import EmptyContent from './empty';
+import ListMissing from './missing';
 import StreamHeader from 'reader/stream-header';
 import { followList, unfollowList } from 'state/reader/lists/actions';
-import { getListByOwnerAndSlug, isSubscribedByOwnerAndSlug } from 'state/reader/lists/selectors';
+import { getListByOwnerAndSlug, isSubscribedByOwnerAndSlug, isMissingByOwnerAndSlug } from 'state/reader/lists/selectors';
 import QueryReaderList from 'components/data/query-reader-list';
 
 const stats = require( 'reader/stats' );
@@ -59,6 +60,10 @@ const ListStream = React.createClass( {
 			this.props.setPageTitle( title );
 		}
 
+		if ( this.props.isMissing ) {
+			return <ListMissing owner={ this.props.owner } slug={ this.props.slug } />;
+		}
+
 		return (
 			<FollowingStream { ...this.props } store={ this.props.postStore } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ shouldShowFollow }>
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
@@ -80,11 +85,10 @@ const ListStream = React.createClass( {
 
 export default connect(
 	( state, ownProps ) => {
-		const owner = encodeURIComponent( ownProps.owner );
-		const slug = encodeURIComponent( ownProps.slug );
 		return {
-			list: getListByOwnerAndSlug( state, owner, slug ),
-			isSubscribed: isSubscribedByOwnerAndSlug( state, owner, slug )
+			list: getListByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
+			isSubscribed: isSubscribedByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
+			isMissing: isMissingByOwnerAndSlug( state, ownProps.owner, ownProps.slug )
 		};
 	},
 	( dispatch ) => {

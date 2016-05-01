@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import { type as domainTypes } from 'lib/domains/constants';
 import snakeCase from 'lodash/snakeCase';
 

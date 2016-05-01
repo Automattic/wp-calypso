@@ -9,6 +9,7 @@ import mockery from 'mockery';
 /**
  * Internal dependencies
  */
+import EmptyComponent from 'test/helpers/react/empty-component';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
@@ -16,11 +17,6 @@ import useMockery from 'test/helpers/use-mockery';
  * Module variables
  */
 const DUMMY_SITE_ID = 2916284;
-const EMPTY_COMPONENT = React.createClass( {
-	render: function() {
-		return <div />;
-	}
-} );
 
 describe( 'MediaLibraryList item selection', function() {
 	let mount, MediaLibrarySelectedData, MediaLibrarySelectedStore,
@@ -55,7 +51,8 @@ describe( 'MediaLibraryList item selection', function() {
 			data: fixtures
 		} );
 
-		mockery.registerMock( './list-item', EMPTY_COMPONENT );
+		mockery.registerMock( 'components/infinite-list', EmptyComponent );
+		mockery.registerMock( './list-item', EmptyComponent );
 		MediaList = require( '../list' );
 	} );
 
@@ -72,6 +69,7 @@ describe( 'MediaLibraryList item selection', function() {
 			wrapper = mount(
 				<MediaLibrarySelectedData siteId={ DUMMY_SITE_ID }>
 					<MediaList
+						filterRequiresUpgrade={ false }
 						site={ { ID: DUMMY_SITE_ID } }
 						media={ fixtures.media }
 						mediaScale={ 0.24 } />
@@ -153,6 +151,7 @@ describe( 'MediaLibraryList item selection', function() {
 			wrapper = mount(
 				<MediaLibrarySelectedData siteId={ DUMMY_SITE_ID }>
 					<MediaList
+						filterRequiresUpgrade={ false }
 						site={ { ID: DUMMY_SITE_ID } }
 						media={ fixtures.media }
 						mediaScale={ 0.24 }

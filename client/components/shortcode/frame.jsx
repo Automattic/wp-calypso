@@ -1,78 +1,16 @@
 /**
  * External dependencies
  */
-import ReactDomServer from 'react-dom/server';
 import React, { PropTypes } from 'react';
-import createFragment from 'react-addons-create-fragment';
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
 import classNames from 'classnames';
-import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies
  */
+import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
 import ResizableIframe from 'components/resizable-iframe'
-
-/**
- * Module variables
- */
-const JQUERY_URL = 'https://s0.wp.com/wp-includes/js/jquery/jquery.js';
-
-function buildFrameBody( { body, scripts, styles } = { body: '', scripts: {}, styles: {} } ) {
-	if ( ! body && ! scripts && ! styles ) {
-		return '';
-	}
-
-	let fragment = {};
-
-	fragment.styles = mapValues( styles, ( style ) => {
-		return <link rel="stylesheet" media={ style.media } href={ style.src } />;
-	} );
-
-	fragment.scripts = mapValues( scripts, ( script ) => {
-		let extra;
-		if ( script.extra ) {
-			/*eslint-disable react/no-danger*/
-			extra = (
-				<script dangerouslySetInnerHTML={ {
-					__html: script.extra
-				} } />
-			);
-			/*eslint-enable react/no-danger*/
-		}
-
-		return createFragment( {
-			extra: extra,
-			script: <script src={ script.src } />
-		} );
-	} );
-
-	/*eslint-disable react/no-danger*/
-	return ReactDomServer.renderToStaticMarkup(
-		<html>
-			<head>
-				{ createFragment( fragment.styles ) }
-				<style dangerouslySetInnerHTML={ { __html: 'a { cursor: default; }' } } />
-			</head>
-			<body style={ { margin: 0 } }>
-				<div dangerouslySetInnerHTML={ { __html: body } } />
-				{ /* Many shortcode scripts assume jQuery is already defined */ }
-				<script src={ JQUERY_URL } />
-				<script dangerouslySetInnerHTML={ { __html: `
-					[ 'click', 'dragstart' ].forEach( function( type ) {
-						document.addEventListener( type, function( event ) {
-							event.preventDefault();
-							event.stopImmediatePropagation();
-						}, true );
-					} );
-				` } } />
-				{ createFragment( fragment.scripts ) }
-			</body>
-		</html>
-	);
-	/*eslint-enable react/no-danger*/
-}
 
 export default React.createClass( {
 	displayName: 'ShortcodeFrame',
@@ -113,7 +51,7 @@ export default React.createClass( {
 
 	updateHtmlState( props ) {
 		this.setState( {
-			html: buildFrameBody( props )
+			html: generateEmbedFrameMarkup( props )
 		} );
 	},
 

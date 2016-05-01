@@ -8,7 +8,11 @@
 .wpcom-plugins__premium-panel.is-disabled,
 .wpcom-plugins__business-panel.is-disabled {
 	.wpcom-plugins__plugin-item {
-		opacity: 0.35;
+		opacity: 0.5;
+	}
+	
+	.wpcom-plugins__plugin-icon {
+		background: $gray;
 	}
 }
 
@@ -24,7 +28,6 @@
 
 .wpcom-plugins__plugin-item {
 	list-style: none;
-	// flex: 1 0 33.33%;
 	box-sizing: border-box;
 	padding: 16px;
 	border-bottom: 1px solid lighten( $gray, 20% );
@@ -61,16 +64,12 @@
 
 .wpcom-plugins__plugin-item a {
 	color: $gray-dark;
-	
-	&:hover .wpcom-plugins__plugin-icon {
-		background: $blue-medium;
-	}
 }
 
 .wpcom-plugins__plugin-icon {
 	width: 40px;
 	height: 40px;
-	background: $gray;
+	background: $blue-medium;
 	float: left;
 	display: flex;
 	justify-content: center;
@@ -118,10 +117,6 @@
 
 .wpcom-plugins-expanded .section-header {
 	border-bottom: none;
-}
-
-.wpcom-plugin-panel .notice__icon {
-	flex-shrink: 0; // Prevent the notice icon from shrinking
 }
 
 .wpcom-plugin-panel__panel-footer {

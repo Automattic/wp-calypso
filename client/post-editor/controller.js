@@ -21,7 +21,7 @@ var actions = require( 'lib/posts/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	sites = require( 'lib/sites-list' )(),
 	user = require( 'lib/user' )(),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 import {
 	setEditingMode,

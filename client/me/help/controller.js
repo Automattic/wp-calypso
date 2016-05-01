@@ -9,7 +9,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	route = require( 'lib/route' ),
 	titleActions = require( 'lib/screen-title/actions' );

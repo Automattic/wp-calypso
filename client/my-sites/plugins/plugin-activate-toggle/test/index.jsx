@@ -29,7 +29,7 @@ describe( 'PluginActivateToggle', function() {
 	useMockery();
 
 	before( function() {
-		mockery.registerMock( 'analytics', analyticsMock );
+		mockery.registerMock( 'lib/analytics', analyticsMock );
 		mockery.registerMock( 'my-sites/plugins/plugin-action/plugin-action', mockedPluginAction );
 		mockery.registerMock( 'lib/plugins/actions', mockedActions );
 		mockery.registerMock( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button', EmptyComponent );

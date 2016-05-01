@@ -3,52 +3,48 @@
  */
 import deepFreeze from 'deep-freeze';
 import assert from 'assert';
-import moment from 'moment';
 
 /**
  * Internal dependencies
  */
+import EmptyComponent from 'test/helpers/react/empty-component';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useI18n from 'test/helpers/use-i18n';
+import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'upgrades/domain-management/list', function() {
+describe( 'index', function() {
 	let React,
 		ReactDom,
 		ReactInjection,
 		DomainList,
 		TestUtils,
-		i18n,
 		noticeTypes,
 		component,
 		sandbox;
 
 	useSandbox( newSandbox => sandbox = newSandbox );
+	useFakeDom.withContainer();
+	useMockery( mockery => {
+		require( 'test/helpers/mocks/component-classes' )( mockery );
+		require( 'test/helpers/mocks/component-tip' )( mockery );
+		require( 'test/helpers/mocks/data-poller' )( mockery );
+		mockery.registerMock( 'components/section-nav', EmptyComponent );
+	} );
+	useI18n();
 
-	require( 'test/helpers/use-fake-dom' )( '<div id="main" />' );
-	require( 'test/helpers/use-mockery' )(
-		mockery => {
-			require( 'test/helpers/mocks/component-classes' )( mockery );
-			require( 'test/helpers/mocks/component-tip' )( mockery );
-			require( 'test/helpers/mocks/data-poller' )( mockery );
-			i18n = require( 'test/helpers/mocks/i18n' )( mockery );
+	before( () => {
+		React = require( 'react' );
+		ReactDom = require( 'react-dom' );
+		TestUtils = require( 'react-addons-test-utils' );
 
-			React = require( 'react' );
-			ReactDom = require( 'react-dom' );
-			TestUtils = require( 'react-addons-test-utils' );
+		noticeTypes = require( '../constants' );
 
-			noticeTypes = require( '../constants' );
+		ReactInjection = require( 'react/lib/ReactInjection' );
+		ReactInjection.Class.injectMixin( require( 'lib/mixins/i18n' ).mixin );
 
-			ReactInjection = require( 'react/lib/ReactInjection' );
-			ReactInjection.Class.injectMixin( i18n );
-			ReactInjection.Class.injectMixin( { moment } );
-
-			const EMPTY_COMPONENT = React.createClass( {
-				render() {
-					return <div />;
-				}
-			} );
-			mockery.registerMock( 'components/section-nav', EMPTY_COMPONENT );
-		}
-	);
+		DomainList = require( '../' ).List;
+	} );
 
 	const selectedSite = deepFreeze( {
 		slug: 'example.com',
@@ -79,12 +75,8 @@ describe( 'upgrades/domain-management/list', function() {
 	} );
 
 	function renderWithProps( props = defaultProps ) {
-		return ReactDom.render( <DomainList { ...props } />, document.getElementById( 'main' ) );
+		return ReactDom.render( <DomainList { ...props } />, useFakeDom.getContainer() );
 	}
-
-	beforeEach( function() {
-		DomainList = require( '../' );
-	} );
 
 	describe( 'regular cases', function() {
 		beforeEach( function() {
@@ -92,7 +84,7 @@ describe( 'upgrades/domain-management/list', function() {
 		} );
 
 		afterEach( function() {
-			ReactDom.unmountComponentAtNode( document.getElementById( 'main' ) );
+			ReactDom.unmountComponentAtNode( useFakeDom.getContainer() );
 		} );
 
 		it( 'should list two domains', () => {
@@ -107,7 +99,7 @@ describe( 'upgrades/domain-management/list', function() {
 			} );
 
 			afterEach( function() {
-				ReactDom.unmountComponentAtNode( document.getElementById( 'main' ) );
+				ReactDom.unmountComponentAtNode( useFakeDom.getContainer() );
 			} );
 
 			it( 'should show "Change Primary Domain" button', () => {
@@ -129,7 +121,7 @@ describe( 'upgrades/domain-management/list', function() {
 			} );
 
 			afterEach( function() {
-				ReactDom.unmountComponentAtNode( document.getElementById( 'main' ) );
+				ReactDom.unmountComponentAtNode( useFakeDom.getContainer() );
 			} );
 
 			it( 'should show the cancel button', () => {

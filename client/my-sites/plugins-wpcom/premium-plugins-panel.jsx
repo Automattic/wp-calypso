@@ -1,52 +1,39 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import PurchaseButton from './purchase-button';
+import { recordTracksEvent } from 'state/analytics/actions';
 
-import PremiumPlugin from './plugin-types/premium-plugin';
-
-const defaultPlugins = [
-	{
-		name: 'No Advertising',
-		supportLink: 'https://en.support.wordpress.com/no-ads/',
-		icon: 'block',
-		plan: 'Premium',
-		description: 'Remove all ads from your site.'
-	},
-	{
-		name: 'Custom Design',
-		supportLink: 'https://en.support.wordpress.com/custom-design/',
-		icon: 'customize',
-		plan: 'Premium',
-		description: 'Customize your blog\'s look with custom fonts, a CSS editor, and more.'
-	},
-	{
-		name: 'Video Uploads',
-		supportLink: 'https://en.support.wordpress.com/videopress/',
-		icon: 'video-camera',
-		plan: 'Premium',
-		description: 'Upload and host your video files on your site with VideoPress.'
-	}
-];
+import Plugin from './plugin';
 
 export const PremiumPluginsPanel = React.createClass( {
 	render() {
-		const { plugins: givenPlugins = [] } = this.props;
-		const plugins = givenPlugins.length
-			? givenPlugins
-			: defaultPlugins;
+		const {
+			isActive = false,
+			onClick,
+			purchaseLink,
+			plugins = []
+		} = this.props;
+
+		const cardClasses = classNames( 'wpcom-plugins__premium-panel', {
+			'is-disabled': ! isActive
+		} );
 
 		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Premium Plan Upgrades' ) }>
-					<Button compact primary>{ this.translate( 'Purchase' ) }</Button>
+					<PurchaseButton { ...{ isActive, href: purchaseLink } } />
 				</SectionHeader>
-				<Card className="wpcom-plugins__premium-panel is-disabled">
+
+				<Card className={ cardClasses }>
 					<div className="wpcom-plugins__list">
-						{ plugins.map( ( { name, supportLink, icon, plan, description } ) =>
-							<PremiumPlugin
-								{ ...{ name, key: name, supportLink, icon, plan, description } }
+						{ plugins.map( ( { name, descriptionLink, icon, category, description } ) =>
+							<Plugin
+								onClick={ () => onClick( name ) }
+								{ ...{ name, key: name, descriptionLink, icon, category, description } }
 							/>
 						) }
 					</div>
@@ -57,7 +44,21 @@ export const PremiumPluginsPanel = React.createClass( {
 } );
 
 PremiumPluginsPanel.propTypes = {
+	isActive: PropTypes.bool,
+	purchaseLink: PropTypes.string.isRequired,
 	plugins: PropTypes.array
 };
 
-export default PremiumPluginsPanel;
+const trackClick = name => recordTracksEvent(
+	'calypso_plugin_wpcom_click',
+	{
+		plugin_name: name,
+		plugin_plan: 'premium'
+	}
+);
+
+const mapDispatchToProps = dispatch => ( {
+	onClick: name => dispatch( trackClick( name ) )
+} );
+
+export default connect( null, mapDispatchToProps )( PremiumPluginsPanel );

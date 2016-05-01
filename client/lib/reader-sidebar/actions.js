@@ -43,23 +43,25 @@ module.exports = {
 				return;
 			}
 
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_READER_TAG_SUBSCRIPTIONS',
-				data: data[ '/read/tags' ],
-				error: error
-			} );
+			function checkForBatchErrorAndDispatch( actionType, key ) {
+				let response = data[ key ];
+				let batchError = undefined;
 
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_READER_LISTS',
-				data: data[ '/read/lists' ],
-				error: error
-			} );
+				if ( response && response.errors ) {
+					batchError = response.errors;
+					response = undefined;
+				}
 
-			Dispatcher.handleServerAction( {
-				type: RECEIVE_TEAMS,
-				data: data[ '/read/teams' ],
-				error: error
-			} );
+				Dispatcher.handleServerAction( {
+					type: actionType,
+					data: response,
+					error: batchError
+				} );
+			}
+
+			checkForBatchErrorAndDispatch( 'RECEIVE_READER_TAG_SUBSCRIPTIONS', '/read/tags' );
+			checkForBatchErrorAndDispatch( 'RECEIVE_READER_LISTS', '/read/lists' );
+			checkForBatchErrorAndDispatch( 'RECEIVE_TEAMS', '/read/teams' );
 
 			// have to set this after we dispatch, otherwise we may try to fetch again as a result of the dispatch.
 			isFetching = false;

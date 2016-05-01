@@ -1,7 +1,7 @@
 /** 
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 /**
  * External dependencies

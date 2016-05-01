@@ -8,7 +8,7 @@ import React from 'react';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import getThemes from './themes-map';
 import Card from 'components/card';
 
@@ -50,8 +50,8 @@ export default React.createClass( {
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
-					headerText={ this.translate( 'What would you like your homepage to look like?' ) }
-					subHeaderText={ this.translate( 'This will help us figure out what kinds of designs to show you.' ) }
+					fallbackHeaderText={ this.translate( 'What would you like your homepage to look like?' ) }
+					fallbackSubHeaderText={ this.translate( 'This will help us figure out what kinds of designs to show you.' ) }
 					signupProgressStore={ this.props.signupProgressStore }
 					stepContent={ this.renderChoices() } />
 			</div>

@@ -10,8 +10,11 @@ import {
 	isRequestingList,
 	isRequestingSubscribedLists,
 	getSubscribedLists,
+	isUpdatedList,
 	getListByOwnerAndSlug,
-	isSubscribedByOwnerAndSlug
+	isSubscribedByOwnerAndSlug,
+	hasError,
+	isMissingByOwnerAndSlug
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -112,13 +115,39 @@ describe( 'selectors', () => {
 		} );
 	} );
 
+	describe( '#isUpdatedList()', () => {
+		it( 'should return false if list has not been updated', () => {
+			const isUpdated = isUpdatedList( {
+				reader: {
+					lists: {
+						updatedLists: []
+					}
+				}
+			}, 123 );
+
+			expect( isUpdated ).to.be.false;
+		} );
+
+		it( 'should return true if the list has been updated', () => {
+			const isUpdated = isUpdatedList( {
+				reader: {
+					lists: {
+						updatedLists: [ 123, 456 ]
+					}
+				}
+			}, 123 );
+
+			expect( isUpdated ).to.be.true;
+		} );
+	} );
+
 	describe( '#getListByOwnerAndSlug()', () => {
 		it( 'should return undefined if the list does not exist', () => {
 			const list = getListByOwnerAndSlug( {
 				reader: {
 					lists: {}
 				}
-			}, 'restapitests', 'bananas' );
+			}, 'lister', 'bananas' );
 
 			expect( list ).to.eql( undefined );
 		} );
@@ -130,22 +159,22 @@ describe( 'selectors', () => {
 						items: {
 							123: {
 								ID: 123,
-								owner: 'restapitests',
+								owner: 'lister',
 								slug: 'bananas'
 							},
 							456: {
 								ID: 456,
-								owner: 'restapitests',
+								owner: 'lister',
 								slug: 'ants'
 							}
 						}
 					}
 				}
-			}, 'restapitests', 'bananas' );
+			}, 'lister', 'bananas' );
 
 			expect( list ).to.eql( {
 				ID: 123,
-				owner: 'restapitests',
+				owner: 'lister',
 				slug: 'bananas'
 			} );
 		} );
@@ -158,7 +187,7 @@ describe( 'selectors', () => {
 					lists: {},
 					subscribedLists: []
 				}
-			}, 'restapitests', 'bananas' );
+			}, 'lister', 'bananas' );
 
 			expect( isSubscribed ).to.eql( false );
 		} );
@@ -170,21 +199,73 @@ describe( 'selectors', () => {
 						items: {
 							123: {
 								ID: 123,
-								owner: 'restapitests',
+								owner: 'lister',
 								slug: 'bananas'
 							},
 							456: {
 								ID: 456,
-								owner: 'restapitests',
+								owner: 'lister',
 								slug: 'ants'
 							}
 						},
 						subscribedLists: [ 123 ]
 					}
 				}
-			}, 'restapitests', 'bananas' );
+			}, 'lister', 'bananas' );
 
 			expect( isSubscribed ).to.eql( true );
+		} );
+	} );
+
+	describe( '#hasError()', () => {
+		it( 'should return false if there is no error for the list', () => {
+			const result = hasError( {
+				reader: {
+					lists: {
+						errors: { 123: 400 }
+					}
+				}
+			}, 456 );
+
+			expect( result ).to.be.false;
+		} );
+
+		it( 'should return true if the list has an error', () => {
+			const result = hasError( {
+				reader: {
+					lists: {
+						errors: { 123: 400 }
+					}
+				}
+			}, 123 );
+
+			expect( result ).to.be.true;
+		} );
+	} );
+
+	describe( '#isMissingByOwnerAndSlug()', () => {
+		it( 'should return false if the missing list does not exist', () => {
+			const isMissing = isMissingByOwnerAndSlug( {
+				reader: {
+					lists: {
+						missingLists: []
+					}
+				}
+			}, 'lister', 'bananas' );
+
+			expect( isMissing ).to.eql( false );
+		} );
+
+		it( 'should return true if the owner and slug match a missing list', () => {
+			const isMissing = isMissingByOwnerAndSlug( {
+				reader: {
+					lists: {
+						missingLists: [ { owner: 'lister', slug: 'bananas' } ]
+					}
+				}
+			}, 'lister', 'bananas' );
+
+			expect( isMissing ).to.eql( true );
 		} );
 	} );
 } );

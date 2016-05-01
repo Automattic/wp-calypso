@@ -13,7 +13,7 @@ var StatsListLegend = require( '../stats-list/legend' ),
 	StatsList = require( '../stats-list' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	ErrorPanel = require( '../stats-error' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	Card = require( 'components/card' ),
 	SectionHeader = require( 'components/section-header' );
 

@@ -8,7 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Main = require( 'components/main' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	HappinessEngineers = require( 'me/help/help-happiness-engineers' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	HelpSearch = require( './help-search' ),
@@ -26,8 +26,8 @@ module.exports = React.createClass( {
 		const helpfulResults = [
 			{
 				link: 'https://en.support.wordpress.com/com-vs-org/',
-				title: this.translate( 'WordPress.com and WordPress.org' ),
-				description: this.translate( 'Learn about the differences between a fully hosted WordPress.com site and a self-hosted WordPress.org site.' )
+				title: this.translate( 'Can\'t add your theme or plugin?' ),
+				description: this.translate( 'Learn about the differences between a fully hosted WordPress.com site and a self-hosted WordPress.org site. Themes and plugins can be uploaded to self-hosted sites only.' )
 			},
 			{
 				link: 'https://en.support.wordpress.com/all-about-domains/',

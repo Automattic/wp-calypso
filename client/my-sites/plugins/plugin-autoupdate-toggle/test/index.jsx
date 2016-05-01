@@ -28,7 +28,7 @@ describe( 'PluginAutoupdateToggle', function() {
 	useMockery();
 
 	before( function() {
-		mockery.registerMock( 'analytics', analyticsMock );
+		mockery.registerMock( 'lib/analytics', analyticsMock );
 		mockery.registerMock( 'my-sites/plugins/plugin-action/plugin-action', mockedPluginAction );
 		mockery.registerMock( 'lib/plugins/actions', mockedActions );
 		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );

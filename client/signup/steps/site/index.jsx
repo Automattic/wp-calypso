@@ -11,7 +11,7 @@ var React = require( 'react' ),
  */
 var wpcom = require( 'lib/wp' ),
 	config = require( 'config' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	formState = require( 'lib/form-state' ),
 	SignupActions = require( 'lib/signup/actions' ),
 	ValidationFieldset = require( 'signup/validation-fieldset' ),

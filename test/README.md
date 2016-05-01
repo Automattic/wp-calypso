@@ -1,55 +1,24 @@
 ## Single test runner
 
-Single test runner loads only test files that are listed in `tests.json` file in top level directory. Configuration reflects folders structure.
+### How to add a new test file
+The single test runner supports automatic test discovery. We only need to put a test file into a `test` subfolder, next to the files we want to test.
+The runner uses this glob pattern `@(client|server|test)/**/test/*.@(js|jsx)` to find test files.
 
-### Extending tests.json
+We should use the same file names as the implementation files for the tests.
+Example: if we want to write unit tests covering the file `hello-world/index.jsx`, we should name a test file `hello-world/test/index.jsx`.
 
-Config file location: `client/tests.json`
+If we ever need to add non-test files to a `test` folder, we should put them in a deeper level. Common choices are:
 
-Example folder: `client/state/plugins/wporg/test/`
-
-Test files we want to add to the runner:
-* `actions`
-* `selectors`
-* `reducer.js`
-
-It translates into the following code in the config file:
-```js
-{
-	"state": {
-		"plugins": {
-			"wporg": {
-				"test": [ "actions", "selectors", "reducer" ]
-			}
-		}
-}
-```
-
-Test output for added files:
-```
-...
-state
-	plugins
-		wporg
-			reducer (taken from describe inside the file)
-				√ Test name
-			test-actions
-				√ Test name
-			test-selectors
-				√ Test name
-...
-```
+* `test/mocks/name.js` for test mocks
+* `test/fixtures/name.js` for test data
 
 ### How to run single test runner
 
-You can run all tests from the root folder using the `npm test` command.
+Executing `make test` from the root folder will run all test suites.
+Behind the scenes we maintain 3 test runners. This is because each folder (`client`, `server` & `test`) has a different `NODE_PATH` path.
 
-We provide three single test runners because of different node path rules applied. They contain files located in:
-* `client/` folder
-* `server/` folder
-* `test/` folder
-
-We have an `npm run` script for each of them: `npm run test-client`, `npm run test-server` and `npm run test-tests`. You can pass a filename or set of files to these scripts to isolate your test run to just your set of files.
+We have also an npm run script for each folder: `npm run test-client`, `npm run test-server` and `npm run test-test`.
+We can pass a filename or set of files to these scripts to isolate your test run to a selected set of files.
 
 Example for client:
 
@@ -63,7 +32,7 @@ Example for client:
 > # run single test suite from server folder
 > npm run test-server server/config/test/parser.js
 > # run single test suite from test folder
-> npm run test-tests test/helpers/use-nock/test/index.js
+> npm run test-test test/helpers/use-nock/test/index.js
 ```
 
 ### How to run specified suite or test-case

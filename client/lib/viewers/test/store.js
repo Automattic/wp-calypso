@@ -1,125 +1,140 @@
 /**
  * External dependencies
  */
-var assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-var actions = require( './lib/mock-actions' ),
-	site = require( './lib/mock-site' ),
-	siteId = site.ID;
+import useFakeDom from 'test/helpers/use-fake-dom';
+import actions from './fixtures/actions';
+import site from './fixtures/site';
 
-require( 'lib/react-test-env-setup' )();
+describe( 'Viewers Store', () => {
+	const siteId = site.ID;
+	let Dispatcher, ViewersStore;
 
-describe( 'Viewers Store', function() {
-	var Dispatcher, ViewersStore;
+	useFakeDom();
 
-	beforeEach( function() {
+	beforeEach( () => {
 		Dispatcher = require( 'dispatcher' );
 		ViewersStore = require( '../store' );
 	} );
 
-	describe( 'Shape of store', function() {
-		it( 'Store should be an object', function() {
+	describe( 'Shape of store', () => {
+		it( 'Store should be an object', () => {
 			assert.isObject( ViewersStore );
 		} );
 
-		it( 'Store should have method emitChange', function() {
+		it( 'Store should have method emitChange', () => {
 			assert.isFunction( ViewersStore.emitChange );
 		} );
 
-		it( 'Store should have method getViewers', function() {
+		it( 'Store should have method getViewers', () => {
 			assert.isFunction( ViewersStore.getViewers );
 		} );
 
-		it( 'Store should have method getPaginationData', function() {
+		it( 'Store should have method getPaginationData', () => {
 			assert.isFunction( ViewersStore.getPaginationData );
 		} );
 	} );
 
-	describe( 'Get Viewers', function() {
-		it( 'Should return false when viewers haven\'t been fetched', function() {
-			var viewers = ViewersStore.getViewers( siteId );
+	describe( 'Get Viewers', () => {
+		it( 'Should return false when viewers haven\'t been fetched', () => {
+			const viewers = ViewersStore.getViewers( siteId );
 
-			assert( false === viewers, 'viewers is false' );
+			assert.isFalse( viewers, 'viewers is false' );
 		} );
 
-		it( 'Should return an array of objects when there are viewers', function() {
-			var viewers;
+		it( 'Should return an array of objects when there are viewers', () => {
+			let viewers;
 
 			Dispatcher.handleServerAction( actions.fetchedViewers );
 			viewers = ViewersStore.getViewers( siteId );
 
-			assert( Array.isArray( viewers ), 'viewers is an array' );
+			assert.isArray( viewers, 'viewers is an array' );
 			assert.isObject( viewers[0] );
 		} );
 	} );
 
-	describe( 'Fetch Viewers', function() {
-		beforeEach( function() {
+	describe( 'Fetch Viewers', () => {
+		let viewers, viewersAgain;
+		beforeEach( () => {
 			Dispatcher.handleServerAction( actions.fetchedViewers );
+			viewers = ViewersStore.getViewers( siteId );
 		} );
 
-		it( 'Fetching zero users should not affect store size', function() {
-			var viewers = ViewersStore.getViewers( siteId ),
-				viewersAgain;
-
+		it( 'Fetching zero users should not affect store size', () => {
 			Dispatcher.handleServerAction( actions.fetchedViewersEmpty );
 			viewersAgain = ViewersStore.getViewers( siteId );
 			assert.equal( viewers.length, viewersAgain.length, 'the viewers store was not affected' );
 		} );
 
-		it( 'Fetching more viewers should increase the store size', function() {
-			var viewers = ViewersStore.getViewers( siteId ),
-				viewersAgain;
-
+		it( 'Fetching more viewers should increase the store size', () => {
 			Dispatcher.handleServerAction( actions.fetchedMoreViewers );
 			viewersAgain = ViewersStore.getViewers( siteId );
 			assert.notEqual( viewersAgain.length, viewers.length, 'the viewers store increased' );
 		} );
+	} );
 
-		it( 'Pagination data should update fetching more viewers', function() {
-			var pagination = ViewersStore.getPaginationData( siteId );
-
-			assert.equal( pagination.totalViewers, 4 );
-			assert.equal( pagination.numViewersFetched, 2 );
-			assert.equal( pagination.currentViewersPage, 1 );
-
-			Dispatcher.handleServerAction( actions.fetchedMoreViewers );
-
+	describe( 'Pagination', () => {
+		let pagination;
+		beforeEach( () => {
+			Dispatcher.handleServerAction( actions.fetchedViewers );
 			pagination = ViewersStore.getPaginationData( siteId );
-			assert.equal( pagination.numViewersFetched, 4 );
-			assert.equal( pagination.currentViewersPage, 2 );
+		} );
+
+		it( 'has the correct total viewers', () => {
+			assert.equal( pagination.totalViewers, 4 );
+		} );
+
+		it( 'has the correct number of viewers fetched', () => {
+			assert.equal( pagination.numViewersFetched, 2 );
+		} );
+
+		it( 'has the correct page', () => {
+			assert.equal( pagination.currentViewersPage, 1 );
+		} );
+
+		context( 'after fetching more viewers', () => {
+			beforeEach( () => {
+				Dispatcher.handleServerAction( actions.fetchedMoreViewers );
+				pagination = ViewersStore.getPaginationData( siteId );
+			} );
+
+			it( 'has the correct updated number of viewers fetched', () => {
+				assert.equal( pagination.numViewersFetched, 4 );
+			} );
+
+			it( 'advances to the next page', () => {
+				assert.equal( pagination.currentViewersPage, 2 );
+			} );
 		} );
 	} );
 
-	describe( 'Removing a viewer', function() {
-		beforeEach( function() {
+	describe( 'Removing a viewer', () => {
+		let viewersAgain;
+		beforeEach( () => {
 			Dispatcher.handleServerAction( actions.fetchedViewers );
+			ViewersStore.getViewers( siteId );
 		} );
 
-		it( 'Should remove a single viewer.', function() {
-			var viewers = ViewersStore.getViewers( siteId ),
-				viewersAgain;
-
-			assert.equal( viewers.length, 2 );
+		it( 'Should remove a single viewer.', () => {
 			Dispatcher.handleServerAction( actions.removeViewer );
 			viewersAgain = ViewersStore.getViewers( siteId );
-			assert.equal( viewersAgain.length, 1 );
+			assert.lengthOf( viewersAgain, 1 );
 		} );
 
 		it( 'Should restore a single viewer on removal error.', function() {
-			var viewers = ViewersStore.getViewers( siteId ),
-				viewersAfterRemove,
-				viewersAfterError;
-			assert.equal( viewers.length, 2 );
+			let viewersAfterRemove, viewersAfterError;
+
 			Dispatcher.handleServerAction( actions.removeViewer );
 			viewersAfterRemove = ViewersStore.getViewers( siteId );
-			assert.equal( viewersAfterRemove.length, 1 );
+			assert.lengthOf( viewersAfterRemove, 1 );
+
 			Dispatcher.handleServerAction( actions.removeViewerError );
 			viewersAfterError = ViewersStore.getViewers( siteId );
-			assert.equal( viewersAfterError.length, 2 );
+			assert.lengthOf( viewersAfterError, 2 );
 		} );
 	} );
 } );

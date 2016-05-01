@@ -8,7 +8,7 @@ var page = require( 'page' );
  */
 var controller = require( './controller' ),
 	jetpackConnectController = require( './jetpack-connect/controller' ),
-	adTracking = require( 'analytics/ad-tracking' ),
+	adTracking = require( 'lib/analytics/ad-tracking' ),
 	config = require( 'config' );
 
 module.exports = function() {
@@ -30,7 +30,7 @@ module.exports = function() {
 		page( '/log-in/:lang?', controller.login );
 	}
 
-	if ( config.isEnabled( 'jetpack/calypso-first-signup-flow' ) ) {
+	if ( config.isEnabled( 'jetpack/connect' ) ) {
 		page( '/jetpack/connect', jetpackConnectController.connect );
 		page(
 			'/jetpack/connect/authorize',

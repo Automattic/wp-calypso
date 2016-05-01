@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var Connection = require( './connection' ),
 	serviceConnections = require( './service-connections' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 	displayName: 'SharingServiceConnectedAccounts',

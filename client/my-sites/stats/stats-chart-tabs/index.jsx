@@ -1,22 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 
-var ElementChart = require( 'components/chart' ),
-	Legend = require( 'components/chart/legend' ),
-	StatTabs = require( '../stats-tabs' ),
-	analytics = require( 'analytics' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
-	Card = require( 'components/card' );
+import ElementChart from 'components/chart';
+import Legend from 'components/chart/legend';
+import StatTabs from '../stats-tabs';
+import analytics from 'lib/analytics';
+import observe from 'lib/mixins/data-observe';
+import StatsModulePlaceholder from '../stats-module/placeholder';
+import Card from 'components/card';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { abtest } from 'lib/abtest';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StatModuleChartTabs',
 
 	mixins: [ observe( 'visitsList', 'activeTabVisitsList' ) ],
@@ -210,6 +213,25 @@ module.exports = React.createClass( {
 		return chartData;
 	},
 
+	renderNudge: function() {
+		if ( abtest( 'statsTabsLikesNudge' ) === 'dataInformedBelowChart' ) {
+			return (
+				<UpgradeNudge
+					title={ this.translate( 'Sites with Premium get 31% more likes' ) }
+					message={ this.translate( 'Premium plan owners get a domain, custom design, and on avarage 31% more likes!' ) }
+					event={ 'stats_likes_31_more' }
+				/>
+			);
+		} else {
+			return (
+				<TrackComponentView
+					eventName={ 'calypso_upgrade_nudge_hide' }
+					eventProperties={ { cta_name: 'stats_likes_31_more' } }
+				/>
+			);
+		}
+	},
+
 	render: function() {
 		var data = this.buildChartData(),
 			activeTab = this.getActiveTab(),
@@ -237,12 +259,15 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<Card className={ classNames.apply( null, classes ) }>
-				<Legend tabs={ this.props.charts } activeTab={ activeTab } availableCharts={ availableCharts } activeCharts={ this.state.activeLegendCharts } clickHandler={ this.onLegendClick } />
-				<StatsModulePlaceholder className="is-chart" isLoading={ activeTabLoading } />
-				<ElementChart loading={ activeTabLoading } data={ data } barClick={ this.props.barClick } />
-				<StatTabs dataList={ visitsList } tabs={ this.props.charts } switchTab={ this.props.switchTab } selectedTab={ this.props.chartTab } activeIndex={ this.props.queryDate } activeKey="period" />
-			</Card>
+			<div>
+				<Card className={ classNames.apply( null, classes ) }>
+					<Legend tabs={ this.props.charts } activeTab={ activeTab } availableCharts={ availableCharts } activeCharts={ this.state.activeLegendCharts } clickHandler={ this.onLegendClick } />
+					<StatsModulePlaceholder className="is-chart" isLoading={ activeTabLoading } />
+					<ElementChart loading={ activeTabLoading } data={ data } barClick={ this.props.barClick } />
+					<StatTabs dataList={ visitsList } tabs={ this.props.charts } switchTab={ this.props.switchTab } selectedTab={ this.props.chartTab } activeIndex={ this.props.queryDate } activeKey="period" />
+				</Card>
+				{ this.props.chartTab === 'likes' && this.renderNudge() }
+			</div>
 		);
 	}
 } );

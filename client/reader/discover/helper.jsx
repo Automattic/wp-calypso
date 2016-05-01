@@ -3,7 +3,8 @@
 // External dependencies
 var find = require( 'lodash/find' ),
 	get = require( 'lodash/get' ),
-	url = require( 'url' );
+	url = require( 'url' ),
+	config = require( 'config' );
 
 /**
  * Internal Dependencies
@@ -17,11 +18,11 @@ module.exports = {
 	},
 
 	isDiscoverPost: function( post ) {
-		return !! post.discover_metadata;
+		return !! ( post.discover_metadata || post.site_ID === config( 'discover_blog_id' ) );
 	},
 
 	isDiscoverSitePick: function( post ) {
-		return !! find( post.discover_metadata.discover_fp_post_formats, { slug: 'site-pick' } );
+		return !! ( post.discover_metadata && find( post.discover_metadata.discover_fp_post_formats, { slug: 'site-pick' } ) );
 	},
 
 	isInternalDiscoverPost: function( post ) {

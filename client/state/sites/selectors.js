@@ -93,3 +93,12 @@ export function getSiteSlug( state, siteId ) {
 
 	return site.URL.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
 }
+
+/**
+ * Returns true if we are requesting all sites.
+ * @param {Object}    state  Global state tree
+ * @return {Boolean}        Request State
+ */
+export function isRequestingSites( state ) {
+	return !! state.sites.fetchingItems.all;
+}

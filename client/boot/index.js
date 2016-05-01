@@ -12,7 +12,7 @@ var React = require( 'react' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
-	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies
@@ -20,20 +20,20 @@ var React = require( 'react' ),
 // lib/local-storage must be run before lib/user
 var config = require( 'config' ),
 	localStoragePolyfill = require( 'lib/local-storage' )(), //eslint-disable-line
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	route = require( 'lib/route' ),
 	user = require( 'lib/user' )(),
 	receiveUser = require( 'state/users/actions' ).receiveUser,
 	setCurrentUserId = require( 'state/current-user/actions' ).setCurrentUserId,
-	showGuidesTour = require( 'state/ui/actions' ).showGuidesTour,
+	showGuidedTour = require( 'state/ui/guided-tours/actions' ).showGuidedTour,
 	sites = require( 'lib/sites-list' )(),
-	superProps = require( 'analytics/super-props' ),
+	superProps = require( 'lib/analytics/super-props' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	perfmon = require( 'lib/perfmon' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
 	translatorInvitation = require( 'layout/community-translator/invitation-utils' ),
 	layoutFocus = require( 'lib/layout-focus' ),
-	nuxWelcome = require( 'nux-welcome' ),
+	nuxWelcome = require( 'layout/nux-welcome' ),
 	emailVerification = require( 'components/email-verification' ),
 	viewport = require( 'lib/viewport' ),
 	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
@@ -47,6 +47,8 @@ var config = require( 'config' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
+	isSectionIsomorphic = require( 'state/ui/selectors' ).isSectionIsomorphic,
+	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
@@ -102,7 +104,6 @@ function setUpContext( reduxStore ) {
 		}
 
 		// set `context.query`
-		// debugger
 		const querystringStart = context.canonicalPath.indexOf( '?' );
 		if ( querystringStart !== -1 ) {
 			context.query = qs.parse( context.canonicalPath.substring( querystringStart + 1 ) );
@@ -161,15 +162,31 @@ function boot() {
 	createReduxStoreFromPersistedInitialState( reduxStoreReady );
 }
 
+function renderLayout( reduxStore ) {
+	let props = { focus: layoutFocus };
+
+	if ( user.get() ) {
+		Object.assign( props, {}, { user, sites, nuxWelcome, translatorInvitation } );
+	}
+
+	Layout = require( 'layout' );
+	renderWithReduxStore(
+		React.createElement( Layout, props ),
+		document.getElementById( 'wpcom' ),
+		reduxStore
+	);
+
+	debug( 'Main layout rendered.' );
+}
+
 function reduxStoreReady( reduxStore ) {
-	let layoutSection, layoutElement, validSections = [];
+	let layoutSection, validSections = [],
+		isIsomorphic = isSectionIsomorphic( reduxStore.getState() );
 
 	bindWpLocaleState( reduxStore );
 	bindTitleToStore( reduxStore );
 
 	supportUser.setReduxStore( reduxStore );
-
-	Layout = require( 'layout' );
 
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
@@ -179,18 +196,8 @@ function reduxStoreReady( reduxStore ) {
 		// Set current user in Redux store
 		reduxStore.dispatch( receiveUser( user.get() ) );
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
-
-		// Create layout instance with current user prop
-		layoutElement = React.createElement( Layout, {
-			user: user,
-			sites: sites,
-			focus: layoutFocus,
-			nuxWelcome: nuxWelcome,
-			translatorInvitation: translatorInvitation
-		} );
 	} else {
 		analytics.setSuperProps( superProps );
-		layoutElement = React.createElement( Layout, { focus: layoutFocus } );
 	}
 
 	if ( config.isEnabled( 'perfmon' ) ) {
@@ -202,23 +209,29 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/network-connection' ).init( reduxStore );
 	}
 
-	renderWithReduxStore(
-		layoutElement,
-		document.getElementById( 'wpcom' ),
-		reduxStore
-	);
-
-	debug( 'Main layout rendered.' );
-
-	// If `?sb` or `?sp` are present on the path set the focus of layout
-	// This needs to be done before the page.js router is started and can be removed when the legacy version is retired
-	if ( window && [ '?sb', '?sp' ].indexOf( window.location.search ) !== -1 ) {
-		layoutSection = ( window.location.search === '?sb' ) ? 'sidebar' : 'sites';
-		layoutFocus.set( layoutSection );
-		window.history.replaceState( null, document.title, window.location.pathname );
+	// Render Layout only for non-isomorphic sections, unless logged-in.
+	// Isomorphic sections will take care of rendering their Layout last themselves,
+	// unless in logged-in mode, where we can't do that yet.
+	// TODO: Remove the ! user.get() check once isomorphic sections render their
+	// Layout themselves when logged in.
+	if ( ! isIsomorphic || user.get() ) {
+		renderLayout( reduxStore );
 	}
 
+	// If `?sb` or `?sp` are present on the path set the focus of layout
+	// This can be removed when the legacy version is retired.
+	page( '*', function( context, next ) {
+		if ( [ 'sb', 'sp' ].indexOf( context.querystring ) !== -1 ) {
+			layoutSection = ( context.querystring === 'sb' ) ? 'sidebar' : 'sites';
+			layoutFocus.set( layoutSection );
+			page.redirect( context.pathname );
+		}
+
+		next();
+	} );
+
 	setUpContext( reduxStore );
+
 	page( '*', require( 'lib/route/normalize' ) );
 
 	// warn against navigating from changed, unsaved forms
@@ -254,10 +267,11 @@ function reduxStoreReady( reduxStore ) {
 			nuxWelcome.clearTempWelcome();
 		}
 
-		// If `?tour` is present, show the guides tour
-		if ( config.isEnabled( 'guidestours' ) && context.query.tour ) {
-			context.store.dispatch( showGuidesTour( {
+		// If `?tour` is present, show the guided tour
+		if ( config.isEnabled( 'guided-tours' ) && context.query.tour ) {
+			context.store.dispatch( showGuidedTour( {
 				shouldShow: true,
+				shouldDelay: /^\/(checkout|plans\/select)/.test( path ),
 				tour: context.query.tour,
 			} ) );
 		}
@@ -354,6 +368,25 @@ function reduxStoreReady( reduxStore ) {
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
 		require( 'lib/rubberband-scroll-disable' )( document.body );
 	}
+
+	/*
+	 * Layouts with differing React mount-points will not reconcile correctly,
+	 * so remove an existing single-tree layout by re-rendering if necessary.
+	 *
+	 * TODO (@seear): React 15's new reconciliation algo may make this unnecessary
+	 */
+	page( '*', function( context, next ) {
+		const sectionNotIsomorphic = ! isSectionIsomorphic( context.store.getState() );
+		const previousLayoutIsSingleTree = ! isEmpty(
+			document.getElementsByClassName( 'wp-singletree-layout' )
+		);
+
+		if ( sectionNotIsomorphic && previousLayoutIsSingleTree ) {
+			debug( 'Re-rendering multi-tree layout' );
+			renderLayout( context.store );
+		}
+		next();
+	} );
 
 	detectHistoryNavigation.start();
 	page.start();

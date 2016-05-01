@@ -1,21 +1,24 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
+import { recordTracksEvent } from 'state/analytics/actions';
 
-import StandardPlugin from './plugin-types/standard-plugin';
-import standardPlugins from './standard-plugins';
+import Plugin from './plugin';
 
 export const StandardPluginsPanel = React.createClass( {
 	render() {
 		const {
 			displayCount,
-			plugins: givenPlugins = standardPlugins
+			onClick,
+			plugins = []
 		} = this.props;
-		
-		const plugins = givenPlugins.slice( 0, displayCount );
+
+		const selectPlugin = name => () => onClick( name );
+		const shownPlugins = plugins.slice( 0, displayCount );
 
 		return (
 			<div>
@@ -24,11 +27,13 @@ export const StandardPluginsPanel = React.createClass( {
 						<Gridicon icon="checkmark" />{ this.translate( 'Active' ) }
 					</Button>
 				</SectionHeader>
+
 				<CompactCard className="wpcom-plugins__standard-panel">
 					<div className="wpcom-plugins__list">
-						{ plugins.map( ( { name, supportLink, icon, category, description } ) =>
-							<StandardPlugin
-								{ ...{ name, key: name, supportLink, icon, category, description } }
+						{ shownPlugins.map( ( { name, descriptionLink, icon, category, description } ) =>
+							<Plugin
+								onClick={ () => onClick( name ) }
+								{ ...{ name, key: name, descriptionLink, icon, category, description } }
 							/>
 						) }
 					</div>
@@ -43,4 +48,17 @@ StandardPluginsPanel.propTypes = {
 	plugins: PropTypes.array
 };
 
-export default StandardPluginsPanel;
+const trackClick = name => recordTracksEvent(
+	'calypso_plugin_wpcom_click',
+	{
+		plugin_name: name,
+		plugin_plan: 'standard'
+	}
+);
+
+const mapDispatchToProps = dispatch => ( {
+	onClick: name => dispatch( trackClick( name ) )
+} );
+
+export default connect( null, mapDispatchToProps )( StandardPluginsPanel );
+

@@ -17,7 +17,7 @@ const abtest = require( 'lib/abtest' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	route = require( 'lib/route' ),
 	pageNotifier = require( 'lib/route/page-notifier' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	config = require( 'config' ),
 	feedStreamFactory = require( 'lib/feed-stream-store' ),
 	FeedStreamStoreActions = require( 'lib/feed-stream-store/actions' ),
@@ -99,6 +99,15 @@ function ensureStoreLoading( store, context ) {
 
 function setPageTitle( title ) {
 	titleActions.setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) );
+}
+
+function renderFeedError() {
+	var FeedError = require( 'reader/feed-error' );
+
+	ReactDom.render(
+		React.createElement( FeedError ),
+		document.getElementById( 'primary' )
+	);
 }
 
 module.exports = {
@@ -214,6 +223,22 @@ module.exports = {
 			),
 			document.getElementById( 'primary' )
 		);
+	},
+
+	feedDiscovery: function( context, next ) {
+		var feedLookup = require( 'lib/feed-lookup' );
+
+		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
+			feedLookup( context.params.feed_id )
+				.then( function( feedId ) {
+					page.redirect( `/read/feeds/${feedId}` );
+				} )
+				.catch( function() {
+					renderFeedError();
+				} );
+		} else {
+			next();
+		}
 	},
 
 	feedListing: function( context ) {
@@ -463,8 +488,8 @@ module.exports = {
 				React.createElement( ListStream, {
 					key: 'tag-' + context.params.user + '-' + context.params.list,
 					postStore: listStore,
-					owner: context.params.user,
-					slug: context.params.list,
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
 					setPageTitle: setPageTitle,
 					trackScrollPage: trackScrollPage.bind(
 						null,
@@ -598,21 +623,21 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagement, {
-				key: 'list-management-sites',
-				list: {
-					owner: context.params.user,
-					slug: context.params.list
-				},
-				tab: 'sites',
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				)
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( listManagement, {
+					key: 'list-management-sites',
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
+					tab: 'sites',
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						analyticsPageTitle,
+						mcKey
+					)
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},
@@ -628,21 +653,21 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagement, {
-				key: 'list-management-tags',
-				list: {
-					owner: context.params.user,
-					slug: context.params.list
-				},
-				tab: 'tags',
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				)
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( listManagement, {
+					key: 'list-management-tags',
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
+					tab: 'tags',
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						analyticsPageTitle,
+						mcKey
+					)
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},
@@ -658,14 +683,14 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagement, {
-				key: 'list-management-description-edit',
-				list: {
-					owner: context.params.user,
-					slug: context.params.list
-				},
-				tab: 'description-edit'
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( listManagement, {
+					key: 'list-management-description-edit',
+					owner: encodeURIComponent( context.params.user ),
+					slug: encodeURIComponent( context.params.list ),
+					tab: 'description-edit'
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},

@@ -161,6 +161,27 @@ module.exports = React.createClass( {
 		}
 	},
 
+	reset: function() {
+		this.cancelAnimationFrame();
+
+		this.scrollHelper = new ScrollHelper( this.boundsForRef );
+		this.scrollHelper.props = this.props;
+		if ( this._contextLoaded() ) {
+			this._scrollContainer = this.props.context || window;
+			this.scrollHelper.updateContextHeight( this.getCurrentContextHeight() );
+		}
+
+		this.isScrolling = false;
+
+		this.setState( {
+			firstRenderedIndex: 0,
+			topPlaceholderHeight: 0,
+			lastRenderedIndex: this.scrollHelper.initialLastRenderedIndex(),
+			bottomPlaceholderHeight: 0,
+			scrollTop: 0
+		} );
+	},
+
 	componentWillUnmount: function() {
 		this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
 		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );

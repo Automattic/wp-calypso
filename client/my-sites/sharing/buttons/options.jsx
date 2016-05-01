@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var MultiCheckbox = require( 'components/forms/multi-checkbox' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsOptions',

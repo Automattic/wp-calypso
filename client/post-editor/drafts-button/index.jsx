@@ -15,7 +15,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { getAllPostCount } from 'state/posts/counts/selectors';
 import { translate } from 'lib/mixins/i18n';
 
-function EditorDraftsButton( { count, onClick, jetpack, siteId } ) {
+function EditorDraftsButton( { count, onClick, jetpack, siteId, hideText } ) {
 	return (
 		<Button
 			compact borderless
@@ -27,7 +27,7 @@ function EditorDraftsButton( { count, onClick, jetpack, siteId } ) {
 			{ siteId && (
 				<QueryPostCounts siteId={ siteId } type="post" />
 			) }
-			<span>{ translate( 'Drafts' ) }</span>
+			{ ! hideText && <span>{ translate( 'Drafts' ) }</span> }
 			{ count && ! jetpack ? <Count count={ count } /> : null }
 		</Button>
 	);
@@ -37,7 +37,8 @@ EditorDraftsButton.propTypes = {
 	count: PropTypes.number,
 	onClick: PropTypes.func,
 	jetpack: PropTypes.bool,
-	siteId: PropTypes.number
+	siteId: PropTypes.number,
+	hideText: PropTypes.bool
 };
 
 export default connect( ( state ) => {

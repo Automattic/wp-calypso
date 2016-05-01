@@ -20,9 +20,6 @@ require( 'tinymce/plugins/paste/plugin.js' );
 require( 'tinymce/plugins/tabfocus/plugin.js' );
 require( 'tinymce/plugins/textcolor/plugin.js' );
 
-// TinyMCE plugins copied from .org
-require( './plugins/wptextpattern/plugin.js' );
-
 // TinyMCE plugins that we've forked or written ourselves
 import wpcomPlugin from './plugins/wpcom/plugin.js';
 import wpcomAutoresizePlugin from './plugins/wpcom-autoresize/plugin.js';
@@ -40,6 +37,8 @@ import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugi
 import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
 import contactFormPlugin from './plugins/contact-form/plugin';
 import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
+import wptextpatternPlugin from './plugins/wptextpattern/plugin';
+import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 
 [
 	wpcomPlugin,
@@ -57,7 +56,9 @@ import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
 	editorButtonAnalyticsPlugin,
 	calypsoAlertPlugin,
 	contactFormPlugin,
-	afterTheDeadlinePlugin
+	afterTheDeadlinePlugin,
+	wptextpatternPlugin,
+	toolbarPinPlugin
 ].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
@@ -119,6 +120,7 @@ const PLUGINS = [
 	'wpcom/editorbuttonanalytics',
 	'wpcom/calypsoalert',
 	'wpcom/tabindex',
+	'wpcom/toolbarpin',
 	'wpcom/contactform',
 	'wpcom/sourcecode',
 ];
@@ -152,8 +154,7 @@ module.exports = React.createClass( {
 		tabIndex: React.PropTypes.number,
 		isNew: React.PropTypes.bool,
 		onTextEditorChange: React.PropTypes.func,
-		onKeyUp: React.PropTypes.func,
-		onTogglePin: React.PropTypes.func
+		onKeyUp: React.PropTypes.func
 	},
 
 	contextTypes: {
@@ -174,8 +175,6 @@ module.exports = React.createClass( {
 	},
 
 	_editor: null,
-
-	_pinned: false,
 
 	componentWillMount: function() {
 		this._id = 'tinymce-' + _instance;
@@ -208,18 +207,12 @@ module.exports = React.createClass( {
 			this.bindEditorEvents();
 			editor.on( 'SetTextAreaContent', ( event ) => this.setTextAreaContent( event.content ) );
 
-			window.addEventListener( 'scroll', this.onScrollPinTools );
 			if ( ! viewport.isMobile() ) {
 				editor.once( 'PostRender', this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } ) );
 			}
 		}.bind( this );
 
 		this.localize();
-
-		let toolbar1 = [ 'wpcom_add_media', 'formatselect', 'bold', 'italic', 'bullist', 'numlist', 'link', 'blockquote', 'alignleft', 'aligncenter', 'alignright', 'spellchecker', 'wp_more', 'wpcom_advanced' ];
-		if ( config.isEnabled( 'post-editor/contact-form' ) ) {
-			toolbar1.splice( toolbar1.length - 1, 0, 'wpcom_add_contact_form' );
-		}
 
 		tinymce.init( {
 			selector: '#' + this._id,
@@ -291,7 +284,7 @@ module.exports = React.createClass( {
 			// future, we should calculate from the rendered editor bounds.
 			autoresize_min_height: Math.max( document.documentElement.clientHeight - 300, 300 ),
 
-			toolbar1: toolbar1.join(),
+			toolbar1: 'wpcom_add_media,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_add_contact_form,wpcom_advanced',
 			toolbar2: 'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',
 			toolbar4: '',
@@ -310,9 +303,6 @@ module.exports = React.createClass( {
 
 	componentWillUnmount: function() {
 		this.mounted = false;
-
-		window.removeEventListener( 'scroll', this.onScrollPinTools );
-
 		if ( this._editor ) {
 			this.destroyEditor();
 		}
@@ -346,31 +336,6 @@ module.exports = React.createClass( {
 				}
 			}
 		}.bind( this ) );
-	},
-
-	onScrollPinTools: function() {
-		const editor = this._editor;
-		if ( ! editor || this.props.mode === 'html' ) {
-			return;
-		}
-
-		const container = editor.getContainer();
-		const rect = container.getBoundingClientRect();
-
-		let newPinned;
-		if ( ! this._pinned && rect.top < 46 && viewport.isWithinBreakpoint( '>660px' ) ) {
-			newPinned = true;
-		} else if ( this._pinned && window.pageYOffset < 164 ) {
-			newPinned = false;
-		} else {
-			return;
-		}
-
-		this._pinned = newPinned;
-		editor.dom.toggleClass( editor.getContainer(), 'is-pinned', newPinned );
-		if ( this.props.onTogglePin ) {
-			this.props.onTogglePin( newPinned ? 'pin' : 'unpin' );
-		}
 	},
 
 	toggleEditor: function( options = { autofocus: true } ) {

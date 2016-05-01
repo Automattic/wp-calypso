@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getCurrentPlan } from 'lib/plans';
 import { getPlansBySite } from 'state/sites/plans/selectors';

@@ -21,6 +21,19 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 
 	return (
 		<div>
+			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
+
+			<PurchaseDetail
+				icon="speaker"
+				title={ i18n.translate( 'No Ads' ) }
+				description={
+					i18n.translate(
+						'Premium plan automatically removes all Ads from your site. ' +
+						'Now your visitors can enjoy your great content without distractions!'
+					)
+				}
+			/>
+
 			{ ! selectedFeature &&
 				<PurchaseDetail
 					icon="customize"
@@ -47,9 +60,6 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 				}
 				buttonText={ i18n.translate( 'Start a new post' ) }
 				href={ paths.newPost( selectedSite ) } />
-
-			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
-
 		</div>
 	);
 };

@@ -9,13 +9,14 @@ import isEmpty from 'lodash/isEmpty';
  * Internal dependencies
  */
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import useI18n from 'test/helpers/use-i18n';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'index', () => {
 	let flows, steps;
 
 	useFilesystemMocks( __dirname );
-
+	useI18n();
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/abtest', {
 			abtest: () => ''

@@ -7,7 +7,7 @@ import find from 'lodash/find';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import signupUtils from 'signup/utils';
 
 export default React.createClass( {

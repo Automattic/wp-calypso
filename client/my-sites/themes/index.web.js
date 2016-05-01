@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import config from 'config';
-import userFactory from 'lib/user';;
+import userFactory from 'lib/user';
 import { makeLoggedOutLayout } from 'controller';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { singleSite, multiSite, loggedOut, details } from './controller';
@@ -34,10 +34,10 @@ const themesRoutes = isLoggedIn
 const routes = Object.assign( {},
 	config.isEnabled( 'manage/themes' ) ? designRoutes : {},
 	config.isEnabled( 'manage/themes/details' ) ? themesRoutes : {}
-)
+);
 
 export default function( router ) {
 	Object.keys( routes ).forEach( route => {
 		router( route, ...routes[ route ] );
-	} )
-};
+	} );
+}

@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import i18n from 'lib/mixins/i18n';
 import userSettings from 'lib/user-settings';
 import titleActions from 'lib/screen-title/actions';

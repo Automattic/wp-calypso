@@ -42,8 +42,14 @@
 		&:after {
 			position: fixed;
 				top: 47px;
-			border-left-width: 0px;
-			border-right-width: 0px;
+			border-top-width: 0;
+			border-left-width: 0;
+			border-right-width: 0;
+		}
+
+		& > .mce-toolbar-grp > .mce-container-body > .mce-container {
+			padding-left: 1px;
+			padding-right: 1px;
 		}
 
 		& > .mce-toolbar-grp {

@@ -45,31 +45,6 @@ export default React.createClass( {
 						</PlanCompareCardItem>
 					</PlanCompareCard>
 				</div>
-				<br />
-				<div>
-					<PlanCompareCard
-						title="Premium"
-						line="$99 per year"
-						buttonName="Upgrade"
-						currentPlan={ false }
-						popularRibbon={ true }>
-						<PlanCompareCardItem highlight={ true }>
-							13GB Space
-						</PlanCompareCardItem>
-						<PlanCompareCardItem>
-							Custom Domain
-						</PlanCompareCardItem>
-						<PlanCompareCardItem>
-							No Ads
-						</PlanCompareCardItem>
-						<PlanCompareCardItem>
-							Custom Design
-						</PlanCompareCardItem>
-						<PlanCompareCardItem>
-							VideoPress
-						</PlanCompareCardItem>
-					</PlanCompareCard>
-				</div>
 			</div>
 		);
 	}

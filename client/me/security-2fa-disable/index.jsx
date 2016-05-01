@@ -13,7 +13,7 @@ var FormButton = require( 'components/forms/form-button' ),
 	FormSectionHeading = require( 'components/forms/form-section-heading' ),
 	Security2faStatus = require( 'me/security-2fa-status' ),
 	Security2faCodePrompt = require( 'me/security-2fa-code-prompt' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	successNotice = require( 'state/notices/actions' ).successNotice;
 
 const Security2faDisable = React.createClass( {
