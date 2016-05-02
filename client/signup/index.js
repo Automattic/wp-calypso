@@ -38,4 +38,8 @@ module.exports = function() {
 			jetpackConnectController.authorizeForm
 		);
 	}
+
+	if ( config.isEnabled( 'jetpack/sso' ) ) {
+		page( '/jetpack/sso', jetpackConnectController.saveQueryObject, jetpackConnectController.sso );
+	}
 };
