@@ -12,6 +12,7 @@ var Domains = require( './lib/domains' );
 var Domain = require( './lib/domain' );
 var Users = require( './lib/users' );
 var Batch = require( './lib/batch' );
+var Plans = require( './lib/plans' );
 var Req = require( './lib/util/request' );
 var sendRequest = require( './lib/util/send-request' );
 var Pinghub = require( './lib/util/pinghub' );
@@ -123,6 +124,15 @@ WPCOM.prototype.site = function( id ) {
  */
 WPCOM.prototype.users = function() {
 	return new Users( this );
+};
+
+/**
+ * Return `Plans` object instance
+ *
+ * @return {Plans} Plans instance
+ */
+WPCOM.prototype.plans = function() {
+	return new Plans( this );
 };
 
  /**
