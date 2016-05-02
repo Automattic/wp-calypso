@@ -49,11 +49,13 @@ export default React.createClass( {
 		}
 
 		MediaActions.clearValidationErrors( this.props.site.ID );
-		MediaActions.add( this.props.site.ID, this.state.value );
+		MediaActions.add( this.props.site.ID, this.state.value )
+			.then( () => {
+				this.replaceState( this.getInitialState() );
+				this.props.onAddMedia();
+				this.props.onClose();
+			} );
 
-		this.replaceState( this.getInitialState() );
-		this.props.onAddMedia();
-		this.props.onClose();
 		analytics.mc.bumpStat( 'editor_upload_via', 'url' );
 		event.preventDefault();
 	},
