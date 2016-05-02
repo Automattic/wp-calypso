@@ -114,7 +114,8 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderPostFormats: function() {
-		if ( ! this.props.site || ! this.props.post ) {
+		if ( ! this.props.site || ! this.props.post ||
+				! this.currentPostTypeSupports( 'post-formats' ) ) {
 			return;
 		}
 
@@ -138,6 +139,10 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderFeaturedImage: function() {
+		if ( ! this.currentPostTypeSupports( 'thumbnail' ) ) {
+			return;
+		}
+
 		return (
 			<Accordion
 				title={ this.translate( 'Featured Image' ) }
