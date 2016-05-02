@@ -3,7 +3,6 @@
  */
 import { combineReducers } from 'redux';
 import merge from 'lodash/merge';
-import get from 'lodash/get';
 import keyBy from 'lodash/keyBy';
 
 /**
@@ -29,17 +28,10 @@ import {
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case TERMS_RECEIVE:
-			const existingSiteTaxonomies = get( state, [ action.siteId ], {} );
-			const existingTaxonomyTerms = get( state, [ action.siteId, action.taxonomy ], {} );
-
-			const newTaxonomyTerms = merge( {}, existingTaxonomyTerms, keyBy( action.terms, 'ID' ) );
-
-			const newSiteTaxonomies = merge( {}, existingSiteTaxonomies, {
-				[ action.taxonomy ]: newTaxonomyTerms
-			} );
-
 			return merge( {}, state, {
-				[ action.siteId ]: newSiteTaxonomies
+				[ action.siteId ]: {
+					[ action.taxonomy ]: keyBy( action.terms, 'ID' )
+				}
 			} );
 
 		case DESERIALIZE:
