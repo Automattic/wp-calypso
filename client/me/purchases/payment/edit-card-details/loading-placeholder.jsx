@@ -16,7 +16,7 @@ import titles from 'me/purchases/titles';
 
 const EditCardDetailsLoadingPlaceholder = () => {
 	return (
-		<LoadingPlaceholder title={ titles.editCardDetails }>
+		<LoadingPlaceholder title={ titles.addCardDetails }>
 			<Card className="edit-card-details__content">
 				<div className="credit-card-form">
 					<div className="credit-card-form__field">
