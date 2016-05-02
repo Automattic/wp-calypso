@@ -15,6 +15,7 @@ import analytics from 'lib/analytics';
 import sitesList from 'lib/sites-list';
 import { getValidFeatureKeys, hasFeature } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 const sites = sitesList();
 
@@ -56,13 +57,20 @@ export default React.createClass( {
 		this.props.onClick();
 	},
 
-	componentDidMount() {
-		if ( this.props.event || this.props.feature ) {
-			analytics.tracks.recordEvent( 'calypso_upgrade_nudge_impression', {
-				cta_name: this.props.event,
-				cta_feature: this.props.feature
-			} );
+	shouldDisplay( site ) {
+		if ( site && this.props.feature ) {
+			if ( hasFeature( this.props.feature, site.siteID ) ) {
+				return false;
+			}
+		} else if ( site && ! isFreePlan( site.plan ) ) {
+			return false;
 		}
+
+		if ( ! this.props.jetpack && site.jetpack || this.props.jetpack && ! site.jetpack ) {
+			return false;
+		}
+
+		return true;
 	},
 
 	render() {
@@ -71,15 +79,7 @@ export default React.createClass( {
 		const site = sites.getSelectedSite();
 		let href = this.props.href;
 
-		if ( site && this.props.feature ) {
-			if ( hasFeature( this.props.feature, site.siteID ) ) {
-				return null;
-			}
-		} else if ( site && ! isFreePlan( site.plan ) ) {
-			return null;
-		}
-
-		if ( ! this.props.jetpack && site.jetpack || this.props.jetpack && ! site.jetpack ) {
+		if ( ! this.shouldDisplay( site ) ) {
 			return null;
 		}
 
@@ -118,6 +118,12 @@ export default React.createClass( {
 						{ this.props.message }
 					</span>
 				</div>
+				{ ( this.props.event || this.props.feature ) &&
+					<TrackComponentView eventName={ 'calypso_upgrade_nudge_impression' } eventProperties={ {
+						cta_name: this.props.event,
+						cta_feature: this.props.feature
+					} } />
+				}
 			</Card>
 		);
 	}
