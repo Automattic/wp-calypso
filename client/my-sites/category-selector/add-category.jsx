@@ -22,7 +22,8 @@ var Dialog = require( 'components/dialog' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	InfoPopover = require( 'components/info-popover' ),
 	FormLegend = require( 'components/forms/form-legend' ),
-	FormFieldset = require( 'components/forms/form-fieldset' );
+	FormFieldset = require( 'components/forms/form-fieldset' ),
+	viewport = require( 'lib/viewport' );
 
 /**
  * Component
@@ -128,8 +129,12 @@ module.exports = React.createClass( {
 		return ! error;
 	},
 
-	validateInput: function() {
-		this.isValid();
+	validateInput: function( event ) {
+		if ( 13 === event.keyCode ) {
+			this.saveCategory();
+		} else {
+			this.isValid();
+		}
 	},
 
 	saveCategory: function() {
@@ -170,10 +175,20 @@ module.exports = React.createClass( {
 				<Button borderless compact={ true } onClick={ this.openDialog }>
 					<Gridicon icon="folder" /> { addCategoryString }
 				</Button>
-				<Dialog isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this.closeDialog } additionalClassNames="category-selector__add-category-dialog">
+				<Dialog
+					autoFocus={ false }
+					isVisible={ this.state.showDialog }
+					buttons={ buttons }
+					onClose={ this.closeDialog }
+					additionalClassNames="category-selector__add-category-dialog">
 					<FormSectionHeading>{ addCategoryString }</FormSectionHeading>
 					<FormFieldset>
-						<FormTextInput placeholder={ this.translate( 'New category name' ) } ref="categoryName" isError={ isError } onKeyUp={ this.validateInput } />
+						<FormTextInput
+							autoFocus={ this.state.showDialog && ! viewport.isMobile() }
+							placeholder={ this.translate( 'New category name' ) }
+							ref="categoryName"
+							isError={ isError }
+							onKeyUp={ this.validateInput } />
 						{ isError ? <FormInputValidation isError={ true } text={ this.state.error } /> : null }
 					</FormFieldset>
 					<FormFieldset>
