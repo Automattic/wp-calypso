@@ -5,7 +5,8 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	store = require( 'store' ),
 	page = require( 'page' ),
-	get = require( 'lodash/get' );
+	get = require( 'lodash/get' ),
+	ReactRedux = require( 'react-redux' );
 
 /**
  * Internal Dependencies
@@ -188,21 +189,23 @@ module.exports = {
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
 		ReactDom.render(
-			React.createElement( StatsComponent, {
-				site: site,
-				followList: followList,
-				streakList: streakList,
-				allTimeList: allTimeList,
-				statSummaryList: statSummaryList,
-				insightsList: insightsList,
-				commentsList: commentsList,
-				tagsList: tagsList,
-				publicizeList: publicizeList,
-				wpcomFollowersList: wpcomFollowersList,
-				emailFollowersList: emailFollowersList,
-				commentFollowersList: commentFollowersList,
-				summaryDate: summaryDate
-			} ),
+			React.createElement( ReactRedux.Provider, { store: context.store },
+				React.createElement( StatsComponent, {
+					site: site,
+					followList: followList,
+					streakList: streakList,
+					allTimeList: allTimeList,
+					statSummaryList: statSummaryList,
+					insightsList: insightsList,
+					commentsList: commentsList,
+					tagsList: tagsList,
+					publicizeList: publicizeList,
+					wpcomFollowersList: wpcomFollowersList,
+					emailFollowersList: emailFollowersList,
+					commentFollowersList: commentFollowersList,
+					summaryDate: summaryDate
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},

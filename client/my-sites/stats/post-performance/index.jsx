@@ -2,44 +2,32 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import PostListStoreFactory from 'lib/posts/post-list-store-factory';
 import PostStatsStore from 'lib/post-stats/store';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import Emojify from 'components/emojify';
-import actions from 'lib/posts/actions';
 import SectionHeader from 'components/section-header';
+import QueryPosts from 'components/data/query-posts';
+import {
+	getSitePostsForQuery,
+	isRequestingSitePostsForQuery
+} from 'state/posts/selectors';
+import { decodeEntities } from 'lib/formatting';
 
-const PostListStore = new PostListStoreFactory;
-
-function getPostState() {
-	const posts = PostListStore.getAll();
-	const post = posts.length ? posts[ 0 ] : null;
-
+function getPostState( post ) {
 	return {
-		post: post,
-		postID: post ? post.ID : null,
-		loading: PostListStore.isFetchingNextPage(),
 		views: post ? PostStatsStore.getItem( 'totalViews', post.site_ID, post.ID ) : String.fromCharCode( 8211 )
 	};
 }
 
-function queryPosts( siteID ) {
-	actions.queryPosts( {
-		type: 'post',
-		siteID: siteID,
-		status: 'published'
-	} );
-	actions.fetchNextPage();
-}
-
-export default React.createClass( {
+const StatsPostPerformance = React.createClass( {
 
 	displayName: 'StatsPostPerformance',
 
@@ -48,40 +36,38 @@ export default React.createClass( {
 			PropTypes.bool,
 			PropTypes.object
 		] ),
-		siteID: PropTypes.number
+		siteID: PropTypes.number,
+		query: PropTypes.object,
+		post: PropTypes.object,
+		loading: PropTypes.bool
 	},
 
 	componentWillMount() {
-		PostListStore.on( 'change', this.onPostsChange );
-		const site = this.props.site;
-		if ( site && site.ID ) {
-			queryPosts( site.ID );
+		const post = this.props.post;
+		if ( post ) {
+			this.updatePostViews( post );
 		}
 		PostStatsStore.on( 'change', this.onViewsChange );
 	},
 
 	componentWillUnmount() {
-		PostListStore.off( 'change', this.onPostsChange );
 		PostStatsStore.off( 'change', this.onViewsChange );
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.site.ID !== this.props.siteID ) {
-			queryPosts( nextProps.site.ID );
+		if ( nextProps.post !== this.props.post ) {
+			this.updatePostViews( nextProps.post );
 		}
 	},
 
 	getInitialState() {
 		return {
-			loading: true,
-			post: null,
-			postID: null,
 			views: null
 		};
 	},
 
-	onPostsChange() {
-		const postState = getPostState();
+	updatePostViews( post ) {
+		const postState = getPostState( post );
 
 		this.setState( postState );
 	},
@@ -99,15 +85,16 @@ export default React.createClass( {
 	getTotalViews() {
 		let views;
 
-		if ( this.state.post ) {
-			views = PostStatsStore.getItem( 'totalViews', this.props.site.ID, this.state.post.ID );
+		if ( this.props.post ) {
+			views = PostStatsStore.getItem( 'totalViews', this.props.site.ID, this.props.post.ID );
 		}
 
 		return views;
 	},
 
 	buildTabs( summaryUrl ) {
-		const { post, loading, views } = this.state;
+		const { views } = this.state;
+		const { post, loading } = this.props;
 		const tabClassName = 'is-post-summary';
 
 		const tabs = [
@@ -141,7 +128,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { post, loading } = this.state;
+		const { site, query, post, loading } = this.props;
 		const postTime = post ? this.moment( post.date ) : this.moment();
 		const cardClass = classNames( 'stats-module', 'stats__latest-post-summary', 'is-site-overview', {
 			'is-loading': loading,
@@ -155,12 +142,16 @@ export default React.createClass( {
 			if ( ! post.title ) {
 				postTitle = this.translate( '(no title)' );
 			} else {
-				postTitle = post.title;
+				postTitle = decodeEntities( post.title );
 			}
 		}
 
 		return (
 			<div>
+				{ site
+					? <QueryPosts siteId={ site.ID } query={ query } />
+					: null
+				}
 				<SectionHeader label={ this.translate( 'Latest Post Summary' ) } href={ summaryUrl } />
 				<Card className={ cardClass }>
 					<div className="module-content-text">
@@ -192,3 +183,15 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state, ownProps ) => {
+	const { site } = ownProps;
+	const query = { status: 'published' };
+	const posts = site ? getSitePostsForQuery( state, site.ID, query ) : null;
+	const post = posts && posts.length ? posts[ 0 ] : null;
+	return {
+		query,
+		post,
+		loading: isRequestingSitePostsForQuery( state, site.ID, query )
+	};
+} )( StatsPostPerformance );
