@@ -50,5 +50,7 @@ module.exports = function() {
 		page.exit( '/read/blogs/:blog/posts/:post', controller.resetTitle );
 	}
 
+	// Automattic Employee Posts
 	page( '/read/a8c', controller.updateLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
+
 };
