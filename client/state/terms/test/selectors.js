@@ -21,11 +21,13 @@ describe( 'selectors', () => {
 		it( 'should return null if no taxonomies exist for site', () => {
 			const terms = getSiteTaxonomyTerms( {
 				terms: {
-					2916284: {
-						'jetpack-portfolio': {
-							111: {
-								ID: 111,
-								name: 'Chicken and a biscuit'
+					items: {
+						2916284: {
+							'jetpack-portfolio': {
+								111: {
+									ID: 111,
+									name: 'Chicken and a biscuit'
+								}
 							}
 						}
 					}
@@ -38,15 +40,17 @@ describe( 'selectors', () => {
 		it( 'should return array of matching terms for site taxonomy combo', () => {
 			const terms = getSiteTaxonomyTerms( {
 				terms: {
-					2916284: {
-						'jetpack-portfolio': {
-							111: {
-								ID: 111,
-								name: 'Chicken and a biscuit'
-							},
-							112: {
-								ID: 112,
-								name: 'Ribs'
+					items: {
+						2916284: {
+							'jetpack-portfolio': {
+								111: {
+									ID: 111,
+									name: 'Chicken and a biscuit'
+								},
+								112: {
+									ID: 112,
+									name: 'Ribs'
+								}
 							}
 						}
 					}

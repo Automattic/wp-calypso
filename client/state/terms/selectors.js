@@ -13,7 +13,7 @@ import values from 'lodash/values';
  * @return {Array}           Terms
  */
 export function getSiteTaxonomyTerms( state, siteId, taxonomy ) {
-	const terms = get( state.terms, [ siteId, taxonomy ] );
+	const terms = get( state.terms, [ 'items', siteId, taxonomy ] );
 
 	if ( ! terms ) {
 		return null;
