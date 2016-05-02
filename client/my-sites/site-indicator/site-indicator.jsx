@@ -42,9 +42,6 @@ export default React.createClass( {
 		if ( site.unreachable ) {
 			return true;
 		}
-		if ( site.hasMinimumJetpackVersion && site.update === 'error' ) {
-			return true;
-		}
 		return false;
 	},
 
