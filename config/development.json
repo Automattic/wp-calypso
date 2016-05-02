@@ -114,7 +114,6 @@
 		"upgrades/in-app-purchase": false,
 		"upgrades/paypal": true,
 		"upgrades/premium-themes": true,
-		"upgrades/product-nudge-success": true,
 		"vip": false,
 		"vip/backups": true,
 		"vip/billing": true,
