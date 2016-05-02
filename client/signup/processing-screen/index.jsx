@@ -12,7 +12,8 @@ var React = require( 'react' ),
 	filter = require( 'lodash/filter' ),
 	pick = require( 'lodash/pick' ),
 	Card = require( 'components/card' ),
-	Button = require( 'components/button' );
+	Button = require( 'components/button' ),
+	Gridicon = require( 'components/gridicon' );
 
 /**
  * Internal dependencies
@@ -67,23 +68,23 @@ module.exports = React.createClass( {
 					<p className="step-header__subtitle">{ this.translate( "We're getting your site ready. It'll only take a few seconds."  ) }</p>
 				</header>
 
-				<div className="email-confirmation__waiting">Just a minute&hellip;</div>
+				<Button primary disabled className="email-confirmation__button">Just a minute&hellip;</Button>
 
-				<p className="email-confirmation__reminder">{ this.translate( " We recommend you confirm your email address now." ) }</p>
-
-				<Card className="signup__email-confirmation">
+				<div className="signup__email-confirmation">
 					<div className="email-confirmation__step">
 						<img className="email-confirmation__step-illustration" src="https://cldup.com/HTmwBYXkOL.svg"/>
 						<h2 className="email-confirmation__step-title">Check your email</h2>
-						<p className="email-confirmation__step-description">areally.longaddress3293@gmail.com</p>
 					</div>
-					<span className="email-confirmation__then">then</span>
+					
+					<Gridicon icon="arrow-right" className="email-confirmation__arrow" />
+					
 					<div className="email-confirmation__step">
 						<img className="email-confirmation__step-illustration" src="https://cldup.com/QOyStuYoQm.svg"/>
-						<h2 className="email-confirmation__step-title">Click the blue button</h2>
-						<p className="email-confirmation__step-description"><a href="#">Didn't get the email?</a></p>
+						<h2 className="email-confirmation__step-title">Click the button</h2>
 					</div>
-				</Card>
+
+					<p className="email-confirmation__reminder">{ this.translate( "Please use this time to confirm your email address." ) }</p>
+				</div>
 				
 				<div className="signup-processing-screen__loader">{ this.translate( 'Loading…' ) }</div>
 			</div>
