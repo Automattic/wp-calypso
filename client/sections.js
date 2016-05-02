@@ -222,6 +222,14 @@ if ( config.isEnabled( 'reader' ) ) {
 	} );
 
 	sections.push( {
+		name: 'reader-post-recomendations',
+		paths: [ '/recommendations' ],
+		module: 'reader/recommendations',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	sections.push( {
 		name: 'discover',
 		paths: [ '/discover' ],
 		module: 'reader/discover',

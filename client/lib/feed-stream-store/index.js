@@ -140,6 +140,19 @@ function getStoreForFeatured( storeId ) {
 	} );
 }
 
+function getStoreForWarmstart( storeId ) {
+	var fetcher = function( query, callback ) {
+			wpcomUndoc.readWarmstart( query, callback );
+		};
+
+	return new PagedStream( {
+		id: storeId,
+		fetcher: fetcher,
+		keyMaker: siteKeyMaker,
+		perPage: 5
+	} );
+}
+
 function feedStoreFactory( storeId ) {
 	var store = FeedStreamCache.get( storeId );
 
@@ -170,6 +183,8 @@ function feedStoreFactory( storeId ) {
 			onUpdateFetch: limitSiteParamsForLikes,
 			dateProperty: 'date_liked'
 		} );
+	} else if ( storeId.indexOf( 'warmstart' ) === 0 ) {
+		store = getStoreForWarmstart( storeId );
 	} else if ( storeId.indexOf( 'feed:' ) === 0 ) {
 		store = getStoreForFeed( storeId );
 	} else if ( storeId.indexOf( 'tag:' ) === 0 ) {
