@@ -32,7 +32,7 @@ export function showGuidedTour( { shouldShow, shouldDelay = false, tour = 'main'
 		tour,
 	} );
 
-	return withAnalytics( trackEvent, showAction );
+	return shouldDelay ? showAction : withAnalytics( trackEvent, showAction );
 }
 
 export function quitGuidedTour( { tour = 'main', stepName, finished } ) {
