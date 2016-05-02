@@ -2,6 +2,7 @@
  * External dependencies
  */
 const debug = require( 'debug' )( 'calypso:jetpack-connect:actions' );
+import pick from 'lodash/pick';
 
 /**
  * Internal dependencies
@@ -20,7 +21,11 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
-	JETPACK_CONNECT_STORE_SESSION
+	JETPACK_CONNECT_STORE_SESSION,
+	JETPACK_CONNECT_SSO_VALIDATE,
+	JETPACK_CONNECT_SSO_AUTHORIZE,
+	JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
+	JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import config from 'config';
@@ -197,6 +202,54 @@ export default {
 					siteId: client_id,
 					data: null,
 					error: error
+				} );
+			} );
+		};
+	},
+
+	validateSSONonce( siteId, ssoNonce ) {
+		return ( dispatch ) => {
+			debug( 'Attempting to validate SSO for ' + siteId );
+			dispatch( {
+				type: JETPACK_CONNECT_SSO_VALIDATE,
+				siteId
+			} );
+
+			return wpcom.undocumented().jetpackValidateSSONonce( siteId, ssoNonce ).then( ( data ) => {
+				dispatch( {
+					type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
+					error: false,
+					success: data.success
+				} );
+			} ).catch( ( error ) => {
+				dispatch( {
+					type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
+					error: pick( error, [ 'error', 'status', 'message' ] ),
+					success: false
+				} );
+			} );
+		};
+	},
+
+	authorizeSSO( siteId, ssoNonce ) {
+		return ( dispatch ) => {
+			debug( 'Attempting to authorize SSO for ' + siteId );
+			dispatch( {
+				type: JETPACK_CONNECT_SSO_AUTHORIZE,
+				siteId
+			} );
+
+			return wpcom.undocumented().jetpackAuthorizeSSONonce( siteId, ssoNonce ).then( ( data ) => {
+				dispatch( {
+					type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
+					error: false,
+					ssoUrl: data.sso_url
+				} );
+			} ).catch( ( error ) => {
+				dispatch( {
+					type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
+					error: pick( error, [ 'error', 'status', 'message' ] ),
+					ssoUrl: false
 				} );
 			} );
 		};
