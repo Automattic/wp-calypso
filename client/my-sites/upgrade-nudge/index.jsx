@@ -15,6 +15,7 @@ import analytics from 'lib/analytics';
 import sitesList from 'lib/sites-list';
 import { getValidFeatureKeys, hasFeature } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 const sites = sitesList();
 
@@ -72,19 +73,6 @@ export default React.createClass( {
 		return true;
 	},
 
-	componentDidMount() {
-		const site = sites.getSelectedSite();
-		if (
-			this.shouldDisplay( site ) &&
-			( this.props.event || this.props.feature )
-		) {
-			analytics.tracks.recordEvent( 'calypso_upgrade_nudge_impression', {
-				cta_name: this.props.event,
-				cta_feature: this.props.feature
-			} );
-		}
-	},
-
 	render() {
 		const classes = classNames( this.props.className, 'upgrade-nudge' );
 
@@ -130,6 +118,12 @@ export default React.createClass( {
 						{ this.props.message }
 					</span>
 				</div>
+				{ ( this.props.event || this.props.feature ) &&
+					<TrackComponentView eventName={ 'calypso_upgrade_nudge_impression' } eventProperties={ {
+						cta_name: this.props.event,
+						cta_feature: this.props.feature
+					} } />
+				}
 			</Card>
 		);
 	}
