@@ -20,7 +20,12 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
-	JETPACK_CONNECT_STORE_SESSION
+	JETPACK_CONNECT_STORE_SESSION,
+	JETPACK_CONNECT_APPROVE_SSO,
+	JETPACK_CONNECT_SSO_VALIDATE,
+	JETPACK_CONNECT_SSO_AUTHORIZE,
+	JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
+	JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import config from 'config';
@@ -197,6 +202,48 @@ export default {
 					siteId: client_id,
 					data: null,
 					error: error
+				} );
+			} );
+		};
+	},
+
+	validateSSONonce( siteId, ssoNonce ) {
+		return ( dispatch ) => {
+			debug( 'Attempting to validate SSO for ' + siteId );
+			dispatch( {
+				type: JETPACK_CONNECT_SSO_VALIDATE,
+				siteId
+			} );
+			wpcom.undocumented().jetpackValidateSSONonce( siteId, ssoNonce, ( error, data ) => {
+				if ( error ) {
+					debug( 'Error validating SSO for ' + siteId );
+				}
+				dispatch( {
+					type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
+					siteId,
+					error,
+					data
+				} );
+			} );
+		};
+	},
+
+	authorizeSSO( siteId, ssoNonce ) {
+		return ( dispatch ) => {
+			debug( 'Attempting to authorize SSO for ' + siteId );
+			dispatch( {
+				type: JETPACK_CONNECT_SSO_AUTHORIZE,
+				siteId
+			} );
+			wpcom.undocumented().jetpackAuthorizeSSONonce( siteId, ssoNonce, ( error, data ) => {
+				if ( error ) {
+					debug( 'Error authorize SSO for ' + siteId );
+				}
+				dispatch( {
+					type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
+					siteId,
+					error,
+					data
 				} );
 			} );
 		};
