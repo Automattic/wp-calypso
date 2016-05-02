@@ -68,10 +68,6 @@ JetpackSite.prototype.fetchAvailableUpdates = function() {
 	wpcom.undocumented().getAvailableUpdates( this.ID, function( error, data ) {
 		if ( error ) {
 			debug( 'error fetching Updates data from api', error );
-			// 403 is returned when the user does not have manage capabilities.
-			if ( 403 !== error.statusCode && ! ( this.update instanceof Object ) ) {
-				this.set( { update: 'error', unreachable: true } );
-			}
 			return;
 		}
 		this.set( { update: data } );
