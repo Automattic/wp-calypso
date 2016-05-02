@@ -31,13 +31,19 @@ module.exports = React.createClass( {
 	},
 
 	uploadFiles: function( event ) {
-		if ( event.target.files && this.props.site ) {
-			MediaActions.clearValidationErrors( this.props.site.ID );
-			MediaActions.add( this.props.site.ID, event.target.files );
-		}
+		let addMedia = () => {
+			if ( event.target.files && this.props.site ) {
+				MediaActions.clearValidationErrors( this.props.site.ID );
+				return MediaActions.add( this.props.site.ID, event.target.files );
+			}
+			return Promise.resolve();
+		};
 
-		ReactDom.findDOMNode( this.refs.form ).reset();
-		this.props.onAddMedia();
+		addMedia().then( () => {
+			ReactDom.findDOMNode( this.refs.form ).reset();
+			this.props.onAddMedia();
+		} );
+
 		analytics.mc.bumpStat( 'editor_upload_via', 'add_button' );
 	},
 
