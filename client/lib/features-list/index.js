@@ -14,6 +14,7 @@ var wpcom = require( 'lib/wp' ),
 /**
  * PlansList component
  *
+ * @return {FeaturesList} FeaturesList instance
  * @api public
  */
 function FeaturesList() {
@@ -31,7 +32,9 @@ Emitter( FeaturesList.prototype );
 
 /**
  * Get list of features from current object or store,
- * trigger fetch on first request to update stale data
+ * trigger fetch on first request to update stale data.
+ *
+ * @return {Array} array of list of features
  */
 FeaturesList.prototype.get = function() {
 	var data;
@@ -75,13 +78,14 @@ FeaturesList.prototype.fetch = function() {
 
 		this.emit( 'change' );
 		store.set( 'FeaturesList', features );
-
 	}.bind( this ) );
 };
 
 /**
  * Initialize data with Feature objects
- **/
+ *
+ * @param {Array} features - features array
+ */
 FeaturesList.prototype.initialize = function( features ) {
 	this.data = features;
 	this.initialized = true;
@@ -92,21 +96,25 @@ FeaturesList.prototype.initialize = function( features ) {
  *
  * @param {array} data - raw data
  * @return {array} a list of features
- **/
+ */
 FeaturesList.prototype.parse = function( data ) {
 	return reject( data, '_headers' );
 };
 
 /**
  * Update features list
- **/
+ *
+ * @param {Array} features - features array
+ */
 FeaturesList.prototype.update = function( features ) {
 	this.data = features;
 };
 
 /**
  * Check whether we have data yet
- **/
+ *
+ * @return {Boolean} data is already?
+ */
 FeaturesList.prototype.hasLoadedFromServer = function() {
 	return this.initialized;
 };
