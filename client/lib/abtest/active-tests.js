@@ -140,8 +140,8 @@ module.exports = {
 	wpcomPluginsInSidebar: {
 		datestamp: '20160428',
 		variations: {
-			showPlugins: 90,
-			hidePlugins: 10
+			showPlugins: 50,
+			hidePlugins: 50
 		},
 		defaultVariation: 'showPlugins',
 		allowExistingUsers: true,
