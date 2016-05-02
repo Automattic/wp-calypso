@@ -87,7 +87,7 @@ describe( 'MediaActions', function() {
 				return Promise.resolve( 'blob:123' );
 			}
 		} );
-		MediaActions = rewire( '../actions' );
+		MediaActions = require( '../actions' );
 	} );
 
 	beforeEach( function() {
