@@ -4,6 +4,7 @@ import tinymce from 'tinymce/tinymce';
 import { renderToString } from 'react-dom/server';
 
 import Gridicon from 'components/gridicon';
+import i18n from 'lib/mixins/i18n';
 
 import menuItems from './menu-items';
 
@@ -20,7 +21,7 @@ const initialize = editor => {
 
 	editor.addButton( 'wpcom_insert_menu', {
 		type: 'splitbutton',
-		title: 'Insert content',
+		title: i18n.translate( 'Insert content' ),
 		classes: 'btn wpcom-insert-menu insert-menu',
 		cmd: menuItems[0].cmd,
 		menu: menuItems.map( ( { name } ) => editor.menuItems[ name ] ),

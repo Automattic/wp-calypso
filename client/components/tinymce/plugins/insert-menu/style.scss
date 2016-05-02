@@ -30,31 +30,31 @@
 	padding-left: 8px;
 }
 
-.wpcom-insert-menu__menu-icon {
-	fill: $gray;
-
-	&:hover {
-		fill: $blue-medium;
-	}
-}
-
 .mce-container .wpcom-insert-menu__menu-label {
 	color: darken( $gray, 30% );
 	display: inline-block;
 	font-family: $sans;
 	margin-left: 8px;
 	margin-top: 2px;
-
-	&:hover {
-		color: $blue-medium;
-	}
 }
 
-.mce-container.mce-menu .mce-container-body {
-	padding: 0 16px;
-	box-sizing: border-box;
+.wpcom-insert-menu__menu-icon {
+	fill: $gray;
 }
 
 .mce-container.mce-menu .mce-container-body .mce-wpcom-insert-menu__menu-item {
-	padding: 9px 0;
+	padding: 9px 16px;
+	margin: none;
+	border: none;
+	
+	&:hover {
+		
+		.wpcom-insert-menu__menu-label {
+			color: $blue-medium;
+		}
+		
+		.wpcom-insert-menu__menu-icon {
+			fill: $blue-medium;
+		}
+	}
 }

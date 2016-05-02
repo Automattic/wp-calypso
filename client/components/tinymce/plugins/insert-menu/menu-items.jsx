@@ -2,6 +2,7 @@ import React from 'react';
 
 import Gridicon from 'components/gridicon';
 import SocialLogo from 'components/social-logo';
+import i18n from 'lib/mixins/i18n';
 
 const GridiconButton = ( { icon, label } ) => (
 	<div>
@@ -21,13 +22,13 @@ export default [
 	{
 		name: 'insert_media_item',
 		icon: 'add-image',
-		item: <GridiconButton icon="image-multiple" label={ 'Add Media' } />,
+		item: <GridiconButton icon="image-multiple" label={ i18n.translate( 'Add Media' ) } />,
 		cmd: 'wpcomAddMedia'
 	},
 	{
 		name: 'insert_contact_form',
 		icon: 'mention',
-		item: <GridiconButton icon="mention" label={ 'Add Contact Form' } />,
+		item: <GridiconButton icon="mention" label={ i18n.translate( 'Add Contact Form' ) } />,
 		cmd: 'wpcomContactForm'
 	}
 ];

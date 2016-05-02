@@ -287,7 +287,9 @@ module.exports = React.createClass( {
 			// future, we should calculate from the rendered editor bounds.
 			autoresize_min_height: Math.max( document.documentElement.clientHeight - 300, 300 ),
 
-			toolbar1: 'wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_advanced',
+			toolbar1: config.isEnabled( 'post-editor/insert-menu' )
+				? 'wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_advanced'
+				: 'wpcom_add_media,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_add_contact_form,wpcom_advanced',
 			toolbar2: 'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',
 			toolbar4: '',
