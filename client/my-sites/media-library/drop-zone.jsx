@@ -36,8 +36,10 @@ module.exports = React.createClass( {
 		}
 
 		MediaActions.clearValidationErrors( this.props.site.ID );
-		MediaActions.add( this.props.site.ID, files );
-		this.props.onAddMedia();
+		MediaActions.add( this.props.site.ID, files )
+			.then( () => {
+				this.props.onAddMedia();
+			} );
 
 		if ( this.props.trackStats ) {
 			analytics.mc.bumpStat( 'editor_upload_via', 'drop' );
