@@ -252,8 +252,13 @@ function getSavedVariations() {
 	return store.get( 'ABTests' ) || {};
 }
 
+function getAllTests() {
+	return keys( activeTests ).map( ABTest );
+}
+
 module.exports = {
 	abtest: abtest,
+	getAllTests,
 	getABTestVariation: getABTestVariation,
 	getSavedVariations: getSavedVariations
 };
