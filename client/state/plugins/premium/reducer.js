@@ -115,30 +115,15 @@ function plugin( state, action ) {
 function pluginStatus( state, action ) {
 	switch ( action.type ) {
 		case PLUGIN_SETUP_INSTALL:
-			return Object.assign( {}, state, {
-				start: true,
-				install: true,
-			} );
+			return 'install';
 		case PLUGIN_SETUP_ACTIVATE:
-			return Object.assign( {}, state, {
-				start: true,
-				install: false,
-				activate: true,
-			} );
+			return 'activate';
 		case PLUGIN_SETUP_CONFIGURE:
-			return Object.assign( {}, state, {
-				start: true,
-				activate: false,
-				config: true,
-			} );
+			return 'configure';
 		case PLUGIN_SETUP_FINISH:
-			return Object.assign( {}, state, {
-				start: true,
-				config: false,
-				done: true,
-			} );
+			return 'done';
 		default:
-			return state;
+			return state || 'wait';
 	}
 }
 

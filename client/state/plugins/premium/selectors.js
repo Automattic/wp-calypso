@@ -16,7 +16,7 @@ const getPluginsForSite = function( state, siteId ) {
 		return [];
 	}
 	return pluginList;
-}
+};
 
 const isFinished = function( state, siteId ) {
 	let pluginList = getPluginsForSite( state, siteId );
@@ -24,15 +24,27 @@ const isFinished = function( state, siteId ) {
 		return false;
 	}
 	pluginList = filter( pluginList, ( item ) => {
-		return ( ! item.status.done && ( item.error === null ) );
+		return ( ( 'done' !== item.status ) && ( item.error === null ) );
 	} );
 	return ( pluginList.length === 0 );
-}
+};
+
+const isInstalling = function( state, siteId ) {
+	let pluginList = getPluginsForSite( state, siteId );
+	if ( pluginList.length === 0 ) {
+		return false;
+	}
+	pluginList = filter( pluginList, ( item ) => {
+		return ( ( -1 === [ 'done', 'wait'].indexOf( item.status ) ) && ( item.error === null ) );
+	} );
+	// If any plugin is not done/waiting/error'd, it's in an installing state.
+	return ( pluginList.length > 0 );
+};
 
 const getActivePlugin = function( state, siteId ) {
 	let pluginList = getPluginsForSite( state, siteId );
 	let plugin = find( pluginList, ( item ) => {
-		return ( item.status.start );
+		return ( ( -1 === [ 'done', 'wait'].indexOf( item.status ) ) && ( item.error === null ) );
 	} );
 	if ( typeof plugin === 'undefined' ) {
 		return false;
@@ -43,12 +55,12 @@ const getActivePlugin = function( state, siteId ) {
 const getNextPlugin = function( state, siteId ) {
 	let pluginList = getPluginsForSite( state, siteId );
 	let plugin = find( pluginList, ( item ) => {
-		return ( ! item.status.start && ! item.status.done && ( item.error === null ) );
+		return ( ( 'wait' === item.status ) && ( item.error === null ) );
 	} );
 	if ( typeof plugin === 'undefined' ) {
 		return false;
 	}
 	return plugin;
-}
+};
 
-export default { isRequesting, isFinished, getPluginsForSite, getActivePlugin, getNextPlugin };
+export default { isRequesting, isFinished, isInstalling, getPluginsForSite, getActivePlugin, getNextPlugin };
