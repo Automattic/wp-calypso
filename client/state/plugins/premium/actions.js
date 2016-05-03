@@ -28,16 +28,10 @@ function normalizePluginInstructions( data ) {
 	return keys( _plugins ).map( ( key ) => {
 		const plugin = _plugins[key];
 		return {
-			slug: plugin.slug,
-			name: plugin.name,
-			key: plugin.key,
-			status: {
-				start: false,
-				install: null,
-				activate: null,
-				config: null,
-				done: false,
-			},
+			slug: plugin.slug || key,
+			name: plugin.name || key,
+			key: plugin.key || plugin,
+			status: 'wait',
 			error: null,
 		}
 	} );
