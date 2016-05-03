@@ -76,15 +76,13 @@ PlansList.prototype.get = function() {
  */
 PlansList.prototype.fetch = function() {
 	debug( 'getting PlansList from api' );
-	wpcom.undocumented().getPlans( function( error, data ) {
-		var plans;
-
+	wpcom.plans().list( function( error, data ) {
 		if ( error ) {
 			debug( 'error fetching PlansList from api', error );
 			return;
 		}
 
-		plans = this.parse( data );
+		let plans = this.parse( data );
 
 		debug( 'PlansList fetched from api:', plans );
 
