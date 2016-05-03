@@ -179,7 +179,7 @@ module.exports = {
 			var errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
 				bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
 
-			callback( errors, assign( {}, { username: userData.username }, bearerToken ) );
+			callback( errors, assign( {}, { username: userData.username, email: userData.email }, bearerToken ) );
 		} );
 	},
 
