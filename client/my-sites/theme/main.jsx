@@ -21,7 +21,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
-import { signup } from 'state/themes/actions';
+import { signup, purchase, activate } from 'state/themes/actions';
 import i18n from 'lib/mixins/i18n';
 import { getSelectedSite } from 'state/ui/selectors';
 
@@ -38,6 +38,9 @@ const ThemeSheet = React.createClass( {
 		descriptionLong: React.PropTypes.string,
 		supportDocumentation: React.PropTypes.string,
 		taxonomies: React.PropTypes.object,
+		isLoggedIn: React.PropTypes.bool,
+		// Connected props
+		selectedSite: React.PropTypes.object,
 	},
 
 	getDefaultProps() {
@@ -48,8 +51,22 @@ const ThemeSheet = React.createClass( {
 		page.back();
 	},
 
+	isPremium() {
+		return this.props.price.value > 0;
+	},
+
 	onPrimaryClick() {
-		this.props.dispatch( signup( this.props ) );
+		// TODO: if active -> customize (could use theme slug from selected site)
+
+		if ( ! this.props.isLoggedIn ) {
+			this.props.dispatch( signup( this.props ) );
+		// TODO: use site picker if no selected site
+		} else if ( this.isPremium() ) {
+			// TODO: check theme is not already purchased
+			this.props.dispatch( purchase( this.props, this.props.selectedSite, 'showcase-sheet' ) );
+		} else {
+			this.props.dispatch( activate( this.props, this.props.selectedSite, 'showcase-sheet' ) );
+		}
 	},
 
 	getContentElement( section ) {
@@ -146,6 +163,7 @@ const ThemeSheet = React.createClass( {
 		const section = this.validateSection( this.props.section );
 		const { themeContentElement, priceElement } = this.getDangerousElements( section );
 
+		console.log( 'props:', this.props );
 		console.log( 'selected site:', this.props.selectedSite );
 
 		return (
