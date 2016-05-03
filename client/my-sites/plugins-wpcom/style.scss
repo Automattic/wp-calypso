@@ -88,14 +88,12 @@
 .wpcom-plugins__plugin-category,
 .wpcom-plugins__plugin-plan {
 	margin-left: 52px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
 }
 
 .wpcom-plugins__plugin-title {
 	font-size: 14px;
 	font-weight: 600;
+	line-height: 1.4;
 }
 
 .wpcom-plugins__plugin-category,
