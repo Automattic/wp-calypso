@@ -457,35 +457,6 @@ Undocumented.prototype.validateDomainContactInformation = function( contactInfor
 };
 
 /**
- * Get a list of active WordPress.com plans
- *
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.getPlans = function( fn ) {
-	debug( '/plans query' );
-	this._sendRequestWithLocale( {
-		path: '/plans',
-		method: 'get',
-		apiVersion: '1.2'
-	}, fn );
-};
-
-/**
- * Get a list of features for active WordPress.com plans
- *
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.getPlansFeatures = function( fn ) {
-	debug( '/plans/features query' );
-	this._sendRequestWithLocale( {
-		path: '/plans/features',
-		method: 'get'
-	}, fn );
-};
-
-/**
  * Get a list of WordPress.com products
  *
  * @param {Function} fn The callback function
