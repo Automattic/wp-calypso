@@ -1808,14 +1808,14 @@ Undocumented.prototype.timezones = function( params, fn ) {
  */
 Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
 	const parsedUrl = url.parse( targetUrl );
-	const endpointUrl = `/connect/site-info/${ parsedUrl.protocol.slice( 0, -1 ) }/${ parsedUrl.host }`;
+	let endpointUrl = `/connect/site-info/${ parsedUrl.protocol.slice( 0, -1 ) }/${ parsedUrl.host }`;
 	let params = {
 		filters: filters,
 		apiVersion: '1.1',
 	};
 
 	if ( parsedUrl.path && parsedUrl.path !== '/' ) {
-		params.path = parsedUrl.path;
+		endpointUrl += parsedUrl.path.replace( /\//g, '::' );
 	}
 
 	return this.wpcom.req.get( `${ endpointUrl }`, params );
