@@ -7,6 +7,7 @@ import moment from 'moment';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
 import invoke from 'lodash/invoke';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -17,10 +18,19 @@ import {
 	isFreeJetpackPlan,
 	isJetpackPlan
 } from 'lib/products-values';
-import { featuresList, plansList } from './constants';
-import { PLAN_FREE } from 'lib/plans/constants';
+import {
+	featuresList,
+	plansList,
+	PLAN_FREE
+} from 'lib/plans/constants';
+import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
+
+/**
+ * Module vars
+ */
 const sitesList = SitesList();
+const debug = debugFactory( 'calypso:plans' );
 
 export function getPlan( plan ) {
 	return plansList[ plan ];
@@ -67,7 +77,18 @@ export function addCurrentPlanToCartAndRedirect( sitePlans, selectedSite ) {
 }
 
 export function getCurrentPlan( plans ) {
-	return find( plans, { currentPlan: true } );
+	const currentPlan = find( plans, { currentPlan: true } );
+
+	if ( currentPlan ) {
+		debug( 'current plan: %o', currentPlan );
+		return currentPlan;
+	}
+
+	// get Site plan from the `site` data
+	const site = sitesList.getSelectedSite();
+	const plan = createSitePlanObject( site.plan );
+	debug( 'current plan: %o', plan );
+	return plan;
 }
 
 export function getCurrentTrialPeriodInDays( plan ) {
