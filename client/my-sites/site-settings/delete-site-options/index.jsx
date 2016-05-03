@@ -12,6 +12,13 @@ import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-
 import PurchasesStore from 'lib/purchases/store';
 import notices from 'notices';
 import config from 'config';
+import { tracks } from 'lib/analytics';
+
+const trackDeleteSiteOption = ( option ) => {
+	tracks.recordEvent( 'calypso_settings_delete_site_options', {
+		option: option
+	} );
+};
 
 module.exports = React.createClass( {
 	displayName: 'DeleteSite',
@@ -40,7 +47,7 @@ module.exports = React.createClass( {
 		const changeAddressLink = `/domains/manage/${selectedSite.slug}`;
 		const startOverLink = `/settings/start-over/${selectedSite.slug}`;
 		const deleteSiteLink = `/settings/delete-site/${selectedSite.slug}`;
-		const changeAddressLinkText = this.translate( 'Register a new domain or change your site\'s address.' );
+		let changeAddressLinkText = this.translate( 'Register a new domain or change your site\'s address.' );
 		const strings = {
 			changeSiteAddress: this.translate( 'Change Site Address' ),
 			startOver: this.translate( 'Start Over' ),
@@ -103,7 +110,16 @@ module.exports = React.createClass( {
 		);
 	},
 
+	trackChangeAddress() {
+		trackDeleteSiteOption( 'change-address' );
+	},
+
+	trackStartOver() {
+		trackDeleteSiteOption( 'start-over' );
+	},
+
 	checkForSubscriptions( event ) {
+		trackDeleteSiteOption( 'delete-site' );
 		const activeSubscriptions = filter( this.props.purchases.data, 'active' );
 
 		if ( ! activeSubscriptions.length ) {
