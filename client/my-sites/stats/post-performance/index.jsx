@@ -24,7 +24,7 @@ const StatsPostPerformance = React.createClass( {
 	displayName: 'StatsPostPerformance',
 
 	propTypes: {
-		countViews: PropTypes.number,
+		viewCount: PropTypes.number,
 		site: PropTypes.oneOfType( [
 			PropTypes.bool,
 			PropTypes.object
@@ -36,14 +36,14 @@ const StatsPostPerformance = React.createClass( {
 	},
 
 	buildTabs( summaryUrl ) {
-		const { countViews, post, loading } = this.props;
+		const { viewCount, post, loading } = this.props;
 		const tabClassName = 'is-post-summary';
 
 		const tabs = [
 			{
 				label: this.translate( 'Views' ),
 				gridicon: 'visible',
-				value: countViews,
+				value: viewCount,
 				href: summaryUrl,
 				className: tabClassName,
 				loading: loading
@@ -129,12 +129,12 @@ export default connect( ( state, ownProps ) => {
 	const query = { status: 'published' };
 	const posts = site ? getSitePostsForQuery( state, site.ID, query ) : null;
 	const post = posts && posts.length ? posts[ 0 ] : null;
-	const countViews = post && site ? getPostStat( state, 'views', site.ID, post.ID ) : null;
+	const viewCount = post && site ? getPostStat( state, 'views', site.ID, post.ID ) : null;
 
 	return {
-		countViews,
+		viewCount,
 		query,
 		post,
-		loading: !site || !posts || countViews === null
+		loading: ! site || ! posts || viewCount === null
 	};
 } )( StatsPostPerformance );

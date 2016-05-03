@@ -13,20 +13,19 @@ import { requestPostStat } from 'state/stats/posts/actions';
 
 class QueryPostStats extends Component {
 	componentWillMount() {
-		if ( !this.props.requestingPostStat &&
-			this.props.siteId &&
-			this.props.postId &&
-			this.props.stat ) {
-			this.props.requestPostStat( this.props.stat, this.props.siteId, this.props.postId );
+		const { requestingPostStat, siteId, postId, stat } = this.props;
+		if ( ! requestingPostStat && siteId && postId && stat ) {
+			this.props.requestPostStat( stat, siteId, postId );
 		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
+		const { siteId, postId, stat } = this.props;
 		if (
-			! ( this.props.siteId && this.props.postId && this.props.stat ) ||
-			( this.props.siteId === nextProps.siteId &&
-				this.props.postId === nextProps.postId &&
-				this.props.stat === nextProps.stat )
+			! ( siteId && postId && stat ) ||
+			( siteId === nextProps.siteId &&
+				postId === nextProps.postId &&
+				stat === nextProps.stat )
 			) {
 			return;
 		}
