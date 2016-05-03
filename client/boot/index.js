@@ -369,8 +369,8 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/rubberband-scroll-disable' )( document.body );
 	}
 
-	if ( config.isEnabled( 'dev/test-helper' ) && document.querySelector( '.environment.is-tests ul.active-tests' ) ) {
-		require( 'lib/abtest/test-helper' )( document.querySelector( '.environment.is-tests ul.active-tests' ) );
+	if ( config.isEnabled( 'dev/test-helper' ) && document.querySelector( '.environment.is-tests' ) ) {
+		require( 'lib/abtest/test-helper' )( document.querySelector( '.environment.is-tests' ) );
 	}
 
 	/*

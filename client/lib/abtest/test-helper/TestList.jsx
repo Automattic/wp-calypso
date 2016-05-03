@@ -7,11 +7,14 @@ export default React.createClass( {
 	render: function() {
 		return (
 			<div>
-				{ this.props.tests.map( test => <Test
-					key={ test.name }
-					test={ test }
-					onChangeVariant={ this.props.onChangeVariant }
-				/> ) }
+				<a href={ "/devdocs/client/lib/abtest/README.md" } title="ABTests">ABTests</a>
+				<ul className="active-tests">
+					{ this.props.tests.map( test => <Test
+						key={ test.name }
+						test={ test }
+						onChangeVariant={ this.props.onChangeVariant }
+					/> ) }
+				</ul>
 			</div>
 		);
 	}
