@@ -1,9 +1,9 @@
 .active-tests {
 	display: none;
-} 
+}
 
 .environment-badge .environment.is-tests a.test-helper__variation {
-	font-weight: normal;	
+	font-weight: normal;
 	cursor: pointer;
 	text-transform: initial;
 
@@ -19,7 +19,12 @@
 	font-weight: bolder;
 }
 
+.environment.is-tests {
+	position: absolute;
+	bottom: 5px;
+}
 .environment.is-tests:hover .active-tests {
 	display:block;
+	max-height: 80vh;
+	overflow-y: scroll;
 }
-
