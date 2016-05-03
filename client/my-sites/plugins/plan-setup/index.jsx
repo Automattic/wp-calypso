@@ -5,6 +5,7 @@ import React from 'react';
 // import classNames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import filter from 'lodash/filter';
 
 /**
  * Internal dependencies
@@ -64,13 +65,18 @@ const PlansSetup = React.createClass( {
 		} );
 	},
 
+	allPluginsHaveWporgData() {
+		const plugins = this.addWporgDataToPlugins( this.props.plugins );
+		return ( plugins.length === filter( plugins, { wporg: true } ).length );
+	},
+
 	componentDidMount() {
 		this.props.fetchInstallInstructions( this.props.siteId );
 	},
 
 	componentDidUpdate() {
 		const site = this.props.selectedSite;
-		if ( site.canManage() && ! this.props.isInstalling && this.props.nextPlugin ) {
+		if ( site.canManage() && this.allPluginsHaveWporgData() && ! this.props.isInstalling && this.props.nextPlugin ) {
 			this.startNextPlugin( this.props.nextPlugin );
 		}
 	},
