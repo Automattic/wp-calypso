@@ -59,18 +59,19 @@ export default React.createClass( {
 	},
 
 	shouldDisplay( site ) {
-		if ( site && this.props.feature ) {
-			if ( hasFeature( this.props.feature, site.siteID ) ) {
-				return false;
-			}
-		} else if ( site && ! isFreePlan( site.plan ) ) {
+		const { feature, jetpack } = this.props;
+		if ( ! site ) {
 			return false;
 		}
-
-		if ( ! this.props.jetpack && site.jetpack || this.props.jetpack && ! site.jetpack ) {
+		if ( feature && hasFeature( feature, site.siteID ) ) {
 			return false;
 		}
-
+		if ( ! feature && ! isFreePlan( site.plan ) ) {
+			return false;
+		}
+		if ( ! jetpack && site.jetpack || jetpack && ! site.jetpack ) {
+			return false;
+		}
 		return true;
 	},
 
