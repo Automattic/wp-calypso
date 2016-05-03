@@ -28,6 +28,9 @@ const SiteNotice = React.createClass( {
 	},
 
 	getSiteRedirectNotice: function( site ) {
+		if ( ! site ) {
+			return null;
+		}
 		if ( ! ( site.options && site.options.is_redirect ) ) {
 			return null;
 		}
@@ -80,10 +83,14 @@ const SiteNotice = React.createClass( {
 	},
 
 	render() {
+		const { site } = this.props;
+		if ( ! site ) {
+			return <div className="site__notices" />;
+		}
 		return (
 			<div className="site__notices">
-				{ this.getSiteRedirectNotice( this.props.site ) }
-				<QueryPlans siteId={ this.props.site.ID } />
+				{ this.getSiteRedirectNotice( site ) }
+				<QueryPlans siteId={ site.ID } />
 				{ this.domainCreditNotice() }
 			</div>
 		);
