@@ -60,6 +60,35 @@ module.exports = React.createClass( {
 		);
 	},
 
+	renderConfirmationPrompt: function() {
+		if ( this.props.user && this.props.user.email_verified ) {
+			return null;
+		}
+
+		let email = ( this.props.user ? this.props.user.email : this.props.signupDependencies.email );
+		if ( !email ) {
+			return null;
+		}
+
+		return (
+			<div className="signup__email-confirmation">
+				<div className="email-confirmation__step">
+					<img className="email-confirmation__step-illustration" src="https://cldup.com/HTmwBYXkOL.svg"/>
+					<h2 className="email-confirmation__step-title">Check your email</h2>
+				</div>
+
+				<Gridicon icon="arrow-right" className="email-confirmation__arrow" />
+
+				<div className="email-confirmation__step">
+					<img className="email-confirmation__step-illustration" src="https://cldup.com/QOyStuYoQm.svg"/>
+					<h2 className="email-confirmation__step-title">Click the button</h2>
+				</div>
+
+				<p className="email-confirmation__reminder">{ this.translate( "We've sent a message to %(email)s. Please use this time to confirm your email address.", { args: { email } } ) }</p>
+			</div>
+		)
+	},
+
 	render: function() {
 		return (
 			<div>
@@ -70,22 +99,8 @@ module.exports = React.createClass( {
 
 				<Button primary disabled className="email-confirmation__button">{ this.translate( "Just a minute…" ) }</Button>
 
-				<div className="signup__email-confirmation">
-					<div className="email-confirmation__step">
-						<img className="email-confirmation__step-illustration" src="https://cldup.com/HTmwBYXkOL.svg"/>
-						<h2 className="email-confirmation__step-title">Check your email</h2>
-					</div>
-					
-					<Gridicon icon="arrow-right" className="email-confirmation__arrow" />
-					
-					<div className="email-confirmation__step">
-						<img className="email-confirmation__step-illustration" src="https://cldup.com/QOyStuYoQm.svg"/>
-						<h2 className="email-confirmation__step-title">Click the button</h2>
-					</div>
+				{ this.renderConfirmationPrompt() }
 
-					<p className="email-confirmation__reminder">{ this.translate( "We've sent a message to %(email)s. Please use this time to confirm your email address.", { args: { email: this.props.signupDependencies.email } } ) }</p>
-				</div>
-				
 				<div className="signup-processing-screen__loader">{ this.translate( 'Loading…' ) }</div>
 			</div>
 		);
