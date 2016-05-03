@@ -33,7 +33,15 @@ export const PremiumPluginsPanel = React.createClass( {
 						{ plugins.map( ( { name, descriptionLink, icon, category, description } ) =>
 							<Plugin
 								onClick={ () => onClick( name ) }
-								{ ...{ name, key: name, descriptionLink, icon, category, description } }
+								{ ...{
+									name,
+									key: name,
+									descriptionLink,
+									icon,
+									isActive,
+									category,
+									description
+								} }
 							/>
 						) }
 					</div>
