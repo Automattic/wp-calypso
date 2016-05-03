@@ -51,6 +51,7 @@ export const Plugin = React.createClass( {
 				>
 					<div className="wpcom-plugins__plugin-icon">
 						<Gridicon icon={ linkIcon } />
+						<Gridicon icon="checkmark-circle" size={ 18 } />
 					</div>
 					<div className="wpcom-plugins__plugin-title">{ name }</div>
 					<div className="wpcom-plugins__plugin-category">{ category }</div>

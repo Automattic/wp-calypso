@@ -11,14 +11,9 @@
 		opacity: 0.5;
 	}
 	
-	.wpcom-plugins__plugin-icon {
-		background: $gray;
+	.gridicons-checkmark-circle  {
+		display: none;
 	}
-}
-
-.wpcom-plugin-panel .section-header {
-	border-bottom: 2px solid $blue-medium;
-	margin-bottom: 0;
 }
 
 .wpcom-plugins__list {
@@ -69,8 +64,9 @@
 .wpcom-plugins__plugin-icon {
 	width: 40px;
 	height: 40px;
-	background: $blue-medium;
+	background: lighten( $gray, 10%);
 	float: left;
+	position: relative;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -78,6 +74,14 @@
 
 .wpcom-plugins__plugin-icon .gridicon {
 	fill: $white;
+}
+
+.wpcom-plugins__plugin-icon .gridicons-checkmark-circle {
+	position: absolute;
+		bottom: -5px;
+	border-radius: 100%;
+	fill: $alert-green;
+	background: $white;
 }
 
 .wpcom-plugins__plugin-title,
