@@ -135,7 +135,20 @@ const PlansSetup = React.createClass( {
 
 			if ( plugin.error ) {
 				statusProps.status = 'is-error';
-				statusProps.text = plugin.error.message;
+				switch ( plugin.status ) {
+					case 'install':
+						statusProps.text = this.translate( 'An error occured when installing %(plugin)s.', { args: { plugin: plugin.name } } );
+						break;
+					case 'activate':
+						statusProps.text = this.translate( 'An error occured when activating %(plugin)s.', { args: { plugin: plugin.name } } );
+						break;
+					case 'configure':
+						statusProps.text = this.translate( 'An error occured when configuring %(plugin)s.', { args: { plugin: plugin.name } } );
+						break;
+					default:
+						statusProps.text = this.translate( 'An error occured.' );
+						break;
+				}
 			} else if ( hidden ) {
 				statusProps.icon = 'plugins';
 				statusProps.status = null;
@@ -145,19 +158,18 @@ const PlansSetup = React.createClass( {
 				statusProps.status = 'is-info';
 				switch ( plugin.status ) {
 					case 'done':
-						statusProps.status = 'is-success';
-						statusProps.icon = null;
-						statusProps.text = this.translate( 'Done', { args: { plugin: plugin.name } } );
+						statusProps.status = null;
+						statusProps.text = this.translate( 'Successfully configured.' );
 						break;
 					case 'activate':
 					case 'configure':
-						statusProps.text = this.translate( 'Almost done', { args: { plugin: plugin.name } } );
+						statusProps.text = this.translate( 'Almost done' );
 						break;
 					case 'install':
-						statusProps.text = this.translate( 'Working…', { args: { plugin: plugin.name } } );
+						statusProps.text = this.translate( 'Working…' );
 					case 'wait':
 					default:
-						statusProps.text = this.translate( 'Waiting to install', { args: { plugin: plugin.name } } );
+						statusProps.text = this.translate( 'Waiting to install' );
 				}
 			}
 
