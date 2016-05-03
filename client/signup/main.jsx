@@ -315,7 +315,7 @@ const Signup = React.createClass( {
 				{
 					//this.state.loadingScreenStartTime ?
 					true ?
-					<SignupProcessingScreen steps={ this.state.progress } /> :
+					<SignupProcessingScreen steps={ this.state.progress } signupDependencies={ this.state.dependencies } /> :
 					<CurrentComponent
 						path={ this.props.path }
 						step={ currentStepProgress }
