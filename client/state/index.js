@@ -9,7 +9,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
  */
 import application from './application/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
-import page from './page/reducer';
+import documentHead from './document-head/reducer';
 import notices from './notices/reducer';
 import posts from './posts/reducer';
 import postTypes from './post-types/reducer';
@@ -35,7 +35,7 @@ export const reducer = combineReducers( {
 	jetpackConnect,
 	plugins,
 	application,
-	page,
+	documentHead,
 	notices,
 	posts,
 	postTypes,

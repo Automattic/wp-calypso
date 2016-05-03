@@ -7,17 +7,17 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	PAGE_LINK_ADD,
-	PAGE_META_ADD,
-	PAGE_TITLE_SET,
-	PAGE_UNREAD_COUNT_SET,
+	DOCUMENT_HEAD_LINK_ADD,
+	DOCUMENT_HEAD_META_ADD,
+	DOCUMENT_HEAD_TITLE_SET,
+	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
 
 export function title( state = '', action ) {
 	switch ( action.type ) {
-		case PAGE_TITLE_SET:
+		case DOCUMENT_HEAD_TITLE_SET:
 			return action.title;
 	}
 
@@ -26,7 +26,7 @@ export function title( state = '', action ) {
 
 export function unreadCount( state = 0, action ) {
 	switch ( action.type ) {
-		case PAGE_UNREAD_COUNT_SET:
+		case DOCUMENT_HEAD_UNREAD_COUNT_SET:
 			return action.count;
 	}
 
@@ -35,7 +35,7 @@ export function unreadCount( state = 0, action ) {
 
 export function meta( state = [], action ) {
 	switch ( action.type ) {
-		case PAGE_META_ADD:
+		case DOCUMENT_HEAD_META_ADD:
 			return [ ...state, action.meta ];
 	}
 
@@ -44,7 +44,7 @@ export function meta( state = [], action ) {
 
 export function link( state = [], action ) {
 	switch ( action.type ) {
-		case PAGE_LINK_ADD:
+		case DOCUMENT_HEAD_LINK_ADD:
 			return [ ...state, action.link ];
 	}
 

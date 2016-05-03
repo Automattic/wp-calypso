@@ -8,10 +8,10 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	PAGE_LINK_ADD,
-	PAGE_META_ADD,
-	PAGE_TITLE_SET,
-	PAGE_UNREAD_COUNT_SET,
+	DOCUMENT_HEAD_LINK_ADD,
+	DOCUMENT_HEAD_META_ADD,
+	DOCUMENT_HEAD_TITLE_SET,
+	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 } from 'state/action-types';
 
 import {
@@ -30,7 +30,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should properly set a new title', () => {
-			const newState = title( undefined, { type: PAGE_TITLE_SET, title: 'new title' } );
+			const newState = title( undefined, { type: DOCUMENT_HEAD_TITLE_SET, title: 'new title' } );
 
 			expect( newState ).to.equal( 'new title' );
 		} );
@@ -44,7 +44,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should properly set a new uread count', () => {
-			const newState = unreadCount( undefined, { type: PAGE_UNREAD_COUNT_SET, count: 123 } );
+			const newState = unreadCount( undefined, { type: DOCUMENT_HEAD_UNREAD_COUNT_SET, count: 123 } );
 
 			expect( newState ).to.equal( 123 );
 		} );
@@ -60,7 +60,7 @@ describe( 'reducer', () => {
 		it( 'should add a new meta tag', () => {
 			const state = deepFreeze( [ { content: 'some content', type: 'some type' } ] );
 			const newState = meta( state, {
-				type: PAGE_META_ADD,
+				type: DOCUMENT_HEAD_META_ADD,
 				meta: {
 					content: 'another content',
 					type: 'another type'
@@ -86,7 +86,7 @@ describe( 'reducer', () => {
 		it( 'should add a new link tag', () => {
 			const state = deepFreeze( [ { rel: 'some-rel', href: 'https://wordpress.org' } ] );
 			const newState = link( state, {
-				type: PAGE_LINK_ADD,
+				type: DOCUMENT_HEAD_LINK_ADD,
 				link: {
 					rel: 'another-rel',
 					href: 'https://automattic.com'
