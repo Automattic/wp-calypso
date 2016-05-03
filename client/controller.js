@@ -20,9 +20,6 @@ const debug = debugFactory( 'calypso:controller' );
 /**
  * @param { object } context -- Middleware context
  * @param { function } next -- Call next middleware in chain
- *
- * When logged-out, call makeLoggedOutLayout( context, next );
- * otherwise, just call next();
 */
 export function makeLayout( context, next ) {
 	const isLoggedIn = !! getCurrentUser( context.store.getState() );
