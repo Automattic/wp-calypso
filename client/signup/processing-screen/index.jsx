@@ -83,7 +83,7 @@ module.exports = React.createClass( {
 						<h2 className="email-confirmation__step-title">Click the button</h2>
 					</div>
 
-					<p className="email-confirmation__reminder">{ this.translate( "Please use this time to confirm your email address." ) }</p>
+					<p className="email-confirmation__reminder">{ this.translate( "We've sent a message to %(email)s. Please use this time to confirm your email address.", { args: { email: this.props.signupDependencies.email } } ) }</p>
 				</div>
 				
 				<div className="signup-processing-screen__loader">{ this.translate( 'Loading…' ) }</div>
