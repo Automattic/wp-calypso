@@ -35,44 +35,26 @@ Data from the aforementioned actions is added to the global state tree, under `p
 ```js
 state.plugins.premium = {
 	isRequesting: {
-		106093271: false
+		'exampleSiteId': false
 	},
 	plugins: {
-		106093271: [ {
+		'exampleSiteId': [ {
 			slug: 'vaultpress',
 			name: 'VaultPress',
 			key: 'vp-api-key',
-			status: {
-				start: false, // false until active, true until finished
-				install: null, // null => not started, true => active state, false => finished
-				activate: null, // null => not started, true => active state, false => finished
-				config: null, // null => not started, true => active state, false => finished
-				done: false,
-			},
+			status: 'wait',
 			error: null
 		}, {
 			slug: 'akismet',
 			name: 'Akismet',
 			key: 'ak-api-key',
-			status: {
-				start: false,
-				install: null,
-				activate: null
-				config: null,
-				done: false,
-			},
+			status: 'wait',
 			error: null
 		}, {
 			slug: 'polldaddy',
 			name: 'Polldaddy',
 			key: 'pd-api-key',
-			status: {
-				start: false,
-				install: null,
-				activate: null,
-				config: null,
-				done: false,
-			},
+			status: 'wait',
 			error: null
 		} ]
 	}
