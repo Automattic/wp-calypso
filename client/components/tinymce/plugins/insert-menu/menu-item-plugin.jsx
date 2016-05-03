@@ -6,36 +6,55 @@ import { Provider } from 'react-redux';
 const menuItemPlugin = props => editor => {
 	let node;
 	const store = editor.getParam( 'redux_store' );
-	const { commandName, Wizard } = props;
+	const {
+		Wizard,
+		buttonName,
+		commandName,
+	} = props;
+
 	const focusEditor = () => editor.focus();
 	const updateContent = newContent => editor.execCommand( 'mceInsertContent', false, newContent );
 
-	editor.on( 'init', () => {
-		node = editor.getContainer().appendChild(
-			document.createElement( 'div' )
-		);
-	} );
+	const closeWizard = () => {
+		if ( ! node ) {
+			return focusEditor();
+		}
 
-	editor.on( 'remove', () => {
 		ReactDOM.unmountComponentAtNode( node );
 		node.parentNode.removeChild( node );
 		node = null;
-	} );
 
-	editor.addCommand( commandName, content => {
+		focusEditor();
+	};
+
+	const openWizard = () => {
+		node = editor.getContainer().appendChild(
+			document.createElement( 'div' )
+		);
+
 		ReactDOM.render(
 			<Provider store={ store }>
 				<Wizard
-					content={ content }
-					onClose={ focusEditor }
+					content={ editor.getContent() }
+					onClose={ closeWizard }
 					onUpdateContent={ updateContent }
 				/>
 			</Provider>,
 			node
 		);
+	};
+
+	editor.on( 'remove', closeWizard );
+
+	editor.addCommand( commandName, openWizard );
+
+	editor.addButton( buttonName, {
+		cmd: commandName,
+		title: 'Button',
+		icon: 'unlink'
 	} );
 };
 
 export default props => () => {
 	tinymce.PluginManager.add( props.pluginSlug, menuItemPlugin( props ) );
-}
+};
