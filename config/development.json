@@ -34,6 +34,7 @@
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
+		"dev/test-helper": true, 
 		"guided-tours": true,
 		"help": true,
 		"jetpack/connect": true,

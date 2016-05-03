@@ -369,6 +369,10 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/rubberband-scroll-disable' )( document.body );
 	}
 
+	if ( config.isEnabled( 'dev/test-helper' ) && document.querySelector( '.environment.is-tests ul.active-tests' ) ) {
+		require( 'lib/abtest/test-helper' )( document.querySelector( '.environment.is-tests ul.active-tests' ) );
+	}
+
 	/*
 	 * Layouts with differing React mount-points will not reconcile correctly,
 	 * so remove an existing single-tree layout by re-rendering if necessary.
