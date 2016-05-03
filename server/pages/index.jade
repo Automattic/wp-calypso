@@ -70,9 +70,8 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				if devDocs
 					span(class=['environment', 'is-docs'])
 						a(href=devDocsURL title='DevDocs') docs
-				span(class=['environment', 'is-tests'])
-					a(href=devDocsURL title='ABtests') ABtests
-					ul(class='active-tests')
+				if abTestHelper
+					div(class=['environment', 'is-tests'])
 
 		if 'development' !== env
 			script( src=catchJsErrors )
