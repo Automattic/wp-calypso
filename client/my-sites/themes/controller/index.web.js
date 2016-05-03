@@ -12,8 +12,7 @@ import LoggedOutComponent from 'my-sites/themes/logged-out';
 import i18n from 'lib/mixins/i18n';
 import trackScrollPage from 'lib/track-scroll-page';
 import buildTitle from 'lib/screen-title/utils';
-import { getAnalyticsData } from '../helpers';
-import { makeElement, runClientAnalytics, LoggedOutHead } from './index.node.js';
+import { makeElement, getAnalyticsData, LoggedOutHead } from './index.node.js';
 import DefaultHead from 'layout/head';
 
 /**
@@ -22,18 +21,13 @@ import DefaultHead from 'layout/head';
 export { details } from './index.node.js';
 
 function getMultiSiteProps( context ) {
-	const { tier, site_id: siteId } = context.params;
-
-	const { basePath, analyticsPageTitle } = getAnalyticsData(
-		context.path,
-		tier,
-		siteId
-	);
+	const { tier } = context.params;
+	const { path, title } = getAnalyticsData( context );
 
 	const boundTrackScrollPage = function() {
 		trackScrollPage(
-			basePath,
-			analyticsPageTitle,
+			path,
+			title,
 			'Themes'
 		);
 	};
@@ -71,19 +65,19 @@ export const singleSite = makeElement(
 	SingleSiteComponent,
 	getSingleSiteProps,
 	LoggedInHead,
-	runClientAnalytics
+	getAnalyticsData
 );
 
 export const multiSite = makeElement(
 	MultiSiteComponent,
 	getMultiSiteProps,
 	LoggedInHead,
-	runClientAnalytics
+	getAnalyticsData
 );
 
 export const loggedOut = makeElement(
 	LoggedOutComponent,
 	getMultiSiteProps,
 	LoggedOutHead,
-	runClientAnalytics
+	getAnalyticsData
 );

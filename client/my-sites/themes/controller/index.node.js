@@ -13,44 +13,41 @@ import ThemeDetailsComponent from 'components/data/theme-details';
 import i18n from 'lib/mixins/i18n';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getThemeDetails } from 'state/themes/theme-details/selectors';
-import ClientSideEffects from 'components/client-side-effects';
 import { receiveThemeDetails } from 'state/themes/actions';
 import wpcom from 'lib/wp';
 import config from 'config';
 import { decodeEntities } from 'lib/formatting';
 import ThemesHead from 'layout/head';
-import analytics from 'lib/analytics';
-import { getAnalyticsData } from '../helpers';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getAnalyticsData as getAnalyticsDataHelper } from '../helpers';
 
 const debug = debugFactory( 'calypso:themes' );
 let themeDetailsCache = new Map();
 
 // This is generic -- nothing themes-specific in here!
-export function makeElement( Component, getProps, Head, sideEffects = function() {} ) {
+export function makeElement( Component, getProps, Head, getAnalyticsDataFn ) {
 	return ( context ) => {
-		const boundSideEffects = sideEffects.bind( null, context );
+		const { path, title } = getAnalyticsDataFn( context );
 
 		return (
 			<ReduxProvider store={ context.store }>
 				<Head context={ context }>
 					<Component { ...getProps( context ) } />
-					<ClientSideEffects>
-						{ boundSideEffects }
-					</ClientSideEffects>
+					<PageViewTracker path={ path } title={ title } />
 				</Head>
 			</ReduxProvider>
 		);
 	};
 }
 
-function runClientAnalytics( context ) {
+export function getAnalyticsData( context ) {
 	const { tier, site_id: siteId } = context.params;
-	const { basePath, analyticsPageTitle } = getAnalyticsData(
+	const { basePath: path, analyticsPageTitle: title } = getAnalyticsDataHelper(
 		context.path,
 		tier,
 		siteId
 	);
-	analytics.pageView.record( basePath, analyticsPageTitle );
+	return { path, title };
 }
 
 export const LoggedOutHead = ( { children, context: { store, params: { slug } } } ) => {
@@ -116,5 +113,5 @@ export const details = makeElement(
 	ConnectedComponent,
 	getDetailsProps,
 	LoggedOutHead, // TODO: logged-in ? LoggedInHead : LoggedOutHead
-	runClientAnalytics
+	getAnalyticsData
 );
