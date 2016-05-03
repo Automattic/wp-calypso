@@ -77,6 +77,7 @@
 		"post-editor/live-image-updates": true,
 		"press-this": true,
 		"reader": true,
+		"reader/a8c": true,
 		"reader/full-errors": true,
 		"reader/search": true,
 		"resume-editing": true,
