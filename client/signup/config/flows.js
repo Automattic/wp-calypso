@@ -191,10 +191,10 @@ const flows = {
 	},
 
 	desktop: {
-		steps: [ 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getPostsDestination,
 		description: 'Signup flow for desktop app',
-		lastModified: '2015-11-05'
+		lastModified: '2015-05-03'
 	},
 
 	layout: {
