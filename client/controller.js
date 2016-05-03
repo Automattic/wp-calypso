@@ -24,28 +24,27 @@ const debug = debugFactory( 'calypso:controller' );
 export function makeLayout( context, next ) {
 	const isLoggedIn = !! getCurrentUser( context.store.getState() );
 	if ( ! isLoggedIn ) {
-		makeLoggedOutLayout( context, next );
-	} // TODO: else { makeLoggedInLayout( context, next ); }
+		context.layout = makeLoggedOutLayout( context );
+	} // TODO: else { makeLoggedInLayout( context ); }
 	next();
 }
 
 /**
  * @param { object } context -- Middleware context
- * @param { function } next -- Call next middleware in chain
+ * @returns { object } `LoggedOutLayout` element
  *
- * Produce a `LayoutLoggedOut` element in `context.layout`, using
- * `context.primary`, `context.secondary`, and `context.tertiary` to populate it.
+ * Return a `LayoutLoggedOut` element, using `context.primary`,
+ * `context.secondary`, and `context.tertiary` to populate it.
 */
-function makeLoggedOutLayout( context, next ) {
+function makeLoggedOutLayout( context ) {
 	const { store, primary, secondary, tertiary } = context;
-	context.layout = (
+	return (
 		<ReduxProvider store={ store }>
 			<LayoutLoggedOut primary={ primary }
 				secondary={ secondary }
 				tertiary={ tertiary } />
 		</ReduxProvider>
 	);
-	next();
 }
 
 /**
