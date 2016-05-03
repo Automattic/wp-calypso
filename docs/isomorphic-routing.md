@@ -16,7 +16,10 @@ The constraints required for isomorphic routing are:
 
 ```js
 export default function( router ) {
-  router( '/themes/:slug/:section?/:site_id?', details, makeLoggedOutLayout );
+  router(
+    '/themes/:slug/:section?/:site_id?',
+    makeLoggedOutLayout( { primary: details, secondary: null } )
+  );
 }
 ```
 
@@ -27,9 +30,9 @@ different from the previous client-side-only routing approach where you'd have
 to render to `#primary`/`#secondary`/`#tertiary` DOM elements.)
 
 To facilitate that, you can (but don't have to) use the `makeLoggedOutLayout`
-generic middleware found in `client/controller`. So in the above example, the
-details middleware will just create an element in `context.primary` (instead of
-rendering it to the `#primary` DOM element, as previously).
+middleware factory found in `client/controller`. So in the above example, the
+`details` function will just return a React element (instead of rendering it to
+the `#primary` DOM element, as previously).
 Note that there is no logged-in counterpart to `makeLoggedOutLayout` yet, as the
 logged-in layout has a lot of dependencies that aren't ready for server-side
 rendering.

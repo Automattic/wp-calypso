@@ -13,12 +13,15 @@ import { details, fetchThemeDetailsData } from './controller';
 // the layout.
 // FIXME: Also create loggedOut/multiSite/singleSite elements, depending on route.
 const designRoutes = {
-	'/design': [ makeLoggedOutLayout ],
-	'/design/type/:tier': [ makeLoggedOutLayout ]
+	'/design': [ makeLoggedOutLayout() ],
+	'/design/type/:tier': [ makeLoggedOutLayout() ]
 };
 
 const themesRoutes = {
-	'/theme/:slug/:section?/:site_id?': [ fetchThemeDetailsData, details, makeLoggedOutLayout ]
+	'/theme/:slug/:section?/:site_id?': [
+		fetchThemeDetailsData,
+		makeLoggedOutLayout( { primary: details, secondary: null } )
+	]
 };
 
 const routes = Object.assign( {},
