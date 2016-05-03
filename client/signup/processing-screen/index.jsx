@@ -68,7 +68,7 @@ module.exports = React.createClass( {
 					<p className="step-header__subtitle">{ this.translate( "We're getting your site ready. It'll only take a few seconds."  ) }</p>
 				</header>
 
-				<Button primary disabled className="email-confirmation__button">Just a minute&hellip;</Button>
+				<Button primary disabled className="email-confirmation__button">{ this.translate( "Just a minute…" ) }</Button>
 
 				<div className="signup__email-confirmation">
 					<div className="email-confirmation__step">
