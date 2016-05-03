@@ -110,10 +110,10 @@ const flows = {
 	},
 
 	main: {
-		steps: [ 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
-		lastModified: '2015-09-03'
+		lastModified: '2016-05-03'
 	},
 
 	plan: {
@@ -127,15 +127,15 @@ const flows = {
 	website: {
 		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
-		description: 'This flow is used for the users who clicked "Create Website" on the two-button homepage.',
-		lastModified: '2016-01-28'
+		description: 'This flow was originally used for the users who clicked "Create Website" on the two-button homepage. It's now linked to from the default homepage CTA as the main flow was slightly behind given translations.',
+		lastModified: '2016-05-03'
 	},
 
 	blog: {
 		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
-		description: 'This flow is used for the users who clicked "Create Blog" on the two-button homepage.',
-		lastModified: '2016-01-28'
+		description: 'This flow was originally used for the users who clicked "Create Blog" on the two-button homepage. It's now used from blog-specific landing pages so that verbiage in survey steps refers to "blog" instead of "website".',
+		lastModified: '2016-05-03'
 	},
 
 	/* On deck flows*/
@@ -151,29 +151,22 @@ const flows = {
 	'delta-discover': {
 		steps: [ 'user' ],
 		destination: '/',
-		description: 'A copy of the `account` flow for the Delta email campaigns',
-		lastModified: null
+		description: 'A copy of the `account` flow for the Delta email campaigns. 50% of users who go through this flow receive a reader-specific drip email series.',
+		lastModified: '2016-05-03'
 	},
 
 	'delta-blog': {
 		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
-		description: 'A copy of the `blog` flow for the Delta email campaigns',
-		lastModified: `2016-03-09`
+		description: 'A copy of the `blog` flow for the Delta email campaigns. 50% of users who go through this flow receive a blogging-specific drip email series.',
+		lastModified: '2016-03-09'
 	},
 
 	'delta-site': {
 		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
-		description: 'A copy of the `website` flow for the Delta email campaigns',
-		lastModified: `2016-03-09`
-	},
-
-	'delta-bloggingu': {
-		steps: [ 'themes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'A copy of the `main` flow for the Delta Blogging U email campaign',
-		lastModified: null
+		description: 'A copy of the `website` flow for the Delta email campaigns. 50% of users who go through this flow receive a website-specific drip email series.',
+		lastModified: '2016-03-09'
 	},
 
 	'domains-with-premium': {
@@ -188,13 +181,6 @@ const flows = {
 		destination: '/me/next?welcome',
 		description: 'Signup flow for free site/account',
 		lastModified: '2015-10-30'
-	},
-
-	headstart: {
-		steps: [ 'themes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'Regular flow but with Headstart enabled to pre-populate site content',
-		lastModified: '2015-02-01'
 	},
 
 	desktop: {
