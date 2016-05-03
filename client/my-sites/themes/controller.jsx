@@ -1,9 +1,9 @@
 /**
  * Internal Dependencies
  */
-import SingleSiteComponent from 'my-sites/themes/single-site';
-import MultiSiteComponent from 'my-sites/themes/multi-site';
-import LoggedOutComponent from 'my-sites/themes/logged-out';
+import SingleSiteComponent from './single-site';
+import MultiSiteComponent from './multi-site';
+import LoggedOutComponent from './logged-out';
 import analytics from 'lib/analytics';
 import i18n from 'lib/mixins/i18n';
 import trackScrollPage from 'lib/track-scroll-page';
