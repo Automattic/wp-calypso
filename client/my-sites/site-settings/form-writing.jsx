@@ -23,11 +23,6 @@ import Button from 'components/button';
 import { requestPostTypes } from 'state/post-types/actions';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
 
-/**
- * Constants
- */
-const CPT_MANAGE_MIN_JETPACK_VERSION = '4.1.0';
-
 const SiteSettingsFormWriting = React.createClass( {
 	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
@@ -35,13 +30,18 @@ const SiteSettingsFormWriting = React.createClass( {
 		var writingAttributes = [
 				'default_category',
 				'post_categories',
-				'default_post_format',
-				'jetpack_testimonial',
-				'jetpack_portfolio'
+				'default_post_format'
 			],
 			settings = {};
 
 		site = site || this.props.site;
+
+		if ( ! site.jetpack ) {
+			writingAttributes = writingAttributes.concat( [
+				'jetpack_testimonial',
+				'jetpack_portfolio'
+			] );
+		}
 
 		if ( site.settings ) {
 			writingAttributes.map( function( attribute ) {
@@ -64,7 +64,8 @@ const SiteSettingsFormWriting = React.createClass( {
 	},
 
 	onSaveComplete() {
-		if ( ! this.props.site ) {
+		const { site } = this.props;
+		if ( ! site || site.jetpack ) {
 			return;
 		}
 
@@ -81,34 +82,9 @@ const SiteSettingsFormWriting = React.createClass( {
 		this.markChanged();
 	},
 
-	submitFormAndActivateCustomContentModule() {
-		this.submitForm();
-
-		// Only need to activate module for Jetpack sites
-		if ( ! this.props.site || ! this.props.site.jetpack ) {
-			return;
-		}
-
-		// Jetpack support applies only to more recent versions
-		if ( ! this.props.site.versionCompare( CPT_MANAGE_MIN_JETPACK_VERSION, '>=' ) ) {
-			return;
-		}
-
-		// No action necessary if neither content type is enabled in form
-		if ( ! this.state.jetpack_testimonial && ! this.state.jetpack_portfolio ) {
-			return;
-		}
-
-		// Only activate module if not already activated (saves an unnecessary
-		// request for post types after submission completes)
-		if ( ! this.props.site.isModuleActive( 'custom-content-types' ) ) {
-			this.props.site.activateModule( 'custom-content-types', this.onSaveComplete );
-		}
-	},
-
 	render: function() {
 		return (
-			<form id="site-settings" onSubmit={ this.submitFormAndActivateCustomContentModule } onChange={ this.markChanged }>
+			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
 				<SectionHeader label={ this.translate( 'Writing Settings' ) }>
 					<Button
 						compact
@@ -155,11 +131,7 @@ const SiteSettingsFormWriting = React.createClass( {
 						</FormSelect>
 					</FormFieldset>
 
-					{ (
-						! this.props.site ||
-						! this.props.site.jetpack ||
-						this.props.site.versionCompare( CPT_MANAGE_MIN_JETPACK_VERSION, '>=' )
-					) && (
+					{ ( ! this.props.site || ! this.props.site.jetpack ) && (
 						<CustomPostTypeFieldset
 							requestingSettings={ this.state.fetchingSettings }
 							value={ pick( this.state, 'jetpack_testimonial', 'jetpack_portfolio' ) }
