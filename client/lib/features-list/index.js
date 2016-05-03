@@ -63,7 +63,7 @@ FeaturesList.prototype.get = function() {
  */
 FeaturesList.prototype.fetch = function() {
 	debug( 'getting FeaturesList from api' );
-	wpcom.plans().features( function( error, data ) {
+	wpcom.plans().features( ( error, data ) => {
 		if ( error ) {
 			debug( 'error fetching FeaturesList from api', error );
 			return;
@@ -81,7 +81,7 @@ FeaturesList.prototype.fetch = function() {
 
 		this.emit( 'change' );
 		store.set( 'FeaturesList', features );
-	}.bind( this ) );
+	} );
 };
 
 /**
