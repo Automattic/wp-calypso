@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import ThemeSheetComponent from 'my-sites/themes/sheet';
+import ThemeSheetComponent from './main';
 import ThemeDetailsComponent from 'components/data/theme-details';
 import i18n from 'lib/mixins/i18n';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -34,10 +34,10 @@ export function makeElement( ThemesComponent, Head, store, props ) {
 			</Head>
 		</ReduxProvider>
 	);
-};
+}
 
 export function fetchThemeDetailsData( context, next ) {
-	if ( ! config.isEnabled( 'manage/themes/details' ) ) {
+	if ( ! config.isEnabled( 'manage/themes/details' ) || ! context.isServerSide ) {
 		return next();
 	}
 

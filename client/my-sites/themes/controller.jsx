@@ -1,20 +1,15 @@
 /**
  * Internal Dependencies
  */
-import SingleSiteComponent from 'my-sites/themes/single-site';
-import MultiSiteComponent from 'my-sites/themes/multi-site';
-import LoggedOutComponent from 'my-sites/themes/logged-out';
+import SingleSiteComponent from './single-site';
+import MultiSiteComponent from './multi-site';
+import LoggedOutComponent from './logged-out';
 import analytics from 'lib/analytics';
 import i18n from 'lib/mixins/i18n';
 import trackScrollPage from 'lib/track-scroll-page';
 import buildTitle from 'lib/screen-title/utils';
-import { getAnalyticsData } from '../helpers';
-import { makeElement } from './index.node.js';
-
-/**
- * Re-export
- */
-export { details } from './index.node.js';
+import { getAnalyticsData } from './helpers';
+import { makeElement } from 'my-sites/theme/controller';
 
 function getProps( context ) {
 	const { tier, site_id: siteId } = context.params;
