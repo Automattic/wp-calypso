@@ -134,6 +134,33 @@
 					text-transform: none;
 				}
 			}
+
+			.sidebar__menu-list {
+
+				.sidebar__menu-item,
+				.sidebar-dynamic-menu__tag {
+
+					@include breakpoint( "<660px" ) {
+						background: none;
+						border-top: 0;
+					}
+				}
+
+				li {
+
+					&:first-child {
+						@include breakpoint( "<660px" ) {
+							margin-top: -5px;
+						}
+					}
+
+					&:last-child {
+						@include breakpoint( "<660px" ) {
+							border-bottom: 1px solid rgba( 200, 215, 225, .5 );
+						}
+					}
+				}
+			}
 		}
 
 		.is-add-open {
@@ -167,6 +194,27 @@
 
 	.sidebar__menu-item-label {
 		padding: 8px 16px 8px 55px;
+
+		&::after {
+			@include long-content-fade( $color: lighten( $gray, 30% ), $size: 28% );
+			padding-right: 50px;
+		}
+
+		.sidebar__menu-item-listname,
+		.sidebar__menu-item-tagname {
+
+			&::after {
+				@include long-content-fade( $color: lighten( $gray, 30% ), $size: 20% );
+				right: 60px;
+			}
+		}
+
+		.sidebar__menu-item-tagname {
+
+			&::after {
+				right: 20px;
+			}
+		}
 	}
 
 	.sidebar__menu-add-button {
@@ -245,7 +293,7 @@
 		}
 
 		@include breakpoint( "<660px" ) {
-			top: 7px;
+			top: -40px;
 
 			.gridicon {
 				top: 6px;
