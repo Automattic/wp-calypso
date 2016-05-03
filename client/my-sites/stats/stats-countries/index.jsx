@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
