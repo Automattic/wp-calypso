@@ -60,7 +60,9 @@ const ReaderSidebarListsListItem = React.createClass( {
 
 		return (
 			<li className={ classes } key={ list.ID } >
-				<a className="sidebar__menu-item-label" href={ listRelativeUrl }>{ list.title }</a>
+				<a className="sidebar__menu-item-label" href={ listRelativeUrl }>
+					<div className="sidebar__menu-item-listname">{ list.title }</div>
+				</a>
 				{ list.is_owner ? <a href={ listManageUrl } rel={ listRel } className="add-new">{ this.translate( 'Manage' ) }</a> : null }
 			</li>
 		);

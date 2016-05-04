@@ -120,6 +120,46 @@
 			.sidebar__menu-item {
 				opacity: 1;
 				transform: translateY( 0 );
+
+				.add-new {
+					background: $white;
+					border: 1px solid lighten( $gray, 20% );
+					border-radius: 3px;
+					color: darken( $gray, 10% );
+					font-size: 11px;
+					padding: 6px 7px;
+					position: absolute;
+						top: 2px;
+						right: 8px;
+					text-transform: none;
+				}
+			}
+
+			.sidebar__menu-list {
+
+				.sidebar__menu-item,
+				.sidebar-dynamic-menu__tag {
+
+					@include breakpoint( "<660px" ) {
+						background: none;
+						border-top: 0;
+					}
+				}
+
+				li {
+
+					&:first-child {
+						@include breakpoint( "<660px" ) {
+							margin-top: -5px;
+						}
+					}
+
+					&:last-child {
+						@include breakpoint( "<660px" ) {
+							border-bottom: 1px solid rgba( 200, 215, 225, .5 );
+						}
+					}
+				}
 			}
 		}
 
@@ -142,6 +182,7 @@
 	}
 
 	.sidebar__menu-item {
+
 		a.sidebar__button {
 			margin-top: 5px;
 
@@ -154,8 +195,25 @@
 	.sidebar__menu-item-label {
 		padding: 8px 16px 8px 55px;
 
-		@include breakpoint( "<660px" ) {
-			padding: 18px 16px 18px 24px;
+		&::after {
+			@include long-content-fade( $color: lighten( $gray, 30% ), $size: 28% );
+			padding-right: 50px;
+		}
+
+		.sidebar__menu-item-listname,
+		.sidebar__menu-item-tagname {
+
+			&::after {
+				@include long-content-fade( $color: lighten( $gray, 30% ), $size: 20% );
+				right: 60px;
+			}
+		}
+
+		.sidebar__menu-item-tagname {
+
+			&::after {
+				right: 20px;
+			}
 		}
 	}
 
@@ -235,7 +293,7 @@
 		}
 
 		@include breakpoint( "<660px" ) {
-			top: 7px;
+			top: -40px;
 
 			.gridicon {
 				top: 6px;
