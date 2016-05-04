@@ -7,11 +7,14 @@ import { connect } from 'react-redux';
 import Main from 'components/main';
 import Button from 'components/button';
 import ReaderStartCard from './card';
+import QueryReaderStartRecommendations from 'components/data/query-reader-start-recommendations';
+import { getRecommendations } from 'state/reader/start/selectors';
 
 const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-unused-vars
 
 const ReaderStart = React.createClass( {
 	render() {
+		debug( this.props.recommendations );
 		return (
 			<Main className="reader-start">
 				<header>
@@ -22,6 +25,7 @@ const ReaderStart = React.createClass( {
 				{ this.translate( "Every time there are new updates to the sites you follow, you'll be the first to know!" ) }
 				</p>
 
+				<QueryReaderStartRecommendations />
 				<div className="reader-start__cards">
 					<ReaderStartCard />
 					<ReaderStartCard />
@@ -35,7 +39,7 @@ const ReaderStart = React.createClass( {
 export default connect(
 	( state ) => {
 		return {
-			recommendations: {} //getColdStartRecommendations( state )
+			recommendations: getRecommendations( state )
 		};
 	}
 )( ReaderStart );

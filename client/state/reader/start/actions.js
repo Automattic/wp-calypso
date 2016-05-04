@@ -8,6 +8,7 @@ import {
 	READER_START_RECOMMENDATIONS_REQUEST_SUCCESS,
 	READER_START_RECOMMENDATIONS_REQUEST_FAILURE
 } from 'state/action-types';
+import { sampleSuccessResponse } from './sample_responses';
 
 /**
  * Returns an action object to signal that recommendation objects have been received.
@@ -27,29 +28,31 @@ export function receiveRecommendations( recommendations ) {
  *
  * @return {Function}        Action thunk
  */
-// export function requestRecommendations() {
-// 	return ( dispatch ) => {
-// 		dispatch( {
-// 			type: READER_START_RECOMMENDATIONS_REQUEST,
-// 		} );
+export function requestRecommendations() {
+	return ( dispatch ) => {
+		dispatch( {
+			type: READER_START_RECOMMENDATIONS_REQUEST,
+		} );
 
-// 		return new Promise( ( resolve, reject ) => {
-// 			wpcom.undocumented().readStartRecommendations( ( error, data ) => {
-// 				if ( error ) {
-// 					dispatch( {
-// 						type: READER_START_RECOMMENDATIONS_REQUEST_FAILURE,
-// 						error
-// 					} );
-// 					reject();
-// 				} else {
-// 					dispatch( receiveLists( data.lists ) );
-// 					dispatch( {
-// 						type: READER_START_RECOMMENDATIONS_REQUEST_SUCCESS,
-// 						data
-// 					} );
-// 					resolve();
-// 				}
-// 			} );
-// 		} );
-// 	};
-// }
+	return new Promise( ( resolve, reject ) => {
+		// wpcom.undocumented().readLists( ( error, data ) => {
+		// 	error ? reject( error ) : resolve( data );
+		// } );
+		// Until the endpoint is ready, use a sample response
+			resolve( sampleSuccessResponse );
+		} )
+		.then( ( data ) => {
+			dispatch( receiveRecommendations( data.recommendations ) );
+			dispatch( {
+				type: READER_START_RECOMMENDATIONS_REQUEST_SUCCESS,
+				data
+			} );
+		} )
+		.catch( ( error ) => {
+			dispatch( {
+				type: READER_START_RECOMMENDATIONS_REQUEST_FAILURE,
+				error
+			} );
+		} );
+	};
+}

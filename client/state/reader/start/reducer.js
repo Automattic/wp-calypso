@@ -3,12 +3,6 @@
  */
 import { combineReducers } from 'redux';
 import keyBy from 'lodash/keyBy';
-import map from 'lodash/map';
-import union from 'lodash/union';
-import filter from 'lodash/filter';
-import get from 'lodash/get';
-import omit from 'lodash/omit';
-import find from 'lodash/find';
 
 /**
  * Internal dependencies
@@ -34,8 +28,7 @@ import { isValidStateWithSchema } from 'state/utils';
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_START_RECOMMENDATIONS_RECEIVE:
-			return state;
-			//return Object.assign( {}, state, keyBy( action.recommendations, 'ID' ) );
+			return Object.assign( {}, state, keyBy( action.recommendations, 'site_ID' ) );
 		case SERIALIZE:
 			return state;
 		case DESERIALIZE:

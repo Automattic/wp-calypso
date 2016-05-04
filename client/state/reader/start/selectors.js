@@ -17,3 +17,13 @@ export function isRequestingRecommendations( state ) {
 export function getRecommendations( state ) {
 	return state.reader.start.items;
 }
+
+/**
+ * Which recommendations has the user already interacted with?
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Array} Recommendations
+ */
+export function getRecommendationsInteractedWith( state ) {
+	return [];
+}
