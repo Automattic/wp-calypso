@@ -15,6 +15,7 @@ import CompactCard from 'components/card/compact';
 import FeatureExample from 'components/feature-example';
 import Button from 'components/button';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
@@ -39,20 +40,14 @@ import {
 // Store for existing plugins
 import PluginsStore from 'lib/plugins/store';
 
+const helpLinks = {
+	vaultpress: 'https://en.support.wordpress.com/setting-up-premium-services/#vaultpress',
+	akismet: 'https://en.support.wordpress.com/setting-up-premium-services/#akismet',
+	polldaddy: 'https://en.support.wordpress.com/setting-up-premium-services/#polldaddy',
+};
+
 const PlansSetup = React.createClass( {
 	displayName: 'PlanSetup',
-
-	doingText( slug ) {
-		switch ( slug ) {
-			case 'vaultpress':
-				return this.translate( '{{b}}VaultPress{{/b}} is backing up your site', { components: { b: <strong /> } } );
-			case 'akismet':
-				return this.translate( '{{b}}Akismet{{/b}} is checking for spam', { components: { b: <strong /> } } );
-			case 'polldaddy':
-				return this.translate( '{{b}}Polldaddy{{/b}} doesn\'t have an active state?', { components: { b: <strong /> } } );
-		}
-		return null;
-	},
 
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
@@ -127,52 +122,6 @@ const PlansSetup = React.createClass( {
 		return plugins.map( ( item, i ) => {
 			const plugin = Object.assign( {}, item, getPlugin( this.props.wporg, item.slug ) );
 
-			const statusProps = {
-				isCompact: true,
-				status: 'is-info',
-				showDismiss: false,
-			};
-
-			if ( plugin.error ) {
-				statusProps.status = 'is-error';
-				switch ( plugin.status ) {
-					case 'install':
-						statusProps.text = this.translate( 'An error occured when installing %(plugin)s.', { args: { plugin: plugin.name } } );
-						break;
-					case 'activate':
-						statusProps.text = this.translate( 'An error occured when activating %(plugin)s.', { args: { plugin: plugin.name } } );
-						break;
-					case 'configure':
-						statusProps.text = this.translate( 'An error occured when configuring %(plugin)s.', { args: { plugin: plugin.name } } );
-						break;
-					default:
-						statusProps.text = this.translate( 'An error occured.' );
-						break;
-				}
-			} else if ( hidden ) {
-				statusProps.icon = 'plugins';
-				statusProps.status = null;
-				statusProps.text = this.translate( 'Waiting to install' );
-			} else {
-				statusProps.icon = 'plugins';
-				statusProps.status = 'is-info';
-				switch ( plugin.status ) {
-					case 'done':
-						statusProps.status = null;
-						statusProps.text = this.translate( 'Successfully configured.' );
-						break;
-					case 'activate':
-					case 'configure':
-						statusProps.text = this.translate( 'Almost done' );
-						break;
-					case 'install':
-						statusProps.text = this.translate( 'Working…' );
-					case 'wait':
-					default:
-						statusProps.text = this.translate( 'Waiting to install' );
-				}
-			}
-
 			return (
 				<CompactCard className="plugin-item" key={ i }>
 					<span className="plugin-item__link">
@@ -180,11 +129,65 @@ const PlansSetup = React.createClass( {
 						<div className="plugin-item__title">
 							{ plugin.name }
 						</div>
-						<Notice { ...statusProps } />
+						{ hidden
+							? <Notice isCompact={ true } showDismiss={ false } icon="plugins" text={ this.translate( 'Waiting to install' ) } />
+							: this.renderStatus( plugin )
+						}
 					</span>
 				</CompactCard>
 			);
 		} );
+	},
+
+	renderStatus( plugin ) {
+		const statusProps = {
+			isCompact: true,
+			status: 'is-info',
+			showDismiss: false,
+		};
+
+		if ( plugin.error ) {
+			statusProps.status = 'is-error';
+			switch ( plugin.status ) {
+				case 'install':
+					statusProps.text = this.translate( 'An error occured when installing %(plugin)s.', { args: { plugin: plugin.name } } );
+					break;
+				case 'activate':
+					statusProps.text = this.translate( 'An error occured when activating %(plugin)s.', { args: { plugin: plugin.name } } );
+					break;
+				case 'configure':
+					statusProps.text = this.translate( 'An error occured when configuring %(plugin)s.', { args: { plugin: plugin.name } } );
+					break;
+				default:
+					statusProps.text = this.translate( 'An error occured.' );
+					break;
+			}
+			statusProps.children = (
+				<NoticeAction href={ helpLinks[ plugin.slug ] }>
+					{ "Manual Installation" }
+				</NoticeAction>
+			);
+		} else {
+			statusProps.icon = 'plugins';
+			statusProps.status = 'is-info';
+			switch ( plugin.status ) {
+				case 'done':
+					statusProps.status = null;
+					statusProps.text = this.translate( 'Successfully configured.' );
+					break;
+				case 'activate':
+				case 'configure':
+					statusProps.text = this.translate( 'Almost done' );
+					break;
+				case 'install':
+					statusProps.text = this.translate( 'Working…' );
+				case 'wait':
+				default:
+					statusProps.text = this.translate( 'Waiting to install' );
+			}
+		}
+
+		return ( <Notice { ...statusProps } /> );
 	},
 
 	renderActions( item, plugin ) {
