@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	noop = require( 'lodash/noop' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	isEqual = require( 'lodash/isEqual' );
+import React from 'react';
+import classNames from 'classnames';
+import noop from 'lodash/noop';
+import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	ThemeMoreButton = require( './more-button' ),
-	Gridicon = require( 'components/gridicon' );
+import Card from 'components/card';
+import ThemeMoreButton from './more-button';
+import Gridicon from 'components/gridicon';
 
 /**
  * Component
  */
-var Theme = React.createClass( {
+const Theme = React.createClass( {
 
 	propTypes: {
 		theme: React.PropTypes.shape( {
@@ -61,11 +61,11 @@ var Theme = React.createClass( {
 		actionLabel: React.PropTypes.string
 	},
 
-	shouldComponentUpdate: function( nextProps ) {
+	shouldComponentUpdate( nextProps ) {
 		return ! isEqual( nextProps.theme, this.props.theme );
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return ( {
 			isPlaceholder: false,
 			buttonContents: {},
@@ -74,11 +74,11 @@ var Theme = React.createClass( {
 		} );
 	},
 
-	onScreenshotClick: function() {
+	onScreenshotClick() {
 		this.props.onScreenshotClick( this.props.theme, this.props.index );
 	},
 
-	renderPlaceholder: function() {
+	renderPlaceholder() {
 		return (
 			<Card className="theme is-placeholder">
 				<div className="theme__content" />
@@ -86,7 +86,7 @@ var Theme = React.createClass( {
 		);
 	},
 
-	renderHover: function() {
+	renderHover() {
 		if ( this.props.screenshotClickUrl || this.props.onScreenshotClick ) {
 			return (
 				<a className="theme__active-focus"
@@ -99,7 +99,7 @@ var Theme = React.createClass( {
 		}
 	},
 
-	render: function() {
+	render() {
 		const {
 			name,
 			active,
@@ -160,4 +160,4 @@ var Theme = React.createClass( {
 	}
 } );
 
-module.exports = Theme;
+export default Theme;
