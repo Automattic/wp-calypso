@@ -10,6 +10,7 @@ import keyBy from 'lodash/keyBy';
  */
 import { plans } from './plans/reducer';
 import { domains } from './domains/reducer';
+
 import mediaStorage from './media-storage/reducer';
 import {
 	SITE_RECEIVE,
