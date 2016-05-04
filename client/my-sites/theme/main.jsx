@@ -119,11 +119,14 @@ const ThemeSheet = React.createClass( {
 			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
 		};
 
+		const { selectedSite } = this.props;
+		const siteSlug = selectedSite ? selectedSite.slug : '';
+
 		const nav = (
 			<NavTabs label="Details" >
-				<NavItem path={ `/theme/${ this.props.id }/details` } selected={ section === 'details' } >{ i18n.translate( 'Details' ) }</NavItem>
-				<NavItem path={ `/theme/${ this.props.id }/documentation` } selected={ section === 'documentation' } >{ i18n.translate( 'Documentation' ) }</NavItem>
-				<NavItem path={ `/theme/${ this.props.id }/support` } selected={ section === 'support' } >{ i18n.translate( 'Support' ) }</NavItem>
+				<NavItem path={ `/theme/${ this.props.id }/details/${ siteSlug }` } selected={ section === 'details' } >{ filterStrings.details }</NavItem>
+				<NavItem path={ `/theme/${ this.props.id }/documentation/${ siteSlug }` } selected={ section === 'documentation' } >{ filterStrings.documentation }</NavItem>
+				<NavItem path={ `/theme/${ this.props.id }/support/${ siteSlug }` } selected={ section === 'support' } >{ filterStrings.support }</NavItem>
 			</NavTabs>
 		);
 
@@ -162,9 +165,6 @@ const ThemeSheet = React.createClass( {
 
 		const section = this.validateSection( this.props.section );
 		const { themeContentElement, priceElement } = this.getDangerousElements( section );
-
-		console.log( 'props:', this.props );
-		console.log( 'selected site:', this.props.selectedSite );
 
 		return (
 			<Main className="themes__sheet">
