@@ -114,7 +114,7 @@ const LoggedInForm = React.createClass( {
 	displayName: 'LoggedInForm',
 
 	componentWillMount() {
-		const { autoAuthorize, queryObject } = this.props.jetpackConnectAuthorize;
+		const { autoAuthorize, queryObject, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		debug( 'Checking for auto-auth on mount', autoAuthorize );
 		if ( autoAuthorize || this.props.calypsoStartedConnection ) {
 			this.props.authorize( queryObject );
@@ -170,7 +170,7 @@ const LoggedInForm = React.createClass( {
 	},
 
 	getButtonText() {
-		const { isAuthorizing, authorizeSuccess, isRedirectingToWpAdmin, siteReceived } = this.props.jetpackConnectAuthorize;
+		const { isAuthorizing, authorizeSuccess, isRedirectingToWpAdmin, siteReceived, authorizeError } = this.props.jetpackConnectAuthorize;
 
 		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			return this.translate( 'Try again' );
