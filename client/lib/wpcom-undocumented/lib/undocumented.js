@@ -882,31 +882,6 @@ Undocumented.prototype.paypalExpressUrl = function( data, fn ) {
 };
 
 /**
- * GET domain suggestions
- *
- * @param {int|string} searchQuery The domain name to search
- * @param {object} functionParams Parameters for the endpoint
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.fetchDomainSuggestions = function( searchQuery, functionParams, fn ) {
-	var query = {
-		query: searchQuery,
-		quantity: functionParams.quantity,
-		include_wordpressdotcom: functionParams.includeWordPressDotCom,
-		vendor: functionParams.vendor,
-	};
-
-	this.wpcom.req.get( '/domains/suggestions', query, function( error, response ) {
-		if ( error ) {
-			return fn( error );
-		}
-
-		fn( null, response );
-	} );
-};
-
-/**
  * GET example domain suggestions
  *
  * @param {Function} fn - The callback funtion
