@@ -282,7 +282,8 @@ var Posts = React.createClass( {
 
 		return (
 			<div>
-				{ posts.length && this.props.sites.getSelectedSite() && ! this.props.statusSlug ?
+				{ postList }
+				{ posts.length > 3 && this.props.sites.getSelectedSite() && ! this.props.statusSlug ?
 					<UpgradeNudge
 						title={ this.translate( 'No Ads with WordPress.com Premium' ) }
 						message={ this.translate( 'Prevent ads from showing on your site.' ) }
@@ -290,7 +291,6 @@ var Posts = React.createClass( {
 						event="published_posts_no_ads"
 					/>
 				: null }
-				{ postList }
 				{ this.props.lastPage && posts.length ? <div className="infinite-scroll-end" /> : null }
 			</div>
 		);
