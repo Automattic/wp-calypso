@@ -19,6 +19,7 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
+	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_STORE_SESSION
 } from 'state/action-types';
 import userFactory from 'lib/user';
@@ -116,6 +117,14 @@ export default {
 			} );
 			window.location = url + activateURL;
 		};
+	},
+	goBackToWpAdmin( url ) {
+		return ( dispatch ) => {
+			dispatch( {
+				type: JETPACK_CONNECT_REDIRECT_WP_ADMIN
+			} );
+			window.location = url ;
+		}
 	},
 	createAccount( userData ) {
 		return ( dispatch ) => {
