@@ -61,14 +61,20 @@ module.exports = React.createClass( {
 	},
 
 	renderConfirmationPrompt: function() {
-		if ( this.props.user && this.props.user.email_verified ) {
+		if ( localStorage.signupProcessingScreen === 'verified' )  {
+			return null;
+		}
+
+		/*if ( this.props.user && this.props.user.email_verified ) {
 			return null;
 		}
 
 		let email = ( this.props.user ? this.props.user.email : this.props.signupDependencies.email );
 		if ( !email ) {
 			return null;
-		}
+		}*/
+
+		let email = 'foo@bar.com';
 
 		return (
 			<div className="signup__email-confirmation">
