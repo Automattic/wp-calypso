@@ -11,12 +11,10 @@ import Dispatcher from 'dispatcher';
 import {
 	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 	PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
-	PLUGIN_SETUP_START,
 	PLUGIN_SETUP_INSTALL,
 	PLUGIN_SETUP_ACTIVATE,
 	PLUGIN_SETUP_CONFIGURE,
 	PLUGIN_SETUP_FINISH,
-	PLUGIN_SETUP_ALL_FINISH,
 	PLUGIN_SETUP_ERROR
 } from 'state/action-types';
 
@@ -205,20 +203,7 @@ export default {
 					data
 				} );
 			} );
-		}
-	},
-
-	startPlugin: function( pluginSlug, siteId ) {
-		return ( dispatch ) => {
-			// Starting Install
-			setTimeout( () => {
-				dispatch( {
-					type: PLUGIN_SETUP_START,
-					siteId: siteId,
-					slug: pluginSlug,
-				} );
-			}, 1 );
-		}
+		};
 	},
 
 	installPlugin: function( plugin, site ) {
@@ -233,19 +218,6 @@ export default {
 			}, 1 );
 
 			install( site, plugin, dispatch );
-		}
-	},
-
-	finishAllPlugins: function( pluginSlug, siteId ) {
-		return ( dispatch ) => {
-			// Starting Install
-			setTimeout( () => {
-				dispatch( {
-					type: PLUGIN_SETUP_ALL_FINISH,
-					siteId: siteId,
-					slug: pluginSlug,
-				} );
-			}, 1 );
-		}
+		};
 	}
 }
