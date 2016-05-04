@@ -32,7 +32,7 @@ import { isPlan } from 'lib/products-values';
 import cartItems from 'lib/cart-values/cart-items';
 import { abtest } from 'lib/abtest';
 
-const undocumented = wpcom.undocumented();
+const domains = wpcom.domains();
 
 // max amount of domain suggestions we should fetch/display
 const SUGGESTION_QUANTITY = 10,
@@ -146,31 +146,33 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	fetchDefaultSuggestions: function() {
-		var initialQuery;
-
 		if ( ! this.props.selectedSite || ! this.props.selectedSite.domain ) {
 			return;
 		}
 
-		initialQuery = this.props.selectedSite.domain.split( '.' )[ 0 ];
-		undocumented.fetchDomainSuggestions( initialQuery, { quantity: SUGGESTION_QUANTITY, vendor: abtest( 'domainSuggestionVendor' ) }, function( error, suggestions ) {
+		const initialQuery = this.props.selectedSite.domain.split( '.' )[ 0 ];
+		const query = {
+			query: initialQuery,
+			quantity: SUGGESTION_QUANTITY,
+			vendor: abtest( 'domainSuggestionVendor' )
+		};
+
+		domains.suggestions( query ).then( suggestions => {
 			if ( ! this.isMounted() ) {
 				return;
 			}
+			this.props.onDomainsAvailabilityChange( true );
+			suggestions = suggestions.map( function( suggestion ) {
+				return extend( suggestion, { isVisible: true } );
+			} );
+			this.setState( { defaultSuggestions: suggestions } );
+		} ).catch( error => {
 			if ( error && error.statusCode === 503 ) {
 				return this.props.onDomainsAvailabilityChange( false );
 			} else if ( error ) {
 				throw error;
 			}
-
-			this.props.onDomainsAvailabilityChange( true );
-
-			suggestions = suggestions.map( function( suggestion ) {
-				return extend( suggestion, { isVisible: true } );
-			} );
-
-			this.setState( { defaultSuggestions: suggestions } );
-		}.bind( this ) );
+		} );
 	},
 
 	render: function() {
@@ -295,23 +297,24 @@ const RegisterDomainStep = React.createClass( {
 					} );
 				},
 				callback => {
-					const params = {
+					const query = {
+						query: domain,
 						quantity: SUGGESTION_QUANTITY,
 						includeWordPressDotCom: this.props.includeWordPressDotCom,
 						vendor: abtest( 'domainSuggestionVendor' )
 					};
 
-					undocumented.fetchDomainSuggestions( domain, params, ( error, domainSuggestions ) => {
+					domains.suggestions( query ).then( domainSuggestions => {
+						this.props.onDomainsAvailabilityChange( true );
+						callback( null, domainSuggestions );
+					} ).catch( error => {
 						if ( error && error.statusCode === 503 ) {
 							return this.props.onDomainsAvailabilityChange( false );
 						} else if ( error && error.error ) {
 							error.code = error.error;
 							this.showValidationErrorMessage( domain, error );
 						}
-
-						this.props.onDomainsAvailabilityChange( true );
-
-						callback( error, domainSuggestions );
+						callback( error, null );
 					} );
 				}
 			],
