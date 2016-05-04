@@ -241,7 +241,7 @@ module.exports = React.createClass( {
 	},
 
 	editItem: function( item ) {
-		const { site, mediaLibrarySelectedItems } = this.props;
+		const { site, mediaLibrarySelectedItems, single } = this.props;
 		if ( ! site ) {
 			return;
 		}
@@ -249,7 +249,11 @@ module.exports = React.createClass( {
 		// Append item to set of selected items if not already selected.
 		let items = mediaLibrarySelectedItems;
 		if ( ! items.some( ( selected ) => selected.ID === item.ID ) ) {
-			items = items.concat( item );
+			if ( single ) {
+				items = [ item ];
+			} else {
+				items = items.concat( item );
+			}
 			MediaActions.setLibrarySelectedItems( site.ID, items );
 		}
 
