@@ -32,7 +32,7 @@ describe( 'EditorTaxonomiesAccordion', function() {
 		i18n = require( 'lib/mixins/i18n' );
 
 		TaxonomiesAccordion = require( 'post-editor/editor-taxonomies/accordion' );
-		TaxonomiesAccordion.prototype.__reactAutoBindMap.translate = i18n.translate;
+		TaxonomiesAccordion.prototype.translate = i18n.translate;
 
 		common.dispatchReceiveCategoryTerms();
 		common.dispatchReceiveTagTerms();

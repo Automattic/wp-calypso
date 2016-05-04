@@ -25,13 +25,13 @@ describe( 'index', () => {
 		translateFn = i18n.translate;
 		i18n.translate = identity;
 		DomainWarnings = require( '../' );
-		DomainWarnings.prototype.__reactAutoBindMap.translate = identity;
-		Notice.prototype.__reactAutoBindMap.translate = identity;
+		DomainWarnings.prototype.translate = identity;
+		Notice.prototype.translate = identity;
 	} );
 
 	afterEach( () => {
-		delete DomainWarnings.prototype.__reactAutoBindMap.translate;
-		delete Notice.prototype.__reactAutoBindMap.translate;
+		delete DomainWarnings.prototype.translate;
+		delete Notice.prototype.translate;
 		i18n.translate = translateFn;
 	} );
 
@@ -45,7 +45,7 @@ describe( 'index', () => {
 
 		const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-		expect( ReactDom.findDOMNode( component ) ).to.be.a( 'null' )
+		expect( ReactDom.findDOMNode( component ) ).to.be.a( 'null' );
 	} );
 
 	it( 'should render new warning notice if the domain is new', () => {
