@@ -7,9 +7,11 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Button = require( 'components/button' ),
+var config = require( 'config' ),
+	Button = require( 'components/button' ),
 	Gridicon = require( 'components/gridicon' ),
-	Card = require( 'components/card' );
+	Card = require( 'components/card' ),
+	DocsExample = require( 'components/docs-example' );
 
 var Buttons = React.createClass( {
 	displayName: 'Buttons',
@@ -23,16 +25,35 @@ var Buttons = React.createClass( {
 	},
 
 	render: function() {
-		var toggleButtonsText = this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons';
+		var toggleText = this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons';
+		return config.isEnabled( 'devdocs/usage-stats' )
+			? this.renderNewStructure( toggleText )
+			: this.renderStructure( toggleText );
+	},
 
+	renderStructure: function( toggleText ) {
 		return (
 			<div className="design-assets__group">
 				<h2>
 					<a href="/devdocs/design/buttons">Button</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleButtons }>{ toggleButtonsText }</a>
+					<a className="design-assets__toggle button" onClick={ this.toggleButtons }>{ toggleText }</a>
 				</h2>
 				{ this.renderButtons() }
 			</div>
+		);
+	},
+
+	renderNewStructure: function( toggleText ) {
+		return (
+			<DocsExample
+				title="Button"
+				url="/devdocs/design/buttons"
+				usageStats={ this.props.usageStats }
+				toggleHandler={ this.toggleButtons }
+				toggleText={ toggleText }
+			>
+				{ this.renderButtons() }
+			</DocsExample>
 		);
 	},
 
