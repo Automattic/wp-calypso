@@ -41,12 +41,12 @@ const normalizePluginInstructions = ( data ) => {
  * Return a SitePlugin instance used to handle the plugin
  *
  * @param {Object} site - site object
- * @param {String} pluginId - plugin identifier
+ * @param {String} plugin - plugin identifier
  * @return {SitePlugin} SitePlugin instance
  */
-const getPluginHandler = ( site, pluginId ) => {
+const getPluginHandler = ( site, plugin ) => {
 	const siteHandler = wpcom.site( site.ID );
-	const pluginHandler = siteHandler.plugin( pluginId );
+	const pluginHandler = siteHandler.plugin( plugin );
 	return pluginHandler;
 };
 
@@ -72,7 +72,7 @@ function install( site, plugin, dispatch ) {
 		return;
 	}
 
-	getPluginHandler( site, plugin.id ).install().then( ( data ) => {
+	getPluginHandler( site, plugin.slug ).install().then( ( data ) => {
 		dispatch( {
 			type: PLUGIN_SETUP_ACTIVATE,
 			siteId: site.ID,
@@ -105,7 +105,7 @@ function install( site, plugin, dispatch ) {
 
 function update( site, plugin, dispatch ) {
 	console.log( '# Trying to update', plugin.name );
-	getPluginHandler( site, plugin.id ).update().then( ( data ) => {
+	getPluginHandler( site, plugin.id ).updateVersion().then( ( data ) => {
 		dispatch( {
 			type: PLUGIN_SETUP_ACTIVATE,
 			siteId: site.ID,
