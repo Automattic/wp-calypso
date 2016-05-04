@@ -18,6 +18,7 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
+	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_STORE_SESSION,
 	SERIALIZE,
 	DESERIALIZE
@@ -72,7 +73,7 @@ export function jetpackConnectSite( state = {}, action ) {
 export function jetpackConnectAuthorize( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_AUTHORIZE:
-			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false } );
+			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, isRedirectingToWpAdmin: false } );
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
 			if ( isEmpty( action.error ) ) {
 				const { plans_url } = action.data;
@@ -93,9 +94,11 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 				return Object.assign( {}, state, { isAuthorizing: false, authorizeSuccess: false, authorizeError: true, autoAuthorize: false } );
 			}
 			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, autoAuthorize: true, userData: action.userData, bearerToken: action.data.bearer_token } );
+		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
+			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case SERIALIZE:
 		case DESERIALIZE:
-			return state;
+			return Object.assign( {}, state, { isRedirectingToWpAdmin: false } );
 	}
 	return state;
 }
