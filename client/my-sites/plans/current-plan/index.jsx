@@ -9,7 +9,11 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import Main from 'components/main';
-import { getPlansBySite } from 'state/sites/plans/selectors';
+import {
+	getPlansBySite,
+	getCurrentPlan,
+	isCurrentPlanExpiring
+} from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/upgrades/navigation';
@@ -62,7 +66,9 @@ class CurrentPlan extends Component {
 			selectedSite,
 			selectedSiteId,
 			sitePlans,
-			context
+			context,
+			currentPlan,
+			isExpiring
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug,
@@ -87,6 +93,9 @@ class CurrentPlan extends Component {
 						isPlaceholder={ isLoading }
 						title={ title }
 						tagLine={ tagLine }
+						currentPlanSlug={ currentPlanSlug }
+						currentPlan={ currentPlan }
+						isExpiring={ isExpiring }
 					/>
 					<ProductPurchaseFeaturesList
 						plan={ currentPlanSlug }
@@ -110,7 +119,9 @@ export default connect(
 			selectedSite,
 			selectedSiteId: getSelectedSiteId( state ),
 			sitePlans: getPlansBySite( state, selectedSite ),
-			context: ownProps.context
+			context: ownProps.context,
+			currentPlan: getCurrentPlan( state, getSelectedSiteId( state ) ),
+			isExpiring: isCurrentPlanExpiring( state, getSelectedSiteId( state ) )
 		};
 	}
 )( localize( CurrentPlan ) );

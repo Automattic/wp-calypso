@@ -89,3 +89,19 @@
 		}
 	}
 }
+
+.current-plan__header-purchase-info {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	&.is-expiring {
+		.current-plan__expires-in {
+			color: $alert-red;
+		}
+	}
+}
+
+.current-plan__header-expires-in {
+	color: $gray;
+}
