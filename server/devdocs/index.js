@@ -16,7 +16,8 @@ var	config = require( 'config' ),
 	root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
 	searchIndex = require( 'devdocs/search-index' ),
 	docsIndex = lunr.Index.load( searchIndex.index ),
-	documents = searchIndex.documents;
+	documents = searchIndex.documents,
+	usageStats = require( 'devdocs/usage-stats.json' );
 
 /**
  * Constants
@@ -194,6 +195,21 @@ module.exports = function() {
 		const fileContents = fs.readFileSync( path, { encoding: 'utf8' } );
 
 		response.send( marked( fileContents ) );
+	} );
+
+	// return json for the components usage stats
+	app.get( '/devdocs/service/usage-stats', function( request, response ) {
+		var counts = Object.keys( usageStats )
+			.filter( function( moduleName ) {
+				return moduleName.indexOf( 'components/' ) === 0 &&
+					moduleName.indexOf( 'docs/' ) === -1;
+			} )
+			.reduce( function( target, moduleName ) {
+				var name = moduleName.replace( 'components/', '' );
+				target[ name ] = usageStats[ moduleName ];
+				return target;
+			}, {} );
+		response.json( counts );
 	} );
 
 	return app;
