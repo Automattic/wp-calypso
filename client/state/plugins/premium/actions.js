@@ -1,7 +1,7 @@
 /**
-* External dependencies
-*/
-const wpcom = require( 'lib/wp' ).undocumented();
+ * External dependencies
+ */
+const wpcom = require( 'lib/wp' );
 import keys from 'lodash/keys';
 
 /**
@@ -23,7 +23,7 @@ import {
  */
 const _fetching = {};
 
-function normalizePluginInstructions( data ) {
+const normalizePluginInstructions = ( data ) => {
 	const _plugins = data.keys;
 	return keys( _plugins ).map( ( key ) => {
 		const plugin = _plugins[key];
@@ -33,11 +33,25 @@ function normalizePluginInstructions( data ) {
 			key: plugin.key || plugin,
 			status: 'wait',
 			error: null,
-		}
+		};
 	} );
-}
+};
+
+/**
+ * Return a SitePlugin instance used to handle the plugin
+ *
+ * @param {Object} site - site object
+ * @param {String} pluginId - plugin identifier
+ * @return {SitePlugin} SitePlugin instance
+ */
+const getPluginHandler = ( site, pluginId ) => {
+	const siteHandler = wpcom.site( site.ID );
+	const pluginHandler = siteHandler.plugin( pluginId );
+	return pluginHandler;
+};
 
 function install( site, plugin, dispatch ) {
+	console.log( '# Start installing', plugin.slug );
 	Dispatcher.handleViewAction( {
 		type: 'INSTALL_PLUGIN',
 		action: 'INSTALL_PLUGIN',
@@ -46,29 +60,19 @@ function install( site, plugin, dispatch ) {
 		data: null,
 		error: null
 	} );
-	wpcom.pluginsInstall( site.ID, plugin.slug, ( error, data ) => {
-		if ( error ) {
-			if ( error.name === 'PluginAlreadyInstalledError' ) {
-				update( site, plugin, dispatch );
-			} else {
-				dispatch( {
-					type: PLUGIN_SETUP_ERROR,
-					siteId: site.ID,
-					slug: plugin.slug,
-					error,
-				} );
-				Dispatcher.handleServerAction( {
-					type: 'RECEIVE_INSTALLED_PLUGIN',
-					action: 'INSTALL_PLUGIN',
-					site: site,
-					plugin: plugin,
-					data: null,
-					error: error
-				} );
-			}
-			return;
-		}
 
+	if ( plugin.active ) {
+		console.log( '# Already installed', plugin.slug );
+		dispatch( {
+			type: PLUGIN_SETUP_CONFIGURE,
+			siteId: site.ID,
+			slug: plugin.slug,
+		} );
+		configure( site, plugin, dispatch );
+		return;
+	}
+
+	getPluginHandler( site, plugin.id ).install().then( ( data ) => {
 		dispatch( {
 			type: PLUGIN_SETUP_ACTIVATE,
 			siteId: site.ID,
@@ -76,12 +80,11 @@ function install( site, plugin, dispatch ) {
 		} );
 
 		activate( site, data, dispatch );
-	} );
-};
-
-function update( site, plugin, dispatch ) {
-	wpcom.pluginsUpdate( site.ID, plugin.id, ( error ) => {
-		if ( error ) {
+	} ).catch( ( error ) => {
+		if ( error.name === 'PluginAlreadyInstalledError' ) {
+			update( site, plugin, dispatch );
+		} else {
+			console.log( '!! Error [install]', error.name, error.message );
 			dispatch( {
 				type: PLUGIN_SETUP_ERROR,
 				siteId: site.ID,
@@ -96,69 +99,90 @@ function update( site, plugin, dispatch ) {
 				data: null,
 				error: error
 			} );
-			return;
 		}
+	} );
+}
 
+function update( site, plugin, dispatch ) {
+	console.log( '# Trying to update', plugin.name );
+	getPluginHandler( site, plugin.id ).update().then( ( data ) => {
 		dispatch( {
 			type: PLUGIN_SETUP_ACTIVATE,
 			siteId: site.ID,
 			slug: plugin.slug,
 		} );
 
-		activate( site, plugin, dispatch );
-	} );
-};
-
-function activate( site, plugin, dispatch ) {
-	wpcom.pluginsActivate( site.ID, plugin.id, ( error, data ) => {
-		if ( error && error.name !== 'ActivationErrorError' ) {
-			dispatch( {
-				type: PLUGIN_SETUP_ERROR,
-				siteId: site.ID,
-				slug: plugin.slug,
-				error,
-			} );
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_INSTALLED_PLUGIN',
-				action: 'INSTALL_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: null,
-				error: error
-			} );
-
-			return;
-		}
-
-		if ( error && error.name === 'ActivationErrorError' ) {
-			// Technically it failed, but we need the plugin info in `data`.
-			data = plugin;
-		}
-
+		activate( site, data, dispatch );
+	} ).catch( ( error ) => {
+		console.log( '!! Error [update]', error.name, error.message );
 		dispatch( {
-			type: PLUGIN_SETUP_CONFIGURE,
+			type: PLUGIN_SETUP_ERROR,
 			siteId: site.ID,
 			slug: plugin.slug,
+			error,
 		} );
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_INSTALLED_PLUGIN',
 			action: 'INSTALL_PLUGIN',
 			site: site,
 			plugin: plugin,
+			data: null,
+			error: error
+		} );
+	} );
+}
+
+function activate( site, plugin, dispatch ) {
+	console.log( '# Trying to activate', plugin.name );
+	const success = ( data ) => {
+		dispatch( {
+			type: PLUGIN_SETUP_CONFIGURE,
+			siteId: site.ID,
+			slug: data.slug,
+		} );
+		Dispatcher.handleServerAction( {
+			type: 'RECEIVE_INSTALLED_PLUGIN',
+			action: 'INSTALL_PLUGIN',
+			site: site,
+			plugin: data,
 			data: data,
 			error: null
 		} );
 
-		autoupdate( site.ID, data );
+		autoupdate( site, data );
 		configure( site, data, dispatch );
-	} );
-};
+	};
 
-function autoupdate( siteId, plugin ) {
-	wpcom.enableAutoupdates( siteId, plugin.id );
-};
+	getPluginHandler( site, plugin.id ).activate().then( success ).catch( ( error ) => {
+		console.log( '!! Error [activate]', error.name, error.message );
+		if ( error.name === 'ActivationErrorError' ) {
+			// Technically it failed, but only because it's already active.
+			success( plugin );
+			return;
+		}
+		dispatch( {
+			type: PLUGIN_SETUP_ERROR,
+			siteId: site.ID,
+			slug: plugin.slug,
+			error,
+		} );
+		Dispatcher.handleServerAction( {
+			type: 'RECEIVE_INSTALLED_PLUGIN',
+			action: 'INSTALL_PLUGIN',
+			site: site,
+			plugin: plugin,
+			data: null,
+			error: error
+		} );
+	} );
+}
+
+function autoupdate( site, plugin ) {
+	getPluginHandler( site, plugin.id ).enableAutoupdate();
+}
 
 function configure( site, plugin, dispatch ) {
+	console.log( '# Start configuring', plugin.slug );
 	setTimeout( () => {
 		dispatch( {
 			type: PLUGIN_SETUP_FINISH,
@@ -183,9 +207,13 @@ export default {
 				} );
 			}, 1 );
 
-			wpcom.fetchJetpackKeys( siteId, ( error, data ) => {
+			wpcom.undocumented().fetchJetpackKeys( siteId, ( error, data ) => {
 				if ( error ) {
-					console.warn( error );
+					dispatch( {
+						type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
+						siteId,
+						data: [],
+					} );
 					return;
 				}
 
@@ -203,15 +231,13 @@ export default {
 	installPlugin: function( plugin, site ) {
 		return ( dispatch ) => {
 			// Starting Install
-			setTimeout( () => {
-				dispatch( {
-					type: PLUGIN_SETUP_INSTALL,
-					siteId: site.ID,
-					slug: plugin.slug,
-				} );
-			}, 1 );
+			dispatch( {
+				type: PLUGIN_SETUP_INSTALL,
+				siteId: site.ID,
+				slug: plugin.slug,
+			} );
 
 			install( site, plugin, dispatch );
 		};
 	}
-}
+};
