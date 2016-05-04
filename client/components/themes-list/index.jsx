@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	times = require( 'lodash/times' ),
-	isEqual = require( 'lodash/isEqual' );
+import React from 'react';
+import times from 'lodash/times';
+import isEqual from 'lodash/isEqual';
 
 /**
  * Internal dependencies
  */
-var Theme = require( 'components/theme' ),
-	EmptyContent = require( 'components/empty-content' ),
-	InfiniteScroll = require( 'lib/mixins/infinite-scroll' ),
-	PER_PAGE = require( 'state/themes/themes-list/constants' ).PER_PAGE;
+import Theme from 'components/theme';
+import EmptyContent from 'components/empty-content';
+import InfiniteScroll from 'lib/mixins/infinite-scroll';
+import { PER_PAGE } from 'state/themes/themes-list/constants';
 
 /**
  * Component
  */
-var ThemesList = React.createClass( {
+const ThemesList = React.createClass( {
 
 	mixins: [ InfiniteScroll( 'fetchNextPage' ) ],
 
@@ -31,30 +31,30 @@ var ThemesList = React.createClass( {
 		getActionLabel: React.PropTypes.func
 	},
 
-	fetchNextPage: function( options ) {
+	fetchNextPage( options ) {
 		this.props.fetchNextPage( options );
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			loading: false,
 			themes: [],
-			fetchNextPage: function() {},
-			optionsGenerator: function() {
+			fetchNextPage() {},
+			optionsGenerator() {
 				return [];
 			},
-			getActionLabel: function() {
+			getActionLabel() {
 				return '';
 			}
 		};
 	},
 
-	shouldComponentUpdate: function( nextProps ) {
+	shouldComponentUpdate( nextProps ) {
 		return this.props.loading !== nextProps.loading ||
 			! isEqual( this.props.themes, nextProps.themes );
 	},
 
-	renderTheme: function( theme, index ) {
+	renderTheme( theme, index ) {
 		return <Theme
 			key={ 'theme-' + theme.id }
 			buttonContents={ this.props.getButtonOptions( theme ) }
@@ -66,21 +66,21 @@ var ThemesList = React.createClass( {
 			theme={ theme } />;
 	},
 
-	renderLoadingPlaceholders: function() {
+	renderLoadingPlaceholders() {
 		return times( PER_PAGE, function( i ) {
 			return <Theme key={ 'placeholder-' + i } theme={ { id: 'placeholder-' + i, name: 'Loading…' } } isPlaceholder={ true } />;
 		} );
 	},
 
 	// Invisible trailing items keep all elements same width in flexbox grid.
-	renderTrailingItems: function() {
+	renderTrailingItems() {
 		const NUM_SPACERS = 8; // gives enough spacers for a theoretical 9 column layout
 		return times( NUM_SPACERS, function( i ) {
 			return <div className="themes-list--spacer" key={ 'themes-list--spacer-' + i } />;
 		} );
 	},
 
-	renderEmpty: function() {
+	renderEmpty() {
 		return this.props.emptyContent ||
 			<EmptyContent
 				title={ this.translate( 'Sorry, no themes found.' ) }
@@ -88,7 +88,7 @@ var ThemesList = React.createClass( {
 				/>;
 	},
 
-	render: function() {
+	render() {
 		if ( ! this.props.loading && this.props.themes.length === 0 ) {
 			return this.renderEmpty();
 		}
@@ -103,4 +103,4 @@ var ThemesList = React.createClass( {
 	}
 } );
 
-module.exports = ThemesList;
+export default ThemesList;
