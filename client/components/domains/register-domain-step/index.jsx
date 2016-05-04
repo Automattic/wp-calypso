@@ -73,7 +73,7 @@ function enqueueSearch( search ) {
 	searchStackTimer = window.setTimeout( processSearchQueue, 10000 );
 }
 
-var RegisterDomainStep = React.createClass( {
+const RegisterDomainStep = React.createClass( {
 	mixins: [ analytics ],
 
 	propTypes: {
@@ -314,7 +314,8 @@ var RegisterDomainStep = React.createClass( {
 						callback( error, domainSuggestions );
 					} );
 				}
-			], ( error, result ) => {
+			],
+			( error, result ) => {
 				if ( ! this.state.loadingResults || domain !== this.state.lastDomainSearched ) {
 					// this callback is irrelevant now, a newer search has been made or the results were cleared
 					return;
@@ -383,11 +384,13 @@ var RegisterDomainStep = React.createClass( {
 			},
 			suggestions = reject( this.state.searchResults, isSearchedDomain ),
 			availableDomain = find( this.state.searchResults, isSearchedDomain ),
-			onAddMapping = this.props.onAddMapping ?
-				domain => {
-					return this.props.onAddMapping( domain, this.state );
-				} :
-				undefined;
+			onAddMapping;
+
+		if ( this.props.onAddMapping ) {
+			onAddMapping = ( domain ) => {
+				return this.props.onAddMapping( domain, this.state );
+			};
+		}
 
 		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
 			// the search returned no results
