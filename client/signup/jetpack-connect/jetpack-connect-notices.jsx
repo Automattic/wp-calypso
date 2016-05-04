@@ -81,6 +81,12 @@ export default React.createClass( {
 			noticeValues.icon = 'status';
 			return noticeValues;
 		}
+		if ( this.props.noticeType === 'secretExpired' ) {
+			noticeValues.text = this.translate( 'Oops, that took a while. You\'ll have to try again.' );
+			noticeValues.status = 'is-error';
+			noticeValues.icon = 'notice';
+			return noticeValues;
+		}
 		if ( this.props.noticeType === 'authorizeError' ) {
 			noticeValues.text = this.translate( 'Error authorizing your site. Please contact support.' );
 			noticeValues.status = 'is-error';

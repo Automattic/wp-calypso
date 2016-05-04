@@ -32,6 +32,7 @@ import Gridicon from 'components/gridicon';
  */
 
 const STATS_PAGE = '/stats/insights/';
+const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + config( 'env' );
 
 /**
  * Module variables
@@ -121,8 +122,10 @@ const LoggedInForm = React.createClass( {
 	},
 
 	handleSubmit() {
-		const { queryObject, siteReceived, plansURL } = this.props.jetpackConnectAuthorize;
-		if ( siteReceived && plansURL ) {
+		const { queryObject, siteReceived, plansURL, authorizeError } = this.props.jetpackConnectAuthorize;
+		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
+			window.location.href = queryObject.site + authUrl;
+		} else if ( siteReceived && plansURL ) {
 			page( plansURL );
 		} else {
 			this.props.authorize( queryObject );
@@ -143,18 +146,25 @@ const LoggedInForm = React.createClass( {
 	},
 
 	renderNotices() {
-		const { authorizeError } = this.props.jetpackConnectAuthorize;
-		if ( authorizeError && authorizeError.message.indexOf( 'already_connected' ) < 0 ) {
-			return <JetpackConnectNotices noticeType="authorizeError" />;
+		const { authorizeError, queryObject } = this.props.jetpackConnectAuthorize;
+		if ( ! authorizeError ) {
+			return null;
 		}
-		if ( authorizeError && authorizeError.message.indexOf( 'already_connected' ) >= 0 ) {
+		if ( authorizeError.message.indexOf( 'already_connected' ) >= 0 ) {
 			return <JetpackConnectNotices noticeType="alreadyConnected" />;
 		}
-		return null;
+		if ( authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
+			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ queryObject.site } />;
+		}
+		return <JetpackConnectNotices noticeType="authorizeError" />;
 	},
 
 	getButtonText() {
-		const { isAuthorizing, authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
+		const { isAuthorizing, authorizeSuccess, siteReceived, authorizeError } = this.props.jetpackConnectAuthorize;
+
+		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
+			return this.translate( 'Try again' );
+		}
 
 		if ( siteReceived ) {
 			return this.translate( 'Browse Available Upgrades' );
