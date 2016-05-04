@@ -30,6 +30,10 @@ import support from './support/reducer';
 import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
+import comments from './comments/reducer';
+import googleAppsUsers from './google-apps-users/reducer';
+import reader from './reader/reducer';
+import componentsUsageStats from './components-usage-stats/reducer';
 
 /**
  * Module variables
@@ -57,7 +61,11 @@ export const reducer = combineReducers( {
 	support,
 	themes,
 	ui,
-	users
+	users,
+	comments,
+	googleAppsUsers,
+	reader,
+	componentsUsageStats
 } );
 
 let middleware = [ thunkMiddleware ];
