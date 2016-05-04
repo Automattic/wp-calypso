@@ -1,43 +1,42 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import React from 'react';
-import classNames from 'classnames';
+// import classNames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
+import FeatureExample from 'components/feature-example';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
-import Spinner from 'components/spinner';
+import Notice from 'components/notice';
+import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
+import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+
 // Redux actions & selectors
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPlugin } from 'state/plugins/wporg/selectors';
+import { fetchPluginData } from 'state/plugins/wporg/actions';
 import {
 	fetchInstallInstructions,
-	startPlugin,
 	installPlugin,
-	finishAllPlugins
 } from 'state/plugins/premium/actions';
 import {
 	getPluginsForSite,
 	getActivePlugin,
 	getNextPlugin,
 	isFinished,
+	isInstalling,
 	isRequesting
 } from 'state/plugins/premium/selectors';
-// Store required to get the plugin meta information like ID, etc.
+// Store for existing plugins
 import PluginsStore from 'lib/plugins/store';
-
-const helpLinks = {
-	vaultpress: 'https://en.support.wordpress.com/setting-up-premium-services/#vaultpress',
-	akismet: 'https://en.support.wordpress.com/setting-up-premium-services/#akismet',
-	polldaddy: 'https://en.support.wordpress.com/setting-up-premium-services/#polldaddy',
-}
 
 const PlansSetup = React.createClass( {
 	displayName: 'PlanSetup',
@@ -54,19 +53,49 @@ const PlansSetup = React.createClass( {
 		return null;
 	},
 
+	// plugins for Jetpack sites require additional data from the wporg-data store
+	addWporgDataToPlugins( plugins ) {
+		return plugins.map( plugin => {
+			const pluginData = getPlugin( this.props.wporg, plugin.slug );
+			if ( ! pluginData ) {
+				this.props.fetchPluginData( plugin.slug );
+			}
+			return Object.assign( {}, plugin, pluginData );
+		} );
+	},
+
 	componentDidMount() {
 		this.props.fetchInstallInstructions( this.props.siteId );
 	},
 
-	renderNoManageWarning() {
-		return (
-			<JetpackManageErrorPage
-				site={ this.props.selectedSite }
-				template={ 'optInManage' }
-				title={ this.translate( 'Oh no! We can\'t automatically install your new plugins.' ) }
-				section={ 'plugins' }
-				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' } />
-		);
+	componentDidUpdate() {
+		const site = this.props.selectedSite;
+		if ( site.canManage() && ! this.props.isInstalling && this.props.nextPlugin ) {
+			this.startNextPlugin( this.props.nextPlugin );
+		}
+	},
+
+	startNextPlugin( plugin ) {
+		let getPluginFromStore;
+		let install = this.props.installPlugin;
+		let site = this.props.selectedSite;
+
+		// Merge wporg info into the plugin object
+		plugin = Object.assign( {}, plugin, getPlugin( this.props.wporg, plugin.slug ) );
+
+		getPluginFromStore = function() {
+			let sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
+			if ( ! sitePlugin && PluginsStore.isFetchingSite( site ) ) {
+				// if the Plugins are still being fetched, we wait. We are not using flux
+				// store events because it would be more messy to handle the one-time-only
+				// callback with bound parameters than to do it this way.
+				return setTimeout( getPluginFromStore, 500 );
+			}
+			// Merge any site-specific info into the plugin object, setting a default plugin ID if needed
+			plugin = Object.assign( { id: plugin.slug }, plugin, sitePlugin );
+			install( plugin, site );
+		};
+		getPluginFromStore();
 	},
 
 	renderNoJetpackSiteSelected() {
@@ -78,179 +107,80 @@ const PlansSetup = React.createClass( {
 		);
 	},
 
-	onNextClick( pluginSlug ) {
-		return () => {
-			let getPlugin;
-			let install = this.props.installPlugin;
-			let site = this.props.selectedSite;
-			this.props.startPlugin( pluginSlug, site.ID );
-
-			getPlugin = function() {
-				let plugin = PluginsStore.getSitePlugin( site, pluginSlug );
-				if ( ! plugin && PluginsStore.isFetchingSite( site ) ) {
-					// if the Plugins are still being fetched, we wait. We are not using flux
-					// store events because it would be more messy to handle the one-time-only
-					// callback with bound parameters than to do it this way.
-					return setTimeout( getPlugin, 500 );
-				};
-				plugin = plugin || { slug: pluginSlug };
-				// Install the plugin. `installer` is a promise, so we can wait for the install
-				// to finish before trying to configure the plugin.
-				install( plugin, site );
-			}
-			getPlugin();
-		}
-	},
-
-	onFinishClick( pluginSlug ) {
-		return () => {
-			let site = this.props.selectedSite;
-			this.props.finishAllPlugins( pluginSlug, site.ID );
-		}
-	},
-
-	renderStart() {
-		const site = this.props.selectedSite;
-		const nextPlugin = this.props.nextPlugin;
-
+	renderNoJetpackPlan() {
 		return (
-			<div className="plan-setup">
-				<Card className="plan-setup__plugin-header start">
-					{ 'Installing your new plugins' }
-				</Card>
-				<CompactCard>
-					{ this.translate( 'Here\'s some info about setting up your new %(plan)s Plan. You can also manually install the plugins by following this help doc(?).', { args: { plan: site.plan.product_name_short } } ) }
-				</CompactCard>
-				<CompactCard className="plan-setup__action">
-					<Button primary onClick={ this.onNextClick( nextPlugin.slug ) }>{ 'Let\'s go!' }</Button>
-					<span className="plan-setup__action-content">{ this.translate( 'We\'ll start with %(plugin)s', { args: { plugin: nextPlugin.name } } ) }</span>
-				</CompactCard>
+			<div>
+				<h1 className="plan-setup__header">{ this.translate( 'Nothing to do here…' ) }</h1>
 			</div>
 		);
 	},
 
-	renderFinish() {
-		const plugins = this.props.plugins;
-		const pluginsContent = plugins.map( ( item, key ) => {
-			let errorContent;
-			if ( item.error !== null ) {
-				errorContent = (
-					<div className="plan-setup__message">
-						{ this.translate( 'Install failed. {{a}}Manually install and activate{{/a}} with your registration key: {{code}}%(key)s{{/code}}', {
-							args: { key: item.key },
-							components: {
-								a: <a href={ helpLinks[item.slug] } />,
-								code: <code />
-							}
-						} ) }
-					</div>
-				);
+	renderPlugins( hidden = false ) {
+		const plugins = this.addWporgDataToPlugins( this.props.plugins );
+
+		return plugins.map( ( item, i ) => {
+			const plugin = Object.assign( {}, item, getPlugin( this.props.wporg, item.slug ) );
+
+			const statusProps = {
+				isCompact: true,
+				status: 'is-info',
+				showDismiss: false,
+			};
+
+			if ( plugin.error ) {
+				statusProps.status = 'is-error';
+				statusProps.text = plugin.error.message;
+			} else if ( hidden ) {
+				statusProps.icon = 'plugins';
+				statusProps.status = null;
+				statusProps.text = this.translate( 'Waiting to install' );
+			} else {
+				statusProps.icon = 'plugins';
+				statusProps.status = 'is-info';
+				switch ( plugin.status ) {
+					case 'done':
+						statusProps.status = 'is-success';
+						statusProps.icon = null;
+						statusProps.text = this.translate( 'Done', { args: { plugin: plugin.name } } );
+						break;
+					case 'activate':
+					case 'configure':
+						statusProps.text = this.translate( 'Almost done', { args: { plugin: plugin.name } } );
+						break;
+					case 'install':
+						statusProps.text = this.translate( 'Working…', { args: { plugin: plugin.name } } );
+					case 'wait':
+					default:
+						statusProps.text = this.translate( 'Waiting to install', { args: { plugin: plugin.name } } );
+				}
 			}
-			if ( item.error !== null ) {
-				return (
-					<CompactCard key={ key } className="plan-setup__status">
-						<strong className="plan-setup__status-name">{ item.name }</strong>
-						<Gridicon icon="notice" />
-						{ errorContent }
-					</CompactCard>
-				);
-			}
+
 			return (
-				<CompactCard key={ key } className="plan-setup__status">
-					<span className="plan-setup__status-name">{ this.doingText( item.slug ) }</span>
-					<Gridicon icon="checkmark-circle" />
+				<CompactCard className="plugin-item" key={ i }>
+					<span className="plugin-item__link">
+						<PluginIcon image={ plugin.icon } />
+						<div className="plugin-item__title">
+							{ plugin.name }
+						</div>
+						<Notice { ...statusProps } />
+					</span>
 				</CompactCard>
 			);
 		} );
-
-		return (
-			<div className="plan-setup">
-				<Card className="plan-setup__plugin-header finished">
-					{ 'We\'ve set up your plugins!' }
-				</Card>
-				{ pluginsContent }
-				<CompactCard className="plan-setup__action">
-					{ 'Where should they go next?' }
-				</CompactCard>
-			</div>
-		);
 	},
 
-	renderPlugin( plugin ) {
-		let actionContent, errorContent, errorActionContent;
-		const nextPlugin = this.props.nextPlugin;
-
-		if ( plugin.error !== null ) {
-			errorActionContent = (
-				<div>
-					{ this.translate( 'We can\'t finish the setup of this plugin due to an error. You can manually install it with instructions later.' ) }
-				</div>
-			);
-		}
-
-		if ( this.props.isFinished ) {
-			actionContent = (
-				<div>
-					{ errorActionContent }
-					<Button primary onClick={ this.onFinishClick( plugin.slug ) }>{ 'Continue' }</Button>
-					<span className="plan-setup__action-content">{ 'All finished!' }</span>
-				</div>
-			);
-		} else if ( plugin.status.done === true || ( plugin.error !== null ) ) {
-			actionContent = (
-				<div>
-					{ errorActionContent }
-					<Button primary onClick={ this.onNextClick( nextPlugin.slug ) }>{ 'Let\'s go!' }</Button>
-					<span className="plan-setup__action-content">{ this.translate( 'Now we\'ll install %(plugin)s', { args: { plugin: nextPlugin.name } } ) }</span>
-				</div>
-			);
-		} else if ( plugin.status.install !== false ) {
-			actionContent = (
-				<span className="plan-setup__action-content">{ 'Working…' }</span>
-			);
-		} else {
-			actionContent = (
-				<span className="plan-setup__action-content">{ 'Almost done…' }</span>
-			);
-		}
-
-		if ( plugin.error !== null ) {
-			errorContent = <span className="plan-setup__error">{ plugin.error.message }</span>
-		}
-
+	renderActions( item, plugin ) {
 		return (
-			<div className="plan-setup">
-				<Card className={ classNames( 'plan-setup__plugin-header', plugin.slug ) }>
-					{ this.translate( 'Installing %(plugin)s', { args: { plugin: plugin.name } } ) }
-				</Card>
-				<CompactCard>
-					{ this.translate( 'We\'re getting your %(plugin)s plugin setup and ready. We\'ll let you know when it\'s done, or if an error occurs along the way.', { args: { plugin: plugin.name } } ) }
-				</CompactCard>
-				<CompactCard className="plan-setup__status">
-					<span className="plan-setup__status-name">{ 'Installing' }</span>
-					{ ( plugin.status.install === true ) && ( plugin.error !== null ? <Gridicon icon="notice" /> : <Spinner /> ) }
-					{ ( plugin.status.install === false ) && <Gridicon icon="checkmark-circle" /> }
-					{ ( plugin.status.install === true ) && errorContent }
-				</CompactCard>
-				<CompactCard className="plan-setup__status">
-					<span className="plan-setup__status-name">{ 'Activating' }</span>
-					{ ( plugin.status.activate === true ) && ( plugin.error !== null ? <Gridicon icon="notice" /> : <Spinner /> ) }
-					{ ( plugin.status.activate === false ) && <Gridicon icon="checkmark-circle" /> }
-					{ ( plugin.status.activate === true ) && errorContent }
-				</CompactCard>
-				<CompactCard className="plan-setup__status">
-					<span className="plan-setup__status-name">{ 'Configuring' }</span>
-					{ ( plugin.status.config === true ) && ( plugin.error !== null ? <Gridicon icon="notice" /> : <Spinner /> ) }
-					{ ( plugin.status.config === false ) && <Gridicon icon="checkmark-circle" /> }
-					{ ( plugin.status.config === true ) && errorContent }
-				</CompactCard>
-				<CompactCard className="plan-setup__status">
-					<span className="plan-setup__status-name">{ 'Finished' }</span>
-					{ ( plugin.status.done === true ) && <Gridicon icon="checkmark-circle" /> }
-				</CompactCard>
-				<CompactCard className="plan-setup__action">
-					{ actionContent }
-				</CompactCard>
+			<div className="plugin-item__actions">
+				<PluginActivateToggle
+					plugin={ plugin }
+					disabled={ true }
+					site={ this.props.selectedSite } />
+				<PluginAutoupdateToggle
+					plugin={ plugin }
+					disabled={ true }
+					site={ this.props.selectedSite }
+					wporg={ !! plugin.wporg } />
 			</div>
 		);
 	},
@@ -260,40 +190,39 @@ const PlansSetup = React.createClass( {
 		if ( ! site || ! site.jetpack ) {
 			return this.renderNoJetpackSiteSelected();
 		}
-		if ( ! site.canManage() ) {
-			return this.renderNoManageWarning();
-		}
-
-		if ( this.props.isRequesting ) {
-			return null;
-		}
 
 		if ( ! this.props.plugins.length ) {
-			return (
-				<div>
-					<h1 className="plan-setup__header">{ this.translate( 'Nothing to do here…' ) }</h1>
-				</div>
+			return this.renderNoJetpackPlan();
+		}
+
+		let turnOnManage;
+		if ( ! site.canManage() ) {
+			turnOnManage = (
+				<Card className="plan-setup__need-manage">
+					<p>{
+						this.translate( '{{strong}}Jetpack Manage must be enabled for us to auto-configure your %(plan)s plan.{{/strong}} This will allow WordPress.com to communicate with your site and auto-configure the features unlocked with your new plan. Or you can opt out.', {
+							args: { plan: site.plan.product_name_short },
+							components: { strong: <strong /> }
+						} )
+					}</p>
+					<Button primary>Enable Manage</Button>
+					<Button>Manual Installation</Button>
+				</Card>
 			);
 		}
 
-		let content;
-		let plugin = this.props.activePlugin;
-		if ( plugin ) {
-			content = this.renderPlugin( plugin );
-		} else if ( this.props.isFinished ) {
-			content = this.renderFinish();
-		} else {
-			content = this.renderStart();
-		}
-
 		return (
-			<div>
+			<div className="plan-setup">
 				<h1 className="plan-setup__header">{ this.translate( 'Setting up your %(plan)s Plan', { args: { plan: site.plan.product_name_short } } ) }</h1>
-				{ content }
+				<p className="plan-setup__description">{ this.translate( 'We need to install a few plugins for you. It won\'t take long!' ) }</p>
+				{ turnOnManage }
+				{ turnOnManage
+					? <FeatureExample>{ this.renderPlugins( true ) }</FeatureExample>
+					: this.renderPlugins( false )
+				}
 			</div>
 		);
 	}
-
 } );
 
 export default connect(
@@ -301,13 +230,15 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			wporg: state.plugins.wporg.items,
 			isRequesting: isRequesting( state, siteId ),
+			isInstalling: isInstalling( state, siteId ),
+			isFinished: isFinished( state, siteId ),
 			plugins: getPluginsForSite( state, siteId ),
 			activePlugin: getActivePlugin( state, siteId ),
 			nextPlugin: getNextPlugin( state, siteId ),
-			isFinished: isFinished( state, siteId ),
 			siteId
 		};
 	},
-	dispatch => bindActionCreators( { fetchInstallInstructions, startPlugin, installPlugin, finishAllPlugins }, dispatch )
+	dispatch => bindActionCreators( { fetchPluginData, fetchInstallInstructions, installPlugin }, dispatch )
 )( PlansSetup );
