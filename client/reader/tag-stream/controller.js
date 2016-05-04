@@ -51,7 +51,7 @@ function setPageTitle( title ) {
 
 export default {
 	tagListing( context ) {
-		var TagStream = require( 'reader/tag-stream' ),
+		var TagStream = require( 'reader/tag-stream/main' ),
 			basePath = '/tag/:slug',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag,
 			tagSlug = trim( context.params.tag )
