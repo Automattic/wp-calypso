@@ -17,7 +17,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import config from 'config';
-import { createAccount, authorize } from 'state/jetpack-connect/actions';
+import { createAccount, authorize, goBackToWpAdmin } from 'state/jetpack-connect/actions';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
@@ -114,10 +114,20 @@ const LoggedInForm = React.createClass( {
 	displayName: 'LoggedInForm',
 
 	componentWillMount() {
-		const { autoAuthorize, queryObject } = this.props.jetpackConnectAuthorize;
+		const { autoAuthorize, queryObject, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		debug( 'Checking for auto-auth on mount', autoAuthorize );
 		if ( autoAuthorize || this.props.calypsoStartedConnection ) {
 			this.props.authorize( queryObject );
+		}
+	},
+
+	componentWillReceiveProps( props ) {
+		const { queryObject, authorizeSuccess, isRedirectingToWpAdmin } = props.jetpackConnectAuthorize;
+		if ( authorizeSuccess &&
+			! isRedirectingToWpAdmin &&
+			! props.calypsoStartedConnection &&
+			queryObject.redirect_after_auth ) {
+			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		}
 	},
 
@@ -160,7 +170,7 @@ const LoggedInForm = React.createClass( {
 	},
 
 	getButtonText() {
-		const { isAuthorizing, authorizeSuccess, siteReceived, authorizeError } = this.props.jetpackConnectAuthorize;
+		const { isAuthorizing, authorizeSuccess, isRedirectingToWpAdmin, siteReceived } = this.props.jetpackConnectAuthorize;
 
 		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			return this.translate( 'Try again' );
@@ -168,6 +178,10 @@ const LoggedInForm = React.createClass( {
 
 		if ( siteReceived ) {
 			return this.translate( 'Browse Available Upgrades' );
+		}
+
+		if ( authorizeSuccess && isRedirectingToWpAdmin ) {
+			return this.translate( 'Returning to your site' );
 		}
 
 		if ( authorizeSuccess ) {
@@ -315,6 +329,6 @@ export default connect(
 			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions
 		};
 	},
-	dispatch => bindActionCreators( { authorize, createAccount }, dispatch )
+	dispatch => bindActionCreators( { authorize, createAccount, goBackToWpAdmin }, dispatch )
 )( JetpackConnectAuthorizeForm );
 

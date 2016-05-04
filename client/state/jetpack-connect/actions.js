@@ -123,8 +123,8 @@ export default {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT_WP_ADMIN
 			} );
-			window.location = url ;
-		}
+			window.location = url;
+		};
 	},
 	createAccount( userData ) {
 		return ( dispatch ) => {
