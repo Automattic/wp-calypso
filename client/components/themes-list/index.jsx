@@ -12,11 +12,12 @@ import Theme from 'components/theme';
 import EmptyContent from 'components/empty-content';
 import InfiniteScroll from 'lib/mixins/infinite-scroll';
 import { PER_PAGE } from 'state/themes/themes-list/constants';
+import localize from 'lib/mixins/i18n/localize';
 
 /**
  * Component
  */
-const ThemesList = React.createClass( {
+export const ThemesList = React.createClass( {
 
 	mixins: [ InfiniteScroll( 'fetchNextPage' ) ],
 
@@ -28,7 +29,9 @@ const ThemesList = React.createClass( {
 		getButtonOptions: React.PropTypes.func,
 		onScreenshotClick: React.PropTypes.func.isRequired,
 		onMoreButtonClick: React.PropTypes.func,
-		getActionLabel: React.PropTypes.func
+		getActionLabel: React.PropTypes.func,
+		// i18n function provided by localize()
+		translate: React.PropTypes.func
 	},
 
 	fetchNextPage( options ) {
@@ -83,8 +86,8 @@ const ThemesList = React.createClass( {
 	renderEmpty() {
 		return this.props.emptyContent ||
 			<EmptyContent
-				title={ this.translate( 'Sorry, no themes found.' ) }
-				line={ this.translate( 'Try a different search or more filters?' ) }
+				title={ this.props.translate( 'Sorry, no themes found.' ) }
+				line={ this.props.translate( 'Try a different search or more filters?' ) }
 				/>;
 	},
 
@@ -103,4 +106,4 @@ const ThemesList = React.createClass( {
 	}
 } );
 
-export default ThemesList;
+export default localize( ThemesList );
