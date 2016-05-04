@@ -1,0 +1,29 @@
+$docs-example-stats-borderColor: transparentize( lighten( $gray, 20% ), .5 );
+
+.docs-example__header {
+	display: flex;
+	align-items: center;
+}
+
+.docs-example__title {
+	flex: 1;
+}
+
+.docs-example__title,
+.docs-example__toggle {
+	margin: 0 !important;
+}
+
+.docs-example__header + .docs-example__main {
+	margin-top: 16px;
+}
+
+.docs-example__footer {
+	margin: 0;
+}
+
+.docs-example__stats {
+	border-bottom: 1px solid $docs-example-stats-borderColor;
+	font-size: 14px;
+	padding-bottom: 16px;
+}
