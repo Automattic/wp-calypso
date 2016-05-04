@@ -80,9 +80,9 @@ export function fetchingItems( state = {}, action ) {
 }
 
 export default combineReducers( {
-	items,
 	domains,
 	fetchingItems,
+	items,
 	mediaStorage,
 	plans
 } );
