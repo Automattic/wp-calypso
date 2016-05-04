@@ -9,6 +9,7 @@ const createSitePlanObject = ( plan ) => {
 	}
 
 	return {
+		auto_renew: Boolean( plan.auto_renew ),
 		canStartTrial: Boolean( plan.can_start_trial ),
 		currentPlan: Boolean( plan.current_plan ),
 		currencyCode: plan.currency_code,
