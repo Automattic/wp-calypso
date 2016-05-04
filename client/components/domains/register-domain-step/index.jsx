@@ -300,7 +300,7 @@ const RegisterDomainStep = React.createClass( {
 					const query = {
 						query: domain,
 						quantity: SUGGESTION_QUANTITY,
-						includeWordPressDotCom: this.props.includeWordPressDotCom,
+						include_wordpressdotcom: this.props.includeWordPressDotCom,
 						vendor: abtest( 'domainSuggestionVendor' )
 					};
 
