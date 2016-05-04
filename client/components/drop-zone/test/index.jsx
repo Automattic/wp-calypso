@@ -15,7 +15,7 @@ describe( 'index', function() {
 	require( 'test/helpers/use-fake-dom' )( '<html><body><div id="container"></div></body></html>' );
 
 	before( function() {
-		DropZone.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
+		DropZone.prototype.translate = sinon.stub().returnsArg( 0 );
 		container = document.getElementById( 'container' );
 		window.MutationObserver = sinon.stub().returns( {
 			observe: sinon.stub(),
@@ -27,7 +27,7 @@ describe( 'index', function() {
 		if ( global.window && global.window.MutationObserver ) {
 			delete global.window.MutationObserver;
 		}
-		delete DropZone.prototype.__reactAutoBindMap.translate;
+		delete DropZone.prototype.translate;
 	} );
 
 	beforeEach( function() {

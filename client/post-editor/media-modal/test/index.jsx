@@ -56,7 +56,7 @@ describe( 'EditorMediaModal', function() {
 		mockery.registerMock( 'lib/media/actions', { delete: deleteMedia } );
 
 		EditorMediaModal = require( '../' );
-		EditorMediaModal.prototype.__reactAutoBindMap.translate = i18n.translate;
+		EditorMediaModal.prototype.translate = i18n.translate;
 	} );
 
 	it( 'should prompt to delete a single item from the list view', function( done ) {
