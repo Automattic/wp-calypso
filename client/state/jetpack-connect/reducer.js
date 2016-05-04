@@ -75,7 +75,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_AUTHORIZE:
 			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, isRedirectingToWpAdmin: false } );
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
-			if ( isEmpty( action.error ) ) {
+			if ( isEmpty( action.error ) && action.data ) {
 				const { plans_url } = action.data;
 				return Object.assign( {}, state, { authorizeError: false, authorizeSuccess: true, autoAuthorize: false, plansURL: plans_url, siteReceived: false } );
 			}
