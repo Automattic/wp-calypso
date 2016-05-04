@@ -1,7 +1,9 @@
 /**
 * External dependencies
 */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import page from 'page';
 import toTitleCase from 'to-title-case';
 import trim from 'lodash/trim';
@@ -9,6 +11,7 @@ import trim from 'lodash/trim';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import SearchCard from 'components/search-card';
 import SearchDemo from 'components/search/docs/example';
 import Notices from 'components/notice/docs/example';
@@ -51,12 +54,20 @@ import ExternalLink from 'components/external-link/docs/example';
 import FeatureGate from 'components/feature-example/docs/example';
 import FilePickers from 'components/file-picker/docs/example';
 import Collection from 'devdocs/design/search-collection';
+import fetchUsageStats from 'state/usage-stats/actions';
 
-export default React.createClass( {
+let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
 
 	getInitialState() {
 		return { filter: '' };
+	},
+
+	componentWillMount() {
+		if ( config.isEnabled( 'devdocs/usage-stats' ) ) {
+			const { dispatchFetchUsageStats } = this.props;
+			dispatchFetchUsageStats();
+		}
 	},
 
 	onSearch( term ) {
@@ -68,6 +79,7 @@ export default React.createClass( {
 	},
 
 	render() {
+		const { usageStats = {} } = this.props;
 		return (
 			<div className="design-assets" role="main">
 				{
@@ -83,10 +95,10 @@ export default React.createClass( {
 					</SearchCard>
 				}
 				<Collection component={ this.props.component } filter={ this.state.filter }>
-					<Accordions />
+					<Accordions usageStats={ usageStats.accordion } />
 					<BulkSelect />
 					<ButtonGroups />
-					<Buttons />
+					<Buttons usageStats={ usageStats.button } />
 					<Cards />
 					<ClipboardButtonInput />
 					<ClipboardButtons />
@@ -127,3 +139,33 @@ export default React.createClass( {
 		);
 	}
 } );
+
+DesignAssets.propTypes = {
+	usageStats: PropTypes.object,
+	isFetching: PropTypes.bool,
+	dispatchFetchUsageStats: PropTypes.func
+};
+
+if ( config.isEnabled( 'devdocs/usage-stats' ) ) {
+	const mapStateToProps = ( state ) => {
+		const { usageStats } = state;
+
+		return {
+			usageStats: usageStats.usageStats,
+			isFetching: usageStats.isFetching
+		};
+	};
+
+	const mapDispatchToProps = ( dispatch ) => {
+		return bindActionCreators( {
+			dispatchFetchUsageStats: fetchUsageStats
+		}, dispatch );
+	};
+
+	DesignAssets = connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)( DesignAssets );
+}
+
+export default DesignAssets;
