@@ -7,22 +7,12 @@ import ReactDom from 'react-dom';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import i18n from 'lib/mixins/i18n';
-import titleActions from 'lib/screen-title/actions';
 import route from 'lib/route';
 import userSettings from 'lib/user-settings';
+import { trackPageLoad, setPageTitle } from 'reader/controller-helper';
 
 const analyticsPageTitle = 'Reader';
-
-function trackPageLoad( path, title, readerView ) {
-	analytics.pageView.record( path, title );
-	analytics.mc.bumpStat( 'reader_views', readerView === 'full_post' ? readerView : readerView + '_load' );
-}
-
-function setPageTitle( title ) {
-	titleActions.setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) );
-}
 
 export default {
 	followingEdit( context ) {

@@ -4,8 +4,6 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
-import debugFactory from 'debug';
-import moment from 'moment';
 import { Provider as ReduxProvider } from 'react-redux';
 
 /**
@@ -15,9 +13,8 @@ import abtest from 'lib/abtest';
 import i18n from 'lib/mixins/i18n';
 import route from 'lib/route';
 import pageNotifier from 'lib/route/page-notifier';
-import analytics from 'lib/analytics';
 import feedStreamFactory from 'lib/feed-stream-store';
-import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
+import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from './controller-helper';
 import TitleStore from 'lib/screen-title/store';
 import titleActions from 'lib/screen-title/actions';
 import { hideReaderFullPost } from 'state/ui/reader/fullpost/actions';
@@ -28,7 +25,6 @@ import {
 } from 'reader/route';
 import { recordTrack } from 'reader/stats';
 
-const debug = debugFactory( 'calypso:reader:controller' );
 const analyticsPageTitle = 'Reader';
 
 // This holds the last title set on the page. Removing the overlay doesn't trigger a re-render, so we need a way to
@@ -38,35 +34,6 @@ const activeAbTests = [
 	// active tests would go here
 ];
 let lastRoute = null;
-
-function trackPageLoad( path, title, readerView ) {
-	analytics.pageView.record( path, title );
-	analytics.mc.bumpStat( 'reader_views', readerView === 'full_post' ? readerView : readerView + '_load' );
-}
-
-function trackUpdatesLoaded( key ) {
-	analytics.mc.bumpStat( 'reader_views', key + '_load_new' );
-	analytics.ga.recordEvent( 'Reader', 'Clicked Load New Posts', key );
-	recordTrack( 'calypso_reader_load_new_posts', {
-		section: key
-	} );
-}
-
-function trackScrollPage( path, title, category, readerView, pageNum ) {
-	debug( 'scroll [%s], [%s], [%s], [%d]', path, title, category, pageNum );
-
-	analytics.ga.recordEvent( category, 'Loaded Next Page', 'page', pageNum );
-	recordTrack( 'calypso_reader_infinite_scroll_performed', {
-		path: path,
-		page: pageNum,
-		section: readerView
-	} );
-	analytics.pageView.record( path, title );
-	analytics.mc.bumpStat( {
-		newdash_pageviews: 'scroll',
-		reader_views: readerView + '_scroll'
-	} );
-}
 
 // Listen for route changes and remove the full post dialog when we navigate away from it
 pageNotifier( function removeFullPostOnLeave( newContext, oldContext ) {
@@ -83,23 +50,6 @@ function removeFullPostDialog() {
 
 function userHasHistory( context ) {
 	return !! context.lastRoute;
-}
-
-function ensureStoreLoading( store, context ) {
-	if ( store.getPage() === 1 ) {
-		if ( context && context.query && context.query.at ) {
-			const startDate = moment( context.query.at );
-			if ( startDate.isValid() ) {
-				store.startDate = startDate.format();
-			}
-		}
-		FeedStreamStoreActions.fetchNextPage( store.id );
-	}
-	return store;
-}
-
-function setPageTitle( title ) {
-	titleActions.setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) );
 }
 
 function renderFeedError() {
@@ -167,9 +117,9 @@ module.exports = {
 		let redirect;
 		// Have we arrived at a URL ending in /posts? Redirect to feed stream/blog stream
 		if ( context.path.match( /^\/read\/feeds\/([0-9]+)\/posts$/i ) ) {
-			redirect = `/read/feeds/${context.params.feed_id}`
+			redirect = `/read/feeds/${context.params.feed_id}`;
 		} else if ( context.path.match( /^\/read\/blogs\/([0-9]+)\/posts$/i ) ) {
-			redirect = `/read/blogs/${context.params.blog_id}`
+			redirect = `/read/blogs/${context.params.blog_id}`;
 		}
 
 		if ( redirect ) {

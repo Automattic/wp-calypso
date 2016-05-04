@@ -7,17 +7,12 @@ import ReactDom from 'react-dom';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import trackScrollPage from 'lib/track-scroll-page';
 import titleActions from 'lib/screen-title/actions';
 import i18n from 'lib/mixins/i18n';
+import { trackPageLoad } from 'reader/controller-helper';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
-
-function trackPageLoad( path, title, readerView ) {
-	analytics.pageView.record( path, title );
-	analytics.mc.bumpStat( 'reader_views', readerView === 'full_post' ? readerView : readerView + '_load' );
-}
 
 export default {
 	recommendedForYou() {
