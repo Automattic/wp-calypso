@@ -15,22 +15,46 @@ class QueryPostStats extends Component {
 	componentWillMount() {
 		const { requestingPostStat, siteId, postId, stat } = this.props;
 		if ( ! requestingPostStat && siteId && postId && stat ) {
-			this.props.requestPostStat( stat, siteId, postId );
+			this.requestPostStat( this.props );
+		}
+	}
+
+	componentWillUnmount() {
+		if ( this.interval ) {
+			clearInterval( this.interval );
 		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { siteId, postId, stat } = this.props;
+		const { siteId, postId, stat, heartbeat } = this.props;
 		if (
 			! ( siteId && postId && stat ) ||
 			( siteId === nextProps.siteId &&
 				postId === nextProps.postId &&
-				stat === nextProps.stat )
+				stat === nextProps.stat &&
+				heartbeat === nextProps.heartbeat )
 			) {
 			return;
 		}
 
-		nextProps.requestPostStat( nextProps.stat, nextProps.siteId, nextProps.postId );
+		this.requestPostStat( nextProps );
+	}
+
+	requestPostStat( props ) {
+		const { siteId, postId, stat, heartbeat } = props;
+		props.requestPostStat( stat, siteId, postId );
+		if ( heartbeat ) {
+			this.clearInterval();
+			this.interval = setInterval( () => {
+				props.requestPostStat( stat, siteId, postId );
+			}, heartbeat );
+		}
+	}
+
+	clearInterval() {
+		if ( this.interval ) {
+			clearInterval( this.interval );
+		}
 	}
 
 	render() {
@@ -43,11 +67,13 @@ QueryPostStats.propTypes = {
 	postId: PropTypes.number,
 	stat: PropTypes.string,
 	requestingPostStat: PropTypes.bool,
-	requestPostStat: PropTypes.func
+	requestPostStat: PropTypes.func,
+	heartbeat: PropTypes.number
 };
 
 QueryPostStats.defaultProps = {
-	requestPostStat: () => {}
+	requestPostStat: () => {},
+	heartbeat: 0
 };
 
 export default connect(

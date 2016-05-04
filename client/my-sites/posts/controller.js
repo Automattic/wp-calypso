@@ -5,7 +5,8 @@ var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	qs = require( 'querystring' ),
-	debug = require( 'debug' )( 'calypso:my-sites:posts' );
+	debug = require( 'debug' )( 'calypso:my-sites:posts' ),
+	ReactRedux = require( 'react-redux' );
 
 /**
  * Internal Dependencies
@@ -77,20 +78,22 @@ module.exports = {
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
 		ReactDom.render(
-			React.createElement( Posts, {
-				context: context,
-				siteID: siteID,
-				author: author,
-				statusSlug: statusSlug,
-				sites: sites,
-				search: search,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					baseAnalyticsPath,
-					analyticsPageTitle,
-					'Posts'
-				)
-			} ),
+			React.createElement( ReactRedux.Provider, { store: context.store },
+				React.createElement( Posts, {
+					context: context,
+					siteID: siteID,
+					author: author,
+					statusSlug: statusSlug,
+					sites: sites,
+					search: search,
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						baseAnalyticsPath,
+						analyticsPageTitle,
+						'Posts'
+					)
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	}
