@@ -7,7 +7,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import domainsReducer, {
+import {
+	domains as domainsReducer,
 	items as itemsReducer,
 	requesting as requestReducer,
 	errors as errorsReducer
