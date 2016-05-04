@@ -82,7 +82,11 @@ describe( 'MediaActions', function() {
 
 			return isPlainObject( obj );
 		} );
-
+		mockery.registerMock( './image-orientation-utils', {
+			fixImageOrientation: function() {
+				return Promise.resolve( 'blob:123' );
+			}
+		} );
 		MediaActions = require( '../actions' );
 	} );
 
@@ -98,7 +102,11 @@ describe( 'MediaActions', function() {
 		mediaDelete = sandbox.stub().callsArgWithAsync( 0, null, DUMMY_API_RESPONSE );
 		MediaActions._fetching = {};
 		window.FileList = function() {};
-		window.URL = { createObjectURL: sandbox.stub() };
+		window.URL = {
+			createObjectURL: sandbox.stub(),
+			revokeObjectURL: sandbox.stub()
+		};
+		window.Blob = function() {};
 	} );
 
 	afterEach( function() {
@@ -184,49 +192,63 @@ describe( 'MediaActions', function() {
 	} );
 
 	describe( '#add()', function() {
-		it( 'should accept a single upload', function() {
-			MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD );
-			expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'CREATE_MEDIA_ITEM'
+		it( 'should accept a single upload', function( done ) {
+			MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+				expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
+				expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+					type: 'CREATE_MEDIA_ITEM'
+				} );
+
+				done();
 			} );
 		} );
 
-		it( 'should accept an array of uploads', function() {
-			MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] );
-			expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
-			expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
-				type: 'CREATE_MEDIA_ITEM'
+		it( 'should accept an array of uploads', function( done ) {
+			MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] ).then( () => {
+				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
+				expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
+					type: 'CREATE_MEDIA_ITEM'
+				} );
+
+				done();
 			} );
 		} );
 
-		it( 'should accept a file URL', function() {
-			return MediaActions.add( DUMMY_SITE_ID, DUMMY_URL ).then( () => {
-				expect( mediaAddUrls ).to.have.been.calledWithMatch( {}, DUMMY_URL );
-			} );
+		it( 'should accept a file URL', function( done ) {
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_URL, { waitForUpload: true } )
+				.then( () => {
+					expect( mediaAddUrls ).to.have.been.calledWithMatch( {}, DUMMY_URL );
+
+					done();
+				} );
 		} );
 
-		it( 'should accept a FileList of uploads', function() {
+		it( 'should accept a FileList of uploads', function( done ) {
 			var uploads = [ DUMMY_UPLOAD, DUMMY_UPLOAD ];
 			uploads.__proto__ = new window.FileList(); // eslint-disable-line no-proto
-			MediaActions.add( DUMMY_SITE_ID, uploads );
-			expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
-			expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
-				type: 'CREATE_MEDIA_ITEM'
+			MediaActions.add( DUMMY_SITE_ID, uploads ).then( () => {
+				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
+				expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
+					type: 'CREATE_MEDIA_ITEM'
+				} );
+
+				done();
 			} );
 		} );
 
-		it( 'should accept a plain object file descriptor', function() {
+		it( 'should accept a plain object file descriptor', function( done ) {
 			var file = { file: DUMMY_UPLOAD, parent_id: 300 };
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
-			return MediaActions.add( DUMMY_SITE_ID, file ).then( () => {
+			return MediaActions.add( DUMMY_SITE_ID, file, { waitForUpload: true } ).then( () => {
 				expect( mediaAdd ).to.have.been.calledWithMatch( {}, file );
+
+				done();
 			} );
 		} );
 
-		it( 'should call to the WordPress.com REST API', function() {
-			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+		it( 'should call the WordPress.com REST API', function( done ) {
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD, { waitForUpload: true } ).then( () => {
 				expect( mediaAdd ).to.have.been.calledWithMatch( {}, DUMMY_UPLOAD );
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 					type: 'RECEIVE_MEDIA_ITEM',
@@ -234,41 +256,49 @@ describe( 'MediaActions', function() {
 					id: 'media-1',
 					data: DUMMY_API_RESPONSE.media[ 0 ]
 				} );
+
+				done();
 			} );
 		} );
 
-		it( 'should immediately receive a transient object', function() {
-			MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD );
+		it( 'should immediately receive a transient object', function( done ) {
+			MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+				expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+					type: 'CREATE_MEDIA_ITEM',
+					data: {
+						ID: 'media-1',
+						file: DUMMY_UPLOAD.name,
+						'transient': true
+					}
+				} );
 
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'CREATE_MEDIA_ITEM',
-				data: {
-					ID: 'media-1',
-					file: DUMMY_UPLOAD.name,
-					'transient': true
-				}
+				done();
 			} );
 		} );
 
-		it( 'should attach file upload to a post if one is being edited', function() {
+		it( 'should attach file upload to a post if one is being edited', function( done ) {
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
-			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD, { waitForUpload: true } ).then( () => {
 				expect( mediaAdd ).to.have.been.calledWithMatch( {}, {
 					file: DUMMY_UPLOAD,
 					parent_id: 200
 				} );
+
+				done();
 			} );
 		} );
 
-		it( 'should attach URL upload to a post if one is being edited', function() {
+		it( 'should attach URL upload to a post if one is being edited', function( done ) {
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
-			return MediaActions.add( DUMMY_SITE_ID, DUMMY_URL ).then( () => {
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_URL, { waitForUpload: true } ).then( () => {
 				expect( mediaAddUrls ).to.have.been.calledWithMatch( {}, {
 					url: DUMMY_URL,
 					parent_id: 200
 				} );
+
+				done();
 			} );
 		} );
 

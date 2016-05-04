@@ -41,7 +41,6 @@ describe( 'MediaLibraryList item selection', function() {
 		mount = require( 'enzyme' ).mount;
 		MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' );
 		MediaLibrarySelectedStore = require( 'lib/media/library-selected-store' );
-		MediaActions = require( 'lib/media/actions' );
 		fixtures = require( './fixtures' );
 		Dispatcher = require( 'dispatcher' );
 
@@ -53,7 +52,14 @@ describe( 'MediaLibraryList item selection', function() {
 
 		mockery.registerMock( 'components/infinite-list', EmptyComponent );
 		mockery.registerMock( './list-item', EmptyComponent );
+		mockery.registerMock( './image-orientation-utils', {
+			fixImageOrientation: function() {
+				return Promise.resolve( 'blob:123' );
+			}
+		} );
+
 		MediaList = require( '../list' );
+		MediaActions = require( 'lib/media/actions' );
 	} );
 
 	beforeEach( function() {
