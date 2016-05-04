@@ -11,20 +11,16 @@ import TestUtils from 'react-addons-test-utils';
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'index', () => {
-	let DomainWarnings, translateFn;
+	let DomainWarnings = require( '../' );
 
 	useFakeDom();
 
 	beforeEach( () => {
-		translateFn = i18n.translate;
-		i18n.translate = identity;
-		DomainWarnings = require( '../' );
 		DomainWarnings.prototype.translate = identity;
 		Notice.prototype.translate = identity;
 	} );
@@ -32,7 +28,6 @@ describe( 'index', () => {
 	afterEach( () => {
 		delete DomainWarnings.prototype.translate;
 		delete Notice.prototype.translate;
-		i18n.translate = translateFn;
 	} );
 
 	it( 'should not render anything if there\'s no need', () => {
