@@ -26,16 +26,10 @@ const initialize = editor => {
 		cmd: menuItems[0].cmd,
 		menu: menuItems.map( ( { name } ) => editor.menuItems[ name ] ),
 		onPostRender() {
-			const parentNode = this.$el[0].children[0];
-			const oldNode = parentNode.children[0];
-			const newNode = document.createElement( 'span' );
-
 			ReactDOM.render(
 				<Gridicon icon={ menuItems[0].icon } />,
-				newNode
+				this.$el[0].children[0]
 			);
-
-			parentNode.replaceChild( newNode, oldNode );
 		}
 	} );
 };
