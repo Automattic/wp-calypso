@@ -277,9 +277,7 @@ const RegisterDomainStep = React.createClass( {
 					}
 
 					canRegister( domain, ( error, result ) => {
-						if ( error && error.code === 'domain_registration_unavailable' ) {
-							return this.props.onDomainsAvailabilityChange( false );
-						} else if ( error ) {
+						if ( error && error.code !== 'domain_registration_unavailable' ) {
 							this.showValidationErrorMessage( domain, error );
 							this.setState( { lastDomainError: error } );
 						} else if ( result ) {
