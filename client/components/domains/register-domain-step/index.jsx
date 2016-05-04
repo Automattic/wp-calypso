@@ -1,36 +1,38 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	extend = require( 'lodash/extend' ),
-	async = require( 'async' ),
-	flatten = require( 'lodash/flatten' ),
-	reject = require( 'lodash/reject' ),
-	find = require( 'lodash/find' ),
-	uniqBy = require( 'lodash/uniqBy' ),
-	times = require( 'lodash/times' ),
-	compact = require( 'lodash/compact' ),
-	noop = require( 'lodash/noop' ),
-	startsWith = require( 'lodash/startsWith' ),
-	page = require( 'page' ),
-	qs = require( 'qs' );
+import React from 'react';
+import async from 'async';
+import extend from 'lodash/extend';
+import flatten from 'lodash/flatten';
+import reject from 'lodash/reject';
+import find from 'lodash/find';
+import uniqBy from 'lodash/uniqBy';
+import times from 'lodash/times';
+import compact from 'lodash/compact';
+import noop from 'lodash/noop';
+import startsWith from 'lodash/startsWith';
+import page from 'page';
+import qs from 'qs';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented(),
-	Notice = require( 'components/notice' ),
-	{ getFixedDomainSearch, canRegister } = require( 'lib/domains' ),
-	SearchCard = require( 'components/search-card' ),
-	DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),
-	DomainMappingSuggestion = require( 'components/domains/domain-mapping-suggestion' ),
-	DomainSearchResults = require( 'components/domains/domain-search-results' ),
-	ExampleDomainSuggestions = require( 'components/domains/example-domain-suggestions' ),
-	analyticsMixin = require( 'lib/mixins/analytics' ),
-	upgradesActions = require( 'lib/upgrades/actions' ),
-	{ isPlan } = require( 'lib/products-values' ),
-	cartItems = require( 'lib/cart-values/cart-items' ),
-	abtest = require( 'lib/abtest' ).abtest;
+import wpcom from 'lib/wp';
+import Notice from 'components/notice';
+import { getFixedDomainSearch, canRegister } from 'lib/domains';
+import SearchCard from 'components/search-card';
+import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
+import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
+import DomainSearchResults from 'components/domains/domain-search-results';
+import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
+import analyticsMixin from 'lib/mixins/analytics';
+import * as upgradesActions from 'lib/upgrades/actions';
+import { isPlan } from 'lib/products-values';
+import cartItems from 'lib/cart-values/cart-items';
+import { abtest } from 'lib/abtest';
+
+const undocumented = wpcom.undocumented();
 
 // max amount of domain suggestions we should fetch/display
 const SUGGESTION_QUANTITY = 10,
@@ -151,8 +153,7 @@ var RegisterDomainStep = React.createClass( {
 		}
 
 		initialQuery = this.props.selectedSite.domain.split( '.' )[ 0 ];
-
-		wpcom.fetchDomainSuggestions( initialQuery, { quantity: SUGGESTION_QUANTITY, vendor: abtest( 'domainSuggestionVendor' ) }, function( error, suggestions ) {
+		undocumented.fetchDomainSuggestions( initialQuery, { quantity: SUGGESTION_QUANTITY, vendor: abtest( 'domainSuggestionVendor' ) }, function( error, suggestions ) {
 			if ( ! this.isMounted() ) {
 				return;
 			}
@@ -300,7 +301,7 @@ var RegisterDomainStep = React.createClass( {
 						vendor: abtest( 'domainSuggestionVendor' )
 					};
 
-					wpcom.fetchDomainSuggestions( domain, params, ( error, domainSuggestions ) => {
+					undocumented.fetchDomainSuggestions( domain, params, ( error, domainSuggestions ) => {
 						if ( error && error.statusCode === 503 ) {
 							return this.props.onDomainsAvailabilityChange( false );
 						} else if ( error && error.error ) {
