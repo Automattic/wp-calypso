@@ -225,29 +225,34 @@ var Posts = React.createClass( {
 	},
 
 	renderPost: function( post, index ) {
-		var postImages = this.props.postImages[ post.global_ID ];
+		const postImages = this.props.postImages[ post.global_ID ];
+		const renderedPost = (
+			<Post
+				ref={ post.global_ID }
+				key={ post.global_ID }
+				post={ post }
+				postImages={ postImages }
+				sites={ this.props.sites }
+				fullWidthPost={ this.state.postsAtFullWidth }
+				path={ route.sectionify( this.props.context.pathname ) }
+			/>
+		);
 
-		return (
-			<div>
-				<Post
-					ref={ post.global_ID }
-					key={ post.global_ID }
-					post={ post }
-					postImages={ postImages }
-					sites={ this.props.sites }
-					fullWidthPost={ this.state.postsAtFullWidth }
-					path={ route.sectionify( this.props.context.pathname ) }
-				/>
-				{ index === 2 && this.props.sites.getSelectedSite() && ! this.props.statusSlug ?
+		if ( index === 2 && this.props.sites.getSelectedSite() && ! this.props.statusSlug ) {
+			return (
+				<div>
 					<UpgradeNudge
 						title={ this.translate( 'No Ads with WordPress.com Premium' ) }
 						message={ this.translate( 'Prevent ads from showing on your site.' ) }
 						feature="no-adverts"
 						event="published_posts_no_ads"
 					/>
-				: null }
-			</div>
-		);
+					{ renderedPost }
+				</div>
+			);
+		} else {
+			return renderedPost;
+		}
 	},
 
 	render: function() {
