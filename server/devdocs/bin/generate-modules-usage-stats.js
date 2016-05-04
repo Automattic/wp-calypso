@@ -7,6 +7,7 @@
  */
 
 var async = require( 'async' ),
+	config = require( 'config' ),
 	fs = require( 'fs' ),
 	fspath = require( 'path' ),
 	root = fspath.dirname( fspath.join( __dirname, '..', '..' ) ),
@@ -22,7 +23,8 @@ var async = require( 'async' ),
 
 function main() {
 	// extract list of files to index and remove leading ./'s
-	var fileList;
+	var fileList,
+		outFilePath = 'server/devdocs/usage-stats.json';
 
 	fileList = process.
 		argv.
@@ -32,14 +34,19 @@ function main() {
 		} );
 
 	if ( fileList.length === 0 ) {
-		process.stderr.write( 'You must pass a list of files to process (try "make server/devdocs/usage-counts.js"' );
+		process.stderr.write( 'You must pass a list of files to process (try "make server/devdocs/usage-stats.js"' );
 		process.exit( 1 );
+	}
+
+	if ( ! config.isEnabled( 'devdocs/usage-stats' ) ) {
+		saveUsageStats( {}, outFilePath );
+		process.exit( 0 );
 	}
 
 	getModulesWithDependencies( root, fileList )
 		.then( function( modulesWithDependencies ) {
-			var usageCounts = generateUsageCounts( modulesWithDependencies );
-			saveUsageCounts( usageCounts, 'server/devdocs/usage-counts.json' );
+			var usageStats = generateUsageStats( modulesWithDependencies );
+			saveUsageStats( usageStats, outFilePath );
 			process.exit( 0 );
 		} )
 		.catch( function( error ) {
@@ -142,7 +149,7 @@ function getDependencies( code ) {
  * @param {object} modules An object of modules with dependencies
  * @returns {object} An object with the usage stats for each dependency
  */
-function generateUsageCounts( modules ) {
+function generateUsageStats( modules ) {
 	return Object.keys( modules ).reduce( function( target, moduleName ) {
 		var deps = modules[ moduleName ];
 		deps.forEach( function( dependency ) {
@@ -155,8 +162,8 @@ function generateUsageCounts( modules ) {
 	}, {} );
 }
 
-function saveUsageCounts( usageCounts, filePath ) {
-	var json = jsFromJSON( JSON.stringify( usageCounts, null, "\t" ) );
+function saveUsageStats( usageStats, filePath ) {
+	var json = jsFromJSON( JSON.stringify( usageStats, null, "\t" ) );
 	fs.writeFileSync( fspath.join( root, filePath ), json );
 }
 
