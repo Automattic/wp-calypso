@@ -109,15 +109,6 @@ module.exports = {
 		defaultVariation: 'original',
 		allowExistingUsers: false
 	},
-	triforce: {
-		datestamp: '20160421',
-		variations: {
-			original: 45,
-			triforce: 45,
-			notTested: 10
-		},
-		defaultVariation: 'original'
-	},
 	planPricing: {
 		datestamp: '20160426',
 		variations: {
