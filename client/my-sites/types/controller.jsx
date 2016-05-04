@@ -11,7 +11,6 @@ import page from 'page';
  */
 import { getSiteFragment, sectionify } from 'lib/route';
 import { pageView } from 'lib/analytics';
-import { setTitle } from 'lib/screen-title/actions';
 import Types from './main';
 
 export function redirect() {
@@ -21,9 +20,6 @@ export function redirect() {
 export function list( context ) {
 	const siteId = getSiteFragment( context.path );
 	const sectionedPath = sectionify( context.path );
-
-	// [TODO]: Translate title text when settled upon
-	setTitle( 'Custom Post Type', { siteId: siteId } );
 
 	// Analytics
 	let baseAnalyticsPath = sectionedPath;
