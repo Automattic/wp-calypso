@@ -114,7 +114,7 @@ const LoggedInForm = React.createClass( {
 	displayName: 'LoggedInForm',
 
 	componentWillMount() {
-		const { autoAuthorize, queryObject, authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		const { autoAuthorize, queryObject } = this.props.jetpackConnectAuthorize;
 		debug( 'Checking for auto-auth on mount', autoAuthorize );
 		if ( autoAuthorize || this.props.calypsoStartedConnection ) {
 			this.props.authorize( queryObject );
