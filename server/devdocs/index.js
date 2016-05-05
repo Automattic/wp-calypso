@@ -132,7 +132,7 @@ function reduceUsageStats( modulesWithDependences ) {
 	return Object.keys( modulesWithDependences )
 		.filter( function( moduleName ) {
 			return moduleName.indexOf( 'components/' ) === 0 &&
-				moduleName.indexOf( 'docs/' ) === -1;
+				moduleName.indexOf( '/docs' ) === -1;
 		} )
 		.reduce( function( target, moduleName ) {
 			var name = moduleName.replace( 'components/', '' );
