@@ -134,11 +134,19 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
-		const displayedComments = commentIds.take( take );
+		let foundComments = 0;
+
+		const displayedComments = commentIds.takeWhile( ( val ) => {
+			const keepGoing = foundComments < take;
+			if ( keepGoing ) {
+				foundComments += this.getCommentsCount( [ val ] );
+			}
+			return keepGoing;
+		} );
 
 		return {
 			displayedComments: displayedComments,
-			displayedCommentsCount: this.getCommentsCount( displayedComments )
+			displayedCommentsCount: foundComments
 		};
 	}
 
@@ -178,7 +186,7 @@ class PostCommentList extends React.Component {
 			<div className={ classNames( 'comments__top-bar', { 'is-no-comments': displayedCommentsCount === 0 } ) }>
 				{ showViewEarlier ? <span icon compact className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>
 					{
-						translate( 'See %(shown)d more comments out of %(total)d…', {
+						translate( 'View earlier comments (%(shown)d of %(total)d)', {
 							args: {
 								shown: displayedCommentsCount,
 								total: totalCommentsCount
