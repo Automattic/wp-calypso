@@ -92,4 +92,4 @@ export function plans( state = {}, action ) {
 	}
 
 	return state;
-};
+}
