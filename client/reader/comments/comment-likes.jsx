@@ -1,78 +1,71 @@
 // External dependencies
-import React from 'react';
-import pick from 'lodash/pick';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+var React = require( 'react' ),
+	omit = require( 'lodash/omit' );
+	//debug = require( 'debug' )( 'calypso:comment-likes' );
 
 // Internal dependencies
-import { translate } from 'lib/mixins/i18n';
-import LikeButton from 'components/like-button/button';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrack
-} from 'reader/stats';
-import {
-	likeComment,
-	unlikeComment
-} from 'state/comments/actions';
-import { getCommentLike } from 'state/comments/selectors';
+var CommentLikeActions = require( 'lib/comment-like-store/actions' ),
+	LikeButton = require( 'components/like-button/button' ),
+	CommentLikeStore = require( 'lib/comment-like-store/comment-like-store' ),
+	stats = require( 'reader/stats' );
 
-class CommentLikeButtonContainer extends React.Component {
-	constructor() {
-		super();
-		this.boundHandleLikeToggle = this.handleLikeToggle.bind( this );
-	}
+var CommentLikeButtonContainer = React.createClass( {
+	propTypes: {
+		siteId: React.PropTypes.number.isRequired,
+		commentId: React.PropTypes.number.isRequired,
+		showCount: React.PropTypes.bool,
+		tagName: React.PropTypes.string
+	},
 
-	handleLikeToggle( liked ) {
-		if ( liked ) {
-			this.props.likeComment( this.props.siteId, this.props.postId, this.props.commentId );
-		} else {
-			this.props.unlikeComment( this.props.siteId, this.props.postId, this.props.commentId );
+	getInitialState: function() {
+		return this.getStateFromStores();
+	},
+
+	getStateFromStores: function() {
+		return {
+			likeCount: CommentLikeStore.getLikeCountForComment( this.props.siteId, this.props.commentId ),
+			iLike: CommentLikeStore.isCommentLikedByCurrentUser( this.props.siteId, this.props.commentId )
+		};
+	},
+
+	componentDidMount: function() {
+		CommentLikeStore.on( 'change', this.onStoreChange );
+	},
+
+	componentWillUnmount: function() {
+		CommentLikeStore.off( 'change', this.onStoreChange );
+	},
+
+	onStoreChange: function() {
+		var newState = this.getStateFromStores();
+		if ( newState.likeCount !== this.state.likeCount ||
+				newState.iLike !== this.state.iLike ) {
+			this.setState( newState );
 		}
+	},
 
-		recordAction( liked ? 'liked_comment' : 'unliked_comment' );
-		recordGaEvent( liked ? 'Clicked Comment Like' : 'Clicked Comment Unlike' );
-		recordTrack( 'calypso_reader_' + ( liked ? 'liked' : 'unliked' ) + '_comment', {
+	handleLikeToggle: function( liked ) {
+		CommentLikeActions[ liked ? 'likeComment' : 'unlikeComment' ]( this.props.siteId, this.props.commentId );
+		stats.recordAction( liked ? 'liked_comment' : 'unliked_comment' );
+		stats.recordGaEvent( liked ? 'Clicked Comment Like' : 'Clicked Comment Unlike' );
+		stats.recordTrack( 'calypso_reader_' + ( liked ? 'liked' : 'unliked' ) + '_comment', {
 			blog_id: this.props.siteId,
 			comment_id: this.props.commentId
 		} );
-	}
-	
-	render() {
-		const props = pick( this.props, [ 'showCount', 'tagName' ] );
-		const likeCount = this.props.commentLike.get( 'like_count' );
-		const iLike = this.props.commentLike.get( 'i_like' );
-		const likedLabel = translate( 'Liked' );
+	},
+
+	render: function() {
+		var props = omit( this.props, [ 'siteId', 'commentId' ] ),
+			likeCount = this.state.likeCount,
+			likedLabel = this.translate( 'Liked' );
 
 		return <LikeButton { ...props }
 				likeCount={ likeCount }
-				liked={ iLike }
-				onLikeToggle={ this.boundHandleLikeToggle }
+				liked={ this.state.iLike }
+				onLikeToggle={ this.handleLikeToggle }
 				likedLabel={ likedLabel }
 				isMini={ true } />;
 	}
-}
+} );
 
-CommentLikeButtonContainer.propTypes = {
-	siteId: React.PropTypes.number.isRequired,
-	postId: React.PropTypes.number.isRequired,
-	commentId: React.PropTypes.number.isRequired,
-	showCount: React.PropTypes.bool,
-	tagName: React.PropTypes.string,
-
-	// connected props:
-	commentLike: React.PropTypes.object.isRequired, // Immutable.Map
-	likeComment: React.PropTypes.func.isRequired,
-	unlikeComment: React.PropTypes.func.isRequired
-};
-
-export default connect(
-	( state, props ) => ( {
-		commentLike: getCommentLike( state, props.siteId, props.postId, props.commentId )
-	} ),
-	( dispatch ) => bindActionCreators( {
-		likeComment,
-		unlikeComment
-	}, dispatch )
-)( CommentLikeButtonContainer );
+module.exports = CommentLikeButtonContainer;
