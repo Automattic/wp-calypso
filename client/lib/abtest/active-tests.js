@@ -63,15 +63,6 @@ module.exports = {
 		},
 		defaultVariation: 'namegen'
 	},
-	themesHeaderNudge: {
-		datestamp: '20160427',
-		variations: {
-			themes_custom_design: 90,
-			themes_premium_theme_more_traffic: 10
-		},
-		defaultVariation: 'themes_custom_design',
-		allowExistingUsers: true,
-	},
 	swapButtonsMySiteSidebar: {
 		datestamp: '20160414',
 		variations: {
