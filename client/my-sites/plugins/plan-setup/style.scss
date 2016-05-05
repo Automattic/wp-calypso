@@ -30,6 +30,13 @@ $polldaddy-red:  #D45458;
 	}
 }
 
+.plan-setup .plugin-item__finished {
+	color: $gray;
+	font-size: 12px;
+	line-height: 1;
+	padding: 6px 0;
+}
+
 .plan-setup .plugin-item.card .notice.is-info .notice__icon {
 	display: block;
 }
