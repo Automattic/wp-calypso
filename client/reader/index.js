@@ -50,5 +50,7 @@ module.exports = function() {
 		page.exit( '/read/blogs/:blog/posts/:post', controller.resetTitle );
 	}
 
-	page( '/read/a8c', controller.updateLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
+	if ( config.isEnabled( 'reader/a8c' ) ) {
+		page( '/read/a8c', controller.updateLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
+	}
 };

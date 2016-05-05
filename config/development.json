@@ -98,6 +98,7 @@
 		"post-editor/media-advanced": true,
 		"press-this": true,
 		"reader": true,
+		"reader/a8c": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
 		"reader/search": true,

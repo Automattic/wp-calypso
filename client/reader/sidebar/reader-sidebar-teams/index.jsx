@@ -9,6 +9,8 @@ import map from 'lodash/map';
  */
 import ReaderSidebarTeamsListItem from './list-item';
 
+var config = require( 'config' );
+
 const ReaderSidebarTeams = React.createClass( {
 
 	propTypes: {
@@ -19,9 +21,11 @@ const ReaderSidebarTeams = React.createClass( {
 	renderItems() {
 		const { path } = this.props;
 		return map( this.props.teams, function( team ) {
-			return (
-				<ReaderSidebarTeamsListItem key={ team.slug } team={ team } path={ path } />
-			);
+			if ( config.isEnabled( 'reader/' + team.slug ) ) {
+				return (
+					<ReaderSidebarTeamsListItem key={ team.slug } team={ team } path={ path } />
+				);
+			}
 		} );
 	},
 
