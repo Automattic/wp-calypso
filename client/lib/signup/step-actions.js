@@ -137,6 +137,65 @@ function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
 	} );
 }
 
+
+/**
+ * Gets username suggestions from the API.
+ *
+ * Ask the API to validate a username.
+ *
+ * If the API returns a suggestion, then the username is already taken.
+ * If there is no error from the API, then the username is free.
+ *
+ * @param {string} username The username to get suggestions for.
+ */
+function getUsernameSuggestion( username, callback ) {
+
+	let fields = {
+		givesuggestions: 1,
+		username: username
+	};
+
+	wpcom.undocumented().validateNewUser( fields, ( error, response ) => {
+
+		if ( error || !response ) {
+			// TODO properly handle this error
+			// return debug( error || 'User validation failed.' );
+		}
+
+		let resulting_username = null;
+
+		/**
+		 * Only start checking for suggested username if the API returns an error for the validation.
+		 */
+		if ( !response.success ) {
+
+			let { messages } = response;
+
+			/**
+			 * The only case we want to update username field is when the username is already taken.
+			 *
+			 * This ensures that the validation is done
+			 *
+			 * Check for:
+			 * 	- username taken error -
+			 * 	- a valid suggested username
+			 */
+			if ( messages.username && messages.username.taken && messages.suggested_username ) {
+
+				resulting_username = messages.suggested_username.suggested_username;
+
+			}
+		}
+
+		/**
+		 * Call the callback function to properly set the username in the form
+		 */
+		callback(resulting_username);
+
+	} );
+}
+
+
 module.exports = {
 	addDomainItemsToCart: addDomainItemsToCart,
 
@@ -205,5 +264,7 @@ module.exports = {
 		} );
 	},
 
-	setThemeOnSite: setThemeOnSite
+	setThemeOnSite: setThemeOnSite,
+
+	getUsernameSuggestion: getUsernameSuggestion
 };
