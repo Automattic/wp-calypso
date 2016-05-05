@@ -9,7 +9,8 @@ var page = require( 'page' );
 var controller = require( './controller' ),
 	jetpackConnectController = require( './jetpack-connect/controller' ),
 	adTracking = require( 'lib/analytics/ad-tracking' ),
-	config = require( 'config' );
+	config = require( 'config' ),
+	sitesController = require( 'my-sites/controller' );
 
 module.exports = function() {
 	if ( config.isEnabled( 'phone_signup' ) ) {
@@ -42,6 +43,12 @@ module.exports = function() {
 			'/jetpack/connect/:locale?',
 			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
 			jetpackConnectController.connect
+		);
+
+		page(
+			'/jetpack/connect/plans/:site',
+			sitesController.siteSelection,
+			jetpackConnectController.plansLanding
 		);
 	}
 
