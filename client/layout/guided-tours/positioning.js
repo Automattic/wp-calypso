@@ -81,6 +81,7 @@ export function getStepPosition( { placement = 'center', targetSlug } ) {
 		: global.window.document.body.getBoundingClientRect();
 	const position = dialogPositioners[ validatePlacement( placement, target ) ]( rect );
 
+	console.log( position );
 	return {
 		x: position.x,
 		y: position.y - scrollDiff +

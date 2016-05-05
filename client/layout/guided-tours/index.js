@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import debounce from 'lodash/debounce';
 
 /**
  * Internal dependencies
@@ -22,7 +23,7 @@ import {
 class GuidedTours extends Component {
 	constructor() {
 		super();
-		this.bind( 'next', 'quit', 'finish' );
+		this.bind( 'next', 'quit', 'finish', 'onWindowResize' );
 	}
 
 	bind( ...methods ) {
@@ -32,6 +33,8 @@ class GuidedTours extends Component {
 	componentDidMount() {
 		const { stepConfig } = this.props.tourState;
 		this.updateTarget( stepConfig );
+		this._handleWindowResize = debounce( this.onWindowResize, 100 );
+		global.window.addEventListener( 'resize', this._handleWindowResize );
 	}
 
 	shouldComponentUpdate( nextProps ) {
@@ -41,6 +44,14 @@ class GuidedTours extends Component {
 	componentWillUpdate( nextProps ) {
 		const { stepConfig } = nextProps.tourState;
 		this.updateTarget( stepConfig );
+	}
+
+	componentWillUnmount() {
+		global.window.removeEventListener( 'resize', this._handleWindowResize );
+	}
+
+	onWindowResize() {
+		this.forceUpdate();
 	}
 
 	updateTarget( step ) {
