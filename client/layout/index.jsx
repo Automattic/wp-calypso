@@ -20,6 +20,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	PollInvitation = require( './poll-invitation' ),
 	PreferencesData = require( 'components/data/preferences-data' ),
 	EmailVerificationNotice = require( 'components/email-verification/email-verification-notice' ),
+	PushNotificationPrompt = require( 'components/push-notification/push-notification-prompt' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
 	WelcomeMessage = require( 'layout/nux-welcome/welcome-message' ),
 	GuidedTours = require( 'layout/guided-tours' ),
@@ -48,7 +49,7 @@ if ( config.isEnabled( 'support-user' ) ) {
 Layout = React.createClass( {
 	displayName: 'Layout',
 
-	mixins: [ SitesListNotices, observe( 'user', 'focus', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
+	mixins: [ SitesListNotices, observe( 'user', 'focus', 'nuxWelcome', 'pushNotifications', 'sites', 'translatorInvitation' ) ],
 
 	_sitesPoller: null,
 
@@ -94,6 +95,22 @@ Layout = React.createClass( {
 		}
 
 		return <EmailVerificationNotice user={ this.props.user } />;
+	},
+
+	renderPushNotificationPrompt: function() {
+		if ( ! config.isEnabled( 'push-notifications' ) ) {
+			return null;
+		}
+
+		if ( ! this.props.pushNotifications ) {
+			return null;
+		}
+
+		if ( ! this.props.user ) {
+			return null;
+		}
+
+		return <PushNotificationPrompt user={ this.props.user } pushNotifications={ this.props.pushNotifications } />;
 	},
 
 	renderMasterbar: function() {
@@ -170,6 +187,7 @@ Layout = React.createClass( {
 				<div id="content" className="wp-content">
 					{ this.renderWelcome() }
 					{ this.renderEmailVerificationNotice() }
+					{ this.renderPushNotificationPrompt() }
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
 					<div id="primary" className="wp-primary wp-section" />
 					<div id="secondary" className="wp-secondary" />

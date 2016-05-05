@@ -96,6 +96,7 @@
 		"post-editor-github-link": false,
 		"post-editor/media-advanced": true,
 		"press-this": true,
+		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
