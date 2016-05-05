@@ -77,6 +77,7 @@ function install( site, plugin, dispatch ) {
 			slug: plugin.slug,
 		} );
 
+		data.key = plugin.key;
 		activate( site, data, dispatch );
 	} ).catch( ( error ) => {
 		if ( error.name === 'PluginAlreadyInstalledError' ) {
@@ -108,6 +109,7 @@ function update( site, plugin, dispatch ) {
 			slug: plugin.slug,
 		} );
 
+		data.key = plugin.key;
 		activate( site, data, dispatch );
 	} ).catch( ( error ) => {
 		dispatch( {
@@ -144,7 +146,7 @@ function activate( site, plugin, dispatch ) {
 		} );
 
 		autoupdate( site, data );
-		configure( site, data, dispatch );
+		configure( site, plugin, dispatch );
 	};
 
 	getPluginHandler( site, plugin.id ).activate().then( success ).catch( ( error ) => {
@@ -175,13 +177,44 @@ function autoupdate( site, plugin ) {
 }
 
 function configure( site, plugin, dispatch ) {
-	setTimeout( () => {
+	let option = false;
+	switch ( plugin.slug ) {
+		case 'vaultpress':
+			option = 'vaultpress_auto_register';
+			break;
+		case 'akismet':
+			option = 'wordpress_api_key';
+			break;
+		case 'polldaddy':
+			option = 'polldaddy_api_key';
+			break;
+	}
+	if ( ! option || ! plugin.key ) {
+		let optionError = new Error( 'We can\'t configure this plugin.' );
+		optionError.name = 'ConfigError';
+		dispatch( {
+			type: PLUGIN_SETUP_ERROR,
+			siteId: site.ID,
+			slug: plugin.slug,
+			error: optionError,
+		} );
+		return;
+	}
+	site.setOption( { option_name: option, option_value: plugin.key }, ( error ) => {
+		if ( error ) {
+			dispatch( {
+				type: PLUGIN_SETUP_ERROR,
+				siteId: site.ID,
+				slug: plugin.slug,
+				error,
+			} );
+		}
 		dispatch( {
 			type: PLUGIN_SETUP_FINISH,
 			siteId: site.ID,
 			slug: plugin.slug,
 		} );
-	}, 1500 );
+	} );
 }
 
 export default {
