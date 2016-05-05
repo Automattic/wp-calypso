@@ -140,7 +140,7 @@ const DomainsStep = React.createClass( {
 
 		this.props.goToNextStep();
 
-		 // Start the username suggestion process.
+		// Start the username suggestion process.
 		getUsernameSuggestion( siteUrl.split( '.' )[ 0 ], this.context.store );
 	},
 
