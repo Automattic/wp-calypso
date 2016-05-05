@@ -152,6 +152,10 @@ describe( 'MediaUtils', function() {
 			expect( MediaUtils.getMimeType( 'example.gif?w=100' ) ).to.equal( 'image/gif' );
 		} );
 
+		it( 'should detect mime type from HTML5 File object', function() {
+			expect( MediaUtils.getMimeType( new window.File( [ '' ], 'example.gif', { type: 'image/gif' } ) ) ).to.equal( 'image/gif' );
+		} );
+
 		it( 'should detect mime type from object file property', function() {
 			expect( MediaUtils.getMimeType( { file: 'example.gif' } ) ).to.equal( 'image/gif' );
 		} );

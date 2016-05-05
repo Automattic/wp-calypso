@@ -111,6 +111,8 @@ MediaActions.add = function( siteId, files ) {
 		const transientMedia = {
 			ID: id,
 			'transient': true,
+			extension: MediaUtils.getFileExtension( file ),
+			mime_type: MediaUtils.getMimeType( file ),
 			// Assign a date such that the first item will be the oldest at the
 			// time of upload, as this is expected order when uploads finish
 			date: new Date( baseTime - ( files.length - i ) ).toISOString()
@@ -120,8 +122,6 @@ MediaActions.add = function( siteId, files ) {
 			// Generate from string
 			assign( transientMedia, {
 				file: file,
-				extension: MediaUtils.getFileExtension( file ),
-				mime_type: MediaUtils.getMimeType( file ),
 				title: path.basename( file )
 			} );
 		} else {
@@ -131,8 +131,6 @@ MediaActions.add = function( siteId, files ) {
 				URL: fileUrl,
 				guid: fileUrl,
 				file: file.name,
-				extension: MediaUtils.getFileExtension( file.name ),
-				mime_type: MediaUtils.getMimeType( file.name ),
 				title: path.basename( file.name ),
 				// Size is not an API media property, though can be useful for
 				// validation purposes if known
