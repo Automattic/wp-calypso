@@ -3,6 +3,9 @@
  */
 import keyBy from 'lodash/keyBy';
 import union from 'lodash/union';
+import mapValues from 'lodash/mapValues';
+import without from 'lodash/without';
+import omit from 'lodash/omit';
 import { combineReducers } from 'redux';
 
 /**
@@ -19,11 +22,17 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 import { getSerializedQuery, normalizeFollower } from 'state/followers/utils';
+import { FOLLOWERS_PER_PAGE } from 'state/followers/constants';
 
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case FOLLOWERS_RECEIVE:
 			return Object.assign( {}, state, keyBy( action.data.subscribers.map( normalizeFollower ), 'ID' ) );
+		case FOLLOWER_REMOVE_SUCCESS:
+			return Object.assign( {}, omit( state, action.follower.ID ) );
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
 	}
 	return state;
 }
@@ -32,12 +41,31 @@ export function queries( state = {}, action ) {
 	switch ( action.type ) {
 		case FOLLOWERS_RECEIVE:
 			const serializedQuery = getSerializedQuery( action.query );
-			const ids = state[ serializedQuery ] || [];
+			const ids = state[ serializedQuery ]
+				? state[ serializedQuery ].ids
+				: [];
 			return Object.assign( {}, state, {
-				[ serializedQuery ]: union( ids, action.data.subscribers.map( ( follower ) => {
-					return follower.ID;
-				} ) )
+				[ serializedQuery ]: {
+					ids: union( ids, action.data.subscribers.map( ( follower ) => {
+						return follower.ID;
+					} ) ),
+					total: action.data.total,
+					lastPage: action.data.pages
+				}
 			} );
+		case FOLLOWER_REMOVE_SUCCESS:
+			return Object.assign( {}, mapValues( state, ( query ) => {
+				if ( query.ids.indexOf( action.follower.ID ) >= 0 ) {
+					const total = query.total - 1;
+					const lastPage = Math.ceil( total / FOLLOWERS_PER_PAGE );
+					return {
+						ids: without( query.ids, action.follower.ID ),
+						total: total,
+						lastPage: Math.max( lastPage, 1 )
+					};
+				}
+				return query;
+			} ) );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};
@@ -67,30 +95,6 @@ export function queryRequests( state = {}, action ) {
 	return state;
 }
 
-export function queriesLastPage( state = {}, action ) {
-	switch ( action.type ) {
-		case FOLLOWERS_RECEIVE:
-			const serializedQuery = getSerializedQuery( action.query );
-			return Object.assign( {}, state, { [ serializedQuery ]: action.data.pages } );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-	}
-	return state;
-}
-
-export function queriesTotal( state = {}, action ) {
-	switch ( action.type ) {
-		case FOLLOWERS_RECEIVE:
-			const serializedQuery = getSerializedQuery( action.query );
-			return Object.assign( {}, state, { [ serializedQuery ]: action.data.total } );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-	}
-	return state;
-}
-
 export function removeFromSiteRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case FOLLOWER_REMOVE_ERROR:
@@ -107,7 +111,6 @@ export function removeFromSiteRequests( state = {}, action ) {
 export default combineReducers( {
 	items,
 	queries,
-	queriesTotal,
 	queryRequests,
 	removeFromSiteRequests
 } );
