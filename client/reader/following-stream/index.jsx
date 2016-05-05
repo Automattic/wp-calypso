@@ -29,6 +29,7 @@ var Main = require( 'components/main' ),
 	PostStore = require( 'lib/feed-post-store' ),
 	UpdateNotice = require( 'reader/update-notice' ),
 	PostBlocked = require( './post-blocked' ),
+	CommentStore = require( 'lib/comment-store/comment-store' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	scrollTo = require( 'lib/scroll-to' ),
 	XPostHelper = require( 'reader/xpost-helper' );
@@ -135,6 +136,9 @@ module.exports = React.createClass( {
 		this.props.store.on( 'change', this.updateState );
 		PostStore.on( 'change', this.updateState ); // should move this dep down into the individual items
 
+		// Ensure that feed posts are received by the CommentStore
+		CommentStore.on( 'change', this.updateState ); // should move this dep down into the individual items
+
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
 		KeyboardShortcuts.on( 'open-selection', this.showSelectedPost );
@@ -148,6 +152,7 @@ module.exports = React.createClass( {
 	componentWillUnmount: function() {
 		this.props.store.off( 'change', this.updateState );
 		PostStore.off( 'change', this.updateState );
+		CommentStore.off( 'change', this.updateState );
 
 		KeyboardShortcuts.off( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.off( 'move-selection-up', this.selectPrevItem );
