@@ -16,6 +16,7 @@ import FeatureExample from 'components/feature-example';
 import Button from 'components/button';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import Spinner from 'components/spinner';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
@@ -134,6 +135,7 @@ const PlansSetup = React.createClass( {
 							: this.renderStatus( plugin )
 						}
 					</span>
+					{ this.renderActions( plugin ) }
 				</CompactCard>
 			);
 		} );
@@ -190,17 +192,32 @@ const PlansSetup = React.createClass( {
 		return ( <Notice { ...statusProps } /> );
 	},
 
-	renderActions( item, plugin ) {
+	renderActions( plugin ) {
+		if ( plugin.status === 'wait' ) {
+			return null;
+		} else if ( plugin.error !== null ) {
+			return null;
+		} else if ( plugin.status !== 'done' ) {
+			return (
+				<div className="plugin-item__actions">
+					<Spinner />
+				</div>
+			);
+		}
+
+		const site = this.props.selectedSite;
+		const sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
+		Object.assign( plugin, sitePlugin );
 		return (
 			<div className="plugin-item__actions">
 				<PluginActivateToggle
 					plugin={ plugin }
-					disabled={ true }
-					site={ this.props.selectedSite } />
+					isMock={ true }
+					site={ site } />
 				<PluginAutoupdateToggle
 					plugin={ plugin }
-					disabled={ true }
-					site={ this.props.selectedSite }
+					isMock={ true }
+					site={ site }
 					wporg={ !! plugin.wporg } />
 			</div>
 		);
