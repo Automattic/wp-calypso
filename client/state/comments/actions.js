@@ -190,8 +190,7 @@ export function writeComment( commentText, siteId, postId, parentCommentId ) {
 			type: COMMENTS_RECEIVE,
 			siteId,
 			postId,
-			comments: [ placeholderComment ],
-			skipSort: true
+			comments: [ placeholderComment ]
 		} );
 
 		let apiPromise;
@@ -216,8 +215,7 @@ export function writeComment( commentText, siteId, postId, parentCommentId ) {
 				type: COMMENTS_RECEIVE,
 				siteId,
 				postId,
-				comments: [ comment ],
-				skipSort: true
+				comments: [ comment ]
 			} );
 
 			return comment;
