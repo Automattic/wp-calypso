@@ -181,7 +181,8 @@ const Plan = React.createClass( {
 				site={ this.props.site }
 				cart={ this.props.cart }
 				isPlaceholder={ this.isPlaceholder() }
-				isSubmitting={ this.props.isSubmitting } />
+				isSubmitting={ this.props.isSubmitting }
+				onSelectFreeJetpackPlan={ this.props.onSelectFreeJetpackPlan } />
 		);
 	},
 
