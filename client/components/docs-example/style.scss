@@ -1,5 +1,3 @@
-$docs-example-stats-borderColor: transparentize( lighten( $gray, 20% ), .5 );
-
 .docs-example__header {
 	display: flex;
 	align-items: center;
@@ -23,7 +21,7 @@ $docs-example-stats-borderColor: transparentize( lighten( $gray, 20% ), .5 );
 }
 
 .docs-example__stats {
-	border-bottom: 1px solid $docs-example-stats-borderColor;
+	border-bottom: 1px solid transparentize( lighten( $gray, 20% ), .5 );
 	font-size: 14px;
 	padding-bottom: 16px;
 }
