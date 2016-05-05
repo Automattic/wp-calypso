@@ -51,7 +51,6 @@ const getPluginHandler = ( site, plugin ) => {
 };
 
 function install( site, plugin, dispatch ) {
-	console.log( '# Start installing', plugin.slug );
 	Dispatcher.handleViewAction( {
 		type: 'INSTALL_PLUGIN',
 		action: 'INSTALL_PLUGIN',
@@ -62,7 +61,6 @@ function install( site, plugin, dispatch ) {
 	} );
 
 	if ( plugin.active ) {
-		console.log( '# Already installed', plugin.slug );
 		dispatch( {
 			type: PLUGIN_SETUP_CONFIGURE,
 			siteId: site.ID,
@@ -84,7 +82,6 @@ function install( site, plugin, dispatch ) {
 		if ( error.name === 'PluginAlreadyInstalledError' ) {
 			update( site, plugin, dispatch );
 		} else {
-			console.log( '!! Error [install]', error.name, error.message );
 			dispatch( {
 				type: PLUGIN_SETUP_ERROR,
 				siteId: site.ID,
@@ -104,7 +101,6 @@ function install( site, plugin, dispatch ) {
 }
 
 function update( site, plugin, dispatch ) {
-	console.log( '# Trying to update', plugin.name );
 	getPluginHandler( site, plugin.id ).updateVersion().then( ( data ) => {
 		dispatch( {
 			type: PLUGIN_SETUP_ACTIVATE,
@@ -114,7 +110,6 @@ function update( site, plugin, dispatch ) {
 
 		activate( site, data, dispatch );
 	} ).catch( ( error ) => {
-		console.log( '!! Error [update]', error.name, error.message );
 		dispatch( {
 			type: PLUGIN_SETUP_ERROR,
 			siteId: site.ID,
@@ -133,7 +128,6 @@ function update( site, plugin, dispatch ) {
 }
 
 function activate( site, plugin, dispatch ) {
-	console.log( '# Trying to activate', plugin.name );
 	const success = ( data ) => {
 		dispatch( {
 			type: PLUGIN_SETUP_CONFIGURE,
@@ -154,7 +148,6 @@ function activate( site, plugin, dispatch ) {
 	};
 
 	getPluginHandler( site, plugin.id ).activate().then( success ).catch( ( error ) => {
-		console.log( '!! Error [activate]', error.name, error.message );
 		if ( error.name === 'ActivationErrorError' ) {
 			// Technically it failed, but only because it's already active.
 			success( plugin );
@@ -182,7 +175,6 @@ function autoupdate( site, plugin ) {
 }
 
 function configure( site, plugin, dispatch ) {
-	console.log( '# Start configuring', plugin.slug );
 	setTimeout( () => {
 		dispatch( {
 			type: PLUGIN_SETUP_FINISH,
