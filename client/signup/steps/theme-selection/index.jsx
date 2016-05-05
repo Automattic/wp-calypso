@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	noop = require( 'lodash/noop' );
+import React from 'react';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	SignupActions = require( 'lib/signup/actions' ),
-	ThemesList = require( 'components/themes-list' ),
-	StepWrapper = require( 'signup/step-wrapper' ),
-	Button = require( 'components/button' );
+import analytics from 'lib/analytics';
+import SignupActions from 'lib/signup/actions';
+import ThemesList from 'components/themes-list';
+import StepWrapper from 'signup/step-wrapper';
+import Button from 'components/button';
 
 module.exports = React.createClass( {
 	displayName: 'ThemeSelection',
@@ -69,7 +69,7 @@ module.exports = React.createClass( {
 					id: theme.slug,
 					name: theme.name,
 					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png?w=660'
-				}
+				};
 			} );
 		return (
 			<ThemesList
