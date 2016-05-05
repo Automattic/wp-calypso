@@ -28,9 +28,8 @@ var Main = require( 'components/main' ),
 	ThemesListSelectors = require( 'state/themes/themes-list/selectors' ),
 	sites = require( 'lib/sites-list' )();
 
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_CUSTOM_DESIGN } from 'lib/plans/constants';
+import { FEATURE_CUSTOM_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
-import { abtest } from 'lib/abtest';
 
 var ThemesSingleSite = React.createClass( {
 	propTypes: {
@@ -158,22 +157,12 @@ var ThemesSingleSite = React.createClass( {
 						site={ site }
 						canCustomize={ site && site.isCustomizable() } />
 				</CurrentThemeData>
-				{ ( abtest( 'themesHeaderNudge' ) === 'themes_custom_design' ) && (
-					<UpgradeNudge
-						title={ this.translate( 'Get Custom Design with Premium' ) }
-						message={ this.translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
-						feature={ FEATURE_CUSTOM_DESIGN }
-						event="themes_custom_design"
-					/>
-				) }
-				{ ( abtest( 'themesHeaderNudge' ) === 'themes_premium_theme_more_traffic' ) && (
-					<UpgradeNudge
-						title={ this.translate( 'Blogs with premium themes get over 7 times more traffic' ) }
-						message={ this.translate( 'Get premium themes, more storage, and Google Analytics with WordPress.com Business.' ) }
-						feature={ FEATURE_UNLIMITED_PREMIUM_THEMES }
-						event="themes_premium_theme_more_traffic"
-					/>
-				) }
+				<UpgradeNudge
+					title={ this.translate( 'Get Custom Design with Premium' ) }
+					message={ this.translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
+					feature={ FEATURE_CUSTOM_DESIGN }
+					event="themes_custom_design"
+				/>
 				{ isJetpack && ! jetpackEnabled
 				? this.renderJetpackMessage()
 				: <ThemesSelection search={ this.props.search }
