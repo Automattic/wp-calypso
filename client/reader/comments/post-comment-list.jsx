@@ -18,6 +18,7 @@ import {
 import {
 	requestPostComments
 } from 'state/comments/actions';
+import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 import {
 	recordAction,
 	recordGaEvent,
@@ -206,8 +207,8 @@ PostCommentList.propTypes = {
 };
 
 PostCommentList.defaultProps = {
-	pageSize: 10,
-	initialSize: 5,
+	pageSize: NUMBER_OF_COMMENTS_PER_FETCH,
+	initialSize: NUMBER_OF_COMMENTS_PER_FETCH,
 	haveMoreCommentsToFetch: false
 };
 
