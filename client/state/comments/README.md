@@ -29,7 +29,7 @@ getPostCommentsTree - returns a memoized comments tree of the form:
 ```
 	CommentNode: Map<> {
 		children: List<CommentId>,
-		data: Map | undefined, // the comment as recieved from wpcom api, if not yet received: undefined
+		data: Map | undefined, // the comment as received from wpcom API, if not yet received: undefined
 		parentId: CommentId | null | undefined, // if we don't know yet, set to undefined. if comment has parent then set to number else to null 
 	}
 ```
@@ -37,7 +37,7 @@ getPostCommentsTree - returns a memoized comments tree of the form:
 ### Simple selectors:
 getPostCommentItems - gets items of siteId, postId;
 getPostCommentRequests - gets requests of siteId, postId
-getPostTotalCommentsCount - gets totalCommentsCount of siteId, postI
+getPostTotalCommentsCount - gets totalCommentsCount of siteId, postId
 
 ### Compute selectors:
 getPostMostRecentCommentDate - gets the date of most recent comment 
