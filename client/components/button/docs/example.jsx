@@ -27,11 +27,11 @@ var Buttons = React.createClass( {
 	render: function() {
 		var toggleText = this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons';
 		return config.isEnabled( 'devdocs/usage-stats' )
-			? this.renderNewStructure( toggleText )
-			: this.renderStructure( toggleText );
+			? this.renderDocsExampleWithUsageStats( toggleText )
+			: this.renderDocsExample( toggleText );
 	},
 
-	renderStructure: function( toggleText ) {
+	renderDocsExample: function( toggleText ) {
 		return (
 			<div className="design-assets__group">
 				<h2>
@@ -43,7 +43,7 @@ var Buttons = React.createClass( {
 		);
 	},
 
-	renderNewStructure: function( toggleText ) {
+	renderDocsExampleWithUsageStats: function( toggleText ) {
 		return (
 			<DocsExample
 				title="Button"
