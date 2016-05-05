@@ -44,7 +44,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getDefaultProps() {
-		return { section: 'details' };
+		return { section: 'overview' };
 	},
 
 	onBackClick() {
@@ -71,8 +71,8 @@ const ThemeSheet = React.createClass( {
 
 	getContentElement( section ) {
 		return {
-			details: <div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />,
-			documentation: <div dangerouslySetInnerHTML={ { __html: this.props.supportDocumentation } } />,
+			overview: <div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />,
+			setup: <div dangerouslySetInnerHTML={ { __html: this.props.supportDocumentation } } />,
 			support: <div>Visit the support forum</div>,
 		}[ section ];
 	},
@@ -84,8 +84,10 @@ const ThemeSheet = React.createClass( {
 	},
 
 	validateSection( section ) {
-		if ( [ 'details', 'support', 'documentation' ].indexOf( section ) === -1 ) {
-			return 'details';
+		const validSections = [ 'overview', 'support' ];
+		this.props.supportDocumentation && validSections.push( 'setup' );
+		if ( validSections.indexOf( section ) === -1 ) {
+			return 'overview';
 		}
 		return section;
 	},
@@ -112,26 +114,36 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderSectionNav( section ) {
+	renderSectionNav( currentSection ) {
 		const filterStrings = {
-			details: i18n.translate( 'Details', { context: 'Filter label for theme content' } ),
-			documentation: i18n.translate( 'Documentation', { context: 'Filter label for theme content' } ),
+			overview: i18n.translate( 'Overview', { context: 'Filter label for theme content' } ),
+			setup: i18n.translate( 'Setup', { context: 'Filter label for theme content' } ),
 			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
 		};
 
-		const { selectedSite } = this.props;
+		const { selectedSite, id, supportDocumentation } = this.props;
 		const siteSlug = selectedSite ? selectedSite.slug : '';
+
+		function navItem( section ) {
+			return(
+				<NavItem
+					path={ `/theme/${ id }/${ section }/${ siteSlug }` }
+					selected={ section === currentSection }>
+					{ filterStrings[ section ] }
+				</NavItem>
+			);
+		}
 
 		const nav = (
 			<NavTabs label="Details" >
-				<NavItem path={ `/theme/${ this.props.id }/details/${ siteSlug }` } selected={ section === 'details' } >{ filterStrings.details }</NavItem>
-				<NavItem path={ `/theme/${ this.props.id }/documentation/${ siteSlug }` } selected={ section === 'documentation' } >{ filterStrings.documentation }</NavItem>
-				<NavItem path={ `/theme/${ this.props.id }/support/${ siteSlug }` } selected={ section === 'support' } >{ filterStrings.support }</NavItem>
+				{ navItem( 'overview' ) }
+				{ supportDocumentation && navItem( 'setup' ) }
+				{ navItem( 'support' ) }
 			</NavTabs>
 		);
 
 		return (
-			<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[section] }>
+			<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[currentSection] }>
 				{ this.props.name && nav }
 			</SectionNav>
 		);

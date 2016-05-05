@@ -56,7 +56,7 @@ var ThemesHelpers = {
 
 		let baseUrl = ThemesHelpers.oldShowcaseUrl + theme.id;
 		if ( config.isEnabled( 'manage/themes/details' ) ) {
-			baseUrl = `/theme/${ theme.id }/details`;
+			baseUrl = `/theme/${ theme.id }/overview`;
 		}
 
 		return baseUrl + ( site ? `/${ site.slug }` : '' );
