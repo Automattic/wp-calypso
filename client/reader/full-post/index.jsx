@@ -119,7 +119,12 @@ FullPostView = React.createClass( {
 		if ( commentListNode ) {
 			this.hasScrolledToAnchor = true;
 			const top = commentListNode.offsetTop;
-			scrollTo( { x: 0, y: top - 48, container: document.querySelector( '.detail-page__content' ) } );
+			scrollTo( {
+				x: 0,
+				y: top - 48,
+				duration: 250,
+				container: document.querySelector( '.detail-page__content' )
+			} );
 		}
 	},
 
