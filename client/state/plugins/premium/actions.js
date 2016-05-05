@@ -25,12 +25,12 @@ const _fetching = {};
 
 const normalizePluginInstructions = ( data ) => {
 	const _plugins = data.keys;
-	return keys( _plugins ).map( ( key ) => {
-		const plugin = _plugins[key];
+	return keys( _plugins ).map( ( slug ) => {
+		const apiKey = _plugins[slug];
 		return {
-			slug: plugin.slug || key,
-			name: plugin.name || key,
-			key: plugin.key || plugin,
+			slug: slug,
+			name: slug,
+			key: apiKey,
 			status: 'wait',
 			error: null,
 		};

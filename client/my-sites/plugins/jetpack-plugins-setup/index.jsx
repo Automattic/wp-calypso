@@ -90,7 +90,14 @@ const PlansSetup = React.createClass( {
 
 	componentDidUpdate() {
 		const site = this.props.selectedSite;
-		if ( site && site.canManage() && this.allPluginsHaveWporgData() && ! this.props.isInstalling && this.props.nextPlugin ) {
+		if ( site &&
+			site.jetpack &&
+			site.canUpdateFiles &&
+			site.canManage() &&
+			this.allPluginsHaveWporgData() &&
+			! this.props.isInstalling &&
+			this.props.nextPlugin
+		) {
 			this.startNextPlugin( this.props.nextPlugin );
 		}
 	},
@@ -122,6 +129,15 @@ const PlansSetup = React.createClass( {
 			<JetpackManageErrorPage
 				site={ this.props.selectedSite }
 				title={ this.translate( 'Oh no! You need to select a jetpack site to be able to setup your plan' ) }
+				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' } />
+		);
+	},
+
+	renderCantInstallPlugins() {
+		return (
+			<JetpackManageErrorPage
+				site={ this.props.selectedSite }
+				title={ this.translate( 'Oh no! We can\'t install plugins on this site.' ) }
 				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' } />
 		);
 	},
@@ -158,7 +174,7 @@ const PlansSetup = React.createClass( {
 							{ plugin.name }
 						</div>
 						{ hidden
-							? <Notice isCompact={ true } showDismiss={ false } icon="plugins" text={ this.translate( 'Waiting to install' ) } />
+							? <Notice key={ 0 } isCompact={ true } showDismiss={ false } icon="plugins" text={ this.translate( 'Waiting to install' ) } />
 							: this.renderStatus( plugin )
 						}
 					</span>
@@ -273,6 +289,10 @@ const PlansSetup = React.createClass( {
 
 		if ( ! site || ! site.jetpack ) {
 			return this.renderNoJetpackSiteSelected();
+		}
+
+		if ( ! site.canUpdateFiles ) {
+			return this.renderCantInstallPlugins();
 		}
 
 		if ( site &&
