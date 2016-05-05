@@ -75,7 +75,9 @@ const DocsExample = ( {
 DocsExample.propTypes = {
 	title: PropTypes.string.isRequired,
 	url: PropTypes.string.isRequired,
-	usageStats: PropTypes.object.isRequired,
+	usageStats: PropTypes.shape( {
+		count: PropTypes.number
+	} ),
 	toggleHandler: PropTypes.func,
 	toggleText: PropTypes.string,
 	children: React.PropTypes.element.isRequired
