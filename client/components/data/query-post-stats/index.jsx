@@ -20,9 +20,7 @@ class QueryPostStats extends Component {
 	}
 
 	componentWillUnmount() {
-		if ( this.interval ) {
-			clearInterval( this.interval );
-		}
+		this.clearInterval();
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -43,8 +41,8 @@ class QueryPostStats extends Component {
 	requestPostStat( props ) {
 		const { siteId, postId, stat, heartbeat } = props;
 		props.requestPostStat( stat, siteId, postId );
+		this.clearInterval();
 		if ( heartbeat ) {
-			this.clearInterval();
 			this.interval = setInterval( () => {
 				props.requestPostStat( stat, siteId, postId );
 			}, heartbeat );

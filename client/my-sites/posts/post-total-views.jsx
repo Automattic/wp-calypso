@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
@@ -14,14 +14,14 @@ import sitesList from 'lib/sites-list';
 import QueryPostStats from 'components/data/query-post-stats';
 import { getPostStat } from 'state/stats/posts/selectors';
 
-const	HEARTBEAT_IN_SECONDS = 60;
 const sites = sitesList();
 
 var PostTotalViews = React.createClass( {
 
 	propTypes: {
-		post: React.PropTypes.object.isRequired,
-		clickHandler: React.PropTypes.func
+		post: PropTypes.object.isRequired,
+		viewCount: PropTypes.number,
+		clickHandler: PropTypes.func
 	},
 
 	render() {
@@ -53,7 +53,7 @@ var PostTotalViews = React.createClass( {
 				} ) }
 				title={ viewsTitle }
 				onClick={ this.props.clickHandler }>
-				<QueryPostStats siteId= { siteId } postId={ postId } stat="views" heartbeat={ HEARTBEAT_IN_SECONDS * 1000 } />
+				<QueryPostStats siteId= { siteId } postId={ postId } stat="views" />
 				<Gridicon icon="visible" size={ 24 } />
 				<StatUpdateIndicator updateOn={ viewsCountDisplay }>{ viewsCountDisplay }</StatUpdateIndicator>
 			</a>
