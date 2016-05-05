@@ -406,7 +406,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000460"
+      "version": "1.0.30000463"
     },
     "caseless": {
       "version": "0.11.0"
@@ -2233,7 +2233,7 @@
       "version": "1.6.2"
     },
     "kind-of": {
-      "version": "3.0.2"
+      "version": "3.0.3"
     },
     "lazy-cache": {
       "version": "1.0.4"
@@ -2547,7 +2547,7 @@
       "version": "0.0.5"
     },
     "nan": {
-      "version": "2.3.2"
+      "version": "2.3.3"
     },
     "ncname": {
       "version": "1.0.0"
@@ -2843,8 +2843,9 @@
       "version": "0.1.4"
     },
     "phone": {
-      "version": "1.0.4-10",
-      "resolved": "git+https://github.com/Automattic/node-phone.git#1.0.4-10"
+      "version": "1.0.4-3",
+      "from": "git+https://github.com/Automattic/node-phone.git#032e313625980de002d9e3cfa8b617aa006cf189",
+      "resolved": "git+https://github.com/Automattic/node-phone.git#032e313625980de002d9e3cfa8b617aa006cf189"
     },
     "photon": {
       "version": "2.0.0"
@@ -3590,7 +3591,7 @@
       "version": "1.0.2"
     },
     "tinymce": {
-      "version": "4.3.8"
+      "version": "4.3.11"
     },
     "title-case": {
       "version": "1.1.2",
