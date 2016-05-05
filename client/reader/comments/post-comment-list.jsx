@@ -26,8 +26,6 @@ import {
 } from 'reader/stats';
 import PostComment from './post-comment';
 import PostCommentForm from './form';
-import Gridicon from 'components/gridicon';
-import Button from 'components/button';
 
 class PostCommentList extends React.Component {
 	constructor( props ) {
