@@ -12,9 +12,10 @@ import store from 'store';
 import config from 'config';
 import wpcom from 'lib/wp';
 
-let _pushNotifications = false;
+const daysBeforeForcingRegistrationRefresh = 15,
+	debug = debugFactory( 'calypso:push-notifications' );
 
-const debug = debugFactory( 'calypso:push-notifications' );
+let _pushNotifications = false;
 
 function initializeState() {
 	// Only continue if the service worker supports notifications
@@ -76,7 +77,7 @@ PushNotifications.prototype.initialize = function() {
 
 	// Only register the service worker in browsers that support it.
 	if ( 'serviceWorker' in window.navigator ) {
-		window.navigator.serviceWorker.register( '/service-worker.js' ).then( initializeState.bind( this ) ).catch( function( err ) {
+		window.navigator.serviceWorker.register( '/service-worker.js' ).then( initializeState.bind( this ) ).catch( ( err ) => {
 			debug( 'Service worker not supported', err );
 		} );
 	} else {
@@ -103,13 +104,13 @@ PushNotifications.prototype.saveSubscription = function( subscription ) {
 		oldSub = store.get( 'push-subscription' ),
 		lastUpdated = store.get( 'push-subscription-updated' );
 
-	var age;
+	let age;
 
 	if ( lastUpdated ) {
 		age = moment().diff( moment( lastUpdated ), 'days' );
 	}
 
-	if ( oldSub !== sub || ( ! lastUpdated ) || age > 15 ) {
+	if ( oldSub !== sub || ( ! lastUpdated ) || age > daysBeforeForcingRegistrationRefresh ) {
 		debug( 'Subscription needed updating.', age );
 		wpcom.undocumented().registerDevice( sub, 'chrome', 'Chrome', function() {
 			store.set( 'push-subscription', sub );
