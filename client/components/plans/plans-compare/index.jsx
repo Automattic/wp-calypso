@@ -28,6 +28,7 @@ import PlanHeader from 'components/plans/plan-header';
 import PlanPrice from 'components/plans/plan-price';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { getPlans } from 'state/plans/selectors';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 
 const PlansCompare = React.createClass( {
@@ -141,7 +142,6 @@ const PlansCompare = React.createClass( {
 
 	getPlans() {
 		return filterPlansBySiteAndProps(
-			this.props.plans.get(),
 			this.props.selectedSite,
 			this.props.hideFreePlan
 		);
@@ -418,6 +418,7 @@ const PlansCompare = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
+			plans: getPlans( state ),
 			sitePlans: getPlansBySite( state, props.selectedSite )
 		};
 	},
