@@ -152,6 +152,8 @@
 	}
 }
 
-.plan-list .jetpack_premium .plan-header__title, .plan-list .jetpack_business .plan-header__title {
+.plan-list .jetpack_free .plan-header__title,
+.plan-list .jetpack_premium .plan-header__title,
+.plan-list .jetpack_business .plan-header__title {
 	margin-top: 15px;
 }
