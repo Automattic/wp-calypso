@@ -2,25 +2,23 @@
  * External Dependencies
  */
 import React from 'react';
-import Debug from 'debug';
+import { connect } from 'react-redux';
+import omit from 'lodash/omit';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
  */
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getAllPostCounts, getMyPostCounts } from 'state/posts/counts/selectors';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavSegmented from 'components/section-nav/segmented';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
-
+import QueryPostCounts from 'components/data/query-post-counts';
 import URLSearch from 'lib/mixins/url-search';
-import PostCountsStore from 'lib/posts/post-counts-store';
-
-/**
- * Debug instance
- */
-
-var debug = new Debug( 'calypso:posts-navigation' );
 
 /**
  * Path converter
@@ -33,61 +31,41 @@ const statusToDescription = {
 	trash: 'trashed'
 };
 
-export default React.createClass( {
-	displayName: 'PostsNavigation',
+/**
+ * Given an object mapping post statuses to count, returns a new object with
+ * pending and private counts summed with draft and publish respectively.
+ *
+ * @param  {Object} counts Mapping of post status to count
+ * @return {Object}        Updated mapping with pending and private merged
+ */
+function getConsolidatedCounts( counts ) {
+	if ( ! counts ) {
+		return;
+	}
 
+	const consolidatedCounts = Object.assign( {}, counts, {
+		draft: counts.draft + counts.pending,
+		publish: counts.publish + counts.private
+	} );
+
+	return omit( consolidatedCounts, 'pending', 'private' );
+}
+
+const PostsNavigation = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object.isRequired,
 		sites: React.PropTypes.object.isRequired,
 		author: React.PropTypes.number,
 		statusSlug: React.PropTypes.string,
-		search: React.PropTypes.string
+		search: React.PropTypes.string,
+		siteId: React.PropTypes.number,
+		jetpackSite: React.PropTypes.bool,
+		counts: React.PropTypes.object
 	},
 
 	mixins: [ URLSearch ],
 
-	getInitialState() {
-		var counts = this._getCounts(),
-			state = {
-				show: true,
-				loading: true,
-				counts: null === this.props.sites.selected ?
-					this._defaultCounts() :
-					this._getCounts()
-			};
-
-		if ( ! this.props.sites.selected || Object.keys( counts ).length ) {
-			state.loading = false;
-		}
-
-		return state;
-	},
-
-	componentWillMount() {
-		PostCountsStore.on( 'change', this._updatePostCounts );
-	},
-
-	componentWillUnmount() {
-		PostCountsStore.off( 'change', this._updatePostCounts );
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteID !== nextProps.siteID ||
-			this.props.author !== nextProps.author ||
-			this.props.statusSlug !== nextProps.statusSlug ) {
-			this._setPostCounts( nextProps.siteID, nextProps.author ? 'mine' : 'all' );
-		}
-	},
-
 	render() {
-		if ( ! this.state.show ) {
-			return null;
-		}
-
-		if ( this.state.loading ) {
-			return ( <SectionNav /> );
-		}
-
 		let author = this.props.author ? '/my' : '',
 			statusSlug = this.props.statusSlug ? '/' + this.props.statusSlug : '',
 			siteFilter = this.props.sites.selected ? '/' + this.props.sites.selected : '',
@@ -127,30 +105,37 @@ export default React.createClass( {
 		);
 
 		return (
-			<SectionNav selectedText={ mobileHeaderText }>
-				{ statusTabs.element }
-				{ ( showMyFilter ) ?
-					authorSegmented.element : null
-				}
-				<Search
-					pinned={ true }
-					onSearch={ this.doSearch }
-					initialValue={ this.props.search }
-					placeholder={ 'Search ' + statusTabs.selectedText + '...' }
-					analyticsGroup="Posts"
-					delaySearch={ true } />
-			</SectionNav>
+			<div>
+				{ this.props.siteId && false === this.props.jetpackSite && (
+					<QueryPostCounts
+						siteId={ this.props.siteId }
+						type="post" />
+				) }
+				<SectionNav selectedText={ mobileHeaderText }>
+					{ statusTabs.element }
+					{ ( showMyFilter ) ?
+						authorSegmented.element : null
+					}
+					<Search
+						pinned={ true }
+						onSearch={ this.doSearch }
+						initialValue={ this.props.search }
+						placeholder={ 'Search ' + statusTabs.selectedText + '...' }
+						analyticsGroup="Posts"
+						delaySearch={ true } />
+				</SectionNav>
+			</div>
 		);
 	},
 
 	_getStatusTabs( author, siteFilter ) {
-		var statusItems = [],
-			isJetpackSite = this.props.sites.getSelectedSite().jetpack,
-			status, selectedText, selectedCount;
+		const statusItems = [];
+		let selectedText, selectedCount;
 
-		for ( status in this.filterStatuses ) {
-			if ( 'undefined' === typeof this.state.counts[ status ] &&
-				( ! isJetpackSite ) ) {
+		for ( let status in this.filterStatuses ) {
+			const count = this.getCountByStatus( status );
+			if ( ! count && this.props.siteId && ! this.props.jetpackSite &&
+					! includes( [ 'publish', 'draft' ], status ) ) {
 				continue;
 			}
 
@@ -160,14 +145,10 @@ export default React.createClass( {
 
 			let textItem = this.filterStatuses[ status ];
 
-			let count = ( ! isJetpackSite ) && false !== this.state.counts[ status ]
-				? this.state.counts[ status ]
-				: false;
-
 			if ( path === this.props.context.pathname ) {
 				selectedText = textItem;
 
-				if ( ! isJetpackSite ) {
+				if ( ! this.props.jetpackSite ) {
 					selectedCount = count;
 				}
 			}
@@ -176,10 +157,7 @@ export default React.createClass( {
 				<NavItem
 					key={ 'statusTabs' + path }
 					path={ path }
-					count={ null === this.props.sites.selected || isJetpackSite ?
-						null :
-						count
-					}
+					count={ count }
 					value={ textItem }
 					selected={ path === this.props.context.pathname }>
 					{ textItem }
@@ -253,117 +231,6 @@ export default React.createClass( {
 		);
 	},
 
-	_defaultCounts() {
-		var default_options = {},
-			status;
-
-		for ( status in statusToDescription ) {
-			default_options[ status ] = false;
-		}
-
-		return default_options;
-	},
-
-	_defaultStateOptions() {
-		this.setState( {
-			show: true,
-			loading: false,
-			counts: this._defaultCounts()
-		} );
-	},
-
-	/**
-	 * Set immediately post filters state
-	 *
-	 * @param {String} siteID - site ID
-	 * @param {String} scope - scope `all` or `mine`
-	 * @return {void}
-	 */
-	_setPostCounts( siteID, scope ) {
-		// print default filters for `All my Sites`
-		if ( ! siteID || null === this.props.sites.selected ) {
-			return this._defaultStateOptions();
-		}
-
-		if ( ! PostCountsStore.getTotalCount( siteID, 'all' ) ) {
-			return this.setState( {
-				show: true,
-				loading: true
-			} );
-		}
-
-		this.setState( {
-			show: true,
-			loading: false,
-			counts: this._getCounts( siteID, scope )
-		} );
-	},
-
-	_updatePostCounts( siteID = this.props.sites.selected, scope ) {
-		scope = scope || ( this.props.author ? 'mine' : 'all' );
-
-		// is `All my sites` selected`
-		if ( null === this.props.sites.selected ) {
-			return this._defaultStateOptions();
-		}
-
-		let state = {
-			show: true,
-			loading: false,
-			counts: {}
-		};
-
-		if ( PostCountsStore.getTotalCount( siteID, 'all' ) ) {
-			state.counts = this._getCounts( siteID, scope );
-		} else {
-			debug( '[%s] clean counts', siteID || 'All my sites' );
-			state.show = false;
-			state.counts = {};
-		}
-
-		this.setState( state );
-	},
-
-	/**
-	 * Return a counts object depending on current
-	 * counts for `all` scope, filling with zeros for
-	 * `me` scope.
-	 * Also calc and remove unallowed statuses.
-	 *
-	 * @param {String} siteID - Site identifier
-	 * @param {String} [scope] - Optional scope (mine or all)
-	 * @return {Object} counts
-	 */
-	_getCounts( siteID = this.props.sites.selected, scope ) {
-		var counts = {},
-			status;
-
-		scope = scope || ( this.props.author ? 'mine' : 'all' );
-		let all = PostCountsStore.get( siteID, 'all' );
-		let mine = PostCountsStore.get( siteID, 'mine' );
-
-		// make a copy of counts object
-		for ( status in all ) {
-			counts[ status ] = 'all' === scope ?
-				all[ status ] :
-				( mine[ status ] || 0 );
-		}
-
-		// join 'draft' and 'pending' statuses in 'draft'
-		if ( counts.draft || counts.pending ) {
-			counts.draft = ( counts.draft || 0 ) + ( counts.pending || 0 );
-			delete counts.pending;
-		}
-
-		// join 'public' and 'private' statuses in 'publish'
-		if ( counts.publish || counts.private ) {
-			counts.publish = ( counts.publish || 0 ) + ( counts.private || 0 );
-			delete counts.private;
-		}
-
-		return counts;
-	},
-
 	/**
 	 * Return count of the given status
 	 *
@@ -371,7 +238,28 @@ export default React.createClass( {
 	 * @return {Number|Null} return count of the given status
 	 */
 	getCountByStatus( status ) {
-		let count = this.state.counts[ status ];
-		return ( count !== false ) ? count : null;
+		if ( ! this.props.counts ) {
+			return;
+		}
+
+		return this.props.counts[ status ];
 	}
 } );
+
+export default connect( ( state, ownProps ) => {
+	const siteId = getSelectedSiteId( state );
+	const isMine = !! ownProps.author;
+
+	let counts;
+	if ( isMine ) {
+		counts = getMyPostCounts( state, siteId, 'post' );
+	} else {
+		counts = getAllPostCounts( state, siteId, 'post' );
+	}
+
+	return {
+		siteId,
+		jetpackSite: isJetpackSite( state, siteId ),
+		counts: getConsolidatedCounts( counts )
+	}
+} )( PostsNavigation );

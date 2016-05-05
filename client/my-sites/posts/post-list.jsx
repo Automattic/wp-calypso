@@ -46,7 +46,6 @@ var PostList = React.createClass( {
 				status={ mapStatus( this.props.statusSlug ) }
 				author={ this.props.author }
 				withImages={ true }
-				withCounts={ true }
 				search={ this.props.search }>
 				<Posts
 					{ ...omit( this.props, 'children' ) }
