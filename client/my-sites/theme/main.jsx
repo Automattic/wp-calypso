@@ -24,6 +24,7 @@ import Card from 'components/card';
 import { signup, purchase, activate } from 'state/themes/actions';
 import i18n from 'lib/mixins/i18n';
 import { getSelectedSite } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -41,6 +42,7 @@ const ThemeSheet = React.createClass( {
 		isLoggedIn: React.PropTypes.bool,
 		// Connected props
 		selectedSite: React.PropTypes.object,
+		siteSlug: React.PropTypes.string,
 	},
 
 	getDefaultProps() {
@@ -121,8 +123,7 @@ const ThemeSheet = React.createClass( {
 			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
 		};
 
-		const { selectedSite, id, supportDocumentation } = this.props;
-		const siteSlug = selectedSite ? selectedSite.slug : '';
+		const { siteSlug, id, supportDocumentation } = this.props;
 
 		function navItem( section ) {
 			return(
@@ -207,6 +208,8 @@ const ThemeSheet = React.createClass( {
 	}
 } );
 
-export default connect( ( state ) => ( {
-	selectedSite: getSelectedSite( state ),
-} ) )( ThemeSheet );
+export default connect( ( state ) => {
+	const selectedSite = getSelectedSite( state );
+	const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
+	return { selectedSite, siteSlug };
+} )( ThemeSheet );
