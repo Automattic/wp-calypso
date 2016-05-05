@@ -11,7 +11,7 @@ import React from 'react';
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
 import config from 'config';
-import { isBusiness, isEnterprise, isFreePlan } from 'lib/products-values';
+import { isBusiness, isEnterprise, isFreePlan, isFreeJetpackPlan } from 'lib/products-values';
 import purchasesPaths from 'me/purchases/paths';
 import { isValidFeatureKey } from 'lib/plans';
 import * as upgradesActions from 'lib/upgrades/actions';
@@ -79,9 +79,25 @@ const PlanActions = React.createClass( {
 		);
 	},
 
+	freeJetpackPlanButton() {
+		return (
+			<div>
+				<button className="button is-primary plan-actions__upgrade-button"
+					disabled={ this.props.isSubmitting }
+					onClick={ this.handleSelectJetpackFreePlan }>
+					{ this.translate( 'Select Free Plan' ) }
+				</button>
+			</div>
+		);
+	},
+
 	upgradeActions() {
 		if ( isFreePlan( this.props.plan ) ) {
 			return this.freePlanButton();
+		}
+
+		if ( isFreeJetpackPlan( this.props.plan ) ) {
+			return this.freeJetpackPlanButton();
 		}
 
 		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
@@ -116,6 +132,14 @@ const PlanActions = React.createClass( {
 
 	getCartItem( properties ) {
 		return cartItems.getItemForPlan( this.props.plan, properties );
+	},
+
+	handleSelectJetpackFreePlan( event ) {
+		event.preventDefault();
+
+		if ( this.props.onSelectFreeJetpackPlan ) {
+			return this.props.onSelectFreeJetpackPlan();
+		}
 	},
 
 	handleSelectPlan( event ) {
