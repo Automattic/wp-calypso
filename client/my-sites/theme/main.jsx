@@ -85,11 +85,17 @@ const ThemeSheet = React.createClass( {
 		return { priceElement, themeContentElement };
 	},
 
-	validateSection( section ) {
-		const validSections = [ 'overview', 'support' ];
+	getValidSections() {
+		const validSections = [];
+		validSections.push( 'overview' );
 		this.props.supportDocumentation && validSections.push( 'setup' );
-		if ( validSections.indexOf( section ) === -1 ) {
-			return 'overview';
+		validSections.push( 'support' );
+		return validSections;
+	},
+
+	validateSection( section ) {
+		if ( this.getValidSections().indexOf( section ) === -1 ) {
+			return this.getValidSections()[0];
 		}
 		return section;
 	},
@@ -123,23 +129,17 @@ const ThemeSheet = React.createClass( {
 			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
 		};
 
-		const { siteSlug, id, supportDocumentation } = this.props;
-
-		function navItem( section ) {
-			return(
-				<NavItem
-					path={ `/theme/${ id }/${ section }/${ siteSlug }` }
-					selected={ section === currentSection }>
-					{ filterStrings[ section ] }
-				</NavItem>
-			);
-		}
+		const { siteSlug, id } = this.props;
 
 		const nav = (
 			<NavTabs label="Details" >
-				{ navItem( 'overview' ) }
-				{ supportDocumentation && navItem( 'setup' ) }
-				{ navItem( 'support' ) }
+				{ this.getValidSections().map( ( section ) => (
+					<NavItem key={ section }
+						path={ `/theme/${ id }/${ section }/${ siteSlug }` }
+						selected={ section === currentSection }>
+						{ filterStrings[ section ] }
+					</NavItem>
+				) ) }
 			</NavTabs>
 		);
 
