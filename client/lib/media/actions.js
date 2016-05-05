@@ -4,7 +4,6 @@
 var debug = require( 'debug' )( 'calypso:media' ),
 	assign = require( 'lodash/assign' ),
 	uniqueId = require( 'lodash/uniqueId' ),
-	isPlainObject = require( 'lodash/isPlainObject' ),
 	path = require( 'path' );
 
 /**
@@ -158,7 +157,7 @@ MediaActions.add = function( siteId, files ) {
 
 		// Assign parent ID if currently editing post
 		const post = PostEditStore.get();
-		if ( post && post.ID && ! isPlainObject( file ) ) {
+		if ( post && post.ID ) {
 			file = {
 				parent_id: post.ID,
 				[ isUrl ? 'url' : 'file' ]: file

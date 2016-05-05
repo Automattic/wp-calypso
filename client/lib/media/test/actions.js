@@ -216,15 +216,6 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should accept a plain object file descriptor', function() {
-			var file = { file: DUMMY_UPLOAD, parent_id: 300 };
-			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
-
-			return MediaActions.add( DUMMY_SITE_ID, file ).then( () => {
-				expect( mediaAdd ).to.have.been.calledWithMatch( {}, file );
-			} );
-		} );
-
 		it( 'should call to the WordPress.com REST API', function() {
 			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
 				expect( mediaAdd ).to.have.been.calledWithMatch( {}, DUMMY_UPLOAD );
