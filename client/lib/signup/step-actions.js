@@ -5,6 +5,7 @@ import assign from 'lodash/assign';
 import defer from 'lodash/defer';
 import isEmpty from 'lodash/isEmpty';
 import async from 'async';
+import store from 'store';
 
 /**
  * Internal dependencies
@@ -146,21 +147,28 @@ function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
  * If there is no error from the API, then the username is free.
  *
  * @param {string} username The username to get suggestions for.
- * @param {function} callback Function to call back when the result is returned by the API
  */
-function getUsernameSuggestion( username, callback ) {
+function getUsernameSuggestion( username ) {
 	let fields = {
 		givesuggestions: 1,
 		username: username
 	};
 
+	/**
+	 * Clear out the local storage variable before sending the call.
+	 */
+	store.set('signupSuggestedUsername', '');
+
 	wpcom.undocumented().validateNewUser( fields, ( error, response ) => {
 		if ( error || !response ) {
-			// TODO properly handle this error
-			// return debug( error || 'User validation failed.' );
+			return null;
 		}
 
-		let resulting_username = null;
+		/**
+		 * Default the suggested username to `username` because if the validation succeeds would mean
+		 * that the username is free
+		 */
+		let resulting_username = username;
 
 		/**
 		 * Only start checking for suggested username if the API returns an error for the validation.
@@ -183,9 +191,9 @@ function getUsernameSuggestion( username, callback ) {
 		}
 
 		/**
-		 * Call the callback function to properly set the username in the form
+		 * Put the suggested username in local storage for later use
 		 */
-		callback(resulting_username);
+		store.set('signupSuggestedUsername', resulting_username);
 	} );
 }
 

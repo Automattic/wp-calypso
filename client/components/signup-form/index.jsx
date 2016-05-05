@@ -10,6 +10,7 @@ import keys from 'lodash/keys';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
+import store from 'store';
 
 /**
  * Internal dependencies
@@ -69,41 +70,16 @@ export default React.createClass( {
 	},
 
 	autoFillUsername( form ) {
-		const steps = getFlowSteps( this.props.flowName );
-		const domainSteps = steps.filter( step => step.match( /^domain/ ) );
-		let domainName = getValueFromProgressStore( {
-			stepName: domainSteps[0] || null,
-			fieldName: 'siteUrl',
-			signupProgressStore: this.props.signupProgressStore
-		} );
-		const siteName = getValueFromProgressStore( {
-			stepName: 'site',
-			fieldName: 'site',
-			signupProgressStore: this.props.signupProgressStore
-		} );
-		if ( domainName ) {
-			domainName = domainName.split( '.' )[ 0 ];
-		}
 
-		// TODO move to the appropriate place
-		getUsernameSuggestion( siteName || domainName, function(suggestedUsername) {
-			/**
-			 * If there is a valid suggested username from the server - use it.
-			 * Otherwise fall back to the default behavior and use the username provided.
-			 */
-			this.formStateController.handleFieldChange( {
-				name: 'username',
-				value: suggestedUsername
-			} );
-		} );
-
-
-
+		/**
+		 * Fetch the suggested username from local storage
+		 */
+		let suggestedUsername = store.get( 'signupSuggestedUsername' );
 
 		return mergeFormWithValue( {
 			form,
 			fieldName: 'username',
-			fieldValue: siteName || domainName || null
+			fieldValue: suggestedUsername || null
 		} );
 	},
 
@@ -120,7 +96,7 @@ export default React.createClass( {
 			initialState: this.props.step ? this.props.step.form : undefined
 		} );
 		let initialState = this.formStateController.getInitialState();
-		// TODO uncomment below
+		// TODO uncomment below - left as that to have the suggestion run every time - remove before merge
 		//if ( this.props.signupProgressStore ) {
 			initialState = this.autoFillUsername( initialState );
 		// TODO uncomment below
