@@ -317,12 +317,20 @@
 }
 
 .comments__top-bar {
-	margin: 24px 48px;
+	margin: 24px 48px 24px 0;
 	overflow: auto;
 
-	&.no-comments {
+	&.is-no-comments {
 	  display: none;
 	}
+}
+
+.comments__view-earlier {
+	color: $gray;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 14px;
+	margin-bottom: 10px;
 }
 
 .comments__view-replies-btn {

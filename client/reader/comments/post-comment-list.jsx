@@ -177,17 +177,16 @@ class PostCommentList extends React.Component {
 									: this.getCommentsCount( this.props.commentsTree.get( 'children' ) );
 
 		return <div className="comments">
-			<div className={ classNames( 'comments__top-bar', { 'no-comments': displayedCommentsCount === 0 } ) }>
-				{ showViewEarlier ? <Button icon compact className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>
-					<Gridicon icon="refresh" size={ 18 } />
+			<div className={ classNames( 'comments__top-bar', { 'is-no-comments': displayedCommentsCount === 0 } ) }>
+				{ showViewEarlier ? <span icon compact className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>
 					{
-						translate( 'See earlier comments (showing %(shown)d of %(total)d)…', {
+						translate( 'See %(shown)d more comments out of %(total)d…', {
 							args: {
 								shown: displayedCommentsCount,
 								total: totalCommentsCount
 							}
 						} )
-					}</Button> : null }
+					}</span> : null }
 			</div>
 			{ this.renderCommentsList( displayedComments ) }
 			{ this.renderCommentForm() }
