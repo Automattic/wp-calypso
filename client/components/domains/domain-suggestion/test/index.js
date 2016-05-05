@@ -23,13 +23,13 @@ xdescribe( 'Domain Suggestion', function() {
 	beforeEach( function() {
 		DomainSuggestion = require( 'components/domains/domain-suggestion' );
 		DomainProductPrice = require( 'components/domains/domain-product-price' );
-		DomainSuggestion.prototype.__reactAutoBindMap.translate = sinon.stub();
-		DomainProductPrice.prototype.__reactAutoBindMap.translate = sinon.stub();
+		DomainSuggestion.prototype.translate = sinon.stub();
+		DomainProductPrice.prototype.translate = sinon.stub();
 	} );
 
 	afterEach( function() {
-		delete DomainSuggestion.prototype.__reactAutoBindMap.translate;
-		delete DomainProductPrice.prototype.__reactAutoBindMap.translate;
+		delete DomainSuggestion.prototype.translate;
+		delete DomainProductPrice.prototype.translate;
 	} );
 
 	describe( 'added domain', function() {

@@ -45,12 +45,12 @@ describe( 'EditorGroundControl', function() {
 		mockery.registerMock( 'components/post-schedule', EmptyComponent );
 		EditorGroundControl = require( '../' ).WrappedComponent;
 
-		EditorGroundControl.prototype.__reactAutoBindMap.translate = i18n.translate;
+		EditorGroundControl.prototype.translate = i18n.translate;
 		EditorGroundControl.prototype.__reactAutoBindMap.moment = i18n.moment;
 	} );
 
 	after( function() {
-		delete EditorGroundControl.prototype.__reactAutoBindMap.translate;
+		delete EditorGroundControl.prototype.translate;
 		delete EditorGroundControl.prototype.__reactAutoBindMap.moment;
 	} );
 
