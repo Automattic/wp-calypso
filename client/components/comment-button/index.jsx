@@ -14,15 +14,14 @@ const CommentButton = React.createClass( {
 	propTypes: {
 		onClick: React.PropTypes.func,
 		tagName: React.PropTypes.string,
-		commentCount: React.PropTypes.number
+		commentCount: React.PropTypes.number.isRequired
 	},
 
 	getDefaultProps() {
 		return {
 			onClick: noop,
 			tagName: 'li',
-			size: 24,
-			commentCount: 0
+			size: 24
 		};
 	},
 
