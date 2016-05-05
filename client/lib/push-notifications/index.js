@@ -12,7 +12,7 @@ import store from 'store';
 import config from 'config';
 import wpcom from 'lib/wp';
 
-const daysBeforeForcingRegistrationRefresh = 15,
+const DAYS_BEFORE_FORCING_REGISTRATION_REFRESH = 15,
 	debug = debugFactory( 'calypso:push-notifications' );
 
 let _pushNotifications = false;
@@ -110,7 +110,7 @@ PushNotifications.prototype.saveSubscription = function( subscription ) {
 		age = moment().diff( moment( lastUpdated ), 'days' );
 	}
 
-	if ( oldSub !== sub || ( ! lastUpdated ) || age > daysBeforeForcingRegistrationRefresh ) {
+	if ( oldSub !== sub || ( ! lastUpdated ) || age > DAYS_BEFORE_FORCING_REGISTRATION_REFRESH ) {
 		debug( 'Subscription needed updating.', age );
 		wpcom.undocumented().registerDevice( sub, 'chrome', 'Chrome', function() {
 			store.set( 'push-subscription', sub );
