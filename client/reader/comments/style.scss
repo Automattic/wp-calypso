@@ -317,20 +317,11 @@
 }
 
 .comments__top-bar {
-	border-bottom: 1px solid lighten( $gray, 30% );
-	padding: 18px 10px;
+	margin: 24px 48px;
 	overflow: auto;
 
 	&.no-comments {
 	  display: none;
-	}
-}
-
-.comments__view-earlier {
-	text-decoration: none;
-
-	&:hover {
-		color: $link-highlight;
 	}
 }
 

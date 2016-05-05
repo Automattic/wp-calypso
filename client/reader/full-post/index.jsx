@@ -48,7 +48,8 @@ var CommentButton = require( 'components/comment-button' ),
 	DiscoverVisitLink = require( 'reader/discover/visit-link' ),
 	readerRoute = require( 'reader/route' ),
 	showReaderFullPost = require( 'state/ui/reader/fullpost/actions' ).showReaderFullPost,
-	smartSetState = require( 'lib/react-smart-set-state' );
+	smartSetState = require( 'lib/react-smart-set-state' ),
+	scrollTo = require( 'lib/scroll-to' );
 
 import PostExcerpt from 'components/post-excerpt';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
@@ -117,7 +118,8 @@ FullPostView = React.createClass( {
 		let commentListNode = ReactDom.findDOMNode( this.refs.commentList );
 		if ( commentListNode ) {
 			this.hasScrolledToAnchor = true;
-			commentListNode.scrollIntoView( { behavior: 'smooth' } );
+			const top = commentListNode.offsetTop;
+			scrollTo( { x: 0, y: top - 48, container: document.querySelector( '.detail-page__content' ) } );
 		}
 	},
 
@@ -219,7 +221,7 @@ FullPostView = React.createClass( {
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
 					{ discoverSiteName && discoverSiteUrl ? <DiscoverVisitLink siteName={ discoverSiteName } siteUrl={ discoverSiteUrl } /> : null }
-					{ this.props.shouldShowComments ? <PostCommentList ref="commentList" post={ post } initialSize={ 5 } onCommentsUpdate={ this.checkForCommentAnchor } /> : null }
+					{ this.props.shouldShowComments ? <PostCommentList ref="commentList" post={ post } initialSize={ 5 } pageSize={ 25 } onCommentsUpdate={ this.checkForCommentAnchor } /> : null }
 				</article>
 			</div>
 		);

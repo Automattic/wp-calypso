@@ -4,7 +4,14 @@
 import raf from 'raf';
 import TWEEN from 'tween.js';
 
-function getWindowScroll() {
+function getCurrentScroll( container ) {
+	if ( container && container.scrollTop !== undefined ) {
+		return {
+			x: container.scrollLeft,
+			y: container.scrollTop
+		};
+	}
+
 	let x = window.pageXOffset || document.documentElement.scrollLeft,
 		y = window.pageYOffset || document.documentElement.scrollTop;
 	return { x: x, y: y };
@@ -15,14 +22,14 @@ function makeScrollUpdater( container ) {
 		? container
 		: window;
 
-	return function() {
+	return function updateScroll() {
 		if ( container === window ) {
 			container.scrollTo( this.x, this.y );
 		} else {
 			container.scrollTop = this.y;
 			container.scrollLeft = this.x;
 		}
-	}
+	};
 }
 
 function animate() {
@@ -44,8 +51,8 @@ function animate() {
  * @param {HTMLElement} options.container - the container to scroll instead of window, if any
  */
 function scrollTo( options ) {
-	var currentWindowScroll = getWindowScroll(),
-		tween = new TWEEN.Tween( currentWindowScroll )
+	var currentScroll = getCurrentScroll( options.container ),
+		tween = new TWEEN.Tween( currentScroll )
 		.easing( options.easing || TWEEN.Easing.Circular.Out )
 		.to( { x: options.x, y: options.y }, options.duration || 500 )
 		.onUpdate( makeScrollUpdater( options.container ) );

@@ -26,6 +26,8 @@ import {
 } from 'reader/stats';
 import PostComment from './post-comment';
 import PostCommentForm from './form';
+import Gridicon from 'components/gridicon';
+import Button from 'components/button';
 
 class PostCommentList extends React.Component {
 	constructor( props ) {
@@ -176,13 +178,16 @@ class PostCommentList extends React.Component {
 
 		return <div className="comments">
 			<div className={ classNames( 'comments__top-bar', { 'no-comments': displayedCommentsCount === 0 } ) }>
-				{ showViewEarlier ? <a href="javascript:void(0)" className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>{ translate( 'View earlier comments…' ) }</a> : null }
-				<h3 className="comments__count">{ translate( '%(displayedCommentsCount)d of %(totalCommentsCount)d', {
-					args: {
-						displayedCommentsCount,
-						totalCommentsCount
-					}
-				} ) }</h3>
+				{ showViewEarlier ? <Button icon compact className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>
+					<Gridicon icon="refresh" size={ 18 } />
+					{
+						translate( 'See earlier comments (showing %(shown)d of %(total)d)…', {
+							args: {
+								shown: displayedCommentsCount,
+								total: totalCommentsCount
+							}
+						} )
+					}</Button> : null }
 			</div>
 			{ this.renderCommentsList( displayedComments ) }
 			{ this.renderCommentForm() }
