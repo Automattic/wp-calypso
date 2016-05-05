@@ -19,16 +19,10 @@ describe( 'ThemesList', function() {
 		TestUtils = require( 'react-addons-test-utils' );
 
 		mockery.registerMock( './more-button', React.createClass( { render: () => <div/> } ) );
-		ThemesList = require( '../' );
-	} );
-
-	after( function() {
-		delete ThemesList.prototype.__reactAutoBindMap.translate;
+		ThemesList = require( '../' ).ThemesList;
 	} );
 
 	beforeEach( function() {
-		ThemesList.prototype.__reactAutoBindMap.translate = this.sandbox.stub().returnsArg( 0 );
-
 		this.props = {
 			themes: [
 				{
@@ -46,7 +40,8 @@ describe( 'ThemesList', function() {
 			loading: false,
 			fetchNextPage: noop,
 			getButtonOptions: noop,
-			onScreenshotClick: noop
+			onScreenshotClick: noop,
+			translate: x => x // Mock translate()
 		};
 
 		this.themesList = React.createElement( ThemesList, this.props );
