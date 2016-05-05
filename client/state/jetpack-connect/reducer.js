@@ -60,9 +60,16 @@ export function jetpackConnectSessions( state = {}, action ) {
 }
 
 export function jetpackConnectSite( state = {}, action ) {
+	const defaultState = {
+		url: null,
+		isFetching: false,
+		isFetched: false,
+		isDismissed: false,
+		data: {}
+	};
 	switch ( action.type ) {
 		case JETPACK_CONNECT_CHECK_URL:
-			return Object.assign( {}, { url: action.url, isFetching: true, isFetched: false, isDismissed: false, data: {} } );
+			return Object.assign( {}, defaultState, { url: action.url, isFetching: true, isFetched: false, isDismissed: false, data: {} } );
 		case JETPACK_CONNECT_CHECK_URL_RECEIVE:
 			if ( action.url === state.url ) {
 				return Object.assign( {}, state, { isFetching: false, isFetched: true, data: action.data } );
@@ -80,7 +87,7 @@ export function jetpackConnectSite( state = {}, action ) {
 			return state;
 		case SERIALIZE:
 		case DESERIALIZE:
-			return {};
+			return defaultState;
 	}
 	return state;
 }
