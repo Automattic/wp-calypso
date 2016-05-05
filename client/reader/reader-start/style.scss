@@ -1,0 +1,78 @@
+.reader-start {
+	position: relative;
+
+	header {
+		h2 {
+			font-size: 2em;
+		}
+
+		button {
+			position: absolute;
+			top: 0;
+			right: 0;
+		}
+
+		margin-bottom: 1em;
+	}
+
+	.reader-start__cards {
+		display: flex;
+		flex-wrap: wrap;
+		margin-left: -30px;
+  		margin-top: -14px;
+	}
+}
+
+.reader-start-card {
+	box-sizing: border-box;
+	flex: 1 0 calc(50% - 30px);
+  	margin-left: 30px;
+  	margin-top: 14px;
+  	padding-bottom: 50px;
+
+  	header {
+  		text-align: center;
+
+		h3 {
+  			font-size: 1.5em;
+  		}
+
+  		.site-icon {
+  			margin: auto;
+  		}
+  	}
+
+  	footer {
+  		.reader-start-card__follower-count {
+  			color: #888;
+  			font-size: 0.8em;
+  			position: absolute;
+  			left: 10px;
+  			bottom: 10px;
+  		}
+
+  		.follow-button {
+  			position: absolute;
+  			right: 0;
+  			bottom: 0;
+  		}
+  	}
+
+}
+
+.reader-start-post-preview {
+	border: 1px solid #eee;
+	padding: 10px 10px 0 10px;
+
+	h4 {
+		font-size: 1.1em;
+	}
+
+	.reader-start-post-preview__byline {
+		font-size: 0.9em;
+
+		span {
+			margin-left: 4px;
+		}
+	}
+}
