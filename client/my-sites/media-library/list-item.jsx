@@ -46,7 +46,7 @@ module.exports = React.createClass( {
 		};
 	},
 
-	shouldComponentUpdate: function( nextProps, nextState ) {
+	shouldComponentUpdate: function( nextProps ) {
 		return ! ( nextProps.media === this.props.media &&
 			nextProps.scale === this.props.scale &&
 			nextProps.maxImageWidth === this.props.maxImageWidth &&
