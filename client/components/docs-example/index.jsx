@@ -10,6 +10,32 @@ import React, { PropTypes } from 'react';
 import Button from 'components/button';
 import Count from 'components/count';
 
+const DocsExampleToggle = ( {
+	onClick,
+	text
+} ) => (
+	<span className="docs-example__toggle">
+		<Button onClick={ onClick }>
+			{ text }
+		</Button>
+	</span>
+);
+
+DocsExampleToggle.propTypes = {
+	onClick: PropTypes.func.isRequired,
+	text: PropTypes.string.isRequired
+};
+
+const DocsExampleStats = ( { count } ) => (
+	<div className="docs-example__stats">
+		Used in <Count count={ count } /> components.
+	</div>
+);
+
+DocsExampleStats.propTypes = {
+	count: PropTypes.number.isRequired
+};
+
 const DocsExample = ( {
 	title,
 	url,
@@ -18,30 +44,7 @@ const DocsExample = ( {
 	toggleText,
 	children
 } ) => {
-	// toggle button – toggle compact/expanded
-	let toggleButton = null;
-
-	if ( toggleHandler && toggleText ) {
-		toggleButton = (
-			<span className="docs-example__toggle">
-				<Button onClick={ toggleHandler }>
-					{ toggleText }
-				</Button>
-			</span>
-		);
-	}
-
-	// stats
-	let stats = null;
 	const { count } = usageStats;
-
-	if ( count ) {
-		stats = (
-			<div className="docs-example__stats">
-				Used in <Count count={ count } /> components.
-			</div>
-		);
-	}
 
 	return (
 		<section className="docs-example">
@@ -49,13 +52,21 @@ const DocsExample = ( {
 				<h2 className="docs-example__title">
 					<a href={ url }>{ title }</a>
 				</h2>
-				{ toggleButton }
+				{
+					toggleHandler && toggleText
+						? <DocsExampleToggle onClick={ toggleHandler } text={ toggleText } />
+						: null
+				}
 			</header>
 			<div className="docs-example__main">
 				{ children }
 			</div>
 			<footer role="contentinfo" className="docs-example__footer">
-				{ stats }
+				{
+					count
+						? <DocsExampleStats count={ count } />
+						: null
+				}
 			</footer>
 		</section>
 	);
