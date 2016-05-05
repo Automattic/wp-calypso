@@ -174,8 +174,12 @@ const PlansSetup = React.createClass( {
 			statusProps.status = 'is-info';
 			switch ( plugin.status ) {
 				case 'done':
-					statusProps.status = null;
-					statusProps.text = this.translate( 'Successfully configured.' );
+					// Done doesn't use a notice
+					return (
+						<div className="plugin-item__finished">
+							{ this.translate( 'Successfully configured.' ) }
+						</div>
+					);
 					break;
 				case 'activate':
 				case 'configure':
