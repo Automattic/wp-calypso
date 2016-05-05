@@ -31,6 +31,8 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import { mergeFormWithValue } from 'signup/utils';
+import { getValueFromProgressStore, mergeFormWithValue, getFlowSteps } from 'signup/utils';
+import { getUsernameSuggestion } from 'lib/signup/step-actions';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -74,7 +76,6 @@ export default React.createClass( {
 	autoFillUsername( form ) {
 		// Fetch the suggested username from local storage
 		const suggestedUsername = this.context.store.getState().signup.optionalDependencies.suggestedUsername;
-
 
 		return mergeFormWithValue( {
 			form,
@@ -129,70 +130,6 @@ export default React.createClass( {
 				username: sanitizedUsername
 			} );
 		}
-	},
-
-	/**
-	 * Gets username suggestions from the API.
-	 *
-	 * Ask the API to validate a username.
-	 *
-	 * If the API returns a suggestion, then the username is already taken.
-	 * If there is no error from the API, then the username is free.
-	 *
-	 * @param {string} username The username to get suggestions for.
-	 */
-	getUsernameSuggestion( username ) {
-
-		let fields = {
-			givesuggestions: 1,
-			username: username
-		};
-
-		wpcom.undocumented().validateNewUser( fields, ( error, response ) => {
-			if ( this.state.readyToLogin || this.props.submitting ) {
-				// this is a stale callback, we have already signed up or are logging in
-				return;
-			}
-
-			if ( error || !response ) {
-				return debug( error || 'User validation failed.' );
-			}
-
-			let resulting_username = null;
-
-			/**
-			 * Only start checking for suggested username if the API returns an error for the validation.
-			 */
-			if ( !response.success ) {
-
-				let { messages } = response;
-
-				/**
-				 * The only case we want to update username field is when the username is already taken.
-				 *
-				 * This ensures that the validation is done
-				 *
-				 * Check for:
-				 * 	- username taken error -
-				 * 	- a valid suggested username
-				 */
-				if ( messages.username && messages.username.taken && messages.suggested_username ) {
-
-					resulting_username = messages.suggested_username.suggested_username;
-
-				}
-			}
-
-			/**
-			 * If there is a valid suggested username from the server - use it.
-			 * Otherwise fall back to the default behavior and use the username provided.
-			 */
-			this.formStateController.handleFieldChange( {
-				name: 'username',
-				value: resulting_username || username
-			} );
-
-		} );
 	},
 
 	validate( fields, onComplete ) {
