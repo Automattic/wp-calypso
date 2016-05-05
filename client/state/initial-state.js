@@ -8,7 +8,11 @@ import pick from 'lodash/pick';
  * Internal dependencies
  */
 import { createReduxStore, reducer } from 'state';
-import { SERIALIZE, DESERIALIZE, SERVER_DESERIALIZE } from 'state/action-types'
+import {
+	SERIALIZE,
+	DESERIALIZE,
+	SERVER_DESERIALIZE
+} from 'state/action-types';
 import localforage from 'lib/localforage';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
 import config from 'config';
