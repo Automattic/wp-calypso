@@ -2843,8 +2843,8 @@
       "version": "0.1.4"
     },
     "phone": {
-      "version": "1.0.4-10",
-      "resolved": "git+https://github.com/Automattic/node-phone.git#1.0.4-10"
+      "version": "1.0.4-11",
+      "resolved": "git+https://github.com/Automattic/node-phone.git#1.0.4-11"
     },
     "photon": {
       "version": "2.0.0"
