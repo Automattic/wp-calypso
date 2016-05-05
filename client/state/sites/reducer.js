@@ -9,7 +9,8 @@ import keyBy from 'lodash/keyBy';
  * Internal dependencies
  */
 import { plans } from './plans/reducer';
-import { domains } from './domains/reducer';
+import domains from './domains/reducer';
+
 import mediaStorage from './media-storage/reducer';
 import {
 	SITE_RECEIVE,
@@ -79,9 +80,9 @@ export function fetchingItems( state = {}, action ) {
 }
 
 export default combineReducers( {
-	items,
 	domains,
 	fetchingItems,
+	items,
 	mediaStorage,
 	plans
 } );
