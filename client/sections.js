@@ -268,6 +268,16 @@ if ( config.isEnabled( 'reader' ) ) {
 		secondary: true,
 		group: 'reader'
 	} );
+
+	if ( config.isEnabled( 'reader/start' ) ) {
+		sections.push( {
+			name: 'reader-start',
+			paths: [ '/read/start' ],
+			module: 'reader/start',
+			secondary: true,
+			group: 'reader'
+		} );
+	}
 }
 
 if ( config.isEnabled( 'devdocs' ) ) {
