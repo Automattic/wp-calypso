@@ -137,7 +137,6 @@ function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
 	} );
 }
 
-
 /**
  * Gets username suggestions from the API.
  *
@@ -147,16 +146,15 @@ function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
  * If there is no error from the API, then the username is free.
  *
  * @param {string} username The username to get suggestions for.
+ * @param {function} callback Function to call back when the result is returned by the API
  */
 function getUsernameSuggestion( username, callback ) {
-
 	let fields = {
 		givesuggestions: 1,
 		username: username
 	};
 
 	wpcom.undocumented().validateNewUser( fields, ( error, response ) => {
-
 		if ( error || !response ) {
 			// TODO properly handle this error
 			// return debug( error || 'User validation failed.' );
@@ -168,7 +166,6 @@ function getUsernameSuggestion( username, callback ) {
 		 * Only start checking for suggested username if the API returns an error for the validation.
 		 */
 		if ( !response.success ) {
-
 			let { messages } = response;
 
 			/**
@@ -181,9 +178,7 @@ function getUsernameSuggestion( username, callback ) {
 			 * 	- a valid suggested username
 			 */
 			if ( messages.username && messages.username.taken && messages.suggested_username ) {
-
 				resulting_username = messages.suggested_username.suggested_username;
-
 			}
 		}
 
@@ -191,10 +186,8 @@ function getUsernameSuggestion( username, callback ) {
 		 * Call the callback function to properly set the username in the form
 		 */
 		callback(resulting_username);
-
 	} );
 }
-
 
 module.exports = {
 	addDomainItemsToCart: addDomainItemsToCart,
