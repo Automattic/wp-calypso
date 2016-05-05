@@ -10,7 +10,7 @@ import times from 'lodash/times';
 import Card from 'components/card';
 import { filterPlansBySiteAndProps } from 'lib/plans';
 import { getCurrentPlan } from 'lib/plans';
-import { isJpphpBundle } from 'lib/products-values'
+import { isJpphpBundle } from 'lib/products-values';
 import Plan from 'components/plans/plan';
 
 const PlanList = React.createClass( {
@@ -32,7 +32,7 @@ const PlanList = React.createClass( {
 			plansList;
 
 		if ( this.props.hideFreePlan || ( site && site.jetpack ) ) {
-			numberOfPlaceholders = 2;
+			numberOfPlaceholders = this.props.showJetpackFreePlan ? 3 : 2;
 			className = 'jetpack';
 		}
 
@@ -75,7 +75,7 @@ const PlanList = React.createClass( {
 		}
 
 		if ( plans.length > 0 ) {
-			plans = filterPlansBySiteAndProps( plans, site, this.props.hideFreePlan );
+			plans = filterPlansBySiteAndProps( plans, site, this.props.hideFreePlan, this.props.showJetpackFreePlan );
 
 			plansList = plans.map( ( plan ) => {
 				return (
@@ -91,7 +91,8 @@ const PlanList = React.createClass( {
 						onSelectPlan={ this.props.onSelectPlan }
 						site={ site }
 						cart={ this.props.cart }
-						isSubmitting={ this.props.isSubmitting } />
+						isSubmitting={ this.props.isSubmitting }
+						onSelectFreeJetpackPlan={ this.props.onSelectFreeJetpackPlan } />
 				);
 			} );
 		}
