@@ -9,6 +9,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
+import { isPremium } from 'my-sites/themes/helpers';
 
 /**
  * Internal dependencies
@@ -54,17 +55,13 @@ const ThemeSheet = React.createClass( {
 		page.back();
 	},
 
-	isPremium() {
-		return this.props.price.value > 0;
-	},
-
 	onPrimaryClick() {
 		// TODO: if active -> customize (could use theme slug from selected site)
 
 		if ( ! this.props.isLoggedIn ) {
 			this.props.dispatch( signup( this.props ) );
 		// TODO: use site picker if no selected site
-		} else if ( this.isPremium() ) {
+		} else if ( isPremium( this.props ) ) {
 			// TODO: check theme is not already purchased
 			this.props.dispatch( purchase( this.props, this.props.selectedSite, 'showcase-sheet' ) );
 		} else {
