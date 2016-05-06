@@ -14,8 +14,13 @@ import JetpackConnect from './index';
 import jetpackConnectAuthorizeForm from './authorize-form';
 import { setSection } from 'state/ui/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import { JETPACK_CONNECT_QUERY_SET, JETPACK_CONNECT_QUERY_UPDATE } from 'state/action-types';
+import {
+	JETPACK_CONNECT_QUERY_SET,
+	JETPACK_CONNECT_QUERY_UPDATE,
+	JETPACK_CONNECT_SSO_QUERY_SET
+} from 'state/action-types';
 import userFactory from 'lib/user';
+import jetpackSSOForm from './sso.jsx';
 
 /**
  * Module variables
@@ -37,6 +42,12 @@ export default {
 			page.redirect( context.pathname );
 		}
 
+		if ( ! isEmpty( context.query ) && context.query.sso_nonce && context.query.site_id ) {
+			debug( 'updating SSO query', context.query );
+			context.store.dispatch( { type: JETPACK_CONNECT_SSO_QUERY_SET, queryObject: context.query } );
+			context.store.dispatch( { type: JETPACK_CONNECT_SSO_QUERY_SET, queryObject: context.query } );
+			page.redirect( context.pathname );
+		}
 		next();
 	},
 
@@ -67,6 +78,25 @@ export default {
 
 		renderWithReduxStore(
 			React.createElement( jetpackConnectAuthorizeForm, {
+				path: context.path,
+				locale: context.params.lang,
+				userModule: userModule
+			} ),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
+	sso( context ) {
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		context.store.dispatch( setSection( 'jetpackConnect', {
+			hasSidebar: false
+		} ) );
+
+		userModule.fetch();
+
+		renderWithReduxStore(
+			React.createElement( jetpackSSOForm, {
 				path: context.path,
 				locale: context.params.lang,
 				userModule: userModule
