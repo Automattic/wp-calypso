@@ -4,7 +4,6 @@
 var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	qs = require( 'querystring' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' ),
 	ReactRedux = require( 'react-redux' );
 
