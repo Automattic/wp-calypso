@@ -979,8 +979,8 @@ Undocumented.prototype.readTagPosts = function( query, fn ) {
 	this.wpcom.req.get( '/read/tags/' + encodeURIComponent( query.tag ) + '/posts', params, fn );
 };
 
-Undocumented.prototype.readWarmstart = function( query, fn ) {
-	debug( '/read/warmstart' );
+Undocumented.prototype.readRecommendedPosts = function( query, fn ) {
+	debug( '/recommendations/posts' );
 	query.apiVersion = '1.2';
 	this.wpcom.req.get( '/read/recommendations/warm-start', query, fn );
 };
