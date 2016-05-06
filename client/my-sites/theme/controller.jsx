@@ -83,9 +83,9 @@ export function details( context, next ) {
 		isLoggedIn: !! user
 	};
 
-	const ConnectedComponent = ( { themeSlug, contentSection } ) => (
+	const ConnectedComponent = ( { themeSlug, contentSection, isLoggedIn } ) => (
 		<ThemeDetailsComponent id={ themeSlug } >
-			<ThemeSheetComponent section={ contentSection } />
+			<ThemeSheetComponent section={ contentSection } isLoggedIn={ isLoggedIn } />
 		</ThemeDetailsComponent>
 	);
 

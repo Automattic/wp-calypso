@@ -21,8 +21,10 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
-import { signup } from 'state/themes/actions';
+import { signup, purchase, activate } from 'state/themes/actions';
 import i18n from 'lib/mixins/i18n';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -37,24 +39,42 @@ const ThemeSheet = React.createClass( {
 		descriptionLong: React.PropTypes.string,
 		supportDocumentation: React.PropTypes.string,
 		taxonomies: React.PropTypes.object,
+		isLoggedIn: React.PropTypes.bool,
+		// Connected props
+		selectedSite: React.PropTypes.object,
+		siteSlug: React.PropTypes.string,
 	},
 
 	getDefaultProps() {
-		return { section: 'details' };
+		return { section: 'overview' };
 	},
 
 	onBackClick() {
 		page.back();
 	},
 
+	isPremium() {
+		return this.props.price.value > 0;
+	},
+
 	onPrimaryClick() {
-		this.props.dispatch( signup( this.props ) );
+		// TODO: if active -> customize (could use theme slug from selected site)
+
+		if ( ! this.props.isLoggedIn ) {
+			this.props.dispatch( signup( this.props ) );
+		// TODO: use site picker if no selected site
+		} else if ( this.isPremium() ) {
+			// TODO: check theme is not already purchased
+			this.props.dispatch( purchase( this.props, this.props.selectedSite, 'showcase-sheet' ) );
+		} else {
+			this.props.dispatch( activate( this.props, this.props.selectedSite, 'showcase-sheet' ) );
+		}
 	},
 
 	getContentElement( section ) {
 		return {
-			details: <div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />,
-			documentation: <div dangerouslySetInnerHTML={ { __html: this.props.supportDocumentation } } />,
+			overview: <div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />,
+			setup: <div dangerouslySetInnerHTML={ { __html: this.props.supportDocumentation } } />,
 			support: <div>Visit the support forum</div>,
 		}[ section ];
 	},
@@ -65,9 +85,17 @@ const ThemeSheet = React.createClass( {
 		return { priceElement, themeContentElement };
 	},
 
+	getValidSections() {
+		const validSections = [];
+		validSections.push( 'overview' );
+		this.props.supportDocumentation && validSections.push( 'setup' );
+		validSections.push( 'support' );
+		return validSections;
+	},
+
 	validateSection( section ) {
-		if ( [ 'details', 'support', 'documentation' ].indexOf( section ) === -1 ) {
-			return 'details';
+		if ( this.getValidSections().indexOf( section ) === -1 ) {
+			return this.getValidSections()[0];
 		}
 		return section;
 	},
@@ -94,23 +122,29 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderSectionNav( section ) {
+	renderSectionNav( currentSection ) {
 		const filterStrings = {
-			details: i18n.translate( 'Details', { context: 'Filter label for theme content' } ),
-			documentation: i18n.translate( 'Documentation', { context: 'Filter label for theme content' } ),
+			overview: i18n.translate( 'Overview', { context: 'Filter label for theme content' } ),
+			setup: i18n.translate( 'Setup', { context: 'Filter label for theme content' } ),
 			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
 		};
 
+		const { siteSlug, id } = this.props;
+
 		const nav = (
 			<NavTabs label="Details" >
-				<NavItem path={ `/theme/${ this.props.id }/details` } selected={ section === 'details' } >{ i18n.translate( 'Details' ) }</NavItem>
-				<NavItem path={ `/theme/${ this.props.id }/documentation` } selected={ section === 'documentation' } >{ i18n.translate( 'Documentation' ) }</NavItem>
-				<NavItem path={ `/theme/${ this.props.id }/support` } selected={ section === 'support' } >{ i18n.translate( 'Support' ) }</NavItem>
+				{ this.getValidSections().map( ( section ) => (
+					<NavItem key={ section }
+						path={ `/theme/${ id }/${ section }/${ siteSlug }` }
+						selected={ section === currentSection }>
+						{ filterStrings[ section ] }
+					</NavItem>
+				) ) }
 			</NavTabs>
 		);
 
 		return (
-			<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[section] }>
+			<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[currentSection] }>
 				{ this.props.name && nav }
 			</SectionNav>
 		);
@@ -174,4 +208,8 @@ const ThemeSheet = React.createClass( {
 	}
 } );
 
-export default connect()( ThemeSheet );
+export default connect( ( state ) => {
+	const selectedSite = getSelectedSite( state );
+	const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
+	return { selectedSite, siteSlug };
+} )( ThemeSheet );
