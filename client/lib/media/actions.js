@@ -4,7 +4,6 @@
 var debug = require( 'debug' )( 'calypso:media' ),
 	assign = require( 'lodash/assign' ),
 	uniqueId = require( 'lodash/uniqueId' ),
-	isPlainObject = require( 'lodash/isPlainObject' ),
 	path = require( 'path' );
 
 /**
@@ -112,6 +111,8 @@ MediaActions.add = function( siteId, files ) {
 		const transientMedia = {
 			ID: id,
 			'transient': true,
+			extension: MediaUtils.getFileExtension( file ),
+			mime_type: MediaUtils.getMimeType( file ),
 			// Assign a date such that the first item will be the oldest at the
 			// time of upload, as this is expected order when uploads finish
 			date: new Date( baseTime - ( files.length - i ) ).toISOString()
@@ -121,8 +122,6 @@ MediaActions.add = function( siteId, files ) {
 			// Generate from string
 			assign( transientMedia, {
 				file: file,
-				extension: MediaUtils.getFileExtension( file ),
-				mime_type: MediaUtils.getMimeType( file ),
 				title: path.basename( file )
 			} );
 		} else {
@@ -132,8 +131,6 @@ MediaActions.add = function( siteId, files ) {
 				URL: fileUrl,
 				guid: fileUrl,
 				file: file.name,
-				extension: MediaUtils.getFileExtension( file.name ),
-				mime_type: MediaUtils.getMimeType( file.name ),
 				title: path.basename( file.name ),
 				// Size is not an API media property, though can be useful for
 				// validation purposes if known
@@ -158,7 +155,7 @@ MediaActions.add = function( siteId, files ) {
 
 		// Assign parent ID if currently editing post
 		const post = PostEditStore.get();
-		if ( post && post.ID && ! isPlainObject( file ) ) {
+		if ( post && post.ID ) {
 			file = {
 				parent_id: post.ID,
 				[ isUrl ? 'url' : 'file' ]: file
