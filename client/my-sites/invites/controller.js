@@ -75,6 +75,7 @@ export function acceptInvite( context ) {
 				page( redirect );
 			}
 		};
+
 		acceptInviteAction( acceptedInvite, acceptInviteCallback )( context.store.dispatch );
 		return;
 	}
