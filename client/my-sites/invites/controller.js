@@ -49,6 +49,11 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 }
 
 export function acceptInvite( context ) {
+	titleActions.setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) );
+
+	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+
 	const acceptedInvite = store.get( 'invite_accepted' );
 	if ( acceptedInvite ) {
 		debug( 'invite_accepted is set in localStorage' );
@@ -69,15 +74,10 @@ export function acceptInvite( context ) {
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
 				page( redirect );
 			}
-		}
+		};
 		acceptInviteAction( acceptedInvite, acceptInviteCallback )( context.store.dispatch );
 		return;
 	}
-
-	titleActions.setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) );
-
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
 	renderWithReduxStore(
 		React.createElement(
