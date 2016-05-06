@@ -193,7 +193,7 @@ class PostCommentList extends React.Component {
 			<div className={ classNames( 'comments__top-bar', { 'is-no-comments': displayedCommentsCount === 0 } ) }>
 				{ showViewEarlier ? <span className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>
 					{
-						translate( 'View earlier comments (%(shown)d of %(total)d)', {
+						translate( 'View earlier comments (Showing %(shown)d of %(total)d)', {
 							args: {
 								shown: displayedCommentsCount,
 								total: totalCommentsCount
