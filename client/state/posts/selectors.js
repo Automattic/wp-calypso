@@ -13,7 +13,8 @@ import merge from 'lodash/merge';
 import TreeConvert from 'lib/tree-convert';
 import {
 	getSerializedPostsQuery,
-	getSerializedPostsQueryWithoutPage
+	getSerializedPostsQueryWithoutPage,
+	applyQueryToPostsList
 } from './utils';
 import { DEFAULT_POST_QUERY } from './constants';
 
@@ -63,14 +64,9 @@ export const getSitePost = createSelector(
  * @return {?Array}         Posts for the post query
  */
 export function getSitePostsForQuery( state, siteId, query ) {
-	const serializedQuery = getSerializedPostsQuery( query, siteId );
-	if ( ! state.posts.queries[ serializedQuery ] ) {
-		return null;
-	}
+	const sitePosts = getSitePosts( state, siteId );
 
-	return state.posts.queries[ serializedQuery ].map( ( globalId ) => {
-		return getPost( state, globalId );
-	} ).filter( Boolean );
+	return applyQueryToPostsList( sitePosts, query );
 }
 
 /**

@@ -45,7 +45,6 @@ describe( 'reducer', () => {
 			'items',
 			'siteRequests',
 			'queryRequests',
-			'queries',
 			'queriesLastPage',
 			'edits'
 		] );
@@ -236,83 +235,6 @@ describe( 'reducer', () => {
 			} );
 
 			const state = queryRequests( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
-	} );
-
-	describe( '#queries()', () => {
-		it( 'should default to an empty object', () => {
-			const state = queries( undefined, {} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should track post query request success', () => {
-			const state = queries( undefined, {
-				type: POSTS_REQUEST_SUCCESS,
-				siteId: 2916284,
-				query: { search: 'Hello' },
-				found: 1,
-				posts: [
-					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-				]
-			} );
-
-			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-			} );
-		} );
-
-		it( 'should accumulate query request success', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-			} );
-			const state = queries( original, {
-				type: POSTS_REQUEST_SUCCESS,
-				siteId: 2916284,
-				query: { search: 'Hello W' },
-				posts: [
-					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-				]
-			} );
-
-			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
-				'2916284:{"search":"hello w"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-			} );
-		} );
-
-		it( 'should persist state', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-			} );
-
-			const state = queries( original, { type: SERIALIZE } );
-
-			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-			} );
-		} );
-
-		it( 'should load persisted state', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-			} );
-
-			const state = queries( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-			} );
-		} );
-
-		it( 'should not load invalid persisted state', () => {
-			const original = deepFreeze( {
-				2916284: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-			} );
-
-			const state = queries( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );
