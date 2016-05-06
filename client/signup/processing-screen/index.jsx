@@ -60,18 +60,22 @@ module.exports = React.createClass( {
 		);
 	},
 
+	renderAlreadyConfirmedPrompt: function() {
+		return <div>Hello, World</div>;
+	},
+
 	renderConfirmationPrompt: function() {
 		if ( localStorage.signupProcessingScreen === 'verified' )  {
-			return null;
+			return this.renderAlreadyConfirmedPrompt();
 		}
 
 		/*if ( this.props.user && this.props.user.email_verified ) {
-			return null;
+			return this.renderAlreadyConfirmedPrompt();
 		}
 
 		let email = ( this.props.user ? this.props.user.email : this.props.signupDependencies.email );
 		if ( !email ) {
-			return null;
+			return this.renderAlreadyConfirmedPrompt();
 		}*/
 
 		let email = 'foo@bar.com';
