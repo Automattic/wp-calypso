@@ -140,9 +140,9 @@ function getStoreForFeatured( storeId ) {
 	} );
 }
 
-function getStoreForWarmstart( storeId ) {
+function getStoreForRecommendedPosts( storeId ) {
 	var fetcher = function( query, callback ) {
-			wpcomUndoc.readWarmstart( query, callback );
+			wpcomUndoc.readRecommendedPosts( query, callback );
 		};
 
 	return new PagedStream( {
@@ -183,8 +183,8 @@ function feedStoreFactory( storeId ) {
 			onUpdateFetch: limitSiteParamsForLikes,
 			dateProperty: 'date_liked'
 		} );
-	} else if ( storeId.indexOf( 'warmstart' ) === 0 ) {
-		store = getStoreForWarmstart( storeId );
+	} else if ( storeId === 'recommendations_posts' ) {
+		store = getStoreForRecommendedPosts( storeId );
 	} else if ( storeId.indexOf( 'feed:' ) === 0 ) {
 		store = getStoreForFeed( storeId );
 	} else if ( storeId.indexOf( 'tag:' ) === 0 ) {

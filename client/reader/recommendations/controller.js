@@ -46,20 +46,20 @@ export default {
 
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
 	recommendedPosts( context ) {
-		var WarmstartStream = require( 'reader/recommendations/posts' ),
+		var RecommendedPostsStream = require( 'reader/recommendations/posts' ),
 			basePath = route.sectionify( context.path ),
-			fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Warmstart',
-			warmstartPostsStore = feedStreamFactory( 'warmstart' ),
-			mcKey = 'warmstart';
+			fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Recommended Posts',
+			RecommendedPostsStore = feedStreamFactory( 'recommendations_posts' ),
+			mcKey = 'recommendations_posts';
 
-		ensureStoreLoading( warmstartPostsStore, context );
+		ensureStoreLoading( RecommendedPostsStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( WarmstartStream, {
-				key: 'warmstart',
-				store: warmstartPostsStore,
+			React.createElement( RecommendedPostsStream, {
+				key: 'recommendations_posts',
+				store: RecommendedPostsStore,
 				setPageTitle: setPageTitle,
 				trackScrollPage: trackScrollPage.bind(
 					null,
