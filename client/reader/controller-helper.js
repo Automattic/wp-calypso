@@ -49,3 +49,7 @@ export function trackUpdatesLoaded( key ) {
 export function setPageTitle( title ) {
 	titleActions.setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) );
 }
+
+export function userHasHistory( context ) {
+	return !! context.lastRoute;
+}
