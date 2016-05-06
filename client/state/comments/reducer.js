@@ -77,11 +77,16 @@ export function items( state = Immutable.Map(), action ) {
 			const newIds = Immutable.Set( action.comments.map( comment => comment.ID ) );
 
 			// we prefer freshly retrieved data, so throw away old data
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) =>
-				comments.filter( ( comment ) => ! newIds.has( comment.get( 'ID' ) ) )
-								.concat( Immutable.fromJS( action.comments ) )
-								.sort( ( a, b ) => new Date( b.get( 'date' ) ) - new Date( a.get( 'date' ) ) )
-			);
+			return updateSpecificState( state, action, function( comments = Immutable.List() ) {
+				let newComments = comments.filter( ( comment ) => ! newIds.has( comment.get( 'ID' ) ) )
+											.concat( Immutable.fromJS( action.comments ) );
+
+				if ( ! action.skipSort ) {
+					newComments = newComments.sort( ( a, b ) => new Date( b.get( 'date' ) ) - new Date( a.get( 'date' ) ) );
+				}
+
+				return newComments;
+			} );
 
 		case COMMENTS_REMOVE:
 			return updateSpecificState( state, action, ( comments = Immutable.List() ) =>
