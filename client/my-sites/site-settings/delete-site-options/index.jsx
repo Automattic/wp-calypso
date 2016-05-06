@@ -1,17 +1,24 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	filter = require( 'lodash/filter' );
+import React from 'react';
+import filter from 'lodash/filter';
 
 /**
  * Internal dependencies
  */
-var CompactCard = require( 'components/card/compact' ),
-	DeleteSiteWarningDialog = require( 'my-sites/site-settings/delete-site-warning-dialog' ),
-	PurchasesStore = require( 'lib/purchases/store' ),
-	notices = require( 'notices' ),
-	config = require( 'config' );
+import CompactCard from 'components/card/compact';
+import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
+import PurchasesStore from 'lib/purchases/store';
+import notices from 'notices';
+import config from 'config';
+import { tracks } from 'lib/analytics';
+
+const trackDeleteSiteOption = ( option ) => {
+	tracks.recordEvent( 'calypso_settings_delete_site_options', {
+		option: option
+	} );
+};
 
 module.exports = React.createClass( {
 	displayName: 'DeleteSite',
@@ -21,7 +28,7 @@ module.exports = React.createClass( {
 		site: React.PropTypes.object.isRequired
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			showDialog: false,
 			showStartOverDialog: false,
@@ -29,21 +36,19 @@ module.exports = React.createClass( {
 		};
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.purchases.error ) {
 			notices.error( nextProps.purchases.error );
 		}
 	},
 
-	render: function() {
-		var selectedSite = this.props.site,
-			changeAddressLink = '/domains/manage/' + selectedSite.slug,
-			startOverLink = '/settings/start-over/' + selectedSite.slug,
-			deleteSiteLink = '/settings/delete-site/' + selectedSite.slug,
-			changeAddressLinkText = this.translate( 'Register a new domain or change your site\'s address.' ),
-			strings;
-
-		strings = {
+	render() {
+		const selectedSite = this.props.site;
+		const changeAddressLink = `/domains/manage/${selectedSite.slug}`;
+		const startOverLink = `/settings/start-over/${selectedSite.slug}`;
+		const deleteSiteLink = `/settings/delete-site/${selectedSite.slug}`;
+		let changeAddressLinkText = this.translate( 'Register a new domain or change your site\'s address.' );
+		const strings = {
 			changeSiteAddress: this.translate( 'Change Site Address' ),
 			startOver: this.translate( 'Start Over' ),
 			deleteSite: this.translate( 'Delete Site' )
@@ -59,7 +64,10 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="delete-site-options">
-				<CompactCard href={ changeAddressLink } className="delete-site-options__link">
+				<CompactCard
+					href={ changeAddressLink }
+					onClick={ this.trackChangeAddress }
+					className="delete-site-options__link">
 					<div className="delete-site-options__content">
 						<h2 className="delete-site-options__section-title">{ strings.changeSiteAddress }</h2>
 						<p className="delete-site-options__section-desc">{ changeAddressLinkText }</p>
@@ -70,13 +78,19 @@ module.exports = React.createClass( {
 						} ) }</p>
 					</div>
 				</CompactCard>
-				<CompactCard href={ startOverLink } className="delete-site-options__link">
+				<CompactCard
+					href={ startOverLink }
+					onClick={ this.trackStartOver }
+					className="delete-site-options__link">
 					<div className="delete-site-options__content">
 						<h2 className="delete-site-options__section-title">{ strings.startOver }</h2>
 						<p className="delete-site-options__section-desc">{ this.translate( 'Keep your URL and site active, but remove the content.' ) }</p>
 					</div>
 				</CompactCard>
-				<CompactCard href={ deleteSiteLink } onClick={ this.checkForSubscriptions } className="delete-site-options__link">
+				<CompactCard
+					href={ deleteSiteLink }
+					onClick={ this.checkForSubscriptions }
+					className="delete-site-options__link">
 					<div className="delete-site-options__content">
 						<h2 className="delete-site-options__section-title">{ strings.deleteSite }</h2>
 						<p className="delete-site-options__section-desc">{ this.translate( 'All your posts, images, data, and this site\'s address ({{siteAddress /}}) will be gone forever.', {
@@ -96,8 +110,17 @@ module.exports = React.createClass( {
 		);
 	},
 
-	checkForSubscriptions: function( event ) {
-		var activeSubscriptions = filter( this.props.purchases.data, 'active' );
+	trackChangeAddress() {
+		trackDeleteSiteOption( 'change-address' );
+	},
+
+	trackStartOver() {
+		trackDeleteSiteOption( 'start-over' );
+	},
+
+	checkForSubscriptions( event ) {
+		trackDeleteSiteOption( 'delete-site' );
+		const activeSubscriptions = filter( this.props.purchases.data, 'active' );
 
 		if ( ! activeSubscriptions.length ) {
 			return true;
@@ -107,7 +130,7 @@ module.exports = React.createClass( {
 		this.setState( { showDialog: true } );
 	},
 
-	closeDialog: function() {
+	closeDialog() {
 		this.setState( { showDialog: false } );
 	}
 } );
