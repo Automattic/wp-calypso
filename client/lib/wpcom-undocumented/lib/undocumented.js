@@ -1850,6 +1850,24 @@ Undocumented.prototype.importReaderFeed = function( file, fn ) {
 };
 
 /**
+ * Creates a Push Notification registration for the device
+ *
+ * @param {String}     registration   The registration to be stored
+ * @param {String}     deviceFamily   The device family
+ * @param {String}     deviceName     The device name
+ * @param {Function}   fn             The callback function
+ * @returns {XMLHttpRequest}          The XHR instance
+ */
+Undocumented.prototype.registerDevice = function( registration, deviceFamily, deviceName, fn ) {
+	debug( '/devices/new' );
+	return this.wpcom.req.post( { path: '/devices/new' }, {}, {
+		device_token: registration,
+		device_family: deviceFamily,
+		device_name: deviceName
+	}, fn );
+};
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;
