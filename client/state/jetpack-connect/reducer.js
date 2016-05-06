@@ -52,8 +52,14 @@ export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_STORE_SESSION:
 			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url ) );
-		case SERIALIZE:
+		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
+			const parsedUrl = urlModule.parse( action.ssoUrl );
+			return Object.assign( {}, state, buildNoProtocolUrlObj( parsedUrl.hostname ) );
+		case JETPACK_CONNECT_CHECK_URL:
+			const noProtocolUrl = action.url.replace( /.*?:\/\//g, '' );
+			return Object.assign( {}, state, { [ noProtocolUrl ]: Date.now() } );
 		case DESERIALIZE:
+		case SERIALIZE:
 			return state;
 	}
 	return state;
