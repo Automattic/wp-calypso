@@ -8,6 +8,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import page from 'page';
 import { isPremium } from 'my-sites/themes/helpers';
 
@@ -23,11 +24,13 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
-import { signup, purchase, activate } from 'state/themes/actions';
+import { signup, purchase, activate, clearActivated } from 'state/themes/actions';
 import i18n from 'lib/mixins/i18n';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import Helpers from 'my-sites/themes/helpers';
+import ActivatingTheme from 'components/data/activating-theme';
+import ThanksModal from 'my-sites/themes/thanks-modal';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -216,10 +219,16 @@ const ThemeSheet = React.createClass( {
 
 		const section = this.validateSection( this.props.section );
 		const priceElement = <span className="themes__sheet-action-bar-cost" dangerouslySetInnerHTML={ { __html: this.props.price } } />;
+		const siteID = this.props.selectedSite && this.props.selectedSite.ID;
 
 		return (
 			<Main className="themes__sheet">
 				{ this.renderBar() }
+				<ActivatingTheme siteId={ siteID }>
+					<ThanksModal
+						site={ this.props.selectedSite }
+						clearActivated={ bindActionCreators( clearActivated, this.props.dispatch ) }/>
+				</ActivatingTheme>
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
 						<HeaderCake className="themes__sheet-action-bar" onClick={ this.onBackClick }>
