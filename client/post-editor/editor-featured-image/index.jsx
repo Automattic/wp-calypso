@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-const MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' ),
-	EditorMediaModal = require( 'post-editor/media-modal' ),
-	PostActions = require( 'lib/posts/actions' ),
-	PostUtils = require( 'lib/posts/utils' ),
-	stats = require( 'lib/posts/stats' ),
-	EditorFeaturedImagePreviewContainer = require( './preview-container' );
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
+import EditorMediaModal from 'post-editor/media-modal';
+import PostActions from 'lib/posts/actions';
+import PostUtils from 'lib/posts/utils';
+import * as stats from 'lib/posts/stats';
+import EditorFeaturedImagePreviewContainer from './preview-container';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import {
@@ -22,7 +22,6 @@ import {
 } from 'state/ui/editor/post/actions';
 
 const EditorFeaturedImage = React.createClass( {
-
 	propTypes: {
 		maxWidth: React.PropTypes.number,
 		site: React.PropTypes.object,
@@ -33,7 +32,7 @@ const EditorFeaturedImage = React.createClass( {
 		onImageSelected: React.PropTypes.func
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			maxWidth: 450,
 			setFeaturedImage: () => {},
@@ -42,20 +41,26 @@ const EditorFeaturedImage = React.createClass( {
 		};
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			isSelecting: false
 		};
 	},
 
-	toggleMediaModal: function( action ) {
+	showMediaModal() {
 		this.setState( {
-			isSelecting: ( 'show' === action )
+			isSelecting: true
 		} );
 	},
 
-	setImage: function( items ) {
-		this.toggleMediaModal( 'hide' );
+	hideMediaModal() {
+		this.setState( {
+			isSelecting: false
+		} );
+	},
+
+	setImage( items ) {
+		this.hideMediaModal();
 		this.props.onImageSelected();
 
 		if ( ! items || ! items.length ) {
@@ -73,7 +78,7 @@ const EditorFeaturedImage = React.createClass( {
 		stats.recordEvent( 'Featured image set' );
 	},
 
-	renderMediaModal: function() {
+	renderMediaModal() {
 		if ( ! this.props.site ) {
 			return;
 		}
@@ -91,14 +96,12 @@ const EditorFeaturedImage = React.createClass( {
 		);
 	},
 
-	renderCurrentImage: function() {
-		var itemId;
-
+	renderCurrentImage() {
 		if ( ! this.props.site || ! this.props.post ) {
 			return;
 		}
 
-		itemId = PostUtils.getFeaturedImageId( this.props.post );
+		const itemId = PostUtils.getFeaturedImageId( this.props.post );
 		if ( ! itemId ) {
 			return;
 		}
@@ -111,14 +114,14 @@ const EditorFeaturedImage = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		const classes = classnames( 'editor-featured-image', {
 			'is-assigned': !! PostUtils.getFeaturedImageId( this.props.post )
 		} );
 
 		return (
 			<Button
-				onClick={ () => this.toggleMediaModal( 'show' ) }
+				onClick={ this.showMediaModal }
 				borderless
 				className={ classes }>
 				{ this.renderMediaModal() }
