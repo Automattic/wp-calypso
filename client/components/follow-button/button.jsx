@@ -36,7 +36,7 @@ var FollowButton = React.createClass( {
 	},
 
 	render: function() {
-		var menuClasses = [ 'follow-button', 'has-icon' ],
+		var menuClasses = [ 'button', 'follow-button', 'has-icon' ],
 			label = this.strings.FOLLOW,
 			iconSize = this.props.iconSize;
 
@@ -47,8 +47,10 @@ var FollowButton = React.createClass( {
 
 		menuClasses = menuClasses.join( ' ' );
 
-		var followingIcon = ( <svg key="following" className="gridicon gridicon__following" height={ iconSize + "px" } width={ iconSize + "px" } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M11.944 17.083L7 12.056l1.648-1.676 3.296 3.352 8.3-7.385C18.445 3.722 15.425 2 12 2 6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10c0-1.212-.227-2.37-.622-3.444l-9.434 8.527z"/></g></svg> ),
-			followIcon = ( <svg key="follow" className="gridicon gridicon__follow" height={ iconSize + "px" } width={ iconSize + "px" } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M12 4c4.41 0 8 3.59 8 8s-3.59 8-8 8-8-3.59-8-8 3.59-8 8-8m0-2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"/><path d="M11 6h2v12.1h-2z"/><path d="M6 11h11.83v2H6z"/></g></svg> ),
+		var followingIcon = ( <svg key="following" className="gridicon gridicon__following" height={ iconSize + "px" } width={ iconSize + "px" } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23,13.482L15.508,21L12,17.4l1.412-1.388l2.106,2.188l6.094-6.094L23,13.482z M15.545,15.344L20,10.889V2H2v14
+		c0,1.1,0.9,2,2,2h4.538l4.913-4.832L15.545,15.344z M8,13H4v-1h4V13z M11,11H4v-1h7V11z M11,9H4V8h7V9z M18,6H4V4h14V6z"/></g></svg> ),
+			followIcon = ( <svg key="follow" className="gridicon gridicon__follow" height={ iconSize + "px" } width={ iconSize + "px" } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23,16v2h-3v3h-2v-3h-3v-2h3v-3h2v3H23z M20,2v9h-4v3h-3v4H4c-1.1,0-2-0.9-2-2V2H20z M8,13v-1H4v1H8z M11,10H4v1h7V10z
+		 M11,8H4v1h7V8z M18,4H4v2h14V4z"/></g></svg> ),
 			followLabel = ( <span key="label" className="follow-button__label">{ label }</span> );
 
 		return React.createElement( this.props.tagName, {
