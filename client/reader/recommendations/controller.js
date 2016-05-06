@@ -10,15 +10,11 @@ import ReactDom from 'react-dom';
 import trackScrollPage from 'lib/track-scroll-page';
 import titleActions from 'lib/screen-title/actions';
 import i18n from 'lib/mixins/i18n';
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, setPageTitle } from 'reader/controller-helper';
+import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, setPageTitle, userHasHistory } from 'reader/controller-helper';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
-
-function userHasHistory( context ) {
-	return !! context.lastRoute;
-}
 
 export default {
 	recommendedForYou() {
