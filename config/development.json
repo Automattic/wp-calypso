@@ -102,6 +102,7 @@
 		"reader/list-management": true,
 		"reader/search": true,
 		"reader/start": true,
+		"reader/recommendations/posts": true,
 		"resume-editing": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,

@@ -10,7 +10,9 @@ import ReactDom from 'react-dom';
 import trackScrollPage from 'lib/track-scroll-page';
 import titleActions from 'lib/screen-title/actions';
 import i18n from 'lib/mixins/i18n';
-import { trackPageLoad } from 'reader/controller-helper';
+import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, setPageTitle, userHasHistory } from 'reader/controller-helper';
+import route from 'lib/route';
+import feedStreamFactory from 'lib/feed-stream-store';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -36,5 +38,36 @@ export default {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		titleActions.setTitle( i18n.translate( 'Recommended Sites For You ‹ Reader' ) );
+	},
+
+	// Post Recommendations - Used by the Data team to test recommendation algorithms
+	recommendedPosts( context ) {
+		var RecommendedPostsStream = require( 'reader/recommendations/posts' ),
+			basePath = route.sectionify( context.path ),
+			fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Recommended Posts',
+			RecommendedPostsStore = feedStreamFactory( 'recommendations_posts' ),
+			mcKey = 'recommendations_posts';
+
+		ensureStoreLoading( RecommendedPostsStore, context );
+
+		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
+		ReactDom.render(
+			React.createElement( RecommendedPostsStream, {
+				key: 'recommendations_posts',
+				store: RecommendedPostsStore,
+				setPageTitle: setPageTitle,
+				trackScrollPage: trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					ANALYTICS_PAGE_TITLE,
+					mcKey
+				),
+				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+				showBack: userHasHistory( context )
+			} ),
+			document.getElementById( 'primary' )
+		);
 	}
 };

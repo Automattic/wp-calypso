@@ -9,7 +9,10 @@ import page from 'page';
 import controller from './controller';
 import readerController from 'reader/controller';
 
-export default function() {
+var config = require( 'config' );
+
+module.exports = function() {
+	// Blog Recommendations
 	page( '/recommendations',
 		readerController.loadSubscriptions,
 		readerController.initAbTests,
@@ -18,4 +21,14 @@ export default function() {
 		readerController.sidebar,
 		controller.recommendedForYou
 	);
+
+	// Post Recommendations - Used by the Data team to test recommendation algorithms
+	if ( config.isEnabled( 'reader/recommendations/posts' ) ) {
+		page( '/recommendations/posts',
+			readerController.loadSubscriptions,
+			readerController.updateLastRoute,
+			readerController.removePost,
+			readerController.sidebar,
+			controller.recommendedPosts );
+	}
 }
