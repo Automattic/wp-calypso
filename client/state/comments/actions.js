@@ -183,7 +183,8 @@ export function writeComment( commentText, siteId, postId, parentCommentId ) {
 	}
 
 	return ( dispatch ) => {
-		const placeholderComment = createPlaceholderComment( commentText, postId, parentCommentId );
+		const placeholderComment = createPlaceholderComment( commentText, postId, parentCommentId ),
+			skipSort = !! parentCommentId;
 
 		// Insert a placeholder
 		dispatch( {
@@ -191,7 +192,7 @@ export function writeComment( commentText, siteId, postId, parentCommentId ) {
 			siteId,
 			postId,
 			comments: [ placeholderComment ],
-			skipSort: true
+			skipSort
 		} );
 
 		let apiPromise;
@@ -217,7 +218,7 @@ export function writeComment( commentText, siteId, postId, parentCommentId ) {
 				siteId,
 				postId,
 				comments: [ comment ],
-				skipSort: true
+				skipSort
 			} );
 
 			return comment;

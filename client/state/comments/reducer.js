@@ -82,7 +82,7 @@ export function items( state = Immutable.Map(), action ) {
 											.concat( Immutable.fromJS( action.comments ) );
 
 				if ( ! action.skipSort ) {
-					newComments.sort( ( a, b ) => new Date( b.get( 'date' ) ) - new Date( a.get( 'date' ) ) );
+					newComments = newComments.sort( ( a, b ) => new Date( b.get( 'date' ) ) - new Date( a.get( 'date' ) ) );
 				}
 
 				return newComments;
