@@ -8,12 +8,14 @@
 /* eslint-enable */
 
 self.addEventListener( 'push', function( event ) {
-	console.log( 'Received a push message', event );
+	var notification = event.data.json();
 
 	event.waitUntil(
-		self.registration.showNotification( 'Title', {
-			body: 'Body',
-			tag: 'Tag'
+		// notifications look best with just a title
+		self.registration.showNotification( notification.msg, {
+			tag: 'note_' + notification.note_id,
+			icon: notification.icon,
+			timestamp: notification.note_timestamp,
 		} )
 	);
 } );
