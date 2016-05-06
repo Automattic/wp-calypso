@@ -80,6 +80,7 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/search": true,
+		"reader/recommendations/posts": true,
 		"resume-editing": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,

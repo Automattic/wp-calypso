@@ -214,6 +214,14 @@ if ( config.isEnabled( 'reader' ) ) {
 	} );
 
 	sections.push( {
+		name: 'reader-post-recomendations',
+		paths: [ '/recommendations/posts' ],
+		module: 'reader/recommendations',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	sections.push( {
 		name: 'reader-recomendations',
 		paths: [ '/recommendations' ],
 		module: 'reader/recommendations',
