@@ -29,6 +29,9 @@ export default React.createClass( {
 	},
 
 	renderButtonLabel() {
+		if ( 'alreadyConnected' === this.props.status ) {
+			return( this.translate( 'Link Additional User' ) );
+		}
 		if ( ! this.props.isFetching ) {
 			return( this.translate( 'Connect Now' ) );
 		}

@@ -70,9 +70,9 @@ export default React.createClass( {
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'alreadyConnected' ) {
-			noticeValues.status = 'is-success';
+			noticeValues.status = 'is-warning';
 			noticeValues.icon = 'status';
-			noticeValues.text = this.translate( 'This site is already connected!' );
+			noticeValues.text = this.translate( 'This site is already connected, would you like to link an other user?' );
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'wordpress.com' ) {
