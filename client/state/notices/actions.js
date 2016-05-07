@@ -25,7 +25,7 @@ function createNotice( status, text, options = {} ) {
 	const notice = {
 		noticeId,
 		icon: options.icon || null,
-		duration: parseInt( options.duration ) || null,
+		duration: parseInt( options.duration, 10 ) || null,
 		button: options.button,
 		onClick: ( event ) => {
 			if ( typeof options.onClick === 'function' ) {
@@ -35,7 +35,6 @@ function createNotice( status, text, options = {} ) {
 		showDismiss: ( typeof options.showDismiss === 'boolean' ? options.showDismiss : true ),
 		isPersistent: options.isPersistent || false,
 		displayOnNextPage: options.displayOnNextPage || false,
-		className: options.className || null,
 		status: status,
 		text: text,
 	};
