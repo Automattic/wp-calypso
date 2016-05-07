@@ -17,6 +17,17 @@ describe( 'utils', () => {
 				query: 'example',
 				quantity: 2,
 				vendor: 'domainsbot',
+				includeSubdomain: true
+			};
+			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":true}'
+			);
+		} );
+		it( 'also supports include_wordpressdotcom vs includeSubdomain', () => {
+			const query = {
+				query: 'example',
+				quantity: 2,
+				vendor: 'domainsbot',
 				include_wordpressdotcom: true
 			};
 			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
@@ -28,13 +39,13 @@ describe( 'utils', () => {
 				query: 'eXaMpLe',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				includeSubdomain: false
 			};
 			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}'
 			);
 		} );
-		it( 'defaults to false, when include_wordpressdotcom is missing', () => {
+		it( 'defaults to false, when includeSubdomain is missing', () => {
 			const query = {
 				query: 'eXaMpLe',
 				quantity: 2,
@@ -48,7 +59,7 @@ describe( 'utils', () => {
 			const query = {
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				includeSubdomain: false
 			};
 			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
 				null
@@ -58,7 +69,7 @@ describe( 'utils', () => {
 			const query = {
 				query: 'example',
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				includeSubdomain: false
 			};
 			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
 				null
@@ -68,7 +79,7 @@ describe( 'utils', () => {
 			const query = {
 				query: 'example',
 				quantity: 2,
-				include_wordpressdotcom: false
+				includeSubdomain: false
 			};
 			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
 				null

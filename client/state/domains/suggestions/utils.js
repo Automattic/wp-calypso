@@ -10,7 +10,7 @@ export function getSerializedDomainsSuggestionsQuery( queryObject ) {
 	if ( ( ! query || query.length === 0 ) || ( ! quantity || quantity <= 0 ) || ( ! vendor || vendor.length === 0 ) ) {
 		return null;
 	}
-	const include_wordpressdotcom = !! queryObject.include_wordpressdotcom;
+	const include_wordpressdotcom = !! ( queryObject.include_wordpressdotcom || queryObject.includeSubdomain );
 	return JSON.stringify( {
 		query,
 		quantity,

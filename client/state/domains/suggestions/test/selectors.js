@@ -35,7 +35,7 @@ describe( 'selectors', () => {
 				query: 'foobar',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				includeSubdomain: false
 			};
 
 			const domainSuggestions = getDomainsSuggestions( state, queryObject );
@@ -63,21 +63,21 @@ describe( 'selectors', () => {
 				query: 'example',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				includeSubdomain: false
 			};
 
 			const foobar = {
 				query: 'foobar',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				includeSubdomain: false
 			};
 
 			const notDefined = {
 				query: 'notDefined',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				includeSubdomain: false
 			};
 
 			expect( isRequestingDomainsSuggestions( state, example ) ).to.equal( true );
