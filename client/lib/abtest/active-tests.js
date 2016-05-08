@@ -22,7 +22,7 @@ module.exports = {
 		allowAnyLocale: true
 	},
 	freeTrialsInSignup: {
-		datestamp: '20160328',
+		datestamp: '20200328',
 		variations: {
 			disabled: 40,
 			enabled: 15,
@@ -31,7 +31,7 @@ module.exports = {
 		defaultVariation: 'disabled'
 	},
 	freeTrialNudgeOnThankYouPage: {
-		datestamp: '20160328',
+		datestamp: '20200328',
 		variations: {
 			disabled: 50,
 			enabled: 50
