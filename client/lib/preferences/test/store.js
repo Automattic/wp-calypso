@@ -3,25 +3,28 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
-import rewire from 'rewire';
 
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
 import { USER_SETTING_KEY } from '../constants';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'PreferencesStore', function() {
-	let PreferencesStore, handler;
+	let Dispatcher, PreferencesStore, handler;
+
+	// makes sure we always load fresh instance of Dispatcher
+	useMockery();
 
 	before( function() {
+		Dispatcher = require( 'dispatcher' );
 		sinon.spy( Dispatcher, 'register' );
-		PreferencesStore = rewire( '../store' );
+		PreferencesStore = require( '../store' );
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
 	beforeEach( function() {
-		PreferencesStore.__set__( '_preferences', undefined );
+		PreferencesStore._preferences = undefined;
 	} );
 
 	after( function() {
