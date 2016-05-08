@@ -4,8 +4,7 @@
 var chai = require( 'chai' ),
 	defer = require( 'lodash/defer' ),
 	expect = chai.expect,
-	sinon = require( 'sinon' ),
-	rewire = require( 'rewire' );
+	sinon = require( 'sinon' );
 
 /**
  * Internal dependencies
@@ -21,7 +20,7 @@ describe( 'actions', function() {
 
 	before( () => {
 		PostEditStore = require( '../post-edit-store' );
-		PostActions = rewire( '../actions' );
+		PostActions = require( '../actions' );
 
 		sandbox = sinon.sandbox.create();
 	} );
@@ -203,9 +202,9 @@ describe( 'actions', function() {
 		} );
 
 		it( 'should normalize attributes and call the API', function( done ) {
-			const normalizeOriginal = PostActions.__get__( 'normalizeApiAttributes' );
+			const normalizeOriginal = PostActions.normalizeApiAttributes;
 			const normalizeSpy = sandbox.spy( normalizeOriginal );
-			PostActions.__set__( 'normalizeApiAttributes', normalizeSpy );
+			PostActions.normalizeApiAttributes = normalizeSpy;
 
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( true );
 
@@ -231,7 +230,7 @@ describe( 'actions', function() {
 			} );
 
 			PostActions.saveEdited( null, () => {
-				PostActions.__set__( 'normalizeApiAttributes', normalizeOriginal );
+				PostActions.normalizeApiAttributes = normalizeOriginal;
 				expect( normalizeSpy.calledWith( changedAttributes ) ).to.be.true;
 				expect( normalizeSpy.returnValues[0] ).to.deep.equal( {
 					ID: 777,
