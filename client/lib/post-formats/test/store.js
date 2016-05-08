@@ -2,8 +2,7 @@
  * External dependencies
  */
 var expect = require( 'chai' ).expect,
-	sinon = require( 'sinon' ),
-	rewire = require( 'rewire' );
+	sinon = require( 'sinon' );
 
 /**
  * Internal dependencies
@@ -21,12 +20,12 @@ describe( 'store', function() {
 
 	before( function() {
 		sinon.spy( Dispatcher, 'register' );
-		PostFormatsStore = rewire( '../store' );
+		PostFormatsStore = require( '../store' );
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
 	beforeEach( function() {
-		PostFormatsStore.__set__( '_formats', {} );
+		PostFormatsStore._formats = {};
 	} );
 
 	after( function() {

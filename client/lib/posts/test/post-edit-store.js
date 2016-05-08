@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var rewire = require( 'rewire' ),
-	assert = require( 'better-assert' ),
+var assert = require( 'better-assert' ),
 	isEqual = require( 'lodash/isEqual' ),
 	sinon = require( 'sinon' ),
 	assign = require( 'lodash/assign' );
@@ -18,8 +17,8 @@ describe( 'post-edit-store', function() {
 	useFakeDom();
 
 	beforeEach( function() {
-		PostEditStore = rewire( '../post-edit-store' );
-		dispatcherCallback = PostEditStore.__get__( 'dispatcherCallback' );
+		PostEditStore = require( '../post-edit-store' );
+		dispatcherCallback = PostEditStore.dispatcherCallback;
 	} );
 
 	function dispatchReceivePost() {
