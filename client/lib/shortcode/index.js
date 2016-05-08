@@ -9,8 +9,7 @@ var memoize = require( 'lodash/memoize' ),
  */
 var Shortcode = {},
 	REGEXP_ATTR_STRING = /(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/g,
-	REGEXP_SHORTCODE = /\[(\[?)([^\[\]\/\s\u00a0\u200b]+)(?![\w-])([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*(?:\[(?!\/\2\])[^\[]*)*)(\[\/\2\]))?)(\]?)/,
-	parseAttributes;
+	REGEXP_SHORTCODE = /\[(\[?)([^\[\]\/\s\u00a0\u200b]+)(?![\w-])([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*(?:\[(?!\/\2\])[^\[]*)*)(\[\/\2\]))?)(\]?)/;
 
 /**
  * Given a string, parses shortcode attributes and returns an object containing
@@ -24,7 +23,7 @@ var Shortcode = {},
  * @param  {string} text A shortcode attribute string
  * @return {Object}      An object of attributes, split as named and numeric
  */
-parseAttributes = memoize( function( text ) {
+Shortcode.parseAttributes = memoize( function( text ) {
 	var named = {},
 		numeric = [],
 		match;
@@ -62,11 +61,11 @@ parseAttributes = memoize( function( text ) {
  * @param  {*}      attributes An object to normalize
  * @return {Object}            An object of attributes, split as named and numeric
  */
-function normalizeAttributes( attributes ) {
+Shortcode.normalizeAttributes = function( attributes ) {
 	var named, numeric;
 
 	if ( 'string' === typeof attributes ) {
-		return parseAttributes( attributes );
+		return Shortcode.parseAttributes( attributes );
 	} else if ( Array.isArray( attributes ) ) {
 		numeric = attributes;
 	} else if ( 'object' === typeof attributes && isEqual( Object.keys( attributes ), [ 'named', 'numeric' ] ) ) {
@@ -79,7 +78,7 @@ function normalizeAttributes( attributes ) {
 		named: named || {},
 		numeric: numeric || []
 	};
-}
+};
 
 /**
  * Given a shortcode object, returns the string value of that shortcode.
@@ -89,7 +88,7 @@ function normalizeAttributes( attributes ) {
  */
 Shortcode.stringify = function( shortcode ) {
 	var text = '[' + shortcode.tag,
-		attributes = normalizeAttributes( shortcode.attrs );
+		attributes = Shortcode.normalizeAttributes( shortcode.attrs );
 
 	Object.keys( attributes.named ).forEach( function( name ) {
 		var value = attributes.named[ name ];
@@ -151,7 +150,7 @@ Shortcode.parse = function( shortcode ) {
 	};
 
 	if ( /\S/.test( match[ 3 ] ) ) {
-		parsed.attrs = parseAttributes( match[ 3 ] );
+		parsed.attrs = Shortcode.parseAttributes( match[ 3 ] );
 	}
 
 	if ( match[ 5 ] ) {
