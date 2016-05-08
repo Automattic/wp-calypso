@@ -21,7 +21,11 @@
 }
 
 /*rtl:ignore*/
-.rtl .gridicon {
-	margin-top: -3px;
-	transform: rotate( 90deg );
+.rtl {
+	.navigation-link {
+		.gridicon {
+			margin-top: -3px;
+			transform: scaleX(-1);
+		}
+	}
 }
