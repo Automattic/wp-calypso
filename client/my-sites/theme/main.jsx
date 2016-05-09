@@ -27,6 +27,7 @@ import { signup, purchase, activate } from 'state/themes/actions';
 import i18n from 'lib/mixins/i18n';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import Helpers from 'my-sites/themes/helpers';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -168,7 +169,7 @@ const ThemeSheet = React.createClass( {
 						{ i18n.translate( 'Need extra help?' ) }
 						<small>{ i18n.translate( 'Visit the theme support forum' ) }</small>
 					</div>
-					<Button primary="true" href="#undefined">Visit forum</Button>
+					<Button primary="true" href={ Helpers.getForumUrl( this.props ) }>Visit forum</Button>
 				</Card>
 				<Card className="themes__sheet-card-support">
 					<Gridicon icon="briefcase" size="48" />
