@@ -145,24 +145,29 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderOverviewTab() {
-		return <div>
+		return (
+			<div>
 				<Card className="themes__sheet-content">
 					<div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />
 				</Card>
 				{ this.renderFeaturesCard() }
-			</div>;
+			</div>
+		);
 	},
 
 	renderSetupTab() {
-		return <div>
+		return (
+			<div>
 				<Card className="themes__sheet-content">
 					<div dangerouslySetInnerHTML={ { __html: this.props.supportDocumentation } } />
 				</Card>
-			</div>;
+			</div>
+		);
 	},
 
 	renderSupportTab() {
-		return <div>
+		return (
+			<div>
 				<Card className="themes__sheet-card-support">
 					<Gridicon icon="comment" size={ 48 } />
 					<div className="themes__sheet-card-support-details">
@@ -179,7 +184,8 @@ const ThemeSheet = React.createClass( {
 					</div>
 					<Button href="//en.forums.wordpress.com/forum/css-customization">Visit forum</Button>
 				</Card>
-			</div>;
+			</div>
+		);
 	},
 
 	renderFeaturesCard() {
