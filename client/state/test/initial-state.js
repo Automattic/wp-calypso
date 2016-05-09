@@ -12,15 +12,20 @@ import { createStore } from 'redux';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import { useSandbox } from 'test/helpers/use-sinon';
+import { useFakeTimers } from 'test/helpers/use-sinon';
 
 describe( 'initial-state', () => {
-	let localforage, createReduxStoreFromPersistedInitialState, persistOnChange, MAX_AGE,
+	let clock, localforage, createReduxStoreFromPersistedInitialState, persistOnChange, MAX_AGE, SERIALIZE_THROTTLE,
 		isSwitchedUser = false,
 		isReduxEnabled = false,
 		isEnabled = () => isReduxEnabled,
 		isSupportUserSession = () => isSwitchedUser;
 
 	useFakeDom();
+
+	useFakeTimers( fakeClock => {
+		clock = fakeClock;
+	} );
 
 	useMockery( () => {
 		const configMock = function() {
@@ -34,6 +39,7 @@ describe( 'initial-state', () => {
 		createReduxStoreFromPersistedInitialState = initialState.default;
 		persistOnChange = initialState.persistOnChange;
 		MAX_AGE = initialState.MAX_AGE;
+		SERIALIZE_THROTTLE = initialState.SERIALIZE_THROTTLE;
 	} );
 
 	describe( 'createReduxStoreFromPersistedInitialState', () => {
@@ -308,6 +314,8 @@ describe( 'initial-state', () => {
 				data: 1
 			} );
 
+			clock.tick( SERIALIZE_THROTTLE );
+
 			expect( localforage.setItem ).to.have.been.calledOnce;
 		} );
 
@@ -317,10 +325,14 @@ describe( 'initial-state', () => {
 				data: 1
 			} );
 
+			clock.tick( SERIALIZE_THROTTLE );
+
 			store.dispatch( {
 				type: 'foo',
 				data: 2
 			} );
+
+			clock.tick( SERIALIZE_THROTTLE );
 
 			expect( localforage.setItem ).to.have.been.calledTwice;
 		} );
@@ -331,12 +343,51 @@ describe( 'initial-state', () => {
 				data: 1
 			} );
 
+			clock.tick( SERIALIZE_THROTTLE );
+
 			store.dispatch( {
 				type: 'foo',
 				data: 1
 			} );
 
+			clock.tick( SERIALIZE_THROTTLE );
+
 			expect( localforage.setItem ).to.have.been.calledOnce;
+		} );
+
+		it( 'should throttle', () => {
+			store.dispatch( {
+				type: 'foo',
+				data: 1
+			} );
+
+			store.dispatch( {
+				type: 'foo',
+				data: 2
+			} );
+
+			store.dispatch( {
+				type: 'foo',
+				data: 3
+			} );
+
+			clock.tick( SERIALIZE_THROTTLE );
+
+			store.dispatch( {
+				type: 'foo',
+				data: 4
+			} );
+
+			store.dispatch( {
+				type: 'foo',
+				data: 5
+			} );
+
+			clock.tick( SERIALIZE_THROTTLE );
+
+			expect( localforage.setItem ).to.have.been.calledTwice;
+			expect( localforage.setItem ).to.have.been.calledWith( 'redux-state', 3 );
+			expect( localforage.setItem ).to.have.been.calledWith( 'redux-state', 5 );
 		} );
 	} );
 } );
