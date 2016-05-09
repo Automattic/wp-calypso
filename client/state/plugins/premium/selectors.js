@@ -10,6 +10,13 @@ const isRequesting = function( state, siteId ) {
 	return state.plugins.premium.isRequesting[ siteId ];
 };
 
+const hasRequested = function( state, siteId ) {
+	if ( typeof state.plugins.premium.hasRequested[ siteId ] === 'undefined' ) {
+		return false;
+	}
+	return state.plugins.premium.hasRequested[ siteId ];
+};
+
 const getPluginsForSite = function( state, siteId ) {
 	let pluginList = state.plugins.premium.plugins[ siteId ];
 	if ( typeof pluginList === 'undefined' ) {
@@ -63,4 +70,4 @@ const getNextPlugin = function( state, siteId ) {
 	return plugin;
 };
 
-export default { isRequesting, isFinished, isInstalling, getPluginsForSite, getActivePlugin, getNextPlugin };
+export default { isRequesting, hasRequested, isFinished, isInstalling, getPluginsForSite, getActivePlugin, getNextPlugin };

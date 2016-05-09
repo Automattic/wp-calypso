@@ -148,16 +148,12 @@ function renderPluginsBrowser( context, siteUrl ) {
 }
 
 function renderProvisionPlugins( context ) {
-	const site = sites.getSelectedSite();
-
 	const section = context.store.getState().ui.section;
 	context.store.dispatch( setSection( Object.assign( {}, section, { secondary: false } ) ) );
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
 	renderWithReduxStore(
-		React.createElement( PlanSetup, {
-			selectedSite: site,
-		} ),
+		React.createElement( PlanSetup, {} ),
 		document.getElementById( 'primary' ),
 		context.store
 	);
