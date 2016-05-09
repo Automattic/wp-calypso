@@ -164,15 +164,15 @@ const ThemeSheet = React.createClass( {
 	renderSupportTab() {
 		return <div>
 				<Card className="themes__sheet-card-support">
-					<Gridicon icon="comment" size="48" />
+					<Gridicon icon="comment" size={ 48 } />
 					<div className="themes__sheet-card-support-details">
 						{ i18n.translate( 'Need extra help?' ) }
 						<small>{ i18n.translate( 'Visit the theme support forum' ) }</small>
 					</div>
-					<Button primary="true" href={ Helpers.getForumUrl( this.props ) }>Visit forum</Button>
+					<Button primary={ true } href={ Helpers.getForumUrl( this.props ) }>Visit forum</Button>
 				</Card>
 				<Card className="themes__sheet-card-support">
-					<Gridicon icon="briefcase" size="48" />
+					<Gridicon icon="briefcase" size={ 48 } />
 					<div className="themes__sheet-card-support-details">
 						{ i18n.translate( 'Need CSS help? ' ) }
 						<small>{ i18n.translate( 'Visit the CSS customization forum' ) }</small>
