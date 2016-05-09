@@ -6,6 +6,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import filter from 'lodash/filter';
+import range from 'lodash/range';
 
 /**
  * Internal dependencies
@@ -21,9 +22,12 @@ import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
+import JetpackSite from 'lib/site/jetpack';
 
 // Redux actions & selectors
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { isRequestingSites } from 'state/sites/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import {
@@ -36,7 +40,8 @@ import {
 	getNextPlugin,
 	isFinished,
 	isInstalling,
-	isRequesting
+	isRequesting,
+	hasRequested
 } from 'state/plugins/premium/selectors';
 // Store for existing plugins
 import PluginsStore from 'lib/plugins/store';
@@ -66,8 +71,21 @@ const PlansSetup = React.createClass( {
 		return ( plugins.length === filter( plugins, { wporg: true } ).length );
 	},
 
+	fetchInstallInstructions( props ) {
+		props = props || this.props;
+		if ( props.siteId && ! props.hasRequested ) {
+			props.fetchInstallInstructions( props.siteId );
+		}
+	},
+
 	componentDidMount() {
-		this.props.fetchInstallInstructions( this.props.siteId );
+		if ( this.props.siteId ) {
+			this.fetchInstallInstructions();
+		}
+	},
+
+	componentWillReceiveProps( props ) {
+		this.fetchInstallInstructions( props );
 	},
 
 	componentDidUpdate() {
@@ -78,14 +96,13 @@ const PlansSetup = React.createClass( {
 	},
 
 	startNextPlugin( plugin ) {
-		let getPluginFromStore;
 		let install = this.props.installPlugin;
 		let site = this.props.selectedSite;
 
 		// Merge wporg info into the plugin object
 		plugin = Object.assign( {}, plugin, getPlugin( this.props.wporg, plugin.slug ) );
 
-		getPluginFromStore = function() {
+		const getPluginFromStore = function() {
 			let sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
 			if ( ! sitePlugin && PluginsStore.isFetchingSite( site ) ) {
 				// if the Plugins are still being fetched, we wait. We are not using flux
@@ -117,7 +134,17 @@ const PlansSetup = React.createClass( {
 		);
 	},
 
+	renderPluginsPlaceholders() {
+		const placeholderCount = 3;
+		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
+	},
+
 	renderPlugins( hidden = false ) {
+		const site = this.props.selectedSite;
+		if ( this.props.isRequesting || PluginsStore.isFetchingSite( site ) ) {
+			return this.renderPluginsPlaceholders();
+		}
+
 		const plugins = this.addWporgDataToPlugins( this.props.plugins );
 
 		return plugins.map( ( item, i ) => {
@@ -227,18 +254,37 @@ const PlansSetup = React.createClass( {
 		);
 	},
 
+	renderPlaceholder() {
+		return (
+			<div className="plan-setup">
+				<h1 className="plan-setup__header is-placeholder">{ this.translate( 'Setting up your plan' ) }</h1>
+				<p className="plan-setup__description is-placeholder">{ this.translate( 'We need to install a few plugins for you. It won\'t take long!' ) }</p>
+				{ this.renderPluginsPlaceholders() }
+			</div>
+		);
+	},
+
 	render() {
 		const site = this.props.selectedSite;
+
+		if ( ! site && ! this.props.isRequestingSites ) {
+			return this.renderPlaceholder();
+		}
+
 		if ( ! site || ! site.jetpack ) {
 			return this.renderNoJetpackSiteSelected();
 		}
 
-		if ( ! this.props.plugins.length ) {
+		if ( site &&
+			! this.props.isRequestingSites &&
+			! this.props.isRequesting &&
+			! PluginsStore.isFetchingSite( site ) &&
+			! this.props.plugins.length ) {
 			return this.renderNoJetpackPlan();
 		}
 
 		let turnOnManage;
-		if ( ! site.canManage() ) {
+		if ( site && ! site.canManage() ) {
 			turnOnManage = (
 				<Card className="plan-setup__need-manage">
 					<p>{
@@ -270,15 +316,19 @@ const PlansSetup = React.createClass( {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
 
 		return {
 			wporg: state.plugins.wporg.items,
 			isRequesting: isRequesting( state, siteId ),
+			hasRequested: hasRequested( state, siteId ),
 			isInstalling: isInstalling( state, siteId ),
 			isFinished: isFinished( state, siteId ),
 			plugins: getPluginsForSite( state, siteId ),
 			activePlugin: getActivePlugin( state, siteId ),
 			nextPlugin: getNextPlugin( state, siteId ),
+			selectedSite: site && site.jetpack ? JetpackSite( site ) : site,
+			isRequestingSites: isRequestingSites( state ),
 			siteId
 		};
 	},

@@ -37,6 +37,22 @@ export function isRequesting( state = {}, action ) {
 }
 
 /*
+ * Tracks the requesting state for premium plugin "instructions" (the list
+ * of plugins and API keys) on a per-site index.
+ */
+export function hasRequested( state = {}, action ) {
+	switch ( action.type ) {
+		case PLUGIN_SETUP_INSTRUCTIONS_RECEIVE:
+			return Object.assign( {}, state, { [ action.siteId ]: true } );
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+		default:
+			return state;
+	}
+}
+
+/*
  * Tracks all known premium plugin objects (plugin meta and install status),
  * indexed by site ID.
  */
@@ -129,5 +145,6 @@ function pluginStatus( state, action ) {
 
 export default combineReducers( {
 	isRequesting,
+	hasRequested,
 	plugins
 } );
