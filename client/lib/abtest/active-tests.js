@@ -138,5 +138,14 @@ module.exports = {
 		defaultVariation: 'standard',
 		allowExistingUsers: true,
 		allowAnyLocale: true
+	},
+	verticalThemes: {
+		datestamp: '20160428',
+		variations: {
+			original: 45,
+			verticalThemes: 45,
+			notTested: 10
+		},
+		defaultVariation: 'original'
 	}
 };
