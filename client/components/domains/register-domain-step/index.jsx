@@ -169,9 +169,11 @@ const RegisterDomainStep = React.createClass( {
 		} ).catch( error => {
 			if ( error && error.statusCode === 503 ) {
 				return this.props.onDomainsAvailabilityChange( false );
-			} else if ( error ) {
-				throw error;
+			} else if ( error && error.error ) {
+				error.code = error.error;
+				this.showValidationErrorMessage( initialQuery, error );
 			}
+			this.setState( { defaultSuggestions: [] } );
 		} );
 	},
 
