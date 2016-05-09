@@ -18,6 +18,10 @@ var SectionNav = require( 'components/section-nav' ),
 	AdsUtils = require( 'lib/ads/utils' ),
 	sites = require( 'lib/sites-list' )();
 
+import FeatureExample from 'components/feature-example';
+import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
+import FormToggle from 'components/forms/form-toggle';
+import Card from 'components/card';
 module.exports = React.createClass( {
 
 	displayName: 'AdsMain',
@@ -68,8 +72,46 @@ module.exports = React.createClass( {
 		}
 	},
 
+	renderInstanActivationToggle: function( component ) {
+		return ( <div>
+			<Card>
+				<div className="ads__activate-header-description">
+					<h2 className="form-section-heading">{ this.translate( 'WordAds Disabled' ) }</h2>
+					<p>
+						{ this.translate(
+							'WordAds let you earn money from your site.' +
+							'Stylish and unobtrusive promotional will help you monetize your blog. ' +
+							'Because you have a premium plan, you can skip review process and activate WordAds instantly.' +
+							'{{br/}}' +
+							'{{a}}Read more about WordAds.{{/a}}', {
+								components: {
+									br: <br />,
+									a: <a href={ 'http://wordads.co' } />
+								}
+							} )
+						}
+					</p>
+				</div>
+				<div className="ads__activate-header-toggle">
+					<FormToggle
+						checked={ false }
+						onChange={ function() {} }
+					/>
+				</div>
+			</Card>
+			<FeatureExample>
+				{ component }
+			</FeatureExample>
+		</div> );
+	},
+
 	render: function() {
 		var component = this.getComponent( this.props.section );
+
+		if ( ! this.props.site.options.wordads && isWordadsInstantActivationEligible( this.props.site ) ) {
+			component = this.renderInstanActivationToggle( component );
+		}
+
 		return (
 			<Main className="ads">
 				<SidebarNavigation />
