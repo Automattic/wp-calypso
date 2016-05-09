@@ -28,6 +28,7 @@ import PlanHeader from 'components/plans/plan-header';
 import PlanPrice from 'components/plans/plan-price';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { getPlans } from 'state/plans/selectors';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 
 const PlansCompare = React.createClass( {
@@ -40,7 +41,7 @@ const PlansCompare = React.createClass( {
 	},
 
 	getInitialState() {
-		return { selectedPlan: 'premium' }
+		return { selectedPlan: 'premium' };
 	},
 
 	getDefaultProps() {
@@ -118,7 +119,7 @@ const PlansCompare = React.createClass( {
 			return false;
 		}
 
-		return this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST
+		return this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST;
 	},
 
 	getColumnCount() {
@@ -133,7 +134,7 @@ const PlansCompare = React.createClass( {
 		const plans = this.getPlans();
 
 		return this.props.features.get().filter( ( feature ) => {
-			return plans.some( ( plan ) => {
+			return plans.some( plan => {
 				return feature[ plan.product_id ];
 			} );
 		} );
@@ -141,7 +142,6 @@ const PlansCompare = React.createClass( {
 
 	getPlans() {
 		return filterPlansBySiteAndProps(
-			this.props.plans.get(),
 			this.props.selectedSite,
 			this.props.hideFreePlan
 		);
@@ -231,8 +231,8 @@ const PlansCompare = React.createClass( {
 				);
 			} );
 		} else {
-			const plans = this.getPlans(),
-				features = this.getFeatures();
+			const plans = this.getPlans();
+			const features = this.getFeatures();
 
 			rows = features.map( ( feature ) => {
 				const planFeatures = plans.map( ( plan ) => {
@@ -386,9 +386,9 @@ const PlansCompare = React.createClass( {
 
 	render() {
 		const classes = classNames( this.props.className, 'plans-compare', {
-				'is-placeholder': this.isDataLoading(),
-				'is-jetpack-site': this.props.selectedSite && this.props.selectedSite.jetpack
-			} );
+			'is-placeholder': this.isDataLoading(),
+			'is-jetpack-site': this.props.selectedSite && this.props.selectedSite.jetpack
+		} );
 
 		let compareString = this.translate( 'Compare Plans' );
 
@@ -418,6 +418,7 @@ const PlansCompare = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
+			plans: getPlans( state ),
 			sitePlans: getPlansBySite( state, props.selectedSite )
 		};
 	},

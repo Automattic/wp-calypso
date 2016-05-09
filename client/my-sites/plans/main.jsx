@@ -10,6 +10,7 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 import { fetchSitePlans } from 'state/sites/plans/actions';
+import { getPlans } from 'state/plans/selectors';
 import { getCurrentPlan } from 'lib/plans';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import Gridicon from 'components/gridicon';
@@ -74,7 +75,7 @@ const Plans = React.createClass( {
 			compareString = this.translate( 'Compare Options' );
 		}
 
-		if ( this.props.plans.get().length <= 0 ) {
+		if ( this.props.plans.length <= 0 ) {
 			return '';
 		}
 
@@ -142,7 +143,7 @@ const Plans = React.createClass( {
 
 						<PlanList
 							site={ selectedSite }
-							plans={ this.props.plans.get() }
+							plans={ this.props.plans }
 							sitePlans={ this.props.sitePlans }
 							onOpen={ this.openPlan }
 							cart={ this.props.cart }
@@ -159,6 +160,7 @@ const Plans = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
+			plans: getPlans( state ),
 			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() )
 		};
 	},
