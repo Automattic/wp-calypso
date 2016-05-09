@@ -5,6 +5,18 @@ $polldaddy-red:  #D45458;
 .plan-setup {
 	margin: 0 auto;
 	max-width: 700px;
+
+	h1.is-placeholder,
+	p.is-placeholder {
+		width: inherit;
+		background-color: lighten( $gray, 30% );
+		color: lighten( $gray, 30% );
+		animation: loading-fade 1.6s ease-in-out infinite;
+
+		&:before {
+			content: ' ';
+		}
+	}
 }
 
 .plan-setup__header {
