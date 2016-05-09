@@ -54,7 +54,7 @@ import ExternalLink from 'components/external-link/docs/example';
 import FeatureGate from 'components/feature-example/docs/example';
 import FilePickers from 'components/file-picker/docs/example';
 import Collection from 'devdocs/design/search-collection';
-import fetchUsageStats from 'state/usage-stats/actions';
+import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -64,9 +64,9 @@ let DesignAssets = React.createClass( {
 	},
 
 	componentWillMount() {
-		if ( config.isEnabled( 'devdocs/usage-stats' ) ) {
-			const { dispatchFetchUsageStats } = this.props;
-			dispatchFetchUsageStats();
+		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
+			const { dispatchFetchComponentsUsageStats } = this.props;
+			dispatchFetchComponentsUsageStats();
 		}
 	},
 
@@ -79,7 +79,7 @@ let DesignAssets = React.createClass( {
 	},
 
 	render() {
-		const { usageStats = {} } = this.props;
+		const { componentsUsageStats = {} } = this.props;
 		return (
 			<div className="design-assets" role="main">
 				{
@@ -95,10 +95,10 @@ let DesignAssets = React.createClass( {
 					</SearchCard>
 				}
 				<Collection component={ this.props.component } filter={ this.state.filter }>
-					<Accordions usageStats={ usageStats.accordion } />
+					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
 					<BulkSelect />
 					<ButtonGroups />
-					<Buttons usageStats={ usageStats.button } />
+					<Buttons componentUsageStats={ componentsUsageStats.button } />
 					<Cards />
 					<ClipboardButtonInput />
 					<ClipboardButtons />
@@ -140,26 +140,23 @@ let DesignAssets = React.createClass( {
 	}
 } );
 
-DesignAssets.propTypes = {
-	usageStats: PropTypes.object,
-	isFetching: PropTypes.bool,
-	dispatchFetchUsageStats: PropTypes.func
-};
-
-if ( config.isEnabled( 'devdocs/usage-stats' ) ) {
+if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 	const mapStateToProps = ( state ) => {
-		const { usageStats } = state;
+		const { componentsUsageStats } = state;
 
-		return {
-			usageStats: usageStats.usageStats,
-			isFetching: usageStats.isFetching
-		};
+		return componentsUsageStats;
 	};
 
 	const mapDispatchToProps = ( dispatch ) => {
 		return bindActionCreators( {
-			dispatchFetchUsageStats: fetchUsageStats
+			dispatchFetchComponentsUsageStats: fetchComponentsUsageStats
 		}, dispatch );
+	};
+
+	DesignAssets.propTypes = {
+		componentsUsageStats: PropTypes.object,
+		isFetching: PropTypes.bool,
+		dispatchFetchComponentsUsageStats: PropTypes.func
 	};
 
 	DesignAssets = connect(

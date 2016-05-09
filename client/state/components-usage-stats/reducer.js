@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import {
-	USAGE_STATS_REQUEST,
-	USAGE_STATS_RECEIVE
+	COMPONENTS_USAGE_STATS_REQUEST,
+	COMPONENTS_USAGE_STATS_RECEIVE
 } from '../action-types';
 
 /**
@@ -12,19 +12,19 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export default function usageStats( state = {
+export default function componentsUsageStats( state = {
 	isFetching: false,
-	usageStats: {}
+	componentsUsageStats: {}
 }, action ) {
 	switch ( action.type ) {
-		case USAGE_STATS_REQUEST:
+		case COMPONENTS_USAGE_STATS_REQUEST:
 			return Object.assign( {}, state, {
 				isFetching: true
 			} );
-		case USAGE_STATS_RECEIVE:
+		case COMPONENTS_USAGE_STATS_RECEIVE:
 			return Object.assign( {}, state, {
 				isFetching: false,
-				usageStats: action.usageStats
+				componentsUsageStats: action.componentsUsageStats
 			} );
 		default:
 			return state;

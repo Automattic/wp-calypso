@@ -26,7 +26,7 @@ var Buttons = React.createClass( {
 
 	render: function() {
 		var toggleText = this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons';
-		return config.isEnabled( 'devdocs/usage-stats' )
+		return config.isEnabled( 'devdocs/components-usage-stats' )
 			? this.renderDocsExampleWithUsageStats( toggleText )
 			: this.renderDocsExample( toggleText );
 	},
@@ -48,7 +48,7 @@ var Buttons = React.createClass( {
 			<DocsExample
 				title="Button"
 				url="/devdocs/design/buttons"
-				usageStats={ this.props.usageStats }
+				componentUsageStats={ this.props.componentUsageStats }
 				toggleHandler={ this.toggleButtons }
 				toggleText={ toggleText }
 			>

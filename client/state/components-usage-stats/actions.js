@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import {
-	USAGE_STATS_REQUEST,
-	USAGE_STATS_RECEIVE
+	COMPONENTS_USAGE_STATS_REQUEST,
+	COMPONENTS_USAGE_STATS_RECEIVE
 } from '../action-types';
 import request from 'superagent';
 
@@ -11,21 +11,21 @@ import request from 'superagent';
  * Return an action object to signaling that the "usage stats" have been requested
  * @return {Object} Action object
  */
-export function requestUsageStats() {
+export function requestComponentsUsageStats() {
 	return {
-		type: USAGE_STATS_REQUEST
+		type: COMPONENTS_USAGE_STATS_REQUEST
 	};
 }
 
 /**
  * Return an action object to signaling that the "usage stats" have been requested
- * @param {Object} usageStats Parsed JSON for the usage stats
+ * @param {Object} componentsUsageStats Parsed JSON for the usage stats
  * @return {Object} 					Action object
  */
-export function receiveUsageStats( usageStats ) {
+export function receiveComponentsUsageStats( componentsUsageStats ) {
 	return {
-		type: USAGE_STATS_RECEIVE,
-		usageStats
+		type: COMPONENTS_USAGE_STATS_RECEIVE,
+		componentsUsageStats
 	};
 }
 
@@ -33,16 +33,16 @@ export function receiveUsageStats( usageStats ) {
  * Triggers a network request to request the components usage stats
  * @returns {Function} Action thunk
  */
-export default function fetchUsageStats() {
+export default function fetchComponentsUsageStats() {
 	return dispatch => {
-		dispatch( requestUsageStats() );
+		dispatch( requestComponentsUsageStats() );
 		return request
-			.get( '/devdocs/service/usage-stats' )
+			.get( '/devdocs/service/components-usage-stats' )
 			.end( ( error, res ) => {
 				if ( ! res.ok ) {
 					return;
 				}
-				dispatch( receiveUsageStats( res.body ) );
+				dispatch( receiveComponentsUsageStats( res.body ) );
 			} );
 	};
 }
