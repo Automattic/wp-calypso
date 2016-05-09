@@ -15,14 +15,8 @@ var ThanksModal = React.createClass( {
 
 	propTypes: {
 		clearActivated: React.PropTypes.func.isRequired,
-		// First link to show for wpcom themes
-		topLink: React.PropTypes.oneOf( [ 'features', 'customize' ] ),
-	},
-
-	getDefaultProps: function() {
-		return {
-			topLink: 'features',
-		};
+		// Where is the modal being used?
+		source: React.PropTypes.oneOf( [ 'details', 'list' ] ).isRequired,
 	},
 
 	onCloseModal: function() {
@@ -54,7 +48,7 @@ var ThanksModal = React.createClass( {
 		return (
 			<ul>
 				<li>
-					{ this.props.topLink === 'features' ? features : customize }
+					{ this.props.source === 'list' ? features : customize }
 				</li>
 			<li>
 				{ this.translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
