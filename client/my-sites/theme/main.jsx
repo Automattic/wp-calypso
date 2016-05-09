@@ -10,7 +10,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import page from 'page';
-import { isPremium } from 'my-sites/themes/helpers';
 
 /**
  * Internal dependencies
@@ -29,6 +28,7 @@ import i18n from 'lib/mixins/i18n';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import Helpers from 'my-sites/themes/helpers';
+import { isPremium } from 'my-sites/themes/helpers';
 import ActivatingTheme from 'components/data/activating-theme';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 
