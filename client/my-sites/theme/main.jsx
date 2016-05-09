@@ -9,6 +9,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
+import { isPremium } from 'my-sites/themes/helpers';
 
 /**
  * Internal dependencies
@@ -21,10 +22,12 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
+import Gridicon from 'components/gridicon';
 import { signup, purchase, activate } from 'state/themes/actions';
 import i18n from 'lib/mixins/i18n';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import Helpers from 'my-sites/themes/helpers';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -39,6 +42,7 @@ const ThemeSheet = React.createClass( {
 		descriptionLong: React.PropTypes.string,
 		supportDocumentation: React.PropTypes.string,
 		taxonomies: React.PropTypes.object,
+		stylesheet: React.PropTypes.string,
 		isLoggedIn: React.PropTypes.bool,
 		// Connected props
 		selectedSite: React.PropTypes.object,
@@ -53,36 +57,18 @@ const ThemeSheet = React.createClass( {
 		page.back();
 	},
 
-	isPremium() {
-		return this.props.price.value > 0;
-	},
-
 	onPrimaryClick() {
 		// TODO: if active -> customize (could use theme slug from selected site)
 
 		if ( ! this.props.isLoggedIn ) {
 			this.props.dispatch( signup( this.props ) );
 		// TODO: use site picker if no selected site
-		} else if ( this.isPremium() ) {
+		} else if ( isPremium( this.props ) ) {
 			// TODO: check theme is not already purchased
 			this.props.dispatch( purchase( this.props, this.props.selectedSite, 'showcase-sheet' ) );
 		} else {
 			this.props.dispatch( activate( this.props, this.props.selectedSite, 'showcase-sheet' ) );
 		}
-	},
-
-	getContentElement( section ) {
-		return {
-			overview: <div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />,
-			setup: <div dangerouslySetInnerHTML={ { __html: this.props.supportDocumentation } } />,
-			support: <div>Visit the support forum</div>,
-		}[ section ];
-	},
-
-	getDangerousElements( section ) {
-		const priceElement = <span className="themes__sheet-action-bar-cost" dangerouslySetInnerHTML={ { __html: this.props.price } } />;
-		const themeContentElement = this.getContentElement( section );
-		return { priceElement, themeContentElement };
 	},
 
 	getValidSections() {
@@ -150,7 +136,59 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderFeatures() {
+	renderSectionContent( section ) {
+		return {
+			overview: this.renderOverviewTab(),
+			setup: this.renderSetupTab(),
+			support: this.renderSupportTab(),
+		}[ section ];
+	},
+
+	renderOverviewTab() {
+		return (
+			<div>
+				<Card className="themes__sheet-content">
+					<div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />
+				</Card>
+				{ this.renderFeaturesCard() }
+			</div>
+		);
+	},
+
+	renderSetupTab() {
+		return (
+			<div>
+				<Card className="themes__sheet-content">
+					<div dangerouslySetInnerHTML={ { __html: this.props.supportDocumentation } } />
+				</Card>
+			</div>
+		);
+	},
+
+	renderSupportTab() {
+		return (
+			<div>
+				<Card className="themes__sheet-card-support">
+					<Gridicon icon="comment" size={ 48 } />
+					<div className="themes__sheet-card-support-details">
+						{ i18n.translate( 'Need extra help?' ) }
+						<small>{ i18n.translate( 'Visit the theme support forum' ) }</small>
+					</div>
+					<Button primary={ true } href={ Helpers.getForumUrl( this.props ) }>Visit forum</Button>
+				</Card>
+				<Card className="themes__sheet-card-support">
+					<Gridicon icon="briefcase" size={ 48 } />
+					<div className="themes__sheet-card-support-details">
+						{ i18n.translate( 'Need CSS help? ' ) }
+						<small>{ i18n.translate( 'Visit the CSS customization forum' ) }</small>
+					</div>
+					<Button href="//en.forums.wordpress.com/forum/css-customization">Visit forum</Button>
+				</Card>
+			</div>
+		);
+	},
+
+	renderFeaturesCard() {
 		const themeFeatures = this.props.taxonomies && this.props.taxonomies.features instanceof Array
 		? this.props.taxonomies.features.map( function( item, i ) {
 			return ( <li key={ 'theme-features-item-' + i++ }><span>{ item.name }</span></li> );
@@ -177,7 +215,7 @@ const ThemeSheet = React.createClass( {
 		}
 
 		const section = this.validateSection( this.props.section );
-		const { themeContentElement, priceElement } = this.getDangerousElements( section );
+		const priceElement = <span className="themes__sheet-action-bar-cost" dangerouslySetInnerHTML={ { __html: this.props.price } } />;
 
 		return (
 			<Main className="themes__sheet">
@@ -194,8 +232,8 @@ const ThemeSheet = React.createClass( {
 						</HeaderCake>
 						<div className="themes__sheet-content">
 							{ this.renderSectionNav( section ) }
-							<Card className="themes__sheet-content">{ themeContentElement }</Card>
-							{ this.renderFeatures() }
+							{ this.renderSectionContent( section ) }
+							<div className="footer__line"><Gridicon icon="my-sites" /></div>
 						</div>
 					</div>
 					<div className="themes__sheet-column-right">
