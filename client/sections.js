@@ -330,8 +330,7 @@ if ( config.isEnabled( 'accept-invite' ) ) {
 		name: 'accept-invite',
 		paths: [ '/accept-invite' ],
 		module: 'my-sites/invites',
-		enableLoggedOut: true,
-		group: 'sites'
+		enableLoggedOut: true
 	} );
 }
 
