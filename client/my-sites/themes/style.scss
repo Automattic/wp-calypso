@@ -222,6 +222,56 @@
 	}
 }
 
+.themes__sheet-card-support {
+	display: flex;
+	align-items: center;
+
+	&:not(:last-child) {
+		margin-bottom: 0;
+	}
+
+	@include breakpoint( "<660px" ) {
+		flex-wrap: wrap;
+	}
+
+	.gridicon {
+		color: lighten( $gray, 20% );
+		flex: 0 0 auto;
+	}
+
+	.button {
+		flex: 0 0 auto;
+
+		@include breakpoint( "<660px" ) {
+			flex: 1 1 100%;
+			margin-top: 20px;
+			text-align: center;
+		}
+	}
+}
+
+.themes__sheet-card-support-details {
+	flex: 1 1 20px;
+	padding: 0 20px;
+
+	small {
+		display: block;
+		color: $gray;
+	}
+}
+
+.footer__line {
+	color: lighten( $gray, 20% );
+	border-top: 1px solid lighten( $gray, 20% );
+	margin: 32px 0 20px;
+
+	.gridicon {
+		display: block;
+		margin: -12px auto 0;
+		background: $gray-light;
+	}
+}
+
 @include breakpoint( "<660px" ) {
 	.themes__sheet-columns {
 		flex-direction: column-reverse;

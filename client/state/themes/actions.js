@@ -54,14 +54,14 @@ export function fetchThemes( site ) {
 				dispatch( receiveThemes( themes, site, queryParams, responseTime ) );
 			} )
 			.catch( error => receiveServerError( error ) );
-	}
+	};
 }
 
 export function fetchNextPage( site ) {
 	return dispatch => {
 		dispatch( incrementThemesPage( site ) );
 		dispatch( fetchThemes( site ) );
-	}
+	};
 }
 
 export function query( params ) {
@@ -75,7 +75,7 @@ export function incrementThemesPage( site ) {
 	return {
 		type: THEMES_INCREMENT_PAGE,
 		site: site
-	}
+	};
 }
 
 export function fetchCurrentTheme( site ) {
@@ -89,7 +89,7 @@ export function fetchCurrentTheme( site ) {
 					themeId: theme.id,
 					themeName: theme.name,
 					themeCost: theme.cost
-				} )
+				} );
 			} ); // TODO: add .catch() error handler
 	};
 }
@@ -99,12 +99,12 @@ export function fetchThemeDetails( id ) {
 		wpcom.undocumented().themeDetails( id )
 			.then( themeDetails => {
 				debug( 'Received theme details', themeDetails );
-				dispatch( receiveThemeDetails( themeDetails ) )
+				dispatch( receiveThemeDetails( themeDetails ) );
 			} )
 			.catch( error => {
-				dispatch( receiveServerError( error ) )
+				dispatch( receiveServerError( error ) );
 			} );
-	}
+	};
 }
 
 export function receiveThemeDetails( theme ) {
@@ -119,8 +119,9 @@ export function receiveThemeDetails( theme ) {
 		themeDescriptionLong: theme.description_long,
 		themeSupportDocumentation: theme.extended ? theme.extended.support_documentation : undefined,
 		themeTaxonomies: theme.taxonomies,
+		themeStylesheet: theme.stylesheet,
 	};
-};
+}
 
 export function receiveServerError( error ) {
 	return {
@@ -162,7 +163,7 @@ export function receiveThemes( data, site, queryParams, responseTime ) {
 			: themeAction;
 
 		dispatch( action );
-	}
+	};
 }
 
 export function activate( theme, site, source = 'unknown' ) {
@@ -180,7 +181,7 @@ export function activate( theme, site, source = 'unknown' ) {
 			.catch( error => {
 				dispatch( receiveServerError( error ) );
 			} );
-	}
+	};
 }
 
 export function activated( theme, site, source = 'unknown', purchased = false ) {
@@ -212,14 +213,14 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 
 			dispatch( withAnalytics( trackThemeActivation, action ) );
 		} );
-	}
-};
+	};
+}
 
 export function clearActivated() {
 	return {
 		type: THEME_CLEAR_ACTIVATED
 	};
-};
+}
 
 export function signup( theme ) {
 	return dispatch => {
@@ -233,7 +234,7 @@ export function signup( theme ) {
 		// `ThemeHelpers.navigateTo` uses `page()` here, which messes with `pushState`,
 		// which we don't want here, since we're navigating away from Calypso.
 		window.location = signupUrl;
-	}
+	};
 }
 
 // Might be obsolete, since in my-sites/themes, we're using `getUrl()` for Details
@@ -247,8 +248,8 @@ export function details( theme, site ) {
 		} );
 
 		ThemeHelpers.navigateTo( detailsUrl, site.jetpack );
-	}
-};
+	};
+}
 
 // Might be obsolete, since in my-sites/themes, we're using `getUrl()` for Support
 export function support( theme, site ) {
@@ -261,8 +262,8 @@ export function support( theme, site ) {
 		} );
 
 		ThemeHelpers.navigateTo( supportUrl, site.jetpack );
-	}
-};
+	};
+}
 
 export function preview( theme, site ) {
 	return dispatch => {
@@ -274,7 +275,7 @@ export function preview( theme, site ) {
 		} );
 
 		ThemeHelpers.navigateTo( previewUrl, site.jetpack );
-	}
+	};
 }
 
 export function customize( theme, site ) {
@@ -287,8 +288,8 @@ export function customize( theme, site ) {
 		} );
 
 		ThemeHelpers.navigateTo( customizeUrl, site.jetpack );
-	}
-};
+	};
+}
 
 export function purchase( theme, site, source = 'unknown' ) {
 	const CartActions = require( 'lib/upgrades/actions' );
@@ -306,5 +307,5 @@ export function purchase( theme, site, source = 'unknown' ) {
 				site: site
 			} );
 		} );
-	}
+	};
 }
