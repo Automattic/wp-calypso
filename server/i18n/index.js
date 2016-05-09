@@ -145,6 +145,11 @@ function buildPhpOutput( data, arrayName ) {
 		'\n_x( "num_first_day_of_week", "momentjs setting" ),',
 		'\n/* translators: The week that contains Jan (X) is the first week of the year, e.g., `4` means Jan 4. Different regions start counting weeks with different rules, check Wikipedia to be sure. */',
 		'\n_x( "num_day_of_year", "momentjs setting" ),',
+		'\n\n// Number formatting strings',
+		'\n/* translators: $thousands_sep argument for http://php.net/number_format, default is , */',
+		'\n__( "number_format_thousands_sep" ),',
+		'\n/* translators: $dec_point argument for http://php.net/number_format, default is . */',
+		'\n__( "number_format_decimal_point" ),',
 		'\n);\n'
 	].join( '' ) );
 
