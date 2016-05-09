@@ -72,7 +72,7 @@ const PlansSetup = React.createClass( {
 
 	componentDidUpdate() {
 		const site = this.props.selectedSite;
-		if ( site.canManage() && this.allPluginsHaveWporgData() && ! this.props.isInstalling && this.props.nextPlugin ) {
+		if ( site && site.canManage() && this.allPluginsHaveWporgData() && ! this.props.isInstalling && this.props.nextPlugin ) {
 			this.startNextPlugin( this.props.nextPlugin );
 		}
 	},
