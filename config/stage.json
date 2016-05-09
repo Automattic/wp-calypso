@@ -65,7 +65,6 @@
 		"olark": true,
 		"perfmon": true,
 		"persist-redux": true,
-		"post-editor/live-image-updates": true,
 		"press-this": true,
 		"reader": true,
 		"reader/full-errors": true,
