@@ -132,13 +132,6 @@ module.exports = React.createClass( {
 
 		this.setState( { submitting: true } );
 
-		if ( this.props.step && 'in-progress' !== this.props.step.status ) {
-			this.resetAnalyticsData();
-
-			this.props.goToNextStep();
-			return;
-		}
-
 		this.formStateController.handleSubmit( function( hasErrors ) {
 			var site = formState.getFieldValue( this.state.form, 'site' );
 
@@ -220,7 +213,7 @@ module.exports = React.createClass( {
 	},
 
 	formFields: function() {
-		var fieldDisabled = this.props.step && 'in-progress' !== this.props.step.status;
+		var fieldDisabled = this.state.submitting;
 
 		return <ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
 			<FormLabel htmlFor="site">
@@ -247,7 +240,7 @@ module.exports = React.createClass( {
 			return this.translate( 'Site created - Go to next step' );
 		}
 
-		if ( this.state.submitting || ( this.props.step && 'in-progress' !== this.props.step.status ) ) {
+		if ( this.state.submitting ) {
 			return this.translate( 'Creating your site…' );
 		}
 
