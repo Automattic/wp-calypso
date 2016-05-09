@@ -24,7 +24,7 @@ var async = require( 'async' ),
 function main() {
 	// extract list of files to index and remove leading ./'s
 	var fileList,
-		outFilePath = 'server/devdocs/usage-stats.json';
+		outFilePath = 'server/devdocs/components-usage-stats.json';
 
 	fileList = process.
 		argv.
@@ -34,11 +34,11 @@ function main() {
 		} );
 
 	if ( fileList.length === 0 ) {
-		process.stderr.write( 'You must pass a list of files to process (try "make server/devdocs/usage-stats.js"' );
+		process.stderr.write( 'You must pass a list of files to process (try "make server/devdocs/components-usage-stats.js"' );
 		process.exit( 1 );
 	}
 
-	if ( ! config.isEnabled( 'devdocs/usage-stats' ) ) {
+	if ( ! config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 		saveUsageStats( {}, outFilePath );
 		process.exit( 0 );
 	}

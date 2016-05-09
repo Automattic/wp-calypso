@@ -25,7 +25,7 @@ RECORD_ENV ?= $(BIN)/record-env
 GET_I18N ?= $(BIN)/get-i18n
 LIST_ASSETS ?= $(BIN)/list-assets
 ALL_DEVDOCS_JS ?= server/devdocs/bin/generate-devdocs-index
-USAGE_STATS_JS ?= server/devdocs/bin/generate-modules-usage-stats.js
+COMPONENTS_USAGE_STATS_JS ?= server/devdocs/bin/generate-components-usage-stats.js
 
 # files used as prereqs
 SASS_FILES := $(shell \
@@ -52,7 +52,7 @@ MD_FILES := $(shell \
 		-name '*.md' \
 	| sed 's/ /\\ /g' \
 )
-USAGE_STATS_FILES = $(shell \
+COMPONENTS_USAGE_STATS_FILES = $(shell \
 	find client \
 		-not \( -path '*/docs/*' -prune \) \
 		-not \( -path '*/test/*' -prune \) \
@@ -144,8 +144,8 @@ public/editor.css: node_modules $(SASS_FILES)
 server/devdocs/search-index.js: $(MD_FILES) $(ALL_DEVDOCS_JS)
 	@$(ALL_DEVDOCS_JS) $(MD_FILES)
 
-server/devdocs/usage-stats.json: $(USAGE_STATS_FILES) $(USAGE_STATS_JS)
-	@$(USAGE_STATS_JS) $(USAGE_STATS_FILES)
+server/devdocs/components-usage-stats.json: $(COMPONENTS_USAGE_STATS_FILES) $(COMPONENTS_USAGE_STATS_JS)
+	@$(COMPONENTS_USAGE_STATS_JS) $(COMPONENTS_USAGE_STATS_FILES)
 
 build-server: install
 	@mkdir -p build
@@ -155,9 +155,9 @@ build: install build-$(CALYPSO_ENV)
 
 build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css
 
-build-development: server/devdocs/usage-stats.json build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
+build-development: server/devdocs/components-usage-stats.json build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
 
-build-wpcalypso: server/devdocs/usage-stats.json build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
+build-wpcalypso: server/devdocs/components-usage-stats.json build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
 	@$(BUNDLER)
 
 build-desktop build-desktop-mac-app-store build-horizon build-stage build-production: build-server $(CLIENT_CONFIG_FILE) build-css
@@ -166,7 +166,7 @@ build-desktop build-desktop-mac-app-store build-horizon build-stage build-produc
 # the `clean` rule deletes all the files created from `make build`, but not
 # those created by `make install`
 clean:
-	@rm -rf public/style*.css public/style-debug.css.map public/*.js $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js server/devdocs/usage-stats.json public/editor.css build/* server/bundler/*.json
+	@rm -rf public/style*.css public/style-debug.css.map public/*.js $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js server/devdocs/components-usage-stats.json public/editor.css build/* server/bundler/*.json
 
 # the `distclean` rule deletes all the files created from `make install`
 distclean:

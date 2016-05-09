@@ -32,12 +32,12 @@ const componentsEntries = {
 	}
 };
 
-function getUsageStatsMock() {
+function getComponentsUsageStatsMock() {
 	return Object.assign( {}, componentsEntries.valid, componentsEntries.invalid );
 }
 
 function getComponentsUsageStats( cb ) {
-	request.get( 'http://localhost:9993/devdocs/service/usage-stats' )
+	request.get( 'http://localhost:9993/devdocs/service/components-usage-stats' )
 		.end( cb );
 }
 
@@ -76,7 +76,7 @@ describe( 'devdocs', () => {
 			}
 		} );
 
-		mockery.registerMock( 'devdocs/usage-stats.json', getUsageStatsMock() );
+		mockery.registerMock( 'devdocs/components-usage-stats.json', getComponentsUsageStatsMock() );
 
 		devdocs = require( '../' );
 		app = devdocs();

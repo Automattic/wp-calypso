@@ -17,7 +17,7 @@ var	config = require( 'config' ),
 	searchIndex = require( 'devdocs/search-index' ),
 	docsIndex = lunr.Index.load( searchIndex.index ),
 	documents = searchIndex.documents,
-	modulesWithDependences = require( 'devdocs/usage-stats.json' );
+	componentsUsageStats = require( 'devdocs/components-usage-stats.json' );
 
 /**
  * Constants
@@ -128,7 +128,7 @@ function defaultSnippet( doc ) {
  * @param {object} modulesWithDependences An object of modules - dipendencies pairs
  * @returns {object} A reduced set of modules.
  */
-function reduceUsageStats( modulesWithDependences ) {
+function reduceComponentsUsageStats( modulesWithDependences ) {
 	return Object.keys( modulesWithDependences )
 		.filter( function( moduleName ) {
 			return moduleName.indexOf( 'components/' ) === 0 &&
@@ -220,9 +220,9 @@ module.exports = function() {
 	} );
 
 	// return json for the components usage stats
-	app.get( '/devdocs/service/usage-stats', function( request, response ) {
-		var componentsUsageStats = reduceUsageStats( modulesWithDependences );
-		response.json( componentsUsageStats );
+	app.get( '/devdocs/service/components-usage-stats', function( request, response ) {
+		var usageStats = reduceComponentsUsageStats( componentsUsageStats );
+		response.json( usageStats );
 	} );
 
 	return app;

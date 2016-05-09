@@ -39,12 +39,12 @@ DocsExampleStats.propTypes = {
 const DocsExample = ( {
 	title,
 	url,
-	usageStats,
+	componentUsageStats,
 	toggleHandler,
 	toggleText,
 	children
 } ) => {
-	const { count } = usageStats;
+	const { count } = componentUsageStats;
 
 	return (
 		<section className="docs-example">
@@ -75,7 +75,7 @@ const DocsExample = ( {
 DocsExample.propTypes = {
 	title: PropTypes.string.isRequired,
 	url: PropTypes.string.isRequired,
-	usageStats: PropTypes.shape( {
+	componentUsageStats: PropTypes.shape( {
 		count: PropTypes.number
 	} ),
 	toggleHandler: PropTypes.func,
