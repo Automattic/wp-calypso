@@ -1,38 +1,38 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	connect = require( 'react-redux' ).connect,
-	pickBy = require( 'lodash/pickBy' ),
-	merge = require( 'lodash/merge' );
+import React from 'react';
+import { connect } from 'react-redux';
+import pickBy from 'lodash/pickBy';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
  */
-var Main = require( 'components/main' ),
-	Action = require( 'state/themes/actions' ),
-	ThemePreview = require( './theme-preview' ),
-	ThemesSelection = require( './themes-selection' ),
-	ThemeHelpers = require( './helpers' ),
-	actionLabels = require( './action-labels' ),
-	ThemesListSelectors = require( 'state/themes/themes-list/selectors' );
+import Main from 'components/main';
+import { signup } from 'state/themes/actions' ;
+import ThemePreview from './theme-preview';
+import ThemesSelection from './themes-selection';
+import { getSignupUrl, getDetailsUrl, getSupportUrl, isPremium, addTracking } from './helpers';
+import actionLabels from './action-labels';
+import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 
-var ThemesLoggedOut = React.createClass( {
+const ThemesLoggedOut = React.createClass( {
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			showPreview: false
-		}
+		};
 	},
 
-	togglePreview: function( theme ) {
+	togglePreview( theme ) {
 		this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
 	},
 
-	getButtonOptions: function() {
+	getButtonOptions() {
 		const buttonOptions = {
 			signup: {
-				getUrl: theme => ThemeHelpers.getSignupUrl( theme ),
+				getUrl: theme => getSignupUrl( theme ),
 			},
 			preview: {
 				action: theme => this.togglePreview( theme ),
@@ -42,12 +42,12 @@ var ThemesLoggedOut = React.createClass( {
 				separator: true
 			},
 			details: {
-				getUrl: theme => ThemeHelpers.getDetailsUrl( theme ),
+				getUrl: theme => getDetailsUrl( theme ),
 			},
 			support: {
-				getUrl: theme => ThemeHelpers.getSupportUrl( theme ),
+				getUrl: theme => getSupportUrl( theme ),
 				// Free themes don't have support docs.
-				hideForTheme: theme => ! ThemeHelpers.isPremium( theme )
+				hideForTheme: theme => ! isPremium( theme )
 			},
 		};
 		return merge( {}, buttonOptions, actionLabels );
@@ -56,12 +56,12 @@ var ThemesLoggedOut = React.createClass( {
 	onPreviewButtonClick( theme ) {
 		this.setState( { showPreview: false },
 			() => {
-				this.props.dispatch( Action.signup( theme ) );
+				this.props.dispatch( signup( theme ) );
 			} );
 	},
 
-	render: function() {
-		var buttonOptions = this.getButtonOptions();
+	render() {
+		const buttonOptions = this.getButtonOptions();
 
 		return (
 			<Main className="themes">
@@ -84,7 +84,7 @@ var ThemesLoggedOut = React.createClass( {
 					} }
 					getOptions={ function( theme ) {
 						return pickBy(
-							ThemeHelpers.addTracking( buttonOptions ),
+							addTracking( buttonOptions ),
 							option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
 						); } }
 					trackScrollPage={ this.props.trackScrollPage }
@@ -98,7 +98,7 @@ var ThemesLoggedOut = React.createClass( {
 
 export default connect(
 	state => ( {
-		queryParams: ThemesListSelectors.getQueryParams( state ),
-		themesList: ThemesListSelectors.getThemesList( state )
+		queryParams: getQueryParams( state ),
+		themesList: getThemesList( state )
 	} )
 )( ThemesLoggedOut );
