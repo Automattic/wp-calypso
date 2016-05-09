@@ -8,7 +8,7 @@ import reject from 'lodash/reject';
 /**
  * Internal dependencies
  */
-import { abtest, getABTestVariation } from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import config from 'config';
 import { isOutsideCalypso } from 'lib/url';
 import plansPaths from 'my-sites/plans/paths';
@@ -236,10 +236,6 @@ function filterFlowName( flowName ) {
 
 	if ( includes( defaultFlows, flowName ) && abtest( 'domainsWithPlansOnly' ) === 'plansOnly' ) {
 		return 'domains-with-premium';
-	}
-
-	if ( includes( defaultFlows, flowName ) && 'notTested' === getABTestVariation( 'freeTrialsInSignup' ) && 'triforce' === abtest( 'triforce' ) ) {
-		return 'layout';
 	}
 
 	return flowName;
