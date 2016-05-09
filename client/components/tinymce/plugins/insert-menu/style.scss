@@ -5,10 +5,9 @@
 	.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu:focus {
 		border-color: lighten( $gray, 20%);
 	}
-	
+
 	.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu {
-		margin: 4px 2px;
-		border-right: 1px solid lighten( $gray, 30% );
+		margin: 4px;
 	}
 }
 
@@ -46,13 +45,13 @@
 	padding: 9px 16px;
 	margin: none;
 	border: none;
-	
+
 	&:hover {
-		
+
 		.wpcom-insert-menu__menu-label {
 			color: $blue-medium;
 		}
-		
+
 		.wpcom-insert-menu__menu-icon {
 			fill: $blue-medium;
 		}
