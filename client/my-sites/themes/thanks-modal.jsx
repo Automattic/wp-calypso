@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-no-bind */
+
 /**
  * External dependencies
  */
@@ -37,12 +39,16 @@ var ThanksModal = React.createClass( {
 	renderWpcomInfo: function() {
 		const features = this.translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
 			components: {
-				a: <a href={ Helpers.getDetailsUrl( this.props.currentTheme, this.props.site ) } target="_blank" />
+				a: <a href={ Helpers.getDetailsUrl( this.props.currentTheme, this.props.site ) }
+					target="_blank"
+					onClick={ this.trackClick.bind( null, 'features' ) }/>
 			}
 		} );
 		const customize = this.translate( '{{a}}Customize{{/a}} this design.', {
 			components: {
-				a: <a href={ Helpers.getCustomizeUrl( this.props.currentTheme, this.props.site ) } target="_blank" />
+				a: <a href={ Helpers.getCustomizeUrl( this.props.currentTheme, this.props.site ) }
+					target="_blank"
+					onClick={ this.trackClick.bind( null, 'customize' ) }/>
 			}
 		} );
 		return (
@@ -53,7 +59,9 @@ var ThanksModal = React.createClass( {
 			<li>
 				{ this.translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
 					components: {
-						a: <a href={ Helpers.getForumUrl( this.props.currentTheme ) } target="_blank" />
+						a: <a href={ Helpers.getForumUrl( this.props.currentTheme ) }
+							target="_blank"
+							onClick={ this.trackClick.bind( null, 'support' ) }/>
 					}
 				} ) }
 			</li>
@@ -67,7 +75,9 @@ var ThanksModal = React.createClass( {
 				<li>
 					{ this.translate( 'Learn more about this {{a}}awesome theme{{/a}}.', {
 						components: {
-							a: <a href={ themeUri } target="_blank" />
+							a: <a href={ themeUri }
+								target="_blank"
+								onClick={ this.trackClick.bind( null, 'org theme' ) }/>
 						}
 					} ) }
 				</li>
@@ -81,7 +91,9 @@ var ThanksModal = React.createClass( {
 				<li>
 					{ this.translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
 						components: {
-							a: <a href={ authorUri } target="_blank" />
+							a: <a href={ authorUri }
+								target="_blank"
+								onClick={ this.trackClick.bind( null, 'org author' ) }/>
 						}
 					} ) }
 				</li>
@@ -94,7 +106,9 @@ var ThanksModal = React.createClass( {
 			<li>
 				{ this.translate( 'If you need support, visit the WordPress.org {{a}}Themes forum{{/a}}.', {
 					components: {
-						a: <a href="https://wordpress.org/support/forum/themes-and-templates" target="_blank" />
+						a: <a href="https://wordpress.org/support/forum/themes-and-templates"
+							target="_blank"
+							onClick={ this.trackClick.bind( null, 'org forum' ) }/>
 					}
 				} ) }
 			</li>
