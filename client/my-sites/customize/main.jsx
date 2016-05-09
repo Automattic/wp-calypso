@@ -34,6 +34,7 @@ var Customize = React.createClass( {
 		prevPath: React.PropTypes.string,
 		query: React.PropTypes.object,
 		themeActivated: React.PropTypes.func.isRequired,
+		panel: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
@@ -196,16 +197,27 @@ var Customize = React.createClass( {
 	},
 
 	buildCustomizerQuery: function() {
-		var protocol = window.location.protocol,
-			host = window.location.host,
-			query = cloneDeep( this.props.query ),
-			site = this.getSite();
+		const { protocol, host } = window.location;
+		const query = cloneDeep( this.props.query );
+		const site = this.getSite();
+		const { panel } = this.props;
 
 		query.return = protocol + '//' + host + this.getPreviousPath();
 		query.calypso = true;
 		query.calypsoOrigin = protocol + '//' + host;
 		if ( site.options && site.options.frame_nonce ) {
 			query['frame-nonce'] = site.options.frame_nonce;
+		}
+
+		// autofocus panels
+		const panels = {
+			widgets: { panel: 'widgets' },
+			fonts: { section: 'jetpack_fonts' },
+			'custom-css': { section: 'jetpack_custom_css' },
+		};
+
+		if ( panels.hasOwnProperty( panel ) ) {
+			query.autofocus = panels[ panel ];
 		}
 
 		return Qs.stringify( query );
