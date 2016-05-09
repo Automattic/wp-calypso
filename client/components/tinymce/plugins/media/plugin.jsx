@@ -96,10 +96,6 @@ function mediaButton( editor ) {
 			return;
 		}
 
-		if ( ! config.isEnabled( 'post-editor/live-image-updates' ) ) {
-			return;
-		}
-
 		// Create rendering context for drop zone
 		if ( ! nodes.dropzone ) {
 			nodes.dropzone = document.createElement( 'div' );
@@ -137,7 +133,7 @@ function mediaButton( editor ) {
 			transients = 0,
 			isVisualEditMode, content, images;
 
-		if ( ! selectedSite || ! config.isEnabled( 'post-editor/live-image-updates' ) ) {
+		if ( ! selectedSite ) {
 			return;
 		}
 

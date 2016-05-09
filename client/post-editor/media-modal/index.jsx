@@ -23,7 +23,6 @@ var MediaLibrary = require( 'my-sites/media-library' ),
 	MediaActions = require( 'lib/media/actions' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	Dialog = require( 'components/dialog' ),
-	config = require( 'config' ),
 	markup = require( './markup' ),
 	accept = require( 'lib/accept' ),
 	ModalViews = require( './constants' ).Views;
@@ -87,13 +86,7 @@ module.exports = React.createClass( {
 
 	isDisabled: function() {
 		return some( this.props.mediaLibrarySelectedItems, function( item ) {
-			var mimePrefix;
-
-			if ( ! config.isEnabled( 'post-editor/live-image-updates' ) && item.transient ) {
-				return true;
-			}
-
-			mimePrefix = MediaUtils.getMimePrefix( item );
+			var mimePrefix = MediaUtils.getMimePrefix( item );
 			return item.transient && ( mimePrefix !== 'image' || ModalViews.GALLERY === this.state.activeView );
 		}.bind( this ) );
 	},
