@@ -14,7 +14,15 @@ var ThanksModal = React.createClass( {
 	trackClick: Helpers.trackClick.bind( null, 'current theme' ),
 
 	propTypes: {
-		clearActivated: React.PropTypes.func.isRequired
+		clearActivated: React.PropTypes.func.isRequired,
+		// First link to show for wpcom themes
+		topLink: React.PropTypes.oneOf( [ 'features', 'customize' ] ),
+	},
+
+	getDefaultProps: function() {
+		return {
+			topLink: 'features',
+		};
 	},
 
 	onCloseModal: function() {
@@ -33,14 +41,20 @@ var ThanksModal = React.createClass( {
 	},
 
 	renderWpcomInfo: function() {
+		const features = this.translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
+			components: {
+				a: <a href={ Helpers.getDetailsUrl( this.props.currentTheme, this.props.site ) } target="_blank" />
+			}
+		} );
+		const customize = this.translate( '{{a}}Customize{{/a}} this design.', {
+			components: {
+				a: <a href={ Helpers.getCustomizeUrl( this.props.currentTheme, this.props.site ) } target="_blank" />
+			}
+		} );
 		return (
 			<ul>
 				<li>
-					{ this.translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
-						components: {
-							a: <a href={ Helpers.getDetailsUrl( this.props.currentTheme, this.props.site ) } target="_blank" />
-						}
-					} ) }
+					{ this.props.topLink === 'features' ? features : customize }
 				</li>
 			<li>
 				{ this.translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {

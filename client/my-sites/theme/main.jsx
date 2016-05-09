@@ -227,6 +227,7 @@ const ThemeSheet = React.createClass( {
 				<ActivatingTheme siteId={ siteID }>
 					<ThanksModal
 						site={ this.props.selectedSite }
+						topLink={ 'customize' }
 						clearActivated={ bindActionCreators( clearActivated, this.props.dispatch ) }/>
 				</ActivatingTheme>
 				<div className="themes__sheet-columns">
