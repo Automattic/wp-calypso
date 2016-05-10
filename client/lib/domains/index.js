@@ -147,7 +147,7 @@ function isRegisteredDomain( domain ) {
 }
 
 function getRegisteredDomains( domains ) {
-	return domains.filter( isRegisteredDomain )
+	return domains.filter( isRegisteredDomain );
 }
 
 function getMappedDomains( domains ) {
