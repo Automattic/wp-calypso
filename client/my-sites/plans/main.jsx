@@ -10,8 +10,9 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 import { fetchSitePlans } from 'state/sites/plans/actions';
-import { getCurrentPlan } from 'lib/plans';
 import { getPlansBySite } from 'state/sites/plans/selectors';
+import { getCurrentPlan } from 'lib/plans';
+import { getPlans } from 'state/plans/selectors';
 import Gridicon from 'components/gridicon';
 import { isJpphpBundle } from 'lib/products-values';
 import Main from 'components/main';
@@ -24,15 +25,16 @@ import { shouldFetchSitePlans } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
+import QueryPlans from 'components/data/query-plans';
 
 const Plans = React.createClass( {
-	mixins: [ observe( 'sites', 'plans' ) ],
+	mixins: [ observe( 'sites' ) ],
 
 	propTypes: {
 		cart: React.PropTypes.object.isRequired,
 		context: React.PropTypes.object.isRequired,
 		destinationType: React.PropTypes.string,
-		plans: React.PropTypes.object.isRequired,
+		plans: React.PropTypes.array.isRequired,
 		fetchSitePlans: React.PropTypes.func.isRequired,
 		sites: React.PropTypes.object.isRequired,
 		sitePlans: React.PropTypes.object.isRequired,
@@ -74,7 +76,7 @@ const Plans = React.createClass( {
 			compareString = this.translate( 'Compare Options' );
 		}
 
-		if ( this.props.plans.get().length <= 0 ) {
+		if ( this.props.plans.length <= 0 ) {
 			return '';
 		}
 
@@ -140,9 +142,11 @@ const Plans = React.createClass( {
 							cart={ this.props.cart }
 							selectedSite={ selectedSite } />
 
+						<QueryPlans />
+
 						<PlanList
 							site={ selectedSite }
-							plans={ this.props.plans.get() }
+							plans={ this.props.plans }
 							sitePlans={ this.props.sitePlans }
 							onOpen={ this.openPlan }
 							cart={ this.props.cart }
@@ -159,10 +163,12 @@ const Plans = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
+			plans: getPlans( state ),
 			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() )
 		};
 	},
-	( dispatch ) => {
+
+	dispatch => {
 		return {
 			fetchSitePlans( sitePlans, site ) {
 				if ( shouldFetchSitePlans( sitePlans, site ) ) {
