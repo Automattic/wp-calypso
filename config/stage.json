@@ -47,6 +47,7 @@
 		"manage/sharing": true,
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/delete-site": true,
+		"manage/seo": true,
 		"manage/stats": true,
 		"manage/themes": true,
 		"manage/themes-jetpack": true,

@@ -101,6 +101,16 @@
 			}
 		}
 	}
+
+	.seo-form .form-text-input-with-affixes__prefix {
+		min-width: 60px;
+		text-align: center;
+	}
+
+	.seo-sitemap {
+		word-wrap: break-word;
+		word-break: break-word;
+	}
 }
 
 .writing-settings,
@@ -213,7 +223,6 @@
 	.jp-relatedposts-post .jp-relatedposts-post-context {
 		opacity: .6;
 	}
-
 }
 
 .jetpack-protect__deactivate,
