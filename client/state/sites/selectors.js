@@ -102,3 +102,24 @@ export function getSiteSlug( state, siteId ) {
 export function isRequestingSites( state ) {
 	return !! state.sites.fetchingItems.all;
 }
+
+/**
+ * Returns true if the current user has the specified capability for the site,
+ * false if the user does not have the capability, or null if the capability
+ * cannot be determined (if the site is not currently known).
+ *
+ * @see https://codex.wordpress.org/Function_Reference/current_user_can
+ *
+ * @param  {Object}   state      Global state tree
+ * @param  {Number}   siteId     Site ID
+ * @param  {String}   capability Capability label
+ * @return {?Boolean}            Whether current user has capability
+ */
+export function isCurrentUserCapableForSite( state, siteId, capability ) {
+	const site = getSite( state, siteId );
+	if ( ! site ) {
+		return null;
+	}
+
+	return site.capabilities[ capability ];
+}
