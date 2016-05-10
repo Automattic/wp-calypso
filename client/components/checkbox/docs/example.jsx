@@ -37,8 +37,12 @@ var Checkboxes = React.createClass( {
 	renderButtons: function() {
 		return (
 			<Card>
-				<div><Checkbox /><span>Checkbox</span></div>
-				<div><Checkbox disabled /><span>disabled Checkbox</span></div>
+				<FormLabel>
+					<Checkbox /><span>Checkbox</span>
+				</FormLabel>
+				<FormLabel>
+					<Checkbox disabled /><span>disabled Checkbox</span>
+				</FormLabel>
 			</Card>
 		);
 	}
