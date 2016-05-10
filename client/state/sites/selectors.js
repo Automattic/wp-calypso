@@ -102,3 +102,20 @@ export function getSiteSlug( state, siteId ) {
 export function isRequestingSites( state ) {
 	return !! state.sites.fetchingItems.all;
 }
+
+/**
+ * Returns true if an url is already in the current site list
+ * @param {Object}	state Global state tree
+ * @return {Boolean}
+ */
+export function isUrlInSites( state, url ) {
+	for ( let siteId in state.sites.items ) {
+		const site = state.sites.items[ siteId ];
+		const siteUrlSansProtocol = site.URL.replace( /^https?:\/\//, '' );
+		const urlSansProtocol = url.replace( /^https?:\/\//, '' );
+		if ( siteUrlSansProtocol === urlSansProtocol ) {
+			return true;
+		}
+	}
+	return false;
+}

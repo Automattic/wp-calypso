@@ -16,7 +16,7 @@ export default React.createClass( {
 		siteUrl: PropTypes.string
 	},
 
-	getNoticeValues() {
+	getNoticeValues( url ) {
 		let noticeValues = {
 			icon: 'trash',
 			status: 'is-warning',
@@ -75,6 +75,16 @@ export default React.createClass( {
 			noticeValues.text = this.translate( 'This site is already connected!' );
 			return noticeValues;
 		}
+		if ( this.props.noticeType === 'alreadyOwned' ) {
+			noticeValues.status = 'is-success';
+			noticeValues.icon = 'status';
+			noticeValues.text = this.translate( 'You already have connected {{a}}this site!{{/a}}', {
+				components: {
+					a: <a href={ '/stats/day/' + url } />
+				}
+			} );
+			return noticeValues;
+		}
 		if ( this.props.noticeType === 'wordpress.com' ) {
 			noticeValues.text = this.translate( 'I think that\'s us ¯\\_(ツ)_/¯' );
 			noticeValues.status = 'is-warning';
@@ -97,7 +107,8 @@ export default React.createClass( {
 	},
 
 	render() {
-		const values = this.getNoticeValues();
+		const urlSlug = this.props.url.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+		const values = this.getNoticeValues( urlSlug );
 		if ( values ) {
 			return (
 				<div className="jetpack-connect__notices-container">

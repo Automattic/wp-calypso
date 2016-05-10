@@ -56,9 +56,25 @@ export default {
 		};
 	},
 
-	checkUrl( url ) {
+	checkUrl( url, isUrlOnSites ) {
 		return ( dispatch ) => {
 			if ( _fetching[ url ] ) {
+				return;
+			}
+
+			if ( isUrlOnSites ) {
+				dispatch( {
+					type: JETPACK_CONNECT_CHECK_URL,
+					url: url,
+				} );
+				setTimeout( () => {
+					dispatch( {
+						type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
+						url: url,
+						data: { exists: true, isWordPress: true, hasJetpack: true, isJetpackActive: true, isJetpackConnected: true, isWordPressDotCom: false, userOwnsSite: true },
+						error: null
+					} );
+				} );
 				return;
 			}
 			_fetching[ url ] = true;
