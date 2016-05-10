@@ -18,10 +18,11 @@ export const postListDifferentPageSeriesKey = 'sync-record-5c73482c2934a7f406019
  * Request Parameters
  */
 
+export const postListSiteId = 'bobinprogress.wordpress.com';
 export const postListParams = {
 	apiVersion: '1.1',
 	method: 'GET',
-	path: '/sites/bobinprogress.wordpress.com/posts',
+	path: `/sites/${ postListSiteId }/posts`,
 	query: 'status=publish%2Cprivate&order_by=date&order=DESC&author=6617482&type=post&site_visibility=visible&meta=counts',
 };
 
@@ -29,7 +30,7 @@ export const postListParams = {
 export const postListDifferentOrderParams = {
 	apiVersion: '1.1',
 	method: 'GET',
-	path: '/sites/bobinprogress.wordpress.com/posts',
+	path: `/sites/${ postListSiteId }/posts`,
 	query: 'order_by=date&order=DESC&author=6617482&type=post&site_visibility=visible&meta=counts&status=publish%2Cprivate',
 };
 
@@ -37,7 +38,7 @@ export const postListDifferentOrderParams = {
 export const postListNextPageParams = {
 	apiVersion: '1.1',
 	method: 'GET',
-	path: '/sites/bobinprogress.wordpress.com/posts',
+	path: `/sites/${ postListSiteId }/posts`,
 	query: 'status=publish%2Cprivate&order_by=date&order=DESC&author=6617482&type=post&site_visibility=visible&meta=counts&page_handle=2014-11-24T13%3A39%3A39-08%3A00%26id=1307',
 };
 

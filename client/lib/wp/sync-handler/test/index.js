@@ -4,6 +4,7 @@
 import defer from 'lodash/defer';
 import { expect } from 'chai';
 import { spy } from 'sinon';
+import querystring from 'querystring';
 
 /**
  * Internal dependencies
@@ -13,8 +14,9 @@ import * as testData from './data';
 import localforageMock from './mock/localforage';
 import { RECORDS_LIST_KEY } from '../constants';
 import useMockery from 'test/helpers/use-mockery';
+import wpcomUndocumented from 'lib/wpcom-undocumented';
 
-let wpcom, SyncHandler, hasPaginationChanged, responseData, cacheIndex;
+let wpcom, SyncHandler, hasPaginationChanged, syncOptOut, responseData, cacheIndex;
 
 const setLocalData = data => localforageMock.setLocalData( data );
 
@@ -27,7 +29,7 @@ describe( 'sync-handler', () => {
 			callback( null, responseData[ key ] );
 			return responseData[ key ];
 		};
-		( { SyncHandler, hasPaginationChanged } = require( '../' ) );
+		( { SyncHandler, hasPaginationChanged, syncOptOut } = require( '../' ) );
 		wpcom = new SyncHandler( handlerMock );
 	} );
 
@@ -193,6 +195,36 @@ describe( 'sync-handler', () => {
 			const { postListResponseBody } = testData;
 			const result = hasPaginationChanged( postListResponseBody, null );
 			expect( result ).to.equal( false );
+		} );
+	} );
+
+	describe( 'syncOptOut', () => {
+		let wpcomOptOut;
+		before( () => {
+			wpcomOptOut = syncOptOut( wpcomUndocumented( wpcom ) );
+		} );
+
+		it( 'should call callback with network response even when local response exists', ( done ) => {
+			const {
+				postListKey,
+				postListSiteId,
+				postListParams,
+				postListNextPageLocalRecord,
+				postListResponseBody
+			} = testData;
+			const callback = spy();
+			setLocalData( {
+				[ postListKey ]: postListNextPageLocalRecord
+			} );
+			responseData[ postListKey ] = postListResponseBody;
+
+			wpcomOptOut.skipLocalSyncResult().site( postListSiteId ).postsList( querystring.parse( postListParams.query ), callback );
+
+			defer( () => {
+				expect( callback ).to.have.been.calledOnce;
+				expect( callback ).to.have.been.calledWith( null, postListResponseBody );
+				done();
+			} );
 		} );
 	} );
 } );
