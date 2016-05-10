@@ -62,7 +62,6 @@
 		"perfmon": true,
 		"persist-redux": true,
 		"post-editor/author-selector": true,
-		"post-editor/live-image-updates": true,
 		"press-this": true,
 		"reader": true,
 		"reader/full-errors": false,
