@@ -8,7 +8,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Helper from './helpers';
+import { getPreviewUrl, trackClick } from './helpers';
 import ThemesSearchCard from './themes-search-card';
 import ThemesData from 'components/data/themes-list-fetcher';
 import ThemesList from 'components/themes-list';
@@ -70,12 +70,12 @@ const ThemesSelection = React.createClass( {
 		const siteId = this.props.siteId ? `/${this.props.siteId}` : '';
 		const url = `/design/type/${tier}${siteId}`;
 		this.setState( { tier } );
-		Helper.trackClick( 'search bar filter', tier );
+		trackClick( 'search bar filter', tier );
 		page( buildUrl( url, this.props.search ) );
 	},
 
 	onScreenshotClick( theme, resultsRank ) {
-		Helper.trackClick( 'theme', 'screenshot' );
+		trackClick( 'theme', 'screenshot' );
 		if ( ! theme.active ) {
 			this.recordSearchResultsClick( theme, resultsRank );
 		}
@@ -105,7 +105,7 @@ const ThemesSelection = React.createClass( {
 					<ThemesList getButtonOptions={ this.props.getOptions }
 						onMoreButtonClick={ this.onMoreButtonClick }
 						onScreenshotClick={ this.onScreenshotClick }
-						getScreenshotUrl={ site ? partialRight( Helper.getPreviewUrl, site ) : null }
+						getScreenshotUrl={ site ? partialRight( getPreviewUrl, site ) : null }
 						getActionLabel={ this.props.getActionLabel } />
 				</ThemesData>
 			</div>

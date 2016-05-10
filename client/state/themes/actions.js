@@ -27,7 +27,7 @@ import {
 	THEMES_RECEIVE,
 	THEMES_RECEIVE_SERVER_ERROR,
 } from '../action-types';
-import ThemeHelpers from 'my-sites/themes/helpers';
+import { getSignupUrl, getCustomizeUrl, navigateTo } from 'my-sites/themes/helpers';
 import { getCurrentTheme } from './current-theme/selectors';
 import {
 	recordTracksEvent,
@@ -222,14 +222,14 @@ export function clearActivated() {
 
 export function signup( theme ) {
 	return dispatch => {
-		const signupUrl = ThemeHelpers.getSignupUrl( theme );
+		const signupUrl = getSignupUrl( theme );
 
 		dispatch( {
 			type: THEME_SIGNUP_WITH,
 			theme
 		} );
 
-		// `ThemeHelpers.navigateTo` uses `page()` here, which messes with `pushState`,
+		// `navigateTo` uses `page()` here, which messes with `pushState`,
 		// which we don't want here, since we're navigating away from Calypso.
 		window.location = signupUrl;
 	};
@@ -237,14 +237,14 @@ export function signup( theme ) {
 
 export function customize( theme, site ) {
 	return dispatch => {
-		const customizeUrl = ThemeHelpers.getCustomizeUrl( theme, site );
+		const customizeUrl = getCustomizeUrl( theme, site );
 
 		dispatch( {
 			type: THEME_CUSTOMIZE,
 			site: site.id
 		} );
 
-		ThemeHelpers.navigateTo( customizeUrl, site.jetpack );
+		navigateTo( customizeUrl, site.jetpack );
 	};
 }
 
