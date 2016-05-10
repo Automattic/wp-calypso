@@ -3,8 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+
 /**
  * Internal dependencies
  */
@@ -16,18 +15,14 @@ import * as stats from 'lib/posts/stats';
 import EditorFeaturedImagePreviewContainer from './preview-container';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
-import {
-	setFeaturedImage,
-	removeFeaturedImage
-} from 'state/ui/editor/post/actions';
 
-const EditorFeaturedImage = React.createClass( {
+export default React.createClass( {
+	displayName: 'EditorFeaturedImage',
+
 	propTypes: {
 		maxWidth: React.PropTypes.number,
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
-		setFeaturedImage: React.PropTypes.func,
-		removeFeaturedImage: React.PropTypes.func,
 		selecting: React.PropTypes.bool,
 		onImageSelected: React.PropTypes.func
 	},
@@ -35,8 +30,6 @@ const EditorFeaturedImage = React.createClass( {
 	getDefaultProps() {
 		return {
 			maxWidth: 450,
-			setFeaturedImage: () => {},
-			removeFeaturedImage: () => {},
 			onImageSelected: () => {}
 		};
 	},
@@ -67,9 +60,6 @@ const EditorFeaturedImage = React.createClass( {
 			return;
 		}
 
-		this.props.setFeaturedImage( items[0].ID );
-
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
 			featured_image: items[0].ID
 		} );
@@ -135,10 +125,3 @@ const EditorFeaturedImage = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setFeaturedImage, removeFeaturedImage }, dispatch ),
-	null,
-	{ pure: false }
-)( EditorFeaturedImage );
