@@ -105,7 +105,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, defaultAuthorizeState, { autoAuthorize: true } );
 		case JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE:
 			if ( action.error ) {
-				return Object.assign( state, { autoAuthorize: false } );
+				return Object.assign( {}, state, { autoAuthorize: false } );
 			}
 		case SERIALIZE:
 		case DESERIALIZE:
@@ -125,16 +125,16 @@ export function jetpackSSO( state = {}, action ) {
 			return Object.assign( state, { isAuthorizing: true } );
 		case JETPACK_CONNECT_SSO_VALIDATION_RECEIVE:
 			if ( action.error ) {
-				return Object. assign( state, { isValidating: false, site_id: action.siteId, validationError: action.error, nonceValid: false } );
+				return Object. assign( state, { isValidating: false, validationError: action.error, nonceValid: false } );
 			}
 
-			return Object. assign( state, { isValidating: false, site_id: action.siteId, validationError: false, nonceValid: action.data.success } );
+			return Object. assign( state, { isValidating: false, validationError: false, nonceValid: action.data.success } );
 		case JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE:
 			if ( action.error ) {
-				return Object. assign( state, { isAuthorizing: false, site_id: action.siteId, authorizationError: action.error, ssoUrl: false } );
+				return Object. assign( state, { isAuthorizing: false, authorizationError: action.error, ssoUrl: false } );
 			}
 
-			return Object. assign( state, { isAuthorizing: false, site_id: action.siteId, authorizationError: false, ssoUrl: action.data.sso_url } );
+			return Object. assign( state, { isAuthorizing: false, authorizationError: false, ssoUrl: action.data.sso_url } );
 		case SERIALIZE:
 		case SERIALIZE:
 			return {};
