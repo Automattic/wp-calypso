@@ -129,7 +129,7 @@ const PlansSetup = React.createClass( {
 	renderNoJetpackPlan() {
 		return (
 			<div>
-				<h1 className="plan-setup__header">{ this.translate( 'Nothing to do here…' ) }</h1>
+				<h1 className="jetpack-plugins-setup__header">{ this.translate( 'Nothing to do here…' ) }</h1>
 			</div>
 		);
 	},
@@ -256,9 +256,9 @@ const PlansSetup = React.createClass( {
 
 	renderPlaceholder() {
 		return (
-			<div className="plan-setup">
-				<h1 className="plan-setup__header is-placeholder">{ this.translate( 'Setting up your plan' ) }</h1>
-				<p className="plan-setup__description is-placeholder">{ this.translate( 'We need to install a few plugins for you. It won\'t take long!' ) }</p>
+			<div className="jetpack-plugins-setup">
+				<h1 className="jetpack-plugins-setup__header is-placeholder">{ this.translate( 'Setting up your plan' ) }</h1>
+				<p className="jetpack-plugins-setup__description is-placeholder">{ this.translate( 'We need to install a few plugins for you. It won\'t take long!' ) }</p>
 				{ this.renderPluginsPlaceholders() }
 			</div>
 		);
@@ -286,7 +286,7 @@ const PlansSetup = React.createClass( {
 		let turnOnManage;
 		if ( site && ! site.canManage() ) {
 			turnOnManage = (
-				<Card className="plan-setup__need-manage">
+				<Card className="jetpack-plugins-setup__need-manage">
 					<p>{
 						this.translate( '{{strong}}Jetpack Manage must be enabled for us to auto-configure your %(plan)s plan.{{/strong}} This will allow WordPress.com to communicate with your site and auto-configure the features unlocked with your new plan. Or you can opt out.', {
 							args: { plan: site.plan.product_name_short },
@@ -300,9 +300,9 @@ const PlansSetup = React.createClass( {
 		}
 
 		return (
-			<div className="plan-setup">
-				<h1 className="plan-setup__header">{ this.translate( 'Setting up your %(plan)s Plan', { args: { plan: site.plan.product_name_short } } ) }</h1>
-				<p className="plan-setup__description">{ this.translate( 'We need to install a few plugins for you. It won\'t take long!' ) }</p>
+			<div className="jetpack-plugins-setup">
+				<h1 className="jetpack-plugins-setup__header">{ this.translate( 'Setting up your %(plan)s Plan', { args: { plan: site.plan.product_name_short } } ) }</h1>
+				<p className="jetpack-plugins-setup__description">{ this.translate( 'We need to install a few plugins for you. It won\'t take long!' ) }</p>
 				{ turnOnManage }
 				{ turnOnManage
 					? <FeatureExample>{ this.renderPlugins( true ) }</FeatureExample>

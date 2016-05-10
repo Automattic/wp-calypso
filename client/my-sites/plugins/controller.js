@@ -16,7 +16,7 @@ import i18n from 'lib/mixins/i18n';
 import notices from 'notices';
 import sitesFactory from 'lib/sites-list';
 import analytics from 'lib/analytics';
-import PlanSetup from './plan-setup';
+import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
