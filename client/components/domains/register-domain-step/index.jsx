@@ -274,7 +274,7 @@ const RegisterDomainStep = React.createClass( {
 		async.parallel(
 			[
 				callback => {
-					if ( ! domain.match( /.{3,}\..{2,}/ ) || domain.match( /\.wordpress\.com/i ) ) {
+					if ( ! domain.match( /.{3,}\..{2,}/ ) ) {
 						return callback();
 					}
 
@@ -496,6 +496,22 @@ const RegisterDomainStep = React.createClass( {
 			case 'not_available':
 			case 'not_available_but_mappable':
 				// unavailable domains are displayed in the search results, not as a notice
+				break;
+
+			case 'mappable_but_blacklisted_domain':
+				message = this.translate( 'Domain cannot be mapped to a WordPress.com blog because of blacklisted term.' );
+				break;
+
+			case 'mappable_but_forbidden_subdomain':
+				message = this.translate( 'Subdomains starting with \'www.\' cannot be mapped to a WordPress.com blog' );
+				break;
+
+			case 'mappable_but_mapped_domain':
+				message = this.translate( 'This domain is already mapped to a WordPress.com site.' );
+				break;
+
+			case 'mappable_but_restricted_domain':
+				message = this.translate( 'You cannot map another WordPress.com subdomain - try creating a new site or one of the custom domains below.' );
 				break;
 
 			case 'empty_query':
