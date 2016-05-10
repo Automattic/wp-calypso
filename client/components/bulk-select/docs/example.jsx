@@ -9,6 +9,7 @@ import React from 'react';
 import Card from 'components/card';
 import Checkbox from 'components/checkbox';
 import BulkSelect from 'components/bulk-select';
+import FormLabel from 'components/forms/form-label';
 
 module.exports = React.createClass( {
 	displayName: 'BulkSelects',
@@ -43,13 +44,13 @@ module.exports = React.createClass( {
 				this.forceUpdate();
 			}.bind( this );
 			return (
-				<label key={ index }>
+				<FormLabel key={ index }>
 					<Checkbox
 						onClick={ onClick }
 						checked={ element.selected }
 						readOnly />
 					{ element.title }
-				</label>
+				</FormLabel>
 			);
 		} );
 	},
