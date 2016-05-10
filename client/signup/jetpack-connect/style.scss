@@ -160,9 +160,14 @@
 	border-radius: 50%;
 }
 
-.jetpack-connect__example .site-address-container {
-	margin-top: 8px;
+.jetpack-connect__example {
+	width: 100%;
+
+	.site-address-container {
+		margin-top: 8px;
+	}
 }
+
 .jetpack-connect__site-url-input-container .site-address-container .jetpack-connect__browser-chrome-url {
 	height: 40px;
 	font-size: 12px;
