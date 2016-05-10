@@ -127,7 +127,7 @@ export function jetpackSSO( state = {}, action ) {
 		case JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE:
 			return Object. assign( state, { isAuthorizing: false, authorizationError: action.error, ssoUrl: action.ssoUrl } );
 		case SERIALIZE:
-		case SERIALIZE:
+		case DESERIALIZE:
 			return {};
 	}
 	return state;
