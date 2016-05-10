@@ -150,16 +150,14 @@ describe( 'reducer', () => {
 				{
 					type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
 					error: null,
-					data: {
-						success: true
-					}
+					success: true
 				},
 				{
 					type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
 					error: {
 						statusCode: 400
 					},
-					data: null
+					success: false
 				}
 			];
 
@@ -174,23 +172,19 @@ describe( 'reducer', () => {
 				{
 					type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
 					error: null,
-					data: {
-						success: true
-					}
+					success: true
 				},
 				{
 					type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
 					error: null,
-					data: {
-						success: false
-					}
+					success: true
 				}
 			];
 
 			actions.forEach( ( action ) => {
 				const originalAction = deepFreeze( action );
 				const state = jetpackSSO( undefined, originalAction );
-				expect( state ).to.have.property( 'nonceValid', originalAction.data.success );
+				expect( state ).to.have.property( 'nonceValid', originalAction.success );
 			} );
 		} );
 
@@ -199,16 +193,14 @@ describe( 'reducer', () => {
 				{
 					type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
 					error: null,
-					data: {
-						sso_url: 'http://website.com'
-					}
+					ssoUrl: 'http://website.com'
 				},
 				{
 					type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
 					error: {
 						statusCode: 400
 					},
-					data: null
+					ssoUrl: false
 				}
 			];
 
@@ -222,14 +214,12 @@ describe( 'reducer', () => {
 			const action = deepFreeze( {
 				type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
 				error: null,
-				data: {
-					sso_url: 'http://website.com'
-				}
+				ssoUrl: 'http://website.com'
 			} );
 
 			const state = jetpackSSO( undefined, action );
 
-			expect( state ).to.have.property( 'ssoUrl', action.data.sso_url );
+			expect( state ).to.have.property( 'ssoUrl', action.sso_url );
 		} );
 	} );
 } );
