@@ -26,7 +26,7 @@ const wpcom = wpcomUndocumented( handler );
 `sync-handler` which allows us to prune records from our local cache. There are
 two methods to invalidate records:
 
-### syncHandler#pruneStaleRecords( [lifetime] );
+#### syncHandler#pruneStaleRecords( [lifetime] );
 Prune records older than the given `lifetime` (milliseconds or [natural
 language](https://github.com/rauchg/ms.js)). By default the value of the lifetime is `2 days`.
 
@@ -42,8 +42,30 @@ syncHandler
 	} );
 ```
 
-### syncHandler.clearAll();
+#### syncHandler.clearAll();
 clearAll the whole sync-handler data.
+
+### Disabling sync handler for single request
+
+To prevent the behavior of sync handler for a single request, a `syncOptOut` function is exported by this module. Passed a wpcom instance, it returns a modified instance including a `skipLocalSyncResult` function which, when called at the beginning of a request chain, will prevent the callback from being called with a local result even if one exists.
+
+```es6
+import { SyncHandler, syncOptOut } from 'lib/wp/sync-handler';
+import wpcomUndocumented from 'lib/wpcom-undocumented';
+import wpcomXHRHandler from 'lib/wpcom-xhr-wrapper';
+
+// wrap the request handler with sync-handler
+const handler = new SyncHandler( wpcomXHRHandler );
+
+// create wpcom instance passing the wrapped handler
+let wpcom = wpcomUndocumented( handler );
+wpcom = syncOptOut( wpcom );
+
+// issue request with sync handler disabled
+wpcom.skipLocalSyncResult().sites( 2916284 ).postsList( ( err, posts ) {
+	// `posts` is guaranteed to be a network response, not local
+} );
+```
 
 ### Testing and Debug
 
