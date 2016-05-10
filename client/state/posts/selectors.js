@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import get from 'lodash/get';
 import range from 'lodash/range';
 import createSelector from 'lib/create-selector';
 import filter from 'lodash/filter';
@@ -209,4 +210,17 @@ export function getEditedPost( state, siteId, postId ) {
 	}
 
 	return merge( {}, post, edits );
+}
+
+/**
+ * Returns the assigned value for the edited post by field key.
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @param  {Number} postId Post ID
+ * @param  {String} field  Field value to retrieve
+ * @return {*}             Field value
+ */
+export function getEditedPostValue( state, siteId, postId, field ) {
+	return get( getEditedPost( state, siteId, postId ), field );
 }
