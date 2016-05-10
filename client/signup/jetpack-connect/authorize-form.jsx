@@ -29,15 +29,11 @@ import Gridicon from 'components/gridicon';
 import LocaleSuggestions from 'signup/locale-suggestions';
 
 /**
- * Constants
- */
-
-const STATS_PAGE = '/stats/insights/';
-const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + config( 'env' );
-
-/**
  * Module variables
  */
+const STATS_PAGE = '/stats/insights/';
+const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + config( 'env' );
+const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 
 /***
  * Renders a header common to both the logged in and logged out forms
@@ -61,8 +57,6 @@ const renderFormHeader = ( siteUrl, isConnected = false ) => {
 	);
 };
 
-const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
-
 const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
 
@@ -76,13 +70,11 @@ const LoggedOutForm = React.createClass( {
 	},
 
 	loginUser() {
-		const { queryObject, userData, bearerToken } = this.props.jetpackConnectAuthorize;
-		const extraFields = { jetpack_calypso_login: '1', _wp_nonce: queryObject._wp_nonce };
+		const { userData, bearerToken } = this.props.jetpackConnectAuthorize;
 		return (
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
-				extraFields={ extraFields }
 				redirectTo={ window.location.href } />
 		);
 	},
@@ -258,7 +250,7 @@ const LoggedInForm = React.createClass( {
 
 	renderFooterLinks() {
 		const { queryObject, authorizeSuccess, isAuthorizing } = this.props.jetpackConnectAuthorize;
-		const loginUrl = config( 'login_url' ) + '?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) + '&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
+		const loginUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
 		let backToWpAdminLink = (
 			<LoggedOutFormLinkItem icon={ true } href={ queryObject.redirect_after_auth }>
 				{ this.translate( 'Cancel and go back to my site' ) } <Gridicon size={ 18 } icon="external" />
@@ -378,4 +370,3 @@ export default connect(
 	},
 	dispatch => bindActionCreators( { authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )
 )( JetpackConnectAuthorizeForm );
-
