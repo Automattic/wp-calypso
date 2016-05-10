@@ -39,7 +39,7 @@ DocsExampleStats.propTypes = {
 const DocsExample = ( {
 	title,
 	url,
-	componentUsageStats,
+	componentUsageStats = {},
 	toggleHandler,
 	toggleText,
 	children
@@ -50,7 +50,7 @@ const DocsExample = ( {
 		<section className="docs-example">
 			<header className="docs-example__header">
 				<h2 className="docs-example__title">
-					<a href={ url }>{ title }</a>
+					<a className="docs-example__link" href={ url }>{ title }</a>
 				</h2>
 				{
 					toggleHandler && toggleText
