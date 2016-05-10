@@ -982,7 +982,7 @@ Undocumented.prototype.readTagPosts = function( query, fn ) {
 Undocumented.prototype.readRecommendedPosts = function( query, fn ) {
 	debug( '/recommendations/posts' );
 	query.apiVersion = '1.2';
-	this.wpcom.req.get( '/read/recommendations/warm-start', query, fn );
+	this.wpcom.req.get( '/read/recommendations/posts', query, fn );
 };
 
 Undocumented.prototype.followReaderTag = function( tag, fn ) {
