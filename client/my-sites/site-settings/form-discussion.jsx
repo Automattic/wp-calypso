@@ -15,7 +15,7 @@ var formBase = require( './form-base' ),
 	FormLegend = require( 'components/forms/form-legend' ),
 	FormTextarea = require( 'components/forms/form-textarea' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
+	Checkbox = require( 'components/checkbox' ),
 	FormSelect = require( 'components/forms/form-select' ),
 	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
 	Card = require( 'components/card' ),
@@ -86,7 +86,7 @@ module.exports = React.createClass( {
 			<FormFieldset>
 				<FormLegend>{ this.translate( 'Default article settings' ) }</FormLegend>
 				<FormLabel>
-					<FormCheckbox
+					<Checkbox
 						name="default_pingback_flag"
 						checkedLink={ this.linkState( 'default_pingback_flag' ) }
 						disabled={ this.state.fetchingSettings }
@@ -94,7 +94,7 @@ module.exports = React.createClass( {
 					<span>{ this.translate( 'Attempt to notify any blogs linked to from the article' ) }</span>
 				</FormLabel>
 				<FormLabel>
-					<FormCheckbox
+					<Checkbox
 						name="default_ping_status"
 						checkedLink={ this.linkState( 'default_ping_status' ) }
 						disabled={ this.state.fetchingSettings }
@@ -102,7 +102,7 @@ module.exports = React.createClass( {
 					<span>{ this.translate( 'Allow link notifications from other blogs (pingbacks and trackbacks)' ) }</span>
 				</FormLabel>
 				<FormLabel>
-					<FormCheckbox
+					<Checkbox
 						name="default_comment_status"
 						checkedLink={ this.linkState( 'default_comment_status' ) }
 						disabled={ this.state.fetchingSettings }
@@ -122,7 +122,7 @@ module.exports = React.createClass( {
 			<FormFieldset className="has-divider">
 				<FormLabel>{ this.translate( 'Other comment settings' ) }</FormLabel>
 				<FormLabel>
-					<FormCheckbox
+					<Checkbox
 						name="require_name_email"
 						checkedLink={ this.linkState( 'require_name_email' ) }
 						disabled={ this.state.fetchingSettings }
@@ -130,7 +130,7 @@ module.exports = React.createClass( {
 					<span>{ this.translate( 'Comment author must fill out name and e-mail' ) }</span>
 				</FormLabel>
 				<FormLabel>
-					<FormCheckbox
+					<Checkbox
 						name="comment_registration"
 						checkedLink={ this.linkState( 'comment_registration' ) }
 						disabled={ this.state.fetchingSettings }
@@ -138,7 +138,7 @@ module.exports = React.createClass( {
 					<span>{ this.translate( 'Users must be registered and logged in to comment' ) }</span>
 				</FormLabel>
 				<FormLabel>
-					<FormCheckbox
+					<Checkbox
 						name="close_comments_for_old_posts"
 						checkedLink={ this.linkState( 'close_comments_for_old_posts' ) }
 						disabled={ this.state.fetchingSettings }
@@ -165,7 +165,7 @@ module.exports = React.createClass( {
 						}</span>
 				</FormLabel>
 				<FormLabel>
-					<FormCheckbox
+					<Checkbox
 						name="thread_comments"
 						checkedLink={ this.linkState( 'thread_comments' ) }
 						disabled={ this.state.fetchingSettings }
@@ -188,7 +188,7 @@ module.exports = React.createClass( {
 						}</span>
 				</FormLabel>
 				<FormLabel>
-					<FormCheckbox
+					<Checkbox
 						name="page_comments"
 						id="page_comments"
 						checkedLink={ this.linkState( 'page_comments' ) }
@@ -261,7 +261,7 @@ module.exports = React.createClass( {
 			<FormFieldset>
 				<FormLegend>{ this.translate( 'E-mail me whenever' ) }</FormLegend>
 				<FormLabel className="short-settings">
-					<FormCheckbox
+					<Checkbox
 						name="comments_notify"
 						checkedLink={ this.linkState( 'comments_notify' ) }
 						disabled={ this.state.fetchingSettings }
@@ -269,7 +269,7 @@ module.exports = React.createClass( {
 					<span>{ this.translate( 'Anyone posts a comment' ) }</span>
 				</FormLabel>
 				<FormLabel className="short-settings">
-					<FormCheckbox
+					<Checkbox
 						name="moderation_notify"
 						checkedLink={ this.linkState( 'moderation_notify' ) }
 						disabled={ this.state.fetchingSettings }
@@ -291,7 +291,7 @@ module.exports = React.createClass( {
 
 		return (
 			<FormLabel className="short-settings">
-				<FormCheckbox
+				<Checkbox
 					name="social_notifications_like"
 					checkedLink={ this.linkState( 'social_notifications_like' ) }
 					disabled={ this.state.fetchingSettings }
@@ -309,7 +309,7 @@ module.exports = React.createClass( {
 
 		return (
 			<FormLabel className="short-settings">
-				<FormCheckbox
+				<Checkbox
 					name="social_notifications_reblog"
 					checkedLink={ this.linkState( 'social_notifications_reblog' ) }
 					disabled={ this.state.fetchingSettings }
@@ -327,7 +327,7 @@ module.exports = React.createClass( {
 
 		return (
 			<FormLabel className="short-settings">
-				<FormCheckbox
+				<Checkbox
 					name="social_notifications_subscribe"
 					checkedLink={ this.linkState( 'social_notifications_subscribe' ) }
 					disabled={ this.state.fetchingSettings }
@@ -342,7 +342,7 @@ module.exports = React.createClass( {
 			<FormFieldset>
 				<FormLegend>{ this.translate( 'Before a comment appears' ) }</FormLegend>
 				<FormLabel className="short-settings">
-					<FormCheckbox
+					<Checkbox
 						name="comment_moderation"
 						checkedLink={ this.linkState( 'comment_moderation' ) }
 						disabled={ this.state.fetchingSettings }
@@ -350,7 +350,7 @@ module.exports = React.createClass( {
 					<span>{ this.translate( 'Comment must be manually approved' ) }</span>
 				</FormLabel>
 				<FormLabel className="short-settings">
-					<FormCheckbox
+					<Checkbox
 						name="comment_whitelist"
 						checkedLink={ this.linkState( 'comment_whitelist' ) }
 						disabled={ this.state.fetchingSettings }

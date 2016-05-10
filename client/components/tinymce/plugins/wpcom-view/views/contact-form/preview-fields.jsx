@@ -6,6 +6,7 @@ import React from 'react';
 /**
  * Internal dependecies
  */
+import Checkbox from 'components/checkbox';
 import PreviewFieldset from './preview-fieldset';
 import PreviewLegend from './preview-legend';
 import PreviewRequired from './preview-required';
@@ -26,7 +27,7 @@ const textarea = ( field, index ) => (
 
 const checkbox = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
-		<label><input type="checkbox" />{ field.label }<PreviewRequired required={ field.required } /></label>
+		<label><Checkbox />{ field.label }<PreviewRequired required={ field.required } /></label>
 	</PreviewFieldset>
 );
 

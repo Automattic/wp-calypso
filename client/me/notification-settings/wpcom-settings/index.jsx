@@ -14,7 +14,7 @@ import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from '../navigation';
 import Card from 'components/card';
-import FormCheckbox from 'components/forms/form-checkbox';
+import Checkbox from 'components/checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
@@ -77,7 +77,7 @@ const WPCOMNotifications = React.createClass( {
 				<FormFieldset>
 					<FormLegend>{ this.translate( 'Suggestions' ) }</FormLegend>
 					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.marketing ) } onChange={ this.toggleSetting.bind( this, options.marketing ) }/>
+						<Checkbox checked={ this.state.settings.get( options.marketing ) } onChange={ this.toggleSetting.bind( this, options.marketing ) }/>
 						<span>{ this.translate( 'Tips for getting the most out of WordPress.com.' ) }</span>
 					</FormLabel>
 				</FormFieldset>
@@ -85,7 +85,7 @@ const WPCOMNotifications = React.createClass( {
 				<FormFieldset>
 					<FormLegend>{ this.translate( 'Research' ) }</FormLegend>
 					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.research ) } onChange={ this.toggleSetting.bind( this, options.research ) }/>
+						<Checkbox checked={ this.state.settings.get( options.research ) } onChange={ this.toggleSetting.bind( this, options.research ) }/>
 						<span>{ this.translate( 'Opportunities to participate in WordPress.com research & surveys.' ) }</span>
 					</FormLabel>
 				</FormFieldset>
@@ -93,7 +93,7 @@ const WPCOMNotifications = React.createClass( {
 				<FormFieldset>
 					<FormLegend>{ this.translate( 'Community' ) }</FormLegend>
 					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.community ) } onChange={ this.toggleSetting.bind( this, options.community ) }/>
+						<Checkbox checked={ this.state.settings.get( options.community ) } onChange={ this.toggleSetting.bind( this, options.community ) }/>
 						<span>{ this.translate( 'Information on WordPress.com courses and events (online & in-person).' ) }</span>
 					</FormLabel>
 				</FormFieldset>

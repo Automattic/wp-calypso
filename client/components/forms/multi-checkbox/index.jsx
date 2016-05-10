@@ -5,6 +5,11 @@ var React = require( 'react' ),
 	omit = require( 'lodash/omit' ),
 	debug = require( 'debug' )( 'calypso:forms:multi-checkbox' );
 
+/**
+ * Internal dependencies
+ */
+import Checkbox from 'components/checkbox';
+
 var MultiCheckbox = module.exports = React.createClass({
 	displayName: 'MultiCheckbox',
 
@@ -53,7 +58,12 @@ var MultiCheckbox = module.exports = React.createClass({
 
 			return (
 				<label key={ option.value }>
-					<input name={ this.props.name + '[]' } type="checkbox" value={ option.value } checked={ isChecked } onChange={ this.handleChange } disabled={ this.props.disabled } />
+					<Checkbox
+						name={ this.props.name + '[]' }
+						value={ option.value }
+						checked={ isChecked }
+						onChange={ this.handleChange }
+						disabled={ this.props.disabled } />
 					{ option.label }
 				</label>
 			);

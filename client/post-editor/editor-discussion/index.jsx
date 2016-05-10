@@ -8,7 +8,7 @@ const React = require( 'react' ),
  * Internal dependencies
  */
 const EditorFieldset = require( 'post-editor/editor-fieldset' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
+	Checkbox = require( 'components/checkbox' ),
 	PostActions = require( 'lib/posts/actions' ),
 	InfoPopover = require( 'components/info-popover' ),
 	stats = require( 'lib/posts/stats' );
@@ -84,7 +84,7 @@ export default React.createClass( {
 		return (
 			<EditorFieldset legend={ this.translate( 'Discussion' ) }>
 				<label>
-					<FormCheckbox
+					<Checkbox
 						name="comment_status"
 						checked={ statusToBoolean( discussion.comment_status ) }
 						disabled={ ! this.props.post }
@@ -97,7 +97,7 @@ export default React.createClass( {
 					</span>
 				</label>
 				<label>
-					<FormCheckbox
+					<Checkbox
 						name="ping_status"
 						checked={ statusToBoolean( discussion.ping_status ) }
 						disabled={ ! this.props.post }

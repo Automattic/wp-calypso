@@ -24,7 +24,7 @@ import config from 'config';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
-import FormCheckbox from 'components/forms/form-checkbox';
+import Checkbox from 'components/checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
@@ -117,7 +117,7 @@ const Account = React.createClass( {
 				<FormFieldset>
 					<FormLegend>{ this.translate( 'Community Translator' ) }</FormLegend>
 					<FormLabel>
-						<FormCheckbox
+						<Checkbox
 							checkedLink={ this.valueLink( 'enable_translator' ) }
 							disabled={ this.getDisabledState() }
 							id="enable_translator"
@@ -264,7 +264,7 @@ const Account = React.createClass( {
 			<FormFieldset>
 				<FormLegend>{ this.translate( 'Holiday Snow' ) }</FormLegend>
 				<FormLabel>
-					<FormCheckbox
+					<Checkbox
 						checkedLink={ this.valueLink( 'holidaysnow' ) }
 						disabled={ this.getDisabledState() }
 						id="holidaysnow"

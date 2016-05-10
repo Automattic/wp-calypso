@@ -8,6 +8,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Count from 'components/count';
+import Checkbox from 'components/checkbox';
 import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
@@ -47,7 +48,10 @@ export default React.createClass( {
 		return (
 			<span className="bulk-select" onClick={ this.handleToggleAll }>
 				<span className="bulk-select__container">
-					<input type="checkbox" className={ inputClasses } checked={ isChecked } readOnly />
+					<Checkbox
+						className={ inputClasses }
+						checked={ isChecked }
+						readOnly />
 					<Count count={ this.props.selectedElements } />
 					{ this.getStateIcon() }
 				</span>

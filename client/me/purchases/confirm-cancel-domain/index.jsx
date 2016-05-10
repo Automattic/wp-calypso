@@ -14,7 +14,7 @@ import Card from 'components/card';
 import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
 import { connect } from 'react-redux';
 import FormButton from 'components/forms/form-button';
-import FormCheckbox from 'components/forms/form-checkbox';
+import Checkbox from 'components/checkbox';
 import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormTextarea from 'components/forms/form-textarea';
@@ -170,7 +170,7 @@ const ConfirmCancelDomain = React.createClass( {
 		return (
 			<div className="confirm-cancel-domain__confirm-container">
 				<FormLabel>
-					<FormCheckbox checked={ this.state.confirmed } onChange={ this.onConfirmationChange } />
+					<Checkbox checked={ this.state.confirmed } onChange={ this.onConfirmationChange } />
 					<span>
 						{ this.translate(
 							'I understand that canceling means that I may {{strong}}lose this domain forever{{/strong}}.', {

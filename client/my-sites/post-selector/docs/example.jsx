@@ -10,6 +10,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import PostSelector from '../';
 import observe from 'lib/mixins/data-observe';
 import sites from 'lib/sites-list';
+import Checkbox from 'components/checkbox';
 import FormLabel from 'components/forms/form-label';
 
 const PostSelectorExample = React.createClass( {
@@ -31,8 +32,7 @@ const PostSelectorExample = React.createClass( {
 				</h2>
 				<div style={ { width: 300 } }>
 					<FormLabel>
-						<input
-							type="checkbox"
+						<Checkbox
 							checked={ this.state.showTypeLabels }
 							onChange={ () => this.setState( { showTypeLabels: ! this.state.showTypeLabels } ) } />
 						Show Type Labels

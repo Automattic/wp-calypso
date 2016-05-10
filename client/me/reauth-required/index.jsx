@@ -12,7 +12,7 @@ var Dialog = require( 'components/dialog' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormTelInput = require( 'components/forms/form-tel-input' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
+	Checkbox = require( 'components/checkbox' ),
 	FormButton = require( 'components/forms/form-button' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
@@ -195,7 +195,7 @@ module.exports = React.createClass( {
 
 					<FormFieldset>
 						<FormLabel>
-							<FormCheckbox
+							<Checkbox
 								checkedLink={ this.linkState( 'remember2fa' ) }
 								id="remember2fa"
 								name="remember2fa"

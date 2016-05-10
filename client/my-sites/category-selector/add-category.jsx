@@ -18,7 +18,7 @@ var Dialog = require( 'components/dialog' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
+	Checkbox = require( 'components/checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	InfoPopover = require( 'components/info-popover' ),
 	FormLegend = require( 'components/forms/form-legend' ),
@@ -204,7 +204,7 @@ module.exports = React.createClass( {
 							</InfoPopover>
 						</FormLegend>
 						<FormLabel>
-							<FormCheckbox ref="topLevel" checked={ this.state.isTopLevel } onChange={ this.onTopLevelChange } />
+							<Checkbox ref="topLevel" checked={ this.state.isTopLevel } onChange={ this.onTopLevelChange } />
 							{ this.translate( 'Top level category', { context: 'Categories: New category being created is top level i.e. has no parent' } ) }
 						</FormLabel>
 						<CategoryList siteId={ this.props.siteId } search={ this.state.searchTerm } categoryStoreId="parent" >

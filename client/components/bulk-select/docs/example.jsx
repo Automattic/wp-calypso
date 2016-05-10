@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
+import Checkbox from 'components/checkbox';
 import BulkSelect from 'components/bulk-select';
 
 module.exports = React.createClass( {
@@ -43,7 +44,10 @@ module.exports = React.createClass( {
 			}.bind( this );
 			return (
 				<label key={ index }>
-					<input type="checkbox" onClick={ onClick } checked={ element.selected } readOnly />
+					<Checkbox
+						onClick={ onClick }
+						checked={ element.selected }
+						readOnly />
 					{ element.title }
 				</label>
 			);

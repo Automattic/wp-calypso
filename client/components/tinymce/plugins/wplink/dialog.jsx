@@ -14,7 +14,7 @@ import MediaStore from 'lib/media/store';
 import MediaUtils from 'lib/media/utils';
 import Dialog from 'components/dialog';
 import FormTextInput from 'components/forms/form-text-input';
-import FormCheckbox from 'components/forms/form-checkbox';
+import Checkbox from 'components/checkbox';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -330,7 +330,7 @@ var LinkDialog = React.createClass( {
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
-						<FormCheckbox onChange={ this.setNewWindow } checked={ this.state.newWindow } />
+						<Checkbox onChange={ this.setNewWindow } checked={ this.state.newWindow } />
 						<span>{ this.translate( 'Open link in a new window/tab' ) }</span>
 					</FormLabel>
 				</FormFieldset>

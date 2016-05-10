@@ -12,7 +12,7 @@ import protectForm from 'lib/mixins/protect-form';
 import formBase from 'me/form-base';
 import Card from 'components/card';
 import Navigation from 'me/notification-settings/navigation';
-import FormCheckbox from 'components/forms/form-checkbox';
+import Checkbox from 'components/checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
@@ -83,7 +83,7 @@ module.exports = React.createClass( {
 						<FormFieldset>
 							<FormLegend>{ this.translate( 'Jabber Subscription Delivery' ) }</FormLegend>
 							<FormLabel>
-								<FormCheckbox
+								<Checkbox
 									checkedLink={ this.valueLink( 'subscription_delivery_jabber_default' ) }
 									disabled={ this.getDisabledState() }
 									id="subscription_delivery_jabber_default"
@@ -152,7 +152,7 @@ module.exports = React.createClass( {
 						<FormFieldset>
 							<FormLegend>{ this.translate( 'Block Emails' ) }</FormLegend>
 							<FormLabel>
-								<FormCheckbox
+								<Checkbox
 									checkedLink={ this.valueLink( 'subscription_delivery_email_blocked' ) }
 									disabled={ this.getDisabledState() }
 									id="subscription_delivery_email_blocked"

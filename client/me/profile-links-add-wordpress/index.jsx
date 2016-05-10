@@ -8,6 +8,7 @@ var React = require( 'react' );
  */
 var config = require( 'config' ),
 	FormButton = require( 'components/forms/form-button' ),
+	Checkbox = require( 'components/checkbox' ),
 	Notice = require( 'components/notice' ),
 	Site = require( 'my-sites/site' ),
 	sites = require( 'lib/sites-list' )(),
@@ -138,9 +139,8 @@ module.exports = React.createClass( {
 
 				return (
 					<li key={ site.ID } className="profile-links-add-wordpress__item" onClick={ this.recordCheckboxEvent( 'Add WordPress Site' ) }>
-						<input
+						<Checkbox
 							className="profile-links-add-wordpress__checkbox"
-							type="checkbox"
 							name={ inputName }
 							onChange={ this.handleCheckedChanged }
 							checked={ checkedState } />

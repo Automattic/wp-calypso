@@ -17,6 +17,7 @@ import SearchDemo from 'components/search/docs/example';
 import Notices from 'components/notice/docs/example';
 import GlobalNotices from 'components/global-notices/docs/example';
 import Buttons from 'components/button/docs/example';
+import Checkboxes from 'components/checkbox/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
 import Gridicons from 'components/gridicon/docs/example';
 import Accordions from 'components/accordion/docs/example';
@@ -99,6 +100,7 @@ let DesignAssets = React.createClass( {
 					<BulkSelect />
 					<ButtonGroups />
 					<Buttons componentUsageStats={ componentsUsageStats.button } />
+					<Checkboxes />
 					<Cards />
 					<ClipboardButtonInput />
 					<ClipboardButtons />

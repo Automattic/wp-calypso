@@ -10,7 +10,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import { isMobile } from 'lib/viewport';
 import Popover from 'components/popover';
 import Gridicon from 'components/gridicon';
-import FormCheckbox from 'components/forms/form-checkbox';
+import Checkbox from 'components/checkbox';
 import Button from 'components/button';
 
 export default React.createClass( {
@@ -86,7 +86,7 @@ export default React.createClass( {
 					</div>
 					<div className="editor-media-modal__gallery-help-actions">
 						<label className="editor-media-modal__gallery-help-remember-dismiss">
-							<FormCheckbox checked={ this.state.rememberDismiss } onChange={ this.toggleRememberDismiss } />
+							<Checkbox checked={ this.state.rememberDismiss } onChange={ this.toggleRememberDismiss } />
 							<span onClick={ this.toggleRememberDismiss }>
 								{ this.translate( 'Don\'t show again' ) }
 							</span>

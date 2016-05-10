@@ -14,6 +14,7 @@ var CompactCard = require( 'components/card/compact' ),
 	PluginsActions = require( 'lib/plugins/actions' ),
 	PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' ),
 	PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' ),
+	Checkbox = require( 'components/checkbox' ),
 	Count = require( 'components/count' ),
 	Notice = require( 'components/notice' ),
 	PluginNotices = require( 'lib/plugins/notices' ),
@@ -265,9 +266,8 @@ module.exports = React.createClass( {
 				<CompactCard className="plugin-item">
 					{ ! this.props.isSelectable
 						? null
-						: <input className="plugin-item__checkbox"
+						: <Checkbox className="plugin-item__checkbox"
 								id={ plugin.slug }
-								type="checkbox"
 								onClick={ this.props.onClick }
 								checked={ this.props.isSelected }
 								readOnly={ true } />

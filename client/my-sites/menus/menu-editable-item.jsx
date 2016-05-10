@@ -18,6 +18,7 @@ var siteMenus = require( 'lib/menu-data' ),
 	PostList = require( './item-options/post-list' ),
 	MenuPanelBackButton = require( './menu-panel-back-button' ),
 	analytics = require( 'lib/analytics' ),
+	Checkbox = require( 'components/checkbox' ),
 	Gridicon = require( 'components/gridicon' );
 
 import { isInjectedNewPageItem } from 'lib/menu-data/menu-data';
@@ -201,7 +202,10 @@ var MenuEditableItem = React.createClass( {
 				<MenuPanelBackButton label={ itemType.label } onClick={ this.showLeftPanel } />
 				<label className="menu-item-form-label">{ this.translate( 'Link address (URL)' ) }</label>
 				<input className="menu-item-form-address" type="text" value={ this.state.item.url } onChange={ this.updateUrlValue } />
-				<input id="menu-flag-open-in-new-window" type="checkbox" defaultChecked={ this.state.item.link_target } onChange={ this.toggleUrlTarget } />
+				<Checkbox
+					id="menu-flag-open-in-new-window"
+					defaultChecked={ this.state.item.link_target }
+					onChange={ this.toggleUrlTarget } />
 				<label htmlFor="menu-flag-open-in-new-window">{ this.translate( 'Open link in new window/tab' ) }</label>
 			</div>
 		);

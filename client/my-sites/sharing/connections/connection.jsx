@@ -8,6 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'lib/analytics' ),
+	Checkbox = require( 'components/checkbox' ),
 	serviceConnections = require( './service-connections' );
 
 module.exports = React.createClass( {
@@ -131,7 +132,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( userCanUpdate ) {
-			content.push( <input key="checkbox" type="checkbox" checked={ this.isConnectionShared() } onChange={ this.toggleSitewideConnection } readOnly={ this.state.isSavingSitewide } /> );
+			content.push( <Checkbox key="checkbox" checked={ this.isConnectionShared() } onChange={ this.toggleSitewideConnection } readOnly={ this.state.isSavingSitewide } /> );
 		}
 
 		if ( userCanUpdate || this.props.connection.shared ) {
