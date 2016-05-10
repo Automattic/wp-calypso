@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import get from 'lodash/get';
+import includes from 'lodash/includes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -36,7 +37,9 @@ import { setExcerpt } from 'state/ui/editor/post/actions';
 import QueryPostTypes from 'components/data/query-post-types';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
+import config from 'config';
 import EditorDrawerFeaturedImage from './featured-image';
+import EditorDrawerTaxonomies from './taxonomies';
 
 const EditorDrawer = React.createClass( {
 	propTypes: {
@@ -89,6 +92,11 @@ const EditorDrawer = React.createClass( {
 
 	renderTaxonomies: function() {
 		var element;
+
+		if ( config.isEnabled( 'manage/custom-post-types' ) &&
+				! includes( [ 'post', 'page' ], this.props.type ) ) {
+			return <EditorDrawerTaxonomies />;
+		}
 
 		if ( ! this.currentPostTypeSupports( 'tags' ) ) {
 			return;
