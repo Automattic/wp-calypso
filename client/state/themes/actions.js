@@ -19,12 +19,9 @@ import {
 	THEME_CLEAR_ACTIVATED,
 	THEME_CUSTOMIZE,
 	THEME_DETAILS_RECEIVE,
-	THEME_DETAILS,
-	THEME_PREVIEW,
 	THEME_PURCHASE,
 	THEME_RECEIVE_CURRENT,
 	THEME_SIGNUP_WITH,
-	THEME_SUPPORT,
 	THEMES_INCREMENT_PAGE,
 	THEMES_QUERY,
 	THEMES_RECEIVE,
@@ -234,47 +231,6 @@ export function signup( theme ) {
 		// `ThemeHelpers.navigateTo` uses `page()` here, which messes with `pushState`,
 		// which we don't want here, since we're navigating away from Calypso.
 		window.location = signupUrl;
-	};
-}
-
-// Might be obsolete, since in my-sites/themes, we're using `getUrl()` for Details
-export function details( theme, site ) {
-	return dispatch => {
-		const detailsUrl = ThemeHelpers.getDetailsUrl( theme, site );
-
-		dispatch( {
-			type: THEME_DETAILS,
-			theme: theme
-		} );
-
-		ThemeHelpers.navigateTo( detailsUrl, site.jetpack );
-	};
-}
-
-// Might be obsolete, since in my-sites/themes, we're using `getUrl()` for Support
-export function support( theme, site ) {
-	return dispatch => {
-		const supportUrl = ThemeHelpers.getSupportUrl( theme, site );
-
-		dispatch( {
-			type: THEME_SUPPORT,
-			theme: theme
-		} );
-
-		ThemeHelpers.navigateTo( supportUrl, site.jetpack );
-	};
-}
-
-export function preview( theme, site ) {
-	return dispatch => {
-		const previewUrl = ThemeHelpers.getPreviewUrl( theme, site );
-
-		dispatch( {
-			type: THEME_PREVIEW,
-			site: site
-		} );
-
-		ThemeHelpers.navigateTo( previewUrl, site.jetpack );
 	};
 }
 
