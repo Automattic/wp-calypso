@@ -78,7 +78,7 @@ export default React.createClass( {
 		if ( this.props.noticeType === 'alreadyOwned' ) {
 			noticeValues.status = 'is-success';
 			noticeValues.icon = 'status';
-			noticeValues.text = this.translate( 'You already have connected {{a}}this site!{{/a}}', {
+			noticeValues.text = this.translate( '{{a}}Your site{{/a}} is already connected', {
 				components: {
 					a: <a href={ '/stats/day/' + url } />
 				}
