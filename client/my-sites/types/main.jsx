@@ -12,15 +12,21 @@ import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import PostTypeFilter from 'my-sites/post-type-filter';
 import PostTypeList from 'my-sites/post-type-list';
+import PostTypeUnsupported from './post-type-unsupported';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostType } from 'state/post-types/selectors';
+import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
 
-function Types( { query, postType } ) {
+function Types( { query, postType, postTypeSupported } ) {
 	return (
 		<Main>
 			<DocumentHead title={ get( postType, 'label' ) } />
-			<PostTypeFilter query={ query } />
-			<PostTypeList query={ query } />
+			{ false !== postTypeSupported && [
+				<PostTypeFilter key="filter" query={ query } />,
+				<PostTypeList key="list" query={ query } />
+			] }
+			{ false === postTypeSupported && (
+				<PostTypeUnsupported type={ query.type } />
+			) }
 		</Main>
 	);
 }
@@ -30,7 +36,10 @@ Types.propTypes = {
 };
 
 export default connect( ( state, ownProps ) => {
+	const siteId = getSelectedSiteId( state );
+
 	return {
-		postType: getPostType( state, getSelectedSiteId( state ), ownProps.query.type )
+		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ),
+		postType: getPostType( state, siteId, ownProps.query.type )
 	};
 } )( Types );
