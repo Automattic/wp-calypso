@@ -117,8 +117,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 export function jetpackSSO( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_SSO_QUERY_SET:
-			const queryObject = Object.assign( {}, action.queryObject );
-			return Object.assign( {}, queryObject );
+			return Object.assign( {}, action.queryObject );
 		case JETPACK_CONNECT_SSO_VALIDATE:
 			return Object.assign( state, { isValidating: true } );
 		case JETPACK_CONNECT_SSO_AUTHORIZE:
