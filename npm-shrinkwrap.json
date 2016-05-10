@@ -131,7 +131,7 @@
       "version": "0.6.0"
     },
     "aws4": {
-      "version": "1.3.2"
+      "version": "1.4.1"
     },
     "babel": {
       "version": "5.8.12",
@@ -339,7 +339,7 @@
       "version": "2.10.2"
     },
     "body-parser": {
-      "version": "1.15.0",
+      "version": "1.15.1",
       "dependencies": {
         "qs": {
           "version": "6.1.0"
@@ -386,7 +386,7 @@
       "version": "2.0.0"
     },
     "bytes": {
-      "version": "2.2.0"
+      "version": "2.3.0"
     },
     "callsite": {
       "version": "1.0.0"
@@ -406,7 +406,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000460"
+      "version": "1.0.30000466"
     },
     "caseless": {
       "version": "0.11.0"
@@ -451,10 +451,10 @@
       }
     },
     "chokidar": {
-      "version": "1.4.3"
+      "version": "1.5.0"
     },
     "chrono-node": {
-      "version": "1.2.1"
+      "version": "1.2.3"
     },
     "classnames": {
       "version": "1.1.1"
@@ -620,7 +620,7 @@
       "version": "0.5.0"
     },
     "content-type": {
-      "version": "1.0.1"
+      "version": "1.0.2"
     },
     "convert-source-map": {
       "version": "1.2.0"
@@ -837,7 +837,7 @@
       "version": "1.1.1"
     },
     "emojis-list": {
-      "version": "1.0.1"
+      "version": "2.0.1"
     },
     "encoding": {
       "version": "0.1.12"
@@ -1114,7 +1114,7 @@
       "version": "0.1.5"
     },
     "expand-range": {
-      "version": "1.8.1"
+      "version": "1.8.2"
     },
     "exports-loader": {
       "version": "0.6.2"
@@ -1176,7 +1176,7 @@
       }
     },
     "figures": {
-      "version": "1.5.0"
+      "version": "1.6.0"
     },
     "file-entry-cache": {
       "version": "1.2.4",
@@ -1664,7 +1664,7 @@
       }
     },
     "fstream": {
-      "version": "1.0.8"
+      "version": "1.0.9"
     },
     "function-bind": {
       "version": "1.1.0"
@@ -1758,7 +1758,7 @@
       "version": "1.1.7"
     },
     "graceful-fs": {
-      "version": "4.1.3"
+      "version": "4.1.4"
     },
     "graceful-readlink": {
       "version": "1.0.1"
@@ -1841,7 +1841,7 @@
       "version": "2.16.3"
     },
     "hoist-non-react-statics": {
-      "version": "1.0.5"
+      "version": "1.0.6"
     },
     "home-or-tmp": {
       "version": "1.0.0"
@@ -1892,7 +1892,7 @@
       "version": "1.4.0"
     },
     "http-proxy": {
-      "version": "1.13.2"
+      "version": "1.13.3"
     },
     "http-signature": {
       "version": "1.1.1"
@@ -2233,7 +2233,7 @@
       "version": "1.6.2"
     },
     "kind-of": {
-      "version": "3.0.2"
+      "version": "3.0.3"
     },
     "lazy-cache": {
       "version": "1.0.4"
@@ -2257,7 +2257,7 @@
       "version": "1.1.0"
     },
     "loader-utils": {
-      "version": "0.2.14",
+      "version": "0.2.15",
       "dependencies": {
         "object-assign": {
           "version": "4.1.0"
@@ -2317,6 +2317,9 @@
     "lodash._baseslice": {
       "version": "4.0.0"
     },
+    "lodash._basetostring": {
+      "version": "4.12.0"
+    },
     "lodash._bindcallback": {
       "version": "3.0.1"
     },
@@ -2372,13 +2375,13 @@
       "version": "3.1.0"
     },
     "lodash.pad": {
-      "version": "4.3.0"
+      "version": "4.4.0"
     },
     "lodash.padend": {
-      "version": "4.4.0"
+      "version": "4.5.0"
     },
     "lodash.padstart": {
-      "version": "4.4.0"
+      "version": "4.5.0"
     },
     "lodash.pick": {
       "version": "3.1.0"
@@ -2390,7 +2393,7 @@
       "version": "3.0.0"
     },
     "lodash.tostring": {
-      "version": "4.1.2"
+      "version": "4.1.3"
     },
     "lolex": {
       "version": "1.1.0"
@@ -2399,7 +2402,7 @@
       "version": "1.0.1"
     },
     "loose-envify": {
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     "loud-rejection": {
       "version": "1.3.0"
@@ -2547,7 +2550,7 @@
       "version": "0.0.5"
     },
     "nan": {
-      "version": "2.3.2"
+      "version": "2.3.3"
     },
     "ncname": {
       "version": "1.0.0"
@@ -2576,7 +2579,7 @@
       "version": "1.0.0"
     },
     "node-fetch": {
-      "version": "1.5.1"
+      "version": "1.5.2"
     },
     "node-gyp": {
       "version": "3.3.1",
@@ -2676,7 +2679,7 @@
       "version": "1.3.7"
     },
     "oauth-sign": {
-      "version": "0.8.1"
+      "version": "0.8.2"
     },
     "object-assign": {
       "version": "3.0.0"
@@ -2843,8 +2846,9 @@
       "version": "0.1.4"
     },
     "phone": {
-      "version": "1.0.4-11",
-      "resolved": "git+https://github.com/Automattic/node-phone.git#1.0.4-11"
+      "version": "1.0.4-3",
+      "from": "git+https://github.com/Automattic/node-phone.git#b00e5a94302d0bc5ae122c0001310954d43488da",
+      "resolved": "git+https://github.com/Automattic/node-phone.git#b00e5a94302d0bc5ae122c0001310954d43488da"
     },
     "photon": {
       "version": "2.0.0"
@@ -2882,10 +2886,10 @@
       "version": "0.1.6"
     },
     "process": {
-      "version": "0.11.2"
+      "version": "0.11.3"
     },
     "process-nextick-args": {
-      "version": "1.0.6"
+      "version": "1.0.7"
     },
     "progress-event": {
       "version": "1.0.0"
@@ -2942,12 +2946,7 @@
       "version": "1.0.3"
     },
     "raw-body": {
-      "version": "2.1.6",
-      "dependencies": {
-        "bytes": {
-          "version": "2.3.0"
-        }
-      }
+      "version": "2.1.6"
     },
     "react": {
       "version": "0.14.3",
@@ -3590,7 +3589,7 @@
       "version": "1.0.2"
     },
     "tinymce": {
-      "version": "4.3.8"
+      "version": "4.3.12"
     },
     "title-case": {
       "version": "1.1.2",
@@ -3655,7 +3654,7 @@
       "version": "0.0.0"
     },
     "tunnel-agent": {
-      "version": "0.4.2"
+      "version": "0.4.3"
     },
     "tv4": {
       "version": "1.2.7"
@@ -3829,7 +3828,7 @@
       "version": "0.6.5"
     },
     "which": {
-      "version": "1.2.4"
+      "version": "1.2.8"
     },
     "window-size": {
       "version": "0.1.4"
