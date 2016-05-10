@@ -57,6 +57,12 @@ const PostTypeFilter = React.createClass( {
 					} );
 					break;
 
+				case 'pending':
+					label = this.translate( 'Pending', {
+						context: 'Filter label for posts list'
+					} );
+					break;
+
 				case 'private':
 					label = this.translate( 'Private', {
 						context: 'Filter label for posts list'
