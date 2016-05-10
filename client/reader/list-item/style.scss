@@ -74,24 +74,31 @@
 		right: 0;
 		top: 16px;
 
+	.follow-button__label {
+
+		@include breakpoint( "<660px" ) {
+			display: none;
+		}
+	}
+
 	.follow-button {
 
-		.follow-button__label {
-			color: $gray;
-		}
+		font-size: 16px;
+		margin-right: 15px;
 
 		.gridicon {
-			left: 18px;
+			left: 15px;
+			top: 9px;
 		}
 
 		&:hover {
 
 			.gridicon {
-				fill: $blue-medium;
+				fill: $gray-dark;
 			}
 
 			.follow-button__label {
-				color: $blue-medium;
+				color: $gray-dark;
 			}
 		}
 	}
