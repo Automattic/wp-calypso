@@ -978,7 +978,7 @@ Undocumented.prototype.readA8C = function( query, fn ) {
 Undocumented.prototype.readFeed = function( query, fn ) {
 	var params = omit( query, 'ID' );
 	debug( '/read/feed' );
-	this.wpcom.req.get( '/read/feed/' + encodeURIComponent( query.ID ), params, fn );
+	return this.wpcom.req.get( '/read/feed/' + encodeURIComponent( query.ID ), params, fn );
 };
 
 Undocumented.prototype.discoverFeed = function( query, fn ) {
@@ -1142,7 +1142,7 @@ Undocumented.prototype.readSite = function( query, fn ) {
 	var params = omit( query, 'site' );
 	debug( '/read/sites/:site' );
 	query.apiVersion = '1.1';
-	this.wpcom.req.get( '/read/sites/' + query.site, params, fn );
+	return this.wpcom.req.get( '/read/sites/' + query.site, params, fn );
 };
 
 Undocumented.prototype.readSiteFeatured = function( siteId, query, fn ) {
