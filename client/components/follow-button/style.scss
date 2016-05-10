@@ -10,12 +10,12 @@
 	padding: 8px 16px;
 	text-align: left;
 
-	&:first-child {
-		margin-top: 5px;
+	@include breakpoint( "<480px" ) {
+		height: 38px;
 	}
 
-	&:hover,
-	&:focus {
+	&:first-child {
+		margin-top: 5px;
 	}
 
 	&:last-child {
@@ -35,6 +35,10 @@
 
 	&.has-icon {
 		padding-left: 42px;
+
+		@include breakpoint( "<480px" ) {
+			padding-left: 36px;
+		}
 	}
 
 	.gridicon__following {
@@ -66,12 +70,13 @@
 
 	&:hover {
 		color: $alert-green;
+
 		.gridicon {
 			fill: $alert-green;
 		}
 
 		&.is-following {
-
+			border-color: lighten( $gray, 10% );
 			color: lighten( $gray, 10% );
 
 			.gridicon {
