@@ -14,143 +14,139 @@ import mapValues from 'lodash/mapValues';
  * Internal dependencies
  */
 import config from 'config';
-import	route from 'lib/route';
+import route from 'lib/route';
 
-var ThemesHelpers = {
-	oldShowcaseUrl: '//wordpress.com/themes/',
+const oldShowcaseUrl = '//wordpress.com/themes/';
 
-	getSignupUrl( theme ) {
-		let url = '/start/with-theme?ref=calypshowcase&theme=' + theme.id;
+export function getSignupUrl( theme ) {
+	let url = '/start/with-theme?ref=calypshowcase&theme=' + theme.id;
 
-		if ( this.isPremium( theme ) ) {
-			url += '&premium=true';
+	if ( isPremium( theme ) ) {
+		url += '&premium=true';
+	}
+
+	return url;
+}
+
+export function getPreviewUrl( theme, site ) {
+	if ( site && site.jetpack ) {
+		return site.options.admin_url + 'customize.php?theme=' + theme.id + '&return=' + encodeURIComponent( window.location );
+	}
+
+	return `${theme.demo_uri}?demo=true&iframe=true&theme_preview=true`;
+}
+
+export function getCustomizeUrl( theme, site ) {
+	if ( ! site ) {
+		return '/customize/';
+	}
+
+	if ( site.jetpack ) {
+		return site.options.admin_url + 'customize.php?return=' + encodeURIComponent( window.location ) + ( theme ? '&theme=' + theme.id : '' );
+	}
+
+	return '/customize/' + site.slug + '?nomuse=1' + ( theme ? '&theme=' + theme.stylesheet : '' );
+}
+
+export function getDetailsUrl( theme, site ) {
+	if ( site && site.jetpack ) {
+		return site.options.admin_url + 'themes.php?theme=' + theme.id;
+	}
+
+	let baseUrl = oldShowcaseUrl + theme.id;
+	if ( config.isEnabled( 'manage/themes/details' ) ) {
+		baseUrl = `/theme/${ theme.id }/overview`;
+	}
+
+	return baseUrl + ( site ? `/${ site.slug }` : '' );
+}
+
+export function getSupportUrl( theme, site ) {
+	if ( ! site ) {
+		return oldShowcaseUrl + theme.id + '/support';
+	}
+
+	if ( site.jetpack ) {
+		return '//wordpress.org/support/theme/' + theme.id;
+	}
+
+	return oldShowcaseUrl + site.slug + '/' + theme.id + '/support';
+}
+
+export function getForumUrl( theme ) {
+	return isPremium( theme ) ? '//premium-themes.forums.wordpress.com/forum/' + theme.id : '//en.forums.wordpress.com/forum/themes';
+}
+
+export function getExternalThemesUrl( site ) {
+	if ( ! site ) {
+		return oldShowcaseUrl;
+	}
+	if ( site.jetpack ) {
+		return site.options.admin_url + 'theme-install.php';
+	}
+	return oldShowcaseUrl + site.slug;
+}
+
+export function isPremium( theme ) {
+	if ( ! theme ) {
+		return false;
+	}
+
+	if ( theme.stylesheet && startsWith( theme.stylesheet, 'premium/' ) ) {
+		return true;
+	}
+	// The /v1.1/sites/:site_id/themes/mine endpoint (which is used by the
+	// current-theme reducer, selector, and component) does not return a
+	// `stylesheet` attribute. However, it does return a `cost` field (which
+	// contains the correct price even if the user has already purchased that
+	// theme, or if they have an upgrade that includes all premium themes).
+	return !! ( theme.cost && theme.cost.number );
+}
+
+export function trackClick( componentName, eventName, verb = 'click' ) {
+	const stat = `${componentName} ${eventName} ${verb}`;
+	analytics.ga.recordEvent( 'Themes', titlecase( stat ) );
+}
+
+export function addTracking( options ) {
+	return mapValues( options, appendActionTracking );
+}
+
+function appendActionTracking( option, name ) {
+	const { action } = option;
+
+	if ( ! action ) {
+		return option;
+	}
+
+	return assign( {}, option, {
+		action: t => {
+			action( t );
+			trackClick( 'more button', name );
 		}
+	} );
+}
 
-		return url;
-	},
+export function navigateTo( url, external ) {
+	if ( external ) {
+		window.open( url );
+	} else {
+		page( url );
+	}
+}
 
-	getPreviewUrl( theme, site ) {
-		if ( site && site.jetpack ) {
-			return site.options.admin_url + 'customize.php?theme=' + theme.id + '&return=' + encodeURIComponent( window.location );
-		}
+export function getAnalyticsData( path, tier, site_id ) {
+	let basePath = route.sectionify( path );
+	let analyticsPageTitle = 'Themes';
 
-		return `${theme.demo_uri}?demo=true&iframe=true&theme_preview=true`;
-	},
+	if ( site_id ) {
+		basePath = basePath + '/:site_id';
+		analyticsPageTitle += ' > Single Site';
+	}
 
-	getCustomizeUrl: function( theme, site ) {
-		if ( ! site ) {
-			return '/customize/';
-		}
+	if ( tier ) {
+		analyticsPageTitle += ` > Type > ${titlecase( tier )}`;
+	}
 
-		if ( site.jetpack ) {
-			return site.options.admin_url + 'customize.php?return=' + encodeURIComponent( window.location ) + ( theme ? '&theme=' + theme.id : '' );
-		}
-
-		return '/customize/' + site.slug + '?nomuse=1' + ( theme ? '&theme=' + theme.stylesheet : '' );
-	},
-
-	getDetailsUrl: function( theme, site ) {
-		if ( site && site.jetpack ) {
-			return site.options.admin_url + 'themes.php?theme=' + theme.id;
-		}
-
-		let baseUrl = ThemesHelpers.oldShowcaseUrl + theme.id;
-		if ( config.isEnabled( 'manage/themes/details' ) ) {
-			baseUrl = `/theme/${ theme.id }/overview`;
-		}
-
-		return baseUrl + ( site ? `/${ site.slug }` : '' );
-	},
-
-	getSupportUrl: function( theme, site ) {
-		if ( ! site ) {
-			return ThemesHelpers.oldShowcaseUrl + theme.id + '/support';
-		}
-
-		if ( site.jetpack ) {
-			return '//wordpress.org/support/theme/' + theme.id;
-		}
-
-		return ThemesHelpers.oldShowcaseUrl + site.slug + '/' + theme.id + '/support';
-	},
-
-	getForumUrl: function( theme ) {
-		return this.isPremium( theme ) ? '//premium-themes.forums.wordpress.com/forum/' + theme.id : '//en.forums.wordpress.com/forum/themes';
-	},
-
-	getExternalThemesUrl: function( site ) {
-		if ( ! site ) {
-			return ThemesHelpers.oldShowcaseUrl;
-		}
-		if ( site.jetpack ) {
-			return site.options.admin_url + 'theme-install.php';
-		}
-		return ThemesHelpers.oldShowcaseUrl + site.slug;
-	},
-
-	isPremium: function( theme ) {
-		if ( ! theme ) {
-			return false;
-		}
-
-		if ( theme.stylesheet && startsWith( theme.stylesheet, 'premium/' ) ) {
-			return true;
-		}
-		// The /v1.1/sites/:site_id/themes/mine endpoint (which is used by the
-		// current-theme reducer, selector, and component) does not return a
-		// `stylesheet` attribute. However, it does return a `cost` field (which
-		// contains the correct price even if the user has already purchased that
-		// theme, or if they have an upgrade that includes all premium themes).
-		return !! ( theme.cost && theme.cost.number );
-	},
-
-	trackClick: function( componentName, eventName, verb = 'click' ) {
-		const stat = `${componentName} ${eventName} ${verb}`;
-		analytics.ga.recordEvent( 'Themes', titlecase( stat ) );
-	},
-
-	addTracking: function( options ) {
-		return mapValues( options, this.appendActionTracking );
-	},
-
-	appendActionTracking: function( option, name ) {
-		const { action } = option;
-
-		if ( ! action ) {
-			return option;
-		}
-
-		return assign( {}, option, {
-			action: t => {
-				action( t );
-				ThemesHelpers.trackClick( 'more button', name );
-			}
-		} );
-	},
-
-	navigateTo: function( url, external ) {
-		if ( external ) {
-			window.open( url );
-		} else {
-			page( url );
-		}
-	},
-
-	getAnalyticsData: function( path, tier, site_id ) {
-		let basePath = route.sectionify( path );
-		let analyticsPageTitle = 'Themes';
-
-		if ( site_id ) {
-			basePath = basePath + '/:site_id';
-			analyticsPageTitle += ' > Single Site';
-		}
-
-		if ( tier ) {
-			analyticsPageTitle += ` > Type > ${titlecase( tier )}`;
-		}
-
-		return { basePath, analyticsPageTitle };
-	},
-};
-
-module.exports = ThemesHelpers;
+	return { basePath, analyticsPageTitle };
+}
