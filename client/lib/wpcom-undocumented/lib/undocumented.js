@@ -1926,6 +1926,18 @@ Undocumented.prototype.registerDevice = function( registration, deviceFamily, de
 };
 
 /**
+ * Removes a Push Notification registration for the device
+ *
+ * @param {int}        deviceId       The device ID for the registration to be removed
+ * @param {Function}   fn             The callback function
+ * @returns {XMLHttpRequest}          The XHR instance
+ */
+Undocumented.prototype.unregisterDevice = function( deviceId, fn ) {
+	debug( '/devices/:device_id/delete' );
+	return this.wpcom.req.post( { path: `/devices/${ deviceId }/delete` }, fn );
+};
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;

@@ -95,8 +95,22 @@ PushNotifications.prototype.setState = function( state, callback ) {
 };
 
 PushNotifications.prototype.deleteSubscription = function() {
-	// @todo: delete the subscription
-	debug( 'Delete subscription' );
+	const deviceId = store.get( 'push-subscription-device-id' );
+	if ( ! deviceId ) {
+		debug( 'Couldn\'t unregister device due to missing id' );
+		return;
+	}
+
+	wpcom.undocumented().unregisterDevice( deviceId ).then( ( data ) => {
+		if ( data.success ) {
+			store.remove( 'push-subscription-device-id' );
+			debug( 'Deleted subscription with id', deviceId );
+		} else {
+			debug( 'Couldn\'t unregister device' );
+		}
+	} ).catch( ( error ) => {
+		debug( 'Couldn\'t unregister device', error );
+	} );
 };
 
 PushNotifications.prototype.saveSubscription = function( subscription ) {
@@ -112,10 +126,15 @@ PushNotifications.prototype.saveSubscription = function( subscription ) {
 
 	if ( oldSub !== sub || ( ! lastUpdated ) || age > DAYS_BEFORE_FORCING_REGISTRATION_REFRESH ) {
 		debug( 'Subscription needed updating.', age );
-		wpcom.undocumented().registerDevice( sub, 'chrome', 'Chrome', function() {
+		wpcom.undocumented().registerDevice( sub, 'browser', 'Browser' ).then( ( data ) => {
+			debug( 'Subscription id', data.ID );
+			store.set( 'push-subscription-device-id', data.ID );
+
 			store.set( 'push-subscription', sub );
 			store.set( 'push-subscription-updated', moment().format() );
 			debug( 'Saved subscription', subscription );
+		} ).catch( ( error ) => {
+			debug( 'Couldn\'t register device', error );
 		} );
 	} else {
 		debug( 'Subscription did not need updating.', age );
