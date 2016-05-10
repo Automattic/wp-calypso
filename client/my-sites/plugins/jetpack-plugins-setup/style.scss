@@ -2,7 +2,7 @@ $vaultpress-red: #ac0300;
 $akismet-green:  #7C992E;
 $polldaddy-red:  #D45458;
 
-.plan-setup {
+.jetpack-plugins-setup {
 	margin: 0 auto;
 	max-width: 700px;
 
@@ -19,20 +19,20 @@ $polldaddy-red:  #D45458;
 	}
 }
 
-.plan-setup__header {
+.jetpack-plugins-setup__header {
 	@extend %heading;
 	margin-bottom: .75em;
 	text-align: center;
 	color: $gray-dark;
 }
 
-.plan-setup__description {
+.jetpack-plugins-setup__description {
 	margin-bottom: 3em;
 	color: darken( $gray, 20% );
 	text-align: center;
 }
 
-.plan-setup__need-manage {
+.jetpack-plugins-setup__need-manage {
 	.button {
 		float: right;
 	}
@@ -42,13 +42,13 @@ $polldaddy-red:  #D45458;
 	}
 }
 
-.plan-setup .plugin-item__finished {
+.jetpack-plugins-setup .plugin-item__finished {
 	color: $gray;
 	font-size: 12px;
 	line-height: 1;
 	padding: 6px 0;
 }
 
-.plan-setup .plugin-item.card .notice.is-info .notice__icon {
+.jetpack-plugins-setup .plugin-item.card .notice.is-info .notice__icon {
 	display: block;
 }
