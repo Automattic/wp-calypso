@@ -20,6 +20,11 @@ import {
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_STORE_SESSION,
+	JETPACK_CONNECT_SSO_QUERY_SET,
+	JETPACK_CONNECT_SSO_VALIDATE,
+	JETPACK_CONNECT_SSO_AUTHORIZE,
+	JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
+	JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -84,7 +89,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { siteReceived: true, isAuthorizing: false } );
 		case JETPACK_CONNECT_QUERY_SET:
 			const queryObject = Object.assign( {}, action.queryObject );
-			return Object.assign( {}, defaultAuthorizeState, { queryObject: queryObject } );
+			return Object.assign( {}, defaultAuthorizeState, state, { queryObject: queryObject } );
 		case JETPACK_CONNECT_QUERY_UPDATE:
 			return Object.assign( {}, state, { queryObject: Object.assign( {}, state.queryObject, { [ action.property ]: action.value } ) } );
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
@@ -96,9 +101,42 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, autoAuthorize: true, userData: action.userData, bearerToken: action.data.bearer_token } );
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
+		case JETPACK_CONNECT_SSO_AUTHORIZE:
+			return Object.assign( {}, defaultAuthorizeState, { autoAuthorize: true } );
+		case JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE:
+			if ( action.error ) {
+				return Object.assign( {}, state, { autoAuthorize: false } );
+			}
 		case SERIALIZE:
 		case DESERIALIZE:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: false } );
+	}
+	return state;
+}
+
+export function jetpackSSO( state = {}, action ) {
+	switch ( action.type ) {
+		case JETPACK_CONNECT_SSO_QUERY_SET:
+			return Object.assign( {}, action.queryObject );
+		case JETPACK_CONNECT_SSO_VALIDATE:
+			return Object.assign( state, { isValidating: true } );
+		case JETPACK_CONNECT_SSO_AUTHORIZE:
+			return Object.assign( state, { isAuthorizing: true } );
+		case JETPACK_CONNECT_SSO_VALIDATION_RECEIVE:
+			if ( action.error ) {
+				return Object. assign( state, { isValidating: false, validationError: action.error, nonceValid: false } );
+			}
+
+			return Object. assign( state, { isValidating: false, validationError: false, nonceValid: action.data.success } );
+		case JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE:
+			if ( action.error ) {
+				return Object. assign( state, { isAuthorizing: false, authorizationError: action.error, ssoUrl: false } );
+			}
+
+			return Object. assign( state, { isAuthorizing: false, authorizationError: false, ssoUrl: action.data.sso_url } );
+		case SERIALIZE:
+		case SERIALIZE:
+			return {};
 	}
 	return state;
 }
@@ -107,4 +145,5 @@ export default combineReducers( {
 	jetpackConnectSite,
 	jetpackConnectAuthorize,
 	jetpackConnectSessions,
+	jetpackSSO,
 } );
