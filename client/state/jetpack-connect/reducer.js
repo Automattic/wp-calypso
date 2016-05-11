@@ -20,11 +20,13 @@ import {
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_STORE_SESSION,
+	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
+	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
+	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
+	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
+	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
+	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	JETPACK_CONNECT_SSO_QUERY_SET,
-	JETPACK_CONNECT_SSO_VALIDATE,
-	JETPACK_CONNECT_SSO_AUTHORIZE,
-	JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
-	JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -101,12 +103,10 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, autoAuthorize: true, userData: action.userData, bearerToken: action.data.bearer_token } );
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
-		case JETPACK_CONNECT_SSO_AUTHORIZE:
+		case JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST:
 			return Object.assign( {}, defaultAuthorizeState, { autoAuthorize: true } );
-		case JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE:
-			if ( action.error ) {
-				return Object.assign( {}, state, { autoAuthorize: false } );
-			}
+		case JETPACK_CONNECT_SSO_AUTHORIZE_ERROR:
+			return Object.assign( {}, state, { autoAuthorize: false } );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: false } );
@@ -118,14 +118,18 @@ export function jetpackSSO( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_SSO_QUERY_SET:
 			return Object.assign( {}, action.queryObject );
-		case JETPACK_CONNECT_SSO_VALIDATE:
+		case JETPACK_CONNECT_SSO_VALIDATION_REQUEST:
 			return Object.assign( state, { isValidating: true } );
-		case JETPACK_CONNECT_SSO_AUTHORIZE:
+		case JETPACK_CONNECT_SSO_VALIDATION_SUCCESS:
+			return Object. assign( state, { isValidating: false, validationError: false, nonceValid: action.success } );
+		case JETPACK_CONNECT_SSO_VALIDATION_ERROR:
+			return Object. assign( state, { isValidating: false, validationError: action.error, nonceValid: false } );
+		case JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST:
 			return Object.assign( state, { isAuthorizing: true } );
-		case JETPACK_CONNECT_SSO_VALIDATION_RECEIVE:
-			return Object. assign( state, { isValidating: false, validationError: action.error, nonceValid: action.success } );
-		case JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE:
-			return Object. assign( state, { isAuthorizing: false, authorizationError: action.error, ssoUrl: action.ssoUrl } );
+		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
+			return Object. assign( state, { isAuthorizing: false, authorizationError: false, ssoUrl: action.ssoUrl } );
+		case JETPACK_CONNECT_SSO_AUTHORIZE_ERROR:
+			return Object. assign( state, { isAuthorizing: false, authorizationError: action.error, ssoUrl: false } );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};

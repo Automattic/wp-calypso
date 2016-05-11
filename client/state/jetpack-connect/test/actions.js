@@ -8,10 +8,12 @@ import nock from 'nock';
  * Internal dependencies
  */
 import {
-	JETPACK_CONNECT_SSO_VALIDATE,
-	JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
-	JETPACK_CONNECT_SSO_AUTHORIZE,
-	JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE
+	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
+	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
+	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
+	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
+	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
+	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 } from 'state/action-types';
 
 import useFakeDom from 'test/helpers/use-fake-dom';
@@ -60,7 +62,7 @@ describe( 'actions', () => {
 				validateSSONonce( siteId, ssoNonce )( spy );
 				expect( spy ).to.have.been.calledWith( {
 					siteId: siteId,
-					type: JETPACK_CONNECT_SSO_VALIDATE
+					type: JETPACK_CONNECT_SSO_VALIDATION_REQUEST
 				} );
 			} );
 
@@ -69,9 +71,8 @@ describe( 'actions', () => {
 
 				return validateSSONonce( siteId, ssoNonce )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
-						error: false,
 						success: true,
-						type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE
+						type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS
 					} );
 				} );
 			} );
@@ -107,8 +108,7 @@ describe( 'actions', () => {
 							message: 'sso_nonce is a required parameter for this endpoint',
 							status: 400
 						},
-						success: false,
-						type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE
+						type: JETPACK_CONNECT_SSO_VALIDATION_ERROR
 					} );
 				} );
 			} );
@@ -145,7 +145,7 @@ describe( 'actions', () => {
 				authorizeSSO( siteId, ssoNonce )( spy );
 				expect( spy ).to.have.been.calledWith( {
 					siteId: siteId,
-					type: JETPACK_CONNECT_SSO_AUTHORIZE
+					type: JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST
 				} );
 			} );
 
@@ -154,9 +154,8 @@ describe( 'actions', () => {
 
 				return authorizeSSO( siteId, ssoNonce )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
-						error: false,
 						ssoUrl,
-						type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE
+						type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS
 					} );
 				} );
 			} );
@@ -192,8 +191,7 @@ describe( 'actions', () => {
 							message: 'sso_nonce is a required parameter for this endpoint',
 							status: 400
 						},
-						ssoUrl: false,
-						type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE
+						type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR
 					} );
 				} );
 			} );
