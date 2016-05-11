@@ -16,14 +16,15 @@ export const requestApproval = siteId => dispatch => {
 	} );
 
 	return wpcom.undocumented().wordAdsApprove( siteId )
-	.then( () => dispatch( {
+	.then( result => dispatch( {
 		type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
+		approved: result.approved,
 		siteId
 	} ) )
 	.catch( error => dispatch( {
 		type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 		siteId,
-		error: error
+		error: error.toString()
 	} ) );
 };
 
