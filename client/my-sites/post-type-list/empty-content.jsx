@@ -20,15 +20,11 @@ function PostTypeListEmptyContent( { siteId, translate, status, typeObject, edit
 	if ( 'draft' === status ) {
 		title = translate( 'You don\'t have any drafts.' );
 	} else if ( typeObject ) {
-		title = translate( 'You don\'t have any %s.', {
-			args: [ typeObject.label.toLocaleLowerCase() ]
-		} );
+		title = typeObject.labels.not_found;
 	}
 
 	if ( typeObject ) {
-		action = translate( 'Start a %s', {
-			args: [ typeObject.labels.singular_name ]
-		} );
+		action = typeObject.labels.add_new_item;
 	}
 
 	return (
