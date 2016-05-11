@@ -14,8 +14,12 @@ import JetpackConnect from './index';
 import jetpackConnectAuthorizeForm from './authorize-form';
 import { setSection } from 'state/ui/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import { JETPACK_CONNECT_QUERY_SET, JETPACK_CONNECT_QUERY_UPDATE } from 'state/action-types';
+import {
+	JETPACK_CONNECT_QUERY_SET,
+	JETPACK_CONNECT_QUERY_UPDATE,
+} from 'state/action-types';
 import userFactory from 'lib/user';
+import jetpackSSOForm from './sso';
 
 /**
  * Module variables
@@ -67,6 +71,25 @@ export default {
 
 		renderWithReduxStore(
 			React.createElement( jetpackConnectAuthorizeForm, {
+				path: context.path,
+				locale: context.params.lang,
+				userModule: userModule
+			} ),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
+	sso( context ) {
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		context.store.dispatch( setSection( 'jetpackConnect', {
+			hasSidebar: false
+		} ) );
+
+		userModule.fetch();
+
+		renderWithReduxStore(
+			React.createElement( jetpackSSOForm, {
 				path: context.path,
 				locale: context.params.lang,
 				userModule: userModule
