@@ -186,6 +186,20 @@ Undocumented.prototype.jetpackAuthorize = function( siteId, code, state, redirec
 	return this.wpcom.req.post( { path: endpointUrl }, params );
 };
 
+Undocumented.prototype.jetpackValidateSSONonce = function( siteId, ssoNonce, fn ) {
+	debug( '/jetpack-blogs/:site_id:/sso-validate query' );
+	const endpointUrl = '/jetpack-blogs/' + siteId + '/sso-validate';
+	const params = { sso_nonce: ssoNonce };
+	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
+};
+
+Undocumented.prototype.jetpackAuthorizeSSONonce = function( siteId, ssoNonce, fn ) {
+	debug( '/jetpack-blogs/:site_id:/sso-authorize query' );
+	const endpointUrl = '/jetpack-blogs/' + siteId + '/sso-authorize';
+	const params = { sso_nonce: ssoNonce };
+	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
+};
+
 Undocumented.prototype.invitesList = function( siteId, number, offset, fn ) {
 	debug( '/sites/:site_id:/invites query' );
 	this.wpcom.req.get( '/sites/' + siteId + '/invites', {
