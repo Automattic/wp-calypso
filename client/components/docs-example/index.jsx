@@ -14,11 +14,9 @@ const DocsExampleToggle = ( {
 	onClick,
 	text
 } ) => (
-	<span className="docs-example__toggle">
-		<Button onClick={ onClick }>
-			{ text }
-		</Button>
-	</span>
+	<Button onClick={ onClick }>
+		{ text }
+	</Button>
 );
 
 DocsExampleToggle.propTypes = {
@@ -27,9 +25,7 @@ DocsExampleToggle.propTypes = {
 };
 
 const DocsExampleStats = ( { count } ) => (
-	<div className="docs-example__stats">
-		Used in <Count count={ count } /> components.
-	</div>
+	<p>Used in <Count count={ count } /> components.</p>
 );
 
 DocsExampleStats.propTypes = {
@@ -53,9 +49,11 @@ const DocsExample = ( {
 					<a className="docs-example__link" href={ url }>{ title }</a>
 				</h2>
 				{
-					toggleHandler && toggleText
-						? <DocsExampleToggle onClick={ toggleHandler } text={ toggleText } />
-						: null
+					toggleHandler && toggleText && (
+						<span className="docs-example__toggle">
+							<DocsExampleToggle onClick={ toggleHandler } text={ toggleText } />
+						</span>
+					)
 				}
 			</header>
 			<div className="docs-example__main">
@@ -63,9 +61,11 @@ const DocsExample = ( {
 			</div>
 			<footer role="contentinfo" className="docs-example__footer">
 				{
-					! isNaN( count )
-						? <DocsExampleStats count={ count } />
-						: null
+					! isNaN( count ) && (
+						<div className="docs-example__stats">
+							<DocsExampleStats count={ count } />
+						</div>
+					)
 				}
 			</footer>
 		</section>
