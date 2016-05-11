@@ -17,7 +17,8 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
 	Notice = require( 'components/notice' ),
 	abtest = require( 'lib/abtest' ).abtest,
-	signupUtils = require( 'signup/utils' );
+	signupUtils = require( 'signup/utils' ),
+	i18n = require( 'lib/mixins/i18n' );
 
 const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 
@@ -229,7 +230,7 @@ module.exports = React.createClass( {
 	render: function() {
 		let content;
 		const backUrl = this.props.stepSectionName ?
-			signupUtils.getStepUrl( this.props.flowName, this.props.stepName ) :
+			signupUtils.getStepUrl( this.props.flowName, this.props.stepName, undefined, i18n.getLocaleSlug() ) :
 			undefined;
 
 		if ( 'mapping' === this.props.stepSectionName ) {
