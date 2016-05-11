@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,16 +11,24 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormFieldSet from 'components/forms/form-fieldset';
-import { successNotice, errorNotice, infoNotice, warningNotice, updateNotice } from 'state/notices/actions';
+import noticeMixin from 'lib/mixins/notice';
 
 const GlobalNotices = React.createClass( {
 	displayName: 'GlobalNotices',
 
+	mixins: [
+		noticeMixin( 'global-notices-example' ),
+	],
+
+	noticeOptions: {
+		id: null,
+		showDismiss: true,
+		button: null,
+		duration: null,
+	},
+
 	getInitialState() {
 		return {
-			showDismiss: true,
-			button: null,
-			duration: null,
 			status: 'success',
 		};
 	},
@@ -30,26 +37,34 @@ const GlobalNotices = React.createClass( {
 		this.setState( { status: event.target.value } );
 	},
 
+	onChangeIdOption( event ) {
+		this.noticeOptions.id = event.target.checked ? '1' : null;
+	},
+
 	onChangeActionOption( event ) {
-		this.setState( { button: event.target.checked ? 'Action' : null } );
+		this.noticeOptions.button = event.target.checked ? 'Action' : null;
 	},
 
 	onChangeDismissOption( event ) {
-		this.setState( { showDismiss: !event.target.checked } );
+		this.noticeOptions.showDismiss = !event.target.checked;
 	},
 
 	onChangeDurationOption( event ) {
-		this.setState( { duration: event.target.checked ? 5000 : null } );
+		this.noticeOptions.duration = event.target.checked ? 5000 : null;
+	},
+
+	onNoticeActionClick( noticeId ) {
+		this.infoNotice( noticeId + ' notice is clicked!' );
 	},
 
 	createNotice() {
-		let fn = this.props[ this.state.status + 'Notice' ];
+		let fn = this[ this.state.status + 'Notice' ];
 
 		if ( !fn ) {
 			fn = this.props.successNotice;
 		}
 
-		fn( 'This is a global ' + this.state.status + ' notice', this.state );
+		fn( 'This is a global ' + this.state.status + ' notice', this.noticeOptions );
 	},
 
 	render() {
@@ -77,6 +92,14 @@ const GlobalNotices = React.createClass( {
 					<FormLabel>Options</FormLabel>
 					<FormLabel>
 						<FormCheckbox
+							id="global_notices_custom_id"
+							name="global_notices_custom_id"
+							onChange={ this.onChangeIdOption }
+						/>
+						<span>Use custom ID (New notice will replace the old one that has the same ID)</span>
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox
 							id="global_notices_action_button"
 							name="global_notices_action_button"
 							onChange={ this.onChangeActionOption }
@@ -101,13 +124,10 @@ const GlobalNotices = React.createClass( {
 					</FormLabel>
 				</FormFieldSet>
 
-				<Button onClick={ this.createNotice }>Create a notice</Button>
+				<Button onClick={ this.createNotice }>Create a new notice</Button>
 			</div>
 		);
 	}
 } );
 
-export default connect(
-	null,
-	{ successNotice, errorNotice, infoNotice, warningNotice, updateNotice }
-)( GlobalNotices );
+export default GlobalNotices;

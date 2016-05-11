@@ -14,7 +14,7 @@ import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
 import { connect } from 'react-redux';
-import { removeNotice } from 'state/notices/actions';
+import { removeNotice, clickNotice } from 'state/notices/actions';
 
 const debug = debugModule( 'calypso:notices' );
 
@@ -110,7 +110,7 @@ const NoticesList = React.createClass( {
 				{ notice.button &&
 					<NoticeAction
 						href={ notice.href }
-						onClick={ notice.onClick }
+						onClick={ () => this.props.clickNotice( notice.noticeId ) }
 					>
 						{ notice.button }
 					</NoticeAction>
@@ -139,5 +139,5 @@ export default connect(
 			storeNotices: state.notices.items
 		};
 	},
-	{ removeNotice }
+	{ removeNotice, clickNotice }
 )( NoticesList );

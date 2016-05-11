@@ -32,8 +32,7 @@ var Main = require( 'components/main' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	scrollTo = require( 'lib/scroll-to' ),
 	XPostHelper = require( 'reader/xpost-helper' ),
-	updateNotice = require( 'state/notices/actions' ).updateNotice,
-	removeNotice = require( 'state/notices/actions' ).removeNotice;
+	noticeMixin = require( 'lib/mixins/notice' );
 
 const GUESSED_POST_HEIGHT = 600,
 	HEADER_OFFSET_TOP = 46;
@@ -55,6 +54,8 @@ function cardClassForPost( post ) {
 module.exports = React.createClass( {
 	displayName: 'ReaderFollowing',
 
+	mixins: [ noticeMixin( 'reader-following-stream' ) ],
+
 	propTypes: {
 		store: React.PropTypes.object.isRequired,
 		trackScrollPage: React.PropTypes.func.isRequired,
@@ -64,8 +65,6 @@ module.exports = React.createClass( {
 		onUpdatesShown: React.PropTypes.func,
 		emptyContent: React.PropTypes.object,
 		className: React.PropTypes.string,
-		updateNotice: React.PropTypes.func,
-		removeNotice: React.PropTypes.func,
 	},
 
 	contextTypes: {
@@ -109,35 +108,32 @@ module.exports = React.createClass( {
 
 		if ( prevState.updateCount !== this.state.updateCount ) {
 			if ( this.state.updateCount > 0 ) {
-				this.updateNotice( this.state.updateCount );
+				this.showNotice( this.state.updateCount );
 			} else {
-				this.removeNotice();
+				this.hideNotice();
 			}
 		}
 	},
 
-	updateNotice: function( count ) {
+	onNoticeActionClick: function( ) {
+		this.handleUpdateClick();
+	},
+
+	showNotice: function( count ) {
 		let countString = count >= 40 ? '40+' : ( '' + count );
 
-		this.context.store.dispatch(
-			updateNotice(
-				this.translate( '%s new post', '%s new posts', { args: [ countString ], count: count } ),
-				{
-					id: READER_STREAM_NOTICE_ID,
-					showDismiss: false,
-					button: this.translate( 'Update' ),
-					onClick: ( event, closeFn ) => {
-						event.preventDefault();
-						this.handleUpdateClick();
-						closeFn();
-					}
-				}
-			)
+		this.updateNotice(
+			this.translate( '%s new post', '%s new posts', { args: [ countString ], count: count } ),
+			{
+				id: READER_STREAM_NOTICE_ID,
+				showDismiss: false,
+				button: this.translate( 'Update' )
+			}
 		);
 	},
 
-	removeNotice: function() {
-		this.context.store.dispatch( removeNotice( READER_STREAM_NOTICE_ID ) );
+	hideNotice: function() {
+		this.removeNotice( READER_STREAM_NOTICE_ID );
 	},
 
 	_popstate: function() {

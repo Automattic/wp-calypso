@@ -9,10 +9,11 @@ import { expect } from 'chai';
 import {
 	NEW_NOTICE,
 	REMOVE_NOTICE,
+	CLICK_NOTICE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { items } from '../reducer';
+import { items, clicked } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
@@ -80,6 +81,26 @@ describe( 'reducer', () => {
 			];
 			const state = items( notices, { type: DESERIALIZE } );
 			expect( state ).to.eql( [] );
+		} );
+	} );
+
+	describe( '#clicked()', () => {
+		it( 'should default to null', () => {
+			const state = clicked( undefined,  {} );
+			expect( state ).to.eql( null );
+		} );
+
+		it( 'should store the notice ID of clicked action button', () => {
+			const state = clicked( null, { type: CLICK_NOTICE, noticeId: 1 } );
+			expect( state ).to.eql( 1 );
+		} );
+
+		it( 'should reset the state only when the notice is removed', () => {
+			let state = clicked( 1, { type: REMOVE_NOTICE, noticeId: 2 } );
+			expect( state ).to.eql( 1 );
+
+			state = clicked( 1, { type: REMOVE_NOTICE, noticeId: 1 });
+			expect( state ).to.eql( null );
 		} );
 	} );
 } );

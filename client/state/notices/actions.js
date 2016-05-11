@@ -9,29 +9,31 @@ import uniqueId from 'lodash/uniqueId';
 import {
 	NEW_NOTICE,
 	REMOVE_NOTICE,
-	SET_ROUTE
+	SET_ROUTE,
+	CLICK_NOTICE,
 } from 'state/action-types';
 
 export function removeNotice( noticeId ) {
 	return {
-		noticeId: noticeId,
+		noticeId,
 		type: REMOVE_NOTICE
+	};
+}
+
+export function clickNotice( noticeId ) {
+	return {
+		noticeId,
+		type: CLICK_NOTICE
 	};
 }
 
 function createNotice( status, text, options = {} ) {
 	const noticeId = options.id || uniqueId();
-	const closeFn = removeNotice.bind( noticeId );
 	const notice = {
 		noticeId,
 		icon: options.icon || null,
 		duration: parseInt( options.duration, 10 ) || null,
 		button: options.button,
-		onClick: ( event ) => {
-			if ( typeof options.onClick === 'function' ) {
-				return options.onClick( event, closeFn );
-			}
-		},
 		showDismiss: ( typeof options.showDismiss === 'boolean' ? options.showDismiss : true ),
 		isPersistent: options.isPersistent || false,
 		displayOnNextPage: options.displayOnNextPage || false,

@@ -10,6 +10,7 @@ import findIndex from 'lodash/findIndex';
 import {
 	NEW_NOTICE,
 	REMOVE_NOTICE,
+	CLICK_NOTICE,
 	SET_ROUTE,
 	SERIALIZE,
 	DESERIALIZE
@@ -47,6 +48,24 @@ export function items( state = [], action ) {
 	return state;
 }
 
+export function clicked( state = null, action ) {
+	switch ( action.type ) {
+		case CLICK_NOTICE:
+			return action.noticeId;
+		case NEW_NOTICE:
+			return ( action.notice.noticeId === state ) ? null : state;
+		case REMOVE_NOTICE:
+			return ( action.noticeId === state ) ? null : state;
+		case SERIALIZE:
+			return null;
+		case DESERIALIZE:
+			return null;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
-	items
+	items,
+	clicked,
 } );
