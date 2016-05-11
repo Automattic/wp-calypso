@@ -1,0 +1,33 @@
+{
+  "name": "i18n",
+  "version": "0.0.1",
+  "description": "i18n JavaScript library on top of Jed",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Automattic/i18n.git"
+  },
+  "author": "@automattic",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/Automattic/i18n/issues"
+  },
+  "homepage": "https://github.com/Automattic/i18n#readme",
+  "dependencies": {
+    "debug": "^2.2.0",
+    "interpolate-components": "^1.0.4",
+    "jed": "1.0.2",
+    "jstimezonedetect": "^1.0.6",
+    "lru-cache": "^4.0.1",
+    "moment-timezone": "^0.4.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "enzyme": "2.2.0",
+    "lodash.assign": "^4.0.8",
+    "mock-local-storage": "^1.0.2",
+    "react": "0.14.8",
+    "react-addons-test-utils": "0.14.8",
+    "react-dom": "0.14.8"
+  }
+}
