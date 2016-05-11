@@ -26,6 +26,7 @@ import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 import i18n from 'lib/mixins/i18n';
 import Gridicon from 'components/gridicon';
+import LocaleSuggestions from 'signup/locale-suggestions';
 
 /**
  * Constants
@@ -86,6 +87,16 @@ const LoggedOutForm = React.createClass( {
 		);
 	},
 
+	renderLocaleSuggestions() {
+		if ( ! this.props.locale ) {
+			return;
+		}
+
+		return (
+			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+		);
+	},
+
 	renderFooterLink() {
 		const loginUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
 		return (
@@ -102,6 +113,7 @@ const LoggedOutForm = React.createClass( {
 		const { site } = this.props.jetpackConnectAuthorize.queryObject;
 		return (
 			<div>
+				{ this.renderLocaleSuggestions() }
 				{ renderFormHeader( site ) }
 				<SignupForm
 					getRedirectToAfterLoginUrl={ window.location.href }
