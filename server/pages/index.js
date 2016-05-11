@@ -374,8 +374,8 @@ module.exports = function() {
 	}
 
 	if ( config.isEnabled( 'jetpack/connect' ) ) {
-		app.get( '/jetpack/connect', setUpRoute, serverRender );
-		app.get( '/jetpack/connect/authorize', setUpRoute, serverRender );
+		app.get( '/jetpack/connect/:locale?', setUpRoute, serverRender );
+		app.get( '/jetpack/connect/authorize/:locale?', setUpRoute, serverRender );
 	}
 
 	app.get( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpRoute, serverRender );
