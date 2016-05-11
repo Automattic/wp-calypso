@@ -163,7 +163,6 @@ export function getScrolledRectFromBase( targetSlug, baseElement ) {
 }
 
 export function getOverlayStyle( { rect } ) {
-	const clientWidth = document.documentElement.clientWidth;
 	const clientHeight = document.documentElement.clientHeight;
 	const correctedRect = {
 		top: rect.top,
@@ -177,27 +176,27 @@ export function getOverlayStyle( { rect } ) {
 	return {
 		top: {
 			top: '0px',
-			left: '0px',
 			right: '0px',
 			height: correctedRect.top + 'px',
+			left: '0px',
 		},
 		left: {
 			top: correctedRect.top + 'px',
-			left: '0px',
 			width: correctedRect.left + 'px',
-			height: correctedRect.height + 'px',
+			bottom: clientHeight - correctedRect.height - correctedRect.top + 'px',
+			left: '0px',
 		},
 		right: {
 			top: correctedRect.top + 'px',
 			right: '0px',
-			height: correctedRect.height + 'px',
-			width: ( clientWidth - correctedRect.right ) + 'px',
+			bottom: clientHeight - correctedRect.height - correctedRect.top + 'px',
+			left: correctedRect.right + 'px',
 		},
 		bottom: {
-			bottom: '0px',
-			height: ( clientHeight - correctedRect.bottom ) + 'px',
-			left: '0px',
+			top: correctedRect.bottom + 'px',
 			right: '0px',
+			bottom: '0px',
+			left: '0px',
 		},
 	};
 }
