@@ -63,7 +63,7 @@ const DocsExample = ( {
 			</div>
 			<footer role="contentinfo" className="docs-example__footer">
 				{
-					count
+					! isNaN( count )
 						? <DocsExampleStats count={ count } />
 						: null
 				}
@@ -83,4 +83,8 @@ DocsExample.propTypes = {
 	children: React.PropTypes.element.isRequired
 };
 
+export {
+	DocsExampleToggle,
+	DocsExampleStats
+};
 export default DocsExample;
