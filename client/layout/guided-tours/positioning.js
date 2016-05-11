@@ -110,7 +110,7 @@ function validatePlacement( placement, target ) {
 		: placement;
 }
 
-export function getScrollDiff( targetSlug, container ) {
+function getScrollDiff( targetSlug, container ) {
 	if ( targetSlug !== 'themes' ) {
 		return 0;
 	}
@@ -144,7 +144,7 @@ function scrollIntoView( target ) {
 	return y;
 }
 
-export function getScrolledRect( { targetSlug, scrollY } ) {
+function getScrolledRect( targetSlug, scrollY ) {
 	const target = targetForSlug( targetSlug );
 	const rect = target.getBoundingClientRect();
 	return {
@@ -155,7 +155,11 @@ export function getScrolledRect( { targetSlug, scrollY } ) {
 		height: rect.height,
 		width: rect.width,
 	};
-	return scrolledRect;
+}
+
+export function getScrolledRectFromBase( targetSlug, baseElement ) {
+	const scrollY = getScrollDiff( targetSlug, baseElement );
+	return getScrolledRect( targetSlug, scrollY );
 }
 
 export function getOverlayStyle( { rect } ) {

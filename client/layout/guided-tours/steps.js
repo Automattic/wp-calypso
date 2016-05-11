@@ -11,7 +11,15 @@ import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'components/gridicon';
-import { posToCss, getStepPosition, getBullseyePosition, getOverlayStyle, getScrollDiff, targetForSlug, getScrolledRect, query } from './positioning';
+import {
+	query,
+	posToCss,
+	getStepPosition,
+	getBullseyePosition,
+	getOverlayStyle,
+	targetForSlug,
+	getScrolledRectFromBase,
+} from './positioning';
 
 class BasicStep extends Component {
 	render() {
@@ -160,12 +168,11 @@ class ActionStep extends Component {
 
 const withHighlighting = StepComponent => class extends Component {
 	componentWillMount() {
-		const container = query( '#secondary .sidebar' )[ 0 ];
-		const scrollY = getScrollDiff( this.props.targetSlug, container );
-		const stepPosition = posToCss( getStepPosition( this.props ) );
-		const targetRect = getScrolledRect( { targetSlug: this.props.targetSlug, scrollY: scrollY } );
-
-		this.computedProps = { stepPosition, targetRect };
+		const sidebar = query( '#secondary .sidebar' )[ 0 ];
+		this.computedProps = {
+			stepPosition: posToCss( getStepPosition( this.props ) ),
+			targetRect: getScrolledRectFromBase( this.props.targetSlug, sidebar ),
+		};
 	}
 
 	render() {
