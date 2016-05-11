@@ -9,10 +9,12 @@ import deepFreeze from 'deep-freeze';
  */
 import {
 	JETPACK_CONNECT_SSO_QUERY_SET,
-	JETPACK_CONNECT_SSO_VALIDATE,
-	JETPACK_CONNECT_SSO_AUTHORIZE,
-	JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
-	JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
+	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
+	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
+	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
+	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
+	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
+	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	SERIALIZE,
 } from 'state/action-types';
 import reducer, {
@@ -38,13 +40,13 @@ describe( 'reducer', () => {
 
 		it( 'should set autoAuthorize to true when SSO authorized', () => {
 			const state = jetpackConnectAuthorize( undefined, {
-				type: JETPACK_CONNECT_SSO_AUTHORIZE
+				type: JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST
 			} );
 
 			expect( state ).to.have.property( 'autoAuthorize', true );
 		} );
 
-		it( 'should leave autoAuthorize as true when no error', () => {
+		it( 'should leave autoAuthorize as true when authorize successful', () => {
 			const original = deepFreeze( {
 				queryObject: {},
 				isAuthorizing: false,
@@ -54,14 +56,13 @@ describe( 'reducer', () => {
 			} );
 
 			const state = jetpackConnectAuthorize( original, {
-				type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
-				error: null
+				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS
 			} );
 
 			expect( state ).to.have.property( 'autoAuthorize', true );
 		} );
 
-		it( 'should set autoAuthorize to false when passed an error', () => {
+		it( 'should set autoAuthorize to false when authorize errors', () => {
 			const original = deepFreeze( {
 				queryObject: {},
 				isAuthorizing: false,
@@ -71,7 +72,7 @@ describe( 'reducer', () => {
 			} );
 
 			const state = jetpackConnectAuthorize( original, {
-				type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
+				type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 				error: {
 					statusCode: 400
 				}
@@ -131,7 +132,7 @@ describe( 'reducer', () => {
 
 		it( 'should set isValidating to true when validating', () => {
 			const state = jetpackSSO( undefined, {
-				type: JETPACK_CONNECT_SSO_VALIDATE
+				type: JETPACK_CONNECT_SSO_VALIDATION_REQUEST
 			} );
 
 			expect( state ).to.have.property( 'isValidating', true );
@@ -139,7 +140,7 @@ describe( 'reducer', () => {
 
 		it( 'should set isAuthorizing to true when authorizing', () => {
 			const state = jetpackSSO( undefined, {
-				type: JETPACK_CONNECT_SSO_AUTHORIZE
+				type: JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST
 			} );
 
 			expect( state ).to.have.property( 'isAuthorizing', true );
@@ -148,18 +149,14 @@ describe( 'reducer', () => {
 		it( 'should set isValidating to false after validation', () => {
 			const actions = [
 				{
-					type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
-					error: null,
-					data: {
-						success: true
-					}
+					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
+					success: true
 				},
 				{
-					type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
+					type: JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 					error: {
 						statusCode: 400
-					},
-					data: null
+					}
 				}
 			];
 
@@ -172,43 +169,33 @@ describe( 'reducer', () => {
 		it( 'should store boolean nonceValid after validation', () => {
 			const actions = [
 				{
-					type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
-					error: null,
-					data: {
-						success: true
-					}
+					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
+					success: true
 				},
 				{
-					type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
-					error: null,
-					data: {
-						success: false
-					}
+					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
+					success: false
 				}
 			];
 
 			actions.forEach( ( action ) => {
 				const originalAction = deepFreeze( action );
 				const state = jetpackSSO( undefined, originalAction );
-				expect( state ).to.have.property( 'nonceValid', originalAction.data.success );
+				expect( state ).to.have.property( 'nonceValid', originalAction.success );
 			} );
 		} );
 
 		it( 'should set isAuthorizing to false after authorization', () => {
 			const actions = [
 				{
-					type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
-					error: null,
-					data: {
-						sso_url: 'http://website.com'
-					}
+					type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
+					ssoUrl: 'http://website.com'
 				},
 				{
-					type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
+					type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 					error: {
 						statusCode: 400
 					},
-					data: null
 				}
 			];
 
@@ -220,16 +207,13 @@ describe( 'reducer', () => {
 
 		it( 'should store sso_url after authorization', () => {
 			const action = deepFreeze( {
-				type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
-				error: null,
-				data: {
-					sso_url: 'http://website.com'
-				}
+				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
+				ssoUrl: 'http://website.com'
 			} );
 
 			const state = jetpackSSO( undefined, action );
 
-			expect( state ).to.have.property( 'ssoUrl', action.data.sso_url );
+			expect( state ).to.have.property( 'ssoUrl', action.sso_url );
 		} );
 	} );
 } );
