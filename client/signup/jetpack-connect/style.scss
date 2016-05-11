@@ -173,3 +173,31 @@
 	font-size: 12px;
 	color: $gray;
 }
+
+.jetpack-connect__sso__user-profile {
+	margin-bottom: 16px;
+}
+
+.jetpack-connect__sso__user-profile .gravatar {
+	display: block;
+	margin: 0 auto 16px;
+}
+
+.jetpack-connect__sso__user-profile-name {
+	font-family: $sans;
+	font-size: 21px;
+	font-weight: 300;
+	text-align: center;
+}
+
+.jetpack-connect__sso__user-email {
+	color: lighten( $gray, 10% );
+	font-weight: 400;
+	text-align: center;
+}
+
+.jetpack-connect__sso__actions .button {
+	display: block;
+	text-align: center;
+	width: 100%;
+}
