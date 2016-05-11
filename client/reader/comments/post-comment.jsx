@@ -71,15 +71,23 @@ class PostComment extends React.Component {
 			return null;
 		}
 
-		const showRepliesText = commentChildrenIds.length > 1 ? translate( 'show %(numOfReplies)d replies', {
-			args: { numOfReplies: commentChildrenIds.length	}
-		} ) : translate( 'show 1 reply' );
-
-		const hideRepliesText = commentChildrenIds.length > 1 ? translate( 'hide %(numOfReplies)d replies', {
-			args: {
-				numOfReplies: commentChildrenIds.length
+		const showRepliesText = translate(
+			'show %(numOfReplies)d reply',
+			'show %(numOfReplies)d replies',
+			{
+				count: commentChildrenIds.length,
+				args: { numOfReplies: commentChildrenIds.length }
 			}
-		} ) : translate( 'hide 1 reply' );
+		);
+
+		const hideRepliesText = translate(
+			'hide %(numOfReplies)d reply',
+			'hide %(numOfReplies)d replies',
+			{
+				count: commentChildrenIds.length,
+				args: { numOfReplies: commentChildrenIds.length }
+			}
+		);
 
 		let replyVisibilityText = null;
 		if ( ! exceedsMaxChildrenToShow ) {
