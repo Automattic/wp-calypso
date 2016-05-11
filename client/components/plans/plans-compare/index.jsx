@@ -40,7 +40,7 @@ const PlansCompare = React.createClass( {
 	},
 
 	getInitialState() {
-		return { selectedPlan: 'premium' }
+		return { selectedPlan: 'premium' };
 	},
 
 	getDefaultProps() {
@@ -118,7 +118,7 @@ const PlansCompare = React.createClass( {
 			return false;
 		}
 
-		return this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST
+		return this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST;
 	},
 
 	getColumnCount() {
@@ -133,7 +133,7 @@ const PlansCompare = React.createClass( {
 		const plans = this.getPlans();
 
 		return this.props.features.get().filter( ( feature ) => {
-			return plans.some( ( plan ) => {
+			return plans.some( plan => {
 				return feature[ plan.product_id ];
 			} );
 		} );
@@ -231,8 +231,8 @@ const PlansCompare = React.createClass( {
 				);
 			} );
 		} else {
-			const plans = this.getPlans(),
-				features = this.getFeatures();
+			const plans = this.getPlans();
+			const features = this.getFeatures();
 
 			rows = features.map( ( feature ) => {
 				const planFeatures = plans.map( ( plan ) => {
@@ -386,9 +386,9 @@ const PlansCompare = React.createClass( {
 
 	render() {
 		const classes = classNames( this.props.className, 'plans-compare', {
-				'is-placeholder': this.isDataLoading(),
-				'is-jetpack-site': this.props.selectedSite && this.props.selectedSite.jetpack
-			} );
+			'is-placeholder': this.isDataLoading(),
+			'is-jetpack-site': this.props.selectedSite && this.props.selectedSite.jetpack
+		} );
 
 		let compareString = this.translate( 'Compare Plans' );
 
