@@ -186,5 +186,25 @@ describe( 'index', function() {
 				} );
 			} );
 		} );
+
+		describe( 'when less than 2 domains', () => {
+			beforeEach( () => {
+				const oneDomain = deepFreeze( {
+					domains: {
+						hasLoadedFromServer: true,
+						list: [
+							{ name: 'example.com', isPrimary: true }
+						]
+					}
+				} );
+				const propsWithOneDomain = deepFreeze( Object.assign( {}, defaultProps, oneDomain ) );
+				component = renderWithProps( propsWithOneDomain );
+			} );
+
+			it( 'should not show "Change Primary Domain" button', () => {
+				const button = ReactDom.findDOMNode( component ).querySelector( '.domain-management-list__change-primary-button' );
+				assert( button === null );
+			} );
+		} );
 	} );
 } );
