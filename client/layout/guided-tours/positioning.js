@@ -111,15 +111,19 @@ function validatePlacement( placement, target ) {
 }
 
 export function getScrollDiff( targetSlug, container ) {
-	const target = targetForSlug( targetSlug );
-	const { top, bottom } = target.getBoundingClientRect();
 	if ( targetSlug !== 'themes' ) {
 		return 0;
 	}
-	if ( bottom + DIALOG_PADDING + DIALOG_HEIGHT <=
-			document.documentElement.clientHeight ) {
+
+	const target = targetForSlug( targetSlug );
+	const { top, bottom } = target.getBoundingClientRect();
+	const dialogWillFit = bottom + DIALOG_PADDING + DIALOG_HEIGHT <=
+			document.documentElement.clientHeight;
+
+	if ( dialogWillFit ) {
 		return 0;
 	}
+
 	const scrollMax = container.scrollHeight -
 		container.clientHeight - container.scrollTop;
 
@@ -128,21 +132,22 @@ export function getScrollDiff( targetSlug, container ) {
 
 function scrollIntoView( target ) {
 	const targetSlug = target && target.dataset && target.dataset.tipTarget;
+
 	if ( targetSlug !== 'themes' ) {
 		return 0;
 	}
 
-	const container = query( '#secondary .sidebar' )[ 0 ];
-	const y = getScrollDiff( targetSlug, container );
+	const sidebar = query( '#secondary .sidebar' )[ 0 ];
+	const y = getScrollDiff( targetSlug, sidebar );
 
-	scrollTo( { y: y, container: container, duration: 300 } );
+	scrollTo( { y: y, container: sidebar, duration: 300 } );
 	return y;
 }
 
 export function getScrolledRect( { targetSlug, scrollY } ) {
 	const target = targetForSlug( targetSlug );
-	let rect = target.getBoundingClientRect();
-	const scrolledRect = {
+	const rect = target.getBoundingClientRect();
+	return {
 		top: rect.top - scrollY,
 		bottom: rect.bottom - scrollY,
 		left: rect.left,

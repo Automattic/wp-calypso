@@ -64,8 +64,8 @@ class GuidedTours extends Component {
 	}
 
 	quit( options = {} ) {
-		const container = query( '#secondary .sidebar' )[ 0 ];
-		scrollTo( { y: 0, container: container } );
+		const sidebar = query( '#secondary .sidebar' )[ 0 ];
+		scrollTo( { y: 0, container: sidebar } );
 
 		this.currentTarget && this.currentTarget.classList.remove( 'guided-tours__overlay' );
 		this.props.quitGuidedTour( Object.assign( {
