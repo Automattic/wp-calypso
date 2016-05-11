@@ -29,7 +29,7 @@ describe( 'actions', () => {
 		spy = sandbox.spy();
 	} );
 
-	before( function() {
+	beforeEach( function() {
 		actions = require( '../actions' );
 	} );
 
@@ -38,7 +38,7 @@ describe( 'actions', () => {
 		const ssoNonce = '123456789';
 
 		describe( 'success', () => {
-			beforeEach( () => {
+			before( () => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-validate', {
@@ -52,7 +52,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			afterEach( () => {
+			after( () => {
 				nock.cleanAll();
 			} );
 
@@ -79,7 +79,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			beforeEach( () => {
+			before( () => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-validate', {
@@ -94,7 +94,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			afterEach( () => {
+			after( () => {
 				nock.cleanAll();
 			} );
 
