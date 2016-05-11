@@ -9,8 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var MenuPanelBackButton = require( '../menu-panel-back-button' ),
-	CategorySelector = require( 'my-sites/category-selector' ),
-	CategoryList = require( 'components/data/category-list-data' );
+	CategorySelector = require( 'my-sites/term-selector' );
 
 // The `selected` prop item passed in from MenuEditableItem
 // Isn't a Category object, a quick transform to get the correct ID in place
@@ -42,7 +41,6 @@ module.exports = React.createClass( {
 		}
 
 		return {
-			searchTerm: null,
 			selected: selected
 		};
 	},
@@ -56,11 +54,6 @@ module.exports = React.createClass( {
 		}
 	},
 
-	onSearch: function( searchTerm ) {
-		debug( 'setting search term', searchTerm );
-		this.setState( { searchTerm: searchTerm } );
-	},
-
 	onChange: function( item ) {
 		debug( 'setting selected', item );
 
@@ -71,17 +64,14 @@ module.exports = React.createClass( {
 	render: function() {
 		debug( 'rendering', this.props );
 		return (
-			<CategoryList siteId={ this.props.siteId } search={ this.state.searchTerm } >
-				<CategorySelector
-					analyticsPrefix="Menus"
-					onChange={ this.onChange }
-					className="menu-item-options"
-					onSearch={ this.onSearch }
-					createLink={ this.props.itemType.createLink }
-					selected={ this.state.selected }>
-						<MenuPanelBackButton label={ this.props.itemType.label } onClick={ this.props.onBackClick } />
-				</CategorySelector>
-			</CategoryList>
+			<CategorySelector
+				analyticsPrefix="Menus"
+				onChange={ this.onChange }
+				className="menu-item-options menu-item-options__term-selector"
+				createLink={ this.props.itemType.createLink }
+				selected={ this.state.selected }>
+					<MenuPanelBackButton label={ this.props.itemType.label } onClick={ this.props.onBackClick } />
+			</CategorySelector>
 		);
 	}
 } );
