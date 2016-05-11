@@ -87,7 +87,16 @@ export const getTermsHierarchyForQueryIgnoringPage = createSelector(
 			return terms;
 		}
 
-		return ( new TreeConvert( 'ID' ) ).treeify( terms );
+		// For each site term object, add `parent` and `order` properties.
+		// These are used by the TreeConvert library ( which mutates ) to build the hierarchy.
+		const treeReadyTerms = terms.map( ( term, i ) => {
+			return Object.assign( {}, term, {
+				parent: term.parent ? term.parent : 0,
+				order: i
+			} );
+		} );
+
+		return ( new TreeConvert( 'ID' ) ).treeify( treeReadyTerms );
 	},
 	( state, siteId, taxonomy ) => getTerms( state, siteId, taxonomy ),
 	( state, siteId, taxonomy, query ) => {

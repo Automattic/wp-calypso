@@ -109,13 +109,14 @@ export function requestSiteTerms( siteId, taxonomy, query = {} ) {
 		} );
 
 		return wpcom.site( siteId ).taxonomy( taxonomy ).termsList( query ).then( ( data ) => {
-			dispatch( receiveTerms( siteId, taxonomy, data.terms, query ) );
 			dispatch( {
 				type: TERMS_REQUEST_SUCCESS,
+				found: data.found,
 				siteId,
 				taxonomy,
 				query
 			} );
+			dispatch( receiveTerms( siteId, taxonomy, data.terms, query ) );
 		} ).catch( ( error ) => {
 			dispatch( {
 				type: TERMS_REQUEST_FAILURE,

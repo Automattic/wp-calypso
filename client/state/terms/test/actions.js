@@ -215,6 +215,7 @@ describe( 'actions', () => {
 					type: TERMS_REQUEST_SUCCESS,
 					siteId: siteId,
 					taxonomy: taxonomyName,
+					found: 2,
 					query: {}
 				} );
 			} );
