@@ -22,6 +22,7 @@ import JetpackExampleActivate from './exampleComponents/jetpack-activate';
 import JetpackExampleConnect from './exampleComponents/jetpack-connect';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
+import LocaleSuggestions from 'signup/locale-suggestions';
 
 /**
  * Constants
@@ -165,10 +166,21 @@ const JetpackConnectMain = React.createClass( {
 		);
 	},
 
+	localeSuggestions() {
+		if ( this.props.userModule.get() || ! this.props.locale ) {
+			return;
+		}
+
+		return (
+			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+		);
+	},
+
 	renderSiteEntry() {
 		const status = this.getStatus();
 		return (
 			<Main className="jetpack-connect">
+				{ this.localeSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
 					<ConnectHeader headerText={ this.translate( 'Connect a self-hosted WordPress' ) }
 						subHeaderText={ this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect to your self-hosted WordPress site.' ) }
@@ -185,6 +197,7 @@ const JetpackConnectMain = React.createClass( {
 	renderInstallInstructions() {
 		return (
 			<Main className="jetpack-connect-wide">
+				{ this.localeSuggestions() }
 				<div className="jetpack-connect__install">
 					<ConnectHeader headerText={ this.translate( 'Ready for installation' ) }
 						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
@@ -210,6 +223,7 @@ const JetpackConnectMain = React.createClass( {
 	renderActivateInstructions() {
 		return (
 			<Main className="jetpack-connect-wide">
+				{ this.localeSuggestions() }
 				<div className="jetpack-connect__install">
 					<ConnectHeader headerText={ this.translate( 'Ready for installation' ) }
 						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
@@ -230,7 +244,6 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	render() {
-		const status = this.getStatus();
 		if ( status === 'notJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
 			return this.renderInstallInstructions();
 		}
