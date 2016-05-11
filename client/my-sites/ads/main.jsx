@@ -4,6 +4,7 @@
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:ads-settings' ),
 	find = require( 'lodash/find' );
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -22,7 +23,9 @@ import FeatureExample from 'components/feature-example';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import FormToggle from 'components/forms/form-toggle';
 import Card from 'components/card';
-module.exports = React.createClass( {
+import { requestApproval } from 'state/wordads/approve/actions';
+
+const AdsMain = React.createClass( {
 
 	displayName: 'AdsMain',
 
@@ -94,7 +97,7 @@ module.exports = React.createClass( {
 				<div className="ads__activate-header-toggle">
 					<FormToggle
 						checked={ false }
-						onChange={ function() {} }
+						onChange={ this.props.requestApproval }
 					/>
 				</div>
 			</Card>
@@ -134,3 +137,13 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	{ requestApproval },
+	( stateProps, dispatchProps, parentProps ) => Object.assign(
+		{ requestApproval: () => dispatchProps.requestApproval( parentProps.site.ID ) },
+		parentProps,
+		stateProps
+	)
+)( AdsMain );
