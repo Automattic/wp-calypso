@@ -133,7 +133,7 @@ function I18N() {
 	// Because the mixin can be injected into a ton of React components,
 	// we need to bump the number of listeners to infinity and beyond
 	this.stateObserver.setMaxListeners( 0 );
-	this.initialize();
+	this.configure();
 }
 
 I18N.throwErrors = false;
@@ -176,6 +176,11 @@ I18N.prototype.initialize = function( bootstrap ) {
 };
 
 I18N.prototype.setLocale = function( localeSlug, localeData ) {
+	// Don't change if same locale as current, except for default locale
+	if ( localeSlug !== this.defaultLocaleSlug && localeSlug === this.state.localeSlug ) {
+		return;
+	}
+
 	if ( ! localeData ) {
 		localeData = { '': {} };
 	}
