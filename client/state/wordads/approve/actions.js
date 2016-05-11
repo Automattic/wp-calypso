@@ -20,7 +20,7 @@ export const requestApproval = siteId => dispatch => {
 		type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 		siteId
 	} ) )
-	.then( error => dispatch( {
+	.catch( error => dispatch( {
 		type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 		siteId,
 		error: error
