@@ -80,21 +80,6 @@ describe( 'reducer', () => {
 
 			expect( state ).to.have.property( 'autoAuthorize', false );
 		} );
-
-		it( 'should persist state and set redirect to false', () => {
-			const original = deepFreeze( {
-				queryObject: {},
-				isAuthorizing: false,
-				authorizeSuccess: false,
-				authorizeError: false,
-				autoAuthorize: true,
-				isRedirectingToWpAdmin: true
-			} );
-
-			const state = jetpackConnectAuthorize( original, { type: SERIALIZE } );
-
-			expect( state ).to.eql( Object.assign( {}, original, { isRedirectingToWpAdmin: false } ) );
-		} );
 	} );
 
 	describe( '#jetpackSSO()', () => {

@@ -1,7 +1,9 @@
 /**
  * External dependencis
  */
- import isEmpty from 'lodash/isEmpty';
+import isEmpty from 'lodash/isEmpty';
+import omit from 'lodash/omit';
+import { combineReducers } from 'redux';
 
 /**
  * Internal dependencies
@@ -15,6 +17,8 @@ import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+	JETPACK_CONNECT_ACTIVATE_MANAGE,
+	JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
@@ -30,7 +34,6 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { combineReducers } from 'redux';
 
 const defaultAuthorizeState = {
 	queryObject: {},
@@ -83,12 +86,18 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, isRedirectingToWpAdmin: false } );
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
 			if ( isEmpty( action.error ) && action.data ) {
-				const { plans_url } = action.data;
-				return Object.assign( {}, state, { authorizeError: false, authorizeSuccess: true, autoAuthorize: false, plansURL: plans_url, siteReceived: false } );
+				const { plans_url, activate_manage } = action.data;
+				return Object.assign( {}, state, { authorizeError: false, authorizeSuccess: true, autoAuthorize: false, plansUrl: plans_url, siteReceived: false, activateManageSecret: activate_manage } );
 			}
 			return Object.assign( {}, state, { isAuthorizing: false, authorizeError: action.error, authorizeSuccess: false, autoAuthorize: false } );
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST:
-			return Object.assign( {}, state, { siteReceived: true, isAuthorizing: false } );
+			const updateQueryObject = omit( state.queryObject, '_wp_nonce', 'secret', 'scope' );
+			return Object.assign( {}, omit( state, 'queryObject' ), { siteReceived: true, isAuthorizing: false, queryObject: updateQueryObject } );
+		case JETPACK_CONNECT_ACTIVATE_MANAGE:
+			return Object.assign( {}, state, { isActivating: true } );
+		case JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE:
+			const error = action.error;
+			return Object.assign( {}, state, { isActivating: false, manageActivated: true, manageActivatedError: error, activateManageSecret: false } );
 		case JETPACK_CONNECT_QUERY_SET:
 			const queryObject = Object.assign( {}, action.queryObject );
 			return Object.assign( {}, defaultAuthorizeState, state, { queryObject: queryObject } );
@@ -109,7 +118,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { autoAuthorize: false } );
 		case SERIALIZE:
 		case DESERIALIZE:
-			return Object.assign( {}, state, { isRedirectingToWpAdmin: false } );
+			return {};
 	}
 	return state;
 }
@@ -140,6 +149,6 @@ export function jetpackSSO( state = {}, action ) {
 export default combineReducers( {
 	jetpackConnectSite,
 	jetpackConnectAuthorize,
-	jetpackConnectSessions,
 	jetpackSSO,
+	jetpackConnectSessions,
 } );
