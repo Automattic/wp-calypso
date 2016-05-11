@@ -14,37 +14,20 @@ import Gridicon from 'components/gridicon';
 import { posToCss, getStepPosition, getBullseyePosition, getOverlayStyle, getScrollDiff, targetForSlug, getScrolledRect, query } from './positioning';
 
 class BasicStep extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = { stepPosition: null, targetRect: null };
-	}
-
-	componentWillMount() {
-		const container = query( '#secondary .sidebar' )[ 0 ];
-		const scrollY = getScrollDiff( this.props.targetSlug, container );
-		const targetRect = getScrolledRect( { targetSlug: this.props.targetSlug, scrollY: scrollY } );
-
-		this.setState( { stepPosition: posToCss( getStepPosition( this.props ) ) } );
-		this.setState( { targetRect: targetRect } );
-	}
-
 	render() {
-		if ( !this.state.stepPosition ) {
+		if ( ! this.props.stepPosition ) {
 			return null;
 		}
 
 		const { text, onNext, onQuit } = this.props;
 		return (
-			<div>
-				<Overlay targetRect={ this.state.targetRect } />
-				<Card className="guided-tours__step" style={ this.state.stepPosition } >
-					<p>{ text }</p>
-					<div className="guided-tours__choice-button-row">
-						<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
-						<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
-					</div>
-				</Card>
-			</div>
+			<Card className="guided-tours__step" style={ this.props.stepPosition } >
+				<p>{ text }</p>
+				<div className="guided-tours__choice-button-row">
+					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
+					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
+				</div>
+			</Card>
 		);
 	}
 }
@@ -113,20 +96,6 @@ class LinkStep extends Component {
 }
 
 class ActionStep extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = { stepPosition: null, targetRect: null };
-	}
-
-	componentWillMount() {
-		const container = query( '#secondary .sidebar' )[ 0 ];
-		const scrollY = getScrollDiff( this.props.targetSlug, container );
-		const targetRect = getScrolledRect( { targetSlug: this.props.targetSlug, scrollY: scrollY } );
-
-		this.setState( { stepPosition: posToCss( getStepPosition( this.props ) ) } );
-		this.setState( { targetRect: targetRect } );
-	}
-
 	componentDidMount() {
 		this.addTargetListener();
 	}
@@ -162,7 +131,7 @@ class ActionStep extends Component {
 	}
 
 	render() {
-		if ( !this.state.stepPosition ) {
+		if ( ! this.props.stepPosition ) {
 			return null;
 		}
 
@@ -172,25 +141,43 @@ class ActionStep extends Component {
 		const pointerCoords = posToCss( bullseyePos );
 
 		return (
-			<div>
-				<Overlay targetRect={ this.state.targetRect } />
-				<Card className="guided-tours__step" style={ this.state.stepPosition } >
-					<p>{ text }</p>
+			<Card className="guided-tours__step" style={ this.props.stepPosition } >
+				<p>{ text }</p>
 				<div className="guided-tours__bullseye-instructions">
-						<p>
-							{ this.props.translate( 'Click the {{gridicon/}} to continue…', {
-								components: {
-									gridicon: <Gridicon icon={ this.props.icon } size={ 24 } />
-								}
-							} ) }
-						</p>
-					</div>
-				<Pointer style={ pointerCoords } />
-				</Card>
-			</div>
+					<p>
+						{ this.props.translate( 'Click the {{gridicon/}} to continue…', {
+							components: {
+								gridicon: <Gridicon icon={ this.props.icon } size={ 24 } />
+							}
+						} ) }
+					</p>
+				</div>
+			<Pointer style={ pointerCoords } />
+			</Card>
 		);
 	}
 }
+
+const withHighlighting = StepComponent => class extends Component {
+	componentWillMount() {
+		const container = query( '#secondary .sidebar' )[ 0 ];
+		const scrollY = getScrollDiff( this.props.targetSlug, container );
+		const stepPosition = posToCss( getStepPosition( this.props ) );
+		const targetRect = getScrolledRect( { targetSlug: this.props.targetSlug, scrollY: scrollY } );
+
+		this.computedProps = { stepPosition, targetRect };
+	}
+
+	render() {
+		const { stepPosition, targetRect } = this.computedProps;
+		return (
+			<div>
+				<Overlay { ...{ targetRect } } />
+				<StepComponent { ...this.props } { ...{ stepPosition } } />
+			</div>
+		);
+	}
+};
 
 BasicStep.propTypes = {
 	targetSlug: PropTypes.string,
@@ -295,9 +282,9 @@ Overlay.propTypes = {
 };
 
 export default {
-	BasicStep: localize( BasicStep ),
+	BasicStep: localize( withHighlighting( BasicStep ) ),
 	LinkStep: localize( LinkStep ),
-	ActionStep: localize( ActionStep ),
+	ActionStep: localize( withHighlighting( ActionStep ) ),
 	FirstStep: localize( FirstStep ),
 	FinishStep: localize( FinishStep ),
 };
