@@ -24,6 +24,24 @@
 	clear: none;
 	cursor: pointer;
 
+	&:checked:before {
+		content: '\f418';
+		margin: -4px 0 0 -5px;
+		float: left;
+		display: inline-block;
+		vertical-align: middle;
+		width: 16px;
+		font: 400 23px/1 Noticons;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		speak: none;
+		color: $blue-medium;
+	}
+
+	&:disabled:checked:before {
+		color: lighten( $gray, 10% );
+	}
+
 	&:hover {
 		border-color: lighten( $gray, 10% );
 	}
@@ -48,24 +66,5 @@
 	+ span {
 		display: block;
 		margin-left: 24px;
-	}
-}
-
-input[type=checkbox] {
-	&:checked:before {
-		content: '\f418';
-		margin: -4px 0 0 -5px;
-		float: left;
-		display: inline-block;
-		vertical-align: middle;
-		width: 16px;
-		font: 400 23px/1 Noticons;
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-		speak: none;
-		color: $blue-medium;
-	}
-	&:disabled:checked:before {
-		color: lighten( $gray, 10% );
 	}
 }
