@@ -166,7 +166,7 @@ const JetpackConnectMain = React.createClass( {
 		);
 	},
 
-	localeSuggestions() {
+	renderLocaleSuggestions() {
 		if ( this.props.userModule.get() || ! this.props.locale ) {
 			return;
 		}
@@ -180,7 +180,7 @@ const JetpackConnectMain = React.createClass( {
 		const status = this.getStatus();
 		return (
 			<Main className="jetpack-connect">
-				{ this.localeSuggestions() }
+				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
 					<ConnectHeader headerText={ this.translate( 'Connect a self-hosted WordPress' ) }
 						subHeaderText={ this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect to your self-hosted WordPress site.' ) }
@@ -197,7 +197,7 @@ const JetpackConnectMain = React.createClass( {
 	renderInstallInstructions() {
 		return (
 			<Main className="jetpack-connect-wide">
-				{ this.localeSuggestions() }
+				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
 					<ConnectHeader headerText={ this.translate( 'Ready for installation' ) }
 						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
@@ -223,7 +223,7 @@ const JetpackConnectMain = React.createClass( {
 	renderActivateInstructions() {
 		return (
 			<Main className="jetpack-connect-wide">
-				{ this.localeSuggestions() }
+				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
 					<ConnectHeader headerText={ this.translate( 'Ready for installation' ) }
 						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
