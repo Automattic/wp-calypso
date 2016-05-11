@@ -38,7 +38,3 @@ render(
 	document.body
 );
 ```
-
-## TODO
-
-- Extract into a separate module

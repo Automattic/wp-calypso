@@ -33,7 +33,7 @@ The following attributes can be set in the options object to alter the translati
 If you pass a single string into `translate`, it will trigger a simple translation without any context, pluralization, sprintf arguments, or comments. You would call it like this.
 
 ```js
-var i18n = require( 'lib/i18n' );
+var i18n = require( 'i18n' );
 var translation = i18n.translate( 'Some content to translate' );
 ```
 
@@ -98,7 +98,7 @@ i18n.translate( 'My %s has 3 corners', {
 
 Because React tracks DOM nodes in the virtual DOM for rendering purposes, you cannot use string substitution with html markup as you might in a php scenario, because we don't render arbitrary html into the page, we are creating a virtual DOM in React.
 
-Instead we use the [interpolate-components module](../../../lib/interpolate-components) to inject components into the string using a component token as a placeholder in the string and a components object, similar to how string substitution works. The result of the `translate()` method can then be inserted as a child into another React component. Component tokens are strings (containing letters, numbers, or underscores only) wrapped inside double-curly braces and have an opening, closing, and self-closing syntax, similar to html.
+Instead we use the [interpolate-components module](https://github.com/Automattic/interpolate-components) to inject components into the string using a component token as a placeholder in the string and a components object, similar to how string substitution works. The result of the `translate()` method can then be inserted as a child into another React component. Component tokens are strings (containing letters, numbers, or underscores only) wrapped inside double-curly braces and have an opening, closing, and self-closing syntax, similar to html.
 
 **NOTE: Always use a JSX element for passing components. Otherwise you will need to [wrap your React classes with `createFactory`](http://facebook.github.io/react/blog/2014/10/14/introducing-react-elements.html). Any wrapped content inside opening/closing component tokens will be inserted/replaced as the children of that component in the output. Component tokens must be unique:**
 
@@ -206,16 +206,6 @@ var component = i18n.translate( 'My hat has {{link}}three{{/link}} corners', {
 
 See the [test cases](test/test.jsx) for more example usage.
 
-
-### Tests
-
-When using i18n as a standalone module, your tests need to call `i18n.initialize()` before any of the i18n methods can be used. `initialize()` is normally called during the Delphin boot sequence, which is not run for tests. Not calling this for tests may result in the tests failing with errors.
-
-```js
-var i18n = require( 'lib/mixins/i18n' );
-i18n.initialize();
-```
-
 ## Moment Method
 
 This module includes an instantiation of `moment.js` to allow for internationalization of dates and times. We generate a momentjs locale file as part of loading a locale and automatically update the moment instance to use the correct locale and translations. You can use `moment()` from within any component like this:
@@ -227,7 +217,7 @@ var thisMagicMoment = i18n.moment( "2014-07-18T14:59:09-07:00" ).format( 'LLLL' 
 And you can use it from outside of React like this.
 
 ```js
-var i18n = require( 'lib/mixins/i18n' );
+var i18n = require( 'i18n' );
 var thisMagicMoment = i18n.moment( "2014-07-18T14:59:09-07:00" ).format( 'LLLL' );
 ```
 
@@ -247,6 +237,10 @@ i18n.numberFormat( 2500.33, { decimals: 3, thousandsSep: '*', decPoint: '@'} ); 
 
 ## Some Background
 
-I18n loads a language-specific locale json file from WordPress that contains the whitelisted translation strings for Delphin, uses that data to instantiate a [Jed](http://slexaxton.github.io/Jed/) instance, and exposes a single `translate` method with sugared syntax for interacting with Jed.
+I18n accepts a language-specific locale json file that contains the whitelisted translation strings for your JS project, uses that data to instantiate a [Jed](http://slexaxton.github.io/Jed/) instance, and exposes a single `translate` method with sugared syntax for interacting with Jed.
 
-Delphin locale files are generated from the WordPress codebase. Locale files are automatically updated as new translations are deployed based on a whitelist file in the WordPress.com codebase. _This means that any translation strings that are added to Delphin will also need to be added to the whitelist file in WordPress.com manually (using equivalent WordPress i18n functions)_.
+
+## TODO
+
+- [ ] Extract `lib/localize` into a separate module
+- [ ] Extract `lib/mixin` into a separate module
