@@ -8,7 +8,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import page from 'page';
 
 /**
@@ -64,13 +63,13 @@ const ThemeSheet = React.createClass( {
 		// TODO: if active -> customize (could use theme slug from selected site)
 
 		if ( ! this.props.isLoggedIn ) {
-			this.props.dispatch( signup( this.props ) );
+			this.props.signup( this.props );
 		// TODO: use site picker if no selected site
 		} else if ( isPremium( this.props ) ) {
 			// TODO: check theme is not already purchased
-			this.props.dispatch( purchase( this.props, this.props.selectedSite, 'showcase-sheet' ) );
+			this.props.purchase( this.props, this.props.selectedSite, 'showcase-sheet' );
 		} else {
-			this.props.dispatch( activate( this.props, this.props.selectedSite, 'showcase-sheet' ) );
+			this.props.activate( this.props, this.props.selectedSite, 'showcase-sheet' );
 		}
 	},
 
@@ -228,7 +227,7 @@ const ThemeSheet = React.createClass( {
 					<ThanksModal
 						site={ this.props.selectedSite }
 						source={ 'details' }
-						clearActivated={ bindActionCreators( clearActivated, this.props.dispatch ) }/>
+						clearActivated={ this.props.clearActivated }/>
 				</ActivatingTheme>
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
@@ -256,8 +255,11 @@ const ThemeSheet = React.createClass( {
 	}
 } );
 
-export default connect( ( state ) => {
-	const selectedSite = getSelectedSite( state );
-	const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
-	return { selectedSite, siteSlug };
-} )( ThemeSheet );
+export default connect(
+	( state ) => {
+		const selectedSite = getSelectedSite( state );
+		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
+		return { selectedSite, siteSlug };
+	},
+	{ signup, purchase, activate, clearActivated }
+)( ThemeSheet );
