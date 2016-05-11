@@ -75,7 +75,7 @@ const PlanList = React.createClass( {
 		}
 
 		if ( plans.length > 0 ) {
-			plans = filterPlansBySiteAndProps( plans, site, this.props.hideFreePlan );
+			plans = filterPlansBySiteAndProps( plans, site, this.props.hideFreePlan, this.props.intervalType );
 
 			plansList = plans.map( ( plan ) => {
 				return (
