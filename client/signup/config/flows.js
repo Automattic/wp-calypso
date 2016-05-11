@@ -190,6 +190,13 @@ const flows = {
 		lastModified: '2016-05-03'
 	},
 
+	app: {
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
+		destination: getPostsDestination,
+		description: 'Used as a web-based control to test the "desktop" flow',
+		lastModified: '2016-05-11'
+	},
+
 	layout: {
 		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
