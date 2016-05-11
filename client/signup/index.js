@@ -32,16 +32,16 @@ module.exports = function() {
 
 	if ( config.isEnabled( 'jetpack/connect' ) ) {
 		page(
-			'/jetpack/connect/:locale?',
-			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
-			jetpackConnectController.connect
-		);
-
-		page(
 			'/jetpack/connect/authorize/:locale?',
 			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
 			jetpackConnectController.saveQueryObject,
 			jetpackConnectController.authorizeForm
+		);
+
+		page(
+			'/jetpack/connect/:locale?',
+			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
+			jetpackConnectController.connect
 		);
 	}
 
