@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import get from 'lodash/get';
 import includes from 'lodash/includes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -35,17 +34,47 @@ import stats from 'lib/posts/stats';
 import siteUtils from 'lib/site/utils';
 import { setExcerpt } from 'state/ui/editor/post/actions';
 import QueryPostTypes from 'components/data/query-post-types';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getPostTypes } from 'state/post-types/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { getPostType } from 'state/post-types/selectors';
 import config from 'config';
 import EditorDrawerFeaturedImage from './featured-image';
 import EditorDrawerTaxonomies from './taxonomies';
+
+/**
+ * Constants
+ */
+
+/**
+ * A mapping of post type to hard-coded post types support. These values are
+ * used as fallbacks if the REST API type entity has not been retrieved, and
+ * prevent the post type query component from being rendered.
+ *
+ * @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/post-types/
+ * @type {Object}
+ */
+const POST_TYPE_SUPPORTS = {
+	post: {
+		thumbnail: true,
+		excerpt: true,
+		'post-formats': true,
+		'geo-location': true,
+		tags: true
+	},
+	page: {
+		thumbnail: true,
+		'page-attributes': true,
+		'geo-location': true,
+		excerpt: true
+	}
+};
 
 const EditorDrawer = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
-		postTypes: React.PropTypes.object,
+		typeObject: React.PropTypes.object,
 		isNew: React.PropTypes.bool,
 		setExcerpt: React.PropTypes.func,
 		type: React.PropTypes.string
@@ -63,26 +92,24 @@ const EditorDrawer = React.createClass( {
 		this.props.setExcerpt( event.target.value );
 	},
 
-	currentPostTypeSupportsAll: function() {
-		// We explicitly hard-code posts as supporting all features, which is a
-		// hack that saves us a network request. While technically possible for
-		// a theme to remove feature support for posts, this is very rare. If
-		// encountered, we should consider removing this shortcut.
-		return 'post' === this.props.type;
+	hasHardCodedPostTypeSupports( type ) {
+		return POST_TYPE_SUPPORTS.hasOwnProperty( type );
 	},
 
 	currentPostTypeSupports: function( feature ) {
-		const { site, postTypes, type } = this.props;
-		if ( this.currentPostTypeSupportsAll() ) {
-			return true;
+		const { typeObject, type } = this.props;
+
+		if ( typeObject ) {
+			return !! typeObject.supports[ feature ];
+		}
+
+		// Fall back to hard-coded settings if known for type
+		if ( this.hasHardCodedPostTypeSupports( type ) ) {
+			return !! POST_TYPE_SUPPORTS[ type ][ feature ];
 		}
 
 		// Default to true until post types are known
-		if ( ! site || ! postTypes ) {
-			return true;
-		}
-
-		return get( postTypes, [ type, 'supports', feature ], false );
+		return true;
 	},
 
 	recordExcerptChangeStats: function() {
@@ -252,42 +279,28 @@ const EditorDrawer = React.createClass( {
 		);
 	},
 
-	renderPageDrawer: function() {
-		return (
-			<div>
-				{ this.renderTaxonomies() }
-				{ this.renderFeaturedImage() }
-				<Accordion
-					title={ this.translate( 'Page Options' ) }
-					icon={ <Gridicon icon="pages" /> }>
-					{ this.props.site && this.props.post ?
-						<div>
-							<PageParent siteId={ this.props.site.ID }
-								postId={ this.props.post.ID }
-								parent={ this.props.post.parent_id ? this.props.post.parent_id : 0 }
-							/>
-							<PageTemplatesData siteId={ this.props.site.ID } >
-								<PageTemplates post={ this.props.post } />
-							</PageTemplatesData>
-						</div>
-					: null }
-					<PageOrder menuOrder={ this.props.post ? this.props.post.menu_order : 0 } />
-				</Accordion>
-				{ this.renderSharing() }
-				{ this.renderMoreOptions() }
-			</div>
-		);
-	},
+	renderPageOptions() {
+		if ( ! this.currentPostTypeSupports( 'page-attributes' ) ) {
+			return;
+		}
 
-	renderPostDrawer: function() {
 		return (
-			<div>
-				{ this.renderTaxonomies() }
-				{ this.renderFeaturedImage() }
-				{ this.renderSharing() }
-				{ this.renderPostFormats() }
-				{ this.renderMoreOptions() }
-			</div>
+			<Accordion
+				title={ this.translate( 'Page Options' ) }
+				icon={ <Gridicon icon="pages" /> }>
+				{ this.props.site && this.props.post ?
+					<div>
+						<PageParent siteId={ this.props.site.ID }
+							postId={ this.props.post.ID }
+							parent={ this.props.post.parent_id ? this.props.post.parent_id : 0 }
+						/>
+						<PageTemplatesData siteId={ this.props.site.ID } >
+							<PageTemplates post={ this.props.post } />
+						</PageTemplatesData>
+					</div>
+				: null }
+				<PageOrder menuOrder={ this.props.post ? this.props.post.menu_order : 0 } />
+			</Accordion>
 		);
 	},
 
@@ -296,12 +309,15 @@ const EditorDrawer = React.createClass( {
 
 		return (
 			<div className="editor-drawer">
-				{ site && ! this.currentPostTypeSupportsAll() && (
+				{ site && ! this.hasHardCodedPostTypeSupports( type ) && (
 					<QueryPostTypes siteId={ site.ID } />
 				) }
-				{ 'page' === type
-					? this.renderPageDrawer()
-					: this.renderPostDrawer() }
+				{ this.renderTaxonomies() }
+				{ this.renderFeaturedImage() }
+				{ this.renderPageOptions() }
+				{ this.renderSharing() }
+				{ this.renderPostFormats() }
+				{ this.renderMoreOptions() }
 			</div>
 		);
 	}
@@ -309,13 +325,11 @@ const EditorDrawer = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const site = getSelectedSite( state );
-		if ( ! site ) {
-			return {};
-		}
+		const siteId = getSelectedSiteId( state );
+		const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
 
 		return {
-			postTypes: getPostTypes( state, site.ID )
+			typeObject: getPostType( state, siteId, type )
 		};
 	},
 	dispatch => bindActionCreators( { setExcerpt }, dispatch ),
