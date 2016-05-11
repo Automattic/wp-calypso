@@ -96,7 +96,7 @@ const AdsMain = React.createClass( {
 				</div>
 				<div className="ads__activate-header-toggle">
 					<FormToggle
-						checked={ false }
+						checked={ this.props.site.options.wordads || ( this.props.requestStatus.requesting && this.props.requestStatus.error === null ) }
 						onChange={ this.props.requestApproval }
 					/>
 				</div>
@@ -139,10 +139,10 @@ const AdsMain = React.createClass( {
 } );
 
 export default connect(
-	null,
+	state => ( { requestStatus: state.wordads.approve.requestStatus } ),
 	{ requestApproval },
 	( stateProps, dispatchProps, parentProps ) => Object.assign(
-		{ requestApproval: () => dispatchProps.requestApproval( parentProps.site.ID ) },
+		{ requestApproval: () => ( ! stateProps.requestStatus.requesting ) ? dispatchProps.requestApproval( parentProps.site.ID ) : null },
 		parentProps,
 		stateProps
 	)
