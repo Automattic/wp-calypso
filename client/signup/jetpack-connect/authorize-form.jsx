@@ -121,7 +121,7 @@ const LoggedInForm = React.createClass( {
 	displayName: 'LoggedInForm',
 
 	componentWillMount() {
-		const { autoAuthorize, queryObject, authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		const { autoAuthorize, queryObject } = this.props.jetpackConnectAuthorize;
 		debug( 'Checking for auto-auth on mount', autoAuthorize );
 		if ( autoAuthorize || this.props.calypsoStartedConnection ) {
 			this.props.authorize( queryObject );
@@ -138,15 +138,20 @@ const LoggedInForm = React.createClass( {
 		}
 	},
 
+	activateManage() {
+		const { queryObject, activateManageSecret, plansUrl } = this.props.jetpackConnectAuthorize;
+		this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
+		page.redirect( plansUrl );
+	},
+
 	handleSubmit() {
-		const { queryObject, siteReceived, manageActivated, activateManageSecret, plansUrl, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		const { queryObject, manageActivated, activateManageSecret, plansUrl, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		if ( activateManageSecret && ! manageActivated ) {
-			this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
-			page( plansUrl );
+			this.activateManage();
 		} else if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			window.location.href = queryObject.site + authUrl;
 		} else if ( authorizeSuccess && plansUrl ) {
-			page( plansUrl );
+			page.redirect( plansUrl );
 		} else {
 			this.props.authorize( queryObject );
 		}
