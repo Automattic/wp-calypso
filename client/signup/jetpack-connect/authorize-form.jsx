@@ -28,6 +28,7 @@ import i18n from 'lib/mixins/i18n';
 import Gridicon from 'components/gridicon';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSiteByUrl } from 'state/sites/selectors';
 
 /**
  * Module variables
@@ -137,8 +138,9 @@ const LoggedInForm = React.createClass( {
 	componentWillMount() {
 		const { autoAuthorize, queryObject } = this.props.jetpackConnectAuthorize;
 		debug( 'Checking for auto-auth on mount', autoAuthorize );
-		if ( autoAuthorize || this.props.calypsoStartedConnection || this.props.isSSO ) {
-			this.props.recordTracksEvent( 'jpc_auth_view' );
+		this.props.recordTracksEvent( 'jpc_auth_view' );
+		if ( ! this.props.isAlreadyOnSitesList &&
+			( autoAuthorize || this.props.calypsoStartedConnection || this.props.isSSO ) ) {
 			this.props.authorize( queryObject );
 		}
 	},
@@ -160,13 +162,16 @@ const LoggedInForm = React.createClass( {
 	},
 
 	handleSubmit() {
-		const { queryObject, manageActivated, activateManageSecret, plansUrl, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
-		if ( activateManageSecret && ! manageActivated ) {
+		const { queryObject, siteReceived, manageActivated, activateManageSecret, plansUrl, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		if ( ! this.props.isAlreadyOnSitesList &&
+			queryObject.already_authorized ) {
+			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+		} else if ( activateManageSecret && ! manageActivated ) {
 			this.activateManage();
 		} else if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			window.location.href = queryObject.site + authUrl;
-		} else if ( authorizeSuccess && plansUrl ) {
-			page.redirect( plansUrl );
+		} else if ( this.props.isAlreadyOnSitesList || ( siteReceived && plansURL ) ) {
+			page( plansURL );
 		} else {
 			this.props.authorize( queryObject );
 		}
@@ -183,11 +188,16 @@ const LoggedInForm = React.createClass( {
 
 	isAuthorizing() {
 		const { isAuthorizing, isActivating } = this.props.jetpackConnectAuthorize;
-		return ( isAuthorizing || isActivating );
+		return ( ! this.props.isAlreadyOnSitesList && ( isAuthorizing || isActivating ) );
 	},
 
 	renderNotices() {
 		const { authorizeError, queryObject } = this.props.jetpackConnectAuthorize;
+
+		if ( queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
+			return <JetpackConnectNotices noticeType="alreadyConnectedByOtherUser" />;
+		}
+
 		if ( ! authorizeError ) {
 			return null;
 		}
@@ -201,13 +211,18 @@ const LoggedInForm = React.createClass( {
 	},
 
 	getButtonText() {
-		const { isAuthorizing, authorizeSuccess, isRedirectingToWpAdmin, siteReceived, authorizeError } = this.props.jetpackConnectAuthorize;
+		const { queryObject, isAuthorizing, authorizeSuccess, isRedirectingToWpAdmin, siteReceived, authorizeError } = this.props.jetpackConnectAuthorize;
+
+		if ( ! this.props.isAlreadyOnSitesList &&
+			queryObject.already_authorized ) {
+			return this.translate( 'Go to your site' );
+		}
 
 		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			return this.translate( 'Try again' );
 		}
 
-		if ( siteReceived ) {
+		if ( this.props.isAlreadyOnSitesList || siteReceived ) {
 			return this.translate( 'Browse Available Upgrades' );
 		}
 
@@ -376,7 +391,8 @@ export default connect(
 		return {
 			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
 			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
-			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions
+			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
+			isAlreadyOnSitesList: getSiteByUrl( state, state.jetpackConnect.jetpackConnectAuthorize.queryObject.site )
 		};
 	},
 	dispatch => bindActionCreators( { recordTracksEvent, authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )

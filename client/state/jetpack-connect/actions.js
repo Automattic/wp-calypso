@@ -90,7 +90,6 @@ export default {
 				wpcom.undocumented().getSiteConnectInfo( url, 'isWordPress' ),
 				wpcom.undocumented().getSiteConnectInfo( url, 'hasJetpack' ),
 				wpcom.undocumented().getSiteConnectInfo( url, 'isJetpackActive' ),
-				wpcom.undocumented().getSiteConnectInfo( url, 'isJetpackConnected' ),
 				wpcom.undocumented().getSiteConnectInfo( url, 'isWordPressDotCom' ),
 			] ).then( ( data, error ) => {
 				_fetching[ url ] = null;

@@ -103,6 +103,13 @@ export default React.createClass( {
 			noticeValues.icon = 'notice';
 			return noticeValues;
 		}
+		if ( this.props.noticeType === 'alreadyConnectedByOtherUser' ) {
+			noticeValues.text = this.translate( 'This site is already connected to a different WordPress.com user' );
+			noticeValues.status = 'is-error';
+			noticeValues.icon = 'notice';
+			return noticeValues;
+		}
+
 		return;
 	},
 
