@@ -69,6 +69,7 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/recommendations/posts": true,
+		"reader/tags-with-elasticsearch": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
