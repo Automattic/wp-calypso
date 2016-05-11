@@ -17,13 +17,15 @@
 		}
 	}
 	&.value_bundle,
-	&.jetpack_premium {
+	&.jetpack_premium,
+	&.jetpack_premium_monthly{
 		.plan-header__title:before {
 			background-image: url( '/calypso/images/plans/plan-premium.svg' );
 		}
 	}
 	&.business-bundle,
-	&.jetpack_business {
+	&.jetpack_business,
+	&.jetpack_business_monthly {
 		.plan-header__title:before {
 			background-image: url( '/calypso/images/plans/plan-business.svg' );
 		}
@@ -152,6 +154,9 @@
 	}
 }
 
-.plan-list .jetpack_premium .plan-header__title, .plan-list .jetpack_business .plan-header__title {
+.plan-list .jetpack_premium .plan-header__title,
+.plan-list .jetpack_business .plan-header__title,
+.plan-list .jetpack_premium_monthly .plan-header__title,
+.plan-list .jetpack_business_monthly .plan-header__title, {
 	margin-top: 15px;
 }
