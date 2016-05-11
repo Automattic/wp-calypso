@@ -12,6 +12,7 @@ import {
 	isCredits,
 	isDomainProduct,
 	isGoogleApps,
+	isMonthly,
 	isTheme
 } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
@@ -63,6 +64,10 @@ export default React.createClass( {
 		}
 
 		if ( abtest( 'planPricing' ) === 'annual' || cost <= 0 ) {
+			return null;
+		}
+
+		if ( isMonthly( this.props.cartItem ) ) {
 			return null;
 		}
 
