@@ -17,7 +17,7 @@ import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
 import { dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation, checkUrl } from 'state/jetpack-connect/actions';
-import { isUrlInSites } from 'state/sites/selectors';
+import { getSiteByUrl } from 'state/sites/selectors';
 import JetpackExampleInstall from './exampleComponents/jetpack-install';
 import JetpackExampleActivate from './exampleComponents/jetpack-activate';
 import JetpackExampleConnect from './exampleComponents/jetpack-connect';
@@ -81,14 +81,10 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	onURLEnter() {
-<<<<<<< 1f10439420e9b897a7d541714a4696f9268580c0
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl
 		} );
-		this.props.checkUrl( this.state.currentUrl );
-=======
-		this.props.checkUrl( this.state.currentUrl, this.props.isUrlInSites( this.state.currentUrl ) );
->>>>>>> Jetpack connect: check users sites before fetching info from the api
+		this.props.checkUrl( this.state.currentUrl, !! this.props.getSiteByUrl( this.state.currentUrl ) );
 	},
 
 	installJetpack() {
@@ -289,11 +285,11 @@ const JetpackConnectMain = React.createClass( {
 export default connect(
 	state => {
 		const checkUrlInSites = ( url ) => {
-			return isUrlInSites( state, url );
+			return getSiteByUrl( state, url );
 		};
 		return {
 			jetpackConnectSite: state.jetpackConnect.jetpackConnectSite,
-			isUrlInSites: checkUrlInSites
+			getSiteByUrl: checkUrlInSites
 		};
 	},
 	dispatch => bindActionCreators( { recordTracksEvent, checkUrl, dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
