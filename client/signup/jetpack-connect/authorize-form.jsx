@@ -140,6 +140,7 @@ const LoggedInForm = React.createClass( {
 		debug( 'Checking for auto-auth on mount', autoAuthorize );
 		this.props.recordTracksEvent( 'jpc_auth_view' );
 		if ( ! this.props.isAlreadyOnSitesList &&
+			! queryObject.already_authorized &&
 			( autoAuthorize || this.props.calypsoStartedConnection || this.props.isSSO ) ) {
 			this.props.authorize( queryObject );
 		}
@@ -193,7 +194,6 @@ const LoggedInForm = React.createClass( {
 
 	renderNotices() {
 		const { authorizeError, queryObject } = this.props.jetpackConnectAuthorize;
-
 		if ( queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
 			return <JetpackConnectNotices noticeType="alreadyConnectedByOtherUser" />;
 		}
@@ -215,7 +215,7 @@ const LoggedInForm = React.createClass( {
 
 		if ( ! this.props.isAlreadyOnSitesList &&
 			queryObject.already_authorized ) {
-			return this.translate( 'Go to your site' );
+			return this.translate( 'Return to your site' );
 		}
 
 		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
@@ -248,7 +248,7 @@ const LoggedInForm = React.createClass( {
 			components: { strong: <strong /> }
 		} );
 
-		if ( authorizeSuccess ) {
+		if ( authorizeSuccess || this.props.isAlreadyOnSitesList ) {
 			text = this.translate( 'Connected as {{strong}}%(user)s{{/strong}}', {
 				args: { user: this.props.user.display_name },
 				components: { strong: <strong /> }
@@ -388,11 +388,14 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 export default connect(
 	state => {
+		const site = state.jetpackConnect.jetpackConnectAuthorize && state.jetpackConnect.jetpackConnectAuthorize.queryObject
+			? getSiteByUrl( state, state.jetpackConnect.jetpackConnectAuthorize.queryObject.site )
+			: null;
 		return {
 			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
 			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
 			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
-			isAlreadyOnSitesList: getSiteByUrl( state, state.jetpackConnect.jetpackConnectAuthorize.queryObject.site )
+			isAlreadyOnSitesList: !! site
 		};
 	},
 	dispatch => bindActionCreators( { recordTracksEvent, authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )
