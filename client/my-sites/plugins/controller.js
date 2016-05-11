@@ -190,9 +190,14 @@ const controller = {
 		next();
 	},
 
-	plugins( filter, context ) {
+	plugins( filter, context, next ) {
 		const siteUrl = route.getSiteFragment( context.path );
 		const basePath = route.sectionify( context.path ).replace( '/' + filter, '' );
+
+		// bail if no site is selected and the user has no Jetpack sites.
+		if ( ! siteUrl && sites.getJetpack().length === 0 ) {
+			return next();
+		}
 
 		context.params.pluginFilter = filter;
 		notices.clearNotices( 'notices' );

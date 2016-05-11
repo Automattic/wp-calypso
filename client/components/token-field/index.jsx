@@ -4,6 +4,7 @@
 var take = require( 'lodash/take' ),
 	clone = require( 'lodash/clone' ),
 	map = require( 'lodash/map' ),
+	difference = require( 'lodash/difference' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	each = require( 'lodash/each' ),
@@ -369,7 +370,9 @@ var TokenField = React.createClass( {
 			startsWithMatch = [],
 			containsMatch = [];
 
-		if ( match.length > 0 ) {
+		if ( match.length === 0 ) {
+			suggestions = difference( suggestions, this.props.value );
+		} else {
 			match = match.toLocaleLowerCase();
 
 			each( suggestions, function( suggestion ) {
@@ -386,7 +389,7 @@ var TokenField = React.createClass( {
 			suggestions = startsWithMatch.concat( containsMatch );
 		}
 
-		return take( suggestions, this.props.maxSuggestions )
+		return take( suggestions, this.props.maxSuggestions );
 	},
 
 	_getSelectedSuggestion: function() {
