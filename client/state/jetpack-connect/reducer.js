@@ -1,14 +1,9 @@
 /**
-<<<<<<< 7c7f6676cb479bdacafc5af98da5ed17da3040b5
  * External dependencis
  */
- import isEmpty from 'lodash/isEmpty';
-=======
- * External dependencies
- */
+import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
 import { combineReducers } from 'redux';
->>>>>>> Jetpack Connect
 
 /**
  * Internal dependencies
@@ -123,7 +118,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { autoAuthorize: false } );
 		case SERIALIZE:
 		case DESERIALIZE:
-			return Object.assign( {}, state, { isRedirectingToWpAdmin: false } );
+			return {};
 	}
 	return state;
 }
@@ -154,6 +149,6 @@ export function jetpackSSO( state = {}, action ) {
 export default combineReducers( {
 	jetpackConnectSite,
 	jetpackConnectAuthorize,
-	jetpackConnectSessions,
 	jetpackSSO,
+	jetpackConnectSessions,
 } );
