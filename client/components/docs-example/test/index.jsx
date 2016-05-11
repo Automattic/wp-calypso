@@ -11,6 +11,8 @@ import noop from 'lodash/noop';
  */
 import DocsExample, { DocsExampleToggle, DocsExampleStats } from '../index';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import Button from 'components/button';
+import Count from 'components/count';
 
 /**
  * Helper method to get an html attribute from a ReactWrapper instance.
@@ -54,6 +56,9 @@ describe( 'DocsExample', () => {
 		assert.equal( titleLink.text(), props.title );
 		// TODO: when available use chai-enzyme instead of this helper
 		assert.equal( getAttribute( titleLink, 'href' ), props.url );
+
+		assert.lengthOf( docsExample.find( '.docs-example__toggle' ), 0 );
+		assert.lengthOf( docsExample.find( '.docs-example__stats' ), 0 );
 	} );
 
 	it( 'should render the toggle button', () => {
@@ -65,7 +70,7 @@ describe( 'DocsExample', () => {
 				toggleText: 'My Test Example'
 			}
 		);
-		const docsExample = mount(
+		const docsExample = shallow(
 			<DocsExample { ...propsWithToggle }>
 				{ childrenFixture }
 			</DocsExample>
@@ -84,7 +89,7 @@ describe( 'DocsExample', () => {
 				}
 			}
 		);
-		const docsExample = mount(
+		const docsExample = shallow(
 			<DocsExample { ...propsWithStats }>
 				{ childrenFixture }
 			</DocsExample>
@@ -95,27 +100,21 @@ describe( 'DocsExample', () => {
 } );
 
 describe( 'DocsExampleToggle', () => {
-	useFakeDom();
-
 	const props = {
 		onClick: noop,
 		text: 'Toggle me baby!'
 	};
 
 	it( 'should render', () => {
-		const docsExampleToggle = mount(
+		const docsExampleToggle = shallow(
 			<DocsExampleToggle { ...props } />
 		);
 
-		const toggleButton = docsExampleToggle.find( '.button' );
-		assert.lengthOf( toggleButton, 1 );
-		assert.equal( toggleButton.text(), props.text );
+		assert.lengthOf( docsExampleToggle.find( Button ), 1 );
 	} );
 } );
 
 describe( 'DocsExampleStats', () => {
-	useFakeDom();
-
 	const props = {
 		count: 10
 	};
@@ -125,16 +124,14 @@ describe( 'DocsExampleStats', () => {
 			<DocsExampleStats { ...props } />
 		);
 
-		assert.lengthOf( docsExampleStats.find( '.docs-example__stats' ), 1 );
+		assert.lengthOf( docsExampleStats.find( 'p' ), 1 );
 	} );
 
-	it( 'should show the component\'s usage count', () => {
-		const docsExampleStats = mount(
+	it( 'should have the component\'s usage count', () => {
+		const docsExampleStats = shallow(
 			<DocsExampleStats { ...props } />
 		);
 
-		const count = docsExampleStats.find( '.count' );
-		assert.lengthOf( count, 1 );
-		assert.equal( count.text(), props.count );
+		assert.lengthOf( docsExampleStats.find( Count ), 1 );
 	} );
 } );
