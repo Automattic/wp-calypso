@@ -7,10 +7,10 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	ADWORDS_SITE_APPROVE_REQUEST,
-	ADWORDS_SITE_APPROVE_REQUEST_SUCCESS,
-	ADWORDS_SITE_APPROVE_REQUEST_FAILURE,
-	ADWORDS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
+	WORDADS_SITE_APPROVE_REQUEST,
+	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
+	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
+	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -30,13 +30,13 @@ const initialState = {
 
 export function requestStatus( state = initialState, action ) {
 	switch ( action.type ) {
-		case ADWORDS_SITE_APPROVE_REQUEST:
+		case WORDADS_SITE_APPROVE_REQUEST:
 			return { requesting: true, error: null };
-		case ADWORDS_SITE_APPROVE_REQUEST_SUCCESS:
+		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
 			return { requesting: false, error: null };
-		case ADWORDS_SITE_APPROVE_REQUEST_FAILURE:
+		case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
 			return { requesting: false, error: action.error };
-		case ADWORDS_SITE_APPROVE_REQUEST_DISMISS_ERROR:
+		case WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR:
 			return Object.assign( {}, state, { error: null } );
 		case DESERIALIZE:
 			return {};
