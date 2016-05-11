@@ -10,15 +10,9 @@
 	margin-right: 5px;
 	font-size: 14px;
 
-	p {
+	.guided-tours__step-text {
 		color: $gray-dark;
 		margin-bottom: 16px;
-	}
-
-	hr {
-		margin-bottom: 0.5em;
-		color: $gray-light;
-		background-color: $gray-light;
 	}
 
 	.gridicon[height="16"] {
@@ -51,27 +45,25 @@
 }
 
 .guided-tours__choice-button-row {
-	button {
+	.button {
 		width: 48%;
 	}
-	button:nth-child(1) {
+	.button:nth-child(1) {
 		margin-right: 4%;
 	}
 }
 
 .guided-tours__single-button-row {
-	button {
+	.button {
 		width: 100%;
 	}
 }
 
 .guided-tours__external-link,
 .guided-tours__bullseye-instructions {
-	p {
-		color: darken( $gray, 10 );
-		margin-bottom: 0;
-		font-style: italic;
-	}
+	color: darken( $gray, 10 );
+	margin-bottom: 0;
+	font-style: italic;
 
 	.gridicon {
 		position: relative;
