@@ -22,10 +22,12 @@ import {
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_STORE_SESSION,
-	JETPACK_CONNECT_SSO_VALIDATE,
-	JETPACK_CONNECT_SSO_AUTHORIZE,
-	JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
-	JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
+	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
+	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
+	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
+	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
+	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
+	JETPACK_CONNECT_SSO_VALIDATION_ERROR
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import config from 'config';
@@ -211,21 +213,19 @@ export default {
 		return ( dispatch ) => {
 			debug( 'Attempting to validate SSO for ' + siteId );
 			dispatch( {
-				type: JETPACK_CONNECT_SSO_VALIDATE,
+				type: JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 				siteId
 			} );
 
 			return wpcom.undocumented().jetpackValidateSSONonce( siteId, ssoNonce ).then( ( data ) => {
 				dispatch( {
-					type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
-					error: false,
+					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 					success: data.success
 				} );
 			} ).catch( ( error ) => {
 				dispatch( {
-					type: JETPACK_CONNECT_SSO_VALIDATION_RECEIVE,
-					error: pick( error, [ 'error', 'status', 'message' ] ),
-					success: false
+					type: JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+					error: pick( error, [ 'error', 'status', 'message' ] )
 				} );
 			} );
 		};
@@ -235,21 +235,19 @@ export default {
 		return ( dispatch ) => {
 			debug( 'Attempting to authorize SSO for ' + siteId );
 			dispatch( {
-				type: JETPACK_CONNECT_SSO_AUTHORIZE,
+				type: JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 				siteId
 			} );
 
 			return wpcom.undocumented().jetpackAuthorizeSSONonce( siteId, ssoNonce ).then( ( data ) => {
 				dispatch( {
-					type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
-					error: false,
+					type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 					ssoUrl: data.sso_url
 				} );
 			} ).catch( ( error ) => {
 				dispatch( {
-					type: JETPACK_CONNECT_SSO_AUTHORIZATION_RECEIVE,
-					error: pick( error, [ 'error', 'status', 'message' ] ),
-					ssoUrl: false
+					type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
+					error: pick( error, [ 'error', 'status', 'message' ] )
 				} );
 			} );
 		};
