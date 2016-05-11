@@ -10,7 +10,7 @@
 	padding: 8px 16px;
 	text-align: left;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( "<660px" ) {
 		height: 38px;
 	}
 
@@ -36,7 +36,7 @@
 	&.has-icon {
 		padding-left: 42px;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( "<660px" ) {
 			padding-left: 36px;
 		}
 	}
@@ -44,10 +44,22 @@
 	.gridicon__following {
 		opacity: 0;
 		pointer-events: none;
+		transform: rotate( 360deg ) scale( 1 );
 	}
 
 	.gridicon__unfollow {
-		display: none;
+
+		.gridicon__follow {
+  			opacity: 0;
+  			pointer-events: none;
+			transform: rotate( -360deg ) scale( 0.5 );
+  		}
+
+  		.gridicon__following {
+  			opacity: 1;
+  			pointer-events: auto;
+ 			transform: rotate( 0 ) scale( 1 );
+  		}
 	}
 
 	&.is-following {
@@ -89,5 +101,6 @@
 		position: absolute;
 			left: 18px;
 			top: 7px;
+		transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	}
 }
