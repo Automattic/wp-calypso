@@ -70,9 +70,6 @@ const PlanDetailsComponent = React.createClass( {
 					selectedSite={ this.props.selectedSite }
 					sitePlans={ this.props.sitePlans }
 				/>
-				<h2 className="current-plan__more-features-header">
-					{ this.translate( 'All this plus awesome features included in Premium:' ) }
-				</h2>
 				<PremiumPlanDetails
 					selectedSite={ this.props.selectedSite }
 					sitePlans={ this.props.sitePlans }
