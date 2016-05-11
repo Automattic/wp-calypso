@@ -7,6 +7,8 @@ export const PLAN_FREE = 'free_plan';
 export const PLAN_JETPACK_FREE = 'jetpack_free';
 export const PLAN_JETPACK_PREMIUM = 'jetpack_premium';
 export const PLAN_JETPACK_BUSINESS = 'jetpack_business';
+export const PLAN_JETPACK_PREMIUM_MONTHLY = 'jetpack_premium_monthly';
+export const PLAN_JETPACK_BUSINESS_MONTHLY = 'jetpack_business_monthly';
 
 // features constants
 export const FEATURE_CUSTOM_DESIGN = 'custom-design';
