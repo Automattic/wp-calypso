@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-no-bind */
-
 /**
  * External dependencies
  */
@@ -36,19 +34,23 @@ var ThanksModal = React.createClass( {
 		this.onCloseModal();
 	},
 
+	onLinkClick: function( link ) {
+		return this.trackClick.bind( null, link, 'click' );
+	},
+
 	renderWpcomInfo: function() {
 		const features = this.translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
 			components: {
 				a: <a href={ Helpers.getDetailsUrl( this.props.currentTheme, this.props.site ) }
 					target="_blank"
-					onClick={ this.trackClick.bind( null, 'features' ) }/>
+					onClick={ this.onLinkClick( 'features' ) }/>
 			}
 		} );
 		const customize = this.translate( '{{a}}Customize{{/a}} this design.', {
 			components: {
 				a: <a href={ Helpers.getCustomizeUrl( this.props.currentTheme, this.props.site ) }
 					target="_blank"
-					onClick={ this.trackClick.bind( null, 'customize' ) }/>
+					onClick={ this.onLinkClick( 'customize' ) }/>
 			}
 		} );
 		return (
@@ -61,7 +63,7 @@ var ThanksModal = React.createClass( {
 					components: {
 						a: <a href={ Helpers.getForumUrl( this.props.currentTheme ) }
 							target="_blank"
-							onClick={ this.trackClick.bind( null, 'support' ) }/>
+							onClick={ this.onLinkClick( 'support' ) }/>
 					}
 				} ) }
 			</li>
@@ -77,7 +79,7 @@ var ThanksModal = React.createClass( {
 						components: {
 							a: <a href={ themeUri }
 								target="_blank"
-								onClick={ this.trackClick.bind( null, 'org theme' ) }/>
+								onClick={ this.onLinkClick( 'org theme' ) }/>
 						}
 					} ) }
 				</li>
@@ -93,7 +95,7 @@ var ThanksModal = React.createClass( {
 						components: {
 							a: <a href={ authorUri }
 								target="_blank"
-								onClick={ this.trackClick.bind( null, 'org author' ) }/>
+								onClick={ this.onLinkClick( 'org author' ) }/>
 						}
 					} ) }
 				</li>
@@ -108,7 +110,7 @@ var ThanksModal = React.createClass( {
 					components: {
 						a: <a href="https://wordpress.org/support/forum/themes-and-templates"
 							target="_blank"
-							onClick={ this.trackClick.bind( null, 'org forum' ) }/>
+							onClick={ this.onLinkClick( 'org forum' ) }/>
 					}
 				} ) }
 			</li>
