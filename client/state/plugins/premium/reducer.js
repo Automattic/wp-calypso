@@ -73,7 +73,6 @@ export function plugins( state = {}, action ) {
 			return state;
 		case SERIALIZE:
 		case DESERIALIZE:
-			return {};
 		default:
 			return state;
 	}
