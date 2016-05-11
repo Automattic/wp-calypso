@@ -9,7 +9,10 @@ import { combineReducers } from 'redux';
 import {
 	ADWORDS_SITE_APPROVE_REQUEST,
 	ADWORDS_SITE_APPROVE_REQUEST_SUCCESS,
-	ADWORDS_SITE_APPROVE_REQUEST_FAILURE
+	ADWORDS_SITE_APPROVE_REQUEST_FAILURE,
+	ADWORDS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
 
 /**
@@ -33,6 +36,12 @@ export function requestStatus( state = initialState, action ) {
 			return { requesting: false, error: null };
 		case ADWORDS_SITE_APPROVE_REQUEST_FAILURE:
 			return { requesting: false, error: action.error };
+		case ADWORDS_SITE_APPROVE_REQUEST_DISMISS_ERROR:
+			return Object.assign( {}, state, { error: null } );
+		case DESERIALIZE:
+			return {};
+		case SERIALIZE:
+			return {};
 	}
 
 	return state;

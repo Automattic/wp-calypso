@@ -23,7 +23,8 @@ import FeatureExample from 'components/feature-example';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import FormToggle from 'components/forms/form-toggle';
 import Card from 'components/card';
-import { requestApproval } from 'state/wordads/approve/actions';
+import { requestApproval, dismissError } from 'state/wordads/approve/actions';
+import Notice from 'components/notice';
 
 const AdsMain = React.createClass( {
 
@@ -78,6 +79,11 @@ const AdsMain = React.createClass( {
 	renderInstanActivationToggle: function( component ) {
 		return ( <div>
 			<Card>
+				{ this.props.requestStatus.error &&
+					<Notice status="is-error" onDismissClick={ this.props.dismissError }>
+						{ this.props.requestStatus.error }
+					</Notice>
+				}
 				<div className="ads__activate-header-description">
 					<h2 className="form-section-heading">{ this.translate( 'WordAds Disabled' ) }</h2>
 					<p>
@@ -140,8 +146,10 @@ const AdsMain = React.createClass( {
 
 export default connect(
 	state => ( { requestStatus: state.wordads.approve.requestStatus } ),
-	{ requestApproval },
+	{ requestApproval, dismissError },
 	( stateProps, dispatchProps, parentProps ) => Object.assign(
+		{},
+		dispatchProps,
 		{ requestApproval: () => ( ! stateProps.requestStatus.requesting ) ? dispatchProps.requestApproval( parentProps.site.ID ) : null },
 		parentProps,
 		stateProps

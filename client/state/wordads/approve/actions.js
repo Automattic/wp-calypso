@@ -4,7 +4,8 @@
 import {
 	ADWORDS_SITE_APPROVE_REQUEST,
 	ADWORDS_SITE_APPROVE_REQUEST_SUCCESS,
-	ADWORDS_SITE_APPROVE_REQUEST_FAILURE
+	ADWORDS_SITE_APPROVE_REQUEST_FAILURE,
+	ADWORDS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 } from 'state/action-types';
 import wpcom from 'lib/wp';
 
@@ -19,9 +20,11 @@ export const requestApproval = siteId => dispatch => {
 		type: ADWORDS_SITE_APPROVE_REQUEST_SUCCESS,
 		siteId
 	} ) )
-	.catch( error => dispatch( {
+	.then( error => dispatch( {
 		type: ADWORDS_SITE_APPROVE_REQUEST_FAILURE,
 		siteId,
-		error
+		error: error
 	} ) );
 };
+
+export const dismissError = () => ( { type: ADWORDS_SITE_APPROVE_REQUEST_DISMISS_ERROR } );
