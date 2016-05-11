@@ -8,6 +8,7 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 } from 'state/action-types';
 import wpcom from 'lib/wp';
+import Sites from 'lib/sites-list';
 
 export const requestApproval = siteId => dispatch => {
 	dispatch( {
@@ -16,11 +17,14 @@ export const requestApproval = siteId => dispatch => {
 	} );
 
 	return wpcom.undocumented().wordAdsApprove( siteId )
-	.then( result => dispatch( {
-		type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
-		approved: result.approved,
-		siteId
-	} ) )
+	.then( result => {
+		Sites().fetch();
+		dispatch( {
+			type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
+			approved: result.approved,
+			siteId
+		} );
+	} )
 	.catch( error => dispatch( {
 		type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 		siteId,
