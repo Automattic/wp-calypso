@@ -71,7 +71,8 @@ export default {
 			React.createElement( JetpackConnect, {
 				path: context.path,
 				context: context,
-				locale: context.params.lang
+				locale: context.params.locale,
+				userModule: userModule
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
@@ -89,7 +90,7 @@ export default {
 		renderWithReduxStore(
 			React.createElement( jetpackConnectAuthorizeForm, {
 				path: context.path,
-				locale: context.params.lang,
+				locale: context.params.locale,
 				userModule: userModule
 			} ),
 			document.getElementById( 'primary' ),
