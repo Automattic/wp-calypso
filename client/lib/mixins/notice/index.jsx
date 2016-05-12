@@ -4,7 +4,7 @@ import get from 'lodash/get';
 import uniqueId from 'lodash/uniqueId';
 import escapeRegexp from 'lodash/escapeRegexp';
 
-function forceInclideIdPrefix( idPrefix, noticeActionCreator ) {
+function forceIncludeIdPrefix( idPrefix, noticeActionCreator ) {
 	return function( text, options = {} ) {
 		options = Object.assign( {}, options );
 
@@ -66,11 +66,11 @@ export default ( idPrefix ) => {
 		},
 	};
 
-	noticeMixin.successNotice = forceInclideIdPrefix( idPrefix, successNotice );
-	noticeMixin.errorNotice = forceInclideIdPrefix( idPrefix, errorNotice );
-	noticeMixin.infoNotice = forceInclideIdPrefix( idPrefix, infoNotice );
-	noticeMixin.warningNotice = forceInclideIdPrefix( idPrefix, warningNotice );
-	noticeMixin.updateNotice = forceInclideIdPrefix( idPrefix, updateNotice );
+	noticeMixin.successNotice = forceIncludeIdPrefix( idPrefix, successNotice );
+	noticeMixin.errorNotice = forceIncludeIdPrefix( idPrefix, errorNotice );
+	noticeMixin.infoNotice = forceIncludeIdPrefix( idPrefix, infoNotice );
+	noticeMixin.warningNotice = forceIncludeIdPrefix( idPrefix, warningNotice );
+	noticeMixin.updateNotice = forceIncludeIdPrefix( idPrefix, updateNotice );
 	noticeMixin.removeNotice = function( noticeID ) {
 		this.context.store.dispatch( removeNotice( noticeID ) );
 	};
