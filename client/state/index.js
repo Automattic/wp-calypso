@@ -15,6 +15,7 @@ import googleAppsUsers from './google-apps-users/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import notices from './notices/reducer';
 import plans from './plans/reducer';
+import preview from './preview/reducer';
 import posts from './posts/reducer';
 import plugins from './plugins/reducer';
 import postTypes from './post-types/reducer';
@@ -42,6 +43,7 @@ export const reducer = combineReducers( {
 	notices,
 	plugins,
 	plans,
+	preview,
 	posts,
 	postTypes,
 	reader,
