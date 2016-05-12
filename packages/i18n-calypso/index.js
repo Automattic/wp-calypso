@@ -10,7 +10,6 @@ module.exports = {
 	numberFormat: i18n.numberFormat.bind( i18n ),
 	translate: i18n.translate.bind( i18n ),
 	configure: i18n.configure.bind( i18n ),
-	initialize: i18n.initialize.bind( i18n ),
 	setLocale: i18n.setLocale.bind( i18n ),
 	getLocale: i18n.getLocale.bind( i18n ),
 	getLocaleSlug: i18n.getLocaleSlug.bind( i18n ),

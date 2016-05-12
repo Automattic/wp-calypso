@@ -1,6 +1,6 @@
 {
   "name": "i18n-calypso",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "i18n JavaScript library on top of Jed originally used in Calypso",
   "main": "index.js",
   "repository": {
@@ -11,6 +11,9 @@
   "license": "GPL-2.0",
   "bugs": {
     "url": "https://github.com/Automattic/i18n-calypso/issues"
+  },
+  "scripts": {
+    "test": "mocha"
   },
   "homepage": "https://github.com/Automattic/i18n-calypso#readme",
   "dependencies": {
@@ -25,6 +28,7 @@
     "chai": "^3.5.0",
     "enzyme": "2.2.0",
     "lodash.assign": "^4.0.8",
+    "mocha": "^2.4.5",
     "mock-local-storage": "^1.0.2",
     "react": "0.14.8",
     "react-addons-test-utils": "0.14.8",

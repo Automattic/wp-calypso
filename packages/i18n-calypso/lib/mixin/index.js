@@ -1,6 +1,7 @@
 var i18n = require( '..' ),
 	moment = require( 'moment-timezone' ),
-	tzDetect = require( './timezone' );
+	tzDetect = require( './timezone' ),
+	debug = require( 'debug' )( 'i18n-calypso:mixin' );
 
 var i18nStateObserver = i18n.stateObserver,
 	componentUpdateHooks = i18n.componentUpdateHooks;
