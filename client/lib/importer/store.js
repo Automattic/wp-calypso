@@ -20,6 +20,7 @@ import {
 	IMPORTS_IMPORT_START,
 	IMPORTS_IMPORT_UNLOCK,
 	IMPORTS_START_IMPORTING,
+	IMPORTS_STORE_RESET,
 	IMPORTS_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
@@ -66,6 +67,12 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		newState;
 
 	switch ( action.type ) {
+		case IMPORTS_STORE_RESET:
+			// this is here to enable
+			// unit-testing the store
+			newState = initialState;
+			break;
+
 		case IMPORTS_FETCH:
 			newState = state.setIn( [ 'api', 'isFetching' ], true );
 			break;
