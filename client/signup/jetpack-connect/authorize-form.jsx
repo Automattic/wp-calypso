@@ -141,16 +141,16 @@ const LoggedInForm = React.createClass( {
 	},
 
 	componentWillReceiveProps( props ) {
-		const { queryObject, authorizeSuccess, siteReceived, isRedirectingToWpAdmin } = props.jetpackConnectAuthorize;
+		const { queryObject, authorizeSuccess, siteReceived, isActivating, isRedirectingToWpAdmin } = props.jetpackConnectAuthorize;
 		if ( authorizeSuccess &&
 			! isRedirectingToWpAdmin &&
 			! props.calypsoStartedConnection &&
 			queryObject.redirect_after_auth ) {
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		} else if ( siteReceived &&
-			props.calypsoStartedConnection ) {
-			const plansURL = this.getRedirectionTarget();
-			page.redirect( plansURL );
+			props.calypsoStartedConnection &&
+			! isActivating ) {
+			this.activateManage();
 		}
 	},
 
@@ -175,9 +175,9 @@ const LoggedInForm = React.createClass( {
 	},
 
 	activateManage() {
-		const { queryObject, activateManageSecret, plansUrl } = this.props.jetpackConnectAuthorize;
+		const { queryObject, activateManageSecret } = this.props.jetpackConnectAuthorize;
 		this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
-		page.redirect( plansUrl );
+		page.redirect( this.getRedirectionTarget() );
 	},
 
 	handleSubmit() {
