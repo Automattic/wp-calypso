@@ -66,13 +66,13 @@ describe( 'TokenField', function() {
 		return textNodes.map( getNodeInnerHtml );
 	}
 
-	function getSuggestionsHTML( selector ) {
+	function getSuggestionsText( selector ) {
 		const suggestionNodes = tokenFieldNode.find( selector || '.token-field__suggestion' );
 
-		return suggestionNodes.map( getSuggestionNodeHTML );
+		return suggestionNodes.map( getSuggestionNodeText );
 	}
 
-	function getSuggestionNodeHTML( node ) {
+	function getSuggestionNodeText( node ) {
 		if ( ! node.find( 'span' ).length ) {
 			return getNodeInnerHtml( node );
 		}
@@ -93,7 +93,7 @@ describe( 'TokenField', function() {
 	}
 
 	function getSelectedSuggestion() {
-		var selectedSuggestions = getSuggestionsHTML( '.token-field__suggestion.is-selected' );
+		var selectedSuggestions = getSuggestionsText( '.token-field__suggestion.is-selected' );
 
 		return selectedSuggestions[ 0 ] || null;
 	}
@@ -142,38 +142,38 @@ describe( 'TokenField', function() {
 	describe( 'suggestions', function() {
 		it( 'should render default suggestions', function() {
 			// limited by maxSuggestions (default 100 so doesn't matter here)
-			expect( getSuggestionsHTML() ).to.deep.equal( wrapper.state( 'tokenSuggestions' ) );
+			expect( getSuggestionsText() ).to.deep.equal( wrapper.state( 'tokenSuggestions' ) );
 		} );
 
 		it( 'should remove already added tags from suggestions', function() {
 			wrapper.setState( {
 				tokens: Object.freeze( [ 'of', 'and' ] )
 			} );
-			expect( getSuggestionsHTML() ).to.not.include.members( getTokensHTML() );
+			expect( getSuggestionsText() ).to.not.include.members( getTokensHTML() );
 		} );
 
 		it( 'should suggest partial matches', function() {
 			setText( 't' );
-			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.matchingSuggestions.t );
+			expect( getSuggestionsText() ).to.deep.equal( fixtures.matchingSuggestions.t );
 		} );
 
 		it( 'suggestions that begin with match are boosted', function() {
 			setText( 's' );
-			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.matchingSuggestions.s );
+			expect( getSuggestionsText() ).to.deep.equal( fixtures.matchingSuggestions.s );
 		} );
 
 		it( 'should display suggestions with escaped special characters properly', function() {
 			wrapper.setState( {
 				tokenSuggestions: fixtures.specialSuggestions.textEscaped
 			} );
-			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.specialSuggestions.htmlEscaped );
+			expect( getSuggestionsText() ).to.deep.equal( fixtures.specialSuggestions.htmlEscaped );
 		} );
 
 		it( 'should display suggestions with special characters properly', function() {
 			wrapper.setState( {
 				tokenSuggestions: fixtures.specialSuggestions.textUnescaped
 			} );
-			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.specialSuggestions.htmlUnescaped );
+			expect( getSuggestionsText() ).to.deep.equal( fixtures.specialSuggestions.htmlUnescaped );
 		} );
 
 		it( 'should match against the unescaped values of suggestions with special characters', function() {
@@ -181,7 +181,7 @@ describe( 'TokenField', function() {
 			wrapper.setState( {
 				tokenSuggestions: fixtures.specialSuggestions.textUnescaped
 			} );
-			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.specialSuggestions.matchAmpersandUnescaped );
+			expect( getSuggestionsText() ).to.deep.equal( fixtures.specialSuggestions.matchAmpersandUnescaped );
 		} );
 
 		it( 'should match against the unescaped values of suggestions with special characters (including spaces)', function() {
@@ -189,7 +189,7 @@ describe( 'TokenField', function() {
 			wrapper.setState( {
 				tokenSuggestions: fixtures.specialSuggestions.textUnescaped
 			} );
-			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.specialSuggestions.matchAmpersandSequence );
+			expect( getSuggestionsText() ).to.deep.equal( fixtures.specialSuggestions.matchAmpersandSequence );
 		} );
 
 		it( 'should not match against the escaped values of suggestions with special characters', function() {
@@ -197,17 +197,17 @@ describe( 'TokenField', function() {
 			wrapper.setState( {
 				tokenSuggestions: fixtures.specialSuggestions.textUnescaped
 			} );
-			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.specialSuggestions.matchAmpersandEscaped );
+			expect( getSuggestionsText() ).to.deep.equal( fixtures.specialSuggestions.matchAmpersandEscaped );
 		} );
 
 		it( 'should match suggestions even with trailing spaces', function() {
 			setText( '  at  ' );
-			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.matchingSuggestions.at );
+			expect( getSuggestionsText() ).to.deep.equal( fixtures.matchingSuggestions.at );
 		} );
 
 		it( 'should manage the selected suggestion based on both keyboard and mouse events', test( function() {
 			setText( 't' );
-			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.matchingSuggestions.t );
+			expect( getSuggestionsText() ).to.deep.equal( fixtures.matchingSuggestions.t );
 			expect( getSelectedSuggestion() ).to.equal( null );
 			sendKeyDown( keyCodes.downArrow ); // 'the'
 			expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'he' ] );
@@ -215,7 +215,7 @@ describe( 'TokenField', function() {
 			expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'o' ] );
 
 			const hoverSuggestion = tokenFieldNode.find( '.token-field__suggestion' ).at( 5 ); // 'it'
-			expect( getSuggestionNodeHTML( hoverSuggestion ) ).to.deep.equal( [ 'i', 't' ] );
+			expect( getSuggestionNodeText( hoverSuggestion ) ).to.deep.equal( [ 'i', 't' ] );
 
 			// before sending a hover event, we need to wait for
 			// SuggestionList#_scrollingIntoView to become false
