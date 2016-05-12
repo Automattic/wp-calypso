@@ -22,7 +22,7 @@ module.exports = {
 		matchAmpersandEscaped: []
 	},
 	matchingSuggestions: {
-		't': [
+		t: [
 			[ 't', 'he' ],
 			[ 't', 'o' ],
 			[ 't', 'hat' ],
@@ -32,7 +32,7 @@ module.exports = {
 			[ 'no', 't' ],
 			[ 'a', 't' ]
 		],
-		's': [
+		s: [
 			[ 's', 'nake' ],
 			[ 's', 'ound' ],
 			[ 'i', 's' ],
@@ -41,7 +41,7 @@ module.exports = {
 			[ 'wa', 's' ],
 			[ 'pipe', 's']
 		],
-		'at': [
+		at: [
 			[ 'at' ],
 			[ 'th', 'at' ]
 		]
