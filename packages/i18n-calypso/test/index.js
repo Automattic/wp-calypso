@@ -29,7 +29,7 @@ describe( 'I18n', function() {
 	useFakeDom();
 
 	before( function() {
-		i18n.initialize( data.locale );
+		i18n.setLocale( data.locale );
 	} );
 
 	describe( 'translate()', function() {

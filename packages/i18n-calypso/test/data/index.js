@@ -1,6 +1,7 @@
 /*eslint-disable quote-props */
 var locale = {
 	'': {
+		localeSlug: 'de',
 		'Plural-Forms': ' nplurals=2; plural=n != 1;',
 		'MIME-Version': ' 1.0',
 		'X-Generator': ' GlotPress/0.1',

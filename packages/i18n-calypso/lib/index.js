@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'i18n' ),
+var debug = require( 'debug' )( 'i18n-calypso' ),
 	Jed = require( 'jed' ),
 	moment = require( 'moment-timezone' ),
 	EventEmitter = require( 'events' ).EventEmitter,
@@ -133,6 +133,7 @@ function I18N() {
 	// Because the mixin can be injected into a ton of React components,
 	// we need to bump the number of listeners to infinity and beyond
 	this.stateObserver.setMaxListeners( 0 );
+	// default configuration
 	this.configure();
 }
 
@@ -156,36 +157,18 @@ I18N.prototype.numberFormat = function( number ) {
 
 I18N.prototype.configure = function( options ) {
 	assign( this, options || {} );
-	this.setLocale( this.defaultLocaleSlug );
+	this.setLocale( { '': { localeSlug: this.defaultLocaleSlug } } );
 };
 
-/**
- * Initialized with a bootstrapped locale, the currentUser's localeSlug, or default if none available
- * @param  {object} bootstrap The bootstrapped locale file
- */
-I18N.prototype.initialize = function( bootstrap ) {
-	var localeSlug = this.defaultLocaleSlug;
+I18N.prototype.setLocale = function( localeData ) {
+	var localeSlug = localeData[ '' ].localeSlug;
 
-	if ( bootstrap && typeof bootstrap[ '' ] !== 'undefined' && typeof bootstrap[ '' ].localeSlug !== 'undefined' ) {
-		localeSlug = bootstrap[ '' ].localeSlug;
-	}
-
-	debug( 'Initialized i18n with bootstrapped locale: ' + localeSlug );
-
-	this.setLocale( localeSlug, bootstrap );
-};
-
-I18N.prototype.setLocale = function( localeSlug, localeData ) {
 	// Don't change if same locale as current, except for default locale
 	if ( localeSlug !== this.defaultLocaleSlug && localeSlug === this.state.localeSlug ) {
 		return;
 	}
 
-	if ( ! localeData ) {
-		localeData = { '': {} };
-	}
-
-	this.state.localeSlug = localeData[ '' ].localeSlug = localeSlug;
+	this.state.localeSlug = localeSlug;
 	this.state.locale = localeData;
 
 	this.state.jed = new Jed( {
