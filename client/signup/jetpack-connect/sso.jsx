@@ -41,9 +41,14 @@ const JetpackSSOForm = React.createClass( {
 		this.maybeValidateSSO();
 
 		if ( nextProps.ssoUrl && ! this.props.ssoUrl ) {
+			// After receiving the SSO URL, which will log the user in on remote site,
+			// we redirect user to remote site to be logged in.
+			//
+			// Note: We add `calypso_env` so that when we are redirected back to Calypso,
+			// we land in the same development environment.
 			const redirect = addQueryArgs( { calypso_env: config( 'env' ) }, nextProps.ssoUrl );
 			debug( 'Redirecting to: ' + redirect );
-			window.location.href = addQueryArgs( { calypso_env: config( 'env' ) }, nextProps.ssoUrl );
+			window.location.href = addQueryArgs( redirect );
 		}
 	},
 
@@ -63,7 +68,7 @@ const JetpackSSOForm = React.createClass( {
 
 	isButtonDisabled() {
 		const { nonceValid, isAuthorizing, isValidating, ssoUrl } = this.props;
-		return ! nonceValid || !! isAuthorizing || !! isValidating || !! ssoUrl;
+		return !! ( ! nonceValid | isAuthorizing | isValidating | ssoUrl );
 	},
 
 	maybeValidateSSO() {
@@ -76,7 +81,6 @@ const JetpackSSOForm = React.createClass( {
 
 	render() {
 		const user = this.props.userModule.get();
-		console.log( this.props );
 
 		return (
 			<Main className="jetpack-connect">
