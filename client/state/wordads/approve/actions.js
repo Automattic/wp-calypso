@@ -18,10 +18,14 @@ export const requestApproval = siteId => dispatch => {
 
 	return wpcom.undocumented().wordAdsApprove( siteId )
 	.then( result => {
-		//We need to propagate this change to flux
-		const site = Sites().getSite( siteId );
-		site.options.wordads = true;
-		site.emit( 'change' );
+		if ( result.approved ) {
+			//We need to propagate this change to flux
+			const site = Sites().getSite( siteId );
+			if ( ! site.options.wordads ) {
+				site.options.wordads = true;
+				site.emit( 'change' );
+			}
+		}
 
 		dispatch( {
 			type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
