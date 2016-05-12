@@ -17,6 +17,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import {
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_QUERY_UPDATE,
+	JETPACK_CONNECT_SSO_QUERY_SET
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import jetpackSSOForm from './sso';
@@ -38,6 +39,12 @@ export default {
 		if ( ! isEmpty( context.query ) && context.query.update_nonce ) {
 			debug( 'updating nonce', context.query );
 			context.store.dispatch( { type: JETPACK_CONNECT_QUERY_UPDATE, property: '_wp_nonce', value: context.query.update_nonce } );
+			page.redirect( context.pathname );
+		}
+
+		if ( ! isEmpty( context.query ) && context.query.sso_nonce && context.query.site_id ) {
+			debug( 'updating SSO query', context.query );
+			context.store.dispatch( { type: JETPACK_CONNECT_SSO_QUERY_SET, queryObject: context.query } );
 			page.redirect( context.pathname );
 		}
 
