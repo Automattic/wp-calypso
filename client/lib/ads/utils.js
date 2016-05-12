@@ -3,7 +3,7 @@
  */
 import config from 'config';
 import { userCan } from 'lib/site/utils';
-import { isBusiness } from 'lib/products-values';
+import { isBusiness, isPremium } from 'lib/products-values';
 
 /**
  * Returns true if the site has WordAds access
@@ -28,7 +28,7 @@ export function canAccessWordads( site ) {
 export function isWordadsInstantActivationEligible( site ) {
 	if (
 		config.isEnabled( 'manage/ads/wordads-instant' ) &&
-		isBusiness( site.plan ) &&
+		( isBusiness( site.plan ) || isPremium( site.plan ) ) &&
 		userCan( 'manage_options', site ) &&
 		! site.jetpack
 	) {
