@@ -35,6 +35,7 @@ describe( 'reducer', () => {
 			themeDescriptionLong: 'the plato form of a theme',
 			themeSupportDocumentation: 'support comes from within',
 			themeStylesheet: 'premium/mood',
+			themeDownload: 'mood.zip',
 			themeTaxonomies: {
 				features: [ {
 					term_id: null,
@@ -60,6 +61,7 @@ describe( 'reducer', () => {
 			descriptionLong: 'the plato form of a theme',
 			supportDocumentation: 'support comes from within',
 			stylesheet: 'premium/mood',
+			download: 'mood.zip',
 			taxonomies: {
 				features: [ {
 					term_id: null,

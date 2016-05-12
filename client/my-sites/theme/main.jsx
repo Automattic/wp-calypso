@@ -16,6 +16,7 @@ import page from 'page';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
+import ThemeDownloadCard from './theme-download-card';
 import Button from 'components/button';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -43,6 +44,7 @@ const ThemeSheet = React.createClass( {
 		description: React.PropTypes.string,
 		descriptionLong: React.PropTypes.string,
 		supportDocumentation: React.PropTypes.string,
+		download: React.PropTypes.string,
 		taxonomies: React.PropTypes.object,
 		stylesheet: React.PropTypes.string,
 		isLoggedIn: React.PropTypes.bool,
@@ -153,6 +155,7 @@ const ThemeSheet = React.createClass( {
 					<div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />
 				</Card>
 				{ this.renderFeaturesCard() }
+				{ this.renderDownload() }
 			</div>
 		);
 	},
@@ -206,6 +209,13 @@ const ThemeSheet = React.createClass( {
 				</Card>
 			</div>
 		);
+	},
+
+	renderDownload() {
+		if ( 'Free' !== this.props.price ) {
+			return null;
+		}
+		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
 	},
 
 	render() {
