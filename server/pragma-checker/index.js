@@ -18,6 +18,7 @@ var IGNORED_MODULES = [
 	'lib/upgrades/actions', // nooped on the server as it still uses the singleton Flux architecture
 	'lib/mixins/i18n', // ignore this until we make it work properly on the server
 	'lib/mixins/i18n/localize', // ignore this until we make it work properly on the server
+	'my-sites/themes/thanks-modal', // stubbed on the server until we develop an isomorphic version
 ];
 
 function PragmaCheckPlugin( options ) {

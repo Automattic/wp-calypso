@@ -9,7 +9,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
-import { isPremium } from 'my-sites/themes/helpers';
 
 /**
  * Internal dependencies
@@ -24,11 +23,14 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
-import { signup, purchase, activate } from 'state/themes/actions';
+import { signup, purchase, activate, clearActivated } from 'state/themes/actions';
 import i18n from 'lib/mixins/i18n';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import Helpers from 'my-sites/themes/helpers';
+import { isPremium } from 'my-sites/themes/helpers';
+import ActivatingTheme from 'components/data/activating-theme';
+import ThanksModal from 'my-sites/themes/thanks-modal';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -63,13 +65,13 @@ const ThemeSheet = React.createClass( {
 		// TODO: if active -> customize (could use theme slug from selected site)
 
 		if ( ! this.props.isLoggedIn ) {
-			this.props.dispatch( signup( this.props ) );
+			this.props.signup( this.props );
 		// TODO: use site picker if no selected site
 		} else if ( isPremium( this.props ) ) {
 			// TODO: check theme is not already purchased
-			this.props.dispatch( purchase( this.props, this.props.selectedSite, 'showcase-sheet' ) );
+			this.props.purchase( this.props, this.props.selectedSite, 'showcase-sheet' );
 		} else {
-			this.props.dispatch( activate( this.props, this.props.selectedSite, 'showcase-sheet' ) );
+			this.props.activate( this.props, this.props.selectedSite, 'showcase-sheet' );
 		}
 	},
 
@@ -226,10 +228,17 @@ const ThemeSheet = React.createClass( {
 
 		const section = this.validateSection( this.props.section );
 		const priceElement = <span className="themes__sheet-action-bar-cost" dangerouslySetInnerHTML={ { __html: this.props.price } } />;
+		const siteID = this.props.selectedSite && this.props.selectedSite.ID;
 
 		return (
 			<Main className="themes__sheet">
 				{ this.renderBar() }
+				<ActivatingTheme siteId={ siteID }>
+					<ThanksModal
+						site={ this.props.selectedSite }
+						source={ 'details' }
+						clearActivated={ this.props.clearActivated }/>
+				</ActivatingTheme>
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
 						<HeaderCake className="themes__sheet-action-bar" onClick={ this.onBackClick }>
@@ -256,8 +265,11 @@ const ThemeSheet = React.createClass( {
 	}
 } );
 
-export default connect( ( state ) => {
-	const selectedSite = getSelectedSite( state );
-	const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
-	return { selectedSite, siteSlug };
-} )( ThemeSheet );
+export default connect(
+	( state ) => {
+		const selectedSite = getSelectedSite( state );
+		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
+		return { selectedSite, siteSlug };
+	},
+	{ signup, purchase, activate, clearActivated }
+)( ThemeSheet );
