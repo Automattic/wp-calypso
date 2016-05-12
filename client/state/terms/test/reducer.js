@@ -12,11 +12,15 @@ import merge from 'lodash/merge';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	DESERIALIZE,
-	SERIALIZE,
-	TERMS_RECEIVE
+	TERMS_RECEIVE,
+	TERMS_REQUEST,
+	TERMS_REQUEST_FAILURE,
+	TERMS_REQUEST_SUCCESS,
+	SERIALIZE
 } from 'state/action-types';
 import reducer, {
-	items
+	items,
+	requesting
 } from '../reducer';
 
 /**
@@ -42,8 +46,157 @@ describe( 'reducer', () => {
 
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'items'
+			'items',
+			'requesting'
 		] );
+	} );
+
+	describe( '#requesting()', () => {
+		it( 'should default to an empty object', () => {
+			const state = requesting( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should track request fetching', () => {
+			const state = requesting( undefined, {
+				type: TERMS_REQUEST,
+				siteId: 2916284,
+				taxonomy: 'category'
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					category: true
+				}
+			} );
+		} );
+
+		it( 'should accumulate requests for the same site', () => {
+			const original = deepFreeze( {
+				2916284: {
+					category: true
+				}
+			} );
+			const state = requesting( original, {
+				type: TERMS_REQUEST,
+				siteId: 2916284,
+				taxonomy: 'some-taxonomy'
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					category: true,
+					'some-taxonomy': true
+				}
+			} );
+		} );
+
+		it( 'should accumulate requests for distinct sites', () => {
+			const original = deepFreeze( {
+				2916284: {
+					category: true,
+					'some-taxonomy': true
+				}
+			} );
+			const state = requesting( original, {
+				type: TERMS_REQUEST,
+				siteId: 77203074,
+				taxonomy: 'some-taxonomy'
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					category: true,
+					'some-taxonomy': true
+				},
+				77203074: {
+					'some-taxonomy': true
+				}
+			} );
+		} );
+
+		it( 'should track request success', () => {
+			const original = deepFreeze( {
+				2916284: {
+					category: true,
+					'some-taxonomy': true
+				},
+				77203074: {
+					category: true
+				}
+			} );
+			const state = requesting( original, {
+				type: TERMS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				taxonomy: 'category'
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					category: false,
+					'some-taxonomy': true
+				},
+				77203074: {
+					category: true
+				}
+			} );
+		} );
+
+		it( 'should track request failure', () => {
+			const original = deepFreeze( {
+				2916284: {
+					category: false,
+					'some-taxonomy': true
+				},
+				77203074: {
+					category: true
+				}
+			} );
+			const state = requesting( original, {
+				type: TERMS_REQUEST_FAILURE,
+				siteId: 2916284,
+				taxonomy: 'some-taxonomy'
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					category: false,
+					'some-taxonomy': false
+				},
+				77203074: {
+					category: true
+				}
+			} );
+		} );
+
+		it( 'should never persist state', () => {
+			const original = deepFreeze( {
+				2916284: {
+					category: false
+				},
+				77203074: {
+					category: true
+				}
+			} );
+			const state = requesting( original, { type: SERIALIZE } );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should never load persisted state', () => {
+			const original = deepFreeze( {
+				2916284: {
+					category: false
+				},
+				77203074: {
+					category: true
+				}
+			} );
+			const state = requesting( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {} );
+		} );
 	} );
 
 	describe( '#items()', () => {
