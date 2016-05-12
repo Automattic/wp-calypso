@@ -64,13 +64,12 @@ module.exports = {
 		defaultVariation: 'namegen'
 	},
 	nudges: {
-		datestamp: '20160101',
+		datestamp: '20160519',
 		variations: {
-			showAll: 100,
-			hideAll: 0
+			showAll: 60,
+			hideAll: 40
 		},
-		defaultVariation: 'showAll',
-		allowExistingUsers: true
+		defaultVariation: 'showAll'
 	},
 	swapButtonsMySiteSidebar: {
 		datestamp: '20160414',
