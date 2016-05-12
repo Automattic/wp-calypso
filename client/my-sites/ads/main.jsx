@@ -84,6 +84,11 @@ const AdsMain = React.createClass( {
 						{ this.props.requestStatus.error }
 					</Notice>
 				}
+				{ this.props.requestStatus.requesting &&
+					<Notice status="is-info" showDismiss={ false }>
+						{ this.translate( 'Kindly requesting WordAds activation' ) }
+					</Notice>
+				}
 				<div className="ads__activate-header-description">
 					<h2 className="form-section-heading">{ this.translate( 'WordAds Disabled' ) }</h2>
 					<p>

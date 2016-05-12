@@ -18,7 +18,11 @@ export const requestApproval = siteId => dispatch => {
 
 	return wpcom.undocumented().wordAdsApprove( siteId )
 	.then( result => {
-		Sites().fetch();
+		//We need to propagate this change to flux
+		const site = Sites().getSite( siteId );
+		site.options.wordads = true;
+		site.emit( 'change' );
+
 		dispatch( {
 			type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 			approved: result.approved,
