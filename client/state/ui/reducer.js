@@ -15,6 +15,7 @@ import {
 import editor from './editor/reducer';
 import guidedTour from './guided-tours/reducer';
 import reader from './reader/reducer';
+import olark from './olark/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -86,6 +87,7 @@ const reducer = combineReducers( {
 	guidedTour,
 	editor,
 	reader,
+	olark
 } );
 
 export default function( state, action ) {
