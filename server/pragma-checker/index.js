@@ -19,6 +19,8 @@ var IGNORED_MODULES = [
 	'lib/mixins/i18n', // ignore this until we make it work properly on the server
 	'lib/mixins/i18n/localize', // ignore this until we make it work properly on the server
 	'my-sites/themes/thanks-modal', // stubbed on the server until we develop an isomorphic version
+	'my-sites/themes/themes-site-selector-modal', // stubbed on the server until we develop an isomorphic version
+	'my-sites/themes/action-labels' // fixme
 ];
 
 function PragmaCheckPlugin( options ) {

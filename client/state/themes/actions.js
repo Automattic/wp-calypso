@@ -123,7 +123,7 @@ export function receiveThemeDetails( theme ) {
 		themeId: theme.id,
 		themeName: theme.name,
 		themeAuthor: theme.author,
-		themePrice: theme.price ? theme.price.display : undefined,
+		themePrice: theme.price,
 		themeScreenshot: theme.screenshot,
 		themeDescription: theme.description,
 		themeDescriptionLong: theme.description_long,
