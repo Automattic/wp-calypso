@@ -12,9 +12,9 @@ import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
+import CodeSplitRender from 'components/code-split-render';
 import CategoryListData from 'components/data/category-list-data';
 import TagListData from 'components/data/tag-list-data';
-import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
 import FormTextarea from 'components/forms/form-textarea';
 import PostFormatsData from 'components/data/post-formats-data';
 import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
@@ -164,7 +164,10 @@ const EditorDrawer = React.createClass( {
 
 	renderSharing: function() {
 		return (
-			<EditorSharingAccordion
+			<CodeSplitRender
+				require={ function( callback ) {
+					require( [ 'post-editor/editor-sharing/accordion' ], callback );
+				} }
 				site={ this.props.site }
 				post={ this.props.post }
 				isNew={ this.props.isNew } />
