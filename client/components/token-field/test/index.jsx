@@ -25,7 +25,7 @@ const keyCodes = {
 	upArrow: 38,
 	rightArrow: 39,
 	downArrow: 40,
-	delete: 46,
+	'delete': 46,
 	comma: 188
 };
 
