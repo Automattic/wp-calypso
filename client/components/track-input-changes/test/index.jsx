@@ -3,7 +3,7 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils'
+import TestUtils from 'react-addons-test-utils';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import useFakeDom from 'test/helpers/use-fake-dom';
@@ -120,6 +120,6 @@ describe( 'TrackInputChanges#onNewValue', function() {
 				/>
 			</TrackInputChanges>,
 			container
-		) ).to.throw( 'Invariant Violation' );
+		) ).to.throw( 'onlyChild must be passed a children with exactly one child.' );
 	} );
 } );
