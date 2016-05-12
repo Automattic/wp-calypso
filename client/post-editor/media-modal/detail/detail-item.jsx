@@ -14,9 +14,11 @@ var EditorMediaModalDetailFields = require( './detail-fields' ),
 	EditorMediaModalDetailPreviewVideo = require( './detail-preview-video' ),
 	EditorMediaModalDetailPreviewAudio = require( './detail-preview-audio' ),
 	EditorMediaModalDetailPreviewDocument = require( './detail-preview-document' ),
+	Button = require( 'components/button' ),
 	Gridicon = require( 'components/gridicon' ),
 	userCan = require( 'lib/site/utils' ).userCan,
-	MediaUtils = require( 'lib/media/utils' );
+	MediaUtils = require( 'lib/media/utils' ),
+	config = require( 'config' );
 
 module.exports = React.createClass( {
 	displayName: 'EditorMediaModalDetailItem',
@@ -27,7 +29,8 @@ module.exports = React.createClass( {
 		hasPreviousItem: React.PropTypes.bool,
 		hasNextItem: React.PropTypes.bool,
 		onShowPreviousItem: React.PropTypes.func,
-		onShowNextItem: React.PropTypes.func
+		onShowNextItem: React.PropTypes.func,
+		onEdit: React.PropTypes.func
 	},
 
 	getDefaultProps: function() {
@@ -35,8 +38,31 @@ module.exports = React.createClass( {
 			hasPreviousItem: false,
 			hasNextItem: false,
 			onShowPreviousItem: noop,
-			onShowNextItem: noop
+			onShowNextItem: noop,
+			onEdit: noop
 		};
+	},
+
+	renderEditButton: function() {
+		if ( ! config.isEnabled( 'post-editor/image-editor' ) ||
+			! userCan( 'upload_files', this.props.site ) ||
+			! this.props.item ) {
+			return;
+		}
+
+		const mimePrefix = MediaUtils.getMimePrefix( this.props.item );
+
+		if ( 'image' !== mimePrefix ) {
+			return;
+		}
+
+		return (
+			<Button
+				className="is-desktop editor-media-modal-detail__edit"
+				onClick={ this.props.onEdit }>
+				<Gridicon icon="pencil" size={ 36 } /> { this.translate( 'Edit Image' ) }
+			</Button>
+		);
 	},
 
 	renderFields: function() {
@@ -120,6 +146,7 @@ module.exports = React.createClass( {
 						{ this.renderNextItemButton() }
 					</div>
 					<div className="editor-media-modal-detail__sidebar">
+						{ this.renderEditButton() }
 						{ this.renderFields() }
 						<EditorMediaModalDetailFileInfo
 							item={ this.props.item } />

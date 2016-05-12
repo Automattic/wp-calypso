@@ -75,7 +75,8 @@ module.exports = React.createClass( {
 					hasPreviousItem={ this.props.selectedIndex - 1 >= 0 }
 					hasNextItem={ this.props.selectedIndex + 1 < items.length }
 					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
-					onShowNextItem={ this.incrementIndex.bind( this, 1 ) } />
+					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
+					onEdit={ this.props.onEdit } />
 			</div>
 		);
 	}

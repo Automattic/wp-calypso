@@ -25,6 +25,13 @@ var DUMMY_SITE_ID = 1,
 		size: 21165,
 		type: 'image/jpeg'
 	},
+	DUMMY_BLOB_UPLOAD = {
+		fileContents: {
+			size: 123456
+		},
+		fileName: 'blob-file.jpg',
+		mimeType: 'image/jpeg'
+	},
 	DUMMY_URL = 'https://wordpress.com/i/stats-icon.gif',
 	DUMMY_API_RESPONSE = {
 		media: [ { title: 'Image' } ],
@@ -213,6 +220,18 @@ describe( 'MediaActions', function() {
 			expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
 			expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
 				type: 'CREATE_MEDIA_ITEM'
+			} );
+		} );
+
+		it( 'should accept a Blob object wrapper and pass it as "file" parameter', function() {
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_BLOB_UPLOAD ).then( () => {
+				expect( mediaAdd ).to.have.been.calledWithMatch( {}, { file: DUMMY_BLOB_UPLOAD } );
+				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+					type: 'RECEIVE_MEDIA_ITEM',
+					siteId: DUMMY_SITE_ID,
+					id: 'media-1',
+					data: DUMMY_API_RESPONSE.media[ 0 ]
+				} );
 			} );
 		} );
 
