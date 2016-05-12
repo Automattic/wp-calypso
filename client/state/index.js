@@ -30,9 +30,6 @@ import support from './support/reducer';
 import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
-import comments from './comments/reducer';
-import googleAppsUsers from './google-apps-users/reducer';
-import reader from './reader/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
 
 /**
@@ -62,9 +59,6 @@ export const reducer = combineReducers( {
 	themes,
 	ui,
 	users,
-	comments,
-	googleAppsUsers,
-	reader,
 	componentsUsageStats
 } );
 
