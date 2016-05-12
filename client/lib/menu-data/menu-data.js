@@ -25,11 +25,13 @@ import trailingslashit from 'lib/route/trailingslashit';
 import { isFrontPage } from 'my-sites/pages/helpers';
 import Traverser from 'lib/tree-convert/tree-traverser';
 import TreeConvert from 'lib/tree-convert';
+import { makePromiseSequence } from 'lib/promises';
 import { decodeEntities } from 'lib/formatting';
 import postEditStore from 'lib/posts/actions';
 
 const debug = debugFactory( 'calypso:menu-data' );
 const sites = sitesFactory();
+const treeConvert = new TreeConvert();
 
 /**
  * Constants
@@ -396,17 +398,17 @@ MenuData.prototype.createNewPagePromise = ( menuItem, siteID ) => new Promise(
 				title: menuItem.name,
 				ID: 'new',
 				type: 'page',
-				status: 'publish'
+				status: 'publish',
 			},
-			function( error, data ) {
+			( error, data ) => {
 				postEditStore.stopEditing();
-				if ( !error && data ) {
-					menuItem.url = data.URL
-					menuItem.content_id = data.ID
+				if ( ! error && data ) {
+					menuItem.url = data.URL;
+					menuItem.content_id = data.ID;
 					resolve();
-				} else {
-					reject( error );
+					return;
 				}
+				reject( error );
 			}
 		);
 	}
@@ -438,7 +440,7 @@ MenuData.prototype.sendMenuToApi = function( menu, callback ) {
 			callback && callback( null, parsedMenu );
 		}
 	);
-}
+};
 
 MenuData.prototype.saveMenu = function( menu, callback ) {
 	if ( ! menu ) {
@@ -461,21 +463,25 @@ MenuData.prototype.saveMenu = function( menu, callback ) {
 
 	debug( 'saveMenu', menu );
 
-	//We will create new pages if need be, and then save edited menu
-	//Post edit store requires the promises te be sequential, so we need to build a chain.
-	//1. Filter injected 'create new page' items
-	TreeConvert().untreeify( menu.items ).filter( isInjectedNewPageItem )
-	//2. Chain all promisses with calls creating a new page
-	.reduce(
-		( previousNewPagePromise, menuItem ) => previousNewPagePromise.then( () => this.createNewPagePromise( menuItem, this.siteID ) ),
-		Promise.resolve()
-	)
-	.catch( error => {
+	/**
+	 * Below, we check for any new pages that need to be created. The post edit
+	 * store requires this process to be sequential, so we build a chain of
+	 * promises, each of them responsible for the creation of a page.
+	 */
+
+	const pendingPageItems = treeConvert
+		.untreeify( menu.items )
+		.filter( isInjectedNewPageItem );
+
+	const createdPages = makePromiseSequence(
+			pendingPageItems,
+			item => this.createNewPagePromise( item, this.siteID )
+	);
+
+	createdPages.catch( error => {
 		this.emit( 'error', i18n.translate( 'There was a problem saving your menu.' ) );
 		debug( 'Error', error );
-	} )
-	//3. Save menu
-	.then( this.sendMenuToApi.bind( this, menu, callback ) );
+	} ).then( this.sendMenuToApi.bind( this, menu, callback ) );
 };
 
 MenuData.prototype.deleteMenu = function( menu, callback ) {
