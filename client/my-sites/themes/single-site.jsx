@@ -150,6 +150,7 @@ var ThemesSingleSite = React.createClass( {
 				<ActivatingTheme siteId={ site.ID } >
 					<ThanksModal
 						site={ site }
+						source={ 'list' }
 						clearActivated={ bindActionCreators( Action.clearActivated, this.props.dispatch ) } />
 				</ActivatingTheme>
 				<CurrentThemeData site={ site }>
