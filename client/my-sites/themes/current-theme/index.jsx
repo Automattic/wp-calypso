@@ -1,21 +1,27 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	Helpers = require( '../helpers' ),
-	CurrentThemeButton = require( './button' );
+import Card from 'components/card';
+import CurrentThemeButton from './button';
+import {
+	getCustomizeUrl,
+	getDetailsUrl,
+	getSupportUrl,
+	isPremium,
+	trackClick
+} from '../helpers';
 
 /**
  * Show current active theme for a site, with
  * related actions.
  */
-var CurrentTheme = React.createClass( {
+const CurrentTheme = React.createClass( {
 
 	propTypes: {
 		currentTheme: React.PropTypes.object,
@@ -26,14 +32,13 @@ var CurrentTheme = React.createClass( {
 		canCustomize: React.PropTypes.bool.isRequired
 	},
 
-	trackClick: Helpers.trackClick.bind( null, 'current theme' ),
+	trackClick: trackClick.bind( null, 'current theme' ),
 
-	render: function() {
-		var currentTheme = this.props.currentTheme,
+	render() {
+		const { currentTheme, site } = this.props,
 			placeholderText = <span className="current-theme__placeholder">loading...</span>,
 			text = currentTheme ? currentTheme.name : placeholderText,
-			site = this.props.site,
-			displaySupportButton = Helpers.isPremium( currentTheme ) && ! site.jetpack;
+			displaySupportButton = isPremium( currentTheme ) && ! site.jetpack;
 
 		return (
 			<Card className="current-theme">
@@ -52,17 +57,17 @@ var CurrentTheme = React.createClass( {
 					<CurrentThemeButton name="customize"
 						label={ this.translate( 'Customize' ) }
 						noticon="paintbrush"
-						href={ this.props.canCustomize ? Helpers.getCustomizeUrl( null, site ) : null }
+						href={ this.props.canCustomize ? getCustomizeUrl( null, site ) : null }
 						onClick={ this.trackClick } />
 					<CurrentThemeButton name="details"
 						label={ this.translate( 'Details' ) }
 						noticon="info"
-						href={ currentTheme ? Helpers.getDetailsUrl( currentTheme, site ) : null }
+						href={ currentTheme ? getDetailsUrl( currentTheme, site ) : null }
 						onClick={ this.trackClick } />
 					{ displaySupportButton && <CurrentThemeButton name="support"
 						label={ this.translate( 'Support' ) }
 						noticon="help"
-						href={ currentTheme ? Helpers.getSupportUrl( currentTheme, site ) : null }
+						href={ currentTheme ? getSupportUrl( currentTheme, site ) : null }
 						onClick={ this.trackClick } /> }
 				</div>
 			</Card>
@@ -70,4 +75,4 @@ var CurrentTheme = React.createClass( {
 	}
 } );
 
-module.exports = CurrentTheme;
+export default CurrentTheme;

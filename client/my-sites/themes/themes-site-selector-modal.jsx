@@ -10,7 +10,7 @@ import defer from 'lodash/defer';
  */
 import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
-import Helper from './helpers';
+import { trackClick } from './helpers';
 
 const ThemesSiteSelectorModal = React.createClass( {
 	propTypes: {
@@ -28,7 +28,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 		 * changes are enqueued, e.g. setSelectedTheme.
 		 */
 		defer( () => {
-			Helper.trackClick( 'site selector', this.props.name );
+			trackClick( 'site selector', this.props.name );
 			page( '/design/' + site.slug );
 			this.props.action( this.props.selectedTheme, site );
 		} );
