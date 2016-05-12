@@ -14,7 +14,9 @@ var ThanksModal = React.createClass( {
 	trackClick: Helpers.trackClick.bind( null, 'current theme' ),
 
 	propTypes: {
-		clearActivated: React.PropTypes.func.isRequired
+		clearActivated: React.PropTypes.func.isRequired,
+		// Where is the modal being used?
+		source: React.PropTypes.oneOf( [ 'details', 'list' ] ).isRequired,
 	},
 
 	onCloseModal: function() {
@@ -32,20 +34,36 @@ var ThanksModal = React.createClass( {
 		this.onCloseModal();
 	},
 
+	onLinkClick: function( link ) {
+		return this.trackClick.bind( null, link, 'click' );
+	},
+
 	renderWpcomInfo: function() {
+		const features = this.translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
+			components: {
+				a: <a href={ Helpers.getDetailsUrl( this.props.currentTheme, this.props.site ) }
+					target="_blank"
+					onClick={ this.onLinkClick( 'features' ) }/>
+			}
+		} );
+		const customize = this.translate( '{{a}}Customize{{/a}} this design.', {
+			components: {
+				a: <a href={ Helpers.getCustomizeUrl( this.props.currentTheme, this.props.site ) }
+					target="_blank"
+					onClick={ this.onLinkClick( 'customize' ) }/>
+			}
+		} );
 		return (
 			<ul>
 				<li>
-					{ this.translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
-						components: {
-							a: <a href={ Helpers.getDetailsUrl( this.props.currentTheme, this.props.site ) } target="_blank" />
-						}
-					} ) }
+					{ this.props.source === 'list' ? features : customize }
 				</li>
 			<li>
 				{ this.translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
 					components: {
-						a: <a href={ Helpers.getForumUrl( this.props.currentTheme ) } target="_blank" />
+						a: <a href={ Helpers.getForumUrl( this.props.currentTheme ) }
+							target="_blank"
+							onClick={ this.onLinkClick( 'support' ) }/>
 					}
 				} ) }
 			</li>
@@ -59,7 +77,9 @@ var ThanksModal = React.createClass( {
 				<li>
 					{ this.translate( 'Learn more about this {{a}}awesome theme{{/a}}.', {
 						components: {
-							a: <a href={ themeUri } target="_blank" />
+							a: <a href={ themeUri }
+								target="_blank"
+								onClick={ this.onLinkClick( 'org theme' ) }/>
 						}
 					} ) }
 				</li>
@@ -73,7 +93,9 @@ var ThanksModal = React.createClass( {
 				<li>
 					{ this.translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
 						components: {
-							a: <a href={ authorUri } target="_blank" />
+							a: <a href={ authorUri }
+								target="_blank"
+								onClick={ this.onLinkClick( 'org author' ) }/>
 						}
 					} ) }
 				</li>
@@ -86,7 +108,9 @@ var ThanksModal = React.createClass( {
 			<li>
 				{ this.translate( 'If you need support, visit the WordPress.org {{a}}Themes forum{{/a}}.', {
 					components: {
-						a: <a href="https://wordpress.org/support/forum/themes-and-templates" target="_blank" />
+						a: <a href="https://wordpress.org/support/forum/themes-and-templates"
+							target="_blank"
+							onClick={ this.onLinkClick( 'org forum' ) }/>
 					}
 				} ) }
 			</li>
