@@ -222,7 +222,7 @@ export default React.createClass( {
 					selected={ path === this.props.context.pathname }
 				>
 					{ textItem }
-					{ isMe && <Gravatar size="16" user={ user.get() } /> }
+					{ isMe && <Gravatar size={ 16 } user={ user.get() } /> }
 				</NavItem>
 			);
 		}
