@@ -157,11 +157,18 @@ I18N.prototype.numberFormat = function( number ) {
 
 I18N.prototype.configure = function( options ) {
 	assign( this, options || {} );
-	this.setLocale( { '': { localeSlug: this.defaultLocaleSlug } } );
+	this.setLocale();
 };
 
 I18N.prototype.setLocale = function( localeData ) {
-	var localeSlug = localeData[ '' ].localeSlug;
+	var localeSlug;
+
+	// if localeData is not given, assumes default locale
+	if ( ! localeData || ! localeData[ '' ].localeSlug ) {
+		localeData = { '': { localeSlug: this.defaultLocaleSlug } }
+	}
+
+	localeSlug = localeData[ '' ].localeSlug;
 
 	// Don't change if same locale as current, except for default locale
 	if ( localeSlug !== this.defaultLocaleSlug && localeSlug === this.state.localeSlug ) {
