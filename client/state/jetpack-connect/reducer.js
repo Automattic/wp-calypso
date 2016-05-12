@@ -175,7 +175,7 @@ export function jetpackSSOSessions( state = {}, action ) {
 export default combineReducers( {
 	jetpackConnectSite,
 	jetpackConnectAuthorize,
-	jetpackSSO,
 	jetpackConnectSessions,
-	jetpackSSOSessions
+	jetpackSSOSessions,
+	jetpackSSO,
 } );
