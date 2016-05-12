@@ -88,11 +88,10 @@
 		}
 
 		&.is-following {
-			border-color: lighten( $gray, 10% );
-			color: lighten( $gray, 10% );
+			color: $alert-green;
 
 			.gridicon {
-				fill: lighten( $gray, 10% );
+				fill: $alert-green;
 			}
 		}
 	}

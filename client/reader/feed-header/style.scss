@@ -30,8 +30,8 @@
 
 		.gridicon {
 			fill: $gray-dark;
-			top: 10px;
 			left: 15px;
+			top: 10px;
 		}
 
 		&:hover {
@@ -62,12 +62,12 @@
 			background: none;
 
 			.gridicon {
-				fill: lighten( $gray, 10% );
+				fill: $alert-green;
 			}
 
 			.follow-button__label {
 				cursor: pointer;
-				color: lighten( $gray, 10% );
+				color: $alert-green;
 			}
 		}
 	}
