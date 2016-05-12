@@ -6,7 +6,10 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import { EDITOR_MEDIA_EDIT_ITEM_SET } from 'state/action-types';
+import imageEditor from './imageEditor/reducer';
+import {
+	EDITOR_MEDIA_EDIT_ITEM_SET
+} from 'state/action-types';
 
 export function editItem( state = null, action ) {
 	switch ( action.type ) {
@@ -18,5 +21,6 @@ export function editItem( state = null, action ) {
 }
 
 export default combineReducers( {
-	editItem
+	editItem,
+	imageEditor
 } );
