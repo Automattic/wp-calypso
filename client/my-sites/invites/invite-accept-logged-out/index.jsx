@@ -166,7 +166,7 @@ let InviteAcceptLoggedOut = React.createClass( {
 					disableEmailExplanation={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: this.props.invite.sentTo } } ) } />
 				{ this.state.userData && this.loginUser() }
 			</div>
-		)
+		);
 	}
 
 } );

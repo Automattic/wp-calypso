@@ -23,7 +23,7 @@ import analytics from 'lib/analytics';
 let InviteAcceptLoggedIn = React.createClass( {
 
 	getInitialState() {
-		return { submitting: false }
+		return { submitting: false };
 	},
 
 	accept() {
