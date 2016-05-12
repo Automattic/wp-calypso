@@ -110,6 +110,26 @@ function validatePlacement( placement, target ) {
 		: placement;
 }
 
+function getScrollDiff( targetSlug, container ) {
+	if ( targetSlug !== 'themes' ) {
+		return 0;
+	}
+
+	const target = targetForSlug( targetSlug );
+	const { top, bottom } = target.getBoundingClientRect();
+	const dialogWillFit = bottom + DIALOG_PADDING + DIALOG_HEIGHT <=
+			document.documentElement.clientHeight;
+
+	if ( dialogWillFit ) {
+		return 0;
+	}
+
+	const scrollMax = container.scrollHeight -
+		container.clientHeight - container.scrollTop;
+
+	return Math.min( .75 * top, scrollMax );
+}
+
 function scrollIntoView( target ) {
 	const targetSlug = target && target.dataset && target.dataset.tipTarget;
 
@@ -117,18 +137,66 @@ function scrollIntoView( target ) {
 		return 0;
 	}
 
-	const { top, bottom } = target.getBoundingClientRect();
+	const sidebar = query( '#secondary .sidebar' )[ 0 ];
+	const y = getScrollDiff( targetSlug, sidebar );
 
-	if ( bottom + DIALOG_PADDING + DIALOG_HEIGHT <=
-			document.documentElement.clientHeight ) {
-		return 0;
-	}
-
-	const container = query( '#secondary .sidebar' )[ 0 ];
-	const scrollMax = container.scrollHeight -
-		container.clientHeight - container.scrollTop;
-	const y = Math.min( .75 * top, scrollMax );
-
-	scrollTo( { y, container } );
+	scrollTo( { y: y, container: sidebar, duration: 300 } );
 	return y;
+}
+
+function getScrolledRect( targetSlug, scrollY ) {
+	const target = targetForSlug( targetSlug );
+	const rect = target.getBoundingClientRect();
+	return {
+		top: rect.top - scrollY,
+		bottom: rect.bottom - scrollY,
+		left: rect.left,
+		right: rect.right,
+		height: rect.height,
+		width: rect.width,
+	};
+}
+
+export function getScrolledRectFromBase( targetSlug, baseElement ) {
+	const scrollY = getScrollDiff( targetSlug, baseElement );
+	return getScrolledRect( targetSlug, scrollY );
+}
+
+export function getOverlayStyle( { rect } ) {
+	const clientHeight = document.documentElement.clientHeight;
+	const correctedRect = {
+		top: rect.top,
+		left: rect.left < 0 ? 0 : rect.left,
+		height: rect.height,
+		width: rect.width,
+		right: rect.left < 0 ? rect.right - rect.left : rect.right,
+		bottom: rect.bottom,
+	};
+
+	return {
+		top: {
+			top: '0px',
+			right: '0px',
+			height: correctedRect.top + 'px',
+			left: '0px',
+		},
+		left: {
+			top: correctedRect.top + 'px',
+			width: correctedRect.left + 'px',
+			bottom: clientHeight - correctedRect.height - correctedRect.top + 'px',
+			left: '0px',
+		},
+		right: {
+			top: correctedRect.top + 'px',
+			right: '0px',
+			bottom: clientHeight - correctedRect.height - correctedRect.top + 'px',
+			left: correctedRect.right + 'px',
+		},
+		bottom: {
+			top: correctedRect.bottom + 'px',
+			right: '0px',
+			bottom: '0px',
+			left: '0px',
+		},
+	};
 }
