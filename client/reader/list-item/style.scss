@@ -89,6 +89,11 @@
 		.gridicon {
 			left: 15px;
 			top: 9px;
+			fill: $gray-dark;
+		}
+
+		.follow-button__label {
+			fill: $gray-dark;
 		}
 
 		&:hover {
@@ -111,11 +116,11 @@
 		&:hover {
 
 			.gridicon {
-				fill: lighten( $gray, 10% );
+				fill: $alert-green;
 			}
 
 			.follow-button__label {
-				color: lighten( $gray, 10% );
+				color: $alert-green;
 			}
 		}
 	}
