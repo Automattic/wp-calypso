@@ -82,11 +82,11 @@ const ThemesSearchCard = React.createClass( {
 						{ isPremiumThemesEnabled && <hr className="section-nav__hr" /> }
 
 						{ isPremiumThemesEnabled && <NavItem
-														path={ getExternalThemesUrl( this.props.site ) }
-														onClick={ this.onMore }
-														isExternalLink={ true }>
-														{ this.translate( 'More' ) + ' ' }
-													</NavItem> }
+							path={ getExternalThemesUrl( this.props.site ) }
+							onClick={ this.onMore }
+							isExternalLink={ true }>
+							{ this.translate( 'More' ) + ' ' }
+						</NavItem> }
 					</NavTabs>
 
 					<Search
