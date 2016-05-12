@@ -128,6 +128,7 @@ const ThemesMultiSite = React.createClass( {
 					selectedTheme={ this.state.selectedTheme }
 					onHide={ this.hideSiteSelectorModal }
 					action={ bindActionCreators( Action[ this.state.selectedAction ], dispatch ) }
+					sourcePath={ '/design' }
 				/> }
 			</Main>
 		);
