@@ -30,7 +30,10 @@ export default React.createClass( {
 
 	renderButtonLabel() {
 		if ( ! this.props.isFetching ) {
-			return( this.translate( 'Connect Now' ) );
+			if ( ! this.props.isInstall ) {
+				return( this.translate( 'Connect Now' ) );
+			}
+			return this.translate( 'Start Installation' );
 		}
 		return( this.translate( 'Connecting…' ) );
 	},
