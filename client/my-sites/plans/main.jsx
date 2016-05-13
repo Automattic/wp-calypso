@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -13,6 +14,8 @@ import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getCurrentPlan } from 'lib/plans';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import Gridicon from 'components/gridicon';
+import ComparisonTable from 'components/comparison-table';
+import TableColumn from 'components/comparison-table/table-column';
 import { isJpphpBundle } from 'lib/products-values';
 import Main from 'components/main';
 import Notice from 'components/notice';
@@ -24,6 +27,7 @@ import { shouldFetchSitePlans } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
+import WordPressLogo from 'components/wordpress-logo';
 
 const Plans = React.createClass( {
 	mixins: [ observe( 'sites', 'plans' ) ],
@@ -104,7 +108,92 @@ const Plans = React.createClass( {
 		}
 	},
 
+	getMockFeatures() {
+		return [
+			{ 	name: 'domain',
+				description: 'Your own domain',
+				free: false,
+				personal: '1 Year Free',
+				pro: '1 Year Free',
+				business: '1 Year Free'
+			},
+			{	name: 'advertising',
+				description: 'Advertising vouchers',
+				free: false,
+				personal: false,
+				pro: '$150 value',
+				business: '$300 value'
+			},
+			{	name: 'google',
+				description: 'Google Apps',
+				free: false,
+				personal: false,
+				pro: 'Email only',
+				business: 'All services'
+			},
+			{	name: 'prioritySupport',
+				description: 'Priority Support',
+				free: false,
+				personal: false,
+				pro: false,
+				business: '24/7 live chat'
+			},
+			{	name: 'prioritySupport',
+				header: true,
+				description: 'Design'
+			},
+			{	name: 'themes',
+				description: '150+ High quality themes',
+				free: true,
+				personal: true,
+				pro: true,
+				business: true
+			},
+			{	name: 'customization',
+				description: 'Standard Customization',
+				free: true,
+				personal: true,
+				pro: true,
+				business: true
+			},
+			{	name: 'premiumThemes',
+				description: 'Free premium themes',
+				free: false,
+				personal: false,
+				pro: true,
+				business: true
+			},
+			{	name: 'advancedCustomization',
+				description: 'Advanced Customization',
+				free: false,
+				personal: false,
+				pro: true,
+				business: true
+			},
+			{	name: 'designReviewService',
+				description: 'Design Review Service',
+				free: false,
+				personal: false,
+				pro: false,
+				business: true
+			},
+			{	name: 'storageUploads',
+				header: true,
+				description: 'Storage & Uploads'
+			},
+			{	name: 'storageSpace',
+				description: 'Storage Space',
+				free: '500 Mb',
+				personal: '1 Gb',
+				pro: '5 Gb',
+				business: 'Unlimited'
+			}
+
+		]
+	},
+
 	render() {
+		console.log( this.getMockFeatures() );
 		const selectedSite = this.props.sites.getSelectedSite();
 		let hasJpphpBundle,
 			currentPlan;
@@ -130,7 +219,7 @@ const Plans = React.createClass( {
 			<div>
 				{ this.renderNotice() }
 
-				<Main>
+				<Main className="wide">
 					<SidebarNavigation />
 
 					<div id="plans" className="plans has-sidebar">
@@ -139,16 +228,65 @@ const Plans = React.createClass( {
 							path={ this.props.context.path }
 							cart={ this.props.cart }
 							selectedSite={ selectedSite } />
+						{ config.isEnabled( 'jetpack/calypso-first-signup-flow' )
+							? ( <ComparisonTable
+									featuresList={ this.getMockFeatures() }
+									columns={ 4 }>
 
-						<PlanList
-							site={ selectedSite }
-							plans={ this.props.plans.get() }
-							sitePlans={ this.props.sitePlans }
-							onOpen={ this.openPlan }
-							cart={ this.props.cart }
-							isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST } />
+									<TableColumn
+										featuresList={ this.getMockFeatures() }
+										descriptionColumn >
+										<div>
+											<WordPressLogo />
+											<h2>{ this.translate( 'Yearly Savings Plans' ) }</h2>
+											<p>{ this.translate( 'Plans are billed annually and have a 30-day money back guarantee' ) }</p>
+										</div>
+									</TableColumn>
+									<TableColumn
+										featuresList={ this.getMockFeatures() }
+										comparisonID="free"
+										name={ this.translate( 'Free' ) }
+										description={ this.translate( 'Just Getting Started' ) }
+										price={ 0 }
+										currentPlan
+										>
+									</TableColumn>
+									<TableColumn
+										featuresList={ this.getMockFeatures() }
+										comparisonID="personal"
+										name={ this.translate( 'Personal' ) }
+										description={ this.translate( 'Just getting started' ) }
+										price={ 5.99 }
+										>
+									</TableColumn>
+									<TableColumn
+										featuresList={ this.getMockFeatures() }
+										comparisonID="pro"
+										name={ this.translate( 'Pro' ) }
+										description={ this.translate( 'Just getting started' ) }
+										price={ 12.99 }
+										popular={ true }
+										>
+									</TableColumn>
+									<TableColumn
+										featuresList={ this.getMockFeatures() }
+										comparisonID="business"
+										name={ this.translate( 'Business' ) }
+										description={ this.translate( 'Just getting started' ) }
+										price={ 24.99 }
+										>
+									</TableColumn>
+								</ComparisonTable> )
+							: ( <PlanList
+									site={ selectedSite }
+									plans={ this.props.plans.get() }
+									sitePlans={ this.props.sitePlans }
+									onOpen={ this.openPlan }
+									cart={ this.props.cart }
+									isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST } /> ) }
 
-						{ ! hasJpphpBundle && this.comparePlansLink() }
+
+						{ ! hasJpphpBundle && ! config.isEnabled( 'jetpack/calypso-first-signup-flow' ) && this.comparePlansLink() }
 					</div>
 				</Main>
 			</div>

@@ -1,0 +1,104 @@
+main.main.wide {
+	max-width: 100%;
+}
+
+.comparison-table__wrapper {
+	display: flex;
+	padding:0;
+}
+
+.comparison-table__column-wrapper {
+	flex: 1;
+
+	&:last-of-type {
+		border-right: 0px;
+	}
+
+	&.description-column {
+		min-width: 260px;
+
+		.comparison-table__cell {
+			text-align: left;
+			padding: 0 16px;
+
+			span {
+				color: $gray-dark;
+			}
+
+			&.is-header {
+				border-right: 0;
+				background-color: lighten( $gray-light, 2% );
+				font-size: 12px;
+				text-transform: uppercase;
+				line-height: 50px;
+				min-width: 260px;
+
+				span {
+					color: $gray;
+				}
+			}
+		}
+	}
+
+	&:last-of-type {
+		.comparison-table__cell {
+			border-right: 0;
+		}
+	}
+}
+
+.comparison-table__header {
+	height: 175px;
+	border-left: lighten( $gray, 30% ) solid 1px;
+
+	&:last-of-type {
+		border-right: 0;
+	}
+
+	.button {
+		width: 100%;
+		margin-top: 16px;
+		display: block;
+	}
+
+	.wordpress-logo {
+		fill: $gray;
+	}
+}
+
+.comparison-table__cell {
+	border-top: lighten( $gray, 30% ) solid 1px;
+	width: 100%;
+	text-align: center;
+	vertical-align: middle;
+	font-size: 14px;
+	line-height: 50px;
+	border-right: lighten( $gray, 30% ) solid 1px;
+
+	&.is-header {
+		border-right: 0;
+		background-color: lighten( $gray-light, 2% );
+		font-size: 12px;
+		text-transform: uppercase;
+		color: $gray;
+		line-height: 50px;
+	}
+
+	.gridicon {
+		position: relative;
+		top: 3px;
+		color: $blue-medium;
+	}
+
+	span {
+		line-height: 20px;
+		display: inline-block;
+		color: $gray;
+		text-align: center;
+	}
+}
+
+.comparison-table__header-wrapper {
+	text-align: center;
+	padding: 0px 16px;
+}
