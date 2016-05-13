@@ -62,15 +62,17 @@ export function getDetailsUrl( theme, site ) {
 }
 
 export function getSupportUrl( theme, site ) {
-	if ( ! site ) {
-		return oldShowcaseUrl + theme.id + '/support';
-	}
-
-	if ( site.jetpack ) {
+	if ( site && site.jetpack ) {
 		return '//wordpress.org/support/theme/' + theme.id;
 	}
 
-	return oldShowcaseUrl + site.slug + '/' + theme.id + '/support';
+	if ( config.isEnabled( 'manage/themes/details' ) ) {
+		const sitePart = site ? `/${ site.slug }` : '';
+		return `/theme/${ theme.id }/setup${ sitePart }`;
+	}
+
+	const sitePart = site ? `${ site.slug }/` : '';
+	return `${ oldShowcaseUrl }${ sitePart }${ theme.id }/support`;
 }
 
 export function getForumUrl( theme ) {
