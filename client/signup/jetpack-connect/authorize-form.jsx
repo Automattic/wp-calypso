@@ -1,4 +1,4 @@
-/**
+F/**
  * External dependencies
  */
 import React from 'react';
@@ -69,6 +69,27 @@ const renderFormHeader = ( siteUrl, isConnected = false ) => {
 const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
 
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
+	},
+
+	renderFormHeader( siteUrl, isConnected ) {
+		const headerText = i18n.translate( 'Create your account' );
+		const subHeaderText = i18n.translate( 'You are moments away from connecting {{span}}%(site)s{{/span}}', {
+			args: { site: siteUrl },
+			components: { span: <span className="jetpack-connect-authorize__site-url" /> }
+		} );
+
+		return(
+			<div>
+				<ConnectHeader
+					showLogo={ false }
+					headerText={ headerText }
+					subHeaderText={ subHeaderText } />
+			</div>
+		);
+	},
+
 	submitForm( form, userData ) {
 		debug( 'submiting new account', form, userData );
 		this.props.createAccount( userData );
@@ -106,7 +127,8 @@ const LoggedOutForm = React.createClass( {
 		const { site } = this.props.jetpackConnectAuthorize.queryObject;
 		return (
 			<div>
-				{ renderFormHeader( site ) }
+				{ this.renderLocaleSuggestions() }
+				{ this.renderFormHeader( site ) }
 				<SignupForm
 					getRedirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.isSubmitting() }
@@ -145,6 +167,26 @@ const LoggedInForm = React.createClass( {
 		}
 	},
 
+	renderFormHeader( siteUrl, isConnected ) {
+		const headerText = ( isConnected )
+			? i18n.translate( 'You are connected!' )
+			: i18n.translate( 'Completing connection' );
+		const subHeaderText = ( isConnected )
+			? i18n.translate( 'The power of WordPress.com is yours to command.' )
+			: i18n.translate( 'Jetpack is finishing up the connection process', {
+				args: { site: siteUrl }
+			} );
+
+		return(
+			<div>
+				<ConnectHeader
+					showLogo={ false }
+					headerText={ headerText }
+					subHeaderText={ subHeaderText } />
+			</div>
+		);
+	},
+
 	activateManage() {
 		const { queryObject, activateManageSecret, plansUrl } = this.props.jetpackConnectAuthorize;
 		this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
@@ -152,11 +194,11 @@ const LoggedInForm = React.createClass( {
 	},
 
 	handleSubmit() {
-		const { queryObject, siteReceived, manageActivated, activateManageSecret, plansUrl, authorizeError } = this.props.jetpackConnectAuthorize;
+		const { siteReceived,  queryObject, manageActivated, activateManageSecret, plansUrl, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		if ( ! this.props.isAlreadyOnSitesList &&
 			queryObject.already_authorized ) {
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
-		} else if ( activateManageSecret && ! manageActivated ) {
+		} else 	if ( activateManageSecret && ! manageActivated ) {
 			this.activateManage();
 		} else if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			window.location.href = queryObject.site + authUrl;
@@ -305,7 +347,7 @@ const LoggedInForm = React.createClass( {
 		const { site } = this.props.jetpackConnectAuthorize.queryObject;
 		return (
 			<div className="jetpack-connect-logged-in-form">
-				{ renderFormHeader( site, authorizeSuccess ) }
+				{ this.renderFormHeader( site, authorizeSuccess ) }
 				<Card>
 					<Gravatar user={ this.props.user } size={ 64 } />
 					<p className="jetpack-connect-logged-in-form__user-text">{ this.getUserText() }</p>
@@ -371,4 +413,3 @@ export default connect(
 	},
 	dispatch => bindActionCreators( { authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )
 )( JetpackConnectAuthorizeForm );
-
