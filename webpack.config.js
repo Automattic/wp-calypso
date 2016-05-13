@@ -4,7 +4,8 @@
  * External dependencies
  */
 var webpack = require( 'webpack' ),
-	path = require( 'path' );
+	path = require( 'path' ),
+	ExtractTextPlugin = require( 'extract-text-webpack-plugin' );
 
 /**
  * Internal dependencies
@@ -50,6 +51,11 @@ webpackConfig = {
 				loader: 'html-loader'
 			},
 			{
+				test: /\.scss$/,
+				//loader: 'style!css?sourceMap!autoprefixer!sass?sourceMap'
+				loader: 'style!css?sourceMap!sass?sourceMap'
+			},
+			{
 				include: require.resolve( 'tinymce/tinymce' ),
 				loader: 'exports?window.tinymce',
 			},
@@ -61,11 +67,11 @@ webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '', '.json', '.js', '.jsx' ],
-		root: [ path.join( __dirname, 'client' ) ],
+		root: [ path.resolve( __dirname, 'client' ), path.resolve( __dirname, 'node_modules/@automattic/dops-components/client' ) ],
 		modulesDirectories: [ 'node_modules' ]
 	},
 	resolveLoader: {
-		root: [ __dirname ]
+		root: [ __dirname, path.join( __dirname, "node_modules" ) ]
 	},
 	node: {
 		console: false,
@@ -77,6 +83,7 @@ webpackConfig = {
 		fs: 'empty'
 	},
 	plugins: [
+		new ExtractTextPlugin( '[name].css' ),
 		new webpack.DefinePlugin( {
 			'process.env': {
 				NODE_ENV: JSON.stringify( config( 'env' ) )
