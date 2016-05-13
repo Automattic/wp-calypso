@@ -1,35 +1,36 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	DropZone = require( 'components/drop-zone' );
+import Card from 'components/card';
+import DropZone from 'components/drop-zone';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'DropZones',
 
 	mixins: [ PureRenderMixin ],
 
-	getInitialState: function() {
+	getInitialState() {
 		return {};
 	},
 
-	onFilesDrop: function( files ) {
+	onFilesDrop( files ) {
 		this.setState( {
 			lastDroppedFiles: files
 		} );
 	},
 
-	renderContainerContent: function() {
-		var style = {
+	renderContainerContent() {
+		const style = {
 			lineHeight: '100px',
 			textAlign: 'center'
-		}, fileNames;
+		};
+		let fileNames;
 
 		if ( this.state.lastDroppedFiles ) {
 			fileNames = this.state.lastDroppedFiles.map( function( file ) {
@@ -39,15 +40,15 @@ module.exports = React.createClass( {
 
 		return (
 			<Card style={ style }>
-				{ fileNames ?
-					this.translate( 'You dropped: %s', { args: fileNames } ) :
-					this.translate( 'This is a droppable area' ) }
+				{ fileNames
+					? this.translate( 'You dropped: %s', { args: fileNames } )
+					: this.translate( 'This is a droppable area' ) }
 			</Card>
 		);
 	},
 
-	renderContainer: function() {
-		var style = {
+	renderContainer() {
+		const style = {
 			position: 'relative',
 			height: '150px'
 		};
@@ -60,7 +61,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		return (
 			<div className="design-assets__group">
 				<h2>
