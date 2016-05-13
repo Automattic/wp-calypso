@@ -37,7 +37,6 @@ export default ( state = initialState, action ) => {
 		case THEME_REQUEST_CURRENT:
 			return state.setIn( [ 'requesting', action.siteId ], true );
 		case THEME_REQUEST_CURRENT_FAILURE:
-			//TODO: show notification
 			return state.setIn( [ 'requesting', action.siteId ], false );
 		case THEME_ACTIVATE:
 			return state.set( 'isActivating', true );
@@ -45,7 +44,7 @@ export default ( state = initialState, action ) => {
 			return state
 				.set( 'isActivating', false )
 				.set( 'hasActivated', true )
-				.setIn( [ 'currentThemes', action.siteId ], action.theme );
+				.setIn( [ 'currentThemes', action.site.ID ], action.theme );
 		case THEME_CLEAR_ACTIVATED:
 			return state.set( 'hasActivated', false );
 		case DESERIALIZE:
