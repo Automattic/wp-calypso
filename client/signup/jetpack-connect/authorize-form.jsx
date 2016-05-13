@@ -48,7 +48,7 @@ const renderFormHeader = ( siteUrl, isConnected = false ) => {
 		: i18n.translate( 'Create a new account for Jetpack' );
 	const subHeaderText = ( isConnected )
 		? i18n.translate( 'The power of WordPress.com is yours to command.' )
-		: i18n.translate( 'You are moments away from connectin %(site)s', {
+		: i18n.translate( 'You are moments away from connecting %(site)s', {
 			args: { site: siteUrl }
 		} );
 
