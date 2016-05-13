@@ -22,6 +22,7 @@ import { errorNotice } from 'state/notices/actions';
 import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
 import addQueryArgs from 'lib/route/add-query-args';
 import config from 'config';
+import EmptyContent from 'components/empty-content';
 
 /*
  * Module variables
@@ -79,8 +80,36 @@ const JetpackSSOForm = React.createClass( {
 		}
 	},
 
+	renderNoQueryArgsError() {
+		return (
+			<Main>
+				<EmptyContent
+					illustration="/calypso/images/drake/drake-whoops.svg"
+					title={ this.translate(
+						'Oops, this URL should not be accessed directly'
+					) }
+					line={ this.translate(
+						'Please click the {{em}}Log in with WordPress.com button{{/em}} on your Jetpack site.',
+						{
+							components: {
+								em: <em />
+							}
+						}
+					) }
+					action={ this.translate( 'Read Single Sign-On Documentation' ) }
+					actionURL="https://jetpack.com/support/sso/"
+				/>
+			</Main>
+		);
+	},
+
 	render() {
 		const user = this.props.userModule.get();
+		const { ssoNonce, siteId } = this.props;
+
+		if ( ! ssoNonce || ! siteId ) {
+			return this.renderNoQueryArgsError();
+		}
 
 		return (
 			<Main className="jetpack-connect">
