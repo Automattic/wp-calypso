@@ -1,23 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:components:themes:more-button' ), // eslint-disable-line no-unused-vars
-	classNames = require( 'classnames' ),
-	isFunction = require( 'lodash/isFunction' ),
-	map = require( 'lodash/map' );
+import React from 'react';
+import classNames from 'classnames';
+import isFunction from 'lodash/isFunction';
+import map from 'lodash/map';
 
 /**
  * Internal dependencies
  */
-var PopoverMenu = require( 'components/popover/menu' ),
-	PopoverMenuItem = require( 'components/popover/menu-item' ),
-	isOutsideCalypso = require( 'lib/url' ).isOutsideCalypso;
+import PopoverMenu from 'components/popover/menu';
+import PopoverMenuItem from 'components/popover/menu-item';
+import { isOutsideCalypso } from 'lib/url';
 
 /**
  * Component
  */
-var ThemeMoreButton = React.createClass( {
+const ThemeMoreButton = React.createClass( {
 	propTypes: {
 		// See Theme component propTypes
 		theme: React.PropTypes.object,
@@ -35,28 +34,28 @@ var ThemeMoreButton = React.createClass( {
 		active: React.PropTypes.bool
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			showPopover: false
 		};
 	},
 
-	togglePopover: function() {
+	togglePopover() {
 		this.setState( { showPopover: ! this.state.showPopover } );
 		! this.state.showPopover && this.props.onClick( this.props.theme.id, this.props.index );
 	},
 
-	closePopover: function( action ) {
+	closePopover( action ) {
 		this.setState( { showPopover: false } );
 		isFunction( action ) && action( this.props.theme );
 	},
 
-	focus: function( event ) {
+	focus( event ) {
 		event.target.focus();
 	},
 
-	render: function() {
-		var classes = classNames(
+	render() {
+		const classes = classNames(
 			'theme__more-button',
 			{ 'is-active': this.props.theme.active },
 			{ 'is-open': this.state.showPopover }
@@ -106,4 +105,4 @@ var ThemeMoreButton = React.createClass( {
 	}
 } );
 
-module.exports = ThemeMoreButton;
+export default ThemeMoreButton;
