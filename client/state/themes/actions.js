@@ -21,6 +21,8 @@ import {
 	THEME_DETAILS_RECEIVE,
 	THEME_PURCHASE,
 	THEME_RECEIVE_CURRENT,
+	THEME_REQUEST_CURRENT,
+	THEME_REQUEST_CURRENT_FAILURE,
 	THEME_SIGNUP_WITH,
 	THEMES_INCREMENT_PAGE,
 	THEMES_QUERY,
@@ -75,19 +77,30 @@ export function incrementThemesPage( site ) {
 	};
 }
 
-export function fetchCurrentTheme( site ) {
+export function fetchCurrentTheme( siteId ) {
 	return dispatch => {
-		wpcom.undocumented().activeTheme( site.ID )
+		dispatch( {
+			type: THEME_REQUEST_CURRENT,
+			siteId,
+		} );
+
+		wpcom.undocumented().activeTheme( siteId )
 			.then( theme => {
 				debug( 'Received current theme', theme );
 				dispatch( {
 					type: THEME_RECEIVE_CURRENT,
-					site: site,
+					siteId,
 					themeId: theme.id,
 					themeName: theme.name,
 					themeCost: theme.cost
 				} );
-			} ); // TODO: add .catch() error handler
+			} ).catch( error => {
+				dispatch( {
+					type: THEME_REQUEST_CURRENT_FAILURE,
+					siteId,
+					error,
+				} );
+			} );
 	};
 }
 

@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,6 +17,8 @@ import {
 	isPremium,
 	trackClick
 } from '../helpers';
+import { getCurrentTheme } from 'state/themes/current-theme/selectors';
+import QueryCurrentTheme from 'components/data/query-current-theme';
 
 /**
  * Show current active theme for a site, with
@@ -37,11 +40,12 @@ const CurrentTheme = React.createClass( {
 	render() {
 		const { currentTheme, site } = this.props,
 			placeholderText = <span className="current-theme__placeholder">loading...</span>,
-			text = currentTheme ? currentTheme.name : placeholderText,
+			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText,
 			displaySupportButton = isPremium( currentTheme ) && ! site.jetpack;
 
 		return (
 			<Card className="current-theme">
+				{ site && <QueryCurrentTheme siteId={ site.ID }/> }
 				<div className="current-theme__info">
 					<span className="current-theme__label">
 						{ this.translate( 'Current Theme' ) }
@@ -75,4 +79,8 @@ const CurrentTheme = React.createClass( {
 	}
 } );
 
-export default CurrentTheme;
+export default connect(
+	( state, props ) => (
+		{ currentTheme: getCurrentTheme( state, props.site && props.site.ID ) }
+	)
+)( CurrentTheme );
