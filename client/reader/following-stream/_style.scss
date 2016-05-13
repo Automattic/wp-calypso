@@ -33,30 +33,39 @@
 
 	.follow-button {
 		position: absolute;
-			top: -5px;
+			top: -8px;
 			right: 0;
 		z-index: z-index( 'reader-card-follow-button-parent', '.reader__card.card .follow-button' );
-		padding-right: 0;
+
+		.gridicon {
+			position: absolute;
+				left: 15px;
+				top: 10px;
+		}
 
 		.follow-button__label {
-			color: $gray;
+			color: $gray-dark;
+			font-size: 16px;
+
+			@include breakpoint( "<660px" ) {
+				display: none;
+			}
 		}
 
 		&:hover {
 			background: none;
 
 			.gridicon {
-				fill: $blue-medium;
+				fill: $gray-dark;
 			}
 
 			.follow-button__label {
 				cursor: pointer;
-				color: $blue-medium;
+				color: $gray-dark;
 			}
 		}
 
 		@include breakpoint( "<480px" ) {
-			top: 0;
 			right: 8px;
 		}
 	}
@@ -70,12 +79,12 @@
 			background: none;
 
 			.gridicon {
-				fill: lighten( $gray, 10% );
+				fill: $alert-green;
 			}
 
 			.follow-button__label {
 				cursor: pointer;
-				color: lighten( $gray, 10% );
+				color: $alert-green;
 			}
 		}
 	}

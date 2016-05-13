@@ -50,7 +50,7 @@ module.exports = React.createClass( {
 				this.translate( 'Follow', {
 					context: 'Stats: Follow action / Following status'
 				} ),
-			gridiconType = following ? 'checkmark-circle' : 'add-outline',
+			gridiconType = following ? 'reader-following' : 'reader-follow',
 			wrapperClassSet;
 
 		wrapperClassSet = classNames( wrapperClass );
@@ -59,7 +59,7 @@ module.exports = React.createClass( {
 			<li className='module-content-list-item-action'>
 				<a href='#' onClick={ this.clickHandler } className={ wrapperClassSet } title={ site.blog_domain } aria-label={ this.translate( 'Follow or unfollow user', { textOnly: true, context: 'Stats ARIA label: Follow/Unfollow action' } ) } >
 					<span className='module-content-list-item-action-label'><Gridicon icon={ gridiconType } size={ 18 } />{ label }</span>
-					<span className='module-content-list-item-action-label unfollow'><Gridicon icon="checkmark-circle" size={ 18 } />{ this.translate( 'Unfollow', { context: 'Stats ARIA label: Unfollow action' } ) }</span>
+					<span className='module-content-list-item-action-label unfollow'><Gridicon icon="cross" size={ 18 } />{ this.translate( 'Unfollow', { context: 'Stats ARIA label: Unfollow action' } ) }</span>
 				</a>
 			</li>
 		);

@@ -1,25 +1,21 @@
 .follow-button {
 	position: relative;
 	background: inherit;
-	border: none;
-	border-radius: 0;
-	color: darken( $gray, 10% );
+	color: $gray-dark;
 	cursor: pointer;
 	display: block;
 	font-size: 14px;
-	font-weight: 400;
+	font-weight: 500;
 	margin: 0;
 	padding: 8px 16px;
 	text-align: left;
 
-	&:first-child {
-		margin-top: 5px;
+	@include breakpoint( "<660px" ) {
+		height: 38px;
 	}
 
-	&:hover,
-	&:focus {
-		border: 0;
-		box-shadow: none;
+	&:first-child {
+		margin-top: 5px;
 	}
 
 	&:last-child {
@@ -31,22 +27,39 @@
 	}
 
 	// Menu Items with Icons
-	&.has-icon {
-		padding-left: 42px;
+
+	.gridicon {
+		height: 24px;
+		width: 24px;
 	}
 
-	.gridicon__follow {
-		opacity: 1;
+	&.has-icon {
+		padding-left: 42px;
+
+		@include breakpoint( "<660px" ) {
+			padding-left: 36px;
+		}
 	}
 
 	.gridicon__following {
 		opacity: 0;
 		pointer-events: none;
-		transform: rotate( 180deg ) scale( 3 );
+		transform: rotate( 360deg ) scale( 1 );
 	}
 
 	.gridicon__unfollow {
-		display: none;
+
+		.gridicon__follow {
+  			opacity: 0;
+  			pointer-events: none;
+			transform: rotate( -360deg ) scale( 0.5 );
+  		}
+
+  		.gridicon__following {
+  			opacity: 1;
+  			pointer-events: auto;
+ 			transform: rotate( 0 ) scale( 1 );
+  		}
 	}
 
 	&.is-following {
@@ -59,37 +72,34 @@
 		.gridicon__follow {
 			opacity: 0;
 			pointer-events: none;
-			transform: rotate( -180deg ) scale( 0.5 );
 		}
 
 		.gridicon__following {
 			opacity: 1;
 			pointer-events: auto;
-			transform: rotate( 0 ) scale( 1 );
 		}
 	}
 
 	&:hover {
 		color: $alert-green;
+
 		.gridicon {
 			fill: $alert-green;
 		}
 
 		&.is-following {
+			color: $alert-green;
+
 			.gridicon {
-				fill: lighten( $gray, 10 );
+				fill: $alert-green;
 			}
-
-			color: lighten( $gray, 10 );
-
 		}
 	}
 
 	.gridicon {
 		position: absolute;
-		top: 7px;
-		left: 18px;
-		fill: lighten( $gray, 10 );
-		transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+			left: 18px;
+			top: 7px;
+		transition: all 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 }

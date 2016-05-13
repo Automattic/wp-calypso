@@ -102,6 +102,8 @@ var Gridicon = React.createClass( {
 			'gridicons-flag',
 			'gridicons-menu',
 			'gridicons-reader',
+			'gridicons-reader-follow',
+			'gridicons-reader-following',
 			'gridicons-strikethrough'
 		];
 
@@ -485,6 +487,14 @@ var Gridicon = React.createClass( {
 				break;
 			case 'gridicons-reader':
 				svg = <svg className={ iconClass } height={ this.props.size } width={ this.props.size } onClick={ this.props.onClick } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M3 4v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4H3zm7 11H5v-1h5v1zm2-2H5v-1h7v1zm0-2H5v-1h7v1zm7 4h-5v-5h5v5zm0-7H5V6h14v2z"/></g></svg>;
+				break;
+			case 'gridicons-reader-follow':
+				svg = <svg className={ iconClass } height={ this.props.size } width={ this.props.size } onClick={ this.props.onClick } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23,16v2h-3v3h-2v-3h-3v-2h3v-3h2v3H23z M20,2v9h-4v3h-3v4H4c-1.1,0-2-0.9-2-2V2H20z M8,13v-1H4v1H8z M11,10H4v1h7V10z
+		 M11,8H4v1h7V8z M18,4H4v2h14V4z"/></g></svg>;
+				break;
+			case 'gridicons-reader-following':
+				svg = <svg className={ iconClass } height={ this.props.size } width={ this.props.size } onClick={ this.props.onClick } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23,13.482L15.508,21L12,17.4l1.412-1.388l2.106,2.188l6.094-6.094L23,13.482z M15.545,15.344L20,10.889V2H2v14
+		c0,1.1,0.9,2,2,2h4.538l4.913-4.832L15.545,15.344z M8,13H4v-1h4V13z M11,11H4v-1h7V11z M11,9H4V8h7V9z M18,6H4V4h14V6z"/></g></svg>;
 				break;
 			case 'gridicons-reblog':
 				svg = <svg className={ iconClass } height={ this.props.size } width={ this.props.size } onClick={ this.props.onClick } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M22.086 9.914L20 7.828V18c0 1.105-.895 2-2 2h-7v-2h7V7.828l-2.086 2.086L14.5 8.5 19 4l4.5 4.5-1.414 1.414zM6 16.172V6h7V4H6c-1.105 0-2 .895-2 2v10.172l-2.086-2.086L.5 15.5 5 20l4.5-4.5-1.414-1.414L6 16.172z"/></g></svg>;

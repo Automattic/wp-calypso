@@ -61,27 +61,35 @@
 
 	.follow-button {
 		position: absolute;
-			top: 0;
+			top: -3px;
 			right: 0;
 
+		.gridicon {
+			position: absolute;
+				left: 15px;
+				top: 10px;
+		}
+
 		.follow-button__label {
-			color: lighten( $gray, 10% );
+			color: $gray-dark;
+			font-size: 16px;
 		}
 
 		&:hover {
 			background: none;
 
 			.gridicon {
-				fill: $blue-medium;
+				fill: $gray-dark;
 			}
 
 			.follow-button__label {
 				cursor: pointer;
-				color: $blue-medium;
+				color: $gray-dark;
 			}
 		}
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( "<660px" ) {
+
 			.follow-button__label {
 				display: none;
 			}
@@ -97,12 +105,12 @@
 			background: none;
 
 			.gridicon {
-				fill: lighten( $gray, 10% );
+				fill: $alert-green;
 			}
 
 			.follow-button__label {
 				cursor: pointer;
-				color: lighten( $gray, 10% );
+				color: $alert-green;
 			}
 		}
 	}
