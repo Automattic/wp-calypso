@@ -110,11 +110,10 @@ export function isRequestingSites( state ) {
  */
 export function getSiteByUrl( state, url ) {
 	for ( let siteId in state.sites.items ) {
-		const site = state.sites.items[ siteId ];
-		const siteUrlSansProtocol = site.URL.replace( /^https?:\/\//, '' );
-		const urlSansProtocol = url.replace( /^https?:\/\//, '' );
-		if ( siteUrlSansProtocol === urlSansProtocol ) {
-			return site;
+		const siteSlug = getSiteSlug( state, siteId );
+		const urlSlug = url.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+		if ( siteSlug === urlSlug ) {
+			return state.sites.items[ siteId ];
 		}
 	}
 	return null;
