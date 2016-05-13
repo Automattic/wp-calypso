@@ -253,7 +253,7 @@ const ThemeSheet = React.createClass( {
 							<div className="themes__sheet-action-bar-container">
 								<Button onClick={ this.onPrimaryClick }>
 									{ actionTitle }
-									{ priceElement }
+									{ ! this.isActive() && priceElement }
 								</Button>
 							</div>
 						</HeaderCake>
