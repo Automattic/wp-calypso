@@ -32,7 +32,7 @@ const emptyStore = {
 	},
 	on() {},
 	off() {}
-}
+};
 
 const FeedStream = React.createClass( {
 
@@ -100,12 +100,6 @@ const FeedStream = React.createClass( {
 				<p>
 					<FormTextInput type="text" value={ undefined } defaultValue={ this.props.query } ref="searchInput" onChange={ this.debouncedUpdate } placeholder={ this.translate( 'Enter a search term' ) } />
 				</p>
-				{ this.props.query && <StreamHeader
-					isPlaceholder={ false }
-					icon={ <Gridicon icon="search" /> }
-					title={ this.state.title }
-					showFollow={ false } />
-				}
 			</FollowingStream>
 		);
 	}
