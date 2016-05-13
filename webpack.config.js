@@ -115,7 +115,7 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 
 jsLoader = {
 	test: /\.jsx?$/,
-	exclude: /node_modules/,
+	exclude: /node_modules\/(?!@automattic\/dops-components\/client)/,
 	loaders: [ 'babel-loader?cacheDirectory&optional[]=runtime' ]
 };
 
