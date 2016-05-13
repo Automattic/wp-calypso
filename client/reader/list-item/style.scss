@@ -14,6 +14,7 @@
 }
 
 .reader-list-item__card.is-placeholder {
+
 	.reader-list-item__title,
 	.reader-list-item__description {
 		pointer-events: none;
@@ -54,8 +55,8 @@
 
 .reader-list-item__icon {
 	position: absolute;
-		top: 14px;
 		left: 16px;
+		top: 14px;
 	height: 48px;
 	width: 48px;
 	text-align: center;
@@ -82,7 +83,6 @@
 	}
 
 	.follow-button {
-
 		font-size: 16px;
 		margin-right: 15px;
 
@@ -109,6 +109,11 @@
 	}
 
 	.follow-button.is-following {
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
 		.follow-button__label {
 			color: $alert-green;
 		}
@@ -127,6 +132,7 @@
 }
 
 .foldable-card {
+
 	.reader-list-item__icon {
 		left: 42px;
 	}
