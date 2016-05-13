@@ -11,7 +11,6 @@ import merge from 'lodash/merge';
  * Internal dependencies
  */
 import Main from 'components/main';
-import CurrentThemeData from 'components/data/current-theme';
 import ActivatingTheme from 'components/data/activating-theme';
 import { customize, purchase, activate, clearActivated } from 'state/themes/actions';
 import ThemePreview from './theme-preview';
@@ -154,11 +153,9 @@ const ThemesSingleSite = React.createClass( {
 						source={ 'list' }
 						clearActivated={ bindActionCreators( clearActivated, this.props.dispatch ) } />
 				</ActivatingTheme>
-				<CurrentThemeData site={ site }>
-					<CurrentTheme
-						site={ site }
-						canCustomize={ site && site.isCustomizable() } />
-				</CurrentThemeData>
+				<CurrentTheme
+					site={ site }
+					canCustomize={ site && site.isCustomizable() } />
 				<UpgradeNudge
 					title={ this.translate( 'Get Custom Design with Premium' ) }
 					message={ this.translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
