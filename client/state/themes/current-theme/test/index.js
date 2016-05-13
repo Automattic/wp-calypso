@@ -11,7 +11,7 @@ describe( 'current-theme', () => {
 		type: THEME_RECEIVE_CURRENT,
 		themeId: 'twentyfifteen',
 		themeName: 'Twenty Fifteen',
-		site: SITE
+		siteId: SITE.ID,
 	};
 
 	let store;
