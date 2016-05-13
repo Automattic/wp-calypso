@@ -163,7 +163,7 @@ const LoggedInForm = React.createClass( {
 	},
 
 	handleSubmit() {
-		const { queryObject, siteReceived, manageActivated, activateManageSecret, plansUrl, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		const { queryObject, siteReceived, manageActivated, activateManageSecret, plansUrl, authorizeError } = this.props.jetpackConnectAuthorize;
 		if ( ! this.props.isAlreadyOnSitesList &&
 			queryObject.already_authorized ) {
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
@@ -171,8 +171,8 @@ const LoggedInForm = React.createClass( {
 			this.activateManage();
 		} else if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			window.location.href = queryObject.site + authUrl;
-		} else if ( this.props.isAlreadyOnSitesList || ( siteReceived && plansURL ) ) {
-			page( plansURL );
+		} else if ( this.props.isAlreadyOnSitesList || ( siteReceived && plansUrl ) ) {
+			page( plansUrl );
 		} else {
 			this.props.authorize( queryObject );
 		}
