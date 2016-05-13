@@ -244,6 +244,7 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	render() {
+		const status = this.getStatus();
 		if ( status === 'notJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
 			return this.renderInstallInstructions();
 		}
