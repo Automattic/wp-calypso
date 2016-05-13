@@ -45,7 +45,7 @@ const CurrentTheme = React.createClass( {
 
 		return (
 			<Card className="current-theme">
-				<QueryCurrentTheme site={ site }/>
+				{ site && <QueryCurrentTheme siteId={ site.ID }/> }
 				<div className="current-theme__info">
 					<span className="current-theme__label">
 						{ this.translate( 'Current Theme' ) }

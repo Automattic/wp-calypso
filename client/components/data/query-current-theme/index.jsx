@@ -15,21 +15,21 @@ import { isRequestingCurrentTheme } from 'state/themes/current-theme/selectors';
 class QueryCurrentTheme extends Component {
 
 	componentDidMount() {
-		const { requestingCurrentTheme, site } = this.props;
-		this.refresh( requestingCurrentTheme, site );
+		const { requestingCurrentTheme, siteId } = this.props;
+		this.refresh( requestingCurrentTheme, siteId );
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.site === this.props.site ) {
+		if ( nextProps.siteId === this.props.siteId ) {
 			return;
 		}
-		const { requestingCurrentTheme, site } = nextProps;
-		this.refresh( requestingCurrentTheme, site );
+		const { requestingCurrentTheme, siteId } = nextProps;
+		this.refresh( requestingCurrentTheme, siteId );
 	}
 
-	refresh( requestingCurrentTheme, site ) {
-		if ( ! requestingCurrentTheme && site ) {
-			this.props.fetchCurrentTheme( site.ID );
+	refresh( requestingCurrentTheme, siteId ) {
+		if ( ! requestingCurrentTheme ) {
+			this.props.fetchCurrentTheme( siteId );
 		}
 	}
 
@@ -39,7 +39,8 @@ class QueryCurrentTheme extends Component {
 }
 
 QueryCurrentTheme.propTypes = {
-	site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+	siteId: PropTypes.number.isRequired,
+	// connected props
 	requestingCurrentTheme: PropTypes.bool,
 	fetchCurrentTheme: PropTypes.func,
 };
