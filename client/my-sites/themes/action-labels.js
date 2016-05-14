@@ -35,6 +35,6 @@ export default {
 		label: i18n.translate( 'Details' ),
 	},
 	support: {
-		label: i18n.translate( 'Support' ),
+		label: i18n.translate( 'Setup' ),
 	},
 };
