@@ -45,10 +45,10 @@ const EditorDeletePost = React.createClass( {
 
 		const handleTrashingPost = function( error ) {
 			if ( error ) {
-				return this.setState( { isTrashing: false } );
+				this.setState( { isTrashing: false } );
 			}
 
-			this.props.onTrashingPost();
+			this.props.onTrashingPost( error );
 		}.bind( this );
 
 		if ( utils.userCan( 'delete_post', this.props.post ) ) {
