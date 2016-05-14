@@ -35,9 +35,10 @@ to remove the from/resolved fields if possible.
 - (Optional) Modify package.json. For example: `npm install --save lodash@4.11.1` or `npm uninstall --save left-pad`
 - Run `make distclean` to delete local node_modules
 - Delete your local copy of npm-shrinkwrap.json.
-- Run `npm install`
+- Run `npm install --no-optional`. Due to npm 3 quirks, you may need to run this twice for all packages to resolve themselves.
+- Run `shonkwrap --dev` to generate a new npm-shrinkwrap.json. It is important that you do this
+before `make run` so optional platform dependent dependencies are not baked into the new shrinkwrap file.
 - Verify that Calypso works as expected and that tests pass.
-- Run `shonkwrap --dev`
 - Commit the new npm-shrinkwrap.json and any changes to package.json
 
 ## Testing
