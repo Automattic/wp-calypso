@@ -1,21 +1,21 @@
-var expect = require( 'chai' ).expect,
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' ),
-	sinon = require( 'sinon' ),
-	DropZone = require( '../' ),
-	Wrapper = React.createClass( {
-		render: function() {
-			return <div>{ this.props.children }</div>;
-		}
-	} );
+import { expect } from 'chai';
+import ReactDom from 'react-dom';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+import sinon from 'sinon';
+import { DropZone } from '../';
+
+const Wrapper = React.createClass( {
+	render: function() {
+		return <div>{ this.props.children }</div>;
+	}
+} );
 
 describe( 'index', function() {
 	var container, sandbox;
 	require( 'test/helpers/use-fake-dom' )( '<html><body><div id="container"></div></body></html>' );
 
 	before( function() {
-		DropZone.prototype.translate = sinon.stub().returnsArg( 0 );
 		container = document.getElementById( 'container' );
 		window.MutationObserver = sinon.stub().returns( {
 			observe: sinon.stub(),
@@ -27,7 +27,6 @@ describe( 'index', function() {
 		if ( global.window && global.window.MutationObserver ) {
 			delete global.window.MutationObserver;
 		}
-		delete DropZone.prototype.translate;
 	} );
 
 	beforeEach( function() {
@@ -135,7 +134,7 @@ describe( 'index', function() {
 	it( 'should further highlight the drop zone when dragging over the element', function() {
 		var tree, dragEnterEvent;
 
-		sandbox.stub( DropZone.prototype.__reactAutoBindMap, 'isWithinZoneBounds' ).returns( true );
+		sandbox.stub( DropZone.prototype, 'isWithinZoneBounds' ).returns( true );
 
 		tree = ReactDom.render( React.createElement( DropZone ), container );
 
