@@ -88,7 +88,7 @@ const ThemesSingleSite = React.createClass( {
 				details: {
 					getUrl: theme => getDetailsUrl( theme, site ),
 				},
-				support: site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
+				support: ! site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
 					? {
 						getUrl: theme => getSupportUrl( theme, site ),
 						hideForTheme: theme => ! isPremium( theme )
