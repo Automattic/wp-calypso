@@ -7,6 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import { EDITOR_POST_ID_SET, EDITOR_SHOW_DRAFTS_TOGGLE } from 'state/action-types';
+import imageEditor from './image-editor/reducer';
 import lastDraft from './last-draft/reducer';
 import media from './media/reducer';
 import contactForm from './contact-form/reducer';
@@ -48,6 +49,7 @@ export function showDrafts( state = false, action ) {
 export default combineReducers( {
 	postId,
 	showDrafts,
+	imageEditor,
 	lastDraft,
 	media,
 	contactForm

@@ -16,7 +16,8 @@ describe( 'reducer', () => {
 			'showDrafts',
 			'lastDraft',
 			'media',
-			'contactForm'
+			'contactForm',
+			'imageEditor'
 		] );
 	} );
 
