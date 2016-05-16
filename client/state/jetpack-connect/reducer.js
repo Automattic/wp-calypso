@@ -76,18 +76,25 @@ export function jetpackConnectSite( state = {}, action ) {
 		case JETPACK_CONNECT_CHECK_URL_RECEIVE:
 			if ( action.url === state.url ) {
 				let errorCode = null;
+				let instructionsType = null;
 				if ( ! action.data.exists ) {
 					errorCode = 'jpc_error_notexists';
-				}
-				if ( ! action.data.isWordPress ) {
+				} else if ( ! action.data.isWordPress ) {
 					errorCode = 'jpc_error_notwpsite';
-				}
-				if ( ! action.data.isWordPressDotCom ) {
+				} else if ( ! action.data.isWordPressDotCom ) {
 					errorCode = 'jpc_error_wpdotcomsite';
+				} else if ( ! action.data.hasJetpack ) {
+					errorCode = 'jpc_instructions_view';
+					instructionsType = 'not_jetpack';
+				} else if ( ! action.data.isJetpackActive ) {
+					errorCode = 'jpc_instructions_view';
+					instructionsType = 'inactive_jetpack';
 				}
+
 				if ( errorCode ) {
 					analytics.tracks.recordEvent( errorCode, {
 						url: action.url,
+						type: instructionsType,
 						user: getCurrentUserId( state )
 					} );
 				}
