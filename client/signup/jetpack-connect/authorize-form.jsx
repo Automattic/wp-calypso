@@ -27,6 +27,8 @@ import Gravatar from 'components/gravatar';
 import i18n from 'lib/mixins/i18n';
 import Gridicon from 'components/gridicon';
 import LocaleSuggestions from 'signup/locale-suggestions';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
  * Constants
@@ -66,8 +68,13 @@ const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
 
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
+	},
+
 	submitForm( form, userData ) {
 		debug( 'submiting new account', form, userData );
+		this.props.recordTracksEvent( 'calypso_jpc_signup_submit' );
 		this.props.createAccount( userData );
 	},
 
@@ -97,11 +104,15 @@ const LoggedOutForm = React.createClass( {
 		);
 	},
 
+	recordSignInClick() {
+		this.props.recordTracksEvent( 'calypso_jpc_signup_signin' );
+	},
+
 	renderFooterLink() {
 		const loginUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ loginUrl }>
+				<LoggedOutFormLinkItem href={ loginUrl } onClick={ this.recordSignInClick }>
 					{ this.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
 			</LoggedOutFormLinks>
@@ -136,6 +147,9 @@ const LoggedInForm = React.createClass( {
 		const { autoAuthorize, queryObject } = this.props.jetpackConnectAuthorize;
 		debug( 'Checking for auto-auth on mount', autoAuthorize );
 		if ( autoAuthorize || this.props.calypsoStartedConnection || this.props.isSSO ) {
+			this.props.recordTracksEvent( 'jpc_auth_view', {
+				user: this.props.userId
+			} );
 			this.props.authorize( queryObject );
 		}
 	},
@@ -370,12 +384,14 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 export default connect(
 	state => {
+		const user = getCurrentUser( state );
 		return {
 			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
 			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
-			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions
+			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
+			userId: user ? user.ID : null
 		};
 	},
-	dispatch => bindActionCreators( { authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )
+	dispatch => bindActionCreators( { recordTracksEvent, authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )
 )( JetpackConnectAuthorizeForm );
 
