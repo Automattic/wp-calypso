@@ -18,8 +18,6 @@ import {
 	SERIALIZE,
 } from 'state/action-types';
 
-import useFakeDom from 'test/helpers/use-fake-dom';
-
 import reducer, {
 	jetpackConnectSessions,
 	jetpackConnectAuthorize,
@@ -27,9 +25,6 @@ import reducer, {
 } from '../reducer';
 
 describe( 'reducer', () => {
-
-	useFakeDom();
-
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'jetpackConnectSite',

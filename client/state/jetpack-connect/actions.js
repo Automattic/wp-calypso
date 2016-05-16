@@ -43,7 +43,7 @@ const activateURL = '/wp-admin/plugins.php';
 const userModule = userFactory();
 const tracksEvent = ( dispatch, eventName, props ) => {
 	setTimeout( () => {
-		dispatch( recordTracksEvent( eventName, props ) )
+		dispatch( recordTracksEvent( eventName, props ) );
 	}, 1 );
 };
 export default {
