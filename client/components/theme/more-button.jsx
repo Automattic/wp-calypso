@@ -16,43 +16,28 @@ import { isOutsideCalypso } from 'lib/url';
 /**
  * Component
  */
-const ThemeMoreButton = React.createClass( {
-	propTypes: {
-		// See Theme component propTypes
-		theme: React.PropTypes.object,
-		// Index of theme in results list
-		index: React.PropTypes.number,
-		// Options to populate the popover menu with
-		options: React.PropTypes.objectOf(
-			React.PropTypes.shape( {
-				label: React.PropTypes.string,
-				header: React.PropTypes.string,
-				action: React.PropTypes.func,
-				getUrl: React.PropTypes.func
-			} )
-		).isRequired,
-		active: React.PropTypes.bool
-	},
+class ThemeMoreButton extends React.Component {
 
-	getInitialState() {
-		return {
-			showPopover: false
-		};
-	},
+	constructor( props ) {
+		super( props );
+		this.state = { showPopover: false };
+		this.togglePopover = this.togglePopover.bind( this );
+		this.closePopover = this.closePopover.bind( this );
+	}
 
 	togglePopover() {
 		this.setState( { showPopover: ! this.state.showPopover } );
 		! this.state.showPopover && this.props.onClick( this.props.theme.id, this.props.index );
-	},
+	}
 
 	closePopover( action ) {
 		this.setState( { showPopover: false } );
 		isFunction( action ) && action( this.props.theme );
-	},
+	}
 
 	focus( event ) {
 		event.target.focus();
-	},
+	}
 
 	render() {
 		const classes = classNames(
@@ -103,6 +88,23 @@ const ThemeMoreButton = React.createClass( {
 			</span>
 		);
 	}
-} );
+}
+
+ThemeMoreButton.propTypes = {
+	// See Theme component propTypes
+	theme: React.PropTypes.object,
+	// Index of theme in results list
+	index: React.PropTypes.number,
+	// Options to populate the popover menu with
+	options: React.PropTypes.objectOf(
+		React.PropTypes.shape( {
+			label: React.PropTypes.string,
+			header: React.PropTypes.string,
+			action: React.PropTypes.func,
+			getUrl: React.PropTypes.func
+		} )
+	).isRequired,
+	active: React.PropTypes.bool
+};
 
 export default ThemeMoreButton;
