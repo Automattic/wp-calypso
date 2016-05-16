@@ -48,7 +48,7 @@ const JetpackSSOForm = React.createClass( {
 			// we land in the same development environment.
 			const redirect = addQueryArgs( { calypso_env: config( 'env' ) }, nextProps.ssoUrl );
 			debug( 'Redirecting to: ' + redirect );
-			window.location.href = addQueryArgs( redirect );
+			window.location.href = redirect;
 		}
 	},
 
