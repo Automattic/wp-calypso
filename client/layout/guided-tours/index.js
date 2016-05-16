@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import scrollTo from 'lib/scroll-to';
-import { getSelectedSite } from 'state/ui/selectors';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
 import { errorNotice } from 'state/notices/actions';
@@ -107,6 +106,7 @@ class GuidedTours extends Component {
 
 	render() {
 		const { stepConfig } = this.props.tourState;
+		debug( 'GuidedTours#render() tourState', this.props.tourState );
 
 		if ( ! stepConfig ) {
 			return null;
@@ -134,7 +134,6 @@ class GuidedTours extends Component {
 }
 
 export default connect( ( state ) => ( {
-	selectedSite: getSelectedSite( state ),
 	tourState: getGuidedTourState( state ),
 } ), {
 	nextGuidedTourStep,
