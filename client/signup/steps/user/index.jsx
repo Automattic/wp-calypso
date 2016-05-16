@@ -22,6 +22,19 @@ export default React.createClass( {
 		}
 	},
 
+	componentWillMount() {
+		let subHeaderText = this.props.subHeaderText;
+
+		/**
+		 * Update the step sub-header if they only want to create an account, without a site.
+		 */
+		if ( 1 === signupUtils.getFlowSteps( this.props.flowName ).length ) {
+			subHeaderText = this.translate( 'Welcome to the wonderful WordPress.com community' );
+		}
+
+		this.setState( Object.assign( {}, this.state, { subHeaderText: subHeaderText } ) );
+	},
+
 	save( form ) {
 		SignupActions.saveSignupStep( {
 			stepName: this.props.stepName,
@@ -113,7 +126,7 @@ export default React.createClass( {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.props.headerText }
-				subHeaderText={ this.props.subHeaderText }
+				subHeaderText={ this.state.subHeaderText }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.translate( 'Create your account.' ) }
 				signupProgressStore={ this.props.signupProgressStore }
