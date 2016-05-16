@@ -103,6 +103,7 @@ export default {
 		return ( dispatch ) => {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT,
+				redirectType: 'remote_auth',
 				url: url
 			} );
 			window.location = url + authURL;
@@ -112,6 +113,7 @@ export default {
 		return ( dispatch ) => {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT,
+				redirectType: 'plugin_install',
 				url: url
 			} );
 			window.location = url + installURL;
@@ -121,6 +123,7 @@ export default {
 		return ( dispatch ) => {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT,
+				redirectType: 'plugin_activation',
 				url: url
 			} );
 			window.location = url + activateURL;
