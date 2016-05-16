@@ -4,7 +4,6 @@
 const React = require( 'react' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
