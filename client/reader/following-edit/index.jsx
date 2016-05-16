@@ -33,6 +33,7 @@ import FollowingExportButton from './export-button';
 import FollowingImportButton from './import-button';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import SectionHeader from 'components/section-header';
+import Button from 'components/button';
 const stats = require( 'reader/stats' );
 
 const initialLoadFeedCount = 20;
@@ -57,7 +58,7 @@ const FollowingEdit = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			initialFollowUrl: ''
-		}
+		};
 	},
 
 	smartSetState: smartSetState,
@@ -134,7 +135,7 @@ const FollowingEdit = React.createClass( {
 		}
 
 		return subscriptions.sortBy( function( subscription ) {
-			return subscription.get( 'date_subscribed' )
+			return subscription.get( 'date_subscribed' );
 		} ).reverse();
 	},
 
@@ -495,7 +496,7 @@ const FollowingEdit = React.createClass( {
 		// the following stream was processed
 		if ( subscriptions ) {
 			subscriptionsToDisplay = subscriptions.filter( function( subscription ) {
-				return subscription.has( 'ID' )
+				return subscription.has( 'ID' );
 			} ).toArray();
 		}
 
@@ -544,7 +545,13 @@ const FollowingEdit = React.createClass( {
 							? <FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
 							: null }
 					{ ! hasNoSubscriptions
-							? <Gridicon icon="search" className="following-edit__search" onClick={ this.toggleSearching } />
+							? <Button
+								borderless
+								className="following-edit__search"
+								aria-label={ this.translate( 'Open Search', { context: 'button label' } ) }
+								onClick={ this.toggleSearching }>
+								<Gridicon icon="search" />
+							  </Button>
 							: null }
 				</SectionHeader>
 

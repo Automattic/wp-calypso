@@ -53,7 +53,6 @@
 		color: $gray;
 		font-weight: 600;
 		font-size: 12px;
-		margin-right: 8px;
 		text-transform: capitalize;
 	}
 
@@ -109,8 +108,20 @@
 }
 
 .following-edit__search {
-	color: $blue-wordpress;
-	cursor: pointer;
+	margin-right: 0;
+	padding: 0;
+
+	.gridicons-search {
+		color: $blue-wordpress;
+	}
+
+	&.button.is-borderless .gridicons-search {
+		top: 4px;
+	}
+
+	&:focus .gridicons-search {
+		color: $blue-light;
+	}
 }
 
 
