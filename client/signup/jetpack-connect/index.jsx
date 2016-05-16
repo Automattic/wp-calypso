@@ -34,12 +34,12 @@ const MINIMUM_JETPACK_VERSION = '3.9.6';
 const JetpackConnectMain = React.createClass( {
 	displayName: 'JetpackConnectSiteURLStep',
 
-	componetDidMount() {
+	componentDidMount() {
 		let from = 'direct';
 		if ( this.props.isInstall ) {
 			from = 'jpdotcom';
 		}
-		recordTracksEvent( 'jpc_url_view', {
+		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: from,
 			user: this.props.userId
 		} );
@@ -82,7 +82,7 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	onURLEnter() {
-		recordTracksEvent( 'jpc_url_submit', {
+		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_funnel: this.state.currentUrl,
 			user: this.props.userId
 		} );
@@ -90,7 +90,7 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	installJetpack() {
-		recordTracksEvent( 'jpc_instructions_click', {
+		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
 			jetpack_funnel: this.state.currentUrl,
 			user: this.props.userId,
 			type: 'install_jetpack'
@@ -100,7 +100,7 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	activateJetpack() {
-		recordTracksEvent( 'jpc_instructions_click', {
+		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
 			jetpack_funnel: this.state.currentUrl,
 			user: this.props.userId,
 			type: 'activate_jetpack'
