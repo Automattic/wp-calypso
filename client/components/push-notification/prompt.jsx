@@ -46,10 +46,7 @@ module.exports = React.createClass( {
 		var noticeText = (
 			<div>
 				<p>
-					<strong>{ this.translate( 'Get notifications on your desktop' ) }</strong>
-				</p>
-				<p>
-					{ this.translate( 'See your likes, comments, and more instantly—even when you don\'t have WordPress.com open in your browser.' ) }
+					<strong>{ this.translate( 'Get notifications on your desktop!' ) }</strong> { this.translate( 'See your likes, comments, and more instantly—even when you don\'t have WordPress.com open in your browser.' ) }
 				</p>
 				<p>
 					{ this.translate(
@@ -62,7 +59,7 @@ module.exports = React.createClass( {
 			</div>
 		);
 
-		return <Notice text={ noticeText } icon="bell" onDismissClick={ this.dismissNotice } />;
+		return <Notice className="push-notification-notice" text={ noticeText } icon="bell" onDismissClick={ this.dismissNotice } />;
 	},
 
 	render: function() {

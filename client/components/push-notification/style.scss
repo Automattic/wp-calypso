@@ -1,74 +1,76 @@
+.push-notification-notice {
+	max-width: 720px;
+	margin: 0 auto 24px;
+	padding-top: 4px;
+	padding-bottom: 8px;
+}
+
 .push-notification__prompt-enable {
-	margin: 16px 0;
+	margin-top: 8px;
+}
+
+.card.push-notification__settings {
+	padding-left: 48px;
+	position: relative;
+}
+
+.push-notification__settings-heading {
+	font-weight: 600;
+	position: relative;
+	margin-bottom: 8px;
 }
 
 .push-notification__settings-icon {
-	margin-right: 12px;
-}
-
-.push-notification__settings-header.card.is-compact {
-	display: flex;
-	position: relative;
-	padding-left: 14px;
-
-	&:after {
-		content: '';
-	}
-}
-
-.push-notification__settings-body {
-	display: flex;
-	position: relative;
-
-	&:after {
-		content: '';
-	}
-}
-
-.push-notification__settings-label {
-	display: flex;
-	position: relative;
-	flex-grow: 1;
+	position: absolute;
+		top: 0;
+		left: -32px;
 }
 
 .push-notification__settings-state {
-	display: flex;
-	position: relative;
-	flex-grow: 0;
-
+	font-size: 13px;
+	font-weight: 500;
+	margin-left: 8px;
 	text-transform: uppercase;
-
-	color: lighten( $gray, 10% );
+	color: lighten( $gray, 10 );
 
 	&.is-enabled {
-		color: $blue-medium;
+		color: $alert-green;
 	}
 }
 
 .push-notification__settings-description {
-	max-width: 80%;
+	margin-bottom: 0;
+
+	@include breakpoint( ">660px" ) {
+		margin-right: 130px;
+	}
 }
 
-.push-notification__settings-action {
-	display: flex;
-	position: relative;
-	flex-grow: 0;
+.push-notification__settings-button {
+	margin-top: 8px;
 
-	& .button {
-		padding: 8px 36px;
+	@include breakpoint( ">660px" ) {
+		margin-top: 0;
+		position: absolute;
+			bottom: 24px;
+			right: 24px;
+	}
 
-		&:disabled {
-			opacity: .3;
-		}
+	&.is-enable {
+		background: $blue-medium;
+		border-color: $blue-wordpress;
+		color: $white;
 
-		&.is-enable {
-			background-color: $blue-medium;
+		&:hover,
+		&:focus {
+			border-color: $blue-dark;
 			color: $white;
 		}
-
-		&.is-disable {
-			background-color: $gray-light;
-			color: $gray-dark;
+		&[disabled],
+		&:disabled {
+			background: tint( $blue-light, 50% );
+			border-color: tint( $blue-wordpress, 55% );
+			color: $white;
 		}
 	}
 }
