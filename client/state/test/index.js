@@ -8,6 +8,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { createReduxStore } from '../';
+import currentUser from 'state/current-user/reducer';
 
 describe( 'index', () => {
 	describe( 'createReduxStore', () => {
@@ -25,7 +26,7 @@ describe( 'index', () => {
 				users: { items: { 1234: user } }
 			};
 			const reduxStoreWithCurrentUser = createReduxStore( initialState ).getState();
-			expect( reduxStoreWithCurrentUser.currentUser ).to.eql( { id: 1234 } );
+			expect( reduxStoreWithCurrentUser.currentUser ).to.eql( currentUser( { id: 1234 }, {} ) );
 			expect( Object.keys( reduxStoreWithCurrentUser.users.items ).length ).to.eql( 1 );
 			expect( reduxStoreWithCurrentUser.users.items[ 1234 ] ).to.eql( user );
 		} );

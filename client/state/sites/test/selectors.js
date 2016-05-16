@@ -12,8 +12,7 @@ import {
 	isSiteConflicting,
 	isJetpackSite,
 	getSiteSlug,
-	isRequestingSites,
-	isCurrentUserCapableForSite
+	isRequestingSites
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -252,36 +251,6 @@ describe( 'selectors', () => {
 			expect( isRequestingSites( state ) ).to.equal( true );
 			expect( isRequestingSites( emptyState ) ).to.equal( false );
 			expect( isRequestingSites( falseState ) ).to.equal( false );
-		} );
-	} );
-
-	describe( 'isCurrentUserCapableForSite', () => {
-		it( 'should return null if the site is not known', () => {
-			const isCapable = isCurrentUserCapableForSite( {
-				sites: {
-					items: {}
-				}
-			}, 2916284, 'manage_options' );
-
-			expect( isCapable ).to.be.null;
-		} );
-
-		it( 'should return the value for the specified capability', () => {
-			const isCapable = isCurrentUserCapableForSite( {
-				sites: {
-					items: {
-						2916284: {
-							ID: 2916284,
-							name: 'WordPress.com Example Blog',
-							capabilities: {
-								manage_options: false
-							}
-						}
-					}
-				}
-			}, 2916284, 'manage_options' );
-
-			expect( isCapable ).to.be.false;
 		} );
 	} );
 } );
