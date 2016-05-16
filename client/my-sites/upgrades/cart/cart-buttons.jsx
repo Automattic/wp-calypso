@@ -9,6 +9,7 @@ import page from 'page';
  * Internal dependencies
  */
 import AnalyticsMixin from 'lib/mixins/analytics';
+import localize from 'lib/mixins/i18n/localize';
 
 export const CartButtons = React.createClass( {
 	mixins: [ AnalyticsMixin( 'popupCart' ) ],
@@ -17,7 +18,8 @@ export const CartButtons = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired
+		] ).isRequired,
+		translate: React.PropTypes.func.isRequired
 	},
 
 	getDefaultProps() {
@@ -29,7 +31,7 @@ export const CartButtons = React.createClass( {
 			<div className="cart-buttons">
 				<button className="cart-checkout-button button is-primary"
 						onClick={ this.goToCheckout }>
-					{ this.translate( 'Checkout', { context: 'Cart button' } ) }
+					{ this.props.translate( 'Checkout', { context: 'Cart button' } ) }
 				</button>
 
 				{ this.optionalKeepSearching() }
@@ -45,7 +47,7 @@ export const CartButtons = React.createClass( {
 		return (
 			<button className="cart-keep-searching-button button"
 					onClick={ this.onKeepSearchingClick }>
-				{ this.translate( 'Keep Searching' ) }
+				{ this.props.translate( 'Keep Searching' ) }
 			</button>
 		);
 	},
@@ -67,4 +69,4 @@ export const CartButtons = React.createClass( {
 	}
 } );
 
-export default CartButtons;
+export default localize( CartButtons );
