@@ -4,7 +4,6 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -31,14 +30,14 @@ const mapStateToProps = ( state, ownProps ) => {
 
 		// Disable options when this post type is not selected
 		isEnabled: getSelectedPostType( state ) === ownProps.postType,
-	}
-}
+	};
+};
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
 	return {
 		onSelect: () => dispatch( setPostType( ownProps.postType ) )
-	}
-}
+	};
+};
 
 /**
  * Displays a list of select menus with a checkbox legend
@@ -71,101 +70,57 @@ const PostTypeOptions = React.createClass( {
 
 	renderFields() {
 		const { options } = this.props;
-		const commonProps = {
-			disabled: ! this.props.isEnabled
+
+		const Field = ( props ) => {
+			if ( ! props.options ) {
+				// This should be replaced with `return null` in React >= 0.15
+				return <span/>;
+			}
+
+			return <Select
+				key={ props.defaultLabel }
+				defaultLabel={ props.defaultLabel }
+				options={ props.options }
+				disabled={ ! this.props.isEnabled } />;
 		};
-
-		const mapAuthors = ( authors ) => {
-			return authors.map( ( author ) => ( {
-				value: author.ID,
-				label: author.name
-			} ) );
-		};
-
-		const mapStatuses = ( statuses ) => {
-			return statuses.map( ( status ) => ( {
-				value: status.name,
-				label: status.label
-			} ) );
-		}
-
-		const mapCategories = ( categories ) => {
-			return categories.map( ( category ) => ( {
-				value: category.name,
-				label: category.name
-			} ) );
-		}
-
-		const mapDates = ( dates, endOfMonth = false ) => {
-			return dates.map( ( date ) => {
-				const year = parseInt( date.year, 10 );
-				// API months start at 1 (Jan = 1)
-				const month = parseInt( date.month, 10 );
-				// JS months start at 0 (Jan = 0)
-				const jsMonth = month - 1;
-
-				if ( month === 0 || year === 0 ) {
-					return {
-						value: '',
-						label: this.translate( 'Unknown' )
-					}
-				}
-
-				let time = moment( { year: year, month: jsMonth, day: 1 } );
-
-				if ( endOfMonth ) {
-					time = time.endOf( 'month' );
-				}
-
-				return {
-					// eg: 2015-06-30
-					value: time.format( 'YYYY-MM-DD' ),
-
-					// eg: Dec 2015
-					label: time.format( 'MMM YYYY' )
-				}
-			} );
-		}
 
 		return (
 			<div className="exporter__option-fieldset-fields">
-				{ options.authors &&
-					<Select defaultLabel="Author…" options={ mapAuthors( options.authors ) } { ...commonProps } />
-				}
-				{ options.statuses &&
-					<Select defaultLabel="Status…" options={ mapStatuses( options.statuses ) } { ...commonProps } />
-				}
-				{ options.export_date_options &&
-					<Select defaultLabel="Start Date…" options={ mapDates( options.export_date_options ) } { ...commonProps } />
-				}
-				{ options.export_date_options &&
-					<Select defaultLabel="End Date…" options={ mapDates( options.export_date_options, true ) } { ...commonProps } />
-				}
-				{ options.categories &&
-					<Select defaultLabel="Category…" options={ mapCategories( options.categories ) } { ...commonProps } />
-				}
+				<Field defaultLabel="Author…" options={ options.authors } />
+				<Field defaultLabel="Status…" options={ options.statuses } />
+				<Field defaultLabel="Start Date…" options={ options.dates } />
+				<Field defaultLabel="End Date…" options={ options.dates } />
+				<Field defaultLabel="Category…" options={ options.categories } />
 			</div>
 		);
 	},
 
 	render() {
+		const {
+			isEnabled,
+			onSelect,
+			legend,
+			description,
+			shouldShowPlaceholders
+		} = this.props;
+
 		return (
 			<div className="exporter__option-fieldset">
 
 				<Label className="exporter__option-fieldset-legend">
 					<FormRadio
-						checked={ this.props.isEnabled }
-						onChange={ this.props.onSelect }/>
-					<span className="exporter__option-fieldset-legend-text">{ this.props.legend }</span>
+						checked={ isEnabled }
+						onChange={ onSelect }/>
+					<span className="exporter__option-fieldset-legend-text">{ legend }</span>
 				</Label>
 
-				{ this.props.description &&
+				{ description &&
 					<p className="exporter__option-fieldset-description">
-						{ this.props.description }
+						{ description }
 					</p>
 				}
 
-				{ this.props.shouldShowPlaceholders ? this.renderPlaceholders() : this.renderFields() }
+				{ shouldShowPlaceholders ? this.renderPlaceholders() : this.renderFields() }
 			</div>
 		);
 	}
