@@ -3,7 +3,6 @@
  */
 import { combineReducers } from 'redux';
 import pick from 'lodash/pick';
-import keyBy from 'lodash/keyBy';
 
 /**
  * Internal dependencies
@@ -40,13 +39,19 @@ const VALID_SITE_KEYS = Object.keys( sitesSchema.patternProperties[ '^\\d+$' ].p
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
-		case SITE_RECEIVE:
+		case SITE_RECEIVE: {
 			const site = pick( action.site, VALID_SITE_KEYS );
 			return Object.assign( {}, state, {
 				[ site.ID ]: site
 			} );
+		}
+
 		case SITES_RECEIVE:
-			return keyBy( action.sites, 'ID' );
+			return action.sites.reduce( ( memo, site ) => {
+				memo[ site.ID ] = pick( site, VALID_SITE_KEYS );
+				return memo;
+			}, {} );
+
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, sitesSchema ) ) {
 				return state;
