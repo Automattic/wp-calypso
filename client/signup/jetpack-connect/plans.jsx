@@ -18,6 +18,7 @@ import PlanList from 'components/plans/plan-list' ;
 import { shouldFetchSitePlans } from 'lib/plans';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
+import * as upgradesActions from 'lib/upgrades/actions';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 
@@ -36,7 +37,7 @@ const Plans = React.createClass( {
 	},
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'jpc_plans_view', {
+		this.props.recordTracksEvent( 'calypso_jpc_plans_view', {
 			user: this.props.userId
 		} );
 		this.updateSitePlans( this.props.sitePlans );
@@ -50,11 +51,30 @@ const Plans = React.createClass( {
 
 	selectFreeJetpackPlan() {
 		const selectedSite = this.props.sites.getSelectedSite();
-		this.props.recordTracksEvent( 'jpc_plans_submit_free', {
+		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
 			user: this.props.userId
 		} );
 		if ( isCalypsoStartedConnection( this.props.jetpackConnectSessions, selectedSite.slug ) ) {
 			page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
+		}
+	},
+
+	selectPlan( cartItem ) {
+		const selectedSite = this.props.sites.getSelectedSite();
+		const checkoutPath = `/checkout/${ selectedSite.slug }`;
+		if ( cartItem.product_slug === 'jetpack_premium' ) {
+			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_99', {
+				user: this.props.userId
+			} );
+			upgradesActions.addItem( cartItem );
+			page( checkoutPath );
+		}
+		if ( cartItem.product_slug === 'jetpack_business' ) {
+			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_299', {
+				user: this.props.userId
+			} );
+			upgradesActions.addItem( cartItem );
+			page( checkoutPath );
 		}
 	},
 
@@ -79,6 +99,7 @@ const Plans = React.createClass( {
 								cart={ this.props.cart }
 								showJetpackFreePlan={ true }
 								isSubmitting={ false }
+								onSelectPlan={ this.selectPlan }
 								onSelectFreeJetpackPlan={ this.selectFreeJetpackPlan }/>
 						</div>
 					</div>
