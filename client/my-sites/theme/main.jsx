@@ -23,13 +23,15 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
-import { signup, purchase, activate, clearActivated } from 'state/themes/actions';
+import { signup, purchase, activate, clearActivated, customize } from 'state/themes/actions';
 import i18n from 'lib/mixins/i18n';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isPremium, getForumUrl } from 'my-sites/themes/helpers';
 import ActivatingTheme from 'components/data/activating-theme';
 import ThanksModal from 'my-sites/themes/thanks-modal';
+import QueryCurrentTheme from 'components/data/query-current-theme';
+import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -50,6 +52,7 @@ const ThemeSheet = React.createClass( {
 		// Connected props
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
+		currentTheme: React.PropTypes.object,
 	},
 
 	getDefaultProps() {
@@ -60,11 +63,16 @@ const ThemeSheet = React.createClass( {
 		page.back();
 	},
 
-	onPrimaryClick() {
-		// TODO: if active -> customize (could use theme slug from selected site)
+	isActive() {
+		const { id, currentTheme } = this.props;
+		return currentTheme && currentTheme.id === id;
+	},
 
+	onPrimaryClick() {
 		if ( ! this.props.isLoggedIn ) {
 			this.props.signup( this.props );
+		} else if ( this.isActive() ) {
+			this.props.customize( this.props, this.props.selectedSite );
 		// TODO: use site picker if no selected site
 		} else if ( isPremium( this.props ) ) {
 			// TODO: check theme is not already purchased
@@ -219,7 +227,7 @@ const ThemeSheet = React.createClass( {
 
 	render() {
 		let actionTitle = <span className="themes__sheet-button-placeholder">loading......</span>;
-		if ( this.props.isLoggedIn && this.props.active ) { //FIXME: active ENOENT
+		if ( this.isActive() ) {
 			actionTitle = i18n.translate( 'Customize' );
 		} else if ( this.props.name ) {
 			actionTitle = i18n.translate( 'Pick this design' );
@@ -232,6 +240,7 @@ const ThemeSheet = React.createClass( {
 		return (
 			<Main className="themes__sheet">
 				{ this.renderBar() }
+				{ siteID && <QueryCurrentTheme siteId={ siteID }/> }
 				<ActivatingTheme siteId={ siteID }>
 					<ThanksModal
 						site={ this.props.selectedSite }
@@ -244,7 +253,7 @@ const ThemeSheet = React.createClass( {
 							<div className="themes__sheet-action-bar-container">
 								<Button onClick={ this.onPrimaryClick }>
 									{ actionTitle }
-									{ priceElement }
+									{ ! this.isActive() && priceElement }
 								</Button>
 							</div>
 						</HeaderCake>
@@ -268,7 +277,8 @@ export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
-		return { selectedSite, siteSlug };
+		const currentTheme = getCurrentTheme( state, selectedSite && selectedSite.ID );
+		return { selectedSite, siteSlug, currentTheme };
 	},
-	{ signup, purchase, activate, clearActivated }
+	{ signup, purchase, activate, clearActivated, customize }
 )( ThemeSheet );
