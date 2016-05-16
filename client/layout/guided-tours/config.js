@@ -6,8 +6,8 @@
 import React from 'react';
 import i18n from 'i18n-calypso';
 
-function get( site ) {
-	return {
+function get( tour = 'main' ) {
+	const tours = {
 		init: {
 			text: i18n.translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place, and give you some ideas for what to do next.", {
 				components: {
@@ -37,15 +37,7 @@ function get( site ) {
 			target: 'sidebar',
 			arrow: 'left-middle',
 			placement: 'beside',
-			next: ( ( () => {
-				if ( site && site.is_previewable ) {
-					return 'click-preview';
-				}
-				if ( site && site.is_customizable ) {
-					return 'themes';
-				}
-				return 'finish';
-			} )() ),
+			next: 'click-preview',
 		},
 		'click-preview': {
 			target: 'site-card-preview',
@@ -79,12 +71,7 @@ function get( site ) {
 			placement: 'beside',
 			icon: 'cross-small',
 			text: i18n.translate( 'Take a look at your site—and then close the site preview. You can come back here anytime.' ),
-			next: ( () => {
-				if ( site && site.is_customizable ) {
-					return 'themes';
-				}
-				return 'finish';
-			} )(),
+			next: 'themes',
 		},
 		themes: {
 			text: i18n.translate( "Change your {{strong}}Theme{{/strong}} to choose a new layout, or {{strong}}Customize{{/strong}} your theme's colors, fonts, and more.", {
@@ -108,11 +95,20 @@ function get( site ) {
 			type: 'FinishStep',
 			linkLabel: i18n.translate( 'Learn more about WordPress.com' ),
 			linkUrl: 'https://learn.wordpress.com',
+		},
+		test: {
+			version: '20160516',
+			init: {
+				description: 'Testing multi tour support',
+				text: i18n.translate( 'Single step tour!' ),
+				type: 'FinishStep',
+			},
 		}
 	};
+
+	return tours[tour] || tours.main;
 }
 
 export default {
 	get,
-	version: '20160601',
 };
