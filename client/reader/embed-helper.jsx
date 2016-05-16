@@ -43,6 +43,15 @@ var embedsConfig = {
 			};
 		},
 		urlRegex: /\/\/w\.soundcloud\.com\/player/
+	},
+	bandcamp: {
+		sizingFunction( embed, availableWidth ) {
+			return {
+				width: availableWidth + 'px',
+				height: embed.height + 'px'
+			};
+		},
+		urlRegex: /\/\/bandcamp\.com\/EmbeddedPlayer/
 	}
 };
 
