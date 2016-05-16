@@ -240,7 +240,7 @@ var Posts = React.createClass( {
 
 		if ( index === 2 && this.props.sites.getSelectedSite() && ! this.props.statusSlug ) {
 			return (
-				<div>
+				<div key={ post.global_ID }>
 					<UpgradeNudge
 						title={ this.translate( 'No Ads with WordPress.com Premium' ) }
 						message={ this.translate( 'Prevent ads from showing on your site.' ) }

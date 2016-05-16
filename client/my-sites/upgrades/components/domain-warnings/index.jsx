@@ -13,7 +13,6 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import purchasesPaths from 'me/purchases/paths';
 import domainConstants from 'lib/domains/constants';
-import i18n from 'lib/mixins/i18n';
 import support from 'lib/url/support';
 import paths from 'my-sites/upgrades/paths';
 
@@ -22,9 +21,7 @@ const debug = _debug( 'calypso:domain-warnings' );
 
 const allAboutDomainsLink = <a href={ support.ALL_ABOUT_DOMAINS } target="_blank"/>,
 	domainsLink = <a href={ support.DOMAINS } target="_blank" />,
-	pNode = <p />,
-	renewLinkSingle = <a href={ purchasesPaths.list() }>{ i18n.translate( 'Renew it now.', { context: 'Call to action link for renewing an expiring/expired domain' } ) }</a>,
-	renewLinkPlural = <a href={ purchasesPaths.list() }>{ i18n.translate( 'Renew them now.', { context: 'Call to action link for renewing an expiring/expired domain' } ) }</a>;
+	pNode = <p />;
 
 export default React.createClass( {
 	displayName: 'DomainWarnings',
@@ -36,6 +33,21 @@ export default React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired
+	},
+
+	renewLink( count ) {
+		return(
+			<a href={ purchasesPaths.list() }>
+				{ this.translate(
+					'Renew it now.',
+					'Renew them now.',
+					{
+						count,
+						context: 'Call to action link for renewing an expiring/expired domain'
+					}
+				) }
+			</a>
+		);
 	},
 
 	getPipe() {
@@ -66,13 +78,12 @@ export default React.createClass( {
 				context: 'Expired domain notice',
 				comment: '%(timeSince)s is something like "a year ago"'
 			} );
-			renewLink = renewLinkSingle;
 		} else {
 			text = this.translate( 'Some of your domains have expired.', {
 				context: 'Expired domain notice'
 			} );
-			renewLink = renewLinkPlural;
 		}
+		renewLink = this.renewLink( expiredDomains.length );
 		return <Notice status="is-error" showDismiss={ false } key="expired-domains">{ text } { renewLink }</Notice>;
 	},
 
@@ -89,13 +100,12 @@ export default React.createClass( {
 				context: 'Expiring soon domain notice',
 				comment: '%(timeUntil)s is something like "in a week"'
 			} );
-			renewLink = renewLinkSingle;
 		} else {
 			text = this.translate( 'Some of your domains are expiring soon.', {
 				context: 'Expiring domain notice'
 			} );
-			renewLink = renewLinkPlural;
 		}
+		renewLink = this.renewLink( expiringDomains.length );
 		return <Notice status="is-error" showDismiss={ false } key="expiring-domains">{ text } { renewLink }</Notice>;
 	},
 

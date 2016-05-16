@@ -9,6 +9,7 @@ import debugFactory from 'debug';
 import { action as ActionTypes } from '../constants';
 import Dispatcher from 'dispatcher';
 import i18n from 'lib/mixins/i18n';
+import olark from 'lib/olark';
 import purchasesAssembler from 'lib/purchases/assembler';
 import wp from 'lib/wp';
 
@@ -64,6 +65,8 @@ function clearPurchases() {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.PURCHASES_REMOVE
 	} );
+
+	olark.updateOlarkGroupAndEligibility();
 }
 
 function deleteStoredCard( card, onComplete ) {
@@ -180,6 +183,8 @@ function removePurchase( purchaseId, userId, onComplete ) {
 				purchases: purchasesAssembler.createPurchasesArray( data.purchases ),
 				userId
 			} );
+
+			olark.updateOlarkGroupAndEligibility();
 		}
 
 		onComplete( data && data.success );

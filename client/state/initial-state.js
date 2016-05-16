@@ -3,12 +3,17 @@
  */
 import debugModule from 'debug';
 import pick from 'lodash/pick';
+import throttle from 'lodash/throttle';
 
 /**
  * Internal dependencies
  */
 import { createReduxStore, reducer } from 'state';
-import { SERIALIZE, DESERIALIZE, SERVER_DESERIALIZE } from 'state/action-types'
+import {
+	SERIALIZE,
+	DESERIALIZE,
+	SERVER_DESERIALIZE
+} from 'state/action-types';
 import localforage from 'lib/localforage';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
 import config from 'config';
@@ -20,6 +25,7 @@ const debug = debugModule( 'calypso:state' );
 
 const DAY_IN_HOURS = 24;
 const HOUR_IN_MS = 3600000;
+export const SERIALIZE_THROTTLE = 500;
 export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 
 function getInitialServerState() {
@@ -64,8 +70,7 @@ function loadInitialStateFailed( error ) {
 
 export function persistOnChange( reduxStore, serializeState = serialize ) {
 	let state;
-
-	reduxStore.subscribe( function() {
+	reduxStore.subscribe( throttle( function() {
 		const nextState = reduxStore.getState();
 		if ( state && nextState === state ) {
 			return;
@@ -77,7 +82,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 			.catch( ( setError ) => {
 				debug( 'failed to set redux-store state', setError );
 			} );
-	} );
+	}, SERIALIZE_THROTTLE, { leading: false, trailing: true } ) );
 
 	return reduxStore;
 }

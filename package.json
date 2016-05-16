@@ -72,7 +72,7 @@
     "node-sass": "3.4.2",
     "page": "1.6.4",
     "path-parser": "1.0.2",
-    "phone": "git+https://github.com/Automattic/node-phone.git#1.0.4-10",
+    "phone": "git+https://github.com/Automattic/node-phone.git#1.0.4-11",
     "photon": "2.0.0",
     "postcss-cli": "2.5.1",
     "q": "1.0.1",
@@ -102,7 +102,7 @@
     "store": "1.3.16",
     "striptags": "2.1.1",
     "superagent": "1.2.0",
-    "tinymce": "4.3.8",
+    "tinymce": "4.3.12",
     "to-title-case": "0.1.5",
     "tv4": "1.2.7",
     "tween.js": "16.3.1",
@@ -118,8 +118,8 @@
     "xgettext-js": "0.3.0"
   },
   "engines": {
-    "node": "5.10.1",
-    "npm": "3.8.3"
+    "node": "5.11.1",
+    "npm": "3.8.6"
   },
   "scripts": {
     "test": "npm run test-client && npm run test-server && npm run test-test",

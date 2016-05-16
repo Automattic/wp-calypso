@@ -443,12 +443,12 @@ const ManagePurchase = React.createClass( {
 			);
 		}
 
-		if ( isRenewing( purchase ) ) {
-			return this.moment( purchase.renewDate ).format( 'LL' );
-		}
-
 		if ( isExpiring( purchase ) || isExpired( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
 			return this.moment( purchase.expiryDate ).format( 'LL' );
+		}
+
+		if ( isRenewing( purchase ) ) {
+			return this.moment( purchase.renewDate ).format( 'LL' );
 		}
 
 		if ( isOneTimePurchase( purchase ) ) {

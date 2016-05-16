@@ -9,6 +9,7 @@ import find from 'lodash/find';
  */
 import analytics from 'lib/analytics';
 import signupUtils from 'signup/utils';
+import i18n from 'lib/mixins/i18n';
 
 export default React.createClass( {
 	displayName: 'PreviousStepButton',
@@ -29,7 +30,7 @@ export default React.createClass( {
 		const previousStepName = signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName ),
 			{ stepSectionName } = find( this.props.signupProgressStore, { stepName: previousStepName } );
 
-		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName );
+		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName, i18n.getLocaleSlug() );
 	},
 
 	recordClick() {

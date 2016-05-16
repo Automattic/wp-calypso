@@ -74,7 +74,7 @@ export function buildCommentsTree( comments ) {
 				commentsTree.update( 'children', ( children ) => children.push( comment.get( 'ID' ) ) );
 			}
 		} );// forEach comments
-	} ); // withMutation
+	} ); // withMutations
 }
 
 /***

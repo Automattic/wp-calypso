@@ -171,6 +171,19 @@ const ReaderSidebar = React.createClass( {
 						<ReaderSidebarTeams teams={ this.state.teams } path={ this.props.path } />
 
 						{
+							// Post Recommendations - Used by the Data team to test recommendation algorithms
+							config.isEnabled( 'reader/recommendations/posts' ) &&
+							(
+								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/posts', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
+									<a href="/recommendations/posts">
+										<Gridicon icon="star" size={ 24 } />
+										<span className="menu-link-text">{ this.translate( 'Recommended Posts (Alpha)' ) }</span>
+									</a>
+								</li>
+							)
+						}
+
+						{
 							discoverHelper.isEnabled()
 							? (
 									<li className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, { 'sidebar-streams__discover': true } ) }>
@@ -193,7 +206,7 @@ const ReaderSidebar = React.createClass( {
 							)
 						}
 
-						<li className={ ReaderSidebarHelper.itemLinkClassStartsWithOneOf( [ '/recommendations', '/tags' ], this.props.path, { 'sidebar-streams__recommendations': true } ) }>
+						<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations', this.props.path, { 'sidebar-streams__recommendations': true } ) }>
 							<a href="/recommendations">
 								<Gridicon icon="thumbs-up" size={ 24 } />
 								<span className="menu-link-text">{ this.translate( 'Recommendations' ) }</span>

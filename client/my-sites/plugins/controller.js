@@ -16,12 +16,13 @@ import i18n from 'lib/mixins/i18n';
 import notices from 'notices';
 import sitesFactory from 'lib/sites-list';
 import analytics from 'lib/analytics';
-import PlanSetup from './plan-setup';
+import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
 import titleActions from 'lib/screen-title/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import { setSection } from 'state/ui/actions';
 
 /**
  * Module variables
@@ -146,13 +147,15 @@ function renderPluginsBrowser( context, siteUrl ) {
 	);
 }
 
-function renderProvisionPlugins() {
-	const site = sites.getSelectedSite();
-	ReactDom.render(
-		React.createElement( PlanSetup, {
-			selectedSite: site,
-		} ),
-		document.getElementById( 'primary' )
+function renderProvisionPlugins( context ) {
+	const section = context.store.getState().ui.section;
+	context.store.dispatch( setSection( Object.assign( {}, section, { secondary: false } ) ) );
+	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+
+	renderWithReduxStore(
+		React.createElement( PlanSetup, {} ),
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -190,9 +193,14 @@ const controller = {
 		next();
 	},
 
-	plugins( filter, context ) {
+	plugins( filter, context, next ) {
 		const siteUrl = route.getSiteFragment( context.path );
 		const basePath = route.sectionify( context.path ).replace( '/' + filter, '' );
+
+		// bail if no site is selected and the user has no Jetpack sites.
+		if ( ! siteUrl && sites.getJetpack().length === 0 ) {
+			return next();
+		}
 
 		context.params.pluginFilter = filter;
 		notices.clearNotices( 'notices' );
@@ -241,8 +249,8 @@ const controller = {
 		next();
 	},
 
-	setupPlugins() {
-		renderProvisionPlugins();
+	setupPlugins( context ) {
+		renderProvisionPlugins( context );
 	}
 };
 

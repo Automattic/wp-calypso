@@ -32,7 +32,7 @@
 
 	.reader-list-item__title,
 	.reader-list-item__description {
-		margin-right: 0;
+		margin-right: 20px;
 	}
 
 	.external-link .gridicons-external {
@@ -158,13 +158,17 @@
 			.follow-button__label {
 				color: lighten( $gray, 20% );
 				display: inline-block;
+
+				@include breakpoint( "<660px" ) {
+					display: none;
+				}
 			}
 		}
 
 		&.is-valid {
 
 			.gridicon {
-				fill: $blue-medium;
+				fill: $gray-dark;
 
 				&:hover,
 				&:active {
@@ -181,7 +185,7 @@
 			}
 
 			.follow-button__label {
-				color: $blue-medium;
+				color: $gray-dark;
 			}
 
 			.following-edit__list-title {
@@ -193,6 +197,7 @@
 }
 
 // Existing Feed Search
+
 .following-edit > .search-card {
 	position: relative;
 	margin-top: -58px;

@@ -17,7 +17,8 @@ import {
 	getSitePostsForQueryIgnoringPage,
 	getSitePostsHierarchyForQueryIgnoringPage,
 	isRequestingSitePost,
-	getEditedPost
+	getEditedPost,
+	getEditedPostValue
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -476,6 +477,59 @@ describe( 'selectors', () => {
 			}, 2916284, 841 );
 
 			expect( editedPost ).to.eql( { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', discussion: { comments_open: true, pings_open: true } } );
+		} );
+	} );
+
+	describe( 'getEditedPostValue()', () => {
+		it( 'should return undefined if the post does not exist', () => {
+			const editedPostValue = getEditedPostValue( {
+				posts: {
+					items: {},
+					edits: {}
+				}
+			}, 2916284, 841, 'title' );
+
+			expect( editedPostValue ).to.be.undefined;
+		} );
+
+		it( 'should return the assigned post value', () => {
+			const editedPostValue = getEditedPostValue( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					},
+					edits: {
+						2916284: {
+							841: {
+								title: 'Hello World!'
+							}
+						}
+					}
+				}
+			}, 2916284, 841, 'title' );
+
+			expect( editedPostValue ).to.equal( 'Hello World!' );
+		} );
+
+		it( 'should return the assigned nested post value', () => {
+			const editedPostValue = getEditedPostValue( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', discussion: { comments_open: true } }
+					},
+					edits: {
+						2916284: {
+							841: {
+								discussion: {
+									pings_open: true
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 841, 'discussion.pings_open' );
+
+			expect( editedPostValue ).to.be.true;
 		} );
 	} );
 } );

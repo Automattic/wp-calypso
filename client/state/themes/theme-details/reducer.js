@@ -25,7 +25,9 @@ export default ( state = Map(), action ) => {
 					description: action.themeDescription,
 					descriptionLong: action.themeDescriptionLong,
 					supportDocumentation: action.themeSupportDocumentation,
+					download: action.themeDownload,
 					taxonomies: action.themeTaxonomies,
+					stylesheet: action.themeStylesheet,
 				} ) );
 		case DESERIALIZE:
 			return Map();

@@ -1,67 +1,65 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	classnames = require( 'classnames' );
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React from 'react';
+import classnames from 'classnames';
+
 /**
  * Internal dependencies
  */
-const MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' ),
-	EditorMediaModal = require( 'post-editor/media-modal' ),
-	EditorDrawerWell = require( 'post-editor/editor-drawer-well' ),
-	PostActions = require( 'lib/posts/actions' ),
-	PostUtils = require( 'lib/posts/utils' ),
-	stats = require( 'lib/posts/stats' ),
-	AccordionSection = require( 'components/accordion/section' ),
-	EditorFeaturedImagePreviewContainer = require( './preview-container' );
-import {
-	setFeaturedImage,
-	removeFeaturedImage
-} from 'state/ui/editor/post/actions';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
+import EditorMediaModal from 'post-editor/media-modal';
+import PostActions from 'lib/posts/actions';
+import PostUtils from 'lib/posts/utils';
+import * as stats from 'lib/posts/stats';
+import EditorFeaturedImagePreviewContainer from './preview-container';
+import Button from 'components/button';
+import Gridicon from 'components/gridicon';
 
-const EditorFeaturedImage = React.createClass( {
+export default React.createClass( {
+	displayName: 'EditorFeaturedImage',
 
 	propTypes: {
 		maxWidth: React.PropTypes.number,
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
-		setFeaturedImage: React.PropTypes.func,
-		removeFeaturedImage: React.PropTypes.func
+		selecting: React.PropTypes.bool,
+		onImageSelected: React.PropTypes.func
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
-			editable: false,
 			maxWidth: 450,
-			setFeaturedImage: () => {},
-			removeFeaturedImage: () => {}
+			onImageSelected: () => {}
 		};
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			isSelecting: false
 		};
 	},
 
-	toggleMediaModal: function( action ) {
+	showMediaModal() {
 		this.setState( {
-			isSelecting: ( 'show' === action )
+			isSelecting: true
 		} );
 	},
 
-	setImage: function( items ) {
-		this.toggleMediaModal( 'hide' );
+	hideMediaModal() {
+		this.setState( {
+			isSelecting: false
+		} );
+	},
+
+	setImage( items ) {
+		this.hideMediaModal();
+		this.props.onImageSelected();
 
 		if ( ! items || ! items.length ) {
 			return;
 		}
 
-		this.props.setFeaturedImage( items[0].ID );
-
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
 			featured_image: items[0].ID
 		} );
@@ -70,19 +68,7 @@ const EditorFeaturedImage = React.createClass( {
 		stats.recordEvent( 'Featured image set' );
 	},
 
-	removeImage: function() {
-		this.props.removeFeaturedImage();
-
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		PostActions.edit( {
-			featured_image: ''
-		} );
-
-		stats.recordStat( 'featured_image_removed' );
-		stats.recordEvent( 'Featured image removed' );
-	},
-
-	renderMediaModal: function() {
+	renderMediaModal() {
 		if ( ! this.props.site ) {
 			return;
 		}
@@ -90,7 +76,7 @@ const EditorFeaturedImage = React.createClass( {
 		return (
 			<MediaLibrarySelectedData siteId={ this.props.site.ID }>
 				<EditorMediaModal
-					visible={ this.state.isSelecting }
+					visible={ this.props.selecting || this.state.isSelecting }
 					onClose={ this.setImage }
 					site={ this.props.site }
 					labels={ { confirm: this.translate( 'Set Featured Image' ) } }
@@ -100,14 +86,12 @@ const EditorFeaturedImage = React.createClass( {
 		);
 	},
 
-	renderCurrentImage: function() {
-		var itemId;
-
+	renderCurrentImage() {
 		if ( ! this.props.site || ! this.props.post ) {
 			return;
 		}
 
-		itemId = PostUtils.getFeaturedImageId( this.props.post );
+		const itemId = PostUtils.getFeaturedImageId( this.props.post );
 		if ( ! itemId ) {
 			return;
 		}
@@ -120,37 +104,24 @@ const EditorFeaturedImage = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		const classes = classnames( 'editor-featured-image', {
 			'is-assigned': !! PostUtils.getFeaturedImageId( this.props.post )
 		} );
 
-		if ( this.props.editable ) {
-			return (
-				<AccordionSection className={ classes }>
-					{ this.renderMediaModal() }
-					<EditorDrawerWell
-						icon="image"
-						label={ this.translate( 'Set Featured Image' ) }
-						onClick={ () => this.toggleMediaModal( 'show' ) }
-						onRemove={ this.removeImage }>
-						{ this.renderCurrentImage() }
-					</EditorDrawerWell>
-				</AccordionSection>
-			);
-		}
-
 		return (
-			<div className={ classes }>
-				{ this.renderCurrentImage() }
-			</div>
+			<Button
+				onClick={ this.showMediaModal }
+				borderless
+				className={ classes }>
+				{ this.renderMediaModal() }
+				<div className="editor-featured-image__current-image">
+					{ this.renderCurrentImage() }
+					<Gridicon
+						icon="pencil"
+						className="editor-featured-image__edit-icon" />
+				</div>
+			</Button>
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setFeaturedImage, removeFeaturedImage }, dispatch ),
-	null,
-	{ pure: false }
-)( EditorFeaturedImage );

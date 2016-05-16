@@ -22,7 +22,7 @@ module.exports = {
 		allowAnyLocale: true
 	},
 	freeTrialsInSignup: {
-		datestamp: '20160328',
+		datestamp: '20200328',
 		variations: {
 			disabled: 40,
 			enabled: 15,
@@ -31,7 +31,7 @@ module.exports = {
 		defaultVariation: 'disabled'
 	},
 	freeTrialNudgeOnThankYouPage: {
-		datestamp: '20160328',
+		datestamp: '20200328',
 		variations: {
 			disabled: 50,
 			enabled: 50
@@ -63,15 +63,6 @@ module.exports = {
 		},
 		defaultVariation: 'namegen'
 	},
-	themesHeaderNudge: {
-		datestamp: '20160427',
-		variations: {
-			themes_custom_design: 90,
-			themes_premium_theme_more_traffic: 10
-		},
-		defaultVariation: 'themes_custom_design',
-		allowExistingUsers: true,
-	},
 	guidedTours: {
 		datestamp: '20160428',
 		variations: {
@@ -100,15 +91,6 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: false
-	},
-	triforce: {
-		datestamp: '20160421',
-		variations: {
-			original: 45,
-			triforce: 45,
-			notTested: 10
-		},
-		defaultVariation: 'original'
 	},
 	planPricing: {
 		datestamp: '20160426',

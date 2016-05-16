@@ -31,7 +31,8 @@ import Headers from 'components/header-cake/docs/example';
 import DropZones from 'components/drop-zone/docs/example';
 import FormFields from 'components/forms/docs/example';
 import SectionNav from 'components/section-nav/docs/example';
-import Spinners from 'components/spinner/docs/example';
+import Spinner from 'components/spinner/docs/example';
+import SpinnerLine from 'components/spinner-line/docs/example';
 import Rating from 'components/rating/docs/example';
 import DatePicker from 'components/date-picker/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
@@ -116,7 +117,8 @@ export default React.createClass( {
 					<SegmentedControl />
 					<SelectDropdown searchKeywords="menu" />
 					<SocialLogos />
-					<Spinners searchKeywords="loading" />
+					<Spinner searchKeywords="loading" />
+					<SpinnerLine searchKeywords="loading" />
 					<TimezoneDropdown />
 					<TokenFields />
 					<Version />

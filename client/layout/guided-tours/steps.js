@@ -21,7 +21,7 @@ class BasicStep extends Component {
 		const { text, onNext, onQuit } = this.props;
 		return (
 			<Card className="guided-tours__step" style={ stepCoords } >
-				<p>{ text }</p>
+				<p className="guided-tours__step-text">{ text }</p>
 				<div className="guided-tours__choice-button-row">
 					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
 					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
@@ -39,7 +39,7 @@ class FirstStep extends Component {
 		const { text, onNext, onQuit } = this.props;
 		return (
 			<Card className="guided-tours__step guided-tours__step-first" style={ stepCoords } >
-				<p>{ text }</p>
+				<p className="guided-tours__step-text">{ text }</p>
 				<div className="guided-tours__choice-button-row">
 					<Button onClick={ onNext } primary>{ this.props.translate( "Let's do it!" ) }</Button>
 					<Button onClick={ onQuit } >
@@ -60,7 +60,7 @@ class FinishStep extends Component {
 
 		return (
 			<Card className="guided-tours__step" style={ stepCoords } >
-				<p>{ text }</p>
+				<p className="guided-tours__step-text">{ text }</p>
 				<div className="guided-tours__single-button-row">
 					<Button onClick={ onFinish } primary>{ this.props.translate( "We're all done!" ) }</Button>
 				</div>
@@ -81,7 +81,7 @@ class LinkStep extends Component {
 
 		return (
 			<Card className="guided-tours__step" style={ stepCoords } >
-				<p>{ text }</p>
+				<p className="guided-tours__step-text">{ text }</p>
 				<div className="guided-tours__choice-button-row">
 					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
 					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
@@ -141,16 +141,14 @@ class ActionStep extends Component {
 
 		return (
 			<Card className="guided-tours__step" style={ stepCoords } >
-				<p>{ text }</p>
-				<div className="guided-tours__bullseye-instructions">
-					<p>
-						{ this.props.translate( 'Click the {{gridicon/}} to continue…', {
-							components: {
-								gridicon: <Gridicon icon={ this.props.icon } size={ 24 } />
-							}
-						} ) }
-					</p>
-				</div>
+				<p className="guided-tours__step-text">{ text }</p>
+				<p className="guided-tours__bullseye-instructions">
+					{ this.props.translate( 'Click the {{gridicon/}} to continue…', {
+						components: {
+							gridicon: <Gridicon icon={ this.props.icon } size={ 24 } />
+						}
+					} ) }
+				</p>
 				<Pointer style={ pointerCoords } />
 			</Card>
 		);

@@ -8,7 +8,7 @@ import reject from 'lodash/reject';
 /**
  * Internal dependencies
  */
-import { abtest, getABTestVariation } from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import config from 'config';
 import { isOutsideCalypso } from 'lib/url';
 import plansPaths from 'my-sites/plans/paths';
@@ -184,10 +184,17 @@ const flows = {
 	},
 
 	desktop: {
-		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'themes', 'domains', 'plans', 'user' ],
 		destination: getPostsDestination,
 		description: 'Signup flow for desktop app',
 		lastModified: '2016-05-03'
+	},
+
+	app: {
+		steps: [ 'themes', 'domains', 'plans', 'user' ],
+		destination: getPostsDestination,
+		description: 'Used as a web-based control to test the "desktop" flow',
+		lastModified: '2016-05-11'
 	},
 
 	layout: {
@@ -236,10 +243,6 @@ function filterFlowName( flowName ) {
 
 	if ( includes( defaultFlows, flowName ) && abtest( 'domainsWithPlansOnly' ) === 'plansOnly' ) {
 		return 'domains-with-premium';
-	}
-
-	if ( includes( defaultFlows, flowName ) && 'notTested' === getABTestVariation( 'freeTrialsInSignup' ) && 'triforce' === abtest( 'triforce' ) ) {
-		return 'layout';
 	}
 
 	return flowName;

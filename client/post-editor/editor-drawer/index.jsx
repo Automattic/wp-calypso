@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import get from 'lodash/get';
+import includes from 'lodash/includes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -15,7 +16,6 @@ import Gridicon from 'components/gridicon';
 import TaxonomiesAccordion from 'post-editor/editor-taxonomies/accordion';
 import CategoryListData from 'components/data/category-list-data';
 import TagListData from 'components/data/tag-list-data';
-import FeaturedImage from 'post-editor/editor-featured-image';
 import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
 import FormTextarea from 'components/forms/form-textarea';
 import PostFormatsData from 'components/data/post-formats-data';
@@ -37,6 +37,9 @@ import { setExcerpt } from 'state/ui/editor/post/actions';
 import QueryPostTypes from 'components/data/query-post-types';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
+import config from 'config';
+import EditorDrawerFeaturedImage from './featured-image';
+import EditorDrawerTaxonomies from './taxonomies';
 
 const EditorDrawer = React.createClass( {
 	propTypes: {
@@ -89,6 +92,11 @@ const EditorDrawer = React.createClass( {
 
 	renderTaxonomies: function() {
 		var element;
+
+		if ( config.isEnabled( 'manage/custom-post-types' ) &&
+				! includes( [ 'post', 'page' ], this.props.type ) ) {
+			return <EditorDrawerTaxonomies />;
+		}
 
 		if ( ! this.currentPostTypeSupports( 'tags' ) ) {
 			return;
@@ -144,15 +152,9 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<Accordion
-				title={ this.translate( 'Featured Image' ) }
-				icon={ <Gridicon icon="image" /> }
-			>
-				<FeaturedImage
-					editable={ true }
-					site={ this.props.site }
-					post={ this.props.post } />
-			</Accordion>
+			<EditorDrawerFeaturedImage
+				site={ this.props.site }
+				post={ this.props.post } />
 		);
 	},
 

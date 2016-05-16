@@ -27,6 +27,6 @@ describe( 'component', () => {
 
 ```js
 before( () => {
-	MyComponent.prototype.__reactAutoBindMap.translate = ( string ) => string;	
+	MyComponent.prototype.translate = ( string ) => string;	
 } );
 ```
