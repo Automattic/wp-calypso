@@ -1,18 +1,21 @@
 .post-editor,
 .mce-inline-toolbar-grp {
 
-	.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu:hover,
-	.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu:focus {
-		border-color: lighten( $gray, 20%);
-	}
-
 	.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu {
-		margin: 4px;
+		margin: 0;
+	}
+}
+
+.post-editor,
+.mce-inline-toolbar-grp {
+
+	.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu .mce-open:hover i.mce-caret {
+		color: $gray-dark;
 	}
 }
 
 .mce-toolbar .mce-btn.mce-insert-menu button:first-child {
-	padding: 2px 4px;
+	padding: 6px 6px 6px 6px;
 }
 
 .mce-splitbtn.mce-insert-menu .mce-open.mce-active {
@@ -25,8 +28,7 @@
 }
 
 .mce-toolbar .mce-btn.mce-insert-menu .mce-open {
-	padding-right: 10px;
-	padding-left: 8px;
+	padding: 8px 12px 8px 12px;
 }
 
 .mce-container .wpcom-insert-menu__menu-label {
