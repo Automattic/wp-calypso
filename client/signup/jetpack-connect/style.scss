@@ -1,5 +1,18 @@
 .jetpack-connect {
 	max-width: 400px;
+
+	.logged-out-form__links {
+		max-width: 100%;
+
+		.logged-out-form__link-item {
+			.gridicon {
+				position: relative;
+				top: 4px;
+			}
+		}
+
+	}
+
 }
 
 .jetpack-connect-wide {
@@ -67,18 +80,6 @@
 		margin-top: 16px;
 		word-wrap: nowrap;
 	}
-}
-
-.logged-out-form__links {
-	max-width: 100%;
-
-	.logged-out-form__link-item {
-		.gridicon {
-			position: relative;
-			top: 4px;
-		}
-	}
-
 }
 
 .jetpack-connect__authorize-form {
