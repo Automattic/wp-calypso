@@ -90,10 +90,21 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	installJetpack() {
+		analytics.tracks.recordEvent( 'jpc_instructions_click', {
+			jetpack_funnel: this.state.currentUrl,
+			user: this.props.userId,
+			type: 'install_jetpack'
+		} );
+
 		this.props.goToPluginInstall( this.state.currentUrl );
 	},
 
 	activateJetpack() {
+		analytics.tracks.recordEvent( 'jpc_instructions_click', {
+			jetpack_funnel: this.state.currentUrl,
+			user: this.props.userId,
+			type: 'activate_jetpack'
+		} );
 		this.props.goToPluginActivation( this.state.currentUrl );
 	},
 
