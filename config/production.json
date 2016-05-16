@@ -65,6 +65,7 @@
 		"press-this": true,
 		"reader": true,
 		"reader/full-errors": false,
+		"reader/tags-with-elasticsearch": false,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,

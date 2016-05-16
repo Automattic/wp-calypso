@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
+var config = require( 'config' ),
+	Dispatcher = require( 'dispatcher' ),
 	FeedStream = require( './feed-stream' ),
 	PagedStream = require( './paged-stream' ),
 	FeedStreamCache = require( './feed-stream-cache' ),
@@ -60,20 +61,29 @@ function getStoreForFeed( storeId ) {
 }
 
 function getStoreForTag( storeId ) {
-	var tagSlug = storeId.split( ':' )[ 1 ],
-		fetcher = function( query, callback ) {
-			query.tag = tagSlug;
-			wpcomUndoc.readTagPosts( query, callback );
-		};
+	const slug = storeId.split( ':' )[ 1 ];
+	const fetcher = function( query, callback ) {
+		query.tag = slug;
+		wpcomUndoc.readTagPosts( query, callback );
+	};
 
-	return new FeedStream( {
-		id: storeId,
-		fetcher: fetcher,
-		keyMaker: siteKeyMaker,
-		onGapFetch: limitSiteParams,
-		onUpdateFetch: limitSiteParams,
-		dateProperty: 'tagged_on'
-	} );
+	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ){
+		return new PagedStream( {
+			id: storeId,
+			fetcher: fetcher,
+			keyMaker: siteKeyMaker,
+			perPage: 5
+		} );
+	} else {
+		return new FeedStream( {
+			id: storeId,
+			fetcher: fetcher,
+			keyMaker: mixedKeyMaker,
+			onGapFetch: limitSiteParams,
+			onUpdateFetch: limitSiteParams,
+			dateProperty: 'tagged_on'
+		} );
+	}
 }
 
 function getStoreForSearch( storeId ) {
