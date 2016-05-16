@@ -40,7 +40,5 @@ export const getAdvancedSettings = ( state, siteId ) => state.siteSettings.expor
 export const getSelectedPostType = ( state ) => state.siteSettings.exporter.selectedPostType;
 export const getPostTypeOptions = ( state, siteId, postType ) => {
 	const advancedSettings = getAdvancedSettings( state, siteId );
-	if ( ! advancedSettings ) return null;
-
-	return advancedSettings[ postType ];
+	return advancedSettings ? advancedSettings[ postType ] : null;
 }
