@@ -115,6 +115,15 @@ class CustomPostTypesFieldset extends Component {
 				{ this.hasDefaultPostTypeEnabled( 'jetpack-testimonial' ) && (
 					<FormSettingExplanation>{ translate( 'Your theme supports Testimonials' ) }</FormSettingExplanation>
 				) }
+				<p>
+					{ translate( 'The Testimonial custom content type allows you to add, organize, and display your testimonials. If your theme doesn’t support it yet, you can display testimonials using the {{shortcodeLink}}testimonial shortcode{{/shortcodeLink}} ( {{code}}[testimonials]{{/code}} ) or you can view a full archive of your testimonials at yourgroovydomain.com/testimonial.', {
+						components: {
+							shortcodeLink: <a href="https://support.wordpress.com/testimonials-shortcode/" />,
+							code: <code />
+						}
+					} ) }
+
+				</p>
 				<FormLabel>
 					<FormToggle
 						checked={ this.isEnabled( 'jetpack-portfolio' ) }
@@ -127,6 +136,14 @@ class CustomPostTypesFieldset extends Component {
 				{ this.hasDefaultPostTypeEnabled( 'jetpack-portfolio' ) && (
 					<FormSettingExplanation>{ translate( 'Your theme supports Portfolio Projects' ) }</FormSettingExplanation>
 				) }
+				<p>
+					{ translate( 'The Portfolio custom content type gives you an easy way to manage and showcase projects on your site. If your theme doesn’t support it yet, you can display the portfolio using the {{shortcodeLink}}portfolio shortcode{{/shortcodeLink}} ( {{code}}[portfolio]{{/code}} ) or with a link to the portfolio in the menu.', {
+						components: {
+							shortcodeLink: <a href="https://support.wordpress.com/portfolios/portfolio-shortcode/" />,
+							code: <code />
+						}
+					} ) }
+				</p>
 			</FormFieldset>
 		);
 	}
