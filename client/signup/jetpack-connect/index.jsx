@@ -23,7 +23,7 @@ import JetpackExampleConnect from './exampleComponents/jetpack-connect';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
 import LocaleSuggestions from 'signup/locale-suggestions';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
@@ -39,7 +39,7 @@ const JetpackConnectMain = React.createClass( {
 		if ( this.props.isInstall ) {
 			from = 'jpdotcom';
 		}
-		analytics.tracks.recordEvent( 'jpc_url_view', {
+		recordTracksEvent( 'jpc_url_view', {
 			jpc_from: from,
 			user: this.props.userId
 		} );
@@ -82,7 +82,7 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	onURLEnter() {
-		analytics.tracks.recordEvent( 'jpc_url_submit', {
+		recordTracksEvent( 'jpc_url_submit', {
 			jetpack_funnel: this.state.currentUrl,
 			user: this.props.userId
 		} );
@@ -90,7 +90,7 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	installJetpack() {
-		analytics.tracks.recordEvent( 'jpc_instructions_click', {
+		recordTracksEvent( 'jpc_instructions_click', {
 			jetpack_funnel: this.state.currentUrl,
 			user: this.props.userId,
 			type: 'install_jetpack'
@@ -100,7 +100,7 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	activateJetpack() {
-		analytics.tracks.recordEvent( 'jpc_instructions_click', {
+		recordTracksEvent( 'jpc_instructions_click', {
 			jetpack_funnel: this.state.currentUrl,
 			user: this.props.userId,
 			type: 'activate_jetpack'
@@ -291,5 +291,5 @@ export default connect(
 			userId: user ? user.ID : null
 		};
 	},
-	dispatch => bindActionCreators( { checkUrl, dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
+	dispatch => bindActionCreators( { recordTracksEvent, checkUrl, dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
 )( JetpackConnectMain );

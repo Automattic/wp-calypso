@@ -35,8 +35,6 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import analytics from 'lib/analytics';
-import { getCurrentUser } from 'state/current-user/selectors';
 
 const defaultAuthorizeState = {
 	queryObject: {},
@@ -75,30 +73,6 @@ export function jetpackConnectSite( state = {}, action ) {
 			return Object.assign( {}, { url: action.url, isFetching: true, isFetched: false, isDismissed: false, data: {} } );
 		case JETPACK_CONNECT_CHECK_URL_RECEIVE:
 			if ( action.url === state.url ) {
-				let errorCode = null;
-				let instructionsType = null;
-				if ( ! action.data.exists ) {
-					errorCode = 'jpc_error_notexists';
-				} else if ( ! action.data.isWordPress ) {
-					errorCode = 'jpc_error_notwpsite';
-				} else if ( ! action.data.isWordPressDotCom ) {
-					errorCode = 'jpc_error_wpdotcomsite';
-				} else if ( ! action.data.hasJetpack ) {
-					errorCode = 'jpc_instructions_view';
-					instructionsType = 'not_jetpack';
-				} else if ( ! action.data.isJetpackActive ) {
-					errorCode = 'jpc_instructions_view';
-					instructionsType = 'inactive_jetpack';
-				}
-
-				if ( errorCode ) {
-					analytics.tracks.recordEvent( errorCode, {
-						url: action.url,
-						type: instructionsType,
-						user: getCurrentUserId( state )
-					} );
-				}
-
 				return Object.assign( {}, state, { isFetching: false, isFetched: true, data: action.data } );
 			}
 			return state;
@@ -109,11 +83,6 @@ export function jetpackConnectSite( state = {}, action ) {
 			return state;
 		case JETPACK_CONNECT_REDIRECT:
 			if ( action.url === state.url ) {
-				analytics.tracks.recordEvent( 'jpc_success_redirect', {
-					url: action.url,
-					type: action.redirectType,
-					user: getCurrentUserId( state )
-				} );
 				return Object.assign( {}, state, { isRedirecting: true } );
 			}
 			return state;
