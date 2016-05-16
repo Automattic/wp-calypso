@@ -37,12 +37,18 @@ const EditorPostFormats = React.createClass( {
 	},
 
 	getSelectedPostFormat: function() {
-		var validSlugs = this.getPostFormats().map( function( postFormat ) {
-			return postFormat.slug;
+		const { value } = this.props;
+
+		if ( 'standard' === value ) {
+			return 'standard';
+		}
+
+		const isSupportedFormat = this.getPostFormats().some( ( postFormat ) => {
+			return postFormat.slug === value;
 		} );
 
-		if ( includes( validSlugs, this.props.value ) ) {
-			return this.props.value;
+		if ( isSupportedFormat ) {
+			return value;
 		}
 
 		return 'standard';
