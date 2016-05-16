@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isFunction = require( 'lodash/isFunction' ),
-	page = require( 'page' );
+import React from 'react';
+import isFunction from 'lodash/isFunction';
+import page from 'page';
 
-/** Internal dependencies **/
-var AnalyticsMixin = require( 'lib/mixins/analytics' );
+/**
+ * Internal dependencies
+ */
+import AnalyticsMixin from 'lib/mixins/analytics';
 
-var CartButtons = React.createClass( {
+export const CartButtons = React.createClass( {
 	mixins: [ AnalyticsMixin( 'popupCart' ) ],
 
 	propTypes: {
@@ -18,11 +20,11 @@ var CartButtons = React.createClass( {
 		] ).isRequired
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return { showKeepSearching: false };
 	},
 
-	render: function() {
+	render() {
 		return (
 			<div className="cart-buttons">
 				<button className="cart-checkout-button button is-primary"
@@ -35,7 +37,7 @@ var CartButtons = React.createClass( {
 		);
 	},
 
-	optionalKeepSearching: function() {
+	optionalKeepSearching() {
 		if ( ! this.props.showKeepSearching ) {
 			return;
 		}
@@ -48,7 +50,7 @@ var CartButtons = React.createClass( {
 		);
 	},
 
-	onKeepSearchingClick: function( event ) {
+	onKeepSearchingClick( event ) {
 		event.preventDefault();
 		this.recordEvent( 'keepSearchButtonClick' );
 		if ( isFunction( this.props.onKeepSearchingClick ) ) {
@@ -56,7 +58,7 @@ var CartButtons = React.createClass( {
 		}
 	},
 
-	goToCheckout: function( event ) {
+	goToCheckout( event ) {
 		event.preventDefault();
 
 		this.recordEvent( 'checkoutButtonClick' );
@@ -65,4 +67,4 @@ var CartButtons = React.createClass( {
 	}
 } );
 
-module.exports = CartButtons;
+export default CartButtons;

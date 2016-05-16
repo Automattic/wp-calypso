@@ -10,7 +10,7 @@ var React = require( 'react' ),
  */
 var CartBody = require( './cart-body' ),
 	CartMessagesMixin = require( './cart-messages-mixin' ),
-	CartButtons = require( './cart-buttons' ),
+	CartButtons = require( './cart-buttons' ).default,
 	Popover = require( 'components/popover' ),
 	CartEmpty = require( './cart-empty' ),
 	CartPlanAd = require( './cart-plan-ad' ),
