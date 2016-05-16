@@ -44,7 +44,17 @@ export default React.createClass( {
 			if ( this.props.subHeaderText ) {
 				return this.props.subHeaderText;
 			}
-			return this.translate( 'Welcome to the best place for your WordPress website.' );
+
+			let subHeadingText = this.translate( 'Welcome to the best place for your WordPress website.' );
+
+			/**
+			 * Provide a proper subheading in the `account` flow.
+			 */
+			if ( 'account' === this.props.flowName ) {
+				subHeadingText = this.translate( 'Welcome to the wonderful WordPress.com community' );
+			}
+
+			return subHeadingText;
 		}
 
 		if ( this.props.fallbackSubHeaderText ) {
