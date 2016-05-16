@@ -25,7 +25,7 @@ var CartButtons = React.createClass( {
 	render: function() {
 		return (
 			<div className="cart-buttons">
-				<button ref="checkoutButton" className="cart-checkout-button button is-primary"
+				<button className="cart-checkout-button button is-primary"
 						onClick={ this.goToCheckout }>
 					{ this.translate( 'Checkout', { context: 'Cart button' } ) }
 				</button>
@@ -41,7 +41,7 @@ var CartButtons = React.createClass( {
 		}
 
 		return (
-			<button ref="keepSearchingButton" className="cart-keep-searching-button button"
+			<button className="cart-keep-searching-button button"
 					onClick={ this.onKeepSearchingClick }>
 				{ this.translate( 'Keep Searching' ) }
 			</button>
