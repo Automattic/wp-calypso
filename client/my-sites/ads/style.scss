@@ -123,15 +123,14 @@
 }
 
 .ads__activate-header-title {
-	font-size: 24px;
-	font-weight: 300;
+	font-weight: 600;
 }
 
 .ads__activate-notice {
 	margin: 0;
 }
 
-.ads__activate-header-toggle {
+.ads__activate-header-toggle, .ads__activate-header-title {
 	margin: auto 0 auto 0;
 }
 .ads__activate-wrapper {
