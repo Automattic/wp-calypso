@@ -4,6 +4,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
+import identity from 'lodash/identity';
 
 /**
  * Internal dependencies
@@ -28,15 +29,7 @@ describe( 'cart-buttons', function() {
 
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/mixins/analytics', AnalyticsMixinStub );
-		CartButtons = require( '../cart-buttons.jsx' );
-	} );
-
-	beforeEach( function() {
-		CartButtons.prototype.translate = sinon.stub();
-	} );
-
-	afterEach( function() {
-		delete CartButtons.prototype.translate;
+		CartButtons = require( '../cart-buttons.jsx' ).CartButtons;
 	} );
 
 	describe( 'Click on Keep Searching Button', function() {
@@ -46,6 +39,7 @@ describe( 'cart-buttons', function() {
 					selectedSite={ {slug: 'example.com'} }
 					showKeepSearching={ true }
 					onKeepSearchingClick={ onKeepSearchingClickStub }
+					translate={ identity }
 					/>
 			);
 		} );
@@ -65,6 +59,7 @@ describe( 'cart-buttons', function() {
 			this.cartButtonsComponent = mount(
 				<CartButtons
 					selectedSite={ {slug: 'example.com'} }
+					translate={ identity }
 					/>
 			);
 		} );
