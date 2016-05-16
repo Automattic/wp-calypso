@@ -11,7 +11,8 @@ import includes from 'lodash/includes';
 import localize from 'lib/mixins/i18n/localize';
 import EmptyContent from 'components/empty-content';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isCurrentUserCapableForSite, getSiteSlug } from 'state/sites/selectors';
+import { canCurrentUser } from 'state/current-user/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 /**
  * Constants
@@ -65,7 +66,7 @@ export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		canManage: isCurrentUserCapableForSite( state, siteId, 'manage_options' ),
+		canManage: canCurrentUser( state, siteId, 'manage_options' ),
 		siteSlug: getSiteSlug( state, siteId )
 	};
 } )( localize( PostTypeUnsupported ) );
