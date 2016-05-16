@@ -15,7 +15,7 @@ import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
 import { fetchSitePlans } from 'state/sites/plans/actions';
-import { filterPlansBySiteAndProps, shouldFetchSitePlans } from 'lib/plans';
+import { filterPlansBySiteAndProps, shouldFetchSitePlans, plansLink } from 'lib/plans';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
@@ -67,16 +67,8 @@ const PlansCompare = React.createClass( {
 		if ( this.props.backUrl ) {
 			return page( this.props.backUrl );
 		}
-
-		const selectedSite = this.props.selectedSite;
-		let plansLink = '/plans';
-
-		if ( selectedSite ) {
-			plansLink += '/' + selectedSite.slug;
-		}
-
 		this.recordViewAllPlansClick();
-		page( plansLink );
+		page( plansLink( '/plans', this.props.selectedSite, this.props.intervalType ) );
 	},
 
 	isDataLoading() {
@@ -143,7 +135,8 @@ const PlansCompare = React.createClass( {
 		return filterPlansBySiteAndProps(
 			this.props.plans.get(),
 			this.props.selectedSite,
-			this.props.hideFreePlan
+			this.props.hideFreePlan,
+			this.props.intervalType
 		);
 	},
 

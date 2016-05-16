@@ -24,7 +24,7 @@ const PlanPrice = React.createClass( {
 				return this.translate( 'Free', { context: 'Zero cost product price' } );
 			}
 
-			if ( abtest( 'planPricing' ) === 'monthly' ) {
+			if ( abtest( 'planPricing' ) === 'monthly' && plan.bill_period === 365 ) {
 				const monthlyPrice = +( rawPrice / 12 ).toFixed( 2 );
 				formattedPrice = formattedPrice.replace( rawPrice, monthlyPrice );
 			}
@@ -59,6 +59,12 @@ const PlanPrice = React.createClass( {
 			periodLabel = '';
 		} else if ( abtest( 'planPricing' ) === 'monthly' && plan.raw_price > 0 ) {
 			periodLabel = this.translate( 'per month, billed yearly' );
+			if ( plan.product_type === 'jetpack' ) {
+				//jetpack supports monthly plans
+				if ( plan.bill_period === 31 ) {
+					periodLabel = this.translate( 'per month, billed monthly' );
+				}
+			}
 		} else {
 			periodLabel = hasDiscount ? this.translate( 'due today when you upgrade' ) : plan.bill_period_label;
 		}

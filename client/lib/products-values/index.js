@@ -74,8 +74,15 @@ function isFreeTrial( product ) {
 	return Boolean( product.free_trial );
 }
 
+function isMonthly( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.bill_period === 31;
+}
+
 function isPremium( product ) {
-	var premiumProducts = [ 'value_bundle', 'jetpack_premium' ];
+	var premiumProducts = [ 'value_bundle', 'jetpack_premium', 'jetpack_premium_monthly' ];
 
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -84,7 +91,7 @@ function isPremium( product ) {
 }
 
 function isBusiness( product ) {
-	var businessProducts = [ 'business-bundle', 'jetpack_business' ];
+	var businessProducts = [ 'business-bundle', 'jetpack_business', 'jetpack_business_monthly' ];
 
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -305,6 +312,7 @@ module.exports = {
 	isFreeJetpackPlan,
 	isFreePlan,
 	isFreeTrial,
+	isMonthly,
 	isGoogleApps,
 	isJetpackBusiness,
 	isJetpackPlan,

@@ -16,7 +16,8 @@ import { addItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 import {
 	isFreeJetpackPlan,
-	isJetpackPlan
+	isJetpackPlan,
+	isMonthly,
 } from 'lib/products-values';
 import {
 	featuresList,
@@ -128,10 +129,16 @@ export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isRequesting && selectedSite;
 }
 
-export function filterPlansBySiteAndProps( plans, site, hideFreePlan ) {
+export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalType ) {
 	return plans.filter( function( plan ) {
 		if ( site && site.jetpack ) {
-			return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan );
+			//jetpack plans support monthly subscriptions
+			if ( 'monthly' === intervalType ) {
+				return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan ) && isMonthly( plan );
+			}
+			else {
+				return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan ) && ! isMonthly( plan );
+			}
 		}
 
 		if ( hideFreePlan && PLAN_FREE === plan.product_slug ) {
@@ -140,4 +147,16 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan ) {
 
 		return ! isJetpackPlan( plan );
 	} );
+}
+
+export function plansLink( url, site, intervalType ) {
+	if ( 'monthly' === intervalType ) {
+		url += '/monthly';
+	}
+
+	if ( site ) {
+		url += '/' + site.slug;
+	}
+
+	return url;
 }
