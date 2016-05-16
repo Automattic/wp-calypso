@@ -16,6 +16,8 @@ import ConnectHeader from './connect-header';
 import observe from 'lib/mixins/data-observe';
 import PlanList from 'components/plans/plan-list' ;
 import { shouldFetchSitePlans } from 'lib/plans';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 
@@ -34,6 +36,9 @@ const Plans = React.createClass( {
 	},
 
 	componentDidMount() {
+		this.props.recordTracksEvent( 'jpc_plans_view', {
+			user: this.props.userId
+		} );
 		this.updateSitePlans( this.props.sitePlans );
 	},
 
@@ -45,6 +50,9 @@ const Plans = React.createClass( {
 
 	selectFreeJetpackPlan() {
 		const selectedSite = this.props.sites.getSelectedSite();
+		this.props.recordTracksEvent( 'jpc_plans_submit_free', {
+			user: this.props.userId
+		} );
 		if ( isCalypsoStartedConnection( this.props.jetpackConnectSessions, selectedSite.slug ) ) {
 			page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
 		}
@@ -82,9 +90,11 @@ const Plans = React.createClass( {
 
 export default connect(
 	( state, props ) => {
+		const user = getCurrentUser( state );
 		return {
 			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() ),
-			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions
+			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
+			userId: user ? user.ID : null
 		};
 	},
 	( dispatch ) => {
@@ -93,6 +103,9 @@ export default connect(
 				if ( shouldFetchSitePlans( sitePlans, site ) ) {
 					dispatch( fetchSitePlans( site.ID ) );
 				}
+			},
+			recordTracksEvent( eventName, props ) {
+				dispatch( recordTracksEvent( eventName, props ) );
 			}
 		};
 	}
