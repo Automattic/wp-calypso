@@ -1,33 +1,41 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isFunction = require( 'lodash/isFunction' ),
-	page = require( 'page' );
+import React from 'react';
+import identity from 'lodash/identity';
+import isFunction from 'lodash/isFunction';
+import page from 'page';
 
-/** Internal dependencies **/
-var AnalyticsMixin = require( 'lib/mixins/analytics' );
+/**
+ * Internal dependencies
+ */
+import AnalyticsMixin from 'lib/mixins/analytics';
+import localize from 'lib/mixins/i18n/localize';
 
-var CartButtons = React.createClass( {
+export const CartButtons = React.createClass( {
 	mixins: [ AnalyticsMixin( 'popupCart' ) ],
 
 	propTypes: {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired
+		] ).isRequired,
+		translate: React.PropTypes.func.isRequired
 	},
 
-	getDefaultProps: function() {
-		return { showKeepSearching: false };
+	getDefaultProps() {
+		return {
+			showKeepSearching: false,
+			translate: identity
+		};
 	},
 
-	render: function() {
+	render() {
 		return (
 			<div className="cart-buttons">
-				<button ref="checkoutButton" className="cart-checkout-button button is-primary"
+				<button className="cart-checkout-button button is-primary"
 						onClick={ this.goToCheckout }>
-					{ this.translate( 'Checkout', { context: 'Cart button' } ) }
+					{ this.props.translate( 'Checkout', { context: 'Cart button' } ) }
 				</button>
 
 				{ this.optionalKeepSearching() }
@@ -35,20 +43,20 @@ var CartButtons = React.createClass( {
 		);
 	},
 
-	optionalKeepSearching: function() {
+	optionalKeepSearching() {
 		if ( ! this.props.showKeepSearching ) {
 			return;
 		}
 
 		return (
-			<button ref="keepSearchingButton" className="cart-keep-searching-button button"
+			<button className="cart-keep-searching-button button"
 					onClick={ this.onKeepSearchingClick }>
-				{ this.translate( 'Keep Searching' ) }
+				{ this.props.translate( 'Keep Searching' ) }
 			</button>
 		);
 	},
 
-	onKeepSearchingClick: function( event ) {
+	onKeepSearchingClick( event ) {
 		event.preventDefault();
 		this.recordEvent( 'keepSearchButtonClick' );
 		if ( isFunction( this.props.onKeepSearchingClick ) ) {
@@ -56,7 +64,7 @@ var CartButtons = React.createClass( {
 		}
 	},
 
-	goToCheckout: function( event ) {
+	goToCheckout( event ) {
 		event.preventDefault();
 
 		this.recordEvent( 'checkoutButtonClick' );
@@ -65,4 +73,4 @@ var CartButtons = React.createClass( {
 	}
 } );
 
-module.exports = CartButtons;
+export default localize( CartButtons );
