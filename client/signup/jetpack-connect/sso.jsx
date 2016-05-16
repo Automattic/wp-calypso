@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -18,6 +19,9 @@ import Button from 'components/button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import { errorNotice } from 'state/notices/actions';
+import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
+import addQueryArgs from 'lib/route/add-query-args';
+import config from 'config';
 
 /*
  * Module variables
@@ -29,16 +33,50 @@ const JetpackSSOForm = React.createClass( {
 
 	mixins: [ observe( 'userModule' ) ],
 
+	componentWillMount() {
+		this.maybeValidateSSO();
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		this.maybeValidateSSO();
+
+		if ( nextProps.ssoUrl && ! this.props.ssoUrl ) {
+			// After receiving the SSO URL, which will log the user in on remote site,
+			// we redirect user to remote site to be logged in.
+			//
+			// Note: We add `calypso_env` so that when we are redirected back to Calypso,
+			// we land in the same development environment.
+			const redirect = addQueryArgs( { calypso_env: config( 'env' ) }, nextProps.ssoUrl );
+			debug( 'Redirecting to: ' + redirect );
+			window.location.href = addQueryArgs( redirect );
+		}
+	},
+
 	onApproveSSO( event ) {
 		event.preventDefault();
+
+		const { siteId, ssoNonce } = this.props;
 		debug( 'Approving sso' );
-		this.props.errorNotice( 'Jetpack SSO is currently in development.' );
+		this.props.authorizeSSO( siteId, ssoNonce );
 	},
 
 	onCancelClick( event ) {
 		event.preventDefault();
 		debug( 'Clicked return to site link' );
 		this.props.errorNotice( 'Jetpack SSO is currently in development.' );
+	},
+
+	isButtonDisabled() {
+		const { nonceValid, isAuthorizing, isValidating, ssoUrl } = this.props;
+		return !! ( ! nonceValid | isAuthorizing | isValidating | ssoUrl );
+	},
+
+	maybeValidateSSO() {
+		const { ssoNonce, siteId, nonceValid, isAuthorizing, isValidating } = this.props;
+
+		if ( ! nonceValid && ! isAuthorizing && ! isValidating ) {
+			this.props.validateSSONonce( siteId, ssoNonce );
+		}
 	},
 
 	render() {
@@ -75,7 +113,7 @@ const JetpackSSOForm = React.createClass( {
 							<Button
 								primary
 								onClick={ this.onApproveSSO }
-								disabled={ false }>
+								disabled={ this.isButtonDisabled() }>
 								{ this.translate( 'Log in' ) }
 							</Button>
 						</div>
@@ -97,6 +135,18 @@ const JetpackSSOForm = React.createClass( {
 } );
 
 export default connect(
-	null,
-	dispatch => bindActionCreators( { errorNotice }, dispatch )
+	state => {
+		const { jetpackSSO } = state.jetpackConnect;
+		return {
+			siteId: get( jetpackSSO, 'site_id' ),
+			ssoNonce: get( jetpackSSO, 'sso_nonce' ),
+			ssoUrl: get( jetpackSSO, 'ssoUrl' ),
+			isAuthorizing: get( jetpackSSO, 'isAuthorizing' ),
+			isValidating: get( jetpackSSO, 'isValidating' ),
+			nonceValid: get( jetpackSSO, 'nonceValid' ),
+			authorizationError: get( jetpackSSO, 'authorizationError' ),
+			validationError: get( jetpackSSO, 'validationError' ),
+		};
+	},
+	dispatch => bindActionCreators( { errorNotice, authorizeSSO, validateSSONonce }, dispatch )
 )( JetpackSSOForm );

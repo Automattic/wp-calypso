@@ -18,6 +18,7 @@ import {
 	SERIALIZE,
 } from 'state/action-types';
 import reducer, {
+	jetpackConnectSessions,
 	jetpackConnectAuthorize,
 	jetpackSSO
 } from '../reducer';
@@ -32,53 +33,29 @@ describe( 'reducer', () => {
 		] );
 	} );
 
-	describe( '#jetpackConnectAuthorize()', () => {
+	describe( '#jetpackConnectSessions()', () => {
 		it( 'should default to an empty object', () => {
 			const state = jetpackConnectAuthorize( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set autoAuthorize to true when SSO authorized', () => {
-			const state = jetpackConnectAuthorize( undefined, {
-				type: JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST
+		it( 'should store an integer timestamp when creating new session', () => {
+			const nowTime = ( new Date() ).getTime();
+			const state = jetpackConnectSessions( undefined, {
+				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
+				ssoUrl: 'https://website.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}'
 			} );
 
-			expect( state ).to.have.property( 'autoAuthorize', true );
+			expect( state ).to.have.property( 'website.com' )
+				.to.be.a( 'number' )
+				.to.be.at.least( nowTime );
 		} );
+	} );
 
-		it( 'should leave autoAuthorize as true when authorize successful', () => {
-			const original = deepFreeze( {
-				queryObject: {},
-				isAuthorizing: false,
-				authorizeSuccess: false,
-				authorizeError: false,
-				autoAuthorize: true
-			} );
-
-			const state = jetpackConnectAuthorize( original, {
-				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS
-			} );
-
-			expect( state ).to.have.property( 'autoAuthorize', true );
-		} );
-
-		it( 'should set autoAuthorize to false when authorize errors', () => {
-			const original = deepFreeze( {
-				queryObject: {},
-				isAuthorizing: false,
-				authorizeSuccess: false,
-				authorizeError: false,
-				autoAuthorize: true
-			} );
-
-			const state = jetpackConnectAuthorize( original, {
-				type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
-				error: {
-					statusCode: 400
-				}
-			} );
-
-			expect( state ).to.have.property( 'autoAuthorize', false );
+	describe( '#jetpackConnectAuthorize()', () => {
+		it( 'should default to an empty object', () => {
+			const state = jetpackConnectAuthorize( undefined, {} );
+			expect( state ).to.eql( {} );
 		} );
 	} );
 

@@ -4,6 +4,7 @@
 import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
 import { combineReducers } from 'redux';
+import urlModule from 'url';
 
 /**
  * Internal dependencies
@@ -42,11 +43,18 @@ const defaultAuthorizeState = {
 	authorizeError: false
 };
 
+function buildNoProtocolUrlObj( url ) {
+	const noProtocolUrl = url.replace( /.*?:\/\//g, '' );
+	return { [ noProtocolUrl ]: ( new Date() ).getTime() };
+}
+
 export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_STORE_SESSION:
-			const noProtocolUrl = action.url.replace( /.*?:\/\//g, '' );
-			return Object.assign( {}, state, { [ noProtocolUrl ]: ( new Date() ).getTime() } );
+			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url ) );
+		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
+			const parsedUrl = urlModule.parse( action.ssoUrl );
+			return Object.assign( {}, state, buildNoProtocolUrlObj( parsedUrl.hostname ) );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return state;
@@ -112,10 +120,6 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, autoAuthorize: true, userData: action.userData, bearerToken: action.data.bearer_token } );
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
-		case JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST:
-			return Object.assign( {}, defaultAuthorizeState, { autoAuthorize: true } );
-		case JETPACK_CONNECT_SSO_AUTHORIZE_ERROR:
-			return Object.assign( {}, state, { autoAuthorize: false } );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};
