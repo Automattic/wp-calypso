@@ -165,6 +165,11 @@ var FormFields = React.createClass( {
 						disabled={ true }
 					/>
 					<br />
+					<FormToggle
+						checked={ true }
+						disabled={ true }
+					/>
+					<br />
 					<CompactFormToggle
 						checked={ this.state.compactToggled }
 						onChange={ this.handleCompactToggle }
