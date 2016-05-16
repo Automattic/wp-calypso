@@ -52,7 +52,7 @@ var embedsConfig = {
 			};
 		},
 		urlRegex: /\/\/bandcamp\.com\/EmbeddedPlayer/
-  }
+	}
 };
 
 function extractUrlFromIframe( iframeHtml ) {
