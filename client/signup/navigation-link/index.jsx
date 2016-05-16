@@ -11,6 +11,7 @@ import analytics from 'lib/analytics';
 import Gridicon from 'components/gridicon';
 import { submitSignupStep } from 'lib/signup/actions';
 import signupUtils from 'signup/utils';
+import i18n from 'lib/mixins/i18n';
 
 const NavigationLink = React.createClass( {
 	propTypes: {
@@ -35,7 +36,7 @@ const NavigationLink = React.createClass( {
 		const previousStepName = signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName ),
 			{ stepSectionName } = find( this.props.signupProgressStore, { stepName: previousStepName } );
 
-		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName );
+		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName, i18n.getLocaleSlug() );
 	},
 
 	handleClick() {

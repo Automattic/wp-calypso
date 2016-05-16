@@ -31,7 +31,8 @@ module.exports = {
 					domain: context.params.domain || '',
 					sites: sites,
 					prevPath: context.prevPath || '',
-					query: context.query
+					query: context.query,
+					panel: context.params.panel
 				} )
 			),
 			document.getElementById( 'primary' )

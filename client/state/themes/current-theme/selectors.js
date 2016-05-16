@@ -11,3 +11,7 @@ export function isActivating( state ) {
 export function hasActivated( state ) {
 	return state.themes.currentTheme.get( 'hasActivated' );
 }
+
+export function isRequestingCurrentTheme( state, siteId ) {
+	return !! state.themes.currentTheme.get( 'requesting' ).get( siteId );
+}

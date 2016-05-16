@@ -1,5 +1,28 @@
-.editor-featured-image__preview {
+.editor-featured-image {
+	width: 100%;
+	padding: 0;
+	text-align: center;
+	line-height: 0;
+}
+
+.editor-featured-image__current-image {
 	position: relative;
+	display: inline-block;
+	vertical-align: top;
+	max-width: 100%;
+
+	.button.is-borderless & .editor-featured-image__edit-icon {
+		position: absolute;
+			top: auto;
+			bottom: 8px;
+			right: 8px;
+		color: $white;
+		opacity: 0.9;
+	}
+
+	.button.is-borderless &:hover .editor-featured-image__edit-icon {
+		opacity: 1;
+	}
 }
 
 .editor-featured-image__preview.is-transient::after {
@@ -33,7 +56,30 @@
 	transform: translate( -50%, -50% );
 }
 
+.editor-featured-image__preview .image-preloader {
+	overflow: hidden;
+}
+
+.editor-featured-image__preview .spinner-line {
+	width: 100vw;
+	margin: 0;
+}
+
+.editor-featured-image__preview.has-assigned-height ~ .editor-featured-image__edit-icon {
+	display: none;
+}
+
+.editor-featured-image__preview.has-assigned-height .spinner-line {
+	position: absolute;
+		top: 50%;
+		left: 50%;
+	transform: translate( -50%, -50% );
+}
+
 .editor-featured-image__preview .spinner__border {
 	fill: transparent;
 }
 
+.editor-featured-image__preview-image {
+	display: block;
+}

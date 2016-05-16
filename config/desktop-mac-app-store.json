@@ -59,7 +59,6 @@
 		"persist-redux": true,
 		"phone_signup": true,
 		"post-editor/author-selector": true,
-		"post-editor/live-image-updates": true,
 		"press-this": false,
 		"reader": true,
 		"reader/full-errors": false,

@@ -219,9 +219,17 @@ export class SyncHandler {
 			};
 
 			// request/response workflow
-			this.retrieveRecord( requestKey ) // => localforage record
-				.then( localResponseHandler, recordErrorHandler ) // => localforage record
-				.then( networkFetch ) // => combinedResponse { localResponse, serverResponse }
+			let request;
+			if ( params.__skipLocalSyncRequest ) {
+				debug( 'local request skipped => %o, params (%o)', path, reqParams );
+				request = networkFetch(); // => combinedResponse { localResponse: undefined, serverResponse }
+			} else {
+				request = this.retrieveRecord( requestKey ) // => localforage record
+					.then( localResponseHandler, recordErrorHandler ) // => localforage record
+					.then( networkFetch ); // => combinedResponse { localResponse, serverResponse }
+			}
+
+			request
 				.then( adjustPagination, networkErrorHandler ) // => combinedResponse { localResponse, serverResponse }
 				.then( cacheResponse ); // => combinedResponse { localResponse, serverResponse }
 		};
@@ -259,6 +267,35 @@ export class SyncHandler {
 			.removeItem( requestKey )
 				.then( cacheIndex.removeItem( requestKey ) );
 	}
+}
+
+/**
+ * Returns a modified wpcom instance including a `skipLocalSyncResult` method
+ * to be used in intentional bypass of local sync handler behavior.
+ *
+ * @param  {Object} wpcom WPCOM instance
+ * @return {Object}       Modified WPCOM instance
+ */
+export function syncOptOut( wpcom ) {
+	const request = wpcom.request.bind( wpcom );
+	return Object.assign( wpcom, {
+		skipLocalSyncResult() {
+			this.__skipLocalSyncRequest = true;
+			return this;
+		},
+
+		request( params, callback ) {
+			if ( this.__skipLocalSyncRequest ) {
+				params = Object.assign( {
+					__skipLocalSyncRequest: true
+				}, params );
+
+				this.__skipLocalSyncRequest = false;
+			}
+
+			return request( params, callback );
+		}
+	} );
 }
 
 export const pruneStaleRecords = lifetime => {

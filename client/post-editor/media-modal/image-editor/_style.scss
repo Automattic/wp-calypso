@@ -1,0 +1,63 @@
+.editor-media-modal-image-editor__content {
+	flex-direction: column;
+	position: absolute;
+		top: 0px;
+		bottom: 0px;
+	background: darken($gray, 52%);
+}
+
+.editor-media-modal-image-editor__toolbar {
+	flex: 1;
+	position: relative;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+}
+
+.editor-media-modal-image-editor__toolbar-button {
+	background: $transparent;
+	border: none;
+	color: $white;
+	margin: 0 10px;
+	cursor: pointer;
+}
+
+.editor-media-modal-image-editor__toolbar-button .gridicon {
+	display: block;
+	margin: 0 auto;
+}
+
+.editor-media-modal-image-editor__toolbar-button:hover {
+	color: $gray;
+}
+
+.editor-media-modal-image-editor__canvas-container {
+	flex: 10;
+	position: relative;
+	width: 100%;
+}
+
+.editor-media-modal-image-editor__canvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: auto;
+	height: auto;
+	max-height: 80%;
+	max-width: 80%;
+	transform: translate( -50%, -50% );
+}
+
+.editor-media-modal-image-editor__buttons {
+	border-top: 1px solid $gray-dark;
+	padding: 16px;
+	text-align: right;
+}
+
+.editor-media-modal-image-editor__buttons button {
+	margin-left: 10px;
+}
+
+.editor-media-modal-image-editor__buttons-cancel {
+	float: left;
+}

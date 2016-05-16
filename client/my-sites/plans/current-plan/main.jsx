@@ -65,12 +65,16 @@ const PlanDetailsComponent = React.createClass( {
 		} else if ( isBusiness( this.props.selectedSite.plan ) ) {
 			title = this.translate( 'Your site is on a Business plan' );
 			tagLine = this.translate( 'Learn more about everything included with Business and take advantage of its professional features.' );
-			featuresList = (
+			featuresList = ( <div>
 				<BusinessPlanDetails
 					selectedSite={ this.props.selectedSite }
 					sitePlans={ this.props.sitePlans }
 				/>
-			);
+				<PremiumPlanDetails
+					selectedSite={ this.props.selectedSite }
+					sitePlans={ this.props.sitePlans }
+				/>
+			</div> );
 		}
 
 		return (

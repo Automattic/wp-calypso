@@ -181,9 +181,11 @@ const WebPreview = React.createClass( {
 			debug( 'preview loaded, but nothing to show' );
 			return;
 		}
-		debug( 'preview loaded:', this.state.iframeUrl );
 		if ( this.props.previewMarkup ) {
+			debug( 'preview loaded with markup' );
 			this.props.onLoad( this.refs.iframe.contentDocument );
+		} else {
+			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
 		this.setState( { loaded: true } );
 	},

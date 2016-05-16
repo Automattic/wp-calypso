@@ -1,48 +1,38 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	createFragment = require( 'react-addons-create-fragment' ),
-	without = require( 'lodash/without' ),
-	includes = require( 'lodash/includes' ),
-	classNames = require( 'classnames' ),
-	noop = require( 'lodash/noop' );
+import ReactDom from 'react-dom';
+import React, { Component, PropTypes } from 'react';
+import createFragment from 'react-addons-create-fragment';
+import without from 'lodash/without';
+import includes from 'lodash/includes';
+import classNames from 'classnames';
+import noop from 'lodash/noop';
+import identity from 'lodash/identity';
 
 /**
  * Internal dependencies
  */
-var RootChild = require( 'components/root-child' );
+import RootChild from 'components/root-child';
+import localize from 'lib/mixins/i18n/localize';
 
-module.exports = React.createClass( {
-	displayName: 'DropZone',
+export class DropZone extends Component {
+	constructor( props ) {
+		super( props );
 
-	propTypes: {
-		onDrop: React.PropTypes.func,
-		onVerifyValidTransfer: React.PropTypes.func,
-		onFilesDrop: React.PropTypes.func,
-		fullScreen: React.PropTypes.bool,
-		icon: React.PropTypes.string
-	},
-
-	getInitialState: function() {
-		return {
+		this.state = {
 			isDraggingOverDocument: false,
 			isDraggingOverElement: false
 		};
-	},
 
-	getDefaultProps: function() {
-		return {
-			onDrop: noop,
-			onVerifyValidTransfer: () => true,
-			onFilesDrop: noop,
-			fullScreen: false,
-			icon: 'dashicons dashicons-admin-media'
-		};
-	},
+		// Bind listeners found in componentDidMount(), except for the ones whose
+		// implementation doesn't refer to `this`.
+		this.onDrop = this.onDrop.bind( this );
+		this.toggleDraggingOverDocument = this.toggleDraggingOverDocument.bind( this );
+		this.resetDragState = this.resetDragState.bind( this );
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.dragEnterNodes = [];
 
 		window.addEventListener( 'dragover', this.preventDefault );
@@ -50,32 +40,32 @@ module.exports = React.createClass( {
 		window.addEventListener( 'dragenter', this.toggleDraggingOverDocument );
 		window.addEventListener( 'dragleave', this.toggleDraggingOverDocument );
 		window.addEventListener( 'mouseup', this.resetDragState );
-	},
+	}
 
-	componentDidUpdate: function( prevProps, prevState ) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( prevState.isDraggingOverDocument !== this.state.isDraggingOverDocument ) {
 			this.toggleMutationObserver();
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'dragover', this.preventDefault );
 		window.removeEventListener( 'drop', this.onDrop );
 		window.removeEventListener( 'dragenter', this.toggleDraggingOverDocument );
 		window.removeEventListener( 'dragleave', this.toggleDraggingOverDocument );
 		window.removeEventListener( 'mouseup', this.resetDragState );
 		this.disconnectMutationObserver();
-	},
+	}
 
-	resetDragState: function() {
+	resetDragState() {
 		if ( ! ( this.state.isDraggingOverDocument || this.state.isDraggingOverElement ) ) {
 			return;
 		}
 
 		this.setState( this.getInitialState() );
-	},
+	}
 
-	toggleMutationObserver: function() {
+	toggleMutationObserver() {
 		this.disconnectMutationObserver();
 
 		if ( this.state.isDraggingOverDocument ) {
@@ -85,18 +75,18 @@ module.exports = React.createClass( {
 				subtree: true
 			} );
 		}
-	},
+	}
 
-	disconnectMutationObserver: function() {
+	disconnectMutationObserver() {
 		if ( ! this.observer ) {
 			return;
 		}
 
 		this.observer.disconnect();
 		delete this.observer;
-	},
+	}
 
-	detectNodeRemoval: function( mutations ) {
+	detectNodeRemoval( mutations ) {
 		mutations.forEach( ( mutation ) => {
 			if ( ! mutation.removedNodes.length ) {
 				return;
@@ -104,10 +94,10 @@ module.exports = React.createClass( {
 
 			this.dragEnterNodes = without( this.dragEnterNodes, Array.from( mutation.removedNodes ) );
 		} );
-	},
+	}
 
-	toggleDraggingOverDocument: function( event ) {
-		var isDraggingOverDocument, detail, isValidDrag;
+	toggleDraggingOverDocument( event ) {
+		let isDraggingOverDocument, detail, isValidDrag;
 
 		// Track nodes that have received a drag event. So long as nodes exist
 		// in the set, we can assume that an item is being dragged on the page.
@@ -139,14 +129,14 @@ module.exports = React.createClass( {
 			// from tracked nodes since another "real" event will be triggered.
 			this.dragEnterNodes = without( this.dragEnterNodes, window );
 		}
-	},
+	}
 
-	preventDefault: function( event ) {
+	preventDefault( event ) {
 		event.preventDefault();
-	},
+	}
 
-	isWithinZoneBounds: function( x, y ) {
-		var rect;
+	isWithinZoneBounds( x, y ) {
+		let rect;
 
 		if ( ! this.refs.zone ) {
 			return false;
@@ -161,9 +151,9 @@ module.exports = React.createClass( {
 
 		return x >= rect.left && x <= rect.right &&
 			y >= rect.top && y <= rect.bottom;
-	},
+	}
 
-	onDrop: function( event ) {
+	onDrop( event ) {
 		// This seemingly useless line has been shown to resolve a Safari issue
 		// where files dragged directly from the dock are not recognized
 		event.dataTransfer && event.dataTransfer.files.length;
@@ -189,10 +179,10 @@ module.exports = React.createClass( {
 
 		event.stopPropagation();
 		event.preventDefault();
-	},
+	}
 
-	renderContent: function() {
-		var content;
+	renderContent() {
+		let content;
 
 		if ( this.props.children ) {
 			content = this.props.children;
@@ -201,24 +191,24 @@ module.exports = React.createClass( {
 				icon: <span className={ classNames( 'drop-zone__content-icon', this.props.icon ) } />,
 				text: (
 					<span className="drop-zone__content-text">
-						{ this.translate( 'Drop files to upload' ) }
+						{ this.props.translate( 'Drop files to upload' ) }
 					</span>
 				)
 			} );
 		}
 
 		return <div className="drop-zone__content">{ content }</div>;
-	},
+	}
 
-	render: function() {
-		var classes = classNames( 'drop-zone', {
+	render() {
+		const classes = classNames( 'drop-zone', {
 			'is-active': this.state.isDraggingOverDocument || this.state.isDraggingOverElement,
 			'is-dragging-over-document': this.state.isDraggingOverDocument,
 			'is-dragging-over-element': this.state.isDraggingOverElement,
 			'is-full-screen': this.props.fullScreen
-		} ), element;
+		} );
 
-		element = (
+		const element = (
 			<div ref="zone" className={ classes }>
 				{ this.renderContent() }
 			</div>
@@ -226,8 +216,27 @@ module.exports = React.createClass( {
 
 		if ( this.props.fullScreen ) {
 			return <RootChild>{ element }</RootChild>;
-		} else {
-			return element;
 		}
+		return element;
 	}
-} );
+}
+
+DropZone.propTypes = {
+	onDrop: PropTypes.func,
+	onVerifyValidTransfer: PropTypes.func,
+	onFilesDrop: PropTypes.func,
+	fullScreen: PropTypes.bool,
+	icon: PropTypes.string,
+	translate: PropTypes.func,
+};
+
+DropZone.defaultProps = {
+	onDrop: noop,
+	onVerifyValidTransfer: () => true,
+	onFilesDrop: noop,
+	fullScreen: false,
+	icon: 'dashicons dashicons-admin-media',
+	translate: identity,
+};
+
+export default localize( DropZone );

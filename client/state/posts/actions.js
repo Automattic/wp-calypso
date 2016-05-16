@@ -54,11 +54,15 @@ export function requestSitePosts( siteId, query = {} ) {
 			query
 		} );
 
-		let source;
+		let source = wpcom;
+		if ( source.skipLocalSyncResult ) {
+			source = source.skipLocalSyncResult();
+		}
+
 		if ( siteId ) {
-			source = wpcom.site( siteId );
+			source = source.site( siteId );
 		} else {
-			source = wpcom.me();
+			source = source.me();
 		}
 
 		return source.postsList( query ).then( ( { found, posts } ) => {

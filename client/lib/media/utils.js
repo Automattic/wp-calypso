@@ -6,6 +6,7 @@ import path from 'path';
 import photon from 'photon';
 import includes from 'lodash/includes';
 import omitBy from 'lodash/omitBy';
+import findKey from 'lodash/findKey';
 
 /**
  * Internal dependencies
@@ -103,6 +104,16 @@ const MediaUtils = {
 		}
 
 		return extension;
+	},
+
+	/**
+	 * Given a mime type, return an extension for a file of that type
+	 *
+	 * @param  {string} mimeType mime type to be checked
+	 * @return {string} extension for the provided type or an empty string if not found
+	 */
+	getFileExtensionFromMimeType: function( mimeType ) {
+		return findKey( MimeTypes, ( ext ) => ext === mimeType ) || '';
 	},
 
 	/**
@@ -438,6 +449,37 @@ const MediaUtils = {
 		}
 
 		return site.capabilities.delete_others_posts;
+	},
+
+	/**
+	 * Wrapper method for the HTML canvas toBlob() function. Polyfills if the
+	 * function does not exist
+	 *
+	 * @param {Object} canvas the canvas element
+	 * @param {Function} callback function to process the blob after it is extracted
+	 * @param {String} type image type to be extracted
+	 * @param {Number} quality extracted image quality
+	 */
+	canvasToBlob( canvas, callback, type, quality ) {
+		if ( ! HTMLCanvasElement.prototype.toBlob ) {
+			Object.defineProperty( HTMLCanvasElement.prototype, 'toBlob', {
+				value: function( polyfillCallback, polyfillType, polyfillQuality ) {
+					const binStr = atob( this.toDataURL( polyfillType, polyfillQuality ).split( ',' )[1] ),
+						len = binStr.length,
+						arr = new Uint8Array( len );
+
+					for ( let i = 0; i < len; i++ ) {
+						arr[i] = binStr.charCodeAt( i );
+					}
+
+					polyfillCallback( new Blob( [arr], {
+						type: polyfillType || 'image/png'
+					} ) );
+				}
+			} );
+		}
+
+		canvas.toBlob( callback, type, quality );
 	}
 };
 

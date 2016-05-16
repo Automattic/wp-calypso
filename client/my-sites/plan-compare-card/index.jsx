@@ -32,7 +32,7 @@ export default React.createClass( {
 			onClick: noop,
 			currentPlan: true,
 			popularRibbon: false
-		}
+		};
 	},
 
 	buttonClick() {

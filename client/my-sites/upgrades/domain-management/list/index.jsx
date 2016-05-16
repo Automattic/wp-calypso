@@ -222,6 +222,10 @@ export const List = React.createClass( {
 	},
 
 	changePrimaryButton() {
+		if ( ! this.props.domains.list || this.props.domains.list.length < 2 ) {
+			return null;
+		}
+
 		return (
 			<Button
 				compact

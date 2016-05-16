@@ -258,7 +258,8 @@ const MediaLibraryContent = React.createClass( {
 						mediaScale={ this.getMediaScale() }
 						mediaScaleChoices={ this.props.mediaScaleChoices }
 						onMediaScaleChange={ this.onMediaScaleChange }
-						onAddMedia={ this.props.onAddMedia } />
+						onAddMedia={ this.props.onAddMedia }
+						onAddAndEditImage={ this.props.onAddAndEditImage } />
 				}
 				{ this.renderErrors() }
 				{ this.renderMediaList() }

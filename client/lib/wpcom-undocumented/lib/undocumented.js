@@ -186,6 +186,27 @@ Undocumented.prototype.jetpackAuthorize = function( siteId, code, state, redirec
 	return this.wpcom.req.post( { path: endpointUrl }, params );
 };
 
+Undocumented.prototype.jetpackValidateSSONonce = function( siteId, ssoNonce, fn ) {
+	debug( '/jetpack-blogs/:site_id:/sso-validate query' );
+	const endpointUrl = '/jetpack-blogs/' + siteId + '/sso-validate';
+	const params = { sso_nonce: ssoNonce };
+	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
+};
+
+Undocumented.prototype.jetpackAuthorizeSSONonce = function( siteId, ssoNonce, fn ) {
+	debug( '/jetpack-blogs/:site_id:/sso-authorize query' );
+	const endpointUrl = '/jetpack-blogs/' + siteId + '/sso-authorize';
+	const params = { sso_nonce: ssoNonce };
+	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
+};
+
+Undocumented.prototype.activateManage = function( siteId, state, secret ) {
+	debug( '/jetpack-blogs/:site_id:/activate-manage query' );
+	const endpointUrl = '/jetpack-blogs/' + siteId + '/activate-manage';
+	const params = { state, secret };
+	return this.wpcom.req.post( { path: endpointUrl }, params );
+};
+
 Undocumented.prototype.invitesList = function( siteId, number, offset, fn ) {
 	debug( '/sites/:site_id:/invites query' );
 	this.wpcom.req.get( '/sites/' + siteId + '/invites', {
@@ -910,6 +931,32 @@ Undocumented.prototype.setPrimaryDomain = function( siteId, domain, fn ) {
 	this.wpcom.req.post( '/sites/' + siteId + '/domains/primary', {}, { domain: domain }, fn );
 };
 
+/**
+ * Fetch preview markup for a site
+ *
+ * @param {int} siteId The site ID
+ * @param {string} slug Optional. The theme slug to preview
+ * @param {object} postData Optional. The customization data to send
+ * @return {Promise} A Promise to resolve when complete
+ */
+Undocumented.prototype.fetchPreviewMarkup = function( siteId, slug, postData ) {
+	debug( '/sites/:site_id/previews/mine' );
+	return new Promise( ( resolve, reject ) => {
+		const endpoint = `/sites/${siteId}/previews/mine`;
+		const query = { path: slug };
+		const isPreviewCustomized = ( postData && Object.keys( postData ).length > 0 );
+		const request = isPreviewCustomized ? this.wpcom.req.post( endpoint, query, { customized: postData } ) : this.wpcom.req.get( endpoint, query );
+		request
+			.then( response => {
+				if ( ! response.html ) {
+					return reject( new Error( 'No markup received from API' ) );
+				}
+				resolve( response.html );
+			} )
+			.catch( reject );
+	} );
+};
+
 Undocumented.prototype.readFollowing = function( query, fn ) {
 	debug( '/read/following' );
 	query.apiVersion = '1.3';
@@ -975,8 +1022,19 @@ Undocumented.prototype.readTags = function( fn ) {
 Undocumented.prototype.readTagPosts = function( query, fn ) {
 	var params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );
-	params.apiVersion = '1.2';
+	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ){
+		params.apiVersion = '1.3';
+	} else {
+		params.apiVersion = '1.2';
+	}
+
 	this.wpcom.req.get( '/read/tags/' + encodeURIComponent( query.tag ) + '/posts', params, fn );
+};
+
+Undocumented.prototype.readRecommendedPosts = function( query, fn ) {
+	debug( '/recommendations/posts' );
+	query.apiVersion = '1.2';
+	this.wpcom.req.get( '/read/recommendations/posts', query, fn );
 };
 
 Undocumented.prototype.followReaderTag = function( tag, fn ) {
@@ -1847,6 +1905,36 @@ Undocumented.prototype.importReaderFeed = function( file, fn ) {
 		apiVersion: '1.2',
 	};
 	return this.wpcom.req.post( params, query, null, fn );
+};
+
+/**
+ * Creates a Push Notification registration for the device
+ *
+ * @param {String}     registration   The registration to be stored
+ * @param {String}     deviceFamily   The device family
+ * @param {String}     deviceName     The device name
+ * @param {Function}   fn             The callback function
+ * @returns {XMLHttpRequest}          The XHR instance
+ */
+Undocumented.prototype.registerDevice = function( registration, deviceFamily, deviceName, fn ) {
+	debug( '/devices/new' );
+	return this.wpcom.req.post( { path: '/devices/new' }, {}, {
+		device_token: registration,
+		device_family: deviceFamily,
+		device_name: deviceName
+	}, fn );
+};
+
+/**
+ * Removes a Push Notification registration for the device
+ *
+ * @param {int}        deviceId       The device ID for the registration to be removed
+ * @param {Function}   fn             The callback function
+ * @returns {XMLHttpRequest}          The XHR instance
+ */
+Undocumented.prototype.unregisterDevice = function( deviceId, fn ) {
+	debug( '/devices/:device_id/delete' );
+	return this.wpcom.req.post( { path: `/devices/${ deviceId }/delete` }, fn );
 };
 
 /**

@@ -22,7 +22,7 @@ export default React.createClass( {
 		return {
 			highlight: false,
 			unavailable: false
-		}
+		};
 	},
 
 	render() {

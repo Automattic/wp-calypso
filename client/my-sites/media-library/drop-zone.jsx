@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	noop = require( 'lodash/noop' );
+import React from 'react';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	DropZone = require( 'components/drop-zone' ),
-	MediaActions = require( 'lib/media/actions' ),
-	userCan = require( 'lib/site/utils' ).userCan;
+import analytics from 'lib/analytics';
+import DropZone from 'components/drop-zone';
+import MediaActions from 'lib/media/actions';
+import { userCan } from 'lib/site/utils';
 
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryDropZone',

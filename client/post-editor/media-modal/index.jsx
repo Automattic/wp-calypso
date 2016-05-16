@@ -20,10 +20,10 @@ var MediaLibrary = require( 'my-sites/media-library' ),
 	MediaModalSecondaryActions = require( './secondary-actions' ),
 	MediaModalDetail = require( './detail' ),
 	MediaModalGallery = require( './gallery' ),
+	MediaModalImageEditor = require( './image-editor' ),
 	MediaActions = require( 'lib/media/actions' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	Dialog = require( 'components/dialog' ),
-	config = require( 'config' ),
 	markup = require( './markup' ),
 	accept = require( 'lib/accept' ),
 	ModalViews = require( './constants' ).Views;
@@ -87,13 +87,7 @@ module.exports = React.createClass( {
 
 	isDisabled: function() {
 		return some( this.props.mediaLibrarySelectedItems, function( item ) {
-			var mimePrefix;
-
-			if ( ! config.isEnabled( 'post-editor/live-image-updates' ) && item.transient ) {
-				return true;
-			}
-
-			mimePrefix = MediaUtils.getMimePrefix( item );
+			var mimePrefix = MediaUtils.getMimePrefix( item );
 			return item.transient && ( mimePrefix !== 'image' || ModalViews.GALLERY === this.state.activeView );
 		}.bind( this ) );
 	},
@@ -145,6 +139,7 @@ module.exports = React.createClass( {
 			case ModalViews.LIST: stat = 'view_list'; break;
 			case ModalViews.DETAIL: stat = 'view_detail'; break;
 			case ModalViews.GALLERY: stat = 'view_gallery'; break;
+			case ModalViews.IMAGE_EDITOR: stat = 'view_edit'; break;
 		}
 
 		if ( stat ) {
@@ -208,6 +203,23 @@ module.exports = React.createClass( {
 		PostStats.recordEvent( 'Upload Media' );
 	},
 
+	onAddAndEditImage: function() {
+		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
+
+		this.setView( ModalViews.IMAGE_EDITOR );
+	},
+
+	onImageEditorClose: function() {
+		const item = this.props.mediaLibrarySelectedItems[ this.state.detailSelectedIndex ];
+
+		if ( item ) {
+			this.setView( ModalViews.DETAIL );
+			return;
+		}
+
+		this.setView( ModalViews.LIST );
+	},
+
 	onFilterChange: function( filter ) {
 		if ( filter !== this.state.filter ) {
 			analytics.mc.bumpStat( 'editor_media_actions', 'filter_' + ( filter || 'all' ) );
@@ -241,7 +253,7 @@ module.exports = React.createClass( {
 	},
 
 	editItem: function( item ) {
-		const { site, mediaLibrarySelectedItems } = this.props;
+		const { site, mediaLibrarySelectedItems, single } = this.props;
 		if ( ! site ) {
 			return;
 		}
@@ -249,7 +261,11 @@ module.exports = React.createClass( {
 		// Append item to set of selected items if not already selected.
 		let items = mediaLibrarySelectedItems;
 		if ( ! items.some( ( selected ) => selected.ID === item.ID ) ) {
-			items = items.concat( item );
+			if ( single ) {
+				items = [ item ];
+			} else {
+				items = items.concat( item );
+			}
 			MediaActions.setLibrarySelectedItems( site.ID, items );
 		}
 
@@ -272,6 +288,10 @@ module.exports = React.createClass( {
 		var isDisabled = this.isDisabled(),
 			selectedItems = this.props.mediaLibrarySelectedItems,
 			buttons;
+
+		if ( ModalViews.IMAGE_EDITOR === this.state.activeView ) {
+			return;
+		}
 
 		buttons = [
 			<MediaModalSecondaryActions
@@ -327,6 +347,7 @@ module.exports = React.createClass( {
 						enabledFilters={ this.props.enabledFilters }
 						search={ this.state.search }
 						onAddMedia={ this.onAddMedia }
+						onAddAndEditImage={ this.onAddAndEditImage }
 						onFilterChange={ this.onFilterChange }
 						onScaleChange={ this.onScaleChange }
 						onSearch={ this.onSearch }
@@ -344,7 +365,8 @@ module.exports = React.createClass( {
 						items={ this.props.mediaLibrarySelectedItems }
 						selectedIndex={ this.state.detailSelectedIndex }
 						onSelectedIndexChange={ this.setDetailSelectedIndex }
-						onChangeView={ this.setView } />
+						onChangeView={ this.setView }
+						onEdit={ this.setView.bind( this, ModalViews.IMAGE_EDITOR ) } />
 				);
 				break;
 
@@ -356,6 +378,16 @@ module.exports = React.createClass( {
 						settings={ this.state.gallerySettings }
 						onUpdateSettings={ ( gallerySettings ) => this.setState( { gallerySettings } ) }
 						onChangeView={ this.setView } />
+				);
+				break;
+
+			case ModalViews.IMAGE_EDITOR:
+				content = (
+					<MediaModalImageEditor
+						site={ this.props.site }
+						items={ this.props.mediaLibrarySelectedItems }
+						selectedIndex={ this.state.detailSelectedIndex }
+						onImageEditorClose={ this.onImageEditorClose } />
 				);
 				break;
 		}

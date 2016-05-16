@@ -17,12 +17,12 @@ describe( 'cart-buttons', function() {
 
 	beforeEach( function() {
 		this.CartButtons = require( '../cart-buttons.jsx' );
-		this.CartButtons.prototype.__reactAutoBindMap.translate = sinon.stub();
+		this.CartButtons.prototype.translate = sinon.stub();
 		this.recordStub = this.CartButtons.prototype.__reactAutoBindMap.recordEvent = sinon.stub();
 	} );
 
 	afterEach( function() {
-		delete this.CartButtons.prototype.__reactAutoBindMap.translate;
+		delete this.CartButtons.prototype.translate;
 		delete this.CartButtons.prototype.__reactAutoBindMap.recondEvent;
 	} );
 

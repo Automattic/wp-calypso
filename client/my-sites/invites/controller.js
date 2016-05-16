@@ -6,6 +6,7 @@ import React from 'react';
 import store from 'store';
 import page from 'page';
 import get from 'lodash/get';
+import debugModule from 'debug';
 
 /**
  * Internal Dependencies
@@ -27,6 +28,7 @@ import isEmpty from 'lodash/isEmpty';
  * Module variables
  */
 const user = _user();
+const debug = debugModule( 'calypso:invite-accept:controller' );
 
 function getLocale( parameters ) {
 	const paths = [ 'site_id', 'invitation_key', 'activation_key', 'auth_key', 'locale' ];
@@ -47,29 +49,36 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 }
 
 export function acceptInvite( context ) {
+	titleActions.setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) );
+
+	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+
 	const acceptedInvite = store.get( 'invite_accepted' );
 	if ( acceptedInvite ) {
+		debug( 'invite_accepted is set in localStorage' );
 		if ( user.get().email === acceptedInvite.sentTo ) {
+			debug( 'Setting email_verified in user object' );
 			user.set( { email_verified: true } );
 		}
 		store.remove( 'invite_accepted' );
 		const acceptInviteCallback = error => {
 			if ( error ) {
+				debug( 'Accept invite error: ' + JSON.stringify( error ) );
 				page( window.location.href );
 			} else if ( get( acceptedInvite, 'site.is_vip' ) ) {
+				debug( 'Accepted invite for VIP sites' );
 				window.location.href = getRedirectAfterAccept( acceptedInvite );
 			} else {
-				page( getRedirectAfterAccept( acceptedInvite ) );
+				const redirect = getRedirectAfterAccept( acceptedInvite );
+				debug( 'Accepted invite and redirecting to:  ' + redirect );
+				page( redirect );
 			}
-		}
+		};
+
 		acceptInviteAction( acceptedInvite, acceptInviteCallback )( context.store.dispatch );
 		return;
 	}
-
-	titleActions.setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) );
-
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
 	renderWithReduxStore(
 		React.createElement(
