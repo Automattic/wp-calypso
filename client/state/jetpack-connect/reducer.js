@@ -35,6 +35,8 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import analytics from 'lib/analytics';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 const defaultAuthorizeState = {
 	queryObject: {},
@@ -47,6 +49,11 @@ function buildNoProtocolUrlObj( url ) {
 	const noProtocolUrl = url.replace( /.*?:\/\//g, '' );
 	return { [ noProtocolUrl ]: ( new Date() ).getTime() };
 }
+
+const getCurrentUserId = ( state ) => {
+	const user = getCurrentUser( state );
+	return user ? user.ID : null;
+};
 
 export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
@@ -68,6 +75,23 @@ export function jetpackConnectSite( state = {}, action ) {
 			return Object.assign( {}, { url: action.url, isFetching: true, isFetched: false, isDismissed: false, data: {} } );
 		case JETPACK_CONNECT_CHECK_URL_RECEIVE:
 			if ( action.url === state.url ) {
+				let errorCode = null;
+				if ( ! action.data.exists ) {
+					errorCode = 'jpc_error_notexists';
+				}
+				if ( ! action.data.isWordPress ) {
+					errorCode = 'jpc_error_notwpsite';
+				}
+				if ( ! action.data.isWordPressDotCom ) {
+					errorCode = 'jpc_error_wpdotcomsite';
+				}
+				if ( errorCode ) {
+					analytics.tracks.recordEvent( errorCode, {
+						url: action.url,
+						user: getCurrentUserId( state )
+					} );
+				}
+
 				return Object.assign( {}, state, { isFetching: false, isFetched: true, data: action.data } );
 			}
 			return state;
@@ -78,6 +102,11 @@ export function jetpackConnectSite( state = {}, action ) {
 			return state;
 		case JETPACK_CONNECT_REDIRECT:
 			if ( action.url === state.url ) {
+				analytics.tracks.recordEvent( 'jpc_success_redirect', {
+					url: action.url,
+					type: action.redirectType,
+					user: getCurrentUserId( state )
+				} );
 				return Object.assign( {}, state, { isRedirecting: true } );
 			}
 			return state;

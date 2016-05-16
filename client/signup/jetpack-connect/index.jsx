@@ -23,6 +23,8 @@ import JetpackExampleConnect from './exampleComponents/jetpack-connect';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
 import LocaleSuggestions from 'signup/locale-suggestions';
+import analytics from 'lib/analytics';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
  * Constants
@@ -31,6 +33,17 @@ const MINIMUM_JETPACK_VERSION = '3.9.6';
 
 const JetpackConnectMain = React.createClass( {
 	displayName: 'JetpackConnectSiteURLStep',
+
+	componetDidMount() {
+		let from = 'direct';
+		if ( this.props.isInstall ) {
+			from = 'jpdotcom';
+		}
+		analytics.tracks.recordEvent( 'jpc_url_view', {
+			jpc_from: from,
+			user: this.props.userId
+		} );
+	},
 
 	getInitialState() {
 		return {
@@ -69,6 +82,10 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	onURLEnter() {
+		analytics.tracks.recordEvent( 'jpc_url_submit', {
+			jetpack_funnel: this.state.currentUrl,
+			user: this.props.userId
+		} );
 		this.props.checkUrl( this.state.currentUrl );
 	},
 
@@ -257,8 +274,10 @@ const JetpackConnectMain = React.createClass( {
 
 export default connect(
 	state => {
+		const user = getCurrentUser( state );
 		return {
-			jetpackConnectSite: state.jetpackConnect.jetpackConnectSite
+			jetpackConnectSite: state.jetpackConnect.jetpackConnectSite,
+			userId: user ? user.ID : null
 		};
 	},
 	dispatch => bindActionCreators( { checkUrl, dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
