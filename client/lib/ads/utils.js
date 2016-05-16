@@ -29,7 +29,7 @@ export function isWordadsInstantActivationEligible( site ) {
 	if (
 		config.isEnabled( 'manage/ads/wordads-instant' ) &&
 		( isBusiness( site.plan ) || isPremium( site.plan ) ) &&
-		userCan( 'manage_options', site ) &&
+		userCan( 'activate_wordads', site ) &&
 		! site.jetpack
 	) {
 		return true;
