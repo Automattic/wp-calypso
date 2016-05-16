@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import identity from 'lodash/identity';
 import isFunction from 'lodash/isFunction';
 import page from 'page';
 
@@ -23,7 +24,10 @@ export const CartButtons = React.createClass( {
 	},
 
 	getDefaultProps() {
-		return { showKeepSearching: false };
+		return {
+			showKeepSearching: false,
+			translate: identity
+		};
 	},
 
 	render() {
