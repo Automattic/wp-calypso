@@ -77,22 +77,23 @@ export default {
 				wpcom.undocumented().getSiteConnectInfo( url, 'isWordPressDotCom' ),
 			] ).then( ( data, error ) => {
 				_fetching[ url ] = null;
+				data = data ? Object.assign.apply( Object, data ) : null;
 				debug( 'jetpack-connect state checked for url', url, error, data );
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
 					url: url,
-					data: data ? Object.assign.apply( Object, data ) : null,
+					data: data,
 					error: error
 				} );
 
 				let errorCode = null;
 				let instructionsType = null;
-				if ( data && ! data.exists ) {
+				if ( data && data.isWordPressDotCom ) {
+					errorCode = 'jpc_error_wpdotcomsite';
+				} else if ( data && ! data.exists ) {
 					errorCode = 'jpc_error_notexists';
 				} else if ( data && ! data.isWordPress ) {
 					errorCode = 'jpc_error_notwpsite';
-				} else if ( data && ! data.isWordPressDotCom ) {
-					errorCode = 'jpc_error_wpdotcomsite';
 				} else if ( data && ! data.hasJetpack ) {
 					errorCode = 'jpc_instructions_view';
 					instructionsType = 'not_jetpack';
