@@ -78,39 +78,40 @@ const AdsMain = React.createClass( {
 
 	renderInstanActivationToggle: function( component ) {
 		return ( <div>
-			<Card>
+			<Card className="ads__activate-wrapper">
+				<div className="ads__activate-header">
+					<h2 className="ads__activate-header-title">{ this.translate( 'WordAds Disabled' ) }</h2>
+					<div className="ads__activate-header-toggle">
+						<FormToggle
+							checked={ this.props.site.options.wordads || ( this.props.requestStatus.requesting && this.props.requestStatus.error === null ) }
+							onChange={ this.props.requestApproval }
+						/>
+					</div>
+				</div>
 				{ this.props.requestStatus.error &&
-					<Notice status="is-error" onDismissClick={ this.props.dismissError }>
+					<Notice status="is-error ads__activate-notice" onDismissClick={ this.props.dismissError }>
 						{ this.props.requestStatus.error }
 					</Notice>
 				}
 				{ this.props.requestStatus.requesting &&
-					<Notice status="is-info" showDismiss={ false }>
+					<Notice status="is-info ads__activate-notice" showDismiss={ false }>
 						{ this.translate( 'Kindly requesting WordAds activation' ) }
 					</Notice>
 				}
-				<div className="ads__activate-header-description">
-					<h2 className="form-section-heading">{ this.translate( 'WordAds Disabled' ) }</h2>
-					<p>
-						{ this.translate(
-							'WordAds allows you to make money from advertising that runs on your site. ' +
-							'Because you have a WordPress.com Premium plan, you can skip the review process and activate WordAds instantly. ' +
-							'{{br/}}' +
-							'{{a}}Learn more about the program.{{/a}}', {
-								components: {
-									br: <br />,
-									a: <a href={ 'http://wordads.co' } />
-								}
-							} )
-						}
-					</p>
-				</div>
-				<div className="ads__activate-header-toggle">
-					<FormToggle
-						checked={ this.props.site.options.wordads || ( this.props.requestStatus.requesting && this.props.requestStatus.error === null ) }
-						onChange={ this.props.requestApproval }
-					/>
-				</div>
+				<p className="ads__activate-description">
+					{ this.translate(
+						'WordAds allows you to make money from advertising that runs on your site. ' +
+						'Because you have a WordPress.com Premium plan, you can skip the review process and activate WordAds instantly. ' +
+						'{{br/}}' +
+						'{{a}}Learn more about the program.{{/a}}', {
+							components: {
+								br: <br />,
+								a: <a href={ 'http://wordads.co' } />
+							}
+						} )
+					}
+				</p>
+
 			</Card>
 			<FeatureExample>
 				{ component }

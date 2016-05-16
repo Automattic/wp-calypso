@@ -122,12 +122,29 @@
 	}
 }
 
-.ads__activate-header-description {
-	float: left;
-	width: 85%;
-}
-.ads__activate-header-toggle {
-	float: right;
-	margin-top: 60px;
+.ads__activate-header-title {
+	font-size: 24px;
+	font-weight: 300;
 }
 
+.ads__activate-notice {
+	margin: 0;
+}
+
+.ads__activate-header-toggle {
+	margin: auto 0 auto 0;
+}
+.ads__activate-wrapper {
+	padding: 0;
+}
+.ads__activate-header {
+	padding: 24px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.ads__activate-description {
+	border-top: 1px solid #e9eff3;
+	padding: 24px;
+}
