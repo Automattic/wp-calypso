@@ -237,7 +237,10 @@ const FormGeneral = React.createClass( {
 						onChange={ this.handleRadio }
 						disabled={ this.state.fetchingSettings }
 						onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
-					<span>{ this.translate( 'Allow search engines to index this site' ) }</span>
+					<span>{ this.translate( 'Public' ) }</span>
+					<FormSettingExplanation className="inside-list is-indented">
+						{ this.translate( 'Your site is visible to everyone, and it may be indexed by search engines.' ) }
+					</FormSettingExplanation>
 				</FormLabel>
 
 				<FormLabel>
@@ -248,9 +251,9 @@ const FormGeneral = React.createClass( {
 						onChange={ this.handleRadio }
 						disabled={ this.state.fetchingSettings }
 						onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
-					<span>{ this.translate( 'Discourage search engines from indexing this site' ) }</span>
+					<span>{ this.translate( 'Hidden' ) }</span>
 					<FormSettingExplanation className="inside-list is-indented">
-						{ this.translate( 'Note: This option does not block access to your site — it is up to search engines to honor your request.' ) }
+						{ this.translate( 'Your site is visible to everyone, but we ask search engines to not index your site.' ) }
 					</FormSettingExplanation>
 				</FormLabel>
 
@@ -263,7 +266,10 @@ const FormGeneral = React.createClass( {
 							onChange={ this.handleRadio }
 							disabled={ this.state.fetchingSettings }
 							onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
-						<span>{ this.translate( 'I would like my site to be private, visible only to users I choose' ) }</span>
+						<span>{ this.translate( 'Private' ) }</span>
+						<FormSettingExplanation className="inside-list is-indented">
+							{ this.translate( 'Your site is only visible to you and users you approve.' ) }
+						</FormSettingExplanation>
 					</FormLabel>
 				}
 
@@ -453,7 +459,7 @@ const FormGeneral = React.createClass( {
 					</form>
 				</Card>
 
-				<SectionHeader label={ this.translate( 'Visibility' ) }>
+				<SectionHeader label={ this.translate( 'Privacy' ) }>
 					<Button
 						compact={ true }
 						onClick={ this.submitForm }
