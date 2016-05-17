@@ -20,19 +20,25 @@ export default React.createClass( {
 		if ( nextProps.step && 'invalid' === nextProps.step.status ) {
 			this.setState( { submitting: false } );
 		}
+
+		this.setSubHeaderText( nextProps );
 	},
 
 	componentWillMount() {
-		let subHeaderText = this.props.subHeaderText;
+		this.setSubHeaderText( this.props );
+	},
+
+	setSubHeaderText( props )  {
+		let subHeaderText = props.subHeaderText;
 
 		/**
 		 * Update the step sub-header if they only want to create an account, without a site.
 		 */
-		if ( 1 === signupUtils.getFlowSteps( this.props.flowName ).length ) {
+		if ( 1 === signupUtils.getFlowSteps( props.flowName ).length ) {
 			subHeaderText = this.translate( 'Welcome to the wonderful WordPress.com community' );
 		}
 
-		this.setState( Object.assign( {}, this.state, { subHeaderText: subHeaderText } ) );
+		this.setState( { subHeaderText: subHeaderText } );
 	},
 
 	save( form ) {
