@@ -141,7 +141,7 @@ const JetpackConnectMain = React.createClass( {
 	renderFooter() {
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href="http://jetpack.com">{ this.translate( 'Install Jetpack Manually' ) }</LoggedOutFormLinkItem>
+				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">{ this.translate( 'Install Jetpack Manually' ) }</LoggedOutFormLinkItem>
 				<LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
 			</LoggedOutFormLinks>
 		);
