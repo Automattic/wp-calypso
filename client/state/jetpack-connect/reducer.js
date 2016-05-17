@@ -48,11 +48,6 @@ function buildNoProtocolUrlObj( url ) {
 	return { [ noProtocolUrl ]: ( new Date() ).getTime() };
 }
 
-const getCurrentUserId = ( state ) => {
-	const user = getCurrentUser( state );
-	return user ? user.ID : null;
-};
-
 export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_STORE_SESSION:
