@@ -92,13 +92,14 @@ module.exports = {
 		allowAnyLocale: true
 	},
 	domainsWithPlansOnly: {
-		datestamp: '20200101', // was 20160427
+		datestamp: '20160517', // was 20160427
 		variations: {
-			original: 50,
-			plansOnly: 50
+			original: 0,
+			plansOnly: 100
 		},
 		defaultVariation: 'original',
-		allowExistingUsers: false
+		allowExistingUsers: false,
+		allowAnyLocale: true
 	},
 	planPricing: {
 		datestamp: '20160426',
