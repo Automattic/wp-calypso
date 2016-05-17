@@ -119,7 +119,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case SERIALIZE:
 		case DESERIALIZE:
-			return {};
+			return state;
 	}
 	return state;
 }
