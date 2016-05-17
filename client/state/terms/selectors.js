@@ -5,20 +5,49 @@ import get from 'lodash/get';
 import values from 'lodash/values';
 
 /**
- * Returns true if a network request is in-progress for the specified site ID,
- * taxonomy pair, or false otherwise.
+ * Internal dependencies
+ */
+import {
+	getSerializedTaxonomyTermsQuery
+} from './utils';
+
+/**
+ * Returns true if currently requesting terms for the taxonomies query, or false
+ * otherwise.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {String}  taxonomy Taxonomy slug
+ * @param  {Object}  query  Taxonomy query object
+ * @return {Boolean}        Whether terms are being requested
+ */
+export function isRequestingSiteTaxonomyTermsForQuery( state, siteId, taxonomy, query ) {
+	const serializedQuery = getSerializedTaxonomyTermsQuery( query, taxonomy, siteId );
+	return !! state.terms.queryRequests[ serializedQuery ];
+}
+
+/**
+ * Returns an array of terms for the taxonomies query, or null if no terms have been
+ * received.
  *
  * @param  {Object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
- * @param  {String}  taxonomy Taxonomy Slug
- * @return {Boolean}          Whether request is in-progress
+ * @param  {String}  taxonomy Taxonomy slug
+ * @param  {Object}  query    Post query object
+ * @return {?Array}           Posts for the post query
  */
-export function isRequestingSiteTaxonomyTerms( state, siteId, taxonomy ) {
-	if ( ! state.terms ) {
-		return false;
+export function getSiteTaxonomyTermsForQuery( state, siteId, taxonomy, query ) {
+	const serializedQuery = getSerializedTaxonomyTermsQuery( query, taxonomy, siteId );
+	if ( ! state.terms.queries[ serializedQuery ] ) {
+		return null;
 	}
 
-	return get( state.terms.requesting, [ siteId, taxonomy ], false );
+	const taxonomyTerms = getSiteTaxonomyTerms( state, siteId, taxonomy );
+	const matchingTerms = state.terms.queries[ serializedQuery ];
+
+	return taxonomyTerms.filter( ( term ) => {
+		return matchingTerms.indexOf( term.ID ) >= 0;
+	} );
 }
 
 /**

@@ -17,32 +17,65 @@ import {
 	SERIALIZE
 } from 'state/action-types';
 import { isValidStateWithSchema } from 'state/utils';
+
 import {
-	termsSchema
+	getSerializedTaxonomyTermsQuery
+} from './utils';
+
+import {
+	termsSchema,
+	queriesSchema
 } from './schema';
 
 /**
- * Returns the updated requests state after an action has been dispatched. The
- * state is a mapping of site ID to taxonomy to whether a request for that
- * taxonomy is in progress.
+ * Returns the updated terms query requesting state after an action has been
+ * dispatched. The state reflects a mapping of serialized query to whether a
+ * network request is in-progress for that query.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function requesting( state = {}, action ) {
+export function queryRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case TERMS_REQUEST:
 		case TERMS_REQUEST_SUCCESS:
 		case TERMS_REQUEST_FAILURE:
-			return merge( {}, state, {
-				[ action.siteId ]: {
-					[ action.taxonomy ]: TERMS_REQUEST === action.type
-				}
+			const serializedQuery = getSerializedTaxonomyTermsQuery( action.query, action.taxonomy, action.siteId );
+			return Object.assign( {}, state, {
+				[ serializedQuery ]: TERMS_REQUEST === action.type
 			} );
 
 		case SERIALIZE:
 		case DESERIALIZE:
+			return {};
+	}
+
+	return state;
+}
+
+/**
+ * Returns the updated term query state after an action has been dispatched.
+ * The state reflects a mapping of serialized query key to an array of term IDs
+ * for the query, if a query response was successfully received.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function queries( state = {}, action ) {
+	switch ( action.type ) {
+		case TERMS_REQUEST_SUCCESS:
+			const serializedQuery = getSerializedTaxonomyTermsQuery( action.query, action.taxonomy, action.siteId );
+			return Object.assign( {}, state, {
+				[ serializedQuery ]: action.terms.map( ( term ) => term.ID )
+			} );
+
+		case DESERIALIZE:
+			if ( isValidStateWithSchema( state, queriesSchema ) ) {
+				return state;
+			}
+
 			return {};
 	}
 
@@ -79,5 +112,6 @@ export function items( state = {}, action ) {
 
 export default combineReducers( {
 	items,
-	requesting
+	queryRequests,
+	queries
 } );

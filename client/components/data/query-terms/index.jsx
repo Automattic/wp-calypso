@@ -3,12 +3,13 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import shallowEqual from 'react-pure-render/shallowEqual';
 
 /**
  * Internal dependencies
  */
 import { requestSiteTerms } from 'state/terms/actions';
-import { isRequestingSiteTaxonomyTerms } from 'state/terms/selectors';
+import { isRequestingSiteTaxonomyTermsForQuery } from 'state/terms/selectors';
 
 class QueryTerms extends Component {
 	componentWillMount() {
@@ -17,7 +18,8 @@ class QueryTerms extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId &&
-				this.props.taxonomy === nextProps.taxonomy ) {
+				this.props.taxonomy === nextProps.taxonomy &&
+				shallowEqual( this.props.query, nextProps.query ) ) {
 			return;
 		}
 
@@ -49,10 +51,14 @@ QueryTerms.propTypes = {
 	requestSiteTerms: PropTypes.func.isRequired
 };
 
+QueryTerms.defaultProps = {
+	query: {}
+};
+
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requesting: isRequestingSiteTaxonomyTerms( state, ownProps.siteId, ownProps.taxonomy )
+			requesting: isRequestingSiteTaxonomyTermsForQuery( state, ownProps.siteId, ownProps.taxonomy, ownProps.query )
 		};
 	},
 	{
