@@ -63,7 +63,7 @@ module.exports = {
 		'react/no-did-mount-set-state': 1,
 		'react/no-did-update-set-state': 1,
 		'jsx-quotes': [ 1, 'prefer-double' ],
-		'react/jsx-no-bind': 1,
+		'react/jsx-no-bind': [ 1, { 'ignoreRefs': true } ],
 		'react/jsx-curly-spacing': [ 1, 'always' ],
 		// Allows function use before declaration
 		'no-use-before-define': [ 2, 'nofunc' ],
