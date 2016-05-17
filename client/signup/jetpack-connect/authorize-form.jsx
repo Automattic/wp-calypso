@@ -28,7 +28,6 @@ import i18n from 'lib/mixins/i18n';
 import Gridicon from 'components/gridicon';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
  * Constants
@@ -147,9 +146,7 @@ const LoggedInForm = React.createClass( {
 		const { autoAuthorize, queryObject } = this.props.jetpackConnectAuthorize;
 		debug( 'Checking for auto-auth on mount', autoAuthorize );
 		if ( autoAuthorize || this.props.calypsoStartedConnection || this.props.isSSO ) {
-			this.props.recordTracksEvent( 'jpc_auth_view', {
-				user: this.props.userId
-			} );
+			this.props.recordTracksEvent( 'jpc_auth_view' );
 			this.props.authorize( queryObject );
 		}
 	},
@@ -384,12 +381,10 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 export default connect(
 	state => {
-		const user = getCurrentUser( state );
 		return {
 			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
-			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
 			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
-			userId: user ? user.ID : null
+			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions
 		};
 	},
 	dispatch => bindActionCreators( { recordTracksEvent, authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )
