@@ -11,7 +11,8 @@ import forOwn from 'lodash/forOwn';
 import {
 	PREFERENCES_SET,
 	PREFERENCES_RECEIVE,
-	PREFERENCES_REMOVE
+	PREFERENCES_REMOVE,
+	PREFERENCES_FETCH
 } from 'state/action-types';
 import { USER_SETTING_KEY } from './actions';
 
@@ -33,6 +34,17 @@ function values( state = {}, action ) {
 	return state;
 }
 
+function isFetching( state = false, action ) {
+	switch ( action.type ) {
+		case PREFERENCES_RECEIVE:
+			return false;
+		case PREFERENCES_FETCH:
+			return true;
+	}
+	return state;
+}
+
 export default combineReducers( {
-	values
+	values,
+	isFetching
 } );

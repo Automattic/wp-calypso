@@ -5,13 +5,15 @@ import wpcom from 'lib/wp';
 import {
 	PREFERENCES_SET,
 	PREFERENCES_RECEIVE,
-	PREFERENCES_REMOVE
+	PREFERENCES_REMOVE,
+	PREFERENCES_FETCH
 } from 'state/action-types';
 
 export const USER_SETTING_KEY = 'calypso_preferences';
 
 export function fetch() {
 	return ( dispatch ) => {
+		dispatch( { type: PREFERENCES_FETCH } );
 		return wpcom.me().settings().get().then( ( data ) => {
 			dispatch( {
 				type: PREFERENCES_RECEIVE,
