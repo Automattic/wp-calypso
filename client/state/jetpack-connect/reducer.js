@@ -52,9 +52,6 @@ export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_STORE_SESSION:
 			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url ) );
-		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
-			const parsedUrl = urlModule.parse( action.ssoUrl );
-			return Object.assign( {}, state, buildNoProtocolUrlObj( parsedUrl.hostname ) );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return state;
@@ -150,9 +147,22 @@ export function jetpackSSO( state = {}, action ) {
 	return state;
 }
 
+export function jetpackSSOSessions( state = {}, action ) {
+	switch ( action.type ) {
+		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
+			const parsedUrl = urlModule.parse( action.ssoUrl );
+			return Object.assign( {}, state, buildNoProtocolUrlObj( parsedUrl.hostname ) );
+		case SERIALIZE:
+		case DESERIALIZE:
+			return state;
+	}
+	return state;
+}
+
 export default combineReducers( {
 	jetpackConnectSite,
 	jetpackConnectAuthorize,
 	jetpackSSO,
 	jetpackConnectSessions,
+	jetpackSSOSessions
 } );
