@@ -848,7 +848,7 @@ const PostEditor = React.createClass( {
 			this.refs.editor.setEditorContent( content );
 		}
 
-		this.props.setPreference( 'editor-mode', mode );
+		this.props.setEditorModePreference( mode );
 
 		// Defer actions until next available tick to avoid
 		// dispatching inside a dispatch which can happen if for example the
@@ -887,6 +887,7 @@ export default connect(
 			resetPostEdits,
 			setEditorPostId,
 			setPreference,
+			setEditorModePreference: setPreference.bind( null, 'editor-mode' ),
 		}, dispatch );
 	},
 	null,
