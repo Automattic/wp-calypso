@@ -125,12 +125,24 @@
 .free_plan.plan-actions__illustration,
 .jetpack_free.plan-actions__illustration {
 	background-image: url('/calypso/images/plans/plan-beginner.svg');
+
+	.is-current-plan & {
+		background-image: url('/calypso/images/plans/plan-beginner-active.svg');
+	}
 }
 .value_bundle.plan-actions__illustration,
 .jetpack_premium.plan-actions__illustration {
 	background-image: url('/calypso/images/plans/plan-premium.svg');
+
+	.is-current-plan & {
+		background-image: url('/calypso/images/plans/plan-premium-active.svg');
+	}
 }
 .business-bundle.plan-actions__illustration,
 .jetpack_business.plan-actions__illustration {
 	background-image: url('/calypso/images/plans/plan-business.svg');
+
+	.is-current-plan & {
+		background-image: url('/calypso/images/plans/plan-business-active.svg');
+	}
 }

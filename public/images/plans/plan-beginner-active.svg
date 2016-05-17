@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-243 335 124 124"
+	 style="enable-background:new -243 335 124 124;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#D3DEE6;}
+	.st1{fill:#78DCFA;}
+	.st2{fill:#FFFFFF;}
+	.st3{fill:#91AEC2;}
+	.st4{fill:#005082;}
+	.st5{fill:#0087BE;}
+	.st6{fill:#00AADC;}
+</style>
+<g id="Page-1" sketch:type="MSPage">
+	<g id="plan-beginner" sketch:type="MSLayerGroup">
+		<path id="Shape" sketch:type="MSShapeGroup" class="st0" d="M-159.9,339.2v62.2h-0.1c-5.8,0-10.4-4.7-10.4-10.4v0.1
+			c0,5.8-4.7,10.4-10.4,10.4h-0.2c-5.8,0-10.4-4.7-10.4-10.4v-0.1c0,5.8-4.8,10.4-10.6,10.4v-62.2c-23.7,8.6-40.7,31.3-40.7,58
+			c0,34.1,27.6,61.7,61.7,61.7s61.7-27.6,61.7-61.7C-119.3,370.5-136.2,347.8-159.9,339.2L-159.9,339.2z"/>
+		<path id="Oval" sketch:type="MSShapeGroup" class="st1" d="M-181,458.9c34.1,0,61.7-27.6,61.7-61.7s-27.6-61.7-61.7-61.7
+			s-61.7,27.6-61.7,61.7S-215.1,458.9-181,458.9z"/>
+		<path id="Shape_1_" sketch:type="MSShapeGroup" class="st2" d="M-160.1,401.4h0.1l0,0H-160.1z"/>
+		<rect id="Rectangle-path" x="-202" y="401.4" sketch:type="MSShapeGroup" class="st2" width="0" height="0.1">
+		</rect>
+		<path id="Shape_2_" sketch:type="MSShapeGroup" class="st3" d="M-181.1,401.4h0.3l0,0H-181.1z"/>
+		<path id="Shape_3_" sketch:type="MSShapeGroup" class="st2" d="M-159.9,401.4l-21.1-20.7l-21.1,20.7l21.1,37.8L-159.9,401.4z"/>
+		<path id="Shape_4_" sketch:type="MSShapeGroup" class="st4" d="M-181,418.9c-4,0-7.3,3.2-7.3,7.2l7.3,13.1l7.3-13.1
+			C-173.7,422.1-177,418.9-181,418.9L-181,418.9z"/>
+		<path id="Shape_5_" sketch:type="MSShapeGroup" class="st5" d="M-181,335.4c-3.6,0-7.1,0.3-10.6,0.9v54.5v0.1
+			c0,5.8,4.7,10.4,10.4,10.4h0.2c5.8,0,10.4-4.7,10.4-10.4v-0.1v-54.5C-173.9,335.8-177.4,335.4-181,335.4L-181,335.4z"/>
+		<path id="Shape_6_" sketch:type="MSShapeGroup" class="st6" d="M-191.6,390.9v-54.5c-3.6,0.6-7.1,1.6-10.6,2.8v62.2
+			C-196.3,401.4-191.6,396.7-191.6,390.9L-191.6,390.9z"/>
+		<path id="Shape_7_" sketch:type="MSShapeGroup" class="st4" d="M-170.4,390.9c0,5.8,4.7,10.4,10.4,10.4h0.1v-62.2
+			c-3.4-1.2-6.9-2.2-10.6-2.8V390.9L-170.4,390.9z"/>
+	</g>
+</g>
+</svg>
