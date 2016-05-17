@@ -21,6 +21,7 @@ import {
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import jetpackSSOForm from './sso';
+import i18nUtils from 'lib/i18n-utils';
 
 /**
  * Module variables
@@ -29,6 +30,15 @@ const debug = new Debug( 'calypso:jetpack-connect:controller' );
 const userModule = userFactory();
 
 export default {
+	redirectWithoutLocaleifLoggedIn( context, next ) {
+		if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
+			let urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
+			return page.redirect( urlWithoutLocale );
+		}
+
+		next();
+	},
+
 	saveQueryObject( context, next ) {
 		if ( ! isEmpty( context.query ) && context.query.redirect_uri ) {
 			debug( 'set initial query object', context.query );
@@ -61,7 +71,8 @@ export default {
 			React.createElement( JetpackConnect, {
 				path: context.path,
 				context: context,
-				locale: context.params.lang
+				locale: context.params.locale,
+				userModule: userModule
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
@@ -79,7 +90,7 @@ export default {
 		renderWithReduxStore(
 			React.createElement( jetpackConnectAuthorizeForm, {
 				path: context.path,
-				locale: context.params.lang,
+				locale: context.params.locale,
 				userModule: userModule
 			} ),
 			document.getElementById( 'primary' ),
