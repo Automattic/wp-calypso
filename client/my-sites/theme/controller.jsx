@@ -5,6 +5,7 @@ import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import omit from 'lodash/omit';
 import debugFactory from 'debug';
+import startsWith from 'lodash/startsWith';
 
 /**
  * Internal Dependencies
@@ -15,7 +16,7 @@ import i18n from 'lib/mixins/i18n';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getThemeDetails } from 'state/themes/theme-details/selectors';
 import ClientSideEffects from 'components/client-side-effects';
-import { receiveThemeDetails } from 'state/themes/actions';
+import { receiveThemeDetails, setBackPath } from 'state/themes/actions';
 import wpcom from 'lib/wp';
 import config from 'config';
 import { decodeEntities } from 'lib/formatting';
@@ -82,6 +83,10 @@ export function details( context, next ) {
 		title: decodeEntities( title ) + ' — WordPress.com', // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
 		isLoggedIn: !! user
 	};
+
+	if ( context.prevPath && startsWith( context.prevPath, '/design' ) ) {
+		context.store.dispatch( setBackPath( context.prevPath ) );
+	}
 
 	const ConnectedComponent = ( { themeSlug, contentSection, isLoggedIn } ) => (
 		<ThemeDetailsComponent id={ themeSlug } >

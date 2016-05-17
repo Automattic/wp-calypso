@@ -34,6 +34,7 @@ import QueryCurrentTheme from 'components/data/query-current-theme';
 import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import actionLabels from 'my-sites/themes/action-labels';
+import { getBackPath } from 'state/themes/themes-ui/selectors';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -55,6 +56,7 @@ const ThemeSheet = React.createClass( {
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
 		currentTheme: React.PropTypes.object,
+		backPath: React.PropTypes.string,
 	},
 
 	getDefaultProps() {
@@ -70,7 +72,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	onBackClick() {
-		page.back();
+		page( this.props.backPath );
 	},
 
 	isActive() {
@@ -144,12 +146,13 @@ const ThemeSheet = React.createClass( {
 		};
 
 		const { siteSlug, id } = this.props;
+		const sitePart = siteSlug ? `/${ siteSlug }` : '';
 
 		const nav = (
 			<NavTabs label="Details" >
 				{ this.getValidSections().map( ( section ) => (
 					<NavItem key={ section }
-						path={ `/theme/${ id }/${ section }/${ siteSlug }` }
+						path={ `/theme/${ id }/${ section }${ sitePart }` }
 						selected={ section === currentSection }>
 						{ filterStrings[ section ] }
 					</NavItem>
@@ -304,7 +307,8 @@ export default connect(
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const currentTheme = getCurrentTheme( state, selectedSite && selectedSite.ID );
-		return { selectedSite, siteSlug, currentTheme };
+		const backPath = getBackPath( state );
+		return { selectedSite, siteSlug, currentTheme, backPath };
 	},
 	{ signup, purchase, activate, clearActivated, customize }
 )( ThemeSheet );
