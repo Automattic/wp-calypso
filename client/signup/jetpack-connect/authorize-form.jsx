@@ -33,13 +33,9 @@ import Spinner from 'components/spinner';
 /**
  * Module variables
  */
-
 const STATS_PAGE = '/stats/insights/';
 const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + process.env.NODE_ENV;
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
-/**
- * Module variables
- */
 
 /***
  * Renders a header common to both the logged in and logged out forms
