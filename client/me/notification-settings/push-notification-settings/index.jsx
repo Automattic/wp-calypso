@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,31 +13,27 @@ import Button from 'components/button';
 import Dialog from 'components/dialog';
 import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
-import observe from 'lib/mixins/data-observe';
+import {
+	getStatus,
+	isApiReady,
+	isShowingUnblockInstructions,
+	isEnabled,
+} from 'state/push-notifications/selectors';
+import {
+	toggleEnabled,
+	toggleUnblockInstructions
+} from 'state/push-notifications/actions';
 
-export default React.createClass( {
+const PushNotificationSettings = React.createClass( {
 	displayName: 'PushNotificationSettings',
 
-	mixins: [ observe( 'pushNotifications' ) ],
-
 	propTypes: {
-		pushNotifications: React.PropTypes.object
-	},
-
-	getInitialState: function() {
-		return {
-			showDialog: false
-		};
+		toggleEnabled: React.PropTypes.func.isRequired,
+		toggleUnblockInstructions: React.PropTypes.func.isRequired
 	},
 
 	clickHandler: function() {
-		if ( 'subscribed' === this.props.pushNotifications.state ) {
-			this.props.pushNotifications.unsubscribe();
-		}
-
-		if ( 'unsubscribed' === this.props.pushNotifications.state ) {
-			this.props.pushNotifications.subscribe();
-		}
+		this.props.toggleEnabled();
 	},
 
 	getBlockedInstruction: function() {
@@ -44,7 +41,7 @@ export default React.createClass( {
 		const svgAlwaysAllow = '<svg width="206px" height="206px" viewBox="0 0 206 206" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><!-- Generator: Sketch 3.7.2 (28276) - http://www.bohemiancoding.com/sketch --><title>always-allow</title><desc>Created with Sketch.</desc><defs><circle id="path-1" cx="99" cy="99" r="99"></circle><mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="-4" y="-4" width="206" height="206"><rect x="-4" y="-4" width="206" height="206" fill="white"></rect><use xlink:href="#path-1" fill="black"></use></mask><circle id="path-3" cx="99" cy="99" r="99"></circle><rect id="path-5" x="0" y="0" width="392" height="290" rx="4"></rect><mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="-4" y="-4" width="400" height="298"><rect x="-4" y="-4" width="400" height="298" fill="white"></rect><use xlink:href="#path-5" fill="black"></use></mask><path d="M78.505814,31.6455696 L58.0031305,31.6455696 C56.3525752,31.6455696 55,32.9893356 55,34.6469549 L55,272.998615 C55,274.655708 56.3445473,276 58.0031305,276 L362.99687,276 C364.647425,276 366,274.656234 366,272.998615 L366,34.6469549 C366,32.9898616 364.655453,31.6455696 362.99687,31.6455696 L98.1944444,31.6455696 L88.3501292,22 L78.505814,31.6455696 Z" id="path-7"></path><filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-8"><feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology><feOffset dx="0" dy="4" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset><feGaussianBlur stdDeviation="8" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur><feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite><feColorMatrix values="0 0 0 0 0.180392157   0 0 0 0 0.266666667   0 0 0 0 0.325490196  0 0 0 0.3 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix></filter><mask id="mask-9" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="-1" y="-1" width="313" height="256"><rect x="54" y="21" width="313" height="256" fill="white"></rect><use xlink:href="#path-7" fill="black"></use></mask><rect id="path-10" x="0" y="0" width="153" height="55" rx="4"></rect><filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-11"><feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset><feGaussianBlur stdDeviation="7" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur><feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite><feColorMatrix values="0 0 0 0 0.180392157   0 0 0 0 0.266666667   0 0 0 0 0.325490196  0 0 0 0.2 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix></filter><mask id="mask-12" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="153" height="55" fill="white"><use xlink:href="#path-10"></use></mask></defs><g id="Enable-Notifications" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="always-allow"><g id="Group-14-Copy" transform="translate(4.000000, 4.000000)"><g id="Oval-2-Copy"><use fill="#F3F6F8" fill-rule="evenodd" xlink:href="#path-1"></use><use stroke="#C8D7E1" mask="url(#mask-2)" stroke-width="8" xlink:href="#path-1"></use></g><g id="Group-13"><mask id="mask-4" fill="white"><use xlink:href="#path-3"></use></mask><use id="Mask" fill="#F3F6F8" xlink:href="#path-3"></use><g mask="url(#mask-4)"><g transform="translate(-39.000000, -46.000000)"><g id="Rectangle-64" fill="none"><use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-5"></use><use stroke="#E9EFF3" mask="url(#mask-6)" stroke-width="8" xlink:href="#path-5"></use></g><g id="Combined-Shape" fill="none"><use fill="black" fill-opacity="1" filter="url(#filter-8)" xlink:href="#path-7"></use><use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-7"></use><use stroke="#C8D7E1" mask="url(#mask-9)" stroke-width="2" xlink:href="#path-7"></use></g><rect id="Rectangle-70" fill="#C8D7E1" fill-rule="evenodd" x="67" y="44" width="129" height="14"></rect><rect id="Rectangle-70-Copy-2" fill="#C8D7E1" fill-rule="evenodd" x="67" y="91" width="121" height="11"></rect><rect id="Rectangle-70-Copy-3" fill="#E9EFF3" fill-rule="evenodd" x="91" y="115" width="121" height="11"></rect><rect id="Rectangle-70-Copy-5" fill="#E9EFF3" fill-rule="evenodd" x="91" y="163" width="121" height="11"></rect><rect id="Rectangle-70-Copy-6" fill="#E9EFF3" fill-rule="evenodd" x="91" y="187" width="121" height="11"></rect><rect id="Rectangle-70-Copy" fill="#E9EFF3" fill-rule="evenodd" x="67" y="62" width="97" height="11"></rect><text id="Notifications:-Ask-b" fill="none" font-family="SFUIText-Regular, SF UI Text" font-size="10.442623" font-weight="normal"><tspan x="91" y="148" fill="#3D596D">Notifications: Ask by default</tspan></text><g id="Group-12" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(236.000000, 139.000000)"><polyline id="Shape" fill="#C8D7E1" points="0 2.86363636 3 0 6 2.86363636 5.46975 3.36978409 3 1.01229545 0.53025 3.36978409"></polyline><polyline id="Shape" fill="#C8D7E1" points="6 5.87546591 3 8.73910227 0 5.87546591 0.53025 5.36931818 3 7.72680682 5.46975 5.36931818"></polyline></g><polygon id="Path-24" fill="#C8D7E1" fill-rule="evenodd" points="67.8235294 139 80.1764706 139 81 139.8 81 147 80.1764706 147.8 73.5882353 147.8 70.2941176 151 70.2941176 147 67.8235294 147 67 146.2 67 139.8"></polygon><g id="Group-11" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(158.000000, 124.000000)"><g id="Rectangle-88"><use fill="black" fill-opacity="1" filter="url(#filter-11)" xlink:href="#path-10"></use><use stroke="#C8D7E1" mask="url(#mask-12)" stroke-width="2" fill="#F3F6F8" fill-rule="evenodd" xlink:href="#path-10"></use></g><text id="Always-allow-on-this" font-family="SFUIText-Regular, SF UI Text" font-size="9.56521739" font-weight="normal" fill="#3D596D"><tspan x="26.434555" y="20.1594203">Always allow on this site</tspan></text><rect id="Rectangle-89" fill="#C8D7E1" opacity="0.5" x="26.434555" y="32.6811594" width="98.5287958" height="11.1594203"></rect></g><polyline id="Shape" fill="#2E4453" fill-rule="evenodd" points="171.109251 144 168 140.675235 168.655506 139.974294 171.109251 142.598116 176.344494 137 177 137.700942"></polyline></g></g></g></g></g></g></svg>';
 
 		return (
-			<Dialog isVisible={ this.state.showDialog } className=".notification-settings-push-notification-settings__instruction-dialog" onClose={ this.onCloseDialog }>
+			<Dialog isVisible={ this.props.showDialog } className=".notification-settings-push-notification-settings__instruction-dialog" onClose={ this.props.toggleUnblockInstructions }>
 				<div className="notification-settings-push-notification-settings__instruction-content">
 					<div>
 						<div className="notification-settings-push-notification-settings__instruction-title">{ this.translate( 'Enable Browser Notifications' ) }</div>
@@ -66,20 +63,12 @@ export default React.createClass( {
 						</div>
 					</div>
 				</div>
-				<span tabIndex="0" className="notification-settings-push-notification-settings__instruction-dismiss" onClick={ this.onCloseDialog } >
+				<span tabIndex="0" className="notification-settings-push-notification-settings__instruction-dismiss" onClick={ this.props.toggleUnblockInstructions } >
 					<Gridicon icon="cross" size={ 24 } />
 					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
 				</span>
 			</Dialog>
 		);
-	},
-
-	onShowDialog: function() {
-		this.setState( { showDialog: true } );
-	},
-
-	onCloseDialog: function() {
-		this.setState( { showDialog: false } );
 	},
 
 	render: function() {
@@ -91,7 +80,25 @@ export default React.createClass( {
 			stateClass,
 			stateText;
 
-		switch ( this.props.pushNotifications.state ) {
+		if ( ! this.props.apiReady ) {
+			return null;
+		}
+
+		switch ( this.props.status ) {
+			case 'disabling':
+				buttonClass = { 'is-enable': true };
+				buttonDisabled = true;
+				buttonText = this.translate( 'Enable' );
+				stateClass = { 'is-disabled': true };
+				stateText = this.translate( 'Disabled' );
+				break;
+			case 'enabling':
+				buttonClass = { 'is-disable': true };
+				buttonDisabled = true;
+				buttonText = this.translate( 'Disable' );
+				stateClass = { 'is-enabled': true };
+				stateText = this.translate( 'Enabled' );
+				break;
 			case 'unsubscribed':
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = false;
@@ -120,14 +127,15 @@ export default React.createClass( {
 						<div>{ this.translate(
 							'{{instructionsButton}}View Instructions to Enable{{/instructionsButton}}', {
 								components: {
-									instructionsButton: <Button className={ 'is-link' } onClick={ this.onShowDialog } />
+									instructionsButton: <Button className={ 'is-link' } onClick={ this.props.toggleUnblockInstructions } />
 								} }
 						) }</div>
 						{ blockedInstruction }
 					</div>
 				} />;
 				break;
-			case 'unknown':
+
+			default:
 				return null;
 		}
 
@@ -148,3 +156,18 @@ export default React.createClass( {
 	);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		return {
+			apiReady: isApiReady( state ),
+			isEnabled: isEnabled( state ),
+			showDialog: isShowingUnblockInstructions( state ),
+			status: getStatus( state )
+		};
+	},
+	{
+		toggleEnabled,
+		toggleUnblockInstructions
+	}
+)( PushNotificationSettings );

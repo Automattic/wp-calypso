@@ -50,7 +50,7 @@ if ( config.isEnabled( 'support-user' ) ) {
 Layout = React.createClass( {
 	displayName: 'Layout',
 
-	mixins: [ SitesListNotices, observe( 'user', 'focus', 'nuxWelcome', 'pushNotifications', 'sites', 'translatorInvitation' ) ],
+	mixins: [ SitesListNotices, observe( 'user', 'focus', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
 
 	_sitesPoller: null,
 
@@ -103,15 +103,11 @@ Layout = React.createClass( {
 			return null;
 		}
 
-		if ( ! this.props.pushNotifications ) {
-			return null;
-		}
-
 		if ( ! this.props.user ) {
 			return null;
 		}
 
-		return <PushNotificationPrompt user={ this.props.user } section={ this.props.section } isLoading={ this.props.isLoading } pushNotifications={ this.props.pushNotifications } />;
+		return <PushNotificationPrompt user={ this.props.user } section={ this.props.section } isLoading={ this.props.isLoading } />;
 	},
 
 	renderMasterbar: function() {
