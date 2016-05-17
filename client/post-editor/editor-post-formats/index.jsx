@@ -108,7 +108,7 @@ const EditorPostFormats = React.createClass( {
 							onChange={ this.onChange } />
 						<span className="editor-post-formats__format-label">
 							<span className={ 'editor-post-formats__format-icon' } >
-								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 18 } />
+								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 20 } nonStandardSize />
 							</span>
 							{ postFormat.label }
 						</span>
