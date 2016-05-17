@@ -23,6 +23,7 @@ import JetpackExampleConnect from './exampleComponents/jetpack-connect';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
 import LocaleSuggestions from 'signup/locale-suggestions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Constants
@@ -31,6 +32,16 @@ const MINIMUM_JETPACK_VERSION = '3.9.6';
 
 const JetpackConnectMain = React.createClass( {
 	displayName: 'JetpackConnectSiteURLStep',
+
+	componentDidMount() {
+		let from = 'direct';
+		if ( this.props.isInstall ) {
+			from = 'jpdotcom';
+		}
+		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
+			jpc_from: from
+		} );
+	},
 
 	getInitialState() {
 		return {
@@ -69,14 +80,26 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	onURLEnter() {
+		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
+			jetpack_url: this.state.currentUrl
+		} );
 		this.props.checkUrl( this.state.currentUrl );
 	},
 
 	installJetpack() {
+		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
+			jetpack_funnel: this.state.currentUrl,
+			type: 'install_jetpack'
+		} );
+
 		this.props.goToPluginInstall( this.state.currentUrl );
 	},
 
 	activateJetpack() {
+		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
+			jetpack_funnel: this.state.currentUrl,
+			type: 'activate_jetpack'
+		} );
 		this.props.goToPluginActivation( this.state.currentUrl );
 	},
 
@@ -261,5 +284,5 @@ export default connect(
 			jetpackConnectSite: state.jetpackConnect.jetpackConnectSite
 		};
 	},
-	dispatch => bindActionCreators( { checkUrl, dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
+	dispatch => bindActionCreators( { recordTracksEvent, checkUrl, dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
 )( JetpackConnectMain );

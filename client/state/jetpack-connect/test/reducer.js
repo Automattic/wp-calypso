@@ -17,6 +17,7 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	SERIALIZE,
 } from 'state/action-types';
+
 import reducer, {
 	jetpackConnectAuthorize,
 	jetpackSSO,
