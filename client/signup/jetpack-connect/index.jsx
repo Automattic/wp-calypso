@@ -17,6 +17,8 @@ import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
 import { dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation, checkUrl } from 'state/jetpack-connect/actions';
+import { getSiteByUrl } from 'state/sites/selectors';
+import { requestSites } from 'state/sites/actions';
 import JetpackExampleInstall from './exampleComponents/jetpack-install';
 import JetpackExampleActivate from './exampleComponents/jetpack-activate';
 import JetpackExampleConnect from './exampleComponents/jetpack-connect';
@@ -41,6 +43,7 @@ const JetpackConnectMain = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: from
 		} );
+		this.props.requestSites();
 	},
 
 	getInitialState() {
@@ -83,7 +86,7 @@ const JetpackConnectMain = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl
 		} );
-		this.props.checkUrl( this.state.currentUrl );
+		this.props.checkUrl( this.state.currentUrl, !! this.props.getJetpackSiteByUrl( this.state.currentUrl ) );
 	},
 
 	installJetpack() {
@@ -155,6 +158,9 @@ const JetpackConnectMain = React.createClass( {
 		if ( ! this.checkProperty( 'isJetpackConnected' ) ) {
 			return 'notConnectedJetpack';
 		}
+		if ( this.checkProperty( 'userOwnsSite' ) ) {
+			return 'alreadyOwned';
+		}
 		if ( this.checkProperty( 'isJetpackConnected' ) ) {
 			return 'alreadyConnected';
 		}
@@ -175,7 +181,7 @@ const JetpackConnectMain = React.createClass( {
 		return (
 			<Card className="jetpack-connect__site-url-input-container">
 				{ ! this.isCurrentUrlFetching() && this.isCurrentUrlFetched() && ! this.props.jetpackConnectSite.isDismissed && status
-					? <JetpackConnectNotices noticeType={ status } onDismissClick={ this.dismissUrl } />
+					? <JetpackConnectNotices noticeType={ status } onDismissClick={ this.dismissUrl } url={ this.state.currentUrl } />
 					: null
 				}
 
@@ -280,9 +286,17 @@ const JetpackConnectMain = React.createClass( {
 
 export default connect(
 	state => {
+		const getJetpackSiteByUrl = ( url ) => {
+			const site = getSiteByUrl( state, url );
+			if ( site && ! site.jetpack ) {
+				return false;
+			}
+			return site;
+		};
 		return {
-			jetpackConnectSite: state.jetpackConnect.jetpackConnectSite
+			jetpackConnectSite: state.jetpackConnect.jetpackConnectSite,
+			getJetpackSiteByUrl
 		};
 	},
-	dispatch => bindActionCreators( { recordTracksEvent, checkUrl, dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
+	dispatch => bindActionCreators( { recordTracksEvent, checkUrl, dismissUrl, requestSites, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
 )( JetpackConnectMain );
