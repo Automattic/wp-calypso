@@ -43,7 +43,7 @@ const activateURL = '/wp-admin/plugins.php';
 const userModule = userFactory();
 const tracksEvent = ( dispatch, eventName, props ) => {
 	setTimeout( () => {
-		dispatch( recordTracksEvent( 'calypso_' + eventName, props ) );
+		dispatch( recordTracksEvent( eventName, props ) );
 	}, 1 );
 };
 export default {
@@ -89,16 +89,16 @@ export default {
 				let errorCode = null;
 				let instructionsType = null;
 				if ( data && data.isWordPressDotCom ) {
-					errorCode = 'jpc_error_wpdotcomsite';
+					errorCode = 'calypso_jpc_error_wpdotcomsite';
 				} else if ( data && ! data.exists ) {
-					errorCode = 'jpc_error_notexists';
+					errorCode = 'calypso_jpc_error_notexists';
 				} else if ( data && ! data.isWordPress ) {
-					errorCode = 'jpc_error_notwpsite';
+					errorCode = 'calypso_jpc_error_notwpsite';
 				} else if ( data && ! data.hasJetpack ) {
-					errorCode = 'jpc_instructions_view';
+					errorCode = 'calypso_jpc_instructions_view';
 					instructionsType = 'not_jetpack';
 				} else if ( data && ! data.isJetpackActive ) {
-					errorCode = 'jpc_instructions_view';
+					errorCode = 'calypso_jpc_instructions_view';
 					instructionsType = 'inactive_jetpack';
 				}
 
@@ -116,7 +116,7 @@ export default {
 						url: url
 					} );
 				} else {
-					tracksEvent( dispatch, 'jpc_error_other', {
+					tracksEvent( dispatch, 'calypso_jpc_error_other', {
 						url: url
 					} );
 				}
@@ -138,7 +138,7 @@ export default {
 				type: JETPACK_CONNECT_REDIRECT,
 				url: url
 			} );
-			tracksEvent( dispatch, 'jpc_success_redirect', {
+			tracksEvent( dispatch, 'calypso_jpc_success_redirect', {
 				url: url,
 				type: 'remote_auth'
 			} );
@@ -151,7 +151,7 @@ export default {
 				type: JETPACK_CONNECT_REDIRECT,
 				url: url
 			} );
-			tracksEvent( dispatch, 'jpc_success_redirect', {
+			tracksEvent( dispatch, 'calypso_jpc_success_redirect', {
 				url: url,
 				type: 'plugin_install'
 			} );
@@ -164,7 +164,7 @@ export default {
 				type: JETPACK_CONNECT_REDIRECT,
 				url: url
 			} );
-			tracksEvent( dispatch, 'jpc_success_redirect', {
+			tracksEvent( dispatch, 'calypso_jpc_success_redirect', {
 				url: url,
 				type: 'plugin_activation'
 			} );
@@ -181,7 +181,7 @@ export default {
 	},
 	createAccount( userData ) {
 		return ( dispatch ) => {
-			tracksEvent( dispatch, 'jetpack_connect_create_account', {} );
+			tracksEvent( dispatch, 'calypso_jpc_create_account', {} );
 
 			dispatch( {
 				type: JETPACK_CONNECT_CREATE_ACCOUNT,
@@ -191,9 +191,9 @@ export default {
 				userData,
 				( error, data ) => {
 					if ( error ) {
-						tracksEvent( dispatch, 'jetpack_connect_create_account_error', { error: error.code } );
+						tracksEvent( dispatch, 'calypso_jpc_create_account_error', { error: error.code } );
 					} else {
-						tracksEvent( dispatch, 'jetpack_connect_create_account_success', {} );
+						tracksEvent( dispatch, 'calypso_jpc_create_account_success', {} );
 					}
 					dispatch( {
 						type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
@@ -209,7 +209,7 @@ export default {
 		return ( dispatch ) => {
 			const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
 			debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
-			tracksEvent( dispatch, 'jetpack_connect_authorize' );
+			tracksEvent( dispatch, 'calypso_jpc_authorize' );
 			dispatch( {
 				type: JETPACK_CONNECT_AUTHORIZE,
 				queryObject: queryObject
@@ -220,7 +220,7 @@ export default {
 				return wpcom.undocumented().jetpackAuthorize( client_id, data.code, state, redirect_uri, secret );
 			} )
 			.then( ( data ) => {
-				tracksEvent( dispatch, 'jetpack_connect_authorize_success' );
+				tracksEvent( dispatch, 'calypso_jpc_authorize_success' );
 				debug( 'Jetpack authorize complete. Updating sites list.', data );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
@@ -245,7 +245,7 @@ export default {
 			} )
 			.catch( ( error ) => {
 				debug( 'Authorize error', error );
-				tracksEvent( dispatch, 'jetpack_connect_authorize_error', { error: error.code } );
+				tracksEvent( dispatch, 'calypso_jpc_authorize_error', { error: error.code } );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 					siteId: client_id,
