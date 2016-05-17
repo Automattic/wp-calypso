@@ -1,10 +1,10 @@
 
 /* !!!
-IF YOU ARE EDITING social-logo/index.jsx
-THEN YOU ARE EDITING A FILE THAT GETS OUTPUT FROM THE SOCIAL LOGO REPO!
-DO NOT EDIT THAT FILE! EDIT index-header.jsx and index-footer.jsx instead
-OR if you're looking to change now SVGs get output, you'll need to edit strings in the Gruntfile :)
-!!! */
+ IF YOU ARE EDITING social-logo/index.jsx
+ THEN YOU ARE EDITING A FILE THAT GETS OUTPUT FROM THE SOCIAL LOGO REPO!
+ DO NOT EDIT THAT FILE! EDIT index-header.jsx and index-footer.jsx instead
+ OR if you're looking to change now SVGs get output, you'll need to edit strings in the Gruntfile :)
+ !!! */
 
 /**
  * External dependencies
