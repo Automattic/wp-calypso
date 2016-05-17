@@ -1,19 +1,298 @@
+/* Gridicon Floaties */
+@keyframes twinkle {
+	0%, 100% {
+		opacity: 0.2;
+	}
+	50% {
+		opacity: 0.1;
+	}
+}
+
+@keyframes floating {
+	0% {
+		opacity: 0.2;
+		transform: scale( 0.8 );
+		filter: blur( 20px );
+	}
+	40% {
+		filter: blur( 0 );
+	}
+	70% {
+		opacity: 1;
+		transform: scale( 1 ) translateY( 50px ) translateX( 30px ) rotate( -15deg );
+		filter: blur( 0 );
+	}
+	100% {
+		opacity: 0.2;
+		transform: scale( 1 ) translateY( 0 ) translateX( 0 );
+		filter: blur( 20px );
+	}
+}
+
+.signup-processing-screen__floaties {
+	position: fixed;
+		top: 30px;
+		right: 0;
+		bottom: 0;
+	opacity: 0.2;
+	animation: twinkle 2s infinite linear;
+
+	@include breakpoint( ">660px" ) {
+		transform: scale( 1.3 );
+		left: -120px;
+	}
+	
+	@include breakpoint( "<660px" ) {
+		transform: scale(0.8);
+		left: 130px;
+		top: -120px;
+	}
+
+	@include breakpoint( ">960px" ) {
+		transform: scale( 1.8 );
+		top: 80px;
+	}
+
+	@include breakpoint( ">1040px" ) {
+		transform: scale( 2.2 );
+		top: 180px;
+	}
+
+	.gridicon {
+		fill: $gray;
+		position: absolute;
+		height: auto;
+		width: auto;
+		opacity: 0.2;
+		filter: blur( 20px );
+		animation: floating 8s infinite ease-in-out;
+	}
+	.gridicons-add {
+		top: 0px;
+		left: calc( 50% - 320px);
+		height: 150px;
+		animation-delay: -2s;
+	}
+	.gridicons-aside {
+		top: 150px;
+		left: calc( 50% + 310px);
+		height: 70px;
+		animation-delay: 5s;
+	}
+	.gridicons-attachment {
+		height: 60px;
+		top: 70px;
+		left: calc(50% + 220px);
+		animation-delay: 10s;
+	}
+	.gridicons-audio {
+		height: 80px;
+		top: 170px;
+		left: calc(50% - 220px );
+		transform: rotate( -30deg );
+		animation-delay: 8s;
+	}
+	.gridicons-bell {
+		height: 120px;
+		top: 10px;
+		left: calc( 50% + 290px);
+		animation-delay: 3s;
+	}
+	.gridicons-book {
+		top: 340px;
+		left: calc(50% - 300px);
+		height: 100px;
+		animation-delay: -2s;
+	}
+	.gridicons-camera {
+		top: 300px;
+		left: calc(50% + 200px );
+		height: 160px;
+		transform: rotate( -10deg );
+		animation-delay: 10s;
+	}
+	.gridicons-comment {
+		left: calc( 50% + 130px );
+		top: 167px;
+		height: 140px;
+		transform: rotate( 12deg );
+		animation-delay: 9s;
+	}
+	.gridicons-globe {
+		height: 100px;
+		top: 220px;
+		left: calc(50% - 330px );
+		animation-delay: 5s;
+	}
+	.gridicons-pencil {
+		height: 220px;
+		top: -110px;
+		left: calc(50% + 110px );
+		animation-delay: 8s;
+	}
+	.gridicons-phone {
+		height: 80px;
+		top: 130px;
+		left: calc(50% - 390px);
+		animation-delay: 7s;
+	}
+	.gridicons-reader {
+		height: 130px;
+		top: 360px;
+		left: calc(50% - 170px );
+		transform: rotate( 12deg );
+		animation-delay: 4s;
+	}
+	.gridicons-star {
+		height: 90px;
+		top: 380px;
+		left: calc(50% + 60px);
+		animation-delay: -3s;
+	}
+	.gridicons-video {
+		top: 245px;
+		left: calc(50% - 160px);
+		animation-delay: 5s;
+	}
+	.gridicons-align-image-right {
+		top: 280px;
+		left: calc(50% + 90px);
+		animation-delay: 2s;
+	}
+	.gridicons-bookmark {
+		top: 460px;
+		height: 110px;
+		left: calc(50% - 440px);
+		animation-delay: -2s;
+	}
+	.gridicons-briefcase {
+		top: 320px;
+		height: 80px;
+		left: calc(50% - 450px);
+		animation-delay: 7s;
+	}
+	.gridicons-calendar {
+		top: 460px;
+		left: calc(50% + 300px);
+		height: 80px;
+		animation-delay: 3s;
+	}
+	.gridicons-clipboard {
+		top: 240px;
+		left: calc(50% + 290px);
+		height: 50px;
+		animation-delay: -3s;
+	}
+	.gridicons-cloud-upload {
+		top: 180px;
+		left: calc(50% - 280px);
+		height: 40px;
+		animation-delay: 3s;
+	}
+	.gridicons-cog {
+		top: 110px;
+		left: calc(50% + 160px);
+		height: 40px;
+		animation-delay: 1s;
+	}
+	.gridicons-customize {
+		top: 240px;
+		height: 40px;
+		left: calc(50% - 400px);
+		animation-delay: 3s;
+	}
+	.gridicons-help {
+		top: 460px;
+		left: calc(50% + 160px );
+		height: 90px;
+		animation-delay: 2s;
+	}
+	.gridicons-link {
+		top: 60px;
+		left: calc(50% - 160px);
+		height: 50px;
+		transform: rotate(-45deg);
+		animation-delay: 9s;
+	}
+	.gridicons-lock {
+		top: 60px;
+		left: calc(50% - 400px);
+		height: 50px;
+		animation-delay: 5s;
+	}
+	.gridicons-pages {
+		top: 70px;
+		left: calc(50% + 70px);
+		height: 50px;
+		animation-delay: 4s;
+	}
+	.gridicons-share {
+		top: 280px;
+		left: calc(50% + 360px);
+		animation-delay: -2s;
+	}
+	.gridicons-stats {
+		top: 470px;
+		left: calc(50% - 270px);
+		height: 80px;
+		animation-delay: 1s;
+	}
+}
+
+.signup-processing__content {
+	position: relative;
+	z-index: 1;
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+/* WP.com Logo */
+.signup-process-screen__wpcom-logo {
+	height: 200px;
+	width: 200px;
+	display: block;
+	margin: 0 auto 40px auto;
+	border-radius: 100%;
+	box-shadow: 0 0 10px 10px $gray-light;
+	fill: lighten( $gray, 20 );
+	background: rgba( $gray-light, 0.8 );
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 48px;
+		height: 160px;
+		width: 160px;
+	}
+}
+
+.signup-process-screen__title {
+	margin: 0;
+	padding: 0 16px;
+	text-align: center;
+}
+
+/* Continue Button */
+.email-confirmation__button {
+	display: block;
+	padding: 10px 24px;
+	margin: 24px auto 48px auto;
+	animation: processing 1s infinite linear;
+}
+
+@keyframes processing {
+	0%, 100% {
+		opacity: 1;
+	}
+	60% {
+		opacity: 0.4;
+	}
+}
+
+
+/* Email Confirmation Message */
 .signup__email-confirmation {
 	max-width: 400px;
 	margin: 50px auto 0 auto;
 	position: relative;
-	animation: zoom 2s cubic-bezier(0.680, -0.550, 0.265, 1.550);
-}
-
-@keyframes zoom {
-	0%, 80% {
-		transform: scale( 0.95 ) translateY( 20px );
-		opacity: 0;
-	}
-	100% {
-		transform: scale( 1 ) translateY( 0 );
-		opacity: 1;
-	}
 }
 
 .email-confirmation__reminder {
@@ -55,22 +334,6 @@
 	//background: $white;
 	box-shadow: 0 0 0 1px lighten( $gray, 20 );
 	border-radius: 100%;
-}
-
-.email-confirmation__button {
-	display: block;
-	min-width: 240px;
-	margin: 24px auto 48px auto;
-	animation: processing 1s infinite linear;
-}
-
-@keyframes processing {
-	0%, 100% {
-		opacity: 1;
-	}
-	60% {
-		opacity: 0.4;
-	}
 }
 
 
