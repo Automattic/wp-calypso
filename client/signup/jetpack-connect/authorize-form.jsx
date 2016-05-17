@@ -385,8 +385,8 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 		return (
 			( user )
-				? <LoggedInForm { ...props } calypsoStartedConnection={ calypsoStartedConnection } isSSO={ this.isSSO() />
-				: <LoggedOutForm { ...props } calypsoStartedConnection={ calypsoStartedConnection } isSSO={ this.isSSO() />
+				? <LoggedInForm { ...props } calypsoStartedConnection={ calypsoStartedConnection } isSSO={ this.isSSO() } />
+				: <LoggedOutForm { ...props } calypsoStartedConnection={ calypsoStartedConnection } isSSO={ this.isSSO() } />
 		);
 	},
 	render() {
