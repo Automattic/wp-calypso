@@ -123,7 +123,7 @@ const LoggedInForm = React.createClass( {
 	componentWillMount() {
 		const { autoAuthorize, queryObject } = this.props.jetpackConnectAuthorize;
 		debug( 'Checking for auto-auth on mount', autoAuthorize );
-		if ( autoAuthorize || this.props.calypsoStartedConnection ) {
+		if ( autoAuthorize || this.props.calypsoStartedConnection || this.props.isSSO ) {
 			this.props.authorize( queryObject );
 		}
 	},
@@ -315,6 +315,16 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		return false;
 	},
 
+	isSSO() {
+		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
+		if ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] ) {
+			const currentTime = ( new Date() ).getTime();
+			return ( currentTime - this.props.jetpackSSOSessions[ site ] < JETPACK_CONNECT_TTL );
+		}
+
+		return false;
+	},
+
 	renderForm() {
 		const { userModule } = this.props;
 		let user = userModule.get();
@@ -323,8 +333,16 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		} );
 		return (
 			( user )
-				? <LoggedInForm { ...props } calypsoStartedConnection={ this.isCalypsoStartedConnection() } />
-				: <LoggedOutForm { ...props } calypsoStartedConnection={ this.isCalypsoStartedConnection() } />
+				? <LoggedInForm
+					{ ...props }
+					calypsoStartedConnection={ this.isCalypsoStartedConnection() }
+					isSSO={ this.isSSO() }
+					/>
+				: <LoggedOutForm
+					{ ...props }
+					calypsoStartedConnection={ this.isCalypsoStartedConnection() }
+					isSSO={ this.isSSO() }
+					/>
 		);
 	},
 	render() {
@@ -342,7 +360,8 @@ export default connect(
 	state => {
 		return {
 			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
-			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions
+			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
+			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions
 		};
 	},
 	dispatch => bindActionCreators( { authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )
