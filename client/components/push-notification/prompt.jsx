@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import store from 'store';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,6 +10,19 @@ import store from 'store';
 import Notice from 'components/notice';
 import Button from 'components/button';
 import observe from 'lib/mixins/data-observe';
+import {
+	dismissNotice,
+	toggleEnabled,
+} from 'state/push-notifications/actions';
+import {
+	getStatus,
+	isApiReady,
+	isAuthorizationLoaded,
+	isAuthorized,
+	isBlocked,
+	isEnabled,
+	isNoticeDismissed
+} from 'state/push-notifications/selectors';
 
 const SECTION_NAME_WHITELIST = [
 	'discover',
@@ -30,10 +43,10 @@ const SECTION_NAME_WHITELIST = [
 	'upgrades'
 ];
 
-export default React.createClass( {
+const PushNotificationPrompt = React.createClass( {
 	displayName: 'PushNotificationPrompt',
 
-	mixins: [ observe( 'pushNotifications', 'user' ) ],
+	mixins: [ observe( 'user' ) ],
 
 	propTypes: {
 		user: React.PropTypes.object,
@@ -41,31 +54,11 @@ export default React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ),
-		isLoading: React.PropTypes.bool,
-		pushNotifications: React.PropTypes.object
-	},
-
-	getInitialState: function() {
-		return {
-			dismissed: store.get( 'push-notification-notice-dismissed' ),
-			subscribed: false
-		};
-	},
-
-	subscribe: function() {
-		this.props.pushNotifications.subscribe( ( state ) => {
-			if ( 'subscribed' === state ) {
-				this.setState( { subscribed: true } );
-			}
-		} );
-	},
-
-	dismissNotice: function() {
-		store.set( 'push-notification-notice-dismissed', true );
-		this.setState( { dismissed: true } );
+		isLoading: React.PropTypes.bool
 	},
 
 	pushUnsubscribedNotice: function() {
+		const buttonDisabled = ( [ 'disabling', 'enabling', 'unknown' ].includes( this.props.status ) );
 		const noticeText = (
 			<div>
 				<p>
@@ -75,21 +68,29 @@ export default React.createClass( {
 					{ this.translate(
 						'{{enableButton}}Enable Browser Notifications{{/enableButton}}', {
 							components: {
-								enableButton: <Button className={ 'push-notification__prompt-enable' } onClick={ this.subscribe } />
+								enableButton: <Button className={ 'push-notification__prompt-enable' } disabled={ buttonDisabled } onClick={ this.props.toggleEnabled } />
 							} }
 					) }
 				</p>
 			</div>
 		);
 
-		return <Notice className="push-notification__notice" text={ noticeText } icon="bell" onDismissClick={ this.dismissNotice } />;
+		return <Notice className="push-notification__notice" text={ noticeText } icon="bell" onDismissClick={ this.props.dismissNotice } />;
 	},
 
 	render: function() {
-		const pushNotifications = this.props.pushNotifications,
-			user = this.props.user.get();
+		if (
+			! this.props.isAuthorizationLoaded ||
+			! this.props.isApiReady ||
+			this.props.isBlocked ||
+			this.props.isNoticeDismissed ||
+			( this.props.isEnabled && this.props.isAuthorized )
+		) {
+			return null;
+		}
+		const user = this.props.user.get();
 
-		if ( ! user || ! user.email_verified || this.state.dismissed || this.state.subscribed ) {
+		if ( ! user || ! user.email_verified ) {
 			return null;
 		}
 
@@ -97,15 +98,24 @@ export default React.createClass( {
 			return null;
 		}
 
-		switch ( pushNotifications.state ) {
-			case 'unknown':
-			case 'subscribed':
-			case 'denied':
-				return null;
-			case 'unsubscribed':
-				return this.pushUnsubscribedNotice();
-			default:
-				return null;
-		}
+		return this.pushUnsubscribedNotice();
 	}
 } );
+
+export default connect(
+	( state ) => {
+		return {
+			isApiReady: isApiReady( state ),
+			isAuthorizationLoaded: isAuthorizationLoaded( state ),
+			isAuthorized: isAuthorized( state ),
+			isBlocked: isBlocked( state ),
+			isEnabled: isEnabled( state ),
+			isNoticeDismissed: isNoticeDismissed( state ),
+			status: getStatus( state )
+		};
+	},
+	{
+		dismissNotice,
+		toggleEnabled
+	}
+)( PushNotificationPrompt );
