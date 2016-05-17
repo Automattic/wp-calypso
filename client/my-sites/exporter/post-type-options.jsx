@@ -12,18 +12,22 @@ import FormRadio from 'components/forms/form-radio';
 import Select from './select';
 import Label from 'components/forms/form-label';
 
-import { setPostType } from 'state/site-settings/exporter/actions';
+import { setPostType, setPostTypeFilters } from 'state/site-settings/exporter/actions';
 import {
 	getPostTypeOptions,
+	getPostTypeValues,
 	getSelectedPostType,
 } from 'state/site-settings/exporter/selectors';
 
 const mapStateToProps = ( state, ownProps ) => {
 	const siteId = state.ui.selectedSiteId;
 	const options = getPostTypeOptions( state, siteId, ownProps.postType );
+	const values = getPostTypeValues( state, siteId, ownProps.postType );
 
 	return {
+		siteId,
 		options,
+		values,
 
 		// Show placeholders when options are not available
 		shouldShowPlaceholders: ! options,
@@ -35,7 +39,8 @@ const mapStateToProps = ( state, ownProps ) => {
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
 	return {
-		onSelect: () => dispatch( setPostType( ownProps.postType ) )
+		onSelect: () => dispatch( setPostType( ownProps.postType ) ),
+		setPostTypeFilters: ( ...args ) => dispatch( setPostTypeFilters( ...args ) ),
 	};
 };
 
@@ -69,7 +74,12 @@ const PostTypeOptions = React.createClass( {
 	},
 
 	renderFields() {
-		const { options } = this.props;
+		const {
+			options,
+			siteId,
+			postType,
+			values,
+		} = this.props;
 
 		const Field = ( props ) => {
 			if ( ! props.options ) {
@@ -77,20 +87,26 @@ const PostTypeOptions = React.createClass( {
 				return <span/>;
 			}
 
+			const setFieldValue = ( e ) => {
+				this.props.setPostTypeFilters( siteId, postType, props.fieldName, e.target.value );
+			};
+
 			return <Select
+				onChange={ setFieldValue }
 				key={ props.defaultLabel }
 				defaultLabel={ props.defaultLabel }
 				options={ props.options }
+				value={ values[ props.fieldName ] }
 				disabled={ ! this.props.isEnabled } />;
 		};
 
 		return (
 			<div className="exporter__option-fieldset-fields">
-				<Field defaultLabel={ this.translate( 'Author…' ) } options={ options.authors } />
-				<Field defaultLabel={ this.translate( 'Status…' ) } options={ options.statuses } />
-				<Field defaultLabel={ this.translate( 'Start Date…' ) } options={ options.dates } />
-				<Field defaultLabel={ this.translate( 'End Date…' ) } options={ options.dates } />
-				<Field defaultLabel={ this.translate( 'Category…' ) } options={ options.categories } />
+				<Field defaultLabel={ this.translate( 'Author…' ) } fieldName="author" options={ options.authors } />
+				<Field defaultLabel={ this.translate( 'Status…' ) } fieldName="status" options={ options.statuses } />
+				<Field defaultLabel={ this.translate( 'Start Date…' ) } fieldName="start_date" options={ options.dates } />
+				<Field defaultLabel={ this.translate( 'End Date…' ) } fieldName="end_date" options={ options.dates } />
+				<Field defaultLabel={ this.translate( 'Category…' ) } fieldName="category" options={ options.categories } />
 			</div>
 		);
 	},

@@ -13,7 +13,8 @@ import {
 	EXPORT_START_REQUEST,
 	EXPORT_STARTED,
 	EXPORT_STATUS_FETCH,
-	SET_EXPORT_POST_TYPE,
+	EXPORT_POST_TYPE_SET,
+	EXPORT_POST_TYPE_FILTER_SET,
 } from 'state/action-types';
 
 /**
@@ -24,8 +25,18 @@ import {
  */
 export function setPostType( postType ) {
 	return {
-		type: SET_EXPORT_POST_TYPE,
+		type: EXPORT_POST_TYPE_SET,
 		postType
+	};
+}
+
+export function setPostTypeFilters( siteId, postType, fieldName, value ) {
+	return {
+		type: EXPORT_POST_TYPE_FILTER_SET,
+		siteId,
+		postType,
+		fieldName,
+		value,
 	};
 }
 
@@ -59,7 +70,7 @@ export function advancedSettingsFetch( siteId ) {
 			.getExportSettings( siteId )
 			.then( updateExportSettings )
 			.catch( fetchFail );
-	}
+	};
 }
 
 export function advancedSettingsReceive( siteId, advancedSettings ) {
@@ -104,7 +115,7 @@ export function startExport( siteId ) {
 			.startExport( siteId )
 			.then( success )
 			.catch( failure );
-	}
+	};
 }
 
 export function exportStarted( siteId ) {
@@ -123,24 +134,24 @@ export function exportStatusFetch( siteId ) {
 
 		const failure = ( error ) => {
 			dispatch( exportFailed( siteId, error ) );
-		}
+		};
 
 		const success = ( response = {} ) => {
 			switch ( response.status ) {
 				case 'finished':
-					return dispatch( exportComplete( siteId, response.$attachment_url ) )
+					return dispatch( exportComplete( siteId, response.$attachment_url ) );
 				case 'running':
 					return;
 			}
 
 			return failure( response );
-		}
+		};
 
 		return wpcom.undocumented()
 			.getExport( siteId, 0 )
 			.then( success )
 			.catch( failure );
-	}
+	};
 }
 
 export function exportFailed( siteId, error ) {
@@ -148,7 +159,7 @@ export function exportFailed( siteId, error ) {
 		type: EXPORT_FAILURE,
 		siteId,
 		error
-	}
+	};
 }
 
 export function exportComplete( siteId, downloadURL ) {
@@ -156,12 +167,12 @@ export function exportComplete( siteId, downloadURL ) {
 		type: EXPORT_COMPLETE,
 		siteId,
 		downloadURL
-	}
+	};
 }
 
 export function clearExport( siteId ) {
 	return {
 		type: EXPORT_CLEAR,
 		siteId
-	}
+	};
 }

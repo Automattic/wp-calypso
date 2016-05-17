@@ -9,7 +9,7 @@ export const getExportingState = ( state, siteId ) => {
 		return States.READY;
 	}
 	return exportingState[ siteId ];
-}
+};
 
 /**
  * Indicates whether an export activity is in progress.
@@ -41,4 +41,9 @@ export const getSelectedPostType = ( state ) => state.siteSettings.exporter.sele
 export const getPostTypeOptions = ( state, siteId, postType ) => {
 	const advancedSettings = getAdvancedSettings( state, siteId );
 	return advancedSettings ? advancedSettings[ postType ] : null;
-}
+};
+
+export const getPostTypeValues = ( state, siteId, postType ) => {
+	const site = state.siteSettings.exporter.selectedAdvancedSettings[ siteId ];
+	return site && site[ postType ] || {};
+};
