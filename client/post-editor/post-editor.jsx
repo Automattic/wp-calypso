@@ -36,7 +36,6 @@ const actions = require( 'lib/posts/actions' ),
 	layoutFocus = require( 'lib/layout-focus' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	DraftList = require( 'my-sites/drafts/draft-list' ),
-	PreferencesActions = require( 'lib/preferences/actions' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
 	utils = require( 'lib/posts/utils' ),
@@ -52,6 +51,9 @@ import { receivePost, editPost, resetPostEdits } from 'state/posts/actions';
 import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
+import { setPreference } from 'state/preferences/actions';
+import { getPreference } from 'state/preferences/selectors';
+import QueryPreferences from 'components/data/query-preferences';
 
 const messages = {
 	post: {
@@ -324,6 +326,7 @@ const PostEditor = React.createClass( {
 										/>
 									: null
 								}
+								<QueryPreferences/>
 								<SegmentedControl className="editor__switch-mode" compact={ true }>
 									<SegmentedControlItem
 										selected={ mode === 'tinymce' }
@@ -827,17 +830,14 @@ const PostEditor = React.createClass( {
 
 	getEditorMode: function() {
 		var editorMode = 'tinymce';
-		if ( this.props.preferences ) {
-			if ( this.props.preferences[ 'editor-mode' ] ) {
-				editorMode = this.props.preferences[ 'editor-mode' ];
-			}
+		if ( this.props.editorModePreference ) {
+			editorMode = this.props.editorModePreference;
 
 			if ( ! this.recordedDefaultEditorMode ) {
 				analytics.mc.bumpStat( 'calypso_default_editor_mode', editorMode );
 				this.recordedDefaultEditorMode = true;
 			}
 		}
-
 		return editorMode;
 	},
 
@@ -848,7 +848,7 @@ const PostEditor = React.createClass( {
 			this.refs.editor.setEditorContent( content );
 		}
 
-		PreferencesActions.set( 'editor-mode', mode );
+		this.props.setPreference( 'editor-mode', mode );
 
 		// Defer actions until next available tick to avoid
 		// dispatching inside a dispatch which can happen if for example the
@@ -873,7 +873,8 @@ export default connect(
 		return {
 			siteId: getSelectedSiteId( state ),
 			postId: getEditorPostId( state ),
-			showDrafts: isEditorDraftsVisible( state )
+			showDrafts: isEditorDraftsVisible( state ),
+			editorModePreference: getPreference( state, 'editor-mode' ),
 		};
 	},
 	( dispatch ) => {
@@ -884,7 +885,8 @@ export default connect(
 			receivePost,
 			editPost,
 			resetPostEdits,
-			setEditorPostId
+			setEditorPostId,
+			setPreference,
 		}, dispatch );
 	},
 	null,

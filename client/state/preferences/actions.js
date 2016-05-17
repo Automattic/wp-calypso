@@ -11,7 +11,7 @@ import {
 
 export const USER_SETTING_KEY = 'calypso_preferences';
 
-export function fetch() {
+export function fetchPreferences() {
 	return ( dispatch ) => {
 		dispatch( { type: PREFERENCES_FETCH } );
 		return wpcom.me().settings().get().then( ( data ) => {
@@ -34,7 +34,7 @@ const save = () => ( dispatch, getState ) => {
 	} );
 };
 
-export const set = ( key, value ) => ( dispatch, getState ) => {
+export const setPreference = ( key, value ) => ( dispatch, getState ) => {
 	dispatch( {
 		type: PREFERENCES_SET,
 		key,
@@ -43,7 +43,7 @@ export const set = ( key, value ) => ( dispatch, getState ) => {
 	save()( dispatch, getState );
 };
 
-export const remove = ( key ) => ( dispatch, getState ) => {
+export const removePreference = ( key ) => ( dispatch, getState ) => {
 	dispatch( {
 		type: PREFERENCES_REMOVE,
 		key
