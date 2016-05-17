@@ -137,8 +137,6 @@ MediaActions.add = function( siteId, files ) {
 				URL: fileUrl,
 				guid: fileUrl,
 				file: fileName,
-				extension: MediaUtils.getFileExtension( fileName ),
-				mime_type: MediaUtils.getMimeType( fileName ),
 				title: path.basename( fileName ),
 				// Size is not an API media property, though can be useful for
 				// validation purposes if known
