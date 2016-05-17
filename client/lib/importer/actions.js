@@ -9,7 +9,25 @@ const wpcom = require( 'lib/wp' ).undocumented();
 /**
  * Internal dependencies
  */
-import { actionTypes, appStates } from './constants';
+import {
+	IMPORTS_AUTHORS_SET_MAPPING,
+	IMPORTS_AUTHORS_START_MAPPING,
+	IMPORTS_FETCH,
+	IMPORTS_FETCH_FAILED,
+	IMPORTS_FETCH_COMPLETED,
+	IMPORTS_IMPORT_CANCEL,
+	IMPORTS_IMPORT_LOCK,
+	IMPORTS_IMPORT_RECEIVE,
+	IMPORTS_IMPORT_RESET,
+	IMPORTS_IMPORT_START,
+	IMPORTS_IMPORT_UNLOCK,
+	IMPORTS_START_IMPORTING,
+	IMPORTS_UPLOAD_FAILED,
+	IMPORTS_UPLOAD_COMPLETED,
+	IMPORTS_UPLOAD_SET_PROGRESS,
+	IMPORTS_UPLOAD_START,
+} from 'state/action-types';
+import { appStates } from './constants';
 import { fromApi, toApi } from './common';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
@@ -31,21 +49,21 @@ const expiryOrder = ( siteId, importerId ) => toApi( { importerId, importerState
 /** Creates a request object to start performing the actual import */
 const importOrder = importerStatus => toApi( Object.assign( {}, importerStatus, { importerState: appStates.IMPORTING } ) );
 
-const apiStart = () => Dispatcher.handleViewAction( { type: actionTypes.API_REQUEST } );
+const apiStart = () => Dispatcher.handleViewAction( { type: IMPORTS_FETCH } );
 const apiSuccess = data => {
-	Dispatcher.handleViewAction( { type: actionTypes.API_SUCCESS } );
+	Dispatcher.handleViewAction( { type: IMPORTS_FETCH_COMPLETED } );
 
 	return data;
 };
 const apiFailure = data => {
-	Dispatcher.handleViewAction( { type: actionTypes.API_FAILURE } );
+	Dispatcher.handleViewAction( { type: IMPORTS_FETCH_FAILED } );
 
 	return data;
 };
 const setImportLock = ( shouldEnableLock, importerId ) => {
 	const type = shouldEnableLock
-		? actionTypes.LOCK_IMPORT
-		: actionTypes.UNLOCK_IMPORT;
+		? IMPORTS_IMPORT_LOCK
+		: IMPORTS_IMPORT_UNLOCK;
 
 	Dispatcher.handleViewAction( { type, importerId } );
 };
@@ -56,7 +74,7 @@ const asArray = a => [].concat( a );
 
 function receiveImporterStatus( importerStatus ) {
 	Dispatcher.handleViewAction( {
-		type: actionTypes.RECEIVE_IMPORT_STATUS,
+		type: IMPORTS_IMPORT_RECEIVE,
 		importerStatus
 	} );
 }
@@ -65,7 +83,7 @@ export function cancelImport( siteId, importerId ) {
 	lockImport( importerId );
 
 	Dispatcher.handleViewAction( {
-		type: actionTypes.CANCEL_IMPORT,
+		type: IMPORTS_IMPORT_CANCEL,
 		importerId,
 		siteId
 	} );
@@ -87,7 +105,7 @@ export function cancelImport( siteId, importerId ) {
 
 export function failUpload( importerId, { message: error } ) {
 	Dispatcher.handleViewAction( {
-		type: actionTypes.FAIL_UPLOAD,
+		type: IMPORTS_UPLOAD_FAILED,
 		importerId,
 		error
 	} );
@@ -106,14 +124,14 @@ export function fetchState( siteId ) {
 
 export function finishUpload( importerId, importerStatus ) {
 	Dispatcher.handleViewAction( {
-		type: actionTypes.FINISH_UPLOAD,
+		type: IMPORTS_UPLOAD_COMPLETED,
 		importerId, importerStatus
 	} );
 }
 
 export function mapAuthor( importerId, sourceAuthor, targetAuthor ) {
 	Dispatcher.handleViewAction( {
-		type: actionTypes.MAP_AUTHORS,
+		type: IMPORTS_AUTHORS_SET_MAPPING,
 		importerId,
 		sourceAuthor,
 		targetAuthor
@@ -125,7 +143,7 @@ export function resetImport( siteId, importerId ) {
 	lockImport( importerId );
 
 	Dispatcher.handleViewAction( {
-		type: actionTypes.RESET_IMPORT,
+		type: IMPORTS_IMPORT_RESET,
 		importerId,
 		siteId
 	} );
@@ -139,26 +157,18 @@ export function resetImport( siteId, importerId ) {
 		.catch( apiFailure );
 }
 
-// Use when developing to force a new state into the store
-export function setState( newState ) {
-	Dispatcher.handleViewAction( {
-		type: actionTypes.DEV_SET_STATE,
-		newState
-	} );
-}
-
 export function startMappingAuthors( importerId ) {
 	lockImport( importerId );
 
 	Dispatcher.handleViewAction( {
-		type: actionTypes.START_MAPPING_AUTHORS,
+		type: IMPORTS_AUTHORS_START_MAPPING,
 		importerId
 	} );
 }
 
 export function setUploadProgress( importerId, data ) {
 	Dispatcher.handleViewAction( {
-		type: actionTypes.SET_UPLOAD_PROGRESS,
+		type: IMPORTS_UPLOAD_SET_PROGRESS,
 		uploadLoaded: data.uploadLoaded,
 		uploadTotal: data.uploadTotal,
 		importerId
@@ -170,7 +180,7 @@ export function startImport( siteId, importerType ) {
 	let importerId = `${ ID_GENERATOR_PREFIX }${ Math.round( Math.random() * 10000 ) }`;
 
 	Dispatcher.handleViewAction( {
-		type: actionTypes.START_IMPORT,
+		type: IMPORTS_IMPORT_START,
 		importerId,
 		importerType,
 		siteId
@@ -183,7 +193,7 @@ export function startImporting( importerStatus ) {
 	unlockImport( importerId );
 
 	Dispatcher.handleViewAction( {
-		type: actionTypes.START_IMPORTING,
+		type: IMPORTS_START_IMPORTING,
 		importerId
 	} );
 
@@ -213,7 +223,7 @@ export function startUpload( importerStatus, file ) {
 		.catch( partial( failUpload, importerId ) );
 
 	Dispatcher.handleViewAction( {
-		type: actionTypes.START_UPLOAD,
+		type: IMPORTS_UPLOAD_START,
 		filename: file.name,
 		importerId
 	} );
