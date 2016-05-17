@@ -46,6 +46,7 @@ const tracksEvent = ( dispatch, eventName, props ) => {
 		dispatch( recordTracksEvent( eventName, props ) );
 	}, 1 );
 };
+
 export default {
 	dismissUrl( url ) {
 		return ( dispatch ) => {
@@ -220,7 +221,10 @@ export default {
 				return wpcom.undocumented().jetpackAuthorize( client_id, data.code, state, redirect_uri, secret );
 			} )
 			.then( ( data ) => {
-				tracksEvent( dispatch, 'calypso_jpc_authorize_success' );
+				tracksEvent( dispatch, 'calypso_jpc_authorize_success', {
+					site: client_id
+				} );
+
 				debug( 'Jetpack authorize complete. Updating sites list.', data );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
@@ -233,6 +237,9 @@ export default {
 				return wpcom.me().sites( { site_visibility: 'all' } );
 			} )
 			.then( ( data ) => {
+				tracksEvent( dispatch, 'jpc_auth_sitesrefresh', {
+					site: client_id
+				} );
 				debug( 'Sites list updated!', data );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
@@ -244,8 +251,15 @@ export default {
 				} );
 			} )
 			.catch( ( error ) => {
+				tracksEvent( dispatch, 'jpc_auth_error', {
+					error: error,
+					site: client_id
+				} );
 				debug( 'Authorize error', error );
-				tracksEvent( dispatch, 'calypso_jpc_authorize_error', { error: error.code } );
+				tracksEvent( dispatch, 'calypso_jpc_authorize_error', {
+					error: error.code,
+					site: client_id
+				} );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 					siteId: client_id,
@@ -306,6 +320,7 @@ export default {
 			} );
 			wpcom.undocumented().activateManage( blogId, state, secret )
 			.then( ( data ) => {
+				tracksEvent( dispatch, 'jpc_activate_manage_success' );
 				debug( 'Manage activated!', data );
 				dispatch( {
 					type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
@@ -314,6 +329,7 @@ export default {
 				} );
 			} )
 			.catch( ( error ) => {
+				tracksEvent( dispatch, 'jpc_activate_manage_error', { error: error.code } );
 				debug( 'Manage activation error', error );
 				dispatch( {
 					type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
