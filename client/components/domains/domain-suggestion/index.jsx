@@ -32,7 +32,7 @@ var DomainSuggestion = React.createClass( {
 			buttonContent = abtest( 'domainsWithPlansOnly' ) === 'plansOnly' && ! this.props.price ? this.translate( 'Select' ) : this.props.buttonLabel;
 		}
 		return (
-			<button ref="button" className={ 'button ' + this.props.buttonClasses } onClick={ this.props.onButtonClick }>
+			<button ref="button" className={ 'button ' + this.props.buttonClasses } onClick={ this.props.onButtonClick } data-domain={ this.props.domain }>
 				{ buttonContent }
 			</button>
 		);
