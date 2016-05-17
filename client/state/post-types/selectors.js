@@ -37,3 +37,22 @@ export function getPostType( state, siteId, slug ) {
 
 	return postTypes[ slug ] || null;
 }
+
+/**
+ * Returns true if the site supported the post type, false if the site does not
+ * support the post type, or null if support cannot be determined (if site is
+ * not currently known).
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @param  {String}   slug   Post type slug
+ * @return {?Boolean}        Whether site supports post type
+ */
+export function isPostTypeSupported( state, siteId, slug ) {
+	const postTypes = getPostTypes( state, siteId );
+	if ( ! postTypes ) {
+		return null;
+	}
+
+	return !! postTypes[ slug ];
+}
