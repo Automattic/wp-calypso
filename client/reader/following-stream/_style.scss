@@ -110,7 +110,6 @@
 
 		.reader__placeholder-text,
 		.site-icon {
-			color: transparent;
 			background-color: lighten( $gray, 30% );
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
