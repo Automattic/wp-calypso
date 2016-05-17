@@ -91,6 +91,7 @@
 		"muse": true,
 		"network-connection": true,
 		"notifications2beta": true,
+		"oauth": true,
 		"olark": true,
 		"perfmon": false,
 		"persist-redux": true,
