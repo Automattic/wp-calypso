@@ -7,74 +7,118 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	isRequestingSiteTaxonomyTerms,
-	getSiteTaxonomyTerms
+	getSiteTaxonomyTerms,
+	getSiteTaxonomyTermsForQuery,
+	isRequestingSiteTaxonomyTermsForQuery
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#isRequestingSiteTaxonomyTerms()', () => {
-		it( 'should return false if state tree is empty', () => {
-			const isRequesting = isRequestingSiteTaxonomyTerms( {}, 2916284, 'category' );
-
-			expect( isRequesting ).to.be.false;
-		} );
-
-		it( 'should return false if no request has been made for site and taxonomy combo', () => {
-			const isRequesting = isRequestingSiteTaxonomyTerms( {
+	describe( 'isRequestingSiteTaxonomyTermsForQuery()', () => {
+		it( 'should return false if no request exists', () => {
+			const requesting = isRequestingSiteTaxonomyTermsForQuery( {
 				terms: {
-					requesting: {}
+					queryRequests: {}
 				}
-			}, 2916284, 'category' );
+			}, 2916284, 'categories', {} );
 
-			expect( isRequesting ).to.be.false;
+			expect( requesting ).to.be.false;
 		} );
 
-		it( 'should return false if no request has been made for site and taxonomy', () => {
-			const isRequesting = isRequestingSiteTaxonomyTerms( {
+		it( 'should return false if query is not requesting', () => {
+			const requesting = isRequestingSiteTaxonomyTermsForQuery( {
 				terms: {
-					requesting: {
-						2916284: {
-							'random-taxonomy': true
-						}
+					queryRequests: {
+						'2916284:categories:{"search":"ribs"}': false
 					}
 				}
-			}, 2916284, 'category' );
+			}, 2916284, 'categories', { search: 'ribs' } );
 
-			expect( isRequesting ).to.be.false;
+			expect( requesting ).to.be.false;
 		} );
 
-		it( 'should return false if request has finished for site taxonomy combo', () => {
-			const isRequesting = isRequestingSiteTaxonomyTerms( {
+		it( 'should return true if query is in progress', () => {
+			const requesting = isRequestingSiteTaxonomyTermsForQuery( {
 				terms: {
-					requesting: {
-						2916284: {
-							'random-taxonomy': false,
-							category: false
-						}
+					queryRequests: {
+						'2916284:categories:{"search":"ribs"}': true
 					}
 				}
-			}, 2916284, 'random-taxonomy' );
+			}, 2916284, 'categories', { search: 'ribs' } );
 
-			expect( isRequesting ).to.be.false;
-		} );
-
-		it( 'should return true if requesting for site taxonomy combo', () => {
-			const isRequesting = isRequestingSiteTaxonomyTerms( {
-				terms: {
-					requesting: {
-						2916284: {
-							'random-taxonomy': false,
-							category: true
-						}
-					}
-				}
-			}, 2916284, 'category' );
-
-			expect( isRequesting ).to.be.true;
+			expect( requesting ).to.be.true;
 		} );
 	} );
 
-	describe( '#getSiteTaxonomyTerms()', () => {
+	describe( 'getSiteTaxonomyTermsForQuery()', () => {
+		it( 'should return null if no matching query results exist', () => {
+			const requesting = getSiteTaxonomyTermsForQuery( {
+				terms: {
+					queries: {}
+				}
+			}, 2916284, 'categories', {} );
+
+			expect( requesting ).to.be.null;
+		} );
+
+		it( 'should return an empty array if no matches exist', () => {
+			const requesting = getSiteTaxonomyTermsForQuery( {
+				terms: {
+					queries: {
+						'2916284:categories:{"search":"ribs"}': []
+					},
+					items: {
+						2916284: {
+							categories: {
+								111: {
+									ID: 111,
+									name: 'Chicken and a biscuit'
+								},
+								112: {
+									ID: 112,
+									name: 'Ribs'
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'categories', { search: 'ribs' } );
+
+			expect( requesting ).to.eql( [] );
+		} );
+
+		it( 'should return matching terms', () => {
+			const requesting = getSiteTaxonomyTermsForQuery( {
+				terms: {
+					queries: {
+						'2916284:categories:{"search":"ribs"}': [ 111 ]
+					},
+					items: {
+						2916284: {
+							categories: {
+								111: {
+									ID: 111,
+									name: 'Chicken and a biscuit'
+								},
+								112: {
+									ID: 112,
+									name: 'Ribs'
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'categories', { search: 'ribs' } );
+
+			expect( requesting ).to.eql( [
+				{
+					ID: 111,
+					name: 'Chicken and a biscuit'
+				}
+			] );
+		} );
+	} );
+
+	describe( 'getSiteTaxonomyTerms()', () => {
 		it( 'should return null if no site exists', () => {
 			const terms = getSiteTaxonomyTerms( {}, 2916284, 'jetpack-portfolio' );
 

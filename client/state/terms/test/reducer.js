@@ -20,7 +20,8 @@ import {
 } from 'state/action-types';
 import reducer, {
 	items,
-	requesting
+	queries,
+	queryRequests,
 } from '../reducer';
 
 /**
@@ -46,160 +47,177 @@ describe( 'reducer', () => {
 
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'items',
-			'requesting'
+			'queries',
+			'queryRequests',
+			'items'
 		] );
 	} );
 
-	describe( '#requesting()', () => {
+	describe( 'queryRequests()', () => {
 		it( 'should default to an empty object', () => {
-			const state = requesting( undefined, {} );
+			const state = queryRequests( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track request fetching', () => {
-			const state = requesting( undefined, {
+		it( 'should track term query request fetching', () => {
+			const state = queryRequests( undefined, {
 				type: TERMS_REQUEST,
 				siteId: 2916284,
-				taxonomy: 'category'
+				query: { search: 'Ribs' },
+				taxonomy: 'categories'
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					category: true
-				}
+				'2916284:categories:{"search":"ribs"}': true
 			} );
 		} );
 
-		it( 'should accumulate requests for the same site', () => {
+		it( 'should accumulate queries', () => {
 			const original = deepFreeze( {
-				2916284: {
-					category: true
-				}
+				'2916284:categories:{"search":"ribs"}': true
 			} );
-			const state = requesting( original, {
+
+			const state = queryRequests( original, {
 				type: TERMS_REQUEST,
 				siteId: 2916284,
-				taxonomy: 'some-taxonomy'
+				query: { search: 'AND Chicken' },
+				taxonomy: 'categories'
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					category: true,
-					'some-taxonomy': true
-				}
+				'2916284:categories:{"search":"ribs"}': true,
+				'2916284:categories:{"search":"and chicken"}': true
 			} );
 		} );
 
-		it( 'should accumulate requests for distinct sites', () => {
-			const original = deepFreeze( {
-				2916284: {
-					category: true,
-					'some-taxonomy': true
-				}
-			} );
-			const state = requesting( original, {
-				type: TERMS_REQUEST,
-				siteId: 77203074,
-				taxonomy: 'some-taxonomy'
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					category: true,
-					'some-taxonomy': true
-				},
-				77203074: {
-					'some-taxonomy': true
-				}
-			} );
-		} );
-
-		it( 'should track request success', () => {
-			const original = deepFreeze( {
-				2916284: {
-					category: true,
-					'some-taxonomy': true
-				},
-				77203074: {
-					category: true
-				}
-			} );
-			const state = requesting( original, {
+		it( 'should track term query request success', () => {
+			const state = queryRequests( undefined, {
 				type: TERMS_REQUEST_SUCCESS,
 				siteId: 2916284,
-				taxonomy: 'category'
+				query: { search: 'Ribs' },
+				found: testTerms.length,
+				terms: testTerms,
+				taxonomy: 'categories'
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					category: false,
-					'some-taxonomy': true
-				},
-				77203074: {
-					category: true
-				}
+				'2916284:categories:{"search":"ribs"}': false
 			} );
 		} );
 
-		it( 'should track request failure', () => {
-			const original = deepFreeze( {
-				2916284: {
-					category: false,
-					'some-taxonomy': true
-				},
-				77203074: {
-					category: true
-				}
-			} );
-			const state = requesting( original, {
+		it( 'should track term query request failure', () => {
+			const state = queryRequests( undefined, {
 				type: TERMS_REQUEST_FAILURE,
 				siteId: 2916284,
-				taxonomy: 'some-taxonomy'
+				query: { search: 'Ribs' },
+				error: new Error(),
+				taxonomy: 'categories'
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					category: false,
-					'some-taxonomy': false
-				},
-				77203074: {
-					category: true
-				}
+				'2916284:categories:{"search":"ribs"}': false
 			} );
 		} );
 
 		it( 'should never persist state', () => {
 			const original = deepFreeze( {
-				2916284: {
-					category: false
-				},
-				77203074: {
-					category: true
-				}
+				'2916284:categories:{"search":"ribs"}': true
 			} );
-			const state = requesting( original, { type: SERIALIZE } );
+
+			const state = queryRequests( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should never load persisted state', () => {
 			const original = deepFreeze( {
-				2916284: {
-					category: false
-				},
-				77203074: {
-					category: true
-				}
+				'2916284:categories:{"search":"ribs"}': true
 			} );
-			const state = requesting( original, { type: DESERIALIZE } );
+
+			const state = queryRequests( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );
 	} );
 
-	describe( '#items()', () => {
+	describe( 'queries()', () => {
+		it( 'should default to an empty object', () => {
+			const state = queries( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should track term query request success', () => {
+			const state = queries( undefined, {
+				type: TERMS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Ribs' },
+				found: 2,
+				terms: testTerms,
+				taxonomy: 'categories'
+			} );
+
+			expect( state ).to.eql( {
+				'2916284:categories:{"search":"ribs"}': [ 111, 123 ]
+			} );
+		} );
+
+		it( 'should accumulate query request success', () => {
+			const original = deepFreeze( {
+				'2916284:categories:{"search":"ribs"}': [ 111 ]
+			} );
+			const state = queries( original, {
+				type: TERMS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'And Chicken' },
+				found: 1,
+				terms: [ { ID: 777, name: 'Noms' } ],
+				taxonomy: 'categories'
+			} );
+
+			expect( state ).to.eql( {
+				'2916284:categories:{"search":"ribs"}': [ 111 ],
+				'2916284:categories:{"search":"and chicken"}': [ 777 ]
+			} );
+		} );
+
+		it( 'should persist state', () => {
+			const original = deepFreeze( {
+				'2916284:categories:{"search":"ribs"}': [ 111 ]
+			} );
+
+			const state = queries( original, { type: SERIALIZE } );
+
+			expect( state ).to.eql( {
+				'2916284:categories:{"search":"ribs"}': [ 111 ]
+			} );
+		} );
+
+		it( 'should load persisted state', () => {
+			const original = deepFreeze( {
+				'2916284:categories:{"search":"ribs"}': [ 111 ]
+			} );
+
+			const state = queries( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {
+				'2916284:categories:{"search":"ribs"}': [ 111 ]
+			} );
+		} );
+
+		it( 'should not load invalid persisted state', () => {
+			const original = deepFreeze( {
+				2916284: [ 111 ]
+			} );
+
+			const state = queries( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {} );
+		} );
+	} );
+
+	describe( 'items()', () => {
 		it( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
