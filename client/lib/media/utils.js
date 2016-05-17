@@ -26,6 +26,7 @@ import Shortcode from 'lib/shortcode';
  * Module variables
  */
 const REGEXP_VIDEOPRESS_GUID = /^[a-z\d]+$/i;
+const REGEXP_EXTENSION = /\.([a-z]+)$/i;
 
 const MediaUtils = {
 	/**
@@ -92,11 +93,25 @@ const MediaUtils = {
 
 		const isUrl = 'string' === typeof media;
 		const isFileObject = 'File' in window && media instanceof window.File;
+		const isBlobObject = 'Blob' in window && media instanceof window.Blob;
+		const isBlobWrapper = media.fileName && media.fileContents;
+
 		if ( isUrl ) {
-			const filePath = url.parse( media ).pathname;
-			extension = path.extname( filePath ).slice( 1 );
-		} else if ( isFileObject ) {
-			extension = path.extname( media.name ).slice( 1 );
+			// Check if we have a plain filename
+			const match = REGEXP_EXTENSION.exec( media );
+			if ( match && match.length >= 2 ) {
+				extension = match[ 1 ];
+			} else {
+				const filePath = url.parse( media ).pathname;
+				extension = path.extname( filePath ).slice( 1 );
+			}
+		} else if ( isFileObject || isBlobObject || isBlobWrapper ) {
+			const fileContents = media.fileContents || media;
+			if ( fileContents.type ) {
+				extension = this.getFileExtensionFromMimeType( fileContents.type );
+			} else {
+				extension = this.getFileExtension( media.fileName || fileContents.name );
+			}
 		} else if ( media.extension ) {
 			extension = media.extension;
 		} else {
