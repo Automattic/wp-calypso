@@ -169,7 +169,7 @@ const WebPreview = React.createClass( {
 	shouldRenderIframe() {
 		// Don't preload iframe on mobile devices as bandwidth is typically more limited and
 		// the preview causes weird issues
-		return ! this._isMobile || this.props.showPreview;
+		return ! this._isMobile && this.props.showPreview;
 	},
 
 	setDeviceViewport( device = 'computer' ) {
