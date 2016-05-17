@@ -32,13 +32,12 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR
 } from 'state/action-types';
 import userFactory from 'lib/user';
-import config from 'config';
 
 /**
  *  Local variables;
  */
 let _fetching = {};
-const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + config( 'env' );
+const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + process.env.NODE_ENV;
 const installURL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const activateURL = '/wp-admin/plugins.php';
 const userModule = userFactory();
