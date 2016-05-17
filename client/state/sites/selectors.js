@@ -102,3 +102,19 @@ export function getSiteSlug( state, siteId ) {
 export function isRequestingSites( state ) {
 	return !! state.sites.fetchingItems.all;
 }
+
+/**
+ * Returns true if an url is already in the current site list
+ * @param {Object}	state Global state tree
+ * @return {Boolean}
+ */
+export function getSiteByUrl( state, url ) {
+	for ( let siteId in state.sites.items ) {
+		const siteSlug = getSiteSlug( state, siteId );
+		const urlSlug = url.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+		if ( siteSlug === urlSlug ) {
+			return state.sites.items[ siteId ];
+		}
+	}
+	return null;
+}
