@@ -103,6 +103,10 @@ const JetpackConnectMain = React.createClass( {
 		this.props.goToPluginActivation( this.state.currentUrl );
 	},
 
+	linkAdditionalUser() {
+		this.props.goToRemoteAuth( this.state.currentUrl );
+	},
+
 	checkProperty( propName ) {
 		return this.state.currentUrl &&
 			this.props.jetpackConnectSite &&
@@ -172,6 +176,7 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	renderSiteInput( status ) {
+		const onClickCallback = ( 'alreadyConnected' === status ) ? this.linkAdditionalUser : this.onURLEnter;
 		return (
 			<Card className="jetpack-connect__site-url-input-container">
 				{ ! this.isCurrentUrlFetching() && this.isCurrentUrlFetched() && ! this.props.jetpackConnectSite.isDismissed && status
@@ -181,9 +186,9 @@ const JetpackConnectMain = React.createClass( {
 
 				<SiteURLInput ref="siteUrlInputRef"
 					onChange={ this.onURLChange }
-					onClick={ this.onURLEnter }
+					onClick={ onClickCallback }
 					onDismissClick={ this.onDismissClick }
-					isError={ this.getStatus() }
+					status={ status }
 					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() } />
 			</Card>
 		);
