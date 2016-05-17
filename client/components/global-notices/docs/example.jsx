@@ -54,11 +54,11 @@ const GlobalNotices = React.createClass( {
 	},
 
 	onNoticeActionClick( noticeId ) {
-		this.infoNotice( noticeId + ' notice is clicked!' );
+		this.notices.info( noticeId + ' notice is clicked!' );
 	},
 
 	createNotice() {
-		let fn = this[ this.state.status + 'Notice' ];
+		let fn = this.notices[ this.state.status ];
 
 		if ( !fn ) {
 			fn = this.props.successNotice;

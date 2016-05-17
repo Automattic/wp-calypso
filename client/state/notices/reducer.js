@@ -48,7 +48,7 @@ export function items( state = [], action ) {
 	return state;
 }
 
-export function clicked( state = null, action ) {
+export function lastClicked( state = null, action ) {
 	switch ( action.type ) {
 		case CLICK_NOTICE:
 			return action.noticeId;
@@ -67,5 +67,5 @@ export function clicked( state = null, action ) {
 
 export default combineReducers( {
 	items,
-	clicked,
+	lastClicked,
 } );
