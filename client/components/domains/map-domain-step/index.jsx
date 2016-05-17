@@ -2,7 +2,9 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	page = require( 'page' );
+	endsWith = require( 'lodash/endsWith' ),
+	page = require( 'page' ),
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -13,7 +15,9 @@ var cartItems = require( 'lib/cart-values' ).cartItems,
 	DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),
 	DomainProductPrice = require( 'components/domains/domain-product-price' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+	upgradesActions = require( 'lib/upgrades/actions' ),
+	{ getCurrentUser } = require( 'state/current-user/selectors' );
+
 
 var MapDomainStep = React.createClass( {
 	mixins: [ analyticsMixin( 'mapDomain' ) ],
@@ -40,7 +44,7 @@ var MapDomainStep = React.createClass( {
 
 	notice: function() {
 		if ( this.state.notice ) {
-			return <Notice text={ this.state.notice } status="is-error" showDismiss={ false } />;
+			return <Notice text={ this.state.notice } status={ `is-${ this.state.noticeSeverity }` } showDismiss={ false } />;
 		}
 	},
 
@@ -151,7 +155,11 @@ var MapDomainStep = React.createClass( {
 		this.recordEvent( 'formSubmit', this.state.searchQuery );
 		this.setState( { suggestion: null, notice: null } );
 
-		canMap( domain, function( error ) {
+		if ( endsWith( domain, '.blog' ) ) {
+			return this.handleValidationErrorMessage( domain, { code: 'dotblog_domain' } );
+		}
+
+		canMap( domain, error => {
 			if ( error ) {
 				this.handleValidationErrorMessage( domain, error );
 				return;
@@ -162,16 +170,16 @@ var MapDomainStep = React.createClass( {
 			}
 
 			this.addMappingToCart( domain );
-		}.bind( this ) );
+		} );
 
-		canRegister( domain, function( error, result ) {
+		canRegister( domain, ( error, result ) => {
 			if ( error ) {
 				return;
 			}
 
 			result.domain_name = domain;
 			this.setState( { suggestion: result } );
-		}.bind( this ) );
+		} );
 	},
 
 	addMappingToCart: function( domain ) {
@@ -183,9 +191,23 @@ var MapDomainStep = React.createClass( {
 	},
 
 	handleValidationErrorMessage: function( domain, error ) {
-		let message;
+		let message,
+			severity = 'error';
 
 		switch ( error.code ) {
+			case 'dotblog_domain':
+				message = this.translate(
+					'.blog domains are not available yet. {{a}}Sign up{{/a}} to get updates on the launch.', {
+						components: {
+							a: <a
+								target="_blank"
+								href={ `https://dotblog.wordpress.com/
+								?email=${ this.props.currentUser && encodeURIComponent( this.props.currentUser.email ) || '' }
+								&domain=${ domain }` }/>
+						}
+				} );
+				severity = 'info';
+				break;
 			case 'not_mappable':
 				message = this.translate( 'Sorry but %(domain)s has not been registered yet therefore cannot be mapped.', {
 					args: { domain: domain }
@@ -235,9 +257,13 @@ var MapDomainStep = React.createClass( {
 		}
 
 		if ( message ) {
-			this.setState( { notice: message } );
+			this.setState( { notice: message, noticeSeverity: severity } );
 		}
 	}
 } );
 
-module.exports = MapDomainStep;
+module.exports = connect( state => {
+	return {
+		currentUser: getCurrentUser( state )
+	};
+} )( MapDomainStep );

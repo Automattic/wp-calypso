@@ -14,6 +14,8 @@ import noop from 'lodash/noop';
 import startsWith from 'lodash/startsWith';
 import page from 'page';
 import qs from 'qs';
+import endsWith from 'lodash/endsWith';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -30,6 +32,7 @@ import analyticsMixin from 'lib/mixins/analytics';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { isPlan } from 'lib/products-values';
 import cartItems from 'lib/cart-values/cart-items';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { abtest } from 'lib/abtest';
 
 const domains = wpcom.domains();
@@ -189,7 +192,7 @@ const RegisterDomainStep = React.createClass( {
 
 	notices: function() {
 		if ( this.state.notice ) {
-			return <Notice text={ this.state.notice } status={ 'is-error' } showDismiss={ false } />;
+			return <Notice text={ this.state.notice } status={ `is-${ this.state.noticeSeverity }` } showDismiss={ false } />;
 		}
 	},
 
@@ -274,6 +277,11 @@ const RegisterDomainStep = React.createClass( {
 		async.parallel(
 			[
 				callback => {
+					if ( endsWith( domain, '.blog' ) ) {
+						let error = { code: 'dotblog_domain' };
+						this.showValidationErrorMessage( domain, error );
+						return callback();
+					}
 					if ( ! domain.match( /.{3,}\..{2,}/ ) ) {
 						return callback();
 					}
@@ -483,9 +491,25 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	showValidationErrorMessage: function( domain, error ) {
-		var message;
+		var message,
+			severity = 'error';
 
 		switch ( error.code ) {
+			case 'dotblog_domain':
+				message = this.translate(
+					'.blog domains are not available yet. {{a}}Sign up{{/a}} to get updates on the launch.', {
+						components: {
+							a: <a
+								target="_blank"
+								href={ `https://dotblog.wordpress.com/
+									?email=${ this.props.currentUser && encodeURIComponent( this.props.currentUser.email ) || '' }
+									&domain=${ domain }`
+									}/>
+						}
+					}
+				);
+				severity = 'info';
+				break;
 			case 'not_registrable':
 				if ( domain.indexOf( '.' ) ) {
 					message = this.translate( 'Sorry but %(domain)s cannot be registered on WordPress.com.', {
@@ -539,9 +563,13 @@ const RegisterDomainStep = React.createClass( {
 		}
 
 		if ( message ) {
-			this.setState( { notice: message } );
+			this.setState( { notice: message, noticeSeverity: severity } );
 		}
 	}
 } );
 
-module.exports = RegisterDomainStep;
+module.exports = connect( state => {
+	return {
+		currentUser: getCurrentUser( state )
+	};
+} )( RegisterDomainStep );
