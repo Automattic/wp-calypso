@@ -14,7 +14,7 @@ import Notifications from './notifications';
 import Gravatar from 'components/gravatar';
 import layoutFocus from 'lib/layout-focus';
 import config from 'config';
-import { preload } from 'sections-preload';
+import { preload } from 'sections/preload';
 import ResumeEditing from 'my-sites/resume-editing';
 
 export default React.createClass( {

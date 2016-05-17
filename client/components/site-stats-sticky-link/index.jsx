@@ -4,7 +4,7 @@ var React = require( 'react' );
 
 // Internal dependencies
 var siteStatsStickyTabStore = require( 'lib/site-stats-sticky-tab/store' );
-var sections = require( 'sections-preload' );
+var sections = require( 'sections/preload' );
 
 var SiteStatsStickyLink = React.createClass( {
 

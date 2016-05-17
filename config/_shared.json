@@ -1,3 +1,14 @@
 {
-	"discover_blog_id": 53424024
+	"discover_blog_id": 53424024,
+	"sections": [
+		"auth",
+		"devdocs",
+		"mailing-lists",
+		"me",
+		"my-sites",
+		"post-editor",
+		"reader",
+		"signup",
+		"vip"
+	]
 }

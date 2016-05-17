@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { isExternal } from 'lib/url';
-import { preload } from 'sections-preload';
+import { preload } from 'sections/preload';
 
 export default React.createClass( {
 	displayName: 'SidebarButton',

@@ -14,7 +14,7 @@ function getSectionsModule( sections ) {
 			"\tLoadingError = require( 'layout/error' ),",
 			"\tclasses = require( 'component-classes' ),",
 			"\tcontroller = require( 'controller' ),",
-			"\tpreloadHub = require( 'sections-preload' ).hub;",
+			"\tpreloadHub = require( 'sections/preload' ).hub;",
 			'\n',
 			'var _loadedSections = {};\n'
 		].join( '\n' );
