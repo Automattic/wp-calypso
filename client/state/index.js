@@ -11,6 +11,7 @@ import application from './application/reducer';
 import comments from './comments/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
+import domains from './domains/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import notices from './notices/reducer';
@@ -38,6 +39,7 @@ export const reducer = combineReducers( {
 	comments,
 	currentUser,
 	documentHead,
+	domains,
 	googleAppsUsers,
 	jetpackConnect,
 	notices,
