@@ -33,13 +33,19 @@ export const termsSchema = {
 export const queriesSchema = {
 	type: 'object',
 	patternProperties: {
-		// Queries are JSON strings, prepended by a site ID and taxonomy slug
-		'^(\\d+:)([A-Za-z0-9-_]+:)\\{[^\\}]*\\}$': {
-			type: 'array',
-			items: {
-				type: 'number'
-			}
-		}
+		'^\\d+$': {
+			type: 'object',
+			patternProperties: {
+				// Queries are JSON strings, prepended by a site ID and taxonomy slug
+				'^([A-Za-z0-9-_]+:)\\{[^\\}]*\\}$': {
+					type: 'array',
+					items: {
+						type: 'number'
+					}
+				}
+			},
+			additionalProperties: false
+		},
 	},
 	additionalProperties: false
 };

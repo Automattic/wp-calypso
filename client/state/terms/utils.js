@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import omit from 'lodash/omit';
 import omitBy from 'lodash/omitBy';
 
 /**
@@ -26,12 +25,11 @@ export function getNormalizedTermsQuery( query ) {
  *
  * @param  {Object} query    Terms query
  * @param  {String} taxonomy Taxonomy slug
- * @param  {Number} siteId   Site ID
  * @return {String}          Serialized terms query
  */
-export function getSerializedTermsQuery( query = {}, taxonomy, siteId ) {
+export function getSerializedTermsQuery( query = {}, taxonomy ) {
 	const normalizedQuery = getNormalizedTermsQuery( query );
 	const serializedQuery = JSON.stringify( normalizedQuery ).toLocaleLowerCase();
 
-	return [ siteId, taxonomy, serializedQuery ].join( ':' );
+	return [ taxonomy, serializedQuery ].join( ':' );
 }
