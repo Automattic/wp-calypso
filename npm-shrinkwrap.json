@@ -3183,16 +3183,16 @@
       "version": "1.0.0"
     },
     "rtlcss": {
-      "version": "1.6.1",
+      "version": "2.0.5",
       "dependencies": {
         "minimist": {
           "version": "0.0.8"
         },
         "mkdirp": {
-          "version": "0.5.0"
+          "version": "0.5.1"
         },
         "postcss": {
-          "version": "4.1.16"
+          "version": "5.0.21"
         },
         "source-map": {
           "version": "0.4.4"
