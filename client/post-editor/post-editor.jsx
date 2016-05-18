@@ -332,7 +332,6 @@ const PostEditor = React.createClass( {
 								<EditorTitle
 									isNew={ this.state.isNew }
 									post={ this.state.post }
-									site={ site }
 									onChange={ this.debouncedAutosave }
 									tabIndex={ 1 } />
 								{ this.state.post && isPage && site
