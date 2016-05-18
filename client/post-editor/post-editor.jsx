@@ -571,7 +571,7 @@ const PostEditor = React.createClass( {
 		actions.edit( edits );
 
 		// Make sure that after TinyMCE processing that the post is still dirty
-		if ( ! PostEditStore.isDirty() || ! PostEditStore.hasContent( [ 'excerpt', 'content' ] ) || ! this.state.post ) {
+		if ( ! PostEditStore.isDirty() || ! PostEditStore.hasContent() || ! this.state.post ) {
 			return;
 		}
 
