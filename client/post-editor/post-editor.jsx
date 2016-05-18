@@ -8,6 +8,7 @@ const ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	debounce = require( 'lodash/debounce' ),
 	throttle = require( 'lodash/throttle' );
+import merge from 'lodash/merge';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -47,6 +48,7 @@ import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-d
 import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';
 import { receivePost, editPost, resetPostEdits } from 'state/posts/actions';
+import { getPostEdits, isEditedPostDirty, isEditedPostContentEmpty } from 'state/posts/selectors';
 import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
@@ -167,6 +169,7 @@ const messages = {
 
 const PostEditor = React.createClass( {
 	propTypes: {
+		siteId: React.PropTypes.number,
 		preferences: React.PropTypes.object,
 		setEditorModePreference: React.PropTypes.func,
 		editorModePreference: React.PropTypes.string,
@@ -227,6 +230,12 @@ const PostEditor = React.createClass( {
 		const { isNew, savedPost } = nextState;
 		if ( ! isNew && savedPost && savedPost !== this.state.savedPost ) {
 			nextProps.receivePost( savedPost );
+		}
+
+		if ( nextState.isDirty || nextProps.dirty ) {
+			this.markChanged();
+		} else {
+			this.markSaved();
 		}
 	},
 
@@ -407,9 +416,9 @@ const PostEditor = React.createClass( {
 								savedPost={ this.state.savedPost }
 								post={ this.state.post }
 								isNew={ this.state.isNew }
-								isDirty={ this.state.isDirty }
+								isDirty={ this.state.isDirty || this.props.dirty }
 								isSaveBlocked={ this.isSaveBlocked() }
-								hasContent={ this.state.hasContent }
+								hasContent={ this.state.hasContent || ! this.props.postContentEmpty }
 								isSaving={ this.state.isSaving }
 								isPublishing={ this.state.isPublishing }
 								onSave={ this.onSave }
@@ -528,11 +537,6 @@ const PostEditor = React.createClass( {
 				}
 			} );
 		}
-		if ( PostEditStore.isDirty() ) {
-			this.markChanged();
-		} else {
-			this.markSaved();
-		}
 	},
 
 	isSaveBlocked() {
@@ -569,7 +573,10 @@ const PostEditor = React.createClass( {
 
 		this.saveRawContent();
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.edit( { content: this.refs.editor.getContent() } );
+		const edits = merge( {}, this.props.edits, {
+			content: this.refs.editor.getContent()
+		} );
+		actions.edit( edits );
 
 		// Make sure that after TinyMCE processing that the post is still dirty
 		if ( ! PostEditStore.isDirty() || ! PostEditStore.hasContent() || ! this.state.post ) {
@@ -650,8 +657,7 @@ const PostEditor = React.createClass( {
 	},
 
 	onSave: function( status, callback ) {
-		var edits = {};
-
+		const edits = merge( {}, this.props.edits );
 		if ( status ) {
 			edits.status = status;
 		}
@@ -719,7 +725,7 @@ const PostEditor = React.createClass( {
 	},
 
 	iframePreview: function() {
-		if ( this.state.isDirty ) {
+		if ( this.state.isDirty || this.props.dirty ) {
 			this.autosave();
 			// to avoid a weird UX we clear the iframe when (auto)saving
 			// so we need to delay opening it a bit to avoid flickering
@@ -769,7 +775,9 @@ const PostEditor = React.createClass( {
 	},
 
 	onPublish: function() {
-		var edits = { status: 'publish' };
+		const edits = merge( {}, this.props.edits, {
+			status: 'publish'
+		} );
 
 		// determine if this is a private publish
 		if ( utils.isPrivate( this.state.post ) ) {
@@ -913,14 +921,18 @@ const PostEditor = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const postId = getEditorPostId( state );
 		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+
 		return {
+			siteId,
+			postId,
 			showDrafts: isEditorDraftsVisible( state ),
 			editorModePreference: getPreference( state, 'editor-mode' ),
 			editPath: getEditorPath( state, siteId, postId ),
-			siteId,
-			postId
+			edits: getPostEdits( state, siteId, postId ),
+			dirty: isEditedPostDirty( state, siteId, postId ),
+			postContentEmpty: isEditedPostContentEmpty( state, siteId, postId )
 		};
 	},
 	( dispatch ) => {
