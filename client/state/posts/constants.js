@@ -12,3 +12,15 @@ export const DEFAULT_POST_QUERY = {
 	sticky: 'include',
 	search: ''
 };
+
+export const DEFAULT_NEW_POST_VALUES = {
+	title: '',
+	content: '',
+	publicize: true,
+	status: 'draft',
+	sticky: false,
+	password: '',
+	type: 'post',
+	parent: 0,
+	format: 'default'
+};
