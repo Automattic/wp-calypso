@@ -53,7 +53,7 @@ export default React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		if ( get( nextProps, 'site.ID', 0 ) !== get( this.props, 'site.ID', 0 ) ) {
+		if ( get( nextProps, 'site.ID' ) !== get( this.props, 'site.ID' ) ) {
 			if ( get( nextProps, 'site.jetpack' ) ) {
 				// Go back to general settings if switched to a Jetpack site
 				page( getGeneralSettingsUrl( get( nextProps, 'site.slug', '' ) ) );
@@ -75,9 +75,11 @@ export default React.createClass( {
 			return;
 		}
 
-		servicesCodes[ serviceName ] = get( event, 'target.value', '' );
-
-		this.setState( { verificationServicesCodes: servicesCodes } );
+		this.setState( {
+			verificationServicesCodes: Object.assign( {}, servicesCodes, {
+				[ serviceName ]: event.target.value
+			} )
+		} );
 	},
 
 	submitSeoForm( event ) {
