@@ -85,7 +85,7 @@ export default React.createClass( {
 
 		notices.clearNotices( 'notices' );
 
-		this.setState( { submittingForm: true } );
+		this.setState( { isSubmittingForm: true } );
 
 		const filteredCodes = omitBy( this.state.verificationServicesCodes, isBoolean );
 		const updatedOptions = {
@@ -102,11 +102,11 @@ export default React.createClass( {
 					default:
 						notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
 				}
-				this.setState( { submittingForm: false } );
+				this.setState( { isSubmittingForm: false } );
 			} else {
 				notices.success( this.translate( 'Settings saved!' ) );
 				this.markSaved();
-				this.setState( { submittingForm: false } );
+				this.setState( { isSubmittingForm: false } );
 
 				site.fetchSettings();
 			}
@@ -121,11 +121,11 @@ export default React.createClass( {
 
 	render() {
 		const { slug = '', settings: { blog_public = 1 } = {}, fetchingSettings } = this.props.site;
-		const { submittingForm, seoMetaDescription, verificationServicesCodes } = this.state;
+		const { isSubmittingForm, seoMetaDescription, verificationServicesCodes } = this.state;
 
 		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
-		const isDisabled = isSitePrivate || fetchingSettings || submittingForm;
-		const isMetaError = seoMetaDescription && seoMetaDescription.length > 160;
+		const isDisabled = isSitePrivate || fetchingSettings || isSubmittingForm;
+		const hasMetaError = seoMetaDescription && seoMetaDescription.length > 160;
 
 		const sitemapUrl = `https://${ slug }/sitemap.xml`;
 		const generalSettingsUrl = this.getGeneralSettingsUrl( slug );
@@ -137,7 +137,7 @@ export default React.createClass( {
 		const yandexCode = get( verificationServicesCodes, 'yandex' ) || '';
 
 		return (
-			<div className={ this.state.fetchingSettings ? 'is-loading' : '' }>
+			<div className={ fetchingSettings ? 'is-loading' : '' }>
 				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
 				{ isSitePrivate &&
 					<Notice status="is-warning" showDismiss={ false } text={ this.translate( 'SEO settings are disabled because the site visibility is not set to Public.' ) }>
@@ -150,9 +150,9 @@ export default React.createClass( {
 						onClick={ this.submitSeoForm }
 						primary={ true }
 						type="submit"
-						disabled={ isDisabled || this.state.submittingForm }
+						disabled={ isDisabled || isSubmittingForm }
 					>
-						{ this.state.submittingForm
+						{ isSubmittingForm
 							? this.translate( 'Saving…' )
 							: this.translate( 'Save Settings' )
 						}
@@ -185,7 +185,7 @@ export default React.createClass( {
 									maxLength="160"
 									acceptableLength={ 159 }
 									onChange={ this.handleMetaChange } />
-								{ isMetaError &&
+								{ hasMetaError &&
 									<FormInputValidation isError={ true } text={ this.translate( 'Description can\'t be longer than 160 characters.' ) } />
 								}
 								<FormSettingExplanation>
