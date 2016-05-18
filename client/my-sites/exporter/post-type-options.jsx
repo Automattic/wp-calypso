@@ -86,11 +86,11 @@ const PostTypeOptions = React.createClass( {
 
 		return (
 			<div className="exporter__option-fieldset-fields">
-				<Field defaultLabel="Author…" options={ options.authors } />
-				<Field defaultLabel="Status…" options={ options.statuses } />
-				<Field defaultLabel="Start Date…" options={ options.dates } />
-				<Field defaultLabel="End Date…" options={ options.dates } />
-				<Field defaultLabel="Category…" options={ options.categories } />
+				<Field defaultLabel={ this.translate( 'Author…' ) } options={ options.authors } />
+				<Field defaultLabel={ this.translate( 'Status…' ) } options={ options.statuses } />
+				<Field defaultLabel={ this.translate( 'Start Date…' ) } options={ options.dates } />
+				<Field defaultLabel={ this.translate( 'End Date…' ) } options={ options.dates } />
+				<Field defaultLabel={ this.translate( 'Category…' ) } options={ options.categories } />
 			</div>
 		);
 	},
