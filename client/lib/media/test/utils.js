@@ -120,14 +120,6 @@ describe( 'MediaUtils', function() {
 			expect( MediaUtils.getFileExtension( new window.File( [''], 'example#?#?.gif' ) ) ).to.equal( 'gif' );
 		} );
 
-		it( 'should detect extension from HTML5 Blob object', function() {
-			expect( MediaUtils.getFileExtension( new window.Blob( [''], { type: 'image/gif' } ) ) ).to.equal( 'gif' );
-		} );
-
-		it( 'should detect extension from Blob wrapper', function() {
-			expect( MediaUtils.getFileExtension( { fileName: 'example#?#?.gif', fileContents: new window.Blob( [''], { type: 'image/gif' } ) } ) ).to.equal( 'gif' );
-		} );
-
 		it( 'should detect extension from object file property', function() {
 			expect( MediaUtils.getFileExtension( { file: 'example.gif' } ) ).to.equal( 'gif' );
 		} );
