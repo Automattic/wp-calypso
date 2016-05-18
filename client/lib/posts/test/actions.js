@@ -219,23 +219,29 @@ describe( 'actions', function() {
 				post: function() {
 					return {
 						add: function( query, attributes, callback ) {
-							callback( null, {} );
+							callback( null, attributes );
 						}
 					};
 				}
 			} );
 
 			PostActions.saveEdited( null, ( error, data ) => {
-				const expectedData = {};
+				const normalizedAttributes = {
+					ID: 777,
+					site_ID: 123,
+					author: 3,
+					title: 'OMG Unicorns',
+					categories_by_id: [ '199', '200' ]
+				};
 
 				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 					error: null,
-					post: expectedData,
+					post: normalizedAttributes,
 					type: 'RECEIVE_POST_BEING_EDITED'
 				} );
 				expect( error ).to.be.null;
-				expect( data ).to.eql( expectedData );
+				expect( data ).to.eql( normalizedAttributes );
 				done();
 			} );
 		} );
