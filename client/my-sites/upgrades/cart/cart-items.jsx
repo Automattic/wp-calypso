@@ -25,8 +25,8 @@ var CartItems = React.createClass({
 		event.preventDefault();
 
 		// If we call setState here directly, it would remove the expander from DOM,
-		// and then click-outside from Popover would consider it as an outside click,
-		// and it would close the Popover cart.
+		// and then react-click-outside from Popover would consider it as an outside
+		// click, and it would close the Popover cart.
 		// event.stopPropagation() does not help.
 		setTimeout( this.setState.bind( this, { isCollapsed: false } ), 0 );
 	},
