@@ -28,7 +28,9 @@ describe( 'selectors', () => {
 			const requesting = isRequestingSiteTaxonomyTermsForQuery( {
 				terms: {
 					queryRequests: {
-						'2916284:categories:{"search":"ribs"}': false
+						2916284: {
+							'categories:{"search":"ribs"}': false
+						}
 					}
 				}
 			}, 2916284, 'categories', { search: 'ribs' } );
@@ -40,7 +42,9 @@ describe( 'selectors', () => {
 			const requesting = isRequestingSiteTaxonomyTermsForQuery( {
 				terms: {
 					queryRequests: {
-						'2916284:categories:{"search":"ribs"}': true
+						2916284: {
+							'categories:{"search":"ribs"}': true
+						}
 					}
 				}
 			}, 2916284, 'categories', { search: 'ribs' } );
@@ -51,20 +55,22 @@ describe( 'selectors', () => {
 
 	describe( 'getSiteTaxonomyTermsForQuery()', () => {
 		it( 'should return null if no matching query results exist', () => {
-			const requesting = getSiteTaxonomyTermsForQuery( {
+			const terms = getSiteTaxonomyTermsForQuery( {
 				terms: {
 					queries: {}
 				}
 			}, 2916284, 'categories', {} );
 
-			expect( requesting ).to.be.null;
+			expect( terms ).to.be.null;
 		} );
 
 		it( 'should return an empty array if no matches exist', () => {
-			const requesting = getSiteTaxonomyTermsForQuery( {
+			const terms = getSiteTaxonomyTermsForQuery( {
 				terms: {
 					queries: {
-						'2916284:categories:{"search":"ribs"}': []
+						2916284: {
+							'categories:{"search":"ribs"}': []
+						}
 					},
 					items: {
 						2916284: {
@@ -83,14 +89,16 @@ describe( 'selectors', () => {
 				}
 			}, 2916284, 'categories', { search: 'ribs' } );
 
-			expect( requesting ).to.eql( [] );
+			expect( terms ).to.eql( [] );
 		} );
 
 		it( 'should return matching terms', () => {
-			const requesting = getSiteTaxonomyTermsForQuery( {
+			const terms = getSiteTaxonomyTermsForQuery( {
 				terms: {
 					queries: {
-						'2916284:categories:{"search":"ribs"}': [ 111 ]
+						2916284: {
+							'categories:{"search":"ribs"}': [ 111 ]
+						}
 					},
 					items: {
 						2916284: {
@@ -109,7 +117,7 @@ describe( 'selectors', () => {
 				}
 			}, 2916284, 'categories', { search: 'ribs' } );
 
-			expect( requesting ).to.eql( [
+			expect( terms ).to.eql( [
 				{
 					ID: 111,
 					name: 'Chicken and a biscuit'
