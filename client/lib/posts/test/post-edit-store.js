@@ -1,24 +1,34 @@
 /**
  * External dependencies
  */
-var assert = require( 'better-assert' ),
-	isEqual = require( 'lodash/isEqual' ),
-	sinon = require( 'sinon' ),
-	assign = require( 'lodash/assign' );
+import assert from 'better-assert';
+import assign from 'lodash/assign';
+import isEqual from 'lodash/isEqual';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'post-edit-store', function() {
-	let PostEditStore, dispatcherCallback;
+	let Dispatcher, PostEditStore, dispatcherCallback;
 
 	useFakeDom();
 
-	beforeEach( function() {
+	// makes sure we always load fresh instance of Dispatcher
+	useMockery();
+
+	before( () => {
+		Dispatcher = require( 'dispatcher' );
+		spy( Dispatcher, 'register' );
 		PostEditStore = require( '../post-edit-store' );
-		dispatcherCallback = PostEditStore.dispatcherCallback;
+		dispatcherCallback = Dispatcher.register.lastCall.args[ 0 ];
+	} );
+
+	after( () => {
+		Dispatcher.register.restore();
 	} );
 
 	function dispatchReceivePost() {
@@ -449,7 +459,7 @@ describe( 'post-edit-store', function() {
 
 	describe( '#setRawContent', function() {
 		it( 'should not emit a change event if content hasn\'t changed', function() {
-			var onChange = sinon.spy();
+			var onChange = spy();
 
 			dispatcherCallback( {
 				action: {
