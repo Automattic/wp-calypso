@@ -45,9 +45,9 @@ const actions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	analytics = require( 'lib/analytics' ),
 	VerifyEmailDialogI18n = require( 'post-editor/verify-email-dialog.i18n' ); // temporary for i18n tools to pick up
-
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
-import { isEditorDraftsVisible } from 'state/ui/editor/selectors';
+import { isEditorDraftsVisible, getEditorPostId } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';
 import { receivePost, editPost, resetPostEdits } from 'state/posts/actions';
 import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
@@ -227,6 +227,10 @@ const PostEditor = React.createClass( {
 
 	componentWillUnmount: function() {
 		PostEditStore.removeListener( 'change', this.onEditedPostChange );
+
+		// Reset post edits after leaving editor
+		this.props.resetPostEdits( this.props.siteId, this.props.postId );
+
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.stopEditing();
 
@@ -871,6 +875,8 @@ const PostEditor = React.createClass( {
 export default connect(
 	( state ) => {
 		return {
+			siteId: getSelectedSiteId( state ),
+			postId: getEditorPostId( state ),
 			showDrafts: isEditorDraftsVisible( state )
 		};
 	},
