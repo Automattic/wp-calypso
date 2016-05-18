@@ -4,8 +4,6 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import AccordionSection from 'components/accordion/section';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
@@ -13,24 +11,16 @@ import PostSelector from 'my-sites/post-selector';
 import postActions from 'lib/posts/actions';
 import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle/compact';
-import { setPageParent } from 'state/ui/editor/post/actions';
 
-const EditorPageParent = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorPageParent',
 
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		setPageParent: PropTypes.func,
 		siteId: PropTypes.number,
 		parent: PropTypes.number,
 		postId: PropTypes.number
-	},
-
-	getDefaultProps: function() {
-		return {
-			setPageParent: () => {},
-		};
 	},
 
 	updatePageParent( item ) {
@@ -39,8 +29,6 @@ const EditorPageParent = React.createClass( {
 		postActions.edit( {
 			parent: parentId
 		} );
-
-		this.props.setPageParent( parentId );
 	},
 
 	getEmptyMessage() {
@@ -79,8 +67,3 @@ const EditorPageParent = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setPageParent }, dispatch )
-)( EditorPageParent );
