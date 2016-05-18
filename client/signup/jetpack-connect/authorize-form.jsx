@@ -169,7 +169,7 @@ const LoggedInForm = React.createClass( {
 			? i18n.translate( 'You are connected!' )
 			: i18n.translate( 'Completing connection' );
 		const subHeaderText = ( isConnected )
-			? i18n.translate( 'The power of WordPress.com is yours to command.' )
+			? i18n.translate( 'Thank you for flying with Jetpack' )
 			: i18n.translate( 'Jetpack is finishing up the connection process', {
 				args: { site: siteUrl }
 			} );
