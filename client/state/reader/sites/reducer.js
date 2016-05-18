@@ -3,6 +3,7 @@ import assign from 'lodash/assign';
 import omit from 'lodash/omit';
 import omitBy from 'lodash/omitBy';
 import keyBy from 'lodash/keyBy';
+import map from 'lodash/map';
 
 import {
 	READER_SITE_REQUEST,
@@ -50,8 +51,33 @@ function handleRequestFailure( state, action ) {
 	}, state );
 }
 
+function adaptSite( attributes ) {
+	// this also ends up cloning attributes, which is important since we mutate it
+	attributes = omit( attributes, [ 'meta', '_headers' ] );
+
+	if ( attributes.URL ) {
+		attributes.domain = attributes.URL.replace( /^https?:\/\//, '' );
+		attributes.slug = attributes.domain.replace( /\//g, '::' );
+	}
+	attributes.title = attributes.name ? attributes.name : attributes.domain;
+
+	// If a WordPress.com site has a mapped domain create a `wpcom_url`
+	// attribute to allow site selection with either domain.
+	if ( attributes.options && attributes.options.is_mapped_domain && ! attributes.is_jetpack ) {
+		attributes.wpcom_url = attributes.options.unmapped_url.replace( /^https?:\/\//, '' );
+	}
+
+	// If a site has an `is_redirect` property use the `unmapped_url`
+	// for the slug and domain to match the wordpress.com original site.
+	if ( attributes.options && attributes.options.is_redirect ) {
+		attributes.slug = attributes.options.unmapped_url.replace( /^https?:\/\//, '' );
+		attributes.domain = attributes.slug;
+	}
+	return attributes;
+}
+
 function handleRequestSuccess( state, action ) {
-	const site = assign( {}, action.payload );
+	const site = adaptSite( action.payload );
 	// TODO do we need to normalize site entries somehow?
 	return assign( {}, state, {
 		[ action.payload.ID ]: site
@@ -59,7 +85,8 @@ function handleRequestSuccess( state, action ) {
 }
 
 function handleSiteUpdate( state, action ) {
-	return assign( {}, state, keyBy( action.payload, 'ID' ) );
+	const sites = map( action.payload, adaptSite );
+	return assign( {}, state, keyBy( sites, 'ID' ) );
 }
 
 export function items( state = {}, action ) {

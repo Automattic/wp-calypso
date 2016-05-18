@@ -35,7 +35,74 @@ describe( 'reducer', ( ) => {
 				} )[ 1 ]
 			).to.deep.equal( {
 				ID: 1,
-				name: 'my site'
+				name: 'my site',
+				title: 'my site'
+			} );
+		} );
+
+		it( 'should fallback to using the domain for the title if name is missing', () => {
+			expect(
+				items( {}, {
+					type: READER_SITE_REQUEST_SUCCESS,
+					payload: {
+						ID: 1,
+						URL: 'http://example.com/foo/bar'
+					}
+				} )[ 1 ]
+			).to.deep.equal( {
+				ID: 1,
+				URL: 'http://example.com/foo/bar',
+				domain: 'example.com/foo/bar',
+				slug: 'example.com::foo::bar',
+				title: 'example.com/foo/bar'
+			} );
+		} );
+
+		it( 'should set the domain and slug from the url', () => {
+			expect(
+				items( {}, {
+					type: READER_SITE_REQUEST_SUCCESS,
+					payload: {
+						ID: 1,
+						URL: 'http://example.com/foo/bar',
+						name: 'example!'
+					}
+				} )[ 1 ]
+			).to.deep.equal( {
+				ID: 1,
+				URL: 'http://example.com/foo/bar',
+				domain: 'example.com/foo/bar',
+				slug: 'example.com::foo::bar',
+				name: 'example!',
+				title: 'example!'
+			} );
+		} );
+
+		it( 'should set the domain and slug from the url unless it is a site redirect', () => {
+			expect(
+				items( {}, {
+					type: READER_SITE_REQUEST_SUCCESS,
+					payload: {
+						ID: 1,
+						URL: 'http://example.com/foo/bar',
+						name: 'example!',
+						options: {
+							is_redirect: true,
+							unmapped_url: 'http://formerlyexample.com/foo/bar'
+						}
+					}
+				} )[ 1 ]
+			).to.deep.equal( {
+				ID: 1,
+				URL: 'http://example.com/foo/bar',
+				domain: 'formerlyexample.com/foo/bar',
+				slug: 'formerlyexample.com/foo/bar',
+				name: 'example!',
+				title: 'example!',
+				options: {
+					is_redirect: true,
+					unmapped_url: 'http://formerlyexample.com/foo/bar'
+				}
 			} );
 		} );
 
@@ -87,7 +154,7 @@ describe( 'reducer', ( ) => {
 					ID: 666,
 					name: 'new'
 				}
-			} ) ).to.deep.equal( { 666: { ID: 666, name: 'new' } } );
+			} ) ).to.deep.equal( { 666: { ID: 666, name: 'new', title: 'new' } } );
 		} );
 
 		it( 'should leave an existing entry alone if an error is received', ( ) => {
@@ -112,9 +179,9 @@ describe( 'reducer', ( ) => {
 					{ ID: 666, name: 'valid but updated' }
 				]
 			} ) ).to.deep.equal( {
-				1: { ID: 1, name: 'first' },
-				2: { ID: 2, name: 'second' },
-				666: { ID: 666, name: 'valid but updated' },
+				1: { ID: 1, name: 'first', title: 'first' },
+				2: { ID: 2, name: 'second', title: 'second' },
+				666: { ID: 666, name: 'valid but updated', title: 'valid but updated' },
 				777: { ID: 777, name: 'second valid' }
 			} );
 		} );
