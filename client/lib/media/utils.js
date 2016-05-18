@@ -93,8 +93,6 @@ const MediaUtils = {
 
 		const isUrl = 'string' === typeof media;
 		const isFileObject = 'File' in window && media instanceof window.File;
-		const isBlobObject = 'Blob' in window && media instanceof window.Blob;
-		const isBlobWrapper = media.fileName && media.fileContents;
 
 		if ( isUrl ) {
 			// Check if we have a plain filename
@@ -105,13 +103,11 @@ const MediaUtils = {
 				const filePath = url.parse( media ).pathname;
 				extension = path.extname( filePath ).slice( 1 );
 			}
-		} else if ( isFileObject || isBlobObject || isBlobWrapper ) {
-			const fileContents = media.fileContents || media;
-			if ( fileContents.type ) {
-				extension = this.getFileExtensionFromMimeType( fileContents.type );
 			} else {
 				extension = this.getFileExtension( media.fileName || fileContents.name );
 			}
+		} else if ( isFileObject ) {
+			extension = path.extname( media.name ).slice( 1 );
 		} else if ( media.extension ) {
 			extension = media.extension;
 		} else {
