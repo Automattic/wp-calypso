@@ -15,7 +15,7 @@
 }
 
 .mce-toolbar .mce-btn.mce-insert-menu button:first-child {
-	padding: 6px 6px 6px 6px;
+	padding: 6px;
 }
 
 .mce-splitbtn.mce-insert-menu .mce-open.mce-active {
@@ -28,7 +28,7 @@
 }
 
 .mce-toolbar .mce-btn.mce-insert-menu .mce-open {
-	padding: 8px 12px 8px 12px;
+	padding: 8px 12px;
 }
 
 .mce-container .wpcom-insert-menu__menu-label {
@@ -48,7 +48,8 @@
 	margin: 0;
 	border: none;
 
-	&:hover {
+	&:hover,
+	&:focus {
 
 		.wpcom-insert-menu__menu-label {
 			color: $blue-medium;
