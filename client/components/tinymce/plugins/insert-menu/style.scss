@@ -3,14 +3,26 @@
 
 	.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu {
 		margin: 0;
-	}
-}
-
-.post-editor,
-.mce-inline-toolbar-grp {
-
-	.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu .mce-open:hover i.mce-caret {
-		color: $gray-dark;
+		
+		&:hover .mce-open i.mce-caret,
+		&:focus .mce-open i.mce-caret {
+			color: lighten( $gray, 20% );
+		}
+		
+		&:hover .gridicons-add-image,
+		&:focus .gridicons-add-image {
+			fill: lighten( $gray, 20% );
+		}
+		
+		.mce-open:hover i.mce-caret,
+		.mce-open:focus i.mce-caret {
+			color: $gray-dark;
+		}
+		
+		.gridicons-add-image:hover,
+		.gridicons-add-image:focus {
+			fill: $gray-dark;
+		}
 	}
 }
 
