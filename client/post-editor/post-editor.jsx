@@ -66,6 +66,9 @@ const messages = {
 		publishFailure: function() {
 			return i18n.translate( 'Publishing of post failed.' );
 		},
+		trashFailure: function() {
+			return i18n.translate( 'Trashing of post failed.' );
+		},
 		editTitle: function() {
 			return i18n.translate( 'Edit Post', { textOnly: true } );
 		},
@@ -118,6 +121,9 @@ const messages = {
 	page: {
 		publishFailure: function() {
 			return i18n.translate( 'Publishing of page failed.' );
+		},
+		trashFailure: function() {
+			return i18n.translate( 'Trashing of page failed.' );
 		},
 		editTitle: function() {
 			return i18n.translate( 'Edit Page', { textOnly: true } );
@@ -606,12 +612,22 @@ const PostEditor = React.createClass( {
 		return path;
 	},
 
-	onTrashingPost: function() {
+	onTrashingPost: function( error ) {
 		var isPage = utils.isPage( this.state.post );
-		stats.recordStat( isPage ? 'page_trashed' : 'post_trashed' );
-		stats.recordEvent( isPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
-		this.markSaved();
-		this.onClose();
+
+		if ( error ) {
+			this.setState( {
+				notice: {
+					type: 'error',
+					text: this.getMessage( 'trashFailure' )
+				}
+			} );
+		} else {
+			stats.recordStat( isPage ? 'page_trashed' : 'post_trashed' );
+			stats.recordEvent( isPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
+			this.markSaved();
+			this.onClose();
+		}
 	},
 
 	onSaveTrashed: function( status, callback ) {
