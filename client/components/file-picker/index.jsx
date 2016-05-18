@@ -4,7 +4,6 @@
  * External dependencies
  */
 import React from 'react';
-import assign from 'lodash/assign';
 import noop from 'lodash/noop';
 
 export default class FilePicker extends React.Component {

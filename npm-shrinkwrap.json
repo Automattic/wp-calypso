@@ -552,9 +552,6 @@
     "component-events": {
       "version": "1.0.10"
     },
-    "component-file-picker": {
-      "version": "0.2.1"
-    },
     "component-indexof": {
       "version": "0.0.3"
     },
