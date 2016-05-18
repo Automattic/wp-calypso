@@ -43,6 +43,7 @@ export default React.createClass( {
 		const siteId = this.props.site.ID;
 
 		const exportAll = () => startExport( siteId );
+		const exportSelectedItems = () => startExport( siteId, false );
 		const fetchStatus = () => exportStatusFetch( siteId );
 
 		const exportButton = (
@@ -105,7 +106,7 @@ export default React.createClass( {
 						postType={ postType }
 						shouldShowProgress={ shouldShowProgress }
 						onSelectPostType={ setPostType }
-						onClickExport={ startExport }
+						onClickExport={ exportSelectedItems }
 					/>
 				</FoldableCard>
 				{ isExporting && <Interval onTick={ fetchStatus } period={ EVERY_SECOND } /> }

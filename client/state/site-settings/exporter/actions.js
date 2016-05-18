@@ -17,6 +17,8 @@ import {
 	EXPORT_POST_TYPE_FILTER_SET,
 } from 'state/action-types';
 
+import { prepareExportRequest } from './selectors';
+
 /**
  * Sets the post type to export.
  *
@@ -94,16 +96,20 @@ export function advancedSettingsFail( siteId, error ) {
  * @param  {Number}   siteId  The ID of the site to export
  * @return {Function}         Action thunk
  */
-export function startExport( siteId ) {
-	return ( dispatch ) => {
+export function startExport( siteId, exportAll = true ) {
+	return ( dispatch, getState ) => {
 		if ( ! siteId ) {
 			return;
 		}
 
 		dispatch( {
 			type: EXPORT_START_REQUEST,
-			siteId: siteId
+			siteId,
+			exportAll,
 		} );
+
+		const state = getState();
+		const advancedSettings = exportAll ? null : prepareExportRequest( state, siteId );
 
 		const success =
 			() => dispatch( exportStarted( siteId ) );
@@ -112,7 +118,7 @@ export function startExport( siteId ) {
 			error => dispatch( exportFailed( siteId, error ) );
 
 		return wpcom.undocumented()
-			.startExport( siteId )
+			.startExport( siteId, advancedSettings )
 			.then( success )
 			.catch( failure );
 	};
@@ -139,7 +145,7 @@ export function exportStatusFetch( siteId ) {
 		const success = ( response = {} ) => {
 			switch ( response.status ) {
 				case 'finished':
-					return dispatch( exportComplete( siteId, response.$attachment_url ) );
+					return dispatch( exportComplete( siteId, response.attachment_url ) );
 				case 'running':
 					return;
 			}

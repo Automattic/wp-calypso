@@ -47,3 +47,15 @@ export const getPostTypeValues = ( state, siteId, postType ) => {
 	const site = state.siteSettings.exporter.selectedAdvancedSettings[ siteId ];
 	return site && site[ postType ] || {};
 };
+
+/**
+ * Prepare currently selected advanced settings for an /exports/start request
+ * @param  {Object} state  Global state tree
+ * @param  {number} siteId The ID of the site
+ * @return {Object}        The request body
+ */
+export function prepareExportRequest( state, siteId ) {
+	const postType = getSelectedPostType( state );
+	const selectedPostTypeValues = getPostTypeValues( state, siteId, postType );
+	return Object.assign( { post_type: postType }, selectedPostTypeValues );
+}
