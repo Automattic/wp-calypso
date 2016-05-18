@@ -21,7 +21,7 @@ function getLocalStorage() {
 	return store.get( PreferencesConstants.LOCALSTORAGE_KEY );
 }
 
-function mergePreferencesToLocalStorage( preferences ) {
+PreferencesActions.mergePreferencesToLocalStorage = function( preferences ) {
 	var storage = getLocalStorage() || {};
 
 	forOwn( preferences, function( value, key ) {
@@ -33,7 +33,7 @@ function mergePreferencesToLocalStorage( preferences ) {
 	} );
 
 	store.set( PreferencesConstants.LOCALSTORAGE_KEY, storage );
-}
+};
 
 PreferencesActions.fetch = function() {
 	var localStorage = getLocalStorage();
@@ -55,7 +55,7 @@ PreferencesActions.fetch = function() {
 
 	wpcom.me().settings().get( function( error, data ) {
 		if ( ! error && data ) {
-			mergePreferencesToLocalStorage( data[ PreferencesConstants.USER_SETTING_KEY ] );
+			PreferencesActions.mergePreferencesToLocalStorage( data[ PreferencesConstants.USER_SETTING_KEY ] );
 		}
 
 		Dispatcher.handleServerAction( {
@@ -78,7 +78,7 @@ PreferencesActions.set = function( key, value ) {
 		data: settings
 	} );
 
-	mergePreferencesToLocalStorage( preferences );
+	PreferencesActions.mergePreferencesToLocalStorage( preferences );
 
 	_pendingUpdates++;
 	wpcom.me().settings().update( JSON.stringify( settings ), function( error, data ) {
