@@ -105,7 +105,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { isActivating: false, manageActivated: true, manageActivatedError: error, activateManageSecret: false } );
 		case JETPACK_CONNECT_QUERY_SET:
 			const queryObject = Object.assign( {}, action.queryObject );
-			return Object.assign( {}, defaultAuthorizeState, state, { queryObject: queryObject } );
+			return Object.assign( {}, defaultAuthorizeState, { queryObject: queryObject } );
 		case JETPACK_CONNECT_QUERY_UPDATE:
 			return Object.assign( {}, state, { queryObject: Object.assign( {}, state.queryObject, { [ action.property ]: action.value } ) } );
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
