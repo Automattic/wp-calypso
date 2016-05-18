@@ -202,10 +202,6 @@ describe( 'actions', function() {
 		} );
 
 		it( 'should normalize attributes and call the API', function( done ) {
-			const normalizeOriginal = PostActions.normalizeApiAttributes;
-			const normalizeSpy = sandbox.spy( normalizeOriginal );
-			PostActions.normalizeApiAttributes = normalizeSpy;
-
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( true );
 
 			const changedAttributes = {
@@ -229,16 +225,17 @@ describe( 'actions', function() {
 				}
 			} );
 
-			PostActions.saveEdited( null, () => {
-				PostActions.normalizeApiAttributes = normalizeOriginal;
-				expect( normalizeSpy.calledWith( changedAttributes ) ).to.be.true;
-				expect( normalizeSpy.returnValues[0] ).to.deep.equal( {
-					ID: 777,
-					site_ID: 123,
-					author: 3,
-					title: 'OMG Unicorns',
-					categories_by_id: [ '199', '200' ]
+			PostActions.saveEdited( null, ( error, data ) => {
+				const expectedData = {};
+
+				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
+				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+					error: null,
+					post: expectedData,
+					type: 'RECEIVE_POST_BEING_EDITED'
 				} );
+				expect( error ).to.be.null;
+				expect( data ).to.eql( expectedData );
 				done();
 			} );
 		} );
