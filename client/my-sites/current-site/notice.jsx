@@ -13,7 +13,7 @@ import NoticeAction from 'components/notice/notice-action';
 import paths from 'my-sites/upgrades/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import QueryPlans from 'components/data/query-plans';
+import QuerySitePlans from 'components/data/query-site-plans';
 import { abtest } from 'lib/abtest';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
@@ -90,7 +90,7 @@ const SiteNotice = React.createClass( {
 		return (
 			<div className="site__notices">
 				{ this.getSiteRedirectNotice( site ) }
-				<QueryPlans siteId={ site.ID } />
+				<QuerySitePlans siteId={ site.ID } />
 				{ this.domainCreditNotice() }
 			</div>
 		);

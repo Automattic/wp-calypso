@@ -12,7 +12,7 @@ import DomainsStore from 'lib/domains/store';
 import CartStore from 'lib/cart/store';
 import observe from 'lib/mixins/data-observe';
 import * as upgradesActions from 'lib/upgrades/actions';
-import QueryPlans from 'components/data/query-plans';
+import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 
 const stores = [
@@ -74,7 +74,7 @@ const DomainManagementData = React.createClass( {
 					context={ this.props.context } />
 				{
 					selectedSite &&
-					<QueryPlans siteId={ selectedSite.ID } />
+					<QuerySitePlans siteId={ selectedSite.ID } />
 				}
 			</div>
 		);
