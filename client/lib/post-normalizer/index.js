@@ -706,7 +706,7 @@ normalizePost.content = {
 		// hosts that we trust that don't work in a sandboxed iframe
 		const iframeNoSandbox = [
 			'spotify.com'
-		]
+		];
 
 		embeds = filter( embeds, function( iframe ) {
 			const iframeSrc = iframe.src && url.parse( iframe.src ).hostname.toLowerCase();
@@ -718,7 +718,7 @@ normalizePost.content = {
 		post.content_embeds = map( embeds, function( iframe ) {
 			var node = iframe,
 				embedType = null,
-				aspectRatio = 0,
+				aspectRatio,
 				width, height,
 				matches;
 
@@ -737,7 +737,15 @@ normalizePost.content = {
 			if ( iframe.width && iframe.height ) {
 				width = Number( iframe.width );
 				height = Number( iframe.height );
-				aspectRatio = Number( iframe.width ) / Number( iframe.height );
+				if ( ! isNaN( width ) && ! isNaN( height ) ) {
+					aspectRatio = width / height;
+				}
+				if ( isNaN( width ) ) {
+					width = iframe.width;
+				}
+				if ( isNaN( height ) ) {
+					height = iframe.height;
+				}
 			}
 
 			const embedUrl = iframe.getAttribute( 'data-wpcom-embed-url' );
@@ -777,7 +785,7 @@ normalizePost.content = {
 				post.content_embeds.push( {
 					type: 'special-' + type,
 					content: node.outerHTML
-				} )
+				} );
 			} );
 		} );
 
