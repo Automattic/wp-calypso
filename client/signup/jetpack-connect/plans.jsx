@@ -85,7 +85,9 @@ const Plans = React.createClass( {
 			<div>
 				<Main>
 					<div className="jetpack-connect__plans">
-						<ConnectHeader headerText={ this.translate( 'Your site is now connected!' ) }
+						<ConnectHeader
+							showLogo={ false }
+							headerText={ this.translate( 'Your site is now connected!' ) }
 							subHeaderText={ this.translate( 'Now pick a plan that\'s right for you' ) }
 							step={ 1 }
 							steps={ 3 } />
