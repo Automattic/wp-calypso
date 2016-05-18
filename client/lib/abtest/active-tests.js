@@ -46,15 +46,6 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
-	sidebarPlanLinkMyPlan: {
-		datestamp: '20160101',
-		variations: {
-			plans: 50,
-			'plans/my-plan': 50,
-		},
-		defaultVariation: 'plans',
-		allowExistingUsers: true,
-	},
 	domainSuggestionVendor: {
 		datestamp: '20160408',
 		variations: {
