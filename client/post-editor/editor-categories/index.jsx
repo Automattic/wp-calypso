@@ -6,8 +6,7 @@ const React = require( 'react' ),
 	clone = require( 'lodash/clone' ),
 	classNames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:post-editor:editor-categories' );
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+
 /**
  * Internal dependencies
  */
@@ -17,21 +16,15 @@ const CategorySelector = require( 'my-sites/category-selector' ),
 	postActions = require( 'lib/posts/actions' ),
 	siteUtils = require( 'lib/site/utils' ),
 	stats = require( 'lib/posts/stats' );
-import { setCategories } from 'state/ui/editor/post/actions';
 
-const EditorCategories = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorCategories',
 
 	propTypes: {
 		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		setCategories: React.PropTypes.func
+		post: React.PropTypes.object
 	},
-	getDefaultProps: function() {
-		return {
-			setCategories: () => {}
-		};
-	},
+
 	getInitialState: function() {
 		return {
 			searchTerm: null
@@ -89,7 +82,6 @@ const EditorCategories = React.createClass( {
 		postActions.edit( {
 			categories: selected
 		} );
-		this.props.setCategories( selected );
 	},
 
 	onSearch: function( searchTerm ) {
@@ -125,10 +117,3 @@ const EditorCategories = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setCategories }, dispatch ),
-	null,
-	{ pure: false }
-)( EditorCategories );

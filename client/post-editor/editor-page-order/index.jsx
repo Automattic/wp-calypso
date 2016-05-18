@@ -4,8 +4,6 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import isNaN from 'lodash/isNaN';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -13,15 +11,13 @@ import { bindActionCreators } from 'redux';
 import TextInput from 'components/forms/form-text-input';
 import postActions from 'lib/posts/actions';
 import { recordEvent, recordStat } from 'lib/posts/stats';
-import { setMenuOrder } from 'state/ui/editor/post/actions';
 
-const EditorPageOrder = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorPageOrder',
 
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		setMenuOrder: PropTypes.func,
 		menuOrder: PropTypes.oneOfType( [
 			PropTypes.number,
 			PropTypes.string
@@ -30,7 +26,6 @@ const EditorPageOrder = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			setMenuOrder: () => {},
 			menuOrder: 0
 		};
 	},
@@ -64,7 +59,6 @@ const EditorPageOrder = React.createClass( {
 			postActions.edit( {
 				menu_order: newOrder
 			} );
-			this.props.setMenuOrder( newOrder );
 		}
 	},
 
@@ -79,8 +73,3 @@ const EditorPageOrder = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setMenuOrder }, dispatch )
-)( EditorPageOrder );

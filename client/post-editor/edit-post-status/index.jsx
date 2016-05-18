@@ -3,8 +3,6 @@
  */
 const React = require( 'react' ),
 	noop = require( 'lodash/noop' );
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -22,28 +20,17 @@ const actions = require( 'lib/posts/actions' ),
 	postScheduleUtils = require( 'components/post-schedule/utils' ),
 	siteUtils = require( 'lib/site/utils' ),
 	stats = require( 'lib/posts/stats' );
-import {
-	toggleStickyStatus,
-	togglePendingStatus
-} from 'state/ui/editor/post/actions';
 
-const EditPostStatus = React.createClass( {
+export default React.createClass( {
+	displayName: 'EditPostStatus',
+
 	propTypes: {
-		togglePendingStatus: React.PropTypes.func,
-		toggleStickyStatus: React.PropTypes.func,
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
 		type: React.PropTypes.string,
 		onSave: React.PropTypes.func,
 		onDateChange: React.PropTypes.func,
 		site: React.PropTypes.object
-	},
-
-	getDefaultProps: function() {
-		return {
-			togglePendingStatus: () => {},
-			toggleStickyStatus: () => {}
-		};
 	},
 
 	getInitialState: function() {
@@ -70,7 +57,6 @@ const EditPostStatus = React.createClass( {
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { sticky: ! this.props.post.sticky } );
-		this.props.toggleStickyStatus( this.props.post.sticky );
 	},
 
 	togglePendingStatus: function() {
@@ -81,7 +67,6 @@ const EditPostStatus = React.createClass( {
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { status: pending ? 'draft' : 'pending' } );
-		this.props.togglePendingStatus( this.props.post.status );
 	},
 
 	togglePostSchedulePopover: function() {
@@ -249,13 +234,3 @@ const EditPostStatus = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( {
-		toggleStickyStatus,
-		togglePendingStatus
-	}, dispatch ),
-	null,
-	{ pure: false }
-)( EditPostStatus );

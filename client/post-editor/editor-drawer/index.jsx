@@ -4,7 +4,6 @@
 import React from 'react';
 import includes from 'lodash/includes';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -32,7 +31,6 @@ import TrackInputChanges from 'components/track-input-changes';
 import actions from 'lib/posts/actions';
 import stats from 'lib/posts/stats';
 import siteUtils from 'lib/site/utils';
-import { setExcerpt } from 'state/ui/editor/post/actions';
 import QueryPostTypes from 'components/data/query-post-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -78,20 +76,12 @@ const EditorDrawer = React.createClass( {
 		post: React.PropTypes.object,
 		typeObject: React.PropTypes.object,
 		isNew: React.PropTypes.bool,
-		setExcerpt: React.PropTypes.func,
 		type: React.PropTypes.string
-	},
-
-	getDefaultProps: function() {
-		return {
-			setExcerpt: () => {}
-		};
 	},
 
 	onExcerptChange: function( event ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { excerpt: event.target.value } );
-		this.props.setExcerpt( event.target.value );
 	},
 
 	hasHardCodedPostTypeSupports( type ) {
@@ -334,7 +324,7 @@ export default connect(
 			typeObject: getPostType( state, siteId, type )
 		};
 	},
-	dispatch => bindActionCreators( { setExcerpt }, dispatch ),
+	null,
 	null,
 	{ pure: false }
 )( EditorDrawer );

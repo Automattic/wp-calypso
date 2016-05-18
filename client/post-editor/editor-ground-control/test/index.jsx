@@ -43,7 +43,7 @@ describe( 'EditorGroundControl', function() {
 		mockery.registerMock( 'post-editor/editor-status-label', EmptyComponent );
 		mockery.registerMock( 'components/sticky-panel', EmptyComponent );
 		mockery.registerMock( 'components/post-schedule', EmptyComponent );
-		EditorGroundControl = require( '../' ).WrappedComponent;
+		EditorGroundControl = require( '../' );
 
 		EditorGroundControl.prototype.translate = i18n.translate;
 		EditorGroundControl.prototype.moment = i18n.moment;

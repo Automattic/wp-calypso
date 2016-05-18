@@ -22,13 +22,6 @@ var actions = require( 'lib/posts/actions' ),
 	sites = require( 'lib/sites-list' )(),
 	user = require( 'lib/user' )(),
 	analytics = require( 'lib/analytics' );
-
-import {
-	setEditingMode,
-	startEditingNew,
-	startEditingExisting,
-	EDITING_MODES
-} from 'state/ui/editor/post/actions';
 import { setEditorPostId } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, getEditorPath, isEditorNewPost } from 'state/ui/editor/selectors';
@@ -167,9 +160,6 @@ module.exports = {
 				actions.startEditingExisting( site, postID );
 				titleActions.setTitle( titleStrings.edit, { siteID: site.ID } );
 				analytics.pageView.record( '/' + postType + '/:blogid/:postid', titleStrings.ga + ' > Edit' );
-
-				context.store.dispatch( setEditingMode( EDITING_MODES.EXISTING, titleStrings.edit, { siteID: site.ID } ) );
-				context.store.dispatch( startEditingExisting( site, postID ) );
 			} else {
 				let postOptions = { type: postType };
 
@@ -187,9 +177,6 @@ module.exports = {
 				actions.startEditingNew( site, postOptions );
 				titleActions.setTitle( titleStrings.new, { siteID: site.ID } );
 				analytics.pageView.record( '/' + postType, titleStrings.ga + ' > New' );
-
-				context.store.dispatch( setEditingMode( EDITING_MODES.NEW, titleStrings.new, { siteID: site.ID } ) );
-				context.store.dispatch( startEditingNew( site, postOptions ) );
 			}
 		}
 
