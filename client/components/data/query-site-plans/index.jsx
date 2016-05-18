@@ -11,7 +11,7 @@ import { bindActionCreators } from 'redux';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 
-class QueryPlans extends Component {
+class QuerySitePlans extends Component {
 
 	constructor( props ) {
 		super( props );
@@ -42,13 +42,13 @@ class QueryPlans extends Component {
 	}
 }
 
-QueryPlans.propTypes = {
+QuerySitePlans.propTypes = {
 	siteId: PropTypes.number,
 	requestingPlans: PropTypes.bool,
 	fetchSitePlans: PropTypes.func
 };
 
-QueryPlans.defaultProps = {
+QuerySitePlans.defaultProps = {
 	fetchSitePlans: () => {}
 };
 
@@ -63,4 +63,4 @@ export default connect(
 			fetchSitePlans
 		}, dispatch );
 	}
-)( QueryPlans );
+)( QuerySitePlans );
