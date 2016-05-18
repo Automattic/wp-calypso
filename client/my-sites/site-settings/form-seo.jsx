@@ -122,8 +122,19 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { slug = '', settings: { blog_public = 1 } = {}, fetchingSettings } = this.props.site;
-		const { isSubmittingForm, seoMetaDescription, verificationServicesCodes } = this.state;
+		const {
+			slug = '',
+			settings: {
+				blog_public = 1
+			} = {},
+			fetchingSettings
+		} = this.props.site;
+
+		const {
+			isSubmittingForm,
+			seoMetaDescription,
+			verificationServicesCodes
+		} = this.state;
 
 		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
 		const isDisabled = isSitePrivate || fetchingSettings || isSubmittingForm;
