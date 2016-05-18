@@ -101,5 +101,14 @@ module.exports = {
 		defaultVariation: 'monthly',
 		allowExistingUsers: true,
 		allowAnyLocale: true
+	},
+	wordadsInstantActivation: {
+		datestamp: '20160518',
+		variations: {
+			disabled: 95,
+			enabled: 5,
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true,
 	}
 };

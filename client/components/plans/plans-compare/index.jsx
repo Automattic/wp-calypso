@@ -233,6 +233,14 @@ const PlansCompare = React.createClass( {
 			const plans = this.getPlans();
 			const features = this.getFeatures();
 
+			abtest( 'wordadsInstantActivation' ) === 'enabled' && features.splice( 6, 0, {
+				1003: true,
+				1008: true,
+				description: this.translate( 'WordAds is an advertising program that enables you to generate income from your site.' ),
+				product_slug: 'wordads-instant',
+				title: this.translate( 'Instant WordAds Activation' )
+			} );
+
 			rows = features.map( ( feature ) => {
 				const planFeatures = plans.map( ( plan ) => {
 					const classes = classNames( 'plans-compare__cell', 'is-plan-specific', {
