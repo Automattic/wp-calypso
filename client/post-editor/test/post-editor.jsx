@@ -40,6 +40,7 @@ describe( 'PostEditor', function() {
 		mockery.registerMock( 'components/notice', MOCK_COMPONENT );
 		mockery.registerMock( 'components/segmented-control', MOCK_COMPONENT );
 		mockery.registerMock( 'components/segmented-control/item', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-document-head', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-action-bar', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-drawer', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-featured-image', MOCK_COMPONENT );

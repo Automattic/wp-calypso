@@ -18,7 +18,6 @@ var actions = require( 'lib/posts/actions' ),
 	PostEditor = require( './post-editor' ),
 	route = require( 'lib/route' ),
 	i18n = require( 'lib/mixins/i18n' ),
-	titleActions = require( 'lib/screen-title/actions' ),
 	sites = require( 'lib/sites-list' )(),
 	user = require( 'lib/user' )(),
 	analytics = require( 'lib/analytics' );
@@ -124,32 +123,11 @@ module.exports = {
 				return;
 			}
 
-			let titleStrings;
+			let gaTitle;
 			switch ( postType ) {
-				case 'post':
-					titleStrings = {
-						edit: i18n.translate( 'Edit Post', { textOnly: true } ),
-						new: i18n.translate( 'New Post', { textOnly: true } ),
-						ga: 'Post'
-					};
-					break;
-
-				case 'page':
-					titleStrings = {
-						edit: i18n.translate( 'Edit Page', { textOnly: true } ),
-						new: i18n.translate( 'New Page', { textOnly: true } ),
-						ga: 'Page'
-					};
-					break;
-
-				default:
-					// [TODO]: Improve these strings, notably once page query
-					// component is available for assigning title dynamically.
-					titleStrings = {
-						edit: i18n.translate( 'Edit', { textOnly: true } ),
-						new: i18n.translate( 'New', { textOnly: true } ),
-						ga: 'Custom Post Type'
-					};
+				case 'post': gaTitle = 'Post'; break;
+				case 'page': gaTitle = 'Page'; break;
+				default: gaTitle = 'Custom Post Type';
 			}
 
 			// We have everything we need to start loading the post for editing,
@@ -158,8 +136,7 @@ module.exports = {
 			if ( postID ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				actions.startEditingExisting( site, postID );
-				titleActions.setTitle( titleStrings.edit, { siteID: site.ID } );
-				analytics.pageView.record( '/' + postType + '/:blogid/:postid', titleStrings.ga + ' > Edit' );
+				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
 			} else {
 				let postOptions = { type: postType };
 
@@ -175,8 +152,7 @@ module.exports = {
 
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				actions.startEditingNew( site, postOptions );
-				titleActions.setTitle( titleStrings.new, { siteID: site.ID } );
-				analytics.pageView.record( '/' + postType, titleStrings.ga + ' > New' );
+				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			}
 		}
 
