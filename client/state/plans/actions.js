@@ -81,7 +81,7 @@ export const requestPlans = () => {
 
 		return wpcom
 			.plans()
-			.list()
+			.list( { apiVersion: '1.2' } )
 			.then( data => {
 				dispatch( plansRequestSuccessAction() );
 				dispatch( plansReceiveAction( getValidDataFromResponse( data ) ) );
