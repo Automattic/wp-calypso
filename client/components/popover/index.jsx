@@ -27,7 +27,7 @@ var Content = withClickOutside( React.createClass( {
 
 	handleClickOutside( event ) {
 		this.props.onClickOutside( event );
-  },
+	},
 
 	_close: function() {
 		this.props.onClose();
