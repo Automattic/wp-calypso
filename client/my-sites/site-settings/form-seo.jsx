@@ -27,38 +27,42 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import analytics from 'lib/analytics';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
+function getGeneralSettingsUrl( slug ) {
+	return `/settings/general/${ slug }`;
+}
+
+function stateForSite( site ) {
+	return {
+		seoMetaDescription: get( site, 'options.seo_meta_description', '' ),
+		verificationServicesCodes: {
+			google: get( site, 'options.verification_services_codes.google', '' ),
+			bing: get( site, 'options.verification_services_codes.bing', '' ),
+			pinterest: get( site, 'options.verification_services_codes.pinterest', '' ),
+			yandex: get( site, 'options.verification_services_codes.yandex', '' )
+		}
+	};
+}
+
 export default React.createClass( {
 	displayName: 'SiteSettingsFormSEO',
 
 	mixins: [ protectForm.mixin ],
 
 	getInitialState() {
-		return this.stateForSite( this.props.site );
+		return stateForSite( this.props.site );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
 		if ( get( nextProps, 'site.ID', 0 ) !== get( this.props, 'site.ID', 0 ) ) {
 			if ( get( nextProps, 'site.jetpack' ) ) {
 				// Go back to general settings if switched to a Jetpack site
-				page( this.getGeneralSettingsUrl( get( nextProps, 'site.slug', '' ) ) );
+				page( getGeneralSettingsUrl( get( nextProps, 'site.slug', '' ) ) );
 				return;
 			}
 
 			// Update state when switching sites
-			this.setState( this.stateForSite( nextProps.site ) );
+			this.setState( stateForSite( nextProps.site ) );
 		}
-	},
-
-	stateForSite: function( site ) {
-		return {
-			seoMetaDescription: get( site, 'options.seo_meta_description', '' ),
-			verificationServicesCodes: {
-				google: get( site, 'options.verification_services_codes.google', '' ),
-				bing: get( site, 'options.verification_services_codes.bing', '' ),
-				pinterest: get( site, 'options.verification_services_codes.pinterest', '' ),
-				yandex: get( site, 'options.verification_services_codes.yandex', '' )
-			}
-		};
 	},
 
 	handleMetaChange( event ) {
@@ -115,10 +119,6 @@ export default React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_seo_settings_form_submit' );
 	},
 
-	getGeneralSettingsUrl( slug ) {
-		return `/settings/general/${ slug }`;
-	},
-
 	render() {
 		const { slug = '', settings: { blog_public = 1 } = {}, fetchingSettings } = this.props.site;
 		const { isSubmittingForm, seoMetaDescription, verificationServicesCodes } = this.state;
@@ -128,7 +128,7 @@ export default React.createClass( {
 		const hasMetaError = seoMetaDescription && seoMetaDescription.length > 160;
 
 		const sitemapUrl = `https://${ slug }/sitemap.xml`;
-		const generalSettingsUrl = this.getGeneralSettingsUrl( slug );
+		const generalSettingsUrl = getGeneralSettingsUrl( slug );
 
 		// The API returns 'false' for an empty array value, so we force it to an empty string if needed
 		const googleCode = get( verificationServicesCodes, 'google' ) || '';
