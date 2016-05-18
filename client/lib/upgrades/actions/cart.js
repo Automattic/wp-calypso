@@ -13,6 +13,7 @@ import { cartItems } from 'lib/cart-values';
 import { isDomainMapping, isDomainRegistration, isPlan } from 'lib/products-values';
 import { abtest } from 'lib/abtest';
 import SitesList from 'lib/sites-list';
+import CartStore from 'lib/cart/store';
 const sitesList = SitesList();
 
 // We need to load the CartStore to make sure the store is registered with the
@@ -55,7 +56,8 @@ function addItems( items ) {
 	let shouldBundleWithPremium = items.some( item => isDomainRegistration( item ) || isDomainMapping( item ) ) && ! freeTrialsEnabled && domainsWithPlansOnlyTestEnabled;
 
 	if ( selectedSite ) {
-		shouldBundleWithPremium = shouldBundleWithPremium && ! isPlan( selectedSite.plan );
+		const cart = CartStore.get();
+		shouldBundleWithPremium = shouldBundleWithPremium && ! isPlan( selectedSite.plan ) && ! cartItems.hasPlan( cart );
 	}
 
 	if ( shouldBundleWithPremium ) {

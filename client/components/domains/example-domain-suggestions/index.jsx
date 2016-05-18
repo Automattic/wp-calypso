@@ -55,7 +55,7 @@ module.exports = React.createClass( {
 		if ( cost && domainsWithPlansOnlyTestEnabled ) {
 			return (
 				<span className="example-domain-suggestions__premium-price" ref="premiumPrice">
-					{ this.translate( 'Included in Premium Plan' ) }
+					{ this.translate( 'Included in WordPress.com Premium' ) }
 					<PremiumPopover
 						context={ this.refs && this.refs.premiumPrice }
 						position="bottom left"
