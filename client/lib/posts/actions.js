@@ -100,8 +100,6 @@ function normalizeApiAttributes( attributes ) {
 }
 
 PostActions = {
-	normalizeApiAttributes,
-
 	/**
 	 * Start keeping track of edits to a new post
 	 *
@@ -327,7 +325,7 @@ PostActions = {
 			return;
 		}
 
-		changedAttributes = PostActions.normalizeApiAttributes( changedAttributes );
+		changedAttributes = normalizeApiAttributes( changedAttributes );
 		rawContent = PostEditStore.getRawContent();
 		mode = PreferencesStore.get( 'editor-mode' );
 		isNew = ! post.ID;
