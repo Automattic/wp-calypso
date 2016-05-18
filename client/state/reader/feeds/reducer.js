@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux';
 import assign from 'lodash/assign';
+import keyBy from 'lodash/keyBy';
+import map from 'lodash/map';
 import omit from 'lodash/omit';
 import omitBy from 'lodash/omitBy';
 
@@ -7,6 +9,7 @@ import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
+	READER_FEED_UPDATE,
 	DESERIALIZE,
 	SERIALIZE
 } from 'state/action-types';
@@ -20,7 +23,8 @@ const actionMap = {
 	[ SERIALIZE ]: handleSerialize,
 	[ DESERIALIZE ]: handleDeserialize,
 	[ READER_FEED_REQUEST_SUCCESS ]: handleRequestSuccess,
-	[ READER_FEED_REQUEST_FAILURE ]: handleRequestFailure
+	[ READER_FEED_REQUEST_FAILURE ]: handleRequestFailure,
+	[ READER_FEED_UPDATE ]: handleFeedUpdate
 };
 
 function defaultHandler( state ) {
@@ -57,6 +61,17 @@ function handleRequestSuccess( state, action ) {
 	return assign( {}, state, {
 		[ action.payload.feed_ID ]: feed
 	} );
+}
+
+function handleFeedUpdate( state, action ) {
+	const feeds = map( action.payload, feed => {
+		feed = assign( {}, feed );
+		if ( feed.name ) {
+			feed.name = decodeEntities( feed.name );
+		}
+		return feed;
+	} );
+	return assign( {}, state, keyBy( feeds, 'feed_ID' ) );
 }
 
 export function items( state = {}, action ) {

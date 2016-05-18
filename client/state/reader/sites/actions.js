@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 import omit from 'lodash/omit';
+import isArray from 'lodash/isArray';
 
 import wpcom from 'lib/wp';
 
@@ -7,7 +8,8 @@ import {
 	READER_SITE_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
-	READER_FEED_UPDATE
+	READER_FEED_UPDATE,
+	READER_SITE_UPDATE
 } from 'state/action-types';
 
 export function requestSite( siteId ) {
@@ -44,5 +46,15 @@ export function requestSite( siteId ) {
 				throw err;
 			}
 		);
+	};
+}
+
+export function updateSites( sites ) {
+	if ( ! isArray( sites ) ) {
+		sites = [ sites ];
+	}
+	return {
+		type: READER_SITE_UPDATE,
+		payload: sites
 	};
 }

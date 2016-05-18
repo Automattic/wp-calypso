@@ -12,6 +12,7 @@ import {
 	READER_SITE_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
+	READER_SITE_UPDATE,
 	SERIALIZE,
 	DESERIALIZE } from 'state/action-types';
 
@@ -96,6 +97,26 @@ describe( 'reducer', ( ) => {
 				error: new Error( 'request failed' ),
 				payload: { ID: 666 }
 			} ) ).to.deep.equal( startingState );
+		} );
+
+		it( 'should accept updates', () => {
+			const startingState = deepFreeze( {
+				666: { ID: 666, name: 'valid' },
+				777: { ID: 777, name: 'second valid' }
+			} );
+			expect( items( startingState, {
+				type: READER_SITE_UPDATE,
+				payload: [
+					{ ID: 1, name: 'first' },
+					{ ID: 2, name: 'second' },
+					{ ID: 666, name: 'valid but updated' }
+				]
+			} ) ).to.deep.equal( {
+				1: { ID: 1, name: 'first' },
+				2: { ID: 2, name: 'second' },
+				666: { ID: 666, name: 'valid but updated' },
+				777: { ID: 777, name: 'second valid' }
+			} );
 		} );
 	} );
 

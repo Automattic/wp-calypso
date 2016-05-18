@@ -1,3 +1,4 @@
+import isArray from 'lodash/isArray';
 import get from 'lodash/get';
 import omit from 'lodash/omit';
 
@@ -7,6 +8,7 @@ import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
+	READER_FEED_UPDATE,
 	READER_SITE_UPDATE
 } from 'state/action-types';
 
@@ -44,5 +46,15 @@ export function requestFeed( feedId ) {
 				throw err;
 			}
 		);
+	};
+}
+
+export function updateFeeds( feeds ) {
+	if ( ! isArray( feeds ) ) {
+		feeds = [ feeds ];
+	}
+	return {
+		type: READER_FEED_UPDATE,
+		payload: feeds
 	};
 }

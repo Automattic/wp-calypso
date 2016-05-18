@@ -8,7 +8,14 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { READER_FEED_REQUEST, READER_FEED_REQUEST_SUCCESS, READER_FEED_REQUEST_FAILURE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import {
+	READER_FEED_REQUEST,
+	READER_FEED_REQUEST_SUCCESS,
+	READER_FEED_REQUEST_FAILURE,
+	READER_FEED_UPDATE,
+	SERIALIZE,
+	DESERIALIZE
+} from 'state/action-types';
 
 import { items, queuedRequests } from '../reducer';
 
@@ -115,6 +122,22 @@ describe( 'reducer', ( ) => {
 				error: new Error( 'request failed' ),
 				payload: { feed_ID: 666 }
 			} ) ).to.deep.equal( startingState );
+		} );
+
+		it( 'should accept feed updates', () => {
+			const startingState = deepFreeze( { 666: { feed_ID: 666, blog_ID: 777, name: 'valid' } } );
+			expect( items( startingState, {
+				type: READER_FEED_UPDATE,
+				payload: [
+					{ feed_ID: 666, blog_ID: 888, name: 'valid but new' },
+					{ feed_ID: 1, blog_ID: 777, name: 'first &amp; one' },
+					{ feed_ID: 2, blog_ID: 999, name: 'second' }
+				]
+			} ) ).to.deep.equal( {
+				666: { feed_ID: 666, blog_ID: 888, name: 'valid but new' },
+				1: { feed_ID: 1, blog_ID: 777, name: 'first & one' },
+				2: { feed_ID: 2, blog_ID: 999, name: 'second' }
+			} );
 		} );
 	} );
 

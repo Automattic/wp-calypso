@@ -2,11 +2,13 @@ import { combineReducers } from 'redux';
 import assign from 'lodash/assign';
 import omit from 'lodash/omit';
 import omitBy from 'lodash/omitBy';
+import keyBy from 'lodash/keyBy';
 
 import {
 	READER_SITE_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
+	READER_SITE_UPDATE,
 	DESERIALIZE,
 	SERIALIZE
 } from 'state/action-types';
@@ -18,7 +20,8 @@ const actionMap = {
 	[ SERIALIZE ]: handleSerialize,
 	[ DESERIALIZE ]: handleDeserialize,
 	[ READER_SITE_REQUEST_SUCCESS ]: handleRequestSuccess,
-	[ READER_SITE_REQUEST_FAILURE ]: handleRequestFailure
+	[ READER_SITE_REQUEST_FAILURE ]: handleRequestFailure,
+	[ READER_SITE_UPDATE ]: handleSiteUpdate
 };
 
 function defaultHandler( state ) {
@@ -55,6 +58,10 @@ function handleRequestSuccess( state, action ) {
 	} );
 }
 
+function handleSiteUpdate( state, action ) {
+	return assign( {}, state, keyBy( action.payload, 'ID' ) );
+}
+
 export function items( state = {}, action ) {
 	const handler = actionMap[ action.type ] || defaultHandler;
 	return handler( state, action );
@@ -71,6 +78,7 @@ export function queuedRequests( state = {}, action ) {
 		case READER_SITE_REQUEST_FAILURE:
 			return omit( state, action.payload.ID );
 			break;
+		// we intentionally don't update state on READER_SITE_UPDATE because those can't affect inflight requests
 	}
 	return state;
 }
