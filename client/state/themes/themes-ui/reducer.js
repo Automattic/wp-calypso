@@ -8,6 +8,7 @@ import { combineReducers } from 'redux';
  */
 import { THEME_BACK_PATH_SET } from 'state/action-types';
 
+// Destination for 'back' button on theme sheet
 function backPath( state = '/design', action ) {
 	switch ( action.type ) {
 		case THEME_BACK_PATH_SET:

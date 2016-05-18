@@ -281,6 +281,7 @@ export function purchase( theme, site, source = 'unknown' ) {
 	};
 }
 
+// Set destination for 'back' button on theme sheet
 export function setBackPath( path ) {
 	return {
 		type: THEME_BACK_PATH_SET,
