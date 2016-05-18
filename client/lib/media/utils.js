@@ -7,6 +7,7 @@ import photon from 'photon';
 import includes from 'lodash/includes';
 import omitBy from 'lodash/omitBy';
 import findKey from 'lodash/findKey';
+import { isUri } from 'valid-url';
 
 /**
  * Internal dependencies
@@ -26,7 +27,6 @@ import Shortcode from 'lib/shortcode';
  * Module variables
  */
 const REGEXP_VIDEOPRESS_GUID = /^[a-z\d]+$/i;
-const REGEXP_EXTENSION = /\.([a-z]+)$/i;
 
 const MediaUtils = {
 	/**
@@ -91,21 +91,18 @@ const MediaUtils = {
 			return;
 		}
 
-		const isUrl = 'string' === typeof media;
+		const isString = 'string' === typeof media;
 		const isFileObject = 'File' in window && media instanceof window.File;
 
-		if ( isUrl ) {
-			// Check if we have a plain filename
-			const match = REGEXP_EXTENSION.exec( media );
-			if ( match && match.length >= 2 ) {
-				extension = match[ 1 ];
+		if ( isString ) {
+			let filePath;
+			if ( isUri( media ) ) {
+				filePath = url.parse( media ).pathname;
 			} else {
-				const filePath = url.parse( media ).pathname;
-				extension = path.extname( filePath ).slice( 1 );
+				filePath = media;
 			}
-			} else {
-				extension = this.getFileExtension( media.fileName || fileContents.name );
-			}
+
+			extension = path.extname( filePath ).slice( 1 );
 		} else if ( isFileObject ) {
 			extension = path.extname( media.name ).slice( 1 );
 		} else if ( media.extension ) {

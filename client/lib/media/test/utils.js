@@ -100,18 +100,6 @@ describe( 'MediaUtils', function() {
 			expect( MediaUtils.getFileExtension( 'example#?#?.gif' ) ).to.equal( 'gif' );
 		} );
 
-		it( 'should ignore invalid filenames', function() {
-			expect( MediaUtils.getFileExtension( 'example#?#?.gif?w=100' ) ).to.equal( '' );
-		} );
-
-		it( 'should ignore querystring parameters', function() {
-			expect( MediaUtils.getFileExtension( 'example.gif?w=100' ) ).to.equal( 'gif' );
-		} );
-
-		it( 'should detect extension from HTML5 File object type', function() {
-			expect( MediaUtils.getFileExtension( new window.File( [''], 'example.wrong', { type: 'image/gif' } ) ) ).to.equal( 'gif' );
-		} );
-
 		it( 'should detect extension from HTML5 File object', function() {
 			expect( MediaUtils.getFileExtension( new window.File( [''], 'example.gif' ) ) ).to.equal( 'gif' );
 		} );
@@ -170,10 +158,6 @@ describe( 'MediaUtils', function() {
 
 		it( 'should ignore invalid filenames', function() {
 			expect( MediaUtils.getMimeType( 'example#?#?.gif?w=100' ) ).to.be.undefined;
-		} );
-
-		it( 'should ignore querystring parameters', function() {
-			expect( MediaUtils.getMimeType( 'example.gif?w=100' ) ).to.equal( 'image/gif' );
 		} );
 
 		it( 'should detect mime type from HTML5 File object', function() {
