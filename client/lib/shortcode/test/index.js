@@ -1,15 +1,14 @@
 /**
- * External depenendencies
+ * External dependencies
  */
-var expect = require( 'chai' ).expect;
+import { expect } from 'chai';
+
+/**
+ * Internal dependencies
+ */
+import Shortcode from '../';
 
 describe( 'index', function() {
-	let Shortcode;
-
-	before( () => {
-		Shortcode = require( '../' );
-	} );
-
 	describe( '#parseAttributes()', function() {
 		it( 'should parse a string of named attributes', function() {
 			var result = Shortcode.parseAttributes( 'bar="baz"' );
