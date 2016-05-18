@@ -123,6 +123,10 @@ describe( 'MediaUtils', function() {
 		it( 'should detect extension from object guid property', function() {
 			expect( MediaUtils.getFileExtension( { guid: 'example.gif' } ) ).to.equal( 'gif' );
 		} );
+
+		it( 'should detect extension from URL string with query parameters', function() {
+			expect( MediaUtils.getFileExtension( 'https://example.com/example.gif?w=110' ) ).to.equal( 'gif' );
+		} );
 	} );
 
 	describe( '#getMimePrefix()', function() {
@@ -174,6 +178,10 @@ describe( 'MediaUtils', function() {
 
 		it( 'should ignore query string parameters', function() {
 			expect( MediaUtils.getMimeType( { URL: 'example.gif?w=110' } ) ).to.equal( 'image/gif' );
+		} );
+
+		it( 'should ignore query string parameters in URL strings', function() {
+			expect( MediaUtils.getMimeType( 'https://example.com/example.gif?w=110' ) ).to.equal( 'image/gif' );
 		} );
 
 		it( 'should detect mime type from object guid property', function() {
