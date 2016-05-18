@@ -1,45 +1,50 @@
 /* Gridicon Floaties */
-@keyframes twinkle {
-	0%, 100% {
-		opacity: 0.2;
+@keyframes floating {
+	0% {
+		opacity: 0;
+		transform: scale( 0.8 ) translateY( 0 ) translateX( 0 ) rotate( 0 );
+		//filter: blur( 10px );
 	}
-	50% {
-		opacity: 0.1;
+/*
+	40% {
+		//filter: blur( 0px );
+	}
+*/
+	70% {
+		opacity: 1;
+		transform: scale( 1 ) translateY( 30px ) translateX( 30px ) rotate( -20deg );
+		//filter: blur( 0px );
+	}
+	100% {
+		opacity: 0;
+		transform: scale( 0.8 ) translateY( 0 ) translateX( 0 ) rotate( 0 );
+		//filter: blur( 10px );
 	}
 }
 
-@keyframes floating {
-	0% {
-		opacity: 0.2;
-		transform: scale( 0.8 );
-		filter: blur( 20px );
-	}
-	40% {
-		filter: blur( 0 );
+@keyframes focus {
+	0%, 100% {
+		filter: blur( 10px );
 	}
 	70% {
-		opacity: 1;
-		transform: scale( 1 ) translateY( 50px ) translateX( 30px ) rotate( -15deg );
-		filter: blur( 0 );
-	}
-	100% {
-		opacity: 0.2;
-		transform: scale( 1 ) translateY( 0 ) translateX( 0 );
-		filter: blur( 20px );
+		filter: blur( 0px );
 	}
 }
 
 .signup-processing-screen__floaties {
+	pointer-events: none;
 	position: fixed;
-		top: 30px;
+		top: 40px;
 		right: 0;
 		bottom: 0;
+	max-height: calc( 100vw - 30px );
 	opacity: 0.2;
-	animation: twinkle 2s infinite linear;
+	filter: blur( 2px );
 
 	@include breakpoint( ">660px" ) {
 		transform: scale( 1.3 );
-		left: -120px;
+		left: 0;
+		//left: -120px;
 	}
 	
 	@include breakpoint( "<660px" ) {
@@ -63,179 +68,204 @@
 		position: absolute;
 		height: auto;
 		width: auto;
-		opacity: 0.2;
-		filter: blur( 20px );
-		animation: floating 8s infinite ease-in-out;
+		opacity: 0;
+		transform: scale( 0.8 );
+		//filter: blur( 20px );
+		animation: floating 10s infinite ease-in-out; //focus 20s infinite linear,
 	}
 	.gridicons-add {
 		top: 0px;
 		left: calc( 50% - 320px);
 		height: 150px;
-		animation-delay: -2s;
+		width: 150px;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-aside {
 		top: 150px;
 		left: calc( 50% + 310px);
 		height: 70px;
-		animation-delay: 5s;
+		width: 70px;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-attachment {
 		height: 60px;
+		width: 60px;
 		top: 70px;
 		left: calc(50% + 220px);
-		animation-delay: 10s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-audio {
 		height: 80px;
+		width: 80px;
 		top: 170px;
 		left: calc(50% - 220px );
 		transform: rotate( -30deg );
-		animation-delay: 8s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-bell {
 		height: 120px;
+		width: 120px;
 		top: 10px;
 		left: calc( 50% + 290px);
-		animation-delay: 3s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-book {
 		top: 340px;
 		left: calc(50% - 300px);
 		height: 100px;
-		animation-delay: -2s;
+		width: 100px;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-camera {
 		top: 300px;
 		left: calc(50% + 200px );
 		height: 160px;
+		width: 160px;
 		transform: rotate( -10deg );
-		animation-delay: 10s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-comment {
 		left: calc( 50% + 130px );
 		top: 167px;
 		height: 140px;
+		width: 140px;
 		transform: rotate( 12deg );
-		animation-delay: 9s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-globe {
 		height: 100px;
+		width: 100px;
 		top: 220px;
 		left: calc(50% - 330px );
-		animation-delay: 5s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-pencil {
 		height: 220px;
+		width: 220px;
 		top: -110px;
 		left: calc(50% + 110px );
-		animation-delay: 8s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-phone {
 		height: 80px;
+		width: 80px;
 		top: 130px;
 		left: calc(50% - 390px);
-		animation-delay: 7s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-reader {
 		height: 130px;
+		width: 130px;
 		top: 360px;
 		left: calc(50% - 170px );
 		transform: rotate( 12deg );
-		animation-delay: 4s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-star {
 		height: 90px;
+		width: 90px;
 		top: 380px;
 		left: calc(50% + 60px);
-		animation-delay: -3s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-video {
 		top: 245px;
 		left: calc(50% - 160px);
-		animation-delay: 5s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-align-image-right {
 		top: 280px;
 		left: calc(50% + 90px);
-		animation-delay: 2s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-bookmark {
 		top: 460px;
 		height: 110px;
+		width: 110px;
 		left: calc(50% - 440px);
-		animation-delay: -2s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-briefcase {
 		top: 320px;
 		height: 80px;
+		width: 80px;
 		left: calc(50% - 450px);
-		animation-delay: 7s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-calendar {
 		top: 460px;
 		left: calc(50% + 300px);
 		height: 80px;
-		animation-delay: 3s;
+		width: 80px;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-clipboard {
 		top: 240px;
 		left: calc(50% + 290px);
 		height: 50px;
-		animation-delay: -3s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-cloud-upload {
 		top: 180px;
 		left: calc(50% - 280px);
 		height: 40px;
-		animation-delay: 3s;
+		width: 40px;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-cog {
 		top: 110px;
 		left: calc(50% + 160px);
 		height: 40px;
-		animation-delay: 1s;
+		width: 40px;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-customize {
 		top: 240px;
 		height: 40px;
+		width: 40px;
 		left: calc(50% - 400px);
-		animation-delay: 3s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-help {
 		top: 460px;
 		left: calc(50% + 160px );
 		height: 90px;
-		animation-delay: 2s;
+		width: 90px;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-link {
 		top: 60px;
 		left: calc(50% - 160px);
 		height: 50px;
+		width: 50px;
 		transform: rotate(-45deg);
-		animation-delay: 9s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-lock {
 		top: 60px;
 		left: calc(50% - 400px);
 		height: 50px;
-		animation-delay: 5s;
+		width: 50px;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-pages {
 		top: 70px;
 		left: calc(50% + 70px);
 		height: 50px;
-		animation-delay: 4s;
+		width: 50px;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-share {
 		top: 280px;
 		left: calc(50% + 360px);
-		animation-delay: -2s;
+		animation-delay: random(10) + s;
 	}
 	.gridicons-stats {
 		top: 470px;
 		left: calc(50% - 270px);
 		height: 80px;
-		animation-delay: 1s;
+		width: 80px;
+		animation-delay: random(10) + s;
 	}
 }
 
@@ -248,10 +278,10 @@
 
 /* WP.com Logo */
 .signup-process-screen__wpcom-logo {
-	height: 200px;
-	width: 200px;
+	height: 120px;
+	width: 120px;
 	display: block;
-	margin: 0 auto 40px auto;
+	margin: 10px auto 40px auto;
 	border-radius: 100%;
 	box-shadow: 0 0 10px 10px $gray-light;
 	fill: lighten( $gray, 20 );
@@ -259,8 +289,6 @@
 
 	@include breakpoint( "<660px" ) {
 		margin-top: 48px;
-		height: 160px;
-		width: 160px;
 	}
 }
 
@@ -271,14 +299,7 @@
 }
 
 /* Continue Button */
-.email-confirmation__button {
-	display: block;
-	padding: 10px 24px;
-	margin: 24px auto 48px auto;
-	animation: processing 1s infinite linear;
-}
-
-@keyframes processing {
+@keyframes pulse {
 	0%, 100% {
 		opacity: 1;
 	}
@@ -287,53 +308,11 @@
 	}
 }
 
-
-/* Email Confirmation Message */
-.signup__email-confirmation {
-	max-width: 400px;
-	margin: 50px auto 0 auto;
-	position: relative;
-}
-
-.email-confirmation__reminder {
-	text-align: center;
-	color: darken( $gray, 10 );
-	margin: 0;
-}
-
-.email-confirmation__step {
-	position: relative;
-	min-height: 70px;
-	box-sizing: border-box;
-	width: 50%;
-	padding: 24px 16px;
-	display: inline-block;
-	text-align: center;
-}
-
-.email-confirmation__step-illustration {
+.email-confirmation__button {
 	display: block;
-	margin: 0 auto;
-	width: 64px;
-}
-
-.email-confirmation__step-title {
-	font-size: 15px;
-	line-height: 160%;
-	margin-top: 8px;
-	margin-bottom: 0;
-	color: darken( $gray, 30 );
-}
-
-.email-confirmation__arrow {
-	position: absolute;
-		top: 32px;
-		left: calc( 50% - 13px - 4px );
-	fill: lighten( $gray, 20 );
-	padding: 4px;
-	//background: $white;
-	box-shadow: 0 0 0 1px lighten( $gray, 20 );
-	border-radius: 100%;
+	padding: 10px 24px;
+	margin: 24px auto 48px auto;
+	animation: pulse 1s infinite linear;
 }
 
 
