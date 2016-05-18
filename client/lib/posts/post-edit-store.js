@@ -395,8 +395,6 @@ function dispatcherCallback( payload ) {
 
 PostEditStore = {
 
-	dispatcherCallback,
-
 	get: function() {
 		return _post;
 	},
@@ -498,6 +496,6 @@ PostEditStore = {
 
 emitter( PostEditStore );
 
-PostEditStore.dispatchToken = Dispatcher.register( PostEditStore.dispatcherCallback );
+PostEditStore.dispatchToken = Dispatcher.register( dispatcherCallback );
 
 module.exports = PostEditStore;
