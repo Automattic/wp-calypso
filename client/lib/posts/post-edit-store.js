@@ -221,12 +221,12 @@ function setRawContent( content ) {
 
 	if ( content !== _rawContent ) {
 		isDirty = PostEditStore.isDirty();
-		hasContent = PostEditStore.hasContent();
+		hasContent = PostEditStore.hasContent( [ 'content' ] );
 
 		debug( 'Set raw content to: %s', content );
 		_rawContent = content;
 
-		if ( PostEditStore.isDirty() !== isDirty || PostEditStore.hasContent() !== hasContent ) {
+		if ( PostEditStore.isDirty() !== isDirty || PostEditStore.hasContent( [ 'content' ] ) !== hasContent ) {
 			PostEditStore.emit( 'change' );
 		}
 		PostEditStore.emit( 'rawContentChange' );
@@ -475,21 +475,28 @@ PostEditStore = {
 		return _previewUrl;
 	},
 
-	hasContent: function() {
+	hasContent: function( fields = [ 'title', 'excerpt', 'content' ] ) {
 		if ( ! _post ) {
 			return false;
 		}
 
-		if ( ( _post.title && _post.title.trim() ) || _post.excerpt ) {
-			return true;
-		}
+		return fields.some( ( field ) => {
+			switch ( field ) {
+				case 'title':
+					return _post[ field ] && _post[ field ].trim();
 
-		if ( _rawContent ) {
-			// Raw content contains the most up-to-date post content
-			return ! isContentEmpty( _rawContent );
-		}
+				case 'excerpt':
+					return _post[ field ];
 
-		return ! isContentEmpty( _post.content );
+				case 'content':
+					if ( _rawContent ) {
+						// Raw content contains the most up-to-date post content
+						return ! isContentEmpty( _rawContent );
+					}
+
+					return ! isContentEmpty( _post[ field ] );
+			}
+		} );
 	}
 
 };
