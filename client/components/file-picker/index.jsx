@@ -27,11 +27,12 @@ export default class FilePicker extends React.Component {
 	// Note: they are already included in the `getFileAttributes` method.
 	setFileDirectoryAttribute() {
 		if ( this.props.directory ) {
-			// Note: the trailing space is important. It includes the unprefixed
-			// `directory` attribute.
-			'webkit moz ms o '.split( ' ' ).forEach( prefix => {
-				this.refs.fileInput.setAttribute( `${prefix}directory`, '' );
-			} );
+			const fileInput = this.refs.fileInput;
+			fileInput.setAttribute( `webkitdirectory`, '' );
+			fileInput.setAttribute( `mozdirectory`, '' );
+			fileInput.setAttribute( `msdirectory`, '' );
+			fileInput.setAttribute( `odirectory`, '' );
+			fileInput.setAttribute( `directory`, '' );
 		}
 	}
 
