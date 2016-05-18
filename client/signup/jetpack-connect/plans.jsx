@@ -43,9 +43,15 @@ const Plans = React.createClass( {
 		this.updateSitePlans( this.props.sitePlans );
 	},
 
+	componentWillReceiveProps( props ) {
+		const selectedSite = props.sites.getSelectedSite();
+		if ( this.hasPlan( selectedSite ) ) {
+			page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
+		}
+	},
+
 	updateSitePlans( sitePlans ) {
 		const selectedSite = this.props.sites.getSelectedSite();
-
 		this.props.fetchSitePlans( sitePlans, selectedSite );
 	},
 
@@ -57,6 +63,12 @@ const Plans = React.createClass( {
 		if ( isCalypsoStartedConnection( this.props.jetpackConnectSessions, selectedSite.slug ) ) {
 			page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
 		}
+	},
+
+	hasPlan( site ) {
+		return site &&
+			site.plan &&
+			( site.plan.product_slug === 'jetpack_business' || site.plan.product_slug === 'jetpack_premium' );
 	},
 
 	selectPlan( cartItem ) {
@@ -80,6 +92,10 @@ const Plans = React.createClass( {
 
 	render() {
 		const selectedSite = this.props.sites.getSelectedSite();
+
+		if ( this.hasPlan( selectedSite ) ) {
+			return null;
+		}
 
 		return (
 			<div>
