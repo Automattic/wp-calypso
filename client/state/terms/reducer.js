@@ -19,7 +19,7 @@ import {
 import { isValidStateWithSchema } from 'state/utils';
 
 import {
-	getSerializedTaxonomyTermsQuery
+	getSerializedTermsQuery
 } from './utils';
 
 import {
@@ -41,7 +41,7 @@ export function queryRequests( state = {}, action ) {
 		case TERMS_REQUEST:
 		case TERMS_REQUEST_SUCCESS:
 		case TERMS_REQUEST_FAILURE:
-			const serializedQuery = getSerializedTaxonomyTermsQuery( action.query, action.taxonomy, action.siteId );
+			const serializedQuery = getSerializedTermsQuery( action.query, action.taxonomy, action.siteId );
 			return Object.assign( {}, state, {
 				[ serializedQuery ]: TERMS_REQUEST === action.type
 			} );
@@ -65,8 +65,8 @@ export function queryRequests( state = {}, action ) {
  */
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
-		case TERMS_REQUEST_SUCCESS:
-			const serializedQuery = getSerializedTaxonomyTermsQuery( action.query, action.taxonomy, action.siteId );
+		case TERMS_RECEIVE:
+			const serializedQuery = getSerializedTermsQuery( action.query, action.taxonomy, action.siteId );
 			return Object.assign( {}, state, {
 				[ serializedQuery ]: action.terms.map( ( term ) => term.ID )
 			} );
