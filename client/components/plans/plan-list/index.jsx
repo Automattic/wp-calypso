@@ -7,6 +7,7 @@ import times from 'lodash/times';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import Card from 'components/card';
 import { filterPlansBySiteAndProps } from 'lib/plans';
 import { getCurrentPlan } from 'lib/plans';
@@ -27,7 +28,7 @@ const PlanList = React.createClass( {
 		const { site, hideFreePlan, plans, showJetpackFreePlan } = this.props;
 
 		let className = '',
-			numberOfPlaceholders = 3;
+			numberOfPlaceholders = abtest( 'personalPlan' ) === 'hide' ? 3 : 4;
 
 		if ( hideFreePlan || ( site && site.jetpack ) ) {
 			numberOfPlaceholders = showJetpackFreePlan ? 3 : 2;

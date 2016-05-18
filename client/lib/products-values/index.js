@@ -11,7 +11,8 @@ var assign = require( 'lodash/assign' ),
 /**
  * Internal dependencies
  */
-var schema = require( './schema.json' );
+var schema = require( './schema.json' ),
+	PLAN_PERSONAL = require( 'lib/plans/constants' ).PLAN_PERSONAL;
 
 var productDependencies = {
 	domain: {
@@ -74,6 +75,13 @@ function isFreeTrial( product ) {
 	return Boolean( product.free_trial );
 }
 
+function isPersonal( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.product_slug === PLAN_PERSONAL;
+}
+
 function isPremium( product ) {
 	var premiumProducts = [ 'value_bundle', 'jetpack_premium' ];
 
@@ -132,6 +140,7 @@ function isPlan( product ) {
 	assertValidProduct( product );
 
 	return (
+		isPersonal( product ) ||
 		isPremium( product ) ||
 		isBusiness( product ) ||
 		isEnterprise( product ) ||
@@ -304,6 +313,7 @@ module.exports = {
 	isEnterprise,
 	isFreeJetpackPlan,
 	isFreePlan,
+	isPersonal,
 	isFreeTrial,
 	isGoogleApps,
 	isJetpackBusiness,

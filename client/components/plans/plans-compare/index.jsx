@@ -11,6 +11,7 @@ import times from 'lodash/times';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
 import { fetchSitePlans } from 'state/sites/plans/actions';
@@ -19,7 +20,7 @@ import { getPlans } from 'state/plans/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
-import { isBusiness, isFreePlan, isPremium } from 'lib/products-values';
+import { isFreePlan, isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import observe from 'lib/mixins/data-observe';
@@ -103,6 +104,10 @@ const PlansCompare = React.createClass( {
 			return isFreePlan( plan );
 		}
 
+		if ( this.state.selectedPlan === 'personal' ) {
+			return isPersonal( plan );
+		}
+
 		if ( this.state.selectedPlan === 'premium' ) {
 			return isPremium( plan );
 		}
@@ -122,10 +127,11 @@ const PlansCompare = React.createClass( {
 
 	getColumnCount() {
 		if ( ! this.props.selectedSite ) {
-			return 4;
+			return abtest( 'personalPlan' ) === 'hide' ? 4 : 5;
 		}
 
-		return this.props.selectedSite.jetpack ? 3 : 4;
+		return this.props.selectedSite.jetpack ? 3
+		:	abtest( 'personalPlan' ) === 'hide' ? 4 : 5;
 	},
 
 	getFeatures() {
@@ -342,6 +348,7 @@ const PlansCompare = React.createClass( {
 	sectionNavigationForMobile() {
 		const text = {
 			free: this.translate( 'Free' ),
+			personal: this.translate( 'Personal' ),
 			premium: this.translate( 'Premium' ),
 			business: this.translate( 'Business' )
 		};
@@ -363,6 +370,13 @@ const PlansCompare = React.createClass( {
 				<SectionNav selectedText={ text[ this.state.selectedPlan ] }>
 					<NavTabs>
 						{ freeOption }
+						{ abtest( 'personalPlan' ) === 'show' &&
+						<NavItem
+							onClick={ this.setPlan.bind( this, 'personal' ) }
+							selected={ 'personal' === this.state.selectedPlan }>
+							{ this.translate( 'Personal' ) }
+						</NavItem>
+						}
 						<NavItem
 							onClick={ this.setPlan.bind( this, 'premium' ) }
 							selected={ 'premium' === this.state.selectedPlan }>

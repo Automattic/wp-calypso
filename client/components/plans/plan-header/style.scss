@@ -10,6 +10,11 @@
 		}
 	}
 
+	&.personal-bundle {
+		.plan-header__title:before {
+			background-image: url( '/calypso/images/plans/plan-personal.svg' );
+		}
+	}
 	&.free_plan,
 	&.jetpack_free {
 		.plan-header__title:before {

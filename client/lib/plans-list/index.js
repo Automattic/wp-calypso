@@ -12,6 +12,7 @@ import wpcom from 'lib/wp';
 import Emitter from 'lib/mixins/emitter';
 import {
 	PLAN_FREE,
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS
 } from 'lib/plans/constants';
@@ -44,6 +45,7 @@ Emitter( PlansList.prototype );
  */
 const pathToSlugMapping = {
 	beginner: PLAN_FREE,
+	personal: PLAN_PERSONAL,
 	premium: PLAN_PREMIUM,
 	business: PLAN_BUSINESS
 };

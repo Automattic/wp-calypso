@@ -141,6 +141,15 @@ const flows = {
 	/* On deck flows*/
 
 	/* Testing flows */
+	personal: {
+		steps: [ 'themes', 'domains', 'user' ],
+		destination: function( dependencies ) {
+			return '/plans/select/personal/' + dependencies.siteSlug;
+		},
+		description: 'Create an account and a blog and then add the personal plan to the users cart.',
+		lastModified: '2016-01-21'
+	},
+
 	'test-site': {
 		steps: config( 'env' ) === 'development' ? [ 'site', 'user' ] : [ 'user' ],
 		destination: '/me/next/welcome',
@@ -232,6 +241,10 @@ function filterFlowName( flowName ) {
 
 	if ( includes( defaultFlows, flowName ) && abtest( 'freeTrialsInSignup' ) === 'enabled' ) {
 		return 'free-trial';
+	}
+
+	if ( includes( defaultFlows, flowName ) && abtest( 'personalPlan' ) === 'show' ) {
+		return 'personal';
 	}
 
 	return flowName;
