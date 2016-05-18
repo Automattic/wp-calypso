@@ -33,7 +33,6 @@ const actions = require( 'lib/posts/actions' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
 	EditorMobileNavigation = require( 'post-editor/editor-mobile-navigation' ),
 	layoutFocus = require( 'lib/layout-focus' ),
-	titleActions = require( 'lib/screen-title/actions' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	DraftList = require( 'my-sites/drafts/draft-list' ),
 	PreferencesActions = require( 'lib/preferences/actions' ),
@@ -51,6 +50,7 @@ import { isEditorDraftsVisible, getEditorPostId } from 'state/ui/editor/selector
 import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';
 import { receivePost, editPost, resetPostEdits } from 'state/posts/actions';
 import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
+import EditorDocumentHead from 'post-editor/editor-document-head';
 
 const messages = {
 	post: {
@@ -59,9 +59,6 @@ const messages = {
 		},
 		trashFailure: function() {
 			return i18n.translate( 'Trashing of post failed.' );
-		},
-		editTitle: function() {
-			return i18n.translate( 'Edit Post', { textOnly: true } );
 		},
 		published: function() {
 			var site = this.props.sites.getSelectedSite();
@@ -115,9 +112,6 @@ const messages = {
 		},
 		trashFailure: function() {
 			return i18n.translate( 'Trashing of page failed.' );
-		},
-		editTitle: function() {
-			return i18n.translate( 'Edit Page', { textOnly: true } );
 		},
 		published: function() {
 			var site = this.props.sites.getSelectedSite();
@@ -295,6 +289,7 @@ const PostEditor = React.createClass( {
 		}
 		return (
 			<div className="post-editor">
+				<EditorDocumentHead />
 				<div className="post-editor__inner">
 					<div className="post-editor__content">
 						<EditorMobileNavigation site={ site } onClose={ this.onClose } />
@@ -806,7 +801,6 @@ const PostEditor = React.createClass( {
 			basePath + '/' + this.props.sites.getSite( post.site_ID ).slug + '/' + post.ID,
 			null, false, false
 		);
-		titleActions.setTitle( this.getMessage( 'editTitle' ), { siteID: this.props.sites.selected } );
 
 		nextState = {
 			isSaving: false,
