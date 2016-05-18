@@ -35,6 +35,24 @@ const EditorPostFormats = React.createClass( {
 		};
 	},
 
+	getSelectedPostFormat: function() {
+		const { value } = this.props;
+
+		if ( 'standard' === value ) {
+			return 'standard';
+		}
+
+		const isSupportedFormat = this.getPostFormats().some( ( postFormat ) => {
+			return postFormat.slug === value;
+		} );
+
+		if ( isSupportedFormat ) {
+			return value;
+		}
+
+		return 'standard';
+	},
+
 	getPostFormats: function() {
 		var formats = [ {
 			slug: 'standard',
@@ -77,6 +95,8 @@ const EditorPostFormats = React.createClass( {
 	},
 
 	renderPostFormats: function() {
+		var selectedFormat = this.getSelectedPostFormat();
+
 		return this.getPostFormats().map( function( postFormat ) {
 			return (
 				<li key={ postFormat.slug } className="editor-post-formats__format">
@@ -84,11 +104,11 @@ const EditorPostFormats = React.createClass( {
 						<FormRadio
 							name="format"
 							value={ postFormat.slug }
-							checked={ postFormat.slug === this.props.value }
+							checked={ postFormat.slug === selectedFormat }
 							onChange={ this.onChange } />
 						<span className="editor-post-formats__format-label">
 							<span className={ 'editor-post-formats__format-icon' } >
-								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 20 } />
+								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 20 } nonStandardSize />
 							</span>
 							{ postFormat.label }
 						</span>
