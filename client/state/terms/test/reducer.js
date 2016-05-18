@@ -150,7 +150,7 @@ describe( 'reducer', () => {
 
 		it( 'should track term query request success', () => {
 			const state = queries( undefined, {
-				type: TERMS_REQUEST_SUCCESS,
+				type: TERMS_RECEIVE,
 				siteId: 2916284,
 				query: { search: 'Ribs' },
 				found: 2,
@@ -168,7 +168,7 @@ describe( 'reducer', () => {
 				'2916284:categories:{"search":"ribs"}': [ 111 ]
 			} );
 			const state = queries( original, {
-				type: TERMS_REQUEST_SUCCESS,
+				type: TERMS_RECEIVE,
 				siteId: 2916284,
 				query: { search: 'And Chicken' },
 				found: 1,

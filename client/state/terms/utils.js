@@ -29,22 +29,9 @@ export function getNormalizedTermsQuery( query ) {
  * @param  {Number} siteId   Site ID
  * @return {String}          Serialized terms query
  */
-export function getSerializedTaxonomyTermsQuery( query = {}, taxonomy, siteId ) {
+export function getSerializedTermsQuery( query = {}, taxonomy, siteId ) {
 	const normalizedQuery = getNormalizedTermsQuery( query );
 	const serializedQuery = JSON.stringify( normalizedQuery ).toLocaleLowerCase();
 
 	return [ siteId, taxonomy, serializedQuery ].join( ':' );
-}
-
-/**
- * Returns a serialized terms query, excluding any page parameter, used as the
- * key in the `state.terms.queriesLastPage` state object.
- *
- * @param  {Object} query    Terms query
- * @param  {String} taxonomy Taxonomy slug
- * @param  {Number} siteId   Site ID
- * @return {String}          Serialized terms query
- */
-export function getSerializedTaxonomyTermsQueryWithoutPage( query, taxonomy, siteId ) {
-	return getSerializedTaxonomyTermsQuery( omit( query, 'page' ), taxonomy, siteId );
 }

@@ -8,7 +8,7 @@ import values from 'lodash/values';
  * Internal dependencies
  */
 import {
-	getSerializedTaxonomyTermsQuery
+	getSerializedTermsQuery
 } from './utils';
 
 /**
@@ -22,7 +22,7 @@ import {
  * @return {Boolean}        Whether terms are being requested
  */
 export function isRequestingSiteTaxonomyTermsForQuery( state, siteId, taxonomy, query ) {
-	const serializedQuery = getSerializedTaxonomyTermsQuery( query, taxonomy, siteId );
+	const serializedQuery = getSerializedTermsQuery( query, taxonomy, siteId );
 	return !! state.terms.queryRequests[ serializedQuery ];
 }
 
@@ -37,17 +37,19 @@ export function isRequestingSiteTaxonomyTermsForQuery( state, siteId, taxonomy, 
  * @return {?Array}           Posts for the post query
  */
 export function getSiteTaxonomyTermsForQuery( state, siteId, taxonomy, query ) {
-	const serializedQuery = getSerializedTaxonomyTermsQuery( query, taxonomy, siteId );
+	const serializedQuery = getSerializedTermsQuery( query, taxonomy, siteId );
 	if ( ! state.terms.queries[ serializedQuery ] ) {
 		return null;
 	}
 
-	const taxonomyTerms = getSiteTaxonomyTerms( state, siteId, taxonomy );
-	const matchingTerms = state.terms.queries[ serializedQuery ];
+	return state.terms.queries[ serializedQuery ].reduce( ( memo, termId ) => {
+		const term = get( state.terms.items, [ siteId, taxonomy, termId ] );
+		if ( term ) {
+			memo.push( term );
+		}
 
-	return taxonomyTerms.filter( ( term ) => {
-		return matchingTerms.indexOf( term.ID ) >= 0;
-	} );
+		return memo;
+	}, [] );
 }
 
 /**
