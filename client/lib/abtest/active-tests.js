@@ -63,11 +63,11 @@ module.exports = {
 		defaultVariation: 'namegen'
 	},
 	guidedTours: {
-		datestamp: '20160428',
+		datestamp: '20160603',
 		variations: {
-			original: 96,
-			guided: 2,
-			calypsoOnly: 2
+			original: 34,
+			guided: 50,
+			calypsoOnly: 16
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: true
