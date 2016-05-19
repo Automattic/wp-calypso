@@ -195,7 +195,7 @@ function hasFreeTrial( cart ) {
  * @returns {boolean} true if there is at least one plan, false otherwise
  */
 function hasPlan( cart ) {
-	return some( getAll( cart ), isPlan );
+	return cart && some( getAll( cart ), isPlan );
 }
 
 function hasPremiumPlan( cart ) {
@@ -696,6 +696,16 @@ function isNextDomainFree( cart ) {
 	return !! ( cart && cart.next_domain_is_free );
 }
 
+function isDomainBeingUsedForPlan( cart, domain ) {
+	if ( cart && domain ) {
+		const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) ) || [],
+			domainProduct = ( domainProducts.shift() || {} );
+		return domain === domainProduct.meta;
+	}
+
+	return false;
+}
+
 module.exports = {
 	add,
 	addPrivacyToAllDomains,
@@ -722,6 +732,7 @@ module.exports = {
 	googleApps,
 	googleAppsExtraLicenses,
 	isNextDomainFree,
+	isDomainBeingUsedForPlan,
 	hasDomainCredit,
 	hasDomainInCart,
 	hasDomainMapping,

@@ -45,12 +45,12 @@ describe( 'Domain Suggestion', function() {
 		} );
 
 		it( 'should show the button label when not in cart', function() {
-			const buttonLabel = 'Select';
+			const buttonContent = 'Select';
 			const domainSuggestion = shallow(
-					<DomainSuggestion isAdded={ false } buttonLabel={ buttonLabel } />
+					<DomainSuggestion isAdded={ false } buttonContent={ buttonContent } />
 				);
 			const domainSuggestionButton = domainSuggestion.find( '.domain-suggestion__select-button' );
-			expect( domainSuggestionButton.text() ).to.equal( buttonLabel );
+			expect( domainSuggestionButton.text() ).to.equal( buttonContent );
 		} );
 	} );
 } );

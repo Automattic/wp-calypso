@@ -25,11 +25,11 @@ import { getFixedDomainSearch, canRegister } from 'lib/domains';
 import SearchCard from 'components/search-card';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
+import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
 import analyticsMixin from 'lib/mixins/analytics';
 import * as upgradesActions from 'lib/upgrades/actions';
-import { isPlan } from 'lib/products-values';
 import cartItems from 'lib/cart-values/cart-items';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { abtest } from 'lib/abtest';
@@ -288,8 +288,7 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	onSearch: function( searchQuery ) {
-		var suggestions = [],
-			domain = getFixedDomainSearch( searchQuery );
+		let domain = getFixedDomainSearch( searchQuery );
 
 		this.setState( { lastQuery: searchQuery }, this.save );
 
@@ -371,7 +370,6 @@ const RegisterDomainStep = React.createClass( {
 						const analyticsResults = [ error.code || error.error || 'ERROR' + ( error.statusCode || '' ) ];
 						this.recordEvent( 'searchResultsReceive', domain, analyticsResults, timeDiff, -1, this.props.analyticsSection );
 						callback( error, null );
-
 					} );
 				}
 			],
@@ -401,7 +399,7 @@ const RegisterDomainStep = React.createClass( {
 
 		if ( this.isLoadingSuggestions() ) {
 			domainRegistrationSuggestions = times( INITIAL_SUGGESTION_QUANTITY + 1, function( n ) {
-				return <DomainRegistrationSuggestion key={ 'suggestion-' + n } />;
+				return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
 			} );
 		} else {
 			// only display two suggestions initially
@@ -413,7 +411,8 @@ const RegisterDomainStep = React.createClass( {
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
-						buttonLabel={ this.props.buttonLabel }
+						selectedSite={ this.props.selectedSite }
+						withPlansOnly={ domainsWithPlansOnlyTestEnabled }
 						onButtonClick={ this.addRemoveDomainToCart.bind( null, suggestion ) } />
 				);
 			}, this );
@@ -421,9 +420,8 @@ const RegisterDomainStep = React.createClass( {
 			domainMappingSuggestion = (
 				<DomainMappingSuggestion
 					onButtonClick={ this.goToMapDomainStep }
-					buttonLabel={ domainsWithPlansOnlyTestEnabled &&
-						! ( this.props.selectedSite && isPlan( this.props.selectedSite.plan ) ) &&
-						! cartItems.isNextDomainFree( this.props.cart ) && this.translate( 'Upgrade' ) }
+					selectedSite={ this.props.selectedSite }
+					withPlansOnly={ domainsWithPlansOnlyTestEnabled }
 					cart={ this.props.cart }
 					products={ this.props.products } />
 				);
@@ -472,15 +470,12 @@ const RegisterDomainStep = React.createClass( {
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
 				availableDomain={ availableDomain }
-				buttonLabel={ this.props.buttonLabel }
+				withPlansOnly={ domainsWithPlansOnlyTestEnabled }
 				lastDomainSearched={ lastDomainSearched }
 				lastDomainError = { this.state.lastDomainError }
 				onAddMapping={ onAddMapping }
 				onClickResult={ this.addRemoveDomainToCart }
 				onClickMapping={ this.goToMapDomainStep }
-				mappingSuggestionLabel={ domainsWithPlansOnlyTestEnabled &&
-						! ( this.props.selectedSite && isPlan( this.props.selectedSite.plan ) ) &&
-						! cartItems.isNextDomainFree( this.props.cart ) && this.translate( 'Upgrade' ) }
 				suggestions={ suggestions }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
@@ -610,7 +605,6 @@ const RegisterDomainStep = React.createClass( {
 			case 'server_error':
 				message = this.translate( 'Sorry but there was a problem processing your request. Please try again in a few minutes.' );
 				break;
-
 
 			default:
 				throw new Error( 'Unrecognized error code: ' + error.code );
