@@ -18,6 +18,7 @@ import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import config from 'config';
 import { createAccount, authorize, goBackToWpAdmin, activateManage } from 'state/jetpack-connect/actions';
+import { isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
@@ -31,9 +32,10 @@ import { getSiteByUrl } from 'state/sites/selectors';
 import Spinner from 'components/spinner';
 
 /**
- * Module variables
+ * Constants
  */
-const STATS_PAGE = '/stats/insights/';
+
+const PLANS_PAGE = '/jetpack/connect/plans/';
 const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + process.env.NODE_ENV;
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 
@@ -139,12 +141,16 @@ const LoggedInForm = React.createClass( {
 	},
 
 	componentWillReceiveProps( props ) {
-		const { queryObject, authorizeSuccess, isRedirectingToWpAdmin } = props.jetpackConnectAuthorize;
+		const { queryObject, authorizeSuccess, siteReceived, isActivating, isRedirectingToWpAdmin } = props.jetpackConnectAuthorize;
 		if ( authorizeSuccess &&
 			! isRedirectingToWpAdmin &&
 			! props.calypsoStartedConnection &&
 			queryObject.redirect_after_auth ) {
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+		} else if ( siteReceived &&
+			props.calypsoStartedConnection &&
+			! isActivating ) {
+			this.activateManage();
 		}
 	},
 
@@ -169,9 +175,9 @@ const LoggedInForm = React.createClass( {
 	},
 
 	activateManage() {
-		const { queryObject, activateManageSecret, plansUrl } = this.props.jetpackConnectAuthorize;
+		const { queryObject, activateManageSecret } = this.props.jetpackConnectAuthorize;
 		this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
-		page.redirect( plansUrl );
+		page.redirect( this.getRedirectionTarget() );
 	},
 
 	handleSubmit() {
@@ -280,7 +286,7 @@ const LoggedInForm = React.createClass( {
 		if ( this.props.calypsoStartedConnection ) {
 			const site = this.props.jetpackConnectAuthorize.queryObject.site;
 			const siteSlug = site.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
-			return STATS_PAGE + siteSlug;
+			return PLANS_PAGE + siteSlug;
 		}
 
 		return queryObject.redirect_after_auth;
@@ -359,11 +365,11 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 	displayName: 'JetpackConnectAuthorizeForm',
 	mixins: [ observe( 'userModule' ) ],
 
-	isCalypsoStartedConnection() {
+	isSSO() {
 		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
-		if ( this.props.jetpackConnectSessions && this.props.jetpackConnectSessions[ site ] ) {
+		if ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] ) {
 			const currentTime = ( new Date() ).getTime();
-			return ( currentTime - this.props.jetpackConnectSessions[ site ] < JETPACK_CONNECT_TTL );
+			return ( currentTime - this.props.jetpackSSOSessions[ site ] < JETPACK_CONNECT_TTL );
 		}
 
 		return false;
@@ -375,10 +381,12 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		const props = Object.assign( {}, this.props, {
 			user: user
 		} );
+		const calypsoStartedConnection = isCalypsoStartedConnection( this.props.jetpackConnectSessions, this.props.jetpackConnectAuthorize.queryObject.site );
+
 		return (
 			( user )
-				? <LoggedInForm { ...props } calypsoStartedConnection={ this.isCalypsoStartedConnection() } />
-				: <LoggedOutForm { ...props } calypsoStartedConnection={ this.isCalypsoStartedConnection() } />
+				? <LoggedInForm { ...props } calypsoStartedConnection={ calypsoStartedConnection } isSSO={ this.isSSO() } />
+				: <LoggedOutForm { ...props } calypsoStartedConnection={ calypsoStartedConnection } isSSO={ this.isSSO() } />
 		);
 	},
 	render() {
