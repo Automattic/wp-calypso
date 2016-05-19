@@ -14,6 +14,7 @@ import {
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
 	EXPORT_COMPLETE,
 	EXPORT_FAILURE,
+	EXPORT_POST_TYPE_FILTER_SET,
 	EXPORT_START_REQUEST,
 	EXPORT_STARTED,
 	EXPORT_STATUS_FETCH,
@@ -23,7 +24,8 @@ import {
 	advancedSettingsReceive,
 	advancedSettingsFail,
 	exportStatusFetch,
-	startExport
+	startExport,
+	setPostTypeFilters,
 } from '../actions';
 import {
 	SAMPLE_ADVANCED_SETTINGS,
@@ -38,13 +40,34 @@ describe( 'actions', () => {
 			fetchingAdvancedSettings: {}
 		} }
 	} );
+	const getStateCustomSettings = () => ( {
+		siteSettings: { exporter: {
+			fetchingAdvancedSettings: {},
+			selectedPostType: 'post',
+			selectedAdvancedSettings: {
+				2916284: {
+					post: {
+						author: 95752520,
+						category: 1
+					},
+					page: {}
+				}
+			}
+		} }
+	} );
 
 	before( () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
 			.get( '/rest/v1.1/sites/100658273/exports/settings' )
 			.reply( 200, SAMPLE_ADVANCED_SETTINGS )
-			.post( '/rest/v1.1/sites/2916284/exports/start' )
+			.post( '/rest/v1.1/sites/2916284/exports/start', {
+				author: 95752520,
+				category: 1,
+				post_type: 'post'
+			} )
+			.reply( 200, true )
+			.post( '/rest/v1.1/sites/2916284/exports/start', body => !body )
 			.reply( 200, true )
 			.get( '/rest/v1.1/sites/100658273/exports/0' )
 			.reply( 200, SAMPLE_EXPORT_COMPLETE_RESPONSE )
@@ -130,6 +153,17 @@ describe( 'actions', () => {
 			} );
 		} );
 
+		it( 'should dispatch custom export action when thunk triggered', ( done ) => {
+			startExport( 2916284, false )( spy, getStateCustomSettings ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: EXPORT_STARTED,
+					siteId: 2916284,
+				} );
+
+				done();
+			} ).catch( done );
+		} );
+
 		it( 'should dispatch export started action when request completes', ( done ) => {
 			startExport( 2916284 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledTwice;
@@ -152,6 +186,18 @@ describe( 'actions', () => {
 
 				done();
 			} ).catch( done );
+		} );
+	} );
+
+	describe( '#setPostTypeFilters()', () => {
+		it( 'should return an action object', () => {
+			expect( setPostTypeFilters( 1, 'post', 'author', 2 ) ).to.deep.equal( {
+				type: EXPORT_POST_TYPE_FILTER_SET,
+				siteId: 1,
+				postType: 'post',
+				fieldName: 'author',
+				value: 2,
+			} );
 		} );
 	} );
 
