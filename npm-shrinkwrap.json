@@ -298,9 +298,6 @@
     "benchmark": {
       "version": "1.0.0"
     },
-    "better-assert": {
-      "version": "1.0.2"
-    },
     "big.js": {
       "version": "3.1.3"
     },
