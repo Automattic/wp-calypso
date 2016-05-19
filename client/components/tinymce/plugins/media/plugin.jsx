@@ -11,6 +11,7 @@ var ReactDom = require( 'react-dom' ),
 	values = require( 'lodash/values' ),
 	debounce = require( 'lodash/debounce' ),
 	includes = require( 'lodash/includes' ),
+	i18n = require( 'i18n-calypso' ),
 	Shortcode = require( 'lib/shortcode' ),
 	closest = require( 'component-closest' );
 
@@ -18,7 +19,6 @@ var ReactDom = require( 'react-dom' ),
  * Internal dependencies
  */
 var sites = require( 'lib/sites-list' )(),
-	i18n = require( 'lib/mixins/i18n' ),
 	PostActions = require( 'lib/posts/actions' ),
 	PostEditStore = require( 'lib/posts/post-edit-store' ),
 	MediaConstants = require( 'lib/media/constants' ),

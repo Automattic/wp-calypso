@@ -3,11 +3,11 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import localize from 'lib/mixins/i18n/localize';
 import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';

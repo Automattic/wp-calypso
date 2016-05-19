@@ -8,6 +8,7 @@ import React from 'react';
 import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 import noop from 'lodash/noop';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import analytics from 'lib/analytics';
 import Spinner from 'components/spinner';
 import Gridicon from 'components/gridicon';
 import { isMobile } from 'lib/viewport';
-import i18n from 'lib/mixins/i18n';
 
 /**
  * Internal variables

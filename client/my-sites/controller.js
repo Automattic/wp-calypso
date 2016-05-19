@@ -5,6 +5,7 @@ import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -22,7 +23,6 @@ import {
 
 import NavigationComponent from 'my-sites/navigation';
 import route from 'lib/route';
-import i18n from 'lib/mixins/i18n';
 import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';

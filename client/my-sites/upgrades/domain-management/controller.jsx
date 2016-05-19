@@ -3,6 +3,7 @@
  */
 import page from 'page';
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -13,7 +14,6 @@ import DomainManagement from './domain-management';
 import DomainManagementData from 'components/data/domain-management';
 import EmailData from 'components/data/domain-management/email' ;
 import EmailForwardingData from 'components/data/domain-management/email-forwarding' ;
-import i18n from 'lib/mixins/i18n';
 import NameserversData from 'components/data/domain-management/nameservers';
 import paths from 'my-sites/upgrades/paths';
 import PrimaryDomainData from 'components/data/domain-management/primary-domain';

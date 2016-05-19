@@ -2,6 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:community-translator' ),
+	i18n = require( 'i18n-calypso' ),
 	React = require( 'react' );
 
 /**
@@ -11,7 +12,6 @@ var config = require( 'config' ),
 	loadScript = require( 'lib/load-script' ),
 	user = require( 'lib/user' )(),
 	userSettings = require( 'lib/user-settings' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	isMobile = require( 'lib/viewport' ).isMobile,
 	analytics = require( 'lib/analytics' ),
 	hasTouch = require( 'lib/touch-detect' ).hasTouch;

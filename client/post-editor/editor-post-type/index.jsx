@@ -4,11 +4,11 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import localize from 'lib/mixins/i18n/localize';
 import { getEditedPost } from 'state/posts/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';

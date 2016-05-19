@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import get from 'lodash/get';
 import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getEditorPostId, isEditorDraftsVisible } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
-import localize from 'lib/mixins/i18n/localize';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import DraftsButton from 'post-editor/drafts-button';

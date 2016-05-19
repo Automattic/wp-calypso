@@ -18,13 +18,12 @@ describe( 'FormPhoneInput', function() {
 		ReactInjection = require( 'react/lib/ReactInjection' );
 		TestUtils = require( 'react-addons-test-utils' );
 
-		i18n = require( 'lib/mixins/i18n' );
+		i18n = require( 'i18n-calypso' );
 		mockCountriesList = require( './mocks/mock-countries-list' );
 		mockCountriesListEmpty = require( './mocks/mock-countries-list-empty' );
 
 		countries = mockCountriesList.get();
 
-		i18n.initialize();
 		ReactInjection.Class.injectMixin( i18n.mixin );
 		FormPhoneInput = require( 'components/forms/form-phone-input' );
 		container = getContainer();

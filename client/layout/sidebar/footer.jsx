@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -9,7 +10,6 @@ import React from 'react';
 var Gridicon = require( 'components/gridicon' );
 
 import Button from 'components/button';
-import localize from 'lib/mixins/i18n/localize';
 
 const SidebarFooter = ( { translate, children } ) => (
 	<div className="sidebar__footer">

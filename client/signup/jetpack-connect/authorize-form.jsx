@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import page from 'page';
 import urlModule from 'url';
+import i18n from 'i18n-calypso';
 const debug = require( 'debug' )( 'calypso:jetpack-connect:authorize-form' );
 
 /**
@@ -26,7 +27,6 @@ import userUtilities from 'lib/user/utils';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
-import i18n from 'lib/mixins/i18n';
 import Gridicon from 'components/gridicon';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';

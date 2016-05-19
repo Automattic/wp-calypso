@@ -3,7 +3,8 @@
  */
 var React = require( 'react' ),
 	defer = require( 'lodash/defer' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
@@ -17,8 +18,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
 	Notice = require( 'components/notice' ),
 	abtest = require( 'lib/abtest' ).abtest,
-	signupUtils = require( 'signup/utils' ),
-	i18n = require( 'lib/mixins/i18n' );
+	signupUtils = require( 'signup/utils' );
 
 const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 

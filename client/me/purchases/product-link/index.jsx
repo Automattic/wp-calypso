@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -10,7 +11,6 @@ import config from 'config';
 import { domainManagementEdit } from 'my-sites/upgrades/paths';
 import { getDetailsUrl as getThemeDetailsUrl } from 'my-sites/themes/helpers';
 import { googleAppsSettingsUrl } from 'lib/google-apps';
-import i18n from 'lib/mixins/i18n';
 import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
 
 const ProductLink = ( { selectedPurchase, selectedSite } ) => {

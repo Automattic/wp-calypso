@@ -11,7 +11,8 @@ var React = require( 'react' ),
 	sortBy = require( 'lodash/sortBy' ),
 	size = require( 'lodash/size' ),
 	filter = require( 'lodash/filter' ),
-	includes = require( 'lodash/includes' );
+	includes = require( 'lodash/includes' ),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
@@ -23,8 +24,7 @@ var config = require( 'config' ),
 	upgradesPaths = require( 'my-sites/upgrades/paths' ),
 	viewport = require( 'lib/viewport' ),
 	upgradesActionTypes = require( 'lib/upgrades/constants' ).action,
-	PopoverCart = require( 'my-sites/upgrades/cart/popover-cart' ),
-	i18n = require( 'lib/mixins/i18n' );
+	PopoverCart = require( 'my-sites/upgrades/cart/popover-cart' );
 
 // The first path acts as the primary path that the button will link to. The
 // remaining paths will make the button highlighted on that page.

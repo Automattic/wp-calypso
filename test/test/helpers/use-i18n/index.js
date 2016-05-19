@@ -1,5 +1,5 @@
 export default function useI18n() {
 	before( () => {
-		require( 'lib/mixins/i18n' ).initialize( { '': {} } );
+		require( 'i18n-calypso' ).configure();
 	} );
 }

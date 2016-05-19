@@ -3,16 +3,16 @@
  */
 var debug = require( 'debug' )( 'calypso:network-connection' ),
 	Emitter = require( 'lib/mixins/emitter' ),
-	request = require( 'superagent' );
+	request = require( 'superagent' ),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
  */
 var config = require( 'config' ),
-	PollerPool = require( 'lib/data-poller' )
+	PollerPool = require( 'lib/data-poller' );
 
 import { connectionLost, connectionRestored } from 'state/application/actions';
-import i18n from 'lib/mixins/i18n';
 
 var STATUS_CHECK_INTERVAL = 20000,
 	connected = true,

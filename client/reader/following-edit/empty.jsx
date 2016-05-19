@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import i18n from 'lib/mixins/i18n';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 const FollowingEditEmptyContent = React.createClass( {

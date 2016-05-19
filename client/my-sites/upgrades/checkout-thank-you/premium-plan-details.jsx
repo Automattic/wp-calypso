@@ -3,6 +3,7 @@
  */
 import find from 'lodash/find';
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -10,7 +11,6 @@ import React from 'react';
 import config from 'config';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleVoucherDetails from './google-voucher';
-import i18n from 'lib/mixins/i18n';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { isPremium } from 'lib/products-values';
 import paths from 'lib/paths';

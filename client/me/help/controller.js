@@ -4,12 +4,12 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import i18n from 'lib/mixins/i18n';
 import route from 'lib/route';
 import titleActions from 'lib/screen-title/actions';
 import config from 'config';

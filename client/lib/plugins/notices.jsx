@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var groupBy = require( 'lodash/groupBy' );
+var groupBy = require( 'lodash/groupBy' ),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
@@ -10,8 +11,7 @@ var notices = require( 'notices' ),
 	PluginsLog = require( 'lib/plugins/log-store' ),
 	PluginsActions = require( 'lib/plugins/actions' ),
 	PluginsUtil = require( 'lib/plugins/utils' ),
-	versionCompare = require( 'lib/version-compare' ),
-	i18n = require( 'lib/mixins/i18n' );
+	versionCompare = require( 'lib/version-compare' );
 
 function getCombination( translateArg ) {
 	return ( translateArg.numberOfSites > 1 ? 'n sites' : '1 site' ) + ' ' + ( translateArg.numberOfPlugins > 1 ? 'n plugins' : '1 plugin' );

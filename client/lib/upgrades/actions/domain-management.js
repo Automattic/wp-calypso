@@ -2,6 +2,7 @@
  * Externel dependencies
  */
 import noop from 'lodash/noop';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import DnsStore from 'lib/domains/dns/store';
 import domainsAssembler from 'lib/domains/assembler';
 import DomainsStore from 'lib/domains/store';
 import EmailForwardingStore from 'lib/domains/email-forwarding/store';
-import i18n from 'lib/mixins/i18n';
 import NameserversStore from 'lib/domains/nameservers/store';
 import sitesFactory from 'lib/sites-list';
 import wapiDomainInfoAssembler from 'lib/domains/wapi-domain-info/assembler';

@@ -2,14 +2,14 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	i18n = require( 'i18n-calypso' ),
 	noop = require( 'lodash/noop' ),
 	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	Popover = require( 'components/popover' ),
+var Popover = require( 'components/popover' ),
 	Tooltip = require( 'components/chart/tooltip' );
 
 module.exports = React.createClass( {

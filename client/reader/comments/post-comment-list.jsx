@@ -5,11 +5,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { translate } from 'lib/mixins/i18n';
 import {
 	getPostCommentsTree,
 	getPostTotalCommentsCount,

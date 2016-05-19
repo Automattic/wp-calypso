@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { getDomainManagementUrl } from './utils';
-import i18n from 'lib/mixins/i18n';
 import PurchaseDetail from 'components/purchase-detail';
 
 const SiteRedirectDetails = ( { selectedSite, domain } ) => {

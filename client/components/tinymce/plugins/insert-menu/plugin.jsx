@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import tinymce from 'tinymce/tinymce';
 import { renderToString } from 'react-dom/server';
+import i18n from 'i18n-calypso';
 
 import Gridicon from 'components/gridicon';
 import config from 'config';
-import i18n from 'lib/mixins/i18n';
 
 import menuItems from './menu-items';
 

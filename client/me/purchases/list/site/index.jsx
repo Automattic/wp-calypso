@@ -4,11 +4,11 @@
 import classNames from 'classnames';
 import React from 'react';
 import times from 'lodash/times';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import PurchaseItem from '../item';
 import SectionHeader from 'components/section-header';
 

@@ -5,13 +5,13 @@
  */
 import React from 'react';
 import Masterbar from './masterbar';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Item from './item';
 import config from 'config';
-import localize from 'lib/mixins/i18n/localize';
 
 const MasterbarLoggedOut = ( { title, translate } ) => (
 	<Masterbar>

@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { addCurrentPlanToCartAndRedirect, getCurrentPlan, getDayOfTrial } from 'lib/plans';
-import i18n from 'lib/mixins/i18n';
 import Notice from 'components/notice';
 
 const FreeTrialNotice = React.createClass( {

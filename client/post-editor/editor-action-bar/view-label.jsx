@@ -3,11 +3,11 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import localize from 'lib/mixins/i18n/localize';
 import { decodeEntities } from 'lib/formatting';
 import { getEditedPost } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';

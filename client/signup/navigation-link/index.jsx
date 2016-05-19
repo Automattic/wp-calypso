@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import find from 'lodash/find';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import { submitSignupStep } from 'lib/signup/actions';
 import signupUtils from 'signup/utils';
-import i18n from 'lib/mixins/i18n';
 
 const NavigationLink = React.createClass( {
 	propTypes: {

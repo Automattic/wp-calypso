@@ -3,13 +3,13 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { getPost } from 'state/posts/selectors';
 import { deletePost } from 'state/posts/actions';
-import localize from 'lib/mixins/i18n/localize';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 

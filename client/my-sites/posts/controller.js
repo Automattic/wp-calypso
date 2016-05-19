@@ -5,6 +5,7 @@ var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' ),
+	i18n = require( 'i18n-calypso' ),
 	ReactRedux = require( 'react-redux' );
 
 /**
@@ -13,7 +14,6 @@ var page = require( 'page' ),
 var user = require( 'lib/user' )(),
 	sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),

@@ -7,9 +7,9 @@
  */
 
 /**
- * Internal dependencies
+ * External dependencies
  */
-import { translate } from 'lib/mixins/i18n';
+import { translate } from 'i18n-calypso';
 
 function AtDCore() {
 	/* these are the categories of errors AtD should ignore */
