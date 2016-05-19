@@ -15,6 +15,8 @@ const PurchaseDetail = ( {
 	description,
 	href,
 	icon,
+	id,
+	info,
 	isPlaceholder,
 	isRequired,
 	isSubmitting,
@@ -44,7 +46,7 @@ const PurchaseDetail = ( {
 	}
 
 	return (
-		<div className={ classes }>
+		<div className={ classes } id={ id || null }>
 			{ requiredText && (
 				<div className="purchase-detail__required-notice">
 					<em>{ requiredText }</em>
@@ -64,6 +66,13 @@ const PurchaseDetail = ( {
 				</div>
 
 				{ buttonElement }
+				{ info && <div className="purchase-detail__info form-setting-explanation">
+					<span className="purchase-detail__info-icon-container">
+						<Gridicon size={ 12 } icon="info-outline" />
+					</span>
+						{ info }
+					</div>
+				}
 			</div>
 		</div>
 	);
