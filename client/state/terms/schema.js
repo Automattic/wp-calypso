@@ -29,3 +29,28 @@ export const termsSchema = {
 	},
 	additionalProperties: false
 };
+
+export const queriesSchema = {
+	type: 'object',
+	patternProperties: {
+		'^\\d+$': {
+			type: 'object',
+			patternProperties: {
+				'^[A-Za-z0-9-_]+$': {
+					type: 'object',
+					patternProperties: {
+						'^\\{[^\\}]*\\}$': {
+							type: 'array',
+							items: {
+								type: 'number'
+							}
+						}
+					},
+					additionalProperties: false
+				}
+			},
+			additionalProperties: false
+		}
+	},
+	additionalProperties: false
+};
