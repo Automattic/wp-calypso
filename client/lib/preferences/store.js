@@ -13,14 +13,15 @@ var Dispatcher = require( 'dispatcher' ),
 /**
  * Module variables
  */
-var PreferencesStore = {},
-	_preferences;
+var PreferencesStore = {
+	_preferences: undefined
+};
 
 emitter( PreferencesStore );
 
 function ensurePreferencesObject() {
-	if ( ! _preferences ) {
-		_preferences = {};
+	if ( ! PreferencesStore._preferences ) {
+		PreferencesStore._preferences = {};
 	}
 }
 
@@ -28,9 +29,9 @@ function receiveSingle( key, value ) {
 	ensurePreferencesObject();
 
 	if ( null === value ) {
-		delete _preferences[ key ];
+		delete PreferencesStore._preferences[ key ];
 	} else {
-		_preferences[ key ] = value;
+		PreferencesStore._preferences[ key ] = value;
 	}
 }
 
@@ -48,7 +49,7 @@ function receiveMany( preferences ) {
  * @return {Object} All key-value pairs in the store
  */
 PreferencesStore.getAll = function() {
-	return _preferences;
+	return PreferencesStore._preferences;
 };
 
 /**
@@ -58,8 +59,8 @@ PreferencesStore.getAll = function() {
  * @return {*}          The value of the item
  */
 PreferencesStore.get = function( key ) {
-	if ( _preferences ) {
-		return _preferences[ key ];
+	if ( PreferencesStore._preferences ) {
+		return PreferencesStore._preferences[ key ];
 	}
 };
 

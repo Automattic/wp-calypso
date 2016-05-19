@@ -4,8 +4,7 @@
 var chai = require( 'chai' ),
 	defer = require( 'lodash/defer' ),
 	expect = chai.expect,
-	sinon = require( 'sinon' ),
-	rewire = require( 'rewire' );
+	sinon = require( 'sinon' );
 
 /**
  * Internal dependencies
@@ -21,7 +20,7 @@ describe( 'actions', function() {
 
 	before( () => {
 		PostEditStore = require( '../post-edit-store' );
-		PostActions = rewire( '../actions' );
+		PostActions = require( '../actions' );
 
 		sandbox = sinon.sandbox.create();
 	} );
@@ -203,10 +202,6 @@ describe( 'actions', function() {
 		} );
 
 		it( 'should normalize attributes and call the API', function( done ) {
-			const normalizeOriginal = PostActions.__get__( 'normalizeApiAttributes' );
-			const normalizeSpy = sandbox.spy( normalizeOriginal );
-			PostActions.__set__( 'normalizeApiAttributes', normalizeSpy );
-
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( true );
 
 			const changedAttributes = {
@@ -224,22 +219,29 @@ describe( 'actions', function() {
 				post: function() {
 					return {
 						add: function( query, attributes, callback ) {
-							callback( null, {} );
+							callback( null, attributes );
 						}
 					};
 				}
 			} );
 
-			PostActions.saveEdited( null, () => {
-				PostActions.__set__( 'normalizeApiAttributes', normalizeOriginal );
-				expect( normalizeSpy.calledWith( changedAttributes ) ).to.be.true;
-				expect( normalizeSpy.returnValues[0] ).to.deep.equal( {
+			PostActions.saveEdited( null, ( error, data ) => {
+				const normalizedAttributes = {
 					ID: 777,
 					site_ID: 123,
 					author: 3,
 					title: 'OMG Unicorns',
 					categories_by_id: [ '199', '200' ]
+				};
+
+				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
+				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+					error: null,
+					post: normalizedAttributes,
+					type: 'RECEIVE_POST_BEING_EDITED'
 				} );
+				expect( error ).to.be.null;
+				expect( data ).to.eql( normalizedAttributes );
 				done();
 			} );
 		} );
