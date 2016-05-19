@@ -20,6 +20,7 @@ module.exports = {
 	localize: localize,
 	state: i18n.state,
 	stateObserver: i18n.stateObserver,
+	on: i18n.stateObserver.on.bind(i18n.stateObserver),
 	I18N: i18n.I18N
 };
 

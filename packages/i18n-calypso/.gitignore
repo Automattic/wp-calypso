@@ -31,6 +31,7 @@ node_modules
 
 # Optional JetBrains IDE directory
 .idea
+*.iml
 
 # Optional npm cache directory
 .npm
