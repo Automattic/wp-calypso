@@ -9,6 +9,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Card from 'components/card';
+import Dialog from 'components/dialog';
 import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
 import observe from 'lib/mixins/data-observe';
@@ -24,6 +25,12 @@ module.exports = React.createClass( {
 		pushNotifications: React.PropTypes.object
 	},
 
+	getInitialState: function() {
+		return {
+			showDialog: false
+		};
+	},
+
 	clickHandler: function() {
 		debug( 'Handling click for state %s', this.props.pushNotifications.state );
 
@@ -36,8 +43,47 @@ module.exports = React.createClass( {
 		}
 	},
 
+	getBlockedInstruction: function() {
+		return (
+			<Dialog isVisible={ this.state.showDialog } className="push-notification-instruction__dialog" onClose={ this._onCloseDialog }>
+				<div className="push-notification-instruction__content">
+					<div>
+						<div className="push-notification-instruction__title">{ this.translate( 'Enable Browser Notifications' ) }</div>
+						<div className="push-notification-instruction__step">
+							<img height="180px" width="180px" src="/calypso/images/push-notifications/address-bar.svg" />
+							<p>{ this.translate( 'Click the lock icon in your address bar.' ) }</p>
+						</div>
+						<div className="push-notification-instruction__step">
+							<img height="180px" width="180px" src="/calypso/images/push-notifications/always-allow.svg" />
+							<p>{ this.translate(
+								'Click {{strong}}Notifications{{/strong}} and choose {{em}}Always allow{{/em}}.', {
+									components: {
+										strong: <strong />,
+										em: <em />
+									} }
+							) }</p>
+						</div>
+					</div>
+				</div>
+				<span tabIndex="0" className="push-notification-instruction__dismiss" onClick={ this._onCloseDialog } >
+					<Gridicon icon="cross" size={ 24 } />
+					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
+				</span>
+			</Dialog>
+		);
+	},
+
+	_onShowDialog: function() {
+		this.setState( { showDialog: true } );
+	},
+
+	_onCloseDialog: function() {
+		this.setState( { showDialog: false } );
+	},
+
 	render: function() {
-		let buttonClass,
+		let blockedInstruction,
+			buttonClass,
 			buttonDisabled,
 			buttonText,
 			deniedText = null,
@@ -60,6 +106,7 @@ module.exports = React.createClass( {
 				stateText = this.translate( 'Enabled' );
 				break;
 			case 'denied':
+				blockedInstruction = this.getBlockedInstruction();
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = true;
 				buttonText = this.translate( 'Enable' );
@@ -69,7 +116,13 @@ module.exports = React.createClass( {
 				deniedText = <Notice className="push-notifications__settings-instruction" showDismiss={ false } text={
 					<div>
 						<div>{ this.translate( 'Your browser is currently set to block notifications from WordPress.com.' ) }</div>
-						<div>{ this.translate( 'View Instructions to Enable' ) }</div>
+						<div>{ this.translate(
+							'{{instructionsButton}}View Instructions to Enable{{/instructionsButton}}', {
+								components: {
+									instructionsButton: <button className="button is-link" onClick={ this._onShowDialog } />
+								} }
+						) }</div>
+						{ blockedInstruction }
 					</div>
 				} />;
 				break;

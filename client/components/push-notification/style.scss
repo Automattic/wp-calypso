@@ -5,6 +5,65 @@
 	padding-bottom: 8px;
 }
 
+.push-notification-instruction__dialog {
+	position: relative;
+}
+
+.push-notification-instruction__dismiss {
+	position: absolute;
+		top: -8px;
+		right: -8px;
+	padding: 0;
+	cursor: pointer;
+	color: $gray;
+
+	&:hover,
+	&:focus {
+		color: $gray-dark;
+	}
+}
+
+.push-notification-instruction__content {
+	max-width: 500px;
+	text-align: center;
+
+	@include breakpoint( "<660px" ) {
+		text-align: left;
+	}
+}
+
+.push-notification-instruction__title {
+	font-weight: 500;
+	display: block;
+	margin-bottom: 24px;
+}
+
+.push-notification-instruction__step {
+	width: 50%;
+	box-sizing: border-box;
+	display: inline-block;
+	padding: 0 24px;
+
+	p {
+		margin: 16px 0 0 0;
+	}
+
+	@include breakpoint( "<660px" ) {
+		width: 100%;
+		min-height: 80px;
+		position: relative;
+		text-align: left;
+		padding: 11px 16px 0 82px;
+
+		img {
+			position: absolute;
+				top: 8px;
+				left: 8px;
+			max-width: 60px;
+		}
+	}
+}
+
 .push-notification__prompt-enable {
 	margin-top: 8px;
 }
