@@ -171,6 +171,11 @@ const JetpackConnectMain = React.createClass( {
 
 	clearUrl() {
 		this.dismissUrl();
+
+	},
+
+	handleOnClickTos() {
+		this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 	},
 
 	renderFooter() {
@@ -194,6 +199,7 @@ const JetpackConnectMain = React.createClass( {
 				}
 
 				<SiteURLInput ref="siteUrlInputRef"
+					onTosClick={ this.handleOnClickTos }
 					onChange={ this.onURLChange }
 					onClick={ this.onURLEnter }
 					onDismissClick={ this.onDismissClick }
