@@ -4,7 +4,7 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 	const site = siteSlug.replace( /.*?:\/\//g, '' );
 	if ( state && state[ site ] ) {
 		const currentTime = ( new Date() ).getTime();
-		return ( currentTime - state[ site ] < JETPACK_CONNECT_TTL );
+		return ( currentTime - state[ site ].timestamp < JETPACK_CONNECT_TTL );
 	}
 
 	return false;
