@@ -29,6 +29,7 @@ const GoogleAppsUserItem = React.createClass( {
 					icon
 					className="google-apps-user-item__manage-link"
 					href={ `https://admin.google.com/a/${ this.props.user.domain }` }
+					onClick={ this.props.onClick }
 					target="_blank">
 					{ this.translate( 'Manage', { context: 'Google Apps user item' } ) }
 				</ExternalLink>

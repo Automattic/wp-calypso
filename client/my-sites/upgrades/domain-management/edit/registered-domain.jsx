@@ -97,7 +97,7 @@ const RegisteredDomain = React.createClass( {
 		return <DomainWarnings
 			domain={ this.props.domain }
 			selectedSite={ this.props.selectedSite }
-			ruleWhiteList={ [ 'expiredDomains', 'expiringDomains', 'newDomainsWithPrimary', 'newDomains' ] }/>;
+			ruleWhiteList={ [ 'expiredDomains', 'expiringDomains', 'newDomainsWithPrimary', 'newDomains', 'pendingGappsTosAcceptanceDomains' ] }/>;
 	},
 
 	getVerticalNav() {
