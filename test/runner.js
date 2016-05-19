@@ -48,13 +48,21 @@ if ( process.env.CIRCLECI ) {
 mocha.suite.beforeAll( boot.before );
 mocha.suite.afterAll( boot.after );
 
-files = program.args;
-if ( files.length === 0 ) {
-	files = glob.sync( process.env.TEST_ROOT + '/**/test/*.@(js|jsx)' );
-	if ( program.nodeTotal > 1 ) {
-		files = files.filter( ( file, index ) => index % program.nodeTotal === program.nodeIndex );
+files = program.args.length ? program.args : [ process.env.TEST_ROOT ];
+files = files.reduce( ( memo, filePath ) => {
+	if ( /\.jsx?$/i.test( filePath ) ) {
+		return memo.concat( filePath );
 	}
+
+	return memo.concat( glob.sync( filePath + '/**/test/*.@(js|jsx)' ) );
+}, [] );
+
+if ( program.nodeTotal > 1 ) {
+	files = files.filter( ( file, index ) => {
+		return index % program.nodeTotal === program.nodeIndex;
+	} );
 }
+
 files.forEach( setup.addFile );
 
 mocha.addFile( path.join( __dirname, 'load-suite.js' ) );
