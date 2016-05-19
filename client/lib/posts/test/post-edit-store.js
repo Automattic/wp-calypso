@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import assert from 'better-assert';
+import assert from 'assert';
 import assign from 'lodash/assign';
 import isEqual from 'lodash/isEqual';
 import { spy } from 'sinon';
