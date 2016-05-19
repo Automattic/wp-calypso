@@ -248,8 +248,10 @@ const JetpackConnectMain = React.createClass( {
 							text={ this.translate( 'Once the plugin is activated you\'ll click this green \'Connect\' button to complete the connection.' ) }
 							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
 					</div>
-					{ this.renderBackButton() }
 					<Button onClick={ this.installJetpack } primary>{ this.translate( 'Install Jetpack' ) }</Button>
+					<div className="jetpack-connect__navigation">
+						{ this.renderBackButton() }
+					</div>
 				</div>
 			</Main>
 		);
@@ -259,7 +261,7 @@ const JetpackConnectMain = React.createClass( {
 		return (
 			<a className="navigation-link jetpack-connect__back-button" onClick={ this.clearUrl }>
 				<span className="navigation-link__label">
-					<Gridicon icon="chevron-left" size={ 18 } />
+					<Gridicon icon="arrow-left" size={ 18 } />
 					{ this.translate( 'Back' ) }
 				</span>
 			</a>
