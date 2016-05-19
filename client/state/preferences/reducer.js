@@ -12,12 +12,16 @@ import {
 	PREFERENCES_SET,
 	PREFERENCES_RECEIVE,
 	PREFERENCES_REMOVE,
-	PREFERENCES_FETCH
+	PREFERENCES_FETCH,
+	PREFERENCES_FETCH_SUCCESS
 } from 'state/action-types';
 import { USER_SETTING_KEY } from './actions';
 
 function values( state = {}, action ) {
-	if ( action.type === PREFERENCES_RECEIVE && has( action, [ 'data', USER_SETTING_KEY ] ) ) {
+	if (
+		( action.type === PREFERENCES_FETCH_SUCCESS || action.type === PREFERENCES_RECEIVE ) &&
+		has( action, [ 'data', USER_SETTING_KEY ] )
+	) {
 		state = Object.assign( {}, state, get( action, [ 'data', USER_SETTING_KEY ] ) );
 		forOwn( state, ( value, key ) => {
 			if ( null === value ) {
@@ -36,7 +40,7 @@ function values( state = {}, action ) {
 
 function fetching( state = false, action ) {
 	switch ( action.type ) {
-		case PREFERENCES_RECEIVE:
+		case PREFERENCES_FETCH_SUCCESS:
 			return false;
 		case PREFERENCES_FETCH:
 			return true;

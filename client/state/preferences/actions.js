@@ -6,7 +6,9 @@ import {
 	PREFERENCES_SET,
 	PREFERENCES_RECEIVE,
 	PREFERENCES_REMOVE,
-	PREFERENCES_FETCH
+	PREFERENCES_FETCH,
+	PREFERENCES_FETCH_SUCCESS,
+	PREFERENCES_FETCH_FAILURE
 } from 'state/action-types';
 
 export const USER_SETTING_KEY = 'calypso_preferences';
@@ -14,12 +16,16 @@ export const USER_SETTING_KEY = 'calypso_preferences';
 export function fetchPreferences() {
 	return ( dispatch ) => {
 		dispatch( { type: PREFERENCES_FETCH } );
-		return wpcom.me().settings().get().then( ( data ) => {
-			dispatch( {
-				type: PREFERENCES_RECEIVE,
-				data
-			} );
-		} );
+		return wpcom.me().settings().get()
+		.then( data => dispatch( {
+			type: PREFERENCES_FETCH_SUCCESS,
+			data
+		} ) )
+		.catch( ( data, error ) => dispatch( {
+			type: PREFERENCES_FETCH_FAILURE,
+			data,
+			error
+		} ) );
 	};
 }
 
