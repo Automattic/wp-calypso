@@ -3,8 +3,8 @@
  */
 import React from 'react';
 import get from 'lodash/get';
-import omitBy from 'lodash/omitBy';
-import isBoolean from 'lodash/isBoolean';
+import pickBy from 'lodash/pickBy';
+import isString from 'lodash/isString';
 import page from 'page';
 
 /**
@@ -93,7 +93,7 @@ export default React.createClass( {
 
 		this.setState( { isSubmittingForm: true } );
 
-		const filteredCodes = omitBy( this.state.verificationServicesCodes, isBoolean );
+		const filteredCodes = pickBy( this.state.verificationServicesCodes, isString );
 		const updatedOptions = {
 			seo_meta_description: this.state.seoMetaDescription,
 			verification_services_codes: filteredCodes
