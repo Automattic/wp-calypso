@@ -27,6 +27,13 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import analytics from 'lib/analytics';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
+const serviceNames = {
+	google: 'google-site-verification',
+	bing: 'msvalidate.01',
+	pinterest: 'p:domain_verify',
+	yandex: 'yandex-verification'
+};
+
 function getGeneralSettingsUrl( slug ) {
 	return `/settings/general/${ slug }`;
 }
@@ -41,6 +48,19 @@ function stateForSite( site ) {
 			yandex: get( site, 'options.verification_services_codes.yandex', '' )
 		}
 	};
+}
+
+function getMetaTagForService( serviceName = '', content = '' ) {
+	if ( ! content ) {
+		return '';
+	}
+
+	if ( content.indexOf( '<meta' ) !== -1 ) {
+		// We were passed a meta tag already!
+		return content;
+	}
+
+	return `<meta name="${ get( serviceNames, serviceName, '' ) }" content="${ content }" />`;
 }
 
 export default React.createClass( {
@@ -142,12 +162,25 @@ export default React.createClass( {
 
 		const sitemapUrl = `https://${ slug }/sitemap.xml`;
 		const generalSettingsUrl = getGeneralSettingsUrl( slug );
+		const placeholderTagContent = '1234';
 
-		// The API returns 'false' for an empty array value, so we force it to an empty string if needed
-		const googleCode = get( verificationServicesCodes, 'google' ) || '';
-		const bingCode = get( verificationServicesCodes, 'bing' ) || '';
-		const pinterestCode = get( verificationServicesCodes, 'pinterest' ) || '';
-		const yandexCode = get( verificationServicesCodes, 'yandex' ) || '';
+		const googleTag = getMetaTagForService(
+			'google',
+			// The API returns 'false' for an empty array value, so we force it to an empty string if needed
+			get( verificationServicesCodes, 'google' ) || ''
+		);
+		const bingTag = getMetaTagForService(
+			'bing',
+			get( verificationServicesCodes, 'bing' ) || ''
+		);
+		const pinterestTag = getMetaTagForService(
+			'pinterest',
+			get( verificationServicesCodes, 'pinterest' ) || ''
+		);
+		const yandexTag = getMetaTagForService(
+			'yandex',
+			get( verificationServicesCodes, 'yandex' ) || ''
+		);
 
 		return (
 			<div className={ fetchingSettings ? 'is-loading' : '' }>
@@ -240,10 +273,10 @@ export default React.createClass( {
 									prefix={ this.translate( 'Google' ) }
 									name="verification_code_google"
 									type="text"
-									value={ googleCode }
+									value={ googleTag }
 									id="verification_code_google"
 									disabled={ isDisabled }
-									placeholder={ '<meta name="google-site-verification" content="1234">' }
+									placeholder={ getMetaTagForService( 'google', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'google' ) } />
 							</FormFieldset>
 
@@ -252,10 +285,10 @@ export default React.createClass( {
 									prefix={ this.translate( 'Bing' ) }
 									name="verification_code_bing"
 									type="text"
-									value={ bingCode }
+									value={ bingTag }
 									id="verification_code_bing"
 									disabled={ isDisabled }
-									placeholder={ '<meta name="msvalidate.01" content="1234" />' }
+									placeholder={ getMetaTagForService( 'bing', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'bing' ) } />
 							</FormFieldset>
 
@@ -264,10 +297,10 @@ export default React.createClass( {
 									prefix={ this.translate( 'Pinterest' ) }
 									name="verification_code_pinterest"
 									type="text"
-									value={ pinterestCode }
+									value={ pinterestTag }
 									id="verification_code_pinterest"
 									disabled={ isDisabled }
-									placeholder={ '<meta name="p:domain_verify content="1234" />' }
+									placeholder={ getMetaTagForService( 'pinterest', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'pinterest' ) } />
 							</FormFieldset>
 
@@ -276,10 +309,10 @@ export default React.createClass( {
 									prefix={ this.translate( 'Yandex' ) }
 									name="verification_code_yandex"
 									type="text"
-									value={ yandexCode }
+									value={ yandexTag }
 									id="verification_code_yandex"
 									disabled={ isDisabled }
-									placeholder={ '<meta name="yandex-verification" content="1234" />' }
+									placeholder={ getMetaTagForService( 'yandex', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'yandex' ) } />
 							</FormFieldset>
 
