@@ -21,7 +21,7 @@ import {
  * @param  {Object}  query  Taxonomy query object
  * @return {Boolean}        Whether terms are being requested
  */
-export function isRequestingSiteTaxonomyTermsForQuery( state, siteId, taxonomy, query ) {
+export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
 	const serializedQuery = getSerializedTermsQuery( query, taxonomy );
 	return !! get( state.terms.queryRequests, [ siteId, serializedQuery ] );
 }
@@ -36,7 +36,7 @@ export function isRequestingSiteTaxonomyTermsForQuery( state, siteId, taxonomy, 
  * @param  {Object}  query    Post query object
  * @return {?Array}           Posts for the post query
  */
-export function getSiteTaxonomyTermsForQuery( state, siteId, taxonomy, query ) {
+export function getTermsForQuery( state, siteId, taxonomy, query ) {
 	const serializedQuery = getSerializedTermsQuery( query, taxonomy );
 	const queryResults = get( state.terms.queries, [ siteId, serializedQuery ] );
 	if ( ! queryResults ) {
@@ -61,7 +61,7 @@ export function getSiteTaxonomyTermsForQuery( state, siteId, taxonomy, query ) {
  * @param  {String} taxonomy Taxonomy slug
  * @return {Array}           Terms
  */
-export function getSiteTaxonomyTerms( state, siteId, taxonomy ) {
+export function getTerms( state, siteId, taxonomy ) {
 	const terms = get( state.terms, [ 'items', siteId, taxonomy ] );
 
 	if ( ! terms ) {

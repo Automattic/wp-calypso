@@ -9,7 +9,7 @@ import shallowEqual from 'react-pure-render/shallowEqual';
  * Internal dependencies
  */
 import { requestSiteTerms } from 'state/terms/actions';
-import { isRequestingSiteTaxonomyTermsForQuery } from 'state/terms/selectors';
+import { isRequestingTermsForQuery } from 'state/terms/selectors';
 
 class QueryTerms extends Component {
 	componentWillMount() {
@@ -58,7 +58,7 @@ QueryTerms.defaultProps = {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requesting: isRequestingSiteTaxonomyTermsForQuery( state, ownProps.siteId, ownProps.taxonomy, ownProps.query )
+			requesting: isRequestingTermsForQuery( state, ownProps.siteId, ownProps.taxonomy, ownProps.query )
 		};
 	},
 	{
