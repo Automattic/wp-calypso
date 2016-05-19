@@ -23,7 +23,7 @@ import {
  */
 export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
 	const serializedQuery = getSerializedTermsQuery( query );
-	return !! get( state.terms, [ 'queryRequests', siteId, taxonomy, serializedQuery ] );
+	return !! get( state.terms.queryRequests, [ siteId, taxonomy, serializedQuery ] );
 }
 
 /**
@@ -38,7 +38,7 @@ export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
  */
 export function getTermsForQuery( state, siteId, taxonomy, query ) {
 	const serializedQuery = getSerializedTermsQuery( query );
-	const queryResults = get( state.terms, [ 'queries', siteId, taxonomy, serializedQuery ] );
+	const queryResults = get( state.terms.queries, [ siteId, taxonomy, serializedQuery ] );
 	if ( ! queryResults ) {
 		return null;
 	}
