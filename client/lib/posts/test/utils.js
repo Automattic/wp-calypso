@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var assert = require( 'better-assert' );
+import assert from 'assert';
 
 /**
 * Internal dependencies
