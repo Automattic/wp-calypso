@@ -18,9 +18,6 @@ var observe = require( 'lib/mixins/data-observe' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
 	Main = require( 'components/main' ),
-	abtest = require( 'lib/abtest' ).abtest,
-	isPlan = require( 'lib/products-values' ).isPlan,
-	cartItems = require( 'lib/cart-values/cart-items' ),
 	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
 
 var DomainSearch = React.createClass( {
@@ -30,7 +27,7 @@ var DomainSearch = React.createClass( {
 		sites: React.PropTypes.object.isRequired,
 		productsList: React.PropTypes.object.isRequired,
 		basePath: React.PropTypes.string.isRequired,
-		context: React.PropTypes.object.isRequired,
+		context: React.PropTypes.object.isRequired
 	},
 
 	getInitialState: function() {
@@ -77,14 +74,12 @@ var DomainSearch = React.createClass( {
 			classes = classnames( 'main-column', {
 				'domain-search-page-wrapper': this.state.domainRegistrationAvailable
 			} ),
-			withPlansOnlyTestActive = abtest( 'domainsWithPlansOnly' ) === 'plansOnly',
-			selectedSiteHasPlan = !! selectedSite && isPlan( selectedSite.plan ),
 			content;
 
 		if ( ! this.state.domainRegistrationAvailable ) {
 			content = (
 				<EmptyContent
-					illustration='/calypso/images/drake/drake-500.svg'
+					illustration="/calypso/images/drake/drake-500.svg"
 					title={ this.translate( 'Domain registration is unavailable' ) }
 					line={ this.translate( "We're hard at work on the issue. Please check back shortly." ) }
 					action={ this.translate( 'Back to Plans' ) }
@@ -113,9 +108,6 @@ var DomainSearch = React.createClass( {
 							selectedSite={ selectedSite }
 							offerMappingOption
 							basePath={ this.props.basePath }
-							buttonLabel={ withPlansOnlyTestActive &&
-								! cartItems.isNextDomainFree( this.props.cart ) &&
-								! selectedSiteHasPlan ? this.translate( 'Upgrade' ) : null }
 							products={ this.props.productsList.get() } />
 					</div>
 				</span>
