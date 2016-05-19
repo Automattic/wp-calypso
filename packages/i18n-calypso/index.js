@@ -1,9 +1,8 @@
 /**
  * Internal dependencies
  */
-var i18n = require( './lib' ),
-	mixin = require( './lib/mixin' ),
-	localize = require( './lib/localize' );
+var I18N = require( './lib' ),
+	i18n = new I18N();
 
 module.exports = {
 	moment: i18n.moment,
@@ -16,11 +15,10 @@ module.exports = {
 	reRenderTranslations: i18n.reRenderTranslations.bind( i18n ),
 	registerComponentUpdateHook: i18n.registerComponentUpdateHook.bind( i18n ),
 	registerTranslateHook: i18n.registerTranslateHook.bind( i18n ),
-	mixin: mixin,
-	localize: localize,
 	state: i18n.state,
 	stateObserver: i18n.stateObserver,
 	on: i18n.stateObserver.on.bind(i18n.stateObserver),
-	I18N: i18n.I18N
+	$this: i18n,
+	I18N: I18N
 };
 
