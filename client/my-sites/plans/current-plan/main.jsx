@@ -39,39 +39,40 @@ const PlanDetailsComponent = React.createClass( {
 		this.props.fetchPlans();
 	},
 	render: function() {
+		const { selectedSite } = this.props;
 		const { hasLoadedFromServer } = this.props.sitePlans;
 		let title;
 		let tagLine;
 		let featuresList;
 
-		if ( ! this.props.selectedSite || ! hasLoadedFromServer ) {
+		if ( ! selectedSite || ! hasLoadedFromServer ) {
 			featuresList = (
 				<div>
 						<PurchaseDetail isPlaceholder />
 						<PurchaseDetail isPlaceholder />
 				</div>
 			);
-		} else if ( this.props.selectedSite.jetpack || isFreePlan( this.props.selectedSite.plan ) ) {
-			page.redirect( '/plans/' + this.props.selectedSite.slug );
-		} else if ( isPremium( this.props.selectedSite.plan ) ) {
+		} else if ( selectedSite.jetpack || isFreePlan( selectedSite.plan ) ) {
+			page.redirect( `/plans/${ selectedSite.slug }` );
+		} else if ( isPremium( selectedSite.plan ) ) {
 			title = this.translate( 'Your site is on a Premium plan' );
 			tagLine = this.translate( 'Unlock the full potential of your site with the premium features included in your plan.' );
 			featuresList = (
 				<PremiumPlanDetails
-					selectedSite={ this.props.selectedSite }
+					selectedSite={ selectedSite }
 					sitePlans={ this.props.sitePlans }
 				/>
 			);
-		} else if ( isBusiness( this.props.selectedSite.plan ) ) {
+		} else if ( isBusiness( selectedSite.plan ) ) {
 			title = this.translate( 'Your site is on a Business plan' );
 			tagLine = this.translate( 'Learn more about everything included with Business and take advantage of its professional features.' );
 			featuresList = ( <div>
 				<BusinessPlanDetails
-					selectedSite={ this.props.selectedSite }
+					selectedSite={ selectedSite }
 					sitePlans={ this.props.sitePlans }
 				/>
 				<PremiumPlanDetails
-					selectedSite={ this.props.selectedSite }
+					selectedSite={ selectedSite }
 					sitePlans={ this.props.sitePlans }
 				/>
 			</div> );
@@ -104,8 +105,8 @@ const PlanDetailsComponent = React.createClass( {
 						isJetpack={ false }
 						isPlaceholder={ false } />
 				</Card>
-				{ this.props.selectedSite &&
-					<Card href={ '/plans/compare/' + this.props.selectedSite.slug }>
+				{ selectedSite &&
+					<Card href={ '/plans/compare/' + selectedSite.slug }>
 						{ this.translate( 'Missing some features? Compare our different plans' ) }
 					</Card>
 				}
@@ -127,7 +128,11 @@ export default connect(
 	} ),
 	( stateProps, dispatchProps ) => {
 		function fetchPlans( props = stateProps ) {
-			if ( props.selectedSite && ! props.sitePlans.hasLoadedFromServer && ! props.sitePlans.isRequesting ) {
+			if (
+				props.selectedSite &&
+				! props.sitePlans.hasLoadedFromServer &&
+				! props.sitePlans.isRequesting
+			) {
 				dispatchProps.fetchSitePlans( props.selectedSite.ID );
 			}
 		}

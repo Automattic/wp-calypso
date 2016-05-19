@@ -45,7 +45,6 @@ BusinessPlanDetails.propTypes = {
 	] ).isRequired,
 	selectedFeature: React.PropTypes.object,
 	sitePlans: React.PropTypes.object.isRequired
-
 };
 
 export default BusinessPlanDetails;
