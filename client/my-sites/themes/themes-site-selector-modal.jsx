@@ -19,7 +19,9 @@ const ThemesSiteSelectorModal = React.createClass( {
 		header: React.PropTypes.string.isRequired,
 		selectedTheme: PropTypes.object.isRequired,
 		onHide: PropTypes.func,
-		action: PropTypes.func
+		action: PropTypes.func,
+		// Will be prepended to site slug for a redirect on selection
+		sourcePath: PropTypes.string.isRequired,
 	},
 
 	redirectAndCallAction( site ) {
@@ -29,7 +31,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 		 */
 		defer( () => {
 			trackClick( 'site selector', this.props.name );
-			page( '/design/' + site.slug );
+			page( this.props.sourcePath + '/' + site.slug );
 			this.props.action( this.props.selectedTheme, site );
 		} );
 	},

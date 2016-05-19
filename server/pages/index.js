@@ -12,7 +12,8 @@ var config = require( 'config' ),
 	utils = require( 'bundler/utils' ),
 	sectionsModule = require( '../../client/sections' ),
 	serverRouter = require( 'isomorphic-routing' ).serverRouter,
-	serverRender = require( 'render' ).serverRender;
+	serverRender = require( 'render' ).serverRender,
+	i18n = require( 'lib/mixins/i18n' );
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -36,6 +37,13 @@ sections.forEach( function( section ) {
 		chunksByPath[ path ] = section.name;
 	} );
 } );
+
+// TODO: Move into an `app.get()` route handler (e.g. next to language setting),
+// and pass the bootstrap locale as a parameter.
+// However, this requires that i18n doesn't use global state to store the locale
+// anymore (but e.g. a Redux subtree), or all users will get the same locale for
+// SSR'd content that the first user had set after a deploy.
+i18n.initialize();
 
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
