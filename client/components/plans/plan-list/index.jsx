@@ -76,7 +76,16 @@ const PlanList = React.createClass( {
 		}
 
 		if ( plans.length > 0 ) {
-			const filteredPlans = filterPlansBySiteAndProps( plans, site, hideFreePlan, showJetpackFreePlan );
+			let filteredPlans = filterPlansBySiteAndProps( plans, site, hideFreePlan, showJetpackFreePlan );
+
+			if ( abtest( 'wordadsInstantActivation' ) === 'enabled' ) {
+				filteredPlans = filteredPlans.map( plan => {
+					if ( plan.product_id === 1003 ) {
+						plan.description = this.translate( 'Your own domain name, powerful customization options, easy monetization with WordAds and lots of space for audio and video.' );
+					}
+					return plan;
+				} );
+			}
 
 			plansList = filteredPlans.map( plan => {
 				return (
