@@ -111,6 +111,11 @@
 		word-wrap: break-word;
 		word-break: break-word;
 	}
+
+	.verification-code-error {
+		color: $alert-red;
+		font-weight: bold;
+	}
 }
 
 .writing-settings,

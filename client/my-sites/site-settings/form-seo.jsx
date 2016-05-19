@@ -27,7 +27,7 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import analytics from 'lib/analytics';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
-const serviceNames = {
+const serviceIds = {
 	google: 'google-site-verification',
 	bing: 'msvalidate.01',
 	pinterest: 'p:domain_verify',
@@ -60,7 +60,17 @@ function getMetaTagForService( serviceName = '', content = '' ) {
 		return content;
 	}
 
-	return `<meta name="${ get( serviceNames, serviceName, '' ) }" content="${ content }" />`;
+	return `<meta name="${ get( serviceIds, serviceName, '' ) }" content="${ content }" />`;
+}
+
+function isValidVerificationCode( serviceName = '', content = '' ) {
+	if ( content.length === 0 ) {
+		return true;
+	}
+
+	content = getMetaTagForService( serviceName, content );
+
+	return content.indexOf( serviceIds[ serviceName ] ) > -1;
 }
 
 export default React.createClass( {
@@ -95,7 +105,15 @@ export default React.createClass( {
 			return;
 		}
 
+		// Show an error if the user types into the field
+		if ( event.target.value.length === 1 ) {
+			this.setState( { showPasteError: true } );
+			return;
+		}
+
 		this.setState( {
+			invalidCodes: [],
+			showPasteError: false,
 			verificationServicesCodes: Object.assign( {}, servicesCodes, {
 				[ serviceName ]: event.target.value
 			} )
@@ -111,9 +129,23 @@ export default React.createClass( {
 
 		notices.clearNotices( 'notices' );
 
+		const filteredCodes = pickBy( this.state.verificationServicesCodes, isString );
+
+		const invalidCodes = [];
+		for ( const serviceName in filteredCodes ) {
+			if ( ! isValidVerificationCode( serviceName, filteredCodes[ serviceName ] ) ) {
+				invalidCodes.push( serviceName );
+			}
+		}
+
+		this.setState( { invalidCodes: invalidCodes } );
+		if ( invalidCodes.length > 0 ) {
+			notices.error( this.translate( 'Invalid site verification tag entered.' ) );
+			return;
+		}
+
 		this.setState( { isSubmittingForm: true } );
 
-		const filteredCodes = pickBy( this.state.verificationServicesCodes, isString );
 		const updatedOptions = {
 			seo_meta_description: this.state.seoMetaDescription,
 			verification_services_codes: filteredCodes
@@ -153,7 +185,9 @@ export default React.createClass( {
 		const {
 			isSubmittingForm,
 			seoMetaDescription,
-			verificationServicesCodes
+			verificationServicesCodes,
+			showPasteError = false,
+			invalidCodes = []
 		} = this.state;
 
 		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
@@ -181,6 +215,11 @@ export default React.createClass( {
 			'yandex',
 			get( verificationServicesCodes, 'yandex' ) || ''
 		);
+
+		const isGoogleError = invalidCodes.indexOf( 'google' ) > -1;
+		const isBingError = invalidCodes.indexOf( 'bing' ) > -1;
+		const isPinterestError = invalidCodes.indexOf( 'pinterest' ) > -1;
+		const isYandexError = invalidCodes.indexOf( 'yandex' ) > -1;
 
 		return (
 			<div className={ fetchingSettings ? 'is-loading' : '' }>
@@ -276,6 +315,7 @@ export default React.createClass( {
 									value={ googleTag }
 									id="verification_code_google"
 									disabled={ isDisabled }
+									isError={ isGoogleError }
 									placeholder={ getMetaTagForService( 'google', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'google' ) } />
 							</FormFieldset>
@@ -288,6 +328,7 @@ export default React.createClass( {
 									value={ bingTag }
 									id="verification_code_bing"
 									disabled={ isDisabled }
+									isError={ isBingError }
 									placeholder={ getMetaTagForService( 'bing', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'bing' ) } />
 							</FormFieldset>
@@ -300,6 +341,7 @@ export default React.createClass( {
 									value={ pinterestTag }
 									id="verification_code_pinterest"
 									disabled={ isDisabled }
+									isError={ isPinterestError }
 									placeholder={ getMetaTagForService( 'pinterest', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'pinterest' ) } />
 							</FormFieldset>
@@ -312,9 +354,15 @@ export default React.createClass( {
 									value={ yandexTag }
 									id="verification_code_yandex"
 									disabled={ isDisabled }
+									isError={ isYandexError }
 									placeholder={ getMetaTagForService( 'yandex', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'yandex' ) } />
 							</FormFieldset>
+							{ showPasteError &&
+								<div className="verification-code-error">
+									{ this.translate( 'Verification tag should be copied and pasted in.' ) }
+								</div>
+							}
 
 						</FormFieldset>
 					</form>
