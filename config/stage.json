@@ -41,7 +41,6 @@
 		"manage/plugins": true,
 		"manage/plugins/cache": false,
 		"manage/plugins/setup": true,
-		"manage/plugins/wpcom": true,
 		"manage/posts": true,
 		"manage/security": true,
 		"manage/sharing": true,
