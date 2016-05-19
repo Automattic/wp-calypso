@@ -238,9 +238,3 @@ i18n.numberFormat( 2500.33, { decimals: 3, thousandsSep: '*', decPoint: '@'} ); 
 ## Some Background
 
 I18n accepts a language-specific locale json file that contains the whitelisted translation strings for your JS project, uses that data to instantiate a [Jed](http://slexaxton.github.io/Jed/) instance, and exposes a single `translate` method with sugared syntax for interacting with Jed.
-
-
-## TODO
-
-- [ ] Extract `lib/localize` into a separate module
-- [ ] Extract `lib/mixin` into a separate module
