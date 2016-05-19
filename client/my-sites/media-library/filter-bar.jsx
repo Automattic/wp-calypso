@@ -113,7 +113,8 @@ module.exports = React.createClass( {
 				{ ! this.props.filterRequiresUpgrade &&
 					<Search
 						analyticsGroup="Media"
-						pinned={ true }
+						pinned
+						fitsContainer
 						onSearch={ this.props.onSearch }
 						initialValue={ this.props.search }
 						placeholder={ this.getSearchPlaceholderText() }

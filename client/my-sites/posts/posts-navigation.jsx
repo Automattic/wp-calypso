@@ -128,7 +128,8 @@ export default React.createClass( {
 					authorSegmented.element : null
 				}
 				<Search
-					pinned={ true }
+					pinned
+					fitsContainer
 					onSearch={ this.doSearch }
 					initialValue={ this.props.search }
 					placeholder={ 'Search ' + statusTabs.selectedText + '...' }

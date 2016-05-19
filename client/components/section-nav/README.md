@@ -43,7 +43,8 @@ module.exports = React.createClass( {
 				</NavSegmented>
 				
 				<Search
-					pinned={ true }
+					pinned
+					fitsContainer
 					onSearch={ this.doSearch }
 					initialValue={ this.props.search }
 					placeholder="Search Published..."
