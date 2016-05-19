@@ -34,7 +34,7 @@ function values( state = {}, action ) {
 	return state;
 }
 
-function isFetching( state = false, action ) {
+function fetching( state = false, action ) {
 	switch ( action.type ) {
 		case PREFERENCES_RECEIVE:
 			return false;
@@ -46,5 +46,5 @@ function isFetching( state = false, action ) {
 
 export default combineReducers( {
 	values,
-	isFetching
+	fetching
 } );

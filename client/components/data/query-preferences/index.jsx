@@ -7,13 +7,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isFetchingPreferences } from 'state/preferences/selectors';
+import { fetchingPreferences } from 'state/preferences/selectors';
 import { fetchPreferences } from 'state/preferences/actions';
 
 class QueryPreferences extends Component {
 
 	componentWillMount() {
-		if ( ! this.props.isFetchingPreferences ) {
+		if ( ! this.props.fetchingPreferences ) {
 			this.props.fetchPreferences();
 		}
 	}
@@ -24,15 +24,11 @@ class QueryPreferences extends Component {
 }
 
 QueryPreferences.propTypes = {
-	requestingSites: PropTypes.bool,
+	fetchingPreferences: PropTypes.bool,
 	fetchPreferences: PropTypes.func
 };
 
-QueryPreferences.defaultProps = {
-	fetchPreferences: () => {}
-};
-
 export default connect(
-	( state ) => ( { isFetchingPreferences: isFetchingPreferences( state ) } ),
+	( state ) => ( { fetchingPreferences: fetchingPreferences( state ) } ),
 	{ fetchPreferences }
 )( QueryPreferences );
