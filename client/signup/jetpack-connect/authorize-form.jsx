@@ -1,4 +1,4 @@
-F/**
+/**
  * External dependencies
  */
 import React from 'react';
@@ -37,32 +37,6 @@ const STATS_PAGE = '/stats/insights/';
 const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + process.env.NODE_ENV;
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 
-/***
- * Renders a header common to both the logged in and logged out forms
- * @param {String} siteUrl A site URL to display in the header
- * @param {Boolean} isConnected Is the connection complete
- * @returns {Object} The JSX for the form's header
- */
-const renderFormHeader = ( siteUrl, isConnected = false ) => {
-	const headerText = ( isConnected )
-		? i18n.translate( 'You are connected!' )
-		: i18n.translate( 'Create your account' );
-	const subHeaderText = ( isConnected )
-		? i18n.translate( 'The power of WordPress.com is yours to command.' )
-		: i18n.translate( 'You are moments away from connecting {{span}}%(site)s{{/span}}', {
-			args: { site: siteUrl },
-			components: { span: <span className="jetpack-connect-authorize__site-url" /> }
-		} );
-	return(
-		<div>
-			<ConnectHeader
-				showLogo={ false }
-				headerText={ headerText }
-				subHeaderText={ subHeaderText } />
-		</div>
-	);
-};
-
 const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
 
@@ -70,7 +44,7 @@ const LoggedOutForm = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
 	},
 
-	renderFormHeader( siteUrl, isConnected ) {
+	renderFormHeader( siteUrl ) {
 		const headerText = i18n.translate( 'Create your account' );
 		const subHeaderText = i18n.translate( 'You are moments away from connecting {{span}}%(site)s{{/span}}', {
 			args: { site: siteUrl },
@@ -105,6 +79,16 @@ const LoggedOutForm = React.createClass( {
 				authorization={ 'Bearer ' + bearerToken }
 				extraFields={ extraFields }
 				redirectTo={ window.location.href } />
+		);
+	},
+
+	renderLocaleSuggestions() {
+		if ( ! this.props.locale ) {
+			return;
+		}
+
+		return (
+			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 		);
 	},
 
@@ -191,7 +175,7 @@ const LoggedInForm = React.createClass( {
 	},
 
 	handleSubmit() {
-		const { siteReceived,  queryObject, manageActivated, activateManageSecret, plansUrl, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		const { siteReceived, queryObject, manageActivated, activateManageSecret, plansUrl, authorizeError } = this.props.jetpackConnectAuthorize;
 		if ( ! this.props.isAlreadyOnSitesList &&
 			queryObject.already_authorized ) {
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
@@ -420,5 +404,5 @@ export default connect(
 			isAlreadyOnSitesList: !! site
 		};
 	},
-	dispatch => bindActionCreators( { authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )
+	dispatch => bindActionCreators( { recordTracksEvent, authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )
 )( JetpackConnectAuthorizeForm );
