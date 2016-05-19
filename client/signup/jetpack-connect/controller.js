@@ -41,6 +41,9 @@ const userModule = userFactory();
 
 const jetpackConnectFirstStep = ( context, isInstall ) => {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+
+	userModule.fetch();
+
 	context.store.dispatch( setSection( 'jetpackConnect', {
 		hasSidebar: false
 	} ) );
@@ -50,6 +53,7 @@ const jetpackConnectFirstStep = ( context, isInstall ) => {
 			path: context.path,
 			context: context,
 			isInstall: isInstall,
+			userModule: userModule,
 			locale: context.params.lang
 		} ),
 		document.getElementById( 'primary' ),
