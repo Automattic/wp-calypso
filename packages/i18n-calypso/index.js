@@ -19,6 +19,7 @@ module.exports = {
 	stateObserver: i18n.stateObserver,
 	on: i18n.stateObserver.on.bind(i18n.stateObserver),
 	off: i18n.stateObserver.removeListener.bind(i18n.stateObserver),
+	emit: i18n.stateObserver.emit.bind(i18n.stateObserver),
 	$this: i18n,
 	I18N: I18N
 };
