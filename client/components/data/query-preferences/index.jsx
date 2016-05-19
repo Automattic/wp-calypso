@@ -28,6 +28,11 @@ QueryPreferences.propTypes = {
 	fetchPreferences: PropTypes.func
 };
 
+QueryPreferences.defaultProps = {
+	fetchPreferences: () => {},
+	fetchingPreferences: false
+};
+
 export default connect(
 	( state ) => ( { fetchingPreferences: fetchingPreferences( state ) } ),
 	{ fetchPreferences }
