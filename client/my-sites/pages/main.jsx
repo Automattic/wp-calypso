@@ -72,7 +72,8 @@ module.exports = React.createClass( {
 						{ this.getNavItems( filterStrings, status ) }
 					</NavTabs>
 					<Search
-						pinned={ true }
+						pinned
+						fitsContainer
 						onSearch={ this.doSearch }
 						initialValue={ this.props.search }
 						placeholder={ searchStrings[ status ] }

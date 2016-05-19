@@ -162,8 +162,9 @@ module.exports = React.createClass( {
 		if ( pinned ) {
 			return (
 				<Search
+					pinned
+					fitsContainer
 					onSearch={ this.doSearch }
-					pinned={ pinned }
 					initialValue={ this.props.search }
 					placeholder={ this.translate( 'Search Plugins' ) }
 					delaySearch={ true }

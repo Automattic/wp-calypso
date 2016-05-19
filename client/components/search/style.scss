@@ -85,12 +85,12 @@
 
 // Position collapsed search-button to the right
 // of the container element
-.search.is-pinned {
+.search.is-expanded-to-container {
 	margin-bottom: 0;
 	height: auto;
 	position: absolute;
-		bottom: 0;
-		top: 0;
+	bottom: 0;
+	top: 0;
 
 	&:not(.ltr) {
 		right: 0;
@@ -99,9 +99,6 @@
 	&.ltr {
 		right: 0 #{"/*rtl:ignore*/"};
 	}
-
-	// matching dropdown-selector
-	z-index: z-index( 'root', '.search.is-pinned' );
 
 	.search-open__icon {
 		&:not(.ltr) {

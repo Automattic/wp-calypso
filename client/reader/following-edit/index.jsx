@@ -57,7 +57,7 @@ const FollowingEdit = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			initialFollowUrl: ''
-		}
+		};
 	},
 
 	smartSetState: smartSetState,
@@ -134,7 +134,7 @@ const FollowingEdit = React.createClass( {
 		}
 
 		return subscriptions.sortBy( function( subscription ) {
-			return subscription.get( 'date_subscribed' )
+			return subscription.get( 'date_subscribed' );
 		} ).reverse();
 	},
 
@@ -495,7 +495,7 @@ const FollowingEdit = React.createClass( {
 		// the following stream was processed
 		if ( subscriptions ) {
 			subscriptionsToDisplay = subscriptions.filter( function( subscription ) {
-				return subscription.has( 'ID' )
+				return subscription.has( 'ID' );
 			} ).toArray();
 		}
 
@@ -550,6 +550,7 @@ const FollowingEdit = React.createClass( {
 
 				{ ! hasNoSubscriptions ? <SearchCard
 					isOpen={ true }
+					pinned={ true }
 					key="existingFeedSearch"
 					autoFocus={ false }
 					additionalClasses="following-edit__existing-feed-search"

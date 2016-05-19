@@ -4,7 +4,7 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 import noop from 'lodash/noop';
@@ -32,24 +32,25 @@ const Search = React.createClass( {
 	},
 
 	propTypes: {
-		additionalClasses: React.PropTypes.string,
-		initialValue: React.PropTypes.string,
-		placeholder: React.PropTypes.string,
-		pinned: React.PropTypes.bool,
-		delaySearch: React.PropTypes.bool,
-		delayTimeout: React.PropTypes.number,
-		onSearch: React.PropTypes.func.isRequired,
-		onSearchChange: React.PropTypes.func,
-		onSearchClose: React.PropTypes.func,
-		analyticsGroup: React.PropTypes.string,
-		autoFocus: React.PropTypes.bool,
-		disabled: React.PropTypes.bool,
-		onKeyDown: React.PropTypes.func,
-		disableAutocorrect: React.PropTypes.bool,
-		onBlur: React.PropTypes.func,
-		searching: React.PropTypes.bool,
-		isOpen: React.PropTypes.bool,
-		dir: React.PropTypes.string
+		additionalClasses: PropTypes.string,
+		initialValue: PropTypes.string,
+		placeholder: PropTypes.string,
+		pinned: PropTypes.bool,
+		delaySearch: PropTypes.bool,
+		delayTimeout: PropTypes.number,
+		onSearch: PropTypes.func.isRequired,
+		onSearchChange: PropTypes.func,
+		onSearchClose: PropTypes.func,
+		analyticsGroup: PropTypes.string,
+		autoFocus: PropTypes.bool,
+		disabled: PropTypes.bool,
+		onKeyDown: PropTypes.func,
+		disableAutocorrect: PropTypes.bool,
+		onBlur: PropTypes.func,
+		searching: PropTypes.bool,
+		isOpen: PropTypes.bool,
+		dir: PropTypes.string,
+		fitsContainer: PropTypes.bool
 	},
 
 	getInitialState: function() {
@@ -72,7 +73,8 @@ const Search = React.createClass( {
 			disableAutocorrect: false,
 			searching: false,
 			isOpen: false,
-			dir: undefined
+			dir: undefined,
+			fitsContainer: false
 		};
 	},
 
@@ -175,15 +177,13 @@ const Search = React.createClass( {
 	},
 
 	closeSearch: function( event ) {
-		var input;
-
 		event.preventDefault();
 
 		if ( this.props.disabled ) {
 			return;
 		}
 
-		input = ReactDom.findDOMNode( this.refs.searchInput );
+		const input = ReactDom.findDOMNode( this.refs.searchInput );
 
 		this.setState( {
 			keyword: '',
@@ -203,7 +203,7 @@ const Search = React.createClass( {
 	},
 
 	keyUp: function( event ) {
-		if ( event.which === 13 && isMobile() ) {
+		if ( event.key === 'Enter' && isMobile() ) {
 			//dismiss soft keyboards
 			this.blur();
 		}
@@ -252,7 +252,7 @@ const Search = React.createClass( {
 		};
 
 		searchClass = classNames( this.props.additionalClasses, {
-			'is-pinned': this.props.pinned,
+			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
 			rtl: this.props.dir === 'rtl',

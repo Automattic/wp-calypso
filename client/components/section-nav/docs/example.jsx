@@ -141,7 +141,8 @@ var SectionNavigation = React.createClass( {
 					</NavSegmented>
 
 					<Search
-						pinned={ true }
+						pinned
+						fitsContainer
 						onSearch={ this.demoSearch }
 						placeholder={ 'Search ' + this.getSelectedText( 'siblingTabs' ) + '...' }
 					/>
