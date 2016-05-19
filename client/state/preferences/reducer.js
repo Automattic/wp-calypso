@@ -38,6 +38,7 @@ function values( state = {}, action ) {
 			state[ action.key ] = null;
 			return state;
 	}
+	return state;
 }
 
 function fetching( state = false, action ) {
