@@ -10,7 +10,6 @@ import urlModule from 'url';
  * Internal dependencies
  */
 import {
-	JETPACK_CONNECT_STORE_SESSION,
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
@@ -50,11 +49,6 @@ function buildNoProtocolUrlObj( url ) {
 
 export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
-		case JETPACK_CONNECT_STORE_SESSION:
-			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url ) );
-		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
-			const parsedUrl = urlModule.parse( action.ssoUrl );
-			return Object.assign( {}, state, buildNoProtocolUrlObj( parsedUrl.hostname ) );
 		case JETPACK_CONNECT_CHECK_URL:
 			const noProtocolUrl = action.url.replace( /.*?:\/\//g, '' );
 			return Object.assign( {}, state, { [ noProtocolUrl ]: Date.now() } );
