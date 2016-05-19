@@ -49,7 +49,8 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.have.property( 'website.com' )
-				.to.be.a( 'number' )
+				.to.be.a( 'object' );
+			expect( state[ 'website.com' ] ).to.have.property( 'timestamp' )
 				.to.be.at.least( nowTime );
 		} );
 	} );
