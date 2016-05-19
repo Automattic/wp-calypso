@@ -179,8 +179,7 @@ export const SeoForm = React.createClass( {
 			slug = '',
 			settings: {
 				blog_public = 1
-			} = {},
-			fetchingSettings
+			} = {}
 		} = this.props.site;
 
 		const {
@@ -192,7 +191,7 @@ export const SeoForm = React.createClass( {
 		} = this.state;
 
 		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
-		const isDisabled = isSitePrivate || fetchingSettings || isSubmittingForm;
+		const isDisabled = isSitePrivate || isSubmittingForm;
 		const hasMetaError = seoMetaDescription && seoMetaDescription.length > 160;
 
 		const sitemapUrl = `https://${ slug }/sitemap.xml`;
@@ -223,7 +222,7 @@ export const SeoForm = React.createClass( {
 		const isYandexError = invalidCodes.indexOf( 'yandex' ) > -1;
 
 		return (
-			<div className={ fetchingSettings ? 'is-loading' : '' }>
+			<div>
 				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
 				{ isSitePrivate &&
 					<Notice status="is-warning" showDismiss={ false } text={ this.translate( 'SEO settings are disabled because the site visibility is not set to Public.' ) }>
