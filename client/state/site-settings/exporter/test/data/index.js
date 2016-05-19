@@ -6,49 +6,49 @@
 export const SAMPLE_ADVANCED_SETTINGS = {
 	feedback: [],
 	page: {
-		authors: [ { ID: 95752520, name: 'Test User', login: 'testuser' } ],
-		export_date_options: [
-			{ year: '2015', month: '11' },
-			{ year: '2015', month: '10' }
+		authors: [ { value: 95752520, label: 'Test User' } ],
+		dates: [
+			{ value: '2015-11', label: 'Nov 2015' },
+			{ value: '2015-10', label: 'Oct 2015' }
 		],
-		statuses: [ { label: 'Published', name: 'publish' } ]
+		statuses: [ { label: 'Published', value: 'publish' } ]
 	},
 	post: {
-		categories: [ { name: 'Uncategorized' } ],
-		authors: [ { ID: 95752520, name: 'Test User', login: 'testuser' } ],
-		export_date_options: [
-			{ year: '2015', month: '11' },
-			{ year: '2015', month: '10' }
+		categories: [ { label: 'Uncategorized', value: 1 } ],
+		authors: [ { value: 95752520, label: 'Test User' } ],
+		dates: [
+			{ value: '2015-11', label: 'Nov 2015' },
+			{ value: '2015-10', label: 'Oct 2015' }
 		],
-		statuses: [ { label: 'Published', name: 'publish' } ]
+		statuses: [ { label: 'Published', value: 'publish' } ]
 	}
-}
+};
 
 export const SAMPLE_ADVANCED_SETTINGS_EMPTY = {
 	feedback: [],
 	page: {
 		authors: [],
-		export_date_options: [],
-		statuses: [ { label: 'Published', name: 'publish' } ]
+		dates: [],
+		statuses: [ { label: 'Published', value: 'publish' } ]
 	},
 	post: {
-		categories: [ { name: 'Uncategorized' } ],
+		categories: [ { label: 'Uncategorized', value: 1 } ],
 		authors: [],
-		export_date_options: [],
-		statuses: [ { label: 'Published', name: 'publish' } ]
+		dates: [],
+		statuses: [ { label: 'Published', value: 'publish' } ]
 	}
-}
+};
 
 export const SAMPLE_EXPORT_COMPLETE_RESPONSE = {
 	status: 'finished',
 	export_file_lifetime_days: 7,
 	$attachment_url: 'https://example.files.wordpress.com/2016/02/not-a-real-file.zip'
-}
+};
 
 export const SAMPLE_EXPORT_RUNNING_RESPONSE = {
 	status: 'running'
-}
+};
 
 export const SAMPLE_EXPORT_FAILED_RESPONSE = {
 	status: 'failed'
-}
+};

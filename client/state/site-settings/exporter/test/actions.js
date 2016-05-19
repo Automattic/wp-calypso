@@ -121,20 +121,21 @@ describe( 'actions', () => {
 
 	describe( '#startExport()', () => {
 		it( 'should dispatch start export action when thunk triggered', () => {
-			startExport( 2916284 )( spy );
+			startExport( 2916284 )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: EXPORT_START_REQUEST,
-				siteId: 2916284
+				siteId: 2916284,
+				exportAll: true,
 			} );
 		} );
 
 		it( 'should dispatch export started action when request completes', ( done ) => {
-			startExport( 2916284 )( spy ).then( () => {
+			startExport( 2916284 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledTwice;
 				expect( spy ).to.have.been.calledWith( {
 					type: EXPORT_STARTED,
-					siteId: 2916284
+					siteId: 2916284,
 				} );
 
 				done();
@@ -142,11 +143,11 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch export failed action when request fails', ( done ) => {
-			startExport( 77203074 )( spy ).then( () => {
+			startExport( 77203074 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledTwice;
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: EXPORT_FAILURE,
-					siteId: 77203074
+					siteId: 77203074,
 				} );
 
 				done();
