@@ -22,8 +22,8 @@ import {
  * @return {Boolean}        Whether terms are being requested
  */
 export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
-	const serializedQuery = getSerializedTermsQuery( query, taxonomy );
-	return !! get( state.terms.queryRequests, [ siteId, serializedQuery ] );
+	const serializedQuery = getSerializedTermsQuery( query );
+	return !! get( state.terms, [ 'queryRequests', siteId, taxonomy, serializedQuery ] );
 }
 
 /**
@@ -37,14 +37,14 @@ export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
  * @return {?Array}           Posts for the post query
  */
 export function getTermsForQuery( state, siteId, taxonomy, query ) {
-	const serializedQuery = getSerializedTermsQuery( query, taxonomy );
-	const queryResults = get( state.terms.queries, [ siteId, serializedQuery ] );
+	const serializedQuery = getSerializedTermsQuery( query );
+	const queryResults = get( state.terms, [ 'queries', siteId, taxonomy, serializedQuery ] );
 	if ( ! queryResults ) {
 		return null;
 	}
 
 	return queryResults.reduce( ( memo, termId ) => {
-		const term = get( state.terms.items, [ siteId, taxonomy, termId ] );
+		const term = get( state.terms, [ 'items', siteId, taxonomy, termId ] );
 		if ( term ) {
 			memo.push( term );
 		}

@@ -29,7 +29,9 @@ describe( 'selectors', () => {
 				terms: {
 					queryRequests: {
 						2916284: {
-							'categories:{"search":"ribs"}': false
+							categories: {
+								'{"search":"ribs"}': false
+							}
 						}
 					}
 				}
@@ -43,7 +45,9 @@ describe( 'selectors', () => {
 				terms: {
 					queryRequests: {
 						2916284: {
-							'categories:{"search":"ribs"}': true
+							categories: {
+								'{"search":"ribs"}': true
+							}
 						}
 					}
 				}
@@ -69,7 +73,9 @@ describe( 'selectors', () => {
 				terms: {
 					queries: {
 						2916284: {
-							'categories:{"search":"ribs"}': []
+							categories: {
+								'{"search":"ribs"}': []
+							}
 						}
 					},
 					items: {
@@ -97,7 +103,9 @@ describe( 'selectors', () => {
 				terms: {
 					queries: {
 						2916284: {
-							'categories:{"search":"ribs"}': [ 111 ]
+							categories: {
+								'{"search":"ribs"}': [ 111 ]
+							}
 						}
 					},
 					items: {
