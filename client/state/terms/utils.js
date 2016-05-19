@@ -24,12 +24,9 @@ export function getNormalizedTermsQuery( query ) {
  * `state.terms.queries` state object.
  *
  * @param  {Object} query    Terms query
- * @param  {String} taxonomy Taxonomy slug
  * @return {String}          Serialized terms query
  */
-export function getSerializedTermsQuery( query = {}, taxonomy ) {
+export function getSerializedTermsQuery( query = {} ) {
 	const normalizedQuery = getNormalizedTermsQuery( query );
-	const serializedQuery = JSON.stringify( normalizedQuery ).toLocaleLowerCase();
-
-	return [ taxonomy, serializedQuery ].join( ':' );
+	return JSON.stringify( normalizedQuery ).toLocaleLowerCase();
 }

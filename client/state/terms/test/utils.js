@@ -30,18 +30,18 @@ describe( 'utils', () => {
 			const serializedQuery = getSerializedTermsQuery( {
 				search: 'ribs',
 				page: 1,
-			}, 'categories' );
+			} );
 
-			expect( serializedQuery ).to.equal( 'categories:{"search":"ribs"}' );
+			expect( serializedQuery ).to.equal( '{"search":"ribs"}' );
 		} );
 
 		it( 'should lowercase the result', () => {
 			const serializedQuery = getSerializedTermsQuery( {
 				search: 'Chicken',
 				page: '2'
-			}, 'categories' );
+			} );
 
-			expect( serializedQuery ).to.equal( 'categories:{"search":"chicken","page":"2"}' );
+			expect( serializedQuery ).to.equal( '{"search":"chicken","page":"2"}' );
 		} );
 	} );
 } );

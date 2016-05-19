@@ -41,10 +41,12 @@ export function queryRequests( state = {}, action ) {
 		case TERMS_REQUEST:
 		case TERMS_REQUEST_SUCCESS:
 		case TERMS_REQUEST_FAILURE:
-			const serializedQuery = getSerializedTermsQuery( action.query, action.taxonomy, action.siteId );
+			const serializedQuery = getSerializedTermsQuery( action.query );
 			return merge( {}, state, {
 				[ action.siteId ]: {
-					[ serializedQuery ]: TERMS_REQUEST === action.type
+					[ action.taxonomy ]: {
+						[ serializedQuery ]: TERMS_REQUEST === action.type
+					}
 				}
 			} );
 
@@ -68,10 +70,12 @@ export function queryRequests( state = {}, action ) {
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
 		case TERMS_RECEIVE:
-			const serializedQuery = getSerializedTermsQuery( action.query, action.taxonomy );
+			const serializedQuery = getSerializedTermsQuery( action.query );
 			return merge( {}, state, {
 				[ action.siteId ]: {
-					[ serializedQuery ]: action.terms.map( ( term ) => term.ID )
+					[ action.taxonomy ]: {
+						[ serializedQuery ]: action.terms.map( ( term ) => term.ID )
+					}
 				}
 			} );
 

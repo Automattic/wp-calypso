@@ -70,7 +70,9 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'categories:{"search":"ribs"}': true
+					categories: {
+						'{"search":"ribs"}': true
+					}
 				}
 			} );
 		} );
@@ -78,7 +80,9 @@ describe( 'reducer', () => {
 		it( 'should accumulate queries', () => {
 			const original = deepFreeze( {
 				2916284: {
-					'categories:{"search":"ribs"}': true
+					categories: {
+						'{"search":"ribs"}': true
+					}
 				}
 			} );
 
@@ -91,8 +95,10 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'categories:{"search":"ribs"}': true,
-					'categories:{"search":"and chicken"}': true
+					categories: {
+						'{"search":"ribs"}': true,
+						'{"search":"and chicken"}': true
+					}
 				}
 			} );
 		} );
@@ -109,7 +115,9 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'categories:{"search":"ribs"}': false
+					categories: {
+						'{"search":"ribs"}': false
+					}
 				}
 			} );
 		} );
@@ -125,7 +133,9 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'categories:{"search":"ribs"}': false
+					categories: {
+						'{"search":"ribs"}': false
+					}
 				}
 			} );
 		} );
@@ -133,7 +143,9 @@ describe( 'reducer', () => {
 		it( 'should never persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
-					'categories:{"search":"ribs"}': false
+					categories: {
+						'{"search":"ribs"}': false
+					}
 				}
 			} );
 
@@ -145,7 +157,9 @@ describe( 'reducer', () => {
 		it( 'should never load persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
-					'categories:{"search":"ribs"}': false
+					categories: {
+						'{"search":"ribs"}': false
+					}
 				}
 			} );
 
@@ -174,7 +188,9 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'categories:{"search":"ribs"}': [ 111, 123 ]
+					categories: {
+						'{"search":"ribs"}': [ 111, 123 ]
+					}
 				}
 			} );
 		} );
@@ -182,7 +198,9 @@ describe( 'reducer', () => {
 		it( 'should accumulate query request success', () => {
 			const original = deepFreeze( {
 				2916284: {
-					'categories:{"search":"ribs"}': [ 111 ]
+					categories: {
+						'{"search":"ribs"}': [ 111 ]
+					}
 				}
 			} );
 			const state = queries( original, {
@@ -196,8 +214,10 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'categories:{"search":"ribs"}': [ 111 ],
-					'categories:{"search":"and chicken"}': [ 777 ]
+					categories: {
+						'{"search":"ribs"}': [ 111 ],
+						'{"search":"and chicken"}': [ 777 ]
+					}
 				}
 			} );
 		} );
@@ -205,7 +225,9 @@ describe( 'reducer', () => {
 		it( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
-					'categories:{"search":"ribs"}': [ 111 ]
+					categories: {
+						'{"search":"ribs"}': [ 111 ]
+					}
 				}
 			} );
 
@@ -213,7 +235,9 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'categories:{"search":"ribs"}': [ 111 ]
+					categories: {
+						'{"search":"ribs"}': [ 111 ]
+					}
 				}
 			} );
 		} );
@@ -221,7 +245,9 @@ describe( 'reducer', () => {
 		it( 'should load persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
-					'categories:{"search":"ribs"}': [ 111 ]
+					categories: {
+						'{"search":"ribs"}': [ 111 ]
+					}
 				}
 			} );
 
@@ -229,7 +255,9 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'categories:{"search":"ribs"}': [ 111 ]
+					categories: {
+						'{"search":"ribs"}': [ 111 ]
+					}
 				}
 			} );
 		} );

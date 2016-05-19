@@ -36,16 +36,21 @@ export const queriesSchema = {
 		'^\\d+$': {
 			type: 'object',
 			patternProperties: {
-				// Queries are JSON strings, prepended by a site ID and taxonomy slug
-				'^([A-Za-z0-9-_]+:)\\{[^\\}]*\\}$': {
-					type: 'array',
-					items: {
-						type: 'number'
-					}
+				'^[A-Za-z0-9-_]+$': {
+					type: 'object',
+					patternProperties: {
+						'^\\{[^\\}]*\\}$': {
+							type: 'array',
+							items: {
+								type: 'number'
+							}
+						}
+					},
+					additionalProperties: false
 				}
 			},
 			additionalProperties: false
-		},
+		}
 	},
 	additionalProperties: false
 };
