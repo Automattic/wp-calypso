@@ -33,6 +33,8 @@ const WebPreview = React.createClass( {
 		showDeviceSwitcher: React.PropTypes.bool,
 		// The URL that should be displayed in the iframe
 		previewUrl: React.PropTypes.string,
+		// The URL for the external link button
+		externalUrl: React.PropTypes.string,
 		// The markup to display in the iframe
 		previewMarkup: React.PropTypes.string,
 		// The viewport device to show initially
@@ -61,7 +63,7 @@ const WebPreview = React.createClass( {
 			previewMarkup: null,
 			onLoad: noop,
 			onClose: noop,
-		}
+		};
 	},
 
 	getInitialState() {

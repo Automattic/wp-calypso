@@ -355,6 +355,7 @@ const PostEditor = React.createClass( {
 								isSaving={ this.state.isSaving || this.state.isAutosaving }
 								isLoading={ this.state.isLoading }
 								previewUrl={ this.state.previewUrl }
+								externalUrl={ this.state.previewUrl }
 							/>
 							: null }
 					</div>
