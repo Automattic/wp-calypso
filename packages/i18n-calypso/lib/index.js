@@ -7,7 +7,7 @@ var debug = require( 'debug' )( 'i18n-calypso' ),
 	EventEmitter = require( 'events' ).EventEmitter,
 	interpolateComponents = require( 'interpolate-components' ),
 	LRU = require( 'lru-cache' ),
-	assign = require( 'lodash/assign' );
+	assign = require( 'lodash.assign' );
 
 /**
  * Internal dependencies
