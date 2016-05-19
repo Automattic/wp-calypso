@@ -112,6 +112,13 @@
 	}
 }
 
+.site-settings__custom-post-type .form-toggle__label {
+	margin-bottom: 0;
+}
+
+.site-settings .site-settings__custom-post-type p.form-setting-explanation {
+	margin: 0 0 16px;
+}
 
 .press-this {
 	/* press this isn't functional on a touch device */
