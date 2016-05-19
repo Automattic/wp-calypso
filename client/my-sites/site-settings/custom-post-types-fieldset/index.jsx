@@ -3,13 +3,13 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { isRequestingPostTypes, getPostTypes } from 'state/post-types/selectors';
-import localize from 'lib/mixins/i18n/localize';
 import QueryPostTypes from 'components/data/query-post-types';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

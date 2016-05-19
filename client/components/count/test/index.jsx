@@ -22,7 +22,7 @@ describe( 'Count', function() {
 		ReactInjection = require( 'react/lib/ReactInjection' );
 		TestUtils = require( 'react-addons-test-utils' );
 
-		ReactInjection.Class.injectMixin( require( 'lib/mixins/i18n' ).mixin );
+		ReactInjection.Class.injectMixin( require( 'i18n-calypso' ).mixin );
 		Count = require( '../' );
 	} );
 

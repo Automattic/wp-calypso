@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import localize from 'lib/mixins/i18n/localize';
 import PostActions from 'lib/posts/actions';
 import * as stats from 'lib/posts/stats';
 import { getFeaturedImageId } from 'lib/posts/utils';

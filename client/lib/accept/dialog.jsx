@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import localize from 'lib/mixins/i18n/localize';
 import Dialog from 'components/dialog';
 
 const AcceptDialog = React.createClass( {

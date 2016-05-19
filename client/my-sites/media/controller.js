@@ -2,14 +2,14 @@
  * External Dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+	React = require( 'react'),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal Dependencies
  */
 var sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	analytics = require( 'lib/analytics' ),
 	titleActions = require( 'lib/screen-title/actions' );
 

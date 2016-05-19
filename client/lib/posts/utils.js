@@ -2,7 +2,7 @@
  * External dependecies
  */
 var url = require( 'url' ),
-	i18n = require( 'lib/mixins/i18n' ),
+	i18n = require( 'i18n-calypso' ),
 	moment = require( 'moment-timezone' );
 
 /**

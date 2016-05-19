@@ -15,10 +15,10 @@
       "version": "1.2.2"
     },
     "acorn-globals": {
-      "version": "1.0.9",
+      "version": "3.0.0",
       "dependencies": {
         "acorn": {
-          "version": "2.7.0"
+          "version": "3.1.0"
         }
       }
     },
@@ -189,6 +189,12 @@
         },
         "lodash": {
           "version": "3.10.1"
+        },
+        "lodash.assign": {
+          "version": "3.2.0"
+        },
+        "lodash.keys": {
+          "version": "3.1.2"
         },
         "recast": {
           "version": "0.10.33"
@@ -403,7 +409,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000471"
+      "version": "1.0.30000475"
     },
     "caseless": {
       "version": "0.11.0"
@@ -457,7 +463,7 @@
       "version": "1.1.1"
     },
     "clean-css": {
-      "version": "3.4.16",
+      "version": "3.4.17",
       "dependencies": {
         "commander": {
           "version": "2.8.1"
@@ -669,6 +675,9 @@
     },
     "cssstyle": {
       "version": "0.2.36"
+    },
+    "currently-unhandled": {
+      "version": "0.4.1"
     },
     "d": {
       "version": "0.1.1"
@@ -897,19 +906,24 @@
       "version": "1.1.1"
     },
     "es5-ext": {
-      "version": "0.10.11"
+      "version": "0.10.11",
+      "dependencies": {
+        "es6-symbol": {
+          "version": "3.0.2"
+        }
+      }
     },
     "es6-iterator": {
       "version": "2.0.0"
     },
     "es6-map": {
-      "version": "0.1.3"
+      "version": "0.1.4"
     },
     "es6-set": {
       "version": "0.1.4"
     },
     "es6-symbol": {
-      "version": "3.0.2"
+      "version": "3.1.0"
     },
     "es6-templates": {
       "version": "0.2.2",
@@ -1505,6 +1519,20 @@
     "https-browserify": {
       "version": "0.0.0"
     },
+    "i18n-calypso": {
+      "version": "0.1.1",
+      "dependencies": {
+        "core-js": {
+          "version": "1.2.6"
+        },
+        "fbjs": {
+          "version": "0.6.1"
+        },
+        "react": {
+          "version": "0.14.8"
+        }
+      }
+    },
     "iconv-lite": {
       "version": "0.4.13"
     },
@@ -1550,6 +1578,9 @@
           "version": "3.0.1"
         }
       }
+    },
+    "interpolate-components": {
+      "version": "1.0.4"
     },
     "interpret": {
       "version": "0.6.6"
@@ -1766,6 +1797,9 @@
       "dependencies": {
         "acorn": {
           "version": "2.7.0"
+        },
+        "acorn-globals": {
+          "version": "1.0.9"
         }
       }
     },
@@ -1803,7 +1837,7 @@
       "version": "1.2.2"
     },
     "jstimezonedetect": {
-      "version": "1.0.5"
+      "version": "1.0.6"
     },
     "jstransform": {
       "version": "10.1.0",
@@ -1887,10 +1921,20 @@
       "version": "3.0.0"
     },
     "lodash._baseassign": {
-      "version": "3.2.0"
+      "version": "3.2.0",
+      "dependencies": {
+        "lodash.keys": {
+          "version": "3.1.2"
+        }
+      }
     },
     "lodash._baseclone": {
-      "version": "3.3.0"
+      "version": "3.3.0",
+      "dependencies": {
+        "lodash.keys": {
+          "version": "3.1.2"
+        }
+      }
     },
     "lodash._basecopy": {
       "version": "3.0.1"
@@ -1938,7 +1982,7 @@
       "version": "3.0.0"
     },
     "lodash.assign": {
-      "version": "3.2.0"
+      "version": "4.0.9"
     },
     "lodash.clonedeep": {
       "version": "3.0.2"
@@ -1956,13 +2000,18 @@
       "version": "3.0.6"
     },
     "lodash.keys": {
-      "version": "3.1.2"
+      "version": "4.0.7"
     },
     "lodash.keysin": {
       "version": "3.0.8"
     },
     "lodash.merge": {
-      "version": "3.3.2"
+      "version": "3.3.2",
+      "dependencies": {
+        "lodash.keys": {
+          "version": "3.1.2"
+        }
+      }
     },
     "lodash.omit": {
       "version": "3.1.0"
@@ -1978,6 +2027,9 @@
     },
     "lodash.pick": {
       "version": "3.1.0"
+    },
+    "lodash.rest": {
+      "version": "4.0.3"
     },
     "lodash.restparam": {
       "version": "3.6.1"
@@ -1998,7 +2050,7 @@
       "version": "1.2.0"
     },
     "loud-rejection": {
-      "version": "1.3.0"
+      "version": "1.4.1"
     },
     "lower-case": {
       "version": "1.1.3"
@@ -2007,7 +2059,7 @@
       "version": "1.0.2"
     },
     "lru-cache": {
-      "version": "4.0.0"
+      "version": "4.0.1"
     },
     "lunr": {
       "version": "0.5.7"
@@ -2120,7 +2172,7 @@
       "version": "2.10.6"
     },
     "moment-timezone": {
-      "version": "0.4.1"
+      "version": "0.4.0"
     },
     "morgan": {
       "version": "1.2.0",
@@ -2868,7 +2920,12 @@
       "version": "2.2.6"
     },
     "shallowequal": {
-      "version": "0.2.2"
+      "version": "0.2.2",
+      "dependencies": {
+        "lodash.keys": {
+          "version": "3.1.2"
+        }
+      }
     },
     "shebang-regex": {
       "version": "1.0.0"
@@ -3410,13 +3467,18 @@
       "version": "0.6.5"
     },
     "which": {
-      "version": "1.2.9"
+      "version": "1.2.10"
     },
     "window-size": {
       "version": "0.1.4"
     },
     "with": {
-      "version": "5.0.0"
+      "version": "5.1.1",
+      "dependencies": {
+        "acorn": {
+          "version": "3.1.0"
+        }
+      }
     },
     "within-document": {
       "version": "0.0.1"

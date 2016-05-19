@@ -3,7 +3,7 @@
  */
 import shuffle from 'lodash/shuffle';
 import find from 'lodash/find';
-import { translate } from 'lib/mixins/i18n';
+import { translate } from 'i18n-calypso';
 
 const verticals = [
 	{ value: 'a8c.1', label: translate( 'Arts & Entertainment' ), icon: 'video-camera', stepTwo: [

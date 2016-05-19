@@ -5,12 +5,12 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
 import abtest from 'lib/abtest';
-import i18n from 'lib/mixins/i18n';
 import route from 'lib/route';
 import pageNotifier from 'lib/route/page-notifier';
 import feedStreamFactory from 'lib/feed-stream-store';

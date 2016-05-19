@@ -2,6 +2,7 @@
  * External Dependencies
  */
 var page = require( 'page' ),
+	i18n = require( 'i18n-calypso' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
 
@@ -11,7 +12,6 @@ var page = require( 'page' ),
 var analytics = require( 'lib/analytics' ),
 	sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	Main = require( 'components/main' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),

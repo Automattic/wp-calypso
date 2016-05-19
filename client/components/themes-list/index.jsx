@@ -4,6 +4,7 @@
 import React from 'react';
 import times from 'lodash/times';
 import isEqual from 'lodash/isEqual';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import Theme from 'components/theme';
 import EmptyContent from 'components/empty-content';
 import InfiniteScroll from 'lib/mixins/infinite-scroll';
 import { PER_PAGE } from 'state/themes/themes-list/constants';
-import localize from 'lib/mixins/i18n/localize';
 
 /**
  * Component

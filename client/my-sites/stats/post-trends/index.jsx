@@ -5,12 +5,12 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import throttle from 'lodash/throttle';
 import touchDetect from 'lib/touch-detect';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
-import i18n from 'lib/mixins/i18n';
 import Month from './month';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';

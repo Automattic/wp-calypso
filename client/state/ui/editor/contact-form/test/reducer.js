@@ -25,10 +25,6 @@ describe( 'editor\'s contact form state reducer', () => {
 	useMockery();
 
 	before( () => {
-		mockery.registerMock( 'lib/mixins/i18n', {
-			translate: string => string
-		} );
-
 		reducer = require( '../reducer' );
 	} );
 

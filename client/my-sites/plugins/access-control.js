@@ -1,10 +1,14 @@
 /**
+ * External Dependencies
+ */
+import i18n from 'i18n-calypso';
+
+/**
  * Internal Dependencies
  */
-import sitesList from 'lib/sites-list'
-import i18n from 'lib/mixins/i18n'
-import config from 'config'
-import notices from 'notices'
+import sitesList from 'lib/sites-list';
+import config from 'config';
+import notices from 'notices';
 
 const sites = sitesList();
 

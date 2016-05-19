@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
  */
 var PeopleLog = require( 'lib/people/log-store' ),
 	PeopleActions = require( 'lib/people/actions' ),
-	Notice = require( 'components/notice' ),
-	i18n = require( 'lib/mixins/i18n' );
+	Notice = require( 'components/notice' );
 
 let isSameSite = ( siteId, log ) => siteId && log.siteId && log.siteId === siteId;
 

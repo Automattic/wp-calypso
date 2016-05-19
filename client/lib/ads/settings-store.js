@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import i18n from 'lib/mixins/i18n';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies

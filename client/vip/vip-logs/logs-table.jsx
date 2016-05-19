@@ -4,13 +4,13 @@
 var React = require( 'react' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	classnames = require( 'classnames' ),
+	i18n = require( 'i18n-calypso' ),
 	debug = require( 'debug' )( 'calypso:vip:logs' );
 
 /**
  * Internal dependencies
  */
 var Card = require( 'components/card' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	SectionHeader = require( 'components/section-header' );
 
 module.exports = React.createClass( {

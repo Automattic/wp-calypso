@@ -3,9 +3,9 @@ import React from 'react';
 import pick from 'lodash/pick';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { translate } from 'i18n-calypso';
 
 // Internal dependencies
-import { translate } from 'lib/mixins/i18n';
 import LikeButton from 'components/like-button/button';
 import {
 	recordAction,
@@ -38,7 +38,7 @@ class CommentLikeButtonContainer extends React.Component {
 			comment_id: this.props.commentId
 		} );
 	}
-	
+
 	render() {
 		const props = pick( this.props, [ 'showCount', 'tagName' ] );
 		const likeCount = this.props.commentLike.get( 'like_count' );

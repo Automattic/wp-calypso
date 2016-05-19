@@ -1,4 +1,4 @@
-var i18n = require( 'lib/mixins/i18n' ),
+var i18n = require( 'i18n-calypso' ),
 	Emitter = require( 'lib/mixins/emitter' );
 
 function KeyBindings() {

@@ -8,6 +8,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -23,7 +24,6 @@ import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import { signup, purchase, activate, clearActivated, customize } from 'state/themes/actions';
-import i18n from 'lib/mixins/i18n';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isPremium, getForumUrl } from 'my-sites/themes/helpers';

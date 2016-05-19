@@ -2,12 +2,12 @@
  * External Dependencies
  */
 import forEach from 'lodash/forEach';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
 import { decodeEntities } from 'lib/formatting';
-import i18n from 'lib/mixins/i18n';
 
 export default function detectPolls( post, dom ) {
 	if ( ! dom ) {

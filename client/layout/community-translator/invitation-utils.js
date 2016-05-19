@@ -8,7 +8,8 @@
 var debug = require( 'debug' )( 'calypso:community-translator-invitation' ),
 	includes = require( 'lodash/includes' ),
 	store = require( 'store' ),
-	once = require( 'lodash/once' );
+	once = require( 'lodash/once'),
+	translate = require( 'i18n-calypso' ).translate;
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ var debug = require( 'debug' )( 'calypso:community-translator-invitation' ),
 var translator = require( 'lib/translator-jumpstart' ),
 	user = require( 'lib/user' )(),
 	userSettings = require( 'lib/user-settings' ),
-	translate = require( 'lib/mixins/i18n' ).translate,
 	emitter = require( 'lib/mixins/emitter' ),
 	preferencesStore = require( 'lib/preferences/store' ),
 	preferencesActions = require( 'lib/preferences/actions' ),

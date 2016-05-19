@@ -2,7 +2,7 @@
  * External dependencies
  */
 var assign = require( 'lodash/assign' ),
-	i18n = require( 'lib/mixins/i18n' ),
+	i18n = require( 'i18n-calypso' ),
 	pick = require( 'lodash/pick' ),
 	omit = require( 'lodash/omit' ),
 	flowRight = require( 'lodash/flowRight' ),

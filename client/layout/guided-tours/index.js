@@ -4,11 +4,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import localize from 'lib/mixins/i18n/localize';
 import scrollTo from 'lib/scroll-to';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';

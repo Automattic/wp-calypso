@@ -13,7 +13,7 @@ var debug = require( 'debug' )( 'calypso:abtests' ),
  */
 var activeTests = require( './active-tests' ),
 	analytics = require( 'lib/analytics' ),
-	i18n = require( 'lib/mixins/i18n' ),
+	i18n = require( 'i18n-calypso' ),
 	user = require( 'lib/user' )(),
 	wpcom = require( 'lib/wp' ),
 	sites = require( 'lib/sites-list' )();

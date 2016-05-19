@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+var i18n = require( 'i18n-calypso' );
+
+/**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	sites = require( 'lib/sites-list' )();
+var sites = require( 'lib/sites-list' )();
 
 function StatsParser() {
 	if ( ! ( this instanceof StatsParser ) ) {

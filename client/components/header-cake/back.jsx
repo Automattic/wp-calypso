@@ -5,6 +5,7 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import classNames from 'classnames';
 import ObserveWindowSizeMixin from 'lib/mixins/observe-window-resize';
 import Gridicon from 'components/gridicon';
 import Button from 'components/button';
-import i18n from 'lib/mixins/i18n';
 import viewport from 'lib/viewport';
 
 /**

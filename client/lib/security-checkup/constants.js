@@ -1,12 +1,8 @@
 /**
  * External dependencies
  */
-var keyMirror = require( 'key-mirror' );
-
-/**
- * Internal dependencies
- */
-var i18n = require( 'lib/mixins/i18n' );
+var keyMirror = require( 'key-mirror' ),
+	i18n = require( 'i18n-calypso' );
 
 var constants;
 

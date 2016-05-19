@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import Gridicon from 'components/gridicon';
 import Spinner from 'components/spinner';
 import untrailingslashit from 'lib/route/untrailingslashit';
-import i18n from 'lib/mixins/i18n';
 
 export default React.createClass( {
 	displayName: 'JetpackConnectSiteURLInput',

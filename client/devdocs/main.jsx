@@ -18,7 +18,6 @@ var DEFAULT_FILES = [
 		'README.md',
 		'.github/CONTRIBUTING.md',
 		'docs/coding-guidelines.md',
-		'client/lib/mixins/i18n/README.md',
 		'docs/coding-guidelines/javascript.md',
 		'docs/coding-guidelines/css.md',
 		'docs/coding-guidelines/html.md'
