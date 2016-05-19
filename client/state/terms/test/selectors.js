@@ -7,15 +7,15 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getSiteTaxonomyTerms,
-	getSiteTaxonomyTermsForQuery,
-	isRequestingSiteTaxonomyTermsForQuery
+	getTerms,
+	getTermsForQuery,
+	isRequestingTermsForQuery
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( 'isRequestingSiteTaxonomyTermsForQuery()', () => {
+	describe( 'isRequestingTermsForQuery()', () => {
 		it( 'should return false if no request exists', () => {
-			const requesting = isRequestingSiteTaxonomyTermsForQuery( {
+			const requesting = isRequestingTermsForQuery( {
 				terms: {
 					queryRequests: {}
 				}
@@ -25,7 +25,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return false if query is not requesting', () => {
-			const requesting = isRequestingSiteTaxonomyTermsForQuery( {
+			const requesting = isRequestingTermsForQuery( {
 				terms: {
 					queryRequests: {
 						2916284: {
@@ -39,7 +39,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return true if query is in progress', () => {
-			const requesting = isRequestingSiteTaxonomyTermsForQuery( {
+			const requesting = isRequestingTermsForQuery( {
 				terms: {
 					queryRequests: {
 						2916284: {
@@ -53,9 +53,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getSiteTaxonomyTermsForQuery()', () => {
+	describe( 'getTermsForQuery()', () => {
 		it( 'should return null if no matching query results exist', () => {
-			const terms = getSiteTaxonomyTermsForQuery( {
+			const terms = getTermsForQuery( {
 				terms: {
 					queries: {}
 				}
@@ -65,7 +65,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return an empty array if no matches exist', () => {
-			const terms = getSiteTaxonomyTermsForQuery( {
+			const terms = getTermsForQuery( {
 				terms: {
 					queries: {
 						2916284: {
@@ -93,7 +93,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return matching terms', () => {
-			const terms = getSiteTaxonomyTermsForQuery( {
+			const terms = getTermsForQuery( {
 				terms: {
 					queries: {
 						2916284: {
@@ -126,15 +126,15 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getSiteTaxonomyTerms()', () => {
+	describe( 'getTerms()', () => {
 		it( 'should return null if no site exists', () => {
-			const terms = getSiteTaxonomyTerms( {}, 2916284, 'jetpack-portfolio' );
+			const terms = getTerms( {}, 2916284, 'jetpack-portfolio' );
 
 			expect( terms ).to.be.null;
 		} );
 
 		it( 'should return null if no taxonomies exist for site', () => {
-			const terms = getSiteTaxonomyTerms( {
+			const terms = getTerms( {
 				terms: {
 					items: {
 						2916284: {
@@ -153,7 +153,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return array of matching terms for site taxonomy combo', () => {
-			const terms = getSiteTaxonomyTerms( {
+			const terms = getTerms( {
 				terms: {
 					items: {
 						2916284: {
