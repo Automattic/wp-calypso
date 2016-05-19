@@ -13,7 +13,7 @@ var PopoverMenu = require( 'components/popover/menu' ),
 	stats = require( 'reader/stats' ),
 	SocialLogo = require( 'components/social-logo' ),
 	SitesPopover = require( 'components/sites-popover' ),
-	sections = require( 'sections-preload' );
+	sections = require( 'sections/preload' );
 
 var actionMap = {
 	twitter: function( post ) {

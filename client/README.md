@@ -11,7 +11,7 @@ These are some of the key modules of the application, kept in `client`'s root fo
 * `config` - generated configuration settings.
 * `layout` - handles the main React layout, including the masterbar. Notably, it sets #primary and #secondary used to render the different sections.
 * `controller.js` - isomorphic routing helper, see comments in that file.
-* `sections.js` - defines section groups, paths, and main modules. (Used by webpack to generate separate chunks.)
+* `sections` - defines section groups, paths, and main modules. (Used by webpack to generate separate chunks.)
 
 ### Components
 

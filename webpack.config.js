@@ -37,7 +37,7 @@ webpackConfig = {
 	module: {
 		loaders: [
 			{
-				test: /sections.js$/,
+				test: /sections\/index.js$/,
 				exclude: 'node_modules',
 				loader: path.join( __dirname, 'server', 'bundler', 'loader' )
 			},

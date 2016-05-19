@@ -1,7 +1,7 @@
 Bundler
 =======
 
-This module contains the code for generating the JavaScript files that are sent to the browser. The code leverages [Webpack](http://webpack.github.io/), [uglifyjs](http://lisperator.net/uglifyjs/), and the sections module at `client/sections.js` that defines the various sections of the application.
+This module contains the code for generating the JavaScript files that are sent to the browser. The code leverages [Webpack](http://webpack.github.io/), [uglifyjs](http://lisperator.net/uglifyjs/), and the sections module at `client/sections/index.js` that defines the various sections of the application.
 
 ### Glossary
 
@@ -24,7 +24,7 @@ The concept of sections is something that is unique to Calypso. It was created t
 
 #### Client
 
-The sections module `client/sections.js` is transformed via a custom Webpack loader `server/bundler/loader.js` into a series of `page.js` route handlers that use `require.ensure` to asynchronously load the JavaScript code needed for the route.
+The sections module `client/sections/index.js` is transformed via a custom Webpack loader `server/bundler/loader.js` into a series of `page.js` route handlers that use `require.ensure` to asynchronously load the JavaScript code needed for the route.
 
 __before__:
 

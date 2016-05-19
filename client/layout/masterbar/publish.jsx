@@ -11,7 +11,7 @@ import MasterbarItem from './item';
 import SitesPopover from 'components/sites-popover';
 import paths from 'lib/paths';
 import viewport from 'lib/viewport';
-import { preload } from 'sections-preload';
+import { preload } from 'sections/preload';
 
 export default React.createClass( {
 	displayName: 'MasterbarItemNew',

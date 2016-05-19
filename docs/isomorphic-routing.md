@@ -7,7 +7,7 @@ run for which path) only once, using them both on the client, and the server.
 For an example of isomorphic routing, see `client/my-sites/themes`.
 
 In order to enable isomorphic routing for a section, set `isomorphic: true`
-for that section in `client/sections.js`.
+for that section in `client/sections/index.js`.
 
 The constraints required for isomorphic routing are:
 * In `client/mysection/index.js`, export a default function that accepts
