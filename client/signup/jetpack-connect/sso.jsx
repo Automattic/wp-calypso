@@ -75,7 +75,7 @@ const JetpackSSOForm = React.createClass( {
 	maybeValidateSSO() {
 		const { ssoNonce, siteId, nonceValid, isAuthorizing, isValidating } = this.props;
 
-		if ( ! nonceValid && ! isAuthorizing && ! isValidating ) {
+		if ( ssoNonce && siteId && ! nonceValid && ! isAuthorizing && ! isValidating ) {
 			this.props.validateSSONonce( siteId, ssoNonce );
 		}
 	},
