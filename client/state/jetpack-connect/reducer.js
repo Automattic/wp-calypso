@@ -10,6 +10,7 @@ import urlModule from 'url';
  * Internal dependencies
  */
 import {
+	JETPACK_CONNECT_STORE_SESSION,
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
@@ -24,7 +25,6 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
-	JETPACK_CONNECT_STORE_SESSION,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -52,17 +52,30 @@ export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_STORE_SESSION:
 			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url ) );
-		case SERIALIZE:
+		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
+			const parsedUrl = urlModule.parse( action.ssoUrl );
+			return Object.assign( {}, state, buildNoProtocolUrlObj( parsedUrl.hostname ) );
+		case JETPACK_CONNECT_CHECK_URL:
+			const noProtocolUrl = action.url.replace( /.*?:\/\//g, '' );
+			return Object.assign( {}, state, { [ noProtocolUrl ]: Date.now() } );
 		case DESERIALIZE:
+		case SERIALIZE:
 			return state;
 	}
 	return state;
 }
 
 export function jetpackConnectSite( state = {}, action ) {
+	const defaultState = {
+		url: null,
+		isFetching: false,
+		isFetched: false,
+		isDismissed: false,
+		data: {}
+	};
 	switch ( action.type ) {
 		case JETPACK_CONNECT_CHECK_URL:
-			return Object.assign( {}, { url: action.url, isFetching: true, isFetched: false, isDismissed: false, data: {} } );
+			return Object.assign( {}, defaultState, { url: action.url, isFetching: true, isFetched: false, isDismissed: false, data: {} } );
 		case JETPACK_CONNECT_CHECK_URL_RECEIVE:
 			if ( action.url === state.url ) {
 				return Object.assign( {}, state, { isFetching: false, isFetched: true, data: action.data } );
@@ -80,7 +93,7 @@ export function jetpackConnectSite( state = {}, action ) {
 			return state;
 		case SERIALIZE:
 		case DESERIALIZE:
-			return {};
+			return defaultState;
 	}
 	return state;
 }
@@ -162,7 +175,7 @@ export function jetpackSSOSessions( state = {}, action ) {
 export default combineReducers( {
 	jetpackConnectSite,
 	jetpackConnectAuthorize,
-	jetpackSSO,
 	jetpackConnectSessions,
-	jetpackSSOSessions
+	jetpackSSOSessions,
+	jetpackSSO,
 } );

@@ -128,9 +128,12 @@ export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isRequesting && selectedSite;
 }
 
-export function filterPlansBySiteAndProps( plans, site, hideFreePlan ) {
+export function filterPlansBySiteAndProps( plans, site, hideFreePlan, showJetpackFreePlan ) {
 	return plans.filter( function( plan ) {
 		if ( site && site.jetpack ) {
+			if ( showJetpackFreePlan ) {
+				return isJetpackPlan( plan );
+			}
 			return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan );
 		}
 
