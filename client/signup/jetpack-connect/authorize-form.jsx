@@ -28,46 +28,38 @@ import Gridicon from 'components/gridicon';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSiteByUrl } from 'state/sites/selectors';
+import Spinner from 'components/spinner';
 
 /**
  * Module variables
  */
-
 const STATS_PAGE = '/stats/insights/';
 const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + process.env.NODE_ENV;
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
-/**
- * Module variables
- */
-
-/***
- * Renders a header common to both the logged in and logged out forms
- * @param {String} siteUrl A site URL to display in the header
- * @param {Boolean} isConnected Is the connection complete
- * @returns {Object} The JSX for the form's header
- */
-const renderFormHeader = ( siteUrl, isConnected = false ) => {
-	const headerText = ( isConnected )
-		? i18n.translate( 'You are connected!' )
-		: i18n.translate( 'Create your account' );
-	const subHeaderText = ( isConnected )
-		? i18n.translate( 'The power of WordPress.com is yours to command.' )
-		: i18n.translate( 'You are moments away from connecting {{span}}%(site)s{{/span}}', {
-			args: { site: siteUrl },
-			components: { span: <span className="jetpack-connect-authorize__site-url" /> }
-		} );
-	return(
-		<div>
-			<ConnectHeader
-				showLogo={ false }
-				headerText={ headerText }
-				subHeaderText={ subHeaderText } />
-		</div>
-	);
-};
 
 const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
+
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
+	},
+
+	renderFormHeader( siteUrl ) {
+		const headerText = i18n.translate( 'Create your account' );
+		const subHeaderText = i18n.translate( 'You are moments away from connecting {{span}}%(site)s{{/span}}', {
+			args: { site: siteUrl },
+			components: { span: <span className="jetpack-connect-authorize__site-url" /> }
+		} );
+
+		return(
+			<div>
+				<ConnectHeader
+					showLogo={ false }
+					headerText={ headerText }
+					subHeaderText={ subHeaderText } />
+			</div>
+		);
+	},
 
 	submitForm( form, userData ) {
 		debug( 'submiting new account', form, userData );
@@ -90,6 +82,16 @@ const LoggedOutForm = React.createClass( {
 		);
 	},
 
+	renderLocaleSuggestions() {
+		if ( ! this.props.locale ) {
+			return;
+		}
+
+		return (
+			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+		);
+	},
+
 	renderFooterLink() {
 		const loginUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
 		return (
@@ -106,7 +108,8 @@ const LoggedOutForm = React.createClass( {
 		const { site } = this.props.jetpackConnectAuthorize.queryObject;
 		return (
 			<div>
-				{ renderFormHeader( site ) }
+				{ this.renderLocaleSuggestions() }
+				{ this.renderFormHeader( site ) }
 				<SignupForm
 					getRedirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.isSubmitting() }
@@ -145,6 +148,26 @@ const LoggedInForm = React.createClass( {
 		}
 	},
 
+	renderFormHeader( siteUrl, isConnected ) {
+		const headerText = ( isConnected )
+			? i18n.translate( 'You are connected!' )
+			: i18n.translate( 'Completing connection' );
+		const subHeaderText = ( isConnected )
+			? i18n.translate( 'Thank you for flying with Jetpack' )
+			: i18n.translate( 'Jetpack is finishing up the connection process', {
+				args: { site: siteUrl }
+			} );
+
+		return(
+			<div>
+				<ConnectHeader
+					showLogo={ false }
+					headerText={ headerText }
+					subHeaderText={ subHeaderText } />
+			</div>
+		);
+	},
+
 	activateManage() {
 		const { queryObject, activateManageSecret, plansUrl } = this.props.jetpackConnectAuthorize;
 		this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
@@ -152,11 +175,11 @@ const LoggedInForm = React.createClass( {
 	},
 
 	handleSubmit() {
-		const { queryObject, siteReceived, manageActivated, activateManageSecret, plansUrl, authorizeError } = this.props.jetpackConnectAuthorize;
+		const { siteReceived, queryObject, manageActivated, activateManageSecret, plansUrl, authorizeError } = this.props.jetpackConnectAuthorize;
 		if ( ! this.props.isAlreadyOnSitesList &&
 			queryObject.already_authorized ) {
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
-		} else if ( activateManageSecret && ! manageActivated ) {
+		} else 	if ( activateManageSecret && ! manageActivated ) {
 			this.activateManage();
 		} else if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			window.location.href = queryObject.site + authUrl;
@@ -224,7 +247,7 @@ const LoggedInForm = React.createClass( {
 		}
 
 		if ( isAuthorizing ) {
-			return this.translate( 'Authorizing' );
+			return this.translate( 'Authorizing your connection' );
 		}
 
 		return this.translate( 'Approve' );
@@ -300,19 +323,31 @@ const LoggedInForm = React.createClass( {
 		);
 	},
 
+	renderStateAction() {
+		const { authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
+		if ( this.isAuthorizing() || ( authorizeSuccess && ! siteReceived ) ) {
+			return ( <div className="jetpack-connect-logged-in-form__loading">
+				<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
+			</div> );
+		}
+		return (
+			<button disabled={ this.isAuthorizing() } onClick={ this.handleSubmit } className="button is-primary">
+				{ this.getButtonText() }
+			</button>
+		);
+	},
+
 	render() {
 		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		const { site } = this.props.jetpackConnectAuthorize.queryObject;
 		return (
 			<div className="jetpack-connect-logged-in-form">
-				{ renderFormHeader( site, authorizeSuccess ) }
+				{ this.renderFormHeader( site, authorizeSuccess ) }
 				<Card>
 					<Gravatar user={ this.props.user } size={ 64 } />
 					<p className="jetpack-connect-logged-in-form__user-text">{ this.getUserText() }</p>
 					{ this.renderNotices() }
-					<button disabled={ this.isAuthorizing() } onClick={ this.handleSubmit } className="button is-primary">
-						{ this.getButtonText() }
-					</button>
+					{ this.renderStateAction() }
 				</Card>
 				{ this.renderFooterLinks() }
 			</div>
@@ -369,6 +404,5 @@ export default connect(
 			isAlreadyOnSitesList: !! site
 		};
 	},
-	dispatch => bindActionCreators( { authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )
+	dispatch => bindActionCreators( { recordTracksEvent, authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )
 )( JetpackConnectAuthorizeForm );
-

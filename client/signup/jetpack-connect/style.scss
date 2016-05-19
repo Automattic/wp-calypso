@@ -201,3 +201,17 @@
 	text-align: center;
 	width: 100%;
 }
+
+.jetpack-connect-logged-in-form__loading {
+	text-align: center;
+
+	span {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		display: block;
+	}
+
+	.spinner {
+		display: inline-block;
+		margin-top: 8px;
+	}
+}
