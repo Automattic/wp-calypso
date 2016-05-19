@@ -32,6 +32,8 @@ import ActivatingTheme from 'components/data/activating-theme';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
 import { getCurrentTheme } from 'state/themes/current-theme/selectors';
+import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
+import actionLabels from 'my-sites/themes/action-labels';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -59,6 +61,14 @@ const ThemeSheet = React.createClass( {
 		return { section: 'overview' };
 	},
 
+	getInitialState() {
+		return { selectedAction: null };
+	},
+
+	hideSiteSelectorModal() {
+		this.setState( { selectedAction: null } );
+	},
+
 	onBackClick() {
 		page.back();
 	},
@@ -73,12 +83,19 @@ const ThemeSheet = React.createClass( {
 			this.props.signup( this.props );
 		} else if ( this.isActive() ) {
 			this.props.customize( this.props, this.props.selectedSite );
-		// TODO: use site picker if no selected site
 		} else if ( isPremium( this.props ) ) {
 			// TODO: check theme is not already purchased
-			this.props.purchase( this.props, this.props.selectedSite, 'showcase-sheet' );
+			this.selectSiteAndDispatch( 'purchase' );
 		} else {
-			this.props.activate( this.props, this.props.selectedSite, 'showcase-sheet' );
+			this.selectSiteAndDispatch( 'activate' );
+		}
+	},
+
+	selectSiteAndDispatch( action ) {
+		if ( this.props.selectedSite ) {
+			this.props[ action ]( this.props, this.props.selectedSite, 'showcase-sheet' );
+		} else {
+			this.setState( { selectedAction: action } );
 		}
 	},
 
@@ -234,7 +251,7 @@ const ThemeSheet = React.createClass( {
 		}
 
 		const section = this.validateSection( this.props.section );
-		const priceElement = <span className="themes__sheet-action-bar-cost" dangerouslySetInnerHTML={ { __html: this.props.price } } />;
+		const priceElement = <span className="themes__sheet-action-bar-cost">{ this.props.price }</span>;
 		const siteID = this.props.selectedSite && this.props.selectedSite.ID;
 
 		return (
@@ -247,6 +264,15 @@ const ThemeSheet = React.createClass( {
 						source={ 'details' }
 						clearActivated={ this.props.clearActivated }/>
 				</ActivatingTheme>
+				{ this.state.selectedAction && <ThemesSiteSelectorModal
+					name={ this.state.selectedAction }
+					label={ actionLabels[ this.state.selectedAction ].label }
+					header={ actionLabels[ this.state.selectedAction ].header }
+					selectedTheme={ this.props }
+					onHide={ this.hideSiteSelectorModal }
+					action={ this.props[ this.state.selectedAction ] }
+					sourcePath={ `/theme/${ this.props.id }/${ section }` }
+				/> }
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
 						<HeaderCake className="themes__sheet-action-bar" onClick={ this.onBackClick }>
