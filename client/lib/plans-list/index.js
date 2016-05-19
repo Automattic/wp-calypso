@@ -76,7 +76,9 @@ PlansList.prototype.get = function() {
  */
 PlansList.prototype.fetch = function() {
 	debug( 'getting PlansList from api' );
-	wpcom.plans().list( function( error, data ) {
+	wpcom
+	.plans()
+	.list( { apiVersion: '1.2' }, function( error, data ) {
 		if ( error ) {
 			debug( 'error fetching PlansList from api', error );
 			return;
