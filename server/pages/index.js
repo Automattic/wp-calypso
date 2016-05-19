@@ -38,6 +38,13 @@ sections.forEach( function( section ) {
 	} );
 } );
 
+// TODO: Move into an `app.get()` route handler (e.g. next to language setting),
+// and pass the bootstrap locale as a parameter.
+// However, this requires that i18n doesn't use global state to store the locale
+// anymore (but e.g. a Redux subtree), or all users will get the same locale for
+// SSR'd content that the first user had set after a deploy.
+i18n.initialize();
+
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
  * @param {String} path Path to file we want to hash
@@ -408,15 +415,6 @@ module.exports = function() {
 	sections
 		.filter( section => section.isomorphic )
 		.forEach( section => {
-			section.paths.forEach( path => {
-				const pathRegex = utils.pathToRegExp( path );
-
-				app.get( pathRegex, function( req, res, next ) {
-					i18n.initialize();
-					next();
-				} );
-			} );
-
 			sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
 		} );
 
