@@ -84,7 +84,7 @@ export function details( context, next ) {
 		isLoggedIn: !! user
 	};
 
-	if ( context.prevPath && startsWith( context.prevPath, '/design' ) ) {
+	if ( startsWith( context.prevPath, '/design' ) ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
 
