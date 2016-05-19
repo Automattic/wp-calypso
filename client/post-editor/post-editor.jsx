@@ -292,6 +292,7 @@ const PostEditor = React.createClass( {
 		}
 		return (
 			<div className="post-editor">
+				<QueryPreferences/>
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
 				<div className="post-editor__inner">
@@ -326,7 +327,6 @@ const PostEditor = React.createClass( {
 										/>
 									: null
 								}
-								<QueryPreferences/>
 								<SegmentedControl className="editor__switch-mode" compact={ true }>
 									<SegmentedControlItem
 										selected={ mode === 'tinymce' }
