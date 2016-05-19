@@ -23,7 +23,6 @@ import {
 	JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
-	JETPACK_CONNECT_STORE_SESSION,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -125,13 +124,7 @@ export default {
 					} );
 				}
 
-				if ( ! error ) {
-					debug( 'jetpack-connect store correct session', url, error, data );
-					dispatch( {
-						type: JETPACK_CONNECT_STORE_SESSION,
-						url: url
-					} );
-				} else {
+				if ( error ) {
 					tracksEvent( dispatch, 'calypso_jpc_error_other', {
 						url: url
 					} );
