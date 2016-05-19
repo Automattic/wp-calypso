@@ -25,7 +25,7 @@ const actions = require( 'lib/posts/actions' ),
 import {
 	toggleStickyStatus,
 	togglePendingStatus
-} from 'state/ui/editor/post/actions'
+} from 'state/ui/editor/post/actions';
 
 const EditPostStatus = React.createClass( {
 	propTypes: {
@@ -51,7 +51,7 @@ const EditPostStatus = React.createClass( {
 			showTZTooltip: false,
 			showPostSchedulePopover: false,
 			onDateChange: noop
-		}
+		};
 	},
 
 	toggleStickyStatus: function() {
@@ -107,9 +107,7 @@ const EditPostStatus = React.createClass( {
 
 		if ( this.props.post ) {
 			isSticky = this.props.post.sticky;
-			isPending = this.props.savedPost.status === 'pending' || (
-				this.props.savedPost.status === 'draft' &&
-				this.props.post.status === 'pending' );
+			isPending = postUtils.isPending( this.props.post );
 			isPublished = this.props.savedPost.status === 'publish';
 			isScheduled = this.props.savedPost.status === 'future';
 			canPublish = siteUtils.userCan( 'publish_posts', this.props.site );
@@ -123,7 +121,7 @@ const EditPostStatus = React.createClass( {
 			( postUtils.getEditedTime( this.props.post ) || new Date() ),
 			siteUtils.timezone( this.props.site ),
 			siteUtils.gmtOffset( this.props.site )
-		).format( 'll LT' )
+		).format( 'll LT' );
 
 		return (
 			<div className="edit-post-status">
