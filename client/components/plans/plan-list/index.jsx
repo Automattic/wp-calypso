@@ -23,18 +23,18 @@ const PlanList = React.createClass( {
 	},
 
 	render() {
-		const isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
-			site = this.props.site;
+		const isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer;
+		const { site, hideFreePlan, plans, showJetpackFreePlan } = this.props;
 
 		let className = '',
-			plans = this.props.plans,
-			numberOfPlaceholders = 3,
-			plansList;
+			numberOfPlaceholders = 3;
 
-		if ( this.props.hideFreePlan || ( site && site.jetpack ) ) {
-			numberOfPlaceholders = this.props.showJetpackFreePlan ? 3 : 2;
+		if ( hideFreePlan || ( site && site.jetpack ) ) {
+			numberOfPlaceholders = showJetpackFreePlan ? 3 : 2;
 			className = 'jetpack';
 		}
+
+		let plansList;
 
 		if ( plans.length === 0 || isLoadingSitePlans ) {
 			plansList = times( numberOfPlaceholders, ( n ) => {
@@ -75,15 +75,15 @@ const PlanList = React.createClass( {
 		}
 
 		if ( plans.length > 0 ) {
-			plans = filterPlansBySiteAndProps( plans, site, this.props.hideFreePlan, this.props.showJetpackFreePlan );
+			const filteredPlans = filterPlansBySiteAndProps( plans, site, hideFreePlan, showJetpackFreePlan );
 
-			plansList = plans.map( ( plan ) => {
+			plansList = filteredPlans.map( plan => {
 				return (
 					<Plan
 						plan={ plan }
 						sitePlans={ this.props.sitePlans }
 						comparePlansUrl={ this.props.comparePlansUrl }
-						hideDiscountMessage={ this.props.hideFreePlan }
+						hideDiscountMessage={ hideFreePlan }
 						isInSignup={ this.props.isInSignup }
 						key={ plan.product_id }
 						open={ plan.product_id === this.state.openPlan }

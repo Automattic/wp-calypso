@@ -11,7 +11,6 @@ import ReactDom from 'react-dom';
 import analytics from 'lib/analytics';
 import config from 'config';
 import i18n from 'lib/mixins/i18n';
-import plansFactory from 'lib/plans-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';
@@ -19,7 +18,6 @@ import titleActions from 'lib/screen-title/actions';
 import get from 'lodash/get';
 import { isValidFeatureKey } from 'lib/plans';
 
-const plans = plansFactory();
 const sites = sitesFactory();
 
 export default {
@@ -69,7 +67,6 @@ export default {
 			<CheckoutData>
 				<Plans
 					sites={ sites }
-					plans={ plans }
 					context={ context }
 					destinationType={ context.params.destinationType } />
 			</CheckoutData>,
@@ -110,7 +107,6 @@ export default {
 				<CheckoutData>
 					<PlansCompare
 						selectedSite={ site }
-						plans={ plans }
 						features={ features }
 						selectedFeature={ context.params.feature }
 						productsList={ productsList } />
