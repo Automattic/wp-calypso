@@ -172,7 +172,10 @@ const JetpackConnectMain = React.createClass( {
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">{ this.translate( 'Install Jetpack Manually' ) }</LoggedOutFormLinkItem>
-				<LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
+				{ this.props.isInstall
+					? null
+					: <LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
+				}
 			</LoggedOutFormLinks>
 		);
 	},
@@ -190,7 +193,8 @@ const JetpackConnectMain = React.createClass( {
 					onClick={ this.onURLEnter }
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
-					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() } />
+					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() }
+					isInstall={ this.props.isInstall } />
 			</Card>
 		);
 	},
@@ -211,8 +215,29 @@ const JetpackConnectMain = React.createClass( {
 			<Main className="jetpack-connect">
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
-					<ConnectHeader headerText={ this.translate( 'Connect a self-hosted WordPress' ) }
+					<ConnectHeader
+						showLogo={ false }
+						headerText={ this.translate( 'Connect a self-hosted WordPress' ) }
 						subHeaderText={ this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect to your self-hosted WordPress site.' ) }
+						step={ 1 }
+						steps={ 3 } />
+
+					{ this.renderSiteInput( status ) }
+					{ this.renderFooter() }
+				</div>
+			</Main>
+		);
+	},
+
+	renderSiteEntryInstall() {
+		const status = this.getStatus();
+		return (
+			<Main className="jetpack-connect">
+				<div className="jetpack-connect__site-url-entry-container">
+					<ConnectHeader
+						showLogo={ false }
+						headerText={ this.translate( 'Install Jetpack' ) }
+						subHeaderText={ this.translate( 'Installing Jetpack is easy. Please start by typing your site address below and then click "Start Installation"' ) }
 						step={ 1 }
 						steps={ 3 } />
 
@@ -228,19 +253,24 @@ const JetpackConnectMain = React.createClass( {
 			<Main className="jetpack-connect-wide">
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
-					<ConnectHeader headerText={ this.translate( 'Ready for installation' ) }
+					<ConnectHeader
+						showLogo={ false }
+						headerText={ this.translate( 'Ready for installation' ) }
 						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
 						step={ 1 }
 						steps={ 3 } />
 					<div className="jetpack-connect__install-steps">
-						<JetpackInstallStep title={ this.translate( '1. Install Jetpack' ) }
-							text={ this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s dashboard to install Jetpack. Click the blue install button.' ) }
+						<JetpackInstallStep title={ this.translate( '1. Install' ) }
+							text={ this.props.isInstall
+									? this.translate( 'You will be redirected to your site\'s dashboard to install Jetpack. Click the blue "Install Now" button' )
+									: this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s dashboard to install Jetpack. Click the blue install button.' )
+							}
 							example={ <JetpackExampleInstall url={ this.state.currentUrl } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Activate Jetpack' ) }
-							text={ this.translate( 'Once the plugin is installed, you\'ll need to click this tiny blue \'Activate\' link from your plugins list page.' ) }
+							text={ this.translate( 'You\'ll then need to click the small blue "Activate Plugin" link to activate Jetpack.' ) }
 							example={ <JetpackExampleActivate url={ this.state.currentUrl } /> } />
 						<JetpackInstallStep title={ this.translate( '3. Connect Jetpack' ) }
-							text={ this.translate( 'Once the plugin is activated you\'ll click this green \'Connect\' button to complete the connection.' ) }
+							text={ this.translate( 'Finally, just click the green "Connect to WordPress.com" button to finish the process.' ) }
 							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
 					</div>
 					<Button onClick={ this.installJetpack } primary>{ this.translate( 'Install Jetpack' ) }</Button>
@@ -254,7 +284,8 @@ const JetpackConnectMain = React.createClass( {
 			<Main className="jetpack-connect-wide">
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
-					<ConnectHeader headerText={ this.translate( 'Ready for installation' ) }
+					<ConnectHeader showLogo={ false }
+						headerText={ this.translate( 'Ready for installation' ) }
 						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
 						step={ 1 }
 						steps={ 3 } />
@@ -263,7 +294,7 @@ const JetpackConnectMain = React.createClass( {
 							text={ this.translate( 'You need to click this tiny blue \'Activate\' link from your plugins list page.' ) }
 							example={ <JetpackExampleActivate url={ this.state.currentUrl } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Connect Jetpack' ) }
-							text={ this.translate( 'Once the plugin is activated you\'ll click this green \'Connect\' button to complete the connection.' ) }
+							text={ this.translate( 'Finally, just click the green "Connect to WordPress.com" button to finish the process.' ) }
 							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
 					</div>
 					<Button onClick={ this.activateJetpack } primary>{ this.translate( 'Activate Jetpack' ) }</Button>
@@ -279,6 +310,9 @@ const JetpackConnectMain = React.createClass( {
 		}
 		if ( status === 'notActiveJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
 			return this.renderActivateInstructions();
+		}
+		if ( this.props.isInstall ) {
+			return this.renderSiteEntryInstall();
 		}
 		return this.renderSiteEntry();
 	}
