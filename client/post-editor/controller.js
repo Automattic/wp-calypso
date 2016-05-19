@@ -61,6 +61,7 @@ function renderEditor( context, postType ) {
 		React.createElement( ReduxProvider, { store: context.store },
 			React.createElement( PreferencesData, null,
 				React.createElement( PostEditor, {
+					user: user,
 					sites: sites,
 					type: postType
 				} )
