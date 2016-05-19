@@ -76,7 +76,7 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Domain Search > Site Redirect' );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			(
 				<CartData>
 					<SiteRedirect
@@ -84,7 +84,8 @@ module.exports = {
 						sites={ sites } />
 				</CartData>
 			),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
