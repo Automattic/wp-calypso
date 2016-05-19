@@ -144,6 +144,7 @@ function getDefaultContext( request ) {
 		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
 		isDebug: request.query.debug !== undefined ? true : false,
+		isDevelopment: utils.isDevelopment( CALYPSO_ENV ),
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
 		jsFile: 'build',
@@ -157,7 +158,7 @@ function getDefaultContext( request ) {
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
-		isDebug: context.env === 'development' || context.isDebug,
+		isDebug: context.isDevelopment || context.isDebug,
 		tinymceWpSkin: context.urls[ 'tinymce/skins/wordpress/wp-content.css' ],
 		tinymceEditorCss: context.urls[ 'editor.css' ]
 	};
@@ -181,7 +182,7 @@ function getDefaultContext( request ) {
 		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
 	}
 
-	if ( CALYPSO_ENV === 'development' ) {
+	if ( utils.isDevelopment( CALYPSO_ENV ) ) {
 		context.badge = 'dev';
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';

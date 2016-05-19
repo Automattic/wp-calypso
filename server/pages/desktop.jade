@@ -17,7 +17,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class='is-desktop' + ( isFluidWidth ?
 		if isRTL
 			link(rel='stylesheet', href=urls['style-rtl.css'])
 		else
-			if 'development' === env || isDebug
+			if isDevelopment || isDebug
 				link(rel='stylesheet', href=urls['style-debug.css'])
 			else
 				link(rel='stylesheet', href=urls['style.css'])

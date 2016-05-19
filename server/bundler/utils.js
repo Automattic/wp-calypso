@@ -1,4 +1,5 @@
-var path = require( 'path' );
+const endsWith = require( 'lodash/endsWith' ),
+	path = require( 'path' );
 
 function getAssets( stats ) {
 	var chunks = stats.chunks;
@@ -14,11 +15,16 @@ function getAssets( stats ) {
 	} );
 }
 
+function isDevelopment( env ) {
+	return endsWith( env, 'development' );
+}
+
 function pathToRegExp( path ) {
 	return new RegExp( '^' + path + '(/.*)?$' );
 }
 
 module.exports = {
-	getAssets: getAssets,
-	pathToRegExp: pathToRegExp
+	getAssets,
+	isDevelopment,
+	pathToRegExp
 };
