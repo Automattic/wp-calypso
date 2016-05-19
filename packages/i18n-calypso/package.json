@@ -21,15 +21,14 @@
     "interpolate-components": "1.0.4",
     "jed": "1.0.2",
     "jstimezonedetect": "1.0.6",
+    "lodash.assign": "^4.0.8",
     "lru-cache": "4.0.1",
     "moment-timezone": "0.4.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "enzyme": "2.2.0",
-    "lodash.assign": "^4.0.8",
     "mocha": "^2.4.5",
-    "mock-local-storage": "^1.0.2",
     "react": "0.14.8",
     "react-addons-test-utils": "0.14.8",
     "react-dom": "0.14.8"
