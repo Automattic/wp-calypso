@@ -130,7 +130,6 @@
   },
   "devDependencies": {
     "babel-eslint": "4.1.8",
-    "better-assert": "1.0.2",
     "blanket": "1.1.6",
     "chai": "2.0.0",
     "deep-freeze": "0.0.1",
