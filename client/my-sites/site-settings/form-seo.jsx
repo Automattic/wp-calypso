@@ -6,6 +6,7 @@ import get from 'lodash/get';
 import pickBy from 'lodash/pickBy';
 import isString from 'lodash/isString';
 import page from 'page';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -24,8 +25,8 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
-import analytics from 'lib/analytics';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -73,7 +74,7 @@ function isValidVerificationCode( serviceName = '', content = '' ) {
 	return content.indexOf( serviceIds[ serviceName ] ) > -1;
 }
 
-export default React.createClass( {
+export const SeoForm = React.createClass( {
 	displayName: 'SiteSettingsFormSEO',
 
 	mixins: [ protectForm.mixin ],
@@ -121,7 +122,7 @@ export default React.createClass( {
 	},
 
 	submitSeoForm( event ) {
-		const site = this.props.site;
+		const { site, trackSubmission } = this.props;
 
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
 			event.preventDefault();
@@ -170,7 +171,7 @@ export default React.createClass( {
 			}
 		} );
 
-		analytics.tracks.recordEvent( 'calypso_seo_settings_form_submit' );
+		trackSubmission();
 	},
 
 	render() {
@@ -371,3 +372,9 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapDispatchToProps = dispatch => ( {
+	trackSubmission: () => dispatch( recordTracksEvent( 'calypso_seo_settings_form_submit', {} ) )
+} );
+
+export default connect( null, mapDispatchToProps )( SeoForm );
