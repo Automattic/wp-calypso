@@ -295,5 +295,4 @@ I18N.prototype.registerTranslateHook = function( callback ) {
 	this.translateHooks.push( callback );
 };
 
-module.exports = new I18N();
-module.exports.I18N = I18N;
+module.exports = I18N;
