@@ -15,6 +15,8 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import SectionHeader from 'components/section-header';
+import Card from 'components/card';
 
 class CustomPostTypesFieldset extends Component {
 	constructor( props ) {
@@ -103,47 +105,46 @@ class CustomPostTypesFieldset extends Component {
 						}
 					} ) }
 				</p>
-				<FormLabel>
-					<FormToggle
-						checked={ this.isEnabled( 'jetpack-testimonial' ) }
-						onChange={ this.boundToggleTestimonial }
-						disabled={ this.isDisabled( 'jetpack-testimonial' ) }
-						onClick={ recordEvent( 'Clicked Jetpack Testimonial CPT Checkbox' ) }>
-						{ translate( 'Testimonials' ) }
-					</FormToggle>
-				</FormLabel>
-				{ this.hasDefaultPostTypeEnabled( 'jetpack-testimonial' ) && (
-					<FormSettingExplanation>{ translate( 'Your theme supports Testimonials' ) }</FormSettingExplanation>
-				) }
-				<p>
-					{ translate( 'The Testimonial custom content type allows you to add, organize, and display your testimonials. If your theme doesn’t support it yet, you can display testimonials using the {{shortcodeLink}}testimonial shortcode{{/shortcodeLink}} ( {{code}}[testimonials]{{/code}} ) or you can view a full archive of your testimonials at yourgroovydomain.com/testimonial.', {
-						components: {
-							shortcodeLink: <a href="https://support.wordpress.com/testimonials-shortcode/" />,
-							code: <code />
-						}
-					} ) }
-
-				</p>
-				<FormLabel>
-					<FormToggle
-						checked={ this.isEnabled( 'jetpack-portfolio' ) }
-						onChange={ this.boundTogglePortfolio }
-						disabled={ this.isDisabled( 'jetpack-portfolio' ) }
-						onClick={ recordEvent( 'Clicked Jetpack Portfolio CPT Checkbox' ) }>
-						{ translate( 'Portfolio Projects' ) }
-					</FormToggle>
-				</FormLabel>
-				{ this.hasDefaultPostTypeEnabled( 'jetpack-portfolio' ) && (
-					<FormSettingExplanation>{ translate( 'Your theme supports Portfolio Projects' ) }</FormSettingExplanation>
-				) }
-				<p>
-					{ translate( 'The Portfolio custom content type gives you an easy way to manage and showcase projects on your site. If your theme doesn’t support it yet, you can display the portfolio using the {{shortcodeLink}}portfolio shortcode{{/shortcodeLink}} ( {{code}}[portfolio]{{/code}} ) or with a link to the portfolio in the menu.', {
-						components: {
-							shortcodeLink: <a href="https://support.wordpress.com/portfolios/portfolio-shortcode/" />,
-							code: <code />
-						}
-					} ) }
-				</p>
+				<div className="site-settings__custom-post-type">
+					<SectionHeader label={ translate( 'Testimonials' ) }>
+						<FormToggle
+							checked={ this.isEnabled( 'jetpack-testimonial' ) }
+							onChange={ this.boundToggleTestimonial }
+							disabled={ this.isDisabled( 'jetpack-testimonial' ) }
+							onClick={ recordEvent( 'Clicked Jetpack Testimonial CPT Checkbox' ) } />
+					</SectionHeader>
+					<Card>
+						{ this.hasDefaultPostTypeEnabled( 'jetpack-testimonial' ) && (
+							<FormSettingExplanation>{ translate( 'Your theme supports Testimonials' ) }</FormSettingExplanation>
+						) }
+						{ translate( 'The Testimonial custom content type allows you to add, organize, and display your testimonials. If your theme doesn’t support it yet, you can display testimonials using the {{shortcodeLink}}testimonial shortcode{{/shortcodeLink}} ( {{code}}[testimonials]{{/code}} ) or you can view a full archive of your testimonials at yourgroovydomain.com/testimonial.', {
+							components: {
+								shortcodeLink: <a href="https://support.wordpress.com/testimonials-shortcode/" />,
+								code: <code />
+							}
+						} ) }
+					</Card>
+				</div>
+				<div className="site-settings__custom-post-type">
+					<SectionHeader label={ translate( 'Portfolio Projects' ) }>
+						<FormToggle
+							checked={ this.isEnabled( 'jetpack-portfolio' ) }
+							onChange={ this.boundTogglePortfolio }
+							disabled={ this.isDisabled( 'jetpack-portfolio' ) }
+							onClick={ recordEvent( 'Clicked Jetpack Portfolio CPT Checkbox' ) } />
+					</SectionHeader>
+					<Card>
+						{ this.hasDefaultPostTypeEnabled( 'jetpack-portfolio' ) && (
+							<FormSettingExplanation>{ translate( 'Your theme supports Portfolio Projects' ) }</FormSettingExplanation>
+						) }
+						{ translate( 'The Portfolio custom content type gives you an easy way to manage and showcase projects on your site. If your theme doesn’t support it yet, you can display the portfolio using the {{shortcodeLink}}portfolio shortcode{{/shortcodeLink}} ( {{code}}[portfolio]{{/code}} ) or with a link to the portfolio in the menu.', {
+							components: {
+								shortcodeLink: <a href="https://support.wordpress.com/portfolios/portfolio-shortcode/" />,
+								code: <code />
+							}
+						} ) }
+					</Card>
+				</div>
 			</FormFieldset>
 		);
 	}
