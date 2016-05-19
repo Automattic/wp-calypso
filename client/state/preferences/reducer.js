@@ -13,7 +13,9 @@ import {
 	PREFERENCES_RECEIVE,
 	PREFERENCES_REMOVE,
 	PREFERENCES_FETCH,
-	PREFERENCES_FETCH_SUCCESS
+	PREFERENCES_FETCH_SUCCESS,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
 import { USER_SETTING_KEY } from './actions';
 
@@ -44,6 +46,9 @@ function fetching( state = false, action ) {
 			return false;
 		case PREFERENCES_FETCH:
 			return true;
+		case SERIALIZE:
+		case DESERIALIZE:
+			return false;
 	}
 	return state;
 }
