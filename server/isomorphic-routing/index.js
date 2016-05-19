@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import { serverRender } from 'render';
 import { createReduxStore } from 'state';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
@@ -11,14 +10,13 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 		expressApp.get(
 			route,
 			setUpRoute,
-			setUpI18n,
 			combineMiddlewares(
 				setSectionMiddlewareFactory( section ),
 				...middlewares
 			),
 			serverRender
 		);
-	}
+	};
 }
 
 function combineMiddlewares( ...middlewares ) {
@@ -26,7 +24,7 @@ function combineMiddlewares( ...middlewares ) {
 		req.context = getEnhancedContext( req );
 		applyMiddlewares( req.context, middlewares );
 		next();
-	}
+	};
 }
 
 // TODO: Maybe merge into getDefaultContext().
@@ -51,9 +49,4 @@ function compose( ...functions ) {
 	return functions.reduceRight( ( composed, f ) => (
 		next => f( composed ) // eslint-disable-line no-unused-vars
 	), () => {} );
-}
-
-function setUpI18n( req, res, next ) {
-	i18n.initialize();
-	next();
 }

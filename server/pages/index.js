@@ -12,7 +12,8 @@ var config = require( 'config' ),
 	utils = require( 'bundler/utils' ),
 	sectionsModule = require( '../../client/sections' ),
 	serverRouter = require( 'isomorphic-routing' ).serverRouter,
-	serverRender = require( 'render' ).serverRender;
+	serverRender = require( 'render' ).serverRender,
+	i18n = require( 'lib/mixins/i18n' );
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -407,6 +408,15 @@ module.exports = function() {
 	sections
 		.filter( section => section.isomorphic )
 		.forEach( section => {
+			section.paths.forEach( path => {
+				const pathRegex = utils.pathToRegExp( path );
+
+				app.get( pathRegex, function( req, res, next ) {
+					i18n.initialize();
+					next();
+				} );
+			} );
+
 			sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
 		} );
 
