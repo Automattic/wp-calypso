@@ -41,7 +41,7 @@ function normalizeTranslateArguments( args ) {
 
 	// warn about older deprecated syntax
 	if ( typeof original !== 'string' || args.length > 3 || ( args.length > 2 && typeof args[ 1 ] === 'object' && typeof args[ 2 ] === 'object' ) ) {
-		warn( 'Deprecated Invocation: `translate()` accepts ( string, [string], [object] ). These arguments passed:', simpleArguments( args ), '. See client/lib/mixins/i18n#translate-method' );
+		warn( 'Deprecated Invocation: `translate()` accepts ( string, [string], [object] ). These arguments passed:', simpleArguments( args ), '. See https://github.com/Automattic/i18n-calypso#translate-method' );
 	}
 	if ( args.length === 2 && typeof original === 'string' && typeof args[ 1 ] === 'string' ) {
 		warn( 'Invalid Invocation: `translate()` requires an options object for plural translations, but passed:', simpleArguments( args ) );
