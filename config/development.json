@@ -89,6 +89,7 @@
 		"me/security/checkup": true,
 		"me/trophies": false,
 		"preview-layout": true,
+		"preview-endpoint": false,
 		"muse": true,
 		"network-connection": true,
 		"notifications2beta": true,
