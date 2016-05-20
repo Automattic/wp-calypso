@@ -96,10 +96,6 @@ var Customize = React.createClass( {
 			return false;
 		}
 
-		if ( this.props.query.nomuse ) {
-			return false;
-		}
-
 		if ( this.state.isWaitingForSiteData || this.state.isWaitingForMuseData ) {
 			return false;
 		}
