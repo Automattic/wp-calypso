@@ -34,6 +34,8 @@ function getExternals() {
 	externals['bundler/hot-reloader'] = 'commonjs bundler/hot-reloader';
 	// Exclude the devdocs search-index, as it's huge.
 	externals['devdocs/search-index'] = 'commonjs devdocs/search-index';
+	// Exclude the devdocs components usage stats data
+	externals['devdocs/components-usage-stats.json'] = 'commonjs devdocs/components-usage-stats.json';
 	// Exclude server/bundler/assets, since the files it requires don't exist until the bundler has run
 	externals['bundler/assets'] = 'commonjs bundler/assets';
 
@@ -62,6 +64,7 @@ module.exports = {
 			},
 			{
 				test: /\.json$/,
+				exclude: /(devdocs\/components-usage-stats.json)/,
 				loader: 'json-loader'
 			}
 		]
