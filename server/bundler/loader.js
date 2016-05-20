@@ -12,7 +12,6 @@ function getSectionsModule( sections ) {
 			"\tlayoutFocus = require( 'lib/layout-focus' ),",
 			"\tReact = require( 'react' ),",
 			"\tLoadingError = require( 'layout/error' ),",
-			"\tclasses = require( 'component-classes' ),",
 			"\tcontroller = require( 'controller' ),",
 			"\tpreloadHub = require( 'sections-preload' ).hub;",
 			'\n',

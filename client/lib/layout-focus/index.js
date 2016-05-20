@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-var classes = require( 'component-classes' );
-
-/**
  * Internal dependencies
  */
 var Emitter = require( 'lib/mixins/emitter' ),
@@ -109,11 +104,11 @@ var layoutFocus = {
 	setFocusHideClass: function() {
 		// Whenever layout focus changes remove `focus-hide` so
 		// that animations can occur with all elements visible.
-		classes( document.documentElement ).remove( 'focus-hide' );
+		document.documentElement.classList.remove( 'focus-hide' );
 
 		// After transitions restore `focus-hide`
 		setTimeout( function() {
-			classes( document.documentElement ).add( 'focus-hide' );
+			document.documentElement.classList.add( 'focus-hide' );
 		}, 200 );
 	}
 };
