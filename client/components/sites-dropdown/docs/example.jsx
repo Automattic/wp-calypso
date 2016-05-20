@@ -6,6 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import DocsExample from 'components/docs-example';
 import SitesDropdown from 'components/sites-dropdown';
 
 export default React.createClass( {
@@ -14,12 +15,13 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/app-components/sites-dropdown">SitesDropdown</a>
-				</h2>
+			<DocsExample
+				title="SitesDropdown"
+				url="/devdocs/design/sites-dropdow"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<SitesDropdown />
-			</div>
+			</DocsExample>
 		);
 	}
 } );

@@ -8,6 +8,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  * Internal dependencies
  */
 import Card from 'components/card';
+import DocsExample from 'components/docs-example';
 import DropZone from 'components/drop-zone';
 
 export default React.createClass( {
@@ -63,12 +64,13 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/dropzones">DropZone</a>
-				</h2>
+			<DocsExample
+				title="DropZone"
+				url="/devdocs/design/dropzones"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				{ this.renderContainer() }
-			</div>
+			</DocsExample>
 		);
 	}
 } );

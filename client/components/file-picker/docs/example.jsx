@@ -8,6 +8,7 @@ import React from 'react';
  */
 import Card from 'components/card';
 import Button from 'components/button';
+import DocsExample from 'components/docs-example';
 import FilePicker from 'components/file-picker';
 
 export default class FilePickers extends React.Component {
@@ -27,11 +28,11 @@ export default class FilePickers extends React.Component {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/file-pickers">File Picker</a>
-				</h2>
-
+			<DocsExample
+				title="File Picker"
+				url="/devdocs/design/file-pickers"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<Card>
 
 					<h4>Select a single file:</h4>
@@ -60,7 +61,7 @@ export default class FilePickers extends React.Component {
 					</FilePicker>
 
 				</Card>
-			</div>
+			</DocsExample>
 		);
 	}
 }

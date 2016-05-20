@@ -9,6 +9,8 @@ var React = require( 'react' ),
  */
 var countriesList = require( 'lib/countries-list' ).forSms(),
 	Card = require( 'components/card' ),
+	DocsExample = require( 'components/docs-example' ),
+	DocsExampleStats = require( 'components/docs-example' ).DocsExampleStats,
 	FormButton = require( 'components/forms/form-button' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
@@ -57,12 +59,12 @@ var FormFields = React.createClass( {
 	},
 
 	render: function() {
+		const { componentsUsageStats = {} } = this.props
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/form-fields">Form Fields</a>
-				</h2>
-
+			<DocsExample
+				title="Form Fields"
+				url="/devdocs/design/form-fields"
+			>
 				<p>
 					The form fields components act as wrapper components to aid in componentizing CSS.
 					Here is an example of all of the form fields components and their expected markup.
@@ -81,50 +83,55 @@ var FormFields = React.createClass( {
 							<FormCheckbox id="comment_like_notification" name="comment_like_notification" />
 							<span>Email me when someone Likes one of my comments.</span>
 						</FormLabel>
+						<DocsExampleStats count={ componentsUsageStats.formCheckbox } />
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="username">Disabled Form Text Input</FormLabel>
-						<FormTextInput
-							id="username"
-							name="username"
-							disabled
-							placeholder="Placeholder text..."
-						/>
-					</FormFieldset>
+						<div class="form-fieldset">
+							<FormLabel htmlFor="username">Disabled Form Text Input</FormLabel>
+							<FormTextInput
+								id="username"
+								name="username"
+								disabled
+								placeholder="Placeholder text..."
+							/>
+						</div>
 
-					<FormFieldset>
-						<FormLabel htmlFor="username">Form Text Input</FormLabel>
-						<FormTextInput id="username" name="username" placeholder="Placeholder text..." />
-						<FormSettingExplanation>This is an explanation of FormTextInput.</FormSettingExplanation>
-					</FormFieldset>
+						<div class="form-fieldset">
+							<FormLabel htmlFor="username">Form Text Input</FormLabel>
+							<FormTextInput id="username" name="username" placeholder="Placeholder text..." />
+							<FormSettingExplanation>This is an explanation of FormTextInput.</FormSettingExplanation>
+						</div>
 
-					<FormFieldset>
-						<FormLabel htmlFor="text_valid">Form Text Input</FormLabel>
-						<FormTextInput
-							autoCapitalize="off"
-							autoComplete="off"
-							autoCorrect="off"
-							id="text_valid"
-							name="text_valid"
-							className="is-valid"
-							placeholder="Placeholder text..."
-						/>
-						<FormInputValidation text="Your text can be saved." />
-					</FormFieldset>
+						<div class="form-fieldset">
+							<FormLabel htmlFor="text_valid">Form Text Input</FormLabel>
+							<FormTextInput
+								autoCapitalize="off"
+								autoComplete="off"
+								autoCorrect="off"
+								id="text_valid"
+								name="text_valid"
+								className="is-valid"
+								placeholder="Placeholder text..."
+							/>
+							<FormInputValidation text="Your text can be saved." />
+						</div>
 
-					<FormFieldset>
-						<FormLabel htmlFor="text_invalid">Form Text Input</FormLabel>
-						<FormTextInput
-							autoCapitalize="off"
-							autoComplete="off"
-							autoCorrect="off"
-							id="text_invalid"
-							name="text_invalid"
-							className="is-error"
-							placeholder="Placeholder text..."
-						/>
-						<FormInputValidation isError text="Your text is too short." />
+						<div class="form-fieldset">
+							<FormLabel htmlFor="text_invalid">Form Text Input</FormLabel>
+							<FormTextInput
+								autoCapitalize="off"
+								autoComplete="off"
+								autoCorrect="off"
+								id="text_invalid"
+								name="text_invalid"
+								className="is-error"
+								placeholder="Placeholder text..."
+							/>
+							<FormInputValidation isError text="Your text is too short." />
+						</div>
+
+						<DocsExampleStats count={ componentsUsageStats.formTextInput } />
 					</FormFieldset>
 
 					<FormFieldset>
@@ -135,10 +142,12 @@ var FormFields = React.createClass( {
 							prefix="Prefix"
 							suffix="Suffix"
 							/>
+						<DocsExampleStats count={ componentsUsageStats.formTextInputWithAffixes } />
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel htmlFor="select">Form Select</FormLabel>
+						<DocsExampleStats count={ getUsageStats( FormSelect ) } />
 						<FormSelect id="select">
 							<option>1</option>
 							<option>2</option>
@@ -159,6 +168,7 @@ var FormFields = React.createClass( {
 						<FormPasswordInput
 							id="password"
 							name="password" />
+						<DocsExampleStats count={ componentsUsageStats.formPasswordInput } />
 					</FormFieldset>
 
 					<FormLegend>Form Toggle</FormLegend>
@@ -171,6 +181,7 @@ var FormFields = React.createClass( {
 						checked={ false }
 						disabled={ true }
 					/>
+					<DocsExampleStats count={ componentsUsageStats.formToggle } />
 					<br />
 					<FormToggle
 						checked={ true }
@@ -186,10 +197,12 @@ var FormFields = React.createClass( {
 						checked={ false }
 						disabled={ true }
 					/>
+					<DocsExampleStats count={ componentsUsageStats['formToggle/compact'] } />
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>
 					</FormButtonsBar>
+					<DocsExampleStats count={ componentsUsageStats.formButtonsBar } />
 				</Card>
 
 				<Card>
@@ -198,11 +211,13 @@ var FormFields = React.createClass( {
 					<FormFieldset>
 						<FormLabel htmlFor="country_code">Form Country Select</FormLabel>
 						<FormCountrySelect name="country_code" id="country_code" countriesList={ countriesList } />
+						<DocsExampleStats count={ componentsUsageStats.formCountrySelect } />
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel htmlFor="us_state">Form US State Select</FormLabel>
 						<FormStateSelector name="us_state" id="us_state" />
+						<DocsExampleStats count={ componentsUsageStats.usStateSelector } />
 					</FormFieldset>
 
 					<FormFieldset>
@@ -216,11 +231,13 @@ var FormFields = React.createClass( {
 							<FormRadio value="second" checked={ 'second' === this.state.checkedRadio } onChange={ this.handleRadioChange } />
 							<span>Second radio</span>
 						</FormLabel>
+						<DocsExampleStats count={ componentsUsageStats.formRadio } />
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel htmlFor="telInput">Form Tel Input</FormLabel>
 						<FormTelInput name="telInput" id="telInput" placeholder="Placeholder text..." />
+						<DocsExampleStats count={ componentsUsageStats.formTelInput } />
 					</FormFieldset>
 
 					<FormFieldset>
@@ -230,19 +247,22 @@ var FormFields = React.createClass( {
 							initialPhoneNumber="8772733049"
 							countriesList={ countriesList }
 							/>
+						<DocsExampleStats count={ componentsUsageStats.formPhoneInput } />
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel htmlFor="textarea">Form Textarea</FormLabel>
 						<FormTextarea name="textarea" id="textarea" placeholder="Placeholder text..."></FormTextarea>
+						<DocsExampleStats count={ componentsUsageStats.formTextarea } />
 					</FormFieldset>
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>
 						<FormButton type="button" isPrimary={ false }>Secondary Form Button</FormButton>
 					</FormButtonsBar>
+					<DocsExampleStats count={ componentsUsageStats.formButtonsBar } />
 				</Card>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

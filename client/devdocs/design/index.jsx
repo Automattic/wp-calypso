@@ -78,8 +78,21 @@ let DesignAssets = React.createClass( {
 		page( '/devdocs/design/' );
 	},
 
+	getFormFiledsStats( componentsUsageStats ) {
+		return Object.keys( componentsUsageStats )
+			.reduce( ( target, name ) => {
+				const parts = name.split( '/' );
+				if ( parts[0] === 'forms' ) {
+					// remove `forms/` from the name
+					target[ parts.slice( 0, 1 ).join( '/' ) ] = componentsUsageStats[ name ];
+				}
+				return target;
+			}, {} );
+	},
+
 	render() {
 		const { componentsUsageStats = {} } = this.props;
+
 		return (
 			<div className="design-assets" role="main">
 				{
@@ -96,43 +109,43 @@ let DesignAssets = React.createClass( {
 				}
 				<Collection component={ this.props.component } filter={ this.state.filter }>
 					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
-					<BulkSelect />
-					<ButtonGroups />
+					<BulkSelect componentUsageStats={ componentsUsageStats.bulkSelect }/>
+					<ButtonGroups componentUsageStats={ componentsUsageStats.buttonGroups } />
 					<Buttons componentUsageStats={ componentsUsageStats.button } />
-					<Cards />
-					<ClipboardButtonInput />
-					<ClipboardButtons />
-					<Count />
-					<CountedTextareas />
-					<DatePicker />
-					<DropZones searchKeywords="drag" />
-					<ExternalLink />
-					<FeatureGate />
-					<FilePickers />
-					<FoldableCard />
-					<FormFields searchKeywords="input textbox textarea radio"/>
-					<Gauge />
-					<GlobalNotices />
-					<Gridicons />
+					<Cards componentUsageStats={ componentsUsageStats.cards } />
+					<ClipboardButtonInput componentUsageStats={ componentsUsageStats.clipboardButtonInput } />
+					<ClipboardButtons componentUsageStats={ componentsUsageStats.clipboardButton } />
+					<Count componentUsageStats={ componentsUsageStats.count } />
+					<CountedTextareas componentUsageStats={ componentsUsageStats.countedTextarea } />
+					<DatePicker componentUsageStats={ componentsUsageStats.datePicker } />
+					<DropZones searchKeywords="drag" componentUsageStats={ componentsUsageStats.dropZone } />
+					<ExternalLink componentUsageStats={ componentsUsageStats.externalLink } />
+					<FeatureGate componentUsageStats={ componentsUsageStats.featureGate } />
+					<FilePickers componentUsageStats={ componentsUsageStats.filePicker } />
+					<FoldableCard componentUsageStats={ componentsUsageStats.foldableCard } />
+					<FormFields searchKeywords="input textbox textarea radio" componentsUsageStats={ this.getFormFiledsStats( componentsUsageStats ) } />
+					<Gauge componentUsageStats={ componentsUsageStats.gauge } />
+					<GlobalNotices componentUsageStats={ componentsUsageStats.globalNotices } />
+					<Gridicons componentUsageStats={ componentsUsageStats.gridicon } />
 					<Headers />
-					<InfoPopover />
-					<InputChrono />
-					<Notices />
-					<PaymentLogo />
-					<Popovers />
-					<ProgressBar />
-					<Ranges />
-					<Rating />
-					<SearchDemo />
-					<SectionHeader />
-					<SectionNav />
-					<SegmentedControl />
+					<InfoPopover componentUsageStats={ componentsUsageStats.infoPopover } />
+					<InputChrono componentUsageStats={ componentsUsageStats.inputChrono } />
+					<Notices componentUsageStats={ componentsUsageStats.notices } />
+					<PaymentLogo componentUsageStats={ componentsUsageStats.paymentLogo } />
+					<Popovers componentUsageStats={ componentsUsageStats.popover } />
+					<ProgressBar componentUsageStats={ componentsUsageStats.progressBar } />
+					<Ranges componentUsageStats={ componentsUsageStats.range } />
+					<Rating componentUsageStats={ componentsUsageStats.rating } />
+					<SearchDemo componentUsageStats={ componentsUsageStats.search } />
+					<SectionHeader componentUsageStats={ componentsUsageStats.sectionHeader } />
+					<SectionNav componentUsageStats={ componentsUsageStats.sectionNav } />
+					<SegmentedControl componentUsageStats={ componentsUsageStats.segmentedControl } />
 					<SelectDropdown searchKeywords="menu" />
-					<SocialLogos />
-					<Spinner searchKeywords="loading" />
-					<SpinnerLine searchKeywords="loading" />
-					<TimezoneDropdown />
-					<TokenFields />
+					<SocialLogos componentUsageStats={ componentsUsageStats.socialLogo } />
+					<Spinner searchKeywords="loading" componentUsageStats={ componentsUsageStats.spinner } />
+					<SpinnerLine searchKeywords="loading" componentUsageStats={ componentsUsageStats.spinnerLine } />
+					<TimezoneDropdown componentUsageStats={ componentsUsageStats.timezoneDropdown } />
+					<TokenFields componentUsageStats={ componentsUsageStats.tokenField } />
 					<Version />
 				</Collection>
 			</div>

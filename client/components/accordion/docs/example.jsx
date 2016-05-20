@@ -8,6 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Accordion = require( 'components/accordion' ),
+	DocsExample = require( 'components/docs-example' ),
 	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
@@ -29,11 +30,11 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/accordions">Accordions</a>
-				</h2>
-
+			<DocsExample
+				title="Accordions"
+				url="/devdocs/design/accordions"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<div style={ { paddingBottom: '10px' } }>
 					<label>
 						<input
@@ -72,7 +73,7 @@ module.exports = React.createClass( {
 						Etiam dictum odio elit, id faucibus urna elementum ac. Mauris in est nec tortor luctus auctor ut a velit. Suspendisse vulputate lectus arcu, sed condimentum risus rutrum vitae. Nullam sagittis ultricies nisl. Duis accumsan libero vel arcu sodales venenatis.
 					</Accordion>
 				</div>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

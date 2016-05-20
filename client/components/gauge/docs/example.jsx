@@ -7,7 +7,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Gauge = require( 'components/gauge' );
+var DocsExample = require( 'components/docs-example' ),
+	Gauge = require( 'components/gauge' );
 
 module.exports = React.createClass( {
 	displayName: 'Gauge',
@@ -16,12 +17,13 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/gauge">Gauge</a>
-				</h2>
+			<DocsExample
+				title="Gauge"
+				url="/devdocs/design/gauge"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<Gauge percentage={ 27 } metric={ 'test' } />
-			</div>
+			</DocsExample>
 		);
 	}
 } );

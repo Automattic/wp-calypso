@@ -7,7 +7,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Count = require( 'components/count' );
+var Count = require( 'components/count' ),
+	DocsExample = require( 'components/docs-example' );
 
 module.exports = React.createClass( {
 	displayName: 'Count',
@@ -16,14 +17,13 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/count">Count</a>
-				</h2>
-				<div>
-					<Count count={ 65365 } />
-				</div>
-			</div>
+			<DocsExample
+				title="Count"
+				url="/devdocs/design/count"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
+				<Count count={ 65365 } />
+			</DocsExample>
 		);
 	}
 } );

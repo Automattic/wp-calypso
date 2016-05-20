@@ -7,17 +7,19 @@ import PureComponent from 'react-pure-render/component';
 /**
  * Internal dependencies
  */
+import DocsExample from 'components/docs-example';
 import SpinnerLine from 'components/spinner-line';
 
 export default class SpinnerLineExample extends PureComponent {
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/spinner-line">SpinnerLine</a>
-				</h2>
+			<DocsExample
+				title="SpinnerLine"
+				url="/devdocs/design/spinner-line"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<SpinnerLine />
-			</div>
+			</DocsExample>
 		);
 	}
 }

@@ -7,7 +7,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var TokenField = require( 'components/token-field' ),
+var DocsExample = require( 'components/docs-example' ),
+	TokenField = require( 'components/token-field' ),
 	Card = require( 'components/card' );
 
 /**
@@ -36,11 +37,11 @@ var TokenFields = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/token-fields">Token Field</a>
-				</h2>
-
+			<DocsExample
+				title="Token Field"
+				url="/devdocs/design/token-fields"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<p>
 					The <code>TokenField</code> is a field similar to the tags and categories
 					fields in the interim editor chrome, or the "to" field in Mail on OS X.
@@ -71,7 +72,7 @@ var TokenFields = React.createClass( {
 						isBorderless
 						value={ this.state.disabledTokens } />
 				</Card>
-			</div>
+			</DocsExample>
 		);
 	},
 

@@ -7,6 +7,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
+import DocsExample from 'components/docs-example';
 import HeaderCake from 'components/header-cake';
 
 /**
@@ -21,15 +22,16 @@ module.exports = React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/headers">Header Cake</a>
-				</h2>
+			<DocsExample
+				title="Header Cake"
+				url="/devdocs/design/headers"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<HeaderCake onClick={ noop }>
 					Subsection Header aka Header Cake
 				</HeaderCake>
 				<p>Clicking header cake returns to previous section.</p>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

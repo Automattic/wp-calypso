@@ -9,6 +9,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import FoldableCard from 'components/foldable-card';
 import Button from 'components/button';
+import DocsExample from 'components/docs-example';
 
 export default React.createClass( {
 	displayName: 'FoldableCard',
@@ -17,10 +18,11 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/foldable-card">Foldable Card</a>
-				</h2>
+			<DocsExample
+				title="Foldable Card"
+				url="/devdocs/design/foldable-card"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<div>
 					<FoldableCard header="This is a foldable card" screenReaderText="More">
 						These are its contents
@@ -73,7 +75,7 @@ export default React.createClass( {
 						Nothing to see here. Keep walking!
 					</FoldableCard>
 				</div>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

@@ -7,7 +7,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var SegmentedControl = require( 'components/segmented-control' ),
+var DocsExample = require( 'components/docs-example' ),
+	SegmentedControl = require( 'components/segmented-control' ),
 	ControlItem = require( 'components/segmented-control/item' );
 
 /**
@@ -45,14 +46,13 @@ var SegmentedControlDemo = React.createClass( {
 		var controlDemoStyles = { maxWidth: 386 };
 
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/segmented-control">Segmented Control</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleCompact }>
-						{ this.state.compact ? 'Normal' : 'Compact' }
-					</a>
-				</h2>
-
+			<DocsExample
+				title="Segmented Control"
+				url="/devdocs/design/segmented-control"
+				componentUsageStats={ this.props.componentUsageStats }
+				toggleHandler={ this.toggleCompact }
+				toggleText={ this.state.compact ? 'Normal' : 'Compact' }
+			>
 				<h3>Items passed as options prop</h3>
 				<SegmentedControl
 					options={ this.props.options }
@@ -131,7 +131,7 @@ var SegmentedControlDemo = React.createClass( {
 						Comments
 					</ControlItem>
 				</SegmentedControl>
-			</div>
+			</DocsExample>
 		);
 	},
 

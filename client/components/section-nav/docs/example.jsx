@@ -8,7 +8,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var SectionNav = require( 'components/section-nav' ),
+var DocsExample = require( 'components/docs-example' ),
+	SectionNav = require( 'components/section-nav' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
 	NavSegmented = require( 'components/section-nav/segmented' ),
 	NavItem = require( 'components/section-nav/item' ),
@@ -101,11 +102,11 @@ var SectionNavigation = React.createClass( {
 		}.bind( this ) );
 
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/section-nav">Section Navigation</a>
-				</h2>
-
+			<DocsExample
+				title="Section Navigation"
+				url="/devdocs/design/section-nav"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<h3>Basic Tabs</h3>
 				<SectionNav
 					selectedText={ this.getSelectedText( 'basicTabs' ) }
@@ -146,7 +147,7 @@ var SectionNavigation = React.createClass( {
 						placeholder={ 'Search ' + this.getSelectedText( 'siblingTabs' ) + '...' }
 					/>
 				</SectionNav>
-			</div>
+			</DocsExample>
 		);
 	},
 

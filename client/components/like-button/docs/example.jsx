@@ -8,7 +8,8 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var LikeButton = require( 'components/like-button/button' ),
-	Card = require( 'components/card/compact' );
+	Card = require( 'components/card/compact' ),
+	DocsExample = require( 'components/docs-example' );
 
 var SimpleLikeButtonContainer = React.createClass( {
 
@@ -45,10 +46,11 @@ var LikeButtons = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/app-components/like-button">Like button</a>
-				</h2>
+			<DocsExample
+				title="Like button"
+				url="/devdocs/design/like-button"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<Card compact>
 					<SimpleLikeButtonContainer tagName="button" likeCount={ 0 } />
 				</Card>
@@ -58,7 +60,7 @@ var LikeButtons = React.createClass( {
 				<Card compact>
 					<SimpleLikeButtonContainer tagName="button" likeCount={ 12 } liked={ true } />
 				</Card>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

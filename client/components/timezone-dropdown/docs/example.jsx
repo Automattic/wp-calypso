@@ -7,6 +7,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
+import DocsExample from 'components/docs-example';
 import TimezoneDropdown from 'components/timezone-dropdown';
 import Card from 'components/card';
 
@@ -29,19 +30,18 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/timezone-dropdown">TimezoneDropdown</a>
-				</h2>
-
+			<DocsExample
+				title="TimezoneDropdown"
+				url="/devdocs/design/timezone-dropdown"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<Card style={ { width: '300px', height: '350px', margin: 0 } }>
 					<TimezoneDropdown
 						selectedZone={ this.state.timezone }
 						onSelect={ this.onTimezoneSelect }
 					/>
 				</Card>
-
-			</div>
+			</DocsExample>
 		);
 	}
 } );

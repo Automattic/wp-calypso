@@ -6,6 +6,7 @@ import React from 'react'
 /**
  * Internal dependencies
  */
+import DocsExample from 'components/docs-example';
 import FeatureExample from '../index'
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item'
 
@@ -47,14 +48,15 @@ module.exports = React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2><a href="/devdocs/design/feature-example">Feature Example</a></h2>
-				<div>
-					<FeatureExample>
-						{ this.getContent() }
-					</FeatureExample>
-				</div>
-			</div>
+			<DocsExample
+				title="Feature Example"
+				url="/devdocs/design/feature-example"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
+				<FeatureExample>
+					{ this.getContent() }
+				</FeatureExample>
+			</DocsExample>
 		);
 	}
 } );

@@ -8,16 +8,18 @@ import React from 'react';
  */
 import CommentButton from 'components/comment-button';
 import Card from 'components/card';
+import DocsExample from 'components/docs-example';
 
 export default React.createClass( {
 	displayName: 'CommentButtonExample',
 
 	render() {
 		return(
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/app-components/comment-button">Comment Buttons</a>
-				</h2>
+			<DocsExample
+				title="Comment Buttons"
+				url="/devdocs/design/comment-button"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<Card>
 					<span>No comments:</span>
 					<CommentButton commentCount={ 0 } />
@@ -26,7 +28,7 @@ export default React.createClass( {
 					<span>With comments:</span>
 					<CommentButton commentCount={ 42 } />
 				</Card>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

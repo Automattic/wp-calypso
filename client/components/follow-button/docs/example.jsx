@@ -8,7 +8,8 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var FollowButton = require( 'components/follow-button/button' ),
-	Card = require( 'components/card/compact' );
+	Card = require( 'components/card/compact' ),
+	DocsExample = require( 'components/docs-example' );
 
 var FollowButtons = React.createClass( {
 	displayName: 'FollowButtons',
@@ -17,17 +18,18 @@ var FollowButtons = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/app-component/follow-buttons">Follow Button</a>
-				</h2>
+			<DocsExample
+				title="Follow Button"
+				url="/devdocs/design/follow-buttons"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<Card compact>
 					<FollowButton following={ false } />
 				</Card>
 				<Card compact>
 					<FollowButton following={ true } />
 				</Card>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
  */
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
+import DocsExample from 'components/docs-example';
 import FormCheckbox from 'components/forms/form-checkbox';
 import notices from 'notices';
 import { createNotice } from 'state/notices/actions';
@@ -42,10 +43,11 @@ class GlobalNotices extends Component {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/global-notices">Global Notices</a>
-				</h2>
+			<DocsExample
+				title="Global Notices"
+				url="/devdocs/design/global-notices"
+				componentUsageStats={ this.props.getUsageStats( notices ) }
+			>
 				<label>
 					<FormCheckbox
 						onChange={ this.toggleUseState }
@@ -58,7 +60,7 @@ class GlobalNotices extends Component {
 					<Button onClick={ this.showInfoNotice }>Show info notice</Button>
 					<Button onClick={ this.showWarningNotice }>Show warning notice</Button>
 				</ButtonGroup>
-			</div>
+			</DocsExample>
 		);
 	}
 }

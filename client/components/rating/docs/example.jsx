@@ -7,7 +7,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Rating = require( 'components/rating' );
+var DocsExample = require( 'components/docs-example' ),
+	Rating = require( 'components/rating' );
 
 module.exports = React.createClass( {
 	displayName: 'Rating',
@@ -16,13 +17,13 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/rating">Rating</a>
-				</h2>
-
+			<DocsExample
+				title="Rating"
+				url="/devdocs/design/rating"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<Rating rating={ 65 } size={ 50 } />
-			</div>
+			</DocsExample>
 		);
 	}
 } );

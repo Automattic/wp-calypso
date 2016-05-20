@@ -7,7 +7,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Search = require( 'components/search' ),
+var DocsExample = require( 'components/docs-example' ),
+	Search = require( 'components/search' ),
 	SearchCard = require( 'components/search-card' );
 
 /**
@@ -22,10 +23,11 @@ var SearchDemo = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/search">Search</a>
-				</h2>
+			<DocsExample
+				title="Search"
+				url="/devdocs/design/search"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<Search
 					onSearch={ noop }
 					placeholder="Placeholder text..."
@@ -35,7 +37,7 @@ var SearchDemo = React.createClass( {
 					onSearch={ noop }
 					placeholder="Placeholder text..."
 				/>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

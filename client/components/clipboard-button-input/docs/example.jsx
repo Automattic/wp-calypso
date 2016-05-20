@@ -8,6 +8,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  * Internal dependencies
  */
 import ClipboardButtonInput from '../';
+import DocsExample from 'components/docs-example';
 
 export default React.createClass( {
 	displayName: 'ClipboardButtonInput',
@@ -16,12 +17,13 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/clipboard-button-input">Clipboard Button Input</a>
-				</h2>
+			<DocsExample
+				title="Clipboard Button Input"
+				url="/devdocs/design/clipboard-button-input"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<ClipboardButtonInput value="https://example.wordpress.com/" />
-			</div>
+			</DocsExample>
 		);
 	}
 } );

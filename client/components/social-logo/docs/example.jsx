@@ -6,6 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import DocsExample from 'components/docs-example';
 import SocialLogo from 'components/social-logo';
 
 export default React.createClass( {
@@ -18,8 +19,11 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2><a href="/devdocs/design/social-logos">Social Logo</a></h2>
+			<DocsExample
+				title="Social Logo"
+				url="/devdocs/design/social-logos"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<SocialLogo icon="amazon" size={ 48 } onClick={ this.handleClick.bind( this, 'amazon' ) } />
 				<SocialLogo icon="behance" size={ 48 } onClick={ this.handleClick.bind( this, 'behance' ) } />
 				<SocialLogo icon="blogger-alt" size={ 48 } onClick={ this.handleClick.bind( this, 'blogger-alt' ) } />
@@ -64,7 +68,7 @@ export default React.createClass( {
 				<SocialLogo icon="wordpress" size={ 48 } onClick={ this.handleClick.bind( this, 'wordpress' ) } />
 				<SocialLogo icon="xanga" size={ 48 } onClick={ this.handleClick.bind( this, 'xanga' ) } />
 				<SocialLogo icon="youtube" size={ 48 } onClick={ this.handleClick.bind( this, 'youtube' ) } />
-			</div>
+			</DocsExample>
 		);
 	}
 } );

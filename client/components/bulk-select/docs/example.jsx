@@ -8,6 +8,7 @@ import React from 'react';
  */
 import Card from 'components/card';
 import BulkSelect from 'components/bulk-select';
+import DocsExample from 'components/docs-example';
 
 module.exports = React.createClass( {
 	displayName: 'BulkSelects',
@@ -52,17 +53,18 @@ module.exports = React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/bulk-selects">BulkSelects</a>
-				</h2>
+			<DocsExample
+				title="BulkSelects"
+				url="/devdocs/design/bulk-selects"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<Card>
 					<div>
 						<BulkSelect totalElements={ this.state.elements.length } selectedElements={ this.getSelectedElementsNumber() } onToggle={ this.handleToggleAll } />
 					</div>
 					{ this.renderElements() }
 				</Card>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

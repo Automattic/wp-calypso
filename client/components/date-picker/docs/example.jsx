@@ -8,7 +8,8 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Card = require( 'components/card' ),
-	DatePicker = require( 'components/date-picker' );
+	DatePicker = require( 'components/date-picker' ),
+	DocsExample = require( 'components/docs-example' );
 
 /**
  * Date Picker Demo
@@ -55,11 +56,11 @@ var datePicker = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/date-picker">DatePicker</a>
-				</h2>
-
+			<DocsExample
+				title="DatePicker"
+				url="/devdocs/design/date-picker"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<Card style={ { width: '300px', margin: 0 } }>
 					<DatePicker
 						events={ this.state.events }
@@ -67,8 +68,7 @@ var datePicker = React.createClass( {
 						selectedDay={ this.state.selectedDay }>
 					</DatePicker>
 				</Card>
-
-			</div>
+			</DocsExample>
 		);
 	}
 } );

@@ -10,6 +10,7 @@ var React = require( 'react' ),
 var ButtonGroup = require( 'components/button-group' ),
 	Button = require( 'components/button' ),
 	Card = require( 'components/card' ),
+	DocsExample = require( 'componets/docs-example' ),
 	Gridicon = require( 'components/gridicon' );
 
 var Buttons = React.createClass( {
@@ -29,13 +30,13 @@ var Buttons = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/button-group">Button Group</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleButtons }>
-						{ this.state.compact ? 'Normal Buttons' : 'Compact Buttons' }
-					</a>
-				</h2>
+			<DocsExample
+				title="Button Group"
+				url="/devdocs/design/button-group"
+				componentUsageStats={ this.props.componentUsageStats }
+				toggleHandler={ this.toggleButtons }
+				toggleText={ this.state.compact ? 'Normal Buttons' : 'Compact Buttons' }
+			>
 				<Card>
 					<div>
 						<ButtonGroup className="example">
@@ -65,7 +66,7 @@ var Buttons = React.createClass( {
 						</ButtonGroup>
 					</div>
 				</Card>
-			</div>
+			</DocsExample>
 		);
 	},
 } );

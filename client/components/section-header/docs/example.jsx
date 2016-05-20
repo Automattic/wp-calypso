@@ -7,7 +7,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var SectionHeader = require( 'components/section-header' ),
+var DocsExample = require( 'components/docs-example' ),
+	SectionHeader = require( 'components/section-header' ),
 	Button = require( 'components/button' );
 
 var Cards = React.createClass( {
@@ -17,11 +18,11 @@ var Cards = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/section-header">Section Header</a>
-				</h2>
-
+			<DocsExample
+				title="Section Header"
+				url="/devdocs/design/section-header"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 }>
 					<Button compact primary>
 						{ this.translate( 'Primary Action' ) }
@@ -43,7 +44,7 @@ var Cards = React.createClass( {
 
 				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 } href="/devdocs/design/section-header">
 				</SectionHeader>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

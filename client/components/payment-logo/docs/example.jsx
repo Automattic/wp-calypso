@@ -7,6 +7,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
+import DocsExample from 'components/docs-example';
 import PaymentLogo from '../index';
 
 const PaymentLogoExamples = React.createClass( {
@@ -14,10 +15,11 @@ const PaymentLogoExamples = React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/paymentlogoexamples">PaymentLogo</a>
-				</h2>
+			<DocsExample
+				title="PaymentLogo"
+				url="/devdocs/design/paymentlogoexamples"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<div>
 					<PaymentLogo type="amex" /> { ' ' }
 					<PaymentLogo type="discover" /> { ' ' }
@@ -26,7 +28,7 @@ const PaymentLogoExamples = React.createClass( {
 					<PaymentLogo type="paypal" isCompact /> { ' ' }
 					<PaymentLogo type="paypal" />
 				</div>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

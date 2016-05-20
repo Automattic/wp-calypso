@@ -7,8 +7,9 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
-import InputChrono from 'components/input-chrono';
 import Card from 'components/card';
+import DocsExample from 'components/docs-example';
+import InputChrono from 'components/input-chrono';
 
 /**
  * Date Picker Demo
@@ -44,18 +45,17 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/input-chrono">InputChrono</a>
-				</h2>
-
+			<DocsExample
+				title="InputChrono"
+				url="/devdocs/design/input-chrono"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<Card style={ { width: '300px', margin: 0 } }>
 					<InputChrono
 						value={ this.state.date.calendar() }
 						onSet={ this.onSet }/>
 				</Card>
-
-			</div>
+			</DocsExample>
 		);
 	}
 } );

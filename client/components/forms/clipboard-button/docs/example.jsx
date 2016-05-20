@@ -7,7 +7,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var ClipboardButton = require( '../' );
+var ClipboardButton = require( '../' ),
+	DocsExample = require( 'components/docs-example' );
 
 module.exports = React.createClass( {
 	displayName: 'ClipboardButtons',
@@ -28,17 +29,18 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/clipboard-buttons">Clipboard Buttons</a>
-				</h2>
+			<DocsExample
+				title="Clipboard Buttons"
+				url="/devdocs/design/clipboard-buttons"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<ClipboardButton
 					onCopy={ this.onCopy }
 					text="This text was copied via ClipboardButton"
 					style={ { float: 'none' } }>
 					{ this.state.isCopied ? 'Copied!' : 'Copy to clipboard' }
 				</ClipboardButton>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

@@ -7,7 +7,8 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'components/gridicon' );
+var DocsExample = require( 'components/docs-example' ),
+	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
 	displayName: 'Gridicons',
@@ -19,8 +20,11 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2><a href="/devdocs/design/gridicons">Gridicons</a></h2>
+			<DocsExample
+				title="Gridicons"
+				url="/devdocs/design/gridicons"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<Gridicon icon="add-image" size={ 48 } onClick={ this.handleClick.bind( this, 'add-image' ) } />
 				<Gridicon icon="add-outline" size={ 48 } onClick={ this.handleClick.bind( this, 'add-outline' ) } />
 				<Gridicon icon="add" size={ 48 } onClick={ this.handleClick.bind( this, 'add' ) } />
@@ -167,7 +171,7 @@ module.exports = React.createClass( {
 				<Gridicon icon="video-camera" size={ 48 } onClick={ this.handleClick.bind( this, 'video-camera' ) } />
 				<Gridicon icon="video" size={ 48 } onClick={ this.handleClick.bind( this, 'video' ) } />
 				<Gridicon icon="visible" size={ 48 } onClick={ this.handleClick.bind( this, 'visible' ) } />
-			</div>
+			</DocsExample>
 		);
 	}
 } );

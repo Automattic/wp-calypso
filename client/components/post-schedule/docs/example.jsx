@@ -7,6 +7,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
+import DocsExample from 'components/docs-example';
 import PostSchedule from 'components/post-schedule';
 import TimezoneDropdown from 'components/timezone-dropdown';
 import Gridicon from 'components/gridicon';
@@ -91,11 +92,11 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/app-components/post-schedule">PostSchedule</a>
-				</h2>
-
+			<DocsExample
+				title="PostSchedule"
+				url="/devdocs/design/post-schedule"
+				componentUsageStats={ this.props.componentUsageStats }
+			>
 				<Card style={ {
 					width: '300px',
 					verticalAlign: 'top',
@@ -121,7 +122,7 @@ export default React.createClass( {
 					<Card className="card__component-instance">
 						<h3>
 							<span>owner</span>
-							<Gridicon icon="arrow-right" size={ 16 } />
+							<Gridicon icon="arrow-right" size={ 16 } nonStandardSize={ true } />
 							<span>ownee</span>
 						</h3>
 
@@ -197,7 +198,7 @@ export default React.createClass( {
 					<Card className="card__component-instance">
 						<h3>
 							<span>owner</span>
-							<Gridicon icon="arrow-left" size={ 16 } />
+							<Gridicon icon="arrow-left" size={ 16 } nonStandardSize={ true } />
 							<span>ownee</span>
 						</h3>
 
@@ -236,7 +237,7 @@ export default React.createClass( {
 					</Card>
 
 				</div>
-			</div>
+			</DocsExample>
 		);
 	},
 
