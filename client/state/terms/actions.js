@@ -16,14 +16,16 @@ import {
  * @param  {Number} siteId   Site ID
  * @param  {String} taxonomy Taxonomy Slug
  * @param  {Array}  terms    An array of term objects
+ * @param  {Object} query    Query Options
  * @return {Object}          Action object
  */
-export function receiveTerms( siteId, taxonomy, terms ) {
+export function receiveTerms( siteId, taxonomy, terms, query = {} ) {
 	return {
 		type: TERMS_RECEIVE,
 		siteId,
 		taxonomy,
-		terms
+		terms,
+		query
 	};
 }
 
@@ -46,7 +48,7 @@ export function requestSiteTerms( siteId, taxonomy, query = {} ) {
 		} );
 
 		return wpcom.site( siteId ).taxonomy( taxonomy ).termsList( query ).then( ( data ) => {
-			dispatch( receiveTerms( siteId, taxonomy, data.terms ) );
+			dispatch( receiveTerms( siteId, taxonomy, data.terms, query ) );
 			dispatch( {
 				type: TERMS_REQUEST_SUCCESS,
 				siteId,
