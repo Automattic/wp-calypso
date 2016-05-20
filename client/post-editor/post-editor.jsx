@@ -167,6 +167,8 @@ const messages = {
 const PostEditor = React.createClass( {
 	propTypes: {
 		preferences: React.PropTypes.object,
+		setEditorModePreference: React.PropTypes.func,
+		editorModePreference: React.PropTypes.string,
 		sites: React.PropTypes.object
 	},
 
