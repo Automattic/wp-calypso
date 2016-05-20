@@ -30,12 +30,9 @@
 	font-family: $sans;
 	font-size: 14px;
 	line-height: 21px;
-	padding: 16px 0 16px 16px;
+	padding: 16px 0 16px 0;
 	cursor: pointer;
-
-	@include breakpoint( ">480px" ) {
-		padding-left: 24px;
-	}
+	text-align: center;
 
 	&:last-child {
 		border-bottom: none;
