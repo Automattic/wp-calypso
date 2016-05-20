@@ -25,3 +25,19 @@
 	font-size: 14px;
 	padding-bottom: 16px;
 }
+
+/**
+ * docs-example-stats
+ * Styles for the stats section of docs-example
+ * Can be rendered as standalone hence the new root/component.
+ */
+
+.docs-example-stats { /* component root */ }
+
+.docs-example-stats__item {
+	margin: 0;
+}
+
+.docs-example-stats__item + .docs-example-stats__item {
+	margin-top: 1.5em;
+}
