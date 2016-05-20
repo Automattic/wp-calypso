@@ -9,5 +9,6 @@ export const jetpackConnectSessionsSchema = {
 				isInstall: { type: 'boolean' }
 			}
 		}
-	}
+	},
+	additionalProperties: false
 };
