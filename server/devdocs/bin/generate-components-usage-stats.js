@@ -7,6 +7,7 @@
  */
 
 var async = require( 'async' ),
+	camelCase = require( 'lodash/camelCase' ),
 	config = require( 'config' ),
 	fs = require( 'fs' ),
 	fspath = require( 'path' ),
@@ -150,13 +151,19 @@ function getDependencies( code ) {
  * @returns {object} An object with the usage stats for each dependency
  */
 function generateUsageStats( modules ) {
+	function getCamelCasedDepName( dep ) {
+		return dep.split( '/' ).map( function( part ) {
+			return camelCase( part );
+		} ).join( '/' );
+	}
 	return Object.keys( modules ).reduce( function( target, moduleName ) {
 		var deps = modules[ moduleName ];
 		deps.forEach( function( dependency ) {
-			if ( ! target[ dependency ] ) {
-				target[ dependency ] = { count: 0 };
+			const camelCasedDepName = getCamelCasedDepName( dependency );
+			if ( ! target[ camelCasedDepName ] ) {
+				target[ camelCasedDepName ] = { count: 0 };
 			}
-			target[ dependency ].count += 1;
+			target[ camelCasedDepName ].count += 1;
 		} );
 		return target;
 	}, {} );
