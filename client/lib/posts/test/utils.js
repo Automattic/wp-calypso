@@ -67,6 +67,20 @@ describe( 'utils', function() {
 		} );
 	} );
 
+	describe( '#isPending', function() {
+		it( 'should return undefined when no post is supplied', function() {
+			assert( postUtils.isPending() === undefined );
+		} );
+
+		it( 'should return true when post.status is pending', function() {
+			assert( postUtils.isPending( { status: 'pending' } ) );
+		} );
+
+		it( 'should return false when post.status is not pending', function() {
+			assert( ! postUtils.isPending( { status: 'draft' } ) );
+		} );
+	} );
+
 	describe( '#isBackDatedPublished', function() {
 		it( 'should return false when no post is supplied', function() {
 			assert( ! postUtils.isBackDatedPublished() );
