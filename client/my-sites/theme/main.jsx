@@ -35,6 +35,7 @@ import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal'
 import actionLabels from 'my-sites/themes/action-labels';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
+import ThemePreview from 'my-sites/themes/theme-preview';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -110,6 +111,10 @@ const ThemeSheet = React.createClass( {
 			return this.getValidSections()[0];
 		}
 		return section;
+	},
+
+	togglePreview() {
+		this.setState( { showPreview: ! this.state.showPreview } );
 	},
 
 	renderBar() {
@@ -299,6 +304,12 @@ const ThemeSheet = React.createClass( {
 						{ ! this.isActive() && priceElement }
 					</Button>
 				</HeaderCake>
+				{ this.state.showPreview && <ThemePreview showPreview={ this.state.showPreview }
+					theme={ this.props }
+					onClose={ this.togglePreview }
+					buttonLabel= { 'temp' }
+					onButtonClick={ this.togglePreview } />
+				}
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
 						<div className="themes__sheet-content">
@@ -308,6 +319,10 @@ const ThemeSheet = React.createClass( {
 						</div>
 					</div>
 					<div className="themes__sheet-column-right">
+						<a className="themes__sheet-preview-link" onClick={ this.togglePreview } >
+							<Gridicon icon="external" />
+							{ i18n.translate( 'Live Preview' ) }
+						</a>
 						{ this.renderScreenshot() }
 					</div>
 				</div>

@@ -387,6 +387,13 @@
 	}
 }
 
+.themes__sheet-preview-link {
+	position: absolute;
+		top: 60px;
+	color: rgba(255, 255, 255, 0.6);
+	text-transform: uppercase;
+}
+
 .footer__line {
 	color: lighten( $gray, 20% );
 	border-top: 1px solid lighten( $gray, 20% );

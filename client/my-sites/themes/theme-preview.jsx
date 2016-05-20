@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -38,4 +40,4 @@ export default React.createClass( {
 			</WebPreview>
 		);
 	}
-} )
+} );
