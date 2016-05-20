@@ -2,11 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import get from 'lodash/get';
-import pickBy from 'lodash/pickBy';
-import isString from 'lodash/isString';
-import page from 'page';
 import { connect } from 'react-redux';
+import get from 'lodash/get';
+import includes from 'lodash/includes';
+import isString from 'lodash/isString';
+import pickBy from 'lodash/pickBy';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -35,7 +36,7 @@ const serviceIds = {
 	yandex: 'yandex-verification'
 };
 
-function getGeneralSettingsUrl( slug ) {
+function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
 }
 
@@ -51,12 +52,12 @@ function stateForSite( site ) {
 	};
 }
 
-function getMetaTagForService( serviceName = '', content = '' ) {
+function getMetaTag( serviceName = '', content = '' ) {
 	if ( ! content ) {
 		return '';
 	}
 
-	if ( content.indexOf( '<meta' ) !== -1 ) {
+	if ( includes( content, '<meta' ) ) {
 		// We were passed a meta tag already!
 		return content;
 	}
@@ -64,14 +65,14 @@ function getMetaTagForService( serviceName = '', content = '' ) {
 	return `<meta name="${ get( serviceIds, serviceName, '' ) }" content="${ content }" />`;
 }
 
-function isValidVerificationCode( serviceName = '', content = '' ) {
-	if ( content.length === 0 ) {
+function isValidCode( serviceName = '', content = '' ) {
+	if ( ! content.length ) {
 		return true;
 	}
 
-	content = getMetaTagForService( serviceName, content );
+	content = getMetaTag( serviceName, content );
 
-	return content.indexOf( serviceIds[ serviceName ] ) > -1;
+	return includes( content, serviceIds[ serviceName ] );
 }
 
 export const SeoForm = React.createClass( {
@@ -87,7 +88,7 @@ export const SeoForm = React.createClass( {
 		if ( get( nextProps, 'site.ID' ) !== get( this.props, 'site.ID' ) ) {
 			if ( get( nextProps, 'site.jetpack' ) ) {
 				// Go back to general settings if switched to a Jetpack site
-				page( getGeneralSettingsUrl( get( nextProps, 'site.slug', '' ) ) );
+				page( getGeneralTabUrl( get( nextProps, 'site.slug', '' ) ) );
 				return;
 			}
 
@@ -131,15 +132,14 @@ export const SeoForm = React.createClass( {
 		notices.clearNotices( 'notices' );
 
 		const filteredCodes = pickBy( this.state.verificationServicesCodes, isString );
+		const invalidCodes = Object.keys(
+			pickBy(
+				filteredCodes,
+				( name, content ) => ! isValidCode( content, name )
+			)
+		);
 
-		const invalidCodes = [];
-		for ( const serviceName in filteredCodes ) {
-			if ( ! isValidVerificationCode( serviceName, filteredCodes[ serviceName ] ) ) {
-				invalidCodes.push( serviceName );
-			}
-		}
-
-		this.setState( { invalidCodes: invalidCodes } );
+		this.setState( { invalidCodes } );
 		if ( invalidCodes.length > 0 ) {
 			notices.error( this.translate( 'Invalid site verification tag entered.' ) );
 			return;
@@ -195,38 +195,37 @@ export const SeoForm = React.createClass( {
 		const hasMetaError = seoMetaDescription && seoMetaDescription.length > 160;
 
 		const sitemapUrl = `https://${ slug }/sitemap.xml`;
-		const generalSettingsUrl = getGeneralSettingsUrl( slug );
+		const generalTabUrl = getGeneralTabUrl( slug );
 		const placeholderTagContent = '1234';
 
-		const googleTag = getMetaTagForService(
+		const googleTag = getMetaTag(
 			'google',
 			// The API returns 'false' for an empty array value, so we force it to an empty string if needed
 			get( verificationServicesCodes, 'google' ) || ''
 		);
-		const bingTag = getMetaTagForService(
+		const bingTag = getMetaTag(
 			'bing',
 			get( verificationServicesCodes, 'bing' ) || ''
 		);
-		const pinterestTag = getMetaTagForService(
+		const pinterestTag = getMetaTag(
 			'pinterest',
 			get( verificationServicesCodes, 'pinterest' ) || ''
 		);
-		const yandexTag = getMetaTagForService(
+		const yandexTag = getMetaTag(
 			'yandex',
 			get( verificationServicesCodes, 'yandex' ) || ''
 		);
 
-		const isGoogleError = invalidCodes.indexOf( 'google' ) > -1;
-		const isBingError = invalidCodes.indexOf( 'bing' ) > -1;
-		const isPinterestError = invalidCodes.indexOf( 'pinterest' ) > -1;
-		const isYandexError = invalidCodes.indexOf( 'yandex' ) > -1;
+		const hasError = function( service ) {
+			return includes( invalidCodes, service );
+		};
 
 		return (
 			<div>
 				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
 				{ isSitePrivate &&
 					<Notice status="is-warning" showDismiss={ false } text={ this.translate( 'SEO settings are disabled because the site visibility is not set to Public.' ) }>
-						<NoticeAction href={ generalSettingsUrl }>{ this.translate( 'View Settings' ) }</NoticeAction>
+						<NoticeAction href={ generalTabUrl }>{ this.translate( 'View Settings' ) }</NoticeAction>
 					</Notice>
 				}
 				<SectionHeader label={ this.translate( 'Search Engine Optimization' ) }>
@@ -315,8 +314,8 @@ export const SeoForm = React.createClass( {
 									value={ googleTag }
 									id="verification_code_google"
 									disabled={ isDisabled }
-									isError={ isGoogleError }
-									placeholder={ getMetaTagForService( 'google', placeholderTagContent ) }
+									isError={ hasError( 'google' ) }
+									placeholder={ getMetaTag( 'google', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'google' ) } />
 							</FormFieldset>
 
@@ -328,8 +327,8 @@ export const SeoForm = React.createClass( {
 									value={ bingTag }
 									id="verification_code_bing"
 									disabled={ isDisabled }
-									isError={ isBingError }
-									placeholder={ getMetaTagForService( 'bing', placeholderTagContent ) }
+									isError={ hasError( 'bing' ) }
+									placeholder={ getMetaTag( 'bing', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'bing' ) } />
 							</FormFieldset>
 
@@ -341,8 +340,8 @@ export const SeoForm = React.createClass( {
 									value={ pinterestTag }
 									id="verification_code_pinterest"
 									disabled={ isDisabled }
-									isError={ isPinterestError }
-									placeholder={ getMetaTagForService( 'pinterest', placeholderTagContent ) }
+									isError={ hasError( 'pinterest' ) }
+									placeholder={ getMetaTag( 'pinterest', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'pinterest' ) } />
 							</FormFieldset>
 
@@ -354,8 +353,8 @@ export const SeoForm = React.createClass( {
 									value={ yandexTag }
 									id="verification_code_yandex"
 									disabled={ isDisabled }
-									isError={ isYandexError }
-									placeholder={ getMetaTagForService( 'yandex', placeholderTagContent ) }
+									isError={ hasError( 'yandex' ) }
+									placeholder={ getMetaTag( 'yandex', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'yandex' ) } />
 							</FormFieldset>
 							{ showPasteError &&
