@@ -81,7 +81,6 @@
 		"press-this": true,
 		"reader": true,
 		"reader/full-errors": true,
-		"reader/search": true,
 		"reader/recommendations/posts": true,
 		"reader/search": true,
 		"reader/tags-with-elasticsearch": true,
