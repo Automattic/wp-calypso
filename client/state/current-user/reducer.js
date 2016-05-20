@@ -9,11 +9,9 @@ import { combineReducers } from 'redux';
 import {
 	CURRENT_USER_ID_SET,
 	SITE_RECEIVE,
-	SITES_RECEIVE,
-	SERIALIZE,
-	DESERIALIZE
+	SITES_RECEIVE
 } from 'state/action-types';
-import { createReducer, isValidStateWithSchema } from 'state/utils';
+import { createReducer } from 'state/utils';
 import { idSchema, capabilitiesSchema } from './schema';
 
 /**
@@ -36,38 +34,28 @@ export const id = createReducer( null, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function capabilities( state = {}, action ) {
-	switch ( action.type ) {
-		case SITE_RECEIVE:
-			if ( ! action.site.capabilities ) {
-				return state;
+export const capabilities = createReducer( {}, {
+	[SITE_RECEIVE]: ( state, action ) => {
+		if ( ! action.site.capabilities ) {
+			return state;
+		}
+
+		return Object.assign( {}, state, {
+			[ action.site.ID ]: action.site.capabilities
+		} );
+	},
+	[SITES_RECEIVE]: ( state, action ) => {
+		const siteCapabilities = action.sites.reduce( ( memo, site ) => {
+			if ( site.capabilities ) {
+				memo[ site.ID ] = site.capabilities;
 			}
 
-			return Object.assign( {}, state, {
-				[ action.site.ID ]: action.site.capabilities
-			} );
+			return memo;
+		}, {} );
 
-		case SITES_RECEIVE:
-			const siteCapabilities = action.sites.reduce( ( memo, site ) => {
-				if ( site.capabilities ) {
-					memo[ site.ID ] = site.capabilities;
-				}
-
-				return memo;
-			}, {} );
-
-			return Object.assign( {}, state, siteCapabilities );
-
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, capabilitiesSchema ) ) {
-				return state;
-			}
-
-			return {};
+		return Object.assign( {}, state, siteCapabilities );
 	}
-
-	return state;
-}
+}, capabilitiesSchema );
 
 export default combineReducers( {
 	id,
