@@ -20,6 +20,28 @@ export default React.createClass( {
 		if ( nextProps.step && 'invalid' === nextProps.step.status ) {
 			this.setState( { submitting: false } );
 		}
+
+		if ( this.props.flowName !== nextProps.flowName || this.props.subHeaderText !== nextProps.subHeaderText ) {
+			this.setSubHeaderText( nextProps );
+		}
+
+	},
+
+	componentWillMount() {
+		this.setSubHeaderText( this.props );
+	},
+
+	setSubHeaderText( props )  {
+		let subHeaderText = props.subHeaderText;
+
+		/**
+		 * Update the step sub-header if they only want to create an account, without a site.
+		 */
+		if ( 1 === signupUtils.getFlowSteps( props.flowName ).length ) {
+			subHeaderText = this.translate( 'Welcome to the wonderful WordPress.com community' );
+		}
+
+		this.setState( { subHeaderText: subHeaderText } );
 	},
 
 	save( form ) {
@@ -113,7 +135,7 @@ export default React.createClass( {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.props.headerText }
-				subHeaderText={ this.props.subHeaderText }
+				subHeaderText={ this.state.subHeaderText }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.translate( 'Create your account.' ) }
 				signupProgressStore={ this.props.signupProgressStore }
