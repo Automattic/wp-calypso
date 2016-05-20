@@ -278,7 +278,7 @@ const ThemeSheet = React.createClass( {
 				/> }
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
-						<HeaderCake className="themes__sheet-action-bar" onClick={ this.onBackClick }>
+						<HeaderCake className="themes__sheet-action-bar" onClick={ this.onBackClick } backText={ i18n.translate( 'All Themes' ) }>
 							<div className="themes__sheet-action-bar-container">
 								<Button onClick={ this.onPrimaryClick }>
 									{ actionTitle }
