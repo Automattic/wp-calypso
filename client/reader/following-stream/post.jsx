@@ -7,7 +7,6 @@ const ReactDom = require( 'react-dom' ),
 	assign = require( 'lodash/assign' ),
 	classnames = require( 'classnames' ),
 	closest = require( 'component-closest' ),
-	classes = require( 'component-classes' ),
 	//debug = require( 'debug' )( 'calypso:reader:following:post' ),
 	head = require( 'lodash/head' ),
 	filter = require( 'lodash/filter' ),
@@ -243,7 +242,7 @@ const Post = React.createClass( {
 		if ( ! headerNode ) {
 			return;
 		}
-		classes( headerNode ).toggle( 'is-long', this.shouldApplyIsLong() );
+		headerNode.classList.toggle( 'is-long', this.shouldApplyIsLong() );
 	},
 
 	propagateCardClick: function( options = {} ) {

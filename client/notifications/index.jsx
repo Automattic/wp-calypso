@@ -5,7 +5,6 @@ var React = require( 'react' ),
 	config = require( 'config' ),
 	debug = require( 'debug' )( 'calypso:notifications' ),
 	assign = require( 'lodash/assign' ),
-	classes = require( 'component-classes' ),
 	oAuthToken = require( 'lib/oauth-token' );
 
 /**
@@ -56,7 +55,7 @@ var Notifications = React.createClass({
 			this.setState( { 'shownOnce' : true, 'widescreen': false } );
 		}
 
-		if ( classes( document.documentElement ).has( 'touch' ) ) {
+		if ( document.documentElement.classList.contains( 'touch' ) ) {
 			// prevent scrolling on main page on mobile
 			if ( this.props.visible && ! nextProps.visible ) {
 				document.body.removeEventListener( 'touchmove', this.preventDefault, false );

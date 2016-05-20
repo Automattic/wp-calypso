@@ -26,7 +26,6 @@ describe( 'index', function() {
 	useSandbox( newSandbox => sandbox = newSandbox );
 	useFakeDom.withContainer();
 	useMockery( mockery => {
-		require( 'test/helpers/mocks/component-classes' )( mockery );
 		require( 'test/helpers/mocks/component-tip' )( mockery );
 		require( 'test/helpers/mocks/data-poller' )( mockery );
 		mockery.registerMock( 'components/section-nav', EmptyComponent );
