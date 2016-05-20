@@ -5,7 +5,6 @@ import wpcom from 'lib/wp';
 import {
 	PREFERENCES_SET,
 	PREFERENCES_RECEIVE,
-	PREFERENCES_REMOVE,
 	PREFERENCES_FETCH,
 	PREFERENCES_FETCH_SUCCESS,
 	PREFERENCES_FETCH_FAILURE
@@ -29,30 +28,19 @@ export function fetchPreferences() {
 	};
 }
 
-const save = () => ( dispatch, getState ) => {
-	const settings = {};
-	settings[ USER_SETTING_KEY ] = getState().preferences.values;
-	wpcom.me().settings().update( JSON.stringify( settings ) ).then( ( data ) => {
-		dispatch( {
-			type: PREFERENCES_RECEIVE,
-			data
-		} );
-	} );
-};
-
 export const setPreference = ( key, value ) => ( dispatch, getState ) => {
 	dispatch( {
 		type: PREFERENCES_SET,
 		key,
 		value
 	} );
-	save()( dispatch, getState );
-};
-
-export const removePreference = ( key ) => ( dispatch, getState ) => {
-	dispatch( {
-		type: PREFERENCES_REMOVE,
-		key
+	const settings = {};
+	settings[ USER_SETTING_KEY ] = getState().preferences.values;
+	wpcom.me().settings().update( JSON.stringify( settings ) )
+	.then( ( data ) => {
+		dispatch( {
+			type: PREFERENCES_RECEIVE,
+			data
+		} );
 	} );
-	save()( dispatch, getState );
 };
