@@ -54,10 +54,13 @@ files = program.args.length ? program.args : [ process.env.TEST_ROOT ];
 files = files.reduce( ( memo, filePath ) => {
 	// Validate test root matches specified file paths
 	if ( ! filePath.startsWith( process.env.TEST_ROOT ) ) {
-		console.log(
+		console.warn(
 			chalk.red.bold( 'WARNING:' ),
-			chalk.yellow( 'Invalid arguments passed to test runner (files with mismatched test root)' )
+			chalk.yellow( 'Invalid argument passed to test runner. Paths must match test root `' + process.env.TEST_ROOT + '`.' )
 		);
+		console.warn( ' - ' + filePath + '\n' );
+
+		return memo;
 	}
 
 	// Append individual file argument
