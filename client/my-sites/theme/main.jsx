@@ -90,6 +90,14 @@ const ThemeSheet = React.createClass( {
 		}
 	},
 
+	onPreviewButtonClick() {
+		if ( ! this.props.isLoggedIn ) {
+			this.props.signup( this.props );
+		} else {
+			this.selectSiteAndDispatch( 'customize' );
+		}
+	},
+
 	selectSiteAndDispatch( action ) {
 		if ( this.props.selectedSite ) {
 			this.props[ action ]( this.props, this.props.selectedSite, 'showcase-sheet' );
@@ -246,6 +254,17 @@ const ThemeSheet = React.createClass( {
 		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
 	},
 
+	renderPreview() {
+		const buttonLabel = this.props.isLoggedIn ? i18n.translate( 'Try & Customize' ) : i18n.translate( 'Pick this design' );
+		return(
+			<ThemePreview showPreview={ this.state.showPreview }
+				theme={ this.props }
+				onClose={ this.togglePreview }
+				buttonLabel= { buttonLabel }
+				onButtonClick={ this.onPreviewButtonClick } />
+		);
+	},
+
 	renderError() {
 		const emptyContentTitle = i18n.translate( 'Looking for great WordPress designs?', {
 			comment: 'Message displayed when requested theme was not found',
@@ -304,12 +323,7 @@ const ThemeSheet = React.createClass( {
 						{ ! this.isActive() && priceElement }
 					</Button>
 				</HeaderCake>
-				{ this.state.showPreview && <ThemePreview showPreview={ this.state.showPreview }
-					theme={ this.props }
-					onClose={ this.togglePreview }
-					buttonLabel= { 'temp' }
-					onButtonClick={ this.togglePreview } />
-				}
+				{ this.state.showPreview && this.renderPreview() }
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
 						<div className="themes__sheet-content">
