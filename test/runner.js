@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+'use strict'; // eslint-disable-line strict
 var files;
 
 require( 'babel/register' );
@@ -51,6 +52,7 @@ mocha.suite.afterAll( boot.after );
 
 files = program.args.length ? program.args : [ process.env.TEST_ROOT ];
 files = files.reduce( ( memo, filePath ) => {
+	// Validate test root matches specified file paths
 	if ( ! filePath.startsWith( process.env.TEST_ROOT ) ) {
 		console.log(
 			chalk.red.bold( 'WARNING:' ),
@@ -58,11 +60,20 @@ files = files.reduce( ( memo, filePath ) => {
 		);
 	}
 
+	// Append individual file argument
 	if ( /\.jsx?$/i.test( filePath ) ) {
 		return memo.concat( filePath );
 	}
 
-	return memo.concat( glob.sync( filePath + '/**/test/*.@(js|jsx)' ) );
+	// Determine whether argument already includes intended test directory,
+	// or if we should recursively search for test directories.
+	let globPattern = '*.@(js|jsx)';
+	if ( ! /\/test\/?$/.test( filePath ) ) {
+		globPattern = path.join( '**/test', globPattern );
+	}
+
+	// Append discovered files from glob result
+	return memo.concat( glob.sync( path.join( filePath, globPattern ) ) );
 }, [] );
 
 if ( program.nodeTotal > 1 ) {
