@@ -289,12 +289,10 @@ const JetpackConnectMain = React.createClass( {
 
 	renderBackButton() {
 		return (
-			<a className="navigation-link jetpack-connect__back-button" onClick={ this.clearUrl }>
-				<span className="navigation-link__label">
-					<Gridicon icon="arrow-left" size={ 18 } />
-					{ this.translate( 'Back' ) }
-				</span>
-			</a>
+			<Button compact borderless className="jetpack-connect__back-button" onClick={ this.clearUrl }>
+				<Gridicon icon="arrow-left" size={ 18 } />
+				{ this.translate( 'Back' ) }
+			</Button>
 		);
 	},
 
