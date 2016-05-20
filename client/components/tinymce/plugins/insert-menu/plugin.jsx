@@ -4,6 +4,7 @@ import tinymce from 'tinymce/tinymce';
 import { renderToString } from 'react-dom/server';
 
 import Gridicon from 'components/gridicon';
+import config from 'config';
 import i18n from 'lib/mixins/i18n';
 
 import menuItems from './menu-items';
@@ -27,7 +28,7 @@ const initialize = editor => {
 		menu: menuItems.map( ( { name } ) => editor.menuItems[ name ] ),
 		onPostRender() {
 			ReactDOM.render(
-				<Gridicon icon={ menuItems[0].icon } />,
+				<Gridicon icon="add-image" />,
 				this.$el[0].children[0]
 			);
 		}
@@ -35,5 +36,9 @@ const initialize = editor => {
 };
 
 export default () => {
+	if ( ! config.isEnabled( 'post-editor/insert-menu' ) ) {
+		return;
+	}
+
 	tinymce.PluginManager.add( 'wpcom/insertmenu', initialize );
 };

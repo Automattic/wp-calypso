@@ -21,13 +21,11 @@ const SocialLogoButton = ( { icon, label } ) => (
 export default [
 	{
 		name: 'insert_media_item',
-		icon: 'add-image',
 		item: <GridiconButton icon="image-multiple" label={ i18n.translate( 'Add Media' ) } />,
 		cmd: 'wpcomAddMedia'
 	},
 	{
 		name: 'insert_contact_form',
-		icon: 'mention',
 		item: <GridiconButton icon="mention" label={ i18n.translate( 'Add Contact Form' ) } />,
 		cmd: 'wpcomContactForm'
 	}
