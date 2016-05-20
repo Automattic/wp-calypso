@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
 import { times } from 'lodash/util';
+import { get } from 'lodash/object';
 
 /**
  * Internal dependencies
@@ -62,14 +63,8 @@ const PostTypeOptions = React.createClass( {
 		legend: PropTypes.string.isRequired,
 	},
 
-	renderFields() {
-		const {
-			fields,
-			fieldValues,
-			postType,
-			shouldShowPlaceholders,
-			siteId,
-		} = this.props;
+	renderPlaceholders() {
+		const { postType } = this.props;
 
 		const Placeholder = () => {
 			return (
@@ -79,21 +74,22 @@ const PostTypeOptions = React.createClass( {
 			);
 		};
 
-		if ( shouldShowPlaceholders ) {
-			let placeholderCount = 0;
-			if ( postType === 'post' ) {
-				placeholderCount = 5;
-			}
-			if ( postType === 'page' ) {
-				placeholderCount = 4;
-			}
+		const placeholderCount = get( { page: 4, post: 5 }, postType, 0 );
 
-			return (
-				<div className="exporter__option-fieldset-fields">
-					{ times( placeholderCount, ( i ) => <Placeholder key={ i } /> ) }
-				</div>
-			);
-		}
+		return (
+			<div className="exporter__option-fieldset-fields">
+				{ times( placeholderCount, ( i ) => <Placeholder key={ i } /> ) }
+			</div>
+		);
+	},
+
+	renderFields() {
+		const {
+			fields,
+			fieldValues,
+			postType,
+			siteId,
+		} = this.props;
 
 		const Field = ( props ) => {
 			if ( ! props.options ) {
@@ -131,6 +127,7 @@ const PostTypeOptions = React.createClass( {
 			onSelect,
 			legend,
 			description,
+			shouldShowPlaceholders,
 		} = this.props;
 
 		return (
@@ -149,7 +146,7 @@ const PostTypeOptions = React.createClass( {
 					</p>
 				}
 
-				{ this.renderFields() }
+				{ shouldShowPlaceholders ? this.renderPlaceholders() : this.renderFields() }
 			</div>
 		);
 	}
