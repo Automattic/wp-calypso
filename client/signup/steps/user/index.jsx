@@ -21,7 +21,10 @@ export default React.createClass( {
 			this.setState( { submitting: false } );
 		}
 
-		this.setSubHeaderText( nextProps );
+		if ( this.props.flowName !== nextProps.flowName || this.props.subHeaderText !== nextProps.subHeaderText ) {
+			this.setSubHeaderText( nextProps );
+		}
+
 	},
 
 	componentWillMount() {
