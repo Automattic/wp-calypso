@@ -7,6 +7,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+
+import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	JETPACK_CONNECT_SSO_QUERY_SET,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
@@ -28,6 +30,10 @@ import reducer, {
 } from '../reducer';
 
 describe( 'reducer', () => {
+	useSandbox( ( sandbox ) => {
+		sandbox.stub( console, 'warn' );
+	} );
+
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'jetpackConnectSite',
