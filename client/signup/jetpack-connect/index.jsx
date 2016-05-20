@@ -26,6 +26,7 @@ import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import Gridicon from 'components/gridicon';
 
 /**
  * Constants
@@ -168,6 +169,10 @@ const JetpackConnectMain = React.createClass( {
 		return false;
 	},
 
+	clearUrl() {
+		this.dismissUrl();
+	},
+
 	renderFooter() {
 		return (
 			<LoggedOutFormLinks>
@@ -274,8 +279,22 @@ const JetpackConnectMain = React.createClass( {
 							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
 					</div>
 					<Button onClick={ this.installJetpack } primary>{ this.translate( 'Install Jetpack' ) }</Button>
+					<div className="jetpack-connect__navigation">
+						{ this.renderBackButton() }
+					</div>
 				</div>
 			</Main>
+		);
+	},
+
+	renderBackButton() {
+		return (
+			<a className="navigation-link jetpack-connect__back-button" onClick={ this.clearUrl }>
+				<span className="navigation-link__label">
+					<Gridicon icon="arrow-left" size={ 18 } />
+					{ this.translate( 'Back' ) }
+				</span>
+			</a>
 		);
 	},
 
@@ -297,6 +316,7 @@ const JetpackConnectMain = React.createClass( {
 							text={ this.translate( 'Finally, just click the green "Connect to WordPress.com" button to finish the process.' ) }
 							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
 					</div>
+					{ this.renderBackButton() }
 					<Button onClick={ this.activateJetpack } primary>{ this.translate( 'Activate Jetpack' ) }</Button>
 				</div>
 			</Main>
