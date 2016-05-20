@@ -7,6 +7,12 @@ This lib enables translations, exposing three public methods:
 * [.moment()](#moment-method)
 * [.numberFormat()](#numberformat-method)
 
+It also provides 2 utility methods for your React application:
+
+* [.mixin](#mixin)
+* [.localize()](#localize)
+
+
 ## Translate Method
 
 `translate()` accepts up to three arguments (`string`, `string`, `object`), depending on the translation needs. The second and/or third parameter can be omitted:
@@ -235,6 +241,84 @@ i18n.numberFormat( 2500.1, 2 ); // '2.500,10'
 i18n.numberFormat( 2500.33, { decimals: 3, thousandsSep: '*', decPoint: '@'} ); // '2*500@330'
 ```
 
+
+## Mixin
+
+### Usage
+
+```js
+import { mixin as i18nMixin } from 'i18n-calypso';
+
+const MyComponent = React.createClass( {
+    mixins: [ i18nMixin ],
+    render: function() {
+        return (
+            <p>{ this.translate( 'Hello World' ) }</p>
+        );
+    }
+} );
+```
+
+Or inject it in all your components using:
+
+```js
+import { mixin as i18nMixin } from 'i18n-calypso';
+import ReactInjection from 'react/lib/ReactInjection';
+
+ReactInjection.Class.injectMixin( i18nMixin );
+```
+
+
+## Localize
+
+`localize` is a higher-order component which, when invoked as a function with a component,
+returns a new component class. The new component wraps the original component, passing all
+original props plus props to assist in localization (`translate`, `moment`, and `numberFormat`).
+The advantage of using a higher-order component instead of calling translate directly from
+the `i18n-calypso` module is that the latter does not properly account for change events
+which may be emitted by the state emitter object.
+
+It should act as a substitute to the existing i18n-calypso-mixin which provides the `this.translate`,
+`this.moment`, and `this.numberFormat` functions. Notably, the higher-order component can be
+used for components which do not support mixins, including those inheriting the `Component` class
+or stateless function components.
+
+### Usage
+
+Typically, you'd wrap your exported function with `localize`:
+
+```jsx
+// greeting.jsx
+import React from 'react';
+import { localize } from 'i18n-calypso';
+
+function Greeting( { translate, className } ) {
+	return (
+		<h1 className={ className }>
+			{ translate( 'Hello!' ) }
+		</h1>
+	);
+}
+
+export default localize( Greeting );
+```
+
+When the wrapped component is rendered, the render behavior of the original component is used, but with access to localization props.
+
+```jsx
+// index.jsx
+import React from 'react';
+import { render } from 'react-dom';
+import Greeting from './greeting';
+
+render(
+	<Greeting className="greeting" />,
+	document.body
+);
+```
+
+
 ## Some Background
 
 I18n accepts a language-specific locale json file that contains the whitelisted translation strings for your JS project, uses that data to instantiate a [Jed](http://slexaxton.github.io/Jed/) instance, and exposes a single `translate` method with sugared syntax for interacting with Jed.
+

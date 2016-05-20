@@ -20,6 +20,8 @@ module.exports = {
 	on: i18n.stateObserver.on.bind(i18n.stateObserver),
 	off: i18n.stateObserver.removeListener.bind(i18n.stateObserver),
 	emit: i18n.stateObserver.emit.bind(i18n.stateObserver),
+	mixin: require( './lib/mixin' )( i18n ),
+	localize: require( './lib/localize' )( i18n ),
 	$this: i18n,
 	I18N: I18N
 };
