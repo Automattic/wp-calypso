@@ -12,7 +12,8 @@ import {
 	isSiteConflicting,
 	isJetpackSite,
 	getSiteSlug,
-	isRequestingSites
+	isRequestingSites,
+	getSiteByUrl
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -251,6 +252,50 @@ describe( 'selectors', () => {
 			expect( isRequestingSites( state ) ).to.equal( true );
 			expect( isRequestingSites( emptyState ) ).to.equal( false );
 			expect( isRequestingSites( falseState ) ).to.equal( false );
+		} );
+	} );
+
+	describe( '#getSiteByUrl()', () => {
+		it( 'should return null if a site cannot be found', () => {
+			const site = getSiteByUrl( {
+				sites: {
+					items: {}
+				}
+			}, 'https://testtwosites2014.wordpress.com' );
+
+			expect( site ).to.be.null;
+		} );
+
+		it( 'should return a matched site', () => {
+			const state = {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://testtwosites2014.wordpress.com'
+						}
+					}
+				}
+			};
+			const site = getSiteByUrl( state, 'https://testtwosites2014.wordpress.com' );
+
+			expect( site ).to.equal( state.sites.items[ 77203199 ] );
+		} );
+
+		it( 'should return a matched site with nested path', () => {
+			const state = {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://testtwosites2014.wordpress.com/path/to/site'
+						}
+					}
+				}
+			};
+			const site = getSiteByUrl( state, 'https://testtwosites2014.wordpress.com/path/to/site' );
+
+			expect( site ).to.equal( state.sites.items[ 77203199 ] );
 		} );
 	} );
 } );
