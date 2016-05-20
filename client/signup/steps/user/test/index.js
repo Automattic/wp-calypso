@@ -45,7 +45,7 @@ describe( '#signupStep User', () => {
 		User.prototype.translate = ( string ) => string;
 	} );
 
-	it( 'User step as first step in flow', () => {
+	it( 'should show community subheader text if User step is first in the flow', () => {
 		testElement = React.createElement( User, {
 			subHeaderText: 'first subheader message',
 			flowName: 'userAsFirstStepInFlow'
@@ -55,7 +55,7 @@ describe( '#signupStep User', () => {
 		expect( rendered.state.subHeaderText ).to.equal( 'Welcome to the wonderful WordPress.com community' );
 	} );
 
-	it( 'User step as not first step in flow', () => {
+	it( 'should show provided subheader text if User step is not first in the flow', () => {
 		testElement = React.createElement( User, {
 			subHeaderText: 'test subheader message',
 			flowName: 'someOtherFlow'
@@ -65,7 +65,7 @@ describe( '#signupStep User', () => {
 		expect( rendered.state.subHeaderText ).to.equal( 'test subheader message' );
 	} );
 
-	describe( 'Component will update', () => {
+	describe( '#updateComponentProps', () => {
 		let node, spyComponentProps, component;
 
 		beforeEach( () => {
@@ -84,7 +84,7 @@ describe( '#signupStep User', () => {
 			User.prototype.componentWillReceiveProps.restore();
 		} );
 
-		it( 'Change props so User is only step in the flow', () => {
+		it( 'should show community subheader text when new flow has user as first step', () => {
 			let testProps = {
 				subHeaderText: 'My test message',
 				flowName: 'userAsFirstStepInFlow'
@@ -98,7 +98,7 @@ describe( '#signupStep User', () => {
 			expect( component.state.subHeaderText ).to.equal( 'Welcome to the wonderful WordPress.com community' );
 		} );
 
-		it( 'Change props so User is not only step in the flow', () => {
+		it( 'should show provided subheader text when new flow doesn\'t have user as first step', () => {
 			let testProps = {
 				subHeaderText: 'My test message',
 				flowName: 'another test message test'
