@@ -10,7 +10,8 @@ const debug = require( 'debug' )( 'test-runner' ),
 	glob = require( 'glob' ),
 	Mocha = require( 'mocha' ),
 	path = require( 'path' ),
-	program = require( 'commander' );
+	program = require( 'commander' ),
+	chalk = require( 'chalk' );
 
 /**
  * Internal dependencies
@@ -50,6 +51,13 @@ mocha.suite.afterAll( boot.after );
 
 files = program.args.length ? program.args : [ process.env.TEST_ROOT ];
 files = files.reduce( ( memo, filePath ) => {
+	if ( ! filePath.startsWith( process.env.TEST_ROOT ) ) {
+		console.log(
+			chalk.red.bold( 'WARNING:' ),
+			chalk.yellow( 'Invalid arguments passed to test runner (files with mismatched test root)' )
+		);
+	}
+
 	if ( /\.jsx?$/i.test( filePath ) ) {
 		return memo.concat( filePath );
 	}
