@@ -23,14 +23,15 @@
     "jstimezonedetect": "1.0.6",
     "lodash.assign": "^4.0.8",
     "lru-cache": "4.0.1",
-    "moment-timezone": "0.4.0"
+    "moment-timezone": "0.4.0",
+    "react": "0.14.8"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "enzyme": "2.2.0",
     "mocha": "^2.4.5",
-    "react": "0.14.8",
     "react-addons-test-utils": "0.14.8",
-    "react-dom": "0.14.8"
+    "react-dom": "0.14.8",
+    "react-test-env": "0.0.2"
   }
 }

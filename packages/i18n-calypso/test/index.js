@@ -3,14 +3,14 @@
  */
 var assert = require( 'assert' ),
 	React = require( 'react' ),
-	ReactDomServer = require( 'react-dom/server' );
+	ReactDomServer = require( 'react-dom/server'),
+	useFakeDom = require( 'react-test-env' ).useFakeDom;
 
 /**
  * Internal dependencies
  */
 var data = require( './data' ),
 	i18n = require( '..' ),
-	useFakeDom = require( './helpers/use-fake-dom'),
 	moment = i18n.moment,
 	numberFormat = i18n.numberFormat,
 	translate = i18n.translate;
