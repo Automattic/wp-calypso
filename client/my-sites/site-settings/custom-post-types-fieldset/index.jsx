@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { isRequestingPostTypes, getPostTypes } from 'state/post-types/selectors';
 import localize from 'lib/mixins/i18n/localize';
 import QueryPostTypes from 'components/data/query-post-types';
@@ -90,7 +90,7 @@ class CustomPostTypesFieldset extends Component {
 	}
 
 	render() {
-		const { translate, siteId, recordEvent, className } = this.props;
+		const { translate, siteId, siteUrl, recordEvent, className } = this.props;
 
 		return (
 			<FormFieldset className={ className }>
@@ -117,10 +117,11 @@ class CustomPostTypesFieldset extends Component {
 						{ this.hasDefaultPostTypeEnabled( 'jetpack-testimonial' ) && (
 							<FormSettingExplanation>{ translate( 'Your theme supports Testimonials' ) }</FormSettingExplanation>
 						) }
-						{ translate( 'The Testimonial custom content type allows you to add, organize, and display your testimonials. If your theme doesn’t support it yet, you can display testimonials using the {{shortcodeLink}}testimonial shortcode{{/shortcodeLink}} ( {{code}}[testimonials]{{/code}} ) or you can view a full archive of your testimonials at yourgroovydomain.com/testimonial.', {
+						{ translate( 'The Testimonial custom content type allows you to add, organize, and display your testimonials. If your theme doesn’t support it yet, you can display testimonials using the {{shortcodeLink}}testimonial shortcode{{/shortcodeLink}} ( {{code}}[testimonials]{{/code}} ) or you can {{archiveLink}}view a full archive of your testimonials{{/archiveLink}}.', {
 							components: {
 								shortcodeLink: <a href="https://support.wordpress.com/testimonials-shortcode/" />,
-								code: <code />
+								code: <code />,
+								archiveLink: <a href={ siteUrl.replace( /\/$/, '' ) + '/testimonial' } />
 							}
 						} ) }
 					</Card>
@@ -162,9 +163,11 @@ CustomPostTypesFieldset.propTypes = {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
 
 	return {
 		siteId,
+		siteUrl: site ? site.URL : '',
 		requestingPostTypes: isRequestingPostTypes( state, siteId ),
 		postTypes: getPostTypes( state, siteId )
 	};
