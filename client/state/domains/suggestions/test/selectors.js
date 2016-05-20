@@ -51,7 +51,7 @@ describe( 'selectors', () => {
 			const state = {
 				domains: {
 					suggestions: {
-						items: {
+						requesting: {
 							'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 							'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': false
 						}
