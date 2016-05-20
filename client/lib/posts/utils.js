@@ -69,6 +69,10 @@ var utils = {
 		return post && ( 'private' === post.status );
 	},
 
+	isPending: function( post ) {
+		return post && ( 'pending' === post.status );
+	},
+
 	getEditedTime: function( post ) {
 		if ( ! post ) {
 			return;
