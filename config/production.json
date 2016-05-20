@@ -56,7 +56,6 @@
 		"me/security": true,
 		"me/security/checkup": true,
 		"me/trophies": false,
-		"muse": true,
 		"olark": true,
 		"perfmon": true,
 		"persist-redux": true,
