@@ -14,16 +14,8 @@ describe( 'utils', () => {
 			expect( isDevelopment( 'test' ) ).to.be.false;
 		} );
 
-		it( 'should return false when string provided does not end with development', () => {
-			expect( isDevelopment( 'development-test' ) ).to.be.false;
-		} );
-
-		it( 'should return true when string provides equals development', () => {
+		it( 'should return true when string provided equals development', () => {
 			expect( isDevelopment( 'development' ) ).to.be.true;
-		} );
-
-		it( 'should return true when string provided ends with development', () => {
-			expect( isDevelopment( 'test-development' ) ).to.be.true;
 		} );
 	} );
 } );

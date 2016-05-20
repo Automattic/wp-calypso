@@ -113,7 +113,7 @@ jsLoader = {
 	loaders: [ 'babel-loader?cacheDirectory&optional[]=runtime' ]
 };
 
-if ( utils.isDevelopment( CALYPSO_ENV ) ) {
+if ( utils.isDevelopment( config( 'env' ) ) ) {
 	webpackConfig.plugins.push( new PragmaCheckPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [

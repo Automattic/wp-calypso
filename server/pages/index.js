@@ -144,7 +144,7 @@ function getDefaultContext( request ) {
 		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
 		isDebug: request.query.debug !== undefined ? true : false,
-		isDevelopment: utils.isDevelopment( CALYPSO_ENV ),
+		isDevelopment: utils.isDevelopment( config( 'env' ) ),
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
 		jsFile: 'build',
@@ -182,7 +182,7 @@ function getDefaultContext( request ) {
 		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
 	}
 
-	if ( utils.isDevelopment( CALYPSO_ENV ) ) {
+	if ( utils.isDevelopment( config( 'env' ) ) ) {
 		context.badge = 'dev';
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
