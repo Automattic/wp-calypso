@@ -15,13 +15,16 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+	JETPACK_CONNECT_CHECK_URL,
 	SERIALIZE,
+	DESERIALIZE,
 } from 'state/action-types';
 
 import reducer, {
 	jetpackConnectAuthorize,
 	jetpackSSO,
-	jetpackSSOSessions
+	jetpackSSOSessions,
+	jetpackConnectSessions
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -33,6 +36,77 @@ describe( 'reducer', () => {
 			'jetpackSSO',
 			'jetpackSSOSessions'
 		] );
+	} );
+
+	describe( '#jetpackConnectSessions()', () => {
+		it( 'should default to an empty object', () => {
+			const state = jetpackConnectSessions( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+		it( 'should add the url slug as a new property when checking a new url', () => {
+			const state = jetpackConnectSessions( undefined, {
+				type: JETPACK_CONNECT_CHECK_URL,
+				url: 'https://website.com'
+			} );
+
+			expect( state ).to.have.property( 'website.com' ).to.be.a( 'object' );
+		} );
+		it( 'should store a timestamp when checking a new url', () => {
+			const nowTime = ( new Date() ).getTime();
+			const state = jetpackConnectSessions( undefined, {
+				type: JETPACK_CONNECT_CHECK_URL,
+				url: 'https://website.com'
+			} );
+
+			expect( state[ 'website.com' ] ).to.have.property( 'timestamp' )
+				.to.be.at.least( nowTime );
+		} );
+		it( 'should update the timestamp when checking an existent url', () => {
+			const nowTime = ( new Date() ).getTime();
+			const state = jetpackConnectSessions( { 'website.com': { timestamp: 1 } }, {
+				type: JETPACK_CONNECT_CHECK_URL,
+				url: 'https://website.com'
+			} );
+
+			expect( state[ 'website.com' ] ).to.have.property( 'timestamp' )
+				.to.be.at.least( nowTime );
+		} );
+		it( 'should not restore a state with a property without a timestamp', () => {
+			const state = jetpackConnectSessions( { 'website.com': {} }, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
+		} );
+		it( 'should not restore a state with a property with a non-integer timestamp', () => {
+			const state = jetpackConnectSessions( { 'website.com': { timestamp: '1' } }, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
+		} );
+		it( 'should not restore a state with a session stored with extra properties', () => {
+			const state = jetpackConnectSessions( { 'website.com': { timestamp: 1, foo: 'bar' } }, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
+		} );
+		it( 'should not restore a state with a property that is not a slug', () => {
+			const state = jetpackConnectSessions( { '#website.com': { timestamp: 1 } }, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
+		} );
+
+		it( 'should restore a valid state', () => {
+			const state = jetpackConnectSessions( { 'website.com': { timestamp: 1 } }, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( { 'website.com': { timestamp: 1 } } );
+		} );
 	} );
 
 	describe( '#jetpackSSOSessions()', () => {
