@@ -7,11 +7,11 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	Button = require( 'components/button' ),
-	Gridicon = require( 'components/gridicon' ),
-	Card = require( 'components/card' ),
-	DocsExample = require( 'components/docs-example' );
+import Button from 'components/button';
+import Card from 'components/card';
+import config from 'config';
+import DocsExample from 'components/docs-example';
+import Gridicon from 'components/gridicon';
 
 var Buttons = React.createClass( {
 	displayName: 'Buttons',

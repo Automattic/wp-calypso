@@ -25,7 +25,9 @@ DocsExampleToggle.propTypes = {
 };
 
 const DocsExampleStats = ( { count } ) => (
-	<p>Used in <Count count={ count } /> components.</p>
+	<div className="docs-example-stats">
+		<p className="docs-example-stats__item">Used in <Count count={ count } /> components.</p>
+	</div>
 );
 
 DocsExampleStats.propTypes = {
