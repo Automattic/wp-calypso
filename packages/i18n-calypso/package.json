@@ -1,6 +1,6 @@
 {
   "name": "i18n-calypso",
-  "version": "0.0.10",
+  "version": "0.1.1",
   "description": "i18n JavaScript library on top of Jed originally used in Calypso",
   "main": "index.js",
   "repository": {
