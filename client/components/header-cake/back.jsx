@@ -11,6 +11,7 @@ import classNames from 'classnames';
  */
 import ObserveWindowSizeMixin from 'lib/mixins/observe-window-resize';
 import Gridicon from 'components/gridicon';
+import Button from 'components/button';
 import i18n from 'lib/mixins/i18n';
 import viewport from 'lib/viewport';
 
@@ -63,13 +64,10 @@ export default React.createClass( {
 		} );
 
 		return (
-			<a className={ linkClasses } href={ href } onClick={ onClick }>
-				<Gridicon icon="chevron-left" size={ 18 } />
-				{
-					! this.hideText( text ) &&
-					<span className="header-cake__back-text">{ text }</span>
-				}
-			</a>
+			<Button compact borderless className={ linkClasses } href={ href } onClick={ onClick }>
+				<Gridicon icon="arrow-left" size={ 18 } />
+				{ ! this.hideText( text ) && text }
+			</Button>
 		);
 	},
 
