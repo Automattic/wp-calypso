@@ -30,6 +30,7 @@ import support from './support/reducer';
 import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
+import componentsUsageStats from './components-usage-stats/reducer';
 
 /**
  * Module variables
@@ -57,7 +58,8 @@ export const reducer = combineReducers( {
 	support,
 	themes,
 	ui,
-	users
+	users,
+	componentsUsageStats
 } );
 
 let middleware = [ thunkMiddleware ];

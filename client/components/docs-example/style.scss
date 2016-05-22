@@ -1,0 +1,43 @@
+.docs-example__header {
+	display: flex;
+	align-items: center;
+}
+
+.docs-example__title {
+	flex: 1;
+}
+
+.docs-example__title,
+.docs-example__toggle {
+	margin: 0 !important;
+}
+
+.docs-example__header + .docs-example__main {
+	margin-top: 16px;
+}
+
+.docs-example__footer {
+	margin: 0;
+}
+
+.docs-example__stats {
+	border-bottom: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+	font-size: 14px;
+	padding-bottom: 16px;
+}
+
+/**
+ * docs-example-stats
+ * Styles for the stats section of docs-example
+ * Can be rendered as standalone hence the new root/component.
+ */
+
+.docs-example-stats { /* component root */ }
+
+.docs-example-stats__item {
+	margin: 0;
+}
+
+.docs-example-stats__item + .docs-example-stats__item {
+	margin-top: 1.5em;
+}
