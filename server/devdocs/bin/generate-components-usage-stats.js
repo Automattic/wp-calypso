@@ -3,10 +3,12 @@
 /**
  * This script generates a usage counts for the dependecies of a list of modules.
  * It accepts a newline-delimited list of .js and|or .jsx files
- * as its input, and writes the index to server/devdocs/usage-counts.js
+ * as its input, and writes the index to server/devdocs/components-usage-stats.json
  */
 
 var async = require( 'async' ),
+	camelCase = require( 'lodash/camelCase' ),
+	config = require( 'config' ),
 	fs = require( 'fs' ),
 	fspath = require( 'path' ),
 	root = fspath.dirname( fspath.join( __dirname, '..', '..' ) ),
@@ -22,7 +24,8 @@ var async = require( 'async' ),
 
 function main() {
 	// extract list of files to index and remove leading ./'s
-	var fileList;
+	var fileList,
+		outFilePath = 'server/devdocs/components-usage-stats.json';
 
 	fileList = process.
 		argv.
@@ -32,14 +35,19 @@ function main() {
 		} );
 
 	if ( fileList.length === 0 ) {
-		process.stderr.write( 'You must pass a list of files to process (try "make server/devdocs/usage-counts.js"' );
+		process.stderr.write( 'You must pass a list of files to process (try "make server/devdocs/components-usage-stats.js"' );
 		process.exit( 1 );
+	}
+
+	if ( ! config.isEnabled( 'devdocs/components-usage-stats' ) ) {
+		saveUsageStats( {}, outFilePath );
+		process.exit( 0 );
 	}
 
 	getModulesWithDependencies( root, fileList )
 		.then( function( modulesWithDependencies ) {
-			var usageCounts = generateUsageCounts( modulesWithDependencies );
-			saveUsageCounts( usageCounts, 'server/devdocs/usage-counts.json' );
+			var usageStats = generateUsageStats( modulesWithDependencies );
+			saveUsageStats( usageStats, outFilePath );
 			process.exit( 0 );
 		} )
 		.catch( function( error ) {
@@ -142,21 +150,27 @@ function getDependencies( code ) {
  * @param {object} modules An object of modules with dependencies
  * @returns {object} An object with the usage stats for each dependency
  */
-function generateUsageCounts( modules ) {
+function generateUsageStats( modules ) {
+	function getCamelCasedDepName( dep ) {
+		return dep.split( '/' ).map( function( part ) {
+			return camelCase( part );
+		} ).join( '/' );
+	}
 	return Object.keys( modules ).reduce( function( target, moduleName ) {
 		var deps = modules[ moduleName ];
 		deps.forEach( function( dependency ) {
-			if ( ! target[ dependency ] ) {
-				target[ dependency ] = { count: 0 };
+			const camelCasedDepName = getCamelCasedDepName( dependency );
+			if ( ! target[ camelCasedDepName ] ) {
+				target[ camelCasedDepName ] = { count: 0 };
 			}
-			target[ dependency ].count += 1;
+			target[ camelCasedDepName ].count += 1;
 		} );
 		return target;
 	}, {} );
 }
 
-function saveUsageCounts( usageCounts, filePath ) {
-	var json = jsFromJSON( JSON.stringify( usageCounts, null, "\t" ) );
+function saveUsageStats( usageStats, filePath ) {
+	var json = jsFromJSON( JSON.stringify( usageStats, null, "\t" ) );
 	fs.writeFileSync( fspath.join( root, filePath ), json );
 }
 
