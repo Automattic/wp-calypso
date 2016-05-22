@@ -16,6 +16,7 @@ import PressThisLink from './press-this-link';
 import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
 import FormSelect from 'components/forms/form-select';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
@@ -30,7 +31,9 @@ const SiteSettingsFormWriting = React.createClass( {
 		var writingAttributes = [
 				'default_category',
 				'post_categories',
-				'default_post_format'
+				'default_post_format',
+				'wpcom_publish_posts_with_markdown',
+				'markdown_supported',
 			],
 			settings = {};
 
@@ -83,6 +86,7 @@ const SiteSettingsFormWriting = React.createClass( {
 	},
 
 	render: function() {
+		const markdownSupported = this.state.markdown_supported;
 		return (
 			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
 				<SectionHeader label={ this.translate( 'Writing Settings' ) }>
@@ -139,6 +143,25 @@ const SiteSettingsFormWriting = React.createClass( {
 							recordEvent={ this.recordEvent }
 							className="has-divider is-top-only" />
 					) }
+					{ markdownSupported &&
+						<FormFieldset className="has-divider is-top-only">
+							<FormLabel>
+								{ this.translate( 'Markdown' ) }
+							</FormLabel>
+							<FormLabel>
+								<FormCheckbox
+									name="wpcom_publish_posts_with_markdown"
+									checkedLink={ this.linkState( 'wpcom_publish_posts_with_markdown' ) }
+									disabled={ this.state.fetchingSettings }
+									onClick={ this.recordEvent.bind( this, 'Clicked Markdown for Posts Checkbox' ) } />
+								<span>{ this.translate( 'Use markdown for posts and pages. {{a}}Learn more about markdown{{/a}}.', {
+										components: {
+											a: <a href="http://en.support.wordpress.com/markdown-quick-reference/" target="_blank" />
+										}
+									} ) }</span>
+							</FormLabel>
+						</FormFieldset>
+					}
 
 					{ config.isEnabled( 'press-this' ) &&
 						<FormFieldset className="has-divider is-top-only">
