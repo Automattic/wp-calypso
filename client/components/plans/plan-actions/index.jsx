@@ -216,7 +216,7 @@ const PlanActions = React.createClass( {
 	},
 
 	managePlanButton() {
-		if ( this.planHasCost() ) {
+		if ( this.planHasCost() && this.props.sitePlan.userIsOwner ) {
 			const link = purchasesPaths.managePurchase( this.props.site.slug, this.props.sitePlan.id );
 
 			return (
