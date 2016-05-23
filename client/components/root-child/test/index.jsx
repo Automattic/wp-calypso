@@ -5,6 +5,7 @@ import { expect } from 'chai';
 import ReactDom from 'react-dom';
 import React from 'react';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import { mount } from 'enzyme';
 
 /**
  * Internal dependencies
@@ -77,12 +78,13 @@ describe( 'RootChild', function() {
 		} );
 
 		it( 'should update the children if parent is re-rendered', function() {
-			var tree = ReactDom.render( React.createElement( Greeting ), container );
+			var tree = mount( React.createElement( Greeting ), { attachTo: container } );
 			tree.setProps( { toWhom: 'Universe' } );
 
-			expect( tree.refs.rootChild
-				.textContent
+			expect( tree.ref( 'rootChild' )
+				.text()
 			).to.equal( 'Hello Universe!' );
+			tree.detach();
 		} );
 	} );
 
