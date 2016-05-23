@@ -20,7 +20,7 @@ describe( 'QueryManager', () => {
 
 	describe( '.parse()', () => {
 		it( 'should return an instance from a serialized JSON string', () => {
-			manager = QueryManager.parse( '{"data":{"items":{"144":{"ID":144},"152":{"ID":152}},"queries":{"{}":[152]}},"options":{"itemKey":"ID"}}' );
+			manager = QueryManager.parse( '{"data":{"items":{"144":{"ID":144},"152":{"ID":152}},"queries":{"[]":[152]}},"options":{"itemKey":"ID"}}' );
 
 			expect( manager.getData() ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
 			expect( manager.getData( {} ) ).to.eql( [ { ID: 152 } ] );
@@ -42,7 +42,7 @@ describe( 'QueryManager', () => {
 					152: { ID: 152 }
 				},
 				queries: {
-					'{}': [ 152 ]
+					'[]': [ 152 ]
 				}
 			} );
 
@@ -63,7 +63,7 @@ describe( 'QueryManager', () => {
 			manager = manager.receive( { ID: 144 } );
 			manager = manager.receive( { ID: 152 }, { query: {} } );
 
-			expect( manager.toJSON() ).to.equal( '{"data":{"items":{"144":{"ID":144},"152":{"ID":152}},"queries":{"{}":[152]}},"options":{"itemKey":"ID"}}' );
+			expect( manager.toJSON() ).to.equal( '{"data":{"items":{"144":{"ID":144},"152":{"ID":152}},"queries":{"[]":[152]}},"options":{"itemKey":"ID"}}' );
 		} );
 	} );
 

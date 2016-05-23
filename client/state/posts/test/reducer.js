@@ -274,7 +274,7 @@ describe( 'reducer', () => {
 				query: { search: 'Hello' },
 				found: 1,
 				posts: [
-					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'publish', type: 'post' }
 				]
 			} ) );
 
@@ -283,16 +283,14 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 				query: { search: 'Hello W' },
 				posts: [
-					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'publish', type: 'post' }
 				]
 			} );
 
 			expect( state ).to.have.keys( [ '2916284' ] );
 			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
-			expect( state[ 2916284 ].data.queries ).to.have.keys( [
-				'{"search":"Hello"}',
-				'{"search":"Hello W"}'
-			] );
+			expect( state[ 2916284 ].getData( { search: 'Hello' } ) ).to.have.length( 1 );
+			expect( state[ 2916284 ].getData( { search: 'Hello W' } ) ).to.have.length( 1 );
 		} );
 
 		it( 'should persist state', () => {
@@ -309,13 +307,13 @@ describe( 'reducer', () => {
 			const state = queries( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( {
-				2916284: '{"data":{"items":{"841":{"ID":841,"site_ID":2916284,"global_ID":"3d097cb7c5473c169bba0eb8e3c6cb64","title":"Hello World"}},"queries":{"{\\"search\\":\\"Hello\\"}":[841]}},"options":{"itemKey":"ID"}}'
+				2916284: '{"data":{"items":{"841":{"ID":841,"site_ID":2916284,"global_ID":"3d097cb7c5473c169bba0eb8e3c6cb64","title":"Hello World"}},"queries":{"[[\\"search\\",\\"Hello\\"]]":[841]}},"options":{"itemKey":"ID"}}'
 			} );
 		} );
 
 		it( 'should load persisted state', () => {
 			const original = deepFreeze( {
-				2916284: '{"data":{"items":{"841":{"ID":841,"site_ID":2916284,"global_ID":"3d097cb7c5473c169bba0eb8e3c6cb64","title":"Hello World"}},"queries":{"{\\"search\\":\\"Hello\\"}":[841]}},"options":{"itemKey":"ID"}}'
+				2916284: '{"data":{"items":{"841":{"ID":841,"site_ID":2916284,"global_ID":"3d097cb7c5473c169bba0eb8e3c6cb64","title":"Hello World"}},"queries":{"[[\\"search\\",\\"Hello\\"]]":[841]}},"options":{"itemKey":"ID"}}'
 			} );
 
 			const state = queries( original, { type: DESERIALIZE } );
