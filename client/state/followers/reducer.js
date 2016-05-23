@@ -46,9 +46,7 @@ export function queries( state = {}, action ) {
 				: [];
 			return Object.assign( {}, state, {
 				[ serializedQuery ]: {
-					ids: union( ids, action.data.subscribers.map( ( follower ) => {
-						return follower.ID;
-					} ) ),
+					ids: union( ids, action.data.subscribers.map( follower => follower.ID ) ),
 					total: action.data.total,
 					lastPage: action.data.pages
 				}
