@@ -60,13 +60,15 @@ const POST_TYPE_SUPPORTS = {
 		excerpt: true,
 		'post-formats': true,
 		'geo-location': true,
-		tags: true
+		tags: true,
+		comments: true
 	},
 	page: {
 		thumbnail: true,
 		'page-attributes': true,
 		'geo-location': true,
-		excerpt: true
+		excerpt: true,
+		comments: true
 	}
 };
 
