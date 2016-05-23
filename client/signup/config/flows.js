@@ -110,10 +110,10 @@ const flows = {
 	},
 
 	main: {
-		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
-		lastModified: '2016-05-03'
+		lastModified: '2016-05-23'
 	},
 
 	plan: {
@@ -125,17 +125,17 @@ const flows = {
 
 	/* WP.com homepage flows */
 	website: {
-		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
 		description: 'This flow was originally used for the users who clicked "Create Website" on the two-button homepage. It is now linked to from the default homepage CTA as the main flow was slightly behind given translations.',
-		lastModified: '2016-05-03'
+		lastModified: '2016-05-23'
 	},
 
 	blog: {
-		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
 		description: 'This flow was originally used for the users who clicked "Create Blog" on the two-button homepage. It is now used from blog-specific landing pages so that verbiage in survey steps refers to "blog" instead of "website".',
-		lastModified: '2016-05-03'
+		lastModified: '2016-05-23'
 	},
 
 	/* On deck flows*/
