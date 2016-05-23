@@ -164,12 +164,10 @@ button {
 	padding-right: 0;
 	border-radius: 0;
 
-	&:hover {
-		color: $gray-dark;
-	}
-
+	&:hover,
 	&:focus {
 		box-shadow: none;
+		color: $gray-dark;
 	}
 
 	.gridicon {
