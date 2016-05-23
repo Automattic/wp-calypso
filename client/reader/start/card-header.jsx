@@ -10,8 +10,8 @@ const StartCardHeader = ( { site } ) => {
 	return (
 		<header>
 			<SiteIcon site={ site } size={ 70 } />
-			<h1>{ site.title }</h1>
-			<p>{ site.description }</p>
+			<h1 className="reader-start-card__site-title">{ site.title }</h1>
+			<p className="reader-start-card__site-description">{ site.description }</p>
 		</header>
 	);
 };
