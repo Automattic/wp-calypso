@@ -50,10 +50,15 @@ var CssHotReload = {
 							var newLink = document.createElement( 'LINK' );
 							elem.parentNode.insertBefore( newLink, elem );
 							elem.parentNode.removeChild( elem );
-							newLink.rel = elem.rel;
-							newLink.type = elem.type;
-							newLink.sizes = elem.sizes;
-							newLink.href = elem.href;
+							// Copy standard attributes
+							// https://developer.mozilla.org/en/docs/Web/HTML/Element/link
+							var attrs = [ 'crossorigin', 'href', 'hreflang',
+										  'media', 'rel', 'sizes', 'title', 'type' ];
+							attrs.forEach( function( attr ) {
+								if ( attr in elem ) {
+									newLink[ attr ] = elem[ attr ];
+								}
+							} );
 						}
 					} );
 					break;
