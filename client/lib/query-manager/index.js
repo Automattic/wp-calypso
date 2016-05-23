@@ -7,6 +7,7 @@ import values from 'lodash/values';
 import omit from 'lodash/omit';
 import map from 'lodash/map';
 import cloneDeep from 'lodash/cloneDeep';
+import difference from 'lodash/difference';
 
 /**
  * Internal dependencies
@@ -141,12 +142,13 @@ export default class QueryManager {
 	 * instance state. Instead, it returns a new instance of QueryManager if
 	 * the tracked items have been modified, or the current instance otherwise.
 	 *
-	 * @param  {(Array|Object)} items         Item(s) to be received
-	 * @param  {Object}         options       Options for receive
-	 * @param  {Boolean}        options.patch Apply changes as partial
-	 * @param  {Object}         options.query Query set to set or replace
-	 * @return {QueryManager}                 Same instance if no modifications
-	 *                                        made, or a new instance otherwise
+	 * @param  {(Array|Object)} items              Item(s) to be received
+	 * @param  {Object}         options            Options for receive
+	 * @param  {Boolean}        options.patch      Apply changes as partial
+	 * @param  {Object}         options.query      Query set to set or replace
+	 * @param  {Boolean}        options.mergeQuery Add to existing query set
+	 * @return {QueryManager}                      New instance if changed, or
+	 *                                             same instance otherwise
 	 */
 	receive( items = [], options = {} ) {
 		// Coerce received single item to array
@@ -180,6 +182,7 @@ export default class QueryManager {
 
 		let isModified = nextItems !== this.data.items,
 			nextQueries = this.data.queries,
+			isNewlyReceivedQueryKey = false,
 			receivedQueryKey;
 
 		// Skip if no items have been updated, added, or removed. If query
@@ -191,14 +194,26 @@ export default class QueryManager {
 		if ( options.query ) {
 			const receivedItemKeys = map( items, this.options.itemKey );
 			receivedQueryKey = this.constructor.QueryKey.stringify( options.query );
+			isNewlyReceivedQueryKey = ! this.data.queries[ receivedQueryKey ];
 
-			// Consider modified either if the current query set is not tracked
-			// or if the keys differ from currently known set
-			isModified = ! isEqual( this.data.queries[ receivedQueryKey ], receivedItemKeys );
+			let nextItemsForReceivedQuery;
+			if ( ! isEqual( this.data.queries[ receivedQueryKey ], receivedItemKeys ) ) {
+				// Consider modified if either the current query set is not
+				// tracked or if the keys differ from currently known set
+				isModified = true;
 
-			if ( isModified ) {
+				if ( options.mergeQuery && ! isNewlyReceivedQueryKey ) {
+					// When merging into a query where items already exist,
+					// omit incoming keys from existing set. These keys will
+					// be restored below during match testing.
+					nextItemsForReceivedQuery = difference( this.data.queries[ receivedQueryKey ], receivedItemKeys );
+				} else {
+					// If not merging, assign incoming keys as next items
+					nextItemsForReceivedQuery = receivedItemKeys;
+				}
+
 				nextQueries = Object.assign( {}, nextQueries, {
-					[ receivedQueryKey ]: receivedItemKeys
+					[ receivedQueryKey ]: nextItemsForReceivedQuery
 				} );
 			}
 		}
@@ -206,7 +221,8 @@ export default class QueryManager {
 		nextQueries = reduce( nextQueries, ( memo, originalItems, queryKey ) => {
 			memo[ queryKey ] = originalItems;
 
-			if ( receivedQueryKey && receivedQueryKey === queryKey ) {
+			if ( receivedQueryKey && receivedQueryKey === queryKey &&
+					( isNewlyReceivedQueryKey || ! options.mergeQuery ) ) {
 				// We can save the effort testing against received items in
 				// the current query, since we know they'll match
 				return memo;
