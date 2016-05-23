@@ -46,12 +46,12 @@ describe( 'EditorGroundControl', function() {
 		EditorGroundControl = require( '../' ).WrappedComponent;
 
 		EditorGroundControl.prototype.translate = i18n.translate;
-		EditorGroundControl.prototype.__reactAutoBindMap.moment = i18n.moment;
+		EditorGroundControl.prototype.moment = i18n.moment;
 	} );
 
 	after( function() {
 		delete EditorGroundControl.prototype.translate;
-		delete EditorGroundControl.prototype.__reactAutoBindMap.moment;
+		delete EditorGroundControl.prototype.moment;
 	} );
 
 	describe( '#getPreviewLabel()', function() {

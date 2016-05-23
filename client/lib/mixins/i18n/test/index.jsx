@@ -138,7 +138,7 @@ describe( 'I18n', function() {
 		describe( 'with mixed components', function() {
 			it( 'should handle sprintf and compoment interpolation together', function() {
 				const input = React.DOM.input(),
-					expectedResultString = '<span><span>foo </span><input/><span> bar</span></span>',
+					expectedResultString = '<span>foo <input/> bar</span>',
 					placeholder = 'bar',
 					translatedComponent = translate( 'foo {{ input /}} %(placeholder)s', {
 						components: {
@@ -150,7 +150,7 @@ describe( 'I18n', function() {
 					} ),
 					instance = <span>{ translatedComponent }</span>;
 
-				assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
+				assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToStaticMarkup( instance ) ) );
 			} );
 		} );
 	} );
