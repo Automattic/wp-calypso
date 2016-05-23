@@ -47,6 +47,11 @@ function setup() {
 	// attach the static file server to serve the `public` dir
 	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', 'public' ) ) );
 
+	if ( config.isEnabled( 'push-notifications' ) ) {
+		// service-worker needs to be served from root to avoid scope issues
+		app.use( '/service-worker.js', express.static( path.resolve( __dirname, '..', '..', 'client', 'lib', 'push-notifications', 'service-worker.js' ) ) );
+	}
+
 	// serve files when not in production so that the source maps work correctly
 	if ( 'development' === config( 'env' ) ) {
 		app.use( '/assets', express.static( path.resolve( __dirname, '..', '..', 'assets' ) ) );
