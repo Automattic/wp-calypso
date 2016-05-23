@@ -18,11 +18,12 @@ import store from 'lib/notification-settings-store';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import PushNotificationSettings from 'components/push-notification/settings';
 
 const NotificationSettings = React.createClass( {
 	displayName: 'NotificationSettings',
 
-	mixins: [ observe( 'sites', 'devices' ) ],
+	mixins: [ observe( 'sites', 'devices', 'pushNotifications' ) ],
 
 	getInitialState() {
 		return {
@@ -63,6 +64,7 @@ const NotificationSettings = React.createClass( {
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<Navigation path={ this.props.path } />
+				<PushNotificationSettings pushNotifications={ this.props.pushNotifications } />
 				<BlogsSettings
 					blogs={ this.props.blogs }
 					devices={ this.props.devices }
