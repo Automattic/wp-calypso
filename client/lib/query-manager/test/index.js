@@ -209,6 +209,13 @@ describe( 'QueryManager', () => {
 			expect( manager ).to.equal( newManager );
 		} );
 
+		it( 'should return the same instance when receiving an existing query with no changes and merging', () => {
+			manager = manager.receive( { ID: 144 }, { query: {}, mergeQuery: true } );
+			const newManager = manager.receive( { ID: 144 }, { query: {}, mergeQuery: true } );
+
+			expect( manager ).to.equal( newManager );
+		} );
+
 		it( 'should omit an item that returns undefined from #mergeItem()', () => {
 			manager = manager.receive( { ID: 144 } );
 			sandbox.stub( manager, 'mergeItem' ).returns( undefined );
@@ -243,6 +250,26 @@ describe( 'QueryManager', () => {
 			manager = manager.receive( { ID: 152 }, { query: {} } );
 
 			expect( manager.getData( {} ) ).to.eql( [ { ID: 152 } ] );
+		} );
+
+		it( 'should merge received items into query set if mergeQuery option specified', () => {
+			manager = manager.receive( { ID: 144 }, { query: {}, mergeQuery: true } );
+			manager = manager.receive( { ID: 152 }, { query: {}, mergeQuery: true } );
+
+			expect( manager.getData( {} ) ).to.eql( [
+				{ ID: 144 },
+				{ ID: 152 }
+			] );
+		} );
+
+		it( 'should de-dupe received items into query set when merging', () => {
+			manager = manager.receive( { ID: 144 }, { query: {}, mergeQuery: true } );
+			manager = manager.receive( [ { ID: 144 }, { ID: 152 } ], { query: {}, mergeQuery: true } );
+
+			expect( manager.getData( {} ) ).to.eql( [
+				{ ID: 144 },
+				{ ID: 152 }
+			] );
 		} );
 
 		it( 'should remove a tracked query item when it no longer matches', () => {
