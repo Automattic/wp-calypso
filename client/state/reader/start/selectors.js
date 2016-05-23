@@ -1,3 +1,7 @@
+// External dependencies
+import map from 'lodash/map';
+import find from 'lodash/find';
+
 /**
  * Returns true if currently requesting recommendations.
  *
@@ -9,6 +13,19 @@ export function isRequestingRecommendations( state ) {
 }
 
 /**
+ * Returns a single recommendation by ID.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Integer}  recommendationId  Recommendation ID
+ * @return {Object} Recommendation
+ */
+export function getRecommendationById( state, recommendationId ) {
+	return find( state.reader.start.items, ( rec ) => {
+		return rec.ID === recommendationId;
+	} );
+}
+
+/**
  * Returns recommendations.
  *
  * @param  {Object}  state  Global state tree
@@ -16,6 +33,16 @@ export function isRequestingRecommendations( state ) {
  */
 export function getRecommendations( state ) {
 	return state.reader.start.items;
+}
+
+/**
+ * Returns recommendation IDs.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Array} Recommendations IDs
+ */
+export function getRecommendationIds( state ) {
+	return map( state.reader.start.items, 'ID' );
 }
 
 /**

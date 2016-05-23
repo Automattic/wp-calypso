@@ -2,10 +2,11 @@
 import React from 'react';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
+import map from 'lodash/map';
 
 // Internal dependencies
 import Main from 'components/main';
-import { getRecommendations } from 'state/reader/start/selectors';
+import { getRecommendationIds } from 'state/reader/start/selectors';
 import QueryReaderStartRecommendations from 'components/data/query-reader-start-recommendations';
 import Button from 'components/button';
 import StartCard from './card';
@@ -25,16 +26,18 @@ const Start = React.createClass( {
 				</header>
 
 				<div className="reader-start__cards">
-					<StartCard />
-					<StartCard />
-					<StartCard />
-					<StartCard />
-					<StartCard />
+					{ this.props.recommendationIds ? map( this.props.recommendationIds, ( recId ) => {
+						return (
+							<StartCard
+								key={ 'start-card-rec' + recId }
+								recommendationId={ recId } />
+						);
+					} ) : null }
 				</div>
 
 				<RootChild className="reader-start-footer">
 					<div className="reader-start-footer__action main">
-						<span>Follow one or more sites to get started</span>
+						<span>{ this.translate( 'Follow one or more sites to get started' ) }</span>
 						<Button disabled>{ this.translate( "OK, I'm all set!" ) }</Button>
 					</div>
 				</RootChild>
@@ -46,7 +49,7 @@ const Start = React.createClass( {
 export default connect(
 	( state ) => {
 		return {
-			recommendations: getRecommendations( state )
+			recommendationIds: getRecommendationIds( state )
 		};
 	}
 )( Start );
