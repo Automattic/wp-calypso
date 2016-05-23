@@ -61,6 +61,33 @@
 	}
 }
 
+.editor__site {
+	display:  flex;
+	background: lighten( $gray, 30% );
+
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
+
+	.site__content {
+		padding-top: 12px;
+		padding-bottom: 12px;
+	}
+
+	.site__title,
+	.site__domain {
+		&::after {
+			@include long-content-fade( $color: lighten( $gray, 30% ) );
+		}
+	}
+
+	.editor-status-label {
+		text-align: right;
+		align-self: center;
+		margin-right: 8px;
+	}
+}
+
 .editor__header,
 .editor .mce-container-body,
 .editor .tinymce {
@@ -87,25 +114,6 @@
 
 .post-editor .draft .post-relative-time-status {
 	display: none;
-}
-
-.post-editor__notice {
-	margin: -24px 0 24px;
-
-	@include breakpoint( ">480px" ) {
-		margin-bottom: 24px;
-	}
-
-	.notice__text {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		display: inline-block;
-
-		a {
-			text-decoration: underline;
-			background-image: none;
-		}
-	}
 }
 
 // Component <Editor>

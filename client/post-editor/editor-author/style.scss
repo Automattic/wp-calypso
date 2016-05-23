@@ -16,16 +16,10 @@
 	color: darken( $gray, 10% );
 	font-size: 13px;
 	margin: 0 8px;
-}
 
-@include breakpoint( "<480px" ) {
-	.editor-author {
-		font-size: 11px;
-		padding-top: 4px;
-		padding-left: 6px;
-	}
-
-	.editor-author .gravatar {
-		width: 16px;
+	@include breakpoint( "<480px" ) {
+		display: none;
 	}
 }
+
+
