@@ -8,10 +8,23 @@ import { expect } from 'chai';
  */
 import {
 	getNormalizedTermsQuery,
-	getSerializedTermsQuery
+	getSerializedTermsQuery,
+	getSerializedTermsQueryWithoutPage
 } from '../utils';
 
 describe( 'utils', () => {
+	describe( 'getSerializedTermsQueryWithoutPage()', () => {
+		it( 'should exclude page and default values', () => {
+			const query = getSerializedTermsQueryWithoutPage( {
+				page: 2,
+				number: 100,
+				search: 'ribs'
+			} );
+
+			expect( query ).to.eql( '{"search":"ribs"}' );
+		} );
+	} );
+
 	describe( 'getNormalizedTermsQuery()', () => {
 		it( 'should exclude default values', () => {
 			const query = getNormalizedTermsQuery( {
