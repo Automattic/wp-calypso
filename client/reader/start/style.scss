@@ -192,6 +192,10 @@
 		font-family: 'Merriweather', serif;
 		font-size: 16px;
 		font-weight: 600;
+
+		a, a:visited {
+			color: inherit;
+		}
 	}
 
 	p {
@@ -219,6 +223,11 @@
 		.reader-start-post-preview__author {
 			margin-left: 4px;
 		}
+	}
+
+	.post-excerpt {
+		max-height: 88px;
+		display: block;
 	}
 }
 
