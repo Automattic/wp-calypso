@@ -270,10 +270,13 @@ export default class QueryManager {
 			return this;
 		}
 
-		return new this.constructor( {
-			items: nextItems,
-			queries: nextQueries
-		}, this.options );
+		return new this.constructor(
+			Object.assign( {}, this.data, {
+				items: nextItems,
+				queries: nextQueries
+			} ),
+			this.options
+		);
 	}
 }
 

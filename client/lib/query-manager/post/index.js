@@ -10,14 +10,14 @@ import get from 'lodash/get';
 /**
  * Internal dependencies
  */
-import QueryManager from '../';
+import PaginatedQueryManager from '../paginated';
 import PostQueryKey from './key';
 import { DEFAULT_POST_QUERY } from './constants';
 
 /**
  * PostQueryManager manages posts which can be queried and change over time
  */
-export default class PostQueryManager extends QueryManager {
+export default class PostQueryManager extends PaginatedQueryManager {
 	/**
 	 * Returns true if the post matches the given query, or false otherwise.
 	 *
@@ -165,3 +165,5 @@ export default class PostQueryManager extends QueryManager {
 }
 
 PostQueryManager.QueryKey = PostQueryKey;
+
+PostQueryManager.DEFAULT_QUERY = DEFAULT_POST_QUERY;

@@ -6,7 +6,7 @@ import omitBy from 'lodash/omitBy';
 /**
  * Internal dependencies
  */
-import QueryKey from '../key';
+import PaginatedQueryKey from '../paginated/key';
 import { DEFAULT_POST_QUERY } from './constants';
 
 /**
@@ -25,7 +25,7 @@ function isDefaultQueryValue( value, key ) {
  * PostQueryKey manages the serialization and deserialization of a query key
  * for use in tracking query results in an instance of PostQueryManager.
  */
-export default class PostQueryKey extends QueryKey {
+export default class PostQueryKey extends PaginatedQueryKey {
 	/**
 	 * Returns a serialized query, given a query object
 	 *

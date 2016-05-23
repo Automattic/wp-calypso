@@ -1,0 +1,172 @@
+/**
+ * External dependencies
+ */
+import omit from 'lodash/omit';
+import isEqual from 'lodash/isEqual';
+import uniq from 'lodash/uniq';
+
+/**
+ * Internal dependencies
+ */
+import QueryManager from '../';
+import PaginatedQueryKey from './key';
+import { DEFAULT_QUERY, PAGINATION_QUERY_KEYS } from './constants';
+
+/**
+ * PaginatedQueryManager manages paginated data which can be queried and
+ * change over time
+ */
+export default class PaginatedQueryManager extends QueryManager {
+	/**
+	 * Returns true if the specified query is an object containing one or more
+	 * query pagination keys.
+	 *
+	 * @param  {Object}  query Query object to check
+	 * @return {Boolean}       Whether query contains pagination key
+	 */
+	static hasQueryPaginationKeys( query ) {
+		if ( ! query ) {
+			return false;
+		}
+
+		return PAGINATION_QUERY_KEYS.some( ( key ) => {
+			return query.hasOwnProperty( key );
+		} );
+	}
+
+	/**
+	 * Returns items tracked by the instance. If a query is specified, returns
+	 * items specific to that query.
+	 *
+	 * @param  {?Object}  query Optional query object
+	 * @return {Object[]}       Items tracked
+	 */
+	getData( query ) {
+		if ( ! query ) {
+			return super.getData( query );
+		}
+
+		// Get all items, ignoring page. Test as truthy to ensure that query is
+		// in-fact being tracked, otherwise bail early.
+		const dataIgnoringPage = this.getDataIgnoringPage( query );
+		if ( ! dataIgnoringPage ) {
+			return dataIgnoringPage;
+		}
+
+		// Slice the unpaginated set of data
+		const page = query.page || this.constructor.DEFAULT_QUERY.page;
+		const perPage = query.number || this.constructor.DEFAULT_QUERY.number;
+		const startOffset = ( page - 1 ) * perPage;
+
+		return dataIgnoringPage.slice( startOffset, startOffset + perPage );
+	}
+
+	/**
+	 * Returns items tracked by the instance, ignoring pagination for the given
+	 * query.
+	 *
+	 * @param  {Object}   query Query object
+	 * @return {Object[]}       Items tracked, ignoring page
+	 */
+	getDataIgnoringPage( query ) {
+		if ( ! query ) {
+			return null;
+		}
+
+		return super.getData( omit( query, PAGINATION_QUERY_KEYS ) );
+	}
+
+	/**
+	 * Signal that an item(s) has been received for tracking. Optionally
+	 * specify that items received are intended for patch application, or that
+	 * they are associated with a query. This function does not mutate the
+	 * instance state. Instead, it returns a new instance of QueryManager if
+	 * the tracked items have been modified, or the current instance otherwise.
+	 *
+	 * @param  {(Array|Object)} items              Item(s) to be received
+	 * @param  {Object}         options            Options for receive
+	 * @param  {Boolean}        options.patch      Apply changes as partial
+	 * @param  {Object}         options.query      Query set to set or replace
+	 * @param  {Boolean}        options.mergeQuery Add to existing query set
+	 * @return {QueryManager}                      New instance if changed, or
+	 *                                             same instance otherwise
+	 */
+	receive( items, options = {} ) {
+		// When tracking queries, remove pagination query arguments. These are
+		// simulated in `PaginatedQueryManager.prototype.getData`.
+		let modifiedOptions = options;
+		if ( options.query ) {
+			modifiedOptions = Object.assign( {
+				mergeQuery: true
+			}, options, {
+				query: omit( options.query, PAGINATION_QUERY_KEYS )
+			} );
+		}
+
+		// Receive the updated manager, passing a modified set of options to
+		// exclude pagination keys, and to indicate appending query.
+		const nextManager = super.receive( items, modifiedOptions );
+
+		// If manager is the same instance, assume no changes have been made
+		if ( this === nextManager ) {
+			return nextManager;
+		}
+
+		// If original query does not have any pagination keys, we don't need
+		// to update its item set
+		if ( ! this.constructor.hasQueryPaginationKeys( options.query ) ) {
+			return nextManager;
+		}
+
+		// If there were previously no items for this query, there's no item
+		// set to be updated
+		const thisPageItems = this.getData( options.query );
+		if ( ! thisPageItems ) {
+			return nextManager;
+		}
+
+		const queryKey = this.constructor.QueryKey.stringify( options.query );
+		const page = options.query.page || DEFAULT_QUERY.page;
+		const perPage = options.query.number || DEFAULT_QUERY.number;
+		const startOffset = ( page - 1 ) * perPage;
+		let nextQueryItemKeys = nextManager.data.queries[ queryKey ];
+
+		// Coerce received single item to array
+		if ( ! Array.isArray( items ) ) {
+			items = [ items ];
+		}
+
+		// If the item set for the queried page is identical, there are no
+		// updates to be made
+		const pageItemKeys = items.map( ( item ) => item[ this.options.itemKey ] );
+		const nextManagerPageItemKeys = nextQueryItemKeys.slice( startOffset, startOffset + perPage );
+		if ( isEqual( pageItemKeys, nextManagerPageItemKeys ) ) {
+			return nextManager;
+		}
+
+		// If we've reached this point, we know that we've received a paged
+		// set of data where our assumed item set is incorrect. We should
+		// proceed to replace the assumed set with the received items.
+		nextQueryItemKeys = [
+			...nextQueryItemKeys.slice( 0, startOffset ),
+			...pageItemKeys,
+			...nextQueryItemKeys.slice( startOffset + perPage )
+		];
+
+		// Avoid duplicates in the items set.
+		nextQueryItemKeys = uniq( nextQueryItemKeys );
+
+		return new this.constructor(
+			Object.assign( {}, nextManager.data, {
+				queries: Object.assign( {}, nextManager.data.queries, {
+					[ queryKey ]: nextQueryItemKeys
+				} )
+			} ),
+			nextManager.options
+		);
+	}
+}
+
+PaginatedQueryManager.QueryKey = PaginatedQueryKey;
+
+PaginatedQueryManager.DEFAULT_QUERY = DEFAULT_QUERY;
