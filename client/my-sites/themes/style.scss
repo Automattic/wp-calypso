@@ -119,17 +119,13 @@
 
 .themes__sheet-action-bar {
 	height: 50px;
-	width: 100%;
 }
 
-.themes_sheet-action-bar-spacer {
-	height: 50px;
-	width: 100%;
-	background-color: white;
-}
-
-.themes__sheet-action-bar button {
-	margin: 2px;
+.themes__sheet-primary-button {
+	position: absolute;
+		top: 5px;
+		right: 50%;
+	margin-right: 20px;
 }
 
 .themes__sheet-button-placeholder {
@@ -142,21 +138,6 @@
 	margin-left: 10px;
 	display: inline-block;
 	max-width: 50%;
-}
-
-.themes__sheet-action-bar-container {
-	display: flex;
-	align-items: center;
-	justify-content: flex-end;
-}
-
-
-.themes__sheet-action-bar .header-cake__back {
-	padding: 16px 0px 16px 16px;
-}
-
-.themes__sheet-action-bar .is-spacer {
-	width: 0;
 }
 
 .themes__sheet-screenshot {
@@ -181,7 +162,6 @@
 		left: 0;
 	width: 100%;
 	height: 100%;
-	border: 1px solid $gray;
 }
 
 .themes__sheet-content {
@@ -291,8 +271,8 @@
 		width: 100%;
 	}
 
-	.themes_sheet-action-bar-spacer {
-		display: none;
+	.themes__sheet-action-bar.card {
+		margin: 0 0 1px 0;
 	}
 
 	.themes__sheet-screenshot {
@@ -301,5 +281,12 @@
 
 	.themes__sheet-screenshot:before {
 		background: linear-gradient( to bottom, transparentize( white, 0.5 ), transparent );
+	}
+
+	.themes__sheet-primary-button {
+		margin-right: 0;
+		position: absolute;
+			top: 5px;
+			right: 5px;
 	}
 }
