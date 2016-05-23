@@ -28,8 +28,11 @@ function setup() {
 	app.set( 'view engine', 'jade' );
 
 	if ( 'development' === config( 'env' ) ) {
-		// only do `make build` upon every request in "development"
-		app.use( build() );
+		// use legacy CSS rebuild system if css-hot-reload is disabled
+		if ( ! config.isEnabled( 'css-hot-reload' ) ) {
+			// only do `make build` upon every request in "development"
+			app.use( build() );
+		}
 
 		bundler = require( 'bundler' );
 		bundler( app );
