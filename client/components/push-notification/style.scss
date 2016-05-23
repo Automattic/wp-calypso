@@ -1,0 +1,78 @@
+.push-notification__prompt-enable {
+	margin: 16px 0;
+}
+
+.push-notification__settings-icon {
+	margin-right: 12px;
+}
+
+.push-notification__settings-header.card.is-compact {
+	display: flex;
+	position: relative;
+	padding-left: 14px;
+
+	&:after {
+		content: '';
+	}
+}
+
+.push-notification__settings-body {
+	display: flex;
+	position: relative;
+
+	&:after {
+		content: '';
+	}
+}
+
+.push-notification__settings-label {
+	display: flex;
+	position: relative;
+	flex-grow: 1;
+}
+
+.push-notification__settings-state {
+	display: flex;
+	position: relative;
+	flex-grow: 0;
+
+	text-transform: uppercase;
+
+	color: lighten( $gray, 10% );
+
+	&.is-enabled {
+		color: $blue-medium;
+	}
+}
+
+.push-notification__settings-description {
+	max-width: 80%;
+}
+
+.push-notification__settings-action {
+	display: flex;
+	position: relative;
+	flex-grow: 0;
+
+	& .button {
+		padding: 8px 36px;
+
+		&:disabled {
+			opacity: .3;
+		}
+
+		&.is-enable {
+			background-color: $blue-medium;
+			color: $white;
+		}
+
+		&.is-disable {
+			background-color: $gray-light;
+			color: $gray-dark;
+		}
+	}
+}
+
+.push-notifications__settings-instruction {
+	margin: 24px 0 0 0;
+}
