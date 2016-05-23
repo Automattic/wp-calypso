@@ -277,14 +277,14 @@ export const SeoForm = React.createClass( {
 									id="seo_meta_description"
 									value={ seoMetaDescription || '' }
 									disabled={ isDisabled }
-									maxLength="160"
+									maxLength="300"
 									acceptableLength={ 159 }
 									onChange={ this.handleMetaChange } />
 								{ hasHtmlTagError &&
 									<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
 								}
 								<FormSettingExplanation>
-									{ this.translate( 'Craft a description of your site in 160 characters or less. This description can be used in search engine results for your site\'s Front Page.' ) }
+									{ this.translate( 'Craft a description of your site in about 160 characters. This description can be used in search engine results for your site\'s Front Page.' ) }
 								</FormSettingExplanation>
 							</FormFieldset>
 
