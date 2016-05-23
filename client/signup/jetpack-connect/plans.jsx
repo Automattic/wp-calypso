@@ -19,6 +19,7 @@ import { shouldFetchSitePlans } from 'lib/plans';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import * as upgradesActions from 'lib/upgrades/actions';
+import { userCan } from 'lib/site/utils';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 
@@ -46,6 +47,9 @@ const Plans = React.createClass( {
 	componentWillReceiveProps( props ) {
 		const selectedSite = props.sites.getSelectedSite();
 		if ( this.hasPlan( selectedSite ) ) {
+			page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
+		}
+		if ( ! props.canPurchasePlans ) {
 			page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
 		}
 	},
@@ -93,7 +97,7 @@ const Plans = React.createClass( {
 	render() {
 		const selectedSite = this.props.sites.getSelectedSite();
 
-		if ( this.hasPlan( selectedSite ) ) {
+		if ( ! this.props.canPurchasePlans || this.hasPlan( selectedSite ) ) {
 			return null;
 		}
 
@@ -130,10 +134,12 @@ const Plans = React.createClass( {
 export default connect(
 	( state, props ) => {
 		const user = getCurrentUser( state );
+		const selectedSite = props.sites.getSelectedSite();
 		return {
-			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() ),
+			sitePlans: getPlansBySite( state, selectedSite ),
 			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
-			userId: user ? user.ID : null
+			userId: user ? user.ID : null,
+			canPurchasePlans: userCan( 'manage_options', selectedSite )
 		};
 	},
 	( dispatch ) => {
