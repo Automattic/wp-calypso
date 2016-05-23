@@ -4,6 +4,8 @@
  * External dependencies
  */
 var socketio = require( 'socket.io' );
+var debug = require( 'debug')( 'hot-reloader' );
+var cssHotReloader = require( './css-hot-reload' );
 
 var io = null,
 	_stats = null,
@@ -56,6 +58,14 @@ hotReloader = {
 			sendStats( io.sockets, stats.toJson() );
 			_stats = stats;
 		} );
+		
+		// CSS hot reloading logic
+
+		io.of( '/css-hot-reload' ).on( 'connection', function(socket) {
+		  debug( '/css-hot-reload new connection' );
+		} );
+
+		cssHotReloader( io );
 	},
 
 	close: function() {
