@@ -43,20 +43,28 @@ var CssHotReload = {
 					// Turn HTMLCollection to standard list
 					var elems = document.head.getElementsByTagName('LINK');
 					elems = [].slice.call( elems );
-					elems.forEach( function( elem ) { 
-						if ( ( 'href' in elem ) && isChanged( elem.href, data.changedFiles ) ) {
-							console.log( 'Reloading CSS: ', elem );
+					elems.forEach( function( oldLink ) { 
+						if ( ( 'href' in oldLink ) && isChanged( oldLink.href, data.changedFiles ) ) {
+							console.log( 'Reloading CSS: ', oldLink );
 							// Remove old .css and insert new one in the same spot
 							var newLink = document.createElement( 'LINK' );
-							elem.parentNode.insertBefore( newLink, elem );
-							elem.parentNode.removeChild( elem );
+							oldLink.parentNode.insertBefore( newLink, oldLink );
+							oldLink.parentNode.removeChild( oldLink );
 							// Copy standard attributes
 							// https://developer.mozilla.org/en/docs/Web/HTML/Element/link
 							var attrs = [ 'crossorigin', 'href', 'hreflang',
 										  'media', 'rel', 'sizes', 'title', 'type' ];
 							attrs.forEach( function( attr ) {
-								if ( attr in elem ) {
-									newLink[ attr ] = elem[ attr ];
+								if ( attr in oldLink ) {
+									if ( 'href' === attr ) {
+										// Make sure it is reloaded
+										var href = oldLink.href.split('?')[0];
+										var hash = new Date().getTime().toString();
+										href += '?v=' + hash;
+										newLink.href = href;
+									} else {
+										newLink[ attr ] = oldLink[ attr ];
+									}
 								}
 							} );
 						}
