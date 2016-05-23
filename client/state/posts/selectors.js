@@ -127,15 +127,11 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  * @return {?Array}         Posts for the post query
  */
 export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
-	const lastPage = getSitePostsLastPageForQuery( state, siteId, query );
-	if ( null === lastPage ) {
-		return lastPage;
+	if ( ! state.posts.queries[ siteId ] ) {
+		return null;
 	}
 
-	return range( 1, lastPage + 1 ).reduce( ( memo, page ) => {
-		const pageQuery = Object.assign( {}, query, { page } );
-		return memo.concat( getSitePostsForQuery( state, siteId, pageQuery ) || [] );
-	}, [] );
+	return state.posts.queries[ siteId ].getDataIgnoringPage( query );
 }
 
 /**
