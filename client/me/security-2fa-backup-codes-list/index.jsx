@@ -201,7 +201,7 @@ module.exports = React.createClass( {
 							defaultChecked={ this.state.userAgrees }
 							onChange={ this.onUserAgreesChange }
 						/>
-						{ this.translate( 'I have printed or saved these codes', { context: 'The codes are the backup codes for Two-Step Authentication.' } ) }
+						<span>{ this.translate( 'I have printed or saved these codes', { context: 'The codes are the backup codes for Two-Step Authentication.' } ) }</span>
 					</FormLabel>
 
 					<FormButton

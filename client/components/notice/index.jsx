@@ -51,15 +51,21 @@ export default React.createClass( {
 	},
 
 	renderChildren() {
-		let content;
+		let content, text;
 
 		if ( typeof this.props.children === 'string' ) {
-			return <span className="notice__text">{ this.props.children }</span>;
+			return <span className="notice__text"><span>{ this.props.children }</span></span>;
 		}
 
 		if ( this.props.text ) {
+			if ( typeof this.props.text === 'string' ) {
+				text = <span>{ this.props.text }</span>;
+			} else {
+				text = this.props.text;
+			}
+
 			content = [ this.props.children ];
-			content.unshift( <span key="notice_text" className="notice__text">{ this.props.text }</span> );
+			content.unshift( <span key="notice_text" className="notice__text">{ text }</span> );
 		} else {
 			content = <span key="notice_text" className="notice__text">{ this.props.children }</span>;
 		}

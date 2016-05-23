@@ -181,7 +181,7 @@ module.exports = React.createClass( {
 		if ( this.props.site && this.props.site.options.publicize_permanently_disabled ) {
 			return (
 				<div className="editor-sharing__publicize-disabled">
-					<p>{ this.translate( 'Publicize is disabled on this site.' ) }</p>
+					<p><span>{ this.translate( 'Publicize is disabled on this site.' ) }</span></p>
 				</div>
 			);
 		}
@@ -189,7 +189,7 @@ module.exports = React.createClass( {
 		if ( this.props.site && this.props.site.jetpack && ! this.props.site.isModuleActive( 'publicize' ) ) {
 			return (
 				<div className="editor-sharing__publicize-disabled">
-					<p>{ this.translate( 'Enable the Publicize module to automatically share new posts to social networks.' ) }</p>
+					<p><span>{ this.translate( 'Enable the Publicize module to automatically share new posts to social networks.' ) }</span></p>
 					<button
 							className="editor-sharing__jetpack-modules-button button is-secondary"
 							onClick={ this.jetpackModulePopup } >

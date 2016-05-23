@@ -205,7 +205,7 @@ module.exports = React.createClass( {
 						</FormLegend>
 						<FormLabel>
 							<FormCheckbox ref="topLevel" checked={ this.state.isTopLevel } onChange={ this.onTopLevelChange } />
-							{ this.translate( 'Top level category', { context: 'Categories: New category being created is top level i.e. has no parent' } ) }
+							<span>{ this.translate( 'Top level category', { context: 'Categories: New category being created is top level i.e. has no parent' } ) }</span>
 						</FormLabel>
 						<CategoryList siteId={ this.props.siteId } search={ this.state.searchTerm } categoryStoreId="parent" >
 						<CategorySelector
