@@ -43,7 +43,7 @@ describe( 'LoginTest', function() {
 		var submit = TestUtils.findRenderedDOMComponentWithTag( page, 'button' );
 
 		page.setState( { login: 'test', password: 'test', inProgress: false }, function() {
-			expect( submit.props.disabled ).to.be.false;
+			expect( submit.disabled ).to.be.false;
 			done();
 		} );
 	} );
