@@ -41,7 +41,7 @@ module.exports = React.createClass( {
 							checked={ this.state.showSubtitles }
 							onChange={ this._toggleShowSubtitles }
 						/>
-						Show subtitles
+						<span>Show subtitles</span>
 					</label>
 				</div>
 

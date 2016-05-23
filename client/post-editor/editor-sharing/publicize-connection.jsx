@@ -99,7 +99,7 @@ export default React.createClass( {
 						checked={ ! this.isConnectionSkipped() }
 						disabled={ this.isDisabled() }
 						onChange={ this.onChange } />
-					{ connection && connection.external_display }
+					<span>{ connection && connection.external_display }</span>
 				</label>
 				{ this.renderBrokenConnection() }
 			</div>

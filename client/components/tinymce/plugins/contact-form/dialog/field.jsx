@@ -106,7 +106,7 @@ export default React.createClass( {
 						<FormCheckbox
 							checked={ this.props.required }
 							onChange={ () => this.props.onUpdate( { required: ! this.props.required } ) } />
-						{ this.translate( 'Required' ) }
+						<span>{ this.translate( 'Required' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 

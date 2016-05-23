@@ -29,7 +29,7 @@ export default React.createClass( {
 		return (
 			<CompactCard className={ classes } href={ this.props.href }>
 				<div className="section-header__label">
-					{ this.props.label }
+					<span>{ this.props.label }</span>
 					{
 						'number' === typeof this.props.count &&
 						<Count count={ this.props.count } />

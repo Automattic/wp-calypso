@@ -186,10 +186,10 @@ const CancelPrivateRegistration = React.createClass( {
 				{ notice }
 				<Card className={ classes }>
 					<div className="cancel-private-registration__text">
-						{ descriptionText }
+						<span>{ descriptionText }</span>
 					</div>
 					<div className="cancel-private-registration__text">
-						{ warningText }
+						<span>{ warningText }</span>
 					</div>
 
 					{ button }

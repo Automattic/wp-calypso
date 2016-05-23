@@ -35,7 +35,7 @@ const PostSelectorExample = React.createClass( {
 							type="checkbox"
 							checked={ this.state.showTypeLabels }
 							onChange={ () => this.setState( { showTypeLabels: ! this.state.showTypeLabels } ) } />
-						Show Type Labels
+						<span>Show Type Labels</span>
 					</FormLabel>
 					{ this.props.sites.initialized && (
 						<PostSelector

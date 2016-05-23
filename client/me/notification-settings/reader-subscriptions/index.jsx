@@ -89,7 +89,7 @@ module.exports = React.createClass( {
 									id="subscription_delivery_jabber_default"
 									name="subscription_delivery_jabber_default"
 									onClick={ this.recordCheckboxEvent( 'Notification Delivery by Jabber' ) } />
-									{ this.translate( 'Default delivery via Jabber instant message' ) }
+									<span>{ this.translate( 'Default delivery via Jabber instant message' ) }</span>
 							</FormLabel>
 						</FormFieldset>
 
@@ -158,7 +158,7 @@ module.exports = React.createClass( {
 									id="subscription_delivery_email_blocked"
 									name="subscription_delivery_email_blocked"
 									onClick={ this.recordCheckboxEvent( 'Block All Notification Emails' ) }/>
-									{ this.translate( 'Block all email updates from blogs you’re following on WordPress.com' ) }
+									<span>{ this.translate( 'Block all email updates from blogs you’re following on WordPress.com' ) }</span>
 							</FormLabel>
 						</FormFieldset>
 

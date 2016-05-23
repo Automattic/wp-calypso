@@ -365,11 +365,13 @@ export default React.createClass( {
 									onChange={ this.updateVisibility }
 									checked={ 'public' === visibility }
 								/>
-								{
-									this.props.isPrivateSite ?
-									this.translate( 'Visible for members of the site', { context: 'Editor: Radio label to set post visibility' } ) :
-									this.translate( 'Public', { context: 'Editor: Radio label to set post visible to public' } )
-								}
+								<span>
+									{
+										this.props.isPrivateSite ?
+										this.translate( 'Visible for members of the site', { context: 'Editor: Radio label to set post visibility' } ) :
+										this.translate( 'Public', { context: 'Editor: Radio label to set post visible to public' } )
+									}
+								</span>
 							</FormLabel>
 							{ this.renderVisibilityTip( 'public' ) }
 
@@ -380,7 +382,7 @@ export default React.createClass( {
 									onChange={ this.onSetToPrivate }
 									checked={ 'private' === visibility }
 								/>
-								{ this.translate( 'Private', { context: 'Editor: Radio label to set post to private' } ) }
+								<span>{ this.translate( 'Private', { context: 'Editor: Radio label to set post to private' } ) }</span>
 							</FormLabel>
 							{ this.renderVisibilityTip( 'private' ) }
 
@@ -391,7 +393,7 @@ export default React.createClass( {
 									onChange={ this.updateVisibility }
 									checked={ 'password' === visibility }
 								/>
-								{ this.translate( 'Password Protected', { context: 'Editor: Radio label to set post to password protected' } ) }
+								<span>{ this.translate( 'Password Protected', { context: 'Editor: Radio label to set post to password protected' } ) }</span>
 							</FormLabel>
 							{ this.renderVisibilityTip( 'password' ) }
 							{ visibility === 'password' ? this.renderPasswordInput() : null }

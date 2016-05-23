@@ -328,7 +328,7 @@ module.exports = React.createClass({
 		if ( metaItems.length ) {
 			footerMetaItems = metaItems.map( function( item, i ) {
 				var itemKey = 'meta-' + postId + '-' + i;
-				return ( <li key={ itemKey }>{ item }</li> );
+				return ( <li key={ itemKey }><span>{ item }</span></li> );
 			}, this );
 
 			return ( <ul className="post__meta">{ footerMetaItems }</ul> );

@@ -176,7 +176,7 @@ const SiteSettingsFormWriting = React.createClass( {
 										onClick={ this.recordEvent.bind( this, 'Clicked Press This Button' ) }
 										onDragStart={ this.recordEvent.bind( this, 'Dragged Press This Button' ) }>
 										<span className="noticon noticon-pinned"></span>
-										{ this.translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
+										<span>{ this.translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }</span>
 									</PressThisLink>
 								</p>
 							</div>

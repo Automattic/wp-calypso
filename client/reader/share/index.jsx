@@ -191,9 +191,9 @@ const ReaderShare = React.createClass( {
 								position={ this.props.position }
 								className="popover reader-share__popover">
 								<PopoverMenuItem action="twitter" className="reader-share__popover-item">
-									<SocialLogo icon="twitter" /> Twitter</PopoverMenuItem>
+									<SocialLogo icon="twitter" /><span>Twitter</span></PopoverMenuItem>
 								<PopoverMenuItem action="facebook" className="reader-share__popover-item">
-									<SocialLogo icon="facebook" /> Facebook</PopoverMenuItem>
+									<SocialLogo icon="facebook" /><span>Facebook</span></PopoverMenuItem>
 							</PopoverMenu>
 						)
 					)

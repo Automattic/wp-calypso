@@ -80,7 +80,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<p>{ lines } </p>
+			<p>{ lines.map( l => <span>{ l }</span> ) } </p>
 		);
 	}
 } );
