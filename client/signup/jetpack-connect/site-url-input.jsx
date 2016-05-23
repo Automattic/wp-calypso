@@ -52,12 +52,13 @@ export default React.createClass( {
 
 	renderTermsOfServiceLink() {
 		return (
-			<p className="jetpack-connect__tos_link">{
+			<p className="jetpack-connect__tos-link">{
 				this.translate(
 					'By connecting your site you agree to our fascinating {{a}}Terms of Service{{/a}}.',
 					{
 						components: {
 							a: <a
+								className="jetpack-connect__tos-link-text"
 								href={ this.getTermsOfServiceUrl() }
 								onClick={ this.props.handleOnClickTos }
 								target="_blank" />
@@ -85,7 +86,7 @@ export default React.createClass( {
 						? ( <Spinner duration={ 30 } /> )
 						: null }
 				</div>
-				<Card className="jetpack-connect__connect_button_card">
+				<Card className="jetpack-connect__connect-button-card">
 					{ this.renderTermsOfServiceLink() }
 					<Button primary
 						disabled={ ( ! this.state.value || this.props.isFetching ) }
