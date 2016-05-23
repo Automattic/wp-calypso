@@ -49,6 +49,7 @@ var config = require( 'config' ),
 	supportUser = require( 'lib/user/support-user-interop' ),
 	isSectionIsomorphic = require( 'state/ui/selectors' ).isSectionIsomorphic,
 	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
+	pushNotifications = require( 'lib/push-notifications' )(),
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
@@ -166,7 +167,7 @@ function renderLayout( reduxStore ) {
 	let props = { focus: layoutFocus };
 
 	if ( user.get() ) {
-		Object.assign( props, {}, { user, sites, nuxWelcome, translatorInvitation } );
+		Object.assign( props, {}, { user, sites, nuxWelcome, translatorInvitation, pushNotifications } );
 	}
 
 	Layout = require( 'layout' );
