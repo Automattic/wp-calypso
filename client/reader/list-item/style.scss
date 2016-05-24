@@ -67,6 +67,10 @@
 		position: relative;
 			top: 1px;
 	}
+
+	.site-icon {
+		border: 0;
+	}
 }
 
 .reader-list-item__actions {
@@ -84,7 +88,7 @@
 
 	.follow-button {
 		font-size: 16px;
-		margin-right: 15px;
+		margin: 1px 15px 0 0;
 
 		.gridicon {
 			left: 15px;
