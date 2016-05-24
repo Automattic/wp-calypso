@@ -16,7 +16,11 @@ import i18n from 'lib/mixins/i18n';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getThemeDetails } from 'state/themes/theme-details/selectors';
 import ClientSideEffects from 'components/client-side-effects';
-import { receiveThemeDetails, setBackPath } from 'state/themes/actions';
+import {
+	receiveThemeDetails,
+	receiveThemeDetailsFailure,
+	setBackPath
+} from 'state/themes/actions';
 import wpcom from 'lib/wp';
 import config from 'config';
 import { decodeEntities } from 'lib/formatting';
@@ -54,7 +58,8 @@ export function fetchThemeDetailsData( context, next ) {
 	themeSlug && wpcom.undocumented().themeDetails( themeSlug, ( error, data ) => {
 		if ( error ) {
 			debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
-			return;
+			context.store.dispatch( receiveThemeDetailsFailure( themeSlug, error ) );
+			return next();
 		}
 		const themeData = themeDetailsCache.get( themeSlug );
 		if ( ! themeData || ( Date( data.date_updated ) > Date( themeData.date_updated ) ) ) {

@@ -34,6 +34,7 @@ import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import actionLabels from 'my-sites/themes/action-labels';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
+import EmptyContentComponent from 'components/empty-content';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -241,6 +242,24 @@ const ThemeSheet = React.createClass( {
 	},
 
 	render() {
+		if ( this.props.error ) {
+			const emptyContentTitle = i18n.translate( 'Looking for great WordPress designs?', {
+				context: 'Message displayed when requested theme was not found',
+			} );
+			const emptyContentMessage = i18n.translate( 'Check our theme showcase', {
+				context: 'Message displayed when requested theme was not found',
+			} );
+
+			return(
+				<Main className="themes__sheet_404">
+					<EmptyContentComponent title={ emptyContentTitle } line={ emptyContentMessage } />
+				</Main>
+			);
+		}
+		return this.renderSheet();
+	},
+
+	renderSheet() {
 		let actionTitle = <span className="themes__sheet-button-placeholder">loading......</span>;
 		if ( this.isActive() ) {
 			actionTitle = i18n.translate( 'Customize' );
