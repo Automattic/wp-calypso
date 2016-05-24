@@ -16,6 +16,7 @@ import property from 'lodash/property';
 import {
 	THEME_ACTIVATE,
 	THEME_ACTIVATED,
+	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
 	THEME_CUSTOMIZE,
 	THEME_DETAILS_RECEIVE,
@@ -277,5 +278,13 @@ export function purchase( theme, site, source = 'unknown' ) {
 				site: site
 			} );
 		} );
+	};
+}
+
+// Set destination for 'back' button on theme sheet
+export function setBackPath( path ) {
+	return {
+		type: THEME_BACK_PATH_SET,
+		path: path,
 	};
 }
