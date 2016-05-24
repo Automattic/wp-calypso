@@ -145,7 +145,7 @@ const CancelPrivateRegistration = React.createClass( {
 		const purchase = this.props.selectedPurchase.data;
 
 		if ( purchase.error ) {
-			return <Notice status='is-error' showDismiss={ false }>{ purchase.error }</Notice>;
+			return <Notice status="is-error" showDismiss={ false }>{ purchase.error }</Notice>;
 		}
 
 		return null;
