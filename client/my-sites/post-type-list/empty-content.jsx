@@ -34,7 +34,6 @@ function PostTypeListEmptyContent( { siteId, translate, status, typeObject, edit
 			) }
 			<EmptyContent
 				title={ title }
-				line={ translate( 'Would you like to create one?' ) }
 				action={ action }
 				actionURL={ editPath }
 				illustration="/calypso/images/pages/illustration-pages.svg"
