@@ -165,7 +165,7 @@
 }
 
 .reader-start-card__hero {
-	background-color: lighten( $gray, 30% ); // Background if no image
+	background: lighten( $gray, 30% ); // Background to be used if no image
 	height: 70px;
 	margin: -24px;
 }
