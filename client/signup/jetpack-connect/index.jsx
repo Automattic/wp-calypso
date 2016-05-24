@@ -243,6 +243,7 @@ const JetpackConnectMain = React.createClass( {
 		const status = this.getStatus();
 		return (
 			<Main className="jetpack-connect">
+				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
 					<ConnectHeader
 						showLogo={ false }
