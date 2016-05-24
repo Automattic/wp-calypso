@@ -154,8 +154,15 @@ PushNotifications.prototype.subscribe = function( callback ) {
 		store.set( 'push-subscription-intent', true );
 		window.navigator.serviceWorker.ready.then( ( serviceWorkerRegistration ) => {
 			serviceWorkerRegistration.pushManager.subscribe( { userVisibleOnly: true } ).then( ( subscription ) => {
-				this.setState( 'subscribed', callback );
-				this.saveSubscription( subscription );
+				serviceWorkerRegistration.pushManager.permissionState( { userVisibleOnly: true } ).then( ( pushMessagingState ) => {
+					if ( 'granted' === pushMessagingState ) {
+						this.setState( 'subscribed', callback );
+						this.saveSubscription( subscription );
+					} else if ( 'prompt' === pushMessagingState ) {
+						this.setState( 'unsubscribed', callback );
+						this.unsubscribe( callback );
+					}
+				} );
 			} ).catch( ( err ) => {
 				if ( 'denied' === window.Notification.permission ) {
 					debug( 'Permission denied' );
