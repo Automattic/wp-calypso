@@ -30,7 +30,7 @@ import PageOrder from 'post-editor/editor-page-order';
 import PostMetadata from 'lib/post-metadata';
 import TrackInputChanges from 'components/track-input-changes';
 import actions from 'lib/posts/actions';
-import stats from 'lib/posts/stats';
+import * as stats from 'lib/posts/stats';
 import siteUtils from 'lib/site/utils';
 import { setExcerpt } from 'state/ui/editor/post/actions';
 import QueryPostTypes from 'components/data/query-post-types';
