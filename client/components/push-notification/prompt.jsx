@@ -21,6 +21,7 @@ export default React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ),
+		isLoading: React.PropTypes.bool,
 		pushNotifications: React.PropTypes.object
 	},
 
@@ -71,7 +72,7 @@ export default React.createClass( {
 			return null;
 		}
 
-		if ( 'notification-settings' === this.props.section.name || 'editor' === this.props.section.group ) {
+		if ( ! this.props.section || this.props.isLoading || 'notification-settings' === this.props.section.name || 'editor' === this.props.section.group ) {
 			return null;
 		}
 
