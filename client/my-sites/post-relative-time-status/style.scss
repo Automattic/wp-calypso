@@ -1,8 +1,26 @@
 .post-relative-time-status {
+	display: flex;
+	flex-wrap: wrap;
+
+	.time,
+	.status {
+		display: inline-flex;
+		align-items: center;
+		margin-right: (11 / 12) * 1em;
+	}
+
+	.time .time-text {
+		&::first-letter {
+			text-transform: capitalize;
+		}
+	}
+
+	.status .status-text {
+		text-transform: capitalize;
+	}
+
 	.gridicon {
-		display: inline-block;
-		margin: -4px 8px 0 0;
-		vertical-align: middle;
+		margin-right: 8px;
 	}
 
 	// Apply colors on /posts/* cards
