@@ -146,6 +146,8 @@ function createSlideshow() {
 	} );
 }
 
+let slideshowCSSPresent = false;
+
 function embedSlideshow( domNode ) {
 	debug( 'processing slideshow for', domNode );
 
@@ -154,8 +156,8 @@ function embedSlideshow( domNode ) {
 		spinner: SLIDESHOW_URLS.SPINNER
 	};
 
-	// load CSS if it isn't alread there
-	if ( ! document.head.querySelector( `link[href="${ SLIDESHOW_URLS.CSS }"]` ) ) {
+	if ( ! slideshowCSSPresent ) {
+		slideshowCSSPresent = true;
 		loadCSS( SLIDESHOW_URLS.CSS );
 	}
 
@@ -165,14 +167,14 @@ function embedSlideshow( domNode ) {
 		el.classList.add( 'hidden' );
 	} );
 
-	if ( window.jQuery && ! window.jQuery.prototype.cycle ) {
+	if ( window.jQuery && window.jQuery.prototype.cycle ) {
+		// jQuery and cylcejs exist
+		createSlideshow();
+	} else if ( window.jQuery && ! window.jQuery.prototype.cycle ) {
 		// Only jQuery exists
 		loadAndRun( SLIDESHOW_URLS.CYCLE_JS, ()=> {
 			createSlideshow();
 		} );
-	} else if ( window.jQuery && window.jQuery.prototype.cycle ) {
-		// jQuery and cylcejs exist
-		createSlideshow();
 	} else {
 		// Neither exist
 		loadjQueryDependentScript( SLIDESHOW_URLS.CYCLE_JS, () => {
