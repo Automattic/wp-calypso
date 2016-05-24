@@ -70,6 +70,10 @@ export function queryRequests( state = {}, action ) {
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
 		case TERMS_RECEIVE:
+			if ( ! action.query ) {
+				return state;
+			}
+
 			const serializedQuery = getSerializedTermsQuery( action.query );
 			return merge( {}, state, {
 				[ action.siteId ]: {

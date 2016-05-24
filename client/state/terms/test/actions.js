@@ -49,7 +49,7 @@ describe( 'actions', () => {
 				siteId: siteId,
 				taxonomy: taxonomyName,
 				terms: testTerms,
-				query: {}
+				query: undefined
 			} );
 		} );
 
