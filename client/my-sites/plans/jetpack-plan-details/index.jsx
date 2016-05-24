@@ -13,7 +13,7 @@ const JetpackPlanDetails = ( { plan } ) => {
 		<div>
 			<p>{ plan.description }</p>
 
-			<ul>
+			<ul className="plan__plan-details-list">
 				<li className="plan__plan-details-item"><Gridicon icon="checkmark" size={ 18 } />{ plan.feature_1 }</li>
 				<li className="plan__plan-details-item"><Gridicon icon="checkmark" size={ 18 } />{ plan.feature_2 }</li>
 				<li className="plan__plan-details-item"><Gridicon icon="checkmark" size={ 18 } />{ plan.feature_3 }</li>
