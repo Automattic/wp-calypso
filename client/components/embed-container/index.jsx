@@ -146,7 +146,7 @@ function createSlideshow() {
 	} );
 }
 
-let slideshowCSSPresent = false;
+let slideshowCSSPresent = document.head.querySelector( `link[href="${ SLIDESHOW_URLS.CSS }"]` );
 
 function embedSlideshow( domNode ) {
 	debug( 'processing slideshow for', domNode );
