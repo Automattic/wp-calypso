@@ -60,7 +60,7 @@ export default React.createClass( {
 			</div>
 		);
 
-		return <Notice className="push-notification-notice" text={ noticeText } icon="bell" onDismissClick={ this.dismissNotice } />;
+		return <Notice className="push-notification__notice" text={ noticeText } icon="bell" onDismissClick={ this.dismissNotice } />;
 	},
 
 	render: function() {
