@@ -44,18 +44,6 @@ const actions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	analytics = require( 'lib/analytics' );
 
-import {
-	setContent,
-	setExcerpt,
-	stopEditing,
-	setTitle,
-	setRawContent,
-	save,
-	autosave,
-	setPostPrivate,
-	setPostPublished,
-	resetRawContent
-} from 'state/ui/editor/post/actions';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
@@ -178,33 +166,8 @@ const messages = {
 
 const PostEditor = React.createClass( {
 	propTypes: {
-		setContent: React.PropTypes.func,
-		setExcerpt: React.PropTypes.func,
-		stopEditing: React.PropTypes.func,
-		setTitle: React.PropTypes.func,
-		setRawContent: React.PropTypes.func,
-		save: React.PropTypes.func,
-		autosave: React.PropTypes.func,
-		setPostPrivate: React.PropTypes.func,
-		setPostPublished: React.PropTypes.func,
-		resetRawContent: React.PropTypes.func,
 		preferences: React.PropTypes.object,
 		sites: React.PropTypes.object
-	},
-
-	getDefaultProps: function() {
-		return {
-			setContent: () => {},
-			setExcerpt: () => {},
-			stopEditing: () => {},
-			setTitle: () => {},
-			setRawContent: () => {},
-			save: () => {},
-			autosave: () => {},
-			setPostPrivate: () => {},
-			setPostPublished: () => {},
-			resetRawContent: () => {}
-		};
 	},
 
 	_previewWindow: null,
@@ -264,7 +227,6 @@ const PostEditor = React.createClass( {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.stopEditing();
 
-		this.props.stopEditing();
 		this.debouncedAutosave.cancel();
 		this.debouncedSaveRawContent.cancel();
 		this._previewWindow = null;
@@ -473,10 +435,6 @@ const PostEditor = React.createClass( {
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( edits );
-
-		this.props.setTitle( autosaveData.title );
-		this.props.setExcerpt( autosaveData.excerpt );
-		this.props.setContent( autosaveData.content );
 	},
 
 	closeAutosaveDialog: function() {
@@ -545,8 +503,6 @@ const PostEditor = React.createClass( {
 	saveRawContent: function() {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.editRawContent( this.refs.editor.getContent( { format: 'raw' } ) );
-
-		this.props.setRawContent( this.refs.editor.getContent( { format: 'raw' } ) );
 	},
 
 	autosave: function() {
@@ -559,8 +515,6 @@ const PostEditor = React.createClass( {
 		this.saveRawContent();
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { content: this.refs.editor.getContent() } );
-
-		this.props.setContent( this.refs.editor.getContent() );
 
 		// Make sure that after TinyMCE processing that the post is still dirty
 		if ( ! PostEditStore.isDirty() || ! PostEditStore.hasContent() || ! this.state.post ) {
@@ -579,7 +533,6 @@ const PostEditor = React.createClass( {
 				}
 			}.bind( this );
 		}
-		this.props.autosave( callback );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.autosave( callback );
@@ -649,9 +602,6 @@ const PostEditor = React.createClass( {
 
 		edits.content = this.refs.editor.getContent();
 
-		this.props.setContent( edits.content );
-		this.props.save();
-
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.saveEdited( edits, function( error ) {
 			if ( error && 'NO_CHANGE' !== error.message ) {
@@ -694,9 +644,6 @@ const PostEditor = React.createClass( {
 		}.bind( this );
 
 		if ( status === 'publish' ) {
-			this.props.setContent( this.refs.editor.getContent() );
-			this.props.autosave( previewPost );
-
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			actions.edit( { content: this.refs.editor.getContent() } );
 			actions.autosave( previewPost );
@@ -766,17 +713,11 @@ const PostEditor = React.createClass( {
 		// determine if this is a private publish
 		if ( utils.isPrivate( this.state.post ) ) {
 			edits.status = 'private';
-			this.props.setPostPrivate();
-		} else {
-			this.props.setPostPublished();
 		}
 
 		// Update content on demand to avoid unnecessary lag and because it is expensive
 		// to serialize when TinyMCE is the active mode
 		edits.content = this.refs.editor.getContent();
-
-		this.props.setContent( edits.content );
-		this.props.save();
 
 		actions.saveEdited( edits, function( error ) {
 			if ( error && 'NO_CHANGE' !== error.message ) {
@@ -900,18 +841,12 @@ const PostEditor = React.createClass( {
 		this._switchEditorTimeout = setTimeout( function() {
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			actions.edit( { content: content } );
-			actions.resetRawContent();
-
-			this.props.setContent( content );
-			this.props.resetRawContent();
 
 			if ( mode === 'html' ) {
 				// Set raw content directly to avoid race conditions
 				actions.editRawContent( content );
-				this.props.setRawContent( content );
 			} else {
 				this.saveRawContent();
-				this.props.save();
 			}
 		}.bind( this ), 0 );
 	}
@@ -927,16 +862,6 @@ export default connect(
 	( dispatch ) => {
 		return bindActionCreators( {
 			toggleDrafts: toggleEditorDraftsVisible,
-			setContent,
-			setExcerpt,
-			stopEditing,
-			setTitle,
-			setRawContent,
-			save,
-			autosave,
-			setPostPrivate,
-			setPostPublished,
-			resetRawContent,
 			setEditorLastDraft,
 			resetEditorLastDraft
 		}, dispatch );

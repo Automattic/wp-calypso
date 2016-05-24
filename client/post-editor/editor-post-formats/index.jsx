@@ -2,8 +2,6 @@
  * External dependencies
  */
 const React = require( 'react' );
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -13,13 +11,11 @@ const FormRadio = require( 'components/forms/form-radio' ),
 	PostActions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	AccordionSection = require( 'components/accordion/section' );
-import { setPostFormat } from 'state/ui/editor/post/actions';
 
-const EditorPostFormats = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorPostFormats',
 
 	propTypes: {
-		setPostFormat: React.PropTypes.func,
 		post: React.PropTypes.object,
 		value: React.PropTypes.string,
 		postFormats: React.PropTypes.arrayOf( React.PropTypes.shape( {
@@ -30,7 +26,6 @@ const EditorPostFormats = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			setPostFormat: () => {},
 			value: 'standard'
 		};
 	},
@@ -88,8 +83,6 @@ const EditorPostFormats = React.createClass( {
 			format: event.target.value
 		} );
 
-		this.props.setPostFormat( event.target.value );
-
 		stats.recordStat( 'post_format_changed' );
 		stats.recordEvent( 'Changed Post Format', event.target.value );
 	},
@@ -128,10 +121,3 @@ const EditorPostFormats = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setPostFormat }, dispatch ),
-	null,
-	{ pure: false }
-)( EditorPostFormats );

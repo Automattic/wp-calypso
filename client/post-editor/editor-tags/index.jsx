@@ -4,8 +4,6 @@
 import React from 'react';
 import unescapeString from 'lodash/unescape';
 import _debug from 'debug';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -16,25 +14,17 @@ import PostActions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { isPage } from 'lib/posts/utils';
 import InfoPopover from 'components/info-popover';
-import { setTags } from 'state/ui/editor/post/actions';
 
 const debug = _debug( 'calypso:post-editor:editor-tags' );
 
-const EditorTags = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorTags',
 
 	propTypes: {
-		setTags: React.PropTypes.func,
 		post: React.PropTypes.object,
 		tags: React.PropTypes.arrayOf( React.PropTypes.object ),
 		tagsHasNextPage: React.PropTypes.bool,
 		tagsFetchingNextPage: React.PropTypes.bool
-	},
-
-	getDefaultProps: function() {
-		return {
-			setTags: () => {},
-		};
 	},
 
 	onTagsChange: function( selectedTags ) {
@@ -58,8 +48,6 @@ const EditorTags = React.createClass( {
 		PostActions.edit( {
 			tags: selectedTags
 		} );
-
-		this.props.setTags( selectedTags );
 	},
 
 	getPostTags: function() {
@@ -100,10 +88,3 @@ const EditorTags = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setTags }, dispatch ),
-	null,
-	{ pure: false }
-)( EditorTags );

@@ -3,8 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import defer from 'lodash/defer';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -13,25 +11,17 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import PostActions from 'lib/posts/actions';
 import EditorFeaturedImagePreview from './preview';
-import { setFeaturedImage } from 'state/ui/editor/post/actions';
 
-const EditorFeaturedImagePreviewContainer = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorFeaturedImagePreviewContainer',
 
 	propTypes: {
-		setFeaturedImage: PropTypes.func,
 		siteId: PropTypes.number.isRequired,
 		itemId: PropTypes.oneOfType( [
 			PropTypes.number,
 			PropTypes.string
 		] ).isRequired,
 		maxWidth: PropTypes.number
-	},
-
-	getDefaultProps: function() {
-		return {
-			setFeaturedImage: () => {}
-		};
 	},
 
 	getInitialState: function() {
@@ -84,8 +74,6 @@ const EditorFeaturedImagePreviewContainer = React.createClass( {
 				PostActions.edit( {
 					featured_image: image.ID
 				} );
-
-				this.props.setFeaturedImage( image.ID );
 			}
 		} );
 	},
@@ -98,8 +86,3 @@ const EditorFeaturedImagePreviewContainer = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setFeaturedImage }, dispatch )
-)( EditorFeaturedImagePreviewContainer );

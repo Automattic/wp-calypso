@@ -42,7 +42,7 @@ describe( 'EditorDiscussion', function() {
 			recordEvent: noop,
 			recordStat: noop
 		} );
-		EditorDiscussion = require( '../' ).WrappedComponent;
+		EditorDiscussion = require( '../' );
 		EditorDiscussion.prototype.translate = sinon.stub().returnsArg( 0 );
 	} );
 

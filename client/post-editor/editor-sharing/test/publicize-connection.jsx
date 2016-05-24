@@ -28,7 +28,7 @@ describe( 'PublicizeConnection', function() {
 	useFakeDom();
 
 	before( () => {
-		PublicizeConnection = require( '../publicize-connection' ).WrappedComponent;
+		PublicizeConnection = require( '../publicize-connection' );
 	} );
 
 	describe( '#isConnectionSkipped()', function() {

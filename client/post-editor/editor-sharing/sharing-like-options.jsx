@@ -2,8 +2,6 @@
  * External dependencies
  */
 const React = require( 'react' );
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -12,24 +10,16 @@ const EditorFieldset = require( 'post-editor/editor-fieldset' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	PostActions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' );
-import { setSharingLikeOption } from 'state/ui/editor/post/actions';
 
-const SharingLikeOptions = React.createClass( {
+export default React.createClass( {
 	displayName: 'SharingLikeOptions',
 
 	propTypes: {
-		setSharingLikeOption: React.PropTypes.func,
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
 		isSharingButtonsEnabled: React.PropTypes.bool,
 		isLikesEnabled: React.PropTypes.bool,
 		isNew: React.PropTypes.bool
-	},
-
-	getDefaultProps: function() {
-		return {
-			setSharingLikeOption: () => {}
-		};
 	},
 
 	isShowingSharingButtons: function() {
@@ -95,8 +85,6 @@ const SharingLikeOptions = React.createClass( {
 		} );
 
 		this.recordStats( event );
-
-		this.props.setSharingLikeOption( event.target.name, event.target.checked );
 	},
 
 	recordStats: function( event ) {
@@ -122,10 +110,3 @@ const SharingLikeOptions = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setSharingLikeOption }, dispatch ),
-	null,
-	{ pure: false }
-)( SharingLikeOptions );
