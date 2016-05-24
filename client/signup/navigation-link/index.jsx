@@ -8,6 +8,7 @@ import find from 'lodash/find';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import { submitSignupStep } from 'lib/signup/actions';
 import signupUtils from 'signup/utils';
@@ -72,23 +73,21 @@ const NavigationLink = React.createClass( {
 		let backGridicon, forwardGridicon, text;
 
 		if ( this.props.direction === 'back' ) {
-			backGridicon = <Gridicon icon="chevron-left" size={ 18 } />;
+			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;
 			text = this.translate( 'Back' );
 		}
 
 		if ( this.props.direction === 'forward' ) {
-			forwardGridicon = <Gridicon icon="chevron-right" size={ 18 } />;
+			forwardGridicon = <Gridicon icon="arrow-right" size={ 18 } />;
 			text = this.translate( 'Skip for now' );
 		}
 
 		return (
-			<a className="navigation-link" href={ this.getBackUrl() } onClick={ this.handleClick }>
-				<span className="navigation-link__label">
-					{ backGridicon }
-					{ text }
-					{ forwardGridicon }
-				</span>
-			</a>
+			<Button compact borderless className="navigation-link" href={ this.getBackUrl() } onClick={ this.handleClick }>
+				{ backGridicon }
+				{ text }
+				{ forwardGridicon }
+			</Button>
 		);
 	}
 } );

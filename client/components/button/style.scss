@@ -207,9 +207,16 @@ button {
 			height: 18px;
 			top: 5px;
 		}
+
+		//arrows sit 1px low in their svg bounding box, need a nudge
 		.gridicons-arrow-left {
 			top: 4px;
 			margin-right: 4px;
+		}
+
+		.gridicons-arrow-right {
+			top: 4px;
+			margin-left: 4px;
 		}
 	}
 }
