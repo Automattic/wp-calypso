@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { useNock } from 'test/helpers/use-nock';
+import useMockery from 'test/helpers/use-mockery';
 import sinon from 'sinon';
 import { assert, expect } from 'chai';
 import deepFreeze from 'deep-freeze';
@@ -14,18 +15,26 @@ import {
 	READER_START_RECOMMENDATIONS_RECEIVE,
 	READER_START_RECOMMENDATIONS_REQUEST,
 	READER_START_RECOMMENDATIONS_REQUEST_SUCCESS,
-	READER_SITE_UPDATE,
-	READER_POSTS_RECEIVE
+	READER_SITE_UPDATE
 } from 'state/action-types';
-
-import {
-	receiveRecommendations,
-	requestRecommendations
-} from '../actions';
 
 import { sampleSuccessResponse } from '../sample_responses';
 
 describe( 'actions', () => {
+	let receiveRecommendations, requestRecommendations;
+
+	useMockery( mockery => {
+		mockery.registerMock( 'state/reader/posts/actions', {
+			receivePosts: ( posts ) => {
+				return Promise.resolve( posts );
+			}
+		} );
+
+		const actions = require( '../actions' );
+		receiveRecommendations = actions.receiveRecommendations;
+		requestRecommendations = actions.requestRecommendations;
+	} );
+
 	const spy = sinon.spy();
 
 	beforeEach( () => {
@@ -52,29 +61,26 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch properly when receiving a valid response', () => {
-			const request = requestRecommendations()( spy );
-			expect( spy ).to.have.been.calledWith( {
+			const dispatchSpy = sinon.stub();
+			dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
+			const request = requestRecommendations()( dispatchSpy );
+			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_START_RECOMMENDATIONS_REQUEST
 			} );
 			return request.then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: READER_START_RECOMMENDATIONS_REQUEST_SUCCESS,
 					data: assign( { _headers: { 'content-type': 'application/json' } }, sampleSuccessResponse )
 				} );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: READER_START_RECOMMENDATIONS_RECEIVE,
 					recommendations: [ { post_ID: 82, site_ID: 82798297 } ]
 				} );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: READER_SITE_UPDATE,
 					payload: [ sampleSuccessResponse.recommendations[0].meta.data.site ]
-				} );
-
-				expect( spy ).to.have.been.calledWith( {
-					type: READER_POSTS_RECEIVE,
-					posts: [ sampleSuccessResponse.recommendations[0].meta.data.post ]
 				} );
 			} ).catch( ( err ) => {
 				assert.fail( err, undefined, 'errback should not have been called' );
