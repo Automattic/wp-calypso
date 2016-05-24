@@ -3,31 +3,25 @@
 	0% {
 		opacity: 0;
 		transform: scale( 0.8 ) translateY( 0 ) translateX( 0 ) rotate( 0 );
-		//filter: blur( 10px );
 	}
-/*
-	40% {
-		//filter: blur( 0px );
-	}
-*/
 	70% {
 		opacity: 1;
 		transform: scale( 1 ) translateY( 30px ) translateX( 30px ) rotate( -20deg );
-		//filter: blur( 0px );
 	}
 	100% {
 		opacity: 0;
 		transform: scale( 0.8 ) translateY( 0 ) translateX( 0 ) rotate( 0 );
-		//filter: blur( 10px );
 	}
 }
 
 @keyframes focus {
 	0%, 100% {
-		filter: blur( 10px );
+		opacity: 0.1;
+		filter: blur( 1px );
 	}
 	70% {
-		filter: blur( 0px );
+		opacity: 0.2;
+		filter: blur( 4px );
 	}
 }
 
@@ -38,13 +32,11 @@
 		right: 0;
 		bottom: 0;
 	max-height: calc( 100vw - 30px );
-	opacity: 0.2;
-	filter: blur( 2px );
+	opacity: 0.1;
+	animation: focus 5s infinite ease-in-out;
 
 	@include breakpoint( ">660px" ) {
-		transform: scale( 1.3 );
 		left: 0;
-		//left: -120px;
 	}
 	
 	@include breakpoint( "<660px" ) {
@@ -54,13 +46,11 @@
 	}
 
 	@include breakpoint( ">960px" ) {
-		transform: scale( 1.8 );
-		top: 80px;
+		transform: scale( 1.2 );
 	}
 
 	@include breakpoint( ">1040px" ) {
-		transform: scale( 2.2 );
-		top: 180px;
+		transform: scale( 1.5 );
 	}
 
 	.gridicon {
@@ -70,15 +60,13 @@
 		width: auto;
 		opacity: 0;
 		transform: scale( 0.8 );
-		//filter: blur( 20px );
-		animation: floating 10s infinite ease-in-out; //focus 20s infinite linear,
+		animation: floating 10s infinite ease-in-out;
 	}
 	.gridicons-add {
 		top: 0px;
 		left: calc( 50% - 320px);
 		height: 150px;
 		width: 150px;
-		animation-delay: random(10) + s;
 	}
 	.gridicons-aside {
 		top: 150px;
@@ -130,7 +118,6 @@
 		height: 140px;
 		width: 140px;
 		transform: rotate( 12deg );
-		animation-delay: random(10) + s;
 	}
 	.gridicons-globe {
 		height: 100px;
@@ -166,7 +153,6 @@
 		width: 90px;
 		top: 380px;
 		left: calc(50% + 60px);
-		animation-delay: random(10) + s;
 	}
 	.gridicons-video {
 		top: 245px;
