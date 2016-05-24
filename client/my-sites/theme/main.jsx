@@ -8,7 +8,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
 
 /**
  * Internal dependencies
