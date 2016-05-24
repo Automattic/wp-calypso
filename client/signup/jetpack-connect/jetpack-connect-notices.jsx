@@ -19,7 +19,7 @@ export default React.createClass( {
 	getNoticeValues( url ) {
 		let noticeValues = {
 			icon: 'notice',
-			status: 'is-warning',
+			status: 'is-error',
 			text: this.translate( 'That\'s not a valid url.' ),
 			showDismiss: false
 		};
