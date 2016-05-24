@@ -35,6 +35,9 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 
+import { isValidStateWithSchema } from 'state/utils';
+import { jetpackConnectSessionsSchema } from './schema';
+
 const defaultAuthorizeState = {
 	queryObject: {},
 	isAuthorizing: false,
@@ -42,17 +45,24 @@ const defaultAuthorizeState = {
 	authorizeError: false
 };
 
-function buildNoProtocolUrlObj( url ) {
+function buildNoProtocolUrlObj( url, isInstall ) {
 	const noProtocolUrl = url.replace( /.*?:\/\//g, '' );
-	return { [ noProtocolUrl ]: ( new Date() ).getTime() };
+	const sessionValue = {
+		timestamp: Date.now(),
+		isInstall: !! isInstall
+	};
+	return { [ noProtocolUrl ]: sessionValue };
 }
 
 export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_CHECK_URL:
-			const noProtocolUrl = action.url.replace( /.*?:\/\//g, '' );
-			return Object.assign( {}, state, { [ noProtocolUrl ]: Date.now() } );
+			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url, action.isInstall ) );
 		case DESERIALIZE:
+			if ( isValidStateWithSchema( state, jetpackConnectSessionsSchema ) ) {
+				return state;
+			}
+			return {};
 		case SERIALIZE:
 			return state;
 	}
