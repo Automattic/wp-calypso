@@ -180,10 +180,18 @@
 		position: relative;
 		top: 0;
 		width: 100%;
+		height: 75vw; // force proportions
+		overflow: hidden;
 		box-shadow: none;
 
 		&:before {
-			background: linear-gradient( to bottom, transparentize( white, 0.5 ), transparent );
+			content: "";
+			display: block;
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			height: 30%;
+			background: linear-gradient( to bottom, transparentize( $gray-light, 1.0 ) 0%, transparentize( $gray-light, 0.5 ) 40%, $gray-light 93% );
 		}
 	}
 }
