@@ -63,6 +63,7 @@
 		"press-this": false,
 		"reader": true,
 		"reader/full-errors": false,
+		"resume-editing": true,
 		"rubberband-scroll-disable": true,
 		"settings/security/monitor": true,
 		"upgrades/checkout": true,
