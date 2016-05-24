@@ -19,7 +19,7 @@ import {
  * @param  {Object} query    Query Options
  * @return {Object}          Action object
  */
-export function receiveTerms( siteId, taxonomy, terms, query = {} ) {
+export function receiveTerms( siteId, taxonomy, terms, query ) {
 	return {
 		type: TERMS_RECEIVE,
 		siteId,
