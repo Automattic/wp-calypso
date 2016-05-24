@@ -2,8 +2,7 @@
  * External dependencies
  */
 const React = require( 'react' );
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+
 /**
  * Internal dependencies
  */
@@ -13,21 +12,14 @@ const Gravatar = require( 'components/gravatar' ),
 	PostActions = require( 'lib/posts/actions' ),
 	touchDetect = require( 'lib/touch-detect' ),
 	sites = require( 'lib/sites-list' )(),
-	config = require( 'config' ),
 	stats = require( 'lib/posts/stats' );
-import { setAuthor } from 'state/ui/editor/post/actions';
 
-const EditorAuthor = React.createClass( {
+export default React.createClass( {
+	displayName: 'EditorAuthor',
+
 	propTypes: {
 		post: React.PropTypes.object,
-		isNew: React.PropTypes.bool,
-		setAuthor: React.PropTypes.func,
-	},
-
-	getDefaultProps: function() {
-		return {
-			setAuthor: () => {}
-		};
+		isNew: React.PropTypes.bool
 	},
 
 	render: function() {
@@ -70,7 +62,6 @@ const EditorAuthor = React.createClass( {
 		stats.recordEvent( 'Changed Author' );
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( { author: author } );
-		this.props.setAuthor( author );
 	},
 
 	userCanAssignAuthor: function() {
@@ -87,10 +78,3 @@ const EditorAuthor = React.createClass( {
 	},
 
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setAuthor }, dispatch ),
-	null,
-	{ pure: false }
-)( EditorAuthor );

@@ -4,8 +4,6 @@
 const noop = require( 'lodash/noop' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' );
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -23,10 +21,10 @@ const Card = require( 'components/card' ),
 	Tooltip = require( 'components/tooltip' ),
 	PostListFetcher = require( 'components/post-list-fetcher' ),
 	stats = require( 'lib/posts/stats' );
-import { setDate } from 'state/ui/editor/post/actions';
 
-const EditorGroundControl = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorGroundControl',
+
 	propTypes: {
 		hasContent: React.PropTypes.bool,
 		isDirty: React.PropTypes.bool,
@@ -38,7 +36,6 @@ const EditorGroundControl = React.createClass( {
 		onPublish: React.PropTypes.func,
 		onSaveDraft: React.PropTypes.func,
 		post: React.PropTypes.object,
-		setDate: React.PropTypes.func,
 		savedPost: React.PropTypes.object,
 		site: React.PropTypes.object,
 		type: React.PropTypes.string
@@ -58,7 +55,6 @@ const EditorGroundControl = React.createClass( {
 			onSaveDraft: noop,
 			post: null,
 			savedPost: null,
-			setDate: () => {},
 			site: {}
 		};
 	},
@@ -76,7 +72,6 @@ const EditorGroundControl = React.createClass( {
 	setPostDate: function( date ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( { date: date ? date.format() : null } );
-		this.props.setDate( date );
 	},
 
 	setCurrentMonth: function( date ) {
@@ -408,10 +403,3 @@ const EditorGroundControl = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setDate }, dispatch ),
-	null,
-	{ pure: false }
-)( EditorGroundControl );
