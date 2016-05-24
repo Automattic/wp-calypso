@@ -36,7 +36,7 @@ const PostEditorSlug = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			setSlug: () => {},
+			setSlug: noop,
 			onEscEnter: noop,
 			isEditable: true
 		};

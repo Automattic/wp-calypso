@@ -10,6 +10,12 @@
 	z-index: z-index( 'root', '.is-group-editor::before' );
 }
 
+@include breakpoint( "<660px" ) {
+	.is-group-editor.focus-sidebar::before {
+		background-color: lighten( $gray, 30% );
+	}
+}
+
 .is-group-editor .wp-content {
 	padding: 0;
 }
@@ -31,8 +37,14 @@
 	margin: 0;
 	backface-visibility: hidden;
 	perspective: 1000;
+	display: none;
+
+	.focus-content & {
+		display: block;
+	}
 
 	@include breakpoint( ">660px" ) {
+		display: block;
 		backface-visibility: visible;
 		perspective: none;
 	}
@@ -47,10 +59,6 @@
 	@include breakpoint( ">960px" ) {
 		margin-left: ( $sidebar-width-max + 1 );
 	}
-}
-
-.post-editor__sidebar {
-	@extend .sidebar;
 }
 
 .editor__header,
@@ -135,14 +143,6 @@
 		right: 16px;
 	width: 160px;
 	z-index: z-index( 'root', '.editor__switch-mode' );
-
-	.focus-sidebar & {
-		z-index: auto;
-
-		@include breakpoint( ">660px" ) {
-			z-index: z-index( 'root', '.editor__switch-mode' );
-		}
-	}
 
 	@include breakpoint( ">960px" ) {
 		right: 32px;

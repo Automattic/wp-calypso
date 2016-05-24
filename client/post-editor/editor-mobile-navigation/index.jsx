@@ -1,19 +1,42 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React, { PropTypes } from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-const Site = require( 'my-sites/site' ),
-	Gridicon = require( 'components/gridicon' ),
-	layoutFocus = require( 'lib/layout-focus' );
+import Gridicon from 'components/gridicon';
+import EditorPublishButton from 'post-editor/editor-publish-button';
+import Button from 'components/button';
+import observe from 'lib/mixins/data-observe';
 
-const EditorMobileNavigation = React.createClass( {
+export default React.createClass( {
+	displayName: 'EditorMobileNavigation',
 
-	toggleSidebar: function() {
-		layoutFocus.set( 'sidebar' );
+	mixins: [ observe( 'layoutFocus' ) ],
+
+	propTypes: {
+		site: PropTypes.object,
+		post: PropTypes.object,
+		savedPost: PropTypes.object,
+		onSave: PropTypes.func,
+		onPublish: PropTypes.func,
+		tabIndex: PropTypes.number,
+		isPublishing: PropTypes.bool,
+		isSaveBlocked: PropTypes.bool,
+		hasContent: PropTypes.bool,
+		onClose: PropTypes.func,
+		layoutFocus: PropTypes.object
+	},
+
+	openSidebar: function() {
+		this.props.layoutFocus.set( 'sidebar' );
+	},
+
+	closeSidebar: function() {
+		this.props.layoutFocus.set( 'content' );
 	},
 
 	render: function() {
@@ -23,17 +46,40 @@ const EditorMobileNavigation = React.createClass( {
 
 		return (
 			<div className="editor-mobile-navigation">
-				<Site indicator={ false } site={ this.props.site } />
-				<button className="button editor-mobile-navigation__toggle" onClick={ this.toggleSidebar }>
-					{ this.translate( 'Actions' ) }
-				</button>
-				<Gridicon
-					icon="cross"
-					onClick={ this.props.onClose }
-					className="editor-mobile-navigation__close" />
+				<div className="editor-mobile-navigation__actions">
+					<Button borderless onClick={ this.props.onClose }>
+						<Gridicon
+							icon="chevron-left"
+							className="editor-mobile-navigation__icon" />
+					</Button>
+					<div className="editor-mobile-navigation__tabs">
+						<Button borderless onClick={ this.closeSidebar }>
+							<Gridicon
+								icon="pencil"
+								className={ classnames( 'editor-mobile-navigation__icon', {
+									'is-selected': this.props.layoutFocus.getCurrent() === 'content'
+								} ) } />
+						</Button>
+						<Button borderless onClick={ this.openSidebar }>
+							<Gridicon
+								icon="cog"
+								className={ classnames( 'editor-mobile-navigation__icon', {
+									'is-selected': this.props.layoutFocus.getCurrent() === 'sidebar'
+								} ) } />
+						</Button>
+					</div>
+				</div>
+				<EditorPublishButton
+					site={ this.props.site }
+					post={ this.props.post }
+					savedPost={ this.props.savedPost }
+					onSave={ this.props.onSave }
+					onPublish={ this.props.onPublish }
+					isPublishing={ this.props.isPublishing }
+					isSaveBlocked={ this.props.isSaveBlocked }
+					hasContent={ this.props.hasContent }
+				/>
 			</div>
 		);
 	}
 } );
-
-module.exports = EditorMobileNavigation;

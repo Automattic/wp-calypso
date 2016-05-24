@@ -18,9 +18,7 @@ const actions = require( 'lib/posts/actions' ),
 	route = require( 'lib/route' ),
 	PostEditStore = require( 'lib/posts/post-edit-store' ),
 	EditorActionBar = require( 'post-editor/editor-action-bar' ),
-	EditorDrawer = require( 'post-editor/editor-drawer' ),
 	FeaturedImage = require( 'post-editor/editor-featured-image' ),
-	EditorGroundControl = require( 'post-editor/editor-ground-control' ),
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
 	NoticeAction = require( 'components/notice/notice-action' ),
@@ -34,7 +32,6 @@ const actions = require( 'lib/posts/actions' ),
 	layoutFocus = require( 'lib/layout-focus' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	DraftList = require( 'my-sites/drafts/draft-list' ),
 	PreferencesActions = require( 'lib/preferences/actions' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
@@ -59,7 +56,7 @@ import {
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
-import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
+import EditorSidebar from 'post-editor/editor-sidebar';
 
 const messages = {
 	post: {
@@ -327,8 +324,18 @@ const PostEditor = React.createClass( {
 		return (
 			<div className="post-editor">
 				<div className="post-editor__inner">
+					<EditorMobileNavigation
+						site={ site }
+						post={ this.state.post }
+						savedPost={ this.state.savedPost }
+						onSave={ this.onSave }
+						onPublish={ this.onPublish }
+						isPublishing={ this.state.isPublishing }
+						isSaveBlocked={ this.state.isSaveBlocked }
+						hasContent={ this.state.hasContent }
+						onClose={ this.onClose }
+						layoutFocus={ layoutFocus }/>
 					<div className="post-editor__content">
-						<EditorMobileNavigation site={ site } onClose={ this.onClose } />
 						<div className="editor">
 							<EditorActionBar
 								isNew={ this.state.isNew }
@@ -386,53 +393,37 @@ const PostEditor = React.createClass( {
 								onTextEditorChange={ this.onEditorContentChange } />
 						</div>
 						<EditorWordCount />
-						{ this.iframePreviewEnabled()
-							? <EditorPreview
-								showPreview={ this.state.showPreview }
-								onClose={ this.onPreviewClose }
-								isSaving={ this.state.isSaving || this.state.isAutosaving }
-								isLoading={ this.state.isLoading }
-								previewUrl={ this.state.previewUrl }
-							/>
-							: null }
 					</div>
-					<div className="post-editor__sidebar">
-						<EditorSidebarHeader
-							allPostsUrl={ this.getAllPostsUrl() }
-							toggleSidebar={ this.toggleSidebar } />
-						{ this.props.showDrafts
-							? <DraftList { ...this.props }
-								onTitleClick={ this.toggleSidebar }
-								showAllActionsMenu={ false }
-								siteID={ site ? site.ID : null }
-								selectedId={ this.state.post && this.state.post.ID || null }
-							/>
-						: <div>
-							<EditorGroundControl
-								savedPost={ this.state.savedPost }
-								post={ this.state.post }
-								isNew={ this.state.isNew }
-								isDirty={ this.state.isDirty }
-								isSaveBlocked={ this.state.isSaveBlocked }
-								hasContent={ this.state.hasContent }
-								isSaving={ this.state.isSaving }
-								isPublishing={ this.state.isPublishing }
-								onSave={ this.onSave }
-								onPreview={ this.onPreview }
-								onPublish={ this.onPublish }
-								onTrashingPost={ this.onTrashingPost }
-								site={ site }
-								type={ this.props.type }
-							/>
-							<EditorDrawer
-								type={ this.props.type }
-								site={ site }
-								post={ this.state.post }
-								isNew={ this.state.isNew }
-							/>
+					<EditorSidebar
+						allPostsUrl={ this.getAllPostsUrl() }
+						sites={ this.props.sites }
+						onTitleClick={ this.toggleSidebar }
+						savedPost={ this.state.savedPost }
+						post={ this.state.post }
+						isNew={ this.state.isNew }
+						isDirty={ this.state.isDirty }
+						isSaveBlocked={ this.state.isSaveBlocked }
+						hasContent={ this.state.hasContent }
+						isSaving={ this.state.isSaving }
+						isPublishing={ this.state.isPublishing }
+						onSave={ this.onSave }
+						onPreview={ this.onPreview }
+						onPublish={ this.onPublish }
+						onTrashingPost={ this.onTrashingPost }
+						site={ site }
+						type={ this.props.type }
+						showDrafts={ this.props.showDrafts }
+						/>
+					{ this.iframePreviewEnabled() ?
+						<EditorPreview
+							showPreview={ this.state.showPreview }
+							onClose={ this.onPreviewClose }
+							isSaving={ this.state.isSaving || this.state.isAutosaving }
+							isLoading={ this.state.isLoading }
+							previewUrl={ this.state.previewUrl }
 
-						</div> }
-					</div>
+						/>
+						: null }
 				</div>
 				{ isTrashed
 					? <RestorePostDialog
@@ -716,14 +707,10 @@ const PostEditor = React.createClass( {
 			// to avoid a weird UX we clear the iframe when (auto)saving
 			// so we need to delay opening it a bit to avoid flickering
 			setTimeout( function() {
-				this.setState( { showPreview: true }, function() {
-					layoutFocus.set( 'content' );
-				} );
+				this.setState({ showPreview: true });
 			}.bind( this ), 150 );
 		} else {
-			this.setState( { showPreview: true }, function() {
-				layoutFocus.set( 'content' );
-			} );
+			this.setState({ showPreview: true });
 		}
 	},
 

@@ -1,12 +1,27 @@
+.post-editor__sidebar {
+	@extend .sidebar;
+
+	@include breakpoint( "<660px" ) {
+		position: relative;
+		  top: 0;
+		  left: 0;
+		display: none;
+
+		.focus-sidebar & {
+			display: block;
+			transform: none;
+		}
+	}
+}
+
 .editor-sidebar__header {
-	display: flex;
-	flex-shrink: 0;
-	justify-content: flex-end;
-	align-items: center;
-	padding: 8px;
+	display: none;
 
 	@include breakpoint( ">660px" ) {
+		display: flex;
 		justify-content: space-between;
+		align-items: center;
+		padding: 8px;
 	}
 }
 
