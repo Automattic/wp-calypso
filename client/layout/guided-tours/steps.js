@@ -118,7 +118,6 @@ class ActionStep extends Component {
 		if ( onNext && target.addEventListener ) {
 			target.addEventListener( 'click', onNext );
 		}
-		target && target.classList.add( 'guided-tours__overlay' );
 	}
 
 	removeTargetListener() {
@@ -128,7 +127,6 @@ class ActionStep extends Component {
 		if ( onNext && target.removeEventListener ) {
 			target.removeEventListener( 'click', onNext );
 		}
-		target && target.classList.remove( 'guided-tours__overlay' );
 	}
 
 	render() {
