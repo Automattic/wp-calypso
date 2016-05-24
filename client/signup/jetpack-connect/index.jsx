@@ -171,7 +171,6 @@ const JetpackConnectMain = React.createClass( {
 
 	clearUrl() {
 		this.dismissUrl();
-
 	},
 
 	handleOnClickTos() {
@@ -320,8 +319,10 @@ const JetpackConnectMain = React.createClass( {
 							text={ this.translate( 'Finally, just click the green "Connect to WordPress.com" button to finish the process.' ) }
 							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
 					</div>
-					{ this.renderBackButton() }
 					<Button onClick={ this.activateJetpack } primary>{ this.translate( 'Activate Jetpack' ) }</Button>
+					<div className="jetpack-connect__navigation">
+						{ this.renderBackButton() }
+					</div>
 				</div>
 			</Main>
 		);
