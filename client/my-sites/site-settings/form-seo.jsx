@@ -369,9 +369,9 @@ export const SeoForm = React.createClass( {
 									onChange={ event => this.handleVerificationCodeChange( event, 'yandex' ) } />
 							</FormFieldset>
 							{ showPasteError &&
-								<div className="verification-code-error">
-									{ this.translate( 'Verification tag should be copied and pasted in.' ) }
-								</div>
+								<FormInputValidation
+									isError={ true }
+									text={ this.translate( 'Verification tag should be copied and pasted in.' ) } />
 							}
 
 						</FormFieldset>
