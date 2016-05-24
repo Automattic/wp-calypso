@@ -1,4 +1,7 @@
 .editor-media-modal-detail .header-cake.card {
+	padding-top: 0;
+	padding-bottom: 0;
+
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 0;
 	}
