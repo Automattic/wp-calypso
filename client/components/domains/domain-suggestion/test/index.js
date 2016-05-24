@@ -2,49 +2,56 @@
  * External Dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
-import ReactDom from 'react-dom';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import { shallow } from 'enzyme';
+import noop from 'lodash/noop';
+
 /**
  * Internal Dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import useI18n from 'test/helpers/use-i18n';
 
-xdescribe( 'Domain Suggestion', function() {
-	let DomainSuggestion,
-		DomainProductPrice;
+describe( 'Domain Suggestion', function() {
+
+	let DomainSuggestion;
+
 	useFakeDom();
-	useMockery( mockery => {
-		mockery.registerMock( 'components/plans/premium-popover', () => {} );
+	useMockery( ( mockery ) => {
+		mockery.registerMock( 'components/plans/premium-popover', noop );
 	} );
+	useI18n();
 
-	beforeEach( function() {
+	before( () => {
 		DomainSuggestion = require( 'components/domains/domain-suggestion' );
-		DomainProductPrice = require( 'components/domains/domain-product-price' );
-		DomainSuggestion.prototype.translate = sinon.stub();
-		DomainProductPrice.prototype.translate = sinon.stub();
 	} );
 
-	afterEach( function() {
-		delete DomainSuggestion.prototype.translate;
-		delete DomainProductPrice.prototype.translate;
+	describe( 'has attributes', () => {
+		it( 'should have data-domain attribute for integration testing', () => {
+			const domainSuggestion = shallow( <DomainSuggestion
+				domain="example.com" isAdded={ false }/> );
+			const domainSuggestionButton = domainSuggestion.find( '.domain-suggestion__select-button[data-domain]' );
+			expect( domainSuggestionButton.length ).to.equal( 1 );
+			expect( domainSuggestionButton.props()[ 'data-domain' ] ).to.equal( 'example.com' )
+		} );
 	} );
 
 	describe( 'added domain', function() {
 		it( 'should show a checkbox when in cart', function() {
-			var suggestionComponent = TestUtils.renderIntoDocument( <DomainSuggestion isAdded={ true } /> );
-
-			expect( suggestionComponent.refs.checkmark ).to.exist;
+			const domainSuggestion = shallow( <DomainSuggestion isAdded={ true } /> );
+			const domainSuggestionButton = domainSuggestion.find( '.domain-suggestion__select-button' );
+			expect( domainSuggestionButton.children().props().icon ).to.equal( 'checkmark' );
 		} );
 
 		it( 'should show the button label when not in cart', function() {
-			var buttonLabel = 'Hello',
-				suggestionComponent = TestUtils.renderIntoDocument(
+			const buttonLabel = 'Hello';
+			const domainSuggestion = shallow(
 					<DomainSuggestion isAdded={ false } buttonLabel={ buttonLabel } />
 				);
-			expect( ReactDom.findDOMNode( suggestionComponent.refs.button ).textContent ).to.equal( buttonLabel );
+			const domainSuggestionButton = domainSuggestion.find( '.domain-suggestion__select-button' );
+			expect( domainSuggestionButton.text() ).to.equal( buttonLabel );
 		} );
 	} );
+
 } );
