@@ -9,6 +9,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Card from 'components/card';
+import Button from 'components/button';
 import Dialog from 'components/dialog';
 import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
@@ -119,7 +120,7 @@ export default  React.createClass( {
 						<div>{ this.translate(
 							'{{instructionsButton}}View Instructions to Enable{{/instructionsButton}}', {
 								components: {
-									instructionsButton: <button className="button is-link" onClick={ this._onShowDialog } />
+									instructionsButton: <Button className={ 'is-link' } onClick={ this._onShowDialog } />
 								} }
 						) }</div>
 						{ blockedInstruction }
@@ -141,7 +142,7 @@ export default  React.createClass( {
 
 					<p className="push-notification__settings-description">{ this.translate( 'Get notifications for new comments, likes, and more instantly, even when your browser is closed.' ) }</p>
 
-					<button className={ classNames( 'button', 'push-notification__settings-button', buttonClass ) } disabled={ buttonDisabled } onClick={ this.clickHandler }>{ buttonText }</button>
+					<Button className={ classNames( 'push-notification__settings-button', buttonClass ) } disabled={ buttonDisabled } onClick={ this.clickHandler } >{ buttonText }</Button>
 
 					{ deniedText }
 				</Card>

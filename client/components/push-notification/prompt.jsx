@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Notice from 'components/notice';
+import Button from 'components/button';
 import observe from 'lib/mixins/data-observe';
 
 export default React.createClass( {
@@ -53,7 +54,7 @@ export default React.createClass( {
 					{ this.translate(
 						'{{enableButton}}Enable Browser Notifications{{/enableButton}}', {
 							components: {
-								enableButton: <button className="button push-notification__prompt-enable" onClick={ this.subscribe } />
+								enableButton: <Button className={ 'push-notification__prompt-enable' } onClick={ this.subscribe } />
 							} }
 					) }
 				</p>
