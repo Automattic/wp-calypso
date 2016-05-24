@@ -8,14 +8,20 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
+import Button from 'components/button';
 import Card from 'components/card';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import Emojify from 'components/emojify';
 import SectionHeader from 'components/section-header';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostStats from 'components/data/query-post-stats';
-import { getSitePostsForQuery } from 'state/posts/selectors';
+import {
+	isRequestingSitePostsForQuery,
+	getSitePostsForQuery
+} from 'state/posts/selectors';
 import { getPostStat } from 'state/stats/posts/selectors';
 import { decodeEntities } from 'lib/formatting';
 
@@ -32,7 +38,7 @@ const StatsPostPerformance = React.createClass( {
 		siteID: PropTypes.number,
 		query: PropTypes.object,
 		post: PropTypes.object,
-		loading: PropTypes.bool
+		isRequesting: PropTypes.bool
 	},
 
 	buildTabs( summaryUrl ) {
@@ -69,15 +75,18 @@ const StatsPostPerformance = React.createClass( {
 		} );
 	},
 
-	render() {
-		const { site, query, post, loading } = this.props;
-		const postTime = post ? this.moment( post.date ) : this.moment();
-		const cardClass = classNames( 'stats-module', 'stats__latest-post-summary', 'is-site-overview', {
-			'is-loading': loading,
-			'is-hidden': ! loading && ! post
-		} );
+	recordClickOnNewPostButton() {
+		analytics.tracks.recordEvent( 'calypso_stats_new_post_click' );
+	},
 
-		const summaryUrl = post ? '/stats/post/' + post.ID + '/' + this.props.site.slug : '#';
+	render() {
+		const { site, query, post, isRequesting } = this.props;
+		const loading = ! site || isRequesting;
+		const postTime = post ? this.moment( post.date ) : this.moment();
+		const cardClass = classNames( 'stats-module', 'stats-post-performance', 'is-site-overview' );
+
+		const newPostUrl = site ? '/post/' + site.slug : '/post';
+		const summaryUrl = post ? '/stats/post/' + post.ID + '/' + this.props.site.slug : undefined;
 		let postTitle;
 
 		if ( post ) {
@@ -94,9 +103,10 @@ const StatsPostPerformance = React.createClass( {
 				{ site && post ? <QueryPostStats siteId= { site.ID } postId={ post.ID } stat="views" /> : null }
 				<SectionHeader label={ this.translate( 'Latest Post Summary' ) } href={ summaryUrl } />
 				<Card className={ cardClass }>
-					<div className="module-content-text">
-						{ post
-							? (
+					<StatsModulePlaceholder isLoading={ loading && ! post } />
+					{ post
+						? (
+							<div className="module-content-text">
 								<p>
 									{ this.translate(
 										'It\'s been %(timeLapsed)s since {{href}}{{postTitle/}}{{/href}} was published. Here\'s how the post has performed so far\u2026',
@@ -112,12 +122,31 @@ const StatsPostPerformance = React.createClass( {
 										} )
 									}
 								</p>
-							) : null
-						}
-					</div>
-					<StatsTabs>
-						{ this.buildTabs( summaryUrl ) }
-					</StatsTabs>
+							</div>
+						) : null
+					}
+					{ ! loading && ! post
+						? (
+							<div className="module-content-text is-empty-message is-error">
+								<p className="stats-post-performance__no-posts-message">
+									{ this.translate( 'You haven\'t published any posts yet.' ) }
+								</p>
+								<div className="stats-post-performance__start-post">
+									<Button primary href={ newPostUrl } onClick={ this.recordClickOnNewPostButton }>
+										{ this.translate( 'Start a Post' ) }
+									</Button>
+								</div>
+							</div>
+						) : null
+					}
+					{ post
+						? (
+							<StatsTabs>
+								{ this.buildTabs( summaryUrl ) }
+							</StatsTabs>
+						)
+						: null
+					}
 				</Card>
 			</div>
 		);
@@ -130,11 +159,12 @@ export default connect( ( state, ownProps ) => {
 	const posts = site ? getSitePostsForQuery( state, site.ID, query ) : null;
 	const post = posts && posts.length ? posts[ 0 ] : null;
 	const viewCount = post && site ? getPostStat( state, 'views', site.ID, post.ID ) : null;
+	const isRequesting = isRequestingSitePostsForQuery( state, site.ID, query );
 
 	return {
 		viewCount,
 		query,
 		post,
-		loading: ! site || ! posts || viewCount === null
+		isRequesting
 	};
 } )( StatsPostPerformance );
