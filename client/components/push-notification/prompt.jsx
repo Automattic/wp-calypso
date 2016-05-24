@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Notice = require( 'components/notice' ),
-	observe = require( 'lib/mixins/data-observe' );
+import Notice from 'components/notice';
+import observe from 'lib/mixins/data-observe';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'PushNotificationPrompt',
 
 	mixins: [ observe( 'pushNotifications', 'user' ) ],
@@ -44,7 +44,7 @@ module.exports = React.createClass( {
 	},
 
 	pushUnsubscribedNotice: function() {
-		var noticeText = (
+		const noticeText = (
 			<div>
 				<p>
 					<strong>{ this.translate( 'Get notifications on your desktop!' ) }</strong> { this.translate( 'See your likes, comments, and more instantly—even when you don\'t have WordPress.com open in your browser.' ) }
@@ -64,7 +64,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var pushNotifications = this.props.pushNotifications,
+		const pushNotifications = this.props.pushNotifications,
 			user = this.props.user.get();
 
 		if ( ! user || ! user.email_verified || this.state.dismissed || this.state.subscribed ) {

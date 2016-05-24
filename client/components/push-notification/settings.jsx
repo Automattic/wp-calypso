@@ -16,7 +16,7 @@ import observe from 'lib/mixins/data-observe';
 
 const debug = debugFactory( 'calypso:push-notification-settings' );
 
-module.exports = React.createClass( {
+export default  React.createClass( {
 	displayName: 'PushNotificationSettings',
 
 	mixins: [ observe( 'pushNotifications' ) ],
