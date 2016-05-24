@@ -171,7 +171,6 @@ const JetpackConnectMain = React.createClass( {
 
 	clearUrl() {
 		this.dismissUrl();
-
 	},
 
 	handleOnClickTos() {
