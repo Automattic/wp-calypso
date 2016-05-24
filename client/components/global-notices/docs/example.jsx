@@ -1,42 +1,72 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
+import FormCheckbox from 'components/forms/form-checkbox';
 import notices from 'notices';
+import { createNotice } from 'state/notices/actions';
 
-function showSuccessNotice() {
-	notices.success( 'This is a global success notice' );
+class GlobalNotices extends Component {
+	constructor() {
+		super( ...arguments );
+
+		this.state = { useState: true };
+		this.toggleUseState = this.toggleUseState.bind( this );
+		this.showSuccessNotice = this.showNotice.bind( this, 'success' );
+		this.showErrorNotice = this.showNotice.bind( this, 'error' );
+		this.showInfoNotice = this.showNotice.bind( this, 'info' );
+		this.showWarningNotice = this.showNotice.bind( this, 'warning' );
+	}
+
+	toggleUseState( event ) {
+		this.setState( {
+			useState: event.target.checked
+		} );
+	}
+
+	showNotice( type ) {
+		const message = `This is a ${ type } notice`;
+		if ( this.state.useState ) {
+			this.props.createNotice( `is-${ type }`, message );
+		} else {
+			notices[ type ]( message );
+		}
+	}
+
+	render() {
+		return (
+			<div className="design-assets__group">
+				<h2>
+					<a href="/devdocs/design/global-notices">Global Notices</a>
+				</h2>
+				<label>
+					<FormCheckbox
+						onChange={ this.toggleUseState }
+						checked={ this.state.useState } />
+					Use global application state
+				</label>
+				<ButtonGroup>
+					<Button onClick={ this.showSuccessNotice }>Show success notice</Button>
+					<Button onClick={ this.showErrorNotice }>Show error notice</Button>
+					<Button onClick={ this.showInfoNotice }>Show info notice</Button>
+					<Button onClick={ this.showWarningNotice }>Show warning notice</Button>
+				</ButtonGroup>
+			</div>
+		);
+	}
 }
 
-function showErrorNotice() {
-	notices.error( 'This is a global error notice' );
-}
+GlobalNotices.propTypes = {
+	createNotice: PropTypes.func
+};
 
-function showInfoNotice() {
-	notices.info( 'This is a global info notice' );
-}
-
-function showWarningNotice() {
-	notices.warning( 'This is a global warning notice' );
-}
-
-const GlobalNotices = () => (
-	<div>
-		<h2>Global Notices</h2>
-		<ButtonGroup>
-			<Button onClick={ showSuccessNotice }>Show success notice</Button>
-			<Button onClick={ showErrorNotice }>Show error notice</Button>
-			<Button onClick={ showInfoNotice }>Show info notice</Button>
-			<Button onClick={ showWarningNotice }>Show warning notice</Button>
-		</ButtonGroup>
-	</div>
-);
-GlobalNotices.displayName = 'GlobalNotices';
-
-module.exports = GlobalNotices;
+const ConnectedGlobalNotices = connect( null, { createNotice } )( GlobalNotices );
+ConnectedGlobalNotices.displayName = 'GlobalNotices';
+export default ConnectedGlobalNotices;
