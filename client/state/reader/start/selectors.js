@@ -1,6 +1,7 @@
-// External dependencies
-import map from 'lodash/map';
-import find from 'lodash/find';
+/**
+ * Internal dependencies
+ */
+import createSelector from 'lib/create-selector';
 
 /**
  * Returns true if currently requesting recommendations.
@@ -20,9 +21,7 @@ export function isRequestingRecommendations( state ) {
  * @return {Object} Recommendation
  */
 export function getRecommendationById( state, recommendationId ) {
-	return find( state.reader.start.items, ( rec ) => {
-		return rec.ID === recommendationId;
-	} );
+	return state.reader.start.items[ recommendationId ];
 }
 
 /**
@@ -41,9 +40,10 @@ export function getRecommendations( state ) {
  * @param  {Object}  state  Global state tree
  * @return {Array} Recommendations IDs
  */
-export function getRecommendationIds( state ) {
-	return map( state.reader.start.items, 'ID' );
-}
+export const getRecommendationIds = createSelector(
+	( state ) => Object.keys( state.reader.start.items ).map( Number ),
+	( state ) => [ state.reader.start.items ]
+);
 
 /**
  * Which recommendations has the user already interacted with?

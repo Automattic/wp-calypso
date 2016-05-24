@@ -28,7 +28,7 @@ import { isValidStateWithSchema } from 'state/utils';
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_START_RECOMMENDATIONS_RECEIVE:
-			return Object.assign( {}, state, keyBy( action.recommendations, 'recommended_site_ID' ) );
+			return Object.assign( {}, state, keyBy( action.recommendations, 'ID' ) );
 		case SERIALIZE:
 			return state;
 		case DESERIALIZE:

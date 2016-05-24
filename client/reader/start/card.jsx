@@ -20,7 +20,7 @@ const StartCard = ( { recommendation } ) => {
 		<Card className="reader-start-card">
 			<div className="reader-start-card__hero"></div>
 			<StartCardHeader siteId={ siteId } />
-			{ postId ? <StartPostPreview siteId={ siteId } postId={ postId } /> : null }
+			{ postId && <StartPostPreview siteId={ siteId } postId={ postId } /> }
 			<StartCardFooter siteId={ siteId } />
 		</Card>
 	);
