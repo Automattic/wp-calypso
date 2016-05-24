@@ -3,27 +3,33 @@
 
 	.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu {
 		margin: 0;
-		
+
 		&:hover .mce-open i.mce-caret,
 		&:focus .mce-open i.mce-caret {
 			color: lighten( $gray, 10% );
 		}
-		
+
 		&:hover .gridicons-add-image,
 		&:focus .gridicons-add-image {
 			fill: lighten( $gray, 10% );
 		}
-		
+
 		.mce-open:hover i.mce-caret,
 		.mce-open:focus i.mce-caret {
 			color: $gray-dark;
 		}
-		
+
 		.gridicons-add-image:hover,
 		.gridicons-add-image:focus {
 			fill: $gray-dark;
 		}
 	}
+}
+
+.post-editor .mce-toolbar .mce-btn.mce-insert-menu .gridicon,
+.wpcom-insert-menu__menu-icon.gridicon {
+	height: 24px;
+	width: 24px;
 }
 
 .mce-toolbar .mce-btn.mce-insert-menu button:first-child {
