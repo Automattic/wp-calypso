@@ -312,8 +312,8 @@ export default React.createClass( {
 
 		icons = {
 			password: 'lock',
-			private: 'not-visible',
-			public: 'visible'
+			'private': 'not-visible',
+			'public': 'visible'
 		};
 
 		visibility = this.state.visibility;
@@ -367,9 +367,9 @@ export default React.createClass( {
 								/>
 								<span>
 									{
-										this.props.isPrivateSite ?
-										this.translate( 'Visible for members of the site', { context: 'Editor: Radio label to set post visibility' } ) :
-										this.translate( 'Public', { context: 'Editor: Radio label to set post visible to public' } )
+										this.props.isPrivateSite
+										? this.translate( 'Visible for members of the site', { context: 'Editor: Radio label to set post visibility' } )
+										: this.translate( 'Public', { context: 'Editor: Radio label to set post visible to public' } )
 									}
 								</span>
 							</FormLabel>
