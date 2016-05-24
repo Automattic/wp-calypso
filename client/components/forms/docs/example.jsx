@@ -220,7 +220,7 @@ var FormFields = React.createClass( {
 						<FormLabel>Form Phone Input</FormLabel>
 						<FormPhoneInput
 							initialCountryCode="US"
-							initialPhoneNumber="877-273-3049"
+							initialPhoneNumber="8772733049"
 							countriesList={ countriesList }
 							/>
 					</FormFieldset>
