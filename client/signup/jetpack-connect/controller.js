@@ -54,7 +54,7 @@ const jetpackConnectFirstStep = ( context, isInstall ) => {
 			context: context,
 			isInstall: isInstall,
 			userModule: userModule,
-			locale: context.params.lang
+			locale: context.params.locale
 		} ),
 		document.getElementById( 'primary' ),
 		context.store
@@ -131,7 +131,7 @@ export default {
 		renderWithReduxStore(
 			React.createElement( jetpackSSOForm, {
 				path: context.path,
-				locale: context.params.lang,
+				locale: context.params.locale,
 				userModule: userModule
 			} ),
 			document.getElementById( 'primary' ),
