@@ -249,7 +249,7 @@ const LoggedInForm = React.createClass( {
 		}
 
 		if ( authorizeSuccess ) {
-			return this.translate( 'Searching Available Upgrades' );
+			return this.translate( 'Finishing up' );
 		}
 
 		if ( isAuthorizing ) {
