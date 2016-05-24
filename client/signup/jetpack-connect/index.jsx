@@ -171,7 +171,6 @@ const JetpackConnectMain = React.createClass( {
 
 	clearUrl() {
 		this.dismissUrl();
-
 	},
 
 	handleOnClickTos() {
@@ -279,7 +278,7 @@ const JetpackConnectMain = React.createClass( {
 							example={ <JetpackExampleInstall url={ this.state.currentUrl } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Activate Jetpack' ) }
 							text={ this.translate( 'You\'ll then need to click the small blue "Activate Plugin" link to activate Jetpack.' ) }
-							example={ <JetpackExampleActivate url={ this.state.currentUrl } /> } />
+							example={ <JetpackExampleActivate url={ this.state.currentUrl } /> } isInstall={ true } />
 						<JetpackInstallStep title={ this.translate( '3. Connect Jetpack' ) }
 							text={ this.translate( 'Finally, just click the green "Connect to WordPress.com" button to finish the process.' ) }
 							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
@@ -315,7 +314,7 @@ const JetpackConnectMain = React.createClass( {
 					<div className="jetpack-connect__install-steps">
 						<JetpackInstallStep title={ this.translate( '1. Activate Jetpack' ) }
 							text={ this.translate( 'You need to click this tiny blue \'Activate\' link from your plugins list page.' ) }
-							example={ <JetpackExampleActivate url={ this.state.currentUrl } /> } />
+							example={ <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ false } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Connect Jetpack' ) }
 							text={ this.translate( 'Finally, just click the green "Connect to WordPress.com" button to finish the process.' ) }
 							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
