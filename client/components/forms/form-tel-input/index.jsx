@@ -27,7 +27,7 @@ module.exports = React.createClass( {
 			<input
 				{ ...otherProps }
 				type={ 'tel' }
-				pattern={ '[0-9]*'}
+				pattern={ '[0-9]*' }
 				className={ classnames( this.props.className, classes ) } />
 		);
 	}
