@@ -14,7 +14,6 @@ import useMockery from 'test/helpers/use-mockery';
 import useI18n from 'test/helpers/use-i18n';
 
 describe( 'Domain Suggestion', function() {
-
 	let DomainSuggestion;
 
 	useFakeDom();
@@ -33,7 +32,7 @@ describe( 'Domain Suggestion', function() {
 				domain="example.com" isAdded={ false }/> );
 			const domainSuggestionButton = domainSuggestion.find( '.domain-suggestion__select-button[data-domain]' );
 			expect( domainSuggestionButton.length ).to.equal( 1 );
-			expect( domainSuggestionButton.props()[ 'data-domain' ] ).to.equal( 'example.com' )
+			expect( domainSuggestionButton.props()[ 'data-domain' ] ).to.equal( 'example.com' );
 		} );
 	} );
 
@@ -53,5 +52,4 @@ describe( 'Domain Suggestion', function() {
 			expect( domainSuggestionButton.text() ).to.equal( buttonLabel );
 		} );
 	} );
-
 } );
