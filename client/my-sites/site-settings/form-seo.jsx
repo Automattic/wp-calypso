@@ -279,7 +279,7 @@ export const SeoForm = React.createClass( {
 
 							<FormFieldset className="has-divider">
 								<FormLabel htmlFor="seo_sitemap">{ this.translate( 'XML Sitemap' ) }</FormLabel>
-								<ExternalLink className="seo-sitemap" icon={ true } href={ sitemapUrl } target={ "_blank" }>{ sitemapUrl }</ExternalLink>
+								<ExternalLink className="seo-sitemap" icon={ true } href={ sitemapUrl } target="_blank">{ sitemapUrl }</ExternalLink>
 								<FormSettingExplanation>
 									{ this.translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
 								</FormSettingExplanation>
@@ -299,10 +299,10 @@ export const SeoForm = React.createClass( {
 												components: {
 													b: <strong />,
 													support: <a href="https://en.support.wordpress.com/webmaster-tools/" />,
-													google: <ExternalLink icon={ true } href="https://www.google.com/webmasters/tools/" />,
-													bing: <ExternalLink icon={ true } href="https://www.bing.com/webmaster/" />,
-													pinterest: <ExternalLink icon={ true } href="https://pinterest.com/website/verify/" />,
-													yandex: <ExternalLink icon={ true } href="https://webmaster.yandex.com/sites/" />
+													google: <ExternalLink icon={ true } target="_blank" href="https://www.google.com/webmasters/tools/" />,
+													bing: <ExternalLink icon={ true } target="_blank" href="https://www.bing.com/webmaster/" />,
+													pinterest: <ExternalLink icon={ true } target="_blank" href="https://pinterest.com/website/verify/" />,
+													yandex: <ExternalLink icon={ true } target="_blank" href="https://webmaster.yandex.com/sites/" />
 												}
 											}
 										) }
