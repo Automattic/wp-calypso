@@ -10,12 +10,13 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import WebPreview from 'components/web-preview';
 import * as PreviewActions from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
 import layoutFocus from 'lib/layout-focus';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -59,6 +60,10 @@ const DesignPreview = React.createClass( {
 	},
 
 	componentDidUpdate( prevProps ) {
+		if ( ! config.isEnabled( 'preview-endpoint' ) ) {
+			return;
+		}
+
 		// If there is no markup or the site has changed, fetch it
 		if ( ! this.props.previewMarkup || this.props.selectedSiteId !== prevProps.selectedSiteId ) {
 			this.loadPreview();
@@ -94,7 +99,10 @@ const DesignPreview = React.createClass( {
 	},
 
 	loadPreview() {
-		if ( this.props.selectedSiteId && this.props.actions.fetchPreviewMarkup ) {
+		if ( ! config.isEnabled( 'preview-endpoint' ) || ! this.props.selectedSite ) {
+			return;
+		}
+		if ( this.props.actions.fetchPreviewMarkup ) {
 			debug( 'loading preview with customizations', this.props.customizations );
 			this.props.actions.fetchPreviewMarkup( this.props.selectedSiteId, '', this.props.customizations );
 		}
@@ -139,30 +147,42 @@ const DesignPreview = React.createClass( {
 	},
 
 	render() {
+		const useEndpoint = config.isEnabled( 'preview-endpoint' );
+
+		if ( ! this.props.selectedSite ) {
+			return null;
+		}
+
 		return (
 			<WebPreview
 				className={ this.props.className }
-				showExternal={ false }
+				previewUrl={ useEndpoint ? null : this.props.selectedSite.URL }
+				showExternal={ true }
 				showClose={ this.props.showClose }
 				showPreview={ this.props.showPreview }
 				defaultViewportDevice={ this.props.defaultViewportDevice }
-				previewMarkup={ this.props.previewMarkup }
+				previewMarkup={ useEndpoint ? this.props.previewMarkup : null }
 				onClose={ this.onClosePreview }
-				onLoad={ this.onLoad }
+				onLoad={ useEndpoint ? this.onLoad : noop }
 			>
-			{ this.props.children }
+				{ this.props.children }
 			</WebPreview>
 		);
 	}
 } );
 
 function mapStateToProps( state ) {
+	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	if ( ! state.preview || ! state.preview[ selectedSiteId ] ) {
-		return { selectedSiteId };
+		return {
+			selectedSite,
+			selectedSiteId,
+		};
 	}
 	const { previewMarkup, customizations, isUnsaved } = state.preview[ selectedSiteId ];
 	return {
+		selectedSite,
 		selectedSiteId,
 		previewMarkup,
 		customizations,
