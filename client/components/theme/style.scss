@@ -85,13 +85,15 @@ $theme-info-height: 54px;
 
 		color: $gray;
 		text-transform: uppercase;
-		text-align: center;
 		font-size: 11px;
 		font-weight: 600;
 
 		background: transparentize($white, 0.9);
 
 		span {
+			position: absolute;
+			left: 50%;
+			transform: translate( -50%, 0 ); // center (using translate to allow animation)
 			padding: 6px 9px;
 
 			color: $gray-dark;
@@ -104,8 +106,7 @@ $theme-info-height: 54px;
 
 @keyframes theme__active-focus-label {
 	0% {
-		position: absolute;
-		transform: translate3d( 0, 10px, 0);
+		transform: translate3d( -50%, 10px, 0);
 	}
 }
 
