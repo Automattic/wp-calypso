@@ -107,6 +107,16 @@ const ReaderSidebar = React.createClass( {
 	openExpandableMenuForCurrentTagOrList() {
 		const pathParts = this.props.path.split( '/' );
 
+		if ( config.isEnabled( 'reader/topics' ) ) {
+			if ( startsWith( this.props.path, '/topic/' ) ) {
+				const tagSlug = pathParts[2];
+				if ( tagSlug ) {
+					// Don't open the sidebar for topics
+					this.setState( { currentTag: tagSlug } );
+				}
+			}
+		}
+
 		if ( startsWith( this.props.path, '/tag/' ) ) {
 			const tagSlug = pathParts[2];
 			if ( tagSlug ) {

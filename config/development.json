@@ -107,6 +107,7 @@
 		"reader/recommendations/posts": true,
 		"reader/search": true,
 		"reader/start": true,
+		"reader/topics": true,
 		"reader/tags-with-elasticsearch": true,
 		"resume-editing": true,
 		"rubberband-scroll-disable": false,
