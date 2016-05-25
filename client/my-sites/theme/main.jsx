@@ -271,18 +271,16 @@ const ThemeSheet = React.createClass( {
 					action={ this.props[ this.state.selectedAction ] }
 					sourcePath={ `/theme/${ this.props.id }/${ section }` }
 				/> }
-				<div className="themes__sheet-columns">
-					<div className="themes__sheet-column-left">
-						<HeaderCake className="themes__sheet-action-bar"
+				<HeaderCake className="themes__sheet-action-bar"
 							backHref={ this.props.backPath }
 							backText={ i18n.translate( 'All Themes' ) }>
-							<div className="themes__sheet-action-bar-container">
-								<Button onClick={ this.onPrimaryClick }>
-									{ actionTitle }
-									{ ! this.isActive() && priceElement }
-								</Button>
-							</div>
-						</HeaderCake>
+					<Button className="themes__sheet-primary-button" onClick={ this.onPrimaryClick }>
+						{ actionTitle }
+						{ ! this.isActive() && priceElement }
+					</Button>
+				</HeaderCake>
+				<div className="themes__sheet-columns">
+					<div className="themes__sheet-column-left">
 						<div className="themes__sheet-content">
 							{ this.renderSectionNav( section ) }
 							{ this.renderSectionContent( section ) }
@@ -290,7 +288,6 @@ const ThemeSheet = React.createClass( {
 						</div>
 					</div>
 					<div className="themes__sheet-column-right">
-						<Card className="themes_sheet-action-bar-spacer"/>
 						{ this.renderScreenshot() }
 					</div>
 				</div>
