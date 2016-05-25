@@ -249,7 +249,9 @@ const LoggedInForm = React.createClass( {
 		}
 
 		if ( authorizeSuccess ) {
-			return this.translate( 'Finishing up' );
+			return this.translate( 'Finishing up!', {
+				context: 'Shown during a jetpack authorization process, while we retrieve the info we need to show the last page'
+			} );
 		}
 
 		if ( isAuthorizing ) {
