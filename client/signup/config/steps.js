@@ -10,6 +10,14 @@ import stepActions from 'lib/signup/step-actions';
 import i18n from 'lib/mixins/i18n';
 
 module.exports = {
+	survey: {
+		stepName: 'survey',
+		props: {
+			surveySiteType: ( current && current.toString().match( /\/start\/(blog|delta-blog)/ ) ) ? 'blog' : 'site'
+		},
+		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
+	},
+
 	themes: {
 		stepName: 'themes',
 		dependencies: [ 'siteSlug' ],
@@ -34,24 +42,16 @@ module.exports = {
 		providesDependencies: [ 'bearer_token', 'username' ]
 	},
 
-	test: {
-		stepName: 'test'
-	},
-
-	survey: {
-		stepName: 'survey',
-		props: {
-			surveySiteType: ( current && current.toString().match( /\/start\/(blog|delta-blog)/ ) ) ? 'blog' : 'site'
-		},
-		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
-	},
-
 	'survey-user': {
 		stepName: 'survey-user',
 		apiRequestFunction: stepActions.createAccount,
 		providesToken: true,
 		dependencies: [ 'surveySiteType', 'surveyQuestion' ],
 		providesDependencies: [ 'bearer_token', 'username' ]
+	},
+
+	test: {
+		stepName: 'test'
 	},
 
 	plans: {
