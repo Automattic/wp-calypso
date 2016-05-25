@@ -291,7 +291,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems( { search: 'Hello W' } ) ).to.have.length( 1 );
 		} );
 
-		it( 'should persist state', () => {
+		it( 'should not persist state', () => {
 			const original = deepFreeze( queries( undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -304,28 +304,12 @@ describe( 'reducer', () => {
 
 			const state = queries( original, { type: SERIALIZE } );
 
-			expect( state ).to.eql( {
-				2916284: '{"data":{"items":{"841":{"ID":841,"site_ID":2916284,"global_ID":"3d097cb7c5473c169bba0eb8e3c6cb64","title":"Hello World"}},"queries":{"[[\\"search\\",\\"Hello\\"]]":{"itemKeys":[841],"found":1}}},"options":{"itemKey":"ID"}}'
-			} );
+			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should load persisted state', () => {
 			const original = deepFreeze( {
-				2916284: '{"data":{"items":{"841":{"ID":841,"site_ID":2916284,"global_ID":"3d097cb7c5473c169bba0eb8e3c6cb64","title":"Hello World"}},"queries":{"[[\\"search\\",\\"Hello\\"]]":{"itemKeys":[841],"found":1}}},"options":{"itemKey":"ID"}}'
-			} );
-
-			const state = queries( original, { type: DESERIALIZE } );
-
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
-			expect( state[ 2916284 ].getItems( { search: 'Hello' } ) ).to.eql( [
-				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			] );
-		} );
-
-		it( 'should not load invalid persisted state', () => {
-			const original = deepFreeze( {
-				2916284: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+				2916284: '{}'
 			} );
 
 			const state = queries( original, { type: DESERIALIZE } );
