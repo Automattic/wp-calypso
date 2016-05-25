@@ -67,7 +67,7 @@ export function getSitePostsForQuery( state, siteId, query ) {
 		return null;
 	}
 
-	return state.posts.queries[ siteId ].getData( query );
+	return state.posts.queries[ siteId ].getItems( query );
 }
 
 /**
@@ -133,7 +133,7 @@ export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
 		return null;
 	}
 
-	return state.posts.queries[ siteId ].getDataIgnoringPage( query );
+	return state.posts.queries[ siteId ].getItemsIgnoringPage( query );
 }
 
 /**
