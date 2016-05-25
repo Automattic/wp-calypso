@@ -113,7 +113,9 @@ describe( 'selectors', () => {
 								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 							},
 							queries: {
-								'[["search","Hello"]]': [ 841 ]
+								'[["search","Hello"]]': {
+									itemKeys: [ 841 ]
+								}
 							}
 						} )
 					}
@@ -279,7 +281,9 @@ describe( 'selectors', () => {
 								413: { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
 							},
 							queries: {
-								'[]': [ 841, 413 ]
+								'[]': {
+									itemKeys: [ 841, 413 ]
+								}
 							}
 						} )
 					},
@@ -322,7 +326,9 @@ describe( 'selectors', () => {
 								120: { ID: 120, site_ID: 2916284, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak & Eggs', parent: { ID: 413 } }
 							},
 							queries: {
-								'[]': [ 841, 413, 120 ]
+								'[]': {
+									itemKeys: [ 841, 413, 120 ]
+								}
 							}
 						} )
 					},
