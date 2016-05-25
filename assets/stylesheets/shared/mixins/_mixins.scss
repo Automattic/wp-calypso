@@ -19,3 +19,11 @@
 	font: normal 16px/1 Noticons;
 	vertical-align: middle;
 }
+
+@mixin mobile-link-element {
+	-webkit-tap-highlight-color: rgba($white, .4); // Until we capture ontouch events in JS this is better than :active
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
