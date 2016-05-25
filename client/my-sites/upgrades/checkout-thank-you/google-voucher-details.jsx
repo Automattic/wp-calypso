@@ -68,8 +68,11 @@ class GoogleVoucherDetails extends Component {
 				additionalClassNames="google-voucher-dialog"
 			>
 				<div className="google-voucher-dialog__header">
-					<h1>{ i18n.translate( 'Terms of Service' ) }</h1>
-					<p>{ i18n.translate( 'Google AdWords credit' ) }</p>
+					<img src="/calypso/images/google-adwords/google-adwords-voucher.svg" className="google-voucher-dialog__header__image" />
+					<div className="google-voucher-dialog__header__text">
+						<h1>{ i18n.translate( 'Terms of Service' ) }</h1>
+						<p>{ i18n.translate( 'Google AdWords credit' ) }</p>
+					</div>
 				</div>
 
 				<div className="google-voucher-dialog__body">
