@@ -32,10 +32,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 					href={ '/design/' + selectedSite.slug } />
 			}
 
-			<GoogleVoucherDetails
-				selectedSite={ selectedSite }
-				step={ 0 }
-			/>
+			<GoogleVoucherDetails selectedSite={ selectedSite } />
 
 			<PurchaseDetail
 				icon="stats-alt"
