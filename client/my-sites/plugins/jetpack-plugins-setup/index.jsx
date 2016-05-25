@@ -20,7 +20,6 @@ import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import JetpackSite from 'lib/site/jetpack';
@@ -261,11 +260,6 @@ const PlansSetup = React.createClass( {
 					plugin={ plugin }
 					isMock={ true }
 					site={ site } />
-				<PluginAutoupdateToggle
-					plugin={ plugin }
-					isMock={ true }
-					site={ site }
-					wporg={ !! plugin.wporg } />
 			</div>
 		);
 	},
