@@ -236,7 +236,7 @@ describe( 'index', function() {
 				assert.strictEqual( normalized.author.avatar_URL, 'http://example.com/me.jpg-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.featured_image, 'http://foo.bar/-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.featured_media.uri, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
-				assert.strictEqual( normalized.attachments['1234'].URL, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' )
+				assert.strictEqual( normalized.attachments['1234'].URL, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.attachments['3456'].URL, 'http://example.com/media.jpg' );
 				done( err );
 			} );
@@ -308,7 +308,7 @@ describe( 'index', function() {
 					assert.deepEqual( normalized, { content: '<video></video>' } );
 					done( err );
 				}
-			)
+			);
 		} );
 
 		it( 'should strip autoplay attributes from audio', function( done ) {
@@ -321,7 +321,7 @@ describe( 'index', function() {
 					assert.deepEqual( normalized, { content: '<audio></audio>' } );
 					done( err );
 				}
-			)
+			);
 		} );
 	} );
 
@@ -340,29 +340,18 @@ describe( 'index', function() {
 		} );
 
 		it( 'should provide a __contentDOM property to transforms and remove it after', function( done ) {
-			function detectTimeTransform( post, callback ) {
-				assert.ok( post.__contentDOM );
-				assert.ok( post.__contentDOM.querySelectorAll );
-				assert.equal( post.__contentDOM.querySelectorAll( 'time' ).length, 1 );
-				callback();
+			function detectTimeTransform( post, dom ) {
+				assert.ok( dom );
+				assert.ok( dom.querySelectorAll );
+				assert.equal( dom.querySelectorAll( 'time' ).length, 1 );
+				return post;
 			}
 			normalizer(
 				{
 					content: '<time>now</time>'
 				},
 				[ normalizer.withContentDOM( [ detectTimeTransform ] ) ], function( err, normalized ) {
-					assert( ! normalized.__contentDOM );
-					done( err );
-				}
-			);
-		} );
-
-		it( 'should support async transforms', function( done ) {
-			normalizer(
-				{
-					content: '<span>hi</span>'
-				},
-				[ normalizer.withContentDOM( [ asyncTransform, asyncTransform, asyncTransform ] ) ], function( err ) {
+					assert.ok( normalized );
 					done( err );
 				}
 			);
