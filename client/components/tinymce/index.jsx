@@ -39,6 +39,7 @@ import contactFormPlugin from './plugins/contact-form/plugin';
 import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
 import wptextpatternPlugin from './plugins/wptextpattern/plugin';
 import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
+import insertMenuPlugin from './plugins/insert-menu/plugin';
 
 [
 	wpcomPlugin,
@@ -49,6 +50,7 @@ import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 	wpcomSourcecode,
 	wpeditimagePlugin,
 	wplinkPlugin,
+	insertMenuPlugin,
 	mediaPlugin,
 	advancedPlugin,
 	wpcomTabindexPlugin,
@@ -124,6 +126,10 @@ const PLUGINS = [
 	'wpcom/contactform',
 	'wpcom/sourcecode',
 ];
+
+if ( config.isEnabled( 'post-editor/insert-menu' ) ) {
+	PLUGINS.push( 'wpcom/insertmenu' );
+}
 
 const CONTENT_CSS = [
 	window.app.tinymceWpSkin,
@@ -284,7 +290,9 @@ module.exports = React.createClass( {
 			// future, we should calculate from the rendered editor bounds.
 			autoresize_min_height: Math.max( document.documentElement.clientHeight - 300, 300 ),
 
-			toolbar1: 'wpcom_add_media,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_add_contact_form,wpcom_advanced',
+			toolbar1: config.isEnabled( 'post-editor/insert-menu' )
+				? 'wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_advanced'
+				: 'wpcom_add_media,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_add_contact_form,wpcom_advanced',
 			toolbar2: 'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',
 			toolbar4: '',
