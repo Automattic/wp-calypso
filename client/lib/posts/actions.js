@@ -103,16 +103,16 @@ PostActions = {
 	/**
 	 * Start keeping track of edits to a new post
 	 *
-	 * @param {Number|String} site - site identifier
-	 * @param {Object} options - edit options
+	 * @param {Number} siteId  Site ID
+	 * @param {Object} options Edit options
 	 */
-	startEditingNew: function( site, options ) {
+	startEditingNew: function( siteId, options ) {
 		var args;
 		options = options || {};
 
 		args = {
 			type: 'DRAFT_NEW_POST',
-			siteId: site.ID,
+			siteId: siteId,
 			postType: options.type || 'post',
 			title: options.title,
 			content: options.content,
@@ -124,28 +124,28 @@ PostActions = {
 	/**
 	 * Load an existing post and keep track of edits to it
 	 *
-	 * @param {object} site to load post from
-	 * @param {number} postId ID of post to load
+	 * @param {Number} siteId Site ID to load post from
+	 * @param {Number} postId Post ID to load
 	 */
-	startEditingExisting: function( site, postId ) {
+	startEditingExisting: function( siteId, postId ) {
 		var currentPost = PostEditStore.get(),
 			postHandle;
 
-		if ( ! site.ID ) {
+		if ( ! siteId ) {
 			return;
 		}
 
-		if ( currentPost && currentPost.site_ID === site.ID && currentPost.ID === postId ) {
+		if ( currentPost && currentPost.site_ID === siteId && currentPost.ID === postId ) {
 			return; // already editing same post
 		}
 
 		Dispatcher.handleViewAction( {
 			type: 'START_EDITING_POST',
-			siteId: site.ID,
+			siteId: siteId,
 			postId: postId
 		} );
 
-		postHandle = wpcom.site( site.ID ).post( postId );
+		postHandle = wpcom.site( siteId ).post( postId );
 
 		postHandle.get( { context: 'edit', meta: 'autosave' }, function( error, data ) {
 			Dispatcher.handleServerAction( {

@@ -401,7 +401,7 @@ MenuData.prototype.interceptLoadForHomepageLink = function( menu ) {
 
 MenuData.prototype.createNewPagePromise = ( menuItem, siteID ) => new Promise(
 	( resolve, reject ) => {
-		postEditStore.startEditingNew( { ID: siteID } );
+		postEditStore.startEditingNew( siteID );
 		postEditStore.saveEdited(
 			{
 				title: menuItem.name,
