@@ -23,7 +23,7 @@ function setup( io ) {
 		cores = os.cpus().length,
 		errors = '',
 		scheduleBuild = false,
-		publicCssFiles = {};
+		publicCssFiles = {}; // { path, hash } dictionary
 
 	function spawnMake() {
 		// If a build is already in progress schedule another build for later
@@ -74,7 +74,7 @@ function setup( io ) {
 			spawnMake();
 		} else if ( 0 === code ) {
 			// 'make build-css' success
-			changedFiles = getChangedCssFiles();
+			changedFiles = updateChangedCssFiles();
 			if ( 0 !== changedFiles.length ) {
 				debug( chalk.green( 'css reload' ) );
 				io.of( '/css-hot-reload' ).emit( 'css-hot-reload', 
@@ -93,20 +93,18 @@ function setup( io ) {
 	}
 
 	/**
+	 * Updates the MD5 hash of the public CSS files and returns the ones who have changed in a list.
 	 */
-	/**
-	 * Returns the list of changed CSS files.
-	 */
-	function getChangedCssFiles() {
-		var changedFiles = [],
-			hash, filePath;
+	function updateChangedCssFiles() {
+		var hash, filePath, changedFiles = [];
 		for( filePath in publicCssFiles ) {
 			hash = md5File.sync( filePath );
 			if ( hash !== publicCssFiles[ filePath ] ) {
-				changedFiles.push( path.basename( filePath ) );
 				publicCssFiles[ filePath ] = hash;
+				changedFiles.push( path.basename( filePath ) );
 			}
 		}
+
 		return changedFiles;
 	}
 
