@@ -16,7 +16,7 @@ sections = [
 		paths: [ '/customize' ],
 		module: 'my-sites/customize',
 		group: 'sites',
-		secondary: true,
+		secondary: true
 	},
 	{
 		name: 'me',
@@ -286,24 +286,6 @@ if ( config.isEnabled( 'reader' ) ) {
 			group: 'reader'
 		} );
 	}
-}
-
-if ( config.isEnabled( 'devdocs' ) ) {
-	sections.push( {
-		name: 'devdocs',
-		paths: [ '/devdocs' ],
-		module: 'devdocs',
-		secondary: true,
-		enableLoggedOut: true
-	} );
-
-	sections.push( {
-		name: 'devdocs',
-		paths: [ '/devdocs/start' ],
-		module: 'devdocs',
-		secondary: false,
-		enableLoggedOut: true
-	} );
 }
 
 if ( config.isEnabled( 'vip' ) ) {
