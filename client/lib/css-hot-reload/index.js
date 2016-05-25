@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var io = require( 'socket.io-client' );
+import io from 'socket.io-client';
 
 /**
  * Internal dependencies
