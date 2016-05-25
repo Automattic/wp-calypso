@@ -8,6 +8,7 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import SiteIcon from 'components/site-icon';
 import Gridicon from 'components/gridicon';
 import SiteIndicator from 'my-sites/site-indicator';
@@ -218,15 +219,18 @@ export default React.createClass( {
 							href={ this.props.homeLink ? site.URL : this.props.href }
 							target={ this.props.externalLink && ! this.state.showMoreActions && '_blank' }
 							title={ this.props.homeLink
-								? this.translate( 'Visit "%(title)s"', { args: { title: site.title } } )
+								? this.translate( 'View "%(title)s"', { args: { title: site.title } } )
 								: site.title
 							}
 							onTouchTap={ this.onSelect }
 							onClick={ this.props.onClick }
 							onMouseEnter={ this.props.onMouseEnter }
 							onMouseLeave={ this.props.onMouseLeave }
-							aria-label={
-								this.translate( 'Open site %(domain)s in new tab', {
+							aria-label={ this.props.homeLink && config.isEnabled( 'preview-layout' )
+								? this.translate( 'Open site %(domain)s in a preview', {
+									args: { domain: site.domain }
+								} )
+								: this.translate( 'Open site %(domain)s in new tab', {
 									args: { domain: site.domain }
 								} )
 							}

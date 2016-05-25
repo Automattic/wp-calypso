@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 import debugFactory from 'debug';
+import url from 'url';
 
 /**
  * Internal dependencies
@@ -146,6 +147,21 @@ const DesignPreview = React.createClass( {
 		// TODO: if the href is on the current site, load the href as a preview and fetch markup for that url
 	},
 
+	getPreviewUrl( site ) {
+		if ( ! site ) {
+			return null;
+		}
+
+		const parsed = url.parse( site.URL, true );
+		parsed.query.iframe = true;
+		parsed.query.theme_preview = true;
+		if ( site.options && site.options.frame_nonce ) {
+			parsed.query['frame-nonce'] = site.options.frame_nonce;
+		}
+		delete parsed.search;
+		return url.format( parsed );
+	},
+
 	render() {
 		const useEndpoint = config.isEnabled( 'preview-endpoint' );
 
@@ -156,7 +172,7 @@ const DesignPreview = React.createClass( {
 		return (
 			<WebPreview
 				className={ this.props.className }
-				previewUrl={ useEndpoint ? null : this.props.selectedSite.URL }
+				previewUrl={ useEndpoint ? null : this.getPreviewUrl( this.props.selectedSite ) }
 				showExternal={ true }
 				showClose={ this.props.showClose }
 				showPreview={ this.props.showPreview }
@@ -174,12 +190,14 @@ const DesignPreview = React.createClass( {
 function mapStateToProps( state ) {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
+
 	if ( ! state.preview || ! state.preview[ selectedSiteId ] ) {
 		return {
 			selectedSite,
 			selectedSiteId,
 		};
 	}
+
 	const { previewMarkup, customizations, isUnsaved } = state.preview[ selectedSiteId ];
 	return {
 		selectedSite,
