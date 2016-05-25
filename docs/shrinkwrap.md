@@ -20,25 +20,22 @@ directory tree structure
 With the upgrade to npm 3, if we make any dependency changes in package.json, we need to regenerate the entire 
 npm-shrinkwrap.json file.
 
-Before generating the npm-shrinkwrap.json:
-- Make sure your node/npm version matches the versions listed in package.json under engines
-- Delete your local node_modules
-- Delete your local copy of npm-shrinkwrap.json before running `npm install`
-
-Testing instructions should ensure that a clean install works and Calypso runs and tests correctly. It's very 
-important that your node_modules is deleted before you do this to be sure to pick up the latest versions.
+Testing instructions should ensure that a clean install works and Calypso runs and tests correctly. 
 
 ## Generating npm-shrinkwrap.json
 
+- (Optional) Modify package.json. For example: `npm install --save lodash@4.11.1` or `npm uninstall --save left-pad`
 - Install [shonkwrap](https://github.com/skybet/shonkwrap) globally: `npm install -g shonkwrap`. This package attempts
 to remove the from/resolved fields if possible.
-- (Optional) Modify package.json. For example: `npm install --save lodash@4.11.1` or `npm uninstall --save left-pad`
-- Run `make distclean` to delete local node_modules
-- Delete your local copy of npm-shrinkwrap.json.
-- Run `npm install`
+- Run `make shrinkwrap` to generate a new npm-shrinkwrap.json
 - Verify that Calypso works as expected and that tests pass.
-- Run `shonkwrap --dev`
 - Commit the new npm-shrinkwrap.json and any changes to package.json
+
+Internally the script does the following:
+- Deletes local node_modules
+- Deletes your local copy of npm-shrinkwrap.json.
+- Runs `npm install --no-optional` twice. Due to npm 3 quirks, we need to call this twice before packages fully resolve themselves.
+- Runs `shonkwrap --dev` to generate a new npm-shrinkwrap.json.
 
 ## Testing
 
