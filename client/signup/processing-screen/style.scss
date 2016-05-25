@@ -38,7 +38,7 @@
 	@include breakpoint( ">660px" ) {
 		left: 0;
 	}
-	
+
 	@include breakpoint( "<660px" ) {
 		transform: scale(0.8);
 		left: 130px;
@@ -298,7 +298,11 @@
 	display: block;
 	padding: 10px 24px;
 	margin: 24px auto 48px auto;
+}
+
+.email-confirmation__button:disabled {
 	animation: pulse 1s infinite linear;
+
 }
 
 

@@ -54,7 +54,8 @@ const Signup = React.createClass( {
 			dependencies: SignupDependencyStore.get(),
 			loadingScreenStartTime: undefined,
 			resumingStep: undefined,
-			user: user.get()
+			user: user.get(),
+			loginHandler: null
 		};
 	},
 
@@ -148,6 +149,12 @@ const Signup = React.createClass( {
 
 		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
 
+		this.setState( {
+			loginHandler: this.handleLogin.bind( this, dependencies, destination )
+		} );
+	},
+
+	handleLogin( dependencies, destination ) {
 		const userIsLoggedIn = Boolean( user.get() );
 
 		if ( userIsLoggedIn ) {
@@ -314,9 +321,8 @@ const Signup = React.createClass( {
 			<div className="signup__step" key={ stepKey }>
 				{ this.localeSuggestions() }
 				{
-					//this.state.loadingScreenStartTime ?
-					localStorage.signupProcessingScreen ?
-					<SignupProcessingScreen steps={ this.state.progress } signupDependencies={ this.state.dependencies } user={ this.state.user } /> :
+					this.state.loadingScreenStartTime ?
+					<SignupProcessingScreen steps={ this.state.progress } user={ this.state.user } loginHandler={ this.state.loginHandler }/> :
 					<CurrentComponent
 						path={ this.props.path }
 						step={ currentStepProgress }
@@ -347,8 +353,7 @@ const Signup = React.createClass( {
 		return (
 			<span>
 				{
-					// this.state.loadingScreenStartTime ?
-					localStorage.signupProcessingScreen ?
+					this.state.loadingScreenStartTime ?
 					null :
 					<FlowProgressIndicator
 						positionInFlow={ this.positionInFlow() }
