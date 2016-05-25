@@ -34,6 +34,7 @@ export default React.createClass( {
 		jetpack: React.PropTypes.bool,
 		compact: React.PropTypes.bool,
 		feature: React.PropTypes.oneOf( [ false, ...getValidFeatureKeys() ] ),
+		shouldDisplay: React.PropTypes.func
 	},
 
 	getDefaultProps() {
@@ -44,8 +45,9 @@ export default React.createClass( {
 			event: null,
 			jetpack: false,
 			feature: false,
-			compact: false
-		}
+			compact: false,
+			shouldDisplay: null
+		};
 	},
 
 	handleClick() {
@@ -59,7 +61,10 @@ export default React.createClass( {
 	},
 
 	shouldDisplay( site ) {
-		const { feature, jetpack } = this.props;
+		const { feature, jetpack, shouldDisplay } = this.props;
+		if ( shouldDisplay ) {
+			return shouldDisplay();
+		}
 		if ( ! site ) {
 			return false;
 		}

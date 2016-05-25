@@ -20,7 +20,7 @@ export default React.createClass( {
 				</h2>
 				<div>
 					<UpgradeNudge
-						feature="domain"
+						feature="custom-domain"
 						href="#"
 					/>
 				</div>
