@@ -46,7 +46,7 @@ export default  React.createClass( {
 
 	getBlockedInstruction: function() {
 		return (
-			<Dialog isVisible={ this.state.showDialog } className=".push-notification__instruction-dialog" onClose={ this._onCloseDialog }>
+			<Dialog isVisible={ this.state.showDialog } className=".push-notification__instruction-dialog" onClose={ this.onCloseDialog }>
 				<div className="push-notification__instruction-content">
 					<div>
 						<div className="push-notification__instruction-title">{ this.translate( 'Enable Browser Notifications' ) }</div>
@@ -66,7 +66,7 @@ export default  React.createClass( {
 						</div>
 					</div>
 				</div>
-				<span tabIndex="0" className="push-notification__instruction-dismiss" onClick={ this._onCloseDialog } >
+				<span tabIndex="0" className="push-notification__instruction-dismiss" onClick={ this.onCloseDialog } >
 					<Gridicon icon="cross" size={ 24 } />
 					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
 				</span>
@@ -74,11 +74,11 @@ export default  React.createClass( {
 		);
 	},
 
-	_onShowDialog: function() {
+	onShowDialog: function() {
 		this.setState( { showDialog: true } );
 	},
 
-	_onCloseDialog: function() {
+	onCloseDialog: function() {
 		this.setState( { showDialog: false } );
 	},
 
@@ -120,7 +120,7 @@ export default  React.createClass( {
 						<div>{ this.translate(
 							'{{instructionsButton}}View Instructions to Enable{{/instructionsButton}}', {
 								components: {
-									instructionsButton: <Button className={ 'is-link' } onClick={ this._onShowDialog } />
+									instructionsButton: <Button className={ 'is-link' } onClick={ this.onShowDialog } />
 								} }
 						) }</div>
 						{ blockedInstruction }
