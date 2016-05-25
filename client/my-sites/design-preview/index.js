@@ -22,6 +22,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 const debug = debugFactory( 'calypso:design-preview' );
 
 const DesignPreview = React.createClass( {
+	previewCounter: 0,
 
 	propTypes: {
 		// Any additional classNames to set on this wrapper
@@ -44,6 +45,12 @@ const DesignPreview = React.createClass( {
 		selectedSiteId: React.PropTypes.number,
 	},
 
+	getInitialState() {
+		return {
+			previewCount: 0
+		};
+	},
+
 	getDefaultProps() {
 		return {
 			showPreview: false,
@@ -54,6 +61,20 @@ const DesignPreview = React.createClass( {
 			isUnsaved: false,
 			onLoad: noop,
 		};
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ! config.isEnabled( 'preview-endpoint' ) ) {
+			if ( this.props.selectedSiteId && this.props.selectedSiteId !== nextProps.selectedSiteId ) {
+				this.previewCounter = 0;
+			}
+
+			if ( ! this.props.showPreview && nextProps.showPreview ) {
+				debug( 'forcing refresh' );
+				this.previewCounter > 0 && this.setState( { previewCount: this.previewCounter } );
+				this.previewCounter += 1;
+			}
+		}
 	},
 
 	componentDidMount() {
@@ -159,7 +180,7 @@ const DesignPreview = React.createClass( {
 			parsed.query['frame-nonce'] = site.options.frame_nonce;
 		}
 		delete parsed.search;
-		return url.format( parsed );
+		return url.format( parsed ) + '&' + this.state.previewCount;
 	},
 
 	render() {
