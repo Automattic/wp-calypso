@@ -63,8 +63,6 @@ var CssHotReload = {
 							console.log( 'Reloading CSS: ', oldLink );
 							// Remove old .css and insert new one in the same spot
 							var newLink = document.createElement( 'link' );
-							oldLink.parentNode.insertBefore( newLink, oldLink );
-							oldLink.parentNode.removeChild( oldLink );
 							// Copy standard attributes
 							// https://developer.mozilla.org/en/docs/Web/HTML/Element/link
 							var attrs = [ 'crossorigin', 'href', 'hreflang',
@@ -82,6 +80,7 @@ var CssHotReload = {
 									}
 								}
 							} );
+							oldLink.parentNode.replaceChild( newLink, oldLink );
 						}
 					} );
 					break;
