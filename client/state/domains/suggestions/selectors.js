@@ -34,7 +34,7 @@ export function getDomainsSuggestions( state, queryObject ) {
 export function isRequestingDomainsSuggestions( state, queryObject ) {
 	const serializedQuery = getSerializedDomainsSuggestionsQuery( queryObject );
 	if ( serializedQuery ) {
-		return !! state.domains.suggestions.items[ serializedQuery ];
+		return !! state.domains.suggestions.requesting[ serializedQuery ];
 	}
 	return false;
 }
