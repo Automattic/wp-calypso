@@ -10,7 +10,6 @@ import isEqual from 'lodash/isEqual';
 import reduce from 'lodash/reduce';
 import keyBy from 'lodash/keyBy';
 import merge from 'lodash/merge';
-import mapValues from 'lodash/mapValues';
 import findKey from 'lodash/findKey';
 import includes from 'lodash/includes';
 
@@ -34,10 +33,7 @@ import {
 } from 'state/action-types';
 import counts from './counts/reducer';
 import { getSerializedPostsQuery } from './utils';
-import {
-	itemsSchema,
-	queriesSchema
-} from './schema';
+import { itemsSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
 
 /**
@@ -192,15 +188,7 @@ export function queries( state = {}, action ) {
 		}
 
 		case SERIALIZE:
-			return mapValues( state, ( queryManager ) => queryManager.toJSON() );
-
 		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, queriesSchema ) ) {
-				return mapValues( state, ( serializedQuery ) => {
-					return PostQueryManager.parse( serializedQuery );
-				} );
-			}
-
 			return {};
 	}
 

@@ -51,16 +51,3 @@ export const itemsSchema = {
 	},
 	additionalProperties: false
 };
-
-export const queriesSchema = {
-	type: 'object',
-	patternProperties: {
-		// Site ID
-		'^[0-9]+$': {
-			type: 'string',
-			// Queries are JSON strings
-			pattern: '^\\{.*\\}$'
-		}
-	},
-	additionalProperties: false
-};
