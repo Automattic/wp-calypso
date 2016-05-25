@@ -7,13 +7,15 @@ import Follow from './site.follow';
 import Media from './site.media';
 import Post from './site.post';
 import Tag from './site.tag';
+import SitePostType from './site.post-type';
 import SiteDomain from './site.domain';
 import SitePlugin from './site.plugin';
 import SiteSettings from './site.settings';
 import SiteTaxonomy from './site.taxonomy';
-import SitePostType from './site.post-type';
+import SiteAdCreditVouchers from './site.ad-credit-vouchers';
 import SiteWordAds from './site.wordads';
 import SiteWPComPlugin from './site.wpcom-plugin';
+
 import siteGetMethods from './runtime/site.get';
 import runtimeBuilder from './util/runtime-builder';
 import debugFactory from 'debug';
@@ -208,6 +210,15 @@ class Site {
 	 */
 	taxonomy( slug ) {
 		return new SiteTaxonomy( slug, this._id, this.wpcom );
+	}
+
+	/**
+	 * Create a `SiteAdCreditVouchers` instance
+	 *
+	 * @return {SiteAdCreditVouchers} SiteAdCreditVouchers instance
+	 */
+	adCreditVouchers() {
+		return new SiteAdCreditVouchers( this._id, this.wpcom );
 	}
 
 	/**
