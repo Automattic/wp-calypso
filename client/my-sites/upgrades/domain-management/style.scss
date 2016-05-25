@@ -494,11 +494,11 @@ input[type=radio].domain-management-list-item__radio {
 
 .add-google-apps-card__price {
 	clear: both;
-	font-style: italic;
 	margin: 0;
 
 	.add-google-apps-card__price-per-user {
 		display: inline-block;
+		font-style: italic;
 
 		strong {
 			color: darken($gray, 15%);
@@ -506,23 +506,23 @@ input[type=radio].domain-management-list-item__radio {
 			font-weight: 600;
 		}
 
-		span, em {
+		span {
 			color: $gray;
 			font-size: 12px;
 			font-weight: normal;
 		}
+	}
 
-		em {
-			@include breakpoint( "<660px" ) {
-				display: none;
-			}
-		}
+	.add-google-apps-card__price-separator {
+		color: $gray;
+		font-size: 12px;
 	}
 
 	.add-google-apps-card__billing-period {
 		color: lighten( $gray, 10% );
 		display: inline-block;
 		font-size: 11px;
+		font-style: italic;
 		text-transform: uppercase;
 	}
 }
