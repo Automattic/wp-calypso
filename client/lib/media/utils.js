@@ -107,7 +107,8 @@ const MediaUtils = {
 		} else if ( media.extension ) {
 			extension = media.extension;
 		} else {
-			extension = path.extname( url.parse( media.URL || media.file || media.guid || '' ).pathname ).slice( 1 );
+			const pathname = url.parse( media.URL || media.file || media.guid || '' ).pathname || '';
+			extension = path.extname( pathname ).slice( 1 );
 		}
 
 		return extension;
