@@ -8,3 +8,14 @@
 @import 'noticon';
 @import 'placeholder';
 @import 'stats-fade-text';
+
+//======================================================
+// Copied _extends rules that are used in @media
+//======================================================
+@mixin noticon-style { //copy of %noticon
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	display: inline-block;
+	font: normal 16px/1 Noticons;
+	vertical-align: middle;
+}

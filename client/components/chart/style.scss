@@ -339,7 +339,7 @@
 		font-size: inherit;
 
 		&::before {
-			@extend %noticon;
+			@include noticon-style;
 			content: '\f456';
 			position: absolute;
 				top: 23px;
