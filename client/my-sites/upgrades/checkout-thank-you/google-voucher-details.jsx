@@ -11,24 +11,40 @@ import ClipboardButtonInput from 'components/clipboard-button-input';
 import PurchaseDetails from 'components/purchase-detail';
 import PurchaseButton from 'components/purchase-detail/purchase-button';
 import TipInfo from 'components/purchase-detail/tip-info';
+import Dialog from 'components/dialog';
+import googleTermsAndConditions from './google-voucher-TC';
 
 class GoogleVoucherDetails extends Component {
 	constructor() {
 		super();
 
-		this.state = { step: 0 };
+		this.state = {
+			showTermsAndConditions: false,
+			step: 0
+		};
 	}
 
 	componentWillMount() {
 		this.onButtonClick = this.onButtonClick.bind( this );
+		this.onDialogCancel = this.onDialogCancel.bind( this );
 	}
 
 	onButtonClick() {
 		this.incrementStep();
 	}
 
+	onDialogCancel() {
+		this.setState( {
+			showTermsAndConditions: false,
+			step: 0
+		} );
+	}
+
 	incrementStep() {
-		this.setState( { step: this.state.step + 1 } );
+		this.setState( {
+			step: this.state.step + 1,
+			showTermsAndConditions: ( this.state.step + 1 ) === 1
+		} );
 	}
 
 	renderStepZero() {
@@ -46,13 +62,44 @@ class GoogleVoucherDetails extends Component {
 
 	renderStepOne() {
 		return (
+			<Dialog
+				isVisible={ this.state.showTermsAndConditions }
+				onClose={ this.onDialogCancel }
+				additionalClassNames="google-voucher-dialog"
+			>
+				<div className="google-voucher-dialog__header">
+					<h1>{ i18n.translate( 'Terms of Service' ) }</h1>
+					<p>{ i18n.translate( 'Google AdWords credit' ) }</p>
+				</div>
+
+				<div className="google-voucher-dialog__body">
+					{ googleTermsAndConditions() }
+				</div>
+
+				<div className="google-voucher-dialog__footer">
+					<PurchaseButton
+						className="google-vucher-dialog__cancel-button"
+						primary={ false }
+						onClick={ this.onDialogCancel }
+						text={ i18n.translate( 'Cancel' ) } />
+
+					<PurchaseButton
+						onClick={ this.onButtonClick }
+						text={ i18n.translate( 'Agree' ) } />
+				</div>
+			</Dialog>
+		);
+	}
+
+	renderStepTwo() {
+		return (
 			<div className="purchase-detail__body">
 				<ClipboardButtonInput value="3JFE4-RVDDD-PV3P" />
 
-				<div style={ { display: 'flex', alignItems: 'flex-start', marginTop: 12 } }>
-					<p
-						className="form-setting-explanation"
-						style={ { flex: '1', marginRight: 16, marginTop: 0 } }>
+				<div className="purchase-detail__google-voucher-code">
+					<p className="form-setting-explanation"
+						style={ { flex: '1', marginRight: 16, marginTop: 0 } }
+					>
 						{
 							i18n.translate( 'Copy this unique, one-time use code to your clipboard and setup your Google AdWords account. {{a}}View help guide{{/a}}',
 								{
@@ -73,6 +120,9 @@ class GoogleVoucherDetails extends Component {
 					info={ i18n.translate( 'Offer valid in US and Canada after spending the first $25 on Google AdWords.' ) } />
 			</div>
 		);
+	}
+
+	renderGoogleTermsAndConditions() {
 	}
 
 	render() {
