@@ -307,13 +307,13 @@ describe( 'reducer', () => {
 			const state = queries( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( {
-				2916284: '{"data":{"items":{"841":{"ID":841,"site_ID":2916284,"global_ID":"3d097cb7c5473c169bba0eb8e3c6cb64","title":"Hello World"}},"queries":{"[[\\"search\\",\\"Hello\\"]]":[841]}},"options":{"itemKey":"ID"}}'
+				2916284: '{"data":{"items":{"841":{"ID":841,"site_ID":2916284,"global_ID":"3d097cb7c5473c169bba0eb8e3c6cb64","title":"Hello World"}},"queries":{"[[\\"search\\",\\"Hello\\"]]":{"itemKeys":[841],"found":1}}},"options":{"itemKey":"ID"}}'
 			} );
 		} );
 
 		it( 'should load persisted state', () => {
 			const original = deepFreeze( {
-				2916284: '{"data":{"items":{"841":{"ID":841,"site_ID":2916284,"global_ID":"3d097cb7c5473c169bba0eb8e3c6cb64","title":"Hello World"}},"queries":{"[[\\"search\\",\\"Hello\\"]]":[841]}},"options":{"itemKey":"ID"}}'
+				2916284: '{"data":{"items":{"841":{"ID":841,"site_ID":2916284,"global_ID":"3d097cb7c5473c169bba0eb8e3c6cb64","title":"Hello World"}},"queries":{"[[\\"search\\",\\"Hello\\"]]":{"itemKeys":[841],"found":1}}},"options":{"itemKey":"ID"}}'
 			} );
 
 			const state = queries( original, { type: DESERIALIZE } );

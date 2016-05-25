@@ -77,6 +77,23 @@ export default class PaginatedQueryManager extends QueryManager {
 	}
 
 	/**
+	 * Returns the number of pages for the specified query, or null if the
+	 * query is not known.
+	 *
+	 * @param  {Object}  query Query object
+	 * @return {?Number}       Pages for query
+	 */
+	getNumberOfPages( query ) {
+		const found = this.getFound( query );
+		if ( null === found ) {
+			return found;
+		}
+
+		const perPage = query.number || this.constructor.DEFAULT_QUERY.number;
+		return Math.ceil( found / perPage );
+	}
+
+	/**
 	 * Signal that an item(s) has been received for tracking. Optionally
 	 * specify that items received are intended for patch application, or that
 	 * they are associated with a query. This function does not mutate the
@@ -88,6 +105,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * @param  {Boolean}        options.patch      Apply changes as partial
 	 * @param  {Object}         options.query      Query set to set or replace
 	 * @param  {Boolean}        options.mergeQuery Add to existing query set
+	 * @param  {Number}         options.found      Total found items for query
 	 * @return {QueryManager}                      New instance if changed, or
 	 *                                             same instance otherwise
 	 */
@@ -129,7 +147,7 @@ export default class PaginatedQueryManager extends QueryManager {
 		const page = options.query.page || DEFAULT_QUERY.page;
 		const perPage = options.query.number || DEFAULT_QUERY.number;
 		const startOffset = ( page - 1 ) * perPage;
-		let nextQueryItemKeys = nextManager.data.queries[ queryKey ];
+		const nextQuery = nextManager.data.queries[ queryKey ];
 
 		// Coerce received single item to array
 		if ( ! Array.isArray( items ) ) {
@@ -139,27 +157,35 @@ export default class PaginatedQueryManager extends QueryManager {
 		// If the item set for the queried page is identical, there are no
 		// updates to be made
 		const pageItemKeys = items.map( ( item ) => item[ this.options.itemKey ] );
-		const nextManagerPageItemKeys = nextQueryItemKeys.slice( startOffset, startOffset + perPage );
+		const nextManagerPageItemKeys = nextQuery.itemKeys.slice( startOffset, startOffset + perPage );
 		if ( isEqual( pageItemKeys, nextManagerPageItemKeys ) ) {
 			return nextManager;
 		}
 
 		// If we've reached this point, we know that we've received a paged
-		// set of data where our assumed item set is incorrect. We should
-		// proceed to replace the assumed set with the received items.
-		nextQueryItemKeys = [
-			...nextQueryItemKeys.slice( 0, startOffset ),
-			...pageItemKeys,
-			...nextQueryItemKeys.slice( startOffset + perPage )
-		];
+		// set of data where our assumed item set is incorrect.
+		const modifiedNextQuery = Object.assign( {}, nextQuery );
 
-		// Avoid duplicates in the items set.
-		nextQueryItemKeys = uniq( nextQueryItemKeys );
+		// Replace the assumed set with the received items.
+		modifiedNextQuery.itemKeys = uniq( [
+			...nextQuery.itemKeys.slice( 0, startOffset ),
+			...pageItemKeys,
+			...nextQuery.itemKeys.slice( startOffset + perPage )
+		] );
+
+		// Adjust the found count if uniquing the query items reveals that
+		// we've lost or gained items
+		if ( nextQuery.hasOwnProperty( 'found' ) ) {
+			const foundIncrement = modifiedNextQuery.itemKeys.length - this.data.queries[ queryKey ].itemKeys.length;
+			if ( 0 !== foundIncrement ) {
+				modifiedNextQuery.found += foundIncrement;
+			}
+		}
 
 		return new this.constructor(
 			Object.assign( {}, nextManager.data, {
 				queries: Object.assign( {}, nextManager.data.queries, {
-					[ queryKey ]: nextQueryItemKeys
+					[ queryKey ]: modifiedNextQuery
 				} )
 			} ),
 			nextManager.options

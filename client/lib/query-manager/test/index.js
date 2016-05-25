@@ -20,7 +20,7 @@ describe( 'QueryManager', () => {
 
 	describe( '.parse()', () => {
 		it( 'should return an instance from a serialized JSON string', () => {
-			manager = QueryManager.parse( '{"data":{"items":{"144":{"ID":144},"152":{"ID":152}},"queries":{"[]":[152]}},"options":{"itemKey":"ID"}}' );
+			manager = QueryManager.parse( '{"data":{"items":{"144":{"ID":144},"152":{"ID":152}},"queries":{"[]":{"itemKeys":[152],"found":1}}},"options":{"itemKey":"ID"}}' );
 
 			expect( manager.getData() ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
 			expect( manager.getData( {} ) ).to.eql( [ { ID: 152 } ] );
@@ -42,7 +42,10 @@ describe( 'QueryManager', () => {
 					152: { ID: 152 }
 				},
 				queries: {
-					'[]': [ 152 ]
+					'[]': {
+						itemKeys: [ 152 ],
+						found: 1
+					}
 				}
 			} );
 
@@ -61,9 +64,9 @@ describe( 'QueryManager', () => {
 	describe( '#toJSON()', () => {
 		it( 'should return a serialized JSON string', () => {
 			manager = manager.receive( { ID: 144 } );
-			manager = manager.receive( { ID: 152 }, { query: {} } );
+			manager = manager.receive( { ID: 152 }, { query: {}, found: 1 } );
 
-			expect( manager.toJSON() ).to.equal( '{"data":{"items":{"144":{"ID":144},"152":{"ID":152}},"queries":{"[]":[152]}},"options":{"itemKey":"ID"}}' );
+			expect( manager.toJSON() ).to.equal( '{"data":{"items":{"144":{"ID":144},"152":{"ID":152}},"queries":{"[]":{"itemKeys":[152],"found":1}}},"options":{"itemKey":"ID"}}' );
 		} );
 	} );
 
@@ -131,6 +134,26 @@ describe( 'QueryManager', () => {
 			manager = manager.receive( { ID: 144 } );
 
 			expect( manager.getData( {} ) ).to.be.null;
+		} );
+	} );
+
+	describe( '#getFound()', () => {
+		it( 'should return null if the query is unknown', () => {
+			manager = manager.receive( { ID: 144 } );
+
+			expect( manager.getFound( {} ) ).to.be.null;
+		} );
+
+		it( 'should return null if the query is known, but found was not provided', () => {
+			manager = manager.receive( { ID: 144 }, { query: {} } );
+
+			expect( manager.getFound( {} ) ).to.be.null;
+		} );
+
+		it( 'should return the found count associated with a query', () => {
+			manager = manager.receive( { ID: 144 }, { query: {}, found: 1 } );
+
+			expect( manager.getFound( {} ) ).to.equal( 1 );
 		} );
 	} );
 
@@ -315,6 +338,67 @@ describe( 'QueryManager', () => {
 			manager = manager.receive( { ID: 150 } );
 
 			expect( manager.getData( {} ) ).to.eql( [ { ID: 140 }, { ID: 150 }, { ID: 160 } ] );
+		} );
+
+		it( 'should accept an optional total found count', () => {
+			manager = manager.receive( { ID: 144 }, { query: {}, found: 1 } );
+
+			expect( manager.getFound( {} ) ).to.equal( 1 );
+		} );
+
+		it( 'should return a new instance when associating found with a query', () => {
+			manager = manager.receive( { ID: 144 }, { query: {} } );
+			const newManager = manager.receive( { ID: 144 }, { query: {}, found: 1 } );
+
+			expect( manager ).to.not.equal( newManager );
+		} );
+
+		it( 'should return the same instance when found has not changed', () => {
+			manager = manager.receive( { ID: 144 }, { query: {}, found: 1 } );
+			const newManager = manager.receive( { ID: 144 }, { query: {}, found: 1 } );
+
+			expect( manager ).to.equal( newManager );
+		} );
+
+		it( 'should return a new instance when changing found for a query', () => {
+			manager = manager.receive( { ID: 144 }, { query: {}, found: 1 } );
+			const newManager = manager.receive( { ID: 144 }, { query: {}, found: 2 } );
+
+			expect( manager ).to.not.equal( newManager );
+		} );
+
+		it( 'should not replace the previous found count if omitted in next received query', () => {
+			manager = manager.receive( { ID: 144 }, { query: {}, found: 1 } );
+			manager = manager.receive( { ID: 144, changed: true }, { query: {} } );
+
+			expect( manager.getData( {} ) ).to.eql( [ { ID: 144, changed: true } ] );
+			expect( manager.getFound( {} ) ).to.equal( 1 );
+		} );
+
+		it( 'should increment found count if adding a matched item', () => {
+			manager = manager.receive( [], { query: {}, found: 0 } );
+			const newManager = manager.receive( { ID: 144 } );
+
+			expect( manager.getFound( {} ) ).to.equal( 0 );
+			expect( newManager.getFound( {} ) ).to.equal( 1 );
+		} );
+
+		it( 'should decrement found count if removing an unmatched item', () => {
+			manager = manager.receive( { ID: 144 }, { query: {}, found: 1 } );
+			sandbox.stub( manager, 'matches' ).returns( false );
+			const newManager = manager.receive( { ID: 144, changed: true } );
+
+			expect( manager.getFound( {} ) ).to.equal( 1 );
+			expect( newManager.getFound( {} ) ).to.equal( 0 );
+		} );
+
+		it( 'should not change found count if merging items into existing query', () => {
+			manager = manager.receive( { ID: 144 }, { query: {}, found: 2 } );
+			const newManager = manager.receive( { ID: 152 }, { query: {}, mergeQuery: true } );
+
+			expect( manager.getFound( {} ) ).to.equal( 2 );
+			expect( newManager.getFound( {} ) ).to.equal( 2 );
+			expect( newManager.getData( {} ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
 		} );
 	} );
 
