@@ -46,15 +46,15 @@ export default  React.createClass( {
 
 	getBlockedInstruction: function() {
 		return (
-			<Dialog isVisible={ this.state.showDialog } className="push-notification-instruction__dialog" onClose={ this._onCloseDialog }>
-				<div className="push-notification-instruction__content">
+			<Dialog isVisible={ this.state.showDialog } className=".push-notification__instruction-dialog" onClose={ this._onCloseDialog }>
+				<div className="push-notification__instruction-content">
 					<div>
-						<div className="push-notification-instruction__title">{ this.translate( 'Enable Browser Notifications' ) }</div>
-						<div className="push-notification-instruction__step">
+						<div className="push-notification__instruction-title">{ this.translate( 'Enable Browser Notifications' ) }</div>
+						<div className="push-notification__instruction-step">
 							<img height="180px" width="180px" src="/calypso/images/push-notifications/address-bar.svg" />
 							<p>{ this.translate( 'Click the lock icon in your address bar.' ) }</p>
 						</div>
-						<div className="push-notification-instruction__step">
+						<div className="push-notification__instruction-step">
 							<img height="180px" width="180px" src="/calypso/images/push-notifications/always-allow.svg" />
 							<p>{ this.translate(
 								'Click {{strong}}Notifications{{/strong}} and choose {{em}}Always allow{{/em}}.', {
@@ -66,7 +66,7 @@ export default  React.createClass( {
 						</div>
 					</div>
 				</div>
-				<span tabIndex="0" className="push-notification-instruction__dismiss" onClick={ this._onCloseDialog } >
+				<span tabIndex="0" className="push-notification__instruction-dismiss" onClick={ this._onCloseDialog } >
 					<Gridicon icon="cross" size={ 24 } />
 					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
 				</span>

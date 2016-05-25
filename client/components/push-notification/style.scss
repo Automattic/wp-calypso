@@ -5,11 +5,11 @@
 	padding-bottom: 8px;
 }
 
-.push-notification-instruction__dialog {
+.push-notification__instruction-dialog {
 	position: relative;
 }
 
-.push-notification-instruction__dismiss {
+.push-notification__instruction-dismiss {
 	position: absolute;
 		top: -8px;
 		right: -8px;
@@ -23,7 +23,7 @@
 	}
 }
 
-.push-notification-instruction__content {
+.push-notification__instruction-content {
 	max-width: 500px;
 	text-align: center;
 
@@ -32,13 +32,13 @@
 	}
 }
 
-.push-notification-instruction__title {
+.push-notification__instruction-title {
 	font-weight: 500;
 	display: block;
 	margin-bottom: 24px;
 }
 
-.push-notification-instruction__step {
+.push-notification__instruction-step {
 	width: 50%;
 	box-sizing: border-box;
 	display: inline-block;
