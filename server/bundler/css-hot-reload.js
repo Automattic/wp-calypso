@@ -93,7 +93,8 @@ function setup( io ) {
 	}
 
 	/**
-	 * Updates the MD5 hash of the public CSS files and returns the ones who have changed in a list.
+	 * Updates the MD5 hash of the public CSS files and returns the changed ones
+	 * in a list.
 	 */
 	function updateChangedCssFiles() {
 		var hash, filePath, changedFiles = [];
