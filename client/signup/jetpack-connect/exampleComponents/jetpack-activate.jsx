@@ -28,7 +28,11 @@ export default React.createClass( {
 					</div>
 
 				</div>
-				<img src="/calypso/images/jetpack/jetpack-connect-activate.png" />
+				{
+					this.props.isInstall
+						? <img src="/calypso/images/jetpack/jetpack-connect-activate.png" />
+						: <img src="/calypso/images/jetpack/jetpack-connect-activate-from-plugins.png" />
+				}
 			</div>
 		);
 	}
