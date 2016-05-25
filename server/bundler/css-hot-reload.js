@@ -113,7 +113,7 @@ function setup( io ) {
 	// Initialize publicCssFiles
 	
 	fs.readdirSync( PUBLIC_DIR ).forEach( function( file ) {
-		if ( file.match( /^.*\.css$/ ) ) {
+		if ( '.css' === file.slice( -4 ) ) {
 			var fullPath = path.join( PUBLIC_DIR, file );
 			publicCssFiles[ fullPath ] = md5File.sync( fullPath );
 		}
