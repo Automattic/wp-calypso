@@ -63,7 +63,7 @@ var CssHotReload = {
 					} );
 					break;
 				case 'building':
-					reduxStore.dispatch( cssBuilding( i18n.translate( 'Building CSS...' ) ) );
+					reduxStore.dispatch( cssBuilding( i18n.translate( 'Building CSS…' ) ) );
 					break
 				case 'build-failed':
 					reduxStore.dispatch( cssBuildFailed( i18n.translate( 'CSS build failed.' ) ) );
