@@ -305,6 +305,7 @@ export default React.createClass( {
 						onSearch={ this.onSearch }
 						autoFocus={ this.props.autoFocus }
 						disabled={ ! this.props.sites.initialized }
+						onSearchClose={ this.props.onClose }
 					/>
 					<div className="site-selector__sites" ref="selector">
 						{ this.renderAllSites() }
