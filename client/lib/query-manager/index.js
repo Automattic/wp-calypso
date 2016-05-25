@@ -115,6 +115,16 @@ export default class QueryManager {
 	}
 
 	/**
+	 * Returns a single item by key.
+	 *
+	 * @param  {String} itemKey Item key
+	 * @return {Object}         Item
+	 */
+	getItem( itemKey ) {
+		return this.data.items[ itemKey ];
+	}
+
+	/**
 	 * Returns items tracked by the instance. If a query is specified, returns
 	 * items specific to that query.
 	 *
@@ -132,9 +142,7 @@ export default class QueryManager {
 			return null;
 		}
 
-		return itemKeys.map( ( itemKey ) => {
-			return this.data.items[ itemKey ];
-		} );
+		return itemKeys.map( ( itemKey ) => this.getItem( itemKey ) );
 	}
 
 	/**
@@ -174,7 +182,7 @@ export default class QueryManager {
 
 		const nextItems = reduce( items, ( memo, receivedItem ) => {
 			const receivedItemKey = receivedItem[ this.options.itemKey ];
-			const item = this.data.items[ receivedItemKey ];
+			const item = this.getItem( receivedItemKey );
 			const mergedItem = this.mergeItem( item, receivedItem, options.patch );
 
 			if ( undefined === mergedItem ) {
