@@ -9,6 +9,29 @@ import io from 'socket.io-client';
 import { cssBuildFailed, cssBuilding } from 'state/application/actions';
 import i18n from 'lib/mixins/i18n';
 
+// https://developer.mozilla.org/en/docs/Web/HTML/Element/link
+var standardAttributes = [
+	'crossorigin',
+	'href',
+	'hreflang',
+	'media',
+	'rel',
+	'sizes',
+	'title',
+	'type'
+];
+
+/**
+ * @returns {object} 
+ */
+function bustHashForHrefs( { name, oldValue } ) {
+    const value = 'href' === name
+        ? `${ oldValue.split( '?' ).shift() }?v=${ new Date().getTime() }`
+        : oldValue;
+
+    return { name, value };
+};
+
 /**
  * @returns {boolean} 
  */
@@ -33,13 +56,13 @@ var CssHotReload = {
 			switch( data.status ) {
 				case 'reload':
 					// Turn HTMLCollection to standard list
-					var elems = document.head.getElementsByTagName('LINK');
+					var elems = document.head.getElementsByTagName( 'link' );
 					elems = [].slice.call( elems );
 					elems.forEach( function( oldLink ) { 
 						if ( ( 'href' in oldLink ) && isChanged( oldLink.href, data.changedFiles ) ) {
 							console.log( 'Reloading CSS: ', oldLink );
 							// Remove old .css and insert new one in the same spot
-							var newLink = document.createElement( 'LINK' );
+							var newLink = document.createElement( 'link' );
 							oldLink.parentNode.insertBefore( newLink, oldLink );
 							oldLink.parentNode.removeChild( oldLink );
 							// Copy standard attributes
