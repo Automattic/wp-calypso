@@ -115,6 +115,15 @@ describe( 'QueryManager', () => {
 		} );
 	} );
 
+	describe( '#getItem()', () => {
+		it( 'should return a single item', () => {
+			const item = { ID: 144 };
+			manager = manager.receive( item );
+
+			expect( manager.getItem( 144 ) ).to.equal( item );
+		} );
+	} );
+
 	describe( '#getItems()', () => {
 		it( 'should return all items when no query provided', () => {
 			manager = manager.receive( { ID: 144 } );
