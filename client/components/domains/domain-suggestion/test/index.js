@@ -24,6 +24,7 @@ describe( 'Domain Suggestion', function() {
 
 	before( () => {
 		DomainSuggestion = require( 'components/domains/domain-suggestion' );
+		DomainSuggestion.prototype.translate = ( x ) => x;
 	} );
 
 	describe( 'has attributes', () => {
@@ -44,7 +45,7 @@ describe( 'Domain Suggestion', function() {
 		} );
 
 		it( 'should show the button label when not in cart', function() {
-			const buttonLabel = 'Hello';
+			const buttonLabel = 'Select';
 			const domainSuggestion = shallow(
 					<DomainSuggestion isAdded={ false } buttonLabel={ buttonLabel } />
 				);
