@@ -27,7 +27,7 @@ describe( 'Domain Suggestion', function() {
 	} );
 
 	describe( 'has attributes', () => {
-		it( 'should have data-domain attribute for integration testing', () => {
+		it( 'should have data-domain attribute for e2e testing', () => {
 			const domainSuggestion = shallow( <DomainSuggestion
 				domain="example.com" isAdded={ false }/> );
 			const domainSuggestionButton = domainSuggestion.find( '.domain-suggestion__select-button[data-domain]' );
