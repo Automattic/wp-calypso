@@ -27,12 +27,12 @@ describe( 'Domain Suggestion', function() {
 	} );
 
 	describe( 'has attributes', () => {
-		it( 'should have data-domain attribute for e2e testing', () => {
+		it( 'should have data-e2e-domain attribute for e2e testing', () => {
 			const domainSuggestion = shallow( <DomainSuggestion
 				domain="example.com" isAdded={ false }/> );
-			const domainSuggestionButton = domainSuggestion.find( '.domain-suggestion__select-button[data-domain]' );
+			const domainSuggestionButton = domainSuggestion.find( `.domain-suggestion__select-button` );
 			expect( domainSuggestionButton.length ).to.equal( 1 );
-			expect( domainSuggestionButton.props()[ 'data-domain' ] ).to.equal( 'example.com' );
+			expect( domainSuggestionButton.props()[ 'data-e2e-domain' ] ).to.equal( 'example.com' );
 		} );
 	} );
 
