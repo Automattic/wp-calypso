@@ -31,7 +31,7 @@ class QueryTerms extends Component {
 			return;
 		}
 
-		props.requestSiteTerms( props.siteId, props.taxonomy );
+		props.requestSiteTerms( props.siteId, props.taxonomy, props.query );
 	}
 
 	shouldComponentUpdate() {

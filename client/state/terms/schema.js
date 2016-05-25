@@ -17,8 +17,7 @@ export const termsSchema = {
 								description: { type: 'string' },
 								post_count: { type: 'number' },
 								parent: { type: 'number' }
-							},
-							additionalProperties: false
+							}
 						}
 					},
 					additionalProperties: false

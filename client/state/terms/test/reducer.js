@@ -195,6 +195,32 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should ignore actions without a query object', () => {
+			const original = deepFreeze( {
+				2916284: {
+					categories: {
+						'{"search":"ribs"}': [ 111 ]
+					}
+				}
+			} );
+
+			const state = queries( original, {
+				type: TERMS_RECEIVE,
+				siteId: 2916284,
+				found: 1,
+				terms: [ { ID: 7878, name: 'Kentucky Fried Chicken' } ],
+				taxonomy: 'categories'
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					categories: {
+						'{"search":"ribs"}': [ 111 ]
+					}
+				}
+			} );
+		} );
+
 		it( 'should accumulate query request success', () => {
 			const original = deepFreeze( {
 				2916284: {

@@ -27,6 +27,7 @@ import sites from './sites/reducer';
 import siteSettings from './site-settings/reducer';
 import stats from './stats/reducer';
 import support from './support/reducer';
+import terms from './terms/reducer';
 import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
@@ -56,6 +57,7 @@ export const reducer = combineReducers( {
 	siteSettings,
 	stats,
 	support,
+	terms,
 	themes,
 	ui,
 	users,
