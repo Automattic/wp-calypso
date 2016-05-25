@@ -25,7 +25,6 @@ import reducer, {
 	items,
 	queryRequests,
 	queries,
-	queriesLastPage,
 	siteRequests,
 	edits
 } from '../reducer';
@@ -47,7 +46,6 @@ describe( 'reducer', () => {
 			'siteRequests',
 			'queryRequests',
 			'queries',
-			'queriesLastPage',
 			'edits'
 		] );
 	} );
@@ -331,122 +329,6 @@ describe( 'reducer', () => {
 			} );
 
 			const state = queries( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
-	} );
-
-	describe( '#queriesLastPage()', () => {
-		it( 'should default to an empty object', () => {
-			const state = queriesLastPage( undefined, {} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should track post query request success last page', () => {
-			const state = queriesLastPage( undefined, {
-				type: POSTS_REQUEST_SUCCESS,
-				siteId: 2916284,
-				query: { search: '', number: 1 },
-				found: 2,
-				posts: [
-					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-				]
-			} );
-
-			expect( state ).to.eql( {
-				'2916284:{"number":1}': 2
-			} );
-		} );
-
-		it( 'should track last page without specified site', () => {
-			const state = queriesLastPage( undefined, {
-				type: POSTS_REQUEST_SUCCESS,
-				query: { search: '', number: 1 },
-				found: 2,
-				posts: [
-					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-				]
-			} );
-
-			expect( state ).to.eql( {
-				'{"number":1}': 2
-			} );
-		} );
-
-		it( 'should track last page regardless of page param', () => {
-			const state = queriesLastPage( undefined, {
-				type: POSTS_REQUEST_SUCCESS,
-				siteId: 2916284,
-				query: { search: '', number: 1, page: 2 },
-				found: 2,
-				posts: [
-					{ ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
-				]
-			} );
-
-			expect( state ).to.eql( {
-				'2916284:{"number":1}': 2
-			} );
-		} );
-
-		it( 'should consider no results as having last page of 1', () => {
-			const state = queriesLastPage( undefined, {
-				type: POSTS_REQUEST_SUCCESS,
-				siteId: 2916284,
-				query: { search: 'none', number: 1 },
-				found: 0,
-				posts: []
-			} );
-
-			expect( state ).to.eql( {
-				'2916284:{"search":"none","number":1}': 1
-			} );
-		} );
-
-		it( 'should accumulate site post request success', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': 1
-			} );
-			const state = queriesLastPage( original, {
-				type: POSTS_REQUEST_SUCCESS,
-				siteId: 2916284,
-				query: { search: 'Ribs' },
-				found: 1,
-				posts: [
-					{ ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
-				]
-			} );
-
-			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': 1,
-				'2916284:{"search":"ribs"}': 1
-			} );
-		} );
-
-		it( 'should persist state', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': 1
-			} );
-			const state = queriesLastPage( original, { type: SERIALIZE } );
-
-			expect( state ).to.eql( original );
-		} );
-
-		it( 'should load valid persisted state', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': 1
-			} );
-			const state = queriesLastPage( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( original );
-		} );
-
-		it( 'should not load invalid persisted state', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': 'bad'
-			} );
-			const state = queriesLastPage( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );
