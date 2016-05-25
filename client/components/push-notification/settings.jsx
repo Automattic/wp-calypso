@@ -132,21 +132,19 @@ export default  React.createClass( {
 		}
 
 		return (
-			<div>
-				<Card className="push-notification__settings">
-					<h2 className="push-notification__settings-heading">
-						<Gridicon size={ 24 } className="push-notification__settings-icon" icon="bell" />
-						{ this.translate( 'Browser Notifications' ) }
-						<small className={ classNames( 'push-notification__settings-state', stateClass ) }>{ stateText }</small>
-					</h2>
+			<Card className="push-notification__settings">
+				<h2 className="push-notification__settings-heading">
+					<Gridicon size={ 24 } className="push-notification__settings-icon" icon="bell" />
+					{ this.translate( 'Browser Notifications' ) }
+					<small className={ classNames( 'push-notification__settings-state', stateClass ) }>{ stateText }</small>
+				</h2>
 
-					<p className="push-notification__settings-description">{ this.translate( 'Get notifications for new comments, likes, and more instantly, even when your browser is closed.' ) }</p>
+				<p className="push-notification__settings-description">{ this.translate( 'Get notifications for new comments, likes, and more instantly, even when your browser is closed.' ) }</p>
 
-					<Button className={ classNames( 'push-notification__settings-button', buttonClass ) } disabled={ buttonDisabled } onClick={ this.clickHandler } >{ buttonText }</Button>
+				<Button className={ classNames( 'push-notification__settings-button', buttonClass ) } disabled={ buttonDisabled } onClick={ this.clickHandler } >{ buttonText }</Button>
 
-					{ deniedText }
-				</Card>
-			</div>
-		);
+				{ deniedText }
+			</Card>
+	);
 	}
 } );
