@@ -180,7 +180,7 @@ describe( 'selectors', () => {
 		it( 'should return null if the site query is not tracked', () => {
 			const lastPage = getSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {}
+					queries: {}
 				}
 			}, 2916284, { search: 'Hello' } );
 
@@ -190,23 +190,43 @@ describe( 'selectors', () => {
 		it( 'should return the last page value for a site query', () => {
 			const lastPage = getSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {
-						'2916284:{"search":"hello"}': 4
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+							},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [ 841 ],
+									found: 1
+								}
+							}
+						} )
 					}
 				}
 			}, 2916284, { search: 'Hello' } );
 
-			expect( lastPage ).to.equal( 4 );
+			expect( lastPage ).to.equal( 1 );
 		} );
 
 		it( 'should return the last page value for a site query, even if including page param', () => {
 			const lastPage = getSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {
-						'2916284:{"search":"hello"}': 4
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+							},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [ 841 ],
+									found: 4
+								}
+							}
+						} )
 					}
 				}
-			}, 2916284, { search: 'Hello', page: 3 } );
+			}, 2916284, { search: 'Hello', page: 3, number: 1 } );
 
 			expect( lastPage ).to.equal( 4 );
 		} );
@@ -216,7 +236,7 @@ describe( 'selectors', () => {
 		it( 'should return null if the last page is not known', () => {
 			const isLastPage = isSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {}
+					queries: {}
 				}
 			}, 2916284, { search: 'Hello' } );
 
@@ -226,11 +246,21 @@ describe( 'selectors', () => {
 		it( 'should return false if the query explicit value is not the last page', () => {
 			const isLastPage = isSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {
-						'2916284:{"search":"hello"}': 4
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+							},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [ 841 ],
+									found: 4
+								}
+							}
+						} )
 					}
 				}
-			}, 2916284, { search: 'Hello', page: 3 } );
+			}, 2916284, { search: 'Hello', page: 3, number: 1 } );
 
 			expect( isLastPage ).to.be.false;
 		} );
@@ -238,11 +268,21 @@ describe( 'selectors', () => {
 		it( 'should return true if the query explicit value is the last page', () => {
 			const isLastPage = isSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {
-						'2916284:{"search":"hello"}': 4
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+							},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [ 841 ],
+									found: 4
+								}
+							}
+						} )
 					}
 				}
-			}, 2916284, { search: 'Hello', page: 4 } );
+			}, 2916284, { search: 'Hello', page: 4, number: 1 } );
 
 			expect( isLastPage ).to.be.true;
 		} );
@@ -250,27 +290,27 @@ describe( 'selectors', () => {
 		it( 'should return true if the query implicit value is the last page', () => {
 			const isLastPage = isSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {
-						'2916284:{"search":"hello"}': 1
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+							},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [ 841 ],
+									found: 1
+								}
+							}
+						} )
 					}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Hello', number: 1 } );
 
 			expect( isLastPage ).to.be.true;
 		} );
 	} );
 
 	describe( '#getSitePostsForQueryIgnoringPage()', () => {
-		it( 'should return null if the last page is not known', () => {
-			const isLastPage = isSitePostsLastPageForQuery( {
-				posts: {
-					queriesLastPage: {}
-				}
-			}, 2916284, { search: 'Hello' } );
-
-			expect( isLastPage ).to.be.null;
-		} );
-
 		it( 'should return a concatenated array of all site posts ignoring page', () => {
 			const sitePosts = getSitePostsForQueryIgnoringPage( {
 				posts: {
@@ -286,9 +326,6 @@ describe( 'selectors', () => {
 								}
 							}
 						} )
-					},
-					queriesLastPage: {
-						'2916284:{"number":1}': 2
 					}
 				}
 			}, 2916284, { search: '', number: 1 } );
@@ -303,16 +340,6 @@ describe( 'selectors', () => {
 	describe( '#getSitePostsHierarchyForQueryIgnoringPage()', () => {
 		beforeEach( () => {
 			getSitePostsHierarchyForQueryIgnoringPage.memoizedSelector.cache.clear();
-		} );
-
-		it( 'should return null if the last page is not known', () => {
-			const isLastPage = isSitePostsLastPageForQuery( {
-				posts: {
-					queriesLastPage: {}
-				}
-			}, 2916284, { search: 'Hello' } );
-
-			expect( isLastPage ).to.be.null;
 		} );
 
 		it( 'should return a concatenated array of all site posts ignoring page, preserving hierarchy', () => {

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import get from 'lodash/get';
-import range from 'lodash/range';
 import createSelector from 'lib/create-selector';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
@@ -95,8 +94,11 @@ export function isRequestingSitePostsForQuery( state, siteId, query ) {
  * @return {?Number}        Last posts page
  */
 export function getSitePostsLastPageForQuery( state, siteId, query ) {
-	const serializedQuery = getSerializedPostsQueryWithoutPage( query, siteId );
-	return state.posts.queriesLastPage[ serializedQuery ] || null;
+	if ( ! state.posts.queries[ siteId ] ) {
+		return null;
+	}
+
+	return state.posts.queries[ siteId ].getNumberOfPages( query );
 }
 
 /**

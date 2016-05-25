@@ -33,15 +33,10 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 import counts from './counts/reducer';
-import {
-	getSerializedPostsQuery,
-	getSerializedPostsQueryWithoutPage
-} from './utils';
-import { DEFAULT_POST_QUERY } from './constants';
+import { getSerializedPostsQuery } from './utils';
 import {
 	itemsSchema,
-	queriesSchema,
-	queriesLastPageSchema
+	queriesSchema
 } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
 
@@ -158,12 +153,16 @@ export function queryRequests( state = {}, action ) {
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
 		case POSTS_REQUEST_SUCCESS: {
-			const { siteId, query, posts } = action;
+			const { siteId, query, posts, found } = action;
 			if ( ! state[ siteId ] ) {
 				state[ siteId ] = new PostQueryManager();
 			}
 
-			const nextPosts = state[ siteId ].receive( posts, { query } );
+			const nextPosts = state[ siteId ].receive( posts, {
+				query,
+				found
+			} );
+
 			if ( nextPosts === state[ siteId ] ) {
 				return state;
 			}
@@ -200,37 +199,6 @@ export function queries( state = {}, action ) {
 				return mapValues( state, ( serializedQuery ) => {
 					return PostQueryManager.parse( serializedQuery );
 				} );
-			}
-
-			return {};
-	}
-
-	return state;
-}
-
-/**
- * Returns the updated post query last page state after an action has been
- * dispatched. The state reflects a mapping of serialized query to last known
- * page number.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function queriesLastPage( state = {}, action ) {
-	switch ( action.type ) {
-		case POSTS_REQUEST_SUCCESS:
-			const { siteId, found } = action;
-			const serializedQuery = getSerializedPostsQueryWithoutPage( action.query, siteId );
-			const lastPage = Math.ceil( found / ( action.query.number || DEFAULT_POST_QUERY.number ) );
-
-			return Object.assign( {}, state, {
-				[ serializedQuery ]: Math.max( lastPage, 1 )
-			} );
-
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, queriesLastPageSchema ) ) {
-				return state;
 			}
 
 			return {};
@@ -294,6 +262,5 @@ export default combineReducers( {
 	siteRequests,
 	queryRequests,
 	queries,
-	queriesLastPage,
 	edits
 } );
