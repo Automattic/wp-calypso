@@ -13,18 +13,10 @@ import i18n from 'lib/mixins/i18n';
  * @returns {boolean} 
  */
 function isChanged( href, changedFiles ) {
-	// "/calypso/style-debug.css?v=5a1db7fee7" -> "/calypso/style-debug.css"
-	var css = href.split('?')[0];
-	var i, re;
-		
-	for( i = 0; i < changedFiles.length; ++i ) {
-		re = new RegExp( '/' + changedFiles[i] + '$' );
-		if ( css.match( re ) ) {
-			return true;
-		}
-	}
-	
-	return false;
+    // "/calypso/style-debug.css?v=5a1db7fee7" -> "style-debug.css"
+    const path = href.split( '?' ).shift().split( '/' ).pop();
+
+    return changedFiles.some( file => file === path );
 }
 
 var CssHotReload = {
