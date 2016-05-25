@@ -7,10 +7,12 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Gridicon from 'components/gridicon';
+import PurchaseButton from './purchase-button';
+import TipInfo from './tip-info';
 
 const PurchaseDetail = ( {
+	body,
 	buttonText,
 	description,
 	href,
@@ -20,7 +22,7 @@ const PurchaseDetail = ( {
 	isPlaceholder,
 	isRequired,
 	isSubmitting,
-	onClick,
+	onClick = () => {},
 	requiredText,
 	target,
 	title
@@ -33,17 +35,29 @@ const PurchaseDetail = ( {
 
 	if ( buttonText || isPlaceholder ) {
 		buttonElement = (
-			<Button
-				className="purchase-detail__button"
+			<PurchaseButton
 				disabled={ isSubmitting }
 				href={ href }
 				onClick={ onClick }
 				target={ target }
-				primary>
-				{ buttonText }
-			</Button>
+				text={ buttonText } />
 		);
 	}
+
+	const renderBody = () => {
+		if ( body ) {
+			return(
+				<div className="purchase-detail__body">{ body }</div>
+			);
+		}
+
+		return(
+			<div className="purchase-detail__body">
+				{ buttonElement }
+				{ info && <TipInfo info={ info } /> }
+			</div>
+		);
+	};
 
 	return (
 		<div className={ classes } id={ id || null }>
@@ -65,14 +79,7 @@ const PurchaseDetail = ( {
 					<div className="purchase-detail__description">{ description }</div>
 				</div>
 
-				{ buttonElement }
-				{ info && <div className="purchase-detail__info form-setting-explanation">
-					<span className="purchase-detail__info-icon-container">
-						<Gridicon size={ 12 } icon="info-outline" />
-					</span>
-						{ info }
-					</div>
-				}
+				{ renderBody() }
 			</div>
 		</div>
 	);
