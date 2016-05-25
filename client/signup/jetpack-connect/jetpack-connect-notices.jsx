@@ -18,9 +18,9 @@ export default React.createClass( {
 
 	getNoticeValues( url ) {
 		let noticeValues = {
-			icon: 'trash',
-			status: 'is-warning',
-			text: this.translate( 'That\'s not a real web site' ),
+			icon: 'notice',
+			status: 'is-error',
+			text: this.translate( 'That\'s not a valid url.' ),
 			showDismiss: false
 		};
 
@@ -34,39 +34,39 @@ export default React.createClass( {
 		}
 		if ( this.props.noticeType === 'isDotCom' ) {
 			noticeValues.icon = 'block';
-			noticeValues.text = this.translate( 'That\'s a WordPress.com site, so you don\'t need to connect it' );
+			noticeValues.text = this.translate( 'That\'s a WordPress.com site, so you don\'t need to connect it.' );
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'notWordPress' ) {
 			noticeValues.icon = 'block';
-			noticeValues.text = this.translate( 'That\'s not a WordPress site' );
+			noticeValues.text = this.translate( 'That\'s not a WordPress site.' );
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'notActiveJetpack' ) {
 			noticeValues.icon = 'block';
-			noticeValues.text = this.translate( 'Jetpack is deactivated' );
+			noticeValues.text = this.translate( 'Jetpack is deactivated.' );
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'outdatedJetpack' ) {
 			noticeValues.icon = 'block';
-			noticeValues.text = this.translate( 'You need to update Jetpack before connecting' );
+			noticeValues.text = this.translate( 'You must update Jetpack before connecting.' );
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'jetpackIsDisconnected' ) {
 			noticeValues.icon = 'link-break';
-			noticeValues.text = this.translate( 'Jetpack is disconnected' );
+			noticeValues.text = this.translate( 'Jetpack is currently disconnected.' );
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'jetpackIsValid' ) {
 			noticeValues.status = 'is-success';
 			noticeValues.icon = 'plugins';
-			noticeValues.text = this.translate( 'Jetpack is connected' );
+			noticeValues.text = this.translate( 'Jetpack is connected.' );
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'notJetpack' ) {
 			noticeValues.status = 'is-noticeType';
 			noticeValues.icon = 'status';
-			noticeValues.text = this.translate( 'Can\'t find Jetpack' );
+			noticeValues.text = this.translate( 'Jetpack couldn\'t be found.' );
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'alreadyConnected' ) {
@@ -78,7 +78,7 @@ export default React.createClass( {
 		if ( this.props.noticeType === 'alreadyOwned' ) {
 			noticeValues.status = 'is-success';
 			noticeValues.icon = 'status';
-			noticeValues.text = this.translate( '{{a}}Your site{{/a}} is already connected', {
+			noticeValues.text = this.translate( '{{a}}Your site{{/a}} is already connected!', {
 				components: {
 					a: <a href={ '/stats/day/' + url } />
 				}
@@ -86,7 +86,7 @@ export default React.createClass( {
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'wordpress.com' ) {
-			noticeValues.text = this.translate( 'I think that\'s us ¯\\_(ツ)_/¯' );
+			noticeValues.text = this.translate( 'Oops, that\'s us.' );
 			noticeValues.status = 'is-warning';
 			noticeValues.icon = 'status';
 			return noticeValues;
@@ -104,7 +104,7 @@ export default React.createClass( {
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'alreadyConnectedByOtherUser' ) {
-			noticeValues.text = this.translate( 'This site is already connected to a different WordPress.com user, you need to disconnect that user before you can connect your current one' );
+			noticeValues.text = this.translate( 'This site is already connected to a different WordPress.com user, you need to disconnect that user before you can connect another.' );
 			noticeValues.status = 'is-warning';
 			noticeValues.icon = 'notice';
 			return noticeValues;
