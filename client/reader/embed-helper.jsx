@@ -1,3 +1,8 @@
+import percentageFactory from 'percentage-regex';
+
+const percentageRegex = percentageFactory({ exact: true });
+const isPercentage = (val) => percentageRegex.test(val);
+
 var embedsConfig = {
 	'default': {
 		sizingFunction: function defaultEmbedSizingFunction( embed, availableWidth ) {
@@ -90,10 +95,6 @@ function resolveEmbedConfig( embed ) {
 	}
 
 	return embedsConfig.default;
-}
-
-function isPercentage( val ) {
-	return 'string' === typeof val && '%' === val[ val.length - 1 ];
 }
 
 module.exports = {
