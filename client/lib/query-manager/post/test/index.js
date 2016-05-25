@@ -698,7 +698,7 @@ describe( 'PostQueryManager', () => {
 				status: 'trash'
 			}, { patch: true } );
 
-			expect( manager.getData() ).to.eql( [ {
+			expect( manager.getItems() ).to.eql( [ {
 				ID: 144,
 				type: 'post',
 				status: 'trash'
@@ -717,7 +717,7 @@ describe( 'PostQueryManager', () => {
 				status: 'trash'
 			}, { patch: true } );
 
-			expect( manager.getData() ).to.eql( [] );
+			expect( manager.getItems() ).to.eql( [] );
 		} );
 
 		it( 'should omit a CPT on trash', () => {
@@ -731,7 +731,7 @@ describe( 'PostQueryManager', () => {
 				status: 'trash'
 			}, { patch: true } );
 
-			expect( manager.getData() ).to.eql( [] );
+			expect( manager.getItems() ).to.eql( [] );
 		} );
 	} );
 } );

@@ -22,15 +22,15 @@ describe( 'QueryManager', () => {
 		it( 'should return an instance from a serialized JSON string', () => {
 			manager = QueryManager.parse( '{"data":{"items":{"144":{"ID":144},"152":{"ID":152}},"queries":{"[]":{"itemKeys":[152],"found":1}}},"options":{"itemKey":"ID"}}' );
 
-			expect( manager.getData() ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
-			expect( manager.getData( {} ) ).to.eql( [ { ID: 152 } ] );
+			expect( manager.getItems() ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 152 } ] );
 		} );
 
 		it( 'should return a new empty instance on invalid input', () => {
 			manager = QueryManager.parse( '{"data":{"item"!!!---INVALID---"ID"}}' );
 
 			expect( manager ).to.be.an.instanceof( QueryManager );
-			expect( manager.getData() ).to.eql( [] );
+			expect( manager.getItems() ).to.eql( [] );
 		} );
 	} );
 
@@ -49,8 +49,8 @@ describe( 'QueryManager', () => {
 				}
 			} );
 
-			expect( manager.getData() ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
-			expect( manager.getData( {} ) ).to.eql( [ { ID: 152 } ] );
+			expect( manager.getItems() ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 152 } ] );
 		} );
 
 		it( 'should allow customization of item key', () => {
@@ -115,25 +115,25 @@ describe( 'QueryManager', () => {
 		} );
 	} );
 
-	describe( '#getData()', () => {
+	describe( '#getItems()', () => {
 		it( 'should return all items when no query provided', () => {
 			manager = manager.receive( { ID: 144 } );
 			manager = manager.receive( { ID: 152 }, { query: {} } );
 
-			expect( manager.getData() ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
+			expect( manager.getItems() ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
 		} );
 
 		it( 'should return items specific to query', () => {
 			manager = manager.receive( { ID: 144 } );
 			manager = manager.receive( { ID: 152 }, { query: {} } );
 
-			expect( manager.getData( {} ) ).to.eql( [ { ID: 152 } ] );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 152 } ] );
 		} );
 
 		it( 'should return null if query is unknown', () => {
 			manager = manager.receive( { ID: 144 } );
 
-			expect( manager.getData( {} ) ).to.be.null;
+			expect( manager.getItems( {} ) ).to.be.null;
 		} );
 	} );
 
@@ -161,13 +161,13 @@ describe( 'QueryManager', () => {
 		it( 'should receive an item', () => {
 			manager = manager.receive( { ID: 144 } );
 
-			expect( manager.getData() ).to.eql( [ { ID: 144 } ] );
+			expect( manager.getItems() ).to.eql( [ { ID: 144 } ] );
 		} );
 
 		it( 'should receive an array of items', () => {
 			manager = manager.receive( [ { ID: 144 }, { ID: 152 } ] );
 
-			expect( manager.getData() ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
+			expect( manager.getItems() ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
 		} );
 
 		it( 'should return a new instance on changes', () => {
@@ -244,42 +244,42 @@ describe( 'QueryManager', () => {
 			sandbox.stub( manager, 'mergeItem' ).returns( undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
-			expect( manager.getData() ).to.eql( [ { ID: 144 } ] );
-			expect( newManager.getData() ).to.eql( [] );
+			expect( manager.getItems() ).to.eql( [ { ID: 144 } ] );
+			expect( newManager.getItems() ).to.eql( [] );
 		} );
 
 		it( 'should replace a received item when key already exists', () => {
 			manager = manager.receive( { ID: 144, exists: true } );
 			manager = manager.receive( { ID: 144, changed: true } );
 
-			expect( manager.getData() ).to.eql( [ { ID: 144, changed: true } ] );
+			expect( manager.getItems() ).to.eql( [ { ID: 144, changed: true } ] );
 		} );
 
 		it( 'should patch a received patch item when key already exists', () => {
 			manager = manager.receive( { ID: 144, exists: true } );
 			manager = manager.receive( { ID: 144, changed: true }, { patch: true } );
 
-			expect( manager.getData() ).to.eql( [ { ID: 144, exists: true, changed: true } ] );
+			expect( manager.getItems() ).to.eql( [ { ID: 144, exists: true, changed: true } ] );
 		} );
 
 		it( 'should track a query set', () => {
 			manager = manager.receive( { ID: 144 }, { query: {} } );
 
-			expect( manager.getData( {} ) ).to.eql( [ { ID: 144 } ] );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 144 } ] );
 		} );
 
 		it( 'should replace the query set when a query updates', () => {
 			manager = manager.receive( { ID: 144 }, { query: {} } );
 			manager = manager.receive( { ID: 152 }, { query: {} } );
 
-			expect( manager.getData( {} ) ).to.eql( [ { ID: 152 } ] );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 152 } ] );
 		} );
 
 		it( 'should merge received items into query set if mergeQuery option specified', () => {
 			manager = manager.receive( { ID: 144 }, { query: {}, mergeQuery: true } );
 			manager = manager.receive( { ID: 152 }, { query: {}, mergeQuery: true } );
 
-			expect( manager.getData( {} ) ).to.eql( [
+			expect( manager.getItems( {} ) ).to.eql( [
 				{ ID: 144 },
 				{ ID: 152 }
 			] );
@@ -289,7 +289,7 @@ describe( 'QueryManager', () => {
 			manager = manager.receive( { ID: 144 }, { query: {}, mergeQuery: true } );
 			manager = manager.receive( [ { ID: 144 }, { ID: 152 } ], { query: {}, mergeQuery: true } );
 
-			expect( manager.getData( {} ) ).to.eql( [
+			expect( manager.getItems( {} ) ).to.eql( [
 				{ ID: 144 },
 				{ ID: 152 }
 			] );
@@ -300,17 +300,17 @@ describe( 'QueryManager', () => {
 			sandbox.stub( manager, 'matches' ).returns( false );
 			const newManager = manager.receive( { ID: 144, changed: true } );
 
-			expect( manager.getData() ).to.eql( [ { ID: 144 } ] );
-			expect( manager.getData( {} ) ).to.eql( [ { ID: 144 } ] );
-			expect( newManager.getData() ).to.eql( [ { ID: 144, changed: true } ] );
-			expect( newManager.getData( {} ) ).to.eql( [] );
+			expect( manager.getItems() ).to.eql( [ { ID: 144 } ] );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 144 } ] );
+			expect( newManager.getItems() ).to.eql( [ { ID: 144, changed: true } ] );
+			expect( newManager.getItems( {} ) ).to.eql( [] );
 		} );
 
 		it( 'should be order sensitive to tracked query items', () => {
 			manager = manager.receive( [ { ID: 144 }, { ID: 152 } ], { query: {} } );
 			manager = manager.receive( [ { ID: 152 }, { ID: 144 } ], { query: {} } );
 
-			expect( manager.getData( {} ) ).to.eql( [ { ID: 152 }, { ID: 144 } ] );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 152 }, { ID: 144 } ] );
 		} );
 
 		it( 'should remove a tracked query item when it is omitted from items', () => {
@@ -318,18 +318,18 @@ describe( 'QueryManager', () => {
 			sandbox.stub( manager, 'mergeItem' ).returns( undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
-			expect( manager.getData() ).to.eql( [ { ID: 144 } ] );
-			expect( manager.getData( {} ) ).to.eql( [ { ID: 144 } ] );
-			expect( newManager.getData() ).to.eql( [] );
-			expect( newManager.getData( {} ) ).to.eql( [] );
+			expect( manager.getItems() ).to.eql( [ { ID: 144 } ] );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 144 } ] );
+			expect( newManager.getItems() ).to.eql( [] );
+			expect( newManager.getItems( {} ) ).to.eql( [] );
 		} );
 
 		it( 'should track an item that previous did not match', () => {
 			manager = manager.receive( [], { query: {} } );
 			manager = manager.receive( { ID: 144 } );
 
-			expect( manager.getData() ).to.eql( [ { ID: 144 } ] );
-			expect( manager.getData( {} ) ).to.eql( [ { ID: 144 } ] );
+			expect( manager.getItems() ).to.eql( [ { ID: 144 } ] );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 144 } ] );
 		} );
 
 		it( 'should sort items appended to query set', () => {
@@ -337,7 +337,7 @@ describe( 'QueryManager', () => {
 			sandbox.stub( manager, 'sort', ( query, a, b ) => a.ID - b.ID );
 			manager = manager.receive( { ID: 150 } );
 
-			expect( manager.getData( {} ) ).to.eql( [ { ID: 140 }, { ID: 150 }, { ID: 160 } ] );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 140 }, { ID: 150 }, { ID: 160 } ] );
 		} );
 
 		it( 'should accept an optional total found count', () => {
@@ -371,7 +371,7 @@ describe( 'QueryManager', () => {
 			manager = manager.receive( { ID: 144 }, { query: {}, found: 1 } );
 			manager = manager.receive( { ID: 144, changed: true }, { query: {} } );
 
-			expect( manager.getData( {} ) ).to.eql( [ { ID: 144, changed: true } ] );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 144, changed: true } ] );
 			expect( manager.getFound( {} ) ).to.equal( 1 );
 		} );
 
@@ -398,7 +398,7 @@ describe( 'QueryManager', () => {
 
 			expect( manager.getFound( {} ) ).to.equal( 2 );
 			expect( newManager.getFound( {} ) ).to.equal( 2 );
-			expect( newManager.getData( {} ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
+			expect( newManager.getItems( {} ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
 		} );
 	} );
 

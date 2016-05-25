@@ -41,14 +41,14 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * @param  {?Object}  query Optional query object
 	 * @return {Object[]}       Items tracked
 	 */
-	getData( query ) {
+	getItems( query ) {
 		if ( ! query ) {
-			return super.getData( query );
+			return super.getItems( query );
 		}
 
 		// Get all items, ignoring page. Test as truthy to ensure that query is
 		// in-fact being tracked, otherwise bail early.
-		const dataIgnoringPage = this.getDataIgnoringPage( query );
+		const dataIgnoringPage = this.getItemsIgnoringPage( query );
 		if ( ! dataIgnoringPage ) {
 			return dataIgnoringPage;
 		}
@@ -68,12 +68,12 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * @param  {Object}   query Query object
 	 * @return {Object[]}       Items tracked, ignoring page
 	 */
-	getDataIgnoringPage( query ) {
+	getItemsIgnoringPage( query ) {
 		if ( ! query ) {
 			return null;
 		}
 
-		return super.getData( omit( query, PAGINATION_QUERY_KEYS ) );
+		return super.getItems( omit( query, PAGINATION_QUERY_KEYS ) );
 	}
 
 	/**
@@ -111,7 +111,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 */
 	receive( items, options = {} ) {
 		// When tracking queries, remove pagination query arguments. These are
-		// simulated in `PaginatedQueryManager.prototype.getData`.
+		// simulated in `PaginatedQueryManager.prototype.getItems`.
 		let modifiedOptions = options;
 		if ( options.query ) {
 			modifiedOptions = Object.assign( {
@@ -138,7 +138,7 @@ export default class PaginatedQueryManager extends QueryManager {
 
 		// If there were previously no items for this query, there's no item
 		// set to be updated
-		const thisPageItems = this.getData( options.query );
+		const thisPageItems = this.getItems( options.query );
 		if ( ! thisPageItems ) {
 			return nextManager;
 		}

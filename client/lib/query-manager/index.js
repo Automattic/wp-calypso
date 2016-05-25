@@ -121,7 +121,7 @@ export default class QueryManager {
 	 * @param  {?Object} query Optional query object
 	 * @return {Object[]}      Items tracked
 	 */
-	getData( query ) {
+	getItems( query ) {
 		if ( ! query ) {
 			return values( this.data.items );
 		}
