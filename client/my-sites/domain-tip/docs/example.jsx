@@ -11,7 +11,6 @@ import DomainTip from '../index';
 import sitesList from 'lib/sites-list';
 
 const sites = sitesList();
-const siteId = sites.getPrimary().ID;
 
 export default React.createClass( {
 
@@ -20,6 +19,8 @@ export default React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render() {
+		const primarySite = sites.initialized && sites.getPrimary();
+		const siteId = primarySite ? primarySite.ID : 0;
 		return (
 			<div className="design-assets__group">
 				<h2>
