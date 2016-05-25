@@ -48,7 +48,7 @@ export default React.createClass( {
 		const noticeText = (
 			<div>
 				<p>
-					<strong>{ this.translate( 'Get notifications on your desktop!' ) }</strong> { this.translate( 'See your likes, comments, and more instantly—even when you don\'t have WordPress.com open in your browser.' ) }
+					<strong>{ this.translate( 'Get notifications on your desktop!' ) }</strong> { this.translate( 'Instantly see your likes, comments, and more—even when you don’t have WordPress.com open in your browser.' ) }
 				</p>
 				<p>
 					{ this.translate(
