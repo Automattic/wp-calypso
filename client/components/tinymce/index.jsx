@@ -112,7 +112,6 @@ const PLUGINS = [
 	'wplink',
 	'AtD',
 	'wpcom/autoresize',
-	'wpcom/insertmenu',
 	'wpcom/media',
 	'wpcom/advanced',
 	'wpcom/help',
@@ -127,6 +126,10 @@ const PLUGINS = [
 	'wpcom/contactform',
 	'wpcom/sourcecode',
 ];
+
+if ( config.isEnabled( 'post-editor/insert-menu' ) ) {
+	PLUGINS.push( 'wpcom/insertmenu' );
+}
 
 const CONTENT_CSS = [
 	window.app.tinymceWpSkin,
