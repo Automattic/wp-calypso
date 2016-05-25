@@ -36,6 +36,10 @@ const serviceIds = {
 	yandex: 'yandex-verification'
 };
 
+// Basic matching for HTML tags
+// Not perfect but meets the needs of this component well
+const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
+
 function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
 }
@@ -98,7 +102,14 @@ export const SeoForm = React.createClass( {
 	},
 
 	handleMetaChange( event ) {
-		this.setState( { seoMetaDescription: get( event, 'target.value', '' ) } );
+		const seoMetaDescription = event.target.value;
+		// Don't allow html tags in the input field
+		const hasHtmlTagError = anyHtmlTag.test( seoMetaDescription );
+
+		this.setState( Object.assign(
+			{ hasHtmlTagError },
+			! hasHtmlTagError && { seoMetaDescription }
+		) );
 	},
 
 	handleVerificationCodeChange( event, serviceName ) {
@@ -187,12 +198,12 @@ export const SeoForm = React.createClass( {
 			seoMetaDescription,
 			verificationServicesCodes,
 			showPasteError = false,
+			hasHtmlTagError = false,
 			invalidCodes = []
 		} = this.state;
 
 		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
 		const isDisabled = isSitePrivate || isSubmittingForm;
-		const hasMetaError = seoMetaDescription && seoMetaDescription.length > 160;
 
 		const sitemapUrl = `https://${ slug }/sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
@@ -269,8 +280,8 @@ export const SeoForm = React.createClass( {
 									maxLength="160"
 									acceptableLength={ 159 }
 									onChange={ this.handleMetaChange } />
-								{ hasMetaError &&
-									<FormInputValidation isError={ true } text={ this.translate( 'Description can\'t be longer than 160 characters.' ) } />
+								{ hasHtmlTagError &&
+									<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
 								}
 								<FormSettingExplanation>
 									{ this.translate( 'Craft a description of your site in 160 characters or less. This description can be used in search engine results for your site\'s Front Page.' ) }
