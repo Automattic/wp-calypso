@@ -132,7 +132,7 @@ module.exports = {
 			// in the view components
 			if ( postID ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				actions.startEditingExisting( site, postID );
+				actions.startEditingExisting( site.ID, postID );
 				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
 			} else {
 				let postOptions = { type: postType };
@@ -148,7 +148,7 @@ module.exports = {
 				}
 
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				actions.startEditingNew( site, postOptions );
+				actions.startEditingNew( site.ID, postOptions );
 				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			}
 		}
