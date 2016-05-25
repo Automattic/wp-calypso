@@ -36,7 +36,8 @@ const serviceIds = {
 	yandex: 'yandex-verification'
 };
 
-// Matches any open or closed html tag
+// Basic matching for HTML tags
+// Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
 
 function getGeneralTabUrl( slug ) {
@@ -101,18 +102,14 @@ export const SeoForm = React.createClass( {
 	},
 
 	handleMetaChange( event ) {
-		const metaContent = event.target.value;
+		const seoMetaDescription = event.target.value;
+		// Don't allow html tags in the input field
+		const hasHtmlTagError = anyHtmlTag.test( seoMetaDescription );
 
-		// Don't allow HTML tags in the input field
-		if ( anyHtmlTag.test( metaContent ) ) {
-			this.setState( { hasHtmlTagError: true } );
-			return;
-		}
-
-		this.setState( {
-			seoMetaDescription: metaContent,
-			hasHtmlTagError: false
-		} );
+		this.setState( Object.assign(
+			{ hasHtmlTagError },
+			! hasHtmlTagError && { seoMetaDescription }
+		) );
 	},
 
 	handleVerificationCodeChange( event, serviceName ) {
