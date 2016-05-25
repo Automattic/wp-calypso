@@ -84,23 +84,10 @@ export const SeoForm = React.createClass( {
 		return stateForSite( this.props.site );
 	},
 
-	componentDidMount() {
-		this.redirectJetpack( this.props.site );
-	},
-
 	componentWillReceiveProps( nextProps ) {
 		if ( get( nextProps, 'site.ID' ) !== get( this.props, 'site.ID' ) ) {
-			this.redirectJetpack( get( nextProps, 'site' ) );
-
 			// Update state when switching sites
 			this.setState( stateForSite( nextProps.site ) );
-		}
-	},
-
-	redirectJetpack( site ) {
-		if ( get( site, 'jetpack' ) ) {
-			// Go back to general settings if this is a Jetpack site
-			page( getGeneralTabUrl( get( site, 'slug', '' ) ) );
 		}
 	},
 

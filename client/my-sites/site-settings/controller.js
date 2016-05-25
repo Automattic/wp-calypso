@@ -4,6 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
+import endsWith from 'lodash/endsWith';
 
 /**
  * Internal Dependencies
@@ -72,6 +73,12 @@ module.exports = {
 		// if user went directly to jetpack settings page, redirect
 		if ( site.jetpack && ! config.isEnabled( 'manage/jetpack' ) ) {
 			window.location.href = '//wordpress.com/manage/' + site.ID;
+			return;
+		}
+
+		// redirect seo tab to general for Jetpack sites
+		if ( site.jetpack && endsWith( basePath, 'seo' ) ) {
+			page.redirect( '/settings/general/' + site.slug );
 			return;
 		}
 
