@@ -252,7 +252,10 @@ const ThemeSheet = React.createClass( {
 
 			return(
 				<Main className="themes__sheet_404">
-					<EmptyContentComponent title={ emptyContentTitle } line={ emptyContentMessage } />
+					<EmptyContentComponent title={ emptyContentTitle } line={ emptyContentMessage }/>
+					<Button primary href="/design">
+						{ i18n.translate( 'View the showcase' ) }
+					</Button>
 				</Main>
 			);
 		}
