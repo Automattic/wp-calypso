@@ -114,7 +114,10 @@ export const SeoForm = React.createClass( {
 
 		// Show an error if the user types into the field
 		if ( event.target.value.length === 1 ) {
-			this.setState( { showPasteError: true } );
+			this.setState( {
+				showPasteError: true,
+				invalidCodes: [ serviceName ]
+			} );
 			return;
 		}
 
@@ -198,6 +201,7 @@ export const SeoForm = React.createClass( {
 
 		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
 		const isDisabled = isSitePrivate || isSubmittingForm;
+		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
 		const sitemapUrl = `https://${ slug }/sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
@@ -239,7 +243,7 @@ export const SeoForm = React.createClass( {
 						onClick={ this.submitSeoForm }
 						primary={ true }
 						type="submit"
-						disabled={ isDisabled || isSubmittingForm }
+						disabled={ isSaveDisabled }
 					>
 						{ isSubmittingForm
 							? this.translate( 'Saving…' )
@@ -322,6 +326,7 @@ export const SeoForm = React.createClass( {
 									isError={ hasError( 'google' ) }
 									placeholder={ getMetaTag( 'google', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'google' ) } />
+								{ hasError( 'google' ) && this.getVerificationError( showPasteError ) }
 							</FormFieldset>
 
 							<FormFieldset>
@@ -335,6 +340,7 @@ export const SeoForm = React.createClass( {
 									isError={ hasError( 'bing' ) }
 									placeholder={ getMetaTag( 'bing', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'bing' ) } />
+								{ hasError( 'bing' ) && this.getVerificationError( showPasteError ) }
 							</FormFieldset>
 
 							<FormFieldset>
@@ -348,6 +354,7 @@ export const SeoForm = React.createClass( {
 									isError={ hasError( 'pinterest' ) }
 									placeholder={ getMetaTag( 'pinterest', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'pinterest' ) } />
+								{ hasError( 'pinterest' ) && this.getVerificationError( showPasteError ) }
 							</FormFieldset>
 
 							<FormFieldset>
@@ -361,17 +368,22 @@ export const SeoForm = React.createClass( {
 									isError={ hasError( 'yandex' ) }
 									placeholder={ getMetaTag( 'yandex', placeholderTagContent ) }
 									onChange={ event => this.handleVerificationCodeChange( event, 'yandex' ) } />
+								{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
 							</FormFieldset>
-							{ showPasteError &&
-								<div className="verification-code-error">
-									{ this.translate( 'Verification tag should be copied and pasted in.' ) }
-								</div>
-							}
-
 						</FormFieldset>
 					</form>
 				</Card>
 			</div>
+		);
+	},
+
+	getVerificationError( isPasteError ) {
+		return (
+			<FormInputValidation isError={ true } text={
+				isPasteError
+					? this.translate( 'Verification code should be copied and pasted into this field.' )
+					: this.translate( 'Invalid site verification tag.' )
+			} />
 		);
 	}
 } );
