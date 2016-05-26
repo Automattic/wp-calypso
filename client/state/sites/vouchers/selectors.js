@@ -34,6 +34,19 @@ export const getVouchersBySiteIdAndServiceType = ( state, siteId, serviceType ) 
 };
 
 /**
+ * Return google-ad-credits vouchers
+ *
+ * @param {Object} state - current state object
+ * @param {Object} site - site object
+ * @return {Array} site vouchers
+ */
+
+export const getGoogleAdCredits = ( state, site ) => {
+	const vouchers = getVouchersBySite( state, site );
+	return vouchers[ 'google-ad-credits' ] || [];
+};
+
+/**
  * Return requesting state for the given site
  *
  * @param {Object} state - current state object
