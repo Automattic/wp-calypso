@@ -9,7 +9,6 @@ import { combineReducers } from 'redux';
 import { EDITOR_POST_ID_SET, EDITOR_SHOW_DRAFTS_TOGGLE } from 'state/action-types';
 import imageEditor from './image-editor/reducer';
 import lastDraft from './last-draft/reducer';
-import media from './media/reducer';
 import contactForm from './contact-form/reducer';
 
 /**
@@ -51,6 +50,5 @@ export default combineReducers( {
 	showDrafts,
 	imageEditor,
 	lastDraft,
-	media,
 	contactForm
 } );
