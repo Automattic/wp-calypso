@@ -75,6 +75,12 @@ module.exports = {
 			return;
 		}
 
+		// redirect seo tab to general for Jetpack sites
+		if ( site.jetpack && context.params.section === 'seo' ) {
+			page.redirect( '/settings/general/' + site.slug );
+			return;
+		}
+
 		if ( ! site.latestSettings || new Date().getTime() - site.latestSettings > ( fiveMinutes ) ) {
 			if ( sites.initialized ) {
 				site.fetchSettings();
