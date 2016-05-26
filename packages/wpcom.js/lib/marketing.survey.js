@@ -1,9 +1,4 @@
 /**
- * Module dependencies.
- */
-import WPCOM from '../';
-
-/**
  * Module vars
  */
 const root = '/marketing/survey';
@@ -26,7 +21,7 @@ export default class MarketingSurvey {
 			return new MarketingSurvey( id, siteId, wpcom );
 		}
 
-		if ( siteId instanceof WPCOM ) {
+		if ( typeof siteId === 'object' ) {
 			this.wpcom = siteId;
 		} else {
 			this._siteId = siteId;
