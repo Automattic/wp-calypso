@@ -1,37 +1,38 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var countriesList = require( 'lib/countries-list' ).forSms(),
-	Card = require( 'components/card' ),
-	DocsExample = require( 'components/docs-example' ),
-	DocsExampleStats = require( 'components/docs-example' ).DocsExampleStats,
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	FormCountrySelect = require( 'components/forms/form-country-select' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormInputValidation = require( 'components/forms/form-input-validation' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormLegend = require( 'components/forms/form-legend' ),
-	FormPasswordInput = require( 'components/forms/form-password-input' ),
-	FormPhoneInput = require( 'components/forms/form-phone-input' ),
-	FormRadio = require( 'components/forms/form-radio' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	FormSelect = require( 'components/forms/form-select' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	FormStateSelector = require( 'components/forms/us-state-selector' ),
-	FormTelInput = require( 'components/forms/form-tel-input' ),
-	FormTextarea = require( 'components/forms/form-textarea' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	FormTextInputWithAffixes = require( 'components/forms/form-text-input-with-affixes' ),
-	FormToggle = require( 'components/forms/form-toggle' ),
-	CompactFormToggle = require( 'components/forms/form-toggle/compact' );
+import { forSms } from 'lib/countries-list';
+import Card from 'components/card';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormCountrySelect from 'components/forms/form-country-select';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormPhoneInput from 'components/forms/form-phone-input';
+import FormRadio from 'components/forms/form-radio';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSelect from 'components/forms/form-select';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormStateSelector from 'components/forms/us-state-selector';
+import FormTelInput from 'components/forms/form-tel-input';
+import FormTextarea from 'components/forms/form-textarea';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import DocsExample, { DocsExampleStats } from 'components/docs-example';
+
+const countriesList = forSms();
 
 var FormFields = React.createClass( {
 	displayName: 'FormFields',

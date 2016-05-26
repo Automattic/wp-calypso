@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var DocsExample = require( 'components/docs-example' ),
-	Gauge = require( 'components/gauge' );
+import DocsExample from 'components/docs-example';
+import Gauge from 'components/gauge';
 
 module.exports = React.createClass( {
 	displayName: 'Gauge',

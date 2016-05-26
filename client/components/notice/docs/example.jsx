@@ -1,15 +1,15 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
 * Internal dependencies
 */
-var DocsExample = require( 'components/docs-example' ),
-	NoticeAction = require( 'components/notice/notice-action' ),
-	Notice = require( 'components/notice' );
+import DocsExample from 'components/docs-example';
+import NoticeAction from 'components/notice/notice-action';
+import Notice from 'components/notice';
 
 var Notices = React.createClass( {
 	mixins: [ PureRenderMixin ],

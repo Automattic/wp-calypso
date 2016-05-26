@@ -1,15 +1,15 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var LikeButton = require( 'components/like-button/button' ),
-	Card = require( 'components/card/compact' ),
-	DocsExample = require( 'components/docs-example' );
+import LikeButton from 'components/like-button/button';
+import Card from 'components/card/compact';
+import DocsExample from 'components/docs-example';
 
 var SimpleLikeButtonContainer = React.createClass( {
 

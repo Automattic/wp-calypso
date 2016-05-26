@@ -2,13 +2,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var DocsExample = require( 'components/docs-example' ),
-	Gridicon = require( 'components/gridicon' );
+import DocsExample from 'components/docs-example';
+import Gridicon from 'components/gridicon';
 
 module.exports = React.createClass( {
 	displayName: 'Gridicons',

@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	DatePicker = require( 'components/date-picker' ),
-	DocsExample = require( 'components/docs-example' );
+import Card from 'components/card';
+import DatePicker from 'components/date-picker';
+import DocsExample from 'components/docs-example';
 
 /**
  * Date Picker Demo

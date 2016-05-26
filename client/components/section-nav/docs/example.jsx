@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	forEach = require( 'lodash/forEach' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import forEach from 'lodash/forEach';
 
 /**
  * Internal dependencies
  */
-var DocsExample = require( 'components/docs-example' ),
-	SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavSegmented = require( 'components/section-nav/segmented' ),
-	NavItem = require( 'components/section-nav/item' ),
-	Search = require( 'components/search' );
+import DocsExample from 'components/docs-example';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavSegmented from 'components/section-nav/segmented';
+import NavItem from 'components/section-nav/item';
+import Search from 'components/search';
 
 /**
  * Main

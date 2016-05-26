@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var DocsExample = require( 'components/docs-example' ),
-	SelectDropdown = require( 'components/select-dropdown' ),
-	DropdownItem = require( 'components/select-dropdown/item' ),
-	DropdownLabel = require( 'components/select-dropdown/label' ),
-	DropdownSeparator = require( 'components/select-dropdown/separator' );
+import DocsExample from 'components/docs-example';
+import SelectDropdown from 'components/select-dropdown';
+import DropdownItem from 'components/select-dropdown/item';
+import DropdownLabel from 'components/select-dropdown/label';
+import DropdownSeparator from 'components/select-dropdown/separator';
 
 var SelectDropdownDemo = React.createClass( {
 	displayName: 'SelectDropdown',
