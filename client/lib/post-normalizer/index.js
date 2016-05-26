@@ -23,6 +23,7 @@ function debugForPost( post ) {
  * If successful, the callback is invoked with `(null, theMutatedPost)`
  */
 function normalizePost( post, transforms, callback ) {
+	console && console.warn( '[DEPRECATED]: Please run the rules you need by hand' );
 	if ( ! callback ) {
 		throw new Error( 'must supply a callback' );
 	}

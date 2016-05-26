@@ -1,18 +1,41 @@
 /**
  * External Dependencies
  */
-const find = require( 'lodash/find' ),
-	forEach = require( 'lodash/forEach' ),
-	url = require( 'url' ),
-	matches = require( 'lodash/matches' ),
-	toArray = require( 'lodash/toArray' );
+import find from 'lodash/find';
+import flow from 'lodash/flow';
+import forEach from 'lodash/forEach';
+import url from 'url';
+import matches from 'lodash/matches';
+import cloneDeep from 'lodash/cloneDeep';
 
 /**
  * Internal Dependencies
  */
-const postNormalizer = require( 'lib/post-normalizer' ),
-	resizeImageUrl = require( 'lib/resize-image-url' ),
-	DISPLAY_TYPES = require( './display-types' );
+import resizeImageUrl from 'lib/resize-image-url';
+import DISPLAY_TYPES from './display-types';
+
+/**
+ * Rules
+ */
+import createBetterExcerpt from 'lib/post-normalizer/rule-create-better-excerpt';
+import detectEmbeds from 'lib/post-normalizer/rule-content-detect-embeds';
+import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
+import makeEmbedsSecure from 'lib/post-normalizer/rule-content-make-embeds-secure';
+import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
+import safeImages from 'lib/post-normalizer/rule-content-safe-images';
+import wordCount from 'lib/post-normalizer/rule-content-word-count';
+import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds} from 'lib/post-normalizer/rule-content-disable-autoplay';
+import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
+import firstPassCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
+import makeSiteIdSafeForApi from 'lib/post-normalizer/rule-make-site-id-safe-for-api';
+import pickPrimaryTag from 'lib/post-normalizer/rule-pick-primary-tag';
+import preventWidows from 'lib/post-normalizer/rule-prevent-widows';
+import safeImageProperties from 'lib/post-normalizer/rule-safe-image-properties';
+import stripHtml from 'lib/post-normalizer/rule-strip-html';
+import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
+import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
+import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
+import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
 
 /**
  * Module vars
@@ -22,35 +45,6 @@ const READER_CONTENT_WIDTH = 720,
 	PHOTO_ONLY_MIN_WIDTH = READER_CONTENT_WIDTH * 0.8,
 	ONE_LINER_THRESHOLD = ( 20 * 10 ), // roughly 10 lines of words
 	DISCOVER_BLOG_ID = 53424024;
-
-const fastPostNormalizationRules = [
-		postNormalizer.decodeEntities,
-		postNormalizer.stripHTML,
-		postNormalizer.preventWidows,
-		postNormalizer.makeSiteIDSafeForAPI,
-		postNormalizer.pickPrimaryTag,
-		postNormalizer.safeImageProperties( READER_CONTENT_WIDTH ),
-		postNormalizer.firstPassCanonicalImage,
-		postNormalizer.withContentDOM( [
-			postNormalizer.content.removeStyles,
-			postNormalizer.content.safeContentImages( READER_CONTENT_WIDTH ),
-			discoverFullBleedImages,
-			postNormalizer.content.makeEmbedsSecure,
-			postNormalizer.content.disableAutoPlayOnEmbeds,
-			postNormalizer.content.disableAutoPlayOnMedia,
-			postNormalizer.content.detectEmbeds,
-			postNormalizer.content.detectPolls,
-			postNormalizer.content.wordCountAndReadingTime
-		] ),
-		postNormalizer.createBetterExcerpt,
-		classifyPost
-	],
-	slowPostNormalizationRules = [
-		postNormalizer.waitForImagesToLoad,
-		postNormalizer.keepValidImages( 144, 72 ),
-		postNormalizer.pickCanonicalImage,
-		classifyPost
-	];
 
 function discoverFullBleedImages( post, dom ) {
 	if ( post.site_ID === DISCOVER_BLOG_ID ) {
@@ -68,9 +62,9 @@ function discoverFullBleedImages( post, dom ) {
 /**
  * Attempt to classify the post into a display type
  * @param  {object}   post     A post to classify
- * @param  {Function} callback A callback to invoke when we're done
+ * @return {object}            The classified post
  */
-function classifyPost( post, callback ) {
+function classifyPost( post ) {
 	var displayType = DISPLAY_TYPES.UNCLASSIFIED,
 		canonicalImage = post.canonical_image,
 		canonicalAspect;
@@ -133,10 +127,45 @@ function classifyPost( post, callback ) {
 
 	post.display_type = displayType;
 
-	callback();
+	return post;
 }
 
-module.exports = {
-	fastRules: fastPostNormalizationRules,
-	slowRules: slowPostNormalizationRules
-};
+const fastPostNormalizationRules = flow( [
+	decodeEntities,
+	stripHtml,
+	preventWidows,
+	makeSiteIdSafeForApi,
+	pickPrimaryTag,
+	safeImageProperties( READER_CONTENT_WIDTH ),
+	firstPassCanonicalImage,
+	withContentDom( [
+		removeStyles,
+		safeImages( READER_CONTENT_WIDTH ),
+		discoverFullBleedImages,
+		makeEmbedsSecure,
+		disableAutoPlayOnEmbeds,
+		disableAutoPlayOnMedia,
+		detectEmbeds,
+		detectPolls,
+		wordCount
+	] ),
+	createBetterExcerpt,
+	classifyPost
+] );
+
+export function runFastRules( post ) {
+	post = cloneDeep( post );
+	fastPostNormalizationRules( post );
+	return post;
+}
+
+const slowSyncRules = flow( [
+	keepValidImages( 144, 72 ),
+	pickCanonicalImage,
+	classifyPost
+] );
+
+export function runSlowRules( post ) {
+	post = cloneDeep( post );
+	return waitForImagesToLoad( post ).then( slowSyncRules );
+}
