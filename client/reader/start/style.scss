@@ -37,15 +37,15 @@
 
 	.reader-start__cards {
 		display: flex;
- 		flex-wrap: wrap;
-  		margin-top: -14px;
+		flex-wrap: wrap;
+		margin-top: -14px;
 
-  		// Aligns last card with grid
-  		&:after {
-  			content:'';
-  			flex: auto;
-  			width: 46%;
-  		}
+		// Aligns last card with grid
+		&:after {
+			content:'';
+			flex: auto;
+			width: 46%;
+		}
 	}
 }
 
@@ -53,11 +53,11 @@
 	box-sizing: border-box;
 	flex: calc( 100% );
 	float: left;
-  	margin: 20px 0 0 0;
+	margin: 20px 0 0 0;
 
 	@include breakpoint( ">960px" ) {
 		flex: calc( 50% - 3em );
-  		margin: 20px 20px 0 0;
+		margin: 20px 20px 0 0;
 	}
 
 	&:nth-child( even ),
@@ -73,61 +73,61 @@
 		}
 	}
 
-  	.reader-start-card__hero {
-  		background: url( "images/reader/hero.jpg" ); // Temp hero image
-  		height: 100px;
-  		margin: -24px;
-  	}
+	.reader-start-card__hero {
+		background: url( "images/reader/hero.jpg" ); // Temp hero image
+		height: 100px;
+		margin: -24px;
+	}
 
-  	header {
+	header {
 
 		margin-top: -38px;
-  		text-align: center;
+		text-align: center;
 
 		h1 {
-  			font-size: 1.5em;
-  			font-weight: 500;
-  		}
+			font-size: 1.5em;
+			font-weight: 500;
+		}
 
-  		p {
-  			color: $gray;
-  			font-size: 12px;
-  		}
+		p {
+			color: $gray;
+			font-size: 12px;
+		}
 
-  		.site-icon {
-  			margin: auto;
+		.site-icon {
+			margin: auto;
 			border: 4px solid $white;
-  		}
-  	}
+		}
+	}
 
-  	footer {
+	footer {
 
-  		.reader-start-card__follower-count {
-  			color: $gray;
-  			display: inline-block;
-  			float: left;
-  			font-size: 12px;
-  			font-weight: 600;
-  			margin-top: 20px;
-
-  			@include breakpoint( ">480px" ) {
-  				margin-top: 30px;
-  			}
-  		}
-
-  		.follow-button {
-
-  			float: right;
-  			margin-top: 10px;
-  			right: 0;
+		.reader-start-card__follower-count {
+			color: $gray;
+			display: inline-block;
+			float: left;
+			font-size: 12px;
+			font-weight: 600;
+			margin-top: 20px;
 
 			@include breakpoint( ">480px" ) {
-  				margin-top: 20px;
+				margin-top: 30px;
+			}
+		}
+
+		.follow-button {
+
+			float: right;
+			margin-top: 10px;
+			right: 0;
+
+			@include breakpoint( ">480px" ) {
+				margin-top: 20px;
 			}
 
-  			&:last-child {
-  				margin-bottom: -6px;
-  			}
+			&:last-child {
+				margin-bottom: -6px;
+			}
 
 			.gridicon {
 				position: absolute;
@@ -176,7 +176,7 @@
 				}
 			}
 		}
-  	}
+	}
 }
 
 .reader-start-post-preview {
@@ -220,59 +220,59 @@
 }
 
 .reader-start-footer {
-    animation-duration: 1.3s;
-    animation-fill-mode: forwards;
-    animation-iteration-count: once;
-    animation-name: slideout-bar;
-    animation-timing-function: ease-out;
+	animation-duration: 1.3s;
+	animation-fill-mode: forwards;
+	animation-iteration-count: once;
+	animation-name: slideout-bar;
+	animation-timing-function: ease-out;
 	background: rgba( 102, 142, 170, .9 );
 	padding: 8px;
-    position: fixed;
-   		bottom: 0;
-    width: 100%;
-    z-index: 5000;
+	position: fixed;
+		bottom: 0;
+	width: 100%;
+	z-index: 5000;
 
-    .reader-start-footer__action {
-    	color: $white;
-    	margin-left: 36%;
-    	width: 50%;
+	.reader-start-footer__action {
+		color: $white;
+		margin-left: 36%;
+		width: 50%;
 
-    	@include breakpoint( "<960px" ) {
-    		margin-left: 10%;
-    		width: 80%;
-    	}
+		@include breakpoint( "<960px" ) {
+			margin-left: 10%;
+			width: 80%;
+		}
 
-    	@include breakpoint( "<660px" ) {
-    		text-align: center;
-    		width: 90%;
-    	}
+		@include breakpoint( "<660px" ) {
+			text-align: center;
+			width: 90%;
+		}
 
-    	@include breakpoint( "<480px" ) {
-    		margin: -10px 0 0 10px;
-    	}
-    }
+		@include breakpoint( "<480px" ) {
+			margin: -10px 0 0 10px;
+		}
+	}
 
-    span {
-    	display: inline-block;
-    	font-size: 18px;
-    	margin-top: 8px;
-    }
+	span {
+		display: inline-block;
+		font-size: 18px;
+		margin-top: 8px;
+	}
 
-    button {
-    	cursor: pointer;
-    	float: none;
+	button {
+		cursor: pointer;
+		float: none;
 
-    	@include breakpoint( ">660px" ) {
-    		float: right;
-    	}
-    }
+		@include breakpoint( ">660px" ) {
+			float: right;
+		}
+	}
 }
 
 @keyframes slideout-bar {
-    0% {
-        bottom: -100px;
-    }
-    100% {
-    	bottom: 0;
-    }
+	0% {
+		bottom: -100px;
+	}
+	100% {
+		bottom: 0;
+	}
 }

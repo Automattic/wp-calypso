@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
- import React from 'react';
- import { bindActionCreators } from 'redux';
- import { connect } from 'react-redux';
- import pickBy from 'lodash/pickBy';
- import merge from 'lodash/merge';
+import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import pickBy from 'lodash/pickBy';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
