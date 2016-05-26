@@ -54,22 +54,6 @@ module.exports = {
 		},
 		defaultVariation: 'namegen'
 	},
-	nudges: {
-		datestamp: '20160519',
-		variations: {
-			showAll: 60,
-			hideAll: 40
-		},
-		defaultVariation: 'showAll'
-	},
-	swapButtonsMySiteSidebar: {
-		datestamp: '20160414',
-		variations: {
-			original: 50,
-			swap: 50
-		},
-		defaultVariation: 'original'
-	},
 	guidedTours: {
 		datestamp: '20160428',
 		variations: {
