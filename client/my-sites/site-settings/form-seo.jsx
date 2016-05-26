@@ -387,7 +387,7 @@ export const SeoForm = React.createClass( {
 		return (
 			<FormInputValidation isError={ true } text={
 				isPasteError
-					? this.translate( 'Verification code should be copied and pasted in.' )
+					? this.translate( 'Verification code should be copied and pasted into this field.' )
 					: this.translate( 'Invalid site verification tag.' )
 			} />
 		);
