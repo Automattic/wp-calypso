@@ -8,16 +8,18 @@ var requestHandler = require('wpcom-xhr-request');
 /**
  * Local module dependencies.
  */
-var Me = require('./lib/me');
-var Site = require('./lib/site');
-var Domains = require('./lib/domains');
-var Domain = require('./lib/domain');
-var Users = require('./lib/users');
 var Batch = require('./lib/batch');
+var Domain = require('./lib/domain');
+var Domains = require('./lib/domains');
+var Marketing = require('./lib/marketing');
+var Me = require('./lib/me');
+var Pinghub = require('./lib/util/pinghub');
 var Plans = require('./lib/plans');
 var Req = require('./lib/util/request');
+var Site = require('./lib/site');
+var Users = require('./lib/users');
+
 var sendRequest = require('./lib/util/send-request');
-var Pinghub = require('./lib/util/pinghub');
 var debug = require('debug')('wpcom');
 
 /**
@@ -80,6 +82,15 @@ function WPCOM(token, reqHandler) {
 	// Default api version;
 	this.apiVersion = '1.1';
 }
+
+/**
+ * Return `Marketing` object instance
+ *
+ * @return {Marketing} Marketing instance
+ */
+WPCOM.prototype.marketing = function () {
+	return new Marketing(this);
+};
 
 /**
  * Return `Me` object instance
