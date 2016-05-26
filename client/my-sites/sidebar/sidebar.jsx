@@ -189,24 +189,6 @@ module.exports = React.createClass( {
 			themesLink = '/design';
 		}
 
-		if ( abtest( 'swapButtonsMySiteSidebar' ) === 'swap' ) {
-			return (
-				<SidebarItem
-					tipTarget="themes"
-					label={ this.translate( 'Customize' ) }
-					className={ this.itemLinkClass( '/design', 'themes' ) }
-					link={ getCustomizeUrl( null, site ) }
-					onNavigate={ this.onNavigate }
-					icon={ 'themes' }
-					preloadSectionName="customize"
-				>
-					<SidebarButton href={ themesLink } preloadSectionName="themes">
-						{ this.translate( 'Themes' ) }
-					</SidebarButton>
-				</SidebarItem>
-			);
-		}
-
 		return (
 			<SidebarItem
 				label={ this.translate( 'Themes' ) }
