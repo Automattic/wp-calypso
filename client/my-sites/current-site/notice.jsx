@@ -62,7 +62,7 @@ const SiteNotice = React.createClass( {
 			const eventProperties = { cta_name: 'current_site_domain_notice' };
 			return (
 				<Notice isCompact status="is-success" icon="info-outline">
-					{ this.translate( 'Unused domain credit' ) }
+					{ this.translate( 'Free domain available' ) }
 					<NoticeAction
 						onClick={ this.props.clickClaimDomainNotice }
 						href={ `/domains/add/${ this.props.site.slug }` }
