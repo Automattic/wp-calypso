@@ -9,6 +9,7 @@ import pick from 'lodash/pick';
  */
 import { plans } from './plans/reducer';
 import domains from './domains/reducer';
+import vouchers from './vouchers/reducer';
 
 import mediaStorage from './media-storage/reducer';
 import {
@@ -89,5 +90,6 @@ export default combineReducers( {
 	fetchingItems,
 	items,
 	mediaStorage,
-	plans
+	plans,
+	vouchers
 } );
