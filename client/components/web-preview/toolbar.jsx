@@ -61,7 +61,7 @@ const PreviewToolbar = React.createClass( {
 					</button>
 				}
 				{ this.props.showExternal &&
-					<a className="web-preview__external" href={ this.props.previewUrl } target="_blank">
+					<a className="web-preview__external" href={ this.props.externalUrl || this.props.previewUrl } target="_blank">
 						<Gridicon icon="external" />
 					</a>
 				}
