@@ -233,12 +233,16 @@ module.exports = React.createClass( {
 		return !! window.location.pathname.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i );
 	},
 
+	getVisibleItemIndexes: function() {
+		return this._list && this._list.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } );
+	},
+
 	selectNextItem: function() {
-		var visibleIndexes = this._list.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } ),
+		var visibleIndexes = this.getVisibleItemIndexes(),
 			visibleIndex,
 			index,
 			i;
-		if ( visibleIndexes.length > 0 ) {
+		if ( visibleIndexes && visibleIndexes.length > 0 ) {
 			index = visibleIndexes[ 0 ].index;
 			for ( i = 0; i < visibleIndexes.length; i++ ) {
 				visibleIndex = visibleIndexes[ i ];
@@ -256,11 +260,11 @@ module.exports = React.createClass( {
 	},
 
 	selectPrevItem: function() {
-		var visibleIndexes = this._list.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } ),
+		var visibleIndexes = this.getVisibleItemIndexes(),
 			visibleIndex,
 			index,
 			i;
-		if ( visibleIndexes.length > 0 ) {
+		if ( visibleIndexes && visibleIndexes.length > 0 ) {
 			index = visibleIndexes[ 0 ].index;
 			for ( i = 0; i < visibleIndexes.length; i++ ) {
 				visibleIndex = visibleIndexes[ i ];
