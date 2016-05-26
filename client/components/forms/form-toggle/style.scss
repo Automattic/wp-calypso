@@ -14,7 +14,6 @@
 	padding: 2px;
 	width: 40px;
 	height: 24px;
-	background: lighten( $gray, 10% );
 	vertical-align: middle;
 	outline: 0;
 	cursor: pointer;
@@ -36,11 +35,6 @@
 	}
 	&:before {
 		display: none;
-	}
-	&:hover {
-		background: lighten( $gray, 20% );
-
-
 	}
 	.accessible-focus &:focus{
 		box-shadow: 0 0 0 2px $blue-medium;
@@ -64,6 +58,17 @@
 			box-shadow: 0 0 0 2px $blue-light;
 		}
 	}
+
+	& + .form-toggle__label .form-toggle__switch {
+		background: lighten( $gray, 10% );
+	}
+
+	&:not( :disabled ) {
+		+ .form-toggle__label .form-toggle__switch:hover {
+			background: lighten( $gray, 20% );
+		}
+	}
+
 	&:checked{
 		+ .form-toggle__label .form-toggle__switch {
 			background: $blue-medium;
@@ -73,15 +78,16 @@
 			}
 		}
 	}
-	&:checked {
+
+	&:checked:not( :disabled ) {
 		+ .form-toggle__label .form-toggle__switch:hover {
 			background: $blue-light;
 		}
 	}
+
 	&:disabled {
-		+ label.form-toggle__label span.form-toggle__switch:hover,
 		+ label.form-toggle__label span.form-toggle__switch {
-			background: lighten( $gray, 30% );
+			opacity: 0.25;
 			cursor: default;
 		}
 	}

@@ -3,8 +3,7 @@
  */
 const React = require( 'react' ),
 	pick = require( 'lodash/pick' );
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+
 /**
  * Internal dependencies
  */
@@ -13,7 +12,6 @@ const EditorFieldset = require( 'post-editor/editor-fieldset' ),
 	PostActions = require( 'lib/posts/actions' ),
 	InfoPopover = require( 'components/info-popover' ),
 	stats = require( 'lib/posts/stats' );
-import { setDiscussionSettings } from 'state/ui/editor/post/actions';
 
 function booleanToStatus( bool ) {
 	return bool ? 'open' : 'closed';
@@ -23,20 +21,18 @@ function statusToBoolean( status ) {
 	return 'open' === status;
 }
 
-const EditorDiscussion = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorDiscussion',
 
 	propTypes: {
 		isNew: React.PropTypes.bool,
 		post: React.PropTypes.object,
-		site: React.PropTypes.object,
-		setDiscussionSettings: React.PropTypes.func
+		site: React.PropTypes.object
 	},
 
 	getDefaultProps: function() {
 		return {
-			isNew: false,
-			setDiscussionSettings: () => {}
+			isNew: false
 		};
 	},
 
@@ -76,8 +72,6 @@ const EditorDiscussion = React.createClass( {
 		stats.recordStat( statName );
 		stats.recordEvent( gaEvent, newStatus );
 
-		this.props.setDiscussionSettings( discussion );
-
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
 			discussion: discussion
@@ -114,10 +108,3 @@ const EditorDiscussion = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setDiscussionSettings }, dispatch ),
-	null,
-	{ pure: false }
-)( EditorDiscussion );

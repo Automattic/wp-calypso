@@ -6,6 +6,13 @@
 	margin: 0 0 15px 0;
 	padding: 0;
 
+	&.jetpack_free,
+	&.jetpack_premium,
+	&.jetpack_business {
+		display: flex;
+		flex-direction: column;
+	}
+
 	&.is-placeholder {
 		.plan__plan-tagline {
 			@include placeholder( 23% );
@@ -40,6 +47,15 @@
 	overflow: hidden;
 	transition: all 0.4s ease-in-out;
 	width: 100%;
+
+	.jetpack_free &,
+	.jetpack_premium &,
+	.jetpack_business & {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+	}
+
 }
 
 .plan__plan-details {
@@ -71,6 +87,12 @@
 		font-size: 13px;
 		display: block;
 		margin: 8px 0 0 0;
+	}
+
+	.jetpack_free &,
+	.jetpack_premium &,
+	.jetpack_business & {
+		flex-grow: 1;
 	}
 }
 
@@ -112,6 +134,14 @@
 			top: 64px;
 			margin-left: 30px;
 		}
+
+		&.jetpack_free,
+		&.jetpack_premium,
+		&.jetpack_business {
+			.plan__plan-tagline {
+				height: 32px;
+			}
+		}
 	}
 
 	.plan__plan-tagline {
@@ -133,6 +163,7 @@
 			flex-wrap: nowrap;
 			justify-content: center;
 	}
+
 }
 
 .plans.has-sidebar {
@@ -161,3 +192,5 @@
 		left: -5px;
 		top: 2px;
 }
+
+

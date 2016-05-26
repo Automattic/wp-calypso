@@ -171,6 +171,22 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should strip invalid keys on the received site objects', () => {
+			const state = items( undefined, {
+				type: SITES_RECEIVE,
+				sites: [ {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog',
+					slug: 'example.wordpress.com',
+					updateComputedAttributes() {}
+				} ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', slug: 'example.wordpress.com' }
+			} );
+		} );
+
 		it( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {

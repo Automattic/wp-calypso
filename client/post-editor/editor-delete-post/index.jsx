@@ -3,8 +3,6 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -15,22 +13,14 @@ import utils from 'lib/posts/utils';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import Tooltip from 'components/tooltip';
-import { trashPost } from 'state/ui/editor/post/actions';
 
-const EditorDeletePost = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorDeletePost',
 
 	propTypes: {
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
-		onTrashingPost: React.PropTypes.func,
-		trashPost: React.PropTypes.func
-	},
-
-	getDefaultProps: function() {
-		return {
-			trashPost: () => {}
-		};
+		onTrashingPost: React.PropTypes.func
 	},
 
 	getInitialState: function() {
@@ -45,14 +35,13 @@ const EditorDeletePost = React.createClass( {
 
 		const handleTrashingPost = function( error ) {
 			if ( error ) {
-				return this.setState( { isTrashing: false } );
+				this.setState( { isTrashing: false } );
 			}
 
-			this.props.onTrashingPost();
+			this.props.onTrashingPost( error );
 		}.bind( this );
 
 		if ( utils.userCan( 'delete_post', this.props.post ) ) {
-			this.props.trashPost( this.props.post, handleTrashingPost );
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			actions.trash( this.props.post, handleTrashingPost );
 		}
@@ -109,10 +98,3 @@ const EditorDeletePost = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { trashPost }, dispatch ),
-	null,
-	{ pure: false }
-)( EditorDeletePost );

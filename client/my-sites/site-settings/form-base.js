@@ -167,6 +167,10 @@ module.exports = {
 
 				site.fetchSettings();
 			}
+
+			if ( 'function' === typeof this.onSaveComplete ) {
+				this.onSaveComplete( error );
+			}
 		} );
 
 		this.recordEvent( 'Clicked Save Settings Button' );

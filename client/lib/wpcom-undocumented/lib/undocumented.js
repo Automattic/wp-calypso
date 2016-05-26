@@ -457,35 +457,6 @@ Undocumented.prototype.validateDomainContactInformation = function( contactInfor
 };
 
 /**
- * Get a list of active WordPress.com plans
- *
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.getPlans = function( fn ) {
-	debug( '/plans query' );
-	this._sendRequestWithLocale( {
-		path: '/plans',
-		method: 'get',
-		apiVersion: '1.2'
-	}, fn );
-};
-
-/**
- * Get a list of features for active WordPress.com plans
- *
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.getPlansFeatures = function( fn ) {
-	debug( '/plans/features query' );
-	this._sendRequestWithLocale( {
-		path: '/plans/features',
-		method: 'get'
-	}, fn );
-};
-
-/**
  * Get a list of WordPress.com products
  *
  * @param {Function} fn The callback function
@@ -978,7 +949,7 @@ Undocumented.prototype.readA8C = function( query, fn ) {
 Undocumented.prototype.readFeed = function( query, fn ) {
 	var params = omit( query, 'ID' );
 	debug( '/read/feed' );
-	this.wpcom.req.get( '/read/feed/' + encodeURIComponent( query.ID ), params, fn );
+	return this.wpcom.req.get( '/read/feed/' + encodeURIComponent( query.ID ), params, fn );
 };
 
 Undocumented.prototype.discoverFeed = function( query, fn ) {
@@ -1022,7 +993,7 @@ Undocumented.prototype.readTags = function( fn ) {
 Undocumented.prototype.readTagPosts = function( query, fn ) {
 	var params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );
-	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ){
+	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ) {
 		params.apiVersion = '1.3';
 	} else {
 		params.apiVersion = '1.2';
@@ -1142,7 +1113,7 @@ Undocumented.prototype.readSite = function( query, fn ) {
 	var params = omit( query, 'site' );
 	debug( '/read/sites/:site' );
 	query.apiVersion = '1.1';
-	this.wpcom.req.get( '/read/sites/' + query.site, params, fn );
+	return this.wpcom.req.get( '/read/sites/' + query.site, params, fn );
 };
 
 Undocumented.prototype.readSiteFeatured = function( siteId, query, fn ) {
@@ -1167,6 +1138,10 @@ Undocumented.prototype.readSitePost = function( query, fn ) {
 
 Undocumented.prototype.fetchSiteRecommendations = function( query, fn ) {
 	this.wpcom.req.get( '/read/recommendations/mine', query, fn );
+};
+
+Undocumented.prototype.readRecommendationsStart = function( query, fn ) {
+	return this.wpcom.req.get( '/read/recommendations/start', query, fn );
 };
 
 Undocumented.prototype.readNewPostEmailSubscription = function( query, fn ) {

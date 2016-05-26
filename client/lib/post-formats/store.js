@@ -7,13 +7,14 @@ var Dispatcher = require( 'dispatcher' ),
 /**
  * Module variables
  */
-var PostFormatsStore = {},
-	_formats = {};
+const PostFormatsStore = {
+	_formats: {}
+};
 
 emitter( PostFormatsStore );
 
 function receivePostFormats( siteId, data ) {
-	_formats[ siteId ] = Object.keys( data ).map( function( slug ) {
+	PostFormatsStore._formats[ siteId ] = Object.keys( data ).map( function( slug ) {
 		return {
 			slug: slug,
 			label: data[ slug ]
@@ -22,7 +23,7 @@ function receivePostFormats( siteId, data ) {
 }
 
 PostFormatsStore.get = function( siteId ) {
-	return _formats[ siteId ];
+	return PostFormatsStore._formats[ siteId ];
 };
 
 PostFormatsStore.dispatchToken = Dispatcher.register( function( payload ) {

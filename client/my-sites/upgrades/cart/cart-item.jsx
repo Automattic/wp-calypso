@@ -12,7 +12,8 @@ import {
 	isCredits,
 	isDomainProduct,
 	isGoogleApps,
-	isTheme
+	isTheme,
+	isPlan
 } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { abtest } from 'lib/abtest';
@@ -59,6 +60,10 @@ export default React.createClass( {
 		const { cost, currency } = this.props.cartItem;
 
 		if ( typeof cost === 'undefined' ) {
+			return null;
+		}
+
+		if ( ! isPlan( this.props.cartItem ) ) {
 			return null;
 		}
 

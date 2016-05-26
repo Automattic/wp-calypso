@@ -54,10 +54,6 @@
 		text-align: left;
 		padding: 16px;
 		width: 100%;
-
-		.gridicon {
-			margin-right: 4px;
-		}
 	}
 
 	@include breakpoint( "<660px" ) {

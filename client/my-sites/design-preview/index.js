@@ -6,20 +6,23 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 import debugFactory from 'debug';
+import url from 'url';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import WebPreview from 'components/web-preview';
 import * as PreviewActions from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
 import layoutFocus from 'lib/layout-focus';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
 const DesignPreview = React.createClass( {
+	previewCounter: 0,
 
 	propTypes: {
 		// Any additional classNames to set on this wrapper
@@ -42,6 +45,12 @@ const DesignPreview = React.createClass( {
 		selectedSiteId: React.PropTypes.number,
 	},
 
+	getInitialState() {
+		return {
+			previewCount: 0
+		};
+	},
+
 	getDefaultProps() {
 		return {
 			showPreview: false,
@@ -54,11 +63,29 @@ const DesignPreview = React.createClass( {
 		};
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		if ( ! config.isEnabled( 'preview-endpoint' ) ) {
+			if ( this.props.selectedSiteId && this.props.selectedSiteId !== nextProps.selectedSiteId ) {
+				this.previewCounter = 0;
+			}
+
+			if ( ! this.props.showPreview && nextProps.showPreview ) {
+				debug( 'forcing refresh' );
+				this.previewCounter > 0 && this.setState( { previewCount: this.previewCounter } );
+				this.previewCounter += 1;
+			}
+		}
+	},
+
 	componentDidMount() {
 		this.loadPreview();
 	},
 
 	componentDidUpdate( prevProps ) {
+		if ( ! config.isEnabled( 'preview-endpoint' ) ) {
+			return;
+		}
+
 		// If there is no markup or the site has changed, fetch it
 		if ( ! this.props.previewMarkup || this.props.selectedSiteId !== prevProps.selectedSiteId ) {
 			this.loadPreview();
@@ -94,7 +121,10 @@ const DesignPreview = React.createClass( {
 	},
 
 	loadPreview() {
-		if ( this.props.selectedSiteId && this.props.actions.fetchPreviewMarkup ) {
+		if ( ! config.isEnabled( 'preview-endpoint' ) || ! this.props.selectedSite ) {
+			return;
+		}
+		if ( this.props.actions.fetchPreviewMarkup ) {
 			debug( 'loading preview with customizations', this.props.customizations );
 			this.props.actions.fetchPreviewMarkup( this.props.selectedSiteId, '', this.props.customizations );
 		}
@@ -138,31 +168,60 @@ const DesignPreview = React.createClass( {
 		// TODO: if the href is on the current site, load the href as a preview and fetch markup for that url
 	},
 
+	getPreviewUrl( site ) {
+		if ( ! site ) {
+			return null;
+		}
+
+		const parsed = url.parse( site.URL, true );
+		parsed.query.iframe = true;
+		parsed.query.theme_preview = true;
+		if ( site.options && site.options.frame_nonce ) {
+			parsed.query['frame-nonce'] = site.options.frame_nonce;
+		}
+		delete parsed.search;
+		return url.format( parsed ) + '&' + this.state.previewCount;
+	},
+
 	render() {
+		const useEndpoint = config.isEnabled( 'preview-endpoint' );
+
+		if ( ! this.props.selectedSite ) {
+			return null;
+		}
+
 		return (
 			<WebPreview
 				className={ this.props.className }
-				showExternal={ false }
+				previewUrl={ useEndpoint ? null : this.getPreviewUrl( this.props.selectedSite ) }
+				showExternal={ true }
 				showClose={ this.props.showClose }
 				showPreview={ this.props.showPreview }
 				defaultViewportDevice={ this.props.defaultViewportDevice }
-				previewMarkup={ this.props.previewMarkup }
+				previewMarkup={ useEndpoint ? this.props.previewMarkup : null }
 				onClose={ this.onClosePreview }
-				onLoad={ this.onLoad }
+				onLoad={ useEndpoint ? this.onLoad : noop }
 			>
-			{ this.props.children }
+				{ this.props.children }
 			</WebPreview>
 		);
 	}
 } );
 
 function mapStateToProps( state ) {
+	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
+
 	if ( ! state.preview || ! state.preview[ selectedSiteId ] ) {
-		return { selectedSiteId };
+		return {
+			selectedSite,
+			selectedSiteId,
+		};
 	}
+
 	const { previewMarkup, customizations, isUnsaved } = state.preview[ selectedSiteId ];
 	return {
+		selectedSite,
 		selectedSiteId,
 		previewMarkup,
 		customizations,

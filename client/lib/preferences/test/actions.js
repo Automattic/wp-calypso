@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
-import rewire from 'rewire';
 import mockery from 'mockery';
 import noop from 'lodash/noop';
 
@@ -50,7 +48,7 @@ describe( 'PreferencesActions', function() {
 			}
 		} );
 
-		PreferencesActions = rewire( '../actions' );
+		PreferencesActions = require( '../actions' );
 	} );
 
 	beforeEach( function() {
@@ -89,18 +87,14 @@ describe( 'PreferencesActions', function() {
 		} );
 
 		it( 'should not persist to localStorage from remote request if error occurs', function( done ) {
-			const mergePreferencesToLocalStorage = sinon.stub();
+			sandbox.stub( PreferencesActions, 'mergePreferencesToLocalStorage' );
 
 			getSettings = sandbox.stub().callsArgWithAsync( 0, true );
 
-			PreferencesActions.__with__( {
-				mergePreferencesToLocalStorage: mergePreferencesToLocalStorage
-			} )( function() {
-				PreferencesActions.fetch();
-				process.nextTick( function() {
-					expect( mergePreferencesToLocalStorage ).to.not.have.been.called;
-					done();
-				} );
+			PreferencesActions.fetch();
+			process.nextTick( function() {
+				expect( PreferencesActions.mergePreferencesToLocalStorage ).to.not.have.been.called;
+				done();
 			} );
 		} );
 

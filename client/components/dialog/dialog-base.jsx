@@ -6,8 +6,7 @@ var ReactDom = require( 'react-dom' ),
 	clickOutside = require( 'click-outside' ),
 	closest = require( 'component-closest' ),
 	noop = require( 'lodash/noop' ),
-	classnames = require( 'classnames' ),
-	componentClasses = require( 'component-classes' );
+	classnames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -41,7 +40,7 @@ var DialogBase = React.createClass( {
 
 			this._unbindClickHandler = clickOutside( ReactDom.findDOMNode( this.refs.dialog ), this._onBackgroundClick );
 		}.bind( this ), 10 );
-		componentClasses( document.documentElement ).add( 'no-scroll' );
+		document.documentElement.classList.add( 'no-scroll' );
 	},
 
 	componentWillUnmount: function() {
@@ -54,7 +53,7 @@ var DialogBase = React.createClass( {
 			this._unbindClickHandler();
 			this._unbindClickHandler = null;
 		}
-		componentClasses( document.documentElement ).remove( 'no-scroll' );
+		document.documentElement.classList.remove( 'no-scroll' );
 	},
 
 	render: function() {

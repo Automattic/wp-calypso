@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var assert = require( 'better-assert' );
+import assert from 'assert';
 
 /**
 * Internal dependencies
@@ -64,6 +64,20 @@ describe( 'utils', function() {
 
 		it( 'should return false when post.status is not publish or private', function() {
 			assert( ! postUtils.isPublished( { status: 'draft' } ) );
+		} );
+	} );
+
+	describe( '#isPending', function() {
+		it( 'should return undefined when no post is supplied', function() {
+			assert( postUtils.isPending() === undefined );
+		} );
+
+		it( 'should return true when post.status is pending', function() {
+			assert( postUtils.isPending( { status: 'pending' } ) );
+		} );
+
+		it( 'should return false when post.status is not pending', function() {
+			assert( ! postUtils.isPending( { status: 'draft' } ) );
 		} );
 	} );
 

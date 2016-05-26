@@ -24,7 +24,6 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
-	JETPACK_CONNECT_STORE_SESSION,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -36,6 +35,9 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 
+import { isValidStateWithSchema } from 'state/utils';
+import { jetpackConnectSessionsSchema } from './schema';
+
 const defaultAuthorizeState = {
 	queryObject: {},
 	isAuthorizing: false,
@@ -43,29 +45,41 @@ const defaultAuthorizeState = {
 	authorizeError: false
 };
 
-function buildNoProtocolUrlObj( url ) {
+function buildNoProtocolUrlObj( url, isInstall ) {
 	const noProtocolUrl = url.replace( /.*?:\/\//g, '' );
-	return { [ noProtocolUrl ]: ( new Date() ).getTime() };
+	const sessionValue = {
+		timestamp: Date.now(),
+		isInstall: !! isInstall
+	};
+	return { [ noProtocolUrl ]: sessionValue };
 }
 
 export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
-		case JETPACK_CONNECT_STORE_SESSION:
-			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url ) );
-		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
-			const parsedUrl = urlModule.parse( action.ssoUrl );
-			return Object.assign( {}, state, buildNoProtocolUrlObj( parsedUrl.hostname ) );
-		case SERIALIZE:
+		case JETPACK_CONNECT_CHECK_URL:
+			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url, action.isInstall ) );
 		case DESERIALIZE:
+			if ( isValidStateWithSchema( state, jetpackConnectSessionsSchema ) ) {
+				return state;
+			}
+			return {};
+		case SERIALIZE:
 			return state;
 	}
 	return state;
 }
 
 export function jetpackConnectSite( state = {}, action ) {
+	const defaultState = {
+		url: null,
+		isFetching: false,
+		isFetched: false,
+		isDismissed: false,
+		data: {}
+	};
 	switch ( action.type ) {
 		case JETPACK_CONNECT_CHECK_URL:
-			return Object.assign( {}, { url: action.url, isFetching: true, isFetched: false, isDismissed: false, data: {} } );
+			return Object.assign( {}, defaultState, { url: action.url, isFetching: true, isFetched: false, isDismissed: false, data: {} } );
 		case JETPACK_CONNECT_CHECK_URL_RECEIVE:
 			if ( action.url === state.url ) {
 				return Object.assign( {}, state, { isFetching: false, isFetched: true, data: action.data } );
@@ -83,7 +97,7 @@ export function jetpackConnectSite( state = {}, action ) {
 			return state;
 		case SERIALIZE:
 		case DESERIALIZE:
-			return {};
+			return defaultState;
 	}
 	return state;
 }
@@ -108,7 +122,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { isActivating: false, manageActivated: true, manageActivatedError: error, activateManageSecret: false } );
 		case JETPACK_CONNECT_QUERY_SET:
 			const queryObject = Object.assign( {}, action.queryObject );
-			return Object.assign( {}, defaultAuthorizeState, state, { queryObject: queryObject } );
+			return Object.assign( {}, defaultAuthorizeState, { queryObject: queryObject } );
 		case JETPACK_CONNECT_QUERY_UPDATE:
 			return Object.assign( {}, state, { queryObject: Object.assign( {}, state.queryObject, { [ action.property ]: action.value } ) } );
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
@@ -122,7 +136,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case SERIALIZE:
 		case DESERIALIZE:
-			return {};
+			return state;
 	}
 	return state;
 }
@@ -150,9 +164,22 @@ export function jetpackSSO( state = {}, action ) {
 	return state;
 }
 
+export function jetpackSSOSessions( state = {}, action ) {
+	switch ( action.type ) {
+		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
+			const parsedUrl = urlModule.parse( action.ssoUrl );
+			return Object.assign( {}, state, buildNoProtocolUrlObj( parsedUrl.hostname ) );
+		case SERIALIZE:
+		case DESERIALIZE:
+			return state;
+	}
+	return state;
+}
+
 export default combineReducers( {
 	jetpackConnectSite,
 	jetpackConnectAuthorize,
-	jetpackSSO,
 	jetpackConnectSessions,
+	jetpackSSOSessions,
+	jetpackSSO,
 } );

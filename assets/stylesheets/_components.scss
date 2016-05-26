@@ -20,6 +20,7 @@
 @import 'components/count/style';
 @import 'components/date-picker/style';
 @import 'components/dialog/style';
+@import 'components/docs-example/style';
 @import 'components/domains/domain-mapping-suggestion/style';
 @import 'components/domains/domain-product-price/style';
 @import 'components/domains/domain-search-results/style';
@@ -188,6 +189,7 @@
 @import 'my-sites/category-selector/style';
 @import 'my-sites/current-site/style';
 @import 'my-sites/customize/style';
+@import 'my-sites/domain-tip/style';
 @import 'my-sites/draft/style';
 @import 'my-sites/drafts/style';
 @import 'my-sites/exporter/style';
@@ -267,6 +269,7 @@
 @import 'my-sites/stats/geochart/style';
 @import 'my-sites/stats/most-popular/style';
 @import 'my-sites/stats/pagination/style';
+@import 'my-sites/stats/post-performance/style';
 @import 'my-sites/stats/post-trends/style';
 @import 'my-sites/stats/stats-chart-tabs/style';
 @import 'my-sites/stats/stats-comments/style';
@@ -345,6 +348,7 @@
 @import 'reader/sidebar/style';
 @import 'reader/site-and-author-icon/style';
 @import 'reader/site-stream/style';
+@import 'reader/start/style';
 @import 'reader/style';
 @import 'reader/stream-header/style';
 @import 'reader/update-notice/style';

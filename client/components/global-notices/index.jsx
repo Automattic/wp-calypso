@@ -77,9 +77,8 @@ const NoticesList = React.createClass( {
 		//needs to be updated.
 		noticesList = noticesList.concat( this.props.storeNotices.map( function( notice, index ) {
 			return (
-				<div className='global-notices__notice'>
+				<div className='global-notices__notice' key={ 'notice-' + index }>
 					<Notice
-						key={ 'notice-' + index }
 						status={ notice.status }
 						duration = { notice.duration || null }
 						showDismiss={ notice.showDismiss }

@@ -10,7 +10,8 @@
 	align-items: center;
 	font-size: 14px;
 	line-height: 18px;
-	padding: 0;
+	padding-top: 11px;
+	padding-bottom: 11px;
 
 	&::after {
 		display: none;
@@ -25,18 +26,9 @@
 	flex: none;
 	display: block;
 	max-width: 33.333%;
-	padding: 16px;
-	color: darken( $gray, 20% );
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	cursor: pointer;
-
-	.gridicon {
-		display: inline-block;
-		vertical-align: middle;
-		opacity: 0.6;
-	}
 
 	&.is-spacer {
 		opacity: 0;
@@ -44,19 +36,13 @@
 	}
 }
 
-.header-cake__back-text {
-	font-size: 11px;
-	font-weight: 600;
-	text-transform: uppercase;
-}
-
 .header-cake__title {
 	flex: 1 1 auto;
-	padding: 16px 0;
-	color: darken( $gray, 20% );
+	color: $gray;
 	text-align: center;
 	word-break: break-word;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	padding: 0 8px;
 }

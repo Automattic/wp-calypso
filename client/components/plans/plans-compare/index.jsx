@@ -11,11 +11,11 @@ import times from 'lodash/times';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { filterPlansBySiteAndProps, shouldFetchSitePlans } from 'lib/plans';
+import { getPlans } from 'state/plans/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
@@ -29,11 +29,10 @@ import PlanPrice from 'components/plans/plan-price';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
+import QueryPlans from 'components/data/query-plans';
 
 const PlansCompare = React.createClass( {
-	mixins: [
-		observe( 'features', 'plans' )
-	],
+	mixins: [ observe( 'features' ) ],
 
 	componentWillReceiveProps( nextProps ) {
 		this.props.fetchSitePlans( nextProps.sitePlans, nextProps.selectedSite );
@@ -141,7 +140,7 @@ const PlansCompare = React.createClass( {
 
 	getPlans() {
 		return filterPlansBySiteAndProps(
-			this.props.plans.get(),
+			this.props.plans,
 			this.props.selectedSite,
 			this.props.hideFreePlan
 		);
@@ -251,10 +250,6 @@ const PlansCompare = React.createClass( {
 
 					if ( typeof feature[ plan.product_id ] === 'string' ) {
 						content = feature[ plan.product_id ];
-
-						if ( abtest( 'freePlanStorageLimit' ) === 'limited' && content === '3GB' ) {
-							content = '150MB';
-						}
 					}
 
 					return (
@@ -398,6 +393,7 @@ const PlansCompare = React.createClass( {
 
 		return (
 			<div className={ classes }>
+				<QueryPlans />
 				{
 					this.props.isInSignup
 					? null
@@ -418,6 +414,7 @@ const PlansCompare = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
+			plans: getPlans( state ),
 			sitePlans: getPlansBySite( state, props.selectedSite )
 		};
 	},

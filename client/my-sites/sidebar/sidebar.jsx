@@ -53,6 +53,13 @@ module.exports = React.createClass( {
 		window.scrollTo( 0, 0 );
 	},
 
+	onPreviewSite( event ) {
+		if ( config.isEnabled( 'preview-layout' ) ) {
+			event.preventDefault();
+			this.props.layoutFocus.set( 'preview' );
+		}
+	},
+
 	itemLinkClass: function( paths, existingClasses ) {
 		var classSet = {};
 
@@ -255,16 +262,6 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		if ( ! this.props.sites.hasSiteWithPlugins() ) {
-			if ( ! config.isEnabled( 'manage/plugins/wpcom' ) ) {
-				return null;
-			}
-
-			if ( abtest( 'wpcomPluginsInSidebar' ) === 'hidePlugins' ) {
-				return null;
-			}
-		}
-
 		if ( ( this.isSingle() && site.jetpack ) || ( ! this.isSingle() && this.hasJetpackSites() ) ) {
 			addPluginsLink = '/plugins/browse' + this.siteSuffix();
 		}
@@ -349,7 +346,6 @@ module.exports = React.createClass( {
 
 		// Show plan details for upgraded sites
 		if (
-			abtest( 'sidebarPlanLinkMyPlan' ) === 'plans/my-plan' &&
 			site &&
 			( isPremium( site.plan ) || isBusiness( site.plan ) )
 		) {
@@ -383,8 +379,7 @@ module.exports = React.createClass( {
 
 	trackUpgradeClick: function() {
 		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
-			cta_name: 'sidebar_upgrade_default',
-			cta_landing: abtest( 'sidebarPlanLinkMyPlan' )
+			cta_name: 'sidebar_upgrade_default'
 		} );
 		this.onNavigate();
 	},
@@ -697,6 +692,7 @@ module.exports = React.createClass( {
 				<CurrentSite
 					sites={ this.props.sites }
 					siteCount={ this.props.user.get().visible_site_count }
+					onClick={ this.onPreviewSite }
 				/>
 				<SidebarMenu>
 					<ul>

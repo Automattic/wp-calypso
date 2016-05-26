@@ -64,7 +64,6 @@ $z-layers: (
 		'.people-list-item .card__link-indicator': 2,
 		'.updated-confirmation': 2,
 		'.auth__form .form-fieldset input:focus': 2,
-		'.toolbar-bulk': 2,
 		'.menus__menu-item': 2,
 		'.menus__menu-item-open:before': 2,
 		'.chart__bar-section': 2,
@@ -149,13 +148,6 @@ $z-layers: (
 	),
 	'.detail-page__backdrop': (
 		'.detail-page__action-buttons': 200
-	),
-	'.toolbar-bulk': (
-		'.toolbar-bulk__check-all': 1,
-		'.toolbar-bulk__selection-options': 1,
-		'.toolbar-bulk__more-actions': 1,
-		'.plugins .toolbar-bulk__toggle': 21,
-		'.toolbar-bulk__toggle': 30
 	),
 	'.popover': (
 		'.input-chrono__container .gridicons-calendar': 0,

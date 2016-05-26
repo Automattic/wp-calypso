@@ -7,6 +7,7 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import some from 'lodash/some';
 import includes from 'lodash/includes';
+import find from 'lodash/find';
 
 /**
  * Internal dependencies
@@ -101,4 +102,24 @@ export function getSiteSlug( state, siteId ) {
  */
 export function isRequestingSites( state ) {
 	return !! state.sites.fetchingItems.all;
+}
+
+/**
+ * Returns a site object by its URL.
+ *
+ * @param  {Object}  state Global state tree
+ * @param  {String}  url   Site URL
+ * @return {?Object}       Site object
+ */
+export function getSiteByUrl( state, url ) {
+	const slug = url.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+	const site = find( state.sites.items, ( item, siteId ) => {
+		return getSiteSlug( state, siteId ) === slug;
+	} );
+
+	if ( ! site ) {
+		return null;
+	}
+
+	return site;
 }

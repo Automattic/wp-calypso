@@ -7,6 +7,7 @@ import photon from 'photon';
 import includes from 'lodash/includes';
 import omitBy from 'lodash/omitBy';
 import findKey from 'lodash/findKey';
+import { isUri } from 'valid-url';
 
 /**
  * Internal dependencies
@@ -90,10 +91,17 @@ const MediaUtils = {
 			return;
 		}
 
-		const isUrl = 'string' === typeof media;
+		const isString = 'string' === typeof media;
 		const isFileObject = 'File' in window && media instanceof window.File;
-		if ( isUrl ) {
-			const filePath = url.parse( media ).pathname;
+
+		if ( isString ) {
+			let filePath;
+			if ( isUri( media ) ) {
+				filePath = url.parse( media ).pathname;
+			} else {
+				filePath = media;
+			}
+
 			extension = path.extname( filePath ).slice( 1 );
 		} else if ( isFileObject ) {
 			extension = path.extname( media.name ).slice( 1 );

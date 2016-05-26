@@ -48,7 +48,20 @@ describe( 'actions', () => {
 				type: TERMS_RECEIVE,
 				siteId: siteId,
 				taxonomy: taxonomyName,
-				terms: testTerms
+				terms: testTerms,
+				query: undefined
+			} );
+		} );
+
+		it( 'should return an action object with query if passed', () => {
+			const action = receiveTerms( siteId, taxonomyName, testTerms, { search: 'foo' } );
+
+			expect( action ).to.eql( {
+				type: TERMS_RECEIVE,
+				siteId: siteId,
+				taxonomy: taxonomyName,
+				terms: testTerms,
+				query: { search: 'foo' }
 			} );
 		} );
 	} );
@@ -86,7 +99,8 @@ describe( 'actions', () => {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
-					terms: testTerms
+					terms: testTerms,
+					query: {}
 				} );
 			} );
 		} );
