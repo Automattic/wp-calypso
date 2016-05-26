@@ -203,6 +203,7 @@ module.exports = React.createClass( {
 				analyticsSection="signup"
 				withPlansOnly={ isPlansOnlyTest }
 				includeWordPressDotCom
+				isSignupStep
 				showExampleSuggestions />
 		);
 	},
