@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import page from 'page';
 import toTitleCase from 'to-title-case';
+import toCamelCase from 'lodash/camelCase';
 import trim from 'lodash/trim';
 
 /**
@@ -92,6 +93,22 @@ let DesignAssets = React.createClass( {
 
 	render() {
 		const { componentsUsageStats = {} } = this.props;
+		const getUsageStats = ( Component, folder ) => {
+			let componentName	= [
+				toCamelCase( Component.displayName || Component.name || '' )
+			];
+
+			if ( folder ) {
+				const camelCasedFolder = folder
+					.split( '/' )
+					.filter(Boolean)
+					.map( part => toCamelCase( part ) )
+					.join( '/' );
+				componentName = `${camelCasedFolder}/${componentName}`;
+			}
+
+			return componentsUsageStats[ componentName ] || {};
+		};
 
 		return (
 			<div className="design-assets" role="main">
@@ -107,45 +124,60 @@ let DesignAssets = React.createClass( {
 						analyticsGroup="Docs">
 					</SearchCard>
 				}
-				<Collection component={ this.props.component } filter={ this.state.filter }>
-					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
-					<BulkSelect componentUsageStats={ componentsUsageStats.bulkSelect }/>
-					<ButtonGroups componentUsageStats={ componentsUsageStats.buttonGroups } />
-					<Buttons componentUsageStats={ componentsUsageStats.button } />
-					<Cards componentUsageStats={ componentsUsageStats.cards } />
-					<ClipboardButtonInput componentUsageStats={ componentsUsageStats.clipboardButtonInput } />
-					<ClipboardButtons componentUsageStats={ componentsUsageStats.clipboardButton } />
-					<Count componentUsageStats={ componentsUsageStats.count } />
-					<CountedTextareas componentUsageStats={ componentsUsageStats.countedTextarea } />
-					<DatePicker componentUsageStats={ componentsUsageStats.datePicker } />
-					<DropZones searchKeywords="drag" componentUsageStats={ componentsUsageStats.dropZone } />
-					<ExternalLink componentUsageStats={ componentsUsageStats.externalLink } />
-					<FeatureGate componentUsageStats={ componentsUsageStats.featureGate } />
-					<FilePickers componentUsageStats={ componentsUsageStats.filePicker } />
-					<FoldableCard componentUsageStats={ componentsUsageStats.foldableCard } />
-					<FormFields searchKeywords="input textbox textarea radio" componentsUsageStats={ this.getFormFiledsStats( componentsUsageStats ) } />
-					<Gauge componentUsageStats={ componentsUsageStats.gauge } />
-					<GlobalNotices componentUsageStats={ componentsUsageStats.globalNotices } />
-					<Gridicons componentUsageStats={ componentsUsageStats.gridicon } />
-					<Headers />
-					<InfoPopover componentUsageStats={ componentsUsageStats.infoPopover } />
-					<InputChrono componentUsageStats={ componentsUsageStats.inputChrono } />
-					<Notices componentUsageStats={ componentsUsageStats.notices } />
-					<PaymentLogo componentUsageStats={ componentsUsageStats.paymentLogo } />
-					<Popovers componentUsageStats={ componentsUsageStats.popover } />
-					<ProgressBar componentUsageStats={ componentsUsageStats.progressBar } />
-					<Ranges componentUsageStats={ componentsUsageStats.range } />
-					<Rating componentUsageStats={ componentsUsageStats.rating } />
-					<SearchDemo componentUsageStats={ componentsUsageStats.search } />
-					<SectionHeader componentUsageStats={ componentsUsageStats.sectionHeader } />
-					<SectionNav componentUsageStats={ componentsUsageStats.sectionNav } />
-					<SegmentedControl componentUsageStats={ componentsUsageStats.segmentedControl } />
-					<SelectDropdown searchKeywords="menu" />
-					<SocialLogos componentUsageStats={ componentsUsageStats.socialLogo } />
-					<Spinner searchKeywords="loading" componentUsageStats={ componentsUsageStats.spinner } />
-					<SpinnerLine searchKeywords="loading" componentUsageStats={ componentsUsageStats.spinnerLine } />
-					<TimezoneDropdown componentUsageStats={ componentsUsageStats.timezoneDropdown } />
-					<TokenFields componentUsageStats={ componentsUsageStats.tokenField } />
+				<Collection
+					component={ this.props.component }
+					filter={ this.state.filter }
+				>
+					{
+						[
+							<Accordions />,
+							<BulkSelect />,
+							<ButtonGroups />,
+							<Buttons />,
+							<Cards />,
+							<ClipboardButtonInput />,
+							<ClipboardButtons />,
+							<Count />,
+							<CountedTextareas />,
+							<DatePicker />,
+							<DropZones searchKeywords="drag" />,
+							<ExternalLink />,
+							<FeatureGate />,
+							<FilePickers />,
+							<FoldableCard />,
+							<FormFields searchKeywords="input textbox textarea radio" />,
+							<Gauge />,
+							<GlobalNotices />,
+							<Gridicons />,
+							<Headers />,
+							<InfoPopover />,
+							<InputChrono />,
+							<Notices />,
+							<PaymentLogo />,
+							<Popovers />,
+							<ProgressBar />,
+							<Ranges />,
+							<Rating />,
+							<SearchDemo />,
+							<SectionHeader />,
+							<SectionNav />,
+							<SegmentedControl />,
+							<SelectDropdown searchKeywords="menu" />,
+							<SocialLogos />,
+							<Spinner searchKeywords="loading" />,
+							<SpinnerLine searchKeywords="loading" />,
+							<TimezoneDropdown />,
+							<TokenFields />
+						].map( ( Component, idx ) => (
+							React.cloneElement(
+								Component,
+								{
+									getUsageStats,
+									key: `devdocs-design-component-${idx}`
+								}
+							)
+						) )
+					}
 					<Version />
 				</Collection>
 			</div>
