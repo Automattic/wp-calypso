@@ -29,7 +29,7 @@ import PageOrder from 'post-editor/editor-page-order';
 import PostMetadata from 'lib/post-metadata';
 import TrackInputChanges from 'components/track-input-changes';
 import actions from 'lib/posts/actions';
-import stats from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'lib/posts/stats';
 import siteUtils from 'lib/site/utils';
 import QueryPostTypes from 'components/data/query-post-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -105,8 +105,8 @@ const EditorDrawer = React.createClass( {
 	},
 
 	recordExcerptChangeStats: function() {
-		stats.recordStat( 'excerpt_changed' );
-		stats.recordEvent( 'Changed Excerpt' );
+		recordStat( 'excerpt_changed' );
+		recordEvent( 'Changed Excerpt' );
 	},
 
 	renderTaxonomies: function() {
