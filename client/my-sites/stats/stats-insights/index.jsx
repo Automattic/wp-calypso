@@ -17,8 +17,7 @@ import StatsModule from '../stats-module';
 import statsStrings from '../stats-strings';
 import MostPopular from 'my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
-import { FEATURE_CUSTOM_DOMAIN } from 'lib/plans/constants';
+import DomainTip from 'my-sites/domain-tip';
 
 export default React.createClass( {
 	displayName: 'StatsInsights',
@@ -85,12 +84,7 @@ export default React.createClass( {
 					/>
 					<AllTime allTimeList={ allTimeList } />
 					<MostPopular insightsList={ insightsList } />
-					<UpgradeNudge
-						title={ this.translate( 'Get a free Custom Domain' ) }
-						message={ this.translate( 'Custom domains are free when you upgrade to a Premium or Business plan.' ) }
-						feature={ FEATURE_CUSTOM_DOMAIN }
-						event="stats_insights_domain"
-					/>
+					<DomainTip siteId={ site.ID } />
 					<div className="stats-nonperiodic has-recent">
 						<div className="module-list">
 							<div className="module-column">
