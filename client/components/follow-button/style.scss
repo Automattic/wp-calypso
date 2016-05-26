@@ -42,16 +42,16 @@
 	.gridicon__unfollow {
 
 		.gridicon__follow {
-  			opacity: 0;
-  			pointer-events: none;
+			opacity: 0;
+			pointer-events: none;
 			transform: rotate( -360deg ) scale( 0.5 );
-  		}
+		}
 
-  		.gridicon__following {
-  			opacity: 1;
-  			pointer-events: auto;
- 			transform: rotate( 0 ) scale( 1 );
-  		}
+		.gridicon__following {
+			opacity: 1;
+			pointer-events: auto;
+			transform: rotate( 0 ) scale( 1 );
+		}
 	}
 
 	&.is-following {
