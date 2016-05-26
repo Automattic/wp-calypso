@@ -23,7 +23,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( tourState ).to.deep.equal( { shouldShow: false, stepConfig: false } );
+			expect( tourState ).to.deep.equal( { shouldShow: false, stepConfig: false, nextStepConfig: false } );
 		} );
 
 		it( 'should include the config of the current tour step', () => {

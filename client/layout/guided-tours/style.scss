@@ -136,3 +136,12 @@ $zoom-scale: 5; // the multiplier determining the size of the animated rings
 .guided-tours__bullseye-ring:after {
 	animation-delay: #{ $animation-speed / 4 };
 }
+
+// the pure text representation of the bullseye dot
+.guided-tours__bullseye-text {
+	position: relative;
+		top: 3px;
+	font-style: normal;
+	font-size: 190%;
+	line-height: 0;
+}
