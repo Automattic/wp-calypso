@@ -96,7 +96,7 @@ export function advancedSettingsFail( siteId, error ) {
  * @param  {Number}   siteId  The ID of the site to export
  * @return {Function}         Action thunk
  */
-export function startExport( siteId, exportAll = true ) {
+export function startExport( siteId, { exportAll = true } = {} ) {
 	return ( dispatch, getState ) => {
 		if ( ! siteId ) {
 			return;
@@ -108,8 +108,7 @@ export function startExport( siteId, exportAll = true ) {
 			exportAll,
 		} );
 
-		const state = getState();
-		const advancedSettings = exportAll ? null : prepareExportRequest( state, siteId );
+		const advancedSettings = prepareExportRequest( getState(), siteId, { exportAll } );
 
 		const success =
 			() => dispatch( exportStarted( siteId ) );

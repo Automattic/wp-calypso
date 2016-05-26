@@ -54,7 +54,12 @@ export const getPostTypeValues = ( state, siteId, postType ) => {
  * @param  {number} siteId The ID of the site
  * @return {Object}        The request body
  */
-export function prepareExportRequest( state, siteId ) {
+export function prepareExportRequest( state, siteId, { exportAll = true } ) {
+	// Request body is empty if we're just exporting everything
+	if ( exportAll ) {
+		return null;
+	}
+
 	const postType = getSelectedPostType( state );
 	const selectedPostTypeValues = getPostTypeValues( state, siteId, postType );
 	return Object.assign( { post_type: postType }, selectedPostTypeValues );

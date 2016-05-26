@@ -37,12 +37,10 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch, ownProps ) => {
-	return {
-		onSelect: () => dispatch( setPostType( ownProps.postType ) ),
-		setPostTypeFilters: ( ...args ) => dispatch( setPostTypeFilters( ...args ) ),
-	};
-};
+const mapDispatchToProps = ( dispatch, ownProps ) => ( {
+	onSelect: () => dispatch( setPostType( ownProps.postType ) ),
+	setPostTypeFilters: ( ...args ) => dispatch( setPostTypeFilters( ...args ) ),
+} );
 
 /**
  * Displays a list of select menus with a checkbox legend
@@ -76,8 +74,8 @@ const PostTypeOptions = React.createClass( {
 	renderFields() {
 		const {
 			options,
-			siteId,
 			postType,
+			siteId,
 			values,
 		} = this.props;
 
