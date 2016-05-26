@@ -52,7 +52,9 @@ module.exports = React.createClass( {
 		'comment_max_links',
 		'moderation_keys',
 		'blacklist_keys',
-		'admin_url'
+		'admin_url',
+		'wpcom_publish_comments_with_markdown',
+		'markdown_supported',
 	],
 
 	getSettingsFromSite: function( siteInstance ) {
@@ -115,6 +117,7 @@ module.exports = React.createClass( {
 	},
 
 	otherCommentSettings: function() {
+		const markdownSupported = this.state.markdown_supported;
 		return (
 			<FormFieldset className="has-divider">
 				<FormLabel>{ this.translate( 'Other comment settings' ) }</FormLabel>
@@ -218,6 +221,20 @@ module.exports = React.createClass( {
 						} )
 						}</span>
 				</FormLabel>
+				{ markdownSupported &&
+					<FormLabel>
+						<FormCheckbox
+							name="wpcom_publish_comments_with_markdown"
+							checkedLink={ this.linkState( 'wpcom_publish_comments_with_markdown' ) }
+							disabled={ this.state.fetchingSettings }
+							onClick={ this.recordEvent.bind( this, 'Clicked Markdown for Comments Checkbox' ) } />
+						<span>{ this.translate( 'Enable Markdown for comments. {{a}}Learn more about markdown{{/a}}.', {
+								components: {
+									a: <a href="http://en.support.wordpress.com/markdown-quick-reference/" target="_blank" />
+								}
+							} ) }</span>
+					</FormLabel>
+				}
 				<FormLabel>
 					<span>{
 						this.translate( 'Comments should be displayed with the {{olderOrNewer /}} comments at the top of each page', {
