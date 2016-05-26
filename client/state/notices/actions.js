@@ -19,7 +19,7 @@ export function removeNotice( noticeId ) {
 	};
 }
 
-function createNotice( status, text, options = {} ) {
+export function createNotice( status, text, options = {} ) {
 	const notice = {
 		noticeId: options.id || uniqueId(),
 		duration: options.duration,
