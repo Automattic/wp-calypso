@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
-import { times } from 'lodash/util';
+import { map } from 'lodash/collection';
 import { get } from 'lodash/object';
 
 /**
@@ -66,19 +66,35 @@ const PostTypeOptions = React.createClass( {
 	renderPlaceholders() {
 		const { postType } = this.props;
 
-		const Placeholder = () => {
+		const Placeholder = ( props ) => {
 			return (
-				<div className="exporter__placeholder-text">
-					{ this.translate( 'Loading options…' ) }
-				</div>
+				<Select
+				className="exporter__placeholder-select"
+				defaultLabel={ props.label }
+				options={ [] }
+				disabled={ true } />
 			);
 		};
 
-		const placeholderCount = get( { page: 4, post: 5 }, postType, 0 );
+		const placeholderLabels = get( {
+			page: [
+				this.translate( 'Author…' ),
+				this.translate( 'Status…' ),
+				this.translate( 'Start Date…' ),
+				this.translate( 'End Date…' ),
+				this.translate( 'Category…' )
+			],
+			post: [
+				this.translate( 'Author…' ),
+				this.translate( 'Status…' ),
+				this.translate( 'Start Date…' ),
+				this.translate( 'End Date…' ),
+			],
+		}, postType, [] );
 
 		return (
 			<div className="exporter__option-fieldset-fields">
-				{ times( placeholderCount, ( i ) => <Placeholder key={ i } /> ) }
+				{ map( placeholderLabels, ( label, i ) => <Placeholder key={ i } label={ label } /> ) }
 			</div>
 		);
 	},
