@@ -21,7 +21,7 @@ export default React.createClass( {
 			<DocsExample
 				title="Foldable Card"
 				url="/devdocs/design/foldable-card"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( FoldableCard ) }
 			>
 				<div>
 					<FoldableCard header="This is a foldable card" screenReaderText="More">

@@ -18,7 +18,7 @@ export default React.createClass( {
 			<DocsExample
 				title="Comment Buttons"
 				url="/devdocs/design/comment-button"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( CommentButton, 'forms' ) }
 			>
 				<Card>
 					<span>No comments:</span>

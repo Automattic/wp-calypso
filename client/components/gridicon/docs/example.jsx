@@ -23,7 +23,7 @@ module.exports = React.createClass( {
 			<DocsExample
 				title="Gridicons"
 				url="/devdocs/design/gridicons"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( Gridicon ) }
 			>
 				<Gridicon icon="add-image" size={ 48 } onClick={ this.handleClick.bind( this, 'add-image' ) } />
 				<Gridicon icon="add-outline" size={ 48 } onClick={ this.handleClick.bind( this, 'add-outline' ) } />

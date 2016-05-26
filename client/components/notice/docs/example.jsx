@@ -25,7 +25,7 @@ var Notices = React.createClass( {
 			<DocsExample
 				title="Notices"
 				url="/devdocs/design/notices"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( Notice ) }
 				toggleHandler={ this.toggleNotices }
 				toggleText={ this.state.compactNotices ? 'Normal Notices' : 'Compact Notices' }
 			>

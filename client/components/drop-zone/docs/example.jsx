@@ -67,7 +67,7 @@ export default React.createClass( {
 			<DocsExample
 				title="DropZone"
 				url="/devdocs/design/dropzones"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( DropZone ) }
 			>
 				{ this.renderContainer() }
 			</DocsExample>

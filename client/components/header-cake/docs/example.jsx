@@ -25,7 +25,7 @@ module.exports = React.createClass( {
 			<DocsExample
 				title="Header Cake"
 				url="/devdocs/design/headers"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( HeaderCake ) }
 			>
 				<HeaderCake onClick={ noop }>
 					Subsection Header aka Header Cake

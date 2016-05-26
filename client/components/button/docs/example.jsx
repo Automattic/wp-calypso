@@ -48,7 +48,7 @@ var Buttons = React.createClass( {
 			<DocsExample
 				title="Button"
 				url="/devdocs/design/buttons"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( Button ) }
 				toggleHandler={ this.toggleButtons }
 				toggleText={ toggleText }
 			>

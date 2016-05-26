@@ -56,7 +56,7 @@ module.exports = React.createClass( {
 			<DocsExample
 				title="BulkSelects"
 				url="/devdocs/design/bulk-selects"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( BulkSelect ) }
 			>
 				<Card>
 					<div>

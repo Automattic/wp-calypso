@@ -20,7 +20,7 @@ module.exports = React.createClass( {
 			<DocsExample
 				title="Count"
 				url="/devdocs/design/count"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( Count ) }
 			>
 				<Count count={ 65365 } />
 			</DocsExample>

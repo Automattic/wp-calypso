@@ -7,9 +7,9 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
-import LikeButton from 'components/like-button/button';
 import Card from 'components/card/compact';
-import DocsExample from 'components/docs-example';
+import DocsExample from'components/docs-example';
+import LikeButton from 'components/like-button/button';
 
 var SimpleLikeButtonContainer = React.createClass( {
 
@@ -49,7 +49,7 @@ var LikeButtons = React.createClass( {
 			<DocsExample
 				title="Like button"
 				url="/devdocs/design/like-button"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( LikeButton ) }
 			>
 				<Card compact>
 					<SimpleLikeButtonContainer tagName="button" likeCount={ 0 } />

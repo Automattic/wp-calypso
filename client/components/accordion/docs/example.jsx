@@ -11,7 +11,7 @@ import Accordion from 'components/accordion';
 import DocsExample from 'components/docs-example';
 import Gridicon from 'components/gridicon';
 
-module.exports = React.createClass( {
+const Accordions = React.createClass( {
 	displayName: 'Accordions',
 
 	mixins: [ PureRenderMixin ],
@@ -29,11 +29,12 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+
 		return (
 			<DocsExample
 				title="Accordions"
 				url="/devdocs/design/accordions"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( Accordion ) }
 			>
 				<div style={ { paddingBottom: '10px' } }>
 					<label>
@@ -77,3 +78,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+module.exports = Accordions;

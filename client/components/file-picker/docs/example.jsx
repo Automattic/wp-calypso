@@ -31,7 +31,7 @@ export default class FilePickers extends React.Component {
 			<DocsExample
 				title="File Picker"
 				url="/devdocs/design/file-pickers"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( FilePicker ) }
 			>
 				<Card>
 

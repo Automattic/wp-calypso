@@ -24,7 +24,7 @@ var Cards = React.createClass( {
 			<DocsExample
 				title="Card"
 				url="/devdocs/design/cards"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( Card ) }
 				toggleHandler={ this.toggleCards }
 				toggleText={ this.state.compactCards ? 'Normal Cards' : 'Compact Cards' }
 			>

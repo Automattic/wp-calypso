@@ -59,7 +59,7 @@ var datePicker = React.createClass( {
 			<DocsExample
 				title="DatePicker"
 				url="/devdocs/design/date-picker"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( DatePicker ) }
 			>
 				<Card style={ { width: '300px', margin: 0 } }>
 					<DatePicker

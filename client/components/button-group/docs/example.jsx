@@ -33,7 +33,7 @@ var Buttons = React.createClass( {
 			<DocsExample
 				title="Button Group"
 				url="/devdocs/design/button-group"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( ButtonGroup ) }
 				toggleHandler={ this.toggleButtons }
 				toggleText={ this.state.compact ? 'Normal Buttons' : 'Compact Buttons' }
 			>

@@ -20,7 +20,7 @@ export default React.createClass( {
 			<DocsExample
 				title="Clipboard Button Input"
 				url="/devdocs/design/clipboard-button-input"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( ClipboardButtonInput ) }
 			>
 				<ClipboardButtonInput value="https://example.wordpress.com/" />
 			</DocsExample>

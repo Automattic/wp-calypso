@@ -26,7 +26,7 @@ var InfoPopoverExample = React.createClass( {
 			<DocsExample
 				title="Info Popover"
 				url="/devdocs/design/info-popover"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( InfoPopover ) }
 			>
 				<label>Position
 					<select value={ this.state.popoverPosition } onChange={ this._changePopoverPosition }>

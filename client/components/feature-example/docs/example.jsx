@@ -51,7 +51,7 @@ module.exports = React.createClass( {
 			<DocsExample
 				title="Feature Example"
 				url="/devdocs/design/feature-example"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( FeatureExample ) }
 			>
 				<FeatureExample>
 					{ this.getContent() }

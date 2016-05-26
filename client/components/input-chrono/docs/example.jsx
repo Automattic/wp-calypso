@@ -48,7 +48,7 @@ export default React.createClass( {
 			<DocsExample
 				title="InputChrono"
 				url="/devdocs/design/input-chrono"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( InputChrono ) }
 			>
 				<Card style={ { width: '300px', margin: 0 } }>
 					<InputChrono

@@ -7,8 +7,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var ClipboardButton = require( '../' ),
-	DocsExample = require( 'components/docs-example' );
+import ClipboardButton from '../';
+import DocsExample from 'components/docs-example';
 
 module.exports = React.createClass( {
 	displayName: 'ClipboardButtons',

@@ -82,7 +82,7 @@ DocsExample.propTypes = {
 	} ),
 	toggleHandler: PropTypes.func,
 	toggleText: PropTypes.string,
-	children: React.PropTypes.element.isRequired
+	children: React.PropTypes.node.isRequired
 };
 
 export {

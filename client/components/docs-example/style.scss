@@ -17,7 +17,11 @@
 }
 
 .docs-example__footer {
-	margin: 0;
+	margin: 10px 0 0;
+
+	@include breakpoint( ">480px" ) {
+		margin-top: 16px;
+	}
 }
 
 .docs-example__stats {

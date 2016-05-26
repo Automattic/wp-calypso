@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
-import DocsExample from 'components/DocsExample';
+import DocsExample from 'components/docs-example';
 import HappinessSupport from 'components/happiness-support';
 
 export default React.createClass( {
@@ -18,7 +18,7 @@ export default React.createClass( {
 			<DocsExample
 				title="HappinessSupport"
 				url="/devdocs/design/happiness-support"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( HappinessSupport ) }
 			>
 				<Card>
 					<HappinessSupport />
