@@ -83,7 +83,8 @@ const RegisterDomainStep = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] ),
 		basePath: React.PropTypes.string.isRequired,
 		suggestion: React.PropTypes.string,
-		withPlansOnly: React.PropTypes.bool
+		withPlansOnly: React.PropTypes.bool,
+		isSignupStep: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -274,14 +275,10 @@ const RegisterDomainStep = React.createClass( {
 		async.parallel(
 			[
 				callback => {
-					if ( !domain.match( /.{3,}\..{2,}/ ) ) {
+					if ( ! domain.match( /.{3,}\..{2,}/ ) ) {
 						return callback();
 					}
 
-					/**
-					 * Do not fire the domain availability check for .wordpress.com
-					 * addresses only during signup. It should run in every other case.
-					 */
 					if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
 						return callback();
 					}
