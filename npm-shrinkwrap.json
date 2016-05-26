@@ -2433,6 +2433,9 @@
     "pbkdf2-compat": {
       "version": "2.0.1"
     },
+    "percentage-regex": {
+      "version": "3.0.0"
+    },
     "performance-now": {
       "version": "0.1.4"
     },
