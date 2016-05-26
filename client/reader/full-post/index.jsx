@@ -5,7 +5,6 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	defer = require( 'lodash/defer' ),
-	classes = require( 'component-classes' ),
 	closest = require( 'component-closest' ),
 	debug = require( 'debug' )( 'calypso:reader-full-post' ), //eslint-disable-line no-unused-vars
 	moment = require( 'moment' ),
@@ -262,11 +261,11 @@ FullPostDialog = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	componentWillMount: function() {
-		classes( document.documentElement ).add( 'detail-page-active' );
+		document.documentElement.classList.add( 'detail-page-active' );
 	},
 
 	componentWillUnmount: function() {
-		classes( document.documentElement ).remove( 'detail-page-active' );
+		document.documentElement.classList.remove( 'detail-page-active' );
 	},
 
 	componentWillUpdate: function( nextProps ) {
@@ -274,7 +273,7 @@ FullPostDialog = React.createClass( {
 			currentID = this.props.post && ( this.props.post.feed_item_ID || this.props.post.ID ),
 			nextID = nextProps.post && ( nextProps.post.feed_item_ID || nextProps.post.ID ),
 			detailPageContent;
-		classes( document.documentElement )[ action ]( 'detail-page-open' );
+		document.documentElement.classList[ action ]( 'detail-page-open' );
 		if ( currentID !== nextID ) {
 			detailPageContent = document.querySelector( '.detail-page__content' );
 			if ( detailPageContent ) {

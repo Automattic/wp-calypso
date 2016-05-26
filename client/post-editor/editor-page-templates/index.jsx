@@ -3,8 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import find from 'lodash/find';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -13,20 +11,17 @@ import PostActions from 'lib/posts/actions';
 import AccordionSection from 'components/accordion/section';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
-import { setPageTemplate } from 'state/ui/editor/post/actions';
 
-const EditorPageTemplates = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorPageTemplates',
 
 	propTypes: {
 		post: PropTypes.object,
-		setPageTemplate: PropTypes.func,
 		pageTemplates: PropTypes.array.isRequired
 	},
 
 	getDefaultProps() {
 		return {
-			setPageTemplate: () => {},
 			pageTemplates: []
 		};
 	},
@@ -77,7 +72,6 @@ const EditorPageTemplates = React.createClass( {
 	_selectTemplate( template ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( { page_template: template.file } );
-		this.props.setPageTemplate( template );
 	},
 
 	_getSelectedTemplateText() {
@@ -90,10 +84,3 @@ const EditorPageTemplates = React.createClass( {
 	}
 
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setPageTemplate }, dispatch ),
-	null,
-	{ pure: false }
-)( EditorPageTemplates );

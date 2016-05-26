@@ -197,45 +197,6 @@ input[type=radio] {
 /* end checkbooms */
 
 
-// ==========================================================================
-// Custom form elements
-// ==========================================================================
-
-// Tristate checkbox for bulk selection options
-
-// Example:
-// <a class="checkbox-tristate" role="checkbox">
-//   <span class="screen-reader-text" >Check all</span>
-// </a>
-
-.checkbox-tristate {
-	@extend input[type=checkbox];
-	position: relative;
-	margin: 20px 0 19px 20px;
-
-	&:before {
-		position: absolute;
-		color: $blue-medium;
-		font-family: Noticons;
-	}
-
-	.some-selected & {
-		&:before {
-			content: '\f421'; // .noticon-minimize
-			top: 7px;
-			left: 0;
-		}
-	}
-	.all-selected & {
-		&:before {
-			content: url("data:image/svg+xml;utf8,<svg fill='" + $blue-medium + "' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='none' d='M0 0h24v24H0z'/><path d='M9 19.414l-6.707-6.707 1.414-1.414L9 16.586 20.293 5.293l1.414 1.414'/></svg>");
-			height: 100%;
-			width: 100%;
-			top: 0;
-		}
-	}
-}
-
 select {
 	background: $white url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPiAgICAgICAgPHRpdGxlPmFycm93LWRvd248L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4gICAgPGRlZnM+PC9kZWZzPiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4gICAgICAgIDxnIGlkPSJhcnJvdy1kb3duIiBza2V0Y2g6dHlwZT0iTVNBcnRib2FyZEdyb3VwIiBmaWxsPSIjQzhEN0UxIj4gICAgICAgICAgICA8cGF0aCBkPSJNMTUuNSw2IEwxNyw3LjUgTDEwLjI1LDE0LjI1IEwzLjUsNy41IEw1LDYgTDEwLjI1LDExLjI1IEwxNS41LDYgWiIgaWQ9IkRvd24tQXJyb3ciIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4gICAgICAgIDwvZz4gICAgPC9nPjwvc3ZnPg==) no-repeat right 10px center;
 	border-color: lighten( $gray, 20% );

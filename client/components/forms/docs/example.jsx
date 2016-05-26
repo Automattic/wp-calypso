@@ -165,6 +165,11 @@ var FormFields = React.createClass( {
 						disabled={ true }
 					/>
 					<br />
+					<FormToggle
+						checked={ true }
+						disabled={ true }
+					/>
+					<br />
 					<CompactFormToggle
 						checked={ this.state.compactToggled }
 						onChange={ this.handleCompactToggle }
@@ -215,7 +220,7 @@ var FormFields = React.createClass( {
 						<FormLabel>Form Phone Input</FormLabel>
 						<FormPhoneInput
 							initialCountryCode="US"
-							initialPhoneNumber="877-273-3049"
+							initialPhoneNumber="8772733049"
 							countriesList={ countriesList }
 							/>
 					</FormFieldset>

@@ -16,7 +16,8 @@ var	config = require( 'config' ),
 	root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
 	searchIndex = require( 'devdocs/search-index' ),
 	docsIndex = lunr.Index.load( searchIndex.index ),
-	documents = searchIndex.documents;
+	documents = searchIndex.documents,
+	componentsUsageStats = require( 'devdocs/components-usage-stats.json' );
 
 /**
  * Constants
@@ -118,6 +119,28 @@ function defaultSnippet( doc ) {
 	return escapeHTML( content ) + '&hellip;';
 }
 
+/**
+ * Given an object of { module: dependenciesArray }
+ * it filters out modules that contain the world "docs/"
+ * and that are not components (i.e. they don't start with "components/").
+ * It also removes the "components/" prefix from the modules name.
+ *
+ * @param {object} modulesWithDependences An object of modules - dipendencies pairs
+ * @returns {object} A reduced set of modules.
+ */
+function reduceComponentsUsageStats( modulesWithDependences ) {
+	return Object.keys( modulesWithDependences )
+		.filter( function( moduleName ) {
+			return moduleName.indexOf( 'components/' ) === 0 &&
+				moduleName.indexOf( '/docs' ) === -1;
+		} )
+		.reduce( function( target, moduleName ) {
+			var name = moduleName.replace( 'components/', '' );
+			target[ name ] = modulesWithDependences[ moduleName ];
+			return target;
+		}, {} );
+}
+
 module.exports = function() {
 	var app = express();
 
@@ -194,6 +217,12 @@ module.exports = function() {
 		const fileContents = fs.readFileSync( path, { encoding: 'utf8' } );
 
 		response.send( marked( fileContents ) );
+	} );
+
+	// return json for the components usage stats
+	app.get( '/devdocs/service/components-usage-stats', function( request, response ) {
+		var usageStats = reduceComponentsUsageStats( componentsUsageStats );
+		response.json( usageStats );
 	} );
 
 	return app;

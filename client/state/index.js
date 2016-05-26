@@ -11,6 +11,7 @@ import application from './application/reducer';
 import comments from './comments/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
+import domains from './domains/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import notices from './notices/reducer';
@@ -26,9 +27,11 @@ import sites from './sites/reducer';
 import siteSettings from './site-settings/reducer';
 import stats from './stats/reducer';
 import support from './support/reducer';
+import terms from './terms/reducer';
 import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
+import componentsUsageStats from './components-usage-stats/reducer';
 
 /**
  * Module variables
@@ -38,6 +41,7 @@ export const reducer = combineReducers( {
 	comments,
 	currentUser,
 	documentHead,
+	domains,
 	googleAppsUsers,
 	jetpackConnect,
 	notices,
@@ -53,9 +57,11 @@ export const reducer = combineReducers( {
 	siteSettings,
 	stats,
 	support,
+	terms,
 	themes,
 	ui,
-	users
+	users,
+	componentsUsageStats
 } );
 
 let middleware = [ thunkMiddleware ];

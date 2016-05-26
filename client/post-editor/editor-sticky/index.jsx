@@ -3,8 +3,6 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -14,9 +12,10 @@ import Tooltip from 'components/tooltip';
 import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 import { recordStat, recordEvent } from 'lib/posts/stats';
-import { toggleStickyStatus } from 'state/ui/editor/post/actions';
 
-const EditorSticky = React.createClass( {
+export default React.createClass( {
+	displayName: 'EditorSticky',
+
 	propTypes: {
 		post: React.PropTypes.object
 	},
@@ -82,12 +81,3 @@ const EditorSticky = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( {
-		toggleStickyStatus
-	}, dispatch ),
-	null,
-	{ pure: false }
-)( EditorSticky );

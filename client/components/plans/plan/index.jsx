@@ -181,7 +181,8 @@ const Plan = React.createClass( {
 				site={ this.props.site }
 				cart={ this.props.cart }
 				isPlaceholder={ this.isPlaceholder() }
-				isSubmitting={ this.props.isSubmitting } />
+				isSubmitting={ this.props.isSubmitting }
+				onSelectFreeJetpackPlan={ this.props.onSelectFreeJetpackPlan } />
 		);
 	},
 
@@ -202,9 +203,17 @@ const Plan = React.createClass( {
 
 	render() {
 		return (
-			<Card className={ this.getClassNames() } key={ this.getProductSlug() } onClick={ this.showDetails }>
+			<Card
+				className={ this.getClassNames() }
+				key={ this.getProductSlug() }
+				onClick={ this.showDetails }
+			>
 				{ this.getPlanDiscountMessage() }
-				<PlanHeader onClick={ this.showDetails } text={ this.getProductName() } isPlaceholder={ this.isPlaceholder() }>
+				<PlanHeader
+					onClick={ this.showDetails }
+					text={ this.getProductName() }
+					isPlaceholder={ this.isPlaceholder() }
+				>
 					{ this.getBadge() }
 
 					<p className="plan__plan-tagline">{ this.getPlanTagline() }</p>
@@ -212,6 +221,7 @@ const Plan = React.createClass( {
 					{ this.getImagePlanAction() }
 					{ this.getPlanPrice() }
 				</PlanHeader>
+
 				<div className="plan__plan-expand">
 					<div className="plan__plan-details">
 						{ this.getDescription() }

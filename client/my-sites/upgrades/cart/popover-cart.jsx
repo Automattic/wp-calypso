@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	reject = require( 'lodash/reject' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import reject from 'lodash/reject';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var CartBody = require( './cart-body' ),
-	CartMessagesMixin = require( './cart-messages-mixin' ),
-	CartButtons = require( './cart-buttons' ),
-	Popover = require( 'components/popover' ),
-	CartEmpty = require( './cart-empty' ),
-	CartPlanAd = require( './cart-plan-ad' ),
-	CartTrialAd = require( './cart-trial-ad' ),
-	isCredits = require( 'lib/products-values' ).isCredits,
-	Gridicon = require( 'components/gridicon' );
+import CartBody from './cart-body';
+import CartMessagesMixin from './cart-messages-mixin';
+import CartButtons from './cart-buttons';
+import Popover from 'components/popover';
+import CartEmpty from './cart-empty';
+import CartPlanAd from './cart-plan-ad';
+import CartTrialAd from './cart-trial-ad';
+import { isCredits } from 'lib/products-values';
+import Gridicon from 'components/gridicon';
 
 var PopoverCart = React.createClass( {
 	propTypes: {

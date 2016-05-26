@@ -2,8 +2,6 @@
  * External dependencies
  */
 const React = require( 'react' );
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -13,13 +11,11 @@ const FormRadio = require( 'components/forms/form-radio' ),
 	PostActions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	AccordionSection = require( 'components/accordion/section' );
-import { setPostFormat } from 'state/ui/editor/post/actions';
 
-const EditorPostFormats = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorPostFormats',
 
 	propTypes: {
-		setPostFormat: React.PropTypes.func,
 		post: React.PropTypes.object,
 		value: React.PropTypes.string,
 		postFormats: React.PropTypes.arrayOf( React.PropTypes.shape( {
@@ -30,9 +26,26 @@ const EditorPostFormats = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			setPostFormat: () => {},
 			value: 'standard'
 		};
+	},
+
+	getSelectedPostFormat: function() {
+		const { value } = this.props;
+
+		if ( 'standard' === value ) {
+			return 'standard';
+		}
+
+		const isSupportedFormat = this.getPostFormats().some( ( postFormat ) => {
+			return postFormat.slug === value;
+		} );
+
+		if ( isSupportedFormat ) {
+			return value;
+		}
+
+		return 'standard';
 	},
 
 	getPostFormats: function() {
@@ -70,13 +83,13 @@ const EditorPostFormats = React.createClass( {
 			format: event.target.value
 		} );
 
-		this.props.setPostFormat( event.target.value );
-
 		stats.recordStat( 'post_format_changed' );
 		stats.recordEvent( 'Changed Post Format', event.target.value );
 	},
 
 	renderPostFormats: function() {
+		var selectedFormat = this.getSelectedPostFormat();
+
 		return this.getPostFormats().map( function( postFormat ) {
 			return (
 				<li key={ postFormat.slug } className="editor-post-formats__format">
@@ -84,11 +97,11 @@ const EditorPostFormats = React.createClass( {
 						<FormRadio
 							name="format"
 							value={ postFormat.slug }
-							checked={ postFormat.slug === this.props.value }
+							checked={ postFormat.slug === selectedFormat }
 							onChange={ this.onChange } />
 						<span className="editor-post-formats__format-label">
 							<span className={ 'editor-post-formats__format-icon' } >
-								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 20 } />
+								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 20 } nonStandardSize />
 							</span>
 							{ postFormat.label }
 						</span>
@@ -108,10 +121,3 @@ const EditorPostFormats = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setPostFormat }, dispatch ),
-	null,
-	{ pure: false }
-)( EditorPostFormats );
