@@ -49,10 +49,6 @@
 	}
 }
 
-.site-icon {
-	border: 4px solid $white;
-}
-
 .reader-start-card {
 	box-sizing: border-box;
 	flex: calc( 100% );
@@ -100,6 +96,7 @@
 
   		.site-icon {
   			margin: auto;
+			border: 4px solid $white;
   		}
   	}
 
