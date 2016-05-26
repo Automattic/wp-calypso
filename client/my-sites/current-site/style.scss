@@ -71,8 +71,9 @@
 
 .current-site .notice.is-compact {
 	display: flex;
-	margin: 0 -8px;
+	margin: 0;
 	padding: 0 0 0 4px;
+	border-radius: 0;
 
 	@include breakpoint( "<660px" ) {
 		padding: 0 24px;
