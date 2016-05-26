@@ -8,6 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import i18n from 'lib/mixins/i18n';
 
 function get() {
@@ -39,6 +40,25 @@ function get() {
 			type: 'BasicStep',
 			target: 'sidebar',
 			placement: 'beside',
+			next: config.isEnabled( 'preview-layout' ) ? 'preview' : 'themes',
+		},
+		preview: {
+			target: 'site-card-preview',
+			type: 'ActionStep',
+			placement: 'beside',
+			text: i18n.translate( '{{strong}}Preview:{{/strong}} Click here to see what your site looks like.', {
+				components: {
+					strong: <strong />,
+				}
+			} ),
+			next: 'close-preview',
+		},
+		'close-preview': {
+			target: 'web-preview__close',
+			type: 'ActionStep',
+			placement: 'beside',
+			icon: 'cross-small',
+			text: i18n.translate( 'Take a look at your site—and then close the site preview. You can come back here anytime.' ),
 			next: 'themes',
 		},
 		themes: {

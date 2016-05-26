@@ -3,13 +3,16 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
+import localize from 'lib/mixins/i18n/localize';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
+import { errorNotice } from 'state/notices/actions';
 import { query } from './positioning';
 import {
 	BasicStep,
@@ -18,6 +21,9 @@ import {
 	FinishStep,
 	ActionStep,
 } from './steps';
+import wait from './wait';
+
+const debug = debugFactory( 'calypso:guided-tours' );
 
 class GuidedTours extends Component {
 	constructor() {
@@ -59,13 +65,34 @@ class GuidedTours extends Component {
 
 	next() {
 		const nextStepName = this.props.tourState.stepConfig.next;
-		this.props.nextGuidedTourStep( { stepName: nextStepName } );
+		const nextStepConfig = this.props.tourState.nextStepConfig;
+
+		const nextTargetFound = () => {
+			if ( nextStepConfig && nextStepConfig.target ) {
+				const target = this.getTipTargets()[nextStepConfig.target];
+				return target && target.getBoundingClientRect().left >= 0;
+			}
+			return true;
+		};
+		const proceedToNextStep = () => {
+			this.props.nextGuidedTourStep( { stepName: nextStepName } );
+		};
+		const abortTour = () => {
+			const ERROR_WAITED_TOO_LONG = 'waited too long for next target';
+			debug( ERROR_WAITED_TOO_LONG );
+			this.props.errorNotice(
+				this.props.translate( 'There was a problem with the tour — sorry!' ),
+				{ duration: 8000 }
+			);
+			this.quit( { error: ERROR_WAITED_TOO_LONG } );
+		};
+		wait( { condition: nextTargetFound, consequence: proceedToNextStep, onError: abortTour } );
 	}
 
 	quit( options = {} ) {
 		this.currentTarget && this.currentTarget.classList.remove( 'guided-tours__overlay' );
 		this.props.quitGuidedTour( Object.assign( {
-			stepName: this.props.tourState.stepName
+			stepName: this.props.tourState.stepName,
 		}, options ) );
 	}
 
@@ -107,4 +134,5 @@ export default connect( ( state ) => ( {
 } ), {
 	nextGuidedTourStep,
 	quitGuidedTour,
-} )( GuidedTours );
+	errorNotice,
+} )( localize( GuidedTours ) );
