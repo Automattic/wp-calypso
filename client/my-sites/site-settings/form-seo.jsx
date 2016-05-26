@@ -386,4 +386,4 @@ const mapDispatchToProps = dispatch => ( {
 	trackSubmission: () => dispatch( recordTracksEvent( 'calypso_seo_settings_form_submit', {} ) )
 } );
 
-export default connect( null, mapDispatchToProps )( SeoForm );
+export default connect( null, mapDispatchToProps, null, { pure: false } )( SeoForm );
