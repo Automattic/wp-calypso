@@ -30,10 +30,21 @@ export const getGuidedTourState = createSelector(
 		const tourState = getRawGuidedTourState( state );
 		const { shouldReallyShow, stepName = '' } = tourState;
 		const stepConfig = getToursConfig()[ stepName ] || false;
+		const nextStepConfig = getToursConfig()[ stepConfig.next ] || false;
+
+		const shouldShow = !! (
+			! isSectionLoading( state ) &&
+			shouldReallyShow
+		);
+
 		return Object.assign( {}, tourState, {
 			stepConfig,
-			shouldShow: !!( ! isSectionLoading( state ) && shouldReallyShow ),
+			nextStepConfig,
+			shouldShow,
 		} );
 	},
-	state => [ getRawGuidedTourState( state ), isSectionLoading( state ) ]
+	state => [
+		getRawGuidedTourState( state ),
+		isSectionLoading( state ),
+	]
 );
