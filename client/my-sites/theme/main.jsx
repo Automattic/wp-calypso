@@ -241,25 +241,22 @@ const ThemeSheet = React.createClass( {
 		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
 	},
 
-	render() {
-		if ( this.props.error ) {
-			const emptyContentTitle = i18n.translate( 'Looking for great WordPress designs?', {
-				context: 'Message displayed when requested theme was not found',
-			} );
-			const emptyContentMessage = i18n.translate( 'Check our theme showcase', {
-				context: 'Message displayed when requested theme was not found',
-			} );
+	renderEmptyContent() {
+		const emptyContentTitle = i18n.translate( 'Looking for great WordPress designs?', {
+			context: 'Message displayed when requested theme was not found',
+		} );
+		const emptyContentMessage = i18n.translate( 'Check our theme showcase', {
+			context: 'Message displayed when requested theme was not found',
+		} );
 
-			return(
-				<Main className="themes__sheet_404">
-					<EmptyContentComponent title={ emptyContentTitle } line={ emptyContentMessage }/>
-					<Button primary href="/design">
-						{ i18n.translate( 'View the showcase' ) }
-					</Button>
-				</Main>
-			);
-		}
-		return this.renderSheet();
+		return(
+			<Main className="themes__sheet_404">
+				<EmptyContentComponent title={ emptyContentTitle } line={ emptyContentMessage }/>
+				<Button primary href="/design">
+					{ i18n.translate( 'View the showcase' ) }
+				</Button>
+			</Main>
+		);
 	},
 
 	renderSheet() {
@@ -315,7 +312,14 @@ const ThemeSheet = React.createClass( {
 				</div>
 			</Main>
 		);
-	}
+	},
+
+	render() {
+		if ( this.props.error ) {
+			return this.renderEmptyContent();
+		}
+		return this.renderSheet();
+	},
 } );
 
 export default connect(
