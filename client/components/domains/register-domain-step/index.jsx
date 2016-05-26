@@ -274,7 +274,15 @@ const RegisterDomainStep = React.createClass( {
 		async.parallel(
 			[
 				callback => {
-					if ( !domain.match( /.{3,}\..{2,}/ ) || domain.match( /\.wordpress\.com$/ ) ) {
+					if ( !domain.match( /.{3,}\..{2,}/ ) ) {
+						return callback();
+					}
+
+					/**
+					 * Do not fire the domain availability check for .wordpress.com
+					 * addresses only during signup. It should run in every other case.
+					 */
+					if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
 						return callback();
 					}
 
