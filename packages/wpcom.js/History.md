@@ -1,4 +1,11 @@
 
+4.9.13 / 2016-05-25
+==================
+
+ * avoid https://github.com/webpack/webpack/issues/300 issue
+ * marketing.survey. First approach
+ * SiteAdCreditVouchers: first implementation
+
 4.9.12 / 2016-05-02
 ==================
 
