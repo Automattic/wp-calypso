@@ -11,7 +11,7 @@ import {
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
 	EXPORT_POST_TYPE_SET,
-	EXPORT_POST_TYPE_FILTER_SET,
+	EXPORT_POST_TYPE_FIELD_SET,
 	SERIALIZE,
 	DESERIALIZE,
 	EXPORT_CLEAR,
@@ -37,7 +37,7 @@ export function selectedPostType( state = null, action ) {
 
 const postTypeField = ( state = '', action ) => {
 	switch ( action.type ) {
-		case EXPORT_POST_TYPE_FILTER_SET:
+		case EXPORT_POST_TYPE_FIELD_SET:
 			return Object.assign( {}, state, {
 				[ action.fieldName ]: action.value
 			} );
@@ -47,7 +47,7 @@ const postTypeField = ( state = '', action ) => {
 
 const postTypes = ( state = { post: {}, page: {} }, action ) => {
 	switch ( action.type ) {
-		case EXPORT_POST_TYPE_FILTER_SET:
+		case EXPORT_POST_TYPE_FIELD_SET:
 			return Object.assign( {}, state, {
 				[ action.postType ]: postTypeField( state[ action.postType ], action )
 			} );
@@ -57,7 +57,7 @@ const postTypes = ( state = { post: {}, page: {} }, action ) => {
 
 export function selectedAdvancedSettings( state = {}, action ) {
 	switch ( action.type ) {
-		case EXPORT_POST_TYPE_FILTER_SET:
+		case EXPORT_POST_TYPE_FIELD_SET:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: postTypes( state[ action.siteId ], action )
 			} );

@@ -14,7 +14,7 @@ import {
 	EXPORT_STARTED,
 	EXPORT_STATUS_FETCH,
 	EXPORT_POST_TYPE_SET,
-	EXPORT_POST_TYPE_FILTER_SET,
+	EXPORT_POST_TYPE_FIELD_SET,
 } from 'state/action-types';
 
 import { prepareExportRequest } from './selectors';
@@ -32,9 +32,9 @@ export function setPostType( postType ) {
 	};
 }
 
-export function setPostTypeFilters( siteId, postType, fieldName, value ) {
+export function setPostTypeFieldValue( siteId, postType, fieldName, value ) {
 	return {
-		type: EXPORT_POST_TYPE_FILTER_SET,
+		type: EXPORT_POST_TYPE_FIELD_SET,
 		siteId,
 		postType,
 		fieldName,

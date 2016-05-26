@@ -10,7 +10,7 @@ import {
 	EXPORT_ADVANCED_SETTINGS_FAIL,
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
-	EXPORT_POST_TYPE_FILTER_SET,
+	EXPORT_POST_TYPE_FIELD_SET,
 	DESERIALIZE,
 	SERIALIZE
 } from 'state/action-types';
@@ -59,7 +59,7 @@ describe( 'reducer', () => {
 
 		it( 'should set post category', () => {
 			const state = selectedAdvancedSettings( {}, {
-				type: EXPORT_POST_TYPE_FILTER_SET,
+				type: EXPORT_POST_TYPE_FIELD_SET,
 				siteId: 2916284,
 				postType: 'post',
 				fieldName: 'category',
@@ -75,7 +75,7 @@ describe( 'reducer', () => {
 
 		it( 'should set page author', () => {
 			const state = selectedAdvancedSettings( {}, {
-				type: EXPORT_POST_TYPE_FILTER_SET,
+				type: EXPORT_POST_TYPE_FIELD_SET,
 				siteId: 2916284,
 				postType: 'page',
 				fieldName: 'author',

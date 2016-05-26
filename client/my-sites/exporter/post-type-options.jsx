@@ -12,25 +12,25 @@ import FormRadio from 'components/forms/form-radio';
 import Select from './select';
 import Label from 'components/forms/form-label';
 
-import { setPostType, setPostTypeFilters } from 'state/site-settings/exporter/actions';
+import { setPostType, setPostTypeFieldValue } from 'state/site-settings/exporter/actions';
 import {
-	getPostTypeOptions,
-	getPostTypeValues,
+	getPostTypeFieldOptions,
+	getPostTypeFieldValues,
 	getSelectedPostType,
 } from 'state/site-settings/exporter/selectors';
 
 const mapStateToProps = ( state, ownProps ) => {
 	const siteId = state.ui.selectedSiteId;
-	const options = getPostTypeOptions( state, siteId, ownProps.postType );
-	const values = getPostTypeValues( state, siteId, ownProps.postType );
+	const fields = getPostTypeFieldOptions( state, siteId, ownProps.postType );
+	const fieldValues = getPostTypeFieldValues( state, siteId, ownProps.postType );
 
 	return {
 		siteId,
-		options,
-		values,
+		fields,
+		fieldValues,
 
-		// Show placeholders when options are not available
-		shouldShowPlaceholders: ! options,
+		// Show placeholders when fields options are not yet available
+		shouldShowPlaceholders: ! fields,
 
 		// Disable options when this post type is not selected
 		isEnabled: getSelectedPostType( state ) === ownProps.postType,
@@ -39,7 +39,7 @@ const mapStateToProps = ( state, ownProps ) => {
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	onSelect: () => dispatch( setPostType( ownProps.postType ) ),
-	setPostTypeFilters: ( ...args ) => dispatch( setPostTypeFilters( ...args ) ),
+	setPostTypeFieldValue: ( ...args ) => dispatch( setPostTypeFieldValue( ...args ) ),
 } );
 
 /**
@@ -73,10 +73,10 @@ const PostTypeOptions = React.createClass( {
 
 	renderFields() {
 		const {
-			options,
+			fields,
 			postType,
 			siteId,
-			values,
+			fieldValues,
 		} = this.props;
 
 		const Field = ( props ) => {
@@ -86,7 +86,7 @@ const PostTypeOptions = React.createClass( {
 			}
 
 			const setFieldValue = ( e ) => {
-				this.props.setPostTypeFilters( siteId, postType, props.fieldName, e.target.value );
+				this.props.setPostTypeFieldValue( siteId, postType, props.fieldName, e.target.value );
 			};
 
 			return <Select
@@ -94,17 +94,17 @@ const PostTypeOptions = React.createClass( {
 				key={ props.defaultLabel }
 				defaultLabel={ props.defaultLabel }
 				options={ props.options }
-				value={ values[ props.fieldName ] }
+				value={ fieldValues[ props.fieldName ] }
 				disabled={ ! this.props.isEnabled } />;
 		};
 
 		return (
 			<div className="exporter__option-fieldset-fields">
-				<Field defaultLabel={ this.translate( 'Author…' ) } fieldName="author" options={ options.authors } />
-				<Field defaultLabel={ this.translate( 'Status…' ) } fieldName="status" options={ options.statuses } />
-				<Field defaultLabel={ this.translate( 'Start Date…' ) } fieldName="start_date" options={ options.dates } />
-				<Field defaultLabel={ this.translate( 'End Date…' ) } fieldName="end_date" options={ options.dates } />
-				<Field defaultLabel={ this.translate( 'Category…' ) } fieldName="category" options={ options.categories } />
+				<Field defaultLabel={ this.translate( 'Author…' ) } fieldName="author" options={ fields.authors } />
+				<Field defaultLabel={ this.translate( 'Status…' ) } fieldName="status" options={ fields.statuses } />
+				<Field defaultLabel={ this.translate( 'Start Date…' ) } fieldName="start_date" options={ fields.dates } />
+				<Field defaultLabel={ this.translate( 'End Date…' ) } fieldName="end_date" options={ fields.dates } />
+				<Field defaultLabel={ this.translate( 'Category…' ) } fieldName="category" options={ fields.categories } />
 			</div>
 		);
 	},

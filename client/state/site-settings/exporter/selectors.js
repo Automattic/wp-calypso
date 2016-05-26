@@ -38,12 +38,12 @@ export function isExporting( state, siteId ) {
 
 export const getAdvancedSettings = ( state, siteId ) => state.siteSettings.exporter.advancedSettings[ siteId ];
 export const getSelectedPostType = ( state ) => state.siteSettings.exporter.selectedPostType;
-export const getPostTypeOptions = ( state, siteId, postType ) => {
+export const getPostTypeFieldOptions = ( state, siteId, postType ) => {
 	const advancedSettings = getAdvancedSettings( state, siteId );
 	return advancedSettings ? advancedSettings[ postType ] : null;
 };
 
-export const getPostTypeValues = ( state, siteId, postType ) => {
+export const getPostTypeFieldValues = ( state, siteId, postType ) => {
 	const site = state.siteSettings.exporter.selectedAdvancedSettings[ siteId ];
 	return site && site[ postType ] || {};
 };
@@ -54,13 +54,13 @@ export const getPostTypeValues = ( state, siteId, postType ) => {
  * @param  {number} siteId The ID of the site
  * @return {Object}        The request body
  */
-export function prepareExportRequest( state, siteId, { exportAll = true } ) {
+export function prepareExportRequest( state, siteId, { exportAll = true } = {} ) {
 	// Request body is empty if we're just exporting everything
 	if ( exportAll ) {
 		return null;
 	}
 
 	const postType = getSelectedPostType( state );
-	const selectedPostTypeValues = getPostTypeValues( state, siteId, postType );
-	return Object.assign( { post_type: postType }, selectedPostTypeValues );
+	const selectedFieldValues = getPostTypeFieldValues( state, siteId, postType );
+	return Object.assign( { post_type: postType }, selectedFieldValues );
 }

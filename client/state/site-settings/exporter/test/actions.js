@@ -14,7 +14,7 @@ import {
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
 	EXPORT_COMPLETE,
 	EXPORT_FAILURE,
-	EXPORT_POST_TYPE_FILTER_SET,
+	EXPORT_POST_TYPE_FIELD_SET,
 	EXPORT_START_REQUEST,
 	EXPORT_STARTED,
 	EXPORT_STATUS_FETCH,
@@ -25,7 +25,7 @@ import {
 	advancedSettingsFail,
 	exportStatusFetch,
 	startExport,
-	setPostTypeFilters,
+	setPostTypeFieldValue,
 } from '../actions';
 import {
 	SAMPLE_ADVANCED_SETTINGS,
@@ -191,8 +191,8 @@ describe( 'actions', () => {
 
 	describe( '#setPostTypeFilters()', () => {
 		it( 'should return an action object', () => {
-			expect( setPostTypeFilters( 1, 'post', 'author', 2 ) ).to.deep.equal( {
-				type: EXPORT_POST_TYPE_FILTER_SET,
+			expect( setPostTypeFieldValue( 1, 'post', 'author', 2 ) ).to.deep.equal( {
+				type: EXPORT_POST_TYPE_FIELD_SET,
 				siteId: 1,
 				postType: 'post',
 				fieldName: 'author',
