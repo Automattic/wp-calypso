@@ -170,10 +170,10 @@ const flows = {
 	},
 
 	'domains-with-premium': {
-		steps: [ 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
 		description: 'Test for domains with plans only',
-		lastModified: '2016-04-27'
+		lastModified: '2016-05-25'
 	},
 
 	'site-user': {
@@ -184,17 +184,17 @@ const flows = {
 	},
 
 	desktop: {
-		steps: [ 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getPostsDestination,
 		description: 'Signup flow for desktop app',
-		lastModified: '2016-05-03'
+		lastModified: '2016-05-25'
 	},
 
 	app: {
-		steps: [ 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getPostsDestination,
 		description: 'Used as a web-based control to test the "desktop" flow',
-		lastModified: '2016-05-11'
+		lastModified: '2016-05-25'
 	},
 
 	layout: {
