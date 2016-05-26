@@ -227,7 +227,7 @@ export default React.createClass( {
 							onClick={ this.props.onClick }
 							onMouseEnter={ this.props.onMouseEnter }
 							onMouseLeave={ this.props.onMouseLeave }
-							aria-label={ this.props.homeLink && config.isEnabled( 'preview-layout' )
+							aria-label={ this.props.homeLink && site.is_previewable
 								? this.translate( 'Open site %(domain)s in a preview', {
 									args: { domain: site.domain }
 								} )

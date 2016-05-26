@@ -8,10 +8,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import i18n from 'lib/mixins/i18n';
 
-function get() {
+function get( site ) {
 	return {
 		init: {
 			text: i18n.translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place, and give you some ideas for what to do next.", {
@@ -40,7 +39,7 @@ function get() {
 			type: 'BasicStep',
 			target: 'sidebar',
 			placement: 'beside',
-			next: config.isEnabled( 'preview-layout' ) ? 'preview' : 'themes',
+			next: site && site.is_previewable ? 'preview' : 'themes',
 		},
 		preview: {
 			target: 'site-card-preview',

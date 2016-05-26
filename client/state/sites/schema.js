@@ -37,6 +37,7 @@ export const sitesSchema = {
 				meta: { type: 'object' },
 				user_can_manager: { type: 'boolean' },
 				is_vip: { type: 'boolean' },
+				is_previewable: { type: 'boolean' },
 				is_multisite: { type: 'boolean' },
 				capabilities: {
 					type: 'object',
