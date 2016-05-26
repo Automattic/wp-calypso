@@ -152,10 +152,7 @@ class PostCommentList extends React.Component {
 		const siteId = this.props.post.site_ID;
 		const postId = this.props.post.ID;
 
-		let amountOfCommentsToTake = Math.min(
-			this.state.amountOfCommentsToTake + this.props.pageSize,
-			this.props.commentsTree.get( 'children' ).size
-		);
+		const amountOfCommentsToTake = this.state.amountOfCommentsToTake + this.props.pageSize;
 
 		this.setState( {
 			amountOfCommentsToTake
