@@ -129,24 +129,22 @@ class PostCommentList extends React.Component {
 		return commentIds.reduce( ( prevSum, commentId ) => prevSum + this.getCommentsCount( this.props.commentsTree.getIn( [ commentId, 'children' ] ) ) + 1, 0 );
 	}
 
+	/***
+	 * Gets comments for display
+	 * @param {Array<Number>} commentIds The top level commentIds to take from
+	 * @param {Number} take How many top level comments to take
+	 * @returns {Object} that has the displayed comments + total displayed count including children
+	 */
 	getDisplayedComments( commentIds, take ) {
 		if ( ! commentIds ) {
 			return null;
 		}
 
-		let foundComments = 0;
-
-		const displayedComments = commentIds.takeWhile( ( val ) => {
-			const keepGoing = foundComments < take;
-			if ( keepGoing ) {
-				foundComments += this.getCommentsCount( [ val ] );
-			}
-			return keepGoing;
-		} );
+		const displayedComments = commentIds.take( take );
 
 		return {
 			displayedComments: displayedComments,
-			displayedCommentsCount: foundComments
+			displayedCommentsCount: this.getCommentsCount( displayedComments )
 		};
 	}
 
