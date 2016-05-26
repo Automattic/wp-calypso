@@ -217,6 +217,7 @@ export default React.createClass( {
 				{ ! this.state.showMoreActions
 					? <a className="site__content"
 							href={ this.props.homeLink ? site.URL : this.props.href }
+							data-tip-target={ this.props.tipTarget }
 							target={ this.props.externalLink && ! this.state.showMoreActions && '_blank' }
 							title={ this.props.homeLink
 								? this.translate( 'View "%(title)s"', { args: { title: site.title } } )

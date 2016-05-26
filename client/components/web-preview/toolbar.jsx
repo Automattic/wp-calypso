@@ -54,6 +54,7 @@ const PreviewToolbar = React.createClass( {
 				{ this.props.showClose &&
 					<button
 						className="web-preview__close"
+						data-tip-target="web-preview__close"
 						onClick={ this.props.onClose }
 						aria-label={ this.translate( 'Close preview' ) }
 					>

@@ -154,6 +154,7 @@ module.exports = React.createClass( {
 						externalLink={ true }
 						onClick={ this.previewSite }
 						onSelect={ this.previewSite }
+						tipTarget="site-card-preview"
 						ref="site" />
 					: <AllSites sites={ this.props.sites.get() } />
 				}
