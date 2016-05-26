@@ -70,8 +70,6 @@
 		"phone_signup": false,
 		"post-editor/insert-menu": true,
 		"press-this": true,
-		"preview-layout": true,
-		"preview-endpoint": false,
 		"reader": true,
 		"resume-editing": true,
 		"rubberband-scroll-disable": false,
