@@ -173,7 +173,7 @@ const DesignPreview = React.createClass( {
 			return null;
 		}
 
-		const parsed = url.parse( site.URL, true );
+		const parsed = url.parse( site.options.unmapped_url, true );
 		parsed.query.iframe = true;
 		parsed.query.theme_preview = true;
 		if ( site.options && site.options.frame_nonce ) {
@@ -186,7 +186,7 @@ const DesignPreview = React.createClass( {
 	render() {
 		const useEndpoint = config.isEnabled( 'preview-endpoint' );
 
-		if ( ! this.props.selectedSite ) {
+		if ( ! this.props.selectedSite || ! this.props.selectedSite.is_previewable ) {
 			return null;
 		}
 
