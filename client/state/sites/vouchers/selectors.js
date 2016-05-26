@@ -29,6 +29,10 @@ export const getVouchersBySite = ( state, site ) => {
 	return getVouchersBySiteId( state, site.ID );
 };
 
+export const getVouchersBySiteIdAndServiceType = ( state, siteId, serviceType ) => {
+	return getVouchersBySiteId( state, siteId )[ serviceType ] || [];
+};
+
 /**
  * Return requesting state for the given site
  *
