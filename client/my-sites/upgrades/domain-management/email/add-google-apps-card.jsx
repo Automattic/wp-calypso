@@ -61,8 +61,9 @@ const AddGoogleAppsCard = React.createClass( {
 									}
 								)
 							}
-							<em> | </em>
 						</h4>
+
+						<span className="add-google-apps-card__price-separator"> | </span>
 
 						<h5 className="add-google-apps-card__billing-period">
 							{ this.translate( 'Billed yearly — get 2 months free!' ) }
