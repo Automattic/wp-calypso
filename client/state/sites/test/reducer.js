@@ -33,7 +33,8 @@ describe( 'reducer', () => {
 			'fetchingItems',
 			'items',
 			'mediaStorage',
-			'plans'
+			'plans',
+			'vouchers'
 		] );
 	} );
 
