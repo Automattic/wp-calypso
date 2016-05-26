@@ -12,19 +12,25 @@ const MASTERBAR_HEIGHT = 48;
 
 const middle = ( a, b ) => Math.abs( b - a ) / 2;
 
-const wouldBeOffscreen = pos =>
+const wouldBeOffscreen = ( pos, dimension = 'width' ) =>
 	pos < 0 || ( pos + DIALOG_PADDING + DIALOG_WIDTH ) >
-		document.documentElement.clientWidth;
+		( dimension === 'width'
+			? document.documentElement.clientWidth
+			: document.documentElement.clientHeight );
 
-const fitOnScreen = pos =>
-	Math.max( 0, pos - DIALOG_PADDING - DIALOG_WIDTH ) / 2;
+const fitOnScreen = ( pos, dimension = 'width' ) =>
+	Math.max( 0, pos - DIALOG_PADDING -
+												( dimension === 'width' ? DIALOG_WIDTH : DIALOG_HEIGHT )
+					) / dimension === 'width' ? 2 : 16;
 
 const dialogPositioners = {
-	below: ( { left, bottom } ) => ( {
+	below: ( { left, bottom }, scrollDiff ) => ( {
 		x: wouldBeOffscreen( left )
 			? fitOnScreen( document.documentElement.clientWidth )
 			: left + DIALOG_PADDING,
-		y: bottom + DIALOG_PADDING,
+		y: wouldBeOffscreen( bottom, 'height' ) && scrollDiff === 0
+			? fitOnScreen( bottom, 'height' )
+			: bottom + DIALOG_PADDING
 	} ),
 	beside: ( { left, right, top } ) => ( {
 		x: wouldBeOffscreen( right )
@@ -79,7 +85,7 @@ export function getStepPosition( { placement = 'center', targetSlug } ) {
 	const rect = target && target.getBoundingClientRect
 		? target.getBoundingClientRect()
 		: global.window.document.body.getBoundingClientRect();
-	const position = dialogPositioners[ validatePlacement( placement, target ) ]( rect );
+	const position = dialogPositioners[ validatePlacement( placement, target ) ]( rect, scrollDiff );
 
 	return {
 		x: position.x,
