@@ -83,7 +83,8 @@ const RegisterDomainStep = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] ),
 		basePath: React.PropTypes.string.isRequired,
 		suggestion: React.PropTypes.string,
-		withPlansOnly: React.PropTypes.bool
+		withPlansOnly: React.PropTypes.bool,
+		isSignupStep: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -275,6 +276,10 @@ const RegisterDomainStep = React.createClass( {
 			[
 				callback => {
 					if ( ! domain.match( /.{3,}\..{2,}/ ) ) {
+						return callback();
+					}
+
+					if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
 						return callback();
 					}
 
