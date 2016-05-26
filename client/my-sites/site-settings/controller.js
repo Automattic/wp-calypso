@@ -52,16 +52,15 @@ module.exports = {
 	},
 
 	siteSettings( context ) {
-		var analyticsPageTitle = 'Site Settings',
-			basePath = route.sectionify( context.path ),
-			fiveMinutes = 5 * 60 * 1000,
-			site;
+		let analyticsPageTitle = 'Site Settings';
+		const basePath = route.sectionify( context.path );
+		const fiveMinutes = 5 * 60 * 1000;
+		let site = sites.getSelectedSite();
+		const { section } = context.params;
 
 		titleActions.setTitle( i18n.translate( 'Site Settings', { textOnly: true } ),
 			{ siteID: route.getSiteFragment( context.path ) }
 		);
-
-		site = sites.getSelectedSite();
 
 		// if site loaded, but user cannot manage site, redirect
 		if ( site && ! utils.userCan( 'manage_options', site ) ) {
@@ -75,8 +74,8 @@ module.exports = {
 			return;
 		}
 
-		// redirect seo tab to general for Jetpack sites
-		if ( site.jetpack && context.params.section === 'seo' ) {
+		// redirect seo and analytics tabs to general for Jetpack sites
+		if ( site.jetpack && ( section === 'seo' || section === 'analytics' ) ) {
 			page.redirect( '/settings/general/' + site.slug );
 			return;
 		}
@@ -97,7 +96,7 @@ module.exports = {
 				<SiteSettingsComponent
 					context={ context }
 					sites={ sites }
-					section={ context.params.section }
+					section={ section }
 					path={ context.path } />
 			</SitePurchasesData>,
 			document.getElementById( 'primary' ),
@@ -105,8 +104,8 @@ module.exports = {
 		);
 
 		// analytics tracking
-		if ( 'undefined' !== typeof context.params.section ) {
-			analyticsPageTitle += ' > ' + titlecase( context.params.section );
+		if ( 'undefined' !== typeof section ) {
+			analyticsPageTitle += ' > ' + titlecase( section );
 		}
 		analytics.pageView.record( basePath + '/:site', analyticsPageTitle );
 	},
