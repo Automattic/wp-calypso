@@ -20,15 +20,11 @@ function PostTypeListEmptyContent( { siteId, translate, status, typeObject, edit
 	if ( 'draft' === status ) {
 		title = translate( 'You don\'t have any drafts.' );
 	} else if ( typeObject ) {
-		title = translate( 'You don\'t have any %s.', {
-			args: [ typeObject.label.toLocaleLowerCase() ]
-		} );
+		title = typeObject.labels.not_found;
 	}
 
 	if ( typeObject ) {
-		action = translate( 'Start a %s', {
-			args: [ typeObject.labels.singular_name ]
-		} );
+		action = typeObject.labels.add_new_item;
 	}
 
 	return (
@@ -38,7 +34,6 @@ function PostTypeListEmptyContent( { siteId, translate, status, typeObject, edit
 			) }
 			<EmptyContent
 				title={ title }
-				line={ translate( 'Would you like to create one?' ) }
 				action={ action }
 				actionURL={ editPath }
 				illustration="/calypso/images/pages/illustration-pages.svg"
