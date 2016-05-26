@@ -62,14 +62,6 @@ module.exports = {
 		},
 		defaultVariation: 'showAll'
 	},
-	swapButtonsMySiteSidebar: {
-		datestamp: '20160414',
-		variations: {
-			original: 50,
-			swap: 50
-		},
-		defaultVariation: 'original'
-	},
 	guidedTours: {
 		datestamp: '20160428',
 		variations: {
