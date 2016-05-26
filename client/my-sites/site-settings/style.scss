@@ -116,6 +116,12 @@
 		color: $alert-red;
 		font-weight: bold;
 	}
+
+	.seo-form .counted-textarea {
+		&.is-exceeding-acceptable-length {
+			background: $alert-yellow;
+		}
+	}
 }
 
 .writing-settings,
