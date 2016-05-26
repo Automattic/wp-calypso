@@ -41,15 +41,15 @@ export default React.createClass( {
 
 	getBlockedInstruction: function() {
 		return (
-			<Dialog isVisible={ this.state.showDialog } className=".push-notification__instruction-dialog" onClose={ this.onCloseDialog }>
-				<div className="push-notification__instruction-content">
+			<Dialog isVisible={ this.state.showDialog } className=".notification-settings-push-notification-settings__instruction-dialog" onClose={ this.onCloseDialog }>
+				<div className="notification-settings-push-notification-settings__instruction-content">
 					<div>
-						<div className="push-notification__instruction-title">{ this.translate( 'Enable Browser Notifications' ) }</div>
-						<div className="push-notification__instruction-step">
+						<div className="notification-settings-push-notification-settings__instruction-title">{ this.translate( 'Enable Browser Notifications' ) }</div>
+						<div className="notification-settings-push-notification-settings__instruction-step">
 							<img height="180px" width="180px" src="/calypso/images/push-notifications/address-bar.svg" />
 							<p>{ this.translate( 'Click the lock icon in your address bar.' ) }</p>
 						</div>
-						<div className="push-notification__instruction-step">
+						<div className="notification-settings-push-notification-settings__instruction-step">
 							<img height="180px" width="180px" src="/calypso/images/push-notifications/always-allow.svg" />
 							<p>{ this.translate(
 								'Click {{strong}}Notifications{{/strong}} and choose {{em}}Always allow{{/em}}.', {
@@ -61,7 +61,7 @@ export default React.createClass( {
 						</div>
 					</div>
 				</div>
-				<span tabIndex="0" className="push-notification__instruction-dismiss" onClick={ this.onCloseDialog } >
+				<span tabIndex="0" className="notification-settings-push-notification-settings__instruction-dismiss" onClick={ this.onCloseDialog } >
 					<Gridicon icon="cross" size={ 24 } />
 					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
 				</span>
@@ -109,7 +109,7 @@ export default React.createClass( {
 				stateClass = { 'is-disabled': true };
 				stateText = this.translate( 'Disabled' );
 
-				deniedText = <Notice className="push-notifications__settings-instruction" showDismiss={ false } text={
+				deniedText = <Notice className="notification-settings-push-notification-settings__instruction" showDismiss={ false } text={
 					<div>
 						<div>{ this.translate( 'Your browser is currently set to block notifications from WordPress.com.' ) }</div>
 						<div>{ this.translate(
@@ -127,16 +127,16 @@ export default React.createClass( {
 		}
 
 		return (
-			<Card className="push-notification__settings">
-				<h2 className="push-notification__settings-heading">
-					<Gridicon size={ 24 } className="push-notification__settings-icon" icon="bell" />
+			<Card className="notification-settings-push-notification-settings__settings">
+				<h2 className="notification-settings-push-notification-settings__settings-heading">
+					<Gridicon size={ 24 } className="notification-settings-push-notification-settings__settings-icon" icon="bell" />
 					{ this.translate( 'Browser Notifications' ) }
-					<small className={ classNames( 'push-notification__settings-state', stateClass ) }>{ stateText }</small>
+					<small className={ classNames( 'notification-settings-push-notification-settings__settings-state', stateClass ) }>{ stateText }</small>
 				</h2>
 
-				<p className="push-notification__settings-description">{ this.translate( 'Get notifications for new comments, likes, and more instantly, even when your browser is closed.' ) }</p>
+				<p className="notification-settings-push-notification-settings__settings-description">{ this.translate( 'Get notifications for new comments, likes, and more instantly, even when your browser is closed.' ) }</p>
 
-					<Button className={ classNames( 'push-notification__settings-button', buttonClass ) } disabled={ buttonDisabled } onClick={ this.clickHandler } >{ buttonText }</Button>
+				<Button className={ classNames( 'notification-settings-push-notification-settings__settings-button', buttonClass ) } disabled={ buttonDisabled } onClick={ this.clickHandler } >{ buttonText }</Button>
 
 				{ deniedText }
 			</Card>
