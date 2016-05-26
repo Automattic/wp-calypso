@@ -142,6 +142,10 @@ const ThemeSheet = React.createClass( {
 		const img = <img className="themes__sheet-img" src={ this.props.screenshot + '?=w680' } />;
 		return (
 			<div className="themes__sheet-screenshot">
+				<a className="themes__sheet-preview-link" onClick={ this.togglePreview } >
+					<Gridicon icon="external" />
+					<span className="themes__sheet-preview-link-text">{ i18n.translate( 'Live Preview' ) }</span>
+				</a>
 				{ this.props.screenshot && img }
 			</div>
 		);
@@ -315,6 +319,7 @@ const ThemeSheet = React.createClass( {
 					action={ this.props[ this.state.selectedAction ] }
 					sourcePath={ `/theme/${ this.props.id }/${ section }` }
 				/> }
+				{ this.state.showPreview && this.renderPreview() }
 				<HeaderCake className="themes__sheet-action-bar"
 							backHref={ this.props.backPath }
 							backText={ i18n.translate( 'All Themes' ) }>
@@ -323,7 +328,6 @@ const ThemeSheet = React.createClass( {
 						{ ! this.isActive() && priceElement }
 					</Button>
 				</HeaderCake>
-				{ this.state.showPreview && this.renderPreview() }
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
 						<div className="themes__sheet-content">
@@ -333,10 +337,6 @@ const ThemeSheet = React.createClass( {
 						</div>
 					</div>
 					<div className="themes__sheet-column-right">
-						<a className="themes__sheet-preview-link" onClick={ this.togglePreview } >
-							<Gridicon icon="external" />
-							{ i18n.translate( 'Live Preview' ) }
-						</a>
 						{ this.renderScreenshot() }
 					</div>
 				</div>

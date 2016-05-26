@@ -389,9 +389,20 @@
 
 .themes__sheet-preview-link {
 	position: absolute;
-		top: 60px;
-	color: rgba(255, 255, 255, 0.6);
+		top: -30px;
+	color: $white;
 	text-transform: uppercase;
+	cursor: pointer;
+
+	@include breakpoint( "<660px" ) {
+		color: transparentize( $gray, 0.2 );
+		top: 90%;
+		margin-left: 30px;
+
+		span.themes__sheet-preview-link-text {
+			display: none;
+		}
+	}
 }
 
 .footer__line {
