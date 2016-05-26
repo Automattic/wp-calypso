@@ -79,8 +79,6 @@
 		"phone_signup": true,
 		"post-editor/insert-menu": true,
 		"press-this": true,
-		"preview-layout": true,
-		"preview-endpoint": false,
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/recommendations/posts": true,
