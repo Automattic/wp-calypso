@@ -42,7 +42,7 @@ import * as oauthToken from 'lib/oauth-token';
 /**
  * Constants
  */
-const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 1000;
+const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 8000;
 
 const Signup = React.createClass( {
 	displayName: 'Signup',
