@@ -194,6 +194,7 @@ const DesignPreview = React.createClass( {
 			<WebPreview
 				className={ this.props.className }
 				previewUrl={ useEndpoint ? null : this.getPreviewUrl( this.props.selectedSite ) }
+				externalUrl={ this.props.selectedSite ? this.props.selectedSite.URL : null }
 				showExternal={ true }
 				showClose={ this.props.showClose }
 				showPreview={ this.props.showPreview }

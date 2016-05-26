@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	url = require( 'url' );
+import React from 'react';
+import url from 'url';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
  */
-const WebPreview = require( 'components/web-preview' );
+import WebPreview from 'components/web-preview';
 
 const EditorPreview = React.createClass( {
 
@@ -79,6 +80,16 @@ const EditorPreview = React.createClass( {
 		return url.format( parsed );
 	},
 
+	cleanExternalUrl( externalUrl ) {
+		if ( ! externalUrl ) {
+			return null;
+		}
+		const parsed = url.parse( externalUrl, true );
+		parsed.query = omit( parsed.query, 'preview', 'iframe', 'frame-nonce' );
+		delete parsed.search;
+		return url.format( parsed );
+	},
+
 	render() {
 		return (
 			<WebPreview
@@ -86,6 +97,7 @@ const EditorPreview = React.createClass( {
 				defaultViewportDevice="tablet"
 				onClose={ this.props.onClose }
 				previewUrl={ this.state.iframeUrl }
+				externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
 				loadingMessage="Beep beep boop…"
 			/>
 		);
