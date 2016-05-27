@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ export default class Select extends Component {
 		} );
 
 		return (
-			<FormSelect { ...this.props }>
+			<FormSelect { ...this.props } className={ classNames( 'exporter__option-fieldset-select', this.props.className ) }>
 				<option value="">{ this.props.defaultLabel }</option>
 				{ options }
 			</FormSelect>

@@ -24,15 +24,8 @@
 	float: right;
 }
 
-
 .exporter__placeholder-select {
-	animation: exporter__placeholder-select-fade 1.6s ease-in-out infinite;
-
-	@keyframes exporter__placeholder-select-fade {
-		0% { opacity: .2; }
-		50% { opacity: .8; }
-		100% { opacity: .2; }
-	}
+	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
 .exporter__advanced-settings {
@@ -64,6 +57,10 @@
 		margin-top: inherit;
 		flex: 1;
 	}
+}
+
+.exporter__option-fieldset-select:disabled {
+	color: lighten( $gray, 10% );
 }
 
 // The following specificity is required to override the form-label selector:

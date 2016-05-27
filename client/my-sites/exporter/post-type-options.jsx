@@ -77,14 +77,14 @@ const PostTypeOptions = React.createClass( {
 		};
 
 		const placeholderLabels = get( {
-			page: [
+			post: [
 				this.translate( 'Author…' ),
 				this.translate( 'Status…' ),
 				this.translate( 'Start Date…' ),
 				this.translate( 'End Date…' ),
 				this.translate( 'Category…' )
 			],
-			post: [
+			page: [
 				this.translate( 'Author…' ),
 				this.translate( 'Status…' ),
 				this.translate( 'Start Date…' ),
