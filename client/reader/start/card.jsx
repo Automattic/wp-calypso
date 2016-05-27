@@ -15,12 +15,12 @@ import { getSite } from 'state/reader/sites/selectors';
 const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-unused-vars
 
 const StartCard = ( { site, siteId, postId } ) => {
-	const { header_image } = site;
+	const headerImage = site.header_image;
 
 	let heroStyle;
-	if ( header_image ) {
+	if ( headerImage ) {
 		heroStyle = {
-			backgroundImage: `url("${ header_image.url }")`
+			backgroundImage: `url("${ headerImage.url }")`
 		};
 	}
 

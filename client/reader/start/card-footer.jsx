@@ -8,10 +8,10 @@ import FollowButton from 'reader/follow-button';
 import { numberFormat } from 'lib/mixins/i18n';
 
 const StartCardFooter = ( { site } ) => {
-	const count = numberFormat( site.subscribers_count );
+	const subscribersCount = numberFormat( site.subscribers_count );
 	return (
 		<footer>
-			<div className="reader-start-card__follower-count">{ count } followers</div>
+			<div className="reader-start-card__follower-count">{ subscribersCount } followers</div>
 			<FollowButton siteUrl={ site.URL } />
 		</footer>
 	);
