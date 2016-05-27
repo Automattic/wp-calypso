@@ -10,15 +10,23 @@ import StartPostPreview from './post-preview';
 import StartCardHeader from './card-header';
 import StartCardFooter from './card-footer';
 import { getRecommendationById } from 'state/reader/start/selectors';
+import { getSite } from 'state/reader/sites/selectors';
 
 const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-unused-vars
 
-const StartCard = ( { recommendation } ) => {
-	const siteId = get( recommendation, 'recommended_site_ID' );
-	const postId = get( recommendation, 'recommended_post_ID' );
+const StartCard = ( { site, siteId, postId } ) => {
+	const { header_image } = site;
+
+	let heroStyle;
+	if ( header_image ) {
+		heroStyle = {
+			backgroundImage: `url("${ header_image.url }")`
+		};
+	}
+
 	return (
 		<Card className="reader-start-card">
-			<div className="reader-start-card__hero"></div>
+			<div className="reader-start-card__hero" style={ heroStyle }></div>
 			<StartCardHeader siteId={ siteId } />
 			{ postId > 0 && <StartPostPreview siteId={ siteId } postId={ postId } /> }
 			<StartCardFooter siteId={ siteId } />
@@ -32,8 +40,15 @@ StartCard.propTypes = {
 
 export default connect(
 	( state, ownProps ) => {
+		const recommendation = getRecommendationById( state, ownProps.recommendationId );
+		const siteId = get( recommendation, 'recommended_site_ID' );
+		const postId = get( recommendation, 'recommended_post_ID' );
+		const site = getSite( state, siteId );
+
 		return {
-			recommendation: getRecommendationById( state, ownProps.recommendationId )
+			siteId,
+			postId,
+			site
 		};
 	}
 )( StartCard );
