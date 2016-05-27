@@ -21,8 +21,7 @@ export function getNormalizedPostsQuery( query ) {
 }
 
 /**
- * Returns a serialized posts query, used as the key in the
- * `state.posts.queries` state object.
+ * Returns a serialized posts query
  *
  * @param  {Object} query  Posts query
  * @param  {Number} siteId Optional site ID
@@ -40,8 +39,7 @@ export function getSerializedPostsQuery( query = {}, siteId ) {
 }
 
 /**
- * Returns a serialized posts query, excluding any page parameter, used as the
- * key in the `state.posts.queriesLastPage` state object.
+ * Returns a serialized posts query, excluding any page parameter
  *
  * @param  {Object} query  Posts query
  * @param  {Number} siteId Optional site ID
