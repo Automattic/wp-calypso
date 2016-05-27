@@ -50,7 +50,7 @@ module.exports = React.createClass( {
 			sharingLink = config.isEnabled( 'manage/sharing' ) ? '/sharing/' + welcomeSite.slug : adminURL + 'options-general.php?page=sharing';
 		}
 
-		if ( window.innerWidth <= 400 && ! config.isEnabled( 'muse' ) ) {
+		if ( window.innerWidth <= 400 ) {
 			customizeEnabled = false;
 		}
 
