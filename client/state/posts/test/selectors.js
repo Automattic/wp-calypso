@@ -12,6 +12,7 @@ import {
 	getSitePost,
 	getSitePostsForQuery,
 	isRequestingSitePostsForQuery,
+	getSitePostsFoundForQuery,
 	getSitePostsLastPageForQuery,
 	isSitePostsLastPageForQuery,
 	getSitePostsForQueryIgnoringPage,
@@ -173,6 +174,60 @@ describe( 'selectors', () => {
 			}, 2916284, { search: 'Hello' } );
 
 			expect( isRequesting ).to.be.false;
+		} );
+	} );
+
+	describe( 'getSitePostsFoundForQuery()', () => {
+		it( 'should return null if the site query is not tracked', () => {
+			const found = getSitePostsFoundForQuery( {
+				posts: {
+					queries: {}
+				}
+			}, 2916284, { search: 'Hello' } );
+
+			expect( found ).to.be.null;
+		} );
+
+		it( 'should return the found items for a site query', () => {
+			const found = getSitePostsFoundForQuery( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+							},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [ 841 ],
+									found: 1
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Hello' } );
+
+			expect( found ).to.equal( 1 );
+		} );
+
+		it( 'should return zero if in-fact there are zero items', () => {
+			const found = getSitePostsFoundForQuery( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [],
+									found: 0
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Hello' } );
+
+			expect( found ).to.equal( 0 );
 		} );
 	} );
 
@@ -358,9 +413,6 @@ describe( 'selectors', () => {
 								}
 							}
 						} )
-					},
-					queriesLastPage: {
-						'2916284:{"number":1}': 3
 					}
 				}
 			}, 2916284, { search: '', number: 1 } );
