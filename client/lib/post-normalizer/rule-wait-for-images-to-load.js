@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import filter from 'lodash/filter';
+import find from 'lodash/find';
 import flow from 'lodash/flow';
 import forEach from 'lodash/forEach';
 import map from 'lodash/map';
