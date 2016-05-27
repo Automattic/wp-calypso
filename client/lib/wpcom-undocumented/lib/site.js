@@ -155,7 +155,7 @@ UndocumentedSite.prototype.getUser = function( login, callback ) {
 };
 
 UndocumentedSite.prototype.removeFollower = function( followerId, callback ) {
-	this.wpcom.req.post( {
+	return this.wpcom.req.post( {
 		path: '/sites/' + this._id + '/followers/' + followerId + '/delete'
 	}, callback );
 };
