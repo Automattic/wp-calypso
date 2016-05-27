@@ -163,7 +163,7 @@ export default React.createClass( {
 			return <SiteIcon site={ this.props.site } />;
 		}
 
-		let url = getCustomizeUrl( null, this.props.site );
+		let url = getCustomizeUrl( null, this.props.site ) + '&autofocus[section]=title_tagline';
 
 		if ( ! this.props.site.jetpack && this.props.site.options ) {
 			url = this.props.site.options.admin_url + 'options-general.php';
