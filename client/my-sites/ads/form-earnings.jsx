@@ -33,7 +33,7 @@ module.exports = React.createClass( {
 	},
 
 	componentDidUpdate: function() {
-		if ( this.state.error ) {
+		if ( this.state.error && this.state.error.message ) {
 			notices.error( this.state.error.message );
 		} else {
 			notices.clearNotices( 'notices' );
