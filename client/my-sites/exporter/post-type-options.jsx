@@ -63,52 +63,25 @@ const PostTypeOptions = React.createClass( {
 		legend: PropTypes.string.isRequired,
 	},
 
-	renderPlaceholders() {
-		const { postType } = this.props;
-
-		const Placeholder = ( props ) => {
-			return (
-				<Select
-				className="exporter__placeholder-select"
-				defaultLabel={ props.label }
-				options={ [] }
-				disabled={ true } />
-			);
-		};
-
-		const placeholderLabels = get( {
-			post: [
-				this.translate( 'Author…' ),
-				this.translate( 'Status…' ),
-				this.translate( 'Start Date…' ),
-				this.translate( 'End Date…' ),
-				this.translate( 'Category…' )
-			],
-			page: [
-				this.translate( 'Author…' ),
-				this.translate( 'Status…' ),
-				this.translate( 'Start Date…' ),
-				this.translate( 'End Date…' ),
-			],
-		}, postType, [] );
-
-		return (
-			<div className="exporter__option-fieldset-fields">
-				{ map( placeholderLabels, ( label, i ) => <Placeholder key={ i } label={ label } /> ) }
-			</div>
-		);
-	},
-
 	renderFields() {
 		const {
 			fields,
 			fieldValues,
 			postType,
+			shouldShowPlaceholders,
 			siteId,
 		} = this.props;
 
+		const fieldsForPostType = get( {
+			'post': [ 'author', 'status', 'start_date', 'end_date', 'category' ],
+			'page': [ 'author', 'status', 'start_date', 'end_date' ],
+		}, postType, [] );
+
 		const Field = ( props ) => {
-			if ( ! props.options ) {
+			const options = get( fields, props.options, [] );
+
+			// Should the field be displayed for this post type?
+			if ( fieldsForPostType.indexOf( props.fieldName ) < 0 ) {
 				// This can be replaced with `return null` in React >= 0.15
 				return <span/>;
 			}
@@ -118,21 +91,22 @@ const PostTypeOptions = React.createClass( {
 			};
 
 			return <Select
+				className={ shouldShowPlaceholders ? 'exporter__placeholder-select' : '' }
 				onChange={ setFieldValue }
 				key={ props.defaultLabel }
 				defaultLabel={ props.defaultLabel }
-				options={ props.options }
+				options={ options }
 				value={ fieldValues[ props.fieldName ] }
-				disabled={ ! this.props.isEnabled } />;
+				disabled={ shouldShowPlaceholders || ! this.props.isEnabled } />;
 		};
 
 		return (
 			<div className="exporter__option-fieldset-fields">
-				<Field defaultLabel={ this.translate( 'Author…' ) } fieldName="author" options={ fields.authors } />
-				<Field defaultLabel={ this.translate( 'Status…' ) } fieldName="status" options={ fields.statuses } />
-				<Field defaultLabel={ this.translate( 'Start Date…' ) } fieldName="start_date" options={ fields.dates } />
-				<Field defaultLabel={ this.translate( 'End Date…' ) } fieldName="end_date" options={ fields.dates } />
-				<Field defaultLabel={ this.translate( 'Category…' ) } fieldName="category" options={ fields.categories } />
+				<Field defaultLabel={ this.translate( 'Author…' ) } fieldName="author" options="authors" />
+				<Field defaultLabel={ this.translate( 'Status…' ) } fieldName="status" options="statuses" />
+				<Field defaultLabel={ this.translate( 'Start Date…' ) } fieldName="start_date" options="dates" />
+				<Field defaultLabel={ this.translate( 'End Date…' ) } fieldName="end_date" options="dates" />
+				<Field defaultLabel={ this.translate( 'Category…' ) } fieldName="category" options="categories" />
 			</div>
 		);
 	},
@@ -143,7 +117,6 @@ const PostTypeOptions = React.createClass( {
 			onSelect,
 			legend,
 			description,
-			shouldShowPlaceholders,
 		} = this.props;
 
 		return (
@@ -162,7 +135,7 @@ const PostTypeOptions = React.createClass( {
 					</p>
 				}
 
-				{ shouldShowPlaceholders ? this.renderPlaceholders() : this.renderFields() }
+				{ this.renderFields() }
 			</div>
 		);
 	}
