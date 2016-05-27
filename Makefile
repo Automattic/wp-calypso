@@ -190,6 +190,7 @@ githooks-push:
 
 # generate a new shrinkwrap
 shrinkwrap: node-version
+	@! lsof -Pi :3000 -sTCP:LISTEN -t || ( echo "Please stop your Calypso instance running on port 3000 and try again." && exit 1 )
 	@type shonkwrap || ( echo "Please install shonkwrap globally and try again: 'npm install -g shonkwrap'" && exit 1 )
 	@rm -rf node_modules
 	@rm -f npm-shrinkwrap.json
