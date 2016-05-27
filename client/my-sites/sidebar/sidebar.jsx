@@ -54,7 +54,8 @@ module.exports = React.createClass( {
 	},
 
 	onPreviewSite( event ) {
-		if ( config.isEnabled( 'preview-layout' ) ) {
+		const site = this.getSelectedSite();
+		if ( site.is_previewable ) {
 			event.preventDefault();
 			this.props.layoutFocus.set( 'preview' );
 		}
