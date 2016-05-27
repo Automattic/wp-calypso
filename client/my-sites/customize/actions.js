@@ -14,16 +14,6 @@ import { trackClick } from '../themes/helpers';
 import { themeItem } from 'lib/cart-values/cart-items';
 
 var CustomizeActions = {
-	fetchMuseCustomizations: function( site ) {
-		wpcom.undocumented().site( site ).getMuseCustomizations( function( error, data ) {
-			Dispatcher.handleViewAction( {
-				type: 'RECEIVED_MUSE_CUSTOMIZATIONS',
-				error,
-				data
-			} );
-		} );
-	},
-
 	purchase: function( id, site ) {
 		addItem( themeItem( id, 'customizer' ) );
 

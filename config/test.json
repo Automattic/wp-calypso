@@ -82,7 +82,6 @@
 		"me/security": true,
 		"me/security/checkup": true,
 		"me/trophies": false,
-		"muse": true,
 		"network-connection": true,
 		"notifications2beta": true,
 		"olark": true,

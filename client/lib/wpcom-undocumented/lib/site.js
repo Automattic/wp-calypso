@@ -166,10 +166,6 @@ UndocumentedSite.prototype.removeEmailFollower = function( followerId, callback 
 	}, callback );
 };
 
-UndocumentedSite.prototype.getMuseCustomizations = function( callback ) {
-	this.wpcom.req.get( '/sites/' + this._id + '/customizations', callback );
-};
-
 UndocumentedSite.prototype.setOption = function( query, callback ) {
 	this.wpcom.req.post(
 		'/sites/' + this._id + '/option',
