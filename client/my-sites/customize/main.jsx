@@ -21,8 +21,7 @@ var notices = require( 'notices' ),
 	Actions = require( 'my-sites/customize/actions' ),
 	themeActivated = require( 'state/themes/actions' ).activated;
 
-var mobileWidth = 400,
-	loadingTimer;
+var loadingTimer;
 
 var Customize = React.createClass( {
 	displayName: 'Customize',
@@ -288,14 +287,6 @@ var Customize = React.createClass( {
 			this.cancelWaitingTimer();
 			return this.renderErrorPage( {
 				title: this.translate( 'Sorry, you do not have enough permissions to customize this site' )
-			} );
-		}
-
-		if ( window.innerWidth <= mobileWidth ) {
-			this.cancelWaitingTimer();
-			return this.renderErrorPage( {
-				title: this.translate( 'Sorry, our customization tools are not ready for use on small screens yet' ),
-				line: this.translate( 'Please use a tablet or desktop browser to customize your site' )
 			} );
 		}
 
