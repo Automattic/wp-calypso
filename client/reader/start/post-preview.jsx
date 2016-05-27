@@ -27,7 +27,7 @@ const StartPostPreview = React.createClass( {
 		const post = this.props.post;
 		return (
 			<article className="reader-start-post-preview">
-				<h1 className="reader-start-post-preview__title"><a href={ this.getFullPostUrl() } onClick={ this.showFullPost }>{ decodeEntities( post.title ) }</a></h1>
+				<h1><a href={ this.getFullPostUrl() } onClick={ this.showFullPost } className="reader-start-post-preview__title">{ decodeEntities( post.title ) }</a></h1>
 				<div className="reader-start-post-preview__byline">
 					<Gravatar user={ post.author } size={ 20 } />
 					<span className="reader-start-post-preview__author">by { decodeEntities( post.author.name ) }</span>

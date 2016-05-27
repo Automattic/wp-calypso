@@ -217,10 +217,17 @@
 }
 
 .reader-start-post-preview__title {
+	color: $gray-dark;
+	display: block;
 	font-family: $serif;
 	font-size: 16px;
 	font-weight: 600;
-	line-height: 1.3;
+	line-height: 1;
+	margin-bottom: 5px;
+
+	&:hover {
+		color: darken( $gray, 10% );
+	}
 }
 
 .reader-start-post-preview__byline {
