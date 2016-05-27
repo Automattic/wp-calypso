@@ -19,6 +19,7 @@ import {
 	getVouchersBySite,
 	getGoogleAdCredits
 } from 'state/sites/vouchers/selectors';
+import wpcom from 'lib/wp';
 
 class GoogleVoucherDetails extends Component {
 	constructor() {
@@ -34,6 +35,7 @@ class GoogleVoucherDetails extends Component {
 		// bounds
 		this.onButtonClick = this.onButtonClick.bind( this );
 		this.onDialogCancel = this.onDialogCancel.bind( this );
+		this.onAgreeButton = this.onAgreeButton.bind( this );
 
 		const voucher = this.getVoucher();
 		if ( voucher && voucher.status === 'assigned' ) {
@@ -52,6 +54,13 @@ class GoogleVoucherDetails extends Component {
 		} );
 	}
 
+	onAgreeButton() {
+		wpcom
+		.site( this.props.selectedSite.ID )
+		.adCreditVouchers( 'google-ad-credits' )
+		.assign();
+	}
+
 	incrementStep() {
 		this.setState( {
 			step: this.state.step + 1,
@@ -61,7 +70,7 @@ class GoogleVoucherDetails extends Component {
 
 	getVoucher() {
 		const { googleAdCredits } = this.props;
-		return googleAdCredits.length > 0 ? googleAdCredits[0] : null;
+		return googleAdCredits.length > 0 ? googleAdCredits[0] : {};
 	}
 
 	renderInitialStep() {
@@ -107,7 +116,7 @@ class GoogleVoucherDetails extends Component {
 						text={ i18n.translate( 'Cancel' ) } />
 
 					<PurchaseButton
-						onClick={ this.onButtonClick }
+						onClick={ this.onAgreeButton }
 						text={ i18n.translate( 'Agree' ) } />
 				</div>
 			</Dialog>
@@ -167,7 +176,7 @@ class GoogleVoucherDetails extends Component {
 			<div>
 				<QuerySiteVouchers siteId={ selectedSite.ID } />
 				<PurchaseDetails
-					id="google-ad-credit"
+					id="google-ad-credits"
 					icon="tag"
 					title={ i18n.translate( 'Google AdWords credit' ) }
 					description={ i18n.translate( 'Use your {{strong}}$100{{/strong}} in credit with Google to bring the right traffic to your most important Posts and Pages.', {
@@ -186,7 +195,6 @@ GoogleVoucherDetails.propTypes = {
 		PropTypes.bool,
 		PropTypes.object
 	] ).isRequired,
-	vouchers: PropTypes.object,
 	googleAdCredits: PropTypes.array,
 	step: PropTypes.number.isRequired
 };
