@@ -93,30 +93,27 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSitePostsForQuery()', () => {
-		it( 'should return null if the site query is not tracked', () => {
+		it( 'should return an empty array if no posts items', () => {
 			const sitePosts = getSitePostsForQuery( {
 				posts: {
-					queries: {}
+					items: {}
 				}
 			}, 2916284, { search: 'Hello' } );
 
-			expect( sitePosts ).to.be.null;
+			expect( sitePosts ).to.eql( [] );
 		} );
 
 		it( 'should return an array of the known queried posts', () => {
 			const sitePosts = getSitePostsForQuery( {
 				posts: {
 					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-					},
-					queries: {
-						'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', parent: 100 }
 					}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { parent_id: 100 } );
 
 			expect( sitePosts ).to.eql( [
-				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', parent: 100 }
 			] );
 		} );
 
@@ -284,15 +281,11 @@ describe( 'selectors', () => {
 						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
 						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
 					},
-					queries: {
-						'2916284:{"number":1}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
-						'2916284:{"number":1,"page":2}': [ '6c831c187ffef321eb43a67761a525a3' ]
-					},
 					queriesLastPage: {
-						'2916284:{"number":1}': 2
+						'2916284:{"order":"asc","order_by":"title","number":1}': 2
 					}
 				}
-			}, 2916284, { search: '', number: 1 } );
+			}, 2916284, { order: 'ASC', order_by: 'title', number: 1 } );
 
 			expect( sitePosts ).to.eql( [
 				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
@@ -325,15 +318,15 @@ describe( 'selectors', () => {
 						'f0cb4eb16f493c19b627438fdc18d57c': { ID: 120, site_ID: 2916284, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak & Eggs', parent: { ID: 413 } } // eslint-disable-line
 					},
 					queries: {
-						'2916284:{"number":1}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
-						'2916284:{"number":1,"page":2}': [ '6c831c187ffef321eb43a67761a525a3' ],
-						'2916284:{"number":1,"page":3}': [ 'f0cb4eb16f493c19b627438fdc18d57c' ]
+						'2916284:{"number":1,"order_by":"title","order":"asc"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
+						'2916284:{"number":1,"order_by":"title","order":"asc","page":2}': [ '6c831c187ffef321eb43a67761a525a3' ],
+						'2916284:{"number":1,"order_by":"title","order":"asc","page":3}': [ 'f0cb4eb16f493c19b627438fdc18d57c' ]
 					},
 					queriesLastPage: {
-						'2916284:{"number":1}': 3
+						'2916284:{"number":1,"order_by":"title","order":"asc"}': 3
 					}
 				}
-			}, 2916284, { search: '', number: 1 } );
+			}, 2916284, { search: '', number: 1, order_by: 'title', order: 'asc' } );
 
 			expect( sitePosts ).to.eql( [
 				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', parent: 0 },

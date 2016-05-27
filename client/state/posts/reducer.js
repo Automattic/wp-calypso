@@ -114,34 +114,6 @@ export function queryRequests( state = {}, action ) {
 }
 
 /**
- * Returns the updated post query state after an action has been dispatched.
- * The state reflects a mapping of serialized query key to an array of post
- * global IDs for the query, if a query response was successfully received.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function queries( state = {}, action ) {
-	switch ( action.type ) {
-		case POSTS_REQUEST_SUCCESS:
-			const serializedQuery = getSerializedPostsQuery( action.query, action.siteId );
-			return Object.assign( {}, state, {
-				[ serializedQuery ]: action.posts.map( ( post ) => post.global_ID )
-			} );
-
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, queriesSchema ) ) {
-				return state;
-			}
-
-			return {};
-	}
-
-	return state;
-}
-
-/**
  * Returns the updated post query last page state after an action has been
  * dispatched. The state reflects a mapping of serialized query to last known
  * page number.
@@ -222,7 +194,6 @@ export default combineReducers( {
 	items,
 	siteRequests,
 	queryRequests,
-	queries,
 	queriesLastPage,
 	edits
 } );
