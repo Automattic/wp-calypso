@@ -16,6 +16,11 @@ import {
 } from '../selectors';
 
 describe( 'selectors', () => {
+	beforeEach( () => {
+		getTermsForQuery.memoizedSelector.cache.clear();
+		getTermsHierarchyForQueryIgnoringPage.memoizedSelector.cache.clear();
+	} );
+
 	describe( 'isRequestingTermsForQuery()', () => {
 		it( 'should return false if no request exists', () => {
 			const requesting = isRequestingTermsForQuery( {
@@ -61,10 +66,6 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getTermsForQuery()', () => {
-		beforeEach( () => {
-			getTermsForQuery.memoizedSelector.cache.clear();
-		} );
-
 		it( 'should return null if no matching query results exist', () => {
 			const terms = getTermsForQuery( {
 				terms: {
@@ -142,10 +143,6 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getTermsForQueryIgnoringPage', () => {
-		beforeEach( () => {
-			getTermsForQuery.memoizedSelector.cache.clear();
-		} );
-
 		it( 'should return null if last page is not known', () => {
 			const terms = getTermsForQueryIgnoringPage( {
 				terms: {
@@ -250,10 +247,6 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getTermsHierarchyForQueryIgnoringPage()', () => {
-		beforeEach( () => {
-			getTermsHierarchyForQueryIgnoringPage.memoizedSelector.cache.clear();
-		} );
-
 		it( 'should return null if no matching query results exist', () => {
 			const terms = getTermsHierarchyForQueryIgnoringPage( {
 				terms: {
