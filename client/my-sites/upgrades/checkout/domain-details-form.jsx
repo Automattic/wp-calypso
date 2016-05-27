@@ -272,16 +272,16 @@ export default React.createClass( {
 	handleSubmitButtonClick( event ) {
 		event.preventDefault();
 
-		if ( ! this.allDomainRegistrationsHavePrivacy() ) {
-			this.openDialog();
-			return;
-		}
-
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			this.recordSubmit();
 
 			if ( hasErrors ) {
 				this.focusFirstError();
+				return;
+			}
+
+			if ( ! this.allDomainRegistrationsHavePrivacy() ) {
+				this.openDialog();
 				return;
 			}
 
