@@ -1,10 +1,7 @@
 .navigation-link {
 	cursor: pointer;
 	display: inline-block;
-	margin: 24px auto;
+	margin: 24px 12px;
 	text-align: center;
 }
 
-.navigation-link:nth-child(2):last-child {
-	margin-left:24px;
-}
