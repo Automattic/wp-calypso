@@ -247,7 +247,7 @@ if ( config.isEnabled( 'reader' ) ) {
 
 	sections.push( {
 		name: 'reader-tags',
-		paths: [ '/tags', '/tag' ],
+		paths: [ '/tags', '/tag', '/topic' ],
 		module: 'reader/tag-stream',
 		secondary: true,
 		group: 'reader'

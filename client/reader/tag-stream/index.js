@@ -10,6 +10,8 @@ import controller from './controller';
 import readerController from 'reader/controller';
 
 export default function() {
+	var config = require( 'config' );
+
 	page( '/tag/*', readerController.loadSubscriptions, readerController.initAbTests );
 	page( '/tag/:tag',
 		readerController.updateLastRoute,
@@ -17,6 +19,16 @@ export default function() {
 		readerController.sidebar,
 		controller.tagListing
 	);
+
+	if ( config.isEnabled( 'reader/topics' ) ) {
+		page( '/topic/*', readerController.loadSubscriptions, readerController.initAbTests );
+		page( '/topic/:tag',
+			readerController.updateLastRoute,
+			readerController.removePost,
+			readerController.sidebar,
+			controller.tagListing
+		);
+	}
 
 	page( '/tags',
 		readerController.loadSubscriptions,

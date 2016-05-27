@@ -16,16 +16,31 @@ const analyticsPageTitle = 'Reader';
 
 export default {
 	tagListing( context ) {
-		var TagStream = require( 'reader/tag-stream/main' ),
-			basePath = '/tag/:slug',
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag,
-			tagSlug = trim( context.params.tag )
-				.toLowerCase()
-				.replace( /\s+/g, '-' )
-				.replace( /-{2,}/g, '-' ),
-			encodedTag = encodeURIComponent( tagSlug ).toLowerCase(),
-			tagStore = feedStreamFactory( 'tag:' + tagSlug ),
-			mcKey = 'topic';
+		var config = require( 'config' );
+
+		if ( config.isEnabled( 'reader/topics' ) ) {
+			var TagStream = require( 'reader/tag-stream/main' ),
+				basePath = '/topic/:slug',
+				fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag,
+				tagSlug = trim( context.params.tag )
+					.toLowerCase()
+					.replace( /\s+/g, '-' )
+					.replace( /-{2,}/g, '-' ),
+				encodedTag = encodeURIComponent( tagSlug ).toLowerCase(),
+				tagStore = feedStreamFactory( 'tag:' + tagSlug ),
+				mcKey = 'topic';
+		} else {
+			var TagStream = require( 'reader/tag-stream/main' ),
+				basePath = '/tag/:slug',
+				fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag,
+				tagSlug = trim( context.params.tag )
+					.toLowerCase()
+					.replace( /\s+/g, '-' )
+					.replace( /-{2,}/g, '-' ),
+				encodedTag = encodeURIComponent( tagSlug ).toLowerCase(),
+				tagStore = feedStreamFactory( 'tag:' + tagSlug ),
+				mcKey = 'topic';
+		}
 
 		ensureStoreLoading( tagStore, context );
 
