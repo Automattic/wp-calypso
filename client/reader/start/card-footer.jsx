@@ -5,11 +5,13 @@ import { connect } from 'react-redux';
 // Internal dependencies
 import { getSite } from 'state/reader/sites/selectors';
 import FollowButton from 'reader/follow-button';
+import { numberFormat } from 'lib/mixins/i18n';
 
 const StartCardFooter = ( { site } ) => {
+	const count = numberFormat( site.subscribers_count );
 	return (
 		<footer>
-			<div className="reader-start-card__follower-count">{ site.subscribers_count } followers</div>
+			<div className="reader-start-card__follower-count">{ count } followers</div>
 			<FollowButton siteUrl={ site.URL } />
 		</footer>
 	);
