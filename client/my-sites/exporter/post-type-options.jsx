@@ -12,32 +12,35 @@ import FormRadio from 'components/forms/form-radio';
 import Select from './select';
 import Label from 'components/forms/form-label';
 
-import { setPostType } from 'state/site-settings/exporter/actions';
+import { setPostType, setPostTypeFieldValue } from 'state/site-settings/exporter/actions';
 import {
-	getPostTypeOptions,
+	getPostTypeFieldOptions,
+	getPostTypeFieldValues,
 	getSelectedPostType,
 } from 'state/site-settings/exporter/selectors';
 
 const mapStateToProps = ( state, ownProps ) => {
 	const siteId = state.ui.selectedSiteId;
-	const options = getPostTypeOptions( state, siteId, ownProps.postType );
+	const fields = getPostTypeFieldOptions( state, siteId, ownProps.postType );
+	const fieldValues = getPostTypeFieldValues( state, siteId, ownProps.postType );
 
 	return {
-		options,
+		siteId,
+		fields,
+		fieldValues,
 
-		// Show placeholders when options are not available
-		shouldShowPlaceholders: ! options,
+		// Show placeholders when fields options are not yet available
+		shouldShowPlaceholders: ! fields,
 
 		// Disable options when this post type is not selected
 		isEnabled: getSelectedPostType( state ) === ownProps.postType,
 	};
 };
 
-const mapDispatchToProps = ( dispatch, ownProps ) => {
-	return {
-		onSelect: () => dispatch( setPostType( ownProps.postType ) )
-	};
-};
+const mapDispatchToProps = ( dispatch, ownProps ) => ( {
+	onSelect: () => dispatch( setPostType( ownProps.postType ) ),
+	setPostTypeFieldValue: ( ...args ) => dispatch( setPostTypeFieldValue( ...args ) ),
+} );
 
 /**
  * Displays a list of select menus with a checkbox legend
@@ -69,7 +72,12 @@ const PostTypeOptions = React.createClass( {
 	},
 
 	renderFields() {
-		const { options } = this.props;
+		const {
+			fields,
+			postType,
+			siteId,
+			fieldValues,
+		} = this.props;
 
 		const Field = ( props ) => {
 			if ( ! props.options ) {
@@ -77,20 +85,26 @@ const PostTypeOptions = React.createClass( {
 				return <span/>;
 			}
 
+			const setFieldValue = ( e ) => {
+				this.props.setPostTypeFieldValue( siteId, postType, props.fieldName, e.target.value );
+			};
+
 			return <Select
+				onChange={ setFieldValue }
 				key={ props.defaultLabel }
 				defaultLabel={ props.defaultLabel }
 				options={ props.options }
+				value={ fieldValues[ props.fieldName ] }
 				disabled={ ! this.props.isEnabled } />;
 		};
 
 		return (
 			<div className="exporter__option-fieldset-fields">
-				<Field defaultLabel={ this.translate( 'Author…' ) } options={ options.authors } />
-				<Field defaultLabel={ this.translate( 'Status…' ) } options={ options.statuses } />
-				<Field defaultLabel={ this.translate( 'Start Date…' ) } options={ options.dates } />
-				<Field defaultLabel={ this.translate( 'End Date…' ) } options={ options.dates } />
-				<Field defaultLabel={ this.translate( 'Category…' ) } options={ options.categories } />
+				<Field defaultLabel={ this.translate( 'Author…' ) } fieldName="author" options={ fields.authors } />
+				<Field defaultLabel={ this.translate( 'Status…' ) } fieldName="status" options={ fields.statuses } />
+				<Field defaultLabel={ this.translate( 'Start Date…' ) } fieldName="start_date" options={ fields.dates } />
+				<Field defaultLabel={ this.translate( 'End Date…' ) } fieldName="end_date" options={ fields.dates } />
+				<Field defaultLabel={ this.translate( 'Category…' ) } fieldName="category" options={ fields.categories } />
 			</div>
 		);
 	},
