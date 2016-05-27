@@ -12,7 +12,7 @@ describe( 'Calypso Site', () => {
 			ID: 1234,
 			name: 'Hello',
 			description: 'Hunting bugs is fun.'
-		}
+		};
 
 		it( 'attribute changed', () => {
 			const site = Site( mockSiteData );
@@ -60,6 +60,18 @@ describe( 'Calypso Site', () => {
 			site.once( 'change', changeCallback );
 			site.set( { arr: [ 1, 2, 3 ] } );
 			expect( changeCallback.called ).to.be.false;
+		} );
+
+		it( "doesn't remove attributes which are not present in the new ones", () => {
+			const site = Site( mockSiteData );
+
+			site.set( {
+				ID: 1234,
+				//name: 'Hello', // name attribute missing in new ones
+				description: 'Hunting bugs is fun.'
+			} );
+
+			expect( site ).to.have.property( 'name' );
 		} );
 	} );
 } );
