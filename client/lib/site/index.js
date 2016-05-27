@@ -10,9 +10,11 @@ var debug = require( 'debug' )( 'calypso:site' ),
  * Internal dependencies
  */
 var wpcom = require( 'lib/wp' ),
+	config = require( 'config' ),
 	notices = require( 'notices' ),
 	i18n = require( 'lib/mixins/i18n' ),
-	Emitter = require( 'lib/mixins/emitter' );
+	Emitter = require( 'lib/mixins/emitter' ),
+	isHttps = require( 'lib/url' ).isHttps;
 
 function Site( attributes ) {
 	if ( ! ( this instanceof Site ) ) {
@@ -113,6 +115,12 @@ Site.prototype.updateComputedAttributes = function() {
 	if ( ! this.options.default_post_format || this.options.default_post_format === '0' ) {
 		this.options.default_post_format = 'standard';
 	}
+	this.is_previewable = !! (
+		config.isEnabled( 'preview-layout' ) &&
+		this.options.unmapped_url &&
+		! this.is_vip &&
+		isHttps( this.options.unmapped_url )
+	);
 };
 
 /**
