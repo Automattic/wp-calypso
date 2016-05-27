@@ -199,13 +199,25 @@
 	}
 
 	img {
-  	margin: 0 -20px;
-  	max-width: calc(100% + 40px);
-
 		&.aligncenter {
+			max-width: 100%;
 			display: block;
-		  margin: 20px auto;
-		  border: 1px solid $gray-light;
+			margin: 20px auto;
+			border: 1px solid $gray-light;
+		}
+
+		&.alignright,
+		&.alignleft {
+			max-width: 100%;
+			margin: 20px 0;
+		}
+
+		&.alignright {
+			float: right;
+		}
+
+		&.alignleft {
+			float: left;
 		}
 	}
 
