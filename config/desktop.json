@@ -1,5 +1,6 @@
 {
 	"env": "production",
+	"env_id": "desktop",
 	"client_slug": "desktop",
 	"hostname": "127.0.0.1",
 	"i18n_default_locale_slug": "en",

@@ -36,7 +36,7 @@ import Spinner from 'components/spinner';
  */
 
 const PLANS_PAGE = '/jetpack/connect/plans/';
-const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + process.env.NODE_ENV;
+const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + config( 'env_id' );
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 
 const LoggedOutForm = React.createClass( {
