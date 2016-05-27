@@ -1,5 +1,3 @@
-$theme-sheet-custom-breakpoint: 900px;
-
 .themes-thanks-modal  {
 	width: 300px;
 	padding: 1.5em;
@@ -105,7 +103,7 @@ $theme-sheet-custom-breakpoint: 900px;
 	display: flex;
 	flex-direction: row;
 
-	@media ( max-width: $theme-sheet-custom-breakpoint ) {
+	@include breakpoint( "<960px" ) {
 		flex-direction: column-reverse;
 	}
 }
@@ -116,7 +114,7 @@ $theme-sheet-custom-breakpoint: 900px;
 	width: 50%;
 	flex-direction: column;
 
-	@media ( max-width: $theme-sheet-custom-breakpoint ) {
+	@include breakpoint( "<960px" ) {
 		width: 100%;
 	}
 }
@@ -124,7 +122,7 @@ $theme-sheet-custom-breakpoint: 900px;
 .themes__sheet-action-bar {
 	height: 50px;
 
-	@media ( max-width: $theme-sheet-custom-breakpoint ) {
+	@include breakpoint( "<960px" ) {
 		&.card {
 			margin: 0 0 1px 0;
 		}
@@ -137,7 +135,7 @@ $theme-sheet-custom-breakpoint: 900px;
 		right: 50%;
 	margin-right: 20px;
 
-	@media ( max-width: $theme-sheet-custom-breakpoint ) {
+	@include breakpoint( "<960px" ) {
 		margin-right: 0;
 		position: absolute;
 			top: 5px;
@@ -169,7 +167,7 @@ $theme-sheet-custom-breakpoint: 900px;
 	// also x-browser issues, so it's smaller than 4:3 proper
 	min-height: 36.15vw; // 36.75vw would be correct, but Safari is slightly off
 
-	@media ( max-width: $theme-sheet-custom-breakpoint ) {
+	@include breakpoint( "<960px" ) {
 		position: relative;
 		top: 0;
 		width: 100%;
@@ -240,7 +238,7 @@ $theme-sheet-custom-breakpoint: 900px;
 		margin-bottom: 0;
 	}
 
-	@media ( max-width: $theme-sheet-custom-breakpoint ) {
+	@include breakpoint( "<960px" ) {
 		flex-wrap: wrap;
 	}
 
@@ -252,7 +250,7 @@ $theme-sheet-custom-breakpoint: 900px;
 	.button {
 		flex: 0 0 auto;
 
-		@media ( max-width: $theme-sheet-custom-breakpoint ) {
+		@include breakpoint( "<960px" ) {
 			flex: 1 1 100%;
 			margin-top: 20px;
 			text-align: center;
