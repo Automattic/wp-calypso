@@ -612,10 +612,10 @@
       "version": "1.1.2"
     },
     "constantinople": {
-      "version": "3.0.2",
+      "version": "3.1.0",
       "dependencies": {
         "acorn": {
-          "version": "2.7.0"
+          "version": "3.2.0"
         }
       }
     },
@@ -795,6 +795,9 @@
     },
     "doctypes": {
       "version": "1.0.0"
+    },
+    "dom-helpers": {
+      "version": "2.4.0"
     },
     "dom-scroll-into-view": {
       "version": "1.0.1"
@@ -1622,10 +1625,10 @@
       "version": "0.1.3"
     },
     "is-expression": {
-      "version": "1.0.2",
+      "version": "2.0.1",
       "dependencies": {
         "acorn": {
-          "version": "2.7.0"
+          "version": "3.1.0"
         },
         "object-assign": {
           "version": "4.1.0"
@@ -1752,7 +1755,18 @@
       "version": "1.1.0"
     },
     "jade-lexer": {
-      "version": "0.0.9"
+      "version": "0.0.9",
+      "dependencies": {
+        "acorn": {
+          "version": "2.7.0"
+        },
+        "is-expression": {
+          "version": "1.0.2"
+        },
+        "object-assign": {
+          "version": "4.1.0"
+        }
+      }
     },
     "jade-linker": {
       "version": "0.0.3"
@@ -2488,6 +2502,9 @@
     "percentage-regex": {
       "version": "3.0.0"
     },
+    "performance-now": {
+      "version": "0.2.0"
+    },
     "phone": {
       "version": "1.0.4-11",
       "from": "git+https://github.com/Automattic/node-phone.git#3161829eba3dbab67c69a3795f74765026d4337a",
@@ -2579,6 +2596,9 @@
     "querystring-es3": {
       "version": "0.2.1"
     },
+    "raf": {
+      "version": "3.2.0"
+    },
     "randomatic": {
       "version": "1.1.5"
     },
@@ -2606,6 +2626,9 @@
       "version": "0.14.3"
     },
     "react-addons-linked-state-mixin": {
+      "version": "0.14.3"
+    },
+    "react-addons-shallow-compare": {
       "version": "0.14.3"
     },
     "react-addons-test-utils": {
@@ -2667,6 +2690,14 @@
         },
         "fbjs": {
           "version": "0.2.1"
+        }
+      }
+    },
+    "react-virtualized": {
+      "version": "7.2.0",
+      "dependencies": {
+        "classnames": {
+          "version": "2.2.5"
         }
       }
     },
