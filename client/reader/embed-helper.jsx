@@ -1,11 +1,30 @@
+import percentageFactory from 'percentage-regex';
+
+const percentageRegex = percentageFactory({ exact: true });
+const isPercentage = (val) => percentageRegex.test(val);
 
 var embedsConfig = {
-	default: {
+	'default': {
 		sizingFunction: function defaultEmbedSizingFunction( embed, availableWidth ) {
-			var aspectRatio = embed.aspectRatio || 1;
+			let { aspectRatio, width, height } = embed;
+
+			if ( ! isNaN( aspectRatio ) ) {
+				// width and height were numbers, so grab the aspect ratio
+				// and scale to the `availableWidth`
+				width = availableWidth;
+				height = availableWidth / aspectRatio;
+			}
+			if ( isPercentage( width ) ) {
+				// if `width` is a percentage, then scale based on `availableWidth`
+				width = availableWidth * ( parseInt( width, 10 ) / 100 );
+			}
+			if ( isPercentage( height ) ) {
+				// if `height` is a percentage, then scale based on the calculated `width`
+				height = width * ( parseInt( height, 10 ) / 100 );
+			}
 			return {
-				width: availableWidth + 'px',
-				height: Math.floor( availableWidth / aspectRatio ) + 'px'
+				width: `${ width | 0 }px`,
+				height: `${ height | 0 }px`
 			};
 		}
 	},
@@ -44,15 +63,6 @@ var embedsConfig = {
 		},
 		urlRegex: /\/\/w\.soundcloud\.com\/player/
 	},
-	bandcamp: {
-		sizingFunction( embed, availableWidth ) {
-			return {
-				width: availableWidth + 'px',
-				height: embed.height + 'px'
-			};
-		},
-		urlRegex: /\/\/bandcamp\.com\/EmbeddedPlayer/
-	}
 };
 
 function extractUrlFromIframe( iframeHtml ) {
