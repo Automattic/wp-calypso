@@ -44,18 +44,15 @@
 	transform: translateY( -50% ) scale( 1.05 );
 }
 
-.drop-zone__content-icon {
+.drop-zone__content-icon,
+.drop-zone__content-text {
 	display: block;
-	margin-bottom: 6px;
-	width: auto;
-	height: auto;
-	font-size: 60px;
+}
+
+.drop-zone__content-icon {
+	margin: 0 auto;
 }
 
 .drop-zone.is-full-screen .drop-zone__content {
 	font-size: 30px;
-}
-
-.drop-zone.is-full-screen .drop-zone__content-icon {
-	font-size: 70px;
 }
