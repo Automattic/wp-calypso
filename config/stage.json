@@ -1,5 +1,6 @@
 {
 	"env": "production",
+	"env_id": "stage",
 	"client_slug": "browser",
 	"hostname": "wordpress.com",
 	"i18n_default_locale_slug": "en",

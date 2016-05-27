@@ -1,5 +1,6 @@
 {
 	"env": "production",
+	"env_id": "wpcalypso",
 	"client_slug": "browser",
 	"hostname": "wpcalypso.wordpress.com",
 	"i18n_default_locale_slug": "en",
