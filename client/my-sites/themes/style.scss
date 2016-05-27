@@ -222,54 +222,54 @@
 	}
 
 	h2 {
-	  color: #87a6bc; /* $gray */
-	  font-size: 14px;
-	  font-weight: 400;
+		color: #87a6bc; /* $gray */
+		font-size: 14px;
+		font-weight: 400;
 
-	  margin: -20px -20px 20px;
-	  padding: 15px 20px 15px;
-	  border-bottom: 1px solid #dce5eb;
+		margin: -20px -20px 20px;
+		padding: 15px 20px 15px;
+		border-bottom: 1px solid #dce5eb;
 
 		&:nth-child(n+2) {
 			// Everything except the first
-		  border-top: 1px solid #dce5eb;
-		  margin: 20px -20px 20px;
-		  padding: 15px 20px 15px;
+			border-top: 1px solid #dce5eb;
+			margin: 20px -20px 20px;
+			padding: 15px 20px 15px;
 
 			&:before {
 				// The "fake" Card separation
-			  content: "";
-			  display: block;
-			  height: 15px;
-			  margin: -15px -21px 15px;
-			  border-bottom: 1px solid #dce5eb;
-			  background: #f3f6f8;
+				content: "";
+				display: block;
+				height: 15px;
+				margin: -15px -21px 15px;
+				border-bottom: 1px solid #dce5eb;
+				background: #f3f6f8;
 			}
 		}
 	}
 
 	h3 {
-	  font-size: 20px;
-	  font-weight: 200;
-	  margin: 40px 0 10px;
+		font-size: 20px;
+		font-weight: 200;
+		margin: 40px 0 10px;
 	}
 
 	h4 {
-	  font-size: 18px;
-	  font-weight: 200;
-	  margin: 40px 0 10px;
+		font-size: 18px;
+		font-weight: 200;
+		margin: 40px 0 10px;
 	}
 
 	h5 {
-	  font-size: 16px;
-	  font-weight: 200;
-	  margin: 40px 0 10px;
+		font-size: 16px;
+		font-weight: 200;
+		margin: 40px 0 10px;
 	}
 
 	h6 {
-	  font-size: 14px;
-	  font-weight: 200;
-	  margin: 40px 0 10px;
+		font-size: 14px;
+		font-weight: 200;
+		margin: 40px 0 10px;
 	}
 
 	pre {
@@ -283,38 +283,36 @@
 	}
 
 	.notes {
-	  background: $gray-light;
-	  margin: 40px -20px -20px;
-	  border-top: 1px solid #e9eff3;
-	  padding: 20px;
+		background: $gray-light;
+		margin: 40px -20px -20px;
+		border-top: 1px solid #e9eff3;
+		padding: 20px;
 
-	  font-size: 13px;
-	  line-height: 21px;
+		font-size: 13px;
+		line-height: 21px;
 
 		&>p:first-child {
-		  color: $gray;
-		  font-weight: 600;
-		  margin: 0 0 14px;
+			color: $gray;
+			font-weight: 600;
+			margin: 0 0 14px;
 		}
 
 		ol {
-		  margin-left: 20px;
+			margin-left: 20px;
 		}
 
 		code {
-		  font-size: 11px;
-		  background: #ffffff;
-		  padding: 2px 4px;
-		  border-radius: 4px;
+			font-size: 11px;
+			background: #ffffff;
+			padding: 2px 4px;
+			border-radius: 4px;
 		}
 
 		:last-child {
-		  margin-bottom: 5px;
+			margin-bottom: 5px;
 		}
 	}
 }
-
-
 
 .themes__sheet-placeholder {
 	color: transparent;
