@@ -3,6 +3,7 @@
  */
 import { combineReducers } from 'redux';
 import pick from 'lodash/pick';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
@@ -43,12 +44,12 @@ export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
 			const prevSite = state[ action.siteId ];
-			const options = Object.assign( {}, prevSite.options, { wordads: true } );
-			const updatedSite = Object.assign( {}, prevSite, { options } );
-
-			return Object.assign( {}, state, {
-				[ action.siteId ]: updatedSite
-			} );
+			if ( prevSite ) {
+				return Object.assign( {}, state, {
+					[ action.siteId ]: merge( {}, prevSite, { options: { wordads: true } } )
+				} );
+			}
+			return state;
 		case SITE_RECEIVE: {
 			const site = pick( action.site, VALID_SITE_KEYS );
 			return Object.assign( {}, state, {
