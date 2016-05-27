@@ -74,7 +74,13 @@
 	}
 
 	.reader-start-card__hero {
-		background: url( "images/reader/hero.jpg" ); // Temp hero image
+		background-repeat: no-repeat;
+		background-position: center center;
+		background-image: url( "images/reader/hero.jpg" ); // Default hero image
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		background-size: cover;
 		height: 100px;
 		margin: -24px;
 	}
