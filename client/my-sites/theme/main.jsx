@@ -196,6 +196,7 @@ const ThemeSheet = React.createClass( {
 				</Card>
 				{ this.renderFeaturesCard() }
 				{ this.renderDownload() }
+				{ this.renderRelatedThemes() }
 			</div>
 		);
 	},
@@ -285,6 +286,14 @@ const ThemeSheet = React.createClass( {
 					action={ i18n.translate( 'View the showcase' ) }
 					actionURL="/design"/>
 			</Main>
+		);
+	},
+
+	renderRelatedThemes() {
+		return (
+			<div>
+				<SectionHeader label={ i18n.translate( 'You might also like' ) } />
+			</div>
 		);
 	},
 
