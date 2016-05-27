@@ -23,7 +23,11 @@ import FeatureExample from 'components/feature-example';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import FormToggle from 'components/forms/form-toggle';
 import Card from 'components/card';
-import { requestApproval, dismissError } from 'state/wordads/approve/actions';
+import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
+import {
+	isRequestingWordAdsApprovalForSite,
+	getWordAdsErrorForSite
+} from 'state/wordads/approve/selectors';
 import Notice from 'components/notice';
 
 const AdsMain = React.createClass( {
@@ -68,32 +72,37 @@ const AdsMain = React.createClass( {
 	getComponent: function( section ) {
 		switch ( section ) {
 			case 'earnings':
-				return <AdsEarnings site={ this.props.site } />
+				return <AdsEarnings site={ this.props.site } />;
 			case 'settings':
-				return <AdsSettings site={ this.props.site } />
+				return <AdsSettings site={ this.props.site } />;
 			default:
 				return null;
 		}
 	},
 
-	renderInstanActivationToggle: function( component ) {
+	dismissWordAdsError() {
+		const siteId = this.props.site ? this.props.site.ID : null;
+		this.props.dismissWordAdsError( siteId );
+	},
+
+	renderInstantActivationToggle: function( component ) {
 		return ( <div>
 			<Card className="ads__activate-wrapper">
 				<div className="ads__activate-header">
 					<h2 className="ads__activate-header-title">{ this.translate( 'WordAds Disabled' ) }</h2>
 					<div className="ads__activate-header-toggle">
 						<FormToggle
-							checked={ this.props.site.options.wordads || ( this.props.requestStatus.requesting && this.props.requestStatus.error === null ) }
-							onChange={ this.props.requestApproval }
+							checked={ this.props.site.options.wordads || ( this.props.requestingWordAdsApproval && this.props.wordAdsError === null ) }
+							onChange={ this.props.requestWordAdsApproval }
 						/>
 					</div>
 				</div>
-				{ this.props.requestStatus.error &&
-					<Notice status="is-error ads__activate-notice" onDismissClick={ this.props.dismissError }>
-						{ this.props.requestStatus.error }
+				{ this.props.wordAdsError &&
+					<Notice status="is-error ads__activate-notice" onDismissClick={ this.dismissWordAdsError }>
+						{ this.props.wordAdsError }
 					</Notice>
 				}
-				{ this.props.requestStatus.requesting &&
+				{ this.props.requestingWordAdsApproval &&
 					<Notice status="is-info ads__activate-notice" showDismiss={ false }>
 						{ this.translate( 'Kindly requesting WordAds activation' ) }
 					</Notice>
@@ -123,7 +132,7 @@ const AdsMain = React.createClass( {
 		var component = this.getComponent( this.props.section );
 
 		if ( ! this.props.site.options.wordads && isWordadsInstantActivationEligible( this.props.site ) ) {
-			component = this.renderInstanActivationToggle( component );
+			component = this.renderInstantActivationToggle( component );
 		}
 
 		return (
@@ -151,12 +160,15 @@ const AdsMain = React.createClass( {
 } );
 
 export default connect(
-	state => ( { requestStatus: state.wordads.approve.requestStatus } ),
-	{ requestApproval, dismissError },
+	( state, ownProps ) => ( {
+		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, ownProps.site ),
+		wordAdsError: getWordAdsErrorForSite( state, ownProps.site )
+	} ),
+	{ requestWordAdsApproval, dismissWordAdsError },
 	( stateProps, dispatchProps, parentProps ) => Object.assign(
 		{},
 		dispatchProps,
-		{ requestApproval: () => ( ! stateProps.requestStatus.requesting ) ? dispatchProps.requestApproval( parentProps.site.ID ) : null },
+		{ requestWordAdsApproval: () => ( ! stateProps.requestingWordAdsApproval ) ? dispatchProps.requestWordAdsApproval( parentProps.site.ID ) : null },
 		parentProps,
 		stateProps
 	)

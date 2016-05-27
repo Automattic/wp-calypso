@@ -10,7 +10,7 @@ import {
 import wpcom from 'lib/wp';
 import Sites from 'lib/sites-list';
 
-export const requestApproval = siteId => dispatch => {
+export const requestWordAdsApproval = siteId => dispatch => {
 	dispatch( {
 		type: WORDADS_SITE_APPROVE_REQUEST,
 		siteId
@@ -21,7 +21,7 @@ export const requestApproval = siteId => dispatch => {
 		if ( result.approved ) {
 			//We need to propagate this change to flux
 			const site = Sites().getSite( siteId );
-			if ( ! site.options.wordads ) {
+			if ( site && ! site.options.wordads ) {
 				site.options.wordads = true;
 				site.emit( 'change' );
 			}
@@ -40,4 +40,4 @@ export const requestApproval = siteId => dispatch => {
 	} ) );
 };
 
-export const dismissError = () => ( { type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR } );
+export const dismissWordAdsError = ( siteId ) => ( { type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR, siteId } );
