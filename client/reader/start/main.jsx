@@ -39,9 +39,9 @@ const Start = React.createClass( {
 					} ) : null }
 				</div>
 
-				<RootChild className="reader-start-footer">
-					<div className="reader-start-footer__action main">
-						<span>{ this.translate( 'Follow one or more sites to get started' ) }</span>
+				<RootChild className="reader-start__bar">
+					<div className="reader-start__bar-action main">
+						<span className="reader-start__bar-text">{ this.translate( 'Follow one or more sites to get started' ) }</span>
 						<Button disabled>{ this.translate( "OK, I'm all set!" ) }</Button>
 					</div>
 				</RootChild>
