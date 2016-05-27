@@ -10,7 +10,8 @@ import {
 	EXPORT_ADVANCED_SETTINGS_FAIL,
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
-	SET_EXPORT_POST_TYPE,
+	EXPORT_POST_TYPE_SET,
+	EXPORT_POST_TYPE_FIELD_SET,
 	SERIALIZE,
 	DESERIALIZE,
 	EXPORT_CLEAR,
@@ -24,12 +25,46 @@ import { States } from './constants';
 
 export function selectedPostType( state = null, action ) {
 	switch ( action.type ) {
-		case SET_EXPORT_POST_TYPE:
+		case EXPORT_POST_TYPE_SET:
 			return action.postType;
 		case SERIALIZE:
 			return null;
 		case DESERIALIZE:
 			return null;
+	}
+	return state;
+}
+
+const postTypeField = ( state = '', action ) => {
+	switch ( action.type ) {
+		case EXPORT_POST_TYPE_FIELD_SET:
+			return Object.assign( {}, state, {
+				[ action.fieldName ]: action.value
+			} );
+	}
+	return state;
+};
+
+const postTypes = ( state = { post: {}, page: {} }, action ) => {
+	switch ( action.type ) {
+		case EXPORT_POST_TYPE_FIELD_SET:
+			return Object.assign( {}, state, {
+				[ action.postType ]: postTypeField( state[ action.postType ], action )
+			} );
+	}
+	return state;
+};
+
+export function selectedAdvancedSettings( state = {}, action ) {
+	switch ( action.type ) {
+		case EXPORT_POST_TYPE_FIELD_SET:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: postTypes( state[ action.siteId ], action )
+			} );
+		case SERIALIZE:
+			return {};
+		case DESERIALIZE:
+			return {};
 	}
 	return state;
 }
@@ -132,6 +167,7 @@ export function downloadURL( state = null, action ) {
 
 export default combineReducers( {
 	selectedPostType,
+	selectedAdvancedSettings,
 	exportingState,
 	fetchingAdvancedSettings,
 	advancedSettings,

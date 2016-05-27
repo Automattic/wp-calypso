@@ -10,11 +10,13 @@ import {
 	EXPORT_ADVANCED_SETTINGS_FAIL,
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
+	EXPORT_POST_TYPE_FIELD_SET,
 	DESERIALIZE,
 	SERIALIZE
 } from 'state/action-types';
 import {
 	selectedPostType,
+	selectedAdvancedSettings,
 	exportingState,
 	advancedSettings,
 	fetchingAdvancedSettings
@@ -36,6 +38,55 @@ describe( 'reducer', () => {
 			const postType = 'feedback';
 			const state = selectedPostType( postType, { type: DESERIALIZE } );
 			expect( state ).to.be.null;
+		} );
+	} );
+
+	describe( 'selectedAdvancedSettings', () => {
+		const selectedSettings = {
+			2916284: {
+				post: { category: 1 },
+				page: { author: 95752520 },
+			}
+		};
+		it( 'does not persist state', () => {
+			const state = selectedAdvancedSettings( selectedSettings, { type: SERIALIZE } );
+			expect( state ).to.eql( {} );
+		} );
+		it( 'does not load persisted state', () => {
+			const state = selectedAdvancedSettings( selectedSettings, { type: SERIALIZE } );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should set post category', () => {
+			const state = selectedAdvancedSettings( {}, {
+				type: EXPORT_POST_TYPE_FIELD_SET,
+				siteId: 2916284,
+				postType: 'post',
+				fieldName: 'category',
+				value: 1,
+			} );
+			expect( state ).to.deep.equal( {
+				2916284: {
+					post: { category: 1 },
+					page: {},
+				}
+			} );
+		} );
+
+		it( 'should set page author', () => {
+			const state = selectedAdvancedSettings( {}, {
+				type: EXPORT_POST_TYPE_FIELD_SET,
+				siteId: 2916284,
+				postType: 'page',
+				fieldName: 'author',
+				value: 95752520,
+			} );
+			expect( state ).to.deep.equal( {
+				2916284: {
+					post: {},
+					page: { author: 95752520 },
+				}
+			} );
 		} );
 	} );
 

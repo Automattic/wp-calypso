@@ -13,8 +13,11 @@ import {
 	EXPORT_START_REQUEST,
 	EXPORT_STARTED,
 	EXPORT_STATUS_FETCH,
-	SET_EXPORT_POST_TYPE,
+	EXPORT_POST_TYPE_SET,
+	EXPORT_POST_TYPE_FIELD_SET,
 } from 'state/action-types';
+
+import { prepareExportRequest } from './selectors';
 
 /**
  * Sets the post type to export.
@@ -24,8 +27,18 @@ import {
  */
 export function setPostType( postType ) {
 	return {
-		type: SET_EXPORT_POST_TYPE,
+		type: EXPORT_POST_TYPE_SET,
 		postType
+	};
+}
+
+export function setPostTypeFieldValue( siteId, postType, fieldName, value ) {
+	return {
+		type: EXPORT_POST_TYPE_FIELD_SET,
+		siteId,
+		postType,
+		fieldName,
+		value,
 	};
 }
 
@@ -59,7 +72,7 @@ export function advancedSettingsFetch( siteId ) {
 			.getExportSettings( siteId )
 			.then( updateExportSettings )
 			.catch( fetchFail );
-	}
+	};
 }
 
 export function advancedSettingsReceive( siteId, advancedSettings ) {
@@ -83,16 +96,19 @@ export function advancedSettingsFail( siteId, error ) {
  * @param  {Number}   siteId  The ID of the site to export
  * @return {Function}         Action thunk
  */
-export function startExport( siteId ) {
-	return ( dispatch ) => {
+export function startExport( siteId, { exportAll = true } = {} ) {
+	return ( dispatch, getState ) => {
 		if ( ! siteId ) {
 			return;
 		}
 
 		dispatch( {
 			type: EXPORT_START_REQUEST,
-			siteId: siteId
+			siteId,
+			exportAll,
 		} );
+
+		const advancedSettings = prepareExportRequest( getState(), siteId, { exportAll } );
 
 		const success =
 			() => dispatch( exportStarted( siteId ) );
@@ -101,10 +117,10 @@ export function startExport( siteId ) {
 			error => dispatch( exportFailed( siteId, error ) );
 
 		return wpcom.undocumented()
-			.startExport( siteId )
+			.startExport( siteId, advancedSettings )
 			.then( success )
 			.catch( failure );
-	}
+	};
 }
 
 export function exportStarted( siteId ) {
@@ -123,24 +139,24 @@ export function exportStatusFetch( siteId ) {
 
 		const failure = ( error ) => {
 			dispatch( exportFailed( siteId, error ) );
-		}
+		};
 
 		const success = ( response = {} ) => {
 			switch ( response.status ) {
 				case 'finished':
-					return dispatch( exportComplete( siteId, response.$attachment_url ) )
+					return dispatch( exportComplete( siteId, response.attachment_url ) );
 				case 'running':
 					return;
 			}
 
 			return failure( response );
-		}
+		};
 
 		return wpcom.undocumented()
 			.getExport( siteId, 0 )
 			.then( success )
 			.catch( failure );
-	}
+	};
 }
 
 export function exportFailed( siteId, error ) {
@@ -148,7 +164,7 @@ export function exportFailed( siteId, error ) {
 		type: EXPORT_FAILURE,
 		siteId,
 		error
-	}
+	};
 }
 
 export function exportComplete( siteId, downloadURL ) {
@@ -156,12 +172,12 @@ export function exportComplete( siteId, downloadURL ) {
 		type: EXPORT_COMPLETE,
 		siteId,
 		downloadURL
-	}
+	};
 }
 
 export function clearExport( siteId ) {
 	return {
 		type: EXPORT_CLEAR,
 		siteId
-	}
+	};
 }
