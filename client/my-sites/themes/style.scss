@@ -272,6 +272,10 @@
 	  margin: 40px 0 10px;
 	}
 
+	pre {
+		white-space: pre-wrap;
+	}
+
 	.notes {
 	  background: $gray-light;
 	  margin: 40px -20px -20px;
