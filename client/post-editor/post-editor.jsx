@@ -301,11 +301,11 @@ const PostEditor = React.createClass( {
 								site={ site }
 								type={ this.props.type }
 							/>
+							{ this.renderNotice() }
 							<FeaturedImage
 								site={ site }
 								post={ this.state.post }
 								maxWidth={ 1462 } />
-							{ this.renderNotice() }
 							<div className="editor__header">
 								<EditorTitleContainer
 									onChange={ this.debouncedAutosave }
@@ -812,7 +812,7 @@ const PostEditor = React.createClass( {
 	},
 
 	getEditorMode: function() {
-		var editorMode = 'tinymce'
+		var editorMode = 'tinymce';
 		if ( this.props.preferences ) {
 			if ( this.props.preferences[ 'editor-mode' ] ) {
 				editorMode = this.props.preferences[ 'editor-mode' ];
