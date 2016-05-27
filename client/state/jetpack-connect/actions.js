@@ -37,7 +37,8 @@ import config from 'config';
  *  Local variables;
  */
 let _fetching = {};
-const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + config( 'env_id' );
+let calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
+const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
 const installURL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const activateURL = '/wp-admin/plugins.php';
 const userModule = userFactory();
