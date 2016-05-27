@@ -276,6 +276,12 @@
 		white-space: pre-wrap;
 	}
 
+	blockquote {
+		padding: 30px;
+		margin: 0 -20px;
+		border-left: 2px solid $gray;
+	}
+
 	.notes {
 	  background: $gray-light;
 	  margin: 40px -20px -20px;
