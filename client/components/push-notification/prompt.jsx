@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import store from 'store';
 
 /**
  * Internal dependencies
@@ -27,7 +28,7 @@ export default React.createClass( {
 
 	getInitialState: function() {
 		return {
-			dismissed: false,
+			dismissed: store.get( 'push-notification-notice-dismissed' ),
 			subscribed: false
 		};
 	},
@@ -41,6 +42,7 @@ export default React.createClass( {
 	},
 
 	dismissNotice: function() {
+		store.set( 'push-notification-notice-dismissed', true );
 		this.setState( { dismissed: true } );
 	},
 
