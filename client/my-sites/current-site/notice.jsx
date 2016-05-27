@@ -12,6 +12,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import paths from 'my-sites/upgrades/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
+import { canCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { abtest } from 'lib/abtest';
@@ -53,7 +54,7 @@ const SiteNotice = React.createClass( {
 	},
 
 	domainCreditNotice() {
-		if ( ! this.props.hasDomainCredit ) {
+		if ( ! this.props.hasDomainCredit || ! this.props.canManageOptions ) {
 			return null;
 		}
 
@@ -98,8 +99,10 @@ const SiteNotice = React.createClass( {
 } );
 
 export default connect( ( state, ownProps ) => {
+	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 	return {
-		hasDomainCredit: !! ownProps.site && hasDomainCredit( state, ownProps.site.ID )
+		hasDomainCredit: hasDomainCredit( state, siteId ),
+		canManageOptions: canCurrentUser( state, siteId, 'manage_options' )
 	};
 }, ( dispatch ) => {
 	return {
