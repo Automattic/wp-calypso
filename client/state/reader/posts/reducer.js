@@ -3,6 +3,8 @@
  */
 import { combineReducers } from 'redux';
 import keyBy from 'lodash/keyBy';
+import omitBy from 'lodash/omitBy';
+import isUndefined from 'lodash/isUndefined';
 
 /**
  * Internal dependencies
@@ -25,7 +27,7 @@ import { isValidStateWithSchema } from 'state/utils';
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_POSTS_RECEIVE:
-			return Object.assign( {}, state, keyBy( action.posts, 'global_ID' ) );
+			return Object.assign( {}, state, keyBy( omitBy( action.posts, isUndefined ), 'global_ID' ) );
 		case SERIALIZE:
 			return state;
 		case DESERIALIZE:
