@@ -301,7 +301,7 @@
 
 // Appending inline recommendations
 
-/*.reader-start-card {
+.reader-start-card {
 
 	&:last-child {
 		animation: slide-right .7s ease-out 5s 1 forwards;
@@ -336,4 +336,4 @@
     		transform: translateX( 105% );
     	}
 	}
-}*/
+}
