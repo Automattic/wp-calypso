@@ -29,10 +29,12 @@ describe( 'reducer', () => {
 
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'domains',
 			'fetchingItems',
 			'items',
 			'mediaStorage',
-			'plans'
+			'plans',
+			'vouchers'
 		] );
 	} );
 
@@ -163,6 +165,22 @@ describe( 'reducer', () => {
 					slug: 'example.wordpress.com',
 					updateComputedAttributes() {}
 				}
+			} );
+
+			expect( state ).to.eql( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', slug: 'example.wordpress.com' }
+			} );
+		} );
+
+		it( 'should strip invalid keys on the received site objects', () => {
+			const state = items( undefined, {
+				type: SITES_RECEIVE,
+				sites: [ {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog',
+					slug: 'example.wordpress.com',
+					updateComputedAttributes() {}
+				} ]
 			} );
 
 			expect( state ).to.eql( {

@@ -2,119 +2,54 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
+import Button from 'components/button';
 import Card from 'components/card';
-import PostListStoreFactory from 'lib/posts/post-list-store-factory';
-import PostStatsStore from 'lib/post-stats/store';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import Emojify from 'components/emojify';
-import actions from 'lib/posts/actions';
 import SectionHeader from 'components/section-header';
+import QueryPosts from 'components/data/query-posts';
+import QueryPostStats from 'components/data/query-post-stats';
+import {
+	isRequestingSitePostsForQuery,
+	getSitePostsForQuery
+} from 'state/posts/selectors';
+import { getPostStat } from 'state/stats/posts/selectors';
+import { decodeEntities } from 'lib/formatting';
 
-const PostListStore = new PostListStoreFactory;
-
-function getPostState() {
-	const posts = PostListStore.getAll();
-	const post = posts.length ? posts[ 0 ] : null;
-
-	return {
-		post: post,
-		postID: post ? post.ID : null,
-		loading: PostListStore.isFetchingNextPage(),
-		views: post ? PostStatsStore.getItem( 'totalViews', post.site_ID, post.ID ) : String.fromCharCode( 8211 )
-	};
-}
-
-function queryPosts( siteID ) {
-	actions.queryPosts( {
-		type: 'post',
-		siteID: siteID,
-		status: 'published'
-	} );
-	actions.fetchNextPage();
-}
-
-export default React.createClass( {
+const StatsPostPerformance = React.createClass( {
 
 	displayName: 'StatsPostPerformance',
 
 	propTypes: {
+		viewCount: PropTypes.number,
 		site: PropTypes.oneOfType( [
 			PropTypes.bool,
 			PropTypes.object
 		] ),
-		siteID: PropTypes.number
-	},
-
-	componentWillMount() {
-		PostListStore.on( 'change', this.onPostsChange );
-		const site = this.props.site;
-		if ( site && site.ID ) {
-			queryPosts( site.ID );
-		}
-		PostStatsStore.on( 'change', this.onViewsChange );
-	},
-
-	componentWillUnmount() {
-		PostListStore.off( 'change', this.onPostsChange );
-		PostStatsStore.off( 'change', this.onViewsChange );
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.site.ID !== this.props.siteID ) {
-			queryPosts( nextProps.site.ID );
-		}
-	},
-
-	getInitialState() {
-		return {
-			loading: true,
-			post: null,
-			postID: null,
-			views: null
-		};
-	},
-
-	onPostsChange() {
-		const postState = getPostState();
-
-		this.setState( postState );
-	},
-
-	onViewsChange() {
-		const views = this.getTotalViews();
-
-		if ( this.state.views !== views ) {
-			this.setState( {
-				views: views
-			} );
-		}
-	},
-
-	getTotalViews() {
-		let views;
-
-		if ( this.state.post ) {
-			views = PostStatsStore.getItem( 'totalViews', this.props.site.ID, this.state.post.ID );
-		}
-
-		return views;
+		siteID: PropTypes.number,
+		query: PropTypes.object,
+		post: PropTypes.object,
+		isRequesting: PropTypes.bool
 	},
 
 	buildTabs( summaryUrl ) {
-		const { post, loading, views } = this.state;
+		const { viewCount, post, loading } = this.props;
 		const tabClassName = 'is-post-summary';
 
 		const tabs = [
 			{
 				label: this.translate( 'Views' ),
 				gridicon: 'visible',
-				value: views,
+				value: viewCount,
 				href: summaryUrl,
 				className: tabClassName,
 				loading: loading
@@ -140,32 +75,38 @@ export default React.createClass( {
 		} );
 	},
 
-	render() {
-		const { post, loading } = this.state;
-		const postTime = post ? this.moment( post.date ) : this.moment();
-		const cardClass = classNames( 'stats-module', 'stats__latest-post-summary', 'is-site-overview', {
-			'is-loading': loading,
-			'is-hidden': ! loading && ! post
-		} );
+	recordClickOnNewPostButton() {
+		analytics.tracks.recordEvent( 'calypso_stats_new_post_click' );
+	},
 
-		const summaryUrl = post ? '/stats/post/' + post.ID + '/' + this.props.site.slug : '#';
+	render() {
+		const { site, query, post, isRequesting } = this.props;
+		const loading = ! site || isRequesting;
+		const postTime = post ? this.moment( post.date ) : this.moment();
+		const cardClass = classNames( 'stats-module', 'stats-post-performance', 'is-site-overview' );
+
+		const newPostUrl = site ? '/post/' + site.slug : '/post';
+		const summaryUrl = post ? '/stats/post/' + post.ID + '/' + this.props.site.slug : undefined;
 		let postTitle;
 
 		if ( post ) {
 			if ( ! post.title ) {
 				postTitle = this.translate( '(no title)' );
 			} else {
-				postTitle = post.title;
+				postTitle = decodeEntities( post.title );
 			}
 		}
 
 		return (
 			<div>
+				{ site ? <QueryPosts siteId={ site.ID } query={ query } /> : null }
+				{ site && post ? <QueryPostStats siteId= { site.ID } postId={ post.ID } stat="views" /> : null }
 				<SectionHeader label={ this.translate( 'Latest Post Summary' ) } href={ summaryUrl } />
 				<Card className={ cardClass }>
-					<div className="module-content-text">
-						{ post
-							? (
+					<StatsModulePlaceholder isLoading={ loading && ! post } />
+					{ post
+						? (
+							<div className="module-content-text">
 								<p>
 									{ this.translate(
 										'It\'s been %(timeLapsed)s since {{href}}{{postTitle/}}{{/href}} was published. Here\'s how the post has performed so far\u2026',
@@ -181,14 +122,49 @@ export default React.createClass( {
 										} )
 									}
 								</p>
-							) : null
-						}
-					</div>
-					<StatsTabs>
-						{ this.buildTabs( summaryUrl ) }
-					</StatsTabs>
+							</div>
+						) : null
+					}
+					{ ! loading && ! post
+						? (
+							<div className="module-content-text is-empty-message is-error">
+								<p className="stats-post-performance__no-posts-message">
+									{ this.translate( 'You haven\'t published any posts yet.' ) }
+								</p>
+								<div className="stats-post-performance__start-post">
+									<Button primary href={ newPostUrl } onClick={ this.recordClickOnNewPostButton }>
+										{ this.translate( 'Start a Post' ) }
+									</Button>
+								</div>
+							</div>
+						) : null
+					}
+					{ post
+						? (
+							<StatsTabs>
+								{ this.buildTabs( summaryUrl ) }
+							</StatsTabs>
+						)
+						: null
+					}
 				</Card>
 			</div>
 		);
 	}
 } );
+
+export default connect( ( state, ownProps ) => {
+	const { site } = ownProps;
+	const query = { status: 'published' };
+	const posts = site ? getSitePostsForQuery( state, site.ID, query ) : null;
+	const post = posts && posts.length ? posts[ 0 ] : null;
+	const viewCount = post && site ? getPostStat( state, 'views', site.ID, post.ID ) : null;
+	const isRequesting = isRequestingSitePostsForQuery( state, site.ID, query );
+
+	return {
+		viewCount,
+		query,
+		post,
+		isRequesting
+	};
+} )( StatsPostPerformance );

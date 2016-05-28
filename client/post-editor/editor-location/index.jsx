@@ -4,9 +4,6 @@
 const React = require( 'react' ),
 	qs = require( 'querystring' );
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-
 /**
  * Internal dependencies
  */
@@ -16,19 +13,15 @@ const PostActions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	EditorLocationSearch = require( './search' );
 
-import { setLocation, removeLocation } from 'state/ui/editor/post/actions';
-
 /**
  * Module variables
  */
 const GOOGLE_MAPS_BASE_URL = 'http://maps.google.com/maps/api/staticmap?';
 
-const EditorLocation = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorLocation',
 
 	propTypes: {
-		setLocation: React.PropTypes.func,
-		removeLocation: React.PropTypes.func,
 		label: React.PropTypes.string,
 		coordinates: function( props, propName ) {
 			var prop = props[ propName ];
@@ -36,13 +29,6 @@ const EditorLocation = React.createClass( {
 				return new Error( 'Expected array pair of coordinates for prop `' + propName + '`.' );
 			}
 		}
-	},
-
-	getDefaultProps: function() {
-		return {
-			setLocation: () => {},
-			removeLocation: () => {}
-		};
 	},
 
 	getInitialState: function() {
@@ -63,7 +49,6 @@ const EditorLocation = React.createClass( {
 		} );
 
 		stats.recordStat( 'location_geolocate_success' );
-		this.props.setLocation( position.coords.latitude, position.coords.longitude );
 	},
 
 	onGeolocateFailure: function( error ) {
@@ -100,8 +85,6 @@ const EditorLocation = React.createClass( {
 	clear: function() {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.deleteMetadata( [ 'geo_latitude', 'geo_longitude' ] );
-
-		this.props.removeLocation();
 	},
 
 	onSearchSelect: function( result ) {
@@ -150,6 +133,7 @@ const EditorLocation = React.createClass( {
 				<EditorDrawerWell
 					icon="location"
 					label={ buttonText }
+					empty={ ! this.props.coordinates }
 					onClick={ this.geolocate }
 					onRemove={ this.clear }
 					disabled={ this.state.locating }>
@@ -162,8 +146,3 @@ const EditorLocation = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setLocation, removeLocation }, dispatch )
-)( EditorLocation );

@@ -9,7 +9,8 @@ var page = require( 'page' );
 var controller = require( './controller' ),
 	jetpackConnectController = require( './jetpack-connect/controller' ),
 	adTracking = require( 'lib/analytics/ad-tracking' ),
-	config = require( 'config' );
+	config = require( 'config' ),
+	sitesController = require( 'my-sites/controller' );
 
 module.exports = function() {
 	if ( config.isEnabled( 'phone_signup' ) ) {
@@ -33,9 +34,32 @@ module.exports = function() {
 	if ( config.isEnabled( 'jetpack/connect' ) ) {
 		page( '/jetpack/connect', jetpackConnectController.connect );
 		page(
-			'/jetpack/connect/authorize',
+			'/jetpack/connect/authorize/:locale?',
+			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
 			jetpackConnectController.saveQueryObject,
 			jetpackConnectController.authorizeForm
 		);
+
+		page(
+			'/jetpack/connect/:locale?',
+			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
+			jetpackConnectController.connect
+		);
+
+		page(
+			'/jetpack/connect/install/:locale?',
+			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
+			jetpackConnectController.install
+		);
+
+		page(
+			'/jetpack/connect/plans/:site',
+			sitesController.siteSelection,
+			jetpackConnectController.plansLanding
+		);
+	}
+
+	if ( config.isEnabled( 'jetpack/sso' ) ) {
+		page( '/jetpack/sso', jetpackConnectController.saveQueryObject, jetpackConnectController.sso );
 	}
 };

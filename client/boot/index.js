@@ -6,7 +6,6 @@ var React = require( 'react' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
 	some = require( 'lodash/some' ),
 	startsWith = require( 'lodash/startsWith' ),
-	classes = require( 'component-classes' ),
 	debug = require( 'debug' )( 'calypso' ),
 	page = require( 'page' ),
 	url = require( 'url' ),
@@ -71,9 +70,9 @@ function init() {
 	// Infer touch screen by checking if device supports touch events
 	// See touch-detect/README.md
 	if ( touchDetect.hasTouch() ) {
-		classes( document.documentElement ).add( 'touch' );
+		document.documentElement.classList.add( 'touch' );
 	} else {
-		classes( document.documentElement ).add( 'notouch' );
+		document.documentElement.classList.add( 'notouch' );
 	}
 
 	// Initialize touch
@@ -319,7 +318,7 @@ function reduxStoreReady( reduxStore ) {
 				return startsWith( context.path, validPath );
 			} );
 
-			if ( '/' === context.path && config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
+			if ( '/' === context.pathname && config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
 				page.redirect( '/devdocs/start' );
 				return;
 			}
@@ -367,6 +366,10 @@ function reduxStoreReady( reduxStore ) {
 
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
 		require( 'lib/rubberband-scroll-disable' )( document.body );
+	}
+
+	if ( config.isEnabled( 'dev/test-helper' ) && document.querySelector( '.environment.is-tests' ) ) {
+		require( 'lib/abtest/test-helper' )( document.querySelector( '.environment.is-tests' ) );
 	}
 
 	/*

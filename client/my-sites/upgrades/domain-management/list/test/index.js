@@ -26,7 +26,6 @@ describe( 'index', function() {
 	useSandbox( newSandbox => sandbox = newSandbox );
 	useFakeDom.withContainer();
 	useMockery( mockery => {
-		require( 'test/helpers/mocks/component-classes' )( mockery );
 		require( 'test/helpers/mocks/component-tip' )( mockery );
 		require( 'test/helpers/mocks/data-poller' )( mockery );
 		mockery.registerMock( 'components/section-nav', EmptyComponent );
@@ -184,6 +183,26 @@ describe( 'index', function() {
 						done();
 					}, 0 );
 				} );
+			} );
+		} );
+
+		describe( 'when less than 2 domains', () => {
+			beforeEach( () => {
+				const oneDomain = deepFreeze( {
+					domains: {
+						hasLoadedFromServer: true,
+						list: [
+							{ name: 'example.com', isPrimary: true }
+						]
+					}
+				} );
+				const propsWithOneDomain = deepFreeze( Object.assign( {}, defaultProps, oneDomain ) );
+				component = renderWithProps( propsWithOneDomain );
+			} );
+
+			it( 'should not show "Change Primary Domain" button', () => {
+				const button = ReactDom.findDOMNode( component ).querySelector( '.domain-management-list__change-primary-button' );
+				assert( button === null );
 			} );
 		} );
 	} );

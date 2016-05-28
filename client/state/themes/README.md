@@ -23,6 +23,10 @@ Manages the list of themes, per query.
 
 Contains a global list of themes queried so far.
 
+### themes-ui/
+
+Any UI-associated state, rather than data.
+
 ## Action Creators
 
 ### actions

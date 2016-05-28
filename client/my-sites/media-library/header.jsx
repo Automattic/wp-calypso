@@ -9,6 +9,7 @@ const debug = _debug( 'calypso:media-library:header' );
  * Internal dependencies
  */
 import { isMobile } from 'lib/viewport';
+import Button from 'components/button';
 import FormRange from 'components/forms/range';
 import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
@@ -18,6 +19,7 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
 import { userCan } from 'lib/site/utils';
+import config from 'config';
 
 export default React.createClass( {
 	displayName: 'MediaLibraryHeader',
@@ -119,6 +121,21 @@ export default React.createClass( {
 		} );
 	},
 
+	renderUploadAndEditButton() {
+		if ( ! config.isEnabled( 'post-editor/image-editor' ) ) {
+			return;
+		}
+
+		return (
+			<Button
+				className="is-desktop"
+				onClick={ this.props.onAddAndEditImage } >
+				<Gridicon icon="pencil" />
+				{ this.translate( 'Add and edit image' ) }
+			</Button>
+		);
+	},
+
 	renderUploadButtons() {
 		const { site, filter, onAddMedia } = this.props;
 
@@ -140,6 +157,7 @@ export default React.createClass( {
 					className="button is-desktop">
 					{ this.translate( 'Add via URL', { context: 'Media upload' } ) }
 				</button>
+				{ this.renderUploadAndEditButton() }
 				<button
 					ref={ this.setMoreOptionsContext }
 					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }

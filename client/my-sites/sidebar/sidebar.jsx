@@ -53,6 +53,14 @@ module.exports = React.createClass( {
 		window.scrollTo( 0, 0 );
 	},
 
+	onPreviewSite( event ) {
+		const site = this.getSelectedSite();
+		if ( site.is_previewable ) {
+			event.preventDefault();
+			this.props.layoutFocus.set( 'preview' );
+		}
+	},
+
 	itemLinkClass: function( paths, existingClasses ) {
 		var classSet = {};
 
@@ -182,24 +190,6 @@ module.exports = React.createClass( {
 			themesLink = '/design';
 		}
 
-		if ( abtest( 'swapButtonsMySiteSidebar' ) === 'swap' ) {
-			return (
-				<SidebarItem
-					tipTarget="themes"
-					label={ this.translate( 'Customize' ) }
-					className={ this.itemLinkClass( '/design', 'themes' ) }
-					link={ getCustomizeUrl( null, site ) }
-					onNavigate={ this.onNavigate }
-					icon={ 'themes' }
-					preloadSectionName="customize"
-				>
-					<SidebarButton href={ themesLink } preloadSectionName="themes">
-						{ this.translate( 'Themes' ) }
-					</SidebarButton>
-				</SidebarItem>
-			);
-		}
-
 		return (
 			<SidebarItem
 				label={ this.translate( 'Themes' ) }
@@ -271,16 +261,6 @@ module.exports = React.createClass( {
 
 		if ( ! this.props.sites.canManageSelectedOrAll() ) {
 			return null;
-		}
-
-		if ( ! this.props.sites.hasSiteWithPlugins() ) {
-			if ( ! config.isEnabled( 'manage/plugins/wpcom' ) ) {
-				return null;
-			}
-
-			if ( abtest( 'wpcomPluginsInSidebar' ) === 'hidePlugins' ) {
-				return null;
-			}
 		}
 
 		if ( ( this.isSingle() && site.jetpack ) || ( ! this.isSingle() && this.hasJetpackSites() ) ) {
@@ -367,7 +347,6 @@ module.exports = React.createClass( {
 
 		// Show plan details for upgraded sites
 		if (
-			abtest( 'sidebarPlanLinkMyPlan' ) === 'plans/my-plan' &&
 			site &&
 			( isPremium( site.plan ) || isBusiness( site.plan ) )
 		) {
@@ -401,8 +380,7 @@ module.exports = React.createClass( {
 
 	trackUpgradeClick: function() {
 		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
-			cta_name: 'sidebar_upgrade_default',
-			cta_landing: abtest( 'sidebarPlanLinkMyPlan' )
+			cta_name: 'sidebar_upgrade_default'
 		} );
 		this.onNavigate();
 	},
@@ -715,6 +693,7 @@ module.exports = React.createClass( {
 				<CurrentSite
 					sites={ this.props.sites }
 					siteCount={ this.props.user.get().visible_site_count }
+					onClick={ this.onPreviewSite }
 				/>
 				<SidebarMenu>
 					<ul>

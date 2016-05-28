@@ -62,7 +62,7 @@ export function cancelSitePlanTrial( siteId, planId ) {
 				}
 			} );
 		} );
-	}
+	};
 }
 
 /**
@@ -110,7 +110,7 @@ export function fetchSitePlans( siteId ) {
 				resolve();
 			} );
 		} );
-	}
+	};
 }
 
 /**
@@ -141,5 +141,5 @@ export function refreshSitePlans( siteId ) {
 	return ( dispatch ) => {
 		dispatch( clearSitePlans( siteId ) );
 		dispatch( fetchSitePlans( siteId ) );
-	}
+	};
 }

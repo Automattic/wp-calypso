@@ -69,7 +69,7 @@ export const List = React.createClass( {
 				<Notice
 					status="is-info"
 					showDismiss={ false }
-					text={ this.translate( 'You have an unused domain credit!' ) }
+					text={ this.translate( 'Free domain available' ) }
 					icon="globe">
 					<NoticeAction onClick={ this.props.clickClaimDomainNotice } href={ `/domains/add/${ this.props.selectedSite.slug }` }>
 						{ this.translate( 'Claim Free Domain' ) }
@@ -222,6 +222,10 @@ export const List = React.createClass( {
 	},
 
 	changePrimaryButton() {
+		if ( ! this.props.domains.list || this.props.domains.list.length < 2 ) {
+			return null;
+		}
+
 		return (
 			<Button
 				compact

@@ -10,15 +10,9 @@
 	margin-right: 5px;
 	font-size: 14px;
 
-	p {
+	.guided-tours__step-text {
 		color: $gray-dark;
 		margin-bottom: 16px;
-	}
-
-	hr {
-		margin-bottom: 0.5em;
-		color: $gray-light;
-		background-color: $gray-light;
 	}
 
 	.gridicon[height="16"] {
@@ -51,27 +45,25 @@
 }
 
 .guided-tours__choice-button-row {
-	button {
+	.button {
 		width: 48%;
 	}
-	button:nth-child(1) {
+	.button:nth-child(1) {
 		margin-right: 4%;
 	}
 }
 
 .guided-tours__single-button-row {
-	button {
+	.button {
 		width: 100%;
 	}
 }
 
 .guided-tours__external-link,
 .guided-tours__bullseye-instructions {
-	p {
-		color: darken( $gray, 10 );
-		margin-bottom: 0;
-		font-style: italic;
-	}
+	color: darken( $gray, 10 );
+	margin-bottom: 0;
+	font-style: italic;
 
 	.gridicon {
 		position: relative;
@@ -145,33 +137,11 @@ $zoom-scale: 5; // the multiplier determining the size of the animated rings
 	animation-delay: #{ $animation-speed / 4 };
 }
 
-// the overlay with animation present when showing a bullseye
-@keyframes guided-tours__overlay-animation {
-	0%, 100% {
-		opacity: 0.4;
-	}
-
-	50% {
-		opacity: 0.7
-	}
-}
-
-.guided-tours__overlay,
-.guided-tours__overlay:hover,
-.guided-tours__overlay:focus,
-.guided-tours__overlay:visited,
-.guided-tours__overlay:active {
-	box-shadow: 0 0 0 9999px rgba( $gray-light, 0.8 );
-	transition: box-shadow 300ms ease-in-out;
-	z-index: z-index( 'root', '.guided-tours__overlay' );
-}
-
-.guided-tours__overlay:before {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	content: " ";
-	margin-left: -15px;
-	animation: guided-tours__overlay-animation 3s ease-in-out 300ms infinite;
-	opacity: 0.4;
+// the pure text representation of the bullseye dot
+.guided-tours__bullseye-text {
+	position: relative;
+		top: 3px;
+	font-style: normal;
+	font-size: 190%;
+	line-height: 0;
 }

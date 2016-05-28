@@ -15,6 +15,8 @@ import analytics from 'lib/analytics';
 import sitesList from 'lib/sites-list';
 import { getValidFeatureKeys, hasFeature } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import { abtest } from 'lib/abtest';
 
 const sites = sitesList();
 
@@ -32,6 +34,7 @@ export default React.createClass( {
 		jetpack: React.PropTypes.bool,
 		compact: React.PropTypes.bool,
 		feature: React.PropTypes.oneOf( [ false, ...getValidFeatureKeys() ] ),
+		shouldDisplay: React.PropTypes.func
 	},
 
 	getDefaultProps() {
@@ -42,8 +45,9 @@ export default React.createClass( {
 			event: null,
 			jetpack: false,
 			feature: false,
-			compact: false
-		}
+			compact: false,
+			shouldDisplay: null
+		};
 	},
 
 	handleClick() {
@@ -56,13 +60,24 @@ export default React.createClass( {
 		this.props.onClick();
 	},
 
-	componentDidMount() {
-		if ( this.props.event || this.props.feature ) {
-			analytics.tracks.recordEvent( 'calypso_upgrade_nudge_impression', {
-				cta_name: this.props.event,
-				cta_feature: this.props.feature
-			} );
+	shouldDisplay( site ) {
+		const { feature, jetpack, shouldDisplay } = this.props;
+		if ( shouldDisplay ) {
+			return shouldDisplay();
 		}
+		if ( ! site ) {
+			return false;
+		}
+		if ( feature && hasFeature( feature, site.siteID ) ) {
+			return false;
+		}
+		if ( ! feature && ! isFreePlan( site.plan ) ) {
+			return false;
+		}
+		if ( ! jetpack && site.jetpack || jetpack && ! site.jetpack ) {
+			return false;
+		}
+		return true;
 	},
 
 	render() {
@@ -71,16 +86,17 @@ export default React.createClass( {
 		const site = sites.getSelectedSite();
 		let href = this.props.href;
 
-		if ( site && this.props.feature ) {
-			if ( hasFeature( this.props.feature, site.siteID ) ) {
-				return null;
-			}
-		} else if ( site && ! isFreePlan( site.plan ) ) {
+		if ( ! this.shouldDisplay( site ) ) {
 			return null;
 		}
 
-		if ( ! this.props.jetpack && site.jetpack || this.props.jetpack && ! site.jetpack ) {
-			return null;
+		if ( abtest( 'nudges' ) === 'hideAll' ) {
+			return (
+				<TrackComponentView eventName={ 'calypso_upgrade_nudge_hide' } eventProperties={ {
+					cta_name: this.props.event,
+					cta_feature: this.props.feature
+				} } />
+			);
 		}
 
 		if ( ! this.props.href && site ) {
@@ -118,6 +134,12 @@ export default React.createClass( {
 						{ this.props.message }
 					</span>
 				</div>
+				{ ( this.props.event || this.props.feature ) &&
+					<TrackComponentView eventName={ 'calypso_upgrade_nudge_impression' } eventProperties={ {
+						cta_name: this.props.event,
+						cta_feature: this.props.feature
+					} } />
+				}
 			</Card>
 		);
 	}

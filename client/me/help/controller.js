@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
-
-import config from 'config';
+import ReactDom from 'react-dom';
+import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	route = require( 'lib/route' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import analytics from 'lib/analytics';
+import i18n from 'lib/mixins/i18n';
+import route from 'lib/route';
+import titleActions from 'lib/screen-title/actions';
+import config from 'config';
 
 module.exports = {
 	help: function( context ) {
@@ -36,7 +36,9 @@ module.exports = {
 		analytics.pageView.record( basePath, 'Help > Contact' );
 
 		ReactDom.render(
-			<ContactComponent clientSlug={ config( 'client_slug' ) } />,
+			<ReduxProvider store={ context.store } >
+				<ContactComponent clientSlug={ config( 'client_slug' ) } />
+			</ReduxProvider>,
 			document.getElementById( 'primary' )
 		);
 	}

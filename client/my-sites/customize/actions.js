@@ -10,24 +10,14 @@ import Dispatcher from 'dispatcher';
 import page from 'page';
 import wpcom from 'lib/wp';
 import { addItem } from 'lib/upgrades/actions/cart';
-import ThemeHelper from '../themes/helpers';
+import { trackClick } from '../themes/helpers';
 import { themeItem } from 'lib/cart-values/cart-items';
 
 var CustomizeActions = {
-	fetchMuseCustomizations: function( site ) {
-		wpcom.undocumented().site( site ).getMuseCustomizations( function( error, data ) {
-			Dispatcher.handleViewAction( {
-				type: 'RECEIVED_MUSE_CUSTOMIZATIONS',
-				error,
-				data
-			} );
-		} );
-	},
-
 	purchase: function( id, site ) {
 		addItem( themeItem( id, 'customizer' ) );
 
-		ThemeHelper.trackClick( 'customizer', 'purchase' );
+		trackClick( 'customizer', 'purchase' );
 
 		defer( function() {
 			page( '/checkout/' + site.slug );
@@ -45,7 +35,7 @@ var CustomizeActions = {
 	// but directly imported and dispatch()ed from inside `activated()`,
 	// which needs to be turned into a Redux thunk.
 	activated: function( id, site, themeActivated ) {
-		ThemeHelper.trackClick( 'customizer', 'activate' );
+		trackClick( 'customizer', 'activate' );
 
 		page( '/design/' + site.slug );
 
@@ -60,7 +50,7 @@ var CustomizeActions = {
 
 	close: function( previousPath ) {
 		if ( previousPath.indexOf( '/design' ) > -1 ) {
-			ThemeHelper.trackClick( 'customizer', 'close' );
+			trackClick( 'customizer', 'close' );
 		}
 
 		Dispatcher.handleViewAction( {

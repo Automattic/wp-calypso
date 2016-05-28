@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import get from 'lodash/get';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
@@ -31,12 +31,12 @@ export function requesting( state = {}, action ) {
 		case POST_STATS_REQUEST:
 		case POST_STATS_REQUEST_SUCCESS:
 		case POST_STATS_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, get( state, [ action.siteId ], {} ), {
-					[ action.postId ]: Object.assign( {}, get( state, [ action.siteId, action.postId ], {} ), {
+			return merge( {}, state, {
+				[ action.siteId ]: {
+					[ action.postId ]: {
 						[ action.stat ]: POST_STATS_REQUEST === action.type
-					} )
-				} )
+					}
+				}
 			} );
 
 		case SERIALIZE:
@@ -58,12 +58,12 @@ export function requesting( state = {}, action ) {
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case POST_STATS_RECEIVE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, get( state, [ action.siteId ], {} ), {
-					[ action.postId ]: Object.assign( {}, get( state, [ action.siteId, action.postId ], {} ), {
+			return merge( {}, state, {
+				[ action.siteId ]: {
+					[ action.postId ]: {
 						[ action.stat ]: action.value
-					} )
-				} )
+					}
+				}
 			} );
 
 		case DESERIALIZE:

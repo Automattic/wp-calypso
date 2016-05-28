@@ -33,6 +33,9 @@ Example for client:
 > npm run test-server server/config/test/parser.js
 > # run single test suite from test folder
 > npm run test-test test/helpers/use-nock/test/index.js
+> # run test suite for all files in a specific folder
+> npm run test-client client/state
+> npm run test-client client/state/posts/test
 ```
 
 ### How to run specified suite or test-case

@@ -133,11 +133,12 @@ sections = [
 	{
 		name: 'theme',
 		paths: [ '/theme' ],
-		module: 'my-sites/themes',
-		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' ),
+		module: 'my-sites/theme',
+		enableLoggedOut: true,
 		secondary: false,
 		group: 'sites',
-		isomorphic: true
+		isomorphic: true,
+		title: 'Themes'
 	},
 	{
 		name: 'themes',
@@ -146,7 +147,8 @@ sections = [
 		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' ),
 		secondary: true,
 		group: 'sites',
-		isomorphic: true
+		isomorphic: true,
+		title: 'Themes'
 	},
 	{
 		name: 'upgrades',
@@ -200,13 +202,7 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 if ( config.isEnabled( 'reader' ) ) {
 	readerPaths = [
 		'/',
-		'/read',
-		'/activities',
-		'/tag',
-		'/discover',
-		'/following',
-		'/recommendations',
-		'/tags'
+		'/read'
 	];
 
 	sections.push( {
@@ -216,6 +212,80 @@ if ( config.isEnabled( 'reader' ) ) {
 		secondary: true,
 		group: 'reader'
 	} );
+
+	sections.push( {
+		name: 'reader-post-recomendations',
+		paths: [ '/recommendations/posts' ],
+		module: 'reader/recommendations',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	sections.push( {
+		name: 'reader-recomendations',
+		paths: [ '/recommendations' ],
+		module: 'reader/recommendations',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	sections.push( {
+		name: 'discover',
+		paths: [ '/discover' ],
+		module: 'reader/discover',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	sections.push( {
+		name: 'reader-following',
+		paths: [ '/following' ],
+		module: 'reader/following',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	sections.push( {
+		name: 'reader-tags',
+		paths: [ '/tags', '/tag' ],
+		module: 'reader/tag-stream',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	sections.push( {
+		name: 'reader-activities',
+		paths: [ '/activities' ],
+		module: 'reader/liked-stream',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	sections.push( {
+		name: 'reader-search',
+		paths: [ '/read/search' ],
+		module: 'reader/search',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	sections.push( {
+		name: 'reader-list',
+		paths: [ '/read/list' ],
+		module: 'reader/list',
+		secondary: true,
+		group: 'reader'
+	} );
+
+	if ( config.isEnabled( 'reader/start' ) ) {
+		sections.push( {
+			name: 'reader-start',
+			paths: [ '/read/start' ],
+			module: 'reader/start',
+			secondary: true,
+			group: 'reader'
+		} );
+	}
 }
 
 if ( config.isEnabled( 'devdocs' ) ) {
@@ -260,8 +330,7 @@ if ( config.isEnabled( 'accept-invite' ) ) {
 		name: 'accept-invite',
 		paths: [ '/accept-invite' ],
 		module: 'my-sites/invites',
-		enableLoggedOut: true,
-		group: 'sites'
+		enableLoggedOut: true
 	} );
 }
 

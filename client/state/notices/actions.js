@@ -27,7 +27,7 @@ export function clickNotice( noticeId ) {
 	};
 }
 
-function createNotice( status, text, options = {} ) {
+export function createNotice( status, text, options = {} ) {
 	const noticeId = options.id || uniqueId();
 	const notice = {
 		noticeId,

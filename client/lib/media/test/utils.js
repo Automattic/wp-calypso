@@ -96,12 +96,16 @@ describe( 'MediaUtils', function() {
 			expect( MediaUtils.getFileExtension( 'example.gif' ) ).to.equal( 'gif' );
 		} );
 
-		it( 'should ignore querystring parameters', function() {
-			expect( MediaUtils.getFileExtension( 'example.gif?w=100' ) ).to.equal( 'gif' );
+		it( 'should handle reserved url characters in filename', function() {
+			expect( MediaUtils.getFileExtension( 'example#?#?.gif' ) ).to.equal( 'gif' );
 		} );
 
 		it( 'should detect extension from HTML5 File object', function() {
 			expect( MediaUtils.getFileExtension( new window.File( [''], 'example.gif' ) ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from HTML5 File object with reserved url chars', function() {
+			expect( MediaUtils.getFileExtension( new window.File( [''], 'example#?#?.gif' ) ) ).to.equal( 'gif' );
 		} );
 
 		it( 'should detect extension from object file property', function() {
@@ -118,6 +122,10 @@ describe( 'MediaUtils', function() {
 
 		it( 'should detect extension from object guid property', function() {
 			expect( MediaUtils.getFileExtension( { guid: 'example.gif' } ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from URL string with query parameters', function() {
+			expect( MediaUtils.getFileExtension( 'https://example.com/example.gif?w=110' ) ).to.equal( 'gif' );
 		} );
 	} );
 
@@ -148,8 +156,16 @@ describe( 'MediaUtils', function() {
 			expect( MediaUtils.getMimeType( 'example.gif' ) ).to.equal( 'image/gif' );
 		} );
 
-		it( 'should ignore querystring parameters', function() {
-			expect( MediaUtils.getMimeType( 'example.gif?w=100' ) ).to.equal( 'image/gif' );
+		it( 'should detect mime type with reserved url characters in filename', function() {
+			expect( MediaUtils.getMimeType( 'example#?#?.gif' ) ).to.equal( 'image/gif' );
+		} );
+
+		it( 'should ignore invalid filenames', function() {
+			expect( MediaUtils.getMimeType( 'example#?#?.gif?w=100' ) ).to.be.undefined;
+		} );
+
+		it( 'should detect mime type from HTML5 File object', function() {
+			expect( MediaUtils.getMimeType( new window.File( [ '' ], 'example.gif', { type: 'image/gif' } ) ) ).to.equal( 'image/gif' );
 		} );
 
 		it( 'should detect mime type from object file property', function() {
@@ -162,6 +178,10 @@ describe( 'MediaUtils', function() {
 
 		it( 'should ignore query string parameters', function() {
 			expect( MediaUtils.getMimeType( { URL: 'example.gif?w=110' } ) ).to.equal( 'image/gif' );
+		} );
+
+		it( 'should ignore query string parameters in URL strings', function() {
+			expect( MediaUtils.getMimeType( 'https://example.com/example.gif?w=110' ) ).to.equal( 'image/gif' );
 		} );
 
 		it( 'should detect mime type from object guid property', function() {

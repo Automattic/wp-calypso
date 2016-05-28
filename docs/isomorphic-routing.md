@@ -16,7 +16,7 @@ The constraints required for isomorphic routing are:
 
 ```js
 export default function( router ) {
-  router( '/themes/:slug/:section?/:site_id?', details, makeLoggedOutLayout );
+  router( '/themes/:slug/:section?/:site_id?', details, makeLayout );
 }
 ```
 
@@ -26,13 +26,12 @@ by either the client or the server render, as appropriate. (This is clearly
 different from the previous client-side-only routing approach where you'd have
 to render to `#primary`/`#secondary`/`#tertiary` DOM elements.)
 
-To facilitate that, you can (but don't have to) use the `makeLoggedOutLayout`
+To facilitate that, you can (but don't have to) use the `makeLayout`
 generic middleware found in `client/controller`. So in the above example, the
 details middleware will just create an element in `context.primary` (instead of
 rendering it to the `#primary` DOM element, as previously).
-Note that there is no logged-in counterpart to `makeLoggedOutLayout` yet, as the
-logged-in layout has a lot of dependencies that aren't ready for server-side
-rendering.
+Note that `makeLayout` cannot produce a logged-in `Layout` on the server side yet,
+as that has a lot of dependencies that aren't ready for server-side rendering.
 
 * Realistically, you will probably need to write separate `index.node.js` and
 `index.web.js` files for the server and client side inside your section, as many

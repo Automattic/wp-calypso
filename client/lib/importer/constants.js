@@ -16,30 +16,3 @@ export const appStates = Object.freeze( {
 
 export const WORDPRESS = 'importer-type-wordpress';
 export const MEDIUM = 'importer-type-medium';
-
-export const actionTypes = Object.freeze( {
-	API_REQUEST: 'importer-api-request',
-	API_FAILURE: 'importer-api-failure',
-	API_SUCCESS: 'importer-api-success',
-
-	LOCK_IMPORT: 'importer-lock-import',
-	UNLOCK_IMPORT: 'importer-unlock-import',
-
-	RECEIVE_IMPORT_STATUS: 'importer-receive-import-status',
-
-	CANCEL_IMPORT: 'importer-cancel',
-	FAIL_UPLOAD: 'importer-fail-upload',
-	FINISH_UPLOAD: 'importer-finish-upload',
-	RESET_IMPORT: 'importer-reset',
-	SET_UPLOAD_PROGRESS: 'importer-set-upload-progress',
-	START_IMPORT: 'importer-start-import',
-	START_UPLOAD: 'importer-start-upload',
-
-	MAP_AUTHORS: 'importer-map-authors',
-	START_MAPPING_AUTHORS: 'importer-start-mapping-authors',
-
-	START_IMPORTING: 'importer-start-importing',
-
-	DEV_SET_STATE: 'dev-set-state',
-	RESET_STORE: 'dev-reset-store'
-} );

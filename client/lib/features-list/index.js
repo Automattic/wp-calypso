@@ -1,19 +1,25 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:features-list' ),
-	reject = require( 'lodash/reject' ),
-	store = require( 'store' );
+import debugFactory from 'debug';
+import reject from 'lodash/reject';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	Emitter = require( 'lib/mixins/emitter' );
+import wpcom from 'lib/wp';
+import Emitter from 'lib/mixins/emitter';
+
+/**
+ * Module vars
+ */
+const debug = debugFactory( 'calypso:features-list' );
 
 /**
  * PlansList component
  *
+ * @return {FeaturesList} FeaturesList instance
  * @api public
  */
 function FeaturesList() {
@@ -31,7 +37,9 @@ Emitter( FeaturesList.prototype );
 
 /**
  * Get list of features from current object or store,
- * trigger fetch on first request to update stale data
+ * trigger fetch on first request to update stale data.
+ *
+ * @return {Array} array of list of features
  */
 FeaturesList.prototype.get = function() {
 	var data;
@@ -55,15 +63,13 @@ FeaturesList.prototype.get = function() {
  */
 FeaturesList.prototype.fetch = function() {
 	debug( 'getting FeaturesList from api' );
-	wpcom.undocumented().getPlansFeatures( function( error, data ) {
-		var features;
-
+	wpcom.plans().features( ( error, data ) => {
 		if ( error ) {
 			debug( 'error fetching FeaturesList from api', error );
 			return;
 		}
 
-		features = this.parse( data );
+		let features = this.parse( data );
 
 		debug( 'FeaturesList fetched from api:', features );
 
@@ -75,13 +81,14 @@ FeaturesList.prototype.fetch = function() {
 
 		this.emit( 'change' );
 		store.set( 'FeaturesList', features );
-
-	}.bind( this ) );
+	} );
 };
 
 /**
  * Initialize data with Feature objects
- **/
+ *
+ * @param {Array} features - features array
+ */
 FeaturesList.prototype.initialize = function( features ) {
 	this.data = features;
 	this.initialized = true;
@@ -92,21 +99,25 @@ FeaturesList.prototype.initialize = function( features ) {
  *
  * @param {array} data - raw data
  * @return {array} a list of features
- **/
+ */
 FeaturesList.prototype.parse = function( data ) {
 	return reject( data, '_headers' );
 };
 
 /**
  * Update features list
- **/
+ *
+ * @param {Array} features - features array
+ */
 FeaturesList.prototype.update = function( features ) {
 	this.data = features;
 };
 
 /**
  * Check whether we have data yet
- **/
+ *
+ * @return {Boolean} true, if data was initialized
+ */
 FeaturesList.prototype.hasLoadedFromServer = function() {
 	return this.initialized;
 };

@@ -12,6 +12,7 @@ import noop from 'lodash/noop';
  */
 import page from 'page';
 import LayoutLoggedOut from 'layout/logged-out';
+import { getCurrentUser } from 'state/current-user/selectors';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:controller' );
@@ -19,21 +20,32 @@ const debug = debugFactory( 'calypso:controller' );
 /**
  * @param { object } context -- Middleware context
  * @param { function } next -- Call next middleware in chain
- *
- * Produce a `LayoutLoggedOut` element in `context.layout`, using
- * `context.primary`, `context.secondary`, and `context.tertiary` to populate it.
 */
-export function makeLoggedOutLayout( context, next ) {
+export function makeLayout( context, next ) {
+	const isLoggedIn = !! getCurrentUser( context.store.getState() );
+	if ( ! isLoggedIn ) {
+		context.layout = makeLoggedOutLayout( context );
+	} // TODO: else { makeLoggedInLayout( context ); }
+	next();
+}
+
+/**
+ * @param { object } context -- Middleware context
+ * @returns { object } `LoggedOutLayout` element
+ *
+ * Return a `LayoutLoggedOut` element, using `context.primary`,
+ * `context.secondary`, and `context.tertiary` to populate it.
+*/
+function makeLoggedOutLayout( context ) {
 	const { store, primary, secondary, tertiary } = context;
-	context.layout = (
+	return (
 		<ReduxProvider store={ store }>
 			<LayoutLoggedOut primary={ primary }
 				secondary={ secondary }
 				tertiary={ tertiary } />
 		</ReduxProvider>
 	);
-	next();
-};
+}
 
 /**
  * Isomorphic routing helper, client side
@@ -58,7 +70,7 @@ export function setSection( section ) {
 		context.store.dispatch( setSectionAction( section ) );
 
 		next();
-	}
+	};
 }
 
 function render( context ) {

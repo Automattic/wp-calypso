@@ -1,38 +1,37 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	bindActionCreators = require( 'redux' ).bindActionCreators,
-	connect = require( 'react-redux' ).connect,
-	pickBy = require( 'lodash/pickBy' ),
-	merge = require( 'lodash/merge' );
+import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import pickBy from 'lodash/pickBy';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
  */
-var Main = require( 'components/main' ),
-	CurrentThemeData = require( 'components/data/current-theme' ),
-	ActivatingTheme = require( 'components/data/activating-theme' ),
-	Action = require( 'state/themes/actions' ),
-	ThemePreview = require( './theme-preview' ),
-	CurrentTheme = require( 'my-sites/themes/current-theme' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	ThanksModal = require( 'my-sites/themes/thanks-modal' ),
-	config = require( 'config' ),
-	EmptyContent = require( 'components/empty-content' ),
-	JetpackUpgradeMessage = require( './jetpack-upgrade-message' ),
-	JetpackManageDisabledMessage = require( './jetpack-manage-disabled-message' ),
-	ThemesSelection = require( './themes-selection' ),
-	ThemeHelpers = require( './helpers' ),
-	actionLabels = require( './action-labels' ),
-	ThemesListSelectors = require( 'state/themes/themes-list/selectors' ),
-	sites = require( 'lib/sites-list' )();
-
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_CUSTOM_DESIGN } from 'lib/plans/constants';
+import Main from 'components/main';
+import ActivatingTheme from 'components/data/activating-theme';
+import { customize, purchase, activate, clearActivated } from 'state/themes/actions';
+import ThemePreview from './theme-preview';
+import CurrentTheme from 'my-sites/themes/current-theme';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import ThanksModal from 'my-sites/themes/thanks-modal';
+import config from 'config';
+import EmptyContent from 'components/empty-content';
+import JetpackUpgradeMessage from './jetpack-upgrade-message';
+import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
+import ThemesSelection from './themes-selection';
+import { getDetailsUrl, getSupportUrl, isPremium, addTracking } from './helpers';
+import actionLabels from './action-labels';
+import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
+import sitesFactory from 'lib/sites-list';
+import { FEATURE_CUSTOM_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
-import { abtest } from 'lib/abtest';
 
-var ThemesSingleSite = React.createClass( {
+const sites = sitesFactory();
+
+const ThemesSingleSite = React.createClass( {
 	propTypes: {
 		siteId: React.PropTypes.string,
 		tier: React.PropTypes.string,
@@ -43,23 +42,23 @@ var ThemesSingleSite = React.createClass( {
 		themesList: React.PropTypes.array
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			selectedTheme: null,
 			selectedAction: null,
 		};
 	},
 
-	togglePreview: function( theme ) {
+	togglePreview( theme ) {
 		const site = sites.getSelectedSite();
 		if ( site.jetpack ) {
-			this.props.dispatch( Action.customize( theme, site ) );
+			this.props.dispatch( customize( theme, site ) );
 		} else {
 			this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
 		}
 	},
 
-	getButtonOptions: function() {
+	getButtonOptions() {
 		const { dispatch } = this.props,
 			site = sites.getSelectedSite(),
 			buttonOptions = {
@@ -69,17 +68,17 @@ var ThemesSingleSite = React.createClass( {
 				},
 				purchase: config.isEnabled( 'upgrades/checkout' )
 					? {
-						action: theme => dispatch( Action.purchase( theme, site, 'showcase' ) ),
+						action: theme => dispatch( purchase( theme, site, 'showcase' ) ),
 						hideForTheme: theme => theme.active || theme.purchased || ! theme.price
 					}
 					: {},
 				activate: {
-					action: theme => dispatch( Action.activate( theme, site, 'showcase' ) ),
+					action: theme => dispatch( activate( theme, site, 'showcase' ) ),
 					hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
 				},
 				customize: site && site.isCustomizable()
 					? {
-						action: theme => dispatch( Action.customize( theme, site ) ),
+						action: theme => dispatch( customize( theme, site ) ),
 						hideForTheme: theme => ! theme.active
 					}
 					: {},
@@ -87,12 +86,12 @@ var ThemesSingleSite = React.createClass( {
 					separator: true
 				},
 				details: {
-					getUrl: theme => ThemeHelpers.getDetailsUrl( theme, site ),
+					getUrl: theme => getDetailsUrl( theme, site ),
 				},
-				support: site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
+				support: ! site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
 					? {
-						getUrl: theme => ThemeHelpers.getSupportUrl( theme, site ),
-						hideForTheme: theme => ! ThemeHelpers.isPremium( theme )
+						getUrl: theme => getSupportUrl( theme, site ),
+						hideForTheme: theme => ! isPremium( theme )
 					}
 					: {},
 			};
@@ -107,8 +106,8 @@ var ThemesSingleSite = React.createClass( {
 			} );
 	},
 
-	renderJetpackMessage: function() {
-		var site = sites.getSelectedSite();
+	renderJetpackMessage() {
+		const site = sites.getSelectedSite();
 		return (
 			<EmptyContent title={ this.translate( 'Changing Themes?' ) }
 				line={ this.translate( 'Use your site theme browser to manage themes.' ) }
@@ -119,8 +118,8 @@ var ThemesSingleSite = React.createClass( {
 		);
 	},
 
-	render: function() {
-		var site = sites.getSelectedSite(),
+	render() {
+		const site = sites.getSelectedSite(),
 			isJetpack = site.jetpack,
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
 			buttonOptions = this.getButtonOptions(),
@@ -151,29 +150,18 @@ var ThemesSingleSite = React.createClass( {
 				<ActivatingTheme siteId={ site.ID } >
 					<ThanksModal
 						site={ site }
-						clearActivated={ bindActionCreators( Action.clearActivated, this.props.dispatch ) } />
+						source={ 'list' }
+						clearActivated={ bindActionCreators( clearActivated, this.props.dispatch ) } />
 				</ActivatingTheme>
-				<CurrentThemeData site={ site }>
-					<CurrentTheme
-						site={ site }
-						canCustomize={ site && site.isCustomizable() } />
-				</CurrentThemeData>
-				{ ( abtest( 'themesHeaderNudge' ) === 'themes_custom_design' ) && (
-					<UpgradeNudge
-						title={ this.translate( 'Get Custom Design with Premium' ) }
-						message={ this.translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
-						feature={ FEATURE_CUSTOM_DESIGN }
-						event="themes_custom_design"
-					/>
-				) }
-				{ ( abtest( 'themesHeaderNudge' ) === 'themes_premium_theme_more_traffic' ) && (
-					<UpgradeNudge
-						title={ this.translate( 'Blogs with premium themes get over 7 times more traffic' ) }
-						message={ this.translate( 'Get premium themes, more storage, and Google Analytics with WordPress.com Business.' ) }
-						feature={ FEATURE_UNLIMITED_PREMIUM_THEMES }
-						event="themes_premium_theme_more_traffic"
-					/>
-				) }
+				<CurrentTheme
+					site={ site }
+					canCustomize={ site && site.isCustomizable() } />
+				<UpgradeNudge
+					title={ this.translate( 'Get Custom Design with Premium' ) }
+					message={ this.translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
+					feature={ FEATURE_CUSTOM_DESIGN }
+					event="themes_custom_design"
+				/>
 				{ isJetpack && ! jetpackEnabled
 				? this.renderJetpackMessage()
 				: <ThemesSelection search={ this.props.search }
@@ -184,11 +172,11 @@ var ThemesSingleSite = React.createClass( {
 							getScreenshotAction( theme ).action( theme );
 						} }
 						getActionLabel={ function( theme ) {
-							return getScreenshotAction( theme ).label
+							return getScreenshotAction( theme ).label;
 						} }
 						getOptions={ function( theme ) {
 							return pickBy(
-								ThemeHelpers.addTracking( buttonOptions ),
+								addTracking( buttonOptions ),
 								option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
 							); } }
 						trackScrollPage={ this.props.trackScrollPage }
@@ -203,7 +191,7 @@ var ThemesSingleSite = React.createClass( {
 
 export default connect(
 	state => ( {
-		queryParams: ThemesListSelectors.getQueryParams( state ),
-		themesList: ThemesListSelectors.getThemesList( state )
+		queryParams: getQueryParams( state ),
+		themesList: getThemesList( state )
 	} )
 )( ThemesSingleSite );

@@ -162,13 +162,12 @@ button {
 	color: darken( $gray, 10% );
 	padding-left: 0;
 	padding-right: 0;
+	border-radius: 0;
 
-	&:hover {
-		color: $gray-dark;
-	}
-
+	&:hover,
 	&:focus {
 		box-shadow: none;
+		color: $gray-dark;
 	}
 
 	.gridicon {
@@ -202,11 +201,22 @@ button {
 
 	&.is-compact {
 		background: transparent;
-		border-radius: 0;
+
 		.gridicon {
 			width: 18px;
 			height: 18px;
 			top: 5px;
+		}
+
+		//arrows sit 1px low in their svg bounding box, need a nudge
+		.gridicons-arrow-left {
+			top: 4px;
+			margin-right: 4px;
+		}
+
+		.gridicons-arrow-right {
+			top: 4px;
+			margin-left: 4px;
 		}
 	}
 }

@@ -43,15 +43,15 @@ describe( 'EditorGroundControl', function() {
 		mockery.registerMock( 'post-editor/editor-status-label', EmptyComponent );
 		mockery.registerMock( 'components/sticky-panel', EmptyComponent );
 		mockery.registerMock( 'components/post-schedule', EmptyComponent );
-		EditorGroundControl = require( '../' ).WrappedComponent;
+		EditorGroundControl = require( '../' );
 
-		EditorGroundControl.prototype.__reactAutoBindMap.translate = i18n.translate;
-		EditorGroundControl.prototype.__reactAutoBindMap.moment = i18n.moment;
+		EditorGroundControl.prototype.translate = i18n.translate;
+		EditorGroundControl.prototype.moment = i18n.moment;
 	} );
 
 	after( function() {
-		delete EditorGroundControl.prototype.__reactAutoBindMap.translate;
-		delete EditorGroundControl.prototype.__reactAutoBindMap.moment;
+		delete EditorGroundControl.prototype.translate;
+		delete EditorGroundControl.prototype.moment;
 	} );
 
 	describe( '#getPreviewLabel()', function() {

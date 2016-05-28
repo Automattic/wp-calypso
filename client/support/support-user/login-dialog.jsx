@@ -23,7 +23,7 @@ const SupportUserLoginDialog = React.createClass( {
 		return {
 			supportUser: '',
 			supportPassword: ''
-		}
+		};
 	},
 
 	onSubmit() {
@@ -56,6 +56,12 @@ const SupportUserLoginDialog = React.createClass( {
 				return this.onEnterKey( event );
 			case 'Escape':
 				return this.onEscapeKey( event );
+		}
+	},
+
+	componentDidUpdate( prevProps ) {
+		if ( ! this.props.isBusy && prevProps.isBusy ) {
+			setTimeout( () => this.supportPasswordInput.focus(), 0 );
 		}
 	},
 

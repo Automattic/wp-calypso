@@ -16,7 +16,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { requesting, items } from '../reducer';
+import reducer, { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
 	before( () => {
@@ -25,6 +25,14 @@ describe( 'reducer', () => {
 
 	after( () => {
 		console.warn.restore();
+	} );
+
+	it( 'should include expected keys in return value', () => {
+		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'requesting',
+			'items',
+			'taxonomies'
+		] );
 	} );
 
 	describe( '#requesting()', () => {

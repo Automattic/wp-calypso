@@ -9,6 +9,7 @@ import keyBy from 'lodash/keyBy';
  */
 import { isValidStateWithSchema } from 'state/utils';
 import * as schema from './schema';
+import taxonomies from './taxonomies/reducer';
 import {
 	SERIALIZE,
 	DESERIALIZE,
@@ -72,5 +73,6 @@ export function items( state = {}, action ) {
 
 export default combineReducers( {
 	requesting,
-	items
+	items,
+	taxonomies
 } );

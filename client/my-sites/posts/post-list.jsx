@@ -224,10 +224,9 @@ var Posts = React.createClass( {
 		);
 	},
 
-	renderPost: function( post ) {
-		var postImages = this.props.postImages[ post.global_ID ];
-
-		return (
+	renderPost: function( post, index ) {
+		const postImages = this.props.postImages[ post.global_ID ];
+		const renderedPost = (
 			<Post
 				ref={ post.global_ID }
 				key={ post.global_ID }
@@ -238,6 +237,22 @@ var Posts = React.createClass( {
 				path={ route.sectionify( this.props.context.pathname ) }
 			/>
 		);
+
+		if ( index === 2 && this.props.sites.getSelectedSite() && ! this.props.statusSlug ) {
+			return (
+				<div key={ post.global_ID }>
+					<UpgradeNudge
+						title={ this.translate( 'No Ads with WordPress.com Premium' ) }
+						message={ this.translate( 'Prevent ads from showing on your site.' ) }
+						feature="no-adverts"
+						event="published_posts_no_ads"
+					/>
+					{ renderedPost }
+				</div>
+			);
+		} else {
+			return renderedPost;
+		}
 	},
 
 	render: function() {
@@ -282,14 +297,6 @@ var Posts = React.createClass( {
 
 		return (
 			<div>
-				{ posts.length && this.props.sites.getSelectedSite() && ! this.props.statusSlug ?
-					<UpgradeNudge
-						title={ this.translate( 'No Ads with WordPress.com Premium' ) }
-						message={ this.translate( 'Prevent ads from showing on your site.' ) }
-						feature="no-adverts"
-						event="published_posts_no_ads"
-					/>
-				: null }
 				{ postList }
 				{ this.props.lastPage && posts.length ? <div className="infinite-scroll-end" /> : null }
 			</div>

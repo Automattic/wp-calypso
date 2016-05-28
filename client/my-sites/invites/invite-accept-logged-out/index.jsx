@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import store from 'store';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -20,6 +21,11 @@ import analytics from 'lib/analytics';
 import { errorNotice } from 'state/notices/actions';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
+
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:invite-accept:logged-out' );
 
 let InviteAcceptLoggedOut = React.createClass( {
 
@@ -47,12 +53,17 @@ let InviteAcceptLoggedOut = React.createClass( {
 
 	submitForm( form, userData ) {
 		this.setState( { submitting: true } );
+		debug( 'Storing invite_accepted: ' + JSON.stringify( this.props.invite ) );
+		store.set( 'invite_accepted', this.props.invite );
 
 		const createAccountCallback = ( error, bearerToken ) => {
+			debug( 'Create account error: ' + JSON.stringify( error ) );
+			debug( 'Create account bearerToken: ' + bearerToken );
+
 			if ( error ) {
+				store.remove( 'invite_accepted' );
 				this.setState( { submitting: false } );
 			} else if ( bearerToken ) {
-				store.set( 'invite_accepted', this.props.invite );
 				this.setState( { bearerToken, userData } );
 			}
 		};
@@ -77,7 +88,7 @@ let InviteAcceptLoggedOut = React.createClass( {
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
 				redirectTo={ window.location.href } />
-		)
+		);
 	},
 
 	subscribeUserByEmailOnly() {
@@ -155,7 +166,7 @@ let InviteAcceptLoggedOut = React.createClass( {
 					disableEmailExplanation={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: this.props.invite.sentTo } } ) } />
 				{ this.state.userData && this.loginUser() }
 			</div>
-		)
+		);
 	}
 
 } );

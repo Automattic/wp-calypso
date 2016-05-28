@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	sinon = require( 'sinon' ),
-	rewire = require( 'rewire' );
+import { expect } from 'chai';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' );
+import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Module variables
@@ -17,16 +16,20 @@ var DUMMY_SITE_ID = 1,
 	DUMMY_POST_FORMATS = { image: 'Image' };
 
 describe( 'store', function() {
-	var PostFormatsStore, handler;
+	let Dispatcher, PostFormatsStore, handler;
+
+	// makes sure we always load fresh instance of Dispatcher
+	useMockery();
 
 	before( function() {
-		sinon.spy( Dispatcher, 'register' );
-		PostFormatsStore = rewire( '../store' );
+		Dispatcher = require( 'dispatcher' );
+		spy( Dispatcher, 'register' );
+		PostFormatsStore = require( '../store' );
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
 	beforeEach( function() {
-		PostFormatsStore.__set__( '_formats', {} );
+		PostFormatsStore._formats = {};
 	} );
 
 	after( function() {

@@ -11,6 +11,7 @@ import page from 'page';
 import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import i18n from 'lib/mixins/i18n';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import config from 'config';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
@@ -51,16 +52,15 @@ module.exports = {
 	},
 
 	siteSettings( context ) {
-		var analyticsPageTitle = 'Site Settings',
-			basePath = route.sectionify( context.path ),
-			fiveMinutes = 5 * 60 * 1000,
-			site;
+		let analyticsPageTitle = 'Site Settings';
+		const basePath = route.sectionify( context.path );
+		const fiveMinutes = 5 * 60 * 1000;
+		let site = sites.getSelectedSite();
+		const { section } = context.params;
 
 		titleActions.setTitle( i18n.translate( 'Site Settings', { textOnly: true } ),
 			{ siteID: route.getSiteFragment( context.path ) }
 		);
-
-		site = sites.getSelectedSite();
 
 		// if site loaded, but user cannot manage site, redirect
 		if ( site && ! utils.userCan( 'manage_options', site ) ) {
@@ -71,6 +71,12 @@ module.exports = {
 		// if user went directly to jetpack settings page, redirect
 		if ( site.jetpack && ! config.isEnabled( 'manage/jetpack' ) ) {
 			window.location.href = '//wordpress.com/manage/' + site.ID;
+			return;
+		}
+
+		// redirect seo and analytics tabs to general for Jetpack sites
+		if ( site.jetpack && ( section === 'seo' || section === 'analytics' ) ) {
+			page.redirect( '/settings/general/' + site.slug );
 			return;
 		}
 
@@ -85,20 +91,21 @@ module.exports = {
 			}
 		}
 
-		ReactDom.render(
+		renderWithReduxStore(
 			<SitePurchasesData>
 				<SiteSettingsComponent
 					context={ context }
 					sites={ sites }
-					section={ context.params.section }
+					section={ section }
 					path={ context.path } />
 			</SitePurchasesData>,
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 
 		// analytics tracking
-		if ( 'undefined' !== typeof context.params.section ) {
-			analyticsPageTitle += ' > ' + titlecase( context.params.section );
+		if ( 'undefined' !== typeof section ) {
+			analyticsPageTitle += ' > ' + titlecase( section );
 		}
 		analytics.pageView.record( basePath + '/:site', analyticsPageTitle );
 	},

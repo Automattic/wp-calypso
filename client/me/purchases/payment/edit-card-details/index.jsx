@@ -20,6 +20,7 @@ import formState from 'lib/form-state';
 import forOwn from 'lodash/forOwn';
 import HeaderCake from 'components/header-cake' ;
 import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
+import { isRenewing } from 'lib/purchases';
 import kebabCase from 'lodash/kebabCase';
 import Main from 'components/main';
 import mapKeys from 'lodash/mapKeys';
@@ -246,11 +247,11 @@ const EditCardDetails = React.createClass( {
 			);
 		}
 
+		const title = isRenewing( getPurchase( this.props ) ) ? titles.editCardDetails : titles.addCardDetails;
+
 		return (
 			<Main className="edit-card-details">
-				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
-					{ titles.editCardDetails }
-				</HeaderCake>
+				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>{ title }</HeaderCake>
 
 				<form onSubmit={ this.onSubmit }>
 					<Card className="edit-card-details__content">

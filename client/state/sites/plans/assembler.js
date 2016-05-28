@@ -22,10 +22,11 @@ const createSitePlanObject = ( plan ) => {
 		subscribedDate: plan.subscribed_date,
 		subscribedDayMoment: moment( plan.subscribed_date ).startOf( 'day' ),
 		userFacingExpiry: plan.user_facing_expiry,
-		userFacingExpiryMoment: moment( plan.user_facing_expiry ).startOf( 'day' )
+		userFacingExpiryMoment: moment( plan.user_facing_expiry ).startOf( 'day' ),
+		userIsOwner: Boolean( plan.user_is_owner )
 	};
 };
 
 export default {
 	createSitePlanObject
-}
+};

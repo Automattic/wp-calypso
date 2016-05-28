@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	find = require( 'lodash/find' ),
-	debounce = require( 'lodash/debounce' );
+import React from 'react';
+import find from 'lodash/find';
+import debounce from 'lodash/debounce';
 
 /**
  * Internal dependencies
  */
-var Search = require( 'components/search' ),
-	ThemesSelectDropdown = require( './select-dropdown' ),
-	SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' ),
-	Helper = require( '../helpers' ),
-	config = require( 'config' ),
-	isMobile = require( 'lib/viewport' ).isMobile;
+import Search from 'components/search';
+import ThemesSelectDropdown from './select-dropdown';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import { getExternalThemesUrl, trackClick } from '../helpers';
+import config from 'config';
+import { isMobile } from 'lib/viewport';
 
-var ThemesSearchCard = React.createClass( {
+const ThemesSearchCard = React.createClass( {
 	propTypes: {
 		tier: React.PropTypes.string.isRequired,
 		select: React.PropTypes.func.isRequired,
@@ -29,7 +29,7 @@ var ThemesSearchCard = React.createClass( {
 		search: React.PropTypes.string
 	},
 
-	trackClick: Helper.trackClick.bind( null, 'search bar' ),
+	trackClick: trackClick.bind( null, 'search bar' ),
 
 	componentWillMount() {
 		this.onResize = debounce( () => {
@@ -82,11 +82,11 @@ var ThemesSearchCard = React.createClass( {
 						{ isPremiumThemesEnabled && <hr className="section-nav__hr" /> }
 
 						{ isPremiumThemesEnabled && <NavItem
-														path={ Helper.getExternalThemesUrl( this.props.site ) }
-														onClick={ this.onMore }
-														isExternalLink={ true }>
-														{ this.translate( 'More' ) + ' ' }
-													</NavItem> }
+							path={ getExternalThemesUrl( this.props.site ) }
+							onClick={ this.onMore }
+							isExternalLink={ true }>
+							{ this.translate( 'More' ) + ' ' }
+						</NavItem> }
 					</NavTabs>
 
 					<Search
@@ -133,7 +133,7 @@ var ThemesSearchCard = React.createClass( {
 										options={ tiers }
 										onSelect={ this.props.select } /> }
 				{ isPremiumThemesEnabled && <a className="button more"
-												href={ Helper.getExternalThemesUrl( this.props.site ) }
+												href={ getExternalThemesUrl( this.props.site ) }
 												target="_blank"
 												onClick={ this.onMore }>
 
@@ -144,4 +144,4 @@ var ThemesSearchCard = React.createClass( {
 	}
 } );
 
-module.exports = ThemesSearchCard;
+export default ThemesSearchCard;

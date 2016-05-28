@@ -1,36 +1,41 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	extend = require( 'lodash/extend' ),
-	async = require( 'async' ),
-	flatten = require( 'lodash/flatten' ),
-	reject = require( 'lodash/reject' ),
-	find = require( 'lodash/find' ),
-	uniqBy = require( 'lodash/uniqBy' ),
-	times = require( 'lodash/times' ),
-	compact = require( 'lodash/compact' ),
-	noop = require( 'lodash/noop' ),
-	startsWith = require( 'lodash/startsWith' ),
-	page = require( 'page' ),
-	qs = require( 'qs' );
+import React from 'react';
+import async from 'async';
+import extend from 'lodash/extend';
+import flatten from 'lodash/flatten';
+import reject from 'lodash/reject';
+import find from 'lodash/find';
+import uniqBy from 'lodash/uniqBy';
+import times from 'lodash/times';
+import compact from 'lodash/compact';
+import noop from 'lodash/noop';
+import startsWith from 'lodash/startsWith';
+import page from 'page';
+import qs from 'qs';
+import endsWith from 'lodash/endsWith';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented(),
-	Notice = require( 'components/notice' ),
-	{ getFixedDomainSearch, canRegister } = require( 'lib/domains' ),
-	SearchCard = require( 'components/search-card' ),
-	DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),
-	DomainMappingSuggestion = require( 'components/domains/domain-mapping-suggestion' ),
-	DomainSearchResults = require( 'components/domains/domain-search-results' ),
-	ExampleDomainSuggestions = require( 'components/domains/example-domain-suggestions' ),
-	analyticsMixin = require( 'lib/mixins/analytics' ),
-	upgradesActions = require( 'lib/upgrades/actions' ),
-	{ isPlan } = require( 'lib/products-values' ),
-	cartItems = require( 'lib/cart-values/cart-items' ),
-	abtest = require( 'lib/abtest' ).abtest;
+import wpcom from 'lib/wp';
+import Notice from 'components/notice';
+import { getFixedDomainSearch, canRegister } from 'lib/domains';
+import SearchCard from 'components/search-card';
+import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
+import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
+import DomainSearchResults from 'components/domains/domain-search-results';
+import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
+import analyticsMixin from 'lib/mixins/analytics';
+import * as upgradesActions from 'lib/upgrades/actions';
+import { isPlan } from 'lib/products-values';
+import cartItems from 'lib/cart-values/cart-items';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { abtest } from 'lib/abtest';
+
+const domains = wpcom.domains();
 
 // max amount of domain suggestions we should fetch/display
 const SUGGESTION_QUANTITY = 10,
@@ -71,7 +76,7 @@ function enqueueSearch( search ) {
 	searchStackTimer = window.setTimeout( processSearchQueue, 10000 );
 }
 
-var RegisterDomainStep = React.createClass( {
+const RegisterDomainStep = React.createClass( {
 	mixins: [ analytics ],
 
 	propTypes: {
@@ -81,7 +86,8 @@ var RegisterDomainStep = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] ),
 		basePath: React.PropTypes.string.isRequired,
 		suggestion: React.PropTypes.string,
-		withPlansOnly: React.PropTypes.bool
+		withPlansOnly: React.PropTypes.bool,
+		isSignupStep: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -144,32 +150,35 @@ var RegisterDomainStep = React.createClass( {
 	},
 
 	fetchDefaultSuggestions: function() {
-		var initialQuery;
-
 		if ( ! this.props.selectedSite || ! this.props.selectedSite.domain ) {
 			return;
 		}
 
-		initialQuery = this.props.selectedSite.domain.split( '.' )[ 0 ];
+		const initialQuery = this.props.selectedSite.domain.split( '.' )[ 0 ];
+		const query = {
+			query: initialQuery,
+			quantity: SUGGESTION_QUANTITY,
+			vendor: abtest( 'domainSuggestionVendor' )
+		};
 
-		wpcom.fetchDomainSuggestions( initialQuery, { quantity: SUGGESTION_QUANTITY, vendor: abtest( 'domainSuggestionVendor' ) }, function( error, suggestions ) {
+		domains.suggestions( query ).then( suggestions => {
 			if ( ! this.isMounted() ) {
 				return;
 			}
-			if ( error && error.statusCode === 503 ) {
-				return this.props.onDomainsAvailabilityChange( false );
-			} else if ( error ) {
-				throw error;
-			}
-
 			this.props.onDomainsAvailabilityChange( true );
-
 			suggestions = suggestions.map( function( suggestion ) {
 				return extend( suggestion, { isVisible: true } );
 			} );
-
 			this.setState( { defaultSuggestions: suggestions } );
-		}.bind( this ) );
+		} ).catch( error => {
+			if ( error && error.statusCode === 503 ) {
+				return this.props.onDomainsAvailabilityChange( false );
+			} else if ( error && error.error ) {
+				error.code = error.error;
+				this.showValidationErrorMessage( initialQuery, error );
+			}
+			this.setState( { defaultSuggestions: [] } );
+		} );
 	},
 
 	render: function() {
@@ -184,7 +193,7 @@ var RegisterDomainStep = React.createClass( {
 
 	notices: function() {
 		if ( this.state.notice ) {
-			return <Notice text={ this.state.notice } status={ 'is-error' } showDismiss={ false } />;
+			return <Notice text={ this.state.notice } status={ `is-${ this.state.noticeSeverity }` } showDismiss={ false } />;
 		}
 	},
 
@@ -269,14 +278,21 @@ var RegisterDomainStep = React.createClass( {
 		async.parallel(
 			[
 				callback => {
-					if ( ! domain.match( /.{3,}\..{2,}/ ) || domain.match( /\.wordpress\.com/i ) ) {
+					if ( endsWith( domain, '.blog' ) ) {
+						let error = { code: 'dotblog_domain' };
+						this.showValidationErrorMessage( domain, error );
+						return callback();
+					}
+					if ( ! domain.match( /.{3,}\..{2,}/ ) ) {
+						return callback();
+					}
+
+					if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
 						return callback();
 					}
 
 					canRegister( domain, ( error, result ) => {
-						if ( error && error.code === 'domain_registration_unavailable' ) {
-							return this.props.onDomainsAvailabilityChange( false );
-						} else if ( error ) {
+						if ( error && error.code !== 'domain_registration_unavailable' ) {
 							this.showValidationErrorMessage( domain, error );
 							this.setState( { lastDomainError: error } );
 						} else if ( result ) {
@@ -294,26 +310,28 @@ var RegisterDomainStep = React.createClass( {
 					} );
 				},
 				callback => {
-					const params = {
+					const query = {
+						query: domain,
 						quantity: SUGGESTION_QUANTITY,
-						includeWordPressDotCom: this.props.includeWordPressDotCom,
+						include_wordpressdotcom: this.props.includeWordPressDotCom,
 						vendor: abtest( 'domainSuggestionVendor' )
 					};
 
-					wpcom.fetchDomainSuggestions( domain, params, ( error, domainSuggestions ) => {
+					domains.suggestions( query ).then( domainSuggestions => {
+						this.props.onDomainsAvailabilityChange( true );
+						callback( null, domainSuggestions );
+					} ).catch( error => {
 						if ( error && error.statusCode === 503 ) {
 							return this.props.onDomainsAvailabilityChange( false );
 						} else if ( error && error.error ) {
 							error.code = error.error;
 							this.showValidationErrorMessage( domain, error );
 						}
-
-						this.props.onDomainsAvailabilityChange( true );
-
-						callback( error, domainSuggestions );
+						callback( error, null );
 					} );
 				}
-			], ( error, result ) => {
+			],
+			( error, result ) => {
 				if ( ! this.state.loadingResults || domain !== this.state.lastDomainSearched ) {
 					// this callback is irrelevant now, a newer search has been made or the results were cleared
 					return;
@@ -382,11 +400,13 @@ var RegisterDomainStep = React.createClass( {
 			},
 			suggestions = reject( this.state.searchResults, isSearchedDomain ),
 			availableDomain = find( this.state.searchResults, isSearchedDomain ),
-			onAddMapping = this.props.onAddMapping ?
-				domain => {
-					return this.props.onAddMapping( domain, this.state );
-				} :
-				undefined;
+			onAddMapping;
+
+		if ( this.props.onAddMapping ) {
+			onAddMapping = ( domain ) => {
+				return this.props.onAddMapping( domain, this.state );
+			};
+		}
 
 		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
 			// the search returned no results
@@ -476,9 +496,25 @@ var RegisterDomainStep = React.createClass( {
 	},
 
 	showValidationErrorMessage: function( domain, error ) {
-		var message;
+		var message,
+			severity = 'error';
 
 		switch ( error.code ) {
+			case 'dotblog_domain':
+				message = this.translate(
+					'.blog domains are not available yet. {{a}}Sign up{{/a}} to get updates on the launch.', {
+						components: {
+							a: <a
+								target="_blank"
+								href={ `https://dotblog.wordpress.com/
+									?email=${ this.props.currentUser && encodeURIComponent( this.props.currentUser.email ) || '' }
+									&domain=${ domain }`
+									}/>
+						}
+					}
+				);
+				severity = 'info';
+				break;
 			case 'not_registrable':
 				if ( domain.indexOf( '.' ) ) {
 					message = this.translate( 'Sorry but %(domain)s cannot be registered on WordPress.com.', {
@@ -489,6 +525,22 @@ var RegisterDomainStep = React.createClass( {
 			case 'not_available':
 			case 'not_available_but_mappable':
 				// unavailable domains are displayed in the search results, not as a notice
+				break;
+
+			case 'mappable_but_blacklisted_domain':
+				message = this.translate( 'Domain cannot be mapped to a WordPress.com blog because of blacklisted term.' );
+				break;
+
+			case 'mappable_but_forbidden_subdomain':
+				message = this.translate( 'Subdomains starting with \'www.\' cannot be mapped to a WordPress.com blog' );
+				break;
+
+			case 'mappable_but_mapped_domain':
+				message = this.translate( 'This domain is already mapped to a WordPress.com site.' );
+				break;
+
+			case 'mappable_but_restricted_domain':
+				message = this.translate( 'You cannot map another WordPress.com subdomain - try creating a new site or one of the custom domains below.' );
 				break;
 
 			case 'empty_query':
@@ -516,9 +568,13 @@ var RegisterDomainStep = React.createClass( {
 		}
 
 		if ( message ) {
-			this.setState( { notice: message } );
+			this.setState( { notice: message, noticeSeverity: severity } );
 		}
 	}
 } );
 
-module.exports = RegisterDomainStep;
+module.exports = connect( state => {
+	return {
+		currentUser: getCurrentUser( state )
+	};
+} )( RegisterDomainStep );

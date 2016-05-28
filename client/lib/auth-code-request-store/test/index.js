@@ -3,7 +3,7 @@ import Dispatcher from 'dispatcher'
 import { default as Store, requestState } from '../index'
 import { actions as ActionTypes } from '../constants'
 
-const debug = require( 'debug' )( 'calypso:comment-store:test' ); //eslint-disable-line no-unused-vars
+const debug = require( 'debug' )( 'calypso:auth-code-request-store:test' ); //eslint-disable-line no-unused-vars
 
 describe( 'index', () => {
 	beforeEach( function() {

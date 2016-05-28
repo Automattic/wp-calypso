@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -20,4 +22,12 @@ function isExternal( url ) {
 	return isOutsideCalypso( url ) && ! startsWith( url, '//wordpress.com' );
 }
 
-export default { isOutsideCalypso, isExternal };
+function isHttps( url ) {
+	return url && startsWith( url, 'https://' );
+}
+
+export default {
+	isOutsideCalypso,
+	isExternal,
+	isHttps,
+};

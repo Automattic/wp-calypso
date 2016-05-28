@@ -443,12 +443,12 @@ const ManagePurchase = React.createClass( {
 			);
 		}
 
-		if ( isRenewing( purchase ) ) {
-			return this.moment( purchase.renewDate ).format( 'LL' );
-		}
-
 		if ( isExpiring( purchase ) || isExpired( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
 			return this.moment( purchase.expiryDate ).format( 'LL' );
+		}
+
+		if ( isRenewing( purchase ) ) {
+			return this.moment( purchase.renewDate ).format( 'LL' );
 		}
 
 		if ( isOneTimePurchase( purchase ) ) {
@@ -466,10 +466,12 @@ const ManagePurchase = React.createClass( {
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = paths.editCardDetails( this.props.selectedSite.slug, purchase.id );
 
+			const text = isRenewing( purchase )
+				? this.translate( 'Edit Payment Method' )
+				: this.translate( 'Add Payment Method' );
+
 			return (
-				<CompactCard href={ path }>
-					{ this.translate( 'Edit Payment Method' ) }
-				</CompactCard>
+				<CompactCard href={ path }>{ text }</CompactCard>
 			);
 		}
 

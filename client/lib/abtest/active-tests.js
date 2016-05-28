@@ -22,7 +22,7 @@ module.exports = {
 		allowAnyLocale: true
 	},
 	freeTrialsInSignup: {
-		datestamp: '20160328',
+		datestamp: '20200328',
 		variations: {
 			disabled: 40,
 			enabled: 15,
@@ -31,7 +31,7 @@ module.exports = {
 		defaultVariation: 'disabled'
 	},
 	freeTrialNudgeOnThankYouPage: {
-		datestamp: '20160328',
+		datestamp: '20200328',
 		variations: {
 			disabled: 50,
 			enabled: 50
@@ -46,48 +46,21 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
-	sidebarPlanLinkMyPlan: {
-		datestamp: '20160101',
-		variations: {
-			plans: 50,
-			'plans/my-plan': 50,
-		},
-		defaultVariation: 'plans',
-		allowExistingUsers: true,
-	},
 	domainSuggestionVendor: {
-		datestamp: '20160408',
+		datestamp: '20160520',
 		variations: {
 			namegen: 75,
 			domainsbot: 25,
 		},
 		defaultVariation: 'namegen'
 	},
-	statsTabsLikesNudge: {
-		datestamp: '20160427',
+	nudges: {
+		datestamp: '20160519',
 		variations: {
-			dataInformedBelowChart: 10,
-			noNudge: 90
+			showAll: 60,
+			hideAll: 40
 		},
-		defaultVariation: 'noNudge',
-		allowExistingUsers: true
-	},
-	themesHeaderNudge: {
-		datestamp: '20160427',
-		variations: {
-			themes_custom_design: 90,
-			themes_premium_theme_more_traffic: 10
-		},
-		defaultVariation: 'themes_custom_design',
-		allowExistingUsers: true,
-	},
-	swapButtonsMySiteSidebar: {
-		datestamp: '20160414',
-		variations: {
-			original: 50,
-			swap: 50
-		},
-		defaultVariation: 'original'
+		defaultVariation: 'showAll'
 	},
 	guidedTours: {
 		datestamp: '20160428',
@@ -110,22 +83,14 @@ module.exports = {
 		allowAnyLocale: true
 	},
 	domainsWithPlansOnly: {
-		datestamp: '20160427',
+		datestamp: '20160517', // was 20160427
 		variations: {
-			original: 50,
-			plansOnly: 50
+			original: 0,
+			plansOnly: 100
 		},
 		defaultVariation: 'original',
-		allowExistingUsers: false
-	},
-	triforce: {
-		datestamp: '20160421',
-		variations: {
-			original: 45,
-			triforce: 45,
-			notTested: 10
-		},
-		defaultVariation: 'original'
+		allowExistingUsers: false,
+		allowAnyLocale: true
 	},
 	planPricing: {
 		datestamp: '20160426',
@@ -134,16 +99,6 @@ module.exports = {
 			annual: 10
 		},
 		defaultVariation: 'monthly',
-		allowExistingUsers: true,
-		allowAnyLocale: true
-	},
-	wpcomPluginsInSidebar: {
-		datestamp: '20160428',
-		variations: {
-			showPlugins: 90,
-			hidePlugins: 10
-		},
-		defaultVariation: 'showPlugins',
 		allowExistingUsers: true,
 		allowAnyLocale: true
 	}

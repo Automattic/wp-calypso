@@ -42,8 +42,8 @@ describe( 'EditorDiscussion', function() {
 			recordEvent: noop,
 			recordStat: noop
 		} );
-		EditorDiscussion = require( '../' ).WrappedComponent;
-		EditorDiscussion.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
+		EditorDiscussion = require( '../' );
+		EditorDiscussion.prototype.translate = sinon.stub().returnsArg( 0 );
 	} );
 
 	beforeEach( function() {
@@ -51,7 +51,7 @@ describe( 'EditorDiscussion', function() {
 	} );
 
 	after( function() {
-		delete EditorDiscussion.prototype.__reactAutoBindMap.translate;
+		delete EditorDiscussion.prototype.translate;
 	} );
 
 	describe( '#getDiscussionSetting()', function() {

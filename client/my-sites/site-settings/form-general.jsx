@@ -6,6 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { connect } from 'react-redux';
 import Card from 'components/card';
 import Button from 'components/button';
 import formBase from './form-base';
@@ -26,9 +27,10 @@ import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import TimezoneDropdown from 'components/timezone-dropdown';
+import QuerySiteDomains from 'components/data/query-site-domains';
+import { getDomainsBySite } from 'state/sites/domains/selectors';
 
-module.exports = React.createClass( {
-
+const FormGeneral = React.createClass( {
 	displayName: 'SiteSettingsFormGeneral',
 
 	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
@@ -235,7 +237,10 @@ module.exports = React.createClass( {
 						onChange={ this.handleRadio }
 						disabled={ this.state.fetchingSettings }
 						onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
-					<span>{ this.translate( 'Allow search engines to index this site' ) }</span>
+					<span>{ this.translate( 'Public' ) }</span>
+					<FormSettingExplanation className="inside-list is-indented">
+						{ this.translate( 'Your site is visible to everyone, and it may be indexed by search engines.' ) }
+					</FormSettingExplanation>
 				</FormLabel>
 
 				<FormLabel>
@@ -246,9 +251,9 @@ module.exports = React.createClass( {
 						onChange={ this.handleRadio }
 						disabled={ this.state.fetchingSettings }
 						onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
-					<span>{ this.translate( 'Discourage search engines from indexing this site' ) }</span>
+					<span>{ this.translate( 'Hidden' ) }</span>
 					<FormSettingExplanation className="inside-list is-indented">
-						{ this.translate( 'Note: This option does not block access to your site — it is up to search engines to honor your request.' ) }
+						{ this.translate( 'Your site is visible to everyone, but we ask search engines to not index your site.' ) }
 					</FormSettingExplanation>
 				</FormLabel>
 
@@ -261,7 +266,10 @@ module.exports = React.createClass( {
 							onChange={ this.handleRadio }
 							disabled={ this.state.fetchingSettings }
 							onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
-						<span>{ this.translate( 'I would like my site to be private, visible only to users I choose' ) }</span>
+						<span>{ this.translate( 'Private' ) }</span>
+						<FormSettingExplanation className="inside-list is-indented">
+							{ this.translate( 'Your site is only visible to you and users you approve.' ) }
+						</FormSettingExplanation>
 					</FormLabel>
 				}
 
@@ -426,6 +434,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ this.state.fetchingSettings ? 'is-loading' : '' }>
+				{ site && <QuerySiteDomains siteId={ site.ID } /> }
 				<SectionHeader label={ this.translate( 'Site Profile' ) }>
 					<Button
 						compact={ true }
@@ -450,7 +459,7 @@ module.exports = React.createClass( {
 					</form>
 				</Card>
 
-				<SectionHeader label={ this.translate( 'Visibility' ) }>
+				<SectionHeader label={ this.translate( 'Privacy' ) }>
 					<Button
 						compact={ true }
 						onClick={ this.submitForm }
@@ -541,3 +550,12 @@ module.exports = React.createClass( {
 		}
 	}
 } );
+
+// connect exposing `domains` props
+export default connect( ( state, ownProps ) => {
+	const { site } = ownProps;
+
+	return {
+		domains: getDomainsBySite( state, site )
+	};
+} )( FormGeneral );

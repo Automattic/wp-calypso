@@ -7,7 +7,12 @@ import classnames from 'classnames';
 const PostExcerpt = React.createClass( {
 
 	propTypes: {
-		content: React.PropTypes.string.isRequired
+		content: React.PropTypes.string.isRequired,
+		maxLength: React.PropTypes.number
+	},
+
+	defaultProps: {
+		maxLength: 80
 	},
 
 	render() {
@@ -17,7 +22,7 @@ const PostExcerpt = React.createClass( {
 
 		const classes = classnames( {
 			'post-excerpt': true,
-			'is-long': ( this.props.content.length > 80 )
+			'is-long': ( this.props.content.length > this.props.maxLength )
 		} );
 
 		return (

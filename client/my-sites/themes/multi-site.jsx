@@ -1,52 +1,52 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	bindActionCreators = require( 'redux' ).bindActionCreators,
-	connect = require( 'react-redux' ).connect,
-	pickBy = require( 'lodash/pickBy' ),
-	merge = require( 'lodash/merge' );
+import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import pickBy from 'lodash/pickBy';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
  */
-var Main = require( 'components/main' ),
-	Action = require( 'state/themes/actions' ),
-	ThemePreview = require( './theme-preview' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	ThemesSiteSelectorModal = require( './themes-site-selector-modal' ),
-	ThemesSelection = require( './themes-selection' ),
-	ThemeHelpers = require( './helpers' ),
-	actionLabels = require( './action-labels' ),
-	ThemesListSelectors = require( 'state/themes/themes-list/selectors' ),
-	config = require( 'config' );
+import Main from 'components/main';
+import * as Action from 'state/themes/actions';
+import ThemePreview from './theme-preview';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import ThemesSiteSelectorModal from './themes-site-selector-modal';
+import ThemesSelection from './themes-selection';
+import { getDetailsUrl, getSupportUrl, isPremium, addTracking } from './helpers';
+import actionLabels from './action-labels';
+import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
+import config from 'config';
 
-var ThemesMultiSite = React.createClass( {
+const ThemesMultiSite = React.createClass( {
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			selectedTheme: null,
 			selectedAction: null,
 		};
 	},
 
-	showSiteSelectorModal: function( action, theme ) {
+	showSiteSelectorModal( action, theme ) {
 		this.setState( { selectedTheme: theme, selectedAction: action } );
 	},
 
-	togglePreview: function( theme ) {
+	togglePreview( theme ) {
 		this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
 	},
 
-	hideSiteSelectorModal: function() {
+	hideSiteSelectorModal() {
 		this.showSiteSelectorModal( null, null );
 	},
 
-	isThemeOrActionSet: function() {
+	isThemeOrActionSet() {
 		return this.state.selectedTheme || this.state.selectedAction;
 	},
 
-	getButtonOptions: function() {
+	getButtonOptions() {
 		const buttonOptions = {
 			preview: {
 				action: theme => this.togglePreview( theme ),
@@ -70,12 +70,12 @@ var ThemesMultiSite = React.createClass( {
 				separator: true
 			},
 			details: {
-				getUrl: theme => ThemeHelpers.getDetailsUrl( theme ),
+				getUrl: theme => getDetailsUrl( theme ),
 			},
 			support: {
-				getUrl: theme => ThemeHelpers.getSupportUrl( theme ),
+				getUrl: theme => getSupportUrl( theme ),
 				// Free themes don't have support docs.
-				hideForTheme: theme => ! ThemeHelpers.isPremium( theme )
+				hideForTheme: theme => ! isPremium( theme )
 			},
 		};
 		return merge( {}, buttonOptions, actionLabels );
@@ -88,8 +88,8 @@ var ThemesMultiSite = React.createClass( {
 			} );
 	},
 
-	render: function() {
-		var { dispatch } = this.props,
+	render() {
+		const { dispatch } = this.props,
 			buttonOptions = this.getButtonOptions();
 
 		return (
@@ -114,7 +114,7 @@ var ThemesMultiSite = React.createClass( {
 					} }
 					getOptions={ function( theme ) {
 						return pickBy(
-							ThemeHelpers.addTracking( buttonOptions ),
+							addTracking( buttonOptions ),
 							option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
 						); } }
 					trackScrollPage={ this.props.trackScrollPage }
@@ -128,6 +128,7 @@ var ThemesMultiSite = React.createClass( {
 					selectedTheme={ this.state.selectedTheme }
 					onHide={ this.hideSiteSelectorModal }
 					action={ bindActionCreators( Action[ this.state.selectedAction ], dispatch ) }
+					sourcePath={ '/design' }
 				/> }
 			</Main>
 		);
@@ -136,7 +137,7 @@ var ThemesMultiSite = React.createClass( {
 
 export default connect(
 	state => ( {
-		queryParams: ThemesListSelectors.getQueryParams( state ),
-		themesList: ThemesListSelectors.getThemesList( state )
+		queryParams: getQueryParams( state ),
+		themesList: getThemesList( state )
 	} )
 )( ThemesMultiSite );

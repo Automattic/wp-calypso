@@ -25,7 +25,7 @@ const keyCodes = {
 	upArrow: 38,
 	rightArrow: 39,
 	downArrow: 40,
-	delete: 46,
+	'delete': 46,
 	comma: 188
 };
 
@@ -136,6 +136,13 @@ describe( 'TokenField', function() {
 		it( 'should render default suggestions', function() {
 			// limited by maxSuggestions (default 100 so doesn't matter here)
 			expect( getSuggestionsHTML() ).to.deep.equal( wrapper.state( 'tokenSuggestions' ) );
+		} );
+
+		it( 'should remove already added tags from suggestions', function() {
+			wrapper.setState( {
+				tokens: Object.freeze( [ 'of', 'and' ] )
+			} );
+			expect( getSuggestionsHTML() ).to.not.include.members( getTokensHTML() );
 		} );
 
 		it( 'should suggest partial matches', function() {

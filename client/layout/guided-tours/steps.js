@@ -21,7 +21,7 @@ class BasicStep extends Component {
 		const { text, onNext, onQuit } = this.props;
 		return (
 			<Card className="guided-tours__step" style={ stepCoords } >
-				<p>{ text }</p>
+				<p className="guided-tours__step-text">{ text }</p>
 				<div className="guided-tours__choice-button-row">
 					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
 					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
@@ -39,7 +39,7 @@ class FirstStep extends Component {
 		const { text, onNext, onQuit } = this.props;
 		return (
 			<Card className="guided-tours__step guided-tours__step-first" style={ stepCoords } >
-				<p>{ text }</p>
+				<p className="guided-tours__step-text">{ text }</p>
 				<div className="guided-tours__choice-button-row">
 					<Button onClick={ onNext } primary>{ this.props.translate( "Let's do it!" ) }</Button>
 					<Button onClick={ onQuit } >
@@ -60,7 +60,7 @@ class FinishStep extends Component {
 
 		return (
 			<Card className="guided-tours__step" style={ stepCoords } >
-				<p>{ text }</p>
+				<p className="guided-tours__step-text">{ text }</p>
 				<div className="guided-tours__single-button-row">
 					<Button onClick={ onFinish } primary>{ this.props.translate( "We're all done!" ) }</Button>
 				</div>
@@ -81,7 +81,7 @@ class LinkStep extends Component {
 
 		return (
 			<Card className="guided-tours__step" style={ stepCoords } >
-				<p>{ text }</p>
+				<p className="guided-tours__step-text">{ text }</p>
 				<div className="guided-tours__choice-button-row">
 					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
 					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
@@ -115,20 +115,18 @@ class ActionStep extends Component {
 		const { targetSlug = false, onNext } = this.props;
 		const target = targetForSlug( targetSlug );
 
-		if ( onNext && target.addEventListener ) {
+		if ( onNext && target && target.addEventListener ) {
 			target.addEventListener( 'click', onNext );
 		}
-		target && target.classList.add( 'guided-tours__overlay' );
 	}
 
 	removeTargetListener() {
 		const { targetSlug = false, onNext } = this.props;
 		const target = targetForSlug( targetSlug );
 
-		if ( onNext && target.removeEventListener ) {
+		if ( onNext && target && target.removeEventListener ) {
 			target.removeEventListener( 'click', onNext );
 		}
-		target && target.classList.remove( 'guided-tours__overlay' );
 	}
 
 	render() {
@@ -139,18 +137,21 @@ class ActionStep extends Component {
 
 		const { text } = this.props;
 
+		let components = {};
+		if ( this.props.icon ) {
+			components.gridicon = <Gridicon icon={ this.props.icon } size={ 24 } />
+		} else {
+			components.gridicon = <span className="guided-tours__bullseye-text">○</span>
+		}
+
 		return (
 			<Card className="guided-tours__step" style={ stepCoords } >
-				<p>{ text }</p>
-				<div className="guided-tours__bullseye-instructions">
-					<p>
-						{ this.props.translate( 'Click the {{gridicon/}} to continue…', {
-							components: {
-								gridicon: <Gridicon icon={ this.props.icon } size={ 24 } />
-							}
-						} ) }
-					</p>
-				</div>
+				<p className="guided-tours__step-text">{ text }</p>
+				<p className="guided-tours__bullseye-instructions">
+					{ this.props.translate( 'Click the {{gridicon/}} to continue.', {
+						components: components
+					} ) }
+				</p>
 				<Pointer style={ pointerCoords } />
 			</Card>
 		);
@@ -178,6 +179,7 @@ ActionStep.propTypes = {
 		PropTypes.string,
 		PropTypes.array
 	] ),
+	icon: PropTypes.string,
 	next: PropTypes.string,
 	onNext: PropTypes.func.isRequired,
 	onQuit: PropTypes.func.isRequired,

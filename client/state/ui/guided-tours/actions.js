@@ -32,10 +32,10 @@ export function showGuidedTour( { shouldShow, shouldDelay = false, tour = 'main'
 		tour,
 	} );
 
-	return withAnalytics( trackEvent, showAction );
+	return shouldDelay ? showAction : withAnalytics( trackEvent, showAction );
 }
 
-export function quitGuidedTour( { tour = 'main', stepName, finished } ) {
+export function quitGuidedTour( { tour = 'main', stepName, finished, error } ) {
 	const quitAction = {
 		type: GUIDED_TOUR_UPDATE,
 		shouldShow: false,
@@ -49,6 +49,7 @@ export function quitGuidedTour( { tour = 'main', stepName, finished } ) {
 		step: stepName,
 		tour_version: guidedToursConfig.version,
 		tour,
+		error,
 	} );
 
 	return withAnalytics( trackEvent, quitAction );

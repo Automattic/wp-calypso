@@ -1,20 +1,17 @@
 /**
- * External depenendencies
+ * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	rewire = require( 'rewire' );
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var Shortcode = rewire( '../' );
+import Shortcode from '../';
 
 describe( 'index', function() {
 	describe( '#parseAttributes()', function() {
-		var parseAttributes = Shortcode.__get__( 'parseAttributes' );
-
 		it( 'should parse a string of named attributes', function() {
-			var result = parseAttributes( 'bar="baz"' );
+			var result = Shortcode.parseAttributes( 'bar="baz"' );
 
 			expect( result ).to.eql( {
 				named: {
@@ -25,7 +22,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should parse a string of numeric attributes', function() {
-			var result = parseAttributes( 'bar baz' );
+			var result = Shortcode.parseAttributes( 'bar baz' );
 
 			expect( result ).to.eql( {
 				named: {},
@@ -34,7 +31,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should parse a string of mixed attributes', function() {
-			var result = parseAttributes( 'bar="baz" qux' );
+			var result = Shortcode.parseAttributes( 'bar="baz" qux' );
 
 			expect( result ).to.eql( {
 				named: {
@@ -46,10 +43,8 @@ describe( 'index', function() {
 	} );
 
 	describe( '#normalizeAttributes()', function() {
-		var normalizeAttributes = Shortcode.__get__( 'normalizeAttributes' );
-
 		it( 'should normalize a string of named attributes', function() {
-			var result = normalizeAttributes( 'bar="baz"' );
+			var result = Shortcode.normalizeAttributes( 'bar="baz"' );
 
 			expect( result ).to.eql( {
 				named: {
@@ -60,7 +55,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should normalize a string of numeric attributes', function() {
-			var result = normalizeAttributes( 'bar' );
+			var result = Shortcode.normalizeAttributes( 'bar' );
 
 			expect( result ).to.eql( {
 				named: {},
@@ -69,7 +64,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should normalize a string of mixed attributes', function() {
-			var result = normalizeAttributes( 'bar="baz" qux' );
+			var result = Shortcode.normalizeAttributes( 'bar="baz" qux' );
 
 			expect( result ).to.eql( {
 				named: {
@@ -80,7 +75,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should normalize an array as numeric attributes', function() {
-			var result = normalizeAttributes( [ 'bar' ] );
+			var result = Shortcode.normalizeAttributes( [ 'bar' ] );
 
 			expect( result ).to.eql( {
 				named: {},
@@ -92,14 +87,14 @@ describe( 'index', function() {
 			var attributes = {
 					named: { bar: 'baz' },
 					numeric: [ 'qux' ]
-				}, result = normalizeAttributes( attributes );
+				}, result = Shortcode.normalizeAttributes( attributes );
 
 			expect( result ).to.eql( attributes );
 		} );
 
 		it( 'should normalize an object as the named attributes', function() {
 			var attributes = { bar: 'baz' },
-				result = normalizeAttributes( attributes );
+				result = Shortcode.normalizeAttributes( attributes );
 
 			expect( result ).to.eql( {
 				named: attributes,

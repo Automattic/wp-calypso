@@ -63,6 +63,9 @@ function getLocation() {
 	if ( path.indexOf( '/discover' ) === 0 ) {
 		return 'discover';
 	}
+	if ( path.indexOf( '/read/recommendations/posts' ) === 0 ) {
+		return 'recommended_posts';
+	}
 	return 'unknown';
 }
 

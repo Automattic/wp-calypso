@@ -13,11 +13,11 @@ import Comments from '../stats-comments';
 import Followers from '../stats-followers';
 import PostingActivity from '../post-trends';
 import TodaysStats from '../stats-site-overview';
-import SiteOverviewPlaceholder from 'my-sites/stats/stats-overview-placeholder';
 import StatsModule from '../stats-module';
 import statsStrings from '../stats-strings';
 import MostPopular from 'my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
+import DomainTip from 'my-sites/domain-tip';
 
 export default React.createClass( {
 	displayName: 'StatsInsights',
@@ -84,6 +84,7 @@ export default React.createClass( {
 					/>
 					<AllTime allTimeList={ allTimeList } />
 					<MostPopular insightsList={ insightsList } />
+					<DomainTip siteId={ site.ID } />
 					<div className="stats-nonperiodic has-recent">
 						<div className="module-list">
 							<div className="module-column">

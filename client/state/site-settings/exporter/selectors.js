@@ -9,7 +9,7 @@ export const getExportingState = ( state, siteId ) => {
 		return States.READY;
 	}
 	return exportingState[ siteId ];
-}
+};
 
 /**
  * Indicates whether an export activity is in progress.
@@ -36,5 +36,31 @@ export function isExporting( state, siteId ) {
 	return exportingState === States.EXPORTING;
 }
 
+export const getAdvancedSettings = ( state, siteId ) => state.siteSettings.exporter.advancedSettings[ siteId ];
 export const getSelectedPostType = ( state ) => state.siteSettings.exporter.selectedPostType;
-export const advancedSettings = ( state, siteId ) => state.siteSettings.exporter.advancedSettings[ siteId ];
+export const getPostTypeFieldOptions = ( state, siteId, postType ) => {
+	const advancedSettings = getAdvancedSettings( state, siteId );
+	return advancedSettings ? advancedSettings[ postType ] : null;
+};
+
+export const getPostTypeFieldValues = ( state, siteId, postType ) => {
+	const site = state.siteSettings.exporter.selectedAdvancedSettings[ siteId ];
+	return site && site[ postType ] || {};
+};
+
+/**
+ * Prepare currently selected advanced settings for an /exports/start request
+ * @param  {Object} state  Global state tree
+ * @param  {number} siteId The ID of the site
+ * @return {Object}        The request body
+ */
+export function prepareExportRequest( state, siteId, { exportAll = true } = {} ) {
+	// Request body is empty if we're just exporting everything
+	if ( exportAll ) {
+		return null;
+	}
+
+	const postType = getSelectedPostType( state );
+	const selectedFieldValues = getPostTypeFieldValues( state, siteId, postType );
+	return Object.assign( { post_type: postType }, selectedFieldValues );
+}

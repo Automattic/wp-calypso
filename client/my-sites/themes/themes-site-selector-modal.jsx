@@ -10,7 +10,7 @@ import defer from 'lodash/defer';
  */
 import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
-import Helper from './helpers';
+import { trackClick } from './helpers';
 
 const ThemesSiteSelectorModal = React.createClass( {
 	propTypes: {
@@ -19,7 +19,9 @@ const ThemesSiteSelectorModal = React.createClass( {
 		header: React.PropTypes.string.isRequired,
 		selectedTheme: PropTypes.object.isRequired,
 		onHide: PropTypes.func,
-		action: PropTypes.func
+		action: PropTypes.func,
+		// Will be prepended to site slug for a redirect on selection
+		sourcePath: PropTypes.string.isRequired,
 	},
 
 	redirectAndCallAction( site ) {
@@ -28,8 +30,8 @@ const ThemesSiteSelectorModal = React.createClass( {
 		 * changes are enqueued, e.g. setSelectedTheme.
 		 */
 		defer( () => {
-			Helper.trackClick( 'site selector', this.props.name );
-			page( '/design/' + site.slug );
+			trackClick( 'site selector', this.props.name );
+			page( this.props.sourcePath + '/' + site.slug );
 			this.props.action( this.props.selectedTheme, site );
 		} );
 	},

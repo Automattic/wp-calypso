@@ -8,6 +8,7 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import SiteIcon from 'components/site-icon';
 import Gridicon from 'components/gridicon';
 import SiteIndicator from 'my-sites/site-indicator';
@@ -162,7 +163,7 @@ export default React.createClass( {
 			return <SiteIcon site={ this.props.site } />;
 		}
 
-		let url = getCustomizeUrl( null, this.props.site );
+		let url = getCustomizeUrl( null, this.props.site ) + '&autofocus[section]=title_tagline';
 
 		if ( ! this.props.site.jetpack && this.props.site.options ) {
 			url = this.props.site.options.admin_url + 'options-general.php';
@@ -216,17 +217,21 @@ export default React.createClass( {
 				{ ! this.state.showMoreActions
 					? <a className="site__content"
 							href={ this.props.homeLink ? site.URL : this.props.href }
+							data-tip-target={ this.props.tipTarget }
 							target={ this.props.externalLink && ! this.state.showMoreActions && '_blank' }
 							title={ this.props.homeLink
-								? this.translate( 'Visit "%(title)s"', { args: { title: site.title } } )
+								? this.translate( 'View "%(title)s"', { args: { title: site.title } } )
 								: site.title
 							}
 							onTouchTap={ this.onSelect }
 							onClick={ this.props.onClick }
 							onMouseEnter={ this.props.onMouseEnter }
 							onMouseLeave={ this.props.onMouseLeave }
-							aria-label={
-								this.translate( 'Open site %(domain)s in new tab', {
+							aria-label={ this.props.homeLink && site.is_previewable
+								? this.translate( 'Open site %(domain)s in a preview', {
+									args: { domain: site.domain }
+								} )
+								: this.translate( 'Open site %(domain)s in new tab', {
 									args: { domain: site.domain }
 								} )
 							}

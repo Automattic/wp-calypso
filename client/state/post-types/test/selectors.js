@@ -9,7 +9,8 @@ import { expect } from 'chai';
 import {
 	isRequestingPostTypes,
 	getPostTypes,
-	getPostType
+	getPostType,
+	isPostTypeSupported
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -112,6 +113,46 @@ describe( 'selectors', () => {
 			}, 2916284, 'post' );
 
 			expect( postType ).to.eql( { name: 'post', label: 'Posts' } );
+		} );
+	} );
+
+	describe( 'isPostTypeSupported', () => {
+		it( 'should return null if the site post types are not known', () => {
+			const isSupported = isPostTypeSupported( {
+				postTypes: {
+					items: {}
+				}
+			}, 2916284, 'post' );
+
+			expect( isSupported ).to.be.null;
+		} );
+
+		it( 'should return false if the post type is not supported', () => {
+			const isSupported = isPostTypeSupported( {
+				postTypes: {
+					items: {
+						2916284: {
+							post: { name: 'post', label: 'Posts' }
+						}
+					}
+				}
+			}, 2916284, 'unknown-type' );
+
+			expect( isSupported ).to.be.false;
+		} );
+
+		it( 'should return true if the post type is supported', () => {
+			const isSupported = isPostTypeSupported( {
+				postTypes: {
+					items: {
+						2916284: {
+							post: { name: 'post', label: 'Posts' }
+						}
+					}
+				}
+			}, 2916284, 'post' );
+
+			expect( isSupported ).to.be.true;
 		} );
 	} );
 } );

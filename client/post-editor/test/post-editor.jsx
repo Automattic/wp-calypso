@@ -30,7 +30,6 @@ describe( 'PostEditor', function() {
 
 		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 		mockery.registerSubstitute( 'query', 'component-query' );
-		mockery.registerMock( 'component-classes', () => {} );
 		mockery.registerMock( 'lib/mixins/i18n', {
 			translate: ( string ) => string
 		} );
@@ -67,7 +66,7 @@ describe( 'PostEditor', function() {
 		SitesList = require( 'lib/sites-list/list' );
 		PostEditStore = require( 'lib/posts/post-edit-store' );
 		PostEditor = require( '../post-editor' );
-		PostEditor.prototype.__reactAutoBindMap.translate = ( string ) => string;
+		PostEditor.prototype.translate = ( string ) => string;
 	} );
 
 	afterEach( function() {

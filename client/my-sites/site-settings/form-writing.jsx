@@ -1,38 +1,50 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { connect } from 'react-redux';
+import each from 'lodash/each';
+import pick from 'lodash/pick';
 
 /**
  * Internal dependencies
  */
-var formBase = require( './form-base' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
-	config = require( 'config' ),
-	PressThisLink = require( './press-this-link' ),
-	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
-	FormSelect = require( 'components/forms/form-select' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	SectionHeader = require( 'components/section-header' ),
-	Card = require( 'components/card' ),
-	Button = require( 'components/button' );
+import formBase from './form-base';
+import protectForm from 'lib/mixins/protect-form';
+import config from 'config';
+import PressThisLink from './press-this-link';
+import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
+import FormSelect from 'components/forms/form-select';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
+import SectionHeader from 'components/section-header';
+import Card from 'components/card';
+import Button from 'components/button';
+import { requestPostTypes } from 'state/post-types/actions';
+import CustomPostTypeFieldset from './custom-post-types-fieldset';
 
-module.exports = React.createClass( {
-
-	displayName: 'SiteSettingsFormWriting',
-
+const SiteSettingsFormWriting = React.createClass( {
 	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	getSettingsFromSite: function( site ) {
 		var writingAttributes = [
 				'default_category',
 				'post_categories',
-				'default_post_format'
+				'default_post_format',
+				'wpcom_publish_posts_with_markdown',
+				'markdown_supported',
 			],
 			settings = {};
 
 		site = site || this.props.site;
+
+		if ( ! site.jetpack && config.isEnabled( 'manage/custom-post-types' ) ) {
+			writingAttributes = writingAttributes.concat( [
+				'jetpack_testimonial',
+				'jetpack_portfolio'
+			] );
+		}
 
 		if ( site.settings ) {
 			writingAttributes.map( function( attribute ) {
@@ -54,7 +66,27 @@ module.exports = React.createClass( {
 		} );
 	},
 
+	onSaveComplete() {
+		const { site } = this.props;
+		if ( ! site || site.jetpack || ! config.isEnabled( 'manage/custom-post-types' ) ) {
+			return;
+		}
+
+		this.props.requestPostTypes( this.props.site.ID );
+	},
+
+	setCustomPostTypeSetting( revision ) {
+		this.setState( revision );
+
+		each( revision, ( value, key ) => {
+			this.linkState( key ).requestChange( value );
+		} );
+
+		this.markChanged();
+	},
+
 	render: function() {
+		const markdownSupported = this.state.markdown_supported;
 		return (
 			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
 				<SectionHeader label={ this.translate( 'Writing Settings' ) }>
@@ -103,6 +135,34 @@ module.exports = React.createClass( {
 						</FormSelect>
 					</FormFieldset>
 
+					{ config.isEnabled( 'manage/custom-post-types' ) && ( ! this.props.site || ! this.props.site.jetpack ) && (
+						<CustomPostTypeFieldset
+							requestingSettings={ this.state.fetchingSettings }
+							value={ pick( this.state, 'jetpack_testimonial', 'jetpack_portfolio' ) }
+							onChange={ this.setCustomPostTypeSetting }
+							recordEvent={ this.recordEvent }
+							className="has-divider is-top-only" />
+					) }
+					{ markdownSupported &&
+						<FormFieldset className="has-divider is-top-only">
+							<FormLabel>
+								{ this.translate( 'Markdown' ) }
+							</FormLabel>
+							<FormLabel>
+								<FormCheckbox
+									name="wpcom_publish_posts_with_markdown"
+									checkedLink={ this.linkState( 'wpcom_publish_posts_with_markdown' ) }
+									disabled={ this.state.fetchingSettings }
+									onClick={ this.recordEvent.bind( this, 'Clicked Markdown for Posts Checkbox' ) } />
+								<span>{ this.translate( 'Use markdown for posts and pages. {{a}}Learn more about markdown{{/a}}.', {
+										components: {
+											a: <a href="http://en.support.wordpress.com/markdown-quick-reference/" target="_blank" />
+										}
+									} ) }</span>
+							</FormLabel>
+						</FormFieldset>
+					}
+
 					{ config.isEnabled( 'press-this' ) &&
 						<FormFieldset className="has-divider is-top-only">
 							<div className="press-this">
@@ -128,3 +188,9 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect( null, {
+	requestPostTypes
+}, null, {
+	pure: false
+} )( SiteSettingsFormWriting );

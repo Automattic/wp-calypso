@@ -325,7 +325,7 @@ const PluginsMain = React.createClass( {
 	render() {
 		const selectedSite = this.props.sites.getSelectedSite();
 
-		if ( config.isEnabled( 'manage/plugins/wpcom' ) && ! getOr( selectedSite, 'jetpack', true ) ) {
+		if ( ! getOr( selectedSite, 'jetpack', true ) ) {
 			return (
 				<Main>
 					<SidebarNavigation />

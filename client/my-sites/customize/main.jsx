@@ -18,12 +18,10 @@ var notices = require( 'notices' ),
 	CustomizerLoadingPanel = require( 'my-sites/customize/loading-panel' ),
 	EmptyContent = require( 'components/empty-content' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	museCustomizations = require( 'lib/customize/muse' ),
 	Actions = require( 'my-sites/customize/actions' ),
 	themeActivated = require( 'state/themes/actions' ).activated;
 
-var mobileWidth = 400,
-	loadingTimer;
+var loadingTimer;
 
 var Customize = React.createClass( {
 	displayName: 'Customize',
@@ -34,6 +32,7 @@ var Customize = React.createClass( {
 		prevPath: React.PropTypes.string,
 		query: React.PropTypes.object,
 		themeActivated: React.PropTypes.func.isRequired,
+		panel: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
@@ -45,9 +44,7 @@ var Customize = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			museCustomizations: null,
 			isWaitingForSiteData: true,
-			isWaitingForMuseData: true,
 			iframeLoaded: false,
 			errorFromIframe: false,
 			timeoutError: false
@@ -60,21 +57,12 @@ var Customize = React.createClass( {
 		this.waitForLoading();
 		this.sitesDidUpdate();
 		window.scrollTo( 0, 0 );
-		museCustomizations.on( 'change', this.gotMuseCustomizations );
-		Actions.fetchMuseCustomizations( this.props.domain );
 	},
 
 	componentWillUnmount: function() {
 		this.props.sites.off( 'change', this.sitesDidUpdate );
-		museCustomizations.on( 'change', this.gotMuseCustomizations );
 		window.removeEventListener( 'message', this.onMessage, false );
 		this.cancelWaitingTimer();
-	},
-
-	gotMuseCustomizations: function() {
-		const { customizations } = museCustomizations.get();
-		debug( 'got muse customizations', customizations );
-		this.setState( { isWaitingForMuseData: false, museCustomizations: customizations } );
 	},
 
 	sitesDidUpdate: function() {
@@ -86,37 +74,6 @@ var Customize = React.createClass( {
 
 	getSite: function() {
 		return this.props.sites.getSite( this.props.domain );
-	},
-
-	shouldLoadMuse: function() {
-		var site;
-
-		if ( ! config.isEnabled( 'muse' ) ) {
-			return false;
-		}
-
-		if ( this.props.query.nomuse ) {
-			return false;
-		}
-
-		if ( this.state.isWaitingForSiteData || this.state.isWaitingForMuseData ) {
-			return false;
-		}
-
-		site = this.getSite();
-		if ( site.jetpack ) {
-			return false;
-		}
-
-		if ( window.innerWidth > mobileWidth ) {
-			return false;
-		}
-
-		if ( ! this.state.museCustomizations || this.state.museCustomizations.length === 0 ) {
-			return false;
-		}
-
-		return true;
 	},
 
 	canUserCustomizeDomain: function() {
@@ -182,12 +139,6 @@ var Customize = React.createClass( {
 			domain = site.options.unmapped_url;
 		}
 
-		// Muse
-		if ( this.shouldLoadMuse() ) {
-			let returnUrl = encodeURIComponent( window.location.protocol + '//' + window.location.host + this.getPreviousPath() );
-			return domain + '?customize=true&return=' + returnUrl;
-		}
-
 		// Customizer
 		if ( site.options && site.options.admin_url ) {
 			return site.options.admin_url + 'customize.php?' + this.buildCustomizerQuery();
@@ -196,16 +147,27 @@ var Customize = React.createClass( {
 	},
 
 	buildCustomizerQuery: function() {
-		var protocol = window.location.protocol,
-			host = window.location.host,
-			query = cloneDeep( this.props.query ),
-			site = this.getSite();
+		const { protocol, host } = window.location;
+		const query = cloneDeep( this.props.query );
+		const site = this.getSite();
+		const { panel } = this.props;
 
 		query.return = protocol + '//' + host + this.getPreviousPath();
 		query.calypso = true;
 		query.calypsoOrigin = protocol + '//' + host;
 		if ( site.options && site.options.frame_nonce ) {
 			query['frame-nonce'] = site.options.frame_nonce;
+		}
+
+		// autofocus panels
+		const panels = {
+			widgets: { panel: 'widgets' },
+			fonts: { section: 'jetpack_fonts' },
+			'custom-css': { section: 'jetpack_custom_css' },
+		};
+
+		if ( panels.hasOwnProperty( panel ) ) {
+			query.autofocus = panels[ panel ];
 		}
 
 		return Qs.stringify( query );
@@ -293,7 +255,7 @@ var Customize = React.createClass( {
 	},
 
 	render: function() {
-		var iframeUrl, showingMuse;
+		var iframeUrl ;
 
 		if ( this.state.timeoutError ) {
 			this.cancelWaitingTimer();
@@ -316,7 +278,7 @@ var Customize = React.createClass( {
 		if ( this.props.sites.fetched !== true ) {
 			return (
 				<div className="main main-column customize is-iframe" role="main">
-					<CustomizerLoadingPanel isMuse={ this.shouldLoadMuse() }/>
+					<CustomizerLoadingPanel />
 				</div>
 			);
 		}
@@ -328,28 +290,7 @@ var Customize = React.createClass( {
 			} );
 		}
 
-		if ( window.innerWidth <= mobileWidth && ! config.isEnabled( 'muse' ) ) {
-			this.cancelWaitingTimer();
-			return this.renderErrorPage( {
-				title: this.translate( 'Sorry, our customization tools are not ready for use on small screens yet' ),
-				line: this.translate( 'Please use a tablet or desktop browser to customize your site' )
-			} );
-		}
-
 		iframeUrl = this.getUrl();
-		showingMuse = this.shouldLoadMuse();
-
-		debug( 'we will load', ( showingMuse ? 'muse' : 'wp-admin customizer' ) );
-
-		if ( showingMuse ) {
-			// Redirect to Muse on the frontend
-			window.location = iframeUrl;
-			return (
-				<div className="main main-column customize is-iframe" role="main">
-					<CustomizerLoadingPanel isMuse={ showingMuse }/>
-				</div>
-			);
-		}
 
 		if ( iframeUrl ) {
 			debug( 'loading iframe URL', iframeUrl );
@@ -360,7 +301,7 @@ var Customize = React.createClass( {
 			// waitForLoading above) then an error will be shown.
 			return (
 				<div className="main main-column customize is-iframe" role="main">
-					<CustomizerLoadingPanel isLoaded={ this.state.iframeLoaded } isMuse={ showingMuse } />
+					<CustomizerLoadingPanel isLoaded={ this.state.iframeLoaded } />
 					<iframe className={ iframeClassName } src={ iframeUrl } />
 				</div>
 			);

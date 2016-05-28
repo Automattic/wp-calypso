@@ -4,8 +4,6 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import omit from 'lodash/omit';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -18,13 +16,11 @@ import TrackInputChanges from 'components/track-input-changes';
 import FormTextInput from 'components/forms/form-text-input';
 import { isMobile } from 'lib/viewport';
 import * as stats from 'lib/posts/stats';
-import { setTitle } from 'state/ui/editor/post/actions';
 
-const EditorTitle = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorTitle',
 
 	propTypes: {
-		setTitle: PropTypes.func,
 		post: PropTypes.object,
 		site: PropTypes.object,
 		isNew: PropTypes.bool,
@@ -40,8 +36,7 @@ const EditorTitle = React.createClass( {
 	getDefaultProps() {
 		return {
 			isNew: true,
-			onChange: () => {},
-			setTitle: () => {},
+			onChange: () => {}
 		};
 	},
 
@@ -74,7 +69,6 @@ const EditorTitle = React.createClass( {
 			title: event.target.value
 		} );
 
-		this.props.setTitle( event.target.value );
 		onChange( event );
 	},
 
@@ -134,10 +128,3 @@ const EditorTitle = React.createClass( {
 		);
 	}
 } );
-
-export default connect(
-	null,
-	dispatch => bindActionCreators( { setTitle }, dispatch ),
-	null,
-	{ pure: false }
-)( EditorTitle );

@@ -54,6 +54,7 @@ const PreviewToolbar = React.createClass( {
 				{ this.props.showClose &&
 					<button
 						className="web-preview__close"
+						data-tip-target="web-preview__close"
 						onClick={ this.props.onClose }
 						aria-label={ this.translate( 'Close preview' ) }
 					>
@@ -61,7 +62,7 @@ const PreviewToolbar = React.createClass( {
 					</button>
 				}
 				{ this.props.showExternal &&
-					<a className="web-preview__external" href={ this.props.previewUrl } target="_blank">
+					<a className="web-preview__external" href={ this.props.externalUrl || this.props.previewUrl } target="_blank">
 						<Gridicon icon="external" />
 					</a>
 				}
