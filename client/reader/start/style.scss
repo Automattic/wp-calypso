@@ -31,6 +31,7 @@
 
 .reader-start__cards {
 
+	padding-bottom: 100px;
 	transform: translateX( 0 ); // Prevents overflowing content from disappearing
 
     @include breakpoint( ">960px" ) {
@@ -63,14 +64,6 @@
 	&:nth-child( even ),
 	&:last-child {
 		margin-right: 0;
-	}
-
-	&:last-child {
-		margin-bottom: 100px;
-
-		@include breakpoint( ">480px" ) {
-			margin-bottom: 80px;
-		}
 	}
 
 	.site-icon__img {
@@ -226,11 +219,15 @@
 	font-family: $serif;
 	font-size: 16px;
 	font-weight: 600;
-	line-height: 1;
+	line-height: 1.3;
 	margin-bottom: 5px;
 
 	&:hover {
 		color: darken( $gray, 10% );
+	}
+
+	&:visited {
+		color: $gray-dark;
 	}
 }
 
@@ -304,7 +301,7 @@
 
 // Appending inline recommendations
 
-.reader-start-card {
+/*.reader-start-card {
 
 	&:last-child {
 		animation: slide-right .7s ease-out 5s 1 forwards;
@@ -339,4 +336,4 @@
     		transform: translateX( 105% );
     	}
 	}
-}
+}*/
