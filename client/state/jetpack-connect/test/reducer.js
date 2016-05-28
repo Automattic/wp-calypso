@@ -29,6 +29,28 @@ import reducer, {
 	jetpackConnectSessions
 } from '../reducer';
 
+const successfulSSOValidation = {
+	type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
+	success: true,
+	blogDetails: {
+		domain: 'website.com',
+		title: 'My BBQ Site',
+		icon: {
+			img: '',
+			ico: '',
+		},
+		URL: 'https://website.com',
+		is_vip: false,
+		admin_url: 'https://website.com/wp-admin'
+	}
+};
+
+const falseSSOValidation = {
+	type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
+	success: false,
+	blogDetails: {}
+};
+
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
@@ -193,10 +215,7 @@ describe( 'reducer', () => {
 
 		it( 'should set isValidating to false after validation', () => {
 			const actions = [
-				{
-					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-					success: true
-				},
+				successfulSSOValidation,
 				{
 					type: JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 					error: {
@@ -213,14 +232,8 @@ describe( 'reducer', () => {
 
 		it( 'should store boolean nonceValid after validation', () => {
 			const actions = [
-				{
-					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-					success: true
-				},
-				{
-					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-					success: false
-				}
+				successfulSSOValidation,
+				falseSSOValidation
 			];
 
 			actions.forEach( ( action ) => {
@@ -228,6 +241,18 @@ describe( 'reducer', () => {
 				const state = jetpackSSO( undefined, originalAction );
 				expect( state ).to.have.property( 'nonceValid', originalAction.success );
 			} );
+		} );
+
+		it( 'should store blog details after successful validation', () => {
+			const successState = jetpackSSO( undefined, successfulSSOValidation );
+			expect( successState ).to.have.property( 'blogDetails' )
+				.to.be.eql( successfulSSOValidation.blogDetails );
+		} );
+
+		it( 'should store empty object in blog_details when validation is false', () => {
+			const failedState = jetpackSSO( undefined, falseSSOValidation );
+			expect( failedState ).to.have.property( 'blogDetails' )
+				.to.be.eql( {} );
 		} );
 
 		it( 'should set isAuthorizing to false after authorization', () => {
