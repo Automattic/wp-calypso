@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { isRequestingRecommendations, getRecommendationsInteractedWith } from 'state/reader/start/selectors';
+import { isRequestingRecommendations } from 'state/reader/start/selectors';
 import { requestRecommendations } from 'state/reader/start/actions';
 
 class QueryReaderStartRecommendations extends Component {
@@ -17,7 +17,7 @@ class QueryReaderStartRecommendations extends Component {
 			return;
 		}
 
-		this.props.requestRecommendations( this.props.recommendationsInteractedWith );
+		this.props.requestRecommendations();
 	}
 
 	render() {
@@ -37,8 +37,7 @@ QueryReaderStartRecommendations.defaultProps = {
 export default connect(
 	( state ) => {
 		return {
-			isRequestingRecommendations: isRequestingRecommendations( state ),
-			recommendationsInteractedWith: getRecommendationsInteractedWith( state )
+			isRequestingRecommendations: isRequestingRecommendations( state )
 		};
 	},
 	( dispatch ) => {
