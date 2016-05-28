@@ -73,6 +73,10 @@
 		}
 	}
 
+	.site-icon__img {
+		position: static; // Makes sure site icons show up on second column of column-count
+	}
+
 	.reader-start-card-footer {
 		margin-top: -25px;
 	}
