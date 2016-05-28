@@ -1,7 +1,17 @@
 /**
+ * External dependencies
+ */
+import includes from 'lodash/includes';
+import find from 'lodash/find';
+import map from 'lodash/map';
+import debugModule from 'debug';
+
+/**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+
+const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-unused-vars
 
 /**
  * Returns true if currently requesting recommendations.
@@ -21,7 +31,9 @@ export function isRequestingRecommendations( state ) {
  * @return {Object} Recommendation
  */
 export function getRecommendationById( state, recommendationId ) {
-	return state.reader.start.items[ recommendationId ];
+	return find( state.reader.start.items, ( item ) => {
+		return item.ID === recommendationId;
+	} );
 }
 
 /**
@@ -41,7 +53,7 @@ export function getRecommendations( state ) {
  * @return {Array} Recommendations IDs
  */
 export const getRecommendationIds = createSelector(
-	( state ) => Object.keys( state.reader.start.items ).map( Number ),
+	( state ) => map( state.reader.start.items, 'ID' ),
 	( state ) => [ state.reader.start.items ]
 );
 
@@ -52,5 +64,16 @@ export const getRecommendationIds = createSelector(
  * @return {Array} Recommendations
  */
 export function getRecommendationsInteractedWith( state ) {
-	return [];
+	return state.reader.start.recommendationsInteractedWith;
+}
+
+/**
+ * Has the user interacted with the specified recommendation?
+ *
+ * @param  {Object}  state  Global state tree
+ * @param {Integer} recommendationId Recommendation ID
+ * @return {Boolean} Has user interacted?
+ */
+export function hasInteractedWithRecommendation( state, recommendationId ) {
+	return includes( state.reader.start.recommendationsInteractedWith, recommendationId );
 }

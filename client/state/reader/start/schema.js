@@ -1,3 +1,3 @@
 export const itemsSchema = {
-	type: 'object'
+	type: 'array'
 };
