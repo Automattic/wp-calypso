@@ -1,0 +1,49 @@
+.post-card {
+	position: relative;
+	overflow: hidden;
+	min-height: 96px;
+}
+
+.post-card__site-info {
+	font-size: 13px;
+	color: $gray;
+	display: block;
+	white-space: nowrap;
+	margin-right: 108px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	.site-icon {
+		margin-right: 4px;
+		align-self: auto;
+		display: inline-block;
+		position: relative;
+			top: 4px;
+	}
+}
+
+.post-card__title {
+	overflow: hidden;
+	margin-top: 8px;
+}
+
+.post-card__anchor {
+	@extend %content-font;
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+	font-size: 18px;
+	font-weight: 600;
+	margin-right: 108px;
+	text-overflow: ellipsis;
+}
+
+.post-card__thumbnail {
+	position: absolute;
+		right: 24px;
+		top: 12px;
+	max-height: 72px;
+	max-width: 96px;
+	border: 1px solid $gray-light;
+	border-radius: 4px;
+}
