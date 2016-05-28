@@ -56,3 +56,17 @@ export const getGoogleAdCredits = ( state, site ) => {
 export const isRequestingSiteVouchers = ( state, siteId ) => {
 	return state.sites.vouchers.requesting[ siteId ] || false;
 };
+
+/**
+ * Return assign requesting state for the given site
+ * and serviceType
+ *
+ * @param {Object} state - current state object
+ * @param {Number} siteId - site identifier
+ * @param {String} serviceType - service type
+ * @return {Boolean} true if a voucher is being assigned
+ */
+export const isAssigningSiteVoucher = ( state, siteId, serviceType ) => {
+	const requesting = state.sites.vouchers.requesting[ siteId ];
+	return requesting ? requesting[ serviceType ] : false;
+};

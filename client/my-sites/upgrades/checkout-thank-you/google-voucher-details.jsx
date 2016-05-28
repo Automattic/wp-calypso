@@ -16,10 +16,13 @@ import Dialog from 'components/dialog';
 import googleTermsAndConditions from './google-voucher-TC';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 import {
+	assignSiteVoucher as assignVoucher
+} from 'state/sites/vouchers/actions';
+import { GOOGLE_AD_CREDITS } from 'state/sites/vouchers/service-types';
+import {
 	getVouchersBySite,
 	getGoogleAdCredits
 } from 'state/sites/vouchers/selectors';
-import wpcom from 'lib/wp';
 
 class GoogleVoucherDetails extends Component {
 	constructor() {
@@ -37,10 +40,12 @@ class GoogleVoucherDetails extends Component {
 		this.onDialogCancel = this.onDialogCancel.bind( this );
 		this.onAgreeButton = this.onAgreeButton.bind( this );
 
+		/*
 		const voucher = this.getVoucher();
 		if ( voucher && voucher.status === 'assigned' ) {
 			this.setState( { step: 2 } );
 		}
+		*/
 	}
 
 	onButtonClick() {
@@ -55,10 +60,13 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	onAgreeButton() {
-		wpcom
-		.site( this.props.selectedSite.ID )
-		.adCreditVouchers( 'google-ad-credits' )
-		.assign();
+		const voucher = this.getVoucher();
+		this.props.assignVoucher( this.props.selectedSite.ID, GOOGLE_AD_CREDITS );
+
+		this.setState( {
+			showTermsAndConditions: false,
+			step: 2
+		} );
 	}
 
 	incrementStep() {
@@ -127,7 +135,9 @@ class GoogleVoucherDetails extends Component {
 		const { code } = this.getVoucher();
 		return (
 			<div className="purchase-detail__body">
-				<ClipboardButtonInput value={ code } />
+				<ClipboardButtonInput
+					value={ code }
+					disabled= { ! code } />
 
 				<div className="purchase-detail__google-voucher-code">
 					<p className="form-setting-explanation"
@@ -143,7 +153,8 @@ class GoogleVoucherDetails extends Component {
 					</p>
 
 					<PurchaseButton
-						onClick={ this.onButtonClick }
+						href="https://www.google.com/adwords/"
+						target="_blank"
 						text={ i18n.translate( 'Setup Google AdWords' ) } />
 
 				</div>
@@ -210,5 +221,6 @@ export default connect(
 			vouchers: getVouchersBySite( state, site ),
 			googleAdCredits: getGoogleAdCredits( state, site )
 		};
-	}
+	},
+	{ assignVoucher }
 )( GoogleVoucherDetails );
