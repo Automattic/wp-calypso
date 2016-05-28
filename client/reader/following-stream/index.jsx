@@ -31,7 +31,7 @@ var Main = require( 'components/main' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	scrollTo = require( 'lib/scroll-to' ),
 	XPostHelper = require( 'reader/xpost-helper' ),
-	noticeMixin = require( 'lib/mixins/notice' );
+	noticeMixin = require( 'lib/mixins/notice' ).default;
 
 const GUESSED_POST_HEIGHT = 600,
 	HEADER_OFFSET_TOP = 46;
