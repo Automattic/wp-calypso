@@ -10,7 +10,7 @@ import { numberFormat } from 'lib/mixins/i18n';
 const StartCardFooter = ( { site } ) => {
 	const subscribersCount = numberFormat( site.subscribers_count );
 	return (
-		<footer>
+		<footer className="reader-start-card-footer">
 			<div className="reader-start-card__follower-count">{ subscribersCount } followers</div>
 			<FollowButton siteUrl={ site.URL } />
 		</footer>

@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import debugModule from 'debug';
 import get from 'lodash/get';
+import classnames from 'classnames';
 
 // Internal dependencies
 import Card from 'components/card';
@@ -24,8 +25,15 @@ const StartCard = ( { site, siteId, postId } ) => {
 		};
 	}
 
+	const cardClasses = classnames(
+		'reader-start-card',
+		{
+			'has-post-preview': ( postId > 0 )
+		}
+	);
+
 	return (
-		<Card className="reader-start-card">
+		<Card className={ cardClasses }>
 			<div className="reader-start-card__hero" style={ heroStyle }></div>
 			<StartCardHeader siteId={ siteId } />
 			{ postId > 0 && <StartPostPreview siteId={ siteId } postId={ postId } /> }
