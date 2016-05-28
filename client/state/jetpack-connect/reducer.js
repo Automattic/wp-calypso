@@ -148,7 +148,12 @@ export function jetpackSSO( state = {}, action ) {
 		case JETPACK_CONNECT_SSO_VALIDATION_REQUEST:
 			return Object.assign( state, { isValidating: true } );
 		case JETPACK_CONNECT_SSO_VALIDATION_SUCCESS:
-			return Object. assign( state, { isValidating: false, validationError: false, nonceValid: action.success } );
+			return Object. assign( state, {
+				isValidating: false,
+				validationError: false,
+				nonceValid: action.success,
+				blogDetails: action.blogDetails
+			} );
 		case JETPACK_CONNECT_SSO_VALIDATION_ERROR:
 			return Object. assign( state, { isValidating: false, validationError: action.error, nonceValid: false } );
 		case JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST:

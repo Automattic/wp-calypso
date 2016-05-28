@@ -288,7 +288,8 @@ export default {
 			return wpcom.undocumented().jetpackValidateSSONonce( siteId, ssoNonce ).then( ( data ) => {
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-					success: data.success
+					success: data.success,
+					blogDetails: data.blog_details
 				} );
 			} ).catch( ( error ) => {
 				dispatch( {
