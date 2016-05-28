@@ -122,7 +122,7 @@ module.exports = React.createClass( {
 	showNotice: function( count ) {
 		let countString = count >= 40 ? '40+' : ( '' + count );
 
-		this.updateNotice(
+		this.notices.update(
 			this.translate( '%s new post', '%s new posts', { args: [ countString ], count: count } ),
 			{
 				id: READER_STREAM_NOTICE_ID,
@@ -133,7 +133,7 @@ module.exports = React.createClass( {
 	},
 
 	hideNotice: function() {
-		this.removeNotice( READER_STREAM_NOTICE_ID );
+		this.notices.removeNotice( READER_STREAM_NOTICE_ID );
 	},
 
 	_popstate: function() {
