@@ -111,9 +111,9 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 }
 
 export function recordTrainTrackInteract( action, post = {} ) {
-	if ( typeof( post.railcar ) !== 'undefined' ) {
+	if ( post.railcar ) {
 		recordTrack( 'calypso_traintracks_interact', {
-			action: 'article_opened',
+			action: action,
 			railcar: post.railcar
 		} );
 	}

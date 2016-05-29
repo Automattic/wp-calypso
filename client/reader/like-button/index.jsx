@@ -1,5 +1,5 @@
 var React = require( 'react' );
-var postStream = require( 'lib/feed-post-store' );
+var postStore = require( 'lib/feed-post-store' );
 
 var LikeButtonContainer = require( 'components/like-button' ),
 	stats = require( 'reader/stats' );
@@ -7,7 +7,7 @@ var LikeButtonContainer = require( 'components/like-button' ),
 var ReaderLikeButton = React.createClass( {
 
 	recordLikeToggle: function( liked ) {
-		var post = postStream.get( {
+		var post = postStore.get( {
 			blogId: this.props.siteId,
 			postId: this.props.postId
 		} );

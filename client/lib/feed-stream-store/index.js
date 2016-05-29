@@ -7,6 +7,7 @@ var config = require( 'config' ),
 	PagedStream = require( './paged-stream' ),
 	FeedStreamCache = require( './feed-stream-cache' ),
 	analytics = require( 'lib/analytics'),
+	forEach = require( 'lodash/forEach' ),
 	wpcomUndoc = require( 'lib/wp' ).undocumented();
 
 function feedKeyMaker( post ) {
@@ -153,26 +154,24 @@ function getStoreForFeatured( storeId ) {
 
 function getStoreForRecommendedPosts( storeId ) {
 	var fetcher = function( query, callback ) {
-			function trainTracksProxy( err, response ) {
-				var eventName= 'calypso_traintracks_render',
-					eventProperties = {};
-				if ( response && response.posts ) {
-					for ( var i=0; i < response.posts.length; i++ ) {
-						let railcar = analytics.tracks.createRandId() + "-" + i;
-						eventProperties = {
-							railcar: railcar,
-							ui_algo: 'warm-start-v1',
-							ui_position: query.offset + i,
-							fetch_algo: response.algorithm,
-							fetch_position: query.offset + i
-						};
-						response.posts[i].railcar = railcar;
-						analytics.tracks.recordEvent( eventName, eventProperties );
-					}
-				}
-				callback( err, response );
-			}
-			wpcomUndoc.readRecommendedPosts( query, trainTracksProxy );
+		function trainTracksProxy( err, response ) {
+			var eventName= 'calypso_traintracks_render',
+				eventProperties = {};
+			forEach ( response && response.posts, ( post, index ) => {
+				let railcar = analytics.tracks.createRandomId() + "-" + index;
+				eventProperties = {
+					railcar: railcar,
+					ui_algo: 'warm-start-v1',
+					ui_position: query.offset + index,
+					fetch_algo: response.algorithm,
+					fetch_position: query.offset + index
+				};
+				post.railcar = railcar;
+				analytics.tracks.recordEvent( eventName, eventProperties );
+			} );
+			callback( err, response );
+		}
+		wpcomUndoc.readRecommendedPosts( query, trainTracksProxy );
 	};
 
 	return new PagedStream( {
