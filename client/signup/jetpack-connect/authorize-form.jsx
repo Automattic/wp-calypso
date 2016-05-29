@@ -23,6 +23,7 @@ import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 import i18n from 'lib/mixins/i18n';
 import Gridicon from 'components/gridicon';
@@ -39,6 +40,34 @@ const PLANS_PAGE = '/jetpack/connect/plans/';
 const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + process.env.NODE_ENV;
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 
+const SiteCard = React.createClass( {
+	render() {
+		const { site_icon } = this.props.queryObject;
+		const style = {
+			height: 32,
+			width: 32,
+			lineHeight: '32px',
+			fontSize: '32px'
+		};
+		const icon = ( site_icon )
+			? <img className="site-icon__img" src={ site_icon } />
+			: <Gridicon icon="globe" size={ Math.round( 32 / 1.3 ) } />;
+		return(
+			<CompactCard>
+				<div className="site">
+					<div className="site-icon" style={ style }>
+						{ icon }
+					</div>
+					<div className="site__info">
+						<div className="site__title">{ this.props.queryObject.blogname }</div>
+						<div className="site__domain">{ this.props.queryObject.home_url }</div>
+					</div>
+				</div>
+			</CompactCard>
+		);
+	}
+} );
+
 const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
 
@@ -46,12 +75,10 @@ const LoggedOutForm = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
 	},
 
-	renderFormHeader( siteUrl ) {
+	renderFormHeader() {
 		const headerText = i18n.translate( 'Create your account' );
-		const subHeaderText = i18n.translate( 'You are moments away from connecting {{span}}%(site)s{{/span}}', {
-			args: { site: siteUrl },
-			components: { span: <span className="jetpack-connect-authorize__site-url" /> }
-		} );
+		const subHeaderText = i18n.translate( 'You are moments away from connecting your site.' );
+		const { queryObject } = this.props.jetpackConnectAuthorize;
 
 		return(
 			<div>
@@ -59,6 +86,7 @@ const LoggedOutForm = React.createClass( {
 					showLogo={ false }
 					headerText={ headerText }
 					subHeaderText={ subHeaderText } />
+				<SiteCard queryObject={ queryObject } />
 			</div>
 		);
 	},
@@ -107,11 +135,10 @@ const LoggedOutForm = React.createClass( {
 
 	render() {
 		const { userData } = this.props.jetpackConnectAuthorize;
-		const { site } = this.props.jetpackConnectAuthorize.queryObject;
 		return (
 			<div>
 				{ this.renderLocaleSuggestions() }
-				{ this.renderFormHeader( site ) }
+				{ this.renderFormHeader() }
 				<SignupForm
 					getRedirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.isSubmitting() }
@@ -154,15 +181,14 @@ const LoggedInForm = React.createClass( {
 		}
 	},
 
-	renderFormHeader( siteUrl, isConnected ) {
+	renderFormHeader( isConnected ) {
+		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const headerText = ( isConnected )
 			? i18n.translate( 'You are connected!' )
 			: i18n.translate( 'Completing connection' );
 		const subHeaderText = ( isConnected )
 			? i18n.translate( 'Thank you for flying with Jetpack' )
-			: i18n.translate( 'Jetpack is finishing up the connection process', {
-				args: { site: siteUrl }
-			} );
+			: i18n.translate( 'Jetpack is finishing up the connection process' );
 
 		return(
 			<div>
@@ -170,6 +196,7 @@ const LoggedInForm = React.createClass( {
 					showLogo={ false }
 					headerText={ headerText }
 					subHeaderText={ subHeaderText } />
+				<SiteCard queryObject={ queryObject } />
 			</div>
 		);
 	},
@@ -347,10 +374,9 @@ const LoggedInForm = React.createClass( {
 
 	render() {
 		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
-		const { site } = this.props.jetpackConnectAuthorize.queryObject;
 		return (
 			<div className="jetpack-connect-logged-in-form">
-				{ this.renderFormHeader( site, authorizeSuccess ) }
+				{ this.renderFormHeader( authorizeSuccess ) }
 				<Card>
 					<Gravatar user={ this.props.user } size={ 64 } />
 					<p className="jetpack-connect-logged-in-form__user-text">{ this.getUserText() }</p>
