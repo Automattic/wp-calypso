@@ -6,6 +6,7 @@ var config = require( 'config' ),
 	FeedStream = require( './feed-stream' ),
 	PagedStream = require( './paged-stream' ),
 	FeedStreamCache = require( './feed-stream-cache' ),
+	analytics = require( 'lib/analytics'),
 	wpcomUndoc = require( 'lib/wp' ).undocumented();
 
 function feedKeyMaker( post ) {
@@ -152,8 +153,27 @@ function getStoreForFeatured( storeId ) {
 
 function getStoreForRecommendedPosts( storeId ) {
 	var fetcher = function( query, callback ) {
-			wpcomUndoc.readRecommendedPosts( query, callback );
-		};
+			function trainTracksProxy( err, response ) {
+				var eventName= 'calypso_traintracks_render',
+					eventProperties = {};
+				if ( response && response.posts ) {
+					for ( var i=0; i < response.posts.length; i++ ) {
+						let railcar = analytics.tracks.createRandId() + "-" + i;
+						eventProperties = {
+							railcar: railcar,
+							ui_algo: 'warm-start-v1',
+							ui_position: query.offset + i,
+							fetch_algo: response.algorithm,
+							fetch_position: query.offset + i
+						};
+						response.posts[i].railcar = railcar;
+						analytics.tracks.recordEvent( eventName, eventProperties );
+					}
+				}
+				callback( err, response );
+			}
+			wpcomUndoc.readRecommendedPosts( query, trainTracksProxy );
+	};
 
 	return new PagedStream( {
 		id: storeId,

@@ -19,6 +19,7 @@ import {
 import {
 	recordAction,
 	recordGaEvent,
+	recordTrainTrackInteract,
 	recordTrack
 } from 'reader/stats';
 
@@ -135,6 +136,7 @@ class PostCommentForm extends React.Component {
 			post_id: post.ID,
 			parent_post_id: this.props.parentCommentID ? this.props.parentCommentID : undefined
 		} );
+		recordTrainTrackInteract( 'article_commented_on', post );
 
 		this.resetCommentText();
 
