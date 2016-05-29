@@ -1136,6 +1136,12 @@ Undocumented.prototype.readSitePost = function( query, fn ) {
 	this.wpcom.req.get( '/read/sites/' + query.site + '/posts/' + query.postId, params, fn );
 };
 
+Undocumented.prototype.readSitePostRelated = function( query, fn ) {
+	debug( '/read/site/:site/post/:post/related' );
+	query.apiVersion = '1.2';
+	this.wpcom.req.get( '/read/site/' + query.site_id + '/post/' + query.post_id + '/related', query, fn );
+};
+
 Undocumented.prototype.fetchSiteRecommendations = function( query, fn ) {
 	this.wpcom.req.get( '/read/recommendations/mine', query, fn );
 };
