@@ -149,7 +149,24 @@ var analytics = {
 			analytics.tracks.recordEvent( 'calypso_page_view', {
 				'path': urlPath
 			} );
+		},
+
+		createRandId:  function() {
+			var randomBytesLength = 9, // 9 * 4/3 = 12
+					randomBytes = [];
+
+			if ( window.crypto && window.crypto.getRandomValues ) {
+				randomBytes = new Uint8Array( randomBytesLength );
+				window.crypto.getRandomValues( randomBytes );
+			} else {
+				for ( var i = 0; i < randomBytesLength; ++i ) {
+					randomBytes[ i ] = Math.floor( Math.random() * 256 );
+				}
+			}
+
+			return btoa( String.fromCharCode.apply( String, randomBytes ) );
 		}
+
 	},
 
 	statsd: {

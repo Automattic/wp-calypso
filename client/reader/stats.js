@@ -110,6 +110,15 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 	}, additionalProps ) );
 }
 
+export function recordTrainTrackInteract( action, post = {} ) {
+	if ( typeof( post.railcar ) !== 'undefined' ) {
+		recordTrack( 'calypso_traintracks_interact', {
+			action: 'article_opened',
+			railcar: post.railcar
+		} );
+	}
+}
+
 export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 	let params = {
 		ref: 'http://wordpress.com/',
