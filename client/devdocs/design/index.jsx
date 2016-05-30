@@ -83,14 +83,14 @@ let DesignAssets = React.createClass( {
 		const { componentsUsageStats = {} } = this.props;
 
 		const getUsageStats = ( Component, options = { folder: false, compact: false } ) => {
-			let componentName	= toCamelCase((
+			let componentName	= toCamelCase( (
 				Component.displayName || Component.name || ''
-			).replace( /^(Localized|Compact)/ , ''));
+			).replace( /^(Localized|Compact)/ , '' ) );
 
 			if ( componentName && options.folder ) {
 				const camelCasedFolder = options.folder
 					.split( '/' )
-					.filter(Boolean)
+					.filter( Boolean )
 					.map( part => toCamelCase( part ) )
 					.join( '/' );
 				componentName = `${camelCasedFolder}/${componentName}`;

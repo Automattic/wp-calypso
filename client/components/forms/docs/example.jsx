@@ -59,7 +59,7 @@ var FormFields = React.createClass( {
 		this.setState( { compactToggled: ! this.state.compactToggled } );
 	},
 
-	getUsageStats: function ( Component, isCompact = false ) {
+	getUsageStats: function( Component, isCompact = false ) {
 		const options = { folder: 'forms', compact: isCompact };
 		return this.props.getUsageStats( Component, options ).count || 0;
 	},

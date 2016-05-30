@@ -19,7 +19,7 @@ module.exports = React.createClass( {
 	getInitialState() {
 		return {
 			compact: false
-		}
+		};
 	},
 
 	toggleCompact() {

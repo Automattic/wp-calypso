@@ -7,7 +7,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
-import DocsExample, { DocsExampleStats } from 'components/docs-example';
+import DocsExample from 'components/docs-example';
 import PostSchedule from 'components/post-schedule';
 import TimezoneDropdown from 'components/timezone-dropdown';
 import Gridicon from 'components/gridicon';

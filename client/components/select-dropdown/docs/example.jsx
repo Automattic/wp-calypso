@@ -44,8 +44,6 @@ var SelectDropdownDemo = React.createClass( {
 	},
 
 	render: function() {
-		var toggleButtonsText = this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons';
-
 		return (
 			<DocsExample
 				title="Select Dropdown"
