@@ -40,26 +40,6 @@ function sortSteps( progressSteps ) {
 module.exports = React.createClass( {
 	displayName: 'SignupProcessingScreen',
 
-	showStep: function( step, index ) {
-		var classes = classNames( {
-			'signup__processing': true,
-			'is-pending': step.status === 'pending',
-			'is-processing': step.status === 'processing',
-			'is-complete': step.status === 'completed'
-		} );
-
-		if ( ! step.processingMessage ) {
-			return null;
-		}
-
-		return (
-			<div className={ classes } key={ index }>
-				{ step.processingMessage }
-			</div>
-		);
-	},
-
-
 	renderConfirmationNotice: function() {
 		if ( this.props.user && this.props.user.email_verified ) {
 			return;
