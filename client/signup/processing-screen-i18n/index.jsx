@@ -18,24 +18,6 @@ var React = require( 'react' ),
  */
 var steps = require( 'signup/config/steps' );
 
-/**
- * Sorts the given steps in the roughly the order they will be processed.
- */
-function sortSteps( progressSteps ) {
-	var canonicalSteps = pick( steps, map( progressSteps, 'stepName' ) ),
-		stepWithToken = find( canonicalSteps, { providesToken: true } ) || [],
-		stepsWithoutDependencies = reject( canonicalSteps, function( step ) {
-			return step.dependencies || step.providesToken;
-		} ),
-		stepsWithDependencies = filter( canonicalSteps, function( step ) {
-			return step.dependencies && ! step.providesToken;
-		} );
-
-	return map( flatten( [ stepWithToken, stepsWithoutDependencies, stepsWithDependencies ] ), function( step ) {
-		return find( progressSteps, { stepName: step.stepName } );
-	} );
-}
-
 module.exports = React.createClass( {
 	displayName: 'SignupProcessingScreen',
 
