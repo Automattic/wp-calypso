@@ -54,14 +54,6 @@ module.exports = {
 		},
 		defaultVariation: 'namegen'
 	},
-	nudges: {
-		datestamp: '20160519',
-		variations: {
-			showAll: 60,
-			hideAll: 40
-		},
-		defaultVariation: 'showAll'
-	},
 	guidedTours: {
 		datestamp: '20160428',
 		variations: {
