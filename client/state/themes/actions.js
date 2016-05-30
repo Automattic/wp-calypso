@@ -18,7 +18,6 @@ import {
 	THEME_ACTIVATED,
 	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
-	THEME_CUSTOMIZE,
 	THEME_DETAILS_RECEIVE,
 	THEME_DETAILS_RECEIVE_FAILURE,
 	THEME_PURCHASE,
@@ -30,7 +29,6 @@ import {
 	THEMES_RECEIVE,
 	THEMES_RECEIVE_SERVER_ERROR,
 } from '../action-types';
-import { getCustomizeUrl, navigateTo } from 'my-sites/themes/helpers';
 import { getCurrentTheme } from './current-theme/selectors';
 import {
 	recordTracksEvent,
@@ -243,19 +241,6 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 export function clearActivated() {
 	return {
 		type: THEME_CLEAR_ACTIVATED
-	};
-}
-
-export function customize( theme, site ) {
-	return dispatch => {
-		const customizeUrl = getCustomizeUrl( theme, site );
-
-		dispatch( {
-			type: THEME_CUSTOMIZE,
-			site: site.id
-		} );
-
-		navigateTo( customizeUrl, site.jetpack );
 	};
 }
 
