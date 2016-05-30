@@ -47,6 +47,11 @@ function registerServiceWorker( serviceWorkerRegistration ) {
 		if ( ! subscription ) {
 			debug( 'Permission not yet granted' );
 			this.setState( 'unsubscribed' );
+			if ( store.get( 'push-subscription-intent' ) ) {
+				// If the user has shown the intent to subscribe, we should attempt to subscribe them.
+				debug( 'Attempting to subscribe based on user-intent...' );
+				this.subscribe();
+			}
 			return;
 		}
 
@@ -144,10 +149,20 @@ PushNotifications.prototype.saveSubscription = function( subscription ) {
 PushNotifications.prototype.subscribe = function( callback ) {
 	debug( 'Triggering browser UI for permission' );
 	if ( 'serviceWorker' in window.navigator ) {
+		// We store the user's intent to subscribe, so that, in the event they deny the subscription
+		// and later attempt to correct that, we can autosubscribe
+		store.set( 'push-subscription-intent', true );
 		window.navigator.serviceWorker.ready.then( ( serviceWorkerRegistration ) => {
 			serviceWorkerRegistration.pushManager.subscribe( { userVisibleOnly: true } ).then( ( subscription ) => {
-				this.setState( 'subscribed', callback );
-				this.saveSubscription( subscription );
+				serviceWorkerRegistration.pushManager.permissionState( { userVisibleOnly: true } ).then( ( pushMessagingState ) => {
+					if ( 'granted' === pushMessagingState ) {
+						this.setState( 'subscribed', callback );
+						this.saveSubscription( subscription );
+					} else if ( 'prompt' === pushMessagingState ) {
+						this.setState( 'unsubscribed', callback );
+						this.unsubscribe( callback );
+					}
+				} );
 			} ).catch( ( err ) => {
 				if ( 'denied' === window.Notification.permission ) {
 					debug( 'Permission denied' );
@@ -163,6 +178,7 @@ PushNotifications.prototype.subscribe = function( callback ) {
 
 PushNotifications.prototype.unsubscribe = function( callback ) {
 	if ( 'serviceWorker' in window.navigator ) {
+		store.remove( 'push-subscription-intent' );
 		window.navigator.serviceWorker.ready.then( ( serviceWorkerRegistration ) => {
 			serviceWorkerRegistration.pushManager.getSubscription().then( ( pushSubscription ) => {
 				if ( ! pushSubscription ) {

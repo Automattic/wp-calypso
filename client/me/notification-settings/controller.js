@@ -12,11 +12,13 @@ import userSettings from 'lib/user-settings';
 import titleActions from 'lib/screen-title/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import devicesFactory from 'lib/devices';
+import pushNotificationsFactory from 'lib/push-notifications';
 import sitesFactory from 'lib/sites-list';
 import userFactory from 'lib/user';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 const devices = devicesFactory();
+const pushNotifications = pushNotificationsFactory();
 const sites = sitesFactory();
 const user = userFactory();
 
@@ -35,6 +37,7 @@ export default {
 				userSettings: userSettings,
 				blogs: sites,
 				devices: devices,
+				pushNotifications: pushNotifications,
 				path: context.path
 			} ),
 			document.getElementById( 'primary' ),

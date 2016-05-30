@@ -14,6 +14,7 @@ import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from './navigation';
 import BlogsSettings from './blogs-settings';
+import PushNotificationSettings from './push-notification-settings';
 import store from 'lib/notification-settings-store';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
 import { connect } from 'react-redux';
@@ -22,7 +23,7 @@ import { bindActionCreators } from 'redux';
 const NotificationSettings = React.createClass( {
 	displayName: 'NotificationSettings',
 
-	mixins: [ observe( 'sites', 'devices' ) ],
+	mixins: [ observe( 'sites', 'devices', 'pushNotifications' ) ],
 
 	getInitialState() {
 		return {
@@ -63,6 +64,7 @@ const NotificationSettings = React.createClass( {
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<Navigation path={ this.props.path } />
+				<PushNotificationSettings pushNotifications={ this.props.pushNotifications } />
 				<BlogsSettings
 					blogs={ this.props.blogs }
 					devices={ this.props.devices }
