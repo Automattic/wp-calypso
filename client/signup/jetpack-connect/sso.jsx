@@ -18,7 +18,6 @@ import Gravatar from 'components/gravatar';
 import Button from 'components/button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import { errorNotice } from 'state/notices/actions';
 import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
 import addQueryArgs from 'lib/route/add-query-args';
 import config from 'config';
@@ -62,10 +61,14 @@ const JetpackSSOForm = React.createClass( {
 		this.props.authorizeSSO( siteId, ssoNonce );
 	},
 
-	onCancelClick( event ) {
-		event.preventDefault();
+	onCancelClick() {
 		debug( 'Clicked return to site link' );
-		this.props.errorNotice( 'Jetpack SSO is currently in development.' );
+
+		// If, for some reason, the API request failed and we do not have the admin URL,
+		// then fallback to the user's last location.
+		if ( ! get( this.props, 'blogDetails.admin_url' ) ) {
+			window.history.back();
+		}
 	},
 
 	isButtonDisabled() {
@@ -116,8 +119,14 @@ const JetpackSSOForm = React.createClass( {
 			<Main className="jetpack-connect">
 				<div className="jetpack-connect__sso">
 					<ConnectHeader
-						headerText="Connect with WordPress.com"
-						subHeaderText="To use Single Sign-On, WordPress.com needs to be able to connect to your account on {$site}"
+						headerText={ this.translate( 'Connect with WordPress.com' ) }
+						subHeaderText={ this.translate(
+							'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s', {
+								args: {
+									siteName: get( this.props, 'blogDetails.title' )
+								}
+							}
+						) }
 					/>
 
 					<Card>
@@ -150,10 +159,13 @@ const JetpackSSOForm = React.createClass( {
 					</Card>
 
 					<LoggedOutFormLinks>
-						<LoggedOutFormLinkItem onClick={ this.onCancelClick } >
+						<LoggedOutFormLinkItem
+							rel="external"
+							href={ get( this.props, 'blogDetails.admin_url', null ) }
+							onClick={ this.onCancelClick }>
 							{ this.translate( 'Return to %(siteName)s', {
 								args: {
-									siteName: '{$site}'
+									siteName: get( this.props, 'blogDetails.title' )
 								}
 							} ) }
 						</LoggedOutFormLinkItem>
@@ -176,7 +188,8 @@ export default connect(
 			nonceValid: get( jetpackSSO, 'nonceValid' ),
 			authorizationError: get( jetpackSSO, 'authorizationError' ),
 			validationError: get( jetpackSSO, 'validationError' ),
+			blogDetails: get( jetpackSSO, 'blogDetails' )
 		};
 	},
-	dispatch => bindActionCreators( { errorNotice, authorizeSSO, validateSSONonce }, dispatch )
+	dispatch => bindActionCreators( { authorizeSSO, validateSSONonce }, dispatch )
 )( JetpackSSOForm );
