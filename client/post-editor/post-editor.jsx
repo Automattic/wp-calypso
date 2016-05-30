@@ -21,6 +21,7 @@ const actions = require( 'lib/posts/actions' ),
 	EditorDrawer = require( 'post-editor/editor-drawer' ),
 	FeaturedImage = require( 'post-editor/editor-featured-image' ),
 	EditorGroundControl = require( 'post-editor/editor-ground-control' ),
+	EditorGroundControlI18n = require( 'post-editor/editor-ground-control.i18n' ), // temporary for i18n tools to pick up
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
 	NoticeAction = require( 'components/notice/notice-action' ),
@@ -42,7 +43,8 @@ const actions = require( 'lib/posts/actions' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	EditorPreview = require( './editor-preview' ),
 	stats = require( 'lib/posts/stats' ),
-	analytics = require( 'lib/analytics' );
+	analytics = require( 'lib/analytics' ),
+	VerifyEmailDialogI18n = require( 'post-editor/verify-email-dialog.i18n' ); // temporary for i18n tools to pick up
 
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible } from 'state/ui/editor/selectors';
