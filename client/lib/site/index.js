@@ -14,7 +14,8 @@ var wpcom = require( 'lib/wp' ),
 	config = require( 'config' ),
 	notices = require( 'notices' ),
 	Emitter = require( 'lib/mixins/emitter' ),
-	isHttps = require( 'lib/url' ).isHttps;
+	isHttps = require( 'lib/url' ).isHttps,
+	sitesSchema = require( 'state/sites/schema' ).sitesSchema;
 
 function Site( attributes ) {
 	if ( ! ( this instanceof Site ) ) {
@@ -61,6 +62,13 @@ Site.prototype.attributes = function( attributes ) {
 	this.updateComputedAttributes();
 };
 
+/**
+ * Updates one or many site's attributes. Won't remove current attributes if they are not
+ * present in the new ones. Use Site.prototype.replace if you want to remove them.
+ *
+ * @param {object} attributes - New attributes for a site.
+ * @returns {boolean} - Returns true if attributes changed, otherwise false.
+ */
 Site.prototype.set = function( attributes ) {
 	var changed = false;
 
@@ -78,7 +86,39 @@ Site.prototype.set = function( attributes ) {
 	}
 
 	return changed;
+};
 
+/**
+ * Replaces all site's attributes. Will remove current attributes if they are not present in the
+ * new ones. Use Site.prototype.set if you want to update one or few attributes instead.
+ *
+ * @param {object} attributes - New attributes for a site.
+ * @returns {boolean} - Returns true if attributes changed, otherwise false.
+ */
+Site.prototype.replace = function( attributes ) {
+	const siteKeys = Object.keys( sitesSchema.patternProperties[ '^\\d+$' ].properties );
+
+	let changed = false;
+
+	siteKeys.forEach( siteKey => {
+		if ( attributes.hasOwnProperty( siteKey ) && ! isEqual( attributes[ siteKey ], this[ siteKey ] ) ) {
+			this[ siteKey ] = attributes[ siteKey ];
+
+			changed = true;
+		} else if ( ! attributes.hasOwnProperty( siteKey ) && siteKey in this ) {
+			delete this[ siteKey ];
+
+			changed = true;
+		}
+	} );
+
+	this.updateComputedAttributes();
+
+	if ( changed ) {
+		this.emit( 'change' );
+	}
+
+	return changed;
 };
 
 /**
