@@ -59,10 +59,6 @@
 	}
 }
 
-.exporter__option-fieldset-select:disabled {
-	color: lighten( $gray, 10% );
-}
-
 // The following specificity is required to override the form-label selector:
 // .form-label input[type="checkbox"] + span { font-weight: normal }
 .exporter__option-fieldset-legend .exporter__option-fieldset-legend-text {
