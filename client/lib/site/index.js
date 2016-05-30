@@ -121,6 +121,10 @@ Site.prototype.updateComputedAttributes = function() {
 		! this.is_vip &&
 		isHttps( this.options.unmapped_url )
 	);
+	this.is_customizable = !! (
+		this.capabilities &&
+		this.capabilities.edit_theme_options
+	);
 };
 
 /**
