@@ -129,24 +129,22 @@ class PostCommentList extends React.Component {
 		return commentIds.reduce( ( prevSum, commentId ) => prevSum + this.getCommentsCount( this.props.commentsTree.getIn( [ commentId, 'children' ] ) ) + 1, 0 );
 	}
 
+	/***
+	 * Gets comments for display
+	 * @param {Immutable.List<Number>} commentIds The top level commentIds to take from
+	 * @param {Number} take How many top level comments to take
+	 * @returns {Object} that has the displayed comments + total displayed count including children
+	 */
 	getDisplayedComments( commentIds, take ) {
 		if ( ! commentIds ) {
 			return null;
 		}
 
-		let foundComments = 0;
-
-		const displayedComments = commentIds.takeWhile( ( val ) => {
-			const keepGoing = foundComments < take;
-			if ( keepGoing ) {
-				foundComments += this.getCommentsCount( [ val ] );
-			}
-			return keepGoing;
-		} );
+		const displayedComments = commentIds.take( take );
 
 		return {
 			displayedComments: displayedComments,
-			displayedCommentsCount: foundComments
+			displayedCommentsCount: this.getCommentsCount( displayedComments )
 		};
 	}
 
@@ -154,10 +152,7 @@ class PostCommentList extends React.Component {
 		const siteId = this.props.post.site_ID;
 		const postId = this.props.post.ID;
 
-		let amountOfCommentsToTake = Math.min(
-			this.state.amountOfCommentsToTake + this.props.pageSize,
-			this.props.commentsTree.get( 'children' ).size
-		);
+		const amountOfCommentsToTake = this.state.amountOfCommentsToTake + this.props.pageSize;
 
 		this.setState( {
 			amountOfCommentsToTake
