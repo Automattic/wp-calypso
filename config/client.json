@@ -1,5 +1,6 @@
 [
   "env",
+  "env_id",
   "client_slug",
   "hostname",
   "wpcom_user_bootstrap",

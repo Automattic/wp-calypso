@@ -1,5 +1,6 @@
 {
 	"env": "production",
+	"env_id": "desktop-mac-app-store",
 	"client_slug": "mac-app-store",
 	"hostname": "127.0.0.1",
 	"i18n_default_locale_slug": "en",
