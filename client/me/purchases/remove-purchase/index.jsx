@@ -12,7 +12,7 @@ import Dialog from 'components/dialog';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { getPurchase, isDataLoading } from '../utils';
 import Gridicon from 'components/gridicon';
-import { isDomainRegistration, isPlan } from 'lib/products-values';
+import { isDomainRegistration, isPlan, isGoogleApps } from 'lib/products-values';
 import notices from 'notices';
 import purchasePaths from '../paths';
 import { removePurchase } from 'lib/upgrades/actions';
@@ -168,9 +168,14 @@ const RemovePurchase = React.createClass( {
 						} )
 					}
 					{ ' ' }
-					{ this.translate( 'You will not be able to reuse it again without purchasing a new subscription.', {
-						comment: "'it' refers to a product purchased by a user"
-					} ) }
+					{ isGoogleApps( purchase )
+						? this.translate( 'Your Google Apps account will continue working without interruption. ' +
+						'You will be able to manage your Google Apps billing directly through Google.'
+					)
+						: this.translate( 'You will not be able to reuse it again without purchasing a new subscription.', {
+							comment: "'it' refers to a product purchased by a user"
+						} )
+					}
 				</p>
 
 				{ includedDomainText }
