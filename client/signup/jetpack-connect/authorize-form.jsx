@@ -31,6 +31,7 @@ import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSiteByUrl } from 'state/sites/selectors';
 import Spinner from 'components/spinner';
+import { decodeEntities } from 'lib/formatting';
 
 /**
  * Constants
@@ -59,8 +60,8 @@ const SiteCard = React.createClass( {
 						{ icon }
 					</div>
 					<div className="site__info">
-						<div className="site__title">{ this.props.queryObject.blogname }</div>
-						<div className="site__domain">{ this.props.queryObject.home_url }</div>
+						<div className="site__title">{ decodeEntities( this.props.queryObject.blogname ) }</div>
+						<div className="site__domain">{ decodeEntities( this.props.queryObject.home_url ) }</div>
 					</div>
 				</div>
 			</CompactCard>
