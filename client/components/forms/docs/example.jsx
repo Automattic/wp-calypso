@@ -145,6 +145,13 @@ var FormFields = React.createClass( {
 							<option>3</option>
 							<option>4</option>
 						</FormSelect>
+						<FormSelect id="select-disabled" disabled>
+							<option>Disabled</option>
+						</FormSelect>
+						<br />
+						<FormSelect id="select-error" className="is-error">
+							<option>Error</option>
+						</FormSelect>
 					</FormFieldset>
 
 					<FormFieldset>
