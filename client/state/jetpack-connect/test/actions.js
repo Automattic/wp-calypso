@@ -36,6 +36,17 @@ describe( 'actions', () => {
 	describe( '#validateSSONonce()', () => {
 		const siteId = '123456';
 		const ssoNonce = '123456789';
+		const blogDetails = {
+			domain: 'website.com',
+			title: 'My BBQ Site',
+			icon: {
+				img: '',
+				ico: '',
+			},
+			URL: 'https://website.com',
+			is_vip: false,
+			admin_url: 'https://website.com/wp-admin'
+		};
 
 		describe( 'success', () => {
 			before( () => {
@@ -48,7 +59,8 @@ describe( 'actions', () => {
 						_headers: {
 							'Content-Type': 'application/json'
 						},
-						success: true
+						success: true,
+						blog_details: blogDetails
 					} );
 			} );
 
@@ -72,6 +84,7 @@ describe( 'actions', () => {
 				return validateSSONonce( siteId, ssoNonce )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						success: true,
+						blogDetails: blogDetails,
 						type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS
 					} );
 				} );
