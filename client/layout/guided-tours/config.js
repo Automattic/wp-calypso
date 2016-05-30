@@ -39,7 +39,15 @@ function get( site ) {
 			type: 'BasicStep',
 			target: 'sidebar',
 			placement: 'beside',
-			next: site && site.is_previewable ? 'preview' : 'themes',
+			next: ( () => {
+				if ( site && site.is_previewable ) {
+					return 'preview';
+				}
+				if ( site && site.is_customizable ) {
+					return 'themes';
+				}
+				return 'finish';
+			}() ),
 		},
 		preview: {
 			target: 'site-card-preview',
@@ -58,7 +66,12 @@ function get( site ) {
 			placement: 'beside',
 			icon: 'cross-small',
 			text: i18n.translate( 'Take a look at your site—and then close the site preview. You can come back here anytime.' ),
-			next: 'themes',
+			next: ( () => {
+				if ( site && site.is_customizable ) {
+					return 'themes';
+				}
+				return 'finish';
+			}() ),
 		},
 		themes: {
 			text: i18n.translate( "Change your {{strong}}Theme{{/strong}} to choose a new layout, or {{strong}}Customize{{/strong}} your theme's colors, fonts, and more.", {
