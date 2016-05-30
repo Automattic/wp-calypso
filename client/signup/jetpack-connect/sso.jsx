@@ -38,7 +38,7 @@ const JetpackSSOForm = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		this.maybeValidateSSO();
+		this.maybeValidateSSO( nextProps );
 
 		if ( nextProps.ssoUrl && ! this.props.ssoUrl ) {
 			// After receiving the SSO URL, which will log the user in on remote site,
@@ -76,8 +76,8 @@ const JetpackSSOForm = React.createClass( {
 		return !! ( ! nonceValid | isAuthorizing | isValidating | ssoUrl );
 	},
 
-	maybeValidateSSO() {
-		const { ssoNonce, siteId, nonceValid, isAuthorizing, isValidating } = this.props;
+	maybeValidateSSO( props = this.props ) {
+		const { ssoNonce, siteId, nonceValid, isAuthorizing, isValidating } = props;
 
 		if ( ssoNonce && siteId && 'undefined' === typeof nonceValid && ! isAuthorizing && ! isValidating ) {
 			this.props.validateSSONonce( siteId, ssoNonce );
