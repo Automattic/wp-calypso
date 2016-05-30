@@ -3,7 +3,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' ),
 	flatten = require( 'lodash/flatten' ),
 	map = require( 'lodash/map' ),
 	find = require( 'lodash/find' ),
