@@ -1,5 +1,6 @@
 {
 	"env": "production",
+	"env_id": "horizon",
 	"client_slug": "browser",
 	"hostname": "horizon.wordpress.com",
 	"i18n_default_locale_slug": "en",

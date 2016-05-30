@@ -1,5 +1,6 @@
 {
 	"env": "development",
+	"env_id": "development",
 	"client_slug": "browser",
 	"hostname": "calypso.localhost",
 	"port": 3000,
