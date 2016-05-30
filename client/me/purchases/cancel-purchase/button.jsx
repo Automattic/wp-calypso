@@ -13,7 +13,7 @@ import { cancelAndRefundPurchase, cancelPurchase } from 'lib/upgrades/actions';
 import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
 import { getName, getSubscriptionEndDate, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
-import { isDomainRegistration } from 'lib/products-values';
+import { isDomainRegistration, isTheme, isGoogleApps  } from 'lib/products-values';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
@@ -60,8 +60,37 @@ const CancelPurchaseButton = React.createClass( {
 					isPrimary: true,
 					disabled: this.state.submitting,
 					onClick: this.submitCancelAndRefundPurchase
-				},
+				}
 			];
+
+		let cancelationEffectText = this.translate(
+			'All plan features and custom changes will be removed from your site and you will be refunded %(cost)s.', {
+				args: {
+					cost: refundText
+				}
+			}
+		);
+
+		if ( isTheme( this.props.purchase ) ) {
+			cancelationEffectText = this.translate(
+				'Your site\'s appearance will revert to its previously selected theme and you will be refunded %(cost)s.', {
+					args: {
+						cost: refundText
+					}
+				}
+			);
+		}
+
+		if ( isGoogleApps( this.props.purchase ) ) {
+			cancelationEffectText = this.translate(
+				'You will be refunded %(cost)s, but your Google Apps account will continue working without interruption. ' +
+				'You will be able to manage your Google Apps billing directly through Google.', {
+					args: {
+						cost: refundText
+					}
+				}
+			);
+		}
 
 		return (
 			<Dialog
@@ -78,18 +107,17 @@ const CancelPurchaseButton = React.createClass( {
 				</h1>
 				<p>
 					{ this.translate(
-						'Are you sure you want to cancel and remove %(purchaseName)s from {{em}}%(domain)s{{/em}}? ' +
-						'All plan features and custom changes will be removed from your site and you will be refunded %(priceText)s.', {
+						'Are you sure you want to cancel and remove %(purchaseName)s from {{em}}%(domain)s{{/em}}? ', {
 							args: {
 								purchaseName,
-								domain,
-								priceText: refundText
+								domain
 							},
 							components: {
 								em: <em />
 							}
 						}
 					) }
+					{ cancelationEffectText }
 				</p>
 			</Dialog>
 		);
