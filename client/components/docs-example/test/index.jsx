@@ -49,7 +49,6 @@ describe( 'DocsExample', () => {
 		);
 		assert.lengthOf( docsExample.find( '.docs-example' ), 1 );
 		assert.lengthOf( docsExample.find( '.docs-example__main' ), 1 );
-		assert.lengthOf( docsExample.find( '.docs-example__footer' ), 1 );
 		assert.ok( docsExample.contains( childrenFixture ) );
 
 		const titleLink = docsExample.find( '.docs-example__link' );
