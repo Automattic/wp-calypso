@@ -177,24 +177,17 @@ const flows = {
 	},
 
 	desktop: {
-		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getPostsDestination,
 		description: 'Signup flow for desktop app',
-		lastModified: '2016-05-25'
+		lastModified: '2016-05-30'
 	},
 
 	app: {
-		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'deisgn-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getPostsDestination,
 		description: 'Used as a web-based control to test the "desktop" flow',
-		lastModified: '2016-05-25'
-	},
-
-	layout: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
-		destination: getSiteDestination,
-		description: 'Signup flow with homepage pattern selection (Triforce) step',
-		lastModified: '2016-04-21'
+		lastModified: '2016-05-30'
 	},
 
 	developer: {
