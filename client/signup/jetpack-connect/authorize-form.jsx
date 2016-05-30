@@ -371,7 +371,8 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
 		if ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] ) {
 			const currentTime = ( new Date() ).getTime();
-			return ( currentTime - this.props.jetpackSSOSessions[ site ] < JETPACK_CONNECT_TTL );
+			const sessionTimestamp = this.props.jetpackSSOSessions[ site ].timestamp || 0;
+			return ( currentTime - sessionTimestamp < JETPACK_CONNECT_TTL );
 		}
 
 		return false;
