@@ -57,11 +57,6 @@ const DocsExample = ( {
 						</span>
 					)
 				}
-			</header>
-			<div className="docs-example__main">
-				{ children }
-			</div>
-			<footer role="contentinfo" className="docs-example__footer">
 				{
 					! isNaN( count ) && (
 						<div className="docs-example__stats">
@@ -69,7 +64,10 @@ const DocsExample = ( {
 						</div>
 					)
 				}
-			</footer>
+			</header>
+			<div className="docs-example__main">
+				{ children }
+			</div>
 		</section>
 	);
 };

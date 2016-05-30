@@ -1,6 +1,7 @@
 .docs-example__header {
-	display: flex;
 	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .docs-example__title {
@@ -25,9 +26,7 @@
 }
 
 .docs-example__stats {
-	border-bottom: 1px solid transparentize( lighten( $gray, 20% ), .5 );
-	font-size: 14px;
-	padding-bottom: 16px;
+	flex-basis: 100%;
 }
 
 /**
@@ -36,7 +35,10 @@
  * Can be rendered as standalone hence the new root/component.
  */
 
-.docs-example-stats { /* component root */ }
+.docs-example-stats {
+	color: lighten( $gray, 10% );
+	font-size: 11px;
+}
 
 .docs-example-stats__item {
 	margin: 0;

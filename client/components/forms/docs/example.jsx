@@ -80,19 +80,24 @@ var FormFields = React.createClass( {
 				</p>
 
 				<Card>
-					<FormSectionHeading>Form Section Heading</FormSectionHeading>
-					<DocsExampleStats count={ this.getUsageStats( FormSectionHeading ) } />
+					<div className="form-fieldset">
+						<FormSectionHeading>Form Section Heading</FormSectionHeading>
+						<DocsExampleStats count={ this.getUsageStats( FormSectionHeading ) } />
+					</div>
 
 					<FormFieldset>
 						<FormLegend>Form Checkbox</FormLegend>
+						<DocsExampleStats count={ this.getUsageStats( FormCheckbox ) } />
 						<FormLabel>
 							<FormCheckbox id="comment_like_notification" name="comment_like_notification" />
 							<span>Email me when someone Likes one of my comments.</span>
 						</FormLabel>
-						<DocsExampleStats count={ this.getUsageStats( FormCheckbox ) } />
 					</FormFieldset>
 
 					<FormFieldset>
+						<FormSectionHeading>Form Text Inputs</FormSectionHeading>
+						<DocsExampleStats count={ this.getUsageStats( FormTextInput ) } />
+
 						<div className="form-fieldset">
 							<FormLabel htmlFor="username">Disabled Form Text Input</FormLabel>
 							<FormTextInput
@@ -136,19 +141,17 @@ var FormFields = React.createClass( {
 							/>
 							<FormInputValidation isError text="Your text is too short." />
 						</div>
-
-						<DocsExampleStats count={ this.getUsageStats( FormTextInput ) } />
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel htmlFor="text_with_affixes">Form Text Input With Affixes</FormLabel>
+						<DocsExampleStats count={ this.getUsageStats( FormTextInputWithAffixes ) } />
 						<FormTextInputWithAffixes
 							id="text_with_affixes"
 							placeholder="Placeholder text..."
 							prefix="Prefix"
 							suffix="Suffix"
 							/>
-						<DocsExampleStats count={ this.getUsageStats( FormTextInputWithAffixes ) } />
 					</FormFieldset>
 
 					<FormFieldset>
@@ -171,44 +174,50 @@ var FormFields = React.createClass( {
 
 					<FormFieldset>
 						<FormLabel htmlFor="password">{ this.translate( 'Form Password Input' ) }</FormLabel>
+						<DocsExampleStats count={ this.getUsageStats( FormPasswordInput ) } />
 						<FormPasswordInput
 							id="password"
 							name="password" />
-						<DocsExampleStats count={ this.getUsageStats( FormPasswordInput ) } />
 					</FormFieldset>
 
-					<FormLegend>Form Toggle</FormLegend>
-					<FormToggle
-						checked={ this.state.toggled }
-						onChange={ this.handleToggle }
-					/>
-					<br />
-					<FormToggle
-						checked={ false }
-						disabled={ true }
-					/>
-					<DocsExampleStats count={ this.getUsageStats( FormToggle ) } />
-					<br />
-					<FormToggle
-						checked={ true }
-						disabled={ true }
-					/>
-					<br />
-					<CompactFormToggle
-						checked={ this.state.compactToggled }
-						onChange={ this.handleCompactToggle }
-					/>
-					<br />
-					<CompactFormToggle
-						checked={ false }
-						disabled={ true }
-					/>
-					<DocsExampleStats count={ this.getUsageStats( CompactFormToggle, true ) } />
+					<FormFieldset>
+						<FormLegend>Form Toggle</FormLegend>
+						<DocsExampleStats count={ this.getUsageStats( FormToggle ) } />
+						<FormToggle
+							checked={ this.state.toggled }
+							onChange={ this.handleToggle }
+						/>
+						<br />
+						<FormToggle
+							checked={ false }
+							disabled={ true }
+						/>
+						<br />
+						<FormToggle
+							checked={ true }
+							disabled={ true }
+						/>
+					</FormFieldset>
 
+					<FormFieldset>
+						<FormLegend>Form Toggle Compact</FormLegend>
+						<DocsExampleStats count={ this.getUsageStats( CompactFormToggle, true ) } />
+						<CompactFormToggle
+							checked={ this.state.compactToggled }
+							onChange={ this.handleCompactToggle }
+						/>
+						<br />
+						<CompactFormToggle
+							checked={ false }
+							disabled={ true }
+						/>
+					</FormFieldset>
+
+					<FormLabel>Form Buttons Bar</FormLabel>
+					<DocsExampleStats count={ this.getUsageStats( FormButtonsBar ) } />
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>
 					</FormButtonsBar>
-					<DocsExampleStats count={ this.getUsageStats( FormButtonsBar ) } />
 				</Card>
 
 				<Card>
@@ -216,18 +225,19 @@ var FormFields = React.createClass( {
 
 					<FormFieldset>
 						<FormLabel htmlFor="country_code">Form Country Select</FormLabel>
-						<FormCountrySelect name="country_code" id="country_code" countriesList={ countriesList } />
 						<DocsExampleStats count={ this.getUsageStats( FormCountrySelect ) } />
+						<FormCountrySelect name="country_code" id="country_code" countriesList={ countriesList } />
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel htmlFor="us_state">Form US State Select</FormLabel>
-						<FormStateSelector name="us_state" id="us_state" />
 						<DocsExampleStats count={ this.getUsageStats( FormStateSelector ) } />
+						<FormStateSelector name="us_state" id="us_state" />
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLegend>Form Radios</FormLegend>
+						<DocsExampleStats count={ this.getUsageStats( FormRadio ) } />
 						<FormLabel>
 							<FormRadio value="first" checked={ 'first' === this.state.checkedRadio } onChange={ this.handleRadioChange } />
 							<span>First radio</span>
@@ -237,36 +247,36 @@ var FormFields = React.createClass( {
 							<FormRadio value="second" checked={ 'second' === this.state.checkedRadio } onChange={ this.handleRadioChange } />
 							<span>Second radio</span>
 						</FormLabel>
-						<DocsExampleStats count={ this.getUsageStats( FormRadio ) } />
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel htmlFor="telInput">Form Tel Input</FormLabel>
-						<FormTelInput name="telInput" id="telInput" placeholder="Placeholder text..." />
 						<DocsExampleStats count={ this.getUsageStats( FormTelInput ) } />
+						<FormTelInput name="telInput" id="telInput" placeholder="Placeholder text..." />
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel>Form Phone Input</FormLabel>
+						<DocsExampleStats count={ this.getUsageStats( FormPhoneInput ) } />
 						<FormPhoneInput
 							initialCountryCode="US"
 							initialPhoneNumber="8772733049"
 							countriesList={ countriesList }
 							/>
-						<DocsExampleStats count={ this.getUsageStats( FormPhoneInput ) } />
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel htmlFor="textarea">Form Textarea</FormLabel>
-						<FormTextarea name="textarea" id="textarea" placeholder="Placeholder text..."></FormTextarea>
 						<DocsExampleStats count={ this.getUsageStats( FormTextarea ) } />
+						<FormTextarea name="textarea" id="textarea" placeholder="Placeholder text..."></FormTextarea>
 					</FormFieldset>
 
+					<FormLabel>Form Buttons Bar</FormLabel>
+					<DocsExampleStats count={ this.getUsageStats( FormButtonsBar ) } />
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>
 						<FormButton type="button" isPrimary={ false }>Secondary Form Button</FormButton>
 					</FormButtonsBar>
-					<DocsExampleStats count={ this.getUsageStats( FormButtonsBar ) } />
 				</Card>
 			</DocsExample>
 		);
