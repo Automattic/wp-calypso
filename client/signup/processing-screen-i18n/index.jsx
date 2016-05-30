@@ -7,11 +7,6 @@ var React = require( 'react' ),
 	Gridicon = require( 'components/gridicon' ),
 	Notice = require( 'components/notice' );
 
-/**
- * Internal dependencies
- */
-var steps = require( 'signup/config/steps' );
-
 module.exports = React.createClass( {
 	displayName: 'SignupProcessingScreen',
 
