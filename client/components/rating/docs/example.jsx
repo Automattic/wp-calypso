@@ -20,7 +20,7 @@ module.exports = React.createClass( {
 			<DocsExample
 				title="Rating"
 				url="/devdocs/design/rating"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( Rating ) }
 			>
 				<Rating rating={ 65 } size={ 50 } />
 			</DocsExample>

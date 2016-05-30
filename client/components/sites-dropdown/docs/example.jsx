@@ -18,7 +18,6 @@ export default React.createClass( {
 			<DocsExample
 				title="SitesDropdown"
 				url="/devdocs/design/sites-dropdow"
-				componentUsageStats={ this.props.componentUsageStats }
 			>
 				<SitesDropdown />
 			</DocsExample>

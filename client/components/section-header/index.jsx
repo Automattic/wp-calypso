@@ -13,6 +13,9 @@ import CompactCard from 'components/card/compact';
 import Count from 'components/count';
 
 export default React.createClass( {
+
+	displayName: 'SectionHeader',
+
 	getDefaultProps() {
 		return {
 			label: '',

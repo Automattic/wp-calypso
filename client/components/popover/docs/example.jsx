@@ -28,7 +28,7 @@ var Popovers = React.createClass( {
 			<DocsExample
 				title="Popovers"
 				url="/devdocs/design/popovers"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( Popover ) }
 			>
 				<label>Position
 					<select value={ this.state.popoverPosition } onChange={ this._changePopoverPosition }>

@@ -49,7 +49,7 @@ var SegmentedControlDemo = React.createClass( {
 			<DocsExample
 				title="Segmented Control"
 				url="/devdocs/design/segmented-control"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( SegmentedControl ) }
 				toggleHandler={ this.toggleCompact }
 				toggleText={ this.state.compact ? 'Normal' : 'Compact' }
 			>

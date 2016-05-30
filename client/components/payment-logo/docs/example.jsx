@@ -18,7 +18,7 @@ const PaymentLogoExamples = React.createClass( {
 			<DocsExample
 				title="PaymentLogo"
 				url="/devdocs/design/paymentlogoexamples"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( PaymentLogo ) }
 			>
 				<div>
 					<PaymentLogo type="amex" /> { ' ' }

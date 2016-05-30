@@ -32,7 +32,7 @@ module.exports = React.createClass( {
 			<DocsExample
 				title="Counted Textareas"
 				url="/devdocs/design/counted-textareas"
-				componentUsageStats={ this.props.getUsageStats( CountedTextarea, 'forms' ) }
+				componentUsageStats={ this.props.getUsageStats( CountedTextarea, { folder: 'forms' } ) }
 			>
 				<div>
 					<CountedTextarea value={ this.state.value } onChange={ this.onChange } acceptableLength={ 20 } />

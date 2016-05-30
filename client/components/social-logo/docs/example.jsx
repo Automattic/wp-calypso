@@ -22,7 +22,7 @@ export default React.createClass( {
 			<DocsExample
 				title="Social Logo"
 				url="/devdocs/design/social-logos"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( SocialLogo ) }
 			>
 				<SocialLogo icon="amazon" size={ 48 } onClick={ this.handleClick.bind( this, 'amazon' ) } />
 				<SocialLogo icon="behance" size={ 48 } onClick={ this.handleClick.bind( this, 'behance' ) } />

@@ -33,7 +33,7 @@ export default React.createClass( {
 			<DocsExample
 				title="TimezoneDropdown"
 				url="/devdocs/design/timezone-dropdown"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( TimezoneDropdown ) }
 			>
 				<Card style={ { width: '300px', height: '350px', margin: 0 } }>
 					<TimezoneDropdown

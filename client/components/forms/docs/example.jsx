@@ -59,8 +59,9 @@ var FormFields = React.createClass( {
 		this.setState( { compactToggled: ! this.state.compactToggled } );
 	},
 
-	getUsageStats: function ( Component ) {
-		return this.props.getUsageStats( Component, 'forms' ).count || 0;
+	getUsageStats: function ( Component, isCompact = false ) {
+		const options = { folder: 'forms', compact: isCompact };
+		return this.props.getUsageStats( Component, options ).count || 0;
 	},
 
 	render: function() {
@@ -80,6 +81,7 @@ var FormFields = React.createClass( {
 
 				<Card>
 					<FormSectionHeading>Form Section Heading</FormSectionHeading>
+					<DocsExampleStats count={ this.getUsageStats( FormSectionHeading ) } />
 
 					<FormFieldset>
 						<FormLegend>Form Checkbox</FormLegend>
@@ -201,7 +203,7 @@ var FormFields = React.createClass( {
 						checked={ false }
 						disabled={ true }
 					/>
-					<DocsExampleStats count={ this.getUsageStats( CompactFormToggle ) } />
+					<DocsExampleStats count={ this.getUsageStats( CompactFormToggle, true ) } />
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>

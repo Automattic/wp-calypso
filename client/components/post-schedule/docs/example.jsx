@@ -7,7 +7,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
-import DocsExample from 'components/docs-example';
+import DocsExample, { DocsExampleStats } from 'components/docs-example';
 import PostSchedule from 'components/post-schedule';
 import TimezoneDropdown from 'components/timezone-dropdown';
 import Gridicon from 'components/gridicon';
@@ -93,9 +93,8 @@ export default React.createClass( {
 	render() {
 		return (
 			<DocsExample
-				title="PostSchedule"
+				title="Post Schedule"
 				url="/devdocs/design/post-schedule"
-				componentUsageStats={ this.props.componentUsageStats }
 			>
 				<Card style={ {
 					width: '300px',

@@ -20,7 +20,7 @@ module.exports = React.createClass( {
 			<DocsExample
 				title="Spinner"
 				url="/devdocs/design/spinner"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( Spinner ) }
 			>
 				<p>
 					<strong>Please exercise caution in deciding to use a spinner in your component.</strong>

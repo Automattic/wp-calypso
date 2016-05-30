@@ -16,7 +16,7 @@ export default class SpinnerLineExample extends PureComponent {
 			<DocsExample
 				title="SpinnerLine"
 				url="/devdocs/design/spinner-line"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( SpinnerLine ) }
 			>
 				<SpinnerLine />
 			</DocsExample>

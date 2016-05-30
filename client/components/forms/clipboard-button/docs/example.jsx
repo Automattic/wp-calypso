@@ -32,7 +32,7 @@ module.exports = React.createClass( {
 			<DocsExample
 				title="Clipboard Buttons"
 				url="/devdocs/design/clipboard-buttons"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( ClipboardButton, { folder: 'forms' } ) }
 			>
 				<ClipboardButton
 					onCopy={ this.onCopy }

@@ -10,7 +10,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import Card from 'components/card';
-import DocsExample from 'componets/docs-example';
+import DocsExample from 'components/docs-example';
 import Gridicon from 'components/gridicon';
 
 var Buttons = React.createClass( {

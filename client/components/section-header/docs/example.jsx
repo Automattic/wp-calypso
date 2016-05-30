@@ -12,7 +12,7 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 
 var Cards = React.createClass( {
-	displayName: 'SectionHeader',
+	displayName: 'SectionHeaders',
 
 	mixins: [ PureRenderMixin ],
 
@@ -21,7 +21,7 @@ var Cards = React.createClass( {
 			<DocsExample
 				title="Section Header"
 				url="/devdocs/design/section-header"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( SectionHeader ) }
 			>
 				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 }>
 					<Button compact primary>

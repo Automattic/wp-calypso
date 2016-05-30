@@ -50,7 +50,7 @@ var SelectDropdownDemo = React.createClass( {
 			<DocsExample
 				title="Select Dropdown"
 				url="/devdocs/design/accordions"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( SelectDropdown ) }
 				toggleHandler={ this.toggleButtons }
 				toggleText={ this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons' }
 			>

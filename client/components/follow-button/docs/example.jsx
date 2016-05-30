@@ -21,7 +21,6 @@ var FollowButtons = React.createClass( {
 			<DocsExample
 				title="Follow Button"
 				url="/devdocs/design/follow-buttons"
-				componentUsageStats={ this.props.getUsageStats( FollowButton ) }
 			>
 				<Card compact>
 					<FollowButton following={ false } />

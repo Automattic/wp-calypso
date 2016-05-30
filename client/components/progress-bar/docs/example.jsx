@@ -31,7 +31,7 @@ module.exports = React.createClass( {
 			<DocsExample
 				title="Progress Bar"
 				url="/devdocs/design/progress-bar"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( ProgressBar ) }
 				toggleHandler={ this.toggleCompact }
 				toggleText={ this.state.compact ? 'Normal Bar' : 'Compact Bar' }
 			>

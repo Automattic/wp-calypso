@@ -79,27 +79,16 @@ let DesignAssets = React.createClass( {
 		page( '/devdocs/design/' );
 	},
 
-	getFormFiledsStats( componentsUsageStats ) {
-		return Object.keys( componentsUsageStats )
-			.reduce( ( target, name ) => {
-				const parts = name.split( '/' );
-				if ( parts[0] === 'forms' ) {
-					// remove `forms/` from the name
-					target[ parts.slice( 0, 1 ).join( '/' ) ] = componentsUsageStats[ name ];
-				}
-				return target;
-			}, {} );
-	},
-
 	render() {
 		const { componentsUsageStats = {} } = this.props;
-		const getUsageStats = ( Component, folder ) => {
-			let componentName	= [
-				toCamelCase( Component.displayName || Component.name || '' )
-			];
 
-			if ( folder ) {
-				const camelCasedFolder = folder
+		const getUsageStats = ( Component, options = { folder: false, compact: false } ) => {
+			let componentName	= toCamelCase((
+				Component.displayName || Component.name || ''
+			).replace( /^(Localized|Compact)/ , ''));
+
+			if ( componentName && options.folder ) {
+				const camelCasedFolder = options.folder
 					.split( '/' )
 					.filter(Boolean)
 					.map( part => toCamelCase( part ) )
@@ -107,7 +96,11 @@ let DesignAssets = React.createClass( {
 				componentName = `${camelCasedFolder}/${componentName}`;
 			}
 
-			return componentsUsageStats[ componentName ] || {};
+			if ( options.compact ) {
+				componentName = `${componentName}/compact`;
+			}
+
+			return componentsUsageStats[ componentName ] || { count: 0 };
 		};
 
 		return (
@@ -167,7 +160,8 @@ let DesignAssets = React.createClass( {
 							<Spinner searchKeywords="loading" />,
 							<SpinnerLine searchKeywords="loading" />,
 							<TimezoneDropdown />,
-							<TokenFields />
+							<TokenFields />,
+							<Version />
 						].map( ( Component, idx ) => (
 							React.cloneElement(
 								Component,
@@ -178,7 +172,6 @@ let DesignAssets = React.createClass( {
 							)
 						) )
 					}
-					<Version />
 				</Collection>
 			</div>
 		);

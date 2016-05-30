@@ -40,7 +40,7 @@ var TokenFields = React.createClass( {
 			<DocsExample
 				title="Token Field"
 				url="/devdocs/design/token-fields"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( TokenField ) }
 			>
 				<p>
 					The <code>TokenField</code> is a field similar to the tags and categories

@@ -26,7 +26,7 @@ var SearchDemo = React.createClass( {
 			<DocsExample
 				title="Search"
 				url="/devdocs/design/search"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( Search ) }
 			>
 				<Search
 					onSearch={ noop }

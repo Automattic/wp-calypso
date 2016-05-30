@@ -87,6 +87,10 @@ var SectionNavigation = React.createClass( {
 		forEach( this.props, function( prop, key ) {
 			demoSections[ key ] = [];
 
+			if ( ! Array.isArray( prop ) ) {
+				return;
+			}
+
 			prop.forEach( function( item, index ) {
 				demoSections[ key ].push( (
 					<NavItem
@@ -105,7 +109,7 @@ var SectionNavigation = React.createClass( {
 			<DocsExample
 				title="Section Navigation"
 				url="/devdocs/design/section-nav"
-				componentUsageStats={ this.props.componentUsageStats }
+				componentUsageStats={ this.props.getUsageStats( SectionNav ) }
 			>
 				<h3>Basic Tabs</h3>
 				<SectionNav

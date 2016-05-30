@@ -49,7 +49,6 @@ var LikeButtons = React.createClass( {
 			<DocsExample
 				title="Like button"
 				url="/devdocs/design/like-button"
-				componentUsageStats={ this.props.getUsageStats( LikeButton ) }
 			>
 				<Card compact>
 					<SimpleLikeButtonContainer tagName="button" likeCount={ 0 } />

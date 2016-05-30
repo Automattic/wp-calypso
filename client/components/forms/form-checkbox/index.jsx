@@ -7,7 +7,7 @@ var React = require( 'react' ),
 
 module.exports = React.createClass( {
 
-	displayName: 'FormInputCheckbox',
+	displayName: 'FormCheckbox',
 
 	render: function() {
 		var otherProps = omit( this.props, [ 'className', 'type' ] );

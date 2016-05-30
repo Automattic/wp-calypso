@@ -18,7 +18,6 @@ export default React.createClass( {
 			<DocsExample
 				title="HappinessSupport"
 				url="/devdocs/design/happiness-support"
-				componentUsageStats={ this.props.getUsageStats( HappinessSupport ) }
 			>
 				<Card>
 					<HappinessSupport />
