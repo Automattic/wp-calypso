@@ -131,7 +131,7 @@ class PostCommentList extends React.Component {
 
 	/***
 	 * Gets comments for display
-	 * @param {Array<Number>} commentIds The top level commentIds to take from
+	 * @param {Immutable.List<Number>} commentIds The top level commentIds to take from
 	 * @param {Number} take How many top level comments to take
 	 * @returns {Object} that has the displayed comments + total displayed count including children
 	 */
