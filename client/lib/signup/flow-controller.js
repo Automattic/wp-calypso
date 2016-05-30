@@ -159,7 +159,21 @@ assign( SignupFlowController.prototype, {
 	},
 
 	_processStep: function( step ) {
-		const dependencies = steps[ step.stepName ].dependencies || [];
+		let dependencies = steps[ step.stepName ].dependencies || [];
+
+		/**
+		 * Check if there are `optionalDependencies` specified.
+		 */
+		if ( steps[ step.stepName ].optionalDependencies ) {
+			let optionalDependencies = steps[ step.stepName ].optionalDependencies || [];
+
+			/**
+			 * Merge `optionalDependencies` in the main list of dependencies,
+			 * so they can be passed properly to `apiRequestFunction`
+			 */
+			dependencies.push( ...optionalDependencies );
+		}
+
 		const dependenciesFound = pick( SignupDependencyStore.get(), dependencies );
 
 		if ( this._canProcessStep( step ) ) {
