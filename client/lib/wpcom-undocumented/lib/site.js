@@ -122,8 +122,8 @@ UndocumentedSite.prototype.shortcodes = function( attributes, callback ) {
 	this.wpcom.req.get( '/sites/' + this._id + '/shortcodes/render', attributes, callback );
 };
 
-UndocumentedSite.prototype.getRoles = function( query, callback ) {
-	this.wpcom.req.get( '/sites/' + this._id + '/roles', query, callback );
+UndocumentedSite.prototype.getRoles = function( callback ) {
+	this.wpcom.req.get( '/sites/' + this._id + '/roles', { locale: i18n.getLocaleSlug() }, callback );
 };
 
 UndocumentedSite.prototype.getViewers = function( query, callback ) {
