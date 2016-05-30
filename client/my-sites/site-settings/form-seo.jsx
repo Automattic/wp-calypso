@@ -50,7 +50,8 @@ function stateForSite( site ) {
 		googleCode: get( site, 'options.verification_services_codes.google', '' ),
 		bingCode: get( site, 'options.verification_services_codes.bing', '' ),
 		pinterestCode: get( site, 'options.verification_services_codes.pinterest', '' ),
-		yandexCode: get( site, 'options.verification_services_codes.yandex', '' )
+		yandexCode: get( site, 'options.verification_services_codes.yandex', '' ),
+		isFetchingSettings: get( site, 'fetchingSettings', false )
 	};
 }
 
@@ -210,6 +211,7 @@ export const SeoForm = React.createClass( {
 
 		const {
 			isSubmittingForm,
+			isFetchingSettings,
 			seoMetaDescription,
 			showPasteError = false,
 			hasHtmlTagError = false,
@@ -219,7 +221,7 @@ export const SeoForm = React.createClass( {
 		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
 
 		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
-		const isDisabled = isSitePrivate || isSubmittingForm;
+		const isDisabled = isSitePrivate || isSubmittingForm || isFetchingSettings;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
 		const sitemapUrl = `https://${ slug }/sitemap.xml`;
