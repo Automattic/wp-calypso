@@ -62,6 +62,12 @@ const JetpackSSOForm = React.createClass( {
 
 	onCancelClick() {
 		debug( 'Clicked return to site link' );
+
+		// If, for some reason, the API request failed and we do not have the admin URL,
+		// then fallback to the user's last location.
+		if ( ! get( this.props, 'blogDetails.admin_url' ) ) {
+			window.history.back();
+		}
 	},
 
 	isButtonDisabled() {
