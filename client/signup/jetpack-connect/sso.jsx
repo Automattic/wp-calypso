@@ -107,12 +107,37 @@ const JetpackSSOForm = React.createClass( {
 		);
 	},
 
+	renderInvalidNonce() {
+		return (
+			<Main>
+				<EmptyContent
+					illustration="/calypso/images/drake/drake-whoops.svg"
+					title={ this.translate(
+						'Oops, something went wrong.'
+					) }
+					line={ this.translate(
+						'Please try again by clicking the {{em}}Log in with WordPress.com button{{/em}} on your Jetpack site.',
+						{
+							components: {
+								em: <em />
+							}
+						}
+					) }
+					action={ this.translate( 'Read Single Sign-On Documentation' ) }
+					actionURL="https://jetpack.com/support/sso/"
+				/>
+			</Main>
+		);
+	},
+
 	render() {
 		const user = this.props.userModule.get();
-		const { ssoNonce, siteId } = this.props;
+		const { ssoNonce, siteId, nonceValid } = this.props;
 
 		if ( ! ssoNonce || ! siteId ) {
 			return this.renderNoQueryArgsError();
+		} else if ( false === nonceValid ) {
+			return this.renderInvalidNonce();
 		}
 
 		return (
