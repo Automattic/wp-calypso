@@ -8,8 +8,8 @@
 
 .notification-settings-push-notification-settings__instruction-dismiss {
 	position: absolute;
-		top: 8px;
-		right: 8px;
+	top: 8px;
+	right: 8px;
 	padding: 0;
 	cursor: pointer;
 	color: $gray;
@@ -54,8 +54,8 @@
 
 		img {
 			position: absolute;
-				top: 8px;
-				left: 8px;
+			top: 8px;
+			left: 8px;
 			max-width: 60px;
 		}
 	}
@@ -74,8 +74,8 @@
 
 .notification-settings-push-notification-settings__settings-icon {
 	position: absolute;
-		top: 0;
-		left: -32px;
+	top: 0;
+	left: -32px;
 }
 
 .notification-settings-push-notification-settings__settings-state {
@@ -104,8 +104,8 @@
 	@include breakpoint( ">660px" ) {
 		margin-top: 0;
 		position: absolute;
-			bottom: 24px;
-			right: 24px;
+	 	bottom: 24px;
+		right: 24px;
 	}
 
 	&.is-enable {
