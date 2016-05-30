@@ -18,7 +18,10 @@
 		align-self: auto;
 		display: inline-block;
 		position: relative;
-			top: 4px;
+	}
+	
+	.post-card__site-title {
+		vertical-align: top;
 	}
 }
 
