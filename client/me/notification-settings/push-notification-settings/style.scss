@@ -6,6 +6,13 @@
 	position: relative;
 }
 
+.notification-settings-push-notification-settings__instruction-image {
+	svg {
+		width: 180px;
+		height: 180px;
+	}
+}
+
 .notification-settings-push-notification-settings__instruction-dismiss {
 	position: absolute;
 	top: 8px;
