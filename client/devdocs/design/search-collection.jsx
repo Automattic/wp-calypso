@@ -6,7 +6,6 @@ import React from 'react';
 /**
 * Internal dependencies
 */
-import config from 'config';
 
 const Hider = React.createClass( {
 	displayName: 'Hider',
@@ -22,7 +21,7 @@ const Hider = React.createClass( {
 	render() {
 		return (
 			<div
-				className={ config.isEnabled( 'devdocs/components-usage-stats' ) ? 'design-assets__group' : null }
+				className='design-assets__group'
 				style={ this.props.hide ? { display: 'none' } : {} }
 			>
 				{ this.props.children }

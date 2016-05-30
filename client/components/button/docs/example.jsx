@@ -9,7 +9,6 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import config from 'config';
 import DocsExample from 'components/docs-example';
 import Gridicon from 'components/gridicon';
 
@@ -25,32 +24,13 @@ var Buttons = React.createClass( {
 	},
 
 	render: function() {
-		var toggleText = this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons';
-		return config.isEnabled( 'devdocs/components-usage-stats' )
-			? this.renderDocsExampleWithUsageStats( toggleText )
-			: this.renderDocsExample( toggleText );
-	},
-
-	renderDocsExample: function( toggleText ) {
-		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/buttons">Button</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleButtons }>{ toggleText }</a>
-				</h2>
-				{ this.renderButtons() }
-			</div>
-		);
-	},
-
-	renderDocsExampleWithUsageStats: function( toggleText ) {
 		return (
 			<DocsExample
 				title="Button"
 				url="/devdocs/design/buttons"
 				componentUsageStats={ this.props.getUsageStats( Button ) }
 				toggleHandler={ this.toggleButtons }
-				toggleText={ toggleText }
+				toggleText={ this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons' }
 			>
 				{ this.renderButtons() }
 			</DocsExample>

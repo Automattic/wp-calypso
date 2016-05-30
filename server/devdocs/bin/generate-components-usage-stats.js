@@ -8,7 +8,6 @@
 
 var async = require( 'async' ),
 	camelCase = require( 'lodash/camelCase' ),
-	config = require( 'config' ),
 	fs = require( 'fs' ),
 	fspath = require( 'path' ),
 	root = fspath.dirname( fspath.join( __dirname, '..', '..' ) ),
@@ -37,11 +36,6 @@ function main() {
 	if ( fileList.length === 0 ) {
 		process.stderr.write( 'You must pass a list of files to process (try "make server/devdocs/components-usage-stats.js"' );
 		process.exit( 1 );
-	}
-
-	if ( ! config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-		saveUsageStats( {}, outFilePath );
-		process.exit( 0 );
 	}
 
 	getModulesWithDependencies( root, fileList )

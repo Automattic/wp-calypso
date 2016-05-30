@@ -12,7 +12,6 @@ import trim from 'lodash/trim';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import SearchCard from 'components/search-card';
 import SearchDemo from 'components/search/docs/example';
 import Notices from 'components/notice/docs/example';
@@ -60,15 +59,19 @@ import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
 
+	propTypes: {
+		componentsUsageStats: PropTypes.object,
+		isFetching: PropTypes.bool,
+		dispatchFetchComponentsUsageStats: PropTypes.func
+	},
+
 	getInitialState() {
 		return { filter: '' };
 	},
 
 	componentWillMount() {
-		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-			const { dispatchFetchComponentsUsageStats } = this.props;
-			dispatchFetchComponentsUsageStats();
-		}
+		const { dispatchFetchComponentsUsageStats } = this.props;
+		dispatchFetchComponentsUsageStats();
 	},
 
 	onSearch( term ) {
@@ -85,7 +88,7 @@ let DesignAssets = React.createClass( {
 		const getUsageStats = ( Component, options = { folder: false, compact: false } ) => {
 			let componentName	= toCamelCase( (
 				Component.displayName || Component.name || ''
-			).replace( /^(Localized|Compact)/ , '' ) );
+			).replace( /^(Localized|Compact)/, '' ) );
 
 			if ( componentName && options.folder ) {
 				const camelCasedFolder = options.folder
@@ -178,29 +181,21 @@ let DesignAssets = React.createClass( {
 	}
 } );
 
-if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-	const mapStateToProps = ( state ) => {
-		const { componentsUsageStats } = state;
+const mapStateToProps = ( state ) => {
+	const { componentsUsageStats } = state;
 
-		return componentsUsageStats;
-	};
+	return componentsUsageStats;
+};
 
-	const mapDispatchToProps = ( dispatch ) => {
-		return bindActionCreators( {
-			dispatchFetchComponentsUsageStats: fetchComponentsUsageStats
-		}, dispatch );
-	};
+const mapDispatchToProps = ( dispatch ) => {
+	return bindActionCreators( {
+		dispatchFetchComponentsUsageStats: fetchComponentsUsageStats
+	}, dispatch );
+};
 
-	DesignAssets.propTypes = {
-		componentsUsageStats: PropTypes.object,
-		isFetching: PropTypes.bool,
-		dispatchFetchComponentsUsageStats: PropTypes.func
-	};
-
-	DesignAssets = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
-}
+DesignAssets = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( DesignAssets );
 
 export default DesignAssets;
