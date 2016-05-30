@@ -5,7 +5,6 @@
  */
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
-import page from 'page';
 import startsWith from 'lodash/startsWith';
 import mapValues from 'lodash/mapValues';
 
@@ -135,14 +134,6 @@ function appendActionTracking( option, name ) {
 			trackClick( 'more button', name );
 		}
 	} );
-}
-
-export function navigateTo( url, external ) {
-	if ( external ) {
-		window.open( url );
-	} else {
-		page( url );
-	}
 }
 
 export function getAnalyticsData( path, tier, site_id ) {
