@@ -60,8 +60,7 @@ const JetpackSSOForm = React.createClass( {
 		this.props.authorizeSSO( siteId, ssoNonce );
 	},
 
-	onCancelClick( event ) {
-		event.preventDefault();
+	onCancelClick() {
 		debug( 'Clicked return to site link' );
 	},
 
@@ -154,6 +153,7 @@ const JetpackSSOForm = React.createClass( {
 
 					<LoggedOutFormLinks>
 						<LoggedOutFormLinkItem
+							rel="external"
 							href={ get( this.props, 'blogDetails.admin_url', null ) }
 							onClick={ this.onCancelClick }>
 							{ this.translate( 'Return to %(siteName)s', {
