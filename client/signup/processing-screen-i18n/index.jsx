@@ -3,12 +3,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	flatten = require( 'lodash/flatten' ),
-	map = require( 'lodash/map' ),
-	find = require( 'lodash/find' ),
-	reject = require( 'lodash/reject' ),
-	filter = require( 'lodash/filter' ),
-	pick = require( 'lodash/pick' ),
 	Button = require( 'components/button' ),
 	Gridicon = require( 'components/gridicon' ),
 	Notice = require( 'components/notice' );
