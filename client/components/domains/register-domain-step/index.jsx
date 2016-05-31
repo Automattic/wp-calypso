@@ -235,7 +235,6 @@ const RegisterDomainStep = React.createClass( {
 					autoFocus={ true }
 					delaySearch={ true }
 					delayTimeout={ 1000 }
-					dir="ltr"
 				/>
 			</div>
 		);

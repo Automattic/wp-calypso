@@ -40,19 +40,7 @@
 		position: absolute;
 			bottom: 0;
 			top: 50%;
-
-		&:not(.ltr):not(.rtl) {
 			right: 0;
-		}
-
-		&.ltr {
-			right: 0 #{"/*rtl:ignore*/"};
-		}
-
-		&.rtl {
-			left: 0 #{"/*rtl:ignore*/"};
-		}
-
 		margin-top: -12px;
 		width: 60px;
 		cursor: pointer;
@@ -95,34 +83,12 @@
 	position: absolute;
 		bottom: 0;
 		top: 0;
-
-	&:not(.ltr):not(.rtl) {
 		right: 0;
-	}
-
-	&.ltr {
-		right: 0 #{"/*rtl:ignore*/"};
-	}
-
-	&.rtl {
-		left: 0 #{"/*rtl:ignore*/"};
-	}
-
 	// matching dropdown-selector
 	z-index: z-index( 'root', '.search.is-pinned' );
 
 	.search-open__icon {
-		&:not(.ltr):not(.rtl) {
-			right: 0;
-		}
-
-		&.ltr {
-			right: 0 #{"/*rtl:ignore*/"};
-		}
-
-		&.rtl {
-			left: 0 #{"/*rtl:ignore*/"};
-		}
+		right: 0;
 	}
 
 	.search__input[type="search"] {
@@ -145,21 +111,8 @@
 
 	@include breakpoint( "<660px" ) {
 		opacity: 0;
-
-		&:not(.ltr):not(.rtl) {
-			right: 0;
-			padding-left: 50px;
-		}
-
-		&.ltr {
-			left: 0 #{"/*rtl:ignore*/"};
-			padding-left: 50px #{"/*rtl:ignore*/"};
-		}
-
-		&.rtl {
-			right: 0 #{"/*rtl:ignore*/"};
-			padding-right: 50px #{"/*rtl:ignore*/"};
-		}
+		left: 0;
+		padding-left: 50px;
 	}
 
 	&::-webkit-search-cancel-button {
@@ -174,36 +127,12 @@
 
 // When search input is opened
 .search.is-open {
-
-	&:not(.ltr):not(.rtl) {
-		margin-right: 0 !important;
-	}
-
-	&.ltr {
-		margin-right: 0 #{"/*rtl:ignore*/"} !important;
-	}
-
-	&.rtl {
-		margin-left: 0 #{"/*rtl:ignore*/"} !important;
-	}
-
+	margin-right: 0 !important;
 	width: 100%;
 
 	.search-open__icon {
 		color: darken( $gray, 30% );
-
-		&:not(.ltr):not(.rtl) {
-			left: 0;
-		}
-
-		&.ltr {
-			left: 0 #{"/*rtl:ignore*/"};
-		}
-
-		&.rtl {
-			right: 0 #{"/*rtl:ignore*/"};
-		}
-
+		left: 0;
 	}
 
 	.search-close__icon {
@@ -224,34 +153,11 @@
 	display: none;
 	position: absolute;
 		top: 50%;
-
-	&:not(.ltr):not(.rtl) {
 		left: 30px;
-	}
-
-	&.ltr {
-		left: 30px #{"/*rtl:ignore*/"};
-	}
-
-	&.rtl {
-		right: 30px #{"/*rtl:ignore*/"};
-	}
-
 	transform: translate( -50%, -50% );
 
 	@include breakpoint( "<660px" ) {
-
-		&:not(.ltr):not(.rtl) {
-			left: 25px;
-		}
-
-		&.ltr {
-			left: 25px #{"/*rtl:ignore*/"};
-		}
-
-		&.rtl {
-			right: 25px #{"/*rtl:ignore*/"};
-		}
+		left: 25px;
 	}
 }
 
