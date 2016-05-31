@@ -32,7 +32,10 @@ module.exports = function() {
 	}
 
 	if ( config.isEnabled( 'jetpack/connect' ) ) {
+		page( '/jetpack/connect/install', jetpackConnectController.install );
+
 		page( '/jetpack/connect', jetpackConnectController.connect );
+
 		page(
 			'/jetpack/connect/authorize/:locale?',
 			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
@@ -41,15 +44,15 @@ module.exports = function() {
 		);
 
 		page(
-			'/jetpack/connect/:locale?',
-			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
-			jetpackConnectController.connect
-		);
-
-		page(
 			'/jetpack/connect/install/:locale?',
 			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
 			jetpackConnectController.install
+		);
+
+		page(
+			'/jetpack/connect/:locale?',
+			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
+			jetpackConnectController.connect
 		);
 
 		page(
