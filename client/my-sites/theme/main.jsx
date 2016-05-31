@@ -241,12 +241,12 @@ const ThemeSheet = React.createClass( {
 		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
 	},
 
-	renderEmptyContent() {
+	renderError() {
 		const emptyContentTitle = i18n.translate( 'Looking for great WordPress designs?', {
-			context: 'Message displayed when requested theme was not found',
+			comment: 'Message displayed when requested theme was not found',
 		} );
 		const emptyContentMessage = i18n.translate( 'Check our theme showcase', {
-			context: 'Message displayed when requested theme was not found',
+			comment: 'Message displayed when requested theme was not found',
 		} );
 
 		return(
@@ -316,7 +316,7 @@ const ThemeSheet = React.createClass( {
 
 	render() {
 		if ( this.props.error ) {
-			return this.renderEmptyContent();
+			return this.renderError();
 		}
 		return this.renderSheet();
 	},
