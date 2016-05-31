@@ -20,6 +20,7 @@
 		"fluid-width": true,
 		"help": true,
 		"login": false,
+		"jetpack/connect": true,
 		"mailing-lists/unsubscribe": true,
 		"manage/add-people": true,
 		"manage/ads": true,
