@@ -25,11 +25,13 @@ const embedsToLookFor = {
 	'.jetpack-slideshow': embedSlideshow
 };
 
+const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
+
 const SLIDESHOW_URLS = {
-	CSS: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/css/slideshow-shortcode.css',
-	CYCLE_JS: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.js',
-	JS: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/slideshow-shortcode.js',
-	SPINNER: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif'
+	CSS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/css/slideshow-shortcode.css${cacheBustQuery}`,
+	CYCLE_JS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.js${cacheBustQuery}`,
+	JS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/slideshow-shortcode.js${cacheBustQuery}`,
+	SPINNER: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif${cacheBustQuery}`
 };
 
 function processEmbeds( domNode ) {
