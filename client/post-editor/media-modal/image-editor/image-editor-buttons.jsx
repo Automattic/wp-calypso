@@ -11,11 +11,11 @@ import noop from 'lodash/noop';
 import Button from 'components/button';
 import {
 	resetImageEditorState
-} from 'state/ui/editor/media/imageEditor/actions';
+} from 'state/ui/editor/image-editor/actions';
 import {
 	getImageEditorFileInfo,
 	imageEditorHasChanges
-} from 'state/ui/editor/media/imageEditor/selectors';
+} from 'state/ui/editor/image-editor/selectors';
 
 const MediaModalImageEditorButtons = React.createClass( {
 	displayName: 'MediaModalImageEditorButtons',
