@@ -12,6 +12,8 @@ var update = require( 'react-addons-update' ),
 	reject = require( 'lodash/reject' ),
 	tail = require( 'lodash/tail' ),
 	some = require( 'lodash/some' ),
+	uniq = require( 'lodash/uniq' ),
+	flatten = require( 'lodash/flatten' ),
 	filter = require( 'lodash/filter' );
 
 /**
@@ -137,9 +139,11 @@ function removeItemAndDependencies( cartItemToRemove, cart ) {
  * @returns {Object[]} the list of dependency items in the shopping cart
  */
 function getDependentProducts( cartItem, cart ) {
-	return getAll( cart ).filter( function( existingCartItem ) {
+	const dependentProducts = getAll( cart ).filter( function( existingCartItem ) {
 		return isDependentProduct( cartItem, existingCartItem );
 	} );
+
+	return uniq( flatten( dependentProducts.concat( dependentProducts.map( dependentProduct => getDependentProducts( dependentProduct, cart ) ) ) ) );
 }
 
 /**
