@@ -30,7 +30,6 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
-	JETPACK_CONNECT_SSO_QUERY_SET,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -143,8 +142,6 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 
 export function jetpackSSO( state = {}, action ) {
 	switch ( action.type ) {
-		case JETPACK_CONNECT_SSO_QUERY_SET:
-			return Object.assign( {}, action.queryObject );
 		case JETPACK_CONNECT_SSO_VALIDATION_REQUEST:
 			return Object.assign( state, { isValidating: true } );
 		case JETPACK_CONNECT_SSO_VALIDATION_SUCCESS:
