@@ -13,16 +13,17 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 			combineMiddlewares(
 				setSectionMiddlewareFactory( section ),
 				...middlewares
-			)
+			),
+			serverRender
 		);
 	};
 }
 
 function combineMiddlewares( ...middlewares ) {
-	return function( req, res ) {
+	return function( req, res, next ) {
 		req.context = getEnhancedContext( req );
 		applyMiddlewares( req.context, ...middlewares, () => {
-			serverRender( req, res );
+			next();
 		} );
 	};
 }
