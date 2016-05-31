@@ -35,6 +35,7 @@ import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal'
 import actionLabels from 'my-sites/themes/action-labels';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
+import ThemePreview from 'my-sites/themes/theme-preview';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -89,6 +90,14 @@ const ThemeSheet = React.createClass( {
 		}
 	},
 
+	onPreviewButtonClick() {
+		if ( ! this.props.isLoggedIn ) {
+			this.props.signup( this.props );
+		} else {
+			this.selectSiteAndDispatch( 'customize' );
+		}
+	},
+
 	selectSiteAndDispatch( action ) {
 		if ( this.props.selectedSite ) {
 			this.props[ action ]( this.props, this.props.selectedSite, 'showcase-sheet' );
@@ -112,6 +121,10 @@ const ThemeSheet = React.createClass( {
 		return section;
 	},
 
+	togglePreview() {
+		this.setState( { showPreview: ! this.state.showPreview } );
+	},
+
 	renderBar() {
 		const placeholder = <span className="themes__sheet-placeholder">loading.....</span>;
 		const title = this.props.name || placeholder;
@@ -129,6 +142,10 @@ const ThemeSheet = React.createClass( {
 		const img = <img className="themes__sheet-img" src={ this.props.screenshot + '?=w680' } />;
 		return (
 			<div className="themes__sheet-screenshot">
+				<a className="themes__sheet-preview-link" onClick={ this.togglePreview } >
+					<Gridicon icon="external" size={ 18 } />
+					<span className="themes__sheet-preview-link-text">{ i18n.translate( 'Live Preview' ) }</span>
+				</a>
 				{ this.props.screenshot && img }
 			</div>
 		);
@@ -241,6 +258,17 @@ const ThemeSheet = React.createClass( {
 		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
 	},
 
+	renderPreview() {
+		const buttonLabel = this.props.isLoggedIn ? i18n.translate( 'Try & Customize' ) : i18n.translate( 'Pick this design' );
+		return(
+			<ThemePreview showPreview={ this.state.showPreview }
+				theme={ this.props }
+				onClose={ this.togglePreview }
+				buttonLabel= { buttonLabel }
+				onButtonClick={ this.onPreviewButtonClick } />
+		);
+	},
+
 	renderError() {
 		const emptyContentTitle = i18n.translate( 'Looking for great WordPress designs?', {
 			comment: 'Message displayed when requested theme was not found',
@@ -291,6 +319,7 @@ const ThemeSheet = React.createClass( {
 					action={ this.props[ this.state.selectedAction ] }
 					sourcePath={ `/theme/${ this.props.id }/${ section }` }
 				/> }
+				{ this.state.showPreview && this.renderPreview() }
 				<HeaderCake className="themes__sheet-action-bar"
 							backHref={ this.props.backPath }
 							backText={ i18n.translate( 'All Themes' ) }>

@@ -8,7 +8,6 @@
 		width: 100%;
 	}
 
-
 	h1 {
 		display: block;
 		font-weight: 300;
@@ -384,6 +383,48 @@
 	small {
 		display: block;
 		color: $gray;
+	}
+}
+
+.themes__sheet-preview-link {
+	display: flex;
+	position: absolute;
+		top: -28px;
+	color: lighten( $gray, 30% );
+	cursor: pointer;
+	transition: all ease-in-out 100ms;
+
+	&:hover {
+		color: $white;
+	}
+
+	.gridicon {
+		margin: 0 8px 0 -4px;
+	}
+
+	.themes__sheet-preview-link-text {
+		font-size: 12px;
+		margin-top: 2px;
+		text-transform: uppercase;
+	}
+
+	@include breakpoint( "<660px" ) {
+		color: transparentize( $gray, 0.2 );
+		top: 90%;
+		margin-left: 30px;
+
+		&:hover {
+			color: $gray-dark;
+		}
+
+		.gridicon {
+			width: 24px;
+			height: 24px;
+		}
+
+		.themes__sheet-preview-link-text {
+			display: none;
+		}
 	}
 }
 

@@ -36,6 +36,7 @@ describe( 'reducer', () => {
 			themeSupportDocumentation: 'support comes from within',
 			themeStylesheet: 'premium/mood',
 			themeDownload: 'mood.zip',
+			themeDemoUri: 'https://mooddemo.wordpress.com/',
 			themeTaxonomies: {
 				features: [ {
 					term_id: null,
@@ -62,6 +63,7 @@ describe( 'reducer', () => {
 			supportDocumentation: 'support comes from within',
 			stylesheet: 'premium/mood',
 			download: 'mood.zip',
+			demo_uri: 'https://mooddemo.wordpress.com/',
 			taxonomies: {
 				features: [ {
 					term_id: null,
