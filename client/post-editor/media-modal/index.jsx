@@ -329,8 +329,9 @@ module.exports = React.createClass( {
 		return buttons;
 	},
 
-	preventPopoverClose: function( event ) {
-		if ( closest( event.target, '.popover.is-dialog-visible' ) ) {
+	preventClose: function( event ) {
+		if ( ModalViews.IMAGE_EDITOR === this.state.activeView ||
+			closest( event.target, '.popover.is-dialog-visible' ) ) {
 			return true;
 		}
 	},
@@ -402,7 +403,7 @@ module.exports = React.createClass( {
 				buttons={ this.getModalButtons() }
 				onClose={ this.onClose }
 				additionalClassNames="editor-media-modal"
-				onClickOutside={ this.preventPopoverClose }>
+				onClickOutside={ this.preventClose }>
 				{ this.renderContent() }
 			</Dialog>
 		);

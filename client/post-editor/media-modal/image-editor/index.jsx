@@ -18,10 +18,10 @@ import MediaUtils from 'lib/media/utils';
 import {
 	resetImageEditorState,
 	setImageEditorFileInfo
-} from 'state/ui/editor/media/imageEditor/actions';
+} from 'state/ui/editor/image-editor/actions';
 import {
 	getImageEditorFileInfo
-} from 'state/ui/editor/media/imageEditor/selectors';
+} from 'state/ui/editor/image-editor/selectors';
 
 const MediaModalImageEditor = React.createClass( {
 	displayName: 'MediaModalImageEditor',
@@ -76,13 +76,12 @@ const MediaModalImageEditor = React.createClass( {
 	},
 
 	onImageExtracted( blob ) {
-		const extension = MediaUtils.getFileExtensionFromMimeType( blob.type ) || 'png';
-		const fileName = this.props.fileName.replace( /\.[^.]+$/, '' ) + '.' + extension;
+		const mimeType = MediaUtils.getMimeType( this.props.fileName );
 
 		MediaActions.add( this.props.site.ID, {
-			fileName,
+			fileName: this.props.fileName,
 			fileContents: blob,
-			mimeType: blob.type
+			mimeType: mimeType
 		} );
 	},
 
@@ -124,15 +123,23 @@ const MediaModalImageEditor = React.createClass( {
 		return ! transfer.types || -1 !== Array.prototype.indexOf.call( transfer.types, 'Files' );
 	},
 
+	renderDropZone() {
+		if ( this.props.src ) {
+			return;
+		}
+
+		return ( <DropZone
+			fullScreen={ true }
+			onVerifyValidTransfer={ this.isValidTransfer }
+			onFilesDrop={ this.onFilesDrop } /> );
+	},
+
 	render() {
 		return (
 			<div className="editor-media-modal-image-editor">
 				<figure>
 					<div className="editor-media-modal-image-editor__content editor-media-modal__content" >
-						<DropZone
-							fullScreen={ true }
-							onVerifyValidTransfer={ this.isValidTransfer }
-							onFilesDrop={ this.onFilesDrop } />
+						{ this.renderDropZone() }
 						<EditCanvas ref="editCanvas" />
 						<EditToolbar />
 						<EditButtons

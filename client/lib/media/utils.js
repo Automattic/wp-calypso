@@ -6,7 +6,6 @@ import path from 'path';
 import photon from 'photon';
 import includes from 'lodash/includes';
 import omitBy from 'lodash/omitBy';
-import findKey from 'lodash/findKey';
 import { isUri } from 'valid-url';
 
 /**
@@ -112,16 +111,6 @@ const MediaUtils = {
 		}
 
 		return extension;
-	},
-
-	/**
-	 * Given a mime type, return an extension for a file of that type
-	 *
-	 * @param  {string} mimeType mime type to be checked
-	 * @return {string} extension for the provided type or an empty string if not found
-	 */
-	getFileExtensionFromMimeType: function( mimeType ) {
-		return findKey( MimeTypes, ( ext ) => ext === mimeType ) || '';
 	},
 
 	/**
