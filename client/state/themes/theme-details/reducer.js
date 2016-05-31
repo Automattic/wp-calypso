@@ -10,7 +10,8 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 	SERVER_DESERIALIZE,
-	THEME_DETAILS_RECEIVE
+	THEME_DETAILS_RECEIVE,
+	THEME_DETAILS_RECEIVE_FAILURE,
 } from 'state/action-types';
 
 export default ( state = Map(), action ) => {
@@ -29,6 +30,8 @@ export default ( state = Map(), action ) => {
 					taxonomies: action.themeTaxonomies,
 					stylesheet: action.themeStylesheet,
 				} ) );
+		case THEME_DETAILS_RECEIVE_FAILURE:
+			return state.set( action.themeId, Map( { error: action.error } ) );
 		case DESERIALIZE:
 			return Map();
 		case SERVER_DESERIALIZE:

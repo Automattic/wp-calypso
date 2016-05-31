@@ -20,6 +20,7 @@ import {
 	THEME_CLEAR_ACTIVATED,
 	THEME_CUSTOMIZE,
 	THEME_DETAILS_RECEIVE,
+	THEME_DETAILS_RECEIVE_FAILURE,
 	THEME_PURCHASE,
 	THEME_RECEIVE_CURRENT,
 	THEME_REQUEST_CURRENT,
@@ -113,7 +114,7 @@ export function fetchThemeDetails( id ) {
 				dispatch( receiveThemeDetails( themeDetails ) );
 			} )
 			.catch( error => {
-				dispatch( receiveServerError( error ) );
+				dispatch( receiveThemeDetailsFailure( id, error ) );
 			} );
 	};
 }
@@ -132,6 +133,15 @@ export function receiveThemeDetails( theme ) {
 		themeDownload: theme.download_uri || undefined,
 		themeTaxonomies: theme.taxonomies,
 		themeStylesheet: theme.stylesheet,
+	};
+}
+
+export function receiveThemeDetailsFailure( id, error ) {
+	debug( `Received error for theme ${ id }:`, error );
+	return {
+		type: THEME_DETAILS_RECEIVE_FAILURE,
+		themeId: id,
+		error: error,
 	};
 }
 

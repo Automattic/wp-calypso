@@ -34,6 +34,7 @@ import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import actionLabels from 'my-sites/themes/action-labels';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
+import EmptyContentComponent from 'components/empty-content';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -240,7 +241,26 @@ const ThemeSheet = React.createClass( {
 		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
 	},
 
-	render() {
+	renderError() {
+		const emptyContentTitle = i18n.translate( 'Looking for great WordPress designs?', {
+			comment: 'Message displayed when requested theme was not found',
+		} );
+		const emptyContentMessage = i18n.translate( 'Check our theme showcase', {
+			comment: 'Message displayed when requested theme was not found',
+		} );
+
+		return(
+			<Main>
+				<EmptyContentComponent
+					title={ emptyContentTitle }
+					line={ emptyContentMessage }
+					action={ i18n.translate( 'View the showcase' ) }
+					actionURL="/design"/>
+			</Main>
+		);
+	},
+
+	renderSheet() {
 		let actionTitle = <span className="themes__sheet-button-placeholder">loading......</span>;
 		if ( this.isActive() ) {
 			actionTitle = i18n.translate( 'Customize' );
@@ -293,7 +313,14 @@ const ThemeSheet = React.createClass( {
 				</div>
 			</Main>
 		);
-	}
+	},
+
+	render() {
+		if ( this.props.error ) {
+			return this.renderError();
+		}
+		return this.renderSheet();
+	},
 } );
 
 export default connect(
