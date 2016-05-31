@@ -169,13 +169,6 @@ const flows = {
 		lastModified: '2016-03-09'
 	},
 
-	'domains-with-premium': {
-		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
-		destination: getSiteDestination,
-		description: 'Test for domains with plans only',
-		lastModified: '2016-05-25'
-	},
-
 	'site-user': {
 		steps: [ 'site', 'user' ],
 		destination: '/me/next?welcome',
@@ -239,10 +232,6 @@ function filterFlowName( flowName ) {
 
 	if ( includes( defaultFlows, flowName ) && abtest( 'freeTrialsInSignup' ) === 'enabled' ) {
 		return 'free-trial';
-	}
-
-	if ( includes( defaultFlows, flowName ) && abtest( 'domainsWithPlansOnly' ) === 'plansOnly' ) {
-		return 'domains-with-premium';
 	}
 
 	return flowName;
