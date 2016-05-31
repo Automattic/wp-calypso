@@ -60,6 +60,6 @@ module.exports = function() {
 	}
 
 	if ( config.isEnabled( 'jetpack/sso' ) ) {
-		page( '/jetpack/sso', jetpackConnectController.saveQueryObject, jetpackConnectController.sso );
+		page( '/jetpack/sso/:siteId?/:ssoNonce?', jetpackConnectController.sso );
 	}
 };
