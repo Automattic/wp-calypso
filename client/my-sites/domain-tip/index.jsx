@@ -46,10 +46,21 @@ const DomainTip = React.createClass( {
 		return true;
 	},
 
+	domainUpgradeNudge() {
+		return (
+			<UpgradeNudge
+					title={ this.translate( 'Get a free Custom Domain' ) }
+					message={ this.translate( 'Custom domains are free when you upgrade to a Premium or Business plan.' ) }
+					feature={ FEATURE_CUSTOM_DOMAIN }
+					event="stats_insights_domain"
+				/>
+		);
+	},
+
 	render() {
 		if ( ! this.props.site || this.props.site.jetpack || ! this.props.siteSlug ||
 				abtest( 'domainsWithPlansOnly' ) !== 'plansOnly' || ! isFreePlan( this.props.site.plan ) ) {
-			return null;
+			return this.domainUpgradeNudge();
 		}
 		const classes = classNames( this.props.className, 'domain-tip' );
 		const { query, quantity, vendor } = getQueryObject( this.props.site, this.props.siteSlug );
@@ -61,7 +72,8 @@ const DomainTip = React.createClass( {
 					quantity={ quantity }
 					vendor={ vendor } />
 				{
-					suggestion && <UpgradeNudge
+					suggestion
+						? <UpgradeNudge
 						event="domain-tip"
 						shouldDisplay={ this.noticeShouldDisplay }
 						feature={ FEATURE_CUSTOM_DOMAIN }
@@ -71,8 +83,8 @@ const DomainTip = React.createClass( {
 								span: <span className="domain-tip__suggestion" />
 							} } ) }
 						message={ this.translate( 'Upgrade your plan to register a domain.' ) }
-						href={ `/domains/add/${ this.props.siteSlug }` }
-					/>
+						href={ `/domains/add/${ this.props.siteSlug }` } />
+						: this.domainUpgradeNudge()
 				}
 			</div>
 		);
