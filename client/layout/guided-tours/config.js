@@ -24,6 +24,7 @@ function get( site ) {
 		},
 		'my-sites': {
 			target: 'my-sites',
+			arrow: 'top-left',
 			type: 'ActionStep',
 			icon: 'my-sites',
 			placement: 'below',
@@ -38,6 +39,7 @@ function get( site ) {
 			text: i18n.translate( 'This menu lets you navigate around, and will adapt to give you the tools you need when you need them.' ),
 			type: 'BasicStep',
 			target: 'sidebar',
+			arrow: 'left-middle',
 			placement: 'beside',
 			next: ( () => {
 				if ( site && site.is_previewable ) {
@@ -51,9 +53,13 @@ function get( site ) {
 		},
 		preview: {
 			target: 'site-card-preview',
+			arrow: 'top-left',
 			type: 'ActionStep',
-			placement: 'beside',
-			text: i18n.translate( '{{strong}}Preview:{{/strong}} Click here to see what your site looks like.', {
+			iconText: i18n.translate( "your site's name", {
+				context: "Click your site's name to continue.",
+			} ),
+			placement: 'below',
+			text: i18n.translate( 'Open {{strong}}Preview{{/strong}} to see what your site looks like.', {
 				components: {
 					strong: <strong />,
 				}
@@ -62,10 +68,15 @@ function get( site ) {
 		},
 		'close-preview': {
 			target: 'web-preview__close',
+			arrow: 'left-top',
 			type: 'ActionStep',
 			placement: 'beside',
 			icon: 'cross-small',
-			text: i18n.translate( 'Take a look at your site—and then close the site preview. You can come back here anytime.' ),
+			text: i18n.translate( 'Below you can see a {{strong}}Preview{{/strong}} of your site. You can come back here anytime.', {
+				components: {
+					strong: <strong />,
+				}
+			} ),
 			next: ( () => {
 				if ( site && site.is_customizable ) {
 					return 'themes';
@@ -81,6 +92,7 @@ function get( site ) {
 			} ),
 			type: 'BasicStep',
 			target: 'themes',
+			arrow: 'top-left',
 			placement: 'below',
 			next: 'finish',
 		},

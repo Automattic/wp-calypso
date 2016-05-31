@@ -2,17 +2,24 @@
 	position: fixed;
 	max-width: 410px;
 	z-index: z-index( 'root', '.guided-tours__step' );
-	border: 1px solid lighten( $gray, 10 );
-	box-shadow: 0px 2px 4px 0px rgba( $gray-dark, 0.15 );
+	background: darken( $gray, 52 );
+	box-shadow: 0 2px 24px 0 rgba( darken( $gray, 52 ), 0.5 );
 	border-radius: 4px;
 	padding-top: 19px;
 	margin-left: 5px;
 	margin-right: 5px;
 	font-size: 14px;
+	animation-duration: 0.15s;
+	animation-name: guided-tours__step-fadein;
+	animation-timing-function: ease-in-out;
 
 	.guided-tours__step-text {
-		color: $gray-dark;
+		color: lighten( $gray, 30 );
 		margin-bottom: 16px;
+
+		strong {
+			color: $white;
+		}
 	}
 
 	.gridicon[height="16"] {
@@ -27,19 +34,42 @@
 }
 
 .guided-tours__step-first {
-	animation-duration: 900ms;
+	animation-duration: 0.25s;
 	animation-name: guided-tours__step-slidein;
-	animation-timing-function: ease-in-out;
+	animation-timing-function: ease-out;
 	animation-delay: 2s;
 	animation-fill-mode: both;
 }
 
+.guided-tours__step-finish {
+	top: 20%;
+}
+
+@keyframes guided-tours__step-fadein {
+	0% {
+		opacity: 0;
+		transform: translateY( 20px ) scale( 0.98 );
+	}
+	100% {
+		opacity: 1;
+		transform: translateY( 0 ) scale( 1 );
+	}
+}
+
 @keyframes guided-tours__step-slidein {
 	0% {
-		transform: translateX( 200% );
+		opacity: 0;
+		pointer-events: none;
+		transform: translateX( 100% );
+	}
+
+	80% {
+		transform: translateX( -16px );
 	}
 
 	100% {
+		opacity: 1;
+		pointer-events: auto;
 		transform: translateX( 0 );
 	}
 }
@@ -51,6 +81,11 @@
 	.button:nth-child(1) {
 		margin-right: 4%;
 	}
+	.button:nth-child(2) {
+		color: darken( $white, 20% );
+		background: none;
+		border: none;
+	}
 }
 
 .guided-tours__single-button-row {
@@ -60,8 +95,8 @@
 }
 
 .guided-tours__external-link,
-.guided-tours__bullseye-instructions {
-	color: darken( $gray, 10 );
+.guided-tours__actionstep-instructions {
+	color: lighten( $gray, 10 );
 	margin-bottom: 0;
 	font-style: italic;
 
@@ -71,77 +106,111 @@
 	}
 
 	.external-link {
-		border-top: 1px solid $gray-light;
+		font-style: normal;
+		border-top: 1px solid $gray-dark;
 		display: block;
-		padding-top: 8px;
+		padding-top: 12px;
 		margin-top: 16px;
 	}
 }
 
-.guided-tours__bullseye-instructions {
+.guided-tours__actionstep-instructions {
 	margin-top: -7px;
 }
 
-// the bullseye used for showing an action step's target
-$animation-speed: 2s;
-$size: 10px;
-$zoom-scale: 5; // the multiplier determining the size of the animated rings
-
-@keyframes guided-tours__bullseye-animation {
-	0% {
-		transform: scale( .2 );
-		opacity: 1;
-	}
-}
-
-.guided-tours__bullseye {
-	position: fixed;
-	z-index: z-index( 'root', '.guided-tours__step' );
-	width: $size;
-	height: $size;
-	pointer-events: none;
-}
-
-.guided-tours__bullseye-center,
-.guided-tours__bullseye-ring,
-.guided-tours__bullseye-ring:before,
-.guided-tours__bullseye-ring:after {
-	position: absolute;
-		top: 0;
-		right: 0;
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-	z-index: 1;
-}
-
-.guided-tours__bullseye-center {
-	background: #fff;
-	border: 1px solid #a8bece;
-	box-shadow: 0 1px 2px rgba( 79, 116, 142, .3 );
-}
-
-.guided-tours__bullseye-ring:before,
-.guided-tours__bullseye-ring:after {
-	content: "";
-	top: ( -1 * $zoom-scale * $size / 2 ) + ( $size / 2 ) + 1;
-	left: ( -1 * $zoom-scale * $size / 2 ) + ( $size / 2 ) - 1;
-	width: $size * $zoom-scale;
-	height: $size * $zoom-scale;
-	background-image: radial-gradient( rgb( 0, 170, 220 ), #fff );
-	opacity: 0;
-	animation: guided-tours__bullseye-animation $animation-speed ease-in-out infinite;
-}
-
-.guided-tours__bullseye-ring:after {
-	animation-delay: #{ $animation-speed / 4 };
-}
-
-// the pure text representation of the bullseye dot
-.guided-tours__bullseye-text {
+// style the pure text representation of the actionstep icon
+.guided-tours__actionstep-text {
 	position: relative;
 		top: 3px;
 	font-style: normal;
 	font-size: 190%;
 	line-height: 0;
+}
+
+// arrow if we have a target
+.guided-tours__step-pointing:before {
+	position: absolute;
+	border: darken( $gray, 52% );
+	content: " ";
+	pointer-events: none;
+	background: darken( $gray, 52% );
+	width: 12px;
+	height: 12px;
+}
+
+// the different arrow directions
+.guided-tours__step-pointing.guided-tours__step-pointing-none:before {
+	display: none;
+}
+
+.guided-tours__step-pointing.guided-tours__step-pointing-top-left:before {
+	top: -5.5px;
+	left: 12px;
+	transform: rotate(45deg);
+}
+
+.guided-tours__step-pointing.guided-tours__step-pointing-top-center:before {
+	top: -5.5px;
+	left: 49%;
+	transform: rotate(45deg);
+}
+
+.guided-tours__step-pointing.guided-tours__step-pointing-top-right:before {
+	top: -5.5px;
+	right: 12px;
+	transform: rotate(45deg);
+}
+
+.guided-tours__step-pointing.guided-tours__step-pointing-right-top:before {
+	top: 15px;
+	right: -5.5px;
+	transform: rotate(135deg);
+}
+
+.guided-tours__step-pointing.guided-tours__step-pointing-right-middle:before {
+	top: 42%;
+	right: -5.5px;
+	transform: rotate(135deg);
+}
+
+.guided-tours__step-pointing.guided-tours__step-pointing-right-bottom:before {
+	bottom: 12px;
+	right: -5.5px;
+	transform: rotate(135deg);
+}
+
+.guided-tours__step-pointing.guided-tours__step-pointing-bottom-right:before {
+	bottom: -5.5px;
+	right: 12px;
+	transform: rotate(225deg);
+}
+
+.guided-tours__step-pointing.guided-tours__step-pointing-bottom-center:before {
+	bottom: -5.5px;
+	left: 49%;
+	transform: rotate(225deg);
+}
+
+.guided-tours__step-pointing.guided-tours__step-pointing-bottom-left:before {
+	bottom: -5.5px;
+	left: 12px;
+	transform: rotate(225deg);
+}
+
+.guided-tours__step-pointing.guided-tours__step-pointing-left-bottom:before {
+	bottom: 12px;
+	left: -5.5px;
+	transform: rotate(-45deg);
+}
+
+.guided-tours__step-pointing.guided-tours__step-pointing-left-middle:before {
+	top: 42%;
+	left: -5.5px;
+	transform: rotate(-45deg);
+}
+
+.guided-tours__step-pointing.guided-tours__step-pointing-left-top:before {
+	top: 12px;
+	left: -5.5px;
+	transform: rotate(-45deg);
 }
