@@ -29,6 +29,7 @@ export default ( state = Map(), action ) => {
 					download: action.themeDownload,
 					taxonomies: action.themeTaxonomies,
 					stylesheet: action.themeStylesheet,
+					demo_uri: action.themeDemoUri,
 				} ) );
 		case THEME_DETAILS_RECEIVE_FAILURE:
 			return state.set( action.themeId, Map( { error: action.error } ) );
