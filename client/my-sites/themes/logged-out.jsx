@@ -56,7 +56,7 @@ const ThemesLoggedOut = React.createClass( {
 	onPreviewButtonClick( theme ) {
 		this.setState( { showPreview: false },
 			() => {
-				this.props.dispatch( signup( theme ) );
+				this.props.signup( theme );
 			} );
 	},
 
@@ -100,5 +100,6 @@ export default connect(
 	state => ( {
 		queryParams: getQueryParams( state ),
 		themesList: getThemesList( state )
-	} )
+	} ),
+	{ signup }
 )( ThemesLoggedOut );
