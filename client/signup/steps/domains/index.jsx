@@ -112,20 +112,7 @@ module.exports = React.createClass( {
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ), [], { domainItem } );
 
-		if ( domainsWithPlansOnlyTestEnabled && isPurchasingItem && abtest( 'freeTrialsInSignup' ) !== 'enabled' ) {
-			this.submitPlansStepWithPremium();
-			const plansIndex = this.props.steps.indexOf( 'plans' );
-			if ( plansIndex === this.props.steps.length - 1 || plansIndex === -1 ) {
-				// if plans is the last step or not in the flow, this'll finish the flow
-				this.props.goToNextStep();
-			} else {
-				// skip plans step
-
-				this.props.goToStep( this.props.steps[ plansIndex + 1 ] );
-			}
-		} else {
-			this.props.goToNextStep();
-		}
+		this.goToNextStep( isPurchasingItem );
 	},
 
 	submitPlansStepWithPremium() {
@@ -142,22 +129,19 @@ module.exports = React.createClass( {
 
 	handleAddMapping: function( sectionName, domain, state ) {
 		const domainItem = cartItems.domainMapping( { domain } );
+		const isPurchasingItem = true;
 
 		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain mapping' ),
 			stepName: this.props.stepName,
 			[ sectionName ]: state,
 			domainItem,
-			isPurchasingItem: true,
+			isPurchasingItem,
 			siteUrl: domain,
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ) );
 
-		if ( domainsWithPlansOnlyTestEnabled && abtest( 'freeTrialsInSignup' ) !== 'enabled' ) {
-			this.submitPlansStepWithPremium();
-		}
-
-		this.props.goToNextStep();
+		this.goToNextStep( isPurchasingItem );
 	},
 
 	handleSave: function( sectionName, state ) {
@@ -166,6 +150,23 @@ module.exports = React.createClass( {
 			stepSectionName: this.props.stepSectionName,
 			[ sectionName ]: state
 		} );
+	},
+
+	goToNextStep( isPurchasingItem ) {
+		if ( domainsWithPlansOnlyTestEnabled && isPurchasingItem && abtest( 'freeTrialsInSignup' ) !== 'enabled' ) {
+			this.submitPlansStepWithPremium();
+			const plansIndex = this.props.steps.indexOf( 'plans' );
+
+			if ( plansIndex === this.props.steps.length - 1 || plansIndex === -1 ) {
+				// if plans is the last step or not in the flow, this'll finish the flow
+				this.props.goToNextStep();
+			} else {
+				// skip plans step
+				this.props.goToStep( this.props.steps[ plansIndex + 1 ] );
+			}
+		} else {
+			this.props.goToNextStep();
+		}
 	},
 
 	googleAppsForm: function() {
