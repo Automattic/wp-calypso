@@ -180,8 +180,6 @@ export default connect(
 	state => {
 		const { jetpackSSO } = state.jetpackConnect;
 		return {
-			siteId: get( jetpackSSO, 'site_id' ),
-			ssoNonce: get( jetpackSSO, 'sso_nonce' ),
 			ssoUrl: get( jetpackSSO, 'ssoUrl' ),
 			isAuthorizing: get( jetpackSSO, 'isAuthorizing' ),
 			isValidating: get( jetpackSSO, 'isValidating' ),
