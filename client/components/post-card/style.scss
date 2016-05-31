@@ -1,51 +1,73 @@
-.post-card {
-	position: relative;
-	overflow: hidden;
-	min-height: 96px;
+.post-card__site-info-title {
+	color: $gray;
+	float: left;
+	margin-top: 8px;
+	width: 68%;
+
+	@include breakpoint( ">960px" ) {
+		width: 75%;
+	}
+
+	@include breakpoint( "<480px" ) {
+		width: 65%;
+	}
 }
 
 .post-card__site-info {
-	font-size: 13px;
 	color: $gray;
 	display: block;
-	white-space: nowrap;
+	font-size: 13px;
 	margin-right: 120px;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
+
+	&:visited {
+		color: inherit;
+	}
 
 	.site-icon {
-		margin-right: 4px;
 		align-self: auto;
 		display: inline-block;
-		position: relative;
+		margin-right: 4px;
 	}
-	
+
 	.post-card__site-title {
+		color: $gray;
 		vertical-align: top;
 	}
 }
 
 .post-card__title {
+	float: left;
+	line-height: 1.2;
+	margin-top: 9px;
 	overflow: hidden;
-	margin-top: 8px;
+	width: 98%;
 }
 
 .post-card__anchor {
-	@extend %content-font;
 	display: block;
-	overflow: hidden;
-	white-space: nowrap;
 	font-size: 18px;
 	font-weight: 600;
-	margin-right: 120px;
+	overflow: hidden;
 	text-overflow: ellipsis;
+	white-space: nowrap;
+	@extend %content-font;
 }
 
 .post-card__thumbnail {
-	position: absolute;
-		right: 24px;
-		top: 16px;
+	float: right;
+	margin-right: 1px;
 	max-height: 68px;
-	max-width: 96px;
-	border-radius: 2px;
+	width: 17%;
+
+	.post-card__thumbnail-img {
+		border-radius: 2px;
+		clear: right;
+		float: right;
+		max-height: 68px;
+		max-width: 96px;
+	}
 }
