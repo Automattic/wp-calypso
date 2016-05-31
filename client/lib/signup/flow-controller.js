@@ -159,13 +159,13 @@ assign( SignupFlowController.prototype, {
 	},
 
 	_processStep: function( step ) {
-		let dependencies = steps[ step.stepName ].dependencies || [];
+		const dependencies = steps[ step.stepName ].dependencies || [];
 
 		/**
 		 * Check if there are `optionalDependencies` specified.
 		 */
 		if ( steps[ step.stepName ].optionalDependencies ) {
-			let optionalDependencies = steps[ step.stepName ].optionalDependencies || [];
+			const optionalDependencies = steps[ step.stepName ].optionalDependencies;
 
 			/**
 			 * Merge `optionalDependencies` in the main list of dependencies,
