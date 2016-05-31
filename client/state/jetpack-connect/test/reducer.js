@@ -135,6 +135,14 @@ describe( 'reducer', () => {
 
 			expect( state ).to.be.eql( { 'website.com': { timestamp: 1 } } );
 		} );
+
+		it( 'should restore a valid state including dashes, slashes and semicolons', () => {
+			const state = jetpackConnectSessions( { 'https://website.com:3000/test-one': { timestamp: 1 } }, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( { 'https://website.com:3000/test-one': { timestamp: 1 } } );
+		} );
 	} );
 
 	describe( '#jetpackSSOSessions()', () => {
