@@ -10,7 +10,6 @@ import deepFreeze from 'deep-freeze';
 
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	JETPACK_CONNECT_SSO_QUERY_SET,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -181,20 +180,6 @@ describe( 'reducer', () => {
 			const state = jetpackSSO( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should store query objct', () => {
-			const queryObject = deepFreeze( {
-				sso_nonce: '123456789',
-				site_id: '123456'
-			} );
-
-			const state = jetpackSSO( undefined, {
-				type: JETPACK_CONNECT_SSO_QUERY_SET,
-				queryObject: queryObject
-			} );
-
-			expect( state ).to.eql( queryObject );
 		} );
 
 		it( 'should set isValidating to true when validating', () => {
