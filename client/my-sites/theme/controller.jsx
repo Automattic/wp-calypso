@@ -56,18 +56,19 @@ export function fetchThemeDetailsData( context, next ) {
 		return next();
 	}
 
-	themeSlug && wpcom.undocumented().themeDetails( themeSlug, ( error, data ) => {
-		if ( error ) {
+	wpcom.undocumented().themeDetails( themeSlug )
+		.then( themeDetails => {
+			debug( 'caching', themeSlug );
+			themeDetails.timestamp = Date.now();
+			themeDetailsCache.set( themeSlug, themeDetails );
+			context.store.dispatch( receiveThemeDetails( themeDetails ) );
+			next();
+		} )
+		.catch( error => {
 			debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
 			context.store.dispatch( receiveThemeDetailsFailure( themeSlug, error ) );
-		} else {
-			debug( 'caching', themeSlug );
-			data.timestamp = Date.now();
-			themeDetailsCache.set( themeSlug, data );
-			context.store.dispatch( receiveThemeDetails( data ) );
-		}
-		next();
-	} );
+			next();
+		} );
 }
 
 export function details( context, next ) {
