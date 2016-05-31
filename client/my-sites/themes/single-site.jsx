@@ -2,10 +2,10 @@
  * External dependencies
  */
 import React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
+import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies
@@ -28,6 +28,7 @@ import { getQueryParams, getThemesList } from 'state/themes/themes-list/selector
 import sitesFactory from 'lib/sites-list';
 import { FEATURE_CUSTOM_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const sites = sitesFactory();
 
@@ -52,15 +53,14 @@ const ThemesSingleSite = React.createClass( {
 	togglePreview( theme ) {
 		const site = sites.getSelectedSite();
 		if ( site.jetpack ) {
-			this.props.dispatch( customize( theme, site ) );
+			this.props.customize( theme );
 		} else {
 			this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
 		}
 	},
 
 	getButtonOptions() {
-		const { dispatch } = this.props,
-			site = sites.getSelectedSite(),
+		const site = sites.getSelectedSite(),
 			buttonOptions = {
 				preview: {
 					action: theme => this.togglePreview( theme ),
@@ -68,17 +68,17 @@ const ThemesSingleSite = React.createClass( {
 				},
 				purchase: config.isEnabled( 'upgrades/checkout' )
 					? {
-						action: theme => dispatch( purchase( theme, site, 'showcase' ) ),
+						action: this.props.purchase,
 						hideForTheme: theme => theme.active || theme.purchased || ! theme.price
 					}
 					: {},
 				activate: {
-					action: theme => dispatch( activate( theme, site, 'showcase' ) ),
+					action: this.props.activate,
 					hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
 				},
 				customize: site && site.isCustomizable()
 					? {
-						action: theme => dispatch( customize( theme, site ) ),
+						action: this.props.customize,
 						hideForTheme: theme => ! theme.active
 					}
 					: {},
@@ -86,7 +86,7 @@ const ThemesSingleSite = React.createClass( {
 					separator: true
 				},
 				details: {
-					getUrl: theme => getDetailsUrl( theme, site ),
+					getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
 				},
 				support: ! site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
 					? {
@@ -102,7 +102,7 @@ const ThemesSingleSite = React.createClass( {
 	onPreviewButtonClick( theme ) {
 		this.setState( { showPreview: false },
 			() => {
-				this.getButtonOptions().customize.action( theme );
+				this.props.customize( theme );
 			} );
 	},
 
@@ -151,7 +151,7 @@ const ThemesSingleSite = React.createClass( {
 					<ThanksModal
 						site={ site }
 						source={ 'list' }
-						clearActivated={ bindActionCreators( clearActivated, this.props.dispatch ) } />
+						clearActivated={ this.props.clearActivated } />
 				</ActivatingTheme>
 				<CurrentTheme
 					site={ site }
@@ -192,6 +192,22 @@ const ThemesSingleSite = React.createClass( {
 export default connect(
 	state => ( {
 		queryParams: getQueryParams( state ),
-		themesList: getThemesList( state )
-	} )
+		themesList: getThemesList( state ),
+		selectedSite: getSelectedSite( state )
+	} ),
+	{
+		activate,
+		clearActivated,
+		customize,
+		purchase
+	},
+	( stateProps, dispatchProps, ownProps ) => Object.assign(
+		{},
+		ownProps,
+		stateProps,
+		mapValues(
+			dispatchProps,
+			action => theme => action( theme, stateProps.selectedSite, 'showcase' )
+		)
+	)
 )( ThemesSingleSite );
