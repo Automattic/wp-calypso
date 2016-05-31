@@ -8,6 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import analytics from 'lib/analytics';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
@@ -20,6 +21,7 @@ import Notice from 'components/notice';
 import observe from 'lib/mixins/data-observe';
 import paths from './paths';
 import PlanList from 'components/plans/plan-list' ;
+import PlanListRedesign from 'components/plans-redesign/plan-list' ;
 import PlanOverview from './plan-overview';
 import { shouldFetchSitePlans } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -107,9 +109,10 @@ const Plans = React.createClass( {
 	},
 
 	render() {
+		const plansRedesignEnabled = config.isEnabled( 'manage/plans/redesign' );
 		const selectedSite = this.props.sites.getSelectedSite();
-		let hasJpphpBundle,
-			currentPlan;
+		let List = PlanList;
+		let hasJpphpBundle, mainStyle, currentPlan;
 
 		if ( this.props.sitePlans.hasLoadedFromServer ) {
 			currentPlan = getCurrentPlan( this.props.sitePlans.data );
@@ -128,11 +131,16 @@ const Plans = React.createClass( {
 			);
 		}
 
+		if ( plansRedesignEnabled ) {
+			List = PlanListRedesign;
+			mainStyle = { maxWidth: 1040 };
+		}
+
 		return (
 			<div>
 				{ this.renderNotice() }
 
-				<Main>
+				<Main style={ mainStyle }>
 					<SidebarNavigation />
 
 					<div id="plans" className="plans has-sidebar">
@@ -144,7 +152,7 @@ const Plans = React.createClass( {
 
 						<QueryPlans />
 
-						<PlanList
+						<List
 							site={ selectedSite }
 							plans={ this.props.plans }
 							sitePlans={ this.props.sitePlans }
@@ -152,7 +160,7 @@ const Plans = React.createClass( {
 							cart={ this.props.cart }
 							isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST } />
 
-						{ ! hasJpphpBundle && this.comparePlansLink() }
+						{ ! hasJpphpBundle && ! plansRedesignEnabled && this.comparePlansLink() }
 					</div>
 				</Main>
 			</div>

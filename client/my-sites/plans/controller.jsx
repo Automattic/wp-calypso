@@ -83,8 +83,13 @@ export default {
 			productsList = require( 'lib/products-list' )(),
 			analyticsPageTitle = 'Plans > Compare',
 			site = sites.getSelectedSite(),
+			domain = context.params.domain,
 			basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
+
+		if ( config.isEnabled( 'manage/plans/redesign' ) ) {
+			return page.redirect( `/plans/${ domain }` );
+		}
 
 		if ( site && ! site.isUpgradeable() ) {
 			return page.redirect( '/plans/compare' );
