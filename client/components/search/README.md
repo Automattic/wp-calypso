@@ -43,7 +43,9 @@ Whether to display a [`<Spinner />`](../spinner/) in place of the search icon.
 ### dir (optional) string ( default undefined )
 Whether to force a specific writing direction for the search field, regardless of the current global writing direction. Useful for inputting domains, codes, etc that use LTR direction when in a RTL language.
 
-Supported values are `'ltr'`, `'rtl'` and `undefined` (the default, which uses the current global writing direction of the app).
+Currently supports forcing a LTR field in a RTL language, but not the other way around.
+
+Supported values are `'ltr'` and `undefined` (the default, which uses the current global writing direction of the app).
 
 ## Methods
 
