@@ -107,8 +107,16 @@
 		padding: 0;
 		width: auto;
 		position: absolute;
-			left: 18px;
 			top: 50%;
+
+		&:not(.ltr) {
+			left: 18px;
+		}
+
+		&.ltr {
+			left: 18px #{"/*rtl:ignore*/"};
+		}
+
 		margin-top: -9px;
 		width: 18px;
 		height: 18px;
@@ -117,7 +125,15 @@
 	&.is-open {
 		.search-close__icon {
 			color: $gray;
-			right: 16px;
+
+			&:not(.ltr) {
+				right: 16px;
+			}
+
+			&.ltr {
+				right: 16px #{"/*rtl:ignore*/"};
+			}
+
 			margin-top: -9px;
 			width: 18px;
 			height: 18px;
