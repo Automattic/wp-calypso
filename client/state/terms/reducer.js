@@ -17,9 +17,11 @@ import {
 	SERIALIZE
 } from 'state/action-types';
 import { isValidStateWithSchema } from 'state/utils';
+import { DEFAULT_TERMS_QUERY } from './constants';
 
 import {
-	getSerializedTermsQuery
+	getSerializedTermsQuery,
+	getSerializedTermsQueryWithoutPage
 } from './utils';
 
 import {
@@ -95,6 +97,37 @@ export function queries( state = {}, action ) {
 }
 
 /**
+ * Returns the updated terms query last page state after an action has been
+ * dispatched. The state reflects a mapping of serialized query to last known
+ * page number.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function queriesLastPage( state = {}, action ) {
+	switch ( action.type ) {
+		case TERMS_REQUEST_SUCCESS:
+			const { siteId, found, taxonomy, query } = action;
+			const serializedQuery = getSerializedTermsQueryWithoutPage( query );
+			const lastPage = Math.ceil( found / ( query.number || DEFAULT_TERMS_QUERY.number ) );
+
+			return merge( {}, state, {
+				[ siteId ]: {
+					[ taxonomy ]: {
+						[ serializedQuery ]: Math.max( lastPage, 1 )
+					}
+				}
+			} );
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+	}
+	return state;
+}
+
+/**
  * Returns the updated terms state after an action has been dispatched.
  * The state reflects a mapping of site ID to terms
  *
@@ -124,6 +157,7 @@ export function items( state = {}, action ) {
 
 export default combineReducers( {
 	items,
-	queryRequests,
-	queries
+	queries,
+	queriesLastPage,
+	queryRequests
 } );
