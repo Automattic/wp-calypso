@@ -52,9 +52,9 @@ const fastPostNormalizationRules = [
 		classifyPost
 	];
 
-function discoverFullBleedImages( post, callback ) {
+function discoverFullBleedImages( post, dom ) {
 	if ( post.site_ID === DISCOVER_BLOG_ID ) {
-		const images = toArray( post.__contentDOM.querySelectorAll( '.fullbleed img, img.fullbleed' ) );
+		const images = dom.querySelectorAll( '.fullbleed img, img.fullbleed' );
 		forEach( images, function( image ) {
 			const newSrc = resizeImageUrl( image.src, { w: DISCOVER_FULL_BLEED_WIDTH } );
 			let oldImageObject = find( post.content_images, { src: image.src } );
@@ -62,7 +62,7 @@ function discoverFullBleedImages( post, callback ) {
 			image.src = newSrc;
 		} );
 	}
-	callback();
+	return post;
 }
 
 /**
