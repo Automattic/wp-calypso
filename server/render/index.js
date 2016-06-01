@@ -12,7 +12,7 @@ import pick from 'lodash/pick';
  */
 import config from 'config';
 
-const markupCache = new Lru( { max: 1000 } );
+const markupCache = new Lru( { max: 3000 } );
 
 function bumpStat( group, name ) {
 	const statUrl = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
