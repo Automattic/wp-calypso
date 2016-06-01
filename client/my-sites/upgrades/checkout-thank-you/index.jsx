@@ -14,7 +14,6 @@ import React from 'react';
 import { activated } from 'state/themes/actions';
 import analytics from 'lib/analytics';
 import { abtest } from 'lib/abtest';
-import BusinessPlanDetails from './business-plan-details';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
@@ -31,7 +30,6 @@ import GoogleAppsDetails from './google-apps-details';
 import HappinessSupport from 'components/happiness-support';
 import HeaderCake from 'components/header-cake';
 import {
-	isBusiness,
 	isChargeback,
 	isDomainMapping,
 	isDomainProduct,
@@ -40,14 +38,18 @@ import {
 	isGoogleApps,
 	isJetpackPlan,
 	isPlan,
+	isPersonal,
 	isPremium,
+	isBusiness,
 	isSiteRedirect,
 	isTheme
 } from 'lib/products-values';
 import JetpackPlanDetails from './jetpack-plan-details';
 import Main from 'components/main';
 import plansPaths from 'my-sites/plans/paths';
+import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
+import BusinessPlanDetails from './business-plan-details';
 import PurchaseDetail from 'components/purchase-detail';
 import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
@@ -187,6 +189,8 @@ const CheckoutThankYou = React.createClass( {
 
 			if ( purchases.some( isJetpackPlan ) ) {
 				return [ JetpackPlanDetails, find( purchases, isJetpackPlan ) ];
+			} else if ( purchases.some( isPersonal ) ) {
+				return [ PersonalPlanDetails, find( purchases, isPersonal ) ];
 			} else if ( purchases.some( isPremium ) ) {
 				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
 			} else if ( purchases.some( isBusiness ) ) {
