@@ -55,7 +55,7 @@ module.exports = React.createClass( {
 
 	onPreviewSite( event ) {
 		const site = this.getSelectedSite();
-		if ( site.is_previewable ) {
+		if ( site.is_previewable && ! event.metaKey && ! event.ctrlKey ) {
 			event.preventDefault();
 			this.props.layoutFocus.set( 'preview' );
 		}
