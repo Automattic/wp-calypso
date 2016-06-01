@@ -34,7 +34,10 @@ import cartItems from 'lib/cart-values/cart-items';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { abtest } from 'lib/abtest';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
-import { getDomainsSuggestions, } from 'state/domains/suggestions/selectors';
+import {
+	getDomainsSuggestions,
+	getDomainsSuggestionsError
+} from 'state/domains/suggestions/selectors';
 
 const domains = wpcom.domains();
 
@@ -132,6 +135,29 @@ const RegisterDomainStep = React.createClass( {
 		};
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.defaultSuggestionsError === nextProps.defaultSuggestionsError ||
+			( ! this.props.defaultSuggestionsError && ! nextProps.defaultSuggestionsError ) ) {
+			return;
+		}
+		const error = nextProps.defaultSuggestionsError;
+		if ( ! error ) {
+			return nextProps.onDomainsAvailabilityChange( true );
+		}
+		if ( error && error.statusCode === 503 ) {
+			return nextProps.onDomainsAvailabilityChange( false );
+		}
+		if ( error && error.error ) {
+			//don't modify global state
+			const domainError = new Error();
+			domainError.code = error.error;
+			const queryObject = getQueryObject( nextProps );
+			if ( queryObject ) {
+				this.showValidationErrorMessage( queryObject.query, domainError );
+			}
+		}
+	},
+
 	componentWillMount: function() {
 		searchCount = 0; // reset the counter
 		lastSearchTimestamp = null; // reset timer
@@ -165,7 +191,7 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	isLoadingSuggestions: function() {
-		return ! this.props.defaultSuggestions;
+		return ! this.props.defaultSuggestions && ! this.props.defaultSuggestionsError;
 	},
 
 	render: function() {
@@ -379,7 +405,7 @@ const RegisterDomainStep = React.createClass( {
 			} );
 		} else {
 			// only display two suggestions initially
-			suggestions = this.props.defaultSuggestions.slice( 0, INITIAL_SUGGESTION_QUANTITY );
+			suggestions = this.props.defaultSuggestions ? this.props.defaultSuggestions.slice( 0, INITIAL_SUGGESTION_QUANTITY ) : [];
 
 			domainRegistrationSuggestions = suggestions.map( function( suggestion ) {
 				return (
@@ -600,6 +626,7 @@ module.exports = connect( ( state, props ) => {
 	const queryObject = getQueryObject( props );
 	return {
 		currentUser: getCurrentUser( state ),
-		defaultSuggestions: getDomainsSuggestions( state, queryObject )
+		defaultSuggestions: getDomainsSuggestions( state, queryObject ),
+		defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject )
 	};
 } )( RegisterDomainStep );
