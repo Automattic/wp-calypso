@@ -412,6 +412,8 @@ module.exports = function() {
 		} );
 	}
 
+	app.get( '/theme', ( req, res ) => res.redirect( '/design' ) );
+
 	// Isomorphic routing
 	sections
 		.filter( section => section.isomorphic )
