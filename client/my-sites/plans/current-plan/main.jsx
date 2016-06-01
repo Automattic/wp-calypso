@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import Main from 'components/main';
 import Card from 'components/card';
 import HappinessSupport from 'components/happiness-support';
+import JetpackPlanDetails from 'my-sites/upgrades/checkout-thank-you/jetpack-plan-details';
 import PersonalPlanDetails from 'my-sites/upgrades/checkout-thank-you/personal-plan-details';
 import PremiumPlanDetails from 'my-sites/upgrades/checkout-thank-you/premium-plan-details';
 import BusinessPlanDetails from 'my-sites/upgrades/checkout-thank-you/business-plan-details';
@@ -54,8 +55,17 @@ const PlanDetailsComponent = React.createClass( {
 						<PurchaseDetail isPlaceholder />
 				</div>
 			);
-		} else if ( this.props.selectedSite.jetpack || isFreePlan( this.props.selectedSite.plan ) ) {
+		} else if ( isFreePlan( this.props.selectedSite.plan ) ) {
 			page.redirect( '/plans/' + this.props.selectedSite.slug );
+		} else if ( this.props.selectedSite.jetpack ) {
+			title = this.translate( 'Your site is on a Premium plan' );
+			tagLine = this.translate( 'Unlock the full potential of your site with all the features included in your plan.' );
+			featuresList = (
+				<JetpackPlanDetails
+					selectedSite={ this.props.selectedSite }
+					sitePlans={ this.props.sitePlans }
+				/>
+			);
 		} else if ( isPersonal( this.props.selectedSite.plan ) ) {
 			title = this.translate( 'Your site is on a Personal plan' );
 			tagLine = this.translate( 'Unlock the full potential of your site with all the features included in your plan.' );
