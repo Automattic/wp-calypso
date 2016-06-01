@@ -79,7 +79,7 @@ export function serverRender( req, res ) {
 		context.layout &&
 		! context.user ) {
 		context.initialReduxState = pick( context.store.getState(), 'ui', 'themes' );
-		const key = JSON.stringify( context.layout ) + req.path + JSON.stringify( context.initialReduxState );
+		const key = JSON.stringify( context.layout ) + JSON.stringify( context.initialReduxState );
 		Object.assign( context, render( context.layout, key ) );
 	}
 
