@@ -28,11 +28,11 @@ export default class FilePicker extends React.Component {
 	setFileDirectoryAttribute() {
 		if ( this.props.directory ) {
 			const fileInput = this.refs.fileInput;
-			fileInput.setAttribute( `webkitdirectory`, '' );
-			fileInput.setAttribute( `mozdirectory`, '' );
-			fileInput.setAttribute( `msdirectory`, '' );
-			fileInput.setAttribute( `odirectory`, '' );
-			fileInput.setAttribute( `directory`, '' );
+			fileInput.setAttribute( 'webkitdirectory', '' );
+			fileInput.setAttribute( 'mozdirectory', '' );
+			fileInput.setAttribute( 'msdirectory', '' );
+			fileInput.setAttribute( 'odirectory', '' );
+			fileInput.setAttribute( 'directory', '' );
 		}
 	}
 
