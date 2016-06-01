@@ -84,7 +84,7 @@ const JetpackSSOForm = React.createClass( {
 
 	isButtonDisabled() {
 		const { nonceValid, isAuthorizing, isValidating, ssoUrl } = this.props;
-		return !! ( ! nonceValid | isAuthorizing | isValidating | ssoUrl );
+		return !! ( ! nonceValid || isAuthorizing || isValidating || ssoUrl );
 	},
 
 	maybeValidateSSO( props = this.props ) {
