@@ -18,7 +18,7 @@ function calypsoAlert( editor ) {
 		node.setAttribute( 'class', 'alert-container' );
 		editor.getContainer().appendChild( node );
 
-		editor.windowManager.alert = function( message, callback, scope ) {
+		editor.windowManager.alert = ( message, callback, scope ) => {
 			function onClose() {
 				render( 'hide' );
 				if ( typeof callback === 'function' ) {
@@ -40,6 +40,14 @@ function calypsoAlert( editor ) {
 			}
 
 			render( 'show' );
+		};
+
+		// The only place we should get one of these in Calypso is when
+		// clicking the "Paste as text" button for the first time in a session.
+		// Previous versions of TinyMCE used an alert to show a message;
+		// current versions use a notification instead.
+		editor.notificationManager.open = data => {
+			editor.windowManager.alert( data.text );
 		};
 	} );
 
