@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
@@ -11,7 +10,7 @@ import merge from 'lodash/merge';
  * Internal dependencies
  */
 import Main from 'components/main';
-import * as Action from 'state/themes/actions';
+import { customize, purchase, activate } from 'state/themes/actions';
 import ThemePreview from './theme-preview';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
@@ -89,8 +88,7 @@ const ThemesMultiSite = React.createClass( {
 	},
 
 	render() {
-		const { dispatch } = this.props,
-			buttonOptions = this.getButtonOptions();
+		const buttonOptions = this.getButtonOptions();
 
 		return (
 			<Main className="themes">
@@ -127,7 +125,7 @@ const ThemesMultiSite = React.createClass( {
 					header={ actionLabels[ this.state.selectedAction ].header }
 					selectedTheme={ this.state.selectedTheme }
 					onHide={ this.hideSiteSelectorModal }
-					action={ bindActionCreators( Action[ this.state.selectedAction ], dispatch ) }
+					action={ this.props[ this.state.selectedAction ] }
 					sourcePath={ '/design' }
 				/> }
 			</Main>
@@ -139,5 +137,10 @@ export default connect(
 	state => ( {
 		queryParams: getQueryParams( state ),
 		themesList: getThemesList( state )
-	} )
+	} ),
+	{
+		activate,
+		customize,
+		purchase
+	}
 )( ThemesMultiSite );
