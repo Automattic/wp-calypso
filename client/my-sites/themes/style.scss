@@ -335,8 +335,14 @@
 	li {
 		list-style: none;
 		display: inline-block;
-		background: #E9EFF3;
-		color: $gray-dark;
+
+		// Commenting background and color from tags to avoid suggesting they are clickable.
+
+		// background: #E9EFF3;
+		// color: $gray-dark;
+
+		color: inherit; // When tags are made clickable, this style can be removed.
+
 		font-size: 0.925em;
 		margin: 0.38em 0.37rem;
 		padding: 0.25em 0.7em;
