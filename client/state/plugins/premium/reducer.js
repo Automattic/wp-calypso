@@ -2,6 +2,7 @@
 * External dependencies
 */
 import { combineReducers } from 'redux';
+import forEach from 'lodash/forEach';
 
 /**
  * Internal dependencies
@@ -17,6 +18,8 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { pluginInstructionSchema } from './schema';
+import { isValidStateWithSchema } from 'state/utils';
 
 /*
  * Tracks the requesting state for premium plugin "instructions" (the list
@@ -72,7 +75,22 @@ export function plugins( state = {}, action ) {
 			}
 			return state;
 		case SERIALIZE:
+			let processedState = {};
+			// Save the error state as a string message.
+			forEach( state, ( pluginList, key ) => {
+				processedState[ key ] = pluginList.map( ( item ) => {
+					if ( item.error !== null ) {
+						return Object.assign( {}, item, { error: item.error.toString() } );
+					}
+					return item;
+				} );
+			} );
+			return processedState;
 		case DESERIALIZE:
+			if ( ! isValidStateWithSchema( state, pluginInstructionSchema ) ) {
+				return {};
+			}
+			return state;
 		default:
 			return state;
 	}
