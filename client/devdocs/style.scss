@@ -158,8 +158,21 @@
 	cursor: pointer;
 }
 
-.design-assets__group .card .docs-example-stats {
-	margin-bottom: 10px;
+.design-assets__group .card {
+	.form-label,
+	.form-legend,
+	.form-section-heading,
+	.docs-example-stats {
+		display: table-cell;
+		vertical-align: bottom;
+		width: 100%;
+	}
+	.docs-example-stats {
+		width: 100%;
+		+ .form-label {
+			display: block;
+		}
+	}
 }
 
 // ==========================================================================

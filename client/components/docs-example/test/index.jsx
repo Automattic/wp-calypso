@@ -9,10 +9,9 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
-import DocsExample, { DocsExampleToggle, DocsExampleStats } from '../index';
+import EmptyComponent from 'test/helpers/react/empty-component';
+import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
-import Button from 'components/button';
-import Count from 'components/count';
 
 /**
  * Helper method to get an html attribute from a ReactWrapper instance.
@@ -32,32 +31,43 @@ const getAttribute = ( reactWrapper, attr ) => {
 };
 
 describe( 'DocsExample', () => {
-	useFakeDom();
-
 	const props = {
 		title: 'Test Title',
 		url: '/test'
 	};
-	const childrenFixture = <div id="children">Test</div>;
+	let DocsExample;
+	useFakeDom();
+	useMockery( mockery => {
+		mockery.registerMock( 'components/tooltip', EmptyComponent );
+		DocsExample = require( '../index' ).default;
+	} );
 
 	it( 'should render', () => {
-		// TODO: when chai-enzyme is available use `shallow` instead
-		const docsExample = mount(
+		const docsExample = shallow(
 			<DocsExample { ...props }>
-				{ childrenFixture }
+				<EmptyComponent />
 			</DocsExample>
 		);
 		assert.lengthOf( docsExample.find( '.docs-example' ), 1 );
 		assert.lengthOf( docsExample.find( '.docs-example__main' ), 1 );
-		assert.ok( docsExample.contains( childrenFixture ) );
+		assert.lengthOf( docsExample.find( '.docs-example__link' ), 1 );
+		assert.lengthOf( docsExample.find( '.docs-example__toggle' ), 0 );
+		assert.lengthOf( docsExample.find( '.docs-example__stats' ), 0 );
 
+		assert.ok( docsExample.contains( EmptyComponent ) );
+	} );
+
+	it( 'should set the correct title/link', () => {
+		// TODO: when chai-enzyme is available use `shallow` instead
+		const docsExample = mount(
+			<DocsExample { ...props }>
+				<EmptyComponent />
+			</DocsExample>
+		);
 		const titleLink = docsExample.find( '.docs-example__link' );
 		assert.equal( titleLink.text(), props.title );
 		// TODO: when available use chai-enzyme instead of this helper
 		assert.equal( getAttribute( titleLink, 'href' ), props.url );
-
-		assert.lengthOf( docsExample.find( '.docs-example__toggle' ), 0 );
-		assert.lengthOf( docsExample.find( '.docs-example__stats' ), 0 );
 	} );
 
 	it( 'should render the toggle button', () => {
@@ -71,7 +81,7 @@ describe( 'DocsExample', () => {
 		);
 		const docsExample = shallow(
 			<DocsExample { ...propsWithToggle }>
-				{ childrenFixture }
+				<EmptyComponent />
 			</DocsExample>
 		);
 
@@ -90,7 +100,7 @@ describe( 'DocsExample', () => {
 		);
 		const docsExample = shallow(
 			<DocsExample { ...propsWithStats }>
-				{ childrenFixture }
+				<EmptyComponent />
 			</DocsExample>
 		);
 
@@ -99,6 +109,14 @@ describe( 'DocsExample', () => {
 } );
 
 describe( 'DocsExampleToggle', () => {
+	let Button, DocsExampleToggle;
+
+	useMockery( mockery => {
+		mockery.registerMock( 'components/tooltip', EmptyComponent );
+		DocsExampleToggle = require( '../index' ).DocsExampleToggle;
+		Button = require( 'components/button' );
+	} );
+
 	const props = {
 		onClick: noop,
 		text: 'Toggle me baby!'
@@ -114,6 +132,13 @@ describe( 'DocsExampleToggle', () => {
 } );
 
 describe( 'DocsExampleStats', () => {
+	let DocsExampleStats;
+
+	useMockery( mockery => {
+		mockery.registerMock( 'components/tooltip', EmptyComponent );
+		DocsExampleStats = require( '../index' ).DocsExampleStats;
+	} );
+
 	const props = {
 		count: 10
 	};
@@ -123,14 +148,15 @@ describe( 'DocsExampleStats', () => {
 			<DocsExampleStats { ...props } />
 		);
 
-		assert.lengthOf( docsExampleStats.find( 'p' ), 1 );
+		assert.lengthOf( docsExampleStats.find( '.docs-example-stats' ), 1 );
 	} );
 
 	it( 'should have the component\'s usage count', () => {
-		const docsExampleStats = shallow(
+		const docsExampleStatsCount = shallow(
 			<DocsExampleStats { ...props } />
-		);
+		).find( '.docs-example-stats__count' );
 
-		assert.lengthOf( docsExampleStats.find( Count ), 1 );
+		assert.lengthOf( docsExampleStatsCount, 1 );
+		assert.equal( docsExampleStatsCount.text(), props.count );
 	} );
 } );

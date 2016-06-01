@@ -95,9 +95,8 @@ var FormFields = React.createClass( {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormSectionHeading>Form Text Inputs</FormSectionHeading>
+						<FormLegend>Form Text Inputs</FormLegend>
 						<DocsExampleStats count={ this.getUsageStats( FormTextInput ) } />
-
 						<div className="form-fieldset">
 							<FormLabel htmlFor="username">Disabled Form Text Input</FormLabel>
 							<FormTextInput
