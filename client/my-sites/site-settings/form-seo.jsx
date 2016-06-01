@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
 import isString from 'lodash/isString';
+import omit from 'lodash/omit';
 import pickBy from 'lodash/pickBy';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -47,12 +47,11 @@ function getGeneralTabUrl( slug ) {
 function stateForSite( site ) {
 	return {
 		seoMetaDescription: get( site, 'options.seo_meta_description', '' ),
-		verificationServicesCodes: {
-			google: get( site, 'options.verification_services_codes.google', '' ),
-			bing: get( site, 'options.verification_services_codes.bing', '' ),
-			pinterest: get( site, 'options.verification_services_codes.pinterest', '' ),
-			yandex: get( site, 'options.verification_services_codes.yandex', '' )
-		}
+		googleCode: get( site, 'options.verification_services_codes.google', '' ),
+		bingCode: get( site, 'options.verification_services_codes.bing', '' ),
+		pinterestCode: get( site, 'options.verification_services_codes.pinterest', '' ),
+		yandexCode: get( site, 'options.verification_services_codes.yandex', '' ),
+		isFetchingSettings: get( site, 'fetchingSettings', false )
 	};
 }
 
@@ -89,10 +88,14 @@ export const SeoForm = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		if ( get( nextProps, 'site.ID' ) !== get( this.props, 'site.ID' ) ) {
-			// Update state when switching sites
-			this.setState( stateForSite( nextProps.site ) );
+		let nextState = stateForSite( nextProps.site );
+
+		// Don't update state for fields the user has edited
+		if ( this.state.dirtyFields ) {
+			nextState = omit( nextState, this.state.dirtyFields );
 		}
+
+		this.setState( nextState );
 	},
 
 	handleMetaChange( event ) {
@@ -100,15 +103,20 @@ export const SeoForm = React.createClass( {
 		// Don't allow html tags in the input field
 		const hasHtmlTagError = anyHtmlTag.test( seoMetaDescription );
 
+		const { dirtyFields = [] } = this.state;
+		if ( ! includes( dirtyFields, 'seoMetaDescription' ) ) {
+			dirtyFields.push( 'seoMetaDescription' );
+		}
+
 		this.setState( Object.assign(
 			{ hasHtmlTagError },
-			! hasHtmlTagError && { seoMetaDescription }
+			! hasHtmlTagError && { seoMetaDescription },
+			{ dirtyFields }
 		) );
 	},
 
-	handleVerificationCodeChange( event, serviceName ) {
-		const servicesCodes = this.state.verificationServicesCodes;
-		if ( ! servicesCodes.hasOwnProperty( serviceName ) ) {
+	handleVerificationCodeChange( event, serviceCode ) {
+		if ( ! this.state.hasOwnProperty( serviceCode ) ) {
 			return;
 		}
 
@@ -116,17 +124,21 @@ export const SeoForm = React.createClass( {
 		if ( event.target.value.length === 1 ) {
 			this.setState( {
 				showPasteError: true,
-				invalidCodes: [ serviceName ]
+				invalidCodes: [ serviceCode.replace( 'Code', '' ) ]
 			} );
 			return;
+		}
+
+		const { dirtyFields = [] } = this.state;
+		if ( ! includes( dirtyFields, serviceCode ) ) {
+			dirtyFields.push( serviceCode );
 		}
 
 		this.setState( {
 			invalidCodes: [],
 			showPasteError: false,
-			verificationServicesCodes: Object.assign( {}, servicesCodes, {
-				[ serviceName ]: event.target.value
-			} )
+			[ serviceCode ]: event.target.value,
+			dirtyFields
 		} );
 	},
 
@@ -139,7 +151,14 @@ export const SeoForm = React.createClass( {
 
 		notices.clearNotices( 'notices' );
 
-		const filteredCodes = pickBy( this.state.verificationServicesCodes, isString );
+		const verificationCodes = {
+			google: this.state.googleCode,
+			bing: this.state.bingCode,
+			pinterest: this.state.pinterestCode,
+			yandex: this.state.yandexCode
+		};
+
+		const filteredCodes = pickBy( verificationCodes, isString );
 		const invalidCodes = Object.keys(
 			pickBy(
 				filteredCodes,
@@ -192,38 +211,28 @@ export const SeoForm = React.createClass( {
 
 		const {
 			isSubmittingForm,
+			isFetchingSettings,
 			seoMetaDescription,
-			verificationServicesCodes,
 			showPasteError = false,
 			hasHtmlTagError = false,
 			invalidCodes = []
 		} = this.state;
 
+		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
+
 		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
-		const isDisabled = isSitePrivate || isSubmittingForm;
+		const isDisabled = isSitePrivate || isSubmittingForm || isFetchingSettings;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
 		const sitemapUrl = `https://${ slug }/sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
 		const placeholderTagContent = '1234';
 
-		const googleTag = getMetaTag(
-			'google',
-			// The API returns 'false' for an empty array value, so we force it to an empty string if needed
-			get( verificationServicesCodes, 'google' ) || ''
-		);
-		const bingTag = getMetaTag(
-			'bing',
-			get( verificationServicesCodes, 'bing' ) || ''
-		);
-		const pinterestTag = getMetaTag(
-			'pinterest',
-			get( verificationServicesCodes, 'pinterest' ) || ''
-		);
-		const yandexTag = getMetaTag(
-			'yandex',
-			get( verificationServicesCodes, 'yandex' ) || ''
-		);
+		// The API returns 'false' for an empty array value, so we force it to an empty string if needed
+		googleCode = getMetaTag( 'google', googleCode || '' );
+		bingCode = getMetaTag( 'bing', bingCode || '' );
+		pinterestCode = getMetaTag( 'pinterest', pinterestCode || '' );
+		yandexCode = getMetaTag( 'yandex', yandexCode || '' );
 
 		const hasError = function( service ) {
 			return includes( invalidCodes, service );
@@ -320,12 +329,12 @@ export const SeoForm = React.createClass( {
 									prefix={ this.translate( 'Google' ) }
 									name="verification_code_google"
 									type="text"
-									value={ googleTag }
+									value={ googleCode }
 									id="verification_code_google"
 									disabled={ isDisabled }
 									isError={ hasError( 'google' ) }
 									placeholder={ getMetaTag( 'google', placeholderTagContent ) }
-									onChange={ event => this.handleVerificationCodeChange( event, 'google' ) } />
+									onChange={ event => this.handleVerificationCodeChange( event, 'googleCode' ) } />
 								{ hasError( 'google' ) && this.getVerificationError( showPasteError ) }
 							</FormFieldset>
 
@@ -334,12 +343,12 @@ export const SeoForm = React.createClass( {
 									prefix={ this.translate( 'Bing' ) }
 									name="verification_code_bing"
 									type="text"
-									value={ bingTag }
+									value={ bingCode }
 									id="verification_code_bing"
 									disabled={ isDisabled }
 									isError={ hasError( 'bing' ) }
 									placeholder={ getMetaTag( 'bing', placeholderTagContent ) }
-									onChange={ event => this.handleVerificationCodeChange( event, 'bing' ) } />
+									onChange={ event => this.handleVerificationCodeChange( event, 'bingCode' ) } />
 								{ hasError( 'bing' ) && this.getVerificationError( showPasteError ) }
 							</FormFieldset>
 
@@ -348,12 +357,12 @@ export const SeoForm = React.createClass( {
 									prefix={ this.translate( 'Pinterest' ) }
 									name="verification_code_pinterest"
 									type="text"
-									value={ pinterestTag }
+									value={ pinterestCode }
 									id="verification_code_pinterest"
 									disabled={ isDisabled }
 									isError={ hasError( 'pinterest' ) }
 									placeholder={ getMetaTag( 'pinterest', placeholderTagContent ) }
-									onChange={ event => this.handleVerificationCodeChange( event, 'pinterest' ) } />
+									onChange={ event => this.handleVerificationCodeChange( event, 'pinterestCode' ) } />
 								{ hasError( 'pinterest' ) && this.getVerificationError( showPasteError ) }
 							</FormFieldset>
 
@@ -362,12 +371,12 @@ export const SeoForm = React.createClass( {
 									prefix={ this.translate( 'Yandex' ) }
 									name="verification_code_yandex"
 									type="text"
-									value={ yandexTag }
+									value={ yandexCode }
 									id="verification_code_yandex"
 									disabled={ isDisabled }
 									isError={ hasError( 'yandex' ) }
 									placeholder={ getMetaTag( 'yandex', placeholderTagContent ) }
-									onChange={ event => this.handleVerificationCodeChange( event, 'yandex' ) } />
+									onChange={ event => this.handleVerificationCodeChange( event, 'yandexCode' ) } />
 								{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
 							</FormFieldset>
 						</FormFieldset>
