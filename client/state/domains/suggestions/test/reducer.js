@@ -17,7 +17,8 @@ import {
 } from 'state/action-types';
 import reducer, {
 	items,
-	requesting
+	requesting,
+	errors
 } from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -32,7 +33,8 @@ describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'items',
-			'requesting'
+			'requesting',
+			'errors'
 		] );
 	} );
 
@@ -241,7 +243,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate fetchingItems by site ID', () => {
+		it( 'should accumulate requesting state by query', () => {
 			const originalState = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
 			} );
@@ -276,6 +278,141 @@ describe( 'reducer', () => {
 					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
 				} );
 				const state = requesting( original, { type: DESERIALIZE } );
+				expect( state ).to.eql( {} );
+			} );
+		} );
+	} );
+
+	describe( '#errors()', () => {
+		it( 'should default to an empty object', () => {
+			const state = errors( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should update errors on failure', () => {
+			const originalState = deepFreeze( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
+			} );
+			const queryObject = {
+				query: 'example',
+				quantity: 2,
+				vendor: 'domainsbot',
+				include_wordpressdotcom: false
+			};
+			const error = new Error( 'something bad happened' );
+			const state = errors( originalState, {
+				type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
+				queryObject,
+				error
+			} );
+
+			expect( state ).to.eql( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error
+			} );
+		} );
+
+		it( 'should update errors on success', () => {
+			const error = new Error( 'something bad happened' );
+			const originalState = deepFreeze( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error
+			} );
+			const queryObject = {
+				query: 'example',
+				quantity: 2,
+				vendor: 'domainsbot',
+				include_wordpressdotcom: false
+			};
+			const state = errors( originalState, {
+				type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
+				queryObject
+			} );
+
+			expect( state ).to.eql( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': null
+			} );
+		} );
+
+		it( 'should update errors on request', () => {
+			const error = new Error( 'something bad happened' );
+			const originalState = deepFreeze( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error
+			} );
+			const queryObject = {
+				query: 'example',
+				quantity: 2,
+				vendor: 'domainsbot',
+				include_wordpressdotcom: false
+			};
+			const state = errors( originalState, {
+				type: DOMAINS_SUGGESTIONS_REQUEST,
+				queryObject
+			} );
+
+			expect( state ).to.eql( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': null
+			} );
+		} );
+
+		it( 'should update errors on failure', () => {
+			const originalState = deepFreeze( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
+			} );
+			const queryObject = {
+				query: 'example',
+				quantity: 2,
+				vendor: 'domainsbot',
+				include_wordpressdotcom: false
+			};
+			const error = new Error( 'something bad happened' );
+			const state = errors( originalState, {
+				type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
+				queryObject,
+				error
+			} );
+
+			expect( state ).to.eql( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error
+			} );
+		} );
+
+		it( 'should accumulate errors by queries', () => {
+			const error = new Error( 'something bad happened' );
+			const originalState = deepFreeze( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error
+			} );
+			const queryObject = {
+				query: 'foobar',
+				quantity: 2,
+				vendor: 'domainsbot',
+				include_wordpressdotcom: false
+			};
+			const error2 = new Error( 'something else bad happened' );
+			const state = errors( originalState, {
+				type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
+				queryObject,
+				error: error2
+			} );
+
+			expect( state ).to.eql( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
+				'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error2
+			} );
+		} );
+
+		describe( 'persistence', () => {
+			it( 'never persists state', () => {
+				const original = deepFreeze( {
+					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': new Error()
+				} );
+				const state = errors( original, { type: SERIALIZE } );
+				expect( state ).to.eql( {} );
+			} );
+
+			it( 'never loads persisted state', () => {
+				const original = deepFreeze( {
+					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': new Error()
+				} );
+				const state = errors( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( {} );
 			} );
 		} );
