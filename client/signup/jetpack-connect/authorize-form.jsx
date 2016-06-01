@@ -31,6 +31,7 @@ import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSiteByUrl } from 'state/sites/selectors';
 import Spinner from 'components/spinner';
+import Site from 'my-sites/site';
 import { decodeEntities } from 'lib/formatting';
 
 /**
@@ -43,27 +44,22 @@ const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 
 const SiteCard = React.createClass( {
 	render() {
-		const { site_icon } = this.props.queryObject;
-		const style = {
-			height: 32,
-			width: 32,
-			lineHeight: '32px',
-			fontSize: '32px'
+		const { site_icon, blogname, home_url } = this.props.queryObject;
+		const siteIcon = site_icon ? { img: site_icon } : false;
+		const url = decodeEntities( home_url );
+		const title = decodeEntities( blogname );
+		const site = {
+			ID: null,
+			url: url,
+			admin_url: url,
+			domain: url,
+			icon: siteIcon,
+			is_vip: false,
+			title: title
 		};
-		const icon = ( site_icon )
-			? <img className="site-icon__img" src={ site_icon } />
-			: <Gridicon icon="globe" size={ Math.round( 32 / 1.3 ) } />;
 		return(
 			<CompactCard>
-				<div className="site">
-					<div className="site-icon" style={ style }>
-						{ icon }
-					</div>
-					<div className="site__info">
-						<div className="site__title">{ decodeEntities( this.props.queryObject.blogname ) }</div>
-						<div className="site__domain">{ decodeEntities( this.props.queryObject.home_url ) }</div>
-					</div>
-				</div>
+				<Site site={ site } />
 			</CompactCard>
 		);
 	}
