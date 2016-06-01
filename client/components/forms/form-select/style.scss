@@ -9,6 +9,10 @@
 		border-color: darken( $alert-red, 10 );
 	}
 
+	&:disabled {
+		color: lighten( $gray, 10% );
+	}
+
 	&:focus {
 		&.is-error {
 			box-shadow: 0 0 0 2px lighten( $alert-red, 35 );
