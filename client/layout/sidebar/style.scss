@@ -378,3 +378,16 @@ a.sidebar__button {
 		}
 	}
 }
+
+.sidebar__region {
+	ul {
+		display: flex;
+		flex-direction: column;
+	}
+
+	@include breakpoint( ">660px" ) {
+		overflow: auto;
+		flex: 1;
+		transform: translateX( 0 ); /* workaround for safari scrollbar rendering bug */
+	}
+}
