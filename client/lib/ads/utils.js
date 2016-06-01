@@ -12,7 +12,7 @@ import { abtest } from 'lib/abtest';
  * @return {boolean}      true if site has WordAds access
  */
 export function canAccessWordads( site ) {
-	if ( config.isEnabled( 'manage/ads' ) ) {
+	if ( site && config.isEnabled( 'manage/ads' ) ) {
 		if ( isWordadsInstantActivationEligible( site ) ) {
 			return true;
 		}
