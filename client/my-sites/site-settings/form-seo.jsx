@@ -103,7 +103,7 @@ export const SeoForm = React.createClass( {
 		// Don't allow html tags in the input field
 		const hasHtmlTagError = anyHtmlTag.test( seoMetaDescription );
 
-		let dirtyFields = this.state.dirtyFields || [];
+		const { dirtyFields = [] } = this.state;
 		if ( ! includes( dirtyFields, 'seoMetaDescription' ) ) {
 			dirtyFields.push( 'seoMetaDescription' );
 		}
