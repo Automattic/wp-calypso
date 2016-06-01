@@ -1,3 +1,4 @@
+import find from 'lodash/find';
 import { fromJS } from 'immutable';
 
 import { appStates } from './constants';
@@ -20,13 +21,17 @@ const importerStateMap = [
 ];
 
 function apiToAppState( state ) {
-	return importerStateMap
-		.find( ( [ , api ] ) => api === state )[0];
+	return find(
+		importerStateMap,
+		( [ , api ] ) => api === state
+	)[0];
 }
 
 function appStateToApi( state ) {
-	return importerStateMap
-		.find( ( [ appState ] ) => appState === state )[1];
+	return find(
+		importerStateMap,
+		( [ appState ] ) => appState === state
+	)[1];
 }
 
 function generateSourceAuthorIds( customData ) {
