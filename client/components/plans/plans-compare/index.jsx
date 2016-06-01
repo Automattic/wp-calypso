@@ -31,6 +31,7 @@ import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import QueryPlans from 'components/data/query-plans';
+import config from 'config';
 
 const PlansCompare = React.createClass( {
 	mixins: [ observe( 'features' ) ],
@@ -233,7 +234,9 @@ const PlansCompare = React.createClass( {
 			const plans = this.getPlans();
 			const features = this.getFeatures();
 
-			abtest( 'wordadsInstantActivation' ) === 'enabled' && features.splice( 6, 0, {
+			config.isEnabled( 'manage/ads/wordads-instant' ) &&
+			abtest( 'wordadsInstantActivation' ) === 'enabled' &&
+			features.splice( 6, 0, {
 				1003: true,
 				1008: true,
 				description: this.translate( 'WordAds is an advertising program that enables you to generate income from your site.' ),
