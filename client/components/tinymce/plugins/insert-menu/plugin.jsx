@@ -28,7 +28,7 @@ const initialize = editor => {
 		menu: menuItems.map( ( { name } ) => editor.menuItems[ name ] ),
 		onPostRender() {
 			ReactDOM.render(
-				<Gridicon icon="add-image" />,
+				<Gridicon icon="add-outline" />,
 				this.$el[0].children[0]
 			);
 		}

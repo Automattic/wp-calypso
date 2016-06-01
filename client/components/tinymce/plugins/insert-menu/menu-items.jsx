@@ -21,7 +21,7 @@ const SocialLogoButton = ( { icon, label } ) => (
 export default [
 	{
 		name: 'insert_media_item',
-		item: <GridiconButton icon="image-multiple" label={ i18n.translate( 'Add Media' ) } />,
+		item: <GridiconButton icon="add-image" label={ i18n.translate( 'Add Media' ) } />,
 		cmd: 'wpcomAddMedia'
 	},
 	{
