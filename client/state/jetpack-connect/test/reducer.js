@@ -71,6 +71,7 @@ describe( 'reducer', () => {
 			const state = jetpackConnectSessions( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
+
 		it( 'should add the url slug as a new property when checking a new url', () => {
 			const state = jetpackConnectSessions( undefined, {
 				type: JETPACK_CONNECT_CHECK_URL,
@@ -79,6 +80,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.have.property( 'website.com' ).to.be.a( 'object' );
 		} );
+
 		it( 'should store a timestamp when checking a new url', () => {
 			const nowTime = ( new Date() ).getTime();
 			const state = jetpackConnectSessions( undefined, {
@@ -89,6 +91,7 @@ describe( 'reducer', () => {
 			expect( state[ 'website.com' ] ).to.have.property( 'timestamp' )
 				.to.be.at.least( nowTime );
 		} );
+
 		it( 'should update the timestamp when checking an existent url', () => {
 			const nowTime = ( new Date() ).getTime();
 			const state = jetpackConnectSessions( { 'website.com': { timestamp: 1 } }, {
@@ -99,6 +102,7 @@ describe( 'reducer', () => {
 			expect( state[ 'website.com' ] ).to.have.property( 'timestamp' )
 				.to.be.at.least( nowTime );
 		} );
+
 		it( 'should not restore a state with a property without a timestamp', () => {
 			const state = jetpackConnectSessions( { 'website.com': {} }, {
 				type: DESERIALIZE
@@ -106,6 +110,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.be.eql( {} );
 		} );
+
 		it( 'should not restore a state with a property with a non-integer timestamp', () => {
 			const state = jetpackConnectSessions( { 'website.com': { timestamp: '1' } }, {
 				type: DESERIALIZE
@@ -113,15 +118,9 @@ describe( 'reducer', () => {
 
 			expect( state ).to.be.eql( {} );
 		} );
+
 		it( 'should not restore a state with a session stored with extra properties', () => {
 			const state = jetpackConnectSessions( { 'website.com': { timestamp: 1, foo: 'bar' } }, {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.be.eql( {} );
-		} );
-		it( 'should not restore a state with a property that is not a slug', () => {
-			const state = jetpackConnectSessions( { '#website.com': { timestamp: 1 } }, {
 				type: DESERIALIZE
 			} );
 
