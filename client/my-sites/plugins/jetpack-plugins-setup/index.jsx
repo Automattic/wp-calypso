@@ -19,7 +19,6 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import JetpackSite from 'lib/site/jetpack';
@@ -219,7 +218,7 @@ const PlansSetup = React.createClass( {
 					// Done doesn't use a notice
 					return (
 						<div className="plugin-item__finished">
-							{ this.translate( 'Successfully configured.' ) }
+							{ this.translate( 'Successfully installed & configured.' ) }
 						</div>
 					);
 					break;
@@ -251,17 +250,7 @@ const PlansSetup = React.createClass( {
 			);
 		}
 
-		const site = this.props.selectedSite;
-		const sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
-		Object.assign( plugin, sitePlugin );
-		return (
-			<div className="plugin-item__actions">
-				<PluginActivateToggle
-					plugin={ plugin }
-					isMock={ true }
-					site={ site } />
-			</div>
-		);
+		return null;
 	},
 
 	renderPlaceholder() {
