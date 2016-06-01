@@ -48,7 +48,8 @@ const Search = React.createClass( {
 		disableAutocorrect: React.PropTypes.bool,
 		onBlur: React.PropTypes.func,
 		searching: React.PropTypes.bool,
-		isOpen: React.PropTypes.bool
+		isOpen: React.PropTypes.bool,
+		dir: React.PropTypes.string
 	},
 
 	getInitialState: function() {
@@ -70,7 +71,8 @@ const Search = React.createClass( {
 			onKeyDown: noop,
 			disableAutocorrect: false,
 			searching: false,
-			isOpen: false
+			isOpen: false,
+			dir: undefined
 		};
 	},
 
@@ -253,6 +255,8 @@ const Search = React.createClass( {
 			'is-pinned': this.props.pinned,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
+			rtl: this.props.dir === 'rtl',
+			ltr: this.props.dir === 'ltr',
 			search: true
 		} );
 
@@ -269,12 +273,12 @@ const Search = React.createClass( {
 					}
 					aria-controls={ 'search-component-' + this.state.instanceId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
-				<Gridicon icon="search" className="search-open__icon"/>
+				<Gridicon icon="search" className={ 'search-open__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) }/>
 				</div>
 				<input
 					type="search"
 					id={ 'search-component-' + this.state.instanceId }
-					className="search__input"
+					className={ 'search__input' + ( this.props.dir ? ' ' + this.props.dir : '' ) }
 					placeholder={ placeholder }
 					role="search"
 					value={ searchValue }
@@ -287,6 +291,7 @@ const Search = React.createClass( {
 					disabled={ this.props.disabled }
 					aria-hidden={ ! isOpenUnpinnedOrQueried }
 					autoCapitalize="none"
+					dir={ this.props.dir }
 					{...autocorrect } />
 				{ ( searchValue || this.state.isOpen ) ? this.closeButton() : null }
 			</div>
@@ -301,7 +306,7 @@ const Search = React.createClass( {
 				onKeyDown={ this._keyListener.bind( this, 'closeSearch' ) }
 				aria-controls={ 'search-component-' + this.state.instanceId }
 				aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
-			<Gridicon icon="cross" className="search-close__icon"/>
+			<Gridicon icon="cross" className={ 'search-close__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) } />
 			</span>
 		);
 	},
