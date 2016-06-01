@@ -276,7 +276,7 @@ export const SeoForm = React.createClass( {
 					</p>
 					<form onChange={ this.markChanged } className="seo-form">
 						<FormFieldset>
-							<FormFieldset className="has-divider is-top-only">
+							<FormFieldset className="has-divider">
 								<FormLabel htmlFor="seo_meta_description">{ this.translate( 'Front Page Meta Description' ) }</FormLabel>
 								<CountedTextarea
 									name="seo_meta_description"
@@ -292,14 +292,6 @@ export const SeoForm = React.createClass( {
 								}
 								<FormSettingExplanation>
 									{ this.translate( 'Craft a description of your site in about 160 characters. This description can be used in search engine results for your site\'s Front Page.' ) }
-								</FormSettingExplanation>
-							</FormFieldset>
-
-							<FormFieldset className="has-divider">
-								<FormLabel htmlFor="seo_sitemap">{ this.translate( 'XML Sitemap' ) }</FormLabel>
-								<ExternalLink className="seo-sitemap" icon={ true } href={ sitemapUrl } target="_blank">{ sitemapUrl }</ExternalLink>
-								<FormSettingExplanation>
-									{ this.translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
 								</FormSettingExplanation>
 							</FormFieldset>
 
@@ -379,6 +371,14 @@ export const SeoForm = React.createClass( {
 									onChange={ event => this.handleVerificationCodeChange( event, 'yandexCode' ) } />
 								{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
 							</FormFieldset>
+						</FormFieldset>
+
+						<FormFieldset className="has-divider is-top-only">
+								<FormLabel htmlFor="seo_sitemap">{ this.translate( 'XML Sitemap' ) }</FormLabel>
+								<ExternalLink className="seo-sitemap" icon={ true } href={ sitemapUrl } target="_blank">{ sitemapUrl }</ExternalLink>
+								<FormSettingExplanation>
+									{ this.translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
+								</FormSettingExplanation>
 						</FormFieldset>
 					</form>
 				</Card>
