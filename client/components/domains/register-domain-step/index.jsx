@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import async from 'async';
-import extend from 'lodash/extend';
 import flatten from 'lodash/flatten';
 import reject from 'lodash/reject';
 import find from 'lodash/find';
@@ -60,7 +59,7 @@ function getQueryObject( props ) {
 		quantity: SUGGESTION_QUANTITY,
 		vendor: abtest( 'domainSuggestionVendor' ),
 		includeSubdomain: props.includeWordPressDotCom
-	}
+	};
 }
 
 function processSearchStatQueue() {
