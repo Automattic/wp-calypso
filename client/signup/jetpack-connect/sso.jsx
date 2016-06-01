@@ -22,6 +22,8 @@ import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
 import addQueryArgs from 'lib/route/add-query-args';
 import config from 'config';
 import EmptyContent from 'components/empty-content';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 /*
  * Module variables
@@ -61,19 +63,28 @@ const JetpackSSOForm = React.createClass( {
 		this.props.authorizeSSO( siteId, ssoNonce );
 	},
 
-	onCancelClick() {
+	onCancelClick( event ) {
 		debug( 'Clicked return to site link' );
+		this.returnToSiteFallback( event );
+	},
 
+	onTryAgainClick( event ) {
+		debug( 'Clicked try again link' );
+		this.returnToSiteFallback( event );
+	},
+
+	returnToSiteFallback( event ) {
 		// If, for some reason, the API request failed and we do not have the admin URL,
 		// then fallback to the user's last location.
 		if ( ! get( this.props, 'blogDetails.admin_url' ) ) {
+			event.preventDefault();
 			window.history.back();
 		}
 	},
 
 	isButtonDisabled() {
-		const { nonceValid, isAuthorizing, isValidating, ssoUrl } = this.props;
-		return !! ( ! nonceValid | isAuthorizing | isValidating | ssoUrl );
+		const { nonceValid, isAuthorizing, isValidating, ssoUrl, authorizationError } = this.props;
+		return !! ( ! nonceValid || isAuthorizing || isValidating || ssoUrl || authorizationError );
 	},
 
 	maybeValidateSSO( props = this.props ) {
@@ -82,6 +93,27 @@ const JetpackSSOForm = React.createClass( {
 		if ( ssoNonce && siteId && 'undefined' === typeof nonceValid && ! isAuthorizing && ! isValidating ) {
 			this.props.validateSSONonce( siteId, ssoNonce );
 		}
+	},
+
+	maybeRenderAuthorizationError() {
+		const { authorizationError } = this.props;
+
+		if ( ! authorizationError ) {
+			return null;
+		}
+
+		return (
+			<Notice
+				status="is-error"
+				text={ this.translate( 'Oops, something went wrong.' ) }
+				showDismiss={ false }>
+				<NoticeAction
+					href={ get( this.props, 'blogDetails.admin_url', '#' ) }
+					onClick={ this.onTryAgainClick }>
+					{ this.translate( 'Try again' ) }
+				</NoticeAction>
+			</Notice>
+		);
 	},
 
 	renderNoQueryArgsError() {
@@ -130,6 +162,7 @@ const JetpackSSOForm = React.createClass( {
 					/>
 
 					<Card>
+						{ this.maybeRenderAuthorizationError() }
 						<div className="jetpack-connect__sso__user-profile">
 							<Gravatar user={ user } size={ 120 } imgSize={ 400 } />
 							<h3 className="jetpack-connect__sso__user-profile-name">
@@ -161,7 +194,7 @@ const JetpackSSOForm = React.createClass( {
 					<LoggedOutFormLinks>
 						<LoggedOutFormLinkItem
 							rel="external"
-							href={ get( this.props, 'blogDetails.admin_url', null ) }
+							href={ get( this.props, 'blogDetails.admin_url', '#' ) }
 							onClick={ this.onCancelClick }>
 							{ this.translate( 'Return to %(siteName)s', {
 								args: {
