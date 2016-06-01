@@ -9,8 +9,8 @@
 			color: lighten( $gray, 10% );
 		}
 
-		&:hover .gridicons-add-image,
-		&:focus .gridicons-add-image {
+		&:hover .gridicons-add-outline,
+		&:focus .gridicons-add-outline {
 			fill: lighten( $gray, 10% );
 		}
 
@@ -19,8 +19,8 @@
 			color: $gray-dark;
 		}
 
-		.gridicons-add-image:hover,
-		.gridicons-add-image:focus {
+		.gridicons-add-outline:hover,
+		.gridicons-add-outline:focus {
 			fill: $gray-dark;
 		}
 	}
