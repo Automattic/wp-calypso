@@ -129,7 +129,7 @@ export const SeoForm = React.createClass( {
 			return;
 		}
 
-		let dirtyFields = this.state.dirtyFields || [];
+		const { dirtyFields = [] } = this.state;
 		if ( ! includes( dirtyFields, serviceCode ) ) {
 			dirtyFields.push( serviceCode );
 		}
