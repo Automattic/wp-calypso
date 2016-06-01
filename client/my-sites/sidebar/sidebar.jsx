@@ -26,6 +26,7 @@ var abtest = require( 'lib/abtest' ).abtest,
 	SidebarHeading = require( 'layout/sidebar/heading' ),
 	SidebarItem = require( 'layout/sidebar/item' ),
 	SidebarMenu = require( 'layout/sidebar/menu' ),
+	SidebarRegion = require( 'layout/sidebar/region' ),
 	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' );
 
 import Button from 'components/button';
@@ -690,6 +691,7 @@ module.exports = React.createClass( {
 
 		return (
 			<Sidebar>
+				<SidebarRegion>
 				<CurrentSite
 					sites={ this.props.sites }
 					siteCount={ this.props.user.get().visible_site_count }
@@ -770,6 +772,7 @@ module.exports = React.createClass( {
 					</SidebarMenu>
 					: null
 				}
+				</SidebarRegion>
 				<SidebarFooter>
 					{ this.addNewWordPress() }
 				</SidebarFooter>
