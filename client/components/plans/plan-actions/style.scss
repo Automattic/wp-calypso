@@ -8,6 +8,10 @@
 		&.is-image-button {
 			padding: 0;
 		}
+
+		.plan-actions__upgrade-button {
+			margin-top: 20px;
+		}
 	}
 
 	.plan-actions__action-details {
@@ -126,6 +130,11 @@
 .jetpack_free.plan-actions__illustration {
 	background-image: url('/calypso/images/plans/plan-beginner.svg');
 }
+
+.personal-bundle.plan-actions__illustration {
+	background-image: url('/calypso/images/plans/plan-personal.svg');
+}
+
 .value_bundle.plan-actions__illustration,
 .jetpack_premium.plan-actions__illustration {
 	background-image: url('/calypso/images/plans/plan-premium.svg');

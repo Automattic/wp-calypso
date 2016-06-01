@@ -1,8 +1,11 @@
+/** @ssr-ready **/
+
 import i18n from 'lib/mixins/i18n';
 
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
 export const PLAN_PREMIUM = 'value_bundle';
+export const PLAN_PERSONAL = 'personal-bundle';
 export const PLAN_FREE = 'free_plan';
 export const PLAN_JETPACK_FREE = 'jetpack_free';
 export const PLAN_JETPACK_PREMIUM = 'jetpack_premium';

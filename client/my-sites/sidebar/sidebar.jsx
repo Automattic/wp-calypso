@@ -33,7 +33,7 @@ import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
 import DraftsButton from 'post-editor/drafts-button';
 import Tooltip from 'components/tooltip';
-import { isPremium, isBusiness } from 'lib/products-values';
+import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
@@ -348,7 +348,7 @@ module.exports = React.createClass( {
 		// Show plan details for upgraded sites
 		if (
 			site &&
-			( isPremium( site.plan ) || isBusiness( site.plan ) )
+			( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) )
 		) {
 			planLink = '/plans/my-plan' + this.siteSuffix();
 		}

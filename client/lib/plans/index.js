@@ -12,6 +12,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { addItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 import {
@@ -21,6 +22,7 @@ import {
 import {
 	featuresList,
 	plansList,
+	PLAN_PERSONAL,
 	PLAN_FREE
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
@@ -129,6 +131,8 @@ export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 }
 
 export function filterPlansBySiteAndProps( plans, site, hideFreePlan, showJetpackFreePlan ) {
+	const hasPersonalPlan = site && site.plan.product_slug === PLAN_PERSONAL;
+
 	return plans.filter( function( plan ) {
 		if ( site && site.jetpack ) {
 			if ( showJetpackFreePlan ) {
@@ -138,6 +142,10 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, showJetpac
 		}
 
 		if ( hideFreePlan && PLAN_FREE === plan.product_slug ) {
+			return false;
+		}
+
+		if ( plan.product_slug === PLAN_PERSONAL && ! hasPersonalPlan && abtest( 'personalPlan' ) === 'hide' ) {
 			return false;
 		}
 
