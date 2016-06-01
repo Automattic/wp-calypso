@@ -32,6 +32,7 @@ const DomainTip = React.createClass( {
 
 	propTypes: {
 		className: React.PropTypes.string,
+		event: React.PropTypes.string.isRequired,
 		siteId: React.PropTypes.number.isRequired
 	},
 
@@ -49,11 +50,11 @@ const DomainTip = React.createClass( {
 	domainUpgradeNudge() {
 		return (
 			<UpgradeNudge
-					title={ this.translate( 'Get a free Custom Domain' ) }
-					message={ this.translate( 'Custom domains are free when you upgrade to a Premium or Business plan.' ) }
-					feature={ FEATURE_CUSTOM_DOMAIN }
-					event="stats_insights_domain"
-				/>
+				title={ this.translate( 'Get a free Custom Domain' ) }
+				message={ this.translate( 'Custom domains are free when you upgrade to a Premium or Business plan.' ) }
+				feature={ FEATURE_CUSTOM_DOMAIN }
+				event={ this.props.event }
+			/>
 		);
 	},
 
@@ -74,7 +75,7 @@ const DomainTip = React.createClass( {
 				{
 					suggestion
 						? <UpgradeNudge
-						event="domain-tip"
+						event={ `domain_tip_${ this.props.event }` }
 						shouldDisplay={ this.noticeShouldDisplay }
 						feature={ FEATURE_CUSTOM_DOMAIN }
 						title={ this.translate( '{{span}}%(domain)s{{/span}} is available!', {

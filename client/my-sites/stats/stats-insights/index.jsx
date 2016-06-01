@@ -84,7 +84,7 @@ export default React.createClass( {
 					/>
 					<AllTime allTimeList={ allTimeList } />
 					<MostPopular insightsList={ insightsList } />
-					<DomainTip siteId={ site.ID } />
+					<DomainTip siteId={ site.ID } event="stats_insights_domain" />
 					<div className="stats-nonperiodic has-recent">
 						<div className="module-list">
 							<div className="module-column">
