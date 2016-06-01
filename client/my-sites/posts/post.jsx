@@ -239,11 +239,10 @@ module.exports = React.createClass( {
 			showLikes = ! isJetpack || site.isModuleActive( 'likes' ),
 			showStats = site.capabilities && site.capabilities.view_stats && ( ! isJetpack || site.isModuleActive( 'stats' ) ),
 			metaItems = [],
-			commentCountDisplay, commentHref, commentTitle, commentMeta,
+			commentCountDisplay, commentTitle, commentMeta,
 			likeCountDisplay, likeTitle, likeMeta, footerMetaItems;
 
 		if ( showComments ) {
-			commentHref = post.URL + '#comments';
 			if ( post.discussion && post.discussion.comment_count > 0 ) {
 				commentTitle = this.translate( '%(count)s Comment', '%(count)s Comments', {
 					count: post.discussion.comment_count,
