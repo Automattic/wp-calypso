@@ -34,12 +34,14 @@ import { isPlan } from 'lib/products-values';
 import cartItems from 'lib/cart-values/cart-items';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { abtest } from 'lib/abtest';
+import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
+import { getDomainsSuggestions, } from 'state/domains/suggestions/selectors';
 
 const domains = wpcom.domains();
 
 // max amount of domain suggestions we should fetch/display
-const SUGGESTION_QUANTITY = 10,
-	INITIAL_SUGGESTION_QUANTITY = 2;
+const SUGGESTION_QUANTITY = 10;
+const INITIAL_SUGGESTION_QUANTITY = 2;
 
 const analytics = analyticsMixin( 'registerDomain' ),
 	domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
@@ -48,6 +50,18 @@ let searchQueue = [],
 	searchStackTimer = null,
 	lastSearchTimestamp = null,
 	searchCount = 0;
+
+function getQueryObject( props ) {
+	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
+		return null;
+	}
+	return {
+		query: props.selectedSite.domain.split( '.' )[ 0 ],
+		quantity: SUGGESTION_QUANTITY,
+		vendor: abtest( 'domainSuggestionVendor' ),
+		includeSubdomain: props.includeWordPressDotCom
+	}
+}
 
 function processSearchStatQueue() {
 	const queue = searchQueue.slice();
@@ -112,7 +126,6 @@ const RegisterDomainStep = React.createClass( {
 			clickedExampleSuggestion: false,
 			lastQuery: suggestion,
 			searchResults: null,
-			defaultSuggestions: null,
 			lastDomainSearched: null,
 			lastDomainError: null,
 			loadingResults: Boolean( suggestion ),
@@ -123,9 +136,6 @@ const RegisterDomainStep = React.createClass( {
 	componentWillMount: function() {
 		searchCount = 0; // reset the counter
 		lastSearchTimestamp = null; // reset timer
-		if ( this.props.selectedSite ) {
-			this.fetchDefaultSuggestions();
-		}
 
 		if ( this.props.initialState ) {
 			this.setState( this.props.initialState );
@@ -143,7 +153,6 @@ const RegisterDomainStep = React.createClass( {
 		if ( this.props.selectedSite && this.props.selectedSite.domain !== prevProps.selectedSite.domain ) {
 			this.setState( this.getInitialState() );
 			this.focusSearchCard();
-			this.fetchDefaultSuggestions();
 		}
 	},
 
@@ -157,39 +166,7 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	isLoadingSuggestions: function() {
-		return this.state.defaultSuggestions === null;
-	},
-
-	fetchDefaultSuggestions: function() {
-		if ( ! this.props.selectedSite || ! this.props.selectedSite.domain ) {
-			return;
-		}
-
-		const initialQuery = this.props.selectedSite.domain.split( '.' )[ 0 ];
-		const query = {
-			query: initialQuery,
-			quantity: SUGGESTION_QUANTITY,
-			vendor: abtest( 'domainSuggestionVendor' )
-		};
-
-		domains.suggestions( query ).then( suggestions => {
-			if ( ! this.isMounted() ) {
-				return;
-			}
-			this.props.onDomainsAvailabilityChange( true );
-			suggestions = suggestions.map( function( suggestion ) {
-				return extend( suggestion, { isVisible: true } );
-			} );
-			this.setState( { defaultSuggestions: suggestions } );
-		} ).catch( error => {
-			if ( error && error.statusCode === 503 ) {
-				return this.props.onDomainsAvailabilityChange( false );
-			} else if ( error && error.error ) {
-				error.code = error.error;
-				this.showValidationErrorMessage( initialQuery, error );
-			}
-			this.setState( { defaultSuggestions: [] } );
-		} );
+		return ! this.props.defaultSuggestions;
 	},
 
 	render: function() {
@@ -198,7 +175,24 @@ const RegisterDomainStep = React.createClass( {
 				{ this.searchForm() }
 				{ this.notices() }
 				{ this.content() }
+				{ this.queryDomainsSuggestions() }
 			</div>
+		);
+	},
+
+	queryDomainsSuggestions() {
+		const queryObject = getQueryObject( this.props );
+		if ( ! queryObject ) {
+			return null;
+		}
+		const { query, quantity, vendor, includeSubdomain } = queryObject;
+		return (
+			<QueryDomainsSuggestions
+				query={ query }
+				quantity={ quantity }
+				vendor={ vendor }
+				includeSubdomain={ includeSubdomain }
+			/>
 		);
 	},
 
@@ -386,7 +380,7 @@ const RegisterDomainStep = React.createClass( {
 			} );
 		} else {
 			// only display two suggestions initially
-			suggestions = this.state.defaultSuggestions.slice( 0, INITIAL_SUGGESTION_QUANTITY );
+			suggestions = this.props.defaultSuggestions.slice( 0, INITIAL_SUGGESTION_QUANTITY );
 
 			domainRegistrationSuggestions = suggestions.map( function( suggestion ) {
 				return (
@@ -446,7 +440,7 @@ const RegisterDomainStep = React.createClass( {
 				);
 			}
 
-			suggestions = this.state.defaultSuggestions;
+			suggestions = this.props.defaultSuggestions;
 		}
 
 		return (
@@ -603,8 +597,10 @@ const RegisterDomainStep = React.createClass( {
 	}
 } );
 
-module.exports = connect( state => {
+module.exports = connect( ( state, props ) => {
+	const queryObject = getQueryObject( props );
 	return {
-		currentUser: getCurrentUser( state )
+		currentUser: getCurrentUser( state ),
+		defaultSuggestions: getDomainsSuggestions( state, queryObject )
 	};
 } )( RegisterDomainStep );
