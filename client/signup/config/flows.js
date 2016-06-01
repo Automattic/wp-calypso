@@ -184,7 +184,7 @@ const flows = {
 	},
 
 	app: {
-		steps: [ 'survey', 'deisgn-type', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getPostsDestination,
 		description: 'Used as a web-based control to test the "desktop" flow',
 		lastModified: '2016-05-30'
