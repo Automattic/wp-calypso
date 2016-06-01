@@ -20,7 +20,8 @@ var SearchCard = React.createClass( {
 		onSearchChange: React.PropTypes.func,
 		analyticsGroup: React.PropTypes.string,
 		autoFocus: React.PropTypes.bool,
-		disabled: React.PropTypes.bool
+		disabled: React.PropTypes.bool,
+		dir: React.PropTypes.string
 	},
 
 	render: function() {
