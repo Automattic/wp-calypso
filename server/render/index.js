@@ -74,7 +74,10 @@ export function serverRender( req, res ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
 	}
 
-	if ( config.isEnabled( 'server-side-rendering' ) && context.store && context.layout ) {
+	if ( config.isEnabled( 'server-side-rendering' ) &&
+		context.store &&
+		context.layout &&
+		! context.user ) {
 		context.initialReduxState = pick( context.store.getState(), 'ui', 'themes' );
 		const key = JSON.stringify( context.layout ) + req.path + JSON.stringify( context.initialReduxState );
 		Object.assign( context, render( context.layout, key ) );
