@@ -23,6 +23,7 @@ import addQueryArgs from 'lib/route/add-query-args';
 import config from 'config';
 import EmptyContent from 'components/empty-content';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 /*
  * Module variables
@@ -103,21 +104,15 @@ const JetpackSSOForm = React.createClass( {
 
 		return (
 			<Notice
-				icon="notice"
 				status="is-error"
-				text={ this.translate( 'Oops, something went wrong. Please {{tryAgainLink}}try again{{/tryAgainLink}}.', {
-					components: {
-						tryAgainLink: (
-							<a
-								rel="external"
-								href={ get( this.props, 'blogDetails.admin_url', '#' ) }
-								onClick={ this.onTryAgainClick }
-							/>
-						)
-					}
-				} ) }
-				showDismiss={ false }
-			/>
+				text={ this.translate( 'Oops, something went wrong.' ) }
+				showDismiss={ false }>
+				<NoticeAction
+					href={ get( this.props, 'blogDetails.admin_url', '#' ) }
+					onClick={ this.onTryAgainClick }>
+					{ this.translate( 'Try again' ) }
+				</NoticeAction>
+			</Notice>
 		);
 	},
 
