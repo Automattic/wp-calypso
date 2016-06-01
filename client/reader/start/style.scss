@@ -91,9 +91,7 @@
 	.post-excerpt.is-long {
 
 		&:after {
-			@include long-content-fade( $color: $white, $direction: right, $size: 100% );
-			height: 20px;
-			position: relative;
+			display: none;
 		}
 	}
 
