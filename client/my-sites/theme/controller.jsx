@@ -49,27 +49,27 @@ export function fetchThemeDetailsData( context, next ) {
 	const themeSlug = context.params.slug;
 	const theme = themeDetailsCache.get( themeSlug );
 
-	if ( theme ) {
+	const HOUR_IN_MS = 3600000;
+	if ( theme && ( theme.timestamp + HOUR_IN_MS > Date.now() ) ) {
 		debug( 'found theme!', theme.id );
 		context.store.dispatch( receiveThemeDetails( theme ) );
-		next();
+		return next();
 	}
 
-	themeSlug && wpcom.undocumented().themeDetails( themeSlug, ( error, data ) => {
-		if ( error ) {
+	wpcom.undocumented().themeDetails( themeSlug )
+		.then( themeDetails => {
+			debug( 'caching', themeSlug );
+			themeDetails.timestamp = Date.now();
+			themeDetailsCache.set( themeSlug, themeDetails );
+			context.store.dispatch( receiveThemeDetails( themeDetails ) );
+			next();
+		} )
+		.catch( error => {
 			debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
 			context.store.dispatch( receiveThemeDetailsFailure( themeSlug, error ) );
-			return next();
-		}
-		const themeData = themeDetailsCache.get( themeSlug );
-		if ( ! themeData || ( Date( data.date_updated ) > Date( themeData.date_updated ) ) ) {
-			debug( 'caching', themeSlug );
-			themeDetailsCache.set( themeSlug, data );
-			context.store.dispatch( receiveThemeDetails( data ) );
 			next();
-		}
-	} );
-} // TODO(ehg): We don't want to hit the endpoint for every req. Debounce based on theme arg?
+		} );
+}
 
 export function details( context, next ) {
 	const { slug } = context.params;
