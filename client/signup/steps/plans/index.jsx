@@ -17,7 +17,8 @@ var productsList = require( 'lib/products-list' )(),
 	SignupActions = require( 'lib/signup/actions' ),
 	signupUtils = require( 'signup/utils' ),
 	StepWrapper = require( 'signup/step-wrapper' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	abtest = require( 'lib/abtest' ).abtest;
 
 module.exports = React.createClass( {
 	displayName: 'PlansStep',
@@ -81,13 +82,21 @@ module.exports = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_signup_compare_plans_click', { location: linkLocation } );
 	},
 
+	hideFreePlan: function() {
+		if ( abtest( 'personalPlan' ) === 'show' && this.props.signupDependencies && this.props.signupDependencies.domainItem ) {
+			return this.props.signupDependencies.domainItem.is_domain_registration;
+		}
+
+		return this.props.hideFreePlan;
+	},
+
 	plansList: function() {
 		return (
 			<div>
 				<PlanList
 					plans={ this.state.plans }
 					comparePlansUrl={ this.comparePlansUrl() }
-					hideFreePlan={ this.props.hideFreePlan }
+					hideFreePlan={ this.hideFreePlan() }
 					isInSignup={ true }
 					onSelectPlan={ this.onSelectPlan } />
 				<a
@@ -128,7 +137,7 @@ module.exports = React.createClass( {
 	plansCompare: function() {
 		return <PlansCompare
 			className="plans-step__compare"
-			hideFreePlan={ this.props.hideFreePlan }
+			hideFreePlan={ this.hideFreePlan() }
 			onSelectPlan={ this.onSelectPlan }
 			isInSignup={ true }
 			backUrl={ this.props.path.replace( '/compare', '' ) }
