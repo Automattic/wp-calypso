@@ -260,7 +260,7 @@ const PluginsActions = {
 		}
 
 		const install = () => {
-			const bound = getPluginBoundMethod( site, plugin.id, 'install' );
+			const bound = getPluginBoundMethod( site, plugin.slug, 'install' );
 			return queueSitePluginActionAsPromise( bound, site.ID, plugin.slug );
 		};
 
