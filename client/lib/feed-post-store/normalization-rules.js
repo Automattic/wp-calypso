@@ -154,7 +154,7 @@ const fastPostNormalizationRules = flow( [
 ] );
 
 export function runFastRules( post ) {
-	post = cloneDeep( post );
+	post = Object.assign( {}, post );
 	fastPostNormalizationRules( post );
 	return post;
 }
@@ -166,6 +166,6 @@ const slowSyncRules = flow( [
 ] );
 
 export function runSlowRules( post ) {
-	post = cloneDeep( post );
+	post = Object.assign( {}, post );
 	return waitForImagesToLoad( post ).then( slowSyncRules );
 }
