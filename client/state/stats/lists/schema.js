@@ -1,4 +1,4 @@
-export const items = {
+export const itemSchema = {
 	type: 'object',
 	patternProperties: {
 		'^\\d+$': {
