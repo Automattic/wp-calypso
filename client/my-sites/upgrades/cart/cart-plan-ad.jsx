@@ -7,17 +7,31 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { isPlan } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
 
+/**
+ * Module Variables
+ */
+const personalPlanTestEnabled = abtest( 'personalPlan' ) === 'show';
+
 const CartPlanAd = React.createClass( {
 	addToCartAndRedirect( event ) {
 		event.preventDefault();
-		upgradesActions.addItem( cartItems.premiumPlan( PLAN_PREMIUM, { isFreeTrial: false } ) );
-		page( '/checkout/' + this.props.selectedSite.slug );
+
+		if ( ! personalPlanTestEnabled ) {
+			upgradesActions.addItem( cartItems.premiumPlan( PLAN_PREMIUM, { isFreeTrial: false } ) );
+			page( '/checkout/' + this.props.selectedSite.slug );
+		} else {
+			const { cart, selectedSite } = this.props;
+			const domain = cartItems.getDomainRegistrations( cart )[0].meta;
+
+			page( '/domains/add/' + domain + '/plans/' + selectedSite.slug );
+		}
 	},
 	shouldDisplayAd() {
 		const { cart, selectedSite } = this.props;
@@ -35,8 +49,8 @@ const CartPlanAd = React.createClass( {
 
 		return (
 			<CartAd>
-				{
-					this.translate( 'Get this domain for free when you upgrade to {{strong}}WordPress.com Premium{{/strong}}!', {
+				{ personalPlanTestEnabled ? this.translate( 'Get this domain for free when you upgrade.' )
+					: this.translate( 'Get this domain for free when you upgrade to {{strong}}WordPress.com Premium{{/strong}}!', {
 						components: { strong: <strong /> }
 					} )
 				}
