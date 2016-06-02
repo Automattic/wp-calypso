@@ -62,7 +62,16 @@ var PostCards = React.createClass( {
 						width: 128
 					}
 				}
-			}
+			},
+			{
+				post: {
+					ID: 2,
+					title: 'No Image? No Problem. We don\'t need an image where we\'re going',
+					site_ID: 99,
+					site_name: 'The text only web is the only web we need.',
+					global_ID: 2
+				}
+			},
 		];
 		return (
 			<div className="design-assets__group">

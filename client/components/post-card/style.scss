@@ -2,6 +2,10 @@
 	color: $gray;
 	float: left;
 	margin-top: 8px;
+	width: 100%;
+}
+
+.has-image .post-card__site-info-title {
 	width: calc( 100% - 120px );
 }
 

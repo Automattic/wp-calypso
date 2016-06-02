@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -12,8 +13,11 @@ import safeImageUrl from 'lib/safe-image-url';
 import resizeImageUrl from 'lib/resize-image-url';
 
 export default function SmallPostCard( { post, site } ) {
+	const classes = classnames( 'post-card small', {
+		'has-image': post.canonical_image
+	} );
 	return (
-		<Card className="post-card small">
+		<Card className={ classes }>
 			<div className="post-card__site-info-title">
 				<a className="post-card__site-info" href={ `/read/blogs/${post.site_ID}` }>
 					<SiteIcon site={ site } size={ 16 } />
