@@ -6,7 +6,6 @@ import flow from 'lodash/flow';
 import forEach from 'lodash/forEach';
 import url from 'url';
 import matches from 'lodash/matches';
-import cloneDeep from 'lodash/cloneDeep';
 
 /**
  * Internal Dependencies
