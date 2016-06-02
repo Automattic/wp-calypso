@@ -125,3 +125,24 @@
 	color: darken( $gray, 20% );
 	font-size: 21px;
 }
+
+.purchase-detail__info {
+	flex: 1;
+	margin-left: 8px;
+	margin-top: 0;
+	max-width: 260px;
+	display: inline-block;
+	margin-top: 8px;
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 0px;
+	}
+}
+
+.purchase-detail__info-icon-container {
+	display: inline-block;
+	margin-top: 2px;
+	margin-right: 4px;
+	float: left;
+	height: 14px;
+}
