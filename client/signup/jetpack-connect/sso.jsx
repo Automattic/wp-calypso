@@ -182,7 +182,7 @@ const JetpackSSOForm = React.createClass( {
 						showLogo={ false }
 						headerText={ this.translate( 'Connect with WordPress.com' ) }
 						subHeaderText={ this.translate(
-							'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s', {
+							'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s.', {
 								args: {
 									siteName: get( this.props, 'blogDetails.title' )
 								}
