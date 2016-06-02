@@ -11,6 +11,25 @@ import Notice from 'components/notice';
 import Button from 'components/button';
 import observe from 'lib/mixins/data-observe';
 
+const SECTION_NAME_WHITELIST = [
+	'discover',
+	'menus',
+	'people',
+	'plans',
+	'plugins',
+	'posts-pages',
+	'reader',
+	'reader-activities',
+	'reader-list',
+	'reader-recomendations',
+	'reader-search',
+	'reader-tags',
+	'settings',
+	'sharing',
+	'stats',
+	'upgrades'
+];
+
 export default React.createClass( {
 	displayName: 'PushNotificationPrompt',
 
@@ -74,7 +93,7 @@ export default React.createClass( {
 			return null;
 		}
 
-		if ( ! this.props.section || this.props.isLoading || 'notification-settings' === this.props.section.name || 'editor' === this.props.section.group ) {
+		if ( ! this.props.section || this.props.isLoading || -1 === SECTION_NAME_WHITELIST.indexOf( this.props.section.name ) ) {
 			return null;
 		}
 
