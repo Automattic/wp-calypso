@@ -8,7 +8,6 @@ import React from 'react';
  * Internal dependencies
  */
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
-import GoogleVoucherDetails from './google-voucher-details';
 import i18n from 'lib/mixins/i18n';
 import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
@@ -28,8 +27,6 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 					buttonText={ i18n.translate( 'Browse premium themes' ) }
 					href={ '/design/' + selectedSite.slug } />
 			}
-
-			<GoogleVoucherDetails selectedSite={ selectedSite } />
 
 			<PurchaseDetail
 				icon="stats-alt"
