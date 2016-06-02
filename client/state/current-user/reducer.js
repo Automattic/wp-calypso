@@ -9,13 +9,14 @@ import get from 'lodash/get';
  */
 import {
 	CURRENT_USER_ID_SET,
+	CURRENT_USER_FLAGS_RECEIVE,
 	SITE_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
 	PLANS_RECEIVE
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
-import { idSchema, capabilitiesSchema, currencyCodeSchema } from './schema';
+import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
 
 /**
  * Tracks the current user ID.
@@ -27,6 +28,10 @@ import { idSchema, capabilitiesSchema, currencyCodeSchema } from './schema';
 export const id = createReducer( null, {
 	[ CURRENT_USER_ID_SET ]: ( state, action ) => action.userId
 }, idSchema );
+
+export const flags = createReducer( [], {
+	[ CURRENT_USER_FLAGS_RECEIVE ]: ( state, action ) => action.flags
+}, flagsSchema );
 
 /**
  * Tracks the currency code of the current user
@@ -80,5 +85,6 @@ export const capabilities = createReducer( {}, {
 export default combineReducers( {
 	id,
 	currencyCode,
-	capabilities
+	capabilities,
+	flags
 } );

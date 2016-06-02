@@ -28,7 +28,8 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'id',
 			'currencyCode',
-			'capabilities'
+			'capabilities',
+			'flags'
 		] );
 	} );
 
