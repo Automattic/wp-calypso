@@ -27,9 +27,9 @@ export default function SmallPostCard( { post, site } ) {
 					<a className="post-card__anchor" href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` }>{ post.title }</a>
 				</h1>
 			</div>
-			<div className="post-card__thumbnail">
+			<div>
 			{ post.canonical_image && (
-					<a href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` }><img className="post-card__thumbnail-img" src={ resizeImageUrl( safeImageUrl( post.canonical_image.uri ), { resize: '96,72' } ) } /></a> ) }
+					<a href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` }><img className="post-card__thumbnail" src={ resizeImageUrl( safeImageUrl( post.canonical_image.uri ), { resize: '96,72' } ) } /></a> ) }
 			</div>
 		</Card>
 	);

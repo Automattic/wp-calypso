@@ -43,23 +43,16 @@
 
 .post-card__anchor {
 	display: block;
-	font-size: 18px;
+	font-size: 15px;
 	font-weight: 600;
-	line-height: 24px;
+	line-height: 1.4;
 	@extend %content-font;
 }
 
 .post-card__thumbnail {
+	border-radius: 2px;
+	clear: right;
 	float: right;
-	margin-right: 1px;
 	max-height: 68px;
-	width: 17%;
-
-	.post-card__thumbnail-img {
-		border-radius: 2px;
-		clear: right;
-		float: right;
-		max-height: 68px;
-		max-width: 96px;
-	}
+	max-width: 96px;
 }
