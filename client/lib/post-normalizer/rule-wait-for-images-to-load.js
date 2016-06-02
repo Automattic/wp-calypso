@@ -69,12 +69,12 @@ export default function waitForImagesToLoad( post ) {
 		// convert to image objects to start the load process
 		let promises = map( imagesToCheck, promiseForURL );
 
-		const imagesLoaded = [];
+		const imagesLoaded = {};
 
 		forEach( promises, promise => {
 			promise.then( image => {
 				// keep track of what loaded successfully. Note these will be out of order.
-				imagesLoaded.push( image );
+				imagesLoaded[ image.src ] = image;
 			} ).catch( () => {
 				// ignore what did not, but return the promise chain to success
 				return null;
@@ -84,7 +84,7 @@ export default function waitForImagesToLoad( post ) {
 				promises = pull( promises, promise );
 				if ( promises.length === 0 ) {
 					const imagesInOrder = filter( map( imagesToCheck, image => {
-						return find( imagesLoaded, { src: image.src } );
+						return imagesLoaded[ image.src ];
 					} ), Boolean );
 					acceptLoadedImages( imagesInOrder );
 				}
