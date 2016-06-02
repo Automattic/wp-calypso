@@ -517,7 +517,7 @@ FullPostContainer = React.createClass( {
 } );
 
 export default connect(
-	( state, ownProps ) => ( {
+	( state ) => ( {
 		isVisible: state.ui.reader.fullpost.isVisible
 	} ),
 	( dispatch ) => bindActionCreators( {
