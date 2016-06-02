@@ -27,7 +27,7 @@ let standardAttributes = [
  * @returns {object} 
  */
 function bustHashForHrefs( { name, oldValue } ) {
-	// style.css?v=abcd -> style.css?v=1234
+	// http://some.site.com/and/a/path?with=a&query -> http://some.site.com/and/a/path?v=13508135781
     const value = 'href' === name
         ? `${ oldValue.split( '?' ).shift() }?v=${ new Date().getTime() }`
         : oldValue;
