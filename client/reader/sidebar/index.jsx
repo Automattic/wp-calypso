@@ -241,8 +241,10 @@ const ReaderSidebar = React.createClass( {
 					onTagExists={ this.highlightNewTag }
 					currentTag={ this.state.currentTag } />
 
-				{ this.renderAppPromo() }
 				</SidebarRegion>
+
+				{ this.renderAppPromo() }
+
 				<SidebarFooter />
 			</Sidebar>
 		);
