@@ -215,7 +215,7 @@ function getDomainProductRanking( product ) {
 }
 
 function isDependentProduct( product, dependentProduct ) {
-	var slug, dependentSlug, isPlansOnlyDependent = false;
+	var slug, dependentSlug, isPlansOnlyDependent = false, withPlansOnly = false, withPersonalPlan = false;
 
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -223,7 +223,10 @@ function isDependentProduct( product, dependentProduct ) {
 	slug = isDomainRegistration( product ) ? 'domain' : product.product_slug;
 	dependentSlug = isDomainRegistration( dependentProduct ) ? 'domain' : dependentProduct.product_slug;
 
-	if ( ( product.extra && dependentProduct.extra ) && ( product.extra.withPlansOnly === 'yes' || dependentProduct.extra.withPlansOnly === 'yes' ) ) {
+	withPlansOnly = product.extra.withPlansOnly === 'yes' || dependentProduct.extra.withPlansOnly === 'yes';
+	withPersonalPlan = product.extra.withPersonalPlan === 'yes' || dependentProduct.extra.withPersonalPlan === 'yes';
+
+	if ( ( product.extra && dependentProduct.extra ) &&	( withPlansOnly || withPersonalPlan ) ) {
 		isPlansOnlyDependent = isPlan( product ) && ( isDomainRegistration( dependentProduct ) || isDomainMapping( dependentProduct ) );
 	}
 

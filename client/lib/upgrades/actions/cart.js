@@ -51,6 +51,7 @@ function addItem( item ) {
 
 function addItems( items ) {
 	const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly',
+		personalPlanTestEnabled = abtest( 'personalPlan' ) === 'show',
 		freeTrialsEnabled = abtest( 'freeTrialsInSignup' ) === 'enabled',
 		selectedSite = sitesList.getSelectedSite();
 	let shouldBundleWithPremium = items.some( item => isDomainRegistration( item ) || isDomainMapping( item ) ) && ! freeTrialsEnabled && domainsWithPlansOnlyTestEnabled;
@@ -68,7 +69,8 @@ function addItems( items ) {
 	const extendedItems = items.map( ( item ) => {
 		const extra = assign( {}, item.extra, {
 			context: 'calypstore',
-			withPlansOnly: domainsWithPlansOnlyTestEnabled && ! freeTrialsEnabled ? 'yes' : ''
+			withPlansOnly: domainsWithPlansOnlyTestEnabled && ! freeTrialsEnabled ? 'yes' : '',
+			withPersonalPlan: personalPlanTestEnabled ? 'yes' : ''
 		} );
 
 		return assign( {}, item, { extra } );
