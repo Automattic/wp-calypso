@@ -61,7 +61,14 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getDefaultProps() {
-		return { section: 'overview' };
+		return {
+			section: 'overview',
+
+			themes: [
+				{ name: 'Sela', slug: 'sela' },
+				{ name: 'Hemingway Rewritten', slug: 'hemingway-rewritten' },
+			],
+		};
 	},
 
 	getInitialState() {
@@ -290,9 +297,29 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderRelatedThemes() {
+		var actionLabel = this.translate( 'Pick' ),
+		themes = this.props.themes.map( function( theme ) {
+				return {
+					id: theme.slug,
+					name: theme.name,
+					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png'
+				};
+			} );
 		return (
 			<div>
 				<SectionHeader label={ i18n.translate( 'You might also like' ) } />
+					<ul className="themes__sheet-related-themes">
+						<li>
+							<Card className="themes__sheet-related-themes-card">
+								<img src={ themes[0].screenshot + '?w=' + '660' }/>
+							</Card>
+						</li>
+						<li>
+							<Card className="themes__sheet-related-themes-card">
+								<img src={ themes[1].screenshot + '?w=' + '660' }/>
+							</Card>
+						</li>
+					</ul>
 			</div>
 		);
 	},
