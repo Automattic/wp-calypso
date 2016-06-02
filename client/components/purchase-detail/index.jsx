@@ -1,20 +1,24 @@
 /**
  * External dependencies
  */
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Gridicon from 'components/gridicon';
+import PurchaseButton from './purchase-button';
+import TipInfo from './tip-info';
 
 const PurchaseDetail = ( {
+	body,
 	buttonText,
 	description,
 	href,
 	icon,
+	id,
+	info,
 	isPlaceholder,
 	isRequired,
 	isSubmitting,
@@ -31,20 +35,17 @@ const PurchaseDetail = ( {
 
 	if ( buttonText || isPlaceholder ) {
 		buttonElement = (
-			<Button
-				className="purchase-detail__button"
+			<PurchaseButton
 				disabled={ isSubmitting }
 				href={ href }
 				onClick={ onClick }
 				target={ target }
-				primary>
-				{ buttonText }
-			</Button>
+				text={ buttonText } />
 		);
 	}
 
 	return (
-		<div className={ classes }>
+		<div className={ classes } id={ id || null }>
 			{ requiredText && (
 				<div className="purchase-detail__required-notice">
 					<em>{ requiredText }</em>
@@ -63,28 +64,38 @@ const PurchaseDetail = ( {
 					<div className="purchase-detail__description">{ description }</div>
 				</div>
 
-				{ buttonElement }
+				{ body
+					? <div className="purchase-detail__body">{ body }</div>
+					: <div className="purchase-detail__body">
+						{ buttonElement }
+						{ info && <TipInfo info={ info } /> }
+					</div>
+				}
 			</div>
 		</div>
 	);
 };
 
 PurchaseDetail.propTypes = {
-	buttonText: React.PropTypes.string,
-	description: React.PropTypes.oneOfType( [
-		React.PropTypes.array,
-		React.PropTypes.string,
-		React.PropTypes.object
+	buttonText: PropTypes.string,
+	description: PropTypes.oneOfType( [
+		PropTypes.array,
+		PropTypes.string,
+		PropTypes.object
 	] ),
-	href: React.PropTypes.string,
-	icon: React.PropTypes.string,
-	isPlaceholder: React.PropTypes.bool,
-	isRequired: React.PropTypes.bool,
-	isSubmitting: React.PropTypes.bool,
-	onClick: React.PropTypes.func,
-	requiredText: React.PropTypes.string,
-	target: React.PropTypes.string,
-	title: React.PropTypes.string
+	href: PropTypes.string,
+	icon: PropTypes.string,
+	isPlaceholder: PropTypes.bool,
+	isRequired: PropTypes.bool,
+	isSubmitting: PropTypes.bool,
+	onClick: PropTypes.func,
+	requiredText: PropTypes.string,
+	target: PropTypes.string,
+	title: PropTypes.string
+};
+
+PurchaseDetail.defaultProps = {
+	onClick: () => {},
 };
 
 export default PurchaseDetail;
