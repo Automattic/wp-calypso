@@ -226,7 +226,7 @@ function isDependentProduct( product, dependentProduct ) {
 	withPlansOnly = product.extra.withPlansOnly === 'yes' || dependentProduct.extra.withPlansOnly === 'yes';
 	withPersonalPlan = product.extra.withPersonalPlan === 'yes' || dependentProduct.extra.withPersonalPlan === 'yes';
 
-	if ( ( product.extra && dependentProduct.extra ) &&	( withPlansOnly || withPersonalPlan ) ) {
+	if ( ( product.extra && dependentProduct.extra ) && ( withPlansOnly || withPersonalPlan ) ) {
 		isPlansOnlyDependent = isPlan( product ) && ( isDomainRegistration( dependentProduct ) || isDomainMapping( dependentProduct ) );
 	}
 

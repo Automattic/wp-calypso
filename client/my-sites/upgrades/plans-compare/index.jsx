@@ -17,9 +17,15 @@ const UpgradePlansCompare = ( { domain, sites, plans, features, productsList } )
 
 	return (
 		<div className="plans has-sidebar">
-			<PlansCompare { ...{ selectedSite, plans, features, productsList, backUrl } }
-				hideFreePlan={ true }
-				isInSignup={ true } />
+			<PlansCompare { ...{
+				selectedSite,
+				plans,
+				features,
+				productsList,
+				backUrl,
+				hideFreePlan: true,
+				isInSignup: true
+			} } />
 		</div>
 	);
 };
@@ -33,10 +39,8 @@ UpgradePlansCompare.propTypes = {
 };
 
 export default connect(
-	( state, props ) => {
-		return {
-			plans: getPlans( state ),
-			sitePlans: getPlansBySite( state, props.sites.getSelectedSite )
-		};
-	}
+	( state, props ) => ( {
+		plans: getPlans( state ),
+		sitePlans: getPlansBySite( state, props.sites.getSelectedSite )
+	} )
 )( UpgradePlansCompare );

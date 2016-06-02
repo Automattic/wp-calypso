@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import assign from 'lodash/assign';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
@@ -66,15 +66,13 @@ function addItems( items ) {
 		items = [ cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) ].concat( items );
 	}
 
-	const extendedItems = items.map( ( item ) => {
-		const extra = assign( {}, item.extra, {
+	const extendedItems = items.map( item => merge( item, {
+		extra: {
 			context: 'calypstore',
 			withPlansOnly: domainsWithPlansOnlyTestEnabled && ! freeTrialsEnabled ? 'yes' : '',
 			withPersonalPlan: personalPlanTestEnabled ? 'yes' : ''
-		} );
-
-		return assign( {}, item, { extra } );
-	} );
+		}
+	} ) );
 
 	extendedItems.forEach( item => recordAddToCart( item ) );
 

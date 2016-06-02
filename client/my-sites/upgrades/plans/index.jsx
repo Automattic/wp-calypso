@@ -24,9 +24,14 @@ const Plans = ( { translate, domain, sites, plans, sitePlans, onGoBack } ) => {
 				{ translate( 'Register %(domain)s', { args: { domain } } ) }
 			</HeaderCake>
 
-			<PlanList { ...{ site, plans, sitePlans, comparePlansUrl } }
-				hideFreePlan={ true }
-				isInSignup={ true } />
+			<PlanList { ...{
+				site,
+				plans,
+				sitePlans,
+				comparePlansUrl,
+				hideFreePlan: true,
+				isInSignup: true
+			} } />
 			<a href={ comparePlansUrl } className="plans-step__compare-plans-link">
 				<Gridicon icon="clipboard" size={ 18 } />
 				{ translate( 'Compare Plans' ) }
@@ -44,10 +49,8 @@ Plans.propTypes = {
 };
 
 export default connect(
-	( state, props ) => {
-		return {
-			plans: getPlans( state ),
-			sitePlans: getPlansBySite( state, props.sites.getSelectedSite )
-		};
-	}
+	( state, props ) => ( {
+		plans: getPlans( state ),
+		sitePlans: getPlansBySite( state, props.sites.getSelectedSite )
+	} )
 )( localize( Plans ) );
