@@ -42,7 +42,7 @@
 		"manage/plans": true,
 		"manage/plugins": true,
 		"manage/plugins/cache": false,
-		"manage/plugins/setup": true,
+		"manage/plugins/setup": false,
 		"manage/posts": true,
 		"manage/security": true,
 		"manage/sharing": true,
