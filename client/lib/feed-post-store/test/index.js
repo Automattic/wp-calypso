@@ -96,7 +96,7 @@ describe( 'feed-post-store', function() {
 		expect( FeedPostStore.get( {
 			feedId: 1,
 			postId: 2
-		} ).title ).to.equal( 'chris & ben' );
+		} ).title ).to.equal( 'chris &\xA0ben' );
 	} );
 
 	it( 'should index a post by the site_ID and ID if it is internal', function() {
