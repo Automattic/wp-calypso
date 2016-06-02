@@ -9,7 +9,7 @@ import merge from 'lodash/merge';
  */
 import { isValidStateWithSchema } from 'state/utils';
 import { getSerializedStatsQuery } from './utils';
-import { items as itemSchema } from './schema';
+import { itemSchema } from './schema';
 import {
 	DESERIALIZE,
 	SERIALIZE,
