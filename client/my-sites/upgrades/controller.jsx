@@ -16,6 +16,7 @@ var analytics = require( 'lib/analytics' ),
 	productsList = require( 'lib/products-list' )(),
 	route = require( 'lib/route' ),
 	Main = require( 'components/main' ),
+	PageViewTracker = require( 'lib/analytics/page-view-tracker' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	setSection = require( 'state/ui/actions' ).setSection,
@@ -186,11 +187,11 @@ module.exports = {
 			page( '/domains/add/' + sites.getSelectedSite().slug );
 		};
 
-		analytics.pageView.record( basePath, 'Domain Search > Domain Registration > Select Plan' );
 		renderWithReduxStore(
 			(
 				<Main className="plans has-sidebar">
 					<CartData>
+						<PageViewTracker path={ basePath } title="Domain Search > Domain Registration > Select Plan" />
 						<Plans { ...{ sites, domain, onGoBack } }/>
 					</CartData>
 				</Main>
@@ -206,11 +207,11 @@ module.exports = {
 		const PlansCompare = require( './plans-compare' );
 		const domain = context.params.registerDomain;
 
-		analytics.pageView.record( basePath, 'Domain Search > Domain Registration > Select Plan > Compare Plans' );
 		renderWithReduxStore(
 			(
 				<Main>
 					<CartData>
+						<PageViewTracker path={ basePath } title="Domain Search > Domain Registration > Select Plan > Compare Plans" />
 						<PlansCompare { ...{ sites, domain, features, productsList } }/>
 					</CartData>
 				</Main>
