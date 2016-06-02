@@ -29,6 +29,7 @@ import Site from 'my-sites/site';
 import SitePlaceholder from 'my-sites/site/placeholder';
 import { decodeEntities } from 'lib/formatting';
 import Gridicon from 'components/gridicon';
+import LoggedOutFormFooter from 'components/logged-out-form/footer';
 
 /*
  * Module variables
@@ -76,6 +77,10 @@ const JetpackSSOForm = React.createClass( {
 	onTryAgainClick( event ) {
 		debug( 'Clicked try again link' );
 		this.returnToSiteFallback( event );
+	},
+
+	onClickSharedDetailsModal( event ) {
+		event.preventDefault();
 	},
 
 	returnToSiteFallback( event ) {
@@ -218,14 +223,31 @@ const JetpackSSOForm = React.createClass( {
 							</div>
 						</div>
 
-						<div className="jetpack-connect__sso__actions">
+						<LoggedOutFormFooter className="jetpack-connect__sso__actions">
+							<p className="jetpack-connect__tos-link">
+								{ this.translate( 'By logging in you agree to share {{detailsLink}}details{{/detailsLink}} between WordPress.com and %(siteName)s', {
+									components: {
+										detailsLink: (
+											<a
+												href="#"
+												onClick={ this.onClickSharedDetailsModal }
+												className="jetpack-connect__sso__actions__modal-link"
+											/>
+										)
+									},
+									args: {
+										siteName: get( this.props, 'blogDetails.title' )
+									}
+								} ) }
+							</p>
+
 							<Button
 								primary
 								onClick={ this.onApproveSSO }
 								disabled={ this.isButtonDisabled() }>
 								{ this.translate( 'Log in' ) }
 							</Button>
-						</div>
+						</LoggedOutFormFooter>
 					</Card>
 
 					<LoggedOutFormLinks>
