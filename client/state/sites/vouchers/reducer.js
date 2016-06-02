@@ -7,6 +7,10 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
+	SITE_VOUCHERS_ASSIGN_RECEIVE,
+	SITE_VOUCHERS_ASSIGN_REQUEST,
+	SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS,
+	SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE,
 	SITE_VOUCHERS_RECEIVE,
 	SITE_VOUCHERS_REQUEST,
 	SITE_VOUCHERS_REQUEST_SUCCESS,
@@ -26,14 +30,34 @@ import { itemsSchema } from './schema';
  * @return {Object} updated state
  */
 export const items = ( state = {}, action ) => {
-	const { siteId } = action;
-	switch ( action.type ) {
+	const {
+		siteId,
+		type,
+		voucher,
+		vouchers,
+		serviceType
+	} = action;
+
+	switch ( type ) {
+		case SITE_VOUCHERS_ASSIGN_RECEIVE:
+			const serviceVouchers = state[ siteId ]
+				? ( state[ siteId ][ serviceType ] || [] )
+				: [];
+
+			return Object.assign( {}, state, {
+				[ siteId ]: {
+					[ serviceType ]: serviceVouchers.concat( voucher )
+				}
+			} );
+
+			return { [ serviceType ]: {} };
+
 		case SITE_VOUCHERS_RECEIVE:
 			return Object.assign(
 				{},
 				state,
 				{
-					[ siteId ]: action.vouchers
+					[ siteId ]: vouchers
 				}
 			);
 		case DESERIALIZE:
@@ -56,13 +80,19 @@ export const items = ( state = {}, action ) => {
  * @param {Object} action - vouchers action
  * @return {Object} updated state
  */
-export const requesting = ( state = {}, action ) => {
-	switch ( action.type ) {
+export const requesting = ( state = {}, { type, siteId } ) => {
+	switch ( type ) {
+		case SITE_VOUCHERS_ASSIGN_REQUEST:
+		case SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS:
+		case SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE:
 		case SITE_VOUCHERS_REQUEST:
 		case SITE_VOUCHERS_REQUEST_SUCCESS:
 		case SITE_VOUCHERS_REQUEST_FAILURE:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: action.type === SITE_VOUCHERS_REQUEST
+				[ siteId ]: {
+					getAll: type === SITE_VOUCHERS_REQUEST,
+					assign: type === SITE_VOUCHERS_ASSIGN_REQUEST
+				}
 			} );
 		case SERIALIZE:
 		case DESERIALIZE:
@@ -79,17 +109,27 @@ export const requesting = ( state = {}, action ) => {
  * @param {Object} action - vouchers action
  * @return {Object} updated state
  */
-export const errors = ( state = {}, action ) => {
-	switch ( action.type ) {
+export const errors = ( state = {}, { type, siteId, error } ) => {
+	switch ( type ) {
+		case SITE_VOUCHERS_ASSIGN_REQUEST:
+		case SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS:
 		case SITE_VOUCHERS_REQUEST:
 		case SITE_VOUCHERS_REQUEST_SUCCESS:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: null
+				[ siteId ]: {
+					getAll: null,
+					assign: null
+				}
 			} );
 
 		case SITE_VOUCHERS_REQUEST_FAILURE:
+		case SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: action.error
+				[ siteId ]: {
+					getAll: type === SITE_VOUCHERS_REQUEST_FAILURE ? error : null,
+					assign: type === SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE ? error : null
+				}
+
 			} );
 
 		case SERIALIZE:

@@ -3,6 +3,10 @@
  */
 import wpcom from 'lib/wp';
 import {
+	SITE_VOUCHERS_ASSIGN_RECEIVE,
+	SITE_VOUCHERS_ASSIGN_REQUEST,
+	SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS,
+	SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE,
 	SITE_VOUCHERS_RECEIVE,
 	SITE_VOUCHERS_REQUEST,
 	SITE_VOUCHERS_REQUEST_SUCCESS,
@@ -20,13 +24,11 @@ import {
  * @param {Object} vouchers - vouchers array gotten from WP REST-API response
  * @returns {Object} the action object
  */
-export const vouchersReceiveAction = ( siteId, vouchers ) => {
-	return {
-		type: SITE_VOUCHERS_RECEIVE,
-		siteId,
-		vouchers
-	};
-};
+export const vouchersReceiveAction = ( siteId, vouchers ) => ( {
+	type: SITE_VOUCHERS_RECEIVE,
+	siteId,
+	vouchers
+} );
 
 /**
  * Action creator function
@@ -36,44 +38,49 @@ export const vouchersReceiveAction = ( siteId, vouchers ) => {
  * @param {Number} siteId - side identifier
  * @return {Object} siteId - action object
  */
-export const vouchersRequestAction = siteId => {
-	return {
-		type: SITE_VOUCHERS_REQUEST,
-		siteId
-	};
-};
+export const vouchersRequestAction = siteId => ( {
+	type: SITE_VOUCHERS_REQUEST,
+	siteId
+} );
 
-/**
- * Action creator function
- *
- * Return SITE_VOUCHERS_REQUEST_SUCCESS action object
- *
- * @param {Number} siteId - side identifier
- * @return {Object} siteId - action object
- */
-export const vouchersRequestSuccessAction = siteId => {
-	return {
-		type: SITE_VOUCHERS_REQUEST_SUCCESS,
-		siteId
-	};
-};
+export const vouchersRequestSuccessAction = siteId => ( {
+	type: SITE_VOUCHERS_REQUEST_SUCCESS,
+	siteId
+} );
 
-/**
- * Action creator function
- *
- * Return SITE_VOUCHERS_REQUEST_FAILURE action object
- *
- * @param {Number} siteId - site identifier
- * @param {Object} error - error message according to REST-API error response
- * @return {Object} action object
- */
-export const vouchersRequestFailureAction = ( siteId, error ) => {
+export const vouchersRequestFailureAction = ( siteId, error ) => ( {
+	type: SITE_VOUCHERS_REQUEST_FAILURE,
+	siteId,
+	error
+} );
+
+export const vouchersAssignReceiveAction = ( siteId, serviceType, voucher ) => ( {
+	type: SITE_VOUCHERS_ASSIGN_RECEIVE,
+	siteId,
+	serviceType,
+	voucher
+} );
+
+export const vouchersAssignRequestAction = ( siteId, serviceType ) => {
 	return {
-		type: SITE_VOUCHERS_REQUEST_FAILURE,
+		type: SITE_VOUCHERS_ASSIGN_REQUEST,
 		siteId,
-		error
+		serviceType
 	};
 };
+
+export const vouchersAssignRequestSuccessAction = ( siteId, serviceType ) => ( {
+	type: SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS,
+	siteId,
+	serviceType
+} );
+
+export const vouchersAssignRequestFailureAction = ( siteId, serviceType, error ) => ( {
+	type: SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE,
+	siteId,
+	serviceType,
+	error
+} );
 
 /**
  * Fetches vouchers for the given site.
@@ -100,6 +107,36 @@ export function requestSiteVouchers( siteId ) {
 					: error;
 
 				dispatch( vouchersRequestFailureAction( siteId, message ) );
+			} );
+	};
+}
+
+/**
+ * Assign a voucher to the given site.
+ *
+ * @param {Number} siteId - identifier of the site
+ * @param {String} serviceType - service type suppoerted: 'google-ad-credits', etc.
+ * @returns {Function} a promise that will resolve once fetching is completed
+ */
+export function assignSiteVoucher( siteId, serviceType ) {
+	return dispatch => {
+		dispatch( vouchersAssignRequestAction( siteId, serviceType ) );
+
+		return wpcom
+			.site( siteId )
+			.adCreditVouchers()
+			.assign( serviceType )
+			.then( data => {
+				const { voucher = {} } = data;
+				dispatch( vouchersAssignRequestSuccessAction( siteId, serviceType ) );
+				dispatch( vouchersAssignReceiveAction( siteId, serviceType, voucher ) );
+			} )
+			.catch( error => {
+				const message = error instanceof Error
+					? error.message
+					: error;
+
+				dispatch( vouchersAssignRequestFailureAction( siteId, serviceType, message ) );
 			} );
 	};
 }

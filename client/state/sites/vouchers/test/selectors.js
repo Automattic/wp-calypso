@@ -9,6 +9,7 @@ import { expect } from 'chai';
 import {
 	getVouchersBySite,
 	getVouchersBySiteId,
+	getVouchersBySiteIdAndServiceType,
 	isRequestingSiteVouchers
 } from '../selectors';
 
@@ -18,7 +19,9 @@ import {
 import {
 	SITE_ID_0 as firstSiteId,
 	SITE_ID_1 as secondSiteId,
-	GOOGLE_AD_CREDITS_0 as firstGoogleAdCredits,
+	AD_CREDITS_0 as firstAdCredits,
+	VOUCHER_0 as firstVoucher,
+	SERVICE_TYPE as serviceType,
 	getStateInstance
 } from './fixture';
 
@@ -27,7 +30,7 @@ describe( 'selectors', () => {
 		it( 'should return vouchers by site', () => {
 			const state = getStateInstance();
 			const vouchers = getVouchersBySite( state, { ID: firstSiteId } );
-			expect( vouchers ).to.eql( firstGoogleAdCredits );
+			expect( vouchers ).to.eql( firstAdCredits );
 		} );
 	} );
 
@@ -35,7 +38,15 @@ describe( 'selectors', () => {
 		it( 'should return vouchers by site id', () => {
 			const state = getStateInstance();
 			const vouchers = getVouchersBySiteId( state, firstSiteId );
-			expect( vouchers ).to.eql( firstGoogleAdCredits );
+			expect( vouchers ).to.eql( firstAdCredits );
+		} );
+	} );
+
+	describe( '#getVouchersBySiteIdAndServiceType()', () => {
+		it( 'should return vouchers by site id', () => {
+			const state = getStateInstance();
+			const vouchers = getVouchersBySiteIdAndServiceType( state, firstSiteId, serviceType );
+			expect( vouchers ).to.eql( [ firstVoucher ] );
 		} );
 	} );
 
