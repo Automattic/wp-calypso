@@ -8,9 +8,9 @@ import { makeLayout } from 'controller';
 // the layout.
 // FIXME: Also create loggedOut/multiSite/singleSite elements, depending on route.
 
-export default function( router ) {
+export default function( router, renderer ) {
 	if ( config.isEnabled( 'manage/themes' ) ) {
-		router( '/design', makeLayout );
-		router( '/design/type/:tier', makeLayout );
+		router( '/design', makeLayout, renderer );
+		router( '/design/type/:tier', makeLayout, renderer );
 	}
 }

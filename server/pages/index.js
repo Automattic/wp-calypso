@@ -418,7 +418,13 @@ module.exports = function() {
 	sections
 		.filter( section => section.isomorphic )
 		.forEach( section => {
-			sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
+			sectionsModule.require( section.module )(
+				serverRouter( app, setUpRoute, section ),
+				context => serverRender(
+					Object.assign( {}, { context, path: context.pathname } ),
+					context.res
+				)
+			);
 		} );
 
 	// catchall path to serve shell for all non-static-file requests (other than auth routes)

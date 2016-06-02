@@ -50,30 +50,29 @@ function makeLoggedOutLayout( context ) {
 /**
  * Isomorphic routing helper, client side
  *
- * @param { string } route - A route path
- * @param { ...function } middlewares - Middleware to be invoked for route
- *
  * This function is passed to individual sections' controllers via
  * `server/bundler/loader`. Sections are free to either ignore it, or use it
  * instead of directly calling `page` for linking routes and middlewares in
  * order to be also usable for server-side rendering (and isomorphic routing).
- * `clientRouter` then also renders the element tree contained in `context.layout`
- * (or, if that is empty, in `context.primary`) to the respectively corresponding
- * divs.
  */
-export function clientRouter( route, ...middlewares ) {
-	page( route, ...middlewares, render );
-}
+export const clientRouter = page;
 
 export function setSection( section ) {
 	return ( context, next = noop ) => {
 		context.store.dispatch( setSectionAction( section ) );
-
 		next();
 	};
 }
 
-function render( context ) {
+/**
+ * Client side renderer
+ *
+ * @param { object } context -- Middleware context
+ *
+ * Middleware to render the element tree contained in `context.layout` (or, if
+ * that is empty, in `context.primary`) to the respectively corresponding divs.
+ */
+export function clientRenderer( context ) {
 	context.layout
 		? renderSingleTree( context )
 		: renderSeparateTrees( context );

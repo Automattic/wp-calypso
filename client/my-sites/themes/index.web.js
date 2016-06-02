@@ -15,19 +15,19 @@ import { singleSite, multiSite, loggedOut } from './controller';
 // the layout.
 // FIXME: Also create loggedOut/multiSite/singleSite elements, depending on route.
 
-export default function( router ) {
+export default function( router, renderer ) {
 	const user = userFactory();
 	const isLoggedIn = !! user.get();
 
 	if ( config.isEnabled( 'manage/themes' ) ) {
 		if ( isLoggedIn ) {
-			router( '/design', multiSite, navigation, siteSelection );
-			router( '/design/:site_id', singleSite, navigation, siteSelection );
-			router( '/design/type/:tier', multiSite, navigation, siteSelection );
-			router( '/design/type/:tier/:site_id', singleSite, navigation, siteSelection );
+			router( '/design', multiSite, navigation, siteSelection, renderer );
+			router( '/design/:site_id', singleSite, navigation, siteSelection, renderer );
+			router( '/design/type/:tier', multiSite, navigation, siteSelection, renderer );
+			router( '/design/type/:tier/:site_id', singleSite, navigation, siteSelection, renderer );
 		} else {
-			router( '/design', loggedOut, makeLayout );
-			router( '/design/type/:tier', loggedOut, makeLayout );
+			router( '/design', loggedOut, makeLayout, renderer );
+			router( '/design/type/:tier', loggedOut, makeLayout, renderer );
 		}
 	}
 }

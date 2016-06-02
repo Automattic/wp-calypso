@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { serverRender } from 'render';
 import { createReduxStore } from 'state';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 
@@ -13,8 +12,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 			combineMiddlewares(
 				setSectionMiddlewareFactory( section ),
 				...middlewares
-			),
-			serverRender
+			)
 		);
 	};
 }
@@ -37,6 +35,7 @@ function getEnhancedContext( req ) {
 		pathname: req.path,
 		params: req.params,
 		query: req.query,
+		res: req.res,
 		store: createReduxStore()
 	} );
 }
