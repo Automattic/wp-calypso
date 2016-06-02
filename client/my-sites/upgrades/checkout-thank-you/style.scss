@@ -220,3 +220,73 @@
 		max-width: 634px;
 	}
 }
+
+.purchase-detail__google-voucher-code {
+	display: flex;
+	align-items: flex-start;
+	margin-top: 12px;
+	padding-bottom: 12px;
+	border-bottom: solid 1px #E9EFF3;
+}
+
+// Google Vouche section
+.purchase-detail__google-voucher-advice {
+	margin-top: 12px;
+	display: flex;
+	max-width: 100%;
+}
+
+.dialog.card.google-voucher-dialog {
+	max-width: 530px;
+	font-size: 13px;
+	overflow: hidden;
+
+	.google-voucher-dialog__header {
+		display: flex;
+		align-items: center;
+		margin: -24px -24px 0;
+		padding: 20px 24px 24px;
+		background-color: #fbfcfd;
+		box-shadow: 0 1px 0 0 rgba(200, 215, 225, 0.5),
+			0 1px 0 #e9eff3;
+
+		.google-voucher-dialog__header__image {
+			width: (149 / 482) * 100%;
+			margin-right: 20px;
+		}
+
+		.google-voucher-dialog__header__text {
+			flex: 1;
+		}
+	}
+
+	.google-voucher-dialog__body {
+		overflow-y: auto;
+		height: 320px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+
+	.google-voucher-dialog__footer {
+		box-shadow: 0 -1px 2px lighten( $gray, 20% );
+		margin-top: 15px;
+		text-align: right;
+		padding: 15px;
+		margin: 0px -25px -25px;
+
+		.button {
+			width: 100px;
+		}
+
+		.google-vucher-dialog__cancel-button {
+			background-color: #f3f6f8;
+			margin-right: 10px;
+		}
+	}
+
+	ol li {
+		line-height: 1.6em;
+		color: lighten( $gray, 10% );
+		margin-bottom: 15px;
+	}
+}

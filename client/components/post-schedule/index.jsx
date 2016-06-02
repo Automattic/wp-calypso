@@ -80,7 +80,7 @@ class PostSchedule extends Component {
 				id: post.ID,
 				title: post.title,
 				date: localDate.toDate()
-			}
+			};
 		} );
 	}
 
@@ -195,7 +195,7 @@ class PostSchedule extends Component {
 			</div>
 		);
 	}
-};
+}
 
 /**
  * Statics

@@ -69,7 +69,7 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: SITE_MEDIA_STORAGE_REQUEST,
 				siteId: 2916284
-			} )
+			} );
 		} );
 
 		it( 'should dispatch receive action when request completes', () => {

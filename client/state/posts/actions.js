@@ -160,5 +160,5 @@ export function resetPostEdits( siteId, postId ) {
 		type: POST_EDITS_RESET,
 		siteId,
 		postId
-	}
+	};
 }
