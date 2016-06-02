@@ -13,6 +13,7 @@ import { filterPlansBySiteAndProps } from 'lib/plans';
 import { getCurrentPlan } from 'lib/plans';
 import { isJpphpBundle } from 'lib/products-values';
 import Plan from 'components/plans/plan';
+import config from 'config';
 
 const PlanList = React.createClass( {
 	getInitialState() {
@@ -78,7 +79,10 @@ const PlanList = React.createClass( {
 		if ( plans.length > 0 ) {
 			let filteredPlans = filterPlansBySiteAndProps( plans, site, hideFreePlan, showJetpackFreePlan );
 
-			if ( abtest( 'wordadsInstantActivation' ) === 'enabled' ) {
+			if (
+				config.isEnabled( 'manage/ads/wordads-instant' ) &&
+				abtest( 'wordadsInstantActivation' ) === 'enabled'
+			) {
 				filteredPlans = filteredPlans.map( plan => {
 					if ( plan.product_id === 1003 ) {
 						plan.description = this.translate( 'Your own domain name, powerful customization options, easy monetization with WordAds and lots of space for audio and video.' );
