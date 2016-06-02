@@ -40,12 +40,10 @@ class GoogleVoucherDetails extends Component {
 		this.onDialogCancel = this.onDialogCancel.bind( this );
 		this.onAgreeButton = this.onAgreeButton.bind( this );
 
-		/*
 		const voucher = this.getVoucher();
 		if ( voucher && voucher.status === 'assigned' ) {
 			this.setState( { step: 2 } );
 		}
-		*/
 	}
 
 	onButtonClick() {
@@ -60,7 +58,6 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	onAgreeButton() {
-		const voucher = this.getVoucher();
 		this.props.assignVoucher( this.props.selectedSite.ID, GOOGLE_AD_CREDITS );
 
 		this.setState( {
