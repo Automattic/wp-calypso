@@ -1,11 +1,11 @@
 .app-promo {
 	position: relative;
 	max-width: 300px;
-	margin: 35px auto 15px auto;
+	margin: 0 auto 15px auto;
 	padding: 5px 0;
 	overflow: hidden;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( "<660px" ) {
 		display: none;
 	}
 }
