@@ -945,5 +945,13 @@ describe( 'index', function() {
 		it( 'only trims top-level breaks', function( done ) {
 			assertExcerptBecomes( '<p></p><p>one<br>two</p>', '<p>one<br>two</p>', done );
 		} );
+
+		it( 'removes style tags', done => {
+			assertExcerptBecomes(
+				'<style>#foo{ color: blue; }</style><p>hi there</p>',
+				'<p>hi there</p>',
+				done
+			);
+		} );
 	} );
 } );

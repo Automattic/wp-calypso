@@ -18,15 +18,16 @@ export default function createBetterExcerpt( post ) {
 		element.parentNode && element.parentNode.removeChild( element );
 	}
 
-	let betterExcerpt = striptags( post.content, [ 'p', 'br' ] );
-
 	// Spin up a new DOM for the linebreak markup
 	const dom = document.createElement( 'div' );
 	dom.id = '__better_excerpt__';
-	dom.innerHTML = betterExcerpt;
+	dom.innerHTML = post.content;
 
-	// Ditch any photo captions with the wp-caption-text class
-	forEach( dom.querySelectorAll( '.wp-caption-text' ), removeElement );
+	// Ditch any photo captions with the wp-caption-text class, styles, scripts
+	forEach( dom.querySelectorAll( '.wp-caption-text, style, script' ), removeElement );
+
+	// limit to paras and brs
+	dom.innerHTML = striptags( dom.innerHTML, [ 'p', 'br' ] );
 
 	// Strip any empty p and br elements from the beginning of the content
 	forEach( dom.querySelectorAll( 'p,br' ), function( element ) {
