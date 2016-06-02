@@ -553,7 +553,7 @@ module.exports = {
 	additionalExplanation: function( error_code ) {
 		switch ( error_code ) {
 			case 'no_package':
-				return i18n.translate( 'Plugin doesn\'t exits in the plugin repo.' );
+				return i18n.translate( 'Plugin doesn\'t exist in the plugin repo.' );
 
 			case 'resource_not_found':
 				return i18n.translate( 'The site could not be reached.' );
