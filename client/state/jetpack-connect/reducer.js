@@ -149,7 +149,8 @@ export function jetpackSSO( state = {}, action ) {
 				isValidating: false,
 				validationError: false,
 				nonceValid: action.success,
-				blogDetails: action.blogDetails
+				blogDetails: action.blogDetails,
+				sharedDetails: action.sharedDetails
 			} );
 		case JETPACK_CONNECT_SSO_VALIDATION_ERROR:
 			return Object. assign( state, { isValidating: false, validationError: action.error, nonceValid: false } );

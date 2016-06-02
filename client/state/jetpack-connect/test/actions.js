@@ -48,6 +48,19 @@ describe( 'actions', () => {
 			admin_url: 'https://website.com/wp-admin'
 		};
 
+		const sharedDetails = {
+			ID: 0,
+			login: 'bbquser',
+			email: 'ieatbbq@website.com',
+			url: 'https://website.com',
+			first_name: 'Lou',
+			last_name: 'Bucket',
+			display_name: 'bestbbqtester',
+			description: 'I like BBQ, a lot.',
+			two_step_enabled: 0,
+			external_user_id: 1
+		};
+
 		describe( 'success', () => {
 			before( () => {
 				nock( 'https://public-api.wordpress.com:443' )
@@ -60,7 +73,8 @@ describe( 'actions', () => {
 							'Content-Type': 'application/json'
 						},
 						success: true,
-						blog_details: blogDetails
+						blog_details: blogDetails,
+						shared_details: sharedDetails
 					} );
 			} );
 
@@ -85,6 +99,7 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						success: true,
 						blogDetails: blogDetails,
+						sharedDetails: sharedDetails,
 						type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS
 					} );
 				} );
