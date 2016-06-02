@@ -230,6 +230,10 @@
 		margin: 24px auto !important;
 	}
 
+	table {
+		table-layout: fixed;
+	}
+
 	@include breakpoint( ">660px" ) {
 		.alignleft {
 			max-width: 100%;
