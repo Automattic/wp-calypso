@@ -20,8 +20,7 @@ export function connectionLost( noticeText ) {
 	return ( dispatch ) => {
 		dispatch( removeNotice( 'connectionRestored' ) );
 		dispatch( warningNotice(
-			noticeText
-			, {
+			noticeText, {
 				showDismiss: true,
 				isPersistent: true,
 				id: 'connectionLost',
@@ -36,8 +35,7 @@ export function connectionRestored( noticeText ) {
 	return ( dispatch ) => {
 		dispatch( removeNotice( 'connectionLost' ) );
 		dispatch( successNotice(
-			noticeText
-			, {
+			noticeText, {
 				showDismiss: true,
 				isPersistent: true,
 				id: 'connectionRestored',
@@ -52,8 +50,7 @@ export function cssBuildFailed( noticeText ) {
 	return ( dispatch ) => {
 		dispatch( removeNotice( 'cssBuilding' ) );
 		dispatch( errorNotice(
-			noticeText
-			, {
+			noticeText, {
 				showDismiss: true,
 				isPersistent: true,
 				id: 'cssBuildFailed',
@@ -68,8 +65,7 @@ export function cssBuilding( noticeText ) {
 	return ( dispatch ) => {
 		dispatch( removeNotice( 'cssBuildFailed' ) );
 		dispatch( infoNotice(
-			noticeText
-			, {
+			noticeText, {
 				showDismiss: true,
 				isPersistent: true,
 				id: 'cssBuilding',
