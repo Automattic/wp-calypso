@@ -14,23 +14,27 @@ var PremiumPopover = require( 'components/plans/premium-popover' ),
 	abtest = require( 'lib/abtest' ).abtest;
 
 const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
+const personalPlanTestEnabled = abtest( 'personalPlan' ) === 'show';
 
 var DomainProductPrice = React.createClass( {
 	shouldShowPremiumMessage: function() {
 		const selectedSite = sitesList.getSelectedSite();
 		return domainsWithPlansOnlyTestEnabled && ! ( selectedSite && isPlan( selectedSite.plan ) ) && this.props.price;
-	}, subMessage() {
+	},
+	subMessage() {
 		var freeWithPlan = this.props.cart && this.props.cart.hasLoadedFromServer && this.props.cart.next_domain_is_free && ! this.props.isFinalPrice;
 		if ( freeWithPlan ) {
 			return <span className="domain-product-price__free-text">{ this.translate( 'Free with your plan' ) }</span>;
 		} else if ( this.shouldShowPremiumMessage() ) {
 			return (
 				<small className="domain-product-price__premium-text" ref="subMessage">
-					{ this.translate( 'Included in WordPress.com Premium' ) }
-					<PremiumPopover
-						context={ this.refs && this.refs.subMessage }
-						bindContextEvents
-						position="bottom left"/>
+					{ personalPlanTestEnabled ? this.translate( 'Included in WordPress.com Upgrades' ) : this.translate( 'Included in WordPress.com Premium' ) }
+					{ personalPlanTestEnabled ||
+						<PremiumPopover
+							context={ this.refs && this.refs.subMessage }
+							bindContextEvents
+							position="bottom left"/>
+					}
 				</small>
 			);
 		}
@@ -53,10 +57,10 @@ var DomainProductPrice = React.createClass( {
 	},
 	render: function() {
 		const classes = classNames( 'domain-product-price', {
-				'is-free-domain': cartItems.isNextDomainFree( this.props.cart ),
-				'is-with-plans-only': this.shouldShowPremiumMessage(),
-				'is-placeholder': this.props.isLoading
-			} );
+			'is-free-domain': cartItems.isNextDomainFree( this.props.cart ),
+			'is-with-plans-only': this.shouldShowPremiumMessage(),
+			'is-placeholder': this.props.isLoading
+		} );
 
 		if ( this.props.isLoading ) {
 			return <div className={ classes }>{ this.translate( 'Loading…' ) }</div>;
