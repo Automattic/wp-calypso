@@ -380,10 +380,9 @@ a.sidebar__button {
 }
 
 .sidebar__region {
-	display: flex;
-	flex-direction: column;
-
 	@include breakpoint( ">660px" ) {
+		display: flex;
+		flex-direction: column;
 		overflow-y: auto;
 		overflow-x: hidden;
 		flex: 1;
