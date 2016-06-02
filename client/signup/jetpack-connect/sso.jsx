@@ -91,6 +91,11 @@ const JetpackSSOForm = React.createClass( {
 		return !! ( ! nonceValid || isAuthorizing || isValidating || ssoUrl || authorizationError );
 	},
 
+	getSignInLink() {
+		const loginUrl = config( 'login_url' ) || 'https://wordpress.com/wp-login.php';
+		return addQueryArgs( { redirect_to: window.location.href }, loginUrl );
+	},
+
 	maybeValidateSSO( props = this.props ) {
 		const { ssoNonce, siteId, nonceValid, isAuthorizing, isValidating } = props;
 
@@ -223,6 +228,9 @@ const JetpackSSOForm = React.createClass( {
 					</Card>
 
 					<LoggedOutFormLinks>
+						<LoggedOutFormLinkItem href={ this.getSignInLink() }>
+							{ this.translate( 'Sign in as a different user' ) }
+						</LoggedOutFormLinkItem>
 						<LoggedOutFormLinkItem
 							rel="external"
 							href={ get( this.props, 'blogDetails.admin_url', '#' ) }
