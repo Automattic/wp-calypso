@@ -303,7 +303,8 @@ const Signup = React.createClass( {
 		let currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
-			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName;
+			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
+			flow = flows.getFlow( this.props.flowName );
 
 		return (
 			<div className="signup__step" key={ stepKey }>
@@ -314,8 +315,9 @@ const Signup = React.createClass( {
 					<CurrentComponent
 						path={ this.props.path }
 						step={ currentStepProgress }
-						steps={ flows.getFlow( this.props.flowName ).steps }
+						steps={ flow.steps }
 						stepName={ this.props.stepName }
+						meta={ flow.meta || {} }
 						goToNextStep={ this.goToNextStep }
 						goToStep={ this.goToStep }
 						flowName={ this.props.flowName }
