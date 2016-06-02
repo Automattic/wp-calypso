@@ -11,7 +11,6 @@ import reject from 'lodash/reject';
 import { abtest } from 'lib/abtest';
 import config from 'config';
 import { isOutsideCalypso } from 'lib/url';
-import plansPaths from 'my-sites/plans/paths';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
 
@@ -23,14 +22,6 @@ function getCheckoutUrl( dependencies ) {
 
 function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
-}
-
-function getFreeTrialDestination( dependencies ) {
-	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies );
-	}
-
-	return plansPaths.plans( dependencies.siteSlug );
 }
 
 function getSiteDestination( dependencies ) {
@@ -60,59 +51,34 @@ const flows = {
 	},
 
 	business: {
-		steps: [ 'themes', 'domains', 'user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'survey-user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
-		lastModified: '2016-01-21',
 		meta: {
 			skipBundlingPlan: true
-		}
+		},
+		lastModified: '2016-06-02'
 	},
 
 	premium: {
-		steps: [ 'themes', 'domains', 'user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'survey-user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
-		description: 'Create an account and a blog and then add the premium plan to the users cart.',
-		lastModified: '2016-01-21',
 		meta: {
 			skipBundlingPlan: true
-		}
-
+		},
+		description: 'Create an account and a blog and then add the business plan to the users cart.',
+		lastModified: '2016-06-02'
 	},
 
 	free: {
-		steps: [ 'themes', 'domains', 'user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'survey-user' ],
 		destination: getSiteDestination,
 		description: 'Create an account and a blog and default to the free plan.',
-		lastModified: '2016-02-29'
-	},
-
-	businessv2: {
-		steps: [ 'domains-only', 'user' ],
-		destination: function( dependencies ) {
-			return '/plans/select/business/' + dependencies.siteSlug;
-		},
-		description: 'Made for CT CMO trial project. Create an account and a blog, without theme selection, and then add the business plan to the users cart.',
-		lastModified: '2016-02-26',
-		meta: {
-			skipBundlingPlan: true
-		}
-	},
-
-	premiumv2: {
-		steps: [ 'domains-only', 'user' ],
-		destination: function( dependencies ) {
-			return '/plans/select/premium/' + dependencies.siteSlug;
-		},
-		description: 'Made for CT CMO trial project. Create an account and a blog, without theme selection, and then add the premium plan to the users cart.',
-		lastModified: '2016-02-26',
-		meta: {
-			skipBundlingPlan: true
-		}
+		lastModified: '2016-06-02'
 	},
 
 	'with-theme': {
@@ -127,13 +93,6 @@ const flows = {
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
 		lastModified: '2016-05-23'
-	},
-
-	plan: {
-		steps: [ 'themes', 'domains', 'select-plan', 'user' ],
-		destination: getSiteDestination,
-		description: '',
-		lastModified: '2016-02-02'
 	},
 
 	/* WP.com homepage flows */
@@ -222,13 +181,6 @@ const flows = {
 	jetpack: {
 		steps: [ 'jetpack-user' ],
 		destination: '/'
-	},
-
-	'free-trial': {
-		steps: [ 'themes', 'domains-with-plan', 'user' ],
-		destination: getFreeTrialDestination,
-		description: 'Signup flow for free trials',
-		lastModified: '2016-03-21'
 	}
 };
 
