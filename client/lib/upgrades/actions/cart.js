@@ -60,9 +60,11 @@ function addItems( items ) {
 		shouldBundleWithPremium = shouldBundleWithPremium && ! isPlan( selectedSite.plan ) && ! cartItems.hasPlan( cart );
 	}
 
-	if ( shouldBundleWithPremium ) {
+	//add premium plan for users not on the personalPlan group.
+	if ( shouldBundleWithPremium && abtest( 'personalPlan' ) === 'hide' ) {
 		items = [ cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) ].concat( items );
 	}
+
 	const extendedItems = items.map( ( item ) => {
 		const extra = assign( {}, item.extra, {
 			context: 'calypstore',

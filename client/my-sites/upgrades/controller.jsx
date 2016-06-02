@@ -11,15 +11,16 @@ var page = require( 'page' ),
  */
 var analytics = require( 'lib/analytics' ),
 	sites = require( 'lib/sites-list' )(),
+	features = require( 'lib/features-list' )(),
+	plansList = require( 'lib/plans-list' )(),
+	productsList = require( 'lib/products-list' )(),
 	route = require( 'lib/route' ),
 	Main = require( 'components/main' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	setSection = require( 'state/ui/actions' ).setSection,
-	plansList = require( 'lib/plans-list' )(),
-	productsList = require( 'lib/products-list' )(),
-	abtest = require( 'lib/abtest' ).abtest,
-	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
+	abtest = require( 'lib/abtest' ).abtest;
 
 module.exports = {
 
@@ -136,7 +137,12 @@ module.exports = {
 
 		const handleAddGoogleApps = function( googleAppsCartItem ) {
 			upgradesActions.addItem( googleAppsCartItem );
-			page( '/checkout/' + sites.getSelectedSite().slug );
+
+			if ( abtest( 'personalPlan' ) === 'hide' ) {
+				page( '/checkout/' + sites.getSelectedSite().slug );
+			} else {
+				page( '/domains/add/' + context.params.registerDomain + '/plans/' + sites.getSelectedSite().slug );
+			}
 		};
 
 		const handleGoBack = function() {
@@ -144,7 +150,11 @@ module.exports = {
 		};
 
 		const handleClickSkip = function() {
-			page( '/checkout/' + sites.getSelectedSite().slug );
+			if ( abtest( 'personalPlan' ) === 'hide' ) {
+				page( '/checkout/' + sites.getSelectedSite().slug );
+			} else {
+				page( '/domains/add/' + context.params.registerDomain + '/plans/' + sites.getSelectedSite().slug );
+			}
 		};
 
 		analytics.pageView.record( '/domains/add/:site/google-apps', 'Domain Search > Domain Registration > Google Apps' );
@@ -163,6 +173,50 @@ module.exports = {
 				</Main>
 			),
 			document.getElementById( 'primary' )
+		);
+	},
+
+	selectPlan: function( context ) {
+		const basePath = route.sectionify( context.path );
+		const CartData = require( 'components/data/cart' );
+		const Plans = require( './plans' );
+		const domain = context.params.registerDomain;
+
+		const onGoBack = () => {
+			page( '/domains/add/' + sites.getSelectedSite().slug );
+		};
+
+		analytics.pageView.record( basePath, 'Domain Search > Domain Registration > Select Plan' );
+		renderWithReduxStore(
+			(
+				<Main className="plans has-sidebar">
+					<CartData>
+						<Plans { ...{ sites, domain, onGoBack } }/>
+					</CartData>
+				</Main>
+			),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
+	comparePlans: function( context ) {
+		const basePath = route.sectionify( context.path );
+		const CartData = require( 'components/data/cart' );
+		const PlansCompare = require( './plans-compare' );
+		const domain = context.params.registerDomain;
+
+		analytics.pageView.record( basePath, 'Domain Search > Domain Registration > Select Plan > Compare Plans' );
+		renderWithReduxStore(
+			(
+				<Main>
+					<CartData>
+						<PlansCompare { ...{ sites, domain, features, productsList } }/>
+					</CartData>
+				</Main>
+			),
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
