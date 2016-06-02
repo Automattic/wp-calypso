@@ -135,7 +135,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( userCanUpdate || this.props.connection.shared ) {
-			content.push( <span key="label">{ this.translate( 'Connection available to all editors and site admins', { context: 'Sharing: Publicize' } ) }</span> );
+			content.push( <span key="label">{ this.translate( 'Connection available to all administrators, editors, and authors', { context: 'Sharing: Publicize' } ) }</span> );
 		}
 
 		if ( content.length ) {
