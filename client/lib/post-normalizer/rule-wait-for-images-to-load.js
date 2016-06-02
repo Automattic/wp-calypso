@@ -34,6 +34,8 @@ function promiseForImage( image ) {
 	} );
 }
 
+const promiseForURL = flow( imageForURL, promiseForImage );
+
 export default function waitForImagesToLoad( post ) {
 	return new Promise( ( resolve ) => {
 		function acceptLoadedImages( images ) {
@@ -65,14 +67,14 @@ export default function waitForImagesToLoad( post ) {
 		imagesToCheck = uniq( imagesToCheck );
 
 		// convert to image objects to start the load process
-		let promises = map( imagesToCheck, flow( imageForURL, promiseForImage ) );
+		let promises = map( imagesToCheck, promiseForURL );
 
-		const imagesLoaded = [];
+		const imagesLoaded = {};
 
 		forEach( promises, promise => {
 			promise.then( image => {
-				// keep track of what loaded successfully
-				imagesLoaded.push( image );
+				// keep track of what loaded successfully. Note these will be out of order.
+				imagesLoaded[ image.src ] = image;
 			} ).catch( () => {
 				// ignore what did not, but return the promise chain to success
 				return null;
@@ -81,7 +83,10 @@ export default function waitForImagesToLoad( post ) {
 				// if so, accept what loaded and resolve the main promise
 				promises = pull( promises, promise );
 				if ( promises.length === 0 ) {
-					acceptLoadedImages( imagesLoaded );
+					const imagesInOrder = filter( map( imagesToCheck, image => {
+						return imagesLoaded[ image.src ];
+					} ), Boolean );
+					acceptLoadedImages( imagesInOrder );
 				}
 			} );
 		} );
