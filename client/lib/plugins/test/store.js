@@ -136,7 +136,7 @@ describe( 'Plugins Store', () => {
 				assert.isObject( Aksimet );
 			} );
 
-			it( 'Should have return undefiend for a site if the plugin doesn\'t exits', () => {
+			it( 'Should have return undefined for a site if the plugin doesn\'t exist', () => {
 				assert.isUndefined( PluginsStore.getSitePlugin( site, 'non-plugin-slug' ) );
 			} );
 		} );
@@ -152,7 +152,7 @@ describe( 'Plugins Store', () => {
 				assert.isObject( Plugins[ 0 ] );
 			} );
 
-			it( 'Should have return undefiend if site doesn\'t exits', () => {
+			it( 'Should have return undefined if site doesn\'t exist', () => {
 				assert.isUndefined( PluginsStore.getSitePlugins( {
 					ID: 1,
 					jetpack: false,
