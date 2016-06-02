@@ -34,7 +34,13 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		const { isVisible, baseClassName, transitionLeave, enterTimeout, leaveTimeout } = this.props;
+		const {
+			isVisible,
+			baseClassName,
+			transitionLeave,
+			enterTimeout,
+			leaveTimeout
+		} = this.props;
 
 		return (
 			<RootChild>
