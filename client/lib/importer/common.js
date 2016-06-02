@@ -1,7 +1,7 @@
 import find from 'lodash/find';
 import { fromJS } from 'immutable';
 
-import { appStates } from './constants';
+import { appStates } from 'state/imports/constants';
 
 // Left( UI ) - Right( API )
 const importerStateMap = [
