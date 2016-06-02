@@ -24,13 +24,13 @@
 
 	.site-icon {
 		align-self: auto;
+		float: left;
 		display: inline-block;
 		margin-right: 4px;
 	}
 
 	.post-card__site-title {
 		color: $gray;
-		vertical-align: top;
 	}
 }
 
