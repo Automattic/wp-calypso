@@ -154,8 +154,10 @@ module.exports = React.createClass( {
 
 	goToNextStep( isPurchasingItem ) {
 		if ( domainsWithPlansOnlyTestEnabled && isPurchasingItem && abtest( 'freeTrialsInSignup' ) !== 'enabled' ) {
-			this.submitPlansStepWithPremium();
 			const plansIndex = this.props.steps.indexOf( 'plans' );
+			if ( ! this.props.meta.skipBundlingPlan ) {
+				this.submitPlansStepWithPremium();
+			}
 
 			if ( plansIndex === this.props.steps.length - 1 || plansIndex === -1 ) {
 				// if plans is the last step or not in the flow, this'll finish the flow
