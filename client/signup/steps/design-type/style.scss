@@ -15,10 +15,9 @@
 	}
 
 	h2 {
-		color: #000;
+		color: darken( $gray, 20% );
 		padding-left: 15px;
 		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
-		font-weight: bold;
 		line-height: 54px;
 	}
 
