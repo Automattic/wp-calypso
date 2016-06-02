@@ -2,15 +2,7 @@
 	color: $gray;
 	float: left;
 	margin-top: 8px;
-	width: 68%;
-
-	@include breakpoint( ">960px" ) {
-		width: 75%;
-	}
-
-	@include breakpoint( "<480px" ) {
-		width: 65%;
-	}
+	width: calc( 100% - 120px );
 }
 
 .post-card__site-info {
