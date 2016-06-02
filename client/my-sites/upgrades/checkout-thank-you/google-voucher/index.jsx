@@ -25,7 +25,15 @@ import {
 	getGoogleAdCredits
 } from 'state/sites/vouchers/selectors';
 
-const [ INITIAL_STEP, TERMS_AND_CONDITIONS, CODE_REDEEMED ] = [ 'INITIAL_STEP', 'TERMS_AND_CONDITIONS', 'CODE_REDEEMED' ];
+const [
+	INITIAL_STEP,
+	TERMS_AND_CONDITIONS,
+	CODE_REDEEMED
+] = [
+	'INITIAL_STEP',
+	'TERMS_AND_CONDITIONS',
+	'CODE_REDEEMED'
+];
 
 class GoogleVoucherDetails extends Component {
 	constructor() {
@@ -91,7 +99,7 @@ class GoogleVoucherDetails extends Component {
 
 	renderInitialStep() {
 		return (
-			<div className="purchase-detail__body">
+			<div>
 				<PurchaseButton
 					onClick={ this.onButtonClick }
 					text={ this.props.translate( 'Generate Code' ) } />
@@ -143,17 +151,17 @@ class GoogleVoucherDetails extends Component {
 	renderCodeRedeemed() {
 		const { code } = this.getVoucher();
 		return (
-			<div className="purchase-detail__body">
+			<div className="google-voucher">
 				<ClipboardButtonInput
 					value={ code }
 					disabled= { ! code } />
 
-				<div className="purchase-detail__google-voucher-code">
+				<div className="google-voucher-code">
 					<p className="form-setting-explanation">
 						{
 							this.props.translate( 'Copy this unique, one-time use code to your clipboard and setup your Google AdWords account. {{a}}View help guide{{/a}}',
 								{
-									components: { a: <a className="purchase-detail__google-voucher-code__help-link" href="#" target="_blank" /> }
+									components: { a: <a className="google-voucher-code__help-link" href="#" target="_blank" /> }
 								}
 							)
 						}
@@ -167,7 +175,7 @@ class GoogleVoucherDetails extends Component {
 				</div>
 
 				<TipInfo
-					className="purchase-detail__google-voucher-advice"
+					className="google-voucher-advice"
 					info={ this.props.translate( 'Offer valid in US and Canada after spending the first $25 on Google AdWords.' ) } />
 			</div>
 		);

@@ -1,9 +1,28 @@
-.purchase-detail__google-voucher-advice {
+.google-voucher-code {
+	display: flex;
+	align-items: flex-start;
+	margin-top: 12px;
+	padding-bottom: 12px;
+	border-bottom: solid 1px $gray-light;
+
+	p.form-setting-explanation {
+		flex: 1;
+		margin-right: 16px;
+		margin-top: 0px
+	}
+}
+
+.google-voucher-code__help-link {
+	color: $blue-medium;
+	text-decoration: underline;
+}
+.google-voucher-advice {
 	margin-top: 12px;
 	display: flex;
 	max-width: 100%;
 }
 
+// dialog
 .dialog.card.google-voucher-dialog {
 	max-width: 530px;
 	font-size: 13px;
