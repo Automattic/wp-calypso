@@ -179,6 +179,7 @@ const JetpackSSOForm = React.createClass( {
 			<Main className="jetpack-connect">
 				<div className="jetpack-connect__sso">
 					<ConnectHeader
+						showLogo={ false }
 						headerText={ this.translate( 'Connect with WordPress.com' ) }
 						subHeaderText={ this.translate(
 							'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s', {
