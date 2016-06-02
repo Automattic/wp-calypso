@@ -178,7 +178,7 @@ const SinglePlugin = React.createClass( {
 
 		const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
 
-		// If the plugin has at least one site then we know it exits
+		// If the plugin has at least one site then we know it exists
 		if ( plugin.sites && plugin.sites[0] ) {
 			return true;
 		}
