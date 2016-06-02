@@ -43,7 +43,6 @@
 	float: left;
 	line-height: 1.2;
 	margin-top: 9px;
-	overflow: hidden;
 	width: 98%;
 }
 
@@ -51,9 +50,6 @@
 	display: block;
 	font-size: 18px;
 	font-weight: 600;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 	@extend %content-font;
 }
 
