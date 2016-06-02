@@ -10,6 +10,7 @@ import React from 'react';
 import config from 'config';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import i18n from 'lib/mixins/i18n';
+import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { isPremium } from 'lib/products-values';
 import paths from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
@@ -60,6 +61,20 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 				}
 				buttonText={ i18n.translate( 'Start a new post' ) }
 				href={ paths.newPost( selectedSite ) } />
+			{
+				isWordadsInstantActivationEligible( selectedSite ) &&
+				<PurchaseDetail
+					icon="speaker"
+					title={ i18n.translate( 'Easily monetize your site' ) }
+					description={
+						i18n.translate(
+							'Take advantage of WordAds instant activation on your upgraded site. ' +
+							'WordAds lets you display promotional content and earn money.'
+						)
+					}
+					buttonText={ i18n.translate( 'Start Earning' ) }
+					href={ '/ads/settings/' + selectedSite.slug } />
+			}
 		</div>
 	);
 };
