@@ -1,28 +1,28 @@
 /**
  * External dependencies
  */
-import React from 'react'
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import pluginsAccessControl from 'my-sites/plugins/access-control'
-import SidebarNavigation from 'my-sites/sidebar-navigation'
-import Search from 'components/search'
-import SearchCard from 'components/search-card'
-import SectionNav from 'components/section-nav'
-import MainComponent from 'components/main'
-import NavTabs from 'components/section-nav/tabs'
-import NavItem from 'components/section-nav/item'
-import NoResults from 'my-sites/no-results'
-import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list'
-import PluginsListStore from 'lib/plugins/wporg-data/list-store'
-import PluginsActions from 'lib/plugins/wporg-data/actions'
-import EmptyContent from 'components/empty-content'
-import URLSearch from 'lib/mixins/url-search'
-import infiniteScroll from 'lib/mixins/infinite-scroll'
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page'
-import FeatureExample from 'components/feature-example'
+import pluginsAccessControl from 'my-sites/plugins/access-control';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import Search from 'components/search';
+import SearchCard from 'components/search-card';
+import SectionNav from 'components/section-nav';
+import MainComponent from 'components/main';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import NoResults from 'my-sites/no-results';
+import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
+import PluginsListStore from 'lib/plugins/wporg-data/list-store';
+import PluginsActions from 'lib/plugins/wporg-data/actions';
+import EmptyContent from 'components/empty-content';
+import URLSearch from 'lib/mixins/url-search';
+import infiniteScroll from 'lib/mixins/infinite-scroll';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import FeatureExample from 'components/feature-example';
 
 module.exports = React.createClass( {
 
@@ -130,10 +130,15 @@ module.exports = React.createClass( {
 			let searchTitle = this.translate( 'Results for: %(searchTerm)s', { textOnly: true, args: { searchTerm } } );
 			return <PluginsBrowserList plugins={ this.getPluginsFullList( 'search' ) } listName={ searchTerm } title={ searchTitle } site={ this.props.site } showPlaceholders={ isFetching } currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 		}
-		return <NoResults text={ this.translate( 'No plugins match your search for {{searchTerm/}}.', {
-			textOnly: true,
-			components: { searchTerm: <em>{ searchTerm }</em> }
-		} ) } />
+		return (
+			<NoResults
+				text={
+					this.translate( 'No plugins match your search for {{searchTerm/}}.', {
+						textOnly: true,
+						components: { searchTerm: <em>{ searchTerm }</em> }
+					} )
+				} />
+		);
 	},
 
 	getPluginSingleListView( category ) {
@@ -223,6 +228,7 @@ module.exports = React.createClass( {
 				</MainComponent>
 			);
 		}
+		const selectedSite = this.props.sites.getSelectedSite();
 
 		return (
 			<MainComponent>
@@ -230,7 +236,7 @@ module.exports = React.createClass( {
 				<JetpackManageErrorPage
 					template="optInManage"
 					title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
-					site={ this.props.site }
+					site={ selectedSite }
 					section="plugins"
 					illustration="/calypso/images/jetpack/jetpack-manage.svg"
 					featureExample={ this.getMockPluginItems() } />
