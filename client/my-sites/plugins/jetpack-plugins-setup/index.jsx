@@ -206,7 +206,7 @@ const PlansSetup = React.createClass( {
 					break;
 			}
 			statusProps.children = (
-				<NoticeAction href={ helpLinks[ plugin.slug ] }>
+				<NoticeAction key="notice_action" href={ helpLinks[ plugin.slug ] }>
 					{ "Manual Installation" }
 				</NoticeAction>
 			);
