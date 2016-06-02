@@ -96,11 +96,11 @@ export default React.createClass( {
 			initialState: this.props.step ? this.props.step.form : undefined
 		} );
 		let initialState = this.formStateController.getInitialState();
-		// TODO uncomment below - left as that to have the suggestion run every time - remove before merge
-		//if ( this.props.signupProgressStore ) {
+
+		if ( this.props.signupProgressStore ) {
 			initialState = this.autoFillUsername( initialState );
-		// TODO uncomment below
-		//}
+		}
+
 		this.setState( { form: initialState } );
 	},
 
