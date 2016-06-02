@@ -202,13 +202,13 @@ const JetpackSSOForm = React.createClass( {
 						{ this.maybeRenderAuthorizationError() }
 						<div className="jetpack-connect__sso__user-profile">
 							<Gravatar user={ user } size={ 120 } imgSize={ 400 } />
-							<h3 className="jetpack-connect__sso__user-profile-name">
+							<h3 className="jetpack-connect__sso__log-in-as">
 								{ this.translate(
 									'Log in as {{strong}}%s{{/strong}}',
 									{
 										args: user.display_name,
 										components: {
-											strong: <strong />
+											strong: <strong className="jetpack-connect__sso__display-name"/>
 										}
 									}
 								) }
