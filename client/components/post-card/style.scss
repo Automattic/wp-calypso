@@ -42,11 +42,19 @@
 }
 
 .post-card__anchor {
-	display: block;
+	color: $gray-dark;
 	font-size: 15px;
 	font-weight: 600;
 	line-height: 1.4;
 	@extend %content-font;
+
+	&:visited {
+		color: $gray-dark;
+	}
+
+	&:hover {
+		color: $blue-wordpress;
+	}
 }
 
 .post-card__thumbnail {
