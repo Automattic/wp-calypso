@@ -65,7 +65,10 @@ const flows = {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
-		lastModified: '2016-01-21'
+		lastModified: '2016-01-21',
+		meta: {
+			skipBundlingPlan: true
+		}
 	},
 
 	premium: {
@@ -73,8 +76,12 @@ const flows = {
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
-		description: 'Create an account and a blog and then add the business plan to the users cart.',
-		lastModified: '2016-01-21'
+		description: 'Create an account and a blog and then add the premium plan to the users cart.',
+		lastModified: '2016-01-21',
+		meta: {
+			skipBundlingPlan: true
+		}
+
 	},
 
 	free: {
@@ -90,7 +97,10 @@ const flows = {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
 		description: 'Made for CT CMO trial project. Create an account and a blog, without theme selection, and then add the business plan to the users cart.',
-		lastModified: '2016-02-26'
+		lastModified: '2016-02-26',
+		meta: {
+			skipBundlingPlan: true
+		}
 	},
 
 	premiumv2: {
@@ -98,8 +108,11 @@ const flows = {
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
-		description: 'Made for CT CMO trial project. Create an account and a blog, without theme selection, and then add the business plan to the users cart.',
-		lastModified: '2016-02-26'
+		description: 'Made for CT CMO trial project. Create an account and a blog, without theme selection, and then add the premium plan to the users cart.',
+		lastModified: '2016-02-26',
+		meta: {
+			skipBundlingPlan: true
+		}
 	},
 
 	'with-theme': {
