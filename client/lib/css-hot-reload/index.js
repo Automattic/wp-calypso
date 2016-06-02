@@ -22,9 +22,12 @@ var standardAttributes = [
 ];
 
 /**
+ * Replaces the old hash parameter with the current timestamp if `name` is `href`.
+ *
  * @returns {object} 
  */
 function bustHashForHrefs( { name, oldValue } ) {
+	// style.css?v=abcd -> style.css?v=1234
     const value = 'href' === name
         ? `${ oldValue.split( '?' ).shift() }?v=${ new Date().getTime() }`
         : oldValue;
