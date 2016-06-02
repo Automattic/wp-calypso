@@ -28,6 +28,7 @@ import NoticeAction from 'components/notice/notice-action';
 import Site from 'my-sites/site';
 import SitePlaceholder from 'my-sites/site/placeholder';
 import { decodeEntities } from 'lib/formatting';
+import Gridicon from 'components/gridicon';
 
 /*
  * Module variables
@@ -235,6 +236,7 @@ const JetpackSSOForm = React.createClass( {
 							rel="external"
 							href={ get( this.props, 'blogDetails.admin_url', '#' ) }
 							onClick={ this.onCancelClick }>
+							<Gridicon icon="arrow-left" size={ 18 } />
 							{ this.translate( 'Return to %(siteName)s', {
 								args: {
 									siteName: get( this.props, 'blogDetails.title' )
