@@ -211,7 +211,7 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	if ( config.isEnabled( 'css-hot-reload' ) ) {
-		require( 'lib/css-hot-reload' ).init(  reduxStore  );
+		require( 'lib/css-hot-reload' )(  reduxStore  );
 	}
 
 	// Render Layout only for non-isomorphic sections.
