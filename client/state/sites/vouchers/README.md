@@ -7,21 +7,33 @@ A module for managing site vouchers data.
 
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.
 
-### `requestSiteVouchers( siteId: Number )`
+### `requestSiteVouchers( siteId )`
 
 Fetches vouchers for the site with the given site ID.
+
+### `assignSiteVoucher( siteId, serviceType )`
+
+Assign a `serviceType` voucher to the given site.
 
 ## Action creators
 
 > Action creators are exactly that—functions that create actions.
 
-### vouchersReceiveAction( siteId, response )
+### `vouchersReceiveAction( siteId, vouchers )`
 
-### vouchersRequestAction( siteId )
+### `vouchersRequestAction( siteId )`
 
-### vouchersRequestSuccessAction( siteId )
+### `vouchersRequestSuccessAction( siteId )`
 
-### vouchersRequestFailureAction( siteId, error )
+### `vouchersRequestFailureAction( siteId, error )`
+
+### `vouchersAssignReceiveAction( siteId, serviceType, voucher )`
+
+### `vouchersAssignRequestAction( siteId, serviceType )`
+
+### `vouchersAssignRequestSuccessAction( siteId, serviceType )`
+
+### `vouchersAssignRequestFailureAction( siteId, serviceType, error )`
 
 ```es6
 import {
@@ -71,11 +83,17 @@ state.sites.vouchers = {
 	},
 	
 	requesting: [
-		[ siteId ]: Boolean
+		[ siteId ]: {
+			getAll: Boolean,
+			assign: Boolean
+		}
 	],
 
 	errors: [
-		[ siteId ]: Boolean
+		[ siteId ]: {
+			getAll: Boolean,
+			assign: Boolean
+		}
 	]
 }
 ```
