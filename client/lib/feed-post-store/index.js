@@ -14,8 +14,7 @@ var assign = require( 'lodash/assign' ),
  */
 var Dispatcher = require( 'dispatcher' ),
 	emitter = require( 'lib/mixins/emitter' ),
-	normalizer = require( 'lib/post-normalizer' ),
-	normalizationRules = require( './normalization-rules' ),
+	{ runFastRules, runSlowRules } = require( './normalization-rules' ),
 	FeedPostActionType = require( './constants' ).action,
 	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
 	ReaderSiteBlockActionType = require( 'lib/reader-site-blocks/constants' ).action,
@@ -263,18 +262,11 @@ function normalizePost( feedId, postId, post ) {
 		return;
 	}
 
-	normalizer( post, normalizationRules.fastRules, function( err, normalizedPost ) {
-		if ( ! err ) {
-			setPost( postId, normalizedPost );
+	const normalizedPost = runFastRules( post );
+	setPost( postId, normalizedPost );
 
-			process.nextTick( function() {
-				normalizer( normalizedPost, normalizationRules.slowRules, function( fullErr, fullyNormalizedPost ) {
-					if ( ! fullErr ) {
-						setPost( postId, fullyNormalizedPost );
-					}
-				} );
-			} );
-		}
+	process.nextTick( () => {
+		runSlowRules( normalizedPost ).then( setPost.bind( null, postId ) );
 	} );
 }
 
@@ -291,7 +283,7 @@ function markPostSeen( post ) {
 	if ( post.site_ID ) {
 		// they have a site ID, let's try to push a page view
 		const site = SiteStore.get( post.site_ID );
-		const isNotAdmin = ! ( site && site.getIn( [ 'capabilities', 'manage_options' ], false ) )
+		const isNotAdmin = ! ( site && site.getIn( [ 'capabilities', 'manage_options' ], false ) );
 		if ( site && site.get( 'state' ) === SiteState.COMPLETE ) {
 			if ( site.get( 'is_private' ) || isNotAdmin ) {
 				stats.pageViewForPost( site.get( 'ID' ), site.get( 'URL' ), post.ID, site.get( 'is_private' ) );

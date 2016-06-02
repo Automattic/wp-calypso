@@ -31,4 +31,5 @@ export default function firstPassCanonicalImage( post ) {
 			};
 		}
 	}
+	return post;
 }

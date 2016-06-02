@@ -2,8 +2,7 @@
  * External Dependencies
  */
 var async = require( 'async' ),
-	debug = require( 'debug' )( 'calypso:post-normalizer' ),
-	cloneDeep = require( 'lodash/cloneDeep' );
+	debug = require( 'debug' )( 'calypso:post-normalizer' );
 /**
  * Internal dependencies
  */
@@ -32,7 +31,7 @@ function normalizePost( post, transforms, callback ) {
 		return;
 	}
 
-	let normalizedPost = cloneDeep( post ),
+	let normalizedPost = Object.assign( {}, post ),
 		postDebug = debugForPost( post );
 
 	postDebug( 'running transforms' );
