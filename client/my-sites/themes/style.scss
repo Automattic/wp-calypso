@@ -252,6 +252,17 @@
 	padding: 0;
 }
 
+.themes__sheet-related-themes-link {
+
+	p {
+		text-align: center;
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
+}
+
 .themes__sheet-card-support {
 	display: flex;
 	align-items: center;

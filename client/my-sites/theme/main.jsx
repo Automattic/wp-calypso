@@ -297,7 +297,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderRelatedThemes() {
-		var actionLabel = this.translate( 'Pick' ),
+		var actionLabel = i18n.translate( 'Pick' ),
 		themes = this.props.themes.map( function( theme ) {
 				return {
 					id: theme.slug,
@@ -305,6 +305,13 @@ const ThemeSheet = React.createClass( {
 					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png'
 				};
 			} );
+
+		const related_text = i18n.translate( 'See all {{a}}BUSINESS{{/a}} themes.', {
+				components: {
+					a: <a href='https://wordpress.com'/>
+				}
+			} );
+
 		return (
 			<div>
 				<SectionHeader label={ i18n.translate( 'You might also like' ) } />
@@ -320,6 +327,9 @@ const ThemeSheet = React.createClass( {
 							</Card>
 						</li>
 					</ul>
+					<div className="themes__sheet-related-themes-link">
+						<p>{ related_text }</p>
+					</div>
 			</div>
 		);
 	},
