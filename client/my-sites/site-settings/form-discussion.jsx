@@ -223,7 +223,7 @@ module.exports = React.createClass( {
 				</FormLabel>
 				{ markdownSupported &&
 					<FormLabel>
-						<FormCheckbox
+						<Checkbox
 							name="wpcom_publish_comments_with_markdown"
 							checkedLink={ this.linkState( 'wpcom_publish_comments_with_markdown' ) }
 							disabled={ this.state.fetchingSettings }

@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  */
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
-import FormCheckbox from 'components/forms/form-checkbox';
+import Checkbox from 'components/checkbox';
 import notices from 'notices';
 import { createNotice } from 'state/notices/actions';
 
@@ -47,7 +47,7 @@ class GlobalNotices extends Component {
 					<a href="/devdocs/design/global-notices">Global Notices</a>
 				</h2>
 				<label>
-					<FormCheckbox
+					<Checkbox
 						onChange={ this.toggleUseState }
 						checked={ this.state.useState } />
 					Use global application state
