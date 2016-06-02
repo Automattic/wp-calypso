@@ -59,6 +59,6 @@ export function canCurrentUser( state, siteId, capability ) {
 	return get( state.currentUser.capabilities, [ siteId, capability ], null );
 }
 
-export function hasFlag( state, flagName ) {
+export function currentUserHasFlag( state, flagName ) {
 	return state.currentUser.flags.indexOf( flagName ) !== -1;
 }
