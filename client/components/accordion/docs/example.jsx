@@ -8,6 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Accordion = require( 'components/accordion' ),
+	Checkbox = require( 'components/checkbox' ),
 	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
@@ -35,14 +36,12 @@ module.exports = React.createClass( {
 				</h2>
 
 				<div style={ { paddingBottom: '10px' } }>
-					<label>
-						<input
-							type="checkbox"
-							checked={ this.state.showSubtitles }
-							onChange={ this._toggleShowSubtitles }
-						/>
-						Show subtitles
-					</label>
+					<Checkbox
+						isChecked={ this.state.showSubtitles }
+						onChange={ this._toggleShowSubtitles }
+					>
+					Show subtitles
+					</Checkbox>
 				</div>
 
 				<div style={ { maxWidth: '300px' } }>

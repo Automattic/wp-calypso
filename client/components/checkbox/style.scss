@@ -1,0 +1,60 @@
+.checkbox {
+	cursor: pointer;
+	display: block;
+	font-size: 14px;
+	margin-bottom: 5px;
+	position: relative;
+	user-select: none;
+}
+
+.checkbox input[type="checkbox"] {
+	@include hide-content-accessibly;
+	border: 0;
+	margin: -1px;
+	padding: 0;
+}
+
+.checkbox .gridicon {
+	fill: $blue-medium;
+	left: 9px;
+	opacity: 0.99;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.checkbox:before {
+	background-color: $white;
+	border: 1px solid lighten( $gray, 20% );
+	content: '';
+	display: block;
+	height: 16px;
+	left: 0;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 16px;
+}
+
+.checkbox:hover:before {
+	border-color: lighten( $gray, 10% );
+}
+
+.checkbox.is-focused {
+
+	&:before,
+	&:hover:before {
+		border-color: $blue-wordpress;
+		box-shadow: 0 0 0 2px $blue-light;
+	}
+}
+
+.checkbox.is-disabled {
+	opacity: 0.8;
+	cursor: not-allowed;
+
+	&:before,
+	&:hover:before {
+		border-color: lighten( $gray, 20% );
+	}
+}

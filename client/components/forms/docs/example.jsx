@@ -11,7 +11,7 @@ var countriesList = require( 'lib/countries-list' ).forSms(),
 	Card = require( 'components/card' ),
 	FormButton = require( 'components/forms/form-button' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
+	Checkbox = require( 'components/checkbox' ),
 	FormCountrySelect = require( 'components/forms/form-country-select' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
@@ -39,6 +39,7 @@ var FormFields = React.createClass( {
 	getInitialState: function() {
 		return {
 			checkedRadio: 'first',
+			checked: false,
 			toggled: false,
 			compactToggled: false
 		};
@@ -50,6 +51,10 @@ var FormFields = React.createClass( {
 
 	handleToggle: function() {
 		this.setState( { toggled: ! this.state.toggled } );
+	},
+
+	handleCheckbox: function() {
+		this.setState( { checked: ! this.state.checked } );
 	},
 
 	handleCompactToggle: function() {
@@ -77,10 +82,14 @@ var FormFields = React.createClass( {
 
 					<FormFieldset>
 						<FormLegend>Form Checkbox</FormLegend>
-						<FormLabel>
-							<FormCheckbox id="comment_like_notification" name="comment_like_notification" />
-							<span>Email me when someone Likes one of my comments.</span>
-						</FormLabel>
+
+						<Checkbox
+							id="comment_like_notification"
+							name="comment_like_notification"
+							isChecked={ this.state.checked }
+							onChange={ this.handleCheckbox }>
+							Email me when someone Likes one of my comments.
+						</Checkbox>
 					</FormFieldset>
 
 					<FormFieldset>
