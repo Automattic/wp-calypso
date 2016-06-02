@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import page from 'page';
+import urlModule from 'url';
 const debug = require( 'debug' )( 'calypso:jetpack-connect:authorize-form' );
 
 /**
@@ -44,21 +45,22 @@ const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 
 const SiteCard = React.createClass( {
 	render() {
-		const { site_icon, blogname, home_url } = this.props.queryObject;
+		const { site_icon, blogname, home_url, site_url } = this.props.queryObject;
 		const siteIcon = site_icon ? { img: site_icon } : false;
 		const url = decodeEntities( home_url );
-		const title = decodeEntities( blogname );
+		const parsedUrl = urlModule.parse( url );
+		const path = ( parsedUrl.path === '/' ) ? '' : parsedUrl.path;
 		const site = {
 			ID: null,
 			url: url,
-			admin_url: url,
-			domain: url,
+			admin_url: decodeEntities( site_url + '/wp-admin' ),
+			domain: parsedUrl.host + path,
 			icon: siteIcon,
 			is_vip: false,
-			title: title
+			title: decodeEntities( blogname )
 		};
 		return(
-			<CompactCard>
+			<CompactCard className="jetpack-connect__site">
 				<Site site={ site } />
 			</CompactCard>
 		);
