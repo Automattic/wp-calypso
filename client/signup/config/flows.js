@@ -56,10 +56,10 @@ const flows = {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
+		lastModified: '2016-06-02',
 		meta: {
 			skipBundlingPlan: true
-		},
-		lastModified: '2016-06-02'
+		}
 	},
 
 	premium: {
@@ -67,11 +67,11 @@ const flows = {
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
+		description: 'Create an account and a blog and then add the business plan to the users cart.',
+		lastModified: '2016-06-02',
 		meta: {
 			skipBundlingPlan: true
-		},
-		description: 'Create an account and a blog and then add the business plan to the users cart.',
-		lastModified: '2016-06-02'
+		}
 	},
 
 	free: {
