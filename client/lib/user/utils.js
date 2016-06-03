@@ -9,6 +9,8 @@ var debug = require( 'debug' )( 'calypso:user:utilities' ),
  */
 var user = require( 'lib/user' )();
 
+const VERIFICATION_POLL_INTERVAL = 15000;
+
 var userUtils = {
 	getLogoutUrl: function( redirect ) {
 		var url = '/logout',
@@ -56,7 +58,53 @@ var userUtils = {
 
 	isLoggedIn: function() {
 		return Boolean( user.data );
-	}
+	},
+
+	needsVerificationForSite: function( site ) {
+		// do not allow publish for unverified e-mails,
+		// but allow if the site is VIP
+		return !user.get().email_verified && !( site && site.is_vip );
+	},
+
+	pollVerificationForSite: function( site ) {
+		return new Promise( ( resolve, reject ) => {
+			let serverPoll;
+			let check = ( signal ) => {
+				// skip server poll if page is in the background
+				// and this was not triggered by a signal
+				if ( document.hidden && !signal ) {
+					return;
+				}
+
+				user.once( 'change', () => {
+					if ( !this.needsVerificationForSite( site ) ) {
+						// email verification took place
+						resolve( user );
+						clearInterval( serverPoll );
+					}
+				} );
+
+				user.fetch();
+			};
+
+			serverPoll = setInterval( check, VERIFICATION_POLL_INTERVAL );
+
+			// wait for localStorage event (from other windows)
+			window.addEventListener( 'storage', ( e ) => {
+				if ( e.key === '__email_verified_signal__' && e.newValue ) {
+					window.localStorage.removeItem( '__email_verified_signal__' );
+					check( true );
+				}
+			} );
+		} );
+	},
+
+	signalVerification: function() {
+		if ( window.localStorage ) {
+			// use localStorage to signal to other browser windows that the user's email was verified
+			window.localStorage.setItem( '__email_verified_signal__', 1 );
+		}
+	},
 };
 
 module.exports = userUtils;
