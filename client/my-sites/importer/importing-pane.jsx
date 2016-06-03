@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import Dispatcher from 'dispatcher';
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
@@ -75,7 +76,7 @@ const hasProgressInfo = progress => {
 	return true;
 };
 
-export default React.createClass( {
+export const ImportingPane = React.createClass( {
 	displayName: 'SiteSettingsImportingPane',
 
 	mixins: [ PureRenderMixin ],
@@ -194,9 +195,22 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		const { site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor } } = this.props;
-		const { importerId, errorData = {}, customData } = this.props.importerStatus;
+		const {
+			importerStatus: {
+				importerId,
+				errorData = {},
+				customData
+			},
+			mapAuthor: mapAuthorFor,
+			site: {
+				ID: siteId,
+				name: siteName,
+				single_user_site: hasSingleAuthor
+			}
+		} = this.props;
+
 		const progressClasses = classNames( 'importer__import-progress', { 'is-complete': this.isFinished() } );
+
 		let { percentComplete, progress, statusMessage } = this.props.importerStatus;
 		let blockingMessage;
 
@@ -221,7 +235,7 @@ export default React.createClass( {
 				{ this.isMapping() &&
 					<MappingPane
 						hasSingleAuthor={ hasSingleAuthor }
-						onMap={ ( source, target ) => mapAuthor( importerId, source, target ) }
+						onMap={ mapAuthorFor( importerId ) }
 						onStartImport={ () => startImporting( this.props.importerStatus ) }
 						{ ...{ siteId } }
 						sourceAuthors={ customData.sourceAuthors }
@@ -240,3 +254,12 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapDispatchToProps = () => ( {
+	mapAuthor: importerId => ( source, target ) => Dispatcher.handleViewAction( mapAuthor( importerId, source, target ) )
+} );
+
+export default props => React.createElement(
+	ImportingPane,
+	Object.assign( {}, props, mapDispatchToProps() )
+);
