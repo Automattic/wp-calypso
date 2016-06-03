@@ -312,6 +312,20 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
+		describe( 'wpcom.site.statsInsights', function() {
+			it( 'should request insight data', done => {
+				site.statsInsights()
+					.then( data => {
+						assert.equal( 'number', typeof data.highest_hour );
+						assert.equal( 'number', typeof data.highest_hour_percent );
+						assert.equal( 'number', typeof data.highest_day_of_week );
+						assert.equal( 'number', typeof data.highest_day_percent );
+						done();
+					} )
+					.catch( done );
+			} );
+		} );
+
 		describe( 'wpcom.site.statsPublicize', function() {
 			it( 'should request publicize data', done => {
 				site.statsPublicize()
