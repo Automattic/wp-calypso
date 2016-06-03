@@ -21,7 +21,7 @@ var SectionNav = require( 'components/section-nav' ),
 
 import FeatureExample from 'components/feature-example';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
-import FormToggle from 'components/forms/form-toggle';
+import FormButton from 'components/forms/form-button';
 import Card from 'components/card';
 import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
 import {
@@ -91,20 +91,17 @@ const AdsMain = React.createClass( {
 				<div className="ads__activate-header">
 					<h2 className="ads__activate-header-title">{ this.translate( 'WordAds Disabled' ) }</h2>
 					<div className="ads__activate-header-toggle">
-						<FormToggle
-							checked={ this.props.site.options.wordads || ( this.props.requestingWordAdsApproval && this.props.wordAdsError === null ) }
-							onChange={ this.props.requestWordAdsApproval }
-						/>
+						<FormButton
+							disabled={ this.props.site.options.wordads || ( this.props.requestingWordAdsApproval && this.props.wordAdsError === null ) }
+							onClick={ this.props.requestWordAdsApproval }
+						>
+							{ this.translate( 'Join WordAds program' ) }
+						</FormButton>
 					</div>
 				</div>
 				{ this.props.wordAdsError &&
 					<Notice status="is-error ads__activate-notice" onDismissClick={ this.dismissWordAdsError }>
 						{ this.props.wordAdsError }
-					</Notice>
-				}
-				{ this.props.requestingWordAdsApproval &&
-					<Notice status="is-info ads__activate-notice" showDismiss={ false }>
-						{ this.translate( 'Kindly requesting WordAds activation' ) }
 					</Notice>
 				}
 				<p className="ads__activate-description">
