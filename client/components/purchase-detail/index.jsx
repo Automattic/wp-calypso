@@ -10,6 +10,12 @@ import React from 'react';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 
+function scrollToTop() {
+	if ( typeof window !== 'undefined' ) {
+		window.scrollTo( 0, 0 );
+	}
+}
+
 const PurchaseDetail = ( {
 	buttonText,
 	description,
@@ -67,6 +73,10 @@ const PurchaseDetail = ( {
 			</div>
 		</div>
 	);
+};
+
+PurchaseDetail.defaultProps = {
+	onClick: scrollToTop
 };
 
 PurchaseDetail.propTypes = {
