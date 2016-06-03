@@ -258,7 +258,7 @@ const JetpackSSOForm = React.createClass( {
 		const buttons = [
 			{
 				action: 'close',
-				label: this.translate( 'Close', { context: 'Verb. Used in a button to close a modal window.' } )
+				label: this.translate( 'Got it', { context: 'Used in a button. Similar phrase would be, "I understand".' } )
 			}
 		];
 
