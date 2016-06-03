@@ -88,6 +88,7 @@ var Notifications = React.createClass({
 
 		if ( 'serviceWorker' in window.navigator && 'addEventListener' in window.navigator.serviceWorker ) {
 			window.navigator.serviceWorker.addEventListener( 'message', this.receiveServiceWorkerMessage );
+			this.postServiceWorkerMessage( { action: 'sendQueuedMessages' } );
 		}
 	},
 
@@ -197,7 +198,7 @@ var Notifications = React.createClass({
 			return;
 		}
 
-		switch( event.data.action ) {
+		switch ( event.data.action ) {
 			case 'openPanel':
 				// checktoggle closes panel with no parameters
 				this.props.checkToggle();
@@ -217,6 +218,16 @@ var Notifications = React.createClass({
 		} else {
 			// save only the latest message to send when iframe is loaded
 			this.queuedMessage = message;
+		}
+	},
+
+	postServiceWorkerMessage: function( message ) {
+		if ( 'serviceWorker' in window.navigator ) {
+			window.navigator.serviceWorker.ready.then( ( serviceWorkerRegistration ) => {
+				if ( 'active' in serviceWorkerRegistration ) {
+					serviceWorkerRegistration.active.postMessage( message );
+				}
+			} );
 		}
 	},
 

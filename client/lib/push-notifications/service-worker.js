@@ -6,6 +6,8 @@
 'use strict';
 /* eslint-enable */
 
+var queuedMessages = [];
+
 self.addEventListener( 'install', function( event ) {
 	event.waitUntil( self.skipWaiting() );
 } );
@@ -15,11 +17,13 @@ self.addEventListener( 'activate', function( event ) {
 } );
 
 self.addEventListener( 'push', function( event ) {
+	var notification;
+
 	if ( typeof event.data !== 'object' && typeof event.data.json !== 'function' ) {
 		return;
 	}
 
-	var notification = event.data.json();
+	notification = event.data.json();
 
 	event.waitUntil(
 		self.registration.showNotification( notification.msg, {
@@ -35,29 +39,39 @@ self.addEventListener( 'notificationclick', function( event ) {
 
 	event.waitUntil(
 		self.clients.matchAll().then( function( clientList ) {
-			var promise;
-			if ( 0 === clientList.length ) {
-				self.clients.openWindow( '/' );
-				
-				promise = new Promise( function( resolve ) {
-					setTimeout( function() {
-						resolve( self.clients.matchAll() );
-					}, 2500 );
-				} );
-
-				return promise;
-			}
-			return clientList;
-		} ).then( function( clientList ) {
-			console.log( clientList );
 			if ( clientList.length > 0 ) {
-				clientList[0].postMessage( {
-					action: 'openPanel'
-				} );
+				clientList[0].postMessage( { action: 'openPanel' } );
 				try {
 					clientList[0].focus();
-				} catch( e ) {}
+				} catch ( err ) {
+					// Client didn't need focus
+				}
+			} else {
+				queuedMessages.push( { action: 'openPanel' } );
+				self.clients.openWindow( '/' );
 			}
 		} )
 	);
+} );
+
+self.addEventListener( 'message', function( event ) {
+	if ( ! ( 'action' in event.data ) ) {
+		return;
+	}
+
+	switch ( event.data.action ) {
+		case 'sendQueuedMessages':
+			self.clients.matchAll().then( function( clientList ) {
+				var queuedMessage;
+
+				if ( clientList.length > 0 ) {
+					queuedMessage = queuedMessages.shift();
+					while ( queuedMessage ) {
+						clientList[0].postMessage( queuedMessage );
+						queuedMessage = queuedMessages.shift();
+					}
+				}
+			} );
+			break;
+	}
 } );
