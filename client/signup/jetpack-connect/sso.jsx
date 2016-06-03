@@ -236,10 +236,10 @@ const JetpackSSOForm = React.createClass( {
 
 		return (
 			<table className="jetpack-connect__sso__shared-details-table">
-				{
-					map( sharedDetails, ( value, key ) => {
+				<tbody>
+					{ map( sharedDetails, ( value, key ) => {
 						return (
-							<tr className="jetpack-connect__sso__shared-detail-row">
+							<tr key={ key } className="jetpack-connect__sso__shared-detail-row">
 								<td className="jetpack-connect__sso__shared-detail-label">
 									{ this.getSharedDetailLabel( key ) }
 								</td>
@@ -248,8 +248,8 @@ const JetpackSSOForm = React.createClass( {
 								</td>
 							</tr>
 						);
-					} )
-				}
+					} ) }
+				</tbody>
 			</table>
 		);
 	},
