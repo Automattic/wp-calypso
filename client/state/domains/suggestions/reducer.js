@@ -66,7 +66,38 @@ export function requesting( state = {}, action ) {
 			}
 			return state;
 		case SERIALIZE:
+		case DESERIALIZE:
 			return {};
+	}
+	return state;
+}
+
+/**
+ * Tracks domains suggestions error state, indexed by a serialized query.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function errors( state = {}, action ) {
+	const serializedQuery = action.queryObject && getSerializedDomainsSuggestionsQuery( action.queryObject );
+	switch ( action.type ) {
+		case DOMAINS_SUGGESTIONS_REQUEST:
+		case DOMAINS_SUGGESTIONS_REQUEST_SUCCESS:
+			if ( serializedQuery ) {
+				return Object.assign( {}, state, {
+					[ serializedQuery ]: null
+				} );
+			}
+			return state;
+		case DOMAINS_SUGGESTIONS_REQUEST_FAILURE:
+			if ( serializedQuery ) {
+				return Object.assign( {}, state, {
+					[ serializedQuery ]: action.error
+				} );
+			}
+			return state;
+		case SERIALIZE:
 		case DESERIALIZE:
 			return {};
 	}
@@ -75,5 +106,6 @@ export function requesting( state = {}, action ) {
 
 export default combineReducers( {
 	items,
-	requesting
+	requesting,
+	errors
 } );

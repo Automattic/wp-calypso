@@ -4,6 +4,9 @@
 import moment from 'moment';
 
 const createSitePlanObject = ( plan ) => {
+	if ( ! plan ) {
+		return {};
+	}
 	return {
 		canStartTrial: Boolean( plan.can_start_trial ),
 		currentPlan: Boolean( plan.current_plan ),

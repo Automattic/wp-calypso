@@ -38,3 +38,21 @@ export function isRequestingDomainsSuggestions( state, queryObject ) {
 	}
 	return false;
 }
+
+/**
+ * Returns an error for a given domains suggestions query.
+ * @param   {Object}     state                                Global state tree
+ * @param   {Object}     queryObject                          domain suggestions queryObject
+ * @param   {String}     queryObject.query                    domainQuery
+ * @param   {Number}     queryObject.quantity                 max results
+ * @param   {String}     queryObject.vendor                   vendor
+ * @param   {?Boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
+ * @returns {?Object}    error or null
+ */
+export function getDomainsSuggestionsError( state, queryObject ) {
+	const serializedQuery = getSerializedDomainsSuggestionsQuery( queryObject );
+	if ( serializedQuery ) {
+		return state.domains.suggestions.errors[ serializedQuery ] || null;
+	}
+	return null;
+}
