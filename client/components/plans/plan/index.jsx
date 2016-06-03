@@ -69,9 +69,13 @@ const Plan = React.createClass( {
 		);
 	},
 
-	showDetails() {
+	showDetails( event ) {
 		if ( 'function' === typeof ( this.props.onOpen ) ) {
 			this.props.onOpen( this.props.plan.product_id );
+		}
+		// clicking a card should select a plan, see issue 4486
+		if ( this.imagePlanActionRef ) {
+			this.imagePlanActionRef.handleSelectPlan( event );
 		}
 	},
 
@@ -186,9 +190,14 @@ const Plan = React.createClass( {
 		);
 	},
 
+	setImagePlanActionRef( imagePlanActionRef ) {
+		this.imagePlanActionRef = imagePlanActionRef;
+	},
+
 	getImagePlanAction() {
 		return (
 			<PlanActions
+				ref={ this.setImagePlanActionRef }
 				plan={ this.props.plan }
 				isInSignup={ this.props.isInSignup }
 				onSelectPlan={ this.props.onSelectPlan }
