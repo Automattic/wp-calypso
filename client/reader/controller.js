@@ -55,7 +55,7 @@ function renderPostNotFound() {
 	setPageTitle( sidebarAndPageTitle );
 
 	ReactDom.render(
-		<FeedError sidebarTitle={ sidebarAndPageTitle } />,
+		<FeedError sidebarTitle={ sidebarAndPageTitle } message={ i18n.translate( 'Post Not Found' ) } />,
 		document.getElementById( 'primary' )
 	);
 }
@@ -65,8 +65,6 @@ function userHasHistory( context ) {
 }
 
 function renderFeedError() {
-	var FeedError = require( 'reader/feed-error' );
-
 	ReactDom.render(
 		React.createElement( FeedError ),
 		document.getElementById( 'primary' )
