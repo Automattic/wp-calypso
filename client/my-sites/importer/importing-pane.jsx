@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import Dispatcher from 'dispatcher';
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
@@ -13,6 +12,7 @@ import omit from 'lodash/omit';
  */
 import { mapAuthor, startImporting } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
+import { connectDispatcher } from './dispatcher-converter';
 import ProgressBar from 'components/progress-bar';
 import MappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
@@ -255,11 +255,8 @@ export const ImportingPane = React.createClass( {
 	}
 } );
 
-const mapDispatchToProps = () => ( {
-	mapAuthor: importerId => ( source, target ) => Dispatcher.handleViewAction( mapAuthor( importerId, source, target ) )
+const mapDispatchToProps = dispatch => ( {
+	mapAuthor: importerId => ( source, target ) => dispatch( mapAuthor( importerId, source, target ) )
 } );
 
-export default props => React.createElement(
-	ImportingPane,
-	Object.assign( {}, props, mapDispatchToProps() )
-);
+export default connectDispatcher( null, mapDispatchToProps )( ImportingPane );
