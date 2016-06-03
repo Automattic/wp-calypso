@@ -197,10 +197,6 @@ function removeUserStepFromFlow( flow ) {
 function filterFlowName( flowName ) {
 	const defaultFlows = [ 'main', 'website' ];
 
-	if ( includes( defaultFlows, flowName ) && abtest( 'freeTrialsInSignup' ) === 'enabled' ) {
-		return 'free-trial';
-	}
-
 	if ( includes( defaultFlows, flowName ) && abtest( 'personalPlan' ) === 'show' ) {
 		return 'personal';
 	}
