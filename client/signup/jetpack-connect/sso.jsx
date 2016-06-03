@@ -353,7 +353,7 @@ const JetpackSSOForm = React.createClass( {
 
 						<LoggedOutFormFooter className="jetpack-connect__sso__actions">
 							<p className="jetpack-connect__tos-link">
-								{ this.translate( 'By logging in you agree to share {{detailsLink}}details{{/detailsLink}} between WordPress.com and %(siteName)s', {
+								{ this.translate( 'By logging in you agree to share {{detailsLink}}details{{/detailsLink}} between WordPress.com and %(siteName)s.', {
 									components: {
 										detailsLink: (
 											<a
