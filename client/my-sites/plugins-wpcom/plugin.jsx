@@ -23,6 +23,7 @@ export const Plugin = React.createClass( {
 			category,
 			description,
 			icon = 'plugins',
+			isActive = true,
 			name,
 			onClick = noop,
 			descriptionLink
@@ -51,6 +52,8 @@ export const Plugin = React.createClass( {
 				>
 					<div className="wpcom-plugins__plugin-icon">
 						<Gridicon icon={ linkIcon } />
+						{ isActive &&
+							<Gridicon icon="checkmark-circle" size={ 18 } /> }
 					</div>
 					<div className="wpcom-plugins__plugin-title">{ name }</div>
 					<div className="wpcom-plugins__plugin-category">{ category }</div>
@@ -65,6 +68,7 @@ Plugin.propTypes = {
 	category: PropTypes.string.isRequired,
 	description: PropTypes.string.isRequired,
 	icon: PropTypes.string,
+	isActive: PropTypes.bool,
 	name: PropTypes.string.isRequired,
 	onClick: PropTypes.func,
 	descriptionLink: PropTypes.string.isRequired
