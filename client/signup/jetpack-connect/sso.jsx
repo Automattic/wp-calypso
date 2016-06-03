@@ -144,7 +144,7 @@ const JetpackSSOForm = React.createClass( {
 		);
 	},
 
-	renderNoQueryArgsError() {
+	renderBadPathArgsError() {
 		return (
 			<Main>
 				<EmptyContent
@@ -169,10 +169,10 @@ const JetpackSSOForm = React.createClass( {
 
 	render() {
 		const user = this.props.userModule.get();
-		const { ssoNonce, siteId } = this.props;
+		const { ssoNonce, siteId, validationError } = this.props;
 
-		if ( ! ssoNonce || ! siteId ) {
-			return this.renderNoQueryArgsError();
+		if ( ! ssoNonce || ! siteId || validationError ) {
+			return this.renderBadPathArgsError();
 		}
 
 		return (
