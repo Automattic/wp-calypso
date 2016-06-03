@@ -14,6 +14,7 @@ import Main from 'components/main';
 import ConnectHeader from './connect-header';
 import observe from 'lib/mixins/data-observe';
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 import Button from 'components/button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -24,6 +25,9 @@ import config from 'config';
 import EmptyContent from 'components/empty-content';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import Site from 'my-sites/site';
+import SitePlaceholder from 'my-sites/site/placeholder';
+import { decodeEntities } from 'lib/formatting';
 
 /*
  * Module variables
@@ -116,6 +120,30 @@ const JetpackSSOForm = React.createClass( {
 		);
 	},
 
+	renderSiteCard() {
+		const { blogDetails } = this.props;
+		let site = <SitePlaceholder />;
+
+		if ( blogDetails ) {
+			const siteObject = {
+				ID: null,
+				url: get( this.props, 'blogDetails.URL', '' ),
+				admin_url: get( this.props, 'blogDetails.admin_url', '' ),
+				domain: get( this.props, 'blogDetails.domain', '' ),
+				icon: get( this.props, 'blogDetails.icon', { img: '', ico: '' } ),
+				is_vip: false,
+				title: decodeEntities( get( this.props, 'blogDetails.title', '' ) )
+			};
+			site = <Site site={ siteObject } />;
+		}
+
+		return (
+			<CompactCard className="jetpack-connect__site">
+				{ site }
+			</CompactCard>
+		);
+	},
+
 	renderNoQueryArgsError() {
 		return (
 			<Main>
@@ -160,6 +188,8 @@ const JetpackSSOForm = React.createClass( {
 							}
 						) }
 					/>
+
+					{ this.renderSiteCard() }
 
 					<Card>
 						{ this.maybeRenderAuthorizationError() }
