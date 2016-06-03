@@ -316,16 +316,15 @@ const ThemeSheet = React.createClass( {
 			<div>
 				<SectionHeader label={ i18n.translate( 'You might also like' ) } />
 					<ul className="themes__sheet-related-themes">
-						<li>
-							<Card className="themes__sheet-related-themes-card">
-								<img src={ themes[0].screenshot + '?w=' + '660' }/>
-							</Card>
-						</li>
-						<li>
-							<Card className="themes__sheet-related-themes-card">
-								<img src={ themes[1].screenshot + '?w=' + '660' }/>
-							</Card>
-						</li>
+						{ themes.map( function( theme ) {
+							return (
+								<li>
+									<Card className="themes__sheet-related-themes-card">
+										<img src={ theme.screenshot + '?w=' + '660' }/>
+									</Card>
+								</li>
+							)
+						} ) }
 					</ul>
 					<div className="themes__sheet-related-themes-link">
 						<p>{ related_text }</p>
