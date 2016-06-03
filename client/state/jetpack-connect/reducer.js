@@ -16,6 +16,7 @@ import {
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_QUERY_UPDATE,
 	JETPACK_CONNECT_AUTHORIZE,
+	JETPACK_CONNECT_AUTHORIZE_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_ACTIVATE_MANAGE,
@@ -37,12 +38,7 @@ import {
 import { isValidStateWithSchema } from 'state/utils';
 import { jetpackConnectSessionsSchema, jetpackConnectAuthorizeSchema } from './schema';
 
-const defaultAuthorizeState = {
-	queryObject: {},
-	isAuthorizing: false,
-	authorizeSuccess: false,
-	authorizeError: false
-};
+import { DEFAULT_AUTHORIZE_STATE } from './constants';
 
 function buildNoProtocolUrlObj( url, isInstall ) {
 	const noProtocolUrl = url.replace( /.*?:\/\//g, '' );
@@ -57,6 +53,8 @@ export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_CHECK_URL:
 			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url, action.isInstall ) );
+		case JETPACK_CONNECT_AUTHORIZE_COMPLETE:
+			return Object.assign( {}, omit( state, action.url.replace( /.*?:\/\//g, '' ) ) );
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, jetpackConnectSessionsSchema ) ) {
 				return state;
@@ -121,7 +119,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { isActivating: false, manageActivated: true, manageActivatedError: error, activateManageSecret: false } );
 		case JETPACK_CONNECT_QUERY_SET:
 			const queryObject = Object.assign( {}, action.queryObject );
-			return Object.assign( {}, defaultAuthorizeState, { queryObject: queryObject } );
+			return Object.assign( {}, DEFAULT_AUTHORIZE_STATE, { queryObject: queryObject } );
 		case JETPACK_CONNECT_QUERY_UPDATE:
 			return Object.assign( {}, state, { queryObject: Object.assign( {}, state.queryObject, { [ action.property ]: action.value } ) } );
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
@@ -133,13 +131,14 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, autoAuthorize: true, userData: action.userData, bearerToken: action.data.bearer_token } );
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
+		case JETPACK_CONNECT_AUTHORIZE_COMPLETE:
+			return Object.assign( {}, DEFAULT_AUTHORIZE_STATE );
+		case SERIALIZE:
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, jetpackConnectAuthorizeSchema ) ) {
 				return state;
 			}
 			return {};
-		case SERIALIZE:
-			return state;
 	}
 	return state;
 }

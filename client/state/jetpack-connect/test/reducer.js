@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
 
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	JETPACK_CONNECT_AUTHORIZE_COMPLETE,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -27,6 +28,8 @@ import reducer, {
 	jetpackSSOSessions,
 	jetpackConnectSessions
 } from '../reducer';
+
+import { DEFAULT_AUTHORIZE_STATE } from '../constants';
 
 const successfulSSOValidation = {
 	type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
@@ -93,7 +96,6 @@ describe( 'reducer', () => {
 				type: JETPACK_CONNECT_CHECK_URL,
 				url: 'https://website.com'
 			} );
-
 			expect( state[ 'website.com' ] ).to.have.property( 'timestamp' )
 				.to.be.at.least( nowTime );
 		} );
@@ -148,6 +150,15 @@ describe( 'reducer', () => {
 
 			expect( state ).to.be.eql( { 'https://website.com:3000/test-one': { timestamp: 1 } } );
 		} );
+
+		it( 'should remove a url when authorization is complete', () => {
+			const original = deepFreeze( { 'website1.com': { timestamp: 1 }, 'website2.com': { timestamp: 1} } );
+			const state = jetpackConnectSessions( original, {
+				type: JETPACK_CONNECT_AUTHORIZE_COMPLETE,
+				url: 'http://website1.com'
+			} );
+			expect( state ).to.eql( { 'website2.com': { timestamp: 1 } } );
+		} );
 	} );
 
 	describe( '#jetpackSSOSessions()', () => {
@@ -174,6 +185,20 @@ describe( 'reducer', () => {
 		it( 'should default to an empty object', () => {
 			const state = jetpackConnectAuthorize( undefined, {} );
 			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should reset the state to default', () => {
+			const original = {
+				queryObject: {
+					site: 'http://some.site',
+				},
+				isAuthorizing: false,
+				authorizeSuccess: true,
+				authorizeError: false,
+				autoAuthorize: false
+			};
+			const state = jetpackConnectAuthorize( original, { type: JETPACK_CONNECT_AUTHORIZE_COMPLETE } );
+			expect( state ).to.eql( DEFAULT_AUTHORIZE_STATE );
 		} );
 	} );
 
