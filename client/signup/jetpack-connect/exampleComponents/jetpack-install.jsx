@@ -28,7 +28,12 @@ export default React.createClass( {
 					</div>
 
 				</div>
-				<img src="/calypso/images/jetpack/jetpack-connect-install.png" />
+				<div className="jetpack-connect__example-content example-install-jetpack">
+					<div className="install-plugin-header"></div>
+					<div className="install-plugin-footer">
+						<div className="install-plugin-footer-button">{ this.translate( 'Install Now' ) }</div>
+					</div>
+				</div>
 			</div>
 		);
 	}

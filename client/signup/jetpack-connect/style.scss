@@ -164,11 +164,49 @@
 	border-radius: 50%;
 }
 
+$jetpack-green:	#8CC258;
+
 .jetpack-connect__example {
 	width: 100%;
 
 	.site-address-container {
 		margin-top: 8px;
+	}
+
+	.jetpack-connect__example-content {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		margin: 0 1px;
+		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+
+		&.example-install-jetpack {
+			.install-plugin-header {
+				align-self: flex-start;
+				padding-bottom: 12%;
+				margin-bottom: 26%;
+				width: 100%;
+				background-color: $jetpack-green;
+			}
+			.install-plugin-footer {
+				align-self: flex-end;
+				flex-grow: 2;
+				float: left;
+				width: 100%;
+				background-color: #F3F3F3;
+			}
+			.install-plugin-footer-button {
+				float: right;
+				font-size: 12px;
+				margin: 9px 16px;
+				padding: 7px 14px;
+				color: $white;
+				background-color: #008EC2;
+				border: 1px solid #006799;
+				border-radius: 3px;
+			}
+		}
 	}
 }
 

@@ -340,7 +340,8 @@ const JetpackConnectMain = React.createClass( {
 		if ( this.props.isInstall ) {
 			return this.renderSiteEntryInstall();
 		}
-		return this.renderSiteEntry();
+		// return this.renderSiteEntry();
+		return this.renderInstallInstructions();
 	}
 } );
 
