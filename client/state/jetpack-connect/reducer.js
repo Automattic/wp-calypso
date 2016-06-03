@@ -35,7 +35,7 @@ import {
 } from 'state/action-types';
 
 import { isValidStateWithSchema } from 'state/utils';
-import { jetpackConnectSessionsSchema } from './schema';
+import { jetpackConnectSessionsSchema, jetpackConnectAuthorizeSchema } from './schema';
 
 const defaultAuthorizeState = {
 	queryObject: {},
@@ -133,8 +133,12 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, autoAuthorize: true, userData: action.userData, bearerToken: action.data.bearer_token } );
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
-		case SERIALIZE:
 		case DESERIALIZE:
+			if ( isValidStateWithSchema( state, jetpackConnectAuthorizeSchema ) ) {
+				return state;
+			}
+			return {};
+		case SERIALIZE:
 			return state;
 	}
 	return state;
