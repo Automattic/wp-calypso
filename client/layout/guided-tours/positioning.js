@@ -57,11 +57,11 @@ export const posToCss = ( { x, y } ) => ( {
 const bullseyePositioners = {
 	below: ( { left, right, bottom } ) => ( {
 		x: left + middle( left, right ) - BULLSEYE_RADIUS,
-		y: bottom - BULLSEYE_RADIUS * 1.5,
+		y: bottom - BULLSEYE_RADIUS * 3,
 	} ),
 
 	beside: ( { top, bottom, right } ) => ( {
-		x: right - BULLSEYE_RADIUS * 1.5,
+		x: right - BULLSEYE_RADIUS * 3,
 		y: top + middle( top, bottom ) - BULLSEYE_RADIUS,
 	} ),
 
@@ -74,6 +74,10 @@ export function targetForSlug( targetSlug ) {
 }
 
 export function getStepPosition( { placement = 'center', targetSlug } ) {
+	if ( placement === 'beside' && DIALOG_WIDTH > 0.98 * document.documentElement.clientWidth ) {
+		placement = 'below';
+	}
+
 	const target = targetForSlug( targetSlug );
 	const scrollDiff = scrollIntoView( target );
 	const rect = target && target.getBoundingClientRect
