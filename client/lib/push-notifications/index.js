@@ -119,7 +119,7 @@ PushNotifications.prototype.deleteSubscription = function() {
 };
 
 PushNotifications.prototype.saveSubscription = function( subscription ) {
-	const sub = JSON.stringify( subscription ),
+	const sub = encodeSubscriptionAsJSON( subscription ),
 		oldSub = store.get( 'push-subscription' ),
 		lastUpdated = store.get( 'push-subscription-updated' );
 
@@ -201,6 +201,30 @@ PushNotifications.prototype.unsubscribe = function( callback ) {
 		} );
 	}
 };
+
+function encodeSubscriptionAsJSON( subscription ) {
+	if ( ! 'keys' in subscription ) {
+		// Some browsers, notably Firefox 46, don't include the keys property
+		// directly on the subscription object
+		return JSON.stringify( createPlainSubscriptionObject( subscription ) );
+	}
+
+	return JSON.stringify( subscription );
+}
+
+function createPlainSubscriptionObject( subscription ) {
+	return {
+		endpoint: subscription.endpoint,
+		keys: {
+			auth: encodeKeyAsBase64( subscription, 'auth' ),
+			p256dh: encodeKeyAsBase64( subscription, 'p256dh' ),
+		}
+	};
+}
+
+function encodeKeyAsBase64( subscription, keyName ) {
+	return btoa( String.fromCharCode.apply( null, new Uint8Array( subscription.getKey( keyName ) ) ) );
+}
 
 /**
  * Mixins
