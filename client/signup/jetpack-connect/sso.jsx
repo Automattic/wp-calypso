@@ -28,6 +28,7 @@ import NoticeAction from 'components/notice/notice-action';
 import Site from 'my-sites/site';
 import SitePlaceholder from 'my-sites/site/placeholder';
 import { decodeEntities } from 'lib/formatting';
+import Gridicon from 'components/gridicon';
 
 /*
  * Module variables
@@ -89,6 +90,11 @@ const JetpackSSOForm = React.createClass( {
 	isButtonDisabled() {
 		const { nonceValid, isAuthorizing, isValidating, ssoUrl, authorizationError } = this.props;
 		return !! ( ! nonceValid || isAuthorizing || isValidating || ssoUrl || authorizationError );
+	},
+
+	getSignInLink() {
+		const loginUrl = config( 'login_url' ) || 'https://wordpress.com/wp-login.php';
+		return addQueryArgs( { redirect_to: window.location.href }, loginUrl );
 	},
 
 	maybeValidateSSO( props = this.props ) {
@@ -179,9 +185,10 @@ const JetpackSSOForm = React.createClass( {
 			<Main className="jetpack-connect">
 				<div className="jetpack-connect__sso">
 					<ConnectHeader
+						showLogo={ false }
 						headerText={ this.translate( 'Connect with WordPress.com' ) }
 						subHeaderText={ this.translate(
-							'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s', {
+							'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s.', {
 								args: {
 									siteName: get( this.props, 'blogDetails.title' )
 								}
@@ -195,13 +202,13 @@ const JetpackSSOForm = React.createClass( {
 						{ this.maybeRenderErrorNotice() }
 						<div className="jetpack-connect__sso__user-profile">
 							<Gravatar user={ user } size={ 120 } imgSize={ 400 } />
-							<h3 className="jetpack-connect__sso__user-profile-name">
+							<h3 className="jetpack-connect__sso__log-in-as">
 								{ this.translate(
 									'Log in as {{strong}}%s{{/strong}}',
 									{
 										args: user.display_name,
 										components: {
-											strong: <strong />
+											strong: <strong className="jetpack-connect__sso__display-name"/>
 										}
 									}
 								) }
@@ -222,10 +229,14 @@ const JetpackSSOForm = React.createClass( {
 					</Card>
 
 					<LoggedOutFormLinks>
+						<LoggedOutFormLinkItem href={ this.getSignInLink() }>
+							{ this.translate( 'Sign in as a different user' ) }
+						</LoggedOutFormLinkItem>
 						<LoggedOutFormLinkItem
 							rel="external"
 							href={ get( this.props, 'blogDetails.admin_url', '#' ) }
 							onClick={ this.onCancelClick }>
+							<Gridicon icon="arrow-left" size={ 18 } />
 							{ this.translate( 'Return to %(siteName)s', {
 								args: {
 									siteName: get( this.props, 'blogDetails.title' )
