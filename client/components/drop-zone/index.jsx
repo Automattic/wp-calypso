@@ -9,6 +9,7 @@ import includes from 'lodash/includes';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import identity from 'lodash/identity';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -188,7 +189,7 @@ export class DropZone extends Component {
 			content = this.props.children;
 		} else {
 			content = createFragment( {
-				icon: <span className={ classNames( 'drop-zone__content-icon', this.props.icon ) } />,
+				icon: <Gridicon icon={ this.props.icon } size={ 48 } className="drop-zone__content-icon" />,
 				text: (
 					<span className="drop-zone__content-text">
 						{ this.props.translate( 'Drop files to upload' ) }
@@ -235,7 +236,7 @@ DropZone.defaultProps = {
 	onVerifyValidTransfer: () => true,
 	onFilesDrop: noop,
 	fullScreen: false,
-	icon: 'dashicons dashicons-admin-media',
+	icon: 'cloud-upload',
 	translate: identity,
 };
 
