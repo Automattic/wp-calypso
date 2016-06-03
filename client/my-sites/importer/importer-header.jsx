@@ -9,7 +9,7 @@ import includes from 'lodash/includes';
  * Internal dependencies
  */
 import Button from 'components/forms/form-button';
-import { appStates } from 'lib/importer/constants';
+import { appStates } from 'state/imports/constants';
 import { cancelImport, resetImport, startImport } from 'lib/importer/actions';
 import SocialLogo from 'components/social-logo';
 

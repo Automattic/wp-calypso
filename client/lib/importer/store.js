@@ -26,7 +26,7 @@ import {
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
 } from 'state/action-types';
-import { appStates } from './constants';
+import { appStates } from 'state/imports/constants';
 import { createReducerStore } from 'lib/store';
 
 /**
@@ -60,7 +60,7 @@ const adjustImporterLock = ( state, { action } ) => {
 		default:
 			return state;
 	}
-}
+};
 
 const ImporterStore = createReducerStore( function( state, payload ) {
 	let { action } = payload,

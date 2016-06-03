@@ -9,7 +9,7 @@ import includes from 'lodash/includes';
 /**
  * Internal dependencies
  */
-import { appStates } from 'lib/importer/constants';
+import { appStates } from 'state/imports/constants';
 import Card from 'components/card';
 import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';

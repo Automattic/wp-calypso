@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import includes from 'lodash/includes';
 import config from 'config';
 
 /**
@@ -15,7 +14,7 @@ import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import MediumImporter from 'my-sites/importer/importer-medium';
 import { fetchState } from 'lib/importer/actions';
-import { appStates, WORDPRESS, MEDIUM } from 'lib/importer/constants';
+import { appStates, WORDPRESS, MEDIUM } from 'state/imports/constants';
 
 export default React.createClass( {
 	displayName: 'SiteSettingsImport',
@@ -128,7 +127,7 @@ export default React.createClass( {
 						<MediumImporter { ...{ key, site, importerStatus } } /> ) }
 
 				<CompactCard href={ adminUrl + 'import.php' } target="_blank">
-					{ this.translate( 'Other importers') }
+					{ this.translate( 'Other importers' ) }
 				</CompactCard>
 			</div>
 		);
