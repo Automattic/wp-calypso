@@ -10,7 +10,9 @@ var React = require( 'react' ),
  */
 var sites = require( 'lib/sites-list' )(),
 	Notice = require( 'components/notice' ),
-	emailVerification = require( 'components/email-verification' );
+	emailVerification = require( 'components/email-verification' ),
+	user = require( 'lib/user' )(),
+	userUtils = require( 'lib/user/utils' )();
 
 module.exports = React.createClass( {
 	displayName: 'EmailVerification',
@@ -40,14 +42,12 @@ module.exports = React.createClass( {
 	},
 
 	setActiveNotice: function() {
-		var user = this.props.user;
-
 		if ( user.fetching ) {
 			// wait until the user is fetched to set a notice
 			return;
 		}
 
-		if ( emailVerification.showUnverifiedNotice && user.get() && ! user.get().email_verified ) {
+		if ( emailVerification.showUnverifiedNotice && userUtils.needsVerificationForSite( sites.getSelectedSite() ) ) {
 			return this.setState( { activeNotice: 'UNVERIFIED' } );
 		}
 
@@ -78,8 +78,7 @@ module.exports = React.createClass( {
 	},
 
 	emailSentNotice: function() {
-		var user = this.props.user.get(),
-			noticeText = this.translate(
+		var noticeText = this.translate(
 				'We sent another confirmation email to %(email)s.',
 				{ args: { email: user.email } }
 			);
@@ -102,8 +101,7 @@ module.exports = React.createClass( {
 	},
 
 	unverifiedNotice: function() {
-		var user = this.props.user.get(),
-			noticeText,
+		var noticeText,
 			noticeStatus;
 
 		if ( this.state.error ) {
@@ -150,8 +148,6 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var user = this.props.user.get();
-
 		if ( ! user || this.state.dismissed || ! this.state.activeNotice ) {
 			return null;
 		}
