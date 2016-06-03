@@ -13,6 +13,9 @@ import uniq from 'lodash/uniq';
 /**
  * Internal Dependencies
  */
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:post-normalizer:wait-for-images-to-load' );
 
 function convertImageToObject( image ) {
 	return pick( image, [ 'src', 'naturalWidth', 'naturalHeight' ] );
@@ -26,7 +29,7 @@ function imageForURL( imageUrl ) {
 
 function promiseForImage( image ) {
 	if ( image.complete && image.naturalWidth > 0 ) {
-		return Promise.resolve();
+		return Promise.resolve( image );
 	}
 	return new Promise( ( resolve, reject ) => {
 		image.onload = () => resolve( image );
@@ -75,19 +78,22 @@ export default function waitForImagesToLoad( post ) {
 			promise.then( image => {
 				// keep track of what loaded successfully. Note these will be out of order.
 				imagesLoaded[ image.src ] = image;
-			} ).catch( () => {
+			} ).catch( err => {
 				// ignore what did not, but return the promise chain to success
+				debug( 'failed to load image', err, post );
 				return null;
 			} ).then( () => {
 				// check to see if all of the promises have settled
 				// if so, accept what loaded and resolve the main promise
 				promises = pull( promises, promise );
 				if ( promises.length === 0 ) {
-					const imagesInOrder = filter( map( imagesToCheck, image => {
-						return imagesLoaded[ image.src ];
+					const imagesInOrder = filter( map( imagesToCheck, src => {
+						return imagesLoaded[ src ];
 					} ), Boolean );
 					acceptLoadedImages( imagesInOrder );
 				}
+			} ).catch( err => {
+				debug( 'Fulfilling promise failed', err );
 			} );
 		} );
 	} );
