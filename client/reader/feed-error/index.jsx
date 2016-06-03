@@ -13,6 +13,12 @@ import i18n from 'lib/mixins/i18n';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 const FeedError = React.createClass( {
+	getDefaultProps() {
+		return {
+			message: i18n.translate( 'Sorry, we can\'t find that stream.' )
+		};
+	},
+
 	recordAction() {
 		recordAction( 'clicked_discover_on_404' );
 		recordGaEvent( 'Clicked Discover on 404' );
@@ -43,7 +49,7 @@ const FeedError = React.createClass( {
 				<EmptyContent
 					action={ action }
 					secondaryAction={ secondaryAction }
-					title={ i18n.translate( 'Sorry, we can\'t find that stream.' ) }
+					title={ this.props.message }
 					illustration={ '/calypso/images/drake/drake-404.svg' }
 					illustrationWidth={ 500 }
 				/>
