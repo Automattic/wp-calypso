@@ -100,6 +100,16 @@ Site.prototype.replace = function( attributes ) {
 
 	let changed = false;
 
+	// Set attrs which will get computed and will mean the same before doing equality checks
+	// so the 'change' event is not triggered. See Site.prototype.updateComputedAttributes.
+	if ( attributes.hasOwnProperty( 'options' ) ) {
+		let options = attributes.options;
+
+		if ( ! options.default_post_format || options.default_post_format === '0' ) {
+			options.default_post_format = 'standard';
+		}
+	}
+
 	siteKeys.forEach( siteKey => {
 		if ( attributes.hasOwnProperty( siteKey ) && ! isEqual( attributes[ siteKey ], this[ siteKey ] ) ) {
 			this[ siteKey ] = attributes[ siteKey ];
@@ -112,9 +122,9 @@ Site.prototype.replace = function( attributes ) {
 		}
 	} );
 
-	this.updateComputedAttributes();
-
 	if ( changed ) {
+		this.updateComputedAttributes();
+
 		this.emit( 'change' );
 	}
 
