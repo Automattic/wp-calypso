@@ -99,10 +99,10 @@ const JetpackSSOForm = React.createClass( {
 		}
 	},
 
-	maybeRenderAuthorizationError() {
-		const { authorizationError } = this.props;
+	maybeRenderErrorNotice() {
+		const { authorizationError, nonceValid } = this.props;
 
-		if ( ! authorizationError ) {
+		if ( ! authorizationError && false !== nonceValid ) {
 			return null;
 		}
 
@@ -192,7 +192,7 @@ const JetpackSSOForm = React.createClass( {
 					{ this.renderSiteCard() }
 
 					<Card>
-						{ this.maybeRenderAuthorizationError() }
+						{ this.maybeRenderErrorNotice() }
 						<div className="jetpack-connect__sso__user-profile">
 							<Gravatar user={ user } size={ 120 } imgSize={ 400 } />
 							<h3 className="jetpack-connect__sso__user-profile-name">
