@@ -11,7 +11,7 @@ import omit from 'lodash/omit';
  * Internal dependencies
  */
 import { mapAuthor, startImporting } from 'lib/importer/actions';
-import { appStates } from 'lib/importer/constants';
+import { appStates } from 'state/imports/constants';
 import ProgressBar from 'components/progress-bar';
 import MappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
@@ -73,7 +73,7 @@ const hasProgressInfo = progress => {
 	}
 
 	return true;
-}
+};
 
 export default React.createClass( {
 	displayName: 'SiteSettingsImportingPane',

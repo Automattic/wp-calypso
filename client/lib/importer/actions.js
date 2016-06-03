@@ -27,7 +27,7 @@ import {
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
 } from 'state/action-types';
-import { appStates } from './constants';
+import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from './common';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
@@ -40,13 +40,13 @@ const ID_GENERATOR_PREFIX = 'local-generated-id-';
  * to the API.
  */
 
-/** Creates a request object to cancel an importer */
+// Creates a request object to cancel an importer
 const cancelOrder = ( siteId, importerId ) => toApi( { importerId, importerState: appStates.CANCEL_PENDING, site: { ID: siteId } } );
 
-/** Creates a request to expire an importer session */
+// Creates a request to expire an importer session
 const expiryOrder = ( siteId, importerId ) => toApi( { importerId, importerState: appStates.EXPIRE_PENDING, site: { ID: siteId } } );
 
-/** Creates a request object to start performing the actual import */
+// Creates a request object to start performing the actual import
 const importOrder = importerStatus => toApi( Object.assign( {}, importerStatus, { importerState: appStates.IMPORTING } ) );
 
 const apiStart = () => Dispatcher.handleViewAction( { type: IMPORTS_FETCH } );

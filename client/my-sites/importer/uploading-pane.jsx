@@ -11,7 +11,7 @@ import includes from 'lodash/includes';
  * Internal dependencies
  */
 import { startMappingAuthors, startUpload } from 'lib/importer/actions';
-import { appStates } from 'lib/importer/constants';
+import { appStates } from 'state/imports/constants';
 import Button from 'components/forms/form-button';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
