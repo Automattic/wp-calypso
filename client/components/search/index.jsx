@@ -197,7 +197,7 @@ const Search = React.createClass( {
 			ReactDom.findDOMNode( this.refs.openIcon ).focus();
 		}
 
-		this.props.onSearchClose();
+		this.props.onSearchClose( event );
 
 		analytics.ga.recordEvent( this.props.analyticsGroup, 'Clicked Close Search' );
 	},
@@ -218,6 +218,9 @@ const Search = React.createClass( {
 	},
 
 	keyDown: function( event ) {
+		if ( event.key === 'Escape' && event.target.value === '' ) {
+			this.closeSearch( event );
+		}
 		this.props.onKeyDown( event );
 	},
 
