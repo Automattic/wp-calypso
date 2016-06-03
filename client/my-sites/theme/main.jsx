@@ -63,11 +63,6 @@ const ThemeSheet = React.createClass( {
 	getDefaultProps() {
 		return {
 			section: 'overview',
-
-			themes: [
-				{ name: 'Sela', slug: 'sela' },
-				{ name: 'Hemingway Rewritten', slug: 'hemingway-rewritten' },
-			],
 		};
 	},
 
@@ -298,7 +293,7 @@ const ThemeSheet = React.createClass( {
 
 	renderRelatedThemes() {
 		var actionLabel = i18n.translate( 'Pick' ),
-		themes = this.props.themes.map( function( theme ) {
+		themes = this.getRelatedThemes().map( function( theme ) {
 				return {
 					id: theme.slug,
 					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png'
@@ -332,6 +327,37 @@ const ThemeSheet = React.createClass( {
 					</div>
 			</div>
 		);
+	},
+
+	getRelatedThemes() {
+		var themes = [
+			{ name: 'Twenty Sixteen', slug: 'twentysixteen' },
+			{ name: 'Rowling', slug: 'rowling' },
+			{ name: 'Hemingway Rewritten', slug: 'hemingway-rewritten' },
+			{ name: 'Gazette', slug: 'gazette' },
+			{ name: 'Ecto', slug: 'ecto' },
+			{ name: 'Isola', slug: 'isola' },
+			{ name: 'Edin', slug: 'edin' },
+			{ name: 'Sela', slug: 'sela' },
+			{ name: 'Pique', slug: 'pique' },
+			{ name: 'Harmonic', slug: 'harmonic' },
+		];
+
+		var selectedThemes = [];
+
+		while( selectedThemes.length < 2 ) {
+			var randomThemeIndex = Math.floor(Math.random() * themes.length );
+			var theme = themes.splice( randomThemeIndex, 1 )[0];
+			// Check if it is not current theme, if it is than discard
+			if( this.props.name === theme.name ) {
+				continue;
+			} else {
+				selectedThemes.push( theme );
+			}
+
+		}
+
+		return selectedThemes;
 	},
 
 	renderSheet() {
