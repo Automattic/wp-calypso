@@ -190,7 +190,8 @@ var Notifications = React.createClass({
 
 	receiveServiceWorkerMessage: function( event ) {
 		// Receives messages from the service worker
-		if ( event.origin !== document.origin ) {
+		// Firefox sets event.origin to "" for service worker messages
+		if ( event.origin && event.origin !== document.origin ) {
 			return;
 		}
 
