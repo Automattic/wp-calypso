@@ -24,6 +24,7 @@ import {
 	getPrettySiteUrl
 } from 'reader/route';
 import { recordTrack } from 'reader/stats';
+import FeedError from 'reader/feed-error';
 
 const analyticsPageTitle = 'Reader';
 
@@ -48,13 +49,22 @@ function removeFullPostDialog() {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
 }
 
+function renderPostNotFound() {
+	var sidebarAndPageTitle = i18n.translate( 'Post not found' );
+
+	setPageTitle( sidebarAndPageTitle );
+
+	ReactDom.render(
+		<FeedError sidebarTitle={ sidebarAndPageTitle } message={ i18n.translate( 'Post Not Found' ) } />,
+		document.getElementById( 'primary' )
+	);
+}
+
 function userHasHistory( context ) {
 	return !! context.lastRoute;
 }
 
 function renderFeedError() {
-	var FeedError = require( 'reader/feed-error' );
-
 	ReactDom.render(
 		React.createElement( FeedError ),
 		document.getElementById( 'primary' )
@@ -292,7 +302,8 @@ module.exports = {
 					onClose: function() {
 						page.back( context.lastRoute || '/' );
 					},
-					onClosed: removeFullPostDialog
+					onClosed: removeFullPostDialog,
+					onPostNotFound: renderPostNotFound
 				} )
 			),
 			document.getElementById( 'tertiary' )
@@ -330,7 +341,8 @@ module.exports = {
 					onClose: function() {
 						page.back( context.lastRoute || '/' );
 					},
-					onClosed: removeFullPostDialog
+					onClosed: removeFullPostDialog,
+					onPostNotFound: renderPostNotFound
 				} )
 			),
 			document.getElementById( 'tertiary' )

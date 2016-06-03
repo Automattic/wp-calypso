@@ -54,8 +54,17 @@ function isSpecialClick( event ) {
 	return event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
 }
 
+function isPostNotFound( post ) {
+	if ( post === undefined ) {
+		return false;
+	}
+
+	return post.statusCode === 404;
+}
+
 module.exports = {
 	siteNameFromSiteAndPost,
 	siteishFromSiteAndPost,
-	isSpecialClick
+	isSpecialClick,
+	isPostNotFound
 };
