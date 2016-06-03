@@ -187,11 +187,15 @@
 	margin: 0 auto 16px;
 }
 
-.jetpack-connect__sso__user-profile-name {
+.jetpack-connect__sso__log-in-as{
 	font-family: $sans;
 	font-size: 21px;
 	font-weight: 300;
 	text-align: center;
+}
+
+.jetpack-connect__sso__display-name {
+	font-family: $serif;
 }
 
 .jetpack-connect__sso__user-email {
