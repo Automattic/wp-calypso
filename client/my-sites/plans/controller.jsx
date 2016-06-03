@@ -102,6 +102,11 @@ export default {
 			siteID: context.params.domain
 		} );
 
+		// Scroll to the top
+		if ( typeof window !== 'undefined' ) {
+			window.scrollTo( 0, 0 );
+		}
+
 		renderWithReduxStore(
 			<Main className="plans has-sidebar">
 				<CheckoutData>

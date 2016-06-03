@@ -63,6 +63,11 @@ module.exports = {
 
 		_recordPageView( context, layoutTitle );
 
+		// Scroll to the top
+		if ( typeof window !== 'undefined' ) {
+			window.scrollTo( 0, 0 );
+		}
+
 		renderWithReduxStore(
 			React.createElement( Ads, {
 				site: site,
