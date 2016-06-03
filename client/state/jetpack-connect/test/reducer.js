@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
 
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	JETPACK_CONNECT_AUTHORIZE_COMPLETE,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -27,6 +28,8 @@ import reducer, {
 	jetpackSSOSessions,
 	jetpackConnectSessions
 } from '../reducer';
+
+import { DEFAULT_AUTHORIZE_STATE } from '../constants';
 
 const successfulSSOValidation = {
 	type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
@@ -163,10 +166,24 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#jetpackConnectAuthorize()', () => {
+	describe.only( '#jetpackConnectAuthorize()', () => {
 		it( 'should default to an empty object', () => {
 			const state = jetpackConnectAuthorize( undefined, {} );
 			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should reset the state to default', () => {
+			const state = {
+				queryObject: {
+					site: 'http://some.site',
+				},
+				isAuthorizing: false,
+				authorizeSuccess: true,
+				authorizeError: false,
+				autoAuthorize: false
+			};
+			const reset = jetpackConnectAuthorize( state, { type: JETPACK_CONNECT_AUTHORIZE_COMPLETE } );
+			expect( reset ).to.eql( DEFAULT_AUTHORIZE_STATE );
 		} );
 	} );
 
