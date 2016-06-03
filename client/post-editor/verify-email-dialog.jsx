@@ -3,13 +3,14 @@
  */
 import React from 'react';
 import noop from 'lodash/noop';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
-import i18n from 'lib/mixins/i18n';
+import Spinner from 'components/spinner';
 
 class VerifyEmailDialog extends React.Component {
 	constructor( props ) {
@@ -45,41 +46,44 @@ class VerifyEmailDialog extends React.Component {
 	getDialogButtons() {
 		return [
 			<FormButton
-				key="publish"
+				key="close"
 				isPrimary={ true }
-				onClick={ this.props.onTryAgain }>
-					{ i18n.translate( 'I clicked on the email, publish' ) }
+				onClick={ this.props.onClose }>
+					{ i18n.translate( 'OK' ) }
 			</FormButton>,
 			<FormButton
-				key="close"
+				key="resend"
 				isPrimary={ false }
-				onClick={ this.props.onClose }>
-					{ i18n.translate( 'Back' ) }
+				disabled={ this.state.pendingRequest || this.state.emailSent }
+				onClick={ this.handleSendVerification }>
+				{ this.state.emailSent ?
+					i18n.translate( 'Email Sent' ) :
+					( this.state.pendingRequest ?
+						<Spinner /> :
+						i18n.translate( 'Resend Email' )
+					)
+				}
 			</FormButton>
 		];
 	}
 
 	render() {
 		const strings = {
-			postSaved: i18n.translate( 'Post saved.' ),
-			urgeToVerify: i18n.translate( 'To publish, please verify your email address.' ),
-			validationEmailSent: i18n.translate(
-				'You should have received an email at {{strong}}%(email)s{{/strong}} when you registered, with a link to validate your email address. If you can\'t find the email, just {{sendAgain}}click here to send it again{{/sendAgain}}.',
+			confirmHeading: i18n.translate( 'Please confirm your email address' ),
+
+			confirmExplanation: i18n.translate( 'We sent you an email when you first signed up. Please open the message and click the blue button.' ),
+
+			confirmReasoning: i18n.translate( 'Email confirmation allows us to assist when recovering your account in the event you forget your password.' ),
+
+			confirmEmail: i18n.translate(
+				'{{wrapper}}%(email)s{{/wrapper}} {{emailPreferences}}change{{/emailPreferences}}',
 				{
 					components: {
-						strong: <strong />,
-						sendAgain: <a href="#" onClick={ this.handleSendVerification } />
+						wrapper: <span />,
+						emailPreferences: <a href="/me/account" />
 					},
 					args: {
 						email: this.props.user.data.email
-					}
-				}
-			),
-			userEmailWrong: i18n.translate(
-				'If the email address above is wrong, {{emailPreferences}}click here to change it{{/emailPreferences}} in your preferences.',
-				{
-					components: {
-						emailPreferences: <a href="/me/account" />
 					}
 				}
 			)
@@ -89,14 +93,12 @@ class VerifyEmailDialog extends React.Component {
 			<Dialog
 				isVisible={ true }
 				buttons={ this.getDialogButtons() }
-				additionalClassNames="verification-modal"
+				additionalClassNames="confirmation-dialog"
 			>
-				<h1>
-					{ strings.postSaved }<br />
-					{ strings.urgeToVerify }
-				</h1>
-				<p>{ strings.validationEmailSent }</p>
-				<p>{ strings.userEmailWrong }</p>
+				<h1>{ strings.confirmHeading }</h1>
+				<p className="confirmation-dialog__email">{ strings.confirmEmail }</p>
+				<p className="confirmation-dialog__explanation">{ strings.confirmExplanation }</p>
+				<p className="confirmation-dialog__reasoning">{ strings.confirmReasoning }</p>
 			</Dialog>
 		);
 	}
@@ -104,13 +106,11 @@ class VerifyEmailDialog extends React.Component {
 
 VerifyEmailDialog.propTypes = {
 	user: React.PropTypes.object.isRequired,
-	onClose: React.PropTypes.func,
-	onTryAgain: React.PropTypes.func
+	onClose: React.PropTypes.func
 };
 
 VerifyEmailDialog.defaultProps = {
-	onClose: noop,
-	onTryAgain: noop
+	onClose: noop
 };
 
 export default VerifyEmailDialog;
