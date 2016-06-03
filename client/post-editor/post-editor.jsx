@@ -21,7 +21,6 @@ const actions = require( 'lib/posts/actions' ),
 	EditorDrawer = require( 'post-editor/editor-drawer' ),
 	FeaturedImage = require( 'post-editor/editor-featured-image' ),
 	EditorGroundControl = require( 'post-editor/editor-ground-control' ),
-	EditorGroundControlI18n = require( 'post-editor/editor-ground-control.i18n' ), // temporary for i18n tools to pick up
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
 	NoticeAction = require( 'components/notice/notice-action' ),
@@ -39,10 +38,11 @@ const actions = require( 'lib/posts/actions' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
 	VerifyEmailDialog = require( 'post-editor/verify-email-dialog' ),
 	utils = require( 'lib/posts/utils' ),
+	userUtils = require( 'lib/user/utils' ),
 	EditorPreview = require( './editor-preview' ),
 	stats = require( 'lib/posts/stats' ),
-	analytics = require( 'lib/analytics' ),
-	VerifyEmailDialogI18n = require( 'post-editor/verify-email-dialog.i18n' ); // temporary for i18n tools to pick up
+	analytics = require( 'lib/analytics' );
+
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible, getEditorPostId } from 'state/ui/editor/selectors';
@@ -406,6 +406,7 @@ const PostEditor = React.createClass( {
 								onPreview={ this.onPreview }
 								onPublish={ this.onPublish }
 								onTrashingPost={ this.onTrashingPost }
+								onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 								site={ site }
 								type={ this.props.type }
 							/>
@@ -430,7 +431,6 @@ const PostEditor = React.createClass( {
 					? <VerifyEmailDialog
 						user={ this.props.user }
 						onClose={ this.closeVerifyEmailDialog }
-						onTryAgain={ this.onPublishAfterVerify }
 					/>
 				: null }
 				{ isInvalidURL
@@ -607,6 +607,12 @@ const PostEditor = React.createClass( {
 		return path;
 	},
 
+	onMoreInfoAboutEmailVerify: function() {
+		this.setState( {
+			showVerifyEmailDialog: true
+		} );
+	},
+
 	onTrashingPost: function( error ) {
 		var isPage = utils.isPage( this.state.post );
 
@@ -749,36 +755,8 @@ const PostEditor = React.createClass( {
 		}
 	},
 
-	onPublishAfterVerify: function() {
-		var user = this.props.user;
-
-		user.off( 'change', this.onPublish );
-		user.once( 'change', this.onPublish );
-
-		user.fetch();
-	},
-
-	needsVerification: function( user, site ) {
-		// do not allow publish for unverified e-mails,
-		// but allow if the site is VIP
-		return !user.email_verified && !( site && site.is_vip );
-	},
-
 	onPublish: function() {
 		var edits = { status: 'publish' };
-		var post = this.state.post;
-		var user = this.props.user.get();
-		var site = this.props.sites.getSite( post.site_ID );
-
-		if ( this.needsVerification( user, site ) ) {
-			this.setState( {
-				showVerifyEmailDialog: true
-			} );
-
-			return;
-		}
-
-		this.setState( { showVerifyEmailDialog: false } );
 
 		// determine if this is a private publish
 		if ( utils.isPrivate( this.state.post ) ) {
