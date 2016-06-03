@@ -254,3 +254,49 @@
 .jetpack-connect__site.card {
 	padding: 0;
 }
+
+.jetpack-connect_sso_terms-dialog {
+	max-height: 70vh;
+	overflow-y: auto;
+}
+
+.jetpack-connect__sso__shared-details-table {
+	border-collapse: separate;
+	// border-spacing: 10px;
+}
+
+.jetpack-connect__sso__shared-detail-row {
+	margin-bottom: 16px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.jetpack-connect__sso__shared-detail-label {
+	font-weight: bold;
+}
+
+.jetpack-connect__sso__shared-detail-value {
+	padding-left: 16px;
+}
+
+.jetpack-connect__sso__shared-detail-label,
+.jetpack-connect__sso__shared-detail-value {
+	padding-bottom: 8px;
+}
+
+@include breakpoint( "<480px" ) {
+	.jetpack-connect__sso__shared-detail-label,
+	.jetpack-connect__sso__shared-detail-value {
+		display: block;
+	}
+
+	.jetpack-connect__sso__shared-detail-label {
+		padding-bottom: 0;
+	}
+
+	.jetpack-connect__sso__shared-detail-value {
+		padding-left: 0;
+	}
+}

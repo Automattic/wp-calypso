@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
 import get from 'lodash/get';
+import map from 'lodash/map';
 
 /**
  * Internal dependencies
@@ -30,6 +31,7 @@ import SitePlaceholder from 'my-sites/site/placeholder';
 import { decodeEntities } from 'lib/formatting';
 import Gridicon from 'components/gridicon';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import Dialog from 'components/dialog';
 
 /*
  * Module variables
@@ -40,6 +42,12 @@ const JetpackSSOForm = React.createClass( {
 	displayName: 'JetpackSSOForm',
 
 	mixins: [ observe( 'userModule' ) ],
+
+	getInitialState() {
+		return {
+			showTermsDialog: false
+		};
+	},
 
 	componentWillMount() {
 		this.maybeValidateSSO();
@@ -81,6 +89,15 @@ const JetpackSSOForm = React.createClass( {
 
 	onClickSharedDetailsModal( event ) {
 		event.preventDefault();
+		this.setState( {
+			showTermsDialog: true
+		} );
+	},
+
+	closeTermsDialog() {
+		this.setState( {
+			showTermsDialog: false
+		} );
 	},
 
 	returnToSiteFallback( event ) {
@@ -152,6 +169,117 @@ const JetpackSSOForm = React.createClass( {
 			<CompactCard className="jetpack-connect__site">
 				{ site }
 			</CompactCard>
+		);
+	},
+
+	getSharedDetailLabel( key ) {
+		switch ( key ) {
+			case 'ID':
+				key = this.translate( 'User ID', { context: 'User Field' } );
+				break;
+			case 'login':
+				key = this.translate( 'Login', { context: 'User Field' } );
+				break;
+			case 'email':
+				key = this.translate( 'Email', { context: 'User Field' } );
+				break;
+			case 'url':
+				key = this.translate( 'URL', { context: 'User Field' } );
+				break;
+			case 'first_name':
+				key = this.translate( 'First Name', { context: 'User Field' } );
+				break;
+			case 'last_name':
+				key = this.translate( 'Last Name', { context: 'User Field' } );
+				break;
+			case 'display_name':
+				key = this.translate( 'Display Name', { context: 'User Field' } );
+				break;
+			case 'description':
+				key = this.translate( 'Description', { context: 'User Field' } );
+				break;
+			case 'two_step_enabled':
+				key = this.translate( 'Two-Step Authentication', { context: 'User Field' } );
+				break;
+			case 'external_user_id':
+				key = this.translate( 'External User ID', { context: 'User Field' } );
+				break;
+		}
+
+		return key;
+	},
+
+	getSharedDetailValue( key, value ) {
+		if ( 'two_step_enabled' === key && value !== '' ) {
+			value = ( true === value )
+				? this.translate( 'Enabled' )
+				: this.translate( 'Disabled' );
+		}
+
+		return decodeEntities( value );
+	},
+
+	renderSharedDetailsList() {
+		const expectedSharedDetails = {
+			ID: '',
+			login: '',
+			email: '',
+			url: '',
+			first_name: '',
+			last_name: '',
+			display_name: '',
+			description: '',
+			two_step_enabled: '',
+			external_user_id: '',
+		};
+		const sharedDetails = this.props.sharedDetails || expectedSharedDetails;
+
+		return (
+			<table className="jetpack-connect__sso__shared-details-table">
+				{
+					map( sharedDetails, ( value, key ) => {
+						return (
+							<tr className="jetpack-connect__sso__shared-detail-row">
+								<td className="jetpack-connect__sso__shared-detail-label">
+									{ this.getSharedDetailLabel( key ) }
+								</td>
+								<td className="jetpack-connect__sso__shared-detail-value">
+									{ this.getSharedDetailValue( key, value ) }
+								</td>
+							</tr>
+						);
+					} )
+				}
+			</table>
+		);
+	},
+
+	renderSharedDetailsDialog() {
+		const buttons = [
+			{
+				action: 'close',
+				label: this.translate( 'Close', { context: 'Verb. Used in a button to close a modal window.' } )
+			}
+		];
+
+		return (
+			<Dialog
+				buttons={ buttons }
+				onClose={ this.closeTermsDialog }
+				isVisible={ this.state.showTermsDialog }
+				className="jetpack-connect_sso_terms-dialog">
+				<div className="jetpack-connect_sso_terms-dialog-content">
+					<p className="jetpack-connect__sso_shared-details-intro">
+						{
+							this.translate(
+								'When you approve logging in with WordPress.com, we will send the following details to your site.'
+							)
+						}
+					</p>
+
+					{ this.renderSharedDetailsList() }
+				</div>
+			</Dialog>
 		);
 	},
 
@@ -267,6 +395,8 @@ const JetpackSSOForm = React.createClass( {
 						</LoggedOutFormLinkItem>
 					</LoggedOutFormLinks>
 				</div>
+
+				{ this.renderSharedDetailsDialog() }
 			</Main>
 		);
 	}
@@ -282,7 +412,8 @@ export default connect(
 			nonceValid: get( jetpackSSO, 'nonceValid' ),
 			authorizationError: get( jetpackSSO, 'authorizationError' ),
 			validationError: get( jetpackSSO, 'validationError' ),
-			blogDetails: get( jetpackSSO, 'blogDetails' )
+			blogDetails: get( jetpackSSO, 'blogDetails' ),
+			sharedDetails: get( jetpackSSO, 'sharedDetails' )
 		};
 	},
 	dispatch => bindActionCreators( { authorizeSSO, validateSSONonce }, dispatch )
