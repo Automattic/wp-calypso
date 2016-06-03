@@ -39,11 +39,13 @@
 	font-size: 14px;
 }
 
-.section-header__actions .button {
-	float: left;
-	margin-right: 8px;
+.section-header__actions {
+	.button {
+		float: left;
+		margin-right: 8px;
+	}
 
-	&:last-child {
+	& > .button:last-child {
 		margin-right: 0;
 	}
 }
