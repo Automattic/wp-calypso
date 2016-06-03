@@ -207,7 +207,8 @@ module.exports = React.createClass( {
 				withPlansOnly={ isPlansOnlyTest }
 				includeWordPressDotCom
 				isSignupStep
-				showExampleSuggestions />
+				showExampleSuggestions
+				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
 		);
 	},
 
