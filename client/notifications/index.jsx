@@ -85,6 +85,10 @@ var Notifications = React.createClass({
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
 		}
+
+		if ( 'serviceWorker' in window.navigator && 'addEventListener' in window.navigator.serviceWorker ) {
+			window.navigator.serviceWorker.addEventListener( 'message', this.receiveServiceWorkerMessage );
+		}
 	},
 
 	componentWillUnmount: function() {
@@ -97,6 +101,10 @@ var Notifications = React.createClass({
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
+		}
+
+		if ( 'serviceWorker' in window.navigator && 'removeEventListener' in window.navigator.serviceWorker ) {
+			window.navigator.serviceWorker.removeEventListener( 'message', this.receiveServiceWorkerMessage );
 		}
 	},
 
@@ -176,6 +184,26 @@ var Notifications = React.createClass({
 			this.setState( { widescreen: data.widescreen } );
 		} else {
 			debug( 'unknown message from iframe: %s', event.data );
+		}
+	},
+
+	receiveServiceWorkerMessage: function( event ) {
+		// Receives messages from the service worker
+		if ( event.origin !== document.origin ) {
+			return;
+		}
+
+		if ( !( 'action' in event.data ) ) {
+			return;
+		}
+
+		switch( event.data.action ) {
+			case 'openPanel':
+				// checktoggle closes panel with no parameters
+				this.props.checkToggle();
+				// ... and toggles when the 2nd parameter is true
+				this.props.checkToggle( null, true );
+				break;
 		}
 	},
 
