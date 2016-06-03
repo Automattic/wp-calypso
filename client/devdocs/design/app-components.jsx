@@ -27,6 +27,7 @@ import UpgradeNudge from 'my-sites/upgrade-nudge/docs/example';
 import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import FeatureComparison from 'my-sites/feature-comparison/docs/example';
 import DomainTip from 'my-sites/domain-tip/docs/example';
+import PostCard from 'components/post-card/docs/example';
 
 export default React.createClass( {
 
@@ -75,6 +76,7 @@ export default React.createClass( {
 					<PlanCompareCard />
 					<FeatureComparison />
 					<DomainTip />
+					<PostCard />
 				</Collection>
 			</div>
 		);

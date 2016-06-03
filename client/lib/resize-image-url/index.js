@@ -31,6 +31,13 @@ function resizeImageUrl( imageUrl, params ) {
 		localParams.h *= IMAGE_SCALE_FACTOR;
 	}
 
+	if ( localParams.resize ) {
+		let [ width, height ] = localParams.resize.split( ',' );
+		width *= IMAGE_SCALE_FACTOR;
+		height *= IMAGE_SCALE_FACTOR;
+		localParams.resize = `${width},${height}`;
+	}
+
 	parsedUrl.query = assign( parsedUrl.query, localParams );
 
 	delete parsedUrl.search;
