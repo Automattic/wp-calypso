@@ -205,6 +205,8 @@ var Notifications = React.createClass({
 				this.props.checkToggle();
 				// ... and toggles when the 2nd parameter is true
 				this.props.checkToggle( null, true );
+				// force refresh the panel
+				this.postMessage( { action: 'refreshNotes' } );
 				break;
 		}
 	},
