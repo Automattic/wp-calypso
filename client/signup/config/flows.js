@@ -41,8 +41,6 @@ function getPostsDestination( dependencies ) {
 }
 
 const flows = {
-	/* Production flows*/
-
 	account: {
 		steps: [ 'user' ],
 		destination: '/',
@@ -95,7 +93,6 @@ const flows = {
 		lastModified: '2016-05-23'
 	},
 
-	/* WP.com homepage flows */
 	website: {
 		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
@@ -110,9 +107,6 @@ const flows = {
 		lastModified: '2016-05-23'
 	},
 
-	/* On deck flows*/
-
-	/* Testing flows */
 	personal: {
 		steps: [ 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
@@ -124,7 +118,7 @@ const flows = {
 
 	'test-site': {
 		steps: config( 'env' ) === 'development' ? [ 'site', 'user' ] : [ 'user' ],
-		destination: '/me/next/welcome',
+		destination: '/',
 		description: 'This flow is used to test the site step.',
 		lastModified: '2015-09-22'
 	},
@@ -150,24 +144,10 @@ const flows = {
 		lastModified: '2016-03-09'
 	},
 
-	'site-user': {
-		steps: [ 'site', 'user' ],
-		destination: '/me/next?welcome',
-		description: 'Signup flow for free site/account',
-		lastModified: '2015-10-30'
-	},
-
 	desktop: {
 		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getPostsDestination,
 		description: 'Signup flow for desktop app',
-		lastModified: '2016-05-30'
-	},
-
-	app: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
-		destination: getPostsDestination,
-		description: 'Used as a web-based control to test the "desktop" flow',
 		lastModified: '2016-05-30'
 	},
 
