@@ -63,20 +63,14 @@ const PlansCompare = React.createClass( {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked View All Plans' );
 	},
 
-	goBack() {
-		if ( this.props.backUrl ) {
-			return page( this.props.backUrl );
-		}
-
+	getPlanURL() {
 		const selectedSite = this.props.selectedSite;
-		let plansLink = '/plans';
+		return selectedSite ? `/plans/${ selectedSite.slug }` : '/plans';
+	},
 
-		if ( selectedSite ) {
-			plansLink += '/' + selectedSite.slug;
-		}
-
+	goBack() {
 		this.recordViewAllPlansClick();
-		page( plansLink );
+		return page.back( this.props.backUrl || this.getPlanURL() );
 	},
 
 	isDataLoading() {
