@@ -237,7 +237,7 @@ const flows = {
 	 * - allow mlblogs.com sites creation as a free product.
 	 * - allow updating theme_options for team-specific styles.
 	 */
-	mlb: {
+	'mlb.com': {
 		steps: [ 'mlb-themes', 'mlb-domains', 'user' ],
 		destination: '/me/next?welcome',
 		description: 'Major League Baseball Blogs Signup flow',
