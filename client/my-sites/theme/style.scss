@@ -148,20 +148,31 @@
 		&.alignright,
 		&.alignleft {
 			max-width: 100%;
-			margin: 20px 0;
+			margin: 7px 0 20px;
 		}
 
 		&.alignright {
 			float: right;
+			margin-left: 20px;
 		}
 
 		&.alignleft {
 			float: left;
+			margin-right: 20px;
 		}
 	}
 
+	.wp-caption {
+		margin-bottom: 20px;
+	}
+
+	.wp-caption-text {
+		color: $gray;
+		font-size: 12px;
+	}
+
 	h2 {
-		color: #87a6bc; /* $gray */
+		color: $gray;
 		font-size: 14px;
 		font-weight: 400;
 
