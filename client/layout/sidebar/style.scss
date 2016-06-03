@@ -37,6 +37,12 @@
 			transform: translateX( 100vw );
 		}
 	}
+
+	@include breakpoint( ">660px" ) {
+		&.has-regions {
+			overflow: hidden;
+		}
+	}
 }
 
 
