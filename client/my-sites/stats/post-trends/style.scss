@@ -47,7 +47,7 @@
 	height: 130px;
 	background: linear-gradient(to right, $white , rgba( $white, .92 ), $transparent );
 	text-align: left;
-	z-index: 100;
+	z-index: z-index( 'root', '.post-trends__scroll-left' );
 
 	.left-arrow,
 	.right-arrow {
