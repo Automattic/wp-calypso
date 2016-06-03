@@ -371,7 +371,7 @@ FullPostDialog = connect(
 
 function getPost( postKey ) {
 	var post = PostStore.get( postKey );
-	if ( ! post || post._state === 'minimal' ) {
+	if ( ! post || post._state === 'minimal' || ! post.content ) {
 		PostStoreActions.fetchPost( postKey );
 	}
 	return post;

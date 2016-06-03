@@ -16,12 +16,17 @@ function PostBatchFetcher( options ) {
 	}, options );
 
 	this.postsToFetch = Immutable.OrderedSet(); // eslint-disable-line new-cap
+	this.inflight = Immutable.Set();
 	this.batchQueued = false;
 }
 
 assign( PostBatchFetcher.prototype, {
 
 	add: function( postKey ) {
+		if ( this.inflight.has( postKey ) || this.postsToFetch.has( postKey ) ) {
+			return;
+		}
+
 		this.postsToFetch = this.postsToFetch.add( Immutable.fromJS( postKey ) );
 
 		if ( ! this.batchQueued ) {
@@ -48,8 +53,8 @@ assign( PostBatchFetcher.prototype, {
 			var post;
 			postKey = postKey.toJS();
 			post = FeedPostStore.get( postKey );
-			if ( post && post._state !== 'minimal' ) {
-				throw new Error( post._state );
+			if ( post && post._state !== 'minimal' && post.content ) {
+				throw new Error( 'invalid post state to refetch' );
 			}
 
 			this.onFetch( postKey );
@@ -62,7 +67,11 @@ assign( PostBatchFetcher.prototype, {
 		while ( index < toFetch.size && ( batchSet = toFetch.slice( index, index + this.BATCH_SIZE ) ).size > 0 ) {
 			batch = wpcom.batch();
 			batchSet.forEach( addToBatch, this );
-			batch.run( { apiVersion: this.apiVersion }, this.receiveBatch.bind( this, batchSet ) );
+			this.inflight = this.inflight.union( batchSet );
+			batch.run( { apiVersion: this.apiVersion }, function( thisBatch, error, data ) {
+				this.inflight = this.inflight.subtract( thisBatch );
+				this.receiveBatch( thisBatch, error, data );
+			}.bind( this, batchSet ) );
 			index += this.BATCH_SIZE;
 		}
 

@@ -418,13 +418,13 @@ const Post = React.createClass( {
 
 				{ shouldUseFullExcerpt
 					? <EmbedContainer>
-							<div key="full-post-inline"
-								className="reader__full-post-content"
-								dangerouslySetInnerHTML={ // eslint-disable-line react/no-danger
-									{ __html: post.content }
-								} />
-						</EmbedContainer>
-					: <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
+						<div key="full-post-inline"
+							className="reader__full-post-content"
+							dangerouslySetInnerHTML={ // eslint-disable-line react/no-danger
+								{ __html: post.content }
+							} />
+					</EmbedContainer>
+						: <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 				}
 
 				{ shouldShowExcerptOnly
