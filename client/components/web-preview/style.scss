@@ -159,10 +159,6 @@
 	position: absolute;
 		top: 45%;
 		left: 50%;
-
-	@include breakpoint( "<660px" ) {
-		top: 20%;
-	}
 }
 
 .web-preview__loading-message {
