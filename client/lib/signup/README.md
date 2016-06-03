@@ -51,6 +51,7 @@ var SignupDependencyStore = require( 'lib/signup/dependency-store' ),
 SignupActions.processedSignupStep( { stepName: 'example' }, [], { userId: 1337 } );
 
 SignupDependencyStore.get() // => { userId: 1337 }
+```
 
 ### `SignupFlowController`
 `SignupFlowController` initializes a new signup flow and handles initiating API requests for the steps that have an `apiRequestFunction` property. It provides a view with a method for getting the current step and a callback for when the flow is completed.
