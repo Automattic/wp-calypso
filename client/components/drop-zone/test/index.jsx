@@ -71,12 +71,12 @@ describe( 'index', function() {
 
 	it( 'should accept an icon to override the default icon', function() {
 		var tree = ReactDom.render( React.createElement( DropZone, {
-				icon: 'hello-world'
+				icon: 'house'
 			} ), container ), icon;
 
 		icon = TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content-icon' );
 
-		expect( icon.className ).to.contain( 'hello-world' );
+		expect( icon.className ).to.contain( 'gridicons-house' );
 	} );
 
 	it( 'should highlight the drop zone when dragging over the body', function() {
