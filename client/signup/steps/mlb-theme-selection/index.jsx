@@ -5,9 +5,9 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var StepWrapper = require( 'signup/step-wrapper' ),
-	analytics = require( 'analytics' ),
-	SignupActions = require( 'lib/signup/actions' ),
-	ThemesList = require( 'components/themes-list' );
+	analytics = require( 'lib/analytics' ),
+	SignupActions = require( 'lib/signup/actions' );
+import ThemesList from 'components/themes-list' ;
 
 module.exports = React.createClass( {
 	displayName: 'MlbThemeSelection',
