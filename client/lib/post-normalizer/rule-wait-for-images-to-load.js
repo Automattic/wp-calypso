@@ -83,8 +83,8 @@ export default function waitForImagesToLoad( post ) {
 				// if so, accept what loaded and resolve the main promise
 				promises = pull( promises, promise );
 				if ( promises.length === 0 ) {
-					const imagesInOrder = filter( map( imagesToCheck, image => {
-						return imagesLoaded[ image.src ];
+					const imagesInOrder = filter( map( imagesToCheck, src => {
+						return imagesLoaded[ src ];
 					} ), Boolean );
 					acceptLoadedImages( imagesInOrder );
 				}
