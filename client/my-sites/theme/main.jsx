@@ -26,7 +26,7 @@ import Gridicon from 'components/gridicon';
 import { signup, purchase, activate, clearActivated, customize } from 'state/themes/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { isPremium, getForumUrl } from 'my-sites/themes/helpers';
+import { isPremium, getForumUrl, getDetailsUrl } from 'my-sites/themes/helpers';
 import ActivatingTheme from 'components/data/activating-theme';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
@@ -301,7 +301,6 @@ const ThemeSheet = React.createClass( {
 		themes = this.props.themes.map( function( theme ) {
 				return {
 					id: theme.slug,
-					name: theme.name,
 					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png'
 				};
 			} );
@@ -318,12 +317,14 @@ const ThemeSheet = React.createClass( {
 					<ul className="themes__sheet-related-themes">
 						{ themes.map( function( theme ) {
 							return (
-								<li>
+								<li key={ theme.id }>
 									<Card className="themes__sheet-related-themes-card">
-										<img src={ theme.screenshot + '?w=' + '660' }/>
+										<a href={ getDetailsUrl( theme ) }>
+											<img src={ theme.screenshot + '?w=' + '660' }/>
+										</a>
 									</Card>
 								</li>
-							)
+							);
 						} ) }
 					</ul>
 					<div className="themes__sheet-related-themes-link">
