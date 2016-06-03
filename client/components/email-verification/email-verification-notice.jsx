@@ -12,7 +12,7 @@ var sites = require( 'lib/sites-list' )(),
 	Notice = require( 'components/notice' ),
 	emailVerification = require( 'components/email-verification' ),
 	user = require( 'lib/user' )(),
-	userUtils = require( 'lib/user/utils' )();
+	userUtils = require( 'lib/user/utils' );
 
 module.exports = React.createClass( {
 	displayName: 'EmailVerification',
@@ -29,7 +29,7 @@ module.exports = React.createClass( {
 
 	componentWillMount: function() {
 		emailVerification.on( 'change', this.setActiveNotice );
-		this.props.user.on( 'change', this.setActiveNotice );
+		user.on( 'change', this.setActiveNotice );
 	},
 
 	componentWillUnmount: function() {
@@ -38,7 +38,7 @@ module.exports = React.createClass( {
 
 	unsubscribeFromStores: function() {
 		emailVerification.off( 'change', this.setActiveNotice );
-		this.props.user.off( 'change', this.setActiveNotice );
+		user.off( 'change', this.setActiveNotice );
 	},
 
 	setActiveNotice: function() {
@@ -116,7 +116,7 @@ module.exports = React.createClass( {
 					{ this.translate(
 						'To post and keep using WordPress.com you need to confirm your email address. ' +
 						'Please click the link in the email we sent at %(email)s.',
-						{ args: { email: user.email } }
+						{ args: { email: user.get().email } }
 					) }
 				</p>
 				<p>
