@@ -34,6 +34,7 @@ import { getSiteByUrl } from 'state/sites/selectors';
 import Spinner from 'components/spinner';
 import Site from 'my-sites/site';
 import { decodeEntities } from 'lib/formatting';
+import versionCompare from 'lib/version-compare';
 
 /**
  * Constants
@@ -78,6 +79,9 @@ const LoggedOutForm = React.createClass( {
 		const headerText = i18n.translate( 'Create your account' );
 		const subHeaderText = i18n.translate( 'You are moments away from connecting your site.' );
 		const { queryObject } = this.props.jetpackConnectAuthorize;
+		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' )
+			? <SiteCard queryObject={ queryObject } />
+			: null;
 
 		return(
 			<div>
@@ -85,7 +89,7 @@ const LoggedOutForm = React.createClass( {
 					showLogo={ false }
 					headerText={ headerText }
 					subHeaderText={ subHeaderText } />
-				<SiteCard queryObject={ queryObject } />
+				{ siteCard }
 			</div>
 		);
 	},
@@ -188,6 +192,9 @@ const LoggedInForm = React.createClass( {
 		const subHeaderText = ( isConnected )
 			? i18n.translate( 'Thank you for flying with Jetpack' )
 			: i18n.translate( 'Jetpack is finishing up the connection process' );
+		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' )
+			? <SiteCard queryObject={ queryObject } />
+			: null;
 
 		return(
 			<div>
@@ -195,7 +202,7 @@ const LoggedInForm = React.createClass( {
 					showLogo={ false }
 					headerText={ headerText }
 					subHeaderText={ subHeaderText } />
-				<SiteCard queryObject={ queryObject } />
+				{ siteCard }
 			</div>
 		);
 	},
