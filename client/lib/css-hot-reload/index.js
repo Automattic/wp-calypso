@@ -27,21 +27,21 @@ let standardAttributes = [
  */
 function bustHashForHrefs( { name, oldValue } ) {
 	// http://some.site.com/and/a/path?with=a&query -> http://some.site.com/and/a/path?v=13508135781
-    const value = 'href' === name
-        ? `${ oldValue.split( '?' ).shift() }?v=${ new Date().getTime() }`
-        : oldValue;
+	const value = 'href' === name
+	    ? `${ oldValue.split( '?' ).shift() }?v=${ new Date().getTime() }`
+	    : oldValue;
 
-    return { name, value };
+	return { name, value };
 };
 
 /**
  * @return {Boolean} 
  */
 function isChanged( href, changedFiles ) {
-    // "/calypso/style-debug.css?v=5a1db7fee7" -> "style-debug.css"
-    const path = href.split( '?' ).shift().split( '/' ).pop();
+	// "/calypso/style-debug.css?v=5a1db7fee7" -> "style-debug.css"
+	const path = href.split( '?' ).shift().split( '/' ).pop();
 
-    return changedFiles.some( file => file === path );
+	return changedFiles.some( file => file === path );
 }
 
 /**
