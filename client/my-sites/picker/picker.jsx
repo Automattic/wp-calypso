@@ -55,7 +55,14 @@ const SitePicker = React.createClass( {
 	},
 
 	onClose: function( event ) {
-		this.closePicker();
+		if ( event.key === 'Escape' ) {
+			this.closePicker();
+		} else {
+			// We use setNext here, because on mobile we want to show sidebar
+			// instead of Stats page after picking a site
+			this.props.layoutFocus.setNext( 'sidebar' );
+			this.scrollToTop();
+		}
 		this.props.onClose( event );
 	},
 
