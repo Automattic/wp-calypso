@@ -23,8 +23,7 @@ let standardAttributes = [
 
 /**
  * Replaces the old hash parameter with the current timestamp if `name` is `href`.
- *
- * @returns {object} 
+ * @return {Object} 
  */
 function bustHashForHrefs( { name, oldValue } ) {
 	// http://some.site.com/and/a/path?with=a&query -> http://some.site.com/and/a/path?v=13508135781
@@ -36,7 +35,7 @@ function bustHashForHrefs( { name, oldValue } ) {
 };
 
 /**
- * @returns {boolean} 
+ * @return {Boolean} 
  */
 function isChanged( href, changedFiles ) {
     // "/calypso/style-debug.css?v=5a1db7fee7" -> "style-debug.css"
