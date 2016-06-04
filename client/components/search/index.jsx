@@ -134,7 +134,8 @@ const Search = React.createClass( {
 			: this.props.onSearch;
 
 		if ( this.props.autoFocus ) {
-			this.focus();
+			// this hack makes autoFocus work correctly in Dropdown
+			setTimeout( () => this.focus(), 0 );
 		}
 	},
 
