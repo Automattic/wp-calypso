@@ -83,6 +83,7 @@ export default React.createClass( {
 				</h2>
 				<Card className="sites__selector-wrapper">
 					<SiteSelector
+						autoFocus={ true }
 						filter={ ( site ) => this.filterSites( site ) }
 						onSiteSelect={ this.onSiteSelect }
 						sites={ this.props.sites }
