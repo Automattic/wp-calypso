@@ -4,7 +4,7 @@
  * External dependencies
  */
 var socketio = require( 'socket.io' );
-var debug = require( 'debug')( 'hot-reloader' );
+var debug = require( 'debug' )( 'calypso:bundler:hot-reloader' );
 var cssHotReloader = require( './css-hot-reload' );
 
 var io = null,
