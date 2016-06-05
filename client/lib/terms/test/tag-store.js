@@ -1,30 +1,27 @@
 /**
  * External dependencies
  */
-var rewire = require( 'rewire' ),
-	assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-var data = require( './data' ),
-	ActionTypes = require( '../constants' ).action;
+import data from './data';
+import { action as ActionTypes } from '../constants';
+import TagStore from '../tag-store';
+import Dispatcher from 'dispatcher';
 
-var TEST_SITE_ID = 777,
-	TEST_TAG_ID = 8,
-	TEST_NUM_TAGS = data.tagList.length;
+/**
+ * Constants
+ */
+const TEST_SITE_ID = 777;
+const TEST_TAG_ID = 8;
+const TEST_NUM_TAGS = data.tagList.length;
 
 describe( 'tag-store', function() {
-	let TagStore, Dispatcher;
-
-	before( function() {
-		TagStore = rewire( '../tag-store' );
-		Dispatcher = require( 'dispatcher' );
-	} );
-
 	beforeEach( function() {
-		TagStore.__set__( '_tagIds', {} );
-		TagStore.__set__( '_siteStatus', {} );
+		TagStore._tagIds = {};
+		TagStore._siteStatus = {};
 	} );
 
 	function dispatchReceiveTerms() {
