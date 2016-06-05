@@ -6,6 +6,7 @@
  * Internal Dependencies
  */
 import {
+	READER_POSTS_RECEIVE,
 	READER_RELATED_POSTS_REQUEST,
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
 	READER_RELATED_POSTS_REQUEST_FAILURE,
@@ -16,16 +17,24 @@ import wpcom from 'lib/wp';
 export function requestRelatedPosts( siteId, postId ) {
 	return function( dispatch ) {
 		dispatch( {
-			type: READER_RELATED_POSTS_REQUEST
+			type: READER_RELATED_POSTS_REQUEST,
+			payload: {
+				siteId,
+				postId
+			}
 		} );
 
-		wpcom.undocumented().readRelatedPosts( siteId, postId ).then(
-			( response ) => {
+		return wpcom.undocumented().readRelatedPosts( siteId, postId ).then(
+			response => {
 				dispatch( {
 					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
 					payload: { siteId, postId }
 				} );
 				// collect posts and dispatch
+				dispatch( {
+					type: READER_POSTS_RECEIVE,
+					posts: response && response.posts
+				} );
 				dispatch( {
 					type: READER_RELATED_POSTS_RECEIVE,
 					payload: {
@@ -35,7 +44,7 @@ export function requestRelatedPosts( siteId, postId ) {
 					}
 				} );
 			},
-			( err ) => {
+			err => {
 				dispatch( {
 					type: READER_RELATED_POSTS_REQUEST_FAILURE,
 					payload: { siteId, postId, error: err },
