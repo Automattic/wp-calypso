@@ -8,8 +8,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { shouldFetchRelated } from 'state/reader/related-posts/selectors';
-import { requestRelatedPosts } from 'state/reader/related-posts/actions';
+import { shouldFetchRelated } from 'state/reader/related/selectors';
+import { requestRelatedPosts } from 'state/reader/related/actions';
 
 class QueryReaderRelatedPosts extends Component {
 	componentWillMount() {
