@@ -18,11 +18,11 @@ module.exports = {
 	},
 
 	isDiscoverPost: function( post ) {
-		return !! ( post.discover_metadata || post.site_ID === config( 'discover_blog_id' ) );
+		return post && !! ( post.discover_metadata || post.site_ID === config( 'discover_blog_id' ) );
 	},
 
 	isDiscoverSitePick: function( post ) {
-		return !! ( post.discover_metadata && find( post.discover_metadata.discover_fp_post_formats, { slug: 'site-pick' } ) );
+		return post && !! ( post.discover_metadata && find( post.discover_metadata.discover_fp_post_formats, { slug: 'site-pick' } ) );
 	},
 
 	isInternalDiscoverPost: function( post ) {

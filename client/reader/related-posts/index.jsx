@@ -27,7 +27,7 @@ const ConnectedRelatedPost = connect(
 		const actualPost = getPost( state, post );
 		const site = actualPost && getSite( state, actualPost.site_ID );
 		return {
-			post,
+			post: actualPost,
 			site
 		};
 	}
@@ -37,11 +37,10 @@ function RelatedPosts( { siteId, postId, posts } ) {
 	if ( ! posts ) {
 		return <QueryReaderRelatedPosts siteId={ siteId } postId={ postId } />;
 	}
-
 	return (
 		<div className="related-posts">
-			<h3>{ i18n.translate( 'Suggested Reading' ) }</h3>
-			<ul>
+			<h3 className="related-posts__heading">{ i18n.translate( 'Suggested Reading' ) }</h3>
+			<ul className="related-posts__list">
 				{ posts.map( post => <ConnectedRelatedPost post={ post } /> ) }
 			</ul>
 		</div>

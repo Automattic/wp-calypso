@@ -1,0 +1,17 @@
+.related-posts {
+	background: $gray-light;
+	margin: 24px 0;
+	padding: 24px;
+}
+
+.related-posts__list {
+	margin: 0;
+}
+
+.related-posts__heading {
+	text-transform: uppercase;
+	font-size: 14px;
+	font-weight: 600;
+	color: $gray;
+	margin: 0 0 24px 0;
+}
