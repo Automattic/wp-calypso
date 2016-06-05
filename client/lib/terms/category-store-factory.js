@@ -3,13 +3,8 @@
  **/
 var CategoryStore = require( './category-store' );
 
-/**
- * Module variables
- **/
-var _categoryStores = {};
-
 function categoryStoreFactory( storeId ) {
-	var categoryStore = _categoryStores[ storeId ];
+	var categoryStore = categoryStoreFactory._categoryStores[ storeId ];
 
 	if ( categoryStore ) {
 		return categoryStore;
@@ -17,9 +12,11 @@ function categoryStoreFactory( storeId ) {
 
 	categoryStore = new CategoryStore( storeId );
 
-	_categoryStores[ storeId ] = categoryStore;
+	categoryStoreFactory._categoryStores[ storeId ] = categoryStore;
 
 	return categoryStore;
 }
+
+categoryStoreFactory._categoryStores = {};
 
 module.exports = categoryStoreFactory;
