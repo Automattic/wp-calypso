@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import toString from 'lodash/toString';
 
 const reactifyNewlines = message =>
 	message
@@ -25,7 +26,7 @@ export const SeoSiteSearchPreview = React.createClass( {
 			url
 		} = this.props;
 
-		const snippet = reactifyNewlines( rawSnippet );
+		const snippet = reactifyNewlines( toString( rawSnippet ) );
 
 		return (
 			<div className="seo-search-result-preview">
