@@ -7,23 +7,23 @@ Object.defineProperty(exports, '__esModule', {
 });
 
 /**
- * SiteAdCreditVouchers methods
+ * SiteCreditVouchers methods
  *
  * @param {String} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
 
-var SiteAdCreditVouchers = (function () {
-	function SiteAdCreditVouchers(sid, wpcom) {
-		_classCallCheck(this, SiteAdCreditVouchers);
+var SiteCreditVouchers = (function () {
+	function SiteCreditVouchers(sid, wpcom) {
+		_classCallCheck(this, SiteCreditVouchers);
 
 		if (!sid) {
 			throw new Error('`site id` is not correctly defined');
 		}
 
-		if (!(this instanceof SiteAdCreditVouchers)) {
-			return new SiteAdCreditVouchers(sid, wpcom);
+		if (!(this instanceof SiteCreditVouchers)) {
+			return new SiteCreditVouchers(sid, wpcom);
 		}
 
 		this.wpcom = wpcom;
@@ -39,12 +39,13 @@ var SiteAdCreditVouchers = (function () {
   * @return {Function} request handler
   */
 
-	_createClass(SiteAdCreditVouchers, [{
+	_createClass(SiteCreditVouchers, [{
 		key: 'list',
 		value: function list(query, fn) {
 			if (query === undefined) query = {};
 
 			query.apiNamespace = 'wpcom/v2';
+			console.log('-> query -> ', query);
 			return this.wpcom.req.get(this.path, query, fn);
 		}
 
@@ -83,8 +84,8 @@ var SiteAdCreditVouchers = (function () {
 		}
 	}]);
 
-	return SiteAdCreditVouchers;
+	return SiteCreditVouchers;
 })();
 
-exports['default'] = SiteAdCreditVouchers;
+exports['default'] = SiteCreditVouchers;
 module.exports = exports['default'];

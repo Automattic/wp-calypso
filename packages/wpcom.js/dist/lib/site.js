@@ -55,9 +55,9 @@ var _siteTaxonomy = require('./site.taxonomy');
 
 var _siteTaxonomy2 = _interopRequireDefault(_siteTaxonomy);
 
-var _siteAdCreditVouchers = require('./site.ad-credit-vouchers');
+var _siteCreditVouchers = require('./site.credit-vouchers');
 
-var _siteAdCreditVouchers2 = _interopRequireDefault(_siteAdCreditVouchers);
+var _siteCreditVouchers2 = _interopRequireDefault(_siteCreditVouchers);
 
 var _siteWordads = require('./site.wordads');
 
@@ -309,14 +309,14 @@ var Site = (function () {
 		}
 
 		/**
-   * Create a `SiteAdCreditVouchers` instance
+   * Create a `SiteCreditVouchers` instance
    *
-   * @return {SiteAdCreditVouchers} SiteAdCreditVouchers instance
+   * @return {SiteCreditVouchers} SiteCreditVouchers instance
    */
 	}, {
-		key: 'adCreditVouchers',
-		value: function adCreditVouchers() {
-			return new _siteAdCreditVouchers2['default'](this._id, this.wpcom);
+		key: 'creditVouchers',
+		value: function creditVouchers() {
+			return new _siteCreditVouchers2['default'](this._id, this.wpcom);
 		}
 
 		/**
