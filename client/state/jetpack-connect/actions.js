@@ -293,7 +293,8 @@ export default {
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 					success: data.success,
-					blogDetails: data.blog_details
+					blogDetails: data.blog_details,
+					sharedDetails: data.shared_details
 				} );
 			} ).catch( ( error ) => {
 				dispatch( {

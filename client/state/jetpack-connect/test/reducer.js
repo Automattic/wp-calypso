@@ -39,16 +39,23 @@ const successfulSSOValidation = {
 			ico: '',
 		},
 		URL: 'https://website.com',
-		is_vip: false,
 		admin_url: 'https://website.com/wp-admin'
+	},
+	sharedDetails: {
+		ID: 0,
+		login: 'bbquser',
+		email: 'ieatbbq@website.com',
+		url: 'https://website.com',
+		first_name: 'Lou',
+		last_name: 'Bucket',
+		display_name: 'bestbbqtester',
+		description: 'I like BBQ, a lot.',
+		two_step_enabled: 0,
+		external_user_id: 1
 	}
 };
 
-const falseSSOValidation = {
-	type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-	success: false,
-	blogDetails: {}
-};
+const falseSSOValidation = Object.assign( successfulSSOValidation, { success: false } );
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -235,16 +242,16 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should store blog details after successful validation', () => {
+		it( 'should store blog details after validation', () => {
 			const successState = jetpackSSO( undefined, successfulSSOValidation );
 			expect( successState ).to.have.property( 'blogDetails' )
 				.to.be.eql( successfulSSOValidation.blogDetails );
 		} );
 
-		it( 'should store empty object in blog_details when validation is false', () => {
-			const failedState = jetpackSSO( undefined, falseSSOValidation );
-			expect( failedState ).to.have.property( 'blogDetails' )
-				.to.be.eql( {} );
+		it( 'should store shared details after validation', () => {
+			const successState = jetpackSSO( undefined, successfulSSOValidation );
+			expect( successState ).to.have.property( 'sharedDetails' )
+				.to.be.eql( successfulSSOValidation.sharedDetails );
 		} );
 
 		it( 'should set isAuthorizing to false after authorization', () => {

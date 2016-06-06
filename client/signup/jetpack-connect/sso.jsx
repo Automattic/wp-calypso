@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
 import get from 'lodash/get';
+import map from 'lodash/map';
 
 /**
  * Internal dependencies
@@ -29,6 +30,8 @@ import Site from 'my-sites/site';
 import SitePlaceholder from 'my-sites/site/placeholder';
 import { decodeEntities } from 'lib/formatting';
 import Gridicon from 'components/gridicon';
+import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import Dialog from 'components/dialog';
 
 /*
  * Module variables
@@ -39,6 +42,12 @@ const JetpackSSOForm = React.createClass( {
 	displayName: 'JetpackSSOForm',
 
 	mixins: [ observe( 'userModule' ) ],
+
+	getInitialState() {
+		return {
+			showTermsDialog: false
+		};
+	},
 
 	componentWillMount() {
 		this.maybeValidateSSO();
@@ -76,6 +85,19 @@ const JetpackSSOForm = React.createClass( {
 	onTryAgainClick( event ) {
 		debug( 'Clicked try again link' );
 		this.returnToSiteFallback( event );
+	},
+
+	onClickSharedDetailsModal( event ) {
+		event.preventDefault();
+		this.setState( {
+			showTermsDialog: true
+		} );
+	},
+
+	closeTermsDialog() {
+		this.setState( {
+			showTermsDialog: false
+		} );
 	},
 
 	returnToSiteFallback( event ) {
@@ -150,6 +172,117 @@ const JetpackSSOForm = React.createClass( {
 		);
 	},
 
+	getSharedDetailLabel( key ) {
+		switch ( key ) {
+			case 'ID':
+				key = this.translate( 'User ID', { context: 'User Field' } );
+				break;
+			case 'login':
+				key = this.translate( 'Login', { context: 'User Field' } );
+				break;
+			case 'email':
+				key = this.translate( 'Email', { context: 'User Field' } );
+				break;
+			case 'url':
+				key = this.translate( 'URL', { context: 'User Field' } );
+				break;
+			case 'first_name':
+				key = this.translate( 'First Name', { context: 'User Field' } );
+				break;
+			case 'last_name':
+				key = this.translate( 'Last Name', { context: 'User Field' } );
+				break;
+			case 'display_name':
+				key = this.translate( 'Display Name', { context: 'User Field' } );
+				break;
+			case 'description':
+				key = this.translate( 'Description', { context: 'User Field' } );
+				break;
+			case 'two_step_enabled':
+				key = this.translate( 'Two-Step Authentication', { context: 'User Field' } );
+				break;
+			case 'external_user_id':
+				key = this.translate( 'External User ID', { context: 'User Field' } );
+				break;
+		}
+
+		return key;
+	},
+
+	getSharedDetailValue( key, value ) {
+		if ( 'two_step_enabled' === key && value !== '' ) {
+			value = ( true === value )
+				? this.translate( 'Enabled' )
+				: this.translate( 'Disabled' );
+		}
+
+		return decodeEntities( value );
+	},
+
+	renderSharedDetailsList() {
+		const expectedSharedDetails = {
+			ID: '',
+			login: '',
+			email: '',
+			url: '',
+			first_name: '',
+			last_name: '',
+			display_name: '',
+			description: '',
+			two_step_enabled: '',
+			external_user_id: '',
+		};
+		const sharedDetails = this.props.sharedDetails || expectedSharedDetails;
+
+		return (
+			<table className="jetpack-connect__sso__shared-details-table">
+				<tbody>
+					{ map( sharedDetails, ( value, key ) => {
+						return (
+							<tr key={ key } className="jetpack-connect__sso__shared-detail-row">
+								<td className="jetpack-connect__sso__shared-detail-label">
+									{ this.getSharedDetailLabel( key ) }
+								</td>
+								<td className="jetpack-connect__sso__shared-detail-value">
+									{ this.getSharedDetailValue( key, value ) }
+								</td>
+							</tr>
+						);
+					} ) }
+				</tbody>
+			</table>
+		);
+	},
+
+	renderSharedDetailsDialog() {
+		const buttons = [
+			{
+				action: 'close',
+				label: this.translate( 'Got it', { context: 'Used in a button. Similar phrase would be, "I understand".' } )
+			}
+		];
+
+		return (
+			<Dialog
+				buttons={ buttons }
+				onClose={ this.closeTermsDialog }
+				isVisible={ this.state.showTermsDialog }
+				className="jetpack-connect_sso_terms-dialog">
+				<div className="jetpack-connect_sso_terms-dialog-content">
+					<p className="jetpack-connect__sso_shared-details-intro">
+						{
+							this.translate(
+								'When you approve logging in with WordPress.com, we will send the following details to your site.'
+							)
+						}
+					</p>
+
+					{ this.renderSharedDetailsList() }
+				</div>
+			</Dialog>
+		);
+	},
+
 	renderBadPathArgsError() {
 		return (
 			<Main>
@@ -218,14 +351,31 @@ const JetpackSSOForm = React.createClass( {
 							</div>
 						</div>
 
-						<div className="jetpack-connect__sso__actions">
+						<LoggedOutFormFooter className="jetpack-connect__sso__actions">
+							<p className="jetpack-connect__tos-link">
+								{ this.translate( 'By logging in you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.', {
+									components: {
+										detailsLink: (
+											<a
+												href="#"
+												onClick={ this.onClickSharedDetailsModal }
+												className="jetpack-connect__sso__actions__modal-link"
+											/>
+										)
+									},
+									args: {
+										siteName: get( this.props, 'blogDetails.title' )
+									}
+								} ) }
+							</p>
+
 							<Button
 								primary
 								onClick={ this.onApproveSSO }
 								disabled={ this.isButtonDisabled() }>
 								{ this.translate( 'Log in' ) }
 							</Button>
-						</div>
+						</LoggedOutFormFooter>
 					</Card>
 
 					<LoggedOutFormLinks>
@@ -245,6 +395,8 @@ const JetpackSSOForm = React.createClass( {
 						</LoggedOutFormLinkItem>
 					</LoggedOutFormLinks>
 				</div>
+
+				{ this.renderSharedDetailsDialog() }
 			</Main>
 		);
 	}
@@ -260,7 +412,8 @@ export default connect(
 			nonceValid: get( jetpackSSO, 'nonceValid' ),
 			authorizationError: get( jetpackSSO, 'authorizationError' ),
 			validationError: get( jetpackSSO, 'validationError' ),
-			blogDetails: get( jetpackSSO, 'blogDetails' )
+			blogDetails: get( jetpackSSO, 'blogDetails' ),
+			sharedDetails: get( jetpackSSO, 'sharedDetails' )
 		};
 	},
 	dispatch => bindActionCreators( { authorizeSSO, validateSSONonce }, dispatch )
