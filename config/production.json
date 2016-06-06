@@ -30,7 +30,6 @@
 		"manage/jetpack-plans": true,
 		"manage/menus": true,
 		"manage/menus-jetpack": true,
-		"manage/import": true,
 		"manage/option_sync_non_public_post_stati": false,
 		"manage/pages": true,
 		"manage/people": true,
