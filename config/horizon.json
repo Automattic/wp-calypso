@@ -24,7 +24,6 @@
 		"jetpack/connect": true,
 		"jetpack_core_inline_update": true,
 		"keyboard-shortcuts": true,
-		"login": false,
 		"manage/add-people": true,
 		"manage/ads": true,
 		"manage/ads/jetpack": true,

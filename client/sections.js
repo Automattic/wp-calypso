@@ -118,7 +118,7 @@ sections = [
 	},
 	{
 		name: 'signup',
-		paths: [ '/start', '/log-in', '/jetpack' ],
+		paths: [ '/start', '/jetpack' ],
 		module: 'signup',
 		secondary: false,
 		enableLoggedOut: true

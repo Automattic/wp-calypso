@@ -23,10 +23,6 @@ module.exports = function() {
 		controller.start
 	);
 
-	if ( config.isEnabled( 'login' ) ) {
-		page( '/log-in/:lang?', controller.login );
-	}
-
 	if ( config.isEnabled( 'jetpack/connect' ) ) {
 		page( '/jetpack/connect/install', jetpackConnectController.install );
 

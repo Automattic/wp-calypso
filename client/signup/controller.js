@@ -102,22 +102,5 @@ export default {
 			),
 			document.getElementById( 'primary' )
 		);
-	},
-
-	login( context ) {
-		var LogInComponent = require( 'signup/log-in-form' ),
-			basePath = route.sectionify( context.path );
-
-		analytics.pageView.record( basePath, basePageTitle + ' > Log-in' );
-
-		titleActions.setTitle( i18n.translate( 'Log in to your WordPress.com account' ) );
-
-		ReactDom.render(
-			React.createElement( LogInComponent, {
-				path: context.path,
-				locale: context.params.lang
-			} ),
-			document.getElementById( 'primary' )
-		);
 	}
 };

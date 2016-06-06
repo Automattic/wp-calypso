@@ -19,7 +19,6 @@
 		"desktop-promo": false,
 		"fluid-width": true,
 		"help": false,
-		"login": false,
 		"mailing-lists/unsubscribe": true,
 		"manage/ads": true,
 		"manage/ads/jetpack": true,
