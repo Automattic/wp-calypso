@@ -378,10 +378,6 @@ module.exports = function() {
 		} );
 	} );
 
-	if ( config.isEnabled( 'login' ) ) {
-		app.get( '/log-in/:lang?', setUpLoggedOutRoute, serverRender );
-	}
-
 	if ( config.isEnabled( 'jetpack/connect' ) ) {
 		app.get( '/jetpack/connect/:locale?', setUpRoute, serverRender );
 		app.get( '/jetpack/connect/authorize/:locale?', setUpRoute, serverRender );
