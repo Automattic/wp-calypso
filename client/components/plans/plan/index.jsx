@@ -186,9 +186,14 @@ const Plan = React.createClass( {
 		);
 	},
 
+	setImagePlanActionRef( imagePlanActionRef ) {
+		this.imagePlanActionRef = imagePlanActionRef;
+	},
+
 	getImagePlanAction() {
 		return (
 			<PlanActions
+				ref={ this.setImagePlanActionRef }
 				plan={ this.props.plan }
 				isInSignup={ this.props.isInSignup }
 				onSelectPlan={ this.props.onSelectPlan }
@@ -201,6 +206,13 @@ const Plan = React.createClass( {
 		);
 	},
 
+	clickPlanHeader( event ) {
+		// clicking a card should select a plan, see issue 4486
+		if ( this.imagePlanActionRef ) {
+			this.imagePlanActionRef.handleSelectPlan( event );
+		}
+	},
+
 	render() {
 		return (
 			<Card
@@ -210,7 +222,7 @@ const Plan = React.createClass( {
 			>
 				{ this.getPlanDiscountMessage() }
 				<PlanHeader
-					onClick={ this.showDetails }
+					onClick={ this.clickPlanHeader }
 					text={ this.getProductName() }
 					isPlaceholder={ this.isPlaceholder() }
 				>
