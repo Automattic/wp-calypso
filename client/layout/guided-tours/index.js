@@ -9,6 +9,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import localize from 'lib/mixins/i18n/localize';
+import scrollTo from 'lib/scroll-to';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
@@ -90,6 +91,10 @@ class GuidedTours extends Component {
 	}
 
 	quit( options = {} ) {
+		// TODO: put into step specific callback?
+		const sidebar = query( '#secondary .sidebar' )[ 0 ];
+		scrollTo( { y: 0, container: sidebar } );
+
 		this.currentTarget && this.currentTarget.classList.remove( 'guided-tours__overlay' );
 		this.props.quitGuidedTour( Object.assign( {
 			stepName: this.props.tourState.stepName,
