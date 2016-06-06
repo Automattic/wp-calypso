@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
+import range from 'lodash/range';
 import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
 import { InfiniteLoader, VirtualScroll } from 'react-virtualized';
 
@@ -74,8 +75,10 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	componentWillMount() {
+		this.itemHeights = {};
 		this.hasPerformedSearch = false;
 
+		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
 		this.debouncedSearch = debounce( () => {
 			this.props.onSearch( this.state.searchTerm );
 		}, SEARCH_DEBOUNCE_TIME_MS );
@@ -92,12 +95,46 @@ const PostSelectorPosts = React.createClass( {
 		}
 	},
 
+	recomputeRowHeights: function() {
+		if ( ! this.refs.loader ) {
+			return;
+		}
+
+		this.refs.loader._registeredChild.recomputeRowHeights();
+		this.refs.loader._registeredChild.forceUpdate();
+
+		// Compact mode passes the height of the scrollable region as a derived
+		// number, and will not be updated unless our component re-renders
+		if ( this.isCompact() ) {
+			this.forceUpdate();
+		}
+	},
+
 	setSelectorRef( selectorRef ) {
 		if ( ! selectorRef ) {
 			return;
 		}
 
 		this.setState( { selectorRef } );
+	},
+
+	setItemRef( item, itemRef ) {
+		if ( ! itemRef || ! item ) {
+			return;
+		}
+
+		// By falling back to the item height constant, we avoid an unnecessary
+		// forced update if all of the items match our guessed height
+		const height = this.itemHeights[ item.global_ID ] || ITEM_HEIGHT;
+
+		const nextHeight = itemRef.clientHeight;
+		this.itemHeights[ item.global_ID ] = nextHeight;
+
+		// If height changes, wait until the end of the current call stack and
+		// fire a single forced update to recompute the row heights
+		if ( height !== nextHeight ) {
+			this.queueRecomputeRowHeights();
+		}
 	},
 
 	hasNoSearchResults() {
@@ -137,6 +174,10 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	getItemHeight( item ) {
+		if ( item && this.itemHeights[ item.global_ID ] ) {
+			return this.itemHeights[ item.global_ID ];
+		}
+
 		let height = ITEM_HEIGHT;
 
 		if ( item && item.items ) {
@@ -150,6 +191,12 @@ const PostSelectorPosts = React.createClass( {
 
 	getRowHeight( { index } ) {
 		return this.getItemHeight( this.getItem( index ) );
+	},
+
+	getCompactContainerHeight() {
+		return range( 0, this.getRowCount() ).reduce( ( memo, index ) => {
+			return memo + this.getRowHeight( { index } );
+		}, 0 );
 	},
 
 	getResultsWidth() {
@@ -203,10 +250,14 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	renderItem( item ) {
-		const onChange = () => this.props.onChange( item, ...arguments );
+		const onChange = ( ...args ) => this.props.onChange( item, ...args );
+		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
 
 		return (
-			<div key={ item.global_ID } className="post-selector__list-item">
+			<div
+				key={ item.global_ID }
+				ref={ setItemRef }
+				className="post-selector__list-item">
 				<label>
 					<input
 						name="posts"
@@ -310,7 +361,7 @@ const PostSelectorPosts = React.createClass( {
 						<VirtualScroll
 							ref={ registerChild }
 							width={ this.getResultsWidth() }
-							height={ isCompact ? rowCount * ITEM_HEIGHT : 300 }
+							height={ isCompact ? this.getCompactContainerHeight() : 300 }
 							onRowsRendered={ onRowsRendered }
 							rowCount={ rowCount }
 							estimatedRowSize={ ITEM_HEIGHT }
