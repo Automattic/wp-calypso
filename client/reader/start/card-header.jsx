@@ -9,9 +9,11 @@ import { getSite } from 'state/reader/sites/selectors';
 const StartCardHeader = ( { site } ) => {
 	return (
 		<header className="reader-start-card__header">
-			<SiteIcon site={ site } size={ 70 } />
-			<h1 className="reader-start-card__site-title">{ site.title }</h1>
-			<p className="reader-start-card__site-description">{ site.description }</p>
+			<a href={ `/read/blogs/${site.ID}` }>
+				<SiteIcon site={ site } size={ 70 } />
+				<h1 className="reader-start-card__site-title">{ site.title }</h1>
+				<p className="reader-start-card__site-description">{ site.description }</p>
+			</a>
 		</header>
 	);
 };
