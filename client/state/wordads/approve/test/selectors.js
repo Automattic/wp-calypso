@@ -53,7 +53,7 @@ describe( 'selectors', () => {
 			const state = {
 				wordads: {
 					approve: {
-						errors: {
+						requestErrors: {
 							2916284: null,
 							77203074: 'Something unexpected happened'
 						}
@@ -69,7 +69,7 @@ describe( 'selectors', () => {
 			const state = {
 				wordads: {
 					approve: {
-						errors: {
+						requestErrors: {
 							2916284: null,
 							77203074: 'Something unexpected happened'
 						}

@@ -17,14 +17,15 @@ import {
 } from 'state/action-types';
 import reducer, {
 	requesting,
-	errors
+	requestErrors
 } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'requesting',
-			'errors'
+			'requestErrors',
+			'requestSuccess'
 		] );
 	} );
 
@@ -96,14 +97,14 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#errors()', () => {
+	describe( '#requestErrors()', () => {
 		it( 'should default to an empty object', () => {
-			const state = errors( undefined, {} );
+			const state = requestErrors( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should index error state by site ID', () => {
-			const state = errors( undefined, {
+			const state = requestErrors( undefined, {
 				type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 				siteId: 2916284,
 				error: 'something went wrong'
@@ -118,7 +119,7 @@ describe( 'reducer', () => {
 			const originalState = deepFreeze( {
 				2916284: 'something went wrong'
 			} );
-			const state = errors( originalState, {
+			const state = requestErrors( originalState, {
 				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 				siteId: 2916284
 			} );
@@ -132,7 +133,7 @@ describe( 'reducer', () => {
 			const originalState = deepFreeze( {
 				2916284: 'something went wrong'
 			} );
-			const state = errors( originalState, {
+			const state = requestErrors( originalState, {
 				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 				siteId: 2916284
 			} );
@@ -146,7 +147,7 @@ describe( 'reducer', () => {
 			const originalState = deepFreeze( {
 				2916284: 'something went wrong'
 			} );
-			const state = errors( originalState, {
+			const state = requestErrors( originalState, {
 				type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 				siteId: 2916284,
 				error: 'whoops'
@@ -160,7 +161,7 @@ describe( 'reducer', () => {
 			const originalState = deepFreeze( {
 				2916284: 'something went wrong'
 			} );
-			const state = errors( originalState, {
+			const state = requestErrors( originalState, {
 				type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 				siteId: 77203074,
 				error: 'something else went wrong'
@@ -175,10 +176,10 @@ describe( 'reducer', () => {
 		describe( 'persistence', () => {
 			it( 'never persists state', () => {
 				const original = deepFreeze( {
-					2916284: 'so many errors',
+					2916284: 'so many requestErrors',
 					77203074: null
 				} );
-				const state = errors( original, { type: SERIALIZE } );
+				const state = requestErrors( original, { type: SERIALIZE } );
 				expect( state ).to.eql( {} );
 			} );
 
@@ -187,7 +188,7 @@ describe( 'reducer', () => {
 					2916284: null,
 					77203074: 'something went wrong'
 				} );
-				const state = errors( original, { type: DESERIALIZE } );
+				const state = requestErrors( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( {} );
 			} );
 		} );
