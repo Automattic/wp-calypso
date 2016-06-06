@@ -1,27 +1,23 @@
 /**
  * External dependencies
  */
-const rewire = require( 'rewire' ),
-	assert = require( 'chai' ).assert,
-	includes = require( 'lodash/includes' );
+import { assert } from 'chai';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
  */
-const common = require( './common' ),
-	data = require( './data' ),
-	ActionTypes = require( '../constants' ).action;
+import common from './common';
+import data from './data';
+import { action as ActionTypes } from '../constants';
+import CategoryStoreFactory from '../category-store-factory';
+import Dispatcher from 'dispatcher';
 
 describe( 'category-store', function() {
-	let CategoryStoreFactory, Dispatcher, defaultCategoryStore;
-
-	before( function() {
-		CategoryStoreFactory = rewire( '../category-store-factory' );
-		Dispatcher = require( 'dispatcher' );
-	} );
+	let defaultCategoryStore;
 
 	beforeEach( function() {
-		CategoryStoreFactory.__set__( '_categoryStores', [] );
+		CategoryStoreFactory._categoryStores = {};
 		defaultCategoryStore = CategoryStoreFactory( common.TEST_CATEGORY_STORE_ID );
 	} );
 

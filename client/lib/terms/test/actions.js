@@ -1,25 +1,23 @@
 /**
  * External dependencies
  */
-var rewire = require( 'rewire' ),
-	assert = require( 'chai' ).assert,
-	sinon = require( 'sinon' ),
-	mockery = require( 'mockery' );
+import { assert } from 'chai';
+import sinon from 'sinon';
+import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-var useMockery = require( 'test/helpers/use-mockery' ),
-	data = require( './data' ),
-	TermsConstants = require( '../constants' );
+import useMockery from 'test/helpers/use-mockery';
+import data from './data';
+import TermsConstants from '../constants';
 
-var ActionTypes = TermsConstants.action,
+const ActionTypes = TermsConstants.action,
 	TEST_SITE_ID = 777,
 	TEST_CATEGORY_STORE_ID = 'default',
 	TEST_CATEGORY_ID = 999,
 	TAGS_DEFAULT_PER_PAGE = TermsConstants.MAX_TAGS,
 	CATEGORIES_DEFAULT_PER_PAGE = 300,
-	TEMPORARY_ID = 'temporary-0',
 	TEST_CATEGORY_NAME = 'OMGKITIES',
 	CATEGORY_API_RESPONSE = {
 		categories: data.treeList,
@@ -27,7 +25,6 @@ var ActionTypes = TermsConstants.action,
 	},
 	ADD_CATEGORY_API_RESPONSE = {
 		ID: TEST_CATEGORY_ID,
-		temporaryId: TEST_CATEGORY_ID,
 		name: TEST_CATEGORY_NAME
 	},
 	TEST_QUERY = {
@@ -57,14 +54,13 @@ describe( 'actions', function() {
 				};
 			}
 		} );
-		TermActions = rewire( '../actions' );
+		TermActions = require( '../actions' );
 		// have to require dispatcher after turning on mockery because we get a different instance after mockery cleans out the cache.
 		// yay singletons that are not single
 		Dispatcher = require( 'dispatcher' );
 	} );
 
 	beforeEach( function() {
-		this.revertTermActions = TermActions.__set__( 'temporaryIdCount', 0 );
 		sandbox = sinon.sandbox.create();
 
 		getCategories = sandbox.stub().callsArgWithAsync( 1, null, CATEGORY_API_RESPONSE );
@@ -75,7 +71,6 @@ describe( 'actions', function() {
 	} );
 
 	afterEach( function() {
-		this.revertTermActions();
 		sandbox.restore();
 	} );
 
@@ -88,7 +83,7 @@ describe( 'actions', function() {
 				data: {
 					termType: 'categories',
 					terms: [ {
-						ID: TEMPORARY_ID,
+						ID: sinon.match( /^temporary-/ ),
 						name: TEST_CATEGORY_NAME,
 						parent: undefined,
 						postId: undefined
@@ -105,7 +100,7 @@ describe( 'actions', function() {
 				data: {
 					termType: 'categories',
 					terms: [ {
-						ID: TEMPORARY_ID,
+						ID: sinon.match( /^temporary-/ ),
 						name: TEST_CATEGORY_NAME,
 						parent: TEST_CATEGORY_ID,
 						postId: undefined
