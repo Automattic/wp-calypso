@@ -53,7 +53,9 @@ export default function( editor ) {
 	}
 
 	function unmount() {
-		ReactDom.unmountComponentAtNode( container );
+		if ( container ) {
+			ReactDom.unmountComponentAtNode( container );
+		}
 	}
 
 	function insertMedia( markup ) {
