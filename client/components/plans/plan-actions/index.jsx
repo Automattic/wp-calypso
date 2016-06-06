@@ -166,6 +166,11 @@ const PlanActions = React.createClass( {
 		if ( this.props.onSelectPlan ) {
 			return this.props.onSelectPlan( cartItem );
 		}
+
+		if ( ! cartItem ) {
+			return;
+		}
+
 		upgradesActions.addItem( cartItem );
 
 		const checkoutPath = this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
