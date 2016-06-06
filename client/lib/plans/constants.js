@@ -15,6 +15,7 @@ export const PLAN_JETPACK_BUSINESS = 'jetpack_business';
 export const FEATURE_CUSTOM_DESIGN = 'custom-design';
 export const FEATURE_CUSTOM_DOMAIN = 'custom-domain';
 export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
+export const FEATURE_GOOGLE_AD_CREDITS = 'google-ad-credits';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
@@ -24,17 +25,23 @@ export const FEATURE_VIDEO_UPLOADS = 'video-upload';
 export const plansList = {
 	[ PLAN_FREE ]: {
 		getTitle: () => i18n.translate( 'Free' ),
-		getPriceTitle: () => i18n.translate( 'Free for life' )
+		getPriceTitle: () => i18n.translate( 'Free for life' ),
+		getProductId: () => 1,
+		getDescription: () => i18n.translate( 'Get a free blog and be on your way to publishing your first post in less than five minutes.' )
 	},
 
 	[ PLAN_PREMIUM ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
-		getPriceTitle: () => i18n.translate( '$99 per year' )
+		getPriceTitle: () => i18n.translate( '$99 per year' ),
+		getProductId: () => 1003,
+		getDescription: () => i18n.translate( 'Your own domain name, powerful customization options, and lots of space for audio and video, and even Google AdWords credit.' )
 	},
 
 	[ PLAN_BUSINESS ]: {
 		getTitle: () => i18n.translate( 'Business' ),
-		getPriceTitle: () => i18n.translate( '$299 per year' )
+		getPriceTitle: () => i18n.translate( '$299 per year' ),
+		getProductId: () => 1008,
+		getDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to our premium themes, and even Google AdWords credit.' )
 	},
 
 	[ PLAN_JETPACK_FREE ]: {},
@@ -85,5 +92,22 @@ export const featuresList = {
 	[ FEATURE_LIVE_CHAT_SUPPORT ]: {
 		getTitle: () => i18n.translate( 'Live Chat Support' ),
 		plans: [ PLAN_BUSINESS ]
+	},
+
+	[ FEATURE_GOOGLE_AD_CREDITS ]: {
+		getTitle: () => i18n.translate( '$100 Google AdWords Credit' ),
+		getDescription: () => i18n.translate( 'Offer valid in US and Canada after spending the first $25 on Google AdWords.' ),
+		plans: allPaidPlans
 	}
+};
+
+export const getPlanObject = planName => {
+	const plan = plansList[ planName ];
+	let objectPlan = {};
+	Object.keys( plan ).forEach( key => {
+		let objectKey = key.substr( 3 ).charAt( 0 ).toLowerCase() + key.slice( 4 );
+		objectPlan[ objectKey ] = plan[ key ]();
+	} );
+
+	return objectPlan;
 };

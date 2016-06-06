@@ -18,6 +18,14 @@ import PlanHeader from 'components/plans/plan-header';
 import PlanPrice from 'components/plans/plan-price';
 import WpcomPlanDetails from 'my-sites/plans/wpcom-plan-details';
 import { isDesktop } from 'lib/viewport';
+import {
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	getPlanObject
+} from 'lib/plans/constants';
+
+const premiumPlan = getPlanObject( PLAN_PREMIUM );
+const businessPlan = getPlanObject( PLAN_BUSINESS );
 
 const Plan = React.createClass( {
 	handleLearnMoreClick() {
@@ -60,6 +68,12 @@ const Plan = React.createClass( {
 			return (
 				<JetpackPlanDetails plan={ plan } />
 			);
+		}
+
+		if ( plan.product_id === premiumPlan.productId ) {
+			plan.description = premiumPlan.description;
+		} else if ( plan.product_id === businessPlan.productId ) {
+			plan.description = businessPlan.description;
 		}
 
 		return (
