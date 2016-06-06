@@ -1,14 +1,15 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var LikeButton = require( 'components/like-button/button' ),
-	Card = require( 'components/card/compact' );
+import Card from 'components/card/compact';
+import DocsExample from'components/docs-example';
+import LikeButton from 'components/like-button/button';
 
 var SimpleLikeButtonContainer = React.createClass( {
 
@@ -45,10 +46,10 @@ var LikeButtons = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/app-components/like-button">Like button</a>
-				</h2>
+			<DocsExample
+				title="Like button"
+				url="/devdocs/design/like-button"
+			>
 				<Card compact>
 					<SimpleLikeButtonContainer tagName="button" likeCount={ 0 } />
 				</Card>
@@ -58,7 +59,7 @@ var LikeButtons = React.createClass( {
 				<Card compact>
 					<SimpleLikeButtonContainer tagName="button" likeCount={ 12 } liked={ true } />
 				</Card>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

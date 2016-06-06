@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var TokenField = require( 'components/token-field' ),
-	Card = require( 'components/card' );
+import DocsExample from 'components/docs-example';
+import TokenField from 'components/token-field';
+import Card from 'components/card';
 
 /**
  * Module variables
@@ -36,11 +37,11 @@ var TokenFields = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/token-fields">Token Field</a>
-				</h2>
-
+			<DocsExample
+				title="Token Field"
+				url="/devdocs/design/token-fields"
+				componentUsageStats={ this.props.getUsageStats( TokenField ) }
+			>
 				<p>
 					The <code>TokenField</code> is a field similar to the tags and categories
 					fields in the interim editor chrome, or the "to" field in Mail on OS X.
@@ -71,7 +72,7 @@ var TokenFields = React.createClass( {
 						isBorderless
 						value={ this.state.disabledTokens } />
 				</Card>
-			</div>
+			</DocsExample>
 		);
 	},
 

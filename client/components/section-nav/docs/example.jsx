@@ -1,18 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	forEach = require( 'lodash/forEach' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import forEach from 'lodash/forEach';
 
 /**
  * Internal dependencies
  */
-var SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavSegmented = require( 'components/section-nav/segmented' ),
-	NavItem = require( 'components/section-nav/item' ),
-	Search = require( 'components/search' );
+import DocsExample from 'components/docs-example';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavSegmented from 'components/section-nav/segmented';
+import NavItem from 'components/section-nav/item';
+import Search from 'components/search';
 
 /**
  * Main
@@ -86,6 +87,10 @@ var SectionNavigation = React.createClass( {
 		forEach( this.props, function( prop, key ) {
 			demoSections[ key ] = [];
 
+			if ( ! Array.isArray( prop ) ) {
+				return;
+			}
+
 			prop.forEach( function( item, index ) {
 				demoSections[ key ].push( (
 					<NavItem
@@ -101,11 +106,11 @@ var SectionNavigation = React.createClass( {
 		}.bind( this ) );
 
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/section-nav">Section Navigation</a>
-				</h2>
-
+			<DocsExample
+				title="Section Navigation"
+				url="/devdocs/design/section-nav"
+				componentUsageStats={ this.props.getUsageStats( SectionNav ) }
+			>
 				<h3>Basic Tabs</h3>
 				<SectionNav
 					selectedText={ this.getSelectedText( 'basicTabs' ) }
@@ -146,7 +151,7 @@ var SectionNavigation = React.createClass( {
 						placeholder={ 'Search ' + this.getSelectedText( 'siblingTabs' ) + '...' }
 					/>
 				</SectionNav>
-			</div>
+			</DocsExample>
 		);
 	},
 

@@ -6,12 +6,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import page from 'page';
 import toTitleCase from 'to-title-case';
+import toCamelCase from 'lodash/camelCase';
 import trim from 'lodash/trim';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import SearchCard from 'components/search-card';
 import SearchDemo from 'components/search/docs/example';
 import Notices from 'components/notice/docs/example';
@@ -59,15 +59,19 @@ import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
 
+	propTypes: {
+		componentsUsageStats: PropTypes.object,
+		isFetching: PropTypes.bool,
+		dispatchFetchComponentsUsageStats: PropTypes.func
+	},
+
 	getInitialState() {
 		return { filter: '' };
 	},
 
 	componentWillMount() {
-		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-			const { dispatchFetchComponentsUsageStats } = this.props;
-			dispatchFetchComponentsUsageStats();
-		}
+		const { dispatchFetchComponentsUsageStats } = this.props;
+		dispatchFetchComponentsUsageStats();
 	},
 
 	onSearch( term ) {
@@ -80,6 +84,28 @@ let DesignAssets = React.createClass( {
 
 	render() {
 		const { componentsUsageStats = {} } = this.props;
+
+		const getUsageStats = ( Component, options = { folder: false, compact: false } ) => {
+			let componentName	= toCamelCase( (
+				Component.displayName || Component.name || ''
+			).replace( /^(Localized|Compact)/, '' ) );
+
+			if ( componentName && options.folder ) {
+				const camelCasedFolder = options.folder
+					.split( '/' )
+					.filter( Boolean )
+					.map( part => toCamelCase( part ) )
+					.join( '/' );
+				componentName = `${camelCasedFolder}/${componentName}`;
+			}
+
+			if ( options.compact ) {
+				componentName = `${componentName}/compact`;
+			}
+
+			return componentsUsageStats[ componentName ] || { count: 0 };
+		};
+
 		return (
 			<div className="design-assets" role="main">
 				{
@@ -94,75 +120,82 @@ let DesignAssets = React.createClass( {
 						analyticsGroup="Docs">
 					</SearchCard>
 				}
-				<Collection component={ this.props.component } filter={ this.state.filter }>
-					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
-					<BulkSelect />
-					<ButtonGroups />
-					<Buttons componentUsageStats={ componentsUsageStats.button } />
-					<Cards />
-					<ClipboardButtonInput />
-					<ClipboardButtons />
-					<Count />
-					<CountedTextareas />
-					<DatePicker />
-					<DropZones searchKeywords="drag" />
-					<ExternalLink />
-					<FeatureGate />
-					<FilePickers />
-					<FoldableCard />
-					<FormFields searchKeywords="input textbox textarea radio"/>
-					<Gauge />
-					<GlobalNotices />
-					<Gridicons />
-					<Headers />
-					<InfoPopover />
-					<InputChrono />
-					<Notices />
-					<PaymentLogo />
-					<Popovers />
-					<ProgressBar />
-					<Ranges />
-					<Rating />
-					<SearchDemo />
-					<SectionHeader />
-					<SectionNav />
-					<SegmentedControl />
-					<SelectDropdown searchKeywords="menu" />
-					<SocialLogos />
-					<Spinner searchKeywords="loading" />
-					<SpinnerLine searchKeywords="loading" />
-					<TimezoneDropdown />
-					<TokenFields />
-					<Version />
+				<Collection
+					component={ this.props.component }
+					filter={ this.state.filter }
+				>
+					{
+						[
+							<Accordions />,
+							<BulkSelect />,
+							<ButtonGroups />,
+							<Buttons />,
+							<Cards />,
+							<ClipboardButtonInput />,
+							<ClipboardButtons />,
+							<Count />,
+							<CountedTextareas />,
+							<DatePicker />,
+							<DropZones searchKeywords="drag" />,
+							<ExternalLink />,
+							<FeatureGate />,
+							<FilePickers />,
+							<FoldableCard />,
+							<FormFields searchKeywords="input textbox textarea radio" />,
+							<Gauge />,
+							<GlobalNotices />,
+							<Gridicons />,
+							<Headers />,
+							<InfoPopover />,
+							<InputChrono />,
+							<Notices />,
+							<PaymentLogo />,
+							<Popovers />,
+							<ProgressBar />,
+							<Ranges />,
+							<Rating />,
+							<SearchDemo />,
+							<SectionHeader />,
+							<SectionNav />,
+							<SegmentedControl />,
+							<SelectDropdown searchKeywords="menu" />,
+							<SocialLogos />,
+							<Spinner searchKeywords="loading" />,
+							<SpinnerLine searchKeywords="loading" />,
+							<TimezoneDropdown />,
+							<TokenFields />,
+							<Version />
+						].map( ( Component, idx ) => (
+							React.cloneElement(
+								Component,
+								{
+									getUsageStats,
+									key: `devdocs-design-component-${idx}`
+								}
+							)
+						) )
+					}
 				</Collection>
 			</div>
 		);
 	}
 } );
 
-if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-	const mapStateToProps = ( state ) => {
-		const { componentsUsageStats } = state;
+const mapStateToProps = ( state ) => {
+	const { componentsUsageStats } = state;
 
-		return componentsUsageStats;
-	};
+	return componentsUsageStats;
+};
 
-	const mapDispatchToProps = ( dispatch ) => {
-		return bindActionCreators( {
-			dispatchFetchComponentsUsageStats: fetchComponentsUsageStats
-		}, dispatch );
-	};
+const mapDispatchToProps = ( dispatch ) => {
+	return bindActionCreators( {
+		dispatchFetchComponentsUsageStats: fetchComponentsUsageStats
+	}, dispatch );
+};
 
-	DesignAssets.propTypes = {
-		componentsUsageStats: PropTypes.object,
-		isFetching: PropTypes.bool,
-		dispatchFetchComponentsUsageStats: PropTypes.func
-	};
-
-	DesignAssets = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
-}
+DesignAssets = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( DesignAssets );
 
 export default DesignAssets;

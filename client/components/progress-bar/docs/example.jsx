@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var ProgressBar = require( 'components/progress-bar' );
+import DocsExample from 'components/docs-example';
+import ProgressBar from 'components/progress-bar';
 
 module.exports = React.createClass( {
 
@@ -18,7 +19,7 @@ module.exports = React.createClass( {
 	getInitialState() {
 		return {
 			compact: false
-		}
+		};
 	},
 
 	toggleCompact() {
@@ -26,18 +27,18 @@ module.exports = React.createClass( {
 	},
 
 	render() {
-		const toggleText = this.state.compact ? 'Normal Bar' : 'Compact Bar';
-
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/progress-bar">Progress Bar</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleCompact }>{ toggleText }</a>
-				</h2>
+			<DocsExample
+				title="Progress Bar"
+				url="/devdocs/design/progress-bar"
+				componentUsageStats={ this.props.getUsageStats( ProgressBar ) }
+				toggleHandler={ this.toggleCompact }
+				toggleText={ this.state.compact ? 'Normal Bar' : 'Compact Bar' }
+			>
 				<ProgressBar value={ 0 } title="0% complete" compact={ this.state.compact } />
 				<ProgressBar value={ 55 } total={ 100 } compact={ this.state.compact } />
 				<ProgressBar value={ 100 } color="#1BABDA" compact={ this.state.compact } />
-			</div>
+			</DocsExample>
 		);
 	}
 } );

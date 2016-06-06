@@ -35,7 +35,6 @@
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
-		"devdocs/components-usage-stats": false,
 		"dev/test-helper": true,
 		"guided-tours": true,
 		"help": true,

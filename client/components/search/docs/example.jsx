@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var Search = require( 'components/search' ),
-	SearchCard = require( 'components/search-card' );
+import DocsExample from 'components/docs-example';
+import Search from 'components/search';
+import SearchCard from 'components/search-card';
 
 /**
  * Globals
@@ -22,10 +23,11 @@ var SearchDemo = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/search">Search</a>
-				</h2>
+			<DocsExample
+				title="Search"
+				url="/devdocs/design/search"
+				componentUsageStats={ this.props.getUsageStats( Search ) }
+			>
 				<Search
 					onSearch={ noop }
 					placeholder="Placeholder text..."
@@ -35,7 +37,7 @@ var SearchDemo = React.createClass( {
 					onSearch={ noop }
 					placeholder="Placeholder text..."
 				/>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

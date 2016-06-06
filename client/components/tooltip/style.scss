@@ -1,3 +1,32 @@
+@mixin tip-arrow-color( $side ) {
+	.tip-arrow {
+		border-#{$side}-color: darken( $gray, 30% );
+		position: absolute;
+
+		&::before {
+			display: none;
+		}
+	}
+
+	&.is-error {
+		.tip-arrow {
+			border-#{$side}-color: $alert-red;
+		}
+	}
+
+	&.is-warning {
+		.tip-arrow {
+			border-#{$side}-color: $alert-yellow;
+		}
+	}
+
+	&.is-success {
+		.tip-arrow {
+			border-#{$side}-color: $alert-green;
+		}
+	}
+}
+
 .tooltip.popover {
 	.tip-arrow {
 		border-width: 6px;
@@ -10,97 +39,36 @@
 	&.tip-bottom-right,
 	&.tip-bottom-left,
 	&.tip-bottom {
+		@include tip-arrow-color( bottom );
 		.tip-arrow {
-			border-bottom-color: darken( $gray, 30% );
-			position: absolute;
 			top: 9px;
 			right: 10px;
-
-			&::before {
-				display: none;
-			}
-		}
-
-		&.is-error {
-			.tip-arrow {
-				border-bottom-color: $alert-red;
-			}
-		}
-
-		&.is-warning {
-			.tip-arrow {
-				border-bottom-color: $alert-yellow;
-			}
-		}
-
-		&.is-success {
-			.tip-arrow {
-				border-bottom-color: $alert-green;
-			}
 		}
 	}
 
 	&.tip-top,
 	&.tip-top-left,
 	&.tip-top-right {
+		@include tip-arrow-color( top );
 		.tip-arrow {
-			border-top-color: darken( $gray, 30% );
-			position: absolute;
 			bottom: 4px;
 			margin-left: -6px;
-
-			&::before {
-				display: none;
-			}
-		}
-
-		&.is-error {
-			.tip-arrow {
-				border-top-color: $alert-red;
-			}
-		}
-
-		&.is-warning {
-			.tip-arrow {
-				border-top-color: $alert-yellow;
-			}
-		}
-
-		&.is-success {
-			.tip-arrow {
-				border-top-color: $alert-green;
-			}
 		}
 	}
 
 	&.tip-right {
 		padding-top: 0;
+		@include tip-arrow-color( right );
 		.tip-arrow {
-			border-right-color: darken( $gray, 30% );
-			position: absolute;
 			margin-left: 4px;
-
-			&::before {
-				display: none;
-			}
 		}
+	}
 
-		&.is-error {
-			.tip-arrow {
-				border-right-color: $alert-red;
-			}
-		}
-
-		&.is-warning {
-			.tip-arrow {
-				border-right-color: $alert-yellow;
-			}
-		}
-
-		&.is-success {
-			.tip-arrow {
-				border-right-color: $alert-green;
-			}
+	&.tip-left {
+		padding-top: 0;
+		@include tip-arrow-color( left );
+		.tip-arrow {
+			margin-right: 4px;
 		}
 	}
 

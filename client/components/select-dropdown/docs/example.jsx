@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var SelectDropdown = require( 'components/select-dropdown' ),
-	DropdownItem = require( 'components/select-dropdown/item' ),
-	DropdownLabel = require( 'components/select-dropdown/label' ),
-	DropdownSeparator = require( 'components/select-dropdown/separator' );
+import DocsExample from 'components/docs-example';
+import SelectDropdown from 'components/select-dropdown';
+import DropdownItem from 'components/select-dropdown/item';
+import DropdownLabel from 'components/select-dropdown/label';
+import DropdownSeparator from 'components/select-dropdown/separator';
 
 var SelectDropdownDemo = React.createClass( {
 	displayName: 'SelectDropdown',
@@ -43,15 +44,14 @@ var SelectDropdownDemo = React.createClass( {
 	},
 
 	render: function() {
-		var toggleButtonsText = this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons';
-
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/select-dropdown">Select Dropdown</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleButtons }>{ toggleButtonsText }</a>
-				</h2>
-
+			<DocsExample
+				title="Select Dropdown"
+				url="/devdocs/design/accordions"
+				componentUsageStats={ this.props.getUsageStats( SelectDropdown ) }
+				toggleHandler={ this.toggleButtons }
+				toggleText={ this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons' }
+			>
 				<h3>Items passed as options prop</h3>
 				<SelectDropdown
 					compact={ this.state.compactButtons }
@@ -101,7 +101,7 @@ var SelectDropdownDemo = React.createClass( {
 						Trashed
 					</DropdownItem>
 				</SelectDropdown>
-			</div>
+			</DocsExample>
 		);
 	},
 

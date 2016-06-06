@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var Count = require( 'components/count' );
+import Count from 'components/count';
+import DocsExample from 'components/docs-example';
 
 module.exports = React.createClass( {
 	displayName: 'Count',
@@ -16,14 +17,13 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/count">Count</a>
-				</h2>
-				<div>
-					<Count count={ 65365 } />
-				</div>
-			</div>
+			<DocsExample
+				title="Count"
+				url="/devdocs/design/count"
+				componentUsageStats={ this.props.getUsageStats( Count ) }
+			>
+				<Count count={ 65365 } />
+			</DocsExample>
 		);
 	}
 } );

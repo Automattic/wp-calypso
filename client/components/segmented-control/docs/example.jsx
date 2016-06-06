@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var SegmentedControl = require( 'components/segmented-control' ),
-	ControlItem = require( 'components/segmented-control/item' );
+import DocsExample from 'components/docs-example';
+import SegmentedControl from 'components/segmented-control';
+import ControlItem from 'components/segmented-control/item';
 
 /**
  * Segmented Control Demo
@@ -45,14 +46,13 @@ var SegmentedControlDemo = React.createClass( {
 		var controlDemoStyles = { maxWidth: 386 };
 
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/segmented-control">Segmented Control</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleCompact }>
-						{ this.state.compact ? 'Normal' : 'Compact' }
-					</a>
-				</h2>
-
+			<DocsExample
+				title="Segmented Control"
+				url="/devdocs/design/segmented-control"
+				componentUsageStats={ this.props.getUsageStats( SegmentedControl ) }
+				toggleHandler={ this.toggleCompact }
+				toggleText={ this.state.compact ? 'Normal' : 'Compact' }
+			>
 				<h3>Items passed as options prop</h3>
 				<SegmentedControl
 					options={ this.props.options }
@@ -131,7 +131,7 @@ var SegmentedControlDemo = React.createClass( {
 						Comments
 					</ControlItem>
 				</SegmentedControl>
-			</div>
+			</DocsExample>
 		);
 	},
 

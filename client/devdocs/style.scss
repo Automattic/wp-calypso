@@ -158,6 +158,23 @@
 	cursor: pointer;
 }
 
+.design-assets__group .card {
+	.form-label,
+	.form-legend,
+	.form-section-heading,
+	.docs-example-stats {
+		display: table-cell;
+		vertical-align: bottom;
+		width: 100%;
+	}
+	.docs-example-stats {
+		width: 1%;
+		+ .form-label {
+			display: block;
+		}
+	}
+}
+
 // ==========================================================================
 // Button component styles
 // ==========================================================================

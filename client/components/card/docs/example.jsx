@@ -1,13 +1,14 @@
 /**
 * External dependencies
 */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	CompactCard = require( 'components/card/compact' );
+import Card from 'components/card';
+import CompactCard from 'components/card/compact';
+import DocsExample from 'components/docs-example';
 
 var Cards = React.createClass( {
 	displayName: 'Cards',
@@ -19,16 +20,16 @@ var Cards = React.createClass( {
 	},
 
 	render: function() {
-		var toggleCardsText = this.state.compactCards ? 'Normal Cards' : 'Compact Cards';
-
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/cards">Card</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleCards }>{ toggleCardsText }</a>
-				</h2>
+			<DocsExample
+				title="Card"
+				url="/devdocs/design/cards"
+				componentUsageStats={ this.props.getUsageStats( Card ) }
+				toggleHandler={ this.toggleCards }
+				toggleText={ this.state.compactCards ? 'Normal Cards' : 'Compact Cards' }
+			>
 				{ this.renderCards() }
-			</div>
+			</DocsExample>
 		);
 	},
 

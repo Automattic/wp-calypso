@@ -1,15 +1,16 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
 * Internal dependencies
 */
-var Popover = require( 'components/popover' ),
-	PopoverMenu = require( 'components/popover/menu' ),
-	PopoverMenuItem = require( 'components/popover/menu-item' );
+import DocsExample from 'components/docs-example';
+import Popover from 'components/popover';
+import PopoverMenu from 'components/popover/menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 
 var Popovers = React.createClass( {
 	mixins: [ PureRenderMixin ],
@@ -24,10 +25,11 @@ var Popovers = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/popovers">Popovers</a>
-				</h2>
+			<DocsExample
+				title="Popovers"
+				url="/devdocs/design/popovers"
+				componentUsageStats={ this.props.getUsageStats( Popover ) }
+			>
 				<label>Position
 					<select value={ this.state.popoverPosition } onChange={ this._changePopoverPosition }>
 						<option value="top">top</option>
@@ -62,7 +64,7 @@ var Popovers = React.createClass( {
 					<PopoverMenuItem action="B" onClick={ this._onPopoverMenuItemBClick }>Item B</PopoverMenuItem>
 					<PopoverMenuItem action="C">Item C</PopoverMenuItem>
 				</PopoverMenu>
-			</div>
+			</DocsExample>
 		);
 	},
 

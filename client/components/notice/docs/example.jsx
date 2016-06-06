@@ -1,14 +1,15 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
 * Internal dependencies
 */
-var NoticeAction = require( 'components/notice/notice-action' ),
-	Notice = require( 'components/notice' );
+import DocsExample from 'components/docs-example';
+import NoticeAction from 'components/notice/notice-action';
+import Notice from 'components/notice';
 
 var Notices = React.createClass( {
 	mixins: [ PureRenderMixin ],
@@ -20,15 +21,14 @@ var Notices = React.createClass( {
 	},
 
 	render: function() {
-		var toggleNoticesText = this.state.compactNotices ? 'Normal Notices' : 'Compact Notices';
-
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/notices">Notices</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleNotices }>{ toggleNoticesText }</a>
-				</h2>
-
+			<DocsExample
+				title="Notices"
+				url="/devdocs/design/notices"
+				componentUsageStats={ this.props.getUsageStats( Notice ) }
+				toggleHandler={ this.toggleNotices }
+				toggleText={ this.state.compactNotices ? 'Normal Notices' : 'Compact Notices' }
+			>
 				<div>
 					<Notice
 						showDismiss={ false }
@@ -108,7 +108,7 @@ var Notices = React.createClass( {
 						</NoticeAction>
 					</Notice>
 				</div>
-			</div>
+			</DocsExample>
 		);
 	},
 

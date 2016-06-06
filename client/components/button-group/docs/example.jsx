@@ -1,16 +1,17 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var ButtonGroup = require( 'components/button-group' ),
-	Button = require( 'components/button' ),
-	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' );
+import ButtonGroup from 'components/button-group';
+import Button from 'components/button';
+import Card from 'components/card';
+import DocsExample from 'components/docs-example';
+import Gridicon from 'components/gridicon';
 
 var Buttons = React.createClass( {
 	displayName: 'ButtonGroup',
@@ -29,13 +30,13 @@ var Buttons = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/button-group">Button Group</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleButtons }>
-						{ this.state.compact ? 'Normal Buttons' : 'Compact Buttons' }
-					</a>
-				</h2>
+			<DocsExample
+				title="Button Group"
+				url="/devdocs/design/button-group"
+				componentUsageStats={ this.props.getUsageStats( ButtonGroup ) }
+				toggleHandler={ this.toggleButtons }
+				toggleText={ this.state.compact ? 'Normal Buttons' : 'Compact Buttons' }
+			>
 				<Card>
 					<div>
 						<ButtonGroup className="example">
@@ -65,7 +66,7 @@ var Buttons = React.createClass( {
 						</ButtonGroup>
 					</div>
 				</Card>
-			</div>
+			</DocsExample>
 		);
 	},
 } );

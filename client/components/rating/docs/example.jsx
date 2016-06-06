@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var Rating = require( 'components/rating' );
+import DocsExample from 'components/docs-example';
+import Rating from 'components/rating';
 
 module.exports = React.createClass( {
 	displayName: 'Rating',
@@ -16,13 +17,13 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/rating">Rating</a>
-				</h2>
-
+			<DocsExample
+				title="Rating"
+				url="/devdocs/design/rating"
+				componentUsageStats={ this.props.getUsageStats( Rating ) }
+			>
 				<Rating rating={ 65 } size={ 50 } />
-			</div>
+			</DocsExample>
 		);
 	}
 } );

@@ -8,7 +8,8 @@ import React, { PropTypes } from 'react';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Count from 'components/count';
+import Tooltip from 'components/tooltip';
+import Gridicon from 'components/gridicon';
 
 const DocsExampleToggle = ( {
 	onClick,
@@ -24,11 +25,38 @@ DocsExampleToggle.propTypes = {
 	text: PropTypes.string.isRequired
 };
 
-const DocsExampleStats = ( { count } ) => (
-	<div className="docs-example-stats">
-		<p className="docs-example-stats__item">Used in <Count count={ count } /> components.</p>
-	</div>
-);
+class DocsExampleStats extends React.Component {
+	constructor() {
+		super();
+		this.state = { tooltip: false };
+	}
+
+	render() {
+		return (
+			<div
+				className="docs-example-stats"
+				onMouseEnter={ () => this.setState( { tooltip: true } ) }
+				onMouseLeave={ () => this.setState( { tooltip: false } ) }
+				aria-label={ `This component is used by ${this.props.count} other components` }
+				ref="statsTooltip"
+			>
+				<div aria-hidden="true">
+					<Tooltip
+						isVisible={ this.state.tooltip }
+						position="left"
+						context={ this.refs && this.refs.statsTooltip }
+					>
+						Number of times used
+					</Tooltip>
+					<span className="docs-example-stats__info">
+						<Gridicon icon="stats" size={ 18 } />
+						<span className="docs-example-stats__count">{ this.props.count }</span>
+					</span>
+				</div>
+			</div>
+		);
+	}
+}
 
 DocsExampleStats.propTypes = {
 	count: PropTypes.number.isRequired
@@ -51,6 +79,13 @@ const DocsExample = ( {
 					<a className="docs-example__link" href={ url }>{ title }</a>
 				</h2>
 				{
+					! isNaN( count ) && (
+						<div className="docs-example__stats">
+							<DocsExampleStats count={ count } />
+						</div>
+					)
+				}
+				{
 					toggleHandler && toggleText && (
 						<span className="docs-example__toggle">
 							<DocsExampleToggle onClick={ toggleHandler } text={ toggleText } />
@@ -61,15 +96,6 @@ const DocsExample = ( {
 			<div className="docs-example__main">
 				{ children }
 			</div>
-			<footer role="contentinfo" className="docs-example__footer">
-				{
-					! isNaN( count ) && (
-						<div className="docs-example__stats">
-							<DocsExampleStats count={ count } />
-						</div>
-					)
-				}
-			</footer>
 		</section>
 	);
 };
@@ -82,7 +108,7 @@ DocsExample.propTypes = {
 	} ),
 	toggleHandler: PropTypes.func,
 	toggleText: PropTypes.string,
-	children: React.PropTypes.element.isRequired
+	children: React.PropTypes.node.isRequired
 };
 
 export {

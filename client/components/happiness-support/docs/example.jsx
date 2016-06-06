@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
+import DocsExample from 'components/docs-example';
 import HappinessSupport from 'components/happiness-support';
 
 export default React.createClass( {
@@ -14,12 +15,14 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2><a href="/devdocs/app-components/happiness-support">HappinessSupport</a></h2>
+			<DocsExample
+				title="HappinessSupport"
+				url="/devdocs/design/happiness-support"
+			>
 				<Card>
 					<HappinessSupport />
 				</Card>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

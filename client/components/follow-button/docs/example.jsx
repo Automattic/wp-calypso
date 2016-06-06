@@ -1,14 +1,15 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var FollowButton = require( 'components/follow-button/button' ),
-	Card = require( 'components/card/compact' );
+import Card from 'components/card/compact';
+import DocsExample from 'components/docs-example';
+import FollowButton from 'components/follow-button/button';
 
 var FollowButtons = React.createClass( {
 	displayName: 'FollowButtons',
@@ -17,17 +18,17 @@ var FollowButtons = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/app-component/follow-buttons">Follow Button</a>
-				</h2>
+			<DocsExample
+				title="Follow Button"
+				url="/devdocs/design/follow-buttons"
+			>
 				<Card compact>
 					<FollowButton following={ false } />
 				</Card>
 				<Card compact>
 					<FollowButton following={ true } />
 				</Card>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

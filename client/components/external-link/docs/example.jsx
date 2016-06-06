@@ -6,8 +6,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
 import Card from 'components/card';
+import DocsExample from 'components/docs-example';
+import ExternalLink from 'components/external-link';
 
 export default React.createClass( {
 
@@ -15,16 +16,16 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/external-link">External Link</a>
-				</h2>
+			<DocsExample
+				title="External Link"
+				url="/devdocs/design/external-link"
+				componentUsageStats={ this.props.getUsageStats( ExternalLink ) }
+			>
 				<Card>
 					<p><ExternalLink icon={ true } href="https://wordpress.org" >WordPress.org</ExternalLink></p>
 					<p><ExternalLink href="https://wordpress.org">WordPress.org</ExternalLink></p>
 				</Card>
-
-			</div>
+			</DocsExample>
 		);
 	}
 } );

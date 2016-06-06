@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var FormRange = require( 'components/forms/range' );
+import DocsExample from 'components/docs-example';
+import FormRange from 'components/forms/range';
 
 module.exports = React.createClass( {
 	displayName: 'Ranges',
@@ -28,10 +29,11 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/ranges">Ranges</a>
-				</h2>
+			<DocsExample
+				title="Ranges"
+				url="/devdocs/design/ranges"
+				componentUsageStats={ this.props.getUsageStats( FormRange, { folder: 'forms' } ) }
+			>
 				<FormRange
 					minContent={ <span className="noticon noticon-minus" /> }
 					maxContent={ <span className="noticon noticon-plus" /> }
@@ -39,7 +41,7 @@ module.exports = React.createClass( {
 					value={ this.state.rangeValue }
 					onChange={ this.onChange }
 					showValueLabel={ true } />
-			</div>
+			</DocsExample>
 		);
 	}
 } );

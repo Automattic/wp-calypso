@@ -1,27 +1,28 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var SectionHeader = require( 'components/section-header' ),
-	Button = require( 'components/button' );
+import DocsExample from 'components/docs-example';
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
 
 var Cards = React.createClass( {
-	displayName: 'SectionHeader',
+	displayName: 'SectionHeaders',
 
 	mixins: [ PureRenderMixin ],
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/section-header">Section Header</a>
-				</h2>
-
+			<DocsExample
+				title="Section Header"
+				url="/devdocs/design/section-header"
+				componentUsageStats={ this.props.getUsageStats( SectionHeader ) }
+			>
 				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 }>
 					<Button compact primary>
 						{ this.translate( 'Primary Action' ) }
@@ -43,7 +44,7 @@ var Cards = React.createClass( {
 
 				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 } href="/devdocs/design/section-header">
 				</SectionHeader>
-			</div>
+			</DocsExample>
 		);
 	}
 } );

@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var Accordion = require( 'components/accordion' ),
-	Gridicon = require( 'components/gridicon' );
+import Accordion from 'components/accordion';
+import DocsExample from 'components/docs-example';
+import Gridicon from 'components/gridicon';
 
-module.exports = React.createClass( {
+const Accordions = React.createClass( {
 	displayName: 'Accordions',
 
 	mixins: [ PureRenderMixin ],
@@ -28,12 +29,13 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/accordions">Accordions</a>
-				</h2>
 
+		return (
+			<DocsExample
+				title="Accordions"
+				url="/devdocs/design/accordions"
+				componentUsageStats={ this.props.getUsageStats( Accordion ) }
+			>
 				<div style={ { paddingBottom: '10px' } }>
 					<label>
 						<input
@@ -72,7 +74,9 @@ module.exports = React.createClass( {
 						Etiam dictum odio elit, id faucibus urna elementum ac. Mauris in est nec tortor luctus auctor ut a velit. Suspendisse vulputate lectus arcu, sed condimentum risus rutrum vitae. Nullam sagittis ultricies nisl. Duis accumsan libero vel arcu sodales venenatis.
 					</Accordion>
 				</div>
-			</div>
+			</DocsExample>
 		);
 	}
 } );
+
+module.exports = Accordions;

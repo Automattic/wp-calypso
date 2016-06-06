@@ -1,6 +1,7 @@
 .docs-example__header {
-	display: flex;
 	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .docs-example__title {
@@ -9,21 +10,16 @@
 
 .docs-example__title,
 .docs-example__toggle {
-	margin: 0 !important;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+}
+
+.docs-example__toggle {
+	margin-left: 10px;
 }
 
 .docs-example__header + .docs-example__main {
 	margin-top: 16px;
-}
-
-.docs-example__footer {
-	margin: 0;
-}
-
-.docs-example__stats {
-	border-bottom: 1px solid transparentize( lighten( $gray, 20% ), .5 );
-	font-size: 14px;
-	padding-bottom: 16px;
 }
 
 /**
@@ -32,12 +28,17 @@
  * Can be rendered as standalone hence the new root/component.
  */
 
-.docs-example-stats { /* component root */ }
-
-.docs-example-stats__item {
-	margin: 0;
+.docs-example-stats {
+	font-size: 11px;
 }
 
-.docs-example-stats__item + .docs-example-stats__item {
-	margin-top: 1.5em;
+.docs-example-stats__info {
+	display: inline-flex;
+	align-items: flex-end;
+	color: lighten( $gray, 10% );
+	user-select: none;
+}
+
+.docs-example-stats__count {
+	margin-left: 2px;
 }

@@ -4,6 +4,8 @@
 import React from 'react';
 
 export default React.createClass( {
+	displayName: 'FeatureExample',
+
 	render() {
 		return (
 			<div className="feature-example">
