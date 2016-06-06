@@ -58,7 +58,6 @@
 		"oauth": true,
 		"olark": false,
 		"persist-redux": true,
-		"phone_signup": true,
 		"post-editor/author-selector": true,
 		"press-this": false,
 		"reader": true,

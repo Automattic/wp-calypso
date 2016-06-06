@@ -13,10 +13,6 @@ var controller = require( './controller' ),
 	sitesController = require( 'my-sites/controller' );
 
 module.exports = function() {
-	if ( config.isEnabled( 'phone_signup' ) ) {
-		page( '/phone/:lang?', controller.phoneSignup );
-	}
-
 	page(
 		'/start/:flowName?/:stepName?/:stepSectionName?/:lang?',
 		adTracking.retarget,

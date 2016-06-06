@@ -96,7 +96,6 @@
 		"olark": true,
 		"perfmon": false,
 		"persist-redux": true,
-		"phone_signup": true,
 		"post-editor-github-link": false,
 		"post-editor/image-editor": false,
 		"post-editor/insert-menu": true,

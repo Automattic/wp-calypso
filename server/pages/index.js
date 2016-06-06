@@ -394,10 +394,6 @@ module.exports = function() {
 		serverRender
 	);
 
-	if ( config.isEnabled( 'phone_signup' ) ) {
-		app.get( '/phone/:lang?', setUpLoggedOutRoute, serverRender );
-	}
-
 	if ( config.isEnabled( 'mailing-lists/unsubscribe' ) ) {
 		app.get( '/mailing-lists/unsubscribe', setUpRoute, serverRender );
 	}

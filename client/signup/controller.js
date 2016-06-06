@@ -104,25 +104,6 @@ export default {
 		);
 	},
 
-	phoneSignup( context ) {
-		var PhoneSignupComponent = require( 'signup/phone-signup-form' ),
-			countriesList = require( 'lib/countries-list' ).forSms(),
-			basePath = route.sectionify( context.path );
-
-		analytics.pageView.record( basePath, basePageTitle + ' > Phone' );
-
-		titleActions.setTitle( i18n.translate( 'Create an account' ) );
-
-		ReactDom.render(
-			React.createElement( PhoneSignupComponent, {
-				path: context.path,
-				countriesList: countriesList,
-				locale: context.params.lang
-			} ),
-			document.getElementById( 'primary' )
-		);
-	},
-
 	login( context ) {
 		var LogInComponent = require( 'signup/log-in-form' ),
 			basePath = route.sectionify( context.path );
