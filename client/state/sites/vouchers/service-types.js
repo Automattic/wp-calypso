@@ -1,2 +1,2 @@
 
-export const GOOGLE_AD_CREDITS = 'google-ad-credits';
+export const GOOGLE_CREDITS = 'google-credits';

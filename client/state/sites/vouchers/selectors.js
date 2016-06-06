@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { GOOGLE_AD_CREDITS } from './service-types';
+import { GOOGLE_CREDITS } from './service-types';
 
 /**
  * Return site vouchers getting from state object and
@@ -40,7 +40,7 @@ export const getVouchersBySiteIdAndServiceType = ( state, siteId, serviceType ) 
 };
 
 /**
- * Return google-ad-credits vouchers
+ * Return google-credits vouchers
  *
  * @param {Object} state - current state object
  * @param {Object} site - site object
@@ -49,7 +49,7 @@ export const getVouchersBySiteIdAndServiceType = ( state, siteId, serviceType ) 
 
 export const getGoogleAdCredits = ( state, site ) => {
 	const vouchers = getVouchersBySite( state, site );
-	return vouchers[ GOOGLE_AD_CREDITS ] || [];
+	return vouchers[ GOOGLE_CREDITS ] || [];
 };
 
 /**

@@ -119,7 +119,7 @@ export function requestSiteVouchers( siteId ) {
  * Assign a voucher to the given site.
  *
  * @param {Number} siteId - identifier of the site
- * @param {String} serviceType - service type suppoerted: 'google-ad-credits', etc.
+ * @param {String} serviceType - service type supported: 'google-credits', etc.
  * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function assignSiteVoucher( siteId, serviceType ) {
