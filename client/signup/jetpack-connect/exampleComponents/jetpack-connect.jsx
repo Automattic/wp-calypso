@@ -28,7 +28,15 @@ export default React.createClass( {
 					</div>
 
 				</div>
-				<img src="/calypso/images/jetpack/jetpack-connect-connect.png" />
+				<div className="jetpack-connect__example-content jetpack-connect__example-connect-jetpack">
+					<div className="jetpack-connect__example-content-wp-admin-masterbar"></div>
+					<div className="jetpack-connect__example-content-wp-admin-sidebar"></div>
+					<div className="jetpack-connect__example-content-wp-admin-main">
+						<div className="jetpack-connect__example-content-wp-admin-connect-banner">
+							<div className="jetpack-connect__example-content-wp-admin-connect-button">{ this.translate( 'Connect to WordPress.com' ) }</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		);
 	}

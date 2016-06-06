@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 /**
@@ -30,9 +31,27 @@ export default React.createClass( {
 				</div>
 				{
 					this.props.isInstall
-						? <img src="/calypso/images/jetpack/jetpack-connect-activate.png" />
-						: <img src="/calypso/images/jetpack/jetpack-connect-activate-from-plugins.png" />
-				}
+						? <div className="jetpack-connect__example-content jetpack-connect__example-connect-jetpack">
+								<div className="jetpack-connect__example-content-wp-admin-masterbar"></div>
+								<div className="jetpack-connect__example-content-wp-admin-sidebar"></div>
+								<div className="jetpack-connect__example-content-wp-admin-main">
+									<div className="jetpack-connect__example-content-wp-admin-plugin-card">
+										<div className="jetpack-connect__example-content-wp-admin-plugin-name">{ this.translate( 'Jetpack by WordPress.com' ) }</div>
+										<div className="jetpack-connect__example-content-wp-admin-plugin-activate-link">{ this.translate( 'Activate' ) }</div>
+									</div>
+								</div>
+							</div>
+
+						: <div className="jetpack-connect__example-content jetpack-connect__example-connect-jetpack">
+								<div className="jetpack-connect__example-content-wp-admin-masterbar"></div>
+								<div className="jetpack-connect__example-content-wp-admin-sidebar"></div>
+								<div className="jetpack-connect__example-content-wp-admin-main">
+									<div className="jetpack-connect__example-content-wp-admin-activate-view">
+										<div className="jetpack-connect__example-content-wp-admin-activate-link">{ this.translate( 'Activate Plugin' ) }</div>
+									</div>
+								</div>
+							</div>
+					}
 			</div>
 		);
 	}

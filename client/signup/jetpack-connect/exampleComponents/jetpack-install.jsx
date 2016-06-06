@@ -28,10 +28,11 @@ export default React.createClass( {
 					</div>
 
 				</div>
-				<div className="jetpack-connect__example-content example-install-jetpack">
-					<div className="install-plugin-header"></div>
-					<div className="install-plugin-footer">
-						<div className="install-plugin-footer-button">{ this.translate( 'Install Now' ) }</div>
+				<div className="jetpack-connect__example-content jetpack-connect__example-install-jetpack">
+					<div className="jetpack-connect__example-install-plugin-header"></div>
+					<div className="jetpack-connect__example-install-plugin-body"></div>
+					<div className="jetpack-connect__example-install-plugin-footer">
+						<div className="jetpack-connect__example-install-plugin-footer-button">{ this.translate( 'Install Now' ) }</div>
 					</div>
 				</div>
 			</div>
