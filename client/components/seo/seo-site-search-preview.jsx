@@ -29,12 +29,15 @@ export const SeoSiteSearchPreview = React.createClass( {
 
 		return (
 			<div className="seo-search-result-preview">
-				<div className="seo-search-result-preview__title">{ title }</div>
-				<div className="seo-search-result-preview__url">
-					{ url } ▾
-				</div>
-				<div className="seo-search-result-preview__snippet">
-					{ snippet }
+				<h2 className="seo-search-result-preview__header">{ this.translate( 'Google Preview' ) }</h2>
+				<div className="seo-search-result-preview__display">
+					<div className="seo-search-result-preview__title">{ title }</div>
+					<div className="seo-search-result-preview__url">
+						{ url } ▾
+					</div>
+					<div className="seo-search-result-preview__snippet">
+						{ snippet }
+					</div>
 				</div>
 			</div>
 		);

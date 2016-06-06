@@ -1,5 +1,24 @@
 .seo-search-result-preview {
-	padding: 2px;
+	border: 1px solid lighten( $gray, 30% );
+	box-shadow: 0 3px 6px -3px rgba( 0, 0, 0, 0.05 );
+}
+
+.seo-search-result-preview__header {
+	margin: 0;
+	padding: 8px 0;
+	background-color: $gray-light;
+	border: 1px solid lighten( $gray, 30% );
+	border-bottom: 0;
+	font-size: 11px;
+	line-height: 1;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+	color: $gray;
+}
+
+.seo-search-result-preview__display {
+	padding: 10px 20px;
 }
 
 .seo-search-result-preview__title {
