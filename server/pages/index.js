@@ -28,15 +28,7 @@ var staticFiles = [
 	{ path: 'style-rtl.css' }
 ];
 
-var chunksByPath = {};
-
 var sections = sectionsModule.get();
-
-sections.forEach( function( section ) {
-	section.paths.forEach( function( path ) {
-		chunksByPath[ path ] = section.name;
-	} );
-} );
 
 // TODO: Move into an `app.get()` route handler (e.g. next to language setting),
 // and pass the bootstrap locale as a parameter.
@@ -105,26 +97,6 @@ function generateStaticUrls( request ) {
 	return urls;
 }
 
-function getChunk( path ) {
-	var regex, chunkPath;
-
-	for ( chunkPath in chunksByPath ) {
-		if ( chunkPath === path ) {
-			return chunksByPath[ chunkPath ];
-		}
-
-		if ( chunkPath === '/' ) {
-			continue;
-		}
-
-		regex = utils.pathToRegExp( chunkPath );
-
-		if ( regex.test( path ) ) {
-			return chunksByPath[ chunkPath ];
-		}
-	}
-}
-
 function getCurrentBranchName() {
 	try {
 		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
@@ -142,9 +114,7 @@ function getCurrentCommitShortChecksum() {
 }
 
 function getDefaultContext( request ) {
-	var context, chunk;
-
-	context = {
+	var context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
 		user: false,
@@ -161,7 +131,7 @@ function getDefaultContext( request ) {
 		devDocsURL: '/devdocs',
 		catchJsErrors: '/calypso/catch-js-errors-' + 'v2' + '.min.js',
 		isPushEnabled: !! config.isEnabled( 'push-notifications' )
-	};
+	} );
 
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
@@ -197,14 +167,6 @@ function getDefaultContext( request ) {
 		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
-	}
-
-	if ( config.isEnabled( 'code-splitting' ) ) {
-		chunk = getChunk( request.path );
-
-		if ( chunk ) {
-			context.chunk = chunk;
-		}
 	}
 
 	return context;
@@ -339,6 +301,12 @@ function setUpRoute( req, res, next ) {
 	}
 }
 
+function render404( request, response ) {
+	response.status( 404 ).render( '404.jade', {
+		urls: generateStaticUrls( request )
+	} );
+}
+
 module.exports = function() {
 	var app = express();
 
@@ -372,11 +340,7 @@ module.exports = function() {
 		res.redirect( redirectUrl );
 	} );
 
-	app.get( '/calypso/?*', function( request, response ) {
-		response.status( 404 ).render( '404.jade', {
-			urls: generateStaticUrls( request )
-		} );
-	} );
+	app.get( '/calypso/?*', render404 );
 
 	if ( config.isEnabled( 'login' ) ) {
 		app.get( '/log-in/:lang?', setUpLoggedOutRoute, serverRender );
@@ -416,13 +380,29 @@ module.exports = function() {
 
 	// Isomorphic routing
 	sections
-		.filter( section => section.isomorphic )
 		.forEach( section => {
-			sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
+			section.paths.forEach( path => {
+				const pathRegex = utils.pathToRegExp( path );
+
+				app.get( pathRegex, function( req, res, next ) {
+					if ( config.isEnabled( 'code-splitting' ) ) {
+						req.context = Object.assign( {}, req.context, { chunk: section.name } );
+					}
+					next();
+				} );
+
+				if ( ! section.isomorphic ) {
+					app.get( pathRegex, setUpLoggedInRoute, serverRender );
+				}
+			} );
+
+			if ( section.isomorphic ) {
+				sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
+			}
 		} );
 
-	// catchall path to serve shell for all non-static-file requests (other than auth routes)
-	app.get( '*', setUpLoggedInRoute, serverRender );
+	// catchall to render 404 for all routes not whitelisted in client/sections
+	app.get( '*', render404 );
 
 	return app;
 };
