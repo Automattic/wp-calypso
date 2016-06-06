@@ -378,10 +378,6 @@ module.exports = function() {
 		} );
 	} );
 
-	if ( config.isEnabled( 'login' ) ) {
-		app.get( '/log-in/:lang?', setUpLoggedOutRoute, serverRender );
-	}
-
 	if ( config.isEnabled( 'jetpack/connect' ) ) {
 		app.get( '/jetpack/connect/:locale?', setUpRoute, serverRender );
 		app.get( '/jetpack/connect/authorize/:locale?', setUpRoute, serverRender );
@@ -393,10 +389,6 @@ module.exports = function() {
 		setUpRoute,
 		serverRender
 	);
-
-	if ( config.isEnabled( 'phone_signup' ) ) {
-		app.get( '/phone/:lang?', setUpLoggedOutRoute, serverRender );
-	}
 
 	if ( config.isEnabled( 'mailing-lists/unsubscribe' ) ) {
 		app.get( '/mailing-lists/unsubscribe', setUpRoute, serverRender );
