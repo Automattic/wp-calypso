@@ -291,17 +291,25 @@ function getGuidedToursDestination( destination, dependencies, flowName ) {
 	return getVariantUrl( guidedToursVariant );
 }
 
-export default {
+const Flows = {
 	filterFlowName,
 	filterDestination,
 
 	defaultFlowName: 'main',
 
 	getFlow( flowName ) {
-		return user.get() ? removeUserStepFromFlow( flows[ flowName ] ) : flows[ flowName ];
+		let flow = Flows.getFlows()[ flowName ];
+
+		if ( user.get() ) {
+			flow = removeUserStepFromFlow( flow );
+		}
+
+		return flow;
 	},
 
 	getFlows() {
 		return flows;
 	}
 };
+
+export default Flows;

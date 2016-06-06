@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:client:signup:controller-utils:test' ), // eslint-disable-line no-unused-vars
-	sinon = require( 'sinon' ),
-	assert = require( 'assert' );
+import debugModule from 'debug';
+import sinon from 'sinon';
+import assert from 'assert';
 
 /**
  * Internal dependencies
@@ -11,19 +11,32 @@ var debug = require( 'debug' )( 'calypso:client:signup:controller-utils:test' ),
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import useI18n from 'test/helpers/use-i18n';
 import useMockery from 'test/helpers/use-mockery';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import mockedFlows from './fixtures/flows';
+
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:client:signup:controller-utils:test' );
 
 debug( 'start utils test' );
 
 describe( 'utils', function() {
-	var flows, utils;
+	let flows, utils;
 
 	useFilesystemMocks( __dirname );
 	useI18n();
+	useFakeDom();
+
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/abtest', {
 			abtest: () => ''
 		} );
+	} );
+
+	before( () => {
 		flows = require( 'signup/config/flows' );
+		sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
 		utils = require( '../utils' );
 	} );
 
@@ -143,7 +156,7 @@ describe( 'utils', function() {
 		} );
 
 		it( 'should handle arbitrary step section names', function() {
-			var randomStepSectionName = 'random-step-section-' + Math.random();
+			const randomStepSectionName = 'random-step-section-' + Math.random();
 
 			assert.equal( utils.getValidPath( {
 				flowName: 'account',
@@ -154,7 +167,7 @@ describe( 'utils', function() {
 		} );
 
 		it( 'should handle arbitrary step section names in the default flow', function() {
-			var randomStepSectionName = 'random-step-section-' + Math.random();
+			const randomStepSectionName = 'random-step-section-' + Math.random();
 
 			assert.equal( utils.getValidPath( {
 				stepName: 'user',

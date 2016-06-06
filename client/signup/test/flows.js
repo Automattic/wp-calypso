@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var assert = require( 'assert' );
+import assert from 'assert';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -9,18 +10,27 @@ var assert = require( 'assert' );
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import useI18n from 'test/helpers/use-i18n';
 import useMockery from 'test/helpers/use-mockery';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import mockedFlows from './fixtures/flows';
 
 describe( 'flows', function() {
-	var flows, user;
+	let flows, user;
 
+	useFakeDom();
 	useFilesystemMocks( __dirname );
 	useI18n();
+
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/abtest', {
 			abtest: () => ''
 		} );
-		flows = require( 'signup/config/flows' );
+	} );
+
+	before( () => {
 		user = require( 'lib/user' )();
+
+		flows = require( 'signup/config/flows' );
+		sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
 	} );
 
 	it( 'should return the full flow when the user is not logged in', function() {
