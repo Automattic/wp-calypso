@@ -1,0 +1,27 @@
+.seo-search-result-preview {
+	padding: 2px;
+}
+
+.seo-search-result-preview__title {
+	color: #1a0dab; // matching Google results
+	font-size: 18px;
+	line-height: 1.2;
+
+	&:hover {
+		cursor: pointer;
+		text-decoration: underline;
+	}
+}
+
+.seo-search-result-preview__url {
+	color: #006621; // matching Google results
+	font-size: 14px;
+	height: 17px;
+	line-height: 16px;
+}
+
+.seo-search-result-preview__snippet {
+	color: #545454; // matching Google results
+	font-size: 13px;
+	line-height: 1.4;
+}

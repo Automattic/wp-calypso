@@ -27,6 +27,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import SearchEngineSeoPreview from 'components/seo/seo-site-search-preview';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const serviceIds = {
@@ -203,10 +204,12 @@ export const SeoForm = React.createClass( {
 
 	render() {
 		const {
+			description: siteDescription,
 			slug = '',
 			settings: {
 				blog_public = 1
-			} = {}
+			} = {},
+			title: siteTitle
 		} = this.props.site;
 
 		const {
@@ -224,7 +227,11 @@ export const SeoForm = React.createClass( {
 		const isDisabled = isSitePrivate || isSubmittingForm || isFetchingSettings;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
-		const sitemapUrl = `https://${ slug }/sitemap.xml`;
+		const seoTitle = siteDescription.length
+			? `${ siteTitle } | ${ siteDescription }`
+			: siteTitle;
+		const siteUrl = `https://${ slug }/`;
+		const sitemapUrl = `${ siteUrl }/sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
 		const placeholderTagContent = '1234';
 
@@ -293,6 +300,12 @@ export const SeoForm = React.createClass( {
 								<FormSettingExplanation>
 									{ this.translate( 'Craft a description of your site in about 160 characters. This description can be used in search engine results for your site\'s Front Page.' ) }
 								</FormSettingExplanation>
+
+								<SearchEngineSeoPreview
+									title={ seoTitle }
+									url={ siteUrl }
+									snippet={ seoMetaDescription }
+								/>
 							</FormFieldset>
 
 							<FormFieldset>
