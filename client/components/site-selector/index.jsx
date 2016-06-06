@@ -60,7 +60,7 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			search: '',
-			highlightedSite: null,
+			highlightedSite: null
 		};
 	},
 
