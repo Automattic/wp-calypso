@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
 import {
 	WORDADS_SITE_APPROVE_REQUEST,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
+	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 	SERIALIZE,
@@ -17,7 +18,8 @@ import {
 } from 'state/action-types';
 import reducer, {
 	requesting,
-	requestErrors
+	requestErrors,
+	requestSuccess
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -189,6 +191,100 @@ describe( 'reducer', () => {
 					77203074: 'something went wrong'
 				} );
 				const state = requestErrors( original, { type: DESERIALIZE } );
+				expect( state ).to.eql( {} );
+			} );
+		} );
+	} );
+
+	describe( '#requestSuccess()', () => {
+		it( 'should default to an empty object', () => {
+			const state = requestSuccess( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should index success state by site ID', () => {
+			const state = requestSuccess( undefined, {
+				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
+				siteId: 2916284
+			} );
+
+			expect( state ).to.eql( {
+				2916284: true
+			} );
+		} );
+
+		it( 'should update success state on error', () => {
+			const originalState = deepFreeze( {
+				2916284: true
+			} );
+			const state = requestSuccess( originalState, {
+				type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
+				siteId: 2916284
+			} );
+
+			expect( state ).to.eql( {
+				2916284: null
+			} );
+		} );
+
+		it( 'should update success state on dismiss error', () => {
+			const originalState = deepFreeze( {
+				2916284: true
+			} );
+			const state = requestSuccess( originalState, {
+				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
+				siteId: 2916284
+			} );
+
+			expect( state ).to.eql( {
+				2916284: null
+			} );
+		} );
+
+		it( 'should update success state by site id', () => {
+			const originalState = deepFreeze( {
+				2916284: true
+			} );
+			const state = requestSuccess( originalState, {
+				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
+				siteId: 2916284
+			} );
+			expect( state ).to.eql( {
+				2916284: true
+			} );
+		} );
+
+		it( 'should accumulate success state by site ID on success', () => {
+			const originalState = deepFreeze( {
+				2916284: true
+			} );
+			const state = requestSuccess( originalState, {
+				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
+				siteId: 77203074
+			} );
+
+			expect( state ).to.eql( {
+				2916284: true,
+				77203074: true
+			} );
+		} );
+
+		describe( 'persistence', () => {
+			it( 'never persists state', () => {
+				const original = deepFreeze( {
+					2916284: true,
+					77203074: null
+				} );
+				const state = requestSuccess( original, { type: SERIALIZE } );
+				expect( state ).to.eql( {} );
+			} );
+
+			it( 'never loads persisted state', () => {
+				const original = deepFreeze( {
+					2916284: null,
+					77203074: true
+				} );
+				const state = requestSuccess( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( {} );
 			} );
 		} );

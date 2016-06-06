@@ -10,7 +10,9 @@ import {
 	isRequestingWordAdsApproval,
 	isRequestingWordAdsApprovalForSite,
 	getWordAdsError,
-	getWordAdsErrorForSite
+	getWordAdsErrorForSite,
+	getWordAdsSuccess,
+	getWordAdsSuccessForSite
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -79,6 +81,39 @@ describe( 'selectors', () => {
 			expect( getWordAdsErrorForSite( state, { ID: 2916284 } ) ).to.equal( null );
 			expect( getWordAdsErrorForSite( state, { ID: 77203074 } ) ).to.equal( 'Something unexpected happened' );
 			expect( getWordAdsErrorForSite( state, null ) ).to.equal( null );
+		} );
+	} );
+	describe( '#getWordAdsSuccess()', () => {
+		it( 'should return word ads error', () => {
+			const state = {
+				wordads: {
+					approve: {
+						requestSuccess: {
+							2916284: null,
+							77203074: true
+						}
+					}
+				}
+			};
+			expect( getWordAdsSuccess( state, 2916284 ) ).to.equal( null );
+			expect( getWordAdsSuccess( state, 77203074 ) ).to.equal( true );
+		} );
+	} );
+	describe( '#getWordAdsSuccessForSite()', () => {
+		it( 'should return word ads error', () => {
+			const state = {
+				wordads: {
+					approve: {
+						requestSuccess: {
+							2916284: null,
+							77203074: true
+						}
+					}
+				}
+			};
+			expect( getWordAdsSuccessForSite( state, { ID: 2916284 } ) ).to.equal( null );
+			expect( getWordAdsSuccessForSite( state, { ID: 77203074 } ) ).to.equal( true );
+			expect( getWordAdsSuccessForSite( state, null ) ).to.equal( null );
 		} );
 	} );
 } );

@@ -12,14 +12,15 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
-	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR
+	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
+	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS
 } from 'state/action-types';
 
 import { useSandbox } from 'test/helpers/use-sinon';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'actions', () => {
-	let sandbox, spy, requestWordAdsApproval, dismissWordAdsError;
+	let sandbox, spy, requestWordAdsApproval, dismissWordAdsError, dismissWordAdsSuccess;
 
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;
@@ -33,12 +34,22 @@ describe( 'actions', () => {
 		const actions = require( '../actions' );
 		requestWordAdsApproval = actions.requestWordAdsApproval;
 		dismissWordAdsError = actions.dismissWordAdsError;
+		dismissWordAdsSuccess = actions.dismissWordAdsSuccess;
 	} );
 
 	describe( '#dismissWordAdsError()', () => {
 		it( 'should return a dismiss error action', () => {
 			expect( dismissWordAdsError( 2916284 ) ).to.eql( {
 				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
+				siteId: 2916284
+			} );
+		} );
+	} );
+
+	describe( '#dismissWordAdsSuccess()', () => {
+		it( 'should return a dismiss Success action', () => {
+			expect( dismissWordAdsSuccess( 2916284 ) ).to.eql( {
+				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 				siteId: 2916284
 			} );
 		} );
