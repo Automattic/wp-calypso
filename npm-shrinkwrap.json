@@ -3015,9 +3015,6 @@
     "restore-cursor": {
       "version": "1.0.1"
     },
-    "rewire": {
-      "version": "2.3.3"
-    },
     "right-align": {
       "version": "0.1.3"
     },
