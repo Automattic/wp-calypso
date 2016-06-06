@@ -1,63 +1,73 @@
 /**
  * External depencencies
  */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
+import React, { Component, PropTypes } from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
-import { setEditorMediaEditItem } from 'state/ui/editor/media/actions';
+import MediaMarkup from 'post-editor/media-modal/markup';
+import localize from 'lib/mixins/i18n/localize';
+import Button from 'components/button';
 import Dialog from 'components/dialog';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
 
-const EditorMediaAdvanced = React.createClass( {
-	propTypes: {
-		item: PropTypes.object,
-		resetEditItem: PropTypes.func,
-		insertMedia: PropTypes.func
-	},
+class EditorMediaAdvanced extends Component {
+	constructor() {
+		super( ...arguments );
 
-	getDefaultProps() {
-		return {
-			resetEditItem: () => {},
-			insertMedia: () => {}
-		};
-	},
+		this.save = this.save.bind( this );
+	}
 
-	getButtonSettings() {
-		return [
-			{
-				action: 'confirm',
-				label: this.translate( 'Save' ),
-				isPrimary: true,
-				onClick: () => this.props.insertMedia( 'Updated' )
-			}
-		];
-	},
+	save() {
+		const { media, appearance } = this.props.item;
+		const markup = MediaMarkup.get( Object.assign( {}, media, {
+			alt: ReactDom.findDOMNode( this.refs.alt ).value
+		} ), appearance );
+
+		this.props.insertMedia( markup );
+	}
 
 	render() {
-		const { item, resetEditItem } = this.props;
+		const { translate, visible, item, onClose } = this.props;
+
+		const buttons = [
+			<Button primary onClick={ this.save }>
+				{ translate( 'Save' ) }
+			</Button>
+		];
 
 		return (
-			<Dialog
-				isVisible={ !! item }
-				buttons={ this.getButtonSettings() }
-				onClose={ resetEditItem }>
-				ID { item && item.media.ID }
+			<Dialog { ...{ isVisible: visible, buttons, onClose } }>
+				<form onSubmit={ this.save }>
+					<FormFieldset>
+						<FormLabel>
+							{ translate( 'Alt text' ) }
+							<FormTextInput
+								ref="alt"
+								defaultValue={ item.media.alt } />
+						</FormLabel>
+					</FormFieldset>
+				</form>
 			</Dialog>
 		);
 	}
-} );
+}
 
-export default connect(
-	( state ) => {
-		return {
-			item: state.ui.editor.media.editItem
-		};
-	},
-	( dispatch ) => {
-		return {
-			resetEditItem: () => dispatch( setEditorMediaEditItem( null ) )
-		};
-	}
-)( EditorMediaAdvanced );
+EditorMediaAdvanced.propTypes = {
+	translate: PropTypes.func,
+	visible: PropTypes.bool,
+	item: PropTypes.object,
+	onClose: PropTypes.func,
+	insertMedia: PropTypes.func
+};
+
+EditorMediaAdvanced.defaultProps = {
+	onClose: () => {},
+	insertMedia: () => {}
+};
+
+export default localize( EditorMediaAdvanced );
