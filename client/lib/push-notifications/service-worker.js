@@ -8,6 +8,12 @@
 
 var queuedMessages = [];
 
+/**
+ *  We want to make sure that if the service worker gets updated that we 
+ *  immediately claim it, to ensure we're not running stale versions of the worker
+ *	See: https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/skipWaiting
+ **/
+
 self.addEventListener( 'install', function( event ) {
 	event.waitUntil( self.skipWaiting() );
 } );
