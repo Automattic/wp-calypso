@@ -12,6 +12,8 @@ If you’re filing a bug, specific steps to reproduce are helpful. Please includ
 
 Here is a [handy link for submitting a new bug](https://github.com/Automattic/wp-calypso/issues/new?body=URL%3A%0A%0AWhat+I+expected%3A%0A%0AWhat+happened+instead%3A%0A%0ASteps+to+reproduce%3A%0A%0ABrowser%20OS%20version%3A%0A%0AScreenshots/Video%3A&title=Feature:%20description%20of%20the%20problem&labels%5B%5D=%5BType%5D%20Bug).
 
+Feel free to share your unique context to help us understand your perspective. You can add context tags such as: `#journey` `#anecdote` `#narrative` `#context` `#empathy` `#perspective` `#reallife` `#dogfooding` `#livesharing` `#flowsharing` `#anxiety` `#anxiety-flow` `#stresscase` `#painpoint`. We'd also love to know how you found the bug: `#dogfooding`, `#manual-testing`, `#automated-testing`, or `#user-report`.
+
 ## Installing Calypso Locally
 
 If you’d like to contribute code, first, you will need to run Calypso locally. Here is the short version:

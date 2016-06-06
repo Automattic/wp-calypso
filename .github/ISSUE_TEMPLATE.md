@@ -17,6 +17,12 @@
 
 #### Screenshot / Video
 
+
+#### Context / Source
+<!-- Optional: Share with us your perspective and source, using suggested flow and source keywords here: https://github.com/Automattic/wp-calypso/blob/master/.github/CONTRIBUTING.md#reporting-bugs-asking-questions-sending-suggestions. -->
+
+
+
 <!--
 PLEASE NOTE
 - These comments won't show up when you submit the issue.
