@@ -290,6 +290,7 @@ export default {
 			} );
 
 			return wpcom.undocumented().jetpackValidateSSONonce( siteId, ssoNonce ).then( ( data ) => {
+				tracksEvent( dispatch, 'calypso_jpc_validate_sso_success' );
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 					success: data.success,
@@ -297,6 +298,9 @@ export default {
 					sharedDetails: data.shared_details
 				} );
 			} ).catch( ( error ) => {
+				tracksEvent( dispatch, 'calypso_jpc_validate_sso_error', {
+					error: error
+				} );
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 					error: pick( error, [ 'error', 'status', 'message' ] )
@@ -313,11 +317,15 @@ export default {
 			} );
 
 			return wpcom.undocumented().jetpackAuthorizeSSONonce( siteId, ssoNonce ).then( ( data ) => {
+				tracksEvent( dispatch, 'calypso_jpc_authorize_sso_success' );
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 					ssoUrl: data.sso_url
 				} );
 			} ).catch( ( error ) => {
+				tracksEvent( dispatch, 'calypso_jpc_authorize_sso_error', {
+					error: error
+				} );
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 					error: pick( error, [ 'error', 'status', 'message' ] )

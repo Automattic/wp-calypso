@@ -32,6 +32,7 @@ import { decodeEntities } from 'lib/formatting';
 import Gridicon from 'components/gridicon';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import Dialog from 'components/dialog';
+import analytics from 'lib/analytics';
 
 /*
  * Module variables
@@ -71,6 +72,7 @@ const JetpackSSOForm = React.createClass( {
 
 	onApproveSSO( event ) {
 		event.preventDefault();
+		analytics.tracks.recordEvent( 'calypso_jetpack_sso_log_in_button_click' );
 
 		const { siteId, ssoNonce } = this.props;
 		debug( 'Approving sso' );
@@ -79,16 +81,23 @@ const JetpackSSOForm = React.createClass( {
 
 	onCancelClick( event ) {
 		debug( 'Clicked return to site link' );
+		analytics.tracks.recordEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
 		this.returnToSiteFallback( event );
 	},
 
 	onTryAgainClick( event ) {
 		debug( 'Clicked try again link' );
+		analytics.tracks.recordEvent( 'calypso_jetpack_sso_try_again_link_click' );
 		this.returnToSiteFallback( event );
+	},
+
+	onClickSignInDifferentUser() {
+		analytics.tracks.recordEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
 	},
 
 	onClickSharedDetailsModal( event ) {
 		event.preventDefault();
+		analytics.tracks.recordEvent( 'calypso_jetpack_sso_shared_details_link_click' );
 		this.setState( {
 			showTermsDialog: true
 		} );
@@ -104,6 +113,7 @@ const JetpackSSOForm = React.createClass( {
 		// If, for some reason, the API request failed and we do not have the admin URL,
 		// then fallback to the user's last location.
 		if ( ! get( this.props, 'blogDetails.admin_url' ) ) {
+			analytics.tracks.recordEvent( 'calypso_jetpack_sso_admin_url_fallback_redirect' );
 			event.preventDefault();
 			window.history.back();
 		}
@@ -379,7 +389,7 @@ const JetpackSSOForm = React.createClass( {
 					</Card>
 
 					<LoggedOutFormLinks>
-						<LoggedOutFormLinkItem href={ this.getSignInLink() }>
+						<LoggedOutFormLinkItem href={ this.getSignInLink() } onClick={ this.onClickSignInDifferentUser }>
 							{ this.translate( 'Sign in as a different user' ) }
 						</LoggedOutFormLinkItem>
 						<LoggedOutFormLinkItem
