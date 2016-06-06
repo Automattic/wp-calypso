@@ -30,7 +30,6 @@ class SiteCreditVouchers {
 	 */
 	list( query = {}, fn ) {
 		query.apiNamespace = 'wpcom/v2';
-		console.log( `-> query -> `, query );
 		return this.wpcom.req.get( this.path, query, fn );
 	}
 
