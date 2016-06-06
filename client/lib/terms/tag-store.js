@@ -16,15 +16,13 @@ var Dispatcher = require( 'dispatcher' ),
 * Module Variables
 */
 
-var _tagIds = {},
-	_siteStatus = {},
-	ActionTypes = TermsConstants.action;
+var ActionTypes = TermsConstants.action;
 
 var TagStore = {};
 
 function ensureSiteHasStatus( siteId ) {
-	if ( ! ( siteId in _siteStatus ) ) {
-		_siteStatus[ siteId ] = {
+	if ( ! ( siteId in TagStore._siteStatus ) ) {
+		TagStore._siteStatus[ siteId ] = {
 			page: 1,
 			isFetchingPage: false
 		};
@@ -34,24 +32,24 @@ function ensureSiteHasStatus( siteId ) {
 function updateSiteStatus( siteId, values ) {
 	debug( 'updateSiteStatus', siteId, values );
 	ensureSiteHasStatus( siteId );
-	assign( _siteStatus[ siteId ], values );
+	assign( TagStore._siteStatus[ siteId ], values );
 }
 
 function updateNextPage( siteId, data ) {
 	ensureSiteHasStatus( siteId );
 
-	if ( data.found !== _tagIds[ siteId ].length && data.terms.length ) {
+	if ( data.found !== TagStore._tagIds[ siteId ].length && data.terms.length ) {
 		debug( 'updateNextPage - site has next page', siteId, data );
-		_siteStatus[ siteId ].page++;
+		TagStore._siteStatus[ siteId ].page++;
 	} else {
 		debug( 'updateNextPage - site has no more pages', siteId, data );
-		delete _siteStatus[ siteId ].page;
+		delete TagStore._siteStatus[ siteId ].page;
 	}
 }
 
 function ensureTagIds( siteId ) {
-	if ( ! ( siteId in _tagIds ) ) {
-		_tagIds[ siteId ] = [];
+	if ( ! ( siteId in TagStore._tagIds ) ) {
+		TagStore._tagIds[ siteId ] = [];
 	}
 }
 
@@ -61,12 +59,12 @@ function receiveTags( siteId, tags ) {
 
 	tags.forEach( function( tag ) {
 		var tagId = tag.ID,
-			existingIndex = _tagIds[ siteId ].indexOf( tagId );
+			existingIndex = TagStore._tagIds[ siteId ].indexOf( tagId );
 
 		if ( -1 !== existingIndex ) {
-			_tagIds[ siteId ].splice( existingIndex, 1, tagId );
+			TagStore._tagIds[ siteId ].splice( existingIndex, 1, tagId );
 		} else {
-			_tagIds[ siteId ].push( tagId );
+			TagStore._tagIds[ siteId ].push( tagId );
 		}
 	} );
 }
@@ -77,12 +75,16 @@ TagStore._queryDefaults = {
 	order: 'DESC'
 };
 
+TagStore._tagIds = {};
+
+TagStore._siteStatus = {};
+
 TagStore.hasNextPage = function( siteId ) {
-	return ! ( siteId in _siteStatus ) || !! _siteStatus[ siteId ].page;
+	return ! ( siteId in TagStore._siteStatus ) || !! TagStore._siteStatus[ siteId ].page;
 };
 
 TagStore.isFetchingPage = function( siteId ) {
-	return ( siteId in _siteStatus ) && _siteStatus[ siteId ].isFetchingPage;
+	return ( siteId in TagStore._siteStatus ) && TagStore._siteStatus[ siteId ].isFetchingPage;
 };
 
 TagStore.get = function( siteId, tagId ) {
@@ -90,7 +92,7 @@ TagStore.get = function( siteId, tagId ) {
 };
 
 TagStore.all = function( siteId ) {
-	var ids = _tagIds[ siteId ],
+	var ids = TagStore._tagIds[ siteId ],
 		tags;
 
 	if ( ids ) {
@@ -107,7 +109,7 @@ TagStore.getQueryParams = function( siteId ) {
 	return assign(
 		{},
 		TagStore._queryDefaults,
-		{ page: _siteStatus[ siteId ].page }
+		{ page: TagStore._siteStatus[ siteId ].page }
 	);
 };
 
