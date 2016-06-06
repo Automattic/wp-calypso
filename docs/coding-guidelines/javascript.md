@@ -226,10 +226,20 @@ var userIdToDelete, siteUrl;
 var userIDToDelete, siteURL;
 ```
 
-Constructors intended for use with new should have a capital first letter (UpperCamelCase).
-
 Names should be descriptive, but not excessively so. Exceptions are allowed for iterators, such as the use of `i` to represent the index in a loop.
 
+Constructors intended for use with new should have a capital first letter (UpperCamelCase).
+
+Variables intended to be used as a [constant](https://en.wikipedia.org/wiki/Constant_(computer_programming)) can be defined with the [SCREAMING_SNAKE_CASE naming convention](https://en.wikipedia.org/wiki/Snake_case). Note that while any variable declared using `const` could be considered a constant, in the context of our application this usage should usually be limited to top-level or exported module values.
+
+```js
+const DUMMY_VALUE = 10;
+
+function getIncrementedDummyValue() {
+	const incrementedValue = DUMMY_VALUE + 1;
+	return incrementedValue;
+}
+```
 
 ## Comments
 
