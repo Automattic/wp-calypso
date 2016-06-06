@@ -14,6 +14,24 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
 let locale;
 
 /**
+ * Setter function for internal locale value
+ *
+ * @param {String} localeToSet Locale to set
+ */
+export function setLocale( localeToSet ) {
+	locale = localeToSet;
+}
+
+/**
+ * Getter function for internal locale value
+ *
+ * @return {String} Locale
+ */
+export function getLocale() {
+	return locale;
+}
+
+/**
  * Given a WPCOM parameter set, modifies the query such that a non-default
  * locale is added to the query parameter.
  *
@@ -29,7 +47,7 @@ export function addLocaleQueryParam( params ) {
 	return Object.assign( params, {
 		query: qs.stringify( Object.assign( query, { locale } ) )
 	} );
-};
+}
 
 /**
  * Modifies a WPCOM instance, returning an updated instance with included
@@ -65,10 +83,10 @@ export function injectLocalization( wpcom ) {
  * @param {Object} store Redux store instance
  */
 export function bindState( store ) {
-	function setLocale() {
-		locale = getCurrentUserLocale( store.getState() );
+	function setLocaleFromState() {
+		setLocale( getCurrentUserLocale( store.getState() ) );
 	}
 
-	store.subscribe( setLocale );
-	setLocale();
+	store.subscribe( setLocaleFromState );
+	setLocaleFromState();
 }
