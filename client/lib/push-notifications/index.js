@@ -82,7 +82,11 @@ PushNotifications.prototype.initialize = function() {
 
 	// Only register the service worker in browsers that support it.
 	if ( 'serviceWorker' in window.navigator ) {
-		window.navigator.serviceWorker.register( '/service-worker.js' ).then( initializeState.bind( this ) ).catch( ( err ) => {
+		window.navigator.serviceWorker.ready.then( () => {
+			window.navigator.serviceWorker.register( '/service-worker.js' ).then( initializeState.bind( this ) ).catch( ( err ) => {
+				debug( 'Service worker not supported', err );
+			} );
+		} ).catch( ( err ) => {
 			debug( 'Service worker not supported', err );
 		} );
 	} else {
