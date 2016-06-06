@@ -46,6 +46,12 @@ export default class FilePicker extends React.Component {
 
 	render() {
 		const formStyle = {
+			position: 'relative',
+			width: '0px',
+			height: '0px',
+			overflow: 'hidden'
+		};
+		const inputStyle = {
 			top: '-1000px',
 			position: 'absolute'
 		};
@@ -55,7 +61,7 @@ export default class FilePicker extends React.Component {
 					{ this.props.children }
 				</span>
 				<form style={ formStyle } >
-					<input type="file" { ...this.getFileAttributes() } aria-hidden="true" ref="fileInput" onChange={ this.onChange.bind( this ) }  />
+					<input type="file" { ...this.getFileAttributes() } style={ inputStyle } aria-hidden="true" ref="fileInput" onChange={ this.onChange.bind( this ) }  />
 				</form>
 			</span>
 		);
