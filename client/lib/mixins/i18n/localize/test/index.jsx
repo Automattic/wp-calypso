@@ -3,17 +3,14 @@
  */
 import React from 'react';
 import { expect } from 'chai';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import localize from '../';
 
 describe( '#localize()', () => {
-	useFakeDom();
-
 	it( 'should be named using the variable name of the composed component', () => {
 		const MyComponent = React.createClass( {
 			render: () => null
@@ -26,14 +23,14 @@ describe( '#localize()', () => {
 
 	it( 'should be named using the displayName of the composed component', () => {
 		const MyComponent = React.createClass( {
-			displayName: 'MyComponent',
+			displayName: 'MyRenamedComponent',
 
 			render: () => null
 		} );
 
 		const LocalizedComponent = localize( MyComponent );
 
-		expect( LocalizedComponent.displayName ).to.equal( 'LocalizedMyComponent' );
+		expect( LocalizedComponent.displayName ).to.equal( 'LocalizedMyRenamedComponent' );
 	} );
 
 	it( 'should be named using the name of the composed function component', () => {
@@ -50,7 +47,7 @@ describe( '#localize()', () => {
 		} );
 		const LocalizedComponent = localize( MyComponent );
 
-		const mounted = mount( <LocalizedComponent /> );
+		const mounted = shallow( <LocalizedComponent /> );
 		const props = mounted.find( MyComponent ).props();
 
 		expect( props.translate ).to.be.a( 'function' );
