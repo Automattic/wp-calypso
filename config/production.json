@@ -63,6 +63,8 @@
 		"persist-redux": true,
 		"post-editor/author-selector": true,
 		"press-this": true,
+		"preview-layout": true,
+		"preview-endpoint": false,
 		"reader": true,
 		"reader/full-errors": false,
 		"reader/tags-with-elasticsearch": false,
