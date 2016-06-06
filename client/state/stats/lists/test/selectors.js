@@ -7,14 +7,16 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getParsedStreakDataForQuery,
+	getSiteStatsMaxPostsByDay,
+	getSiteStatsPostStreakData,
 	getSiteStatsForQuery,
 	isRequestingSiteStatsForQuery
 } from '../selectors';
 
 describe( 'selectors', () => {
 	beforeEach( () => {
-		getParsedStreakDataForQuery.memoizedSelector.cache.clear();
+		getSiteStatsPostStreakData.memoizedSelector.cache.clear();
+		getSiteStatsMaxPostsByDay.memoizedSelector.cache.clear();
 	} );
 
 	describe( 'isRequestingSiteStatsForQuery()', () => {
@@ -107,9 +109,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getParsedStreakDataForQuery()', () => {
-		it( 'should return default object if no matching query results exist', () => {
-			const stats = getParsedStreakDataForQuery( {
+	describe( 'getSiteStatsPostStreakData()', () => {
+		it( 'should return an empty object if no matching query results exist', () => {
+			const stats = getSiteStatsPostStreakData( {
 				stats: {
 					lists: {
 						items: {}
@@ -117,11 +119,11 @@ describe( 'selectors', () => {
 				}
 			}, 2916284, {} );
 
-			expect( stats ).to.eql( { days: {}, best: { day: 0, percent: 0 }, max: 0 } );
+			expect( stats ).to.eql( {} );
 		} );
 
 		it( 'should properly formatted data if matching data for query exists', () => {
-			const stats = getParsedStreakDataForQuery( {
+			const stats = getSiteStatsPostStreakData( {
 				stats: {
 					lists: {
 						items: {
@@ -140,16 +142,45 @@ describe( 'selectors', () => {
 			}, 2916284, { startDate: '2015-06-01', endDate: '2016-06-01' } );
 
 			expect( stats ).to.eql( {
-				best: {
-					day: 2,
-					percent: 67
-				},
-				days: {
-					'2016-04-29': 1,
-					'2016-05-24': 2
-				},
-				max: 2
+				'2016-04-29': 1,
+				'2016-05-24': 2
 			} );
+		} );
+	} );
+
+	describe( 'getSiteStatsMaxPostsByDay()', () => {
+		it( 'should return null if no matching query results exist', () => {
+			const stats = getSiteStatsMaxPostsByDay( {
+				stats: {
+					lists: {
+						items: {}
+					}
+				}
+			}, 2916284, {} );
+
+			expect( stats ).to.be.null;
+		} );
+
+		it( 'should properly correct number of max posts grouped by day', () => {
+			const stats = getSiteStatsMaxPostsByDay( {
+				stats: {
+					lists: {
+						items: {
+							2916284: {
+								statsStreak: {
+									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
+										1461961382: 1,
+										1464110402: 1,
+										1464110448: 1
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, { startDate: '2015-06-01', endDate: '2016-06-01' } );
+
+			expect( stats ).to.eql( 2 );
 		} );
 	} );
 } );
