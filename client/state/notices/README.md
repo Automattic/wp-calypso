@@ -42,6 +42,7 @@ this.props.successNotice(
 * `errorNotice()`
 * `infoNotice()`
 * `warningNotice()`
+* `updateNotice()`
 
 ## Options
 
@@ -49,9 +50,11 @@ The first argument is the text to be displayed on the notice. The second argumen
 
 *All these parameters are optional*
 
-* `id` (default generated `uniqueId()` ) ID for your notice
+* `id` (default generated `uniqueId()` ) ID for your notice. If a notice with the same ID already exists then the new one will replace it.
+* `icon` (default null - use default icon) The icon name.
+* `button: 'Label'`: (optional) Text label to display on action button.
+* `href: 'https://wordpress.com'`: (optional, requires `button` to be set as well) Url to be used for the button action.
 * `duration` (default null - notices stay forever) Duration in milliseconds to display the notice before dismissing.
 * `showDismiss` (default true) To indicate if dismiss button should be rendered within the overlay.
 * `isPersistent` (default false - notices disappear when navigating route) - should notice be persistent between route changes?
 * `displayOnNextPage` (default false) - should notice appear on next route change?
-

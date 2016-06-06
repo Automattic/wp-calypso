@@ -1,72 +1,133 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import ButtonGroup from 'components/button-group';
 import FormCheckbox from 'components/forms/form-checkbox';
-import notices from 'notices';
-import { createNotice } from 'state/notices/actions';
+import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
+import FormFieldSet from 'components/forms/form-fieldset';
+import noticeMixin from 'lib/mixins/notice';
 
-class GlobalNotices extends Component {
-	constructor() {
-		super( ...arguments );
+const GlobalNotices = React.createClass( {
+	displayName: 'GlobalNotices',
 
-		this.state = { useState: true };
-		this.toggleUseState = this.toggleUseState.bind( this );
-		this.showSuccessNotice = this.showNotice.bind( this, 'success' );
-		this.showErrorNotice = this.showNotice.bind( this, 'error' );
-		this.showInfoNotice = this.showNotice.bind( this, 'info' );
-		this.showWarningNotice = this.showNotice.bind( this, 'warning' );
-	}
+	mixins: [
+		noticeMixin( 'global-notices-example' ),
+	],
 
-	toggleUseState( event ) {
-		this.setState( {
-			useState: event.target.checked
-		} );
-	}
+	noticeOptions: {
+		id: null,
+		showDismiss: true,
+		button: null,
+		duration: null,
+	},
 
-	showNotice( type ) {
-		const message = `This is a ${ type } notice`;
-		if ( this.state.useState ) {
-			this.props.createNotice( `is-${ type }`, message );
-		} else {
-			notices[ type ]( message );
+	getInitialState() {
+		return {
+			status: 'success',
+		};
+	},
+
+	onChangeStatus( event ) {
+		this.setState( { status: event.target.value } );
+	},
+
+	onChangeIdOption( event ) {
+		this.noticeOptions.id = event.target.checked ? '1' : null;
+	},
+
+	onChangeActionOption( event ) {
+		this.noticeOptions.button = event.target.checked ? 'Action' : null;
+	},
+
+	onChangeDismissOption( event ) {
+		this.noticeOptions.showDismiss = !event.target.checked;
+	},
+
+	onChangeDurationOption( event ) {
+		this.noticeOptions.duration = event.target.checked ? 5000 : null;
+	},
+
+	onNoticeActionClick( noticeId ) {
+		this.notices.info( noticeId + ' notice is clicked!' );
+	},
+
+	createNotice() {
+		let fn = this.notices[ this.state.status ];
+
+		if ( !fn ) {
+			fn = this.props.successNotice;
 		}
-	}
+
+		fn( 'This is a global ' + this.state.status + ' notice', this.noticeOptions );
+	},
 
 	render() {
 		return (
 			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/global-notices">Global Notices</a>
-				</h2>
-				<label>
-					<FormCheckbox
-						onChange={ this.toggleUseState }
-						checked={ this.state.useState } />
-					Use global application state
-				</label>
-				<ButtonGroup>
-					<Button onClick={ this.showSuccessNotice }>Show success notice</Button>
-					<Button onClick={ this.showErrorNotice }>Show error notice</Button>
-					<Button onClick={ this.showInfoNotice }>Show info notice</Button>
-					<Button onClick={ this.showWarningNotice }>Show warning notice</Button>
-				</ButtonGroup>
+				<h2>Global Notices</h2>
+
+				<FormFieldSet>
+					<FormLabel>
+						<span>Status</span>
+						<FormSelect
+							id="global_notices_status"
+							name="global_notices_status"
+							onChange={ this.onChangeStatus }>
+							<option value="success">Success</option>
+							<option value="error">Error</option>
+							<option value="info">Info</option>
+							<option value="warning">Warning</option>
+							<option value="update">Update</option>
+						</FormSelect>
+					</FormLabel>
+				</FormFieldSet>
+
+				<FormFieldSet>
+					<FormLabel>Options</FormLabel>
+					<FormLabel>
+						<FormCheckbox
+							id="global_notices_custom_id"
+							name="global_notices_custom_id"
+							onChange={ this.onChangeIdOption }
+						/>
+						<span>Use custom ID (New notice will replace the old one that has the same ID)</span>
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox
+							id="global_notices_action_button"
+							name="global_notices_action_button"
+							onChange={ this.onChangeActionOption }
+						/>
+						<span>Show action button</span>
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox
+							id="global_notices_dismiss_button"
+							name="global_notices_dismiss_button"
+							onChange={ this.onChangeDismissOption }
+						/>
+						<span>Hide dismiss button</span>
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox
+							id="global_notices_duration"
+							name="global_notices_duration"
+							onChange={ this.onChangeDurationOption }
+						/>
+						<span>Close after 5 seconds ( duration: 5000 )</span>
+					</FormLabel>
+				</FormFieldSet>
+
+				<Button onClick={ this.createNotice }>Create a new notice</Button>
 			</div>
 		);
 	}
-}
+} );
 
-GlobalNotices.propTypes = {
-	createNotice: PropTypes.func
-};
-
-const ConnectedGlobalNotices = connect( null, { createNotice } )( GlobalNotices );
-ConnectedGlobalNotices.displayName = 'GlobalNotices';
-export default ConnectedGlobalNotices;
+export default GlobalNotices;

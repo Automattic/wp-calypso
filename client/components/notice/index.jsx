@@ -10,6 +10,14 @@ import noop from 'lodash/noop';
  */
 import Gridicon from 'components/gridicon';
 
+const statusIcons = {
+	'is-info': 'info',
+	'is-success': 'checkmark',
+	'is-error': 'notice',
+	'is-warning': 'notice',
+	'is-update': 'arrow-up',
+};
+
 export default React.createClass( {
 	displayName: 'Notice',
 	dismissTimeout: null,
@@ -25,11 +33,11 @@ export default React.createClass( {
 	},
 
 	propTypes: {
-		// we should validate the allowed statuses
-		status: PropTypes.string,
+		noticeId: PropTypes.string,
+		status: PropTypes.oneOf( Object.keys( statusIcons ) ),
 		showDismiss: PropTypes.bool,
 		isCompact: PropTypes.bool,
-		duration: React.PropTypes.number,
+		duration: PropTypes.number,
 		text: PropTypes.oneOfType( [
 			PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) )
@@ -40,7 +48,7 @@ export default React.createClass( {
 
 	componentDidMount() {
 		if ( this.props.duration > 0 ) {
-			this.dismissTimeout = setTimeout( this.props.onDismissClick, this.props.duration );
+			this.dismissTimeout = setTimeout( this.handleDismissClick, this.props.duration );
 		}
 	},
 
@@ -48,6 +56,10 @@ export default React.createClass( {
 		if ( this.dismissTimeout ) {
 			clearTimeout( this.dismissTimeout );
 		}
+	},
+
+	handleDismissClick() {
+		this.props.onDismissClick( this.props.noticeId );
 	},
 
 	renderChildren() {
@@ -68,27 +80,7 @@ export default React.createClass( {
 	},
 
 	getIcon() {
-		let icon;
-
-		switch ( this.props.status ) {
-			case 'is-info':
-				icon = 'info';
-				break;
-			case 'is-success':
-				icon = 'checkmark';
-				break;
-			case 'is-error':
-				icon = 'notice';
-				break;
-			case 'is-warning':
-				icon = 'notice';
-				break;
-			default:
-				icon = 'info';
-				break;
-		}
-
-		return icon;
+		return statusIcons[this.props.status] || 'info';
 	},
 
 	render() {
@@ -107,7 +99,7 @@ export default React.createClass( {
 		if ( this.props.showDismiss ) {
 			noticeClass = classnames( noticeClass, 'is-dismissable' );
 			dismiss = (
-				<span tabIndex="0" className="notice__dismiss" onClick={ this.props.onDismissClick } >
+				<span tabIndex="0" className="notice__dismiss" onClick={ this.handleDismissClick } >
 					<Gridicon icon="cross" size={ 24 } />
 					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
 				</span>

@@ -32,10 +32,16 @@
 		background: $blue-wordpress;
 	}
 
+	// Update
+	&.is-update {
+		background: $orange-jazzy;
+	}
+
 	&.is-success,
 	&.is-error,
 	&.is-warning,
-	&.is-info {
+	&.is-info,
+	&.is-update {
 		color: $white;
 
 		.notice__text a {
@@ -153,7 +159,8 @@ a.notice__action {
 	.is-success &,
 	.is-error &,
 	.is-warning &,
-	.is-info & {
+	.is-info &,
+	.is-update & {
 		color: $white;
 	}
 
@@ -161,6 +168,7 @@ a.notice__action {
 	.is-error & { background: darken( $alert-red, 15 ); }
 	.is-warning & { background: darken( $alert-yellow, 15 ); }
 	.is-info & { background: darken( $blue-wordpress, 15 ); }
+	.is-update & { background: darken( $orange-jazzy, 15 ); }
 
 	.gridicon {
 		margin-left: 8px;
@@ -193,7 +201,8 @@ a.notice__action {
 	&.is-success,
 	&.is-error,
 	&.is-warning,
-	&.is-info {
+	&.is-info,
+	&.is-update {
 		color: $white;
 	}
 

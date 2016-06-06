@@ -176,19 +176,21 @@ module.exports = {
 		setPageTitle( i18n.translate( 'Following' ) );
 
 		ReactDom.render(
-			React.createElement( FollowingComponent, {
-				key: 'following',
-				listName: i18n.translate( 'Followed Sites' ),
-				store: followingStore,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( FollowingComponent, {
+					key: 'following',
+					listName: i18n.translate( 'Followed Sites' ),
+					store: followingStore,
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						analyticsPageTitle,
+						mcKey
+					),
+					onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},

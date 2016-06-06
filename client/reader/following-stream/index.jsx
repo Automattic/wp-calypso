@@ -27,14 +27,16 @@ var Main = require( 'components/main' ),
 	PostUnavailable = require( './post-unavailable' ),
 	PostPlaceholder = require( './post-placeholder' ),
 	PostStore = require( 'lib/feed-post-store' ),
-	UpdateNotice = require( 'reader/update-notice' ),
 	PostBlocked = require( './post-blocked' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	scrollTo = require( 'lib/scroll-to' ),
-	XPostHelper = require( 'reader/xpost-helper' );
+	XPostHelper = require( 'reader/xpost-helper' ),
+	noticeMixin = require( 'lib/mixins/notice' ).default;
 
 const GUESSED_POST_HEIGHT = 600,
 	HEADER_OFFSET_TOP = 46;
+
+const READER_STREAM_NOTICE_ID = 'reader-stream-notice';
 
 function cardClassForPost( post ) {
 	if ( post.display_type & DISPLAY_TYPES.X_POST ) {
@@ -51,6 +53,8 @@ function cardClassForPost( post ) {
 module.exports = React.createClass( {
 	displayName: 'ReaderFollowing',
 
+	mixins: [ noticeMixin( 'reader-following-stream' ) ],
+
 	propTypes: {
 		store: React.PropTypes.object.isRequired,
 		trackScrollPage: React.PropTypes.func.isRequired,
@@ -59,7 +63,11 @@ module.exports = React.createClass( {
 		showFollowInHeader: React.PropTypes.bool,
 		onUpdatesShown: React.PropTypes.func,
 		emptyContent: React.PropTypes.object,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
+	},
+
+	contextTypes: {
+		store: React.PropTypes.object.isRequired,
 	},
 
 	getDefaultProps: function() {
@@ -96,6 +104,35 @@ module.exports = React.createClass( {
 				this.showSelectedPost( { replaceHistory: true } );
 			}
 		}
+
+		if ( prevState.updateCount !== this.state.updateCount ) {
+			if ( this.state.updateCount > 0 ) {
+				this.showNotice( this.state.updateCount );
+			} else {
+				this.hideNotice();
+			}
+		}
+	},
+
+	onNoticeActionClick: function( ) {
+		this.handleUpdateClick();
+	},
+
+	showNotice: function( count ) {
+		let countString = count >= 40 ? '40+' : ( '' + count );
+
+		this.notices.update(
+			this.translate( '%s new post', '%s new posts', { args: [ countString ], count: count } ),
+			{
+				id: READER_STREAM_NOTICE_ID,
+				showDismiss: false,
+				button: this.translate( 'Update' )
+			}
+		);
+	},
+
+	hideNotice: function() {
+		this.notices.removeNotice( READER_STREAM_NOTICE_ID );
 	},
 
 	_popstate: function() {
@@ -438,7 +475,6 @@ module.exports = React.createClass( {
 					<h1>{ this.props.listName }</h1>
 				</MobileBackToSidebar>
 
-				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
 				{ this.props.children }
 				{ body }
 			</Main>

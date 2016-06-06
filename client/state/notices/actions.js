@@ -9,25 +9,36 @@ import uniqueId from 'lodash/uniqueId';
 import {
 	NEW_NOTICE,
 	REMOVE_NOTICE,
-	SET_ROUTE
+	SET_ROUTE,
+	CLICK_NOTICE,
 } from 'state/action-types';
 
 export function removeNotice( noticeId ) {
 	return {
-		noticeId: noticeId,
+		noticeId,
 		type: REMOVE_NOTICE
 	};
 }
 
+export function clickNotice( noticeId ) {
+	return {
+		noticeId,
+		type: CLICK_NOTICE
+	};
+}
+
 export function createNotice( status, text, options = {} ) {
+	const noticeId = options.id || uniqueId();
 	const notice = {
-		noticeId: options.id || uniqueId(),
-		duration: options.duration,
+		noticeId,
+		icon: options.icon || null,
+		duration: parseInt( options.duration, 10 ) || null,
+		button: options.button,
 		showDismiss: ( typeof options.showDismiss === 'boolean' ? options.showDismiss : true ),
 		isPersistent: options.isPersistent || false,
 		displayOnNextPage: options.displayOnNextPage || false,
 		status: status,
-		text: text
+		text: text,
 	};
 
 	return {
@@ -47,3 +58,4 @@ export const successNotice = createNotice.bind( null, 'is-success' );
 export const errorNotice = createNotice.bind( null, 'is-error' );
 export const infoNotice = createNotice.bind( null, 'is-info' );
 export const warningNotice = createNotice.bind( null, 'is-warning' );
+export const updateNotice = createNotice.bind( null, 'is-update' );

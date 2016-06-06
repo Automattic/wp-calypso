@@ -1,8 +1,10 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import debugModule from 'debug';
+import find from 'lodash/find';
 
 /**
  * Internal Dependencies
@@ -12,10 +14,15 @@ import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { removeNotice } from 'state/notices/actions'
+import { removeNotice, clickNotice } from 'state/notices/actions';
 
 const debug = debugModule( 'calypso:notices' );
+
+const ANIMATIONS = [
+	'fade',
+	'fade-left', 'fade-right', 'fade-up', 'fade-down',
+	'zoom',
+];
 
 const NoticesList = React.createClass( {
 
@@ -24,17 +31,24 @@ const NoticesList = React.createClass( {
 	mixins: [ observe( 'notices' ) ],
 
 	propTypes: {
-		id: React.PropTypes.string,
-		notices: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.array
-		] )
+		id: PropTypes.string,
+		notices: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.array
+		] ),
+		storeNotices: PropTypes.array,
+		removeNotice: PropTypes.func,
+		animation: PropTypes.shape( {
+			enter: PropTypes.oneOf( ANIMATIONS ),
+			leave: PropTypes.oneOf( ANIMATIONS )
+		} )
 	},
 
 	getDefaultProps() {
 		return {
 			id: 'overlay-notices',
-			notices: Object.freeze( [] )
+			notices: Object.freeze( [] ),
+			animation: { enter: 'fade', leave: 'fade' }
 		};
 	},
 
@@ -42,7 +56,10 @@ const NoticesList = React.createClass( {
 		debug( 'Mounting Global Notices React component.' );
 	},
 
-	removeNotice( notice ) {
+	handleOldDismissClick( noticeId ) {
+		const noticesRaw = this.props.notices[ this.props.id ] || [];
+		const notice = find( noticesRaw, { noticeId } );
+
 		if ( notice ) {
 			notices.removeNotice( notice );
 		}
@@ -50,51 +67,67 @@ const NoticesList = React.createClass( {
 
 	render() {
 		const noticesRaw = this.props.notices[ this.props.id ] || [];
-		let noticesList = noticesRaw.map( function( notice, index ) {
+		let noticesList = noticesRaw.map( ( notice ) => {
 			return (
 				<Notice
-					key={ 'notice-old-' + index }
+					noticeId={ notice.noticeId }
+					key={ 'notice-old-' + notice.noticeId }
 					status={ notice.status }
-					duration={ notice.duration || null }
+					duration={ notice.duration }
 					text={ notice.text }
 					isCompact={ notice.isCompact }
-					onDismissClick={ this.removeNotice.bind( this, notice ) }
+					onDismissClick={ this.handleOldDismissClick }
 					showDismiss={ notice.showDismiss }
 				>
-					{ notice.button &&
-						<NoticeAction
-							href={ notice.href }
-							onClick={ notice.onClick }
-						>
-							{ notice.button }
-						</NoticeAction> }
-					</Notice>
+				{ notice.button &&
+					<NoticeAction
+						href={ notice.href }
+						onClick={ notice.onClick }
+					>
+						{ notice.button }
+					</NoticeAction>
+				}
+				</Notice>
 			);
-		}, this );
+		} );
 
 		//This is an interim solution for displaying both notices from redux store
 		//and from the old component. When all notices are moved to redux store, this component
 		//needs to be updated.
-		noticesList = noticesList.concat( this.props.storeNotices.map( function( notice, index ) {
+		noticesList = noticesList.concat( this.props.storeNotices.map( ( notice ) => {
 			return (
 				<Notice
-					key={ 'notice-' + index }
+					noticeId={ notice.noticeId }
+					key={ 'notice-' + notice.noticeId }
 					status={ notice.status }
-					duration = { notice.duration || null }
+					duration = { notice.duration }
 					showDismiss={ notice.showDismiss }
-					onDismissClick={ this.props.removeNotice.bind( this, notice.noticeId ) }
-					text={ notice.text }>
+					onDismissClick={ this.props.removeNotice }
+					className={ notice.className }
+					text={ notice.text }
+					icon={ notice.icon }
+				>
+				{ notice.button &&
+					<NoticeAction
+						href={ notice.href }
+						onClick={ () => this.props.clickNotice( notice.noticeId ) }
+					>
+						{ notice.button }
+					</NoticeAction>
+				}
 				</Notice>
 			);
-		}, this ) );
-
-		if ( ! noticesList.length ) {
-			return null;
-		}
+		} ) );
 
 		return (
 			<div id={ this.props.id } className="global-notices">
+				<ReactCSSTransitionGroup
+					transitionName={ { enter: `notice-${this.props.animation.enter}-enter`, leave: `notice-${this.props.animation.leave}-leave` } }
+					transitionEnterTimeout={ 300 }
+					transitionLeaveTimeout={ 300 }
+				>
 				{ noticesList }
+				</ReactCSSTransitionGroup>
 			</div>
 		);
 	}
@@ -106,5 +139,5 @@ export default connect(
 			storeNotices: state.notices.items
 		};
 	},
-	dispatch => bindActionCreators( { removeNotice }, dispatch )
+	{ removeNotice, clickNotice }
 )( NoticesList );
