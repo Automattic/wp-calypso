@@ -1,4 +1,10 @@
 
+4.9.14 / 2016-06-06
+==================
+
+ * rename `ad-credit-vouchers` to `credit-voucher`
+ * Stats: Add statsInsights method for site.
+
 4.9.13 / 2016-05-25
 ==================
 
