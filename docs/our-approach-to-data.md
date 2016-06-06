@@ -311,12 +311,9 @@ Because browser storage is only capable of storing simple JavaScript objects, th
 type reducer handler is to return a plain object representation. In a subtree that uses Immutable.js it should be 
 similar to:
 ```javascript
-export default ( state = defaultState, action ) => {
-	switch ( action.type ) {
-		case THEMES_RECEIVE:
-		//...
-		case SERIALIZE:
-			return state.toJS();
+export const items = createReducer( defaultState, {
+	[THEMES_RECEIVE]: ( state, action ) => // ...
+	[SERIALIZE]: state => state.toJS()
 } );
 ```
 
@@ -324,12 +321,9 @@ In turn, when the store instance is initialized with the browser storage copy of
 your subtree state back to its expected format from the `DESERIALIZE` handler. In a subtree that uses Immutable.js 
 instead of returning a plain object, we create an Immutable.js instance:
 ```javascript
-export default ( state = defaultState, action ) => {
-	switch ( action.type ) {
-		case THEMES_RECEIVE:
-		//...
-		case DESERIALIZE:
-			return fromJS( state );
+export const items = createReducer( defaultState, {
+	[THEMES_RECEIVE]: ( state, action ) => // ...
+	[SERIALIZE]: state => fromJS( state )
 } );
 ```
 If your reducer state is already a plain object, you may choose to omit `SERIALIZE` and `DESERIALIZE` handlers, or 
@@ -378,42 +372,30 @@ export const itemsSchema = {
 };
 ```
 
-If we find that our persisted data doesn't match our described data shape, we should throw it out and rebuild that 
-section of the tree with our default state.
-
+A JSON Schema must be provided if the subtree chooses to persist state. If we find that our persisted data doesn't
+match our described data shape, we should throw it out and rebuild that section of the tree with our default state.
+When using `createReducer` util you can pass a schema as a third param and all that will be handled for you.
 ```javascript
-export default ( state = defaultState, action ) => {
-	switch ( action.type ) {
-		case THEMES_RECEIVE:
-		//...
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, itemsSchema ) ) {
-				return state;
-			}
-			return defaultState;
-} );
+export const items = createReducer( defaultState, {
+	[THEMES_RECEIVE]: ( state, action ) => // ...
+}, itemsSchema );
 ```
 
-You are encouraged to implement `SERIALIZE` and `DESERIALIZE` in your reducers to avoid errors when data shape changes. 
-A JSON Schema should be added if the subtree chooses to persist state.
+When you are not satisfied with the default handling you are also encouraged to implement your own `SERIALIZE` and
+`DESERIALIZE` action handlers in your reducers to customize data persistence. Always consider using schema to avoid
+errors when data shape changes. 
 
 ### Not persisting data
 
 Some subtrees may choose to never persist data. One such example of this is our online connection state. If connection 
 values are persisted we will not be able to reliably tell when the application is offline or online.
 
-If persisting state causes application errors, opting out of persistence is straightforward: in the reducer return 
-default state for both `SERIALIZE` and `DESERIALIZE` . In this example, it happens to be `'CHECKING'`
+If persisting state causes application errors, opting out of persistence is straightforward: in the `createReducer` util
+provide only the default state value as a first param and don't provide a schema as a third param. Behind the scenes 
+data is never going to be persisted and always regenerated with default value. In this example, it happens to be `'CHECKING'`
 ```javascript
-export default ( state = 'CHECKING', action ) => {
-	switch ( action.type ) {
-		case CONNECTION_LOST:
-			return 'OFFLINE';
-		case CONNECTION_RESTORED:
-			return 'ONLINE';
-		case SERIALIZE:
-			return 'CHECKING';
-		case DESERIALIZE:
-			return 'CHECKING';
+export const connectionState = createReducer( 'CHECKING', {
+	[CONNECTION_LOST]: () => 'OFFLINE',
+	[CONNECTION_RESTORED]: () => 'ONLINE'
 } );
 ```
