@@ -16,9 +16,8 @@ module.exports = function() {
 	 */
 	page( '/settings', controller.siteSelection, settingsController.redirectToGeneral );
 
-	if ( config.isEnabled( 'manage/import' ) ) {
-		page( '/settings/import/:site_id', controller.siteSelection, controller.navigation, settingsController.importSite );
-	}
+	page( '/settings/import/:site_id', controller.siteSelection, controller.navigation, settingsController.importSite );
+
 	if ( config.isEnabled( 'manage/export' ) ) {
 		page( '/settings/export/:site_id', controller.siteSelection, controller.navigation, settingsController.exportSite );
 	}

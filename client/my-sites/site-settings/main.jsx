@@ -156,15 +156,12 @@ export class SiteSettingsComponent extends Component {
 						</NavItem>
 					}
 
-					{
-						config.isEnabled( 'manage/import' ) &&
-							<NavItem
-								path={ this.getImportPath() }
-								selected={ section === 'import' }
-								isExternalLink={ !! site.jetpack } >
-									{ strings.import }
-							</NavItem>
-					}
+					<NavItem
+						path={ this.getImportPath() }
+						selected={ section === 'import' }
+						isExternalLink={ !! site.jetpack } >
+							{ strings.import }
+					</NavItem>
 
 					{
 						config.isEnabled( 'manage/export' ) &&
