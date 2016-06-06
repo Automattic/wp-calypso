@@ -11,7 +11,9 @@ const StartCardFooter = ( { site } ) => {
 	const subscribersCount = numberFormat( site.subscribers_count );
 	return (
 		<footer className="reader-start-card-footer">
-			<div className="reader-start-card__follower-count">{ subscribersCount } followers</div>
+			<div className="reader-start-card__follower-count">
+				<a href={ `/read/blogs/${site.ID}` }>{ subscribersCount } followers</a>
+			</div>
 			<FollowButton siteUrl={ site.URL } />
 		</footer>
 	);
