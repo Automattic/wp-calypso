@@ -47,15 +47,12 @@ arrayName = program.arrayName || program.args[1];
 inputFiles = ( program.inputFile.length ) ? program.inputFile : program.args.slice( 2 );
 
 if ( inputFiles.length === 0 ) {
-	console.log( 'Error: You must enter the input file. Run `get-i18n -h` for examples.' );
 	throw new Error( 'Error: You must enter the input file. Run `get-i18n -h` for examples.' );
 }
 if ( ! outputFile ) {
-	console.log( 'Error: You must enter the output file. Run `get-i18n -h` for examples.' );
 	throw new Error( 'Error: You must enter the output file. Run `get-i18n -h` for examples.' );
 }
 if ( ! arrayName ) {
-	console.log( 'Error: You must enter the php variable name for the array of translation calls.' );
 	throw new Error( 'Error: You must enter the php variable name for the array of translation calls.' );
 }
 
@@ -68,8 +65,7 @@ inputPaths = inputFiles.map( function( fileName ) {
 
 inputPaths.forEach( function( inputFile ) {
 	if ( ! fs.existsSync( inputFile ) ) {
-		process.exitCode = 1;
-		console.log( 'Error: inputFile, `' + inputFile + '`, does not exist' );
+		throw new Error( 'Error: inputFile "' + inputFile + '" does not exist' );
 	}
 } );
 
