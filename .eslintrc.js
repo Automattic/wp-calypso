@@ -16,11 +16,13 @@ module.exports = {
 		'eslint-plugin-wpcalypso'
 	],
 	'rules': {
+		'array-bracket-spacing': [ 1, 'always' ],
 		'brace-style': [ 1, '1tbs' ],
 		// REST API objects include underscores
 		'camelcase': 0,
 		'comma-dangle': 0,
 		'comma-spacing': 1,
+		'computed-property-spacing': [ 1, 'always' ],
 		// Allows returning early as undefined
 		'consistent-return': 0,
 		'dot-notation': 1,
@@ -67,6 +69,7 @@ module.exports = {
 		'react/jsx-curly-spacing': [ 1, 'always' ],
 		// Allows function use before declaration
 		'no-use-before-define': [ 2, 'nofunc' ],
+		'object-curly-spacing': [ 1, 'always' ],
 		// We split external, internal, module variables
 		'one-var': 0,
 		'operator-linebreak': [ 1, 'after', { 'overrides': {
@@ -81,8 +84,6 @@ module.exports = {
 		'space-after-keywords': [ 1, 'always' ],
 		'space-before-blocks': [ 1, 'always' ],
 		'space-before-function-paren': [ 1, 'never' ],
-		// Our array literal index exception violates this rule
-		'space-in-brackets': 0,
 		'space-in-parens': [ 1, 'always' ],
 		'space-infix-ops': [ 1, { 'int32Hint': false } ],
 		// Ideal for '!' but not for '++'
