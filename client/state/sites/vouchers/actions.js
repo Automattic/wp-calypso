@@ -94,7 +94,7 @@ export function requestSiteVouchers( siteId ) {
 
 		return wpcom
 			.site( siteId )
-			.adCreditVouchers()
+			.creditVouchers()
 			.list()
 			.then( data => {
 				const { vouchers = [] } = data;
@@ -124,7 +124,7 @@ export function assignSiteVoucher( siteId, serviceType ) {
 
 		return wpcom
 			.site( siteId )
-			.adCreditVouchers()
+			.creditVouchers()
 			.assign( serviceType )
 			.then( data => {
 				const { voucher = {} } = data;
