@@ -28,7 +28,7 @@ export function isRequestingWordAdsApprovalForSite( state, site ) {
  * @returns {?Object}       WordAds Error
  */
 export function getWordAdsError( state, siteId ) {
-	return state.wordads.approve.errors[ siteId ];
+	return state.wordads.approve.requestErrors[ siteId ];
 }
 
 /**
@@ -42,4 +42,27 @@ export function getWordAdsErrorForSite( state, site ) {
 		return null;
 	}
 	return getWordAdsError( state, site.ID );
+}
+
+/**
+ * Returns true if we're currently requesting WordAds approval
+ * @param   {Object} state  Global State
+ * @param   {Number} siteId Site Id
+ * @returns {?Object}       WordAds Error
+ */
+export function getWordAdsSuccess( state, siteId ) {
+	return state.wordads.approve.requestSuccess[ siteId ];
+}
+
+/**
+ * Returns true if we're currently requesting WordAds approval
+ * @param   {Object} state  Global State
+ * @param   {Object} site   Site
+ * @returns {?Object}       WordAds Error
+ */
+export function getWordAdsSuccessForSite( state, site ) {
+	if ( ! site || ! site.ID ) {
+		return null;
+	}
+	return getWordAdsSuccess( state, site.ID );
 }

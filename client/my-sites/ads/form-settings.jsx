@@ -5,6 +5,7 @@ var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	notices = require( 'notices' ),
 	debug = require( 'debug' )( 'calypso:my-sites:ads-settings' );
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -26,7 +27,9 @@ var Card = require( 'components/card' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	sites = require( 'lib/sites-list' )();
 
-module.exports = React.createClass( {
+import { dismissWordAdsSuccess } from 'state/wordads/approve/actions';
+
+const AdsFormSettings = React.createClass( {
 
 	displayName: 'AdsFormSettings',
 
@@ -49,9 +52,11 @@ module.exports = React.createClass( {
 
 	updateSettings: function() {
 		var settings = this.getSettingsFromStore();
+		const site = sites.getSelectedSite();
 		this.setState( settings );
 
 		// set/clear any notices on update
+		site && this.props.dismissWordAdsSuccess( site.ID );
 		if ( settings.error && settings.error.message ) {
 			notices.error( settings.error.message );
 		} else if ( settings.notice ) {
@@ -400,3 +405,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect( null, { dismissWordAdsSuccess } )( AdsFormSettings );

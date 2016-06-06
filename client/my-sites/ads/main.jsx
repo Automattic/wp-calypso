@@ -26,7 +26,8 @@ import Card from 'components/card';
 import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
 import {
 	isRequestingWordAdsApprovalForSite,
-	getWordAdsErrorForSite
+	getWordAdsErrorForSite,
+	getWordAdsSuccessForSite
 } from 'state/wordads/approve/selectors';
 import Notice from 'components/notice';
 
@@ -126,9 +127,16 @@ const AdsMain = React.createClass( {
 	},
 
 	render: function() {
-		var component = this.getComponent( this.props.section );
+		let component = this.getComponent( this.props.section );
+		let notice = null;
 
-		if ( ! this.props.site.options.wordads && isWordadsInstantActivationEligible( this.props.site ) ) {
+		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
+			notice = (
+				<Notice status="is-success" showDismiss={ false }>
+					{ this.translate( 'You have joined WordAds program. Please review these settings:' ) }
+				</Notice>
+			);
+		} else if ( ! this.props.site.options.wordads && isWordadsInstantActivationEligible( this.props.site ) ) {
 			component = this.renderInstantActivationToggle( component );
 		}
 
@@ -150,6 +158,7 @@ const AdsMain = React.createClass( {
 						}, this ) }
 					</NavTabs>
 				</SectionNav>
+				{ notice }
 				{ component }
 			</Main>
 		);
@@ -159,7 +168,8 @@ const AdsMain = React.createClass( {
 export default connect(
 	( state, ownProps ) => ( {
 		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, ownProps.site ),
-		wordAdsError: getWordAdsErrorForSite( state, ownProps.site )
+		wordAdsError: getWordAdsErrorForSite( state, ownProps.site ),
+		wordAdsSuccess: getWordAdsSuccessForSite( state, ownProps.site ),
 	} ),
 	{ requestWordAdsApproval, dismissWordAdsError },
 	( stateProps, dispatchProps, parentProps ) => Object.assign(

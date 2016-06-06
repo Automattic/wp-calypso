@@ -11,6 +11,7 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
+	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -44,7 +45,7 @@ export function requesting( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function errors( state = {}, action ) {
+export function requestErrors( state = {}, action ) {
 	switch ( action.type ) {
 		case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
 			return Object.assign( {}, state, {
@@ -62,7 +63,32 @@ export function errors( state = {}, action ) {
 	return state;
 }
 
+/**
+ * Keeps track of all WordAds request successes, indexed by siteId
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function requestSuccess( state = {}, action ) {
+	switch ( action.type ) {
+		case WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS:
+		case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: null
+			} );
+		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: true
+			} );
+		case DESERIALIZE:
+		case SERIALIZE:
+			return {};
+	}
+	return state;
+}
+
 export default combineReducers( {
 	requesting,
-	errors
+	requestSuccess,
+	requestErrors,
 } );
