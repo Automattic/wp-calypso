@@ -229,7 +229,7 @@ export default React.createClass( {
 		}
 
 		if ( this.props.hideSelected && this.props.selected ) {
-			sites = sites.filter( site => site.slug !== this.props.selected, this );
+			sites = sites.filter( site => site.slug !== this.props.selected );
 		}
 
 		// Render sites
