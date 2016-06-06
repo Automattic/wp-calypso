@@ -1,19 +1,19 @@
 
 /**
- * SiteAdCreditVouchers methods
+ * SiteCreditVouchers methods
  *
  * @param {String} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-class SiteAdCreditVouchers {
+class SiteCreditVouchers {
 	constructor( sid, wpcom ) {
 		if ( ! sid ) {
 			throw new Error( '`site id` is not correctly defined' );
 		}
 
-		if ( ! ( this instanceof SiteAdCreditVouchers ) ) {
-			return new SiteAdCreditVouchers( sid, wpcom );
+		if ( ! ( this instanceof SiteCreditVouchers ) ) {
+			return new SiteCreditVouchers( sid, wpcom );
 		}
 
 		this.wpcom = wpcom;
@@ -30,6 +30,7 @@ class SiteAdCreditVouchers {
 	 */
 	list( query = {}, fn ) {
 		query.apiNamespace = 'wpcom/v2';
+		console.log( `-> query -> `, query );
 		return this.wpcom.req.get( this.path, query, fn );
 	}
 
@@ -60,4 +61,4 @@ class SiteAdCreditVouchers {
 	}
 }
 
-export default SiteAdCreditVouchers;
+export default SiteCreditVouchers;

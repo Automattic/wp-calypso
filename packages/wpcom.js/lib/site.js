@@ -12,7 +12,7 @@ import SiteDomain from './site.domain';
 import SitePlugin from './site.plugin';
 import SiteSettings from './site.settings';
 import SiteTaxonomy from './site.taxonomy';
-import SiteAdCreditVouchers from './site.ad-credit-vouchers';
+import SiteCreditVouchers from './site.credit-vouchers';
 import SiteWordAds from './site.wordads';
 import SiteWPComPlugin from './site.wpcom-plugin';
 
@@ -213,12 +213,12 @@ class Site {
 	}
 
 	/**
-	 * Create a `SiteAdCreditVouchers` instance
+	 * Create a `SiteCreditVouchers` instance
 	 *
-	 * @return {SiteAdCreditVouchers} SiteAdCreditVouchers instance
+	 * @return {SiteCreditVouchers} SiteCreditVouchers instance
 	 */
-	adCreditVouchers() {
-		return new SiteAdCreditVouchers( this._id, this.wpcom );
+	creditVouchers() {
+		return new SiteCreditVouchers( this._id, this.wpcom );
 	}
 
 	/**
