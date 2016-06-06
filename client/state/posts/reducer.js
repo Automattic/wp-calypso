@@ -33,7 +33,11 @@ import {
 	getSerializedPostsQueryWithoutPage
 } from './utils';
 import { DEFAULT_POST_QUERY } from './constants';
-import { itemsSchema, queriesSchema } from './schema';
+import {
+	itemsSchema,
+	queriesSchema,
+	queriesLastPageSchema
+} from './schema';
 import { isValidStateWithSchema } from 'state/utils';
 
 /**
@@ -161,10 +165,14 @@ export function queriesLastPage( state = {}, action ) {
 				[ serializedQuery ]: Math.max( lastPage, 1 )
 			} );
 
-		case SERIALIZE:
 		case DESERIALIZE:
+			if ( isValidStateWithSchema( state, queriesLastPageSchema ) ) {
+				return state;
+			}
+
 			return {};
 	}
+
 	return state;
 }
 
