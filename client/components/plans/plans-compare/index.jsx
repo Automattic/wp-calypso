@@ -121,12 +121,14 @@ const PlansCompare = React.createClass( {
 	},
 
 	getColumnCount() {
-		if ( ! this.props.selectedSite ) {
-			return abtest( 'personalPlan' ) === 'hide' ? 4 : 5;
+		const colsCount = abtest( 'personalPlan' ) === 'hide' ? 4 : 5;
+
+		if ( ! this.props.selectedSite || ! this.props.selectedSite.jetpack ) {
+			return colsCount;
 		}
 
-		return this.props.selectedSite.jetpack ? 3
-		:	abtest( 'personalPlan' ) === 'hide' ? 4 : 5;
+		// column count for jetpack site
+		return 3;
 	},
 
 	getFeatures() {
@@ -359,12 +361,12 @@ const PlansCompare = React.createClass( {
 		};
 
 		let freeOption = (
-				<NavItem
-					onClick={ this.setPlan.bind( this, 'free' ) }
-					selected={ 'free' === this.state.selectedPlan }>
-					{ this.translate( 'Free' ) }
-				</NavItem>
-			);
+			<NavItem
+				onClick={ this.setPlan.bind( this, 'free' ) }
+				selected={ 'free' === this.state.selectedPlan }>
+				{ this.translate( 'Free' ) }
+			</NavItem>
+		);
 
 		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
 			freeOption = null;
