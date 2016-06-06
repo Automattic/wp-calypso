@@ -3428,7 +3428,7 @@
       "version": "1.3.0"
     },
     "wpcom": {
-      "version": "4.9.13",
+      "version": "4.9.15",
       "dependencies": {
         "babel": {
           "version": "5.8.38"
