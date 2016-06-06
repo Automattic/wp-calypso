@@ -3,11 +3,19 @@
  */
 import classNames from 'classnames';
 import React from 'react';
+import noop from 'lodash/noop';
 
 const PlanHeader = React.createClass( {
 	propTypes: {
 		isPlaceholder: React.PropTypes.bool,
-		text: React.PropTypes.string
+		text: React.PropTypes.string,
+		onClick: React.PropTypes.func
+	},
+
+	getDefaultProps() {
+		return {
+			onClick: noop
+		};
 	},
 
 	render() {
@@ -17,7 +25,7 @@ const PlanHeader = React.createClass( {
 		} );
 
 		return (
-			<div className={ classes }>
+			<div className={ classes } onClick={ this.props.onClick } >
 				<h2 className="plan-header__title">{ this.props.text }</h2>
 
 				{ this.props.children }
