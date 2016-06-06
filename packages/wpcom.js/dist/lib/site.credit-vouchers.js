@@ -45,7 +45,6 @@ var SiteCreditVouchers = (function () {
 			if (query === undefined) query = {};
 
 			query.apiNamespace = 'wpcom/v2';
-			console.log('-> query -> ', query);
 			return this.wpcom.req.get(this.path, query, fn);
 		}
 
