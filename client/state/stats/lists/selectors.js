@@ -2,6 +2,7 @@
  * External dependencies
  */
 import get from 'lodash/get';
+import values from 'lodash/values';
 
 /**
  * Internal dependencies
@@ -51,36 +52,20 @@ export function getSiteStatsForQuery( state, siteId, statType, query ) {
  * @param  {Object}  query    Stats query object
  * @return {Object}           Parsed Data for the query
  */
-export const getParsedStreakDataForQuery = createSelector(
+export const getSiteStatsPostStreakData = createSelector(
 	( state, siteId, query ) => {
-		const response = { days: {}, best: { day: 0, percent: 0 }, max: 0 };
-		const days = [ 0, 0, 0, 0, 0, 0, 0 ];
-		let total = 0;
+		const response = {};
 		const data = getSiteStatsForQuery( state, siteId, 'statsStreak', query ) || [];
 
 		Object.keys( data ).forEach( ( timestamp ) => {
 			const postDay = i18n.moment.unix( timestamp );
 			const datestamp = postDay.format( 'YYYY-MM-DD' );
-			if ( 'undefined' === typeof( response.days[ datestamp ] ) ) {
-				response.days[ datestamp ] = 0;
+			if ( 'undefined' === typeof( response[ datestamp ] ) ) {
+				response[ datestamp ] = 0;
 			}
 
-			response.days[ datestamp ] += data[ timestamp ];
-			days[ postDay.day() ] += data[ timestamp ];
-			total += data[ timestamp ];
+			response[ datestamp ] += data[ timestamp ];
 		} );
-
-		Object.keys( response.days ).forEach( ( datestamp ) => {
-			if ( response.days[ datestamp ] > response.max ) {
-				response.max = response.days[ datestamp ];
-			}
-		} );
-
-		const maxDay = Math.max.apply( null, days );
-		response.best.day = days.indexOf( maxDay );
-		if ( total ) {
-			response.best.percent = Math.round( 100 * ( maxDay / total ) );
-		}
 
 		return response;
 	},
@@ -90,3 +75,29 @@ export const getParsedStreakDataForQuery = createSelector(
 		return [ siteId, 'statsStreak', serializedQuery ].join();
 	}
 );
+
+/**
+ * Returns a number representing the most posts made during a day for a given query
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {Object}  query    Stats query object
+ * @return {?Number}          Max number of posts by day
+ */
+export const getSiteStatsMaxPostsByDay = createSelector(
+	( state, siteId, query ) => {
+		const data = values( getSiteStatsPostStreakData( state, siteId, query ) ).sort();
+
+		if ( data.length ) {
+			return data[ data.length - 1 ];
+		}
+
+		return null;
+	},
+	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
+	( state, siteId, taxonomy, query ) => {
+		const serializedQuery = getSerializedStatsQuery( query );
+		return [ siteId, 'statsStreakMax', serializedQuery ].join();
+	}
+);
+
