@@ -103,10 +103,10 @@ module.exports = {
 		allowAnyLocale: true
 	},
 	wordadsInstantActivation: {
-		datestamp: '20160518',
+		datestamp: '20160607',
 		variations: {
-			disabled: 95,
-			enabled: 5,
+			disabled: 50,
+			enabled: 50,
 		},
 		defaultVariation: 'disabled',
 		allowExistingUsers: true,
