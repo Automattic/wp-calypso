@@ -50,6 +50,11 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Domain Search > Domain Registration' );
 
+		// Scroll to the top
+		if ( typeof window !== 'undefined' ) {
+			window.scrollTo( 0, 0 );
+		}
+
 		renderWithReduxStore(
 			(
 				<CartData>

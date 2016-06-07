@@ -14,6 +14,7 @@ import {
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
+	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -185,6 +186,34 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', slug: 'example.wordpress.com' }
+			} );
+		} );
+
+		it( 'should update properties when wordads is activated', () => {
+			const original = deepFreeze( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', options: { foo: 'bar' } }
+			} );
+			const state = items( original, {
+				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
+				siteId: 2916284
+			} );
+
+			expect( state ).to.eql( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', options: { foo: 'bar', wordads: true} }
+			} );
+		} );
+
+		it( 'should do nothing when site is not loaded and wordads is activated', () => {
+			const original = deepFreeze( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
+			} );
+			const state = items( original, {
+				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
+				siteId: 77203074
+			} );
+
+			expect( state ).to.eql( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
 			} );
 		} );
 

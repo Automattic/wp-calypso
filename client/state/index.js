@@ -9,6 +9,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
  */
 import application from './application/reducer';
 import comments from './comments/reducer';
+import componentsUsageStats from './components-usage-stats/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
@@ -31,7 +32,7 @@ import terms from './terms/reducer';
 import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
-import componentsUsageStats from './components-usage-stats/reducer';
+import wordads from './wordads/reducer';
 
 /**
  * Module variables
@@ -39,6 +40,7 @@ import componentsUsageStats from './components-usage-stats/reducer';
 export const reducer = combineReducers( {
 	application,
 	comments,
+	componentsUsageStats,
 	currentUser,
 	documentHead,
 	domains,
@@ -61,7 +63,7 @@ export const reducer = combineReducers( {
 	themes,
 	ui,
 	users,
-	componentsUsageStats
+	wordads
 } );
 
 let middleware = [ thunkMiddleware ];

@@ -53,6 +53,11 @@ export function singleSite( context, next ) {
 	props.key = siteId;
 	props.siteId = siteId;
 
+	// Scroll to the top
+	if ( typeof window !== 'undefined' ) {
+		window.scrollTo( 0, 0 );
+	}
+
 	context.primary = makeElement( SingleSiteComponent, Head, context.store, props );
 	next();
 }
@@ -60,6 +65,11 @@ export function singleSite( context, next ) {
 export function multiSite( context, next ) {
 	const Head = require( 'layout/head' );
 	const props = getProps( context );
+
+	// Scroll to the top
+	if ( typeof window !== 'undefined' ) {
+		window.scrollTo( 0, 0 );
+	}
 
 	context.primary = makeElement( MultiSiteComponent, Head, context.store, props );
 	next();

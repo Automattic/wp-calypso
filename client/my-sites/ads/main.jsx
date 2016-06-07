@@ -4,6 +4,7 @@
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:ads-settings' ),
 	find = require( 'lodash/find' );
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -18,7 +19,19 @@ var SectionNav = require( 'components/section-nav' ),
 	AdsUtils = require( 'lib/ads/utils' ),
 	sites = require( 'lib/sites-list' )();
 
-module.exports = React.createClass( {
+import FeatureExample from 'components/feature-example';
+import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
+import FormButton from 'components/forms/form-button';
+import Card from 'components/card';
+import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
+import {
+	isRequestingWordAdsApprovalForSite,
+	getWordAdsErrorForSite,
+	getWordAdsSuccessForSite
+} from 'state/wordads/approve/selectors';
+import Notice from 'components/notice';
+
+const AdsMain = React.createClass( {
 
 	displayName: 'AdsMain',
 
@@ -60,16 +73,73 @@ module.exports = React.createClass( {
 	getComponent: function( section ) {
 		switch ( section ) {
 			case 'earnings':
-				return <AdsEarnings site={ this.props.site } />
+				return <AdsEarnings site={ this.props.site } />;
 			case 'settings':
-				return <AdsSettings site={ this.props.site } />
+				return <AdsSettings site={ this.props.site } />;
 			default:
 				return null;
 		}
 	},
 
+	dismissWordAdsError() {
+		const siteId = this.props.site ? this.props.site.ID : null;
+		this.props.dismissWordAdsError( siteId );
+	},
+
+	renderInstantActivationToggle: function( component ) {
+		return ( <div>
+			<Card className="ads__activate-wrapper">
+				<div className="ads__activate-header">
+					<h2 className="ads__activate-header-title">{ this.translate( 'WordAds Disabled' ) }</h2>
+					<div className="ads__activate-header-toggle">
+						<FormButton
+							disabled={ this.props.site.options.wordads || ( this.props.requestingWordAdsApproval && this.props.wordAdsError === null ) }
+							onClick={ this.props.requestWordAdsApproval }
+						>
+							{ this.translate( 'Join WordAds' ) }
+						</FormButton>
+					</div>
+				</div>
+				{ this.props.wordAdsError &&
+					<Notice status="is-error ads__activate-notice" onDismissClick={ this.dismissWordAdsError }>
+						{ this.props.wordAdsError }
+					</Notice>
+				}
+				<p className="ads__activate-description">
+					{ this.translate(
+						'WordAds allows you to make money from advertising that runs on your site. ' +
+						'Because you have a WordPress.com Premium plan, you can skip the review process and activate WordAds instantly. ' +
+						'{{br/}}' +
+						'{{a}}Learn more about the program.{{/a}}', {
+							components: {
+								br: <br />,
+								a: <a href={ 'http://wordads.co' } />
+							}
+						} )
+					}
+				</p>
+
+			</Card>
+			<FeatureExample>
+				{ component }
+			</FeatureExample>
+		</div> );
+	},
+
 	render: function() {
-		var component = this.getComponent( this.props.section );
+		let component = this.getComponent( this.props.section );
+		let notice = null;
+
+		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
+			notice = (
+				<Notice status="is-success" showDismiss={ false }>
+					{ this.translate( 'You have successfully joined WordAds. Please review these settings:' ) }
+				</Notice>
+			);
+		} else if ( ! this.props.site.options.wordads && isWordadsInstantActivationEligible( this.props.site ) ) {
+			component = this.renderInstantActivationToggle( component );
+		}
+
 		return (
 			<Main className="ads">
 				<SidebarNavigation />
@@ -88,8 +158,25 @@ module.exports = React.createClass( {
 						}, this ) }
 					</NavTabs>
 				</SectionNav>
+				{ notice }
 				{ component }
 			</Main>
 		);
 	}
 } );
+
+export default connect(
+	( state, ownProps ) => ( {
+		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, ownProps.site ),
+		wordAdsError: getWordAdsErrorForSite( state, ownProps.site ),
+		wordAdsSuccess: getWordAdsSuccessForSite( state, ownProps.site ),
+	} ),
+	{ requestWordAdsApproval, dismissWordAdsError },
+	( stateProps, dispatchProps, parentProps ) => Object.assign(
+		{},
+		dispatchProps,
+		{ requestWordAdsApproval: () => ( ! stateProps.requestingWordAdsApproval ) ? dispatchProps.requestWordAdsApproval( parentProps.site.ID ) : null },
+		parentProps,
+		stateProps
+	)
+)( AdsMain );
