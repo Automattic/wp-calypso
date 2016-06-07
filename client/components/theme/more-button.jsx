@@ -67,7 +67,8 @@ class ThemeMoreButton extends React.Component {
 								<a className="theme__more-button-menu-item popover__menu-item"
 									onMouseOver={ this.focus }
 									key={ option.label }
-									// Use absolute link to work around IE11 bug with relative links in modals
+									// Use absolute link to work around IE11 bug with relative links in modals #5766
+									// TODO (seear): remove when we drop support for IE11
 									href={ url.replace( /^\/[^\/]/, `//${ window.location.host }$&` ) }
 									target={ isOutsideCalypso( url ) ? '_blank' : null }>
 									{ option.label }
