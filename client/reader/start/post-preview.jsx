@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 // Internal dependencies
 import Gravatar from 'components/gravatar';
 import PostExcerpt from 'components/post-excerpt';
-import { decodeEntities } from 'lib/formatting';
 import page from 'page';
 import { getPostBySiteAndId } from 'state/reader/posts/selectors';
 
@@ -25,12 +24,15 @@ const StartPostPreview = React.createClass( {
 
 	render() {
 		const post = this.props.post;
+		if ( ! post ) {
+			return null;
+		}
 		return (
 			<article className="reader-start-post-preview">
-				<h1><a href={ this.getFullPostUrl() } onClick={ this.showFullPost } className="reader-start-post-preview__title">{ decodeEntities( post.title ) }</a></h1>
+				<h1><a href={ this.getFullPostUrl() } onClick={ this.showFullPost } className="reader-start-post-preview__title">{ post.title }</a></h1>
 				<div className="reader-start-post-preview__byline">
 					<Gravatar user={ post.author } size={ 20 } />
-					<span className="reader-start-post-preview__author">by { decodeEntities( post.author.name ) }</span>
+					<span className="reader-start-post-preview__author">by { post.author.name }</span>
 				</div>
 				<PostExcerpt maxLength={ 160 } content={ post.excerpt } className="reader-start-post-preview__excerpt" />
 			</article>
