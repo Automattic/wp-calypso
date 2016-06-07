@@ -16,7 +16,8 @@ import PlanActions from 'components/plans/plan-actions';
 import PlanDiscountMessage from 'components/plans/plan-discount-message';
 import PlanHeader from 'components/plans/plan-header';
 import PlanPrice from 'components/plans/plan-price';
-import WpcomPlanDetails from 'my-sites/plans/wpcom-plan-details' ;
+import WpcomPlanDetails from 'my-sites/plans/wpcom-plan-details';
+import { isDesktop } from 'lib/viewport';
 
 const Plan = React.createClass( {
 	handleLearnMoreClick() {
@@ -208,7 +209,7 @@ const Plan = React.createClass( {
 
 	clickPlanHeader( event ) {
 		// clicking a card should select a plan, see issue 4486
-		if ( this.imagePlanActionRef ) {
+		if ( isDesktop() && this.imagePlanActionRef ) {
 			this.imagePlanActionRef.handleSelectPlan( event );
 		}
 	},
