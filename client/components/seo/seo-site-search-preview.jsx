@@ -1,12 +1,4 @@
 import React, { PropTypes } from 'react';
-import toString from 'lodash/toString';
-
-const reactifyNewlines = message =>
-	message
-		.split( '\n' )
-		.map( ( snip, index ) => [ <span key={ `s${ index }` }>{ snip }</span>, <br key={ `br${ index }` } /> ] )
-		.reduce( ( final, next ) => final.concat( next ), [] )
-		.slice( 0, -1 );
 
 export const SeoSiteSearchPreview = React.createClass( {
 	shouldComponentUpdate( next ) {
@@ -21,12 +13,10 @@ export const SeoSiteSearchPreview = React.createClass( {
 
 	render() {
 		const {
-			snippet: rawSnippet,
+			snippet,
 			title,
 			url
 		} = this.props;
-
-		const snippet = reactifyNewlines( toString( rawSnippet ) );
 
 		return (
 			<div className="seo-search-result-preview">
