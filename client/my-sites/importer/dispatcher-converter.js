@@ -1,9 +1,10 @@
 import Dispatcher from 'dispatcher';
 import React from 'react';
+import find from 'lodash/find';
 import identity from 'lodash/identity';
 import isFunction from 'lodash/isFunction';
 
-const ifCallableElse = ( f, g ) => isFunction( f ) ? f : g;
+const firstCallable = ( ...args ) => find( args, isFunction );
 const mergeProps = ( ...args ) => Object.assign( {}, ...args );
 
 const dispatchObject = action => Dispatcher.handleViewAction( action );
@@ -18,8 +19,8 @@ export const connectDispatcher = ( fromState, fromDispatch ) => Component => pro
 		Component,
 		mergeProps(
 			props,
-			ifCallableElse( fromState, identity )( {} ),
-			ifCallableElse( fromDispatch, identity )( dispatch )
+			firstCallable( fromState, identity )( {} ),
+			firstCallable( fromDispatch, identity )( dispatch )
 		),
 		props.children
 	)
