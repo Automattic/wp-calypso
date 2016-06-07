@@ -30,6 +30,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	OfflineStatus = require( 'layout/offline-status' ),
 	PollerPool = require( 'lib/data-poller' ),
+	EmailVerifiedNotice = require( 'components/email-verification/email-verified-notice' ),
 	KeyboardShortcutsMenu,
 	Layout,
 	SupportUser;
@@ -87,6 +88,13 @@ Layout = React.createClass( {
 
 	newestSite: function() {
 		return sortBy( this.props.sites.get(), property( 'ID' ) ).pop();
+	},
+
+	renderEmailVerifiedNotice: function() {
+		if ( !this.props.user ) {
+			return null;
+		}
+		return <EmailVerifiedNotice />;
 	},
 
 	renderPushNotificationPrompt: function() {
@@ -186,6 +194,7 @@ Layout = React.createClass( {
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="wp-content">
 					{ this.renderWelcome() }
+					{ this.renderEmailVerifiedNotice() }
 					{ this.renderPushNotificationPrompt() }
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
 					<div id="primary" className="wp-primary wp-section" />
