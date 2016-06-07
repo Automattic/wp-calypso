@@ -13,7 +13,7 @@ export const SearchPreview = React.createClass( {
 
 		return (
 			<div className="seo-search-preview">
-				<h2 className="seo-search-preview__header">{ this.translate( 'Google Preview' ) }</h2>
+				<h2 className="seo-search-preview__header">{ this.translate( 'Search Preview' ) }</h2>
 				<div className="seo-search-preview__display">
 					<div className="seo-search-preview__title">
 						{ title }
