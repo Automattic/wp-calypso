@@ -1,0 +1,97 @@
+.plan-features__header {
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: 12px 24px 12px 12px;
+	border-bottom: solid 2px lighten( $gray, 20% );
+	background-color: $white;
+}
+
+.plan-features__header-figure {
+	position: relative;
+	width: 70px;
+	height: 70px;
+	margin-right: 12px;
+	border: solid 6px $gray-light;
+	border-radius: 50%;
+}
+
+.plan-features__header-checkmark {
+	position: absolute;
+	top: 0;
+	right: 0;
+	transform: translate(25%, -25%);
+	fill: $alert-green;
+}
+
+.plan-features__header-text {
+	flex: 1;
+	padding: 6px 0;
+}
+
+.plan-features__header-title,
+.plan-features__header-price,
+.plan-features__header-timeframe {
+	line-height: 1;
+	margin: 0;
+}
+
+.plan-features__header-title {
+	font-size: 18px;
+	color: $blue-wordpress;
+}
+
+.plan-features__header-price {
+	margin: 8px 0;
+	font-size: 24px;
+}
+
+.plan-features__header-currency-symbol,
+.plan-features__header-cents{
+	vertical-align: super;
+	font-size: 12px;
+}
+
+.plan-features__header-currency-symbol {
+	color: $gray;
+}
+
+.plan-features__header-dollars,
+.plan-features__header-cents {
+	color: $gray-dark;
+}
+
+.plan-features__header-dollars {
+	margin: 0 3px;
+	font-weight: 400;
+}
+
+.plan-features__header-cents {
+	font-weight: 500;
+}
+
+.plan-features__header-timeframe {
+	font-size: 12px;
+	font-style: italic;
+	font-weight: 400;
+	color: $gray;
+}
+
+.plan-features__header-banner {
+	box-sizing: border-box;
+	position: absolute;
+	left: -1px;
+	right: -1px;
+	top: 0;
+	transform: translateY( -21px );
+	padding: 0 8px;
+	background: $gray-dark;
+	font-size: 10px;
+	line-height: 20px;
+	text-align: center;
+	text-transform: uppercase;
+	color: $white;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
