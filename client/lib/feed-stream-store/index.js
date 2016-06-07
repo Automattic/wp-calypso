@@ -69,7 +69,7 @@ function getStoreForTag( storeId ) {
 		wpcomUndoc.readTagPosts( query, callback );
 	};
 
-	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ){
+	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ) {
 		return new PagedStream( {
 			id: storeId,
 			fetcher: fetcher,
@@ -153,12 +153,22 @@ function getStoreForFeatured( storeId ) {
 }
 
 function getStoreForRecommendedPosts( storeId ) {
-	var fetcher = function( query, callback ) {
+	const stream = new PagedStream( {
+		id: storeId,
+		fetcher: fetcher,
+		keyMaker: siteKeyMaker,
+		perPage: 5
+	} );
+
+	function fetcher( query, callback ) {
 		function trainTracksProxy( err, response ) {
-			var eventName= 'calypso_traintracks_render',
+			var eventName = 'calypso_traintracks_render',
 				eventProperties = {};
-			forEach ( response && response.posts, ( post, index ) => {
-				let railcar = analytics.tracks.createRandomId() + "-" + index;
+			if ( response && response.algorithm ) {
+				stream.algorithm = response.algorithm;
+			}
+			forEach( response && response.posts, ( post, index ) => {
+				let railcar = analytics.tracks.createRandomId() + '-' + index;
 				eventProperties = {
 					railcar: railcar,
 					ui_algo: 'warm-start-v1',
@@ -172,14 +182,15 @@ function getStoreForRecommendedPosts( storeId ) {
 			callback( err, response );
 		}
 		wpcomUndoc.readRecommendedPosts( query, trainTracksProxy );
+	}
+
+	const oldNextPageFetch = stream.onNextPageFetch;
+	stream.onNextPageFetch = function( params ) {
+		oldNextPageFetch.call( this, params );
+		params.algorithm = stream.algorithm;
 	};
 
-	return new PagedStream( {
-		id: storeId,
-		fetcher: fetcher,
-		keyMaker: siteKeyMaker,
-		perPage: 5
-	} );
+	return stream;
 }
 
 function feedStoreFactory( storeId ) {
