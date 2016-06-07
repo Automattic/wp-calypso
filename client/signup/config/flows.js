@@ -108,7 +108,7 @@ const flows = {
 	},
 
 	personal: {
-		steps: [ 'themes', 'domains', 'user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/personal/' + dependencies.siteSlug;
 		},
