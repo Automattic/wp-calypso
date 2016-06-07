@@ -30,11 +30,13 @@ export default class EmailVerificationGate extends React.Component {
 
 	componentWillMount() {
 		user.on( 'change', this.updateVerificationState );
+		user.on( 'verified', this.updateVerificationState );
 		sites.on( 'change', this.updateVerificationState );
 	}
 
 	componentWillUnmount() {
 		user.off( 'change', this.updateVerificationState );
+		user.off( 'verified', this.updateVerificationState );
 		sites.off( 'change', this.updateVerificationState );
 	}
 
