@@ -214,11 +214,6 @@ GoogleVoucherDetails.propTypes = {
 		PropTypes.object
 	] ).isRequired,
 	googleAdCredits: PropTypes.array,
-	step: PropTypes.number.isRequired
-};
-
-GoogleVoucherDetails.defaultProps = {
-	step: 0
 };
 
 export default connect(
