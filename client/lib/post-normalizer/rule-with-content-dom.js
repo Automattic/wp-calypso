@@ -9,7 +9,7 @@ export default function createDomTransformRunner( transforms ) {
 		let dom;
 		if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
 			const parser = new DOMParser();
-			dom = parser.parseFromString( post.content, 'text/html' );
+			dom = parser.parseFromString( post.content, 'text/html' ).body;
 		} else {
 			dom = document.createElement( 'div' );
 			dom.innerHTML = post.content;
