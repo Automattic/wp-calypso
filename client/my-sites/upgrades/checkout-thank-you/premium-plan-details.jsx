@@ -23,7 +23,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 
 	return (
 		<div>
-			<QuerySiteVouchers siteId={ selectedSite.ID } />
+			{ config.isEnabled( 'google-voucher' ) && <QuerySiteVouchers siteId={ selectedSite.ID } /> }
 
 			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
 
