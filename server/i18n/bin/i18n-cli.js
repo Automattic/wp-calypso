@@ -63,10 +63,10 @@ inputPaths = inputFiles.map( function( fileName ) {
 	return path.resolve( process.env.PWD, fileName );
 } );
 
-inputPaths.forEach( function( inputFile ) {
-	if ( ! fs.existsSync( inputFile ) ) {
-		throw new Error( 'Error: inputFile "' + inputFile + '" does not exist' );
+i18n( outputFile, arrayName, inputPaths, function() {
+	if ( process.exitCode ) {
+		console.log( 'get-i18n completed with errors.' );
+	} else {
+		console.log( 'get-i18n completed.' );
 	}
 } );
-
-i18n( outputFile, arrayName, inputPaths );

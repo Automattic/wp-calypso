@@ -168,27 +168,27 @@ function buildPhpOutput( data, arrayName ) {
  * @param  {Function} done       - callback function
  */
 function readFile( outputFile, arrayName, inputFiles, done ) {
-	console.log( 'Reading inputFiles: ' + inputFiles.join( ', ' ) );
 	async.map( inputFiles, function( inputFile, callback ) {
 		fs.readFile( inputFile, 'utf8', function( err, data ) {
 			if ( err ) {
-				throw new Error( 'i18n: Error reading ' + inputFile );
+				console.log( 'i18n: Error reading ' + inputFile );
+				console.error( err );
+				process.exitCode = 1;
+				callback();
 			} else {
+				console.log( 'i18n: Reading ' + inputFile );
 				callback( null, data );
 			}
 		} );
 	}, function( err, data ) {
-		if ( err ) {
-			throw new Error( err );
-		}
 		fs.writeFile( outputFile, buildPhpOutput( data.join( '\n' ), arrayName ), 'utf8', function( error ) {
 			if ( error ) {
-				throw new Error( error );
-			} else {
-				console.log( 'get-i18n completed' );
-				if ( 'function' === typeof done ) {
-					done();
-				}
+				process.exitCode = 1;
+				console.log( 'i18n: Error writing ' + outputFile );
+				console.error( error );
+			}
+			if ( 'function' === typeof done ) {
+				done();
 			}
 		} );
 	} );
