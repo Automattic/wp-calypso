@@ -27,7 +27,7 @@ export default React.createClass( {
 					<a href="/devdocs/app-components/domain-tip">Domain Tip</a>
 				</h2>
 				<div>
-					<DomainTip siteId={ siteId } />
+					<DomainTip siteId={ siteId } event="domain_app_example" />
 				</div>
 			</div>
 		);
