@@ -10,11 +10,15 @@ import isEqual from 'lodash/isEqual';
 import reduce from 'lodash/reduce';
 import keyBy from 'lodash/keyBy';
 import merge from 'lodash/merge';
+import findKey from 'lodash/findKey';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
  */
+import PostQueryManager from 'lib/query-manager/post';
 import {
+	POST_DELETE,
 	POST_EDIT,
 	POST_EDITS_RESET,
 	POST_REQUEST,
@@ -28,12 +32,8 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 import counts from './counts/reducer';
-import {
-	getSerializedPostsQuery,
-	getSerializedPostsQueryWithoutPage
-} from './utils';
-import { DEFAULT_POST_QUERY } from './constants';
-import { itemsSchema, queriesSchema } from './schema';
+import { getSerializedPostsQuery } from './utils';
+import { itemsSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
 
 /**
@@ -47,12 +47,36 @@ export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case POSTS_RECEIVE:
 			return Object.assign( {}, state, keyBy( action.posts, 'global_ID' ) );
+
+		case POST_DELETE:
+			const globalId = findKey( state, {
+				ID: action.postId,
+				site_ID: action.siteId
+			} );
+
+			if ( ! globalId ) {
+				break;
+			}
+
+			// Posts and pages are first sent to trash before being permanently
+			// deleted. Therefore, only omit if already trashed or custom type.
+			const post = state[ globalId ];
+			if ( 'trash' === post.status || ! includes( [ 'post', 'page' ], post.type ) ) {
+				return omit( state, globalId );
+			}
+
+			return merge( {}, state, {
+				[ globalId ]: { status: 'trash' }
+			} );
+
 		case SERIALIZE:
 			return state;
+
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, itemsSchema ) ) {
 				return state;
 			}
+
 			return {};
 	}
 	return state;
@@ -124,47 +148,50 @@ export function queryRequests( state = {}, action ) {
  */
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
-		case POSTS_REQUEST_SUCCESS:
-			const serializedQuery = getSerializedPostsQuery( action.query, action.siteId );
-			return Object.assign( {}, state, {
-				[ serializedQuery ]: action.posts.map( ( post ) => post.global_ID )
+		case POSTS_REQUEST_SUCCESS: {
+			const { siteId, query, posts, found } = action;
+			if ( ! state[ siteId ] ) {
+				state[ siteId ] = new PostQueryManager();
+			}
+
+			const nextPosts = state[ siteId ].receive( posts, {
+				query,
+				found
 			} );
 
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, queriesSchema ) ) {
+			if ( nextPosts === state[ siteId ] ) {
 				return state;
 			}
 
-			return {};
-	}
+			return Object.assign( {}, state, {
+				[ siteId ]: nextPosts
+			} );
+		}
 
-	return state;
-}
+		case POST_DELETE: {
+			if ( ! state[ action.siteId ] ) {
+				return state;
+			}
 
-/**
- * Returns the updated post query last page state after an action has been
- * dispatched. The state reflects a mapping of serialized query to last known
- * page number.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function queriesLastPage( state = {}, action ) {
-	switch ( action.type ) {
-		case POSTS_REQUEST_SUCCESS:
-			const { siteId, found } = action;
-			const serializedQuery = getSerializedPostsQueryWithoutPage( action.query, siteId );
-			const lastPage = Math.ceil( found / ( action.query.number || DEFAULT_POST_QUERY.number ) );
+			const nextPosts = state[ action.siteId ].receive( {
+				ID: action.postId,
+				status: 'trash'
+			}, { patch: true } );
+
+			if ( nextPosts === state[ action.siteId ] ) {
+				return state;
+			}
 
 			return Object.assign( {}, state, {
-				[ serializedQuery ]: Math.max( lastPage, 1 )
+				[ action.siteId ]: nextPosts
 			} );
+		}
 
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};
 	}
+
 	return state;
 }
 
@@ -223,6 +250,5 @@ export default combineReducers( {
 	siteRequests,
 	queryRequests,
 	queries,
-	queriesLastPage,
 	edits
 } );
