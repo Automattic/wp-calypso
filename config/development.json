@@ -63,6 +63,7 @@
 		"manage/people": true,
 		"manage/people/readers": true,
 		"manage/plans": true,
+		"manage/plans/redesign": true,
 		"manage/plugins": true,
 		"manage/plugins/cache": false,
 		"manage/plugins/compatibility-warning": false,
