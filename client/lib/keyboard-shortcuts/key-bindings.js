@@ -47,6 +47,14 @@ KeyBindings.prototype.get = function() {
 					keys: [ 'enter' ],
 					text: i18n.translate( 'Open selection' )
 				}
+			},
+			{
+				eventName: 'go-to-top',
+				keys: [ '.' ],
+				description: {
+					keys: [ '.' ],
+					text: i18n.translate( 'Go to top' )
+				},
 			}
 		],
 
