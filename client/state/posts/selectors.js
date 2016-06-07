@@ -2,7 +2,6 @@
  * External dependencies
  */
 import get from 'lodash/get';
-import range from 'lodash/range';
 import createSelector from 'lib/create-selector';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
@@ -64,14 +63,11 @@ export const getSitePost = createSelector(
  * @return {?Array}         Posts for the post query
  */
 export function getSitePostsForQuery( state, siteId, query ) {
-	const serializedQuery = getSerializedPostsQuery( query, siteId );
-	if ( ! state.posts.queries[ serializedQuery ] ) {
+	if ( ! state.posts.queries[ siteId ] ) {
 		return null;
 	}
 
-	return state.posts.queries[ serializedQuery ].map( ( globalId ) => {
-		return getPost( state, globalId );
-	} ).filter( Boolean );
+	return state.posts.queries[ siteId ].getItems( query );
 }
 
 /**
@@ -98,8 +94,11 @@ export function isRequestingSitePostsForQuery( state, siteId, query ) {
  * @return {?Number}        Last posts page
  */
 export function getSitePostsLastPageForQuery( state, siteId, query ) {
-	const serializedQuery = getSerializedPostsQueryWithoutPage( query, siteId );
-	return state.posts.queriesLastPage[ serializedQuery ] || null;
+	if ( ! state.posts.queries[ siteId ] ) {
+		return null;
+	}
+
+	return state.posts.queries[ siteId ].getNumberOfPages( query );
 }
 
 /**
@@ -130,15 +129,11 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  * @return {?Array}         Posts for the post query
  */
 export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
-	const lastPage = getSitePostsLastPageForQuery( state, siteId, query );
-	if ( null === lastPage ) {
-		return lastPage;
+	if ( ! state.posts.queries[ siteId ] ) {
+		return null;
 	}
 
-	return range( 1, lastPage + 1 ).reduce( ( memo, page ) => {
-		const pageQuery = Object.assign( {}, query, { page } );
-		return memo.concat( getSitePostsForQuery( state, siteId, pageQuery ) || [] );
-	}, [] );
+	return state.posts.queries[ siteId ].getItemsIgnoringPage( query );
 }
 
 /**

@@ -20,6 +20,7 @@ import {
 	getEditedPost,
 	getEditedPostValue
 } from '../selectors';
+import PostQueryManager from 'lib/query-manager/post';
 
 describe( 'selectors', () => {
 	describe( '#getPost()', () => {
@@ -106,11 +107,17 @@ describe( 'selectors', () => {
 		it( 'should return an array of the known queried posts', () => {
 			const sitePosts = getSitePostsForQuery( {
 				posts: {
-					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-					},
 					queries: {
-						'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+							},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [ 841 ]
+								}
+							}
+						} )
 					}
 				}
 			}, 2916284, { search: 'Hello' } );
@@ -118,19 +125,6 @@ describe( 'selectors', () => {
 			expect( sitePosts ).to.eql( [
 				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			] );
-		} );
-
-		it( 'should omit known query posts where post object is unknown', () => {
-			const sitePosts = getSitePostsForQuery( {
-				posts: {
-					items: {},
-					queries: {
-						'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-					}
-				}
-			}, 2916284, { search: 'Hello' } );
-
-			expect( sitePosts ).to.eql( [] );
 		} );
 	} );
 
@@ -186,7 +180,7 @@ describe( 'selectors', () => {
 		it( 'should return null if the site query is not tracked', () => {
 			const lastPage = getSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {}
+					queries: {}
 				}
 			}, 2916284, { search: 'Hello' } );
 
@@ -196,23 +190,43 @@ describe( 'selectors', () => {
 		it( 'should return the last page value for a site query', () => {
 			const lastPage = getSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {
-						'2916284:{"search":"hello"}': 4
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+							},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [ 841 ],
+									found: 1
+								}
+							}
+						} )
 					}
 				}
 			}, 2916284, { search: 'Hello' } );
 
-			expect( lastPage ).to.equal( 4 );
+			expect( lastPage ).to.equal( 1 );
 		} );
 
 		it( 'should return the last page value for a site query, even if including page param', () => {
 			const lastPage = getSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {
-						'2916284:{"search":"hello"}': 4
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+							},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [ 841 ],
+									found: 4
+								}
+							}
+						} )
 					}
 				}
-			}, 2916284, { search: 'Hello', page: 3 } );
+			}, 2916284, { search: 'Hello', page: 3, number: 1 } );
 
 			expect( lastPage ).to.equal( 4 );
 		} );
@@ -222,7 +236,7 @@ describe( 'selectors', () => {
 		it( 'should return null if the last page is not known', () => {
 			const isLastPage = isSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {}
+					queries: {}
 				}
 			}, 2916284, { search: 'Hello' } );
 
@@ -232,11 +246,21 @@ describe( 'selectors', () => {
 		it( 'should return false if the query explicit value is not the last page', () => {
 			const isLastPage = isSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {
-						'2916284:{"search":"hello"}': 4
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+							},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [ 841 ],
+									found: 4
+								}
+							}
+						} )
 					}
 				}
-			}, 2916284, { search: 'Hello', page: 3 } );
+			}, 2916284, { search: 'Hello', page: 3, number: 1 } );
 
 			expect( isLastPage ).to.be.false;
 		} );
@@ -244,11 +268,21 @@ describe( 'selectors', () => {
 		it( 'should return true if the query explicit value is the last page', () => {
 			const isLastPage = isSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {
-						'2916284:{"search":"hello"}': 4
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+							},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [ 841 ],
+									found: 4
+								}
+							}
+						} )
 					}
 				}
-			}, 2916284, { search: 'Hello', page: 4 } );
+			}, 2916284, { search: 'Hello', page: 4, number: 1 } );
 
 			expect( isLastPage ).to.be.true;
 		} );
@@ -256,40 +290,42 @@ describe( 'selectors', () => {
 		it( 'should return true if the query implicit value is the last page', () => {
 			const isLastPage = isSitePostsLastPageForQuery( {
 				posts: {
-					queriesLastPage: {
-						'2916284:{"search":"hello"}': 1
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+							},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [ 841 ],
+									found: 1
+								}
+							}
+						} )
 					}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Hello', number: 1 } );
 
 			expect( isLastPage ).to.be.true;
 		} );
 	} );
 
 	describe( '#getSitePostsForQueryIgnoringPage()', () => {
-		it( 'should return null if the last page is not known', () => {
-			const isLastPage = isSitePostsLastPageForQuery( {
-				posts: {
-					queriesLastPage: {}
-				}
-			}, 2916284, { search: 'Hello' } );
-
-			expect( isLastPage ).to.be.null;
-		} );
-
 		it( 'should return a concatenated array of all site posts ignoring page', () => {
 			const sitePosts = getSitePostsForQueryIgnoringPage( {
 				posts: {
-					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
-					},
 					queries: {
-						'2916284:{"number":1}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
-						'2916284:{"number":1,"page":2}': [ '6c831c187ffef321eb43a67761a525a3' ]
-					},
-					queriesLastPage: {
-						'2916284:{"number":1}': 2
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
+								413: { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
+							},
+							queries: {
+								'[]': {
+									itemKeys: [ 841, 413 ]
+								}
+							}
+						} )
 					}
 				}
 			}, 2916284, { search: '', number: 1 } );
@@ -306,28 +342,22 @@ describe( 'selectors', () => {
 			getSitePostsHierarchyForQueryIgnoringPage.memoizedSelector.cache.clear();
 		} );
 
-		it( 'should return null if the last page is not known', () => {
-			const isLastPage = isSitePostsLastPageForQuery( {
-				posts: {
-					queriesLastPage: {}
-				}
-			}, 2916284, { search: 'Hello' } );
-
-			expect( isLastPage ).to.be.null;
-		} );
-
 		it( 'should return a concatenated array of all site posts ignoring page, preserving hierarchy', () => {
 			const sitePosts = getSitePostsHierarchyForQueryIgnoringPage( {
 				posts: {
-					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' },
-						'f0cb4eb16f493c19b627438fdc18d57c': { ID: 120, site_ID: 2916284, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak & Eggs', parent: { ID: 413 } } // eslint-disable-line
-					},
 					queries: {
-						'2916284:{"number":1}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
-						'2916284:{"number":1,"page":2}': [ '6c831c187ffef321eb43a67761a525a3' ],
-						'2916284:{"number":1,"page":3}': [ 'f0cb4eb16f493c19b627438fdc18d57c' ]
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
+								413: { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' },
+								120: { ID: 120, site_ID: 2916284, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak & Eggs', parent: { ID: 413 } }
+							},
+							queries: {
+								'[]': {
+									itemKeys: [ 841, 413, 120 ]
+								}
+							}
+						} )
 					},
 					queriesLastPage: {
 						'2916284:{"number":1}': 3
