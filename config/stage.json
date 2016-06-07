@@ -73,6 +73,7 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/recommendations/posts": true,
+		"reader/related-posts": true,
 		"reader/tags-with-elasticsearch": true,
 		"resume-editing": true,
 		"rubberband-scroll-disable": false,

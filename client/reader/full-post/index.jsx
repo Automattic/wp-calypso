@@ -17,7 +17,8 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal Dependencies
  */
-var CommentButton = require( 'components/comment-button' ),
+var config = require( 'config' ),
+	CommentButton = require( 'components/comment-button' ),
 	Dialog = require( 'components/dialog' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
 	EmbedContainer = require( 'components/embed-container' ),
@@ -53,7 +54,6 @@ var CommentButton = require( 'components/comment-button' ),
 import PostExcerpt from 'components/post-excerpt';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
 import RelatedPosts from 'reader/related-posts';
-
 
 let loadingPost = {
 		URL: '',
@@ -227,7 +227,7 @@ FullPostView = React.createClass( {
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
 					{ discoverSiteName && discoverSiteUrl ? <DiscoverVisitLink siteName={ discoverSiteName } siteUrl={ discoverSiteUrl } /> : null }
-					{ ! post.is_external && post.site_ID && <RelatedPosts siteId={ post.site_ID } postId={ post.ID } /> }
+					{ config.isEnabled( 'reader/related-posts' ) && ! post.is_external && post.site_ID && <RelatedPosts siteId={ post.site_ID } postId={ post.ID } /> }
 					{ this.props.shouldShowComments ? <PostCommentList ref="commentList" post={ post } initialSize={ 25 } pageSize={ 25 } onCommentsUpdate={ this.checkForCommentAnchor } /> : null }
 				</article>
 			</div>
