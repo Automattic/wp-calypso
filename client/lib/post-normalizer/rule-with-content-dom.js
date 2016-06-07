@@ -6,9 +6,15 @@ export default function createDomTransformRunner( transforms ) {
 			return post;
 		}
 
-		// spin up the DOM
-		const dom = document.createElement( 'div' );
-		dom.innerHTML = post.content;
+		let dom;
+		if ( typeof DOMParser !== 'undefined' ) {
+			const parser = new DOMParser();
+			dom = parser.parseFromString( post.content, 'text/html' );
+		} else {
+			dom = document.createElement( 'div' );
+			dom.innerHTML = post.content;
+		}
+
 		post = reduce( transforms, ( memo, transform ) => {
 			return transform( memo, dom );
 		}, post );
