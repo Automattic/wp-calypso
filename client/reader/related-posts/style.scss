@@ -1,28 +1,24 @@
 .related-posts {
 	margin: 48px 0;
 	padding: 0;
-
-	a:link, a:visited {
-		text-decoration: none;
-		color: $gray-dark;
-	}
-
-	a:hover {
-		text-decoration: underline;
-	}
 }
 
 .related-posts__list,
 .related-posts__list-item {
+	list-style: none;
 	margin: 0;
 	padding: 0;
-	list-style: none;
 }
 
 .related-posts__heading {
-	text-transform: uppercase;
+	color: $gray;
 	font-size: 14px;
 	font-weight: 600;
-	color: $gray;
-	margin: 0 0 24px 0;
+	margin-bottom: 24px;
+	text-transform: uppercase;
+}
+
+.post-card__site-info,
+.post-card__anchor {
+	text-decoration: none;
 }
