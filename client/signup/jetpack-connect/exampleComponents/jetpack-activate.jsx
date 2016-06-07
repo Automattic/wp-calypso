@@ -45,7 +45,7 @@ export default React.createClass( {
 					</div>
 
 				</div>
-				<div className="jetpack-connect__example-content jetpack-connect__example-connect-jetpack">
+				<div className="jetpack-connect__example-content jetpack-connect__example-activate-jetpack">
 					<div className="jetpack-connect__example-content-wp-admin-masterbar"></div>
 					<div className="jetpack-connect__example-content-wp-admin-sidebar"></div>
 					<div className="jetpack-connect__example-content-wp-admin-main">
