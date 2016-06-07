@@ -27,12 +27,12 @@ describe( 'actions', () => {
 
 	describe( '#receivePosts()', () => {
 		it( 'should return an action object', () => {
-			const posts = {};
-			const action = receivePosts( posts );
-
-			expect( action ).to.eql( {
-				type: READER_POSTS_RECEIVE,
-				posts
+			const posts = [];
+			return receivePosts( posts )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: READER_POSTS_RECEIVE,
+					posts
+				} );
 			} );
 		} );
 	} );
