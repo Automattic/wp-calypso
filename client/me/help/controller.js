@@ -35,6 +35,11 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Help > Contact' );
 
+		// Scroll to the top
+		if ( typeof window !== 'undefined' ) {
+			window.scrollTo( 0, 0 );
+		}
+
 		ReactDom.render(
 			<ReduxProvider store={ context.store } >
 				<ContactComponent clientSlug={ config( 'client_slug' ) } />

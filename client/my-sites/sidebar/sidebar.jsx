@@ -14,9 +14,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-var abtest = require( 'lib/abtest' ).abtest,
-	AdsUtils = require( 'lib/ads/utils' ),
-	config = require( 'config' ),
+var config = require( 'config' ),
 	CurrentSite = require( 'my-sites/current-site' ),
 	getCustomizeUrl = require( '../themes/helpers' ).getCustomizeUrl,
 	Gridicon = require( 'components/gridicon' ),
@@ -155,7 +153,7 @@ module.exports = React.createClass( {
 		var site = this.getSelectedSite(),
 			adsLink = '/ads/earnings' + this.siteSuffix();
 
-		if ( ! AdsUtils.canAccessWordads( site ) ) {
+		if ( !site || ! site.options.wordads ) {
 			return null;
 		}
 

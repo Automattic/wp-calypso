@@ -3,6 +3,7 @@
  */
 import { combineReducers } from 'redux';
 import pick from 'lodash/pick';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
@@ -19,7 +20,8 @@ import {
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
 	DESERIALIZE,
-	SERIALIZE
+	SERIALIZE,
+	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { sitesSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
@@ -40,6 +42,14 @@ const VALID_SITE_KEYS = Object.keys( sitesSchema.patternProperties[ '^\\d+$' ].p
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
+		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
+			const prevSite = state[ action.siteId ];
+			if ( prevSite ) {
+				return Object.assign( {}, state, {
+					[ action.siteId ]: merge( {}, prevSite, { options: { wordads: true } } )
+				} );
+			}
+			return state;
 		case SITE_RECEIVE: {
 			const site = pick( action.site, VALID_SITE_KEYS );
 			return Object.assign( {}, state, {
