@@ -55,6 +55,7 @@ import FeatureGate from 'components/feature-example/docs/example';
 import FilePickers from 'components/file-picker/docs/example';
 import Collection from 'devdocs/design/search-collection';
 import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
+import FAQ from 'components/faq/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -107,6 +108,7 @@ let DesignAssets = React.createClass( {
 					<DatePicker />
 					<DropZones searchKeywords="drag" />
 					<ExternalLink />
+					<FAQ />
 					<FeatureGate />
 					<FilePickers />
 					<FoldableCard />
