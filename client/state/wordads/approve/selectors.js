@@ -45,7 +45,7 @@ export function getWordAdsErrorForSite( state, site ) {
 }
 
 /**
- * Returns true if we're currently requesting WordAds approval
+ * Returns true if the WordAds approval request was successful
  * @param   {Object} state  Global State
  * @param   {Number} siteId Site Id
  * @returns {?Object}       WordAds Error

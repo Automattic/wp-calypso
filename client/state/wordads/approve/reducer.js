@@ -71,6 +71,7 @@ export function requestErrors( state = {}, action ) {
  */
 export function requestSuccess( state = {}, action ) {
 	switch ( action.type ) {
+		case WORDADS_SITE_APPROVE_REQUEST:
 		case WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS:
 		case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
 			return Object.assign( {}, state, {
