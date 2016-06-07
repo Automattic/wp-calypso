@@ -82,4 +82,28 @@ describe('TestRun class', function() {
 			'another/path/to/specs'
 		]);
 	});
+
+	it('returns the arguments for a run with characters that needs to be escaped in title', function() {
+		testFramework.initialize({
+			'mocha_tests': ['path/to/specs', 'another/path/to/specs'],
+			'mocha_opts': 'path/to/mocha.opts'
+		});
+
+		var localRun = new TestRun({
+			locator: {
+				name: 'The full name of the test to run, with ()[]+*.$^'
+			}
+		});
+		var args = localRun.getArguments();
+		expect(args).to.deep.equal([
+      '--mocking_port=undefined',
+			'--worker=1',
+			'-g',
+			'The full name of the test to run, with \\(\\)\\[\\]\\+\\*\\.\\$\\^',
+			'--opts',
+			'path/to/mocha.opts',
+			'path/to/specs',
+			'another/path/to/specs'
+		]);
+	});
 });
