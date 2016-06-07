@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-
 /**
  * Internal Dependencies
  */
@@ -41,7 +40,7 @@ function RelatedPosts( { siteId, postId, posts } ) {
 		<div className="related-posts">
 			<h3 className="related-posts__heading">{ i18n.translate( 'Suggested Reading' ) }</h3>
 			<ul className="related-posts__list">
-				{ posts.map( post => <ConnectedRelatedPost post={ post } /> ) }
+				{ posts.map( post_id => <li key={ post_id } className="related-posts__list-item"><ConnectedRelatedPost post={ post_id } /></li> ) }
 			</ul>
 		</div>
 	);

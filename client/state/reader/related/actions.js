@@ -8,13 +8,15 @@ import map from 'lodash/map';
  * Internal Dependencies
  */
 import {
-	READER_POSTS_RECEIVE,
 	READER_RELATED_POSTS_REQUEST,
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
 	READER_RELATED_POSTS_REQUEST_FAILURE,
 	READER_RELATED_POSTS_RECEIVE,
 	READER_SITE_UPDATE
 } from 'state/action-types';
+import {
+	receivePosts
+} from 'state/reader/posts/actions';
 import wpcom from 'lib/wp';
 
 export function requestRelatedPosts( siteId, postId ) {
@@ -33,11 +35,6 @@ export function requestRelatedPosts( siteId, postId ) {
 					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
 					payload: { siteId, postId }
 				} );
-				// collect posts and dispatch
-				dispatch( {
-					type: READER_POSTS_RECEIVE,
-					posts: response && response.posts
-				} );
 				const sites = filter( map( response && response.posts, 'meta.data.site' ), Boolean );
 				if ( sites ) {
 					dispatch( {
@@ -45,13 +42,16 @@ export function requestRelatedPosts( siteId, postId ) {
 						payload: sites
 					} );
 				}
-				dispatch( {
-					type: READER_RELATED_POSTS_RECEIVE,
-					payload: {
-						siteId,
-						postId,
-						posts: response && response.posts
-					}
+				// collect posts and dispatch
+				dispatch( receivePosts( response && response.posts ) ).then( () => {
+					dispatch( {
+						type: READER_RELATED_POSTS_RECEIVE,
+						payload: {
+							siteId,
+							postId,
+							posts: response && response.posts
+						}
+					} );
 				} );
 			},
 			err => {

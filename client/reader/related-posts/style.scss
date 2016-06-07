@@ -1,11 +1,22 @@
 .related-posts {
-	background: $gray-light;
-	margin: 24px 0;
-	padding: 24px;
+	margin: 48px 0;
+	padding: 0;
+
+	a:link, a:visited {
+		text-decoration: none;
+		color: $gray-dark;
+	}
+
+	a:hover {
+		text-decoration: underline;
+	}
 }
 
-.related-posts__list {
+.related-posts__list,
+.related-posts__list-item {
 	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
 .related-posts__heading {
