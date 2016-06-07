@@ -1,26 +1,32 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	i18n = require( 'i18n-calypso' ),
-	noop = require( 'lodash/noop' ),
-	classNames = require( 'classnames' );
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import classNames from 'classnames';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
-var Popover = require( 'components/popover' ),
-	Tooltip = require( 'components/chart/tooltip' );
+import i18n from 'lib/mixins/i18n';
+import Popover from 'components/popover';
+import Tooltip from 'components/chart/tooltip';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	getSiteStatsPostsCountByDay,
+	getSiteStatsMaxPostsByDay
+} from 'state/stats/lists/selectors';
 
-module.exports = React.createClass( {
+const PostTrendsDay = React.createClass( {
 
 	displayName: 'PostTrendsDay',
 
 	propTypes: {
-		days: React.PropTypes.object.isRequired,
-		date: React.PropTypes.object.isRequired,
-		month: React.PropTypes.object.isRequired,
-		max: React.PropTypes.number.isRequired
+		date: PropTypes.object.isRequired,
+		month: PropTypes.object.isRequired,
+		max: PropTypes.number,
+		postCount: PropTypes.number
 	},
 
 	getInitialState: function() {
@@ -35,58 +41,45 @@ module.exports = React.createClass( {
 		this.setState( { showPopover: false } );
 	},
 
-	buildTooltipData: function( date, data ) {
-		var tooltipData = [],
-			count = 0,
-			label,
-			labelWrapper;
+	buildTooltipData: function() {
+		const { date, postCount } = this.props;
+		const count = postCount || 0;
 
-		count = data[ date.format( 'YYYY-MM-DD' ) ] || 0;
-
-		label = this.translate(
-			'%(posts)d post on',
-			'%(posts)d posts on', {
-				count: count,
-				args: {
-					posts: count
-				},
-				comment: 'How many posts published on a certain date.'
-		} );
-
-		labelWrapper = (
+		const labelWrapper = (
 			<span>
-				<span className="post-count">{ label } </span>
+				<span className="post-count">{
+					this.translate(
+						'%(posts)d post on',
+						'%(posts)d posts on', {
+							count: count,
+							args: {
+								posts: count
+							},
+							comment: 'How many posts published on a certain date.'
+						}
+					)
+				} </span>
 				<span className="date">{ date.format( 'L' ) }</span>
 			</span>
 		);
 
-		tooltipData.push( {
-			label: labelWrapper
-		} );
-
-		return tooltipData;
+		return [ { label: labelWrapper } ];
 	},
 
 	render: function() {
-		var level,
-			data = this.props.days,
-			date = this.props.date,
-			max = this.props.max,
-			dayClasses = {},
-			tooltip = null,
-			showTooltip = false;
+		const { postCount, max, date, month } = this.props;
+		let dayClasses = {};
+		let showTooltip = false;
+		let tooltip;
 
 		// Level is calculated between 0 and 4, 4 being days where posts = max, and 0 being days where posts = 0
-		level = Math.ceil( ( data[ date.format( 'YYYY-MM-DD' ) ] / max ) * 4 );
+		let level = Math.ceil( ( postCount / max ) * 4 );
 
-		if ( date.isBefore( i18n.moment( this.props.month ).startOf( 'month' ) ) || date.isAfter( i18n.moment( this.props.month ).endOf( 'month' ) ) ) {
+		if ( date.isBefore( i18n.moment( month ).startOf( 'month' ) ) || date.isAfter( i18n.moment( month ).endOf( 'month' ) ) ) {
 			dayClasses['is-outside-month'] = true;
-
 		} else if ( date.isAfter( i18n.moment().endOf( 'day' ) ) ) {
 			dayClasses['is-after-today'] = true;
-
 		} else if ( level ) {
-
 			if ( level > 4 ) {
 				level = 4;
 			}
@@ -103,10 +96,10 @@ module.exports = React.createClass( {
 				<Popover context={ this.refs && this.refs.day }
 					isVisible={ this.state.showPopover }
 					position="top"
-					onClose={ noop }
 					className="chart__tooltip is-streak"
+					onClose={ noop }
 					>
-					<Tooltip data={ this.buildTooltipData( date, data ) } />
+					<Tooltip data={ this.buildTooltipData() } />
 				</Popover>
 			);
 		}
@@ -121,3 +114,16 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state, ownProps ) => {
+	const siteId = getSelectedSiteId( state );
+	const query = {
+		startDate: i18n.moment().subtract( 1, 'year' ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
+		endDate: i18n.moment().endOf( 'month' ).format( 'YYYY-MM-DD' )
+	};
+
+	return {
+		postCount: getSiteStatsPostsCountByDay( state, siteId, query, ownProps.date.format( 'YYYY-MM-DD' ) ),
+		max: getSiteStatsMaxPostsByDay( state, siteId, query )
+	};
+} )( PostTrendsDay );

@@ -15,20 +15,17 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		startDate: React.PropTypes.object.isRequired,
-		month: React.PropTypes.object.isRequired,
-		data: React.PropTypes.object.isRequired
+		month: React.PropTypes.object.isRequired
 	},
 
 	getDayComponents: function() {
 		var i,
-			data = this.props.data.response.days || {},
-			max = this.props.data.response.max || 1,
 			days = [],
 			dayDate;
 
 		for ( i = 0; i < 7; i++ ) {
 			dayDate = i18n.moment( this.props.startDate ).add( i, 'day' );
-			days.push( <Day days={ data } key={ dayDate.format( 'MMDD' ) } date={ dayDate } month={ this.props.month } max={ max } /> );
+			days.push( <Day key={ dayDate.format( 'MMDD' ) } date={ dayDate } month={ this.props.month } /> );
 		}
 
 		return days;

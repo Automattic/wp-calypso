@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import throttle from 'lodash/throttle';
 import touchDetect from 'lib/touch-detect';
@@ -10,19 +11,22 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import observe from 'lib/mixins/data-observe';
 import Month from './month';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
+import QuerySiteStats from 'components/data/query-site-stats';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	isRequestingSiteStatsForQuery
+} from 'state/stats/lists/selectors';
 
-export default React.createClass( {
+const PostTrends = React.createClass( {
 
 	displayName: 'PostTrends',
 
-	mixins: [ observe( 'streakList' ) ],
-
 	propTypes: {
-		streakList: PropTypes.object.isRequired
+		siteId: PropTypes.number,
+		query: PropTypes.object
 	},
 
 	getInitialState: function() {
@@ -111,7 +115,7 @@ export default React.createClass( {
 
 		for ( i = 11; i >= 0; i-- ) {
 			startDate = i18n.moment().subtract( i, 'months' ).startOf( 'month' );
-			months.push( <Month key={ startDate.format( 'YYYYMM' ) } startDate={ startDate } data={ this.props.streakList } /> );
+			months.push( <Month key={ startDate.format( 'YYYYMM' ) } startDate={ startDate } /> );
 		}
 
 		return months;
@@ -121,6 +125,8 @@ export default React.createClass( {
 		var leftClass,
 			rightClass,
 			containerClass;
+
+		const { siteId, query } = this.props;
 
 		leftClass = classNames( 'post-trends__scroll-left', {
 			'is-active': this.state.canScrollLeft
@@ -141,6 +147,7 @@ export default React.createClass( {
 		return (
 
 			<div className={ containerClass }>
+				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
 				<SectionHeader label={ this.translate( 'Posting Activity' ) }></SectionHeader>
 				<Card>
 					<div className={ leftClass } onClick={ this.scrollLeft }><span className="left-arrow"></span></div>
@@ -166,3 +173,17 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const query = {
+		startDate: i18n.moment().subtract( 1, 'year' ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
+		endDate: i18n.moment().endOf( 'month' ).format( 'YYYY-MM-DD' )
+	};
+
+	return {
+		requesting: isRequestingSiteStatsForQuery( state, siteId, 'statsStreak', query ),
+		query,
+		siteId
+	};
+} )( PostTrends );
