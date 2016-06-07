@@ -103,3 +103,23 @@ export const getSiteStatsMaxPostsByDay = createSelector(
 	}
 );
 
+/**
+ * Returns a number representing the posts made during a day for a given query
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {Object}  query    Stats query object
+ * @return {?Number}          Max number of posts by day
+ */
+export const getSiteStatsPostsCountByDay = createSelector(
+	( state, siteId, query, date ) => {
+		const data = getSiteStatsPostStreakData( state, siteId, query );
+		return data[ date ] || null;
+	},
+	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
+	( state, siteId, taxonomy, query ) => {
+		const serializedQuery = getSerializedStatsQuery( query );
+		return [ siteId, 'statsStreakMax', serializedQuery ].join();
+	}
+);
+

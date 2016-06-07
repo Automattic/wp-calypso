@@ -10,6 +10,7 @@ import {
 	getSiteStatsMaxPostsByDay,
 	getSiteStatsPostStreakData,
 	getSiteStatsForQuery,
+	getSiteStatsPostsCountByDay,
 	isRequestingSiteStatsForQuery
 } from '../selectors';
 
@@ -191,6 +192,45 @@ describe( 'selectors', () => {
 					}
 				}
 			}, 2916284, { startDate: '2015-06-01', endDate: '2016-06-01' } );
+
+			expect( stats ).to.eql( 2 );
+		} );
+	} );
+
+	describe( 'getSiteStatsPostsCountByDay()', () => {
+		it( 'should return null if no matching query results exist', () => {
+			const stats = getSiteStatsPostsCountByDay( {
+				stats: {
+					lists: {
+						items: {}
+					}
+				}
+			}, 2916284, {}, '2016-06-01' );
+
+			expect( stats ).to.be.null;
+		} );
+
+		it( 'should properly correct number of max posts for a day', () => {
+			const stats = getSiteStatsPostsCountByDay( {
+				stats: {
+					lists: {
+						items: {
+							2916284: {
+								statsStreak: {
+									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
+										streak: {},
+										data: {
+											1461961382: 1,
+											1464110402: 1,
+											1464110448: 1
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, { startDate: '2015-06-01', endDate: '2016-06-01' }, '2016-05-24' );
 
 			expect( stats ).to.eql( 2 );
 		} );
