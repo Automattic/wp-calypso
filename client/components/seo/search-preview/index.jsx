@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
-export const SeoSiteSearchPreview = React.createClass( {
+export const SearchPreview = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render() {
@@ -30,10 +30,10 @@ export const SeoSiteSearchPreview = React.createClass( {
 	}
 } );
 
-SeoSiteSearchPreview.propTypes = {
+SearchPreview.propTypes = {
 	title: PropTypes.string,
 	url: PropTypes.string,
 	snippet: PropTypes.string
 };
 
-export default SeoSiteSearchPreview;
+export default SearchPreview;

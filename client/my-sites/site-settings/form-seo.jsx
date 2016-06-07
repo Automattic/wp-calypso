@@ -27,7 +27,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SearchEngineSeoPreview from 'components/seo/seo-site-search-preview';
+import SearchPreview from 'components/seo/search-preview';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const serviceIds = {
@@ -301,7 +301,7 @@ export const SeoForm = React.createClass( {
 									{ this.translate( 'Craft a description of your site in about 160 characters. This description can be used in search engine results for your site\'s Front Page.' ) }
 								</FormSettingExplanation>
 
-								<SearchEngineSeoPreview
+								<SearchPreview
 									title={ seoTitle }
 									url={ siteUrl }
 									snippet={ seoMetaDescription }
