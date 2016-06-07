@@ -28,7 +28,6 @@ var config = require( 'config' ),
 	sites = require( 'lib/sites-list' )(),
 	superProps = require( 'lib/analytics/super-props' ),
 	i18n = require( 'lib/mixins/i18n' ),
-	perfmon = require( 'lib/perfmon' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
 	translatorInvitation = require( 'layout/community-translator/invitation-utils' ),
 	layoutFocus = require( 'lib/layout-focus' ),
@@ -198,11 +197,6 @@ function reduxStoreReady( reduxStore ) {
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
 	} else {
 		analytics.setSuperProps( superProps );
-	}
-
-	if ( config.isEnabled( 'perfmon' ) ) {
-		// Record time spent watching slowly-flashing divs
-		perfmon();
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
