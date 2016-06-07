@@ -49,9 +49,8 @@ export function receiveRecommendations( recommendations ) {
 export function recordRecommendationInteraction( recommendationId, siteId, postId ) {
 	return( dispatch ) => {
 		debug( 'User interacted with recommendation ' + recommendationId );
-
-		const numberOfRecommendations = 1;
-		dispatch( requestRecommendations( siteId, postId, numberOfRecommendations ) );
+		const numberOfRecommendationsToLoad = 3;
+		dispatch( requestRecommendations( siteId, postId, numberOfRecommendationsToLoad ) );
 		dispatch( {
 			type: READER_START_RECOMMENDATION_INTERACTION,
 			recommendationId
@@ -72,6 +71,10 @@ export function requestRecommendations( originSiteId, originPostId, limit ) {
 		dispatch( {
 			type: READER_START_RECOMMENDATIONS_REQUEST,
 		} );
+
+		if ( ! limit ) {
+			limit = 20;
+		}
 
 		const query = {
 			meta: 'site,post',
