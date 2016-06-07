@@ -1,15 +1,8 @@
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 export const SeoSiteSearchPreview = React.createClass( {
-	shouldComponentUpdate( next ) {
-		const current = this.props;
-
-		return ! (
-			current.snippet === next.snippet &&
-			current.title === next.title &&
-			current.url === next.url
-		);
-	},
+	mixins: [ PureRenderMixin ],
 
 	render() {
 		const {
