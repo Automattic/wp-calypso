@@ -272,9 +272,9 @@ User.prototype.set = function( attributes ) {
  */
 
 User.prototype.verificationPollerCallback = function( signal ) {
-	// skip server poll if page is in the background
+	// skip server poll if page is hidden or there are no listeners
 	// and this was not triggered by a localStorage signal
-	if ( document.hidden && !signal ) {
+	if ( ( document.hidden || this.listeners( 'verified' ).length === 0 ) && !signal ) {
 		return;
 	}
 
@@ -283,6 +283,7 @@ User.prototype.verificationPollerCallback = function( signal ) {
 			// email is verified, stop polling
 			clearInterval( this.verificationPoller );
 			this.verificationPoller = null;
+			this.emit( 'verified' );
 		}
 	} );
 
@@ -306,7 +307,7 @@ User.prototype.checkVerification = function() {
 
 	if ( this.get().email_verified ) {
 		// email already verified, do nothing
-		return
+		return;
 	}
 
 	if ( this.verificationPoller ) {
