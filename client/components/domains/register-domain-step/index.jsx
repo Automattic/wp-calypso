@@ -38,6 +38,7 @@ import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError
 } from 'state/domains/suggestions/selectors';
+import { isOffline } from 'state/application/selectors';
 
 const domains = wpcom.domains();
 
@@ -223,6 +224,9 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	notices: function() {
+		if ( this.props.offline ) {
+			return <Notice text={ this.translate( 'Oh no! We\'ve lost internet connection. Please check your settings and try again.' ) } status={ `is-error` } showDismiss={ false } />;
+		}
 		if ( this.state.notice ) {
 			return <Notice text={ this.state.notice } status={ `is-${ this.state.noticeSeverity }` } showDismiss={ false } />;
 		}
@@ -235,6 +239,10 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	content: function() {
+		if ( this.props.content ) {
+			return;
+		}
+
 		if ( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) {
 			return this.allSearchResults();
 		}
@@ -622,6 +630,7 @@ module.exports = connect( ( state, props ) => {
 	return {
 		currentUser: getCurrentUser( state ),
 		defaultSuggestions: getDomainsSuggestions( state, queryObject ),
-		defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject )
+		defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
+		offline: isOffline( state )
 	};
 } )( RegisterDomainStep );
