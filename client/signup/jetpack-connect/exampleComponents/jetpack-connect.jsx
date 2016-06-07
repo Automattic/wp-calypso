@@ -33,7 +33,7 @@ export default React.createClass( {
 					<div className="jetpack-connect__example-content-wp-admin-sidebar"></div>
 					<div className="jetpack-connect__example-content-wp-admin-main">
 						<div className="jetpack-connect__example-content-wp-admin-connect-banner">
-							<div className="jetpack-connect__example-content-wp-admin-connect-button">{ this.translate( 'Connect to WordPress.com' ) }</div>
+							<div className="jetpack-connect__example-content-wp-admin-connect-button" aria-hidden="true">{ this.translate( 'Connect to WordPress.com' ) }</div>
 						</div>
 					</div>
 				</div>

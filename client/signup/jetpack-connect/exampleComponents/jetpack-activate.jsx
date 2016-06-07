@@ -14,14 +14,14 @@ export default React.createClass( {
 		if ( this.props.isInstall ) {
 			return (
 				<div className="jetpack-connect__example-content-wp-admin-plugin-card">
-					<div className="jetpack-connect__example-content-wp-admin-plugin-name">{ this.translate( 'Jetpack by WordPress.com' ) }</div>
-					<div className="jetpack-connect__example-content-wp-admin-plugin-activate-link">{ this.translate( 'Activate' ) }</div>
+					<div className="jetpack-connect__example-content-wp-admin-plugin-name" aria-hidden="true">{ this.translate( 'Jetpack by WordPress.com' ) }</div>
+					<div className="jetpack-connect__example-content-wp-admin-plugin-activate-link" aria-hidden="true">{ this.translate( 'Activate' ) }</div>
 				</div>
 			);
 		}
 		return (
 			<div className="jetpack-connect__example-content-wp-admin-activate-view">
-				<div className="jetpack-connect__example-content-wp-admin-activate-link">{ this.translate( 'Activate Plugin' ) }</div>
+				<div className="jetpack-connect__example-content-wp-admin-activate-link" aria-hidden="true">{ this.translate( 'Activate Plugin' ) }</div>
 			</div>
 		);
 	},
