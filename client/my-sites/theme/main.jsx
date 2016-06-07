@@ -17,7 +17,7 @@ import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import ThemeDownloadCard from './theme-download-card';
-import ThemeRelatedThemesCard from './related-themes-card';
+import ThemeRelatedThemesCard from './theme-related-themes-card';
 import Button from 'components/button';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
