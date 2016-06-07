@@ -19,7 +19,14 @@ export default function createBetterExcerpt( post ) {
 	}
 
 	// Spin up a new DOM for the linebreak markup
-	const dom = document.createElement( 'div' );
+	let dom;
+	if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
+		const parser = new DOMParser();
+		dom = parser.parseFromString( post.content, 'text/html' );
+	} else {
+		dom = document.createElement( 'div' );
+		dom.innerHTML = post.content;
+	}
 	dom.id = '__better_excerpt__';
 	dom.innerHTML = post.content;
 

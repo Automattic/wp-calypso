@@ -7,7 +7,7 @@ export default function createDomTransformRunner( transforms ) {
 		}
 
 		let dom;
-		if ( typeof DOMParser !== 'undefined' ) {
+		if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
 			const parser = new DOMParser();
 			dom = parser.parseFromString( post.content, 'text/html' );
 		} else {
