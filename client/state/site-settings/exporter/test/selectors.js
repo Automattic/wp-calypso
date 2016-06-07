@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isExporting } from '../selectors';
+import { isExporting, isDateValid } from '../selectors';
 import { States } from '../constants.js';
 
 describe( 'selectors', () => {
@@ -49,6 +49,44 @@ describe( 'selectors', () => {
 			}, 100658273 );
 
 			expect( exporting ).to.eql( true );
+		} );
+
+		it( 'should return invalid date if start date is after end date', () => {
+			const state = {
+				siteSettings: {
+					exporter: {
+						selectedAdvancedSettings: {
+							100658273: {
+								post: {
+									start_date: '2016-06',
+									end_date: '2004-03',
+								}
+							}
+						}
+					}
+				}
+			};
+			expect( isDateValid( state, 100658273, 'post' ) ).to.equal( false );
+			expect( isDateValid( state, 100658273, 'page' ) ).to.equal( true );
+		} );
+
+		it( 'should return valid date if end date is after start date', () => {
+			const state = {
+				siteSettings: {
+					exporter: {
+						selectedAdvancedSettings: {
+							100658273: {
+								post: {
+									start_date: '2006-06',
+									end_date: '2024-03',
+								}
+							}
+						}
+					}
+				}
+			};
+			expect( isDateValid( state, 100658273, 'post' ) ).to.equal( true );
+			expect( isDateValid( state, 100658273, 'page' ) ).to.equal( true );
 		} );
 	} );
 } );

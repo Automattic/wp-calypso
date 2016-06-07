@@ -4,21 +4,21 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
-import { map } from 'lodash/collection';
 import { get } from 'lodash/object';
 
 /**
  * Internal dependencies
  */
 import FormRadio from 'components/forms/form-radio';
-import Select from './select';
 import Label from 'components/forms/form-label';
+import Select from './select';
 
 import { setPostType, setPostTypeFieldValue } from 'state/site-settings/exporter/actions';
 import {
 	getPostTypeFieldOptions,
 	getPostTypeFieldValues,
 	getSelectedPostType,
+	isDateValid as isExportDateValid,
 } from 'state/site-settings/exporter/selectors';
 
 const mapStateToProps = ( state, ownProps ) => {
@@ -30,6 +30,8 @@ const mapStateToProps = ( state, ownProps ) => {
 		siteId,
 		fields,
 		fieldValues,
+
+		isDateValid: isExportDateValid( state, siteId, ownProps.postType ),
 
 		// Show placeholders when fields options are not yet available
 		shouldShowPlaceholders: ! fields,
@@ -70,11 +72,12 @@ const PostTypeOptions = React.createClass( {
 			postType,
 			shouldShowPlaceholders,
 			siteId,
+			isDateValid,
 		} = this.props;
 
 		const fieldsForPostType = get( {
-			'post': [ 'author', 'status', 'start_date', 'end_date', 'category' ],
-			'page': [ 'author', 'status', 'start_date', 'end_date' ],
+			post: [ 'author', 'status', 'start_date', 'end_date', 'category' ],
+			page: [ 'author', 'status', 'start_date', 'end_date' ],
 		}, postType, [] );
 
 		const Field = ( props ) => {
@@ -96,6 +99,7 @@ const PostTypeOptions = React.createClass( {
 				key={ props.defaultLabel }
 				defaultLabel={ props.defaultLabel }
 				options={ options }
+				isError={ this.props.isEnabled && props.isError }
 				value={ fieldValues[ props.fieldName ] }
 				disabled={ shouldShowPlaceholders || ! this.props.isEnabled } />;
 		};
@@ -104,8 +108,8 @@ const PostTypeOptions = React.createClass( {
 			<div className="exporter__option-fieldset-fields">
 				<Field defaultLabel={ this.translate( 'Author…' ) } fieldName="author" options="authors" />
 				<Field defaultLabel={ this.translate( 'Status…' ) } fieldName="status" options="statuses" />
-				<Field defaultLabel={ this.translate( 'Start Date…' ) } fieldName="start_date" options="dates" />
-				<Field defaultLabel={ this.translate( 'End Date…' ) } fieldName="end_date" options="dates" />
+				<Field defaultLabel={ this.translate( 'Start Date…' ) } fieldName="start_date" options="dates" isError={ ! isDateValid } />
+				<Field defaultLabel={ this.translate( 'End Date…' ) } fieldName="end_date" options="dates" isError={ ! isDateValid } />
 				<Field defaultLabel={ this.translate( 'Category…' ) } fieldName="category" options="categories" />
 			</div>
 		);

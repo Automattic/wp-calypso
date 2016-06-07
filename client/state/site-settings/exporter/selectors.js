@@ -36,6 +36,25 @@ export function isExporting( state, siteId ) {
 	return exportingState === States.EXPORTING;
 }
 
+export function isDateValid( state, siteId, postType ) {
+	const site = state.siteSettings.exporter.selectedAdvancedSettings[ siteId ];
+	if ( ! site ) {
+		return true;
+	}
+	const values = site[ postType ];
+	if ( ! values ) {
+		return true;
+	}
+
+	const startDate = values.start_date;
+	const endDate = values.end_date;
+	if ( startDate && endDate && startDate > endDate ) {
+		return false;
+	}
+
+	return true;
+}
+
 export const getAdvancedSettings = ( state, siteId ) => state.siteSettings.exporter.advancedSettings[ siteId ];
 export const getSelectedPostType = ( state ) => state.siteSettings.exporter.selectedPostType;
 export const getPostTypeFieldOptions = ( state, siteId, postType ) => {
