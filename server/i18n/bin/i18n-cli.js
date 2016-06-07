@@ -46,14 +46,14 @@ outputFile = program.outputFile || program.args[0];
 arrayName = program.arrayName || program.args[1];
 inputFiles = ( program.inputFile.length ) ? program.inputFile : program.args.slice( 2 );
 
-if ( inputFiles.length === 0 ) {
-	throw new Error( 'Error: You must enter the input file. Run `get-i18n -h` for examples.' );
-}
 if ( ! outputFile ) {
 	throw new Error( 'Error: You must enter the output file. Run `get-i18n -h` for examples.' );
 }
 if ( ! arrayName ) {
 	throw new Error( 'Error: You must enter the php variable name for the array of translation calls.' );
+}
+if ( inputFiles.length === 0 ) {
+	throw new Error( 'Error: You must enter at least one input file. Run `get-i18n -h` for examples.' );
 }
 
 outputFile = path.resolve( process.env.PWD, outputFile );
