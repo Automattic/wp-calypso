@@ -274,7 +274,7 @@ User.prototype.set = function( attributes ) {
 User.prototype.verificationPollerCallback = function( signal ) {
 	// skip server poll if page is hidden or there are no listeners
 	// and this was not triggered by a localStorage signal
-	if ( ( document.hidden || this.listeners( 'verified' ).length === 0 ) && !signal ) {
+	if ( ( document.hidden || this.listeners( 'verify' ).length === 0 ) && !signal ) {
 		return;
 	}
 
@@ -286,7 +286,7 @@ User.prototype.verificationPollerCallback = function( signal ) {
 			clearInterval( this.verificationPoller );
 			this.verificationPoller = null;
 			debug( 'Verification: VERIFIED' );
-			this.emit( 'verified' );
+			this.emit( 'verify' );
 		}
 	} );
 

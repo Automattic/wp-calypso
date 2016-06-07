@@ -38,13 +38,13 @@ export default class EmailUnverifiedNotice extends React.Component {
 
 	componentWillMount() {
 		user.on( 'change', this.updateVerificationState );
-		user.on( 'verified', this.updateVerificationState );
+		user.on( 'verify', this.updateVerificationState );
 		sites.on( 'change', this.updateVerificationState );
 	}
 
 	componentWillUnmount() {
 		user.off( 'change', this.updateVerificationState );
-		user.off( 'verified', this.updateVerificationState );
+		user.off( 'verify', this.updateVerificationState );
 		sites.off( 'change', this.updateVerificationState );
 	}
 
