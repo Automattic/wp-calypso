@@ -35,11 +35,11 @@ var ThemeRelatedThemesCard = React.createClass( {
 
 		var selectedThemes = [];
 
-		while( selectedThemes.length < 2 ) {
-			var randomThemeIndex = Math.floor(Math.random() * themes.length );
+		while ( selectedThemes.length < 2 ) {
+			var randomThemeIndex = Math.floor( Math.random() * themes.length );
 			var theme = themes.splice( randomThemeIndex, 1 )[0];
 			// Check if it is not current theme, if it is than discard
-			if( this.props.currentTheme === theme.name ) {
+			if ( this.props.currentTheme === theme.name ) {
 				continue;
 			} else {
 				selectedThemes.push( theme );
