@@ -38,7 +38,7 @@ import addQueryArgs from 'lib/route/add-query-args';
  *  Local variables;
  */
 let _fetching = {};
-let calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
+let calypsoEnv;
 const apiBaseUrl = 'https://jetpack.wordpress.com';
 const remoteAuthPath = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
 const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
@@ -49,6 +49,12 @@ const tracksEvent = ( dispatch, eventName, props ) => {
 		dispatch( recordTracksEvent( eventName, props ) );
 	}, 1 );
 };
+
+try {
+	calypsoEnv = config( 'env_id' );
+} catch ( err ) {
+	calypsoEnv = process.env.NODE_ENV || '';
+}
 
 export default {
 	dismissUrl( url ) {
