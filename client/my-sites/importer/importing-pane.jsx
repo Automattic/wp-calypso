@@ -201,7 +201,7 @@ export const ImportingPane = React.createClass( {
 				errorData = {},
 				customData
 			},
-			mapAuthor: mapAuthorFor,
+			mapAuthorFor,
 			site: {
 				ID: siteId,
 				name: siteName,
@@ -256,7 +256,7 @@ export const ImportingPane = React.createClass( {
 } );
 
 const mapDispatchToProps = dispatch => ( {
-	mapAuthor: importerId => ( source, target ) => dispatch( mapAuthor( importerId, source, target ) )
+	mapAuthorFor: importerId => ( source, target ) => dispatch( mapAuthor( importerId, source, target ) )
 } );
 
 export default connectDispatcher( null, mapDispatchToProps )( ImportingPane );
