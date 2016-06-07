@@ -12,7 +12,11 @@ import PaginatedQueryManager from '../';
 describe( 'PaginatedQueryManager', () => {
 	let sandbox, manager;
 
-	useSandbox( ( _sandbox ) => sandbox = _sandbox );
+	useSandbox( ( _sandbox ) => {
+		sandbox = _sandbox;
+		sandbox.stub( PaginatedQueryManager.prototype, 'sort', ( query, a, b ) => a.ID - b.ID );
+	} );
+
 	beforeEach( () => {
 		manager = new PaginatedQueryManager();
 	} );
@@ -52,13 +56,20 @@ describe( 'PaginatedQueryManager', () => {
 		} );
 
 		it( 'should return a page subset of query items', () => {
-			manager = manager.receive( { ID: 144 }, { query: {} } );
-			manager = manager.receive( { ID: 152 }, { query: { page: 2 } } );
+			manager = manager.receive( { ID: 144 }, { query: { number: 1 } } );
+			manager = manager.receive( { ID: 152 }, { query: { number: 1, page: 2 } } );
 
 			expect( manager.getItems( { number: 1, page: 1 } ) ).to.eql( [ { ID: 144 } ] );
 			expect( manager.getItems( { number: 1, page: 2 } ) ).to.eql( [ { ID: 152 } ] );
 			expect( manager.getItems( { number: 2, page: 1 } ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
 			expect( manager.getItems( { number: 2, page: 2 } ) ).to.eql( [] );
+		} );
+
+		it( 'should return page subset for non-sequentially received query', () => {
+			manager = manager.receive( { ID: 152 }, { query: { page: 2, number: 1 } } );
+
+			expect( manager.getItems( { number: 1, page: 1 } ) ).to.eql( [ undefined ] );
+			expect( manager.getItems( { number: 1, page: 2 } ) ).to.eql( [ { ID: 152 } ] );
 		} );
 	} );
 
@@ -76,10 +87,22 @@ describe( 'PaginatedQueryManager', () => {
 		} );
 
 		it( 'should return all pages of query items', () => {
-			manager = manager.receive( { ID: 144 }, { query: {} } );
-			manager = manager.receive( { ID: 152 }, { query: { page: 2 } } );
+			manager = manager.receive( { ID: 144 }, { query: { number: 1 } } );
+			manager = manager.receive( { ID: 152 }, { query: { number: 1, page: 2 } } );
 
 			expect( manager.getItemsIgnoringPage( {} ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
+		} );
+
+		it( 'should exclude undefined items by default', () => {
+			manager = manager.receive( { ID: 144 }, { query: { number: 1 }, found: 2 } );
+
+			expect( manager.getItemsIgnoringPage( {} ) ).to.eql( [ { ID: 144 } ] );
+		} );
+
+		it( 'should include undefined items when opting to includeFiller argument', () => {
+			manager = manager.receive( { ID: 144 }, { query: { number: 1 }, found: 2 } );
+
+			expect( manager.getItemsIgnoringPage( {}, true ) ).to.eql( [ { ID: 144 }, undefined ] );
 		} );
 	} );
 
@@ -132,6 +155,27 @@ describe( 'PaginatedQueryManager', () => {
 			expect( manager.getItemsIgnoringPage( { search: 'title', number: 1 } ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
 		} );
 
+		it( 'should preserve existing pages when receiving items queried with different number', () => {
+			manager = manager.receive( [ { ID: 144 }, { ID: 152 } ], { query: { number: 2 } } );
+			manager = manager.receive( { ID: 144, changed: true }, { query: { number: 1 } } );
+
+			expect( manager.getItemsIgnoringPage( {} ) ).to.eql( [ { ID: 144, changed: true }, { ID: 152 } ] );
+			expect( manager.getItems( { number: 1, page: 1 } ) ).to.eql( [ { ID: 144, changed: true } ] );
+			expect( manager.getItems( { number: 1, page: 2 } ) ).to.eql( [ { ID: 152 } ] );
+		} );
+
+		it( 'should include filler undefined entries for yet-to-be-received items', () => {
+			manager = manager.receive( [ { ID: 144 } ], { query: { number: 1, page: 2 }, found: 4 } );
+
+			expect( manager.getItemsIgnoringPage( { number: 1 }, true ) ).to.eql( [ undefined, { ID: 144 }, undefined, undefined ] );
+		} );
+
+		it( 'should strip excess undefined entries beyond found count', () => {
+			manager = manager.receive( [ { ID: 144 }, { ID: 152 } ], { query: { number: 20 }, found: 2 } );
+
+			expect( manager.getItems( { number: 20 } ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
+		} );
+
 		it( 'should replace the existing page subset of a received query', () => {
 			// Scenario: Received updated page 2 where ID:152 had been removed,
 			// and in its place a new ID:154 (net found change: 0)
@@ -149,8 +193,8 @@ describe( 'PaginatedQueryManager', () => {
 			// ID:152, then deleted ID:144 and received updated first page
 			// including only ID:152 (net found change: -1)
 			manager = manager.receive( { ID: 144 }, { query: { search: 'title', number: 1 }, found: 2 } );
-			manager = manager.receive( { ID: 152 }, { query: { search: 'title', number: 1, page: 2 } } );
-			manager = manager.receive( { ID: 152 }, { query: { search: 'title', number: 1, page: 1 } } );
+			manager = manager.receive( { ID: 152 }, { query: { search: 'title', number: 1, page: 2 }, found: 2 } );
+			manager = manager.receive( { ID: 152 }, { query: { search: 'title', number: 1, page: 1 }, found: 1 } );
 
 			expect( manager.getItems( { search: 'title', number: 1 } ) ).to.eql( [ { ID: 152 } ] );
 			expect( manager.getItems( { search: 'title', number: 1, page: 2 } ) ).to.eql( [] );
@@ -180,7 +224,6 @@ describe( 'PaginatedQueryManager', () => {
 			manager = manager.receive( [ { ID: 144 }, { ID: 152 } ], { query: { search: 'title', number: 2 }, found: 6 } );
 			manager = manager.receive( [ { ID: 160 }, { ID: 168 } ], { query: { search: 'title', number: 2, page: 2 } } );
 			manager = manager.receive( [ { ID: 176 }, { ID: 184 } ], { query: { search: 'title', number: 2, page: 3 } } );
-			sandbox.stub( manager, 'sort', ( query, a, b ) => a.ID - b.ID );
 			manager = manager.receive( { ID: 154 } );
 
 			expect( manager.getFound( { search: 'title' } ) ).to.equal( 7 );
