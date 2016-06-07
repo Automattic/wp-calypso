@@ -12,16 +12,16 @@ export const SearchPreview = React.createClass( {
 		} = this.props;
 
 		return (
-			<div className="seo-search-result-preview">
-				<h2 className="seo-search-result-preview__header">{ this.translate( 'Google Preview' ) }</h2>
-				<div className="seo-search-result-preview__display">
-					<div className="seo-search-result-preview__title">
+			<div className="seo-search-preview">
+				<h2 className="seo-search-preview__header">{ this.translate( 'Google Preview' ) }</h2>
+				<div className="seo-search-preview__display">
+					<div className="seo-search-preview__title">
 						{ title }
 					</div>
-					<div className="seo-search-result-preview__url">
+					<div className="seo-search-preview__url">
 						{ url } ▾
 					</div>
-					<div className="seo-search-result-preview__snippet">
+					<div className="seo-search-preview__snippet">
 						{ snippet }
 					</div>
 				</div>
