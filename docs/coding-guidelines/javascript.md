@@ -81,16 +81,6 @@ foo( function() {
 
 ```
 
-
-Exceptions:
-
-```js
-// For consistency with our PHP standards, do not include a space around
-// string literals or integers used as key values in array notation:
-prop = object['default'];
-firstArrayElement = arr[0];
-```
-
 ## Examples of Good Spacing
 
 ```js
