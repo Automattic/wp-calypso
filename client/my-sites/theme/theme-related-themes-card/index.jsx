@@ -44,46 +44,44 @@ var ThemeRelatedThemesCard = React.createClass( {
 			} else {
 				selectedThemes.push( theme );
 			}
-
 		}
 
 		return selectedThemes;
 	},
 
 	render() {
-		var actionLabel = i18n.translate( 'Pick' ),
-		themes = this.getRelatedThemes().map( function( theme ) {
-				return {
-					id: theme.slug,
-					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png'
-				};
-			} );
+		var themes = this.getRelatedThemes().map( function( theme ) {
+			return {
+				id: theme.slug,
+				screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png'
+			};
+		} );
 
 		const related_text = i18n.translate( 'See all {{a}}BUSINESS{{/a}} themes.', {
-				components: {
-					a: <a href='https://wordpress.com'/>
-				}
-			} );
+			components: {
+				a: <a href='https://wordpress.com'/>
+			}
+		} );
 
 		return (
 			<div>
-/*				<SectionHeader label={ i18n.translate( 'You might also like' ) } />
-					<ul className="themes__sheet-related-themes">
-						{ themes.map( function( theme ) {
-							return (
-								<li key={ theme.id }>
-									<Card className="themes__sheet-related-themes-card">
-										<a href={ getDetailsUrl( theme ) }>
-											<img src={ theme.screenshot + '?w=' + '660' }/>
-										</a>
-									</Card>
-								</li>
-							);
-						} ) }
-					</ul>
-					<div className="themes__sheet-related-themes-link">
-						<p>{ related_text }</p>
-					</div> */
+				<SectionHeader label={ i18n.translate( 'You might also like' ) } />
+				<ul className="themes__sheet-related-themes">
+					{ themes.map( function( theme ) {
+						return (
+							<li key={ theme.id }>
+								<Card className="themes__sheet-related-themes-card">
+									<a href={ getDetailsUrl( theme ) }>
+										<img src={ theme.screenshot + '?w=' + '660' }/>
+									</a>
+								</Card>
+							</li>
+						);
+					} ) }
+				</ul>
+				<div className="themes__sheet-related-themes-link">
+					<p>{ related_text }</p>
+				</div>
 			</div>
 		);
 	}
