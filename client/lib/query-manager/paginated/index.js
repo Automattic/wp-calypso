@@ -3,7 +3,9 @@
  */
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
-import uniq from 'lodash/uniq';
+import cloneDeep from 'lodash/cloneDeep';
+import range from 'lodash/range';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -48,7 +50,7 @@ export default class PaginatedQueryManager extends QueryManager {
 
 		// Get all items, ignoring page. Test as truthy to ensure that query is
 		// in-fact being tracked, otherwise bail early.
-		const dataIgnoringPage = this.getItemsIgnoringPage( query );
+		const dataIgnoringPage = this.getItemsIgnoringPage( query, true );
 		if ( ! dataIgnoringPage ) {
 			return dataIgnoringPage;
 		}
@@ -65,15 +67,23 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * Returns items tracked by the instance, ignoring pagination for the given
 	 * query.
 	 *
-	 * @param  {Object}   query Query object
-	 * @return {Object[]}       Items tracked, ignoring page
+	 * @param  {Object}   query         Query object
+	 * @param  {Boolean}  includeFiller Whether page structure should be left
+	 *                                  intact to reflect found count, with
+	 *                                  items yet to be received as `undefined`
+	 * @return {Object[]}               Items tracked, ignoring page
 	 */
-	getItemsIgnoringPage( query ) {
+	getItemsIgnoringPage( query, includeFiller = false ) {
 		if ( ! query ) {
 			return null;
 		}
 
-		return super.getItems( omit( query, PAGINATION_QUERY_KEYS ) );
+		const items = super.getItems( omit( query, PAGINATION_QUERY_KEYS ) );
+		if ( ! items || includeFiller ) {
+			return items;
+		}
+
+		return items.filter( ( item ) => undefined !== item );
 	}
 
 	/**
@@ -136,13 +146,6 @@ export default class PaginatedQueryManager extends QueryManager {
 			return nextManager;
 		}
 
-		// If there were previously no items for this query, there's no item
-		// set to be updated
-		const thisPageItems = this.getItems( options.query );
-		if ( ! thisPageItems ) {
-			return nextManager;
-		}
-
 		const queryKey = this.constructor.QueryKey.stringify( options.query );
 		const page = options.query.page || DEFAULT_QUERY.page;
 		const perPage = options.query.number || DEFAULT_QUERY.number;
@@ -157,29 +160,39 @@ export default class PaginatedQueryManager extends QueryManager {
 		// If the item set for the queried page is identical, there are no
 		// updates to be made
 		const pageItemKeys = items.map( ( item ) => item[ this.options.itemKey ] );
-		const nextManagerPageItemKeys = nextQuery.itemKeys.slice( startOffset, startOffset + perPage );
-		if ( isEqual( pageItemKeys, nextManagerPageItemKeys ) ) {
-			return nextManager;
-		}
 
 		// If we've reached this point, we know that we've received a paged
 		// set of data where our assumed item set is incorrect.
-		const modifiedNextQuery = Object.assign( {}, nextQuery );
+		const modifiedNextQuery = cloneDeep( nextQuery );
 
 		// Replace the assumed set with the received items.
-		modifiedNextQuery.itemKeys = uniq( [
-			...nextQuery.itemKeys.slice( 0, startOffset ),
-			...pageItemKeys,
-			...nextQuery.itemKeys.slice( startOffset + perPage )
-		] );
+		modifiedNextQuery.itemKeys = [
+			...range( 0, startOffset ).map( ( index ) => {
+				// Ensure that item set is comprised of all indices leading up
+				// to received page, even if those items are not known.
+				const itemKey = nextQuery.itemKeys[ index ];
+				if ( ! includes( pageItemKeys, itemKey ) ) {
+					return itemKey;
+				}
+			} ),
+			...range( 0, perPage ).map( ( index ) => {
+				// Fill page with items from the received set, or undefined to
+				// at least ensure page matches expected range
+				return pageItemKeys[ index ];
+			} ),
+			...nextQuery.itemKeys.slice( startOffset + perPage ).filter( ( itemKey ) => {
+				// Filter out any item keys which exist in the page set, as
+				// this indicates that they've trickled down from later page
+				return itemKey && ! includes( pageItemKeys, itemKey );
+			} )
+		];
 
-		// Adjust the found count if uniquing the query items reveals that
-		// we've lost or gained items
+		// If found is known from options, ensure that we fill the end of the
+		// array with undefined entries until found count
 		if ( nextQuery.hasOwnProperty( 'found' ) ) {
-			const foundIncrement = modifiedNextQuery.itemKeys.length - this.data.queries[ queryKey ].itemKeys.length;
-			if ( 0 !== foundIncrement ) {
-				modifiedNextQuery.found += foundIncrement;
-			}
+			modifiedNextQuery.itemKeys = range( 0, modifiedNextQuery.found ).map( ( index ) => {
+				return modifiedNextQuery.itemKeys[ index ];
+			} );
 		}
 
 		return new this.constructor(
