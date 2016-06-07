@@ -70,6 +70,10 @@ export function render( element, key = JSON.stringify( element ) ) {
 export function serverRender( req, res ) {
 	const context = req.context;
 
+	if ( context.lang !== config( 'i18n_default_locale_slug' ) ) {
+		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
+	}
+
 	if ( config.isEnabled( 'server-side-rendering' ) && context.store && context.layout ) {
 		context.initialReduxState = pick( context.store.getState(), 'ui', 'themes' );
 		const key = JSON.stringify( context.layout ) + req.path + JSON.stringify( context.initialReduxState );

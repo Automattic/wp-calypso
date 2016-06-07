@@ -4,7 +4,6 @@ var express = require( 'express' ),
 	qs = require( 'qs' ),
 	execSync = require( 'child_process' ).execSync,
 	cookieParser = require( 'cookie-parser' ),
-	i18nUtils = require( 'lib/i18n-utils' ),
 	debug = require( 'debug' )( 'calypso:pages' );
 
 var config = require( 'config' ),
@@ -204,29 +203,11 @@ function getDefaultContext( request ) {
 }
 
 function setUpLoggedOutRoute( req, res, next ) {
-	var context = getDefaultContext( req ),
-		language;
-
+	req.context = getDefaultContext( req );
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN'
 	} );
 
-	// Set up the locale in case it has ended up in the flow param
-	req.params = i18nUtils.setUpLocale( req.params );
-
-	language = i18nUtils.getLanguage( req.params.lang );
-	if ( language ) {
-		context.lang = req.params.lang;
-		if ( language.rtl ) {
-			context.isRTL = true;
-		}
-	}
-
-	if ( context.lang !== config( 'i18n_default_locale_slug' ) ) {
-		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
-	}
-
-	req.context = context;
 	next();
 }
 
@@ -288,10 +269,6 @@ function setUpLoggedInRoute( req, res, next ) {
 
 			if ( data.localeSlug ) {
 				context.lang = data.localeSlug;
-			}
-
-			if ( context.lang !== config( 'i18n_default_locale_slug' ) ) {
-				context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
 			}
 
 			if ( req.path === '/' && req.query ) {
@@ -375,8 +352,6 @@ module.exports = function() {
 		app.get( '/jetpack/connect/:locale?', setUpRoute, serverRender );
 		app.get( '/jetpack/connect/authorize/:locale?', setUpRoute, serverRender );
 	}
-
-	app.get( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpRoute, serverRender );
 
 	app.get( '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?/:locale?',
 		setUpRoute,
