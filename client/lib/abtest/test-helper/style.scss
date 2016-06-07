@@ -9,7 +9,7 @@
 
 	&.test-helper__current-variation {
 		text-decoration: underline;
-		color: red;
+		color: $orange-jazzy;
 	}
 }
 
@@ -19,12 +19,17 @@
 	font-weight: bolder;
 }
 
-.environment.is-tests:hover {
-	position: absolute;
-	bottom: 5px;
-}
-.environment.is-tests:hover .active-tests {
-	display:block;
+.environment.is-tests:hover .active-tests.card {
+	display: block;
 	max-height: 80vh;
 	overflow-y: scroll;
+	position: absolute;
+		bottom: 0;
+		right: 100%;
+	margin: 0;
+	font-size: 11px;
+}
+
+.test-helper__list {
+	margin: 5px 0 8px 20px;
 }

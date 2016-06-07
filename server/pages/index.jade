@@ -66,15 +66,15 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				.wpcom-site__logo.noticon.noticon-wordpress
 		if badge
 			div.environment-badge
-				a(class='bug-report', href=feedbackURL, title='Report an issue', target='_blank')
-				span(class=['environment', 'is-' + badge])=badge
+				if abTestHelper
+					div(class=['environment', 'is-tests'])
 				if branchName && branchName !== 'master'
 					span(class=['environment', 'branch-name'], title='Commit ' + commitChecksum)=branchName
 				if devDocs
 					span(class=['environment', 'is-docs'])
 						a(href=devDocsURL title='DevDocs') docs
-				if abTestHelper
-					div(class=['environment', 'is-tests'])
+				span(class=['environment', 'is-' + badge, 'is-env'])=badge
+				a(class='bug-report', href=feedbackURL, title='Report an issue', target='_blank')
 
 		if 'development' !== env
 			script( src=catchJsErrors )
