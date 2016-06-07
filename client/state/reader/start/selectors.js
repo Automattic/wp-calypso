@@ -31,9 +31,7 @@ export function isRequestingRecommendations( state ) {
  * @return {Object} Recommendation
  */
 export function getRecommendationById( state, recommendationId ) {
-	return find( state.reader.start.items, ( item ) => {
-		return item.ID === recommendationId;
-	} );
+	return find( state.reader.start.items, { ID: recommendationId } );
 }
 
 /**

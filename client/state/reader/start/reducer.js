@@ -3,11 +3,8 @@
  */
 import { combineReducers } from 'redux';
 import union from 'lodash/union';
-import findIndex from 'lodash/findIndex';
-import forEach from 'lodash/forEach';
+import find from 'lodash/find';
 import filter from 'lodash/filter';
-import has from 'lodash/has';
-import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -21,13 +18,6 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
-import { itemsSchema } from './schema';
-import { isValidStateWithSchema } from 'state/utils';
-
-/**
- * Module variables
- */
-const debug = debugModule( 'calypso:redux:reader-start-recommendations' );
 
 /**
  * Tracks all known list objects, indexed by list ID.
@@ -39,52 +29,24 @@ const debug = debugModule( 'calypso:redux:reader-start-recommendations' );
 export function items( state = [], action ) {
 	switch ( action.type ) {
 		case READER_START_RECOMMENDATIONS_RECEIVE:
-			let updatedRecommendations = state;
-
 			// Filter out any recommendations we already have
 			const newRecommendations = filter( action.recommendations, ( incomingRecommendation ) => {
-				if ( findIndex( state, ( existingRecommendation ) => {
-					return existingRecommendation.ID === incomingRecommendation.ID;
-				} ) >= 0 ) {
-					return false;
-				}
-				return true;
+				return ! find( state, { ID: incomingRecommendation.ID } );
 			} );
 
-			const totalRecommendationsCount = state.length + newRecommendations.length;
-
-			forEach( newRecommendations, ( recommendation ) => {
-				// Find the parent recommendation, if there is one.
-				let parentPosition = findIndex( state, ( item ) => {
-					if ( ! has( item, 'recommended_site_ID' ) ) {
-						return false;
-					}
-					return item.recommended_site_ID === recommendation.origin_site_ID && item.recommended_post_ID === recommendation.origin_post_ID;
-				} );
-
-				let childPosition;
-				if ( parentPosition >= 0 ) {
-					// Insert the new recommendation immediately after the parent, if we found one.
-					childPosition = parentPosition + 1;
-				} else {
-					// No parent recommendation? Insert it at the end.
-					childPosition = totalRecommendationsCount - 1;
-				}
-
-				debug( 'Inserting recommendation ID ' + recommendation.ID + ' at position ' + childPosition );
-
-				updatedRecommendations = insertItemAtArrayPosition( updatedRecommendations, recommendation, childPosition );
-			} );
-			return updatedRecommendations;
-
-		case SERIALIZE:
-			return state;
-		case DESERIALIZE:
-			if ( ! isValidStateWithSchema( state, itemsSchema ) ) {
-				return [];
+			// No new recommendations? Just return the existing ones.
+			if ( newRecommendations.length < 1 ) {
+				return state;
 			}
-			return state;
+
+			return state.concat( newRecommendations );
+
+		// Always return default state - we don't want to serialize recommendations
+		case SERIALIZE:
+		case DESERIALIZE:
+			return [];
 	}
+
 	return state;
 }
 
@@ -117,16 +79,10 @@ export function recommendationsInteractedWith( state = [], action ) {
 
 		case SERIALIZE:
 		case DESERIALIZE:
-			return state;
+			return [];
 	}
 
 	return state;
-}
-
-function insertItemAtArrayPosition( array, item, position ) {
-	const beforeSlice = array.slice( 0, position );
-	const afterSlice = array.slice( position );
-	return beforeSlice.concat( item, afterSlice );
 }
 
 export default combineReducers( {

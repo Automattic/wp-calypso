@@ -31,7 +31,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( expected );
 		} );
 
-		it( 'should insert a new recommendation immediately after its parent', () => {
+		it( 'should insert a new recommendation', () => {
 			const original = [
 				{
 					ID: 123,
