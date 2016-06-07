@@ -59,7 +59,7 @@ var ThemeRelatedThemesCard = React.createClass( {
 
 		const related_text = i18n.translate( 'See all {{a}}BUSINESS{{/a}} themes.', {
 			components: {
-				a: <a href='https://wordpress.com'/>
+				a: <a href="/design?s=business"/>
 			}
 		} );
 
