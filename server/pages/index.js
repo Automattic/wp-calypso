@@ -394,12 +394,12 @@ module.exports = function() {
 		app.get( '/mailing-lists/unsubscribe', setUpRoute, serverRender );
 	}
 
-	if ( config.isEnabled( 'reader/discover' ) && config( 'env' ) !== 'development' ) {
+	if ( config( 'env' ) !== 'development' ) {
 		app.get( '/discover', function( req, res, next ) {
-			if ( req.cookies.wordpress_logged_in ) {
-				setUpLoggedInRoute( req, res, next );
-			} else {
+			if ( ! req.cookies.wordpress_logged_in ) {
 				res.redirect( config( 'discover_logged_out_redirect_url' ) );
+			} else {
+				next();
 			}
 		} );
 	}
