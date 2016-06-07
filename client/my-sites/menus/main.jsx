@@ -20,7 +20,7 @@ var protectForm = require( 'lib/mixins/protect-form' ),
 	EmptyContent = require( 'components/empty-content' ),
 	LoadingPlaceholder = require( './loading-placeholder' ),
 	analytics = require( 'lib/analytics' ),
-	EmailVerificationNotice = require( 'components/email-verification/email-verification-notice' ),
+	EmailVerificationGate = require( 'components/email-verification/email-verification-gate' ),
 	JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
 
 var Menus = React.createClass( {
@@ -284,8 +284,9 @@ var Menus = React.createClass( {
 		return (
 			<Main className="manage-menus">
 				<SidebarNavigation />
-				<EmailVerificationNotice />
-				{ this.renderMenus() }
+				<EmailVerificationGate>
+					{ this.renderMenus() }
+				</EmailVerificationGate>
 			</Main>
 		);
 	}
