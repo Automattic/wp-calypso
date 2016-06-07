@@ -527,6 +527,7 @@ body.newdash div.wordpress-com-extension-promo {
 		border: solid 1px $gray-dark;
 		border-radius: 50%;
 		color: $gray-dark;
+		margin-left: -4px;
 		text-decoration: none;
 		text-align: center;
 		z-index: z-index( '.environment-badge', '.environment-badge .bug-report' );
@@ -547,22 +548,10 @@ body.newdash div.wordpress-com-extension-promo {
 		padding: 4px 7px 4px 6px;
 		vertical-align: middle;
 		transition: all 0.2s ease-out;
-		&:before {
-			content: '';
-			position: absolute;
-				right: -1px;
-				left: 0;
-				top: 0;
-				bottom: 0;
-			z-index: z-index( '.environment-badge', '.environment-badge .environment::before' );
-			background-color: $white;
-			border: solid 1px $gray-dark;
-		}
+		background-color: $white;
+		box-shadow: 0 0 0 1px $gray-dark;
 		&.is-env {
 			display: inline-block;
-			&::before {
-				right: -4px;
-			}
 		}
 		a {
 			text-decoration: none;
@@ -574,25 +563,17 @@ body.newdash div.wordpress-com-extension-promo {
 			}
 		}
 		&.is-staging {
-			&:before {
-				background-color: $alert-yellow;
-			}
+			background-color: $alert-yellow;
 		}
 		&.is-wpcalypso {
-			&:before {
-				background-color: #B1EED0;
-			}
+			background-color: #B1EED0;
 		}
 		&.is-dev {
-			&:before {
-				background-color: $alert-red;
-			}
+			background-color: $alert-red;
 		}
 		&.is-horizon,
 		&.is-feedback {
-			&:before {
-				background-color: $blue-light;
-			}
+			background-color: $blue-light;
 		}
 		&.branch-name {
 			text-transform: inherit;
