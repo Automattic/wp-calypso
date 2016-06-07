@@ -76,6 +76,12 @@ export default {
 	},
 
 	plansCompare( context ) {
+		if ( config.isEnabled( 'manage/plans/redesign' ) ) {
+			const domain = context.params.domain;
+
+			return page.redirect( `/plans/${ domain }` );
+		}
+
 		const PlansCompare = require( 'components/plans/plans-compare' ),
 			Main = require( 'components/main' ),
 			CheckoutData = require( 'components/data/checkout' ),
