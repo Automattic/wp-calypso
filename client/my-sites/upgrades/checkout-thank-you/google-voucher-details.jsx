@@ -25,6 +25,8 @@ import {
 	getGoogleAdCredits
 } from 'state/sites/vouchers/selectors';
 
+const [ INITIAL_STEP, TERMS_AND_CONDITIONS, CODE_REDEEMED ] = [ 'INITIAL_STEP', 'TERMS_AND_CONDITIONS', 'CODE_REDEEMED' ];
+
 class GoogleVoucherDetails extends Component {
 	constructor() {
 		super();
@@ -38,15 +40,14 @@ class GoogleVoucherDetails extends Component {
 		this.incrementStep = debounce( this.incrementStep, 300 );
 
 		this.state = {
-			showTermsAndConditions: false,
-			step: 0
+			step: INITIAL_STEP
 		};
 	}
 
 	componentWillMount() {
 		const voucher = this.getVoucher();
 		if ( voucher && voucher.status === 'assigned' ) {
-			this.setState( { step: 2 } );
+			this.setState( { step: CODE_REDEEMED } );
 		}
 	}
 
@@ -60,7 +61,7 @@ class GoogleVoucherDetails extends Component {
 		}
 
 		if ( nextProps.googleAdCredits.length > 0 ) {
-			this.setState( { step: 2 } );
+			this.setState( { step: CODE_REDEEMED } );
 		}
 	}
 
@@ -69,26 +70,18 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	onDialogCancel() {
-		this.setState( {
-			showTermsAndConditions: false,
-			step: 0
-		} );
+		this.setState( { step: INITIAL_STEP } );
 	}
 
 	onAgreeButton() {
 		this.props.assignVoucher( this.props.selectedSite.ID, GOOGLE_CREDITS );
 
-		this.setState( {
-			showTermsAndConditions: false,
-			step: 2
-		} );
+		this.setState( { step: CODE_REDEEMED } );
 	}
 
 	incrementStep() {
-		this.setState( {
-			step: this.state.step + 1,
-			showTermsAndConditions: ( this.state.step + 1 ) === 1
-		} );
+		const newStep = ( this.state.step === INITIAL_STEP ) ? TERMS_AND_CONDITIONS : CODE_REDEEMED;
+		this.setState( { step: newStep } );
 	}
 
 	getVoucher( props = this.props ) {
@@ -112,7 +105,7 @@ class GoogleVoucherDetails extends Component {
 	renderTermsAndConditions() {
 		return (
 			<Dialog
-				isVisible={ this.state.showTermsAndConditions }
+				isVisible={ true }
 				onClose={ this.onDialogCancel }
 				additionalClassNames="google-voucher-dialog"
 			>
@@ -186,13 +179,13 @@ class GoogleVoucherDetails extends Component {
 		let body;
 
 		switch ( step ) {
-			case 0:
+			case INITIAL_STEP:
 				body = this.renderInitialStep();
 				break;
-			case 1:
+			case TERMS_AND_CONDITIONS:
 				body = this.renderTermsAndConditions();
 				break;
-			case 2:
+			case CODE_REDEEMED:
 				body = this.renderCodeRedeemed();
 				break;
 		}
