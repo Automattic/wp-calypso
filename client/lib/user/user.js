@@ -278,11 +278,14 @@ User.prototype.verificationPollerCallback = function( signal ) {
 		return;
 	}
 
+	debug( 'Verification: POLL' );
+
 	this.once( 'change', () => {
 		if ( this.get().email_verified ) {
 			// email is verified, stop polling
 			clearInterval( this.verificationPoller );
 			this.verificationPoller = null;
+			debug( 'Verification: VERIFIED' );
 			this.emit( 'verified' );
 		}
 	} );
@@ -320,6 +323,7 @@ User.prototype.checkVerification = function() {
 	// wait for localStorage event (from other windows)
 	window.addEventListener( 'storage', ( e ) => {
 		if ( e.key === '__email_verified_signal__' && e.newValue ) {
+			debug( 'Verification: RECEIVED SIGNAL' );
 			window.localStorage.removeItem( '__email_verified_signal__' );
 			this.verificationPollerCallback( true );
 		}
@@ -338,6 +342,7 @@ User.prototype.signalVerification = function() {
 	if ( window.localStorage ) {
 		// use localStorage to signal to other browser windows that the user's email was verified
 		window.localStorage.setItem( '__email_verified_signal__', 1 );
+		debug( 'Verification: SENT SIGNAL' );
 	}
 };
 
