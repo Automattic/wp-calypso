@@ -8,7 +8,8 @@ import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import range from 'lodash/range';
 import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
-import { InfiniteLoader, VirtualScroll } from 'react-virtualized';
+import VirtualScroll from 'react-virtualized/VirtualScroll';
+import InfiniteLoader from 'react-virtualized/InfiniteLoader';
 
 /**
  * Internal dependencies
