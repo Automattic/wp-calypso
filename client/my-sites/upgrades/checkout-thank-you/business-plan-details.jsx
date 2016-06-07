@@ -11,15 +11,12 @@ import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import i18n from 'lib/mixins/i18n';
 import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
-import QuerySiteVouchers from 'components/data/query-site-vouchers';
 
 const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 	const plan = find( sitePlans.data, isBusiness );
 
 	return (
 		<div>
-			<QuerySiteVouchers siteId={ selectedSite.ID } />
-
 			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
 
 			{ ! selectedFeature &&
@@ -48,7 +45,6 @@ BusinessPlanDetails.propTypes = {
 	] ).isRequired,
 	selectedFeature: React.PropTypes.object,
 	sitePlans: React.PropTypes.object.isRequired
-
 };
 
 export default BusinessPlanDetails;
