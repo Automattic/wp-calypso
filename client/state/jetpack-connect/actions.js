@@ -204,7 +204,7 @@ export default {
 				userData,
 				( error, data ) => {
 					if ( error ) {
-						tracksEvent( dispatch, 'calypso_jpc_create_account_error', { error: error.code } );
+						tracksEvent( dispatch, 'calypso_jpc_create_account_error', { error_code: error.code, error: JSON.stringify( error ) } );
 					} else {
 						tracksEvent( dispatch, 'calypso_jpc_create_account_success', {} );
 					}
@@ -249,7 +249,7 @@ export default {
 				return wpcom.me().sites( { site_visibility: 'all' } );
 			} )
 			.then( ( data ) => {
-				tracksEvent( dispatch, 'jpc_auth_sitesrefresh', {
+				tracksEvent( dispatch, 'calypso_jpc_auth_sitesrefresh', {
 					site: client_id
 				} );
 				debug( 'Sites list updated!', data );
@@ -263,13 +263,10 @@ export default {
 				} );
 			} )
 			.catch( ( error ) => {
-				tracksEvent( dispatch, 'jpc_auth_error', {
-					error: error,
-					site: client_id
-				} );
 				debug( 'Authorize error', error );
 				tracksEvent( dispatch, 'calypso_jpc_authorize_error', {
-					error: error.code,
+					error_code: error.code,
+					error: JSON.stringify( error ),
 					site: client_id
 				} );
 				dispatch( {
@@ -334,7 +331,7 @@ export default {
 			} );
 			wpcom.undocumented().activateManage( blogId, state, secret )
 			.then( ( data ) => {
-				tracksEvent( dispatch, 'jpc_activate_manage_success' );
+				tracksEvent( dispatch, 'calypso_jpc_activate_manage_success' );
 				debug( 'Manage activated!', data );
 				dispatch( {
 					type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
@@ -343,7 +340,7 @@ export default {
 				} );
 			} )
 			.catch( ( error ) => {
-				tracksEvent( dispatch, 'jpc_activate_manage_error', { error: error.code } );
+				tracksEvent( dispatch, 'calypso_jpc_activate_manage_error', { error_code: error.code, error: JSON.stringify( error ) } );
 				debug( 'Manage activation error', error );
 				dispatch( {
 					type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
