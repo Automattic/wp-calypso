@@ -334,11 +334,7 @@ module.exports = function() {
 				} );
 
 				if ( ! section.isomorphic ) {
-					if ( section.enableLoggedOut ) {
-						app.get( pathRegex, setUpRoute, serverRender );
-					} else {
-						app.get( pathRegex, setUpLoggedInRoute, serverRender );
-					}
+					app.get( pathRegex, section.enableLoggedOut ? setUpRoute : setUpLoggedInRoute, serverRender );
 				}
 			} );
 
