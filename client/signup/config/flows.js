@@ -195,7 +195,7 @@ function filterDestination( destination, dependencies, flowName ) {
 function getGuidedToursDestination( destination, dependencies, flowName ) {
 	const guidedToursVariant = abtest( 'guidedTours' );
 	const tourName = 'main';
-	const disabledFlows = [ 'account', 'site-user', 'jetpack' ];
+	const disabledFlows = [ 'account', 'jetpack' ];
 	const siteSlug = dependencies.siteSlug;
 	const baseUrl = `/stats/${ siteSlug }`;
 
