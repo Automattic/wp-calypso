@@ -89,4 +89,4 @@ var ThemeRelatedThemesCard = React.createClass( {
 	}
 } );
 
-module.export = ThemeRelatedThemesCard;
+module.exports = ThemeRelatedThemesCard;
