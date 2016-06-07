@@ -6,12 +6,14 @@ import Helmet from 'react-helmet';
 import superagent from 'superagent';
 import Lru from 'lru-cache';
 import pick from 'lodash/pick';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
 
+const debug = debugFactory( 'calypso:server-render' );
 const markupCache = new Lru( { max: 3000 } );
 
 function bumpStat( group, name ) {
@@ -33,10 +35,12 @@ function bumpStat( group, name ) {
 export function render( element, key = JSON.stringify( element ) ) {
 	try {
 		const startTime = Date.now();
+		debug( 'cache access for key', key );
 
 		let context = markupCache.get( key );
 		if ( ! context ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
+			debug( 'cache miss for key', key );
 			const renderedLayout = ReactDomServer.renderToString( element );
 			context = { renderedLayout };
 
@@ -79,7 +83,7 @@ export function serverRender( req, res ) {
 		context.layout &&
 		! context.user ) {
 		context.initialReduxState = pick( context.store.getState(), 'ui', 'themes' );
-		const key = req.path + JSON.stringify( context.initialReduxState );
+		const key = context.renderCacheKey || JSON.stringify( context.layout );
 		Object.assign( context, render( context.layout, key ) );
 	}
 

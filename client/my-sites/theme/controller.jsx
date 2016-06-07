@@ -53,6 +53,7 @@ export function fetchThemeDetailsData( context, next ) {
 	if ( theme && ( theme.timestamp + HOUR_IN_MS > Date.now() ) ) {
 		debug( 'found theme!', theme.id );
 		context.store.dispatch( receiveThemeDetails( theme ) );
+		context.renderCacheKey = context.path + theme.timestamp;
 		return next();
 	}
 
@@ -62,11 +63,13 @@ export function fetchThemeDetailsData( context, next ) {
 			themeDetails.timestamp = Date.now();
 			themeDetailsCache.set( themeSlug, themeDetails );
 			context.store.dispatch( receiveThemeDetails( themeDetails ) );
+			context.renderCacheKey = context.path + themeDetails.timestamp;
 			next();
 		} )
 		.catch( error => {
 			debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
 			context.store.dispatch( receiveThemeDetailsFailure( themeSlug, error ) );
+			context.renderCacheKey = 'theme not found';
 			next();
 		} );
 }
