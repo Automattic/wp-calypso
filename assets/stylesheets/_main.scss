@@ -510,9 +510,13 @@ body.newdash div.wordpress-com-extension-promo {
 .environment-badge {
 	position: fixed;
 		bottom: 16px;
-		left: 16px;
+		right: 16px;
 	z-index: z-index( 'root', '.environment-badge' );
 	backface-visibility: hidden;
+
+	&:hover .environment {
+		display: inline-block;
+	}
 
 	.bug-report {
 		position: relative;
@@ -535,7 +539,7 @@ body.newdash div.wordpress-com-extension-promo {
 
 	.environment {
 		position: relative;
-		display: inline-block;
+		display: none;
 		font-size: 9px;
 		font-weight: 600;
 		line-height: 1;
@@ -546,16 +550,19 @@ body.newdash div.wordpress-com-extension-promo {
 		&:before {
 			content: '';
 			position: absolute;
-				left: -1px;
-				right: 0;
+				right: -1px;
+				left: 0;
 				top: 0;
 				bottom: 0;
 			z-index: z-index( '.environment-badge', '.environment-badge .environment::before' );
 			background-color: $white;
 			border: solid 1px $gray-dark;
 		}
-		&:first-of-type:before {
-			left: -4px;
+		&.is-env {
+			display: inline-block;
+			&::before {
+				right: -4px;
+			}
 		}
 		a {
 			text-decoration: none;
