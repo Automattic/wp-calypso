@@ -241,7 +241,7 @@ const PlansCompare = React.createClass( {
 				1008: true,
 				description: this.translate( 'WordAds is an advertising program that enables you to generate income from your site.' ),
 				product_slug: 'wordads-instant',
-				title: this.translate( 'Instant WordAds Activation' )
+				title: this.translate( 'Monetize Your Site' )
 			} );
 
 			rows = features.map( ( feature ) => {
