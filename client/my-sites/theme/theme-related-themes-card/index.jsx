@@ -9,11 +9,15 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
-import i18n from 'lib/mixins/i18n'
+import i18n from 'lib/mixins/i18n';
 import SectionHeader from 'components/section-header';
 import { getDetailsUrl } from 'my-sites/themes/helpers';
 
 var ThemeRelatedThemesCard = React.createClass( {
+
+	propTypes: {
+		currentTheme: React.PropTypes.string.isRequired
+	},
 
 	getRelatedThemes() {
 		var themes = [
@@ -35,7 +39,7 @@ var ThemeRelatedThemesCard = React.createClass( {
 			var randomThemeIndex = Math.floor(Math.random() * themes.length );
 			var theme = themes.splice( randomThemeIndex, 1 )[0];
 			// Check if it is not current theme, if it is than discard
-			if( this.props.name === theme.name ) {
+			if( this.props.currentTheme === theme.name ) {
 				continue;
 			} else {
 				selectedThemes.push( theme );
