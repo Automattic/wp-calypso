@@ -51,6 +51,7 @@ export function requestErrors( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: action.error
 			} );
+		case WORDADS_SITE_APPROVE_REQUEST:
 		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
 		case WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR:
 			return Object.assign( {}, state, {
