@@ -33,7 +33,6 @@ const actions = require( 'lib/posts/actions' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
 	EditorMobileNavigation = require( 'post-editor/editor-mobile-navigation' ),
 	layoutFocus = require( 'lib/layout-focus' ),
-	titleActions = require( 'lib/screen-title/actions' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	DraftList = require( 'my-sites/drafts/draft-list' ),
 	PreferencesActions = require( 'lib/preferences/actions' ),
@@ -45,11 +44,13 @@ const actions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	analytics = require( 'lib/analytics' ),
 	VerifyEmailDialogI18n = require( 'post-editor/verify-email-dialog.i18n' ); // temporary for i18n tools to pick up
-
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
-import { isEditorDraftsVisible } from 'state/ui/editor/selectors';
-import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
+import { isEditorDraftsVisible, getEditorPostId } from 'state/ui/editor/selectors';
+import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';
+import { receivePost, editPost, resetPostEdits } from 'state/posts/actions';
 import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
+import EditorDocumentHead from 'post-editor/editor-document-head';
 
 const messages = {
 	post: {
@@ -58,9 +59,6 @@ const messages = {
 		},
 		trashFailure: function() {
 			return i18n.translate( 'Trashing of post failed.' );
-		},
-		editTitle: function() {
-			return i18n.translate( 'Edit Post', { textOnly: true } );
 		},
 		published: function() {
 			var site = this.props.sites.getSelectedSite();
@@ -114,9 +112,6 @@ const messages = {
 		},
 		trashFailure: function() {
 			return i18n.translate( 'Trashing of page failed.' );
-		},
-		editTitle: function() {
-			return i18n.translate( 'Edit Page', { textOnly: true } );
 		},
 		published: function() {
 			var site = this.props.sites.getSelectedSite();
@@ -226,6 +221,10 @@ const PostEditor = React.createClass( {
 
 	componentWillUnmount: function() {
 		PostEditStore.removeListener( 'change', this.onEditedPostChange );
+
+		// Reset post edits after leaving editor
+		this.props.resetPostEdits( this.props.siteId, this.props.postId );
+
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.stopEditing();
 
@@ -290,6 +289,7 @@ const PostEditor = React.createClass( {
 		}
 		return (
 			<div className="post-editor">
+				<EditorDocumentHead />
 				<div className="post-editor__inner">
 					<div className="post-editor__content">
 						<EditorMobileNavigation site={ site } onClose={ this.onClose } />
@@ -785,12 +785,22 @@ const PostEditor = React.createClass( {
 			this.props.resetEditorLastDraft();
 		}
 
+		// Reset previous edits, preserving type
+		this.props.resetPostEdits( this.props.siteId );
+		this.props.resetPostEdits( post.site_ID, post.ID );
+		this.props.editPost( { type: this.props.type }, post.site_ID, post.ID );
+
+		// Assign editor post ID to saved value (especially important when
+		// transitioning from an unsaved post to a saved one)
+		if ( post.ID !== this.props.postId ) {
+			this.props.setEditorPostId( post.ID );
+		}
+
 		// make sure the history entry has the post ID in it, but don't dispatch
 		page.replace(
 			basePath + '/' + this.props.sites.getSite( post.site_ID ).slug + '/' + post.ID,
 			null, false, false
 		);
-		titleActions.setTitle( this.getMessage( 'editTitle' ), { siteID: this.props.sites.selected } );
 
 		nextState = {
 			isSaving: false,
@@ -859,6 +869,8 @@ const PostEditor = React.createClass( {
 export default connect(
 	( state ) => {
 		return {
+			siteId: getSelectedSiteId( state ),
+			postId: getEditorPostId( state ),
 			showDrafts: isEditorDraftsVisible( state )
 		};
 	},
@@ -866,7 +878,11 @@ export default connect(
 		return bindActionCreators( {
 			toggleDrafts: toggleEditorDraftsVisible,
 			setEditorLastDraft,
-			resetEditorLastDraft
+			resetEditorLastDraft,
+			receivePost,
+			editPost,
+			resetPostEdits,
+			setEditorPostId
 		}, dispatch );
 	},
 	null,
