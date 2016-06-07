@@ -17,8 +17,7 @@ var productsList = require( 'lib/products-list' )(),
 	SignupActions = require( 'lib/signup/actions' ),
 	signupUtils = require( 'signup/utils' ),
 	StepWrapper = require( 'signup/step-wrapper' ),
-	Gridicon = require( 'components/gridicon' ),
-	abtest = require( 'lib/abtest' ).abtest;
+	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
 	displayName: 'PlansStep',
@@ -83,7 +82,7 @@ module.exports = React.createClass( {
 	},
 
 	hideFreePlan: function() {
-		if ( abtest( 'personalPlan' ) === 'show' && this.props.signupDependencies && this.props.signupDependencies.domainItem ) {
+		if ( this.props.signupDependencies && this.props.signupDependencies.domainItem ) {
 			return this.props.signupDependencies.domainItem.is_domain_registration;
 		}
 
