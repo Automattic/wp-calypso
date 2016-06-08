@@ -17,6 +17,10 @@ $polldaddy-red:  #D45458;
 			content: ' ';
 		}
 	}
+
+	.plugin-item__link {
+		cursor: default;
+	}
 }
 
 .jetpack-plugins-setup__header {
