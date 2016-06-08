@@ -17,6 +17,7 @@ import {
 	getSiteStatsPostsCountByDay,
 	getSiteStatsMaxPostsByDay
 } from 'state/stats/lists/selectors';
+import { getStatsStreakQuery } from 'state/stats/lists/utils';
 
 const PostTrendsDay = React.createClass( {
 
@@ -117,10 +118,7 @@ const PostTrendsDay = React.createClass( {
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
-	const query = {
-		startDate: i18n.moment().subtract( 1, 'year' ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
-		endDate: i18n.moment().endOf( 'month' ).format( 'YYYY-MM-DD' )
-	};
+	const query = getStatsStreakQuery();
 
 	return {
 		postCount: getSiteStatsPostsCountByDay( state, siteId, query, ownProps.date.format( 'YYYY-MM-DD' ) ),
