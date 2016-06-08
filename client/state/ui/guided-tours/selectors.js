@@ -28,10 +28,10 @@ const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 export const getGuidedTourState = createSelector(
 	state => {
 		const tourState = getRawGuidedTourState( state );
-		const site = getSelectedSite( state );
 		const { shouldReallyShow, stepName = '', tour } = tourState;
 		const stepConfig = getToursConfig( tour )[ stepName ] || false;
-		const nextStepConfig = getToursConfig( tour )[ stepConfig.next( site ) ] || false;
+		console.log( stepConfig.next );
+		const nextStepConfig = getToursConfig( tour )[ stepConfig.next ] || false;
 
 		const shouldShow = !! (
 			! isSectionLoading( state ) &&
@@ -47,6 +47,5 @@ export const getGuidedTourState = createSelector(
 	state => [
 		getRawGuidedTourState( state ),
 		isSectionLoading( state ),
-		getSelectedSite( state ),
 	]
 );
