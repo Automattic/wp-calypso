@@ -21,6 +21,7 @@ export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
+export const WORDADS_INSTANT = 'wordads-instant';
 
 export const plansList = {
 	[ PLAN_FREE ]: {
@@ -97,6 +98,12 @@ export const featuresList = {
 	[ FEATURE_GOOGLE_AD_CREDITS ]: {
 		getTitle: () => i18n.translate( 'Advertising Credit' ),
 		getDescription: () => i18n.translate( '$100 Google AdWords credit after spending the first $25. Offer valid in US and Canada.' ),
+		plans: allPaidPlans
+	},
+
+	[ WORDADS_INSTANT ]: {
+		getTitle: () => i18n.translate( 'Monetize Your Site' ),
+		getDescription: () => i18n.translate( 'Add advertising to your site through our WordAds program and get paid.' ),
 		plans: allPaidPlans
 	}
 };

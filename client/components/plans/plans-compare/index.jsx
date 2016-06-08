@@ -33,9 +33,11 @@ import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import QueryPlans from 'components/data/query-plans';
 import config from 'config';
 import InfoPopover from 'components/info-popover';
+import { isJetpack } from 'lib/site/utils';
 import {
 	featuresList,
-	FEATURE_GOOGLE_AD_CREDITS
+	FEATURE_GOOGLE_AD_CREDITS,
+	WORDADS_INSTANT,
 } from 'lib/plans/constants';
 
 // google ad credits feature
@@ -47,6 +49,16 @@ const googleAdCreditsFeature = {
 	1: false,
 	1003: '$100',
 	1008: '$100'
+};
+// WordAds instant activation feature
+const wordAdsInstant = featuresList[ WORDADS_INSTANT ];
+const wordAdsFeature = {
+	title: wordAdsInstant.getTitle(),
+	compareDescription: wordAdsInstant.getDescription(),
+	1: false,
+	1003: true,
+	1008: true,
+	product_slug: WORDADS_INSTANT,
 };
 
 const PlansCompare = React.createClass( {
@@ -149,6 +161,7 @@ const PlansCompare = React.createClass( {
 
 	getFeatures() {
 		const plans = this.getPlans();
+		const { selectedSite } = this.props;
 
 		let features = this.props.features.get().filter( ( feature ) => {
 			return plans.some( plan => {
@@ -156,9 +169,17 @@ const PlansCompare = React.createClass( {
 			} );
 		} );
 
+		if ( isJetpack( selectedSite ) ) {
+			return features;
+		}
+
 		// add google-ad-credits feature
 		if ( config.isEnabled( 'google-voucher' ) ) {
 			features.splice( 1, 0, googleAdCreditsFeature );
+		}
+
+		if ( config.isEnabled( 'manage/ads/wordads-instant' ) && abtest( 'wordadsInstantActivation' ) === 'enabled' ) {
+			features.splice( 6, 0, wordAdsFeature );
 		}
 
 		return features;
@@ -258,16 +279,6 @@ const PlansCompare = React.createClass( {
 		} else {
 			const plans = this.getPlans();
 			const features = this.getFeatures();
-
-			config.isEnabled( 'manage/ads/wordads-instant' ) &&
-			abtest( 'wordadsInstantActivation' ) === 'enabled' &&
-			features.splice( 6, 0, {
-				1003: true,
-				1008: true,
-				description: this.translate( 'WordAds is an advertising program that enables you to generate income from your site.' ),
-				product_slug: 'wordads-instant',
-				title: this.translate( 'Monetize Your Site' )
-			} );
 
 			rows = features.map( ( feature ) => {
 				const planFeatures = plans.map( ( plan ) => {
