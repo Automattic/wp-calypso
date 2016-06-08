@@ -43,14 +43,22 @@ const devdocs = {
 	 */
 	devdocs: function( context ) {
 		function onSearchChange( searchTerm ) {
-			var query = context.query;
+			let query = context.query,
+				url = context.pathname;
+
 			if ( searchTerm ) {
 				query.term = searchTerm;
 			} else {
 				delete query.term;
 			}
 
-			page.replace( context.pathname + '?' + qs.stringify( query ).replace( /%20/g, '+' ),
+			const queryString = qs.stringify( query ).replace( /%20/g, '+' ).trim();
+
+			if ( queryString ) {
+				url += '?' + queryString;
+			}
+
+			page.replace( url,
 				context.state,
 				false,
 				false );
