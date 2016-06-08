@@ -5,11 +5,11 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import Popover from 'components/popover';
 import Tooltip from 'components/chart/tooltip';
 import { getSelectedSiteId } from 'state/ui/selectors';
