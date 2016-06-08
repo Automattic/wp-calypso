@@ -28,7 +28,7 @@ const getPluginsForSite = function( state, siteId ) {
 const isFinished = function( state, siteId ) {
 	let pluginList = getPluginsForSite( state, siteId );
 	if ( pluginList.length === 0 ) {
-		return false;
+		return true;
 	}
 	pluginList = filter( pluginList, ( item ) => {
 		return ( ( 'done' !== item.status ) && ( item.error === null ) );

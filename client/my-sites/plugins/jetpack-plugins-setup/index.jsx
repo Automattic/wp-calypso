@@ -77,9 +77,14 @@ const PlansSetup = React.createClass( {
 	},
 
 	componentDidMount() {
+		window.addEventListener( 'beforeunload', this.warnIfNotFinished );
 		if ( this.props.siteId ) {
 			this.fetchInstallInstructions();
 		}
+	},
+
+	componentWillUnmount() {
+		window.removeEventListener( 'beforeunload', this.warnIfNotFinished );
 	},
 
 	componentWillReceiveProps( props ) {
@@ -98,6 +103,15 @@ const PlansSetup = React.createClass( {
 		) {
 			this.startNextPlugin( this.props.nextPlugin );
 		}
+	},
+
+	warnIfNotFinished( event ) {
+		if ( this.props.isFinished ) {
+			return;
+		}
+		const beforeUnloadText = this.translate( 'We haven\'t finished installing your plugins.' );
+		( event || window.event ).returnValue = beforeUnloadText;
+		return beforeUnloadText;
 	},
 
 	startNextPlugin( plugin ) {
