@@ -109,7 +109,7 @@ const PostTypeFilter = React.createClass( {
 
 		return (
 			<div>
-				{ siteId && (
+				{ query && siteId && (
 					<QueryPostCounts
 						siteId={ siteId }
 						type={ query.type } />
