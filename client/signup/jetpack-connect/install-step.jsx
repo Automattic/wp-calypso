@@ -20,7 +20,7 @@ export default React.createClass( {
 				<div className="jetpack-connect__install-step-text">
 					{ this.props.text }
 				</div>
-				{ this.props.example }
+					{ this.props.example }
 			</Card>
 		);
 	}

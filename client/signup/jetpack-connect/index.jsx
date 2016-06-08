@@ -267,7 +267,7 @@ const JetpackConnectMain = React.createClass( {
 					<ConnectHeader
 						showLogo={ false }
 						headerText={ this.translate( 'Ready for installation' ) }
-						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
+						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ) }
 						step={ 1 }
 						steps={ 3 } />
 					<div className="jetpack-connect__install-steps">
@@ -279,7 +279,7 @@ const JetpackConnectMain = React.createClass( {
 							example={ <JetpackExampleInstall url={ this.state.currentUrl } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Activate Jetpack' ) }
 							text={ this.translate( 'You\'ll then need to click the small blue "Activate Plugin" link to activate Jetpack.' ) }
-							example={ <JetpackExampleActivate url={ this.state.currentUrl } /> } isInstall={ true } />
+							example={ <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ true } /> } />
 						<JetpackInstallStep title={ this.translate( '3. Connect Jetpack' ) }
 							text={ this.translate( 'Finally, just click the green "Connect to WordPress.com" button to finish the process.' ) }
 							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
@@ -309,7 +309,7 @@ const JetpackConnectMain = React.createClass( {
 				<div className="jetpack-connect__install">
 					<ConnectHeader showLogo={ false }
 						headerText={ this.translate( 'Ready for installation' ) }
-						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
+						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ) }
 						step={ 1 }
 						steps={ 3 } />
 					<div className="jetpack-connect__install-steps">
