@@ -76,9 +76,9 @@ const PostTrendsDay = React.createClass( {
 		let level = Math.ceil( ( postCount / max ) * 4 );
 
 		if ( date.isBefore( i18n.moment( month ).startOf( 'month' ) ) || date.isAfter( i18n.moment( month ).endOf( 'month' ) ) ) {
-			dayClasses['is-outside-month'] = true;
+			dayClasses[ 'is-outside-month' ] = true;
 		} else if ( date.isAfter( i18n.moment().endOf( 'day' ) ) ) {
-			dayClasses['is-after-today'] = true;
+			dayClasses[ 'is-after-today' ] = true;
 		} else if ( level ) {
 			if ( level > 4 ) {
 				level = 4;
