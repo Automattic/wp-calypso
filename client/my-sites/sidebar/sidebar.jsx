@@ -6,8 +6,7 @@ var analytics = require( 'lib/analytics' ),
 	debug = require( 'debug' )( 'calypso:my-sites:sidebar' ),
 	has = require( 'lodash/has' ),
 	includes = require( 'lodash/includes' ),
-	React = require( 'react' ),
-	startsWith = require( 'lodash/startsWith' );
+	React = require( 'react' );
 
 import page from 'page';
 
@@ -84,7 +83,7 @@ module.exports = React.createClass( {
 		}
 
 		return paths.some( function( path ) {
-			return startsWith( this.props.path, path );
+			return path === this.props.path || 0 === this.props.path.indexOf( path + '/' );
 		}, this );
 	},
 
