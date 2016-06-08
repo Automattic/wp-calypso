@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
+import forOwn from 'lodash/forOwn';
 import get from 'lodash/get';
-import values from 'lodash/values';
 import i18n from 'i18n-calypso';
 
 /**
@@ -86,13 +86,15 @@ export const getSiteStatsPostStreakData = createSelector(
  */
 export const getSiteStatsMaxPostsByDay = createSelector(
 	( state, siteId, query ) => {
-		const data = values( getSiteStatsPostStreakData( state, siteId, query ) ).sort();
+		let max = 0;
 
-		if ( data.length ) {
-			return data[ data.length - 1 ];
-		}
+		forOwn( getSiteStatsPostStreakData( state, siteId, query ), count => {
+			if ( count > max ) {
+				max = count;
+			}
+		} );
 
-		return null;
+		return max || null;
 	},
 	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
 	( state, siteId, taxonomy, query ) => {
