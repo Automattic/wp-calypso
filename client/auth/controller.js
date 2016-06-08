@@ -10,6 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import LoginComponent from './login';
+import ConnectComponent from './connect';
 import * as OAuthToken from 'lib/oauth-token';
 import wpcom from 'lib/wp';
 import config from 'config';
@@ -17,8 +18,6 @@ import store from 'store';
 import WPOAuth from 'wpcom-oauth';
 import userFactory from 'lib/user';
 import Main from 'components/main';
-import Button from 'components/button';
-import WordPressLogo from 'components/wordpress-logo';
 
 module.exports = {
 
@@ -72,12 +71,12 @@ module.exports = {
 		const authUrl = wpoauth.urlToConnect( { scope: 'global', blog_id: 0 } );
 
 		// Extract this into a component...
-		ReactDom.render( (
-			<Main className="auth">
-				<WordPressLogo size={ 140 } />
-				<Button href={ authUrl }>Authorize</Button>
-			</Main>
-		), document.getElementById( 'primary' ) );
+		ReactDom.render(
+			React.createElement( ConnectComponent, {
+				authUrl: authUrl
+			} ),
+			document.getElementById( 'primary' )
+		);
 	},
 
 	// Retrieve token from local storage

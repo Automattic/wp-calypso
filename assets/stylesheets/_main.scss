@@ -2,6 +2,13 @@
  * Layout Views
  */
 
+// DO NOT MERGE THIS
+html,
+body,
+.wpcom-site {
+	height: 100%;
+}
+
 .wpcom-site__logo {
 	color: lighten( $gray, 20% );
 	font-size: 12vw;
