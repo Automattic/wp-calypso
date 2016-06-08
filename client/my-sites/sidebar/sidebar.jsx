@@ -160,7 +160,7 @@ module.exports = React.createClass( {
 		return (
 			<SidebarItem
 				label={ site.jetpack ? 'AdControl' : 'WordAds' }
-				className={ this.itemLinkClass( '/ads', 'ads' ) }
+				className={ this.itemLinkClass( '/ads', 'rads' ) }
 				link={ adsLink }
 				onNavigate={ this.onNavigate }
 				icon="speaker" />
