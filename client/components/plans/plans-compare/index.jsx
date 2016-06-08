@@ -32,6 +32,34 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import QueryPlans from 'components/data/query-plans';
 import config from 'config';
+import InfoPopover from 'components/info-popover';
+import { isJetpack } from 'lib/site/utils';
+import {
+	featuresList,
+	FEATURE_GOOGLE_AD_CREDITS,
+	WORDADS_INSTANT,
+} from 'lib/plans/constants';
+
+// google ad credits feature
+const googleAdCredits = featuresList[ FEATURE_GOOGLE_AD_CREDITS ];
+const googleAdCreditsFeature = {
+	title: googleAdCredits.getTitle(),
+	compareDescription: googleAdCredits.getDescription(),
+	product_slug: FEATURE_GOOGLE_AD_CREDITS,
+	1: false,
+	1003: '$100',
+	1008: '$100'
+};
+// WordAds instant activation feature
+const wordAdsInstant = featuresList[ WORDADS_INSTANT ];
+const wordAdsFeature = {
+	title: wordAdsInstant.getTitle(),
+	compareDescription: wordAdsInstant.getDescription(),
+	1: false,
+	1003: true,
+	1008: true,
+	product_slug: WORDADS_INSTANT,
+};
 
 const PlansCompare = React.createClass( {
 	mixins: [ observe( 'features' ) ],
@@ -121,22 +149,40 @@ const PlansCompare = React.createClass( {
 	},
 
 	getColumnCount() {
-		if ( ! this.props.selectedSite ) {
-			return abtest( 'personalPlan' ) === 'hide' ? 4 : 5;
+		const colsCount = abtest( 'personalPlan' ) === 'hide' ? 4 : 5;
+
+		if ( ! this.props.selectedSite || ! this.props.selectedSite.jetpack ) {
+			return colsCount;
 		}
 
-		return this.props.selectedSite.jetpack ? 3
-		:	abtest( 'personalPlan' ) === 'hide' ? 4 : 5;
+		// column count for jetpack site
+		return 3;
 	},
 
 	getFeatures() {
 		const plans = this.getPlans();
+		const { selectedSite } = this.props;
 
-		return this.props.features.get().filter( ( feature ) => {
+		let features = this.props.features.get().filter( ( feature ) => {
 			return plans.some( plan => {
 				return feature[ plan.product_id ];
 			} );
 		} );
+
+		if ( isJetpack( selectedSite ) ) {
+			return features;
+		}
+
+		// add google-ad-credits feature
+		if ( config.isEnabled( 'google-voucher' ) ) {
+			features.splice( 1, 0, googleAdCreditsFeature );
+		}
+
+		if ( config.isEnabled( 'manage/ads/wordads-instant' ) && abtest( 'wordadsInstantActivation' ) === 'enabled' ) {
+			features.splice( 6, 0, wordAdsFeature );
+		}
+
+		return features;
 	},
 
 	getPlans() {
@@ -234,16 +280,6 @@ const PlansCompare = React.createClass( {
 			const plans = this.getPlans();
 			const features = this.getFeatures();
 
-			config.isEnabled( 'manage/ads/wordads-instant' ) &&
-			abtest( 'wordadsInstantActivation' ) === 'enabled' &&
-			features.splice( 6, 0, {
-				1003: true,
-				1008: true,
-				description: this.translate( 'WordAds is an advertising program that enables you to generate income from your site.' ),
-				product_slug: 'wordads-instant',
-				title: this.translate( 'Monetize Your Site' )
-			} );
-
 			rows = features.map( ( feature ) => {
 				const planFeatures = plans.map( ( plan ) => {
 					const classes = classNames( 'plans-compare__cell', 'is-plan-specific', {
@@ -255,7 +291,10 @@ const PlansCompare = React.createClass( {
 
 					let content;
 
-					if ( typeof feature[ plan.product_id ] === 'boolean' && feature[ plan.product_id ] ) {
+					if (
+						typeof feature[ plan.product_id ] === 'boolean' &&
+						feature[ plan.product_id ]
+					) {
 						content = <Gridicon icon="checkmark-circle" size={ 24 } />;
 					}
 
@@ -268,7 +307,7 @@ const PlansCompare = React.createClass( {
 							className={ classes }
 							key={ plan.product_id }>
 							<div className={ mobileClasses }>
-								{ feature.title }
+								{ this.renderFeatureTitle( feature ) }
 							</div>
 							<div className="plans-compare__cell-content">
 								{ content }
@@ -277,8 +316,10 @@ const PlansCompare = React.createClass( {
 					);
 				} );
 
+				const isHighlighted = this.props.selectedFeature &&
+					this.props.selectedFeature.toLowerCase() === feature.product_slug.split( '/' )[ 0 ].toLowerCase();
 				const classes = classNames( 'plans-compare__row', {
-					'is-highlighted': this.props.selectedFeature && this.props.selectedFeature.toLowerCase() === feature.product_slug.split( '/' )[0].toLowerCase()
+					'is-highlighted': isHighlighted
 				} );
 
 				return (
@@ -286,7 +327,7 @@ const PlansCompare = React.createClass( {
 						<td
 							className="plans-compare__cell"
 							key={ feature.title }>
-							{ feature.title }
+							{ this.renderFeatureTitle( feature ) }
 						</td>
 						{ planFeatures }
 					</tr>
@@ -359,12 +400,12 @@ const PlansCompare = React.createClass( {
 		};
 
 		let freeOption = (
-				<NavItem
-					onClick={ this.setPlan.bind( this, 'free' ) }
-					selected={ 'free' === this.state.selectedPlan }>
-					{ this.translate( 'Free' ) }
-				</NavItem>
-			);
+			<NavItem
+				onClick={ this.setPlan.bind( this, 'free' ) }
+				selected={ 'free' === this.state.selectedPlan }>
+				{ this.translate( 'Free' ) }
+			</NavItem>
+		);
 
 		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
 			freeOption = null;
@@ -398,6 +439,23 @@ const PlansCompare = React.createClass( {
 		);
 	},
 
+	renderFeatureTitle( feature ) {
+		return(
+			<div className="plans-compare__feature-title">
+				<span className="plans-compare__feature-title__container">
+					{ feature.title }
+				</span>
+				{ feature.compareDescription &&
+					<div className="plans-compare__feature-descripcion">
+						<InfoPopover position="right">
+							{ feature.compareDescription }
+						</InfoPopover>
+					</div>
+				}
+			</div>
+		);
+	},
+
 	render() {
 		const classes = classNames( this.props.className, 'plans-compare', {
 			'is-placeholder': this.isDataLoading(),
@@ -415,8 +473,8 @@ const PlansCompare = React.createClass( {
 				<QueryPlans />
 				{
 					this.props.isInSignup
-					? null
-					: <SidebarNavigation />
+						? null
+						: <SidebarNavigation />
 				}
 				<HeaderCake onClick={ this.goBack }>
 					{ compareString }

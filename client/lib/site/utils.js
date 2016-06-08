@@ -164,5 +164,9 @@ export default {
 		}
 
 		return false;
+	},
+
+	isJetpack( site ) {
+		return site && site.jetpack;
 	}
 };

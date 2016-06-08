@@ -9,6 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import config from 'config';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import JetpackPlanDetails from 'my-sites/plans/jetpack-plan-details';
@@ -18,6 +19,14 @@ import PlanHeader from 'components/plans/plan-header';
 import PlanPrice from 'components/plans/plan-price';
 import WpcomPlanDetails from 'my-sites/plans/wpcom-plan-details';
 import { isDesktop } from 'lib/viewport';
+import {
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	getPlanObject
+} from 'lib/plans/constants';
+
+const premiumPlan = getPlanObject( PLAN_PREMIUM );
+const businessPlan = getPlanObject( PLAN_BUSINESS );
 
 const Plan = React.createClass( {
 	handleLearnMoreClick() {
@@ -60,6 +69,15 @@ const Plan = React.createClass( {
 			return (
 				<JetpackPlanDetails plan={ plan } />
 			);
+		}
+
+		// override plan description during google voucher test
+		if ( config.isEnabled( 'google-voucher' ) ) {
+			if ( plan.product_id === premiumPlan.productId ) {
+				plan.description = premiumPlan.description;
+			} else if ( plan.product_id === businessPlan.productId ) {
+				plan.description = businessPlan.description;
+			}
 		}
 
 		return (

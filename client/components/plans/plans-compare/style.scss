@@ -185,6 +185,24 @@
 	vertical-align: middle;
 }
 
+.plans-compare__feature-title {
+	position: relative;
+}
+
+.plans-compare__feature-title__container {
+	padding-right: 20px;
+}
+
+.plans-compare__feature-descripcion {
+	position: absolute;
+	top: 50%;
+	margin-top: -9px;
+	right: 0;
+}
+
+.plans-compare__feature-descripcion .gridicon {
+	color: $gray;
+}
 
 .layout:not(.has-no-sidebar) .plans-compare {
 	@include breakpoint( "<960px" ) {
