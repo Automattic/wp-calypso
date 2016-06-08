@@ -176,11 +176,7 @@ function removeUserStepFromFlow( flow ) {
 
 function filterFlowName( flowName ) {
 	const defaultFlows = [ 'main', 'website' ];
-
-	if ( includes( defaultFlows, flowName ) && abtest( 'personalPlan' ) === 'show' ) {
-		return 'personal';
-	}
-
+	// do nothing. No flows to filter at the moment.
 	return flowName;
 }
 
