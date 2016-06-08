@@ -22,6 +22,7 @@ import SidebarActions from 'lib/reader-sidebar/actions';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
+import SidebarRegion from 'layout/sidebar/region';
 import Gridicon from 'components/gridicon';
 import discoverHelper from 'reader/discover/helper';
 import ReaderSidebarTags from './reader-sidebar-tags';
@@ -157,6 +158,7 @@ const ReaderSidebar = React.createClass( {
 	render() {
 		return (
 			<Sidebar onClick={ this.handleClick }>
+				<SidebarRegion>
 				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Streams' ) }</SidebarHeading>
 					<ul>
@@ -239,7 +241,10 @@ const ReaderSidebar = React.createClass( {
 					onTagExists={ this.highlightNewTag }
 					currentTag={ this.state.currentTag } />
 
+				</SidebarRegion>
+
 				{ this.renderAppPromo() }
+
 				<SidebarFooter />
 			</Sidebar>
 		);

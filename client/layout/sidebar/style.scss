@@ -37,6 +37,12 @@
 			transform: translateX( 100vw );
 		}
 	}
+
+	@include breakpoint( ">660px" ) {
+		&.has-regions {
+			overflow: hidden;
+		}
+	}
 }
 
 
@@ -376,5 +382,17 @@ a.sidebar__button {
 			border-color: $blue-medium;
 			color: $white;
 		}
+	}
+}
+
+.sidebar__region {
+	flex-shrink: 0;
+	@include breakpoint( ">660px" ) {
+		display: flex;
+		flex-direction: column;
+		overflow-y: auto;
+		overflow-x: hidden;
+		flex: 1;
+		transform: translateX( 0 ); /* workaround for safari scrollbar rendering bug */
 	}
 }
