@@ -49,8 +49,8 @@ const PostTrendsDay = React.createClass( {
 			<span>
 				<span className="post-count">{
 					this.translate(
-						'%(posts)d post on',
-						'%(posts)d posts on', {
+						'%(posts)d post',
+						'%(posts)d posts', {
 							count: count,
 							args: {
 								posts: count

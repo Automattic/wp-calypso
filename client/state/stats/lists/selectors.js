@@ -57,17 +57,15 @@ export const getSiteStatsPostStreakData = createSelector(
 		const response = {};
 		const streakData = getSiteStatsForQuery( state, siteId, 'statsStreak', query ) || {};
 
-		if ( streakData && streakData.data ) {
-			Object.keys( streakData.data ).forEach( ( timestamp ) => {
-				const postDay = i18n.moment.unix( timestamp );
-				const datestamp = postDay.format( 'YYYY-MM-DD' );
-				if ( 'undefined' === typeof( response[ datestamp ] ) ) {
-					response[ datestamp ] = 0;
-				}
+		Object.keys( streakData ).forEach( ( timestamp ) => {
+			const postDay = i18n.moment.unix( timestamp );
+			const datestamp = postDay.format( 'YYYY-MM-DD' );
+			if ( 'undefined' === typeof( response[ datestamp ] ) ) {
+				response[ datestamp ] = 0;
+			}
 
-				response[ datestamp ] += streakData.data[ timestamp ];
-			} );
-		}
+			response[ datestamp ] += streakData[ timestamp ];
+		} );
 
 		return response;
 	},
@@ -106,20 +104,14 @@ export const getSiteStatsMaxPostsByDay = createSelector(
 /**
  * Returns a number representing the posts made during a day for a given query
  *
- * @param  {Object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
- * @param  {Object}  query    Stats query object
- * @return {?Number}          Max number of posts by day
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Object}  query  Stats query object
+ * @param  {String}  date   Date in YYYY-MM-DD format
+ * @return {?Number}        Number of posts made on date
  */
-export const getSiteStatsPostsCountByDay = createSelector(
-	( state, siteId, query, date ) => {
-		const data = getSiteStatsPostStreakData( state, siteId, query );
-		return data[ date ] || null;
-	},
-	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
-	( state, siteId, taxonomy, query ) => {
-		const serializedQuery = getSerializedStatsQuery( query );
-		return [ siteId, 'statsStreakMax', serializedQuery ].join();
-	}
-);
+export function getSiteStatsPostsCountByDay( state, siteId, query, date ) {
+	const data = getSiteStatsPostStreakData( state, siteId, query );
+	return data[ date ] || null;
+}
 

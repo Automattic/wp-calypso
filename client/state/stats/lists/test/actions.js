@@ -22,6 +22,7 @@ import {
 const SITE_ID = 2916284;
 const STAT_TYPE = 'statsStreak';
 const STREAK_RESPONSE = {
+	streak: {},
 	data: {
 		1461961382: 1,
 		1464110402: 1,
@@ -89,7 +90,7 @@ describe( 'actions', () => {
 					type: SITE_STATS_RECEIVE,
 					siteId: SITE_ID,
 					statType: STAT_TYPE,
-					data: STREAK_RESPONSE,
+					data: STREAK_RESPONSE.data,
 					query: STREAK_QUERY
 				} );
 			} );

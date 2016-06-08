@@ -126,7 +126,7 @@ const PostTrends = React.createClass( {
 			rightClass,
 			containerClass;
 
-		const { siteId, query } = this.props;
+		const { siteId, query, requesting } = this.props;
 
 		leftClass = classNames( 'post-trends__scroll-left', {
 			'is-active': this.state.canScrollLeft
@@ -137,7 +137,7 @@ const PostTrends = React.createClass( {
 		} );
 
 		containerClass = classNames( 'post-trends', {
-			'is-loading': this.props.streakList.isLoading()
+			'is-loading': requesting
 		} );
 
 		if ( touchDetect.hasTouch() ) {
