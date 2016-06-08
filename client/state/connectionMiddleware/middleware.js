@@ -3,6 +3,8 @@
  */
 import uniqueId from 'lodash/uniqueId';
 import Hashes from 'jshashes';
+import wpcom from 'lib/wp';
+
 
 /**
  * Internal dependencies
@@ -79,7 +81,7 @@ function dispatchAndFireNextQueuedAction( store ) {
 
 function fireAction( action, store ) {
 	const dispatch = dispatchAndFireNextQueuedAction( store );
-	connections[ action.type ].connectionFunction( action, dispatch );
+	connections[ action.type ].connectionFunction( wpcom )( action, dispatch );
 };
 
 function shouldQueueAction( action ) {
