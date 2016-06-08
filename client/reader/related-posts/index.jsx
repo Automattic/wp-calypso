@@ -3,16 +3,16 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import { relatedPostsForPost } from 'state/reader/related/selectors';
+import { relatedPostsForPost } from 'state/reader/related-posts/selectors';
 import { getPost } from 'state/reader/posts/selectors';
 import { getSite } from 'state/reader/sites/selectors';
 import SmallPost from 'components/post-card/small';
 import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts';
-import i18n from 'lib/mixins/i18n';
 
 const RelatedPost = React.createClass( {
 	render() {
