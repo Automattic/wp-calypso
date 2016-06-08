@@ -88,10 +88,10 @@ const AdsMain = React.createClass( {
 
 	renderInstantActivationToggle: function( component ) {
 		return ( <div>
-			<Card className="ads__activate-wrapper">
-				<div className="ads__activate-header">
-					<h2 className="ads__activate-header-title">{ this.translate( 'WordAds Disabled' ) }</h2>
-					<div className="ads__activate-header-toggle">
+			<Card className="rads__activate-wrapper">
+				<div className="rads__activate-header">
+					<h2 className="rads__activate-header-title">{ this.translate( 'WordAds Disabled' ) }</h2>
+					<div className="rads__activate-header-toggle">
 						<FormButton
 							disabled={ this.props.site.options.wordads || ( this.props.requestingWordAdsApproval && this.props.wordAdsError === null ) }
 							onClick={ this.props.requestWordAdsApproval }
@@ -101,11 +101,11 @@ const AdsMain = React.createClass( {
 					</div>
 				</div>
 				{ this.props.wordAdsError &&
-					<Notice status="is-error ads__activate-notice" onDismissClick={ this.dismissWordAdsError }>
+					<Notice status="is-error rads__activate-notice" onDismissClick={ this.dismissWordAdsError }>
 						{ this.props.wordAdsError }
 					</Notice>
 				}
-				<p className="ads__activate-description">
+				<p className="rads__activate-description">
 					{ this.translate(
 						'WordAds allows you to make money from advertising that runs on your site. ' +
 						'Because you have a WordPress.com Premium plan, you can skip the review process and activate WordAds instantly. ' +
@@ -141,7 +141,7 @@ const AdsMain = React.createClass( {
 		}
 
 		return (
-			<Main className="ads">
+			<Main className="rads">
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
