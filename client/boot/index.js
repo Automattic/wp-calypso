@@ -305,7 +305,7 @@ function reduxStoreReady( reduxStore ) {
 
 	if ( config.isEnabled( 'oauth' ) ) {
 		// Forces OAuth users to the /login page if no token is present
-		// page( '*', require( 'auth/controller' ).checkToken );
+		page( '*', require( 'auth/controller' ).checkToken );
 	}
 
 	// Load the application modules for the various sections and features

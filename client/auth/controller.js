@@ -34,7 +34,7 @@ module.exports = {
 	},
 
 	checkToken: function( context, next ) {
-		const loggedOutRoutes = [ '/login', '/oauth', '/start', '/authorize' ],
+		const loggedOutRoutes = [ '/login', '/oauth', '/start', '/authorize', '/api/oauth/token' ],
 			isValidSection = loggedOutRoutes.some( route => startsWith( context.path, route ) );
 
 		if ( config( 'env' ) === 'desktop' ) {
@@ -46,10 +46,9 @@ module.exports = {
 			}
 		}
 
-		let token = store.get( 'wpcom_token' );
-
-		if ( ! token ) {
-			page.redirect( '/authorize' );
+		// Check we have an OAuth token, otherwise redirect to auth page
+		if ( OAuthToken.getToken() === false && ! isValidSection ) {
+			page( '/authorize' );
 		} else {
 			next();
 		}
@@ -70,7 +69,6 @@ module.exports = {
 		const wpoauth = WPOAuth( oauthSettings );
 		const authUrl = wpoauth.urlToConnect( { scope: 'global', blog_id: 0 } );
 
-		// Extract this into a component...
 		ReactDom.render(
 			React.createElement( ConnectComponent, {
 				authUrl: authUrl
