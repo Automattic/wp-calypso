@@ -166,26 +166,39 @@ function buildPhpOutput( data, arrayName ) {
  * @param  {string}   arrayName  - name of array to use inside php file
  * @param  {string}   inputFiles  - location of the javascript file to parse
  * @param  {Function} done       - callback function
+ * @param  {boolean}  verbose    - whether to output to console
  */
-function readFile( outputFile, arrayName, inputFiles, done ) {
+function readFile( outputFile, arrayName, inputFiles, done, verbose ) {
+	if ( typeof verbose === 'undefined' ) {
+		verbose = false;
+	}
 	async.map( inputFiles, function( inputFile, callback ) {
 		fs.readFile( inputFile, 'utf8', function( err, data ) {
 			if ( err ) {
-				console.log( 'i18n: Error reading ' + inputFile );
-				console.error( err );
+				if ( verbose ) {
+					console.log( 'i18n: Error reading ' + inputFile );
+					console.error( err );
+				}
 				process.exitCode = 1;
 				callback();
 			} else {
-				console.log( 'i18n: Reading ' + inputFile );
+				if ( verbose ) {
+					console.log( 'i18n: Reading ' + inputFile );
+				}
+
 				callback( null, data );
 			}
 		} );
-	}, function( err, data ) {
+	}, function( _, data ) {
 		fs.writeFile( outputFile, buildPhpOutput( data.join( '\n' ), arrayName ), 'utf8', function( error ) {
 			if ( error ) {
 				process.exitCode = 1;
-				console.log( 'i18n: Error writing ' + outputFile );
-				console.error( error );
+				if ( verbose ) {
+					console.log( 'i18n: Error writing ' + outputFile );
+					console.error( error );
+				}
+			} else if ( verbose ) {
+				console.log( 'i18n: Wrote to ' + outputFile );
 			}
 			if ( 'function' === typeof done ) {
 				done();
