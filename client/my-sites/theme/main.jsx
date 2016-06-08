@@ -68,6 +68,10 @@ const ThemeSheet = React.createClass( {
 		return { selectedAction: null };
 	},
 
+	componentDidMount() {
+		window.scroll( 0, 0 );
+	},
+
 	hideSiteSelectorModal() {
 		this.setState( { selectedAction: null } );
 	},
