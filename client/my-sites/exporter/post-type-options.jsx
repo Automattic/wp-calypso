@@ -57,6 +57,7 @@ const PostTypeOptions = React.createClass( {
 		const {
 			description,
 			legend,
+			isDateValid,
 			isEnabled,
 			onSelect,
 			postType,
@@ -88,6 +89,7 @@ const PostTypeOptions = React.createClass( {
 							postType={ postType }
 							fieldName={ fieldName }
 							isEnabled={ isEnabled }
+							isError={ ( fieldName === 'start_date' || fieldName === 'end_date' ) && ! isDateValid }
 						/>
 					) }
 				</div>
