@@ -11,7 +11,6 @@ import reject from 'lodash/reject';
 import { abtest } from 'lib/abtest';
 import config from 'config';
 import { isOutsideCalypso } from 'lib/url';
-import plansPaths from 'my-sites/plans/paths';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
 
@@ -23,14 +22,6 @@ function getCheckoutUrl( dependencies ) {
 
 function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
-}
-
-function getFreeTrialDestination( dependencies ) {
-	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies );
-	}
-
-	return plansPaths.plans( dependencies.siteSlug );
 }
 
 function getSiteDestination( dependencies ) {
@@ -50,8 +41,6 @@ function getPostsDestination( dependencies ) {
 }
 
 const flows = {
-	/* Production flows*/
-
 	account: {
 		steps: [ 'user' ],
 		destination: '/',
@@ -60,59 +49,34 @@ const flows = {
 	},
 
 	business: {
-		steps: [ 'themes', 'domains', 'user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'survey-user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
-		lastModified: '2016-01-21',
+		lastModified: '2016-06-02',
 		meta: {
 			skipBundlingPlan: true
 		}
 	},
 
 	premium: {
-		steps: [ 'themes', 'domains', 'user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'survey-user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
 		description: 'Create an account and a blog and then add the premium plan to the users cart.',
-		lastModified: '2016-01-21',
+		lastModified: '2016-06-02',
 		meta: {
 			skipBundlingPlan: true
 		}
-
 	},
 
 	free: {
-		steps: [ 'themes', 'domains', 'user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'survey-user' ],
 		destination: getSiteDestination,
 		description: 'Create an account and a blog and default to the free plan.',
-		lastModified: '2016-02-29'
-	},
-
-	businessv2: {
-		steps: [ 'domains-only', 'user' ],
-		destination: function( dependencies ) {
-			return '/plans/select/business/' + dependencies.siteSlug;
-		},
-		description: 'Made for CT CMO trial project. Create an account and a blog, without theme selection, and then add the business plan to the users cart.',
-		lastModified: '2016-02-26',
-		meta: {
-			skipBundlingPlan: true
-		}
-	},
-
-	premiumv2: {
-		steps: [ 'domains-only', 'user' ],
-		destination: function( dependencies ) {
-			return '/plans/select/premium/' + dependencies.siteSlug;
-		},
-		description: 'Made for CT CMO trial project. Create an account and a blog, without theme selection, and then add the premium plan to the users cart.',
-		lastModified: '2016-02-26',
-		meta: {
-			skipBundlingPlan: true
-		}
+		lastModified: '2016-06-02'
 	},
 
 	'with-theme': {
@@ -129,14 +93,6 @@ const flows = {
 		lastModified: '2016-05-23'
 	},
 
-	plan: {
-		steps: [ 'themes', 'domains', 'select-plan', 'user' ],
-		destination: getSiteDestination,
-		description: '',
-		lastModified: '2016-02-02'
-	},
-
-	/* WP.com homepage flows */
 	website: {
 		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
@@ -151,11 +107,8 @@ const flows = {
 		lastModified: '2016-05-23'
 	},
 
-	/* On deck flows*/
-
-	/* Testing flows */
 	personal: {
-		steps: [ 'themes', 'domains', 'user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/personal/' + dependencies.siteSlug;
 		},
@@ -165,7 +118,7 @@ const flows = {
 
 	'test-site': {
 		steps: config( 'env' ) === 'development' ? [ 'site', 'user' ] : [ 'user' ],
-		destination: '/me/next/welcome',
+		destination: '/',
 		description: 'This flow is used to test the site step.',
 		lastModified: '2015-09-22'
 	},
@@ -191,24 +144,10 @@ const flows = {
 		lastModified: '2016-03-09'
 	},
 
-	'site-user': {
-		steps: [ 'site', 'user' ],
-		destination: '/me/next?welcome',
-		description: 'Signup flow for free site/account',
-		lastModified: '2015-10-30'
-	},
-
 	desktop: {
 		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getPostsDestination,
 		description: 'Signup flow for desktop app',
-		lastModified: '2016-05-30'
-	},
-
-	app: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
-		destination: getPostsDestination,
-		description: 'Used as a web-based control to test the "desktop" flow',
 		lastModified: '2016-05-30'
 	},
 
@@ -222,13 +161,6 @@ const flows = {
 	jetpack: {
 		steps: [ 'jetpack-user' ],
 		destination: '/'
-	},
-
-	'free-trial': {
-		steps: [ 'themes', 'domains-with-plan', 'user' ],
-		destination: getFreeTrialDestination,
-		description: 'Signup flow for free trials',
-		lastModified: '2016-03-21'
 	}
 };
 
@@ -244,10 +176,6 @@ function removeUserStepFromFlow( flow ) {
 
 function filterFlowName( flowName ) {
 	const defaultFlows = [ 'main', 'website' ];
-
-	if ( includes( defaultFlows, flowName ) && abtest( 'freeTrialsInSignup' ) === 'enabled' ) {
-		return 'free-trial';
-	}
 
 	if ( includes( defaultFlows, flowName ) && abtest( 'personalPlan' ) === 'show' ) {
 		return 'personal';
@@ -267,7 +195,7 @@ function filterDestination( destination, dependencies, flowName ) {
 function getGuidedToursDestination( destination, dependencies, flowName ) {
 	const guidedToursVariant = abtest( 'guidedTours' );
 	const tourName = 'main';
-	const disabledFlows = [ 'account', 'site-user', 'jetpack' ];
+	const disabledFlows = [ 'account', 'jetpack' ];
 	const siteSlug = dependencies.siteSlug;
 	const baseUrl = `/stats/${ siteSlug }`;
 
