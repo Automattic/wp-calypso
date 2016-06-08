@@ -33,7 +33,7 @@ const Start = React.createClass( {
 		FeedSubscriptionStore.on( 'change', this.handleChange );
 	},
 
-	// Remove change listers from stores
+	// Remove change listeners from stores
 	componentWillUnmount() {
 		FeedSubscriptionStore.off( 'change', this.handleChange );
 	},
@@ -45,7 +45,7 @@ const Start = React.createClass( {
 	},
 
 	handleChange() {
-		this.setState( this.getStateFromStores() );
+		this.smartSetState( this.getStateFromStores() );
 	},
 
 	graduateColdStart() {
@@ -56,7 +56,6 @@ const Start = React.createClass( {
 
 	render() {
 		const canGraduate = ( this.state.totalSubscriptions > 0 );
-
 		return (
 			<Main className="reader-start">
 				<QueryReaderStartRecommendations />
@@ -78,7 +77,20 @@ const Start = React.createClass( {
 
 				<RootChild className="reader-start__bar">
 					<div className="reader-start__bar-action main">
-						<span className="reader-start__bar-text">{ this.translate( 'Follow one or more sites to get started' ) }</span>
+						<span className="reader-start__bar-text">
+							{ canGraduate
+								? this.translate(
+									'Great! You\'re following %(totalSubscriptions)d site.',
+									'Great! You\'re following %(totalSubscriptions)d sites.', {
+										count: this.state.totalSubscriptions,
+										args: {
+											totalSubscriptions: this.state.totalSubscriptions
+										}
+									}
+								)
+								: this.translate( 'Follow one or more sites to get started' )
+							}
+						</span>
 						<Button onClick={ this.graduateColdStart } disabled={ ! canGraduate }>{ this.translate( "OK, I'm all set!" ) }</Button>
 					</div>
 				</RootChild>
