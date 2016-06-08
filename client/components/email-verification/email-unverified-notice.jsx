@@ -12,7 +12,7 @@ import userUtils from 'lib/user/utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';
-import i18n from 'lib/mixins/i18n';
+import i18n from 'i18n-calypso';
 import _sites from 'lib/sites-list';
 import _user from 'lib/user';
 

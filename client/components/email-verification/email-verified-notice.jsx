@@ -12,7 +12,7 @@ import page from 'page';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Emojify from 'components/emojify';
-import i18n from 'lib/mixins/i18n';
+import i18n from 'i18n-calypso';
 import emailVerification from './';
 import _sites from 'lib/sites-list';
 
