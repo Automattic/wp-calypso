@@ -508,8 +508,9 @@ body.newdash div.wordpress-com-extension-promo {
 }
 
 .environment-badge {
+	padding: 16px 0;
 	position: fixed;
-		bottom: 16px;
+		bottom: 0;
 		right: 16px;
 	z-index: z-index( 'root', '.environment-badge' );
 	backface-visibility: hidden;
@@ -550,6 +551,7 @@ body.newdash div.wordpress-com-extension-promo {
 		transition: all 0.2s ease-out;
 		background-color: $white;
 		box-shadow: 0 0 0 1px $gray-dark;
+
 		&.is-env {
 			display: inline-block;
 		}
