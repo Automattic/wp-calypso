@@ -302,6 +302,7 @@ const PlansSetup = React.createClass( {
 
 		let turnOnManage;
 		if ( site && ! site.canManage() ) {
+			const manageUrl = site.getRemoteManagementURL() + '&section=plugins';
 			turnOnManage = (
 				<Card className="jetpack-plugins-setup__need-manage">
 					<p>{
@@ -310,8 +311,8 @@ const PlansSetup = React.createClass( {
 							components: { strong: <strong /> }
 						} )
 					}</p>
-					<Button primary>Enable Manage</Button>
-					<Button>Manual Installation</Button>
+					<Button primary href={ manageUrl }>Enable Manage</Button>
+					<Button href="https://en.support.wordpress.com/setting-up-premium-services/">Manual Installation</Button>
 				</Card>
 			);
 		}
