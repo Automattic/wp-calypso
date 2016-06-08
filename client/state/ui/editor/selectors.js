@@ -40,17 +40,14 @@ export function isEditorDraftsVisible( state ) {
 }
 
 /**
- * Returns the editor URL path for the given site ID, post ID pair.
+ * Returns the editor new post URL path for the given site ID and type.
  *
  * @param  {Object} state       Global state tree
  * @param  {Number} siteId      Site ID
- * @param  {Number} postId      Post ID
- * @param  {String} defaultType Fallback post type if post not found
+ * @param  {Number} type        Post type
  * @return {String}             Editor URL path
  */
-export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
-	const type = get( getEditedPost( state, siteId, postId ), 'type', defaultType );
-
+export function getEditorNewPostPath( state, siteId, type = 'post' ) {
 	let path;
 	switch ( type ) {
 		case 'post': path = '/post'; break;
@@ -64,6 +61,22 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
 	} else {
 		path += `/${ siteId }`;
 	}
+
+	return path;
+}
+
+/**
+ * Returns the editor URL path for the given site ID, post ID pair.
+ *
+ * @param  {Object} state       Global state tree
+ * @param  {Number} siteId      Site ID
+ * @param  {Number} postId      Post ID
+ * @param  {String} defaultType Fallback post type if post not found
+ * @return {String}             Editor URL path
+ */
+export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
+	const type = get( getEditedPost( state, siteId, postId ), 'type', defaultType );
+	let path = getEditorNewPostPath( state, siteId, type );
 
 	if ( postId ) {
 		path += `/${ postId }`;

@@ -6,7 +6,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getEditorPostId, isEditorNewPost, isEditorDraftsVisible, getEditorPath } from '../selectors';
+import {
+	getEditorPostId,
+	isEditorNewPost,
+	isEditorDraftsVisible,
+	getEditorNewPostPath,
+	getEditorPath
+} from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getEditorPostId()', () => {
@@ -60,6 +66,63 @@ describe( 'selectors', () => {
 			} );
 
 			expect( showDrafts ).to.be.true;
+		} );
+	} );
+
+	describe( 'getEditorNewPostPath()', () => {
+		it( 'should return the post path with the site ID if site unknown', () => {
+			const path = getEditorNewPostPath( {
+				sites: {
+					items: {}
+				}
+			}, 2916284 );
+
+			expect( path ).to.equal( '/post/2916284' );
+		} );
+
+		it( 'should prefix the post route for post types', () => {
+			const path = getEditorNewPostPath( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.wordpress.com'
+						}
+					}
+				}
+			}, 2916284, 'post' );
+
+			expect( path ).to.equal( '/post/example.wordpress.com' );
+		} );
+
+		it( 'should prefix the page route for page types', () => {
+			const path = getEditorNewPostPath( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.wordpress.com'
+						}
+					}
+				}
+			}, 2916284, 'page' );
+
+			expect( path ).to.equal( '/page/example.wordpress.com' );
+		} );
+
+		it( 'should prefix the type route for custom post types', () => {
+			const path = getEditorNewPostPath( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.wordpress.com'
+						}
+					}
+				}
+			}, 2916284, 'jetpack-portfolio' );
+
+			expect( path ).to.equal( '/edit/jetpack-portfolio/example.wordpress.com' );
 		} );
 	} );
 
