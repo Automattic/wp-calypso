@@ -15,14 +15,19 @@ import PostTypeList from 'my-sites/post-type-list';
 import PostTypeUnsupported from './post-type-unsupported';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
+import { canCurrentUser } from 'state/current-user/selectors';
 
-function Types( { query, postType, postTypeSupported } ) {
+function Types( { query, postType, postTypeSupported, userCanEdit } ) {
 	return (
 		<Main>
 			<DocumentHead title={ get( postType, 'label' ) } />
 			{ false !== postTypeSupported && [
-				<PostTypeFilter key="filter" query={ query } />,
-				<PostTypeList key="list" query={ query } />
+				<PostTypeFilter
+					key="filter"
+					query={ userCanEdit ? query : null } />,
+				<PostTypeList
+					key="list"
+					query={ userCanEdit ? query : null } />
 			] }
 			{ false === postTypeSupported && (
 				<PostTypeUnsupported type={ query.type } />
@@ -32,14 +37,20 @@ function Types( { query, postType, postTypeSupported } ) {
 }
 
 Types.propTypes = {
-	query: PropTypes.object
+	query: PropTypes.object,
+	postType: PropTypes.object,
+	postTypeSupported: PropTypes.bool,
+	userCanEdit: PropTypes.bool
 };
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
+	const postType = getPostType( state, siteId, ownProps.query.type );
+	const capability = get( postType, [ 'capabilities', 'edit_posts' ], null );
 
 	return {
+		postType,
 		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ),
-		postType: getPostType( state, siteId, ownProps.query.type )
+		userCanEdit: canCurrentUser( state, siteId, capability )
 	};
 } )( Types );
