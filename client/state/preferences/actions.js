@@ -35,7 +35,7 @@ export const setPreference = ( key, value ) => ( dispatch, getState ) => {
 	} );
 	const settings = {};
 	settings[ USER_SETTING_KEY ] = getState().preferences.values;
-	wpcom.me().settings().update( JSON.stringify( settings ) )
+	return wpcom.me().settings().update( JSON.stringify( settings ) )
 	.then( ( data ) => {
 		dispatch( {
 			type: PREFERENCES_RECEIVE,
