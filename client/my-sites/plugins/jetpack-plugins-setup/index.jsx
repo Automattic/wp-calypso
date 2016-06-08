@@ -333,7 +333,6 @@ const PlansSetup = React.createClass( {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
-		const site = getSelectedSite( state );
 
 		return {
 			wporg: state.plugins.wporg.items,
@@ -344,7 +343,6 @@ export default connect(
 			plugins: getPluginsForSite( state, siteId ),
 			activePlugin: getActivePlugin( state, siteId ),
 			nextPlugin: getNextPlugin( state, siteId ),
-			selectedSite: site && site.jetpack ? JetpackSite( site ) : site,
 			isRequestingSites: isRequestingSites( state ),
 			siteId
 		};
