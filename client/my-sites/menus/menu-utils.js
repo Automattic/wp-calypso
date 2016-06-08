@@ -1,9 +1,13 @@
 /**
+ * External dependencies
+ */
+var i18n = require( 'i18n-calypso' );
+
+/**
  * Internal dependencies
  */
 var sites = require( 'lib/sites-list' )(),
-	decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	i18n = require( 'lib/mixins/i18n' );
+	decodeEntities = require( 'lib/formatting' ).decodeEntities;
 
 module.exports = {
 

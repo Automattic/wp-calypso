@@ -2,11 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import i18n from 'lib/mixins/i18n';
+import i18n from 'i18n-calypso';
 
 const WpcomPlanDetails = ( { comparePlansUrl, handleLearnMoreClick, plan } ) => {
 	return (

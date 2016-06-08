@@ -22,11 +22,11 @@ import tinymce from 'tinymce/tinymce';
 import qs from 'querystring';
 import find from 'lodash/find';
 import throttle from 'lodash/throttle';
+import { getLocaleSlug, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getLocaleSlug, translate } from 'lib/mixins/i18n';
 import AtDCore from './core';
 import PreferencesActions from 'lib/preferences/actions';
 import PreferencesStore from 'lib/preferences/store';

@@ -4,11 +4,11 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import includes from 'lodash/includes';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import localize from 'lib/mixins/i18n/localize';
 import EmptyContent from 'components/empty-content';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';

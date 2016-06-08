@@ -3,11 +3,11 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import route from 'lib/route';
 import userSettings from 'lib/user-settings';
 import { trackPageLoad, setPageTitle } from 'reader/controller-helper';

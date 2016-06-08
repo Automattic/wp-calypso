@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import noop from 'lodash/noop';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -10,7 +11,6 @@ import noop from 'lodash/noop';
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 import Spinner from 'components/spinner';
-import i18n from 'lib/mixins/i18n';
 
 class VerifyEmailDialog extends React.Component {
 	constructor( props ) {

@@ -5,12 +5,12 @@ import React from 'react';
 import identity from 'lodash/identity';
 import isFunction from 'lodash/isFunction';
 import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import AnalyticsMixin from 'lib/mixins/analytics';
-import localize from 'lib/mixins/i18n/localize';
 
 export const CartButtons = React.createClass( {
 	mixins: [ AnalyticsMixin( 'popupCart' ) ],

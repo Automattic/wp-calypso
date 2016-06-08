@@ -2,11 +2,11 @@
  * External Dependencies
  */
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import support from 'lib/url/support';
 
 export default [

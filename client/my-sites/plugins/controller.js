@@ -7,12 +7,12 @@ import page from 'page';
 import some from 'lodash/some';
 import includes from 'lodash/includes';
 import capitalize from 'lodash/capitalize';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
 import route from 'lib/route';
-import i18n from 'lib/mixins/i18n';
 import notices from 'notices';
 import sitesFactory from 'lib/sites-list';
 import analytics from 'lib/analytics';

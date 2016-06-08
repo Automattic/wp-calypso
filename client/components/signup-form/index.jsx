@@ -9,6 +9,7 @@ import includes from 'lodash/includes';
 import keys from 'lodash/keys';
 import debugModule from 'debug';
 import classNames from 'classnames';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -26,7 +27,6 @@ import notices from 'notices';
 import Notice from 'components/notice';
 import LoggedOutForm from 'components/logged-out-form';
 import formState from 'lib/form-state';
-import i18n from 'lib/mixins/i18n';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';

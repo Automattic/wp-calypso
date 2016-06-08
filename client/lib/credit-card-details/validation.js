@@ -7,12 +7,8 @@ var creditcards = require( 'creditcards' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	toArray = require( 'lodash/toArray' ),
 	inRange = require( 'lodash/inRange' ),
-	capitalize = require( 'lodash/capitalize' );
-
-/**
- * Internal dependencies
- */
-var i18n = require( 'lib/mixins/i18n' );
+	capitalize = require( 'lodash/capitalize' ),
+	i18n = require( 'i18n-calypso' );
 
 function creditCardFieldRules() {
 	return {

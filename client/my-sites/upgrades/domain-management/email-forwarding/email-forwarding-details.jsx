@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var i18n = require( 'i18n-calypso' ),
+	React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	support = require( 'lib/url/support' ),
+var support = require( 'lib/url/support' ),
 	analyticsMixin = require( 'lib/mixins/analytics' );
 
 var EmailForwardingDetails = React.createClass( {

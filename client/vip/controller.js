@@ -3,13 +3,13 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
+	i18n = require( 'i18n-calypso' ),
 	page = require( 'page' );
 
 /**
  * Internal Dependencies
  */
 var route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	sites = require( 'lib/sites-list' )();
 

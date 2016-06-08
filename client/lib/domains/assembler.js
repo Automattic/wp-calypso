@@ -5,12 +5,12 @@ import find from 'lodash/find';
 import without from 'lodash/without';
 import mapKeys from 'lodash/mapKeys';
 import camelCase from 'lodash/camelCase';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import {type as domainTypes} from './constants';
-import i18n from 'lib/mixins/i18n';
 
 function createDomainObjects( dataTransferObject ) {
 	let domains = [];

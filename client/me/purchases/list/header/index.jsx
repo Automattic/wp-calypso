@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import paths from '../../paths.js';
@@ -25,7 +25,7 @@ const PurchasesHeader = ( { section } ) => {
 				<NavItem path={ paths.list() } selected={ section === 'purchases' }>
 					{ i18n.translate( 'Purchases' ) }
 				</NavItem>
-				
+
 				<NavItem path="/me/billing" selected={ section === 'billing' }>
 					{ i18n.translate( 'Billing History' ) }
 				</NavItem>

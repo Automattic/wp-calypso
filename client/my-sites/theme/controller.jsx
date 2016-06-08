@@ -6,13 +6,13 @@ import { Provider as ReduxProvider } from 'react-redux';
 import omit from 'lodash/omit';
 import debugFactory from 'debug';
 import startsWith from 'lodash/startsWith';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
 import ThemeSheetComponent from './main';
 import ThemeDetailsComponent from 'components/data/theme-details';
-import i18n from 'lib/mixins/i18n';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getThemeDetails } from 'state/themes/theme-details/selectors';
 import ClientSideEffects from 'components/client-side-effects';

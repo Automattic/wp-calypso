@@ -6,11 +6,11 @@
 import find from 'lodash/find';
 import includes from 'lodash/includes';
 import moment from 'moment';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import {
 	isDomainRegistration,
 	isPlan,

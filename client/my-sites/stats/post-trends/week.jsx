@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var i18n = require( 'i18n-calypso' ),
+	React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	Day = require( './day' );
+var Day = require( './day' );
 
 module.exports = React.createClass( {
 

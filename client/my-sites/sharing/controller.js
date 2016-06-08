@@ -3,7 +3,8 @@
  */
 var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+	React = require( 'react' ),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal Dependencies
@@ -11,7 +12,6 @@ var page = require( 'page' ),
 var sites = require( 'lib/sites-list' )(),
 	user = require( 'lib/user' )(),
 	utils = require( 'lib/site/utils' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	notices = require( 'notices' ),
 	route = require( 'lib/route' ),
 	analytics = require( 'lib/analytics' ),

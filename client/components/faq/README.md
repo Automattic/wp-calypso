@@ -13,7 +13,7 @@ The FAQ component is made of two parts:
 ```jsx
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
-import i18n from 'lib/mixins/i18n';
+import i18n from 'i18n-calypso';
 
 export default React.createClass( {
 	displayName: 'MyFAQ',

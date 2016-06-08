@@ -6,11 +6,11 @@ import React from 'react';
 import page from 'page';
 import route from 'lib/route';
 import get from 'lodash/get';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import sitesList from 'lib/sites-list';
 import PeopleList from './main';
 import EditTeamMember from './edit-team-member-form';

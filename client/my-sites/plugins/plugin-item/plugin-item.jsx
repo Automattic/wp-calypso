@@ -4,7 +4,7 @@
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	uniqBy = require( 'lodash/uniqBy' ),
-	i18n = require( 'lib/mixins/i18n' );
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies

@@ -1,7 +1,7 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-const i18n = require( 'lib/mixins/i18n' );
+const i18n = require( 'i18n-calypso' );
 
 /**
  * @see wp_mce_translation() in src/wp-includes/class-wp-editor.php from WordPress

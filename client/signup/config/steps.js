@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { current } from 'page';
+import i18n from 'i18n-calypso';
 
 /**
 * Internal dependencies
 */
 import stepActions from 'lib/signup/step-actions';
-import i18n from 'lib/mixins/i18n';
 
 module.exports = {
 	survey: {

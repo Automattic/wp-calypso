@@ -7,11 +7,11 @@ import store from 'store';
 import page from 'page';
 import get from 'lodash/get';
 import debugModule from 'debug';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import titleActions from 'lib/screen-title/actions';
 import InviteAccept from 'my-sites/invites/invite-accept';
 import { setSection } from 'state/ui/actions';

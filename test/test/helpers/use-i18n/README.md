@@ -23,7 +23,7 @@ describe( 'component', () => {
 ## Caveats
 
 1. If used in combination with the [`use-mockery` helper](../use-mockery), you will likely want to call `useI18n` after `useMockery`, since using Mockery will cause module caches to be reset.
-2. This helper does not inject the `translate` mixin to your components. You may want to consider authoring your components using the [`localize` higher-order component](../../../../client/lib/mixins/i18n/localize). Otherwise, you may override the function autobind map for your component before running your tests:
+2. This helper does not inject the `translate` mixin to your components. You may want to consider authoring your components using the [`localize` higher-order component](https://github.com/Automattic/i18n-calypso#localize). Otherwise, you may override the function autobind map for your component before running your tests:
 
 ```js
 before( () => {

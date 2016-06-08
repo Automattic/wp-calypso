@@ -3,6 +3,7 @@
  */
 import page from 'page';
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -16,7 +17,6 @@ import EditCardDetails from './payment/edit-card-details';
 import EditCardDetailsData from 'components/data/purchases/edit-card-details';
 import EditCardDetailsLoadingPlaceholder from './payment/edit-card-details/loading-placeholder';
 import EditPaymentMethod from './payment/edit-payment-method';
-import i18n from 'lib/mixins/i18n';
 import { isDataLoading } from './utils';
 import Main from 'components/main';
 import ManagePurchase from './manage-purchase';

@@ -29,7 +29,7 @@ describe( 'EditorTaxonomiesAccordion', function() {
 		common = require( 'lib/terms/test/common' );
 		categoryStore = require( 'lib/terms/category-store-factory' )( 'default' );
 		tagStore = require( 'lib/terms/tag-store' );
-		i18n = require( 'lib/mixins/i18n' );
+		i18n = require( 'i18n-calypso' );
 
 		TaxonomiesAccordion = require( 'post-editor/editor-taxonomies/accordion' );
 		TaxonomiesAccordion.prototype.translate = i18n.translate;

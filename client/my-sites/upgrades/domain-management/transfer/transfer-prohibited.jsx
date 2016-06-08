@@ -1,10 +1,10 @@
 /** External Dependencies */
 import React from 'react';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { translate } from 'lib/mixins/i18n';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import support from 'lib/url/support';

@@ -3,12 +3,12 @@
  */
 import find from 'lodash/find';
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
-import i18n from 'lib/mixins/i18n';
 import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 

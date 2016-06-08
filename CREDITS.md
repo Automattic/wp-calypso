@@ -984,7 +984,6 @@ THE SOFTWARE.
 
 ### https://github.com/kvz/phpjs/
 #### client/lib/version-compare
-#### client/lib/mixins/i18n/number-format.js
 ```text
 Copyright (c) 2013 Kevin van Zonneveld (http://kvz.io)
 and Contributors (http://phpjs.org/authors)

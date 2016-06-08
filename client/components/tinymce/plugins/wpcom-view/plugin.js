@@ -13,13 +13,13 @@
 var tinymce = require( 'tinymce/tinymce' ),
 	debounce = require( 'lodash/debounce' ),
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+	React = require( 'react'),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
  */
 var views = require( './views' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	sites = require( 'lib/sites-list' )();
 
 /**

@@ -4,13 +4,13 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
 import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
-import i18n from 'lib/mixins/i18n';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import config from 'config';
 import analytics from 'lib/analytics';

@@ -4,11 +4,11 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import debounce from 'lodash/debounce';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import localize from 'lib/mixins/i18n/localize';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import PurchaseDetails from 'components/purchase-detail';
 import PurchaseButton from 'components/purchase-detail/purchase-button';

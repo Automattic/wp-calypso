@@ -4,6 +4,7 @@
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import isEmpty from 'lodash/isEmpty';
+import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import NoResults from 'my-sites/no-results';
 import SearchCard from 'components/search-card';
 import CompactCard from 'components/card/compact';
 import analytics from 'lib/analytics';
-import { getLocaleSlug } from 'lib/mixins/i18n';
 
 module.exports = React.createClass( {
 	displayName: 'HelpSearch',

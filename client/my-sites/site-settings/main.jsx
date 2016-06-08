@@ -3,6 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import ImportSettings from './section-import';
 import ExportSettings from './section-export';
 import SiteSecurity from './section-security';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import i18n from 'lib/mixins/i18n';
 
 /**
  * Module vars

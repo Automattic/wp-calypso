@@ -4,11 +4,11 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import flatten from 'lodash/flatten';
 import values from 'lodash/values';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import notices from 'notices'
 import ValidationErrorList from 'notices/validation-error-list';
 

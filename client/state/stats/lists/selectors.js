@@ -3,12 +3,12 @@
  */
 import get from 'lodash/get';
 import values from 'lodash/values';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import i18n from 'lib/mixins/i18n';
 import {
 	getSerializedStatsQuery
 } from './utils';

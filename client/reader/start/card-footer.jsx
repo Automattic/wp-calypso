@@ -1,11 +1,11 @@
 // External dependencies
 import React from 'react';
 import { connect } from 'react-redux';
+import { numberFormat } from 'i18n-calypso';
 
 // Internal dependencies
 import { getSite } from 'state/reader/sites/selectors';
 import FollowButton from 'reader/follow-button';
-import { numberFormat } from 'lib/mixins/i18n';
 
 const StartCardFooter = ( { site } ) => {
 	const subscribersCount = numberFormat( site.subscribers_count );

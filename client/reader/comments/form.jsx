@@ -4,9 +4,9 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import noop from 'lodash/noop';
+import { translate } from 'i18n-calypso';
 
 // Internal dependencies
-import { translate } from 'lib/mixins/i18n';
 import Gravatar from 'components/gravatar';
 import Notice from 'components/notice';
 import {

@@ -1,6 +1,6 @@
 const url = require( 'url' );
 
-const i18n = require( 'lib/mixins/i18n' ),
+const i18n = require( 'i18n-calypso' ),
 	SiteState = require( 'lib/reader-site-store/constants' ).state,
 	FeedDisplayHelper = require( 'reader/lib/feed-display-helper' );
 

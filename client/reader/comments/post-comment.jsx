@@ -2,6 +2,7 @@
 import React from 'react';
 import noop from 'lodash/noop';
 import { connect } from 'react-redux';
+import { translate } from 'i18n-calypso';
 
 // Internal Dependencies
 import {
@@ -10,7 +11,6 @@ import {
 import Gridicon from 'components/gridicon';
 import PostTime from 'reader/post-time';
 import Gravatar from 'components/gravatar';
-import { translate } from 'lib/mixins/i18n';
 import {
 	recordAction,
 	recordGaEvent,

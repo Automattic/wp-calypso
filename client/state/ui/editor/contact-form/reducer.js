@@ -3,11 +3,11 @@
  */
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import {
 	EDITOR_CONTACT_FORM_CLEAR,
 	EDITOR_CONTACT_FORM_LOAD,

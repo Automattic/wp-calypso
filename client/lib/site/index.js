@@ -2,6 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:site' ),
+	i18n = require( 'i18n-calypso' ),
 	isEqual = require( 'lodash/isEqual' ),
 	find = require( 'lodash/find' ),
 	omit = require( 'lodash/omit' );
@@ -12,7 +13,6 @@ var debug = require( 'debug' )( 'calypso:site' ),
 var wpcom = require( 'lib/wp' ),
 	config = require( 'config' ),
 	notices = require( 'notices' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	isHttps = require( 'lib/url' ).isHttps;
 
