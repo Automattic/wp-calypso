@@ -9,8 +9,7 @@ import {
 	PREFERENCES_FETCH_SUCCESS,
 	PREFERENCES_FETCH_FAILURE
 } from 'state/action-types';
-
-export const USER_SETTING_KEY = 'calypso_preferences';
+import { USER_SETTING_KEY } from './constants';
 
 export function fetchPreferences() {
 	return ( dispatch ) => {
