@@ -16,8 +16,7 @@ var cartItems = require( 'lib/cart-values' ).cartItems,
 	DomainProductPrice = require( 'components/domains/domain-product-price' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
-	{ getCurrentUser } = require( 'state/current-user/selectors' ),
-	abtest = require( 'lib/abtest' ).abtest;
+	{ getCurrentUser } = require( 'state/current-user/selectors' );
 
 var MapDomainStep = React.createClass( {
 	mixins: [ analyticsMixin( 'mapDomain' ) ],
@@ -186,11 +185,7 @@ var MapDomainStep = React.createClass( {
 		upgradesActions.addItem( cartItems.domainMapping( { domain: domain } ) );
 
 		if ( this.isMounted() ) {
-			if ( abtest( 'personalPlan' ) === 'show' ) {
-				page( '/domains/add/' + domain + '/plans/' + this.props.selectedSite.slug );
-			} else {
-				page( '/checkout/' + this.props.selectedSite.slug );
-			}
+			page( '/domains/add/' + domain + '/plans/' + this.props.selectedSite.slug );
 		}
 	},
 
