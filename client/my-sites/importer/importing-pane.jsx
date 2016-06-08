@@ -12,6 +12,7 @@ import omit from 'lodash/omit';
  */
 import { mapAuthor, startImporting } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
+import { connectDispatcher } from './dispatcher-converter';
 import ProgressBar from 'components/progress-bar';
 import MappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
@@ -75,7 +76,7 @@ const hasProgressInfo = progress => {
 	return true;
 };
 
-export default React.createClass( {
+export const ImportingPane = React.createClass( {
 	displayName: 'SiteSettingsImportingPane',
 
 	mixins: [ PureRenderMixin ],
@@ -194,9 +195,22 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		const { site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor } } = this.props;
-		const { importerId, errorData = {}, customData } = this.props.importerStatus;
+		const {
+			importerStatus: {
+				importerId,
+				errorData = {},
+				customData
+			},
+			mapAuthorFor,
+			site: {
+				ID: siteId,
+				name: siteName,
+				single_user_site: hasSingleAuthor
+			}
+		} = this.props;
+
 		const progressClasses = classNames( 'importer__import-progress', { 'is-complete': this.isFinished() } );
+
 		let { percentComplete, progress, statusMessage } = this.props.importerStatus;
 		let blockingMessage;
 
@@ -221,7 +235,7 @@ export default React.createClass( {
 				{ this.isMapping() &&
 					<MappingPane
 						hasSingleAuthor={ hasSingleAuthor }
-						onMap={ ( source, target ) => mapAuthor( importerId, source, target ) }
+						onMap={ mapAuthorFor( importerId ) }
 						onStartImport={ () => startImporting( this.props.importerStatus ) }
 						{ ...{ siteId } }
 						sourceAuthors={ customData.sourceAuthors }
@@ -240,3 +254,9 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapDispatchToProps = dispatch => ( {
+	mapAuthorFor: importerId => ( source, target ) => dispatch( mapAuthor( importerId, source, target ) )
+} );
+
+export default connectDispatcher( null, mapDispatchToProps )( ImportingPane );

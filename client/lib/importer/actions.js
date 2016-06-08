@@ -129,14 +129,12 @@ export function finishUpload( importerId, importerStatus ) {
 	} );
 }
 
-export function mapAuthor( importerId, sourceAuthor, targetAuthor ) {
-	Dispatcher.handleViewAction( {
-		type: IMPORTS_AUTHORS_SET_MAPPING,
-		importerId,
-		sourceAuthor,
-		targetAuthor
-	} );
-}
+export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) => ( {
+	type: IMPORTS_AUTHORS_SET_MAPPING,
+	importerId,
+	sourceAuthor,
+	targetAuthor
+} );
 
 export function resetImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
