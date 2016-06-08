@@ -3742,6 +3742,37 @@
         }
       }
     },
+    "wpcom-oauth": {
+      "version": "0.3.3",
+      "dependencies": {
+        "cookiejar": {
+          "version": "1.3.0"
+        },
+        "emitter-component": {
+          "version": "1.0.0"
+        },
+        "extend": {
+          "version": "1.2.1"
+        },
+        "methods": {
+          "version": "0.0.1"
+        },
+        "mime": {
+          "version": "1.2.5"
+        },
+        "qs": {
+          "version": "0.6.5"
+        },
+        "superagent": {
+          "version": "0.17.0",
+          "dependencies": {
+            "debug": {
+              "version": "0.7.4"
+            }
+          }
+        }
+      }
+    },
     "wpcom-proxy-request": {
       "version": "2.0.0"
     },
