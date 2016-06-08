@@ -9,6 +9,7 @@ import React from 'react';
  */
 import { getPlans } from 'state/plans/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
+import QueryPlans from 'components/data/query-plans';
 import PlansCompare from 'components/plans/plans-compare' ;
 
 const UpgradePlansCompare = ( { domain, sites, plans, features, productsList } ) => {
@@ -17,6 +18,8 @@ const UpgradePlansCompare = ( { domain, sites, plans, features, productsList } )
 
 	return (
 		<div className="plans has-sidebar">
+			<QueryPlans />
+
 			<PlansCompare { ...{
 				selectedSite,
 				plans,

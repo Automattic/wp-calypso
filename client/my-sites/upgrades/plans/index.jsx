@@ -10,6 +10,7 @@ import React from 'react';
 import localize from 'lib/mixins/i18n/localize';
 import { getPlans } from 'state/plans/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
+import QueryPlans from 'components/data/query-plans';
 import PlanList from 'components/plans/plan-list' ;
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
@@ -23,6 +24,8 @@ const Plans = ( { translate, domain, sites, plans, sitePlans, onGoBack } ) => {
 			<HeaderCake onClick={ onGoBack }>
 				{ translate( 'Register %(domain)s', { args: { domain } } ) }
 			</HeaderCake>
+
+			<QueryPlans />
 
 			<PlanList { ...{
 				site,
