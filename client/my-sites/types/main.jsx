@@ -13,6 +13,7 @@ import DocumentHead from 'components/data/document-head';
 import PostTypeFilter from 'my-sites/post-type-filter';
 import PostTypeList from 'my-sites/post-type-list';
 import PostTypeUnsupported from './post-type-unsupported';
+import PostTypeForbidden from './post-type-forbidden';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
@@ -21,7 +22,7 @@ function Types( { query, postType, postTypeSupported, userCanEdit } ) {
 	return (
 		<Main>
 			<DocumentHead title={ get( postType, 'label' ) } />
-			{ false !== postTypeSupported && [
+			{ false !== userCanEdit && false !== postTypeSupported && [
 				<PostTypeFilter
 					key="filter"
 					query={ userCanEdit ? query : null } />,
@@ -31,6 +32,9 @@ function Types( { query, postType, postTypeSupported, userCanEdit } ) {
 			] }
 			{ false === postTypeSupported && (
 				<PostTypeUnsupported type={ query.type } />
+			) }
+			{ false === userCanEdit && (
+				<PostTypeForbidden />
 			) }
 		</Main>
 	);
