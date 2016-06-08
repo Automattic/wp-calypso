@@ -70,7 +70,7 @@ export const getSiteStatsPostStreakData = createSelector(
 		return response;
 	},
 	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
-	( state, siteId, taxonomy, query ) => {
+	( state, siteId, query ) => {
 		const serializedQuery = getSerializedStatsQuery( query );
 		return [ siteId, 'statsStreak', serializedQuery ].join();
 	}
@@ -97,7 +97,7 @@ export const getSiteStatsMaxPostsByDay = createSelector(
 		return max || null;
 	},
 	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
-	( state, siteId, taxonomy, query ) => {
+	( state, siteId, query ) => {
 		const serializedQuery = getSerializedStatsQuery( query );
 		return [ siteId, 'statsStreakMax', serializedQuery ].join();
 	}
