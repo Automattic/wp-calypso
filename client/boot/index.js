@@ -293,10 +293,7 @@ function reduxStoreReady( reduxStore ) {
 		next();
 	} );
 
-	page( '*', function( context, next ) {
-		emailVerification.renderNotice( context );
-		next();
-	} );
+	page( '*', emailVerification );
 
 	if ( config.isEnabled( 'oauth' ) ) {
 		// Forces OAuth users to the /login page if no token is present
