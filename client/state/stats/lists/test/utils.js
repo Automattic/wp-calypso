@@ -2,12 +2,14 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import {
-	getSerializedStatsQuery
+	getSerializedStatsQuery,
+	getStatsStreakQuery
 } from '../utils';
 
 describe( 'utils', () => {
@@ -33,6 +35,31 @@ describe( 'utils', () => {
 			} );
 
 			expect( serializedQuery ).to.eql( serializedQueryTwo );
+		} );
+	} );
+
+	describe( 'getStatsStreakQuery()', () => {
+		it( 'should return the correct default query', () => {
+			const streakQuery = getStatsStreakQuery( {} );
+
+			expect( streakQuery ).to.eql( {
+				startDate: i18n.moment().subtract( 1, 'year' ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
+				endDate: i18n.moment().endOf( 'month' ).format( 'YYYY-MM-DD' ),
+				max: 3000
+			} );
+		} );
+
+		it( 'should allow defaults to be over-ridden', () => {
+			const streakQuery = getStatsStreakQuery( {
+				startDate: '1999-12-31',
+				endDate: 'out-of-time'
+			} );
+
+			expect( streakQuery ).to.eql( {
+				startDate: '1999-12-31',
+				endDate: 'out-of-time',
+				max: 3000
+			} );
 		} );
 	} );
 } );

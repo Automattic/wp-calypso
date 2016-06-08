@@ -19,6 +19,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery
 } from 'state/stats/lists/selectors';
+import { getStatsStreakQuery } from 'state/stats/lists/utils';
 
 const PostTrends = React.createClass( {
 
@@ -176,10 +177,7 @@ const PostTrends = React.createClass( {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const query = {
-		startDate: i18n.moment().subtract( 1, 'year' ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
-		endDate: i18n.moment().endOf( 'month' ).format( 'YYYY-MM-DD' )
-	};
+	const query = getStatsStreakQuery();
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, 'statsStreak', query ),
