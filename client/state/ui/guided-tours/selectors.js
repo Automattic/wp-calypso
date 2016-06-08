@@ -7,7 +7,7 @@ import memoize from 'lodash/memoize';
 /**
  * Internal dependencies
  */
-import { isSectionLoading, getSelectedSite } from 'state/ui/selectors';
+import { isSectionLoading } from 'state/ui/selectors';
 import createSelector from 'lib/create-selector';
 import guidedToursConfig from 'layout/guided-tours/config';
 

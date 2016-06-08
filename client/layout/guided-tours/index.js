@@ -67,16 +67,12 @@ class GuidedTours extends Component {
 
 	next() {
 		const getNextStep = ( currentStepConfig ) => {
-			const next = { stepName: currentStepConfig.next, stepConfig: guidedToursConfig.get( this.props.tourState.tour )[ currentStepConfig.next ] || false };
-			const skip = !! ( next.stepConfig.showInContext && ! next.stepConfig.showInContext( this.props.selectedSite ) );
-			console.log( 'site', this.props.selectedSite );
-			console.log( 'skipping', next.stepConfig.showInContext, next.stepConfig.showInContext && next.stepConfig.showInContext( this.props.selectedSite ) );
-			return skip ? getNextStep( next.stepConfig ) : next;
+			const next = guidedToursConfig.get( this.props.tourState.tour )[ currentStepConfig.next ] || false;
+			const skip = !! ( next.showInContext && ! next.showInContext( this.props.selectedSite ) );
+			return skip ? getNextStep( next ) : next;
 		};
 
-		const nextStep = getNextStep( this.props.tourState.stepConfig );
-
-		console.log( nextStep );
+		const nextStepConfig = getNextStep( this.props.tourState.stepConfig );
 
 		const nextTargetFound = () => {
 			if ( nextStep.stepConfig && nextStep.stepConfig.target ) {
@@ -86,7 +82,7 @@ class GuidedTours extends Component {
 			return true;
 		};
 		const proceedToNextStep = () => {
-			this.props.nextGuidedTourStep( { stepName: nextStep.stepName } );
+			this.props.nextGuidedTourStep( { stepName: nextStepConfig.next } );
 		};
 		const abortTour = () => {
 			const ERROR_WAITED_TOO_LONG = 'waited too long for next target';
