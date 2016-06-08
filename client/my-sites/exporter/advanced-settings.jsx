@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import PostTypeOptions from './post-type-options';
 import SpinnerButton from './spinner-button';
 import { isDateValid as isExportDateValid } from 'state/site-settings/exporter/selectors';
-import FormInputValidation from 'components/forms/form-input-validation';
 
 /**
  * Displays additional options for customising an export
@@ -53,9 +52,6 @@ const AdvancedSettings = React.createClass( {
 						description={ this.translate( 'Survey results etc.' ) }
 					/>
 				</div>
-				{ this.props.isDateValid ? null
-					: <FormInputValidation isError={ true } text={ this.translate( 'The start date is later than the end date' ) } />
-				}
 				<SpinnerButton
 					className="exporter__export-button"
 					disabled={ ! this.props.isValid }
@@ -75,7 +71,6 @@ const mapStateToProps = ( state, ownProps ) => {
 	const isDateValid = isExportDateValid( state, siteId, postType );
 	return {
 		siteId,
-		isDateValid,
 		isValid: postType && isDateValid,
 	};
 };

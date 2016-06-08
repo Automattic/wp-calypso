@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { States } from './constants.js';
+import { get } from 'lodash/object';
 
 export const getExportingState = ( state, siteId ) => {
 	const exportingState = state.siteSettings.exporter.exportingState;
@@ -57,14 +58,41 @@ export function isDateValid( state, siteId, postType ) {
 
 export const getAdvancedSettings = ( state, siteId ) => state.siteSettings.exporter.advancedSettings[ siteId ];
 export const getSelectedPostType = ( state ) => state.siteSettings.exporter.selectedPostType;
-export const getPostTypeFieldOptions = ( state, siteId, postType ) => {
+export const getPostTypeFieldOptions = ( state, siteId, postType, fieldName ) => {
+	// Choose which set of options to return for the given field name
+	const optionSet = get( {
+		author: 'authors',
+		status: 'statuses',
+		start_date: 'dates',
+		end_date: 'dates',
+		category: 'categories',
+	}, fieldName, null );
+
 	const advancedSettings = getAdvancedSettings( state, siteId );
-	return advancedSettings ? advancedSettings[ postType ] : null;
+	if ( ! advancedSettings ) {
+		return null;
+	}
+	const fields = advancedSettings[ postType ];
+	if ( ! fields ) {
+		return null;
+	}
+	return fields[ optionSet ] || null;
 };
 
 export const getPostTypeFieldValues = ( state, siteId, postType ) => {
 	const site = state.siteSettings.exporter.selectedAdvancedSettings[ siteId ];
-	return site && site[ postType ] || {};
+	if ( ! site ) {
+		return null;
+	}
+	return site[ postType ] || null;
+};
+
+export const getPostTypeFieldValue = ( state, siteId, postType, fieldName ) => {
+	const fields = getPostTypeFieldValues( state, siteId, postType );
+	if ( ! fields ) {
+		return null;
+	}
+	return fields[ fieldName ] || null;
 };
 
 /**
