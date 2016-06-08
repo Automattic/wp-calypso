@@ -53,7 +53,7 @@ var config = require( 'config' ),
 
 import PostExcerpt from 'components/post-excerpt';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
-import RelatedPosts from 'reader/related-posts';
+import RelatedPosts from 'components/related-posts';
 
 let loadingPost = {
 		URL: '',
