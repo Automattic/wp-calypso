@@ -1,0 +1,54 @@
+Preferences
+========
+
+This store holds preferences specific to Calypso.
+They are persisted in `calypso_preferences` key of `/me/settings`.
+
+# Usage
+
+1. Render `QueryPreferences` from `components/data/query-preferences`
+2. Connect your component specyfiyng proper option keys:
+```
+export default connect(
+	( state ) => {
+		return {
+			editorModePreference: getPreference( state, 'editor-mode' ),
+		};
+	},
+	( dispatch ) => {
+		return bindActionCreators( {
+			setEditorModePreference: setPreference.bind( null, 'editor-mode' ),
+		}, dispatch );
+	},
+)( PostEditor );
+```
+
+
+## Adding new preference key
+
+To add a new preference key, you only need to add a key and defaut value in `DEFAULT_PREFERENCES` in [./constants.js](./constants.js).
+`createReducerForPreferenceKey` in [./reducer.js](./reducer.js) will create a reducer for you along with fetching, persistance and tests.
+
+# How does it work?
+
+## Endpoint structure
+
+This subtree uses `/me/settings` endpoint. Because all Calypso preferences are stored in 1 key, they are serialized and saved / read upon 1 request. That requires saving them all at once.
+
+
+### Tree shape.
+
+- **fetching** (boolean) - are we currently fetching data?
+- **values** ( Object ) - preferences
+
+### Selectors
+
+- **fetchingPreferences( state )** - are we currently fetching?
+- **getPreference( state, key )** - get value for the specific preference key
+
+
+### Actions
+
+- **fetchPreferences()** - populate the tree
+- **setPreference( key, value )** - set preference and persist all preferences in the endpoint
+
