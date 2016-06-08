@@ -1138,8 +1138,9 @@ Undocumented.prototype.readSitePost = function( query, fn ) {
 
 Undocumented.prototype.readSitePostRelated = function( query, fn ) {
 	debug( '/read/site/:site/post/:post/related' );
-	query.apiVersion = '1.2';
-	return this.wpcom.req.get( '/read/site/' + query.site_id + '/post/' + query.post_id + '/related', query, fn );
+	const params = omit( query, [ 'site_id', 'post_id' ] );
+	params.apiVersion = '1.2';
+	return this.wpcom.req.get( '/read/site/' + query.site_id + '/post/' + query.post_id + '/related', params, fn );
 };
 
 Undocumented.prototype.fetchSiteRecommendations = function( query, fn ) {

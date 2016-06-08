@@ -36,7 +36,7 @@ export function requestRelatedPosts( siteId, postId ) {
 					payload: { siteId, postId }
 				} );
 				const sites = filter( map( response && response.posts, 'meta.data.site' ), Boolean );
-				if ( sites ) {
+				if ( sites && sites.length !== 0 ) {
 					dispatch( {
 						type: READER_SITE_UPDATE,
 						payload: sites
