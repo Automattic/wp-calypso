@@ -42,7 +42,7 @@ describe( 'EditorMediaModal', function() {
 
 	before( function() {
 		ModalViews = require( '../constants' ).Views;
-		i18n = require( 'lib/mixins/i18n' );
+		i18n = require( 'i18n-calypso' );
 
 		// Mockery
 		mockery.registerMock( 'my-sites/media-library', EMPTY_COMPONENT );

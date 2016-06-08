@@ -2,13 +2,13 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	i18n = require( 'i18n-calypso' ),
 	find = require( 'lodash/find' );
 
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	SectionNav = require( 'components/section-nav' ),
+var SectionNav = require( 'components/section-nav' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
 	NavItem = require( 'components/section-nav/item' ),
 	config = require( 'config' );

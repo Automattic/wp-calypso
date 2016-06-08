@@ -3,6 +3,7 @@
  */
 var React = require( 'react' ),
 	ReactCSSTransitionGroup = require( 'react-addons-css-transition-group' ),
+	i18n = require( 'i18n-calypso' ),
 	page = require( 'page' );
 
 /**
@@ -15,7 +16,6 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	PopoverMenuItem = require( 'components/popover/menu-item' ),
 	SiteIcon = require( 'components/site-icon' ),
 	helpers = require( './helpers' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	analytics = require( 'lib/analytics' ),
 	utils = require( 'lib/posts/utils' );
 

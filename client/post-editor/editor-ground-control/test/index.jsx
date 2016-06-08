@@ -34,7 +34,7 @@ describe( 'EditorGroundControl', function() {
 
 	before( function() {
 		shallow = require( 'enzyme' ).shallow;
-		i18n = require( 'lib/mixins/i18n' );
+		i18n = require( 'i18n-calypso' );
 
 		mockery.registerMock( 'components/card', EmptyComponent );
 		mockery.registerMock( 'components/popover', EmptyComponent );

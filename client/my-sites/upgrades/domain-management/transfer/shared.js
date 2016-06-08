@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React from 'react';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import notices from 'notices';
-import { translate } from 'lib/mixins/i18n';
 import support from 'lib/url/support';
 
 export const displayResponseError = ( responseError ) => {

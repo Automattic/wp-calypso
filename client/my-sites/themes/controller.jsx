@@ -1,11 +1,15 @@
 /**
+ * External Dependencies
+ */
+import i18n from 'i18n-calypso';
+
+/**
  * Internal Dependencies
  */
 import SingleSiteComponent from './single-site';
 import MultiSiteComponent from './multi-site';
 import LoggedOutComponent from './logged-out';
 import analytics from 'lib/analytics';
-import i18n from 'lib/mixins/i18n';
 import trackScrollPage from 'lib/track-scroll-page';
 import buildTitle from 'lib/screen-title/utils';
 import { getAnalyticsData } from './helpers';

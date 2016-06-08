@@ -4,13 +4,13 @@
 var debug = require( 'debug' )( 'calypso:my-sites:billing-history:billing-data' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	store = require( 'store' ),
-	assign = require( 'lodash/assign' );
+	assign = require( 'lodash/assign'),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented(),
-	i18n = require( 'lib/mixins/i18n' );
+var wpcom = require( 'lib/wp' ).undocumented();
 
 function BillingData() {
 	if ( ! ( this instanceof BillingData ) ) {

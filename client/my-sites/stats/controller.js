@@ -5,6 +5,7 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	store = require( 'store' ),
 	page = require( 'page' ),
+	i18n = require( 'i18n-calypso' ),
 	get = require( 'lodash/get' ),
 	ReactRedux = require( 'react-redux' );
 
@@ -16,7 +17,6 @@ var user = require( 'lib/user' )(),
 	route = require( 'lib/route' ),
 	analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	analyticsPageTitle = 'Stats',
 	layoutFocus = require( 'lib/layout-focus' ),
 	titleActions = require( 'lib/screen-title/actions' );

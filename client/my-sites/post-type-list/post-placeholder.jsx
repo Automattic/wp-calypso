@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import localize from 'lib/mixins/i18n/localize';
 import { PostTypeListPost } from './post';
 
 function PostTypeListPostPlaceholder( { translate } ) {

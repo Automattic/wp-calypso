@@ -1,4 +1,4 @@
-import i18n from 'lib/mixins/i18n'
+import i18n from 'i18n-calypso'
 
 export const streamLabels = {
 	timeline: () => i18n.translate( 'Timeline' ),

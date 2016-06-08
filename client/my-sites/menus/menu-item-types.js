@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var find = require( 'lodash/find' );
+var find = require( 'lodash/find'),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
@@ -9,7 +10,6 @@ var find = require( 'lodash/find' );
 var sites = require( 'lib/sites-list' )(),
 	postTypes = require( 'lib/post-types-list' )(),
 	Emitter = require( 'lib/mixins/emitter' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	TagsList = require( 'lib/tags-list' ),
 	debug = require( 'debug' )( 'calypso:menus:menu-item-types' ); // eslint-disable-line no-unused-vars
 

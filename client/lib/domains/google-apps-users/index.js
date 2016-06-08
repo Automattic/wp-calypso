@@ -8,12 +8,8 @@ var some = require( 'lodash/some' ),
 	compact = require( 'lodash/compact' ),
 	values = require( 'lodash/values' ),
 	property = require( 'lodash/property' ),
-	endsWith = require( 'lodash/endsWith' );
-
-/**
- * Internal dependencies
- */
-var i18n = require( 'lib/mixins/i18n' );
+	endsWith = require( 'lodash/endsWith' ),
+	i18n = require( 'i18n-calypso' );
 
 function filter( { users, fields } ) {
 	return users.filter( function( user, index ) {

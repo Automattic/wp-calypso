@@ -3,11 +3,11 @@
  */
 import find from 'lodash/find';
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import localize from 'lib/mixins/i18n/localize';
 import { isPersonal } from 'lib/products-values';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import PurchaseDetail from 'components/purchase-detail';

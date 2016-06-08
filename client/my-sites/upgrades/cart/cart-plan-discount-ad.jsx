@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import find from 'lodash/find';
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import { cartItems } from 'lib/cart-values';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
-import i18n from 'lib/mixins/i18n';
 import { shouldFetchSitePlans } from 'lib/plans';
 
 const CartPlanDiscountAd = React.createClass( {

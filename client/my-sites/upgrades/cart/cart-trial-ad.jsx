@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -9,7 +10,6 @@ import React from 'react';
 import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { addCurrentPlanToCartAndRedirect, getCurrentPlan, getDayOfTrial } from 'lib/plans';
-import i18n from 'lib/mixins/i18n';
 
 const CartTrialAd = React.createClass( {
 	propTypes: {

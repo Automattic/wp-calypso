@@ -5,12 +5,12 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import includes from 'lodash/includes';
 import page from 'page';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import i18n from 'lib/mixins/i18n';
 import route from 'lib/route';
 import userFactory from 'lib/user';
 import userSettings from 'lib/user-settings';

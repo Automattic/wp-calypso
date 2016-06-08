@@ -90,7 +90,7 @@ Consistent coding style makes the code so much easier to read. Here are ours:
 	- [CSS/SASS](/docs/coding-guidelines/css.md)
 	- [HTML](/docs/coding-guidelines/html.md)
 	- [React Components](/docs/components.md)
-* [I18n Guidelines »](/client/lib/mixins/i18n/README.md)
+* [I18n Guidelines »](https://github.com/Automattic/i18n-calypso/blob/master/README.md)
 
 
 ### Lifecycle of a Pull Request

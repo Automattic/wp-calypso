@@ -3,13 +3,13 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import trackScrollPage from 'lib/track-scroll-page';
 import titleActions from 'lib/screen-title/actions';
-import i18n from 'lib/mixins/i18n';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, setPageTitle, userHasHistory } from 'reader/controller-helper';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';

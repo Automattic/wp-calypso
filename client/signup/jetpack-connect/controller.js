@@ -6,6 +6,7 @@ import React from 'react';
 import isEmpty from 'lodash/isEmpty';
 import page from 'page';
 import Debug from 'debug';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -23,7 +24,6 @@ import jetpackSSOForm from './sso';
 import i18nUtils from 'lib/i18n-utils';
 import analytics from 'lib/analytics';
 import config from 'config';
-import i18n from 'lib/mixins/i18n';
 import plansFactory from 'lib/plans-list';
 import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:site:jetpack' );
+var debug = require( 'debug' )( 'calypso:site:jetpack' ),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
@@ -10,7 +11,6 @@ var wpcom = require( 'lib/wp' ),
 	Site = require( 'lib/site' ),
 	inherits = require( 'inherits' ),
 	notices = require( 'notices' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	versionCompare = require( 'lib/version-compare' ),
 	SiteUtils = require( 'lib/site/utils' ),
 	config = require( 'config' );

@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+import i18n from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import { createReceiptObject } from './assembler';
-import i18n from 'lib/mixins/i18n';
 import {
 	RECEIPT_FETCH,
 	RECEIPT_FETCH_COMPLETED,

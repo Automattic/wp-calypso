@@ -11,6 +11,7 @@ var React = require( 'react' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
+	i18n = require( 'i18n-calypso' ),
 	isEmpty = require( 'lodash/isEmpty' );
 
 /**
@@ -18,6 +19,7 @@ var React = require( 'react' ),
  */
 // lib/local-storage must be run before lib/user
 var config = require( 'config' ),
+	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
 	localStoragePolyfill = require( 'lib/local-storage' )(), //eslint-disable-line
 	analytics = require( 'lib/analytics' ),
 	route = require( 'lib/route' ),
@@ -27,7 +29,6 @@ var config = require( 'config' ),
 	showGuidedTour = require( 'state/ui/guided-tours/actions' ).showGuidedTour,
 	sites = require( 'lib/sites-list' )(),
 	superProps = require( 'lib/analytics/super-props' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
 	translatorInvitation = require( 'layout/community-translator/invitation-utils' ),
 	layoutFocus = require( 'lib/layout-focus' ),
@@ -62,8 +63,8 @@ function init() {
 	// Initialize i18n
 	if ( window.i18nLocaleStrings ) {
 		i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
+		i18n.setLocale( i18nLocaleStringsObject );
 	}
-	i18n.initialize( i18nLocaleStringsObject );
 
 	ReactInjection.Class.injectMixin( i18n.mixin );
 
@@ -144,16 +145,24 @@ function loadDevModulesAndBoot() {
 }
 
 function boot() {
+	var localeSlug;
+
 	init();
 
 	// When the user is bootstrapped, we also bootstrap the
 	// locale strings
 	if ( ! config( 'wpcom_user_bootstrap' ) ) {
-		i18n.setLocaleSlug( user.get().localeSlug );
+		localeSlug = user.get().localeSlug;
+		if ( localeSlug ) {
+			switchLocale( localeSlug );
+		}
 	}
 	// Set the locale for the current user
 	user.on( 'change', function() {
-		i18n.setLocaleSlug( user.get().localeSlug );
+		localeSlug = user.get().localeSlug;
+		if ( localeSlug ) {
+			switchLocale( localeSlug );
+		}
 	} );
 
 	translatorJumpstart.init();

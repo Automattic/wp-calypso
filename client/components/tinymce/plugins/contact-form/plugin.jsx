@@ -2,11 +2,12 @@
  * External Dependencies
  */
 import tinymce from 'tinymce/tinymce';
-import i18n from 'lib/mixins/i18n';
+import i18n from 'i18n-calypso';
 import React, { createElement } from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Provider } from 'react-redux';
+
 /**
  * Internal Dependencies
  */

@@ -10,12 +10,12 @@ import classNames from 'classnames';
 import noop from 'lodash/noop';
 import identity from 'lodash/identity';
 import Gridicon from 'components/gridicon';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import RootChild from 'components/root-child';
-import localize from 'lib/mixins/i18n/localize';
 
 export class DropZone extends Component {
 	constructor( props ) {

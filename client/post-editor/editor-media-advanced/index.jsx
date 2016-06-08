@@ -3,12 +3,12 @@
  */
 import React, { Component, PropTypes } from 'react';
 import ReactDom from 'react-dom';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import MediaMarkup from 'post-editor/media-modal/markup';
-import localize from 'lib/mixins/i18n/localize';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';

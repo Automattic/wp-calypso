@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
+var i18n = require( 'i18n-calypso' ),
 	some = require( 'lodash/some' ),
 	values = require( 'lodash/values' ),
 	isDate = require( 'lodash/isDate' ),

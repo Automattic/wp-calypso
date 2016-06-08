@@ -4,11 +4,11 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import { trackPageLoad, setPageTitle } from 'reader/controller-helper';
 
 const analyticsPageTitle = 'Reader';

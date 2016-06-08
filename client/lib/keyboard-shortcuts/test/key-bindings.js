@@ -14,7 +14,7 @@ describe( 'KeyBindings', function() {
 	useFilesystemMocks( __dirname );
 
 	before( () => {
-		i18n = require( 'lib/mixins/i18n' );
+		i18n = require( 'i18n-calypso' );
 		KeyBindings = require( 'lib/keyboard-shortcuts/key-bindings' );
 	} );
 

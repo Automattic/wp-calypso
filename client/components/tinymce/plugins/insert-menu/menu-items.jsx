@@ -2,7 +2,7 @@ import React from 'react';
 
 import Gridicon from 'components/gridicon';
 import SocialLogo from 'components/social-logo';
-import i18n from 'lib/mixins/i18n';
+import i18n from 'i18n-calypso';
 
 const GridiconButton = ( { icon, label } ) => (
 	<div>

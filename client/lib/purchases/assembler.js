@@ -2,11 +2,11 @@
  * External dependencies
  */
 import camelCase from 'lodash/camelCase';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import sortProducts from 'lib/products-values/sort';
 
 function createPurchaseObject( purchase ) {
