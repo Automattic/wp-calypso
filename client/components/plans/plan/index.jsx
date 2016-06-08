@@ -9,6 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import config from 'config';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import JetpackPlanDetails from 'my-sites/plans/jetpack-plan-details';
@@ -70,10 +71,13 @@ const Plan = React.createClass( {
 			);
 		}
 
-		if ( plan.product_id === premiumPlan.productId ) {
-			plan.description = premiumPlan.description;
-		} else if ( plan.product_id === businessPlan.productId ) {
-			plan.description = businessPlan.description;
+		// override plan description during google voucher test
+		if ( config.isEnabled( 'google-voucher' ) ) {
+			if ( plan.product_id === premiumPlan.productId ) {
+				plan.description = premiumPlan.description;
+			} else if ( plan.product_id === businessPlan.productId ) {
+				plan.description = businessPlan.description;
+			}
 		}
 
 		return (

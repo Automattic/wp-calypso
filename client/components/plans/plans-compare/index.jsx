@@ -157,7 +157,9 @@ const PlansCompare = React.createClass( {
 		} );
 
 		// add google-ad-credits feature
-		features.splice( 1, 0, googleAdCreditsFeature );
+		if ( config.isEnabled( 'google-voucher' ) ) {
+			features.splice( 1, 0, googleAdCreditsFeature );
+		}
 
 		return features;
 	},
