@@ -197,7 +197,6 @@ module.exports = {
 		const basePath = route.sectionify( context.path );
 		const CartData = require( 'components/data/cart' );
 		const PlansCompare = require( './plans-compare' );
-		const site = sites.getSelectedSite();
 		const domain = context.params.registerDomain;
 
 		renderWithReduxStore(
