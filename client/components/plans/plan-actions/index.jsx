@@ -233,7 +233,9 @@ const PlanActions = React.createClass( {
 	freePlanExpiration() {
 		if ( ! this.planHasCost() ) {
 			return (
-				<span className="plan-actions__plan-expiration">{ this.translate( 'Never expires', { context: 'Expiration info for free plan in /plans/' } ) }</span>
+				<span className="plan-actions__plan-expiration">
+					{ this.translate( 'Never expires', { context: 'Expiration info for free plan in /plans/' } ) }
+				</span>
 			);
 		}
 	},
@@ -265,7 +267,11 @@ const PlanActions = React.createClass( {
 			return this.placeholder();
 		}
 
-		if ( ! this.props.isInSignup && this.props.site && isEnterprise( this.props.site.plan ) ) {
+		if (
+			! this.props.isInSignup &&
+			this.props.site &&
+			isEnterprise( this.props.site.plan )
+		) {
 			return this.downgradeMessage();
 		}
 
