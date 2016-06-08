@@ -229,6 +229,19 @@ const flows = {
 		destination: getFreeTrialDestination,
 		description: 'Signup flow for free trials',
 		lastModified: '2016-03-21'
+	},
+
+	/*
+	 * MLB signup flow is not production ready.
+	 * Some API changes are neeeded to
+	 * - allow mlblogs.com sites creation as a free product.
+	 * - allow updating theme_options for team-specific styles.
+	 */
+	'mlb.com': {
+		steps: [ 'mlb-themes', 'mlb-domains', 'user' ],
+		destination: '/me/next?welcome',
+		description: 'Major League Baseball Blogs Signup flow',
+		lastModified: '2015-11-22'
 	}
 };
 
