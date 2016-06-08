@@ -267,7 +267,7 @@ const JetpackConnectMain = React.createClass( {
 					<ConnectHeader
 						showLogo={ false }
 						headerText={ this.translate( 'Ready for installation' ) }
-						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
+						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ) }
 						step={ 1 }
 						steps={ 3 } />
 					<div className="jetpack-connect__install-steps">
@@ -309,7 +309,7 @@ const JetpackConnectMain = React.createClass( {
 				<div className="jetpack-connect__install">
 					<ConnectHeader showLogo={ false }
 						headerText={ this.translate( 'Ready for installation' ) }
-						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
+						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ) }
 						step={ 1 }
 						steps={ 3 } />
 					<div className="jetpack-connect__install-steps">

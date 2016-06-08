@@ -30,10 +30,11 @@ export default React.createClass( {
 		return (
 			<div className="jetpack-connect__example">
 				<div className="jetpack-connect__browser-chrome jetpack-connect__site-url-input-container">
-					<div className="jetpack-connect__browser-chrome-dot"></div>
-					<div className="jetpack-connect__browser-chrome-dot"></div>
-					<div className="jetpack-connect__browser-chrome-dot"></div>
-
+					<div className="jetpack-connect__browser-chrome-dots">
+						<div className="jetpack-connect__browser-chrome-dot"></div>
+						<div className="jetpack-connect__browser-chrome-dot"></div>
+						<div className="jetpack-connect__browser-chrome-dot"></div>
+					</div>
 					<div className="site-address-container">
 						<Gridicon
 							size={ 24 }
@@ -43,7 +44,6 @@ export default React.createClass( {
 							disabled="true"
 							placeholder={ this.props.url } />
 					</div>
-
 				</div>
 				<div className="jetpack-connect__example-content jetpack-connect__example-activate-jetpack">
 					<div className="jetpack-connect__example-content-wp-admin-masterbar"></div>
