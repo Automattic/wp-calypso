@@ -34,14 +34,14 @@ export const plansList = {
 		getTitle: () => i18n.translate( 'Premium' ),
 		getPriceTitle: () => i18n.translate( '$99 per year' ),
 		getProductId: () => 1003,
-		getDescription: () => i18n.translate( 'Your own domain name, powerful customization options, and lots of space for audio and video, and even Google AdWords credit.' )
+		getDescription: () => i18n.translate( 'Your own domain name, powerful customization options, lots of space for audio and video, and $100 advertising credit.' )
 	},
 
 	[ PLAN_BUSINESS ]: {
 		getTitle: () => i18n.translate( 'Business' ),
 		getPriceTitle: () => i18n.translate( '$299 per year' ),
 		getProductId: () => 1008,
-		getDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to our premium themes, and even Google AdWords credit.' )
+		getDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to our premium themes.' )
 	},
 
 	[ PLAN_JETPACK_FREE ]: {},
@@ -95,8 +95,8 @@ export const featuresList = {
 	},
 
 	[ FEATURE_GOOGLE_AD_CREDITS ]: {
-		getTitle: () => i18n.translate( '$100 Google AdWords Credit' ),
-		getDescription: () => i18n.translate( 'Offer valid in US and Canada after spending the first $25 on Google AdWords.' ),
+		getTitle: () => i18n.translate( 'Advertising Credit' ),
+		getDescription: () => i18n.translate( '$100 Google AdWords credit after spending the first $25. Offer valid in US and Canada.' ),
 		plans: allPaidPlans
 	}
 };

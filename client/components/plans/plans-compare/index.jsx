@@ -45,8 +45,8 @@ const googleAdCreditsFeature = {
 	compareDescription: googleAdCredits.getDescription(),
 	product_slug: FEATURE_GOOGLE_AD_CREDITS,
 	1: false,
-	1003: true,
-	1008: true
+	1003: '$100',
+	1008: '$100'
 };
 
 const PlansCompare = React.createClass( {
@@ -157,7 +157,7 @@ const PlansCompare = React.createClass( {
 		} );
 
 		// add google-ad-credits feature
-		features.push( googleAdCreditsFeature );
+		features.splice( 1, 0, googleAdCreditsFeature );
 
 		return features;
 	},
