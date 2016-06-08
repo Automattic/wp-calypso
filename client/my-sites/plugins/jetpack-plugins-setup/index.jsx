@@ -242,6 +242,7 @@ const PlansSetup = React.createClass( {
 					break;
 				case 'install':
 					statusProps.text = this.translate( 'Working…' );
+					break;
 				case 'wait':
 				default:
 					statusProps.text = this.translate( 'Waiting to install' );
@@ -321,7 +322,7 @@ const PlansSetup = React.createClass( {
 				<h1 className="jetpack-plugins-setup__header">{ this.translate( 'Setting up your %(plan)s Plan', { args: { plan: site.plan.product_name_short } } ) }</h1>
 				<p className="jetpack-plugins-setup__description">{ this.translate( 'We need to install a few plugins for you. It won\'t take long!' ) }</p>
 				{ turnOnManage }
-				{ ! turnOnManage && this.props.isFinished &&
+				{ ! turnOnManage && this.props.hasRequested && this.props.isFinished &&
 					<Notice status="is-success" text={ this.translate( 'We\'ve installed your plugins, your site is powered up!' ) } showDismiss={ false }>
 						<NoticeAction href={ `/stats/insights/${site.slug}` }>
 							{ this.translate( 'Continue' ) }
