@@ -2,9 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-import debugModule from 'debug';
 import { connect } from 'react-redux';
 import map from 'lodash/map';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -15,11 +15,47 @@ import QueryReaderStartRecommendations from 'components/data/query-reader-start-
 import Button from 'components/button';
 import StartCard from './card';
 import RootChild from 'components/root-child';
-
-const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-unused-vars
+import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
+import smartSetState from 'lib/react-smart-set-state';
 
 const Start = React.createClass( {
+
+	smartSetState: smartSetState,
+
+	getInitialState() {
+		return {
+			totalSubscriptions: 0
+		};
+	},
+
+	// Add change listeners to stores
+	componentDidMount() {
+		FeedSubscriptionStore.on( 'change', this.handleChange );
+	},
+
+	// Remove change listeners from stores
+	componentWillUnmount() {
+		FeedSubscriptionStore.off( 'change', this.handleChange );
+	},
+
+	getStateFromStores() {
+		return {
+			totalSubscriptions: FeedSubscriptionStore.getTotalSubscriptions()
+		};
+	},
+
+	handleChange() {
+		this.smartSetState( this.getStateFromStores() );
+	},
+
+	graduateColdStart() {
+		// Later, we'll store that the user has graduated Cold Start, so they won't see it again.
+		// For the moment, just redirect to the following stream.
+		page.redirect( '/' );
+	},
+
 	render() {
+		const canGraduate = ( this.state.totalSubscriptions > 0 );
 		return (
 			<Main className="reader-start">
 				<QueryReaderStartRecommendations />
@@ -41,8 +77,21 @@ const Start = React.createClass( {
 
 				<RootChild className="reader-start__bar">
 					<div className="reader-start__bar-action main">
-						<span className="reader-start__bar-text">{ this.translate( 'Follow one or more sites to get started' ) }</span>
-						<Button disabled>{ this.translate( "OK, I'm all set!" ) }</Button>
+						<span className="reader-start__bar-text">
+							{ canGraduate
+								? this.translate(
+									'Great! You\'re following %(totalSubscriptions)d site.',
+									'Great! You\'re following %(totalSubscriptions)d sites.', {
+										count: this.state.totalSubscriptions,
+										args: {
+											totalSubscriptions: this.state.totalSubscriptions
+										}
+									}
+								)
+								: this.translate( 'Follow one or more sites to get started' )
+							}
+						</span>
+						<Button onClick={ this.graduateColdStart } disabled={ ! canGraduate }>{ this.translate( "OK, I'm all set!" ) }</Button>
 					</div>
 				</RootChild>
 			</Main>
