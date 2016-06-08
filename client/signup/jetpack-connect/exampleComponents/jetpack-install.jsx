@@ -32,7 +32,7 @@ export default React.createClass( {
 					<div className="jetpack-connect__example-install-plugin-header"></div>
 					<div className="jetpack-connect__example-install-plugin-body"></div>
 					<div className="jetpack-connect__example-install-plugin-footer">
-						<div className="jetpack-connect__example-install-plugin-footer-button" aria-hidden="true">{ this.translate( 'Install Now' ) }</div>
+						<div className="jetpack-connect__example-install-plugin-footer-button" aria-hidden="true">{ this.translate( 'Install Now', { context: 'Jetpack Connect install plugin instructions, install button' }  ) }</div>
 					</div>
 				</div>
 			</div>
