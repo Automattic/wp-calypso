@@ -15,6 +15,7 @@ import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
+import { isFinished as isJetpackPluginsFinished } from 'state/plugins/premium/selectors';
 import { abtest } from 'lib/abtest';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
@@ -83,6 +84,24 @@ const SiteNotice = React.createClass( {
 		);
 	},
 
+	jetpackPluginsSetupNotice() {
+		if ( ! this.props.pausedJetpackPluginsSetup || this.props.site.plan.product_slug === 'jetpack_free' ) {
+			return null;
+		}
+
+		return (
+			<Notice isCompact status="is-info" icon="plugins">
+				{ this.translate(
+					'Your %(plan)s plan needs setting up!',
+					{ args: { plan: this.props.site.plan.product_name_short } }
+				) }
+				<NoticeAction href={ `/plugins/setup/${ this.props.site.slug }` } >
+					{ this.translate( 'Finish' ) }
+				</NoticeAction>
+			</Notice>
+		);
+	},
+
 	render() {
 		const { site } = this.props;
 		if ( ! site ) {
@@ -93,6 +112,7 @@ const SiteNotice = React.createClass( {
 				{ this.getSiteRedirectNotice( site ) }
 				<QuerySitePlans siteId={ site.ID } />
 				{ this.domainCreditNotice() }
+				{ this.jetpackPluginsSetupNotice() }
 			</div>
 		);
 	}
@@ -102,7 +122,8 @@ export default connect( ( state, ownProps ) => {
 	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 	return {
 		hasDomainCredit: hasDomainCredit( state, siteId ),
-		canManageOptions: canCurrentUser( state, siteId, 'manage_options' )
+		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
+		pausedJetpackPluginsSetup: ! isJetpackPluginsFinished( state, siteId )
 	};
 }, ( dispatch ) => {
 	return {

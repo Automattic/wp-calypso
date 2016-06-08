@@ -63,8 +63,8 @@ describe( 'Premium Plugin Selectors', function() {
 	} );
 
 	describe( 'isFinished', function() {
-		it( 'Should get `false` if the requested site is not in the current state', function() {
-			assert.equal( selectors.isFinished( state, 'no.site' ), false );
+		it( 'Should get `true` if the requested site is not in the current state', function() {
+			assert.equal( selectors.isFinished( state, 'no.site' ), true );
 		} );
 
 		it( 'Should get `false` if there is a plugin installing on the requested site', function() {
