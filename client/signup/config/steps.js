@@ -39,7 +39,8 @@ module.exports = {
 		stepName: 'user',
 		apiRequestFunction: stepActions.createAccount,
 		providesToken: true,
-		providesDependencies: [ 'bearer_token', 'username' ]
+		providesDependencies: [ 'bearer_token', 'username' ],
+		optionalDependencies: [ 'surveySiteType', 'surveyQuestion' ]
 	},
 
 	'survey-user': {
