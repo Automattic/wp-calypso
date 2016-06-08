@@ -279,7 +279,7 @@ const JetpackConnectMain = React.createClass( {
 							example={ <JetpackExampleInstall url={ this.state.currentUrl } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Activate Jetpack' ) }
 							text={ this.translate( 'You\'ll then need to click the small blue "Activate Plugin" link to activate Jetpack.' ) }
-							example={ <JetpackExampleActivate url={ this.state.currentUrl } /> } isInstall={ true } />
+							example={ <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ true } /> } />
 						<JetpackInstallStep title={ this.translate( '3. Connect Jetpack' ) }
 							text={ this.translate( 'Finally, just click the green "Connect to WordPress.com" button to finish the process.' ) }
 							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
