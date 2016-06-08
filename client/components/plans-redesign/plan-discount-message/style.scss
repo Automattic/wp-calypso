@@ -1,0 +1,59 @@
+.plan-discount-message {
+	display: block;
+	padding: 2px 10px;
+	box-sizing: border-box;
+	background: $gray-dark;
+	color: $white;
+	font-size: 10px;
+	text-transform: uppercase;
+}
+
+.plan-discount-message {
+	display: block;
+	width: 100%;
+}
+
+@mixin plans-in-three-columns() {
+	.plan-discount-message {
+		text-align: center;
+	}
+
+	.plan-discount-message {
+		position: absolute;
+			top: -19px;
+		z-index: z-index( 'root', '.plan-discount-message' );
+	}
+
+	.plans-compare {
+		.plan-discount-message {
+			margin: 0 10px;
+			padding: 5px 10px;
+			position: relative;
+				top: auto;
+			width: calc( 100% - 20px );
+
+			&:after {
+				content: "";
+				position: absolute;
+				border-width: 10px;
+				border-style: solid;
+				border-color: transparent transparent $gray-dark transparent;
+				top: -20px;
+				left: 42%;
+			}
+		}
+	}
+}
+
+.plans.has-sidebar {
+	@include breakpoint( ">960px" ) {
+		@include plans-in-three-columns();
+	}
+}
+
+.plans.has-no-sidebar {
+	@include breakpoint( ">660px" ) {
+		@include plans-in-three-columns();
+	}
+}
+

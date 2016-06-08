@@ -1,0 +1,231 @@
+.plan-list--redesign {
+	@include breakpoint( ">1040px" ) {
+		display: flex;
+		flex-flow: row wrap;
+		padding-top: 19px; // popular banner height adjustment
+	}
+
+	+ .faq {
+		margin-top: 20px;
+	}
+}
+
+// (component) Plan
+.plan--redesign {
+	margin: 0 0 16px;
+	border: solid 1px lighten( $gray, 27% );
+	background-color: lighten( $gray, 35% );
+
+	&.is-popular {
+		margin-top: 35px; // popular banner + margin
+	}
+
+	@include breakpoint( ">1040px" ) {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		flex: 1;
+		margin: 0 0 24px 24px;
+
+		&.is-popular {
+			margin-top: 0;
+		}
+
+		&:first-child {
+			margin-left: 0;
+		}
+	}
+}
+
+// (component) PlanHeader
+.plan-header--redesign {
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: 12px 24px 12px 12px;
+	border-bottom: solid 2px lighten( $gray, 20% );
+	background-color: $white;
+}
+
+.plan-header__figure--redesign {
+	position: relative;
+	width: 70px;
+	height: 70px;
+	margin-right: 12px;
+	border: solid 6px $gray-light;
+	border-radius: 50%;
+	background-size: cover;
+
+	&.is-free {
+		background-image: url( '/calypso/images/plans/plan-beginner.svg' );
+	}
+
+	&.is-premium {
+		background-image: url( '/calypso/images/plans/plan-premium.svg' );
+	}
+
+	&.is-business {
+		background-image: url( '/calypso/images/plans/plan-business.svg' );
+	}
+
+	.gridicon {
+		position: absolute;
+		top: 0;
+		right: 0;
+		transform: translate(25%, -25%);
+		fill: $alert-green;
+	}
+}
+
+.plan-header__text--redesign {
+	flex: 1;
+	padding: 6px 0;
+}
+
+.plan-header__title--redesign,
+.plan-header__price--redesign,
+.plan-header__timeframe--redesign {
+	line-height: 1;
+	margin: 0;
+}
+
+.plan-header__title--redesign {
+	font-size: 18px;
+	color: $blue-wordpress;
+}
+
+.plan-header__price--redesign {
+	margin: 8px 0;
+	font-size: 24px;
+}
+
+.plan-header__price__symbol--redesign,
+.plan-header__price__minor--redesign {
+	vertical-align: super;
+	font-size: 12px;
+}
+
+.plan-header__price__symbol--redesign {
+	color: $gray;
+}
+
+.plan-header__price__minor--redesign,
+.plan-header__price__major--redesign {
+	color: $gray-dark;
+}
+
+.plan-header__price__major--redesign {
+	margin: 0 3px;
+	font-weight: 400;
+}
+
+.plan-header__price__minor--redesign {
+	font-weight: 500;
+}
+
+.plan-header__timeframe--redesign {
+	font-size: 12px;
+	font-style: italic;
+	font-weight: 400;
+	color: $gray;
+}
+
+.plan-header__popular-banner--redesign {
+	box-sizing: border-box;
+	position: absolute;
+	left: -1px;
+	right: -1px;
+	top: 0;
+	transform: translateY( calc( -100% - 1px ) );
+	padding: 0 8px;
+	background: $gray-dark;
+	font-size: 10px;
+	line-height: 20px;
+	text-align: center;
+	text-transform: uppercase;
+	color: $white;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+// (component) PlanFeatureList
+.plan-feature-list--redesign {
+	list-style: none;
+	margin: 0;
+}
+
+// (component) PlanFeature
+.plan-feature--redesign {
+	position: relative;
+	margin: 0 16px;
+	padding: 12px 0 12px 30px;
+	border-bottom: solid 1px lighten( $gray, 27% );
+	font-size: 14px;
+	color: $gray-dark;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	.gridicons-checkmark {
+		position: absolute;
+		left: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		fill: $blue-wordpress;
+	}
+
+	@include breakpoint( ">480px" ) {
+		margin: 0 24px;
+	}
+}
+
+// (component) PlanFooter
+.plan-footer--redesign {
+	margin-top: auto;
+	padding: 16px 16px 24px;
+	border-top: solid 1px lighten( $gray, 27% );
+
+	@include breakpoint( ">480px" ) {
+		padding: 16px 24px 24px;
+	}
+}
+
+.plan-footer__desc--redesign {
+	margin: 0;
+	font-size: 14px;
+	color: $gray;
+}
+
+.plan-footer__buttons--redesign {
+	text-align: center;
+}
+
+.plan-footer__button--redesign {
+	width: 100%;
+	margin-top: 8px;
+
+	&:first-child {
+		margin-top: 16px;
+	}
+
+	&.is-current {
+		border-bottom-width: 1px;
+		border-color: lighten( $gray, 27% );
+		background: transparent;
+		font-weight: 400;
+		color: $gray;
+
+		.gridicon {
+			fill: $alert-green;
+			margin-right: 8px;
+		}
+	}
+
+	@media
+	(min-width: 480px) and (max-width: 660px),
+	(min-width: 800px) and (max-width: 1040px) {
+		max-width: 260px;
+	}
+}
