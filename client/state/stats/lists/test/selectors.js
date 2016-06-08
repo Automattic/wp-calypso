@@ -183,6 +183,27 @@ describe( 'selectors', () => {
 
 			expect( stats ).to.eql( 2 );
 		} );
+
+		it( 'should compare numerically rather than lexically', () => {
+			const stats = getSiteStatsMaxPostsByDay( {
+				stats: {
+					lists: {
+						items: {
+							2916284: {
+								statsStreak: {
+									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
+										1461961382: 12,
+										1464110402: 2
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, { startDate: '2015-06-01', endDate: '2016-06-01' } );
+
+			expect( stats ).to.eql( 12 );
+		} );
 	} );
 
 	describe( 'getSiteStatsPostsCountByDay()', () => {
