@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import omit from 'lodash/omit';
-
-/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';

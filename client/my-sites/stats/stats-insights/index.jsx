@@ -35,7 +35,6 @@ export default React.createClass( {
 			React.PropTypes.object
 		] ),
 		statSummaryList: PropTypes.object.isRequired,
-		streakList: PropTypes.object.isRequired,
 		summaryDate: PropTypes.string,
 		wpcomFollowersList: PropTypes.object
 	},
@@ -51,7 +50,6 @@ export default React.createClass( {
 			publicizeList,
 			site,
 			statSummaryList,
-			streakList,
 			summaryDate,
 			wpcomFollowersList } = this.props;
 
@@ -74,7 +72,7 @@ export default React.createClass( {
 				<SidebarNavigation />
 				<StatsNavigation section="insights" site={ site } />
 				<div id="my-stats-content">
-					<PostingActivity streakList={ streakList } />
+					<PostingActivity />
 					<LatestPostSummary site={ site } />
 					<TodaysStats
 						site={ site }
