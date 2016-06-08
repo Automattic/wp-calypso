@@ -386,6 +386,7 @@ a.sidebar__button {
 }
 
 .sidebar__region {
+	flex-shrink: 0;
 	@include breakpoint( ">660px" ) {
 		display: flex;
 		flex-direction: column;
