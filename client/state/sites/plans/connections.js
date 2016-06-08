@@ -9,17 +9,17 @@ import {
 } from 'state/action-types';
 import { createSitePlanObject } from './assembler';
 import { fetchSitePlansCompleted } from './actions';
-import i18n from 'lib/mixins/i18n';
+import i18n from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:site-plans:connections' );
 
 export function connectCancelSitePlanTrial( action, dispatch ) {
 	return new Promise( ( resolve, reject ) => {
-		wpcom.undocumented().cancelPlanTrial( planId, ( error, data ) => {
+		wpcom.undocumented().cancelPlanTrial( action.planId, ( error, data ) => {
 			if ( data && data.success ) {
 				dispatch( {
 					type: SITE_PLANS_TRIAL_CANCEL_COMPLETED,
-					siteId,
+					siteId: action.siteId,
 					plans: map( data.plans, createSitePlanObject )
 				} );
 
@@ -31,7 +31,7 @@ export function connectCancelSitePlanTrial( action, dispatch ) {
 
 				dispatch( {
 					type: SITE_PLANS_TRIAL_CANCEL_FAILED,
-					siteId,
+					siteId: action.siteId,
 					error: errorMessage
 				} );
 
@@ -43,7 +43,7 @@ export function connectCancelSitePlanTrial( action, dispatch ) {
 
 export function connectFetchSitePlans( action, dispatch ) {
 	return new Promise( ( resolve ) => {
-		wpcom.undocumented().getSitePlans( siteId, ( error, data ) => {
+		wpcom.undocumented().getSitePlans( action.siteId, ( error, data ) => {
 			if ( error ) {
 				debug( 'Fetching site plans failed: ', error );
 
@@ -51,11 +51,11 @@ export function connectFetchSitePlans( action, dispatch ) {
 
 				dispatch( {
 					type: SITE_PLANS_FETCH_FAILED,
-					siteId,
+					siteId: action.siteId,
 					error: errorMessage
 				} );
 			} else {
-				dispatch( fetchSitePlansCompleted( siteId, data ) );
+				dispatch( fetchSitePlansCompleted( action.siteId, data ) );
 			}
 
 			resolve();
