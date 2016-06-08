@@ -10,9 +10,9 @@ export default React.createClass( {
 	render() {
 		const currentVariation = this.props.test.getVariation();
 		return (
-			<li>
+			<div>
 				<h5 className="test-helper__test-header">{ this.props.test.name }</h5>
-				<ul>
+				<ul className="test-helper__list">
 					{ this.props.test.variationNames.map( variation => (
 						<li onClick={ this.changeVariant.bind( this, variation ) } key={ variation } >
 							<a className={ classNames( {
@@ -24,7 +24,7 @@ export default React.createClass( {
 						</li>
 					) ) }
 				</ul>
-			</li>
+			</div>
 		);
 	}
 } );
