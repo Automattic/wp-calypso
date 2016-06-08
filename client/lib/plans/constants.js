@@ -42,7 +42,7 @@ export const plansList = {
 		getTitle: () => i18n.translate( 'Business' ),
 		getPriceTitle: () => i18n.translate( '$299 per year' ),
 		getProductId: () => 1008,
-		getDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to our premium themes.' )
+		getDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, and Google Analytics.' )
 	},
 
 	[ PLAN_JETPACK_FREE ]: {},
