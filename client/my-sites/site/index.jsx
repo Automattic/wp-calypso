@@ -8,7 +8,6 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import SiteIcon from 'components/site-icon';
 import Gridicon from 'components/gridicon';
 import SiteIndicator from 'my-sites/site-indicator';
@@ -17,6 +16,7 @@ import sitesList from 'lib/sites-list';
 import { userCan } from 'lib/site/utils';
 import Tooltip from 'components/tooltip';
 import ExternalLink from 'components/external-link';
+import analytics from 'lib/analytics';
 
 const sites = sitesList();
 
@@ -170,7 +170,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<ExternalLink icon={ true } href={ url } target="_blank" className="site__edit-icon">
+			<ExternalLink icon={ true } href={ url } target="_blank" className="site__edit-icon" onCLick={ this.onEditIconClick() }>
 				<SiteIcon site={ this.props.site } />
 				<span className="site__edit-icon-text">{ this.translate( 'Edit Icon' ) }</span>
 			</ExternalLink>
@@ -191,6 +191,10 @@ export default React.createClass( {
 
 	toggleActions() {
 		this.setState( { showMoreActions: ! this.state.showMoreActions } );
+	},
+
+	onEditIconClick() {
+		analytics.mc.bumpStat( 'calypso_site_card', 'edit_icon' );
 	},
 
 	render() {
