@@ -12,6 +12,8 @@ var translator = require( 'lib/translator-jumpstart' ),
 	Dialog = require( 'components/dialog' ),
 	analytics = require( 'lib/analytics' );
 
+import Gridicon from 'components/gridicon';
+
 module.exports = React.createClass( {
 	displayName: 'TranslatorLauncher',
 
@@ -58,9 +60,8 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var launcherClasses = 'translator',
-			toggleString,
-			infoDialogButtons;
+		let launcherClasses = 'community-translator';
+		let toggleString;
 
 		if ( ! this.props.isEnabled ) {
 			return null;
@@ -68,26 +69,26 @@ module.exports = React.createClass( {
 
 		if ( this.props.isActive ) {
 			toggleString = this.translate( 'Disable Translator' );
-			launcherClasses += ' active';
+			launcherClasses += ' is-active';
 		} else {
 			toggleString = this.translate( 'Enable Translator' );
 		}
 
-		infoDialogButtons = [ { action: 'cancel', label: this.translate( 'Ok' ) }, ];
+		const infoDialogButtons = [ { action: 'cancel', label: this.translate( 'Ok' ) }, ];
 
 		return (
 			<div>
-				<Dialog isVisible={ this.state.infoDialogVisible } buttons={ infoDialogButtons } onClose={ this.infoDialogClose } additionalClassNames="translator-modal">
+				<Dialog isVisible={ this.state.infoDialogVisible } buttons={ infoDialogButtons } onClose={ this.infoDialogClose } additionalClassNames="community-translator__modal">
 					<h1>{ this.translate( 'Community Translator' ) }</h1>
 					<p>{ this.translate( 'You have now enabled the translator.  Right click highlighted text to translate it.' ) }</p>
 					<p>
 						<label><input type="checkbox" onClick={ this.toggleInfoCheckbox } /><span>{ this.translate( "Don't show again" ) }</span></label>
 					</p>
 				</Dialog>
-				<div id='translator-launcher' className={ launcherClasses }>
-					<a onClick={ this.toggle } href='' title={ this.translate( 'Community Translator' ) }>
-						<span className="noticon noticon-website"></span>
-						<div className="text">{ toggleString }</div>
+				<div className={ launcherClasses }>
+					<a className="community-translator__button" onClick={ this.toggle } title={ this.translate( 'Community Translator' ) }>
+						<Gridicon icon="globe" />
+						<div className="community-translator__text">{ toggleString }</div>
 					</a>
 				</div>
 			</div>

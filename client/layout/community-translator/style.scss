@@ -1,52 +1,45 @@
-#translator-launcher {
+.community-translator {
 	position: fixed;
-		bottom: 45px;
-		right: 20px;
-
+		bottom: 50px;
+		right: 16px;
 	border-radius: 27px;
 	background: $blue-wordpress;
+	cursor: pointer;
 	padding: 4px;
-	font-size: 16px;
-	z-index: z-index( 'root', '#translator-launcher' );
+	font-size: 13px;
+	z-index: z-index( 'root', '.community-translator' );
 
-	a {
-		color: $white;
-		text-decoration: none;
-		outline: 0;
-
-		.noticon {
-			font-size: 32px;
-			width: 32px;
-		}
-
-		.text {
-			float: right;
-			width: 0;
-			overflow: hidden;
-			height: 32px;
-			line-height: 32px;
-			white-space: nowrap;
-		}
-
-		&:hover {
-			.text {
-				transition: all 0.25s ease-in-out;
-				width: auto;
-				margin-right: 6px;
-				padding: 0 2px;
-			}
-		}
+	&.is-active {
+		background: $orange-jazzy;
 	}
+}
 
-	&.active {
-		background: $white;
-		a {
-			color: $blue-wordpress;
+.community-translator__button {
+	align-items: center;
+	color: $white;
+	text-decoration: none;
+	outline: 0;
+	display: flex;
+
+	&:hover {
+		color: $white;
+
+		.community-translator__text {
+			transition: all 0.15s ease-in-out;
+			width: auto;
+			margin-right: 6px;
+			padding: 0 2px;
 		}
 	}
 }
 
-//Overwriting the popup defaults
+.community-translator__text {
+	width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+// Overwriting the popup defaults
 body {
 	.webui-popover {
 		border-radius: 2px;
@@ -98,7 +91,7 @@ body {
 	}
 }
 
-.translator-modal {
+.community-translator__modal {
 	max-width: 400px;
 }
 
