@@ -13,10 +13,11 @@ export default React.createClass( {
 		return (
 			<div className="jetpack-connect__example">
 				<div className="jetpack-connect__browser-chrome jetpack-connect__site-url-input-container">
-					<div className="jetpack-connect__browser-chrome-dot"></div>
-					<div className="jetpack-connect__browser-chrome-dot"></div>
-					<div className="jetpack-connect__browser-chrome-dot"></div>
-
+					<div className="jetpack-connect__browser-chrome-dots">
+						<div className="jetpack-connect__browser-chrome-dot"></div>
+						<div className="jetpack-connect__browser-chrome-dot"></div>
+						<div className="jetpack-connect__browser-chrome-dot"></div>
+					</div>
 					<div className="site-address-container">
 						<Gridicon
 							size={ 24 }
@@ -26,9 +27,18 @@ export default React.createClass( {
 							disabled="true"
 							placeholder={ this.props.url } />
 					</div>
-
 				</div>
-				<img src="/calypso/images/jetpack/jetpack-connect-connect.png" />
+				<div className="jetpack-connect__example-content jetpack-connect__example-connect-jetpack">
+					<div className="jetpack-connect__example-content-wp-admin-masterbar"></div>
+					<div className="jetpack-connect__example-content-wp-admin-sidebar"></div>
+					<div className="jetpack-connect__example-content-wp-admin-main">
+						<div className="jetpack-connect__example-content-wp-admin-connect-banner">
+							<div className="jetpack-connect__example-content-wp-admin-connect-button" aria-hidden="true">
+								{ this.translate( 'Connect to WordPress.com', { context: 'Jetpack Connect post-plugin-activation step, Connect to WordPress.com button' } ) }
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		);
 	}
