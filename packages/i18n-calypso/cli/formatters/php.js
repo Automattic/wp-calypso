@@ -34,21 +34,21 @@ function buildPHPString( properties ) {
 	var wpFunc = getGlotPressFunction( properties ),
 		response = [],
 		stringFromFunc = {
-			__: '\n__( ' + encapsulateString( properties.single ) + ' ),',
-			_x: '\n_x( ' + [ properties.single, properties.context ].map( encapsulateString ).join( ', ' ) + ' ),',
-			_nx: '\n_nx( ' + [ properties.single, properties.plural, properties.count, properties.context ].map( encapsulateString ).join( ', ' ) + ' ),',
-			_n: '\n_n( ' + [ properties.single, properties.plural, properties.count ].map( encapsulateString ).join( ', ' ) + ' ),'
+			__: '__( ' + encapsulateString( properties.single ) + ' ),',
+			_x: '_x( ' + [ properties.single, properties.context ].map( encapsulateString ).join( ', ' ) + ' ),',
+			_nx: '_nx( ' + [ properties.single, properties.plural, properties.count, properties.context ].map( encapsulateString ).join( ', ' ) + ' ),',
+			_n: '_n( ' + [ properties.single, properties.plural, properties.count ].map( encapsulateString ).join( ', ' ) + ' ),'
 		};
 
 	// translations with comments get a preceding comment in the php code
 	if ( properties.comment ) {
 		// replace */ with *\/ to prevent translators from accidentally running arbitrary code
-		response.push( '\n/* translators: ' + properties.comment.replace( /\*\//g, '*\\/' ) + ' */' );
+		response.push( '/* translators: ' + properties.comment.replace( /\*\//g, '*\\/' ) + ' */' );
 	}
 
 	response.push( stringFromFunc[ wpFunc ] );
 
-	return response.join( '' );
+	return response.join( '\n' );
 }
 
 /**
@@ -76,10 +76,10 @@ module.exports = function formatInPHP( matches, options ) {
 	return [
 		// start of the php file
 		'<?php',
-		'\n/* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */',
-		'\n$' + arrayName + ' = array(',
+		'/* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */',
+		'$' + arrayName + ' = array(',
 			matches.map( buildPHPString ).join( '\n' ),
-		'\n);',
-		'\n/* THIS IS THE END OF THE GENERATED FILE */'
-	].join( '' );
+		');',
+		'/* THIS IS THE END OF THE GENERATED FILE */'
+	].join( '\n' );
 };
