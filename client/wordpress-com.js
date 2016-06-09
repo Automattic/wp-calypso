@@ -121,7 +121,8 @@ sections = [
 		paths: [ '/start', '/jetpack' ],
 		module: 'signup',
 		secondary: false,
-		enableLoggedOut: true
+		enableLoggedOut: true,
+		isomorphic: true
 	},
 	{
 		name: 'stats',
