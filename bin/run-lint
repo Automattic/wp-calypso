@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 const child_process = require( 'child_process' );
-var args = [ '--cache', '--quiet', '--ext=.js',  '--ext=.jsx' ];
+const path = require( 'path' );
+var args = [ '--cache', '--ext=.js',  '--ext=.jsx' ];
 if ( process.argv.length > 2 ) {
 	args = args.concat( process.argv.slice( 2 ) );
 } else {
 	args = args.concat( [ '.' ] );
 }
 
-const results = child_process.spawnSync( 'eslint', args );
+const results = child_process.spawnSync( path.join( '.', 'node_modules', '.bin', 'eslint' ), args );
+console.log( 'got', results.status );
 
 if ( results.stdout ) {
 	process.stdout.write( results.stdout );
