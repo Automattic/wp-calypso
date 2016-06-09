@@ -46,7 +46,7 @@
 	// transform: scale( 0.96 );
 	// transition: 0.1s transform cubic-bezier( 0.25, 0.5, 0.5, 0.9 );
 	transition: transform 0.2s;
-	transform: translateY(20%);
+	transform: translateY(12%) scale( 0.95 );
 	background: lighten( $gray, 30% );
 
 	.is-computer & {
@@ -79,7 +79,7 @@
 	visibility: visible;
 
 	.web-preview__content {
-		transform: translateY(0%);
+		transform: translateY(0%) scale(1);
 		transition: transform 0.5s;
 	}
 }
