@@ -1,3 +1,7 @@
+#### v1.2.0 (June 9, 2016)
+
+- New rule: [`jsx-gridicon-size`](docs/rules/jsx-gridicon-size.md)
+
 #### v1.1.4 (June 9, 2016)
 
 - Fix: i18n-no-variables should allow ES2015 template literal strings as long as there are no interpolated variables
