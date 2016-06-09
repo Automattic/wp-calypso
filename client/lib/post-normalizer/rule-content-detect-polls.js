@@ -7,6 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import { domForHtml } from './utils';
 
 export default function detectPolls( post, dom ) {
 	if ( ! dom ) {
@@ -22,16 +23,15 @@ export default function detectPolls( post, dom ) {
 			return;
 		}
 
-		const noscriptDom = document.createElement( 'div' );
 		// some browers don't require this and let us query the dom inside a noscript. some do not. maybe just jsdom.
-		noscriptDom.innerHTML = noscript.innerHTML;
+		const noscriptDom = domForHtml( noscript.innerHTML );
 
 		let pollLink = noscriptDom.querySelector( 'a[href^="http://polldaddy.com/poll/"]' );
 		if ( pollLink ) {
-			const pollId = pollLink.href.match( /http:\/\/polldaddy.com\/poll\/([0-9]+)/ )[ 1 ];
+			const pollId = pollLink.href.match( /https?:\/\/polldaddy.com\/poll\/([0-9]+)/ )[ 1 ];
 			if ( pollId ) {
 				let p = document.createElement( 'p' );
-				p.innerHTML = '<a rel="external" target="_blank" href="http://polldaddy.com/poll/' + pollId + '">' + i18n.translate( 'Take our poll' ) + '</a>';
+				p.innerHTML = '<a rel="external" target="_blank" href="https://polldaddy.com/poll/' + pollId + '">' + i18n.translate( 'Take our poll' ) + '</a>';
 				noscript.parentNode.replaceChild( p, noscript );
 			}
 		}

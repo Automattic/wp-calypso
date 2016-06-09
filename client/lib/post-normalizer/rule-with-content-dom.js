@@ -1,4 +1,12 @@
+/**
+ * External Dependencies
+ */
 import reduce from 'lodash/reduce';
+
+/**
+ * Internal Dependencies
+ */
+import { domForHtml } from './utils';
 
 export default function createDomTransformRunner( transforms ) {
 	return function withContentDOM( post ) {
@@ -6,20 +14,15 @@ export default function createDomTransformRunner( transforms ) {
 			return post;
 		}
 
-		let dom;
-		if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
-			const parser = new DOMParser();
-			dom = parser.parseFromString( post.content, 'text/html' ).body;
-		} else {
-			dom = document.createElement( 'div' );
-			dom.innerHTML = post.content;
-		}
+		const dom = domForHtml( post.content );
 
 		post = reduce( transforms, ( memo, transform ) => {
 			return transform( memo, dom );
 		}, post );
+
 		post.content = dom.innerHTML;
 		dom.innerHTML = '';
+
 		return post;
 	};
 }

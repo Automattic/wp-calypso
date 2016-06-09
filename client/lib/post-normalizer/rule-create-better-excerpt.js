@@ -8,6 +8,7 @@ import trim from 'lodash/trim';
 /**
  * Internal Dependencies
  */
+import { domForHtml } from './utils';
 
 export default function createBetterExcerpt( post ) {
 	if ( ! post || ! post.content ) {
@@ -19,14 +20,7 @@ export default function createBetterExcerpt( post ) {
 	}
 
 	// Spin up a new DOM for the linebreak markup
-	let dom;
-	if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
-		const parser = new DOMParser();
-		dom = parser.parseFromString( post.content, 'text/html' ).body;
-	} else {
-		dom = document.createElement( 'div' );
-		dom.innerHTML = post.content;
-	}
+	const dom = domForHtml( post.content );
 	dom.id = '__better_excerpt__';
 	dom.innerHTML = post.content;
 
