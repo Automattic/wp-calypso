@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import map from 'lodash/map';
 import page from 'page';
+import Masonry from 'react-masonry-component';
 
 /**
  * Internal dependencies
@@ -65,7 +66,7 @@ const Start = React.createClass( {
 				</p>
 				</header>
 
-				<div className="reader-start__cards">
+				<Masonry className="reader-start__cards">
 					{ this.props.recommendationIds ? map( this.props.recommendationIds, ( recId ) => {
 						return (
 							<StartCard
@@ -73,7 +74,7 @@ const Start = React.createClass( {
 								recommendationId={ recId } />
 						);
 					} ) : null }
-				</div>
+				</Masonry>
 
 				<RootChild className="reader-start__bar">
 					<div className="reader-start__bar-action main">
