@@ -90,7 +90,8 @@ const ThemesSearchCard = React.createClass( {
 					</NavTabs>
 
 					<Search
-						pinned={ true }
+						pinned
+						fitsContainer
 						onSearch={ this.props.onSearch }
 						initialValue={ this.props.search }
 						ref="url-search"

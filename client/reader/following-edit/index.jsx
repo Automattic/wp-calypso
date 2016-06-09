@@ -557,6 +557,7 @@ const FollowingEdit = React.createClass( {
 
 				{ ! hasNoSubscriptions ? <SearchCard
 					isOpen={ true }
+					pinned={ true }
 					key="existingFeedSearch"
 					autoFocus={ false }
 					additionalClasses="following-edit__existing-feed-search"
