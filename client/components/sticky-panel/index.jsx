@@ -4,7 +4,6 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	throttle = require( 'lodash/throttle' ),
-	raf = require( 'raf' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -37,11 +36,11 @@ module.exports = React.createClass( {
 	componentWillUnmount: function() {
 		window.removeEventListener( 'scroll', this.onWindowScroll );
 		window.removeEventListener( 'resize', this.throttleOnResize );
-		raf.cancel( this.rafHandle );
+		window.cancelAnimationFrame( this.rafHandle );
 	},
 
 	onWindowScroll: function() {
-		this.rafHandle = raf( this.updateIsSticky );
+		this.rafHandle = window.requestAnimationFrame( this.updateIsSticky );
 	},
 
 	onWindowResize: function() {
