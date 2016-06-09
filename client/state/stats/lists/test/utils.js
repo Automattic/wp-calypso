@@ -40,7 +40,7 @@ describe( 'utils', () => {
 
 	describe( 'getStatsStreakQuery()', () => {
 		it( 'should return the correct default query', () => {
-			const streakQuery = getStatsStreakQuery( {} );
+			const streakQuery = getStatsStreakQuery();
 
 			expect( streakQuery ).to.eql( {
 				startDate: i18n.moment().subtract( 1, 'year' ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
