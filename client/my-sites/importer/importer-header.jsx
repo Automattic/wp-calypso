@@ -12,6 +12,8 @@ import Button from 'components/forms/form-button';
 import { appStates } from 'state/imports/constants';
 import { cancelImport, resetImport, startImport } from 'lib/importer/actions';
 import SocialLogo from 'components/social-logo';
+import flowRight from 'lodash/flowRight';
+import { connectDispatcher } from './dispatcher-converter';
 
 /**
  * Module variables
@@ -27,7 +29,7 @@ const startStates = [ appStates.DISABLED, appStates.INACTIVE ],
 	stopStates = [ appStates.IMPORT_FAILURE, appStates.IMPORTING ],
 	doneStates = [ appStates.IMPORT_SUCCESS ];
 
-export default React.createClass( {
+export const ImporterHeader = React.createClass( {
 	displayName: 'ImporterHeader',
 
 	mixins: [ PureRenderMixin ],
@@ -44,7 +46,17 @@ export default React.createClass( {
 	},
 
 	controlButtonClicked: function() {
-		const { importerStatus: { importerId, importerState, type }, site: { ID: siteId } } = this.props;
+		const {
+			importerStatus: {
+				importerId,
+				importerState,
+				type
+			},
+			site: {
+				ID: siteId
+			},
+			startImport
+		} = this.props;
 
 		if ( includes( [ ...cancelStates, ...stopStates ], importerState ) ) {
 			cancelImport( siteId, importerId );
@@ -102,3 +114,9 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapDispatchToProps = dispatch => ( {
+	startImport: flowRight( dispatch, startImport )
+} );
+
+export default connectDispatcher( null, mapDispatchToProps )( ImporterHeader );
