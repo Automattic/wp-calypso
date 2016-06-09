@@ -85,6 +85,23 @@ export function isRequestingSitePostsForQuery( state, siteId, query ) {
 }
 
 /**
+ * Returns the total number of items reported to be found for the given query,
+ * or null if the total number of queryable posts if unknown.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Object}  query  Post query object
+ * @return {?Number}        Total number of found items
+ */
+export function getSitePostsFoundForQuery( state, siteId, query ) {
+	if ( ! state.posts.queries[ siteId ] ) {
+		return null;
+	}
+
+	return state.posts.queries[ siteId ].getFound( query );
+}
+
+/**
  * Returns the last queryable page of posts for the given query, or null if the
  * total number of queryable posts if unknown.
  *

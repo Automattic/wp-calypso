@@ -62,7 +62,10 @@ webpackConfig = {
 	resolve: {
 		extensions: [ '', '.json', '.js', '.jsx' ],
 		root: [ path.join( __dirname, 'client' ) ],
-		modulesDirectories: [ 'node_modules' ]
+		modulesDirectories: [ 'node_modules' ],
+		alias: {
+			'react-virtualized': 'react-virtualized/dist/commonjs'
+		}
 	},
 	resolveLoader: {
 		root: [ __dirname ]
