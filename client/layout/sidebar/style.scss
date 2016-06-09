@@ -394,5 +394,6 @@ a.sidebar__button {
 		overflow-x: hidden;
 		flex: 1;
 		transform: translateX( 0 ); /* workaround for safari scrollbar rendering bug */
+		-webkit-overflow-scrolling: touch;
 	}
 }
