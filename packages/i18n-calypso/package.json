@@ -9,11 +9,14 @@
   },
   "author": "@automattic",
   "license": "GPL-2.0",
+  "bin": {
+    "i18n-calypso": "bin/index.js"
+  },
   "bugs": {
     "url": "https://github.com/Automattic/i18n-calypso/issues"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --recursive"
   },
   "homepage": "https://github.com/Automattic/i18n-calypso#readme",
   "dependencies": {
@@ -24,9 +27,14 @@
     "lodash.assign": "^4.0.8",
     "lru-cache": "4.0.1",
     "moment-timezone": "0.4.0",
-    "react": "0.14.8"
+    "react": "0.14.8",
+    "async": "^1.5.2",
+    "commander": "^2.9.0",
+    "xgettext-js": "^0.3.0"
   },
   "devDependencies": {
+    "babel-core": "^6.7.7",
+    "babel-preset-react": "^6.5.0",
     "chai": "^3.5.0",
     "enzyme": "2.2.0",
     "mocha": "^2.4.5",
