@@ -18,6 +18,7 @@ import store from 'store';
 import WPOAuth from 'wpcom-oauth';
 import userFactory from 'lib/user';
 import Main from 'components/main';
+import PulsingDot from 'components/pulsing-dot';
 
 module.exports = {
 
@@ -91,7 +92,10 @@ module.exports = {
 		// Extract this into a component...
 		ReactDom.render( (
 			<Main className="auth">
-				Success
+				<p className="auth__welcome">
+					Loading user...
+				</p>
+				<PulsingDot active />
 			</Main>
 		), document.getElementById( 'primary' ) );
 
@@ -100,7 +104,7 @@ module.exports = {
 		user.fetching = false;
 		user.fetch();
 		user.on( 'change', function() {
-			window.location = '/sites';
+			window.location = '/';
 		} );
 	}
 };
