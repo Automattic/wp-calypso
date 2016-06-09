@@ -45,7 +45,7 @@
 	margin: 0 auto;
 	// transform: scale( 0.96 );
 	// transition: 0.1s transform cubic-bezier( 0.25, 0.5, 0.5, 0.9 );
-	transition: transform 0.4s, visibility 0s 0.5s;
+	transition: transform 0.2s;
 	transform: translateY(20%);
 	background: lighten( $gray, 30% );
 
