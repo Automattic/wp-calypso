@@ -27,20 +27,6 @@ const i18nUtils = {
 		return language;
 	},
 
-	setUpLocale: function( parameters ) {
-		if ( ! parameters.lang && parameters.stepSectionName && i18nUtils.getLanguage( parameters.stepSectionName ) ) {
-			parameters.lang = parameters.stepSectionName;
-			parameters.stepSectionName = undefined;
-		} else if ( ! parameters.lang && parameters.stepName && i18nUtils.getLanguage( parameters.stepName ) ) {
-			parameters.lang = parameters.stepName;
-			parameters.flowName = undefined;
-		} else if ( ! parameters.lang && parameters.flowName && i18nUtils.getLanguage( parameters.flowName ) ) {
-			parameters.lang = parameters.flowName;
-			parameters.flowName = undefined;
-		}
-		return parameters;
-	},
-
 	/**
 	 * Assuming that locale is adding at the end of path, retrieves the locale if present.
 	 * @param {string} path - original path
