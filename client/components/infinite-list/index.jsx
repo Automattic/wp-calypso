@@ -3,7 +3,6 @@
  */
 var debug = require( 'debug' )( 'calypso:infinite-list' ),
 	omit = require( 'lodash/omit' ),
-	raf = require( 'raf' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	page = require( 'page' );
@@ -190,7 +189,7 @@ module.exports = React.createClass( {
 
 	cancelAnimationFrame: function() {
 		if ( this.scrollRAFHandle ) {
-			raf.cancel( this.scrollRAFHandle );
+			window.cancelAnimationFrame( this.scrollRAFHandle );
 			this.scrollRAFHandle = null;
 		}
 		this.lastScrollTop = -1;
@@ -201,7 +200,7 @@ module.exports = React.createClass( {
 			return;
 		}
 		if ( ! this.scrollRAFHandle && this.getCurrentScrollTop() !== this.lastScrollTop ) {
-			this.scrollRAFHandle = raf( this.scrollChecks );
+			this.scrollRAFHandle = window.requestAnimationFrame( this.scrollChecks );
 		}
 	},
 
@@ -287,7 +286,7 @@ module.exports = React.createClass( {
 			InfiniteListActions.storePositions( url, newState );
 		}
 
-		this.scrollRAFHandle = raf( this.scrollChecks );
+		this.scrollRAFHandle = window.requestAnimationFrame( this.scrollChecks );
 	},
 
 	boundsForRef: function( ref ) {
