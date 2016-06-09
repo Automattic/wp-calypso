@@ -1,5 +1,6 @@
 .seo-search-preview {
-	box-shadow: 0 3px 6px -3px rgba( 0, 0, 0, 0.05 );
+	margin-top: 1.5em;
+	margin-bottom: 1.5em;
 }
 
 .seo-search-preview__header {
@@ -13,7 +14,7 @@
 	font-weight: bold;
 	text-transform: uppercase;
 	text-align: center;
-	color: $gray;
+	color: darken( $gray, 10% );
 }
 
 .seo-search-preview__display {
