@@ -1,6 +1,6 @@
 .counted-textarea {
 	border: 1px solid lighten( $gray, 20% );
-	background-color: lighten( $gray, 30% );
+	background-color: $gray-light;
 
 	&.is-exceeding-acceptable-length {
 		background: $alert-red;
@@ -22,5 +22,5 @@
 .counted-textarea__count-panel {
 	padding: 8px;
 	font-size: 12px;
-	color: darken( $gray, 10% );
+	color: darken( $gray, 20% );
 }
