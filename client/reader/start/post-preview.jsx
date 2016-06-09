@@ -29,12 +29,15 @@ const StartPostPreview = React.createClass( {
 		}
 		return (
 			<article className="reader-start-post-preview">
-				<h1><a href={ this.getFullPostUrl() } onClick={ this.showFullPost } className="reader-start-post-preview__title">{ post.title }</a></h1>
-				<div className="reader-start-post-preview__byline">
-					<Gravatar user={ post.author } size={ 20 } />
-					<span className="reader-start-post-preview__author">by { post.author.name }</span>
+				<span className="reader-start-post-preview__popular">Popular from this site</span>
+				<div className="reader-start-post-preview__post-content">
+					<h1><a href={ this.getFullPostUrl() } onClick={ this.showFullPost } className="reader-start-post-preview__title">{ post.title }</a></h1>
+					<div className="reader-start-post-preview__byline">
+						<Gravatar user={ post.author } size={ 20 } />
+						<span className="reader-start-post-preview__author">by { post.author.name }</span>
+					</div>
+					<PostExcerpt maxLength={ 160 } content={ post.excerpt } className="reader-start-post-preview__excerpt" />
 				</div>
-				<PostExcerpt maxLength={ 160 } content={ post.excerpt } className="reader-start-post-preview__excerpt" />
 			</article>
 		);
 	}
