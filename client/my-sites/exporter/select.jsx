@@ -16,7 +16,7 @@ import {
 import {
 	setPostTypeFieldValue,
 } from 'state/site-settings/exporter/actions';
-import i18n from 'lib/mixins/i18n';
+import i18n from 'i18n-calypso';
 
 export default class Select extends Component {
 	render() {
