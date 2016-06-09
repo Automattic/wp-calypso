@@ -19,19 +19,17 @@ import {
 } from 'state/action-types';
 import { USER_SETTING_KEY, DEFAULT_PREFERENCES } from './constants';
 
-export function createReducerForPreferenceKey( key, defaultValue = null ) {
+export function createReducerForPreferenceKey( key, defaultValue = null, schema = null ) {
 	const handlePreferencesFromApi = ( state, action ) => get( action, [ 'data', USER_SETTING_KEY, key ], state );
 	return createReducer( defaultValue, {
 		[ PREFERENCES_SET ]: ( state, action ) => ( action.key === key ) ? action.value : state,
 		[ PREFERENCES_RECEIVE ]: handlePreferencesFromApi,
-		[ PREFERENCES_FETCH_SUCCESS ]: handlePreferencesFromApi,
-		[ SERIALIZE ]: state => state,
-		[ DESERIALIZE ]: state => state,
-	} );
+		[ PREFERENCES_FETCH_SUCCESS ]: handlePreferencesFromApi
+	}, schema );
 }
 
 const values = combineReducers( mapValues( DEFAULT_PREFERENCES,
-	( value, key ) => createReducerForPreferenceKey( key, value )
+	( value, key ) => createReducerForPreferenceKey( key, value.default, value.schema )
 ) );
 export const fetching = createReducer( false, {
 	[ PREFERENCES_FETCH_SUCCESS ]: () => false,

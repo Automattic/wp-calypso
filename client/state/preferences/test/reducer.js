@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies
@@ -32,7 +33,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should use DEFAULT_PREFERENCES from constants as a default', () => {
-			expect( reducer( undefined, {} ).values ).to.deep.equal( DEFAULT_PREFERENCES );
+			expect( reducer( undefined, {} ).values ).to.deep.equal( mapValues( DEFAULT_PREFERENCES, value => value.default ) );
 		} );
 	} );
 
@@ -77,7 +78,7 @@ describe( 'reducer', () => {
 	describe( '#createReducerForPreferenceKey()', () => {
 		const optionKey = 'theBestKeyEver';
 		const defaultValue = 'the best default value you will ever see';
-		const keyReducer = createReducerForPreferenceKey( optionKey, defaultValue );
+		const keyReducer = createReducerForPreferenceKey( optionKey, defaultValue, { type: 'string' } );
 
 		it( 'should create a reducer', () => {
 			expect( keyReducer ).to.be.a( 'function' );
