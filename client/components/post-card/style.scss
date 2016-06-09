@@ -31,6 +31,10 @@
 
 	.post-card__site-title {
 		color: $gray;
+
+		&:hover {
+			color: darken( $gray, 30% );
+		}
 	}
 }
 

@@ -73,6 +73,7 @@
 		"preview-layout": true,
 		"preview-endpoint": false,
 		"reader": true,
+		"reader/related-posts": true,
 		"resume-editing": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,

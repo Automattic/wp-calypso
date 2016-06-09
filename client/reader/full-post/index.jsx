@@ -17,7 +17,8 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal Dependencies
  */
-var CommentButton = require( 'components/comment-button' ),
+var config = require( 'config' ),
+	CommentButton = require( 'components/comment-button' ),
 	Dialog = require( 'components/dialog' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
 	EmbedContainer = require( 'components/embed-container' ),
@@ -52,6 +53,7 @@ var CommentButton = require( 'components/comment-button' ),
 
 import PostExcerpt from 'components/post-excerpt';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
+import RelatedPosts from 'components/related-posts';
 
 let loadingPost = {
 		URL: '',
@@ -155,7 +157,7 @@ FullPostView = React.createClass( {
 				post.canonical_image &&
 				! ( post.display_type & DISPLAY_TYPES.CANONICAL_IN_CONTENT ),
 			articleClasses = [ 'reader__full-post' ],
-			shouldShowExcerptOnly = ( post.use_excerpt ? post.use_excerpt : false ),
+			shouldShowExcerptOnly = ( post && post.use_excerpt ? post.use_excerpt : false ),
 			siteName = utils.siteNameFromSiteAndPost( site, post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
 			discoverSiteUrl,
@@ -216,7 +218,7 @@ FullPostView = React.createClass( {
 
 					<PostByline post={ post } site={ site } icon={ true }/>
 
-					{ post.use_excerpt
+					{ post && post.use_excerpt
 						? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 						: <EmbedContainer>
 								<div className="reader__full-post-content" dangerouslySetInnerHTML={ { __html: post.content } } />
@@ -225,6 +227,7 @@ FullPostView = React.createClass( {
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
 					{ discoverSiteName && discoverSiteUrl ? <DiscoverVisitLink siteName={ discoverSiteName } siteUrl={ discoverSiteUrl } /> : null }
+					{ config.isEnabled( 'reader/related-posts' ) && ! post.is_external && post.site_ID && <RelatedPosts siteId={ post.site_ID } postId={ post.ID } /> }
 					{ this.props.shouldShowComments ? <PostCommentList ref="commentList" post={ post } initialSize={ 25 } pageSize={ 25 } onCommentsUpdate={ this.checkForCommentAnchor } /> : null }
 				</article>
 			</div>
@@ -488,7 +491,7 @@ FullPostContainer = React.createClass( {
 		PostStore.off( 'change', this._onChange );
 		SiteStore.off( 'change', this._onChange );
 		FeedStore.off( 'change', this._onChange );
-		
+
 		if ( utils.isPostNotFound( this.state.post ) ) {
 			this.props.onPostNotFound();
 		}
