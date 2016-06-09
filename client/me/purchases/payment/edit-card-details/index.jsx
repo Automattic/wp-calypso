@@ -95,6 +95,8 @@ const EditCardDetails = React.createClass( {
 
 	componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
+
+		recordPageView( 'edit_card_details', this.props, nextProps );
 	},
 
 	validate( formValues, onComplete ) {
