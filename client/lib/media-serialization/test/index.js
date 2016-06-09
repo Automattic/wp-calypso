@@ -76,8 +76,11 @@ describe( 'MediaSerialization', function() {
 					get: () => 660
 				} );
 			} );
-			img.naturalWidth = 1320;
-			img.naturalHeight = 1320;
+			[ 'naturalWidth', 'naturalHeight' ].forEach( ( dimension ) => {
+				Object.defineProperty( img, dimension, {
+					get: () => 1320
+				} );
+			} );
 			const parsed = deserialize( img );
 
 			expect( parsed.type ).to.equal( MediaTypes.IMAGE );
@@ -89,8 +92,11 @@ describe( 'MediaSerialization', function() {
 			let img = document.createElement( 'img' );
 			img.width = 660;
 			img.height = 660;
-			img.naturalWidth = 1320;
-			img.naturalHeight = 1320;
+			[ 'naturalWidth', 'naturalHeight' ].forEach( ( dimension ) => {
+				Object.defineProperty( img, dimension, {
+					get: () => 1320
+				} );
+			} );
 			img.setAttribute( 'width', '990' );
 			img.setAttribute( 'height', '990' );
 			const parsed = deserialize( img );

@@ -687,7 +687,7 @@ describe( 'index', function() {
 					content: '<iframe src="http://example.com"></iframe>'
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSecure ] ) ], function( err, normalized ) {
-					assert.strictEqual( normalized.content, '<iframe src="https://example.com" sandbox=""></iframe>' );
+					assert.strictEqual( normalized.content, '<iframe src="https://example.com/" sandbox=""></iframe>' );
 					done( err );
 				}
 			);
