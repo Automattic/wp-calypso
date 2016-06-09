@@ -698,7 +698,6 @@ module.exports = React.createClass( {
 				<SidebarMenu>
 					<ul>
 						{ this.stats() }
-						{ this.ads() }
 						{ this.plan() }
 					</ul>
 				</SidebarMenu>
@@ -760,6 +759,7 @@ module.exports = React.createClass( {
 					? <SidebarMenu>
 						<SidebarHeading>{ this.translate( 'Configure' ) }</SidebarHeading>
 						<ul>
+							{ this.ads() }
 							{ this.sharing() }
 							{ this.users() }
 							{ this.plugins() }
