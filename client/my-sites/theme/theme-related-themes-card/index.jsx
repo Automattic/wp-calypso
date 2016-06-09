@@ -20,39 +20,35 @@ const ThemeRelatedThemesCard = React.createClass( {
 	},
 
 	getRelatedThemes() {
-		const themes = [
-			{ name: 'Twenty Sixteen', slug: 'twentysixteen' },
-			{ name: 'Rowling', slug: 'rowling' },
-			{ name: 'Hemingway Rewritten', slug: 'hemingway-rewritten' },
-			{ name: 'Gazette', slug: 'gazette' },
-			{ name: 'Ecto', slug: 'ecto' },
-			{ name: 'Isola', slug: 'isola' },
-			{ name: 'Edin', slug: 'edin' },
-			{ name: 'Sela', slug: 'sela' },
-			{ name: 'Pique', slug: 'pique' },
-			{ name: 'Harmonic', slug: 'harmonic' },
-		];
+		let themes = new Set([
+			'twentysixteen',
+			'rowling',
+			'hemingway-rewritten',
+			'gazette',
+			'ecto',
+			'isola',
+			'edin',
+			'sela',
+			'pique',
+			'harmonic'
+		]);
 
-		const selectedThemes = [];
+		//Remove current theme so we will not show it as related
+		themes.delete( this.props.currentTheme );
+		themes = [...themes];
 
-		while ( selectedThemes.length < 2 ) {
-			let randomThemeIndex = Math.floor( Math.random() * themes.length );
-			let theme = themes.splice( randomThemeIndex, 1 )[0];
-			// Check if it is not current theme, if it is than discard
-			if ( this.props.currentTheme === theme.slug ) {
-				continue;
-			} else {
-				selectedThemes.push( theme );
-			}
-		}
+		let randomThemeIndex = this.props.currentTheme.charCodeAt( 0 ) % themes.length;
+		let theme = themes.splice( randomThemeIndex, 1 )[0];
+		const selectedThemes = [ theme ];
+		selectedThemes.push( themes[ theme.charCodeAt( 0 ) % themes.length ])
 
 		return selectedThemes;
 	},
 
 	render() {
-		const themes = this.getRelatedThemes().map( theme => ( {
-			id: theme.slug,
-			screenshot: `https://i1.wp.com/s0.wp.com/wp-content/themes/pub/${ theme.slug }/screenshot.png`
+		const themes = this.getRelatedThemes().map( slug => ( {
+			id: slug,
+			screenshot: `https://i1.wp.com/s0.wp.com/wp-content/themes/pub/${ slug }/screenshot.png`
 		} ) );
 
 		const relatedText = i18n.translate( 'See all {{a}}BUSINESS{{/a}} themes.', {
