@@ -8,7 +8,6 @@ import { expect } from 'chai';
 */
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
-import useI18n from 'test/helpers/use-i18n';
 
 import { sites } from './fixtures';
 
@@ -27,8 +26,6 @@ describe( 'PluginsList', () => {
 
 		mockery.registerMock( 'lib/sites-list', () => siteListMock );
 	} );
-
-	useI18n();
 
 	before( () => {
 		React = require( 'react' );

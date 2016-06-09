@@ -8,7 +8,6 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-import useI18n from 'test/helpers/use-i18n';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'mapped-domain', () => {
@@ -33,7 +32,6 @@ describe( 'mapped-domain', () => {
 
 	useFakeDom.withContainer();
 	useMockery();
-	useI18n();
 
 	before( () => {
 		React = require( 'react' );

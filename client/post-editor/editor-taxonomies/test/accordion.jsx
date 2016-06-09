@@ -11,14 +11,12 @@ import { expect } from 'chai';
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
-import useI18n from 'test/helpers/use-i18n';
 
 describe( 'EditorTaxonomiesAccordion', function() {
 	let shallow, common, categoryStore, tagStore, i18n, TaxonomiesAccordion, accordion;
 
 	useMockery();
 	useFakeDom();
-	useI18n();
 
 	before( () => {
 		mockery.registerMock( 'post-editor/editor-categories', EmptyComponent );

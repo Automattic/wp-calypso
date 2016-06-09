@@ -11,7 +11,6 @@ import { expect } from 'chai';
  */
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
-import useI18n from 'test/helpers/use-i18n';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 /**
@@ -33,7 +32,6 @@ describe( 'EditorMediaModal', function() {
 
 	useMockery();
 	useFakeDom();
-	useI18n();
 	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		deleteMedia = sandbox.stub();
