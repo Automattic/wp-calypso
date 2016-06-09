@@ -5,6 +5,7 @@
 	padding: 32px 32px 32px ( $sidebar-width-max + 32px );
 	box-sizing: border-box;
 	overflow: hidden;
+	transition: opacity 0.3s;
 
 	.has-no-sidebar & {
 		padding-left: 32px;
@@ -158,13 +159,4 @@
 .layout__loader.is-active {
 	visibility: visible;
 	opacity: 1;
-}
-
-.layout__preview.web-preview.is-visible,
-.layout__preview.web-preview {
-	left: 0;
-	.web-preview__content {
-		top: 0;
-		transform: scale( 1 );
-	}
 }
