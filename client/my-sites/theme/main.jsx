@@ -17,7 +17,7 @@ import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import ThemeDownloadCard from './theme-download-card';
-import ThemeRelatedThemesCard from './theme-related-themes-card';
+import ThemesRelatedCard from './themes-related-card';
 import Button from 'components/button';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -293,7 +293,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderRelatedThemes() {
-		return <ThemeRelatedThemesCard currentTheme={ this.props.id } />;
+		return <ThemesRelatedCard currentTheme={ this.props.id } />;
 	},
 
 	renderSheet() {

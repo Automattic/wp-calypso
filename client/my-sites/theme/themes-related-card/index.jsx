@@ -13,7 +13,7 @@ import i18n from 'lib/mixins/i18n';
 import SectionHeader from 'components/section-header';
 import { getDetailsUrl } from 'my-sites/themes/helpers';
 
-const ThemeRelatedThemesCard = React.createClass( {
+const ThemesRelatedCard = React.createClass( {
 
 	propTypes: {
 		currentTheme: React.PropTypes.string.isRequired
@@ -79,4 +79,4 @@ const ThemeRelatedThemesCard = React.createClass( {
 	}
 } );
 
-export default ThemeRelatedThemesCard;
+export default ThemesRelatedCard;
