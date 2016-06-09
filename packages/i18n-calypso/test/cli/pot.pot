@@ -1,0 +1,146 @@
+# THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY.
+
+msgid ""
+msgstr ""
+Project-Id-Version: _s i18nTest
+Report-Msgid-Bugs-To:
+POT-Creation-Date: 2016-04-25T01:50:44.330Z
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+PO-Revision-Date: 2014-MO-DA HO:MI+ZONE
+Last-Translator: FULL NAME <EMAIL@ADDRESS>
+Language-Team: LANGUAGE <LL@li.org>
+
+msgid "My hat has three corners."
+msgstr ""
+
+msgid "My hat has three corners too."
+msgstr ""
+
+msgid "My hat has three corners."
+msgid_plural "My hats have three corners."
+msgstr[0] ""
+msgstr[1] ""
+
+msgctxt "verb"
+msgid "post"
+msgstr ""
+
+msgctxt "verb2"
+msgid "post2"
+msgstr ""
+
+#. draft saved date format, see http://php.net/date
+msgid "g:i:s a"
+msgstr ""
+
+msgid "Your city is %(city)s and your zip is %(zip)s."
+msgstr ""
+
+msgid "single test"
+msgid_plural "plural test"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "single test2"
+msgid_plural "plural test2"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "This is a multi-line translation with \$1mixed quotes\$1 and mixed 'single quotes'"
+msgstr ""
+
+msgctxt "context with a literal string key"
+msgid "The string key text"
+msgstr ""
+
+msgid "My test has two files."
+msgstr ""
+
+msgctxt "future time"
+msgid "in %s"
+msgstr ""
+
+msgid "a few seconds"
+msgstr ""
+
+msgid "a minute"
+msgstr ""
+
+msgid "%d minutes"
+msgstr ""
+
+msgid "%d hours"
+msgstr ""
+
+msgid "%d days"
+msgstr ""
+
+msgid "a month"
+msgstr ""
+
+msgid "%d months"
+msgstr ""
+
+msgid "a year"
+msgstr ""
+
+msgid "%d years"
+msgstr ""
+
+msgctxt "momentjs format string (for LT)"
+msgid "HH:mm"
+msgstr ""
+
+msgctxt "momentjs format string (for L)"
+msgid "DD/MM/YYYY"
+msgstr ""
+
+msgctxt "momentjs format string (for LL)"
+msgid "D MMMM YYYY"
+msgstr ""
+
+msgctxt "momentjs format string (for LLL)"
+msgid "D MMMM YYYY LT"
+msgstr ""
+
+msgctxt "momentjs format string (for LLLL)"
+msgid "dddd, D MMMM YYYY LT"
+msgstr ""
+
+msgctxt "momentjs format string (for MMM D)"
+msgid "MMM D"
+msgstr ""
+
+msgctxt "momentjs format string (sameDay)"
+msgid "[Today at] LT"
+msgstr ""
+
+msgctxt "momentjs format string (nextDay)"
+msgid "[Tomorrow at] LT"
+msgstr ""
+
+msgctxt "momentjs format string (nextWeek)"
+msgid "dddd [at] LT"
+msgstr ""
+
+msgctxt "momentjs format string (lastDay)"
+msgid "[Yesterday at] LT"
+msgstr ""
+
+msgctxt "momentjs format string (lastWeek)"
+msgid "[Last] dddd [at] LT"
+msgstr ""
+
+msgctxt "momentjs format string (sameElse)"
+msgid "L"
+msgstr ""
+
+msgctxt "momentjs setting"
+msgid "num_first_day_of_week"
+msgstr ""
+
+msgctxt "momentjs setting"
+msgid "num_day_of_year"
+msgstr ""
