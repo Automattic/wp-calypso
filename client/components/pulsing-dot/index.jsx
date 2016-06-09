@@ -27,7 +27,7 @@ var PulsingDot = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		if ( nextProps.active === this.props.active ) {
+		if ( nextProps.active === this.props.active || ! this.props.chunkName ) {
 			return;
 		}
 
