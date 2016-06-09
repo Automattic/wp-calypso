@@ -8,6 +8,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import classnames from 'classnames';
 import debugModule from 'debug';
 import noop from 'lodash/noop';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import Toolbar from './toolbar';
 import touchDetect from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
 import Spinner from 'components/spinner';
+import { setPreviewShowing } from 'state/ui/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
 
@@ -122,7 +124,9 @@ const WebPreview = React.createClass( {
 		if ( showPreview ) {
 			window.addEventListener( 'keydown', this.keyDown );
 			document.documentElement.classList.add( 'no-scroll' );
+			this.props.setPreviewShowing( true );
 		} else {
+			this.props.setPreviewShowing( false );
 			window.removeEventListener( 'keydown', this.keyDown );
 			document.documentElement.classList.remove( 'no-scroll' );
 		}
@@ -241,4 +245,7 @@ const WebPreview = React.createClass( {
 	}
 } );
 
-export default WebPreview;
+export default connect(
+	null,
+	{ setPreviewShowing }
+)( WebPreview );

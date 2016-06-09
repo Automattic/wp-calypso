@@ -32,7 +32,7 @@ export function getSelectedSite( state ) {
  * @return {?Number}       Selected site ID
  */
 export function getSelectedSiteId( state ) {
-	return state.ui.selectedSiteId;
+	return get( state.ui, 'selectedSiteId', null );
 }
 
 /**
@@ -65,4 +65,8 @@ export function isSectionLoading( state ) {
  */
 export function isSectionIsomorphic( state ) {
 	return get( state.ui.section, 'isomorphic', false );
+}
+
+export function isPreviewShowing( state ) {
+	return get( state.ui, 'isPreviewShowing', false );
 }

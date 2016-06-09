@@ -121,7 +121,7 @@ const Theme = React.createClass( {
 
 		const screenshotWidth = window && window.devicePixelRatio > 1 ? 680 : 340;
 		return (
-			<Card className={ themeClass }>
+			<Card className={ themeClass } data-tip-target={ screenshotID } >
 				<div className="theme__content">
 					{ this.renderHover() }
 					<a href={ this.props.screenshotClickUrl }>
@@ -129,7 +129,8 @@ const Theme = React.createClass( {
 							? <img className="theme__img"
 								src={ screenshot + '?w=' + screenshotWidth }
 								onClick={ this.onScreenshotClick }
-								id={ screenshotID }/>
+								id={ screenshotID }
+								/>
 							: <div className="theme__no-screenshot" >
 								<Gridicon icon="themes" size={ 48 } />
 							</div>

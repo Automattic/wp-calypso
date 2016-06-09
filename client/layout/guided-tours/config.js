@@ -6,8 +6,16 @@
 import React from 'react';
 import i18n from 'i18n-calypso';
 
-function get( tour = 'main' ) {
-	const tours = {
+import { getSectionName, getSelectedSite, isPreviewShowing } from 'state/ui/selectors';
+import { isFetchingNextPage, getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
+
+function sectionVisitedForFirstTime( sectionName, state ) {
+	console.log( state.ui )
+	return getSectionName( state ) === sectionName;
+}
+
+function getAll() {
+	return {
 		main: {
 			version: '201600601',
 			init: {
@@ -49,7 +57,7 @@ function get( tour = 'main' ) {
 					context: "Click your site's name to continue.",
 				} ),
 				placement: 'below',
-				showInContext: site => site && site.is_previewable,
+				showInContext: state => state && getSelectedSite( state ) && getSelectedSite( state ).is_previewable,
 				text: i18n.translate( "This shows your currently {{strong}}selected site{{/strong}}'s name and address.", {
 					components: {
 						strong: <strong />,
@@ -65,7 +73,7 @@ function get( tour = 'main' ) {
 				} ),
 				type: 'BasicStep',
 				placement: 'center',
-				showInContext: site => site && site.is_previewable,
+				showInContext: state => state && isPreviewShowing( state ),
 				next: 'close-preview',
 			},
 			'close-preview': {
@@ -75,7 +83,7 @@ function get( tour = 'main' ) {
 				placement: 'beside',
 				icon: 'cross-small',
 				text: i18n.translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ),
-				showInContext: site => site && site.is_previewable,
+				showInContext: state => state && isPreviewShowing( state ),
 				next: 'themes',
 			},
 			themes: {
@@ -88,7 +96,7 @@ function get( tour = 'main' ) {
 				target: 'themes',
 				arrow: 'top-left',
 				placement: 'below',
-				showInContext: site => site && site.is_customizable,
+				showInContext: state => true,
 				next: 'finish',
 			},
 			finish: {
@@ -103,19 +111,63 @@ function get( tour = 'main' ) {
 				linkUrl: 'https://learn.wordpress.com',
 			},
 		},
-		test: {
-			version: '20160516',
+		themes: {
+			version: '20160609',
+			description: 'Learn how to find and activate a theme',
+			showInContext: state => sectionVisitedForFirstTime( 'themes', state ),
 			init: {
-				description: 'Testing multi tour support',
-				text: i18n.translate( 'Single step tour!' ),
+				text: i18n.translate( 'Find a theme thats good for you.' ),
+				type: 'FirstStep',
+				placement: 'right',
+				next: 'search',
+			},
+			search: {
+				text: i18n.translate( 'You can search for themes here, try a few terms, find a theme you like' ),
+				type: 'ActionStep',
+				target: 'themes-search-card',
+				placement: 'below',
+				continueIf: state => {
+					const params = getQueryParams( state );
+					return params && params.search && params.search.length && ! isFetchingNextPage( state ) && getThemesList( state ).length > 0;
+				},
+				arrow: 'top-left',
+				next: 'choose-theme',
+			},
+			'choose-theme': {
+				text: i18n.translate( 'Click on any theme, will give you a preview of how it will look like' ),
+				type: 'BasicStep',
+				placement: 'right',
+				showInContext: state => state && ! isFetchingNextPage( state ) && getThemesList( state ).length > 0,
+				next: 'close-preview',
+			},
+			'close-preview': {
+				target: 'web-preview__close',
+				arrow: 'left-top',
+				type: 'ActionStep',
+				placement: 'beside',
+				icon: 'cross-small',
+				text: i18n.translate( 'Close the preview' ),
+				showInContext: state => state && isPreviewShowing( state ),
+				next: 'finish',
+			},
+			finish: {
+				placement: 'center',
+				text: i18n.translate( "I guess that's it. I'll probably add some activation steps.", {
+					components: {
+						strong: <strong />,
+					}
+				} ),
 				type: 'FinishStep',
 			},
 		}
 	};
+}
 
-	return tours[ tour ] || tours.main;
+function get( tour = 'main' ) {
+	return getAll()[ tour ] || getAll().main;
 }
 
 export default {
 	get,
+	getAll,
 };

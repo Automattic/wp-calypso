@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
+import defer from 'lodash/defer';
 
 /**
  * Internal dependencies
@@ -46,6 +47,12 @@ class GuidedTours extends Component {
 		return this.props.tourState !== nextProps.tourState;
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		const { stepConfig } = nextProps.tourState;
+		console.log( stepConfig, stepConfig.continueIf && stepConfig.continueIf( nextProps.state ) );
+		stepConfig.continueIf && stepConfig.continueIf( nextProps.state ) && defer( this.next );
+	}
+
 	componentWillUpdate( nextProps ) {
 		const { stepConfig } = nextProps.tourState;
 		this.updateTarget( stepConfig );
@@ -68,7 +75,7 @@ class GuidedTours extends Component {
 	next() {
 		const getNextStep = ( currentStepConfig ) => {
 			const next = { stepName: currentStepConfig.next, stepConfig: guidedToursConfig.get( this.props.tourState.tour )[ currentStepConfig.next ] || false };
-			const skip = !! ( next.stepConfig.showInContext && ! next.stepConfig.showInContext( this.props.selectedSite ) );
+			const skip = !! ( next.stepConfig.showInContext && ! next.stepConfig.showInContext( this.props.state ) );
 			return skip ? getNextStep( next.stepConfig ) : next;
 		};
 
@@ -142,6 +149,7 @@ class GuidedTours extends Component {
 export default connect( ( state ) => ( {
 	selectedSite: getSelectedSite( state ),
 	tourState: getGuidedTourState( state ),
+	state,
 } ), {
 	nextGuidedTourStep,
 	quitGuidedTour,
