@@ -42,11 +42,12 @@
 
 .reader-start-card {
 	margin-bottom: 25px;
+	width: 100%;
 
 	@include breakpoint( ">960px" ) {
 		display: inline-block;
 			margin: 8px 5px 8px 2px;
-			width: 341px;
+			width: 48%;
 	}
 
 	&:first-child {
