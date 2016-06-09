@@ -7,7 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { decodeEntities } from 'lib/formatting';
+import { domForHtml } from './utils';
 
 export default function detectPolls( post, dom ) {
 	if ( ! dom ) {
@@ -22,12 +22,18 @@ export default function detectPolls( post, dom ) {
 		if ( ! noscript.firstChild ) {
 			return;
 		}
-		let firstChildData = decodeEntities( noscript.firstChild.data );
-		let match = firstChildData.match( '^<a href="http:\/\/polldaddy.com\/poll\/([0-9]+)' );
-		if ( match ) {
-			let p = document.createElement( 'p' );
-			p.innerHTML = '<a rel="external" target="_blank" href="http://polldaddy.com/poll/' + match[1] + '">' + i18n.translate( 'Take our poll' ) + '</a>';
-			noscript.parentNode.replaceChild( p, noscript );
+
+		// some browers don't require this and let us query the dom inside a noscript. some do not. maybe just jsdom.
+		const noscriptDom = domForHtml( noscript.innerHTML );
+
+		let pollLink = noscriptDom.querySelector( 'a[href^="http://polldaddy.com/poll/"]' );
+		if ( pollLink ) {
+			const pollId = pollLink.href.match( /https?:\/\/polldaddy.com\/poll\/([0-9]+)/ )[ 1 ];
+			if ( pollId ) {
+				let p = document.createElement( 'p' );
+				p.innerHTML = '<a rel="external" target="_blank" href="https://polldaddy.com/poll/' + pollId + '">' + i18n.translate( 'Take our poll' ) + '</a>';
+				noscript.parentNode.replaceChild( p, noscript );
+			}
 		}
 	} );
 

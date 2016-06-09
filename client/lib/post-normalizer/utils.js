@@ -75,3 +75,15 @@ export function makeImageURLSafe( object, propName, maxWidth, baseURL ) {
 		}
 	}
 }
+
+export function domForHtml( html ) {
+	let dom;
+	if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
+		const parser = new DOMParser();
+		dom = parser.parseFromString( html, 'text/html' ).body;
+	} else {
+		dom = document.createElement( 'div' );
+		dom.innerHTML = html;
+	}
+	return dom;
+}
