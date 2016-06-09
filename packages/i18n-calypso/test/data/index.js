@@ -8,105 +8,7 @@ var locale = {
 		'Content-Type': ' text/plain; charset=UTF-8',
 		'PO-Revision-Date': ' 2014-08-11 23:50:52+0000',
 		'Content-Transfer-Encoding': ' 8bit',
-		'Project-Id-Version': ' WordPress.com',
-		'momentjs_locale': {
-			'months': [
-				'Januar',
-				'Februar',
-				'März',
-				'April',
-				'Mai',
-				'Juni',
-				'Juli',
-				'August',
-				'September',
-				'Oktober',
-				'November',
-				'Dezember'
-			],
-			'monthShort': [
-				'Jan',
-				'Feb',
-				'Mär',
-				'Apr',
-				'Mai',
-				'Jun',
-				'Jul',
-				'Aug',
-				'Sep',
-				'Okt',
-				'Nov',
-				'Dez'
-			],
-			'weekdays': [
-				'Sonntag',
-				'Montag',
-				'Dienstag',
-				'Mittwoch',
-				'Donnerstag',
-				'Freitag',
-				'Samstag'
-			],
-			'weekdaysShort': [
-				'So',
-				'Mo',
-				'Di',
-				'Mi',
-				'Do',
-				'Fr',
-				'Sa'
-			],
-			'weekdaysMin': [
-				'S',
-				'M',
-				'D',
-				'M',
-				'D',
-				'F',
-				'S'
-			],
-			'meridiem': {
-				'am': 'vormittags',
-				'pm': 'nachmittags',
-				'AM': 'vormittags',
-				'PM': 'nachmittags'
-			},
-			'textDirection': 'ltr',
-			'numberFormat': {
-				'thousands_sep': '.',
-				'decimal_point': ','
-			},
-			'longDateFormat': {
-				'LT': 'HH:mm',
-				'L': 'DD/MM/YYYY',
-				'LL': 'D MMMM YYYY',
-				'LLL': 'D MMMM YYYY LT',
-				'LLLL': 'dddd, D MMMM YYYY LT'
-			},
-			'calendar': {
-				'sameDay': '[Today at] LT',
-				'nextDay': '[Tomorrow at] LT',
-				'nextWeek': 'dddd [at] LT',
-				'lastDay': '[Yesterday at] LT',
-				'lastWeek': '[Last] dddd [at] LT',
-				'sameElse': 'L'
-			},
-			'relativeTime': {
-				'future': 'in %s',
-				'past': 'vor %s',
-				's': 'einige Sekunden',
-				'm': 'eine Minute',
-				'mm': '%d Minuten',
-				'h': 'eine Stunde',
-				'hh': '%d Stunden',
-				'd': 'ein Tag',
-				'dd': '%d Tage',
-				'M': 'ein Monat',
-				'MM': '%d Monaten',
-				'y': 'ein Jahr',
-				'yy': '%d Jahre'
-			}
-		}
+		'Project-Id-Version': ' WordPress.com'
 	},
 	'test1': [
 		null,
@@ -266,17 +168,14 @@ var locale = {
 		null,
 		'%d Jahre'
 	],
-	'momentjs format string (for LT)\u0004HH:mm': null,
-	'momentjs format string (for L)\u0004DD/MM/YYYY': null,
-	'momentjs format string (for LL)\u0004D MMMM YYYY': null,
-	'momentjs format string (for LLL)\u0004D MMMM YYYY LT': null,
-	'momentjs format string (for LLLL)\u0004dddd, D MMMM YYYY LT': null,
-	'momentjs format string (sameDay)\u0004[Today at] LT': null,
-	'momentjs format string (nextDay)\u0004[Tomorrow at] LT': null,
-	'momentjs format string (nextWeek)\u0004dddd [at] LT': null,
-	'momentjs format string (lastDay)\u0004[Yesterday at] LT': null,
-	'momentjs format string (lastWeek)\u0004[Last] dddd [at] LT': null,
-	'momentjs format string (sameElse)\u0004L': null
+	'number_format_thousands_sep': [
+		null,
+		'.'
+	],
+	'number_format_decimals': [
+		null,
+		','
+	]
 };
 
 exports.locale = locale;

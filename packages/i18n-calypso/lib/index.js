@@ -14,6 +14,12 @@ var debug = require( 'debug' )( 'i18n-calypso' ),
  */
 var numberFormatPHPJS = require( './number-format' );
 
+/**
+ * Constants
+ */
+var decimal_point_translation_key = 'number_format_decimals',
+	thousands_sep_translation_key = 'number_format_thousands_sep';
+
 // raise a console warning
 function warn() {
 	if ( ! I18N.throwErrors ) {
@@ -184,9 +190,25 @@ I18N.prototype.setLocale = function( localeData ) {
 		}
 	} );
 
-	if ( localeData[ '' ].momentjs_locale ) {
-		moment.locale( localeSlug, localeData[ '' ].momentjs_locale );
-		this.state.numberFormatSettings = localeData[ '' ].momentjs_locale.numberFormat;
+	moment.locale( localeSlug );
+
+	// Updates numberFormat preferences with settings from translations
+	this.state.numberFormatSettings.decimal_point = getTranslationFromJed(
+		this.state.jed,
+		normalizeTranslateArguments( [ decimal_point_translation_key ] )
+	);
+	this.state.numberFormatSettings.thousands_sep = getTranslationFromJed(
+		this.state.jed,
+		normalizeTranslateArguments( [ thousands_sep_translation_key ] )
+	);
+
+	// If translation isn't set, define defaults.
+	if ( this.state.numberFormatSettings.decimal_point === decimal_point_translation_key ) {
+		this.state.numberFormatSettings.decimal_point = '.';
+	}
+
+	if ( this.state.numberFormatSettings.thousands_sep === thousands_sep_translation_key ) {
+		this.state.numberFormatSettings.thousands_sep = ',';
 	}
 
 	this.state.translations.reset();

@@ -30,6 +30,11 @@ describe( 'I18n', function() {
 
 	before( function() {
 		i18n.setLocale( data.locale );
+		moment.locale( 'de' );
+	} );
+
+	after( () => {
+		moment.locale( 'en' );
 	} );
 
 	describe( 'translate()', function() {
@@ -156,8 +161,17 @@ describe( 'I18n', function() {
 
 	describe( 'moment()', function() {
 		describe( 'generating date strings', function() {
-			it( 'should use available translations', function() {
-				assert.equal( 'Freitag, 18 Juli 2014 21:59', moment( '2014-07-18T14:59:09-07:00' ).utcOffset( '+00:00' ).format( 'LLLL' ) );
+			it( 'should know the short weekdays', function() {
+				assert.equal( 'Fr', moment( '2014-07-18' ).format( 'dd' ) );
+			} );
+			it( 'should use available translations for date format', function() {
+				assert.equal( 'Freitag, 18. Juli 2014 21:59', moment( '2014-07-18T14:59:09-07:00' ).utcOffset( '+00:00' ).format( 'LLLL' ) );
+			} );
+			it( 'should use available translations for relative time in the past', function() {
+				assert.equal( 'vor 3 Stunden', moment().subtract( 3, 'hours' ).fromNow() );
+			} );
+			it( 'should use available translations for relative time in the future', function() {
+				assert.equal( 'in ein paar Sekunden', moment().add( 10, 'seconds' ).fromNow() );
 			} );
 		} );
 	} );
