@@ -27,7 +27,7 @@ import Gridicon from 'components/gridicon';
 import { signup, purchase, activate, clearActivated, customize } from 'state/themes/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { isPremium, getForumUrl, getDetailsUrl } from 'my-sites/themes/helpers';
+import { isPremium, getForumUrl } from 'my-sites/themes/helpers';
 import ActivatingTheme from 'components/data/activating-theme';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
