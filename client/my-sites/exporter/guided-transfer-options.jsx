@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -12,7 +13,15 @@ import Button from 'components/forms/form-button';
 export default React.createClass( {
 	displayName: 'GuidedTransferOptions',
 
-	render: function() {
+	propTypes: {
+		siteSlug: PropTypes.string.isRequired
+	},
+
+	purchaseGuidedTransfer() {
+		page( `/settings/export/${this.props.siteSlug}/guided` );
+	},
+
+	render() {
 		return (
 			<div>
 				<CompactCard>
@@ -23,6 +32,7 @@ export default React.createClass( {
 					</div>
 					<div className="exporter__guided-transfer-options-header-button-container">
 						<Button
+							onClick={ this.purchaseGuidedTransfer }
 							isPrimary={ true }>
 							{ this.translate( 'Purchase a Guided Transfer' ) }
 						</Button>
