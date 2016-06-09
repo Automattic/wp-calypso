@@ -81,21 +81,13 @@ module.exports = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_signup_compare_plans_click', { location: linkLocation } );
 	},
 
-	hideFreePlan: function() {
-		if ( this.props.signupDependencies && this.props.signupDependencies.domainItem ) {
-			return this.props.signupDependencies.domainItem.is_domain_registration;
-		}
-
-		return this.props.hideFreePlan;
-	},
-
 	plansList: function() {
 		return (
 			<div>
 				<PlanList
 					plans={ this.state.plans }
 					comparePlansUrl={ this.comparePlansUrl() }
-					hideFreePlan={ this.hideFreePlan() }
+					hideFreePlan={ this.props.hideFreePlan }
 					isInSignup={ true }
 					onSelectPlan={ this.onSelectPlan } />
 				<a
@@ -136,7 +128,7 @@ module.exports = React.createClass( {
 	plansCompare: function() {
 		return <PlansCompare
 			className="plans-step__compare"
-			hideFreePlan={ this.hideFreePlan() }
+			hideFreePlan={ this.props.hideFreePlan }
 			onSelectPlan={ this.onSelectPlan }
 			isInSignup={ true }
 			backUrl={ this.props.path.replace( '/compare', '' ) }
