@@ -11,13 +11,14 @@
 //------------------------------------------------------------------------------
 
 var rule = require( '../../../lib/rules/i18n-no-variables' ),
+	config = { env: { es6: true } },  // support for string templates
 	RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-( new RuleTester() ).run( 'i18n-no-variables', rule, {
+( new RuleTester( config ) ).run( 'i18n-no-variables', rule, {
 	valid: [
 		{
 			code: 'translate( \'Hello World\' );'
@@ -39,6 +40,12 @@ var rule = require( '../../../lib/rules/i18n-no-variables' ),
 		},
 		{
 			code: 'translate( { original: { single: \'Hello World\' } } );'
+		},
+		{
+			code: 'translate( `Hello World` );'
+		},
+		{
+			code: 'translate( `Multi\nline\nstring\ntemplate` );'
 		}
 	],
 
@@ -87,6 +94,12 @@ var rule = require( '../../../lib/rules/i18n-no-variables' ),
 		},
 		{
 			code: 'translate( { original: { single: string } } );',
+			errors: [ {
+				message: rule.ERROR_MESSAGE
+			} ]
+		},
+		{
+			code: '/*eslint-env es6*/ translate( `Hello ${World}!` );',
 			errors: [ {
 				message: rule.ERROR_MESSAGE
 			} ]

@@ -30,6 +30,12 @@ var rule = module.exports = function( context ) {
 				isAcceptableLiteralNode( node.right );
 		}
 
+		if ( 'TemplateLiteral' === node.type ) {
+			// Backticks are fine, but if there's any interpolation in it,
+			// that's a problem
+			return node.expressions.length === 0;
+		}
+
 		return 'Literal' === node.type;
 	}
 
