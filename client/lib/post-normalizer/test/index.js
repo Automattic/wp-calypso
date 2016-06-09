@@ -911,7 +911,7 @@ describe( 'index', function() {
 				[
 					normalizer.withContentDOM( [ normalizer.content.detectPolls ] )
 				], function( err, normalized ) {
-					assert.include( normalized.content, '<p><a rel="external" target="_blank" href="http://polldaddy.com/poll/8980420">Take our poll</a></p>' );
+					assert.include( normalized.content, '<p><a rel="external" target="_blank" href="https://polldaddy.com/poll/8980420">Take our poll</a></p>' );
 					done( err );
 				}
 			);
