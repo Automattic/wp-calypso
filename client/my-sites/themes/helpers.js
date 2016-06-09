@@ -55,7 +55,7 @@ export function getDetailsUrl( theme, site ) {
 
 	let baseUrl = oldShowcaseUrl + theme.id;
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		baseUrl = `/theme/${ theme.id }/overview`;
+		baseUrl = `/theme/${ theme.id }/overview/`;
 	}
 
 	return baseUrl + ( site ? `/${ site.slug }` : '' );
@@ -68,7 +68,7 @@ export function getSupportUrl( theme, site ) {
 
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
 		const sitePart = site ? `/${ site.slug }` : '';
-		return `/theme/${ theme.id }/setup${ sitePart }`;
+		return `/theme/${ theme.id }/setup${ sitePart }/`;
 	}
 
 	const sitePart = site ? `${ site.slug }/` : '';
