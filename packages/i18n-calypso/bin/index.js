@@ -46,7 +46,7 @@ extras = Array.isArray( program.extra ) ? program.extra : ( program.extra ? [ pr
 inputFiles = ( program.inputFile.length ) ? program.inputFile : program.args.slice( 2 );
 
 if ( inputFiles.length === 0 ) {
-	throw new Error( 'Error: You must enter the input file. Run `get-i18n -h` for examples.' );
+	throw new Error( 'Error: You must enter the input file. Run `i18n-calypso -h` for examples.' );
 }
 
 if ( outputFile ) {
