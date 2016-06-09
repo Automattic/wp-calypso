@@ -18,7 +18,7 @@
       "version": "3.0.0",
       "dependencies": {
         "acorn": {
-          "version": "3.1.0"
+          "version": "3.2.0"
         }
       }
     },
@@ -63,6 +63,9 @@
     },
     "arr-flatten": {
       "version": "1.0.1"
+    },
+    "array-equal": {
+      "version": "1.0.0"
     },
     "array-find-index": {
       "version": "1.0.1"
@@ -409,7 +412,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000475"
+      "version": "1.0.30000476"
     },
     "caseless": {
       "version": "0.11.0"
@@ -454,7 +457,7 @@
       }
     },
     "chokidar": {
-      "version": "1.5.1"
+      "version": "1.5.2"
     },
     "chrono-node": {
       "version": "1.2.3"
@@ -1793,7 +1796,7 @@
       }
     },
     "jsdom": {
-      "version": "7.2.0",
+      "version": "9.2.1",
       "dependencies": {
         "acorn": {
           "version": "2.7.0"
@@ -3420,7 +3423,7 @@
       "version": "0.2.9"
     },
     "webidl-conversions": {
-      "version": "2.0.1"
+      "version": "3.0.1"
     },
     "webpack": {
       "version": "1.12.15",
@@ -3463,8 +3466,8 @@
     "whatwg-fetch": {
       "version": "0.9.0"
     },
-    "whatwg-url-compat": {
-      "version": "0.6.5"
+    "whatwg-url": {
+      "version": "3.0.0"
     },
     "which": {
       "version": "1.2.10"
@@ -3476,7 +3479,7 @@
       "version": "5.1.1",
       "dependencies": {
         "acorn": {
-          "version": "3.1.0"
+          "version": "3.2.0"
         }
       }
     },
@@ -3528,7 +3531,7 @@
       "version": "0.3.0",
       "dependencies": {
         "acorn": {
-          "version": "3.1.0"
+          "version": "3.2.0"
         },
         "lodash": {
           "version": "2.4.2"
