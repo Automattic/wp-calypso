@@ -1,0 +1,24 @@
+.related-posts {
+	margin: 48px 0;
+	padding: 0;
+}
+
+.related-posts__list,
+.related-posts__list-item {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.related-posts__heading {
+	color: $gray;
+	font-size: 14px;
+	font-weight: 600;
+	margin-bottom: 24px;
+	text-transform: uppercase;
+}
+
+.post-card__site-info,
+.post-card__anchor {
+	text-decoration: none;
+}
