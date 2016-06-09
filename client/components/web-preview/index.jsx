@@ -17,6 +17,7 @@ import Toolbar from './toolbar';
 import touchDetect from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
 import Spinner from 'components/spinner';
+import RootChild from 'components/root-child';
 import { setPreviewShowing } from 'state/ui/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
@@ -213,38 +214,40 @@ const WebPreview = React.createClass( {
 		} );
 
 		return (
-			<div className={ className }>
-				<div className="web-preview__backdrop" onClick={ this.props.onClose } />
-				<div className="web-preview__content">
-					<Toolbar setDeviceViewport={ this.setDeviceViewport }
-						device={ this.state.device }
-						{ ...this.props }
-						showExternal={ ( this.props.previewUrl ? this.props.showExternal : false ) }
-						showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this._isMobile }
-					/>
-					<div className="web-preview__placeholder">
-						{ ! this.state.loaded &&
-							<div>
-								<Spinner />
-								{ this.props.loadingMessage &&
-									<span className="web-preview__loading-message">
-										{ this.props.loadingMessage }
-									</span>
-								}
-							</div>
-						}
-						{ this.shouldRenderIframe() &&
-							<iframe
-								ref="iframe"
-								className="web-preview__frame"
-								src="about:blank"
-								onLoad={ this.setLoaded }
-								title={ this.props.iframeTitle || this.translate( 'Preview' ) }
-							/>
-						}
+			<RootChild>
+				<div className={ className }>
+					<div className="web-preview__backdrop" onClick={ this.props.onClose } />
+					<div className="web-preview__content">
+						<Toolbar setDeviceViewport={ this.setDeviceViewport }
+							device={ this.state.device }
+							{ ...this.props }
+							showExternal={ ( this.props.previewUrl ? this.props.showExternal : false ) }
+							showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this._isMobile }
+						/>
+						<div className="web-preview__placeholder">
+							{ ! this.state.loaded &&
+								<div>
+									<Spinner />
+									{ this.props.loadingMessage &&
+										<span className="web-preview__loading-message">
+											{ this.props.loadingMessage }
+										</span>
+									}
+								</div>
+							}
+							{ this.shouldRenderIframe() &&
+								<iframe
+									ref="iframe"
+									className="web-preview__frame"
+									src="about:blank"
+									onLoad={ this.setLoaded }
+									title={ this.props.iframeTitle || this.translate( 'Preview' ) }
+								/>
+							}
+						</div>
 					</div>
 				</div>
-			</div>
+			</RootChild>
 		);
 	}
 } );
