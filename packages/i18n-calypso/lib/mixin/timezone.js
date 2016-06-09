@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var jstz = require( 'jstimezonedetect' );
+var tzdetect = require( 'jstimezonedetect' );
 
 /**
  * Detect and return the current timezone of the browser
@@ -9,6 +9,6 @@ var jstz = require( 'jstimezonedetect' );
  * @return {String} timezone
  */
 module.exports = function timezone() {
-	var detected = jstz.determine();
+	var detected = tzdetect.jstz.determine();
 	return detected ? detected.name() : null;
 };

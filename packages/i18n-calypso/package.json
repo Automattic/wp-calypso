@@ -23,7 +23,7 @@
     "debug": "2.2.0",
     "interpolate-components": "1.0.4",
     "jed": "1.0.2",
-    "jstimezonedetect": "1.0.6",
+    "jstimezonedetect": "1.0.5",
     "lodash.assign": "^4.0.8",
     "lru-cache": "4.0.1",
     "moment-timezone": "0.4.0",
