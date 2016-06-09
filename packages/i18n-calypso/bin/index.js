@@ -58,6 +58,8 @@ inputPaths = inputFiles.map( function( fileName ) {
 	return path.resolve( process.env.PWD, fileName );
 } );
 
+console.log( 'Reading inputFiles:\n\t- ' + inputPaths.join( '\n\t- ' ) );
+
 inputPaths.forEach( function( inputFile ) {
 	if ( ! fs.existsSync( inputFile ) ) {
 		console.error( 'Error: inputFile, `' + inputFile + '`, does not exist' );

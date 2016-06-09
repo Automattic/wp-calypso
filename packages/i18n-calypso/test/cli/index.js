@@ -104,7 +104,6 @@ describe( 'index', function() {
 		} );
 
 		it( 'should have all the default headers', function() {
-			console.log(output);
 			assert.notEqual( -1, output.indexOf( '"Project-Id-Version: _s i18nTest"\n' ) );
 			assert.notEqual( -1, output.indexOf( '"Report-Msgid-Bugs-To:' ) );
 			assert.notEqual( -1, output.indexOf( '"POT-Creation-Date:' ) );
