@@ -33,6 +33,8 @@ import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
+import connectionMiddleware from './connectionMiddleware/middleware';
+import connectionMiddlewareReducer from './connectionMiddleware/reducer';
 
 /**
  * Module variables
@@ -63,7 +65,8 @@ export const reducer = combineReducers( {
 	themes,
 	ui,
 	users,
-	wordads
+	wordads,
+	connectionMiddleware: connectionMiddlewareReducer
 } );
 
 let middleware = [ thunkMiddleware ];
@@ -76,6 +79,7 @@ if ( typeof window === 'object' ) {
 	];
 }
 
+middleware.push( connectionMiddleware );
 let createStoreWithMiddleware = applyMiddleware.apply( null, middleware );
 
 export function createReduxStore( initialState = {} ) {
