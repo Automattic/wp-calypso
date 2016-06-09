@@ -50,7 +50,7 @@ export default class Select extends Component {
 			this.props.setValue( e.target.value );
 		};
 
-		const options = this.props.options.map( ( option, i ) => {
+		const options = this.props.options && this.props.options.map( ( option, i ) => {
 			return <option key={ i } value={ option.value }>{ option.label }</option>;
 		} );
 		return (
