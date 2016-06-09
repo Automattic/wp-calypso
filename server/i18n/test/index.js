@@ -153,4 +153,8 @@ describe( 'index', function() {
 	it( 'should find options with a literal string key', function() {
 		assert.notEqual( -1, output.indexOf( 'context with a literal string key' ) );
 	} );
+
+	it( 'should allow literal string templates (backticks) with no interpolation', function() {
+		assert.notEqual( -1, output.indexOf( 'A string template with no interpolation' ) );
+	} );
 } );
