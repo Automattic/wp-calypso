@@ -7,7 +7,8 @@ import io from 'socket.io-client';
  * Internal dependencies
  */
 import { cssBuildFailed, cssBuilding } from 'state/application/actions';
-import i18n from 'lib/mixins/i18n';
+
+import i18n from 'i18n-calypso';
 
 // https://developer.mozilla.org/en/docs/Web/HTML/Element/link
 let standardAttributes = [
