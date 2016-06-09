@@ -168,16 +168,9 @@ function getStoreForRecommendedPosts( storeId ) {
 				stream.algorithm = response.algorithm;
 			}
 			forEach( response && response.posts, ( post, index ) => {
-				let railcar = analytics.tracks.createRandomId() + '-' + index;
-				eventProperties = {
-					railcar: railcar,
-					ui_algo: 'warm-start-v1',
-					ui_position: query.offset + index,
-					fetch_algo: response.algorithm,
-					fetch_position: query.offset + index
-				};
-				post.railcar = railcar;
-				analytics.tracks.recordEvent( eventName, eventProperties );
+				if ( post.railcar ) {
+					analytics.tracks.recordEvent( eventName, post.railcar );
+				}
 			} );
 			callback( err, response );
 		}
