@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react'
-import classNames from 'classnames'
-import Gridicon from 'components/gridicon'
+import React from 'react';
+import classNames from 'classnames';
+import Gridicon from 'components/gridicon';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 export default React.createClass( {
 
@@ -13,6 +14,8 @@ export default React.createClass( {
 		image: React.PropTypes.string,
 		isPlaceholder: React.PropTypes.bool
 	},
+
+	mixins: [ PureRenderMixin ],
 
 	render() {
 		const className = classNames( {

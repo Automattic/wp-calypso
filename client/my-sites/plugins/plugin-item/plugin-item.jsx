@@ -4,7 +4,8 @@
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	uniqBy = require( 'lodash/uniqBy' ),
-	i18n = require( 'i18n-calypso' );
+	i18n = require( 'i18n-calypso' ),
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Internal dependencies
@@ -19,9 +20,42 @@ var CompactCard = require( 'components/card/compact' ),
 	PluginNotices = require( 'lib/plugins/notices' ),
 	analytics = require( 'lib/analytics' );
 
+function checkPropsChange( nextProps, propArr ) {
+	var i, prop;
+
+	for ( i = 0; i < propArr.length; i++ ) {
+		prop = propArr[ i ];
+
+		if ( ! isEqual( nextProps[ prop ], this.props[ prop ] ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
 module.exports = React.createClass( {
 
 	displayName: 'PluginItem',
+
+	shouldComponentUpdate: function( nextProps, nextState ) {
+		var propsToCheck = [ 'plugin', 'sites', 'selectedSite', 'isMock', 'isSelectable', 'isSelected' ];
+		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
+			return true;
+		}
+
+		if ( this.props.hasAllNoManageSites !== nextProps.hasAllNoManageSites ) {
+			return true;
+		}
+
+		if ( PluginNotices.shouldComponentUpdateNotices( this.props.notices, nextProps.notices ) ) {
+			return true;
+		}
+
+		if ( this.state.clicked !== nextState.clicked ) {
+			return true;
+		}
+		return false;
+	},
 
 	getInitialState: function() {
 		return { clicked: false };
@@ -169,7 +203,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderCount: function() {
+	renderSiteCount: function() {
 		return (
 			<div className="plugin-item__count">{ this.translate( 'Sites {{count/}}',
 				{
@@ -252,7 +286,7 @@ module.exports = React.createClass( {
 							{ pluginTitle }
 							{ this.pluginMeta( plugin ) }
 						</span>
-						{ this.props.selectedSite ? null : this.renderCount() }
+						{ this.props.selectedSite ? null : this.renderSiteCount() }
 					</CompactCard>
 					<div>
 					{ this.state.clicked ? this.getNoManageWarning() : null }
@@ -277,7 +311,7 @@ module.exports = React.createClass( {
 						{ pluginTitle }
 						{ this.pluginMeta( plugin ) }
 					</a>
-					{ this.props.selectedSite ? this.renderActions() : this.renderCount() }
+					{ this.props.selectedSite ? this.renderActions() : this.renderSiteCount() }
 				</CompactCard>
 				{ errorNotices }
 			</div>

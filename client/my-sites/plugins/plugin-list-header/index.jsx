@@ -6,6 +6,7 @@ import debounce from 'lodash/debounce';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
 import analytics from 'lib/analytics';
+import isEqual from 'lodash/isEqual';
 
 /**
  * Internal dependencies
@@ -25,6 +26,19 @@ let _actionBarVisible = true;
 // If the Action
 const MAX_ACTIONBAR_HEIGHT = 50;
 const MIN_ACTIONBAR_WIDTH = 600;
+
+function checkPropsChange( nextProps, propArr ) {
+	var i, prop;
+
+	for ( i = 0; i < propArr.length; i++ ) {
+		prop = propArr[ i ];
+
+		if ( nextProps[ prop ] !== this.props[ prop ] ) {
+			return true;
+		}
+	}
+	return false;
+}
 
 export default React.createClass( {
 	displayName: 'Plugins-list-header',
@@ -47,9 +61,38 @@ export default React.createClass( {
 		haveActiveSelected: React.PropTypes.bool,
 		haveInactiveSelected: React.PropTypes.bool,
 		bulkManagement: React.PropTypes.bool,
-		sites: React.PropTypes.object.isRequired,
+		selectedSiteSlug: React.PropTypes.string,
 		plugins: React.PropTypes.array.isRequired,
 		selected: React.PropTypes.array.isRequired
+	},
+
+	shouldComponentUpdate( nextProps, nextState ) {
+		var propsToCheck = [ 'label', 'isBulkManagementActive', 'haveUpdatesSelected', 'pluginUpdateCount', 'haveActiveSelected', 'haveInactiveSelected', 'bulkManagement' ];
+		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
+			return true;
+		}
+
+		if ( this.props.plugins.length !== nextProps.plugins.length ){
+			return true;
+		}
+
+		if ( ! isEqual( this.props.sites, nextProps.sites ) ) {
+			return true;
+		}
+
+		if ( this.props.selected.length !== nextProps.selected.length ) {
+			return true;
+		}
+
+		if ( this.state.actionBarVisible !== nextState.actionBarVisible ) {
+			return true;
+		}
+
+		if ( this.state.addPluginTooltip !== nextState.addPluginTooltip ) {
+			return true;
+		}
+
+		return false;
 	},
 
 	getInitialState() {
@@ -84,6 +127,14 @@ export default React.createClass( {
 			const actionBarVisible = actionBarDomElement.offsetHeight <= MAX_ACTIONBAR_HEIGHT;
 			this.setState( { actionBarVisible } );
 		}, 1 );
+	},
+
+	showPluginTooltip() {
+		this.setState( { addPluginTooltip: true } )
+	},
+
+	hidePluginTooltip() {
+		this.setState( { addPluginTooltip: false } )
 	},
 
 	toggleBulkManagement() {
@@ -132,8 +183,7 @@ export default React.createClass( {
 					</Button>
 				</ButtonGroup>
 			);
-			const selectedSite = this.props.sites.getSelectedSite();
-			const browserUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' );
+			const browserUrl = '/plugins/browse' + ( this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' );
 
 			rightSideButtons.push(
 				<ButtonGroup key="plugin-list-header__buttons-browser">
@@ -142,8 +192,8 @@ export default React.createClass( {
 						href={ browserUrl }
 						onClick={ this.onBrowserLinkClick }
 						className="plugin-list-header__browser-button"
-						onMouseEnter={ () => this.setState( { addPluginTooltip: true } ) }
-						onMouseLeave={ () => this.setState( { addPluginTooltip: false } ) }
+						onMouseEnter={ this.showPluginTooltip }
+						onMouseEnter={ this.hidePluginTooltip }
 						ref="addPluginButton"
 						aria-label={ this.translate( 'Browse all plugins', { context: 'button label' } ) }>
 						<Gridicon key="plus-icon" icon="plus-small" size={ 18 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
