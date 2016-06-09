@@ -293,8 +293,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderRelatedThemes() {
-
-		return <ThemeRelatedThemesCard currentTheme={ this.props.name } />;
+		return <ThemeRelatedThemesCard currentTheme={ this.props.id } />;
 	},
 
 	renderSheet() {
