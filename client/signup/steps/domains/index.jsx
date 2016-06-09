@@ -20,8 +20,6 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	abtest = require( 'lib/abtest' ).abtest,
 	signupUtils = require( 'signup/utils' );
 
-const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
-
 module.exports = React.createClass( {
 	displayName: 'DomainsStep',
 
@@ -92,15 +90,15 @@ module.exports = React.createClass( {
 	submitWithDomain: function( googleAppsCartItem ) {
 		const suggestion = this.props.step.suggestion,
 			isPurchasingItem = Boolean( suggestion.product_slug ),
-			siteUrl = isPurchasingItem ?
-				suggestion.domain_name :
-				suggestion.domain_name.replace( '.wordpress.com', '' ),
-			domainItem = isPurchasingItem ?
-				cartItems.domainRegistration( {
+			siteUrl = isPurchasingItem
+				? suggestion.domain_name
+				: suggestion.domain_name.replace( '.wordpress.com', '' ),
+			domainItem = isPurchasingItem
+				? cartItems.domainRegistration( {
 					domain: suggestion.domain_name,
 					productSlug: suggestion.product_slug
-				} ) :
-				undefined;
+				} )
+				: undefined;
 
 		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain' ),
@@ -112,19 +110,7 @@ module.exports = React.createClass( {
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ), [], { domainItem } );
 
-		this.goToNextStep( isPurchasingItem );
-	},
-
-	submitPlansStepWithPremium() {
-		const premiumPlan = cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } );
-		SignupActions.submitSignupStep( {
-			processingMessage: this.translate( 'Adding your plan' ),
-			stepName: 'plans',
-			stepSectionName: this.props.stepSectionName,
-			cartItem: premiumPlan
-		}, [], {
-			cartItem: premiumPlan
-		} );
+		this.props.goToNextStep();
 	},
 
 	handleAddMapping: function( sectionName, domain, state ) {
@@ -141,7 +127,7 @@ module.exports = React.createClass( {
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ) );
 
-		this.goToNextStep( isPurchasingItem );
+		this.props.goToNextStep();
 	},
 
 	handleSave: function( sectionName, state ) {
@@ -150,25 +136,6 @@ module.exports = React.createClass( {
 			stepSectionName: this.props.stepSectionName,
 			[ sectionName ]: state
 		} );
-	},
-
-	goToNextStep( isPurchasingItem ) {
-		if ( domainsWithPlansOnlyTestEnabled && isPurchasingItem && abtest( 'freeTrialsInSignup' ) !== 'enabled' ) {
-			const plansIndex = this.props.steps.indexOf( 'plans' );
-			if ( ! this.props.meta.skipBundlingPlan ) {
-				this.submitPlansStepWithPremium();
-			}
-
-			if ( plansIndex === this.props.steps.length - 1 || plansIndex === -1 ) {
-				// if plans is the last step or not in the flow, this'll finish the flow
-				this.props.goToNextStep();
-			} else {
-				// skip plans step
-				this.props.goToStep( this.props.steps[ plansIndex + 1 ] );
-			}
-		} else {
-			this.props.goToNextStep();
-		}
 	},
 
 	googleAppsForm: function() {
@@ -234,9 +201,9 @@ module.exports = React.createClass( {
 
 	render: function() {
 		let content;
-		const backUrl = this.props.stepSectionName ?
-			signupUtils.getStepUrl( this.props.flowName, this.props.stepName, undefined, i18n.getLocaleSlug() ) :
-			undefined;
+		const backUrl = this.props.stepSectionName
+			? signupUtils.getStepUrl( this.props.flowName, this.props.stepName, undefined, i18n.getLocaleSlug() )
+			: undefined;
 
 		if ( 'mapping' === this.props.stepSectionName ) {
 			content = this.mappingForm();
@@ -253,7 +220,7 @@ module.exports = React.createClass( {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			content = (
 				<div className="domains-step__section-wrapper">
-					<Notice status='is-error' showDismiss={ false }>
+					<Notice status="is-error" showDismiss={ false }>
 						{ this.props.step.errors.message }
 					</Notice>
 					{ content }

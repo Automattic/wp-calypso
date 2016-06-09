@@ -304,7 +304,10 @@ const Signup = React.createClass( {
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
 			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
-			flow = flows.getFlow( this.props.flowName );
+			flow = flows.getFlow( this.props.flowName ),
+			hideFreePlan = this.state.dependencies && this.state.dependencies.domainItem
+				? this.state.dependencies.domainItem.is_domain_registration
+				: false;
 
 		return (
 			<div className="signup__step" key={ stepKey }>
@@ -325,6 +328,7 @@ const Signup = React.createClass( {
 						signupDependencies={ this.state.dependencies }
 						stepSectionName={ this.props.stepSectionName }
 						positionInFlow={ this.positionInFlow() }
+						hideFreePlan={ hideFreePlan }
 						{ ...propsFromConfig } />
 				}
 			</div>
