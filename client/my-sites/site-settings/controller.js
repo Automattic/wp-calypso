@@ -132,6 +132,17 @@ module.exports = {
 		);
 	},
 
+	guidedTransfer( context ) {
+		ReactDom.render(
+			<SiteSettingsComponent
+				context={ context }
+				sites={ sites }
+				section="guidedTransfer"
+				path={ context.path } />,
+			document.getElementById( 'primary' )
+		);
+	},
+
 	deleteSite( context ) {
 		var site = sites.getSelectedSite();
 

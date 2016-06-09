@@ -18,6 +18,9 @@ module.exports = function() {
 
 	page( '/settings/import/:site_id', controller.siteSelection, controller.navigation, settingsController.importSite );
 
+	if ( config.isEnabled( 'manage/export/guided-transfer' ) ) {
+		page( '/settings/export/:site_id/guided', controller.siteSelection, controller.navigation, settingsController.guidedTransfer );
+	}
 	if ( config.isEnabled( 'manage/export' ) ) {
 		page( '/settings/export/:site_id', controller.siteSelection, controller.navigation, settingsController.exportSite );
 	}
