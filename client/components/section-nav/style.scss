@@ -370,7 +370,7 @@
 // -------- Search --------
 .section-nav {
 	@include breakpoint( "<480px" ) {
-		.search.is-pinned {
+		.search.is-expanded-to-container {
 			height: 46px;
 		}
 	}

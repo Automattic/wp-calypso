@@ -186,7 +186,8 @@ module.exports = React.createClass( {
 						<NavItem path={ '/vip/logs/notice' + siteFilter } selected={ statusSlug === 'notice' } >{ filterStrings.notice }</NavItem>
 					</NavTabs>
 					<Search
-						pinned={ true }
+						pinned
+						fitsContainer
 						onSearch={ this.doSearch }
 						initialValue={ this.props.search }
 						placeholder={ searchPlaceholder }
