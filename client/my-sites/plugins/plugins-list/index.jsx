@@ -8,6 +8,8 @@ import find from 'lodash/find';
 import includes from 'lodash/includes';
 import negate from 'lodash/negate';
 import range from 'lodash/range';
+import isEqual from 'lodash/isEqual';
+import map from 'lodash/map';
 
 /**
  * Internal dependencies
@@ -21,6 +23,19 @@ import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginNotices from 'lib/plugins/notices';
 import SectionHeader from 'components/section-header';
+
+function checkPropsChange( nextProps, propArr ) {
+	var i, prop;
+
+	for ( i = 0; i < propArr.length; i++ ) {
+		prop = propArr[ i ];
+
+		if ( ! isEqual( nextProps[ prop ], this.props[ prop ] ) ) {
+			return true;
+		}
+	}
+	return false;
+}
 
 export default React.createClass( {
 	displayName: 'PluginsList',
@@ -38,6 +53,34 @@ export default React.createClass( {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
 		pluginUpdateCount: PropTypes.number,
 		isPlaceholder: PropTypes.bool.isRequired,
+	},
+
+	shouldComponentUpdate( nextProps, nextState ) {
+		var propsToCheck = [ 'plugins', 'sites', 'selectedSite', 'pluginUpdateCount', '' ];
+		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
+			return true;
+		}
+
+		if ( this.props.isPlaceholder !== nextProps.isPlaceholder ) {
+			return true;
+		}
+
+		if ( this.state.bulkManagement !== nextState.bulkManagement ) {
+			return true;
+		}
+
+		if ( this.state.disconnectJetpackDialog !== nextState.disconnectJetpackDialog ) {
+			return true;
+		}
+
+		if ( ! isEqual( this.state.selectedPlugins, nextState.selectedPlugins ) ) {
+			return true;
+		}
+		if ( this.shouldComponentUpdateNotices( this.state.notices, nextState.notices) ) {
+			return true;
+		}
+
+		return false;
 	},
 
 	getInitialState() {
@@ -322,6 +365,8 @@ export default React.createClass( {
 			'is-bulk-editing': this.state.bulkManagementActive
 		} );
 
+		const selectedSiteSlug = this.props.sites.getSelectedSite() ? this.props.sites.getSelectedSite().slug : '';
+
 		if ( this.props.isPlaceholder ) {
 			return (
 				<div className="plugins-list">
@@ -339,7 +384,7 @@ export default React.createClass( {
 			<div className="plugins-list" >
 				<PluginsListHeader label={ this.props.header }
 					isBulkManagementActive={ this.state.bulkManagementActive }
-					sites={ this.props.sites }
+					selectedSiteSlug={ selectedSiteSlug }
 					plugins={ this.props.plugins }
 					selected={ this.getSelected() }
 					toggleBulkManagement={ this.toggleBulkManagement }

@@ -43,6 +43,18 @@ function getTranslateArg( logs, sampleLog, typeFilter ) {
 }
 
 module.exports = {
+	shouldComponentUpdateNotices: function( currentNotices, nextNotices ) {
+		if ( currentNotices.errors && currentNotices.errors.length !== nextNotices.errors.length ) {
+			return true;
+		}
+		if ( currentNotices.inProgress && currentNotices.inProgress.length !== nextNotices.inProgress.length ) {
+			return true;
+		}
+		if ( currentNotices.completed && currentNotices.completed.length !== nextNotices.completed.length ) {
+			return true;
+		}
+		return false;
+	},
 	getInitialState: function() {
 		return { notices: this.refreshPluginNotices() };
 	},
