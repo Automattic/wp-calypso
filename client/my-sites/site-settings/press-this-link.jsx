@@ -48,9 +48,9 @@ const pressThis = function( postURL ) {
 
 class PressThisLink extends React.Component {
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.object.isRequired,
-	}
+	};
 
 	/**
 	 * Legacy press-this pointing to wp-admin. This will be

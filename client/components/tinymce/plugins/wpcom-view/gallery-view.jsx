@@ -13,14 +13,14 @@ import GalleryShortcode from 'components/gallery-shortcode';
 class GalleryView extends Component {
 
 	static match( content ) {
-		const match = shortcodeUtils.next( 'gallery', content );
+		const nextMatch = shortcodeUtils.next( 'gallery', content );
 
-		if ( match ) {
+		if ( nextMatch ) {
 			return {
-				index: match.index,
-				content: match.content,
+				index: nextMatch.index,
+				content: nextMatch.content,
 				options: {
-					shortcode: match.shortcode
+					shortcode: nextMatch.shortcode
 				}
 			};
 		}
