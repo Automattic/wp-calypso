@@ -6,22 +6,31 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var DomainSuggestion = require( 'components/domains/domain-suggestion' );
+var DomainSuggestion = require( 'components/domains/domain-suggestion' ),
+	DomainSuggestionMixin = require( 'components/domains/mixins/domain-suggestion-mixin' );
 
 var DomainMappingSuggestion = React.createClass( {
-	render: function() {
-		var buttonLabel = this.props.buttonLabel || this.translate( 'Map it', {
-			context: 'Go to the flow to add a domain mapping'
-		} );
+	propTypes: {
+		cart: React.PropTypes.object.isRequired,
+		products: React.PropTypes.object.isRequired,
+		onButtonClick: React.PropTypes.func.isRequired,
+		withPlansOnly: React.PropTypes.bool.isRequired,
+		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] ).isRequired
+	},
+	mixins: [ DomainSuggestionMixin ],
 
+	render: function() {
+		const suggestion = { product_slug: this.props.products.domain_map.product_slug, cost: this.props.products.domain_map.cost_display };
+		const buttonContent = this.willBundle( this.props.withPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) ? this.translate( 'Upgrade' ) : this.translate( 'Map it' );
 		return (
-			<DomainSuggestion
-					price={ this.props.products.domain_map ? this.props.products.domain_map.cost_display : null }
+				<DomainSuggestion
+					priceRule={ this.getPriceRule( this.props.withPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) }
+					price={ this.props.products.domain_map && this.props.products.domain_map.cost_display }
 					extraClasses="is-visible domain-mapping-suggestion"
 					buttonClasses="map"
-					buttonLabel={ buttonLabel }
+					withPlansOnly={ this.props.withPlansOnly }
+					buttonContent={ buttonContent }
 					cart={ this.props.cart }
-					isAdded={ false }
 					onButtonClick={ this.props.onButtonClick }>
 				<div className="domain-mapping-suggestion__domain-description">
 					<h3>
