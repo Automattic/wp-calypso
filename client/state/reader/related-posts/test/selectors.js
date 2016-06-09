@@ -14,7 +14,7 @@ describe( 'selectors', () => {
 		it( 'should return true if no key present', () => {
 			expect( shouldFetchRelated( {
 				reader: {
-					related_posts: {
+					relatedPosts: {
 						queuedRequests: {
 
 						}
@@ -25,7 +25,7 @@ describe( 'selectors', () => {
 		it( 'should return false if key present', () => {
 			expect( shouldFetchRelated( {
 				reader: {
-					related_posts: {
+					relatedPosts: {
 						queuedRequests: {
 							'1-1': true
 						}
@@ -39,7 +39,7 @@ describe( 'selectors', () => {
 		it( 'should return the posts that are there', () => {
 			expect( relatedPostsForPost( {
 				reader: {
-					related_posts: {
+					relatedPosts: {
 						items: {
 							'1-1': [ 1, 2 ]
 						}
@@ -51,7 +51,7 @@ describe( 'selectors', () => {
 		it( 'should return undefined if nothing present', () => {
 			expect( relatedPostsForPost( {
 				reader: {
-					related_posts: {
+					relatedPosts: {
 						items: {
 							'1-2': [ 1, 2 ]
 						}

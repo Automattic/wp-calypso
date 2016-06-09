@@ -11,7 +11,7 @@ import feeds from './feeds/reducer';
 import sites from './sites/reducer';
 import start from './start/reducer';
 import posts from './posts/reducer';
-import related_posts from './related-posts/reducer';
+import relatedPosts from './related-posts/reducer';
 
 export default combineReducers( {
 	feeds,
@@ -19,5 +19,5 @@ export default combineReducers( {
 	sites,
 	start,
 	posts,
-	related_posts
+	relatedPosts
 } );
