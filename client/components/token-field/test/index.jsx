@@ -304,7 +304,7 @@ describe( 'TokenField', function() {
 				expect( tokenFieldNode.find( 'div' ).first().hasClass( 'is-active' ) ).to.equal( isActive );
 			}
 
-			document.activeElement = document.body;
+			document.activeElement.blur();
 			textInputNode.simulate( 'blur' );
 
 			// After blur, need to wait for TokenField#_blurTimeoutID
