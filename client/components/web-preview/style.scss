@@ -5,10 +5,22 @@
 		right: 0;
 	margin: 0 auto;
 	height: 0;
+	// height: 100%;
+	// width: 100%;
 	overflow: hidden;
-	z-index: z-index( 'root', '.web-preview' ); // Above TinyMCE dialogs
 	opacity: 0;
+	z-index: z-index( 'root', '.web-preview' ); // Above TinyMCE dialogs
 	transition: 0s 0.2s height, 0.2s opacity cubic-bezier( 0.25, 0.5, 0.5, 0.9 );
+}
+
+.is-previewing {
+	.masterbar {
+		transform: translateY( -100% );
+		transition: transform 0.15s ease-out;
+	}
+	.wp-content {
+		opacity: 0.6;
+	}
 }
 
 .web-preview__backdrop {
@@ -31,8 +43,10 @@
 		right: 0;
 		bottom: 0;
 	margin: 0 auto;
-	transform: scale( 0.96 );
-	transition: 0.1s transform cubic-bezier( 0.25, 0.5, 0.5, 0.9 );
+	// transform: scale( 0.96 );
+	// transition: 0.1s transform cubic-bezier( 0.25, 0.5, 0.5, 0.9 );
+	transition: transform 0.4s, visibility 0s 0.5s;
+	transform: translateY(20%);
 	background: lighten( $gray, 30% );
 
 	.is-computer & {
@@ -62,9 +76,11 @@
 	height: 100%;
 	opacity: 1;
 	transition: 0s height, 0.2s opacity cubic-bezier( 0.25, 0.5, 0.5, 0.9 );
+	visibility: visible;
 
 	.web-preview__content {
-		transform: scale( 1 );
+		transform: translateY(0%);
+		transition: transform 0.5s;
 	}
 }
 
