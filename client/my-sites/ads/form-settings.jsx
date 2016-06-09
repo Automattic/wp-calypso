@@ -142,7 +142,7 @@ const AdsFormSettings = React.createClass( {
 			optimized_ads: false,
 			paypal: '',
 			show_to_logged_in: 'yes',
-			state: '',
+			state: 'AL',
 			taxid_last4: '',
 			tos: 'signed',
 			us_resident: 'no',
