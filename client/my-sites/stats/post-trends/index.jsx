@@ -17,9 +17,10 @@ import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
-	isRequestingSiteStatsForQuery
+	isRequestingSiteStatsForQuery,
+	getSiteStatsPostStreakData,
+	getSiteStatsMaxPostsByDay
 } from 'state/stats/lists/selectors';
-import { getStatsStreakQuery } from 'state/stats/lists/utils';
 
 const PostTrends = React.createClass( {
 
@@ -116,7 +117,14 @@ const PostTrends = React.createClass( {
 
 		for ( i = 11; i >= 0; i-- ) {
 			startDate = i18n.moment().subtract( i, 'months' ).startOf( 'month' );
-			months.push( <Month key={ startDate.format( 'YYYYMM' ) } startDate={ startDate } /> );
+			months.push(
+				<Month
+					key={ startDate.format( 'YYYYMM' ) }
+					startDate={ startDate }
+					streakData={ this.props.streakData }
+					max={ this.props.max }
+				/>
+			);
 		}
 
 		return months;
@@ -177,10 +185,16 @@ const PostTrends = React.createClass( {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const query = getStatsStreakQuery();
+	const query = {
+		startDate: i18n.moment().subtract( 1, 'year' ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
+		endDate: i18n.moment().endOf( 'month' ).format( 'YYYY-MM-DD' ),
+		max: 3000
+	};
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, 'statsStreak', query ),
+		streakData: getSiteStatsPostStreakData( state, siteId, query ),
+		max: getSiteStatsMaxPostsByDay( state, siteId, query ),
 		query,
 		siteId
 	};
