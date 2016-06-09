@@ -79,14 +79,31 @@ module.exports = React.createClass( {
 		} );
 	},
 
+	isPurchasingTheme: function() {
+		return this.props.queryObject && this.props.queryObject.premium;
+	},
+
+	getThemeSlug: function() {
+		return this.props.queryObject ? this.props.queryObject.theme : undefined;
+	},
+
 	getThemeArgs: function() {
-		const isPurchasingTheme = this.props.queryObject && this.props.queryObject.premium;
-		const themeSlug = this.props.queryObject ? this.props.queryObject.theme : undefined;
-		const themeItem = isPurchasingTheme
+		const themeSlug = this.getThemeSlug(),
+			themeSlugWithRepo = this.getThemeSlugWithRepo(),
+			themeItem = this.isPurchasingTheme()
 			? cartItems.themeItem( themeSlug, 'signup-with-theme' )
 			: undefined;
 
-		return { themeSlug, themeItem };
+		return { themeSlug, themeSlugWithRepo, themeItem };
+	},
+
+	getThemeSlugWithRepo: function() {
+		const themeSlug = this.getThemeSlug();
+		if ( ! themeSlug ) {
+			return undefined;
+		}
+		// Only allow free themes for now; a valid theme value here (free or premium) will cause a theme_switch by Headstart.
+		return this.isPurchasingTheme() ? undefined : 'pub/' + themeSlug;
 	},
 
 	submitWithDomain: function( googleAppsCartItem ) {
