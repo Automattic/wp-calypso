@@ -27,6 +27,14 @@ export function fetchPreferences() {
 	};
 }
 
+/**
+ * Create action thunk for updating preference value and saving all preferences in API
+ * Returned thunk uses getState to grab all preferences keys/values because the endpoint
+ * treats all values as one serialized value.
+ * More about this behaviour in state/preferences/README.md
+ * @param key
+ * @param value
+ */
 export const setPreference = ( key, value ) => ( dispatch, getState ) => {
 	dispatch( {
 		type: PREFERENCES_SET,
