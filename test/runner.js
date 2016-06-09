@@ -2,7 +2,7 @@
 'use strict'; // eslint-disable-line strict
 var files;
 
-require( 'babel/register' );
+require( 'babel-register' );
 
 /**
  * External dependencies

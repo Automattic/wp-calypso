@@ -3,7 +3,7 @@
  * $ NODE_ENV=test NODE_PATH=client:test node_modules/.bin/mocha test/run-mocha.js
  */
 
-require( 'babel/register' );
+require( 'babel-register' );
 const boot = require( './boot-test' );
 before( boot.before );
 after( boot.after );

@@ -60,7 +60,7 @@ module.exports = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs\/search-index)/,
-				loader: 'babel-loader?optional[]=runtime'
+				loader: 'babel-loader'
 			},
 			{
 				test: /\.json$/,
