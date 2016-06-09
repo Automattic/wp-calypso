@@ -103,6 +103,64 @@ function get( tour = 'main' ) {
 				linkUrl: 'https://learn.wordpress.com',
 			},
 		},
+		'reader-intro': {
+			version: '20160609',
+			validFrom: '20170101',
+			validUntil: '20180101',
+			preconditions: [
+				{
+					name: 'emailVerified',
+				},
+				{
+					name: 'hoursSinceSignup',
+					minHours: 0,
+					maxHours: 720,
+				},
+				{
+					name: 'seenTour',
+					tourName: 'reader-intro',
+					negate: true,
+				},
+				{
+					name: 'pathMatches',
+					targetSlug: '/',
+				}
+			],
+			init: {
+				text: 'You are currently looking at the Reader. Do you want to learn more about what it is?',
+				type: 'FirstStep',
+				placement: 'right',
+				next: 'to-discover',
+			},
+			'to-discover': {
+				text: 'This is Discover. It is a daily selection of the best content published on WordPress, collected for you by humans who love to read.',
+				next: 'see-discover',
+				target: 'discover',
+				arrow: 'left-top',
+				type: 'ActionStep',
+				iconText: 'Discover',
+				placement: 'beside',
+			},
+			'see-discover': {
+				text: 'Take a look around. We have lots of great posts here.',
+				next: 'follow-discover',
+			},
+			'follow-discover': {
+				text: 'Discover is a special blog by us. Like every blog, you can follow it. Do that now, you can always unfollow later.',
+				showInContext: () => ! ( document.querySelector( '.follow-button.is-following' ) ),
+				target: 'follow-button',
+				arrow: 'top-right',
+				type: 'ActionStep',
+				iconText: 'Follow',
+				placement: 'beside',
+				next: 'finish',
+			},
+			finish: {
+				text: 'You are done.',
+				placement: 'center',
+				type: 'FinishStep',
+			},
+		},
 		test: {
 			version: '20160516',
 			init: {
