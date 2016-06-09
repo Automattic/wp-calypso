@@ -28,21 +28,21 @@ export function fetchPreferences() {
 }
 
 /**
- * Create action thunk for updating preference value and saving all preferences in API
- * Returned thunk uses getState to grab all preferences keys/values because the endpoint
- * treats all values as one serialized value.
- * More about this behaviour in state/preferences/README.md
+ * Create action thunk for updating preference value and saving it in API
  * @param key
  * @param value
  */
-export const setPreference = ( key, value ) => ( dispatch, getState ) => {
+export const setPreference = ( key, value ) => dispatch => {
 	dispatch( {
 		type: PREFERENCES_SET,
 		key,
 		value
 	} );
-	const settings = {};
-	settings[ USER_SETTING_KEY ] = getState().preferences.values;
+	const settings = { 
+		[ USER_SETTING_KEY ]: {
+			[ key ]: value
+		}
+	};
 	return wpcom.me().settings().update( JSON.stringify( settings ) )
 	.then( ( data ) => {
 		dispatch( {

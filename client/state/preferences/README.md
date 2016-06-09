@@ -31,11 +31,6 @@ To add a new preference key, you only need to add a key and defaut value in `DEF
 
 # How does it work?
 
-## Endpoint structure
-
-This subtree uses `/me/settings` endpoint. Because all Calypso preferences are stored in 1 key, they are serialized and saved / read upon 1 request. That requires saving them all at once.
-
-
 ### Tree shape.
 
 - **fetching** (boolean) - are we currently fetching data?
