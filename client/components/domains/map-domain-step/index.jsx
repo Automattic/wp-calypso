@@ -17,7 +17,8 @@ var cartItems = require( 'lib/cart-values' ).cartItems,
 	analyticsMixin = require( 'lib/mixins/analytics' ),
 	abtest = require( 'lib/abtest' ).abtest,
 	upgradesActions = require( 'lib/upgrades/actions' ),
-	{ getCurrentUser } = require( 'state/current-user/selectors' );
+	{ getCurrentUser } = require( 'state/current-user/selectors' ),
+	support = require( 'lib/url/support' );
 
 var MapDomainStep = React.createClass( {
 	mixins: [ analyticsMixin( 'mapDomain' ) ],
@@ -236,9 +237,22 @@ var MapDomainStep = React.createClass( {
 				break;
 
 			case 'blacklisted_domain':
-				message = this.translate( 'Sorry but %(domain)s cannot be mapped to a WordPress.com blog.', {
-					args: { domain: domain }
-				} );
+				if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
+					message = this.translate(
+						'Due to {{a1}}trademark policy{{/a1}}, we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. Please {{a2}}contact support{{/a2}} if you have any questions.',
+						{
+							components: {
+								strong: <strong />,
+								a1: <a target="_blank" href="http://wordpressfoundation.org/trademark-policy/"/>,
+								a2: <a href={ support.CALYPSO_CONTACT }/>
+							}
+						}
+					);
+				} else {
+					message = this.translate( 'Sorry but %(domain)s cannot be mapped to a WordPress.com blog.', {
+						args: { domain: domain }
+					} );
+				}
 				break;
 
 			case 'forbidden_domain':
