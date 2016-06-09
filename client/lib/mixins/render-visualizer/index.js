@@ -83,7 +83,7 @@ var RenderVisualizerMixin = {
 
 		resetRenderLog: function() {
 			this.renderLog = [];
-			this.renderCount = 1;
+			this.renderCountLog = 1;
 		},
 
 		applyCssStyling: function( node, styles ) {
@@ -161,7 +161,7 @@ var RenderVisualizerMixin = {
 			var logFragment = document.createDocumentFragment();
 
 			if ( this.renderLogRenderCount ) {
-				this.renderLogRenderCount.innerText = ( this.renderCount - 1 );
+				this.renderLogRenderCount.innerText = ( this.renderCountLog - 1 );
 			}
 
 			if ( this.renderLogDetail ) {
@@ -183,8 +183,8 @@ var RenderVisualizerMixin = {
 		},
 
 		addToRenderLog: function( message ) {
-			this.renderLog.unshift( this.renderCount + ') ' + message );
-			this.renderCount++;
+			this.renderLog.unshift( this.renderCountLog + ') ' + message );
+			this.renderCountLog++;
 
 			this.renderLog.splice( this.MAX_LOG_LENGTH, 1 );
 		},
