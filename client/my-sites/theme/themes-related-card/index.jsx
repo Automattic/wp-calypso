@@ -51,12 +51,6 @@ const ThemesRelatedCard = React.createClass( {
 			screenshot: `https://i1.wp.com/s0.wp.com/wp-content/themes/pub/${ slug }/screenshot.png`
 		} ) );
 
-		const relatedText = i18n.translate( 'See all {{a}}BUSINESS{{/a}} themes.', {
-			components: {
-				a: <a href="/design?s=business"/>
-			}
-		} );
-
 		return (
 			<div>
 				<SectionHeader label={ i18n.translate( 'You might also like' ) } />
@@ -71,9 +65,6 @@ const ThemesRelatedCard = React.createClass( {
 						</li>
 					) ) }
 				</ul>
-				<div className="themes__sheet-related-themes-link">
-					<p>{ relatedText }</p>
-				</div>
 			</div>
 		);
 	}
