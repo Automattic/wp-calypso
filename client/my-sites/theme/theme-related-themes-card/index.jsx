@@ -13,14 +13,14 @@ import i18n from 'lib/mixins/i18n';
 import SectionHeader from 'components/section-header';
 import { getDetailsUrl } from 'my-sites/themes/helpers';
 
-var ThemeRelatedThemesCard = React.createClass( {
+const ThemeRelatedThemesCard = React.createClass( {
 
 	propTypes: {
 		currentTheme: React.PropTypes.string.isRequired
 	},
 
 	getRelatedThemes() {
-		var themes = [
+		const themes = [
 			{ name: 'Twenty Sixteen', slug: 'twentysixteen' },
 			{ name: 'Rowling', slug: 'rowling' },
 			{ name: 'Hemingway Rewritten', slug: 'hemingway-rewritten' },
@@ -33,10 +33,10 @@ var ThemeRelatedThemesCard = React.createClass( {
 			{ name: 'Harmonic', slug: 'harmonic' },
 		];
 
-		var selectedThemes = [];
+		const selectedThemes = [];
 
-		while( selectedThemes.length < 2 ) {
-			let randomThemeIndex = Math.floor(Math.random() * themes.length );
+		while ( selectedThemes.length < 2 ) {
+			let randomThemeIndex = Math.floor( Math.random() * themes.length );
 			let theme = themes.splice( randomThemeIndex, 1 )[0];
 			// Check if it is not current theme, if it is than discard
 			if ( this.props.currentTheme === theme.slug ) {
@@ -50,12 +50,12 @@ var ThemeRelatedThemesCard = React.createClass( {
 	},
 
 	render() {
-		var themes = this.getRelatedThemes().map( theme => ( {
-				id: theme.slug,
-				screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png'
+		const themes = this.getRelatedThemes().map( theme => ( {
+			id: theme.slug,
+			screenshot: `https://i1.wp.com/s0.wp.com/wp-content/themes/pub/${ theme.slug }/screenshot.png`
 		} ) );
 
-		const related_text = i18n.translate( 'See all {{a}}BUSINESS{{/a}} themes.', {
+		const relatedText = i18n.translate( 'See all {{a}}BUSINESS{{/a}} themes.', {
 			components: {
 				a: <a href="/design?s=business"/>
 			}
@@ -76,11 +76,11 @@ var ThemeRelatedThemesCard = React.createClass( {
 					) ) }
 				</ul>
 				<div className="themes__sheet-related-themes-link">
-					<p>{ related_text }</p>
+					<p>{ relatedText }</p>
 				</div>
 			</div>
 		);
 	}
 } );
 
-module.exports = ThemeRelatedThemesCard;
+export default ThemeRelatedThemesCard;
