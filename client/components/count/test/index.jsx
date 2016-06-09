@@ -5,17 +5,11 @@ var expect = require( 'chai' ).expect,
 	sinon = require( 'sinon' ),
 	useMockery = require( 'test/helpers/use-mockery' );
 
-/**
- * Internal dependencies
- */
-import useI18n from 'test/helpers/use-i18n';
-
 describe( 'Count', function() {
 	var React, ReactInjection, TestUtils, Count, renderer;
 
 	// really only using Mockery for the clean module cache
 	useMockery();
-	useI18n();
 
 	before( function() {
 		React = require( 'react' );

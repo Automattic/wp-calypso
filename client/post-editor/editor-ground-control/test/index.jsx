@@ -11,7 +11,6 @@ import mockery from 'mockery';
  * Internal dependencies
  */
 import EmptyComponent from 'test/helpers/react/empty-component';
-import useI18n from 'test/helpers/use-i18n';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
@@ -29,7 +28,6 @@ describe( 'EditorGroundControl', function() {
 	let shallow, i18n, EditorGroundControl;
 
 	useMockery();
-	useI18n();
 	useFakeDom();
 
 	before( function() {
