@@ -294,7 +294,7 @@ const PostEditor = React.createClass( {
 		}
 		return (
 			<div className="post-editor">
-				<QueryPreferences/>
+				<QueryPreferences />
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
 				<div className="post-editor__inner">
