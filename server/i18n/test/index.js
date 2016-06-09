@@ -138,8 +138,8 @@ describe( 'index', function() {
 		assert.notEqual( -1, output.indexOf( '_n( \'single test2\', \'plural test2\', 1 ),' ) );
 	} );
 
-	it( 'should include default translations for momentjs object', function() {
-		assert.notEqual( -1, output.indexOf( '// Date/time strings for localisation' ) );
+	it( 'should include default translations for number formatting strings', function() {
+		assert.notEqual( -1, output.indexOf( '// Number formatting strings' ) );
 	} );
 
 	it( 'should close the php array', function() {
