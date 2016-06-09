@@ -211,7 +211,6 @@ const PostEditor = React.createClass( {
 		PostEditStore.on( 'change', this.onEditedPostChange );
 		this.debouncedSaveRawContent = debounce( this.saveRawContent, 200 );
 		this.debouncedAutosave = debounce( throttle( this.autosave, 20000 ), 3000 );
-		this.recordedDefaultEditorModeFromPreferences = false;
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 	},
