@@ -323,7 +323,7 @@ instead of returning a plain object, we create an Immutable.js instance:
 ```javascript
 export const items = createReducer( defaultState, {
 	[THEMES_RECEIVE]: ( state, action ) => // ...
-	[SERIALIZE]: state => fromJS( state )
+	[DESERIALIZE]: state => fromJS( state )
 } );
 ```
 If your reducer state is already a plain object, you may choose to omit `SERIALIZE` and `DESERIALIZE` handlers, or 
