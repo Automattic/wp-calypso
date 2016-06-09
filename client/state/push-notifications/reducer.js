@@ -41,6 +41,7 @@ function settings( state = {}, action ) {
 				// @TODO enforce TTL on dismissedNotice
 			} );
 		}
+
 		case PUSH_NOTIFICATIONS_API_READY: {
 			debug( 'API is ready' );
 			return Object.assign( {}, state, {

@@ -9,28 +9,6 @@ export const isShowingUnblockInstructions = ( state ) => !! state.pushNotificati
 export const getSavedSubscription = ( state ) => state.pushNotifications.settings.subscription;
 export const getSavedWPCOMSubscription = ( state ) => state.pushNotifications.settings.wpcomSubscription;
 
-export function isPushNotificationsSupported() {
-	return (
-		isServiceWorkerSupported() &&
-		'showNotification' in window.ServiceWorkerRegistration.prototype &&
-		'PushManager' in window
-	);
-}
-
-export function isServiceWorkerSupported() {
-	return (
-		'serviceWorker' in window.navigator &&
-		'ServiceWorkerRegistration' in window
-	);
-}
-
-export function isPushNotificationsDenied() {
-	return (
-		( ! ( 'Notification' in window ) ) ||
-		'denied' === window.Notification.permission
-	);
-}
-
 export function getDeviceId( state ) {
 	const subscription = getSavedWPCOMSubscription( state );
 	if ( ! subscription ) {
@@ -48,6 +26,10 @@ export function getLastUpdated( state ) {
 }
 
 export function getStatus( state ) {
+	if ( ! isApiReady( state ) ) {
+		return 'unknown';
+	}
+
 	if ( isBlocked( state ) ) {
 		return 'denied';
 	}

@@ -49,7 +49,7 @@ function setup() {
 
 	if ( config.isEnabled( 'push-notifications' ) ) {
 		// service-worker needs to be served from root to avoid scope issues
-		app.use( '/service-worker.js', express.static( path.resolve( __dirname, '..', '..', 'client', 'service-worker.js' ) ) );
+		app.use( '/service-worker.js', express.static( path.resolve( __dirname, '..', '..', 'client', 'lib', 'service-worker', 'service-worker.js' ) ) );
 	}
 
 	// serve files when not in production so that the source maps work correctly

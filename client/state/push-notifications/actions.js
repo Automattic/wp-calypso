@@ -23,15 +23,21 @@ import {
 } from 'state/action-types';
 
 import {
+	isApiReady,
 	getDeviceId,
 	getLastUpdated,
 	getSavedSubscription,
 	isBlocked,
 	isEnabled,
+} from './selectors';
+import {
 	isPushNotificationsDenied,
 	isPushNotificationsSupported,
-} from './selectors';
-
+} from './utils';
+import {
+	isServiceWorkerSupported,
+	registerServerWorker,
+} from 'lib/service-worker';
 const debug = debugFactory( 'calypso:push-notifications' );
 const DAYS_BEFORE_FORCING_REGISTRATION_REFRESH = 15;
 
@@ -84,9 +90,13 @@ export function apiReady() {
 
 export function fetchAndLoadServiceWorker() {
 	return dispatch => {
+		if ( ! isServiceWorkerSupported() ) {
+			debug( 'Service workers are not supported' );
+			return;
+		}
 		debug( 'Registering service worker' );
 
-		window.navigator.serviceWorker.register( '/service-worker.js' )
+		registerServerWorker()
 			.then( serviceWorkerRegistration => dispatch( apiReady( serviceWorkerRegistration ) ) )
 			.catch( err => {
 				debug( 'Error loading service worker!', err );
@@ -207,7 +217,11 @@ export function sendSubscriptionToWPCOM() {
 }
 
 export function activateSubscription() {
-	return dispatch => {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		if ( isBlocked( state ) || ! isApiReady( state ) ) {
+			return;
+		}
 		window.navigator.serviceWorker.ready
 			.then( serviceWorkerRegistration => {
 				serviceWorkerRegistration.pushManager.subscribe( { userVisibleOnly: true } )
