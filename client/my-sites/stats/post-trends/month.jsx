@@ -14,7 +14,9 @@ module.exports = React.createClass( {
 	displayName: 'PostTrendsMonth',
 
 	propTypes: {
-		startDate: React.PropTypes.object.isRequired
+		startDate: React.PropTypes.object.isRequired,
+		streakData: React.PropTypes.object,
+		max: React.PropTypes.number
 	},
 
 	getWeekComponents: function() {
@@ -31,7 +33,15 @@ module.exports = React.createClass( {
 		}
 
 		do {
-			weeks.push( <Week key={ weekStart.format( 'YYYYMMDD' ) } startDate={ i18n.moment( weekStart ) } month={ monthStart } /> );
+			weeks.push(
+				<Week
+					key={ weekStart.format( 'YYYYMMDD' ) }
+					startDate={ i18n.moment( weekStart ) }
+					month={ monthStart }
+					streakData={ this.props.streakData }
+					max={ this.props.max }
+				/>
+			);
 			weekStart.add( 1, 'week' );
 		} while ( weekStart.isBefore( monthEnd, 'day' ) || weekStart.isSame( monthEnd, 'day' ) );
 
