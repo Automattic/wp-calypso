@@ -18,11 +18,11 @@ NODE_BIN := $(THIS_DIR)/node_modules/.bin
 NODE ?= node
 NPM ?= npm
 BUNDLER ?= $(BIN)/bundler
+I18N_CALYPSO ?= $(NODE_BIN)/i18n-calypso
 SASS ?= $(NODE_BIN)/node-sass --include-path 'client'
 RTLCSS ?= $(NODE_BIN)/rtlcss
 AUTOPREFIXER ?= $(NODE_BIN)/postcss -r --use autoprefixer --autoprefixer.browsers "last 2 versions, > 1%, Safari >= 8, iOS >= 8, Firefox ESR, Opera 12.1"
 RECORD_ENV ?= $(BIN)/record-env
-GET_I18N ?= $(BIN)/get-i18n
 LIST_ASSETS ?= $(BIN)/list-assets
 ALL_DEVDOCS_JS ?= server/devdocs/bin/generate-devdocs-index
 COMPONENTS_USAGE_STATS_JS ?= server/devdocs/bin/generate-components-usage-stats.js
@@ -175,7 +175,7 @@ distclean:
 # create list of translations, saved as `./calypso-strings.php`
 translate: node_modules $(CLIENT_CONFIG_FILE)
 	@CALYPSO_ENV=stage $(BUNDLER)
-	@CALYPSO_ENV=stage $(LIST_ASSETS) | xargs $(GET_I18N) ./calypso-strings.php calypso_i18n_strings
+	@CALYPSO_ENV=stage $(LIST_ASSETS) | xargs $(I18N_CALYPSO) --format php --output-file ./calypso-strings.php --array-name calypso_i18n_strings
 
 # install all git hooks
 githooks: githooks-commit githooks-push
