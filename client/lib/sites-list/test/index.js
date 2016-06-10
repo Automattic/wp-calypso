@@ -39,7 +39,7 @@ describe( 'SitesList', () => {
 
 		it( 'should create Site objects', () => {
 			forEach( initializedSites, site => {
-				assert.instanceOf( site, Site )
+				assert.instanceOf( site, Site );
 			} );
 		} );
 
@@ -84,6 +84,16 @@ describe( 'SitesList', () => {
 			forEach( updatedSite, ( updatedValue, prop ) => {
 				assert.deepEqual( updatedValue, site[ prop ] );
 			} );
+		} );
+
+		it( 'should not trigger change when sites attributes didn\'t change', () => {
+			const changeCallback = sinon.spy();
+
+			sitesList.once( 'change', changeCallback );
+
+			sitesList.update( cloneDeep( data.original ) );
+
+			assert.isFalse( changeCallback.called );
 		} );
 	} );
 

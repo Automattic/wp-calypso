@@ -13,7 +13,6 @@ export const sitesSchema = {
 				jetpack: { type: 'boolean' },
 				post_count: { type: 'number' },
 				subscribers_count: { type: 'number' },
-				slug: { type: 'string' },
 				lang: { type: 'string' },
 				icon: {
 					type: 'object',
@@ -37,8 +36,6 @@ export const sitesSchema = {
 				meta: { type: 'object' },
 				user_can_manager: { type: 'boolean' },
 				is_vip: { type: 'boolean' },
-				is_previewable: { type: 'boolean' },
-				is_customizable: { type: 'boolean' },
 				is_multisite: { type: 'boolean' },
 				capabilities: {
 					type: 'object',
