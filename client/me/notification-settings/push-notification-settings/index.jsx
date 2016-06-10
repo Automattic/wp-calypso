@@ -76,7 +76,7 @@ const PushNotificationSettings = React.createClass( {
 			buttonClass,
 			buttonDisabled,
 			buttonText,
-			deniedText = null,
+			deniedText,
 			stateClass,
 			stateText;
 

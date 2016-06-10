@@ -17,7 +17,6 @@ import {
 	PUSH_NOTIFICATIONS_DISMISS_NOTICE,
 	PUSH_NOTIFICATIONS_MUST_PROMPT,
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
-	PUSH_NOTIFICATIONS_RECEIVE_SUBSCRIPTION,
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
 } from 'state/action-types';
@@ -26,7 +25,6 @@ import {
 	isApiReady,
 	getDeviceId,
 	getLastUpdated,
-	getSavedSubscription,
 	isBlocked,
 	isEnabled,
 } from './selectors';
@@ -112,29 +110,19 @@ export function deactivateSubscription() {
 			.then( ( serviceWorkerRegistration ) => {
 				serviceWorkerRegistration.pushManager.getSubscription()
 					.then( pushSubscription => {
-						if ( ! pushSubscription ) {
-							debug( 'Deactivated subscription' );
-							dispatch( receiveSubscription( null ) );
+						dispatch( unregisterDevice() );
+
+						if ( ! ( pushSubscription && pushSubscription.unsubscribe ) ) {
+							debug( 'Error getting push subscription to deactivate' );
 							return;
 						}
 
-						dispatch( unregisterDevice() );
-
 						pushSubscription.unsubscribe()
-							.then( () => {
-								dispatch( receiveSubscription( null ) );
-							} )
-							.catch( err => {
-								debug( 'Error while unsubscribing', err );
-							} )
+							.then( () => debug( 'Push subscription unsubscribed' ) )
+							.catch( err => debug( 'Error while unsubscribing', err ) )
 						;
 					} )
-					.catch( err => {
-						debug( 'Error getting subscription to deactivate', err );
-
-						// @TODO is this correct behavior?
-						dispatch( receiveSubscription( null ) );
-					} )
+					.catch( err => debug( 'Error getting subscription to deactivate', err ) )
 				;
 			} );
 	};
@@ -169,8 +157,7 @@ export function fetchPushManagerSubscription() {
 			.then( ( serviceWorkerRegistration ) => {
 				serviceWorkerRegistration.pushManager.getSubscription()
 					.then( pushSubscription => {
-						dispatch( receiveSubscription( pushSubscription ) );
-						dispatch( sendSubscriptionToWPCOM() );
+						dispatch( sendSubscriptionToWPCOM( pushSubscription ) );
 					} )
 					.catch( err => debug( 'Error getting subscription', err ) )
 				;
@@ -180,8 +167,12 @@ export function fetchPushManagerSubscription() {
 	};
 }
 
-export function sendSubscriptionToWPCOM() {
+export function sendSubscriptionToWPCOM( pushSubscription ) {
 	return ( dispatch, getState ) => {
+		if ( ! pushSubscription ) {
+			debug( 'No subscription to send to WPCOM' );
+			return;
+		}
 		const state = getState();
 		const lastUpdated = getLastUpdated( state );
 		debug( 'Subscription last updated: ' + lastUpdated );
@@ -194,19 +185,12 @@ export function sendSubscriptionToWPCOM() {
 				debug( 'Subscription did not need updating.', age );
 				return;
 			}
+			debug( 'Subscription needed updating.', age );
 		}
 
-		debug( 'Subscription needed updating.', age );
+		debug( 'Sending subscription to WPCOM', pushSubscription );
 
-		const sub = getSavedSubscription( state );
-		if ( ! sub ) {
-			debug( 'No subscription to send to WPCOM' );
-			// @TODO dispatch something :)
-			return;
-		}
-		debug( 'Sending subscription to WPCOM', sub );
-
-		wpcom.undocumented().registerDevice( JSON.stringify( sub ), 'browser', 'Browser' )
+		wpcom.undocumented().registerDevice( JSON.stringify( pushSubscription ), 'browser', 'Browser' )
 			.then( data => dispatch( {
 				type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 				data
@@ -225,17 +209,14 @@ export function activateSubscription() {
 		window.navigator.serviceWorker.ready
 			.then( serviceWorkerRegistration => {
 				serviceWorkerRegistration.pushManager.subscribe( { userVisibleOnly: true } )
-					.then( subscription => {
-						dispatch( receiveSubscription( subscription ) );
-						dispatch( checkPermissionsState() );
-					} )
+					.then( () => dispatch( checkPermissionsState() ) )
 					.catch( err => {
 						debug( 'Error receiving subscription', err );
 						dispatch( block() );
 					} )
 				;
 			} )
-			.catch( err => debug( 'Error activating subscription', err )	)
+			.catch( err => debug( 'Error activating subscription', err ) )
 		;
 	};
 }
@@ -306,13 +287,6 @@ export function toggleEnabled() {
 		} else {
 			dispatch( deactivateSubscription() );
 		}
-	};
-}
-
-export function receiveSubscription( subscription ) {
-	return {
-		type: PUSH_NOTIFICATIONS_RECEIVE_SUBSCRIPTION,
-		subscription
 	};
 }
 

@@ -17,7 +17,6 @@ import {
 	PUSH_NOTIFICATIONS_BLOCK,
 	PUSH_NOTIFICATIONS_DISMISS_NOTICE,
 	PUSH_NOTIFICATIONS_MUST_PROMPT,
-	PUSH_NOTIFICATIONS_RECEIVE_SUBSCRIPTION,
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_TOGGLE_ENABLED,
@@ -37,13 +36,11 @@ function system( state = {}, action ) {
 		// System state is not persisted
 		case DESERIALIZE: {
 			const newState = omit( state, UNPERSISTED_SYSTEM_NODES );
-			debug( 'DESERIALIZE system', newState );
 			return omit( newState, UNPERSISTED_SYSTEM_NODES );
 		}
 
 		case SERIALIZE: {
 			const newState = omit( state, UNPERSISTED_SYSTEM_NODES );
-			debug( 'SERIALIZE system', newState );
 			return newState;
 		}
 
@@ -83,10 +80,8 @@ function system( state = {}, action ) {
 			if ( ! data.success ) {
 				debug( 'Couldn\'t unregister device', data );
 			}
-			debug( 'Deleted subscription', data );
-			return Object.assign( {}, state, {
-				wpcomSubscription: null
-			} );
+			debug( 'Deleted WPCOM subscription', data );
+			return omit( state, [ 'wpcomSubscription' ] );
 		}
 
 		case PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE: {
@@ -110,15 +105,6 @@ function system( state = {}, action ) {
 				} )
 			} );
 		}
-
-		case PUSH_NOTIFICATIONS_RECEIVE_SUBSCRIPTION: {
-			const subscription = action.subscription;
-			debug( 'receive subscription', subscription );
-
-			return Object.assign( {}, state, {
-				subscription,
-			} );
-		}
 	}
 
 	return state;
@@ -133,13 +119,11 @@ function settings( state = {}, action ) {
 	switch ( action.type ) {
 		case DESERIALIZE: {
 			const newState = omit( state, UNPERSISTED_SETTINGS_NODES );
-			debug( 'DESERIALIZE settings', newState );
 			return newState;
 		}
 
 		case SERIALIZE: {
 			const newState = omit( state, UNPERSISTED_SETTINGS_NODES );
-			debug( 'SERIALIZE settings', newState );
 			return newState;
 		}
 
