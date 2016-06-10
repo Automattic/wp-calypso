@@ -112,15 +112,15 @@ export default React.createClass( {
 
 		return (
 			<div className="section-import">
-				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
-				<CompactCard>
-					<header>
-						<h1 className="importer__section-title">{ this.translate( 'Import Another Site' ) }</h1>
-						<p className="importer__section-description">{ description }</p>
-					</header>
-				</CompactCard>
-
 				<EmailVerificationGate>
+					<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
+					<CompactCard>
+						<header>
+							<h1 className="importer__section-title">{ this.translate( 'Import Another Site' ) }</h1>
+							<p className="importer__section-description">{ description }</p>
+						</header>
+					</CompactCard>
+
 					{ this.getImports( WORDPRESS ).map( ( importerStatus, key ) =>
 						<WordPressImporter { ...{ key, site, importerStatus } } /> ) }
 

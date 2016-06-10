@@ -313,8 +313,8 @@ const InvitePeople = React.createClass( {
 				<HeaderCake isCompact onClick={ this.goBack }>
 					{ this.translate( 'Invite People' ) }
 				</HeaderCake>
-				<EmailVerificationGate>
-					<Card>
+				<Card>
+					<EmailVerificationGate>
 						<form onSubmit={ this.submitForm } >
 							<FormFieldset>
 								<FormLabel>{ this.translate( 'Usernames or Emails' ) }</FormLabel>
@@ -376,8 +376,8 @@ const InvitePeople = React.createClass( {
 								) }
 							</FormButton>
 						</form>
-					</Card>
-				</EmailVerificationGate>
+					</EmailVerificationGate>
+				</Card>
 			</Main>
 		);
 	}
