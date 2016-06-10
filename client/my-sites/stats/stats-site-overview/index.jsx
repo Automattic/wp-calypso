@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import route from 'lib/route';
 import Card from 'components/card';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
@@ -17,7 +16,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsForQuery
 } from 'state/stats/lists/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 const StatsSiteOverview = React.createClass( {
 	displayName: 'StatsSiteOverview',
@@ -39,9 +38,8 @@ const StatsSiteOverview = React.createClass( {
 	},
 
 	render() {
-		const { siteId, site, path, summaryData, query, title } = this.props;
+		const { siteId, siteSlug, path, summaryData, query, title } = this.props;
 		const { views, visitors, likes, comments } = summaryData;
-		const siteSlug = site ? site.slug : null;
 		const siteStatsPath = [ path, siteSlug ].join( '/' );
 		let headerPath = siteStatsPath;
 
@@ -92,7 +90,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, 'statsSummary', query ),
 		summaryData: getSiteStatsForQuery( state, siteId, 'statsSummary', query ) || {},
-		site: getSite( state, siteId ),
+		siteSlug: getSiteSlug( state, siteId ),
 		query
 	};
 } )( StatsSiteOverview );
