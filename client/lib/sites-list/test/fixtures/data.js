@@ -8,6 +8,7 @@ export const original = [
 		'URL': 'https://testonesite2014.wordpress.com',
 		'jetpack': false,
 		'post_count': 1,
+		'slug': 'testonesite2014.wordpress.com',
 		'subscribers_count': 1,
 		'lang': 'en',
 		'logo': {
@@ -145,7 +146,8 @@ export const original = [
 				'xmlrpc': 'https://gcbu.wordpress.com/xmlrpc.php'
 			}
 		},
-		'user_can_manage': true
+		'user_can_manage': true,
+		'is_previewable': true
 	},
 	{
 		'ID': 54117,
@@ -187,6 +189,7 @@ export const original = [
 				'quote': 'Quote',
 				'image': 'Image'
 			},
+			'default_post_format': false,
 			'default_likes_enabled': false,
 			'default_sharing_status': true,
 			'default_comment_status': false,
