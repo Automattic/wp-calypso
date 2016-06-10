@@ -10,6 +10,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import PlanFeaturesHeader from '../header';
 import PlanFeaturesItem from '../item';
 import PlanFeaturesItemList from '../list';
+import PlanFeaturesFooter from '../footer';
 import { plansList, PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 
 export default React.createClass( {
@@ -57,6 +58,11 @@ export default React.createClass( {
 						<PlanFeaturesItem>3GB of storage</PlanFeaturesItem>
 						<PlanFeaturesItem>Community Support</PlanFeaturesItem>
 					</PlanFeaturesItemList>
+					<PlanFeaturesFooter
+						current
+						description={ 'Get a free blog and be on your way to publishing your first post in less' +
+							' than five minutes.' }
+					/>
 					<br />
 				</div>
 				<div>
@@ -77,6 +83,10 @@ export default React.createClass( {
 						<PlanFeaturesItem>Advanced design customization</PlanFeaturesItem>
 						<PlanFeaturesItem>VideoPress</PlanFeaturesItem>
 					</PlanFeaturesItemList>
+					<PlanFeaturesFooter
+						description={ 'Your own domain name, powerful customization options, and lots of space' +
+							' for audio and video.' }
+					/>
 					<br />
 				</div>
 				<div>
@@ -97,6 +107,10 @@ export default React.createClass( {
 						<PlanFeaturesItem>VideoPress</PlanFeaturesItem>
 						<PlanFeaturesItem>Google Analytics</PlanFeaturesItem>
 					</PlanFeaturesItemList>
+					<PlanFeaturesFooter
+						description={ 'Everything included with Premium, as well as live chat support,' +
+							' and unlimited access to our premium themes.' }
+					/>
 				</div>
 			</div>
 		);
