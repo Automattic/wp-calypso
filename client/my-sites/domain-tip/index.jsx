@@ -33,7 +33,10 @@ const DomainTip = React.createClass( {
 	propTypes: {
 		className: React.PropTypes.string,
 		event: React.PropTypes.string.isRequired,
-		siteId: React.PropTypes.number.isRequired
+		siteId: React.PropTypes.oneOfType( [
+			React.PropTypes.number,
+			React.PropTypes.bool
+		] )
 	},
 
 	getDefaultProps() {
@@ -65,7 +68,7 @@ const DomainTip = React.createClass( {
 		}
 		const classes = classNames( this.props.className, 'domain-tip' );
 		const { query, quantity, vendor } = getQueryObject( this.props.site, this.props.siteSlug );
-		const suggestion = this.props.suggestions ? this.props.suggestions[0] : null;
+		const suggestion = this.props.suggestions ? this.props.suggestions[ 0 ] : null;
 		return (
 			<div className={ classes } >
 				<QueryDomainsSuggestions
