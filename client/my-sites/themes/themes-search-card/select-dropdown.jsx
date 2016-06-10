@@ -49,6 +49,7 @@ const ThemesSelectDropdown = React.createClass( {
 		return <SelectDropdown
 				style={ this.state.style }
 				initialSelected={ this.props.tier }
+				tipTarget="themes-tier-dropdown"
 				{ ...this.props } />;
 	}
 } );

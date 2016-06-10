@@ -190,7 +190,7 @@ class SelectDropdown extends Component {
 			), 'label' );
 
 		return (
-			<div style={ this.props.style } className={ dropdownClassName }>
+			<div style={ this.props.style } className={ dropdownClassName } >
 				<div
 					ref="dropdownContainer"
 					className="select-dropdown__container"
@@ -202,6 +202,7 @@ class SelectDropdown extends Component {
 					aria-controls={ 'select-submenu-' + this.state.instanceId }
 					aria-expanded={ this.state.isOpen }
 					onClick={ this.toggleDropdown }
+					data-tip-target={ this.props.tipTarget }
 				>
 					<div
 						id={ 'select-dropdown-' + this.state.instanceId }
@@ -379,6 +380,7 @@ SelectDropdown.propTypes = {
 	onToggle: PropTypes.func,
 	focusSibling: PropTypes.func,
 	tabIndex: PropTypes.number,
+	tipTarget: PropTypes.string,
 	options: PropTypes.arrayOf(
 		PropTypes.shape( {
 			value: PropTypes.string.isRequired,

@@ -132,7 +132,8 @@ const ThemesSearchCard = React.createClass( {
 				{ isPremiumThemesEnabled && ! isJetpack && <ThemesSelectDropdown
 										tier={ this.props.tier }
 										options={ tiers }
-										onSelect={ this.props.select } /> }
+										onSelect={ this.props.select }
+					/> }
 				{ isPremiumThemesEnabled && <a className="button more"
 												href={ getExternalThemesUrl( this.props.site ) }
 												target="_blank"
