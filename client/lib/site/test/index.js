@@ -12,7 +12,7 @@ describe( 'Calypso Site', () => {
 			ID: 1234,
 			name: 'Hello',
 			description: 'Hunting bugs is fun.'
-		};
+		}
 
 		it( 'attribute changed', () => {
 			const site = Site( mockSiteData );
@@ -60,60 +60,6 @@ describe( 'Calypso Site', () => {
 			site.once( 'change', changeCallback );
 			site.set( { arr: [ 1, 2, 3 ] } );
 			expect( changeCallback.called ).to.be.false;
-		} );
-
-		it( "doesn't remove attributes which are not present in the new ones", () => {
-			const site = Site( mockSiteData );
-
-			site.set( {
-				ID: 1234,
-				//name: 'Hello', // name attribute missing in new ones
-				description: 'Hunting bugs is fun.'
-			} );
-
-			expect( site ).to.have.property( 'name' );
-		} );
-	} );
-
-	describe( 'replacing attributes', () => {
-		const mockSiteData = {
-			ID: 1234,
-			name: 'Hello',
-			description: 'Hunting bugs is fun.'
-		};
-
-		it( "removes icon attr if it isn't present in the new attributes", () => {
-			const site = Site( Object.assign( {}, mockSiteData, { icon: {} } ) );
-
-			site.replace( mockSiteData );
-
-			expect( site ).to.not.have.property( 'icon' );
-			expect( site ).to.have.property( 'ID' );
-			expect( site ).to.have.property( 'description' );
-		} );
-
-		it( 'fires change event on attribute removal', () => {
-			const changeCallback = sinon.spy();
-			const site = Site( mockSiteData );
-
-			site.on( 'change', changeCallback );
-
-			site.replace( { ID: 1234, name: 'Goodbye' } );
-
-			expect( changeCallback.called ).to.be.true;
-			expect( site ).to.not.have.property( 'description' );
-		} );
-
-		it( 'fires change event on attribute change', () => {
-			const changeCallback = sinon.spy();
-			const site = Site( mockSiteData );
-			
-			site.on( 'change', changeCallback );
-			
-			site.replace( Object.assign( {}, mockSiteData, { name: 'Goodbye' } ) );
-			
-			expect( changeCallback.called ).to.be.true;
-			expect( site.name ).to.equal( 'Goodbye' );
 		} );
 	} );
 } );

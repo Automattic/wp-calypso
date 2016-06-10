@@ -205,7 +205,7 @@ SitesList.prototype.update = function( sites ) {
 		if ( sitesMap[ site.ID ] ) {
 			// Update existing Site object
 			siteObj = sitesMap[ site.ID ];
-			result = siteObj.replace( site );
+			result = siteObj.set( site );
 			if ( result ) {
 				changed = true;
 			}
