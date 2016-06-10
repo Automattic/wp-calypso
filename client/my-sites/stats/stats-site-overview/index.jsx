@@ -2,54 +2,54 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import observe from 'lib/mixins/data-observe';
 import route from 'lib/route';
 import Card from 'components/card';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import SectionHeader from 'components/section-header';
+import QuerySiteStats from 'components/data/query-site-stats';
+import {
+	isRequestingSiteStatsForQuery,
+	getSiteStatsForQuery
+} from 'state/stats/lists/selectors';
+import { getSite } from 'state/sites/selectors';
 
-export default React.createClass( {
+const StatsSiteOverview = React.createClass( {
 	displayName: 'StatsSiteOverview',
 
 	proptypes: {
-		site: PropTypes.object.isRequired,
-		summaryData: PropTypes.object.isRequired,
-		path: PropTypes.string.isRequired
+		siteId: PropTypes.number,
+		period: PropTypes.string,
+		date: PropTypes.string,
+		path: PropTypes.string.isRequired,
+		query: PropTypes.object,
+		requesting: PropTypes.bool,
+		summaryData: PropTypes.object,
+		insights: PropTypes.bool,
+		title: PropTypes.string
 	},
-
-	mixins: [ observe( 'summaryData' ) ],
 
 	isValueLow( value ) {
 		return ! value || 0 === value;
 	},
 
 	render() {
-		const { site, path, summaryData, insights } = this.props;
-		const { views, visitors, likes, comments } = summaryData.data;
-		const siteStatsPath = [ path, site.slug ].join( '/' );
+		const { siteId, site, path, summaryData, query, title } = this.props;
+		const { views, visitors, likes, comments } = summaryData;
+		const siteSlug = site ? site.slug : null;
+		const siteStatsPath = [ path, siteSlug ].join( '/' );
 		let headerPath = siteStatsPath;
-		let title;
-
-		if ( insights ) {
-			title = this.translate( 'Today\'s Stats' );
-		} else {
-			title = site.title;
-			headerPath = route.getStatsDefaultSitePage( site.slug );
-		}
-
-		if ( ! this.props.summaryData ) {
-			return;
-		}
 
 		return (
 			<div>
+				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsSummary" query={ query } /> }
 				<SectionHeader label={ title } href={ headerPath } />
-				<Card key={ site.ID } className="stats__overview stats-module is-site-overview">
+				<Card className="stats__overview stats-module is-site-overview">
 					<StatsTabs borderless>
 						<StatsTab
 							className={ this.isValueLow( views ) ? 'is-low' : null }
@@ -81,3 +81,19 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state, ownProps ) => {
+	const { siteId, date, period } = ownProps;
+	const query = {
+		date,
+		period
+	};
+
+	return {
+		requesting: isRequestingSiteStatsForQuery( state, siteId, 'statsSummary', query ),
+		summaryData: getSiteStatsForQuery( state, siteId, 'statsSummary', query ) || {},
+		site: getSite( state, siteId ),
+		query
+	};
+} )( StatsSiteOverview );
+

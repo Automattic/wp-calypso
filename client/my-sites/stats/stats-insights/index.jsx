@@ -2,6 +2,7 @@
 * External dependencies
 */
 import React, { PropTypes } from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -49,14 +50,19 @@ export default React.createClass( {
 			insightsList,
 			publicizeList,
 			site,
-			statSummaryList,
-			summaryDate,
 			wpcomFollowersList } = this.props;
 
 		const moduleStrings = statsStrings();
 
 		let tagsList;
-		let summaryData = statSummaryList.get( site.ID, summaryDate );
+
+		let momentSiteZone = i18n.moment();
+
+		if ( site && site.options ) {
+			momentSiteZone = i18n.moment().utcOffset( site.options.gmt_offset );
+		}
+
+		const summaryDate = momentSiteZone.format( 'YYYY-MM-DD' );
 
 		if ( ! site.jetpack ) {
 			tagsList = <StatsModule
@@ -75,10 +81,11 @@ export default React.createClass( {
 					<PostingActivity />
 					<LatestPostSummary site={ site } />
 					<TodaysStats
-						site={ site }
-						summaryData={ summaryData }
+						siteId={ site ? site.ID : false }
+						period="day"
+						date={ summaryDate }
 						path={ '/stats/day' }
-						insights={ true }
+						title={ this.translate( 'Today\'s Stats' ) }
 					/>
 					<AllTime allTimeList={ allTimeList } />
 					<MostPopular insightsList={ insightsList } />
