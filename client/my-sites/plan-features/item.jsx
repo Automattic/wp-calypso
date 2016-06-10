@@ -1,23 +1,18 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
 
-class PlanFeaturesItem extends Component {
-
-	render() {
-		return (
-			<li className="plan-features__item">
-				<Gridicon className="plan-features__item-checkmark" size={ 18 } icon="checkmark" />
-				{ this.props.children }
-			</li>
-		);
-	}
+export default function PlanFeaturesItem( { children } ) {
+	return (
+		<li className="plan-features__item">
+			<Gridicon className="plan-features__item-checkmark" size={ 18 } icon="checkmark" />
+			{ children }
+		</li>
+	);
 }
-
-export default PlanFeaturesItem;

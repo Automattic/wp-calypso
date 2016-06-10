@@ -1,17 +1,12 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 
-class PlanFeaturesItemList extends Component {
-
-	render() {
-		return (
-			<ul className="plan-features__item-list">
-				{ this.props.children }
-			</ul>
-		);
-	}
+export default function PlanFeaturesItemList( { children } ) {
+	return (
+		<ul className="plan-features__item-list">
+			{ children }
+		</ul>
+	);
 }
-
-export default PlanFeaturesItemList;
