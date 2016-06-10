@@ -35,13 +35,11 @@ function system( state = {}, action ) {
 	switch ( action.type ) {
 		// System state is not persisted
 		case DESERIALIZE: {
-			const newState = omit( state, UNPERSISTED_SYSTEM_NODES );
-			return omit( newState, UNPERSISTED_SYSTEM_NODES );
+			return omit( state, UNPERSISTED_SYSTEM_NODES );
 		}
 
 		case SERIALIZE: {
-			const newState = omit( state, UNPERSISTED_SYSTEM_NODES );
-			return newState;
+			return omit( state, UNPERSISTED_SYSTEM_NODES );
 		}
 
 		case PUSH_NOTIFICATIONS_API_READY: {
@@ -118,13 +116,11 @@ const UNPERSISTED_SETTINGS_NODES = [
 function settings( state = {}, action ) {
 	switch ( action.type ) {
 		case DESERIALIZE: {
-			const newState = omit( state, UNPERSISTED_SETTINGS_NODES );
-			return newState;
+			return omit( state, UNPERSISTED_SETTINGS_NODES );
 		}
 
 		case SERIALIZE: {
-			const newState = omit( state, UNPERSISTED_SETTINGS_NODES );
-			return newState;
+			return omit( state, UNPERSISTED_SETTINGS_NODES );
 		}
 
 		case PUSH_NOTIFICATIONS_TOGGLE_ENABLED: {
