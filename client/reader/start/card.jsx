@@ -8,23 +8,14 @@ import classnames from 'classnames';
 // Internal dependencies
 import Card from 'components/card';
 import StartPostPreview from './post-preview';
+import StartCardHero from './card-hero';
 import StartCardHeader from './card-header';
 import StartCardFooter from './card-footer';
 import { getRecommendationById } from 'state/reader/start/selectors';
-import { getSite } from 'state/reader/sites/selectors';
 
 const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-unused-vars
 
-const StartCard = ( { site, siteId, postId } ) => {
-	const headerImage = site.header_image;
-
-	let heroStyle;
-	if ( headerImage ) {
-		heroStyle = {
-			backgroundImage: `url("${ headerImage.url }")`
-		};
-	}
-
+const StartCard = ( { siteId, postId } ) => {
 	const cardClasses = classnames(
 		'reader-start-card',
 		{
@@ -34,7 +25,7 @@ const StartCard = ( { site, siteId, postId } ) => {
 
 	return (
 		<Card className={ cardClasses }>
-			<div className="reader-start-card__hero" style={ heroStyle }></div>
+			<StartCardHero siteId={ siteId } postId={ postId } />
 			<StartCardHeader siteId={ siteId } />
 			{ postId > 0 && <StartPostPreview siteId={ siteId } postId={ postId } /> }
 			<StartCardFooter siteId={ siteId } />
@@ -51,12 +42,10 @@ export default connect(
 		const recommendation = getRecommendationById( state, ownProps.recommendationId );
 		const siteId = get( recommendation, 'recommended_site_ID' );
 		const postId = get( recommendation, 'recommended_post_ID' );
-		const site = getSite( state, siteId );
 
 		return {
 			siteId,
-			postId,
-			site
+			postId
 		};
 	}
 )( StartCard );
