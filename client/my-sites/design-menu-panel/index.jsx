@@ -16,10 +16,10 @@ const DesignMenuPanel = React.createClass( {
 	render() {
 		return (
 			<div className="design-menu-panel">
-				<Card compact>
+				<Card compact className="design-menu-panel__label">
 					<span>{ this.props.label }</span>
 				</Card>
-				<Card compact>
+				<Card compact className="design-menu-panel__content">
 					{ this.props.children }
 				</Card>
 			</div>
