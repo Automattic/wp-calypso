@@ -269,8 +269,11 @@ export function checkPermissionsState() {
 }
 
 export function block() {
-	return {
-		type: PUSH_NOTIFICATIONS_BLOCK
+	return dispatch => {
+		dispatch( {
+			type: PUSH_NOTIFICATIONS_BLOCK
+		} );
+		dispatch( deactivateSubscription() );
 	};
 }
 
