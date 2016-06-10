@@ -12,10 +12,7 @@ import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
-import {
-	isRequestingSiteStatsForQuery,
-	getSiteStatsForQuery
-} from 'state/stats/lists/selectors';
+import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
 const StatsSiteOverview = React.createClass( {
@@ -28,7 +25,6 @@ const StatsSiteOverview = React.createClass( {
 		date: PropTypes.string,
 		path: PropTypes.string.isRequired,
 		query: PropTypes.object,
-		requesting: PropTypes.bool,
 		summaryData: PropTypes.object,
 		insights: PropTypes.bool,
 		title: PropTypes.string
@@ -91,7 +87,6 @@ export default connect( ( state, ownProps ) => {
 	const slug = siteSlug || getSiteSlug( state, siteId );
 
 	return {
-		requesting: isRequestingSiteStatsForQuery( state, siteId, 'statsSummary', query ),
 		summaryData: getSiteStatsForQuery( state, siteId, 'statsSummary', query ) || {},
 		siteSlug: slug,
 		query
