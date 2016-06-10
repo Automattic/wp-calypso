@@ -60,3 +60,9 @@
 		}
 	}
 }
+
+// we add margin here, so `overflow:hidden` of .wp-content
+// won't cut bottom of SitesDropdown in this form when it is opened
+.help-contact__form {
+	margin-bottom: 70px;
+}
