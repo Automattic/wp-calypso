@@ -7,15 +7,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
-import useI18n from 'test/helpers/use-i18n';
 
 import Dispatcher from 'dispatcher';
 import undocumentedMe from 'lib/wpcom-undocumented/lib/me';
 
 describe( 'AccountRecoveryStore', () => {
 	let AccountRecoveryStore, sandbox, dispatchHandler, testConstants;
-
-	useI18n();
 
 	useSandbox( sandy => sandbox = sandy );
 

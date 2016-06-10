@@ -10,11 +10,9 @@ import {
 	getGuidedTourState,
 } from '../selectors';
 import guidedToursConfig from 'layout/guided-tours/config';
-import useI18n from 'test/helpers/use-i18n';
 
 describe( 'selectors', () => {
 	describe( '#getGuidedTourState()', () => {
-		useI18n();
 		it( 'should return an empty object if no state is present', () => {
 			const tourState = getGuidedTourState( {
 				ui: {

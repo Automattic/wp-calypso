@@ -9,7 +9,6 @@ import assert from 'assert';
  * Internal dependencies
  */
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
-import useI18n from 'test/helpers/use-i18n';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import mockedFlows from './fixtures/flows';
@@ -25,7 +24,6 @@ describe( 'utils', function() {
 	let flows, utils;
 
 	useFilesystemMocks( __dirname );
-	useI18n();
 	useFakeDom();
 
 	useMockery( ( mockery ) => {

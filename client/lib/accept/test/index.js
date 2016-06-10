@@ -10,14 +10,12 @@ import noop from 'lodash/noop';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
-import useI18n from 'test/helpers/use-i18n';
 
 describe( '#accept()', function() {
 	let accept;
 
 	useFakeDom();
 	useMockery();
-	useI18n();
 
 	before( function() {
 		mockery.registerSubstitute( 'event', 'component-event' );

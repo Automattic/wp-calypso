@@ -9,7 +9,6 @@ import assert from 'assert';
  */
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useFakeDom from 'test/helpers/use-fake-dom';
-import useI18n from 'test/helpers/use-i18n';
 import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -30,7 +29,6 @@ describe( 'index', function() {
 		require( 'test/helpers/mocks/data-poller' )( mockery );
 		mockery.registerMock( 'components/section-nav', EmptyComponent );
 	} );
-	useI18n();
 
 	before( () => {
 		React = require( 'react' );

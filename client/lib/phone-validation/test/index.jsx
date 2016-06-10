@@ -6,12 +6,9 @@ import assert from  'assert';
 /**
  * Internal dependencies
  */
-import useI18n from 'test/helpers/use-i18n';
 import phoneValidation from '..';
 
 describe( 'Phone Validation Library', () => {
-	useI18n();
-
 	it( 'should fail an empty number', () => {
 		assert.equal( 'phone_number_empty', phoneValidation( '' ).error );
 	} );
