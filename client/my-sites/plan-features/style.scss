@@ -95,3 +95,33 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+
+.plan-features__item-list {
+	list-style: none;
+	margin: 0;
+}
+
+.plan-features__item {
+	position: relative;
+	margin: 0 24px;
+	padding: 12px 0 12px 30px;
+	border-bottom: solid 1px lighten( $gray, 27% );
+	font-size: 14px;
+	color: $gray-dark;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	@include breakpoint( "<480px" ) {
+		margin: 0 16px;
+	}
+}
+
+.plan-features__item-checkmark {
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	fill: $blue-wordpress;
+}
