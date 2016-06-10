@@ -146,7 +146,6 @@ const SiteSelector = React.createClass( {
 	},
 
 	onSiteSelect( siteSlug, event ) {
-		this.closeSelector();
 		const handledByHost = this.props.onSiteSelect( siteSlug );
 		this.props.onClose( event );
 
@@ -165,10 +164,6 @@ const SiteSelector = React.createClass( {
 				page( pathname );
 			}
 		}
-	},
-
-	closeSelector() {
-		this.refs.siteSearch.blur();
 	},
 
 	recordAddNewSite() {
