@@ -47,7 +47,7 @@ module.exports = React.createClass( {
 			return true;
 		}
 
-		if ( PluginNotices.shouldComponentUpdateNotices( this.props.notices, nextProps.notices ) ) {
+		if ( this.props.notices && PluginNotices.shouldComponentUpdateNotices( this.props.notices, nextProps.notices ) ) {
 			return true;
 		}
 
