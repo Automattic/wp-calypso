@@ -104,7 +104,11 @@ module.exports = {
 		user.fetching = false;
 		user.fetch();
 		user.on( 'change', function() {
-			window.location = '/';
+			if ( config.isEnabled( 'devdocs' ) ) {
+				window.location = '/devdocs/welcome';
+			} else {
+				window.location = '/';
+			}
 		} );
 	}
 };
