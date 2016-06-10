@@ -9,6 +9,7 @@ import wpcom from 'lib/wp';
  */
 import * as ActionTypes from 'state/action-types';
 import * as customizationSaveFunctions from './save-functions';
+import { requestSitePosts } from 'state/posts/actions';
 
 const debug = debugFactory( 'calypso:preview-actions' );
 
@@ -16,13 +17,13 @@ export function fetchPreviewMarkup( site, slug, customizations ) {
 	return function( dispatch ) {
 		const postData = {};
 		if ( customizations ) {
-			if ( customizations.homePage && customizations.homePage.hasOwnProperty( 'isPageOnFront' ) ) {
-				postData.show_on_front = customizations.homePage.isPageOnFront ? 'page' : 'posts';
-				if ( customizations.homePage.pageOnFrontId ) {
-					postData.page_on_front = customizations.homePage.pageOnFrontId;
+			if ( customizations.homepage && customizations.homepage.hasOwnProperty( 'isPageOnFront' ) ) {
+				postData.show_on_front = customizations.homepage.isPageOnFront ? 'page' : 'posts';
+				if ( customizations.homepage.pageOnFrontId ) {
+					postData.page_on_front = customizations.homepage.pageOnFrontId;
 				}
-				if ( customizations.homePage.pageForPostsId ) {
-					postData.page_for_posts = customizations.homePage.pageForPostsId;
+				if ( customizations.homepage.pageForPostsId ) {
+					postData.page_for_posts = customizations.homepage.pageForPostsId;
 				}
 			}
 		}
@@ -75,4 +76,25 @@ function saveCustomizationsFor( id, customizations, siteId, dispatch ) {
 		return saveFunction( dispatch, customizations, siteId );
 	}
 	debug( 'no save function for', id );
+}
+
+export function createHomepage() {
+	return function( dispatch, getState ) {
+		const { preview, ui } = getState();
+		const siteId = ui.selectedSiteId;
+		const customizations = preview[ siteId ].customizations;
+		debug( 'creating home page for site', siteId );
+		wpcom.site( siteId ).addPost( { type: 'page', title: 'Home', content: '<h1>Welcome!</h1>' } )
+		.then( post => {
+			debug( 'home page successfully created!', post );
+			debug( 'setting home page preview setting to replace existing setting', customizations.homepage );
+			if ( ! customizations.homepage ) {
+				customizations.homepage = { isPageOnFront: true };
+			}
+			customizations.homepage.pageOnFrontId = post.ID;
+			dispatch( updateCustomizations( siteId, { homepage: customizations.homepage } ) );
+			debug( 'refreshing page list for new home page' );
+			dispatch( requestSitePosts( siteId, { type: 'page' } ) );
+		} );
+	}
 }
