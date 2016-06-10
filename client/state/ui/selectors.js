@@ -68,5 +68,6 @@ export function isSectionIsomorphic( state ) {
 }
 
 export function isPreviewShowing( state ) {
+	console.log( state.ui );
 	return get( state.ui, 'isPreviewShowing', false );
 }

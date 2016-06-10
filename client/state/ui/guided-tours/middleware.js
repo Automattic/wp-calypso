@@ -6,7 +6,7 @@ import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 
 export const contextMiddleware = store => next => action => {
 	next( action );
-	if ( ! getGuidedTourState( store.getState() ).shouldShow ) {
+	if ( ! getGuidedTourState( store.getState() ).shouldReallyShow ) {
 		const toursWithContexts = mapValues( getAll(), 'showInContext' );
 		Object.keys( toursWithContexts )
 			.filter( tour => toursWithContexts[ tour ] )

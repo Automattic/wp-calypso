@@ -31,7 +31,7 @@ const debug = debugFactory( 'calypso:guided-tours' );
 class GuidedTours extends Component {
 	constructor() {
 		super();
-		this.bind( 'next', 'quit', 'finish' );
+		this.bind( 'next', 'quit', 'finish', 'getNextStep' );
 	}
 
 	bind( ...methods ) {
@@ -44,18 +44,17 @@ class GuidedTours extends Component {
 	}
 
 	shouldComponentUpdate( nextProps ) {
-		return this.props.tourState !== nextProps.tourState;
+		return true || this.props.tourState !== nextProps.tourState;
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		const { stepConfig } = nextProps.tourState;
-		console.log( stepConfig, stepConfig.continueIf && stepConfig.continueIf( nextProps.state ) );
-		stepConfig.continueIf && stepConfig.continueIf( nextProps.state ) && defer( this.next );
 	}
 
 	componentWillUpdate( nextProps ) {
 		const { stepConfig } = nextProps.tourState;
 		this.updateTarget( stepConfig );
+		stepConfig.continueIf && stepConfig.continueIf( nextProps.state ) && this.next();
 	}
 
 	updateTarget( step ) {
@@ -72,14 +71,25 @@ class GuidedTours extends Component {
 		} ), {} );
 	}
 
-	async next() {
-		const getNextStep = ( currentStepConfig ) => {
-			const next = { stepName: currentStepConfig.next, stepConfig: guidedToursConfig.get( this.props.tourState.tour )[ currentStepConfig.next ] || false };
-			const skip = !! ( next.stepConfig.showInContext && ! next.stepConfig.showInContext( this.props.state ) );
-			return skip ? getNextStep( next.stepConfig ) : next;
-		};
+	async getNextStep( currentStepConfig ) {
+		const next = { stepName: currentStepConfig.next, stepConfig: guidedToursConfig.get( this.props.tourState.tour )[ currentStepConfig.next ] || false };
+		if ( ! next.stepConfig.showInContext ) {
+			return next;
+		}
+		try {
+			const skip = await wait( { condition: next.stepConfig.showInContext.bind( null, this.props.state ) } );
+			console.log( 'reached here', skip );
+			return skip ? this.getNextStep( next.stepConfig ) : next;
+		} catch ( e ) {
+			console.log( 'rejected ', e );
+			return this.getNextStep( next.stepConfig ); // skip if rejected
+		}
+	}
 
-		const nextStep = getNextStep( this.props.tourState.stepConfig );
+	async next() {
+		const nextStep = await this.getNextStep( this.props.tourState.stepConfig );
+
+		console.log( 'nextStep', nextStep );
 
 		const nextTargetFound = () => {
 			if ( nextStep.stepConfig && nextStep.stepConfig.target ) {

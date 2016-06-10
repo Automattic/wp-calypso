@@ -140,18 +140,16 @@ function getAll() {
 				placement: 'below',
 				continueIf: state => {
 					const params = getQueryParams( state );
-					console.log( 'filter params' );
 					return params && params.tier === 'free';
 				},
 				arrow: 'top-left',
 				next: 'choose-theme',
 			},
-
 			'choose-theme': {
 				text: i18n.translate( 'Click on any theme, will give you a preview of how it will look like' ),
-				type: 'BasicStep',
+				type: 'ActionStep',
 				placement: 'right',
-				showInContext: state => state && ! isFetchingNextPage( state ) && getThemesList( state ).length > 0,
+				continueIf: state => state && isPreviewShowing( state ),
 				next: 'close-preview',
 			},
 			'close-preview': {

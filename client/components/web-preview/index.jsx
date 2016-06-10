@@ -93,6 +93,9 @@ const WebPreview = React.createClass( {
 		}
 		if ( this.props.showPreview ) {
 			document.documentElement.classList.add( 'no-scroll' );
+			this.props.setPreviewShowing( true );
+		} else {
+			this.props.setPreviewShowing( false );
 		}
 	},
 
@@ -124,9 +127,7 @@ const WebPreview = React.createClass( {
 		if ( showPreview ) {
 			window.addEventListener( 'keydown', this.keyDown );
 			document.documentElement.classList.add( 'no-scroll' );
-			this.props.setPreviewShowing( true );
 		} else {
-			this.props.setPreviewShowing( false );
 			window.removeEventListener( 'keydown', this.keyDown );
 			document.documentElement.classList.remove( 'no-scroll' );
 		}
@@ -139,9 +140,14 @@ const WebPreview = React.createClass( {
 
 	keyDown( event ) {
 		if ( event.keyCode === 27 ) {
-			this.props.onClose();
+			this.onClose();
 			event.preventDefault();
 		}
+	},
+
+	close() {
+		this.props.setPreviewShowing( false );
+		this.props.onClose();
 	},
 
 	setIframeMarkup( content ) {
@@ -210,7 +216,7 @@ const WebPreview = React.createClass( {
 
 		return (
 			<div className={ className }>
-				<div className="web-preview__backdrop" onClick={ this.props.onClose } />
+				<div className="web-preview__backdrop" onClick={ this.onClose } />
 				<div className="web-preview__content">
 					<Toolbar setDeviceViewport={ this.setDeviceViewport }
 						device={ this.state.device }
