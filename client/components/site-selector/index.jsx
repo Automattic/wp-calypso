@@ -142,7 +142,6 @@ export default React.createClass( {
 	},
 
 	onSiteSelect( siteSlug, event ) {
-		this.closeSelector();
 		const handledByHost = this.props.onSiteSelect( siteSlug );
 		this.props.onClose( event );
 
@@ -161,10 +160,6 @@ export default React.createClass( {
 				page( pathname );
 			}
 		}
-	},
-
-	closeSelector() {
-		this.refs.siteSearch.blur();
 	},
 
 	recordAddNewSite() {
