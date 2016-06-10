@@ -113,6 +113,9 @@ const PlansSetup = React.createClass( {
 		if ( this.props.isFinished ) {
 			return;
 		}
+		if ( ! this.props.selectedSite.canManage() ) {
+			return;
+		}
 		const beforeUnloadText = this.translate( 'We haven\'t finished installing your plugins.' );
 		( event || window.event ).returnValue = beforeUnloadText;
 		return beforeUnloadText;
