@@ -8,6 +8,8 @@ import PureRenderMixin from 'react-pure-render/mixin';
  * Internal dependencies
  */
 import PlanFeaturesHeader from '../header';
+import PlanFeaturesItem from '../item';
+import PlanFeaturesItemList from '../list';
 import { plansList, PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 
 export default React.createClass( {
@@ -48,6 +50,13 @@ export default React.createClass( {
 						price={ priceFree }
 						billingTimeFrame={ 'for life' }
 					/>
+					<PlanFeaturesItemList>
+						<PlanFeaturesItem>Free site</PlanFeaturesItem>
+						<PlanFeaturesItem>WordPress.com subdomain</PlanFeaturesItem>
+						<PlanFeaturesItem>Hundreds of free themes</PlanFeaturesItem>
+						<PlanFeaturesItem>3GB of storage</PlanFeaturesItem>
+						<PlanFeaturesItem>Community Support</PlanFeaturesItem>
+					</PlanFeaturesItemList>
 					<br />
 				</div>
 				<div>
@@ -58,6 +67,16 @@ export default React.createClass( {
 						price={ pricePremium }
 						billingTimeFrame={ 'per month, billed yearly' }
 					/>
+					<PlanFeaturesItemList>
+						<PlanFeaturesItem>Free site</PlanFeaturesItem>
+						<PlanFeaturesItem>Your custom domain</PlanFeaturesItem>
+						<PlanFeaturesItem>Hundreds of free themes</PlanFeaturesItem>
+						<PlanFeaturesItem>13GB of storage</PlanFeaturesItem>
+						<PlanFeaturesItem>Email and live chat support</PlanFeaturesItem>
+						<PlanFeaturesItem>No ads</PlanFeaturesItem>
+						<PlanFeaturesItem>Advanced design customization</PlanFeaturesItem>
+						<PlanFeaturesItem>VideoPress</PlanFeaturesItem>
+					</PlanFeaturesItemList>
 					<br />
 				</div>
 				<div>
@@ -67,6 +86,17 @@ export default React.createClass( {
 						price={ priceBusiness }
 						billingTimeFrame={ 'per month, billed yearly' }
 					/>
+					<PlanFeaturesItemList>
+						<PlanFeaturesItem>Free site</PlanFeaturesItem>
+						<PlanFeaturesItem>Your custom domain</PlanFeaturesItem>
+						<PlanFeaturesItem>Unlimited premium themes</PlanFeaturesItem>
+						<PlanFeaturesItem>Unlimited storage</PlanFeaturesItem>
+						<PlanFeaturesItem>Email and live chat support</PlanFeaturesItem>
+						<PlanFeaturesItem>No ads</PlanFeaturesItem>
+						<PlanFeaturesItem>Advanced design customization</PlanFeaturesItem>
+						<PlanFeaturesItem>VideoPress</PlanFeaturesItem>
+						<PlanFeaturesItem>Google Analytics</PlanFeaturesItem>
+					</PlanFeaturesItemList>
 				</div>
 			</div>
 		);
