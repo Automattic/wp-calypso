@@ -147,8 +147,9 @@ describe( 'index', function() {
 			assert.notEqual( -1, output.indexOf( 'msgid "single test"\nmsgid_plural "plural test"\nmsgstr[0] ""\n' ) );
 		} );
 
-		it( 'should include default translations for momentjs object', function() {
-			assert.notEqual( -1, output.indexOf( 'msgctxt "momentjs format string (for LT)"\nmsgid "HH:mm"\nmsgstr ""\n' ) );
+		it( 'should include default translations for number formatting strings', function() {
+			assert.notEqual( -1, output.indexOf( 'msgid "number_format_thousands_sep"\n' ) );
+			assert.notEqual( -1, output.indexOf( 'msgid "number_format_decimal_point"\n' ) );
 		} );
 
 		it( 'should find translations from multiple files', function() {
@@ -221,7 +222,8 @@ describe( 'index', function() {
 		} );
 
 		it( 'should include default translations for momentjs object', function() {
-			assert.notEqual( -1, output.indexOf( '_x( \'HH:mm\', \'momentjs format string (for LT)\' )' ) );
+			assert.notEqual( -1, output.indexOf( '__( \'number_format_thousands_sep\' ),' ) );
+			assert.notEqual( -1, output.indexOf( '__( \'number_format_decimal_point\' ),' ) );
 		} );
 
 		it( 'should close the php array', function() {

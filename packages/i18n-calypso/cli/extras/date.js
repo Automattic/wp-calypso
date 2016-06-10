@@ -11,3 +11,9 @@ i18n.translate( "a month" );
 i18n.translate( "%d months" );
 i18n.translate( "a year" );
 i18n.translate( "%d years" );
+
+// Number formatting strings
+/* translators: $thousands_sep argument for http://php.net/number_format, default is , */
+i18n.translate( "number_format_thousands_sep" );
+/* translators: $dec_point argument for http://php.net/number_format, default is . */
+i18n.translate( "number_format_decimal_point" );
