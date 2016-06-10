@@ -58,17 +58,21 @@ module.exports = {
 	// This controller renders the API authentication screen
 	// for granting the app access to the user data using oauth
 	authorize: function() {
-		const oauthSettings = {
-			response_type: 'token',
-			client_id: config( 'oauth_client_id' ),
-			client_secret: 'n/a',
-			url: {
-				redirect: 'http://calypso.localhost:3000/api/oauth/token'
-			}
-		};
+		let authUrl;
 
-		const wpoauth = WPOAuth( oauthSettings );
-		const authUrl = wpoauth.urlToConnect( { scope: 'global', blog_id: 0 } );
+		if ( config( 'oauth_client_id' ) ) {
+			const oauthSettings = {
+				response_type: 'token',
+				client_id: config( 'oauth_client_id' ),
+				client_secret: 'n/a',
+				url: {
+					redirect: 'http://calypso.localhost:3000/api/oauth/token'
+				}
+			};
+
+			const wpoauth = WPOAuth( oauthSettings );
+			authUrl = wpoauth.urlToConnect( { scope: 'global', blog_id: 0 } );
+		}
 
 		ReactDom.render(
 			React.createElement( ConnectComponent, {
