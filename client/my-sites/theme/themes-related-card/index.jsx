@@ -35,10 +35,10 @@ const ThemesRelatedCard = React.createClass( {
 
 		//Remove current theme so we will not show it as related
 		themes.delete( this.props.currentTheme );
-		themes = [...themes];
+		themes = [ ...themes ];
 
 		let randomThemeIndex = this.props.currentTheme.charCodeAt( 0 ) % themes.length;
-		let theme = themes.splice( randomThemeIndex, 1 )[0];
+		let theme = themes.splice( randomThemeIndex, 1 )[ 0 ];
 		const selectedThemes = [ theme ];
 		selectedThemes.push( themes[ theme.charCodeAt( 0 ) % themes.length ] );
 
