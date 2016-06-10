@@ -82,6 +82,7 @@ export default React.createClass( {
 					date={ date }
 					path={ statsPath }
 					title={ site.title }
+					siteSlug={ site.slug }
 				/>
 			);
 
