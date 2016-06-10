@@ -8,8 +8,9 @@ import wpcom from 'lib/wp';
  * Internal dependencies
  */
 import * as ActionTypes from 'state/action-types';
+import * as customizationSaveFunctions from './save-functions';
 
-const debug = debugFactory( 'calypso:preivew-actions' );
+const debug = debugFactory( 'calypso:preview-actions' );
 
 export function fetchPreviewMarkup( site, slug, customizations ) {
 	return function( dispatch ) {
@@ -50,4 +51,28 @@ export function undoCustomization( siteId ) {
 
 export function customizationsSaved( siteId ) {
 	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_SAVED, siteId };
+}
+
+export function saveCustomizations() {
+	return function( dispatch, getState ) {
+		if ( ! getState().preview ) {
+			debug( 'no preview state to save' );
+			return;
+		}
+		const { preview, ui } = getState();
+		const siteId = ui.selectedSiteId;
+		const customizations = preview[ siteId ].customizations;
+		debug( 'saving customizations', customizations );
+		Object.keys( customizations ).map( id => saveCustomizationsFor( id, customizations[ id ], siteId, dispatch ) );
+		dispatch( customizationsSaved( siteId ) );
+	}
+}
+
+function saveCustomizationsFor( id, customizations, siteId, dispatch ) {
+	debug( 'saving customizations for', id );
+	const saveFunction = customizationSaveFunctions[ id ];
+	if ( saveFunction ) {
+		return saveFunction( dispatch, customizations, siteId );
+	}
+	debug( 'no save function for', id );
 }
