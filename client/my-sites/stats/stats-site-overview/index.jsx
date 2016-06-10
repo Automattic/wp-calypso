@@ -23,6 +23,7 @@ const StatsSiteOverview = React.createClass( {
 
 	proptypes: {
 		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
 		period: PropTypes.string,
 		date: PropTypes.string,
 		path: PropTypes.string.isRequired,
@@ -81,16 +82,18 @@ const StatsSiteOverview = React.createClass( {
 } );
 
 export default connect( ( state, ownProps ) => {
-	const { siteId, date, period } = ownProps;
+	const { siteId, date, period, siteSlug } = ownProps;
 	const query = {
 		date,
 		period
 	};
+	// It seems not all sites are in the sites/items subtree consistently
+	const slug = siteSlug || getSiteSlug( state, siteId );
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, 'statsSummary', query ),
 		summaryData: getSiteStatsForQuery( state, siteId, 'statsSummary', query ) || {},
-		siteSlug: getSiteSlug( state, siteId ),
+		siteSlug: slug,
 		query
 	};
 } )( StatsSiteOverview );
