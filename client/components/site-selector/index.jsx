@@ -75,15 +75,31 @@ const SiteSelector = React.createClass( {
 	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.search !== prevState.search ) {
 			this.setState( {
-				highlightedSite: this.visibleSites[0] || null
+				highlightedSite: this.visibleSites[ 0 ] || null
+			}, () => {
+				this.scrollToHightlightedSite();
 			} );
+		} else if ( prevState.highlightedSite !== this.state.highlightedSite ) {
+			this.scrollToHightlightedSite();
+		}
+	},
+
+	scrollToHightlightedSite() {
+		const selectedSite = this.refs.selectedSite;
+		if ( selectedSite ) {
+			const selectedSiteElement = ReactDom.findDOMNode( this.refs.selectedSite );
+			if ( typeof selectedSiteElement.scrollIntoViewIfNeeded === 'function' ) {
+				selectedSiteElement.scrollIntoViewIfNeeded();
+			} else {
+				selectedSiteElement.scrollIntoView();
+			}
 		}
 	},
 
 	componentDidMount() {
 		if ( this.visibleSites.length > 0 ) {
 			this.setState( {
-				highlightedSite: this.visibleSites[0]
+				highlightedSite: this.visibleSites[ 0 ]
 			} );
 		}
 	},
@@ -126,7 +142,7 @@ const SiteSelector = React.createClass( {
 
 		if ( nextIndex !== null ) {
 			this.setState( {
-				highlightedSite: this.visibleSites[nextIndex]
+				highlightedSite: this.visibleSites[ nextIndex ]
 			} );
 		}
 	},
@@ -262,12 +278,14 @@ const SiteSelector = React.createClass( {
 		if ( this.props.showAllSites && ! this.state.search && this.props.allSitesPath ) {
 			this.visibleSites.push( ALL_SITES );
 
-			return (
+			const isSelected = this.isSelected( ALL_SITES );
+			return(
 				<AllSites
 					key="selector-all-sites"
 					sites={ this.props.sites.get() }
 					onSelect={ this.onSiteSelect.bind( this, ALL_SITES ) }
-					isSelected={ this.isSelected( ALL_SITES ) }
+					isSelected={ isSelected }
+					ref={ isSelected ? 'selectedSite' : null }
 				/>
 			);
 		}
@@ -276,13 +294,15 @@ const SiteSelector = React.createClass( {
 	renderSite( site ) {
 		this.visibleSites.push( site );
 
+		const isSelected = this.isSelected( site );
 		return (
 			<Site
 				site={ site }
 				key={ 'site-' + site.ID }
 				indicator={ this.props.indicator }
 				onSelect={ this.onSiteSelect.bind( this, site.slug ) }
-				isSelected={ this.isSelected( site ) }
+				isSelected={ isSelected }
+				ref={ isSelected ? 'selectedSite' : null }
 			/>
 		);
 	},
