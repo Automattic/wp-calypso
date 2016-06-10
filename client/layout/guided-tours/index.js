@@ -72,7 +72,7 @@ class GuidedTours extends Component {
 		} ), {} );
 	}
 
-	next() {
+	async next() {
 		const getNextStep = ( currentStepConfig ) => {
 			const next = { stepName: currentStepConfig.next, stepConfig: guidedToursConfig.get( this.props.tourState.tour )[ currentStepConfig.next ] || false };
 			const skip = !! ( next.stepConfig.showInContext && ! next.stepConfig.showInContext( this.props.state ) );
@@ -88,10 +88,11 @@ class GuidedTours extends Component {
 			}
 			return true;
 		};
-		const proceedToNextStep = () => {
+
+		try {
+			await wait( { condition: nextTargetFound } );
 			this.props.nextGuidedTourStep( { stepName: nextStep.stepName } );
-		};
-		const abortTour = () => {
+		} catch ( err ) {
 			const ERROR_WAITED_TOO_LONG = 'waited too long for next target';
 			debug( ERROR_WAITED_TOO_LONG );
 			this.props.errorNotice(
@@ -99,8 +100,7 @@ class GuidedTours extends Component {
 				{ duration: 8000 }
 			);
 			this.quit( { error: ERROR_WAITED_TOO_LONG } );
-		};
-		wait( { condition: nextTargetFound, consequence: proceedToNextStep, onError: abortTour } );
+		}
 	}
 
 	quit( options = {} ) {

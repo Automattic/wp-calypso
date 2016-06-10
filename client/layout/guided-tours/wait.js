@@ -7,23 +7,26 @@ const WAIT_INITIAL = 1; // initial wait in milliseconds
 const WAIT_MULTIPLIER = 2;
 const WAIT_MAX = 2048; // give up waiting when delay has grown to ~4 seconds
 
-const wait = ( { condition, consequence, delay = 0, onError = noop } ) => {
-	if ( condition() ) {
-		consequence();
-		return;
-	}
+function wait( { condition, consequence, delay = 0, onError = noop } ) {
+	return new Promise( ( resolve, reject ) => {
+		const waitLoop = () => {
+			if ( condition() ) {
+				resolve();
+			}
 
-	if ( delay >= WAIT_MAX ) {
-		onError();
-		return;
-	}
+			if ( delay >= WAIT_MAX ) {
+				reject();
+				return;
+			}
+		};
 
-	window.setTimeout( wait.bind( null, {
-		condition,
-		consequence,
-		delay: delay ? delay * WAIT_MULTIPLIER : WAIT_INITIAL,
-		onError,
-	} ), delay );
-};
+		setTimeout( waitLoop.bind( null, {
+			condition,
+			consequence,
+			delay: delay ? delay * WAIT_MULTIPLIER : WAIT_INITIAL,
+			onError,
+		} ), delay );
+	} );
+}
 
 export default wait;
