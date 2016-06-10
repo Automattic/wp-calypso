@@ -9,7 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
-import i18n from 'lib/mixins/i18n';
+import i18n from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
 import { getDetailsUrl } from 'my-sites/themes/helpers';
 
