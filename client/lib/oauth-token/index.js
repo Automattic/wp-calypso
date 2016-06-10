@@ -13,11 +13,11 @@ const MAX_AGE = 365 * 24 * 60 * 60 * 1000;   // How long to store the OAuth cook
 export function getToken() {
 	let cookies = cookie.parse( document.cookie );
 
-	if ( typeof cookies[TOKEN_NAME] !== 'undefined' ) {
-		return cookies[TOKEN_NAME];
+	if ( typeof cookies[ TOKEN_NAME ] !== 'undefined' ) {
+		return cookies[ TOKEN_NAME ];
 	}
 
-	const token = store.get( 'wpcom_token' );
+	const token = store.get( TOKEN_NAME );
 
 	if ( token ) {
 		return token;
@@ -34,7 +34,7 @@ export function setToken( token ) {
 export function clearToken() {
 	let cookies = cookie.parse( document.cookie );
 
-	if ( typeof cookies[TOKEN_NAME] !== 'undefined' ) {
+	if ( typeof cookies[ TOKEN_NAME ] !== 'undefined' ) {
 		document.cookie = cookie.serialize( TOKEN_NAME, false, { maxAge: -1 } );
 	}
 }

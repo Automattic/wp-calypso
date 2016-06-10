@@ -10,6 +10,7 @@
 	"logout_url": "/logout",
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "/",
+	"oauth_client_id": false,
 	"features": {
 		"ad-tracking": true,
 		"always_use_logout_url": true,
