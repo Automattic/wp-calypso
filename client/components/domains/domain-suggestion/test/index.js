@@ -11,7 +11,6 @@ import noop from 'lodash/noop';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
-import useI18n from 'test/helpers/use-i18n';
 
 describe( 'Domain Suggestion', function() {
 	let DomainSuggestion;
@@ -20,7 +19,6 @@ describe( 'Domain Suggestion', function() {
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'components/plans/premium-popover', noop );
 	} );
-	useI18n();
 
 	before( () => {
 		DomainSuggestion = require( 'components/domains/domain-suggestion' );

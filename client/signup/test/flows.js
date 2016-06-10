@@ -8,7 +8,6 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
-import useI18n from 'test/helpers/use-i18n';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import mockedFlows from './fixtures/flows';
@@ -18,7 +17,6 @@ describe( 'flows', function() {
 
 	useFakeDom();
 	useFilesystemMocks( __dirname );
-	useI18n();
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/abtest', {

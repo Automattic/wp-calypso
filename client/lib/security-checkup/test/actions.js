@@ -11,7 +11,6 @@ import { expect } from 'chai';
 
 import useFakeDom from 'test/helpers/use-fake-dom';
 import { useSandbox } from 'test/helpers/use-sinon';
-import useI18n from 'test/helpers/use-i18n';
 
 import Dispatcher from 'dispatcher';
 import undocumentedMe from 'lib/wpcom-undocumented/lib/me';
@@ -24,8 +23,6 @@ describe( 'SecurityCheckupActions', () => {
 	} );
 
 	useFakeDom();
-
-	useI18n();
 
 	before( () => {
 		actions = require( '../constants' ).actions;
