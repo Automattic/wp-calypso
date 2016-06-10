@@ -330,6 +330,9 @@
     "babel-plugin-transform-export-extensions": {
       "version": "6.8.0"
     },
+    "babel-plugin-transform-imports": {
+      "version": "1.1.0"
+    },
     "babel-plugin-transform-object-rest-spread": {
       "version": "6.20.2"
     },
@@ -534,7 +537,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000600"
+      "version": "1.0.30000601"
     },
     "caseless": {
       "version": "0.11.0"
@@ -1335,7 +1338,7 @@
       "dev": true,
       "dependencies": {
         "acorn": {
-          "version": "4.0.3",
+          "version": "4.0.4",
           "dev": true
         }
       }
@@ -1464,7 +1467,7 @@
       "version": "2.1.1"
     },
     "fbjs": {
-      "version": "0.8.6",
+      "version": "0.8.7",
       "dependencies": {
         "core-js": {
           "version": "1.2.7"
@@ -1528,7 +1531,7 @@
       "version": "2.3.0"
     },
     "flat-cache": {
-      "version": "1.2.1",
+      "version": "1.2.2",
       "dev": true
     },
     "flatten": {
@@ -2385,6 +2388,9 @@
       "version": "3.0.4",
       "dev": true
     },
+    "lodash.kebabcase": {
+      "version": "4.1.1"
+    },
     "lodash.keys": {
       "version": "3.1.2",
       "dev": true
@@ -3019,7 +3025,7 @@
       "version": "1.0.2"
     },
     "pump": {
-      "version": "1.0.1"
+      "version": "1.0.2"
     },
     "punycode": {
       "version": "1.4.1"
@@ -3474,6 +3480,9 @@
     },
     "set-immediate-shim": {
       "version": "1.0.1"
+    },
+    "setimmediate": {
+      "version": "1.0.5"
     },
     "setprototypeof": {
       "version": "1.0.2"
