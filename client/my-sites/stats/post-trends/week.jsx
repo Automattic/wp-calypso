@@ -1,40 +1,70 @@
 /**
  * External dependencies
  */
-var i18n = require( 'i18n-calypso' ),
-	React = require( 'react' );
+import i18n from 'i18n-calypso';
+import React, { PropTypes } from 'react';
 
 /**
  * Internal dependencies
  */
-var Day = require( './day' );
+import Day from './day';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PostTrendsWeek',
 
 	propTypes: {
-		startDate: React.PropTypes.object.isRequired,
-		month: React.PropTypes.object.isRequired,
-		data: React.PropTypes.object.isRequired
+		startDate: PropTypes.object.isRequired,
+		month: PropTypes.object.isRequired,
+		max: PropTypes.number,
+		streakData: PropTypes.object
 	},
 
-	getDayComponents: function() {
-		var i,
-			data = this.props.data.response.days || {},
-			max = this.props.data.response.max || 1,
-			days = [],
-			dayDate;
+	getDefaultProps() {
+		return {
+			streakData: {},
+			max: 0
+		};
+	},
 
-		for ( i = 0; i < 7; i++ ) {
-			dayDate = i18n.moment( this.props.startDate ).add( i, 'day' );
-			days.push( <Day days={ data } key={ dayDate.format( 'MMDD' ) } date={ dayDate } month={ this.props.month } max={ max } /> );
+	getDayComponents() {
+		const days = [];
+		const { month, startDate, streakData, max } = this.props;
+
+		for ( let i = 0; i < 7; i++ ) {
+			const dayDate = i18n.moment( startDate ).add( i, 'day' );
+			const postCount = streakData[ dayDate.format( 'YYYY-MM-DD' ) ] || 0;
+			let classNames = [];
+			let level = Math.ceil( ( postCount / max ) * 4 );
+
+			if (
+				dayDate.isBefore( i18n.moment( month ).startOf( 'month' ) ) ||
+				dayDate.isAfter( i18n.moment( month ).endOf( 'month' ) )
+			) {
+				classNames.push( 'is-outside-month' );
+			} else if ( dayDate.isAfter( i18n.moment().endOf( 'day' ) ) ) {
+				classNames.push( 'is-after-today' );
+			} else if ( level ) {
+				if ( level > 4 ) {
+					level = 4;
+				}
+
+				classNames.push( 'is-level-' + level );
+			}
+
+			days.push(
+				<Day key={ dayDate.format( 'MMDD' ) }
+					className={ classNames.join( ' ' ) }
+					label={ dayDate.format( 'L' ) }
+					postCount={ postCount }
+				/>
+			);
 		}
 
 		return days;
 	},
 
-	render: function() {
+	render() {
 		return (
 			<div className="post-trends__week">{ this.getDayComponents() }</div>
 		);

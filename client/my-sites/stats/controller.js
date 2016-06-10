@@ -122,7 +122,6 @@ module.exports = {
 			activeFilter = false,
 			basePath = route.sectionify( context.path ),
 			followList,
-			streakList,
 			allTimeList,
 			insightsList,
 			statSummaryList,
@@ -134,8 +133,6 @@ module.exports = {
 			commentFollowersList,
 			summaryDate,
 			summarySites = [],
-			startDate = i18n.moment().subtract( 1, 'year' ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
-			endDate = i18n.moment().endOf( 'month' ).format( 'YYYY-MM-DD' ),
 			momentSiteZone = i18n.moment(),
 			StatsComponent = Insights;
 
@@ -176,7 +173,6 @@ module.exports = {
 			? site.slug : route.getSiteFragment( context.path );
 
 		allTimeList = new StatsList( { siteID: siteId, statType: 'stats', domain: siteDomain } );
-		streakList = new StatsList( { siteID: siteId, statType: 'statsStreak', startDate: startDate, endDate: endDate, max: 3000, domain: siteDomain } );
 		statSummaryList = new StatsSummaryList( { period: 'day', sites: summarySites, domain: siteDomain } );
 		insightsList = new StatsList( { siteID: siteId, statType: 'statsInsights', domain: siteDomain } );
 		commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: siteDomain } );
@@ -193,7 +189,6 @@ module.exports = {
 				React.createElement( StatsComponent, {
 					site: site,
 					followList: followList,
-					streakList: streakList,
 					allTimeList: allTimeList,
 					statSummaryList: statSummaryList,
 					insightsList: insightsList,

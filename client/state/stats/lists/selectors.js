@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
+import forOwn from 'lodash/forOwn';
 import get from 'lodash/get';
-import values from 'lodash/values';
 import i18n from 'i18n-calypso';
 
 /**
@@ -55,22 +55,22 @@ export function getSiteStatsForQuery( state, siteId, statType, query ) {
 export const getSiteStatsPostStreakData = createSelector(
 	( state, siteId, query ) => {
 		const response = {};
-		const data = getSiteStatsForQuery( state, siteId, 'statsStreak', query ) || [];
+		const streakData = getSiteStatsForQuery( state, siteId, 'statsStreak', query ) || {};
 
-		Object.keys( data ).forEach( ( timestamp ) => {
+		Object.keys( streakData ).forEach( ( timestamp ) => {
 			const postDay = i18n.moment.unix( timestamp );
 			const datestamp = postDay.format( 'YYYY-MM-DD' );
 			if ( 'undefined' === typeof( response[ datestamp ] ) ) {
 				response[ datestamp ] = 0;
 			}
 
-			response[ datestamp ] += data[ timestamp ];
+			response[ datestamp ] += streakData[ timestamp ];
 		} );
 
 		return response;
 	},
 	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
-	( state, siteId, taxonomy, query ) => {
+	( state, siteId, query ) => {
 		const serializedQuery = getSerializedStatsQuery( query );
 		return [ siteId, 'statsStreak', serializedQuery ].join();
 	}
@@ -86,18 +86,34 @@ export const getSiteStatsPostStreakData = createSelector(
  */
 export const getSiteStatsMaxPostsByDay = createSelector(
 	( state, siteId, query ) => {
-		const data = values( getSiteStatsPostStreakData( state, siteId, query ) ).sort();
+		let max = 0;
 
-		if ( data.length ) {
-			return data[ data.length - 1 ];
-		}
+		forOwn( getSiteStatsPostStreakData( state, siteId, query ), count => {
+			if ( count > max ) {
+				max = count;
+			}
+		} );
 
-		return null;
+		return max || null;
 	},
 	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
-	( state, siteId, taxonomy, query ) => {
+	( state, siteId, query ) => {
 		const serializedQuery = getSerializedStatsQuery( query );
 		return [ siteId, 'statsStreakMax', serializedQuery ].join();
 	}
 );
+
+/**
+ * Returns a number representing the posts made during a day for a given query
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Object}  query  Stats query object
+ * @param  {String}  date   Date in YYYY-MM-DD format
+ * @return {?Number}        Number of posts made on date
+ */
+export function getSiteStatsPostsCountByDay( state, siteId, query, date ) {
+	const data = getSiteStatsPostStreakData( state, siteId, query );
+	return data[ date ] || null;
+}
 
