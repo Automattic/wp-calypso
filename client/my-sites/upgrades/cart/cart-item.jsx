@@ -16,7 +16,6 @@ import {
 	isPlan
 } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
-import { abtest } from 'lib/abtest';
 
 const getIncludedDomain = cartItems.getIncludedDomain;
 
@@ -67,7 +66,7 @@ export default React.createClass( {
 			return null;
 		}
 
-		if ( abtest( 'planPricing' ) === 'annual' || cost <= 0 ) {
+		if ( cost <= 0 ) {
 			return null;
 		}
 

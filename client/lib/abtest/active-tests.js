@@ -92,16 +92,6 @@ module.exports = {
 		allowExistingUsers: false,
 		allowAnyLocale: true
 	},
-	planPricing: {
-		datestamp: '20160426',
-		variations: {
-			monthly: 90,
-			annual: 10
-		},
-		defaultVariation: 'monthly',
-		allowExistingUsers: true,
-		allowAnyLocale: true
-	},
 	wordadsInstantActivation: {
 		datestamp: '20160607',
 		variations: {
