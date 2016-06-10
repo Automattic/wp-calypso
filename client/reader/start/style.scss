@@ -34,11 +34,6 @@
 	padding-bottom: 100px;
 	transform: translateX( 0 ); // Prevents overflowing content from disappearing
 
-    @include breakpoint( ">960px" ) {
-	    column-count: 2;
-	    column-gap: 1em;
-    }
-
 	.site-icon {
 		border: 4px solid $white;
 		margin: 0 auto;
@@ -47,11 +42,12 @@
 
 .reader-start-card {
 	margin-bottom: 25px;
+	width: 100%;
 
 	@include breakpoint( ">960px" ) {
 		display: inline-block;
-	    margin: 8px 5px 8px 2px;
-	    width: 100%;
+			margin: 0px 0px 14px 0px;
+			width: 48%;
 	}
 
 	&:first-child {
