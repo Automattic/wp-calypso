@@ -15,6 +15,7 @@ import {
 	toggleEnabled,
 } from 'state/push-notifications/actions';
 import {
+	getStatus,
 	isApiReady,
 	isAuthorizationLoaded,
 	isAuthorized,
@@ -57,6 +58,7 @@ const PushNotificationPrompt = React.createClass( {
 	},
 
 	pushUnsubscribedNotice: function() {
+		const buttonDisabled = ( [ 'disabling', 'enabling', 'unknown' ].includes( this.props.status ) );
 		const noticeText = (
 			<div>
 				<p>
@@ -66,7 +68,7 @@ const PushNotificationPrompt = React.createClass( {
 					{ this.translate(
 						'{{enableButton}}Enable Browser Notifications{{/enableButton}}', {
 							components: {
-								enableButton: <Button className={ 'push-notification__prompt-enable' } onClick={ this.props.toggleEnabled } />
+								enableButton: <Button className={ 'push-notification__prompt-enable' } disabled={ buttonDisabled } onClick={ this.props.toggleEnabled } />
 							} }
 					) }
 				</p>
@@ -88,15 +90,11 @@ const PushNotificationPrompt = React.createClass( {
 		}
 		const user = this.props.user.get();
 
-		if ( ! user || ! user.email_verified || this.props.isNoticeDismissed ) {
+		if ( ! user || ! user.email_verified ) {
 			return null;
 		}
 
 		if ( ! this.props.section || this.props.isLoading || -1 === SECTION_NAME_WHITELIST.indexOf( this.props.section.name ) ) {
-			return null;
-		}
-
-		if ( this.props.isAuthorized ) {
 			return null;
 		}
 
@@ -112,7 +110,8 @@ export default connect(
 			isAuthorized: isAuthorized( state ),
 			isBlocked: isBlocked( state ),
 			isEnabled: isEnabled( state ),
-			isNoticeDismissed: isNoticeDismissed( state )
+			isNoticeDismissed: isNoticeDismissed( state ),
+			status: getStatus( state )
 		};
 	},
 	{

@@ -4,6 +4,7 @@
 import { combineReducers } from 'redux';
 import debugFactory from 'debug';
 import moment from 'moment';
+import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 
 /**
@@ -21,25 +22,29 @@ import {
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_TOGGLE_ENABLED,
 	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
+	SERIALIZE,
 } from 'state/action-types';
 const debug = debugFactory( 'calypso:push-notifications' );
 
-function settings( state = {}, action ) {
+const UNPERSISTED_SYSTEM_NODES = [
+	'apiReady',
+	'authorized',
+	'authorizationLoaded',
+	'blocked',
+];
+function system( state = {}, action ) {
 	switch ( action.type ) {
+		// System state is not persisted
 		case DESERIALIZE: {
-			// Don't persist these
-			return Object.assign( {}, state, {
-				// API status & permissions should be checked on boot
-				apiReady: false,
-				authorizationLoaded: false,
-				authorized: false,
-				blocked: false,
+			const newState = omit( state, UNPERSISTED_SYSTEM_NODES );
+			debug( 'DESERIALIZE system', newState );
+			return omit( newState, UNPERSISTED_SYSTEM_NODES );
+		}
 
-				// The dialog should default to hidden @TODO move to ui subtree?
-				showingUnblockInstructions: false,
-
-				// @TODO enforce TTL on dismissedNotice
-			} );
+		case SERIALIZE: {
+			const newState = omit( state, UNPERSISTED_SYSTEM_NODES );
+			debug( 'SERIALIZE system', newState );
+			return newState;
 		}
 
 		case PUSH_NOTIFICATIONS_API_READY: {
@@ -73,25 +78,6 @@ function settings( state = {}, action ) {
 			} );
 		}
 
-		case PUSH_NOTIFICATIONS_TOGGLE_ENABLED: {
-			return Object.assign( {}, state, {
-				enabled: ! state.enabled
-			} );
-		}
-
-		case PUSH_NOTIFICATIONS_DISMISS_NOTICE: {
-			return Object.assign( {}, state, {
-				dismissedNotice: true,
-				dismissedNoticeAt: ( new Date() ).getTime(),
-			} );
-		}
-
-		case PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS: {
-			return Object.assign( {}, state, {
-				showingUnblockInstructions: !state.showingUnblockInstructions
-			} );
-		}
-
 		case PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE: {
 			const { data } = action;
 			if ( ! data.success ) {
@@ -99,7 +85,6 @@ function settings( state = {}, action ) {
 			}
 			debug( 'Deleted subscription', data );
 			return Object.assign( {}, state, {
-				lastUpdated: null,
 				wpcomSubscription: null
 			} );
 		}
@@ -119,12 +104,10 @@ function settings( state = {}, action ) {
 				}
 			}
 
-			const wpcomSubscription = Object.assign( {}, pick( data, [ 'ID', 'settings' ] ), {
-				lastUpdated: moment( lastUpdated ).format()
-			} );
-
 			return Object.assign( {}, state, {
-				wpcomSubscription
+				wpcomSubscription: Object.assign( {}, pick( data, [ 'ID', 'settings' ] ), {
+					lastUpdated: moment( lastUpdated ).format()
+				} )
 			} );
 		}
 
@@ -136,12 +119,54 @@ function settings( state = {}, action ) {
 				subscription,
 			} );
 		}
-
-		default:
-			return state;
 	}
+
+	return state;
+}
+
+const UNPERSISTED_SETTINGS_NODES = [
+	// The dialog should default to hidden
+	'showingUnblockInstructions',
+];
+
+function settings( state = {}, action ) {
+	switch ( action.type ) {
+		case DESERIALIZE: {
+			const newState = omit( state, UNPERSISTED_SETTINGS_NODES );
+			debug( 'DESERIALIZE settings', newState );
+			return newState;
+		}
+
+		case SERIALIZE: {
+			const newState = omit( state, UNPERSISTED_SETTINGS_NODES );
+			debug( 'SERIALIZE settings', newState );
+			return newState;
+		}
+
+		case PUSH_NOTIFICATIONS_TOGGLE_ENABLED: {
+			return Object.assign( {}, state, {
+				enabled: ! state.enabled
+			} );
+		}
+
+		case PUSH_NOTIFICATIONS_DISMISS_NOTICE: {
+			return Object.assign( {}, state, {
+				dismissedNotice: true,
+				dismissedNoticeAt: ( new Date() ).getTime(),
+			} );
+		}
+
+		case PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS: {
+			return Object.assign( {}, state, {
+				showingUnblockInstructions: ! state.showingUnblockInstructions
+			} );
+		}
+	}
+
+	return state;
 }
 
 export default combineReducers( {
-	settings
+	settings,
+	system
 } );
