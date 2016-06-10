@@ -163,12 +163,13 @@ describe( 'reducer', () => {
 				site: {
 					ID: 2916284,
 					name: 'WordPress.com Example Blog',
+					slug: 'example.wordpress.com',
 					updateComputedAttributes() {}
 				}
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', slug: 'example.wordpress.com' }
 			} );
 		} );
 
@@ -178,12 +179,13 @@ describe( 'reducer', () => {
 				sites: [ {
 					ID: 2916284,
 					name: 'WordPress.com Example Blog',
+					slug: 'example.wordpress.com',
 					updateComputedAttributes() {}
 				} ]
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', slug: 'example.wordpress.com' }
 			} );
 		} );
 
