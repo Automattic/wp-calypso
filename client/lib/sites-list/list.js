@@ -425,7 +425,7 @@ SitesList.prototype.getStarred = function() {
  * @api private
  */
 SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
-	if ( ! this.recentlySelected ) {
+	if ( ! this.recentlySelected || this.recentlySelected.length === 0 ) {
 		this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
 	}
 
