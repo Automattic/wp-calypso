@@ -28,12 +28,12 @@ export default React.createClass( {
 	},
 
 	getDayComponents() {
-		let days = [];
+		const days = [];
 		const { month, startDate, streakData, max } = this.props;
 
 		for ( let i = 0; i < 7; i++ ) {
 			const dayDate = i18n.moment( startDate ).add( i, 'day' );
-			const postCount = streakData[ dayDate.format( 'YYYY-MM-DD' ) ];
+			const postCount = streakData[ dayDate.format( 'YYYY-MM-DD' ) ] || 0;
 			let classNames = [];
 			let level = Math.ceil( ( postCount / max ) * 4 );
 
