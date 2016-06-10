@@ -43,7 +43,7 @@ outputFile = program.outputFile;
 arrayName = program.arrayName;
 projectName = program.projectName;
 extras = Array.isArray( program.extra ) ? program.extra : ( program.extra ? [ program.extra ] : null );
-inputFiles = ( program.inputFile.length ) ? program.inputFile : program.args.slice( 2 );
+inputFiles = ( program.inputFile.length ) ? program.inputFile : program.args;
 
 if ( inputFiles.length === 0 ) {
 	throw new Error( 'Error: You must enter the input file. Run `i18n-calypso -h` for examples.' );
