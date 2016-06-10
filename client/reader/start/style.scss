@@ -80,7 +80,7 @@
 	.post-excerpt.is-long {
 		font-family: $serif;
 		font-size: 12px;
-		margin: 10px 0 -10px;
+		margin: 10px 0 -3px;
 		max-height: none;
 	}
 
@@ -175,7 +175,7 @@
 }
 
 .reader-start-card__site-description {
-	color: $gray;
+	color: darken( $gray, 20% );
 	font-size: 12px;
 
 	.site-icon {
@@ -204,8 +204,26 @@
 .reader-start-post-preview {
 	border: 1px solid lighten( $gray, 30% );
 	border-radius: 1px;
-	margin-top: -8px;
+	margin-top: 23px;
 	padding: 10px 10px 20px;
+}
+
+.reader-start-post-preview__popular {
+    background-color: $white;
+    color: $gray;
+    display: inline;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    margin-left: -3px;
+    padding: 0 4px;
+	position: relative;
+    	top : -24px;
+    text-transform: uppercase;
+}
+
+.reader-start-post-preview__post-content {
+	margin-top: -13px;
 }
 
 .reader-start-post-preview__title {
@@ -218,7 +236,7 @@
 	margin-bottom: 5px;
 
 	&:hover {
-		color: darken( $gray, 10% );
+		color: darken( $gray, 20% );
 	}
 
 	&:visited {

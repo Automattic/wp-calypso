@@ -61,9 +61,9 @@ const Start = React.createClass( {
 			<Main className="reader-start">
 				<QueryReaderStartRecommendations />
 				<header className="reader-start__intro">
-					<h1 className="reader-start__title">{ this.translate( 'Welcome to the Reader' ) }</h1>
-					<p className="reader-start__description">{ this.translate( "Discover great stories and read your favorite sites' posts all in one place. Every time there are new updates to the sites you follow, you'll be the first to know!" ) }
-				</p>
+					<h1 className="reader-start__title">{ this.translate( 'Welcome to the WordPress.com Reader' ) }</h1>
+					<p className="reader-start__description">{ this.translate( "Discover great stories and read your favorite sites' posts all in one place. Every time there are new updates to the sites you follow, you'll be the first to know!" ) }</p>
+					<p className="reader-start__description">{ this.translate( "We've curated a list of content for you. Follow one or more sites to get started." ) }</p>
 				</header>
 
 				<Masonry className="reader-start__cards" options={ { gutter: 14 } }>
@@ -81,8 +81,8 @@ const Start = React.createClass( {
 						<span className="reader-start__bar-text">
 							{ canGraduate
 								? this.translate(
-									'Great! You\'re following %(totalSubscriptions)d site.',
-									'Great! You\'re following %(totalSubscriptions)d sites.', {
+									'Great! You\'re now following %(totalSubscriptions)d site.',
+									'Great! You\'re now following %(totalSubscriptions)d sites.', {
 										count: this.state.totalSubscriptions,
 										args: {
 											totalSubscriptions: this.state.totalSubscriptions
