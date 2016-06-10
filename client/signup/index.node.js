@@ -5,9 +5,7 @@ import { getLanguage } from 'lib/i18n-utils';
 
 export default function( router ) {
 	router( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpLocale );
-	router( '/jetpack/*', ( context, next ) => {
-		next();
-	} ); // Required so this route doesn't 404
+	router( '/jetpack/*' ); // Required so this route doesn't 404
 }
 
 // Set up the locale in case it has ended up in the flow param
