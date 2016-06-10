@@ -72,8 +72,6 @@ export default React.createClass( {
 		if ( this.state.search !== prevState.search ) {
 			this.setState( {
 				highlightedSite: this.visibleSites[ 0 ] || null
-			}, () => {
-				this.scrollToHightlightedSite();
 			} );
 		} else if ( prevState.highlightedSite !== this.state.highlightedSite ) {
 			this.scrollToHightlightedSite();
