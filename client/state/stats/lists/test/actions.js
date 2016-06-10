@@ -90,7 +90,7 @@ describe( 'actions', () => {
 					type: SITE_STATS_RECEIVE,
 					siteId: SITE_ID,
 					statType: STAT_TYPE,
-					data: STREAK_RESPONSE.data,
+					data: STREAK_RESPONSE,
 					query: STREAK_QUERY
 				} );
 			} );

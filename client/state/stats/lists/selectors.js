@@ -55,16 +55,16 @@ export function getSiteStatsForQuery( state, siteId, statType, query ) {
 export const getSiteStatsPostStreakData = createSelector(
 	( state, siteId, query ) => {
 		const response = {};
-		const streakData = getSiteStatsForQuery( state, siteId, 'statsStreak', query ) || {};
+		const streakData = getSiteStatsForQuery( state, siteId, 'statsStreak', query ) || { data: {} };
 
-		Object.keys( streakData ).forEach( ( timestamp ) => {
+		Object.keys( streakData.data ).forEach( ( timestamp ) => {
 			const postDay = i18n.moment.unix( timestamp );
 			const datestamp = postDay.format( 'YYYY-MM-DD' );
 			if ( 'undefined' === typeof( response[ datestamp ] ) ) {
 				response[ datestamp ] = 0;
 			}
 
-			response[ datestamp ] += streakData[ timestamp ];
+			response[ datestamp ] += streakData.data[ timestamp ];
 		} );
 
 		return response;
