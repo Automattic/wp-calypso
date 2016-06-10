@@ -20,7 +20,7 @@ const DesignToolList = React.createClass( {
 		const onChange = event => {
 			event.preventDefault();
 			this.props.onChange( tool.value );
-		}
+		};
 		return ( <SidebarItem
 							className="design-tool-list__button"
 							icon={ tool.icon }
@@ -39,15 +39,7 @@ const DesignToolList = React.createClass( {
 				<SidebarHeading>{ this.translate( 'Site Identity' ) }</SidebarHeading>
 				<SidebarMenu>
 					<ul>
-						{ this.renderControl( { icon: 'image', label: this.translate( 'Logo' ), value: 'siteLogo' } ) }
 						{ this.renderControl( { icon: 'heading', label: this.translate( 'Title and Tagline' ), value: 'siteTitle' } ) }
-					</ul>
-				</SidebarMenu>
-				<SidebarHeading>{ this.translate( 'Site Layout' ) }</SidebarHeading>
-				<SidebarMenu>
-					<ul>
-						{ this.renderControl( { icon: 'house', label: this.translate( 'Homepage Settings' ), value: 'homePage' } ) }
-						{ this.renderControl( { icon: 'image', label: this.translate( 'Header Image' ), value: 'headerImage' } ) }
 					</ul>
 				</SidebarMenu>
 			</div>
