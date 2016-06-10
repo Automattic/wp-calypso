@@ -20,7 +20,7 @@ const ThemesRelatedCard = React.createClass( {
 	},
 
 	getRelatedThemes() {
-		let themes = new Set([
+		let themes = new Set( [
 			'twentysixteen',
 			'rowling',
 			'hemingway-rewritten',
@@ -31,7 +31,7 @@ const ThemesRelatedCard = React.createClass( {
 			'sela',
 			'pique',
 			'harmonic'
-		]);
+		] );
 
 		//Remove current theme so we will not show it as related
 		themes.delete( this.props.currentTheme );
@@ -40,7 +40,7 @@ const ThemesRelatedCard = React.createClass( {
 		let randomThemeIndex = this.props.currentTheme.charCodeAt( 0 ) % themes.length;
 		let theme = themes.splice( randomThemeIndex, 1 )[0];
 		const selectedThemes = [ theme ];
-		selectedThemes.push( themes[ theme.charCodeAt( 0 ) % themes.length ])
+		selectedThemes.push( themes[ theme.charCodeAt( 0 ) % themes.length ] );
 
 		return selectedThemes;
 	},
