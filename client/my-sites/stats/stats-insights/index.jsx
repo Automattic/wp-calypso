@@ -35,7 +35,6 @@ export default React.createClass( {
 			React.PropTypes.bool,
 			React.PropTypes.object
 		] ),
-		statSummaryList: PropTypes.object.isRequired,
 		summaryDate: PropTypes.string,
 		wpcomFollowersList: PropTypes.object
 	},
