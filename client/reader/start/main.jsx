@@ -66,7 +66,7 @@ const Start = React.createClass( {
 				</p>
 				</header>
 
-				<Masonry className="reader-start__cards">
+				<Masonry className="reader-start__cards" options={ { gutter: 14 } }>
 					{ this.props.recommendationIds ? map( this.props.recommendationIds, ( recId ) => {
 						return (
 							<StartCard
