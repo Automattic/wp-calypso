@@ -86,8 +86,7 @@ webpackConfig = {
 			}
 		} ),
 		new webpack.optimize.OccurenceOrderPlugin( true ),
-		new webpack.IgnorePlugin( /^props$/ ),
-		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ )
+		new webpack.IgnorePlugin( /^props$/ )
 	],
 	externals: [ 'electron' ]
 };
