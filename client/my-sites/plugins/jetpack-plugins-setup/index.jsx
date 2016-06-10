@@ -22,12 +22,15 @@ import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import JetpackSite from 'lib/site/jetpack';
+import sitesFactory from 'lib/sites-list';
+const sites = sitesFactory();
 
 // Redux actions & selectors
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
+import { requestSites } from 'state/sites/actions';
 import {
 	fetchInstallInstructions,
 	installPlugin,
@@ -78,6 +81,7 @@ const PlansSetup = React.createClass( {
 
 	componentDidMount() {
 		window.addEventListener( 'beforeunload', this.warnIfNotFinished );
+		this.props.requestSites();
 		if ( this.props.siteId ) {
 			this.fetchInstallInstructions();
 		}
@@ -221,7 +225,7 @@ const PlansSetup = React.createClass( {
 			}
 			statusProps.children = (
 				<NoticeAction key="notice_action" href={ helpLinks[ plugin.slug ] }>
-					{ "Manual Installation" }
+					{ this.translate( 'Manual Installation' ) }
 				</NoticeAction>
 			);
 		} else {
@@ -311,8 +315,8 @@ const PlansSetup = React.createClass( {
 							components: { strong: <strong /> }
 						} )
 					}</p>
-					<Button primary href={ manageUrl }>Enable Manage</Button>
-					<Button href="https://en.support.wordpress.com/setting-up-premium-services/">Manual Installation</Button>
+					<Button primary href={ manageUrl }>{ this.translate( 'Enable Manage' ) }</Button>
+					<Button href="https://en.support.wordpress.com/setting-up-premium-services/">{ this.translate( 'Manual Installation' ) }</Button>
 				</Card>
 			);
 		}
@@ -334,8 +338,7 @@ const PlansSetup = React.createClass( {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
-		const site = getSelectedSite( state );
-
+		const site = sites.getSelectedSite();
 		return {
 			wporg: state.plugins.wporg.items,
 			isRequesting: isRequesting( state, siteId ),
@@ -350,5 +353,5 @@ export default connect(
 			siteId
 		};
 	},
-	dispatch => bindActionCreators( { fetchPluginData, fetchInstallInstructions, installPlugin }, dispatch )
+	dispatch => bindActionCreators( { requestSites, fetchPluginData, fetchInstallInstructions, installPlugin }, dispatch )
 )( PlansSetup );
