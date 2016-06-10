@@ -1,3 +1,9 @@
-export function updatePreviewWithChanges( previewDocument, customizations ) { // eslint-disable-line no-unused-vars
-	// Update the preview here
+import siteTitle from './updaters/site-title';
+
+const updaterFunctions = [
+	siteTitle,
+];
+
+export function updatePreviewWithChanges( previewDocument, customizations ) {
+	updaterFunctions.map( callback => callback( previewDocument, customizations ) );
 }
