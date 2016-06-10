@@ -25,6 +25,7 @@ import {
 	isApiReady,
 	getDeviceId,
 	getLastUpdated,
+	getStatus,
 	isBlocked,
 	isEnabled,
 } from './selectors';
@@ -36,8 +37,12 @@ import {
 	isServiceWorkerSupported,
 	registerServerWorker,
 } from 'lib/service-worker';
+
 const debug = debugFactory( 'calypso:push-notifications' );
 const DAYS_BEFORE_FORCING_REGISTRATION_REFRESH = 15;
+const serviceWorkerOptions = {
+	path: '/service-worker.js',
+};
 
 export function init() {
 	return dispatch => {
@@ -78,10 +83,13 @@ export function apiReady() {
 
 		if ( isEnabled( state ) ) {
 			dispatch( activateSubscription() );
-		} else {
-			dispatch( {
-				type: PUSH_NOTIFICATIONS_MUST_PROMPT
-			} );
+			return;
+		}
+
+		dispatch( mustPrompt() );
+		if ( 'disabling' === getStatus( state ) ) {
+			debug( 'Forcibly unregistering device (disabling on apiReady)' );
+			dispatch( unregisterDevice() );
 		}
 	};
 }
@@ -94,7 +102,7 @@ export function fetchAndLoadServiceWorker() {
 		}
 		debug( 'Registering service worker' );
 
-		registerServerWorker()
+		registerServerWorker( serviceWorkerOptions )
 			.then( serviceWorkerRegistration => dispatch( apiReady( serviceWorkerRegistration ) ) )
 			.catch( err => {
 				debug( 'Error loading service worker!', err );
@@ -106,7 +114,7 @@ export function fetchAndLoadServiceWorker() {
 
 export function deactivateSubscription() {
 	return dispatch => {
-		window.navigator.serviceWorker.ready
+		navigator.serviceWorker.getRegistration( serviceWorkerOptions )
 			.then( ( serviceWorkerRegistration ) => {
 				serviceWorkerRegistration.pushManager.getSubscription()
 					.then( pushSubscription => {
@@ -122,14 +130,22 @@ export function deactivateSubscription() {
 							.catch( err => debug( 'Error while unsubscribing', err ) )
 						;
 					} )
-					.catch( err => debug( 'Error getting subscription to deactivate', err ) )
+					.catch( err => {
+						dispatch( unregisterDevice() );
+						debug( 'Error getting subscription to deactivate', err );
+					} )
 				;
-			} );
+			} )
+			.catch( err => {
+				dispatch( unregisterDevice() );
+				debug( 'Error getting ServiceWorkerRegistration to deactivate', err );
+			} )
+		;
 	};
 }
 
 export function receivePermissionState( permission ) {
-	return dispatch => {
+	return ( dispatch, getState ) => {
 		if ( permission === 'granted' ) {
 			debug( 'Push notifications authorized' );
 			dispatch( {
@@ -144,13 +160,19 @@ export function receivePermissionState( permission ) {
 			return;
 		}
 
-		dispatch( {
-			type: PUSH_NOTIFICATIONS_MUST_PROMPT
-		} );
-		dispatch( toggleEnabled() );
+		if ( isEnabled( getState() ) ) {
+			// The user dismissed the prompt -- disable
+			dispatch( toggleEnabled() );
+		}
+		dispatch( mustPrompt() );
 	};
 }
 
+export function mustPrompt() {
+	return {
+		type: PUSH_NOTIFICATIONS_MUST_PROMPT
+	};
+}
 export function fetchPushManagerSubscription() {
 	return dispatch => {
 		window.navigator.serviceWorker.ready
@@ -269,8 +291,11 @@ export function checkPermissionsState() {
 }
 
 export function block() {
-	return {
-		type: PUSH_NOTIFICATIONS_BLOCK
+	return dispatch => {
+		dispatch( {
+			type: PUSH_NOTIFICATIONS_BLOCK
+		} );
+		dispatch( deactivateSubscription() );
 	};
 }
 
