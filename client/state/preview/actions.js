@@ -8,6 +8,8 @@ import wpcom from 'lib/wp';
  * Internal dependencies
  */
 import * as ActionTypes from 'state/action-types';
+import * as customizationSaveFunctions from './save-functions';
+import { requestSitePosts } from 'state/posts/actions';
 
 const debug = debugFactory( 'calypso:preivew-actions' );
 
@@ -50,4 +52,49 @@ export function undoCustomization( siteId ) {
 
 export function customizationsSaved( siteId ) {
 	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_SAVED, siteId };
+}
+
+export function saveCustomizations() {
+	return function( dispatch, getState ) {
+		if ( ! getState().preview ) {
+			debug( 'no preview state to save' );
+			return;
+		}
+		const { preview, ui } = getState();
+		const siteId = ui.selectedSiteId;
+		const customizations = preview[ siteId ].customizations;
+		debug( 'saving customizations', customizations );
+		Object.keys( customizations ).map( id => saveCustomizationsFor( id, customizations[ id ], siteId, dispatch ) );
+		dispatch( customizationsSaved( siteId ) );
+	}
+}
+
+function saveCustomizationsFor( id, customizations, siteId, dispatch ) {
+	debug( 'saving customizations for', id );
+	const saveFunction = customizationSaveFunctions[ id ];
+	if ( saveFunction ) {
+		return saveFunction( dispatch, customizations, siteId );
+	}
+	debug( 'no save function for', id );
+}
+
+export function createHomePage() {
+	return function( dispatch, getState ) {
+		const { preview, ui } = getState();
+		const siteId = ui.selectedSiteId;
+		const customizations = preview[ siteId ].customizations;
+		debug( 'creating home page for site', siteId );
+		wpcom.site( siteId ).addPost( { type: 'page', title: 'Home', content: '<h1>Welcome!</h1>' } )
+		.then( post => {
+			debug( 'home page successfully created!', post );
+			debug( 'setting home page preview setting to replace existing setting', customizations.homePage );
+			if ( ! customizations.homePage ) {
+				customizations.homePage = { isPageOnFront: true };
+			}
+			customizations.homePage.pageOnFrontId = post.ID;
+			dispatch( updateCustomizations( siteId, { homePage: customizations.homePage } ) );
+			debug( 'refreshing page list for new home page' );
+			dispatch( requestSitePosts( siteId, { type: 'page' } ) );
+		} );
+	}
 }
