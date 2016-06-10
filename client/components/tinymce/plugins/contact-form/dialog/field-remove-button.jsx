@@ -40,7 +40,6 @@ export default React.createClass( {
 				<Popover
 					isVisible={ this.state.showTooltip }
 					context={ this.refs && this.refs.removeField }
-					onClose={ () => {} }
 					position="bottom"
 					className="popover tooltip is-dialog-visible">
 					{ this.translate( 'Remove Field', { context: 'button tooltip' } ) }

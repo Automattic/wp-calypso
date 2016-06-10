@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import noop from 'lodash/noop';
 import classnames from 'classnames';
 
 /**
@@ -45,7 +44,6 @@ export default React.createClass( {
 				className={ classes }
 				isVisible={ this.props.isVisible }
 				context={ this.props.context }
-				onClose={ noop }
 				position={ this.props.position }
 			>
 				{ this.props.children }
