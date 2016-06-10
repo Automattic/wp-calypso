@@ -33,15 +33,15 @@ module.exports = function( matches, options ) {
 	output += options.potHeader || [
 			'msgid ""',
 			'msgstr ""',
-			'"Project-Id-Version: _s ' + ( options.projectName || '' ) + '"\n',
-			'"Report-Msgid-Bugs-To: ' + ( options.projectBugsUrl || '' ) + '"\n',
-			'"POT-Creation-Date: ' + new Date().toISOString() + '"\n',
-			'"MIME-Version: 1.0"\n',
-			'"Content-Type: text/plain; charset=UTF-8"\n',
-			'"Content-Transfer-Encoding: 8bit"\n',
-			'"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE"\n',
-			'"Last-Translator: FULL NAME <EMAIL@ADDRESS>"\n',
-			'"Language-Team: LANGUAGE <LL@li.org>"\n',
+			'"Project-Id-Version: _s ' + ( options.projectName || '' ) + '"',
+			'"Report-Msgid-Bugs-To: ' + ( options.projectBugsUrl || '' ) + '"',
+			'"POT-Creation-Date: ' + new Date().toISOString() + '"',
+			'"MIME-Version: 1.0"',
+			'"Content-Type: text/plain; charset=UTF-8"',
+			'"Content-Transfer-Encoding: 8bit"',
+			'"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE"',
+			'"Last-Translator: FULL NAME <EMAIL@ADDRESS>"',
+			'"Language-Team: LANGUAGE <LL@li.org>"',
 			''
 		].join( '\n' );
 
