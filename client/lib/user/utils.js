@@ -9,6 +9,8 @@ var debug = require( 'debug' )( 'calypso:user:utilities' ),
  */
 var user = require( 'lib/user' )();
 
+const beforeLogOutCallbacks = [];
+
 var userUtils = {
 	getLogoutUrl: function( redirect ) {
 		var url = '/logout',
@@ -42,12 +44,22 @@ var userUtils = {
 	logout: function( redirect ) {
 		var logoutUrl = userUtils.getLogoutUrl( redirect );
 
+		beforeLogOutCallbacks.forEach( function( callback ) {
+			if ( 'function' === typeof callback ) {
+				callback();
+			}
+		} );
+
 		// Clear any data stored locally within the user data module or localStorage
 		user.clear();
 		debug( 'User stored data cleared' );
 
 		// Forward user to WordPress.com to be logged out
 		location.href = logoutUrl;
+	},
+
+	beforeLogOut( callback ) {
+		beforeLogOutCallbacks.push( callback );
 	},
 
 	getLocaleSlug: function() {
