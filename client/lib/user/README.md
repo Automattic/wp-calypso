@@ -26,9 +26,12 @@ var user = require( 'lib/user/utilities' );
 ```
 
 ### `UserUtilities#logout()`
-This is a small module that logs a user out by clearing user stored data by calling `User#clear()` and redirects user to WordPress.com to be logged out.
+This is a small module that logs a user out by clearing user stored data by calling `User#clear()` and redirects user to WordPress.com to be logged out. Sequentially executes callback functions added via `beforeLogOut` prior to actually logging out.
+
+### `UserUtilities#beforeLogOut( callback )`
+Adds a `callback` function to a list that is executed immediately prior to `logout` doing its work. These receive no arguments.
 
 ### `UserUtilities#getLogoutUrl()`
-Returns a localized logout URL based on the current user's language. 
+Returns a localized logout URL based on the current user's language.
 
 For example, an English speaking user be redirected to `wordpress.com` after being logged, but a Spanish speaking user will be redirected to `es.wordpress.com`.;

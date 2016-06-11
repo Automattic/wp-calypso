@@ -36,7 +36,6 @@ var config = require( 'config' ),
 	emailVerification = require( 'components/email-verification' ),
 	viewport = require( 'lib/viewport' ),
 	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
-	pushNotificationsInit = require( 'state/push-notifications/actions' ).init,
 	sections = require( 'sections' ),
 	touchDetect = require( 'lib/touch-detect' ),
 	setRouteAction = require( 'state/notices/actions' ).setRoute,
@@ -51,6 +50,12 @@ var config = require( 'config' ),
 	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
+
+import { beforeLogOut } from 'lib/user/utils';
+import {
+	init as pushNotificationsInit,
+	unregisterDevice as pushNotificationsUnregisterDevice,
+} from 'state/push-notifications/actions';
 
 function init() {
 	var i18nLocaleStringsObject = null;
@@ -207,6 +212,7 @@ function reduxStoreReady( reduxStore ) {
 
 		if ( config.isEnabled( 'push-notifications' ) ) {
 			// If the browser is capable, registers a service worker & exposes the API
+			beforeLogOut( () => reduxStore.dispatch( pushNotificationsUnregisterDevice() ) );
 			reduxStore.dispatch( pushNotificationsInit() );
 		}
 	} else {
