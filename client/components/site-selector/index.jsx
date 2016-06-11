@@ -64,6 +64,17 @@ export default React.createClass( {
 		};
 	},
 
+	reset() {
+		if ( this.state.search && this.refs.siteSearch ) {
+			this.refs.siteSearch.clear();
+		} else {
+			this.setState( {
+				highlightedSite: this.visibleSites[ 0 ] || null,
+				search: ''
+			} );
+		}
+	},
+
 	onSearch( terms ) {
 		this.setState( { search: terms } );
 	},

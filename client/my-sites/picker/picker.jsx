@@ -47,6 +47,10 @@ const SitePicker = React.createClass( {
 				isAutoFocused: nextProps.layoutFocus.getCurrent() === 'sites'
 			} );
 		}.bind( this ), 200 );
+
+		if ( this.refs.siteSelector && nextProps.layoutFocus.getCurrent() === 'sites' ) {
+			this.refs.siteSelector.reset();
+		}
 	},
 
 	componentWillUnmount: function() {
