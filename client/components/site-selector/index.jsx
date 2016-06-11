@@ -79,6 +79,9 @@ export default React.createClass( {
 		this.setState( { search: terms } );
 	},
 
+	// This ESLint rule prevents you from making infinite loops of componentDidUpdate.
+	// We have conditions in place, so infinite loop cannot happen and we can disable the warning.
+	/* eslint-disable react/no-did-update-set-state */
 	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.search !== prevState.search ) {
 			this.setState( {
@@ -88,6 +91,7 @@ export default React.createClass( {
 			this.scrollToHightlightedSite();
 		}
 	},
+	/* eslint-enable react/no-did-update-set-state */
 
 	scrollToHightlightedSite() {
 		const selectedSite = this.refs.selectedSite;
