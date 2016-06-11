@@ -60,7 +60,7 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			search: '',
-			highlightedSite: null
+			highlightedIndex: 0
 		};
 	},
 
@@ -68,30 +68,22 @@ export default React.createClass( {
 		if ( this.state.search && this.refs.siteSearch ) {
 			this.refs.siteSearch.clear();
 		} else {
-			this.setState( {
-				highlightedSite: this.visibleSites[ 0 ] || null,
-				search: ''
-			} );
+			this.setState( this.getInitialState() );
 		}
 	},
 
 	onSearch( terms ) {
-		this.setState( { search: terms } );
+		this.setState( {
+			search: terms,
+			highlightedIndex: 0
+		} );
 	},
 
-	// This ESLint rule prevents you from making infinite loops of componentDidUpdate.
-	// We have conditions in place, so infinite loop cannot happen and we can disable the warning.
-	/* eslint-disable react/no-did-update-set-state */
 	componentDidUpdate( prevProps, prevState ) {
-		if ( this.state.search !== prevState.search ) {
-			this.setState( {
-				highlightedSite: this.visibleSites[ 0 ] || null
-			} );
-		} else if ( prevState.highlightedSite !== this.state.highlightedSite ) {
+		if ( prevState.highlightedIndex !== this.state.highlightedIndex ) {
 			this.scrollToHightlightedSite();
 		}
 	},
-	/* eslint-enable react/no-did-update-set-state */
 
 	scrollToHightlightedSite() {
 		const selectedSite = this.refs.selectedSite;
@@ -105,16 +97,8 @@ export default React.createClass( {
 		}
 	},
 
-	componentDidMount() {
-		if ( this.visibleSites.length > 0 ) {
-			this.setState( {
-				highlightedSite: this.visibleSites[ 0 ]
-			} );
-		}
-	},
-
 	onKeyDown( event ) {
-		const highlightedIndex = this.visibleSites.indexOf( this.state.highlightedSite );
+		const highlightedSite = this.visibleSites[ this.state.highlightedIndex ];
 		const visibleLength = this.visibleSites.length;
 
 		// ignore keyboard access when there are no results
@@ -127,23 +111,23 @@ export default React.createClass( {
 
 		switch ( event.key ) {
 			case 'ArrowUp':
-				nextIndex = highlightedIndex - 1;
+				nextIndex = this.state.highlightedIndex - 1;
 				if ( nextIndex < 0 ) {
 					nextIndex = visibleLength - 1;
 				}
 				break;
 			case 'ArrowDown':
-				nextIndex = highlightedIndex + 1;
+				nextIndex = this.state.highlightedIndex + 1;
 				if ( nextIndex >= visibleLength ) {
 					nextIndex = 0;
 				}
 				break;
 			case 'Enter':
-				if ( highlightedIndex > -1 ) {
-					if ( this.state.highlightedSite === ALL_SITES ) {
+				if ( highlightedSite ) {
+					if ( highlightedSite === ALL_SITES ) {
 						this.onSiteSelect( ALL_SITES, event );
 					} else {
-						this.onSiteSelect( this.state.highlightedSite.slug, event );
+						this.onSiteSelect( highlightedSite.slug, event );
 					}
 				}
 				break;
@@ -151,7 +135,7 @@ export default React.createClass( {
 
 		if ( nextIndex !== null ) {
 			this.setState( {
-				highlightedSite: this.visibleSites[ nextIndex ]
+				highlightedIndex: nextIndex
 			} );
 		}
 	},
@@ -226,7 +210,7 @@ export default React.createClass( {
 	},
 
 	isSelected( site ) {
-		return site === this.state.highlightedSite;
+		return this.visibleSites.indexOf( site ) === this.state.highlightedIndex;
 	},
 
 	shouldShowGroups() {
