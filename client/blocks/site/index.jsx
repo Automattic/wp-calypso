@@ -68,7 +68,7 @@ export default React.createClass( {
 			return;
 		}
 
-		this.props.onSelect( event );
+		this.props.onSelect( event, this.props.site.slug );
 		event.preventDefault(); // this doesn't actually do anything...
 	},
 
