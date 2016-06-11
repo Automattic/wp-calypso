@@ -78,11 +78,10 @@ export function apiReady() {
 
 		if ( isEnabled( state ) ) {
 			dispatch( activateSubscription() );
-		} else {
-			dispatch( {
-				type: PUSH_NOTIFICATIONS_MUST_PROMPT
-			} );
+			return;
 		}
+
+		dispatch( mustPrompt() );
 	};
 }
 
@@ -129,7 +128,7 @@ export function deactivateSubscription() {
 }
 
 export function receivePermissionState( permission ) {
-	return dispatch => {
+	return ( dispatch, getState ) => {
 		if ( permission === 'granted' ) {
 			debug( 'Push notifications authorized' );
 			dispatch( {
@@ -144,13 +143,19 @@ export function receivePermissionState( permission ) {
 			return;
 		}
 
-		dispatch( {
-			type: PUSH_NOTIFICATIONS_MUST_PROMPT
-		} );
-		dispatch( toggleEnabled() );
+		if ( isEnabled( getState() ) ) {
+			// The user dismissed the prompt -- disable
+			dispatch( toggleEnabled() );
+		}
+		dispatch( mustPrompt() );
 	};
 }
 
+export function mustPrompt() {
+	return {
+		type: PUSH_NOTIFICATIONS_MUST_PROMPT
+	};
+}
 export function fetchPushManagerSubscription() {
 	return dispatch => {
 		window.navigator.serviceWorker.ready
