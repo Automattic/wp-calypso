@@ -125,9 +125,9 @@ export default React.createClass( {
 			case 'Enter':
 				if ( highlightedSite ) {
 					if ( highlightedSite === ALL_SITES ) {
-						this.onSiteSelect( ALL_SITES, event );
+						this.onSiteSelect( event, ALL_SITES );
 					} else {
-						this.onSiteSelect( highlightedSite.slug, event );
+						this.onSiteSelect( event, highlightedSite.slug );
 					}
 				}
 				break;
@@ -140,7 +140,7 @@ export default React.createClass( {
 		}
 	},
 
-	onSiteSelect( siteSlug, event ) {
+	onSiteSelect( event, siteSlug ) {
 		const handledByHost = this.props.onSiteSelect( siteSlug );
 		this.props.onClose( event );
 
@@ -159,6 +159,10 @@ export default React.createClass( {
 				page( pathname );
 			}
 		}
+	},
+
+	onAllSitesSelect( event ) {
+		this.onSiteSelect( event, ALL_SITES );
 	},
 
 	recordAddNewSite() {
@@ -259,7 +263,7 @@ export default React.createClass( {
 				<AllSites
 					key="selector-all-sites"
 					sites={ this.props.sites.get() }
-					onSelect={ this.onSiteSelect.bind( this, ALL_SITES ) }
+					onSelect={ this.onAllSitesSelect }
 					isSelected={ isSelected }
 					ref={ isSelected ? 'selectedSite' : null }
 				/>
@@ -276,7 +280,7 @@ export default React.createClass( {
 				site={ site }
 				key={ 'site-' + site.ID }
 				indicator={ this.props.indicator }
-				onSelect={ this.onSiteSelect.bind( this, site.slug ) }
+				onSelect={ this.onSiteSelect }
 				isSelected={ isSelected }
 				ref={ isSelected ? 'selectedSite' : null }
 			/>
