@@ -174,7 +174,7 @@ const PlansCompare = React.createClass( {
 		}
 
 		// add google-ad-credits feature
-		if ( config.isEnabled( 'google-voucher' ) ) {
+		if ( config.isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' ) {
 			features.splice( 1, 0, googleAdCreditsFeature );
 		}
 

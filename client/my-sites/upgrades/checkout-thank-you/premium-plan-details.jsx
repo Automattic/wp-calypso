@@ -9,6 +9,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleVoucherDetails from './google-voucher';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
@@ -24,7 +25,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 
 	return (
 		<div>
-			{ config.isEnabled( 'google-voucher' ) && <QuerySiteVouchers siteId={ selectedSite.ID } /> }
+			{ config.isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' && <QuerySiteVouchers siteId={ selectedSite.ID } /> }
 
 			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
 
@@ -40,7 +41,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 			/>
 
 			{
-				config.isEnabled( 'google-voucher' ) &&
+				config.isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' &&
 				<div className="purchase-detail__body">
 					<GoogleVoucherDetails selectedSite={ selectedSite } />
 				</div>
