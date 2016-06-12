@@ -17,7 +17,6 @@ import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import ThemeDownloadCard from './theme-download-card';
-import ThemesRelatedCard from './themes-related-card';
 import Button from 'components/button';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -62,9 +61,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getDefaultProps() {
-		return {
-			section: 'overview',
-		};
+		return { section: 'overview' };
 	},
 
 	getInitialState() {
@@ -199,7 +196,6 @@ const ThemeSheet = React.createClass( {
 				</Card>
 				{ this.renderFeaturesCard() }
 				{ this.renderDownload() }
-				{ this.renderRelatedThemes() }
 			</div>
 		);
 	},
@@ -290,10 +286,6 @@ const ThemeSheet = React.createClass( {
 					actionURL="/design"/>
 			</Main>
 		);
-	},
-
-	renderRelatedThemes() {
-		return <ThemesRelatedCard currentTheme={ this.props.id } />;
 	},
 
 	renderSheet() {
