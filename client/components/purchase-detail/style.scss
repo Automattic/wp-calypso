@@ -9,7 +9,7 @@
 			border-bottom: none;
 		}
 
-		.button {
+		.button:not(.clipboard-button) {
 			width: 80%;
 		}
 	}

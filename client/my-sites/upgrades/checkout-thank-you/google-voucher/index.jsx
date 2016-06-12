@@ -94,7 +94,7 @@ class GoogleVoucherDetails extends Component {
 
 	getVoucher( props = this.props ) {
 		const { googleAdCredits } = props;
-		return googleAdCredits.length > 0 ? googleAdCredits[0] : {};
+		return googleAdCredits.length > 0 ? googleAdCredits[ 0 ] : {};
 	}
 
 	renderInitialStep() {
@@ -168,6 +168,7 @@ class GoogleVoucherDetails extends Component {
 					</p>
 
 					<PurchaseButton
+						className="google-voucher-code__setup-google-adwords"
 						href="https://www.google.com/adwords/"
 						target="_blank"
 						text={ this.props.translate( 'Setup Google AdWords' ) } />
