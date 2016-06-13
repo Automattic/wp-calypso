@@ -9,6 +9,7 @@ import flowRight from 'lodash/flowRight';
  */
 import config from 'config';
 import Exporter from './exporter';
+import { getSiteSlug } from 'state/sites/selectors';
 import {
 	shouldShowProgress,
 	getSelectedPostType,
@@ -28,6 +29,7 @@ function mapStateToProps( state ) {
 
 	return {
 		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
 		postType: getSelectedPostType( state ),
 		shouldShowProgress: shouldShowProgress( state, siteId ),
 		isExporting: isExporting( state, siteId ),
