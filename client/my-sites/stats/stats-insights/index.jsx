@@ -80,7 +80,7 @@ export default React.createClass( {
 					<PostingActivity />
 					<LatestPostSummary site={ site } />
 					<TodaysStats
-						siteId={ site ? site.ID : false }
+						siteId={ site ? site.ID : 0 }
 						period="day"
 						date={ summaryDate }
 						path={ '/stats/day' }
@@ -88,7 +88,7 @@ export default React.createClass( {
 					/>
 					<AllTime allTimeList={ allTimeList } />
 					<MostPopular insightsList={ insightsList } />
-					<DomainTip siteId={ site.ID } event="stats_insights_domain" />
+					<DomainTip siteId={ site ? site.ID : 0 } event="stats_insights_domain" />
 					<div className="stats-nonperiodic has-recent">
 						<div className="module-list">
 							<div className="module-column">
