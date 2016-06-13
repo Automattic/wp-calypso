@@ -36,8 +36,12 @@ import {
 	isServiceWorkerSupported,
 	registerServerWorker,
 } from 'lib/service-worker';
+
 const debug = debugFactory( 'calypso:push-notifications' );
 const DAYS_BEFORE_FORCING_REGISTRATION_REFRESH = 15;
+const serviceWorkerOptions = {
+	path: '/service-worker.js',
+};
 
 export function init() {
 	return dispatch => {
@@ -93,7 +97,7 @@ export function fetchAndLoadServiceWorker() {
 		}
 		debug( 'Registering service worker' );
 
-		registerServerWorker()
+		registerServerWorker( serviceWorkerOptions )
 			.then( serviceWorkerRegistration => dispatch( apiReady( serviceWorkerRegistration ) ) )
 			.catch( err => {
 				debug( 'Error loading service worker!', err );
@@ -105,7 +109,7 @@ export function fetchAndLoadServiceWorker() {
 
 export function deactivateSubscription() {
 	return dispatch => {
-		window.navigator.serviceWorker.ready
+		navigator.serviceWorker.getRegistration( serviceWorkerOptions )
 			.then( ( serviceWorkerRegistration ) => {
 				serviceWorkerRegistration.pushManager.getSubscription()
 					.then( pushSubscription => {
@@ -121,9 +125,17 @@ export function deactivateSubscription() {
 							.catch( err => debug( 'Error while unsubscribing', err ) )
 						;
 					} )
-					.catch( err => debug( 'Error getting subscription to deactivate', err ) )
+					.catch( err => {
+						dispatch( unregisterDevice() );
+						debug( 'Error getting subscription to deactivate', err );
+					} )
 				;
-			} );
+			} )
+			.catch( err => {
+				dispatch( unregisterDevice() );
+				debug( 'Error getting ServiceWorkerRegistration to deactivate', err );
+			} )
+		;
 	};
 }
 
