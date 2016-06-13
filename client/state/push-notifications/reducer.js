@@ -10,6 +10,12 @@ import pick from 'lodash/pick';
 /**
  * Internal dependencies
  */
+import { isValidStateWithSchema } from 'state/utils';
+import {
+	settingsSchema,
+	systemSchema,
+} from './schema';
+
 import {
 	DESERIALIZE,
 	PUSH_NOTIFICATIONS_API_READY,
@@ -35,11 +41,21 @@ function system( state = {}, action ) {
 	switch ( action.type ) {
 		// System state is not persisted
 		case DESERIALIZE: {
-			return omit( state, UNPERSISTED_SYSTEM_NODES );
+			const newState = omit( state, UNPERSISTED_SYSTEM_NODES );
+			if ( isValidStateWithSchema( newState, systemSchema ) ) {
+				return newState;
+			}
+			debug( 'INVALID system state during DESERIALIZE', newState );
+			return {};
 		}
 
 		case SERIALIZE: {
-			return omit( state, UNPERSISTED_SYSTEM_NODES );
+			const newState = omit( state, UNPERSISTED_SYSTEM_NODES );
+			if ( isValidStateWithSchema( newState, systemSchema ) ) {
+				return newState;
+			}
+			debug( 'INVALID system state during SERIALIZE', newState );
+			return {};
 		}
 
 		case PUSH_NOTIFICATIONS_API_READY: {
@@ -88,7 +104,11 @@ function system( state = {}, action ) {
 
 			debug( 'Received WPCOM device registration results', data );
 
-			if ( data && data._headers && data._headers.Date ) {
+			if ( ! ( data && data.ID ) ) {
+				return state;
+			}
+
+			if ( data._headers && data._headers.Date ) {
 				lastUpdated = new Date( data._headers.Date );
 				if ( lastUpdated.getTime() ) {
 					// Calling moment with non-ISO date strings is deprecated
@@ -116,11 +136,25 @@ const UNPERSISTED_SETTINGS_NODES = [
 function settings( state = {}, action ) {
 	switch ( action.type ) {
 		case DESERIALIZE: {
-			return omit( state, UNPERSISTED_SETTINGS_NODES );
+			const newState = omit( state, UNPERSISTED_SETTINGS_NODES );
+			if ( isValidStateWithSchema( newState, settingsSchema ) ) {
+				return newState;
+			}
+			debug( 'INVALID settings state during DESERIALIZE', newState );
+			return {
+				enabled: false,
+			};
 		}
 
 		case SERIALIZE: {
-			return omit( state, UNPERSISTED_SETTINGS_NODES );
+			const newState = omit( state, UNPERSISTED_SETTINGS_NODES );
+			if ( isValidStateWithSchema( newState, settingsSchema ) ) {
+				return newState;
+			}
+			debug( 'INVALID settings state during SERIALIZE', newState );
+			return {
+				enabled: false
+			};
 		}
 
 		case PUSH_NOTIFICATIONS_TOGGLE_ENABLED: {
