@@ -97,8 +97,6 @@ client/state/
 
 For example, the reducer responsible for maintaining the `state.sites` key within the global state can be found in `client/state/sites/reducer.js`. It's quite common that the subject reducer is itself a combined reducer. Just as it helps to split the global state into subdirectories responsible for their own part of the tree, as a subject grows, you may find that it's easier to maintain pieces as nested subdirectories. This ease of composability is one of Redux's strengths.
 
-For your tests to be included in the Redux state test runner, you must add them to `client/tests.json`. [The tests documentation](https://github.com/Automattic/wp-calypso/tree/master/test) includes information about how to include tests in the test runner, and instructions for running a single test file.
-
 ### Actions
 
 An action describes an intent to change the state of the application. When an action object is [dispatched](http://redux.js.org/docs/api/Store.html#dispatch) to an instance of a Redux store, the reducer function for that store is called with the action. Given the structure of our application state, specific subtrees can maintain their own state in response to any actions for which they are concerned.
