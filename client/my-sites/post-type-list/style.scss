@@ -1,6 +1,6 @@
 .post-type-list__posts {
-	list-style: none;
-	margin-left: 0;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
 }
 
 .post-type-list__post {
