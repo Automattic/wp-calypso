@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isExporting, isDateValid } from '../selectors';
+import { isExporting, isDateRangeValid } from '../selectors';
 import { States } from '../constants.js';
 
 describe( 'selectors', () => {
@@ -66,8 +66,8 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			expect( isDateValid( state, 100658273, 'post' ) ).to.equal( false );
-			expect( isDateValid( state, 100658273, 'page' ) ).to.equal( true );
+			expect( isDateRangeValid( state, 100658273, 'post' ) ).to.equal( false );
+			expect( isDateRangeValid( state, 100658273, 'page' ) ).to.equal( true );
 		} );
 
 		it( 'should return valid date if end date is after start date', () => {
@@ -85,8 +85,27 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			expect( isDateValid( state, 100658273, 'post' ) ).to.equal( true );
-			expect( isDateValid( state, 100658273, 'page' ) ).to.equal( true );
+			expect( isDateRangeValid( state, 100658273, 'post' ) ).to.equal( true );
+			expect( isDateRangeValid( state, 100658273, 'page' ) ).to.equal( true );
+		} );
+
+		it( 'should return valid date if end date is the same as start date', () => {
+			const state = {
+				siteSettings: {
+					exporter: {
+						selectedAdvancedSettings: {
+							100658273: {
+								post: {
+									start_date: '2040-06',
+									end_date: '2040-06',
+								}
+							}
+						}
+					}
+				}
+			};
+			expect( isDateRangeValid( state, 100658273, 'post' ) ).to.equal( true );
+			expect( isDateRangeValid( state, 100658273, 'page' ) ).to.equal( true );
 		} );
 	} );
 } );

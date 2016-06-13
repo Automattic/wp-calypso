@@ -65,6 +65,13 @@ const PostTypeOptions = React.createClass( {
 		} = this.props;
 
 		const fields = [ 'author', 'status', 'start_date', 'end_date', 'category' ];
+
+		const setRef = fieldName => c => {
+			if ( fieldName === 'start_date' ) {
+				this._startDate = c;
+			}
+		};
+
 		return (
 			<div className="exporter__option-fieldset">
 
@@ -84,7 +91,7 @@ const PostTypeOptions = React.createClass( {
 				<div className="exporter__option-fieldset-fields">
 					{ fields.map( fieldName =>
 						<Select key={ fieldName }
-							ref={ fieldName }
+							ref={ setRef( fieldName ) }
 							siteId={ siteId }
 							postType={ postType }
 							fieldName={ fieldName }
@@ -95,7 +102,7 @@ const PostTypeOptions = React.createClass( {
 				</div>
 
 				<Tooltip
-					context={ this.refs && this.refs.start_date }
+					context={ this._startDate }
 					status="error"
 					isVisible={ isEnabled && ! this.props.isDateValid }>
 						{ this.translate( 'Selected start date is later than the end date' ) }

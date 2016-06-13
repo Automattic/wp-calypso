@@ -16,9 +16,18 @@ import {
 import {
 	setPostTypeFieldValue,
 } from 'state/site-settings/exporter/actions';
-import i18n from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 export default class Select extends Component {
+	constructor( props ) {
+		super( props );
+		this.setValue = this.setValue.bind( this );
+	}
+
+	setValue( e ) {
+		this.props.setValue( e.target.value );
+	}
+
 	render() {
 		const {
 			isEnabled,
@@ -35,20 +44,16 @@ export default class Select extends Component {
 		}, postType, [] );
 
 		const label = get( {
-			author: i18n.translate( 'Author…' ),
-			status: i18n.translate( 'Status…' ),
-			start_date: i18n.translate( 'Start Date…' ),
-			end_date: i18n.translate( 'End Date…' ),
-			category: i18n.translate( 'Category…' ),
+			author: this.props.translate( 'Author…' ),
+			status: this.props.translate( 'Status…' ),
+			start_date: this.props.translate( 'Start Date…' ),
+			end_date: this.props.translate( 'End Date…' ),
+			category: this.props.translate( 'Category…' ),
 		}, fieldName, '' );
 
 		if ( fieldsForPostType.indexOf( this.props.fieldName ) < 0 ) {
 			return null;
 		}
-
-		const setValue = ( e ) => {
-			this.props.setValue( e.target.value );
-		};
 
 		const options = this.props.options && this.props.options.map( ( option, i ) => {
 			return <option key={ i } value={ option.value }>{ option.label }</option>;
@@ -58,7 +63,7 @@ export default class Select extends Component {
 				className={ shouldShowPlaceholders ? 'exporter__placeholder-select' : '' }
 				disabled={ shouldShowPlaceholders || ! isEnabled }
 				isError={ isEnabled && isError }
-				onChange={ setValue }
+				onChange={ this.setValue }
 				value={ value }
 			>
 				<option value="">{ label }</option>
@@ -89,4 +94,4 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( Select );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Select ) );

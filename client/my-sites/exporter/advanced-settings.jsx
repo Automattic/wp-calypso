@@ -9,7 +9,8 @@ import { connect } from 'react-redux';
  */
 import PostTypeOptions from './post-type-options';
 import SpinnerButton from './spinner-button';
-import { isDateValid as isExportDateValid } from 'state/site-settings/exporter/selectors';
+import { isDateRangeValid as isExportDateRangeValid } from 'state/site-settings/exporter/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Displays additional options for customising an export
@@ -66,9 +67,9 @@ const AdvancedSettings = React.createClass( {
 } );
 
 const mapStateToProps = ( state, ownProps ) => {
-	const siteId = state.ui.selectedSiteId;
+	const siteId = getSelectedSiteId( state );
 	const postType = ownProps.postType;
-	const isDateValid = isExportDateValid( state, siteId, postType );
+	const isDateValid = isExportDateRangeValid( state, siteId, postType );
 	return {
 		siteId,
 		isValid: postType && isDateValid,

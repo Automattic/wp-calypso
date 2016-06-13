@@ -37,7 +37,7 @@ export function isExporting( state, siteId ) {
 	return exportingState === States.EXPORTING;
 }
 
-export function isDateValid( state, siteId, postType ) {
+export function isDateRangeValid( state, siteId, postType ) {
 	const site = state.siteSettings.exporter.selectedAdvancedSettings[ siteId ];
 	if ( ! site ) {
 		return true;
