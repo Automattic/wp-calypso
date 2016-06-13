@@ -56,7 +56,7 @@ describe( 'actions', () => {
 	describe( '#requestRecommendations', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.1/read/recommendations/start?meta=site%2Cpost' )
+				.get( '/rest/v1.1/read/recommendations/start?meta=site%2Cpost&number=20' )
 				.reply( 200, deepFreeze( sampleSuccessResponse ) );
 		} );
 

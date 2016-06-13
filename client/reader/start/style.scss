@@ -183,6 +183,10 @@
 	}
 }
 
+.reader-start-card__site-title {
+	color: $gray-dark;
+}
+
 .reader-start-card__site-title,
 .reader-start-card__site-description {
 	text-align: center;
@@ -195,6 +199,10 @@
 	font-size: 12px;
 	font-weight: 600;
 	margin-top: 20px;
+
+	a {
+		color: inherit;
+	}
 
 	@include breakpoint( ">480px" ) {
 		margin-top: 30px;
@@ -302,7 +310,6 @@
 }
 
 @keyframes slideout-bar {
-
     0% {
         transform: translateY( calc( 100vh - 100px ) );
     }
