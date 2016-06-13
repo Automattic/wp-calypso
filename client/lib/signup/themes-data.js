@@ -1,4 +1,4 @@
-export let themes = [
+export const themes = [
 	{
 		name: 'Apostrophe',
 		slug: 'apostrophe',
