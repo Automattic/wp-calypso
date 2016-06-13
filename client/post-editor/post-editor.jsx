@@ -210,6 +210,7 @@ const PostEditor = React.createClass( {
 		this.debouncedAutosave = debounce( throttle( this.autosave, 20000 ), 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
+		layoutFocus.set( 'content' );
 	},
 
 	componentDidMount: function() {
