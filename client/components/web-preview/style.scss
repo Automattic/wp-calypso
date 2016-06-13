@@ -69,6 +69,7 @@
 }
 
 .web-preview__toolbar {
+	height: 48px;
 	background: $white;
 	border-bottom: 1px solid lighten( $gray, 20% );
 	border-radius: 4px 4px 0 0;
@@ -98,6 +99,7 @@
 }
 
 .web-preview__close {
+	height: 49px;
 	cursor: pointer;
 }
 
@@ -148,7 +150,7 @@
 .web-preview__placeholder {
 	width: 100%;
 	position: absolute;
-		top: 53px;
+		top: 49px;
 		bottom: 0;
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
