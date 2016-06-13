@@ -37,6 +37,7 @@ import actionLabels from 'my-sites/themes/action-labels';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -312,8 +313,12 @@ const ThemeSheet = React.createClass( {
 		const priceElement = <span className="themes__sheet-action-bar-cost">{ this.props.price }</span>;
 		const siteID = this.props.selectedSite && this.props.selectedSite.ID;
 
+		const analyticsPath = `/theme/:slug${ section ? '/:section' : '' }${ siteID ? '/:site_id' : '' }`;
+		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > Section' : '' }${ siteID ? ' > Site' : '' }`;
+
 		return (
 			<Main className="themes__sheet">
+			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
 				{ this.renderBar() }
 				{ siteID && <QueryCurrentTheme siteId={ siteID }/> }
 				<ActivatingTheme siteId={ siteID }>
