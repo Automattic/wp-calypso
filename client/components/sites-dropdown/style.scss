@@ -79,28 +79,6 @@
 
 .sites-dropdown .site-selector .site {
 	flex-grow: 1;
-
-	.notouch & {
-		&:hover {
-			background: $blue-medium;
-
-			.site__badge {
-				color: $white;
-			}
-
-			.site__title,
-			.site__domain {
-				color: white;
-				&::after {
-					@include long-content-fade( $color: $blue-medium );
-				}
-			}
-
-			.site__title:before {
-				color: white;
-			}
-		}
-	}
 }
 
 .sites-dropdown .site-selector .site:not(.is-selected) .site-icon__img {

@@ -20,8 +20,7 @@
 	font-size: 14px;
 
 	// Highlight selected site
-	&.is-selected,
-	.notouch &.is-selected:hover {
+	&.is-selected {
 		background-color: $gray;
 
 		.site__badge {
@@ -46,24 +45,31 @@
 		}
 	}
 
-	// Hover effects
-	.notouch & {
-		&:hover {
-			background-color: $gray-light;
-			cursor: pointer;
+	// Highlight & hover effects
+	&.is-highlighted,
+	.notouch &:hover {
+		background: $blue-medium;
+		cursor: pointer;
 
-			.site__title,
-			.site__domain {
-				color: $blue-medium;
-				&::after {
-					@include long-content-fade( $color: $gray-light );
-				}
-			}
+		.site__badge {
+			color: $white;
+		}
 
-			.count {
-				border-color: $blue-medium;
-				color: $blue-medium;
+		.site__title,
+		.site__domain {
+			color: white;
+			&::after {
+				@include long-content-fade( $color: $blue-medium );
 			}
+		}
+
+		.site__title:before {
+			color: white;
+		}
+
+		.count {
+			border-color: $white;
+			color: $white;
 		}
 	}
 }
