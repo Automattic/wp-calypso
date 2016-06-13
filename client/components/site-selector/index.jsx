@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import classNames from 'classnames';
 import { get, filter, size, keyBy, map, includes } from 'lodash';
+import scrollIntoView from 'dom-scroll-into-view';
 
 /**
  * Internal dependencies
@@ -93,10 +94,11 @@ const SiteSelector = React.createClass( {
 		const selectedSite = this.refs.selectedSite;
 		if ( selectedSite ) {
 			const selectedSiteElement = ReactDom.findDOMNode( this.refs.selectedSite );
-			if ( typeof selectedSiteElement.scrollIntoViewIfNeeded === 'function' ) {
-				selectedSiteElement.scrollIntoViewIfNeeded();
-			} else {
-				selectedSiteElement.scrollIntoView();
+			const selectorElement = ReactDom.findDOMNode( this.refs.selector );
+			if ( selectedSiteElement && selectorElement ) {
+				scrollIntoView( selectedSiteElement, selectorElement, {
+					onlyScrollIfNeeded: true
+				} );
 			}
 		}
 	},
