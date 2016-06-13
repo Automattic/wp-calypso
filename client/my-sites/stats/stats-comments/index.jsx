@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react'
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
 /**
@@ -21,7 +21,10 @@ export default React.createClass( {
 	displayName: 'StatsComments',
 
 	propTypes: {
-		site: PropTypes.object,
+		site: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
+		] ),
 		commentsList: PropTypes.object,
 		commentFollowersList: PropTypes.object
 	},
