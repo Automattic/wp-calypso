@@ -35,18 +35,18 @@ function advanced( editor ) {
 
 			toolbar.visible( isToolbarVisible );
 
-			if ( isAdvancedVisible ) {
-				if ( isSmallViewport ) {
-					containerPadding = Math.max( containerPadding, toolbar.getEl().clientHeight );
-				} else {
-					containerPadding += toolbar.getEl().clientHeight;
-				}
+			if ( isSmallViewport ) {
+				containerPadding = Math.max( containerPadding, toolbar.getEl().clientHeight );
+			} else {
+				containerPadding += toolbar.getEl().clientHeight;
 			}
 		} );
 
-		tinymce.DOM.setStyles( editor.getContainer(), {
-			'padding-top': containerPadding
-		} );
+		if ( editor.theme.panel.getEl().clientHeight ) {
+			tinymce.DOM.setStyles(editor.getContainer(), {
+				'padding-top': containerPadding
+			});
+		}
 
 		if ( menuButton ) {
 			menuButton.active( isAdvancedVisible() );
