@@ -29,7 +29,8 @@ const SitePicker = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			isAutoFocused: false
+			isAutoFocused: false,
+			isOpened: false
 		};
 	},
 
