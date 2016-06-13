@@ -13,6 +13,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
+import config from 'config';
 import { addItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 import {
@@ -152,3 +153,7 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, showJetpac
 		return ! isJetpackPlan( plan );
 	} );
 }
+
+export const isGoogleVouchersEnabled = () => {
+	return ( config.isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' );
+};

@@ -15,7 +15,7 @@ import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
 import { fetchSitePlans } from 'state/sites/plans/actions';
-import { filterPlansBySiteAndProps, shouldFetchSitePlans } from 'lib/plans';
+import { filterPlansBySiteAndProps, shouldFetchSitePlans, isGoogleVouchersEnabled } from 'lib/plans';
 import { getPlans } from 'state/plans/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import Gridicon from 'components/gridicon';
@@ -174,7 +174,7 @@ const PlansCompare = React.createClass( {
 		}
 
 		// add google-ad-credits feature
-		if ( config.isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' ) {
+		if ( isGoogleVouchersEnabled() ) {
 			features.splice( 1, 0, googleAdCreditsFeature );
 		}
 

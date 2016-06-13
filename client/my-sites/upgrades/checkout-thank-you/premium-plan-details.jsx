@@ -9,7 +9,6 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { abtest } from 'lib/abtest';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleVoucherDetails from './google-voucher';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
@@ -17,6 +16,7 @@ import { isPremium } from 'lib/products-values';
 import paths from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
+import { isGoogleVouchersEnabled } from 'lib/plans';
 
 const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/',
@@ -25,8 +25,6 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 
 	return (
 		<div>
-			{ config.isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' && <QuerySiteVouchers siteId={ selectedSite.ID } /> }
-
 			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
 
 			<PurchaseDetail
@@ -40,8 +38,8 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 				}
 			/>
 
-			{
-				config.isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' &&
+			{ isGoogleVouchersEnabled() && <QuerySiteVouchers siteId={ selectedSite.ID } /> }
+			{ isGoogleVouchersEnabled() &&
 				<div className="purchase-detail__body">
 					<GoogleVoucherDetails selectedSite={ selectedSite } />
 				</div>
