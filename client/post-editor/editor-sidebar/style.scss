@@ -19,6 +19,7 @@
 
 	@include breakpoint( ">660px" ) {
 		display: flex;
+		flex-shrink: 0;
 		justify-content: space-between;
 		align-items: center;
 		padding: 8px;
