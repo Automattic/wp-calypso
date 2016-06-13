@@ -100,5 +100,14 @@ module.exports = {
 		},
 		defaultVariation: 'disabled',
 		allowExistingUsers: true,
-	}
+	},
+	googleVouchers: {
+		datestamp: '20160613',
+		variations: {
+			disabled: 50,
+			enabled: 50,
+		},
+		defaultVariation: 'enabled',
+		allowExistingUsers: false,
+	},
 };

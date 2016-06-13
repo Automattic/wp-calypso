@@ -9,7 +9,6 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import config from 'config';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import JetpackPlanDetails from 'my-sites/plans/jetpack-plan-details';
@@ -22,8 +21,9 @@ import { isDesktop } from 'lib/viewport';
 import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
-	getPlanObject
+	getPlanObject,
 } from 'lib/plans/constants';
+import { isGoogleVouchersEnabled } from 'lib/plans';
 
 const premiumPlan = getPlanObject( PLAN_PREMIUM );
 const businessPlan = getPlanObject( PLAN_BUSINESS );
@@ -72,7 +72,7 @@ const Plan = React.createClass( {
 		}
 
 		// override plan description during google voucher test
-		if ( config.isEnabled( 'google-voucher' ) ) {
+		if ( isGoogleVouchersEnabled() ) {
 			if ( plan.product_id === premiumPlan.productId ) {
 				plan.description = premiumPlan.description;
 			} else if ( plan.product_id === businessPlan.productId ) {
