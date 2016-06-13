@@ -16,7 +16,7 @@ import Tooltip from 'components/tooltip';
 import { setPostType } from 'state/site-settings/exporter/actions';
 import {
 	getSelectedPostType,
-	isDateValid as isExportDateValid,
+	isDateRangeValid as isExportDateRangeValid,
 } from 'state/site-settings/exporter/selectors';
 
 const mapStateToProps = ( state, ownProps ) => {
@@ -25,7 +25,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	return {
 		siteId,
 
-		isDateValid: isExportDateValid( state, siteId, ownProps.postType ),
+		isDateValid: isExportDateRangeValid( state, siteId, ownProps.postType ),
 
 		// Disable options when this post type is not selected
 		isEnabled: getSelectedPostType( state ) === ownProps.postType,
