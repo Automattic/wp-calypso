@@ -81,6 +81,7 @@
 .post-type-list__post-actions {
 	margin-left: auto;
 	margin-right: -8px;
+	flex-shrink: 0;
 }
 
 .post-type-list__post-actions .button {
