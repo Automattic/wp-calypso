@@ -16,8 +16,6 @@ import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
 const StatsSiteOverview = React.createClass( {
-	displayName: 'StatsSiteOverview',
-
 	proptypes: {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
@@ -84,7 +82,7 @@ export default connect( ( state, ownProps ) => {
 		period
 	};
 	// It seems not all sites are in the sites/items subtree consistently
-	const slug = siteSlug || getSiteSlug( state, siteId );
+	const slug = getSiteSlug( state, siteId ) || siteSlug;
 
 	return {
 		summaryData: getSiteStatsForQuery( state, siteId, 'statsSummary', query ) || {},
