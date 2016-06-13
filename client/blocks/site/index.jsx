@@ -51,6 +51,7 @@ export default React.createClass( {
 		onMouseEnter: React.PropTypes.func,
 		onMouseLeave: React.PropTypes.func,
 		isSelected: React.PropTypes.bool,
+		isHighlighted: React.PropTypes.bool,
 		site: React.PropTypes.object.isRequired,
 		onClick: React.PropTypes.func,
 		enableActions: React.PropTypes.bool
@@ -181,6 +182,7 @@ export default React.createClass( {
 			'is-private': site.is_private,
 			'is-redirect': site.options && site.options.is_redirect,
 			'is-selected': this.props.isSelected,
+			'is-highlighted': this.props.isHighlighted,
 			'is-toggled': this.state.showMoreActions,
 			'has-edit-capabilities': userCan( 'manage_options', site )
 		} );

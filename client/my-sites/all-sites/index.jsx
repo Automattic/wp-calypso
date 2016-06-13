@@ -21,6 +21,7 @@ export default React.createClass( {
 			onSelect: function() {},
 			href: null,
 			isSelected: false,
+			isHighlighted: false,
 			showCount: true,
 			domain: ''
 		};
@@ -31,6 +32,7 @@ export default React.createClass( {
 		onSelect: React.PropTypes.func,
 		href: React.PropTypes.string,
 		isSelected: React.PropTypes.bool,
+		isHighlighted: React.PropTypes.bool,
 		showCount: React.PropTypes.bool,
 		count: React.PropTypes.number,
 		title: React.PropTypes.string,
@@ -49,7 +51,8 @@ export default React.createClass( {
 	render() {
 		const allSitesClass = classNames( {
 			'all-sites': true,
-			'is-selected': this.props.isSelected
+			'is-selected': this.props.isSelected,
+			'is-highlighted': this.props.isHighlighted
 		} );
 
 		const title = this.props.title || this.translate( 'All My Sites' );
