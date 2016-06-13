@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,8 +16,10 @@ import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import resizeImageUrl from 'lib/resize-image-url';
 import PostTypeListPostActions from './post-actions';
 
-export function PostTypeListPost( { globalId, post, editUrl, className } ) {
-	const classes = classnames( 'post-type-list__post', className );
+export function PostTypeListPost( { translate, globalId, post, editUrl, className } ) {
+	const classes = classnames( 'post-type-list__post', className, {
+		'is-untitled': ! post.title
+	} );
 
 	return (
 		<Card compact className={ classes }>
@@ -32,7 +35,7 @@ export function PostTypeListPost( { globalId, post, editUrl, className } ) {
 				<div className="post-type-list__post-title-meta">
 					<h1 className="post-type-list__post-title">
 						<a href={ editUrl }>
-							{ post.title }
+							{ post.title || translate( 'Untitled' ) }
 						</a>
 					</h1>
 					<div className="post-type-list__post-meta">
@@ -46,6 +49,7 @@ export function PostTypeListPost( { globalId, post, editUrl, className } ) {
 }
 
 PostTypeListPost.propTypes = {
+	translate: PropTypes.func,
 	globalId: PropTypes.string,
 	post: PropTypes.object,
 	className: PropTypes.string
@@ -58,4 +62,4 @@ export default connect( ( state, ownProps ) => {
 		post,
 		editUrl: getEditorPath( state, state.ui.selectedSiteId, post.ID )
 	};
-} )( PostTypeListPost );
+} )( localize( PostTypeListPost ) );
