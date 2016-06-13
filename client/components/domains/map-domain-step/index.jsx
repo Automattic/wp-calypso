@@ -192,7 +192,13 @@ var MapDomainStep = React.createClass( {
 		upgradesActions.addItem( cartItems.domainMapping( { domain: domain } ) );
 
 		if ( this.isMounted() ) {
-			page( '/checkout/' + this.props.selectedSite.slug );
+			const freeWithPlan = this.props.cart && this.props.cart.hasLoadedFromServer && this.props.cart.next_domain_is_free;
+
+			if ( freeWithPlan ) {
+				page( '/checkout/' + this.props.selectedSite.slug );
+			} else {
+				page( '/domains/add/' + domain + '/plans/' + this.props.selectedSite.slug );
+			}
 		}
 	},
 
