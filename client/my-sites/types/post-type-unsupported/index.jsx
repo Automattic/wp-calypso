@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import EmptyContent from 'components/empty-content';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { canCurrentUser } from 'state/current-user/selectors';
+import { canCurrentUser } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
 /**

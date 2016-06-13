@@ -12,3 +12,5 @@
  * but instead use a Babel plugin "transform-imports" to transform the import
  * to its individual file.
  */
+
+export canCurrentUser from './can-current-user';

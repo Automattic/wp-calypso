@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import CurrentThemeButton from './button';
-import { connectOptions } from '../theme-options';
+import { connectOptions } from '../theme-options';
 import { trackClick } from '../helpers';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getActiveTheme, getTheme } from 'state/themes/selectors';
@@ -64,10 +64,10 @@ const CurrentTheme = React.createClass( {
 					{ 'two-buttons': Object.keys( options ).length === 2 }
 					) } >
 					{ map( options, ( option, name ) => (
-						<CurrentThemeButton name={ name }
+						<CurrentThemeButton name={ name }
 							key={ name }
 							label={ option.label }
-							icon={ option.icon }
+							icon={ option.icon }
 							href={ currentTheme && option.getUrl( currentTheme ) }
 							onClick={ this.trackClick } />
 					) ) }
@@ -83,7 +83,7 @@ const CurrentThemeWithOptions = ( { siteId, currentTheme, currentThemeId, siteId
 	<ConnectedCurrentTheme currentTheme={ currentTheme }
 		currentThemeId={ currentThemeId }
 		siteIdOrWpcom={ siteIdOrWpcom }
-		siteId={ siteId }
+		siteId={ siteId }
 		options={ [
 			'customize',
 			'info',

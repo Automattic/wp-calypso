@@ -7,7 +7,8 @@ import get from 'lodash/get';
 /**
  * Internal dependencies
  */
-import { canCurrentUser, getCurrentUserId } from 'state/current-user/selectors';
+import { canCurrentUser } from 'state/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
