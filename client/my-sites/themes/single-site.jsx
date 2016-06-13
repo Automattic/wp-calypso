@@ -29,6 +29,7 @@ import sitesFactory from 'lib/sites-list';
 import { FEATURE_CUSTOM_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { getSelectedSite } from 'state/ui/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const sites = sitesFactory();
 
@@ -137,6 +138,7 @@ const ThemesSingleSite = React.createClass( {
 
 		return (
 			<Main className="themes">
+				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle }/>
 				<SidebarNavigation />
 				{ this.state.showPreview &&
 					<ThemePreview showPreview={ this.state.showPreview }

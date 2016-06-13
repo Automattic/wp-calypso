@@ -15,7 +15,6 @@ import ThemeSheetComponent from './main';
 import ThemeDetailsComponent from 'components/data/theme-details';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getThemeDetails } from 'state/themes/theme-details/selectors';
-import ClientSideEffects from 'components/client-side-effects';
 import {
 	receiveThemeDetails,
 	receiveThemeDetailsFailure,
@@ -32,10 +31,7 @@ export function makeElement( ThemesComponent, Head, store, props ) {
 	return(
 		<ReduxProvider store={ store }>
 			<Head title={ props.title } tier={ props.tier || 'all' }>
-				<ThemesComponent { ...omit( props, [ 'title', 'runClientAnalytics' ] ) } />
-				<ClientSideEffects>
-					{ props.runClientAnalytics }
-				</ClientSideEffects>
+				<ThemesComponent { ...omit( props, [ 'title' ] ) } />
 			</Head>
 		</ReduxProvider>
 	);

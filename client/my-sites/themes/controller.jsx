@@ -9,7 +9,6 @@ import i18n from 'i18n-calypso';
 import SingleSiteComponent from './single-site';
 import MultiSiteComponent from './multi-site';
 import LoggedOutComponent from './logged-out';
-import analytics from 'lib/analytics';
 import trackScrollPage from 'lib/track-scroll-page';
 import buildTitle from 'lib/screen-title/utils';
 import { getAnalyticsData } from './helpers';
@@ -28,10 +27,6 @@ function getProps( context ) {
 		siteId
 	);
 
-	const runClientAnalytics = function() {
-		analytics.pageView.record( basePath, analyticsPageTitle );
-	};
-
 	const boundTrackScrollPage = function() {
 		trackScrollPage(
 			basePath,
@@ -43,9 +38,10 @@ function getProps( context ) {
 	return {
 		title,
 		tier,
+		analyticsPageTitle,
+		analyticsPath: basePath,
 		search: context.query.s,
-		trackScrollPage: boundTrackScrollPage,
-		runClientAnalytics
+		trackScrollPage: boundTrackScrollPage
 	};
 }
 

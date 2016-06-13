@@ -18,6 +18,7 @@ import ThemesSelection from './themes-selection';
 import { getDetailsUrl, getSupportUrl, isPremium, addTracking } from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import config from 'config';
 
 const ThemesMultiSite = React.createClass( {
@@ -92,6 +93,7 @@ const ThemesMultiSite = React.createClass( {
 
 		return (
 			<Main className="themes">
+				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle }/>
 				<SidebarNavigation />
 				{ this.state.showPreview &&
 					<ThemePreview showPreview={ this.state.showPreview }
