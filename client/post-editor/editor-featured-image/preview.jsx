@@ -40,7 +40,7 @@ const EditorFeaturedImagePreview = React.createClass( {
 		// To prevent container height from collapsing and expanding rapidly,
 		// we preserve the current height while the next image loads
 		const nextState = {
-			height: this.refs.preview.clientHeight
+			height: this.refs.preview.clientHeight || null
 		};
 
 		// If the next image is the persisted copy of an in-progress upload, we
