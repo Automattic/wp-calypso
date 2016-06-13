@@ -98,5 +98,47 @@ describe( 'selectors', () => {
 				cents: 0
 			} );
 		} );
+		it( 'should handle AUD localization correctly', () => {
+			const state = {
+				plans: {
+					items: [ {
+						product_id: 2000,
+						product_name: 'Premium',
+						formatted_price: 'A$99',
+						raw_price: 99
+					} ],
+					requesting: false,
+					error: false
+				}
+			};
+			const priceObject = getPlanPriceObject( state, 2000, true );
+			expect( priceObject ).to.eql( {
+				currencySymbol: 'A$',
+				decimalMark: '.',
+				dollars: 8,
+				cents: 25
+			} );
+		} );
+		it( 'should handle CAD localization correctly', () => {
+			const state = {
+				plans: {
+					items: [ {
+						product_id: 2000,
+						product_name: 'Premium',
+						formatted_price: 'C$99',
+						raw_price: 99
+					} ],
+					requesting: false,
+					error: false
+				}
+			};
+			const priceObject = getPlanPriceObject( state, 2000, true );
+			expect( priceObject ).to.eql( {
+				currencySymbol: 'C$',
+				decimalMark: '.',
+				dollars: 8,
+				cents: 25
+			} );
+		} );
 	} );
 } );
