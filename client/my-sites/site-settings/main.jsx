@@ -19,6 +19,7 @@ import AnalyticsSettings from './section-analytics';
 import SeoSettings from './section-seo';
 import ImportSettings from './section-import';
 import ExportSettings from './section-export';
+import GuidedTransfer from './section-guided-transfer';
 import SiteSecurity from './section-security';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
@@ -95,7 +96,8 @@ export class SiteSettingsComponent extends Component {
 			analytics: <AnalyticsSettings site={ site } />,
 			seo: <SeoSettings site={ site } />,
 			'import': <ImportSettings site={ site } />,
-			'export': <ExportSettings site={ site } store={ context.store } />
+			'export': <ExportSettings site={ site } store={ context.store } />,
+			guidedTransfer: <GuidedTransfer store={ context.store } />
 		};
 	}
 
@@ -108,6 +110,11 @@ export class SiteSettingsComponent extends Component {
 
 		if ( ! site ) {
 			return ( <SectionNav /> );
+		}
+
+		if ( section === 'guidedTransfer' ) {
+			// Dont show the navigation for guided transfer since it includes its own back navigation
+			return null;
 		}
 
 		return (

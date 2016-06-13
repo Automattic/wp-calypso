@@ -25,6 +25,7 @@ export default React.createClass( {
 		showGuidedTransferOptions: PropTypes.bool,
 		shouldShowProgress: PropTypes.bool.isRequired,
 		postType: PropTypes.string,
+		siteSlug: PropTypes.string,
 		siteId: PropTypes.number
 	},
 
@@ -117,7 +118,7 @@ export default React.createClass( {
 						onClickExport={ exportSelectedItems }
 					/>
 				</FoldableCard>
-				{ showGuidedTransferOptions && <GuidedTransferOptions /> }
+				{ showGuidedTransferOptions && <GuidedTransferOptions siteSlug={ this.props.siteSlug } /> }
 				{ isExporting && <Interval onTick={ fetchStatus } period={ EVERY_SECOND } /> }
 			</div>
 		);
