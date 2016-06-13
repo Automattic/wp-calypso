@@ -222,7 +222,9 @@
 
 	&.is-assigned {
 		display: block;
-		margin: -24px 0 24px;
+		@include breakpoint( ">660px" ) {
+			margin: -24px 0 24px;
+		}
 	}
 
 	img {
