@@ -223,7 +223,7 @@ function isDependentProduct( product, dependentProduct ) {
 	slug = isDomainRegistration( product ) ? 'domain' : product.product_slug;
 	dependentSlug = isDomainRegistration( dependentProduct ) ? 'domain' : dependentProduct.product_slug;
 
-	withPlansOnly = product.extra.withPlansOnly === 'yes' || dependentProduct.extra.withPlansOnly === 'yes';
+	withPlansOnly = product.extra && ( product.extra.withPlansOnly === 'yes' || dependentProduct.extra.withPlansOnly === 'yes' );
 
 	if ( product.extra && dependentProduct.extra && withPlansOnly ) {
 		isPlansOnlyDependent = isPlan( product ) && ( isDomainRegistration( dependentProduct ) || isDomainMapping( dependentProduct ) );

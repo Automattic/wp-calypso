@@ -3,11 +3,11 @@
  */
 import { connect } from 'react-redux';
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import localize from 'lib/mixins/i18n/localize';
 import { getPlans } from 'state/plans/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import QueryPlans from 'components/data/query-plans';

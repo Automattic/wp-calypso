@@ -125,7 +125,8 @@ module.exports = {
 
 	googleAppsWithRegistration: function( context ) {
 		var CartData = require( 'components/data/cart' ),
-			GoogleApps = require( 'components/upgrades/google-apps' );
+			GoogleApps = require( 'components/upgrades/google-apps' ),
+			CartStore = require( 'lib/cart/store' );
 
 		titleActions.setTitle(
 			i18n.translate( 'Register %(domain)s', {
@@ -136,17 +137,24 @@ module.exports = {
 			}
 		);
 
+		const goToNextStep = () => {
+			const cart = CartStore.get();
+			const freeWithPlan = cart && cart.hasLoadedFromServer && ( cart.next_domain_is_free || cart.has_bundle_credit );
+
+			if ( freeWithPlan ) {
+				page( '/checkout/' + sites.getSelectedSite().slug );
+			} else {
+				page( '/domains/add/' + context.params.registerDomain + '/plans/' + sites.getSelectedSite().slug );
+			}
+		};
+
 		const handleAddGoogleApps = function( googleAppsCartItem ) {
 			upgradesActions.addItem( googleAppsCartItem );
-			page( '/domains/add/' + context.params.registerDomain + '/plans/' + sites.getSelectedSite().slug );
+			goToNextStep();
 		};
 
 		const handleGoBack = function() {
 			page( '/domains/add/' + sites.getSelectedSite().slug );
-		};
-
-		const handleClickSkip = function() {
-			page( '/domains/add/' + context.params.registerDomain + '/plans/' + sites.getSelectedSite().slug );
 		};
 
 		analytics.pageView.record( '/domains/add/:site/google-apps', 'Domain Search > Domain Registration > Google Apps' );
@@ -160,7 +168,7 @@ module.exports = {
 							domain={ context.params.registerDomain }
 							onGoBack={ handleGoBack }
 							onAddGoogleApps={ handleAddGoogleApps }
-							onClickSkip={ handleClickSkip } />
+							onClickSkip={ goToNextStep } />
 					</CartData>
 				</Main>
 			),
