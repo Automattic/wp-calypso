@@ -152,7 +152,7 @@ const flows = {
 	},
 
 	developer: {
-		steps: [ 'themes', 'site', 'user' ],
+		steps: [ 'themes', 'domains', 'user' ],
 		destination: '/devdocs/welcome',
 		description: 'Signup flow for developers in developer environment',
 		lastModified: '2015-11-23'
