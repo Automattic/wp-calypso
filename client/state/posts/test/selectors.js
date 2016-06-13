@@ -284,6 +284,26 @@ describe( 'selectors', () => {
 
 			expect( lastPage ).to.equal( 4 );
 		} );
+
+		it( 'should return 1 if there are no found posts', () => {
+			const lastPage = getSitePostsLastPageForQuery( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {},
+							queries: {
+								'[["search","Hello"]]': {
+									itemKeys: [],
+									found: 0
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Hello' } );
+
+			expect( lastPage ).to.equal( 1 );
+		} );
 	} );
 
 	describe( '#isSitePostsLastPageForQuery()', () => {
