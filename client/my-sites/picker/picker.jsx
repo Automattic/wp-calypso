@@ -24,7 +24,8 @@ const SitePicker = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			isAutoFocused: false
+			isAutoFocused: false,
+			isOpened: false
 		};
 	},
 
@@ -48,7 +49,11 @@ const SitePicker = React.createClass( {
 			} );
 		}.bind( this ), 200 );
 
-		if ( this.refs.siteSelector && nextProps.layoutFocus.getCurrent() === 'sites' ) {
+		const currentFocus = nextProps.layoutFocus.getCurrent();
+		if ( this.state.isOpened && currentFocus !== 'sites' ) {
+			this.setState( { isOpened: false } );
+		} else if ( ! this.state.isOpened && currentFocus === 'sites' ) {
+			this.setState( { isOpened: true } );
 			this.refs.siteSelector.reset();
 		}
 	},
