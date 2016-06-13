@@ -20,12 +20,11 @@ export default React.createClass( {
 	mixins: [ observe( 'sites' ) ],
 
 	propTypes: {
-		statSummaryList: PropTypes.object,
 		path: PropTypes.string
 	},
 
 	render() {
-		const { statSummaryList, path } = this.props;
+		const { path, period } = this.props;
 		const sites = this.props.sites.getVisible();
 		const statsPath = ( path === '/stats' ) ? '/stats/day' : path;
 
@@ -70,14 +69,21 @@ export default React.createClass( {
 			}
 
 			const date = this.moment().utcOffset( siteOffset ).format( 'YYYY-MM-DD' );
-			const summaryData = statSummaryList.get( site.ID, date );
 
 			if ( 0 === index || sitesSorted[ index - 1 ].periodEnd !== site.periodEnd ) {
-				overview.push( <DatePicker period={ this.props.period } date={ date } /> );
+				overview.push( <DatePicker period={ period } date={ date } /> );
 			}
 
 			overview.push(
-				<SiteOverview key={ site.ID } site={ site } summaryData={ summaryData } path={ statsPath } />
+				<SiteOverview
+					key={ site.ID }
+					siteId={ site.ID }
+					period={ period }
+					date={ date }
+					path={ statsPath }
+					title={ site.title }
+					siteSlug={ site.slug }
+				/>
 			);
 
 			return overview;

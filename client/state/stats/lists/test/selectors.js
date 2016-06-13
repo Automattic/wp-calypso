@@ -123,7 +123,7 @@ describe( 'selectors', () => {
 			expect( stats ).to.eql( {} );
 		} );
 
-		it( 'should properly formatted data if matching data for query exists', () => {
+		it( 'should return properly formatted data if matching data for query exists', () => {
 			const stats = getSiteStatsPostStreakData( {
 				stats: {
 					lists: {
@@ -131,9 +131,12 @@ describe( 'selectors', () => {
 							2916284: {
 								statsStreak: {
 									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
-										1461961382: 1,
-										1464110402: 1,
-										1464110448: 1
+										streak: {},
+										data: {
+											1461961382: 1,
+											1464110402: 1,
+											1464110448: 1
+										}
 									}
 								}
 							}
@@ -170,9 +173,11 @@ describe( 'selectors', () => {
 							2916284: {
 								statsStreak: {
 									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
-										1461961382: 1,
-										1464110402: 1,
-										1464110448: 1
+										data: {
+											1461961382: 1,
+											1464110402: 1,
+											1464110448: 1
+										}
 									}
 								}
 							}
@@ -192,8 +197,10 @@ describe( 'selectors', () => {
 							2916284: {
 								statsStreak: {
 									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
-										1461961382: 12,
-										1464110402: 2
+										data: {
+											1461961382: 12,
+											1464110402: 2
+										}
 									}
 								}
 							}
@@ -227,9 +234,11 @@ describe( 'selectors', () => {
 							2916284: {
 								statsStreak: {
 									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
-										1461961382: 1,
-										1464110402: 1,
-										1464110448: 1
+										data: {
+											1461961382: 1,
+											1464110402: 1,
+											1464110448: 1
+										}
 									}
 								}
 							}
