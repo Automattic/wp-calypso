@@ -77,5 +77,26 @@ describe( 'selectors', () => {
 			const priceObject = getPlanPriceObject( state, 44, true );
 			expect( priceObject ).to.eql( null );
 		} );
+		it( 'should handle JPY localization correctly', () => {
+			const state = {
+				plans: {
+					items: [ {
+						product_id: 2000,
+						product_name: 'Premium',
+						formatted_price: '¥11,800',
+						raw_price: 11800
+					} ],
+					requesting: false,
+					error: false
+				}
+			};
+			const priceObject = getPlanPriceObject( state, 2000, true );
+			expect( priceObject ).to.eql( {
+				currencySymbol: '¥',
+				decimalMark: '.',
+				dollars: 983,
+				cents: 0
+			} );
+		} );
 	} );
 } );

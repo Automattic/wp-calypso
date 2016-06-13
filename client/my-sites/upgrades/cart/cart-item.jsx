@@ -72,7 +72,7 @@ export default React.createClass( {
 
 		return this.translate( '(%(monthlyPrice)f %(currency)s x 12 months)', {
 			args: {
-				monthlyPrice: +( cost / 12 ).toFixed( 2 ),
+				monthlyPrice: +( cost / 12 ).toFixed( currency === 'JPY' ? 0 : 2 ),
 				currency
 			}
 		} );

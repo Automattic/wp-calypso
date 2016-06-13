@@ -51,11 +51,12 @@ export function getPlanPriceObject( state, productId, isMonthly = false ) {
 		return null;
 	}
 	const cost = plan.raw_price;
-	const price = isMonthly ? +( cost / 12 ).toFixed( 2 ) : cost;
+	const currencySymbol = plan.formatted_price.slice( 0, 1 );
+	const price = isMonthly ? +( cost / 12 ).toFixed( currencySymbol === '¥' ? 0 : 2 ) : cost;
 	const dollars = Math.floor( price );
 	const cents = ( price - dollars ) * 100;
 	return {
-		currencySymbol: plan.formatted_price.slice( 0, 1 ),
+		currencySymbol,
 		decimalMark: '.', //hard code this for now until we can get number localization from the server
 		dollars,
 		cents
