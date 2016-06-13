@@ -32,8 +32,8 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 				title={ i18n.translate( 'No Ads' ) }
 				description={
 					i18n.translate(
-						'Premium plan automatically removes all Ads from your site. ' +
-						'Now your visitors can enjoy your great content without distractions!'
+						'Your plan removes advertising from your site so ' +
+						'your visitors can enjoy your content without distractions!'
 					)
 				}
 			/>
@@ -79,7 +79,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 					description={
 						i18n.translate(
 							'Take advantage of WordAds instant activation on your upgraded site. ' +
-							'WordAds lets you display promotional content and earn money.'
+							'WordAds lets you earn money by displaying promotional content.'
 						)
 					}
 					buttonText={ i18n.translate( 'Start Earning' ) }
