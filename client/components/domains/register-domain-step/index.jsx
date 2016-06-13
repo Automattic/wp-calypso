@@ -46,7 +46,8 @@ const SUGGESTION_QUANTITY = 10;
 const INITIAL_SUGGESTION_QUANTITY = 2;
 
 const analytics = analyticsMixin( 'registerDomain' ),
-	domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
+	domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly',
+	searchVendor = abtest( 'domainSuggestionVendor' );
 
 let searchQueue = [],
 	searchStackTimer = null,
@@ -60,7 +61,7 @@ function getQueryObject( props ) {
 	return {
 		query: props.selectedSite.domain.split( '.' )[ 0 ],
 		quantity: SUGGESTION_QUANTITY,
-		vendor: abtest( 'domainSuggestionVendor' ),
+		vendor: searchVendor,
 		includeSubdomain: props.includeWordPressDotCom
 	};
 }
@@ -89,7 +90,7 @@ function reportSearchStats( { query, section, timestamp } ) {
 	}
 	lastSearchTimestamp = timestamp;
 	searchCount++;
-	analytics.recordEvent( 'searchFormSubmit', query, section, timeDiffFromLastSearchInSeconds, searchCount );
+	analytics.recordEvent( 'searchFormSubmit', query, section, timeDiffFromLastSearchInSeconds, searchCount, searchVendor );
 }
 
 function enqueueSearchStatReport( search ) {

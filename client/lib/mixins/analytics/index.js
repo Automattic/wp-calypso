@@ -69,7 +69,7 @@ const EVENTS = {
 			analytics.tracks.recordEvent( 'calypso_domain_search_results_mapping_button_click', { section } );
 		},
 
-		searchFormSubmit( searchBoxValue, section, timeDiffFromLastSearch, searchCount ) {
+		searchFormSubmit( searchBoxValue, section, timeDiffFromLastSearch, searchCount, searchVendor ) {
 			analytics.ga.recordEvent(
 				'Domain Search',
 				'Submitted Search Form',
@@ -83,6 +83,7 @@ const EVENTS = {
 					search_box_value: searchBoxValue,
 					seconds_from_last_search: timeDiffFromLastSearch,
 					search_count: searchCount,
+					search_vendor: searchVendor,
 					section
 				}
 			);
