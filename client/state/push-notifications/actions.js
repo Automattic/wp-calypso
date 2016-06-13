@@ -25,6 +25,7 @@ import {
 	isApiReady,
 	getDeviceId,
 	getLastUpdated,
+	getStatus,
 	isBlocked,
 	isEnabled,
 } from './selectors';
@@ -86,6 +87,10 @@ export function apiReady() {
 		}
 
 		dispatch( mustPrompt() );
+		if ( 'disabling' === getStatus( state ) ) {
+			debug( 'Forcibly unregistering device (disabling on apiReady)' );
+			dispatch( unregisterDevice() );
+		}
 	};
 }
 
