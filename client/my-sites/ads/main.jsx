@@ -133,7 +133,7 @@ const AdsMain = React.createClass( {
 		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
 			notice = (
 				<Notice status="is-success" showDismiss={ false }>
-					{ this.translate( 'You have successfully joined WordAds. Please review these settings:' ) }
+					{ this.translate( 'You have joined the WordAds program. Please review these settings:' ) }
 				</Notice>
 			);
 		} else if ( ! this.props.site.options.wordads && isWordadsInstantActivationEligible( this.props.site ) ) {
