@@ -34,6 +34,20 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 				description={ i18n.translate( 'Connect to Google Analytics for the perfect complement to WordPress.com stats.' ) }
 				buttonText={ i18n.translate( 'Connect Google Analytics' ) }
 				href={ '/settings/analytics/' + selectedSite.slug } />
+
+			<PurchaseDetail
+				icon="star"
+				title={ i18n.translate( 'Boost Your Audience' ) }
+				description={ i18n.translate( 'Business includes 100,000 advertising impressions from our WordAds network at $100 value to boost a post or page of your choosing. '+
+					'Contact us at {{a}}wordads-credit@automattic.com{{/a}} to tell us which page you would like to promote.',
+					{
+						components: {
+							a: <a target="_blank" href="mailto:wordads-credit@automattic.com?subject=WordAds%20Credit&body=Please%20send%20my%20100%2C000%20impressions%20to%20the%20following%20URL%20on%20my%20WordPress.com%20Business%20site.%20I%20understand%20that%20the%20title%20of%20this%20page%20will%20be%20the%20headline%2C%20and%20the%20first%20few%20lines%20of%20content%20will%20be%20used%20for%20the%20body%20of%20the%20advertisement.%0A%0AURL%20TO%20PROMOTE%3A%20" />
+						}
+					}
+				) }
+				/>
+
 		</div>
 	);
 };
