@@ -152,8 +152,10 @@ function renderProvisionPlugins( context ) {
 	context.store.dispatch( setSection( Object.assign( {}, section, { secondary: false } ) ) );
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
+	let site = sites.getSelectedSite();
+
 	renderWithReduxStore(
-		React.createElement( PlanSetup, {} ),
+		React.createElement( PlanSetup, { selectedSite: site } ),
 		document.getElementById( 'primary' ),
 		context.store
 	);
