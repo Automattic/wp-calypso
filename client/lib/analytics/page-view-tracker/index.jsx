@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import flowRight from 'lodash/flowRight';
-import has from 'lodash/has';
 import noop from 'lodash/noop';
 import { connect } from 'react-redux';
 import { recordPageView } from 'state/analytics/actions';
