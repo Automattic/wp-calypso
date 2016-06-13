@@ -1,7 +1,14 @@
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
 import flowRight from 'lodash/flowRight';
 import noop from 'lodash/noop';
 import { connect } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
 import { recordPageView } from 'state/analytics/actions';
 
 export const PageViewTracker = React.createClass( {
