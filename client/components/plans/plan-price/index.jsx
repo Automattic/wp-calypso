@@ -3,6 +3,7 @@
  */
 import isUndefined from 'lodash/isUndefined';
 import React from 'react';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -23,11 +24,16 @@ const PlanPrice = React.createClass( {
 				return this.translate( 'Free', { context: 'Zero cost product price' } );
 			}
 
-			const currencySymbol = formattedPrice.slice( 0, 1 );
-			const monthlyPrice = +( rawPrice / 12 ).toFixed( currencySymbol === '¥' ? 0 : 2 );
-			formattedPrice = `${ currencySymbol }${ monthlyPrice }`;
+			// could get $5.95, A$4.13, ¥298, €3,50, etc…
+			const getCurrencySymbol = price => /(\D+)\d+/.exec( price )[ 1 ];
+			const currencyDigits = currencySymbol => get( {
+				'¥': 0
+			}, currencySymbol, 2 );
 
-			return formattedPrice;
+			const currencySymbol = getCurrencySymbol( formattedPrice );
+			const monthlyPrice = ( rawPrice / 12 ).toFixed( currencyDigits( currencySymbol ) );
+
+			return `${ currencySymbol }${ monthlyPrice }`;
 		}
 
 		return this.translate( 'Loading' );

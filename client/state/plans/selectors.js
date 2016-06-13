@@ -1,4 +1,9 @@
 /**
+ * External Dependencies
+ */
+import get from 'lodash/get';
+
+/**
  * Internal Dependencies
  */
 import createSelector from 'lib/create-selector';
@@ -50,9 +55,14 @@ export function getPlanPriceObject( state, productId, isMonthly = false ) {
 	if ( ! plan || ! plan.formatted_price || ! plan.raw_price ) {
 		return null;
 	}
-	const cost = plan.raw_price;
-	const currencySymbol = plan.formatted_price.slice( 0, 1 );
-	const price = isMonthly ? +( cost / 12 ).toFixed( currencySymbol === '¥' ? 0 : 2 ) : cost;
+	// could get $5.95, A$4.13, ¥298, €3,50, etc…
+	const getCurrencySymbol = formattedPrice => /(\D+)\d+/.exec( formattedPrice )[ 1 ];
+	const currencyDigits = currencySymbol => get( {
+		'¥': 0
+	}, currencySymbol, 2 );
+
+	const currencySymbol = getCurrencySymbol( plan.formatted_price );
+	const price = isMonthly ? ( plan.raw_price / 12 ).toFixed( currencyDigits( currencySymbol ) ) : plan.raw_price;
 	const dollars = Math.floor( price );
 	const cents = ( price - dollars ) * 100;
 	return {
