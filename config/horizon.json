@@ -26,6 +26,7 @@
 		"keyboard-shortcuts": true,
 		"manage/add-people": true,
 		"manage/ads": true,
+		"manage/ads/wordads-instant": true,
 		"manage/ads/jetpack": true,
 		"manage/customize": true,
 		"manage/drafts": true,
