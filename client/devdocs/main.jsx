@@ -113,11 +113,17 @@ module.exports = React.createClass( {
 
 		searchResults = this.state.inputValue ? this.state.results : this.state.defaultResults;
 		return searchResults.map( function( result ) {
+			let url = '/devdocs/' + result.path;
+
+			if ( this.state.term ) {
+				url += '?term=' + encodeURIComponent( this.state.term );
+			}
+
 			return (
 				<Card compact className="devdocs__result" key={ result.path }>
 					<header className="devdocs__result-header">
 						<h1 className="devdocs__result-title">
-							<a className="devdocs__result-link" href={ '/devdocs/' + result.path + '?term=' + encodeURIComponent( this.state.term ) }>{ result.title }</a>
+							<a className="devdocs__result-link" href={ url }>{ result.title }</a>
 						</h1>
 						<h2 className="devdocs__result-path">{ result.path }</h2>
 					</header>
