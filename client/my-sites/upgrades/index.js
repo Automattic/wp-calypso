@@ -193,6 +193,24 @@ module.exports = function() {
 			upgradesController.googleAppsWithRegistration
 		);
 
+		page( '/domains/add/:registerDomain/plans/:domain',
+			adTracking.retarget,
+			controller.siteSelection,
+			controller.navigation,
+			upgradesController.redirectIfNoSite( '/domains/add' ),
+			controller.jetPackWarning,
+			upgradesController.selectPlan
+		);
+
+		page( '/domains/add/:registerDomain/plans/compare/:domain',
+			adTracking.retarget,
+			controller.siteSelection,
+			controller.navigation,
+			upgradesController.redirectIfNoSite( '/domains/add' ),
+			controller.jetPackWarning,
+			upgradesController.comparePlans
+		);
+
 		page( '/domains/add/mapping/:domain',
 			adTracking.retarget,
 			controller.siteSelection,
