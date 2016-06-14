@@ -201,6 +201,20 @@ Undocumented.prototype.jetpackAuthorizeSSONonce = function( siteId, ssoNonce, fn
 	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
 };
 
+Undocumented.prototype.getJetpackSyncStatus = function( siteId, fn ) {
+	debug( '/sites/:site_id:/sync/status query' );
+	const endpointUrl = '/sites/' + siteId + '/sync/status';
+	const params = {};
+	return this.wpcom.req.get( { path: endpointUrl }, params, fn );
+};
+
+Undocumented.prototype.scheduleJetpackFullysync = function( siteId, fn ) {
+	debug( '/sites/:site_id:/sync query' );
+	const endpointUrl = '/sites/' + siteId + '/sync';
+	const params = {};
+	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
+};
+
 Undocumented.prototype.activateManage = function( siteId, state, secret ) {
 	debug( '/jetpack-blogs/:site_id:/activate-manage query' );
 	const endpointUrl = '/jetpack-blogs/' + siteId + '/activate-manage';
