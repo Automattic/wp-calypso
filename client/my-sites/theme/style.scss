@@ -60,7 +60,7 @@
 	}
 }
 
-.themes__sheet-primary-button {
+.themes__sheet__theme-pick-button {
 	position: absolute;
 		top: 5px;
 		right: 50%;
@@ -74,11 +74,7 @@
 	}
 }
 
-.themes__sheet-button-placeholder {
-	color: transparent;
-}
-
-.themes__sheet-action-bar-cost {
+.theme-pick-button__cost {
 	font-weight: 600;
 	color: #4AB866;
 	margin-left: 10px;

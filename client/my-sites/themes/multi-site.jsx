@@ -12,6 +12,7 @@ import merge from 'lodash/merge';
 import Main from 'components/main';
 import { customize, purchase, activate } from 'state/themes/actions';
 import ThemePreview from './theme-preview';
+import ThemePickButton from 'my-sites/theme/theme-pick-button';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import ThemesSelection from './themes-selection';
@@ -81,11 +82,8 @@ const ThemesMultiSite = React.createClass( {
 		return merge( {}, buttonOptions, actionLabels );
 	},
 
-	onPreviewButtonClick( theme ) {
-		this.setState( { showPreview: false },
-			() => {
-				this.getButtonOptions().customize.action( theme );
-			} );
+	onPreviewButtonClick() {
+		this.setState( { showPreview: false } );
 	},
 
 	render() {
@@ -99,10 +97,9 @@ const ThemesMultiSite = React.createClass( {
 					<ThemePreview showPreview={ this.state.showPreview }
 						theme={ this.state.previewingTheme }
 						onClose={ this.togglePreview }
-						buttonLabel={ this.translate( 'Try & Customize', {
-							context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
-						} ) }
-						onButtonClick={ this.onPreviewButtonClick } />
+					>
+						<ThemePickButton theme={ this.state.previewingTheme } onClick={ this.onPreviewButtonClick } />
+					</ThemePreview>
 				}
 				<ThemesSelection search={ this.props.search }
 					selectedSite={ false }
