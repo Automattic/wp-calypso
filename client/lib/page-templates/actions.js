@@ -16,7 +16,7 @@ const PageTemplatesActions = {
 			debug( 'already fetching pageTemplates', siteId );
 			return;
 		}
-		debug( 'fetcing pageTemplates', siteId );
+		debug( 'fetching pageTemplates', siteId );
 		Dispatcher.handleViewAction( {
 			type: 'FETCHING_PAGE_TEMPLATES',
 			siteId: siteId
