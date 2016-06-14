@@ -38,7 +38,7 @@ function RelatedPosts( { siteId, postId, posts } ) {
 	}
 	return (
 		<div className="related-posts">
-			<h1 className="related-posts__heading">{ i18n.translate( 'Suggested Reading' ) }</h1>
+			<h1 className="related-posts__heading">{ i18n.translate( 'Related Reading' ) }</h1>
 			<ul className="related-posts__list">
 				{ posts.map( post_id => <li key={ post_id } className="related-posts__list-item"><ConnectedRelatedPost post={ post_id } /></li> ) }
 			</ul>
