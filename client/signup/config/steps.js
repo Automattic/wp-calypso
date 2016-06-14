@@ -26,7 +26,7 @@ module.exports = {
 
 	'design-type': {
 		stepName: 'design-type',
-		providesDependencies: [ 'themes' ]
+		providesDependencies: [ 'designType' ]
 	},
 
 	site: {

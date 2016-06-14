@@ -9,7 +9,6 @@ import React from 'react';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import analytics from 'lib/analytics';
-import getThemes from './themes-map';
 import Card from 'components/card';
 
 export default React.createClass( {
@@ -65,11 +64,9 @@ export default React.createClass( {
 	},
 
 	handleNextStep( designType ) {
-		const themes = getThemes( designType );
-
 		analytics.tracks.recordEvent( 'calypso_triforce_select_design', { category: designType } );
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { themes } );
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
 		this.props.goToNextStep();
 	}
 } );
