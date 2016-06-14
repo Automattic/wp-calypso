@@ -109,7 +109,6 @@ const AdsMain = React.createClass( {
 					{ this.translate(
 						'WordAds allows you to make money from advertising that runs on your site. ' +
 						'Because you have a WordPress.com Premium plan, you can skip the review process and activate WordAds instantly. ' +
-						'{{br/}}' +
 						'{{a}}Learn more about the program.{{/a}}', {
 							components: {
 								br: <br />,
