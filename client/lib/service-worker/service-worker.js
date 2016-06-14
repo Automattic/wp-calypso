@@ -35,18 +35,27 @@ self.addEventListener( 'push', function( event ) {
 		self.registration.showNotification( notification.msg, {
 			tag: 'note_' + notification.note_id,
 			icon: notification.icon,
-			timestamp: notification.note_timestamp
+			timestamp: notification.note_timestamp,
+			data: notification
+		} ).then( function() {
+			if ( notification.note_opened_pixel ) {
+				fetch( notification.note_opened_pixel, { mode: 'no-cors' } ).catch( function( err ) {
+					console.log( 'Could not load the pixel %s', notification.note_opened_pixel );
+				} );
+			}
 		} )
 	);
 } );
 
 self.addEventListener( 'notificationclick', function( event ) {
-	event.notification.close();
+	var notification = event.notification;
+	notification.close();
 
 	event.waitUntil(
 		self.clients.matchAll().then( function( clientList ) {
 			if ( clientList.length > 0 ) {
 				clientList[ 0 ].postMessage( { action: 'openPanel' } );
+				clientList[ 0 ].postMessage( { action: 'trackClick', notification: notification.data  } );
 				try {
 					clientList[ 0 ].focus();
 				} catch ( err ) {
@@ -54,6 +63,7 @@ self.addEventListener( 'notificationclick', function( event ) {
 				}
 			} else {
 				queuedMessages.push( { action: 'openPanel' } );
+				queuedMessages.push( { action: 'trackClick', notification: notification.data } );
 				self.clients.openWindow( '/' );
 			}
 		} )

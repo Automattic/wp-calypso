@@ -10,7 +10,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
+var analytics = require( 'lib/analytics' ),
+	config = require( 'config' ),
 	user = require( 'lib/user' )();
 
 /**
@@ -207,6 +208,12 @@ var Notifications = React.createClass({
 				this.props.checkToggle( null, true );
 				// force refresh the panel
 				this.postMessage( { action: 'refreshNotes' } );
+				break;
+			case 'trackClick':
+				analytics.tracks.recordEvent( 'calypso_web_push_notification_clicked', {
+					push_notification_note_id: event.data.notification.note_id,
+					push_notification_type: event.data.notification.type
+				} );
 				break;
 		}
 	},
