@@ -9,6 +9,18 @@
 		width: 100%;
 	}
 
+	.guided-transfer__host-button-image {
+		vertical-align: middle;
+		height: 50%;
+	}
+
+	.guided-transfer__host-button {
+		display: inline-block;
+		width: 100%;
+		height: 80px;
+		margin-bottom: 10px;
+	}
+
 	@include breakpoint( ">960px" ) {
 		.guided-transfer__account-username-fieldset,
 		.guided-transfer__account-password-fieldset {
@@ -20,6 +32,16 @@
 
 		.guided-transfer__account-username-fieldset {
 			padding-right: 10px;
+		}
+
+		.guided-transfer__host-button {
+			width: calc( 50% - 5px );
+			margin-right: 5px;
+		}
+
+		.guided-transfer__host-button:nth-child(even) {
+			margin-left: 5px;
+			margin-right: 0px;
 		}
 	}
 }
