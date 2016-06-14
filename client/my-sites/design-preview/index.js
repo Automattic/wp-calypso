@@ -112,7 +112,13 @@ const DesignPreview = React.createClass( {
 			debug( 'restoring original markup' );
 			this.loadPreview();
 		}
-		// Apply customizations
+		// Certain customizations cannot be applied by DOM changes, in which case we
+		// can reload the preview.
+		if ( this.shouldReloadPreview( prevProps ) ) {
+			debug( 'reloading preview due to customizations' );
+			this.loadPreview();
+		}
+		// Apply customizations as DOM changes
 		if ( this.props.customizations && this.previewDocument ) {
 			debug( 'updating preview with customizations', this.props.customizations );
 			updatePreviewWithChanges( this.previewDocument, this.props.customizations );
@@ -127,6 +133,13 @@ const DesignPreview = React.createClass( {
 			Object.keys( this.props.customizations ).length === 0 &&
 			Object.keys( prevProps.customizations ).length > 0
 		);
+	},
+
+	shouldReloadPreview( prevProps ) {
+		if ( this.props.customizations.homePage && JSON.stringify( this.props.customizations.homePage ) !== JSON.stringify( prevProps.customizations.homePage ) ) {
+			return true;
+		}
+		return false;
 	},
 
 	loadPreview() {
