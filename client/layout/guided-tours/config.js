@@ -10,7 +10,6 @@ import { getSectionName, getSelectedSite, isPreviewShowing } from 'state/ui/sele
 import { isFetchingNextPage, getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 
 function sectionVisitedForFirstTime( sectionName, state ) {
-	console.log( state.ui )
 	return getSectionName( state ) === sectionName;
 }
 

@@ -5,14 +5,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import defer from 'lodash/defer';
 
 /**
  * Internal dependencies
  */
 import scrollTo from 'lib/scroll-to';
 import { getSelectedSite } from 'state/ui/selectors';
-import guidedToursConfig from './config';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
 import { errorNotice } from 'state/notices/actions';
@@ -31,7 +29,7 @@ const debug = debugFactory( 'calypso:guided-tours' );
 class GuidedTours extends Component {
 	constructor() {
 		super();
-		this.bind( 'next', 'quit', 'finish', 'getNextStep' );
+		this.bind( 'next', 'quit', 'finish' );
 	}
 
 	bind( ...methods ) {
@@ -47,14 +45,9 @@ class GuidedTours extends Component {
 		return true || this.props.tourState !== nextProps.tourState;
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		const { stepConfig } = nextProps.tourState;
-	}
-
 	componentWillUpdate( nextProps ) {
 		const { stepConfig } = nextProps.tourState;
 		this.updateTarget( stepConfig );
-		stepConfig.continueIf && stepConfig.continueIf( nextProps.state ) && this.next();
 	}
 
 	updateTarget( step ) {
@@ -71,29 +64,13 @@ class GuidedTours extends Component {
 		} ), {} );
 	}
 
-	async getNextStep( currentStepConfig ) {
-		const next = { stepName: currentStepConfig.next, stepConfig: guidedToursConfig.get( this.props.tourState.tour )[ currentStepConfig.next ] || false };
-		if ( ! next.stepConfig.showInContext ) {
-			return next;
-		}
-		try {
-			const skip = await wait( { condition: next.stepConfig.showInContext.bind( null, this.props.state ) } );
-			console.log( 'reached here', skip );
-			return skip ? this.getNextStep( next.stepConfig ) : next;
-		} catch ( e ) {
-			console.log( 'rejected ', e );
-			return this.getNextStep( next.stepConfig ); // skip if rejected
-		}
-	}
-
 	async next() {
-		const nextStep = await this.getNextStep( this.props.tourState.stepConfig );
-
-		console.log( 'nextStep', nextStep );
+		const nextStepName = this.props.tourState.stepConfig.next;
+		const nextStepConfig = this.props.tourState.nextStepConfig;
 
 		const nextTargetFound = () => {
-			if ( nextStep.stepConfig && nextStep.stepConfig.target ) {
-				const target = this.getTipTargets()[ nextStep.stepConfig.target ];
+			if ( nextStepConfig && nextStepConfig.target ) {
+				const target = this.getTipTargets()[ nextStepConfig.target ];
 				return target && target.getBoundingClientRect().left >= 0;
 			}
 			return true;
@@ -101,7 +78,7 @@ class GuidedTours extends Component {
 
 		try {
 			await wait( { condition: nextTargetFound } );
-			this.props.nextGuidedTourStep( { stepName: nextStep.stepName } );
+			this.props.nextGuidedTourStep( { stepName: nextStepName } );
 		} catch ( err ) {
 			const ERROR_WAITED_TOO_LONG = 'waited too long for next target';
 			debug( ERROR_WAITED_TOO_LONG );
