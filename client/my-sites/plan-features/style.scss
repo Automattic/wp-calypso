@@ -125,3 +125,51 @@
 	transform: translateY(-50%);
 	fill: $blue-wordpress;
 }
+
+.plan-features__footer {
+	margin-top: auto;
+	padding: 16px 16px 24px;
+	border-top: solid 1px lighten( $gray, 27% );
+
+	@include breakpoint( ">480px" ) {
+		padding: 16px 24px 24px;
+	}
+}
+
+.plan-features__footer-desc {
+	margin: 0;
+	font-size: 14px;
+	color: $gray;
+}
+
+.plan-features__footer-buttons {
+	text-align: center;
+}
+
+.plan-features__footer-button {
+	width: 100%;
+	margin-top: 8px;
+
+	&:first-child {
+		margin-top: 16px;
+	}
+
+	&.is-current {
+		border-bottom-width: 1px;
+		border-color: lighten( $gray, 27% );
+		background: transparent;
+		font-weight: 400;
+		color: $gray;
+
+		.gridicon {
+			fill: $alert-green;
+			margin-right: 8px;
+		}
+	}
+
+	@media
+		(min-width: 480px) and (max-width: 660px),
+		(min-width: 800px) and (max-width: 1040px) {
+			max-width: 260px;
+	}
+}
