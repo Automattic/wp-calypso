@@ -186,6 +186,7 @@ const Plans = React.createClass( {
 							isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST } />
 
 						{ ! hasJpphpBundle && this.comparePlansLink() }
+						{ ! hasJpphpBundle && this.showMonthlyPlansLink() }
 					</div>
 				</Main>
 			</div>
