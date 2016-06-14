@@ -211,8 +211,7 @@ export function sendSubscriptionToWPCOM( pushSubscription ) {
 		}
 
 		debug( 'Sending subscription to WPCOM', pushSubscription );
-
-		wpcom.undocumented().registerDevice( JSON.stringify( pushSubscription ), 'browser', 'Browser' )
+		return wpcom.undocumented().registerDevice( JSON.stringify( pushSubscription ), 'browser', 'Browser' )
 			.then( data => dispatch( {
 				type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 				data
@@ -251,7 +250,7 @@ export function unregisterDevice() {
 			dispatch( receiveUnregisterDevice() );
 			return;
 		}
-		wpcom.undocumented().unregisterDevice( deviceId )
+		return wpcom.undocumented().unregisterDevice( deviceId )
 			.then( ( data ) => {
 				debug( 'Successfully unregistered device', data );
 				dispatch( receiveUnregisterDevice( data ) );
