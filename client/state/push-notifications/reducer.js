@@ -90,11 +90,7 @@ function system( state = {}, action ) {
 		}
 
 		case PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE: {
-			const { data } = action;
-			if ( ! data.success ) {
-				debug( 'Couldn\'t unregister device', data );
-			}
-			debug( 'Deleted WPCOM subscription', data );
+			debug( 'Deleted WPCOM subscription' );
 			return omit( state, [ 'wpcomSubscription' ] );
 		}
 
