@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-var assert = require( 'assert' ),
+var expect = require( 'chai' ).expect,
 	path = require( 'path' ),
 	babel = require( 'babel-core' ),
-	fs = require( 'fs' );
+	fs = require( 'fs'),
+	rewire = require( 'rewire' );
 
 /**
  * Internal dependencies
  */
-var glotpress = require( '../../cli' );
+var i18nCalypsoCLI = require( '../../cli' );
 
 // generate whitelist file
 var buildFiles, sourceFiles;
@@ -91,11 +92,117 @@ describe( 'index', function() {
 		cleanupExamples( done );
 	} );
 
+	describe( 'POT helpers', function() {
+		describe( '#multiline()', function() {
+			var multiline = rewire( '../../cli/formatters/pot.js' ).__get__( 'multiline' );
+
+			it( 'should not split a short literal into multiple lines', function() {
+				var literal = '"Lorem ipsum dolor sit amet"';
+				expect( multiline( literal ) ).to.equal( '"Lorem ipsum dolor sit amet"' );
+			} );
+
+			it( 'should split a long literal into multiple lines', function() {
+				// normal text
+				var literal1 = '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."';
+				expect( multiline( literal1 ) ).to.equal( [
+					'""',
+					'"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "',
+					'"tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, "',
+					'"quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo "',
+					'"consequat."'
+				].join( '\n' ) );
+
+				// long words
+				var literal2 = '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporincididuntutlaboreetdoloremagnaaliqua.Utenimadminimveniamquisnostrudexercitationullamco laborisnisiutaliquipexeacommodo consequat."';
+				expect( multiline( literal2 ) ).to.equal( [
+					'""',
+					'"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "',
+					'"temporincididuntutlaboreetdoloremagnaaliqua.Utenimadminimveniamquisnostrudexercitationullamco "',
+					'"laborisnisiutaliquipexeacommodo consequat."'
+				].join( '\n' ) );
+
+				// 1 line just longer than 79 characters
+				var literal3 = '"If you’re looking to paste rich content from Microsoft Word, try turning this option off. The editor will clean up text pasted from Word automatically."';
+				expect( multiline( literal3 ) ).to.equal( [
+					'""',
+					'"If you’re looking to paste rich content from Microsoft Word, try turning "',
+					'"this option off. The editor will clean up text pasted from Word "',
+					'"automatically."'
+				].join( '\n' ) );
+
+				// 2 lines of 78 characters
+				var literal4 = '"The registry for your domains requires a special process for transfers. Our Happiness Engineers have been notified about your transfer request. Tnk you."';
+				expect( multiline( literal4 ) ).to.equal( [
+					'""',
+					'"The registry for your domains requires a special process for transfers. Our "',
+					'"Happiness Engineers have been notified about your transfer request. Tnk you."'
+				].join( '\n' ) );
+
+				// A space after 79 characters
+				var literal5 = '"%d file could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support."';
+				expect( multiline( literal5 ) ).to.equal( [
+					'""',
+					'"%d file could not be uploaded because your site does not support video "',
+					'"files. Upgrade to a premium plan for video support."'
+				].join( '\n' ) );
+
+				// short words
+				var literal6 = '"a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9. a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9."';
+				expect( multiline( literal6 ) ).to.equal( [
+					'""',
+					'"a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9. a b "',
+					'"c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9."'
+				].join( '\n' ) );
+			} );
+
+			it( 'should add an empty line first if the literal can fit on one line without the prefix', function() {
+				var literal = '"There is an issue connecting to %s. {{button}}Reconnect {{icon/}}{{/button}}"';
+				expect( multiline( literal ) ).to.equal( [
+					'""',
+					'"There is an issue connecting to %s. {{button}}Reconnect {{icon/}}{{/button}}"'
+				].join( '\n' ) );
+			} );
+
+			it( 'should not add an empty line if the literal length is less or equal to 73 characters (79 - lengthOf("msgid "))', function() {
+				var literal = '"Testimonials are not enabled. Open your site settings to activate them."';
+				expect( multiline( literal ) ).to.equal( '"Testimonials are not enabled. Open your site settings to activate them."' );
+			} );
+
+			it( 'should split text on a /', function() {
+				var literal = '"{{wrapper}}%(email)s{{/wrapper}} {{emailPreferences}}change{{/emailPreferences}}"';
+				expect( multiline( literal ) ).to.equal( [
+					'""',
+					'"{{wrapper}}%(email)s{{/wrapper}} {{emailPreferences}}change{{/"',
+					'"emailPreferences}}"'
+				].join( '\n' ) );
+			} );
+
+			it( 'should work with longer prefixes', function() {
+				var literal = '"Categories: info popover text shown when creating a new category and selecting a parent category."';
+				expect( multiline( literal, 'msgctxt ' ) ).to.equal( [
+					'""',
+					'"Categories: info popover text shown when creating a new category and "',
+					'"selecting a parent category."'
+				].join( '\n' ) );
+			} );
+
+			it( 'should work with very long words', function() {
+				var literal = '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporincididuntutlaboreetdoloremagnaaliquaUtenimadminimveniamquisnostrudexercitationullamco laborisnisiutaliquipexeacommodo consequat."';
+				expect( multiline( literal ) ).to.equal( [
+					'""',
+					'"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "',
+					'"temporincididuntutlaboreetdoloremagnaaliquaUtenimadminimveniamquisnostrudexercitationullamco "',
+					'"laborisnisiutaliquipexeacommodo consequat."'
+				].join( '\n' ) );
+			} );
+		} );
+	} );
+
 	describe( 'POT', function() {
 		var output;
 
 		before( function() {
-			output = glotpress( {
+			output = i18nCalypsoCLI( {
 				projectName: 'i18nTest',
 				inputPaths: buildFiles,
 				format: 'POT',
@@ -104,60 +211,65 @@ describe( 'index', function() {
 		} );
 
 		it( 'should have all the default headers', function() {
-			assert.notEqual( -1, output.indexOf( '"Project-Id-Version: _s i18nTest"\n' ) );
-			assert.notEqual( -1, output.indexOf( '"Report-Msgid-Bugs-To:' ) );
-			assert.notEqual( -1, output.indexOf( '"POT-Creation-Date:' ) );
-			assert.notEqual( -1, output.indexOf( '"MIME-Version: 1.0"\n' ) );
-			assert.notEqual( -1, output.indexOf( '"Content-Type: text/plain; charset=UTF-8"\n' ) );
-			assert.notEqual( -1, output.indexOf( '"Content-Transfer-Encoding: 8bit"\n' ) );
-			assert.notEqual( -1, output.indexOf( '"PO-Revision-Date:' ) );
-			assert.notEqual( -1, output.indexOf( '"Last-Translator: FULL NAME <EMAIL@ADDRESS>"\n' ) );
-			assert.notEqual( -1, output.indexOf( '"Language-Team: LANGUAGE <LL@li.org>"\n' ) );
+			expect( output ).to.have.string( '"Project-Id-Version: _s i18nTest"\n' );
+			expect( output ).to.have.string( '"Report-Msgid-Bugs-To:' );
+			expect( output ).to.have.string( '"POT-Creation-Date:' );
+			expect( output ).to.have.string( '"MIME-Version: 1.0"\n' );
+			expect( output ).to.have.string( '"Content-Type: text/plain; charset=UTF-8"\n' );
+			expect( output ).to.have.string( '"Content-Transfer-Encoding: 8bit"\n' );
+			expect( output ).to.have.string( '"PO-Revision-Date:' );
+			expect( output ).to.have.string( '"Last-Translator: FULL NAME <EMAIL@ADDRESS>"\n' );
+			expect( output ).to.have.string( '"Language-Team: LANGUAGE <LL@li.org>"\n' );
 		} );
 
 		it( 'should create a simple translation', function() {
-			assert.notEqual( -1, output.indexOf( 'msgid "My hat has three corners."\nmsgstr ""\n' ) );
+			expect( output ).to.have.string( 'msgid "My hat has three corners."\nmsgstr ""\n' );
 		} );
 
 		it( 'should create a plural translation', function() {
-			assert.notEqual( -1, output.indexOf( 'msgid "My hat has three corners."\nmsgid_plural "My hats have three corners."\nmsgstr[0] ""\n' ) );
+			expect( output ).to.have.string( 'msgid "My hat has three corners."\nmsgid_plural "My hats have three corners."\nmsgstr[0] ""\n' );
 		} );
 
 		it( 'should create a context translation', function() {
-			assert.notEqual( -1, output.indexOf( 'msgctxt "verb"\nmsgid "post"\nmsgstr ""\n' ) );
-			assert.notEqual( -1, output.indexOf( 'msgctxt "verb2"\nmsgid "post2"\nmsgstr ""\n' ) );
+			expect( output ).to.have.string( 'msgctxt "verb"\nmsgid "post"\nmsgstr ""\n' );
+			expect( output ).to.have.string( 'msgctxt "verb2"\nmsgid "post2"\nmsgstr ""\n' );
 		} );
 
 		it( 'should prepend a translator comment', function() {
-			assert.notEqual( -1, output.indexOf( '#. draft saved date format, see http://php.net/date' ) );
+			expect( output ).to.have.string( '#. draft saved date format, see http://php.net/date' );
 		} );
 
 		it( 'should pass through an sprintf as a regular translation', function() {
-			assert.notEqual( -1, output.indexOf( 'msgid "Your city is %(city)s and your zip is %(zip)s."\nmsgstr ""\n' ) );
+			expect( output ).to.have.string( 'msgid "Your city is %(city)s and your zip is %(zip)s."\nmsgstr ""\n' );
 		} );
 
 		it( 'should allow string concatenating with + operator', function() {
-			assert.notEqual( -1, output.indexOf( 'msgid "This is a multi-line translation with \\$1mixed quotes\\$1 and mixed \'single quotes\'"\nmsgstr ""\n' ) );
+			expect( output ).to.have.string( [
+				'msgid ""',
+				'"This is a multi-line translation with \\"mixed quotes\\" and mixed \'single "',
+				'"quotes\'"',
+				'msgstr ""'
+			].join( '\n' ) );
 		} );
 
 		// we are updating the translate api for plurals to allow for:
 		// i18n.translate( 'single', 'plural', options );
 		// we will honor the prior syntax but raise a warning in the console
 		it( 'should handle the new plural syntax', function() {
-			assert.notEqual( -1, output.indexOf( 'msgid "single test"\nmsgid_plural "plural test"\nmsgstr[0] ""\n' ) );
+			expect( output ).to.have.string( 'msgid "single test"\nmsgid_plural "plural test"\nmsgstr[0] ""\n' );
 		} );
 
 		it( 'should include default translations for number formatting strings', function() {
-			assert.notEqual( -1, output.indexOf( 'msgid "number_format_thousands_sep"\n' ) );
-			assert.notEqual( -1, output.indexOf( 'msgid "number_format_decimal_point"\n' ) );
+			expect( output ).to.have.string( 'msgid "number_format_thousands_sep"\n' );
+			expect( output ).to.have.string( 'msgid "number_format_decimal_point"\n' );
 		} );
 
 		it( 'should find translations from multiple files', function() {
-			assert.notEqual( -1, output.indexOf( 'msgid "My test has two files."\nmsgstr ""\n' ) );
+			expect( output ).to.have.string( 'msgid "My test has two files."\nmsgstr ""\n' );
 		} );
 
 		it( 'should find options with a literal string key', function() {
-			assert.notEqual( -1, output.indexOf( 'msgctxt "context with a literal string key"\nmsgid "The string key text"\nmsgstr ""\n' ) );
+			expect( output ).to.have.string( 'msgctxt "context with a literal string key"\nmsgid "The string key text"\nmsgstr ""\n' );
 		} );
 	} );
 
@@ -165,7 +277,7 @@ describe( 'index', function() {
 		var output;
 
 		before( function() {
-			output = glotpress( {
+			output = i18nCalypsoCLI( {
 				projectName: 'i18nTest',
 				inputPaths: buildFiles,
 				phpArrayName: 'arrayName',
@@ -175,67 +287,67 @@ describe( 'index', function() {
 		} );
 
 		it( 'should open with a php opening tag', function() {
-			assert.equal( 0, output.indexOf( '<?php' ) );
+			expect( output ).to.have.string( '<?php' );
 		} );
 
 		it( 'should create an array with the passed-in name', function() {
-			assert.notEqual( -1, output.indexOf( '$arrayName = array(\n' ) );
+			expect( output ).to.have.string( '$arrayName = array(\n' );
 		} );
 
 		it( 'should create a simple __() translation', function() {
-			assert.notEqual( -1, output.indexOf( '__( \'My hat has three corners.\' ),' ) );
+			expect( output ).to.have.string( '__( "My hat has three corners." ),' );
 		} );
 
 		it( 'should create a plural _n() translation', function() {
-			assert.notEqual( -1, output.indexOf( '_n( \'My hat has three corners.\', \'My hats have three corners.\', 1 ),' ) );
+			expect( output ).to.have.string( '_n( "My hat has three corners.", "My hats have three corners.", 1 ),' );
 		} );
 
 		it( 'should create a context _x() translation', function() {
-			assert.notEqual( -1, output.indexOf( '_x( \'post\', \'verb\' ),' ) );
+			expect( output ).to.have.string( '_x( "post", "verb" ),' );
 		} );
 
 		it( 'should allow `original` as initial string', function() {
-			assert.notEqual( -1, output.indexOf( '_x( \'post2\', \'verb2\' ),' ) );
+			expect( output ).to.have.string( '_x( "post2", "verb2" ),' );
 		} );
 
 		it( 'should prepend a translator comment', function() {
-			assert.notEqual( -1, output.indexOf( '/* translators: draft saved date format, see http://php.net/date */\n__( \'g:i:s a\' ),' ) );
+			expect( output ).to.have.string( '/* translators: draft saved date format, see http://php.net/date */\n__( "g:i:s a" ),' );
 		} );
 
 		it( 'should pass through an sprintf as a regular __() method', function() {
-			assert.notEqual( -1, output.indexOf( '__( \'Your city is %(city)s and your zip is %(zip)s.\' ),' ) );
+			expect( output ).to.have.string( '__( "Your city is %(city)s and your zip is %(zip)s." ),' );
 		} );
 
 		it( 'should allow string concatenating with + operator', function() {
-			assert.notEqual( -1, output.indexOf( '__( \'This is a multi-line translation with "mixed quotes" and mixed \\\'single quotes\\\'\' ),' ) );
+			expect( output ).to.have.string( '__( "This is a multi-line translation with \\"mixed quotes\\" and mixed \'single quotes\'" ),' );
 		} );
 
 		// we are updating the translate api for plurals to allow for:
 		// i18n.translate( 'single', 'plural', options );
 		// we will honor the prior syntax but raise a warning in the console
 		it( 'should handle the new plural syntax', function() {
-			assert.notEqual( -1, output.indexOf( '_n( \'single test\', \'plural test\', 1 ),' ) );
+			expect( output ).to.have.string( '_n( "single test", "plural test", 1 ),' );
 		} );
 
 		it( 'should allow a variable placeholder for `count`', function() {
-			assert.notEqual( -1, output.indexOf( '_n( \'single test2\', \'plural test2\', 1 ),' ) );
+			expect( output ).to.have.string( '_n( "single test2", "plural test2", 1 ),' );
 		} );
 
 		it( 'should include default translations for momentjs object', function() {
-			assert.notEqual( -1, output.indexOf( '__( \'number_format_thousands_sep\' ),' ) );
-			assert.notEqual( -1, output.indexOf( '__( \'number_format_decimal_point\' ),' ) );
+			expect( output ).to.have.string( '__( "number_format_thousands_sep" ),' );
+			expect( output ).to.have.string( '__( "number_format_decimal_point" ),' );
 		} );
 
 		it( 'should close the php array', function() {
-			assert.notEqual( -1, output.indexOf( '\n);' ) );
+			expect( output ).to.have.string( '\n);' );
 		} );
 
 		it( 'should find translations from multiple files', function() {
-			assert.notEqual( -1, output.indexOf( '__( \'My test has two files.\' ),' ) );
+			expect( output ).to.have.string( '__( "My test has two files." ),' );
 		} );
 
 		it( 'should find options with a literal string key', function() {
-			assert.notEqual( -1, output.indexOf( 'context with a literal string key' ) );
+			expect( output ).to.have.string( 'context with a literal string key' );
 		} );
 	} );
 } );

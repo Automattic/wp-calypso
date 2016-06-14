@@ -34,10 +34,10 @@ function buildPHPString( properties ) {
 	var wpFunc = getGlotPressFunction( properties ),
 		response = [],
 		stringFromFunc = {
-			__: '__( ' + encapsulateString( properties.single ) + ' ),',
-			_x: '_x( ' + [ properties.single, properties.context ].map( encapsulateString ).join( ', ' ) + ' ),',
-			_nx: '_nx( ' + [ properties.single, properties.plural, properties.count, properties.context ].map( encapsulateString ).join( ', ' ) + ' ),',
-			_n: '_n( ' + [ properties.single, properties.plural, properties.count ].map( encapsulateString ).join( ', ' ) + ' ),'
+			__: '__( ' + properties.single + ' ),',
+			_x: '_x( ' + [ properties.single, properties.context ].join( ', ' ) + ' ),',
+			_nx: '_nx( ' + [ properties.single, properties.plural, properties.count, properties.context ].join( ', ' ) + ' ),',
+			_n: '_n( ' + [ properties.single, properties.plural, properties.count ].join( ', ' ) + ' ),'
 		};
 
 	// translations with comments get a preceding comment in the php code
@@ -51,16 +51,6 @@ function buildPHPString( properties ) {
 	return response.join( '\n' );
 }
 
-/**
- * Takes a string argument and turns it into a valid string representation for most languages/format (with double quotes)
- * Anything else than a string is left unchanged
- * @param  {string} input  - origin string or other type of input
- * @return {string}        - universal representation of string or input unchanged
- */
-function encapsulateString( input ) {
-	if ( 'string' !== typeof input ) return input;
-	return "'" + input.replace( /(\\|\')/g, '\\$1' ) + "'";
-}
 
 /**
  * Takes read file and generates a string representation of a file with
