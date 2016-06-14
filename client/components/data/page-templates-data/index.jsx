@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import debugModule from 'debug';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,6 +12,7 @@ import PageTemplatesStore from 'lib/page-templates/store';
 import PageTemplatesActions from 'lib/page-templates/actions';
 import sitesList from 'lib/sites-list';
 import passToChildren from 'lib/react-pass-to-children';
+import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 
 /**
  * Module variables
@@ -18,10 +20,10 @@ import passToChildren from 'lib/react-pass-to-children';
 const sites = sitesList();
 const debug = debugModule( 'calypso:page-templates-data' );
 
-export default React.createClass( {
-	displayName: 'PageTempaltesData',
+const PageTemplatesData = React.createClass( {
 
 	propTypes: {
+		currentTheme: React.PropTypes.object,
 		siteId: PropTypes.number.isRequired
 	},
 
@@ -49,6 +51,10 @@ export default React.createClass( {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId === this.props.siteId ) {
+			if ( nextProps.currentTheme && nextProps.currentTheme.stylesheet !== this.activeTheme ) {
+				PageTemplatesActions.fetchPageTemplates( this.props.siteId );
+				this.activeTheme = nextProps.currentTheme.stylesheet;
+			}
 			return;
 		}
 		this._fetchIfUnfetched( nextProps.siteId );
@@ -97,3 +103,9 @@ export default React.createClass( {
 		this.setState( this._getUpdatedState( siteId ) );
 	}
 } );
+
+export default connect(
+	( state, ownProps ) => (
+		{ currentTheme: getCurrentTheme( state, ownProps.siteId ) }
+	)
+)( PageTemplatesData );
