@@ -14,12 +14,44 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS
 } from 'lib/plans/constants';
+import currencyFormatter, { findCurrency } from 'lib/currency-formatter';
+
+function currencyFormatOptions( defaults, showDecimal = true ) {
+	const options = { code: defaults.code };
+	const space = defaults.spaceBetweenAmountAndSymbol ? '\u00a0' : '';
+
+	options.format = `<sup class="plan-features__header-currency-symbol">%s</sup>${ space }%v`;
+
+	if ( ! defaults.symbolOnLeft && showDecimal ) {
+		options.format = `%v</sup>${ space }<sup class="plan-features__header-currency-symbol">%s</sup>`;
+	} else if ( ! defaults.symbolOnLeft ) {
+		options.format = `%v${ space }<sup class="plan-features__header-currency-symbol">%s</sup>`;
+	} else if ( defaults.symbolOnLeft && showDecimal ) {
+		options.format = `<sup class="plan-features__header-currency-symbol">%s</sup>${ space }%v</sup>`;
+	}
+
+	if ( showDecimal ) {
+		options.decimal = `<sup class="plan-features__header-cents">${ defaults.decimalSeparator }`; //open sup is closed by format string
+	} else {
+		options.precision = 0;
+	}
+	return options;
+}
 
 class PlanFeaturesHeader extends Component {
 
+	getPrice( rawPrice, code ) {
+		const defaults = findCurrency( code );
+		const priceHTML = currencyFormatter( rawPrice, currencyFormatOptions( defaults, rawPrice !== 0 ) );
+		/*eslint-disable react/no-danger*/
+		return (
+			<h4 className="plan-features__header-price" dangerouslySetInnerHTML={ { __html: priceHTML } } />
+		);
+		/*eslint-enable react/no-danger*/
+	}
+
 	render() {
-		const { billingTimeFrame, current, planType, popular, price, title, translate } = this.props;
-		const isFree = planType === PLAN_FREE;
+		const { billingTimeFrame, currencyCode, current, planType, popular, rawPrice, title, translate } = this.props;
 		return (
 			<header className="plan-features__header" onClick={ this.props.onClick } >
 				{
@@ -34,17 +66,7 @@ class PlanFeaturesHeader extends Component {
 				</div>
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
-					<h4 className="plan-features__header-price">
-						<sup className="plan-features__header-currency-symbol">
-							{ price.currencySymbol }
-						</sup>
-						<span className="plan-features__header-dollars">
-							{ price.dollars }
-						</span>
-						<sup className="plan-features__header-cents">
-							{ ! isFree && `${ price.decimalMark }${ price.cents }` }
-						</sup>
-					</h4>
+					{ this.getPrice( rawPrice, currencyCode ) }
 					<p className="plan-features__header-timeframe">
 						{ billingTimeFrame }
 					</p>
@@ -366,11 +388,13 @@ PlanFeaturesHeader.propTypes = {
 	onClick: PropTypes.func,
 	planType: React.PropTypes.oneOf( [ PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS ] ).isRequired,
 	popular: PropTypes.bool,
-	price: PropTypes.object.isRequired,
+	rawPrice: PropTypes.number.isRequired,
+	currencyCode: PropTypes.string,
 	title: PropTypes.string.isRequired
 };
 
 PlanFeaturesHeader.defaultProps = {
+	currencyCode: 'USD',
 	current: false,
 	onClick: noop,
 	popular: false

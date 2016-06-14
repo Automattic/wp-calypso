@@ -11,6 +11,9 @@
     "accepts": {
       "version": "1.2.13"
     },
+    "accounting": {
+      "version": "0.4.1"
+    },
     "acorn": {
       "version": "3.2.0"
     },
@@ -850,6 +853,9 @@
     },
     "cssstyle": {
       "version": "0.2.36"
+    },
+    "currency-formatter": {
+      "version": "1.0.2"
     },
     "currently-unhandled": {
       "version": "0.4.1"

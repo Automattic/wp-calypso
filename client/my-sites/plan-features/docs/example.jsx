@@ -20,24 +20,9 @@ export default React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render() {
-		const priceFree = {
-			currencySymbol: '$',
-			decimalMark: '.',
-			dollars: 0,
-			cents: 0
-		};
-		const pricePremium = {
-			currencySymbol: '$',
-			decimalMark: '.',
-			dollars: 8,
-			cents: 25
-		};
-		const priceBusiness = {
-			currencySymbol: '$',
-			decimalMark: '.',
-			dollars: 24,
-			cents: 92
-		};
+		const priceFree = 0;
+		const pricePremium = 8.25;
+		const priceBusiness = 24.92;
 		return (
 			<div className="design-assets__group">
 				<h2>
@@ -48,7 +33,7 @@ export default React.createClass( {
 						current
 						title={ plansList[ PLAN_FREE ].getTitle() }
 						planType={ PLAN_FREE }
-						price={ priceFree }
+						rawPrice={ priceFree }
 						billingTimeFrame={ 'for life' }
 					/>
 					<PlanFeaturesItemList>
@@ -70,7 +55,8 @@ export default React.createClass( {
 						popular
 						title={ plansList[ PLAN_PREMIUM ].getTitle() }
 						planType={ PLAN_PREMIUM }
-						price={ pricePremium }
+						rawPrice={ pricePremium }
+						currencyCode={ 'EUR' }
 						billingTimeFrame={ 'per month, billed yearly' }
 					/>
 					<PlanFeaturesItemList>
@@ -93,7 +79,7 @@ export default React.createClass( {
 					<PlanFeaturesHeader
 						title={ plansList[ PLAN_BUSINESS ].getTitle() }
 						planType={ PLAN_BUSINESS }
-						price={ priceBusiness }
+						rawPrice={ priceBusiness }
 						billingTimeFrame={ 'per month, billed yearly' }
 					/>
 					<PlanFeaturesItemList>
