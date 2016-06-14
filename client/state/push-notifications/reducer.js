@@ -31,6 +31,7 @@ import {
 } from 'state/action-types';
 const debug = debugFactory( 'calypso:push-notifications' );
 
+// If you change this, also change the corresponding test
 const UNPERSISTED_SYSTEM_NODES = [
 	'apiReady',
 	'authorized',
@@ -128,6 +129,7 @@ function system( state = {}, action ) {
 	return state;
 }
 
+// If you change this, also change the corresponding test
 const UNPERSISTED_SETTINGS_NODES = [
 	// The dialog should default to hidden
 	'showingUnblockInstructions',
