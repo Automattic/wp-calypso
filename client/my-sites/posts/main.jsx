@@ -21,7 +21,9 @@ import {
 	getSitePostsForQueryIgnoringPage,
 	isRequestingSitePostsForQuery
 } from 'state/posts/selectors';
-import SectionHeader from 'components/section-header';
+import Button from 'components/button';
+import Card from 'components/card';
+import Gridicon from 'components/gridicon';
 import { sectionify } from 'lib/route/path';
 
 const PostsMain = React.createClass( {
@@ -45,7 +47,10 @@ const PostsMain = React.createClass( {
 					siteId={ site && site.ID }
 					query={ this.props.draftsQuery } />
 				{ this.props.drafts &&
-					<SectionHeader label={ this.translate( 'Drafts' ) } />
+					<Card compact className="posts__drafts-header">
+						{ this.translate( 'Drafts' ) }
+						<Button borderless><Gridicon icon="plus" /></Button>
+					</Card>
 				}
 				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 			</div>

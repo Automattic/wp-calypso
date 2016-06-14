@@ -472,3 +472,14 @@
 	margin: 0 0 24px 24px;
 	max-width: 296px;
 }
+
+.posts__recent-drafts .posts__drafts-header.card.is-compact {
+	border-bottom: 2px solid $alert-yellow;
+	margin-bottom: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 4px 16px;
+	color: $gray-dark;
+	font-size: 14px;
+}
