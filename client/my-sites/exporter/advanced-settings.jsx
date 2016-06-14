@@ -9,6 +9,8 @@ import { connect } from 'react-redux';
  */
 import PostTypeOptions from './post-type-options';
 import SpinnerButton from './spinner-button';
+import { isDateRangeValid as isExportDateRangeValid } from 'state/site-settings/exporter/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Displays additional options for customising an export
@@ -53,7 +55,7 @@ const AdvancedSettings = React.createClass( {
 				</div>
 				<SpinnerButton
 					className="exporter__export-button"
-					disabled={ ! this.props.postType }
+					disabled={ ! this.props.isValid }
 					loading={ this.props.shouldShowProgress }
 					isPrimary={ true }
 					onClick={ this.props.onClickExport }
@@ -64,10 +66,13 @@ const AdvancedSettings = React.createClass( {
 	}
 } );
 
-const mapStateToProps = ( state ) => {
-	const siteId = state.ui.selectedSiteId;
+const mapStateToProps = ( state, ownProps ) => {
+	const siteId = getSelectedSiteId( state );
+	const postType = ownProps.postType;
+	const isDateValid = isExportDateRangeValid( state, siteId, postType );
 	return {
-		siteId
+		siteId,
+		isValid: postType && isDateValid,
 	};
 };
 
