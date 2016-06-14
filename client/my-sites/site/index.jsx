@@ -170,7 +170,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<ExternalLink icon={ true } href={ url } target="_blank" className="site__edit-icon" onCLick={ this.onEditIconClick() }>
+			<ExternalLink icon={ true } href={ url } target="_blank" className="site__edit-icon" onClick={ this.onEditIconClick }>
 				<SiteIcon site={ this.props.site } />
 				<span className="site__edit-icon-text">{ this.translate( 'Edit Icon' ) }</span>
 			</ExternalLink>
@@ -193,8 +193,10 @@ export default React.createClass( {
 		this.setState( { showMoreActions: ! this.state.showMoreActions } );
 	},
 
-	onEditIconClick() {
-		analytics.mc.bumpStat( 'calypso_site_card', 'edit_icon' );
+	onEditIconClick( event ) {
+		if ( event ) {
+			analytics.mc.bumpStat( 'calypso_site_card', 'edit_icon' );
+		}
 	},
 
 	render() {
