@@ -40,7 +40,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 
 			{ isGoogleVouchersEnabled() && <QuerySiteVouchers siteId={ selectedSite.ID } /> }
 			{ isGoogleVouchersEnabled() &&
-				<div className="purchase-detail__body">
+				<div>
 					<GoogleVoucherDetails selectedSite={ selectedSite } />
 				</div>
 			}

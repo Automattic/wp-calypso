@@ -4,14 +4,12 @@
 	color: $gray;
 	position: relative;
 
-	@include breakpoint( "<660px" ) {
-		&:last-child {
-			border-bottom: none;
-		}
+	&:last-child {
+		border-bottom: none;
+	}
 
-		.button {
-			width: 80%;
-		}
+	.button:not(.clipboard-button) {
+		width: 80%;
 	}
 
 	@include breakpoint( ">660px" ) {
@@ -20,6 +18,14 @@
 		max-width: 700px;
 		margin: 16px auto;
 		text-align: left;
+
+		&:last-child {
+			border-bottom-width: 1px;
+		}
+
+		.button:not(.clipboard-button) {
+			width: auto;
+		}
 	}
 
 	&.is-placeholder {
