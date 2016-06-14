@@ -63,6 +63,8 @@ function test() {
 
 	content = this.translate( 'The string key text',
 		{ 'context': 'context with a literal string key' } );
+
+	content = this.translate( `A string template with no interpolation` );
 }
 
 module.exports = test;
