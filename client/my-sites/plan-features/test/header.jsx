@@ -108,7 +108,7 @@ describe( 'plan-features-header', () => {
 				/>
 			);
 			expect( header.find( '.plan-features__header-price' ).render().children().html() ).to.equal(
-				'8&#xA0;000<sup class="plan-features__header-cents">,25</sup><sup class="plan-features__header-currency-symbol">&#x20AC;</sup>'
+				'8&#xA0;000<sup class="plan-features__header-cents">,25</sup>&#xA0;<sup class="plan-features__header-currency-symbol">&#x20AC;</sup>'
 			);
 		} );
 		it( 'GBP', () => {
