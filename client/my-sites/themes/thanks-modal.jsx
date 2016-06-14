@@ -9,6 +9,7 @@ import React from 'react';
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
 import { getDetailsUrl, getCustomizeUrl, getForumUrl, trackClick } from './helpers';
+import page from 'page';
 
 const ThanksModal = React.createClass( {
 	trackClick: trackClick.bind( null, 'current theme' ),
@@ -26,7 +27,7 @@ const ThanksModal = React.createClass( {
 
 	visitSite() {
 		this.trackClick( 'visit site' );
-		window.open( this.props.site.URL );
+		page( this.props.site.URL );
 	},
 
 	goBack() {
@@ -42,14 +43,12 @@ const ThanksModal = React.createClass( {
 		const features = this.translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
 			components: {
 				a: <a href={ getDetailsUrl( this.props.currentTheme, this.props.site ) }
-					target="_blank"
 					onClick={ this.onLinkClick( 'features' ) }/>
 			}
 		} );
 		const customize = this.translate( '{{a}}Customize{{/a}} this design.', {
 			components: {
 				a: <a href={ getCustomizeUrl( this.props.currentTheme, this.props.site ) }
-					target="_blank"
 					onClick={ this.onLinkClick( 'customize' ) }/>
 			}
 		} );
@@ -62,7 +61,6 @@ const ThanksModal = React.createClass( {
 				{ this.translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
 					components: {
 						a: <a href={ getForumUrl( this.props.currentTheme ) }
-							target="_blank"
 							onClick={ this.onLinkClick( 'support' ) }/>
 					}
 				} ) }
@@ -78,7 +76,6 @@ const ThanksModal = React.createClass( {
 					{ this.translate( 'Learn more about this {{a}}awesome theme{{/a}}.', {
 						components: {
 							a: <a href={ themeUri }
-								target="_blank"
 								onClick={ this.onLinkClick( 'org theme' ) }/>
 						}
 					} ) }
@@ -94,7 +91,6 @@ const ThanksModal = React.createClass( {
 					{ this.translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
 						components: {
 							a: <a href={ authorUri }
-								target="_blank"
 								onClick={ this.onLinkClick( 'org author' ) }/>
 						}
 					} ) }
@@ -109,7 +105,6 @@ const ThanksModal = React.createClass( {
 				{ this.translate( 'If you need support, visit the WordPress.org {{a}}Themes forum{{/a}}.', {
 					components: {
 						a: <a href="https://wordpress.org/support/forum/themes-and-templates"
-							target="_blank"
 							onClick={ this.onLinkClick( 'org forum' ) }/>
 					}
 				} ) }
