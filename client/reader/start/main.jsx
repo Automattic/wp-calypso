@@ -63,7 +63,7 @@ const Start = React.createClass( {
 				<header className="reader-start__intro">
 					<h1 className="reader-start__title">{ this.translate( 'Welcome to the WordPress.com Reader' ) }</h1>
 					<p className="reader-start__description">{ this.translate( "Discover great stories and read your favorite sites' posts all in one place. Every time there are new updates to the sites you follow, you'll be the first to know!" ) }</p>
-					<p className="reader-start__description">{ this.translate( "We've curated a list of content for you. Follow one or more sites to get started." ) }</p>
+					<p className="reader-start__description">{ this.translate( "We've suggested some sites below that you might enjoy. Follow one or more sites to get started." ) }</p>
 				</header>
 
 				<Masonry className="reader-start__cards" options={ { gutter: 14 } }>
