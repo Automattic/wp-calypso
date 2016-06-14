@@ -9,6 +9,7 @@ import noop from 'lodash/noop';
  */
 import analytics from 'lib/analytics';
 import SignupActions from 'lib/signup/actions';
+import getThemes from 'lib/signup/themes';
 import ThemesList from 'components/themes-list';
 import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
@@ -17,32 +18,29 @@ module.exports = React.createClass( {
 	displayName: 'ThemeSelection',
 
 	propTypes: {
-		themes: React.PropTypes.arrayOf( React.PropTypes.shape( {
-			name: React.PropTypes.string.isRequired,
-			slug: React.PropTypes.string.isRequired
-		} ) ),
 		useHeadstart: React.PropTypes.bool,
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
-			themes: [
-				{ name: 'Dyad', slug: 'dyad' },
-				{ name: 'Independent Publisher', slug: 'independent-publisher' },
-				{ name: 'Sela', slug: 'sela' },
-				{ name: 'Hemingway Rewritten', slug: 'hemingway-rewritten' },
-				{ name: 'Twenty Sixteen', slug: 'twentysixteen' },
-				{ name: 'Penscratch', slug: 'penscratch' },
-				{ name: 'Edin', slug: 'edin' },
-				{ name: 'Publication', slug: 'publication' },
-				{ name: 'Harmonic', slug: 'harmonic' },
-			],
-
 			useHeadstart: true,
 		};
 	},
 
-	handleScreenshotClick: function( theme ) {
+	getInitialState() {
+		return {
+			themes: getThemes( this.props.signupDependencies.surveyQuestion, this.props.signupDependencies.designType )
+		};
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		const { surveyQuestion, designType } = nextProps.signupDependencies;
+		if ( surveyQuestion !== this.props.signupDependencies.surveyQuestion || designType !== this.props.signupDependencies.designType ) {
+			this.setState( { themes: this.getThemes() } );
+		}
+	},
+
+	handleScreenshotClick( theme ) {
 		var themeSlug = theme.id;
 
 		analytics.tracks.recordEvent( 'calypso_signup_theme_select', { theme: themeSlug, headstart: true } );
@@ -58,13 +56,9 @@ module.exports = React.createClass( {
 		this.props.goToNextStep();
 	},
 
-	getThemes() {
-		return this.props.signupDependencies.themes || this.props.themes;
-	},
-
-	renderThemesList: function() {
+	renderThemesList() {
 		var actionLabel = this.translate( 'Pick' ),
-			themes = this.getThemes().map( function( theme ) {
+			themes = this.state.themes.map( function( theme ) {
 				return {
 					id: theme.slug,
 					name: theme.name,
@@ -90,7 +84,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		const defaultDependencies = this.props.useHeadstart ? { theme: 'pub/twentysixteen' } : undefined;
 		return (
 			<StepWrapper
