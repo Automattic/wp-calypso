@@ -19,8 +19,7 @@ import {
 import {
 	recordAction,
 	recordGaEvent,
-	recordTrainTrackInteract,
-	recordTrack
+	recordTrackForPost
 } from 'reader/stats';
 
 class PostCommentForm extends React.Component {
@@ -131,12 +130,9 @@ class PostCommentForm extends React.Component {
 
 		recordAction( 'posted_comment' );
 		recordGaEvent( 'Clicked Post Comment Button' );
-		recordTrack( 'calypso_reader_article_commented_on', {
-			blog_id: post.site_ID,
-			post_id: post.ID,
+		recordTrackForPost( 'calypso_reader_article_commented_on', post, {
 			parent_post_id: this.props.parentCommentID ? this.props.parentCommentID : undefined
 		} );
-		recordTrainTrackInteract( 'article_commented_on', post );
 
 		this.resetCommentText();
 
