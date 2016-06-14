@@ -208,7 +208,16 @@ export default React.createClass( {
 					{ ...fieldProps( 'organization' ) }/>
 
 				<Input label={ this.translate( 'Email', { textOnly } ) } { ...fieldProps( 'email' ) }/>
-				<Input label={ this.translate( 'Phone', { textOnly } ) } { ...fieldProps( 'phone' ) }/>
+				<Input
+					label={ this.translate( 'Phone', { textOnly } ) }
+					placeholder={ this.translate(
+						'e.g. +1.555.867.5309',
+						{
+							context: 'Domain contact info phone placeholder',
+							comment: 'Please use the phone number format most common for your language, but it must begin with just the country code in the format \'+1\' - no parenthesis, leading zeros, etc.'
+						}
+					) }
+					{ ...fieldProps( 'phone' ) }/>
 
 				<CountrySelect
 					label={ this.translate( 'Country', { textOnly } ) }
