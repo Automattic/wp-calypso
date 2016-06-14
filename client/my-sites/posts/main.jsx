@@ -50,16 +50,15 @@ const PostsMain = React.createClass( {
 					siteId={ site && site.ID }
 					query={ this.props.draftsQuery } />
 				<QueryPostCounts siteId={ site && site.ID } type="post" />
-				{ this.props.drafts &&
-					<Card compact className="posts__drafts-header">
-						<span>
-							{ this.translate( 'Drafts' ) }
-							{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
-						</span>
-						<Button borderless><Gridicon icon="plus" /></Button>
-					</Card>
-				}
+				<Card compact className="posts__drafts-header">
+					<span>
+						{ this.translate( 'Drafts' ) }
+						{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
+					</span>
+					<Button borderless><Gridicon icon="plus" /></Button>
+				</Card>
 				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
+				{ this.props.loadingDrafts && <Draft isPlaceholder /> }
 			</div>
 		);
 	},
@@ -104,7 +103,6 @@ export default connect( ( state ) => {
 		type: 'post',
 		lastPage: true,
 		status: 'draft',
-		number: 10,
 		order_by: 'modified'
 	};
 
