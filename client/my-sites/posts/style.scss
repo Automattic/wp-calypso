@@ -9,6 +9,7 @@
 }
 
 .posts__primary {
+	flex-grow: 1;
 	max-width: 720px;
 }
 
@@ -492,6 +493,10 @@
 	padding: 3px 16px;
 	color: $gray-dark;
 	font-size: 14px;
+
+	&::after {
+		display: none;
+	}
 
 	.count {
 		margin-left: 8px;
