@@ -47,6 +47,7 @@ class PostTypeList extends Component {
 
 		this.renderPostRow = this.renderPostRow.bind( this );
 		this.setRequestedPages = this.setRequestedPages.bind( this );
+		this.setVirtualScrollRef = this.setVirtualScrollRef.bind( this );
 		this.state = { requestedPages: [] };
 	}
 
@@ -54,6 +55,20 @@ class PostTypeList extends Component {
 		if ( ! isEqual( this.props.query, nextProps.query ) ) {
 			this.setState( { requestedPages: [] } );
 		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		// If, after requesting, it turns out that there's only a single post,
+		// VirtualScroll may not update because the row count doesn't change
+		// (1 placeholder, 1 post result). In these cases, force an update.
+		if ( this.props.posts && 1 === this.props.posts.length && this.virtualScroll &&
+				! this.props.requestingFirstPage && prevProps.requestingFirstPage ) {
+			this.virtualScroll.forceUpdate();
+		}
+	}
+
+	setVirtualScrollRef( ref ) {
+		this.virtualScroll = ref;
 	}
 
 	getPageForIndex( index ) {
@@ -139,6 +154,7 @@ class PostTypeList extends Component {
 							<AutoSizer disableHeight>
 								{ ( { width } ) => (
 									<VirtualScroll
+										ref={ this.setVirtualScrollRef }
 										autoHeight
 										scrollTop={ scrollTop }
 										height={ height }
