@@ -102,7 +102,7 @@ function makeSnippet( doc, query ) {
 	}
 
 	if ( snippets.length ) {
-		return '...' + snippets.join( ' ... ' ) + '...';
+		return '…' + snippets.join( ' … ' ) + '…';
 	};
 
 	return defaultSnippet( doc );
@@ -116,7 +116,7 @@ function escapeRegexString( str ) {
 
 function defaultSnippet( doc ) {
 	var content = doc.body.substring( 0, DEFAULT_SNIPPET_LENGTH );
-	return escapeHTML( content ) + '&hellip;';
+	return escapeHTML( content ) + '…';
 }
 
 /**
