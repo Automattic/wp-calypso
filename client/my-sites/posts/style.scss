@@ -1,3 +1,12 @@
+.posts.main {
+	display: flex;
+	max-width: 1040px;
+}
+
+.posts__primary {
+	max-width: 720px;
+}
+
 .posts__list {
 
 	.post {
@@ -459,5 +468,7 @@
 }
 
 .posts__recent-drafts {
-	margin: 0 0 24px;
+	flex-grow: 1;
+	margin: 0 0 24px 24px;
+	max-width: 296px;
 }
