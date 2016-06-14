@@ -9,6 +9,10 @@ import React from 'react';
  */
 import { abtest } from 'lib/abtest';
 import WpcomPlanPrice from 'my-sites/plans/wpcom-plan-price';
+import {
+	PLAN_YEARLY_INTERVAL,
+	PLAN_MONTHLY_INTERVAL,
+} from 'lib/plans/constants';
 
 const PlanPrice = React.createClass( {
 	getFormattedPrice( plan ) {
@@ -24,7 +28,7 @@ const PlanPrice = React.createClass( {
 				return this.translate( 'Free', { context: 'Zero cost product price' } );
 			}
 
-			if ( abtest( 'planPricing' ) === 'monthly' && plan.bill_period === 365 ) {
+			if ( abtest( 'planPricing' ) === 'monthly' && plan.bill_period === PLAN_YEARLY_INTERVAL ) {
 				const monthlyPrice = +( rawPrice / 12 ).toFixed( 2 );
 				formattedPrice = formattedPrice.replace( rawPrice, monthlyPrice );
 			}
@@ -61,7 +65,7 @@ const PlanPrice = React.createClass( {
 			periodLabel = this.translate( 'per month, billed yearly' );
 			if ( plan.product_type === 'jetpack' ) {
 				//jetpack supports monthly plans
-				if ( plan.bill_period === 31 ) {
+				if ( plan.bill_period === PLAN_MONTHLY_INTERVAL ) {
 					periodLabel = this.translate( 'per month, billed monthly' );
 				}
 			}

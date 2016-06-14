@@ -26,6 +26,18 @@ var productDependencies = {
 	}
 };
 
+import {
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+	PLAN_FREE,
+	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_MONTHLY_INTERVAL
+} from 'lib/plans/constants';
+
 function assertValidProduct( product ) {
 	var missingAttributes = difference( schema.required, Object.keys( product ) );
 
@@ -57,14 +69,14 @@ function isFreePlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === 'free_plan';
+	return product.product_slug === PLAN_FREE;
 }
 
 function isFreeJetpackPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === 'jetpack_free';
+	return product.product_slug === PLAN_JETPACK_FREE;
 }
 
 function isFreeTrial( product ) {
@@ -78,11 +90,11 @@ function isMonthly( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.bill_period === 31;
+	return product.bill_period === PLAN_MONTHLY_INTERVAL;
 }
 
 function isPremium( product ) {
-	var premiumProducts = [ 'value_bundle', 'jetpack_premium', 'jetpack_premium_monthly' ];
+	var premiumProducts = [ PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
 
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -91,7 +103,7 @@ function isPremium( product ) {
 }
 
 function isBusiness( product ) {
-	var businessProducts = [ 'business-bundle', 'jetpack_business', 'jetpack_business_monthly' ];
+	var businessProducts = [ PLAN_BUSINESS, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
 
 	product = formatProduct( product );
 	assertValidProduct( product );

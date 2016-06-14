@@ -20,6 +20,9 @@ export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
 
+export const PLAN_YEARLY_INTERVAL  = 365;
+export const PLAN_MONTHLY_INTERVAL = 31;
+
 export const plansList = {
 	[ PLAN_FREE ]: {
 		getTitle: () => i18n.translate( 'Free' ),
