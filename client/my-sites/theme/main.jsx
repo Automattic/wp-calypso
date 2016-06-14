@@ -71,6 +71,10 @@ const ThemeSheet = React.createClass( {
 		return { selectedAction: null };
 	},
 
+	componentDidMount() {
+		window.scroll( 0, 0 );
+	},
+
 	hideSiteSelectorModal() {
 		this.setState( { selectedAction: null } );
 	},
@@ -119,7 +123,7 @@ const ThemeSheet = React.createClass( {
 
 	validateSection( section ) {
 		if ( this.getValidSections().indexOf( section ) === -1 ) {
-			return this.getValidSections()[0];
+			return this.getValidSections()[ 0 ];
 		}
 		return section;
 	},
@@ -177,7 +181,7 @@ const ThemeSheet = React.createClass( {
 		);
 
 		return (
-			<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[currentSection] }>
+			<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[ currentSection ] }>
 				{ this.props.name && nav }
 			</SectionNav>
 		);
