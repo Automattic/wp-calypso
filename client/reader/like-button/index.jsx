@@ -13,14 +13,7 @@ var ReaderLikeButton = React.createClass( {
 		} );
 		stats.recordAction( liked ? 'liked_post' : 'unliked_post' );
 		stats.recordGaEvent( liked ? 'Clicked Like Post' : 'Clicked Unlike Post' );
-		stats.recordTrack( liked ? 'calypso_reader_article_liked' : 'calypso_reader_article_unliked', {
-			blog_id: this.props.siteId,
-			post_id: this.props.postId
-		} );
-		stats.recordTrainTrackInteract( 'article_liked', post );
-		if ( this.props.onLikeToggle ) {
-			this.props.onLikeToggle( liked );
-		}
+		stats.recordTrackForPost( liked ? 'calypso_reader_article_liked' : 'calypso_reader_article_unliked', post );
 	},
 
 	render: function() {
