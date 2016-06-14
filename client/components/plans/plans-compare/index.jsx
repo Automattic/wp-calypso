@@ -94,7 +94,16 @@ const PlansCompare = React.createClass( {
 
 	getPlanURL() {
 		const selectedSite = this.props.selectedSite;
-		return selectedSite ? `/plans/${ selectedSite.slug }` : '/plans';
+		let url = '/plans';
+
+		if ( 'monthly' === this.props.intervalType ) {
+			url += '/monthly';
+		}
+
+		if ( selectedSite ) {
+			url += '/' + selectedSite.slug;
+		}
+		return url;
 	},
 
 	goBack() {
@@ -189,7 +198,8 @@ const PlansCompare = React.createClass( {
 		return filterPlansBySiteAndProps(
 			this.props.plans,
 			this.props.selectedSite,
-			this.props.hideFreePlan
+			this.props.hideFreePlan,
+			this.props.intervalType
 		);
 	},
 

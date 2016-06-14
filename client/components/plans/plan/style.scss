@@ -8,7 +8,9 @@
 
 	&.jetpack_free,
 	&.jetpack_premium,
-	&.jetpack_business {
+	&.jetpack_business,
+	&.jetpack_premium_monthly,
+	&.jetpack_business_monthly{
 		display: flex;
 		flex-direction: column;
 	}
@@ -50,7 +52,9 @@
 
 	.jetpack_free &,
 	.jetpack_premium &,
-	.jetpack_business & {
+	.jetpack_business &
+	.jetpack_premium_monthly &
+	.jetpack_business_monthly & {
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
@@ -91,7 +95,9 @@
 
 	.jetpack_free &,
 	.jetpack_premium &,
-	.jetpack_business & {
+	.jetpack_business &
+	.jetpack_premium_monthly &
+	.jetpack_business_monthly & {
 		flex-grow: 1;
 	}
 }
@@ -137,7 +143,9 @@
 
 		&.jetpack_free,
 		&.jetpack_premium,
-		&.jetpack_business {
+		&.jetpack_business,
+		&.jetpack_premium_monthly,
+		&.jetpack_business_monthly {
 			.plan__plan-tagline {
 				height: 32px;
 			}

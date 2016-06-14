@@ -1,10 +1,14 @@
 .jetpack_premium .plan__plan-details .plan__plan-details-list,
-.jetpack_business .plan__plan-details .plan__plan-details-list {
+.jetpack_business .plan__plan-details .plan__plan-details-list,
+.jetpack_premium_monthly .plan__plan-details .plan__plan-details-list,
+.jetpack_business_monthly .plan__plan-details .plan__plan-details-list {
 	margin: 8px 0;
 }
 
 .jetpack_premium .plan__plan-details .plan__plan-details-item,
-.jetpack_business .plan__plan-details .plan__plan-details-item {
+.jetpack_business .plan__plan-details .plan__plan-details-item,
+.jetpack_premium_monthly .plan__plan-details .plan__plan-details-item,
+.jetpack_business_monthly .plan__plan-details .plan__plan-details-item {
 	opacity: 1.0;
 	padding: 4px 0;
 
