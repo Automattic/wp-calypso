@@ -12,6 +12,13 @@ var sections,
 
 sections = [
 	{
+		name: 'sites',
+		paths: [ '/sites' ],
+		module: 'my-sites',
+		group: 'sites',
+		secondary: true
+	},
+	{
 		name: 'customize',
 		paths: [ '/customize' ],
 		module: 'my-sites/customize',
