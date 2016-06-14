@@ -8,6 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
+import config from 'config';
 import Button from 'components/forms/form-button';
 
 export default React.createClass( {
@@ -18,7 +19,13 @@ export default React.createClass( {
 	},
 
 	purchaseGuidedTransfer() {
-		page( `/settings/export/${this.props.siteSlug}/guided` );
+		const { siteSlug } = this.props;
+		if ( config.isEnabled( 'manage/export/guided-transfer' ) ) {
+			page( `/settings/export/${ siteSlug }/guided` );
+		} else {
+			// Redirect to legacy guided transfer
+			window.location = `https://${ siteSlug }/wp-admin/paid-upgrades.php?product=40&view=purchase&source=export`;
+		}
 	},
 
 	render() {
