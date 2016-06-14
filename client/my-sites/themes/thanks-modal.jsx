@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -9,7 +10,6 @@ import React from 'react';
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
 import { getDetailsUrl, getCustomizeUrl, getForumUrl, trackClick } from './helpers';
-import page from 'page';
 
 const ThanksModal = React.createClass( {
 	trackClick: trackClick.bind( null, 'current theme' ),
