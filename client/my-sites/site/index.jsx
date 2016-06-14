@@ -190,12 +190,21 @@ export default React.createClass( {
 	},
 
 	toggleActions() {
+		if ( ! this.state.showMoreActions ) {
+			analytics.mc.bumpStat( 'calypso_site_card', 'toggle_button' );
+		}
 		this.setState( { showMoreActions: ! this.state.showMoreActions } );
 	},
 
 	onEditIconClick( event ) {
+		const site = this.props.site;
+
 		if ( event ) {
 			analytics.mc.bumpStat( 'calypso_site_card', 'edit_icon' );
+		}
+
+		if ( event && site && ! site.icon ) {
+			analytics.mc.bumpStat( 'calypso_site_card', 'edit_default_icon' );
 		}
 	},
 
