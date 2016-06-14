@@ -60,7 +60,7 @@ const PostsMain = React.createClass( {
 					</Button>
 				</Card>
 				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
-				{ this.props.loadingDrafts && <Draft isPlaceholder /> }
+				{ ! this.props.drafts && this.props.loadingDrafts && <Draft isPlaceholder /> }
 			</div>
 		);
 	},
