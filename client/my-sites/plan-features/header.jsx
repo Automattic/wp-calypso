@@ -390,14 +390,18 @@ PlanFeaturesHeader.propTypes = {
 	popular: PropTypes.bool,
 	rawPrice: PropTypes.number.isRequired,
 	currencyCode: PropTypes.string,
-	title: PropTypes.string.isRequired
+	title: PropTypes.string.isRequired,
+	translate: PropTypes.func
 };
 
 PlanFeaturesHeader.defaultProps = {
 	currencyCode: 'USD',
 	current: false,
 	onClick: noop,
-	popular: false
+	popular: false,
+	translate: noop
 };
+
+export const BareComponent = PlanFeaturesHeader;
 
 export default localize( PlanFeaturesHeader );
