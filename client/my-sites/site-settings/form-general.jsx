@@ -29,6 +29,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDomainsBySite } from 'state/sites/domains/selectors';
+import JetpackSyncPanel from './jetpack-sync-panel';
 
 const FormGeneral = React.createClass( {
 	displayName: 'SiteSettingsFormGeneral',
@@ -426,6 +427,21 @@ const FormGeneral = React.createClass( {
 		);
 	},
 
+	renderJetpackSyncPanel() {
+		if ( ! config.isEnabled( 'jetpack/sync-panel' ) ) {
+			 return null;
+		}
+
+		const site = this.props.site;
+		if ( ! site.jetpack || this.props.site.versionCompare( '4.2.0-alpha', '<' ) ) {
+			return null;
+		}
+
+		return (
+			<JetpackSyncPanel siteId={ site.ID } />
+		);
+	},
+
 	render() {
 		var site = this.props.site;
 		if ( site.jetpack && ! site.hasMinimumJetpackVersion ) {
@@ -498,6 +514,8 @@ const FormGeneral = React.createClass( {
 						{ this.relatedPostsOptions() }
 					</form>
 				</Card>
+
+				{ this.renderJetpackSyncPanel() }
 
 				{ this.props.site.jetpack
 					? <div>

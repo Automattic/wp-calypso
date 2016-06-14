@@ -43,6 +43,7 @@
 		"jetpack/connect": true,
 		"jetpack/sso": true,
 		"jetpack_core_inline_update": true,
+		"jetpack/sync-panel": true,
 		"keyboard-shortcuts": true,
 		"mailing-lists/unsubscribe": true,
 		"manage/add-people": true,
