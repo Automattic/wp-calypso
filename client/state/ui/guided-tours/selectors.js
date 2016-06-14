@@ -30,13 +30,11 @@ export const getGuidedTourState = createSelector(
 		const tourState = getRawGuidedTourState( state );
 		const { shouldReallyShow, stepName = '', tour } = tourState;
 		const tourConfig = getToursConfig( tour );
-		const isInTourContext = s => tourConfig.showInContext && tourConfig.showInContext( s );
 		const stepConfig = tourConfig[ stepName ] || false;
 		const nextStepConfig = getToursConfig( tour )[ stepConfig.next ] || false;
 
 		const shouldShow = !! (
 			! isSectionLoading( state ) &&
-			isInTourContext( state ) &&
 			shouldReallyShow
 		);
 
