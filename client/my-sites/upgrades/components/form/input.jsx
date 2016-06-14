@@ -77,7 +77,7 @@ export default React.createClass( {
 			<div className={ classes }>
 				<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
 				<FormTextInput
-					placeholder={ this.props.label }
+					placeholder={ this.props.placeholder ? this.props.placeholder : this.props.label }
 					id={ this.props.name }
 					value={ this.props.value }
 					name={ this.props.name }
