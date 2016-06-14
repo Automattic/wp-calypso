@@ -492,10 +492,12 @@ function getItemForPlan( plan, properties ) {
 			return personalPlan( plan.product_slug, properties );
 		case 'value_bundle':
 		case 'jetpack_premium':
+		case 'jetpack_premium_monthly':
 			return premiumPlan( plan.product_slug, properties );
 
 		case 'business-bundle':
 		case 'jetpack_business':
+		case 'jetpack_business_monthly':
 			return businessPlan( plan.product_slug, properties );
 
 		default:
