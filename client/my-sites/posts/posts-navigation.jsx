@@ -167,10 +167,10 @@ export default React.createClass( {
 					selectedCount = count;
 				}
 			}
-			console.log(this.props);
 
 			statusItems.push(
 				<NavItem
+					className={ 'is-' + status }
 					key={ 'statusTabs' + path }
 					path={ path }
 					count={ null === this.props.sites.selected || isJetpackSite ?

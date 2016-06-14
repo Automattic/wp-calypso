@@ -1,6 +1,11 @@
 .posts.main {
-	display: flex;
-	max-width: 1040px;
+	display: block;
+	max-width: 720px;
+
+	@include breakpoint( ">1040px" ) {
+		display: flex;
+		max-width: 1040px;
+	}
 }
 
 .posts__primary {
@@ -471,6 +476,11 @@
 	flex-grow: 1;
 	margin: 0 0 24px 24px;
 	max-width: 296px;
+	display: none;
+
+	@include breakpoint( ">1040px" ) {
+		display: block;
+	}
 }
 
 .posts__recent-drafts .posts__drafts-header.card.is-compact {
@@ -479,11 +489,17 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 4px 16px;
+	padding: 3px 16px;
 	color: $gray-dark;
 	font-size: 14px;
 
 	.count {
 		margin-left: 8px;
+	}
+}
+
+.posts .section-nav-tab.is-draft {
+	@include breakpoint( ">1040px" ) {
+		display: none;
 	}
 }
