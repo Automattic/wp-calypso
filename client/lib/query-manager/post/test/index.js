@@ -103,6 +103,14 @@ describe( 'PostQueryManager', () => {
 
 				expect( isMatch ).to.be.true;
 			} );
+
+			it( 'should separately test title and content fields', () => {
+				const isMatch = manager.matches( {
+					search: 'ChickenAre'
+				}, DEFAULT_POST );
+
+				expect( isMatch ).to.be.false;
+			} );
 		} );
 
 		context( 'query.after', () => {
