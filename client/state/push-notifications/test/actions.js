@@ -39,20 +39,9 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'receiveUnregisterDevice()', () => {
-		it( 'should return an action object with empty data for empty input', () => {
+		it( 'should return an action object', () => {
 			expect( receiveUnregisterDevice() ).to.eql( {
-				type: PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
-				data: {},
-			} );
-		} );
-
-		it( 'should return an action object with provided data intact', () => {
-			const data = {
-				devicestuff: 'some_value',
-			};
-			expect( receiveUnregisterDevice( data ) ).to.eql( {
-				type: PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
-				data,
+				type: PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE
 			} );
 		} );
 	} );

@@ -87,9 +87,10 @@ export function apiReady() {
 		}
 
 		dispatch( mustPrompt() );
+
 		if ( 'disabling' === getStatus( state ) ) {
-			debug( 'Forcibly unregistering device (disabling on apiReady)' );
 			dispatch( unregisterDevice() );
+			debug( 'resolveStatus forcibly unregistered device' );
 		}
 	};
 }
@@ -245,27 +246,26 @@ export function activateSubscription() {
 export function unregisterDevice() {
 	return ( dispatch, getState ) => {
 		const deviceId = getDeviceId( getState() );
+
+		// Always assume success as it pertains to the UI
+		dispatch( receiveUnregisterDevice() );
+
 		if ( ! deviceId ) {
-			debug( 'Couldn\'t unregister device. Unknown device ID' );
-			dispatch( receiveUnregisterDevice() );
-			return;
-		}
-		return wpcom.undocumented().unregisterDevice( deviceId )
-			.then( ( data ) => {
-				debug( 'Successfully unregistered device', data );
-				dispatch( receiveUnregisterDevice( data ) );
-			} )
-			.catch( err => {
-				debug( 'Couldn\'t unregister device', err );
-				dispatch( receiveUnregisterDevice() );
+			return new Promise( ( resolve, reject ) => {
+				reject( 'Couldn\'t unregister device. Unknown device ID' );
 			} );
+		}
+
+		return wpcom.undocumented().unregisterDevice( deviceId )
+			.then( ( data ) => debug( 'Successfully unregistered device', data ) )
+			.catch( err => debug( 'Couldn\'t unregister device', err ) )
+		;
 	};
 }
 
-export function receiveUnregisterDevice( data ) {
+export function receiveUnregisterDevice() {
 	return {
 		type: PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
-		data: data ? data : {}
 	};
 }
 
