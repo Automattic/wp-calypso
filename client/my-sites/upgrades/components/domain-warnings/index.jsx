@@ -66,8 +66,10 @@ export default React.createClass( {
 			], rules;
 
 		if ( ! this.props.ruleWhiteList ) {
+			debug( 'All rules are active' );
 			rules = allRules;
 		} else {
+			debug( 'Rules:', this.props.ruleWhiteList );
 			const validRules = this.props.ruleWhiteList.map( ruleName => this[ ruleName ] );
 			rules = intersection( allRules, validRules ); // avoid leaking other functions
 		}
@@ -81,8 +83,10 @@ export default React.createClass( {
 	wrongNSMappedDomains() {
 		debug( 'Rendering wrongNSMappedDomains' );
 		const wrongMappedDomains = this.getDomains().filter( domain =>
-			domain.type === domainTypes.MAPPED && ! domain.hasZone );
+			domain.type === domainTypes.MAPPED && ! domain.pointsToWpcom );
 
+		debug( 'Domains:', this.getDomains() );
+		debug( 'NS error domains:', wrongMappedDomains );
 		let learnMoreUrl,
 			text,
 			offendingList = null;
@@ -278,7 +282,7 @@ export default React.createClass( {
 	},
 
 	componentWillMount: function() {
-		if ( ! this.props.domains || ! this.props.domain ) {
+		if ( ! this.props.domains && ! this.props.domain ) {
 			debug( 'You need provide either "domains" or "domain" property to this component.' );
 		}
 	},

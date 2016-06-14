@@ -9,6 +9,7 @@ export const createSiteDomainObject = domain => {
 		blogId: Number( domain.blog_id ),
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
 		domain: String( domain.domain ),
+		pointsToWpcom: Boolean( domain.points_to_wpcom ),
 		expired: Boolean( domain.expired ),
 		expiry: String( domain.expiry ),
 		expirySoon: Boolean( domain.expiry_soon ),

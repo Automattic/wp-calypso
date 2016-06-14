@@ -105,7 +105,7 @@ describe( 'index', () => {
 		it( 'should render a warning for misconfigured mapped domains', () => {
 			const props = {
 				domains: [
-					{ name: '1.com', hasZone: false, type: domainTypes.MAPPED }
+					{ name: '1.com', pointsToWpcom: false, type: domainTypes.MAPPED, isCurrentUserOwner: true }
 				],
 				selectedSite: { domain: '1.com' }
 			};
@@ -123,8 +123,8 @@ describe( 'index', () => {
 		it( 'should render the correct support url for multiple misconfigured mapped domains', () => {
 			const props = {
 				domains: [
-					{ name: '1.com', hasZone: false, type: domainTypes.MAPPED },
-					{ name: '2.com', hasZone: false, type: domainTypes.MAPPED }
+					{ name: '1.com', pointsToWpcom: false, type: domainTypes.MAPPED, isCurrentUserOwner: true },
+					{ name: '2.com', pointsToWpcom: false, type: domainTypes.MAPPED, isCurrentUserOwner: true }
 				],
 				selectedSite: { domain: '1.com' }
 			};
@@ -140,7 +140,7 @@ describe( 'index', () => {
 		it( 'should show a subdomain mapping related message for one misconfigured subdomain', () => {
 			const props = {
 				domains: [
-					{ name: 'blog.example.com', hasZone: false, type: domainTypes.MAPPED }
+					{ name: 'blog.example.com', pointsToWpcom: false, type: domainTypes.MAPPED, isCurrentUserOwner: true }
 				],
 				selectedSite: { domain: 'blog.example.com' }
 			};
@@ -157,8 +157,8 @@ describe( 'index', () => {
 		it( 'should show a subdomain mapping related message for multiple misconfigured subdomains', () => {
 			const props = {
 				domains: [
-					{ name: 'blog.example.com', hasZone: false, type: domainTypes.MAPPED },
-					{ name: 'blog.mygroovysite.com', hasZone: false, type: domainTypes.MAPPED }
+					{ name: 'blog.example.com', pointsToWpcom: false, type: domainTypes.MAPPED, isCurrentUserOwner: true },
+					{ name: 'blog.mygroovysite.com', pointsToWpcom: false, type: domainTypes.MAPPED, isCurrentUserOwner: true }
 				],
 				selectedSite: { domain: 'blog.example.com' }
 			};
@@ -175,8 +175,8 @@ describe( 'index', () => {
 		it( 'should show a subdomain mapping related message for multiple misconfigured subdomains and domains mixed', () => {
 			const props = {
 				domains: [
-					{ name: 'blog.example.com', hasZone: false, type: domainTypes.MAPPED },
-					{ name: 'mygroovysite.com', hasZone: false, type: domainTypes.MAPPED }
+					{ name: 'blog.example.com', pointsToWpcom: false, type: domainTypes.MAPPED, isCurrentUserOwner: true },
+					{ name: 'mygroovysite.com', pointsToWpcom: false, type: domainTypes.MAPPED, isCurrentUserOwner: true }
 				],
 				selectedSite: { domain: 'blog.example.com' }
 			};
