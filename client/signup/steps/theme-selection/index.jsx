@@ -29,7 +29,7 @@ module.exports = React.createClass( {
 
 	getInitialState() {
 		return {
-			themes: this.getThemes()
+			themes: getThemes( this.props.signupDependencies.surveyQuestion, this.props.signupDependencies.designType )
 		};
 	},
 
@@ -54,10 +54,6 @@ module.exports = React.createClass( {
 		} );
 
 		this.props.goToNextStep();
-	},
-
-	getThemes() {
-		return this.props.themes || getThemes( this.props.signupDependencies.surveyQuestion, this.props.signupDependencies.designType );
 	},
 
 	renderThemesList() {
