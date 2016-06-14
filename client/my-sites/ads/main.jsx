@@ -109,10 +109,8 @@ const AdsMain = React.createClass( {
 					{ this.translate(
 						'WordAds allows you to make money from advertising that runs on your site. ' +
 						'Because you have a WordPress.com Premium plan, you can skip the review process and activate WordAds instantly. ' +
-						'{{br/}}' +
 						'{{a}}Learn more about the program.{{/a}}', {
 							components: {
-								br: <br />,
 								a: <a href={ 'http://wordads.co' } />
 							}
 						} )
@@ -133,7 +131,7 @@ const AdsMain = React.createClass( {
 		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
 			notice = (
 				<Notice status="is-success" showDismiss={ false }>
-					{ this.translate( 'You have successfully joined WordAds. Please review these settings:' ) }
+					{ this.translate( 'You have joined the WordAds program. Please review these settings:' ) }
 				</Notice>
 			);
 		} else if ( ! this.props.site.options.wordads && isWordadsInstantActivationEligible( this.props.site ) ) {
