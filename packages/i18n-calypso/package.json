@@ -21,13 +21,13 @@
   "homepage": "https://github.com/Automattic/i18n-calypso#readme",
   "dependencies": {
     "debug": "2.2.0",
-    "interpolate-components": "1.0.4",
+    "interpolate-components": "1.0.5",
     "jed": "1.0.2",
     "jstimezonedetect": "1.0.5",
     "lodash.assign": "^4.0.8",
     "lru-cache": "4.0.1",
     "moment-timezone": "0.4.0",
-    "react": "0.14.8",
+    "react": "0.14.8 || ^15.1.0",
     "async": "^1.5.2",
     "commander": "^2.9.0",
     "xgettext-js": "^0.3.0"
@@ -38,8 +38,8 @@
     "chai": "^3.5.0",
     "enzyme": "2.2.0",
     "mocha": "^2.4.5",
-    "react-addons-test-utils": "0.14.8",
-    "react-dom": "0.14.8",
+    "react-addons-test-utils": "0.14.8 || ^15.1.0",
+    "react-dom": "0.14.8 || ^15.1.0",
     "react-test-env": "0.0.2",
     "rewire": "^2.5.1"
   }
