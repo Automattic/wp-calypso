@@ -15,6 +15,7 @@ import config from 'config';
 import Main from 'components/main';
 import notices from 'notices';
 import QueryPosts from 'components/data/query-posts';
+import QueryPostCounts from 'components/data/query-post-counts';
 import Draft from 'my-sites/draft';
 import { getSelectedSite } from 'state/ui/selectors';
 import {
@@ -25,6 +26,8 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import { sectionify } from 'lib/route/path';
+import Count from 'components/count';
+import { getAllPostCount } from 'state/posts/counts/selectors';
 
 const PostsMain = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
@@ -46,9 +49,13 @@ const PostsMain = React.createClass( {
 				<QueryPosts
 					siteId={ site && site.ID }
 					query={ this.props.draftsQuery } />
+				<QueryPostCounts siteId={ site && site.ID } type="post" />
 				{ this.props.drafts &&
 					<Card compact className="posts__drafts-header">
-						{ this.translate( 'Drafts' ) }
+						<span>
+							{ this.translate( 'Drafts' ) }
+							{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
+						</span>
 						<Button borderless><Gridicon icon="plus" /></Button>
 					</Card>
 				}
@@ -104,6 +111,7 @@ export default connect( ( state ) => {
 	return {
 		drafts: getSitePostsForQueryIgnoringPage( state, siteId, draftsQuery ),
 		loadingDrafts: isRequestingSitePostsForQuery( state, siteId, draftsQuery ),
-		draftsQuery: draftsQuery
+		draftsQuery: draftsQuery,
+		draftCount: getAllPostCount( state, siteId, 'post', 'draft' )
 	};
 } )( PostsMain );
