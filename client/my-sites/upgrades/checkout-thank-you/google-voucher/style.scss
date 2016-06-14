@@ -1,14 +1,18 @@
 .google-voucher-code {
-	display: flex;
-	align-items: flex-start;
 	margin-top: 12px;
 	padding-bottom: 12px;
 	border-bottom: solid 1px $gray-light;
+
 
 	p.form-setting-explanation {
 		flex: 1;
 		margin-right: 16px;
 		margin-top: 0px
+	}
+
+	@include breakpoint( ">660px" ) {
+		display: flex;
+		align-items: flex-start;
 	}
 }
 
@@ -20,6 +24,14 @@
 	margin-top: 12px;
 	display: flex;
 	max-width: 100%;
+}
+
+.button.google-voucher-code__setup-google-adwords:not(.is-compact) {
+	margin-top: 10px;
+	@include breakpoint( ">660px" ) {
+		width: 190px;
+		text-align: center;
+	}
 }
 
 // dialog
