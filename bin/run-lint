@@ -9,7 +9,6 @@ if ( process.argv.length > 2 ) {
 }
 
 const results = child_process.spawnSync( path.join( '.', 'node_modules', '.bin', 'eslint' ), args );
-console.log( 'eslint returned', results.status );
 
 if ( results.stdout ) {
 	process.stdout.write( results.stdout );
