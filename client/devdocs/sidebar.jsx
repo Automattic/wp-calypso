@@ -21,7 +21,9 @@ export default React.createClass( {
 	render() {
 		return (
 			<Sidebar>
-				<h1 className="devdocs__title">Calypso Docs</h1>
+				<a href="/devdocs">
+					<h1 className="devdocs__title">Calypso Docs</h1>
+				</a>
 				<SidebarMenu>
 					<ul>
 						<SidebarItem
