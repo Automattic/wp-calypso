@@ -111,7 +111,6 @@ const AdsMain = React.createClass( {
 						'Because you have a WordPress.com Premium plan, you can skip the review process and activate WordAds instantly. ' +
 						'{{a}}Learn more about the program.{{/a}}', {
 							components: {
-								br: <br />,
 								a: <a href={ 'http://wordads.co' } />
 							}
 						} )
