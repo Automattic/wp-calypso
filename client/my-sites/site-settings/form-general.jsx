@@ -29,6 +29,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDomainsBySite } from 'state/sites/domains/selectors';
+import JetpackSyncPanel from './jetpack-sync-panel';
 
 const FormGeneral = React.createClass( {
 	displayName: 'SiteSettingsFormGeneral',
@@ -498,6 +499,8 @@ const FormGeneral = React.createClass( {
 						{ this.relatedPostsOptions() }
 					</form>
 				</Card>
+
+				{ this.props.site.jetpack && <JetpackSyncPanel siteId={ this.props.site.ID } /> }
 
 				{ this.props.site.jetpack
 					? <div>
