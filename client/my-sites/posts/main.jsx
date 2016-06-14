@@ -55,7 +55,9 @@ const PostsMain = React.createClass( {
 						{ this.translate( 'Drafts' ) }
 						{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
 					</span>
-					<Button borderless><Gridicon icon="plus" /></Button>
+					<Button disabled={ ! site } borderless href={ `/post/${ site.slug }` }>
+						<Gridicon icon="plus" />
+					</Button>
 				</Card>
 				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 				{ this.props.loadingDrafts && <Draft isPlaceholder /> }
@@ -98,7 +100,7 @@ const PostsMain = React.createClass( {
 
 export default connect( ( state ) => {
 	const selectedSite = getSelectedSite( state );
-	const siteId = selectedSite.ID;
+	const siteId = selectedSite && selectedSite.ID;
 	const draftsQuery = {
 		type: 'post',
 		lastPage: true,
