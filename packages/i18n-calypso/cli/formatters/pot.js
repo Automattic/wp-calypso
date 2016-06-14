@@ -1,5 +1,57 @@
-function encapsulateString( input ) {
-	return '"' + input.replace( /\\|\n|"/gm, '\\$1' ) + '"';
+const MAX_COLUMNS = 79,
+	SEPARATORS = [ ' ' , '/' , ',' , ';' ];
+
+/**
+ * Split a string literal into multiple lines
+ * Ex:
+ * input: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."'
+ * output:
+ * '""
+ * "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
+ * "tempor incididunt ut labore et dolore magna aliqua."
+ *
+ * @param literal {string}     - A string literal
+ * @param startAt {string|int} - A prefix (or the negative length of the prefix) the literal will be printed at
+ * @returns {string}           - A multiline string compatible with the POT format
+ */
+function multiline( literal, startAt ) {
+	var nextSpaceIndex, i, char,
+		maxPosition = MAX_COLUMNS - 1; // MAX_COLUMNS minus the last character needed for closing string (a ");
+
+	if ( typeof startAt === 'string' ) {
+		startAt = - startAt.length;
+	} else if ( startAt === undefined ) {
+		startAt = - 6;
+	}
+
+	if ( literal.length <= startAt + MAX_COLUMNS ) {
+		return literal.substr( startAt > 0 ? startAt : 0 );
+	}
+
+	if ( startAt < 0 ) {
+		return '""\n' + multiline( literal, 0 );
+	}
+
+	for ( i = startAt + maxPosition - 1; i > startAt; i-- ) {
+		char = literal.charAt( i );
+		if ( SEPARATORS.indexOf( char ) !== -1 ) {
+			nextSpaceIndex = i;
+			break;
+		}
+	}
+
+	// we encountered a very long word, look to the right
+	if ( ! nextSpaceIndex ) {
+		for ( i = startAt + maxPosition; i < literal.length - 1; i++ ) {
+			char = literal.charAt( i );
+			if ( SEPARATORS.indexOf( char ) !== -1 ) {
+				nextSpaceIndex = i;
+				break;
+			}
+		}
+	}
+
+	return literal.substring( startAt, nextSpaceIndex + 1 ) + '"\n' + multiline( '"' + literal.substr( nextSpaceIndex + 1 ), 0 );
 }
 
 function uniqueMatchId( match ) {
@@ -63,11 +115,11 @@ module.exports = function( matches, options ) {
 			} ).join( '' );
 		}
 		if ( match.context ) {
-			matchPotStr += "msgctxt " + encapsulateString( match.context ) + '\n';
+			matchPotStr += 'msgctxt ' + multiline( match.context, 'msgctxt ' ) + '\n';
 		}
-		matchPotStr += 'msgid ' + encapsulateString( match.single ) + '\n';
+		matchPotStr += 'msgid ' + multiline( match.single, 'msgid ' ) + '\n';
 		if ( match.plural ) {
-			matchPotStr += 'msgid_plural ' + encapsulateString( match.plural ) + '\n';
+			matchPotStr += 'msgid_plural ' + multiline( match.plural, 'msgid_plural ' ) + '\n';
 			matchPotStr += 'msgstr[0] ""\n';
 			matchPotStr += 'msgstr[1] ""\n';
 		} else {

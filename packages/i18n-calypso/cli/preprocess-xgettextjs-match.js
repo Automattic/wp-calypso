@@ -23,17 +23,17 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 
 	// first string argument
 	if ( args[ 0 ].type === 'Literal' ) {
-		finalProps.single = args[ 0 ].value;
+		finalProps.single = makeDoubleQuoted( args[ 0 ].raw );
 	} else if ( args[ 0 ].type === 'BinaryExpression' ) {
-		finalProps.single = concatenateBinaryExpression( args[ 0 ] );
+		finalProps.single = encapsulateString( concatenateBinaryExpression( args[ 0 ] ) );
 	}
 
 	// second string argument
 	if ( args[ 1 ] ) {
 		if ( args[ 1 ].type === 'Literal' ) {
-			finalProps.plural = args[ 1 ].value;
+			finalProps.plural = makeDoubleQuoted( args[ 1 ].raw );
 		} else if ( args[ 1 ].type === 'BinaryExpression' ) {
-			finalProps.plural = concatenateBinaryExpression( args[ 1 ] );
+			finalProps.plural = encapsulateString( concatenateBinaryExpression( args[ 1 ] ) );
 		}
 	}
 
@@ -52,12 +52,12 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 			var key = property.key.name || property.key.value;
 			if ( 'Literal' === property.value.type ) {
 				keyName = ( key === 'original' ) ? 'single' : key;
-				finalProps[ keyName ] = property.value.value;
+				finalProps[ keyName ] = ( 'comment' === key ) ? property.value.value : makeDoubleQuoted( property.value.raw );
 			} else if ( 'ObjectExpression' === property.value.type && 'original' === key ) {
 				// Get pluralization strings. This clause can be removed when all translations
 				// are updated to the new approach for plurals.
 				property.value.properties.forEach( function( innerProp ) {
-					finalProps[ innerProp.key.name || innerProp.key.value ] = innerProp.value.value;
+					finalProps[ innerProp.key.name || innerProp.key.value ] = makeDoubleQuoted( innerProp.value.raw );
 				} );
 			}
 		} );
@@ -95,4 +95,45 @@ function concatenateBinaryExpression( ASTNode ) {
 	result += ( ASTNode.right.type === 'Literal' ) ? ASTNode.right.value : concatenateBinaryExpression( ASTNode.right );
 
 	return result;
+}
+
+/**
+ * Takes a valid javascript literal (with the quotes included) and returns a double-quoted
+ * version of that string
+ *
+ * @param  {string} literal - origin literal (string with quotes)
+ * @return {string}         - double quote representation of the string
+ */
+function makeDoubleQuoted( literal ) {
+	if ( ! literal || literal.length < 2 ) {
+		return undefined;
+	}
+
+	// double-quoted string
+	if ( literal.charAt( 0 ) === '"' ) {
+		return literal;
+	}
+
+	// single-quoted string
+	if ( literal.charAt( 0 ) === '\'' ) {
+		return '"' + literal.substring( 1, literal.length - 1 ).replace( /\\'/g, '\'' ).replace( /(\\|")/g, '\\$1' ) + '"';
+	}
+
+	// ES6 string
+	if ( literal.charAt( 0 ) === '`' ) {
+		return '"' + literal.substring( 1, literal.length - 1 ).replace( /`/g, '\`' ).replace( /(\\|")/g, '\\$1' ) + '"';
+	}
+
+	return "";
+}
+
+/**
+ * Takes a string argument and turns it into a valid string representation for most languages/format (with double quotes)
+ * Anything else than a string is left unchanged
+ * @param  {string} input  - origin string or other type of input
+ * @return {string}        - universal representation of string or input unchanged
+ */
+function encapsulateString( input ) {
+	if ( 'string' !== typeof input ) return input;
+	return '"' + input.replace( /(\\|")/g, '\\$1' ) + '"';
 }
