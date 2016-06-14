@@ -13,6 +13,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
+import { createReducer } from 'state/utils';
 import editor from './editor/reducer';
 import guidedTour from './guided-tours/reducer';
 import reader from './reader/reducer';
@@ -79,13 +80,10 @@ export function isLoading( state = false, action ) {
 	return state;
 }
 
-export function isPreviewShowing( state = false, action ) {
-	switch ( action.type ) {
-		case PREVIEW_IS_SHOWING:
-			return ( action.isShowing !== undefined ) ? action.isShowing : state;
-	}
-	return state;
-}
+export const isPreviewShowing = createReducer( false, {
+	[ PREVIEW_IS_SHOWING ]: ( state, { isShowing } ) =>
+		isShowing !== undefined ? isShowing : state,
+} );
 
 const reducer = combineReducers( {
 	section,
