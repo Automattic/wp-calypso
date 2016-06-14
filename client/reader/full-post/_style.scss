@@ -203,8 +203,9 @@
 	}
 
 	blockquote {
-		padding: 16px 24px;
-		margin: 16px 0 32px;
+		padding: 0 24px 0 32px;
+    	margin: 16px 0 32px;
+    	border-left: 3px solid lighten( $gray, 30% );
 		color: darken( $gray, 20% );
 		font-weight: normal;
 		background: transparent;
