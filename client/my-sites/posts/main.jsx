@@ -45,7 +45,7 @@ const PostsMain = React.createClass( {
 					siteId={ site && site.ID }
 					query={ this.props.draftsQuery } />
 				{ this.props.drafts &&
-					<SectionHeader label={ this.translate( 'Most Recent Drafts' ) } />
+					<SectionHeader label={ this.translate( 'Drafts' ) } />
 				}
 				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 			</div>
@@ -65,9 +65,11 @@ const PostsMain = React.createClass( {
 		return (
 			<Main className="posts">
 				<SidebarNavigation />
-				<PostsNavigation { ...this.props } />
-				{ path === '/posts' && this.mostRecentDrafts() }
-				<PostList { ...this.props } />
+				<div className="posts__primary">
+					<PostsNavigation { ...this.props } />
+					<PostList { ...this.props } />
+				</div>
+				{ this.mostRecentDrafts() }
 			</Main>
 		);
 	},
@@ -90,7 +92,7 @@ export default connect( ( state ) => {
 		type: 'post',
 		lastPage: true,
 		status: 'draft',
-		number: 3,
+		number: 10,
 		order_by: 'modified'
 	};
 

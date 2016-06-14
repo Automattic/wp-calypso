@@ -167,6 +167,7 @@ export default React.createClass( {
 					selectedCount = count;
 				}
 			}
+			console.log(this.props);
 
 			statusItems.push(
 				<NavItem
