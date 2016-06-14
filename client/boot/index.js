@@ -174,7 +174,7 @@ function renderLayout( reduxStore ) {
 	let props = { focus: layoutFocus };
 
 	if ( user.get() ) {
-		Object.assign( props, {}, { user, sites, nuxWelcome, translatorInvitation } );
+		Object.assign( props, { user, sites, nuxWelcome, translatorInvitation } );
 	}
 
 	Layout = require( 'layout' );
