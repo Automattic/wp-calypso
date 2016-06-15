@@ -97,8 +97,10 @@ export function recordTrack( eventName, eventProperties ) {
 	if ( subCount != null ) {
 		eventProperties = Object.assign( { subscription_count: subCount }, eventProperties );
 	}
-	if ( 'blog_id' in eventProperties && 'post_id' in eventProperties && ! 'is_jetpack' in eventProperties ) {
-		console.warn( 'consider using recordTrackForPost...', eventName, eventProperties );
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'blog_id' in eventProperties && 'post_id' in eventProperties && ! 'is_jetpack' in eventProperties ) {
+			console.warn( 'consider using recordTrackForPost...', eventName, eventProperties );
+		}
 	}
 	tracks.recordEvent( eventName, eventProperties );
 }
@@ -123,8 +125,8 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 			action: eventName.replace( 'calypso_reader_', '' ),
 			railcar: post.railcar
 		} );
-	} else if ( post.railcar ) {
-		console.warn( 'maybe you want to whitelist', eventName );
+	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
+		console.warn( 'Consider whitelisting reader track', eventName );
 	}
 }
 
