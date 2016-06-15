@@ -20,19 +20,21 @@ import PostTypeListEmptyContent from './empty-content';
 function PostTypeList( { query, siteId, posts, requesting } ) {
 	return (
 		<div className="post-type-list">
-			<QueryPosts
-				siteId={ siteId }
-				query={ query } />
-			{ posts && ! posts.length && ! requesting && (
+			{ query && (
+				<QueryPosts
+					siteId={ siteId }
+					query={ query } />
+			) }
+			{ query && posts && ! posts.length && ! requesting && (
 				<PostTypeListEmptyContent
 					type={ query.type }
 					status={ query.status } />
 			) }
 			<ul className="post-type-list__posts">
-				{ requesting && (
+				{ ( ! query || requesting ) && (
 					<li><PostTypeListPostPlaceholder /></li>
 				) }
-				{ posts && posts.map( ( post ) => (
+				{ query && posts && posts.map( ( post ) => (
 					<li key={ post.global_ID }>
 						<PostTypeListPost globalId={ post.global_ID } />
 					</li>
