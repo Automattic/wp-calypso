@@ -13,7 +13,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	productsList = require( 'lib/products-list' )(),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	SignupActions = require( 'lib/signup/actions' ),
-	MapDomain = require( 'components/domains/map-domain' ),
+	MapDomainStep = require( 'components/domains/map-domain-step' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
 	Notice = require( 'components/notice' ),
@@ -201,7 +201,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="domains-step__section-wrapper">
-				<MapDomain
+				<MapDomainStep
 					initialState={ initialState }
 					path={ this.props.path }
 					onAddDomain={ this.handleAddDomain }
