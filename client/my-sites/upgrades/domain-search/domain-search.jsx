@@ -31,7 +31,8 @@ var DomainSearch = React.createClass( {
 		sites: React.PropTypes.object.isRequired,
 		productsList: React.PropTypes.object.isRequired,
 		basePath: React.PropTypes.string.isRequired,
-		context: React.PropTypes.object.isRequired
+		context: React.PropTypes.object.isRequired,
+		domainsWithPlansOnly: React.PropTypes.bool.isRequired
 	},
 
 	getInitialState: function() {
@@ -128,6 +129,7 @@ var DomainSearch = React.createClass( {
 						<RegisterDomainStep
 							path={ this.props.context.path }
 							suggestion={ this.props.context.params.suggestion }
+							domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 							onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 							onAddDomain={ this.handleAddDomain }
 							cart={ this.props.cart }
