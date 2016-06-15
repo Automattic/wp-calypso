@@ -58,7 +58,11 @@ function appendSite( title, options ) {
 		siteName = options.get( 'siteID' );
 	}
 
-	return title + ' \u2039 ' + siteName;
+	if ( title ) {
+		return title + ' \u2039 ' + siteName;
+	}
+
+	return siteName;
 }
 
 function toImmutable( object = {} ) {
