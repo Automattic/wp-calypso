@@ -8,7 +8,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  * Internal dependencies
  */
 import PlanFeatures from '../';
-import { plansList, PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
+import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 import QueryPlans from 'components/data/query-plans';
 
 // TODO: use SelectDropdown to select currency.

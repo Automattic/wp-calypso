@@ -44,8 +44,8 @@ class PlanFeatures extends Component {
 				/>
 				<PlanFeaturesItemList>
 					{
-						features.map( ( feature ) =>
-							<PlanFeaturesItem>{ feature.getTitle() }</PlanFeaturesItem>
+						features.map( ( feature, index ) =>
+							<PlanFeaturesItem key={ index }>{ feature.getTitle() }</PlanFeaturesItem>
 						)
 					}
 				</PlanFeaturesItemList>
