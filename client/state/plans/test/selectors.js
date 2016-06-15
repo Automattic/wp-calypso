@@ -3,6 +3,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -53,17 +54,38 @@ describe( 'selectors', () => {
 
 	describe( '#getPlanRawPrice()', () => {
 		it( 'should return annual raw price', () => {
-			const state = getStateInstance();
+			const state = deepFreeze( {
+				plans: {
+					items: [ {
+						product_id: 1003,
+						raw_price: 99
+					} ]
+				}
+			} );
 			const price = getPlanRawPrice( state, 1003 );
 			expect( price ).to.eql( 99 );
 		} );
 		it( 'should return monthly price plan object', () => {
-			const state = getStateInstance();
+			const state = deepFreeze( {
+				plans: {
+					items: [ {
+						product_id: 1003,
+						raw_price: 99
+					} ]
+				}
+			} );
 			const price = getPlanRawPrice( state, 1003, true );
 			expect( price ).to.eql( 8.25 );
 		} );
 		it( 'should return null when plan is not available', () => {
-			const state = getStateInstance();
+			const state = deepFreeze( {
+				plans: {
+					items: [ {
+						product_id: 1003,
+						raw_price: 99
+					} ]
+				}
+			} );
 			const price = getPlanRawPrice( state, 44, true );
 			expect( price ).to.eql( null );
 		} );
