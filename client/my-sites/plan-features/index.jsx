@@ -36,7 +36,7 @@ class PlanFeatures extends Component {
 		return (
 			<div className={ classes } >
 				<PlanFeaturesHeader
-					current
+					current={ current }
 					title={ plansList[ planName ].getTitle() }
 					planType={ planName }
 					rawPrice={ rawPrice }
@@ -57,10 +57,17 @@ class PlanFeatures extends Component {
 
 export default connect( ( state, ownProps ) => {
 	const planProductId = plansList[ ownProps.plan ].getProductId();
+	let sitePlanObj = getCurrentPlan( state, sitesFactory().getSelectedSite() );
+
+	if ( sitePlanObj === null ) {
+		sitePlanObj = {
+			currentPlan: false
+		};
+	}
 
 	return {
 		planName: ownProps.plan,
-		current: getCurrentPlan( state, sitesFactory().getSelectedSite() ),
+		current: sitePlanObj.currentPlan,
 		popular: ownProps.plan === PLAN_PREMIUM,
 		features: getPlanFeaturesObject( ownProps.plan ),
 		description: plansList[ ownProps.plan ].getDescription(),
