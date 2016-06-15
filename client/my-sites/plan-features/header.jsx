@@ -20,7 +20,16 @@ import {
 export class PlanFeaturesHeader extends Component {
 
 	render() {
-		const { billingTimeFrame, currencyCode, current, planType, popular, rawPrice, title, translate } = this.props;
+		const {
+			billingTimeFrame,
+			currencyCode,
+			current,
+			planType,
+			popular,
+			rawPrice,
+			title,
+			translate
+		} = this.props;
 		return (
 			<header className="plan-features__header" onClick={ this.props.onClick } >
 				{
