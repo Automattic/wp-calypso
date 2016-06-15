@@ -7,7 +7,7 @@
 	margin: 0;
 	padding: 0;
 	box-shadow: none;
-	border-bottom: 1px solid lighten( $gray, 25% );
+	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 
 	&.is-loading {
 		.site-icon {
@@ -43,8 +43,8 @@
 }
 
 .current-site__switch-sites {
-	background: lighten( $gray, 30% );
-	border-bottom: 1px solid lighten( $gray, 25% );
+	background: $sidebar-bg-color;
+	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 	display: block;
 	box-sizing: border-box;
 	cursor: pointer;
@@ -61,7 +61,12 @@
 	}
 
 	&:hover {
-		background-color: $gray-light;
+		background-color: lighten( $sidebar-bg-color, 3% );
+
+		.button.is-borderless:hover,
+		.button.is-borderless:focus {
+			color: $sidebar-text-color;
+		}
 	}
 }
 
