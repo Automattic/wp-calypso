@@ -11,13 +11,13 @@ import classNames from 'classnames';
 import Card from 'components/card';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
-import { abtest } from 'lib/abtest';
 import PremiumPopover from 'components/plans/premium-popover';
-
-const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 
 module.exports = React.createClass( {
 	displayName: 'ExampleDomainSuggestions',
+	propTypes: {
+		domainsWithPlansOnly: React.PropTypes.bool.isRequired
+	},
 
 	getInitialState: function() {
 		return {
@@ -52,7 +52,7 @@ module.exports = React.createClass( {
 			return this.translate( 'Free' );
 		}
 
-		if ( cost && domainsWithPlansOnlyTestEnabled ) {
+		if ( cost && this.props.domainsWithPlansOnly ) {
 			return (
 				<span className="example-domain-suggestions__premium-price" ref="premiumPrice">
 					{ this.translate( 'Included in WordPress.com Premium' ) }
@@ -102,7 +102,7 @@ module.exports = React.createClass( {
 				mappingLink: <a onClick={ this.handleClickMappingLink } href={ this.props.mapDomainUrl } />,
 				strong: <strong />
 			};
-			if ( domainsWithPlansOnlyTestEnabled ) {
+			if ( this.props.domainsWithPlansOnly ) {
 				mappingInformation = this.translate(
 					'{{strong}}Already own a domain?{{/strong}} {{mappingLink}}Map it{{/mappingLink}} with WordPress.com' +
 					' Premium.',
