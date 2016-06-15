@@ -471,7 +471,7 @@ const RegisterDomainStep = React.createClass( {
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
 				availableDomain={ availableDomain }
-				withPlansOnly={ this.props.domainsWithPlansOnly }
+				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				lastDomainSearched={ lastDomainSearched }
 				lastDomainError = { this.state.lastDomainError }
 				onAddMapping={ onAddMapping }

@@ -714,10 +714,10 @@ function isDomainBeingUsedForPlan( cart, domain ) {
 	return false;
 }
 
-function shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestion ) {
+function shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestionOrCartItem ) {
 	return withPlansOnly &&
-		isDomainProduct( suggestion ) && // not free
-		( ! isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) && // a plan in cart
+		( isDomainProduct( suggestionOrCartItem ) || suggestionOrCartItem.cost ) && // not free or a cart item
+		( ! isDomainBeingUsedForPlan( cart, suggestionOrCartItem.domain_name ) ) && // a plan in cart
 		( ! isNextDomainFree( cart ) ) && // domain credit
 		( ! hasPlan( cart ) ) && // already a plan in cart
 		( ! selectedSite || ( selectedSite && selectedSite.plan.product_slug === 'free_plan' ) ); // site has a plan
