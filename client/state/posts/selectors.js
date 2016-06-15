@@ -16,7 +16,8 @@ import {
 	getSerializedPostsQueryWithoutPage
 } from './utils';
 import { DEFAULT_POST_QUERY } from './constants';
-import { runFastRules } from 'lib/feed-post-store/normalization-rules';
+import firstPassCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
+import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 
 /**
  * Returns a post object by its global ID.
@@ -147,19 +148,16 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  * @return {?Array}         Posts for the post query
  */
 export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
-	if ( ! state.posts.queries[ siteId ] ) {
+	const posts = state.posts.queries[ siteId ];
+	if ( ! posts ) {
 		return null;
 	}
 
-	let posts = state.posts.queries[ siteId ].getItemsIgnoringPage( query );
-
-	// Normalize each post object
-	const normalizedPosts = posts.map( ( post ) => {
-		const normalizedPost = runFastRules( post );
-		return Object.assign( {}, normalizedPost );
+	return posts.getItemsIgnoringPage( query ).map( ( post ) => {
+		firstPassCanonicalImage( post );
+		decodeEntities( post );
+		return post;
 	} );
-
-	return normalizedPosts;
 }
 
 /**
