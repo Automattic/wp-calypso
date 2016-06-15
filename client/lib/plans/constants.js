@@ -25,14 +25,21 @@ export const PLAN_MONTHLY_PERIOD = 31;
 export const PLAN_ANNUAL_PERIOD  = 365;
 
 // features constants
-export const FEATURE_CUSTOM_DESIGN = 'custom-design';
+export const FEATURE_FREE_SITE = 'free-site';
+export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
 export const FEATURE_CUSTOM_DOMAIN = 'custom-domain';
+export const FEATURE_FREE_THEMES = 'free-themes';
+export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
+export const FEATURE_3GB_STORAGE = '3gb-storage';
+export const FEATURE_13GB_STORAGE = '13gb-storage';
+export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
+export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
+export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
+export const FEATURE_CUSTOM_DESIGN = 'custom-design';
 export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
 export const FEATURE_GOOGLE_AD_CREDITS = 'google-ad-credits';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
-export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
-export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
 export const WORDADS_INSTANT = 'wordads-instant';
 
@@ -64,6 +71,12 @@ export const plansList = {
 };
 
 const allPaidPlans = [
+	PLAN_PREMIUM,
+	PLAN_BUSINESS
+];
+
+const allPlans = [
+	PLAN_FREE,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS
 ];
@@ -124,6 +137,41 @@ export const featuresList = {
 	[ WORDADS_INSTANT ]: {
 		getTitle: () => i18n.translate( 'Monetize Your Site' ),
 		getDescription: () => i18n.translate( 'Add advertising to your site through our WordAds program and get paid.' ),
+		plans: allPaidPlans
+	},
+
+	[ FEATURE_FREE_SITE ]: {
+		getTitle: () => i18n.translate( 'Free site' ),
+		plans: allPlans
+	},
+
+	[ FEATURE_WP_SUBDOMAIN ]: {
+		getTitle: () => i18n.translate( 'WordPress.com subdomain' ),
+		plans: [ PLAN_FREE ]
+	},
+
+	[ FEATURE_FREE_THEMES ]: {
+		getTitle: () => i18n.translate( 'Hundreds of free themes' ),
+		plans: [ PLAN_FREE, PLAN_PREMIUM ]
+	},
+
+	[ FEATURE_3GB_STORAGE ]: {
+		getTitle: () => i18n.translate( '3GB of storage' ),
+		plans: [ PLAN_FREE ]
+	},
+
+	[ FEATURE_13GB_STORAGE ]: {
+		getTitle: () => i18n.translate( '13GB of storage' ),
+		plans: [ PLAN_PREMIUM ]
+	},
+
+	[ FEATURE_COMMUNITY_SUPPORT ]: {
+		getTitle: () => i18n.translate( 'Community support' ),
+		plans: [ PLAN_FREE ]
+	},
+
+	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
+		getTitle: () => i18n.translate( 'Email and live chat support' ),
 		plans: allPaidPlans
 	}
 };
