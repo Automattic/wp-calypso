@@ -161,7 +161,9 @@ class GoogleVoucherDetails extends Component {
 						{
 							this.props.translate( 'Copy this unique, one-time use code to your clipboard and setup your Google AdWords account. {{a}}View help guide{{/a}}',
 								{
-									components: { a: <a className="google-voucher-code__help-link" href="#" target="_blank" /> }
+									components: {
+										a: <a className="google-voucher-code__help-link" href="https://en.support.wordpress.com/google-adwords-credit/" target="_blank" />
+									}
 								}
 							)
 						}
