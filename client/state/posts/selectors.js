@@ -16,6 +16,7 @@ import {
 	getSerializedPostsQueryWithoutPage
 } from './utils';
 import { DEFAULT_POST_QUERY } from './constants';
+import { runFastRules } from 'lib/feed-post-store/normalization-rules';
 
 /**
  * Returns a post object by its global ID.
@@ -150,7 +151,15 @@ export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
 		return null;
 	}
 
-	return state.posts.queries[ siteId ].getItemsIgnoringPage( query );
+	let posts = state.posts.queries[ siteId ].getItemsIgnoringPage( query );
+
+	// Normalize each post object
+	const normalizedPosts = posts.map( ( post ) => {
+		const normalizedPost = runFastRules( post );
+		return Object.assign( {}, normalizedPost );
+	} );
+
+	return normalizedPosts;
 }
 
 /**
