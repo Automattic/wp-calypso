@@ -26,7 +26,7 @@ export default React.createClass( {
 		return {
 			size: 24,
 			loading: false
-		}
+		};
 	},
 
 	render() {

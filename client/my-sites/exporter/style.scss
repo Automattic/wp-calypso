@@ -82,13 +82,56 @@
 }
 
 // START GUIDED TRANSFER
+.exporter__guided-transfer-options {
+	display: flex;
+}
+
 .exporter__guided-transfer-options-header-title-container {
-	display: inline-block;
-	float: left;
+	flex-grow: 1;
 }
 
 .exporter__guided-transfer-options-header-button-container {
-	display: inline-block;
-	float: right;
+	margin: auto;
+}
+
+.exporter__guided-transfer-title {
+	font-size: 21px;
+	font-weight: 300;
+	color: $gray-dark;
+	clear: left;
+}
+
+.exporter__guided-transfer-subtitle {
+	color: $gray;
+	font-style: italic;
+	font-size: 14px;
+}
+
+.exporter__guided-transfer-price {
+	font-style: normal;
+	font-size: 18px;
+}
+
+.exporter__guided-transfer-details {
+	background-color: lighten( $gray-light, 2% );
+}
+
+.exporter__guided-transfer-details-container {
+	display: flex;
+}
+
+.exporter__guided-transfer-details-title {
+	color: $gray-dark;
+	font-weight: 600;
+	margin-bottom: 12px;
+}
+
+.exporter__guided-transfer-details-text {
+	flex-basis: 60%;
+	color: $gray;
+}
+
+.exporter__guided-transfer-feature-list {
+	flex-basis: 40%;
 }
 // END GUIDED TRANSFER

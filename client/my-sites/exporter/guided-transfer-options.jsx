@@ -23,12 +23,15 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div>
-				<CompactCard>
+			<CompactCard>
+				<div className="exporter__guided-transfer-options">
 					<div className="exporter__guided-transfer-options-header-title-container">
-						<h1 className="exporter__title">
+						<h1 className="exporter__guided-transfer-title">
 							{ this.translate( 'Guided Transfer' ) }
 						</h1>
+						<h2 className="exporter__guided-transfer-subtitle">
+							<span className="exporter__guided-transfer-price">$129</span> One-time expense
+						</h2>
 					</div>
 					<div className="exporter__guided-transfer-options-header-button-container">
 						<Button
@@ -37,8 +40,8 @@ export default React.createClass( {
 							{ this.translate( 'Purchase a Guided Transfer' ) }
 						</Button>
 					</div>
-				</CompactCard>
-			</div>
+				</div>
+			</CompactCard>
 		);
 	}
 } );
