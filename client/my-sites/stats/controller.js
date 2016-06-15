@@ -121,7 +121,6 @@ module.exports = {
 			activeFilter = false,
 			basePath = route.sectionify( context.path ),
 			followList,
-			insightsList,
 			commentsList,
 			tagsList,
 			publicizeList,
@@ -169,7 +168,6 @@ module.exports = {
 		const siteDomain = ( site && ( typeof site.slug !== 'undefined' ) )
 			? site.slug : route.getSiteFragment( context.path );
 
-		insightsList = new StatsList( { siteID: siteId, statType: 'statsInsights', domain: siteDomain } );
 		commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: siteDomain } );
 		tagsList = new StatsList( { siteID: siteId, statType: 'statsTags', domain: siteDomain } );
 		publicizeList = new StatsList( { siteID: siteId, statType: 'statsPublicize', domain: siteDomain } );
@@ -184,7 +182,6 @@ module.exports = {
 				React.createElement( StatsComponent, {
 					site: site,
 					followList: followList,
-					insightsList: insightsList,
 					commentsList: commentsList,
 					tagsList: tagsList,
 					publicizeList: publicizeList,
