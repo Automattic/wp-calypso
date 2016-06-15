@@ -33,7 +33,7 @@ describe( 'currencyFormatter', () => {
 		} );
 		it( 'EUR', () => {
 			const money = currencyFormatter( 9800900.32, { code: 'EUR' } );
-			expect( money ).to.equal( '9 800 900,32 €' );
+			expect( money ).to.equal( '9.800.900,32 €' );
 		} );
 		it( 'GBP', () => {
 			const money = currencyFormatter( 9800900.32, { code: 'GBP' } );
@@ -46,7 +46,7 @@ describe( 'currencyFormatter', () => {
 	} );
 
 	describe( 'findCurrency returns currency defaults', () => {
-		it( 'returns Calypso defaults', () => {
+		it( 'returns Calypso symbol defaults', () => {
 			const audDefaults = findCurrency( 'AUD' );
 			expect( audDefaults ).to.eql( {
 				code: 'AUD',
@@ -55,6 +55,18 @@ describe( 'currencyFormatter', () => {
 				decimalSeparator: '.',
 				symbolOnLeft: true,
 				spaceBetweenAmountAndSymbol: false,
+				decimalDigits: 2
+			} );
+		} );
+		it( 'returns Calypso thousand defaults', () => {
+			const audDefaults = findCurrency( 'EUR' );
+			expect( audDefaults ).to.eql( {
+				code: 'EUR',
+				symbol: '€',
+				thousandsSeparator: '.', //originally a space in external lib
+				decimalSeparator: ',',
+				symbolOnLeft: false,
+				spaceBetweenAmountAndSymbol: true,
 				decimalDigits: 2
 			} );
 		} );
