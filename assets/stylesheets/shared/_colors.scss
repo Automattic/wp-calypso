@@ -1,4 +1,4 @@
-// Accents (Blues)
+// Primary Accent (Blues)
 $blue-wordpress:         #0087be;
 $blue-light:             #78dcfa;
 $blue-medium:            #00aadc;
@@ -6,9 +6,10 @@ $blue-dark:              #005082;
 
 // Grays
 $gray:                   #87a6bc;
+$gray-light:             lighten( $gray, 33% ); //#f3f6f8
+$gray-dark:              darken( $gray, 38% ); //#2e4453
 
 // $gray color functions:
-//
 // lighten( $gray, 10% )
 // lighten( $gray, 20% )
 // lighten( $gray, 30% )
@@ -18,10 +19,7 @@ $gray:                   #87a6bc;
 //
 // See wordpress.com/design-handbook/colors/ for more info.
 
-$gray-light:             lighten( $gray, 33% ); //#f3f6f8
-$gray-dark:              darken( $gray, 38% ); //#2e4453
-
-// Oranges
+// Secondary Accent (Oranges)
 $orange-jazzy:           #f0821e;
 $orange-fire:            #d54e21;
 
