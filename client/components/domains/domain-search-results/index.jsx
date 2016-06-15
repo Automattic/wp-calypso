@@ -13,6 +13,7 @@ const React = require( 'react' ),
  */
 const DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),
 	DomainMappingSuggestion = require( 'components/domains/domain-mapping-suggestion' ),
+	DomainSuggestion = require( 'components/domains/domain-suggestion' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	abtest = require( 'lib/abtest' ).abtest,
 	upgradesActions = require( 'lib/upgrades/actions' );
@@ -56,7 +57,9 @@ var DomainSearchResults = React.createClass( {
 				<DomainRegistrationSuggestion
 					suggestion={ availableDomain }
 					key={ availableDomain.domain_name }
-					buttonLabel={ this.props.buttonLabel }
+					withPlansOnly={ domainsWithPlansOnlyTestEnabled }
+					buttonContent={ this.props.buttonContent }
+					selectedSite={ this.props.selectedSite }
 					cart={ this.props.cart }
 					onButtonClick={ this.props.onClickResult.bind( null, availableDomain ) } />
 				);
@@ -122,7 +125,7 @@ var DomainSearchResults = React.createClass( {
 
 	placeholders: function() {
 		return times( this.props.placeholderQuantity, function( n ) {
-			return <DomainRegistrationSuggestion key={ 'suggestion-' + n } />;
+			return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
 		} );
 	},
 
@@ -136,8 +139,9 @@ var DomainSearchResults = React.createClass( {
 					<DomainRegistrationSuggestion
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
-						buttonLabel={ this.props.buttonLabel }
 						cart={ this.props.cart }
+						selectedSite={ this.props.selectedSite }
+						withPlansOnly={ domainsWithPlansOnlyTestEnabled }
 						onButtonClick={ this.props.onClickResult.bind( null, suggestion ) } />
 				);
 			}, this );
@@ -145,9 +149,10 @@ var DomainSearchResults = React.createClass( {
 			if ( this.props.offerMappingOption ) {
 				mappingOffer = (
 					<DomainMappingSuggestion
-						buttonLabel={ this.props.mappingSuggestionLabel }
 						onButtonClick={ this.props.onClickMapping }
 						products={ this.props.products }
+						selectedSite={ this.props.selectedSite }
+						withPlansOnly={ domainsWithPlansOnlyTestEnabled }
 						cart={ this.props.cart } />
 				);
 			}

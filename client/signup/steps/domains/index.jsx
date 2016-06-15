@@ -181,7 +181,6 @@ module.exports = React.createClass( {
 				initialState={ initialState }
 				onAddDomain={ this.handleAddDomain }
 				products={ this.state.products }
-				buttonLabel={ isPlansOnlyTest ? this.translate( 'Upgrade' ) : this.translate( 'Select' ) }
 				basePath={ this.props.path }
 				mapDomainUrl={ this.getMapDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }

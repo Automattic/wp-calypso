@@ -154,7 +154,7 @@ function getDependentProducts( cartItem, cart ) {
  * @returns {Object[]} the list of items in the shopping cart as `CartItemValue` objects
  */
 function getAll( cart ) {
-	return cart.products;
+	return cart && cart.products || [];
 }
 
 /**
@@ -195,7 +195,7 @@ function hasFreeTrial( cart ) {
  * @returns {boolean} true if there is at least one plan, false otherwise
  */
 function hasPlan( cart ) {
-	return some( getAll( cart ), isPlan );
+	return cart && some( getAll( cart ), isPlan );
 }
 
 function hasPremiumPlan( cart ) {
@@ -696,6 +696,45 @@ function isNextDomainFree( cart ) {
 	return !! ( cart && cart.next_domain_is_free );
 }
 
+function isDomainBeingUsedForPlan( cart, domain ) {
+	if ( cart && domain && hasPlan( cart ) ) {
+		const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) ),
+			domainProduct = ( domainProducts.shift() || {} );
+		return domain === domainProduct.meta;
+	}
+
+	return false;
+}
+
+function shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestion ) {
+	return withPlansOnly &&
+		( suggestion.product_slug && suggestion.cost ) && // not free
+		( ! isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) && // a plan in cart
+		( ! isNextDomainFree( cart ) ) && // domain credit
+		( ! hasPlan( cart ) ) && // already a plan in cart
+		( ! selectedSite || ( selectedSite && selectedSite.plan.product_slug === 'free_plan' ) ); // site has a plan
+}
+
+function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
+	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
+		return 'FREE_DOMAIN';
+	}
+
+	if ( isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) {
+		return 'FREE_WITH_PLAN';
+	}
+
+	if ( isNextDomainFree( cart ) ) {
+		return 'FREE_WITH_PLAN';
+	}
+
+	if ( shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestion ) ) {
+		return 'INCLUDED_IN_PREMIUM';
+	}
+
+	return 'PRICE';
+}
+
 module.exports = {
 	add,
 	addPrivacyToAllDomains,
@@ -709,6 +748,7 @@ module.exports = {
 	getAll,
 	getAllSorted,
 	getDomainMappings,
+	getDomainPriceRule,
 	getDomainRegistrations,
 	getDomainRegistrationsWithoutPrivacy,
 	getDomainRegistrationTld,
@@ -722,6 +762,7 @@ module.exports = {
 	googleApps,
 	googleAppsExtraLicenses,
 	isNextDomainFree,
+	isDomainBeingUsedForPlan,
 	hasDomainCredit,
 	hasDomainInCart,
 	hasDomainMapping,
@@ -743,6 +784,7 @@ module.exports = {
 	removeItemAndDependencies,
 	removePrivacyFromAllDomains,
 	siteRedirect,
+	shouldBundleDomainWithPlan,
 	spaceUpgradeItem,
 	themeItem,
 	unlimitedSpaceItem,
