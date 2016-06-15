@@ -14,14 +14,18 @@ var observe = require( 'lib/mixins/data-observe' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
 	FreeTrialNotice = require( './free-trial-notice' ),
 	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
+	{ currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
 	Main = require( 'components/main' ),
+	upgradesActions = require( 'lib/upgrades/actions' ),
+	cartItems = require( 'lib/cart-values/cart-items' ),
+	analyticsMixin = require( 'lib/mixins/analytics' ),
 	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
 
 var DomainSearch = React.createClass( {
-	mixins: [ observe( 'productsList', 'sites' ) ],
+	mixins: [ observe( 'productsList', 'sites' ), analyticsMixin( 'registerDomain' ) ],
 
 	propTypes: {
 		sites: React.PropTypes.object.isRequired,
@@ -69,6 +73,27 @@ var DomainSearch = React.createClass( {
 		this.setState( { domainRegistrationAvailable: isAvailable } );
 	},
 
+	handleAddDomain: function( suggestion ) {
+		if ( ! cartItems.hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
+			this.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'domains' );
+
+			if ( cartItems.shouldBundleDomainWithPlan( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) ) {
+				const domain = cartItems.domainRegistration( {
+					domain: suggestion.domain_name,
+					productSlug: suggestion.product_slug
+				} );
+				const items = cartItems.bundleItemWithPlan( domain );
+				upgradesActions.addItems( items );
+			} else {
+				upgradesActions.addDomainToCart( suggestion );
+			}
+			upgradesActions.goToDomainCheckout( suggestion );
+		} else {
+			this.recordEvent( 'removeDomainButtonClick', suggestion.domain_name );
+			upgradesActions.removeDomainFromCart( suggestion );
+		}
+	},
+
 	render: function() {
 		var selectedSite = this.props.sites.getSelectedSite(),
 			classes = classnames( 'main-column', {
@@ -104,6 +129,7 @@ var DomainSearch = React.createClass( {
 							path={ this.props.context.path }
 							suggestion={ this.props.context.params.suggestion }
 							onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
+							onAddDomain={ this.handleAddDomain }
 							cart={ this.props.cart }
 							selectedSite={ selectedSite }
 							offerMappingOption
@@ -125,7 +151,10 @@ var DomainSearch = React.createClass( {
 
 module.exports = connect(
 	function( state, props ) {
-		return { sitePlans: getPlansBySite( state, props.sites.getSelectedSite() ) };
+		return {
+			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() ),
+			domainsWithPlansOnly: currentUserHasFlag( state, 'calypso_domains_with_plans_only' )
+		};
 	},
 	function( dispatch ) {
 		return {

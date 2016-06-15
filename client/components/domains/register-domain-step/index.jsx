@@ -29,9 +29,7 @@ import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
 import analyticsMixin from 'lib/mixins/analytics';
-import * as upgradesActions from 'lib/upgrades/actions';
-import cartItems from 'lib/cart-values/cart-items';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import { abtest } from 'lib/abtest';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
 import {
@@ -47,7 +45,6 @@ const SUGGESTION_QUANTITY = 10;
 const INITIAL_SUGGESTION_QUANTITY = 2;
 
 const analytics = analyticsMixin( 'registerDomain' ),
-	domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly',
 	searchVendor = abtest( 'domainSuggestionVendor' );
 
 let searchQueue = [],
@@ -246,6 +243,7 @@ const RegisterDomainStep = React.createClass( {
 					onClickExampleSuggestion={ this.handleClickExampleSuggestion }
 					mapDomainUrl={ this.getMapDomainUrl() }
 					path={ this.props.path }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					products={ this.props.products } />
 			);
 		}
@@ -414,7 +412,7 @@ const RegisterDomainStep = React.createClass( {
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
 						selectedSite={ this.props.selectedSite }
-						withPlansOnly={ domainsWithPlansOnlyTestEnabled }
+						withPlansOnly={ this.props.domainsWithPlansOnly }
 						onButtonClick={ this.addRemoveDomainToCart.bind( null, suggestion ) } />
 				);
 			}, this );
@@ -423,7 +421,7 @@ const RegisterDomainStep = React.createClass( {
 				<DomainMappingSuggestion
 					onButtonClick={ this.goToMapDomainStep }
 					selectedSite={ this.props.selectedSite }
-					withPlansOnly={ domainsWithPlansOnlyTestEnabled }
+					withPlansOnly={ this.props.domainsWithPlansOnly }
 					cart={ this.props.cart }
 					products={ this.props.products } />
 				);
@@ -461,6 +459,7 @@ const RegisterDomainStep = React.createClass( {
 					<ExampleDomainSuggestions
 						mapDomainUrl={ this.getMapDomainUrl() }
 						path={ this.props.path }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						products={ this.props.products } />
 				);
 			}
@@ -472,7 +471,7 @@ const RegisterDomainStep = React.createClass( {
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
 				availableDomain={ availableDomain }
-				withPlansOnly={ domainsWithPlansOnlyTestEnabled }
+				withPlansOnly={ this.props.domainsWithPlansOnly }
 				lastDomainSearched={ lastDomainSearched }
 				lastDomainError = { this.state.lastDomainError }
 				onAddMapping={ onAddMapping }
@@ -514,18 +513,12 @@ const RegisterDomainStep = React.createClass( {
 	addRemoveDomainToCart: function( suggestion, event ) {
 		event.preventDefault();
 
-		this.recordEvent( 'addDomainButtonClick', suggestion.domain_name, this.props.analyticsSection );
-
 		if ( this.props.onAddDomain ) {
+			// todo maybe evnt
+			//this.recordEvent( 'addDomainButtonClick', suggestion.domain_name, this.props.analyticsSection );
+			// todo dont pass state above
 			return this.props.onAddDomain( suggestion, this.state );
 		}
-
-		if ( ! cartItems.hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
-			upgradesActions.addItem( cartItems.domainRegistration( {
-				domain: suggestion.domain_name,
-				productSlug: suggestion.product_slug
-			} ) );
-
 			if ( abtest( 'privacyCheckbox' ) === 'checkbox' &&
 				(
 					cartItems.isNextDomainFree( this.props.cart ) ||
@@ -537,15 +530,6 @@ const RegisterDomainStep = React.createClass( {
 				} ) );
 			}
 
-			if ( abtest( 'multiDomainRegistrationV1' ) === 'popupCart' ) {
-				upgradesActions.openCartPopup( { showKeepSearching: true } );
-			} else { // keep searching in gapps or singlePurchaseFlow
-				upgradesActions.goToDomainCheckout( suggestion );
-			}
-		} else {
-			this.recordEvent( 'removeDomainButtonClick', suggestion.domain_name );
-			upgradesActions.removeDomainFromCart( suggestion );
-		}
 	},
 
 	showValidationErrorMessage: function( domain, error ) {
@@ -646,6 +630,7 @@ module.exports = connect( ( state, props ) => {
 	const queryObject = getQueryObject( props );
 	return {
 		currentUser: getCurrentUser( state ),
+		domainsWithPlansOnly: currentUserHasFlag( state, 'calypso_domains_with_plans_only' ),
 		defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 		defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject )
 	};
