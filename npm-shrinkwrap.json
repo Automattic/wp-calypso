@@ -644,7 +644,7 @@
       "version": "1.1.1"
     },
     "clean-css": {
-      "version": "3.4.17",
+      "version": "3.4.18",
       "dependencies": {
         "commander": {
           "version": "2.8.1"
@@ -1696,7 +1696,7 @@
       "version": "0.0.0"
     },
     "i18n-calypso": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "dependencies": {
         "async": {
           "version": "1.5.2"
@@ -1708,10 +1708,10 @@
           "version": "1.2.6"
         },
         "fbjs": {
-          "version": "0.6.1"
+          "version": "0.8.3"
         },
         "react": {
-          "version": "0.14.8"
+          "version": "15.1.0"
         }
       }
     },
@@ -1759,7 +1759,7 @@
       }
     },
     "interpolate-components": {
-      "version": "1.0.4"
+      "version": "1.0.5"
     },
     "interpret": {
       "version": "0.6.6"
