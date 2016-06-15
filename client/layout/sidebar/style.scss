@@ -3,19 +3,19 @@
 	flex-direction: column;
 	overflow: auto;
 	padding: 0;
-	background: lighten( $gray, 30% );
+	background: $sidebar-bg-color;
 	position: fixed;
 		top: 47px;
 		bottom: 0;
 		left: 0;
 
 	@include breakpoint( "<960px" ) {
-		border-right: 1px solid lighten( $gray, 25% );
+		border-right: 1px solid darken( $sidebar-bg-color, 5% );
 		width: $sidebar-width-min;
 	}
 
 	@include breakpoint( ">960px" ) {
-		border-right: 1px solid lighten( $gray, 25% );
+		border-right: 1px solid darken( $sidebar-bg-color, 5% );
 		width: $sidebar-width-max;
 	}
 
@@ -69,7 +69,7 @@
 
 // Sidebar group headings
 .sidebar__heading {
-	color: darken( $gray, 10% );
+	color: rgba( saturate( $sidebar-text-color, 60% ), 0.6 );
 	font-weight: 600;
 	font-size: 12px;
 	margin: 16px 8px 6px 14px;
@@ -116,8 +116,8 @@
 			width: 15%;
 			background: linear-gradient(
 				to right,
-				rgba( lighten( $gray, 30% ), 0 ),
-				rgba( lighten( $gray, 30% ), 1 ) 50% );
+				rgba( $sidebar-bg-color, 0 ),
+				rgba( $sidebar-bg-color, 1 ) 50% );
 
 			@include breakpoint( "<660px" ) {
 				background: linear-gradient(
@@ -132,7 +132,7 @@
 		font-size: 13px;
 		position: relative;
 		padding: 14px 16px 14px 55px;
-		color: $gray-dark;
+		color: $sidebar-text-color;
 		box-sizing: border-box;
 		white-space: nowrap;
 		overflow: hidden;
@@ -154,7 +154,7 @@
 		position: absolute;
 			top: 12px;
 			right: 8px;
-		color: darken( $gray, 20% );
+		color: rgba( saturate( $sidebar-text-color, 60% ), 0.7 );
 		font-size: 11px;
 
 		@include breakpoint( "<660px" ) {
@@ -218,12 +218,12 @@ a.sidebar__button {
 	height: 24px;
 	margin: 11px 8px 0 0;
 	line-height: 18px;
-	background-color: $gray-light;
-	color: darken( $gray, 20% );
+	background-color: lighten( $sidebar-bg-color, 3% );
+	color: rgba( saturate( $sidebar-text-color, 50% ), 0.8 );
 	font-size: 11px;
 	font-weight: 600;
 	border-radius: 3px;
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid darken( $sidebar-bg-color, 10% );
 
 	@include breakpoint( "<660px" ) {
 		font-size: 14px;
@@ -237,7 +237,7 @@ a.sidebar__button {
 // Selected Menu
 @include breakpoint( ">660px" ) {
 	.sidebar__menu .selected {
-		background-color: $gray;
+		background-color: $sidebar-selected-color;
 
 		a {
 			color: $white;
@@ -245,14 +245,15 @@ a.sidebar__button {
 			&:first-child:after {
 				background: linear-gradient(
 					to right,
-					rgba( $gray, 0 ),
-					rgba( $gray, 1 ) 50% );
+					rgba( $sidebar-selected-color, 0 ),
+					rgba( $sidebar-selected-color, 1 ) 50% );
 			}
 		}
 
 		.sidebar__button {
-			color: darken( $gray, 30% );
-			border: 1px solid darken( $gray, 10% );
+			background: lighten( $sidebar-selected-color, 30% );
+			color: darken( $sidebar-selected-color, 30% );
+			border: 1px solid darken( $sidebar-selected-color, 10% );
 		}
 
 		.gridicon {
@@ -274,7 +275,7 @@ a.sidebar__button {
 // Menu Hover
 .notouch .sidebar__menu li:hover {
 	&:not(.selected) {
-		background-color: $gray-light;
+		background-color: lighten( $sidebar-bg-color, 3% );
 
 		a {
 			color: $blue-medium;
@@ -282,13 +283,13 @@ a.sidebar__button {
 			&:first-child:after {
 				background: linear-gradient(
 					to right,
-					rgba( $gray-light, 0 ),
-					rgba( $gray-light, 1 ) 50% );
+					rgba( lighten( $sidebar-bg-color, 3% ), 0 ),
+					rgba( lighten( $sidebar-bg-color, 3% ), 1 ) 50% );
 			}
 
 			&.sidebar__button {
-				background-color: $white;
-				color: $gray-dark;
+				background-color: lighten( $sidebar-bg-color, 10% );
+				color: $sidebar-text-color;
 			}
 		}
 
@@ -330,7 +331,7 @@ a.sidebar__button {
 
 .sidebar .sidebar__footer {
 	padding: 0;
-	border-top: 1px solid lighten( $gray, 20% );
+	border-top: 1px solid darken( $sidebar-bg-color, 10% );
 	margin: auto 0 0;
 
 	@include breakpoint( "<660px" ) {
