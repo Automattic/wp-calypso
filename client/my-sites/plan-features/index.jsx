@@ -24,8 +24,8 @@ class PlanFeatures extends Component {
 			rawPrice,
 			popular,
 			current,
+			planConstantObj,
 			features,
-			description,
 			billingTimeFrame
 		} = this.props;
 
@@ -49,7 +49,7 @@ class PlanFeatures extends Component {
 						)
 					}
 				</PlanFeaturesItemList>
-				<PlanFeaturesFooter current={ current } description={ description } />
+				<PlanFeaturesFooter current={ current } description={ planConstantObj.getDescription() } />
 			</div>
 		);
 	}
@@ -70,8 +70,8 @@ export default connect( ( state, ownProps ) => {
 		current: sitePlanObj.currentPlan,
 		popular: ownProps.plan === PLAN_PREMIUM,
 		features: getPlanFeaturesObject( ownProps.plan ),
-		description: plansList[ ownProps.plan ].getDescription(),
-		rawPrice: getPlanRawPrice( state, planProductId ),
+		rawPrice: getPlanRawPrice( state, planProductId /**, get from abtest **/ ),
+		planConstantObj: plansList[ ownProps.plan ],
 		billingTimeFrame: getPlan( state, planProductId ).bill_period_label
 	};
 } )( PlanFeatures );
