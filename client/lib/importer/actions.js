@@ -173,17 +173,17 @@ export function setUploadProgress( importerId, data ) {
 	} );
 }
 
-export function startImport( siteId, importerType ) {
+export const startImport = ( siteId, importerType ) => {
 	// Use a fake ID until the server returns the real one
 	let importerId = `${ ID_GENERATOR_PREFIX }${ Math.round( Math.random() * 10000 ) }`;
 
-	Dispatcher.handleViewAction( {
+	return {
 		type: IMPORTS_IMPORT_START,
 		importerId,
 		importerType,
 		siteId
-	} );
-}
+	};
+};
 
 export function startImporting( importerStatus ) {
 	const { importerId, site: { ID: siteId } } = importerStatus;
