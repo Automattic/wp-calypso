@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
+import flowRight from 'lodash/flowRight';
 import noop from 'lodash/noop';
 import includes from 'lodash/includes';
 
@@ -16,8 +17,9 @@ import Button from 'components/forms/form-button';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
 import Gridicon from 'components/gridicon';
+import { connectDispatcher } from './dispatcher-converter';
 
-export default React.createClass( {
+export const UploadingPane = React.createClass( {
 	displayName: 'SiteSettingsUploadingPane',
 
 	mixins: [ PureRenderMixin ],
@@ -111,6 +113,8 @@ export default React.createClass( {
 	},
 
 	startUpload: function( file ) {
+		const { startUpload } = this.props;
+
 		startUpload( this.props.importerStatus, file );
 	},
 
@@ -132,3 +136,9 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapDispatchToProps = dispatch => ( {
+	startUpload: flowRight( dispatch, startUpload )
+} );
+
+export default connectDispatcher( null, mapDispatchToProps )( UploadingPane );
