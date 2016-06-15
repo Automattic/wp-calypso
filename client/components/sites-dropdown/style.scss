@@ -79,8 +79,3 @@
 .sites-dropdown .site-selector .site {
 	flex-grow: 1;
 }
-
-.sites-dropdown .site-selector .site:not(.is-selected) .site-icon__img {
-	opacity: 1;
-	filter: none;
-}
