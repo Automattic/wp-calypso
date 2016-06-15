@@ -716,19 +716,26 @@ function isDomainBeingUsedForPlan( cart, domain ) {
 
 function shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestion ) {
 	return withPlansOnly &&
-		( suggestion.product_slug && suggestion.cost ) && // not free
+		isDomainProduct( suggestion ) && // not free
 		( ! isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) && // a plan in cart
 		( ! isNextDomainFree( cart ) ) && // domain credit
 		( ! hasPlan( cart ) ) && // already a plan in cart
 		( ! selectedSite || ( selectedSite && selectedSite.plan.product_slug === 'free_plan' ) ); // site has a plan
 }
 
-function bundleItemWithPlan( cartItem, plan_slug = 'value_bundle' ) {
-	const items = [ cartItem, planItem( plan_slug, false ) ];
+function bundleItemWithPlan( cartItem, planSlug = 'value_bundle' ) {
+	const items = [ cartItem, planItem( planSlug, false ) ];
 	return items.map( item => {
 		const extra = assign( {}, item.extra, { withPlansOnly: 'yes' } );
 		return assign( {}, item, { extra } );
 	} );
+}
+
+function bundleItemWithPlanIfNecessary( cartItem, withPlansOnly, selectedSite, cart, planSlug = 'value_bundle' ) {
+	if ( shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, cartItem ) ) {
+		return bundleItemWithPlan( cartItem, planSlug );
+	}
+	return [ cartItem ];
 }
 
 function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
@@ -755,6 +762,7 @@ module.exports = {
 	add,
 	addPrivacyToAllDomains,
 	bundleItemWithPlan,
+	bundleItemWithPlanIfNecessary,
 	businessPlan,
 	customDesignItem,
 	domainMapping,
