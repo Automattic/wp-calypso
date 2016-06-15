@@ -37,6 +37,9 @@ import {
 	isServiceWorkerSupported,
 	registerServerWorker,
 } from 'lib/service-worker';
+import {
+	recordTracksEvent
+} from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:push-notifications' );
 const DAYS_BEFORE_FORCING_REGISTRATION_REFRESH = 15;
@@ -295,6 +298,7 @@ export function block() {
 			type: PUSH_NOTIFICATIONS_BLOCK
 		} );
 		dispatch( deactivateSubscription() );
+		dispatch( recordTracksEvent( 'calypso_web_push_notifications_blocked' ) );
 	};
 }
 
@@ -308,8 +312,10 @@ export function toggleEnabled() {
 		} );
 		if ( enabling ) {
 			dispatch( fetchAndLoadServiceWorker() );
+			dispatch( recordTracksEvent( 'calypso_web_push_notifications_enabled' ) );
 		} else {
 			dispatch( deactivateSubscription() );
+			dispatch( recordTracksEvent( 'calypso_web_push_notifications_disabled' ) );
 		}
 	};
 }
