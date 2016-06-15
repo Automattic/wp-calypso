@@ -1,30 +1,42 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var PremiumPopover = require( 'components/plans/premium-popover' ),
-	cartItems = require( 'lib/cart-values/cart-items' ),
-	sitesList = require( 'lib/sites-list' )(),
-	isPlan = require( 'lib/products-values' ).isPlan,
-	abtest = require( 'lib/abtest' ).abtest;
-
-const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
-
-var DomainProductPrice = React.createClass( {
-	shouldShowPremiumMessage: function() {
-		const selectedSite = sitesList.getSelectedSite();
-		return domainsWithPlansOnlyTestEnabled && ! ( selectedSite && isPlan( selectedSite.plan ) ) && this.props.price;
-	}, subMessage() {
-		var freeWithPlan = this.props.cart && this.props.cart.hasLoadedFromServer && this.props.cart.next_domain_is_free && ! this.props.isFinalPrice;
-		if ( freeWithPlan ) {
-			return <span className="domain-product-price__free-text">{ this.translate( 'Free with your plan' ) }</span>;
-		} else if ( this.shouldShowPremiumMessage() ) {
-			return (
+import PremiumPopover from 'components/plans/premium-popover';
+const DomainProductPrice = React.createClass( {
+	propTypes: {
+		isLoading: React.PropTypes.bool,
+		price: React.PropTypes.string,
+		freeWithPlan: React.PropTypes.bool,
+		requiresPlan: React.PropTypes.bool
+	},
+	renderFreeWithPlan() {
+		return (
+			<div className="domain-product-price is-free-domain">
+				<span className="domain-product-price__price">{ this.translate( '%(cost)s {{small}}/year{{/small}}', {
+					args: { cost: this.props.price },
+					components: { small: <small /> }
+				} ) }</span>
+				<span className="domain-product-price__free-text" ref="subMessage">
+					{ this.translate( 'Free with your plan' ) }
+				</span>
+			</div>
+		);
+	},
+	renderFree() {
+		return (
+			<div className="domain-product-price">
+				<span className="domain-product-price__price">{ this.translate( 'Free' ) }</span>
+			</div>
+		);
+	},
+	renderIncludedInPremium() {
+		return (
+			<div className="domain-product-price is-with-plans-only">
 				<small className="domain-product-price__premium-text" ref="subMessage">
 					{ this.translate( 'Included in WordPress.com Premium' ) }
 					<PremiumPopover
@@ -32,43 +44,38 @@ var DomainProductPrice = React.createClass( {
 						bindContextEvents
 						position="bottom left"/>
 				</small>
-			);
-		}
-		return null;
-	},
-	priceMessage( price ) {
-		return this.translate( '%(cost)s {{small}}/year{{/small}}', {
-			args: { cost: price },
-			components: { small: <small /> }
-		} );
-	},
-	priceText() {
-		const selectedSite = sitesList.getSelectedSite();
-		if ( ! this.props.price ) {
-			return this.translate( 'Free' );
-		} else if ( domainsWithPlansOnlyTestEnabled && ! cartItems.isNextDomainFree( this.props.cart ) && ( ! selectedSite || ! isPlan( selectedSite.plan ) ) ) {
-			return null;
-		}
-		return this.priceMessage( this.props.price );
-	},
-	render: function() {
-		const classes = classNames( 'domain-product-price', {
-				'is-free-domain': cartItems.isNextDomainFree( this.props.cart ),
-				'is-with-plans-only': this.shouldShowPremiumMessage(),
-				'is-placeholder': this.props.isLoading
-			} );
-
-		if ( this.props.isLoading ) {
-			return <div className={ classes }>{ this.translate( 'Loading…' ) }</div>;
-		}
-
-		return (
-			<div className={ classes }>
-				<span className="domain-product-price__price">{ this.priceText() }</span>
-				{ this.subMessage() }
 			</div>
 		);
+	},
+	renderPrice() {
+		return (
+			<div className="domain-product-price">
+				<span className="domain-product-price__price">
+					{ this.translate( '%(cost)s {{small}}/year{{/small}}', {
+						args: { cost: this.props.price },
+						components: { small: <small /> }
+					} ) }
+				</span>
+			</div>
+		);
+	},
+	render() {
+		if ( this.props.isLoading ) {
+			return <div className="domain-product-price is-placeholder">{ this.translate( 'Loading…' ) }</div>;
+		}
+
+		switch ( this.props.rule ) {
+			case 'FREE_DOMAIN':
+				return this.renderFree();
+			case 'FREE_WITH_PLAN':
+				return this.renderFreeWithPlan();
+			case 'INCLUDED_IN_PREMIUM':
+				return this.renderIncludedInPremium();
+			case 'PRICE':
+			default:
+				return this.renderPrice();
+		}
 	}
 } );
 
-module.exports = DomainProductPrice;
+export default DomainProductPrice;

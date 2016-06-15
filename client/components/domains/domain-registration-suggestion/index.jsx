@@ -1,43 +1,30 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isEmpty = require( 'lodash/isEmpty' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 var DomainSuggestion = require( 'components/domains/domain-suggestion' ),
-	cartItems = require( 'lib/cart-values/cart-items' ),
-	DomainSuggestionFlag = require( 'components/domains/domain-suggestion-flag' );
+	Gridicon = require( 'components/gridicon' ),
+	DomainSuggestionFlag = require( 'components/domains/domain-suggestion-flag' ),
+	{ shouldBundleDomainWithPlan, getDomainPriceRule, hasDomainInCart } = require( 'lib/cart-values/cart-items' );
 
-var DomainRegistrationSuggestion = React.createClass( {
+const DomainRegistrationSuggestion = React.createClass( {
 	propTypes: {
 		cart: React.PropTypes.object,
-		suggestion: React.PropTypes.object,
-		onButtonClick: React.PropTypes.func,
-		withPlansOnly: React.PropTypes.bool
+		suggestion: React.PropTypes.object.isRequired,
+		onButtonClick: React.PropTypes.func.isRequired,
+		withPlansOnly: React.PropTypes.bool.isRequired,
+		selectedSite: React.PropTypes.object
 	},
 
-	buttonLabel: function( isAdded ) {
-		if ( this.props.buttonLabel ) {
-			return this.props.buttonLabel;
-		}
-
-		if ( isAdded ) {
-			return null;
-		}
-
-		return this.translate( 'Add', {
-			context: 'Add a domain registration to the shopping cart'
-		} );
-	},
-
-	render: function() {
-		var suggestion = this.props.suggestion ? this.props.suggestion : {},
-			domainName = suggestion.domain_name ? suggestion.domain_name : this.translate( 'Loading\u2026' ),
-			isAdded = !! ( this.props.cart && cartItems.hasDomainInCart( this.props.cart, suggestion.domain_name ) ),
+	render() {
+		var suggestion = this.props.suggestion || {},
+			isAdded = hasDomainInCart( this.props.cart, suggestion.domain_name ),
 			buttonClasses,
+			buttonContent,
 			domainFlag = null;
 
 		if ( suggestion.domain_name ) {
@@ -46,22 +33,26 @@ var DomainRegistrationSuggestion = React.createClass( {
 
 		if ( isAdded ) {
 			buttonClasses = 'added';
+			buttonContent = <Gridicon icon="checkmark" />;
 		} else {
 			buttonClasses = 'add is-primary';
+			buttonContent = shouldBundleDomainWithPlan( this.props.withPlansOnly, this.props.selectedSite, this.props.cart, suggestion )
+				? this.translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
+				: this.translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 
 		return (
 			<DomainSuggestion
-					price={ suggestion.product_slug ? suggestion.cost : undefined }
-					isLoading={ isEmpty( suggestion.cost ) }
+					priceRule={ getDomainPriceRule( this.props.withPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) }
+					price={ suggestion.product_slug && suggestion.cost }
 					domain={ suggestion.domain_name }
 					buttonClasses={ buttonClasses }
-					buttonLabel={ this.buttonLabel( isAdded ) }
-					isAdded={ isAdded }
+					buttonContent={ buttonContent }
 					cart={ this.props.cart }
+					withPlansOnly={ this.props.withPlansOnly }
 					onButtonClick={ this.props.onButtonClick }>
 				<h3>
-					{ domainName }
+					{ suggestion.domain_name }
 					{ domainFlag }
 				</h3>
 			</DomainSuggestion>
