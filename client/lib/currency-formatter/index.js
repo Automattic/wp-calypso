@@ -109,11 +109,13 @@ export function getCurrencyObject( number, options = {} ) {
 		thousandsSep: grouping,
 		decPoint: decimal
 	} );
-	const cents = precision > 0 ? numberFormat( absNumber - rawDollars, {
-		decimals: precision,
-		thousandsSep: grouping,
-		decPoint: decimal
-	} ).slice( 1 ) : '';
+	const cents = precision > 0
+		? numberFormat( absNumber - rawDollars, {
+			decimals: precision,
+			thousandsSep: grouping,
+			decPoint: decimal
+		} ).slice( 1 )
+		: '';
 	return {
 		sign,
 		symbol,
