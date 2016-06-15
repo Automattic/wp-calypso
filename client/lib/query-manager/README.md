@@ -17,7 +17,11 @@ Once items have been inserted into the query manager, they can then be retrieved
 - `getItems( query: ?object )` - Returns all items tracked, optionally only those associated with the passed query
 - `getFound( query: object )` - Returns the total number of items matching a query
 
-Under the hood, Query Manager reconciles any change to an item across all queries where that item is tracked. For example, in a `PostQueryManager` instance tracking both draft posts and trashed posts, if I were to call `receive` with a partial change indicating that a single draft had been moved to trash, that post would (1) be updated across all queries tracking it, (2) be removed from the drafts query set, (3) be added to the trashed query set, (4) be sorted according to the query's sorting parameter, (5) redistribute the affected pagination results in both drafts and trashed, and (6) decrement/increment the found counts respectively.
+Under the hood, Query Manager reconciles any change to an item across all queries where that item is tracked. 
+
+## Example
+
+In a `PostQueryManager` instance tracking both draft posts and trashed posts, if I were to call `receive` with a partial change indicating that a single draft had been moved to trash, that post would (1) be updated across all queries tracking it, (2) be removed from the drafts query set, (3) be added to the trashed query set, (4) be sorted according to the query's sorting parameter, (5) redistribute the affected pagination results in both drafts and trashed, and (6) decrement/increment the found counts respectively.
 
 ## Implementations
 
