@@ -21,7 +21,7 @@ import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
 import Location from 'post-editor/editor-location';
 import Discussion from 'post-editor/editor-discussion';
 import PageParent from 'post-editor/editor-page-parent';
-import SeoAccordion from 'post-editor/editor-seo-accordion';
+import SeoAccordion from 'post-editor/editor-seo';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
 import InfoPopover from 'components/info-popover';
 import PageTemplatesData from 'components/data/page-templates-data';
@@ -261,7 +261,7 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<SeoAccordion metaDescription={ PostMetadata.metaDescription( this.props.post ) } />
+			<SeoAccordion site={ this.props.site } post={ this.props.post } />
 		);
 	},
 
