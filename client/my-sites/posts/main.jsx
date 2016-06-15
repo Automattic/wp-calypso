@@ -24,9 +24,10 @@ import {
 } from 'state/posts/selectors';
 import Button from 'components/button';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
-import { sectionify } from 'lib/route/path';
 import Count from 'components/count';
+import Gridicon from 'components/gridicon';
+import NoResults from 'my-sites/no-results';
+import { sectionify } from 'lib/route/path';
 import { getAllPostCount } from 'state/posts/counts/selectors';
 
 const PostsMain = React.createClass( {
@@ -44,6 +45,8 @@ const PostsMain = React.createClass( {
 
 	mostRecentDrafts() {
 		const site = this.props.sites.getSelectedSite();
+		const isLoading = this.props.draftCount !== 0 && this.props.loadingDrafts;
+
 		return (
 			<div className="posts__recent-drafts">
 				<QueryPosts
@@ -60,7 +63,8 @@ const PostsMain = React.createClass( {
 					</Button>
 				</Card>
 				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
-				{ ! this.props.drafts && this.props.loadingDrafts && <Draft isPlaceholder /> }
+				{ isLoading && <Draft isPlaceholder /> }
+				{ this.props.draftCount === 0 && <NoResults text="You have no drafts at the moment." /> }
 			</div>
 		);
 	},
