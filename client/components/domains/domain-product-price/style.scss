@@ -59,6 +59,15 @@
 			opacity: .6;
 			text-decoration: line-through;
 		}
+
+		&.no-price {
+			@include breakpoint( ">660px" ) {
+				padding-top: 7px;
+			}
+			@include breakpoint( ">960px" ) {
+				padding-top: 13px;
+			}
+		}
 	}
 
 	.is-placeholder & {
