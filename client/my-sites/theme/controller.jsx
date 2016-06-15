@@ -30,7 +30,7 @@ let themeDetailsCache = new Map();
 export function makeElement( ThemesComponent, Head, store, props ) {
 	return(
 		<ReduxProvider store={ store }>
-			<Head title={ props.title } tier={ props.tier || 'all' }>
+			<Head title={ props.title } description={ props.description } tier={ props.tier || 'all' }>
 				<ThemesComponent { ...omit( props, [ 'title' ] ) } />
 			</Head>
 		</ReduxProvider>
@@ -73,7 +73,9 @@ export function fetchThemeDetailsData( context, next ) {
 export function details( context, next ) {
 	const { slug } = context.params;
 	const user = getCurrentUser( context.store.getState() );
-	const themeName = ( getThemeDetails( context.store.getState(), slug ) || false ).name;
+	const themeDetails = getThemeDetails( context.store.getState(), slug ) || false;
+	const themeName = themeDetails.name;
+	const themeDescription = themeDetails.description;
 	const title = i18n.translate( '%(themeName)s Theme', {
 		args: { themeName }
 	} );
@@ -85,6 +87,7 @@ export function details( context, next ) {
 		themeSlug: slug,
 		contentSection: context.params.section,
 		title: decodeEntities( title ) + ' — WordPress.com', // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
+		description : themeDescription,
 		isLoggedIn: !! user
 	};
 
