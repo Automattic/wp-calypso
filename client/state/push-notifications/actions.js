@@ -38,13 +38,18 @@ import {
 	registerServerWorker,
 } from 'lib/service-worker';
 import {
-	tracks
-} from 'lib/analytics';
+	recordTracksEvent
+} from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:push-notifications' );
 const DAYS_BEFORE_FORCING_REGISTRATION_REFRESH = 15;
 const serviceWorkerOptions = {
 	path: '/service-worker.js',
+};
+const tracksEvent = ( dispatch, eventName, props ) => {
+	setTimeout( () => {
+		dispatch( recordTracksEvent( eventName, props ) );
+	}, 1 );
 };
 
 export function init() {
@@ -298,7 +303,7 @@ export function block() {
 			type: PUSH_NOTIFICATIONS_BLOCK
 		} );
 		dispatch( deactivateSubscription() );
-		tracks.recordEvent( 'calypso_web_push_notifications_blocked' );
+		tracksEvent( dispatch, 'calypso_web_push_notifications_blocked' );
 	};
 }
 
@@ -312,10 +317,10 @@ export function toggleEnabled() {
 		} );
 		if ( enabling ) {
 			dispatch( fetchAndLoadServiceWorker() );
-			tracks.recordEvent( 'calypso_web_push_notification_enabled' );
+			tracksEvent( dispatch, 'calypso_web_push_notifications_enabled' );
 		} else {
 			dispatch( deactivateSubscription() );
-			tracks.recordEvent( 'calypso_web_push_notification_disabled' );
+			tracksEvent( dispatch, 'calypso_web_push_notifications_disabled' );
 		}
 	};
 }
