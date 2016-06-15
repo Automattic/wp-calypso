@@ -11,8 +11,10 @@ const USD = currencyFormatter( 9800900.32, { code: 'USD' } ); // '$9,800,900.32'
 const EUR = currencyFormatter( 9800900.32, { code: 'EUR' } ); // '€9.800.900,32'
 const JPY = currencyFormatter( 9800900.32, { code: 'JPY' } ); // '¥9,800,900'
 ```
+
 Or
-```
+
+```javascript
 import { getCurrencyObject } from 'lib/currency-formatter';
 const USD = getCurrencyObject( 9800900.32, { code: 'USD' } ); // { symbol: '$', dollars: '9,800,900', cents: '.32' }
 
