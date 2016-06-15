@@ -3,8 +3,8 @@ $autobar-height: 20px;
 
 // The WordPress.com Masterbar
 .masterbar {
-	background: $blue-wordpress;
-	border-bottom: 1px solid darken( $blue-wordpress, 4% );
+	background: $masterbar-color;
+	border-bottom: 1px solid darken( $masterbar-color, 4% );
 	color: $white;
 	font-size: 16px;
 	display: flex;
