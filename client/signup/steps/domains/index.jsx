@@ -17,7 +17,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
 	Notice = require( 'components/notice' ),
-	abtest = require( 'lib/abtest' ).abtest,
+	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	signupUtils = require( 'signup/utils' );
 
 module.exports = React.createClass( {
