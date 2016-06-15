@@ -104,7 +104,7 @@ button {
 // Primary buttons
 .button.is-primary {
 	background: $blue-medium;
-	border-color: $blue-wordpress;
+	border-color: darken( $blue-medium, 8% );
 	color: $white;
 
 	&:hover,
