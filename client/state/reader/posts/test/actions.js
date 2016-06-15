@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { nock, useNock } from 'test/helpers/use-nock';
+import { useNock } from 'test/helpers/use-nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -11,13 +11,22 @@ import { expect } from 'chai';
 import {
 	READER_POSTS_RECEIVE
 } from 'state/action-types';
-
-import {
-	receivePosts
-} from '../actions';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'actions', () => {
+	let receivePosts;
+
 	useNock();
+
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/analytics', {
+			tracks: {
+				recordEvent: function() {}
+			}
+		} );
+
+		receivePosts = require( '../actions' ).receivePosts;
+	} );
 
 	const spy = sinon.spy();
 
