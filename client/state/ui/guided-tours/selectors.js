@@ -3,6 +3,7 @@
  */
 import get from 'lodash/get';
 import memoize from 'lodash/memoize';
+import startsWith from 'lodash/startsWith';
 
 /**
  * Internal dependencies
@@ -25,10 +26,44 @@ const getToursConfig = memoize( ( tour ) => guidedToursConfig.get( tour ) );
  */
 const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 
+const getTourTriggers = state => get( state, 'ui.tourTriggers', [] );
+
+const tourCandidates = [
+	{
+		name: 'themes',
+		test: ( { type, path } ) =>
+			type === 'SET_ROUTE' && startsWith( path, '/design' ),
+	},
+];
+
+const findEligibleTour = createSelector(
+		state => {
+			let tourName;
+			tourCandidates.some( ( { name, test } ) => {
+				if ( getTourTriggers( state ).some( test ) ) {
+					tourName = name;
+					return true;
+				}
+			} );
+			return tourName;
+		},
+		state => [
+			getTourTriggers( state ),
+		]
+);
+
 export const getGuidedTourState = createSelector(
 	state => {
 		const tourState = getRawGuidedTourState( state );
-		const { shouldReallyShow, stepName = '', tour } = tourState;
+		const { stepName = '' } = tourState;
+		let { shouldReallyShow, tour } = tourState;
+
+		if ( ! tour ) {
+			console.log( 'no tour, finding one' );
+			tour = findEligibleTour( state );
+			console.log( 'found', tour );
+		}
+
 		const tourConfig = getToursConfig( tour );
 		const stepConfig = tourConfig[ stepName ] || false;
 		const nextStepConfig = getToursConfig( tour )[ stepConfig.next ] || false;
@@ -47,5 +82,6 @@ export const getGuidedTourState = createSelector(
 	state => [
 		getRawGuidedTourState( state ),
 		isSectionLoading( state ),
+		getTourTriggers( state ),
 	]
 );

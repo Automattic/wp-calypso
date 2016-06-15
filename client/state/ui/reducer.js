@@ -15,7 +15,7 @@ import {
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import editor from './editor/reducer';
-import guidedTour from './guided-tours/reducer';
+import { guidedTour, tourTriggers } from './guided-tours/reducer';
 import reader from './reader/reducer';
 import olark from './olark/reducer';
 
@@ -93,6 +93,7 @@ const reducer = combineReducers( {
 	selectedSiteId,
 	recentlySelectedSiteIds,
 	guidedTour,
+	tourTriggers,
 	editor,
 	reader,
 	olark
