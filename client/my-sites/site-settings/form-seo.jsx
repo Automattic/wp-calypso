@@ -16,6 +16,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
+import MetaTitleEditor from 'components/seo/meta-title-editor';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
@@ -284,6 +285,12 @@ export const SeoForm = React.createClass( {
 					<form onChange={ this.markChanged } className="seo-form">
 						<FormFieldset>
 							<FormFieldset className="has-divider">
+								<FormLabel htmlFor="seo_title">{ this.translate( 'Meta Title Format' ) }</FormLabel>
+								<MetaTitleEditor />
+								<FormSettingExplanation>
+									{ this.translate( 'Control how the title for your site will be generated when sharing' ) }
+								</FormSettingExplanation>
+
 								<FormLabel htmlFor="seo_meta_description">{ this.translate( 'Front Page Meta Description' ) }</FormLabel>
 								<CountedTextarea
 									name="seo_meta_description"
