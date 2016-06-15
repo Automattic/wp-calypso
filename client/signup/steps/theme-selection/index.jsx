@@ -2,15 +2,13 @@
  * External dependencies
  */
 import React from 'react';
-import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import SignupActions from 'lib/signup/actions';
-import getThemes from 'lib/signup/themes';
-import ThemesList from 'components/themes-list';
+import SignupThemesList from './signup-themes-list';
 import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
 
@@ -19,29 +17,15 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		useHeadstart: React.PropTypes.bool,
+		stepName: React.PropTypes.string.isRequired,
+		goToNextStep: React.PropTypes.func.isRequired,
+		signupDependencies: React.PropTypes.object.isRequired,
 	},
 
 	getDefaultProps() {
 		return {
 			useHeadstart: true,
 		};
-	},
-
-	getInitialState() {
-		return {
-			themes: this.getThemes()
-		};
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		const { surveyQuestion, designType } = nextProps.signupDependencies;
-		if ( surveyQuestion !== this.props.signupDependencies.surveyQuestion || designType !== this.props.signupDependencies.designType ) {
-			this.setState( { themes: this.getThemes() } );
-		}
-	},
-
-	getThemes() {
-		return getThemes( this.props.signupDependencies.surveyQuestion, this.props.signupDependencies.designType );
 	},
 
 	handleScreenshotClick( theme ) {
@@ -61,25 +45,11 @@ module.exports = React.createClass( {
 	},
 
 	renderThemesList() {
-		var actionLabel = this.translate( 'Pick' ),
-			themes = this.state.themes.map( function( theme ) {
-				return {
-					id: theme.slug,
-					name: theme.name,
-					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png?w=660'
-				};
-			} );
-		return (
-			<ThemesList
-				getButtonOptions= { noop }
-				onScreenshotClick= { this.handleScreenshotClick }
-				onMoreButtonClick= { noop }
-				getActionLabel={ function() {
-					return actionLabel;
-				} }
-				{ ...this.props }
-				themes= { themes } />
-		);
+		return ( <SignupThemesList
+			surveyQuestion={ this.props.signupDependencies.surveyQuestion }
+			designType={ this.props.signupDependencies.designType }
+			handleScreenshotClick={ this.handleScreenshotClick }
+		/> );
 	},
 
 	renderJetpackButton() {
