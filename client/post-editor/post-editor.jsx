@@ -7,8 +7,7 @@ const ReactDom = require( 'react-dom' ),
 	i18n = require( 'i18n-calypso' ),
 	page = require( 'page' ),
 	debounce = require( 'lodash/debounce' ),
-	throttle = require( 'lodash/throttle' ),
-	assign = require( 'lodash/assign' );
+	throttle = require( 'lodash/throttle' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -180,17 +179,23 @@ const PostEditor = React.createClass( {
 		observe( 'sites' )
 	],
 
-	getInitialState: function() {
-		var state = this.getPostEditState();
+	getInitialState() {
+		return {
+			...this.getDefaultState(),
+			isEditorInitialized: false
+		};
+	},
 
-		return assign( {}, state, {
+	getDefaultState() {
+		return {
+			...this.getPostEditState(),
 			isSaving: false,
 			isPublishing: false,
 			notice: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
 			isTitleFocused: false
-		} );
+		};
 	},
 
 	getPostEditState: function() {
@@ -352,6 +357,7 @@ const PostEditor = React.createClass( {
 								tabIndex={ 2 }
 								isNew={ this.state.isNew }
 								onSetContent={ this.debouncedSaveRawContent }
+								onInit={ this.onEditorInitialized }
 								onChange={ this.onEditorContentChange }
 								onKeyUp={ this.debouncedSaveRawContent }
 								onFocus={ this.onEditorFocus }
@@ -386,7 +392,7 @@ const PostEditor = React.createClass( {
 								post={ this.state.post }
 								isNew={ this.state.isNew }
 								isDirty={ this.state.isDirty }
-								isSaveBlocked={ this.state.isSaveBlocked }
+								isSaveBlocked={ this.isSaveBlocked() }
 								hasContent={ this.state.hasContent }
 								isSaving={ this.state.isSaving }
 								isPublishing={ this.state.isPublishing }
@@ -471,7 +477,7 @@ const PostEditor = React.createClass( {
 			this.setState( { loadingError } );
 		} else if ( ( PostEditStore.isNew() && ! this.state.isNew ) || PostEditStore.isLoading() ) {
 			// is new or loading
-			this.setState( this.getInitialState(), function() {
+			this.setState( this.getDefaultState(), function() {
 				this.refs.editor.setEditorContent( '' );
 			} );
 		} else {
@@ -499,6 +505,14 @@ const PostEditor = React.createClass( {
 		}
 	},
 
+	isSaveBlocked() {
+		return this.state.isSaveBlocked || ! this.state.isEditorInitialized;
+	},
+
+	onEditorInitialized() {
+		this.setState( { isEditorInitialized: true } );
+	},
+
 	onEditorContentChange: function() {
 		debug( 'editor content changed' );
 		this.debouncedSaveRawContent();
@@ -519,7 +533,7 @@ const PostEditor = React.createClass( {
 	autosave: function() {
 		var callback;
 
-		if ( this.state.isSaving === true || this.state.isSaveBlocked ) {
+		if ( this.state.isSaving === true || this.isSaveBlocked() ) {
 			return;
 		}
 
