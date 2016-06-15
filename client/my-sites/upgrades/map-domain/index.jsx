@@ -2,13 +2,18 @@
  * External dependencies
  */
 var page = require( 'page' ),
-	React = require( 'react' );
+	React = require( 'react' ),
+	omit = require( 'lodash/omit' ),
+	{ connect } = require( 'react-redux' );
 
 /**
  * Internal dependencies
  */
 var HeaderCake = require( 'components/header-cake' ),
 	MapDomainStep = require( 'components/domains/map-domain-step' ),
+	{ currentUserHasFlag } = require( 'state/current-user/selectors' ),
+	cartItems = require( 'lib/cart-values' ).cartItems,
+	upgradesActions = require( 'lib/upgrades/actions' ),
 	observe = require( 'lib/mixins/data-observe' );
 
 var MapDomain = React.createClass( {
@@ -17,7 +22,8 @@ var MapDomain = React.createClass( {
 	propTypes: {
 		analyticsSection: React.PropTypes.string,
 		query: React.PropTypes.string,
-		productsList: React.PropTypes.object.isRequired
+		productsList: React.PropTypes.object.isRequired,
+		withPlansOnly: React.PropTypes.bool.isRequired
 	},
 
 	getDefaultProps: function() {
@@ -60,6 +66,18 @@ var MapDomain = React.createClass( {
 		page( '/domains/add/' + this.props.sites.getSelectedSite().slug );
 	},
 
+	handleRegisterDomain( suggestion ) {
+		upgradesActions.registerDomain( suggestion );
+	},
+
+	handleMapDomain( domain ) {
+		upgradesActions.addItem( cartItems.domainMapping( { domain } ) );
+
+		if ( this.isMounted() ) {
+			page( '/checkout/' + this.props.sites.getSelectedSite().slug );
+		}
+	},
+
 	render: function() {
 		let selectedSite;
 
@@ -74,18 +92,19 @@ var MapDomain = React.createClass( {
 				</HeaderCake>
 
 				<MapDomainStep
-					initialState={ this.props.initialState }
-					onAddDomain={ this.props.onAddDomain }
-					onAddMapping={ this.props.onAddMapping }
-					onSave={ this.props.onSave }
-					cart={ this.props.cart }
+					{ ...omit( this.props, [ 'children', 'productsList', 'sites' ] ) }
 					products={ this.props.productsList.get() }
-					initialQuery={ this.props.initialQuery }
 					selectedSite={ selectedSite }
-					analyticsSection={ this.props.analyticsSection } />
+					onRegisterDomain={ this.handleRegisterDomain }
+					onMapDomain={ this.handleMapDomain }
+				/>
 			</span>
 		);
-	},
+	}
 } );
 
-module.exports = MapDomain;
+module.exports = connect( state => (
+	{
+		domainsWithPlansOnly: currentUserHasFlag( state, 'calypso_domains_with_plans_only' )
+	}
+) )( MapDomain );
