@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
+import identity from 'lodash/identity';
 
 /**
  * Internal Dependencies
@@ -38,7 +39,7 @@ function currencyFormatOptions( defaults, showDecimal = true ) {
 	return options;
 }
 
-class PlanFeaturesHeader extends Component {
+export class PlanFeaturesHeader extends Component {
 
 	getPrice( rawPrice, code ) {
 		const defaults = findCurrency( code );
@@ -399,9 +400,7 @@ PlanFeaturesHeader.defaultProps = {
 	current: false,
 	onClick: noop,
 	popular: false,
-	translate: noop
+	translate: identity
 };
-
-export const BareComponent = PlanFeaturesHeader;
 
 export default localize( PlanFeaturesHeader );

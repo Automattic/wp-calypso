@@ -8,7 +8,7 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import { BareComponent as PlanFeaturesHeader } from '../header';
+import { PlanFeaturesHeader } from '../header';
 import {
 	PLAN_FREE,
 	PLAN_PREMIUM
