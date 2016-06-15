@@ -21,6 +21,7 @@ import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
 import Location from 'post-editor/editor-location';
 import Discussion from 'post-editor/editor-discussion';
 import PageParent from 'post-editor/editor-page-parent';
+import SeoAccordion from 'post-editor/editor-seo';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
 import InfoPopover from 'components/info-popover';
 import PageTemplatesData from 'components/data/page-templates-data';
@@ -31,6 +32,7 @@ import TrackInputChanges from 'components/track-input-changes';
 import actions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import siteUtils from 'lib/site/utils';
+import { isBusiness, isEnterprise } from 'lib/products-values';
 import QueryPostTypes from 'components/data/query-post-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -240,7 +242,23 @@ const EditorDrawer = React.createClass( {
 					isNew={ this.props.isNew }
 				/>
 			</AccordionSection>
-		)
+		);
+	},
+
+	renderSeo: function() {
+		if ( ! config.isEnabled( 'manage/advanced-seo' ) || ! this.props.site ) {
+			return;
+		}
+
+		const { plan } = this.props.site;
+		const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
+		if ( ! hasBusinessPlan ) {
+			return;
+		}
+
+		return (
+			<SeoAccordion site={ this.props.site } post={ this.props.post } />
+		);
 	},
 
 	renderMoreOptions: function() {
@@ -309,6 +327,7 @@ const EditorDrawer = React.createClass( {
 				{ this.renderPageOptions() }
 				{ this.renderSharing() }
 				{ this.renderPostFormats() }
+				{ this.renderSeo() }
 				{ this.renderMoreOptions() }
 			</div>
 		);
