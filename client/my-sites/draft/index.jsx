@@ -152,6 +152,11 @@ module.exports = React.createClass( {
 			imageUrl = '//' + image.hostname + image.pathname + '?w=680px';
 		}
 
+		if ( post && post.canonical_image ) {
+			image = url.parse( post.canonical_image.uri, true );
+			imageUrl = '//' + image.hostname + image.pathname + '?w=680px';
+		}
+
 		classes = [
 			'draft',
 			{
