@@ -73,7 +73,7 @@ export function recordFollow( url ) {
 	const source = getLocation();
 	mc.bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
-	recordGaEvent( 'Clicked Follow Blog', source )
+	recordGaEvent( 'Clicked Follow Blog', source );
 	recordTrack( 'calypso_reader_site_followed', {
 		url,
 		source
@@ -84,7 +84,7 @@ export function recordUnfollow( url ) {
 	const source = getLocation();
 	mc.bumpStat( 'reader_unfollows', source );
 	recordAction( 'unfollowed_blog' );
-	recordGaEvent( 'Clicked Unfollow Blog', source )
+	recordGaEvent( 'Clicked Unfollow Blog', source );
 	recordTrack( 'calypso_reader_site_unfollowed', {
 		url,
 		source
@@ -97,8 +97,20 @@ export function recordTrack( eventName, eventProperties ) {
 	if ( subCount != null ) {
 		eventProperties = Object.assign( { subscription_count: subCount }, eventProperties );
 	}
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'blog_id' in eventProperties && 'post_id' in eventProperties && ! 'is_jetpack' in eventProperties ) {
+			console.warn( 'consider using recordTrackForPost...', eventName, eventProperties );
+		}
+	}
 	tracks.recordEvent( eventName, eventProperties );
 }
+
+const tracksRailcarEventWhitelist = new Set();
+tracksRailcarEventWhitelist
+	.add( 'calypso_reader_article_liked' )
+	.add( 'calypso_reader_article_commented_on' )
+	.add( 'calypso_reader_article_opened' )
+;
 
 export function recordTrackForPost( eventName, post = {}, additionalProps = {} ) {
 	recordTrack( eventName, assign( {
@@ -108,6 +120,14 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 		feed_item_id: post.feed_item_ID > 0 ? post.feed_item_ID : undefined,
 		is_jetpack: post.is_jetpack
 	}, additionalProps ) );
+	if ( post.railcar && tracksRailcarEventWhitelist.has( eventName ) ) {
+		recordTrack( 'calypso_traintracks_interact', {
+			action: eventName.replace( 'calypso_reader_', '' ),
+			railcar: post.railcar
+		} );
+	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
+		console.warn( 'Consider whitelisting reader track', eventName );
+	}
 }
 
 export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
