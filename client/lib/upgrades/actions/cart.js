@@ -10,11 +10,6 @@ import { recordAddToCart } from 'lib/analytics/ad-tracking';
 import { action as ActionTypes } from '../constants';
 import Dispatcher from 'dispatcher';
 import { cartItems } from 'lib/cart-values';
-import { isDomainMapping, isDomainRegistration, isPlan } from 'lib/products-values';
-import { abtest } from 'lib/abtest';
-import SitesList from 'lib/sites-list';
-import CartStore from 'lib/cart/store';
-const sitesList = SitesList();
 
 // We need to load the CartStore to make sure the store is registered with the
 // dispatcher even though it's not used directly here
@@ -50,26 +45,11 @@ function addItem( item ) {
 }
 
 function addItems( items ) {
-	const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly',
-		freeTrialsEnabled = abtest( 'freeTrialsInSignup' ) === 'enabled',
-		selectedSite = sitesList.getSelectedSite();
-	let shouldBundleWithPremium = items.some( item => isDomainRegistration( item ) || isDomainMapping( item ) ) && ! freeTrialsEnabled && domainsWithPlansOnlyTestEnabled;
-
-	if ( selectedSite ) {
-		const cart = CartStore.get();
-		shouldBundleWithPremium = shouldBundleWithPremium && ! isPlan( selectedSite.plan ) && ! cartItems.hasPlan( cart );
-	}
-
-	if ( shouldBundleWithPremium ) {
-		items = [ cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) ].concat( items );
-	}
 
 	const extendedItems = items.map( ( item ) => {
 		const extra = assign( {}, item.extra, {
-			context: 'calypstore',
-			withPlansOnly: domainsWithPlansOnlyTestEnabled && ! freeTrialsEnabled ? 'yes' : ''
+			context: 'calypstore'
 		} );
-
 		return assign( {}, item, { extra } );
 	} );
 
