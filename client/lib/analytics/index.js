@@ -3,6 +3,7 @@
  */
 var debug = require( 'debug' )( 'calypso:analytics' ),
 	assign = require( 'lodash/assign' ),
+	times = require( 'lodash/times' ),
 	omit = require( 'lodash/omit' ),
 	startsWith = require( 'lodash/startsWith' ),
 	isUndefined = require( 'lodash/isUndefined' );
@@ -149,7 +150,22 @@ var analytics = {
 			analytics.tracks.recordEvent( 'calypso_page_view', {
 				'path': urlPath
 			} );
+		},
+
+		createRandomId:  function() {
+			var randomBytesLength = 9, // 9 * 4/3 = 12 - this is to avoid getting padding of a random byte string when it is base64 encoded
+					randomBytes = [];
+
+			if ( window.crypto && window.crypto.getRandomValues ) {
+				randomBytes = new Uint8Array( randomBytesLength );
+				window.crypto.getRandomValues( randomBytes );
+			} else {
+				randomBytes = times( randomBytesLength, () => Math.floor( Math.random() * 256 ) );
+			}
+
+			return btoa( String.fromCharCode.apply( String, randomBytes ) );
 		}
+
 	},
 
 	statsd: {

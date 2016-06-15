@@ -6,6 +6,8 @@ var config = require( 'config' ),
 	FeedStream = require( './feed-stream' ),
 	PagedStream = require( './paged-stream' ),
 	FeedStreamCache = require( './feed-stream-cache' ),
+	analytics = require( 'lib/analytics'),
+	forEach = require( 'lodash/forEach' ),
 	wpcomUndoc = require( 'lib/wp' ).undocumented();
 
 function feedKeyMaker( post ) {
@@ -67,7 +69,7 @@ function getStoreForTag( storeId ) {
 		wpcomUndoc.readTagPosts( query, callback );
 	};
 
-	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ){
+	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ) {
 		return new PagedStream( {
 			id: storeId,
 			fetcher: fetcher,
@@ -151,16 +153,37 @@ function getStoreForFeatured( storeId ) {
 }
 
 function getStoreForRecommendedPosts( storeId ) {
-	var fetcher = function( query, callback ) {
-			wpcomUndoc.readRecommendedPosts( query, callback );
-		};
-
-	return new PagedStream( {
+	const stream = new PagedStream( {
 		id: storeId,
 		fetcher: fetcher,
 		keyMaker: siteKeyMaker,
 		perPage: 5
 	} );
+
+	function fetcher( query, callback ) {
+		function trainTracksProxy( err, response ) {
+			var eventName = 'calypso_traintracks_render',
+				eventProperties = {};
+			if ( response && response.algorithm ) {
+				stream.algorithm = response.algorithm;
+			}
+			forEach( response && response.posts, ( post, index ) => {
+				if ( post.railcar ) {
+					analytics.tracks.recordEvent( eventName, post.railcar );
+				}
+			} );
+			callback( err, response );
+		}
+		wpcomUndoc.readRecommendedPosts( query, trainTracksProxy );
+	}
+
+	const oldNextPageFetch = stream.onNextPageFetch;
+	stream.onNextPageFetch = function( params ) {
+		oldNextPageFetch.call( this, params );
+		params.algorithm = stream.algorithm;
+	};
+
+	return stream;
 }
 
 function feedStoreFactory( storeId ) {
