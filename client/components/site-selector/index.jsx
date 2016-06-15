@@ -61,7 +61,7 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			search: '',
-			highlightedIndex: 0
+			highlightedIndex: -1
 		};
 	},
 
@@ -76,7 +76,7 @@ export default React.createClass( {
 	onSearch( terms ) {
 		this.setState( {
 			search: terms,
-			highlightedIndex: 0
+			highlightedIndex: ( terms ? 0 : -1 )
 		} );
 	},
 
@@ -87,14 +87,15 @@ export default React.createClass( {
 	},
 
 	scrollToHightlightedSite() {
-		const highlightedSite = this.refs.highlightedSite;
-		if ( highlightedSite ) {
+		const selectorElement = ReactDom.findDOMNode( this.refs.selector );
+		if ( selectorElement ) {
 			const highlightedSiteElement = ReactDom.findDOMNode( this.refs.highlightedSite );
-			const selectorElement = ReactDom.findDOMNode( this.refs.selector );
-			if ( highlightedSiteElement && selectorElement ) {
+			if ( highlightedSiteElement ) {
 				scrollIntoView( highlightedSiteElement, selectorElement, {
 					onlyScrollIfNeeded: true
 				} );
+			} else {
+				selectorElement.scrollTop = 0;
 			}
 		}
 	},
