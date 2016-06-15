@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 
 /**
@@ -11,10 +12,22 @@ import PlanFeaturesHeader from './header';
 import PlanFeaturesItemList from './list';
 import PlanFeaturesItem from './item';
 import PlanFeaturesFooter from './footer';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getPlanRawPrice , getPlan } from 'state/plans/selectors';
+import sitesFactory from 'lib/sites-list';
+import { plansList, getPlanFeaturesObject, PLAN_PREMIUM } from 'lib/plans/constants';
 
 class PlanFeatures extends Component {
 	render() {
-		const { popular, current, features, description } = this.props;
+		const {
+			planName,
+			rawPrice,
+			popular,
+			current,
+			features,
+			description,
+			billingTimeFrame
+		} = this.props;
 
 		const classes = classNames( 'plan-features', {
 			'is-popular': popular
@@ -22,11 +35,17 @@ class PlanFeatures extends Component {
 
 		return (
 			<div className={ classes } >
-				<PlanFeaturesHeader { ...this.props } />
+				<PlanFeaturesHeader
+					current
+					title={ plansList[ planName ].getTitle() }
+					planType={ planName }
+					rawPrice={ rawPrice }
+					billingTimeFrame={ billingTimeFrame }
+				/>
 				<PlanFeaturesItemList>
 					{
 						features.map( ( feature ) =>
-							<PlanFeaturesItem>{ feature.title }</PlanFeaturesItem>
+							<PlanFeaturesItem>{ feature.getTitle() }</PlanFeaturesItem>
 						)
 					}
 				</PlanFeaturesItemList>
@@ -36,14 +55,17 @@ class PlanFeatures extends Component {
 	}
 }
 
-PlanFeatures.propTypes = {
-	current: PropTypes.bool,
-	popular: PropTypes.bool,
-	features: PropTypes.array.isRequired,
-	description: PropTypes.string.isRequired
-};
+export default connect( ( state, ownProps ) => {
+	const planProductId = plansList[ ownProps.plan ].getProductId();
 
-PlanFeaturesHeader.defaultProps = {
-	current: false,
-	popular: false
-};
+	return {
+		planName: ownProps.plan,
+		current: getCurrentPlan( state, sitesFactory().getSelectedSite() ),
+		popular: ownProps.plan === PLAN_PREMIUM,
+		features: getPlanFeaturesObject( ownProps.plan ),
+		description: plansList[ ownProps.plan ].getDescription(),
+		rawPrice: getPlanRawPrice( state, planProductId ),
+		billingTimeFrame: getPlan( state, planProductId ).bill_period_label
+	};
+} )( PlanFeatures );
+
