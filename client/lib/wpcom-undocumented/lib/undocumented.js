@@ -8,7 +8,8 @@ var debug = require( 'debug' )( 'calypso:wpcom-undocumented:undocumented' ),
 	camelCase = require( 'lodash/camelCase' ),
 	snakeCase = require( 'lodash/snakeCase' ),
 	pick = require( 'lodash/pick' ),
-	url = require( 'url' );
+	url = require( 'url' ),
+	reject = require( 'lodash/reject' );
 
 /**
  * Internal dependencies.
@@ -1505,12 +1506,11 @@ Undocumented.prototype.fetchDns = function( domainName, fn ) {
 	this.wpcom.req.get( '/domains/' + domainName + '/dns', fn );
 };
 
-Undocumented.prototype.addDns = function( domain, record, fn ) {
-	this.wpcom.req.post( '/domains/' + domain + '/dns/add', {}, record, fn );
-};
+Undocumented.prototype.updateDns = function( domain, records, fn ) {
+	var filtered = reject( records, 'isBeingDeleted' ),
+		body = { dns: JSON.stringify( filtered ) };
 
-Undocumented.prototype.deleteDns = function( domain, record, fn ) {
-	this.wpcom.req.post( '/domains/' + domain + '/dns/delete', {}, record, fn );
+	this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
 };
 
 Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
