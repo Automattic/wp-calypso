@@ -46,11 +46,6 @@ const DAYS_BEFORE_FORCING_REGISTRATION_REFRESH = 15;
 const serviceWorkerOptions = {
 	path: '/service-worker.js',
 };
-const tracksEvent = ( dispatch, eventName, props ) => {
-	setTimeout( () => {
-		dispatch( recordTracksEvent( eventName, props ) );
-	}, 1 );
-};
 
 export function init() {
 	return dispatch => {
@@ -303,7 +298,7 @@ export function block() {
 			type: PUSH_NOTIFICATIONS_BLOCK
 		} );
 		dispatch( deactivateSubscription() );
-		tracksEvent( dispatch, 'calypso_web_push_notifications_blocked' );
+		dispatch( recordTracksEvent( 'calypso_web_push_notifications_blocked' ) );
 	};
 }
 
@@ -317,10 +312,10 @@ export function toggleEnabled() {
 		} );
 		if ( enabling ) {
 			dispatch( fetchAndLoadServiceWorker() );
-			tracksEvent( dispatch, 'calypso_web_push_notifications_enabled' );
+			dispatch( recordTracksEvent( 'calypso_web_push_notifications_enabled' ) );
 		} else {
 			dispatch( deactivateSubscription() );
-			tracksEvent( dispatch, 'calypso_web_push_notifications_disabled' );
+			dispatch( recordTracksEvent( 'calypso_web_push_notifications_disabled' ) );
 		}
 	};
 }
