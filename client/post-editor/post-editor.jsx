@@ -51,6 +51,7 @@ import { receivePost, editPost, resetPostEdits } from 'state/posts/actions';
 import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
+import EditorForbidden from 'post-editor/editor-forbidden';
 import { setPreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
@@ -296,6 +297,7 @@ const PostEditor = React.createClass( {
 				<QueryPreferences />
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
+				<EditorForbidden />
 				<div className="post-editor__inner">
 					<div className="post-editor__content">
 						<EditorMobileNavigation site={ site } onClose={ this.onClose } />
