@@ -141,8 +141,12 @@ export function getAnalyticsData( path, tier, site_id ) {
 	let basePath = route.sectionify( path );
 	let analyticsPageTitle = 'Themes';
 
+	if ( tier ) {
+		basePath += '/type/:tier';
+	}
+
 	if ( site_id ) {
-		basePath = basePath + '/:site_id';
+		basePath += '/:site_id';
 		analyticsPageTitle += ' > Single Site';
 	}
 
