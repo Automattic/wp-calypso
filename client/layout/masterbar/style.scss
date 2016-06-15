@@ -63,8 +63,7 @@ $autobar-height: 20px;
 
 	&:hover,
 	&:focus {
-		background: $blue-medium;
-		background: rgba( 255, 255, 255, 0.15 );
+		background: lighten( $masterbar-color, 5% );
 		color: $white;
 		outline: 0;
 	}
@@ -213,7 +212,7 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__notifications-bubble {
-		border: solid 2px $blue-wordpress;
+		border: solid 2px $masterbar-color;
 		border-radius: 50%;
 		display: none;
 		font-size: 8px;
@@ -235,7 +234,7 @@ $autobar-height: 20px;
 	}
 
 	&:hover .masterbar__notifications-bubble {
-		border-color: #1a98ca;
+		border-color: lighten( $masterbar-color, 5% );
 	}
 
 	&.is-active .masterbar__notifications-bubble {
