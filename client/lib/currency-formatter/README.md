@@ -2,16 +2,20 @@ Currency Formatter
 ==========
 Given a currency code, this library will take in a number and display it as money correctly.
 
-Also See: https://github.com/smirzaei/currency-formatter
-
 Usage
 ==========
 ```javascript
 import currencyFormatter from 'lib/currency-formatter';
 
 const USD = currencyFormatter( 9800900.32, { code: 'USD' } ); // '$9,800,900.32'
-const EUR = currencyFormatter( 9800900.32, { code: 'EUR' } ); // '9 800 900,32 €'
+const EUR = currencyFormatter( 9800900.32, { code: 'EUR' } ); // '€9.800.900,32'
 const JPY = currencyFormatter( 9800900.32, { code: 'JPY' } ); // '¥9,800,900'
+```
+Or
+```
+import { getCurrencyObject } from 'lib/currency-formatter';
+const USD = getCurrencyObject( 9800900.32, { code: 'USD' } ); // { symbol: '$', dollars: '9,800,900', cents: '.32' }
+
 ```
 
 ## Option Properties
@@ -43,7 +47,7 @@ Overrides the currency symbol. Eg replacing 'A$' instead of '$'
 
 Overrides the decimal mark. eg: 9.99 vs 9,99
 
-### `thousand`
+### `grouping`
 
 <table>
 	<tr><th>Type</th><td>String</td></tr>
@@ -61,12 +65,3 @@ Overrides the thousands symbol grouping.
 </table>
 
 The number of decimal places to display.
-
-### `format`
-
-<table>
-	<tr><th>Type</th><td>String</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-</table>
-
-Use a custom format string eg. '%v %s' where %s is the symbol and %v is the value
