@@ -56,13 +56,13 @@ module.exports = React.createClass( {
 			published: this.translate( 'Published', { context: 'Filter label for pages list' } ),
 			drafts: this.translate( 'Drafts', { context: 'Filter label for pages list' } ),
 			scheduled: this.translate( 'Scheduled', { context: 'Filter label for pages list' } ),
-			trashed: this.translate( 'Trash', { context: 'Filter label for pages list' } )
+			trashed: this.translate( 'Trashed', { context: 'Filter label for pages list' } )
 		};
 		const searchStrings = {
-			published: this.translate( 'Search published…', { context: 'Search placeholder for pages list', textOnly: true } ),
-			drafts: this.translate( 'Search drafts…', { context: 'Search placeholder for pages list', textOnly: true } ),
-			scheduled: this.translate( 'Search scheduled…', { context: 'Search placeholder for pages list', textOnly: true } ),
-			trashed: this.translate( 'Search trash…', { context: 'Search placeholder for pages list', textOnly: true } )
+			published: this.translate( 'Search Published…', { context: 'Search placeholder for pages list', textOnly: true } ),
+			drafts: this.translate( 'Search Drafts…', { context: 'Search placeholder for pages list', textOnly: true } ),
+			scheduled: this.translate( 'Search Scheduled…', { context: 'Search placeholder for pages list', textOnly: true } ),
+			trashed: this.translate( 'Search Trashed…', { context: 'Search placeholder for pages list', textOnly: true } )
 		};
 		return (
 			<div className="main main-column pages" role="main">
