@@ -24,7 +24,7 @@
 }
 
 .web-preview__backdrop {
-	background: rgba( $gray, 0.9 );
+	background: rgba( darken( $gray, 52% ), 0.8 );
 	position: absolute;
 		top: 0;
 		left: 0;
@@ -38,7 +38,7 @@
 		0 1px 2px lighten( $gray-dark, 30% );
 	border-radius: 4px 4px 0 0;
 	position: absolute;
-		top: 47px;
+		top: 0;
 		left: 0;
 		right: 0;
 		bottom: 0;
