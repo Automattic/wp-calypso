@@ -181,13 +181,6 @@ const PostEditor = React.createClass( {
 
 	getInitialState() {
 		return {
-			...this.getDefaultState(),
-			isEditorInitialized: false
-		};
-	},
-
-	getDefaultState() {
-		return {
 			...this.getPostEditState(),
 			isSaving: false,
 			isPublishing: false,
@@ -219,6 +212,10 @@ const PostEditor = React.createClass( {
 		this.debouncedAutosave = debounce( throttle( this.autosave, 20000 ), 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
+
+		this.setState( {
+			isEditorInitialized: false
+		} );
 	},
 
 	componentDidMount: function() {
@@ -477,7 +474,7 @@ const PostEditor = React.createClass( {
 			this.setState( { loadingError } );
 		} else if ( ( PostEditStore.isNew() && ! this.state.isNew ) || PostEditStore.isLoading() ) {
 			// is new or loading
-			this.setState( this.getDefaultState(), function() {
+			this.setState( this.getInitialState(), function() {
 				this.refs.editor.setEditorContent( '' );
 			} );
 		} else {
