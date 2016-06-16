@@ -1,4 +1,9 @@
 /**
+ * External Dependencies
+ */
+import get from 'lodash/get';
+
+/**
  * Internal Dependencies
  */
 import createSelector from 'lib/create-selector';
@@ -43,7 +48,7 @@ export const getPlan = createSelector(
  */
 export function getPlanRawPrice( state, productId, isMonthly = false ) {
 	const plan = getPlan( state, productId );
-	if ( ! plan || ! ( plan.raw_price || plan.raw_price === 0 ) ) {
+	if ( get( plan, 'raw_price', -1 ) < 0 ) {
 		return null;
 	}
 	return isMonthly ? parseFloat( ( plan.raw_price / 12 ).toFixed( 2 ) ) : plan.raw_price;
