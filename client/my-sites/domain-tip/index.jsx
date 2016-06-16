@@ -14,6 +14,7 @@ import { getSite, getSiteSlug } from 'state/sites/selectors';
 import { getDomainsSuggestions, } from 'state/domains/suggestions/selectors';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
+import { DWPO } from 'state/current-user/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { FEATURE_CUSTOM_DOMAIN } from 'lib/plans/constants';
 import { isFreePlan } from 'lib/products-values';
@@ -101,7 +102,7 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		suggestions: queryObject && getDomainsSuggestions( state, queryObject ),
-		domainsWithPlansOnly: currentUserHasFlag( state, 'calypso_domains_with_plans_only' ),
+		domainsWithPlansOnly: currentUserHasFlag( state, DWPO ),
 		site: site,
 		siteSlug: siteSlug
 	};

@@ -19,6 +19,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
 	Notice = require( 'components/notice' ),
 	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
+	{ DWPO } = require( 'state/current-user/constants' ),
 	signupUtils = require( 'signup/utils' );
 
 const DomainsStep = React.createClass( {
@@ -260,6 +261,6 @@ const DomainsStep = React.createClass( {
 module.exports = connect( ( state ) => {
 	return {
 		// no user = DWPO
-		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, 'calypso_domains_with_plans_only' ) : true
+		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DWPO ) : true
 	};
 } ) ( DomainsStep );
