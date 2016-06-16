@@ -55,5 +55,5 @@ The code for Query Manager and all of its implementations are thoroughly documen
 
 The following pull requests can serve as background for this library:
 
-- #5135
-- #6022
+- [#5135](https://github.com/Automattic/wp-calypso/pull/5135)
+- [#6022](https://github.com/Automattic/wp-calypso/pull/6022)
