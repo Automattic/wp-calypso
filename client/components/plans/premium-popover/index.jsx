@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import omit from 'lodash/omit';
+import find from 'lodash/find';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -57,7 +58,7 @@ const PremiumPopover = React.createClass( {
 		} );
 	},
 	getSitePlan() {
-		return ( this.props.sitePlans.data || [] ).find( plan => plan.product_slug === 'value_bundle' );
+		return find( ( this.props.sitePlans.data || [] ), ( plan => plan.product_slug === 'value_bundle' ) );
 	},
 	componentDidUpdate( oldProps ) {
 		if ( oldProps.context !== this.props.context ) {
@@ -115,7 +116,7 @@ const PremiumPopover = React.createClass( {
 		}
 	},
 	render() {
-		const premiumPlan = this.props.plans.find( plan => plan.product_slug === 'value_bundle' );
+		const premiumPlan = find( this.props.plans, ( plan => plan.product_slug === 'value_bundle' ) );
 		return (
 			<Popover
 				{ ...omit( this.props, [ 'children', 'className', 'bindContextEvents' ] ) }
