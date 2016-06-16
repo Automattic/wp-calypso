@@ -33,7 +33,7 @@ import {
 const SEARCH_DEBOUNCE_TIME_MS = 500;
 const ITEM_HEIGHT = 25;
 
-const TermSelectorList = React.createClass( {
+const TermTreeSelectorList = React.createClass( {
 
 	propTypes: {
 		terms: PropTypes.array,
@@ -279,13 +279,13 @@ const TermSelectorList = React.createClass( {
 			<div
 				key={ itemId }
 				ref={ setItemRef }
-				className="term-selector__list-item">
+				className="term-tree-selector__list-item">
 				<label>
 					{ input }
-					<span className="term-selector__label">{ name }</span>
+					<span className="term-tree-selector__label">{ name }</span>
 				</label>
 				{ item.items && (
-					<div className="term-selector__nested-list">
+					<div className="term-tree-selector__nested-list">
 						{ item.items.map( this.renderItem ) }
 					</div>
 				) }
@@ -296,7 +296,7 @@ const TermSelectorList = React.createClass( {
 	renderRow( { index } ) {
 		if ( this.hasNoSearchResults() || this.hasNoTerms() ) {
 			return (
-				<div key="no-results" className="term-selector__list-item is-empty">
+				<div key="no-results" className="term-tree-selector__list-item is-empty">
 					{ ( this.hasNoSearchResults() || ! this.props.emptyMessage ) && (
 						<NoResults
 							createLink={ this.props.createLink } />
@@ -312,13 +312,13 @@ const TermSelectorList = React.createClass( {
 		}
 
 		return (
-			<div key="placeholder" className="term-selector__list-item is-placeholder">
+			<div key="placeholder" className="term-tree-selector__list-item is-placeholder">
 				<label>
 					<input
 						type={ this.props.multiple ? 'checkbox' : 'radio' }
 						disabled
-						className="term-selector__input" />
-					<span className="term-selector__label">
+						className="term-tree-selector__input" />
+					<span className="term-tree-selector__label">
 						{ this.translate( 'Loading…' ) }
 					</span>
 				</label>
@@ -331,7 +331,7 @@ const TermSelectorList = React.createClass( {
 		const isCompact = this.isCompact();
 		const showSearch = this.state.searchTerm.length > 0 || ! isCompact;
 		const { className, loading, siteId, taxonomy, query } = this.props;
-		const classes = classNames( 'term-selector', className, {
+		const classes = classNames( 'term-tree-selector', className, {
 			'is-loading': loading,
 			'is-compact': isCompact
 		} );
@@ -362,7 +362,7 @@ const TermSelectorList = React.createClass( {
 							estimatedRowSize={ ITEM_HEIGHT }
 							rowHeight={ this.getRowHeight }
 							rowRenderer={ this.renderRow }
-							className="term-selector__results" />
+							className="term-tree-selector__results" />
 					) }
 				</InfiniteLoader>
 			</div>
@@ -386,5 +386,5 @@ export default connect( ( state, ownProps ) => {
 		search,
 		query
 	};
-} )( localize( TermSelectorList ) );
+} )( localize( TermTreeSelectorList ) );
 
