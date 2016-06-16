@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
-import identity from 'lodash/identity';
 
 /**
  * Internal Dependencies
@@ -376,8 +375,7 @@ PlanFeaturesHeader.defaultProps = {
 	currencyCode: 'USD',
 	current: false,
 	onClick: noop,
-	popular: false,
-	translate: identity
+	popular: false
 };
 
 export default localize( PlanFeaturesHeader );
