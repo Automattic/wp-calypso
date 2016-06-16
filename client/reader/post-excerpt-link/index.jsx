@@ -1,49 +1,54 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' );
+ import React from 'react';
+ import classNames from 'classnames';
 
-// Internal Dependencies
-var stats = require( 'reader/stats' );
+/**
+ * Internal dependencies
+ */
+import {
+	recordPermalinkClick,
+	recordGaEvent
+} from 'reader/stats';
 
-var PostExcerptOnly = React.createClass( {
+const PostExcerptLink = React.createClass( {
 
 	propTypes: {
 		siteName: React.PropTypes.string,
 		postUrl: React.PropTypes.string
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			isShowingNotice: false
 		};
 	},
 
-	toggleNotice: function( event ) {
+	toggleNotice( event ) {
 		event.preventDefault();
 		this.setState( {
 			isShowingNotice: ! this.state.isShowingNotice
 		} );
 	},
 
-	recordClick: function() {
-		stats.recordPermalinkClick( 'summary_card_site_name' );
-		stats.recordGaEvent( 'Clicked Excerpt Notice Permalink' );
+	recordClick() {
+		recordPermalinkClick( 'summary_card_site_name' );
+		recordGaEvent( 'Clicked Excerpt Notice Permalink' );
 	},
 
-	render: function() {
-		var siteName = ( <a onClick={ this.recordClick } href={ this.props.postUrl } rel="external" target="_blank">
-				<span className="post-excerpt-only-site-name">{ this.props.siteName || '(untitled)' }</span>
-			</a> ),
-			classes = classnames( {
-				'post-excerpt-link': true,
-				'is-showing-notice': this.state.isShowingNotice
-			} );
-
+	render() {
 		if ( ! this.props.siteName || ! this.props.postUrl ) {
 			return null;
 		}
+
+		const siteName = ( <a onClick={ this.recordClick } href={ this.props.postUrl } rel="external" target="_blank">
+				<span className="post-excerpt-only-site-name">{ this.props.siteName || '(untitled)' }</span>
+			</a> );
+		const classes = classNames( {
+			'post-excerpt-link': true,
+			'is-showing-notice': this.state.isShowingNotice
+		} );
 
 		return (
 			<div className={ classes }>
@@ -57,4 +62,4 @@ var PostExcerptOnly = React.createClass( {
 	}
 } );
 
-module.exports = PostExcerptOnly;
+export default PostExcerptLink;
