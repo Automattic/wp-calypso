@@ -77,6 +77,29 @@ describe( 'selectors', () => {
 			const price = getPlanRawPrice( state, 1003, true );
 			expect( price ).to.eql( 8.25 );
 		} );
+		it( 'should return monthly price plan object when raw price is 0', () => {
+			const state = deepFreeze( {
+				plans: {
+					items: [ {
+						product_id: 1003,
+						raw_price: 0
+					} ]
+				}
+			} );
+			const price = getPlanRawPrice( state, 1003, true );
+			expect( price ).to.eql( 0 );
+		} );
+		it( 'should return null when raw price is missing', () => {
+			const state = deepFreeze( {
+				plans: {
+					items: [ {
+						product_id: 1003
+					} ]
+				}
+			} );
+			const price = getPlanRawPrice( state, 1003, true );
+			expect( price ).to.eql( null );
+		} );
 		it( 'should return null when plan is not available', () => {
 			const state = deepFreeze( {
 				plans: {
