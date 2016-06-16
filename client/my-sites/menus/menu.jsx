@@ -13,7 +13,7 @@ var protectForm = require( 'lib/mixins/protect-form' ),
 	classNames = require( 'classnames' ),
 	MenuName = require( './menu-name' ),
 	MenuItemList = require( './menu-item-list' ),
-	MenuDeleteButton = require ( './menu-delete-button' ),
+	MenuDeleteButton = require( './menu-delete-button' ),
 	MenuSaveButton = require( './menus-save-button' ),
 	MenuRevertButton = require( './menus-revert-button' ),
 	analytics = require( 'lib/analytics' );
@@ -71,7 +71,6 @@ var Menu = React.createClass( {
 		moveOp = this.getMoveOperation( x, y, item );
 
 		if ( moveOp && ! this.operationsEqual( moveOp, this.previousOp ) ) {
-
 			// prevent drop of item into its own subtree
 			if ( menuData.isAncestor( this.draggedItem, item ) ) {
 				return;
@@ -203,10 +202,11 @@ var Menu = React.createClass( {
 	},
 
 	renderAddTip: function() {
-		return ! this.getEditItem() ?
-			<div className="menus__add-item-footer-label">
+		return ! this.getEditItem()
+			? <div className="menus__add-item-footer-label">
 				{ this.translate( 'Add new item' ) }
-			</div> : null;
+			</div>
+			: null;
 	},
 
 	updateTitleEditing: function( editing ) {

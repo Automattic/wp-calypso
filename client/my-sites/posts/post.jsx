@@ -29,7 +29,7 @@ function recordEvent( eventAction ) {
 function checkPropsChange( nextProps, propArr ) {
 	var i, prop;
 
-	for( i = 0; i < propArr.length; i++ ) {
+	for ( i = 0; i < propArr.length; i++ ) {
 		prop = propArr[ i ];
 		if ( nextProps[ prop ] !== this.props[ prop ] ) {
 			return true;
@@ -38,7 +38,7 @@ function checkPropsChange( nextProps, propArr ) {
 	return false;
 }
 
-module.exports = React.createClass({
+module.exports = React.createClass( {
 
 	displayName: 'Post',
 
@@ -52,7 +52,6 @@ module.exports = React.createClass({
 	},
 
 	shouldComponentUpdate: function( nextProps, nextState ) {
-
 		var propsToCheck = [ 'ref', 'key', 'post', 'postImages', 'fullWidthPost', 'path' ];
 
 		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
@@ -63,7 +62,6 @@ module.exports = React.createClass({
 		}
 
 		return false;
-
 	},
 
 	analyticsEvents: {
@@ -146,7 +144,7 @@ module.exports = React.createClass({
 
 	getPostClass: function() {
 		var postClasses = classNames( {
-			'post': true,
+			post: true,
 			'is-protected': ( this.props.post.password ) ? true : false,
 			'show-more-options': this.state.showMoreOptions
 		} );
@@ -241,11 +239,10 @@ module.exports = React.createClass({
 			showLikes = ! isJetpack || site.isModuleActive( 'likes' ),
 			showStats = site.capabilities && site.capabilities.view_stats && ( ! isJetpack || site.isModuleActive( 'stats' ) ),
 			metaItems = [],
-			commentCountDisplay, commentHref, commentTitle, commentMeta,
+			commentCountDisplay, commentTitle, commentMeta,
 			likeCountDisplay, likeTitle, likeMeta, footerMetaItems;
 
 		if ( showComments ) {
-			commentHref = post.URL + '#comments';
 			if ( post.discussion && post.discussion.comment_count > 0 ) {
 				commentTitle = this.translate( '%(count)s Comment', '%(count)s Comments', {
 					count: post.discussion.comment_count,
@@ -254,13 +251,11 @@ module.exports = React.createClass({
 					}
 				} );
 				commentCountDisplay = this.numberFormat( post.discussion.comment_count );
+			} else if ( post.discussion.comments_open ) {
+				commentTitle = this.translate( 'Comments' );
 			} else {
-				if ( post.discussion.comments_open ) {
-					commentTitle = this.translate( 'Comments' );
-				} else {
-					// No comments recorded & they're disabled, don't show the icon
-					showComments = false;
-				}
+				// No comments recorded & they're disabled, don't show the icon
+				showComments = false;
 			}
 			if ( showComments ) {
 				commentMeta = (
@@ -268,7 +263,7 @@ module.exports = React.createClass({
 						className={
 							classNames( {
 								post__comments: true,
-								"is-empty": ! commentCountDisplay
+								'is-empty': ! commentCountDisplay
 							} )
 						}
 						title={ commentTitle }
@@ -291,13 +286,11 @@ module.exports = React.createClass({
 					}
 				} );
 				likeCountDisplay = this.numberFormat( post.like_count );
+			} else if ( post.likes_enabled ) {
+				likeTitle = this.translate( 'Likes' );
 			} else {
-				if ( post.likes_enabled ) {
-					likeTitle = this.translate( 'Likes' );
-				} else {
-					// No likes recorded & they're disabled, don't show the icon
-					showLikes = false;
-				}
+				// No likes recorded & they're disabled, don't show the icon
+				showLikes = false;
 			}
 			if ( showLikes ) {
 				likeMeta = (
@@ -305,7 +298,7 @@ module.exports = React.createClass({
 						href={ post.URL }
 						className={ classNames( {
 							post__likes: true,
-							"is-empty": ! likeCountDisplay
+							'is-empty': ! likeCountDisplay
 						} ) }
 						target="_blank"
 						title={ likeTitle }
@@ -328,7 +321,7 @@ module.exports = React.createClass({
 		if ( metaItems.length ) {
 			footerMetaItems = metaItems.map( function( item, i ) {
 				var itemKey = 'meta-' + postId + '-' + i;
-				return ( <li key={ itemKey }>{ item }</li> );
+				return ( <li key={ itemKey }><span>{ item }</span></li> );
 			}, this );
 
 			return ( <ul className="post__meta">{ footerMetaItems }</ul> );
@@ -377,7 +370,6 @@ module.exports = React.createClass({
 	},
 
 	render: function() {
-
 		var site = this.getSite();
 
 		return (
@@ -415,7 +407,6 @@ module.exports = React.createClass({
 				{ this.state.showComments && <Comments post={ this.props.post } onCommentsUpdate={ () => {} } /> }
 			</Card>
 		);
-
 	}
 
-});
+} );

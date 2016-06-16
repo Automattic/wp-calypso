@@ -10,7 +10,7 @@ var ReactDom = require( 'react-dom' ),
  */
 var analytics = require( 'lib/analytics' );
 
-var MenuName = React.createClass({
+var MenuName = React.createClass( {
 
 	getInitialState: function() {
 		return {
@@ -64,7 +64,7 @@ var MenuName = React.createClass({
 		} else {
 			menuEditable = (
 				<span className={ this.props.className } onTouchTap={ this.toggleEdit }>
-					{ this.state.value }
+					<span>{ this.state.value }</span>
 					<a className="edit" />
 				</span>
 			);
@@ -73,9 +73,9 @@ var MenuName = React.createClass({
 		return menuEditable;
 	}
 
-});
+} );
 
-var TemporaryInput = React.createClass({
+var TemporaryInput = React.createClass( {
 
 	getInitialState: function() {
 		return {
@@ -88,7 +88,7 @@ var TemporaryInput = React.createClass({
 		node.focus();
 		try {
 			node.setSelectionRange( 0, 999 );
-		} catch (e) {
+		} catch ( e ) {
 			debug( 'setSelectionRange failed' );
 		}
 	},
@@ -119,6 +119,6 @@ var TemporaryInput = React.createClass({
 				value={ this.state.value } />
 		);
 	}
-});
+} );
 
 module.exports = MenuName;

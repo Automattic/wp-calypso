@@ -50,7 +50,7 @@ class GlobalNotices extends Component {
 					<FormCheckbox
 						onChange={ this.toggleUseState }
 						checked={ this.state.useState } />
-					Use global application state
+					<span>Use global application state</span>
 				</label>
 				<ButtonGroup>
 					<Button onClick={ this.showSuccessNotice }>Show success notice</Button>

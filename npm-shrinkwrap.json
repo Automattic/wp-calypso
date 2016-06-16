@@ -460,9 +460,6 @@
     "balanced-match": {
       "version": "0.4.1"
     },
-    "base62": {
-      "version": "0.1.1"
-    },
     "Base64": {
       "version": "0.2.1"
     },
@@ -534,7 +531,7 @@
       "version": "1.0.5"
     },
     "brace-expansion": {
-      "version": "1.1.4"
+      "version": "1.1.5"
     },
     "braces": {
       "version": "1.8.5"
@@ -1089,9 +1086,6 @@
     },
     "entities": {
       "version": "1.0.0"
-    },
-    "envify": {
-      "version": "3.4.0"
     },
     "enzyme": {
       "version": "2.2.0"
@@ -1703,15 +1697,6 @@
         },
         "commander": {
           "version": "2.9.0"
-        },
-        "core-js": {
-          "version": "1.2.6"
-        },
-        "fbjs": {
-          "version": "0.8.3"
-        },
-        "react": {
-          "version": "15.1.0"
         }
       }
     },
@@ -2022,17 +2007,6 @@
     },
     "jstimezonedetect": {
       "version": "1.0.5"
-    },
-    "jstransform": {
-      "version": "10.1.0",
-      "dependencies": {
-        "esprima-fb": {
-          "version": "13001.1001.0-dev-harmony-fb"
-        },
-        "source-map": {
-          "version": "0.1.31"
-        }
-      }
     },
     "jstransformer": {
       "version": "0.0.3"
@@ -2717,6 +2691,9 @@
     "pinkie-promise": {
       "version": "2.0.1"
     },
+    "pkg-conf": {
+      "version": "1.1.3"
+    },
     "postcss": {
       "version": "5.0.21",
       "dependencies": {
@@ -2780,7 +2757,7 @@
       "version": "0.0.0"
     },
     "qrcode.react": {
-      "version": "0.5.2"
+      "version": "0.6.1"
     },
     "qs": {
       "version": "4.0.0"
@@ -2804,33 +2781,33 @@
       "version": "2.1.6"
     },
     "react": {
-      "version": "0.14.3",
+      "version": "15.1.0",
       "dependencies": {
         "core-js": {
           "version": "1.2.6"
         },
         "fbjs": {
-          "version": "0.3.2"
+          "version": "0.8.3"
         }
       }
     },
     "react-addons-create-fragment": {
-      "version": "0.14.3"
+      "version": "15.1.0"
     },
     "react-addons-css-transition-group": {
-      "version": "0.14.3"
+      "version": "15.1.0"
     },
     "react-addons-linked-state-mixin": {
-      "version": "0.14.3"
+      "version": "15.1.0"
     },
     "react-addons-shallow-compare": {
-      "version": "0.14.3"
+      "version": "15.1.0"
     },
     "react-addons-test-utils": {
-      "version": "0.14.3"
+      "version": "15.1.0"
     },
     "react-addons-update": {
-      "version": "0.14.3"
+      "version": "15.1.0"
     },
     "react-click-outside": {
       "version": "2.1.0"
@@ -2839,7 +2816,7 @@
       "version": "1.3.2"
     },
     "react-dom": {
-      "version": "0.14.3"
+      "version": "15.1.0"
     },
     "react-helmet": {
       "version": "2.2.0",
@@ -2884,7 +2861,7 @@
       }
     },
     "react-tap-event-plugin": {
-      "version": "0.2.1",
+      "version": "1.0.0",
       "dependencies": {
         "core-js": {
           "version": "1.2.6"
@@ -3033,6 +3010,9 @@
         }
       }
     },
+    "require-main-filename": {
+      "version": "1.0.1"
+    },
     "requireindex": {
       "version": "1.1.0"
     },
@@ -3108,10 +3088,22 @@
       "version": "1.11.1"
     },
     "sass-graph": {
-      "version": "2.1.1",
+      "version": "2.1.2",
       "dependencies": {
+        "camelcase": {
+          "version": "3.0.0"
+        },
+        "cliui": {
+          "version": "3.2.0"
+        },
         "glob": {
-          "version": "6.0.4"
+          "version": "7.0.3"
+        },
+        "window-size": {
+          "version": "0.2.0"
+        },
+        "yargs": {
+          "version": "4.7.1"
         }
       }
     },
@@ -3177,6 +3169,9 @@
           "version": "1.2.1"
         }
       }
+    },
+    "set-blocking": {
+      "version": "1.0.0"
     },
     "sha.js": {
       "version": "2.2.6"
@@ -3463,6 +3458,9 @@
     "swap-case": {
       "version": "1.1.2"
     },
+    "symbol": {
+      "version": "0.2.3"
+    },
     "symbol-tree": {
       "version": "3.1.4"
     },
@@ -3746,6 +3744,9 @@
     "wpcom-xhr-request": {
       "version": "0.5.0"
     },
+    "wrap-ansi": {
+      "version": "2.0.0"
+    },
     "wrappy": {
       "version": "1.0.2"
     },
@@ -3790,6 +3791,14 @@
     },
     "yargs": {
       "version": "3.10.0"
+    },
+    "yargs-parser": {
+      "version": "2.4.0",
+      "dependencies": {
+        "camelcase": {
+          "version": "2.1.1"
+        }
+      }
     }
   }
 }
