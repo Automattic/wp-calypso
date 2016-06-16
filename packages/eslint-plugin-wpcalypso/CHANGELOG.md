@@ -1,3 +1,7 @@
+#### v1.3.0 (June 16, 2016)
+
+- New rule: [`jsx-classname-namespace`](docs/rules/jsx-classname-namespace.md)
+
 #### v1.2.0 (June 9, 2016)
 
 - New rule: [`jsx-gridicon-size`](docs/rules/jsx-gridicon-size.md)

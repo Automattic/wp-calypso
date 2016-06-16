@@ -42,6 +42,7 @@ Then configure the rules you want to use under the rules section.
 
 ## Supported Rules
 
+- [`jsx-classname-namespace`](docs/rules/jsx-classname-namespace.md): Ensure JSX className adheres to CSS namespace guidelines
 - [`no-lodash-import`](docs/rules/no-lodash-import.md): Disallow importing from the root Lodash module
 - [`i18n-ellipsis`](docs/rules/i18n-ellipsis.md): Disallow using three dots in translate strings
 - [`i18n-no-variables`](docs/rules/i18n-no-variables.md): Disallow variables as translate strings
