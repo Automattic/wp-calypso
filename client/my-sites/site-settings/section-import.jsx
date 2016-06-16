@@ -15,7 +15,6 @@ import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import MediumImporter from 'my-sites/importer/importer-medium';
 import { fetchState } from 'lib/importer/actions';
 import { appStates, WORDPRESS, MEDIUM } from 'state/imports/constants';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 
 export default React.createClass( {
 	displayName: 'SiteSettingsImport',
@@ -112,26 +111,24 @@ export default React.createClass( {
 
 		return (
 			<div className="section-import">
-				<EmailVerificationGate>
-					<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
-					<CompactCard>
-						<header>
-							<h1 className="importer__section-title">{ this.translate( 'Import Another Site' ) }</h1>
-							<p className="importer__section-description">{ description }</p>
-						</header>
-					</CompactCard>
+				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
+				<CompactCard>
+					<header>
+						<h1 className="importer__section-title">{ this.translate( 'Import Another Site' ) }</h1>
+						<p className="importer__section-description">{ description }</p>
+					</header>
+				</CompactCard>
 
-					{ this.getImports( WORDPRESS ).map( ( importerStatus, key ) =>
-						<WordPressImporter { ...{ key, site, importerStatus } } /> ) }
+				{ this.getImports( WORDPRESS ).map( ( importerStatus, key ) =>
+					<WordPressImporter { ...{ key, site, importerStatus } } /> ) }
 
-					{ config.isEnabled( 'manage/import/medium' ) &&
-						this.getImports( MEDIUM ).map( ( importerStatus, key ) =>
-							<MediumImporter { ...{ key, site, importerStatus } } /> ) }
+				{ config.isEnabled( 'manage/import/medium' ) &&
+					this.getImports( MEDIUM ).map( ( importerStatus, key ) =>
+						<MediumImporter { ...{ key, site, importerStatus } } /> ) }
 
-					<CompactCard href={ adminUrl + 'import.php' } target="_blank">
-						{ this.translate( 'Other importers' ) }
-					</CompactCard>
-				</EmailVerificationGate>
+				<CompactCard href={ adminUrl + 'import.php' } target="_blank">
+					{ this.translate( 'Other importers' ) }
+				</CompactCard>
 			</div>
 		);
 	}
