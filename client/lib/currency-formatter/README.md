@@ -7,20 +7,28 @@ Usage
 ```javascript
 import currencyFormatter from 'lib/currency-formatter';
 
-const USD = currencyFormatter( 9800900.32, { code: 'USD' } ); // '$9,800,900.32'
-const EUR = currencyFormatter( 9800900.32, { code: 'EUR' } ); // '€9.800.900,32'
-const JPY = currencyFormatter( 9800900.32, { code: 'JPY' } ); // '¥9,800,900'
+const USD = currencyFormatter( 9800900.32, 'USD' ); // '$9,800,900.32'
+const EUR = currencyFormatter( 9800900.32, 'EUR' ); // '€9.800.900,32'
+const JPY = currencyFormatter( 9800900.32, 'JPY' ); // '¥9,800,900'
 ```
 
 Or
 
 ```javascript
 import { getCurrencyObject } from 'lib/currency-formatter';
-const USD = getCurrencyObject( 9800900.32, { code: 'USD' } ); // { symbol: '$', dollars: '9,800,900', cents: '.32' }
+const USD = getCurrencyObject( 9800900.32, 'USD' ); // { symbol: '$', integer: '9,800,900', fraction: '.32', sign: '' }
 
 ```
+## Parameters
 
-## Option Properties
+### `number`
+
+<table>
+	<tr><th>Type</th><td>Number</td></tr>
+	<tr><th>Required</th><td>Yes</td></tr>
+</table>
+
+The number to format.
 
 ### `code`
 
@@ -29,7 +37,9 @@ const USD = getCurrencyObject( 9800900.32, { code: 'USD' } ); // { symbol: '$', 
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The Currency Code
+The currency code to format with.
+
+## Option Properties
 
 ### `symbol`
 

@@ -47,7 +47,7 @@
 }
 
 .plan-features__price-currency-symbol,
-.plan-features__price-cents{
+.plan-features__price-fraction{
 	vertical-align: super;
 	font-size: 12px;
 }
@@ -56,17 +56,17 @@
 	color: $gray;
 }
 
-.plan-features__price-dollars,
-.plan-features__price-cents {
+.plan-features__price-integer,
+.plan-features__price-fraction {
 	color: $gray-dark;
 }
 
-.plan-features__price-dollars {
+.plan-features__price-integer {
 	margin: 0 3px;
 	font-weight: 400;
 }
 
-.plan-features__price-cents {
+.plan-features__price-fraction {
 	font-weight: 500;
 }
 

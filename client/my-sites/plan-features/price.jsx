@@ -12,17 +12,17 @@ export default class PlanFeaturesPrice extends Component {
 
 	render() {
 		const { currencyCode, rawPrice } = this.props;
-		const price = getCurrencyObject( rawPrice, { code: currencyCode } );
+		const price = getCurrencyObject( rawPrice, currencyCode );
 		return (
 			<h4 className="plan-features__price">
 				<sup className="plan-features__price-currency-symbol">
 					{ price.symbol }
 				</sup>
-				<span className="plan-features__price-dollars">
-					{ price.dollars }
+				<span className="plan-features__price-integer">
+					{ price.integer }
 				</span>
-				<sup className="plan-features__price-cents">
-					{ rawPrice > 0 && price.cents }
+				<sup className="plan-features__price-fraction">
+					{ rawPrice > 0 && price.fraction }
 				</sup>
 			</h4>
 		);

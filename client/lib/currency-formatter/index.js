@@ -5,42 +5,36 @@ import { numberFormat } from 'i18n-calypso';
 
 const CURRENCIES = {
 	USD: {
-		code: 'USD',
 		symbol: '$',
 		grouping: ',',
 		decimal: '.',
 		precision: 2
 	},
 	AUD: {
-		code: 'AUD',
 		symbol: 'A$',
 		grouping: ',',
 		decimal: '.',
 		precision: 2
 	},
 	CAD: {
-		code: 'CAD',
 		symbol: 'C$',
 		grouping: ',',
 		decimal: '.',
 		precision: 2
 	},
 	EUR: {
-		code: 'EUR',
 		symbol: '€',
 		grouping: '.',
 		decimal: ',',
 		precision: 2
 	},
 	GBP: {
-		code: 'GBP',
 		symbol: '£',
 		grouping: ',',
 		decimal: '.',
 		precision: 2
 	},
 	JPY: {
-		code: 'JPY',
 		symbol: '¥',
 		grouping: ',',
 		decimal: '.',
@@ -51,16 +45,16 @@ const CURRENCIES = {
 /**
  * Formats money with a given currency code
  * @param   {Number}     number              number to format
+ * @param   {String}     code                currency code e.g. 'USD'
  * @param   {Object}     options             options object
- * @param   {String}     options.code        currency code e.g. 'USD'
  * @param   {String}     options.decimal     decimal symbol e.g. ','
  * @param   {String}     options.grouping    thousands separator
  * @param   {Number}     options.precision   decimal digits
  * @param   {String}     options.symbol      currency symbol e.g. 'A$'
  * @returns {?String}                        A formatted string.
  */
-export default function formatCurrency( number, options = {} ) {
-	const currencyDefaults = getCurrencyDefaults( options.code );
+export default function formatCurrency( number, code, options = {} ) {
+	const currencyDefaults = getCurrencyDefaults( code );
 	if ( ! currencyDefaults || isNaN( number ) ) {
 		return null;
 	}
@@ -82,16 +76,16 @@ export default function formatCurrency( number, options = {} ) {
 /**
  * Returns a formatted price object.
  * @param   {Number}     number              number to format
+ * @param   {String}     code                currency code e.g. 'USD'
  * @param   {Object}     options             options object
- * @param   {String}     options.code        currency code e.g. 'USD'
  * @param   {String}     options.decimal     decimal symbol e.g. ','
  * @param   {String}     options.grouping    thousands separator
  * @param   {Number}     options.precision   decimal digits
  * @param   {String}     options.symbol      currency symbol e.g. 'A$'
- * @returns {?String}                        A formatted string e.g. { symbol:'$', dollars: '$99', cents: '.99', sign: '-' }
+ * @returns {?String}                        A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
  */
-export function getCurrencyObject( number, options = {} ) {
-	const currencyDefaults = getCurrencyDefaults( options.code );
+export function getCurrencyObject( number, code, options = {} ) {
+	const currencyDefaults = getCurrencyDefaults( code );
 	if ( ! currencyDefaults || isNaN( number ) ) {
 		return null;
 	}
@@ -103,14 +97,14 @@ export function getCurrencyObject( number, options = {} ) {
 	} = { ...currencyDefaults, ...options };
 	const sign = number < 0 ? '-' : '';
 	const absNumber = Math.abs( number );
-	const rawDollars = Math.floor( absNumber );
-	const dollars = numberFormat( rawDollars, {
+	const rawInteger = Math.floor( absNumber );
+	const integer = numberFormat( rawInteger, {
 		decimals: 0,
 		thousandsSep: grouping,
 		decPoint: decimal
 	} );
-	const cents = precision > 0
-		? numberFormat( absNumber - rawDollars, {
+	const fraction = precision > 0
+		? numberFormat( absNumber - rawInteger, {
 			decimals: precision,
 			thousandsSep: grouping,
 			decPoint: decimal
@@ -119,8 +113,8 @@ export function getCurrencyObject( number, options = {} ) {
 	return {
 		sign,
 		symbol,
-		dollars,
-		cents
+		integer,
+		fraction
 	};
 }
 
