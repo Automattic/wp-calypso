@@ -5,17 +5,15 @@ const assign = require( 'lodash/assign' ),
 // Internal dependencies
 const Dispatcher = require( 'dispatcher' ),
 	ACTION = require( './constants' ).action,
-	PostBatcher = require( './post-batch-fetcher' );
+	PostBatcher = require( './post-batch-fetcher' ),
+	wpcom = require( 'lib/wp' );
 
 var feedPostBatcher, blogPostBatcher, FeedPostActions;
 
 feedPostBatcher = new PostBatcher( {
-	BATCH_SIZE: 7,
-	apiVersion: '1.3',
-	buildUrl: function( postKey ) {
-		return '/read/feed/' + encodeURIComponent( postKey.feedId ) + '/posts/' + encodeURIComponent( postKey.postId );
+	makeRequest: function( postKey ) {
+		return wpcom.undocumented().readFeedPost( postKey );
 	},
-	resultKeyRegex: /\/read\/feed\/(\w+)\/posts\/(\w+)/,
 	onFetch: function( postKey ) {
 		Dispatcher.handleViewAction( {
 			type: ACTION.FETCH_FEED_POST,
@@ -38,12 +36,9 @@ feedPostBatcher = new PostBatcher( {
 } );
 
 blogPostBatcher = new PostBatcher( {
-	BATCH_SIZE: 7,
-	apiVersion: '1.1',
-	buildUrl: function( postKey ) {
-		return '/read/sites/' + encodeURIComponent( postKey.blogId ) + '/posts/' + encodeURIComponent( postKey.postId );
+	makeRequest: function( postKey ) {
+		return wpcom.undocumented().readSitePost( { site: postKey.blogId, postId: postKey.postId } );
 	},
-	resultKeyRegex: /\/read\/sites\/(\w+)\/posts\/(\w+)/,
 	onFetch: function( postKey ) {
 		Dispatcher.handleViewAction( {
 			type: ACTION.FETCH_FEED_POST,
@@ -92,7 +87,7 @@ FeedPostActions = {
 				data: {
 					post, source
 				}
-			} )
+			} );
 		} );
 	}
 };

@@ -34,9 +34,7 @@ assign( PostBatchFetcher.prototype, {
 	},
 
 	run: function() {
-		var toFetch = this.postsToFetch,
-			batch, batchSet,
-			index = 0;
+		const toFetch = this.postsToFetch;
 
 		this.batchQueued = false;
 
@@ -46,58 +44,27 @@ assign( PostBatchFetcher.prototype, {
 
 		toFetch.forEach( function( postKey ) {
 			var post;
+
 			postKey = postKey.toJS();
 			post = FeedPostStore.get( postKey );
+
 			if ( post && post._state !== 'minimal' ) {
 				throw new Error( post._state );
 			}
 
 			this.onFetch( postKey );
+
+			this.makeRequest( postKey ).then(
+				data => {
+					this.onPostReceived( postKey.blogId || postKey.feedId, postKey.postId, data );
+				},
+				err => {
+					this.onError( err, postKey );
+				}
+			);
 		}, this );
 
-		function addToBatch( postKey ) {
-			batch.add( this.buildUrl( postKey.toJS() ) );
-		}
-
-		while ( index < toFetch.size && ( batchSet = toFetch.slice( index, index + this.BATCH_SIZE ) ).size > 0 ) {
-			batch = wpcom.batch();
-			batchSet.forEach( addToBatch, this );
-			batch.run( { apiVersion: this.apiVersion }, this.receiveBatch.bind( this, batchSet ) );
-			index += this.BATCH_SIZE;
-		}
-
 		this.postsToFetch = Immutable.OrderedSet(); // eslint-disable-line new-cap
-	},
-
-	receiveBatch: function( batchSet, error, data ) {
-		if ( error ) {
-			batchSet.forEach( function( val ) {
-				this.onError( error, val );
-			}, this );
-			return;
-		}
-
-		if ( data ) {
-			forOwn( data, function( post, key ) {
-				// Batches return a map of URL requested to result. This regex pulls
-				// the container ID and post ID back out of each URL, so we know which
-				// post is which
-				var match = this.resultKeyRegex.exec( key ), containerId, postId;
-
-				if ( ! match ) {
-					return;
-				}
-
-				containerId = match[ 1 ];
-				postId = match[ 2 ];
-
-				if ( ! ( containerId && postId ) ) {
-					return;
-				}
-
-				this.onPostReceived( containerId, postId, post );
-			}.bind( this ) );
-		}
 	}
 } );
 
