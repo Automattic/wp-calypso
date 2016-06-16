@@ -107,7 +107,7 @@ const Plans = React.createClass( {
 		}
 
 		return (
-			<a href={ plansLink( '/plans', selectedSite, intervalType ) } className="show-monthly-plans-link" onClick={ this.recordShowMonthlyPlansClick }>
+			<a href={ plansLink( '/plans', selectedSite, intervalType ) } className="show-monthly-plans-link" onClick={ this.recordComparePlansClick }>
 				<Gridicon icon="refresh" size={ 18 } />
 				{ showString }
 			</a>
@@ -164,6 +164,7 @@ const Plans = React.createClass( {
 							cart={ this.props.cart }
 							selectedSite={ selectedSite } />
 
+						{ ! hasJpphpBundle && this.showMonthlyPlansLink() }
 						<QueryPlans />
 
 						<PlanList
@@ -176,7 +177,6 @@ const Plans = React.createClass( {
 							isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST } />
 
 						{ ! hasJpphpBundle && this.comparePlansLink() }
-						{ ! hasJpphpBundle && this.showMonthlyPlansLink() }
 					</div>
 				</Main>
 			</div>
