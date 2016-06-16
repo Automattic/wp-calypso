@@ -36,6 +36,7 @@ var productsValues = require( 'lib/products-values' ),
 	isUnlimitedSpace = productsValues.isUnlimitedSpace,
 	isUnlimitedThemes = productsValues.isUnlimitedThemes,
 	isVideoPress = productsValues.isVideoPress,
+	isJetpackPlan = productsValues.isJetpackPlan,
 	sortProducts = require( 'lib/products-values/sort' ),
 	PLAN_PERSONAL = require( 'lib/plans/constants' ).PLAN_PERSONAL;
 
@@ -91,6 +92,11 @@ function cartItemShouldReplaceCart( cartItem, cart ) {
 	if ( productsValues.isFreeTrial( cartItem ) || hasFreeTrial( cart ) ) {
 		// adding a free trial plan to your cart replaces the cart
 		// adding another product to a cart containing a free trial removes the free trial
+		return true;
+	}
+
+	if ( isJetpackPlan( cartItem ) ) {
+		// adding a jetpack bundle should replace the cart
 		return true;
 	}
 
