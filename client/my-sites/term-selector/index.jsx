@@ -52,12 +52,7 @@ export default React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		const isChangingQuery = [
-			'taxonomy',
-			'multiple'
-		].some( ( prop ) => nextProps[ prop ] !== this.props[ prop ] );
-
-		if ( isChangingQuery ) {
+		if ( nextProps.taxonomy !== this.props.taxonomy ) {
 			this.setState( { page: 1 } );
 		}
 	},
