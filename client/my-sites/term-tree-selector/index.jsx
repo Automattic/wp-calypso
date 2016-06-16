@@ -33,7 +33,6 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			page: 1,
 			search: ''
 		};
 	},
@@ -47,24 +46,12 @@ export default React.createClass( {
 		}
 	},
 
-	incrementPage() {
-		this.setState( {
-			page: this.state.page + 1
-		} );
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.taxonomy !== this.props.taxonomy ) {
-			this.setState( { page: 1 } );
-		}
-	},
-
 	render() {
 		const { className, taxonomy, onChange, selected, createLink } = this.props;
 
 		const classes = classNames( className );
-		const { page, search } = this.state;
-		const query = { page, search };
+		const { search } = this.state;
+		const query = { search };
 
 		return (
 			<div className={ classes } ref="wrapper">
@@ -72,7 +59,6 @@ export default React.createClass( {
 					taxonomy={ taxonomy }
 					onSearch={ this.onSearch }
 					onChange={ onChange }
-					onNextPage={ this.incrementPage }
 					query={ query }
 					selected={ selected }
 					createLink={ createLink }

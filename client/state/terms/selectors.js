@@ -26,6 +26,28 @@ export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
 }
 
 /**
+ * Returns true if currently requesting terms for a query, excluding all known
+ * queried pages, or false otherwise.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  taxonomy Taxonomy slug
+ * @param  {Object}  query    Terms query object
+ * @return {Boolean}           Terms for the query
+ */
+export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ) {
+	const lastPage = getTermsLastPageForQuery( state, siteId, taxonomy, query );
+	if ( null === lastPage ) {
+		return false;
+	}
+
+	return range( 1, lastPage + 1 ).some( ( page ) => {
+		const termsQuery = { ...query, page };
+		return isRequestingTermsForQuery( state, siteId, taxonomy, termsQuery );
+	} );
+}
+
+/**
  * Returns an array of terms for the taxonomies query, or null if no terms have been
  * received.
  *

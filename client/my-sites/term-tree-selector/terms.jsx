@@ -11,6 +11,7 @@ import debounce from 'lodash/debounce';
 import range from 'lodash/range';
 import VirtualScroll from 'react-virtualized/VirtualScroll';
 import InfiniteLoader from 'react-virtualized/InfiniteLoader';
+import difference from 'lodash/difference';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ import Search from './search';
 import QueryTerms from 'components/data/query-terms';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
-	isRequestingTermsForQuery,
+	isRequestingTermsForQueryIgnoringPage,
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
 	getTermsHierarchyForQueryIgnoringPage
@@ -31,6 +32,8 @@ import {
  * Constants
  */
 const SEARCH_DEBOUNCE_TIME_MS = 500;
+const DEFAULT_TERMS_PER_PAGE = 100;
+const LOAD_OFFSET = 10;
 const ITEM_HEIGHT = 25;
 
 const TermTreeSelectorList = React.createClass( {
@@ -45,15 +48,15 @@ const TermTreeSelectorList = React.createClass( {
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 		defaultTermId: PropTypes.number,
-		lastPage: PropTypes.bool,
+		lastPage: PropTypes.number,
 		onSearch: PropTypes.func,
-		onChange: PropTypes.func,
-		onNextPage: PropTypes.func
+		onChange: PropTypes.func
 	},
 
 	getInitialState() {
 		return {
-			searchTerm: ''
+			searchTerm: '',
+			requestedPages: []
 		};
 	},
 
@@ -77,6 +80,15 @@ const TermTreeSelectorList = React.createClass( {
 		this.debouncedSearch = debounce( () => {
 			this.props.onSearch( this.state.searchTerm );
 		}, SEARCH_DEBOUNCE_TIME_MS );
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.taxonomy !== this.props.taxonomy ) {
+			this.setState( {
+				searchTerm: '',
+				requestedPages: []
+			} );
+		}
 	},
 
 	componentDidUpdate( prevProps ) {
@@ -111,6 +123,30 @@ const TermTreeSelectorList = React.createClass( {
 		}
 
 		this.setState( { selectorRef } );
+	},
+
+	getPageForIndex( index ) {
+		const { query, lastPage } = this.props;
+		const perPage = query.number || DEFAULT_TERMS_PER_PAGE;
+		const page = Math.ceil( index / perPage );
+
+		return Math.max( Math.min( page, lastPage || Infinity ), 1 );
+	},
+
+	setRequestedPages( { startIndex, stopIndex } ) {
+		const { requestedPages } = this.state;
+		const pagesToRequest = difference( range(
+			this.getPageForIndex( startIndex - LOAD_OFFSET ),
+			this.getPageForIndex( stopIndex + LOAD_OFFSET ) + 1
+		), requestedPages );
+
+		if ( ! pagesToRequest.length ) {
+			return;
+		}
+
+		this.setState( {
+			requestedPages: requestedPages.concat( pagesToRequest )
+		} );
 	},
 
 	setItemRef( item, itemRef ) {
@@ -202,19 +238,11 @@ const TermTreeSelectorList = React.createClass( {
 			count += this.props.termsHierarchy.length;
 		}
 
-		if ( ! this.props.lastPage || this.hasNoSearchResults() ) {
+		if ( ! this.props.lastPage || this.hasNoSearchResults() || this.props.loading ) {
 			count += 1;
 		}
 
 		return count;
-	},
-
-	maybeFetchNextPage() {
-		if ( this.props.loading || ! this.props.terms ) {
-			return;
-		}
-
-		this.props.onNextPage();
 	},
 
 	onSearch( event ) {
@@ -311,6 +339,10 @@ const TermTreeSelectorList = React.createClass( {
 			return this.renderItem( item );
 		}
 
+		if ( ! this.props.loading && this.props.lastPage ) {
+			return;
+		}
+
 		return (
 			<div key="placeholder" className="term-tree-selector__list-item is-placeholder">
 				<label>
@@ -338,10 +370,13 @@ const TermTreeSelectorList = React.createClass( {
 
 		return (
 			<div ref={ this.setSelectorRef } className={ classes }>
-				<QueryTerms
-					siteId={ siteId }
-					taxonomy={ taxonomy }
-					query={ query } />
+				{ this.state.requestedPages.map( ( page ) => (
+					<QueryTerms
+						key={ `query-${ page }` }
+						siteId={ siteId }
+						taxonomy={ taxonomy }
+						query={ { ...query, page } } />
+				) ) }
 				{ showSearch && (
 					<Search
 						searchTerm={ this.state.searchTerm }
@@ -350,14 +385,14 @@ const TermTreeSelectorList = React.createClass( {
 				<InfiniteLoader
 					ref="loader"
 					isRowLoaded={ this.isRowLoaded }
-					loadMoreRows={ this.maybeFetchNextPage }
+					loadMoreRows={ this.setRequestedPages }
 					rowCount={ rowCount }>
-					{ ( { onRowsRendered, registerChild } ) => (
+					{ ( { registerChild } ) => (
 						<VirtualScroll
 							ref={ registerChild }
 							width={ this.getResultsWidth() }
 							height={ isCompact ? this.getCompactContainerHeight() : 300 }
-							onRowsRendered={ onRowsRendered }
+							onRowsRendered={ this.setRequestedPages }
 							rowCount={ rowCount }
 							estimatedRowSize={ ITEM_HEIGHT }
 							rowHeight={ this.getRowHeight }
@@ -374,14 +409,11 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const { taxonomy, search, query } = ownProps;
 
-	const lastPageNumber = getTermsLastPageForQuery( state, siteId, taxonomy, query );
-	const lastPage = lastPageNumber && ( lastPageNumber === query.page );
-
 	return {
-		loading: isRequestingTermsForQuery( state, siteId, taxonomy, query ),
+		loading: isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		terms: getTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		termsHierarchy: getTermsHierarchyForQueryIgnoringPage( state, siteId, taxonomy, query ),
-		lastPage,
+		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
 		siteId,
 		search,
 		query

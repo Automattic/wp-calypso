@@ -13,7 +13,8 @@ import {
 	getTermsForQueryIgnoringPage,
 	getTermsHierarchyForQueryIgnoringPage,
 	getTermsLastPageForQuery,
-	isRequestingTermsForQuery
+	isRequestingTermsForQuery,
+	isRequestingTermsForQueryIgnoringPage
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -61,6 +62,66 @@ describe( 'selectors', () => {
 					}
 				}
 			}, 2916284, 'category', { search: 'ribs' } );
+
+			expect( requesting ).to.be.true;
+		} );
+	} );
+
+	describe( 'isRequestingTermsForQueryIgnoringPage()', () => {
+		it( 'should return false if no request exists', () => {
+			const requesting = isRequestingTermsForQueryIgnoringPage( {
+				terms: {
+					queryRequests: {}
+				}
+			}, 2916284, 'categories', {} );
+
+			expect( requesting ).to.be.false;
+		} );
+
+		it( 'should return false if query is not requesting', () => {
+			const requesting = isRequestingTermsForQueryIgnoringPage( {
+				terms: {
+					queriesLastPage: {
+						2916284: {
+							categories: {
+								'{"search":"ribs"}': 1
+							}
+						}
+					},
+					queryRequests: {
+						2916284: {
+							categories: {
+								'{"search":"ribs","page":"1"}': false
+							}
+						}
+					}
+				}
+			}, 2916284, 'categories', { search: 'ribs', page: 1 } );
+
+			expect( requesting ).to.be.false;
+		} );
+
+		it( 'should return true if any query is in progress', () => {
+			const requesting = isRequestingTermsForQueryIgnoringPage( {
+				terms: {
+					queriesLastPage: {
+						2916284: {
+							categories: {
+								'{"search":"ribs"}': 3
+							}
+						}
+					},
+					queryRequests: {
+						2916284: {
+							categories: {
+								'{"search":"ribs","page":1}': false,
+								'{"search":"ribs","page":2}': false,
+								'{"search":"ribs","page":3}': true
+							}
+						}
+					}
+				}
+			}, 2916284, 'categories', { search: 'ribs', page: 1 } );
 
 			expect( requesting ).to.be.true;
 		} );
