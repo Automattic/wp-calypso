@@ -65,7 +65,9 @@ function advanced( editor ) {
 
 			this.innerHtml( ReactDomServer.renderToStaticMarkup(
 				<button type="button" role="presentation" tabIndex="-1">
-					<Gridicon icon="ellipsis" size={ 28 } nonStandardSize />
+					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+					<Gridicon icon="ellipsis" size={ 28 } />
+					{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 				</button>
 			) );
 		}

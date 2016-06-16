@@ -296,7 +296,9 @@ function mediaButton( editor ) {
 		onPostRender: function() {
 			this.innerHtml( ReactDomServer.renderToStaticMarkup(
 				<button type="button" role="presentation" tabIndex="-1">
-					<Gridicon icon="image-multiple" size={ 20 } nonStandardSize />
+					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+					<Gridicon icon="image-multiple" size={ 20 } />
+					{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 				</button>
 			) );
 		}

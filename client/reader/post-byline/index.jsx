@@ -66,6 +66,7 @@ var PostByline = React.createClass( {
 			siteName = this.translate( '(no title)' );
 		}
 
+		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<ul className="reader-post-byline">
 			{ post.author && post.author.name ?
@@ -77,14 +78,15 @@ var PostByline = React.createClass( {
 					<a className="reader-post-byline__date-link"
 						onClick={ this.recordDateClick }
 						href={ post.URL }
-						target="_blank"><PostTime date={ post.date } />{ this.props.icon ? <Gridicon icon="external" nonStandardSize size={ 14 } /> : null }</a>
+						target="_blank"><PostTime date={ post.date } />{ this.props.icon ? <Gridicon icon="external" size={ 14 } /> : null }</a>
 				</li> : null }
 			{ primaryTag ?
 				<li className="reader-post-byline__tag">
-					<a href={ '/tag/' + primaryTag.slug } className="ignore-click" onClick={ this.recordTagClick }><Gridicon icon="tag" nonStandardSize size={ 16 } /> { primaryTag.display_name }</a>
+					<a href={ '/tag/' + primaryTag.slug } className="ignore-click" onClick={ this.recordTagClick }><Gridicon icon="tag" size={ 16 } /> { primaryTag.display_name }</a>
 				</li> : null }
 			</ul>
 		);
+		/* eslint-enable wpcalypso/jsx-gridicon-size */
 	}
 
 } );
