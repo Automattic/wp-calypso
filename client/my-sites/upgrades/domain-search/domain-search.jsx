@@ -15,6 +15,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	FreeTrialNotice = require( './free-trial-notice' ),
 	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
 	{ currentUserHasFlag } = require( 'state/current-user/selectors' ),
+	{ DWPO } = require( 'state/current-user/constants' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
@@ -155,7 +156,7 @@ module.exports = connect(
 	function( state, props ) {
 		return {
 			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() ),
-			domainsWithPlansOnly: currentUserHasFlag( state, 'calypso_domains_with_plans_only' )
+			domainsWithPlansOnly: currentUserHasFlag( state, DWPO )
 		};
 	},
 	function( dispatch ) {
