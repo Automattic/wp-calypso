@@ -4,6 +4,7 @@
  * External dependencies
  */
 var assign = require( 'lodash/assign' ),
+	endsWith = require( 'lodash/endsWith' ),
 	difference = require( 'lodash/difference' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	pick = require( 'lodash/pick' );
@@ -318,6 +319,13 @@ function isUnlimitedThemes( product ) {
 	return 'unlimited_themes' === product.product_slug;
 }
 
+function isWordPressDomain( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return endsWith( product.domain_name, '.wordpress.com' );
+}
+
 function whitelistAttributes( product ) {
 	return pick( product, Object.keys( schema.properties ) );
 }
@@ -368,5 +376,6 @@ module.exports = {
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
+	isWordPressDomain,
 	whitelistAttributes
 };
