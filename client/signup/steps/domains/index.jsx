@@ -20,7 +20,11 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	Notice = require( 'components/notice' ),
 	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	{ DWPO } = require( 'state/current-user/constants' ),
+	analyticsMixin = require( 'lib/mixins/analytics' ),
 	signupUtils = require( 'signup/utils' );
+
+const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
+	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
 
 const DomainsStep = React.createClass( {
 	showGoogleApps: function() {
@@ -56,6 +60,8 @@ const DomainsStep = React.createClass( {
 			stepName: this.props.stepName,
 			suggestion
 		};
+
+		registerDomainAnalytics.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'signup' );
 
 		if ( this.props.step.suggestion &&
 			this.props.step.suggestion.domain_name !== suggestion.domain_name ) {
@@ -133,6 +139,8 @@ const DomainsStep = React.createClass( {
 	handleAddMapping: function( sectionName, domain, state ) {
 		const domainItem = cartItems.domainMapping( { domain } );
 		const isPurchasingItem = true;
+
+		mapDomainAnalytics.recordEvent( 'addDomainButtonClick', domain, 'signup' );
 
 		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain mapping' ),
