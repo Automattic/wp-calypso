@@ -63,6 +63,7 @@ function addItems( items ) {
 	if ( shouldBundleWithPremium ) {
 		items = [ cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ) ].concat( items );
 	}
+
 	const extendedItems = items.map( ( item ) => {
 		const extra = assign( {}, item.extra, {
 			context: 'calypstore',
