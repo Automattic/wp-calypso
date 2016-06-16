@@ -1,148 +1,312 @@
-.signup-processing-screen__steps {
-	margin: 0 auto;
-	min-width: 200px;
-	max-width: 450px;
-	min-height: 140px + 48px;
-	padding-left: 188px;
-	position: relative;
-
-	@include breakpoint( "<660px" ) {
-		padding-left: 0;
-	}
-}
-
-.signup-processing-screen__illustration {
-	width: 140px;
-	height: 140px;
-	margin: 0 auto;
-	display: block;
-	position: absolute;
-		top: 24px;
-		left: 24px;
-
-	@include breakpoint( "<660px" ) {
-		position: relative;
-			top: auto;
-			left: auto;
-		margin-bottom: 32px;
-	}
-}
-
-.signup-processing-screen__processing-step {
-	color: darken( $gray, 20% );
-	font-size: 16px;
-	transition: all .5s ease-in-out;
-	margin-bottom: 16px;
-	position: relative;
-	padding-left: 32px;
-
-	@include breakpoint( "<660px" ) {
-		margin-left: 24px;
-		margin-right: 24px;
-	}
-
-	&:last-child {
-		margin-bottom: 0;
-
-		@include breakpoint( "<660px" ) {
-			margin-bottom: 24px;
-		}
-	}
-
-	&:before {
-		position: absolute;
-			top: 0;
-			left: 0;
-		display: block;
-		content: '';
-		height: 24px;
-		width: 24px;
-		transform: scale( 0.7 );
-	}
-
-	&.is-pending {
-		color: lighten( $gray, 10 );
-
-		&:before {
-			transform: scale( 0.3 );
-			background: $gray;
-			border-radius: 100%;
-		}
-	}
-
-	&.is-processing {
-		font-weight: bold;
-		animation: pulse 3s infinite ease-in-out;
-
-		&:before {
-			//background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3QgeD0iMCIgZmlsbD0ibm9uZSIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ii8+PHBhdGggZmlsbD0iIzRmNzQ4ZSIgZD0iTTIzLjUgMTMuNWwtMy4wODYgMy4wODZMMTkgMThsLTQuNS00LjUgMS40MTQtMS40MTRMMTggMTQuMTcyVjEyYzAtMy4zMDgtMi42OTItNi02LTZWNGM0LjQxOCAwIDggMy41ODIgOCA4djIuMTcybDIuMDg2LTIuMDg2TDIzLjUgMTMuNXpNNiAxMlY5LjgyOGwyLjA4NiAyLjA4Nkw5LjUgMTAuNSA1IDYgMy41ODYgNy40MTQuNSAxMC41bDEuNDE0IDEuNDE0TDQgOS44MjhWMTJjMCA0LjQxOCAzLjU4MiA4IDggOHYtMmMtMy4zMDggMC02LTIuNjkyLTYtNnoiLz48L3N2Zz4=);
-			animation: processing 2.5s infinite linear;
-			background: $white;
-			border-radius: 100%;
-			z-index: 1;
-			box-shadow: 0 0 0 1px lighten( $gray, 20 ),
-				0 0 8px 1px $blue-medium;
-		}
-
-		&:after {
-			position: absolute;
-				top: 0;
-				left: 0;
-			display: block;
-			content: '';
-			height: 24px;
-			width: 24px;
-			border-radius: 100%;
-			opacity: 0.3;
-			background: lighten( $gray, 10 );
-			animation: processing-bg 2s infinite linear;
-		}
-	}
-
-	&.is-complete {
-		color: $alert-green;
-
-		&:before {
-			background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3QgeD0iMCIgZmlsbD0idHJhbnNwYXJlbnQiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIvPjxwYXRoIGZpbGw9IiM0QUI4NjUiIGQ9Ik05IDE5LjQxNGwtNi43MDctNi43MDcgMS40MTQtMS40MTRMOSAxNi41ODYgMjAuMjkzIDUuMjkzbDEuNDE0IDEuNDE0Ii8+PC9zdmc+);
-		}
-	}
-}
-
-@keyframes processing {
-	0%, 100% {
-		transform: scale( 0.3 );
-	}
-	60% {
-		transform: scale( 0.5 );
-	}
-}
-
-@keyframes processing-bg {
-	0%, 100% {
-		transform: scale( 0.6 );
-	}
-	50% {
-		transform: scale( 1 );
-	}
-}
-
-@keyframes spin {
+/* Gridicon Floaties */
+@keyframes floating {
 	0% {
-		transform: rotate(0);
+		opacity: 0;
+		transform: scale( 0.8 ) translateY( 0 ) translateX( 0 ) rotate( 0 );
+	}
+	70% {
+		opacity: 1;
+		transform: scale( 1 ) translateY( 30px ) translateX( 30px ) rotate( -20deg );
 	}
 	100% {
-		transform: rotate(360deg);
+		opacity: 0;
+		transform: scale( 0.8 ) translateY( 0 ) translateX( 0 ) rotate( 0 );
 	}
 }
 
-@keyframes pulse {
-	0%, 80%, 100% {
-		opacity: 0.75;
+@keyframes focus {
+	0%, 100% {
+		opacity: 0.1;
+		filter: blur( 1px );
 	}
-	40% {
-		opacity: 1;
+	70% {
+		opacity: 0.2;
+		filter: blur( 4px );
 	}
 }
+
+.signup-processing-screen__floaties {
+	pointer-events: none;
+	position: fixed;
+		top: 40px;
+		right: 0;
+		bottom: 0;
+	max-height: calc( 100vw - 30px );
+	opacity: 0.1;
+	animation: focus 5s infinite ease-in-out;
+
+	@include breakpoint( ">660px" ) {
+		left: 0;
+	}
+
+	@include breakpoint( "<660px" ) {
+		transform: scale(0.8);
+		left: 130px;
+		top: -120px;
+	}
+
+	@include breakpoint( ">960px" ) {
+		transform: scale( 1.2 );
+	}
+
+	@include breakpoint( ">1040px" ) {
+		transform: scale( 1.5 );
+	}
+
+	.gridicon {
+		fill: $gray;
+		position: absolute;
+		height: auto;
+		width: auto;
+		opacity: 0;
+		transform: scale( 0.8 );
+		animation: floating 10s infinite ease-in-out;
+	}
+	.gridicons-add {
+		top: 0px;
+		left: calc( 50% - 320px);
+		height: 150px;
+		width: 150px;
+	}
+	.gridicons-aside {
+		top: 150px;
+		left: calc( 50% + 310px);
+		height: 70px;
+		width: 70px;
+		animation-delay: random(10) + s;
+	}
+	.gridicons-attachment {
+		height: 60px;
+		width: 60px;
+		top: 70px;
+		left: calc(50% + 220px);
+		animation-delay: random(10) + s;
+	}
+	.gridicons-audio {
+		height: 80px;
+		width: 80px;
+		top: 170px;
+		left: calc(50% - 220px );
+		transform: rotate( -30deg );
+		animation-delay: random(10) + s;
+	}
+	.gridicons-bell {
+		height: 120px;
+		width: 120px;
+		top: 10px;
+		left: calc( 50% + 290px);
+		animation-delay: random(10) + s;
+	}
+	.gridicons-book {
+		top: 340px;
+		left: calc(50% - 300px);
+		height: 100px;
+		width: 100px;
+		animation-delay: random(10) + s;
+	}
+	.gridicons-camera {
+		top: 300px;
+		left: calc(50% + 200px );
+		height: 160px;
+		width: 160px;
+		transform: rotate( -10deg );
+		animation-delay: random(10) + s;
+	}
+	.gridicons-comment {
+		left: calc( 50% + 130px );
+		top: 167px;
+		height: 140px;
+		width: 140px;
+		transform: rotate( 12deg );
+	}
+	.gridicons-globe {
+		height: 100px;
+		width: 100px;
+		top: 220px;
+		left: calc(50% - 330px );
+		animation-delay: random(10) + s;
+	}
+	.gridicons-pencil {
+		height: 220px;
+		width: 220px;
+		top: -110px;
+		left: calc(50% + 110px );
+		animation-delay: random(10) + s;
+	}
+	.gridicons-phone {
+		height: 80px;
+		width: 80px;
+		top: 130px;
+		left: calc(50% - 390px);
+		animation-delay: random(10) + s;
+	}
+	.gridicons-reader {
+		height: 130px;
+		width: 130px;
+		top: 360px;
+		left: calc(50% - 170px );
+		transform: rotate( 12deg );
+		animation-delay: random(10) + s;
+	}
+	.gridicons-star {
+		height: 90px;
+		width: 90px;
+		top: 380px;
+		left: calc(50% + 60px);
+	}
+	.gridicons-video {
+		top: 245px;
+		left: calc(50% - 160px);
+		animation-delay: random(10) + s;
+	}
+	.gridicons-align-image-right {
+		top: 280px;
+		left: calc(50% + 90px);
+		animation-delay: random(10) + s;
+	}
+	.gridicons-bookmark {
+		top: 460px;
+		height: 110px;
+		width: 110px;
+		left: calc(50% - 440px);
+		animation-delay: random(10) + s;
+	}
+	.gridicons-briefcase {
+		top: 320px;
+		height: 80px;
+		width: 80px;
+		left: calc(50% - 450px);
+		animation-delay: random(10) + s;
+	}
+	.gridicons-calendar {
+		top: 460px;
+		left: calc(50% + 300px);
+		height: 80px;
+		width: 80px;
+		animation-delay: random(10) + s;
+	}
+	.gridicons-clipboard {
+		top: 240px;
+		left: calc(50% + 290px);
+		height: 50px;
+		animation-delay: random(10) + s;
+	}
+	.gridicons-cloud-upload {
+		top: 180px;
+		left: calc(50% - 280px);
+		height: 40px;
+		width: 40px;
+		animation-delay: random(10) + s;
+	}
+	.gridicons-cog {
+		top: 110px;
+		left: calc(50% + 160px);
+		height: 40px;
+		width: 40px;
+		animation-delay: random(10) + s;
+	}
+	.gridicons-customize {
+		top: 240px;
+		height: 40px;
+		width: 40px;
+		left: calc(50% - 400px);
+		animation-delay: random(10) + s;
+	}
+	.gridicons-help {
+		top: 460px;
+		left: calc(50% + 160px );
+		height: 90px;
+		width: 90px;
+		animation-delay: random(10) + s;
+	}
+	.gridicons-link {
+		top: 60px;
+		left: calc(50% - 160px);
+		height: 50px;
+		width: 50px;
+		transform: rotate(-45deg);
+		animation-delay: random(10) + s;
+	}
+	.gridicons-lock {
+		top: 60px;
+		left: calc(50% - 400px);
+		height: 50px;
+		width: 50px;
+		animation-delay: random(10) + s;
+	}
+	.gridicons-pages {
+		top: 70px;
+		left: calc(50% + 70px);
+		height: 50px;
+		width: 50px;
+		animation-delay: random(10) + s;
+	}
+	.gridicons-share {
+		top: 280px;
+		left: calc(50% + 360px);
+		animation-delay: random(10) + s;
+	}
+	.gridicons-stats {
+		top: 470px;
+		left: calc(50% - 270px);
+		height: 80px;
+		width: 80px;
+		animation-delay: random(10) + s;
+	}
+}
+
+.signup-processing__content {
+	position: relative;
+	z-index: 1;
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+/* WP.com Logo */
+.signup-process-screen__wpcom-logo {
+	height: 120px;
+	width: 120px;
+	display: block;
+	margin: 10px auto 40px auto;
+	border-radius: 100%;
+	box-shadow: 0 0 10px 10px $gray-light;
+	fill: lighten( $gray, 20 );
+	background: rgba( $gray-light, 0.8 );
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 48px;
+	}
+}
+
+.signup-process-screen__title {
+	margin: 0;
+	padding: 0 16px;
+	text-align: center;
+}
+
+/* Continue Button */
+@keyframes pulse {
+	0%, 100% {
+		opacity: 1;
+	}
+	60% {
+		opacity: 0.4;
+	}
+}
+
+.email-confirmation__button {
+	display: block;
+	padding: 10px 24px;
+	margin: 24px auto 48px auto;
+}
+
+.email-confirmation__button:disabled {
+	animation: pulse 1s infinite linear;
+
+}
+
+
+// Not entirely sure what this stuff is all about... -shaun
 
 .signup-processing-screen__loader {
 	animation: load8 1.1s infinite linear;
