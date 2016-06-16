@@ -49,7 +49,8 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			form: null,
-			isDialogVisible: false
+			isDialogVisible: false,
+			submissionCount: 0
 		};
 	},
 
@@ -318,9 +319,13 @@ export default React.createClass( {
 	},
 
 	recordSubmit() {
+		const errors = formState.getErrorMessages( this.state.form );
 		analytics.tracks.recordEvent( 'calypso_contact_information_form_submit', {
-			errors: formState.getErrorMessages( this.state.form )
+			errors,
+			errors_count: errors && errors.length || 0,
+			submission_count: this.state.submissionCount + 1
 		} );
+		this.setState( { submissionCount: this.state.submissionCount + 1 } );
 	},
 
 	handlePrivacyDialogSelect( options ) {
