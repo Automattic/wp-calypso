@@ -123,3 +123,24 @@ export function getSiteByUrl( state, url ) {
 
 	return site;
 }
+
+/**
+ * Returns a site's plan object by site ID.
+ *
+ * The difference between this selector and sites/plans/getPlansBySite is that the latter selectors works
+ * with the /sites/$site/plans endpoint while the former selectors works with /sites/$site endpoint.
+ * Query these endpoints to see if you need the first or the second one.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {?Object}        Site's plan object
+ */
+export function getSitePlan( state, siteId ) {
+	const site = getSite( state, siteId );
+
+	if ( ! site ) {
+		return null;
+	}
+
+	return site.plan;
+}
