@@ -37,6 +37,7 @@ class PlanFeatures extends Component {
 			<div className={ classes } >
 				<PlanFeaturesHeader
 					current={ current }
+					popular={ popular }
 					title={ plansList[ planName ].getTitle() }
 					planType={ planName }
 					rawPrice={ rawPrice }
