@@ -16,7 +16,7 @@ const DomainRegistrationSuggestion = React.createClass( {
 		cart: React.PropTypes.object,
 		suggestion: React.PropTypes.object.isRequired,
 		onButtonClick: React.PropTypes.func.isRequired,
-		withPlansOnly: React.PropTypes.bool.isRequired,
+		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
 		selectedSite: React.PropTypes.object
 	},
 
@@ -36,20 +36,20 @@ const DomainRegistrationSuggestion = React.createClass( {
 			buttonContent = <Gridicon icon="checkmark" />;
 		} else {
 			buttonClasses = 'add is-primary';
-			buttonContent = shouldBundleDomainWithPlan( this.props.withPlansOnly, this.props.selectedSite, this.props.cart, suggestion )
+			buttonContent = shouldBundleDomainWithPlan( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion )
 				? this.translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
 				: this.translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 
 		return (
 			<DomainSuggestion
-					priceRule={ getDomainPriceRule( this.props.withPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) }
+					priceRule={ getDomainPriceRule( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) }
 					price={ suggestion.product_slug && suggestion.cost }
 					domain={ suggestion.domain_name }
 					buttonClasses={ buttonClasses }
 					buttonContent={ buttonContent }
 					cart={ this.props.cart }
-					withPlansOnly={ this.props.withPlansOnly }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					onButtonClick={ this.props.onButtonClick }>
 				<h3>
 					{ suggestion.domain_name }

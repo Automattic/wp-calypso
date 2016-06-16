@@ -72,7 +72,7 @@ var DomainSearchResults = React.createClass( {
 				<DomainRegistrationSuggestion
 					suggestion={ availableDomain }
 					key={ availableDomain.domain_name }
-					withPlansOnly={ this.props.domainsWithPlansOnly }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					buttonContent={ this.props.buttonContent }
 					selectedSite={ this.props.selectedSite }
 					cart={ this.props.cart }
@@ -168,7 +168,7 @@ var DomainSearchResults = React.createClass( {
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
 						selectedSite={ this.props.selectedSite }
-						withPlansOnly={ this.props.domainsWithPlansOnly }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						onButtonClick={ this.props.onClickResult.bind( null, suggestion ) } />
 				);
 			}, this );
@@ -179,7 +179,7 @@ var DomainSearchResults = React.createClass( {
 						onButtonClick={ this.props.onClickMapping }
 						products={ this.props.products }
 						selectedSite={ this.props.selectedSite }
-						withPlansOnly={ this.props.domainsWithPlansOnly }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						cart={ this.props.cart } />
 				);
 			}

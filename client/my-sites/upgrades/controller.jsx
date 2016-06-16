@@ -108,7 +108,6 @@ module.exports = {
 				<Main>
 					<CartData>
 						<MapDomain
-							withPlansOnly={ abtest( 'domainsWithPlansOnly' ) === 'plansOnly' }
 							store={ context.store }
 							productsList={ productsList }
 							initialQuery={ context.query.initialQuery }
