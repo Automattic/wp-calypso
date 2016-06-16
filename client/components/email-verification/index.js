@@ -9,13 +9,13 @@ import i18n from 'i18n-calypso';
  */
 
 import { successNotice } from 'state/notices/actions';
-import _user from 'lib/user';
+import userFactory from 'lib/user';
 
 /**
  * Constants
  */
 
-const user = _user();
+const user = userFactory();
 
 /**
  * Page middleware

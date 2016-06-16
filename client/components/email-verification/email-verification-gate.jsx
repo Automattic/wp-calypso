@@ -9,11 +9,11 @@ import * as React from 'react';
 
 import EmailUnverifiedNotice from './email-unverified-notice.jsx';
 import userUtils from 'lib/user/utils';
-import _sites from 'lib/sites-list';
-import _user from 'lib/user';
+import sitesFactory from 'lib/sites-list';
+import userFactory from 'lib/user';
 
-const sites = _sites();
-const user = _user();
+const sites = sitesFactory();
+const user = userFactory();
 
 export default class EmailVerificationGate extends React.Component {
 
