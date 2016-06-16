@@ -14,6 +14,7 @@ import PurchaseDetails from 'components/purchase-detail';
 import PurchaseButton from 'components/purchase-detail/purchase-button';
 import TipInfo from 'components/purchase-detail/tip-info';
 import Dialog from 'components/dialog';
+import analytics from 'lib/analytics';
 import termsAndConditions from './terms-and-conditions';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 import {
@@ -40,12 +41,13 @@ class GoogleVoucherDetails extends Component {
 		super();
 
 		// bounds
-		this.onButtonClick = this.onButtonClick.bind( this );
+		this.onGenerateCode = this.onGenerateCode.bind( this );
 		this.onDialogCancel = this.onDialogCancel.bind( this );
-		this.onAgreeButton = this.onAgreeButton.bind( this );
+		this.onAcceptTermsAndConditions = this.onAcceptTermsAndConditions.bind( this );
+		this.onSetupGoogleAdWordsLink = this.onSetupGoogleAdWordsLink.bind( this );
 
 		// debounced
-		this.incrementStep = debounce( this.incrementStep, 300 );
+		this.changeStep = debounce( this.changeStep, 300 );
 
 		this.state = {
 			step: INITIAL_STEP
@@ -73,21 +75,28 @@ class GoogleVoucherDetails extends Component {
 		}
 	}
 
-	onButtonClick() {
-		this.incrementStep();
+	onGenerateCode() {
+		analytics.ga.recordEvent( 'calypso_plans_google_voucher_generate_click', 'Cliked Generate Code Button' );
+
+		this.changeStep();
 	}
 
 	onDialogCancel() {
 		this.setState( { step: INITIAL_STEP } );
 	}
 
-	onAgreeButton() {
-		this.props.assignVoucher( this.props.selectedSite.ID, GOOGLE_CREDITS );
+	onAcceptTermsAndConditions() {
+		analytics.ga.recordEvent( 'calypso_plans_google_voucher_toc_accept_click', 'Cliked Agree Button' );
 
+		this.props.assignVoucher( this.props.selectedSite.ID, GOOGLE_CREDITS );
 		this.setState( { step: CODE_REDEEMED } );
 	}
 
-	incrementStep() {
+	onSetupGoogleAdWordsLink() {
+		analytics.ga.recordEvent( 'calypso_plans_google_voucher_setup_click', 'Cliked Setup Goole AdWords Button' );
+	}
+
+	changeStep() {
 		const newStep = ( this.state.step === INITIAL_STEP ) ? TERMS_AND_CONDITIONS : CODE_REDEEMED;
 		this.setState( { step: newStep } );
 	}
@@ -101,7 +110,7 @@ class GoogleVoucherDetails extends Component {
 		return (
 			<div>
 				<PurchaseButton
-					onClick={ this.onButtonClick }
+					onClick={ this.onGenerateCode }
 					text={ this.props.translate( 'Generate Code' ) } />
 
 				<TipInfo
@@ -141,7 +150,7 @@ class GoogleVoucherDetails extends Component {
 
 					<PurchaseButton
 						className="google-vouchers-dialog__agree-button"
-						onClick={ this.onAgreeButton }
+						onClick={ this.onAcceptTermsAndConditions }
 						text={ this.props.translate( 'Agree' ) } />
 				</div>
 			</Dialog>
@@ -162,7 +171,10 @@ class GoogleVoucherDetails extends Component {
 							this.props.translate( 'Copy this unique, one-time use code to your clipboard and setup your Google AdWords account. {{a}}View help guide{{/a}}',
 								{
 									components: {
-										a: <a className="google-voucher-code__help-link" href="https://en.support.wordpress.com/google-adwords-credit/" target="_blank" />
+										a: <a
+											className="google-voucher-code__help-link"
+											href="https://en.support.wordpress.com/google-adwords-credit/"
+											target="_blank" />
 									}
 								}
 							)
@@ -173,6 +185,7 @@ class GoogleVoucherDetails extends Component {
 						className="google-voucher-code__setup-google-adwords"
 						href="https://www.google.com/adwords/"
 						target="_blank"
+						onClick= { this.onSetupGoogleAdWordsLink }
 						text={ this.props.translate( 'Setup Google AdWords' ) } />
 
 				</div>
