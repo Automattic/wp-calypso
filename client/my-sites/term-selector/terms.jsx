@@ -251,13 +251,12 @@ const TermSelectorList = React.createClass( {
 		const onChange = ( ...args ) => this.props.onChange( item, ...args );
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
 
-		const { multiple, defaultTermId, taxonomy, translate } = this.props;
+		const { multiple, defaultTermId, translate } = this.props;
 		const selectedIds = this.getSelectedIds();
 		const itemId = item.ID;
 		const name = unescapeString( item.name ) || translate( 'Untitled' );
 		const checked = includes( selectedIds, itemId );
 		const inputType = multiple ? 'checkbox' : 'radio';
-		const domId = taxonomy + '-option-' + itemId;
 		let disabled;
 
 		if ( multiple && checked && defaultTermId &&
@@ -267,11 +266,13 @@ const TermSelectorList = React.createClass( {
 		}
 
 		const input = (
-			<input id={ domId } type={ inputType } name="terms"
+			<input
+				type={ inputType }
 				value={ itemId }
 				onChange={ onChange }
 				disabled={ disabled }
-				checked={ checked } />
+				checked={ checked }
+			/>
 		);
 
 		return (

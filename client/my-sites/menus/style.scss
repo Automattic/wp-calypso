@@ -746,31 +746,6 @@
 						border: 0;
 					}
 
-					.term-selector__results {
-						&::-webkit-scrollbar {
-							width: 9px;
-							height: 9px;
-						}
-						&::-webkit-scrollbar-button:start:decrement,
-						&::-webkit-scrollbar-button:end:increment {
-							display: block;
-							height: 0;
-							background-color: transparent;
-						}
-						&::-webkit-scrollbar-track-piece {
-							background-color: transparent;
-							-webkit-border-radius: 0;
-							-webkit-border-bottom-right-radius: 8px;
-							-webkit-border-bottom-left-radius: 8px;
-						}
-						&::-webkit-scrollbar-thumb:vertical,
-						&::-webkit-scrollbar-thumb:horizontal {
-							background-color: lighten( $gray, 20% );
-							-webkit-border-radius: 8px;
-							border: 1px solid $white;
-						}
-					}
-
 					.term-selector__search input {
 						border-width: 1px;
 					}
