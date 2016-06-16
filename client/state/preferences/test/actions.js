@@ -17,7 +17,7 @@ import {
 
 import { useSandbox } from 'test/helpers/use-sinon';
 import { DEFAULT_PREFERENCES, USER_SETTING_KEY } from '../constants';
-import { fetchPreferences, setPreference } from '../actions';
+import { fetchPreferences, savePreference } from '../actions';
 
 describe( 'actions', () => {
 	let sandbox, spy;
@@ -94,7 +94,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch PREFERENCES_SET action when thunk triggered', () => {
-			setPreference( 'preferenceKey', 'preferenceValue' )( spy, getState );
+			savePreference( 'preferenceKey', 'preferenceValue' )( spy, getState );
 			expect( spy ).to.have.been.calledWithMatch( {
 				type: PREFERENCES_SET,
 				key: 'preferenceKey',
@@ -103,7 +103,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch PREFERENCES_RECEIVE action when request completes', () => {
-			return setPreference( 'preferenceKey', 'preferenceValue' )( spy, getState ).then( () => {
+			return savePreference( 'preferenceKey', 'preferenceValue' )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_RECEIVE,
 					data: responseShape

@@ -20,10 +20,9 @@ var Spinner = require( 'components/spinner' ),
 	ListItemVideo = require( './list-item-video' ),
 	ListItemAudio = require( './list-item-audio' ),
 	ListItemDocument = require( './list-item-document' ),
-	EditorMediaModalGalleryHelpContainer = require( 'post-editor/media-modal/gallery-help-container' ),
 	MediaUtils = require( 'lib/media/utils' );
 
-import { setPreference } from 'state/preferences/actions';
+import { setPreference, savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
@@ -156,9 +155,12 @@ export default connect(
 		)
 	} ),
 	dispatch => bindActionCreators( {
-		dismissMediaModalGalleryInstructions: options => setPreference(
-			options.remember ? 'mediaModalGalleryInstructionsDismissed' : 'mediaModalGalleryInstructionsDismissedForSession',
-			true
-		)
+		dismissMediaModalGalleryInstructions: options => {
+			if ( options.remember ) {
+				return savePreference( 'mediaModalGalleryInstructionsDismissed', true );
+			} else {
+				return setPreference( 'mediaModalGalleryInstructionsDismissedForSession', true );
+			}
+		}
 	}, dispatch )
 )( MediaLibraryListItem );
