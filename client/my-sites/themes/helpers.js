@@ -15,8 +15,7 @@ import mapValues from 'lodash/mapValues';
  */
 import config from 'config';
 import route from 'lib/route';
-
-const oldShowcaseUrl = '//wordpress.com/themes/';
+import { oldShowcaseUrl } from 'state/themes/themes/selectors';
 
 export function getSignupUrl( theme ) {
 	let url = '/start/with-theme?ref=calypshowcase&theme=' + theme.id;
