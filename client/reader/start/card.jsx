@@ -13,6 +13,7 @@ import StartCardHeader from './card-header';
 import { recordRecommendationInteraction } from 'state/reader/start/actions';
 import { getRecommendationById } from 'state/reader/start/selectors';
 import { getPostBySiteAndId } from 'state/reader/posts/selectors';
+import { recordTrack, recordTrackForPost } from 'reader/stats';
 
 const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-unused-vars
 
@@ -23,6 +24,21 @@ const StartCard = React.createClass( {
 			this.props.recommendation.recommended_site_ID,
 			this.props.recommendation.recommended_post_ID
 		);
+
+		if ( this.props.post ) {
+			recordTrackForPost( 'calypso_reader_startcard_clicked', this.props.post );
+		} else {
+			recordTrack( 'calypso_reader_startcard_clicked', {
+				blog_id: this.props.recommendation.recommended_site_ID,
+				recommendation_id: this.props.recommendationId
+			} );
+			if ( this.props.recommendation.railcar ) {
+				recordTrack( 'calypso_traintracks_interact', {
+					action: 'startcard_clicked',
+					railcar: this.props.recommendation.railcar
+				} );
+			}
+		}
 	},
 
 	render() {
@@ -55,11 +71,13 @@ export default connect(
 		const siteId = get( recommendation, 'recommended_site_ID' );
 		const postId = get( recommendation, 'recommended_post_ID' );
 
+		const post = postId ? getPostBySiteAndId( state, siteId, postId ) : undefined;
+
 		return {
 			recommendation,
 			siteId,
 			postId,
-			post: getPostBySiteAndId( state, siteId, postId )
+			post
 		};
 	},
 	( dispatch ) => bindActionCreators( {

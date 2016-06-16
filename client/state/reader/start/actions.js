@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import get from 'lodash/get';
 import map from 'lodash/map';
 import omit from 'lodash/omit';
 import property from 'lodash/property';
@@ -89,7 +90,14 @@ export function requestRecommendations( originSiteId, originPostId, limit ) {
 			.then( ( data ) => {
 				// Collect sites and posts from meta, and receive them separately
 				const sites = map( data.recommendations, property( 'meta.data.site' ) );
-				const posts = map( data.recommendations, property( 'meta.data.post' ) );
+				const posts = map( data.recommendations, rec => {
+					// attach railcar to post if available and return the post
+					const post = get( rec, 'meta.data.post' );
+					if ( post && rec.railcar ) {
+						post.railcar = rec.railcar;
+					}
+					return post;
+				} );
 				dispatch( updateSites( sites ) );
 
 				return dispatch( receivePosts( posts ) ).then( () => {
