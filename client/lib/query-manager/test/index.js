@@ -257,6 +257,14 @@ describe( 'QueryManager', () => {
 			expect( newManager.getItems() ).to.eql( [] );
 		} );
 
+		it( 'should do nothing if #mergeItem() returns undefined but the item didn\'t exist', () => {
+			manager = manager.receive();
+			sandbox.stub( manager, 'mergeItem' ).returns( undefined );
+			const newManager = manager.receive( { ID: 144 } );
+
+			expect( manager ).to.equal( newManager );
+		} );
+
 		it( 'should replace a received item when key already exists', () => {
 			manager = manager.receive( { ID: 144, exists: true } );
 			manager = manager.receive( { ID: 144, changed: true } );

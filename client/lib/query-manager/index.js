@@ -186,8 +186,14 @@ export default class QueryManager {
 			const mergedItem = this.mergeItem( item, receivedItem, options.patch );
 
 			if ( undefined === mergedItem ) {
-				// `undefined` item is an intended omission from set
-				return omit( memo, receivedItemKey );
+				if ( item ) {
+					// `undefined` item is an intended omission from set
+					return omit( memo, receivedItemKey );
+				}
+
+				// Item never existed in set in the first place, skip and
+				// return same memo
+				return memo;
 			}
 
 			if ( ! item || ! isEqual( mergedItem, item ) ) {
