@@ -21,14 +21,9 @@ var MapDomain = React.createClass( {
 	mixins: [ observe( 'productsList', 'sites' ) ],
 
 	propTypes: {
-		analyticsSection: React.PropTypes.string,
 		query: React.PropTypes.string,
 		productsList: React.PropTypes.object.isRequired,
 		withPlansOnly: React.PropTypes.bool.isRequired
-	},
-
-	getDefaultProps: function() {
-		return { analyticsSection: 'domains' };
 	},
 
 	componentWillMount: function() {

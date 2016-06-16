@@ -514,9 +514,6 @@ const RegisterDomainStep = React.createClass( {
 		event.preventDefault();
 
 		if ( this.props.onAddDomain ) {
-			// todo maybe evnt
-			//this.recordEvent( 'addDomainButtonClick', suggestion.domain_name, this.props.analyticsSection );
-			// todo dont pass state above
 			return this.props.onAddDomain( suggestion, this.state );
 		}
 			if ( abtest( 'privacyCheckbox' ) === 'checkbox' &&
