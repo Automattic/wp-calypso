@@ -42,7 +42,6 @@ const
 	EmbedHelper = require( 'reader/embed-helper' ),
 	readerRoute = require( 'reader/route' ),
 	stats = require( 'reader/stats' ),
-	PostExcerptLink = require( 'reader/post-excerpt-link' ),
 	PostPermalink = require( 'reader/post-permalink' ),
 	DiscoverPostAttribution = require( 'reader/discover/post-attribution' ),
 	DiscoverSiteAttribution = require( 'reader/discover/site-attribution' ),
@@ -169,7 +168,7 @@ const Post = React.createClass( {
 	featuredImageComponent: function( post ) {
 		var featuredImage = ( post.canonical_image && post.canonical_image.uri ),
 			featuredEmbed = head( filter( post.content_embeds, ( embed ) => {
-				return ! startsWith( embed.type, 'special-' )
+				return ! startsWith( embed.type, 'special-' );
 			} ) ),
 			maxWidth = Math.min( 653, window.innerWidth ),
 			featuredSize, useFeaturedEmbed;
@@ -426,10 +425,6 @@ const Post = React.createClass( {
 						</EmbedContainer>
 					: <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 				}
-
-				{ shouldShowExcerptOnly
-					? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
-					: null }
 
 				{ ! shouldShowExcerptOnly
 					? <PostImages postImages={ post.content_images || [] } />
