@@ -5,8 +5,6 @@
  */
 import React from 'react';
 import i18n from 'i18n-calypso';
-import filter from 'lodash/filter';
-import sortBy from 'lodash/sortBy';
 
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
@@ -49,14 +47,33 @@ export const plansList = {
 		getTitle: () => i18n.translate( 'Free' ),
 		getPriceTitle: () => i18n.translate( 'Free for life' ),
 		getProductId: () => 1,
-		getDescription: () => i18n.translate( 'Get a free blog and be on your way to publishing your first post in less than five minutes.' )
+		getDescription: () => i18n.translate( 'Get a free blog and be on your way to publishing your first post in less than five minutes.' ),
+		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
+			FEATURE_FREE_SITE,
+			FEATURE_WP_SUBDOMAIN,
+			FEATURE_FREE_THEMES,
+			FEATURE_3GB_STORAGE,
+			FEATURE_COMMUNITY_SUPPORT
+		]
 	},
 
 	[ PLAN_PREMIUM ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
 		getPriceTitle: () => i18n.translate( '$99 per year' ),
 		getProductId: () => 1003,
-		getDescription: () => i18n.translate( 'Your own domain name, powerful customization options, lots of space for audio and video, and $100 advertising credit.' )
+		getDescription: () => i18n.translate( 'Your own domain name, powerful customization options, lots of space for audio and video, and $100 advertising credit.' ),
+		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
+			FEATURE_FREE_SITE,
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_FREE_THEMES,
+			FEATURE_13GB_STORAGE,
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_NO_ADS,
+			FEATURE_CUSTOM_DESIGN,
+			FEATURE_VIDEO_UPLOADS,
+			FEATURE_GOOGLE_AD_CREDITS,
+			WORDADS_INSTANT
+		]
 	},
 
 	[ PLAN_BUSINESS ]: {
@@ -65,6 +82,19 @@ export const plansList = {
 		getProductId: () => 1008,
 		getDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, and Google Analytics.' ),
 		getDescriptionWithWordAdsCredit: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, Google Analytics, and $200 advertising credit.' ),
+		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
+			FEATURE_FREE_SITE,
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_UNLIMITED_PREMIUM_THEMES,
+			FEATURE_UNLIMITED_STORAGE,
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_NO_ADS,
+			FEATURE_CUSTOM_DESIGN,
+			FEATURE_VIDEO_UPLOADS,
+			FEATURE_GOOGLE_AD_CREDITS,
+			WORDADS_INSTANT,
+			FEATURE_GOOGLE_ANALYTICS
+		]
 	},
 
 	[ PLAN_JETPACK_FREE ]: {},
@@ -85,43 +115,36 @@ const allPlans = [
 export const featuresList = {
 	[ FEATURE_GOOGLE_ANALYTICS ]: {
 		getTitle: () => i18n.translate( 'Google Analytics' ),
-		order: 9,
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_UNLIMITED_STORAGE ]: {
 		getTitle: () => i18n.translate( 'Unlimited Storage' ),
-		order: 4,
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
 		getTitle: () => i18n.translate( 'Custom Domain' ),
-		order: 2,
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_UNLIMITED_PREMIUM_THEMES ]: {
 		getTitle: () => i18n.translate( 'Unlimited Premium Themes' ),
-		order: 3,
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
 		getTitle: () => i18n.translate( 'VideoPress' ),
-		order: 8,
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_CUSTOM_DESIGN ]: {
 		getTitle: () => i18n.translate( 'Custom Design' ),
-		order: 7,
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_NO_ADS ]: {
 		getTitle: () => i18n.translate( 'No Ads' ),
-		order: 6,
 		plans: allPaidPlans
 	},
 
@@ -141,49 +164,41 @@ export const featuresList = {
 	[ WORDADS_INSTANT ]: {
 		getTitle: () => i18n.translate( 'Monetize Your Site' ),
 		getDescription: () => i18n.translate( 'Add advertising to your site through our WordAds program and get paid.' ),
-		order: 11,
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_FREE_SITE ]: {
 		getTitle: () => i18n.translate( 'Free site' ),
-		order: 1,
 		plans: allPlans
 	},
 
 	[ FEATURE_WP_SUBDOMAIN ]: {
 		getTitle: () => i18n.translate( 'WordPress.com subdomain' ),
-		order: 2,
 		plans: [ PLAN_FREE ]
 	},
 
 	[ FEATURE_FREE_THEMES ]: {
 		getTitle: () => i18n.translate( 'Hundreds of free themes' ),
-		order: 3,
 		plans: [ PLAN_FREE, PLAN_PREMIUM ]
 	},
 
 	[ FEATURE_3GB_STORAGE ]: {
 		getTitle: () => i18n.translate( '3GB of storage' ),
-		order: 4,
 		plans: [ PLAN_FREE ]
 	},
 
 	[ FEATURE_13GB_STORAGE ]: {
 		getTitle: () => i18n.translate( '13GB of storage' ),
-		order: 4,
 		plans: [ PLAN_PREMIUM ]
 	},
 
 	[ FEATURE_COMMUNITY_SUPPORT ]: {
 		getTitle: () => i18n.translate( 'Community support' ),
-		order: 5,
 		plans: [ PLAN_FREE ]
 	},
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
 		getTitle: () => i18n.translate( 'Email and live chat support' ),
-		order: 5,
 		plans: allPaidPlans
 	}
 };
@@ -200,9 +215,9 @@ export const getPlanObject = planName => {
 };
 
 export const getPlanFeaturesObject = planName => {
-	const planFeatures = filter( featuresList, obj =>
-		obj.plans.indexOf( planName ) !== -1
-	);
+	const planFeaturesList = plansList[ planName ].getFeatures();
 
-	return sortBy( planFeatures, 'order' );
+	return planFeaturesList.map( featureConstant =>
+		featuresList[ featureConstant ]
+	);
 };
