@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	{ connect } = require( 'react-redux' ),
 	defer = require( 'lodash/defer' ),
 	page = require( 'page' ),
 	i18n = require( 'i18n-calypso' );
@@ -20,9 +21,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	signupUtils = require( 'signup/utils' );
 
-module.exports = React.createClass( {
-	displayName: 'DomainsStep',
-
+const DomainsStep = React.createClass( {
 	showGoogleApps: function() {
 		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'google', this.props.locale ) );
 	},
@@ -174,7 +173,6 @@ module.exports = React.createClass( {
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 
-		const isPlansOnlyTest = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 		return (
 			<RegisterDomainStep
 				path={ this.props.path }
@@ -187,7 +185,7 @@ module.exports = React.createClass( {
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
 				offerMappingOption
 				analyticsSection="signup"
-				withPlansOnly={ isPlansOnlyTest }
+				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom
 				isSignupStep
 				showExampleSuggestions
@@ -204,11 +202,11 @@ module.exports = React.createClass( {
 				<MapDomainStep
 					initialState={ initialState }
 					path={ this.props.path }
-					onAddDomain={ this.handleAddDomain }
-					onAddMapping={ this.handleAddMapping.bind( this, 'mappingForm' ) }
+					onRegisterDomain={ this.handleAddDomain }
+					onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
 					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-					productsList={ productsList }
-					withPlansOnly={ abtest( 'domainsWithPlansOnly' ) === 'plansOnly' }
+					products={ productsList.get() }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
 					analyticsSection="signup" />
 			</div>
@@ -258,3 +256,10 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+module.exports = connect( ( state ) => {
+	return {
+		// no user = DWPO
+		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, 'calypso_domains_with_plans_only' ) : true
+	};
+} ) ( DomainsStep );
