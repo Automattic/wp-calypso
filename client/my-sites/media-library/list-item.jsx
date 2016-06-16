@@ -7,6 +7,8 @@ var React = require( 'react' ),
 	assign = require( 'lodash/assign' ),
 	omit = require( 'lodash/omit' ),
 	isEqual = require( 'lodash/isEqual' );
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * External dependencies
@@ -21,7 +23,12 @@ var Spinner = require( 'components/spinner' ),
 	EditorMediaModalGalleryHelpContainer = require( 'post-editor/media-modal/gallery-help-container' ),
 	MediaUtils = require( 'lib/media/utils' );
 
-module.exports = React.createClass( {
+import { setPreference } from 'state/preferences/actions';
+import { getPreference } from 'state/preferences/selectors';
+import QueryPreferences from 'components/data/query-preferences';
+import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
+
+const MediaLibraryListItem = React.createClass( {
 	displayName: 'MediaLibraryListItem',
 
 	propTypes: {
@@ -117,15 +124,18 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ classes } style={ style } onClick={ this.clickItem } { ...props }>
+				<QueryPreferences />
 				<span className="media-library__list-item-selected-icon">
 					<Gridicon icon="checkmark" size={ 20 } />
 				</span>
 				<figure className="media-library__list-item-figure" title={ title }>
 					{ this.renderItem() }
 					{ this.renderSpinner() }
-					{ this.props.showGalleryHelp && (
-						<EditorMediaModalGalleryHelpContainer />
-					) }
+					{
+						this.props.showGalleryHelp &&
+						! this.props.isMediaModalGalleryInstructionsDismissed &&
+						( <EditorMediaModalGalleryHelp onDismiss={ this.props.dismissMediaModalGalleryInstructions } /> )
+					}
 					<Button type="button" className="media-library__list-item-edit" onClick={ this.editItem }>
 						<span className="screen-reader-text">
 							{ this.translate( 'Edit', { context: 'verb' } ) }
@@ -137,3 +147,18 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	state => ( {
+		isMediaModalGalleryInstructionsDismissed: (
+			getPreference( state, 'mediaModalGalleryInstructionsDismissed' ) ||
+			getPreference( state, 'mediaModalGalleryInstructionsDismissedForSession' )
+		)
+	} ),
+	dispatch => bindActionCreators( {
+		dismissMediaModalGalleryInstructions: options => setPreference(
+			options.remember ? 'mediaModalGalleryInstructionsDismissed' : 'mediaModalGalleryInstructionsDismissedForSession',
+			true
+		)
+	}, dispatch )
+)( MediaLibraryListItem );

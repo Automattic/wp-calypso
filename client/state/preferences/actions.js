@@ -9,7 +9,7 @@ import {
 	PREFERENCES_FETCH_SUCCESS,
 	PREFERENCES_FETCH_FAILURE
 } from 'state/action-types';
-import { USER_SETTING_KEY } from './constants';
+import { USER_SETTING_KEY, DEFAULT_PREFERENCES } from './constants';
 
 export function fetchPreferences() {
 	return ( dispatch ) => {
@@ -43,11 +43,13 @@ export const setPreference = ( key, value ) => dispatch => {
 			[ key ]: value
 		}
 	};
-	return wpcom.me().settings().update( JSON.stringify( settings ) )
-	.then( ( data ) => {
-		dispatch( {
-			type: PREFERENCES_RECEIVE,
-			data
-		} );
-	} );
+	if( DEFAULT_PREFERENCES[ key ].save ) {
+		return wpcom.me().settings().update( JSON.stringify(settings) )
+			.then((data) => {
+				dispatch({
+					type: PREFERENCES_RECEIVE,
+					data
+				});
+			});
+	}
 };
