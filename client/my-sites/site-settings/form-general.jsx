@@ -24,7 +24,7 @@ import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
+import Checkbox from 'components/checkbox';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import TimezoneDropdown from 'components/timezone-dropdown';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -311,13 +311,13 @@ const FormGeneral = React.createClass( {
 						<ul id="settings-reading-relatedposts-customize" className={ 1 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) ? null : 'disabled-block' }>
 							<li>
 								<FormLabel>
-									<FormCheckbox name="jetpack_relatedposts_show_headline" checkedLink={ this.linkState( 'jetpack_relatedposts_show_headline' ) }/>
+									<Checkbox name="jetpack_relatedposts_show_headline" checkedLink={ this.linkState( 'jetpack_relatedposts_show_headline' ) }/>
 									<span>{ this.translate( 'Show a "Related" header to more clearly separate the related section from posts' ) }</span>
 								</FormLabel>
 							</li>
 							<li>
 								<FormLabel>
-									<FormCheckbox name="jetpack_relatedposts_show_thumbnails" checkedLink={ this.linkState( 'jetpack_relatedposts_show_thumbnails' ) }/>
+									<Checkbox name="jetpack_relatedposts_show_thumbnails" checkedLink={ this.linkState( 'jetpack_relatedposts_show_thumbnails' ) }/>
 									<span>{ this.translate( 'Use a large and visually striking layout' ) }</span>
 								</FormLabel>
 							</li>
@@ -339,7 +339,7 @@ const FormGeneral = React.createClass( {
 					<ul id="settings-jetpack" className="settings-jetpack">
 						<li>
 							<FormLabel>
-								<FormCheckbox name="jetpack_sync_non_public_post_stati" checkedLink={ this.linkState( 'jetpack_sync_non_public_post_stati' ) }/>
+								<Checkbox name="jetpack_sync_non_public_post_stati" checkedLink={ this.linkState( 'jetpack_sync_non_public_post_stati' ) }/>
 								<span>{ this.translate( 'Allow synchronization of Posts and Pages with non-public post statuses' ) }</span>
 								<FormSettingExplanation className="is-indented">
 									{ this.translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }
@@ -392,7 +392,7 @@ const FormGeneral = React.createClass( {
 				<ul>
 					<li>
 						<FormLabel>
-							<FormCheckbox name="holidaysnow" checkedLink={ this.linkState( 'holidaysnow' ) }/>
+							<Checkbox name="holidaysnow" checkedLink={ this.linkState( 'holidaysnow' ) }/>
 							<span>{ this.translate( 'Show falling snow on my blog until January 4th.' ) }</span>
 						</FormLabel>
 					</li>

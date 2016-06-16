@@ -7,7 +7,7 @@ const React = require( 'react' );
  * Internal dependencies
  */
 const EditorFieldset = require( 'post-editor/editor-fieldset' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
+	Checkbox = require( 'components/checkbox' ),
 	PostActions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' );
 
@@ -53,7 +53,7 @@ export default React.createClass( {
 
 		return (
 			<label>
-				<FormCheckbox
+				<Checkbox
 					name='sharing_enabled'
 					checked={ this.isShowingSharingButtons() }
 					onChange={ this.onChange } />
@@ -69,7 +69,7 @@ export default React.createClass( {
 
 		return (
 				<label>
-					<FormCheckbox
+					<Checkbox
 						name='likes_enabled'
 						checked={ this.isShowingLikeButton() }
 						onChange={ this.onChange } />

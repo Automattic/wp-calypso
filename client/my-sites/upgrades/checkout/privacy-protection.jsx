@@ -9,6 +9,7 @@ var React = require( 'react' );
 var cartItems = require( 'lib/cart-values' ).cartItems,
 	PrivacyProtectionDialog = require( './privacy-protection-dialog' ),
 	Card = require( 'components/card' ),
+	Checkbox = require( 'components/checkbox' ),
 	Gridicon = require( 'components/gridicon' ),
 	abtest = require( 'lib/abtest' ).abtest;
 
@@ -80,7 +81,7 @@ module.exports = React.createClass( {
 			return (
 				<div>
 					<Card className="checkout__privacy-protection-checkbox">
-						<input type="checkbox" onChange={ this.props.onCheckboxChange } checked={ this.props.isChecked } />
+						<Checkbox onChange={ this.props.onCheckboxChange } checked={ this.props.isChecked } />
 						<div className="privacy-protection-checkbox__description">
 							<strong className="checkout__privacy-protection-checkbox-heading">{ this.translate( 'Please keep my information private.', { textOnly: true } ) }</strong>
 							<p className="checkout__privacy-protection-checkbox-text">{ priceForPrivacyText }</p>

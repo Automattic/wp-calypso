@@ -4,6 +4,11 @@
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
 
+/**
+ * Internal dependencies
+ */
+var Checkbox = require( 'components/checkbox' );
+
 var idNum = 0;
 
 module.exports = React.createClass( {
@@ -44,9 +49,8 @@ module.exports = React.createClass( {
 
 		return (
 			<span>
-				<input
+				<Checkbox
 					className={ classNames( this.props.className, toggleClasses ) }
-					type="checkbox"
 					checked={ this.props.checked }
 					readOnly={ true }
 					disabled={ this.props.disabled }

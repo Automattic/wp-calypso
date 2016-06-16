@@ -9,6 +9,7 @@ var React = require( 'react' );
 var ButtonsPreview = require( './preview' ),
 	ButtonsPreviewPlaceholder = require( './preview-placeholder' ),
 	ButtonsStyle = require( './style' ),
+	Checkbox = require( 'components/checkbox' ),
 	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
@@ -68,7 +69,9 @@ module.exports = React.createClass( {
 		if ( ! this.props.site.jetpack ) {
 			return (
 				<label>
-					<input name="disabled_reblogs" type="checkbox" checked={ '' === this.props.values.disabled_reblogs || false === this.props.values.disabled_reblogs } onChange={ this.onReblogsLikesCheckboxClicked } disabled={ ! this.props.initialized } />
+					<Checkbox
+						name="disabled_reblogs"
+						checked={ '' === this.props.values.disabled_reblogs || false === this.props.values.disabled_reblogs } onChange={ this.onReblogsLikesCheckboxClicked } disabled={ ! this.props.initialized } />
 					<span>{ this.translate( 'Show reblog button', { context: 'Sharing options: Checkbox label' } ) }</span>
 				</label>
 			);
@@ -84,7 +87,9 @@ module.exports = React.createClass( {
 					</legend>
 					{ this.getReblogOptionElement() }
 					<label>
-						<input name="disabled_likes" type="checkbox" checked={ '' === this.props.values.disabled_likes || false === this.props.values.disabled_likes } onChange={ this.onReblogsLikesCheckboxClicked } disabled={ ! this.props.initialized } />
+						<Checkbox
+							name="disabled_likes"
+							checked={ '' === this.props.values.disabled_likes || false === this.props.values.disabled_likes } onChange={ this.onReblogsLikesCheckboxClicked } disabled={ ! this.props.initialized } />
 						<span>{ this.translate( 'Show like button', { context: 'Sharing options: Checkbox label' } ) }</span>
 					</label>
 				</fieldset>

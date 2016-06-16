@@ -16,6 +16,7 @@ var ReactDom = require( 'react-dom' ),
  * Internal dependencies
  */
 var NoResults = require( './no-results' ),
+	Checkbox = require( 'components/checkbox' ),
 	analytics = require( 'lib/analytics' ),
 	Search = require( './search' );
 
@@ -125,7 +126,6 @@ module.exports = React.createClass( {
 		var itemId = item.ID,
 			name = unescapeString( item.name ) || this.translate( 'Untitled' ),
 			checked = ( -1 !== this.state.selectedIds.indexOf( item.ID ) ),
-			inputType = this.props.multiple ? 'checkbox' : 'radio',
 			domId = camelCase( this.props.analyticsPrefix ) + '-option-' + itemId,
 			disabled,
 			input;
@@ -136,13 +136,26 @@ module.exports = React.createClass( {
 			disabled = true;
 		}
 
-		input = (
-			<input id={ domId } type={ inputType } name='categories'
-				value={ itemId }
-				onChange={ this.props.onChange.bind( null, item ) }
-				disabled={ disabled }
-				checked={ checked } />
-		);
+		if ( !this.props.multple ) {
+			input = (
+				<Checkbox id={ domId }
+					name="categories"
+					value={ itemId }
+					onChange={ this.props.onChange.bind( null, item ) }
+					disabled={ disabled }
+					checked={ checked } />
+			);
+		} else {
+			input = (
+				<input id={ domId }
+					type="radio"
+					name="categories"
+					value={ itemId }
+					onChange={ this.props.onChange.bind( null, item ) }
+					disabled={ disabled }
+					checked={ checked } />
+			);
+		}
 
 		return (
 			<li key={ 'category-' + itemId }>

@@ -9,6 +9,7 @@ var React = require( 'react' ),
  */
 var translator = require( 'lib/translator-jumpstart' ),
 	localStorageHelper = require( 'store' ),
+	Checkbox = require( 'components/checkbox' ),
 	Dialog = require( 'components/dialog' ),
 	analytics = require( 'lib/analytics' );
 
@@ -82,7 +83,7 @@ module.exports = React.createClass( {
 					<h1>{ this.translate( 'Community Translator' ) }</h1>
 					<p>{ this.translate( 'You have now enabled the translator.  Right click highlighted text to translate it.' ) }</p>
 					<p>
-						<label><input type="checkbox" onClick={ this.toggleInfoCheckbox } /><span>{ this.translate( "Don't show again" ) }</span></label>
+						<label><Checkbox onClick={ this.toggleInfoCheckbox } /><span>{ this.translate( "Don't show again" ) }</span></label>
 					</p>
 				</Dialog>
 				<div className={ launcherClasses }>

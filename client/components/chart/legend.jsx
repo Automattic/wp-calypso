@@ -9,6 +9,8 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 
+var Checkbox = require( 'components/checkbox' );
+
 var LegendItem = React.createClass( {
 	displayName: 'ModuleChartLegendItem',
 
@@ -29,7 +31,10 @@ var LegendItem = React.createClass( {
 		return (
 			<li className="chart__legend-option">
 				<label htmlFor="checkbox" className="chart__legend-label is-selectable" onClick={ this.clickHandler } >
-					<input type="checkbox" className="chart__legend-checkbox" checked={ this.props.checked } onChange={ function(){} } />
+					<Checkbox
+						className="chart__legend-checkbox"
+						checked={ this.props.checked }
+						onChange={ function(){} } />
 					<span className={ this.props.className }></span>{ this.props.label }
 				</label>
 			</li>

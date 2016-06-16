@@ -8,7 +8,6 @@ The following form components were created as an effort to minimize duplication 
 
 - form-button
 - form-buttons-bar
-- form-checkbox
 - form-fieldset
 - form-label
 - form-legend

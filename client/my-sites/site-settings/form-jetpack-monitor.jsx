@@ -10,7 +10,7 @@ var React = require( 'react' ),
 var config = require( 'config' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	Card = require( 'components/card' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
+	Checkbox = require( 'components/checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	formBase = require( './form-base' ),
 	notices = require( 'notices' ),
@@ -100,7 +100,7 @@ module.exports = React.createClass( {
 			<div>
 				<p>{ this.translate( "Jetpack is currently monitoring your site's uptime." ) }</p>
 				<FormLabel>
-					<FormCheckbox
+					<Checkbox
 						disabled={ this.disableForm() }
 						onClick={ this.recordEvent.bind( this, 'Clicked on Monitor email checkbox' ) }
 						id="jetpack_monitor_email"

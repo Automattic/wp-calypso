@@ -9,6 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var MultiCheckbox = require( 'components/forms/multi-checkbox' ),
+	Checkbox = require( 'components/checkbox' ),
 	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
@@ -140,7 +141,7 @@ module.exports = React.createClass( {
 					{ this.translate( 'Comment Likes', { context: 'Sharing options: Header' } ) }
 				</legend>
 				<label>
-					<input name="jetpack_comment_likes_enabled" type="checkbox" checked={ this.props.values.jetpack_comment_likes_enabled } onChange={ this.handleChange } disabled={ ! this.props.initialized } />
+					<Checkbox name="jetpack_comment_likes_enabled" checked={ this.props.values.jetpack_comment_likes_enabled } onChange={ this.handleChange } disabled={ ! this.props.initialized } />
 					<span>{ this.translate( 'On for all posts', { context: 'Sharing options: Comment Likes' } ) }</span>
 				</label>
 			</fieldset>

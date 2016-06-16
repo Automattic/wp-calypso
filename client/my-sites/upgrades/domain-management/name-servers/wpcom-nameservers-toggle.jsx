@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 var Toggle = require( 'components/forms/form-toggle' ),
+	Checkbox = require( 'components/checkbox' ),
 	support = require( 'lib/url/support' );
 import analyticsMixin from 'lib/mixins/analytics';
 
@@ -30,7 +31,6 @@ const NameserversToggle = React.createClass( {
 						id="wp-nameservers"
 						name="wp-nameservers"
 						onChange={ this.handleToggle }
-						type="checkbox"
 						checked={ this.props.enabled }
 						value="active"/>
 				</form>

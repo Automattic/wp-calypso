@@ -1,0 +1,70 @@
+// ==========================================================================
+// Checkboxes
+// ==========================================================================
+
+.checkbox {
+	display: inline-block;
+	box-sizing: border-box;
+	margin: 2px 0 0;
+	padding: 7px 14px;
+	width: 16px;
+	height: 16px;
+	float: left;
+	outline: 0;
+	padding: 0;
+	background-color: $white;
+	border: 1px solid lighten( $gray, 20% );
+	color: $gray-dark;
+	font-size: 16px;
+	line-height: 0;
+	text-align: center;
+	vertical-align: middle;
+	appearance: none;
+	transition: all .15s ease-in-out;
+	clear: none;
+	cursor: pointer;
+
+	&:checked:before {
+		content: '\f418';
+		margin: -4px 0 0 -5px;
+		float: left;
+		display: inline-block;
+		vertical-align: middle;
+		width: 16px;
+		font: 400 23px/1 Noticons;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		speak: none;
+		color: $blue-medium;
+	}
+
+	&:disabled:checked:before {
+		color: lighten( $gray, 10% );
+	}
+
+	&:hover {
+		border-color: lighten( $gray, 10% );
+	}
+
+	&:focus {
+		border-color: $blue-wordpress;
+		outline: none;
+		box-shadow: 0 0 0 2px $blue-light;
+	}
+
+	&:disabled {
+		background: $gray-light;
+		border-color: lighten( $gray, 30% );
+		color: lighten( $gray, 10% );
+
+		&:hover {
+			cursor: default;
+		}
+	}
+
+	// I would like to remove this, but might break things - MJA
+	+ span {
+		display: block;
+		margin-left: 24px;
+	}
+}

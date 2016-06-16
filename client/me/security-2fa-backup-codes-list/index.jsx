@@ -10,7 +10,7 @@ var React = require( 'react' ),
 var	FormButton = require( 'components/forms/form-button' ),
 	analytics = require( 'lib/analytics' ),
 	FormButtonBar = require( 'components/forms/form-buttons-bar' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
+	Checkbox = require( 'components/checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	config = require( 'config' ),
 	Notice = require( 'components/notice' );
@@ -197,7 +197,7 @@ module.exports = React.createClass( {
 
 				<FormButtonBar>
 					<FormLabel className="security-2fa-backup-codes-list__print-agreement">
-						<FormCheckbox
+						<Checkbox
 							defaultChecked={ this.state.userAgrees }
 							onChange={ this.onUserAgreesChange }
 						/>

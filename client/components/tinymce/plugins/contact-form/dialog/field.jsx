@@ -13,7 +13,7 @@ import FoldableCard from 'components/foldable-card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import FormCheckbox from 'components/forms/form-checkbox';
+import Checkbox from 'components/checkbox';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SelectDropdown from 'components/select-dropdown';
@@ -103,7 +103,7 @@ export default React.createClass( {
 
 				<FormFieldset>
 					<FormLabel>
-						<FormCheckbox
+						<Checkbox
 							checked={ this.props.required }
 							onChange={ () => this.props.onUpdate( { required: ! this.props.required } ) } />
 						{ this.translate( 'Required' ) }

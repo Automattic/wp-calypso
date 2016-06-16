@@ -72,7 +72,6 @@ input[type="search"],
 input[type="email"],
 input[type="number"],
 input[type="password"],
-input[type=checkbox],
 input[type=radio],
 input[type="tel"],
 input[type="url"],
@@ -99,7 +98,6 @@ label {
 
 /*Checkbooms*/
 
-input[type=checkbox],
 input[type=radio] {
 	clear: none;
 	cursor: pointer;
@@ -117,29 +115,9 @@ input[type=radio] {
 	appearance: none;
 }
 
-input[type=checkbox] + span,
 input[type=radio] + span {
 	display: block;
 	margin-left: 24px;
-}
-
-input[type=checkbox] {
-	&:checked:before {
-		@extend %clear-text;
-
-		content: '\f418';
-		margin: -4px 0 0 -5px;
-		float: left;
-		display: inline-block;
-		vertical-align: middle;
-		width: 16px;
-		font: 400 23px/1 Noticons;
-		speak: none;
-		color: $blue-medium;
-	}
-	&:disabled:checked:before {
-		color: lighten( $gray, 10% );
-	}
 }
 
 input[type=radio] {
@@ -179,22 +157,6 @@ input[type=radio] {
 		transform: scale(1);
 	}
 }
-
-@keyframes grow {
-	0% {
-		transform: scale(0.3);
-	}
-
-	60% {
-		transform: scale(1.15);
-	}
-
-	100% {
-		transform: scale(1);
-	}
-}
-
-/* end checkbooms */
 
 
 select {

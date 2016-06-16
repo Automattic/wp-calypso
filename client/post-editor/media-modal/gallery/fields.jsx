@@ -14,7 +14,7 @@ import fromPairs from 'lodash/fromPairs';
 import EditorMediaModalFieldset from '../fieldset';
 import SelectDropdown from 'components/select-dropdown';
 import SelectDropdownItem from 'components/select-dropdown/item';
-import FormCheckbox from 'components/forms/form-checkbox';
+import Checkbox from 'components/checkbox';
 import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants';
 
 export default React.createClass( {
@@ -139,7 +139,7 @@ export default React.createClass( {
 
 		return (
 			<EditorMediaModalFieldset legend={ this.translate( 'Random Order' ) }>
-				<FormCheckbox onChange={ this.updateRandomOrder } checked={ settings.orderBy === 'rand' } />
+				<Checkbox onChange={ this.updateRandomOrder } checked={ settings.orderBy === 'rand' } />
 			</EditorMediaModalFieldset>
 		);
 	},

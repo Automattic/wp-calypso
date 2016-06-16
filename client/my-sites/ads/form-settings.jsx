@@ -19,7 +19,7 @@ var Card = require( 'components/card' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormLegend = require( 'components/forms/form-legend' ),
 	FormRadio = require( 'components/forms/form-radio' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
+	Checkbox = require( 'components/checkbox' ),
 	FormSelect = require( 'components/forms/form-select' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	WordadsActions = require( 'lib/ads/actions' ),
@@ -233,7 +233,7 @@ const AdsFormSettings = React.createClass( {
 			<FormFieldset>
 				<FormLegend>{ this.translate( 'Additional Ads' ) }</FormLegend>
 				<FormLabel>
-					<FormCheckbox
+					<Checkbox
 						name="optimized_ads"
 						checkedLink={ this.linkState( 'optimized_ads' ) }
 						disabled={ this.state.isLoading } />
@@ -276,7 +276,7 @@ const AdsFormSettings = React.createClass( {
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
-						<FormCheckbox
+						<Checkbox
 							name="us_resident"
 							checked={ this.state.us_checked }
 							disabled={ this.state.isLoading }
@@ -365,7 +365,7 @@ const AdsFormSettings = React.createClass( {
 		return (
 			<FormFieldset className="wordads-tos__fieldset">
 				<FormLabel>
-					<FormCheckbox
+					<Checkbox
 						name="tos"
 						checkedLink={ this.linkState( 'tos' ) }
 						disabled={ this.state.isLoading || 'signed' === this.state.tos } />

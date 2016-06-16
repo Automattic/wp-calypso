@@ -16,7 +16,7 @@ import PressThisLink from './press-this-link';
 import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
 import FormSelect from 'components/forms/form-select';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormCheckbox from 'components/forms/form-checkbox';
+import Checkbox from 'components/checkbox';
 import FormLabel from 'components/forms/form-label';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
@@ -149,7 +149,7 @@ const SiteSettingsFormWriting = React.createClass( {
 								{ this.translate( 'Markdown' ) }
 							</FormLabel>
 							<FormLabel>
-								<FormCheckbox
+								<Checkbox
 									name="wpcom_publish_posts_with_markdown"
 									checkedLink={ this.linkState( 'wpcom_publish_posts_with_markdown' ) }
 									disabled={ this.state.fetchingSettings }
