@@ -3,6 +3,10 @@ Query Manager
 
 Query Manager is an extendable utility class intended for managing complex data sets where items can be associated with one or more queries and can change over time.
 
+In a nutshell, Query Manager recreates the storage and querying of resources completely within the client, enabling us to optimistically predict the effects of particular actions taken on those resources.
+
+## Usage
+
 At its core is the `receive` method, which can be used in a number of contexts:
 
 - Identifying the item(s) associated with a query object (with the `query` option)
