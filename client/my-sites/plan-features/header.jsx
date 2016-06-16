@@ -17,7 +17,7 @@ import {
 	PLAN_BUSINESS
 } from 'lib/plans/constants';
 
-export class PlanFeaturesHeader extends Component {
+class PlanFeaturesHeader extends Component {
 
 	render() {
 		const {
