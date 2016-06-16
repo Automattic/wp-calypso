@@ -148,6 +148,15 @@ FullPostView = React.createClass( {
 		}
 	},
 
+	showFullPost( event, post ) {
+		event && event.preventDefault();
+		if ( post.feed_ID && post.feed_item_ID ) {
+			page.replace( `/read/feeds/${post.feed_ID}/posts/${post.feed_item_ID}` );
+		} else {
+			page.replace( `/read/blogs/${post.site_ID}/posts/${post.ID}` );
+		}
+	},
+
 	render: function() {
 		var post = this.props.post,
 			site = this.props.site,
@@ -227,7 +236,7 @@ FullPostView = React.createClass( {
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
 					{ discoverSiteName && discoverSiteUrl ? <DiscoverVisitLink siteName={ discoverSiteName } siteUrl={ discoverSiteUrl } /> : null }
-					{ config.isEnabled( 'reader/related-posts' ) && ! post.is_external && post.site_ID && <RelatedPosts siteId={ post.site_ID } postId={ post.ID } /> }
+					{ config.isEnabled( 'reader/related-posts' ) && ! post.is_external && post.site_ID && <RelatedPosts siteId={ post.site_ID } postId={ post.ID } onPostClick={ this.showFullPost } /> }
 					{ this.props.shouldShowComments ? <PostCommentList ref="commentList" post={ post } initialSize={ 25 } pageSize={ 25 } onCommentsUpdate={ this.checkForCommentAnchor } /> : null }
 				</article>
 			</div>
