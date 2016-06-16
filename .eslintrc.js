@@ -55,6 +55,8 @@ module.exports = {
 		// Allows Chai `expect` expressions
 		'no-unused-expressions': 0,
 		'no-unused-vars': 1,
+		'no-var': 1,
+		'prefer-const': 1,
 		// Teach eslint about React+JSX
 		'react/jsx-uses-react': 1,
 		'react/jsx-uses-vars': 1,
