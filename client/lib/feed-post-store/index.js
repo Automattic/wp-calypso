@@ -100,6 +100,10 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 			break;
 
+		case FeedPostActionType.RECEIVE_NORMALIZED_FEED_POST:
+			setPost( action.data.feed_item_ID, action.data );
+			break;
+
 		case FeedPostActionType.MARK_FEED_POST_SEEN:
 			markPostSeen( action.data.post, action.data.source );
 			break;
