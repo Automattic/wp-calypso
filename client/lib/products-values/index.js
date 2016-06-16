@@ -123,10 +123,12 @@ function isEnterprise( product ) {
 }
 
 function isJetpackPlan( product ) {
+	var jetpackProducts = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
+
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return 'jetpack' === product.product_type;
+	return ( jetpackProducts.indexOf( product.product_slug ) >= 0 );
 }
 
 function isJetpackBusiness( product ) {
