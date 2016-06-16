@@ -70,8 +70,10 @@
 		}
 
 		@include breakpoint( ">660px" ) {
-			+ .button {
-				margin-left: 16px;
+			margin-top: 10px;
+
+			&:first-of-type {
+				margin-right: 16px;
 			}
 		}
 	}
