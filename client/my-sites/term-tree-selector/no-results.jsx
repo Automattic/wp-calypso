@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 export default React.createClass( {
-	displayName: 'TermSelectorNoResults',
+	displayName: 'TermTreeSelectorNoResults',
 
 	mixins: [ PureRenderMixin ],
 

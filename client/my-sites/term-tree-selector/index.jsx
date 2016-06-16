@@ -7,9 +7,11 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import TermSelectorTerms from './terms';
+import TermTreeSelectorTerms from './terms';
 
 export default React.createClass( {
+	displayName: 'TermTreeSelector',
+
 	propTypes: {
 		multiple: PropTypes.bool,
 		className: PropTypes.string,
@@ -66,7 +68,7 @@ export default React.createClass( {
 
 		return (
 			<div className={ classes } ref="wrapper">
-				<TermSelectorTerms
+				<TermTreeSelectorTerms
 					taxonomy={ taxonomy }
 					onSearch={ this.onSearch }
 					onChange={ onChange }

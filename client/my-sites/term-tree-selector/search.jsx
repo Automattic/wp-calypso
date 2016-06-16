@@ -9,7 +9,7 @@ import React, { PropTypes } from 'react';
 import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
-	displayName: 'TermSelectorSearch',
+	displayName: 'TermTreeSelectorSearch',
 
 	propTypes: {
 		searchTerm: PropTypes.string,
@@ -18,7 +18,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="term-selector__search">
+			<div className="term-tree-selector__search">
 				<Gridicon icon="search" size={ 18 } />
 				<input type="search"
 					placeholder={ this.translate( 'Search…', { textOnly: true } ) }
