@@ -23,7 +23,7 @@ var MapDomain = React.createClass( {
 	propTypes: {
 		query: React.PropTypes.string,
 		productsList: React.PropTypes.object.isRequired,
-		withPlansOnly: React.PropTypes.bool.isRequired
+		domainsWithPlansOnly: React.PropTypes.bool.isRequired
 	},
 
 	componentWillMount: function() {

@@ -412,7 +412,7 @@ const RegisterDomainStep = React.createClass( {
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
 						selectedSite={ this.props.selectedSite }
-						withPlansOnly={ this.props.domainsWithPlansOnly }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						onButtonClick={ this.addRemoveDomainToCart.bind( null, suggestion ) } />
 				);
 			}, this );
@@ -421,7 +421,7 @@ const RegisterDomainStep = React.createClass( {
 				<DomainMappingSuggestion
 					onButtonClick={ this.goToMapDomainStep }
 					selectedSite={ this.props.selectedSite }
-					withPlansOnly={ this.props.domainsWithPlansOnly }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					cart={ this.props.cart }
 					products={ this.props.products } />
 				);

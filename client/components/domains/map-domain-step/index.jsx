@@ -122,7 +122,7 @@ var MapDomainStep = React.createClass( {
 				<DomainRegistrationSuggestion
 					suggestion={ suggestion }
 					selectedSite={ this.props.selectedSite }
-					withPlansOnly={ this.props.domainsWithPlansOnly }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					key={ suggestion.domain_name }
 					cart={ this.props.cart }
 					onButtonClick={ this.registerSuggestedDomain } />
