@@ -13,11 +13,11 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';
 import i18n from 'i18n-calypso';
-import _sites from 'lib/sites-list';
-import _user from 'lib/user';
+import sitesFactory from 'lib/sites-list';
+import userFactory from 'lib/user';
 
-const sites = _sites();
-const user = _user();
+const sites = sitesFactory();
+const user = userFactory();
 
 export default class EmailUnverifiedNotice extends React.Component {
 	constructor( props ) {
