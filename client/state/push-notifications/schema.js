@@ -1,32 +1,34 @@
 
 const boolType = { type: 'boolean' };
 const stringType = { type: 'string' };
+const numberType = { type: 'number' };
 
 export const settingsSchema = {
-	name: 'settings',
 	type: 'object',
-	patternProperties: {
+	properties: {
 		enabled: boolType,
 		dismissedNotice: boolType,
-		dismissedNoticeAt: stringType,
+		dismissedNoticeAt: numberType,
 		showingUnblockInstructions: boolType
 	},
 	additionalProperties: false
 };
 
 export const systemSchema = {
-	name: 'system',
 	type: 'object',
-	patternProperties: {
+	properties: {
 		apiReady: boolType,
 		authorized: boolType,
 		authorizationLoaded: boolType,
 		blocked: boolType,
 		wpcomSubscription: {
 			type: 'object',
-			patternProperties: {
-				lastUpdated: {
-					type: 'string'
+			properties: {
+				lastUpdated: stringType,
+				ID: numberType,
+				settings: {
+					type: 'object',
+					additionalProperties: true
 				}
 			}
 		}
