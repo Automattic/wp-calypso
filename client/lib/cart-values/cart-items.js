@@ -23,6 +23,7 @@ var productsValues = require( 'lib/products-values' ),
 	formatProduct = productsValues.formatProduct,
 	isCustomDesign = productsValues.isCustomDesign,
 	isDependentProduct = productsValues.isDependentProduct,
+	isDomainMapping = productsValues.isDomainMapping,
 	isDomainProduct = productsValues.isDomainProduct,
 	isDomainRedemption = productsValues.isDomainRedemption,
 	isDomainRegistration = productsValues.isDomainRegistration,
@@ -720,7 +721,9 @@ function isDomainBeingUsedForPlan( cart, domain ) {
 function shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestionOrCartItem ) {
 	return withPlansOnly &&
 		// not free or a cart item
-		( isDomainProduct( suggestionOrCartItem ) || ( suggestionOrCartItem.domain_name && ! isWordPressDomain( suggestionOrCartItem ) ) ) &&
+		( isDomainRegistration( suggestionOrCartItem ) ||
+			isDomainMapping( suggestionOrCartItem ) ||
+			( suggestionOrCartItem.domain_name && ! isWordPressDomain( suggestionOrCartItem ) ) ) &&
 		( ! isDomainBeingUsedForPlan( cart, suggestionOrCartItem.domain_name ) ) && // a plan in cart
 		( ! isNextDomainFree( cart ) ) && // domain credit
 		( ! hasPlan( cart ) ) && // already a plan in cart
