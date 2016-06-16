@@ -7,8 +7,7 @@ const ReactDom = require( 'react-dom' ),
 	i18n = require( 'i18n-calypso' ),
 	page = require( 'page' ),
 	debounce = require( 'lodash/debounce' ),
-	throttle = require( 'lodash/throttle' ),
-	assign = require( 'lodash/assign' );
+	throttle = require( 'lodash/throttle' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -180,17 +179,16 @@ const PostEditor = React.createClass( {
 		observe( 'sites' )
 	],
 
-	getInitialState: function() {
-		var state = this.getPostEditState();
-
-		return assign( {}, state, {
+	getInitialState() {
+		return {
+			...this.getPostEditState(),
 			isSaving: false,
 			isPublishing: false,
 			notice: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
 			isTitleFocused: false
-		} );
+		};
 	},
 
 	getPostEditState: function() {
@@ -214,6 +212,10 @@ const PostEditor = React.createClass( {
 		this.debouncedAutosave = debounce( throttle( this.autosave, 20000 ), 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
+
+		this.setState( {
+			isEditorInitialized: false
+		} );
 	},
 
 	componentDidMount: function() {
@@ -352,6 +354,7 @@ const PostEditor = React.createClass( {
 								tabIndex={ 2 }
 								isNew={ this.state.isNew }
 								onSetContent={ this.debouncedSaveRawContent }
+								onInit={ this.onEditorInitialized }
 								onChange={ this.onEditorContentChange }
 								onKeyUp={ this.debouncedSaveRawContent }
 								onFocus={ this.onEditorFocus }
@@ -386,7 +389,7 @@ const PostEditor = React.createClass( {
 								post={ this.state.post }
 								isNew={ this.state.isNew }
 								isDirty={ this.state.isDirty }
-								isSaveBlocked={ this.state.isSaveBlocked }
+								isSaveBlocked={ this.isSaveBlocked() }
 								hasContent={ this.state.hasContent }
 								isSaving={ this.state.isSaving }
 								isPublishing={ this.state.isPublishing }
@@ -499,6 +502,14 @@ const PostEditor = React.createClass( {
 		}
 	},
 
+	isSaveBlocked() {
+		return this.state.isSaveBlocked || ! this.state.isEditorInitialized;
+	},
+
+	onEditorInitialized() {
+		this.setState( { isEditorInitialized: true } );
+	},
+
 	onEditorContentChange: function() {
 		debug( 'editor content changed' );
 		this.debouncedSaveRawContent();
@@ -519,7 +530,7 @@ const PostEditor = React.createClass( {
 	autosave: function() {
 		var callback;
 
-		if ( this.state.isSaving === true || this.state.isSaveBlocked ) {
+		if ( this.state.isSaving === true || this.isSaveBlocked() ) {
 			return;
 		}
 
