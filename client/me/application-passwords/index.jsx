@@ -181,7 +181,9 @@ const ApplicationPasswords = React.createClass( {
 			<div>
 				<SectionHeader label={ this.translate( 'Application Passwords' ) }>
 					<Button compact onClick={ this.recordClickEvent( 'Create Application Password Button', this.toggleNewPassword ) }>
-						<Gridicon icon="plus-small" size={ 16 } nonStandardSize />
+						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+						<Gridicon icon="plus-small" size={ 16 } />
+						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 						{ this.translate( 'Add New Application Password' ) }
 					</Button>
 				</SectionHeader>
