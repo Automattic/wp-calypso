@@ -657,17 +657,6 @@
     "cli-width": {
       "version": "1.1.1"
     },
-    "click-outside": {
-      "version": "1.0.4",
-      "dependencies": {
-        "babel-runtime": {
-          "version": "4.7.4"
-        },
-        "core-js": {
-          "version": "0.6.1"
-        }
-      }
-    },
     "clipboard": {
       "version": "1.5.3"
     },

@@ -3,7 +3,7 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	clickOutside = require( 'click-outside' ),
+	withClickOutside = require( 'react-click-outside' ),
 	closest = require( 'component-closest' ),
 	noop = require( 'lodash/noop' ),
 	classnames = require( 'classnames' );
@@ -14,6 +14,18 @@ var ReactDom = require( 'react-dom' ),
 var closeOnEsc = require( 'lib/mixins/close-on-esc' ),
 	Card = require( 'components/card' ),
 	trapFocus = require( 'lib/mixins/trap-focus' );
+
+// Subclass <Card> component to extend with "click outside" behavior.".
+var DialogBaseCard = withClickOutside( React.createClass( {
+
+	render: function() {
+		return <Card {...this.props} />
+	},
+
+	handleClickOutside: function( event ) {
+		this.props.onClickOutside( event );
+	}
+} ) );
 
 var DialogBase = React.createClass( {
 	mixins: [ closeOnEsc( '_close' ), trapFocus ],
@@ -37,8 +49,6 @@ var DialogBase = React.createClass( {
 			if ( this.props.autoFocus ) {
 				ReactDom.findDOMNode( this.refs.content ).focus();
 			}
-
-			this._unbindClickHandler = clickOutside( ReactDom.findDOMNode( this.refs.dialog ), this._onBackgroundClick );
 		}.bind( this ), 10 );
 		document.documentElement.classList.add( 'no-scroll' );
 	},
@@ -49,10 +59,6 @@ var DialogBase = React.createClass( {
 			this._focusTimeout = false;
 		}
 
-		if ( this._unbindClickHandler ) {
-			this._unbindClickHandler();
-			this._unbindClickHandler = null;
-		}
 		document.documentElement.classList.remove( 'no-scroll' );
 	},
 
@@ -72,12 +78,12 @@ var DialogBase = React.createClass( {
 
 		return (
 			<div className={ backdropClassName } ref="backdrop">
-				<Card className={ dialogClassName } role="dialog" ref="dialog">
+				<DialogBaseCard className={ dialogClassName } role="dialog" onClickOutside={ this._onBackgroundClick }>
 					<div className={ classnames( this.props.className, contentClassName ) } ref="content" tabIndex="-1">
 						{ this.props.children }
 					</div>
 					{ this._renderButtonsBar() }
-				</Card>
+				</DialogBaseCard>
 			</div>
 		);
 	},
