@@ -234,7 +234,7 @@ var Gridicon = React.createClass( {
 				svg = <svg className={ iconClass } height={ this.props.size } width={ this.props.size } onClick={ this.props.onClick } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M17 3H7c-1.105 0-2 .896-2 2v16l7-4 7 4V5c0-1.104-.896-2-2-2z"/></g></svg>;
 				break;
 			case 'gridicons-briefcase':
-				svg = <svg className={ iconClass } height={ this.props.size } width={ this.props.size } onClick={ this.props.onClick } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M21 6h-4V3c0-.5-.5-1-1-1H8c-.5 0-1 .5-1 1v3H3c-.6 0-1 .4-1 1v5h20V7c0-.6-.4-1-1-1zm-6 0H9V4h6v2zM14 15h-4v-2H2v8c0 .6.4 1 1 1h18c.6 0 1-.4 1-1v-8h-8v2z"/></g></svg>;
+				svg = <svg className={ iconClass } height={ this.props.size } width={ this.props.size } onClick={ this.props.onClick } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M14,15h-4v-2H2v6c0,1.105,0.895,2,2,2h16c1.105,0,2-0.895,2-2v-6h-8V15z M20,6h-2V4c0-1.105-0.895-2-2-2H8 C6.895,2,6,2.895,6,4v2H4C2.895,6,2,6.895,2,8v4h20V8C22,6.895,21.105,6,20,6z M16,6H8V4h8V6z"/></g></svg>;
 				break;
 			case 'gridicons-calendar':
 				svg = <svg className={ iconClass } height={ this.props.size } width={ this.props.size } onClick={ this.props.onClick } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.105 0-2 .896-2 2v13c0 1.104.895 2 2 2h14c1.104 0 2-.896 2-2V6c0-1.104-.896-2-2-2zm0 15H5V8h14v11z"/></g></svg>;
