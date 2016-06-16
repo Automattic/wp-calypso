@@ -14,7 +14,8 @@ import {
 	getSiteSlug,
 	isRequestingSites,
 	getSiteByUrl,
-	getSitePlan
+	getSitePlan,
+	isCurrentSitePlan
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -334,6 +335,69 @@ describe( 'selectors', () => {
 				product_name_short: 'Business',
 				free_trial: false
 			} );
+		} );
+	} );
+
+	describe( '#isCurrentSitePlan()', () => {
+		it( 'should return null if the site is not known', () => {
+			const isCurrent = isCurrentSitePlan( {
+				sites: {
+					items: {}
+				}
+			}, 77203074, 1008 );
+
+			expect( isCurrent ).to.be.null;
+		} );
+
+		it( 'should return null if the planProductId is not supplied', () => {
+			const isCurrent = isCurrentSitePlan( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							plan: {
+								product_id: 1008
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( isCurrent ).to.be.null;
+		} );
+
+		it( 'it should return true if the site\'s plan matches supplied planProductId', () => {
+			const isCurrent = isCurrentSitePlan( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							plan: {
+								product_id: 1008
+							}
+						}
+					}
+				}
+			}, 77203074, 1008 );
+
+			expect( isCurrent ).to.be.true;
+		} );
+
+		it( 'it should return false if the site\'s plan doesn\'t match supplied planProductId', () => {
+			const isCurrent = isCurrentSitePlan( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							plan: {
+								product_id: 1008
+							}
+						}
+					}
+				}
+			}, 77203074, 1003 );
+
+			expect( isCurrent ).to.be.false;
 		} );
 	} );
 } );
