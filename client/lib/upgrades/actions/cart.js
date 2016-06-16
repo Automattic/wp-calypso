@@ -61,10 +61,11 @@ function addItems( items ) {
 	} );
 }
 
-function removeItem( item ) {
+function removeItem( item, domainsWithPlansOnly ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_ITEM_REMOVE,
-		cartItem: item
+		cartItem: item,
+		domainsWithPlansOnly
 	} );
 }
 

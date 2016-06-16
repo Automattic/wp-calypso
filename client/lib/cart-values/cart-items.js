@@ -130,10 +130,11 @@ function remove( cartItemToRemove ) {
  *
  * @param {Object} cartItemToRemove - item as `CartItemValue` object
  * @param {Object} cart - cart as `CartValue` object
+ * @param {bool} domainsWithPlansOnly - Whether we should consider domains as dependents of products
  * @returns {Function} the function that removes the items from a shopping cart
  */
-function removeItemAndDependencies( cartItemToRemove, cart ) {
-	var dependencies = getDependentProducts( cartItemToRemove, cart ),
+function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPlansOnly ) {
+	var dependencies = getDependentProducts( cartItemToRemove, cart, domainsWithPlansOnly ),
 		changes = dependencies.map( remove ).concat( remove( cartItemToRemove ) );
 
 	return flow.apply( null, changes );
@@ -144,11 +145,12 @@ function removeItemAndDependencies( cartItemToRemove, cart ) {
  *
  * @param {Object} cartItem - item as `CartItemValue` object
  * @param {Object} cart - cart as `CartValue` object
+ * @param {bool} domainsWithPlansOnly - Whether we should consider domains as dependents of products
  * @returns {Object[]} the list of dependency items in the shopping cart
  */
-function getDependentProducts( cartItem, cart ) {
+function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
 	const dependentProducts = getAll( cart ).filter( function( existingCartItem ) {
-		return isDependentProduct( cartItem, existingCartItem );
+		return isDependentProduct( cartItem, existingCartItem, domainsWithPlansOnly );
 	} );
 
 	return uniq( flatten( dependentProducts.concat( dependentProducts.map( dependentProduct => getDependentProducts( dependentProduct, cart ) ) ) ) );
@@ -726,11 +728,7 @@ function shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggesti
 }
 
 function bundleItemWithPlan( cartItem, planSlug = 'value_bundle' ) {
-	const items = [ cartItem, planItem( planSlug, false ) ];
-	return items.map( item => {
-		const extra = assign( {}, item.extra, { withPlansOnly: 'yes' } );
-		return assign( {}, item, { extra } );
-	} );
+	return [ cartItem, planItem( planSlug, false ) ];
 }
 
 function bundleItemWithPlanIfNecessary( cartItem, withPlansOnly, selectedSite, cart, planSlug = 'value_bundle' ) {

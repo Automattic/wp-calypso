@@ -114,7 +114,7 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 			break;
 
 		case UpgradesActionTypes.CART_ITEM_REMOVE:
-			update( cartItems.removeItemAndDependencies( action.cartItem, CartStore.get() ) );
+			update( cartItems.removeItemAndDependencies( action.cartItem, CartStore.get(), action.domainsWithPlansOnly ) );
 			break;
 	}
 } );
