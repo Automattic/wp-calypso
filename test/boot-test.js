@@ -9,11 +9,9 @@ module.exports = {
 		Chai.use( immutableChai );
 		Chai.use( sinonChai );
 		sinon.assert.expose( Chai.assert, { prefix: '' } );
-		nock.disableNetConnect();
 	},
 	after: function() {
 		nock.cleanAll();
-		nock.enableNetConnect();
 		nock.restore();
 	}
 };
