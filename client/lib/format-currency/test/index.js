@@ -6,53 +6,53 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import currencyFormatter, { getCurrencyDefaults, getCurrencyObject } from 'lib/currency-formatter';
+import formatCurrency, { getCurrencyDefaults, getCurrencyObject } from 'lib/format-currency';
 
-describe( 'currencyFormatter', () => {
+describe( 'formatCurrency', () => {
 	it( 'formats a number to localized currency', () => {
-		const money = currencyFormatter( 99.32, 'USD' );
+		const money = formatCurrency( 99.32, 'USD' );
 		expect( money ).to.equal( '$99.32' );
 	} );
 	it( 'adds a localized thousands separator', () => {
-		const money = currencyFormatter( 9800900.32, 'USD' );
+		const money = formatCurrency( 9800900.32, 'USD' );
 		expect( money ).to.equal( '$9,800,900.32' );
 	} );
 	it( 'handles zero', () => {
-		const money = currencyFormatter( 0, 'USD' );
+		const money = formatCurrency( 0, 'USD' );
 		expect( money ).to.equal( '$0.00' );
 	} );
 	it( 'handles negative values', () => {
-		const money = currencyFormatter( -1234.56789, 'USD' );
+		const money = formatCurrency( -1234.56789, 'USD' );
 		expect( money ).to.equal( '-$1,234.57' );
 	} );
 	it( 'unknown currency codes return null', () => {
-		const money = currencyFormatter( 9800900.32, {} );
+		const money = formatCurrency( 9800900.32, {} );
 		expect( money ).to.equal( null );
 	} );
 
 	describe( 'supported currencies', () => {
 		it( 'USD', () => {
-			const money = currencyFormatter( 9800900.32, 'USD' );
+			const money = formatCurrency( 9800900.32, 'USD' );
 			expect( money ).to.equal( '$9,800,900.32' );
 		} );
 		it( 'AUD', () => {
-			const money = currencyFormatter( 9800900.32, 'AUD' );
+			const money = formatCurrency( 9800900.32, 'AUD' );
 			expect( money ).to.equal( 'A$9,800,900.32' );
 		} );
 		it( 'CAD', () => {
-			const money = currencyFormatter( 9800900.32, 'CAD' );
+			const money = formatCurrency( 9800900.32, 'CAD' );
 			expect( money ).to.equal( 'C$9,800,900.32' );
 		} );
 		it( 'EUR', () => {
-			const money = currencyFormatter( 9800900.32, 'EUR' );
+			const money = formatCurrency( 9800900.32, 'EUR' );
 			expect( money ).to.equal( '€9.800.900,32' );
 		} );
 		it( 'GBP', () => {
-			const money = currencyFormatter( 9800900.32, 'GBP' );
+			const money = formatCurrency( 9800900.32, 'GBP' );
 			expect( money ).to.equal( '£9,800,900.32' );
 		} );
 		it( 'JPY', () => {
-			const money = currencyFormatter( 9800900.32, 'JPY' );
+			const money = formatCurrency( 9800900.32, 'JPY' );
 			expect( money ).to.equal( '¥9,800,900' );
 		} );
 	} );

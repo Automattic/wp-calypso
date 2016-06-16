@@ -6,7 +6,7 @@ import React, { Component, PropTypes } from 'react';
 /**
  * Internal Dependencies
  **/
-import { getCurrencyObject } from 'lib/currency-formatter';
+import { getCurrencyObject } from 'lib/format-currency';
 
 export default class PlanFeaturesPrice extends Component {
 
