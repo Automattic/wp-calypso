@@ -12,9 +12,9 @@ import PlanFeaturesHeader from './header';
 import PlanFeaturesItemList from './list';
 import PlanFeaturesItem from './item';
 import PlanFeaturesFooter from './footer';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getPlanRawPrice , getPlan } from 'state/plans/selectors';
-import sitesFactory from 'lib/sites-list';
+import { isCurrentSitePlan } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPlanRawPrice, getPlan } from 'state/plans/selectors';
 import { plansList, getPlanFeaturesObject, PLAN_PREMIUM } from 'lib/plans/constants';
 
 class PlanFeatures extends Component {
@@ -58,17 +58,11 @@ class PlanFeatures extends Component {
 
 export default connect( ( state, ownProps ) => {
 	const planProductId = plansList[ ownProps.plan ].getProductId();
-	let sitePlanObj = getCurrentPlan( state, sitesFactory().getSelectedSite() );
-
-	if ( sitePlanObj === null ) {
-		sitePlanObj = {
-			currentPlan: false
-		};
-	}
+	const selectedSiteId = getSelectedSiteId( state );
 
 	return {
 		planName: ownProps.plan,
-		current: sitePlanObj.currentPlan,
+		current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 		popular: ownProps.plan === PLAN_PREMIUM,
 		features: getPlanFeaturesObject( ownProps.plan ),
 		rawPrice: getPlanRawPrice( state, planProductId /**, get from abtest **/ ),
