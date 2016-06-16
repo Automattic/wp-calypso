@@ -57,7 +57,7 @@ export default React.createClass( {
 					name='sharing_enabled'
 					checked={ this.isShowingSharingButtons() }
 					onChange={ this.onChange } />
-				{ this.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }
+				<span>{ this.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }</span>
 			</label>
 		);
 	},
@@ -73,7 +73,7 @@ export default React.createClass( {
 						name='likes_enabled'
 						checked={ this.isShowingLikeButton() }
 						onChange={ this.onChange } />
-					{ this.translate( 'Show Like Button', { context: 'Post Editor' } ) }
+					<span>{ this.translate( 'Show Like Button', { context: 'Post Editor' } ) }</span>
 				</label>
 		);
 	},

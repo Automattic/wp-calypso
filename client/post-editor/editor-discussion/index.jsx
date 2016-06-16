@@ -102,7 +102,7 @@ export default React.createClass( {
 						checked={ statusToBoolean( discussion.ping_status ) }
 						disabled={ ! this.props.post }
 						onChange={ this.onChange } />
-					{ this.translate( 'Allow Pingbacks & Trackbacks' ) }
+					<span>{ this.translate( 'Allow Pingbacks & Trackbacks' ) }</span>
 				</label>
 			</EditorFieldset>
 		);

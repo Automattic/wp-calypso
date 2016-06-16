@@ -145,7 +145,7 @@ const CancelPrivateRegistration = React.createClass( {
 		const purchase = this.props.selectedPurchase.data;
 
 		if ( purchase.error ) {
-			return <Notice status='is-error' showDismiss={ false }>{ purchase.error }</Notice>;
+			return <Notice status="is-error" showDismiss={ false }>{ purchase.error }</Notice>;
 		}
 
 		return null;
@@ -186,10 +186,10 @@ const CancelPrivateRegistration = React.createClass( {
 				{ notice }
 				<Card className={ classes }>
 					<div className="cancel-private-registration__text">
-						{ descriptionText }
+						<span>{ descriptionText }</span>
 					</div>
 					<div className="cancel-private-registration__text">
-						{ warningText }
+						<span>{ warningText }</span>
 					</div>
 
 					{ button }

@@ -92,7 +92,7 @@ class PlanFeaturesHeader extends Component {
 	getPremiumPlanSvg() {
 		/*eslint-disable react/no-danger*/
 		return (
-			<svg viewBox="0 0 124 127.1" enable-background="new 0 0 124 127.1" dangerouslySetInnerHTML={ { __html: `
+			<svg viewBox="0 0 124 127.1" enableBackground="new 0 0 124 127.1" dangerouslySetInnerHTML={ { __html: `
 				<circle fill="#D3DEE6" cx="62" cy="63.1" r="62"/>
 				<g>
 					<defs>
@@ -294,7 +294,7 @@ class PlanFeaturesHeader extends Component {
 	getBusinessPlanSvg() {
 		/*eslint-disable react/no-danger*/
 		return (
-			<svg viewBox="0 0 124 127.1" enable-background="new 0 0 124 127.1" dangerouslySetInnerHTML={ { __html: `
+			<svg viewBox="0 0 124 127.1" enableBackground="new 0 0 124 127.1" dangerouslySetInnerHTML={ { __html: `
 				<circle fill="#D3DEE6" cx="62" cy="63.1" r="62"/>
 				<g>
 					<defs>

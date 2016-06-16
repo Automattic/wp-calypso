@@ -44,7 +44,7 @@ module.exports = React.createClass( {
 			return (
 				<label key={ index }>
 					<input type="checkbox" onClick={ onClick } checked={ element.selected } readOnly />
-					{ element.title }
+					<span>{ element.title }</span>
 				</label>
 			);
 		} );

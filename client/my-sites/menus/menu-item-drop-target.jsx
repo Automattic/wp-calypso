@@ -22,7 +22,6 @@ var MenuItemDropTarget = React.createClass( {
 	},
 
 	render: function() {
-
 		var label = {
 			move: {
 				before: this.translate( 'Move item above' ),
