@@ -20,7 +20,6 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	TranslatorLauncher = require( './community-translator/launcher' ),
 	PollInvitation = require( './poll-invitation' ),
 	PreferencesData = require( 'components/data/preferences-data' ),
-	EmailVerificationNotice = require( 'components/email-verification/email-verification-notice' ),
 	PushNotificationPrompt = require( 'components/push-notification/prompt' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
 	WelcomeMessage = require( 'layout/nux-welcome/welcome-message' ),
@@ -88,14 +87,6 @@ Layout = React.createClass( {
 
 	newestSite: function() {
 		return sortBy( this.props.sites.get(), property( 'ID' ) ).pop();
-	},
-
-	renderEmailVerificationNotice: function() {
-		if ( ! this.props.user ) {
-			return null;
-		}
-
-		return <EmailVerificationNotice user={ this.props.user } />;
 	},
 
 	renderPushNotificationPrompt: function() {
@@ -195,7 +186,6 @@ Layout = React.createClass( {
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="wp-content">
 					{ this.renderWelcome() }
-					{ this.renderEmailVerificationNotice() }
 					{ this.renderPushNotificationPrompt() }
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
 					<div id="primary" className="wp-primary wp-section" />
