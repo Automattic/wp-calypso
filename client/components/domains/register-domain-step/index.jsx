@@ -29,7 +29,7 @@ import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
 import analyticsMixin from 'lib/mixins/analytics';
-import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { abtest } from 'lib/abtest';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
 import {
