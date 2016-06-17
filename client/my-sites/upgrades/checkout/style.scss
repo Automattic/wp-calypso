@@ -841,3 +841,20 @@
 	font-style: italic;
 	margin: 4px 0 0 0;
 }
+
+.checkout__privacy-protection-price-text {
+	color: $gray;
+	margin: 4px 0 0 0;
+	font-size: 15px;
+
+	span {
+		&.free-with-plan {
+			text-decoration: line-through;
+		}
+	}
+}
+
+.checkout__privacy-protection-free-text {
+	color: $alert-green;
+	padding-left: 8px;
+}

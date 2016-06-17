@@ -311,7 +311,7 @@ const RegisterDomainStep = React.createClass( {
 			[
 				callback => {
 					if ( endsWith( domain, '.blog' ) ) {
-						let error = { code: 'dotblog_domain' };
+						const error = { code: 'dotblog_domain' };
 						this.showValidationErrorMessage( domain, error );
 						return callback();
 					}
@@ -395,7 +395,7 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	initialSuggestions: function() {
-		var domainRegistrationSuggestions,
+		let domainRegistrationSuggestions,
 			domainMappingSuggestion,
 			suggestions;
 
@@ -439,12 +439,12 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	allSearchResults: function() {
-		var lastDomainSearched = this.state.lastDomainSearched,
+		const lastDomainSearched = this.state.lastDomainSearched,
 			isSearchedDomain = function( suggestion ) {
 				return suggestion.domain_name === lastDomainSearched;
 			},
-			suggestions = reject( this.state.searchResults, isSearchedDomain ),
-			availableDomain = find( this.state.searchResults, isSearchedDomain ),
+			availableDomain = find( this.state.searchResults, isSearchedDomain );
+		let suggestions = reject( this.state.searchResults, isSearchedDomain ),
 			onAddMapping;
 
 		if ( this.props.onAddMapping ) {
@@ -526,6 +526,17 @@ const RegisterDomainStep = React.createClass( {
 				productSlug: suggestion.product_slug
 			} ) );
 
+			if ( abtest( 'privacyCheckbox' ) === 'checkbox' &&
+				(
+					cartItems.isNextDomainFree( this.props.cart ) ||
+					cartItems.shouldBundleDomainWithPlan( domainsWithPlansOnlyTestEnabled, this.props.selectedSite, this.props.cart, suggestion )
+				)
+			) {
+				upgradesActions.addItem( cartItems.domainPrivacyProtection( {
+					domain: suggestion.domain_name
+				} ) );
+			}
+
 			if ( abtest( 'multiDomainRegistrationV1' ) === 'popupCart' ) {
 				upgradesActions.openCartPopup( { showKeepSearching: true } );
 			} else { // keep searching in gapps or singlePurchaseFlow
@@ -538,7 +549,7 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	showValidationErrorMessage: function( domain, error ) {
-		var message,
+		let message,
 			severity = 'error';
 
 		switch ( error.code ) {
