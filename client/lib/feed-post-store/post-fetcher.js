@@ -1,25 +1,21 @@
-var assign = require( 'lodash/assign' ),
-	forOwn = require( 'lodash/forOwn' ),
+const assign = require( 'lodash/assign' ),
 	Immutable = require( 'immutable' ),
 	noop = require( 'lodash/noop' );
 
-var FeedPostStore = require( './' ),
-	wpcom = require( 'lib/wp' );
+const FeedPostStore = require( './' );
 
-function PostBatchFetcher( options ) {
+function PostFetcher( options ) {
 	assign( this, {
-		BATCH_SIZE: 7,
 		onFetch: noop,
 		onPostReceived: noop,
-		onError: noop,
-		apiVersion: '1.1'
+		onError: noop
 	}, options );
 
 	this.postsToFetch = Immutable.OrderedSet(); // eslint-disable-line new-cap
 	this.batchQueued = false;
 }
 
-assign( PostBatchFetcher.prototype, {
+assign( PostFetcher.prototype, {
 
 	add: function( postKey ) {
 		this.postsToFetch = this.postsToFetch.add( Immutable.fromJS( postKey ) );
@@ -43,10 +39,8 @@ assign( PostBatchFetcher.prototype, {
 		}
 
 		toFetch.forEach( function( postKey ) {
-			var post;
-
 			postKey = postKey.toJS();
-			post = FeedPostStore.get( postKey );
+			const post = FeedPostStore.get( postKey );
 
 			if ( post && post._state !== 'minimal' ) {
 				throw new Error( post._state );
@@ -68,4 +62,4 @@ assign( PostBatchFetcher.prototype, {
 	}
 } );
 
-module.exports = PostBatchFetcher;
+module.exports = PostFetcher;

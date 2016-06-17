@@ -5,12 +5,12 @@ const assign = require( 'lodash/assign' ),
 // Internal dependencies
 const Dispatcher = require( 'dispatcher' ),
 	ACTION = require( './constants' ).action,
-	PostBatcher = require( './post-batch-fetcher' ),
+	PostFetcher = require( './post-fetcher' ),
 	wpcom = require( 'lib/wp' );
 
-var feedPostBatcher, blogPostBatcher, FeedPostActions;
+let feedPostFetcher, blogPostFetcher, FeedPostActions;
 
-feedPostBatcher = new PostBatcher( {
+feedPostFetcher = new PostFetcher( {
 	makeRequest: function( postKey ) {
 		return wpcom.undocumented().readFeedPost( postKey );
 	},
@@ -35,7 +35,7 @@ feedPostBatcher = new PostBatcher( {
 	}
 } );
 
-blogPostBatcher = new PostBatcher( {
+blogPostFetcher = new PostFetcher( {
 	makeRequest: function( postKey ) {
 		return wpcom.undocumented().readSitePost( { site: postKey.blogId, postId: postKey.postId } );
 	},
@@ -63,14 +63,14 @@ blogPostBatcher = new PostBatcher( {
 FeedPostActions = {
 
 	fetchPost: function( postKey ) {
-		var batcher = postKey.blogId ? blogPostBatcher : feedPostBatcher;
-		batcher.add( postKey );
+		const fetcher = postKey.blogId ? blogPostFetcher : feedPostFetcher;
+		fetcher.add( postKey );
 	},
 
 	receivePost: function( error, data, postKey ) {
-		var batcher = postKey.blogId ? blogPostBatcher : feedPostBatcher;
+		const fetcher = postKey.blogId ? blogPostFetcher : feedPostFetcher;
 		if ( data ) {
-			batcher.remove( postKey );
+			fetcher.remove( postKey );
 		}
 
 		Dispatcher.handleServerAction( assign( {
