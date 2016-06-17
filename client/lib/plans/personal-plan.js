@@ -6,9 +6,7 @@ import { PLAN_PERSONAL } from './constants';
 export default {
 	product_id: 1009,
 	product_name: 'WordPress.com Personal',
-	prices: {
-		USD: 71.88
-	},
+	prices: { USD: 71.88 },
 	product_name_short: 'Personal',
 	product_slug: PLAN_PERSONAL,
 	tagline: 'Get your own domain',
