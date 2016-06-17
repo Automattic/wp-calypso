@@ -79,7 +79,7 @@ var DomainSearch = React.createClass( {
 		if ( ! cartItems.hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
 			this.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'domains' );
 
-			if ( cartItems.shouldBundleDomainWithPlan( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) ) {
+			if ( cartItems.shouldBundleDomainWithPlan( this.props.domainsWithPlansOnly, this.props.sites.getSelectedSite(), this.props.cart, suggestion ) ) {
 				const domain = cartItems.domainRegistration( {
 					domain: suggestion.domain_name,
 					productSlug: suggestion.product_slug
