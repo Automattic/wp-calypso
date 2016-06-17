@@ -7,7 +7,7 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import GridiconListItem from 'components/gridicon-list/item';
 
 export default React.createClass( {
 
@@ -32,10 +32,9 @@ export default React.createClass( {
 		} );
 		const showCheckmark = this.props.highlight || ! this.props.unavailable;
 		return (
-			<li className={ classes }>
-				{ showCheckmark && <Gridicon className="plan-compare-card-item__checkmark" size={ 18 } icon="checkmark" /> }
+			<GridiconListItem className={ classes } icon={ showCheckmark ? 'checkmark' : null }>
 				{ this.props.children }
-			</li>
+			</GridiconListItem>
 		);
 	}
 } );

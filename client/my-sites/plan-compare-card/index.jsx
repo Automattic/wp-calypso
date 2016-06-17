@@ -12,6 +12,7 @@ import noop from 'lodash/noop';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
+import GridiconList from 'components/gridicon-list';
 
 export default React.createClass( {
 
@@ -56,9 +57,9 @@ export default React.createClass( {
 					<div className="plan-compare-card__line">{ this.props.line }</div>
 				</Card>
 				<Card className="plan-compare-card__features">
-					<ul className="plan-compare-card__features-list">
+					<GridiconList className="plan-compare-card__features-list">
 						{ this.props.children }
-					</ul>
+					</GridiconList>
 				</Card>
 				<Card className="plan-compare-card__actions">
 					<Button
