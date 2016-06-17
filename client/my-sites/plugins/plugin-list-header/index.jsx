@@ -21,17 +21,15 @@ import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
 import Tooltip from 'components/tooltip';
 
-let _actionBarVisible = true;
+const _actionBarVisible = true;
 
 // If the Action
 const MAX_ACTIONBAR_HEIGHT = 50;
 const MIN_ACTIONBAR_WIDTH = 600;
 
 function checkPropsChange( nextProps, propArr ) {
-	var i, prop;
-
-	for ( i = 0; i < propArr.length; i++ ) {
-		prop = propArr[ i ];
+	for ( let i = 0; i < propArr.length; i++ ) {
+		const prop = propArr[ i ];
 
 		if ( nextProps[ prop ] !== this.props[ prop ] ) {
 			return true;
@@ -67,12 +65,12 @@ export default React.createClass( {
 	},
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		var propsToCheck = [ 'label', 'isBulkManagementActive', 'haveUpdatesSelected', 'pluginUpdateCount', 'haveActiveSelected', 'haveInactiveSelected', 'bulkManagement' ];
+		const propsToCheck = [ 'label', 'isBulkManagementActive', 'haveUpdatesSelected', 'pluginUpdateCount', 'haveActiveSelected', 'haveInactiveSelected', 'bulkManagement' ];
 		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
 			return true;
 		}
 
-		if ( this.props.plugins.length !== nextProps.plugins.length ){
+		if ( this.props.plugins.length !== nextProps.plugins.length ) {
 			return true;
 		}
 
@@ -130,11 +128,11 @@ export default React.createClass( {
 	},
 
 	showPluginTooltip() {
-		this.setState( { addPluginTooltip: true } )
+		this.setState( { addPluginTooltip: true } );
 	},
 
 	hidePluginTooltip() {
-		this.setState( { addPluginTooltip: false } )
+		this.setState( { addPluginTooltip: false } );
 	},
 
 	toggleBulkManagement() {
@@ -193,7 +191,7 @@ export default React.createClass( {
 						onClick={ this.onBrowserLinkClick }
 						className="plugin-list-header__browser-button"
 						onMouseEnter={ this.showPluginTooltip }
-						onMouseEnter={ this.hidePluginTooltip }
+						onMouseLeave={ this.hidePluginTooltip }
 						ref="addPluginButton"
 						aria-label={ this.translate( 'Browse all plugins', { context: 'button label' } ) }>
 						<Gridicon key="plus-icon" icon="plus-small" size={ 18 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
@@ -240,7 +238,7 @@ export default React.createClass( {
 						{ this.translate( 'Deactivate' ) }
 					</Button>
 				);
-			activateButtons.push( deactivateButton )
+			activateButtons.push( deactivateButton );
 			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
 
 			autoupdateButtons.push(
