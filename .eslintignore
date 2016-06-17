@@ -4,5 +4,5 @@ build/
 config/
 docs/
 public/
-
+!.eslintrc.js
 server/devdocs/search-index.js
