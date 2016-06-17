@@ -230,39 +230,24 @@ const JetpackSSOForm = React.createClass( {
 	},
 
 	getReturnToSiteText() {
-		const title = get( this.props, 'blogDetails.title' );
-
-		if ( ! title ) {
-			return this.translate( 'Return to {{placeholder}}your Jetpack site{{/placeholder}}', {
-				context: 'This is a placeholder string until we have the site title.',
-				components: {
-					placeholder: <span className="jetpack-connect__sso__placeholder" />
+		const text = (
+			<span className="jetpack-connect__sso__return-to-site">
+				<Gridicon icon="arrow-left" size={ 18 } />
+				{
+					this.translate( 'Return to %(siteName)s', {
+						args: {
+							siteName: get( this.props, 'blogDetails.title' )
+						}
+					} )
 				}
-			} );
-		}
+			</span>
+		);
 
-		return this.translate( 'Return to %(siteName)s', {
-			args: {
-				siteName: title
-			}
-		} );
+		return this.maybeWrapWithPlaceholder( text );
 	},
 
 	getTOSText() {
-		const title = get( this.props, 'blogDetails.title' );
-		if ( ! title ) {
-			return this.translate(
-				'By logging in you agree to share details between WordPress.com and {{placeholder}}your Jetpack site{{/placeholder}}',
-				{
-					context: 'This is a placeholder string until we have the site title.',
-					components: {
-						placeholder: <span className="jetpack-connect__sso__placeholder" />
-					}
-				}
-			);
-		}
-
-		return this.translate(
+		const text = this.translate(
 			'By logging in you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
 			{
 				components: {
@@ -275,32 +260,35 @@ const JetpackSSOForm = React.createClass( {
 					)
 				},
 				args: {
-					siteName: title
+					siteName: get( this.props, 'blogDetails.title' )
 				}
 			}
 		);
+
+		return this.maybeWrapWithPlaceholder( text );
 	},
 
 	getSubHeaderText() {
-		const title = get( this.props, 'blogDetails.title' );
-		if ( ! title ) {
-			return this.translate(
-				'To use Single Sign-On, WordPress.com needs to be able to connect to your account on {{placeholder}}your Jetpack site{{/placeholder}}.',
-				{
-					context: 'This is a placeholder string until we have the site title.',
-					components: {
-						placeholder: <span className="jetpack-connect__sso__placeholder" />
-					}
-				}
-			);
-		}
-
-		return this.translate(
+		const text = this.translate(
 			'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s.', {
 				args: {
-					siteName: title
+					siteName: get( this.props, 'blogDetails.title' )
 				}
 			}
+		);
+		return this.maybeWrapWithPlaceholder( text );
+	},
+
+	maybeWrapWithPlaceholder( input ) {
+		const title = get( this.props, 'blogDetails.title' );
+		if ( title ) {
+			return input;
+		}
+
+		return (
+			<span className="jetpack-connect__sso__placeholder">
+				{ input }
+			</span>
 		);
 	},
 
@@ -452,7 +440,6 @@ const JetpackSSOForm = React.createClass( {
 							rel="external"
 							href={ get( this.props, 'blogDetails.admin_url', '#' ) }
 							onClick={ this.onCancelClick }>
-							<Gridicon icon="arrow-left" size={ 18 } />
 							{ this.getReturnToSiteText() }
 						</LoggedOutFormLinkItem>
 					</LoggedOutFormLinks>
