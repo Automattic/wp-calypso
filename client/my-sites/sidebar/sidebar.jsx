@@ -30,6 +30,7 @@ import Button from 'components/button';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
+import { abtest } from 'lib/abtest';
 
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
@@ -334,6 +335,10 @@ module.exports = React.createClass( {
 		}
 
 		let planLink = '/plans' + this.siteSuffix();
+
+		if ( abtest( 'planFeatures' ) === 'show' ) {
+			planLink = '/plans/features' +this.siteSuffix();
+		}
 
 		// Show plan details for upgraded sites
 		if (
