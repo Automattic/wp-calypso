@@ -104,6 +104,8 @@ const WebPreview = React.createClass( {
 
 		this.setIframeUrl( previewUrl );
 
+		( prevProps.showPreview !== this.props.showPreview ) && this.props.setPreviewShowing( showPreview );
+
 		if ( ! this.shouldRenderIframe() ) {
 			this.setState( {
 				iframeUrl: null,
