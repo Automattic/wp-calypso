@@ -1,21 +1,25 @@
-/*eslint-disable quote-props */
+/* eslint-disable quote-props */
 module.exports = {
-	'parser': 'babel-eslint',
-	'env': {
-		'browser': true,
-		'es6': true,
-		'mocha': true,
-		'node': true
+	root: true,
+	parser: 'babel-eslint',
+	env: {
+		browser: true,
+		es6: true,
+		mocha: true,
+		node: true
 	},
-	'ecmaFeatures': {
-		'jsx': true,
-		'modules': true
+	parserOptions: {
+		ecmaVersion: 6,
+		ecmaFeatures: {
+			jsx: true
+		},
+		sourceType: 'module'
 	},
-	'plugins': [
+	plugins: [
 		'eslint-plugin-react',
 		'eslint-plugin-wpcalypso'
 	],
-	'rules': {
+	rules: {
 		'array-bracket-spacing': [ 1, 'always' ],
 		'brace-style': [ 1, '1tbs' ],
 		// REST API objects include underscores
@@ -30,6 +34,7 @@ module.exports = {
 		'eol-last': 1,
 		'indent': [ 1, 'tab', { 'SwitchCase': 1 } ],
 		'key-spacing': 1,
+		'keyword-spacing': 1,
 		'new-cap': [ 1, { 'capIsNew': false, 'newIsCap': true } ],
 		'no-cond-assign': 2,
 		'no-dupe-keys': 2,
@@ -83,7 +88,6 @@ module.exports = {
 		'quotes': [ 1, 'single', 'avoid-escape' ],
 		'semi': 1,
 		'semi-spacing': 1,
-		'space-after-keywords': [ 1, 'always' ],
 		'space-before-blocks': [ 1, 'always' ],
 		'space-before-function-paren': [ 1, 'never' ],
 		'space-in-parens': [ 1, 'always' ],
