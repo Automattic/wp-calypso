@@ -412,3 +412,12 @@
 		padding-left: 0;
 	}
 }
+
+.jetpack-connect__sso__placeholder {
+	@include placeholder( 23% );
+	background-color: transparent;
+}
+
+.jetpack-connect__sso__placeholder a {
+	color: transparent;
+}
