@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
+import noop from 'lodash/noop';
 
 /**
  * Internal Dependencies
@@ -16,7 +17,11 @@ import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts'
 
 const RelatedPost = React.createClass( {
 	render() {
-		return <SmallPost post={ this.props.post } site={ this.props.site } />;
+		return <SmallPost
+			post={ this.props.post }
+			site={ this.props.site }
+			onPostClick={ this.props.onPostClick }
+			onSiteClick={ this.props.onSiteClick } />;
 	}
 } );
 
@@ -32,7 +37,7 @@ const ConnectedRelatedPost = connect(
 	}
 )( RelatedPost );
 
-function RelatedPosts( { siteId, postId, posts } ) {
+function RelatedPosts( { siteId, postId, posts, onPostClick = noop, onSiteClick = noop } ) {
 	if ( ! posts ) {
 		return <QueryReaderRelatedPosts siteId={ siteId } postId={ postId } />;
 	}
@@ -40,7 +45,12 @@ function RelatedPosts( { siteId, postId, posts } ) {
 		<div className="related-posts">
 			<h1 className="related-posts__heading">{ i18n.translate( 'Related Reading' ) }</h1>
 			<ul className="related-posts__list">
-				{ posts.map( post_id => <li key={ post_id } className="related-posts__list-item"><ConnectedRelatedPost post={ post_id } /></li> ) }
+				{ posts.map( post_id => {
+					return ( <li key={ post_id } className="related-posts__list-item">
+							<ConnectedRelatedPost post={ post_id } onPostClick={ onPostClick } onSiteClick={ onSiteClick } />
+						</li> );
+				} )
+				}
 			</ul>
 		</div>
 	);
