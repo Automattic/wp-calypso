@@ -20,7 +20,8 @@ import Main from 'components/main';
 import Notice from 'components/notice';
 import observe from 'lib/mixins/data-observe';
 import paths from './paths';
-import PlanList from 'components/plans/plan-list' ;
+import OldPlanList from 'components/plans/plan-list' ;
+import PlanFeaturesList from 'my-sites/plan-features-list';
 import PlanOverview from './plan-overview';
 import { shouldFetchSitePlans, plansLink } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -140,13 +141,16 @@ const Plans = React.createClass( {
 	},
 
 	render() {
-		if ( showPlanFeatures ) {
-			console.log( this.props.context );
-		}
-
 		const selectedSite = this.props.sites.getSelectedSite();
+		let PlanList = OldPlanList;
 		let hasJpphpBundle,
-			currentPlan;
+			currentPlan,
+			mainStyle;
+
+		if ( showPlanFeatures ) {
+			PlanList = PlanFeaturesList;
+			mainStyle = { maxWidth: 1040 };
+		}
 
 		if ( this.props.sitePlans.hasLoadedFromServer ) {
 			currentPlan = getCurrentPlan( this.props.sitePlans.data );
@@ -169,7 +173,7 @@ const Plans = React.createClass( {
 			<div>
 				{ this.renderNotice() }
 
-				<Main>
+				<Main style={ mainStyle }>
 					<SidebarNavigation />
 
 					<div id="plans" className="plans has-sidebar">
