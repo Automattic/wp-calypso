@@ -55,13 +55,16 @@
 .sites-dropdown .site-selector {
 	padding: 0;
 	position: static;
-	max-height: 30vh;
 	overflow-y: auto;
-	border-radius: 0 0 2px 2px;
 
 	&.is-large {
 		margin-top: 50px;
 	}
+}
+
+.sites-dropdown .site-selector__sites {
+	max-height: 30vh;
+	border-radius: 0 0 2px 2px;
 }
 
 .sites-dropdown .site-selector .search {
