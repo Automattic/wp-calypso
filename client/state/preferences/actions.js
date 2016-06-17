@@ -9,7 +9,7 @@ import {
 	PREFERENCES_FETCH_SUCCESS,
 	PREFERENCES_FETCH_FAILURE
 } from 'state/action-types';
-import { USER_SETTING_KEY, DEFAULT_PREFERENCES } from './constants';
+import { USER_SETTING_KEY } from './constants';
 
 export function fetchPreferences() {
 	return ( dispatch ) => {
