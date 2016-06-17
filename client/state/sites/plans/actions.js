@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 import map from 'lodash/map';
-import isEmpty from 'lodash/isEmpty';
+import has from 'lodash/has';
 import omit from 'lodash/omit';
 import i18n from 'i18n-calypso';
 
@@ -124,27 +124,30 @@ export function fetchSitePlans( siteId ) {
  * @returns {Object} the corresponding action object
  */
 export function fetchSitePlansCompleted( siteId, data ) {
-	data = omit( data, '_headers' );
+	let plansData = omit( data, '_headers' );
 	const { product_id } = personalPlan;
 
-	if ( ! isEmpty( data ) && ! data.hasOwnProperty( product_id ) ) {
+	if ( ! has( plansData, product_id ) ) {
 		const { formatted_price, product_name, product_slug, raw_price } = personalPlan;
-		data[ product_id ] = {
-			can_start_trial: true,
-			discount_reason: null,
-			formatted_discount: '$0',
-			formatted_price,
-			product_name,
-			product_slug,
-			raw_discount: 0,
-			raw_price
+		plansData = {
+			...plansData,
+			[ product_id ]: {
+				can_start_trial: true,
+				discount_reason: null,
+				formatted_discount: '$0',
+				formatted_price,
+				product_name,
+				product_slug,
+				raw_discount: 0,
+				raw_price
+			}
 		};
 	}
 
 	return {
 		type: SITE_PLANS_FETCH_COMPLETED,
 		siteId,
-		plans: map( data, createSitePlanObject )
+		plans: map( plansData, createSitePlanObject )
 	};
 }
 
