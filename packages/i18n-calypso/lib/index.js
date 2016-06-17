@@ -5,7 +5,7 @@ var debug = require( 'debug' )( 'i18n-calypso' ),
 	Jed = require( 'jed' ),
 	moment = require( 'moment-timezone' ),
 	EventEmitter = require( 'events' ).EventEmitter,
-	interpolateComponents = require( 'interpolate-components' ),
+	interpolateComponents = require( 'interpolate-components' ).default,
 	LRU = require( 'lru-cache' ),
 	assign = require( 'lodash.assign' );
 
