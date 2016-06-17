@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ import PlanFeaturesFooter from './footer';
 import { isCurrentSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPlanRawPrice, getPlan } from 'state/plans/selectors';
-import { plansList, getPlanFeaturesObject, PLAN_PREMIUM } from 'lib/plans/constants';
+import { plansList, getPlanFeaturesObject, PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 
 class PlanFeatures extends Component {
 	render() {
@@ -26,7 +27,8 @@ class PlanFeatures extends Component {
 			current,
 			planConstantObj,
 			features,
-			billingTimeFrame
+			billingTimeFrame,
+			onUpgradeClick
 		} = this.props;
 
 		const classes = classNames( 'plan-features', {
@@ -42,6 +44,7 @@ class PlanFeatures extends Component {
 					planType={ planName }
 					rawPrice={ rawPrice }
 					billingTimeFrame={ billingTimeFrame }
+					onClick={ onUpgradeClick }
 				/>
 				<PlanFeaturesItemList>
 					{
@@ -50,11 +53,24 @@ class PlanFeatures extends Component {
 						)
 					}
 				</PlanFeaturesItemList>
-				<PlanFeaturesFooter current={ current } description={ planConstantObj.getDescription() } />
+				<PlanFeaturesFooter
+					current={ current }
+					description={ planConstantObj.getDescription() }
+					onUpgradeClick={ onUpgradeClick }
+				/>
 			</div>
 		);
 	}
 }
+
+PlanFeatures.propTypes = {
+	onUgradeClick: PropTypes.func,
+	plan: React.PropTypes.oneOf( [ PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS ] ).isRequired
+};
+
+PlanFeaturesHeader.defaultProps = {
+	onUpgradeClick: noop
+};
 
 export default connect( ( state, ownProps ) => {
 	const planProductId = plansList[ ownProps.plan ].getProductId();
