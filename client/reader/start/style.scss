@@ -169,7 +169,7 @@
 	font-weight: 500;
 	line-height: 1.2;
     font-size: 12px;
-    margin: 5px 120px 0 0;
+    margin: 4px 120px 2px 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -331,11 +331,18 @@
 		}
 	}
 
+	.follow-button.is-following {
+
+		&:hover {
+			border-color: $alert-green;
+		}
+	}
+
 	.reader-start-post-preview__featured-label {
 		opacity: .75;
 		position: absolute;
-			top: 120px;
 			left: 3px;
+			top: 120px;
 	}
 
 	.reader-start-post-preview__post-content {
