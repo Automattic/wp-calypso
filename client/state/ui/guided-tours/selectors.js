@@ -55,12 +55,13 @@ const findEligibleTour = createSelector(
 export const getGuidedTourState = createSelector(
 	state => {
 		const tourState = getRawGuidedTourState( state );
-		const { stepName = '' } = tourState;
+		const { stepName = 'init' } = tourState;
 		let { shouldReallyShow, tour } = tourState;
 
 		if ( ! tour ) {
 			console.log( 'no tour, finding one' );
 			tour = findEligibleTour( state );
+			if ( tour ) shouldReallyShow = true;
 			console.log( 'found', tour );
 		}
 

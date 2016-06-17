@@ -42,6 +42,8 @@ export function guidedTour( state = {}, action ) {
 
 const isRelevantTrigger = includes.bind( null, [
 	SET_ROUTE,
+	GUIDED_TOUR_SHOW,
+	GUIDED_TOUR_UPDATE,
 ] );
 
 const toTrigger = ( action ) => ( {
