@@ -1,4 +1,12 @@
 module.exports = {
+	planFeatures: {
+		datestamp: '20160617',
+		variations: {
+			hide: 50,
+			show: 50
+		},
+		defaultVariation: 'hide'
+	},
 	personalPlan: {
 		datestamp: '20160623',
 		variations: {

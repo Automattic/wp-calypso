@@ -28,7 +28,9 @@ import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
 import { PLAN_MONTHLY_PERIOD } from 'lib/plans/constants';
+import { abtest } from 'lib/abtest';
 
+const showPlanFeatures = abtest( 'planFeatures' ) === 'show';
 
 const Plans = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
@@ -138,6 +140,10 @@ const Plans = React.createClass( {
 	},
 
 	render() {
+		if ( showPlanFeatures ) {
+			console.log( this.props.context );
+		}
+
 		const selectedSite = this.props.sites.getSelectedSite();
 		let hasJpphpBundle,
 			currentPlan;
