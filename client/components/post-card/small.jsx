@@ -5,29 +5,37 @@ import React from 'react';
 import classnames from 'classnames';
 import noop from 'lodash/noop';
 import partial from 'lodash/partial';
+import { localize } from 'i18n-calypso';
+import trim from 'lodash/trim';
 
 /**
  * Internal Dependencies
  */
 import Card from 'components/card/compact';
-import SiteIcon from 'components/site-icon';
 import safeImageUrl from 'lib/safe-image-url';
 import resizeImageUrl from 'lib/resize-image-url';
 
-export default function SmallPostCard( { post, site, onPostClick = noop, onSiteClick = noop } ) {
+export function SmallPostCard( { translate, post, site, onPostClick = noop, onSiteClick = noop } ) {
 	const classes = classnames( 'post-card small', {
 		'has-image': post.canonical_image
 	} );
+	const displayName = trim( `${post.author.first_name} ${post.author.last_name}` );
+
 	return (
 		<Card className={ classes }>
 			<div className="post-card__site-info-title">
-				<a className="post-card__site-info" href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }>
-					<SiteIcon site={ site } size={ 16 } />
-					<span className="post-card__site-title">{ site && site.title || post.site_name }</span>
-				</a>
 				<h1 className="post-card__title">
 					<a className="post-card__anchor" href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` } onClick={ partial( onPostClick, post ) }>{ post.title }</a>
 				</h1>
+				<a className="post-card__site-info" href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }>
+					{ displayName && (
+						<span className="post-card__author">
+							{ displayName }
+							&nbsp;&bull;&nbsp;
+						</span> )
+					}
+					<span className="post-card__site-title">{ site && site.title || post.site_name }</span>
+				</a>
 			</div>
 			<div>
 			{ post.canonical_image && (
@@ -36,3 +44,5 @@ export default function SmallPostCard( { post, site, onPostClick = noop, onSiteC
 		</Card>
 	);
 }
+
+export default localize( SmallPostCard );
