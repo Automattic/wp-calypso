@@ -26,10 +26,10 @@ export default React.createClass( {
 				</GridiconList>
 				<GridiconList>
 					<GridiconListItem icon="checkmark">Item 1</GridiconListItem>
-					<GridiconListItem icon="checkmark">Item 2</GridiconListItem>
-					<GridiconListItem icon="checkmark">Item 3</GridiconListItem>
-					<GridiconListItem>Item 4</GridiconListItem>
-					<GridiconListItem>Item 5</GridiconListItem>
+					<GridiconListItem icon="checkmark">Item 2 contains a<br/>new line</GridiconListItem>
+					<GridiconListItem>Item 3</GridiconListItem>
+					<GridiconListItem>Item 4 also contains<br/>a new line</GridiconListItem>
+					<GridiconListItem icon="checkmark">Item 5</GridiconListItem>
 				</GridiconList>
 			</div>
 		);
