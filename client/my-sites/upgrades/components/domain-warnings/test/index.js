@@ -14,11 +14,17 @@ import TestUtils from 'react-addons-test-utils';
 import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'index', () => {
-	let DomainWarnings = require( '../' );
+	let DomainWarnings;
 
 	useFakeDom();
+
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/analytics', {} );
+		DomainWarnings = require( '../' );
+	} );
 
 	beforeEach( () => {
 		DomainWarnings.prototype.translate = identity;
