@@ -74,7 +74,6 @@ let middleware = [ thunkMiddleware ];
 if ( typeof window === 'object' ) {
 	middleware = [
 		...middleware,
-		require( './ui/guided-tours/middleware' ).default,
 		require( './analytics/middleware.js' ).analyticsMiddleware,
 	];
 }
