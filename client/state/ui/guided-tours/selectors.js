@@ -59,15 +59,27 @@ export const getGuidedTourState = createSelector(
 		let { shouldReallyShow, tour } = tourState;
 
 		if ( ! tour ) {
-			console.log( 'no tour, finding one' );
+			//console.log( 'no tour, finding one' );
 			tour = findEligibleTour( state );
 			if ( tour ) shouldReallyShow = true;
-			console.log( 'found', tour );
+			//console.log( 'found', tour );
 		}
 
 		const tourConfig = getToursConfig( tour );
-		const stepConfig = tourConfig[ stepName ] || false;
-		const nextStepConfig = getToursConfig( tour )[ stepConfig.next ] || false;
+
+		const getStep = s => {
+			const shouldSkip = !! (
+				tourConfig[ s ].showInContext && ! tourConfig[ s ].showInContext( state ) ||
+				tourConfig[ s ].continueIf && tourConfig[ s ].continueIf( state )
+			);
+			console.log( 'current should skip/continue', shouldSkip );
+			return shouldSkip ? getStep( tourConfig[ s ].next ) : tourConfig[ s ];
+		};
+
+		const stepConfig = getStep( stepName ) || false;
+		const nextStepConfig = tourConfig[ stepConfig.next ] || false;
+
+		console.log( 'current', stepConfig, 'next', nextStepConfig );
 
 		const shouldShow = !! (
 			! isSectionLoading( state ) &&
