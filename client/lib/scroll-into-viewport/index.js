@@ -12,7 +12,7 @@ function recursivelyWalkAndSum( node, valueProp, nextNodeProp, value = 0 ) {
 	if ( ! node[ nextNodeProp ] ) {
 		return value
 	}
-	return recursivelyWalkAndSum( node[ nextNodeProp ], valueProp, value );
+	return recursivelyWalkAndSum( node[ nextNodeProp ], valueProp, nextNodeProp, value );
 }
 
 /**
