@@ -27,15 +27,17 @@ export function SmallPostCard( { translate, post, site, onPostClick = noop, onSi
 				<h1 className="post-card__title">
 					<a className="post-card__anchor" href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` } onClick={ partial( onPostClick, post ) }>{ post.title }</a>
 				</h1>
-				<a className="post-card__site-info" href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }>
+				<div className="post-card__site-info">
 					{ displayName && (
 						<span className="post-card__author">
-							{ displayName }
-							&nbsp;&bull;&nbsp;
+							<a href="href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }">{ displayName }</a>
 						</span> )
 					}
-					<span className="post-card__site-title">{ site && site.title || post.site_name }</span>
-				</a>
+					<span className="post-card__site-title">
+						<a href="href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }">{ site && site.title || post.site_name }
+						</a>
+					</span>
+				</div>
 			</div>
 			<div>
 			{ post.canonical_image && (
