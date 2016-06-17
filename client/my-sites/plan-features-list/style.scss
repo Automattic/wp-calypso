@@ -1,0 +1,11 @@
+.plan-features-list {
+	@include breakpoint( ">1040px" ) {
+		display: flex;
+		flex-flow: row wrap;
+		padding-top: 19px; // popular banner height adjustment
+	}
+
+	+ .faq {
+		margin-top: 20px;
+	}
+}
