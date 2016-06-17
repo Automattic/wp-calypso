@@ -3,15 +3,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
-/**
- * Module variables
- */
-var Spinner;
-
-Spinner = React.createClass( {
+const Spinner = React.createClass( {
 	propTypes: {
 		className: React.PropTypes.string,
 		size: React.PropTypes.number,
@@ -56,7 +51,7 @@ Spinner = React.createClass( {
 	},
 
 	renderFallback: function() {
-		var style = {
+		const style = {
 			width: this.props.size,
 			height: this.props.size
 		};
@@ -70,54 +65,47 @@ Spinner = React.createClass( {
 	},
 
 	render: function() {
-		var instanceId = parseInt( this.state.instanceId, 10 );
+		const instanceId = parseInt( this.state.instanceId, 10 );
 
 		if ( ! this.isSVGCSSAnimationSupported() ) {
 			return this.renderFallback();
 		}
 
-		// We're using `dangerouslySetInnerHTML` for the SVG, as React unfortunately doesn't support
-		// SVG's `mask` attribute, see https://github.com/facebook/react/issues/1657#issuecomment-63209488
-		// The only variable we're using inside is `instanceId`, which is an (integer) counter
-		// we generate ourselves, so we're fine.
-		/*eslint-disable react/no-danger*/
 		return (
 			<div className={ this.getClassName() }>
 				<svg className="spinner__image"
 					width={ this.props.size }
 					height={ this.props.size }
-					viewBox="0 0 100 100"
-					dangerouslySetInnerHTML={ { __html: `
+					viewBox="0 0 100 100">
 					<defs>
-						<mask id="maskBorder${ instanceId }">
+						<mask id={ `maskBorder${ instanceId }` }>
 							<rect x="0" y="0" width="100%" height="100%" fill="white" />
 							<circle r="46%" cx="50%" cy="50%" fill="black" />
 						</mask>
-						<mask id="maskDonut${ instanceId }">
+						<mask id={ `maskDonut${ instanceId }` }>
 							<rect x="0" y="0" width="100%" height="100%" fill="black" />
 							<circle r="46%" cx="50%" cy="50%" fill="white" />
 							<circle r="30%" cx="50%" cy="50%" fill="black" />
 						</mask>
-						<mask id="maskLeft${ instanceId }">
+						<mask id={ `maskLeft${ instanceId }` }>
 							<rect x="0" y="0" width="50%" height="100%" fill="white" />
 						</mask>
-						<mask id="maskRight${ instanceId }">
+						<mask id={ `maskRight${ instanceId }` }>
 							<rect x="50%" y="0" width="50%" height="100%" fill="white" />
 						</mask>
 					</defs>
-					<circle class="spinner__border" r="50%" cx="50%" cy="50%" mask="url( #maskBorder${ instanceId } )" />
-					<g mask="url( #maskDonut${ instanceId } )">
-						<g mask="url( #maskLeft${ instanceId } )">
-							<rect class="spinner__progress is-left" x="0" y="0" width="50%" height="100%" />
+					<circle className="spinner__border" r="50%" cx="50%" cy="50%" mask={ `url( #maskBorder${ instanceId } )` } />
+					<g mask={ `url( #maskDonut${ instanceId } )` }>
+						<g mask={ `url( #maskLeft${ instanceId } )` }>
+							<rect className="spinner__progress is-left" x="0" y="0" width="50%" height="100%" />
 						</g>
-						<g mask="url( #maskRight${ instanceId } )">
-							<rect class="spinner__progress is-right" x="50%" y="0" width="50%" height="100%" />
+						<g mask={ `url( #maskRight${ instanceId } )` }>
+							<rect className="spinner__progress is-right" x="50%" y="0" width="50%" height="100%" />
 						</g>
 					</g>
-				` } } />
+				</svg>
 			</div>
 		);
-		/*eslint-enable react/no-danger*/
 	}
 } );
 

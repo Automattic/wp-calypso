@@ -66,9 +66,8 @@ class PlanFeaturesHeader extends Component {
 	}
 
 	getFreePlanSvg() {
-		/*eslint-disable react/no-danger*/
 		return (
-			<svg viewBox="0 0 200 200" dangerouslySetInnerHTML={ { __html: `
+			<svg viewBox="0 0 200 200">
 				<path fill="#D3DEE6" d="M133.4,7.6v98.3h-0.2c-9.1,0-16.5-7.4-16.5-16.5v0.2c0,9.1-7.4,16.5-16.5,16.5h-0.3
 					c-9.1,0-16.5-7.4-16.5-16.5v-0.2c0,9.1-7.6,16.5-16.7,16.5V7.6C29.2,21.2,2.4,57.1,2.4,99.3c0,53.9,43.7,97.6,97.6,97.6
 					c53.9,0,97.6-43.7,97.6-97.6C197.6,57.1,170.8,21.2,133.4,7.6z"/>
@@ -83,24 +82,22 @@ class PlanFeaturesHeader extends Component {
 					V3.2C111.3,2.2,105.7,1.7,100,1.7z"/>
 				<path fill="#B1C6D4" d="M83.3,89.4V3.2c-5.7,1-11.3,2.5-16.7,4.4v98.3C75.8,105.9,83.3,98.5,83.3,89.4z"/>
 				<path fill="#485567" d="M116.7,89.4c0,9.1,7.4,16.5,16.5,16.5h0.2V7.6c-5.4-1.9-10.9-3.4-16.7-4.4V89.4z"/>
-			` } } ></svg>
+			</svg>
 		);
-		/*eslint-enable react/no-danger*/
 	}
 
 	getPremiumPlanSvg() {
-		/*eslint-disable react/no-danger*/
 		return (
-			<svg viewBox="0 0 124 127.1" enableBackground="new 0 0 124 127.1" dangerouslySetInnerHTML={ { __html: `
+			<svg viewBox="0 0 124 127.1" enableBackground="new 0 0 124 127.1">
 				<circle fill="#D3DEE6" cx="62" cy="63.1" r="62"/>
 				<g>
 					<defs>
 						<circle id="SVGID_3_" cx="62" cy="63.1" r="62"/>
 					</defs>
 					<clipPath id="SVGID_4_">
-						<use xlink:href="#SVGID_3_"  overflow="visible"/>
+						<use xlinkHref="#SVGID_3_" overflow="visible"/>
 					</clipPath>
-					<g clip-path="url(#SVGID_4_)">
+					<g clipPath="url(#SVGID_4_)">
 						<path fill="#FFFFFF" d="M61.9,67.3H41l13.7,24.7c0-4,3.2-7.2,7.2-7.2h0.1c4,0,7.2,3.2,7.2,7.2L62,105.3l21-37.9H62.1H61.9z"/>
 						<polygon fill="#485567" points="54.7,92.1 62,105.3 54.7,92.1 		"/>
 						<polygon fill="#485567" points="54.7,92.1 62,105.3 69.3,92.1 		"/>
@@ -131,9 +128,9 @@ class PlanFeaturesHeader extends Component {
 						<circle id="SVGID_1_" cx="62" cy="63" r="62"/>
 					</defs>
 					<clipPath id="SVGID_5_">
-						<use xlink:href="#SVGID_1_"  overflow="visible"/>
+						<use xlinkHref="#SVGID_1_" overflow="visible"/>
 					</clipPath>
-					<g clip-path="url(#SVGID_5_)">
+					<g clipPath="url(#SVGID_5_)">
 						<path fill="none" d="M85.2,70.9c0-9.4-5.6-17.4-13.5-21.1V37.8H52.4v12.1c-8,3.7-13.5,11.7-13.5,21.1c0,4.9,1.5,9.4,4.1,13.1h0
 							c15.4,22.4,15.4,22.4,17,24.8H64c1.6-2.4,1.6-2.4,17-24.8h0C83.6,80.3,85.2,75.8,85.2,70.9z"/>
 						<path fill="#FFFFFF" d="M57.4,74.8c0-2.5,2-4.6,4.6-4.6V37.8h-9.6v12.1c-8,3.7-13.5,11.7-13.5,21.1c0,4.9,1.5,9.4,4.1,13.1h0
@@ -157,9 +154,9 @@ class PlanFeaturesHeader extends Component {
 						<circle id="SVGID_2_" cx="62" cy="63" r="62"/>
 					</defs>
 					<clipPath id="SVGID_6_">
-						<use xlink:href="#SVGID_2_"  overflow="visible"/>
+						<use xlinkHref="#SVGID_2_" overflow="visible"/>
 					</clipPath>
-					<g clip-path="url(#SVGID_6_)">
+					<g clipPath="url(#SVGID_6_)">
 						<g>
 							<path fill="none" d="M85.3-2c-0.1,0.7-0.1,1.4-0.2,2.1C85.2-0.6,85.3-1.3,85.3-2z"/>
 							<path fill="none" d="M43,35.2c-0.6-4.8-1.2-10-1.9-15.5C41.7,25.2,42.4,30.3,43,35.2z"/>
@@ -285,24 +282,22 @@ class PlanFeaturesHeader extends Component {
 							c0.1-0.9,0.2-1.9,0.3-2.8c0-0.4,0.1-0.9,0.1-1.3H62V37.2z"/>
 					</g>
 				</g>
-			` } } ></svg>
+			</svg>
 		);
-		/*eslint-enable react/no-danger*/
 	}
 
 	getBusinessPlanSvg() {
-		/*eslint-disable react/no-danger*/
 		return (
-			<svg viewBox="0 0 124 127.1" enableBackground="new 0 0 124 127.1" dangerouslySetInnerHTML={ { __html: `
+			<svg viewBox="0 0 124 127.1" enableBackground="new 0 0 124 127.1">
 				<circle fill="#D3DEE6" cx="62" cy="63.1" r="62"/>
 				<g>
 					<defs>
 						<circle id="SVGID_3_" cx="62" cy="63.1" r="62"/>
 					</defs>
 					<clipPath id="SVGID_2_">
-						<use xlink:href="#SVGID_3_"  overflow="visible"/>
+						<use xlinkHref="#SVGID_3_" overflow="visible"/>
 					</clipPath>
-					<g clip-path="url(#SVGID_2_)">
+					<g clipPath="url(#SVGID_2_)">
 						<path fill="#FFFFFF" d="M61.9,67.3H41l13.7,24.7c0-4,3.2-7.2,7.2-7.2h0.1c4,0,7.2,3.2,7.2,7.2L62,105.3l21-37.9H62.1H61.9z"/>
 						<polygon fill="#485567" points="54.7,92.1 62,105.3 54.7,92.1 		"/>
 						<polygon fill="#485567" points="54.7,92.1 62,105.3 69.3,92.1 		"/>
@@ -333,9 +328,9 @@ class PlanFeaturesHeader extends Component {
 						<circle id="SVGID_1_" cx="62" cy="63" r="62"/>
 					</defs>
 					<clipPath id="SVGID_4_">
-						<use xlink:href="#SVGID_1_"  overflow="visible"/>
+						<use xlinkHref="#SVGID_1_" overflow="visible"/>
 					</clipPath>
-					<g clip-path="url(#SVGID_4_)">
+					<g clipPath="url(#SVGID_4_)">
 						<path fill="none" d="M85.2,70.9c0-9.4-5.6-17.4-13.5-21.1V37.8H52.4v12.1c-8,3.7-13.5,11.7-13.5,21.1c0,4.9,1.5,9.4,4.1,13.1h0
 							c15.4,22.4,15.4,22.4,17,24.8H64c1.6-2.4,1.6-2.4,17-24.8h0C83.6,80.3,85.2,75.8,85.2,70.9z"/>
 						<path fill="#FFFFFF" d="M57.4,74.8c0-2.5,2-4.6,4.6-4.6V37.8h-9.6v12.1c-8,3.7-13.5,11.7-13.5,21.1c0,4.9,1.5,9.4,4.1,13.1h0
@@ -353,9 +348,8 @@ class PlanFeaturesHeader extends Component {
 						<rect x="62" y="-4.6" fill="#485567" width="0" height="44.7"/>
 					</g>
 				</g>
-			` } } ></svg>
+			</svg>
 		);
-		/*eslint-enable react/no-danger*/
 	}
 }
 
