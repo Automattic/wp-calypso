@@ -412,3 +412,7 @@
 		padding-left: 0;
 	}
 }
+
+.jetpack-connect__sso__placeholder {
+	@include placeholder( 23% );
+}
