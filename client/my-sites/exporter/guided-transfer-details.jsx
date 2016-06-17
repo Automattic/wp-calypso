@@ -8,16 +8,16 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import GridiconList from 'components/gridicon-list';
-import GridiconListItem from 'components/gridicon-list/item';
+import Gridicon from 'components/gridicon';
 
 const GuidedTransferDetails = ( { translate } ) => {
 	const Item = ( { children } ) =>
-		<GridiconListItem className="exporter__guided-transfer-feature-list-item" icon="checkmark">
+		<li className="exporter__guided-transfer-feature-list-item">
+			<Gridicon className="exporter__guided-transfer-feature-icon" size={ 18 } icon="checkmark" />
 			<span className="exporter__guided-transfer-feature-text">
 				{ children }
 			</span>
-		</GridiconListItem>;
+		</li>;
 
 	return <CompactCard className="exporter__guided-transfer-details">
 		<div className="exporter__guided-transfer-details-container">
@@ -33,7 +33,7 @@ one of our hosting partners.`, { components: { strong: <strong /> } }
 				<br/>
 				<a href="#" >{ translate( 'Learn more.' ) }</a>
 			</div>
-			<GridiconList className="exporter__guided-transfer-feature-list">
+			<ul className="exporter__guided-transfer-feature-list">
 				<Item>{ translate( 'Seamless content transfer' ) }</Item>
 				<Item>{ translate( 'Install and configure plugins to keep your functionality' ) }</Item>
 				<Item>
@@ -43,7 +43,7 @@ one of our hosting partners.`, { components: { strong: <strong /> } }
 						}
 					} ) }
 				</Item>
-			</GridiconList>
+			</ul>
 		</div>
 	</CompactCard>;
 };

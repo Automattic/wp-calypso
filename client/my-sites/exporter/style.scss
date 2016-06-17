@@ -136,7 +136,15 @@
 	flex-basis: 40%;
 
 	.exporter__guided-transfer-feature-list-item {
+		list-style-type: none;
+		text-indent: -24px;
 		margin-bottom: 8px;
+	}
+
+	.exporter__guided-transfer-feature-icon {
+		margin-right: 6px;
+		margin-top: -4px;
+		vertical-align: middle;
 	}
 }
 
