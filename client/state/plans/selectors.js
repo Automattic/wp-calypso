@@ -40,35 +40,16 @@ export const getPlan = createSelector(
 );
 
 /**
- * Returns a plan price object
+ * Returns a plan price
  * @param  {Object}  state     global state
  * @param  {Number}  productId the plan productId
  * @param  {Boolean} isMonthly if true, returns monthly price
- * @return {Object}  a plan price object with the following shape:
- * {String} currencySymbol: '$',
- * {String} decimalMark: '.',
- * {String} dollars: '8',
- * {String} cents: '25'
+ * @return {Number}  plan price
  */
-export function getPlanPriceObject( state, productId, isMonthly = false ) {
+export function getPlanRawPrice( state, productId, isMonthly = false ) {
 	const plan = getPlan( state, productId );
-	if ( ! plan || ! plan.formatted_price || ! plan.raw_price ) {
+	if ( get( plan, 'raw_price', -1 ) < 0 ) {
 		return null;
 	}
-	// could get $5.95, A$4.13, ¥298, €3,50, etc…
-	const getCurrencySymbol = formattedPrice => /(\D+)\d+/.exec( formattedPrice )[ 1 ];
-	const currencyDigits = currencySymbol => get( {
-		'¥': 0
-	}, currencySymbol, 2 );
-
-	const currencySymbol = getCurrencySymbol( plan.formatted_price );
-	const price = isMonthly ? ( plan.raw_price / 12 ).toFixed( currencyDigits( currencySymbol ) ) : plan.raw_price;
-	const dollars = Math.floor( price );
-	const cents = ( price - dollars ) * 100;
-	return {
-		currencySymbol,
-		decimalMark: '.', //hard code this for now until we can get number localization from the server
-		dollars,
-		cents
-	};
+	return isMonthly ? parseFloat( ( plan.raw_price / 12 ).toFixed( 2 ) ) : plan.raw_price;
 }
