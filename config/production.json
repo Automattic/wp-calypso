@@ -73,6 +73,7 @@
 		"resume-editing": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
+		"service-worker-file": true,
 		"settings/security/monitor": true,
 		"support-user": true,
 		"sync-handler": true,
