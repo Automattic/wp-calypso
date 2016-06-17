@@ -16,13 +16,7 @@ import InfoPopover from 'components/info-popover';
 import TokenField from 'components/token-field';
 import { getSiteSlug } from 'state/sites/selectors';
 
-class SeoAccordion extends Component {
-	constructor() {
-		super();
-
-		this.displayName = 'EditorSeoAccordion';
-	}
-
+class EditorSeoAccordion extends Component {
 	render() {
 		const { translate } = this.props;
 		// Temporary placeholder chips for design review
@@ -32,7 +26,7 @@ class SeoAccordion extends Component {
 			<Accordion
 				title={ translate( 'Advanced SEO' ) }
 				icon={ <Gridicon icon="search" /> }
-				className="editor-drawer__editor-seo"
+				className="editor-seo-accordion"
 			>
 				<AccordionSection>
 					<span className="editor-drawer__label-text">
@@ -73,7 +67,7 @@ class SeoAccordion extends Component {
 	}
 }
 
-SeoAccordion.propTypes = {
+EditorSeoAccordion.propTypes = {
 	siteId: PropTypes.number.isRequired
 };
 
@@ -81,4 +75,4 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 	siteSlug: getSiteSlug( state, siteId )
 } );
 
-export default connect( mapStateToProps )( localize( SeoAccordion ) );
+export default connect( mapStateToProps )( localize( EditorSeoAccordion ) );
