@@ -41,32 +41,32 @@
 	color: $blue-wordpress;
 }
 
-.plan-features__header-price {
+.plan-features__price {
 	margin: 8px 0;
 	font-size: 24px;
 }
 
-.plan-features__header-currency-symbol,
-.plan-features__header-cents{
+.plan-features__price-currency-symbol,
+.plan-features__price-fraction{
 	vertical-align: super;
 	font-size: 12px;
 }
 
-.plan-features__header-currency-symbol {
+.plan-features__price-currency-symbol {
 	color: $gray;
 }
 
-.plan-features__header-dollars,
-.plan-features__header-cents {
+.plan-features__price-integer,
+.plan-features__price-fraction {
 	color: $gray-dark;
 }
 
-.plan-features__header-dollars {
+.plan-features__price-integer {
 	margin: 0 3px;
 	font-weight: 400;
 }
 
-.plan-features__header-cents {
+.plan-features__price-fraction {
 	font-weight: 500;
 }
 

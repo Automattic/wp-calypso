@@ -3,6 +3,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -11,7 +12,7 @@ import {
 	getPlans,
 	isRequestingPlans,
 	getPlan,
-	getPlanPriceObject
+	getPlanRawPrice
 } from '../selectors';
 
 /**
@@ -51,94 +52,65 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getPlanPriceObject()', () => {
-		it( 'should return price plan object', () => {
-			const state = getStateInstance();
-			const priceObject = getPlanPriceObject( state, 1003 );
-			expect( priceObject ).to.eql( {
-				currencySymbol: '$',
-				decimalMark: '.',
-				dollars: 99,
-				cents: 0
+	describe( '#getPlanRawPrice()', () => {
+		it( 'should return annual raw price', () => {
+			const state = deepFreeze( {
+				plans: {
+					items: [ {
+						product_id: 1003,
+						raw_price: 99
+					} ]
+				}
 			} );
+			const price = getPlanRawPrice( state, 1003 );
+			expect( price ).to.eql( 99 );
 		} );
 		it( 'should return monthly price plan object', () => {
-			const state = getStateInstance();
-			const priceObject = getPlanPriceObject( state, 1003, true );
-			expect( priceObject ).to.eql( {
-				currencySymbol: '$',
-				decimalMark: '.',
-				dollars: 8,
-				cents: 25
+			const state = deepFreeze( {
+				plans: {
+					items: [ {
+						product_id: 1003,
+						raw_price: 99
+					} ]
+				}
 			} );
+			const price = getPlanRawPrice( state, 1003, true );
+			expect( price ).to.eql( 8.25 );
+		} );
+		it( 'should return monthly price plan object when raw price is 0', () => {
+			const state = deepFreeze( {
+				plans: {
+					items: [ {
+						product_id: 1003,
+						raw_price: 0
+					} ]
+				}
+			} );
+			const price = getPlanRawPrice( state, 1003, true );
+			expect( price ).to.eql( 0 );
+		} );
+		it( 'should return null when raw price is missing', () => {
+			const state = deepFreeze( {
+				plans: {
+					items: [ {
+						product_id: 1003
+					} ]
+				}
+			} );
+			const price = getPlanRawPrice( state, 1003, true );
+			expect( price ).to.eql( null );
 		} );
 		it( 'should return null when plan is not available', () => {
-			const state = getStateInstance();
-			const priceObject = getPlanPriceObject( state, 44, true );
-			expect( priceObject ).to.eql( null );
-		} );
-		it( 'should handle JPY localization correctly', () => {
-			const state = {
+			const state = deepFreeze( {
 				plans: {
 					items: [ {
-						product_id: 2000,
-						product_name: 'Premium',
-						formatted_price: '¥11,800',
-						raw_price: 11800
-					} ],
-					requesting: false,
-					error: false
-				}
-			};
-			const priceObject = getPlanPriceObject( state, 2000, true );
-			expect( priceObject ).to.eql( {
-				currencySymbol: '¥',
-				decimalMark: '.',
-				dollars: 983,
-				cents: 0
-			} );
-		} );
-		it( 'should handle AUD localization correctly', () => {
-			const state = {
-				plans: {
-					items: [ {
-						product_id: 2000,
-						product_name: 'Premium',
-						formatted_price: 'A$99',
+						product_id: 1003,
 						raw_price: 99
-					} ],
-					requesting: false,
-					error: false
+					} ]
 				}
-			};
-			const priceObject = getPlanPriceObject( state, 2000, true );
-			expect( priceObject ).to.eql( {
-				currencySymbol: 'A$',
-				decimalMark: '.',
-				dollars: 8,
-				cents: 25
 			} );
-		} );
-		it( 'should handle CAD localization correctly', () => {
-			const state = {
-				plans: {
-					items: [ {
-						product_id: 2000,
-						product_name: 'Premium',
-						formatted_price: 'C$99',
-						raw_price: 99
-					} ],
-					requesting: false,
-					error: false
-				}
-			};
-			const priceObject = getPlanPriceObject( state, 2000, true );
-			expect( priceObject ).to.eql( {
-				currencySymbol: 'C$',
-				decimalMark: '.',
-				dollars: 8,
-				cents: 25
-			} );
+			const price = getPlanRawPrice( state, 44, true );
+			expect( price ).to.eql( null );
 		} );
 	} );
 } );

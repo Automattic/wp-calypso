@@ -9,6 +9,7 @@ import noop from 'lodash/noop';
  **/
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
+import PlanFeaturesPrice from './price';
 import {
 	PLAN_FREE,
 	PLAN_PREMIUM,
@@ -18,8 +19,16 @@ import {
 class PlanFeaturesHeader extends Component {
 
 	render() {
-		const { billingTimeFrame, current, planType, popular, price, title, translate } = this.props;
-		const isFree = planType === PLAN_FREE;
+		const {
+			billingTimeFrame,
+			currencyCode,
+			current,
+			planType,
+			popular,
+			rawPrice,
+			title,
+			translate
+		} = this.props;
 		return (
 			<header className="plan-features__header" onClick={ this.props.onClick } >
 				{
@@ -34,17 +43,7 @@ class PlanFeaturesHeader extends Component {
 				</div>
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
-					<h4 className="plan-features__header-price">
-						<sup className="plan-features__header-currency-symbol">
-							{ price.currencySymbol }
-						</sup>
-						<span className="plan-features__header-dollars">
-							{ price.dollars }
-						</span>
-						<sup className="plan-features__header-cents">
-							{ ! isFree && `${ price.decimalMark }${ price.cents }` }
-						</sup>
-					</h4>
+					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ rawPrice } />
 					<p className="plan-features__header-timeframe">
 						{ billingTimeFrame }
 					</p>
@@ -366,11 +365,14 @@ PlanFeaturesHeader.propTypes = {
 	onClick: PropTypes.func,
 	planType: React.PropTypes.oneOf( [ PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS ] ).isRequired,
 	popular: PropTypes.bool,
-	price: PropTypes.object.isRequired,
-	title: PropTypes.string.isRequired
+	rawPrice: PropTypes.number,
+	currencyCode: PropTypes.string,
+	title: PropTypes.string.isRequired,
+	translate: PropTypes.func
 };
 
 PlanFeaturesHeader.defaultProps = {
+	currencyCode: 'USD',
 	current: false,
 	onClick: noop,
 	popular: false
