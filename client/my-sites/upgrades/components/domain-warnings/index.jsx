@@ -11,6 +11,7 @@ import intersection from 'lodash/intersection';
  **/
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import PendingGappsTosNotice from './pending-gapps-tos-notice';
 import purchasesPaths from 'me/purchases/paths';
 import domainConstants from 'lib/domains/constants';
 import support from 'lib/url/support';
@@ -51,7 +52,7 @@ export default React.createClass( {
 	},
 
 	getPipe() {
-		let allRules = [ this.expiredDomains, this.expiringDomains, this.newDomains, this.unverifiedDomains ],
+		let allRules = [ this.expiredDomains, this.expiringDomains, this.newDomains, this.unverifiedDomains, this.pendingGappsTosAcceptanceDomains ],
 			rules;
 		if ( ! this.props.ruleWhiteList ) {
 			rules = allRules;
@@ -213,6 +214,14 @@ export default React.createClass( {
 			return this.unverifiedDomainsNotice( domains );
 		}
 		return null;
+	},
+
+	pendingGappsTosAcceptanceDomains() {
+		const pendingDomains = this.getDomains().filter( domain =>
+				domain.googleAppsSubscription &&
+				domain.googleAppsSubscription.pendingUsers &&
+				domain.googleAppsSubscription.pendingUsers.length !== 0 );
+		return pendingDomains.length !== 0 && <PendingGappsTosNotice key="pending-gapps-tos-notice" siteSlug={ this.props.selectedSite && this.props.selectedSite.slug } domains={ pendingDomains } section="domain-management" />;
 	},
 
 	componentWillMount: function() {
