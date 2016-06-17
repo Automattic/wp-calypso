@@ -229,6 +229,81 @@ const JetpackSSOForm = React.createClass( {
 		return decodeEntities( value );
 	},
 
+	getReturnToSiteText() {
+		const title = get( this.props, 'blogDetails.title' );
+
+		if ( ! title ) {
+			return this.translate( 'Return to {{placeholder}}your Jetpack site{{/placeholder}}', {
+				context: 'This is a placeholder string until we have the site title.',
+				components: {
+					placeholder: <span className="jetpack-connect__sso__placeholder" />
+				}
+			} );
+		}
+
+		return this.translate( 'Return to %(siteName)s', {
+			args: {
+				siteName: title
+			}
+		} );
+	},
+
+	getTOSText() {
+		const title = get( this.props, 'blogDetails.title' );
+		if ( ! title ) {
+			return this.translate(
+				'By logging in you agree to share details between WordPress.com and {{placeholder}}your Jetpack site{{/placeholder}}',
+				{
+					context: 'This is a placeholder string until we have the site title.',
+					components: {
+						placeholder: <span className="jetpack-connect__sso__placeholder" />
+					}
+				}
+			);
+		}
+
+		return this.translate(
+			'By logging in you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
+			{
+				components: {
+					detailsLink: (
+						<a
+							href="#"
+							onClick={ this.onClickSharedDetailsModal }
+							className="jetpack-connect__sso__actions__modal-link"
+						/>
+					)
+				},
+				args: {
+					siteName: title
+				}
+			}
+		);
+	},
+
+	getSubHeaderText() {
+		const title = get( this.props, 'blogDetails.title' );
+		if ( ! title ) {
+			return this.translate(
+				'To use Single Sign-On, WordPress.com needs to be able to connect to your account on {{placeholder}}your Jetpack site{{/placeholder}}.',
+				{
+					context: 'This is a placeholder string until we have the site title.',
+					components: {
+						placeholder: <span className="jetpack-connect__sso__placeholder" />
+					}
+				}
+			);
+		}
+
+		return this.translate(
+			'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s.', {
+				args: {
+					siteName: title
+				}
+			}
+		);
+	},
+
 	renderSharedDetailsList() {
 		const expectedSharedDetails = {
 			ID: '',
@@ -330,13 +405,7 @@ const JetpackSSOForm = React.createClass( {
 					<ConnectHeader
 						showLogo={ false }
 						headerText={ this.translate( 'Connect with WordPress.com' ) }
-						subHeaderText={ this.translate(
-							'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s.', {
-								args: {
-									siteName: get( this.props, 'blogDetails.title' )
-								}
-							}
-						) }
+						subHeaderText={ this.getSubHeaderText() }
 					/>
 
 					{ this.renderSiteCard() }
@@ -363,20 +432,7 @@ const JetpackSSOForm = React.createClass( {
 
 						<LoggedOutFormFooter className="jetpack-connect__sso__actions">
 							<p className="jetpack-connect__tos-link">
-								{ this.translate( 'By logging in you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.', {
-									components: {
-										detailsLink: (
-											<a
-												href="#"
-												onClick={ this.onClickSharedDetailsModal }
-												className="jetpack-connect__sso__actions__modal-link"
-											/>
-										)
-									},
-									args: {
-										siteName: get( this.props, 'blogDetails.title' )
-									}
-								} ) }
+								{ this.getTOSText() }
 							</p>
 
 							<Button
@@ -397,11 +453,7 @@ const JetpackSSOForm = React.createClass( {
 							href={ get( this.props, 'blogDetails.admin_url', '#' ) }
 							onClick={ this.onCancelClick }>
 							<Gridicon icon="arrow-left" size={ 18 } />
-							{ this.translate( 'Return to %(siteName)s', {
-								args: {
-									siteName: get( this.props, 'blogDetails.title' )
-								}
-							} ) }
+							{ this.getReturnToSiteText() }
 						</LoggedOutFormLinkItem>
 					</LoggedOutFormLinks>
 				</div>
