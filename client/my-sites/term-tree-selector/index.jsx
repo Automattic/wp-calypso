@@ -40,7 +40,6 @@ export default React.createClass( {
 	onSearch( searchTerm ) {
 		if ( searchTerm !== this.state.search ) {
 			this.setState( {
-				page: 1,
 				search: searchTerm
 			} );
 		}
@@ -51,7 +50,10 @@ export default React.createClass( {
 
 		const classes = classNames( className );
 		const { search } = this.state;
-		const query = { search };
+		const query = {};
+		if ( search && search.length ) {
+			query.search = search;
+		}
 
 		return (
 			<div className={ classes } ref="wrapper">

@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 import debounce from 'lodash/debounce';
 import range from 'lodash/range';
 import VirtualScroll from 'react-virtualized/VirtualScroll';
-import InfiniteLoader from 'react-virtualized/InfiniteLoader';
 import difference from 'lodash/difference';
 
 /**
@@ -56,7 +55,7 @@ const TermTreeSelectorList = React.createClass( {
 	getInitialState() {
 		return {
 			searchTerm: '',
-			requestedPages: []
+			requestedPages: [ 1 ]
 		};
 	},
 
@@ -75,6 +74,7 @@ const TermTreeSelectorList = React.createClass( {
 	componentWillMount() {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
+		this.virtualScroll = null;
 
 		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
 		this.debouncedSearch = debounce( () => {
@@ -86,7 +86,7 @@ const TermTreeSelectorList = React.createClass( {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
 			this.setState( {
 				searchTerm: '',
-				requestedPages: []
+				requestedPages: [ 1 ]
 			} );
 		}
 	},
@@ -94,21 +94,22 @@ const TermTreeSelectorList = React.createClass( {
 	componentDidUpdate( prevProps ) {
 		const forceUpdate = (
 			prevProps.selected !== this.props.selected ||
-			prevProps.loading && ! this.props.loading
+			prevProps.loading && ! this.props.loading ||
+			( ! prevProps.terms && this.props.terms )
 		);
 
 		if ( forceUpdate ) {
-			this.refs.loader._registeredChild.forceUpdate();
+			this.virtualScroll.forceUpdate();
 		}
 	},
 
 	recomputeRowHeights: function() {
-		if ( ! this.refs.loader ) {
+		if ( ! this.virtualScroll ) {
 			return;
 		}
 
-		this.refs.loader._registeredChild.recomputeRowHeights();
-		this.refs.loader._registeredChild.forceUpdate();
+		this.virtualScroll.recomputeRowHeights();
+		this.virtualScroll.forceUpdate();
 
 		// Compact mode passes the height of the scrollable region as a derived
 		// number, and will not be updated unless our component re-renders
@@ -171,7 +172,7 @@ const TermTreeSelectorList = React.createClass( {
 	hasNoSearchResults() {
 		return ! this.props.loading &&
 			( this.props.terms && ! this.props.terms.length ) &&
-			this.state.searchTerm;
+			!! this.state.searchTerm.length;
 	},
 
 	hasNoTerms() {
@@ -238,10 +239,6 @@ const TermTreeSelectorList = React.createClass( {
 			count += this.props.termsHierarchy.length;
 		}
 
-		if ( ! this.props.lastPage || this.hasNoSearchResults() || this.props.loading ) {
-			count += 1;
-		}
-
 		return count;
 	},
 
@@ -275,6 +272,10 @@ const TermTreeSelectorList = React.createClass( {
 		} );
 	},
 
+	setVirtualScrollRef( ref ) {
+		this.virtualScroll = ref;
+	},
+
 	renderItem( item ) {
 		const onChange = ( ...args ) => this.props.onChange( item, ...args );
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
@@ -285,13 +286,13 @@ const TermTreeSelectorList = React.createClass( {
 		const name = unescapeString( item.name ) || translate( 'Untitled' );
 		const checked = includes( selectedIds, itemId );
 		const inputType = multiple ? 'checkbox' : 'radio';
-		let disabled;
-
-		if ( multiple && checked && defaultTermId &&
-				( 1 === selectedIds.length ) &&
-				( defaultTermId === itemId ) ) {
-			disabled = true;
-		}
+		const disabled = (
+			multiple &&
+			checked &&
+			defaultTermId &&
+			1 === selectedIds.length &&
+			defaultTermId === itemId
+		);
 
 		const input = (
 			<input
@@ -321,7 +322,7 @@ const TermTreeSelectorList = React.createClass( {
 		);
 	},
 
-	renderRow( { index } ) {
+	renderNoResults() {
 		if ( this.hasNoSearchResults() || this.hasNoTerms() ) {
 			return (
 				<div key="no-results" className="term-tree-selector__list-item is-empty">
@@ -334,15 +335,6 @@ const TermTreeSelectorList = React.createClass( {
 			);
 		}
 
-		const item = this.getItem( index );
-		if ( item ) {
-			return this.renderItem( item );
-		}
-
-		if ( ! this.props.loading && this.props.lastPage ) {
-			return;
-		}
-
 		return (
 			<div key="placeholder" className="term-tree-selector__list-item is-placeholder">
 				<label>
@@ -351,11 +343,18 @@ const TermTreeSelectorList = React.createClass( {
 						disabled
 						className="term-tree-selector__input" />
 					<span className="term-tree-selector__label">
-						{ this.translate( 'Loading…' ) }
+						{ this.props.translate( 'Loading…' ) }
 					</span>
 				</label>
 			</div>
 		);
+	},
+
+	renderRow( { index } ) {
+		const item = this.getItem( index );
+		if ( item ) {
+			return this.renderItem( item );
+		}
 	},
 
 	render() {
@@ -382,24 +381,17 @@ const TermTreeSelectorList = React.createClass( {
 						searchTerm={ this.state.searchTerm }
 						onSearch={ this.onSearch } />
 				) }
-				<InfiniteLoader
-					ref="loader"
-					isRowLoaded={ this.isRowLoaded }
-					loadMoreRows={ this.setRequestedPages }
-					rowCount={ rowCount }>
-					{ ( { registerChild } ) => (
-						<VirtualScroll
-							ref={ registerChild }
-							width={ this.getResultsWidth() }
-							height={ isCompact ? this.getCompactContainerHeight() : 300 }
-							onRowsRendered={ this.setRequestedPages }
-							rowCount={ rowCount }
-							estimatedRowSize={ ITEM_HEIGHT }
-							rowHeight={ this.getRowHeight }
-							rowRenderer={ this.renderRow }
-							className="term-tree-selector__results" />
-					) }
-				</InfiniteLoader>
+				<VirtualScroll
+					ref={ this.setVirtualScrollRef }
+					width={ this.getResultsWidth() }
+					height={ isCompact ? this.getCompactContainerHeight() : 300 }
+					onRowsRendered={ this.setRequestedPages }
+					rowCount={ rowCount }
+					estimatedRowSize={ ITEM_HEIGHT }
+					rowHeight={ this.getRowHeight }
+					rowRenderer={ this.renderRow }
+					noRowsRenderer={ this.renderNoResults }
+					className="term-tree-selector__results" />
 			</div>
 		);
 	}
@@ -407,7 +399,7 @@ const TermTreeSelectorList = React.createClass( {
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
-	const { taxonomy, search, query } = ownProps;
+	const { taxonomy, query } = ownProps;
 
 	return {
 		loading: isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
@@ -415,7 +407,6 @@ export default connect( ( state, ownProps ) => {
 		termsHierarchy: getTermsHierarchyForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
 		siteId,
-		search,
 		query
 	};
 } )( localize( TermTreeSelectorList ) );
