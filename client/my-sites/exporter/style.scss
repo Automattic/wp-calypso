@@ -132,6 +132,15 @@
 }
 
 .exporter__guided-transfer-feature-list {
+	color: $alert-green;
 	flex-basis: 40%;
+
+	.exporter__guided-transfer-feature-list-item {
+		margin-bottom: 8px;
+	}
+}
+
+.exporter__guided-transfer-feature-text {
+	color: $gray;
 }
 // END GUIDED TRANSFER

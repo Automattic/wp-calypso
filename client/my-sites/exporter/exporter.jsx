@@ -66,7 +66,7 @@ export default React.createClass( {
 				loadingText={ this.translate( 'Exporting…' ) } />
 		);
 
-		var notice = null;
+		let notice = null;
 		if ( this.props.didComplete ) {
 			notice = (
 				<Notice
