@@ -40,7 +40,7 @@
     "mocha": "^2.4.5",
     "react-addons-test-utils": "0.14.8 || ^15.1.0",
     "react-dom": "0.14.8 || ^15.1.0",
-    "react-test-env": "0.0.2",
+    "react-test-env": "0.1.1",
     "rewire": "^2.5.1"
   }
 }
