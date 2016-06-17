@@ -81,6 +81,7 @@ User.prototype.initialize = function() {
 
 	if ( this.data ) {
 		this.initialized = true;
+		this.emit( 'change' );
 	}
 };
 
