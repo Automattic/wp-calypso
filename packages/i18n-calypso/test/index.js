@@ -140,7 +140,7 @@ describe( 'I18n', function() {
 		} );
 
 		describe( 'with mixed components', function() {
-			it( 'should handle sprintf and compoment interpolation together', function() {
+			it( 'should handle sprintf and component interpolation together', function() {
 				var input = React.DOM.input(),
 					expectedResultString = '<span><span>foo </span><input/><span> bar</span></span>',
 					placeholder = 'bar',
