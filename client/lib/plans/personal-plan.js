@@ -6,13 +6,7 @@ export default {
 	product_id: 1009,
 	product_name: translate( 'WordPress.com Personal' ),
 	prices: {
-		USD: 71.88,
-		NZD: 105.35,
-		AUD: 99.05,
-		CAD: 94.05,
-		JPY: 7874.06,
-		EUR: 64.27,
-		GBP: 49.86
+		USD: 71.88
 	},
 	product_name_short: translate( 'Personal' ),
 	product_slug: PLAN_PERSONAL,
