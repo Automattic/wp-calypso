@@ -41,7 +41,7 @@ export default React.createClass( {
 		this.props.onSelect( event );
 	},
 
-	renderCount() {
+	renderSiteCount() {
 		const count = this.props.count || user.get().visible_site_count;
 		return <Count count={ count } />;
 	},
@@ -57,7 +57,7 @@ export default React.createClass( {
 		return (
 			<div className={ allSitesClass }>
 				<a className="site__content" href={ this.props.href } onTouchTap={ this.onSelect }>
-					{ this.props.showCount && this.renderCount() }
+					{ this.props.showCount && this.renderSiteCount() }
 					<div className="site__info">
 						<span className="site__title">{ title }</span>
 						{ this.props.domain && <span className="site__domain">{ this.props.domain }</span> }
