@@ -235,8 +235,8 @@ export function activateSubscription() {
 				serviceWorkerRegistration.pushManager.subscribe( { userVisibleOnly: true } )
 					.then( () => dispatch( checkPermissionsState() ) )
 					.catch( err => {
-						debug( 'Error receiving subscription', err );
-						dispatch( block() );
+						debug( 'Couldn\'t get subscription', err );
+						dispatch( checkPermissionsState() );
 					} )
 				;
 			} )
