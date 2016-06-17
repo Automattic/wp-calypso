@@ -42,7 +42,7 @@ class GuidedTours extends Component {
 	}
 
 	shouldComponentUpdate( nextProps ) {
-		return true || this.props.tourState !== nextProps.tourState;
+		return this.props.tourState !== nextProps.tourState;
 	}
 
 	componentWillUpdate( nextProps ) {
