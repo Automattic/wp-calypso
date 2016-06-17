@@ -65,7 +65,8 @@ const SiteSelector = React.createClass( {
 	getInitialState() {
 		return {
 			search: '',
-			highlightedIndex: -1
+			highlightedIndex: -1,
+			showSearch: false
 		};
 	},
 
@@ -80,7 +81,8 @@ const SiteSelector = React.createClass( {
 	onSearch( terms ) {
 		this.setState( {
 			search: terms,
-			highlightedIndex: ( terms ? 0 : -1 )
+			highlightedIndex: ( terms ? 0 : -1 ),
+			showSearch: ( terms ? true : this.state.showSearch ),
 		} );
 	},
 
@@ -337,7 +339,7 @@ const SiteSelector = React.createClass( {
 	render() {
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 		const selectorClass = classNames( 'site-selector', 'sites-list', {
-			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0,
+			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
 			'is-single': this.props.visibleSiteCount === 1
 		} );
 
