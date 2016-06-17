@@ -24,15 +24,15 @@ import personalPlan from 'lib/plans/personal-plan';
  */
 export const plansReceiveAction = plans => {
 	const freePlanIndex = findIndex( plans, plan => plan.product_slug === PLAN_FREE );
-	const personalPlanIndex = findIndex( plans, plan => plan.product_slug === PLAN_PERSONAL );
+	const hasPersonalPlan = plans.some( ( { product_slug } ) => PLAN_PERSONAL === product_slug );
 
-	if ( personalPlanIndex < 0 ) {
-		plans.splice( freePlanIndex + 1, 0, personalPlan );
-	}
+	const newPlans = ! hasPersonalPlan
+		? [ ...plans.slice( 0, freePlanIndex + 1 ), personalPlan, ...plans.slice( freePlanIndex + 1 ) ]
+		: plans;
 
 	return {
 		type: PLANS_RECEIVE,
-		plans: plans
+		plans: newPlans
 	};
 };
 
