@@ -257,7 +257,7 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<SeoAccordion siteId={ this.props.site.ID } />
+			<SeoAccordion />
 		);
 	},
 

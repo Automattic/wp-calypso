@@ -14,6 +14,7 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import Gridicon from 'components/gridicon';
 import InfoPopover from 'components/info-popover';
 import TokenField from 'components/token-field';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
 class EditorSeoAccordion extends Component {
@@ -43,7 +44,7 @@ class EditorSeoAccordion extends Component {
 							) }
 						</InfoPopover>
 					</span>
-					<TokenField value={ sampleChips } disabled={ true } />
+					<TokenField value={ sampleChips } disabled />
 				</AccordionSection>
 				<AccordionSection>
 					<span className="editor-drawer__label-text">
@@ -68,11 +69,12 @@ class EditorSeoAccordion extends Component {
 }
 
 EditorSeoAccordion.propTypes = {
-	siteId: PropTypes.number.isRequired
+	translate: PropTypes.func,
+	siteSlug: PropTypes.string
 };
 
-const mapStateToProps = ( state, { siteId } ) => ( {
-	siteSlug: getSiteSlug( state, siteId )
+const mapStateToProps = ( state ) => ( {
+	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
 } );
 
 export default connect( mapStateToProps )( localize( EditorSeoAccordion ) );
