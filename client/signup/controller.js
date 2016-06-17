@@ -97,7 +97,8 @@ export default {
 					locale: utils.getLocale( context.params ),
 					flowName: flowName,
 					stepName: stepName,
-					stepSectionName: stepSectionName
+					stepSectionName: stepSectionName,
+					reduxStore: context.store
 				} )
 			),
 			document.getElementById( 'primary' )

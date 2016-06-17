@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-var store = require( 'store' ),
-	assign = require( 'lodash/assign' ),
-	keys = require( 'lodash/keys' ),
+var keys = require( 'lodash/keys' ),
 	difference = require( 'lodash/difference' ),
 	isEmpty = require( 'lodash/isEmpty' );
 
@@ -11,37 +9,22 @@ var store = require( 'store' ),
  * Internal dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
-	config = require( 'config' ),
-	steps = require( 'signup/config/steps' ),
-	emitter = require( 'lib/mixins/emitter' );
-
-/**
- * Constants
- */
-const STORAGE_KEY = 'signupDependencies';
-
-/**
- * Module variables
- */
-var signupDependencies = {};
+	steps = require( 'signup/config/steps' );
 
 var SignupDependencyStore = {
 	get: function() {
-		return signupDependencies;
+		return SignupDependencyStore.reduxStore.getState().signup.dependencyStore.storeState || {};
 	},
 	reset: function() {
-		signupDependencies = {};
-		store.remove( STORAGE_KEY );
+		SignupDependencyStore.reduxStore.dispatch( {
+			type: 'SIGNUP_DEPENDENCY_STORE_RESET',
+			data: {}
+		} );
+	},
+	setReduxStore( reduxStore ) {
+		this.reduxStore = reduxStore;
 	}
 };
-
-emitter( SignupDependencyStore );
-
-function addDependencies( dependencies ) {
-	signupDependencies = assign( {}, signupDependencies, dependencies );
-
-	handleChange();
-}
 
 function assertValidDependencies( action ) {
 	var providesDependencies = steps[ action.data.stepName ].providesDependencies || [],
@@ -56,52 +39,30 @@ function assertValidDependencies( action ) {
 	return isEmpty( extraDependencies );
 }
 
-function loadDependenciesFromCache() {
-	const cachedSignupDependencies = store.get( STORAGE_KEY );
-
-	if ( ! isEmpty( cachedSignupDependencies ) ) {
-		signupDependencies = cachedSignupDependencies;
-	}
-
-	handleChange();
-}
-
-function handleChange() {
-	SignupDependencyStore.emit( 'change' );
-	saveDependencies();
-}
-
-function saveDependencies() {
-	store.set( STORAGE_KEY, signupDependencies );
-}
-
+/**
+ * Compatibility layer
+ */
 SignupDependencyStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
-	switch ( action.type ) {
-		case 'FETCH_CACHED_SIGNUP':
-			loadDependenciesFromCache();
-			break;
-		case 'SAVE_SIGNUP_STEP':
-			// If we return to an abandoned signup in a separate tab after the local storage has been completed
-			// we can resume signup from local storage, but if we do so we must also preserve the dependency store
-			// as well as the progress store
-			saveDependencies();
-			break;
-		case 'SUBMIT_SIGNUP_STEP':
-			if ( action.providedDependencies ) {
+	if ( SignupDependencyStore.reduxStore ) {
+		switch ( action.type ) {
+			case 'PROCESSED_SIGNUP_STEP':
+			case 'SUBMIT_SIGNUP_STEP':
 				if ( assertValidDependencies( action ) ) {
-					addDependencies( action.providedDependencies );
+					SignupDependencyStore.reduxStore.dispatch( {
+						type: 'SIGNUP_DEPENDENCY_STORE_UPDATE_STATE',
+						data: action.providedDependencies
+					} );
 				}
-			}
-			break;
-		case 'PROCESSED_SIGNUP_STEP':
-			if ( action.providedDependencies ) {
-				if ( assertValidDependencies( action ) ) {
-					addDependencies( action.providedDependencies );
-				}
-			}
-			break;
+				break;
+		}
+	} else {
+		/**
+		 * Catch calls to the SignupDependencyStore where the redux store is not yet initialized.
+		 * This should be active only during development and removed later.
+		 */
+		throw new Error( 'No redux store instance found for the current SignupDependencyStore call!' );
 	}
 } );
 

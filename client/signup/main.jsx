@@ -50,6 +50,11 @@ const Signup = React.createClass( {
 	displayName: 'Signup',
 
 	getInitialState() {
+		/**
+		 * Pass the redux store to SignupDependencyStore.
+		 */
+		SignupDependencyStore.setReduxStore( this.props.reduxStore );
+		
 		return {
 			login: false,
 			progress: SignupProgressStore.get(),
@@ -185,13 +190,13 @@ const Signup = React.createClass( {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
-		SignupProgressStore.on( 'change', this.loadDependenciesFromStore );
+		this.sigunpListener = SignupDependencyStore.reduxStore.subscribe( this.loadDependenciesFromStore );
 	},
 
 	componentWillUnmount() {
 		debug( 'Signup component unmounted' );
 		SignupProgressStore.off( 'change', this.loadProgressFromStore );
-		SignupProgressStore.off( 'change', this.loadDependenciesFromStore );
+		this.signupListener();
 	},
 
 	loginRedirectTo( path ) {
