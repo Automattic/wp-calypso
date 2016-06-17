@@ -167,10 +167,11 @@
 .reader-start-card__site-title {
 	display: block;
 	font-weight: 500;
-	line-height: 1.2;
+	line-height: normal;
     font-size: 12px;
-    margin: 4px 120px 2px 0;
+    margin: 3px 120px 0 0;
     overflow: hidden;
+    padding-bottom: 4px;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 100%;
