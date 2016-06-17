@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+import findIndex from 'lodash/findIndex';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
 import {
 	PLANS_RECEIVE,
 	PLANS_REQUEST,
@@ -10,6 +14,8 @@ import {
 	PLANS_REQUEST_FAILURE
 } from '../action-types';
 
+import { PLAN_FREE, PLAN_PERSONAL } from 'lib/plans/constants';
+import personalPlan from 'lib/plans/personal-plan';
 /**
  * Action creator function: RECEIVE
  *
@@ -17,6 +23,13 @@ import {
  * @return {Object} action object
  */
 export const plansReceiveAction = plans => {
+	const freePlanIndex = findIndex( plans, plan => plan.product_slug === PLAN_FREE );
+	const personalPlanIndex = findIndex( plans, plan => plan.product_slug === PLAN_PERSONAL );
+
+	if ( personalPlanIndex < 0 ) {
+		plans.splice( freePlanIndex + 1, 0, personalPlan );
+	}
+
 	return {
 		type: PLANS_RECEIVE,
 		plans: plans

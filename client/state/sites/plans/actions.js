@@ -3,6 +3,7 @@
  */
 import debugFactory from 'debug';
 import map from 'lodash/map';
+import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
 import i18n from 'i18n-calypso';
 
@@ -22,6 +23,7 @@ import {
 	SITE_PLANS_TRIAL_CANCEL_FAILED
 } from 'state/action-types';
 import wpcom from 'lib/wp';
+import personalPlan from 'lib/plans/personal-plan';
 
 /**
  * Cancels the specified plan trial for the given site.
@@ -123,6 +125,21 @@ export function fetchSitePlans( siteId ) {
  */
 export function fetchSitePlansCompleted( siteId, data ) {
 	data = omit( data, '_headers' );
+	const { product_id } = personalPlan;
+
+	if ( ! isEmpty( data ) && ! data.hasOwnProperty( product_id ) ) {
+		const { formatted_price, product_name, product_slug, raw_price } = personalPlan;
+		data[ product_id ] = {
+			can_start_trial: true,
+			discount_reason: null,
+			formatted_discount: '$0',
+			formatted_price,
+			product_name,
+			product_slug,
+			raw_discount: 0,
+			raw_price
+		};
+	}
 
 	return {
 		type: SITE_PLANS_FETCH_COMPLETED,
