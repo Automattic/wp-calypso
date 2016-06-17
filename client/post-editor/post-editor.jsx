@@ -889,7 +889,6 @@ export default connect(
 			editPost,
 			resetPostEdits,
 			setEditorPostId,
-			savePreference,
 			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
 		}, dispatch );
 	},
