@@ -19,7 +19,7 @@ const debug = debugFactory( 'calypso:my-sites:plugins:actions' );
 let _actionsQueueBySite = {};
 
 const queueSitePluginAction = ( action, siteId, pluginId, callback ) => {
-	let next = ( nextCallback, error, data ) => {
+	const next = ( nextCallback, error, data ) => {
 		let nextAction;
 
 		if ( nextCallback ) {
@@ -49,7 +49,7 @@ const queueSitePluginAction = ( action, siteId, pluginId, callback ) => {
 };
 
 const queueSitePluginActionAsPromise = ( action, siteId, pluginId, callback ) => {
-	var promise = new Promise( ( resolve, reject ) => {
+	return new Promise( ( resolve, reject ) => {
 		queueSitePluginAction( action, siteId, pluginId, ( error, data ) => {
 			if ( callback ) {
 				callback( error, data );
@@ -60,8 +60,6 @@ const queueSitePluginActionAsPromise = ( action, siteId, pluginId, callback ) =>
 			resolve( data );
 		} );
 	} );
-
-	return promise;
 };
 
 const getSolvedPromise = ( dataToPass ) => {
@@ -147,7 +145,7 @@ const autoupdatePlugin = ( site, plugin ) => {
 
 	analytics.mc.bumpStat( 'calypso_plugin_update_automatic' );
 
-	const boundEnableAU = getPluginBoundMethod( site, plugin.id, 'enableAutoupdate' );
+	const boundEnableAU = getPluginBoundMethod( site, plugin.id, 'updateVersion' );
 	queueSitePluginAction( boundEnableAU, site.ID, plugin.id, ( error, data ) => {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_AUTOUPDATE_PLUGIN',
@@ -283,7 +281,7 @@ const PluginsActions = {
 		};
 
 		const dispatchMessage = ( type, responseData, error ) => {
-			var message = {
+			const message = {
 				type: type,
 				action: 'INSTALL_PLUGIN',
 				site: site,
