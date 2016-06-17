@@ -227,12 +227,20 @@ FullPostView = React.createClass( {
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
 					{ discoverSiteName && discoverSiteUrl ? <DiscoverVisitLink siteName={ discoverSiteName } siteUrl={ discoverSiteUrl } /> : null }
-					{ config.isEnabled( 'reader/related-posts' ) && ! post.is_external && post.site_ID && <RelatedPosts siteId={ post.site_ID } postId={ post.ID } /> }
+					{ config.isEnabled( 'reader/related-posts' ) && ! post.is_external && post.site_ID && <RelatedPosts siteId={ post.site_ID } postId={ post.ID } onPostClick={ this.recordRelatedPostClicks } onSiteClick={ this.recordRelatedPostSiteClicks }/> }
 					{ this.props.shouldShowComments ? <PostCommentList ref="commentList" post={ post } initialSize={ 25 } pageSize={ 25 } onCommentsUpdate={ this.checkForCommentAnchor } /> : null }
 				</article>
 			</div>
 		);
 		/*eslint-enable react/no-danger*/
+	},
+
+	recordRelatedPostClicks: function( post ) {
+		stats.recordTrackForPost( 'calypso_reader_related_post_clicked', post );
+	},
+
+	recordRelatedPostSiteClicks: function( site, post ) {
+		stats.recordTrackForPost( 'calypso_reader_related_post_site_clicked', post );
 	},
 
 	_generateButtonClickHandler: function( clickHandler ) {
