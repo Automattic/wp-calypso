@@ -24,6 +24,7 @@ var analytics = require( 'lib/analytics' ),
 	SecurePaymentForm = require( './secure-payment-form' ),
 	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
 	upgradesActions = require( 'lib/upgrades/actions' ),
+	themeItem = require( 'lib/cart-values/cart-items' ).themeItem,
 	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
 	notices = require( 'notices' ),
 	supportPaths = require( 'lib/url/support' );
@@ -51,8 +52,8 @@ const Checkout = React.createClass( {
 		if ( this.props.cart.hasLoadedFromServer ) {
 			this.trackPageView();
 
-			if ( this.props.planName ) {
-				this.addPlanToCart();
+			if ( this.props.product ) {
+				this.addProductToCart();
 			}
 		}
 
@@ -64,8 +65,8 @@ const Checkout = React.createClass( {
 			// if the cart hadn't loaded when this mounted, record the page view when it loads
 			this.trackPageView( nextProps );
 
-			if ( this.props.planName ) {
-				this.addPlanToCart();
+			if ( this.props.product ) {
+				this.addProductToCart();
 			}
 		}
 	},
@@ -94,17 +95,29 @@ const Checkout = React.createClass( {
 		} );
 	},
 
-	addPlanToCart: function() {
-		var planSlug = this.props.plans.getSlugFromPath( this.props.planName ),
-			planItem = cartItems.getItemForPlan( { product_slug: planSlug }, { isFreeTrial: false } );
+	addProductToCart: function() {
+		var planSlug = this.props.plans.getSlugFromPath( this.props.product ),
+			cartItem,
+			cartMeta;
 
-		upgradesActions.addItem( planItem );
+		if ( planSlug ) {
+			cartItem = cartItems.getItemForPlan( { product_slug: planSlug }, { isFreeTrial: false } );
+		}
+
+		if ( this.props.product.indexOf( 'theme' ) === 0 ) {
+			cartMeta = this.props.product.split( ':' )[1];
+			cartItem = themeItem( cartMeta );
+		}
+
+		if ( cartItem ) {
+			upgradesActions.addItem( cartItem );
+		}
 	},
 
 	redirectIfEmptyCart: function() {
 		var redirectTo = '/plans/';
 
-		if ( ! this.state.previousCart && this.props.planName ) {
+		if ( ! this.state.previousCart && this.props.productName ) {
 			// the plan hasn't been added to the cart yet
 			return false;
 		}
