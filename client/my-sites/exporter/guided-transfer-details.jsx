@@ -31,7 +31,9 @@ site{{/strong}} to a self-hosted WordPress.org installation with
 one of our hosting partners.`, { components: { strong: <strong /> } }
 				) }
 				<br/>
-				<a href="#" >{ translate( 'Learn more.' ) }</a>
+				<a href="https://en.support.wordpress.com/guided-transfer/" >
+					{ translate( 'Learn more.' ) }
+				</a>
 			</div>
 			<ul className="exporter__guided-transfer-feature-list">
 				<Item>{ translate( 'Seamless content transfer' ) }</Item>
@@ -39,7 +41,7 @@ one of our hosting partners.`, { components: { strong: <strong /> } }
 				<Item>
 					{ translate( 'Switch your domain over {{link}}and more!{{/link}}', {
 						components: {
-							link: <a href="#" />
+							link: <a href="https://en.support.wordpress.com/guided-transfer/" />
 						}
 					} ) }
 				</Item>
