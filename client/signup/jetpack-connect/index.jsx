@@ -271,17 +271,17 @@ const JetpackConnectMain = React.createClass( {
 						step={ 1 }
 						steps={ 3 } />
 					<div className="jetpack-connect__install-steps">
-						<JetpackInstallStep title={ this.translate( '1. Install' ) }
+						<JetpackInstallStep title={ this.translate( '1. Install Jetpack' ) }
 							text={ this.props.isInstall
 									? this.translate( 'You will be redirected to your site\'s dashboard to install Jetpack. Click the blue "Install Now" button' )
 									: this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s dashboard to install Jetpack. Click the blue install button.' )
-							}
+								}
 							example={ <JetpackExampleInstall url={ this.state.currentUrl } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Activate Jetpack' ) }
-							text={ this.translate( 'You\'ll then need to click the small blue "Activate Plugin" link to activate Jetpack.' ) }
+							text={ this.translate( 'Then you\'ll click the blue "Activate" link to activate Jetpack.' ) }
 							example={ <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ true } /> } />
 						<JetpackInstallStep title={ this.translate( '3. Connect Jetpack' ) }
-							text={ this.translate( 'Finally, just click the green "Connect to WordPress.com" button to finish the process.' ) }
+							text={ this.translate( 'Finally, click the green "Connect to WordPress.com" button to finish the process.' ) }
 							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
 					</div>
 					<Button onClick={ this.installJetpack } primary>{ this.translate( 'Install Jetpack' ) }</Button>
@@ -308,16 +308,16 @@ const JetpackConnectMain = React.createClass( {
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
 					<ConnectHeader showLogo={ false }
-						headerText={ this.translate( 'Ready for installation' ) }
+						headerText={ this.translate( 'Ready for activation' ) }
 						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ) }
 						step={ 1 }
 						steps={ 3 } />
 					<div className="jetpack-connect__install-steps">
 						<JetpackInstallStep title={ this.translate( '1. Activate Jetpack' ) }
-							text={ this.translate( 'You need to click this tiny blue \'Activate\' link from your plugins list page.' ) }
+							text={ this.translate( 'You will be redirected to your site\'s dashboard to activate Jetpack. Click the blue "Activate" link.' ) }
 							example={ <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ false } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Connect Jetpack' ) }
-							text={ this.translate( 'Finally, just click the green "Connect to WordPress.com" button to finish the process.' ) }
+							text={ this.translate( 'Then click the green "Connect to WordPress.com" button to finish the process.' ) }
 							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
 					</div>
 					<Button onClick={ this.activateJetpack } primary>{ this.translate( 'Activate Jetpack' ) }</Button>

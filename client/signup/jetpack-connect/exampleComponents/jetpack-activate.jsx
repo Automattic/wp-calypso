@@ -13,20 +13,20 @@ export default React.createClass( {
 	renderActivate() {
 		if ( this.props.isInstall ) {
 			return (
-				<div className="jetpack-connect__example-content-wp-admin-plugin-card">
-					<div className="jetpack-connect__example-content-wp-admin-plugin-name" aria-hidden="true">
-						{ this.translate( 'Jetpack by WordPress.com', { context: 'Jetpack Connect activate plugin instructions, plugin title' } ) }
-					</div>
-					<div className="jetpack-connect__example-content-wp-admin-plugin-activate-link" aria-hidden="true">
-						{ this.translate( 'Activate', { context: 'Jetpack Connect activate plugin instructions, activate link' } ) }
+				<div className="jetpack-connect__example-content-wp-admin-activate-view">
+					<div className="jetpack-connect__example-content-wp-admin-activate-link" aria-hidden="true">
+						{ this.translate( 'Activate Plugin', { context: 'Jetpack Connect activate plugin instructions, activate link' } ) }
 					</div>
 				</div>
 			);
 		}
 		return (
-			<div className="jetpack-connect__example-content-wp-admin-activate-view">
-				<div className="jetpack-connect__example-content-wp-admin-activate-link" aria-hidden="true">
-					{ this.translate( 'Activate Plugin', { context: 'Jetpack Connect activate plugin instructions, activate link' } ) }
+			<div className="jetpack-connect__example-content-wp-admin-plugin-card">
+				<div className="jetpack-connect__example-content-wp-admin-plugin-name" aria-hidden="true">
+					{ this.translate( 'Jetpack by WordPress.com', { context: 'Jetpack Connect activate plugin instructions, plugin title' } ) }
+				</div>
+				<div className="jetpack-connect__example-content-wp-admin-plugin-activate-link" aria-hidden="true">
+					{ this.translate( 'Activate', { context: 'Jetpack Connect activate plugin instructions, activate link' } ) }
 				</div>
 			</div>
 		);
