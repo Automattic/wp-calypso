@@ -3,15 +3,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
-/**
- * Module variables
- */
-var Spinner;
-
-Spinner = React.createClass( {
+const Spinner = React.createClass( {
 	propTypes: {
 		className: React.PropTypes.string,
 		size: React.PropTypes.number,
@@ -56,7 +51,7 @@ Spinner = React.createClass( {
 	},
 
 	renderFallback: function() {
-		var style = {
+		const style = {
 			width: this.props.size,
 			height: this.props.size
 		};
@@ -70,7 +65,7 @@ Spinner = React.createClass( {
 	},
 
 	render: function() {
-		var instanceId = parseInt( this.state.instanceId, 10 );
+		const instanceId = parseInt( this.state.instanceId, 10 );
 
 		if ( ! this.isSVGCSSAnimationSupported() ) {
 			return this.renderFallback();
