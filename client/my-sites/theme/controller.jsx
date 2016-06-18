@@ -31,7 +31,7 @@ export function makeElement( ThemesComponent, Head, store, props ) {
 	return(
 		<ReduxProvider store={ store }>
 			<Head title={ props.title } description={ props.description } type={ 'website' }
-				 canonicalUrl={ props.canonicalUrl } image={ props.image } tier={ props.tier || 'all' }>
+				canonicalUrl={ props.canonicalUrl } image={ props.image } tier={ props.tier || 'all' }>
 				<ThemesComponent { ...omit( props, [ 'title' ] ) } />
 			</Head>
 		</ReduxProvider>
