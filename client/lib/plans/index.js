@@ -157,3 +157,11 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, showJetpac
 export const isGoogleVouchersEnabled = () => {
 	return ( config.isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' );
 };
+
+export const isWordpressAdCreditsEnabled = () => {
+	return (
+		isGoogleVouchersEnabled() &&
+		config.isEnabled( 'plans/wordpress-ad-credits' ) &&
+		abtest( 'wordpressAdCredits' ) === 'enabled'
+	);
+};
