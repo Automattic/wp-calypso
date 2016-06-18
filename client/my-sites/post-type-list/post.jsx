@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getEditorPath } from 'state/ui/editor/selectors';
-import { getPost } from 'state/posts/selectors';
+import { getNormalizedPost } from 'state/posts/selectors';
 import Card from 'components/card';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import resizeImageUrl from 'lib/resize-image-url';
@@ -56,7 +56,7 @@ PostTypeListPost.propTypes = {
 };
 
 export default connect( ( state, ownProps ) => {
-	const post = getPost( state, ownProps.globalId );
+	const post = getNormalizedPost( state, ownProps.globalId );
 
 	return {
 		post,
