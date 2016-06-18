@@ -9,7 +9,6 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { abtest } from 'lib/abtest';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import JetpackPlanDetails from 'my-sites/plans/jetpack-plan-details';

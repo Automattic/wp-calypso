@@ -11,6 +11,7 @@ import i18n from 'i18n-calypso';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
+import { isWordpressAdCreditsEnabled } from 'lib/plans';
 
 const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 	const plan = find( sitePlans.data, isBusiness );
@@ -35,10 +36,10 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 				buttonText={ i18n.translate( 'Connect Google Analytics' ) }
 				href={ '/settings/analytics/' + selectedSite.slug } />
 
-			<PurchaseDetail
+			{ isWordpressAdCreditsEnabled() && <PurchaseDetail
 				icon="star"
 				title={ i18n.translate( 'Boost Your Audience' ) }
-				description={ i18n.translate( 'Get more visitors to your most important Posts or Pages with WordAds Boost. We\'ll display an ad for your site 100,000 times (a $100 value). '+
+				description={ i18n.translate( 'Get more visitors to your most important Posts or Pages with WordAds Boost. We\'ll display an ad for your site 100,000 times (a $100 value). ' +
 					'Contact us at {{a}}wordads-credit@wordpress.com{{/a}} to activate!',
 					{
 						components: {
@@ -47,6 +48,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 					}
 				) }
 				/>
+			}
 
 		</div>
 	);
