@@ -30,7 +30,8 @@ let themeDetailsCache = new Map();
 export function makeElement( ThemesComponent, Head, store, props ) {
 	return(
 		<ReduxProvider store={ store }>
-			<Head title={ props.title } description={ props.description } canonicalUrl={ props.canonicalUrl } tier={ props.tier || 'all' }>
+			<Head title={ props.title } description={ props.description }
+				type={ 'website' } canonicalUrl={ props.canonicalUrl } tier={ props.tier || 'all' }>
 				<ThemesComponent { ...omit( props, [ 'title' ] ) } />
 			</Head>
 		</ReduxProvider>
