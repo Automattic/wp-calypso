@@ -10,13 +10,14 @@ import React from 'react';
  */
 import Head from 'layout/head';
 
-const ThemesHead = ( { title, description, canonicalUrl, type, tier, children } ) => (
+const ThemesHead = ( { title, description, canonicalUrl, type, image, tier, children } ) => (
 	<Head
 		title={ title ? title : get( 'title', tier ) }
 		description={ description ? description : get( 'description', tier ) }
 		canonicalUrl={ canonicalUrl ? canonicalUrl : get( 'canonicalUrl', tier ) }
 		type={ type ? type : 'website' }
-		site_name={ 'WprdPress.com' } >
+		site_name={ 'WprdPress.com' }
+		image={ image ? image : {} } >
 		{ children }
 	</Head>
 );

@@ -30,8 +30,8 @@ let themeDetailsCache = new Map();
 export function makeElement( ThemesComponent, Head, store, props ) {
 	return(
 		<ReduxProvider store={ store }>
-			<Head title={ props.title } description={ props.description }
-				type={ 'website' } canonicalUrl={ props.canonicalUrl } tier={ props.tier || 'all' }>
+			<Head title={ props.title } description={ props.description } type={ 'website' }
+				 canonicalUrl={ props.canonicalUrl } image={ props.image } tier={ props.tier || 'all' }>
 				<ThemesComponent { ...omit( props, [ 'title' ] ) } />
 			</Head>
 		</ReduxProvider>
@@ -89,6 +89,7 @@ export function details( context, next ) {
 		title: decodeEntities( title ) + ' — WordPress.com', // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
 		description: themeDetails.description,
 		canonicalUrl: `https://wordpress.com/theme/${ slug }`, // TODO: use getDetailsUrl() When it becomes availavle
+		image: themeDetails.screenshot,
 		isLoggedIn: !! user
 	};
 
