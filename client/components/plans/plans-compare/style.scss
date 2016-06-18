@@ -204,6 +204,10 @@
 	color: $gray;
 }
 
+.plans-compare__info-hr {
+	margin-bottom: 0.5em;
+}
+
 .layout:not(.has-no-sidebar) .plans-compare {
 	@include breakpoint( "<960px" ) {
 		@include plans-collapsed();

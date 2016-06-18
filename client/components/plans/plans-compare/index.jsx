@@ -15,7 +15,7 @@ import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
 import { fetchSitePlans } from 'state/sites/plans/actions';
-import { filterPlansBySiteAndProps, shouldFetchSitePlans, isGoogleVouchersEnabled } from 'lib/plans';
+import { filterPlansBySiteAndProps, shouldFetchSitePlans, isGoogleVouchersEnabled, isWordpressAdCreditsEnabled } from 'lib/plans';
 import { getPlans } from 'state/plans/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import Gridicon from 'components/gridicon';
@@ -44,11 +44,11 @@ import {
 const googleAdCredits = featuresList[ FEATURE_GOOGLE_AD_CREDITS ];
 const googleAdCreditsFeature = {
 	title: googleAdCredits.getTitle(),
-	compareDescription: googleAdCredits.getDescription(),
+	compareDescription: isWordpressAdCreditsEnabled() ? googleAdCredits.getDescriptionWithWordAdsCredit() : googleAdCredits.getDescription(),
 	product_slug: FEATURE_GOOGLE_AD_CREDITS,
 	1: false,
 	1003: '$100',
-	1008: '$100'
+	1008: isWordpressAdCreditsEnabled() ? '$200' : '$100'
 };
 // WordAds instant activation feature
 const wordAdsInstant = featuresList[ WORDADS_INSTANT ];

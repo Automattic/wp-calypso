@@ -23,7 +23,7 @@ import {
 	PLAN_BUSINESS,
 	getPlanObject,
 } from 'lib/plans/constants';
-import { isGoogleVouchersEnabled } from 'lib/plans';
+import { isGoogleVouchersEnabled, isWordpressAdCreditsEnabled } from 'lib/plans';
 
 const premiumPlan = getPlanObject( PLAN_PREMIUM );
 const businessPlan = getPlanObject( PLAN_BUSINESS );
@@ -76,7 +76,7 @@ const Plan = React.createClass( {
 			if ( plan.product_id === premiumPlan.productId ) {
 				plan.description = premiumPlan.description;
 			} else if ( plan.product_id === businessPlan.productId ) {
-				plan.description = businessPlan.description;
+				plan.description = isWordpressAdCreditsEnabled() ? businessPlan.descriptionWithWordAdsCredit : businessPlan.description;
 			}
 		}
 
