@@ -13,13 +13,13 @@ import Head from 'layout/head';
 const ThemesHead = ( { title, description, canonicalUrl, type, tier, children } ) => (
 	<Head
 		title={ title ? title : get( 'title', tier ) }
-		description={ description ? description: get( 'description', tier ) }
+		description={ description ? description : get( 'description', tier ) }
 		canonicalUrl={ canonicalUrl ? canonicalUrl : get( 'canonicalUrl', tier ) }
 		type={ type ? type : 'website' }
 		site_name={ 'WprdPress.com' } >
 		{ children }
 	</Head>
-)
+);
 
 ThemesHead.propTypes = {
 	title: React.PropTypes.string,
