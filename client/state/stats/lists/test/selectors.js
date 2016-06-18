@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import {
 	getSiteStatsMaxPostsByDay,
-	getSiteStatsPostStreakData,
 	getSiteStatsForQuery,
+	getSiteStatsPostStreakData,
 	getSiteStatsPostsCountByDay,
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery
