@@ -65,7 +65,7 @@ export default React.createClass( {
 			return true;
 		}
 
-		if ( this.state.bulkManagement !== nextState.bulkManagement ) {
+		if ( this.state.bulkManagementActive !== nextState.bulkManagementActive ) {
 			return true;
 		}
 
