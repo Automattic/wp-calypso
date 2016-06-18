@@ -18,6 +18,7 @@ const createSitePlanObject = ( plan ) => {
 		freeTrial: Boolean( plan.free_trial ),
 		hasDomainCredit: Boolean( plan.has_domain_credit ),
 		id: Number( plan.id ),
+		interval: Number( plan.interval ),
 		productName: plan.product_name,
 		productSlug: plan.product_slug,
 		rawDiscount: plan.raw_discount,

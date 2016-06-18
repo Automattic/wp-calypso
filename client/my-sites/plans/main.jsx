@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
+import find from 'lodash/find';
 
 /**
  * Internal dependencies
@@ -26,6 +27,8 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
+import { PLAN_MONTHLY_PERIOD } from 'lib/plans/constants';
+
 
 const Plans = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
@@ -96,7 +99,13 @@ const Plans = React.createClass( {
 		}
 
 		let intervalType = this.props.intervalType,
-			showString = '';
+			showString = '',
+			hasMonthlyPlans = find( this.props.sitePlans.data, { interval: PLAN_MONTHLY_PERIOD } );
+
+		if ( hasMonthlyPlans === undefined ) {
+			//No monthly plan found for this site so no need for a monthly plans link
+			return '';
+		}
 
 		if ( 'monthly' === intervalType ) {
 			intervalType = '';
