@@ -18,7 +18,6 @@ const debug = require( 'debug' )( 'test-runner' ),
 /**
  * Internal dependencies
  */
-const boot = require( './boot-test' );
 
 program
 	.usage( '[options] [files]' )
@@ -32,7 +31,7 @@ program.name = 'runner';
 
 program.parse( process.argv );
 
-let getTestFiles = () => {
+const getTestFiles = () => {
 	let testFiles = program.args;
 	if ( isEmpty( program.args ) ) {
 		testFiles = [ process.env.TEST_ROOT ];
@@ -76,6 +75,8 @@ let getTestFiles = () => {
 };
 
 const getMocha = function() {
+	const boot = require( './boot-test' );
+
 	const mocha = new Mocha( {
 		ui: 'bdd',
 		reporter: program.reporter
@@ -122,8 +123,8 @@ if ( program.watch ) {
 			}
 			// aborting is not instant, so wait for it to finish
 			// then call run the test-suite again
-			let abortedCheck = setInterval( () => {
-				if ( runner == null ) {
+			const abortedCheck = setInterval( () => {
+				if ( runner === null ) {
 					clearInterval( abortedCheck );
 
 					// Must purge the cache in case any files have been modified
