@@ -1,5 +1,7 @@
 /** @ssr-ready **/
 
+import React from 'react';
+
 import i18n from 'i18n-calypso';
 
 // plans constants
@@ -42,7 +44,8 @@ export const plansList = {
 		getTitle: () => i18n.translate( 'Business' ),
 		getPriceTitle: () => i18n.translate( '$299 per year' ),
 		getProductId: () => 1008,
-		getDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, and Google Analytics.' )
+		getDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, and Google Analytics.' ),
+		getDescriptionWithWordAdsCredit: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, Google Analytics, and $200 advertising credit.' ),
 	},
 
 	[ PLAN_JETPACK_FREE ]: {},
@@ -98,6 +101,12 @@ export const featuresList = {
 	[ FEATURE_GOOGLE_AD_CREDITS ]: {
 		getTitle: () => i18n.translate( 'Advertising Credit' ),
 		getDescription: () => i18n.translate( '$100 Google AdWords credit after spending the first $25. Offer valid in US and Canada.' ),
+		getDescriptionWithWordAdsCredit: () => i18n.translate( '$100 Google AdWords credit after spending the first $25. ' +
+			'Offer valid in US and Canada. {{hr/}}Business also includes $100 of advertising from WordAds on WordPress.com.', {
+			components: {
+				hr: <hr className="plans-compare__info-hr"/>
+			}
+		} ),
 		plans: allPaidPlans
 	},
 
