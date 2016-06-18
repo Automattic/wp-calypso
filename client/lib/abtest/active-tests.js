@@ -110,13 +110,4 @@ module.exports = {
 		defaultVariation: 'enabled',
 		allowExistingUsers: false,
 	},
-	wordpressAdCredits: {
-		datestamp: '20160613',
-		variations: {
-			disabled: 50,
-			enabled: 50,
-		},
-		defaultVariation: 'enabled',
-		allowExistingUsers: false,
-	},
 };
