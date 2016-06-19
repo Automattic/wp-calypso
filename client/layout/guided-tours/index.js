@@ -65,6 +65,7 @@ class GuidedTours extends Component {
 	}
 
 	async next() {
+		const tour = this.props.tourState.tour;
 		const nextStepName = this.props.tourState.stepConfig.next;
 		const nextStepConfig = this.props.tourState.nextStepConfig;
 
@@ -78,7 +79,10 @@ class GuidedTours extends Component {
 
 		try {
 			await wait( { condition: nextTargetFound } );
-			this.props.nextGuidedTourStep( { stepName: nextStepName } );
+			this.props.nextGuidedTourStep( {
+				tour,
+				stepName: nextStepName,
+			} );
 		} catch ( err ) {
 			const ERROR_WAITED_TOO_LONG = 'waited too long for next target';
 			debug( ERROR_WAITED_TOO_LONG );
@@ -97,6 +101,7 @@ class GuidedTours extends Component {
 
 		this.currentTarget && this.currentTarget.classList.remove( 'guided-tours__overlay' );
 		this.props.quitGuidedTour( Object.assign( {
+			tour: this.props.tourState.tour,
 			stepName: this.props.tourState.stepName,
 		}, options ) );
 	}
@@ -136,7 +141,6 @@ class GuidedTours extends Component {
 export default connect( ( state ) => ( {
 	selectedSite: getSelectedSite( state ),
 	tourState: getGuidedTourState( state ),
-	state,
 } ), {
 	nextGuidedTourStep,
 	quitGuidedTour,

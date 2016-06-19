@@ -57,6 +57,7 @@ export function quitGuidedTour( { tour = 'main', stepName, finished, error } ) {
 export function nextGuidedTourStep( { tour = 'main', stepName } ) {
 	const nextAction = {
 		type: GUIDED_TOUR_UPDATE,
+		tour,
 		stepName,
 	};
 
