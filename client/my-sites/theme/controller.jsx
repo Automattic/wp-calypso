@@ -87,7 +87,7 @@ export function details( context, next ) {
 		themeSlug: slug,
 		contentSection: context.params.section,
 		title: decodeEntities( title ) + ' — WordPress.com', // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
-		description: themeDetails.description,
+		description: decodeEntities( themeDetails.description ),
 		canonicalUrl: `https://wordpress.com/theme/${ slug }`, // TODO: use getDetailsUrl() When it becomes availavle
 		image: themeDetails.screenshot,
 		isLoggedIn: !! user
