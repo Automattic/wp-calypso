@@ -99,7 +99,7 @@ UndocumentedSite.prototype.domains = function( callback ) {
 };
 
 UndocumentedSite.prototype.postFormatsList = function( callback ) {
-	this.wpcom.req.get( '/sites/' + this._id + '/post-formats', { locale: i18n.getLocaleSlug() }, callback );
+	this.wpcom.withLocale().req.get( '/sites/' + this._id + '/post-formats', {}, callback );
 };
 
 UndocumentedSite.prototype.postAutosave = function( postId, attributes, callback ) {
@@ -123,7 +123,7 @@ UndocumentedSite.prototype.shortcodes = function( attributes, callback ) {
 };
 
 UndocumentedSite.prototype.getRoles = function( callback ) {
-	this.wpcom.req.get( '/sites/' + this._id + '/roles', { locale: i18n.getLocaleSlug() }, callback );
+	this.wpcom.withLocale().req.get( '/sites/' + this._id + '/roles', {}, callback );
 };
 
 UndocumentedSite.prototype.getViewers = function( query, callback ) {
