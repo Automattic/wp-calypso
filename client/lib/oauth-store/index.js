@@ -16,13 +16,20 @@ import * as OAuthToken from 'lib/oauth-token';
  */
 const initialState = {
 	requires2fa: false,
+	pollCount: 0,
+	unverified_token: null,
 	inProgress: false,
 	errorLevel: false,
 	errorMessage: false
 };
 
 function handleAuthError( error, data ) {
-	let stateChanges = { errorLevel: 'is-error', requires2fa: false, inProgress: false };
+	let stateChanges = {
+		errorLevel: 'is-error',
+		requires2fa: false,
+		pushauth_token: null,
+		inProgress: false
+	};
 
 	stateChanges.errorMessage = data && data.body ? data.body.error_description : error.message;
 
@@ -30,10 +37,18 @@ function handleAuthError( error, data ) {
 
 	if ( data && data.body ) {
 		if ( data.body.error === errorTypes.ERROR_REQUIRES_2FA ) {
-			stateChanges.requires2fa = true;
 			stateChanges.errorLevel = 'is-info';
+			if ( data.body.error_info && data.body.error_info.type === 'push-verification-sent' ) {
+				stateChanges.requires2fa = 'push-verification';
+				stateChanges.pushauth_token = {
+					token: data.body.error_info.unverified_token,
+					user_id: data.body.error_info.user_id
+				};
+			} else {
+				stateChanges.requires2fa = 'code';
+			}
 		} else if ( data.body.error === errorTypes.ERROR_INVALID_OTP ) {
-			stateChanges.requires2fa = true;
+			stateChanges.requires2fa = 'code';
 		}
 	}
 
@@ -44,10 +59,10 @@ function goToLogin() {
 	document.location.replace( '/' );
 }
 
-function handleLogin( response ) {
+function handleLogin( token ) {
 	debug( 'Access token received' );
 
-	OAuthToken.setToken( response.body.access_token );
+	OAuthToken.setToken( token );
 
 	goToLogin();
 }
@@ -67,7 +82,16 @@ const AuthStore = createReducerStore( function( state, payload ) {
 			if ( action.error ) {
 				stateChanges = handleAuthError( action.error, action.data );
 			} else {
-				handleLogin( action.data );
+				handleLogin( action.data.body.access_token );
+			}
+			break;
+		case ActionTypes.RECEIVE_AUTH_TOKEN_INFO:
+			if ( action.error ) {
+				// XXX: this triggers component update, which in turn triggers polling
+				//      too much indirection :(
+				stateChanges = { pollCount: state.pollCount + 1 };
+			} else {
+				handleLogin( action.data.body.access_token );
 			}
 			break;
 	}

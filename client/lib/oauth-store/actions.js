@@ -29,6 +29,20 @@ export function login( username, password, auth_code ) {
 		} );
 }
 
+export function checkToken( tokenInfo ) {
+	request.post( '/token-info' )
+		.send( tokenInfo )
+		.end( ( error, data ) => {
+			// XXX: bump stats?
+
+			Dispatcher.handleServerAction( {
+				type: actions.RECEIVE_AUTH_TOKEN_INFO,
+				data,
+				error
+			} );
+		} );
+}
+
 function bumpStats( error, data ) {
 	let errorType;
 

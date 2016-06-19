@@ -13,7 +13,9 @@ function oauth() {
 	return {
 		client_id: config( 'desktop_oauth_client_id' ),
 		client_secret: config( 'desktop_oauth_client_secret' ),
+		client_name: config( 'desktop_oauth_client_name' ),
 		wpcom_supports_2fa: true,
+		wpcom_supports_2fa_push_verification: true,
 		grant_type: 'password'
 	}
 }
@@ -35,6 +37,24 @@ function proxyOAuth( request, response ) {
 	}
 
 	req.post( config( 'desktop_oauth_token_endpoint' ) )
+		.type( 'form' )
+		.send( data )
+		.end( validateOauthResponse( response, function( error, res ) {
+			// Return the token as a response
+			console.log( res.body );
+			response.json( res.body );
+		} ) );
+}
+
+function proxyTokenInfo( request, response ) {
+	var data = Object.assign( {}, {
+		client_id: oauth().client_id,
+		user_id: request.body.user_id,
+		verify: "true", // XXX: can be removed by using a different end-point
+		push_token: request.body.token
+	} );
+
+	req.post( config( 'desktop_oauth_push_token_verify_endpoint' ) )
 		.type( 'form' )
 		.send( data )
 		.end( validateOauthResponse( response, function( error, res ) {
@@ -94,6 +114,7 @@ module.exports = function( app ) {
 	return app
 		.use( bodyParser.json() )
 		.post( '/oauth', proxyOAuth )
+		.post( '/token-info', proxyTokenInfo )
 		.get( '/logout', logout )
 		.post( '/sms', sms );
 }
