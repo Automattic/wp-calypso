@@ -2,12 +2,20 @@
  * External dependencies
  */
 import get from 'lodash/get';
+import difference from 'lodash/difference';
+import find from 'lodash/find';
 import memoize from 'lodash/memoize';
+import noop from 'lodash/noop';
 import startsWith from 'lodash/startsWith';
+import uniq from 'lodash/uniq';
 
 /**
  * Internal dependencies
  */
+import {
+	SET_ROUTE,
+	GUIDED_TOUR_UPDATE,
+} from 'state/action-types';
 import { isSectionLoading } from 'state/ui/selectors';
 import createSelector from 'lib/create-selector';
 import guidedToursConfig from 'layout/guided-tours/config';
@@ -28,42 +36,82 @@ const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 
 const getTourTriggers = state => get( state, 'ui.tourTriggers', [] );
 
-const tourCandidates = [
+const relevantFeatures = [
 	{
-		name: 'themes',
-		test: ( { type, path } ) =>
-			type === 'SET_ROUTE' && startsWith( path, '/design' ),
+		path: '/',
+		tour: 'main',
+		// obviously a hack
+		context: () => -1 !== location.search.indexOf( 'tour=main' )
+	},
+	{
+		path: '/design',
+		tour: 'themes',
+		context: state => true // eslint-disable-line no-unused-vars
 	},
 ];
 
+const getFeaturesReached = createSelector(
+	state => (
+		getTourTriggers( state )
+			.filter( ( { type } ) => type === SET_ROUTE )
+			.reduce( ( allFeatures, { path: triggerPath } ) => {
+				const newFeatures = relevantFeatures
+					.filter( ( { path: featurePath } ) =>
+						startsWith( triggerPath, featurePath ) );
+
+				return newFeatures
+					? uniq( [ ...allFeatures, ...newFeatures ] )
+					: allFeatures;
+			}, [] )
+	),
+	state => getTourTriggers( state )
+);
+
+const getToursFromFeaturesReached = ( state ) =>
+	getFeaturesReached( state ).map( feature => feature.tour );
+
+const getToursSeen = ( state ) =>
+	getTourTriggers( state )
+		.filter( ( { type } ) => type === GUIDED_TOUR_UPDATE )
+		.filter( ( { shouldShow } ) => false === shouldShow )
+		.map( ( { tour } ) => tour );
+
 const findEligibleTour = createSelector(
-		state => {
-			let tourName;
-			tourCandidates.some( ( { name, test } ) => {
-				if ( getTourTriggers( state ).some( test ) ) {
-					tourName = name;
-					return true;
-				}
-			} );
-			return tourName;
-		},
-		state => [
-			getTourTriggers( state ),
-		]
+	state => {
+		const toursFromTriggers = uniq( [
+			// Right now, only one source from which to derive tours, but we may
+			// have more later.
+			...getToursFromFeaturesReached( state )
+		] );
+
+		const toursToDismiss = uniq( [
+			// Same idea here.
+			...getToursSeen( state )
+		] );
+
+		const newTours = difference( toursFromTriggers, toursToDismiss );
+		return newTours.find( tour => {
+			const { context = noop } = find( relevantFeatures, { tour } );
+			return context( state );
+		} );
+	},
+	state => getTourTriggers( state )
 );
 
 export const getGuidedTourState = createSelector(
 	state => {
 		const tourState = getRawGuidedTourState( state );
 		const { stepName = 'init' } = tourState;
-		let { shouldReallyShow, tour } = tourState;
 
-		if ( ! tour ) {
-			//console.log( 'no tour, finding one' );
-			tour = findEligibleTour( state );
-			if ( tour ) shouldReallyShow = true;
-			//console.log( 'found', tour );
-		}
+		// note how we don't care about these:
+		//let { shouldReallyShow, tour } = tourState;
+
+		const tour = findEligibleTour( state );
+		const shouldReallyShow = !! tour;
+
+		console.log( 'tours reached', getToursFromFeaturesReached( state ) );
+		console.log( 'tours seen', getToursSeen( state ) );
+		console.log( 'found', tour );
 
 		const tourConfig = getToursConfig( tour );
 
@@ -86,11 +134,13 @@ export const getGuidedTourState = createSelector(
 			shouldReallyShow
 		);
 
-		return Object.assign( {}, tourState, {
+		return {
+			...tourState,
+			tour,
 			stepConfig,
 			nextStepConfig,
 			shouldShow,
-		} );
+		};
 	},
 	state => [
 		getRawGuidedTourState( state ),

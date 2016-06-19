@@ -36,12 +36,6 @@ export function guidedTour( state = {}, action ) {
 
 /*****/
 
-//const triggerFactories = [
-//	{
-//		type: SET_ROUTE,
-//		factory: ( action ) =>
-//];
-
 const isRelevantTrigger = includes.bind( null, [
 	SET_ROUTE,
 	GUIDED_TOUR_SHOW,
