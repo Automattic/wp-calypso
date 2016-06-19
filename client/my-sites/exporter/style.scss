@@ -84,6 +84,7 @@
 // START GUIDED TRANSFER
 .exporter__guided-transfer-options {
 	display: flex;
+	font-size: 14px;
 }
 
 .exporter__guided-transfer-options-header-title-container {
@@ -114,6 +115,7 @@
 
 .exporter__guided-transfer-details {
 	background-color: lighten( $gray-light, 2% );
+	font-size: 14px;
 }
 
 .exporter__guided-transfer-details-container {
