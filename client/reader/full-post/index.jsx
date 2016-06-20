@@ -17,7 +17,8 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal Dependencies
  */
-var config = require( 'config' ),
+var abtest = require( 'lib/abtest' ).abtest,
+	config = require( 'config' ),
 	CommentButton = require( 'components/comment-button' ),
 	Dialog = require( 'components/dialog' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
@@ -78,6 +79,8 @@ let loadingPost = {
 		content: '<p>Error Loading Post</p>'
 	},
 	FullPostView, FullPostDialog, FullPostContainer;
+
+const relatedPostsEnabled = config.isEnabled( 'reader/related-posts' ) && abtest( 'readerRelatedPosts' ) === 'enabled';
 
 /**
  * The content of a FullPostView
@@ -227,7 +230,7 @@ FullPostView = React.createClass( {
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
 					{ discoverSiteName && discoverSiteUrl ? <DiscoverVisitLink siteName={ discoverSiteName } siteUrl={ discoverSiteUrl } /> : null }
-					{ config.isEnabled( 'reader/related-posts' ) && ! post.is_external && post.site_ID && <RelatedPosts siteId={ post.site_ID } postId={ post.ID } onPostClick={ this.recordRelatedPostClicks } onSiteClick={ this.recordRelatedPostSiteClicks }/> }
+					{ relatedPostsEnabled && ! post.is_external && post.site_ID && <RelatedPosts siteId={ post.site_ID } postId={ post.ID } onPostClick={ this.recordRelatedPostClicks } onSiteClick={ this.recordRelatedPostSiteClicks }/> }
 					{ this.props.shouldShowComments ? <PostCommentList ref="commentList" post={ post } initialSize={ 25 } pageSize={ 25 } onCommentsUpdate={ this.checkForCommentAnchor } /> : null }
 				</article>
 			</div>
