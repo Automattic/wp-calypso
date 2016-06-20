@@ -1,4 +1,4 @@
-$header-banner-height: 20px;
+$plan-features-header-banner-height: 20px;
 
 .plan-features {
 	margin: 0 0 16px;
@@ -8,7 +8,7 @@ $header-banner-height: 20px;
 	&.is-popular {
 		$top-margin: 15px;
 
-		margin-top: $header-banner-height + $top-margin;
+		margin-top: $plan-features-header-banner-height + $top-margin;
 	}
 
 	@include breakpoint( ">1040px" ) {
@@ -117,7 +117,7 @@ $header-banner-height: 20px;
 	padding: 0 8px;
 	background: $gray-dark;
 	font-size: 10px;
-	line-height: $header-banner-height;
+	line-height: $plan-features-header-banner-height;
 	text-align: center;
 	text-transform: uppercase;
 	color: $white;
