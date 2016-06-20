@@ -34,8 +34,11 @@ export default class PostQueryManager extends PaginatedQueryManager {
 						return true;
 					}
 
-					const content = ( post.title || '' ) + ( post.content || '' );
-					return includes( content.toLowerCase(), value.toLowerCase() );
+					const search = value.toLowerCase();
+					return (
+						( post.title && includes( post.title.toLowerCase(), search ) ) ||
+						( post.content && includes( post.content.toLowerCase(), search ) )
+					);
 
 				case 'after':
 				case 'before':
