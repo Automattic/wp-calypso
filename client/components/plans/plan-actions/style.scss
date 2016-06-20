@@ -136,10 +136,12 @@
 }
 
 .value_bundle.plan-actions__illustration,
-.jetpack_premium.plan-actions__illustration {
+.jetpack_premium.plan-actions__illustration,
+.jetpack_premium_monthly.plan-actions__illustration {
 	background-image: url('/calypso/images/plans/plan-premium.svg');
 }
 .business-bundle.plan-actions__illustration,
-.jetpack_business.plan-actions__illustration {
+.jetpack_business.plan-actions__illustration,
+.jetpack_business_monthly.plan-actions__illustration {
 	background-image: url('/calypso/images/plans/plan-business.svg');
 }

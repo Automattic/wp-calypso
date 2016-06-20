@@ -11,8 +11,23 @@ var assign = require( 'lodash/assign' ),
 /**
  * Internal dependencies
  */
-var schema = require( './schema.json' ),
-	PLAN_PERSONAL = require( 'lib/plans/constants' ).PLAN_PERSONAL;
+import {
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+	PLAN_PERSONAL,
+	PLAN_FREE,
+	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_HOST_BUNDLE,
+	PLAN_WPCOM_ENTERPRISE,
+	PLAN_CHARGEBACK,
+	PLAN_MONTHLY_PERIOD,
+} from 'lib/plans/constants';
+
+var schema = require( './schema.json' );
 
 var productDependencies = {
 	domain: {
@@ -51,21 +66,21 @@ function isChargeback( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === 'chargeback';
+	return product.product_slug === PLAN_CHARGEBACK;
 }
 
 function isFreePlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === 'free_plan';
+	return product.product_slug === PLAN_FREE;
 }
 
 function isFreeJetpackPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === 'jetpack_free';
+	return product.product_slug === PLAN_JETPACK_FREE;
 }
 
 function isFreeTrial( product ) {
@@ -83,7 +98,7 @@ function isPersonal( product ) {
 }
 
 function isPremium( product ) {
-	var premiumProducts = [ 'value_bundle', 'jetpack_premium' ];
+	var premiumProducts = [ PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
 
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -92,7 +107,7 @@ function isPremium( product ) {
 }
 
 function isBusiness( product ) {
-	var businessProducts = [ 'business-bundle', 'jetpack_business' ];
+	var businessProducts = [ PLAN_BUSINESS, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
 
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -104,14 +119,16 @@ function isEnterprise( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === 'wpcom-enterprise';
+	return product.product_slug === PLAN_WPCOM_ENTERPRISE;
 }
 
 function isJetpackPlan( product ) {
+	var jetpackProducts = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
+
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return 'jetpack' === product.product_type;
+	return ( jetpackProducts.indexOf( product.product_slug ) >= 0 );
 }
 
 function isJetpackBusiness( product ) {
@@ -128,11 +145,22 @@ function isJetpackPremium( product ) {
 	return isPremium( product ) && isJetpackPlan( product );
 }
 
+function isJetpackMonthlyPlan( product ) {
+	return isMonthly( product ) && isJetpackPlan( product );
+}
+
+function isMonthly( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+	
+	return product.bill_period === PLAN_MONTHLY_PERIOD;
+}
+
 function isJpphpBundle( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === 'host-bundle';
+	return product.product_slug === PLAN_HOST_BUNDLE;
 }
 
 function isPlan( product ) {
@@ -319,6 +347,8 @@ module.exports = {
 	isJetpackBusiness,
 	isJetpackPlan,
 	isJetpackPremium,
+	isJetpackMonthlyPlan,
+	isMonthly,
 	isJpphpBundle,
 	isNoAds,
 	isPlan,

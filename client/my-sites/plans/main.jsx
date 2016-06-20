@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
+import find from 'lodash/find';
 
 /**
  * Internal dependencies
@@ -21,11 +22,13 @@ import observe from 'lib/mixins/data-observe';
 import paths from './paths';
 import PlanList from 'components/plans/plan-list' ;
 import PlanOverview from './plan-overview';
-import { shouldFetchSitePlans } from 'lib/plans';
+import { shouldFetchSitePlans, plansLink } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
+import { PLAN_MONTHLY_PERIOD } from 'lib/plans/constants';
+
 
 const Plans = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
@@ -34,6 +37,7 @@ const Plans = React.createClass( {
 		cart: React.PropTypes.object.isRequired,
 		context: React.PropTypes.object.isRequired,
 		destinationType: React.PropTypes.string,
+		intervalType: React.PropTypes.string,
 		plans: React.PropTypes.array.isRequired,
 		fetchSitePlans: React.PropTypes.func.isRequired,
 		sites: React.PropTypes.object.isRequired,
@@ -68,26 +72,53 @@ const Plans = React.createClass( {
 	},
 
 	comparePlansLink() {
+		if ( this.props.plans.length <= 0 ) {
+			return '';
+		}
+
 		const selectedSite = this.props.sites.getSelectedSite();
-		let url = '/plans/compare',
+		let url = plansLink( '/plans/compare', selectedSite, this.props.intervalType ),
 			compareString = this.translate( 'Compare Plans' );
 
 		if ( selectedSite.jetpack ) {
 			compareString = this.translate( 'Compare Options' );
 		}
 
-		if ( this.props.plans.length <= 0 ) {
-			return '';
-		}
-
-		if ( selectedSite ) {
-			url += '/' + selectedSite.slug;
-		}
-
 		return (
 			<a href={ url } className="compare-plans-link" onClick={ this.recordComparePlansClick }>
 				<Gridicon icon="clipboard" size={ 18 } />
 				{ compareString }
+			</a>
+		);
+	},
+
+	showMonthlyPlansLink() {
+		const selectedSite = this.props.sites.getSelectedSite();
+		if ( !selectedSite.jetpack ) {
+			return '';
+		}
+
+		let intervalType = this.props.intervalType,
+			showString = '',
+			hasMonthlyPlans = find( this.props.sitePlans.data, { interval: PLAN_MONTHLY_PERIOD } );
+
+		if ( hasMonthlyPlans === undefined ) {
+			//No monthly plan found for this site so no need for a monthly plans link
+			return '';
+		}
+
+		if ( 'monthly' === intervalType ) {
+			intervalType = '';
+			showString = this.translate( 'Show Yearly Plans' );
+		} else {
+			intervalType = 'monthly';
+			showString = this.translate( 'Show Monthly Plans' );
+		}
+
+		return (
+			<a href={ plansLink( '/plans', selectedSite, intervalType ) } className="show-monthly-plans-link" onClick={ this.recordComparePlansClick }>
+				<Gridicon icon="refresh" size={ 18 } />
+				{ showString }
 			</a>
 		);
 	},
@@ -142,6 +173,7 @@ const Plans = React.createClass( {
 							cart={ this.props.cart }
 							selectedSite={ selectedSite } />
 
+						{ ! hasJpphpBundle && this.showMonthlyPlansLink() }
 						<QueryPlans />
 
 						<PlanList
@@ -150,6 +182,7 @@ const Plans = React.createClass( {
 							sitePlans={ this.props.sitePlans }
 							onOpen={ this.openPlan }
 							cart={ this.props.cart }
+							intervalType={ this.props.intervalType }
 							isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST } />
 
 						{ ! hasJpphpBundle && this.comparePlansLink() }

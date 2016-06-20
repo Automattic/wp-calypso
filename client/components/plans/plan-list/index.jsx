@@ -26,7 +26,7 @@ const PlanList = React.createClass( {
 
 	render() {
 		const isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer;
-		const { site, hideFreePlan, plans, showJetpackFreePlan } = this.props;
+		const { site, hideFreePlan, plans, intervalType, showJetpackFreePlan } = this.props;
 
 		let className = '',
 			numberOfPlaceholders = abtest( 'personalPlan' ) === 'hide' ? 3 : 4;
@@ -77,7 +77,7 @@ const PlanList = React.createClass( {
 		}
 
 		if ( plans.length > 0 ) {
-			let filteredPlans = filterPlansBySiteAndProps( plans, site, hideFreePlan, showJetpackFreePlan );
+			let filteredPlans = filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalType, showJetpackFreePlan );
 
 			if (
 				config.isEnabled( 'manage/ads/wordads-instant' ) &&
