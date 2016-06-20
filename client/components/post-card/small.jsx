@@ -18,7 +18,7 @@ export function SmallPostCard( { translate, post, site, onPostClick = noop, onSi
 	const classes = classnames( 'post-card small', {
 		'has-image': post.canonical_image
 	} );
-	const displayName = post.author.nice_name;
+	const displayName = post.author.name;
 	const siteName = site && site.title || post.site_name;
 
 	const username = (
