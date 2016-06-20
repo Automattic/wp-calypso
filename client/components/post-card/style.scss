@@ -39,14 +39,6 @@
 	}
 }
 
-.post-card__author {
-
-	&:after {
-		content: "\2022";
-		margin: 0 3px;
-	}
-}
-
 .post-card__title {
 	float: left;
 	line-height: 1.2;

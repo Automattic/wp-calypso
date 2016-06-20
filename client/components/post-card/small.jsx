@@ -6,7 +6,6 @@ import classnames from 'classnames';
 import noop from 'lodash/noop';
 import partial from 'lodash/partial';
 import { localize } from 'i18n-calypso';
-import trim from 'lodash/trim';
 
 /**
  * Internal Dependencies
@@ -19,7 +18,14 @@ export function SmallPostCard( { translate, post, site, onPostClick = noop, onSi
 	const classes = classnames( 'post-card small', {
 		'has-image': post.canonical_image
 	} );
-	const displayName = trim( `${post.author.first_name} ${post.author.last_name}` );
+	const displayName = post.author.nice_name;
+	const siteName = site && site.title || post.site_name;
+
+	const username = (
+		<span className="post-card__author">
+			<a href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }>{ displayName }</a>
+		</span>
+	);
 
 	return (
 		<Card className={ classes }>
@@ -28,20 +34,28 @@ export function SmallPostCard( { translate, post, site, onPostClick = noop, onSi
 					<a className="post-card__anchor" href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` } onClick={ partial( onPostClick, post ) }>{ post.title }</a>
 				</h1>
 				<div className="post-card__site-info">
-					{ displayName && (
-						<span className="post-card__author">
-							<a href="href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }">{ displayName }</a>
-						</span> )
-					}
-					<span className="post-card__site-title">
-						<a href="href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }">{ site && site.title || post.site_name }
-						</a>
-					</span>
+					{
+						siteName !== displayName
+						? translate( 'By {{username/}} in {{sitename/}}', {
+							components: {
+								username,
+								sitename: ( <span className="post-card__site-title">
+									<a href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }>{ siteName }
+									</a>
+								</span> )
+							}
+						} )
+						: translate( 'By {{username/}}', {
+							components: {
+								username
+							}
+						} )
+				}
 				</div>
 			</div>
 			<div>
-			{ post.canonical_image && (
-					<a href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` } onClick={ partial( onPostClick, post ) }><img className="post-card__thumbnail" src={ resizeImageUrl( safeImageUrl( post.canonical_image.uri ), { resize: '96,72' } ) } /></a> ) }
+				{ post.canonical_image && (
+						<a href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` } onClick={ partial( onPostClick, post ) }><img className="post-card__thumbnail" src={ resizeImageUrl( safeImageUrl( post.canonical_image.uri ), { resize: '96,72' } ) } /></a> ) }
 			</div>
 		</Card>
 	);
