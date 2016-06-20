@@ -44,6 +44,55 @@
 	margin-bottom: 25px;
 	width: 100%;
 
+	// Loading Placeholders
+	&.is-placeholder {
+		pointer-events: none;
+		user-select: none;
+		margin-right: 14px !important;
+
+		.reader-start-card__site-title,
+		.reader-start-post-preview__title,
+		.reader-start-post-preview__byline,
+		.reader-start-post-preview__excerpt,
+		.reader-start-card__follower-count,
+		.site-icon {
+			color: transparent;
+			background-color: lighten( $gray, 30% );
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+
+		.reader-start-card__site-title {
+			margin-bottom: 2px;
+		}
+
+		.reader-start-post-preview__title,
+		.reader-start-post-preview__byline {
+			width: 60%;
+		}
+
+		.reader-start-post-preview__excerpt {
+			margin-bottom: 0;
+		}
+
+		.reader-start-post-preview__post-content {
+			padding-bottom: 1em;
+		}
+
+		.site-icon {
+			float: left;
+			margin: 5px 5px 0 0;
+		}
+
+		.reader-start-post-preview__featured-label {
+			display: none;
+		}
+
+		.reader-start-post-preview__post-content {
+			margin-top: 0;
+			padding: 15px 10px 20px;
+		}
+	}
+
 	@include breakpoint( ">960px" ) {
 		display: inline-block;
 			margin: 0px 0px 14px 0px;
