@@ -51,7 +51,9 @@ function wpLink( editor ) {
 		node = null;
 	} );
 
-	editor.addCommand( 'WP_Link', render );
+	editor.addCommand( 'WP_Link', function() {
+		return render();
+	} );
 
 	// WP default shortcut
 	editor.addShortcut( 'access+a', '', 'WP_Link' );
