@@ -3,6 +3,8 @@
  */
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -13,7 +15,11 @@ import Gridicon from 'components/gridicon';
 import FormCheckbox from 'components/forms/form-checkbox';
 import Button from 'components/button';
 
-export default React.createClass( {
+import { setPreference, savePreference } from 'state/preferences/actions';
+import { getPreference } from 'state/preferences/selectors';
+import QueryPreferences from 'components/data/query-preferences';
+
+const EditorMediaModalGalleryHelp =  React.createClass( {
 	displayName: 'EditorMediaModalGalleryHelp',
 
 	mixins: [ PureRenderMixin ],
@@ -101,10 +107,33 @@ export default React.createClass( {
 	},
 
 	render() {
+		if ( this.props.isMediaModalGalleryInstructionsDismissed ) {
+			return null;
+		}
 		return (
 			<div ref={ this.setRenderContext } className="editor-media-modal__gallery-help">
+				<QueryPreferences />
 				{ this.renderPopover() }
 			</div>
 		);
 	}
 } );
+
+export default connect(
+	state => ( {
+		isMediaModalGalleryInstructionsDismissed: (
+			getPreference( state, 'mediaModalGalleryInstructionsDismissed' ) ||
+			getPreference( state, 'mediaModalGalleryInstructionsDismissedForSession' )
+		)
+	} ),
+	dispatch => bindActionCreators( {
+		onDismiss: options => {
+			if ( options.remember ) {
+				return savePreference( 'mediaModalGalleryInstructionsDismissed', true );
+			} else {
+				return setPreference( 'mediaModalGalleryInstructionsDismissedForSession', true );
+			}
+		}
+	}, dispatch )
+)( EditorMediaModalGalleryHelp );
+
