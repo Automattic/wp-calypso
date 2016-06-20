@@ -16,6 +16,8 @@ export const itemsSchema = {
 			feature_1: { type: 'string' },
 			feature_2: { type: 'string' },
 			feature_3: { type: 'string' },
+			feature_4: { type: 'string' },
+			feature_5: { type: 'string' },
 			features_highlight: { type: [ 'null', 'array' ] },
 			formatted_price: { type: 'string' },
 			formatted_original_price: { type: 'string' },
@@ -39,8 +41,6 @@ export const itemsSchema = {
 			support_document: { type: 'string' },
 			tagline: { type: 'string' },
 			width: { type: 'number' }
-		},
-
-		additionalProperties: false
+		}
 	}
 };
