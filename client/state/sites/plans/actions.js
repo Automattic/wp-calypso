@@ -2,8 +2,9 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import map from 'lodash/map';
+import has from 'lodash/has';
 import isEmpty from 'lodash/isEmpty';
+import map from 'lodash/map';
 import omit from 'lodash/omit';
 import i18n from 'i18n-calypso';
 
@@ -127,7 +128,7 @@ export function fetchSitePlansCompleted( siteId, data ) {
 	let plansData = omit( data, '_headers' );
 	const { product_id } = personalPlan;
 
-	if ( ! isEmpty( plansData ) && ! plansData.hasOwnProperty( product_id ) ) {
+	if ( ! ( isEmpty( plansData ) || has( plansData, product_id ) ) ) {
 		const { formatted_price, product_name, product_slug, raw_price } = personalPlan;
 		plansData = {
 			...plansData,
