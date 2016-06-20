@@ -32,7 +32,7 @@ function getLocation() {
 		return 'unknown';
 	}
 
-	let path = window.location.pathname;
+	const path = window.location.pathname;
 	if ( path === '/' ) {
 		return 'following';
 	}
@@ -112,6 +112,7 @@ tracksRailcarEventWhitelist
 	.add( 'calypso_reader_article_liked' )
 	.add( 'calypso_reader_article_commented_on' )
 	.add( 'calypso_reader_article_opened' )
+	.add( 'calypso_reader_startcard_clicked' )
 ;
 
 export function recordTrackForPost( eventName, post = {}, additionalProps = {} ) {
@@ -133,7 +134,7 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 }
 
 export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
-	let params = {
+	const params = {
 		ref: 'http://wordpress.com/',
 		reader: 1,
 		host: blogUrl.replace( /.*?:\/\//g, '' ),
