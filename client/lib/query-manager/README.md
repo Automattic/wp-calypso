@@ -20,6 +20,8 @@ Once items have been inserted into the query manager, they can then be retrieved
 - `getItem( itemKey: string )` - Returns a single item
 - `getItems( query: ?object )` - Returns all items tracked, optionally only those associated with the passed query
 - `getFound( query: object )` - Returns the total number of items matching a query
+- `removeItem( itemKey: string )` - Removes a single item, returning a new instance if changed
+- `removeItems( itemKeys: string[] )` - Removes items, returning a new instance if changed
 
 Under the hood, Query Manager reconciles any change to an item across all queries where that item is tracked. 
 
