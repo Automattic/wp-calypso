@@ -52,7 +52,7 @@ const PostsMain = React.createClass( {
 			<div className="posts__recent-drafts">
 				{ site &&
 					<QueryPosts
-						siteId={ site && site.ID }
+						siteId={ site.ID }
 						query={ this.props.draftsQuery } />
 				}
 				{ site && <QueryPostCounts siteId={ site.ID } type="post" /> }
