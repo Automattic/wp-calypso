@@ -380,9 +380,8 @@ describe( 'TokenField', function() {
 		it( 'should not lose focus when a suggestion is clicked', test( function() {
 			// prevents regression of https://github.com/Automattic/wp-calypso/issues/1884
 
-			textInputNode.simulate( 'blur', {
-				relatedTarget: document.querySelector( '.token-field__suggestion' )
-			} );
+			const firstSuggestion = tokenFieldNode.find( '.token-field__suggestion' ).at( 0 );
+			firstSuggestion.simulate( 'click' );
 
 			// wait for setState call
 			this.clock.tick( 10 );
