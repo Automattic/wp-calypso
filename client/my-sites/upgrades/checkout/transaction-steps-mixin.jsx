@@ -94,6 +94,7 @@ var TransactionStepsMixin = {
 					// zero-value cost and would thus lead to a wrong computation of conversions
 					if ( ! cartItems.hasFreeTrial( cartValue ) ) {
 						cartValue.products.map( adTracking.recordPurchase );
+						adTracking.recordOrderInAtlas( cartValue );
 					}
 
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
