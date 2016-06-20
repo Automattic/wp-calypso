@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -20,6 +21,10 @@ import { plansList, getPlanFeaturesObject, PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINES
 
 class PlanFeatures extends Component {
 	render() {
+		if ( ! this.props.planObject ) {
+			return null;
+		}
+
 		const {
 			planName,
 			rawPrice,
@@ -75,6 +80,7 @@ PlanFeaturesHeader.defaultProps = {
 export default connect( ( state, ownProps ) => {
 	const planProductId = plansList[ ownProps.plan ].getProductId();
 	const selectedSiteId = getSelectedSiteId( state );
+	const planObject = getPlan( state, planProductId );
 
 	return {
 		planName: ownProps.plan,
@@ -83,7 +89,8 @@ export default connect( ( state, ownProps ) => {
 		features: getPlanFeaturesObject( ownProps.plan ),
 		rawPrice: getPlanRawPrice( state, planProductId /**, get from abtest **/ ),
 		planConstantObj: plansList[ ownProps.plan ],
-		billingTimeFrame: getPlan( state, planProductId ).bill_period_label
+		billingTimeFrame: get( planObject, 'bill_period_label', '' ),
+		planObject: planObject
 	};
 } )( PlanFeatures );
 
