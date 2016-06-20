@@ -38,6 +38,7 @@ import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError
 } from 'state/domains/suggestions/selectors';
+import support from 'lib/url/support';
 
 const domains = wpcom.domains();
 
@@ -572,7 +573,20 @@ const RegisterDomainStep = React.createClass( {
 				break;
 
 			case 'mappable_but_blacklisted_domain':
-				message = this.translate( 'Domain cannot be mapped to a WordPress.com blog because of blacklisted term.' );
+				if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
+					message = this.translate(
+						'Due to {{a1}}trademark policy{{/a1}}, we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. Please {{a2}}contact support{{/a2}} if you have any questions.',
+						{
+							components: {
+								strong: <strong />,
+								a1: <a target="_blank" href="http://wordpressfoundation.org/trademark-policy/"/>,
+								a2: <a href={ support.CALYPSO_CONTACT }/>
+							}
+						}
+					);
+				} else {
+					message = this.translate( 'Domain cannot be mapped to a WordPress.com blog because of blacklisted term.' );
+				}
 				break;
 
 			case 'mappable_but_forbidden_subdomain':
