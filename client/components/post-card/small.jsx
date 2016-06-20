@@ -42,24 +42,18 @@ export function SmallPostCard( { translate, post, site, onPostClick = noop, onSi
 				</h1>
 				<div className="post-card__site-info">
 					{
-						displayName === ''
+						displayName === '' || siteName === displayName
 						? translate( 'On {{sitename/}}', {
 							components: {
 								sitename
 							}
 						} )
-						: siteName !== displayName
-							? translate( 'By {{username/}} in {{sitename/}}', {
-								components: {
-									username,
-									sitename
-								}
-							} )
-							: translate( 'By {{username/}}', {
-								components: {
-									username
-								}
-							} )
+						: translate( 'By {{username/}}, {{sitename/}}', {
+							components: {
+								username,
+								sitename
+							}
+						} )
 				}
 				</div>
 			</div>
