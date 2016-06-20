@@ -10,14 +10,17 @@ import React from 'react';
  */
 import Head from 'layout/head';
 
-const ThemesHead = ( { title, tier, children } ) => (
+const ThemesHead = ( { title, description, canonicalUrl, type, image, tier, children } ) => (
 	<Head
 		title={ title ? title : get( 'title', tier ) }
-		description={ get( 'description', tier ) }
-		canonicalUrl={ get( 'canonicalUrl', tier ) } >
+		description={ description ? description : get( 'description', tier ) }
+		canonicalUrl={ canonicalUrl ? canonicalUrl : get( 'canonicalUrl', tier ) }
+		type={ type ? type : 'website' }
+		site_name={ 'WordPress.com' }
+		image={ image ? image : {} } >
 		{ children }
 	</Head>
-)
+);
 
 ThemesHead.propTypes = {
 	title: React.PropTypes.string,
@@ -40,7 +43,7 @@ const themesMeta = {
 		description: 'Discover Premium WordPress Themes on the WordPress.com Theme Showcase.',
 		canonicalUrl: 'https://wordpress.com/design/type/premium',
 	}
-}
+};
 
 function get( key, tier ) {
 	return tier in themesMeta && key in themesMeta[ tier ]
