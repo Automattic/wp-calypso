@@ -170,11 +170,16 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  */
 export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
 	const posts = state.posts.queries[ siteId ];
-	if ( ! posts || ! posts.getItemsIgnoringPage( query ) ) {
+	if ( ! posts ) {
 		return null;
 	}
 
-	return posts.getItemsIgnoringPage( query ).map( ( post ) => {
+	const itemsIgnoringPage = posts.getItemsIgnoringPage( query );
+	if ( ! itemsIgnoringPage ) {
+		return null;
+	}
+
+	return itemsIgnoringPage.map( ( post ) => {
 		return getNormalizedPost( state, post.global_ID );
 	} );
 }

@@ -365,6 +365,33 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSitePostsForQueryIgnoringPage()', () => {
+		it( 'should return null if the query is not tracked', () => {
+			const sitePosts = getSitePostsForQueryIgnoringPage( {
+				posts: {
+					items: {},
+					queries: {}
+				}
+			}, 2916284, { search: '', number: 1 } );
+
+			expect( sitePosts ).to.be.null;
+		} );
+
+		it( 'should return null if the query manager has not received items for query', () => {
+			const sitePosts = getSitePostsForQueryIgnoringPage( {
+				posts: {
+					items: {},
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {},
+							queries: {}
+						} )
+					}
+				}
+			}, 2916284, { search: '', number: 1 } );
+
+			expect( sitePosts ).to.be.null;
+		} );
+
 		it( 'should return a concatenated array of all site posts ignoring page', () => {
 			const sitePosts = getSitePostsForQueryIgnoringPage( {
 				posts: {
