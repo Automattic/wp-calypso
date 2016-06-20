@@ -13,6 +13,7 @@ import {
 	isDomainProduct,
 	isGoogleApps,
 	isTheme,
+	isMonthly,
 	isPlan
 } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
@@ -70,6 +71,10 @@ export default React.createClass( {
 			return null;
 		}
 
+		if ( isMonthly( this.props.cartItem ) ) {
+			return null;
+		}
+
 		return this.translate( '(%(monthlyPrice)f %(currency)s x 12 months)', {
 			args: {
 				monthlyPrice: +( cost / 12 ).toFixed( currency === 'JPY' ? 0 : 2 ),
@@ -116,7 +121,11 @@ export default React.createClass( {
 	render: function() {
 		var name = this.getProductName();
 		if ( this.props.cartItem.bill_period && this.props.cartItem.bill_period !== -1 ) {
-			name += ' - ' + this.translate( 'annual subscription' );
+			if ( isMonthly( this.props.cartItem ) ) {
+				name += ' - ' + this.translate( 'monthly subscription' );
+			} else {
+				name += ' - ' + this.translate( 'annual subscription' );
+			}
 		}
 
 		return (

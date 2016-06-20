@@ -48,6 +48,14 @@ export default function() {
 		);
 
 		page(
+			'/plans/compare/:intervalType?/:domain',
+			retarget,
+			controller.siteSelection,
+			controller.navigation,
+			plansController.plansCompare
+		);
+
+		page(
 			'/plans/compare/:feature/:domain',
 			retarget,
 			controller.siteSelection,
