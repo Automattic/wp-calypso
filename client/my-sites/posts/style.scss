@@ -482,6 +482,10 @@
 	@include breakpoint( ">1040px" ) {
 		display: block;
 	}
+
+	.draft__actions {
+		display: none;
+	}
 }
 
 .posts__recent-drafts .posts__drafts-header.card.is-compact {

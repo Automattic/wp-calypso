@@ -6,6 +6,8 @@ import createSelector from 'lib/create-selector';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
 import merge from 'lodash/merge';
+import flow from 'lodash/flow';
+import cloneDeep from 'lodash/cloneDeep';
 
 /**
  * Internal dependencies
@@ -18,6 +20,7 @@ import {
 import { DEFAULT_POST_QUERY } from './constants';
 import firstPassCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
+import stripHtml from 'lib/post-normalizer/rule-strip-html';
 
 /**
  * Returns a post object by its global ID.
@@ -39,10 +42,11 @@ export function getPost( state, globalId ) {
  */
 export const getNormalizedPost = createSelector(
 	( state, globalId ) => {
-		const post = getPost( state, globalId );
-		firstPassCanonicalImage( post );
-		decodeEntities( post );
-		return post;
+		return flow( [
+			firstPassCanonicalImage,
+			decodeEntities,
+			stripHtml
+		] )( cloneDeep( getPost( state, globalId ) ) );
 	},
 	( state ) => state.posts.items
 );
@@ -166,7 +170,7 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  */
 export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
 	const posts = state.posts.queries[ siteId ];
-	if ( ! posts ) {
+	if ( ! posts || ! posts.getItemsIgnoringPage( query ) ) {
 		return null;
 	}
 
