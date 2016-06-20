@@ -1,12 +1,12 @@
-Timezone Dropdown
-=================
+Timezone
+========
 
-React component for selecting a timezone from a dropdown.
+Select timezone react component.
 
 ---
 
 ```jsx
-var TimezoneDropdown = require( 'components/timezone-dropdown' );
+var Timezone = require( 'components/timezone' );
 
 module.exports = React.createClass( {
 
@@ -18,7 +18,7 @@ module.exports = React.createClass( {
 
 	render() {
 		return (
-			<TimezoneDropdown
+			<Timezone
 				selectedZone="Indian/Mahe"
 				onSelect={ this.onTimezoneSelect }
 			/>
@@ -27,13 +27,13 @@ module.exports = React.createClass( {
 
 } );
 ```
-## TimezoneDropdown
+## Timezone
 
 #### Props
 
 `selectedZone` - **optional** String value to define the selected timezone.
 
 `onSelect` - **optional** Called when user selects a timezone from the
-dropdown. An object parameter is passed to the function which has two
+select. An object parameter is passed to the function which has two
 properties: `label` usually used to show the selected timezone to the user and
 `value` which is the normalized timezone value.
