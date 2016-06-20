@@ -142,10 +142,11 @@ export default class QueryManager {
 
 	/**
 	 * Returns items tracked by the instance. If a query is specified, returns
-	 * items specific to that query.
+	 * items specific to that query, or null if no items have been received for
+	 * the query.
 	 *
-	 * @param  {?Object} query Optional query object
-	 * @return {Object[]}      Items tracked
+	 * @param  {?Object}       query Optional query object
+	 * @return {Object[]|null}       Items tracked, if known
 	 */
 	getItems( query ) {
 		if ( ! query ) {
