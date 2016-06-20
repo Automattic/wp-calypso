@@ -28,7 +28,7 @@ export default React.createClass( {
 	},
 
 	hasAllElementsSelected() {
-		return this.props.selectedElements && this.props.selectedElements === this.props.totalElements;
+		return !! ( this.props.selectedElements && this.props.selectedElements === this.props.totalElements );
 	},
 
 	hasSomeElementsSelected() {
