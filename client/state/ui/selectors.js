@@ -66,3 +66,15 @@ export function isSectionLoading( state ) {
 export function isSectionIsomorphic( state ) {
 	return get( state.ui.section, 'isomorphic', false );
 }
+
+/**
+ * Returns true if WebPreview is currently showing.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {bool}    True if currently showing WebPreview
+ *
+ * @see client/components/web-preview
+ */
+export function isPreviewShowing( state ) {
+	return get( state.ui, 'isPreviewShowing', false );
+}
