@@ -17,7 +17,7 @@ import {
 
 import { useSandbox } from 'test/helpers/use-sinon';
 import { DEFAULT_PREFERENCES, USER_SETTING_KEY } from '../constants';
-import { fetchPreferences, savePreference } from '../actions';
+import { fetchPreferences, savePreference, setPreference } from '../actions';
 
 describe( 'actions', () => {
 	let sandbox, spy;
@@ -82,6 +82,16 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#setPreference()', () => {
+		it( 'should return PREFERENCES_SET with correct payload', () => {
+			expect( setPreference( 'preferenceKey', 'preferenceValue' ) ).to.deep.equal( {
+				type: PREFERENCES_SET,
+				key: 'preferenceKey',
+				value: 'preferenceValue'
+			} );
+		} );
+	} );
+
+	describe( '#savePreference()', () => {
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
