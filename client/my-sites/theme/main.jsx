@@ -54,6 +54,8 @@ const ThemeSheet = React.createClass( {
 		download: React.PropTypes.string,
 		taxonomies: React.PropTypes.object,
 		stylesheet: React.PropTypes.string,
+		active: React.PropTypes.bool,
+		purchased: React.PropTypes.bool,
 		isLoggedIn: React.PropTypes.bool,
 		// Connected props
 		selectedSite: React.PropTypes.object,
@@ -90,8 +92,7 @@ const ThemeSheet = React.createClass( {
 			this.props.signup( this.props );
 		} else if ( this.isActive() ) {
 			this.props.customize( this.props, this.props.selectedSite );
-		} else if ( isPremium( this.props ) ) {
-			// TODO: check theme is not already purchased
+		} else if ( isPremium( this.props ) && ! this.props.purchased ) {
 			this.selectSiteAndDispatch( 'purchase' );
 		} else {
 			this.selectSiteAndDispatch( 'activate' );
@@ -243,8 +244,8 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderFeaturesCard() {
-		const themeFeatures = this.props.taxonomies && this.props.taxonomies.features instanceof Array
-		? this.props.taxonomies.features.map( function( item, i ) {
+		const themeFeatures = this.props.taxonomies && this.props.taxonomies.theme_feature instanceof Array
+		? this.props.taxonomies.theme_feature.map( function( item, i ) {
 			return ( <li key={ 'theme-features-item-' + i++ }><span>{ item.name }</span></li> );
 		} ) : [];
 

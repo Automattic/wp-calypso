@@ -22,6 +22,7 @@ const ThemeDetailsData = React.createClass( {
 	propTypes: {
 		children: React.PropTypes.element.isRequired,
 		id: React.PropTypes.string.isRequired,
+		site: React.PropTypes.string,
 		// Connected props
 		name: React.PropTypes.string,
 		author: React.PropTypes.string,
@@ -43,8 +44,9 @@ const ThemeDetailsData = React.createClass( {
 	},
 
 	refresh( props ) {
-		if ( ! this.props.name && props.id ) {
-			this.props.fetchThemeDetails( props.id );
+		// todo (seear): Don't fetch if site matches existing data
+		if ( props.id ) {
+			this.props.fetchThemeDetails( props.id, props.site );
 		}
 	},
 
