@@ -13,9 +13,10 @@ import Main from 'components/main';
 import { signup } from 'state/themes/actions' ;
 import ThemePreview from './theme-preview';
 import ThemesSelection from './themes-selection';
-import { getSignupUrl, getDetailsUrl, getSupportUrl, getHelpUrl, isPremium, addTracking } from './helpers';
+import { getSignupUrl, getHelpUrl, isPremium, addTracking } from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
+import { getThemeDetailsUrl, getThemeSupportUrl } from 'state/themes/themes/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const ThemesLoggedOut = React.createClass( {
@@ -43,10 +44,10 @@ const ThemesLoggedOut = React.createClass( {
 				separator: true
 			},
 			details: {
-				getUrl: theme => getDetailsUrl( theme ),
+				getUrl: this.props.getDetailsUrl,
 			},
 			support: {
-				getUrl: theme => getSupportUrl( theme ),
+				getUrl: this.props.getSupportUrl,
 				// Free themes don't have support docs.
 				hideForTheme: theme => ! isPremium( theme )
 			},
@@ -104,7 +105,9 @@ const ThemesLoggedOut = React.createClass( {
 export default connect(
 	state => ( {
 		queryParams: getQueryParams( state ),
-		themesList: getThemesList( state )
+		themesList: getThemesList( state ),
+		getDetailsUrl: getThemeDetailsUrl.bind( null, state ),
+		getSupportUrl: getThemeSupportUrl.bind( null, state )
 	} ),
 	{ signup }
 )( ThemesLoggedOut );
