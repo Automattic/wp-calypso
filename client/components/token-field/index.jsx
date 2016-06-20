@@ -95,11 +95,6 @@ var TokenField = React.createClass( {
 		}
 	},
 
-	componentWillUnmount: function() {
-		debug( 'componentWillUnmount' );
-		this._clearBlurTimeout();
-	},
-
 	render: function() {
 		var classes = classNames( 'token-field', {
 			'is-active': this.state.isActive,
@@ -192,13 +187,6 @@ var TokenField = React.createClass( {
 	},
 
 	_onFocus: function( event ) {
-		if ( this._blurTimeoutID ) {
-			this._clearBlurTimeout();
-			return;
-		} else if ( this.state.isActive ) {
-			return; // already active
-		}
-
 		this.setState( { isActive: true } );
 		if ( 'function' === typeof this.props.onFocus ) {
 			this.props.onFocus( event );
@@ -215,15 +203,6 @@ var TokenField = React.createClass( {
 		}
 		debug( '_onBlur resetting component state' );
 		this.setState( this.getInitialState() );
-		this._clearBlurTimeout();
-	},
-
-	_clearBlurTimeout: function() {
-		if ( this._blurTimeoutID ) {
-			debug( '_blurTimeoutID cleared' );
-			window.clearTimeout( this._blurTimeoutID );
-			this._blurTimeoutID = null;
-		}
 	},
 
 	_onTokenClickRemove: function( event ) {
