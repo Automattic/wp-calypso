@@ -2,6 +2,7 @@
  * External dependencies
  */
 import findIndex from 'lodash/findIndex';
+import matchesProperty from 'lodash/matchesProperty'
 
 /**
  * Internal dependencies
@@ -23,8 +24,8 @@ import personalPlan from 'lib/plans/personal-plan';
  * @return {Object} action object
  */
 export const plansReceiveAction = plans => {
-	const freePlanIndex = findIndex( plans, plan => plan.product_slug === PLAN_FREE );
-	const hasPersonalPlan = plans.some( ( { product_slug } ) => PLAN_PERSONAL === product_slug );
+	const freePlanIndex = findIndex( plans, matchesProperty( 'product_slug', PLAN_FREE ) );
+	const hasPersonalPlan = plans.some( matchesProperty( 'product_slug', PLAN_PERSONAL ) );
 
 	const newPlans = ! hasPersonalPlan
 		? [ ...plans.slice( 0, freePlanIndex + 1 ), personalPlan, ...plans.slice( freePlanIndex + 1 ) ]
