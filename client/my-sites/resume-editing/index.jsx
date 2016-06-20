@@ -113,7 +113,7 @@ const ResumeEditing = React.createClass( {
 					{ translate( 'Continue Editing' ) }
 				</span>
 				<span className="resume-editing__post-title">
-					<SiteIcon size={ 14 } site={ sites.getSite( siteId ) } />
+					<SiteIcon size={ 16 } site={ sites.getSite( siteId ) } />
 					{ draft.title ? decodeEntities( draft.title ) : translate( 'Untitled' ) }
 				</span>
 			</a>
