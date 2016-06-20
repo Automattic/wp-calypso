@@ -21,8 +21,6 @@ export function SmallPostCard( { translate, post, site, onPostClick = noop, onSi
 	const displayName = post.author.nice_name;
 	const siteName = site && site.title || post.site_name;
 
-	console.log( post, site );
-
 	const username = (
 		<span className="post-card__author">
 			<a href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }>{ displayName }</a>
