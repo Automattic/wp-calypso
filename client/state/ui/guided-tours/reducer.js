@@ -2,9 +2,7 @@
 /**
  * External dependencies
  */
-import includes from 'lodash/includes';
 import omit from 'lodash/omit';
-import takeRight from 'lodash/takeRight';
 
 /**
  * Internal dependencies
@@ -12,9 +10,6 @@ import takeRight from 'lodash/takeRight';
 import {
 	GUIDED_TOUR_SHOW,
 	GUIDED_TOUR_UPDATE,
-	SET_ROUTE,
-	THEMES_RECEIVE,
-	PREVIEW_IS_SHOWING,
 } from 'state/action-types';
 
 export function guidedTour( state = {}, action ) {
@@ -33,27 +28,5 @@ export function guidedTour( state = {}, action ) {
 	}
 	return state;
 }
-
-/*****/
-
-const isRelevantTrigger = includes.bind( null, [
-	SET_ROUTE,
-	GUIDED_TOUR_SHOW,
-	GUIDED_TOUR_UPDATE,
-	THEMES_RECEIVE,
-	PREVIEW_IS_SHOWING,
-] );
-
-const toTrigger = ( action ) => ( {
-	...action, timestamp: Date.now()
-} );
-
-export function tourTriggers( state = [], action ) {
-	return isRelevantTrigger( action.type )
-		? takeRight( [ ...state, toTrigger( action ) ], 50 )
-		: state;
-}
-
-/*****/
 
 export default guidedTour;

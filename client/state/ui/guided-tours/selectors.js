@@ -34,8 +34,26 @@ const getToursConfig = memoize( ( tour ) => guidedToursConfig.get( tour ) );
  */
 const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 
-const getTourTriggers = state => get( state, 'ui.tourTriggers', [] );
+/**
+ * Since this selector is now pulling from two sources and merging them, it
+ * will always return a different object instance even when called with the
+ * same `state`. Thus, we need to memoize it with `createSelector` — not for
+ * its own benefit, but for that of other selectors which depend on it.
+ */
+const getTourTriggers = createSelector(
+	state => [
+		...get( state, 'currentUser.actionLog.temporary', [] ),
+		...get( state, 'currentUser.actionLog.permanent', [] ),
+	],
+	state => [
+		state.currentUser.actionLog.temporary,
+		state.currentUser.actionLog.permanent,
+	]
+);
 
+/**
+ * This would/will be part of the existing config for tours.
+ */
 const relevantFeatures = [
 	{
 		path: '/',
@@ -79,9 +97,11 @@ const getToursSeen = ( state ) =>
 const findEligibleTour = createSelector(
 	state => {
 		const toursFromTriggers = uniq( [
+			...getToursFromFeaturesReached( state ),
 			// Right now, only one source from which to derive tours, but we may
-			// have more later.
-			...getToursFromFeaturesReached( state )
+			// have more later. Examples:
+			// ...getToursFromPurchases( state ),
+			// ...getToursFromFirstActions( state ),
 		] );
 
 		const toursToDismiss = uniq( [

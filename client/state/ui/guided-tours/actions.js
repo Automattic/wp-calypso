@@ -35,7 +35,7 @@ export function showGuidedTour( { shouldShow, shouldDelay = false, tour = 'main'
 	return shouldDelay ? showAction : withAnalytics( trackEvent, showAction );
 }
 
-export function quitGuidedTour( { tour, stepName, finished, error } ) {
+export function quitGuidedTour( { tour, stepName, finished = false, error } ) {
 	const quitAction = {
 		type: GUIDED_TOUR_UPDATE,
 		shouldShow: false,
@@ -43,6 +43,7 @@ export function quitGuidedTour( { tour, stepName, finished, error } ) {
 		shouldDelay: false,
 		tour,
 		stepName,
+		finished,
 	};
 
 	const trackEvent = recordTracksEvent( `calypso_guided_tours_${ finished ? 'finished' : 'quit' }`, {

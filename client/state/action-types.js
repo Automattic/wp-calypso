@@ -10,6 +10,7 @@
  *  - https://wpcalypso.wordpress.com/devdocs/docs/our-approach-to-data.md#actions
  */
 
+export const ACTION_LOG_RECEIVE = 'ACTION_LOG_RECEIVE';
 export const ANALYTICS_EVENT_RECORD = 'ANALYTICS_EVENT_RECORD';
 export const ANALYTICS_MULTI_TRACK = 'ANALYTICS_MULTI_TRACK';
 export const ANALYTICS_PAGE_VIEW_RECORD = 'ANALYTICS_PAGE_VIEW_RECORD';
