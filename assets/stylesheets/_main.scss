@@ -73,6 +73,13 @@
 @-o-viewport { width : device-width; }
 @viewport { width : device-width; }
 
+// make sure layout can fill the viewport
+html,
+body,
+.wpcom-site {
+	height: 100%;
+}
+
 * {
 	-webkit-tap-highlight-color: rgba( 0, 0, 0, 0);
 }

@@ -327,7 +327,7 @@ if ( config.isEnabled( 'accept-invite' ) ) {
 if ( config.isEnabled( 'oauth' ) ) {
 	sections.push( {
 		name: 'auth',
-		paths: [ '/login' ],
+		paths: [ '/login', '/authorize', '/api/oauth/token' ],
 		module: 'auth',
 		secondary: false,
 		enableLoggedOut: true

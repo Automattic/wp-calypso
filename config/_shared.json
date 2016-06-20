@@ -1,5 +1,6 @@
 {
 	"discover_blog_id": 53424024,
+	"oauth_client_id": false,
 	"languages": [
 		{ "value": 2, "langSlug": "af", "name": "af - Afrikaans", "wpLocale": "af" },
 		{ "value": 418, "langSlug": "als", "name": "als - Alemannisch", "wpLocale": "" },

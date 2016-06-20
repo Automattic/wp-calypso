@@ -123,6 +123,7 @@
     "webpack": "1.12.15",
     "webpack-dev-middleware": "1.2.0",
     "wpcom": "4.9.15",
+    "wpcom-oauth": "0.3.3",
     "wpcom-proxy-request": "2.0.0",
     "wpcom-xhr-request": "0.5.0",
     "xgettext-js": "0.3.0"

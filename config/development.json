@@ -94,6 +94,7 @@
 		"preview-endpoint": false,
 		"network-connection": true,
 		"notifications2beta": true,
+		"oauth": false,
 		"olark": true,
 		"perfmon": false,
 		"persist-redux": true,

@@ -328,7 +328,11 @@ function reduxStoreReady( reduxStore ) {
 			} );
 
 			if ( '/' === context.pathname && config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
-				page.redirect( '/devdocs/start' );
+				if ( config.isEnabled( 'oauth' ) ) {
+					page.redirect( '/authorize' );
+				} else {
+					page.redirect( '/devdocs/start' );
+				}
 				return;
 			}
 
