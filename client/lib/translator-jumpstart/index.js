@@ -87,7 +87,7 @@ communityTranslatorJumpstart = {
 		props = { className: 'translatable' };
 
 		if ( 'string' === typeof originalFromPage ) {
-			props.value = originalFromPage;
+			props[ 'data-singular' ] = originalFromPage;
 		} else {
 			debug( 'unknown original format' );
 			return displayedTranslationFromPage;
