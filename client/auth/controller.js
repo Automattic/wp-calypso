@@ -41,7 +41,7 @@ module.exports = {
 		if ( config( 'env' ) === 'desktop' ) {
 			// Check we have an OAuth token, otherwise redirect to login page
 			if ( OAuthToken.getToken() === false && ! isValidSection ) {
-				page( '/login' );
+				return page( '/login' );
 			} else {
 				next();
 			}
@@ -49,7 +49,7 @@ module.exports = {
 
 		// Check we have an OAuth token, otherwise redirect to auth page
 		if ( OAuthToken.getToken() === false && ! isValidSection ) {
-			page( '/authorize' );
+			return page( '/authorize' );
 		} else {
 			next();
 		}
