@@ -21,11 +21,18 @@ export function SmallPostCard( { translate, post, site, onPostClick = noop, onSi
 	const displayName = post.author.nice_name;
 	const siteName = site && site.title || post.site_name;
 
+	console.log( post, site );
+
 	const username = (
 		<span className="post-card__author">
 			<a href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }>{ displayName }</a>
 		</span>
 	);
+
+	const sitename = ( <span className="post-card__site-title">
+		<a href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }>{ siteName }
+		</a>
+	</span> );
 
 	return (
 		<Card className={ classes }>
@@ -35,21 +42,24 @@ export function SmallPostCard( { translate, post, site, onPostClick = noop, onSi
 				</h1>
 				<div className="post-card__site-info">
 					{
-						siteName !== displayName
-						? translate( 'By {{username/}} in {{sitename/}}', {
+						displayName === ''
+						? translate( 'On {{sitename/}}', {
 							components: {
-								username,
-								sitename: ( <span className="post-card__site-title">
-									<a href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }>{ siteName }
-									</a>
-								</span> )
+								sitename
 							}
 						} )
-						: translate( 'By {{username/}}', {
-							components: {
-								username
-							}
-						} )
+						: siteName !== displayName
+							? translate( 'By {{username/}} in {{sitename/}}', {
+								components: {
+									username,
+									sitename
+								}
+							} )
+							: translate( 'By {{username/}}', {
+								components: {
+									username
+								}
+							} )
 				}
 				</div>
 			</div>
