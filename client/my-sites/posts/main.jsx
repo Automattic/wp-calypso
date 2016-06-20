@@ -17,7 +17,7 @@ import notices from 'notices';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostCounts from 'components/data/query-post-counts';
 import Draft from 'my-sites/draft';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getSitePostsForQueryIgnoringPage,
 	isRequestingSitePostsForQuery
@@ -29,6 +29,7 @@ import Gridicon from 'components/gridicon';
 import NoResults from 'my-sites/no-results';
 import { sectionify } from 'lib/route/path';
 import { getAllPostCount } from 'state/posts/counts/selectors';
+import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 
 const PostsMain = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
@@ -49,22 +50,24 @@ const PostsMain = React.createClass( {
 
 		return (
 			<div className="posts__recent-drafts">
-				<QueryPosts
-					siteId={ site && site.ID }
-					query={ this.props.draftsQuery } />
-				<QueryPostCounts siteId={ site && site.ID } type="post" />
+				{ site &&
+					<QueryPosts
+						siteId={ site && site.ID }
+						query={ this.props.draftsQuery } />
+				}
+				{ site && <QueryPostCounts siteId={ site.ID } type="post" /> }
 				<Card compact className="posts__drafts-header">
 					<span>
 						{ this.translate( 'Drafts' ) }
 						{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
 					</span>
-					<Button disabled={ ! site } borderless href={ `/post/${ site.slug }` }>
+					<Button disabled={ ! site } borderless href={ this.props.newPostPath }>
 						<Gridicon icon="plus" />
 					</Button>
 				</Card>
 				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 				{ isLoading && <Draft isPlaceholder /> }
-				{ this.props.draftCount === 0 && <NoResults text="You have no drafts at the moment." /> }
+				{ this.props.draftCount === 0 && <NoResults text={ this.translate( 'You have no drafts at the moment.' ) } /> }
 			</div>
 		);
 	},
@@ -86,7 +89,7 @@ const PostsMain = React.createClass( {
 					<PostsNavigation { ...this.props } />
 					<PostList { ...this.props } />
 				</div>
-				{ this.mostRecentDrafts() }
+				{ path !== '/posts/drafts' && this.mostRecentDrafts() }
 			</Main>
 		);
 	},
@@ -103,11 +106,9 @@ const PostsMain = React.createClass( {
 } );
 
 export default connect( ( state ) => {
-	const selectedSite = getSelectedSite( state );
-	const siteId = selectedSite && selectedSite.ID;
+	const siteId = getSelectedSiteId( state );
 	const draftsQuery = {
 		type: 'post',
-		lastPage: true,
 		status: 'draft',
 		order_by: 'modified'
 	};
@@ -116,6 +117,7 @@ export default connect( ( state ) => {
 		drafts: getSitePostsForQueryIgnoringPage( state, siteId, draftsQuery ),
 		loadingDrafts: isRequestingSitePostsForQuery( state, siteId, draftsQuery ),
 		draftsQuery: draftsQuery,
-		draftCount: getAllPostCount( state, siteId, 'post', 'draft' )
+		draftCount: getAllPostCount( state, siteId, 'post', 'draft' ),
+		newPostPath: getEditorNewPostPath( state, siteId )
 	};
 } )( PostsMain );

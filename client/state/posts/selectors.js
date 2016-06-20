@@ -31,6 +31,23 @@ export function getPost( state, globalId ) {
 }
 
 /**
+ * Returns a normalized post object by its global ID.
+ *
+ * @param  {Object} state    Global state tree
+ * @param  {String} globalId Post global ID
+ * @return {Object}          Post object
+ */
+export const getNormalizedPost = createSelector(
+	( state, globalId ) => {
+		const post = getPost( state, globalId );
+		firstPassCanonicalImage( post );
+		decodeEntities( post );
+		return post;
+	},
+	( state ) => state.posts.items
+);
+
+/**
  * Returns an array of post objects by site ID.
  *
  * @param  {Object} state  Global state tree
@@ -154,9 +171,7 @@ export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
 	}
 
 	return posts.getItemsIgnoringPage( query ).map( ( post ) => {
-		firstPassCanonicalImage( post );
-		decodeEntities( post );
-		return post;
+		return getNormalizedPost( state, post.global_ID );
 	} );
 }
 
