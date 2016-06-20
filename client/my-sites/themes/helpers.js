@@ -60,20 +60,6 @@ export function getDetailsUrl( theme, site ) {
 	return baseUrl + ( site ? `/${ site.slug }` : '' );
 }
 
-export function getSupportUrl( theme, site ) {
-	if ( site && site.jetpack ) {
-		return '//wordpress.org/support/theme/' + theme.id;
-	}
-
-	const sitePart = site ? `/${ site.slug }` : '';
-
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		return `/theme/${ theme.id }/setup${ sitePart }`;
-	}
-
-	return `${ oldShowcaseUrl }${ sitePart }${ theme.id }/support`;
-}
-
 export function getForumUrl( theme ) {
 	return isPremium( theme ) ? '//premium-themes.forums.wordpress.com/forum/' + theme.id : '//en.forums.wordpress.com/forum/themes';
 }
