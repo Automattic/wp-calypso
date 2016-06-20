@@ -56,7 +56,13 @@ var userUtils = {
 
 	isLoggedIn: function() {
 		return Boolean( user.data );
-	}
+	},
+
+	needsVerificationForSite: function( site ) {
+		// do not allow publish for unverified e-mails,
+		// but allow if the site is VIP
+		return !user.get().email_verified && !( site && site.is_vip );
+	},
 };
 
 module.exports = userUtils;

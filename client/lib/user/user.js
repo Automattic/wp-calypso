@@ -31,6 +31,10 @@ function User() {
 	this.initialize();
 }
 
+/**
+ * Constants
+ */
+const VERIFICATION_POLL_INTERVAL = 15000;
 
 /**
  * Mixins
@@ -44,6 +48,10 @@ User.prototype.initialize = function() {
 	debug( 'Initializing User' );
 	this.fetching = false;
 	this.initialized = false;
+
+	if ( config( 'email_verification_gate' ) ) {
+		this.on( 'change', this.checkVerification.bind( this ) );
+	}
 
 	if ( isSupportUserSession() ) {
 		supportUserBoot();
@@ -75,6 +83,7 @@ User.prototype.initialize = function() {
 
 	if ( this.data ) {
 		this.initialized = true;
+		this.emit( 'change' );
 	}
 };
 
@@ -253,6 +262,91 @@ User.prototype.set = function( attributes ) {
 	}
 
 	return changed;
+};
+
+/**
+ * Called every VERIFICATION_POLL_INTERVAL milliseconds
+ * if the email is not verified.
+ *
+ * May also be called by a localStorage event, on which case
+ * the `signal` parameter is set to true.
+ *
+ * @private
+ */
+
+User.prototype.verificationPollerCallback = function( signal ) {
+	// skip server poll if page is hidden or there are no listeners
+	// and this was not triggered by a localStorage signal
+	if ( ( document.hidden || this.listeners( 'verify' ).length === 0 ) && !signal ) {
+		return;
+	}
+
+	debug( 'Verification: POLL' );
+
+	this.once( 'change', () => {
+		if ( this.get().email_verified ) {
+			// email is verified, stop polling
+			clearInterval( this.verificationPoller );
+			this.verificationPoller = null;
+			debug( 'Verification: VERIFIED' );
+			this.emit( 'verify' );
+		}
+	} );
+
+	this.fetch();
+};
+
+/**
+ * Checks if the user email is verified, and starts polling
+ * for verification if that's not the case.
+ *
+ * Also registers a listener to localStorage events.
+ *
+ * @private
+ */
+
+User.prototype.checkVerification = function() {
+	if ( !this.get() ) {
+		// not loaded, do nothing
+		return;
+	}
+
+	if ( this.get().email_verified ) {
+		// email already verified, do nothing
+		return;
+	}
+
+	if ( this.verificationPoller ) {
+		// already polling, do nothing
+		return;
+	}
+
+	this.verificationPoller = setInterval( this.verificationPollerCallback.bind( this ), VERIFICATION_POLL_INTERVAL );
+
+	// wait for localStorage event (from other windows)
+	window.addEventListener( 'storage', ( e ) => {
+		if ( e.key === '__email_verified_signal__' && e.newValue ) {
+			debug( 'Verification: RECEIVED SIGNAL' );
+			window.localStorage.removeItem( '__email_verified_signal__' );
+			this.verificationPollerCallback( true );
+		}
+	} );
+};
+
+/**
+ * Writes to local storage, signalling all other windows
+ * that the user has been verified.
+ *
+ * This should be called from the verification successful
+ * message, so that all the windows update instantaneously
+ */
+
+User.prototype.signalVerification = function() {
+	if ( window.localStorage ) {
+		// use localStorage to signal to other browser windows that the user's email was verified
+		window.localStorage.setItem( '__email_verified_signal__', 1 );
+		debug( 'Verification: SENT SIGNAL' );
+	}
 };
 
 /**
