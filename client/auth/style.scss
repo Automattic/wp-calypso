@@ -147,7 +147,8 @@
 	margin: 0 auto 20px auto;
 }
 
-.auth__help {
+.auth__help,
+.auth__help:visited {
 	position: absolute;
 	top: 16px;
 	right: 16px;
@@ -256,4 +257,22 @@
 
 }
 
+.auth__welcome {
+	color: $white;
+}
 
+.auth__connect-intro {
+	width: 420px;
+	margin: 0 auto;
+}
+
+.auth__connect .button,
+.auth__connect .button:visited {
+	background: #00a8db;
+	border: #00a8db;
+	color: $white;
+}
+
+.auth .pulsing-dot {
+	top: 40%;
+}
