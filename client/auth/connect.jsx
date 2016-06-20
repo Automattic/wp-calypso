@@ -25,7 +25,10 @@ const Connect = React.createClass( {
 			<Main className="auth auth__connect">
 				<WordPressLogo size={ 72 } />
 				{ ! config( 'oauth_client_id' )
-					? <Notice status="is-warning" text="You need to set `oauth_client_id` in your config file." showDismiss={ false }>
+					? <Notice
+						status="is-warning"
+						text={ this.translate( 'You need to set `oauth_client_id` in your config file.' ) }
+						showDismiss={ false } >
 						<NoticeAction href="https://developer.wordpress.com/apps/">{ this.translate( 'Go to Developer Resources' ) }</NoticeAction>
 					</Notice>
 					: <div className="auth__connect-intro">
