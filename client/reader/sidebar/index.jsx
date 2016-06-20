@@ -87,7 +87,7 @@ const ReaderSidebar = React.createClass( {
 	},
 
 	handleClick( event ) {
-		if ( ! event.isDefaultPrevented() && ! closest( event.target, 'input,textarea', true ) ) {
+		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span', true ) ) {
 			layoutFocus.setNext( 'content' );
 			window.scrollTo( 0, 0 );
 		}
@@ -109,7 +109,7 @@ const ReaderSidebar = React.createClass( {
 		const pathParts = this.props.path.split( '/' );
 
 		if ( startsWith( this.props.path, '/tag/' ) ) {
-			const tagSlug = pathParts[2];
+			const tagSlug = pathParts[ 2 ];
 			if ( tagSlug ) {
 				// Open the sidebar
 				if ( ! this.props.isTagsOpen ) {
@@ -120,8 +120,8 @@ const ReaderSidebar = React.createClass( {
 		}
 
 		if ( startsWith( this.props.path, '/read/list/' ) ) {
-			const listOwner = pathParts[3];
-			const listSlug = pathParts[4];
+			const listOwner = pathParts[ 3 ];
+			const listSlug = pathParts[ 4 ];
 			if ( listOwner && listSlug ) {
 				// Open the sidebar
 				if ( ! this.props.isListsOpen ) {
@@ -136,7 +136,7 @@ const ReaderSidebar = React.createClass( {
 		// if promo not configured return
 		if ( ! config.isEnabled( 'desktop-promo' ) ) {
 			return;
-		};
+		}
 
 		// if user settings not loaded, return so we dont show
 		// before we can check if user is already a desktop user
