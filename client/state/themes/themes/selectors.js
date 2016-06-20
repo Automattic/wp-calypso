@@ -19,6 +19,10 @@ export function getThemeById( state, id ) {
 }
 
 export function getThemeDetailsUrl( state, theme ) {
+	if ( ! theme ) {
+		return null;
+	}
+
 	const site = getSelectedSite( state );
 
 	if ( site && isJetpackSite( state, site.ID ) ) {
@@ -34,6 +38,10 @@ export function getThemeDetailsUrl( state, theme ) {
 }
 
 export function getThemeSupportUrl( state, theme ) {
+	if ( ! theme ) {
+		return null;
+	}
+
 	const site = getSelectedSite( state );
 
 	if ( site && isJetpackSite( state, site.ID ) ) {
