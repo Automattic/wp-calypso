@@ -23,6 +23,8 @@ class EditorSeoAccordion extends Component {
 		// Temporary placeholder chips for design review
 		const sampleChips = [ 'Post Title', 'Site Title' ];
 
+		const seoTabUrl = `/settings/seo/${ this.props.siteSlug }`;
+
 		return (
 			<Accordion
 				title={ translate( 'Advanced SEO' ) }
@@ -34,11 +36,10 @@ class EditorSeoAccordion extends Component {
 						{ translate( 'Meta Title' ) }
 						<InfoPopover position="top left">
 							{ translate(
-								'The format for the title as it will appear in search engines. ' +
-								'{{a}}Edit{{/a}}',
+								'To edit the format of the meta title, go to your site\'s {{a}}SEO settings{{/a}}.',
 								{
 									components: {
-										a: <a target="_blank" href={ this.props.siteSlug } />
+										a: <a target="_blank" href={ seoTabUrl } />
 									}
 								}
 							) }
@@ -51,8 +52,8 @@ class EditorSeoAccordion extends Component {
 						{ translate( 'Meta Description' ) }
 						<InfoPopover position="top left">
 							{ translate(
-								'Craft a description of your post in about 160 characters. ' +
-								'This description can be used in search engine results.'
+								'Craft a description of your post for search engine results. ' +
+								'The post content is used by default.'
 							) }
 						</InfoPopover>
 					</span>
