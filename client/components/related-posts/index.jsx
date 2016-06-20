@@ -41,6 +41,9 @@ function RelatedPosts( { siteId, postId, posts, onPostClick = noop, onSiteClick 
 	if ( ! posts ) {
 		return <QueryReaderRelatedPosts siteId={ siteId } postId={ postId } />;
 	}
+	if ( ! posts.length ) {
+		return null;
+	}
 	return (
 		<div className="related-posts">
 			<h1 className="related-posts__heading">{ i18n.translate( 'Related Reading' ) }</h1>

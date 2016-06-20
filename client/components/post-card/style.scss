@@ -18,8 +18,17 @@
 	white-space: nowrap;
 	width: 100%;
 
-	&:visited {
-		color: inherit;
+	a {
+		color: $gray;
+		text-decoration: none;
+
+		&:visited {
+			color: inherit;
+		}
+
+		&:hover {
+			color: $blue-wordpress;
+		}
 	}
 
 	.site-icon {
@@ -27,14 +36,6 @@
 		float: left;
 		display: inline-block;
 		margin-right: 4px;
-	}
-
-	.post-card__site-title {
-		color: $gray;
-
-		&:hover {
-			color: darken( $gray, 30% );
-		}
 	}
 }
 
