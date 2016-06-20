@@ -41,8 +41,6 @@ export const itemsSchema = {
 			support_document: { type: 'string' },
 			tagline: { type: 'string' },
 			width: { type: 'number' }
-		},
-
-		additionalProperties: false
+		}
 	}
 };
