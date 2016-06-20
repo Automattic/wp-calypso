@@ -32,6 +32,8 @@ export function SmallPostCard( { translate, post, site, onPostClick = noop, onSi
 		</a>
 	</span> );
 
+	const thumbnailUrl = post.canonical_image && resizeImageUrl( safeImageUrl( post.canonical_image.uri ), { resize: '96,72' } );
+
 	return (
 		<Card className={ classes }>
 			<div className="post-card__site-info-title">
@@ -62,8 +64,10 @@ export function SmallPostCard( { translate, post, site, onPostClick = noop, onSi
 				</div>
 			</div>
 			<div>
-				{ post.canonical_image && (
-						<a href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` } onClick={ partial( onPostClick, post ) }><img className="post-card__thumbnail" src={ resizeImageUrl( safeImageUrl( post.canonical_image.uri ), { resize: '96,72' } ) } /></a> ) }
+			{ post.canonical_image && (
+					<a href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` } onClick={ partial( onPostClick, post ) }>
+						<img className="post-card__thumbnail" src={ thumbnailUrl } />
+					</a> ) }
 			</div>
 		</Card>
 	);
