@@ -16,6 +16,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS
 } from 'lib/plans/constants';
+import { insertPersonalPlan } from 'lib/plans/personal-plan';
 
 /**
  * Module vars
@@ -57,7 +58,7 @@ const pathToSlugMapping = {
  * @return {Object} list of plans object
  */
 PlansList.prototype.get = function() {
-	var data;
+	let data;
 	if ( ! this.data ) {
 		debug( 'First time loading PlansList, check store' );
 		data = store.get( 'PlansList' );
@@ -86,7 +87,7 @@ PlansList.prototype.fetch = function() {
 			return;
 		}
 
-		let plans = this.parse( data );
+		const plans = insertPersonalPlan( this.parse( data ) );
 
 		debug( 'PlansList fetched from api:', plans );
 

@@ -2,8 +2,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import has from 'lodash/has';
-import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import omit from 'lodash/omit';
 import i18n from 'i18n-calypso';
@@ -24,7 +22,7 @@ import {
 	SITE_PLANS_TRIAL_CANCEL_FAILED
 } from 'state/action-types';
 import wpcom from 'lib/wp';
-import personalPlan from 'lib/plans/personal-plan';
+import { insertSitePersonalPlan } from 'lib/plans/personal-plan';
 
 /**
  * Cancels the specified plan trial for the given site.
@@ -125,31 +123,12 @@ export function fetchSitePlans( siteId ) {
  * @returns {Object} the corresponding action object
  */
 export function fetchSitePlansCompleted( siteId, data ) {
-	let plansData = omit( data, '_headers' );
-	const { product_id } = personalPlan;
-
-	if ( ! ( isEmpty( plansData ) || has( plansData, product_id ) ) ) {
-		const { formatted_price, product_name, product_slug, raw_price } = personalPlan;
-		plansData = {
-			...plansData,
-			[ product_id ]: {
-				can_start_trial: true,
-				discount_reason: null,
-				formatted_discount: '$0',
-				formatted_price,
-				product_name,
-				product_slug,
-				product_id,
-				raw_discount: 0,
-				raw_price
-			}
-		};
-	}
+	const plans = insertSitePersonalPlan( omit( data, '_headers' ) );
 
 	return {
 		type: SITE_PLANS_FETCH_COMPLETED,
 		siteId,
-		plans: map( plansData, createSitePlanObject )
+		plans: map( plans, createSitePlanObject )
 	};
 }
 

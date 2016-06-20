@@ -10,7 +10,7 @@ import {
 
 import { getValidDataFromResponse } from '../actions';
 
-import PLAN_1009 from 'lib/plans/personal-plan';
+import { personalPlan as PLAN_1009 } from 'lib/plans/personal-plan';
 
 // WP REST-API error response
 export const ERROR_MESSAGE_RESPONSE = 'There was a problem fetching plans. Please try again later or contact support.';

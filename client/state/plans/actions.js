@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-import findIndex from 'lodash/findIndex';
-import matchesProperty from 'lodash/matchesProperty'
-
-/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
@@ -15,8 +9,7 @@ import {
 	PLANS_REQUEST_FAILURE
 } from '../action-types';
 
-import { PLAN_FREE, PLAN_PERSONAL } from 'lib/plans/constants';
-import personalPlan from 'lib/plans/personal-plan';
+import { insertPersonalPlan } from 'lib/plans/personal-plan';
 /**
  * Action creator function: RECEIVE
  *
@@ -24,16 +17,9 @@ import personalPlan from 'lib/plans/personal-plan';
  * @return {Object} action object
  */
 export const plansReceiveAction = plans => {
-	const freePlanIndex = findIndex( plans, matchesProperty( 'product_slug', PLAN_FREE ) );
-	const hasPersonalPlan = plans.some( matchesProperty( 'product_slug', PLAN_PERSONAL ) );
-
-	const newPlans = ! hasPersonalPlan
-		? [ ...plans.slice( 0, freePlanIndex + 1 ), personalPlan, ...plans.slice( freePlanIndex + 1 ) ]
-		: plans;
-
 	return {
 		type: PLANS_RECEIVE,
-		plans: newPlans
+		plans: insertPersonalPlan( plans )
 	};
 };
 
