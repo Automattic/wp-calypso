@@ -32,3 +32,19 @@ export function getThemeDetailsUrl( state, theme ) {
 
 	return baseUrl + ( site ? `/${ getSiteSlug( state, site.ID ) }` : '' );
 }
+
+export function getThemeSupportUrl( state, theme ) {
+	const site = getSelectedSite( state );
+
+	if ( site && isJetpackSite( state, site.ID ) ) {
+		return '//wordpress.org/support/theme/' + theme.id;
+	}
+
+	const sitePart = site ? `/${ getSiteSlug( state, site.ID ) }` : '';
+
+	if ( config.isEnabled( 'manage/themes/details' ) ) {
+		return `/theme/${ theme.id }/setup${ sitePart }`;
+	}
+
+	return `${ oldShowcaseUrl }${ sitePart }${ theme.id }/support`;
+}
