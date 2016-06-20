@@ -27,32 +27,24 @@ export function fetchPreferences() {
 	};
 }
 
-/**
- * Create action for updating preference value in redux tree
- * WITHOUT SAVING TO API
- * @param key
- * @param value
- */
+// Create action for updating preference value in redux tree
+// WITHOUT SAVING TO API
 export const setPreference = ( key, value ) => ( {
 	type: PREFERENCES_SET,
 	key,
 	value
 } );
 
-/**
- * Create action thunk for updating preference value and saving it in API
- * @param key
- * @param value
- */
+// Create action thunk for updating preference value and saving it in API
 export const savePreference = ( key, value ) => dispatch => {
 	dispatch( setPreference( key, value ) );
-	const settings = { 
+	const settings = {
 		[ USER_SETTING_KEY ]: {
 			[ key ]: value
 		}
 	};
 
-	return wpcom.me().settings().update( JSON.stringify(settings) )
+	return wpcom.me().settings().update( JSON.stringify( settings ) )
 		.then( ( data ) => {
 			dispatch( {
 				type: PREFERENCES_RECEIVE,
