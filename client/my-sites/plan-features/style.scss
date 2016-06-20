@@ -1,3 +1,33 @@
+$plan-features-header-banner-height: 20px;
+
+.plan-features {
+	margin: 0 0 16px;
+	border: solid 1px lighten( $gray, 27% );
+	background-color: lighten( $gray, 35% );
+
+	&.is-popular {
+		$top-margin: 15px;
+
+		margin-top: $plan-features-header-banner-height + $top-margin;
+	}
+
+	@include breakpoint( ">1040px" ) {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		flex: 1;
+		margin: 0 0 24px 24px;
+
+		&.is-popular {
+			margin-top: 0;
+		}
+
+		&:first-child {
+			margin-left: 0;
+		}
+	}
+}
+
 .plan-features__header {
 	position: relative;
 	display: flex;
@@ -87,7 +117,7 @@
 	padding: 0 8px;
 	background: $gray-dark;
 	font-size: 10px;
-	line-height: 20px;
+	line-height: $plan-features-header-banner-height;
 	text-align: center;
 	text-transform: uppercase;
 	color: $white;
