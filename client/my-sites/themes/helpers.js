@@ -65,12 +65,12 @@ export function getSupportUrl( theme, site ) {
 		return '//wordpress.org/support/theme/' + theme.id;
 	}
 
+	const sitePart = site ? `/${ site.slug }` : '';
+
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		const sitePart = site ? `/${ site.slug }` : '';
 		return `/theme/${ theme.id }/setup${ sitePart }`;
 	}
 
-	const sitePart = site ? `${ site.slug }/` : '';
 	return `${ oldShowcaseUrl }${ sitePart }${ theme.id }/support`;
 }
 
