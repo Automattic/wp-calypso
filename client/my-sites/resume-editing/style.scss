@@ -21,6 +21,11 @@
 		display: inline-block;
 		margin-right: 8px;
 		vertical-align: bottom;
+
+		svg {
+			position: relative;
+			top: 1px;
+		}
 	}
 }
 
@@ -41,7 +46,7 @@
 	white-space: nowrap;
 	font-family: $serif;
 	font-size: 14px;
-	line-height: 1;
+	line-height: 1.1;
 
 	&::after {
 		@include long-content-fade( $size: 24px, $color: $blue-wordpress );
