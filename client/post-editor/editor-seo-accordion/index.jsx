@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -17,56 +17,54 @@ import TokenField from 'components/token-field';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
-class EditorSeoAccordion extends Component {
-	render() {
-		const { translate } = this.props;
-		// Temporary placeholder chips for design review
-		const sampleChips = [ 'Post Title', 'Site Title' ];
+function EditorSeoAccordion( props ) {
+	const { translate, siteSlug } = props;
+	// Temporary placeholder chips for design review
+	const sampleChips = [ 'Post Title', 'Site Title' ];
 
-		const seoTabUrl = `/settings/seo/${ this.props.siteSlug }`;
+	const seoTabUrl = `/settings/seo/${ siteSlug }`;
 
-		return (
-			<Accordion
-				title={ translate( 'Advanced SEO' ) }
-				icon={ <Gridicon icon="search" /> }
-				className="editor-seo-accordion"
-			>
-				<AccordionSection>
-					<span className="editor-drawer__label-text">
-						{ translate( 'Meta Title' ) }
-						<InfoPopover position="top left">
-							{ translate(
-								'To edit the format of the meta title, go to your site\'s {{a}}SEO settings{{/a}}.',
-								{
-									components: {
-										a: <a target="_blank" href={ seoTabUrl } />
-									}
+	return (
+		<Accordion
+			title={ translate( 'Advanced SEO' ) }
+			icon={ <Gridicon icon="search" /> }
+			className="editor-seo-accordion"
+		>
+			<AccordionSection>
+				<span className="editor-drawer__label-text">
+					{ translate( 'Meta Title' ) }
+					<InfoPopover position="top left">
+						{ translate(
+							'To edit the format of the meta title, go to your site\'s {{a}}SEO settings{{/a}}.',
+							{
+								components: {
+									a: <a target="_blank" href={ seoTabUrl } />
 								}
-							) }
-						</InfoPopover>
-					</span>
-					<TokenField value={ sampleChips } disabled />
-				</AccordionSection>
-				<AccordionSection>
-					<span className="editor-drawer__label-text">
-						{ translate( 'Meta Description' ) }
-						<InfoPopover position="top left">
-							{ translate(
-								'Craft a description of your post for search engine results. ' +
-								'The post content is used by default.'
-							) }
-						</InfoPopover>
-					</span>
-					<CountedTextarea
-						maxLength="300"
-						acceptableLength={ 159 }
-						placeholder={ translate( 'Write a description…' ) }
-						aria-label={ translate( 'Write a description…' ) }
-					/>
-				</AccordionSection>
-			</Accordion>
-		);
-	}
+							}
+						) }
+					</InfoPopover>
+				</span>
+				<TokenField value={ sampleChips } disabled />
+			</AccordionSection>
+			<AccordionSection>
+				<span className="editor-drawer__label-text">
+					{ translate( 'Meta Description' ) }
+					<InfoPopover position="top left">
+						{ translate(
+							'Craft a description of your post for search engine results. ' +
+							'The post content is used by default.'
+						) }
+					</InfoPopover>
+				</span>
+				<CountedTextarea
+					maxLength="300"
+					acceptableLength={ 159 }
+					placeholder={ translate( 'Write a description…' ) }
+					aria-label={ translate( 'Write a description…' ) }
+				/>
+			</AccordionSection>
+		</Accordion>
+	);
 }
 
 EditorSeoAccordion.propTypes = {
