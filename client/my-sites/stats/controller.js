@@ -7,7 +7,8 @@ var ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	i18n = require( 'i18n-calypso' ),
 	get = require( 'lodash/get' ),
-	ReactRedux = require( 'react-redux' );
+	ReactRedux = require( 'react-redux' ),
+	config = require( 'config' );
 
 /**
  * Internal Dependencies
@@ -19,7 +20,9 @@ var user = require( 'lib/user' )(),
 	titlecase = require( 'to-title-case' ),
 	analyticsPageTitle = 'Stats',
 	layoutFocus = require( 'lib/layout-focus' ),
-	titleActions = require( 'lib/screen-title/actions' );
+	titleActions = require( 'lib/screen-title/actions' ),
+	enableFirstView = require( 'components/enable-first-view' ),
+	FirstView = require( './stats-first-view' );
 
 function getVisitDates() {
 	var statsVisitDates = store.get( 'statVisits' ) || [];
@@ -132,6 +135,10 @@ module.exports = {
 			summarySites = [],
 			momentSiteZone = i18n.moment(),
 			StatsComponent = Insights;
+
+		if ( config.isEnabled( 'stats/first-view' ) ) {
+			StatsComponent = enableFirstView( StatsComponent, FirstView );
+		}
 
 		followList = new FollowList();
 
