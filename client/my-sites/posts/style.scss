@@ -5,6 +5,7 @@
 	@include breakpoint( ">1040px" ) {
 		display: flex;
 		max-width: 1040px;
+		justify-content: center;
 	}
 }
 
