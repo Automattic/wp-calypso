@@ -1,6 +1,6 @@
 export const productsListSchema = {
 	type: 'object',
-	required: [ 'product_id' ],
+	required: [],
 	patternProperties: {
 		'.+': {
 			type: 'object',

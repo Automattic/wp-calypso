@@ -36,7 +36,7 @@ export function items( state = null, action ) {
 			if ( isValidStateWithSchema( state, productsListSchema ) ) {
 				return state;
 			}
-			return {};
+			return null;
 	}
 
 	return state;
