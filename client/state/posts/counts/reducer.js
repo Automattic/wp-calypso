@@ -4,7 +4,6 @@
 import { combineReducers } from 'redux';
 import merge from 'lodash/merge';
 import pick from 'lodash/pick';
-import includes from 'lodash/includes';
 import omit from 'lodash/omit';
 import get from 'lodash/get';
 
@@ -19,6 +18,7 @@ import {
 	POST_COUNTS_REQUEST_FAILURE,
 	POST_COUNTS_RESET_INTERNAL_STATE,
 	POST_DELETE,
+	POST_SAVE,
 	POSTS_RECEIVE,
 	SERIALIZE,
 	DESERIALIZE
@@ -79,24 +79,6 @@ export const counts = ( () => {
 	}
 
 	/**
-	 * Returns true if the status transition will result in the post being
-	 * permanently deleted, which is derived by the post's current status and
-	 * type.
-	 *
-	 * @param  {String}  nextStatus Post's next (transitioning) status
-	 * @param  {String}  status     Post's current status
-	 * @param  {String}  type       Post's type
-	 * @return {Boolean}            Whether post is to be permanently deleted
-	 */
-	function isPermanentlyDeleting( nextStatus, status, type ) {
-		if ( 'trash' !== nextStatus ) {
-			return false;
-		}
-
-		return 'trash' === status || ! includes( [ 'post', 'page' ], type );
-	}
-
-	/**
 	 * Returns the updated post count state after transitioning a post to a new
 	 * status.
 	 *
@@ -134,14 +116,14 @@ export const counts = ( () => {
 
 			// So long as we're not trashing an already trashed post or page,
 			// increment the count for the transitioned status
-			if ( ! isPermanentlyDeleting( status, postStatus.status, postStatus.type ) ) {
+			if ( 'deleted' !== status ) {
 				memo[ subKey ][ status ] = ( subKeyCounts[ status ] || 0 ) + 1;
 			}
 
 			return memo;
 		}, {} );
 
-		if ( isPermanentlyDeleting( status, postStatus.status, postStatus.type ) ) {
+		if ( 'deleted' === status ) {
 			// If post is permanently deleted, omit from tracked statuses
 			postStatuses = omit( postStatuses, postStatusKey );
 		} else {
@@ -185,8 +167,16 @@ export const counts = ( () => {
 
 			return state;
 		},
+		[ POST_SAVE ]: ( state, action ) => {
+			const { siteId, postId, post } = action;
+			if ( ! post.status ) {
+				return state;
+			}
+
+			return transitionPostStateToStatus( state, siteId, postId, post.status );
+		},
 		[ POST_DELETE ]: ( state, action ) => {
-			return transitionPostStateToStatus( state, action.siteId, action.postId, 'trash' );
+			return transitionPostStateToStatus( state, action.siteId, action.postId, 'deleted' );
 		},
 		[ POST_COUNTS_RECEIVE ]: ( state, action ) => {
 			return merge( {}, state, {

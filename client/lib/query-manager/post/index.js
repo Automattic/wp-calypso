@@ -143,28 +143,6 @@ export default class PostQueryManager extends PaginatedQueryManager {
 
 		return order || 0;
 	}
-
-	/**
-	 * Returns a new post after consideration of incoming revision of that
-	 * post. The post can be undefined in the case that the revision is
-	 * new. Optionally patch the post to merge, not replace. Returning
-	 * undefined indicates that post should be removed from known set. Posts
-	 * are omitted if trashed as a custom post type (not post or page), or if
-	 * trashed a second time for posts and pages.
-	 *
-	 * @param  {?Object} post        Existing post, if exists
-	 * @param  {Object}  revisedPost Incoming revision of post
-	 * @param  {Boolean} patch       Use patching application
-	 * @return {?Object}             Item to track, or undefined to omit
-	 */
-	mergeItem( post, revisedPost, patch = false ) {
-		if ( patch && post && 'trash' === revisedPost.status &&
-				( ! includes( [ 'post', 'page' ], post.type ) || 'trash' === post.status ) ) {
-			return undefined;
-		}
-
-		return super.mergeItem( ...arguments );
-	}
 }
 
 PostQueryManager.QueryKey = PostQueryKey;

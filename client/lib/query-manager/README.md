@@ -49,7 +49,6 @@ Depending on the level of customization you need, you'll likely only need to imp
 Sometimes you may need to make further customizations. Some examples include:
 
 - `PostQueryManager` and `TermQueryManager` extend the [`QueryKey`](./key.js) implementation to remove default query values from the serialized query. The purpose of this is to ensure that queries are considered the same whether or not they include a default value. For example, including `page: 1` in a query should be counted the same if it were left out entirely.
-- `PostQueryManager` extends `mergeItem` to customize the trashing behavior, which varies both by post type and status ([see description on REST API post endpoint](https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/posts/%24post_ID/delete/)).
 
 ## More Information
 

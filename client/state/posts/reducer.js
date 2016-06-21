@@ -11,7 +11,6 @@ import reduce from 'lodash/reduce';
 import keyBy from 'lodash/keyBy';
 import merge from 'lodash/merge';
 import findKey from 'lodash/findKey';
-import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -24,6 +23,7 @@ import {
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
+	POST_SAVE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -58,16 +58,7 @@ export function items( state = {}, action ) {
 				break;
 			}
 
-			// Posts and pages are first sent to trash before being permanently
-			// deleted. Therefore, only omit if already trashed or custom type.
-			const post = state[ globalId ];
-			if ( 'trash' === post.status || ! includes( [ 'post', 'page' ], post.type ) ) {
-				return omit( state, globalId );
-			}
-
-			return merge( {}, state, {
-				[ globalId ]: { status: 'trash' }
-			} );
+			return omit( state, globalId );
 
 		case SERIALIZE:
 			return state;
@@ -168,18 +159,54 @@ export function queries( state = {}, action ) {
 			} );
 		}
 
-		case POST_DELETE: {
-			if ( ! state[ action.siteId ] ) {
-				return state;
+		case POSTS_RECEIVE:
+			return reduce( action.posts, ( memo, post ) => {
+				const { site_ID: siteId } = post;
+				if ( ! memo[ siteId ] ) {
+					return memo;
+				}
+
+				const nextPosts = memo[ siteId ].receive( post );
+				if ( nextPosts === memo[ siteId ] ) {
+					return memo;
+				}
+
+				if ( memo === state ) {
+					memo = { ...memo };
+				}
+
+				memo[ siteId ] = nextPosts;
+				return memo;
+			}, state );
+
+		case POST_SAVE: {
+			const { siteId, postId, post } = action;
+			if ( ! state[ siteId ] ) {
+				break;
 			}
 
-			const nextPosts = state[ action.siteId ].receive( {
-				ID: action.postId,
-				status: 'trash'
+			const nextPosts = state[ siteId ].receive( {
+				ID: postId,
+				...post
 			}, { patch: true } );
 
+			if ( nextPosts === state[ siteId ] ) {
+				break;
+			}
+
+			return Object.assign( {}, state, {
+				[ siteId ]: nextPosts
+			} );
+		}
+
+		case POST_DELETE: {
+			if ( ! state[ action.siteId ] ) {
+				break;
+			}
+
+			const nextPosts = state[ action.siteId ].removeItem( action.postId );
 			if ( nextPosts === state[ action.siteId ] ) {
-				return state;
+				break;
 			}
 
 			return Object.assign( {}, state, {

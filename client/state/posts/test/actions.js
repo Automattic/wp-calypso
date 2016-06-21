@@ -9,11 +9,17 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	POST_DELETE,
+	POST_DELETE_SUCCESS,
+	POST_DELETE_FAILURE,
 	POST_EDIT,
 	POST_EDITS_RESET,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
+	POST_SAVE,
+	POST_SAVE_SUCCESS,
+	POST_SAVE_FAILURE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -26,7 +32,10 @@ import {
 	requestSitePost,
 	requestPosts,
 	editPost,
-	resetPostEdits
+	resetPostEdits,
+	savePost,
+	trashPost,
+	deletePost
 } from '../actions';
 
 describe( 'actions', () => {
@@ -271,6 +280,204 @@ describe( 'actions', () => {
 				type: POST_EDITS_RESET,
 				siteId: 2916284,
 				postId: undefined
+			} );
+		} );
+	} );
+
+	describe( 'savePost()', () => {
+		before( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.2/sites/2916284/posts/new', {
+					title: 'Hello World'
+				} )
+				.reply( 200, {
+					ID: 13640,
+					title: 'Hello World'
+				} )
+				.post( '/rest/v1.2/sites/2916284/posts/13640', {
+					title: 'Updated'
+				} )
+				.reply( 200, {
+					ID: 13640,
+					title: 'Updated'
+				} )
+				.post( '/rest/v1.2/sites/77203074/posts/new' )
+				.reply( 403, {
+					error: 'unauthorized',
+					message: 'User cannot edit posts'
+				} )
+				.post( '/rest/v1.2/sites/77203074/posts/102' )
+				.reply( 403, {
+					error: 'unauthorized',
+					message: 'User cannot edit post'
+				} );
+		} );
+
+		it( 'should dispatch save action when thunk triggered for new post', () => {
+			savePost( { title: 'Hello World' }, 2916284 )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: POST_SAVE,
+				siteId: 2916284,
+				postId: undefined,
+				post: {
+					title: 'Hello World'
+				}
+			} );
+		} );
+
+		it( 'should dispatch post save save success action when request completes for new post', () => {
+			return savePost( { title: 'Hello World' }, 2916284 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_SAVE_SUCCESS,
+					siteId: 2916284,
+					postId: undefined,
+					savedPost: sinon.match( {
+						ID: 13640,
+						title: 'Hello World'
+					} )
+				} );
+			} );
+		} );
+
+		it( 'should dispatch received post action when request completes for new post', () => {
+			return savePost( { title: 'Hello World' }, 2916284 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POSTS_RECEIVE,
+					posts: [
+						sinon.match( {
+							ID: 13640,
+							title: 'Hello World'
+						} )
+					]
+				} );
+			} );
+		} );
+
+		it( 'should dispatch save action when thunk triggered for existing post', () => {
+			savePost( { title: 'Updated' }, 2916284, 13640 )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: POST_SAVE,
+				siteId: 2916284,
+				postId: 13640,
+				post: {
+					title: 'Updated'
+				}
+			} );
+		} );
+
+		it( 'should dispatch post save save success action when request completes for existing post', () => {
+			return savePost( { title: 'Updated' }, 2916284, 13640 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_SAVE_SUCCESS,
+					siteId: 2916284,
+					postId: 13640,
+					savedPost: sinon.match( {
+						ID: 13640,
+						title: 'Updated'
+					} )
+				} );
+			} );
+		} );
+
+		it( 'should dispatch received post action when request completes for existing post', () => {
+			return savePost( { title: 'Updated' }, 2916284, 13640 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POSTS_RECEIVE,
+					posts: [
+						sinon.match( {
+							ID: 13640,
+							title: 'Updated'
+						} )
+					]
+				} );
+			} );
+		} );
+
+		it( 'should dispatch failure action when error occurs while saving new post', () => {
+			return savePost( { title: 'Hello World' }, 77203074 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_SAVE_FAILURE,
+					siteId: 77203074,
+					postId: undefined,
+					error: sinon.match( { message: 'User cannot edit posts' } )
+				} );
+			} );
+		} );
+
+		it( 'should dispatch failure action when error occurs while saving existing post', () => {
+			return savePost( { title: 'Hello World' }, 77203074, 102 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_SAVE_FAILURE,
+					siteId: 77203074,
+					postId: 102,
+					error: sinon.match( { message: 'User cannot edit post' } )
+				} );
+			} );
+		} );
+	} );
+
+	describe( 'trashPost()', () => {
+		it( 'should dispatch save request with trash status payload', () => {
+			trashPost( 2916284, 13640 )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: POST_SAVE,
+				siteId: 2916284,
+				postId: 13640,
+				post: {
+					status: 'trash'
+				}
+			} );
+		} );
+	} );
+
+	describe( 'deletePost()', () => {
+		before( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2916284/posts/13640/delete' )
+				.reply( 200, {
+					ID: 13640,
+					status: 'deleted'
+				} )
+				.post( '/rest/v1.1/sites/77203074/posts/102/delete' )
+				.reply( 403, {
+					error: 'unauthorized',
+					message: 'User cannot delete posts'
+				} );
+		} );
+
+		it( 'should dispatch request action when thunk triggered', () => {
+			deletePost( 2916284, 13640 )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: POST_DELETE,
+				siteId: 2916284,
+				postId: 13640
+			} );
+		} );
+
+		it( 'should dispatch post delete request success action when request completes', () => {
+			return deletePost( 2916284, 13640 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_DELETE_SUCCESS,
+					siteId: 2916284,
+					postId: 13640
+				} );
+			} );
+		} );
+
+		it( 'should dispatch post delete request failure action when request fails', () => {
+			return deletePost( 77203074, 102 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_DELETE_FAILURE,
+					siteId: 77203074,
+					postId: 102,
+					error: sinon.match( { message: 'User cannot delete posts' } )
+				} );
 			} );
 		} );
 	} );
