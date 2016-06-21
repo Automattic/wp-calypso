@@ -35,6 +35,7 @@ import Spinner from 'components/spinner';
 import Site from 'my-sites/site';
 import { decodeEntities } from 'lib/formatting';
 import versionCompare from 'lib/version-compare';
+import EmptyContent from 'components/empty-content';
 
 /**
  * Constants
@@ -410,6 +411,21 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		return false;
 	},
 
+	renderNoQueryArgsError() {
+		return (
+			<Main>
+				<EmptyContent
+					illustration="/calypso/images/drake/drake-whoops.svg"
+					title={ this.translate(
+						'Oops, this URL should not be accessed directly'
+					) }
+					action={ this.translate( 'Get back to Jetpack Connect screen' ) }
+					actionURL="/jetpack/connect"
+				/>
+			</Main>
+		);
+	},
+
 	renderForm() {
 		const { userModule } = this.props;
 		let user = userModule.get();
@@ -425,6 +441,11 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		);
 	},
 	render() {
+		const { queryObject } = this.props.jetpackConnectAuthorize;
+		if ( typeof queryObject === 'undefined' ) {
+			return this.renderNoQueryArgsError();
+		}
+
 		return (
 			<Main className="jetpack-connect">
 				<div className="jetpack-connect__authorize-form">
