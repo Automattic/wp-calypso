@@ -119,13 +119,4 @@ module.exports = {
 		defaultVariation: 'enabled',
 		allowExistingUsers: false,
 	},
-	readerRelatedPosts: {
-		datestamp: '20160620',
-		variations: {
-			disabled: 90,
-			enabled: 10
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true
-	}
 };
