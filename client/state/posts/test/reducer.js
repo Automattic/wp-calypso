@@ -9,11 +9,13 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import {
+	POST_DELETE,
 	POST_EDIT,
 	POST_EDITS_RESET,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
+	POST_SAVE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_FAILURE,
@@ -99,6 +101,19 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Ribs & Chicken' }
 			} );
+		} );
+
+		it( 'should remove an item when delete action is dispatched', () => {
+			const original = deepFreeze( {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+			} );
+			const state = items( original, {
+				type: POST_DELETE,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state ).to.eql( {} );
 		} );
 
 		describe( 'persistence', () => {
@@ -289,6 +304,74 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
 			expect( state[ 2916284 ].getItems( { search: 'Hello' } ) ).to.have.length( 1 );
 			expect( state[ 2916284 ].getItems( { search: 'Hello W' } ) ).to.have.length( 1 );
+		} );
+
+		it( 'should update received posts', () => {
+			const original = deepFreeze( queries( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Hello' },
+				found: 1,
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'publish', type: 'post' }
+				]
+			} ) );
+
+			const state = queries( original, {
+				type: POSTS_RECEIVE,
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'draft', type: 'post' }
+				]
+			} );
+
+			expect( state[ 2916284 ].getItem( 841 ) ).to.eql(
+				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'draft', type: 'post' }
+			);
+		} );
+
+		it( 'should apply save actions as partial received posts', () => {
+			const original = deepFreeze( queries( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Hello' },
+				found: 1,
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'draft', type: 'post' }
+				]
+			} ) );
+
+			const state = queries( original, {
+				type: POST_SAVE,
+				siteId: 2916284,
+				postId: 841,
+				post: {
+					status: 'trash'
+				}
+			} );
+
+			expect( state[ 2916284 ].getItem( 841 ) ).to.eql(
+				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'trash', type: 'post' }
+			);
+		} );
+
+		it( 'should remove item when post delete action dispatched', () => {
+			const original = deepFreeze( queries( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Hello' },
+				found: 1,
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'trash', type: 'post' }
+				]
+			} ) );
+
+			const state = queries( original, {
+				type: POST_DELETE,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state[ 2916284 ].getItems() ).to.have.length( 0 );
 		} );
 
 		it( 'should not persist state', () => {

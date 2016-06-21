@@ -11,6 +11,9 @@ import {
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
+	POST_SAVE,
+	POST_SAVE_SUCCESS,
+	POST_SAVE_FAILURE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -168,7 +171,59 @@ export function resetPostEdits( siteId, postId ) {
 
 /**
  * Returns an action thunk which, when dispatched, triggers a network request
- * to delete the specified post.
+ * to save the specified post object.
+ *
+ * @param  {Object}   post   Post attributes
+ * @param  {Number}   siteId Site ID
+ * @param  {Number}   postId Post ID
+ * @return {Function}        Action thunk
+ */
+export function savePost( post, siteId, postId ) {
+	return async ( dispatch ) => {
+		dispatch( {
+			type: POST_SAVE,
+			siteId,
+			postId,
+			post
+		} );
+
+		let postHandle = wpcom.site( siteId ).post( postId );
+		postHandle = postHandle[ postId ? 'update' : 'add' ].bind( postHandle );
+		return postHandle( { apiVersion: '1.2' }, post ).then( ( savedPost ) => {
+			dispatch( {
+				type: POST_SAVE_SUCCESS,
+				siteId,
+				postId,
+				savedPost
+			} );
+			dispatch( receivePost( savedPost ) );
+		} ).catch( ( error ) => {
+			dispatch( {
+				type: POST_SAVE_FAILURE,
+				siteId,
+				postId,
+				error
+			} );
+		} );
+	};
+}
+
+/**
+ * Returns an action thunk which, when dispatched, triggers a network request
+ * to trash the specified post.
+ *
+ * @param  {Number}   siteId Site ID
+ * @param  {Number}   postId Post ID
+ * @return {Function}        Action thunk
+ */
+export function trashPost( siteId, postId ) {
+	return savePost( { status: 'trash' }, siteId, postId );
+}
+
+/**
+ * Returns an action thunk which, when dispatched, triggers a network request
+ * to delete the specified post. The post should already have a status of trash
+ * when dispatching this action, else you should use `trashPost`.
  *
  * @param  {Number}   siteId Site ID
  * @param  {Number}   postId Post ID

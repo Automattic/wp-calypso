@@ -16,6 +16,7 @@ import {
 	POST_COUNTS_REQUEST_FAILURE,
 	POST_COUNTS_RESET_INTERNAL_STATE,
 	POST_DELETE,
+	POST_SAVE,
 	POSTS_RECEIVE,
 	SERIALIZE,
 	DESERIALIZE
@@ -289,80 +290,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should transition post counts to trashed when trashing', () => {
-			let state = counts( undefined, {
-				type: POSTS_RECEIVE,
-				posts: [
-					{ ID: 481, site_ID: 2916284, type: 'post', status: 'publish', author: { ID: 73705554 } }
-				]
-			} );
-
-			state = counts( state, {
-				type: POST_COUNTS_RECEIVE,
-				siteId: 2916284,
-				postType: 'post',
-				counts: {
-					all: { publish: 3, trash: 0 },
-					mine: { publish: 2, trash: 0 }
-				}
-			} );
-
-			state = counts( state, {
-				type: POST_DELETE,
-				siteId: 2916284,
-				postId: 481
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					post: {
-						all: { publish: 2, trash: 1 },
-						mine: { publish: 2, trash: 0 }
-					}
-				}
-			} );
-		} );
-
-		it( 'should transition mine post counts to trashed when trashing author\'s post', () => {
-			let state = counts( undefined, {
-				type: POSTS_RECEIVE,
-				posts: [
-					{ ID: 481, site_ID: 2916284, type: 'post', status: 'publish', author: { ID: 73705554 } }
-				]
-			} );
-
-			state = counts( state, {
-				type: CURRENT_USER_ID_SET,
-				userId: 73705554
-			} );
-
-			state = counts( state, {
-				type: POST_COUNTS_RECEIVE,
-				siteId: 2916284,
-				postType: 'post',
-				counts: {
-					all: { publish: 3, trash: 0 },
-					mine: { publish: 2, trash: 0 }
-				}
-			} );
-
-			state = counts( state, {
-				type: POST_DELETE,
-				siteId: 2916284,
-				postId: 481
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					post: {
-						all: { publish: 2, trash: 1 },
-						mine: { publish: 1, trash: 1 }
-					}
-				}
-			} );
-		} );
-
-		it( 'should transition trashed posts counts to the void when trashing', () => {
+		it( 'should transition trashed posts counts to the void when deleting', () => {
 			let state = counts( undefined, {
 				type: POSTS_RECEIVE,
 				posts: [
@@ -401,40 +329,6 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should transition non-post/page types counts to the void when trashing', () => {
-			let state = counts( undefined, {
-				type: POSTS_RECEIVE,
-				posts: [
-					{ ID: 184, site_ID: 2916284, type: 'jetpack-portfolio', status: 'publish', author: { ID: 73705554 } }
-				]
-			} );
-
-			state = counts( state, {
-				type: POST_COUNTS_RECEIVE,
-				siteId: 2916284,
-				postType: 'jetpack-portfolio',
-				counts: {
-					all: { publish: 3 },
-					mine: { publish: 2 }
-				}
-			} );
-
-			state = counts( state, {
-				type: POST_DELETE,
-				siteId: 2916284,
-				postId: 184
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					'jetpack-portfolio': {
-						all: { publish: 2 },
-						mine: { publish: 2 }
-					}
-				}
-			} );
-		} );
-
 		it( 'should transition an updated post\'s count to its new status when changed', () => {
 			let state = counts( undefined, {
 				type: POSTS_RECEIVE,
@@ -464,6 +358,41 @@ describe( 'reducer', () => {
 				2916284: {
 					post: {
 						all: { publish: 4, draft: 0, trash: 0 },
+						mine: { publish: 2, draft: 0, trash: 0 }
+					}
+				}
+			} );
+		} );
+
+		it( 'should transition status when saving a post with status value', () => {
+			let state = counts( undefined, {
+				type: POSTS_RECEIVE,
+				posts: [
+					{ ID: 98, site_ID: 2916284, type: 'post', status: 'draft', author: { ID: 73705554 } }
+				]
+			} );
+
+			state = counts( state, {
+				type: POST_COUNTS_RECEIVE,
+				siteId: 2916284,
+				postType: 'post',
+				counts: {
+					all: { publish: 3, draft: 1, trash: 0 },
+					mine: { publish: 2, draft: 0, trash: 0 }
+				}
+			} );
+
+			state = counts( state, {
+				type: POST_SAVE,
+				siteId: 2916284,
+				postId: 98,
+				post: { status: 'trash' }
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					post: {
+						all: { publish: 3, draft: 0, trash: 1 },
 						mine: { publish: 2, draft: 0, trash: 0 }
 					}
 				}
