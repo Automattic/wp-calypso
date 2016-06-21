@@ -15,23 +15,23 @@
 
 .reader-start__description {
 	color: $gray;
-	font-size: 15px;
+	font-size: 16px;
 	font-weight: 100;
-	line-height: 1.4;
+	line-height: 1.5;
 	margin-bottom: 15px;
 
 	@include breakpoint( "<960px" ) {
 		padding: 0 15px;
-	}
-
-	@include breakpoint( ">480px" ) {
-		font-size: 16px;
 	}
 }
 
 .reader-start__cards {
 
 	padding-bottom: 100px;
+
+	@include breakpoint( "<480px" ) {
+		margin-top: -10px;
+	}
 
 	.site-icon {
 		clear: both;
