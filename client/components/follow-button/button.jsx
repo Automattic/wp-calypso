@@ -53,8 +53,9 @@ var FollowButton = React.createClass( {
 
 		return React.createElement( this.props.tagName, {
 			onClick: this.toggleFollow,
+			'data-tip-target': 'follow-button',
 			className: menuClasses,
-			title: label
+			title: label,
 		}, [ followingIcon, followIcon, followLabel ] );
 	}
 

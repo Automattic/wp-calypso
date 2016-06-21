@@ -78,9 +78,11 @@ class FinishStep extends Component {
 				<div className="guided-tours__single-button-row">
 					<Button onClick={ onFinish } primary>{ this.props.translate( "We're all done!" ) }</Button>
 				</div>
-				<div className="guided-tours__external-link">
-					<ExternalLink target="_blank" icon={ true } href={ linkUrl }>{ linkLabel }</ExternalLink>
-				</div>
+				{ linkLabel && linkUrl &&
+					<div className="guided-tours__external-link">
+						<ExternalLink target="_blank" icon={ true } href={ linkUrl }>{ linkLabel }</ExternalLink>
+					</div>
+				}
 			</Card>
 		);
 	}

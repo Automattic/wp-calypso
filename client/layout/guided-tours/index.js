@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import scrollTo from 'lib/scroll-to';
 import { getSelectedSite } from 'state/ui/selectors';
+import guidedToursConfig from './config';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
 import { errorNotice } from 'state/notices/actions';
@@ -65,18 +66,27 @@ class GuidedTours extends Component {
 	}
 
 	next() {
-		const nextStepName = this.props.tourState.stepConfig.next;
-		const nextStepConfig = this.props.tourState.nextStepConfig;
+		const getNextStep = ( currentStepConfig ) => {
+			const next = { stepName: currentStepConfig.next, stepConfig: guidedToursConfig.get( this.props.tourState.tour )[ currentStepConfig.next ] || false };
+			const skip = !! ( next.stepConfig.showInContext && ! next.stepConfig.showInContext( this.props.selectedSite ) );
+			console.log( 'site', this.props.selectedSite );
+			console.log( 'skipping', next.stepConfig.showInContext, next.stepConfig.showInContext && next.stepConfig.showInContext( this.props.selectedSite ) );
+			return skip ? getNextStep( next.stepConfig ) : next;
+		};
+
+		const nextStep = getNextStep( this.props.tourState.stepConfig );
+
+		console.log( nextStep );
 
 		const nextTargetFound = () => {
-			if ( nextStepConfig && nextStepConfig.target ) {
-				const target = this.getTipTargets()[nextStepConfig.target];
+			if ( nextStep.stepConfig && nextStep.stepConfig.target ) {
+				const target = this.getTipTargets()[ nextStep.stepConfig.target ];
 				return target && target.getBoundingClientRect().left >= 0;
 			}
 			return true;
 		};
 		const proceedToNextStep = () => {
-			this.props.nextGuidedTourStep( { stepName: nextStepName } );
+			this.props.nextGuidedTourStep( { stepName: nextStep.stepName } );
 		};
 		const abortTour = () => {
 			const ERROR_WAITED_TOO_LONG = 'waited too long for next target';

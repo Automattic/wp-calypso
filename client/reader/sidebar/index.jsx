@@ -189,7 +189,7 @@ const ReaderSidebar = React.createClass( {
 							discoverHelper.isEnabled()
 							? (
 									<li className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, { 'sidebar-streams__discover': true } ) }>
-										<a href="/discover">
+										<a href="/discover" data-tip-target="discover">
 											<Gridicon icon="my-sites" />
 											<span className="menu-link-text">{ this.translate( 'Discover' ) }</span>
 										</a>
