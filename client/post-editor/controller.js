@@ -19,6 +19,7 @@ var actions = require( 'lib/posts/actions' ),
 	route = require( 'lib/route' ),
 	sites = require( 'lib/sites-list' )(),
 	user = require( 'lib/user' )(),
+	userUtils = require( 'lib/user/utils' ),
 	analytics = require( 'lib/analytics' );
 import { setEditorPostId } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -52,6 +53,7 @@ function renderEditor( context, postType ) {
 		React.createElement( ReduxProvider, { store: context.store },
 			React.createElement( PostEditor, {
 				user: user,
+				userUtils: userUtils,
 				sites: sites,
 				type: postType
 			} )
