@@ -502,15 +502,14 @@
 	&::after {
 		display: none;
 	}
-
-	.count {
-		margin-left: 8px;
-	}
 }
 
 .posts.is-single-site .section-nav-tab.is-draft {
 	@include breakpoint( ">1040px" ) {
 		display: none;
+		&.is-selected {
+			display: block;
+		}
 	}
 }
 
@@ -518,4 +517,12 @@
 	color: $gray;
 	font-size: 14px;
 	margin-left: 16px;
+}
+
+.posts__see-all-drafts {
+	margin-top: 8px;
+
+	.count {
+		margin-left: 8px;
+	}
 }
