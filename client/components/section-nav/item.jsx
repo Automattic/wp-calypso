@@ -27,7 +27,8 @@ var NavItem = React.createClass( {
 		onClick: React.PropTypes.func,
 		isExternalLink: React.PropTypes.bool,
 		disabled: React.PropTypes.bool,
-		count: React.PropTypes.number
+		count: React.PropTypes.number,
+		className: React.PropTypes.string
 	},
 
 	render: function() {
@@ -43,7 +44,7 @@ var NavItem = React.createClass( {
 			};
 
 		itemClasses[ 'section-nav-' + itemClassPrefix ] = true;
-		itemClassName = classNames( itemClasses );
+		itemClassName = classNames( this.props.className, itemClasses );
 
 		if ( this.props.isExternalLink ) {
 			target = '_blank';

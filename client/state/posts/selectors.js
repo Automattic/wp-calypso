@@ -6,6 +6,8 @@ import createSelector from 'lib/create-selector';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
 import merge from 'lodash/merge';
+import flow from 'lodash/flow';
+import cloneDeep from 'lodash/cloneDeep';
 
 /**
  * Internal dependencies
@@ -16,6 +18,9 @@ import {
 	getSerializedPostsQueryWithoutPage
 } from './utils';
 import { DEFAULT_POST_QUERY } from './constants';
+import firstPassCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
+import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
+import stripHtml from 'lib/post-normalizer/rule-strip-html';
 
 /**
  * Returns a post object by its global ID.
@@ -27,6 +32,28 @@ import { DEFAULT_POST_QUERY } from './constants';
 export function getPost( state, globalId ) {
 	return state.posts.items[ globalId ];
 }
+
+/**
+ * Returns a normalized post object by its global ID.
+ *
+ * @param  {Object} state    Global state tree
+ * @param  {String} globalId Post global ID
+ * @return {Object}          Post object
+ */
+export const getNormalizedPost = createSelector(
+	( () => {
+		// Cache normalize flow in immediately-invoked closure so to avoid
+		// regenerating same flow on each call to this selector
+		const normalize = flow( [
+			firstPassCanonicalImage,
+			decodeEntities,
+			stripHtml
+		] );
+
+		return ( state, globalId ) => normalize( cloneDeep( getPost( state, globalId ) ) );
+	} )(),
+	( state ) => state.posts.items
+);
 
 /**
  * Returns an array of post objects by site ID.
@@ -146,11 +173,19 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  * @return {?Array}         Posts for the post query
  */
 export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
-	if ( ! state.posts.queries[ siteId ] ) {
+	const posts = state.posts.queries[ siteId ];
+	if ( ! posts ) {
 		return null;
 	}
 
-	return state.posts.queries[ siteId ].getItemsIgnoringPage( query );
+	const itemsIgnoringPage = posts.getItemsIgnoringPage( query );
+	if ( ! itemsIgnoringPage ) {
+		return null;
+	}
+
+	return itemsIgnoringPage.map( ( post ) => {
+		return getNormalizedPost( state, post.global_ID );
+	} );
 }
 
 /**

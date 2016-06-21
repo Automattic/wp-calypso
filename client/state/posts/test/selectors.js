@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getPost,
+	getNormalizedPost,
 	getSitePosts,
 	getSitePost,
 	getSitePostsForQuery,
@@ -24,6 +25,13 @@ import {
 import PostQueryManager from 'lib/query-manager/post';
 
 describe( 'selectors', () => {
+	beforeEach( () => {
+		getSitePosts.memoizedSelector.cache.clear();
+		getSitePost.memoizedSelector.cache.clear();
+		getSitePostsHierarchyForQueryIgnoringPage.memoizedSelector.cache.clear();
+		getNormalizedPost.memoizedSelector.cache.clear();
+	} );
+
 	describe( '#getPost()', () => {
 		it( 'should return the object for the post global ID', () => {
 			const post = getPost( {
@@ -39,17 +47,13 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSitePosts()', () => {
-		beforeEach( () => {
-			getSitePosts.memoizedSelector.cache.clear();
-		} );
-
 		it( 'should return an array of post objects for the site', () => {
 			const state = {
 				posts: {
 					items: {
 						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' },
-						'0fcb4eb16f493c19b627438fdc18d57c': { ID: 120, site_ID: 77203074, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak & Eggs' }
+						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs &amp; Chicken' },
+						'0fcb4eb16f493c19b627438fdc18d57c': { ID: 120, site_ID: 77203074, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak &amp; Eggs' }
 					}
 				}
 			};
@@ -62,11 +66,6 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSitePost()', () => {
-		beforeEach( () => {
-			getSitePosts.memoizedSelector.cache.clear();
-			getSitePost.memoizedSelector.cache.clear();
-		} );
-
 		describe( '#getSitePost()', () => {
 			it( 'should return null if the post is not known for the site', () => {
 				const post = getSitePost( {
@@ -83,13 +82,13 @@ describe( 'selectors', () => {
 					posts: {
 						items: {
 							'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-							'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' },
-							'0fcb4eb16f493c19b627438fdc18d57c': { ID: 120, site_ID: 77203074, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak & Eggs' }
+							'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs &amp; Chicken' },
+							'0fcb4eb16f493c19b627438fdc18d57c': { ID: 120, site_ID: 77203074, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak &amp; Eggs' }
 						}
 					}
 				}, 2916284, 413 );
 
-				expect( post ).to.eql( { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' } );
+				expect( post ).to.eql( { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs &amp; Chicken' } );
 			} );
 		} );
 	} );
@@ -366,14 +365,45 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSitePostsForQueryIgnoringPage()', () => {
+		it( 'should return null if the query is not tracked', () => {
+			const sitePosts = getSitePostsForQueryIgnoringPage( {
+				posts: {
+					items: {},
+					queries: {}
+				}
+			}, 2916284, { search: '', number: 1 } );
+
+			expect( sitePosts ).to.be.null;
+		} );
+
+		it( 'should return null if the query manager has not received items for query', () => {
+			const sitePosts = getSitePostsForQueryIgnoringPage( {
+				posts: {
+					items: {},
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {},
+							queries: {}
+						} )
+					}
+				}
+			}, 2916284, { search: '', number: 1 } );
+
+			expect( sitePosts ).to.be.null;
+		} );
+
 		it( 'should return a concatenated array of all site posts ignoring page', () => {
 			const sitePosts = getSitePostsForQueryIgnoringPage( {
 				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
+						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs &amp; Chicken' }
+					},
 					queries: {
 						2916284: new PostQueryManager( {
 							items: {
 								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-								413: { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
+								413: { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs &amp; Chicken' }
 							},
 							queries: {
 								'[]': {
@@ -393,19 +423,20 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSitePostsHierarchyForQueryIgnoringPage()', () => {
-		beforeEach( () => {
-			getSitePostsHierarchyForQueryIgnoringPage.memoizedSelector.cache.clear();
-		} );
-
 		it( 'should return a concatenated array of all site posts ignoring page, preserving hierarchy', () => {
 			const sitePosts = getSitePostsHierarchyForQueryIgnoringPage( {
 				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
+						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs &amp; Chicken' },
+						f0cb4eb16f493c19b627438fdc18d57c: { ID: 120, site_ID: 2916284, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak &amp; Eggs', parent: { ID: 413 } }
+					},
 					queries: {
 						2916284: new PostQueryManager( {
 							items: {
 								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-								413: { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' },
-								120: { ID: 120, site_ID: 2916284, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak & Eggs', parent: { ID: 413 } }
+								413: { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs &amp; Chicken' },
+								120: { ID: 120, site_ID: 2916284, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak &amp; Eggs', parent: { ID: 413 } }
 							},
 							queries: {
 								'[]': {
@@ -494,14 +525,14 @@ describe( 'selectors', () => {
 					edits: {
 						2916284: {
 							'': {
-								title: 'Ribs & Chicken'
+								title: 'Ribs &amp; Chicken'
 							}
 						}
 					}
 				}
 			}, 2916284 );
 
-			expect( editedPost ).to.eql( { title: 'Ribs & Chicken' } );
+			expect( editedPost ).to.eql( { title: 'Ribs &amp; Chicken' } );
 		} );
 
 		it( 'should return revisions for a draft if the original is unknown', () => {
