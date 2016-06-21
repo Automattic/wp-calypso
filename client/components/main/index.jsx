@@ -3,10 +3,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import classnames from 'classnames';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Main',
 
 	render: function() {
