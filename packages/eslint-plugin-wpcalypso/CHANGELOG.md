@@ -1,3 +1,7 @@
+#### v1.3.1 (June 17, 2016)
+
+- Fix: jsx-classname-namespace: JSX child expressions should not be considered root elements
+
 #### v1.3.0 (June 16, 2016)
 
 - New rule: [`jsx-classname-namespace`](docs/rules/jsx-classname-namespace.md)

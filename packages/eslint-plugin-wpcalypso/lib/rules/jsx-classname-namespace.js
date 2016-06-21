@@ -61,12 +61,12 @@ var rule = module.exports = function( context ) {
 		var parent = node.parent.parent.parent,
 			functionExpression, functionName;
 
-		// If wrapped in a JSX element, the node is a child
-		if ( 'JSXElement' === parent.type ) {
-			return false;
-		}
-
 		do {
+			// If wrapped in a JSX element, the node is a child
+			if ( 'JSXElement' === parent.type ) {
+				return false;
+			}
+
 			if ( -1 !== [ 'FunctionExpression', 'FunctionDeclaration', 'ArrowFunctionExpression' ].indexOf( parent.type ) ) {
 				functionExpression = parent;
 

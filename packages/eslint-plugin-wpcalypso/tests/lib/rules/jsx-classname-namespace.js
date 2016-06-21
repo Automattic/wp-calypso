@@ -126,6 +126,12 @@ EXPECTED_FOO_PREFIX_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo_
 			filename: '/tmp/foo/index.js'
 		},
 		{
+			code: 'const isOk = true; export default React.createClass( { render() { return <Foo className="foo">{ isOk && <div className="foo__child" /> }</Foo>; } } );',
+			env: { es6: true },
+			ecmaFeatures: { jsx: true, modules: true },
+			filename: '/tmp/foo/index.js'
+		},
+		{
 			code: 'export default React.createClass( { child() { return <div className="foo__child" />; }, render() { return <Foo className="foo" />; } } );',
 			env: { es6: true },
 			ecmaFeatures: { jsx: true, modules: true },
@@ -268,6 +274,15 @@ EXPECTED_FOO_PREFIX_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo_
 		},
 		{
 			code: 'export default React.createClass( { render() { return <Foo className="foo"><div className="foobar__child" /></Foo>; } } );',
+			env: { es6: true },
+			ecmaFeatures: { jsx: true, modules: true },
+			filename: '/tmp/foo/index.js',
+			errors: [ {
+				message: EXPECTED_FOO_PREFIX_ERROR
+			} ]
+		},
+		{
+			code: 'const isOk = true; export default React.createClass( { render() { return <Foo className="foo">{ isOk && <div className="foobar__child" /> }</Foo>; } } );',
 			env: { es6: true },
 			ecmaFeatures: { jsx: true, modules: true },
 			filename: '/tmp/foo/index.js',
