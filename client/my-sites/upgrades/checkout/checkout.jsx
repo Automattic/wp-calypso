@@ -117,7 +117,7 @@ const Checkout = React.createClass( {
 	redirectIfEmptyCart: function() {
 		var redirectTo = '/plans/';
 
-		if ( ! this.state.previousCart && this.props.productName ) {
+		if ( ! this.state.previousCart && this.props.product ) {
 			// the plan hasn't been added to the cart yet
 			return false;
 		}
