@@ -23,6 +23,7 @@ import {
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
+	POST_SAVE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -177,6 +178,26 @@ export function queries( state = {}, action ) {
 				memo[ siteId ] = nextPosts;
 				return memo;
 			}, state );
+
+		case POST_SAVE: {
+			const { siteId, postId, post } = action;
+			if ( ! state[ siteId ] ) {
+				break;
+			}
+
+			const nextPosts = state[ siteId ].receive( {
+				ID: postId,
+				...post
+			}, { patch: true } );
+
+			if ( nextPosts === state[ siteId ] ) {
+				break;
+			}
+
+			return Object.assign( {}, state, {
+				[ siteId ]: nextPosts
+			} );
+		}
 
 		case POST_DELETE: {
 			if ( ! state[ action.siteId ] ) {

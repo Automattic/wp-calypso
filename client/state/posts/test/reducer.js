@@ -15,6 +15,7 @@ import {
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
+	POST_SAVE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_FAILURE,
@@ -325,6 +326,31 @@ describe( 'reducer', () => {
 
 			expect( state[ 2916284 ].getItem( 841 ) ).to.eql(
 				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'draft', type: 'post' }
+			);
+		} );
+
+		it( 'should apply save actions as partial received posts', () => {
+			const original = deepFreeze( queries( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Hello' },
+				found: 1,
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'draft', type: 'post' }
+				]
+			} ) );
+
+			const state = queries( original, {
+				type: POST_SAVE,
+				siteId: 2916284,
+				postId: 841,
+				post: {
+					status: 'trash'
+				}
+			} );
+
+			expect( state[ 2916284 ].getItem( 841 ) ).to.eql(
+				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'trash', type: 'post' }
 			);
 		} );
 

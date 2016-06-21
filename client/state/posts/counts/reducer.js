@@ -18,6 +18,7 @@ import {
 	POST_COUNTS_REQUEST_FAILURE,
 	POST_COUNTS_RESET_INTERNAL_STATE,
 	POST_DELETE,
+	POST_SAVE,
 	POSTS_RECEIVE,
 	SERIALIZE,
 	DESERIALIZE
@@ -165,6 +166,14 @@ export const counts = ( () => {
 			} );
 
 			return state;
+		},
+		[ POST_SAVE ]: ( state, action ) => {
+			const { siteId, postId, post } = action;
+			if ( ! post.status ) {
+				return state;
+			}
+
+			return transitionPostStateToStatus( state, siteId, postId, post.status );
 		},
 		[ POST_DELETE ]: ( state, action ) => {
 			return transitionPostStateToStatus( state, action.siteId, action.postId, 'deleted' );
