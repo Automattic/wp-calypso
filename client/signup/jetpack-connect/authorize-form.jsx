@@ -41,7 +41,7 @@ import { isRequestingSites } from 'state/sites/selectors';
 /**
  * Constants
  */
-let calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
+const calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
 const PLANS_PAGE = '/jetpack/connect/plans/';
 const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
@@ -336,7 +336,7 @@ const LoggedInForm = React.createClass( {
 	renderFooterLinks() {
 		const { queryObject, authorizeSuccess, isAuthorizing } = this.props.jetpackConnectAuthorize;
 		const loginUrl = config( 'login_url' ) + '?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) + '&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
-		let backToWpAdminLink = (
+		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem icon={ true } href={ queryObject.redirect_after_auth }>
 				{ this.translate( 'Cancel and go back to my site' ) } <Gridicon size={ 18 } icon="external" />
 			</LoggedOutFormLinkItem>
@@ -418,7 +418,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 	renderForm() {
 		const { userModule } = this.props;
-		let user = userModule.get();
+		const user = userModule.get();
 		const props = Object.assign( {}, this.props, {
 			user: user
 		} );
