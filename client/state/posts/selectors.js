@@ -41,13 +41,17 @@ export function getPost( state, globalId ) {
  * @return {Object}          Post object
  */
 export const getNormalizedPost = createSelector(
-	( state, globalId ) => {
-		return flow( [
+	( () => {
+		// Cache normalize flow in immediately-invoked closure so to avoid
+		// regenerating same flow on each call to this selector
+		const normalize = flow( [
 			firstPassCanonicalImage,
 			decodeEntities,
 			stripHtml
-		] )( cloneDeep( getPost( state, globalId ) ) );
-	},
+		] );
+
+		return ( state, globalId ) => normalize( cloneDeep( getPost( state, globalId ) ) );
+	} )(),
 	( state ) => state.posts.items
 );
 
