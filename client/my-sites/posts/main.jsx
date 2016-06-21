@@ -48,14 +48,16 @@ const PostsMain = React.createClass( {
 		const site = this.props.sites.getSelectedSite();
 		const isLoading = this.props.draftCount !== 0 && this.props.loadingDrafts;
 
+		if ( ! site ) {
+			return null;
+		}
+
 		return (
 			<div className="posts__recent-drafts">
-				{ site &&
-					<QueryPosts
-						siteId={ site.ID }
-						query={ this.props.draftsQuery } />
-				}
-				{ site && <QueryPostCounts siteId={ site.ID } type="post" /> }
+				<QueryPosts
+					siteId={ site.ID }
+					query={ this.props.draftsQuery } />
+				<QueryPostCounts siteId={ site.ID } type="post" />
 				<Card compact className="posts__drafts-header">
 					<span>
 						{ this.translate( 'Drafts' ) }
@@ -68,7 +70,7 @@ const PostsMain = React.createClass( {
 				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 				{ isLoading && <Draft isPlaceholder /> }
 				{ this.props.draftCount === 0 && <NoResults text={ this.translate( 'You have no drafts at the moment.' ) } /> }
-				{ site && this.props.draftCount > 50 &&
+				{ this.props.draftCount > 50 &&
 					<Button compact borderless href={ `/posts/drafts/${ site.slug }` }>
 						{ this.translate( 'See all drafts' ) }
 					</Button>
