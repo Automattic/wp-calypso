@@ -68,6 +68,11 @@ const PostsMain = React.createClass( {
 				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 				{ isLoading && <Draft isPlaceholder /> }
 				{ this.props.draftCount === 0 && <NoResults text={ this.translate( 'You have no drafts at the moment.' ) } /> }
+				{ site && this.props.draftCount > 50 &&
+					<Button compact borderless href={ `/posts/drafts/${ site.slug }` }>
+						{ this.translate( 'See all drafts' ) }
+					</Button>
+				}
 			</div>
 		);
 	},
