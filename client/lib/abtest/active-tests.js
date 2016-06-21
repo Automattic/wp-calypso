@@ -2,10 +2,10 @@ module.exports = {
 	planFeatures: {
 		datestamp: '20160617',
 		variations: {
-			hide: 50,
+			original: 50,
 			show: 50
 		},
-		defaultVariation: 'hide'
+		defaultVariation: 'original'
 	},
 	personalPlan: {
 		datestamp: '20160623',
