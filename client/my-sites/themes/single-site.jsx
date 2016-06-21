@@ -11,8 +11,7 @@ import mapValues from 'lodash/mapValues';
  * Internal dependencies
  */
 import Main from 'components/main';
-import ActivatingTheme from 'components/data/activating-theme';
-import { customize, purchase, activate, clearActivated } from 'state/themes/actions';
+import { customize, purchase, activate } from 'state/themes/actions';
 import ThemePreview from './theme-preview';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -149,12 +148,9 @@ const ThemesSingleSite = React.createClass( {
 						} ) }
 						onButtonClick={ this.onPreviewButtonClick } />
 				}
-				<ActivatingTheme siteId={ site.ID } >
-					<ThanksModal
-						site={ site }
-						source={ 'list' }
-						clearActivated={ this.props.clearActivated } />
-				</ActivatingTheme>
+				<ThanksModal
+					site={ site }
+					source={ 'list' }/>
 				<CurrentTheme
 					site={ site }
 					canCustomize={ site && site.isCustomizable() } />
@@ -199,7 +195,6 @@ export default connect(
 	} ),
 	{
 		activate,
-		clearActivated,
 		customize,
 		purchase
 	},

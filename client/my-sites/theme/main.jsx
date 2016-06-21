@@ -24,11 +24,10 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
-import { signup, purchase, activate, clearActivated, customize } from 'state/themes/actions';
+import { signup, purchase, activate, customize } from 'state/themes/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isPremium, getForumUrl } from 'my-sites/themes/helpers';
-import ActivatingTheme from 'components/data/activating-theme';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
 import { getCurrentTheme } from 'state/themes/current-theme/selectors';
@@ -321,12 +320,9 @@ const ThemeSheet = React.createClass( {
 			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
 				{ this.renderBar() }
 				{ siteID && <QueryCurrentTheme siteId={ siteID }/> }
-				<ActivatingTheme siteId={ siteID }>
-					<ThanksModal
-						site={ this.props.selectedSite }
-						source={ 'details' }
-						clearActivated={ this.props.clearActivated }/>
-				</ActivatingTheme>
+				<ThanksModal
+					site={ this.props.selectedSite }
+					source={ 'details' }/>
 				{ this.state.selectedAction && <ThemesSiteSelectorModal
 					name={ this.state.selectedAction }
 					label={ actionLabels[ this.state.selectedAction ].label }
@@ -377,5 +373,5 @@ export default connect(
 		const backPath = getBackPath( state );
 		return { selectedSite, siteSlug, currentTheme, backPath };
 	},
-	{ signup, purchase, activate, clearActivated, customize }
+	{ signup, purchase, activate, customize }
 )( ThemeSheet );
