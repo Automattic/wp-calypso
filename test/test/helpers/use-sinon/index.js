@@ -1,4 +1,4 @@
-import sinon from 'sinon';
+import sinon, { spy } from 'sinon';
 import noop from 'lodash/noop';
 import isFunction from 'lodash/isFunction';
 
@@ -65,4 +65,19 @@ export function useSandbox( config, sandboxCallback = noop ) {
 			this.sandbox = null;
 		}
 	} );
+}
+
+/**
+ * Creates a sinon spy out of responseFunction and wraps it in layers of function calls, like wpcom does.
+ * Returned object stubs wpcom.
+ * responseSpy attribute of returned object provides reference to sinon spy.
+ * @param {Array} path
+ * @param {Function} responseFunction
+ * @returns {Object} wpcom-like wrapped object
+ */
+export function createWpcomSpy( path, responseFunction ) {
+	const responseSpy = spy( responseFunction );
+	const wpcom =  path.reverse().reduce( ( prev, current, index ) => ( { [ current ]: index ? () => prev : prev } ), responseSpy );
+	wpcom.responseSpy = responseSpy;
+	return wpcom;
 }

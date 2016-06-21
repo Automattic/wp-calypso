@@ -6,22 +6,24 @@ import map from 'lodash/map';
 import omit from 'lodash/omit';
 import i18n from 'i18n-calypso';
 
-const debug = debugFactory( 'calypso:site-plans:actions' );
-
 /**
  * Internal dependencies
  */
 import { createSitePlanObject } from './assembler';
+import wpcom from 'lib/wp';
 import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
-	SITE_PLANS_FETCH_FAILED,
 	SITE_PLANS_REMOVE,
 	SITE_PLANS_TRIAL_CANCEL,
 	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 	SITE_PLANS_TRIAL_CANCEL_FAILED
 } from 'state/action-types';
-import wpcom from 'lib/wp';
+import { registerConnection } from 'state/connectionMiddleware/middleware';
+import {
+	connectFetchSitePlans
+} from './connections';
+const debug = debugFactory( 'calypso:site-plans:actions' );
 
 /**
  * Cancels the specified plan trial for the given site.
@@ -85,33 +87,12 @@ export function clearSitePlans( siteId ) {
  * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function fetchSitePlans( siteId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_PLANS_FETCH,
-			siteId
-		} );
-
-		return new Promise( ( resolve ) => {
-			wpcom.undocumented().getSitePlans( siteId, ( error, data ) => {
-				if ( error ) {
-					debug( 'Fetching site plans failed: ', error );
-
-					const errorMessage = error.message || i18n.translate( 'There was a problem fetching site plans. Please try again later or contact support.' );
-
-					dispatch( {
-						type: SITE_PLANS_FETCH_FAILED,
-						siteId,
-						error: errorMessage
-					} );
-				} else {
-					dispatch( fetchSitePlansCompleted( siteId, data ) );
-				}
-
-				resolve();
-			} );
-		} );
-	};
+	return {
+		type: SITE_PLANS_FETCH,
+		siteId
+	}
 }
+registerConnection( SITE_PLANS_FETCH, connectFetchSitePlans );
 
 /**
  * Returns an action object to be used in signalling that an object containing
