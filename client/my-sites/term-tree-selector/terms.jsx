@@ -4,13 +4,13 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import unescapeString from 'lodash/unescape';
 import includes from 'lodash/includes';
 import { localize } from 'i18n-calypso';
 import debounce from 'lodash/debounce';
 import range from 'lodash/range';
 import VirtualScroll from 'react-virtualized/VirtualScroll';
 import difference from 'lodash/difference';
+import isEqual from 'lodash/isEqual';
 
 /**
  * Internal dependencies
@@ -18,6 +18,7 @@ import difference from 'lodash/difference';
 import analytics from 'lib/analytics';
 import NoResults from './no-results';
 import Search from './search';
+import { decodeEntities } from 'lib/formatting';
 import QueryTerms from 'components/data/query-terms';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -53,6 +54,7 @@ const TermTreeSelectorList = React.createClass( {
 	},
 
 	getInitialState() {
+		// getInitialState is also used to reset state when a the taxonomy prop changes
 		return {
 			searchTerm: '',
 			requestedPages: [ 1 ]
@@ -84,16 +86,13 @@ const TermTreeSelectorList = React.createClass( {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
-			this.setState( {
-				searchTerm: '',
-				requestedPages: [ 1 ]
-			} );
+			this.setState( this.getInitialState() );
 		}
 	},
 
 	componentDidUpdate( prevProps ) {
 		const forceUpdate = (
-			prevProps.selected !== this.props.selected ||
+			isEqual( prevProps.selected, this.props.selected ) ||
 			prevProps.loading && ! this.props.loading ||
 			( ! prevProps.terms && this.props.terms )
 		);
@@ -239,6 +238,10 @@ const TermTreeSelectorList = React.createClass( {
 			count += this.props.termsHierarchy.length;
 		}
 
+		if ( this.props.loading || ! this.props.terms ) {
+			count += 1;
+		}
+
 		return count;
 	},
 
@@ -261,17 +264,6 @@ const TermTreeSelectorList = React.createClass( {
 		this.debouncedSearch();
 	},
 
-	getSelectedIds( selected ) {
-		const selectedObjects = selected || this.props.selected;
-		return selectedObjects.map( function( item ) {
-			if ( ! item.ID ) {
-				return item;
-			}
-
-			return item.ID;
-		} );
-	},
-
 	setVirtualScrollRef( ref ) {
 		this.virtualScroll = ref;
 	},
@@ -280,17 +272,16 @@ const TermTreeSelectorList = React.createClass( {
 		const onChange = ( ...args ) => this.props.onChange( item, ...args );
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
 
-		const { multiple, defaultTermId, translate } = this.props;
-		const selectedIds = this.getSelectedIds();
+		const { multiple, defaultTermId, translate, selected } = this.props;
 		const itemId = item.ID;
-		const name = unescapeString( item.name ) || translate( 'Untitled' );
-		const checked = includes( selectedIds, itemId );
+		const name = decodeEntities( item.name ) || translate( 'Untitled' );
+		const checked = includes( selected, itemId );
 		const inputType = multiple ? 'checkbox' : 'radio';
 		const disabled = (
 			multiple &&
 			checked &&
 			defaultTermId &&
-			1 === selectedIds.length &&
+			1 === selected.length &&
 			defaultTermId === itemId
 		);
 
@@ -322,6 +313,24 @@ const TermTreeSelectorList = React.createClass( {
 		);
 	},
 
+	renderPlaceholder() {
+		if ( this.props.loading || ! this.props.terms ) {
+			return (
+				<div key="placeholder" className="term-tree-selector__list-item is-placeholder">
+						<label>
+							<input
+								type={ this.props.multiple ? 'checkbox' : 'radio' }
+								disabled
+								className="term-tree-selector__input" />
+							<span className="term-tree-selector__label">
+								{ this.props.translate( 'Loading…' ) }
+							</span>
+						</label>
+					</div>
+			);
+		}
+	},
+
 	renderNoResults() {
 		if ( this.hasNoSearchResults() || this.hasNoTerms() ) {
 			return (
@@ -333,6 +342,13 @@ const TermTreeSelectorList = React.createClass( {
 					{ this.hasNoTerms() && this.props.emptyMessage }
 				</div>
 			);
+		}
+	},
+
+	renderRow( { index } ) {
+		const item = this.getItem( index );
+		if ( item ) {
+			return this.renderItem( item );
 		}
 
 		return (
@@ -350,17 +366,12 @@ const TermTreeSelectorList = React.createClass( {
 		);
 	},
 
-	renderRow( { index } ) {
-		const item = this.getItem( index );
-		if ( item ) {
-			return this.renderItem( item );
-		}
-	},
-
 	render() {
 		const rowCount = this.getRowCount();
 		const isCompact = this.isCompact();
-		const showSearch = this.state.searchTerm.length > 0 || ! isCompact;
+		const searchLength = this.state.searchTerm.length;
+		const showSearch = ( searchLength > 0 || ! isCompact ) &&
+			( this.props.terms || ( ! this.props.terms && searchLength > 0 ) );
 		const { className, loading, siteId, taxonomy, query } = this.props;
 		const classes = classNames( 'term-tree-selector', className, {
 			'is-loading': loading,

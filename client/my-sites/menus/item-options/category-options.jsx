@@ -61,17 +61,28 @@ module.exports = React.createClass( {
 		this.setState( { selected: [ item ] } );
 	},
 
+	getSelectedIds() {
+		return this.state.selected.map( function( item ) {
+			if ( ! item.ID ) {
+				return item;
+			}
+
+			return item.ID;
+		} );
+	},
+
 	render: function() {
 		debug( 'rendering', this.props );
 		return (
-			<CategorySelector
-				analyticsPrefix="Menus"
-				onChange={ this.onChange }
-				className="menu-item-options menu-item-options__term-tree-selector"
-				createLink={ this.props.itemType.createLink }
-				selected={ this.state.selected }>
-					<MenuPanelBackButton label={ this.props.itemType.label } onClick={ this.props.onBackClick } />
-			</CategorySelector>
+			<div className="menu-item-options menu-item-options__term-tree-selector">
+				<MenuPanelBackButton label={ this.props.itemType.label } onClick={ this.props.onBackClick } />
+				<CategorySelector
+					analyticsPrefix="Menus"
+					onChange={ this.onChange }
+					createLink={ this.props.itemType.createLink }
+					selected={ this.getSelectedIds() }>
+				</CategorySelector>
+			</div>
 		);
 	}
 } );

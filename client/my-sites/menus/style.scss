@@ -739,15 +739,28 @@
 				padding: 10px 13px;
 
 				&.menu-item-options__term-tree-selector {
-					padding: 10px 0;
-					overflow-y: hidden;	
-
+					padding: 10px 0px 10px 13px;
+					overflow-y: hidden;
+					
 					.term-tree-selector {
 						border: 0;
 					}
 
 					.term-tree-selector__search input {
 						border-width: 1px;
+					}
+
+					.term-tree-selector__label {
+						color: $gray-dark;
+						font-size: 14px;
+					}
+
+					.term-tree-selector__list-item.is-placeholder {
+						width: 85%;
+
+						.term-tree-selector__label {
+							color: transparent;
+						}
 					}
 				}
 
