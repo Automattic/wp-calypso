@@ -245,8 +245,8 @@ const ThemeSheet = React.createClass( {
 
 	renderFeaturesCard() {
 		const themeFeatures = this.props.taxonomies && this.props.taxonomies.theme_feature instanceof Array
-		? this.props.taxonomies.theme_feature.map( function( item, i ) {
-			return ( <li key={ 'theme-features-item-' + i++ }><span>{ item.name }</span></li> );
+		? this.props.taxonomies.theme_feature.map( function( item ) {
+			return ( <li key={ 'theme-features-item-' + item.slug }><span>{ item.name }</span></li> );
 		} ) : [];
 
 		return (
