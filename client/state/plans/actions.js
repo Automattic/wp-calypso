@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
 import {
 	PLANS_RECEIVE,
 	PLANS_REQUEST,
@@ -10,6 +9,7 @@ import {
 	PLANS_REQUEST_FAILURE
 } from '../action-types';
 
+import { insertPersonalPlan } from 'lib/plans/personal-plan';
 /**
  * Action creator function: RECEIVE
  *
@@ -19,7 +19,7 @@ import {
 export const plansReceiveAction = plans => {
 	return {
 		type: PLANS_RECEIVE,
-		plans: plans
+		plans: insertPersonalPlan( plans )
 	};
 };
 

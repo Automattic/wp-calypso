@@ -10,6 +10,8 @@ import {
 
 import { getValidDataFromResponse } from '../actions';
 
+import { personalPlan as PLAN_1009 } from 'lib/plans/personal-plan';
+
 // WP REST-API error response
 export const ERROR_MESSAGE_RESPONSE = 'There was a problem fetching plans. Please try again later or contact support.';
 
@@ -252,7 +254,7 @@ export const PLAN_2002 = {
 };
 
 export const WPCOM_RESPONSE = [
-	PLAN_1, PLAN_1003, PLAN_1008, PLAN_2000, PLAN_2001, PLAN_2002
+	PLAN_1, PLAN_1003, PLAN_1008, PLAN_1009, PLAN_2000, PLAN_2001, PLAN_2002
 ];
 
 WPCOM_RESPONSE._headers = {
