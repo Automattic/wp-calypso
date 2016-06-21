@@ -1765,7 +1765,7 @@ Undocumented.prototype.submitSupportForumsTopic = function( subject, message, cl
  * @api public
  */
 Undocumented.prototype.getExportSettings = function( siteId, fn ) {
-	return this.wpcom.req.get( {
+	return this.wpcom.withLocale().req.get( {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/settings`
 	}, fn );
@@ -1780,7 +1780,7 @@ Undocumented.prototype.getExportSettings = function( siteId, fn ) {
  * @returns {Promise}                   A promise that resolves when the export started
  */
 Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
-	return this.wpcom.req.post( {
+	return this.wpcom.withLocale().req.post( {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/start`
 	}, advancedSettings, fn );
@@ -1795,7 +1795,7 @@ Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
  * @returns {Promise}  promise
  */
 Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
-	return this.wpcom.req.get( {
+	return this.wpcom.withLocale().req.get( {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/${ exportId }`
 	}, fn );
