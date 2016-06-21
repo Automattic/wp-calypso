@@ -508,7 +508,7 @@
 	}
 }
 
-.posts .section-nav-tab.is-draft {
+.posts.is-single-site .section-nav-tab.is-draft {
 	@include breakpoint( ">1040px" ) {
 		display: none;
 	}

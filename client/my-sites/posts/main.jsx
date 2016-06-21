@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -63,7 +64,7 @@ const PostsMain = React.createClass( {
 						{ this.translate( 'Drafts' ) }
 						{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
 					</span>
-					<Button disabled={ ! site } borderless href={ this.props.newPostPath }>
+					<Button borderless href={ this.props.newPostPath }>
 						<Gridicon icon="plus" />
 					</Button>
 				</Card>
@@ -89,8 +90,13 @@ const PostsMain = React.createClass( {
 
 	render() {
 		const path = sectionify( this.props.context.path );
+		const classes = classnames( 'posts', {
+			'is-multisite': ! this.props.sites.selected,
+			'is-single-site': this.props.sites.selected
+		} );
+
 		return (
-			<Main className="posts">
+			<Main className={ classes }>
 				<SidebarNavigation />
 				<div className="posts__primary">
 					<PostsNavigation { ...this.props } />
