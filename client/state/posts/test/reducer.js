@@ -305,6 +305,29 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems( { search: 'Hello W' } ) ).to.have.length( 1 );
 		} );
 
+		it( 'should update received posts', () => {
+			const original = deepFreeze( queries( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Hello' },
+				found: 1,
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'publish', type: 'post' }
+				]
+			} ) );
+
+			const state = queries( original, {
+				type: POSTS_RECEIVE,
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'draft', type: 'post' }
+				]
+			} );
+
+			expect( state[ 2916284 ].getItem( 841 ) ).to.eql(
+				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'draft', type: 'post' }
+			);
+		} );
+
 		it( 'should remove item when post delete action dispatched', () => {
 			const original = deepFreeze( queries( undefined, {
 				type: POSTS_REQUEST_SUCCESS,

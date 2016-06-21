@@ -158,6 +158,26 @@ export function queries( state = {}, action ) {
 			} );
 		}
 
+		case POSTS_RECEIVE:
+			return reduce( action.posts, ( memo, post ) => {
+				const { site_ID: siteId } = post;
+				if ( ! memo[ siteId ] ) {
+					return memo;
+				}
+
+				const nextPosts = memo[ siteId ].receive( post );
+				if ( nextPosts === memo[ siteId ] ) {
+					return memo;
+				}
+
+				if ( memo === state ) {
+					memo = { ...memo };
+				}
+
+				memo[ siteId ] = nextPosts;
+				return memo;
+			}, state );
+
 		case POST_DELETE: {
 			if ( ! state[ action.siteId ] ) {
 				break;
