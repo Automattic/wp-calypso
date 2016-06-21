@@ -9,6 +9,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	POST_DELETE,
+	POST_DELETE_SUCCESS,
+	POST_DELETE_FAILURE,
 	POST_EDIT,
 	POST_EDITS_RESET,
 	POST_REQUEST,
@@ -26,7 +29,8 @@ import {
 	requestSitePost,
 	requestPosts,
 	editPost,
-	resetPostEdits
+	resetPostEdits,
+	deletePost
 } from '../actions';
 
 describe( 'actions', () => {
@@ -271,6 +275,54 @@ describe( 'actions', () => {
 				type: POST_EDITS_RESET,
 				siteId: 2916284,
 				postId: undefined
+			} );
+		} );
+	} );
+
+	describe( 'deletePost()', () => {
+		before( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2916284/posts/13640/delete' )
+				.reply( 200, {
+					ID: 13640,
+					status: 'deleted'
+				} )
+				.post( '/rest/v1.1/sites/77203074/posts/102/delete' )
+				.reply( 403, {
+					error: 'unauthorized',
+					message: 'User cannot delete posts'
+				} );
+		} );
+
+		it( 'should dispatch request action when thunk triggered', () => {
+			deletePost( 2916284, 13640 )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: POST_DELETE,
+				siteId: 2916284,
+				postId: 13640
+			} );
+		} );
+
+		it( 'should dispatch post delete request success action when request completes', () => {
+			return deletePost( 2916284, 13640 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_DELETE_SUCCESS,
+					siteId: 2916284,
+					postId: 13640
+				} );
+			} );
+		} );
+
+		it( 'should dispatch post delete request failure action when request fails', () => {
+			return deletePost( 77203074, 102 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_DELETE_FAILURE,
+					siteId: 77203074,
+					postId: 102,
+					error: sinon.match( { message: 'User cannot delete posts' } )
+				} );
 			} );
 		} );
 	} );
