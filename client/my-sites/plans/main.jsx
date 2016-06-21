@@ -21,7 +21,7 @@ import Notice from 'components/notice';
 import observe from 'lib/mixins/data-observe';
 import paths from './paths';
 import PlanList from 'components/plans/plan-list' ;
-import PlanFeaturesList from 'my-sites/plan-features-list';
+import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlanOverview from './plan-overview';
 import { shouldFetchSitePlans, plansLink } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -187,7 +187,7 @@ const Plans = React.createClass( {
 
 						{
 							showPlanFeatures
-								? <PlanFeaturesList
+								? <PlansFeaturesMain
 									site={ selectedSite } />
 
 								: <PlanList

@@ -12,14 +12,14 @@ import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 
-class PlanFeaturesList extends Component {
+class PlansFeaturesMain extends Component {
 
 	render() {
 		const { translate, site } = this.props;
 
 		return (
 			<div>
-				<div className="plan-features-list">
+				<div className="plans-features-main">
 					<PlanFeatures plan={ PLAN_FREE } /* onClick={ this.upgradePlan } */ />
 					<PlanFeatures plan={ PLAN_PREMIUM } /* onClick={ this.upgradePlan } */ />
 					<PlanFeatures plan={ PLAN_BUSINESS } /* onClick={ this.upgradePlan } */ />
@@ -108,4 +108,4 @@ class PlanFeaturesList extends Component {
 	}
 }
 
-export default localize( PlanFeaturesList );
+export default localize( PlansFeaturesMain );
