@@ -24,7 +24,7 @@ export function guidedTour( state = {}, action ) {
 				tour: action.tour,
 			};
 		case GUIDED_TOUR_UPDATE:
-			return Object.assign( {}, state, omit( action, 'type' ) );
+			return { ...state, ...omit( action, 'type' ) };
 	}
 	return state;
 }
