@@ -98,6 +98,7 @@
 		"olark": true,
 		"perfmon": false,
 		"persist-redux": true,
+		"plans/personal-plan": true,
 		"plans/wordpress-ad-credits": true,
 		"post-editor-github-link": false,
 		"post-editor/image-editor": false,

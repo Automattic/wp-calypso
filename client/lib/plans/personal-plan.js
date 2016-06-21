@@ -34,7 +34,8 @@ export const personalPlan = {
 	bill_period_label: translate( 'per year' ),
 	price: '$71.88',
 	formatted_price: '$71.88',
-	raw_price: 71.88
+	raw_price: 71.88,
+	has_domain_credit: true
 };
 
 export const insertPersonalPlan = plans => {
@@ -50,6 +51,7 @@ export const insertSitePersonalPlan = plans => {
 	const {
 		product_id,
 		formatted_price,
+		has_domain_credit,
 		product_name,
 		product_slug,
 		raw_price
@@ -62,6 +64,7 @@ export const insertSitePersonalPlan = plans => {
 				can_start_trial: true,
 				discount_reason: null,
 				formatted_discount: '$0',
+				has_domain_credit,
 				formatted_price,
 				product_name,
 				product_slug,

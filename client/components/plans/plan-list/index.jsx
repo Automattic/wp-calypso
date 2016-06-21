@@ -13,7 +13,9 @@ import { filterPlansBySiteAndProps } from 'lib/plans';
 import { getCurrentPlan } from 'lib/plans';
 import { isJpphpBundle } from 'lib/products-values';
 import Plan from 'components/plans/plan';
-import config from 'config';
+import { isEnabled } from 'config';
+
+const personalPlanTestEnabled = abtest( 'personalPlan' ) === 'show' && isEnabled( 'plans/personal-plan' );
 
 const PlanList = React.createClass( {
 	getInitialState() {
@@ -29,7 +31,7 @@ const PlanList = React.createClass( {
 		const { site, hideFreePlan, plans, intervalType, showJetpackFreePlan } = this.props;
 
 		let className = '',
-			numberOfPlaceholders = abtest( 'personalPlan' ) === 'hide' ? 3 : 4;
+			numberOfPlaceholders = personalPlanTestEnabled ? 4 : 3;
 
 		if ( hideFreePlan || ( site && site.jetpack ) ) {
 			numberOfPlaceholders = showJetpackFreePlan ? 3 : 2;
@@ -80,7 +82,7 @@ const PlanList = React.createClass( {
 			let filteredPlans = filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalType, showJetpackFreePlan );
 
 			if (
-				config.isEnabled( 'manage/ads/wordads-instant' ) &&
+				isEnabled( 'manage/ads/wordads-instant' ) &&
 				abtest( 'wordadsInstantActivation' ) === 'enabled'
 			) {
 				filteredPlans = filteredPlans.map( plan => {
