@@ -1,5 +1,6 @@
 import assign from 'lodash/assign';
 import debugFactory from 'debug';
+import partial from 'lodash/partial';
 
 import { mc, ga, tracks } from 'lib/analytics';
 
@@ -115,6 +116,16 @@ tracksRailcarEventWhitelist
 	.add( 'calypso_reader_startcard_clicked' )
 ;
 
+export function recordTracksRailcar( action, eventName, railcar ) {
+	// flatten the railcar down into the event props
+	recordTrack( action, Object.assign( {
+		action: eventName.replace( 'calypso_reader_', '' )
+	}, railcar ) );
+}
+
+export const recordTracksRailcarRender = partial( recordTracksRailcar, 'calypso_traintracks_render' );
+export const recordTracksRailcarInteract = partial( recordTracksRailcar, 'calypso_traintracks_interact' );
+
 export function recordTrackForPost( eventName, post = {}, additionalProps = {} ) {
 	recordTrack( eventName, assign( {
 		blog_id: ! post.is_external && post.site_ID > 0 ? post.site_ID : undefined,
@@ -124,10 +135,7 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 		is_jetpack: post.is_jetpack
 	}, additionalProps ) );
 	if ( post.railcar && tracksRailcarEventWhitelist.has( eventName ) ) {
-		recordTrack( 'calypso_traintracks_interact', {
-			action: eventName.replace( 'calypso_reader_', '' ),
-			railcar: JSON.stringify( post.railcar )
-		} );
+		recordTracksRailcarInteract( eventName, post.railcar );
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
 		console.warn( 'Consider whitelisting reader track', eventName );
 	}
