@@ -10,6 +10,7 @@ import { combineReducers } from 'redux';
  */
 import {
 	ACTION_LOG_RECEIVE,
+	ACTION_LOG_RESET,
 	DESERIALIZE,
 	GUIDED_TOUR_SHOW,
 	GUIDED_TOUR_UPDATE,
@@ -46,6 +47,11 @@ const permanent = ( state = [], action ) => {
 	// Receive arbitrary collection
 	if ( action.type === ACTION_LOG_RECEIVE ) {
 		return [ ...state, ...action.actions.map( newAction ) ];
+	}
+
+	// Reset arbitrarily, for testing
+	if ( action.type === ACTION_LOG_RESET ) {
+		return [];
 	}
 
 	// Log some actions as we go, persist with localForage
