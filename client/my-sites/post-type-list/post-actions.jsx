@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getPost } from 'state/posts/selectors';
-import { deletePost } from 'state/posts/actions';
+import { trashPost } from 'state/posts/actions';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 
@@ -50,6 +50,6 @@ export default connect(
 		};
 	},
 	{
-		trash: deletePost
+		trash: trashPost
 	}
 )( localize( PostTypeListPostActions ) );
