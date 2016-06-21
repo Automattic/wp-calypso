@@ -81,13 +81,13 @@
 		font-family: $serif;
 		font-size: 12px;
 		margin: 10px 0 -3px;
-		max-height: none;
-	}
-
-	.post-excerpt.is-long {
+		max-height: 56px;
 
 		&:after {
-			display: none;
+			@include long-content-fade;
+			width: 65%;
+			position: absolute;
+				top: 35px;
 		}
 	}
 
