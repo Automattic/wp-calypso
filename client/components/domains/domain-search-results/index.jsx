@@ -16,7 +16,8 @@ const DomainRegistrationSuggestion = require( 'components/domains/domain-registr
 	DomainSuggestion = require( 'components/domains/domain-suggestion' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	abtest = require( 'lib/abtest' ).abtest,
-	upgradesActions = require( 'lib/upgrades/actions' );
+	upgradesActions = require( 'lib/upgrades/actions' ),
+	{ isNextDomainFree } = require( 'lib/cart-values/cart-items' );
 
 const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 
@@ -74,10 +75,22 @@ var DomainSearchResults = React.createClass( {
 						}
 					);
 				} else {
-					mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}', {
-						args: { domain: lastDomainSearched, cost: this.props.products.domain_map.cost_display },
-						components
-					} );
+					if ( isNextDomainFree( this.props.cart ) ) {
+						mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}', {
+							args: {
+								domain: lastDomainSearched
+							},
+							components
+						} );
+					} else {
+						mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}', {
+							args: {
+								domain: lastDomainSearched,
+								cost: this.props.products.domain_map.cost_display
+							},
+							components
+						} );
+					}
 				}
 			}
 
