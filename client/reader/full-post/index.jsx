@@ -80,7 +80,7 @@ let loadingPost = {
 	},
 	FullPostView, FullPostDialog, FullPostContainer;
 
-const relatedPostsEnabled = config.isEnabled( 'reader/related-posts' ) && abtest( 'readerRelatedPosts' ) === 'enabled';
+const relatedPostsEnabled = config.isEnabled( 'reader/related-posts' );
 
 /**
  * The content of a FullPostView
