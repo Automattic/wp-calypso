@@ -205,15 +205,15 @@ module.exports = React.createClass( {
 		);
 	},
 
-	getHeader: function() {
-		var selectedSite = this.props.sites.getSelectedSite(),
-			site = this.getSite();
+	getHeader() {
+		const selectedSite = this.props.sites.getSelectedSite();
+		const site = this.getSite();
 
 		if ( selectedSite && site.single_user_site ) {
 			return null;
 		}
 
-		return <PostHeader site={ site } author={ this.props.post.author.name } path={ this.props.path } showAuthor={ ! site.single_user_site } />;
+		return <PostHeader site={ site } author={ this.props.post.author ? this.props.post.author.name : '' } path={ this.props.path } showAuthor={ ! site.single_user_site } />;
 	},
 
 	getContent: function() {
