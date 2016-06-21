@@ -9,6 +9,7 @@ import { combineReducers } from 'redux';
 import {
 	SELECTED_SITE_SET,
 	SET_SECTION,
+	PREVIEW_IS_SHOWING,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -78,10 +79,19 @@ export function isLoading( state = false, action ) {
 	return state;
 }
 
+export function isPreviewShowing( state = false, action ) {
+	switch ( action.type ) {
+		case PREVIEW_IS_SHOWING:
+			return ( action.isShowing !== undefined ) ? action.isShowing : state;
+	}
+	return state;
+}
+
 const reducer = combineReducers( {
 	section,
 	isLoading,
 	hasSidebar,
+	isPreviewShowing,
 	selectedSiteId,
 	recentlySelectedSiteIds,
 	guidedTour,

@@ -126,19 +126,19 @@ class ActionStep extends Component {
 	}
 
 	addTargetListener() {
-		const { targetSlug = false, onNext } = this.props;
+		const { targetSlug = false, onNext, continueIf } = this.props;
 		const target = targetForSlug( targetSlug );
 
-		if ( onNext && target && target.addEventListener ) {
+		if ( ! continueIf && onNext && target && target.addEventListener ) {
 			target.addEventListener( 'click', onNext );
 		}
 	}
 
 	removeTargetListener() {
-		const { targetSlug = false, onNext } = this.props;
+		const { targetSlug = false, onNext, continueIf } = this.props;
 		const target = targetForSlug( targetSlug );
 
-		if ( onNext && target && target.removeEventListener ) {
+		if ( ! continueIf && onNext && target && target.removeEventListener ) {
 			target.removeEventListener( 'click', onNext );
 		}
 	}

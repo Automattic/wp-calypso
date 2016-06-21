@@ -1,29 +1,32 @@
 /**
  * External dependencies
  */
-import noop from 'lodash/noop';
-
 const WAIT_INITIAL = 1; // initial wait in milliseconds
 const WAIT_MULTIPLIER = 2;
 const WAIT_MAX = 2048; // give up waiting when delay has grown to ~4 seconds
 
-const wait = ( { condition, consequence, delay = 0, onError = noop } ) => {
-	if ( condition() ) {
-		consequence();
-		return;
-	}
+function wait( { condition, consequence, delay = 0 } ) {
+	return new Promise( ( resolve, reject ) => {
+		const waitLoop = ( options ) => {
+			if ( options.condition() ) {
+				resolve( true );
+				return;
+			}
 
-	if ( delay >= WAIT_MAX ) {
-		onError();
-		return;
-	}
+			if ( options.delay >= WAIT_MAX ) {
+				reject();
+				return;
+			}
 
-	window.setTimeout( wait.bind( null, {
-		condition,
-		consequence,
-		delay: delay ? delay * WAIT_MULTIPLIER : WAIT_INITIAL,
-		onError,
-	} ), delay );
-};
+			setTimeout( waitLoop.bind( null, {
+				condition: options.condition,
+				consequence: options.consequence,
+				delay: options.delay ? options.delay * WAIT_MULTIPLIER : WAIT_INITIAL,
+			} ), options.delay );
+		};
+
+		waitLoop( { condition, consequence, delay } );
+	} );
+}
 
 export default wait;

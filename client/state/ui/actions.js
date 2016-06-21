@@ -1,9 +1,12 @@
+/** @ssr-ready **/
+
 /**
  * Internal dependencies
  */
 import {
 	SELECTED_SITE_SET,
 	SET_SECTION,
+	PREVIEW_IS_SHOWING,
 } from 'state/action-types';
 
 /**
@@ -40,4 +43,11 @@ export function setSection( section, options = {} ) {
 	}
 	options.hasSidebar = ( options.hasSidebar === false ) ? false : true;
 	return options;
+}
+
+export function setPreviewShowing( isShowing ) {
+	return {
+		type: PREVIEW_IS_SHOWING,
+		isShowing,
+	};
 }

@@ -74,7 +74,7 @@ const ThemesSearchCard = React.createClass( {
 		const selectedTiers = isPremiumThemesEnabled ? tiers : [ tiers.find( tier => tier.value === 'free' ) ];
 
 		return (
-			<div className="themes__search-card">
+			<div className="themes__search-card" data-tip-target="themes-search-card">
 				<SectionNav selectedText={ this.getSelectedTierFormatted( tiers ) }>
 					<NavTabs>
 						{ ! isJetpack && this.getTierNavItems( selectedTiers ) }
@@ -119,7 +119,7 @@ const ThemesSearchCard = React.createClass( {
 		}
 
 		return (
-			<div className="themes__search-card">
+			<div className="themes__search-card" data-tip-target="themes-search-card">
 				<Search
 					onSearch={ this.props.onSearch }
 					initialValue={ this.props.search }
@@ -132,7 +132,8 @@ const ThemesSearchCard = React.createClass( {
 				{ isPremiumThemesEnabled && ! isJetpack && <ThemesSelectDropdown
 										tier={ this.props.tier }
 										options={ tiers }
-										onSelect={ this.props.select } /> }
+										onSelect={ this.props.select }
+					/> }
 				{ isPremiumThemesEnabled && <a className="button more"
 												href={ getExternalThemesUrl( this.props.site ) }
 												target="_blank"

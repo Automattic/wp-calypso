@@ -42,7 +42,7 @@ class GuidedTours extends Component {
 	}
 
 	shouldComponentUpdate( nextProps ) {
-		return this.props.tourState !== nextProps.tourState;
+		return true || this.props.tourState !== nextProps.tourState;
 	}
 
 	componentWillUpdate( nextProps ) {
@@ -64,21 +64,22 @@ class GuidedTours extends Component {
 		} ), {} );
 	}
 
-	next() {
+	async next() {
 		const nextStepName = this.props.tourState.stepConfig.next;
 		const nextStepConfig = this.props.tourState.nextStepConfig;
 
 		const nextTargetFound = () => {
 			if ( nextStepConfig && nextStepConfig.target ) {
-				const target = this.getTipTargets()[nextStepConfig.target];
+				const target = this.getTipTargets()[ nextStepConfig.target ];
 				return target && target.getBoundingClientRect().left >= 0;
 			}
 			return true;
 		};
-		const proceedToNextStep = () => {
+
+		try {
+			await wait( { condition: nextTargetFound } );
 			this.props.nextGuidedTourStep( { stepName: nextStepName } );
-		};
-		const abortTour = () => {
+		} catch ( err ) {
 			const ERROR_WAITED_TOO_LONG = 'waited too long for next target';
 			debug( ERROR_WAITED_TOO_LONG );
 			this.props.errorNotice(
@@ -86,8 +87,7 @@ class GuidedTours extends Component {
 				{ duration: 8000 }
 			);
 			this.quit( { error: ERROR_WAITED_TOO_LONG } );
-		};
-		wait( { condition: nextTargetFound, consequence: proceedToNextStep, onError: abortTour } );
+		}
 	}
 
 	quit( options = {} ) {
@@ -136,6 +136,7 @@ class GuidedTours extends Component {
 export default connect( ( state ) => ( {
 	selectedSite: getSelectedSite( state ),
 	tourState: getGuidedTourState( state ),
+	state,
 } ), {
 	nextGuidedTourStep,
 	quitGuidedTour,

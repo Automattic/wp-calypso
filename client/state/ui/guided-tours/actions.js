@@ -28,7 +28,7 @@ export function showGuidedTour( { shouldShow, shouldDelay = false, tour = 'main'
 	};
 
 	const trackEvent = recordTracksEvent( 'calypso_guided_tours_show', {
-		tour_version: guidedToursConfig.version,
+		tour_version: guidedToursConfig.get( tour ).version,
 		tour,
 	} );
 
@@ -47,7 +47,7 @@ export function quitGuidedTour( { tour = 'main', stepName, finished, error } ) {
 
 	const trackEvent = recordTracksEvent( `calypso_guided_tours_${ finished ? 'finished' : 'quit' }`, {
 		step: stepName,
-		tour_version: guidedToursConfig.version,
+		tour_version: guidedToursConfig.get( tour ).version,
 		tour,
 		error,
 	} );
@@ -62,7 +62,7 @@ export function nextGuidedTourStep( { tour = 'main', stepName } ) {
 
 	const trackEvent = recordTracksEvent( 'calypso_guided_tours_next_step', {
 		step: stepName,
-		tour_version: guidedToursConfig.version,
+		tour_version: guidedToursConfig.get( tour ).version,
 		tour,
 	} );
 

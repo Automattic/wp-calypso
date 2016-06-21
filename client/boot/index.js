@@ -276,7 +276,7 @@ function reduxStoreReady( reduxStore ) {
 		}
 
 		// If `?tour` is present, show the guided tour
-		if ( config.isEnabled( 'guided-tours' ) && context.query.tour ) {
+		if ( config.isEnabled( 'guided-tours' ) && context.query.tour && ! context.query.s ) {
 			context.store.dispatch( showGuidedTour( {
 				shouldShow: true,
 				shouldDelay: /^\/(checkout|plans\/select)/.test( path ),

@@ -7,11 +7,11 @@ import memoize from 'lodash/memoize';
 /**
  * Internal dependencies
  */
-import { isSectionLoading, getSelectedSite } from 'state/ui/selectors';
+import { isSectionLoading } from 'state/ui/selectors';
 import createSelector from 'lib/create-selector';
 import guidedToursConfig from 'layout/guided-tours/config';
 
-const getToursConfig = memoize( ( site ) => guidedToursConfig.get( site ) );
+const getToursConfig = memoize( ( tour ) => guidedToursConfig.get( tour ) );
 
 /**
  * Returns the current state for Guided Tours.
@@ -28,10 +28,10 @@ const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 export const getGuidedTourState = createSelector(
 	state => {
 		const tourState = getRawGuidedTourState( state );
-		const site = getSelectedSite( state );
-		const { shouldReallyShow, stepName = '' } = tourState;
-		const stepConfig = getToursConfig( site )[ stepName ] || false;
-		const nextStepConfig = getToursConfig( site )[ stepConfig.next ] || false;
+		const { shouldReallyShow, stepName = '', tour } = tourState;
+		const tourConfig = getToursConfig( tour );
+		const stepConfig = tourConfig[ stepName ] || false;
+		const nextStepConfig = getToursConfig( tour )[ stepConfig.next ] || false;
 
 		const shouldShow = !! (
 			! isSectionLoading( state ) &&
@@ -47,6 +47,5 @@ export const getGuidedTourState = createSelector(
 	state => [
 		getRawGuidedTourState( state ),
 		isSectionLoading( state ),
-		getSelectedSite( state ),
 	]
 );
