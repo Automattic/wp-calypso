@@ -126,7 +126,7 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 	if ( post.railcar && tracksRailcarEventWhitelist.has( eventName ) ) {
 		recordTrack( 'calypso_traintracks_interact', {
 			action: eventName.replace( 'calypso_reader_', '' ),
-			railcar: post.railcar
+			railcar: JSON.stringify( post.railcar )
 		} );
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
 		console.warn( 'Consider whitelisting reader track', eventName );
