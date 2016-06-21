@@ -1,3 +1,19 @@
+.posts.main {
+	display: block;
+	max-width: 720px;
+
+	@include breakpoint( ">1040px" ) {
+		display: flex;
+		max-width: 1040px;
+		justify-content: center;
+	}
+}
+
+.posts__primary {
+	flex-grow: 1;
+	max-width: 720px;
+}
+
 .posts__list {
 
 	.post {
@@ -456,4 +472,50 @@
 .posts .section-nav .gravatar {
 	margin-left: 6px;
 	vertical-align: middle;
+}
+
+.posts__recent-drafts {
+	flex-grow: 1;
+	margin: 0 0 24px 24px;
+	max-width: 296px;
+	display: none;
+
+	@include breakpoint( ">1040px" ) {
+		display: block;
+	}
+
+	.draft__actions {
+		display: none;
+	}
+}
+
+.posts__recent-drafts .posts__drafts-header.card.is-compact {
+	border-bottom: 2px solid $alert-yellow;
+	margin-bottom: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 3px 16px;
+	color: $gray-dark;
+	font-size: 14px;
+
+	&::after {
+		display: none;
+	}
+
+	.count {
+		margin-left: 8px;
+	}
+}
+
+.posts .section-nav-tab.is-draft {
+	@include breakpoint( ">1040px" ) {
+		display: none;
+	}
+}
+
+.posts__recent-drafts .no-results {
+	color: $gray;
+	font-size: 14px;
+	margin-left: 16px;
 }
