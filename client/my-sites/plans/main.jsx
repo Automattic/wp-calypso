@@ -20,7 +20,7 @@ import Main from 'components/main';
 import Notice from 'components/notice';
 import observe from 'lib/mixins/data-observe';
 import paths from './paths';
-import OldPlanList from 'components/plans/plan-list' ;
+import PlanList from 'components/plans/plan-list' ;
 import PlanFeaturesList from 'my-sites/plan-features-list';
 import PlanOverview from './plan-overview';
 import { shouldFetchSitePlans, plansLink } from 'lib/plans';
@@ -143,13 +143,11 @@ const Plans = React.createClass( {
 
 	render() {
 		const selectedSite = this.props.sites.getSelectedSite();
-		let PlanList = OldPlanList;
 		let hasJpphpBundle,
 			currentPlan,
 			mainStyle;
 
 		if ( showPlanFeatures ) {
-			PlanList = PlanFeaturesList;
 			mainStyle = { maxWidth: 1040 };
 		}
 
@@ -187,14 +185,20 @@ const Plans = React.createClass( {
 						{ ! hasJpphpBundle && this.showMonthlyPlansLink() }
 						<QueryPlans />
 
-						<PlanList
-							site={ selectedSite }
-							plans={ this.props.plans }
-							sitePlans={ this.props.sitePlans }
-							onOpen={ this.openPlan }
-							cart={ this.props.cart }
-							intervalType={ this.props.intervalType }
-							isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST } />
+						{
+							showPlanFeatures
+								? <PlanFeaturesList
+									site={ selectedSite } />
+
+								: <PlanList
+									site={ selectedSite }
+									plans={ this.props.plans }
+									sitePlans={ this.props.sitePlans }
+									onOpen={ this.openPlan }
+									cart={ this.props.cart }
+									intervalType={ this.props.intervalType }
+									isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST }/>
+						}
 
 						{ ! hasJpphpBundle && this.comparePlansLink() }
 					</div>
