@@ -168,7 +168,8 @@ export function resetPostEdits( siteId, postId ) {
 
 /**
  * Returns an action thunk which, when dispatched, triggers a network request
- * to delete the specified post.
+ * to delete the specified post. The post should already have a status of trash
+ * when dispatching this action, else you should use `trashPost`.
  *
  * @param  {Number}   siteId Site ID
  * @param  {Number}   postId Post ID
