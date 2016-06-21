@@ -17,13 +17,11 @@ const Card = require( 'components/card' ),
 	StatusLabel = require( 'post-editor/editor-status-label' ),
 	postUtils = require( 'lib/posts/utils' ),
 	siteUtils = require( 'lib/site/utils' ),
-	userUtils = require( 'lib/user/utils' ),
 	PostSchedule = require( 'components/post-schedule' ),
 	postActions = require( 'lib/posts/actions' ),
 	Tooltip = require( 'components/tooltip' ),
 	PostListFetcher = require( 'components/post-list-fetcher' ),
 	stats = require( 'lib/posts/stats' ),
-	user = require( 'lib/user' )(),
 	config = require( 'config' );
 
 export default React.createClass( {
@@ -43,6 +41,8 @@ export default React.createClass( {
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
 		site: React.PropTypes.object,
+		user: React.PropTypes.object,
+		userUtils: React.PropTypes.object,
 		type: React.PropTypes.string
 	},
 
@@ -60,27 +60,29 @@ export default React.createClass( {
 			onSaveDraft: noop,
 			post: null,
 			savedPost: null,
-			site: {}
+			site: {},
+			user: {},
+			userUtils: {},
 		};
 	},
 
 	componentDidMount: function() {
 		if ( ! config( 'email_verification_gate' ) ) return;
-		
-		user.on( 'change', this.updateNeedsVerification );
-		user.on( 'verify', this.updateNeedsVerification );
+
+		this.props.user.on( 'change', this.updateNeedsVerification );
+		this.props.user.on( 'verify', this.updateNeedsVerification );
 	},
 
 	componentWillUnmount: function() {
 		if ( ! config( 'email_verification_gate' ) ) return;
-		
-		user.off( 'change', this.updateNeedsVerification );
-		user.off( 'verify', this.updateNeedsVerification );
+
+		this.props.user.off( 'change', this.updateNeedsVerification );
+		this.props.user.off( 'verify', this.updateNeedsVerification );
 	},
 
 	updateNeedsVerification: function() {
 		this.setState( {
-			needsVerification: config( 'email_verification_gate' ) && userUtils.needsVerificationForSite( this.props.site ),
+			needsVerification: config( 'email_verification_gate' ) && this.props.userUtils.needsVerificationForSite( this.props.site ),
 		} );
 	},
 
@@ -91,8 +93,21 @@ export default React.createClass( {
 			showDateTooltip: false,
 			firstDayOfTheMonth: this.getFirstDayOfTheMonth(),
 			lastDayOfTheMonth: this.getLastDayOfTheMonth(),
-			needsVerification: config( 'email_verification_gate' ) && userUtils.needsVerificationForSite( this.props.site ),
+			needsVerification: config( 'email_verification_gate' ) && this.props.userUtils.needsVerificationForSite( this.props.site ),
 		};
+	},
+
+	componentWillReceiveProps: function( nextProps ) {
+		this.setState( {
+			needsVerification: config( 'email_verification_gate' ) && nextProps.userUtils.needsVerificationForSite( nextProps.site ),
+		} );
+
+		if ( ! config( 'email_verification_gate' ) ) return;
+
+		this.props.user.off( 'change', this.updateNeedsVerification );
+		this.props.user.off( 'verify', this.updateNeedsVerification );
+		nextProps.user.on( 'change', this.updateNeedsVerification );
+		nextProps.user.on( 'verify', this.updateNeedsVerification );
 	},
 
 	setPostDate: function( date ) {
@@ -177,7 +192,7 @@ export default React.createClass( {
 	getVerificationNoticeLabel: function() {
 		const primaryButtonState = this.getPrimaryButtonState();
 		let buttonLabels;
-		
+
 		// TODO: switch entirely to new wording once translations catch up
 		if ( i18n.getLocaleSlug() === 'en' ) {
 			buttonLabels = {

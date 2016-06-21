@@ -38,7 +38,6 @@ const actions = require( 'lib/posts/actions' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
 	VerifyEmailDialog = require( 'post-editor/verify-email-dialog' ),
 	utils = require( 'lib/posts/utils' ),
-	userUtils = require( 'lib/user/utils' ),
 	EditorPreview = require( './editor-preview' ),
 	stats = require( 'lib/posts/stats' ),
 	analytics = require( 'lib/analytics' );
@@ -170,7 +169,9 @@ const PostEditor = React.createClass( {
 		preferences: React.PropTypes.object,
 		setEditorModePreference: React.PropTypes.func,
 		editorModePreference: React.PropTypes.string,
-		sites: React.PropTypes.object
+		sites: React.PropTypes.object,
+		user: React.PropTypes.object,
+		userUtils: React.PropTypes.object,
 	},
 
 	_previewWindow: null,
@@ -408,6 +409,8 @@ const PostEditor = React.createClass( {
 								onTrashingPost={ this.onTrashingPost }
 								onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 								site={ site }
+								user={ this.props.user }
+								userUtils={ this.props.userUtils }
 								type={ this.props.type }
 							/>
 							<EditorDrawer
