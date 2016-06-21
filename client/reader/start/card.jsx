@@ -13,7 +13,7 @@ import StartCardHeader from './card-header';
 import { recordRecommendationInteraction } from 'state/reader/start/actions';
 import { getRecommendationById } from 'state/reader/start/selectors';
 import { getPostBySiteAndId } from 'state/reader/posts/selectors';
-import { recordTrack, recordTrackForPost } from 'reader/stats';
+import { recordTrack, recordTrackForPost, recordTracksRailcarInteract } from 'reader/stats';
 
 const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-unused-vars
 
@@ -33,10 +33,7 @@ const StartCard = React.createClass( {
 				recommendation_id: this.props.recommendationId
 			} );
 			if ( this.props.recommendation.railcar ) {
-				recordTrack( 'calypso_traintracks_interact', {
-					action: 'startcard_clicked',
-					railcar: this.props.recommendation.railcar
-				} );
+				recordTracksRailcarInteract( 'startcard_clicked', this.props.recommendation.railcar );
 			}
 		}
 	},
