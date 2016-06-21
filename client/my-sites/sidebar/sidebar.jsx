@@ -30,7 +30,6 @@ import Button from 'components/button';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
-import { abtest } from 'lib/abtest';
 
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
@@ -336,7 +335,7 @@ module.exports = React.createClass( {
 
 		let planLink = '/plans' + this.siteSuffix();
 
-		if ( config.isEnabled( 'manage/plan-features' ) && abtest( 'planFeatures' ) === 'show' ) {
+		if ( config.isEnabled( 'manage/plan-features' ) ) {
 			planLink = '/plans/features' + this.siteSuffix();
 		}
 

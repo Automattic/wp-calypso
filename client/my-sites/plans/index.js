@@ -13,10 +13,9 @@ import plansController from './controller';
 import { retarget } from 'lib/analytics/ad-tracking';
 import googleAnalyticsLandingPage from './plan-feature/google-analytics';
 import yourPlan from './current-plan/controller';
-import { abtest } from 'lib/abtest';
 
 export default function() {
-	if ( config.isEnabled( 'manage/plan-features' ) && abtest( 'planFeatures' ) === 'show' ) {
+	if ( config.isEnabled( 'manage/plan-features' ) ) {
 		page(
 			'/plans/features',
 			retarget,
