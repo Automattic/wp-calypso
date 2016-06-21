@@ -29,8 +29,6 @@ var config = require( 'config' ),
 import Button from 'components/button';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
-import DraftsButton from 'post-editor/drafts-button';
-import Tooltip from 'components/tooltip';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 
 module.exports = React.createClass( {
@@ -38,12 +36,6 @@ module.exports = React.createClass( {
 
 	componentDidMount: function() {
 		debug( 'The sidebar React component is mounted.' );
-	},
-
-	getInitialState: function() {
-		return {
-			draftsTooltip: false
-		};
 	},
 
 	onNavigate: function() {
@@ -676,10 +668,6 @@ module.exports = React.createClass( {
 		);
 	},
 
-	onDraftsClick: function() {
-		page( '/posts/drafts' + this.siteSuffix() );
-	},
-
 	render: function() {
 		var publish = !! this.publish(),
 			appearance = ( !! this.themes() || !! this.menus() ),
@@ -718,26 +706,7 @@ module.exports = React.createClass( {
 
 				{ publish
 					? <SidebarMenu>
-						<SidebarHeading>
-							{ this.translate( 'Publish' ) }
-							{ config.isEnabled( 'sidebar-drafts-count' ) &&
-								<div
-									className="sidebar__drafts-button"
-									onMouseEnter={ () => this.setState( { draftsTooltip: true } ) }
-									onMouseLeave={ () => this.setState( { draftsTooltip: false } ) }
-									ref="draftsButton"
-								>
-									<DraftsButton hideText onClick={ this.onDraftsClick } />
-									<Tooltip
-										context={ this.refs && this.refs.draftsButton }
-										isVisible={ this.state.draftsTooltip }
-										position="top"
-									>
-										{ this.translate( 'Drafts' ) }
-									</Tooltip>
-								</div>
-							}
-						</SidebarHeading>
+						<SidebarHeading>{ this.translate( 'Publish' ) }</SidebarHeading>
 						{ this.publish() }
 					</SidebarMenu>
 					: null

@@ -83,7 +83,6 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/security/scan": true,
-		"sidebar-drafts-count": true,
 		"support-user": true,
 		"sync-handler": true,
 		"upgrades/checkout": true,
