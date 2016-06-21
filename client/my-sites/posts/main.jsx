@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -48,27 +49,29 @@ const PostsMain = React.createClass( {
 		const site = this.props.sites.getSelectedSite();
 		const isLoading = this.props.draftCount !== 0 && this.props.loadingDrafts;
 
+		if ( ! site ) {
+			return null;
+		}
+
 		return (
 			<div className="posts__recent-drafts">
-				{ site &&
-					<QueryPosts
-						siteId={ site.ID }
-						query={ this.props.draftsQuery } />
-				}
-				{ site && <QueryPostCounts siteId={ site.ID } type="post" /> }
+				<QueryPosts
+					siteId={ site.ID }
+					query={ this.props.draftsQuery } />
+				<QueryPostCounts siteId={ site.ID } type="post" />
 				<Card compact className="posts__drafts-header">
 					<span>
 						{ this.translate( 'Drafts' ) }
 						{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
 					</span>
-					<Button disabled={ ! site } borderless href={ this.props.newPostPath }>
+					<Button borderless href={ this.props.newPostPath }>
 						<Gridicon icon="plus" />
 					</Button>
 				</Card>
 				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 				{ isLoading && <Draft isPlaceholder /> }
 				{ this.props.draftCount === 0 && <NoResults text={ this.translate( 'You have no drafts at the moment.' ) } /> }
-				{ site && this.props.draftCount > 50 &&
+				{ this.props.draftCount > 50 &&
 					<Button compact borderless href={ `/posts/drafts/${ site.slug }` }>
 						{ this.translate( 'See all drafts' ) }
 					</Button>
@@ -87,8 +90,13 @@ const PostsMain = React.createClass( {
 
 	render() {
 		const path = sectionify( this.props.context.path );
+		const classes = classnames( 'posts', {
+			'is-multisite': ! this.props.sites.selected,
+			'is-single-site': this.props.sites.selected
+		} );
+
 		return (
-			<Main className="posts">
+			<Main className={ classes }>
 				<SidebarNavigation />
 				<div className="posts__primary">
 					<PostsNavigation { ...this.props } />
