@@ -73,6 +73,9 @@ export default React.createClass( {
 		if ( ! feature && ! isFreePlan( site.plan ) ) {
 			return false;
 		}
+		if ( feature === 'no-adverts' && site.options.wordads ) {
+			return false;
+		}
 		if ( ! jetpack && site.jetpack || jetpack && ! site.jetpack ) {
 			return false;
 		}
