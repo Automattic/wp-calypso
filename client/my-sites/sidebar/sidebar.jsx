@@ -336,8 +336,8 @@ module.exports = React.createClass( {
 
 		let planLink = '/plans' + this.siteSuffix();
 
-		if ( abtest( 'planFeatures' ) === 'show' ) {
-			planLink = '/plans/features' +this.siteSuffix();
+		if ( config.isEnabled( 'manage/plan-features' ) && abtest( 'planFeatures' ) === 'show' ) {
+			planLink = '/plans/features' + this.siteSuffix();
 		}
 
 		// Show plan details for upgraded sites

@@ -30,8 +30,9 @@ import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
 import { PLAN_MONTHLY_PERIOD } from 'lib/plans/constants';
 import { abtest } from 'lib/abtest';
+import config from 'config';
 
-const showPlanFeatures = abtest( 'planFeatures' ) === 'show';
+const showPlanFeatures = config.isEnabled( 'manage/plan-features' ) && abtest( 'planFeatures' ) === 'show';
 
 const Plans = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
