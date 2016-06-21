@@ -3,8 +3,8 @@ $autobar-height: 20px;
 
 // The WordPress.com Masterbar
 .masterbar {
-	background: $blue-wordpress;
-	border-bottom: 1px solid darken( $blue-wordpress, 4% );
+	background: $masterbar-color;
+	border-bottom: 1px solid darken( $masterbar-color, 4% );
 	color: $white;
 	font-size: 16px;
 	display: flex;
@@ -63,14 +63,13 @@ $autobar-height: 20px;
 
 	&:hover,
 	&:focus {
-		background: $blue-medium;
-		background: rgba( 255, 255, 255, 0.15 );
+		background: lighten( $masterbar-color, 5% );
 		color: $white;
 		outline: 0;
 	}
 
 	&.is-active {
-		background: $blue-dark;
+		background: darken( $masterbar-color, 17% );
 	}
 
 	.is-support-user &.is-active {
@@ -213,7 +212,7 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__notifications-bubble {
-		border: solid 2px $blue-wordpress;
+		border: solid 2px $masterbar-color;
 		border-radius: 50%;
 		display: none;
 		font-size: 8px;
@@ -235,11 +234,11 @@ $autobar-height: 20px;
 	}
 
 	&:hover .masterbar__notifications-bubble {
-		border-color: #1a98ca;
+		border-color: lighten( $masterbar-color, 5% );
 	}
 
 	&.is-active .masterbar__notifications-bubble {
-		border-color: $blue-dark;
+		border-color: darken( $masterbar-color, 10% );
 	}
 
 	&.has-unread .masterbar__notifications-bubble {
