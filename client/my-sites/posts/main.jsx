@@ -116,13 +116,14 @@ const PostsMain = React.createClass( {
 
 } );
 
-export default connect( ( state ) => {
+export default connect( ( state, props ) => {
 	const siteId = getSelectedSiteId( state );
 	const draftsQuery = {
 		type: 'post',
 		status: 'draft',
 		number: 6,
-		order_by: 'modified'
+		order_by: 'modified',
+		author: props.author
 	};
 
 	return {
