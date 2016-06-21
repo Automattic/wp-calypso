@@ -11,11 +11,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<main
-				className={ classnames( this.props.className, 'main' ) }
-				role="main"
-				style={ this.props.style }
-			>
+			<main className={ classnames( this.props.className, 'main' ) } role="main">
 				{ this.props.children }
 			</main>
 		);

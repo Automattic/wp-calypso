@@ -142,14 +142,11 @@ const Plans = React.createClass( {
 	},
 
 	render() {
-		const selectedSite = this.props.sites.getSelectedSite();
-		let hasJpphpBundle,
-			currentPlan,
-			mainStyle;
+		const selectedSite = this.props.sites.getSelectedSite(),
+			mainClassNames = {};
 
-		if ( showPlanFeatures ) {
-			mainStyle = { maxWidth: 1040 };
-		}
+		let	hasJpphpBundle,
+			currentPlan;
 
 		if ( this.props.sitePlans.hasLoadedFromServer ) {
 			currentPlan = getCurrentPlan( this.props.sitePlans.data );
@@ -168,11 +165,15 @@ const Plans = React.createClass( {
 			);
 		}
 
+		if ( showPlanFeatures ) {
+			mainClassNames[ 'is-wide-layout' ] = true;
+		}
+
 		return (
 			<div>
 				{ this.renderNotice() }
 
-				<Main style={ mainStyle }>
+				<Main className={ mainClassNames }>
 					<SidebarNavigation />
 
 					<div id="plans" className="plans has-sidebar">
