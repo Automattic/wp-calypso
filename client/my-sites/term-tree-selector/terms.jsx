@@ -313,24 +313,6 @@ const TermTreeSelectorList = React.createClass( {
 		);
 	},
 
-	renderPlaceholder() {
-		if ( this.props.loading || ! this.props.terms ) {
-			return (
-				<div key="placeholder" className="term-tree-selector__list-item is-placeholder">
-						<label>
-							<input
-								type={ this.props.multiple ? 'checkbox' : 'radio' }
-								disabled
-								className="term-tree-selector__input" />
-							<span className="term-tree-selector__label">
-								{ this.props.translate( 'Loading…' ) }
-							</span>
-						</label>
-					</div>
-			);
-		}
-	},
-
 	renderNoResults() {
 		if ( this.hasNoSearchResults() || this.hasNoTerms() ) {
 			return (
