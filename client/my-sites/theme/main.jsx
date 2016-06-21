@@ -339,7 +339,8 @@ const ThemeSheet = React.createClass( {
 				{ this.state.showPreview && this.renderPreview() }
 				<HeaderCake className="themes__sheet-action-bar"
 							backHref={ this.props.backPath }
-							backText={ i18n.translate( 'All Themes' ) }>
+							backText={ i18n.translate( 'All Themes' ) }
+							noSecondBackButton={ true }>
 					<Button className="themes__sheet-primary-button" onClick={ this.onPrimaryClick }>
 						{ actionTitle }
 						{ ! this.isActive() && priceElement }

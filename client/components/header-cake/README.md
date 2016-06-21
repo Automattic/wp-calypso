@@ -18,3 +18,4 @@ The "header cake" component should be used at the top of an item's detail page. 
 * `backText` - React Element or string to use in place of default "Back" text
 * `backHref` - URL to specify where the back button should redirect
 * `isCompact` - Optional variant of a more visually compact header cake
+* `noSecondBackButton` - Disable second back button, it gets in the way of some layouts
