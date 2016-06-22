@@ -1,0 +1,11 @@
+.editor-seo-accordion {
+	.token-field__remove-token {
+		display: none;
+	}
+
+	.token-field__token-text {
+		border-radius: 4px;
+		background-color: lighten( $gray, 10% );
+		padding: 0 6px;
+	}
+}

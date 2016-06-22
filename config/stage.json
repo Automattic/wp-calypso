@@ -30,6 +30,7 @@
 		"manage/ads": true,
 		"manage/ads/jetpack": true,
 		"manage/ads/wordads-instant": true,
+		"manage/advanced-seo": true,
 		"manage/customize": true,
 		"manage/edit-user": true,
 		"manage/jetpack": true,
