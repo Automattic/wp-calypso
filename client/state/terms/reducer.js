@@ -10,6 +10,9 @@ import keyBy from 'lodash/keyBy';
  */
 import {
 	DESERIALIZE,
+	TERMS_ADD_REQUEST,
+	TERMS_ADD_REQUEST_SUCCESS,
+	TERMS_ADD_REQUEST_FAILURE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_FAILURE,
@@ -143,6 +146,28 @@ export function items( state = {}, action ) {
 					[ action.taxonomy ]: keyBy( action.terms, 'ID' )
 				}
 			} );
+
+		case TERMS_ADD_REQUEST:
+			return merge( {}, state, {
+				[ action.siteId ]: {
+					[ action.taxonomy ]: {
+						[ action.temporaryId ]: action.term
+					}
+				}
+			} );
+
+		case TERMS_ADD_REQUEST_SUCCESS:
+			const taxonomyTerms = merge( {}, state );
+			taxonomyTerms[ action.siteId ][ action.taxonomy ][ action.term.ID ] = action.term;
+			delete taxonomyTerms[ action.siteId ][ action.taxonomy ][ action.temporaryId ];
+
+			return taxonomyTerms;
+
+		case TERMS_ADD_REQUEST_FAILURE:
+			const terms = merge( {}, state );
+			delete terms[ action.siteId ][ action.taxonomy ][ action.temporaryId ];
+
+			return terms;
 
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, termsSchema ) ) {

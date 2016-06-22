@@ -66,10 +66,10 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: TERMS_ADD_REQUEST,
-				temporaryId: sinon.match( /^temporary-/ ),
+				temporaryId: sinon.match( /^temporary/ ),
 				siteId: siteId,
 				taxonomy: taxonomyName,
-				args: { name: 'ribs' }
+				term: { name: 'ribs' }
 			} );
 		} );
 
@@ -77,10 +77,10 @@ describe( 'actions', () => {
 			return addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: TERMS_ADD_REQUEST_SUCCESS,
-					temporaryId: sinon.match( /^temporary-/ ),
+					temporaryId: sinon.match( /^temporary/ ),
 					siteId: siteId,
 					taxonomy: taxonomyName,
-					args: { name: 'ribs' },
+					term: { name: 'ribs' },
 					data: {
 						ID: 123,
 						name: 'ribs',
@@ -94,10 +94,10 @@ describe( 'actions', () => {
 			return addTerm( siteId, 'chicken-and-ribs', { name: 'new term' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: TERMS_ADD_REQUEST_FAILURE,
-					temporaryId: sinon.match( /^temporary-/ ),
+					temporaryId: sinon.match( /^temporary/ ),
 					siteId: siteId,
 					taxonomy: 'chicken-and-ribs',
-					args: { name: 'new term' },
+					term: { name: 'new term' },
 					error: sinon.match( { error: 'invalid_taxonomy' } )
 				} );
 			} );

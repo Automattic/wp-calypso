@@ -2,6 +2,7 @@
  * External dependencies
  */
 import omit from 'lodash/omit';
+import uniqueId from 'lodash/uniqueId';
 
 /**
  * Internal dependencies
@@ -18,56 +19,46 @@ import {
 } from 'state/action-types';
 
 /**
- * Module constants
- */
-let temporaryIdCount = 0;
-
-function getTemporaryId() {
-	const temporaryId = [ 'temporary', temporaryIdCount ].join( '-' );
-	temporaryIdCount++;
-	return temporaryId;
-}
-
-/**
  * Returns an action thunk, dispatching progress of a request to add a new term
  * the site and taxonomy.
  *
  * @param  {Number} siteId   Site ID
  * @param  {String} taxonomy Taxonomy Slug
- * @param  {Object} args     Object of new term attributes
+ * @param  {Object} term     Object of new term attributes
  * @return {Object}          Action object
  */
-export function addTerm( siteId, taxonomy, args ) {
-	return ( dispatch ) => {
-		const temporaryId = getTemporaryId();
+export function addTerm( siteId, taxonomy, term ) {
+	return async ( dispatch ) => {
+		const temporaryId = uniqueId( 'temporary' );
 
 		dispatch( {
 			type: TERMS_ADD_REQUEST,
 			temporaryId,
 			siteId,
 			taxonomy,
-			args
+			term
 		} );
 
-		return wpcom.site( siteId ).taxonomy( taxonomy ).term().add( args ).then( ( data ) => {
+		try {
+			const data = await wpcom.site( siteId ).taxonomy( taxonomy ).term().add( term );
 			dispatch( {
 				type: TERMS_ADD_REQUEST_SUCCESS,
 				data: omit( data, '_headers' ),
 				temporaryId,
 				siteId,
 				taxonomy,
-				args
+				term
 			} );
-		} ).catch( ( error ) => {
+		} catch ( error ) {
 			dispatch( {
 				type: TERMS_ADD_REQUEST_FAILURE,
 				temporaryId,
 				siteId,
 				taxonomy,
-				args,
+				term,
 				error
 			} );
-		} );
+		}
 	};
 }
 
