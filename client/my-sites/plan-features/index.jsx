@@ -14,6 +14,7 @@ import PlanFeaturesHeader from './header';
 import PlanFeaturesItemList from './list';
 import PlanFeaturesItem from './item';
 import PlanFeaturesFooter from './footer';
+import PlanFeaturesPlaceholder from './placeholder';
 import { isCurrentSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPlanRawPrice, getPlan } from 'state/plans/selectors';
@@ -21,8 +22,8 @@ import { plansList, getPlanFeaturesObject, PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINES
 
 class PlanFeatures extends Component {
 	render() {
-		if ( ! this.props.planObject ) {
-			return null;
+		if ( ! this.props.planObject || this.props.isPlaceholder ) {
+			return <PlanFeaturesPlaceholder />;
 		}
 
 		const {
@@ -90,7 +91,8 @@ export default connect( ( state, ownProps ) => {
 		rawPrice: getPlanRawPrice( state, planProductId /**, get from abtest **/ ),
 		planConstantObj: plansList[ ownProps.plan ],
 		billingTimeFrame: get( planObject, 'bill_period_label', '' ),
-		planObject: planObject
+		planObject: planObject,
+		isPlaceholder: get( ownProps, 'placeholder', false )
 	};
 } )( PlanFeatures );
 
