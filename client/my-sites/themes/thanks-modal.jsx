@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 
 /**
@@ -10,14 +11,27 @@ import page from 'page';
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
 import { getDetailsUrl, getCustomizeUrl, getForumUrl, trackClick } from './helpers';
+import {
+	isActivating,
+	hasActivated,
+	getCurrentTheme
+} from 'state/themes/current-theme/selectors';
+import { clearActivated } from 'state/themes/actions';
 
 const ThanksModal = React.createClass( {
 	trackClick: trackClick.bind( null, 'current theme' ),
 
 	propTypes: {
-		clearActivated: React.PropTypes.func.isRequired,
 		// Where is the modal being used?
 		source: React.PropTypes.oneOf( [ 'details', 'list' ] ).isRequired,
+		// Connected props
+		isActivating: React.PropTypes.bool.isRequired,
+		hasActivated: React.PropTypes.bool.isRequired,
+		currentTheme: React.PropTypes.shape( {
+			name: React.PropTypes.string,
+			id: React.PropTypes.string
+		} ),
+		clearActivated: React.PropTypes.func.isRequired,
 	},
 
 	onCloseModal() {
@@ -172,4 +186,11 @@ const ThanksModal = React.createClass( {
 	},
 } );
 
-export default ThanksModal;
+export default connect(
+	( state, props ) => ( {
+		isActivating: isActivating( state ),
+		hasActivated: hasActivated( state ),
+		currentTheme: getCurrentTheme( state, props.site ? props.site.ID : null )
+	} ),
+	{ clearActivated }
+)( ThanksModal );
