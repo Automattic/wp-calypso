@@ -46,25 +46,31 @@ class PostTypeList extends Component {
 		super( ...arguments );
 
 		this.renderPostRow = this.renderPostRow.bind( this );
+		this.renderPlaceholder = this.renderPlaceholder.bind( this );
 		this.setRequestedPages = this.setRequestedPages.bind( this );
 		this.setVirtualScrollRef = this.setVirtualScrollRef.bind( this );
-		this.state = { requestedPages: [] };
+
+		this.state = {
+			requestedPages: this.getInitialRequestedPages( this.props )
+		};
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( this.props.query, nextProps.query ) ) {
-			this.setState( { requestedPages: [] } );
+			this.setState( {
+				requestedPages: this.getInitialRequestedPages( nextProps )
+			} );
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		// If, after requesting, it turns out that there's only a single post,
-		// VirtualScroll may not update because the row count doesn't change
-		// (1 placeholder, 1 post result). In these cases, force an update.
-		if ( this.props.posts && 1 === this.props.posts.length && this.virtualScroll &&
-				! this.props.requestingFirstPage && prevProps.requestingFirstPage ) {
-			this.virtualScroll.forceUpdate();
+	getInitialRequestedPages( props ) {
+		// If we have no posts, start by requesting the first page, since
+		// setRequestedPages won't be called if row count is 0
+		if ( ! props.posts ) {
+			return [ 1 ];
 		}
+
+		return [];
 	}
 
 	setVirtualScrollRef( ref ) {
@@ -107,24 +113,28 @@ class PostTypeList extends Component {
 	}
 
 	getRowCount() {
-		let count = 1;
+		let count = 0;
 
 		if ( this.props.posts ) {
 			count += this.props.posts.length;
-		}
 
-		if ( this.isLastPage() ) {
-			count--;
+			if ( ! this.isLastPage() ) {
+				count++;
+			}
 		}
 
 		return count;
+	}
+
+	renderPlaceholder() {
+		return <PostTypeListPostPlaceholder key="placeholder" />;
 	}
 
 	renderPostRow( { index } ) {
 		const { requestingFirstPage, posts } = this.props;
 		if ( ! posts || ( requestingFirstPage && 0 === index ) ||
 				( ! requestingFirstPage && index >= posts.length ) ) {
-			return <PostTypeListPostPlaceholder key="placeholder" />;
+			return this.renderPlaceholder();
 		}
 
 		const { global_ID: globalId } = posts[ requestingFirstPage ? index - 1 : index ];
@@ -160,6 +170,7 @@ class PostTypeList extends Component {
 										height={ height }
 										width={ width }
 										onRowsRendered={ this.setRequestedPages }
+										noRowsRenderer={ this.renderPlaceholder }
 										rowRenderer={ this.renderPostRow }
 										rowHeight={ POST_ROW_HEIGHT }
 										rowCount={ this.getRowCount() }
