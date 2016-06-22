@@ -308,3 +308,47 @@ export function getEditedPost( state, siteId, postId ) {
 export function getEditedPostValue( state, siteId, postId, field ) {
 	return get( getEditedPost( state, siteId, postId ), field );
 }
+
+/**
+ * Returns the ID of the post given its global ID, or null if not known
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {String}  globalId Post global ID
+ * @return {?Number}          Post ID, if known
+ */
+export function getPostId( state, globalId ) {
+	return get( getPost( state, globalId ), 'ID', null );
+}
+
+/**
+ * Returns the site ID of the post given its global ID, or null if not known
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {String}  globalId Post global ID
+ * @return {?Number}          Post site ID, if known
+ */
+export function getPostSiteId( state, globalId ) {
+	return get( getPost( state, globalId ), 'site_ID', null );
+}
+
+/**
+ * Returns the status of the post given its global ID, or null if not known
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {String}  globalId Post global ID
+ * @return {?String}          Post status, if known
+ */
+export function getPostStatus( state, globalId ) {
+	return get( getPost( state, globalId ), 'status', null );
+}
+
+/**
+ * Returns the URL of the post given its global ID, or null if not known
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {String}  globalId Post global ID
+ * @return {?String}          Post URL, if known
+ */
+export function getPostUrl( state, globalId ) {
+	return get( getPost( state, globalId ), 'URL', null );
+}
