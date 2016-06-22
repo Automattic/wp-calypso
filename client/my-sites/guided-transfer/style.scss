@@ -1,0 +1,25 @@
+.guided-transfer {
+	.guided-transfer__header-nav {
+		margin: 0 0 17px 0;
+	}
+
+	.guided-transfer__account-username-fieldset,
+	.guided-transfer__account-password-fieldset {
+		display: inline-block;
+		width: 100%;
+	}
+
+	@include breakpoint( ">960px" ) {
+		.guided-transfer__account-username-fieldset,
+		.guided-transfer__account-password-fieldset {
+			width: 50%;
+
+			/* Override the default margin bottom provided for FormFieldset */
+			margin-bottom: 0px;
+		}
+
+		.guided-transfer__account-username-fieldset {
+			padding-right: 10px;
+		}
+	}
+}
