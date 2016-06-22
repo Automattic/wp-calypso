@@ -303,10 +303,10 @@ Undocumented.prototype._sendRequestWithLocale = function( originalParams, fn ) {
 
 	if ( apiVersion ) {
 		// TODO: temporary solution for apiVersion until https://github.com/Automattic/wpcom.js/issues/152 is resolved
-		this.wpcom.req[ method.toLowerCase() ]( updatedParams, { apiVersion }, fn );
-	} else {
-		this.wpcom.req[ method.toLowerCase() ]( updatedParams, fn );
+		return this.wpcom.req[ method.toLowerCase() ]( updatedParams, { apiVersion }, fn );
 	}
+
+	return this.wpcom.req[ method.toLowerCase() ]( updatedParams, fn );
 };
 
 /**
@@ -491,7 +491,7 @@ Undocumented.prototype.validateDomainContactInformation = function( contactInfor
  */
 Undocumented.prototype.getProducts = function( fn ) {
 	debug( '/products query' );
-	this._sendRequestWithLocale( {
+	return this._sendRequestWithLocale( {
 		path: '/products',
 		method: 'get'
 	}, fn );

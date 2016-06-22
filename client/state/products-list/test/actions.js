@@ -12,7 +12,6 @@ import {
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
 	PRODUCTS_LIST_REQUEST_FAILURE,
-	PRODUCTS_LIST_REQUEST_SUCCESS,
 } from 'state/action-types';
 import {
 	receiveProductsList,
@@ -32,30 +31,7 @@ describe( 'actions', () => {
 
 	describe( '#receiveProductsList()', () => {
 		it( 'should return an action object', () => {
-			const product = {
-				guided_transfer: {
-					product_id: 40,
-					product_name: 'Guided Transfer',
-					product_slug: 'guided_transfer',
-					prices: { USD: 129, AUD: 169 },
-					is_domain_registration: false,
-					description: 'Guided Transfer',
-					cost: 129,
-					cost_display: '$129',
-				}
-			};
-			const action = receiveProductsList( [ product ] );
-
-			expect( action ).to.eql( {
-				type: PRODUCTS_LIST_RECEIVE,
-				productsList: [ product ]
-			} );
-		} );
-	} );
-
-	describe( '#requestProductsList()', () => {
-		const product = {
-			guided_transfer: {
+			const guided_transfer = {
 				product_id: 40,
 				product_name: 'Guided Transfer',
 				product_slug: 'guided_transfer',
@@ -64,18 +40,37 @@ describe( 'actions', () => {
 				description: 'Guided Transfer',
 				cost: 129,
 				cost_display: '$129',
-			}
+			};
+			const action = receiveProductsList( { guided_transfer } );
+
+			expect( action ).to.eql( {
+				type: PRODUCTS_LIST_RECEIVE,
+				productsList: { guided_transfer },
+			} );
+		} );
+	} );
+
+	describe( '#requestProductsList()', () => {
+		const guided_transfer = {
+			product_id: 40,
+			product_name: 'Guided Transfer',
+			product_slug: 'guided_transfer',
+			prices: { USD: 129, AUD: 169 },
+			is_domain_registration: false,
+			description: 'Guided Transfer',
+			cost: 129,
+			cost_display: '$129',
 		};
 
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
 				.get( '/rest/v1.1/products' )
-				.reply( 200, [ product ] )
+				.twice().reply( 200, { guided_transfer } )
 				.get( '/rest/v1.1/products' )
-				.reply( 200, [ product ] )
-				.get( '/rest/v1.1/products' )
-				.reply( 500, [ product ] );
+				.reply( 500, {
+					error: 'server_error',
+					message: 'A server error occurred',
+				} );
 		} );
 
 		it( 'should dispatch fetch action when thunk triggered', () => {
@@ -90,15 +85,7 @@ describe( 'actions', () => {
 			return requestProductsList()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PRODUCTS_LIST_RECEIVE,
-					productsList: [ product ]
-				} );
-			} );
-		} );
-
-		it( 'should dispatch product list request success action when request completes', () => {
-			return requestProductsList()( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: PRODUCTS_LIST_REQUEST_SUCCESS,
+					productsList: { guided_transfer }
 				} );
 			} );
 		} );
