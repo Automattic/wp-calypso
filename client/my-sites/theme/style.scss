@@ -278,7 +278,7 @@
 	li {
 		list-style: none;
 		display: inline-block;
-		background: #E9EFF3;
+		// background: lighten( $gray, 30% ); // To be restored once made clickable
 		color: $gray-dark;
 		font-size: 0.925em;
 		margin: 0.38em 0.37rem;
