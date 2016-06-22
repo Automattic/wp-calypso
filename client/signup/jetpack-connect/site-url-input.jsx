@@ -82,6 +82,7 @@ export default React.createClass( {
 	},
 
 	render() {
+		const hasError = this.props.isError && ( 'notExists' !== this.props.isError );
 		return (
 			<div>
 				<FormLabel>{ this.translate( 'Site Address' ) }</FormLabel>
@@ -103,7 +104,7 @@ export default React.createClass( {
 				<Card className="jetpack-connect__connect-button-card">
 					{ this.renderTermsOfServiceLink() }
 					<Button primary
-						disabled={ ( ! this.state.value || this.props.isFetching || 'alreadyOwned' === this.props.isError ) }
+						disabled={ ( ! this.state.value || this.props.isFetching || hasError ) }
 						onClick={ this.props.onClick }>{ this.renderButtonLabel() }</Button>
 				</Card>
 			</div>
