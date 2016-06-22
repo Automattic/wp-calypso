@@ -13,6 +13,7 @@ import StartCardHeader from './card-header';
 import { recordRecommendationInteraction } from 'state/reader/start/actions';
 import { getRecommendationById } from 'state/reader/start/selectors';
 import { getPostBySiteAndId } from 'state/reader/posts/selectors';
+import { getSite } from 'state/reader/sites/selectors';
 import { recordTrack, recordTrackForPost, recordTracksRailcarInteract } from 'reader/stats';
 
 const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-unused-vars
@@ -39,20 +40,20 @@ const StartCard = React.createClass( {
 	},
 
 	render() {
-		const { siteId, postId, post } = this.props;
-
+		const { post, site } = this.props;
+		const hasPost = !! post;
 		const cardClasses = classnames(
 			'reader-start-card',
 			{
-				'has-post-preview': ( postId > 0 ),
-				'is-photo': post && post.excerpt.length < 1
+				'has-post-preview': hasPost,
+				'is-photo': hasPost && post.excerpt.length < 1
 			}
 		);
 
 		return (
 			<Card className={ cardClasses } onClick={ this.onCardInteraction }>
-				<StartCardHeader siteId={ siteId } />
-				{ postId > 0 && <StartPostPreview siteId={ siteId } postId={ postId } /> }
+				<StartCardHeader site={ site } />
+				{ hasPost && <StartPostPreview post={ post } /> }
 			</Card>
 		);
 	}
@@ -67,14 +68,13 @@ export default connect(
 		const recommendation = getRecommendationById( state, ownProps.recommendationId );
 		const siteId = get( recommendation, 'recommended_site_ID' );
 		const postId = get( recommendation, 'recommended_post_ID' );
-
+		const site = siteId ? getSite( state, siteId ) : undefined;
 		const post = postId ? getPostBySiteAndId( state, siteId, postId ) : undefined;
 
 		return {
 			recommendation,
-			siteId,
-			postId,
-			post
+			post,
+			site
 		};
 	},
 	( dispatch ) => bindActionCreators( {
