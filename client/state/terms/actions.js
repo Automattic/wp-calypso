@@ -9,9 +9,7 @@ import uniqueId from 'lodash/uniqueId';
  */
 import wpcom from 'lib/wp';
 import {
-	TERMS_ADD_REQUEST,
-	TERMS_ADD_REQUEST_SUCCESS,
-	TERMS_ADD_REQUEST_FAILURE,
+	TERM_REMOVE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_SUCCESS,
@@ -31,34 +29,28 @@ export function addTerm( siteId, taxonomy, term ) {
 	return ( dispatch ) => {
 		const temporaryId = uniqueId( 'temporary' );
 
-		dispatch( {
-			type: TERMS_ADD_REQUEST,
-			temporaryId,
-			siteId,
-			taxonomy,
-			term
-		} );
+		dispatch( receiveTerm( siteId, taxonomy, {
+			...term,
+			ID: temporaryId
+		} ) );
 
-		return wpcom.site( siteId ).taxonomy( taxonomy ).term().add( term ).then( ( data ) => {
-			dispatch( {
-				type: TERMS_ADD_REQUEST_SUCCESS,
-				data: omit( data, '_headers' ),
-				temporaryId,
-				siteId,
-				taxonomy,
-				term
-			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: TERMS_ADD_REQUEST_FAILURE,
-				temporaryId,
-				siteId,
-				taxonomy,
-				term,
-				error
-			} );
-		} );
+		return wpcom.site( siteId ).taxonomy( taxonomy ).term().add( term ).then(
+			( data ) => dispatch( receiveTerm( siteId, taxonomy, omit( data, '_headers' ) ) ),
+			() => Promise.resolve() // Silently ignore failure so we can proceed to remove temporary
+		).then( () => dispatch( removeTerm( siteId, taxonomy, temporaryId ) ) );
 	};
+}
+
+/**
+ * Returns an action object signalling that a term has been received
+ *
+ * @param  {Number} siteId   Site ID
+ * @param  {String} taxonomy Taxonomy Slug
+ * @param  {Object} term     Term object
+ * @return {Object}          Action object
+ */
+export function receiveTerm( siteId, taxonomy, term ) {
+	return receiveTerms( siteId, taxonomy, [ term ] );
 }
 
 /**
@@ -78,6 +70,23 @@ export function receiveTerms( siteId, taxonomy, terms, query ) {
 		taxonomy,
 		terms,
 		query
+	};
+}
+
+/**
+ * Returns an action object signalling that a term is to be removed
+ *
+ * @param  {Number} siteId   Site ID
+ * @param  {String} taxonomy Taxonomy Slug
+ * @param  {Number} termId   Term ID
+ * @return {Object}          Action object
+ */
+export function removeTerm( siteId, taxonomy, termId ) {
+	return {
+		type: TERM_REMOVE,
+		siteId,
+		taxonomy,
+		termId
 	};
 }
 

@@ -4,15 +4,14 @@
 import { combineReducers } from 'redux';
 import merge from 'lodash/merge';
 import keyBy from 'lodash/keyBy';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
  */
 import {
 	DESERIALIZE,
-	TERMS_ADD_REQUEST,
-	TERMS_ADD_REQUEST_SUCCESS,
-	TERMS_ADD_REQUEST_FAILURE,
+	TERM_REMOVE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_FAILURE,
@@ -147,25 +146,19 @@ export function items( state = {}, action ) {
 				}
 			} );
 
-		case TERMS_ADD_REQUEST:
-			return merge( {}, state, {
-				[ action.siteId ]: {
-					[ action.taxonomy ]: {
-						[ action.temporaryId ]: action.term
-					}
-				}
-			} );
-
-		case TERMS_ADD_REQUEST_SUCCESS:
-		case TERMS_ADD_REQUEST_FAILURE:
-			const taxonomyTerms = merge( {}, state );
-			delete taxonomyTerms[ action.siteId ][ action.taxonomy ][ action.temporaryId ];
-
-			if ( action.type === TERMS_ADD_REQUEST_SUCCESS ) {
-				taxonomyTerms[ action.siteId ][ action.taxonomy ][ action.term.ID ] = action.term;
+		case TERM_REMOVE:
+			const { siteId, taxonomy, termId } = action;
+			if ( ! state[ siteId ] || ! state[ siteId ][ taxonomy ] ) {
+				return state;
 			}
 
-			return taxonomyTerms;
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					[ taxonomy ]: omit( state[ siteId ][ taxonomy ], termId )
+				}
+			};
 
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, termsSchema ) ) {
