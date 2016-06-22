@@ -31,7 +31,7 @@ import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import QueryPlans from 'components/data/query-plans';
-import config from 'config';
+import { isEnabled } from 'config';
 import InfoPopover from 'components/info-popover';
 import { isJetpack } from 'lib/site/utils';
 import {
@@ -60,6 +60,8 @@ const wordAdsFeature = {
 	1008: true,
 	product_slug: WORDADS_INSTANT,
 };
+
+const personalPlanTestEnabled = abtest( 'personalPlan' ) === 'show' && isEnabled( 'plans/personal-plan' );
 
 const PlansCompare = React.createClass( {
 	mixins: [ observe( 'features' ) ],
@@ -158,7 +160,7 @@ const PlansCompare = React.createClass( {
 	},
 
 	getColumnCount() {
-		const colsCount = abtest( 'personalPlan' ) === 'hide' ? 4 : 5;
+		const colsCount = personalPlanTestEnabled ? 5 : 4;
 
 		if ( ! this.props.selectedSite || ! this.props.selectedSite.jetpack ) {
 			return colsCount;
@@ -172,7 +174,7 @@ const PlansCompare = React.createClass( {
 		const plans = this.getPlans();
 		const { selectedSite } = this.props;
 
-		let features = this.props.features.get().filter( ( feature ) => {
+		const features = this.props.features.get().filter( ( feature ) => {
 			return plans.some( plan => {
 				return feature[ plan.product_id ];
 			} );
@@ -187,7 +189,7 @@ const PlansCompare = React.createClass( {
 			features.splice( 1, 0, googleAdCreditsFeature );
 		}
 
-		if ( config.isEnabled( 'manage/ads/wordads-instant' ) && abtest( 'wordadsInstantActivation' ) === 'enabled' ) {
+		if ( isEnabled( 'manage/ads/wordads-instant' ) && abtest( 'wordadsInstantActivation' ) === 'enabled' ) {
 			features.splice( 6, 0, wordAdsFeature );
 		}
 
@@ -426,7 +428,7 @@ const PlansCompare = React.createClass( {
 				<SectionNav selectedText={ text[ this.state.selectedPlan ] }>
 					<NavTabs>
 						{ freeOption }
-						{ abtest( 'personalPlan' ) === 'show' &&
+						{ personalPlanTestEnabled &&
 						<NavItem
 							onClick={ this.setPlan.bind( this, 'personal' ) }
 							selected={ 'personal' === this.state.selectedPlan }>
