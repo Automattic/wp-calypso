@@ -67,8 +67,6 @@ export default React.createClass( {
 	},
 
 	componentDidMount: function() {
-		if ( ! config( 'email_verification_gate' ) ) return;
-
 		this.props.user
 			&& this.props.user
 			.on( 'change', this.updateNeedsVerification )
@@ -76,8 +74,6 @@ export default React.createClass( {
 	},
 
 	componentWillUnmount: function() {
-		if ( ! config( 'email_verification_gate' ) ) return;
-
 		this.props.user
 			&& this.props.user
 			.off( 'change', this.updateNeedsVerification )
@@ -86,9 +82,7 @@ export default React.createClass( {
 
 	updateNeedsVerification: function() {
 		this.setState( {
-			needsVerification: config( 'email_verification_gate' )
-				&& this.props.userUtils
-				&& this.props.userUtils.needsVerificationForSite( this.props.site ),
+			needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
 		} );
 	},
 
@@ -99,20 +93,14 @@ export default React.createClass( {
 			showDateTooltip: false,
 			firstDayOfTheMonth: this.getFirstDayOfTheMonth(),
 			lastDayOfTheMonth: this.getLastDayOfTheMonth(),
-			needsVerification: config( 'email_verification_gate' )
-				&& this.props.userUtils
-				&& this.props.userUtils.needsVerificationForSite( this.props.site ),
+			needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
 		};
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
 		this.setState( {
-			needsVerification: config( 'email_verification_gate' )
-				&& nextProps.userUtils
-				&& nextProps.userUtils.needsVerificationForSite( nextProps.site ),
+			needsVerification: nextProps.userUtils && nextProps.userUtils.needsVerificationForSite( nextProps.site ),
 		} );
-
-		if ( ! config( 'email_verification_gate' ) ) return;
 
 		this.props.user
 			&& this.props.user

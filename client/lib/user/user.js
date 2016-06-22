@@ -49,9 +49,7 @@ User.prototype.initialize = function() {
 	this.fetching = false;
 	this.initialized = false;
 
-	if ( config( 'email_verification_gate' ) ) {
-		this.on( 'change', this.checkVerification.bind( this ) );
-	}
+	this.on( 'change', this.checkVerification.bind( this ) );
 
 	if ( isSupportUserSession() ) {
 		supportUserBoot();
