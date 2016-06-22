@@ -13,7 +13,6 @@ import {
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
 	PRODUCTS_LIST_REQUEST_FAILURE,
-	PRODUCTS_LIST_REQUEST_SUCCESS,
 	SERIALIZE,
 } from 'state/action-types';
 import reducer, {
@@ -128,7 +127,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should be false when a request completes', () => {
-			const state = isFetching( true, { type: PRODUCTS_LIST_REQUEST_SUCCESS } );
+			const state = isFetching( true, { type: PRODUCTS_LIST_RECEIVE } );
 			expect( state ).to.eql( false );
 		} );
 

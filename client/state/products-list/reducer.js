@@ -10,7 +10,6 @@ import {
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
 	PRODUCTS_LIST_REQUEST_FAILURE,
-	PRODUCTS_LIST_REQUEST_SUCCESS,
 	DESERIALIZE,
 	SERIALIZE,
 } from 'state/action-types';
@@ -53,8 +52,8 @@ export function isFetching( state = false, action ) {
 	switch ( action.type ) {
 		case PRODUCTS_LIST_REQUEST:
 			return true;
+		case PRODUCTS_LIST_RECEIVE:
 		case PRODUCTS_LIST_REQUEST_FAILURE:
-		case PRODUCTS_LIST_REQUEST_SUCCESS:
 			return false;
 		case SERIALIZE:
 		case DESERIALIZE:
