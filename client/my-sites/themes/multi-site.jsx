@@ -15,7 +15,7 @@ import ThemePreview from './theme-preview';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import ThemesSelection from './themes-selection';
-import { getDetailsUrl, getSupportUrl, isPremium, addTracking } from './helpers';
+import { getDetailsUrl, getSupportUrl, getHelpUrl, isPremium, addTracking } from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -76,6 +76,9 @@ const ThemesMultiSite = React.createClass( {
 				getUrl: theme => getSupportUrl( theme ),
 				// Free themes don't have support docs.
 				hideForTheme: theme => ! isPremium( theme )
+			},
+			help: {
+				getUrl: theme => getHelpUrl( theme )
 			},
 		};
 		return merge( {}, buttonOptions, actionLabels );
