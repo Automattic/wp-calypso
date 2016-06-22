@@ -1,7 +1,7 @@
 client/config
 =============
 
-The `index.js` file is generated on startup by `regenerate.js`. Based on the environment, data is read from the appropriate .json file in the root config directory, for example, `/config/development.json`. The data is then compared against a whitelist in `/config/client.json`, and whitelisted items are added to the data object in `/client/config/index.js`. You can read more about how to use `config` in the [main documentation](https://github.com/Automattic/wp-calypso#config).
+The `index.js` file is generated on startup by `regenerate-client.js`. Based on the environment, data is read from the appropriate .json file in the root config directory, for example, `/config/development.json`. The data is then compared against a whitelist in `/config/client.json`, and whitelisted items are added to the data object in `/client/config/index.js`. You can read more about how to use `config` in the [main documentation](https://github.com/Automattic/wp-calypso#config).
 
 Feature Flags API
 -----------------
