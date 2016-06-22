@@ -21,7 +21,11 @@ import {
 	getSitePostsHierarchyForQueryIgnoringPage,
 	isRequestingSitePost,
 	getEditedPost,
-	getEditedPostValue
+	getEditedPostValue,
+	getPostId,
+	getPostSiteId,
+	getPostStatus,
+	getPostUrl
 } from '../selectors';
 import PostQueryManager from 'lib/query-manager/post';
 
@@ -780,6 +784,130 @@ describe( 'selectors', () => {
 			}, 2916284, 841, 'discussion.pings_open' );
 
 			expect( editedPostValue ).to.be.true;
+		} );
+	} );
+
+	describe( 'getPostId()', () => {
+		it( 'should return null if not known', () => {
+			const id = getPostId( {
+				posts: {
+					items: {}
+				}
+			}, '3d097cb7c5473c169bba0eb8e3c6cb64' );
+
+			expect( id ).to.be.null;
+		} );
+
+		it( 'should return the ID of the post', () => {
+			const id = getPostId( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							URL: 'https://example.wordpress.com/?p=841',
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							title: 'Hello World',
+							status: 'publish'
+						}
+					}
+				}
+			}, '3d097cb7c5473c169bba0eb8e3c6cb64' );
+
+			expect( id ).to.equal( 841 );
+		} );
+	} );
+
+	describe( 'getPostSiteId()', () => {
+		it( 'should return null if not known', () => {
+			const siteId = getPostSiteId( {
+				posts: {
+					items: {}
+				}
+			}, '3d097cb7c5473c169bba0eb8e3c6cb64' );
+
+			expect( siteId ).to.be.null;
+		} );
+
+		it( 'should return the site ID of the post', () => {
+			const siteId = getPostSiteId( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							URL: 'https://example.wordpress.com/?p=841',
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							title: 'Hello World',
+							status: 'publish'
+						}
+					}
+				}
+			}, '3d097cb7c5473c169bba0eb8e3c6cb64' );
+
+			expect( siteId ).to.equal( 2916284 );
+		} );
+	} );
+
+	describe( 'getPostStatus()', () => {
+		it( 'should return null if not known', () => {
+			const status = getPostStatus( {
+				posts: {
+					items: {}
+				}
+			}, '3d097cb7c5473c169bba0eb8e3c6cb64' );
+
+			expect( status ).to.be.null;
+		} );
+
+		it( 'should return the status of the post', () => {
+			const status = getPostStatus( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							URL: 'https://example.wordpress.com/?p=841',
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							title: 'Hello World',
+							status: 'publish'
+						}
+					}
+				}
+			}, '3d097cb7c5473c169bba0eb8e3c6cb64' );
+
+			expect( status ).to.equal( 'publish' );
+		} );
+	} );
+
+	describe( 'getPostUrl()', () => {
+		it( 'should return null if not known', () => {
+			const url = getPostUrl( {
+				posts: {
+					items: {}
+				}
+			}, '3d097cb7c5473c169bba0eb8e3c6cb64' );
+
+			expect( url ).to.be.null;
+		} );
+
+		it( 'should return the URL of the post', () => {
+			const url = getPostUrl( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							URL: 'https://example.wordpress.com/?p=841',
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							title: 'Hello World',
+							status: 'publish'
+						}
+					}
+				}
+			}, '3d097cb7c5473c169bba0eb8e3c6cb64' );
+
+			expect( url ).to.equal( 'https://example.wordpress.com/?p=841' );
 		} );
 	} );
 } );
