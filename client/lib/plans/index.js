@@ -66,6 +66,11 @@ export function getSitePlanSlug( siteID ) {
 	return get( site, 'plan.product_slug' );
 }
 
+export const getCartItem = ( productSlug, isFreeTrial = false ) => ( {
+	product_slug: productSlug,
+	free_trial: isFreeTrial
+} );
+
 export function planHasFeature( plan, feature ) {
 	return includes( get( featuresList, [ feature, 'plans' ] ), plan );
 }
@@ -94,6 +99,7 @@ export function getCurrentPlan( plans ) {
 	debug( 'current plan: %o', plan );
 	return plan;
 }
+
 
 export function getCurrentTrialPeriodInDays( plan ) {
 	const { expiryMoment, subscribedDayMoment, userFacingExpiryMoment } = plan;

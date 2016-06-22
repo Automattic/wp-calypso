@@ -66,6 +66,7 @@ export const plansList = {
 		getTitle: () => i18n.translate( 'Free' ),
 		getPriceTitle: () => i18n.translate( 'Free for life' ), //TODO: DO NOT USE
 		getProductId: () => 1,
+		getStoreSlug: () => PLAN_FREE,
 		getDescription: () => i18n.translate( 'Get a free blog and be on your way to publishing your first post in less than five minutes.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_FREE_SITE,
@@ -96,6 +97,7 @@ export const plansList = {
 		getTitle: () => i18n.translate( 'Premium' ),
 		getPriceTitle: () => i18n.translate( '$99 per year' ), //TODO: DO NOT USE
 		getProductId: () => 1003,
+		getStoreSlug: () => PLAN_PREMIUM,
 		getDescription: () => i18n.translate( 'Your own domain name, powerful customization options, lots of space for audio and video, and $100 advertising credit.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_FREE_SITE,
@@ -116,6 +118,7 @@ export const plansList = {
 		getTitle: () => i18n.translate( 'Business' ),
 		getPriceTitle: () => i18n.translate( '$299 per year' ), //TODO: DO NOT USE
 		getProductId: () => 1008,
+		getStoreSlug: () => PLAN_BUSINESS,
 		getDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, and Google Analytics.' ),
 		getDescriptionWithWordAdsCredit: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, Google Analytics, and $200 advertising credit.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
@@ -231,6 +234,7 @@ export const featuresList = {
 
 	[ FEATURE_UNLIMITED_STORAGE ]: {
 		getTitle: () => i18n.translate( 'Unlimited Storage' ),
+		getStoreSlug: () => 'unlimited_space',
 		plans: [ PLAN_BUSINESS ]
 	},
 
@@ -241,21 +245,25 @@ export const featuresList = {
 
 	[ FEATURE_UNLIMITED_PREMIUM_THEMES ]: {
 		getTitle: () => i18n.translate( 'Unlimited Premium Themes' ),
+		getStoreSlug: () => 'unlimited_themes',
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
 		getTitle: () => i18n.translate( 'VideoPress' ),
+		getStoreSlug: () => 'videopress',
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_CUSTOM_DESIGN ]: {
 		getTitle: () => i18n.translate( 'Custom Design' ),
+		getStoreSlug: () => FEATURE_CUSTOM_DESIGN,
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_NO_ADS ]: {
 		getTitle: () => i18n.translate( 'No Ads' ),
+		getStoreSlug: () => 'no-adverts/no-adverts.php',
 		plans: allPaidPlans
 	},
 
