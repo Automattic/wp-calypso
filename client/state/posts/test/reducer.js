@@ -166,7 +166,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should track post query request fetching', () => {
-			const state = queryRequests( undefined, {
+			const state = queryRequests( deepFreeze( {} ), {
 				type: POSTS_REQUEST,
 				siteId: 2916284,
 				query: { search: 'Hello' }
@@ -178,7 +178,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should track post queries without specified site', () => {
-			const state = queryRequests( undefined, {
+			const state = queryRequests( deepFreeze( {} ), {
 				type: POSTS_REQUEST,
 				query: { search: 'Hello' }
 			} );
@@ -206,7 +206,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should track post query request success', () => {
-			const state = queryRequests( undefined, {
+			const state = queryRequests( deepFreeze( {} ), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -222,7 +222,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should track post query request failure', () => {
-			const state = queryRequests( undefined, {
+			const state = queryRequests( deepFreeze( {} ), {
 				type: POSTS_REQUEST_FAILURE,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -263,7 +263,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should track post query request success', () => {
-			const state = queries( undefined, {
+			const state = queries( deepFreeze( {} ), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -281,7 +281,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should accumulate query request success', () => {
-			const original = deepFreeze( queries( undefined, {
+			const original = deepFreeze( queries( deepFreeze( {} ), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -306,8 +306,24 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems( { search: 'Hello W' } ) ).to.have.length( 1 );
 		} );
 
+		it( 'should return the same state if successful request has no changes', () => {
+			const action = {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Hello' },
+				found: 1,
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'publish', type: 'post' }
+				]
+			};
+			const original = deepFreeze( queries( deepFreeze( {} ), action ) );
+			const state = queries( original, action );
+
+			expect( state ).to.equal( original );
+		} );
+
 		it( 'should update received posts', () => {
-			const original = deepFreeze( queries( undefined, {
+			const original = deepFreeze( queries( deepFreeze( {} ), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -330,7 +346,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should apply save actions as partial received posts', () => {
-			const original = deepFreeze( queries( undefined, {
+			const original = deepFreeze( queries( deepFreeze( {} ), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -355,7 +371,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should remove item when post delete action dispatched', () => {
-			const original = deepFreeze( queries( undefined, {
+			const original = deepFreeze( queries( deepFreeze( {} ), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -375,7 +391,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not persist state', () => {
-			const original = deepFreeze( queries( undefined, {
+			const original = deepFreeze( queries( deepFreeze( {} ), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -409,7 +425,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should map site ID, post ID to true value if request in progress', () => {
-			const state = siteRequests( undefined, {
+			const state = siteRequests( deepFreeze( {} ), {
 				type: POST_REQUEST,
 				siteId: 2916284,
 				postId: 841
@@ -510,7 +526,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should track new post draft revisions by site ID', () => {
-			const state = edits( undefined, {
+			const state = edits( deepFreeze( {} ), {
 				type: POST_EDIT,
 				siteId: 2916284,
 				post: { title: 'Ribs & Chicken' }
@@ -526,7 +542,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should track existing post revisions by site ID, post ID', () => {
-			const state = edits( undefined, {
+			const state = edits( deepFreeze( {} ), {
 				type: POST_EDIT,
 				siteId: 2916284,
 				postId: 841,
