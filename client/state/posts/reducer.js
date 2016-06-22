@@ -141,21 +141,15 @@ export function queries( state = {}, action ) {
 	switch ( action.type ) {
 		case POSTS_REQUEST_SUCCESS: {
 			const { siteId, query, posts, found } = action;
-			if ( ! state[ siteId ] ) {
-				state[ siteId ] = new PostQueryManager();
-			}
+			const manager = state[ siteId ] ? state[ siteId ] : new PostQueryManager();
+			const nextManager = manager.receive( posts, { query, found } );
 
-			const nextPosts = state[ siteId ].receive( posts, {
-				query,
-				found
-			} );
-
-			if ( nextPosts === state[ siteId ] ) {
+			if ( nextManager === manager ) {
 				return state;
 			}
 
 			return Object.assign( {}, state, {
-				[ siteId ]: nextPosts
+				[ siteId ]: nextManager
 			} );
 		}
 
