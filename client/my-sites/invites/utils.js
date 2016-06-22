@@ -2,12 +2,12 @@
  * Internal dependencies
  */
 import React from 'react';
-import get from 'lodash/get'
+import get from 'lodash/get';
 import i18n from 'i18n-calypso';
 
 export default {
 	acceptedNotice( invite, displayOnNextPage = true ) {
-		let site = (
+		const site = (
 			<a href={ get( invite, 'site.URL' ) } className="invite-accept__notice-site-link">
 				{ get( invite, 'site.title' ) }
 			</a>
@@ -123,7 +123,7 @@ export default {
 			switch ( invite.role ) {
 				case 'viewer':
 				case 'follower':
-					return get( invite, 'site.URL' ) || readerPath
+					return get( invite, 'site.URL' ) || readerPath;
 					break;
 				default:
 					return get( invite, 'site.admin_url' ) || postsListPath;
