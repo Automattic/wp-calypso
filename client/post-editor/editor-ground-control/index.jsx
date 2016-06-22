@@ -21,8 +21,7 @@ const Card = require( 'components/card' ),
 	postActions = require( 'lib/posts/actions' ),
 	Tooltip = require( 'components/tooltip' ),
 	PostListFetcher = require( 'components/post-list-fetcher' ),
-	stats = require( 'lib/posts/stats' ),
-	config = require( 'config' );
+	stats = require( 'lib/posts/stats' );
 
 export default React.createClass( {
 	displayName: 'EditorGroundControl',
