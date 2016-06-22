@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-// import classNames from 'classnames';
+import page from 'page';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import filter from 'lodash/filter';
@@ -85,6 +85,23 @@ const PlansSetup = React.createClass( {
 		if ( this.props.siteId ) {
 			this.fetchInstallInstructions();
 		}
+
+		page.exit( '/plugins/setup/*', ( context, next ) => {
+			const confirmText = this.warnIfNotFinished( {} );
+			if ( ! confirmText ) {
+				return next();
+			}
+			console.log( 'We\'re still installing...' );
+			if ( window.confirm( confirmText ) ) { // eslint-disable-line no-aler
+				next();
+			} else {
+				// save off the current path just in case context changes after this call
+				const currentPath = context.canonicalPath;
+				setTimeout( function() {
+					page.replace( currentPath, null, false, false );
+				}, 0 );
+			}
+		} );
 	},
 
 	componentWillUnmount() {
