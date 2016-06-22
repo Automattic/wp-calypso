@@ -194,14 +194,12 @@ var TokenField = React.createClass( {
 	},
 
 	_onBlur: function( event ) {
-		debug( '_onBlur setting component inactive' );
 		if ( this._inputHasValidValue() ) {
 			debug( '_onBlur adding current token' );
 			this._addCurrentToken();
 		} else {
 			debug( '_onBlur not adding current token' );
 		}
-		debug( '_onBlur resetting component state' );
 		this.setState( this.getInitialState() );
 	},
 
