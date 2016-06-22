@@ -129,7 +129,7 @@ function scrollIntoView( target ) {
 		return 0;
 	}
 
-	const container = query( '#secondary .sidebar' )[ 0 ];
+	const container = query( '#secondary .sidebar .sidebar__region' )[ 0 ];
 	const scrollMax = container.scrollHeight -
 		container.clientHeight - container.scrollTop;
 	const y = Math.min( .75 * top, scrollMax );
