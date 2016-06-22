@@ -38,7 +38,8 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
-			spacer: false
+			spacer: false,
+			disabled: false
 		};
 	},
 
@@ -64,7 +65,7 @@ export default React.createClass( {
 		} );
 
 		return (
-			<Button compact borderless className={ linkClasses } href={ href } onClick={ onClick }>
+			<Button compact borderless className={ linkClasses } href={ href } onClick={ onClick } disabled={ spacer }>
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{ ! this.hideText( text ) && text }
 			</Button>
