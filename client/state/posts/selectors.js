@@ -142,7 +142,12 @@ export function getSitePostsLastPageForQuery( state, siteId, query ) {
 		return null;
 	}
 
-	return state.posts.queries[ siteId ].getNumberOfPages( query );
+	const pages = state.posts.queries[ siteId ].getNumberOfPages( query );
+	if ( null === pages ) {
+		return null;
+	}
+
+	return Math.max( pages, 1 );
 }
 
 /**

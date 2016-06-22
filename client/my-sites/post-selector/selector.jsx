@@ -155,7 +155,7 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	isCompact() {
-		if ( ! this.props.posts || this.state.searchTerm ) {
+		if ( ! this.props.posts || this.state.searchTerm || this.hasNoPosts() ) {
 			return false;
 		}
 
@@ -295,20 +295,30 @@ const PostSelectorPosts = React.createClass( {
 		);
 	},
 
-	renderRow( { index } ) {
-		if ( this.hasNoSearchResults() || this.hasNoPosts() ) {
-			return (
-				<div key="no-results" className="post-selector__list-item is-empty">
-					{ ( this.hasNoSearchResults() || ! this.props.emptyMessage ) && (
-						<NoResults
-							createLink={ this.props.createLink }
-							noResultsMessage={ this.props.noResultsMessage } />
-					) }
-					{ this.hasNoPosts() && this.props.emptyMessage }
-				</div>
+	renderEmptyContent() {
+		let message;
+		if ( this.hasNoSearchResults() ) {
+			message = (
+				<NoResults
+					createLink={ this.props.createLink }
+					noResultsMessage={ this.props.noResultsMessage } />
 			);
+		} else if ( this.hasNoPosts() ) {
+			message = this.props.emptyMessage;
 		}
 
+		if ( ! message ) {
+			return;
+		}
+
+		return (
+			<div key="no-results" className="post-selector__list-item is-empty">
+				{ message }
+			</div>
+		);
+	},
+
+	renderRow( { index } ) {
 		const item = this.getItem( index );
 		if ( item ) {
 			return this.renderItem( item );
@@ -364,6 +374,7 @@ const PostSelectorPosts = React.createClass( {
 							width={ this.getResultsWidth() }
 							height={ isCompact ? this.getCompactContainerHeight() : 300 }
 							onRowsRendered={ onRowsRendered }
+							noRowsRenderer={ this.renderEmptyContent }
 							rowCount={ rowCount }
 							estimatedRowSize={ ITEM_HEIGHT }
 							rowHeight={ this.getRowHeight }
