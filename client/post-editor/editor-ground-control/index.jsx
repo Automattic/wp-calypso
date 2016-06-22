@@ -475,7 +475,7 @@ export default React.createClass( {
 							className="editor-ground-control__email-verification-notice-icon" />
 						{ this.getVerificationNoticeLabel() }
 						{ ' ' }
-						<u>{ this.translate( 'Learn More' ) }</u>
+						<span className="editor-ground-control__email-verification-notice-more">{ this.translate( 'Learn More' ) }</span>
 					</div>
 				}
 			</Card>
