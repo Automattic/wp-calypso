@@ -12,9 +12,7 @@ import merge from 'lodash/merge';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	DESERIALIZE,
-	TERMS_ADD_REQUEST,
-	TERMS_ADD_REQUEST_SUCCESS,
-	TERMS_ADD_REQUEST_FAILURE,
+	TERM_REMOVE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_FAILURE,
@@ -522,123 +520,24 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should add a temporary term by taxonomy', () => {
+		it( 'should omit removed term', () => {
 			const original = deepFreeze( {
 				2916284: {
-					'jetpack-portfolio': {
-						724: {
-							ID: 724,
-							name: 'Ribs',
-							slug: 'ribs'
-						}
-					}
+					'jetpack-portfolio': keyedTestTerms
 				}
 			} );
 
 			const state = items( original, {
-				type: TERMS_ADD_REQUEST,
+				type: TERM_REMOVE,
 				siteId: 2916284,
 				taxonomy: 'jetpack-portfolio',
-				temporaryId: 'temporary-1',
-				term: {
-					name: 'And Chicken'
-				}
+				termId: 123
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					'jetpack-portfolio': {
-						724: {
-							ID: 724,
-							name: 'Ribs',
-							slug: 'ribs'
-						},
-						'temporary-1': {
-							name: 'And Chicken'
-						}
-					}
-				}
-			} );
-		} );
-
-		it( 'should remove temporary term and add permanent term', () => {
-			const original = deepFreeze( {
-				2916284: {
-					'jetpack-portfolio': {
-						724: {
-							ID: 724,
-							name: 'Ribs',
-							slug: 'ribs'
-						},
-						'temporary-1': {
-							name: 'And Chicken'
-						}
-					}
-				}
-			} );
-
-			const state = items( original, {
-				type: TERMS_ADD_REQUEST_SUCCESS,
-				siteId: 2916284,
-				taxonomy: 'jetpack-portfolio',
-				temporaryId: 'temporary-1',
-				term: {
-					ID: 8976,
-					name: 'And Chicken',
-					slug: 'and-chicken'
-				}
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					'jetpack-portfolio': {
-						724: {
-							ID: 724,
-							name: 'Ribs',
-							slug: 'ribs'
-						},
-						8976: {
-							ID: 8976,
-							name: 'And Chicken',
-							slug: 'and-chicken'
-						}
-					}
-				}
-			} );
-		} );
-
-		it( 'should remove temporary term on add failure', () => {
-			const original = deepFreeze( {
-				2916284: {
-					'jetpack-portfolio': {
-						724: {
-							ID: 724,
-							name: 'Ribs',
-							slug: 'ribs'
-						},
-						'temporary-1': {
-							name: 'And Chicken'
-						}
-					}
-				}
-			} );
-
-			const state = items( original, {
-				type: TERMS_ADD_REQUEST_FAILURE,
-				siteId: 2916284,
-				taxonomy: 'jetpack-portfolio',
-				temporaryId: 'temporary-1',
-				error: 'FAIL'
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					'jetpack-portfolio': {
-						724: {
-							ID: 724,
-							name: 'Ribs',
-							slug: 'ribs'
-						}
+						111: { ID: 111, name: 'Chicken', slug: 'chicken', description: 'cornel sanders', post_count: 1, parent: 0 }
 					}
 				}
 			} );
