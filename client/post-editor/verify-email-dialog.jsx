@@ -106,13 +106,11 @@ class VerifyEmailDialog extends React.Component {
 
 VerifyEmailDialog.propTypes = {
 	user: React.PropTypes.object.isRequired,
-	onClose: React.PropTypes.func,
-	onTryAgain: React.PropTypes.func
+	onClose: React.PropTypes.func
 };
 
 VerifyEmailDialog.defaultProps = {
-	onClose: noop,
-	onTryAgain: noop
+	onClose: noop
 };
 
 export default VerifyEmailDialog;

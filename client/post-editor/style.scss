@@ -1,3 +1,49 @@
+.dialog.confirmation-dialog {
+	max-width: 450px;
+	border-radius: 3px;
+
+	h1 {
+		font-size: 22px;
+		line-height: 1.2;
+		height: auto;
+		margin: 0 0 4px 0;
+	}
+
+	p {
+		color: darken( $gray, 30 );
+		margin: 0 0 8px 0;
+
+		&.confirmation-dialog__email {
+			margin-bottom: 16px;
+			color: darken( $gray, 10 );
+
+			span {
+				display: inline-block;
+				max-width: 70%;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				margin-right: 5px;
+			}
+		}
+
+		&.confirmation-dialog__reasoning {
+			color: darken( $gray, 10 );
+			font-size: 14px;
+			margin-bottom: 24px;
+		}
+	}
+
+	.spinner {
+		display: inline-block;
+		vertical-align: -25%;
+	}
+
+	@include breakpoint( "<660px" ) {
+		max-width: 100%;
+		border-radius: 0;
+	}
+}
+
 .is-group-editor::before {
 	content: '';
 	position: fixed;
@@ -12,14 +58,6 @@
 
 .is-group-editor .wp-content {
 	padding: 0;
-}
-
-.is-group-editor .email-verification-notice {
-	margin: 8px;
-
-	@include breakpoint( ">660px" ) {
-		margin: 0;
-	}
 }
 
 .post-editor__inner {
@@ -38,7 +76,6 @@
 	}
 }
 
-.is-group-editor .email-verification-notice,
 .post-editor__content {
 	@include breakpoint( ">660px" ) {
 		margin-left: ( $sidebar-width-min + 1 );
