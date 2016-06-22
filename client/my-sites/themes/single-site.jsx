@@ -62,6 +62,12 @@ const ThemesSingleSite = React.createClass( {
 	getButtonOptions() {
 		const site = sites.getSelectedSite(),
 			buttonOptions = {
+				customize: site && site.isCustomizable()
+					? {
+						action: this.props.customize,
+						hideForTheme: theme => ! theme.active
+					}
+					: {},
 				preview: {
 					action: theme => this.togglePreview( theme ),
 					hideForTheme: theme => theme.active
@@ -76,12 +82,6 @@ const ThemesSingleSite = React.createClass( {
 					action: this.props.activate,
 					hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
 				},
-				customize: site && site.isCustomizable()
-					? {
-						action: this.props.customize,
-						hideForTheme: theme => ! theme.active
-					}
-					: {},
 				separator: {
 					separator: true
 				},
