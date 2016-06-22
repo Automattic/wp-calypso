@@ -9,12 +9,16 @@ import nock from 'nock';
  * Internal dependencies
  */
 import {
+	TERMS_ADD_REQUEST,
+	TERMS_ADD_REQUEST_SUCCESS,
+	TERMS_ADD_REQUEST_FAILURE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_SUCCESS,
 	TERMS_REQUEST_FAILURE
 } from 'state/action-types';
 import {
+	addTerm,
 	receiveTerms,
 	requestSiteTerms
 } from '../actions';
@@ -38,6 +42,66 @@ describe( 'actions', () => {
 
 	after( () => {
 		nock.cleanAll();
+	} );
+
+	describe( 'addTerm()', () => {
+		before( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/new` )
+				.reply( 200, {
+					ID: 123,
+					name: 'ribs',
+					description: ''
+				} )
+				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/chicken-and-ribs/terms/new` )
+				.reply( 400, {
+					message: 'The taxonomy does not exist',
+					error: 'invalid_taxonomy'
+				} );
+		} );
+
+		it( 'should dispatch a TERMS_ADD_REQUEST', () => {
+			addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: TERMS_ADD_REQUEST,
+				temporaryId: sinon.match( /^temporary/ ),
+				siteId: siteId,
+				taxonomy: taxonomyName,
+				term: { name: 'ribs' }
+			} );
+		} );
+
+		it( 'should dispatch a TERMS_ADD_REQUEST_SUCCESS event on success', () => {
+			return addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: TERMS_ADD_REQUEST_SUCCESS,
+					temporaryId: sinon.match( /^temporary/ ),
+					siteId: siteId,
+					taxonomy: taxonomyName,
+					term: { name: 'ribs' },
+					data: {
+						ID: 123,
+						name: 'ribs',
+						description: ''
+					}
+				} );
+			} );
+		} );
+
+		it( 'should dispatch TERMS_REQUEST_FAILURE action when request fails', () => {
+			return addTerm( siteId, 'chicken-and-ribs', { name: 'new term' } )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: TERMS_ADD_REQUEST_FAILURE,
+					temporaryId: sinon.match( /^temporary/ ),
+					siteId: siteId,
+					taxonomy: 'chicken-and-ribs',
+					term: { name: 'new term' },
+					error: sinon.match( { error: 'invalid_taxonomy' } )
+				} );
+			} );
+		} );
 	} );
 
 	describe( '#receiveTerms()', () => {
