@@ -14,6 +14,7 @@ import PlanFeaturesHeader from './header';
 import PlanFeaturesItemList from './list';
 import PlanFeaturesItem from './item';
 import PlanFeaturesFooter from './footer';
+import PlanFeaturesPlaceholder from './placeholder';
 import { isCurrentSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPlanRawPrice, getPlan } from 'state/plans/selectors';
@@ -21,8 +22,8 @@ import { plansList, getPlanFeaturesObject, PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINES
 
 class PlanFeatures extends Component {
 	render() {
-		if ( ! this.props.planObject ) {
-			return null;
+		if ( ! this.props.planObject || this.props.isPlaceholder ) {
+			return <PlanFeaturesPlaceholder />;
 		}
 
 		const {
@@ -70,14 +71,22 @@ class PlanFeatures extends Component {
 
 PlanFeatures.propTypes = {
 	onUgradeClick: PropTypes.func,
-	plan: React.PropTypes.oneOf( [ PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS ] ).isRequired
+	// either you specify the plan prop or isPlaceholder prop
+	plan: React.PropTypes.oneOf( [ PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS ] ),
+	isPlaceholder: PropTypes.bool
 };
 
-PlanFeaturesHeader.defaultProps = {
+PlanFeatures.defaultProps = {
 	onUpgradeClick: noop
 };
 
 export default connect( ( state, ownProps ) => {
+	if ( ownProps.placeholder ) {
+		return {
+			isPlaceholder: true
+		};
+	}
+
 	const planProductId = plansList[ ownProps.plan ].getProductId();
 	const selectedSiteId = getSelectedSiteId( state );
 	const planObject = getPlan( state, planProductId );
