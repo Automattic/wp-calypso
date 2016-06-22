@@ -6,6 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import TermQueryManager from 'lib/query-manager/term';
 import {
 	getTerms,
 	getTermsForQuery,
@@ -27,7 +28,7 @@ describe( 'selectors', () => {
 				terms: {
 					queryRequests: {}
 				}
-			}, 2916284, 'categories', {} );
+			}, 2916284, 'category', {} );
 
 			expect( requesting ).to.be.false;
 		} );
@@ -37,13 +38,13 @@ describe( 'selectors', () => {
 				terms: {
 					queryRequests: {
 						2916284: {
-							categories: {
+							category: {
 								'{"search":"ribs"}': false
 							}
 						}
 					}
 				}
-			}, 2916284, 'categories', { search: 'ribs' } );
+			}, 2916284, 'category', { search: 'ribs' } );
 
 			expect( requesting ).to.be.false;
 		} );
@@ -53,13 +54,13 @@ describe( 'selectors', () => {
 				terms: {
 					queryRequests: {
 						2916284: {
-							categories: {
+							category: {
 								'{"search":"ribs"}': true
 							}
 						}
 					}
 				}
-			}, 2916284, 'categories', { search: 'ribs' } );
+			}, 2916284, 'category', { search: 'ribs' } );
 
 			expect( requesting ).to.be.true;
 		} );
@@ -71,7 +72,7 @@ describe( 'selectors', () => {
 				terms: {
 					queries: {}
 				}
-			}, 2916284, 'categories', {} );
+			}, 2916284, 'category', {} );
 
 			expect( terms ).to.be.null;
 		} );
@@ -81,27 +82,18 @@ describe( 'selectors', () => {
 				terms: {
 					queries: {
 						2916284: {
-							categories: {
-								'{"search":"ribs"}': []
-							}
-						}
-					},
-					items: {
-						2916284: {
-							categories: {
-								111: {
-									ID: 111,
-									name: 'Chicken and a biscuit'
-								},
-								112: {
-									ID: 112,
-									name: 'Ribs'
+							category: new TermQueryManager( {
+								items: {},
+								queries: {
+									'[["search","ribs"]]': {
+										itemKeys: []
+									}
 								}
-							}
+							} )
 						}
 					}
 				}
-			}, 2916284, 'categories', { search: 'ribs' } );
+			}, 2916284, 'category', { search: 'ribs' } );
 
 			expect( terms ).to.eql( [] );
 		} );
@@ -111,27 +103,27 @@ describe( 'selectors', () => {
 				terms: {
 					queries: {
 						2916284: {
-							categories: {
-								'{"search":"ribs"}': [ 111 ]
-							}
-						}
-					},
-					items: {
-						2916284: {
-							categories: {
-								111: {
-									ID: 111,
-									name: 'Chicken and a biscuit'
+							category: new TermQueryManager( {
+								items: {
+									111: {
+										ID: 111,
+										name: 'Chicken and a biscuit'
+									},
+									112: {
+										ID: 112,
+										name: 'Ribs'
+									}
 								},
-								112: {
-									ID: 112,
-									name: 'Ribs'
+								queries: {
+									'[["search","ribs"]]': {
+										itemKeys: [ 111 ]
+									}
 								}
-							}
+							} )
 						}
 					}
 				}
-			}, 2916284, 'categories', { search: 'ribs' } );
+			}, 2916284, 'category', { search: 'ribs' } );
 
 			expect( terms ).to.eql( [
 				{
@@ -143,12 +135,47 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getTermsForQueryIgnoringPage', () => {
-		it( 'should return null if last page is not known', () => {
+		it( 'should return null if site has not received terms', () => {
 			const terms = getTermsForQueryIgnoringPage( {
 				terms: {
-					queriesLastPage: {}
+					queries: {
+						2916284: {}
+					}
 				}
-			}, 2916284, 'category', { search: 'Hello' } );
+			}, 2916284, 'category', { search: 'i', page: 2, number: 1 } );
+
+			expect( terms ).to.be.null;
+		} );
+
+		it( 'should return null if site is not tracking query for taxonomy', () => {
+			const terms = getTermsForQueryIgnoringPage( {
+				terms: {
+					queries: {
+						2916284: {
+							category: new TermQueryManager( {
+								items: {
+									123: {
+										ID: 123,
+										name: 'Chicken',
+										slug: 'chicken'
+									},
+									124: {
+										ID: 124,
+										name: 'Ribs',
+										slug: 'ribs'
+									}
+								},
+								queries: {
+									'[["search","i"]]': {
+										itemKeys: [ 123, 124 ],
+										found: 2
+									}
+								}
+							} )
+						}
+					}
+				}
+			}, 2916284, 'category', { search: 'icken', page: 2, number: 1 } );
 
 			expect( terms ).to.be.null;
 		} );
@@ -156,39 +183,32 @@ describe( 'selectors', () => {
 		it( 'should return terms ignoring page param', () => {
 			const terms = getTermsForQueryIgnoringPage( {
 				terms: {
-					queriesLastPage: {
-						2916284: {
-							category: {
-								'{"search":"hello"}': 2
-							}
-						}
-					},
 					queries: {
 						2916284: {
-							category: {
-								'{"search":"hello"}': [ 123 ],
-								'{"search":"hello","page":2}': [ 124 ]
-							}
-						}
-					},
-					items: {
-						2916284: {
-							category: {
-								123: {
-									ID: 123,
-									name: 'Chicken',
-									slug: 'chicken'
+							category: new TermQueryManager( {
+								items: {
+									123: {
+										ID: 123,
+										name: 'Chicken',
+										slug: 'chicken'
+									},
+									124: {
+										ID: 124,
+										name: 'Ribs',
+										slug: 'ribs'
+									}
 								},
-								124: {
-									ID: 124,
-									name: 'Ribs',
-									slug: 'ribs'
+								queries: {
+									'[["search","i"]]': {
+										itemKeys: [ 123, 124 ],
+										found: 2
+									}
 								}
-							}
+							} )
 						}
 					}
 				}
-			}, 2916284, 'category', { search: 'Hello', page: 2 } );
+			}, 2916284, 'category', { search: 'i', page: 2, number: 1 } );
 
 			expect( terms ).to.eql( [ {
 				ID: 123,
@@ -203,10 +223,22 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getTermsLastPageForQuery()', () => {
+		it( 'should return null if the taxonomy is not tracked', () => {
+			const lastPage = getTermsLastPageForQuery( {
+				terms: {
+					queries: {}
+				}
+			}, 2916284, 'category', { search: 'Hello' } );
+
+			expect( lastPage ).to.be.null;
+		} );
+
 		it( 'should return null if the terms query is not tracked', () => {
 			const lastPage = getTermsLastPageForQuery( {
 				terms: {
-					queriesLastPage: {}
+					queries: {
+						category: new TermQueryManager()
+					}
 				}
 			}, 2916284, 'category', { search: 'Hello' } );
 
@@ -216,33 +248,89 @@ describe( 'selectors', () => {
 		it( 'should return the last page value for a query', () => {
 			const lastPage = getTermsLastPageForQuery( {
 				terms: {
-					queriesLastPage: {
+					queries: {
 						2916284: {
-							category: {
-								'{"search":"hello"}': 4
-							}
+							category: new TermQueryManager( {
+								items: {
+									123: {
+										ID: 123,
+										name: 'Chicken',
+										slug: 'chicken'
+									},
+									124: {
+										ID: 124,
+										name: 'Ribs',
+										slug: 'ribs'
+									}
+								},
+								queries: {
+									'[["search","i"]]': {
+										itemKeys: [ 123, 124 ],
+										found: 2
+									}
+								}
+							} )
 						}
 					}
 				}
-			}, 2916284, 'category', { search: 'Hello' } );
+			}, 2916284, 'category', { search: 'i', number: 1 } );
 
-			expect( lastPage ).to.equal( 4 );
+			expect( lastPage ).to.equal( 2 );
 		} );
 
 		it( 'should return the last page value for a terms query, even if including page param', () => {
 			const lastPage = getTermsLastPageForQuery( {
 				terms: {
-					queriesLastPage: {
+					queries: {
 						2916284: {
-							category: {
-								'{"search":"hello"}': 4
-							}
+							category: new TermQueryManager( {
+								items: {
+									123: {
+										ID: 123,
+										name: 'Chicken',
+										slug: 'chicken'
+									},
+									124: {
+										ID: 124,
+										name: 'Ribs',
+										slug: 'ribs'
+									}
+								},
+								queries: {
+									'[["search","i"]]': {
+										itemKeys: [ 123, 124 ],
+										found: 2
+									}
+								}
+							} )
 						}
 					}
 				}
-			}, 2916284, 'category', { search: 'Hello', page: 2 } );
+			}, 2916284, 'category', { search: 'i', page: 2, number: 1 } );
 
-			expect( lastPage ).to.equal( 4 );
+			expect( lastPage ).to.equal( 2 );
+		} );
+
+		it( 'should return 1 if there are no results for a query', () => {
+			const lastPage = getTermsLastPageForQuery( {
+				terms: {
+					queries: {
+						2916284: {
+							category: new TermQueryManager( {
+								items: {},
+								queries: {
+									'[["search","unappetizing"]]': {
+										itemKeys: [],
+										found: 0
+									}
+								}
+							} )
+						}
+					}
+				}
+			}, 2916284, 'category', { search: 'unappetizing' } );
+
+			expect( lastPage ).to.equal( 1 );
 		} );
 	} );
 
@@ -252,7 +340,7 @@ describe( 'selectors', () => {
 				terms: {
 					queries: {}
 				}
-			}, 2916284, 'categories', {} );
+			}, 2916284, 'category', {} );
 
 			expect( terms ).to.be.null;
 		} );
@@ -260,37 +348,21 @@ describe( 'selectors', () => {
 		it( 'should return an empty array if no matches exist', () => {
 			const terms = getTermsHierarchyForQueryIgnoringPage( {
 				terms: {
-					queriesLastPage: {
-						2916284: {
-							categories: {
-								'{"search":"ribs"}': 1
-							}
-						}
-					},
 					queries: {
 						2916284: {
-							categories: {
-								'{"search":"ribs"}': []
-							}
-						}
-					},
-					items: {
-						2916284: {
-							categories: {
-								111: {
-									ID: 111,
-									name: 'Chicken and a biscuit'
-								},
-								112: {
-									ID: 112,
-									name: 'Ribs',
-									parent: 111
+							category: new TermQueryManager( {
+								items: {},
+								queries: {
+									'[["search","unappetizing"]]': {
+										itemKeys: [],
+										found: 0
+									}
 								}
-							}
+							} )
 						}
 					}
 				}
-			}, 2916284, 'categories', { search: 'ribs' } );
+			}, 2916284, 'category', { search: 'unappetizing' } );
 
 			expect( terms ).to.eql( [] );
 		} );
@@ -298,42 +370,31 @@ describe( 'selectors', () => {
 		it( 'should return matching terms in hierarchical structure', () => {
 			const terms = getTermsHierarchyForQueryIgnoringPage( {
 				terms: {
-					queriesLastPage: {
-						2916284: {
-							categories: {
-								'{"search":"ribs"}': 1
-							}
-						}
-					},
 					queries: {
 						2916284: {
-							categories: {
-								'{"search":"ribs"}': [ 111, 112 ]
-							}
-						}
-					},
-					items: {
-						2916284: {
-							categories: {
-								111: {
-									ID: 111,
-									name: 'Chicken and a biscuit'
+							category: new TermQueryManager( {
+								items: {
+									111: {
+										ID: 111,
+										name: 'Chicken and a biscuit'
+									},
+									112: {
+										ID: 112,
+										name: 'Ribs',
+										parent: 111
+									}
 								},
-								112: {
-									ID: 112,
-									name: 'Ribs',
-									parent: 111
-								},
-								113: {
-									ID: 113,
-									name: 'Cornbread',
-									parent: 111
+								queries: {
+									'[["search","i"]]': {
+										itemKeys: [ 111, 112 ],
+										found: 2
+									}
 								}
-							}
+							} )
 						}
 					}
 				}
-			}, 2916284, 'categories', { search: 'ribs' } );
+			}, 2916284, 'category', { search: 'i' } );
 
 			expect( terms ).to.eql( [
 				{
@@ -352,22 +413,29 @@ describe( 'selectors', () => {
 
 	describe( 'getTerms()', () => {
 		it( 'should return null if no site exists', () => {
-			const terms = getTerms( {}, 2916284, 'jetpack-portfolio' );
+			const terms = getTerms( {
+				terms: {
+					queries: {}
+				}
+			}, 2916284, 'jetpack-portfolio' );
 
 			expect( terms ).to.be.null;
 		} );
 
-		it( 'should return null if no taxonomies exist for site', () => {
+		it( 'should return null if no terms exist for site taxonomy', () => {
 			const terms = getTerms( {
 				terms: {
-					items: {
+					queries: {
 						2916284: {
-							'jetpack-portfolio': {
-								111: {
-									ID: 111,
-									name: 'Chicken and a biscuit'
-								}
-							}
+							'jetpack-portfolio': new TermQueryManager( {
+								items: {
+									111: {
+										ID: 111,
+										name: 'Chicken and a biscuit'
+									}
+								},
+								queries: {}
+							} )
 						}
 					}
 				}
@@ -379,18 +447,21 @@ describe( 'selectors', () => {
 		it( 'should return array of matching terms for site taxonomy combo', () => {
 			const terms = getTerms( {
 				terms: {
-					items: {
+					queries: {
 						2916284: {
-							'jetpack-portfolio': {
-								111: {
-									ID: 111,
-									name: 'Chicken and a biscuit'
+							'jetpack-portfolio': new TermQueryManager( {
+								items: {
+									111: {
+										ID: 111,
+										name: 'Chicken and a biscuit'
+									},
+									112: {
+										ID: 112,
+										name: 'Ribs'
+									}
 								},
-								112: {
-									ID: 112,
-									name: 'Ribs'
-								}
-							}
+								queries: {}
+							} )
 						}
 					}
 				}
