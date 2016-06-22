@@ -1,11 +1,12 @@
 module.exports = {
 	personalPlan: {
-		datestamp: '21160601',
+		datestamp: '20160622',
 		variations: {
 			hide: 50,
 			show: 50
 		},
-		defaultVariation: 'hide'
+		defaultVariation: 'hide',
+		allowExistingUsers: false
 	},
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',

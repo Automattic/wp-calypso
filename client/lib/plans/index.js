@@ -13,7 +13,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
-import config from 'config';
+import { isEnabled } from 'config';
 import { addItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 import {
@@ -57,7 +57,7 @@ export function getFeatureTitle( feature ) {
 }
 
 export function getSitePlanSlug( siteID ) {
-	var site;
+	let site;
 	if ( siteID ) {
 		site = sitesList.getSite( siteID );
 	} else {
@@ -134,6 +134,7 @@ export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 
 export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalType, showJetpackFreePlan ) {
 	const hasPersonalPlan = site && site.plan.product_slug === PLAN_PERSONAL;
+	const personalPlanTestEnabled = abtest( 'personalPlan' ) === 'show' && isEnabled( 'plans/personal-plan' );
 
 	return plans.filter( function( plan ) {
 		if ( site && site.jetpack ) {
@@ -155,7 +156,7 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 			return false;
 		}
 
-		if ( plan.product_slug === PLAN_PERSONAL && ! hasPersonalPlan && abtest( 'personalPlan' ) === 'hide' ) {
+		if ( plan.product_slug === PLAN_PERSONAL && ! ( hasPersonalPlan || personalPlanTestEnabled ) ) {
 			return false;
 		}
 
@@ -164,14 +165,13 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 }
 
 export const isGoogleVouchersEnabled = () => {
-	return ( config.isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' );
+	return ( isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' );
 };
-
 
 export const isWordpressAdCreditsEnabled = () => {
 	return (
 		isGoogleVouchersEnabled() &&
-		config.isEnabled( 'plans/wordpress-ad-credits' ) &&
+		isEnabled( 'plans/wordpress-ad-credits' ) &&
 		abtest( 'wordpressAdCredits' ) === 'enabled'
 	);
 };
