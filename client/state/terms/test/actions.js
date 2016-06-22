@@ -9,9 +9,7 @@ import nock from 'nock';
  * Internal dependencies
  */
 import {
-	TERMS_ADD_REQUEST,
-	TERMS_ADD_REQUEST_SUCCESS,
-	TERMS_ADD_REQUEST_FAILURE,
+	TERM_REMOVE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_SUCCESS,
@@ -19,7 +17,9 @@ import {
 } from 'state/action-types';
 import {
 	addTerm,
+	receiveTerm,
 	receiveTerms,
+	removeTerm,
 	requestSiteTerms
 } from '../actions';
 
@@ -61,45 +61,72 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch a TERMS_ADD_REQUEST', () => {
+		it( 'should dispatch a TERMS_RECEIVE', () => {
 			addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: TERMS_ADD_REQUEST,
-				temporaryId: sinon.match( /^temporary/ ),
+				type: TERMS_RECEIVE,
 				siteId: siteId,
 				taxonomy: taxonomyName,
-				term: { name: 'ribs' }
+				terms: [
+					sinon.match( {
+						ID: sinon.match( /^temporary/ ),
+						name: 'ribs'
+					} )
+				],
+				query: undefined
 			} );
 		} );
 
-		it( 'should dispatch a TERMS_ADD_REQUEST_SUCCESS event on success', () => {
+		it( 'should dispatch a TERMS_RECEIVE event on success', () => {
 			return addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: TERMS_ADD_REQUEST_SUCCESS,
-					temporaryId: sinon.match( /^temporary/ ),
+					type: TERMS_RECEIVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
-					term: { name: 'ribs' },
-					data: {
+					terms: [ {
 						ID: 123,
 						name: 'ribs',
 						description: ''
-					}
+					} ],
+					query: undefined
 				} );
 			} );
 		} );
 
-		it( 'should dispatch TERMS_REQUEST_FAILURE action when request fails', () => {
+		it( 'should dispatch a TERM_REMOVE event on success', () => {
+			return addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: TERM_REMOVE,
+					siteId: siteId,
+					taxonomy: taxonomyName,
+					termId: sinon.match( /^temporary/ )
+				} );
+			} );
+		} );
+
+		it( 'should dispatch a TERM_REMOVE event on failure', () => {
 			return addTerm( siteId, 'chicken-and-ribs', { name: 'new term' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: TERMS_ADD_REQUEST_FAILURE,
-					temporaryId: sinon.match( /^temporary/ ),
+					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: 'chicken-and-ribs',
-					term: { name: 'new term' },
-					error: sinon.match( { error: 'invalid_taxonomy' } )
+					termId: sinon.match( /^temporary/ )
 				} );
+			} );
+		} );
+	} );
+
+	describe( 'receiveTerm()', () => {
+		it( 'should return an action object', () => {
+			const action = receiveTerm( siteId, taxonomyName, testTerms[ 0 ] );
+
+			expect( action ).to.eql( {
+				type: TERMS_RECEIVE,
+				siteId: siteId,
+				taxonomy: taxonomyName,
+				terms: [ testTerms[ 0 ] ],
+				query: undefined
 			} );
 		} );
 	} );
@@ -126,6 +153,19 @@ describe( 'actions', () => {
 				taxonomy: taxonomyName,
 				terms: testTerms,
 				query: { search: 'foo' }
+			} );
+		} );
+	} );
+
+	describe( 'removeTerm()', () => {
+		it( 'should return an action object', () => {
+			const action = removeTerm( siteId, taxonomyName, 777 );
+
+			expect( action ).to.eql( {
+				type: TERM_REMOVE,
+				siteId: siteId,
+				taxonomy: taxonomyName,
+				termId: 777
 			} );
 		} );
 	} );
