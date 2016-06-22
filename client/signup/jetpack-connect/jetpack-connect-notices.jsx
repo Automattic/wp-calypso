@@ -17,7 +17,7 @@ export default React.createClass( {
 	},
 
 	getNoticeValues( url ) {
-		let noticeValues = {
+		const noticeValues = {
 			icon: 'notice',
 			status: 'is-error',
 			text: this.translate( 'That\'s not a valid url.' ),
@@ -114,7 +114,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const urlSlug = this.props.url.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+		const urlSlug = this.props.url ? this.props.url.replace( /^https?:\/\//, '' ).replace( /\//g, '::' ) : '';
 		const values = this.getNoticeValues( urlSlug );
 		if ( values ) {
 			return (
