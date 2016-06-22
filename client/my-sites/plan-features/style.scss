@@ -44,6 +44,11 @@ $plan-features-header-banner-height: 20px;
 	margin-right: 12px;
 	border: solid 6px $gray-light;
 	border-radius: 50%;
+
+	&.is-placeholder {
+		@include placeholder( 23% );
+	}
+
 }
 
 .plan-features__header-checkmark {
@@ -64,6 +69,16 @@ $plan-features-header-banner-height: 20px;
 .plan-features__header-timeframe {
 	line-height: 1;
 	margin: 0;
+
+	&.is-placeholder {
+		@include placeholder( 23% );
+		width: 60px;
+		margin-bottom: 15px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
 }
 
 .plan-features__header-title {
@@ -143,6 +158,10 @@ $plan-features-header-banner-height: 20px;
 		border-bottom: none;
 	}
 
+	&.is-placeholder {
+		padding-left: 1px;
+	}
+
 	@include breakpoint( "<480px" ) {
 		margin: 0 16px;
 	}
@@ -154,6 +173,10 @@ $plan-features-header-banner-height: 20px;
 	top: 50%;
 	transform: translateY(-50%);
 	fill: $blue-wordpress;
+}
+
+.plan-features__item-text-placeholder {
+	@include placeholder( 23% );
 }
 
 .plan-features__footer {
@@ -170,6 +193,12 @@ $plan-features-header-banner-height: 20px;
 	margin: 0;
 	font-size: 14px;
 	color: $gray;
+
+	&.is-placeholder {
+		@include placeholder( 23% );
+		height: 50px;
+		margin-top: 5px;
+	}
 }
 
 .plan-features__footer-buttons {
@@ -195,6 +224,10 @@ $plan-features-header-banner-height: 20px;
 			fill: $alert-green;
 			margin-right: 8px;
 		}
+	}
+
+	&.is-placeholder {
+		@include placeholder( 23% );
 	}
 
 	@media
