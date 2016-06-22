@@ -81,3 +81,54 @@
 .editor-ground-control__view-site-tooltip {
 	font-size: 12px;
 }
+
+.editor-ground-control__email-verification-notice {
+	font-size: 12px;
+	padding: 16px 16px 16px 48px;
+	background: white;
+	margin: 16px -16px -16px;
+	position: relative;
+	color: $blue-wordpress;
+	border-top: 1px solid lighten( $gray, 20% );
+	cursor: pointer;
+	fill: $blue-wordpress;
+
+	&::before {
+		content: '';
+		display: block;
+		width: 10px;
+		height: 10px;
+		background: white;
+		position: absolute;
+		top: -6px;
+		left: 50%;
+		transform: translate(-50%) rotate(45deg);
+		border-top: 1px solid lighten( $gray, 20% );
+		border-left: 1px solid lighten( $gray, 20% );
+	}
+
+	&:focus:not(:active)::before {
+		box-shadow: -1px -1px 0 1px $blue-light;
+		border-top-color: $gray;
+		border-left-color: $gray;
+	}
+
+	&:focus:not(:active) {
+		box-shadow: 0 0 0 2px $blue-light;
+		z-index: 1;
+		border-top-color: $gray;
+		border-bottom: 1px solid $gray;
+		margin-bottom: -17px;
+	}
+
+	&:hover {
+		color: $blue-medium;
+		fill: $blue-medium;
+	}
+}
+
+.editor-ground-control__email-verification-notice-icon {
+	position: absolute;
+	left: 16px;
+	top: 16px;
+}

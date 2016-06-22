@@ -21,7 +21,6 @@ const actions = require( 'lib/posts/actions' ),
 	EditorDrawer = require( 'post-editor/editor-drawer' ),
 	FeaturedImage = require( 'post-editor/editor-featured-image' ),
 	EditorGroundControl = require( 'post-editor/editor-ground-control' ),
-	EditorGroundControlI18n = require( 'post-editor/editor-ground-control.i18n' ), // temporary for i18n tools to pick up
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
 	NoticeAction = require( 'components/notice/notice-action' ),
@@ -37,11 +36,12 @@ const actions = require( 'lib/posts/actions' ),
 	DraftList = require( 'my-sites/drafts/draft-list' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
+	VerifyEmailDialog = require( 'post-editor/verify-email-dialog' ),
 	utils = require( 'lib/posts/utils' ),
 	EditorPreview = require( './editor-preview' ),
 	stats = require( 'lib/posts/stats' ),
-	analytics = require( 'lib/analytics' ),
-	VerifyEmailDialogI18n = require( 'post-editor/verify-email-dialog.i18n' ); // temporary for i18n tools to pick up
+	analytics = require( 'lib/analytics' );
+
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible, getEditorPostId } from 'state/ui/editor/selectors';
@@ -169,7 +169,9 @@ const PostEditor = React.createClass( {
 		preferences: React.PropTypes.object,
 		setEditorModePreference: React.PropTypes.func,
 		editorModePreference: React.PropTypes.string,
-		sites: React.PropTypes.object
+		sites: React.PropTypes.object,
+		user: React.PropTypes.object,
+		userUtils: React.PropTypes.object,
 	},
 
 	_previewWindow: null,
@@ -185,6 +187,7 @@ const PostEditor = React.createClass( {
 			isSaving: false,
 			isPublishing: false,
 			notice: false,
+			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
 			isTitleFocused: false
@@ -404,7 +407,10 @@ const PostEditor = React.createClass( {
 								onPreview={ this.onPreview }
 								onPublish={ this.onPublish }
 								onTrashingPost={ this.onTrashingPost }
+								onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 								site={ site }
+								user={ this.props.user }
+								userUtils={ this.props.userUtils }
 								type={ this.props.type }
 							/>
 							<EditorDrawer
@@ -422,6 +428,12 @@ const PostEditor = React.createClass( {
 						post={ this.state.post }
 						onClose={ this.onClose }
 						onRestore={ this.onSaveTrashed }
+					/>
+				: null }
+				{ this.state.showVerifyEmailDialog
+					? <VerifyEmailDialog
+						user={ this.props.user }
+						onClose={ this.closeVerifyEmailDialog }
 					/>
 				: null }
 				{ isInvalidURL
@@ -460,6 +472,10 @@ const PostEditor = React.createClass( {
 
 	closeAutosaveDialog: function() {
 		this.setState( { showAutosaveDialog: false } );
+	},
+
+	closeVerifyEmailDialog: function() {
+		this.setState( { showVerifyEmailDialog: false } );
 	},
 
 	getMessage: function( name ) {
@@ -592,6 +608,12 @@ const PostEditor = React.createClass( {
 		}
 
 		return path;
+	},
+
+	onMoreInfoAboutEmailVerify: function() {
+		this.setState( {
+			showVerifyEmailDialog: true
+		} );
 	},
 
 	onTrashingPost: function( error ) {
