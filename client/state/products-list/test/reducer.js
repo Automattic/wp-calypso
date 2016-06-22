@@ -44,6 +44,28 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
+		it( 'should store the product list received', () => {
+			const productsList = [ {
+				guided_transfer: {
+					product_id: 40,
+					product_name: 'Guided Transfer',
+					product_slug: 'guided_transfer',
+					prices: { USD: 129, AUD: 169 },
+					is_domain_registration: false,
+					description: 'Guided Transfer',
+					cost: 129,
+					cost_display: '$129',
+				}
+			} ];
+
+			const state = items( null, {
+				type: PRODUCTS_LIST_RECEIVE,
+				productsList
+			} );
+
+			expect( state ).to.eql( productsList );
+		} );
+
 		describe( 'persistence', () => {
 			it( 'persists state', () => {
 				const original = deepFreeze( {
@@ -97,6 +119,21 @@ describe( 'reducer', () => {
 		it( 'should default to false', () => {
 			const state = isFetching( undefined, {} );
 
+			expect( state ).to.eql( false );
+		} );
+
+		it( 'should be true after a request begins', () => {
+			const state = isFetching( false, { type: PRODUCTS_LIST_REQUEST } );
+			expect( state ).to.eql( true );
+		} );
+
+		it( 'should be false when a request completes', () => {
+			const state = isFetching( true, { type: PRODUCTS_LIST_REQUEST_SUCCESS } );
+			expect( state ).to.eql( false );
+		} );
+
+		it( 'should be false when a request fails', () => {
+			const state = isFetching( true, { type: PRODUCTS_LIST_REQUEST_FAILURE } );
 			expect( state ).to.eql( false );
 		} );
 
