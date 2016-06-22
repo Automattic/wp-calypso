@@ -1,11 +1,14 @@
 .editor-media-modal-detail .header-cake.card {
+	padding-top: 0;
+	padding-bottom: 0;
+
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 0;
 	}
 }
 
 .editor-media-modal-detail .header-cake__title {
-	padding: 6px 0;
+	padding: 6px;
 }
 
 .editor-media-modal-detail .editor-media-modal-detail__title-input {
