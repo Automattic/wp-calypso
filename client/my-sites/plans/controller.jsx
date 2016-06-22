@@ -87,6 +87,10 @@ export default {
 			basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
 
+		if ( config.isEnabled( 'manage/plan-features' ) ) {
+			return page.redirect( '/plans/features' );
+		}
+
 		if ( site && ! site.isUpgradeable() ) {
 			return page.redirect( '/plans/compare' );
 		}
