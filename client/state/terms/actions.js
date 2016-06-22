@@ -28,7 +28,7 @@ import {
  * @return {Object}          Action object
  */
 export function addTerm( siteId, taxonomy, term ) {
-	return async ( dispatch ) => {
+	return ( dispatch ) => {
 		const temporaryId = uniqueId( 'temporary' );
 
 		dispatch( {
@@ -39,8 +39,7 @@ export function addTerm( siteId, taxonomy, term ) {
 			term
 		} );
 
-		try {
-			const data = await wpcom.site( siteId ).taxonomy( taxonomy ).term().add( term );
+		return wpcom.site( siteId ).taxonomy( taxonomy ).term().add( term ).then( ( data ) => {
 			dispatch( {
 				type: TERMS_ADD_REQUEST_SUCCESS,
 				data: omit( data, '_headers' ),
@@ -49,7 +48,7 @@ export function addTerm( siteId, taxonomy, term ) {
 				taxonomy,
 				term
 			} );
-		} catch ( error ) {
+		} ).catch( ( error ) => {
 			dispatch( {
 				type: TERMS_ADD_REQUEST_FAILURE,
 				temporaryId,
@@ -58,7 +57,7 @@ export function addTerm( siteId, taxonomy, term ) {
 				term,
 				error
 			} );
-		}
+		} );
 	};
 }
 
