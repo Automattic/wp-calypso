@@ -24,7 +24,7 @@ describe( 'formatting', () => {
 
 	describe( '#capitalPDangit()', function() {
 		it( 'should error when input is not a string', function() {
-			var types = [
+			const types = [
 				{},
 				undefined,
 				1,
@@ -41,7 +41,7 @@ describe( 'formatting', () => {
 		} );
 
 		it( 'should not modify wordpress', function() {
-			var strings = [ 'wordpress', 'I love wordpress' ];
+			const strings = [ 'wordpress', 'I love wordpress' ];
 
 			strings.forEach( function( string ) {
 				chai.assert.equal( capitalPDangit( string ), string );
@@ -56,12 +56,12 @@ describe( 'formatting', () => {
 		it( 'should replace all instances of Wordpress', function() {
 			chai.assert.equal( capitalPDangit( 'Wordpress Wordpress' ), 'WordPress WordPress' );
 			chai.assert.equal( capitalPDangit( 'I love Wordpress and Wordpress loves me' ), 'I love WordPress and WordPress loves me' );
-		} )
+		} );
 	} );
 
 	describe( '#parseHtml()', function() {
 		it( 'should equal to null when input is not a string', function() {
-			var types = [
+			const types = [
 				{},
 				undefined,
 				1,
@@ -76,28 +76,29 @@ describe( 'formatting', () => {
 		} );
 
 		it( 'should return a DOM element if you pass in DOM element', function() {
-			let div = document.createElement( 'div' );
+			const div = document.createElement( 'div' );
 			chai.assert.equal( div, parseHtml( div ) );
 		} );
 
 		it( 'should return a document fragment if we pass in a string', function() {
-			let fragment = parseHtml( 'hello' );
+			const fragment = parseHtml( 'hello' );
 			chai.assert.isFunction( fragment.querySelector );
 			chai.assert.equal( fragment.querySelectorAll( '*' ).length, 0 );
 		} );
+
 		it( 'should return a document fragment if we pass in a HTML string', function() {
-			let fragment = parseHtml( '<div>hello</div>' );
+			const fragment = parseHtml( '<div>hello</div>' );
 			chai.assert.equal( fragment.querySelectorAll( 'div' ).length, 1 );
 		} );
 
 		it( 'should parseHtml and return document fragment that can be queried', function() {
-			var strings = [
+			const strings = [
 				'<span><a href="stuff">hello world</a></span>',
 				'<div><span></span><a href="stuff">hello world</a></div>'
 			];
 
 			strings.forEach( function( string ) {
-				var link = parseHtml( string ).querySelectorAll( 'a' );
+				const link = parseHtml( string ).querySelectorAll( 'a' );
 				chai.assert.equal( link[ 0 ].innerHTML, 'hello world' );
 			} );
 		} );
@@ -129,7 +130,7 @@ describe( 'formatting', () => {
 
 	describe( '#preventWidows()', () => {
 		it( 'should not modify input if type is not string', () => {
-			let types = [
+			const types = [
 				{},
 				undefined,
 				1,
@@ -144,7 +145,7 @@ describe( 'formatting', () => {
 		} );
 
 		it( 'should return empty string when input is all whitespace', () => {
-			let inputs = [
+			const inputs = [
 				' ',
 				'\t',
 				'\n'
