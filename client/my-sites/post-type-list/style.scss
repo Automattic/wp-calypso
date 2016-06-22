@@ -11,6 +11,8 @@
 
 .post-type-list__post-detail {
 	display: flex;
+	min-width: 0;
+	overflow: hidden;
 }
 
 .post-type-list__post-thumbnail-wrapper {
@@ -33,11 +35,13 @@
 
 .post-type-list__post-title-meta {
 	padding: 6px 0;
+	width: 100%;
 }
 
 .post-type-list__post-title {
 	@extend %content-font;
 	margin-bottom: 2px;
+	white-space: nowrap;
 
 	a {
 		color: $gray-dark;
@@ -48,6 +52,12 @@
 
 		.post-type-list__post-placeholder & {
 			@include placeholder;
+		}
+
+		.post-type-list__post.is-untitled & {
+			color: $gray;
+			font-style: italic;
+			font-weight: 400;
 		}
 	}
 }
@@ -73,8 +83,15 @@
 }
 
 .post-type-list__post-actions {
+	position: relative;
 	margin-left: auto;
 	margin-right: -8px;
+	flex-shrink: 0;
+
+	&::before {
+		@include long-content-fade( $size: 40px );
+		right: 100%;
+	}
 }
 
 .post-type-list__post-actions .button {
