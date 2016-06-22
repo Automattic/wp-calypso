@@ -95,8 +95,8 @@
 				top: 40px;
 			width: 65%;
 
-			@include breakpoint( ">680px" ) {
-				top: 35px;
+			@include breakpoint( ">660px" ) {
+				top: 36px;
 			}
 		}
 
