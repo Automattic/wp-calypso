@@ -55,7 +55,7 @@ export function getDetailsUrl( theme, site ) {
 
 	let baseUrl = oldShowcaseUrl + theme.id;
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		baseUrl = `/theme/${ theme.id }/overview`;
+		baseUrl = `/theme/${ theme.id }`;
 	}
 
 	return baseUrl + ( site ? `/${ site.slug }` : '' );

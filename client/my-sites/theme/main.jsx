@@ -64,7 +64,7 @@ const ThemeSheet = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			section: 'overview',
+			section: '',
 		};
 	},
 
@@ -116,7 +116,7 @@ const ThemeSheet = React.createClass( {
 
 	getValidSections() {
 		const validSections = [];
-		validSections.push( 'overview' );
+		validSections.push( '' ); // Default section
 		this.props.supportDocumentation && validSections.push( 'setup' );
 		validSections.push( 'support' );
 		return validSections;
@@ -161,7 +161,7 @@ const ThemeSheet = React.createClass( {
 
 	renderSectionNav( currentSection ) {
 		const filterStrings = {
-			overview: i18n.translate( 'Overview', { context: 'Filter label for theme content' } ),
+			'': i18n.translate( 'Overview', { context: 'Filter label for theme content' } ),
 			setup: i18n.translate( 'Setup', { context: 'Filter label for theme content' } ),
 			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
 		};
@@ -173,7 +173,7 @@ const ThemeSheet = React.createClass( {
 			<NavTabs label="Details" >
 				{ this.getValidSections().map( ( section ) => (
 					<NavItem key={ section }
-						path={ `/theme/${ id }/${ section }${ sitePart }` }
+						path={ `/theme/${ id }${ section ? '/' + section : '' }${ sitePart }` }
 						selected={ section === currentSection }>
 						{ filterStrings[ section ] }
 					</NavItem>
@@ -190,7 +190,7 @@ const ThemeSheet = React.createClass( {
 
 	renderSectionContent( section ) {
 		return {
-			overview: this.renderOverviewTab(),
+			'': this.renderOverviewTab(),
 			setup: this.renderSetupTab(),
 			support: this.renderSupportTab(),
 		}[ section ];
@@ -331,7 +331,7 @@ const ThemeSheet = React.createClass( {
 					selectedTheme={ this.props }
 					onHide={ this.hideSiteSelectorModal }
 					action={ this.props[ this.state.selectedAction ] }
-					sourcePath={ `/theme/${ this.props.id }/${ section }` }
+					sourcePath={ `/theme/${ this.props.id }${ section ? '/' + section : '' }` }
 				/> }
 				{ this.state.showPreview && this.renderPreview() }
 				<HeaderCake className="themes__sheet-action-bar"
