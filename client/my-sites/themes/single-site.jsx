@@ -82,6 +82,10 @@ const ThemesSingleSite = React.createClass( {
 					action: this.props.activate,
 					hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
 				},
+				tryandcustomize: {
+					action: theme => this.props.customize( theme ),
+					hideForTheme: theme => theme.active
+				},
 				separator: {
 					separator: true
 				},

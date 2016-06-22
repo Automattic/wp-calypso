@@ -48,6 +48,10 @@ const ThemesMultiSite = React.createClass( {
 
 	getButtonOptions() {
 		const buttonOptions = {
+			customize: {
+				action: theme => this.showSiteSelectorModal( 'customize', theme ),
+				hideForTheme: theme => ! theme.active
+			},
 			preview: {
 				action: theme => this.togglePreview( theme ),
 				hideForTheme: theme => theme.active
@@ -62,9 +66,9 @@ const ThemesMultiSite = React.createClass( {
 				action: theme => this.showSiteSelectorModal( 'activate', theme ),
 				hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
 			},
-			customize: {
+			tryandcustomize: {
 				action: theme => this.showSiteSelectorModal( 'customize', theme ),
-				hideForTheme: theme => ! theme.active
+				hideForTheme: theme => theme.active
 			},
 			separator: {
 				separator: true
