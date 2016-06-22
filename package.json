@@ -100,7 +100,7 @@
     "react-pure-render": "1.0.2",
     "react-redux": "4.4.5",
     "react-tap-event-plugin": "1.0.0",
-    "react-virtualized": "7.2.0",
+    "react-virtualized": "7.9.1",
     "redux": "3.0.4",
     "redux-thunk": "1.0.0",
     "rtlcss": "2.0.5",

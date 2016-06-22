@@ -345,7 +345,8 @@ var LinkDialog = React.createClass( {
 								orderBy="date"
 								order="DESC"
 								selected={ this.getSelectedPostId() }
-								onChange={ this.setExistingContent } />
+								onChange={ this.setExistingContent }
+								emptyMessage={ this.translate( 'No posts found' ) } />
 						) }
 					</FormLabel>
 				</FormFieldset>
