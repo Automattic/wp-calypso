@@ -71,14 +71,22 @@ class PlanFeatures extends Component {
 
 PlanFeatures.propTypes = {
 	onUgradeClick: PropTypes.func,
-	plan: React.PropTypes.oneOf( [ PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS ] ).isRequired
+	// either you specify the plan prop or isPlaceholder prop
+	plan: React.PropTypes.oneOf( [ PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS ] ),
+	isPlaceholder: PropTypes.bool
 };
 
-PlanFeaturesHeader.defaultProps = {
+PlanFeatures.defaultProps = {
 	onUpgradeClick: noop
 };
 
 export default connect( ( state, ownProps ) => {
+	if ( ownProps.placeholder ) {
+		return {
+			isPlaceholder: true
+		};
+	}
+
 	const planProductId = plansList[ ownProps.plan ].getProductId();
 	const selectedSiteId = getSelectedSiteId( state );
 	const planObject = getPlan( state, planProductId );
@@ -91,8 +99,7 @@ export default connect( ( state, ownProps ) => {
 		rawPrice: getPlanRawPrice( state, planProductId /**, get from abtest **/ ),
 		planConstantObj: plansList[ ownProps.plan ],
 		billingTimeFrame: get( planObject, 'bill_period_label', '' ),
-		planObject: planObject,
-		isPlaceholder: get( ownProps, 'placeholder', false )
+		planObject: planObject
 	};
 } )( PlanFeatures );
 
