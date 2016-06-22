@@ -53,7 +53,7 @@ function stripHTML( string ) {
  * @param  {number} wordsToKeep the number of words to keep together
  * @return {string}             the widow-prevented string
  */
-function preventWidows( text, wordsToKeep ) {
+function preventWidows( text, wordsToKeep = 2 ) {
 	var words, endWords;
 
 	if ( typeof text !== 'string' ) {
@@ -66,8 +66,7 @@ function preventWidows( text, wordsToKeep ) {
 	}
 
 	words = text.match( /\S+/g );
-
-	if ( ! words ) { // all whitespace
+	if ( ! words || 1 === words.length ) {
 		return text;
 	}
 

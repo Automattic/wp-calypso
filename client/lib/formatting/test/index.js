@@ -10,7 +10,7 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import decodeEntitiesNode from '../decode-entities/node';
 
 describe( 'formatting', () => {
-	let formatting, capitalPDangit, parseHtml, decodeEntitiesBrowser;
+	let formatting, capitalPDangit, parseHtml, decodeEntitiesBrowser, preventWidows;
 
 	useFakeDom();
 
@@ -19,6 +19,7 @@ describe( 'formatting', () => {
 		capitalPDangit = formatting.capitalPDangit;
 		parseHtml = formatting.parseHtml;
 		decodeEntitiesBrowser = require( '../decode-entities/browser' );
+		preventWidows = formatting.preventWidows;
 	} );
 
 	describe( '#capitalPDangit()', function() {
@@ -123,6 +124,56 @@ describe( 'formatting', () => {
 					chai.assert.equal( decoded, 'Ribs > Chicken. Truth & Liars.' );
 				} );
 			} );
+		} );
+	} );
+
+	describe( '#preventWidows()', () => {
+		it( 'should not modify input if type is not string', () => {
+			let types = [
+				{},
+				undefined,
+				1,
+				true,
+				[],
+				function() {}
+			];
+
+			types.forEach( ( type ) => {
+				chai.assert.equal( preventWidows( type ), type );
+			} );
+		} );
+
+		it( 'should return empty string when input is all whitespace', () => {
+			let inputs = [
+				' ',
+				'\t',
+				'\n'
+			];
+
+			inputs.forEach( ( input ) => {
+				chai.assert.equal( preventWidows( input ), '' );
+			} );
+		} );
+
+		it( 'should return input when only one word', () => {
+			chai.assert.equal( preventWidows( 'test' ), 'test' );
+		} );
+
+		it( 'should trim whitespace', () => {
+			chai.assert.equal( preventWidows( 'test ' ), 'test' );
+			chai.assert.equal( preventWidows( '\ntest string ' ), 'test\xA0string' );
+		} );
+
+		it( 'should add non-breaking space between words to keep', () => {
+			const input = 'I really love BBQ. It is one of my favorite foods. Beef ribs are amazing.';
+			chai.assert.equal(
+				preventWidows( input ),
+				'I really love BBQ. It is one of my favorite foods. Beef ribs are\xA0amazing.'
+			);
+			chai.assert.equal(
+				preventWidows( input, 4 ),
+				'I really love BBQ. It is one of my favorite foods. Beef\xA0ribs\xA0are\xA0amazing.'
+			);
 		} );
 	} );
 } );
