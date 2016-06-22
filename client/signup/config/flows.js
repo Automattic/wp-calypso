@@ -152,10 +152,10 @@ const flows = {
 	},
 
 	developer: {
-		steps: [ 'themes', 'domains', 'user' ],
+		steps: [ 'domains-only', 'user' ],
 		destination: '/devdocs/welcome',
 		description: 'Signup flow for developers in developer environment',
-		lastModified: '2015-11-23'
+		lastModified: '2016-06-22'
 	},
 
 	jetpack: {
