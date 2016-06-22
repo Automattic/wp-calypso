@@ -66,7 +66,7 @@ const Start = React.createClass( {
 					<p className="reader-start__description">{ this.translate( "We've suggested some sites that you might enjoy. Follow one or more sites to get started." ) }</p>
 				</header>
 
-				<Masonry className="reader-start__cards" options={ { gutter: 14 } }>
+				<Masonry className="reader-start__cards" updateOnEachImageLoad={ true } options={ { gutter: 14 } }>
 					{ this.props.recommendationIds ? map( this.props.recommendationIds, ( recId ) => {
 						return (
 							<StartCard
