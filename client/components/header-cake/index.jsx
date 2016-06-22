@@ -36,7 +36,7 @@ export default class HeaderCake extends Component {
 					{ this.props.children }
 				</div>
 
-				<HeaderCakeBack text={ backText } href={ backHref } spacer />
+				<HeaderCakeBack text={ backText } href={ backHref } spacer={ true } disabled={ true } />
 			</Card>
 		);
 	}

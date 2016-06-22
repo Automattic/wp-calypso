@@ -33,12 +33,14 @@ export default React.createClass( {
 		onClick: PropTypes.func,
 		href: PropTypes.string,
 		text: PropTypes.string,
-		spacer: PropTypes.bool
+		spacer: PropTypes.bool,
+		disabled: PropTypes.bool,
 	},
 
 	getDefaultProps() {
 		return {
-			spacer: false
+			spacer: false,
+			disabled: false
 		};
 	},
 
@@ -57,10 +59,11 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { text = i18n.translate( 'Back' ), href, onClick, spacer } = this.props;
+		const { text = i18n.translate( 'Back' ), href, onClick, spacer, disabled } = this.props;
 		const linkClasses = classNames( {
 			'header-cake__back': true,
-			'is-spacer': spacer
+			'is-spacer': spacer,
+			disabled: disabled
 		} );
 
 		return (

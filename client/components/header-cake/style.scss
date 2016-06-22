@@ -33,6 +33,7 @@
 	&.is-spacer {
 		opacity: 0;
 		cursor: default;
+		z-index: -1;
 	}
 }
 
