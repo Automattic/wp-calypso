@@ -22,20 +22,14 @@ export function receiveProductsList( productsList ) {
 
 export function requestProductsList() {
 	return ( dispatch ) => {
-		dispatch( {
-			type: PRODUCTS_LIST_REQUEST,
-		} );
+		dispatch( { type: PRODUCTS_LIST_REQUEST } );
 
 		return wpcom.undocumented().getProducts()
 			.then( response => omit( response, '_headers' ) )
-			.then( productsList => {
-				dispatch( receiveProductsList( productsList ) );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: PRODUCTS_LIST_REQUEST_FAILURE,
-					error,
-				} );
-			} );
+			.then( productsList => dispatch( receiveProductsList( productsList ) ) )
+			.catch( error => dispatch( {
+				type: PRODUCTS_LIST_REQUEST_FAILURE,
+				error,
+			} ) );
 	};
 }

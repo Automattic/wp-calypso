@@ -29,18 +29,19 @@ describe( 'actions', () => {
 		nock.cleanAll();
 	} );
 
+	const guided_transfer = {
+		product_id: 40,
+		product_name: 'Guided Transfer',
+		product_slug: 'guided_transfer',
+		prices: { USD: 129, AUD: 169 },
+		is_domain_registration: false,
+		description: 'Guided Transfer',
+		cost: 129,
+		cost_display: '$129',
+	};
+
 	describe( '#receiveProductsList()', () => {
 		it( 'should return an action object', () => {
-			const guided_transfer = {
-				product_id: 40,
-				product_name: 'Guided Transfer',
-				product_slug: 'guided_transfer',
-				prices: { USD: 129, AUD: 169 },
-				is_domain_registration: false,
-				description: 'Guided Transfer',
-				cost: 129,
-				cost_display: '$129',
-			};
 			const action = receiveProductsList( { guided_transfer } );
 
 			expect( action ).to.eql( {
@@ -51,17 +52,6 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestProductsList()', () => {
-		const guided_transfer = {
-			product_id: 40,
-			product_name: 'Guided Transfer',
-			product_slug: 'guided_transfer',
-			prices: { USD: 129, AUD: 169 },
-			is_domain_registration: false,
-			description: 'Guided Transfer',
-			cost: 129,
-			cost_display: '$129',
-		};
-
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/products' )
@@ -76,9 +66,7 @@ describe( 'actions', () => {
 		it( 'should dispatch fetch action when thunk triggered', () => {
 			requestProductsList()( spy );
 
-			expect( spy ).to.have.been.calledWith( {
-				type: PRODUCTS_LIST_REQUEST,
-			} );
+			expect( spy ).to.have.been.calledWith( { type: PRODUCTS_LIST_REQUEST } );
 		} );
 
 		it( 'should dispatch product list receive action when request completes', () => {
