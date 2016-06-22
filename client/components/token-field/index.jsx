@@ -196,11 +196,11 @@ var TokenField = React.createClass( {
 	_onBlur: function( event ) {
 		if ( this._inputHasValidValue() ) {
 			debug( '_onBlur adding current token' );
-			this._addCurrentToken();
+			this.setState( { isActive: false }, this._addCurrentToken );
 		} else {
 			debug( '_onBlur not adding current token' );
+			this.setState( this.getInitialState() );
 		}
-		this.setState( this.getInitialState() );
 	},
 
 	_onTokenClickRemove: function( event ) {
