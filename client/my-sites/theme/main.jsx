@@ -9,6 +9,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
+import titlecase from 'to-title-case';
 
 /**
  * Internal dependencies
@@ -313,8 +314,8 @@ const ThemeSheet = React.createClass( {
 		const priceElement = <span className="themes__sheet-action-bar-cost">{ this.props.price }</span>;
 		const siteID = this.props.selectedSite && this.props.selectedSite.ID;
 
-		const analyticsPath = `/theme/:slug${ section ? '/:section' : '' }${ siteID ? '/:site_id' : '' }`;
-		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > Section' : '' }${ siteID ? ' > Site' : '' }`;
+		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
+		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
 		return (
 			<Main className="themes__sheet">
