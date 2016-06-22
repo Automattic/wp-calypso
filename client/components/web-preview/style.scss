@@ -22,12 +22,12 @@
 }
 
 .wp.layout {
-	transition: all 0.3s ease-in-out;
+	transition: all 0.5s ease-in-out;
 }
 
 .is-previewing .wp.layout {
-	filter: blur( 3px );
-	opacity: 0.3;
+	-webkit-filter: blur( 3px );
+	opacity: 0.2;
 }
 
 .web-preview__backdrop {
@@ -51,7 +51,7 @@
 	margin: 0 auto;
 	opacity: 0;
 	transform: translateY( 80vh );
-	transition: transform 0.3s cubic-bezier(0.895, 0.03, 0.685, 0.22),
+	transition: transform 0.2s ease-out,
 		opacity 0.1s ease-in-out,
 		max-width 0.2s ease-out;
 
