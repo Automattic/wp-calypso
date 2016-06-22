@@ -34,15 +34,16 @@ export function getPost( state, globalId ) {
 }
 
 /**
- * Returns a normalized post object by its global ID.
+ * Returns a normalized post object by its global ID, or null if the post does
+ * not exist.
  *
- * @param  {Object} state    Global state tree
- * @param  {String} globalId Post global ID
- * @return {Object}          Post object
+ * @param  {Object}  state    Global state tree
+ * @param  {String}  globalId Post global ID
+ * @return {?Object}          Post object
  */
 export const getNormalizedPost = createSelector(
 	( () => {
-		// Cache normalize flow in immediately-invoked closure so to avoid
+		// Cache normalize flow in immediately-invoked closure to avoid
 		// regenerating same flow on each call to this selector
 		const normalize = flow( [
 			firstPassCanonicalImage,
@@ -50,7 +51,14 @@ export const getNormalizedPost = createSelector(
 			stripHtml
 		] );
 
-		return ( state, globalId ) => normalize( cloneDeep( getPost( state, globalId ) ) );
+		return ( state, globalId ) => {
+			const post = getPost( state, globalId );
+			if ( ! post ) {
+				return null;
+			}
+
+			return normalize( cloneDeep( post ) );
+		};
 	} )(),
 	( state ) => state.posts.items
 );

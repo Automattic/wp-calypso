@@ -48,6 +48,16 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getNormalizedPost()', () => {
+		it( 'should return null if the post is not tracked', () => {
+			const normalizedPost = getNormalizedPost( {
+				posts: {
+					items: {}
+				}
+			}, '3d097cb7c5473c169bba0eb8e3c6cb64' );
+
+			expect( normalizedPost ).to.be.null;
+		} );
+
 		it( 'should return a normalized copy of the post', () => {
 			const post = {
 				ID: 841,
