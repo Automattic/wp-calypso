@@ -1,11 +1,9 @@
 // External dependencies
 import React from 'react';
-import { connect } from 'react-redux';
 import { numberFormat } from 'i18n-calypso';
 
 // Internal dependencies
 import SiteIcon from 'components/site-icon';
-import { getSite } from 'state/reader/sites/selectors';
 import FollowButton from 'reader/follow-button';
 
 const StartCardHeader = ( { site } ) => {
@@ -29,13 +27,7 @@ const StartCardHeader = ( { site } ) => {
 };
 
 StartCardHeader.propTypes = {
-	siteId: React.PropTypes.number.isRequired
+	site: React.PropTypes.object.isRequired
 };
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			site: getSite( state, ownProps.siteId )
-		};
-	}
-)( StartCardHeader );
+export default StartCardHeader;

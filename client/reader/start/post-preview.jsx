@@ -1,6 +1,5 @@
 // External dependencies
 import React from 'react';
-import { connect } from 'react-redux';
 import get from 'lodash/get';
 import classNames from 'classnames';
 
@@ -8,7 +7,6 @@ import classNames from 'classnames';
 import Gravatar from 'components/gravatar';
 import PostExcerpt from 'components/post-excerpt';
 import page from 'page';
-import { getPostBySiteAndId } from 'state/reader/posts/selectors';
 import safeImageUrl from 'lib/safe-image-url';
 import resizeImageUrl from 'lib/resize-image-url';
 
@@ -70,14 +68,7 @@ const StartPostPreview = React.createClass( {
 } );
 
 StartPostPreview.propTypes = {
-	siteId: React.PropTypes.number.isRequired,
-	postId: React.PropTypes.number.isRequired
+	post: React.PropTypes.object.isRequired
 };
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			post: getPostBySiteAndId( state, ownProps.siteId, ownProps.postId )
-		};
-	}
-)( StartPostPreview );
+export default StartPostPreview;
