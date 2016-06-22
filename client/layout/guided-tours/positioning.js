@@ -103,6 +103,13 @@ export function getStepPosition( { placement = 'center', targetSlug } ) {
 	};
 }
 
+export function getScrollableSidebar() {
+	if ( viewport.isMobile() ) {
+		return query( '#secondary .sidebar' )[ 0 ];
+	}
+	return query( '#secondary .sidebar .sidebar__region' )[ 0 ];
+}
+
 function validatePlacement( placement, target ) {
 	const targetSlug = target && target.dataset && target.dataset.tipTarget;
 
@@ -122,16 +129,15 @@ function scrollIntoView( target ) {
 		return 0;
 	}
 
+	const container = getScrollableSidebar();
 	const { top, bottom } = target.getBoundingClientRect();
+	const clientHeight = viewport.isMobile() ? document.documentElement.clientHeight : container.clientHeight;
 
-	if ( bottom + DIALOG_PADDING + DIALOG_HEIGHT <=
-			document.documentElement.clientHeight ) {
+	if ( bottom + DIALOG_PADDING + DIALOG_HEIGHT <= clientHeight ) {
 		return 0;
 	}
 
-	const container = query( '#secondary .sidebar .sidebar__region' )[ 0 ];
-	const scrollMax = container.scrollHeight -
-		container.clientHeight - container.scrollTop;
+	const scrollMax = container.scrollHeight - clientHeight - container.scrollTop;
 	const y = Math.min( .75 * top, scrollMax );
 
 	scrollTo( { y, container } );
