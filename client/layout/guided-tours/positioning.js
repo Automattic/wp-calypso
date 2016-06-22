@@ -45,7 +45,7 @@ const dialogPositioners = {
 		y: MASTERBAR_HEIGHT / 2 + DIALOG_HEIGHT / 2,
 	} ),
 	right: () => ( {
-		x: document.documentElement.clientWidth - DIALOG_WIDTH - ( 3 * DIALOG_PADDING ),
+		x: Math.max( 0, document.documentElement.clientWidth - DIALOG_WIDTH - ( 3 * DIALOG_PADDING ) ),
 		y: MASTERBAR_HEIGHT + 16,
 	} ),
 };
@@ -59,7 +59,7 @@ export const posToCss = ( { x, y } ) => ( {
 } );
 
 export function targetForSlug( targetSlug ) {
-	return query( '[data-tip-target="' + targetSlug + '"]' )[0];
+	return query( '[data-tip-target="' + targetSlug + '"]' )[ 0 ];
 }
 
 export function getValidatedArrowPosition( { targetSlug, arrow, stepPos } ) {
@@ -110,7 +110,7 @@ function validatePlacement( placement, target ) {
 		return 'middle';
 	}
 
-	return ( placement !== 'center' && viewport.isMobile() )
+	return ( target && placement !== 'center' && viewport.isMobile() )
 		? 'below'
 		: placement;
 }
