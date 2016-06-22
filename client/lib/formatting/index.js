@@ -1,14 +1,14 @@
 /**
  * External Dependencies
  */
-var trim = require( 'lodash/trim' ),
-	warn = require( 'lib/warn' ),
-	stripTags = require( 'striptags' );
+import trim from 'lodash/trim';
+import stripTags from 'striptags';
 
 /**
  * Internal Dependencies
  */
-var decode = require( './decode-entities' );
+import warn from 'lib/warn';
+import decode from './decode-entities';
 
 function decodeEntities( text ) {
 	if ( text === undefined || text === false || text === null ) {
@@ -28,7 +28,7 @@ function decodeEntities( text ) {
  */
 function interpose( separator, list ) {
 	return list.reduce( function( previousValue, currentValue, index ) {
-		var value;
+		let value;
 		if ( index > 0 ) {
 			value = previousValue.concat( separator, currentValue );
 		} else {
@@ -53,8 +53,8 @@ function stripHTML( string ) {
  * @param  {number} wordsToKeep the number of words to keep together
  * @return {string}             the widow-prevented string
  */
-function preventWidows( text, wordsToKeep ) {
-	var words, endWords;
+function preventWidows( text, wordsToKeep = 2 ) {
+	let words, endWords;
 
 	if ( typeof text !== 'string' ) {
 		return text;
@@ -66,8 +66,7 @@ function preventWidows( text, wordsToKeep ) {
 	}
 
 	words = text.match( /\S+/g );
-
-	if ( ! words ) { // all whitespace
+	if ( ! words || 1 === words.length ) {
 		return text;
 	}
 
@@ -93,11 +92,12 @@ function preventWidows( text, wordsToKeep ) {
  * @return {string}        html string with HTML paragraphs instead of double line-breaks
  */
 function wpautop( pee ) {
-	var preserve_linebreaks = false,
-		preserve_br = false,
-		blocklist = 'table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre' +
+	const blocklist = 'table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre' +
 		'|form|map|area|blockquote|address|math|style|p|h[1-6]|hr|fieldset|legend|section' +
 		'|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary';
+
+	let preserve_linebreaks = false,
+		preserve_br = false;
 
 	if ( pee.indexOf( '<object' ) !== -1 ) {
 		pee = pee.replace( /<object[\s\S]+?<\/object>/g, function( a ) {
@@ -175,10 +175,11 @@ function wpautop( pee ) {
 }
 
 function removep( html ) {
-	var blocklist = 'blockquote|ul|ol|li|table|thead|tbody|tfoot|tr|th|td|h[1-6]|fieldset',
-		blocklist1 = blocklist + '|div|p',
-		blocklist2 = blocklist + '|pre',
-		preserve_linebreaks = false,
+	const blocklist = 'blockquote|ul|ol|li|table|thead|tbody|tfoot|tr|th|td|h[1-6]|fieldset';
+	const blocklist1 = blocklist + '|div|p';
+	const blocklist2 = blocklist + '|pre';
+
+	let preserve_linebreaks = false,
 		preserve_br = false;
 
 	if ( ! html ) {
