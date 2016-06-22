@@ -50,6 +50,7 @@
 		"manage/stats": true,
 		"manage/themes": true,
 		"manage/themes-jetpack": true,
+		"manage/themes/details": true,
 		"manage/themes/logged-out": true,
 		"me/account": true,
 		"me/billing-history": true,
