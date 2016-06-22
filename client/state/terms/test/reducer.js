@@ -12,6 +12,9 @@ import merge from 'lodash/merge';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	DESERIALIZE,
+	TERMS_ADD_REQUEST,
+	TERMS_ADD_REQUEST_SUCCESS,
+	TERMS_ADD_REQUEST_FAILURE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_FAILURE,
@@ -515,6 +518,128 @@ describe( 'reducer', () => {
 				2916284: {
 					'amazing-taxonomy': keyedMoreTerms,
 					'jetpack-portfolio': keyedTestTerms
+				}
+			} );
+		} );
+
+		it( 'should add a temporary term by taxonomy', () => {
+			const original = deepFreeze( {
+				2916284: {
+					'jetpack-portfolio': {
+						724: {
+							ID: 724,
+							name: 'Ribs',
+							slug: 'ribs'
+						}
+					}
+				}
+			} );
+
+			const state = items( original, {
+				type: TERMS_ADD_REQUEST,
+				siteId: 2916284,
+				taxonomy: 'jetpack-portfolio',
+				temporaryId: 'temporary-1',
+				term: {
+					name: 'And Chicken'
+				}
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					'jetpack-portfolio': {
+						724: {
+							ID: 724,
+							name: 'Ribs',
+							slug: 'ribs'
+						},
+						'temporary-1': {
+							name: 'And Chicken'
+						}
+					}
+				}
+			} );
+		} );
+
+		it( 'should remove temporary term and add permanent term', () => {
+			const original = deepFreeze( {
+				2916284: {
+					'jetpack-portfolio': {
+						724: {
+							ID: 724,
+							name: 'Ribs',
+							slug: 'ribs'
+						},
+						'temporary-1': {
+							name: 'And Chicken'
+						}
+					}
+				}
+			} );
+
+			const state = items( original, {
+				type: TERMS_ADD_REQUEST_SUCCESS,
+				siteId: 2916284,
+				taxonomy: 'jetpack-portfolio',
+				temporaryId: 'temporary-1',
+				term: {
+					ID: 8976,
+					name: 'And Chicken',
+					slug: 'and-chicken'
+				}
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					'jetpack-portfolio': {
+						724: {
+							ID: 724,
+							name: 'Ribs',
+							slug: 'ribs'
+						},
+						8976: {
+							ID: 8976,
+							name: 'And Chicken',
+							slug: 'and-chicken'
+						}
+					}
+				}
+			} );
+		} );
+
+		it( 'should remove temporary term on add failure', () => {
+			const original = deepFreeze( {
+				2916284: {
+					'jetpack-portfolio': {
+						724: {
+							ID: 724,
+							name: 'Ribs',
+							slug: 'ribs'
+						},
+						'temporary-1': {
+							name: 'And Chicken'
+						}
+					}
+				}
+			} );
+
+			const state = items( original, {
+				type: TERMS_ADD_REQUEST_FAILURE,
+				siteId: 2916284,
+				taxonomy: 'jetpack-portfolio',
+				temporaryId: 'temporary-1',
+				error: 'FAIL'
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					'jetpack-portfolio': {
+						724: {
+							ID: 724,
+							name: 'Ribs',
+							slug: 'ribs'
+						}
+					}
 				}
 			} );
 		} );
