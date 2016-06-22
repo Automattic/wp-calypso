@@ -97,7 +97,7 @@ export class SiteSettingsComponent extends Component {
 			seo: <SeoSettings site={ site } />,
 			'import': <ImportSettings site={ site } />,
 			'export': <ExportSettings site={ site } store={ context.store } />,
-			guidedTransfer: <GuidedTransfer store={ context.store } />
+			guidedTransfer: <GuidedTransfer store={ context.store } hostSlug={ context.params.host_slug } />
 		};
 	}
 
