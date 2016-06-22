@@ -188,7 +188,9 @@ const Plans = React.createClass( {
 						{
 							showPlanFeatures
 								? <PlansFeaturesMain
-									site={ selectedSite } />
+									site={ selectedSite }
+									plans={ this.props.plans }
+									sitePlans={ this.props.sitePlans } />
 
 								: <PlanList
 									site={ selectedSite }

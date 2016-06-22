@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import times from 'lodash/times';
 
 /**
  * Internal dependencies
@@ -11,11 +12,39 @@ import PlanFeatures from 'my-sites/plan-features';
 import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
+import { abtest } from 'lib/abtest';
 
 class PlansFeaturesMain extends Component {
+	renderPlanPlaceholders() {
+		const { site, hideFreePlan, showJetpackFreePlan } = this.props;
+
+		let numberOfPlaceholders = abtest( 'personalPlan' ) === 'hide' ? 3 : 4;
+
+		if ( hideFreePlan || ( site && site.jetpack ) ) {
+			numberOfPlaceholders = showJetpackFreePlan ? 3 : 2;
+		}
+
+		const plansList = times( numberOfPlaceholders, ( n ) => {
+			return (
+				<PlanFeatures key={ n } placeholder={ true } />
+			);
+		} );
+
+		return (
+			<div className="plans-features-main">
+				{ plansList }
+			</div>
+		);
+	}
 
 	render() {
-		const { translate, site } = this.props;
+		const { translate, site, plans, isInSignup, sitePlans } = this.props;
+
+		const isLoadingSitePlans = ! isInSignup && ! sitePlans.hasLoadedFromServer;
+
+		if ( plans.length === 0 || isLoadingSitePlans ) {
+			return this.renderPlanPlaceholders();
+		}
 
 		return (
 			<div>
