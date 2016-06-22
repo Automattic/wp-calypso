@@ -91,7 +91,7 @@ class GuidedTours extends Component {
 
 	quit( options = {} ) {
 		// TODO: put into step specific callback?
-		const sidebar = query( '#secondary .sidebar' )[ 0 ];
+		const sidebar = query( '#secondary .sidebar .sidebar__region' )[ 0 ];
 		scrollTo( { y: 0, container: sidebar } );
 
 		this.currentTarget && this.currentTarget.classList.remove( 'guided-tours__overlay' );
