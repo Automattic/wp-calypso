@@ -173,7 +173,6 @@ module.exports = React.createClass( {
 
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
-
 		const isPlansOnlyTest = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 		return (
 			<RegisterDomainStep
@@ -190,7 +189,7 @@ module.exports = React.createClass( {
 				withPlansOnly={ isPlansOnlyTest }
 				includeWordPressDotCom
 				isSignupStep
-				showExampleSuggestions
+				showExampleSuggestions={ ! ( 'developer' === this.props.flowName ) }
 				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
 		);
 	},
