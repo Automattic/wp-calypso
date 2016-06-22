@@ -157,17 +157,15 @@ export function items( state = {}, action ) {
 			} );
 
 		case TERMS_ADD_REQUEST_SUCCESS:
+		case TERMS_ADD_REQUEST_FAILURE:
 			const taxonomyTerms = merge( {}, state );
-			taxonomyTerms[ action.siteId ][ action.taxonomy ][ action.term.ID ] = action.term;
 			delete taxonomyTerms[ action.siteId ][ action.taxonomy ][ action.temporaryId ];
 
+			if ( action.type === TERMS_ADD_REQUEST_SUCCESS ) {
+				taxonomyTerms[ action.siteId ][ action.taxonomy ][ action.term.ID ] = action.term;
+			}
+
 			return taxonomyTerms;
-
-		case TERMS_ADD_REQUEST_FAILURE:
-			const terms = merge( {}, state );
-			delete terms[ action.siteId ][ action.taxonomy ][ action.temporaryId ];
-
-			return terms;
 
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, termsSchema ) ) {
