@@ -3,6 +3,7 @@
  */
 const debug = require( 'debug' )( 'calypso:analytics' ),
 	assign = require( 'lodash/assign' ),
+	isObjectLike = require( 'lodash/isObjectLike' ),
 	times = require( 'lodash/times' ),
 	omit = require( 'lodash/omit' ),
 	pickBy = require( 'lodash/pickBy' ),
@@ -135,6 +136,15 @@ const analytics = {
 			let superProperties;
 
 			eventProperties = eventProperties || {};
+
+			if ( process.env.NODE_ENV !== 'production' ) {
+				for ( const key in eventProperties ) {
+					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
+						console.error( `Nested properties are not supported by Tracks. Check '${key}' on`, eventProperties );
+						return;
+					}
+				}
+			}
 
 			debug( 'Record event "%s" called with props %o', eventName, eventProperties );
 
