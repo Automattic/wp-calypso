@@ -114,7 +114,7 @@ export default {
 					<PlansCompare
 						selectedSite={ site }
 						features={ features }
-						selectedFeature={ context.params.feature }
+						selectedFeature={ context.params.feature || context.query.feature }
 						intervalType={ context.params.intervalType }
 						productsList={ productsList } />
 				</CheckoutData>
