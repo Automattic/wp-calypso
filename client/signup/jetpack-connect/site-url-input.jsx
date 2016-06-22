@@ -91,6 +91,7 @@ export default React.createClass( {
 						icon="globe" />
 					<FormTextInput
 						ref="siteUrl"
+						autoFocus="autofocus"
 						onChange={ this.onChange }
 						disabled={ this.props.isFetching }
 						placeholder={ this.translate( 'http://www.yoursite.com' ) }
