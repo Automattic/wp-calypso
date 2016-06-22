@@ -1,15 +1,15 @@
 /**
 * External dependencies
 */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var SmallPostCard = require( 'components/post-card/small' );
+import SmallPostCard from 'components/post-card/small';
 
-var PostCards = React.createClass( {
-	displayName: 'PostCards',
+const PostCards = React.createClass( {
+	displayName: 'PostCard',
 
 	render: function() {
 		const items = [
@@ -20,6 +20,9 @@ var PostCards = React.createClass( {
 					site_ID: 1234,
 					site_name: 'All the catsss',
 					global_ID: 1,
+					author: {
+						name: 'wolvy'
+					},
 					canonical_image: {
 						uri: 'http://lorempixel.com/256/256/cats/',
 						height: 256,
@@ -42,6 +45,9 @@ var PostCards = React.createClass( {
 					site_ID: 99,
 					site_name: '99 Problems',
 					global_ID: 2,
+					author: {
+						name: 'wolvy'
+					},
 					canonical_image: {
 						uri: 'http://lorempixel.com/1024/256/sports/',
 						height: 256,
@@ -55,7 +61,10 @@ var PostCards = React.createClass( {
 					title: 'Seven weird numbers that are even lonlier than one. You won\'t believe number 4',
 					site_ID: 7,
 					site_name: 'Made You Click! Made You Click! Made You Click! Made You Click! Made You Click! Made You Click! Made You Click! Made You Click! Made You Click! Made You Click!',
-					global_ID: 2,
+					global_ID: 3,
+					author: {
+						name: 'wolvy'
+					},
 					canonical_image: {
 						uri: 'http://lorempixel.com/128/96/sports/',
 						height: 96,
@@ -69,24 +78,23 @@ var PostCards = React.createClass( {
 					title: 'No Image? No Problem. We don\'t need an image where we\'re going',
 					site_ID: 99,
 					site_name: 'The text only web is the only web we need.',
-					global_ID: 2
+					global_ID: 4,
+					author: {
+						name: 'wolvy'
+					}
 				}
 			},
 		];
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/design/post-card">Post Card</a>
+					<a href="/devdocs/app-components/post-card">Post Card</a>
 				</h2>
 				<div>
-					{ items.map( item => <SmallPostCard post={ item.post } site={ item.site } /> ) }
+					{ items.map( item => <SmallPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
 				</div>
 			</div>
 		);
-	},
-
-	toggleCards: function() {
-		this.setState( { compactCards: ! this.state.compactCards } );
 	}
 } );
 
