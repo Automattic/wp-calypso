@@ -67,15 +67,13 @@ export default React.createClass( {
 	},
 
 	componentDidMount: function() {
-		this.props.user
-			&& this.props.user
+		this.props.user	&& this.props.user
 			.on( 'change', this.updateNeedsVerification )
 			.on( 'verify', this.updateNeedsVerification );
 	},
 
 	componentWillUnmount: function() {
-		this.props.user
-			&& this.props.user
+		this.props.user	&& this.props.user
 			.off( 'change', this.updateNeedsVerification )
 			.off( 'verify', this.updateNeedsVerification );
 	},
@@ -102,13 +100,11 @@ export default React.createClass( {
 			needsVerification: nextProps.userUtils && nextProps.userUtils.needsVerificationForSite( nextProps.site ),
 		} );
 
-		this.props.user
-			&& this.props.user
+		this.props.user	&& this.props.user
 			.off( 'change', this.updateNeedsVerification )
 			.off( 'verify', this.updateNeedsVerification );
 
-		nextProps.user
-			&& nextProps.user
+		nextProps.user && nextProps.user
 			.on( 'change', this.updateNeedsVerification )
 			.on( 'verify', this.updateNeedsVerification );
 	},
