@@ -351,7 +351,7 @@
 		text-transform: uppercase;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( "<960px" ) {
 		color: transparentize( $gray, 0.2 );
 		top: 90%;
 		margin-left: 30px;
