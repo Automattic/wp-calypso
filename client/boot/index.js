@@ -19,6 +19,7 @@ var React = require( 'react' ),
  */
 // lib/local-storage must be run before lib/user
 var config = require( 'config' ),
+	abtest = require( 'lib/abtest' ).abtest,
 	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
 	localStoragePolyfill = require( 'lib/local-storage' )(), //eslint-disable-line
 	analytics = require( 'lib/analytics' ),
@@ -205,7 +206,9 @@ function reduxStoreReady( reduxStore ) {
 		reduxStore.dispatch( receiveUser( user.get() ) );
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
 
-		if ( config.isEnabled( 'push-notifications' ) ) {
+
+		const participantInPushNotificationsAbTest = config.isEnabled('push-notifications-ab-test') && abtest('browserNotifications') === 'enabled';
+		if ( config.isEnabled( 'push-notifications' ) || participantInPushNotificationsAbTest ) {
 			// If the browser is capable, registers a service worker & exposes the API
 			reduxStore.dispatch( pushNotificationsInit() );
 		}

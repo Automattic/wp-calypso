@@ -26,6 +26,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	GuidedTours = require( 'layout/guided-tours' ),
 	analytics = require( 'lib/analytics' ),
 	config = require( 'config' ),
+	abtest = require( 'lib/abtest' ).abtest,
 	PulsingDot = require( 'components/pulsing-dot' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	OfflineStatus = require( 'layout/offline-status' ),
@@ -90,7 +91,8 @@ Layout = React.createClass( {
 	},
 
 	renderPushNotificationPrompt: function() {
-		if ( ! config.isEnabled( 'push-notifications' ) ) {
+		const participantInAbTest = config.isEnabled('push-notifications-ab-test') && abtest('browserNotifications') === 'enabled';
+		if ( ! config.isEnabled( 'push-notifications' ) && ! participantInAbTest ) {
 			return null;
 		}
 
