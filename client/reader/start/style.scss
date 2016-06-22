@@ -15,23 +15,23 @@
 
 .reader-start__description {
 	color: $gray;
-	font-size: 15px;
+	font-size: 16px;
 	font-weight: 100;
-	line-height: 1.4;
+	line-height: 1.5;
 	margin-bottom: 15px;
 
 	@include breakpoint( "<960px" ) {
 		padding: 0 15px;
-	}
-
-	@include breakpoint( ">480px" ) {
-		font-size: 18px;
 	}
 }
 
 .reader-start__cards {
 
 	padding-bottom: 100px;
+
+	@include breakpoint( "<480px" ) {
+		margin-top: -10px;
+	}
 
 	.site-icon {
 		clear: both;
@@ -81,14 +81,26 @@
 		font-family: $serif;
 		font-size: 12px;
 		margin: 10px 0 -3px;
-		max-height: none;
-	}
+		max-height: 65px;
 
-	.post-excerpt.is-long {
+		@include breakpoint( ">480px" ) {
+			max-height: 56px;
+		}
 
 		&:after {
-			display: none;
+			@include long-content-fade;
+			height: 25px;
+			position: absolute;
+				bottom: 0;
+				top: 40px;
+			width: 40%;
+
+			@include breakpoint( ">660px" ) {
+				top: 36px;
+			}
 		}
+
+		@include breakpoint
 	}
 
 	.follow-button {
