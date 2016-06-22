@@ -2,18 +2,13 @@
  * External dependencies
  */
 import get from 'lodash/get';
-import values from 'lodash/values';
-import range from 'lodash/range';
 
 /**
  * Internal dependencies
  */
 import TreeConvert from 'lib/tree-convert';
 import createSelector from 'lib/create-selector';
-import {
-	getSerializedTermsQuery,
-	getSerializedTermsQueryWithoutPage
-} from './utils';
+import { getSerializedTermsQuery } from './utils';
 
 /**
  * Returns true if currently requesting terms for the taxonomies query, or false
@@ -42,20 +37,12 @@ export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
  */
 export const getTermsForQuery = createSelector(
 	( state, siteId, taxonomy, query ) => {
-		const serializedQuery = getSerializedTermsQuery( query );
-		const queryResults = get( state.terms.queries, [ siteId, taxonomy, serializedQuery ] );
-		if ( ! queryResults ) {
+		const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+		if ( ! manager ) {
 			return null;
 		}
 
-		return queryResults.reduce( ( memo, termId ) => {
-			const term = get( state.terms, [ 'items', siteId, taxonomy, termId ] );
-			if ( term ) {
-				memo.push( term );
-			}
-
-			return memo;
-		}, [] );
+		return manager.getItems( query );
 	},
 	( state, siteId, taxonomy ) => getTerms( state, siteId, taxonomy ),
 	( state, siteId, taxonomy, query ) => {
@@ -75,15 +62,12 @@ export const getTermsForQuery = createSelector(
  * @return {?Array}           Terms for the query
  */
 export function getTermsForQueryIgnoringPage( state, siteId, taxonomy, query ) {
-	const lastPage = getTermsLastPageForQuery( state, siteId, taxonomy, query );
-	if ( null === lastPage ) {
-		return lastPage;
+	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+	if ( ! manager ) {
+		return null;
 	}
 
-	return range( 1, lastPage + 1 ).reduce( ( memo, page ) => {
-		const termsQuery = Object.assign( {}, query, { page } );
-		return memo.concat( getTermsForQuery( state, siteId, taxonomy, termsQuery ) || [] );
-	}, [] );
+	return manager.getItemsIgnoringPage( query );
 }
 
 /**
@@ -123,8 +107,17 @@ export const getTermsHierarchyForQueryIgnoringPage = createSelector(
  * @return {?Number}          Last terms page
  */
 export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
-	const serializedQuery = getSerializedTermsQueryWithoutPage( query );
-	return get( state.terms.queriesLastPage, [ siteId, taxonomy, serializedQuery ], null );
+	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+	if ( ! manager ) {
+		return null;
+	}
+
+	const pages = manager.getNumberOfPages( query );
+	if ( null === pages ) {
+		return null;
+	}
+
+	return Math.max( pages, 1 );
 }
 
 /**
@@ -133,14 +126,13 @@ export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
  * @param  {Object} state    Global state tree
  * @param  {Number} siteId   Site ID
  * @param  {String} taxonomy Taxonomy slug
- * @return {Array}           Terms
+ * @return {?Array}          Terms
  */
 export function getTerms( state, siteId, taxonomy ) {
-	const terms = get( state.terms, [ 'items', siteId, taxonomy ] );
-
-	if ( ! terms ) {
+	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+	if ( ! manager ) {
 		return null;
 	}
 
-	return values( terms );
+	return manager.getItems();
 }
