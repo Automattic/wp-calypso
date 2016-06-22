@@ -98,11 +98,17 @@ export const getSitePost = createSelector(
  * @return {?Array}         Posts for the post query
  */
 export function getSitePostsForQuery( state, siteId, query ) {
-	if ( ! state.posts.queries[ siteId ] ) {
+	const manager = state.posts.queries[ siteId ];
+	if ( ! manager ) {
 		return null;
 	}
 
-	return state.posts.queries[ siteId ].getItems( query );
+	const posts = manager.getItems( query );
+	if ( ! posts ) {
+		return null;
+	}
+
+	return posts.map( ( post ) => getNormalizedPost( state, post.global_ID ) );
 }
 
 /**
