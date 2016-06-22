@@ -13,11 +13,18 @@ export default React.createClass( {
 		onClick: React.PropTypes.func
 	},
 
-	render: function() {
-		let hasRegions = this.props.children.some( el => el.type === SidebarRegion );
+	hasRegions: function() {
+		React.Children.forEach( this.props.children, el => {
+			if ( el && SidebarRegion === el.type ) {
+				return true;
+			}
+		} );
+		return false;
+	},
 
+	render: function() {
 		return (
-			<ul className={ classNames( 'sidebar', this.props.className, { 'has-regions': hasRegions } ) } onClick={ this.props.onClick } data-tip-target="sidebar">
+			<ul className={ classNames( 'sidebar', this.props.className, { 'has-regions': this.hasRegions() } ) } onClick={ this.props.onClick } data-tip-target="sidebar">
 				{ this.props.children }
 			</ul>
 		);
