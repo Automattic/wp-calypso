@@ -34,7 +34,7 @@ webpackConfig = {
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]'
 	},
 	debug: true,
-	devtool: '#source-map',
+	devtool: '#eval-cheap-module-source-map',
 	module: {
 		preLoaders: [
 			{
