@@ -61,12 +61,11 @@ export default React.createClass( {
 		const { text = i18n.translate( 'Back' ), href, onClick, spacer } = this.props;
 		const linkClasses = classNames( {
 			'header-cake__back': true,
-			'is-spacer': spacer,
-			disabled: spacer,
+			'is-spacer': spacer
 		} );
 
 		return (
-			<Button compact borderless className={ linkClasses } href={ href } onClick={ onClick }>
+			<Button compact borderless className={ linkClasses } href={ href } onClick={ onClick } disabled={ spacer }>
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{ ! this.hideText( text ) && text }
 			</Button>
