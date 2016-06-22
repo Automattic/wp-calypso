@@ -28,8 +28,7 @@ export function SmallPostCard( { translate, post, site, onPostClick = noop, onSi
 	);
 
 	const sitename = ( <span className="post-card__site-title">
-		<a href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }>{ siteName }
-		</a>
+		<a href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }>{ siteName }</a>
 	</span> );
 
 	const thumbnailUrl = post.canonical_image && resizeImageUrl( safeImageUrl( post.canonical_image.uri ), { resize: '96,72' } );
