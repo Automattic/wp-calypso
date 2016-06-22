@@ -130,4 +130,13 @@ module.exports = {
 		defaultVariation: 'noChanges',
 		allowExistingUsers: false,
 	},
+	browserNotifications: {
+		datestamp: '20160628',
+		variations: {
+			disabled: 95,
+			enabled: 5,
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true,
+	},
 };

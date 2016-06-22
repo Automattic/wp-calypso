@@ -121,7 +121,6 @@ function getDefaultContext( request ) {
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
 		catchJsErrors: '/calypso/catch-js-errors-' + 'v2' + '.min.js',
-		isPushEnabled: !! config.isEnabled( 'push-notifications' )
 	} );
 
 	context.app = {
