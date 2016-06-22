@@ -99,8 +99,7 @@ export default connect( ( state, ownProps ) => {
 		rawPrice: getPlanRawPrice( state, planProductId /**, get from abtest **/ ),
 		planConstantObj: plansList[ ownProps.plan ],
 		billingTimeFrame: get( planObject, 'bill_period_label', '' ),
-		planObject: planObject,
-		isPlaceholder: get( ownProps, 'placeholder', false )
+		planObject: planObject
 	};
 } )( PlanFeatures );
 
