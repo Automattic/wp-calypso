@@ -43,6 +43,16 @@ class VerifyEmailDialog extends React.Component {
 		}.bind( this ) );
 	}
 
+	getResendbuttonLabel() {
+		if ( this.state.emailSent ) {
+			return i18n.translate( 'Email Sent' );
+		}
+		if ( this.state.pendingRequest ) {
+			return <Spinner className="post-editor__confirmation-dialog-spinner" />;
+		}
+		return i18n.translate( 'Resend Email' );
+	}
+
 	getDialogButtons() {
 		return [
 			<FormButton
@@ -56,13 +66,7 @@ class VerifyEmailDialog extends React.Component {
 				isPrimary={ false }
 				disabled={ this.state.pendingRequest || this.state.emailSent }
 				onClick={ this.handleSendVerification }>
-				{ this.state.emailSent ?
-					i18n.translate( 'Email Sent' ) :
-					( this.state.pendingRequest ?
-						<Spinner className="post-editor__confirmation-dialog-spinner" /> :
-						i18n.translate( 'Resend Email' )
-					)
-				}
+				{ this.getResendbuttonLabel() }
 			</FormButton>
 		];
 	}
@@ -79,7 +83,7 @@ class VerifyEmailDialog extends React.Component {
 				'{{wrapper}}%(email)s{{/wrapper}} {{emailPreferences}}change{{/emailPreferences}}',
 				{
 					components: {
-						wrapper: <span />,
+						wrapper: <span className="post-editor__confirmation-dialog-email-wrapper" />,
 						emailPreferences: <a href="/me/account" />
 					},
 					args: {
