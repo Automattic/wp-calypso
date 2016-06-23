@@ -17,7 +17,7 @@ export default connect(
 	},
 	( dispatch ) => {
 		return bindActionCreators( {
-			setEditorModePreference: setPreference.bind( null, 'editor-mode' ),
+			saveEditorModePreference: savePreference.bind( null, 'editor-mode' ),
 		}, dispatch );
 	},
 )( PostEditor );
@@ -45,5 +45,6 @@ To add a new preference key, you only need to add a key and defaut value in `DEF
 ### Actions
 
 - **fetchPreferences()** - populate the tree
-- **setPreference( key, value )** - set preference and persist all preferences in the endpoint
+- **savePreference( key, value )** - set preference and persist all preferences in the endpoint
+- **setPreference( key, value )** - set preference without persisting in API
 
