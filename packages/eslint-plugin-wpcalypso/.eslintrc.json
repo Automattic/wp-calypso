@@ -1,11 +1,9 @@
 {
+	"root": true,
 	"parser": "babel-eslint",
 	"env": {
-		"es6": true,
-		"mocha": true
-	},
-	"ecmaFeatures": {
-		"modules": true
+		"mocha": true,
+		"node": true
 	},
 	"rules": {
 		"brace-style": [ 2, "1tbs" ],
@@ -18,6 +16,7 @@
 		"eol-last": 2,
 		"indent": [ 2, "tab", { "SwitchCase": 1 } ],
 		"key-spacing": 2,
+		"keyword-spacing": 2,
 		"new-cap": [ 2, { "capIsNew": false, "newIsCap": true } ],
 		"no-cond-assign": 2,
 		"no-dupe-keys": 2,
@@ -50,7 +49,6 @@
 		"quote-props": [ 2, "as-needed" ],
 		"quotes": [ 2, "single", "avoid-escape" ],
 		"semi-spacing": 2,
-		"space-after-keywords": [ 2, "always" ],
 		"space-before-blocks": [ 2, "always" ],
 		"space-before-function-paren": [ 2, "never" ],
 		"space-in-brackets": 0,

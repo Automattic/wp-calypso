@@ -17,12 +17,11 @@
     "test": "mocha tests --recursive"
   },
   "dependencies": {
-    "eslint": "^1.10.3",
     "requireindex": "^1.1.0"
   },
   "devDependencies": {
-    "babel-eslint": "^5.0.0-beta6",
-    "eslint": "~1.2.0"
+    "babel-eslint": "^6.1.0",
+    "eslint": "^2.13.1"
   },
   "engines": {
     "node": ">=0.10.0"

@@ -21,14 +21,14 @@ var rule = require( '../../../lib/rules/jsx-gridicon-size' ),
 	valid: [
 		{
 			code: '<Gridicon size={ 18 } />',
-			ecmaFeatures: { jsx: true }
+			parserOptions: { ecmaFeatures: { jsx: true } }
 		}
 	],
 
 	invalid: [
 		{
 			code: '<Gridicon size={ 20 } />',
-			ecmaFeatures: { jsx: true },
+			parserOptions: { ecmaFeatures: { jsx: true } },
 			errors: [ {
 				message: rule.ERROR_MESSAGE
 			} ]
