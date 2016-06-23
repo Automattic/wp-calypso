@@ -35,8 +35,7 @@ function EditorPostTypeUnsupported( { translate, types, type, typeObject, writeP
 	//  2. The type value has been unset from the edited post (navigating away)
 	//  3. Type object provided (indicates that type indeed exists)
 	if ( ! types || ! type || typeObject ) {
-		// [TODO]: React 15 supports returning `null` from function components
-		return <noscript />;
+		return null;
 	}
 
 	const buttons = [
