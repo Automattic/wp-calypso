@@ -16,7 +16,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
-import { dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation, checkUrl } from 'state/jetpack-connect/actions';
+import { confirmJetpackInstallStatus, dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation, checkUrl } from 'state/jetpack-connect/actions';
 import { getSiteByUrl } from 'state/sites/selectors';
 import { requestSites } from 'state/sites/actions';
 import JetpackExampleInstall from './exampleComponents/jetpack-install';
@@ -55,6 +55,14 @@ const JetpackConnectMain = React.createClass( {
 
 	dismissUrl() {
 		this.props.dismissUrl( this.state.currentUrl );
+	},
+
+	confirmJetpackInstalled() {
+		this.props.confirmJetpackInstallStatus( true );
+	},
+
+	confirmJetpackNotInstalled() {
+		this.props.confirmJetpackInstallStatus( false );
 	},
 
 	isCurrentUrlFetched() {
@@ -134,6 +142,15 @@ const JetpackConnectMain = React.createClass( {
 		if ( this.state.currentUrl === '' ) {
 			return false;
 		}
+
+		if ( this.props.jetpackConnectSite.installConfirmedByUser === false ) {
+			return 'notJetpack';
+		}
+
+		if ( this.props.jetpackConnectSite.installConfirmedByUser === true ) {
+			return 'notActiveJetpack';
+		}
+
 		if ( this.state.currentUrl.toLowerCase() === 'http://wordpress.com' || this.state.currentUrl.toLowerCase() === 'https://wordpress.com' ) {
 			return 'wordpress.com';
 		}
@@ -286,10 +303,27 @@ const JetpackConnectMain = React.createClass( {
 					</div>
 					<Button onClick={ this.installJetpack } primary>{ this.translate( 'Install Jetpack' ) }</Button>
 					<div className="jetpack-connect__navigation">
-						{ this.renderBackButton() }
+						<div>{ this.renderAlreadyHaveJetpackButton() }</div>
+						<div>{ this.renderBackButton() }</div>
 					</div>
 				</div>
 			</Main>
+		);
+	},
+
+	renderAlreadyHaveJetpackButton() {
+		return (
+			<Button compact borderless className="jetpack-connect__already-installed-jetpack-button" onClick={ this.confirmJetpackInstalled }>
+				{ this.translate( 'I already have jetpack installed' ) }
+			</Button>
+		);
+	},
+
+	renderNotJetpackButton() {
+		return (
+			<Button compact borderless className="jetpack-connect__no-jetpack-button" onClick={ this.confirmJetpackNotInstalled }>
+				{ this.translate( 'I don\'t have jetpack' ) }
+			</Button>
 		);
 	},
 
@@ -322,7 +356,8 @@ const JetpackConnectMain = React.createClass( {
 					</div>
 					<Button onClick={ this.activateJetpack } primary>{ this.translate( 'Activate Jetpack' ) }</Button>
 					<div className="jetpack-connect__navigation">
-						{ this.renderBackButton() }
+						<div>{ this.renderNotJetpackButton() }</div>
+						<div>{ this.renderBackButton() }</div>
 					</div>
 				</div>
 			</Main>
@@ -358,5 +393,5 @@ export default connect(
 			getJetpackSiteByUrl
 		};
 	},
-	dispatch => bindActionCreators( { recordTracksEvent, checkUrl, dismissUrl, requestSites, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
+	dispatch => bindActionCreators( { recordTracksEvent, confirmJetpackInstallStatus, checkUrl, dismissUrl, requestSites, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
 )( JetpackConnectMain );
