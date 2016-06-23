@@ -3,19 +3,9 @@
  */
 import moment from 'moment';
 
-/**
- * Internal dependencies
- */
-import { PLAN_PERSONAL } from 'lib/plans/constants';
-import { personalPlan } from 'lib/plans/personal-plan';
-
 const createSitePlanObject = ( plan ) => {
 	if ( ! plan ) {
 		return {};
-	}
-
-	if ( plan.product_slug === PLAN_PERSONAL ) {
-		plan = { ...plan, ...personalPlan };
 	}
 
 	return {
