@@ -30,16 +30,12 @@ export default class EmailVerificationGate extends React.Component {
 	}
 
 	componentWillMount() {
-		if ( ! config( 'email_verification_gate' ) ) return;
-
 		user.on( 'change', this.updateVerificationState );
 		user.on( 'verify', this.updateVerificationState );
 		sites.on( 'change', this.updateVerificationState );
 	}
 
 	componentWillUnmount() {
-		if ( ! config( 'email_verification_gate' ) ) return;
-
 		user.off( 'change', this.updateVerificationState );
 		user.off( 'verify', this.updateVerificationState );
 		sites.off( 'change', this.updateVerificationState );
@@ -56,7 +52,7 @@ export default class EmailVerificationGate extends React.Component {
 	}
 
 	render() {
-		if ( config( 'email_verification_gate' ) && this.state.needsVerification ) {
+		if ( this.state.needsVerification ) {
 			return (
 				<div tabIndex="-1" className="email-verification-gate" onFocus={ this.handleFocus }>
 					<EmailUnverifiedNotice />
