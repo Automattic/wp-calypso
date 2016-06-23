@@ -8,6 +8,7 @@ import find from 'lodash/find';
 import merge from 'lodash/merge';
 import flow from 'lodash/flow';
 import cloneDeep from 'lodash/cloneDeep';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -108,6 +109,15 @@ export function getSitePostsForQuery( state, siteId, query ) {
 
 	const posts = manager.getItems( query );
 	if ( ! posts ) {
+		return null;
+	}
+
+	// PostQueryManager is smart enough to return an array including undefined
+	// entries if it knows that a page of results exists for the query (via a
+	// previous request's `found` value) but the items haven't been received.
+	// While we could impose this on the developer to accommodate, instead we
+	// simply return null when any `undefined` entries exist in the set.
+	if ( includes( posts, undefined ) ) {
 		return null;
 	}
 
