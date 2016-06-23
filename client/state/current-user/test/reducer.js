@@ -12,10 +12,11 @@ import {
 	CURRENT_USER_ID_SET,
 	SITE_RECEIVE,
 	SITES_RECEIVE,
+	PLANS_RECEIVE,
 	DESERIALIZE,
 	SERIALIZE
 } from 'state/action-types';
-import reducer, { id, capabilities } from '../reducer';
+import reducer, { id, capabilities, currencyCode } from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -25,6 +26,7 @@ describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'id',
+			'currencyCode',
 			'capabilities'
 		] );
 	} );
@@ -78,10 +80,68 @@ describe( 'reducer', () => {
 		} );
 	} );
 
+	describe( '#currencyCode()', () => {
+		it( 'should default to null', () => {
+			const state = currencyCode( undefined, {} );
+			expect( state ).to.equal( null );
+		} );
+		it( 'should set currency code when plans are received', () => {
+			const state = currencyCode( undefined, {
+				type: PLANS_RECEIVE,
+				plans: [
+					{
+						product_id: 1001,
+						currency_code: 'USD'
+					}
+				]
+			} );
+			expect( state ).to.equal( 'USD' );
+		} );
+		it( 'should return current state when we have empty plans', () => {
+			const state = currencyCode( 'USD', {
+				type: PLANS_RECEIVE,
+				plans: []
+			} );
+			expect( state ).to.equal( 'USD' );
+		} );
+		it( 'should update current state when we receive new plans', () => {
+			const state = currencyCode( 'USD', {
+				type: PLANS_RECEIVE,
+				plans: [
+					{
+						product_id: 1001,
+						currency_code: 'EUR'
+					}
+				]
+			} );
+			expect( state ).to.equal( 'EUR' );
+		} );
+		it( 'should persist state', () => {
+			const original = 'JPY';
+			const state = currencyCode( original, {
+				type: SERIALIZE
+			} );
+			expect( state ).to.equal( original );
+		} );
+		it( 'should restore valid persisted state', () => {
+			const original = 'JPY';
+			const state = currencyCode( original, {
+				type: DESERIALIZE
+			} );
+			expect( state ).to.equal( original );
+		} );
+		it( 'should ignore invalid persisted state', () => {
+			const original = 1234;
+			const state = currencyCode( original, {
+				type: DESERIALIZE
+			} );
+			expect( state ).to.equal( null );
+		} );
+	} );
+
 	describe( 'capabilities()', () => {
 		it( 'should default to an empty object', () => {
 			const state = capabilities( undefined, {} );
-
 			expect( state ).to.eql( {} );
 		} );
 

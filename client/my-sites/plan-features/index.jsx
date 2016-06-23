@@ -16,7 +16,8 @@ import PlanFeaturesFooter from './footer';
 import PlanFeaturesPlaceholder from './placeholder';
 import { isCurrentSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPlanRawPrice, getPlan, getCurrencyCode } from 'state/plans/selectors';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getPlanRawPrice, getPlan } from 'state/plans/selectors';
 import {
 	plansList,
 	getPlanFeaturesObject,
@@ -99,7 +100,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		planName: ownProps.plan,
 		current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
-		currencyCode: getCurrencyCode( state, planProductId ) || 'USD', //temporary fallback until we fix personal plans stub data
+		currencyCode: getCurrentUserCurrencyCode( state ),
 		popular: isPopular( ownProps.plan ),
 		features: getPlanFeaturesObject( ownProps.plan ),
 		rawPrice: getPlanRawPrice( state, planProductId, ! isMonthly( ownProps.plan ) ),

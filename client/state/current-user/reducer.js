@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -9,10 +10,11 @@ import { combineReducers } from 'redux';
 import {
 	CURRENT_USER_ID_SET,
 	SITE_RECEIVE,
-	SITES_RECEIVE
+	SITES_RECEIVE,
+	PLANS_RECEIVE
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
-import { idSchema, capabilitiesSchema } from './schema';
+import { idSchema, capabilitiesSchema, currencyCodeSchema } from './schema';
 
 /**
  * Tracks the current user ID.
@@ -22,8 +24,22 @@ import { idSchema, capabilitiesSchema } from './schema';
  * @return {Object}        Updated state
  */
 export const id = createReducer( null, {
-	[CURRENT_USER_ID_SET]: ( state, action ) => action.userId
+	[ CURRENT_USER_ID_SET ]: ( state, action ) => action.userId
 }, idSchema );
+
+/**
+ * Tracks the currency code of the current user
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ *
+ */
+export const currencyCode = createReducer( null, {
+	[ PLANS_RECEIVE ]: ( state, action ) => {
+		return get( action.plans[ 0 ], 'currency_code', state );
+	}
+}, currencyCodeSchema );
 
 /**
  * Returns the updated capabilities state after an action has been dispatched.
@@ -35,7 +51,7 @@ export const id = createReducer( null, {
  * @return {Object}        Updated state
  */
 export const capabilities = createReducer( {}, {
-	[SITE_RECEIVE]: ( state, action ) => {
+	[ SITE_RECEIVE ]: ( state, action ) => {
 		if ( ! action.site.capabilities ) {
 			return state;
 		}
@@ -44,7 +60,7 @@ export const capabilities = createReducer( {}, {
 			[ action.site.ID ]: action.site.capabilities
 		} );
 	},
-	[SITES_RECEIVE]: ( state, action ) => {
+	[ SITES_RECEIVE ]: ( state, action ) => {
 		const siteCapabilities = action.sites.reduce( ( memo, site ) => {
 			if ( site.capabilities ) {
 				memo[ site.ID ] = site.capabilities;
@@ -59,5 +75,6 @@ export const capabilities = createReducer( {}, {
 
 export default combineReducers( {
 	id,
+	currencyCode,
 	capabilities
 } );

@@ -3,6 +3,10 @@ export const idSchema = {
 	minimum: 0
 };
 
+export const currencyCodeSchema = {
+	type: [ 'string', 'null' ]
+};
+
 export const capabilitiesSchema = {
 	type: 'object',
 	additionalProperties: false,

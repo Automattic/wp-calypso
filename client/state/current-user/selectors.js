@@ -32,6 +32,15 @@ export function getCurrentUserLocale( state ) {
 
 	return user.localeSlug || null;
 }
+/**
+ * Returns the currency code for the current user.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {?String}        Current currency code
+ */
+export function getCurrentUserCurrencyCode( state ) {
+	return get( state.currentUser, 'currencyCode', null );
+}
 
 /**
  * Returns true if the current user has the specified capability for the site,
