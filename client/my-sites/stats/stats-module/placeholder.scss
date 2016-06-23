@@ -2,6 +2,7 @@
 	display: block;
 	padding: 0 24px;
 	min-height: 140px;
+	clear: both;
 
 	// Block placeholder, primarily for SVGs and similar
 	&.is-block {
@@ -9,15 +10,11 @@
 	}
 
 	// Spinner placeholder, to be used in Summary views, where we already have some data
-	&.is-spinner,
 	&.is-void {
-		background: url("images/loading.gif") no-repeat 50% 50%;
-		background-size: 32px 32px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		opacity: 1;
-	}
-
-	// 'Void' placeholder, don't stare too long into the void or the void will stare back into you
-	&.is-void {
 		-webkit-animation: delay-fade-in 2s 1; // Animating in this silly way to have the graphic actually be visible once the animation is completed
 	}
 
