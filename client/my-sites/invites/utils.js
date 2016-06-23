@@ -2,22 +2,12 @@
  * Internal dependencies
  */
 import React from 'react';
-import get from 'lodash/get'
+import get from 'lodash/get';
 import i18n from 'i18n-calypso';
 
 export default {
 	acceptedNotice( invite, displayOnNextPage = true ) {
-		let takeATour = (
-			<p className="invite-message__intro">
-				{
-					i18n.translate(
-						'Since you\'re new, you might like to {{docsLink}}take a tour{{/docsLink}}.',
-						{ components: { docsLink: <a href="https://learn.wordpress.com/" target="_blank" /> } }
-					)
-				}
-			</p>
-		);
-		let site = (
+		const site = (
 			<a href={ get( invite, 'site.URL' ) } className="invite-accept__notice-site-link">
 				{ get( invite, 'site.title' ) }
 			</a>
@@ -65,7 +55,6 @@ export default {
 								args: { site: get( invite, 'site.title' ) }
 							} ) }
 						</p>
-						{ takeATour }
 					</div>,
 					{ displayOnNextPage }
 				];
@@ -81,7 +70,6 @@ export default {
 						<p className="invite-message__intro">
 							{ i18n.translate( 'This is your site dashboard where you can publish and manage your own posts and the posts of others, as well as upload media.' ) }
 						</p>
-						{ takeATour }
 					</div>,
 					{ displayOnNextPage }
 				];
@@ -97,7 +85,6 @@ export default {
 						<p className="invite-message__intro">
 							{ i18n.translate( 'This is your site dashboard where you can publish and edit your own posts as well as upload media.' ) }
 						</p>
-						{ takeATour }
 					</div>,
 					{ displayOnNextPage }
 				];
@@ -113,7 +100,6 @@ export default {
 						<p className="invite-message__intro">
 							{ i18n.translate( 'This is your site dashboard where you can write and manage your own posts.' ) }
 						</p>
-						{ takeATour }
 					</div>,
 					{ displayOnNextPage }
 				];
@@ -137,7 +123,7 @@ export default {
 			switch ( invite.role ) {
 				case 'viewer':
 				case 'follower':
-					return get( invite, 'site.URL' ) || readerPath
+					return get( invite, 'site.URL' ) || readerPath;
 					break;
 				default:
 					return get( invite, 'site.admin_url' ) || postsListPath;
