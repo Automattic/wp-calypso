@@ -54,7 +54,7 @@ export function fetchThemeDetailsData( context, next ) {
 		return next();
 	}
 
-	wpcom.undocumented().themeDetails( themeSlug, null )
+	wpcom.undocumented().themeDetails( themeSlug )
 		.then( themeDetails => {
 			debug( 'caching', themeSlug );
 			themeDetails.timestamp = Date.now();
@@ -90,7 +90,7 @@ export function details( context, next ) {
 		description: decodeEntities( themeDetails.description ),
 		canonicalUrl: `https://wordpress.com/theme/${ slug }`, // TODO: use getDetailsUrl() When it becomes availavle
 		image: themeDetails.screenshot,
-		isLoggedIn: !! user,
+		isLoggedIn: !! user
 	};
 
 	if ( startsWith( context.prevPath, '/design' ) ) {
