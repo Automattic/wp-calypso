@@ -12,7 +12,7 @@ import classNames from 'classnames';
 import Main from 'components/main';
 import Card from 'components/card';
 import HappinessSupport from 'components/happiness-support';
-import JetpackPlanDetails from 'my-sites/upgrades/checkout-thank-you/jetpack-plan-details';
+import JetpackPlanDetails from './jetpack';
 import PersonalPlanDetails from 'my-sites/upgrades/checkout-thank-you/personal-plan-details';
 import PremiumPlanDetails from 'my-sites/upgrades/checkout-thank-you/premium-plan-details';
 import BusinessPlanDetails from 'my-sites/upgrades/checkout-thank-you/business-plan-details';
@@ -23,6 +23,8 @@ import { fetchSitePlans } from 'state/sites/plans/actions';
 import {
 	isBusiness,
 	isPremium,
+	isJetpackBusiness,
+	isJetpackPremium,
 	isPersonal,
 	isFreePlan
 } from 'lib/products-values';
@@ -58,8 +60,13 @@ const PlanDetailsComponent = React.createClass( {
 		} else if ( isFreePlan( this.props.selectedSite.plan ) ) {
 			page.redirect( '/plans/' + this.props.selectedSite.slug );
 		} else if ( this.props.selectedSite.jetpack ) {
-			title = this.translate( 'Your site is on a Premium plan' );
+			title = this.translate( 'Your site is on a Free plan' );
 			tagLine = this.translate( 'Unlock the full potential of your site with all the features included in your plan.' );
+			if ( isJetpackPremium( this.props.selectedSite.plan ) ) {
+				title = this.translate( 'Your site is on a Premium plan' );
+			} else if ( isJetpackBusiness( this.props.selectedSite.plan ) ) {
+				title = this.translate( 'Your site is on a Professional plan' );
+			}
 			featuresList = (
 				<JetpackPlanDetails
 					selectedSite={ this.props.selectedSite }
@@ -123,7 +130,7 @@ const PlanDetailsComponent = React.createClass( {
 				</Card>
 				<Card>
 					<HappinessSupport
-						isJetpack={ false }
+						isJetpack={ !! this.props.selectedSite.jetpack }
 						isPlaceholder={ false } />
 				</Card>
 				{ selectedSite &&
