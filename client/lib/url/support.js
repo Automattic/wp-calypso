@@ -1,5 +1,4 @@
-const root = 'https://support.wordpress.com',
-	jetpackRoot = 'https://jetpack.me';
+const root = 'https://support.wordpress.com';
 
 export default {
 	ADDING_GOOGLE_APPS_TO_YOUR_SITE: `${root}/add-email/adding-google-apps-to-your-site`,
@@ -34,8 +33,8 @@ export default {
 	GUIDED_TRANSFER: `${root}/guided-transfer`,
 	IMPORT: `${root}/import`,
 	INSTAGRAM_WIDGET: `${root}/instagram/instagram-widget`,
-	JETPACK_SUPPORT: `${jetpackRoot}/support/`,
-	JETPACK_CONTACT_SUPPORT: `${jetpackRoot}/contact-support/`,
+	JETPACK_SUPPORT: `${root}/setting-up-premium-services/`,
+	JETPACK_CONTACT_SUPPORT: `${root}/premium-services/`,
 	LIVE_CHAT: `${root}/live-chat`,
 	MANAGE_PURCHASES: `${root}/manage-purchases`,
 	MAP_EXISTING_DOMAIN: `${root}/domains/map-existing-domain`,
