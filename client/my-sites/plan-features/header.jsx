@@ -13,7 +13,13 @@ import PlanFeaturesPrice from './price';
 import {
 	PLAN_FREE,
 	PLAN_PREMIUM,
-	PLAN_BUSINESS
+	PLAN_BUSINESS,
+	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_PERSONAL
 } from 'lib/plans/constants';
 
 class PlanFeaturesHeader extends Component {
@@ -54,15 +60,38 @@ class PlanFeaturesHeader extends Component {
 
 	getFigure( planType ) {
 		switch ( planType ) {
+			case PLAN_JETPACK_FREE:
 			case PLAN_FREE:
 				return this.getFreePlanSvg();
+			case PLAN_PERSONAL:
+				return this.getPersonalPlanSvg();
 			case PLAN_PREMIUM:
+			case PLAN_JETPACK_PREMIUM:
+			case PLAN_JETPACK_PREMIUM_MONTHLY:
 				return this.getPremiumPlanSvg();
 			case PLAN_BUSINESS:
+			case PLAN_JETPACK_BUSINESS:
+			case PLAN_JETPACK_BUSINESS_MONTHLY:
 				return this.getBusinessPlanSvg();
 			default:
 				return null;
 		}
+	}
+
+	getPersonalPlanSvg() {
+		return (
+			<svg id="Layer_1" x="0px" y="0px" viewBox="0 0 124 127.1" xmlns="http://www.w3.org/2000/svg">
+				<ellipse cx="62" cy="63.1" rx="62" ry="62" style={ { fill: 'rgb(211, 222, 230)' } } />
+				<g class="cls-3" transform="matrix(1, 0, 0, 1, 0, -68)">
+					<path d="M63.95,105.89l4-9.81V83.55H62.05v23.61A2,2,0,0,0,63.95,105.89Z" transform="translate(0 69.26)" style={ { fill: 'rgb(144, 172, 193)' } } />
+					<path d="M56.14,83.55V96.08l4,9.81a2,2,0,0,0,1.9,1.27V83.55H56.14Z" transform="translate(0 69.26)" style={ { fill: 'rgb(176, 197, 211)' } } />
+					<rect x="62.05" width="17.1" height="101.98" style={ { fill: 'rgb(176, 197, 211)' } } />
+					<rect x="44.95" width="17.1" height="101.98" style={ { fill: 'rgb(255, 255, 255)' } } />
+					<path d="M 62 101.9800033569336 L 44.95000076293945 101.9800033569336 L 48.290000915527344 117.7699966430664 L 53.29999923706055 161.8699951171875 L 62 161.8699951171875 L 62 101.9800033569336 Z" style={ { fill: 'rgb(102, 141, 170)' } } />
+					<path d="M 62 101.9800033569336 L 79.1500015258789 101.9800033569336 L 75.80999755859375 117.7699966430664 L 70.80000305175781 161.8699951171875 L 62 161.8699951171875 L 62 101.9800033569336 Z" style={ { fill: 'rgb(79, 116, 142)' } } />
+				</g>
+			</svg>
+		);
 	}
 
 	getFreePlanSvg() {
@@ -357,7 +386,7 @@ PlanFeaturesHeader.propTypes = {
 	billingTimeFrame: PropTypes.string.isRequired,
 	current: PropTypes.bool,
 	onClick: PropTypes.func,
-	planType: React.PropTypes.oneOf( [ PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS ] ).isRequired,
+	planType: React.PropTypes.string.isRequired,
 	popular: PropTypes.bool,
 	rawPrice: PropTypes.number,
 	currencyCode: PropTypes.string,
