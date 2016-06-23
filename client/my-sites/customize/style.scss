@@ -32,17 +32,17 @@
 }
 
 .customizer-loading-panel__notice-label {
-	background: $gray-light url( '/calypso/images/loading.gif' ) no-repeat center 90px;
-	background-size: 32px;
-	border-radius: 8px;
 	display: block;
-	height: 140px;
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 200px;
 	padding: 20px;
 	text-align: center;
 	width: 140px;
+}
+
+.customizer-loading-panel__notice-label .spinner__image {
+	margin: 0 auto 20px;
 }
 
 .customizer-loading-panel__status-message {
