@@ -2,6 +2,7 @@
  * External dependencies
  */
 import i18n from 'i18n-calypso';
+import get from 'lodash/get';
 
 export default {
 	userCan( capability, site ) {
@@ -157,10 +158,13 @@ export default {
 		}
 
 		if ( site.is_multisite ) {
+			const unmappedUrl = get( site.options, 'unmapped_url', null );
+			const mainNetworkSite = get( site.options, 'main_network_site', null );
+			if ( ! unmappedUrl || ! mainNetworkSite ) {
+				return false;
+			}
 			// Compare unmapped_url with the main_network_site to see if is the main network site.
-			return ! ( site.options &&
-				site.options.unmapped_url.replace( /^https?:\/\//, '' ) !== site.options.main_network_site.replace( /^https?:\/\//, '' )
-			);
+			return ! ( unmappedUrl.replace( /^https?:\/\//, '' ) !== mainNetworkSite.replace( /^https?:\/\//, '' ) );
 		}
 
 		return false;
