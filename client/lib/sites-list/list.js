@@ -23,6 +23,24 @@ var wpcom = require( 'lib/wp' ),
 	userUtils = require( 'lib/user/utils' );
 
 /**
+ * Filters sites that the user can see but has no capabilities for.
+ * This can happen when a user has a "None" role This will also update
+ * the user's local visible site count.
+ *
+ * @param   {Array}   sites   a list of sites
+ * @returns {Array}           a list of filtered sites
+ */
+function filterSitesAndUpdateVisibleCount( sites ) {
+	const filteredSites = sites.filter( site => {
+		return some( site.capabilities );
+	} );
+	user.set( {
+		visible_site_count: filteredSites.length
+	} );
+	return filteredSites;
+}
+
+/**
  * SitesList component
  *
  * @api public
@@ -58,7 +76,8 @@ SitesList.prototype.get = function() {
 		debug( 'First time loading SitesList, check store' );
 		data = store.get( 'SitesList' );
 		if ( data ) {
-			this.initialize( data );
+			const sites = filterSitesAndUpdateVisibleCount( data );
+			this.initialize( sites );
 		} else {
 			this.data = [];
 		}
@@ -88,7 +107,6 @@ SitesList.prototype.fetch = function() {
 
 			return;
 		}
-
 		this.sync( data );
 		this.fetching = false;
 	}.bind( this ) );
@@ -175,14 +193,16 @@ SitesList.prototype.markCollisions = function( sites ) {
  * @return {array} sites
  **/
 SitesList.prototype.parse = function( data ) {
+
+	const sites = filterSitesAndUpdateVisibleCount( data.sites );
 	/**
 	 * Set primary flag for primary blog
 	 */
-	if ( typeof data.sites[ 0 ] !== 'undefined' ) {
-		data.sites[ 0 ].primary = true;
+	if ( typeof sites[ 0 ] !== 'undefined' ) {
+		sites[ 0 ].primary = true;
 	}
 
-	return data.sites;
+	return sites;
 };
 
 /**
