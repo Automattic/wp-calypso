@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
- import trim from 'lodash/trim';
+import trim from 'lodash/trim';
 
 /**
  * Internal Dependencies
@@ -14,7 +14,7 @@ export default function wordCountAndReadingTime( post, dom ) {
 		throw new Error( 'this transform must be used as part of withContentDOM' );
 	}
 
-	let textContent = trim( dom.textContent );
+	const textContent = trim( dom.textContent );
 
 	post.word_count = ( textContent.replace( /['";:,.?¿\-!¡]+/g, '' ).match( /\S+/g ) || [] ).length;
 
