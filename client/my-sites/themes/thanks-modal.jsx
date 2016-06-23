@@ -50,7 +50,10 @@ const ThanksModal = React.createClass( {
 	},
 
 	onLinkClick( link ) {
-		return this.trackClick.bind( null, link, 'click' );
+		return () => {
+			this.onCloseModal();
+			this.trackClick( link, 'click' );
+		};
 	},
 
 	renderWpcomInfo() {
