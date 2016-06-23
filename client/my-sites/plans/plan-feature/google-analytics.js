@@ -47,7 +47,7 @@ export default function( context ) {
 	const planSlug = ( site && site.ID ) ? getSitePlanSlug( site.ID ) : PLAN_FREE;
 
 	const SvgLogo = () => (
-		<svg width="84" height="84" viewBox="0 0 84 84" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+		<svg width="84" height="84" viewBox="0 0 84 84" xmlns="http://www.w3.org/2000/svg" style={ { overflow: 'hidden' } }>
 			<title>icon - google analytics</title>
 			<g fill="none" fillRule="evenodd">
 				<rect fillOpacity=".27" fill="#C8D7E1" x="4" y="4" width="80" height="80" rx="6"/>
