@@ -3,6 +3,7 @@
 */
 import React, { PropTypes } from 'react';
 import i18n from 'i18n-calypso';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -57,8 +58,9 @@ export default React.createClass( {
 
 		let momentSiteZone = i18n.moment();
 
-		if ( site && site.options ) {
-			momentSiteZone = i18n.moment().utcOffset( site.options.gmt_offset );
+		const gmtOffset = get( site.options, 'gmt_offset', null );
+		if ( gmtOffset ) {
+			momentSiteZone = i18n.moment().utcOffset( gmtOffset );
 		}
 
 		const summaryDate = momentSiteZone.format( 'YYYY-MM-DD' );
