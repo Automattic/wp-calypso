@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import map from 'lodash/map';
 import page from 'page';
 import Masonry from 'react-masonry-component';
+import times from 'lodash/times';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import StartCard from './card';
 import RootChild from 'components/root-child';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import smartSetState from 'lib/react-smart-set-state';
+import CardPlaceholder from './card-placeholder';
 
 const Start = React.createClass( {
 
@@ -55,8 +57,16 @@ const Start = React.createClass( {
 		page.redirect( '/' );
 	},
 
+	renderLoadingPlaceholders() {
+		const count = 4;
+		return times( count, function( i ) {
+			return( <CardPlaceholder key={ 'placeholder-' + i } /> );
+		} );
+	},
+
 	render() {
 		const canGraduate = ( this.state.totalSubscriptions > 0 );
+		const hasRecommendations = this.props.recommendationIds.length > 0;
 		return (
 			<Main className="reader-start">
 				<QueryReaderStartRecommendations />
@@ -66,7 +76,9 @@ const Start = React.createClass( {
 					<p className="reader-start__description">{ this.translate( "We've suggested some sites that you might enjoy. Follow one or more sites to get started." ) }</p>
 				</header>
 
-				<Masonry className="reader-start__cards" updateOnEachImageLoad={ true } options={ { gutter: 14 } }>
+				{ ! hasRecommendations && this.renderLoadingPlaceholders() }
+
+				{ hasRecommendations && <Masonry className="reader-start__cards"  updateOnEachImageLoad={ true } options={ { gutter: 14 } }>
 					{ this.props.recommendationIds ? map( this.props.recommendationIds, ( recId ) => {
 						return (
 							<StartCard
@@ -74,9 +86,9 @@ const Start = React.createClass( {
 								recommendationId={ recId } />
 						);
 					} ) : null }
-				</Masonry>
+				</Masonry> }
 
-				<RootChild className="reader-start__bar">
+				{ hasRecommendations && <RootChild className="reader-start__bar">
 					<div className="reader-start__bar-action main">
 						<span className="reader-start__bar-text">
 							{ canGraduate
@@ -94,7 +106,7 @@ const Start = React.createClass( {
 						</span>
 						<Button onClick={ this.graduateColdStart } disabled={ ! canGraduate }>{ this.translate( "OK, I'm all set!" ) }</Button>
 					</div>
-				</RootChild>
+				</RootChild> }
 			</Main>
 		);
 	}
