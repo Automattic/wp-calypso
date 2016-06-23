@@ -52,7 +52,7 @@ const ThanksModal = React.createClass( {
 	onLinkClick( link ) {
 		return () => {
 			this.onCloseModal();
-			this.trackClick.call( null, link, 'click' );
+			this.trackClick( link, 'click' );
 		};
 	},
 
