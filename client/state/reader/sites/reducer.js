@@ -4,6 +4,7 @@ import omit from 'lodash/omit';
 import omitBy from 'lodash/omitBy';
 import keyBy from 'lodash/keyBy';
 import map from 'lodash/map';
+import trim from 'lodash/trim';
 
 import {
 	READER_SITE_REQUEST,
@@ -59,7 +60,7 @@ function adaptSite( attributes ) {
 		attributes.domain = attributes.URL.replace( /^https?:\/\//, '' );
 		attributes.slug = attributes.domain.replace( /\//g, '::' );
 	}
-	attributes.title = attributes.name ? attributes.name : attributes.domain;
+	attributes.title = trim( attributes.name ) || attributes.domain;
 
 	// If a WordPress.com site has a mapped domain create a `wpcom_url`
 	// attribute to allow site selection with either domain.

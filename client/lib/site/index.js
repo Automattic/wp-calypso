@@ -5,7 +5,8 @@ var debug = require( 'debug' )( 'calypso:site' ),
 	i18n = require( 'i18n-calypso' ),
 	isEqual = require( 'lodash/isEqual' ),
 	find = require( 'lodash/find' ),
-	omit = require( 'lodash/omit' );
+	omit = require( 'lodash/omit' ),
+	trim = require( 'lodash/trim' );
 
 /**
  * Internal dependencies
@@ -96,7 +97,7 @@ Site.prototype.updateComputedAttributes = function() {
 		this.domain = this.URL.replace( /^https?:\/\//, '' );
 		this.slug = this.domain.replace( /\//g, '::' );
 	}
-	this.title = this.name || this.domain;
+	this.title = trim( this.name ) || this.domain;
 
 	// If a WordPress.com site has a mapped domain create a `wpcom_url`
 	// attribute to allow site selection with either domain.
