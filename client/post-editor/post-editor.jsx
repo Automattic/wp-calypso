@@ -51,7 +51,7 @@ import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
-import { setPreference } from 'state/preferences/actions';
+import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 
@@ -932,8 +932,7 @@ export default connect(
 			editPost,
 			resetPostEdits,
 			setEditorPostId,
-			setPreference,
-			setEditorModePreference: setPreference.bind( null, 'editor-mode' ),
+			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
 		}, dispatch );
 	},
 	null,
