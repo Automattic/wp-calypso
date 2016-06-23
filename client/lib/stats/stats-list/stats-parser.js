@@ -17,7 +17,7 @@ function StatsParser() {
 }
 
 function rangeOfPeriod( period, date ) {
-	date = new i18n.moment( date );
+	date = new i18n.moment( date ).locale( 'en' );
 	var periodRange = { period: period,
 		startOf: date.clone().startOf( period ),
 		endOf: date.clone().endOf( period )
