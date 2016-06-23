@@ -3301,6 +3301,9 @@
     "source-map": {
       "version": "0.1.39"
     },
+    "source-map-loader": {
+      "version": "0.1.5"
+    },
     "source-map-support": {
       "version": "0.3.2",
       "dependencies": {
