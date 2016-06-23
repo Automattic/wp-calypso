@@ -30,7 +30,7 @@ const ThemeDetailsData = React.createClass( {
 		description: React.PropTypes.string,
 		descriptionLong: React.PropTypes.string,
 		supportDocumentation: React.PropTypes.string,
-		selectedSiteId: React.PropTypes.string,
+		selectedSiteId: React.PropTypes.number,
 		fetchThemeDetails: React.PropTypes.func.isRequired
 	},
 
