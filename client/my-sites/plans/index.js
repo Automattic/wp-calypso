@@ -85,13 +85,6 @@ export default function() {
 		);
 
 		page(
-			'/plans/features/:feature/:domain',
-			retarget,
-			controller.siteSelection,
-			plansController.features
-		);
-
-		page(
 			paths.plansDestination(),
 			retarget,
 			controller.siteSelection,
