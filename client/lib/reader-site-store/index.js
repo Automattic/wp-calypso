@@ -3,7 +3,8 @@
 // External Dependencies
 var Immutable = require( 'immutable' ),
 	omit = require( 'lodash/omit' ),
-	has = require( 'lodash/has' );
+	has = require( 'lodash/has' ),
+	trim = require( 'lodash/trim' );
 
 // Internal Dependencies
 var Dispatcher = require( 'dispatcher' ),
@@ -37,7 +38,7 @@ function adaptSite( attributes ) {
 		attributes.domain = attributes.URL.replace( /^https?:\/\//, '' );
 		attributes.slug = attributes.domain.replace( /\//g, '::' );
 	}
-	attributes.title = attributes.name ? attributes.name : attributes.domain;
+	attributes.title = trim( attributes.name ) || attributes.domain;
 
 	// If a WordPress.com site has a mapped domain create a `wpcom_url`
 	// attribute to allow site selection with either domain.
