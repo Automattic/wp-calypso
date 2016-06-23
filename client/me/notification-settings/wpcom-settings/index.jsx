@@ -30,7 +30,9 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 const options = {
 	marketing: 'marketing',
 	research: 'research',
-	community: 'community'
+	community: 'community',
+	promotion: 'promotion',
+	news: 'news'
 };
 
 const WPCOMNotifications = React.createClass( {
@@ -95,6 +97,22 @@ const WPCOMNotifications = React.createClass( {
 					<FormLabel>
 						<FormCheckbox checked={ this.state.settings.get( options.community ) } onChange={ this.toggleSetting.bind( this, options.community ) }/>
 						<span>{ this.translate( 'Information on WordPress.com courses and events (online & in-person).' ) }</span>
+					</FormLabel>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLegend>{ this.translate( 'Promotions' ) }</FormLegend>
+					<FormLabel>
+						<FormCheckbox checked={ this.state.settings.get( options.promotion ) } onChange={ this.toggleSetting.bind( this, options.promotion ) }/>
+						<span>{ this.translate( 'Promotions and deals on upgrades.' ) }</span>
+					</FormLabel>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLegend>{ this.translate( 'News' ) }</FormLegend>
+					<FormLabel>
+						<FormCheckbox checked={ this.state.settings.get( options.news ) } onChange={ this.toggleSetting.bind( this, options.news ) }/>
+						<span>{ this.translate( 'WordPress.com news and announcements.' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 
