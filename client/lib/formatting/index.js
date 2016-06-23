@@ -1,14 +1,14 @@
 /**
  * External Dependencies
  */
-import trim from 'lodash/trim';
-import stripTags from 'striptags';
+const trim = require( 'lodash/trim' ),
+	stripTags = require( 'striptags' );
 
 /**
  * Internal Dependencies
  */
-import warn from 'lib/warn';
-import decode from './decode-entities';
+const warn = require( 'lib/warn' ),
+	decode = require( './decode-entities' );
 
 function decodeEntities( text ) {
 	if ( text === undefined || text === false || text === null ) {
