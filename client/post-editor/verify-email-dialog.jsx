@@ -43,7 +43,7 @@ class VerifyEmailDialog extends React.Component {
 		}.bind( this ) );
 	}
 
-	getResendbuttonLabel() {
+	getResendButtonLabel() {
 		if ( this.state.emailSent ) {
 			return i18n.translate( 'Email Sent' );
 		}
@@ -66,7 +66,7 @@ class VerifyEmailDialog extends React.Component {
 				isPrimary={ false }
 				disabled={ this.state.pendingRequest || this.state.emailSent }
 				onClick={ this.handleSendVerification }>
-				{ this.getResendbuttonLabel() }
+				{ this.getResendButtonLabel() }
 			</FormButton>
 		];
 	}
