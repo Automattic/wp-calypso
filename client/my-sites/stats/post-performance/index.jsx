@@ -154,7 +154,7 @@ const StatsPostPerformance = React.createClass( {
 
 export default connect( ( state, ownProps ) => {
 	const { site } = ownProps;
-	const query = { status: 'published', number: 1 };
+	const query = { status: 'publish', number: 1 };
 	const posts = site ? getSitePostsForQuery( state, site.ID, query ) : null;
 	const post = posts && posts.length ? posts[ 0 ] : null;
 	const viewCount = post && site ? getPostStat( state, 'views', site.ID, post.ID ) : null;
