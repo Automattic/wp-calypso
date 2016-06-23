@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -43,6 +44,52 @@ describe( 'selectors', () => {
 			}, '3d097cb7c5473c169bba0eb8e3c6cb64' );
 
 			expect( post ).to.eql( { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' } );
+		} );
+	} );
+
+	describe( 'getNormalizedPost()', () => {
+		it( 'should return null if the post is not tracked', () => {
+			const normalizedPost = getNormalizedPost( {
+				posts: {
+					items: {}
+				}
+			}, '3d097cb7c5473c169bba0eb8e3c6cb64' );
+
+			expect( normalizedPost ).to.be.null;
+		} );
+
+		it( 'should return a normalized copy of the post', () => {
+			const post = {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Ribs &amp; Chicken',
+				author: {
+					name: 'Badman <img onerror= />'
+				},
+				featured_image: 'https://example.com/logo.png'
+			};
+
+			const normalizedPost = getNormalizedPost( deepFreeze( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': post
+					}
+				}
+			} ), '3d097cb7c5473c169bba0eb8e3c6cb64' );
+
+			expect( normalizedPost ).to.not.equal( post );
+			expect( normalizedPost ).to.eql( {
+				...post,
+				title: 'Ribs & Chicken',
+				author: {
+					name: 'Badman '
+				},
+				canonical_image: {
+					type: 'image',
+					uri: 'https://example.com/logo.png'
+				}
+			} );
 		} );
 	} );
 
@@ -99,31 +146,49 @@ describe( 'selectors', () => {
 				posts: {
 					queries: {}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Ribs' } );
 
 			expect( sitePosts ).to.be.null;
 		} );
 
-		it( 'should return an array of the known queried posts', () => {
+		it( 'should return null if the query is not tracked to the query manager', () => {
 			const sitePosts = getSitePostsForQuery( {
 				posts: {
 					queries: {
 						2916284: new PostQueryManager( {
+							items: {},
+							queries: {}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Ribs' } );
+
+			expect( sitePosts ).to.be.null;
+		} );
+
+		it( 'should return an array of normalized known queried posts', () => {
+			const sitePosts = getSitePostsForQuery( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Ribs &amp; Chicken' }
+					},
+					queries: {
+						2916284: new PostQueryManager( {
 							items: {
-								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Ribs &amp; Chicken' }
 							},
 							queries: {
-								'[["search","Hello"]]': {
+								'[["search","Ribs"]]': {
 									itemKeys: [ 841 ]
 								}
 							}
 						} )
 					}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Ribs' } );
 
 			expect( sitePosts ).to.eql( [
-				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Ribs & Chicken' }
 			] );
 		} );
 	} );
