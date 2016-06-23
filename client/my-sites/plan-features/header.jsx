@@ -386,7 +386,17 @@ PlanFeaturesHeader.propTypes = {
 	billingTimeFrame: PropTypes.string.isRequired,
 	current: PropTypes.bool,
 	onClick: PropTypes.func,
-	planType: React.PropTypes.string.isRequired,
+	planType: React.PropTypes.oneOf( [
+		PLAN_FREE,
+		PLAN_PREMIUM,
+		PLAN_BUSINESS,
+		PLAN_JETPACK_FREE,
+		PLAN_JETPACK_BUSINESS,
+		PLAN_JETPACK_BUSINESS_MONTHLY,
+		PLAN_JETPACK_PREMIUM,
+		PLAN_JETPACK_PREMIUM_MONTHLY,
+		PLAN_PERSONAL
+	] ).isRequired,
 	popular: PropTypes.bool,
 	rawPrice: PropTypes.number,
 	currencyCode: PropTypes.string,
