@@ -262,7 +262,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderDownload() {
-		if ( this.props.price ) {
+		if ( isPremium( this.props ) ) {
 			return null;
 		}
 		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
