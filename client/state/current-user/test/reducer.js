@@ -10,11 +10,12 @@ import deepFreeze from 'deep-freeze';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	CURRENT_USER_ID_SET,
-	SITE_RECEIVE,
-	SITES_RECEIVE,
-	PLANS_RECEIVE,
 	DESERIALIZE,
-	SERIALIZE
+	PLANS_RECEIVE,
+	SERIALIZE,
+	SITE_RECEIVE,
+	SITE_PLANS_FETCH_COMPLETED,
+	SITES_RECEIVE
 } from 'state/action-types';
 import reducer, { id, capabilities, currencyCode } from '../reducer';
 
@@ -115,6 +116,37 @@ describe( 'reducer', () => {
 				]
 			} );
 			expect( state ).to.equal( 'EUR' );
+		} );
+		it( 'should return current state when we have empty site plans', () => {
+			const state = currencyCode( 'USD', {
+				type: SITE_PLANS_FETCH_COMPLETED,
+				plans: []
+			} );
+			expect( state ).to.equal( 'USD' );
+		} );
+		it( 'should set currency code when site plans are received', () => {
+			const state = currencyCode( undefined, {
+				type: SITE_PLANS_FETCH_COMPLETED,
+				plans: [
+					{
+						productName: 'Free',
+						currencyCode: 'USD'
+					}
+				]
+			} );
+			expect( state ).to.equal( 'USD' );
+		} );
+		it( 'should update currency code when site plans are received', () => {
+			const state = currencyCode( 'USD', {
+				type: SITE_PLANS_FETCH_COMPLETED,
+				plans: [
+					{
+						productName: 'Free',
+						currencyCode: 'CAD'
+					}
+				]
+			} );
+			expect( state ).to.equal( 'CAD' );
 		} );
 		it( 'should persist state', () => {
 			const original = 'JPY';

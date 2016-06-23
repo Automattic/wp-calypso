@@ -10,6 +10,7 @@ import get from 'lodash/get';
 import {
 	CURRENT_USER_ID_SET,
 	SITE_RECEIVE,
+	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
 	PLANS_RECEIVE
 } from 'state/action-types';
@@ -38,6 +39,9 @@ export const id = createReducer( null, {
 export const currencyCode = createReducer( null, {
 	[ PLANS_RECEIVE ]: ( state, action ) => {
 		return get( action.plans[ 0 ], 'currency_code', state );
+	},
+	[ SITE_PLANS_FETCH_COMPLETED ]: ( state, action ) => {
+		return get( action.plans[ 0 ], 'currencyCode', state );
 	}
 }, currencyCodeSchema );
 
