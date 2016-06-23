@@ -92,7 +92,7 @@ const ThemeSheet = React.createClass( {
 			this.props.signup( this.props );
 		} else if ( this.isActive() ) {
 			this.props.customize( this.props, this.props.selectedSite );
-		} else if ( isPremium( this.props ) && ! this.props.purchased ) {
+		} else if ( this.props.price ) {
 			this.selectSiteAndDispatch( 'purchase' );
 		} else {
 			this.selectSiteAndDispatch( 'activate' );
@@ -262,7 +262,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderDownload() {
-		if ( 'Free' !== this.props.price ) {
+		if ( this.props.price ) {
 			return null;
 		}
 		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
