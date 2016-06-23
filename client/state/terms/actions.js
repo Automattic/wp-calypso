@@ -63,13 +63,14 @@ export function receiveTerm( siteId, taxonomy, term ) {
  * @param  {Object} query    Query Options
  * @return {Object}          Action object
  */
-export function receiveTerms( siteId, taxonomy, terms, query ) {
+export function receiveTerms( siteId, taxonomy, terms, query, found ) {
 	return {
 		type: TERMS_RECEIVE,
 		siteId,
 		taxonomy,
 		terms,
-		query
+		query,
+		found
 	};
 }
 
@@ -116,7 +117,7 @@ export function requestSiteTerms( siteId, taxonomy, query = {} ) {
 				taxonomy,
 				query
 			} );
-			dispatch( receiveTerms( siteId, taxonomy, data.terms, query ) );
+			dispatch( receiveTerms( siteId, taxonomy, data.terms, query, data.found ) );
 		} ).catch( ( error ) => {
 			dispatch( {
 				type: TERMS_REQUEST_FAILURE,

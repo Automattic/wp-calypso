@@ -2,6 +2,7 @@
  * External dependencies
  */
 import get from 'lodash/get';
+import range from 'lodash/range';
 
 /**
  * Internal dependencies
@@ -104,7 +105,7 @@ export function getTermsForQueryIgnoringPage( state, siteId, taxonomy, query ) {
  */
 export const getTermsHierarchyForQueryIgnoringPage = createSelector(
 	( state, siteId, taxonomy, query ) => {
-		let terms = getTermsForQueryIgnoringPage( state, siteId, taxonomy, query );
+		const terms = getTermsForQueryIgnoringPage( state, siteId, taxonomy, query );
 		if ( ! terms ) {
 			return terms;
 		}
@@ -121,7 +122,7 @@ export const getTermsHierarchyForQueryIgnoringPage = createSelector(
 
 		return ( new TreeConvert( 'ID' ) ).treeify( treeReadyTerms );
 	},
-	( state, siteId, taxonomy ) => getTerms( state, siteId, taxonomy ),
+	( state, siteId, taxonomy ) => get( state.terms.queries, [ siteId, taxonomy ] ),
 	( state, siteId, taxonomy, query ) => {
 		const serializedQuery = getSerializedTermsQuery( query );
 		return [ siteId, taxonomy, serializedQuery ].join();
