@@ -12,6 +12,7 @@ import omit from 'lodash/omit';
  */
 import { fetchThemeDetails } from 'state/themes/actions';
 import { getThemeDetails } from 'state/themes/theme-details/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Fetches details for a theme specified by its ID
@@ -22,7 +23,6 @@ const ThemeDetailsData = React.createClass( {
 	propTypes: {
 		children: React.PropTypes.element.isRequired,
 		id: React.PropTypes.string.isRequired,
-		site: React.PropTypes.string,
 		// Connected props
 		name: React.PropTypes.string,
 		author: React.PropTypes.string,
@@ -30,6 +30,7 @@ const ThemeDetailsData = React.createClass( {
 		description: React.PropTypes.string,
 		descriptionLong: React.PropTypes.string,
 		supportDocumentation: React.PropTypes.string,
+		selectedSiteId: React.PropTypes.string,
 		fetchThemeDetails: React.PropTypes.func.isRequired
 	},
 
@@ -46,7 +47,7 @@ const ThemeDetailsData = React.createClass( {
 	refresh( props ) {
 		// todo (seear): Don't fetch if site matches existing data
 		if ( props.id ) {
-			this.props.fetchThemeDetails( props.id, props.site );
+			this.props.fetchThemeDetails( props.id, props.selectedSiteId );
 		}
 	},
 
@@ -56,6 +57,9 @@ const ThemeDetailsData = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => getThemeDetails( state, props.id ),
+	( state, props ) => Object.assign( {},
+		getThemeDetails( state, props.id ),
+		{ selectedSiteId: getSelectedSiteId( state ) }
+	),
 	{ fetchThemeDetails }
 )( ThemeDetailsData );

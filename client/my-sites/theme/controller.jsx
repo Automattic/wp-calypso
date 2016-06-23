@@ -91,15 +91,14 @@ export function details( context, next ) {
 		canonicalUrl: `https://wordpress.com/theme/${ slug }`, // TODO: use getDetailsUrl() When it becomes availavle
 		image: themeDetails.screenshot,
 		isLoggedIn: !! user,
-		site: context.params.site_id,
 	};
 
 	if ( startsWith( context.prevPath, '/design' ) ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
 
-	const ConnectedComponent = ( { themeSlug, contentSection, isLoggedIn, site } ) => (
-		<ThemeDetailsComponent id={ themeSlug } site={ site } >
+	const ConnectedComponent = ( { themeSlug, contentSection, isLoggedIn } ) => (
+		<ThemeDetailsComponent id={ themeSlug } >
 			<ThemeSheetComponent section={ contentSection } isLoggedIn={ isLoggedIn } />
 		</ThemeDetailsComponent>
 	);
