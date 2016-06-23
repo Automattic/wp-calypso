@@ -14,7 +14,9 @@
   "author": "Automattic",
   "main": "lib/index.js",
   "scripts": {
-    "test": "mocha tests --recursive"
+  	"tests": "mocha tests --recursive",
+  	"lint": "eslint lib/ tests/",
+    "test": "npm run tests & npm run lint"
   },
   "dependencies": {
     "requireindex": "^1.1.0"
