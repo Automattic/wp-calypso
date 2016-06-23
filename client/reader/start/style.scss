@@ -229,13 +229,13 @@
 	display: block;
 	font-weight: 500;
 	line-height: normal;
-    font-size: 12px;
-    margin: 3px 120px 0 0;
-    overflow: hidden;
-    padding-bottom: 1px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%;
+	font-size: 12px;
+	margin: 3px 120px 0 0;
+	overflow: hidden;
+	padding-bottom: 1px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
 }
 
 .reader-start-card__site-description {
@@ -257,10 +257,10 @@
 	font-size: 12px;
 	font-weight: 600;
 	display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
 
 	a {
 		color: inherit;
@@ -284,42 +284,42 @@
 
 .reader-start-post-preview__featured-label {
 	background-color: $white;
-    color: $gray;
-    display: inline;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: .05em;
-    margin-left: 4px;
-    padding: 0 4px;
+	color: $gray;
+	display: inline;
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: .05em;
+	margin-left: 4px;
+	padding: 0 4px;
 	position: relative;
-    	top : -13px;
-    text-transform: uppercase;
+	top : -13px;
+	text-transform: uppercase;
 }
 
 .has-image {
 
-    .reader-start-post-preview__featured-label {
+	.reader-start-post-preview__featured-label {
 		color: $white;
-	    background: none;
-	    font-size: 10px;
-	    letter-spacing: .03em;
-	    padding: 5px 0 0 3px;
+		background: none;
+		font-size: 10px;
+		letter-spacing: .03em;
+		padding: 5px 0 0 3px;
 		position: absolute;
-			top: 0;
-	    text-transform: uppercase;
-	    z-index: 1;
-    }
+		top: 0;
+		text-transform: uppercase;
+		z-index: 1;
+	}
 
-    .reader-start-post-preview__featured-image {
-    	height: 80px;
-    }
+	.reader-start-post-preview__featured-image {
+		height: 80px;
+	}
 
-    .reader-start-post-preview__post-content {
-    	padding: 12px 10px 20px;
-    	margin-top: 0;
-    }
+	.reader-start-post-preview__post-content {
+		padding: 12px 10px 20px;
+		margin-top: 0;
+	}
 
-    .reader-start-post-preview__featured-image {
+	.reader-start-post-preview__featured-image {
 		background-size: cover;
 		border-top-left-radius: 1px;
 		border-top-right-radius: 1px;
