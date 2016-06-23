@@ -12,8 +12,7 @@ import {
 	getPlans,
 	isRequestingPlans,
 	getPlan,
-	getPlanRawPrice,
-	getCurrencyCode
+	getPlanRawPrice
 } from '../selectors';
 
 /**
@@ -111,32 +110,6 @@ describe( 'selectors', () => {
 				}
 			} );
 			const price = getPlanRawPrice( state, 44, true );
-			expect( price ).to.eql( null );
-		} );
-	} );
-	describe( '#getCurrencyCode()', () => {
-		it( 'should return currency code', () => {
-			const state = deepFreeze( {
-				plans: {
-					items: [ {
-						product_id: 1003,
-						currency_code: 'EUR'
-					} ]
-				}
-			} );
-			const price = getCurrencyCode( state, 1003 );
-			expect( price ).to.eql( 'EUR' );
-		} );
-		it( 'should return null when plan is not available', () => {
-			const state = deepFreeze( {
-				plans: {
-					items: [ {
-						product_id: 1003,
-						currency_code: 'EUR'
-					} ]
-				}
-			} );
-			const price = getCurrencyCode( state, 1009 );
 			expect( price ).to.eql( null );
 		} );
 	} );
