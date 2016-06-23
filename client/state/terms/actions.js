@@ -61,6 +61,7 @@ export function receiveTerm( siteId, taxonomy, term ) {
  * @param  {String} taxonomy Taxonomy Slug
  * @param  {Array}  terms    An array of term objects
  * @param  {Object} query    Query Options
+ * @param  {Number} found    Total terms found for query
  * @return {Object}          Action object
  */
 export function receiveTerms( siteId, taxonomy, terms, query, found ) {
