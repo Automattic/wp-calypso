@@ -35,7 +35,8 @@ export function getPost( state, globalId ) {
 
 /**
  * Returns a normalized post object by its global ID, or null if the post does
- * not exist.
+ * not exist. A normalized post includes common transformations to prepare the
+ * post for display.
  *
  * @param  {Object}  state    Global state tree
  * @param  {String}  globalId Post global ID
@@ -89,8 +90,10 @@ export const getSitePost = createSelector(
 );
 
 /**
- * Returns an array of posts for the posts query, or null if no posts have been
- * received.
+ * Returns an array of normalized posts for the posts query, or null if no
+ * posts have been received.
+ *
+ * @see getNormalizedPost
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
@@ -183,8 +186,10 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
 }
 
 /**
- * Returns an array of posts for the posts query, including all known
- * queried pages, or null if the number of pages is unknown.
+ * Returns an array of normalized posts for the posts query, including all
+ * known queried pages, or null if the posts for the query are not known.
+ *
+ * @see getNormalizedPost
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
@@ -208,9 +213,12 @@ export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
 }
 
 /**
- * Returns an array of posts for the posts query, including all known queried
- * pages, preserving hierarchy. Returns null if no posts have been received.
- * Hierarchy is represented by `parent` and `items` properties on each post.
+ * Returns an array of normalized posts for the posts query, including all
+ * known queried pages, preserving hierarchy. Returns null if no posts have
+ * been received. Hierarchy is represented by `parent` and `items` properties
+ * on each post.
+ *
+ * @see getNormalizedPost
  *
  * @param  {Object} state  Global state tree
  * @param  {Number} siteId Site ID
