@@ -78,7 +78,7 @@ FeedStreamActions = {
 						feedId: post.feed_ID,
 						postId: post.ID
 					} );
-				} else if ( post && post.feed_ID ) {
+				} else if ( post && post.feed_ID && post.feed_item_ID ) {
 					// 1.2 style
 					FeedPostStoreActions.receivePost( null, post, {
 						feedId: post.feed_ID,
