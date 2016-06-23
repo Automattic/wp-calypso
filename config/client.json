@@ -28,5 +28,6 @@
   "discover_blog_id",
   "support-user",
   "sync-handler-defaults",
-  "email_verification_gate"
+  "email_verification_gate",
+  "project"
 ]
