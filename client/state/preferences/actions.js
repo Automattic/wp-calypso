@@ -11,6 +11,10 @@ import {
 } from 'state/action-types';
 import { USER_SETTING_KEY } from './constants';
 
+/**
+ * Returns an action thunk that fetches all preferences
+ * @returns { Function }                      Action thunk
+ */
 export function fetchPreferences() {
 	return ( dispatch ) => {
 		dispatch( { type: PREFERENCES_FETCH } );
@@ -27,15 +31,26 @@ export function fetchPreferences() {
 	};
 }
 
-// Create action for updating preference value in redux tree
-// WITHOUT SAVING TO API
+/**
+ * Returns an action object that is used to signal storing a user preference for the _current_ page load.
+ * This is not to be confused with the `savePreference` action which will eventually store these values
+ * on the setting endpoint.
+ * @param   { String | Number }               key User preference key
+ * @param   { String | Number | Object }      value User preference value
+ * @returns { Object }                        Action object
+ */
 export const setPreference = ( key, value ) => ( {
 	type: PREFERENCES_SET,
 	key,
 	value
 } );
 
-// Create action thunk for updating preference value and saving it in API
+/**
+ * Returns an action thunk that stores a preference and saves it to API.
+ * @param   { String | Number }               key User preference key
+ * @param   { String | Number | Object }      value User preference value
+ * @returns { Function }                      Action thunk
+ */
 export const savePreference = ( key, value ) => dispatch => {
 	dispatch( setPreference( key, value ) );
 	const settings = {
