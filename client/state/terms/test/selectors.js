@@ -81,22 +81,28 @@ describe( 'selectors', () => {
 		it( 'should return false if query is not requesting', () => {
 			const requesting = isRequestingTermsForQueryIgnoringPage( {
 				terms: {
-					queriesLastPage: {
+					queries: {
 						2916284: {
-							categories: {
-								'{"search":"ribs"}': 1
-							}
+							categories: new TermQueryManager( {
+								queries: {
+									'[["search","ribs"]]': {
+										itemKeys: [ 123, 124 ],
+										found: 2
+									}
+								}
+							} )
 						}
 					},
 					queryRequests: {
 						2916284: {
 							categories: {
-								'{"search":"ribs","page":"1"}': false
+								'{"search":"ribs","page":1,"number":1}': false,
+								'{"search":"ribs","page":2,"number":1}': false
 							}
 						}
 					}
 				}
-			}, 2916284, 'categories', { search: 'ribs', page: 1 } );
+			}, 2916284, 'categories', { search: 'ribs', page: 1, number: 1 } );
 
 			expect( requesting ).to.be.false;
 		} );
@@ -104,24 +110,28 @@ describe( 'selectors', () => {
 		it( 'should return true if any query is in progress', () => {
 			const requesting = isRequestingTermsForQueryIgnoringPage( {
 				terms: {
-					queriesLastPage: {
+					queries: {
 						2916284: {
-							categories: {
-								'{"search":"ribs"}': 3
-							}
+							categories: new TermQueryManager( {
+								queries: {
+									'[["search","ribs"]]': {
+										itemKeys: [ 123, 124 ],
+										found: 2
+									}
+								}
+							} )
 						}
 					},
 					queryRequests: {
 						2916284: {
 							categories: {
-								'{"search":"ribs","page":1}': false,
-								'{"search":"ribs","page":2}': false,
-								'{"search":"ribs","page":3}': true
+								'{"search":"ribs","page":1,"number":1}': false,
+								'{"search":"ribs","page":2,"number":1}': true
 							}
 						}
 					}
 				}
-			}, 2916284, 'categories', { search: 'ribs', page: 1 } );
+			}, 2916284, 'categories', { search: 'ribs', page: 1, number: 1 } );
 
 			expect( requesting ).to.be.true;
 		} );
