@@ -34,17 +34,15 @@ export function getPost( state, globalId ) {
 }
 
 /**
- * Returns a normalized post object by its global ID, or null if the post does
- * not exist. A normalized post includes common transformations to prepare the
- * post for display.
+ * Returns a normalized post object by its global ID.
  *
- * @param  {Object}  state    Global state tree
- * @param  {String}  globalId Post global ID
- * @return {?Object}          Post object
+ * @param  {Object} state    Global state tree
+ * @param  {String} globalId Post global ID
+ * @return {Object}          Post object
  */
 export const getNormalizedPost = createSelector(
 	( () => {
-		// Cache normalize flow in immediately-invoked closure to avoid
+		// Cache normalize flow in immediately-invoked closure so to avoid
 		// regenerating same flow on each call to this selector
 		const normalize = flow( [
 			firstPassCanonicalImage,
@@ -52,14 +50,7 @@ export const getNormalizedPost = createSelector(
 			stripHtml
 		] );
 
-		return ( state, globalId ) => {
-			const post = getPost( state, globalId );
-			if ( ! post ) {
-				return null;
-			}
-
-			return normalize( cloneDeep( post ) );
-		};
+		return ( state, globalId ) => normalize( cloneDeep( getPost( state, globalId ) ) );
 	} )(),
 	( state ) => state.posts.items
 );
@@ -90,10 +81,8 @@ export const getSitePost = createSelector(
 );
 
 /**
- * Returns an array of normalized posts for the posts query, or null if no
- * posts have been received.
- *
- * @see getNormalizedPost
+ * Returns an array of posts for the posts query, or null if no posts have been
+ * received.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
@@ -101,17 +90,11 @@ export const getSitePost = createSelector(
  * @return {?Array}         Posts for the post query
  */
 export function getSitePostsForQuery( state, siteId, query ) {
-	const manager = state.posts.queries[ siteId ];
-	if ( ! manager ) {
+	if ( ! state.posts.queries[ siteId ] ) {
 		return null;
 	}
 
-	const posts = manager.getItems( query );
-	if ( ! posts ) {
-		return null;
-	}
-
-	return posts.map( ( post ) => getNormalizedPost( state, post.global_ID ) );
+	return state.posts.queries[ siteId ].getItems( query );
 }
 
 /**
@@ -186,10 +169,8 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
 }
 
 /**
- * Returns an array of normalized posts for the posts query, including all
- * known queried pages, or null if the posts for the query are not known.
- *
- * @see getNormalizedPost
+ * Returns an array of posts for the posts query, including all known
+ * queried pages, or null if the number of pages is unknown.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
@@ -213,12 +194,9 @@ export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
 }
 
 /**
- * Returns an array of normalized posts for the posts query, including all
- * known queried pages, preserving hierarchy. Returns null if no posts have
- * been received. Hierarchy is represented by `parent` and `items` properties
- * on each post.
- *
- * @see getNormalizedPost
+ * Returns an array of posts for the posts query, including all known queried
+ * pages, preserving hierarchy. Returns null if no posts have been received.
+ * Hierarchy is represented by `parent` and `items` properties on each post.
  *
  * @param  {Object} state  Global state tree
  * @param  {Number} siteId Site ID
