@@ -34,18 +34,23 @@ export const jetpackConnectAuthorizeSchema = {
 				plansUrl: { type: 'string' },
 				queryObject: {
 					type: 'object',
+					required: [ '_wp_nonce', 'client_id', 'redirect_uri', 'scope', 'secret', 'site', 'state' ],
 					properties: {
 						_wp_nonce: { type: 'string' },
 						client_id: { type: 'string' },
 						from: { type: 'string' },
+						home_url: { type: 'string' },
 						jp_version: { type: 'string' },
 						redirect_after_auth: { type: 'string' },
 						redirect_uri: { type: 'string' },
 						scope: { type: 'string' },
 						secret: { type: 'string' },
 						site: { type: 'string' },
+						site_icon: { type: 'string' },
+						site_url: { type: 'string' },
 						state: { type: 'string' }
-					}
+					},
+					additionalProperties: false
 				},
 				siteReceived: { type: 'boolean' }
 			},
