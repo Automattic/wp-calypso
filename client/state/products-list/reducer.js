@@ -32,7 +32,7 @@ export function items( state = null, action ) {
 			return state;
 
 		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, productsListSchema ) ) {
+			if ( state !== null && isValidStateWithSchema( state, productsListSchema ) ) {
 				return state;
 			}
 			return null;
