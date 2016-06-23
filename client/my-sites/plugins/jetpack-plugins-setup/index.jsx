@@ -91,7 +91,6 @@ const PlansSetup = React.createClass( {
 			if ( ! confirmText ) {
 				return next();
 			}
-			console.log( 'We\'re still installing...' );
 			if ( window.confirm( confirmText ) ) { // eslint-disable-line no-aler
 				next();
 			} else {
