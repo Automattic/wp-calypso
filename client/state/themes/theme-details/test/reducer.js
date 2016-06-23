@@ -50,7 +50,9 @@ describe( 'reducer', () => {
 					count: 0,
 					filter: 'raw'
 				} ]
-			}
+			},
+			themeActive: false,
+			themePurchased: false
 		} );
 
 		expect( state.get( 'mood' ).toJS() ).to.eql( {
@@ -77,7 +79,9 @@ describe( 'reducer', () => {
 					count: 0,
 					filter: 'raw'
 				} ]
-			}
+			},
+			active: false,
+			purchased: false
 		} );
 	} );
 

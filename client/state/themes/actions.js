@@ -106,9 +106,9 @@ export function fetchCurrentTheme( siteId ) {
 	};
 }
 
-export function fetchThemeDetails( id ) {
+export function fetchThemeDetails( id, site ) {
 	return dispatch => {
-		wpcom.undocumented().themeDetails( id )
+		wpcom.undocumented().themeDetails( id, site )
 			.then( themeDetails => {
 				debug( 'Received theme details', themeDetails );
 				dispatch( receiveThemeDetails( themeDetails ) );
@@ -129,11 +129,13 @@ export function receiveThemeDetails( theme ) {
 		themeScreenshot: theme.screenshot,
 		themeDescription: theme.description,
 		themeDescriptionLong: theme.description_long,
-		themeSupportDocumentation: theme.extended ? theme.extended.support_documentation : undefined,
+		themeSupportDocumentation: theme.support_documentation || undefined,
 		themeDownload: theme.download_uri || undefined,
 		themeTaxonomies: theme.taxonomies,
 		themeStylesheet: theme.stylesheet,
 		themeDemoUri: theme.demo_uri,
+		themeActive: theme.active,
+		themePurchased: theme.purchased,
 	};
 }
 

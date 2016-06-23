@@ -11,27 +11,18 @@ import { getThemeDetails } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getThemeDetails()', () => {
-
 		const themes = {
 			themes: {
 				themeDetails: Map( {
 					mood: Map( {
 						name: 'Mood',
 						author: 'Automattic',
-						price: {
-							value: 65,
-							currency: 'USD',
-							display: '<abbr title=\"United States Dollars\">$</abbr>65'
-						},
+						price: '$65'
 					} ),
 					twentysixteen: Map( {
 						name: 'Twenty Sixteen',
 						author: 'Automattic',
-						price: {
-							value: 0,
-							currency: 'USD',
-							display: 'Free'
-						},
+						price: 'free',
 					} ),
 				} )
 			}
@@ -44,10 +35,10 @@ describe( 'selectors', () => {
 
 		it( 'should format the price as plaintext', () => {
 			const mood = getThemeDetails( themes, 'mood' );
-			expect( mood.price ).to.eql( '$65' );
+			expect( mood.price ).to.equal( '$65' );
 
 			const twentysixteen = getThemeDetails( themes, 'twentysixteen' );
-			expect( twentysixteen.price ).to.eql( 'Free' );
+			expect( twentysixteen.price ).to.equal( 'free' );
 		} );
 	} );
 } );
