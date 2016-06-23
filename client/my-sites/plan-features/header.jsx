@@ -49,7 +49,7 @@ class PlanFeaturesHeader extends Component {
 				</div>
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
-					{ currencyCode && <PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ rawPrice } /> }
+					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ rawPrice } />
 					<p className="plan-features__header-timeframe">
 						{ billingTimeFrame }
 					</p>
