@@ -34,10 +34,12 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	QueryPreferences = require( 'components/data/query-preferences' ),
 	KeyboardShortcutsMenu,
 	Layout,
-	SupportUser;
+	SupportUser,
+	Happychat = require( 'components/happychat' );
 
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
+import { isHappychatOpen } from 'state/ui/happychat/selectors';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
@@ -220,6 +222,7 @@ Layout = React.createClass( {
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
 				{ this.renderPreview() }
+				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <Happychat /> }
 			</div>
 		);
 	}
@@ -235,6 +238,7 @@ export default connect(
 			hasSidebar: hasSidebar( state ),
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
+			chatIsOpen: isHappychatOpen( state )
 		};
 	}
 )( Layout );

@@ -61,7 +61,8 @@ const MeSidebar = React.createClass( {
 			'/me/notifications/subscriptions': 'notifications',
 			'/help/contact': 'help',
 			'/purchases': 'billing',
-			'/me/billing': 'billing'
+			'/me/billing': 'billing',
+			'/me/chat': 'happychat'
 		};
 		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
 		let selected;
@@ -159,6 +160,13 @@ const MeSidebar = React.createClass( {
 							icon="help-outline"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="help"
+						/>
+						<SidebarItem
+							selected= { selected === 'happychat' }
+							link="/me/chat"
+							icon="comment"
+							label= { this.translate( 'Support Chat' ) }
+							onNavigate={ this.onNavigate }
 						/>
 					</ul>
 				</SidebarMenu>
