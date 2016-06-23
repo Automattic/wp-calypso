@@ -66,7 +66,7 @@ export default React.createClass( {
 	},
 
 	componentDidMount: function() {
-		if ( !this.props.user ) {
+		if ( ! this.props.user ) {
 			return;
 		}
 
@@ -76,7 +76,7 @@ export default React.createClass( {
 	},
 
 	componentWillUnmount: function() {
-		if ( !this.props.user ) {
+		if ( ! this.props.user ) {
 			return;
 		}
 
