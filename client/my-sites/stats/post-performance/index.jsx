@@ -23,7 +23,6 @@ import {
 	getSitePostsForQuery
 } from 'state/posts/selectors';
 import { getPostStat } from 'state/stats/posts/selectors';
-import { decodeEntities } from 'lib/formatting';
 
 const StatsPostPerformance = React.createClass( {
 
@@ -93,7 +92,7 @@ const StatsPostPerformance = React.createClass( {
 			if ( ! post.title ) {
 				postTitle = this.translate( '(no title)' );
 			} else {
-				postTitle = decodeEntities( post.title );
+				postTitle = post.title;
 			}
 		}
 
