@@ -43,6 +43,16 @@ class VerifyEmailDialog extends React.Component {
 		}.bind( this ) );
 	}
 
+	getResendButtonLabel() {
+		if ( this.state.emailSent ) {
+			return i18n.translate( 'Email Sent' );
+		}
+		if ( this.state.pendingRequest ) {
+			return <Spinner className="post-editor__confirmation-dialog-spinner" />;
+		}
+		return i18n.translate( 'Resend Email' );
+	}
+
 	getDialogButtons() {
 		return [
 			<FormButton
@@ -56,13 +66,7 @@ class VerifyEmailDialog extends React.Component {
 				isPrimary={ false }
 				disabled={ this.state.pendingRequest || this.state.emailSent }
 				onClick={ this.handleSendVerification }>
-				{ this.state.emailSent ?
-					i18n.translate( 'Email Sent' ) :
-					( this.state.pendingRequest ?
-						<Spinner /> :
-						i18n.translate( 'Resend Email' )
-					)
-				}
+				{ this.getResendButtonLabel() }
 			</FormButton>
 		];
 	}
@@ -79,7 +83,7 @@ class VerifyEmailDialog extends React.Component {
 				'{{wrapper}}%(email)s{{/wrapper}} {{emailPreferences}}change{{/emailPreferences}}',
 				{
 					components: {
-						wrapper: <span />,
+						wrapper: <span className="post-editor__confirmation-dialog-email-wrapper" />,
 						emailPreferences: <a href="/me/account" />
 					},
 					args: {
@@ -93,12 +97,12 @@ class VerifyEmailDialog extends React.Component {
 			<Dialog
 				isVisible={ true }
 				buttons={ this.getDialogButtons() }
-				additionalClassNames="confirmation-dialog"
+				additionalClassNames="post-editor__confirmation-dialog is-narrow"
 			>
-				<h1>{ strings.confirmHeading }</h1>
-				<p className="confirmation-dialog__email">{ strings.confirmEmail }</p>
-				<p className="confirmation-dialog__explanation">{ strings.confirmExplanation }</p>
-				<p className="confirmation-dialog__reasoning">{ strings.confirmReasoning }</p>
+				<h1 className="post-editor__confirmation-dialog-heading">{ strings.confirmHeading }</h1>
+				<p className="post-editor__confirmation-dialog-email">{ strings.confirmEmail }</p>
+				<p className="post-editor__confirmation-dialog-explanation">{ strings.confirmExplanation }</p>
+				<p className="post-editor__confirmation-dialog-reasoning">{ strings.confirmReasoning }</p>
 			</Dialog>
 		);
 	}

@@ -21,8 +21,7 @@ const Card = require( 'components/card' ),
 	postActions = require( 'lib/posts/actions' ),
 	Tooltip = require( 'components/tooltip' ),
 	PostListFetcher = require( 'components/post-list-fetcher' ),
-	stats = require( 'lib/posts/stats' ),
-	config = require( 'config' );
+	stats = require( 'lib/posts/stats' );
 
 export default React.createClass( {
 	displayName: 'EditorGroundControl',
@@ -67,28 +66,28 @@ export default React.createClass( {
 	},
 
 	componentDidMount: function() {
-		if ( ! config( 'email_verification_gate' ) ) return;
+		if ( ! this.props.user ) {
+			return;
+		}
 
 		this.props.user
-			&& this.props.user
 			.on( 'change', this.updateNeedsVerification )
 			.on( 'verify', this.updateNeedsVerification );
 	},
 
 	componentWillUnmount: function() {
-		if ( ! config( 'email_verification_gate' ) ) return;
+		if ( ! this.props.user ) {
+			return;
+		}
 
 		this.props.user
-			&& this.props.user
 			.off( 'change', this.updateNeedsVerification )
 			.off( 'verify', this.updateNeedsVerification );
 	},
 
 	updateNeedsVerification: function() {
 		this.setState( {
-			needsVerification: config( 'email_verification_gate' )
-				&& this.props.userUtils
-				&& this.props.userUtils.needsVerificationForSite( this.props.site ),
+			needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
 		} );
 	},
 
@@ -99,30 +98,26 @@ export default React.createClass( {
 			showDateTooltip: false,
 			firstDayOfTheMonth: this.getFirstDayOfTheMonth(),
 			lastDayOfTheMonth: this.getLastDayOfTheMonth(),
-			needsVerification: config( 'email_verification_gate' )
-				&& this.props.userUtils
-				&& this.props.userUtils.needsVerificationForSite( this.props.site ),
+			needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
 		};
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
 		this.setState( {
-			needsVerification: config( 'email_verification_gate' )
-				&& nextProps.userUtils
-				&& nextProps.userUtils.needsVerificationForSite( nextProps.site ),
+			needsVerification: nextProps.userUtils && nextProps.userUtils.needsVerificationForSite( nextProps.site ),
 		} );
 
-		if ( ! config( 'email_verification_gate' ) ) return;
+		if ( this.props.user ) {
+			this.props.user
+				.off( 'change', this.updateNeedsVerification )
+				.off( 'verify', this.updateNeedsVerification );
+		}
 
-		this.props.user
-			&& this.props.user
-			.off( 'change', this.updateNeedsVerification )
-			.off( 'verify', this.updateNeedsVerification );
-
-		nextProps.user
-			&& nextProps.user
-			.on( 'change', this.updateNeedsVerification )
-			.on( 'verify', this.updateNeedsVerification );
+		if ( nextProps.user ) {
+			nextProps.user
+				.on( 'change', this.updateNeedsVerification )
+				.on( 'verify', this.updateNeedsVerification );
+		}
 	},
 
 	setPostDate: function( date ) {
@@ -487,7 +482,7 @@ export default React.createClass( {
 							className="editor-ground-control__email-verification-notice-icon" />
 						{ this.getVerificationNoticeLabel() }
 						{ ' ' }
-						<u>{ this.translate( 'Learn More' ) }</u>
+						<span className="editor-ground-control__email-verification-notice-more">{ this.translate( 'Learn More' ) }</span>
 					</div>
 				}
 			</Card>

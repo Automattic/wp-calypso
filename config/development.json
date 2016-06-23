@@ -134,6 +134,5 @@
 		"vip/deploys": true,
 		"vip/logs": true,
 		"vip/support": true
-	},
-	"email_verification_gate": true
+	}
 }

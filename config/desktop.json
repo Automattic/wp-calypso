@@ -91,6 +91,5 @@
 	"olark": {
 		"business_account_id": "3146-815-10-9343",
 		"business_group_id": "3033aa025c1a9648c703eb70132ff220"
-	},
-	"email_verification_gate": false
+	}
 }
