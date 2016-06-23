@@ -10,6 +10,7 @@ import some from 'lodash/some';
 import isEmpty from 'lodash/isEmpty';
 import findIndex from 'lodash/findIndex';
 import flow from 'lodash/flow';
+import partialRight from 'lodash/partialRight';
 import matchesProperty from 'lodash/matchesProperty';
 
 /**
@@ -49,6 +50,8 @@ export const personalPlan = {
 
 const getCurrencyCode = plans => head( map( plans, property( 'currency_code' ) ) ) || 'USD';
 
+const hasCurrentPlan = partialRight( some, matchesProperty( 'current_plan', true ) );
+
 const applyCurrency = currencyCode => {
 	const cost = personalPlan.prices[ currencyCode ];
 	const price = formatCurrency( cost, currencyCode );
@@ -86,12 +89,10 @@ export const insertSitePersonalPlan = plans => {
 	} = formatPlan( plans );
 
 	if ( ! ( isEmpty( plans ) || has( plans, product_id ) ) ) {
-		const hasCurrentPlan = some( plans, matchesProperty( 'current_plan', true ) );
-
 		return {
 			...plans,
 			[ product_id ]: {
-				current_plan: ! hasCurrentPlan,
+				current_plan: ! hasCurrentPlan( plans ),
 				currency_code,
 				can_start_trial: true,
 				discount_reason: null,
