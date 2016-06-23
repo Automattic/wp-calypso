@@ -1,3 +1,9 @@
+#### v1.3.2 (June 23, 2016)
+
+- Fix: jsx-classname-namespace: Skip validation on render call expressions (ReactDOM.render)
+- General: Upgrade ESLint (^1.10.3 to ^2.13.1) and babel-eslint (^5.0.0-beta6 to ^6.1.0)
+- General: Add `npm run lint` npm script, included in `npm test`
+
 #### v1.3.1 (June 17, 2016)
 
 - Fix: jsx-classname-namespace: JSX child expressions should not be considered root elements
