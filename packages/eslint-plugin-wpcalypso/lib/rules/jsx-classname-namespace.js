@@ -41,6 +41,21 @@ var rule = module.exports = function( context ) {
 		return false;
 	}
 
+	function isRenderCallExpression( node ) {
+		if ( 'CallExpression' !== node.type ) {
+			return false;
+		}
+
+		let calleeName;
+		if ( 'MemberExpression' === node.callee.type ) {
+			calleeName = node.callee.property.name;
+		} else if ( 'Identifier' === node.callee.type ) {
+			calleeName = node.callee.name;
+		}
+
+		return calleeName && 'render' === calleeName;
+	}
+
 	function isRenderFunction( node ) {
 		if ( 'FunctionExpression' !== node.type ) {
 			return false;
@@ -58,13 +73,26 @@ var rule = module.exports = function( context ) {
 	}
 
 	function isRootRenderedElement( node ) {
-		var parent = node.parent.parent.parent,
-			functionExpression, functionName;
+		var parent = node.parent.parent,
+			functionExpression, functionName, isRoot;
 
 		do {
+			parent = parent.parent;
+
+			// Abort if render call expression (i.e. ReactDOM.render)
+			if ( isRenderCallExpression( parent ) ) {
+				return null;
+			}
+
+			// Continue through ancestors if we've already determined whether
+			// this is root, to ensure we're not in a render call expression
+			if ( undefined !== isRoot ) {
+				continue;
+			}
+
 			// If wrapped in a JSX element, the node is a child
 			if ( 'JSXElement' === parent.type ) {
-				return false;
+				isRoot = false;
 			}
 
 			if ( -1 !== [ 'FunctionExpression', 'FunctionDeclaration', 'ArrowFunctionExpression' ].indexOf( parent.type ) ) {
@@ -73,7 +101,7 @@ var rule = module.exports = function( context ) {
 				// If inside function expression, check that the name of the
 				// property is "render" (React.createClass or Component class)
 				if ( isRenderFunction( parent ) ) {
-					return true;
+					isRoot = true;
 				}
 
 				// If wrapped in function declaration, check the declaration
@@ -83,14 +111,14 @@ var rule = module.exports = function( context ) {
 					case 'FunctionDeclaration':
 						if ( 'ExportDefaultDeclaration' === parent.parent.type ||
 								isModuleExportNode( parent.parent ) ) {
-							return true;
+							isRoot = true;
 						}
 						break;
 
 					case 'FunctionExpression':
 						if ( 'AssignmentExpression' === parent.parent.type &&
 								isModuleExportNode( parent.parent.parent ) ) {
-							return true;
+							isRoot = true;
 						}
 				}
 			}
@@ -112,7 +140,7 @@ var rule = module.exports = function( context ) {
 						break;
 				}
 
-				return !! functionName && parent.body.some( function( programNode ) {
+				isRoot = !! functionName && parent.body.some( function( programNode ) {
 					if ( 'ExportDefaultDeclaration' === programNode.type ) {
 						return isIdentifierInDescendents( programNode.declaration, functionName );
 					}
@@ -126,11 +154,9 @@ var rule = module.exports = function( context ) {
 					return false;
 				} );
 			}
+		} while ( parent.parent );
 
-			parent = parent.parent;
-		} while ( parent );
-
-		return false;
+		return !! isRoot;
 	}
 
 	return {
@@ -154,6 +180,12 @@ var rule = module.exports = function( context ) {
 			classNames = rawClassName.value.split( ' ' );
 			namespace = path.basename( path.dirname( context.getFilename() ) );
 			isRoot = isRootRenderedElement( node );
+
+			// `null` return value indicates intent to abort validation
+			if ( null === isRoot ) {
+				return;
+			}
+
 			isError = ! classNames.some( function( className ) {
 				if ( isRoot ) {
 					return className === namespace;

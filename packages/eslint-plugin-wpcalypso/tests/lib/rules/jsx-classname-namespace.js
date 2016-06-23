@@ -164,6 +164,26 @@ EXPECTED_FOO_PREFIX_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo_
 			env: { es6: true },
 			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
 			filename: '/tmp/foo/index.js'
+		},
+		{
+			code: 'import ReactDOM from "react-dom"; ReactDOM.render( <div className="quux" />, document.body );',
+			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
+			filename: '/tmp/foo/index.js'
+		},
+		{
+			code: 'import ReactDOM from "react-dom"; ReactDOM.render( <div className="quux"><div className="quux__child" /></div>, document.body );',
+			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
+			filename: '/tmp/foo/index.js'
+		},
+		{
+			code: 'import { render } from "react-dom"; render( <div className="quux" />, document.body );',
+			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
+			filename: '/tmp/foo/index.js'
+		},
+		{
+			code: 'import { render } from "react-dom"; render( <div className="quux"><div className="quux__child" /></div>, document.body );',
+			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
+			filename: '/tmp/foo/index.js'
 		}
 	],
 
