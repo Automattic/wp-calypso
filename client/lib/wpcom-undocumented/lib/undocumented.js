@@ -1404,12 +1404,12 @@ Undocumented.prototype.themes = function( site, query, fn ) {
 	}, fn );
 };
 
-Undocumented.prototype.themeDetails = function( themeId, fn ) {
-	const path = `/themes/${ themeId }`;
-	debug( '/themes/:theme_id' );
+Undocumented.prototype.themeDetails = function( themeId, site, fn ) {
+	const sitePath = site ? `/sites/${ site }` : '';
+	const path = `${ sitePath }/themes/${ themeId }`;
+	debug( path );
 	return this.wpcom.req.get( path, {
-		apiVersion: '1.1',
-		extended: 'true',
+		apiVersion: '1.2',
 	}, fn );
 };
 
