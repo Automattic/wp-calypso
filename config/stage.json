@@ -69,7 +69,7 @@
 		"olark": true,
 		"perfmon": true,
 		"persist-redux": true,
-		"plans/personal-plan": false,
+		"plans/personal-plan": true,
 		"post-editor/insert-menu": true,
 		"press-this": true,
 		"preview-layout": true,

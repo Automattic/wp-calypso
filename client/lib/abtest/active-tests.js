@@ -1,6 +1,6 @@
 module.exports = {
 	personalPlan: {
-		datestamp: '20160622',
+		datestamp: '20160623',
 		variations: {
 			hide: 50,
 			show: 50
