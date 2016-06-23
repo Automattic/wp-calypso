@@ -33,8 +33,15 @@ webpackConfig = {
 		chunkFilename: '[name].[chunkhash].js',
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]'
 	},
-	devtool: '#eval',
+	debug: true,
+	devtool: '#eval-cheap-module-source-map',
 	module: {
+		preLoaders: [
+			{
+				test: /\.jsx?$/,
+				loader: 'source-map-loader'
+			}
+		],
 		loaders: [
 			{
 				test: /sections.js$/,
@@ -127,6 +134,7 @@ if ( CALYPSO_ENV === 'development' ) {
 	jsLoader.loaders = [ 'react-hot' ].concat( jsLoader.loaders );
 } else {
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = path.join( __dirname, 'client', 'boot' );
+	webpackConfig.debug = false;
 	webpackConfig.devtool = false;
 }
 
