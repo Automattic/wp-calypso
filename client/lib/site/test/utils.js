@@ -37,7 +37,7 @@ describe( 'Site Utils', function() {
 					is_multi_network: false,
 					file_mod_disabled: [ 'something else' ]
 				}
-			}
+			};
 			assert.isFalse( SiteUtils.canUpdateFiles( site ) );
 		} );
 
@@ -51,7 +51,7 @@ describe( 'Site Utils', function() {
 					is_multi_network: false,
 					file_mod_disabled: false
 				}
-			}
+			};
 			assert.isFalse( SiteUtils.canUpdateFiles( site ) );
 		} );
 
@@ -65,7 +65,7 @@ describe( 'Site Utils', function() {
 					is_multi_network: false,
 					file_mod_disabled: false
 				}
-			}
+			};
 			assert.isTrue( SiteUtils.canUpdateFiles( site ) );
 		} );
 
@@ -79,7 +79,7 @@ describe( 'Site Utils', function() {
 					is_multi_network: false,
 					file_mod_disabled: false
 				}
-			}
+			};
 			assert.isTrue( SiteUtils.canUpdateFiles( site ) );
 		} );
 
@@ -93,7 +93,7 @@ describe( 'Site Utils', function() {
 					is_multi_network: false,
 					file_mod_disabled: false
 				}
-			}
+			};
 			assert.isFalse( SiteUtils.canUpdateFiles( site ) );
 		} );
 
@@ -107,7 +107,7 @@ describe( 'Site Utils', function() {
 					is_multi_network: false,
 					file_mod_disabled: false
 				}
-			}
+			};
 			assert.isTrue( SiteUtils.canUpdateFiles( site ) );
 		} );
 	} );
@@ -136,7 +136,7 @@ describe( 'Site Utils', function() {
 					unmapped_url: 'someurl',
 					main_network_site: 'someurl-different',
 				}
-			}
+			};
 			assert.isFalse( SiteUtils.isMainNetworkSite( site ) );
 		} );
 
@@ -147,7 +147,7 @@ describe( 'Site Utils', function() {
 					unmapped_url: 'someurl',
 					main_network_site: 'someurl-different',
 				}
-			}
+			};
 			assert.isTrue( SiteUtils.isMainNetworkSite( site ) );
 		} );
 
@@ -156,7 +156,7 @@ describe( 'Site Utils', function() {
 				options: {
 					is_multi_network: true,
 				}
-			}
+			};
 			assert.isFalse( SiteUtils.isMainNetworkSite( site ) );
 		} );
 
@@ -167,7 +167,7 @@ describe( 'Site Utils', function() {
 					unmapped_url: 'http://someurl',
 					main_network_site: 'https://someurl',
 				}
-			}
+			};
 			assert.isTrue( SiteUtils.isMainNetworkSite( site ) );
 		} );
 
@@ -178,7 +178,15 @@ describe( 'Site Utils', function() {
 					unmapped_url: 'http://someurl',
 					main_network_site: 'ftp://someurl',
 				}
-			}
+			};
+			assert.isFalse( SiteUtils.isMainNetworkSite( site ) );
+		} );
+
+		it( 'Does not explode when unmapped_url is not defined', function() {
+			const site = {
+				is_multisite: true,
+				options: {}
+			};
 			assert.isFalse( SiteUtils.isMainNetworkSite( site ) );
 		} );
 	} );
