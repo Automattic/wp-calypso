@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
- import trim from 'lodash/trim';
+import trim from 'lodash/trim';
 
 /**
  * Internal Dependencies

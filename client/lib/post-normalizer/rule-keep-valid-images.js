@@ -7,7 +7,7 @@ import filter from 'lodash/filter';
  * Internal Dependencies
  */
 
- function imageHasMinWidthAndHeight( width, height ) {
+function imageHasMinWidthAndHeight( width, height ) {
 	return function( image ) {
 		return image.naturalWidth >= width && image.naturalHeight >= height;
 	};
@@ -15,7 +15,7 @@ import filter from 'lodash/filter';
 
 export default function keepValidImages( minWidth, minHeight ) {
 	return function keepValidImagesForWidthAndHeight( post ) {
-		var imageFilter = imageHasMinWidthAndHeight( minWidth, minHeight );
+		const imageFilter = imageHasMinWidthAndHeight( minWidth, minHeight );
 		if ( post.images ) {
 			post.images = filter( post.images, imageFilter );
 		}
