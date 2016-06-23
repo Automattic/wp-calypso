@@ -316,7 +316,7 @@
 	color: $gray-dark;
 
 	&.is-compact {
-		padding: 10px 0;
+		padding: 10px 16px;
 
 		@include breakpoint( ">660px" ) {
 			padding-left: 105px;
