@@ -48,32 +48,33 @@ export const personalPlan = {
 	has_domain_credit: true
 };
 
-const getCurrencyCode = plans => head( map( plans, property( 'currency_code' ) ) ) || 'USD';
+const findCurrency = plans => head( map( plans, property( 'currency_code' ) ) ) || 'USD';
 
-const hasCurrentPlan = partialRight( some, matchesProperty( 'current_plan', true ) );
-
-const applyCurrency = currencyCode => {
+const pricePersonalPlan = currencyCode => {
 	const cost = personalPlan.prices[ currencyCode ];
 	const price = formatCurrency( cost, currencyCode );
 
 	return {
 		...personalPlan,
 		cost,
-		price,
 		raw_price: cost,
+		price,
 		formatted_price: price,
 		currency_code: currencyCode
 	};
 };
 
-const formatPlan = flow( getCurrencyCode, applyCurrency );
+const getPricedPersonalPlan = flow( findCurrency, pricePersonalPlan );
+
+const hasCurrentPlan = partialRight( some, matchesProperty( 'current_plan', true ) );
+
+const hasPersonalPlan = partialRight( some, matchesProperty( 'product_slug', PLAN_PERSONAL ) );
 
 export const insertPersonalPlan = plans => {
 	const freePlanIndex = findIndex( plans, matchesProperty( 'product_slug', PLAN_FREE ) );
-	const hasPersonalPlan = some( plans, matchesProperty( 'product_slug', PLAN_PERSONAL ) );
 
-	return ! hasPersonalPlan
-		? [ ...plans.slice( 0, freePlanIndex + 1 ), formatPlan( plans ), ...plans.slice( freePlanIndex + 1 ) ]
+	return ! hasPersonalPlan( plans )
+		? [ ...plans.slice( 0, freePlanIndex + 1 ), getPricedPersonalPlan( plans ), ...plans.slice( freePlanIndex + 1 ) ]
 		: plans;
 };
 
@@ -86,7 +87,7 @@ export const insertSitePersonalPlan = plans => {
 		product_slug,
 		raw_price,
 		currency_code
-	} = formatPlan( plans );
+	} = getPricedPersonalPlan( plans );
 
 	if ( ! ( isEmpty( plans ) || has( plans, product_id ) ) ) {
 		return {
