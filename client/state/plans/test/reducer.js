@@ -58,10 +58,10 @@ describe( 'reducer', () => {
 			const initialState = undefined;
 			const plans = getValidDataFromResponse( WPCOM_RESPONSE );
 			const action = plansReceiveAction( plans );
-			const newState = itemsReducer( initialState, action );
 			const expectedState = plans;
+			deepFreeze( expectedState );
 
-			deepFreeze( action );
+			const newState = itemsReducer( initialState, action );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -71,10 +71,11 @@ describe( 'reducer', () => {
 			const initialState = plans;
 			const action = plansReceiveAction( plans );
 			const expectedState = plans;
-			const newState = itemsReducer( initialState, action );
 
 			deepFreeze( initialState );
-			deepFreeze( action );
+			deepFreeze( expectedState );
+
+			const newState = itemsReducer( initialState, action );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -83,11 +84,12 @@ describe( 'reducer', () => {
 			const plans = getValidDataFromResponse( WPCOM_RESPONSE );
 			const initialState = plans;
 			const action = { type: 'SERIALIZE' };
-			const newState = itemsReducer( initialState, action );
 			const expectedState = plans;
 
 			deepFreeze( initialState );
-			deepFreeze( action );
+			deepFreeze( expectedState );
+
+			const newState = itemsReducer( initialState, action );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -96,11 +98,11 @@ describe( 'reducer', () => {
 			const plans = getValidDataFromResponse( WPCOM_RESPONSE );
 			const initialState = plans;
 			const action = { type: 'DESERIALIZE' };
-			const newState = itemsReducer( initialState, action );
 			const expectedState = plans;
-
 			deepFreeze( initialState );
-			deepFreeze( action );
+			deepFreeze( expectedState );
+
+			const newState = itemsReducer( initialState, action );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -110,11 +112,11 @@ describe( 'reducer', () => {
 			const plans = [ { product_id: '234234' } ];
 			const initialState = plans;
 			const action = { type: 'DESERIALIZE' };
-			const newState = itemsReducer( initialState, action );
-			const expectedState = [];
-
 			deepFreeze( initialState );
-			deepFreeze( action );
+			const expectedState = [];
+			deepFreeze( expectedState );
+
+			const newState = itemsReducer( initialState, action );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -129,9 +131,9 @@ describe( 'reducer', () => {
 			const initialState = undefined;
 			const action = plansRequestAction();
 			const expectedState = true;
-			const newState = requestReducer( initialState, action );
+			deepFreeze( expectedState );
 
-			deepFreeze( action );
+			const newState = requestReducer( initialState, action );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -140,10 +142,11 @@ describe( 'reducer', () => {
 			const initialState = true;
 			const action = plansRequestSuccessAction();
 			const expectedState = false;
-			const newState = requestReducer( initialState, action );
 
 			deepFreeze( initialState );
-			deepFreeze( action );
+			deepFreeze( expectedState );
+
+			const newState = requestReducer( initialState, action );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -152,10 +155,11 @@ describe( 'reducer', () => {
 			const initialState = true;
 			const action = plansRequestFailureAction();
 			const expectedState = false;
-			const newState = requestReducer( initialState, action );
 
 			deepFreeze( initialState );
-			deepFreeze( action );
+			deepFreeze( expectedState );
+
+			const newState = requestReducer( initialState, action );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -170,9 +174,10 @@ describe( 'reducer', () => {
 			const initialState = undefined;
 			const action = plansRequestFailureAction();
 			const expectedState = true;
-			const newState = errorReducer( initialState, action );
 
-			deepFreeze( action );
+			deepFreeze( expectedState );
+
+			const newState = errorReducer( initialState, action );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -181,10 +186,11 @@ describe( 'reducer', () => {
 			const initialState = true;
 			const action = plansRequestAction();
 			const expectedState = false;
-			const newState = errorReducer( initialState, action );
 
 			deepFreeze( initialState );
-			deepFreeze( action );
+			deepFreeze( expectedState );
+
+			const newState = errorReducer( initialState, action );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -193,10 +199,11 @@ describe( 'reducer', () => {
 			const initialState = true;
 			const action = plansRequestSuccessAction();
 			const expectedState = false;
-			const newState = errorReducer( initialState, action );
 
 			deepFreeze( initialState );
-			deepFreeze( action );
+			deepFreeze( expectedState );
+
+			const newState = errorReducer( initialState, action );
 
 			expect( newState ).to.eql( expectedState );
 		} );
