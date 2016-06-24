@@ -113,7 +113,7 @@ export default React.createClass( {
 					<TrackInputChanges onNewValue={ this.recordChangeStats }>
 						<FormTextInput
 							ref="slugField"
-							value={ this.props.slug }
+							value={ this.props.slug ? this.props.slug : '' }
 							onChange={ this.onSlugChange }
 							onKeyDown={ this.onSlugKeyDown }
 							onBlur={ this.onBlur }
