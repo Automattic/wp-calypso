@@ -94,7 +94,7 @@ export default React.createClass( {
 
 		if ( ! this.props.href && site ) {
 			if ( this.props.feature ) {
-				href = `/plans/compare/${ this.props.feature }/${ site.slug }`;
+				href = `/plans/compare/${ site.slug }?feature=${ this.props.feature }`;
 			} else {
 				href = `/plans/${ site.slug }`;
 			}
