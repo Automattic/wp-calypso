@@ -35,7 +35,7 @@ export function addTerm( siteId, taxonomy, term ) {
 		} ) );
 
 		return wpcom.site( siteId ).taxonomy( taxonomy ).term().add( term ).then(
-			( data ) => dispatch( receiveTerm( siteId, taxonomy, omit( data, '_headers' ) ), null, null ),
+			( data ) => dispatch( receiveTerm( siteId, taxonomy, omit( data, '_headers' ) ) ),
 			() => Promise.resolve() // Silently ignore failure so we can proceed to remove temporary
 		).then( () => dispatch( removeTerm( siteId, taxonomy, temporaryId ) ) );
 	};
@@ -113,7 +113,6 @@ export function requestSiteTerms( siteId, taxonomy, query = {} ) {
 		return wpcom.site( siteId ).taxonomy( taxonomy ).termsList( query ).then( ( data ) => {
 			dispatch( {
 				type: TERMS_REQUEST_SUCCESS,
-				found: data.found,
 				siteId,
 				taxonomy,
 				query
