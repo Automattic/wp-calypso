@@ -99,7 +99,7 @@ class VerifyEmailDialog extends React.Component {
 				buttons={ this.getDialogButtons() }
 				additionalClassNames="post-editor__confirmation-dialog is-narrow"
 			>
-				<h1 className="post-editor__confirmation-dialog-heading">{ strings.confirmHeading }</h1>
+				<h1 className="post-editor__confirmation-dialog-heading is-variable-height">{ strings.confirmHeading }</h1>
 				<p className="post-editor__confirmation-dialog-email">{ strings.confirmEmail }</p>
 				<p className="post-editor__confirmation-dialog-explanation">{ strings.confirmExplanation }</p>
 				<p className="post-editor__confirmation-dialog-reasoning">{ strings.confirmReasoning }</p>
