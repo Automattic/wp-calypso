@@ -219,7 +219,7 @@
 	border-radius: 0;
 
 	@include breakpoint( ">660px" ) {
-		max-width: 450px;
+		max-width: 550px;
 		border-radius: 3px;
 	}
 }
