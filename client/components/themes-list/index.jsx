@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import ReactDom from 'react-dom';
 import times from 'lodash/times';
 import isEqual from 'lodash/isEqual';
 
@@ -90,6 +91,15 @@ export const ThemesList = React.createClass( {
 				line={ this.props.translate( 'Try a different search or more filters?' ) }
 				/>;
 	},
+
+	componentWillUpdate: function() {
+		var node = ReactDom.findDOMNode( this );
+		node.className = node.className.replace( / themes-list-loaded/, '' );
+	},
+
+	componentDidUpdate: function() {
+		ReactDom.findDOMNode( this ).className += " themes-list-loaded";
+	  },
 
 	render() {
 		if ( ! this.props.loading && this.props.themes.length === 0 ) {
