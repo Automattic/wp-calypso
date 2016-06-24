@@ -80,7 +80,7 @@ class PlanFeaturesHeader extends Component {
 
 	getPersonalPlanSvg() {
 		return (
-			<svg id="Layer_1" x="0px" y="0px" viewBox="0 0 124 127.1" xmlns="http://www.w3.org/2000/svg">
+			<svg viewBox="0 0 124 127.1">
 				<ellipse cx="62" cy="63.1" rx="62" ry="62" style={ { fill: 'rgb(211, 222, 230)' } } />
 				<g class="cls-3" transform="matrix(1, 0, 0, 1, 0, -68)">
 					<path d="M63.95,105.89l4-9.81V83.55H62.05v23.61A2,2,0,0,0,63.95,105.89Z" transform="translate(0 69.26)" style={ { fill: 'rgb(144, 172, 193)' } } />
