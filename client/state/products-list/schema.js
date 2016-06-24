@@ -1,6 +1,6 @@
 export const productsListSchema = {
 	type: 'object',
-	required: [],
+	additionalProperties: false,
 	patternProperties: {
 		'.+': {
 			type: 'object',
@@ -9,7 +9,6 @@ export const productsListSchema = {
 				'product_name',
 				'product_slug',
 				'description',
-				'cost',
 				'is_domain_registration',
 				'cost_display' ],
 			properties: {
@@ -17,17 +16,13 @@ export const productsListSchema = {
 				product_name: { type: 'string' },
 				product_slug: { type: 'string' },
 				description: { type: 'string' },
-				cost: { type: 'integer' },
+				cost: { type: 'number' },
 				prices: {
 					type: 'object',
-					patternProperties: {
-						'^[A-Z]+$': { type: 'integer' }
-					}
 				},
 				is_domain_registration: { type: 'boolean' },
 				cost_display: { type: 'string' },
 			}
 		}
-	},
-	additionalProperties: false
+	}
 };
