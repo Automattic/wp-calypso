@@ -147,8 +147,8 @@ export default class PaginatedQueryManager extends QueryManager {
 		}
 
 		const queryKey = this.constructor.QueryKey.stringify( options.query );
-		const page = options.query.page || DEFAULT_QUERY.page;
-		const perPage = options.query.number || DEFAULT_QUERY.number;
+		const page = options.query.page || this.constructor.DEFAULT_QUERY.page;
+		const perPage = options.query.number || this.constructor.DEFAULT_QUERY.number;
 		const startOffset = ( page - 1 ) * perPage;
 		const nextQuery = nextManager.data.queries[ queryKey ];
 
