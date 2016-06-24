@@ -42,6 +42,7 @@
 		"manage/people": true,
 		"manage/people/readers": true,
 		"manage/plans": true,
+		"manage/plan-features": false,
 		"manage/plugins": true,
 		"manage/plugins/cache": false,
 		"manage/plugins/setup": true,
