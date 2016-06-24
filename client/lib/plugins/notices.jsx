@@ -576,7 +576,7 @@ module.exports = {
 				return i18n.translate( 'Plugin is already installed.' );
 
 			case 'incompatible_archive':
-				return i18n.translate( 'Incompatible Archive.' );
+				return i18n.translate( 'Incompatible Archive. The package could not be installed.' );
 
 			case 'empty_archive_pclzip':
 				return i18n.translate( 'Empty archive.' );
@@ -623,9 +623,6 @@ module.exports = {
 
 			case 'mkdir_failed':
 				return i18n.translate( 'Could not create directory.' );
-
-			case 'incompatible_archive':
-				return i18n.translate( 'The package could not be installed.' );
 
 			case 'files_not_writable':
 				return i18n.translate( 'The update cannot be installed because we will be unable to copy some files. This is usually due to inconsistent file permissions.' );
