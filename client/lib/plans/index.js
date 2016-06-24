@@ -97,6 +97,10 @@ export function addCurrentPlanToCartAndRedirect( sitePlans, selectedSite ) {
 	page( `/checkout/${ selectedSite.slug }` );
 }
 
+export function getCheckoutURL( plan, siteSlug ) {
+	return `/checkout/${ siteSlug }/${ plan }`;
+}
+
 export function getCurrentPlan( plans ) {
 	const currentPlan = find( plans, { currentPlan: true } );
 

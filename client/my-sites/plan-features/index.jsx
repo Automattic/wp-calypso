@@ -27,7 +27,8 @@ import {
 	PLAN_FREE
 } from 'lib/plans/constants';
 import { getSiteSlug } from 'state/sites/selectors';
-import { addItem as addItemToCart } from 'lib/upgrades/actions/cart';
+import { getCheckoutURL } from 'lib/plans';
+
 class PlanFeatures extends Component {
 	render() {
 		if ( ! this.props.planObject || this.props.isPlaceholder ) {
@@ -110,12 +111,7 @@ export default connect( ( state, ownProps ) => {
 		planConstantObj: plansList[ ownProps.plan ],
 		onUpgradeClick: ownProps.plan === PLAN_FREE ? noop : () => {
 			const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
-			addItemToCart( { product_slug: plansList[ ownProps.plan ].getStoreSlug() } );
-			const checkoutPath = ownProps.selectedFeature
-				? `/checkout/features/${ownProps.selectedFeature}/${ selectedSiteSlug }`
-				: `/checkout/${ selectedSiteSlug }`;
-
-			page( checkoutPath );
+			page( getCheckoutURL( ownProps.plan, selectedSiteSlug ) );
 		},
 		planObject: planObject
 	};
