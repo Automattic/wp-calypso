@@ -8,7 +8,13 @@ import defer from 'lodash/defer';
 /**
  * Internal dependencies
  */
-import { action as actionTypes } from 'lib/upgrades/constants';
+import {
+	PURCHASES_USER_FETCH,
+	PURCHASES_SITE_FETCH_COMPLETED,
+	PURCHASES_USER_FETCH_COMPLETED,
+	PRIVACY_PROTECTION_CANCEL_COMPLETED,
+	PRIVACY_PROTECTION_CANCEL_FAILED
+} from 'state/action-types';
 import PurchasesStore from '../store';
 
 describe( 'store', () => {
@@ -32,7 +38,7 @@ describe( 'store', () => {
 
 	it( 'should return an object with an empty list and fetching enabled when fetching is triggered', () => {
 		Dispatcher.handleViewAction( {
-			type: actionTypes.PURCHASES_USER_FETCH
+			type: PURCHASES_USER_FETCH
 		} );
 
 		expect( PurchasesStore.get() ).to.be.eql( {
@@ -47,13 +53,13 @@ describe( 'store', () => {
 
 	it( 'should return an object with the list of purchases when fetching completed', done => {
 		Dispatcher.handleServerAction( {
-			type: actionTypes.PURCHASES_USER_FETCH_COMPLETED,
+			type: PURCHASES_USER_FETCH_COMPLETED,
 			purchases: [ { id: 1, siteId, userId }, { id: 2, siteId, userId } ]
 		} );
 
 		defer( () => {
 			Dispatcher.handleServerAction( {
-				type: actionTypes.PURCHASES_SITE_FETCH_COMPLETED,
+				type: PURCHASES_SITE_FETCH_COMPLETED,
 				purchases: [ { id: 2, siteId, userId }, { id: 3, siteId, userId } ]
 			} );
 
@@ -79,7 +85,7 @@ describe( 'store', () => {
 		expect( PurchasesStore.getByPurchaseId( 3 ) ).to.exist;
 
 		Dispatcher.handleServerAction( {
-			type: actionTypes.PURCHASES_USER_FETCH_COMPLETED,
+			type: PURCHASES_USER_FETCH_COMPLETED,
 			purchases: [
 				{ id: 1, siteId, userId },
 				{ id: 2, siteId, userId },
@@ -103,7 +109,7 @@ describe( 'store', () => {
 
 		defer( () => {
 			Dispatcher.handleServerAction( {
-				type: actionTypes.PURCHASES_SITE_FETCH_COMPLETED,
+				type: PURCHASES_SITE_FETCH_COMPLETED,
 				purchases: [ { id: 2, siteId, userId } ],
 				siteId
 			} );
@@ -126,7 +132,7 @@ describe( 'store', () => {
 
 	it( 'should return an object with original purchase when cancelation of private registration is triggered', () => {
 		Dispatcher.handleServerAction( {
-			type: actionTypes.PRIVACY_PROTECTION_CANCEL,
+			type: 'PRIVACY_PROTECTION_CANCEL',
 			purchaseId: 2
 		} );
 
@@ -142,7 +148,7 @@ describe( 'store', () => {
 
 	it( 'should return an object with original purchase and error message when cancelation of private registration failed', () => {
 		Dispatcher.handleServerAction( {
-			type: actionTypes.PRIVACY_PROTECTION_CANCEL_FAILED,
+			type: PRIVACY_PROTECTION_CANCEL_FAILED,
 			error: 'Unable to fetch stored cards',
 			purchaseId: 2
 		} );
@@ -164,7 +170,7 @@ describe( 'store', () => {
 
 	it( 'should return an object with updated purchase when cancelation of private registration completed', () => {
 		Dispatcher.handleServerAction( {
-			type: actionTypes.PRIVACY_PROTECTION_CANCEL_COMPLETED,
+			type: PRIVACY_PROTECTION_CANCEL_COMPLETED,
 			purchase: {
 				amount: 2200,
 				error: null,
