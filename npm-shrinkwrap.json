@@ -1233,67 +1233,7 @@
       "version": "5.2.2"
     },
     "eslint-plugin-wpcalypso": {
-      "version": "1.1.3",
-      "dependencies": {
-        "cli-width": {
-          "version": "1.1.1"
-        },
-        "doctrine": {
-          "version": "0.7.2",
-          "dependencies": {
-            "esutils": {
-              "version": "1.1.6"
-            }
-          }
-        },
-        "eslint": {
-          "version": "1.10.3"
-        },
-        "espree": {
-          "version": "2.2.5"
-        },
-        "fast-levenshtein": {
-          "version": "1.0.7"
-        },
-        "glob": {
-          "version": "5.0.15"
-        },
-        "inquirer": {
-          "version": "0.11.4"
-        },
-        "isarray": {
-          "version": "0.0.1"
-        },
-        "js-yaml": {
-          "version": "3.4.5",
-          "dependencies": {
-            "esprima": {
-              "version": "2.7.2"
-            }
-          }
-        },
-        "levn": {
-          "version": "0.2.5"
-        },
-        "lodash": {
-          "version": "3.10.1"
-        },
-        "minimatch": {
-          "version": "3.0.2"
-        },
-        "optionator": {
-          "version": "0.6.0"
-        },
-        "shelljs": {
-          "version": "0.5.3"
-        },
-        "strip-json-comments": {
-          "version": "1.0.4"
-        },
-        "user-home": {
-          "version": "2.0.0"
-        }
-      }
+      "version": "1.3.2"
     },
     "espree": {
       "version": "3.1.6"
@@ -1311,9 +1251,6 @@
     },
     "estraverse": {
       "version": "4.2.0"
-    },
-    "estraverse-fb": {
-      "version": "1.3.1"
     },
     "esutils": {
       "version": "2.0.2"
@@ -1615,17 +1552,6 @@
     },
     "growl": {
       "version": "1.8.1"
-    },
-    "handlebars": {
-      "version": "4.0.5",
-      "dependencies": {
-        "async": {
-          "version": "1.5.2"
-        },
-        "source-map": {
-          "version": "0.4.4"
-        }
-      }
     },
     "har-validator": {
       "version": "2.0.6",
@@ -2121,46 +2047,6 @@
     "lodash-deep": {
       "version": "1.5.3"
     },
-    "lodash._arraycopy": {
-      "version": "3.0.0"
-    },
-    "lodash._arrayeach": {
-      "version": "3.0.0"
-    },
-    "lodash._arraymap": {
-      "version": "3.0.0"
-    },
-    "lodash._baseassign": {
-      "version": "3.2.0",
-      "dependencies": {
-        "lodash.keys": {
-          "version": "3.1.2"
-        }
-      }
-    },
-    "lodash._baseclone": {
-      "version": "3.3.0",
-      "dependencies": {
-        "lodash.keys": {
-          "version": "3.1.2"
-        }
-      }
-    },
-    "lodash._basecopy": {
-      "version": "3.0.1"
-    },
-    "lodash._basedifference": {
-      "version": "3.0.3"
-    },
-    "lodash._baseflatten": {
-      "version": "3.1.4"
-    },
-    "lodash._basefor": {
-      "version": "3.0.3"
-    },
-    "lodash._baseindexof": {
-      "version": "3.1.0"
-    },
     "lodash._baseiteratee": {
       "version": "4.7.0"
     },
@@ -2170,34 +2056,8 @@
     "lodash._basetostring": {
       "version": "4.12.0"
     },
-    "lodash._bindcallback": {
-      "version": "3.0.1"
-    },
-    "lodash._cacheindexof": {
-      "version": "3.0.2"
-    },
-    "lodash._createassigner": {
-      "version": "3.1.1"
-    },
-    "lodash._createcache": {
-      "version": "3.1.2"
-    },
     "lodash._getnative": {
       "version": "3.9.1"
-    },
-    "lodash._isiterateecall": {
-      "version": "3.0.9"
-    },
-    "lodash._pickbyarray": {
-      "version": "3.0.2"
-    },
-    "lodash._pickbycallback": {
-      "version": "3.0.0",
-      "dependencies": {
-        "lodash.keysin": {
-          "version": "3.0.8"
-        }
-      }
     },
     "lodash._stringtopath": {
       "version": "4.8.0"
@@ -2205,50 +2065,17 @@
     "lodash.assign": {
       "version": "4.0.9"
     },
-    "lodash.clonedeep": {
-      "version": "3.0.2"
-    },
     "lodash.isarguments": {
       "version": "3.0.8"
     },
     "lodash.isarray": {
       "version": "3.0.4"
     },
-    "lodash.isplainobject": {
-      "version": "3.2.0",
-      "dependencies": {
-        "lodash.keysin": {
-          "version": "3.0.8"
-        }
-      }
-    },
-    "lodash.istypedarray": {
-      "version": "3.0.6"
-    },
     "lodash.keys": {
       "version": "4.0.7"
     },
     "lodash.keysin": {
       "version": "4.1.4"
-    },
-    "lodash.merge": {
-      "version": "3.3.2",
-      "dependencies": {
-        "lodash.keys": {
-          "version": "3.1.2"
-        },
-        "lodash.keysin": {
-          "version": "3.0.8"
-        }
-      }
-    },
-    "lodash.omit": {
-      "version": "3.1.0",
-      "dependencies": {
-        "lodash.keysin": {
-          "version": "3.0.8"
-        }
-      }
     },
     "lodash.pad": {
       "version": "4.4.0"
@@ -2264,17 +2091,6 @@
     },
     "lodash.rest": {
       "version": "4.0.3"
-    },
-    "lodash.restparam": {
-      "version": "3.6.1"
-    },
-    "lodash.toplainobject": {
-      "version": "3.0.0",
-      "dependencies": {
-        "lodash.keysin": {
-          "version": "3.0.8"
-        }
-      }
     },
     "lodash.tostring": {
       "version": "4.1.3"
@@ -3909,9 +3725,6 @@
       "version": "1.0.1"
     },
     "xml-char-classes": {
-      "version": "1.0.0"
-    },
-    "xml-escape": {
       "version": "1.0.0"
     },
     "xml-name-validator": {

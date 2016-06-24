@@ -254,16 +254,18 @@ export default React.createClass( {
 							<SiteIcon site={ site } />
 							<div className="site__info">
 								<div className="site__title">
+									{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 									{ this.props.site.is_private &&
 										<span className="site__badge">
-											<Gridicon icon="lock" size={ 14 } nonStandardSize />
+											<Gridicon icon="lock" size={ 14 } />
 										</span>
 									}
 									{ site.options && site.options.is_redirect &&
 										<span className="site__badge">
-											<Gridicon icon="block" size={ 14 } nonStandardSize />
+											<Gridicon icon="block" size={ 14 } />
 										</span>
 									}
+									{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 									{ site.title }
 								</div>
 								<div className="site__domain">{ site.domain }</div>
