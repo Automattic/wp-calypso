@@ -2,8 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import Dispatcher from 'dispatcher';
-import defer from 'lodash/defer';
 
 /**
  * Internal dependencies
@@ -15,18 +13,15 @@ import {
 	PRIVACY_PROTECTION_CANCEL_COMPLETED,
 	PRIVACY_PROTECTION_CANCEL_FAILED
 } from 'state/action-types';
-import PurchasesStore from '../store';
+import { getByPurchaseId } from '../selectors';
+import { items } from '../reducer';
 
-describe( 'store', () => {
+describe( 'items', () => {
 	const userId = 1337,
 		siteId = 2701;
 
-	it( 'should be an object', () => {
-		expect( PurchasesStore ).to.be.an( 'object' );
-	} );
-
 	it( 'should return an object with the initial state', () => {
-		expect( PurchasesStore.get() ).to.be.eql( {
+		expect( items( undefined, { type: 'UNRELATED' } ) ).to.be.eql( {
 			data: [],
 			error: null,
 			isFetchingSitePurchases: false,
@@ -37,11 +32,7 @@ describe( 'store', () => {
 	} );
 
 	it( 'should return an object with an empty list and fetching enabled when fetching is triggered', () => {
-		Dispatcher.handleViewAction( {
-			type: PURCHASES_USER_FETCH
-		} );
-
-		expect( PurchasesStore.get() ).to.be.eql( {
+		expect( items( undefined, { type: PURCHASES_USER_FETCH } ) ).to.be.eql( {
 			data: [],
 			error: null,
 			isFetchingSitePurchases: false,
@@ -51,40 +42,46 @@ describe( 'store', () => {
 		} );
 	} );
 
-	it( 'should return an object with the list of purchases when fetching completed', done => {
-		Dispatcher.handleServerAction( {
+	it( 'should return an object with the list of purchases when fetching completed', () => {
+		let state = items( undefined, {
 			type: PURCHASES_USER_FETCH_COMPLETED,
 			purchases: [ { id: 1, siteId, userId }, { id: 2, siteId, userId } ]
 		} );
 
-		defer( () => {
-			Dispatcher.handleServerAction( {
-				type: PURCHASES_SITE_FETCH_COMPLETED,
-				purchases: [ { id: 2, siteId, userId }, { id: 3, siteId, userId } ]
-			} );
+		state = items( state, {
+			type: PURCHASES_SITE_FETCH_COMPLETED,
+			purchases: [ { id: 2, siteId, userId }, { id: 3, siteId, userId } ]
+		} );
 
-			expect( PurchasesStore.get() ).to.be.eql( {
-				data: [
-					{ id: 2, siteId, userId },
-					{ id: 3, siteId, userId },
-					{ id: 1, siteId, userId } ],
-				error: null,
-				isFetchingSitePurchases: false,
-				isFetchingUserPurchases: false,
-				hasLoadedSitePurchasesFromServer: true,
-				hasLoadedUserPurchasesFromServer: true
-			} );
-
-			done();
+		expect( state ).to.be.eql( {
+			data: [
+				{ id: 2, siteId, userId },
+				{ id: 3, siteId, userId },
+				{ id: 1, siteId, userId } ],
+			error: null,
+			isFetchingSitePurchases: false,
+			isFetchingUserPurchases: false,
+			hasLoadedSitePurchasesFromServer: true,
+			hasLoadedUserPurchasesFromServer: true
 		} );
 	} );
 
-	it( 'should only remove purchases missing from the new purchases array with the same `userId` or `siteId`', done => {
+	it( 'should only remove purchases missing from the new purchases array with the same `userId` or `siteId`', () => {
+		let state = {
+			data: [
+				{ id: 2, siteId, userId },
+				{ id: 3, siteId, userId },
+				{ id: 1, siteId, userId } ],
+			error: null,
+			isFetchingSitePurchases: false,
+			isFetchingUserPurchases: false,
+			hasLoadedSitePurchasesFromServer: true,
+			hasLoadedUserPurchasesFromServer: true
+		};
+
 		const newPurchase = { id: 4, siteId: 2702, userId };
 
-		expect( PurchasesStore.getByPurchaseId( 3 ) ).to.exist;
-
-		Dispatcher.handleServerAction( {
+		state = items( state, {
 			type: PURCHASES_USER_FETCH_COMPLETED,
 			purchases: [
 				{ id: 1, siteId, userId },
@@ -94,7 +91,7 @@ describe( 'store', () => {
 			userId
 		} );
 
-		expect( PurchasesStore.get() ).to.be.eql( {
+		expect( state ).to.be.eql( {
 			data: [
 				{ id: 1, siteId, userId },
 				{ id: 2, siteId, userId },
@@ -107,37 +104,17 @@ describe( 'store', () => {
 			hasLoadedUserPurchasesFromServer: true
 		} );
 
-		defer( () => {
-			Dispatcher.handleServerAction( {
-				type: PURCHASES_SITE_FETCH_COMPLETED,
-				purchases: [ { id: 2, siteId, userId } ],
-				siteId
-			} );
-
-			expect( PurchasesStore.get() ).to.be.eql( {
-				data: [
-					{ id: 2, siteId, userId },
-					newPurchase // the new purchase was not removed because it has a different `siteId`
-				],
-				error: null,
-				isFetchingSitePurchases: false,
-				isFetchingUserPurchases: false,
-				hasLoadedSitePurchasesFromServer: true,
-				hasLoadedUserPurchasesFromServer: true
-			} );
-
-			done();
-		} );
-	} );
-
-	it( 'should return an object with original purchase when cancelation of private registration is triggered', () => {
-		Dispatcher.handleServerAction( {
-			type: 'PRIVACY_PROTECTION_CANCEL',
-			purchaseId: 2
+		state = items( state, {
+			type: PURCHASES_SITE_FETCH_COMPLETED,
+			purchases: [ { id: 2, siteId, userId } ],
+			siteId
 		} );
 
-		expect( PurchasesStore.getByPurchaseId( 2 ) ).to.be.eql( {
-			data: { id: 2, siteId, userId },
+		expect( state ).to.be.eql( {
+			data: [
+				{ id: 2, siteId, userId },
+				{ id: 4, siteId: 2702, userId } // the new purchase was not removed because it has a different `siteId`
+			],
 			error: null,
 			isFetchingSitePurchases: false,
 			isFetchingUserPurchases: false,
@@ -147,13 +124,25 @@ describe( 'store', () => {
 	} );
 
 	it( 'should return an object with original purchase and error message when cancelation of private registration failed', () => {
-		Dispatcher.handleServerAction( {
+		let state = {
+			data: [
+				{ id: 2, siteId, userId },
+				{ id: 4, siteId: 2702, userId } // the new purchase was not removed because it has a different `siteId`
+			],
+			error: null,
+			isFetchingSitePurchases: false,
+			isFetchingUserPurchases: false,
+			hasLoadedSitePurchasesFromServer: true,
+			hasLoadedUserPurchasesFromServer: true
+		};
+
+		state = items( state, {
 			type: PRIVACY_PROTECTION_CANCEL_FAILED,
 			error: 'Unable to fetch stored cards',
 			purchaseId: 2
 		} );
 
-		expect( PurchasesStore.getByPurchaseId( 2 ) ).to.be.eql( {
+		expect( getByPurchaseId( state, 2 ) ).to.be.eql( {
 			data: {
 				id: 2,
 				error: 'Unable to fetch stored cards',
@@ -169,7 +158,19 @@ describe( 'store', () => {
 	} );
 
 	it( 'should return an object with updated purchase when cancelation of private registration completed', () => {
-		Dispatcher.handleServerAction( {
+		let state = {
+			data: [
+				{ id: 2, siteId, userId },
+				{ id: 4, siteId: 2702, userId }
+			],
+			error: null,
+			isFetchingSitePurchases: false,
+			isFetchingUserPurchases: false,
+			hasLoadedSitePurchasesFromServer: true,
+			hasLoadedUserPurchasesFromServer: true
+		};
+
+		state = items( state, {
 			type: PRIVACY_PROTECTION_CANCEL_COMPLETED,
 			purchase: {
 				amount: 2200,
@@ -181,7 +182,7 @@ describe( 'store', () => {
 			}
 		} );
 
-		expect( PurchasesStore.getByPurchaseId( 2 ) ).to.be.eql( {
+		expect( getByPurchaseId( state, 2 ) ).to.be.eql( {
 			data: {
 				amount: 2200,
 				error: null,
