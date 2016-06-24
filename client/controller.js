@@ -92,25 +92,31 @@ function renderSeparateTrees( context ) {
 }
 
 function renderPrimary( context ) {
-	const { primary } = context;
+	const { primary, store } = context;
 
 	if ( primary ) {
 		debug( 'Rendering primary', primary );
 		ReactDom.render(
-			primary,
+			<ReduxProvider store={ store }>
+				{ primary }
+			</ReduxProvider>,
 			document.getElementById( 'primary' )
 		);
 	}
 }
 
 function renderSecondary( context ) {
-	if ( context.secondary === null ) {
+	const { secondary, store } = context;
+
+	if ( secondary === null ) {
 		debug( 'Unmounting secondary' );
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	} else if ( context.secondary !== undefined ) {
+	} else if ( secondary !== undefined ) {
 		debug( 'Rendering secondary' );
 		ReactDom.render(
-			context.secondary,
+			<ReduxProvider store={ store }>
+				{ secondary }
+			</ReduxProvider>,
 			document.getElementById( 'secondary' )
 		);
 	}
