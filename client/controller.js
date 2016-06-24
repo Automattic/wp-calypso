@@ -6,6 +6,7 @@ import ReactDom from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
 import { setSection as setSectionAction } from 'state/ui/actions';
 import noop from 'lodash/noop';
+import pick from 'lodash/pick';
 
 /**
  * Internal dependencies
@@ -17,34 +18,43 @@ import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:controller' );
 
+const getLoggedInLayoutProps = ( () => {
+	let props;
+	return () => {
+		if ( ! props && 'undefined' !== typeof global.window ) {
+			props = {
+				user: require( 'lib/user' )(),
+				focus: require( 'lib/layout-focus' ),
+				sites: require( 'lib/sites-list' )(),
+				nuxWelcome: require( 'layout/nux-welcome' ),
+				translatorInvitation: require( 'layout/community-translator/invitation-utils' )
+			};
+		}
+
+		return props;
+	};
+} )();
+
 /**
  * @param { object } context -- Middleware context
  * @param { function } next -- Call next middleware in chain
 */
 export function makeLayout( context, next ) {
 	const isLoggedIn = !! getCurrentUser( context.store.getState() );
-	if ( ! isLoggedIn ) {
-		context.layout = makeLoggedOutLayout( context );
-	} // TODO: else { makeLoggedInLayout( context ); }
-	next();
-}
+	const Layout = isLoggedIn ? require( 'layout' ) : LayoutLoggedOut;
 
-/**
- * @param { object } context -- Middleware context
- * @returns { object } `LoggedOutLayout` element
- *
- * Return a `LayoutLoggedOut` element, using `context.primary`,
- * `context.secondary`, and `context.tertiary` to populate it.
-*/
-function makeLoggedOutLayout( context ) {
-	const { store, primary, secondary, tertiary } = context;
-	return (
-		<ReduxProvider store={ store }>
-			<LayoutLoggedOut primary={ primary }
-				secondary={ secondary }
-				tertiary={ tertiary } />
+	const layoutProps = pick( context, 'primary', 'secondary', 'tertiary' );
+	if ( isLoggedIn ) {
+		Object.assign( layoutProps, getLoggedInLayoutProps() );
+	}
+
+	context.layout = (
+		<ReduxProvider store={ context.store }>
+			<Layout { ...layoutProps } />
 		</ReduxProvider>
 	);
+
+	next();
 }
 
 /**

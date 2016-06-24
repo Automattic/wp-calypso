@@ -36,27 +36,6 @@ import trackScrollPage from 'lib/track-scroll-page';
 const user = userFactory();
 const sites = sitesFactory();
 
-/*
- * The main navigation of My Sites consists of a component with
- * the site selector list and the sidebar section items
- */
-function renderNavigation( context, allSitesPath, siteBasePath ) {
-	// Render the My Sites navigation in #secondary
-	ReactDom.render(
-		React.createElement( ReduxProvider, { store: context.store },
-			React.createElement( NavigationComponent, {
-				layoutFocus,
-				path: context.path,
-				allSitesPath,
-				siteBasePath,
-				user,
-				sites
-			} )
-		),
-		document.getElementById( 'secondary' )
-	);
-}
-
 function removeSidebar( context ) {
 	context.store.dispatch( setSection( {
 		group: 'sites',
@@ -249,7 +228,23 @@ module.exports = {
 			basePath = route.sectionify( context.pathname );
 		}
 
-		renderNavigation( context, basePath, basePath );
+		context.secondary = React.createElement( ReduxProvider, { store: context.store },
+			React.createElement( NavigationComponent, {
+				layoutFocus,
+				path: context.path,
+				allSitesPath: basePath,
+				siteBasePath: basePath,
+				user,
+				sites
+			} )
+		);
+
+		// Render the My Sites navigation in #secondary
+		ReactDom.render(
+			context.secondary,
+			document.getElementById( 'secondary' )
+		);
+
 		next();
 	},
 
