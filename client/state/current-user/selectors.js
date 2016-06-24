@@ -39,7 +39,7 @@ export function getCurrentUserLocale( state ) {
  * @return {?String}        Current currency code
  */
 export function getCurrentUserCurrencyCode( state ) {
-	return get( state.currentUser, 'currencyCode', null );
+	return state.currentUser.currencyCode;
 }
 
 /**

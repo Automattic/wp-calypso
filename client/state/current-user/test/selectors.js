@@ -132,13 +132,6 @@ describe( 'selectors', () => {
 			} );
 			expect( selected ).to.equal( null );
 		} );
-		it( 'should return null if currencyCode is missing', () => {
-			const selected = getCurrentUserCurrencyCode( {
-				currentUser: {
-				}
-			} );
-			expect( selected ).to.equal( null );
-		} );
 		it( 'should return value if currencyCode is set', () => {
 			const selected = getCurrentUserCurrencyCode( {
 				currentUser: {
