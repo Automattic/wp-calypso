@@ -17,6 +17,9 @@
     "acorn-globals": {
       "version": "3.0.0"
     },
+    "acorn-jsx": {
+      "version": "3.0.1"
+    },
     "after": {
       "version": "0.8.1"
     },
@@ -560,8 +563,14 @@
     "bytes": {
       "version": "2.4.0"
     },
+    "caller-path": {
+      "version": "0.1.0"
+    },
     "callsite": {
       "version": "1.0.0"
+    },
+    "callsites": {
+      "version": "0.2.0"
     },
     "camel-case": {
       "version": "0.1.0"
@@ -578,7 +587,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000486"
+      "version": "1.0.30000488"
     },
     "caseless": {
       "version": "0.11.0"
@@ -632,7 +641,7 @@
       }
     },
     "chokidar": {
-      "version": "1.5.2"
+      "version": "1.6.0"
     },
     "chrono-node": {
       "version": "1.2.3"
@@ -655,7 +664,7 @@
       "version": "1.0.2"
     },
     "cli-width": {
-      "version": "1.1.1"
+      "version": "2.1.0"
     },
     "click-outside": {
       "version": "2.0.1"
@@ -963,13 +972,10 @@
       "version": "2.0.0"
     },
     "doctrine": {
-      "version": "0.7.2",
+      "version": "1.2.2",
       "dependencies": {
         "esutils": {
           "version": "1.1.6"
-        },
-        "isarray": {
-          "version": "0.0.1"
         }
       }
     },
@@ -1137,18 +1143,6 @@
         },
         "estraverse": {
           "version": "1.9.3"
-        },
-        "fast-levenshtein": {
-          "version": "1.1.3"
-        },
-        "levn": {
-          "version": "0.3.0"
-        },
-        "optionator": {
-          "version": "0.8.1"
-        },
-        "wordwrap": {
-          "version": "1.0.0"
         }
       }
     },
@@ -1216,16 +1210,82 @@
       "version": "1.0.1"
     },
     "eslint": {
-      "version": "1.10.3",
+      "version": "2.13.1",
       "dependencies": {
+        "chalk": {
+          "version": "1.1.3"
+        },
+        "globals": {
+          "version": "9.8.0"
+        },
+        "strip-json-comments": {
+          "version": "1.0.4"
+        },
+        "supports-color": {
+          "version": "2.0.0"
+        },
+        "user-home": {
+          "version": "2.0.0"
+        }
+      }
+    },
+    "eslint-plugin-react": {
+      "version": "5.2.2"
+    },
+    "eslint-plugin-wpcalypso": {
+      "version": "1.1.3",
+      "dependencies": {
+        "cli-width": {
+          "version": "1.1.1"
+        },
+        "doctrine": {
+          "version": "0.7.2",
+          "dependencies": {
+            "esutils": {
+              "version": "1.1.6"
+            }
+          }
+        },
+        "eslint": {
+          "version": "1.10.3"
+        },
         "espree": {
           "version": "2.2.5"
+        },
+        "fast-levenshtein": {
+          "version": "1.0.7"
         },
         "glob": {
           "version": "5.0.15"
         },
+        "inquirer": {
+          "version": "0.11.4"
+        },
+        "isarray": {
+          "version": "0.0.1"
+        },
+        "js-yaml": {
+          "version": "3.4.5",
+          "dependencies": {
+            "esprima": {
+              "version": "2.7.2"
+            }
+          }
+        },
+        "levn": {
+          "version": "0.2.5"
+        },
+        "lodash": {
+          "version": "3.10.1"
+        },
         "minimatch": {
           "version": "3.0.2"
+        },
+        "optionator": {
+          "version": "0.6.0"
+        },
+        "shelljs": {
+          "version": "0.5.3"
         },
         "strip-json-comments": {
           "version": "1.0.4"
@@ -1235,11 +1295,8 @@
         }
       }
     },
-    "eslint-plugin-react": {
-      "version": "3.11.3"
-    },
-    "eslint-plugin-wpcalypso": {
-      "version": "1.1.3"
+    "espree": {
+      "version": "3.1.6"
     },
     "esprima-fb": {
       "version": "10001.1.0-dev-harmony-fb"
@@ -1320,7 +1377,7 @@
       }
     },
     "fast-levenshtein": {
-      "version": "1.0.7"
+      "version": "1.1.3"
     },
     "fastparse": {
       "version": "1.1.1"
@@ -1613,7 +1670,7 @@
       "version": "1.0.0"
     },
     "has-unicode": {
-      "version": "2.0.0"
+      "version": "2.0.1"
     },
     "hawk": {
       "version": "3.1.3"
@@ -1698,6 +1755,9 @@
     "ieee754": {
       "version": "1.1.6"
     },
+    "ignore": {
+      "version": "3.1.3"
+    },
     "imagesloaded": {
       "version": "4.1.0"
     },
@@ -1706,6 +1766,9 @@
     },
     "imports-loader": {
       "version": "0.6.5"
+    },
+    "imurmurhash": {
+      "version": "0.1.4"
     },
     "indent-string": {
       "version": "2.1.0",
@@ -1728,12 +1791,7 @@
       "version": "1.3.4"
     },
     "inquirer": {
-      "version": "0.11.4",
-      "dependencies": {
-        "lodash": {
-          "version": "3.10.1"
-        }
-      }
+      "version": "0.12.0"
     },
     "interpolate-components": {
       "version": "1.1.0"
@@ -1946,7 +2004,7 @@
       "version": "1.0.3"
     },
     "js-yaml": {
-      "version": "3.4.5",
+      "version": "3.6.1",
       "dependencies": {
         "esprima": {
           "version": "2.7.2"
@@ -1995,13 +2053,16 @@
       "version": "2.0.0"
     },
     "jsprim": {
-      "version": "1.2.2"
+      "version": "1.3.0"
     },
     "jstimezonedetect": {
       "version": "1.0.5"
     },
     "jstransformer": {
       "version": "0.0.3"
+    },
+    "jsx-ast-utils": {
+      "version": "1.2.1"
     },
     "key-mirror": {
       "version": "1.0.1"
@@ -2022,7 +2083,7 @@
       "version": "1.0.2"
     },
     "levn": {
-      "version": "0.2.5"
+      "version": "0.3.0"
     },
     "load-json-file": {
       "version": "1.1.0",
@@ -2537,7 +2598,12 @@
       }
     },
     "optionator": {
-      "version": "0.6.0"
+      "version": "0.8.1",
+      "dependencies": {
+        "wordwrap": {
+          "version": "1.0.0"
+        }
+      }
     },
     "options": {
       "version": "0.0.6"
@@ -2691,6 +2757,9 @@
     "pkg-conf": {
       "version": "1.1.3"
     },
+    "pluralize": {
+      "version": "1.2.1"
+    },
     "postcss": {
       "version": "5.0.21",
       "dependencies": {
@@ -2719,6 +2788,9 @@
     },
     "process-nextick-args": {
       "version": "1.0.7"
+    },
+    "progress": {
+      "version": "1.1.8"
     },
     "progress-event": {
       "version": "1.0.0"
@@ -2897,10 +2969,13 @@
       "version": "2.0.6"
     },
     "readdirp": {
-      "version": "2.0.0",
+      "version": "2.0.1",
       "dependencies": {
         "graceful-fs": {
           "version": "4.1.4"
+        },
+        "minimatch": {
+          "version": "3.0.2"
         }
       }
     },
@@ -3010,6 +3085,9 @@
     "require-main-filename": {
       "version": "1.0.1"
     },
+    "require-uncached": {
+      "version": "1.0.2"
+    },
     "requireindex": {
       "version": "1.1.0"
     },
@@ -3018,6 +3096,9 @@
     },
     "resolve": {
       "version": "1.1.7"
+    },
+    "resolve-from": {
+      "version": "1.0.1"
     },
     "restore-cursor": {
       "version": "1.0.1"
@@ -3197,7 +3278,7 @@
       "version": "1.0.0"
     },
     "shelljs": {
-      "version": "0.5.3"
+      "version": "0.6.0"
     },
     "sigmund": {
       "version": "1.0.1"
@@ -3219,6 +3300,9 @@
     },
     "slash": {
       "version": "1.0.0"
+    },
+    "slice-ansi": {
+      "version": "0.0.4"
     },
     "snake-case": {
       "version": "1.1.2",
@@ -3478,6 +3562,20 @@
     },
     "sync-exec": {
       "version": "0.5.0"
+    },
+    "table": {
+      "version": "3.7.8",
+      "dependencies": {
+        "bluebird": {
+          "version": "3.4.1"
+        },
+        "chalk": {
+          "version": "1.1.3"
+        },
+        "supports-color": {
+          "version": "2.0.0"
+        }
+      }
     },
     "tapable": {
       "version": "0.1.10"
@@ -3822,6 +3920,9 @@
     "xmlhttprequest": {
       "version": "1.5.0",
       "resolved": "https://github.com/rase-/node-XMLHttpRequest/archive/a6b6f2.tar.gz"
+    },
+    "xregexp": {
+      "version": "3.1.1"
     },
     "xtend": {
       "version": "4.0.1"
