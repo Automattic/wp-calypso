@@ -154,7 +154,7 @@
     "esformatter-semicolons": "1.1.1",
     "esformatter-special-bangs": "1.0.1",
     "eslint": "2.13.1",
-    "eslint-plugin-react": "3.11.3",
+    "eslint-plugin-react": "5.2.2",
     "eslint-plugin-wpcalypso": "1.1.3",
     "glob": "7.0.3",
     "jsdom": "9.2.1",
