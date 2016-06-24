@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
 import {
 	NOTICE_CREATE,
 	NOTICE_REMOVE,
+	POST_SAVE_SUCCESS,
 	ROUTE_SET
 } from 'state/action-types';
 import { items } from '../reducer';
@@ -105,6 +106,81 @@ describe( 'reducer', () => {
 
 				expect( state ).to.eql( {
 					2: { noticeId: 2, displayOnNextPage: false }
+				} );
+			} );
+		} );
+
+		context( 'POST_SAVE_SUCCESS', () => {
+			it( 'should return same state if save payload lacks status', () => {
+				const original = deepFreeze( {} );
+				const state = items( original, {
+					type: POST_SAVE_SUCCESS,
+					post: { title: 'Hello World' }
+				} );
+
+				expect( state ).to.equal( original );
+			} );
+
+			it( 'should return same state if status has no corresponding text', () => {
+				const original = deepFreeze( {} );
+				const state = items( original, {
+					type: POST_SAVE_SUCCESS,
+					post: {
+						title: 'Hello World',
+						status: 'publish' // [TODO]: We'll eventually want publish notice
+					}
+				} );
+
+				expect( state ).to.equal( original );
+			} );
+
+			it( 'should return state with single trash success', () => {
+				const original = deepFreeze( {} );
+				const state = items( original, {
+					type: POST_SAVE_SUCCESS,
+					post: { status: 'trash' }
+				} );
+
+				expect( state ).to.eql( {
+					POST_SAVE_SUCCESS: {
+						showDismiss: true,
+						isPersistent: false,
+						displayOnNextPage: false,
+						status: 'is-success',
+						noticeId: 'POST_SAVE_SUCCESS',
+						count: 1,
+						text: 'Post successfully moved to trash'
+					}
+				} );
+			} );
+
+			it( 'should return state with multiple trash success', () => {
+				const original = deepFreeze( {
+					POST_SAVE_SUCCESS: {
+						showDismiss: true,
+						isPersistent: false,
+						displayOnNextPage: false,
+						status: 'is-success',
+						noticeId: 'POST_SAVE_SUCCESS',
+						count: 1,
+						text: 'Post successfully moved to trash'
+					}
+				} );
+				const state = items( original, {
+					type: POST_SAVE_SUCCESS,
+					post: { status: 'trash' }
+				} );
+
+				expect( state ).to.eql( {
+					POST_SAVE_SUCCESS: {
+						showDismiss: true,
+						isPersistent: false,
+						displayOnNextPage: false,
+						status: 'is-success',
+						noticeId: 'POST_SAVE_SUCCESS',
+						count: 2,
+						text: '2 posts successfully moved to trash'
+					}
 				} );
 			} );
 		} );

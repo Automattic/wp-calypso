@@ -194,7 +194,8 @@ export function savePost( post, siteId, postId ) {
 				type: POST_SAVE_SUCCESS,
 				siteId,
 				postId,
-				savedPost
+				savedPost,
+				post
 			} );
 			dispatch( receivePost( savedPost ) );
 		} ).catch( ( error ) => {
