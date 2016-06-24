@@ -8,6 +8,7 @@ import React, { PropTypes } from 'react';
  */
 import FoldableCard from 'components/foldable-card';
 import GuidedTransferOptions from 'my-sites/exporter/guided-transfer-options';
+import GuidedTransferDetails from 'my-sites/exporter/guided-transfer-details';
 import AdvancedSettings from 'my-sites/exporter/advanced-settings';
 import SpinnerButton from './spinner-button';
 import Interval, { EVERY_SECOND } from 'lib/interval';
@@ -65,7 +66,7 @@ export default React.createClass( {
 				loadingText={ this.translate( 'Exporting…' ) } />
 		);
 
-		var notice = null;
+		let notice = null;
 		if ( this.props.didComplete ) {
 			notice = (
 				<Notice
@@ -119,6 +120,7 @@ export default React.createClass( {
 					/>
 				</FoldableCard>
 				{ showGuidedTransferOptions && <GuidedTransferOptions siteSlug={ this.props.siteSlug } /> }
+				{ showGuidedTransferOptions && <GuidedTransferDetails /> }
 				{ isExporting && <Interval onTick={ fetchStatus } period={ EVERY_SECOND } /> }
 			</div>
 		);
