@@ -2,8 +2,6 @@
  * External Dependencies
  */
 import React from 'react';
-import ReactDom from 'react-dom';
-import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 
 /**
@@ -17,7 +15,7 @@ export function redirect() {
 	page.redirect( '/posts' );
 }
 
-export function list( context ) {
+export function list( context, next ) {
 	const siteId = getSiteFragment( context.path );
 	const sectionedPath = sectionify( context.path );
 
@@ -28,17 +26,13 @@ export function list( context ) {
 	}
 	pageView.record( baseAnalyticsPath, 'Custom Post Type' );
 
-	// Construct query arguments
-	const query = {
-		type: context.params.type,
-		status: context.params.status || 'publish',
-		search: context.query.s
-	};
-
-	ReactDom.render(
-		<ReduxProvider store={ context.store }>
-			<Types query={ query } />
-		</ReduxProvider>,
-		document.getElementById( 'primary' )
+	context.primary = (
+		<Types query={ {
+			type: context.params.type,
+			status: context.params.status || 'publish',
+			search: context.query.s
+		} } />
 	);
+
+	next();
 }
