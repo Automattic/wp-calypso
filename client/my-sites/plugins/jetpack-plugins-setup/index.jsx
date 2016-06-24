@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-// import classNames from 'classnames';
+import page from 'page';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import filter from 'lodash/filter';
@@ -85,6 +85,22 @@ const PlansSetup = React.createClass( {
 		if ( this.props.siteId ) {
 			this.fetchInstallInstructions();
 		}
+
+		page.exit( '/plugins/setup/*', ( context, next ) => {
+			const confirmText = this.warnIfNotFinished( {} );
+			if ( ! confirmText ) {
+				return next();
+			}
+			if ( window.confirm( confirmText ) ) { // eslint-disable-line no-aler
+				next();
+			} else {
+				// save off the current path just in case context changes after this call
+				const currentPath = context.canonicalPath;
+				setTimeout( function() {
+					page.replace( currentPath, null, false, false );
+				}, 0 );
+			}
+		} );
 	},
 
 	componentWillUnmount() {
@@ -110,10 +126,13 @@ const PlansSetup = React.createClass( {
 	},
 
 	warnIfNotFinished( event ) {
-		if ( this.props.isFinished ) {
-			return;
-		}
-		if ( ! this.props.selectedSite.canManage() ) {
+		const site = this.props.selectedSite;
+		if ( ! site ||
+			! site.jetpack ||
+			! site.canUpdateFiles ||
+			! site.canManage() ||
+			this.props.isFinished
+		) {
 			return;
 		}
 		const beforeUnloadText = this.translate( 'We haven\'t finished installing your plugins.' );
@@ -122,14 +141,14 @@ const PlansSetup = React.createClass( {
 	},
 
 	startNextPlugin( plugin ) {
-		let install = this.props.installPlugin;
-		let site = this.props.selectedSite;
+		const install = this.props.installPlugin;
+		const site = this.props.selectedSite;
 
 		// Merge wporg info into the plugin object
 		plugin = Object.assign( {}, plugin, getPlugin( this.props.wporg, plugin.slug ) );
 
 		const getPluginFromStore = function() {
-			let sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
+			const sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
 			if ( ! sitePlugin && PluginsStore.isFetchingSite( site ) ) {
 				// if the Plugins are still being fetched, we wait. We are not using flux
 				// store events because it would be more messy to handle the one-time-only
