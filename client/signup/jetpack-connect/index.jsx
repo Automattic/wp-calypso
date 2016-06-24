@@ -57,11 +57,13 @@ const JetpackConnectMain = React.createClass( {
 		this.props.dismissUrl( this.state.currentUrl );
 	},
 
-	confirmJetpackInstalled() {
+	confirmJetpackInstalled( event ) {
+		event.preventDefault();
 		this.props.confirmJetpackInstallStatus( true );
 	},
 
-	confirmJetpackNotInstalled() {
+	confirmJetpackNotInstalled( event ) {
+		event.preventDefault();
 		this.props.confirmJetpackInstallStatus( false );
 	},
 
@@ -293,6 +295,7 @@ const JetpackConnectMain = React.createClass( {
 									? this.translate( 'You will be redirected to your site\'s dashboard to install Jetpack. Click the blue "Install Now" button' )
 									: this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s dashboard to install Jetpack. Click the blue install button.' )
 								}
+							action={ this.renderAlreadyHaveJetpackButton() }
 							example={ <JetpackExampleInstall url={ this.state.currentUrl } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Activate Jetpack' ) }
 							text={ this.translate( 'Then you\'ll click the blue "Activate" link to activate Jetpack.' ) }
@@ -303,7 +306,6 @@ const JetpackConnectMain = React.createClass( {
 					</div>
 					<Button onClick={ this.installJetpack } primary>{ this.translate( 'Install Jetpack' ) }</Button>
 					<div className="jetpack-connect__navigation">
-						<div>{ this.renderAlreadyHaveJetpackButton() }</div>
 						<div>{ this.renderBackButton() }</div>
 					</div>
 				</div>
@@ -313,17 +315,17 @@ const JetpackConnectMain = React.createClass( {
 
 	renderAlreadyHaveJetpackButton() {
 		return (
-			<Button compact borderless className="jetpack-connect__already-installed-jetpack-button" onClick={ this.confirmJetpackInstalled }>
-				{ this.translate( 'I already have jetpack installed' ) }
-			</Button>
+			<a className="jetpack-connect__already-installed-jetpack-button" href="#" onClick={ this.confirmJetpackInstalled }>
+				{ this.translate( 'Already have jetpack installed?' ) }
+			</a>
 		);
 	},
 
 	renderNotJetpackButton() {
 		return (
-			<Button compact borderless className="jetpack-connect__no-jetpack-button" onClick={ this.confirmJetpackNotInstalled }>
-				{ this.translate( 'I don\'t have jetpack' ) }
-			</Button>
+			<a className="jetpack-connect__no-jetpack-button" href="#" onClick={ this.confirmJetpackNotInstalled }>
+				{ this.translate( 'Don\'t have jetpack installed?' ) }
+			</a>
 		);
 	},
 
@@ -349,6 +351,7 @@ const JetpackConnectMain = React.createClass( {
 					<div className="jetpack-connect__install-steps">
 						<JetpackInstallStep title={ this.translate( '1. Activate Jetpack' ) }
 							text={ this.translate( 'You will be redirected to your site\'s dashboard to activate Jetpack. Click the blue "Activate" link.' ) }
+							action={ this.renderNotJetpackButton() }
 							example={ <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ false } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Connect Jetpack' ) }
 							text={ this.translate( 'Then click the green "Connect to WordPress.com" button to finish the process.' ) }
@@ -356,7 +359,6 @@ const JetpackConnectMain = React.createClass( {
 					</div>
 					<Button onClick={ this.activateJetpack } primary>{ this.translate( 'Activate Jetpack' ) }</Button>
 					<div className="jetpack-connect__navigation">
-						<div>{ this.renderNotJetpackButton() }</div>
 						<div>{ this.renderBackButton() }</div>
 					</div>
 				</div>

@@ -18,7 +18,7 @@ export default React.createClass( {
 					{ this.props.title }
 				</div>
 				<div className="jetpack-connect__install-step-text">
-					{ this.props.text }
+					<span>{ this.props.text }</span> <span>{ this.props.action ? this.props.action : '' }</span>
 				</div>
 					{ this.props.example }
 			</Card>
