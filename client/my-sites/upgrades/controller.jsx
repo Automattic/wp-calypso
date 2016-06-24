@@ -16,7 +16,6 @@ var analytics = require( 'lib/analytics' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	setSection = require( 'state/ui/actions' ).setSection,
-	plansList = require( 'lib/plans-list' )(),
 	productsList = require( 'lib/products-list' )(),
 	abtest = require( 'lib/abtest' ).abtest,
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
@@ -193,7 +192,6 @@ module.exports = {
 					<Checkout
 						cards={ storedCards }
 						product={ product }
-						plans={ plansList }
 						productsList={ productsList }
 						selectedFeature={ selectedFeature }
 						sites={ sites } />
