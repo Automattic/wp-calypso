@@ -10,16 +10,17 @@ import endsWith from 'lodash/endsWith';
  */
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
+import { isBeingProcessed } from 'lib/domains/dns';
 
-var DnsRecord = React.createClass( {
+const DnsRecord = React.createClass( {
 	propTypes: {
-		deleteDns: React.PropTypes.func.isRequired,
+		onDeleteDns: React.PropTypes.func.isRequired,
 		dnsRecord: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired
 	},
 
 	handledBy: function() {
-		var { type, data, aux, target, port, service, weight, protocol } = this.props.dnsRecord;
+		let { type, data, aux, target, port, service, weight, protocol } = this.props.dnsRecord;
 
 		data = this.trimDot( data );
 		target = this.trimDot( target );
@@ -92,15 +93,9 @@ var DnsRecord = React.createClass( {
 		return name ? name + '.' + domain : domain;
 	},
 
-	isBeingProcessed: function() {
-		return this.props.dnsRecord.isBeingDeleted || this.props.dnsRecord.isBeingAdded;
-	},
-
 	deleteDns: function() {
-		if ( this.isBeingProcessed() ) {
-			return;
-		}
-		this.props.deleteDns( this.props.dnsRecord );
+		// Delegate to callback from parent
+		this.props.onDeleteDns( this.props.dnsRecord );
 	},
 
 	renderRemoveButton: function() {
@@ -112,7 +107,8 @@ var DnsRecord = React.createClass( {
 	},
 
 	render: function() {
-		const classes = classNames( { 'is-disabled': this.isBeingProcessed() } ),
+		const { dnsRecord } = this.props,
+			classes = classNames( { 'is-disabled': isBeingProcessed( dnsRecord ) } ),
 			isAllowedToBeRemoved = ! this.props.dnsRecord.protected_field || 'MX' === this.props.dnsRecord.type;
 		return (
 			<li className={ classes }>
