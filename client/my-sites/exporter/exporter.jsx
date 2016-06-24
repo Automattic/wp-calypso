@@ -117,7 +117,7 @@ export default React.createClass( {
 						onClickExport={ exportSelectedItems }
 					/>
 				</FoldableCard>
-				<GuidedTransferOptions siteSlug={ this.props.siteSlug } />
+				<GuidedTransferOptions siteSlug={ this.props.siteSlug } siteURL={ this.props.siteURL } />
 				<GuidedTransferDetails />
 				{ isExporting && <Interval onTick={ fetchStatus } period={ EVERY_SECOND } /> }
 			</div>

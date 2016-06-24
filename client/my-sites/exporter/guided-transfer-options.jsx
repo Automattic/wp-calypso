@@ -19,12 +19,12 @@ export default React.createClass( {
 	},
 
 	purchaseGuidedTransfer() {
-		const { siteSlug } = this.props;
+		const { siteSlug, siteURL } = this.props;
 		if ( config.isEnabled( 'manage/export/guided-transfer' ) ) {
 			page( `/settings/export/${ siteSlug }/guided` );
 		} else {
 			// Redirect to legacy guided transfer
-			window.location = `https://${ siteSlug }/wp-admin/paid-upgrades.php?product=40&view=purchase&source=export`;
+			window.location = siteURL + '/wp-admin/paid-upgrades.php?product=40&view=purchase&source=export';
 		}
 	},
 

@@ -96,6 +96,22 @@ export function getSiteSlug( state, siteId ) {
 }
 
 /**
+ * Returns the URL for a site, or null if the site is unknown.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {?String}        Site slug
+ */
+export function getSiteURL( state, siteId ) {
+	const site = getSite( state, siteId );
+	if ( ! site ) {
+		return null;
+	}
+
+	return site.URL;
+}
+
+/**
  * Returns true if we are requesting all sites.
  * @param {Object}    state  Global state tree
  * @return {Boolean}        Request State
