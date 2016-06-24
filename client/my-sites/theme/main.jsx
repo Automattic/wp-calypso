@@ -66,6 +66,12 @@ const ThemeSheet = React.createClass( {
 		};
 	},
 
+	getInitialState() {
+		return {
+			showPreview: false,
+		};
+	},
+
 	componentDidMount() {
 		window.scroll( 0, 0 );
 	},
