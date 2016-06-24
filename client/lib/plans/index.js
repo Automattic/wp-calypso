@@ -40,6 +40,10 @@ export function getPlan( plan ) {
 	return plansList[ plan ];
 }
 
+export function sanitizePlanKey( plan ) {
+	return plansList[ plan ] ? plan : undefined;
+}
+
 export function getValidFeatureKeys() {
 	return Object.keys( featuresList );
 }
@@ -64,6 +68,14 @@ export function getSitePlanSlug( siteID ) {
 		site = sitesList.getSelectedSite();
 	}
 	return get( site, 'plan.product_slug' );
+}
+
+export function getPlanSlugFromPath( path ) {
+	return find( Object.keys( plansList ), planKey => ( getPlanPath( planKey ) === path ) );
+}
+
+export function getPlanPath( plan ) {
+	return get( plansList, [ plan, 'getPathSlug' ], () => undefined )();
 }
 
 export const getCartItem = ( productSlug, isFreeTrial = false ) => ( {
