@@ -405,7 +405,6 @@ PlanFeaturesHeader.propTypes = {
 };
 
 PlanFeaturesHeader.defaultProps = {
-	currencyCode: null,
 	current: false,
 	onClick: noop,
 	popular: false
