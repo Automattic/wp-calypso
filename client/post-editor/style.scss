@@ -227,8 +227,11 @@
 .post-editor__confirmation-dialog-heading {
 	font-size: 22px;
 	line-height: 1.2;
-	height: auto;
 	margin: 0 0 4px 0;
+}
+
+.post-editor__confirmation-dialog-heading.is-variable-height {
+	height: auto;
 }
 
 .post-editor__confirmation-dialog-email,
