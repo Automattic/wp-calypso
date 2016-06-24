@@ -348,7 +348,8 @@ if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 		name: 'posts-custom',
 		paths: [ '/types' ],
 		module: 'my-sites/types',
-		secondary: true
+		secondary: true,
+		group: 'sites'
 	} );
 }
 
