@@ -35,7 +35,6 @@ import userModule from 'lib/user';
 const user = userModule();
 import analytics from 'lib/analytics';
 import SignupProcessingScreen from 'signup/processing-screen';
-import SignupProcessingScreenI18n from 'signup/processing-screen-i18n'; // Temporary, for i18n to pick up
 import utils from './utils';
 import * as oauthToken from 'lib/oauth-token';
 
@@ -149,6 +148,8 @@ const Signup = React.createClass( {
 
 		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
 
+		this.signupFlowController.reset();
+
 		this.setState( {
 			loginHandler: this.handleLogin.bind( this, dependencies, destination )
 		} );
@@ -176,8 +177,6 @@ const Signup = React.createClass( {
 				redirectTo: this.loginRedirectTo( destination )
 			} );
 		}
-
-		this.signupFlowController.reset();
 	},
 
 	componentDidMount() {
