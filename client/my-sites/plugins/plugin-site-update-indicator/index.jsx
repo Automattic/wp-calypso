@@ -78,7 +78,9 @@ module.exports = React.createClass( {
 		if ( this.props.site.canUpdateFiles &&
 				( ( this.props.site.plugin.update && ! this.props.site.plugin.update.recentlyUpdated ) || this.isUpdating() ) ) {
 			if ( ! this.props.expanded ) {
-				return <span className="plugin-site-update-indicator"><Gridicon icon="sync" size={ 20 } nonStandardSize /></span>;
+				/* eslint-disable wpcalypso/jsx-gridicon-size */
+				return <span className="plugin-site-update-indicator"><Gridicon icon="sync" size={ 20 } /></span>;
+				/* eslint-enable wpcalypso/jsx-gridicon-size */
 			}
 
 			return this.renderUpdate();

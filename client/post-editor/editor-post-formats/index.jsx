@@ -101,7 +101,9 @@ export default React.createClass( {
 							onChange={ this.onChange } />
 						<span className="editor-post-formats__format-label">
 							<span className={ 'editor-post-formats__format-icon' } >
-								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 20 } nonStandardSize />
+								{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 20 } />
+								{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 							</span>
 							{ postFormat.label }
 						</span>

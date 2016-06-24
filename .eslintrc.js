@@ -106,6 +106,8 @@ module.exports = {
 		'wpcalypso/i18n-no-variables': 1,
 		'wpcalypso/i18n-no-placeholders-only': 1,
 		'wpcalypso/i18n-mismatched-placeholders': 1,
-		'wpcalypso/i18n-named-placeholders': 1
+		'wpcalypso/i18n-named-placeholders': 1,
+		'wpcalypso/jsx-gridicon-size': 1,
+		'wpcalypso/jsx-classname-namespace': 1
 	}
 };

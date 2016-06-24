@@ -25,14 +25,6 @@ done
 
 printf "\neslint validation complete\n"
 
-for file in ${files}; do
-    ./bin/check-gridicon-format ${file}
-        if [ $? -ne 0 ]; then
-        printf "\033[31mGridicon Format Check Failed: \033[0m%s\n" "${file}"
-        pass=false
-    fi
-done
-
 if ! $pass; then
     printf "\n\033[41mCOMMIT FAILED:\033[0m Your commit contains files that should pass validation tests but do not. Please fix the errors and try again.\n\n"
     exit 1
