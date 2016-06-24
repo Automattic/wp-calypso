@@ -12,6 +12,7 @@ import merge from 'lodash/merge';
 import Main from 'components/main';
 import { signup } from 'state/themes/actions' ;
 import ThemePreview from './theme-preview';
+import ThemePickButton from 'my-sites/theme/theme-pick-button';
 import ThemesSelection from './themes-selection';
 import { getSignupUrl, getDetailsUrl, getSupportUrl, isPremium, addTracking } from './helpers';
 import actionLabels from './action-labels';
@@ -54,11 +55,8 @@ const ThemesLoggedOut = React.createClass( {
 		return merge( {}, buttonOptions, actionLabels );
 	},
 
-	onPreviewButtonClick( theme ) {
-		this.setState( { showPreview: false },
-			() => {
-				this.props.signup( theme );
-			} );
+	onPreviewButtonClick() {
+		this.setState( { showPreview: false } );
 	},
 
 	render() {
@@ -71,10 +69,9 @@ const ThemesLoggedOut = React.createClass( {
 					<ThemePreview showPreview={ this.state.showPreview }
 						theme={ this.state.previewingTheme }
 						onClose={ this.togglePreview }
-						buttonLabel={ this.translate( 'Choose this design', {
-							comment: 'when signing up for a WordPress.com account with a selected theme'
-						} ) }
-						onButtonClick={ this.onPreviewButtonClick } />
+					>
+						<ThemePickButton theme={ this.state.previewingTheme } onClick={ this.onPreviewButtonClick } />
+					</ThemePreview>
 				}
 				<ThemesSelection search={ this.props.search }
 					selectedSite={ false }

@@ -10,6 +10,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 import titlecase from 'to-title-case';
+import pick from 'lodash/pick';
 
 /**
  * Internal dependencies
@@ -19,21 +20,18 @@ import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import ThemeDownloadCard from './theme-download-card';
 import ThemesRelatedCard from './themes-related-card';
+import ThemePickButton from './theme-pick-button';
 import Button from 'components/button';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
-import { signup, purchase, activate, customize } from 'state/themes/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isPremium, getForumUrl } from 'my-sites/themes/helpers';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
-import { getCurrentTheme } from 'state/themes/current-theme/selectors';
-import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
-import actionLabels from 'my-sites/themes/action-labels';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
@@ -56,11 +54,9 @@ const ThemeSheet = React.createClass( {
 		stylesheet: React.PropTypes.string,
 		active: React.PropTypes.bool,
 		purchased: React.PropTypes.bool,
-		isLoggedIn: React.PropTypes.bool,
 		// Connected props
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
-		currentTheme: React.PropTypes.object,
 		backPath: React.PropTypes.string,
 	},
 
@@ -71,48 +67,17 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getInitialState() {
-		return { selectedAction: null };
+		return {
+			showPreview: false,
+		};
 	},
 
 	componentDidMount() {
 		window.scroll( 0, 0 );
 	},
 
-	hideSiteSelectorModal() {
-		this.setState( { selectedAction: null } );
-	},
-
-	isActive() {
-		const { id, currentTheme } = this.props;
-		return currentTheme && currentTheme.id === id;
-	},
-
-	onPrimaryClick() {
-		if ( ! this.props.isLoggedIn ) {
-			this.props.signup( this.props );
-		} else if ( this.isActive() ) {
-			this.props.customize( this.props, this.props.selectedSite );
-		} else if ( this.props.price ) {
-			this.selectSiteAndDispatch( 'purchase' );
-		} else {
-			this.selectSiteAndDispatch( 'activate' );
-		}
-	},
-
-	onPreviewButtonClick() {
-		if ( ! this.props.isLoggedIn ) {
-			this.props.signup( this.props );
-		} else {
-			this.selectSiteAndDispatch( 'customize' );
-		}
-	},
-
-	selectSiteAndDispatch( action ) {
-		if ( this.props.selectedSite ) {
-			this.props[ action ]( this.props, this.props.selectedSite, 'showcase-sheet' );
-		} else {
-			this.setState( { selectedAction: action } );
-		}
+	getTheme() {
+		return pick( this.props, [ 'id', 'name', 'author', 'screenshot', 'price', 'description', 'descriptionLong', 'supportDocumentation', 'download', 'taxonomies', 'stylesheet', 'active', 'purchased' ] );
 	},
 
 	getValidSections() {
@@ -269,13 +234,13 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderPreview() {
-		const buttonLabel = this.props.isLoggedIn ? i18n.translate( 'Try & Customize' ) : i18n.translate( 'Pick this design' );
 		return(
 			<ThemePreview showPreview={ this.state.showPreview }
 				theme={ this.props }
 				onClose={ this.togglePreview }
-				buttonLabel= { buttonLabel }
-				onButtonClick={ this.onPreviewButtonClick } />
+			>
+				<ThemePickButton theme={ this.getTheme() } />
+			</ThemePreview>
 		);
 	},
 
@@ -303,15 +268,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderSheet() {
-		let actionTitle = <span className="themes__sheet-button-placeholder">loading......</span>;
-		if ( this.isActive() ) {
-			actionTitle = i18n.translate( 'Customize' );
-		} else if ( this.props.name ) {
-			actionTitle = i18n.translate( 'Pick this design' );
-		}
-
 		const section = this.validateSection( this.props.section );
-		const priceElement = <span className="themes__sheet-action-bar-cost">{ this.props.price }</span>;
 		const siteID = this.props.selectedSite && this.props.selectedSite.ID;
 
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
@@ -325,23 +282,13 @@ const ThemeSheet = React.createClass( {
 				<ThanksModal
 					site={ this.props.selectedSite }
 					source={ 'details' }/>
-				{ this.state.selectedAction && <ThemesSiteSelectorModal
-					name={ this.state.selectedAction }
-					label={ actionLabels[ this.state.selectedAction ].label }
-					header={ actionLabels[ this.state.selectedAction ].header }
-					selectedTheme={ this.props }
-					onHide={ this.hideSiteSelectorModal }
-					action={ this.props[ this.state.selectedAction ] }
-					sourcePath={ `/theme/${ this.props.id }${ section ? '/' + section : '' }` }
-				/> }
 				{ this.state.showPreview && this.renderPreview() }
 				<HeaderCake className="themes__sheet-action-bar"
 							backHref={ this.props.backPath }
 							backText={ i18n.translate( 'All Themes' ) }>
-					<Button className="themes__sheet-primary-button" onClick={ this.onPrimaryClick }>
-						{ actionTitle }
-						{ ! this.isActive() && priceElement }
-					</Button>
+					<ThemePickButton className="themes__sheet__theme-pick-button"
+						theme={ this.getTheme() }
+					/>
 				</HeaderCake>
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
@@ -371,9 +318,7 @@ export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
-		const currentTheme = getCurrentTheme( state, selectedSite && selectedSite.ID );
 		const backPath = getBackPath( state );
-		return { selectedSite, siteSlug, currentTheme, backPath };
-	},
-	{ signup, purchase, activate, customize }
+		return { selectedSite, siteSlug, backPath };
+	}
 )( ThemeSheet );
