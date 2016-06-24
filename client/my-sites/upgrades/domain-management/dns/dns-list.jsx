@@ -56,7 +56,7 @@ const DnsList = React.createClass( {
 				<DnsRecord
 					key={ index }
 					dnsRecord={ dnsRecord }
-					deleteDns={ this.deleteDns }
+					onDeleteDns={ this.deleteDns }
 					selectedDomainName={ this.props.selectedDomainName }
 					selectedSite={ this.props.selectedSite } />
 			);

@@ -173,9 +173,14 @@ function addMissingWpcomRecords( domain, records ) {
 	return records;
 }
 
+function isBeingProcessed( record ) {
+	return record.isBeingDeleted || record.isBeingAdded;
+}
+
 export {
 	addMissingWpcomRecords,
 	getNormalizedData,
 	removeDuplicateWpcomRecords,
-	validateAllFields
+	validateAllFields,
+	isBeingProcessed
 };
