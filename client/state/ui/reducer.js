@@ -8,7 +8,7 @@ import { combineReducers } from 'redux';
  */
 import {
 	SELECTED_SITE_SET,
-	SET_SECTION,
+	SECTION_SET,
 	PREVIEW_IS_SHOWING,
 	SERIALIZE,
 	DESERIALIZE,
@@ -58,7 +58,7 @@ export function recentlySelectedSiteIds( state = [], action ) {
 //TODO: do we really want to mix strings and booleans?
 export function section( state = false, action ) {
 	switch ( action.type ) {
-		case SET_SECTION:
+		case SECTION_SET:
 			return ( action.section !== undefined ) ? action.section : state;
 	}
 	return state;
@@ -66,7 +66,7 @@ export function section( state = false, action ) {
 
 export function hasSidebar( state = true, action ) {
 	switch ( action.type ) {
-		case SET_SECTION:
+		case SECTION_SET:
 			return ( action.hasSidebar !== undefined ) ? action.hasSidebar : state;
 	}
 	return state;
@@ -74,7 +74,7 @@ export function hasSidebar( state = true, action ) {
 
 export function isLoading( state = false, action ) {
 	switch ( action.type ) {
-		case SET_SECTION:
+		case SECTION_SET:
 			return ( action.isLoading !== undefined ) ? action.isLoading : state;
 	}
 	return state;

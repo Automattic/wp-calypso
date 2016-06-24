@@ -5,7 +5,7 @@
  */
 import {
 	SELECTED_SITE_SET,
-	SET_SECTION,
+	SECTION_SET,
 	PREVIEW_IS_SHOWING,
 } from 'state/action-types';
 
@@ -37,7 +37,7 @@ export function setAllSitesSelected() {
 }
 
 export function setSection( section, options = {} ) {
-	options.type = SET_SECTION;
+	options.type = SECTION_SET;
 	if ( section ) {
 		options.section = section;
 	}

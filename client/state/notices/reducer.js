@@ -9,7 +9,7 @@ import { combineReducers } from 'redux';
 import {
 	NEW_NOTICE,
 	REMOVE_NOTICE,
-	SET_ROUTE,
+	ROUTE_SET,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -20,7 +20,7 @@ export function items( state = [], action ) {
 			return [ action.notice, ...state ];
 		case REMOVE_NOTICE:
 			return state.filter( ( notice ) => ( notice.noticeId !== action.noticeId ) );
-		case SET_ROUTE:
+		case ROUTE_SET:
 			return state.filter( notice => {
 				const show = notice.isPersistent || notice.displayOnNextPage;
 				if ( notice.displayOnNextPage ) {
