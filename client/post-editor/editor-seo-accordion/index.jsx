@@ -14,11 +14,11 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import Gridicon from 'components/gridicon';
 import InfoPopover from 'components/info-popover';
 import TokenField from 'components/token-field';
+import PostActions from 'lib/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
-function EditorSeoAccordion( props ) {
-	const { translate, siteSlug } = props;
+function EditorSeoAccordion( { translate, siteSlug, metaDescription = '' } ) {
 	// Temporary placeholder chips for design review
 	const sampleChips = [ 'Post Title', 'Site Title' ];
 
@@ -61,15 +61,24 @@ function EditorSeoAccordion( props ) {
 					acceptableLength={ 159 }
 					placeholder={ translate( 'Write a description…' ) }
 					aria-label={ translate( 'Write a description…' ) }
+					value={ metaDescription }
+					onChange={ onMetaChange }
 				/>
 			</AccordionSection>
 		</Accordion>
 	);
 }
 
+function onMetaChange( event ) {
+	PostActions.updateMetadata( {
+		advanced_seo_description: event.target.value
+	} );
+}
+
 EditorSeoAccordion.propTypes = {
 	translate: PropTypes.func,
-	siteSlug: PropTypes.string
+	siteSlug: PropTypes.string,
+	metaDescription: PropTypes.string
 };
 
 const mapStateToProps = ( state ) => ( {

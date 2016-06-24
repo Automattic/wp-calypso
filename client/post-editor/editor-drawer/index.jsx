@@ -257,7 +257,7 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<SeoAccordion />
+			<SeoAccordion metaDescription={ PostMetadata.metaDescription( this.props.post ) } />
 		);
 	},
 
