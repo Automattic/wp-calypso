@@ -109,10 +109,10 @@ function updatePurchases( existingPurchases, action ) {
 	return purchases;
 }
 
-const reducer = ( state, payload ) => {
-	const { action } = payload;
+export const items = ( state = initialState, action ) => {
+	const { type } = action;
 
-	switch ( action.type ) {
+	switch ( type ) {
 		case PURCHASES_REMOVE:
 			return assign( {}, state, {
 				data: [],
@@ -170,9 +170,4 @@ const reducer = ( state, payload ) => {
 		default:
 			return state;
 	}
-};
-
-export {
-	initialState,
-	reducer
 };
