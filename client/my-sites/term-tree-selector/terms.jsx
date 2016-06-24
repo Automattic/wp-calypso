@@ -393,7 +393,6 @@ const TermTreeSelectorList = React.createClass( {
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const { taxonomy, query } = ownProps;
-	query.number = query.number || 100;
 
 	return {
 		loading: isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),

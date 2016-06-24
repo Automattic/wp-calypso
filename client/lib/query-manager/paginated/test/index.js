@@ -9,6 +9,14 @@ import { expect } from 'chai';
 import { useSandbox } from 'test/helpers/use-sinon';
 import PaginatedQueryManager from '../';
 
+/**
+ * Module constants
+ */
+const TestCustomQueryManager = class TermQueryManager extends PaginatedQueryManager {};
+TestCustomQueryManager.DEFAULT_QUERY = {
+	number: 25
+};
+
 describe( 'PaginatedQueryManager', () => {
 	let sandbox, manager;
 
@@ -232,6 +240,27 @@ describe( 'PaginatedQueryManager', () => {
 			expect( manager.getItems( { search: 'title', number: 2, page: 2 } ) ).to.eql( [ { ID: 154 }, { ID: 160 } ] );
 			expect( manager.getItems( { search: 'title', number: 2, page: 3 } ) ).to.eql( [ { ID: 168 }, { ID: 176 } ] );
 			expect( manager.getItems( { search: 'title', number: 2, page: 4 } ) ).to.eql( [ { ID: 184 } ] );
+		} );
+
+		it( 'should use the constructors DEFAULT_QUERY.number if query object does not specify it', () => {
+			let customizedManager = new TestCustomQueryManager();
+			customizedManager = customizedManager.receive(
+				[
+					{ ID: 144 }, { ID: 152 }, { ID: 162 }, { ID: 164 }, { ID: 165 },
+					{ ID: 244 }, { ID: 252 }, { ID: 262 }, { ID: 264 }, { ID: 265 },
+					{ ID: 344 }, { ID: 352 }, { ID: 362 }, { ID: 364 }, { ID: 365 },
+					{ ID: 444 }, { ID: 452 }, { ID: 462 }, { ID: 464 }, { ID: 465 },
+					{ ID: 544 }, { ID: 552 }, { ID: 562 }, { ID: 564 }, { ID: 565 }
+				], { query: { page: 1 }, found: 28 }
+			);
+			expect( customizedManager.getNumberOfPages( {} ) ).to.equal( 2 );
+			expect( customizedManager.getItems( { page: 1 } ) ).eql( [
+				{ ID: 144 }, { ID: 152 }, { ID: 162 }, { ID: 164 }, { ID: 165 },
+				{ ID: 244 }, { ID: 252 }, { ID: 262 }, { ID: 264 }, { ID: 265 },
+				{ ID: 344 }, { ID: 352 }, { ID: 362 }, { ID: 364 }, { ID: 365 },
+				{ ID: 444 }, { ID: 452 }, { ID: 462 }, { ID: 464 }, { ID: 465 },
+				{ ID: 544 }, { ID: 552 }, { ID: 562 }, { ID: 564 }, { ID: 565 }
+			] );
 		} );
 	} );
 } );
