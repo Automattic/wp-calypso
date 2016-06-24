@@ -48,27 +48,21 @@ const ThemesMultiSite = React.createClass( {
 
 	getButtonOptions() {
 		const buttonOptions = {
-			customize: {
-				action: theme => this.showSiteSelectorModal( 'customize', theme ),
-				hideForTheme: theme => ! theme.active
-			},
 			preview: {
 				action: theme => this.togglePreview( theme ),
-				hideForTheme: theme => theme.active
 			},
 			purchase: config.isEnabled( 'upgrades/checkout' )
 				? {
 					action: theme => this.showSiteSelectorModal( 'purchase', theme ),
-					hideForTheme: theme => theme.active || theme.purchased || ! theme.price
+					hideForTheme: theme => ! theme.price
 				}
 				: {},
 			activate: {
 				action: theme => this.showSiteSelectorModal( 'activate', theme ),
-				hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
+				hideForTheme: theme => theme.price
 			},
 			tryandcustomize: {
-				action: theme => this.showSiteSelectorModal( 'customize', theme ),
-				hideForTheme: theme => theme.active
+				action: theme => this.showSiteSelectorModal( 'tryandcustomize', theme ),
 			},
 			separator: {
 				separator: true
@@ -91,7 +85,7 @@ const ThemesMultiSite = React.createClass( {
 	onPreviewButtonClick( theme ) {
 		this.setState( { showPreview: false },
 			() => {
-				this.getButtonOptions().customize.action( theme );
+				this.getButtonOptions().tryandcustomize.action( theme );
 			} );
 	},
 
@@ -149,7 +143,7 @@ export default connect(
 	} ),
 	{
 		activate,
-		customize,
+		tryandcustomize: customize,
 		purchase
 	}
 )( ThemesMultiSite );
