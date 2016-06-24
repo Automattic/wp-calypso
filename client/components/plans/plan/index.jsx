@@ -227,7 +227,7 @@ const Plan = React.createClass( {
 
 	clickPlanHeader( event ) {
 		// clicking a card should select a plan, see issue 4486
-		if ( isDesktop() && this.imagePlanActionRef ) {
+		if ( isDesktop() && this.imagePlanActionRef && this.imagePlanActionRef.canSelectPlan() ) {
 			this.imagePlanActionRef.handleSelectPlan( event );
 		}
 	},
