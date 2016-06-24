@@ -333,6 +333,7 @@ describe( 'actions', () => {
 					type: POST_SAVE_SUCCESS,
 					siteId: 2916284,
 					postId: undefined,
+					post: { title: 'Hello World' },
 					savedPost: sinon.match( {
 						ID: 13640,
 						title: 'Hello World'
@@ -374,6 +375,7 @@ describe( 'actions', () => {
 					type: POST_SAVE_SUCCESS,
 					siteId: 2916284,
 					postId: 13640,
+					post: { title: 'Updated' },
 					savedPost: sinon.match( {
 						ID: 13640,
 						title: 'Updated'
