@@ -8,7 +8,20 @@ import matches from 'lodash/matches';
 /**
  * Internal Dependencies
  */
-import { action as ActionTypes } from 'lib/upgrades/constants';
+import {
+	PURCHASES_REMOVE,
+	PURCHASE_REMOVE,
+	PURCHASES_SITE_FETCH,
+	PURCHASES_USER_FETCH,
+	PURCHASE_REMOVE_COMPLETED,
+	PURCHASES_SITE_FETCH_COMPLETED,
+	PURCHASES_USER_FETCH_COMPLETED,
+	PURCHASE_REMOVE_FAILED,
+	PURCHASES_SITE_FETCH_FAILED,
+	PURCHASES_USER_FETCH_FAILED,
+	PRIVACY_PROTECTION_CANCEL_COMPLETED,
+	PRIVACY_PROTECTION_CANCEL_FAILED
+} from 'state/action-types';
 
 /**
  * Constants
@@ -81,12 +94,12 @@ function removeMissingPurchasesByPredicate( existingPurchases, newPurchases, pre
 function updatePurchases( existingPurchases, action ) {
 	let purchases, predicate;
 
-	if ( ActionTypes.PURCHASES_SITE_FETCH_COMPLETED === action.type ) {
+	if ( PURCHASES_SITE_FETCH_COMPLETED === action.type ) {
 		predicate = { siteId: action.siteId };
 	}
 
-	if ( ActionTypes.PURCHASES_USER_FETCH_COMPLETED === action.type ||
-		ActionTypes.PURCHASE_REMOVE_COMPLETED === action.type ) {
+	if ( PURCHASES_USER_FETCH_COMPLETED === action.type ||
+		PURCHASE_REMOVE_COMPLETED === action.type ) {
 		predicate = { userId: action.userId };
 	}
 
@@ -100,24 +113,24 @@ const reducer = ( state, payload ) => {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case ActionTypes.PURCHASES_REMOVE:
+		case PURCHASES_REMOVE:
 			return assign( {}, state, {
 				data: [],
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: false
 			} );
-		case ActionTypes.PURCHASE_REMOVE:
+		case PURCHASE_REMOVE:
 			return assign( {}, state, {
 				data: [],
 				isFetchingSitePurchases: false,
 				isFetchingUserPurchases: false
 			} );
-		case ActionTypes.PURCHASES_SITE_FETCH:
+		case PURCHASES_SITE_FETCH:
 			return assign( {}, state, { isFetchingSitePurchases: true } );
-		case ActionTypes.PURCHASES_USER_FETCH:
+		case PURCHASES_USER_FETCH:
 			return assign( {}, state, { isFetchingUserPurchases: true } );
 
-		case ActionTypes.PURCHASE_REMOVE_COMPLETED:
+		case PURCHASE_REMOVE_COMPLETED:
 			return assign( {}, state, {
 				data: updatePurchases( state.data, action ),
 				error: null,
@@ -126,14 +139,14 @@ const reducer = ( state, payload ) => {
 				hasLoadedSitePurchasesFromServer: true,
 				hasLoadedUserPurchasesFromServer: true
 			} );
-		case ActionTypes.PURCHASES_SITE_FETCH_COMPLETED:
+		case PURCHASES_SITE_FETCH_COMPLETED:
 			return assign( {}, state, {
 				data: updatePurchases( state.data, action ),
 				error: null,
 				isFetchingSitePurchases: false,
 				hasLoadedSitePurchasesFromServer: true
 			} );
-		case ActionTypes.PURCHASES_USER_FETCH_COMPLETED:
+		case PURCHASES_USER_FETCH_COMPLETED:
 			return assign( {}, state, {
 				data: updatePurchases( state.data, action ),
 				error: null,
@@ -141,15 +154,15 @@ const reducer = ( state, payload ) => {
 				hasLoadedUserPurchasesFromServer: true
 			} );
 
-		case ActionTypes.PURCHASE_REMOVE_FAILED:
-		case ActionTypes.PURCHASES_SITE_FETCH_FAILED:
-		case ActionTypes.PURCHASES_USER_FETCH_FAILED:
+		case PURCHASE_REMOVE_FAILED:
+		case PURCHASES_SITE_FETCH_FAILED:
+		case PURCHASES_USER_FETCH_FAILED:
 			return assign( {}, state, { error: action.error } );
 
-		case ActionTypes.PRIVACY_PROTECTION_CANCEL_COMPLETED:
+		case PRIVACY_PROTECTION_CANCEL_COMPLETED:
 			return updatePurchaseById( state, action.purchase.id, action.purchase );
 
-		case ActionTypes.PRIVACY_PROTECTION_CANCEL_FAILED:
+		case PRIVACY_PROTECTION_CANCEL_FAILED:
 			return updatePurchaseById( state, action.purchaseId, {
 				error: action.error
 			} );
