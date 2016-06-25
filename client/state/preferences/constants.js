@@ -11,5 +11,21 @@ export const DEFAULT_PREFERENCES = {
 	mediaModalGalleryInstructionsDismissedForSession: {
 		schema: null, //We only want to store this preference for current session. mediaModalGalleryInstructionsDismissed is the version stored in api and localStorage
 		'default': false
-	}
+	},
+	'guided-tours-history': {
+		schema: {
+			type: 'array',
+			items: {
+				type: 'object',
+				properties: {
+					tourName: { type: 'string' },
+					timestamp: { type: 'number', minimum: 0 },
+					finished: { type: 'boolean' },
+				},
+				required: [ 'tourName', 'timestamp', 'finished' ],
+				additionalProperties: false,
+			},
+		},
+		'default': [],
+	},
 };
