@@ -47,12 +47,19 @@ export const FEATURE_VIDEO_UPLOADS = 'video-upload';
 export const WORDADS_INSTANT = 'wordads-instant';
 
 // jetpack features constants
-export const FEATURE_DAILY_BACKUPS = 'jetpack-daily-backups';
-export const FEATURE_DAILY_MALWARE_SCANNING = 'jetpack-daily-malware-scanning';
-export const FEATURE_SPAM_PROTECTION = 'jetpack-spam-protection';
-export const FEATURE_REALTIME_BACKUPS = 'jetpack-realtime-backups';
-export const FEATURE_UNLIMITED_BACKUP_ARCHIVE = 'jetpack-unlimited-backup-archive';
-export const FEATURE_ONE_CLICK_THREAT_RESOLUTION = 'jetpack-one-click-threat-resolution';
+export const FEATURE_SPAM_AKISMET_PLUS = 'spam-akismet-plus';
+export const FEATURE_SPAM_AKISMET_UNLIMITED = 'spam-akismet-unlimited';
+export const FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY = 'offsite-backup-vaultpress-daily';
+export const FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME = 'offsite-backup-vaultpress-realtime';
+export const FEATURE_BACKUP_ARCHIVE_30 = 'backup-archive-30';
+export const FEATURE_BACKUP_ARCHIVE_UNLIMITED = 'backup-archive-unlimited';
+export const FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED = 'backup-storage-space-unlimited';
+export const FEATURE_AUTOMATED_RESTORES = 'automated-restores';
+export const FEATURE_EASY_SITE_MIGRATION = 'easy-site-migration';
+export const FEATURE_MALWARE_SCANNING_DAILY = 'malware-scanning-daily';
+export const FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND = 'malware-scanning-daily-and-on-demand';
+export const FEATURE_ONE_CLICK_THREAT_RESOLUTION = 'one-click-threat-resolution';
+export const FEATURE_POLLS_PRO = 'polls-pro';
 
 export const plansList = {
 	[ PLAN_FREE ]: {
@@ -139,9 +146,14 @@ export const plansList = {
 		getProductId: () => 2000,
 		getDescription: () => i18n.translate( 'All the features you need to keep your site’s content backed up and secure, as well as spam-free.' ),
 		getFeatures: () => [
-			FEATURE_DAILY_BACKUPS,
-			FEATURE_DAILY_MALWARE_SCANNING,
-			FEATURE_SPAM_PROTECTION
+			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+			FEATURE_BACKUP_ARCHIVE_30,
+			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_EASY_SITE_MIGRATION,
+			FEATURE_MALWARE_SCANNING_DAILY,
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -150,9 +162,14 @@ export const plansList = {
 		getProductId: () => 2003,
 		getDescription: () => i18n.translate( 'All the features you need to keep your site’s content backed up and secure, as well as spam-free.' ),
 		getFeatures: () => [
-			FEATURE_DAILY_BACKUPS,
-			FEATURE_DAILY_MALWARE_SCANNING,
-			FEATURE_SPAM_PROTECTION
+			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+			FEATURE_BACKUP_ARCHIVE_30,
+			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_EASY_SITE_MIGRATION,
+			FEATURE_MALWARE_SCANNING_DAILY,
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
@@ -161,9 +178,16 @@ export const plansList = {
 		getProductId: () => 2001,
 		getDescription: () => i18n.translate( 'More powerful security tools and realtime content backup for the ultimate peace of mind.' ),
 		getFeatures: () => [
-			FEATURE_REALTIME_BACKUPS,
-			FEATURE_UNLIMITED_BACKUP_ARCHIVE,
-			FEATURE_ONE_CLICK_THREAT_RESOLUTION
+			FEATURE_SPAM_AKISMET_UNLIMITED,
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
+			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
+			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_EASY_SITE_MIGRATION,
+			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
+			FEATURE_POLLS_PRO
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 
@@ -173,9 +197,16 @@ export const plansList = {
 		getProductId: () => 2004,
 		getDescription: () => i18n.translate( 'More powerful security tools and realtime content backup for the ultimate peace of mind.' ),
 		getFeatures: () => [
-			FEATURE_REALTIME_BACKUPS,
-			FEATURE_UNLIMITED_BACKUP_ARCHIVE,
-			FEATURE_ONE_CLICK_THREAT_RESOLUTION
+			FEATURE_SPAM_AKISMET_UNLIMITED,
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
+			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
+			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_EASY_SITE_MIGRATION,
+			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
+			FEATURE_POLLS_PRO
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	}
@@ -281,23 +312,44 @@ export const featuresList = {
 		getTitle: () => i18n.translate( 'Email and live chat support' ),
 		plans: allPaidPlans
 	},
-	[ FEATURE_DAILY_BACKUPS ]: {
-		getTitle: () => i18n.translate( 'Daily off-site backups' )
+	[ FEATURE_SPAM_AKISMET_PLUS ]: {
+		getTitle: () => i18n.translate( 'Spam Protection' )
 	},
-	[ FEATURE_DAILY_MALWARE_SCANNING ]: {
-		getTitle: () => i18n.translate( 'Daily malware scanning' )
+	[ FEATURE_SPAM_AKISMET_UNLIMITED ]: {
+		getTitle: () => i18n.translate( 'Unlimited Spam Protection' )
 	},
-	[ FEATURE_SPAM_PROTECTION ]: {
-		getTitle: () => i18n.translate( 'Spam protection' )
+	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: {
+		getTitle: () => i18n.translate( 'Daily Offsite Backups' )
 	},
-	[ FEATURE_REALTIME_BACKUPS ]: {
-		getTitle: () => i18n.translate( 'Realtime off-site backups' )
+	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME ]: {
+		getTitle: () => i18n.translate( 'Realtime offsite backups' )
 	},
-	[ FEATURE_UNLIMITED_BACKUP_ARCHIVE ]: {
-		getTitle: () => i18n.translate( 'Unlimited backup archive' )
+	[ FEATURE_BACKUP_ARCHIVE_30 ]: {
+		getTitle: () => i18n.translate( '30-day Backup Archive' )
+	},
+	[ FEATURE_BACKUP_ARCHIVE_UNLIMITED ]: {
+		getTitle: () => i18n.translate( 'Unlimited Backup Archive' )
+	},
+	[ FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED ]: {
+		getTitle: () => i18n.translate( 'Unlimited Backup Storage Space' )
+	},
+	[ FEATURE_AUTOMATED_RESTORES ]: {
+		getTitle: () => i18n.translate( 'Automated Restores' )
+	},
+	[ FEATURE_EASY_SITE_MIGRATION ]: {
+		getTitle: () => i18n.translate( 'Easy Site Migration' )
+	},
+	[ FEATURE_MALWARE_SCANNING_DAILY ]: {
+		getTitle: () => i18n.translate( 'Daily Malware Scanning' )
+	},
+	[ FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND ]: {
+		getTitle: () => i18n.translate( 'Daily and On-demand Malware Scanning' )
 	},
 	[ FEATURE_ONE_CLICK_THREAT_RESOLUTION ]: {
-		getTitle: () => i18n.translate( 'One-click threat resolution' )
+		getTitle: () => i18n.translate( 'One-Click Threat Resolution' )
+	},
+	[ FEATURE_POLLS_PRO ]: {
+		getTitle: () => i18n.translate( 'Advanced Polls and Ratings' )
 	}
 };
 
