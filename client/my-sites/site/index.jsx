@@ -142,6 +142,7 @@ export default React.createClass( {
 			<a
 				className="site__cog"
 				href={ `/settings/general/${ site.slug }` }
+				onClick={ this.onSettingsClick }
 				onMouseEnter={ this.enableCogTooltip }
 				onMouseLeave={ this.disableCogTooltip }
 				ref="cogButton"
@@ -205,6 +206,12 @@ export default React.createClass( {
 
 		if ( event && site && ! site.icon ) {
 			analytics.mc.bumpStat( 'calypso_site_card', 'edit_default_icon' );
+		}
+	},
+
+	onSettingsClick( event ) {
+		if ( event ) {
+			analytics.mc.bumpStat( 'calypso_site_card', 'settings' );
 		}
 	},
 
