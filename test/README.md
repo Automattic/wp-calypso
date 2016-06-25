@@ -38,6 +38,14 @@ Example for client:
 > npm run test-client client/state/posts/test
 ```
 
+### How to watch files for test running
+```bash
+> # run all client tests on file changes
+> npm run test-client:watch
+> # run tests for a specific folder on file changes
+> npm run test-client:watch client/state
+```
+
 ### How to run specified suite or test-case
 
 The exclusivity feature allows you to run only the specified suite or test-case by appending `.only()` to the function.
