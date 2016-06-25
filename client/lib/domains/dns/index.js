@@ -177,10 +177,20 @@ function isBeingProcessed( record ) {
 	return record.isBeingDeleted || record.isBeingAdded;
 }
 
+function isDeletingLastMXRecord( recordToDelete, records ) {
+	const currentMXRecords = filter( records, { type: 'MX' } );
+
+	return (
+		recordToDelete.type === 'MX' &&
+		currentMXRecords.length === 1
+	);
+}
+
 export {
 	addMissingWpcomRecords,
 	getNormalizedData,
 	removeDuplicateWpcomRecords,
 	validateAllFields,
-	isBeingProcessed
+	isBeingProcessed,
+	isDeletingLastMXRecord
 };
