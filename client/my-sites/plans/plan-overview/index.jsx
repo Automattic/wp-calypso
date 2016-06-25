@@ -8,7 +8,6 @@ import React from 'react';
  * Internal dependencies
  */
 import Main from 'components/main';
-import paths from '../paths';
 import PlanFeatures from './plan-features';
 import PlanRemove from './plan-remove';
 import PlanStatus from './plan-status';
@@ -30,7 +29,8 @@ const PlanOverview = React.createClass( {
 	},
 
 	redirectToDefault() {
-		page.redirect( paths.plans( this.props.selectedSite.slug ) );
+		const site = this.props.selectedSite.slug;
+		page.redirect( `/plans/${ site }` );
 	},
 
 	renderNotice() {
