@@ -28,16 +28,18 @@ function getGlotPressFunction( properties ) {
  * Generate each line of equivalent php from a matching `translate()`
  * request found in the client code
  * @param  {object} properties - properties describing translation request
+ * @param  {string} texdomain - optional string to be added as a textdomain value
  * @return {string}            the equivalent php code for each translation request
  */
-function buildPHPString( properties ) {
+function buildPHPString( properties, textdomain ) {
 	var wpFunc = getGlotPressFunction( properties ),
 		response = [],
+		closing = textdomain ? ( ', "' + textdomain + '" ),' ) : ' ),',
 		stringFromFunc = {
-			__: '__( ' + properties.single + ' ),',
-			_x: '_x( ' + [ properties.single, properties.context ].join( ', ' ) + ' ),',
-			_nx: '_nx( ' + [ properties.single, properties.plural, properties.count, properties.context ].join( ', ' ) + ' ),',
-			_n: '_n( ' + [ properties.single, properties.plural, properties.count ].join( ', ' ) + ' ),'
+			__: '__( ' + properties.single + closing,
+			_x: '_x( ' + [ properties.single, properties.context ].join( ', ' ) + closing,
+			_nx: '_nx( ' + [ properties.single, properties.plural, properties.count, properties.context ].join( ', ' ) + closing,
+			_n: '_n( ' + [ properties.single, properties.plural, properties.count ].join( ', ' ) + closing
 		};
 
 	// translations with comments get a preceding comment in the php code
@@ -68,7 +70,9 @@ module.exports = function formatInPHP( matches, options ) {
 		'<?php',
 		'/* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */',
 		'$' + arrayName + ' = array(',
-			matches.map( buildPHPString ).join( '\n' ),
+			matches.map( function( element ) {
+				return buildPHPString( element, options.textdomain );
+			} ).join( '\n' ),
 		');',
 		'/* THIS IS THE END OF THE GENERATED FILE */'
 	].join( '\n' );

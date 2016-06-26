@@ -350,4 +350,24 @@ describe( 'index', function() {
 			expect( output ).to.have.string( 'context with a literal string key' );
 		} );
 	} );
+
+	describe( 'PHP with an additional textdomain parameter', function() {
+		var output;
+
+		before( function() {
+			output = i18nCalypsoCLI( {
+				projectName: 'i18nTest',
+				inputPaths: buildFiles,
+				phpArrayName: 'arrayName',
+				format: 'PHP',
+				extras: [ 'date' ],
+				textdomain: 'some_domain'
+			} );
+		} );
+
+		it( 'should create a simple __() translation', function() {
+			expect( output ).to.have.string( '__( "My hat has three corners.", "some_domain" ),' );
+		} );
+
+	} );
 } );
