@@ -255,7 +255,8 @@ const Post = React.createClass( {
 	},
 
 	handleCardClick: function( event ) {
-		var rootNode = ReactDom.findDOMNode( this );
+		var rootNode = ReactDom.findDOMNode( this ),
+			selection = window.getSelection && window.getSelection();
 
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
@@ -279,6 +280,11 @@ const Post = React.createClass( {
 
 		// ignore clicks on anchors inside inline content
 		if ( closest( event.target, 'a', true, rootNode ) && closest( event.target, '.reader__full-post-content', true, rootNode ) ) {
+			return;
+		}
+
+		// ignore clicks when highlighting text
+		if ( selection && selection.toString() ) {
 			return;
 		}
 
