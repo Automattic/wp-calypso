@@ -5,52 +5,56 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import PureComponent from 'react-pure-render/component';
 
-const Spinner = React.createClass( {
-	propTypes: {
+/**
+ * Constants
+ */
+
+/**
+ * Defines whether the current browser supports CSS animations for SVG
+ * elements. Specifically, this returns false for Internet Explorer versions
+ * 11 and below.
+ *
+ * @see http://dev.modern.ie/platform/status/csstransitionsanimationsforsvgelements/
+ * @type {Boolean} True if the browser supports CSS animations for SVG
+ *                 elements, or false otherwise.
+ */
+const isSVGCSSAnimationSupported = ( () => {
+	if ( ! global.window ) {
+		return false;
+	}
+
+	return ! /(MSIE |Trident\/)/.test( global.window.navigator.userAgent );
+} )();
+
+export default class Spinner extends PureComponent {
+	static propTypes = {
 		className: React.PropTypes.string,
 		size: React.PropTypes.number,
 		duration: React.PropTypes.number
-	},
+	};
 
-	statics: {
-		instances: 0
-	},
+	static instances = 0;
 
-	getDefaultProps: function() {
-		return {
-			size: 20,
-			duration: 3000
-		};
-	},
+	static defaultProps = {
+		size: 20,
+		duration: 3000
+	};
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.setState( {
 			instanceId: ++Spinner.instances
 		} );
-	},
+	}
 
-	/**
-	 * Returns whether the current browser supports CSS animations for SVG
-	 * elements. Specifically, this returns false for Internet Explorer
-	 * versions 11 and below.
-	 *
-	 * @see http://dev.modern.ie/platform/status/csstransitionsanimationsforsvgelements/
-	 * @return {Boolean} True if the browser supports CSS animations for SVG
-	 *                   elements, or false otherwise.
-	 */
-	isSVGCSSAnimationSupported: function() {
-		const navigator = global.window ? global.window.navigator.userAgent : ''; // FIXME: replace with UA from server
-		return ! /(MSIE |Trident\/)/.test( navigator );
-	},
-
-	getClassName: function() {
+	getClassName() {
 		return classNames( 'spinner', this.props.className, {
-			'is-fallback': ! this.isSVGCSSAnimationSupported()
+			'is-fallback': ! isSVGCSSAnimationSupported
 		} );
-	},
+	}
 
-	renderFallback: function() {
+	renderFallback() {
 		const style = {
 			width: this.props.size,
 			height: this.props.size
@@ -62,14 +66,14 @@ const Spinner = React.createClass( {
 				<span className="spinner__progress is-right"></span>
 			</div>
 		);
-	},
+	}
 
-	render: function() {
-		const instanceId = parseInt( this.state.instanceId, 10 );
-
-		if ( ! this.isSVGCSSAnimationSupported() ) {
+	render() {
+		if ( ! isSVGCSSAnimationSupported ) {
 			return this.renderFallback();
 		}
+
+		const { instanceId } = this.state;
 
 		return (
 			<div className={ this.getClassName() }>
@@ -107,6 +111,4 @@ const Spinner = React.createClass( {
 			</div>
 		);
 	}
-} );
-
-module.exports = Spinner;
+}

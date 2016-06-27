@@ -4,6 +4,11 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
+import Spinner from 'components/spinner';
+
 export default React.createClass( {
 	displayName: 'StatsModulePlaceholder',
 
@@ -21,6 +26,6 @@ export default React.createClass( {
 
 		const classes = classNames( 'stats-module__placeholder', 'is-void', className );
 
-		return ( <div className={ classes } /> );
+		return ( <Spinner className={ classes } /> );
 	}
 } );
