@@ -21,6 +21,7 @@ import Notice from 'components/notice';
 import observe from 'lib/mixins/data-observe';
 import paths from './paths';
 import PlanList from 'components/plans/plan-list' ;
+import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlanOverview from './plan-overview';
 import { shouldFetchSitePlans, plansLink } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -28,7 +29,9 @@ import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
 import { PLAN_MONTHLY_PERIOD } from 'lib/plans/constants';
+import config from 'config';
 
+const showPlanFeatures = config.isEnabled( 'manage/plan-features' );
 
 const Plans = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
@@ -138,8 +141,10 @@ const Plans = React.createClass( {
 	},
 
 	render() {
-		const selectedSite = this.props.sites.getSelectedSite();
-		let hasJpphpBundle,
+		const selectedSite = this.props.sites.getSelectedSite(),
+			mainClassNames = {};
+
+		let	hasJpphpBundle,
 			currentPlan;
 
 		if ( this.props.sitePlans.hasLoadedFromServer ) {
@@ -159,11 +164,15 @@ const Plans = React.createClass( {
 			);
 		}
 
+		if ( showPlanFeatures ) {
+			mainClassNames[ 'is-wide-layout' ] = true;
+		}
+
 		return (
 			<div>
 				{ this.renderNotice() }
 
-				<Main>
+				<Main className={ mainClassNames }>
 					<SidebarNavigation />
 
 					<div id="plans" className="plans has-sidebar">
@@ -176,16 +185,24 @@ const Plans = React.createClass( {
 						{ ! hasJpphpBundle && this.showMonthlyPlansLink() }
 						<QueryPlans />
 
-						<PlanList
-							site={ selectedSite }
-							plans={ this.props.plans }
-							sitePlans={ this.props.sitePlans }
-							onOpen={ this.openPlan }
-							cart={ this.props.cart }
-							intervalType={ this.props.intervalType }
-							isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST } />
+						{
+							showPlanFeatures
+								? <PlansFeaturesMain
+									site={ selectedSite }
+									plans={ this.props.plans }
+									sitePlans={ this.props.sitePlans } />
 
-						{ ! hasJpphpBundle && this.comparePlansLink() }
+								: <PlanList
+									site={ selectedSite }
+									plans={ this.props.plans }
+									sitePlans={ this.props.sitePlans }
+									onOpen={ this.openPlan }
+									cart={ this.props.cart }
+									intervalType={ this.props.intervalType }
+									isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST }/>
+						}
+
+						{ ! hasJpphpBundle && ! showPlanFeatures && this.comparePlansLink() }
 					</div>
 				</Main>
 			</div>
