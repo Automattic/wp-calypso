@@ -1,4 +1,4 @@
-.plans-features-main {
+.plans-features-main__group {
 	@include breakpoint( ">1040px" ) {
 		display: flex;
 		flex-flow: row wrap;

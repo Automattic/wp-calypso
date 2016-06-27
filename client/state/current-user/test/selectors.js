@@ -9,7 +9,8 @@ import { expect } from 'chai';
 import {
 	getCurrentUser,
 	getCurrentUserLocale,
-	canCurrentUser
+	canCurrentUser,
+	getCurrentUserCurrencyCode
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -119,6 +120,25 @@ describe( 'selectors', () => {
 			}, 2916284, 'manage_foo' );
 
 			expect( isCapable ).to.be.null;
+		} );
+	} );
+
+	describe( 'getCurrentUserCurrencyCode', () => {
+		it( 'should return null if currencyCode is not set', () => {
+			const selected = getCurrentUserCurrencyCode( {
+				currentUser: {
+					currencyCode: null
+				}
+			} );
+			expect( selected ).to.equal( null );
+		} );
+		it( 'should return value if currencyCode is set', () => {
+			const selected = getCurrentUserCurrencyCode( {
+				currentUser: {
+					currencyCode: 'USD'
+				}
+			} );
+			expect( selected ).to.equal( 'USD' );
 		} );
 	} );
 } );

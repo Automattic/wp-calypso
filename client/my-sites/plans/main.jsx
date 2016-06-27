@@ -102,8 +102,8 @@ const Plans = React.createClass( {
 		}
 
 		let intervalType = this.props.intervalType,
-			showString = '',
-			hasMonthlyPlans = find( this.props.sitePlans.data, { interval: PLAN_MONTHLY_PERIOD } );
+			showString = '';
+		const hasMonthlyPlans = find( this.props.sitePlans.data, { interval: PLAN_MONTHLY_PERIOD } );
 
 		if ( hasMonthlyPlans === undefined ) {
 			//No monthly plan found for this site so no need for a monthly plans link
@@ -190,8 +190,8 @@ const Plans = React.createClass( {
 								? <PlansFeaturesMain
 									site={ selectedSite }
 									plans={ this.props.plans }
-									sitePlans={ this.props.sitePlans } />
-
+									sitePlans={ this.props.sitePlans }
+									intervalType={ this.props.intervalType } />
 								: <PlanList
 									site={ selectedSite }
 									plans={ this.props.plans }

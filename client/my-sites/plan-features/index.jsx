@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
-import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -17,8 +16,14 @@ import PlanFeaturesFooter from './footer';
 import PlanFeaturesPlaceholder from './placeholder';
 import { isCurrentSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getPlanRawPrice, getPlan } from 'state/plans/selectors';
-import { plansList, getPlanFeaturesObject, PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
+import {
+	plansList,
+	getPlanFeaturesObject,
+	isPopular,
+	isMonthly
+} from 'lib/plans/constants';
 
 class PlanFeatures extends Component {
 	render() {
@@ -27,13 +32,13 @@ class PlanFeatures extends Component {
 		}
 
 		const {
+			currencyCode,
 			planName,
 			rawPrice,
 			popular,
 			current,
 			planConstantObj,
 			features,
-			billingTimeFrame,
 			onUpgradeClick
 		} = this.props;
 
@@ -45,11 +50,12 @@ class PlanFeatures extends Component {
 			<div className={ classes } >
 				<PlanFeaturesHeader
 					current={ current }
+					currencyCode={ currencyCode }
 					popular={ popular }
-					title={ plansList[ planName ].getTitle() }
+					title={ planConstantObj.getTitle() }
 					planType={ planName }
 					rawPrice={ rawPrice }
-					billingTimeFrame={ billingTimeFrame }
+					billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
 					onClick={ onUpgradeClick }
 				/>
 				<PlanFeaturesItemList>
@@ -70,9 +76,9 @@ class PlanFeatures extends Component {
 }
 
 PlanFeatures.propTypes = {
-	onUgradeClick: PropTypes.func,
+	onUpgradeClick: PropTypes.func,
 	// either you specify the plan prop or isPlaceholder prop
-	plan: React.PropTypes.oneOf( [ PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS ] ),
+	plan: React.PropTypes.string,
 	isPlaceholder: PropTypes.bool
 };
 
@@ -94,11 +100,11 @@ export default connect( ( state, ownProps ) => {
 	return {
 		planName: ownProps.plan,
 		current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
-		popular: ownProps.plan === PLAN_PREMIUM,
+		currencyCode: getCurrentUserCurrencyCode( state ),
+		popular: isPopular( ownProps.plan ),
 		features: getPlanFeaturesObject( ownProps.plan ),
-		rawPrice: getPlanRawPrice( state, planProductId /**, get from abtest **/ ),
+		rawPrice: getPlanRawPrice( state, planProductId, ! isMonthly( ownProps.plan ) ),
 		planConstantObj: plansList[ ownProps.plan ],
-		billingTimeFrame: get( planObject, 'bill_period_label', '' ),
 		planObject: planObject
 	};
 } )( PlanFeatures );
