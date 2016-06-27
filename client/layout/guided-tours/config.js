@@ -108,14 +108,22 @@ function get( tour = 'main' ) {
 				linkUrl: 'https://learn.wordpress.com',
 			},
 		},
+		themes: {
+			version: '20160516',
+			init: {
+				description: 'Dummy tour for Themes',
+				text: 'This is a dummy tour for Themes!',
+				type: 'FinishStep',
+			},
+		},
 		test: {
 			version: '20160516',
 			init: {
 				description: 'Testing multi tour support',
-				text: i18n.translate( 'Single step tour!' ),
+				text: 'Single step tour!',
 				type: 'FinishStep',
 			},
-		}
+		},
 	};
 
 	return tours[ tour ] || tours.main;
