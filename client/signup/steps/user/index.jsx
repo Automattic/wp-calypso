@@ -12,6 +12,7 @@ import SignupForm from 'components/signup-form';
 import signupUtils from 'signup/utils';
 import SignupActions from 'lib/signup/actions';
 import { abtest } from 'lib/abtest';
+import config from 'config';
 
 export default React.createClass( {
 
@@ -59,15 +60,17 @@ export default React.createClass( {
 			queryArgs.jetpackRedirect = this.props.queryObject.jetpack_redirect;
 		}
 
-		// User is participating in Reader Cold Start
-		if ( abtest( 'coldStartReader' ) === 'noEmailColdStart' ) {
-			userData.follow_default_blogs = false;
-			userData.subscription_delivery_email_default = 'never';
-			userData.is_new_reader = true;
+		if ( config.isEnabled( 'reader/start' ) ) {
+			// User is participating in Reader Cold Start
+			if ( abtest( 'coldStartReader' ) === 'noEmailColdStart' ) {
+				userData.follow_default_blogs = false;
+				userData.subscription_delivery_email_default = 'never';
+				userData.is_new_reader = true;
 
-		// User is not participating in Reader Cold Start, but is in our "never send email" experiment group
-		} else if ( abtest( 'coldStartReader' ) === 'noEmailNoColdStart' ) {
-			userData.subscription_delivery_email_default = 'never';
+			// User is not participating in Reader Cold Start, but is in our "never send email" experiment group
+			} else if ( abtest( 'coldStartReader' ) === 'noEmailNoColdStart' ) {
+				userData.subscription_delivery_email_default = 'never';
+			}
 		}
 
 		const formWithoutPassword = Object.assign( {}, form, {
