@@ -23,7 +23,6 @@ import {
 	getSitePostsForQuery
 } from 'state/posts/selectors';
 import { getPostStat } from 'state/stats/posts/selectors';
-import { decodeEntities } from 'lib/formatting';
 
 const StatsPostPerformance = React.createClass( {
 
@@ -93,7 +92,7 @@ const StatsPostPerformance = React.createClass( {
 			if ( ! post.title ) {
 				postTitle = this.translate( '(no title)' );
 			} else {
-				postTitle = decodeEntities( post.title );
+				postTitle = post.title;
 			}
 		}
 
@@ -155,7 +154,7 @@ const StatsPostPerformance = React.createClass( {
 
 export default connect( ( state, ownProps ) => {
 	const { site } = ownProps;
-	const query = { status: 'published', number: 1 };
+	const query = { status: 'publish', number: 1 };
 	const posts = site ? getSitePostsForQuery( state, site.ID, query ) : null;
 	const post = posts && posts.length ? posts[ 0 ] : null;
 	const viewCount = post && site ? getPostStat( state, 'views', site.ID, post.ID ) : null;

@@ -9,6 +9,7 @@ import omitBy from 'lodash/omitBy';
 import isEqual from 'lodash/isEqual';
 import reduce from 'lodash/reduce';
 import keyBy from 'lodash/keyBy';
+import groupBy from 'lodash/groupBy';
 import merge from 'lodash/merge';
 import findKey from 'lodash/findKey';
 
@@ -154,13 +155,12 @@ export function queries( state = {}, action ) {
 		}
 
 		case POSTS_RECEIVE:
-			return reduce( action.posts, ( memo, post ) => {
-				const { site_ID: siteId } = post;
+			return reduce( groupBy( action.posts, 'site_ID' ), ( memo, posts, siteId ) => {
 				if ( ! memo[ siteId ] ) {
 					return memo;
 				}
 
-				const nextPosts = memo[ siteId ].receive( post );
+				const nextPosts = memo[ siteId ].receive( posts );
 				if ( nextPosts === memo[ siteId ] ) {
 					return memo;
 				}
