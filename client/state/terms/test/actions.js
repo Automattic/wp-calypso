@@ -74,7 +74,8 @@ describe( 'actions', () => {
 						name: 'ribs'
 					} )
 				],
-				query: undefined
+				query: undefined,
+				found: undefined
 			} );
 		} );
 
@@ -89,7 +90,8 @@ describe( 'actions', () => {
 						name: 'ribs',
 						description: ''
 					} ],
-					query: undefined
+					query: undefined,
+					found: undefined
 				} );
 			} );
 		} );
@@ -126,33 +128,36 @@ describe( 'actions', () => {
 				siteId: siteId,
 				taxonomy: taxonomyName,
 				terms: [ testTerms[ 0 ] ],
-				query: undefined
+				query: undefined,
+				found: undefined
 			} );
 		} );
 	} );
 
 	describe( '#receiveTerms()', () => {
 		it( 'should return an action object', () => {
-			const action = receiveTerms( siteId, taxonomyName, testTerms );
+			const action = receiveTerms( siteId, taxonomyName, testTerms, {}, 2 );
 
 			expect( action ).to.eql( {
 				type: TERMS_RECEIVE,
 				siteId: siteId,
 				taxonomy: taxonomyName,
 				terms: testTerms,
-				query: undefined
+				query: {},
+				found: 2
 			} );
 		} );
 
 		it( 'should return an action object with query if passed', () => {
-			const action = receiveTerms( siteId, taxonomyName, testTerms, { search: 'foo' } );
+			const action = receiveTerms( siteId, taxonomyName, testTerms, { search: 'foo' }, 2 );
 
 			expect( action ).to.eql( {
 				type: TERMS_RECEIVE,
 				siteId: siteId,
 				taxonomy: taxonomyName,
 				terms: testTerms,
-				query: { search: 'foo' }
+				query: { search: 'foo' },
+				found: 2
 			} );
 		} );
 	} );
@@ -204,7 +209,8 @@ describe( 'actions', () => {
 					siteId: siteId,
 					taxonomy: taxonomyName,
 					terms: testTerms,
-					query: {}
+					query: {},
+					found: 2
 				} );
 			} );
 		} );
