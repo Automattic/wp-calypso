@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	{ connect } = require( 'react-redux' ),
 	defer = require( 'lodash/defer' ),
 	page = require( 'page' ),
 	i18n = require( 'i18n-calypso' );
@@ -14,7 +13,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	productsList = require( 'lib/products-list' )(),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	SignupActions = require( 'lib/signup/actions' ),
-	MapDomainStep = require( 'components/domains/map-domain-step' ),
+	MapDomain = require( 'components/domains/map-domain' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
@@ -78,7 +77,7 @@ const DomainsStep = React.createClass( {
 
 	getThemeArgs: function() {
 		const themeSlug = this.getThemeSlug(),
-			themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug ),
+			themeSlugWithRepo = this.getThemeSlugWithRepo(),
 			themeItem = this.isPurchasingTheme()
 			? cartItems.themeItem( themeSlug, 'signup-with-theme' )
 			: undefined;
@@ -86,12 +85,13 @@ const DomainsStep = React.createClass( {
 		return { themeSlug, themeSlugWithRepo, themeItem };
 	},
 
-	getThemeSlugWithRepo: function( themeSlug ) {
+	getThemeSlugWithRepo: function() {
+		const themeSlug = this.getThemeSlug();
 		if ( ! themeSlug ) {
 			return undefined;
 		}
-		const repo = this.isPurchasingTheme() ? 'premium' : 'pub';
-		return `${repo}/${themeSlug}`;
+		// Only allow free themes for now; a valid theme value here (free or premium) will cause a theme_switch by Headstart.
+		return this.isPurchasingTheme() ? undefined : 'pub/' + themeSlug;
 	},
 
 	submitWithDomain: function( googleAppsCartItem ) {
@@ -126,8 +126,6 @@ const DomainsStep = React.createClass( {
 		const domainItem = cartItems.domainMapping( { domain } );
 		const isPurchasingItem = true;
 
-		mapDomainAnalytics.recordEvent( 'addDomainButtonClick', domain, 'signup' );
-
 		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain mapping' ),
 			stepName: this.props.stepName,
@@ -151,7 +149,8 @@ const DomainsStep = React.createClass( {
 
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
-
+		const isPlansOnlyTest = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
+		const isDeveloperFlow = 'developer' === this.props.flowName;
 		return (
 			<RegisterDomainStep
 				path={ this.props.path }
@@ -162,15 +161,15 @@ const DomainsStep = React.createClass( {
 				mapDomainUrl={ this.getMapDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerMappingOption
+				offerMappingOption={ ! isDeveloperFlow }
 				analyticsSection="signup"
-				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+				withPlansOnly={ isPlansOnlyTest }
 				includeWordPressDotCom
 				includeDotBlogSubdomain={ ( this.props.flowName === 'subdomain' ) ||
 					( abtest( 'domainDotBlogSubdomain' ) === 'includeDotBlogSubdomain' ) }
 				isSignupStep
-				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
+				showExampleSuggestions={ ! isDeveloperFlow }
 				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
 		);
 	},
@@ -181,14 +180,14 @@ const DomainsStep = React.createClass( {
 
 		return (
 			<div className="domains-step__section-wrapper">
-				<MapDomainStep
+				<MapDomain
 					initialState={ initialState }
 					path={ this.props.path }
-					onRegisterDomain={ this.handleAddDomain }
-					onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
+					onAddDomain={ this.handleAddDomain }
+					onAddMapping={ this.handleAddMapping.bind( this, 'mappingForm' ) }
 					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-					products={ productsList.get() }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					productsList={ productsList }
+					withPlansOnly={ abtest( 'domainsWithPlansOnly' ) === 'plansOnly' }
 					initialQuery={ initialQuery }
 					analyticsSection="signup" />
 			</div>
