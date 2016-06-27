@@ -17,6 +17,10 @@
 		max-width: 100%;
 	}
 
+	&.is-wide-layout {
+		max-width: 1040px;
+	}
+
 	@include breakpoint( "<660px" ) {
 		backface-visibility: hidden;
 		perspective: 1000;

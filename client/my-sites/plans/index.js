@@ -15,6 +15,15 @@ import googleAnalyticsLandingPage from './plan-feature/google-analytics';
 import yourPlan from './current-plan/controller';
 
 export default function() {
+	if ( config.isEnabled( 'manage/plan-features' ) ) {
+		page(
+			'/plans/features',
+			retarget,
+			controller.siteSelection,
+			controller.sites
+		);
+	}
+
 	if ( config.isEnabled( 'manage/plans' ) ) {
 		page(
 			'/plans',
