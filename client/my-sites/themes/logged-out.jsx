@@ -13,7 +13,7 @@ import Main from 'components/main';
 import { signup } from 'state/themes/actions' ;
 import ThemePreview from './theme-preview';
 import ThemesSelection from './themes-selection';
-import { getSignupUrl, getDetailsUrl, getSupportUrl, isPremium, addTracking } from './helpers';
+import { getSignupUrl, getDetailsUrl, getSupportUrl, getHelpUrl, isPremium, addTracking } from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -49,6 +49,9 @@ const ThemesLoggedOut = React.createClass( {
 				getUrl: theme => getSupportUrl( theme ),
 				// Free themes don't have support docs.
 				hideForTheme: theme => ! isPremium( theme )
+			},
+			help: {
+				getUrl: theme => getHelpUrl( theme )
 			},
 		};
 		return merge( {}, buttonOptions, actionLabels );
