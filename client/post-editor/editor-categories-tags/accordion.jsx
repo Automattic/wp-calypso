@@ -20,7 +20,7 @@ import { isPage } from 'lib/posts/utils';
 import unescapeString from 'lodash/unescape';
 
 module.exports = React.createClass( {
-	displayName: 'EditorTaxonomiesAccordion',
+	displayName: 'EditorCategoriesTagsAccordion',
 
 	propTypes: {
 		site: React.PropTypes.object,
