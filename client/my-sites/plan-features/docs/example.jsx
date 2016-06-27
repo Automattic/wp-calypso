@@ -39,7 +39,6 @@ export default React.createClass( {
 				<PlanFeatures plan={ PLAN_PERSONAL } />
 				<PlanFeatures plan={ PLAN_PREMIUM } />
 				<PlanFeatures plan={ PLAN_BUSINESS } />
-				<PlanFeatures plan={ PLAN_JETPACK_FREE } />
 				<PlanFeatures plan={ PLAN_JETPACK_BUSINESS } />
 				<PlanFeatures plan={ PLAN_JETPACK_BUSINESS_MONTHLY } />
 				<PlanFeatures plan={ PLAN_JETPACK_PREMIUM } />
