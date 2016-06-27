@@ -248,7 +248,7 @@ const JetpackConnectMain = React.createClass( {
 					<ConnectHeader
 						showLogo={ false }
 						headerText={ this.translate( 'Install Jetpack' ) }
-						subHeaderText={ this.translate( 'Installing Jetpack is easy. Please start by typing your site address below and then click "Start Installation"' ) }
+						subHeaderText={ this.translate( 'Installing Jetpack is easy. Please start by typing your site address below and then click "Start Installation".' ) }
 						step={ 1 }
 						steps={ 3 } />
 
