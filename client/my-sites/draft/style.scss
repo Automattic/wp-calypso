@@ -1,3 +1,6 @@
+.draft.card.is-compact {
+	padding: 16px;
+}
 
 .draft__title {
 	display: inline-block;
@@ -289,4 +292,9 @@
 	margin-right: 8px;
 	padding: 2px 8px;
 	text-transform: uppercase;
+}
+
+.draft .gravatar {
+	margin-right: 8px;
+	vertical-align: middle;
 }

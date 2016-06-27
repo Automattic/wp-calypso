@@ -22,6 +22,8 @@ var CompactCard = require( 'components/card/compact' ),
 	utils = require( 'lib/posts/utils' ),
 	hasTouch = require( 'lib/touch-detect' ).hasTouch;
 
+import Gravatar from 'components/gravatar';
+
 module.exports = React.createClass( {
 
 	displayName: 'Draft',
@@ -35,14 +37,16 @@ module.exports = React.createClass( {
 		sites: React.PropTypes.object,
 		onTitleClick: React.PropTypes.func,
 		postImages: React.PropTypes.object,
-		selected: React.PropTypes.bool
+		selected: React.PropTypes.bool,
+		showAuthor: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
 		return {
 			showAllActions: false,
 			onTitleClick: noop,
-			selected: false
+			selected: false,
+			showAuthor: false
 		};
 	},
 
@@ -181,6 +185,7 @@ module.exports = React.createClass( {
 				<h3 className="draft__title">
 					{ post.status === 'pending' &&
 						<span className="draft__pending-label">{ this.translate( 'Pending' ) }</span> }
+					{ this.props.showAuthor && <Gravatar user={ post.author } size={ 22 } /> }
 					<a href={ editPostURL } onClick={ this.props.onTitleClick }>
 						{ post.format === 'aside' ? excerpt : title }
 					</a>
