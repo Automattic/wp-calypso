@@ -28,6 +28,7 @@
 		"manage/ads/wordads-instant": true,
 		"manage/customize": true,
 		"manage/edit-user": true,
+		"manage/export": true,
 		"manage/jetpack": true,
 		"manage/jetpack-plans": true,
 		"manage/menus": true,
