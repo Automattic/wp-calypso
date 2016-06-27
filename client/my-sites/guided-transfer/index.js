@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import GuidedTransfer from './guided-transfer';
+import GuidedTransfer from './success';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
