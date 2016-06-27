@@ -11,7 +11,7 @@ import mapValues from 'lodash/mapValues';
  * Internal dependencies
  */
 import Main from 'components/main';
-import { customize, purchase, activate } from 'state/themes/actions';
+import { purchase, activate } from 'state/themes/actions';
 import ThemePreview from './theme-preview';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -21,7 +21,7 @@ import EmptyContent from 'components/empty-content';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import ThemesSelection from './themes-selection';
-import { getDetailsUrl, getSupportUrl, getHelpUrl, isPremium, addTracking } from './helpers';
+import { getCustomizeUrl, getDetailsUrl, getSupportUrl, getHelpUrl, isPremium, addTracking } from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import sitesFactory from 'lib/sites-list';
@@ -53,7 +53,7 @@ const ThemesSingleSite = React.createClass( {
 	togglePreview( theme ) {
 		const site = sites.getSelectedSite();
 		if ( site.jetpack ) {
-			this.props.customize( theme );
+			window.open( getCustomizeUrl( theme, site ) );
 		} else {
 			this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
 		}
@@ -64,7 +64,7 @@ const ThemesSingleSite = React.createClass( {
 			buttonOptions = {
 				customize: site && site.isCustomizable()
 					? {
-						action: this.props.customize,
+						getUrl: theme => getCustomizeUrl( theme, site ),
 						hideForTheme: theme => ! theme.active
 					}
 					: {},
@@ -83,7 +83,7 @@ const ThemesSingleSite = React.createClass( {
 					hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
 				},
 				tryandcustomize: {
-					action: theme => this.props.customize( theme ),
+					getUrl: theme => getCustomizeUrl( theme, site ),
 					hideForTheme: theme => theme.active
 				},
 				separator: {
@@ -108,11 +108,12 @@ const ThemesSingleSite = React.createClass( {
 		return merge( {}, buttonOptions, actionLabels );
 	},
 
-	onPreviewButtonClick( theme ) {
-		this.setState( { showPreview: false },
-			() => {
-				this.props.customize( theme );
-			} );
+	getPreviewButtonUrl( theme ) {
+		return getCustomizeUrl( theme, sites.getSelectedSite() );
+	},
+
+	onPreviewButtonClick() {
+		this.setState( { showPreview: false } );
 	},
 
 	renderJetpackMessage() {
@@ -155,6 +156,7 @@ const ThemesSingleSite = React.createClass( {
 						buttonLabel={ this.translate( 'Try & Customize', {
 							context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
 						} ) }
+						getButtonHref={ this.getPreviewButtonUrl }
 						onButtonClick={ this.onPreviewButtonClick } />
 				}
 				<ThanksModal
@@ -204,7 +206,6 @@ export default connect(
 	} ),
 	{
 		activate,
-		customize,
 		purchase
 	},
 	( stateProps, dispatchProps, ownProps ) => Object.assign(
