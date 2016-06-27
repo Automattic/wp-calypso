@@ -11,13 +11,18 @@ import {
 	ROUTE_SET,
 } from 'state/action-types';
 
+const timestamped = ( query ) => ( {
+	...query,
+	timestamp: Date.now(),
+} );
+
 const initial = createReducer( false, {
 	[ ROUTE_SET ]: ( state, { query } ) =>
-		state === false ? query : state,
+		state === false ? timestamped( query ) : state,
 } );
 
 const current = createReducer( {}, {
-	[ ROUTE_SET ]: ( state, { query } ) => query,
+	[ ROUTE_SET ]: ( state, { query } ) => timestamped( query ),
 } );
 
 export default combineReducers( {

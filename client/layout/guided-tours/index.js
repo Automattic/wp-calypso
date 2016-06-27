@@ -77,7 +77,10 @@ class GuidedTours extends Component {
 			return true;
 		};
 		const proceedToNextStep = () => {
-			this.props.nextGuidedTourStep( { stepName: nextStepName } );
+			this.props.nextGuidedTourStep( {
+				stepName: nextStepName,
+				tour: this.props.tourState.tour,
+			} );
 		};
 		const abortTour = () => {
 			const ERROR_WAITED_TOO_LONG = 'waited too long for next target';
@@ -99,6 +102,7 @@ class GuidedTours extends Component {
 		this.currentTarget && this.currentTarget.classList.remove( 'guided-tours__overlay' );
 		this.props.quitGuidedTour( Object.assign( {
 			stepName: this.props.tourState.stepName,
+			tour: this.props.tourState.tour,
 		}, options ) );
 	}
 
