@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
 import { connect } from 'react-redux';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
@@ -53,7 +54,7 @@ const ThemesMultiSite = React.createClass( {
 	getButtonOptions() {
 		const buttonOptions = {
 			preview: {
-				action: theme => this.togglePreview( theme ),
+				action: theme => page( getDetailsUrl( theme ) ),
 			},
 			purchase: config.isEnabled( 'upgrades/checkout' )
 				? {

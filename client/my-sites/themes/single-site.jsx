@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
 import { connect } from 'react-redux';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
@@ -69,7 +70,7 @@ const ThemesSingleSite = React.createClass( {
 					}
 					: {},
 				preview: {
-					action: theme => this.togglePreview( theme ),
+					action: theme => page( getDetailsUrl( theme, site ) ),
 					hideForTheme: theme => theme.active
 				},
 				purchase: config.isEnabled( 'upgrades/checkout' )

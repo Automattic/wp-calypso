@@ -12,8 +12,8 @@ export default {
 		} )
 	},
 	preview: {
-		label: i18n.translate( 'Live demo', {
-			comment: 'label for previewing the theme demo website'
+		label: i18n.translate( 'Info', {
+			comment: 'label for displaying the theme info sheet'
 		} )
 	},
 	purchase: {
