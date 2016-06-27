@@ -4,6 +4,7 @@
 import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
 import noop from 'lodash/noop';
+import { stub } from 'sinon';
 
 /**
  * Internal dependencies
@@ -76,7 +77,7 @@ describe( 'utils', () => {
 
 			before( () => {
 				reducer = createReducer( initialState, {
-					[TEST_ADD]: ( state, action ) => {
+					[ TEST_ADD ]: ( state, action ) => {
 						return {
 							test: [ ...state.test, action.value ]
 						};
@@ -142,8 +143,8 @@ describe( 'utils', () => {
 
 			before( () => {
 				reducer = createReducer( null, {
-					[SERIALIZE]: () => overriddenState,
-					[DESERIALIZE]: () => overriddenState
+					[ SERIALIZE ]: () => overriddenState,
+					[ DESERIALIZE ]: () => overriddenState
 				} );
 			} );
 
@@ -158,6 +159,27 @@ describe( 'utils', () => {
 					reducer( currentState, actionDeserialize )
 				).to.be.deep.equal( overriddenState );
 			} );
+		} );
+
+		it( 'should cache the serialize result on custom serialization behavior', () => {
+			const monitor = stub().returnsArg( 0 );
+
+			reducer = createReducer( [], {
+				[ SERIALIZE ]: monitor,
+				TEST_ADD: ( state ) => [ ...state, state.length ]
+			}, testSchema );
+
+			let state;
+			state = reducer( state, { type: SERIALIZE } );
+			state = reducer( state, { type: SERIALIZE } );
+			state = reducer( state, { type: 'TEST_ADD' } );
+			state = reducer( state, { type: SERIALIZE } );
+			state = reducer( state, { type: SERIALIZE } );
+			state = reducer( state, { type: 'TEST_ADD' } );
+			state = reducer( state, { type: SERIALIZE } );
+
+			expect( monitor ).to.have.been.calledThrice;
+			expect( state ).to.eql( [ 0, 1 ] );
 		} );
 	} );
 } );
