@@ -26,7 +26,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import TimezoneDropdown from 'components/timezone-dropdown';
+import Timezone from 'components/timezone';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDomainsBySite } from 'state/sites/domains/selectors';
 
@@ -106,7 +106,7 @@ const FormGeneral = React.createClass( {
 	},
 
 	onTimezoneSelect( timezone ) {
-		this.setState( { timezone_string: timezone.value } );
+		this.setState( { timezone_string: timezone } );
 	},
 
 	onRecordEvent( eventAction ) {
@@ -401,7 +401,7 @@ const FormGeneral = React.createClass( {
 		);
 	},
 
-	timezoneDropdown() {
+	Timezone() {
 		if ( this.props.site.jetpack ) {
 			return;
 		}
@@ -412,7 +412,7 @@ const FormGeneral = React.createClass( {
 					{ this.translate( 'Site Timezone' ) }
 				</FormLabel>
 
-				<TimezoneDropdown
+				<Timezone
 					valueLink={ this.linkState( 'timezone_string' ) }
 					selectedZone={ this.linkState( 'timezone_string' ).value }
 					disabled={ this.state.fetchingSettings }
@@ -454,7 +454,7 @@ const FormGeneral = React.createClass( {
 						{ this.siteOptions() }
 						{ this.blogAddress() }
 						{ this.languageOptions() }
-						{ this.timezoneDropdown() }
+						{ this.Timezone() }
 						{ this.holidaySnowOption() }
 					</form>
 				</Card>

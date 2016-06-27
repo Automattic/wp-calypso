@@ -39,7 +39,7 @@ import SpinnerLine from 'components/spinner-line/docs/example';
 import Rating from 'components/rating/docs/example';
 import DatePicker from 'components/date-picker/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
-import TimezoneDropdown from 'components/timezone-dropdown/docs/example';
+import Timezone from 'components/timezone/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
 import HeaderCake from 'components/header-cake';
@@ -133,7 +133,7 @@ let DesignAssets = React.createClass( {
 					<SocialLogos />
 					<Spinner searchKeywords="loading" />
 					<SpinnerLine searchKeywords="loading" />
-					<TimezoneDropdown />
+					<Timezone />
 					<TokenFields />
 					<Version />
 				</Collection>
