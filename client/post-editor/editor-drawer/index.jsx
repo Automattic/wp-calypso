@@ -93,7 +93,7 @@ const EditorDrawer = React.createClass( {
 	currentPostTypeSupports: function( feature ) {
 		const { typeObject, type } = this.props;
 
-		if ( typeObject ) {
+		if ( typeObject && typeObject.supports ) {
 			return !! typeObject.supports[ feature ];
 		}
 
