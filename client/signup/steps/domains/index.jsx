@@ -174,6 +174,7 @@ module.exports = React.createClass( {
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 		const isPlansOnlyTest = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
+		const isDeveloperFlow = 'developer' === this.props.flowName;
 		return (
 			<RegisterDomainStep
 				path={ this.props.path }
@@ -184,12 +185,12 @@ module.exports = React.createClass( {
 				mapDomainUrl={ this.getMapDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerMappingOption
+				offerMappingOption={ ! isDeveloperFlow }
 				analyticsSection="signup"
 				withPlansOnly={ isPlansOnlyTest }
 				includeWordPressDotCom
 				isSignupStep
-				showExampleSuggestions={ ! ( 'developer' === this.props.flowName ) }
+				showExampleSuggestions={ ! isDeveloperFlow }
 				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
 		);
 	},
