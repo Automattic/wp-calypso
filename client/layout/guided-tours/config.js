@@ -11,7 +11,7 @@ import i18n from 'i18n-calypso';
  */
 import { getSelectedSite } from 'state/ui/selectors';
 
-function get( tour = 'main' ) {
+function get( tour ) {
 	const tours = {
 		main: {
 			version: '20160601',
@@ -126,7 +126,7 @@ function get( tour = 'main' ) {
 		},
 	};
 
-	return tours[ tour ] || tours.main;
+	return tours[ tour ] || null;
 }
 
 export default {

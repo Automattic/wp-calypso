@@ -58,8 +58,8 @@ export function quitGuidedTour( { tour, stepName, finished, error } ) {
 	} );
 
 	return ( dispatch, getState ) => {
-		dispatch( withAnalytics( trackEvent, quitAction ) );
 		dispatch( addSeenGuidedTour( getState, tour, finished ) );
+		dispatch( withAnalytics( trackEvent, quitAction ) );
 	};
 }
 
