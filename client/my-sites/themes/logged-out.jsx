@@ -13,10 +13,10 @@ import Main from 'components/main';
 import { signup } from 'state/themes/actions' ;
 import ThemePreview from './theme-preview';
 import ThemesSelection from './themes-selection';
-import { getSignupUrl, getHelpUrl, isPremium, addTracking } from './helpers';
+import { getSignupUrl, isPremium, addTracking } from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
-import { getThemeDetailsUrl, getThemeSupportUrl } from 'state/themes/themes/selectors';
+import { getThemeDetailsUrl, getThemeSupportUrl, getThemeHelpUrl } from 'state/themes/themes/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const ThemesLoggedOut = React.createClass( {
@@ -52,7 +52,7 @@ const ThemesLoggedOut = React.createClass( {
 				hideForTheme: theme => ! isPremium( theme )
 			},
 			help: {
-				getUrl: theme => getHelpUrl( theme )
+				getUrl: this.props.getHelpUrl
 			},
 		};
 		return merge( {}, buttonOptions, actionLabels );
@@ -107,7 +107,8 @@ export default connect(
 		queryParams: getQueryParams( state ),
 		themesList: getThemesList( state ),
 		getDetailsUrl: getThemeDetailsUrl.bind( null, state ),
-		getSupportUrl: getThemeSupportUrl.bind( null, state )
+		getSupportUrl: getThemeSupportUrl.bind( null, state ),
+		getHelpUrl: getThemeHelpUrl.bind( null, state )
 	} ),
 	{ signup }
 )( ThemesLoggedOut );

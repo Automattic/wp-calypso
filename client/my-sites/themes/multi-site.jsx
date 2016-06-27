@@ -19,10 +19,10 @@ import ThemePreview from './theme-preview';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import ThemesSelection from './themes-selection';
-import { getHelpUrl, isPremium, addTracking } from './helpers';
+import { isPremium, addTracking } from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
-import { getThemeDetailsUrl, getThemeSupportUrl } from 'state/themes/themes/selectors';
+import { getThemeDetailsUrl, getThemeSupportUrl, getThemeHelpUrl } from 'state/themes/themes/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import config from 'config';
 
@@ -81,7 +81,7 @@ const ThemesMultiSite = React.createClass( {
 				hideForTheme: theme => ! isPremium( theme )
 			},
 			help: {
-				getUrl: theme => getHelpUrl( theme )
+				getUrl: this.props.getHelpUrl
 			},
 		};
 		return merge( {}, buttonOptions, actionLabels );
@@ -146,7 +146,8 @@ export default connect(
 		queryParams: getQueryParams( state ),
 		themesList: getThemesList( state ),
 		getDetailsUrl: getThemeDetailsUrl.bind( null, state ),
-		getSupportUrl: getThemeSupportUrl.bind( null, state )
+		getSupportUrl: getThemeSupportUrl.bind( null, state ),
+		getHelpUrl: getThemeHelpUrl.bind( null, state )
 	} ),
 	{
 		activate,

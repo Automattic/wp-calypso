@@ -56,3 +56,22 @@ export function getThemeSupportUrl( state, theme ) {
 
 	return `${ oldShowcaseUrl }${ sitePart }${ theme.id }/support`;
 }
+
+export function getThemeHelpUrl( state, theme ) {
+	if ( ! theme ) {
+		return null;
+	}
+
+	const site = getSelectedSite( state );
+
+	if ( site && site.jetpack ) {
+		return getThemeSupportUrl( state, theme );
+	}
+
+	let baseUrl = oldShowcaseUrl + theme.id;
+	if ( config.isEnabled( 'manage/themes/details' ) ) {
+		baseUrl = `/theme/${ theme.id }/support`;
+	}
+
+	return baseUrl + ( site ? `/${ site.slug }` : '' );
+}

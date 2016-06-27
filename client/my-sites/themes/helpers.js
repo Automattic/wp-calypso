@@ -64,19 +64,6 @@ export function getForumUrl( theme ) {
 	return isPremium( theme ) ? '//premium-themes.forums.wordpress.com/forum/' + theme.id : '//en.forums.wordpress.com/forum/themes';
 }
 
-export function getHelpUrl( theme, site ) {
-	if ( site && site.jetpack ) {
-		return getSupportUrl( theme, site );
-	}
-
-	let baseUrl = oldShowcaseUrl + theme.id;
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		baseUrl = `/theme/${ theme.id }/support`;
-	}
-
-	return baseUrl + ( site ? `/${ site.slug }` : '' );
-}
-
 export function getExternalThemesUrl( site ) {
 	if ( ! site ) {
 		return oldShowcaseUrl;
