@@ -359,7 +359,7 @@ const JetpackConnectMain = React.createClass( {
 					</div>
 					<Button onClick={ this.activateJetpack } primary>{ this.translate( 'Activate Jetpack' ) }</Button>
 					<div className="jetpack-connect__navigation">
-						<div>{ this.renderBackButton() }</div>
+						{ this.renderBackButton() }
 					</div>
 				</div>
 			</Main>
