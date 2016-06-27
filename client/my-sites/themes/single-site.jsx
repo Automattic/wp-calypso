@@ -92,7 +92,7 @@ const ThemesSingleSite = React.createClass( {
 				separator: {
 					separator: true
 				},
-				details: {
+				info: {
 					action: theme => page( getDetailsUrl( theme, site ) ),
 					getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
 				},
@@ -136,7 +136,7 @@ const ThemesSingleSite = React.createClass( {
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
 			buttonOptions = this.getButtonOptions(),
 			getScreenshotAction = function( theme ) {
-				return buttonOptions[ theme.active ? 'customize' : 'details' ];
+				return buttonOptions[ theme.active ? 'customize' : 'info' ];
 			};
 
 		if ( isJetpack && jetpackEnabled && ! site.hasJetpackThemes ) {

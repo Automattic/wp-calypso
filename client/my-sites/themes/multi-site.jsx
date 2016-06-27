@@ -74,7 +74,7 @@ const ThemesMultiSite = React.createClass( {
 			separator: {
 				separator: true
 			},
-			details: {
+			info: {
 				action: theme => page( getDetailsUrl( theme ) ),
 				getUrl: theme => getDetailsUrl( theme ),
 			},
@@ -115,10 +115,10 @@ const ThemesMultiSite = React.createClass( {
 				<ThemesSelection search={ this.props.search }
 					selectedSite={ false }
 					onScreenshotClick={ function( theme ) {
-						buttonOptions.details.action( theme );
+						buttonOptions.info.action( theme );
 					} }
 					getActionLabel={ function() {
-						return buttonOptions.details.label;
+						return buttonOptions.info.label;
 					} }
 					getOptions={ function( theme ) {
 						return pickBy(
