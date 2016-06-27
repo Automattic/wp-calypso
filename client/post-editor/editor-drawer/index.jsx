@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
-import TaxonomiesAccordion from 'post-editor/editor-taxonomies/accordion';
+import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import CategoryListData from 'components/data/category-list-data';
 import TagListData from 'components/data/tag-list-data';
 import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
@@ -124,7 +124,7 @@ const EditorDrawer = React.createClass( {
 		}
 
 		element = (
-			<TaxonomiesAccordion
+			<CategoriesTagsAccordion
 				site={ this.props.site }
 				post={ this.props.post } />
 		);
