@@ -10,12 +10,16 @@ import merge from 'lodash/merge';
  * Internal dependencies
  */
 import Main from 'components/main';
-import { customize, purchase, activate } from 'state/themes/actions';
+import {
+	customize as tryandcustomize,
+	purchase,
+	activate
+} from 'state/themes/actions';
 import ThemePreview from './theme-preview';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import ThemesSelection from './themes-selection';
-import { getDetailsUrl, getSupportUrl, isPremium, addTracking } from './helpers';
+import { getDetailsUrl, getSupportUrl, getHelpUrl, isPremium, addTracking } from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -50,21 +54,19 @@ const ThemesMultiSite = React.createClass( {
 		const buttonOptions = {
 			preview: {
 				action: theme => this.togglePreview( theme ),
-				hideForTheme: theme => theme.active
 			},
 			purchase: config.isEnabled( 'upgrades/checkout' )
 				? {
 					action: theme => this.showSiteSelectorModal( 'purchase', theme ),
-					hideForTheme: theme => theme.active || theme.purchased || ! theme.price
+					hideForTheme: theme => ! theme.price
 				}
 				: {},
 			activate: {
 				action: theme => this.showSiteSelectorModal( 'activate', theme ),
-				hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
+				hideForTheme: theme => theme.price
 			},
-			customize: {
-				action: theme => this.showSiteSelectorModal( 'customize', theme ),
-				hideForTheme: theme => ! theme.active
+			tryandcustomize: {
+				action: theme => this.showSiteSelectorModal( 'tryandcustomize', theme ),
 			},
 			separator: {
 				separator: true
@@ -77,6 +79,9 @@ const ThemesMultiSite = React.createClass( {
 				// Free themes don't have support docs.
 				hideForTheme: theme => ! isPremium( theme )
 			},
+			help: {
+				getUrl: theme => getHelpUrl( theme )
+			},
 		};
 		return merge( {}, buttonOptions, actionLabels );
 	},
@@ -84,7 +89,7 @@ const ThemesMultiSite = React.createClass( {
 	onPreviewButtonClick( theme ) {
 		this.setState( { showPreview: false },
 			() => {
-				this.getButtonOptions().customize.action( theme );
+				this.getButtonOptions().tryandcustomize.action( theme );
 			} );
 	},
 
@@ -142,7 +147,7 @@ export default connect(
 	} ),
 	{
 		activate,
-		customize,
+		tryandcustomize,
 		purchase
 	}
 )( ThemesMultiSite );

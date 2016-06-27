@@ -21,7 +21,7 @@ import EmptyContent from 'components/empty-content';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import ThemesSelection from './themes-selection';
-import { getDetailsUrl, getSupportUrl, isPremium, addTracking } from './helpers';
+import { getDetailsUrl, getSupportUrl, getHelpUrl, isPremium, addTracking } from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import sitesFactory from 'lib/sites-list';
@@ -62,6 +62,12 @@ const ThemesSingleSite = React.createClass( {
 	getButtonOptions() {
 		const site = sites.getSelectedSite(),
 			buttonOptions = {
+				customize: site && site.isCustomizable()
+					? {
+						action: this.props.customize,
+						hideForTheme: theme => ! theme.active
+					}
+					: {},
 				preview: {
 					action: theme => this.togglePreview( theme ),
 					hideForTheme: theme => theme.active
@@ -76,12 +82,10 @@ const ThemesSingleSite = React.createClass( {
 					action: this.props.activate,
 					hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
 				},
-				customize: site && site.isCustomizable()
-					? {
-						action: this.props.customize,
-						hideForTheme: theme => ! theme.active
-					}
-					: {},
+				tryandcustomize: {
+					action: theme => this.props.customize( theme ),
+					hideForTheme: theme => theme.active
+				},
 				separator: {
 					separator: true
 				},
@@ -92,6 +96,11 @@ const ThemesSingleSite = React.createClass( {
 					? {
 						getUrl: theme => getSupportUrl( theme, site ),
 						hideForTheme: theme => ! isPremium( theme )
+					}
+					: {},
+				help: ! site.jetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
+					? {
+						getUrl: theme => getHelpUrl( theme, site )
 					}
 					: {},
 			};
