@@ -313,10 +313,6 @@ describe( 'TokenField', function() {
 
 			document.activeElement.blur();
 			textInputNode.simulate( 'blur' );
-
-			// After blur, need to wait for TokenField#_blurTimeoutID
-			clock.tick( 10 );
-
 			testSavedState( false );
 			textInputNode.simulate( 'focus' );
 			testSavedState( true );
@@ -350,31 +346,6 @@ describe( 'TokenField', function() {
 				[ 'foo', 'bar' ], // expectedTokens
 				this.clock
 			);
-		} ) );
-
-		// Firefox on OS X first sends a blur event, then a click event as the
-		// mouse is released. These two tests ensure that the component
-		// activates correctly in this situation.
-		it( 'should allow clicking on the field in Firefox (click event from input container)', test( function() {
-			textInputNode.simulate( 'blur' );
-
-			this.clock.tick( 50 );
-
-			// The click event comes from here the first time you click to
-			// activate the token field.
-			tokenFieldNode.find( '.token-field__input-container' ).simulate( 'click' );
-			expect( tokenFieldNode.find( 'div' ).first().hasClass( 'is-active' ) ).to.equal( true );
-		} ) );
-
-		it( 'should allow clicking on the field in Firefox (click event from <input>)', test( function() {
-			textInputNode.simulate( 'blur' );
-
-			this.clock.tick( 50 );
-
-			// The click event comes from here if you click on the token
-			// field when it is already active.
-			textInputNode.simulate( 'click' );
-			expect( tokenFieldNode.find( 'div' ).first().hasClass( 'is-active' ) ).to.equal( true );
 		} ) );
 
 		it( 'should not lose focus when a suggestion is clicked', test( function() {
