@@ -302,6 +302,16 @@ const ThemeSheet = React.createClass( {
 		return <ThemesRelatedCard currentTheme={ this.props.id } />;
 	},
 
+	renderPrice(){
+		let price = this.props.price;
+
+		if ( ! isPremium( this.props ) ) {
+			price = i18n.translate( 'Free' );
+		}
+
+		return <span className="themes__sheet-action-bar-cost">{ price }</span>;
+	},
+
 	renderSheet() {
 		let actionTitle = <span className="themes__sheet-button-placeholder">loading......</span>;
 		if ( this.isActive() ) {
@@ -311,7 +321,7 @@ const ThemeSheet = React.createClass( {
 		}
 
 		const section = this.validateSection( this.props.section );
-		const priceElement = <span className="themes__sheet-action-bar-cost">{ this.props.price }</span>;
+		const priceElement = this.renderPrice();
 		const siteID = this.props.selectedSite && this.props.selectedSite.ID;
 
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
