@@ -12,8 +12,8 @@ export default {
 		} )
 	},
 	preview: {
-		label: i18n.translate( 'Info', {
-			comment: 'label for displaying the theme info sheet'
+		label: i18n.translate( 'Live demo', {
+			comment: 'label for previewing the theme demo website'
 		} )
 	},
 	purchase: {
@@ -38,7 +38,9 @@ export default {
 		header: i18n.translate( 'Try & Customize on:', { comment: 'label in the dialog for opening the Customizer with the theme in preview' } ),
 	},
 	details: {
-		label: i18n.translate( 'Details' ),
+		label: i18n.translate( 'Info', {
+			comment: 'label for displaying the theme info sheet'
+		} )
 	},
 	support: {
 		label: i18n.translate( 'Setup' ),

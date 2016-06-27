@@ -13,6 +13,7 @@ import mapValues from 'lodash/mapValues';
  */
 import Main from 'components/main';
 import { customize, purchase, activate } from 'state/themes/actions';
+import ThemePreview from './theme-preview';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -47,7 +48,18 @@ const ThemesSingleSite = React.createClass( {
 		return {
 			selectedTheme: null,
 			selectedAction: null,
+			showPreview: null,
+			previewingTheme: null,
 		};
+	},
+
+	togglePreview( theme ) {
+		const site = sites.getSelectedSite();
+		if ( site.jetpack ) {
+			this.props.customize( theme );
+		} else {
+			this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
+		}
 	},
 
 	getButtonOptions() {
@@ -60,7 +72,7 @@ const ThemesSingleSite = React.createClass( {
 					}
 					: {},
 				preview: {
-					action: theme => page( getDetailsUrl( theme, site ) ),
+					action: theme => this.togglePreview( theme ),
 					hideForTheme: theme => theme.active
 				},
 				purchase: config.isEnabled( 'upgrades/checkout' )
@@ -80,6 +92,10 @@ const ThemesSingleSite = React.createClass( {
 				separator: {
 					separator: true
 				},
+				details: {
+					action: theme => page( getDetailsUrl( theme, site ) ),
+					getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
+				},
 				support: ! site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
 					? {
 						getUrl: theme => getSupportUrl( theme, site ),
@@ -94,6 +110,12 @@ const ThemesSingleSite = React.createClass( {
 			};
 
 		return merge( {}, buttonOptions, actionLabels );
+	},
+
+	onPreviewButtonClick( theme ) {
+		this.setState( { showPreview: false }, () => {
+			this.props.customize( theme );
+		} );
 	},
 
 	renderJetpackMessage() {
@@ -114,7 +136,7 @@ const ThemesSingleSite = React.createClass( {
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
 			buttonOptions = this.getButtonOptions(),
 			getScreenshotAction = function( theme ) {
-				return buttonOptions[ theme.active ? 'customize' : 'preview' ];
+				return buttonOptions[ theme.active ? 'customize' : 'details' ];
 			};
 
 		if ( isJetpack && jetpackEnabled && ! site.hasJetpackThemes ) {
@@ -129,6 +151,15 @@ const ThemesSingleSite = React.createClass( {
 			<Main className="themes">
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle }/>
 				<SidebarNavigation />
+				{ this.state.showPreview &&
+					<ThemePreview showPreview={ this.state.showPreview }
+						theme={ this.state.previewingTheme }
+						onClose={ this.togglePreview }
+						buttonLabel={ this.translate( 'Try & Customize', {
+							context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
+						} ) }
+						onButtonClick={ this.onPreviewButtonClick } />
+				}
 				<ThanksModal
 					site={ site }
 					source={ 'list' }/>

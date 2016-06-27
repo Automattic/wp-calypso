@@ -16,6 +16,7 @@ import {
 	purchase,
 	activate
 } from 'state/themes/actions';
+import ThemePreview from './theme-preview';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import ThemesSelection from './themes-selection';
@@ -31,11 +32,17 @@ const ThemesMultiSite = React.createClass( {
 		return {
 			selectedTheme: null,
 			selectedAction: null,
+			showPreview: null,
+			previewingTheme: null,
 		};
 	},
 
 	showSiteSelectorModal( action, theme ) {
 		this.setState( { selectedTheme: theme, selectedAction: action } );
+	},
+
+	togglePreview( theme ) {
+		this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
 	},
 
 	hideSiteSelectorModal() {
@@ -49,7 +56,7 @@ const ThemesMultiSite = React.createClass( {
 	getButtonOptions() {
 		const buttonOptions = {
 			preview: {
-				action: theme => page( getDetailsUrl( theme ) ),
+				action: theme => this.togglePreview( theme ),
 			},
 			purchase: config.isEnabled( 'upgrades/checkout' )
 				? {
@@ -67,6 +74,10 @@ const ThemesMultiSite = React.createClass( {
 			separator: {
 				separator: true
 			},
+			details: {
+				action: theme => page( getDetailsUrl( theme ) ),
+				getUrl: theme => getDetailsUrl( theme ),
+			},
 			support: {
 				getUrl: theme => getSupportUrl( theme ),
 				// Free themes don't have support docs.
@@ -79,6 +90,12 @@ const ThemesMultiSite = React.createClass( {
 		return merge( {}, buttonOptions, actionLabels );
 	},
 
+	onPreviewButtonClick( theme ) {
+		this.setState( { showPreview: false }, () => {
+			this.getButtonOptions().tryandcustomize.action( theme );
+		} );
+	},
+
 	render() {
 		const buttonOptions = this.getButtonOptions();
 
@@ -86,13 +103,22 @@ const ThemesMultiSite = React.createClass( {
 			<Main className="themes">
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle }/>
 				<SidebarNavigation />
+				{ this.state.showPreview &&
+					<ThemePreview showPreview={ this.state.showPreview }
+						theme={ this.state.previewingTheme }
+						onClose={ this.togglePreview }
+						buttonLabel={ this.translate( 'Try & Customize', {
+							context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
+						} ) }
+						onButtonClick={ this.onPreviewButtonClick } />
+				}
 				<ThemesSelection search={ this.props.search }
 					selectedSite={ false }
 					onScreenshotClick={ function( theme ) {
-						buttonOptions.preview.action( theme );
+						buttonOptions.details.action( theme );
 					} }
 					getActionLabel={ function() {
-						return buttonOptions.preview.label;
+						return buttonOptions.details.label;
 					} }
 					getOptions={ function( theme ) {
 						return pickBy(
