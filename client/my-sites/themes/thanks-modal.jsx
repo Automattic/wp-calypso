@@ -10,7 +10,8 @@ import page from 'page';
  */
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
-import { getDetailsUrl, getCustomizeUrl, getForumUrl, trackClick } from './helpers';
+import { getCustomizeUrl, getForumUrl, trackClick } from './helpers';
+import { getThemeDetailsUrl } from 'state/themes/themes/selectors';
 import {
 	isActivating,
 	hasActivated,
@@ -59,7 +60,7 @@ const ThanksModal = React.createClass( {
 	renderWpcomInfo() {
 		const features = this.translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
 			components: {
-				a: <a href={ getDetailsUrl( this.props.currentTheme, this.props.site ) }
+				a: <a href={ this.props.detailsUrl }
 					onClick={ this.onLinkClick( 'features' ) }/>
 			}
 		} );
@@ -190,10 +191,15 @@ const ThanksModal = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => ( {
-		isActivating: isActivating( state ),
-		hasActivated: hasActivated( state ),
-		currentTheme: getCurrentTheme( state, props.site ? props.site.ID : null )
-	} ),
+	( state, props ) => {
+		const currentTheme = getCurrentTheme( state, props.site && props.site.ID );
+
+		return {
+			currentTheme,
+			detailsUrl: getThemeDetailsUrl( state, currentTheme ),
+			isActivating: isActivating( state ),
+			hasActivated: hasActivated( state ),
+		};
+	},
 	{ clearActivated }
 )( ThanksModal );
