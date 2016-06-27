@@ -10,6 +10,7 @@ import get from 'lodash/get';
  */
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PostTypeFilter from 'my-sites/post-type-filter';
 import PostTypeList from 'my-sites/post-type-list';
 import PostTypeUnsupported from './post-type-unsupported';
@@ -18,10 +19,13 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 
-function Types( { query, postType, postTypeSupported, userCanEdit } ) {
+function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 	return (
 		<Main>
 			<DocumentHead title={ get( postType, 'label' ) } />
+			<PageViewTracker
+				path={ siteId ? '/types/:site' : '/types' }
+				title="Custom Post Type" />
 			{ false !== userCanEdit && false !== postTypeSupported && [
 				<PostTypeFilter
 					key="filter"
@@ -41,6 +45,7 @@ function Types( { query, postType, postTypeSupported, userCanEdit } ) {
 }
 
 Types.propTypes = {
+	siteId: PropTypes.number,
 	query: PropTypes.object,
 	postType: PropTypes.object,
 	postTypeSupported: PropTypes.bool,
@@ -53,6 +58,7 @@ export default connect( ( state, ownProps ) => {
 	const capability = get( postType, [ 'capabilities', 'edit_posts' ], null );
 
 	return {
+		siteId,
 		postType,
 		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ),
 		userCanEdit: canCurrentUser( state, siteId, capability )
