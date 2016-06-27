@@ -43,6 +43,7 @@ const ReaderSidebarLists = React.createClass( {
 				expanded={ this.props.isOpen }
 				title={ this.translate( 'Lists' ) }
 				count={ listCount }
+				addLabel={ this.translate( 'New list name' ) }
 				addPlaceholder={ this.translate( 'Give your list a name' ) }
 				onAddClick={ this.handleAddClick }
 				onAddSubmit={ this.createList }
