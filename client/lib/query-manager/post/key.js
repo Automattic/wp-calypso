@@ -11,14 +11,17 @@ import { DEFAULT_POST_QUERY } from './constants';
 
 /**
  * Returns true if the specified key value query pair is identical to that of
- * the default post query.
+ * the default post query, is null, or is undefined.
  *
  * @param  {*}       value Value to check
  * @param  {String}  key   Key to check
- * @return {Boolean}       Whether key value matches default query
+ * @return {Boolean}       Whether key value matches default query or is null
  */
-function isDefaultQueryValue( value, key ) {
-	return DEFAULT_POST_QUERY[ key ] === value;
+function isDefaultOrNullQueryValue( value, key ) {
+	return (
+		null == value || // Double-equals null checks undefined, null
+		DEFAULT_POST_QUERY[ key ] === value
+	);
 }
 
 /**
@@ -33,7 +36,7 @@ export default class PostQueryKey extends PaginatedQueryKey {
 	 * @return {String}       Serialized query
 	 */
 	static stringify( query ) {
-		return super.stringify( omitBy( query, isDefaultQueryValue ) );
+		return super.stringify( omitBy( query, isDefaultOrNullQueryValue ) );
 	}
 
 	/**
@@ -43,6 +46,6 @@ export default class PostQueryKey extends PaginatedQueryKey {
 	 * @return {Object}     Query object
 	 */
 	static parse( key ) {
-		return omitBy( super.parse( key ), isDefaultQueryValue );
+		return omitBy( super.parse( key ), isDefaultOrNullQueryValue );
 	}
 }
