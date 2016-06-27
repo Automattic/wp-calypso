@@ -52,7 +52,7 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			searchTerm: null,
+			searchTerm: '',
 			selectedIds: this.getSelectedIds()
 		};
 	},
