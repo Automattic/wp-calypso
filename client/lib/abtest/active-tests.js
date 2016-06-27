@@ -120,4 +120,14 @@ module.exports = {
 		defaultVariation: 'enabled',
 		allowExistingUsers: false,
 	},
+	coldStartReader: {
+		datestamp: '20160622',
+		variations: {
+			noEmailColdStart: 10,
+			noEmailNoColdStart: 10,
+			noChanges: 80
+		},
+		defaultVariation: 'noChanges',
+		allowExistingUsers: false,
+	},
 };
