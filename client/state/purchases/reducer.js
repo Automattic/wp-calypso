@@ -1,7 +1,6 @@
 /**
  * External Dependencies
  */
-import assign from 'lodash/assign';
 import find from 'lodash/find';
 import matches from 'lodash/matches';
 
@@ -36,14 +35,15 @@ const initialState = {
 };
 
 function updatePurchaseById( state, id, properties ) {
-	return assign( {}, state, {
+	return {
+		...state,
 		data: state.data.map( purchase => {
 			if ( id === purchase.id ) {
-				return assign( {}, purchase, properties );
+				return { ...purchase, ...properties };
 			}
 			return purchase;
 		} )
-	} );
+	};
 }
 
 /**
@@ -114,50 +114,50 @@ export const items = ( state = initialState, action ) => {
 
 	switch ( type ) {
 		case PURCHASES_REMOVE:
-			return assign( {}, state, {
+			return { ...state,
 				data: [],
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: false
-			} );
+			};
 		case PURCHASE_REMOVE:
-			return assign( {}, state, {
+			return { ...state,
 				data: [],
 				isFetchingSitePurchases: false,
 				isFetchingUserPurchases: false
-			} );
+			};
 		case PURCHASES_SITE_FETCH:
-			return assign( {}, state, { isFetchingSitePurchases: true } );
+			return { ...state, isFetchingSitePurchases: true };
 		case PURCHASES_USER_FETCH:
-			return assign( {}, state, { isFetchingUserPurchases: true } );
+			return { ...state, isFetchingUserPurchases: true };
 
 		case PURCHASE_REMOVE_COMPLETED:
-			return assign( {}, state, {
+			return { ...state,
 				data: updatePurchases( state.data, action ),
 				error: null,
 				isFetchingSitePurchases: false,
 				isFetchingUserPurchases: false,
 				hasLoadedSitePurchasesFromServer: true,
 				hasLoadedUserPurchasesFromServer: true
-			} );
+			};
 		case PURCHASES_SITE_FETCH_COMPLETED:
-			return assign( {}, state, {
+			return { ...state,
 				data: updatePurchases( state.data, action ),
 				error: null,
 				isFetchingSitePurchases: false,
 				hasLoadedSitePurchasesFromServer: true
-			} );
+			};
 		case PURCHASES_USER_FETCH_COMPLETED:
-			return assign( {}, state, {
+			return { ...state,
 				data: updatePurchases( state.data, action ),
 				error: null,
 				isFetchingUserPurchases: false,
 				hasLoadedUserPurchasesFromServer: true
-			} );
+			};
 
 		case PURCHASE_REMOVE_FAILED:
 		case PURCHASES_SITE_FETCH_FAILED:
 		case PURCHASES_USER_FETCH_FAILED:
-			return assign( {}, state, { error: action.error } );
+			return { ...state, error: action.error };
 
 		case PRIVACY_PROTECTION_CANCEL_COMPLETED:
 			return updatePurchaseById( state, action.purchase.id, action.purchase );
