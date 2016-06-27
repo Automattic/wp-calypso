@@ -83,7 +83,7 @@ const PostsMain = React.createClass( {
 			return null;
 		}
 
-		return <Draft key={ draft.global_ID } post={ draft } sites={ this.props.sites } />;
+		return <Draft key={ draft.global_ID } post={ draft } sites={ this.props.sites } showAuthor={ ! this.props.author } />;
 	},
 
 	render() {
