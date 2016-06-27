@@ -67,9 +67,6 @@ const ThemesMultiSite = React.createClass( {
 			separator: {
 				separator: true
 			},
-			details: {
-				getUrl: theme => getDetailsUrl( theme ),
-			},
 			support: {
 				getUrl: theme => getSupportUrl( theme ),
 				// Free themes don't have support docs.

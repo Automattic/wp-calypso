@@ -80,9 +80,6 @@ const ThemesSingleSite = React.createClass( {
 				separator: {
 					separator: true
 				},
-				details: {
-					getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
-				},
 				support: ! site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
 					? {
 						getUrl: theme => getSupportUrl( theme, site ),
