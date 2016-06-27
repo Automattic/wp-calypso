@@ -25,7 +25,9 @@ import {
 	featuresList,
 	plansList,
 	PLAN_PERSONAL,
-	PLAN_FREE
+	PLAN_FREE,
+	JETPACK,
+	WPCOM
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
@@ -70,8 +72,17 @@ export function getSitePlanSlug( siteID ) {
 	return get( site, 'plan.product_slug' );
 }
 
-export function getPlanSlugFromPath( path ) {
-	return find( Object.keys( plansList ), planKey => ( getPlanPath( planKey ) === path ) );
+function canUpgradeToPlan( planKey, site ) {
+	const offer = site.jetpack ? JETPACK : WPCOM;
+	return get( plansList, [ planKey, 'availableIn' ], () => false )( offer );
+}
+
+export function getUpgradePlanSlugFromPath( path, siteID ) {
+	const site = siteID ? sitesList.getSite( siteID ) : sitesList.getSelectedSite();
+	return find( Object.keys( plansList ), planKey => (
+		( planKey === path || getPlanPath( planKey ) === path ) &&
+		canUpgradeToPlan( planKey, site )
+	) );
 }
 
 export function getPlanPath( plan ) {

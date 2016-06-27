@@ -30,8 +30,7 @@ var analytics = require( 'lib/analytics' ),
 
 import {
 	isValidFeatureKey,
-	getPlanSlugFromPath,
-	sanitizePlanKey,
+	getUpgradePlanSlugFromPath,
 	getCartItem
 } from 'lib/plans';
 
@@ -102,10 +101,10 @@ const Checkout = React.createClass( {
 	},
 
 	addProductToCart: function() {
-		var planSlug = getPlanSlugFromPath( this.props.product ) || sanitizePlanKey( this.props.product ),
+		var planSlug = getUpgradePlanSlugFromPath( this.props.product ),
 			cartItem,
 			cartMeta;
-
+			
 		if ( planSlug ) {
 			cartItem = getCartItem( planSlug );
 		}
