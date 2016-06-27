@@ -31,12 +31,15 @@ export default function detectEmbeds( post, dom ) {
 		'8tracks.com',
 		'spotify.com',
 		'me.sh',
-		'bandcamp.com'
+		'bandcamp.com',
+		'kickstarter.com',
+		'facebook.com'
 	];
 
 	// hosts that we trust that don't work in a sandboxed iframe
 	const iframeNoSandbox = [
-		'spotify.com'
+		'spotify.com',
+		'kickstarter.com'
 	];
 
 	embeds = filter( embeds, function( iframe ) {
