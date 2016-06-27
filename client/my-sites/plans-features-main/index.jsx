@@ -24,18 +24,17 @@ import { abtest } from 'lib/abtest';
 
 class PlansFeaturesMain extends Component {
 
-	constructor( props ) {
-		super( props );
-		this.getFAQ = this.getFAQ.bind( this );
-	}
-
 	renderPlanPlaceholders() {
-		const { site, hideFreePlan, showJetpackFreePlan } = this.props;
+		const { site, hideFreePlan } = this.props;
 
 		let numberOfPlaceholders = abtest( 'personalPlan' ) === 'hide' ? 3 : 4;
 
-		if ( hideFreePlan || ( site && site.jetpack ) ) {
-			numberOfPlaceholders = showJetpackFreePlan ? 3 : 2;
+		if ( hideFreePlan ) {
+			numberOfPlaceholders = 3;
+		}
+
+		if ( site && site.jetpack ) {
+			numberOfPlaceholders = 2;
 		}
 
 		const plansList = times( numberOfPlaceholders, ( n ) => {
