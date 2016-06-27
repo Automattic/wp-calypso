@@ -1,16 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react'
-import analytics from 'lib/analytics'
+import React from 'react';
+import analytics from 'lib/analytics';
 
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper'
-import SignupForm from 'components/signup-form'
-import signupUtils from 'signup/utils'
+import StepWrapper from 'signup/step-wrapper';
+import SignupForm from 'components/signup-form';
+import signupUtils from 'signup/utils';
 import SignupActions from 'lib/signup/actions';
+import { abtest } from 'lib/abtest';
+import config from 'config';
 
 export default React.createClass( {
 
@@ -24,14 +26,13 @@ export default React.createClass( {
 		if ( this.props.flowName !== nextProps.flowName || this.props.subHeaderText !== nextProps.subHeaderText ) {
 			this.setSubHeaderText( nextProps );
 		}
-
 	},
 
 	componentWillMount() {
 		this.setSubHeaderText( this.props );
 	},
 
-	setSubHeaderText( props )  {
+	setSubHeaderText( props ) {
 		let subHeaderText = props.subHeaderText;
 
 		/**
@@ -57,6 +58,19 @@ export default React.createClass( {
 
 		if ( this.props.queryObject && this.props.queryObject.jetpack_redirect ) {
 			queryArgs.jetpackRedirect = this.props.queryObject.jetpack_redirect;
+		}
+
+		if ( config.isEnabled( 'reader/start' ) ) {
+			// User is participating in Reader Cold Start
+			if ( abtest( 'coldStartReader' ) === 'noEmailColdStart' ) {
+				userData.follow_default_blogs = false;
+				userData.subscription_delivery_email_default = 'never';
+				userData.is_new_reader = true;
+
+			// User is not participating in Reader Cold Start, but is in our "never send email" experiment group
+			} else if ( abtest( 'coldStartReader' ) === 'noEmailNoColdStart' ) {
+				userData.subscription_delivery_email_default = 'never';
+			}
 		}
 
 		const formWithoutPassword = Object.assign( {}, form, {
@@ -126,7 +140,7 @@ export default React.createClass( {
 				submitForm={ this.submitForm }
 				submitButtonText={ this.submitButtonText() }
 			/>
-		)
+		);
 	},
 
 	render() {
@@ -141,6 +155,6 @@ export default React.createClass( {
 				signupProgressStore={ this.props.signupProgressStore }
 				stepContent={ this.renderSignupForm() }
 			/>
-		)
+		);
 	}
 } );
