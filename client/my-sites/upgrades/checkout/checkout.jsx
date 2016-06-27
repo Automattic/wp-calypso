@@ -104,7 +104,7 @@ const Checkout = React.createClass( {
 		var planSlug = getUpgradePlanSlugFromPath( this.props.product ),
 			cartItem,
 			cartMeta;
-			
+
 		if ( planSlug ) {
 			cartItem = getCartItem( planSlug );
 		}

@@ -42,10 +42,6 @@ export function getPlan( plan ) {
 	return plansList[ plan ];
 }
 
-export function sanitizePlanKey( plan ) {
-	return plansList[ plan ] ? plan : undefined;
-}
-
 export function getValidFeatureKeys() {
 	return Object.keys( featuresList );
 }
