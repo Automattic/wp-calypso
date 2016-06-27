@@ -10,7 +10,11 @@ import merge from 'lodash/merge';
  * Internal dependencies
  */
 import Main from 'components/main';
-import { customize, purchase, activate } from 'state/themes/actions';
+import {
+	customize as tryandcustomize,
+	purchase,
+	activate
+} from 'state/themes/actions';
 import ThemePreview from './theme-preview';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
@@ -143,7 +147,7 @@ export default connect(
 	} ),
 	{
 		activate,
-		tryandcustomize: customize,
+		tryandcustomize,
 		purchase
 	}
 )( ThemesMultiSite );
