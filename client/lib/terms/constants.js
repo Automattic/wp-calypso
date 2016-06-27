@@ -13,3 +13,9 @@ module.exports.action = keyMirror( {
 	FETCH_TAGS: null,
 	SET_CATEGORY_SELECTED_ITEMS: null
 } );
+
+module.exports.defaultNonHierarchicalQuery = {
+	number: module.exports.MAX_TAGS,
+	order_by: 'count',
+	order: 'DESC'
+};
