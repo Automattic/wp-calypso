@@ -279,7 +279,7 @@ const EditorDrawer = React.createClass( {
 			>
 				{ siteUtils.isPermalinkEditable( this.props.site ) && (
 					<EditorMoreOptionsSlug
-						slug={ this.props.post ? this.props.post.slug : null }
+						slug={ this.props.post ? this.props.post.slug : '' }
 						type={ this.props.type } />
 				) }
 				{ this.renderExcerpt() }
