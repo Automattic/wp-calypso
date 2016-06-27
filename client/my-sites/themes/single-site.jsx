@@ -13,7 +13,6 @@ import mapValues from 'lodash/mapValues';
  */
 import Main from 'components/main';
 import { customize, purchase, activate } from 'state/themes/actions';
-import ThemePreview from './theme-preview';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -49,15 +48,6 @@ const ThemesSingleSite = React.createClass( {
 			selectedTheme: null,
 			selectedAction: null,
 		};
-	},
-
-	togglePreview( theme ) {
-		const site = sites.getSelectedSite();
-		if ( site.jetpack ) {
-			this.props.customize( theme );
-		} else {
-			this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
-		}
 	},
 
 	getButtonOptions() {
@@ -109,13 +99,6 @@ const ThemesSingleSite = React.createClass( {
 		return merge( {}, buttonOptions, actionLabels );
 	},
 
-	onPreviewButtonClick( theme ) {
-		this.setState( { showPreview: false },
-			() => {
-				this.props.customize( theme );
-			} );
-	},
-
 	renderJetpackMessage() {
 		const site = sites.getSelectedSite();
 		return (
@@ -149,15 +132,6 @@ const ThemesSingleSite = React.createClass( {
 			<Main className="themes">
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle }/>
 				<SidebarNavigation />
-				{ this.state.showPreview &&
-					<ThemePreview showPreview={ this.state.showPreview }
-						theme={ this.state.previewingTheme }
-						onClose={ this.togglePreview }
-						buttonLabel={ this.translate( 'Try & Customize', {
-							context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
-						} ) }
-						onButtonClick={ this.onPreviewButtonClick } />
-				}
 				<ThanksModal
 					site={ site }
 					source={ 'list' }/>

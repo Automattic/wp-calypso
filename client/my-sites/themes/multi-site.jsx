@@ -16,7 +16,6 @@ import {
 	purchase,
 	activate
 } from 'state/themes/actions';
-import ThemePreview from './theme-preview';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import ThemesSelection from './themes-selection';
@@ -37,10 +36,6 @@ const ThemesMultiSite = React.createClass( {
 
 	showSiteSelectorModal( action, theme ) {
 		this.setState( { selectedTheme: theme, selectedAction: action } );
-	},
-
-	togglePreview( theme ) {
-		this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
 	},
 
 	hideSiteSelectorModal() {
@@ -87,13 +82,6 @@ const ThemesMultiSite = React.createClass( {
 		return merge( {}, buttonOptions, actionLabels );
 	},
 
-	onPreviewButtonClick( theme ) {
-		this.setState( { showPreview: false },
-			() => {
-				this.getButtonOptions().tryandcustomize.action( theme );
-			} );
-	},
-
 	render() {
 		const buttonOptions = this.getButtonOptions();
 
@@ -101,15 +89,6 @@ const ThemesMultiSite = React.createClass( {
 			<Main className="themes">
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle }/>
 				<SidebarNavigation />
-				{ this.state.showPreview &&
-					<ThemePreview showPreview={ this.state.showPreview }
-						theme={ this.state.previewingTheme }
-						onClose={ this.togglePreview }
-						buttonLabel={ this.translate( 'Try & Customize', {
-							context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
-						} ) }
-						onButtonClick={ this.onPreviewButtonClick } />
-				}
 				<ThemesSelection search={ this.props.search }
 					selectedSite={ false }
 					onScreenshotClick={ function( theme ) {
