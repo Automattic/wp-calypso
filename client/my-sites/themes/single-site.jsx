@@ -98,7 +98,7 @@ const ThemesSingleSite = React.createClass( {
 						hideForTheme: theme => ! isPremium( theme )
 					}
 					: {},
-				help: ! site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
+				help: ! site.jetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
 					? {
 						getUrl: theme => getHelpUrl( theme, site )
 					}
