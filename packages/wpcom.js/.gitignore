@@ -1,10 +1,12 @@
-node_modules
 npm-debug.log
+.DS_Store
+.idea
+
+/node_modules
 /test/config.json
 /tmp
 /gh-tmp
-.DS_Store
-.idea
-/dist/test
+/dist
+/build
 /webapp/webapp-bundle*
 /webapp/tests/testing-bundle*

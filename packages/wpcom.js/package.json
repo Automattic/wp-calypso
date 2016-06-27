@@ -2,8 +2,11 @@
   "name": "wpcom",
   "description": "Official JavaScript library for the WordPress.com REST API",
   "version": "4.9.15",
-  "main": "dist/index.js",
+  "main": "build/index.js",
   "author": "Automattic, Inc.",
+  "scripts": {
+    "prepublish": "make build"
+  },
   "contributors": [
     "Damian Suarez <rdsuarez@gmail.com>",
     "Dennis Snell <dennis.snell@automattic.com>",
@@ -22,22 +25,18 @@
   "repository": "git@github.com:Automattic/wpcom.js.git",
   "license": "MIT",
   "dependencies": {
-    "babel": "^5.8.23",
-    "babel-runtime": "5.8.12",
+    "babel-runtime": "^6.9.2",
     "debug": "^2.2.0",
-    "json-loader": "^0.5.4",
     "qs": "^4.0.0",
     "wpcom-xhr-request": "0.5.0"
   },
   "devDependencies": {
-    "babel-core": "^5.8.23",
     "babel-eslint": "^4.1.6",
-    "babel-loader": "^5.3.2",
     "eslint": "^1.10.1",
     "mocha": "^2.3.4",
-    "strip-loader": "^0.1.0",
+    "n8-make": "^1.1.0",
     "webpack": "^1.12.1",
     "wpcom-oauth-cors": "^1.0.0",
-    "wpcom-proxy-request": "^1.0.5"
+    "wpcom-proxy-request": "^2.0.0"
   }
 }

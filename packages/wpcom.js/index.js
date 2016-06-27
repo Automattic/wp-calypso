@@ -1,29 +1,29 @@
 /**
  * Module dependencies.
  */
-var requestHandler = require( 'wpcom-xhr-request' );
+import requestHandler from 'wpcom-xhr-request';
+import debugModule from 'debug';
 
 /**
  * Local module dependencies.
  */
-var Batch = require( './lib/batch' );
-var Domain = require( './lib/domain' );
-var Domains = require( './lib/domains' );
-var Marketing = require( './lib/marketing' );
-var Me = require( './lib/me' );
-var Pinghub = require( './lib/util/pinghub' );
-var Plans = require( './lib/plans' );
-var Req = require( './lib/util/request' );
-var Site = require( './lib/site' );
-var Users = require( './lib/users' );
-
-var sendRequest = require( './lib/util/send-request' );
-var debug = require( 'debug' )( 'wpcom' );
+import Batch from './lib/batch';
+import Domain from './lib/domain';
+import Domains from './lib/domains';
+import Marketing from './lib/marketing';
+import Me from './lib/me';
+import Pinghub from './lib/util/pinghub';
+import Plans from './lib/plans';
+import Req from './lib/util/request';
+import Site from './lib/site';
+import Users from './lib/users';
+import sendRequest from './lib/util/send-request';
 
 /**
  * Local module constants
  */
-var DEFAULT_ASYNC_TIMEOUT = 30000;
+const debug = debugModule( 'wpcom' );
+const DEFAULT_ASYNC_TIMEOUT = 30000;
 
 /**
  * XMLHttpRequest (and CORS) API access method.

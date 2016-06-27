@@ -122,10 +122,10 @@ Run tests:
 $ make test-all
 ```
 
-Also tests can be filtered using `make test <filter>`:
+Also tests can be filtered using `make test FILTER=<filter>`:
 
 ```cli
-$ make test wpcom.site.post
+$ make test FILTER=wpcom.site.post
 ```
 
 ## License
