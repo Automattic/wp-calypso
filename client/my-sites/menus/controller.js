@@ -3,7 +3,8 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react'),
-	i18n = require( 'i18n-calypso' );
+	i18n = require( 'i18n-calypso' ),
+	ReactRedux = require( 'react-redux' );
 
 /**
  * Internal Dependencies
@@ -65,12 +66,14 @@ var controller = {
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
 		ReactDom.render(
-			React.createElement( MenusComponent, {
-				siteMenus: siteMenus,
-				itemTypes: itemTypes,
-				key: siteMenus.siteID,
-				site: site
-			} ),
+			React.createElement( ReactRedux.Provider, { store: context.store },
+				React.createElement( MenusComponent, {
+					siteMenus: siteMenus,
+					itemTypes: itemTypes,
+					key: siteMenus.siteID,
+					site: site
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	}
