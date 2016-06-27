@@ -12,6 +12,9 @@ export default class PlanFeaturesPrice extends Component {
 
 	render() {
 		const { currencyCode, rawPrice } = this.props;
+		if ( ! currencyCode || ( rawPrice !== 0 && ! rawPrice ) ) {
+			return null;
+		}
 		const price = getCurrencyObject( rawPrice, currencyCode );
 		return (
 			<h4 className="plan-features__price">

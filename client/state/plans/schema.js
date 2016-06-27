@@ -12,6 +12,7 @@ export const itemsSchema = {
 			bundle_product_ids: { type: 'array' },
 			cost: { type: 'number' },
 			capability: { type: 'string' },
+			currency_code: { type: 'string' },
 			description: { type: 'string' },
 			feature_1: { type: 'string' },
 			feature_2: { type: 'string' },

@@ -11,6 +11,7 @@ const createSitePlanObject = ( plan ) => {
 	return {
 		canStartTrial: Boolean( plan.can_start_trial ),
 		currentPlan: Boolean( plan.current_plan ),
+		currencyCode: plan.currency_code,
 		discountReason: plan.discount_reason,
 		expiry: plan.expiry,
 		expiryMoment: moment( plan.expiry ).startOf( 'day' ),
