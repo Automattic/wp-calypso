@@ -10,7 +10,6 @@ import times from 'lodash/times';
  */
 import PlanFeatures from 'my-sites/plan-features';
 import {
-	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
@@ -46,7 +45,7 @@ class PlansFeaturesMain extends Component {
 		} );
 
 		return (
-			<div className="plans-features-main">
+			<div className="plans-features-main__group">
 				{ plansList }
 			</div>
 		);
@@ -55,7 +54,7 @@ class PlansFeaturesMain extends Component {
 	getPlanFeatures( site, intervalType ) {
 		if ( site.jetpack && intervalType === 'monthly' ) {
 			return (
-				<div className="plans-features-main">
+				<div className="plans-features-main__group">
 					<PlanFeatures plan={ PLAN_JETPACK_PREMIUM_MONTHLY } /* onClick={ this.upgradePlan } */ />
 					<PlanFeatures plan={ PLAN_JETPACK_BUSINESS_MONTHLY } /* onClick={ this.upgradePlan } */ />
 				</div>
@@ -63,16 +62,15 @@ class PlansFeaturesMain extends Component {
 		}
 		if ( site.jetpack ) {
 			return (
-				<div className="plans-features-main__">
+				<div className="plans-features-main__group">
 					<PlanFeatures plan={ PLAN_JETPACK_PREMIUM } /* onClick={ this.upgradePlan } */ />
 					<PlanFeatures plan={ PLAN_JETPACK_BUSINESS } /* onClick={ this.upgradePlan } */ />
 				</div>
 			);
 		}
 		//TODO: we need to allow a free option in NUX flow
-
 		return (
-			<div className="plans-features-main">
+			<div className="plans-features-main__group">
 				<PlanFeatures plan={ PLAN_PERSONAL } /* onClick={ this.upgradePlan } */ />
 				<PlanFeatures plan={ PLAN_PREMIUM } /* onClick={ this.upgradePlan } */ />
 				<PlanFeatures plan={ PLAN_BUSINESS } /* onClick={ this.upgradePlan } */ />
@@ -178,7 +176,7 @@ class PlansFeaturesMain extends Component {
 		}
 
 		return (
-			<div>
+			<div class="plans-features-main">
 				{ this.getPlanFeatures( site, intervalType ) }
 				{ this.getFAQ( site ) }
 			</div>
