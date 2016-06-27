@@ -19,6 +19,7 @@ import GlobalNotices from 'components/global-notices/docs/example';
 import Buttons from 'components/button/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
 import Gridicons from 'components/gridicon/docs/example';
+import GridiconList from 'components/gridicon-list/docs/example';
 import Accordions from 'components/accordion/docs/example';
 import SocialLogos from 'components/social-logo/docs/example';
 import SelectDropdown from 'components/select-dropdown/docs/example';
@@ -116,6 +117,7 @@ let DesignAssets = React.createClass( {
 					<Gauge />
 					<GlobalNotices />
 					<Gridicons />
+					<GridiconList />
 					<Headers />
 					<InfoPopover />
 					<InputChrono />

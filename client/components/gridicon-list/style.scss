@@ -1,0 +1,19 @@
+
+.gridicon-list {
+	padding-left: 24px;
+}
+
+.gridicon-list__item {
+	list-style-type: none;
+	text-indent: -24px;
+
+	&.gridicon-list__item-no-icon {
+		text-indent: 0;
+	}
+}
+
+.gridicon-list__item-icon {
+	margin-right: 6px;
+	vertical-align: middle;
+	margin-top: -4px;
+}
