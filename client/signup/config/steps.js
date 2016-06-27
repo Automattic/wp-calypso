@@ -35,6 +35,12 @@ module.exports = {
 		providesDependencies: [ 'siteSlug' ]
 	},
 
+	store: {
+		stepName: 'store',
+		dependencies: [ 'designType' ],
+		providesDependencies: [ ]
+	},
+
 	user: {
 		stepName: 'user',
 		apiRequestFunction: stepActions.createAccount,

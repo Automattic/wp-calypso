@@ -1,0 +1,29 @@
+.pressable-store-form {
+	max-width: 600px;
+}
+
+.pressable-store-form__fields {
+	display: flex;
+	flex-flow: row wrap;
+}
+
+.pressable-store-form__email {
+	&.is-spaced {
+		margin-bottom: 10px;
+	}
+}
+
+@include breakpoint( ">660px" ) {
+	.pressable-store-form__email {
+		flex: 1.3 0 0;
+
+		&.is-spaced {
+			margin-right: 10px;
+			margin-bottom: 0;
+		}
+	}
+
+	.pressable-store-form__submit {
+		flex: 1 0 0;
+	}
+}
