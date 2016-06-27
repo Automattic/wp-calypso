@@ -45,6 +45,20 @@ const PostsMain = React.createClass( {
 		this.setWarning( selectedSite );
 	},
 
+	showNoDraftsMessage() {
+		const site = this.props.sites.getSelectedSite();
+		const noResults = <NoResults text={ this.translate( 'You have no drafts at the moment.' ) } />;
+
+		// Jetpack sites can have malformed counts
+		if ( site.jetpack && ! this.props.loadingDrafts && this.props.drafts && this.props.drafts.length === 0 ) {
+			return noResults;
+		}
+
+		if ( ! site.jetpack && this.props.draftCount === 0 ) {
+			return noResults;
+		}
+	},
+
 	mostRecentDrafts() {
 		const site = this.props.sites.getSelectedSite();
 		const isLoading = this.props.draftCount !== 0 && this.props.loadingDrafts;
@@ -67,7 +81,7 @@ const PostsMain = React.createClass( {
 				</Card>
 				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 				{ isLoading && <Draft isPlaceholder /> }
-				{ this.props.draftCount === 0 && <NoResults text={ this.translate( 'You have no drafts at the moment.' ) } /> }
+				{ this.showNoDraftsMessage() }
 				{ this.props.draftCount > 6 &&
 					<Button compact borderless className="posts__see-all-drafts" href={ `/posts/drafts/${ site.slug }` }>
 						{ this.translate( 'See all drafts' ) }
