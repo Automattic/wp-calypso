@@ -8,7 +8,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  * Internal dependencies
  */
 import PostSchedule from 'components/post-schedule';
-import TimezoneDropdown from 'components/timezone-dropdown';
+import Timezone from 'components/timezone';
 import Gridicon from 'components/gridicon';
 import Card from 'components/card';
 
@@ -121,7 +121,7 @@ export default React.createClass( {
 					<Card className="card__component-instance">
 						<h3>
 							<span>owner</span>
-							<Gridicon icon="arrow-right" size={ 16 } />
+							<Gridicon icon="arrow-right" size={ 18 } />
 							<span>ownee</span>
 						</h3>
 
@@ -134,7 +134,7 @@ export default React.createClass( {
 								{ this.state.timezone || 'not defined' }
 							</div>
 
-							<TimezoneDropdown
+							<Timezone
 								selectedZone={ this.state.timezone }
 								onSelect={ this.setTimezone }
 							/>
@@ -197,7 +197,7 @@ export default React.createClass( {
 					<Card className="card__component-instance">
 						<h3>
 							<span>owner</span>
-							<Gridicon icon="arrow-left" size={ 16 } />
+							<Gridicon icon="arrow-left" size={ 18 } />
 							<span>ownee</span>
 						</h3>
 
