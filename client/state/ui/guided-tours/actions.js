@@ -14,13 +14,14 @@ import guidedToursConfig from 'layout/guided-tours/config';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 
-export function quitGuidedTour( { tour = 'main', stepName, finished, error } ) {
+export function quitGuidedTour( { tour, stepName, finished, error } ) {
 	const quitAction = {
 		type: GUIDED_TOUR_UPDATE,
 		shouldShow: false,
 		shouldReallyShow: false,
 		tour,
 		stepName,
+		finished,
 	};
 
 	const trackEvent = recordTracksEvent( `calypso_guided_tours_${ finished ? 'finished' : 'quit' }`, {
@@ -31,14 +32,15 @@ export function quitGuidedTour( { tour = 'main', stepName, finished, error } ) {
 	} );
 
 	return ( dispatch, getState ) => {
-		dispatch( withAnalytics( trackEvent, quitAction ) );
 		dispatch( addSeenGuidedTour( getState, tour, finished ) );
+		dispatch( withAnalytics( trackEvent, quitAction ) );
 	};
 }
 
-export function nextGuidedTourStep( { tour = 'main', stepName } ) {
+export function nextGuidedTourStep( { tour, stepName } ) {
 	const nextAction = {
 		type: GUIDED_TOUR_UPDATE,
+		tour,
 		stepName,
 	};
 
