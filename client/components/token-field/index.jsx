@@ -120,6 +120,8 @@ var TokenField = React.createClass( {
 				<div ref="tokensAndInput"
 					className="token-field__input-container"
 					tabIndex="-1"
+					onMouseDown={ this._onContainerTouched }
+					onTouchStart={ this._onContainerTouched }
 				>
 					{ this._renderTokensAndInput() }
 				</div>
@@ -229,6 +231,14 @@ var TokenField = React.createClass( {
 			selectedSuggestionIndex: -1,
 			selectedSuggestionScroll: false
 		} );
+	},
+
+	_onContainerTouched: function( event ) {
+		// Prevent clicking/touching the tokensAndInput container from blurring
+		// the input and adding the current token.
+		if ( event.target === this.refs.tokensAndInput && this.state.isActive ) {
+			event.preventDefault();
+		}
 	},
 
 	_onKeyDown: function( event ) {
