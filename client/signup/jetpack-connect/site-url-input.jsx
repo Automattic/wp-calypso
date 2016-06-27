@@ -18,6 +18,18 @@ import untrailingslashit from 'lib/route/untrailingslashit';
 export default React.createClass( {
 	displayName: 'JetpackConnectSiteURLInput',
 
+	componentDidUpdate() {
+		if ( ! this.props.isError ) {
+			return;
+		}
+
+		if ( ! this.refs.siteUrl.refs.textField ) {
+			return;
+		}
+
+		this.refs.siteUrl.refs.textField.focus();
+	},
+
 	getInitialState() {
 		return {
 			value: ''
@@ -70,6 +82,7 @@ export default React.createClass( {
 	},
 
 	render() {
+		const hasError = this.props.isError && ( 'notExists' !== this.props.isError );
 		return (
 			<div>
 				<FormLabel>{ this.translate( 'Site Address' ) }</FormLabel>
@@ -78,6 +91,8 @@ export default React.createClass( {
 						size={ 24 }
 						icon="globe" />
 					<FormTextInput
+						ref="siteUrl"
+						autoFocus="autofocus"
 						onChange={ this.onChange }
 						disabled={ this.props.isFetching }
 						placeholder={ this.translate( 'http://www.yoursite.com' ) }
@@ -89,7 +104,7 @@ export default React.createClass( {
 				<Card className="jetpack-connect__connect-button-card">
 					{ this.renderTermsOfServiceLink() }
 					<Button primary
-						disabled={ ( ! this.state.value || this.props.isFetching ) }
+						disabled={ ( ! this.state.value || this.props.isFetching || hasError ) }
 						onClick={ this.props.onClick }>{ this.renderButtonLabel() }</Button>
 				</Card>
 			</div>
