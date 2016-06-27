@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	clone = require( 'lodash/clone' );
+import React from 'react';
+import clone from 'lodash/clone';
 
 /**
  * Internal dependencies
  */
-var AnalyticsMixin = require( 'lib/mixins/analytics' );
+import AnalyticsMixin from 'lib/mixins/analytics';
 
-var GoogleAppsUsers = React.createClass( {
+const GoogleAppsUsers = React.createClass( {
 	mixins: [ AnalyticsMixin( 'googleApps' ) ],
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.props.onChange( this.props.fields ? this.props.fields : this.getInitialFields() );
 	},
 
-	getInitialFields: function() {
+	getInitialFields() {
 		return [ this.getNewUserFields() ];
 	},
 
-	getNewUserFields: function() {
+	getNewUserFields() {
 		return {
 			email: { value: '', error: null },
 			firstName: { value: '', error: null },
@@ -28,12 +28,12 @@ var GoogleAppsUsers = React.createClass( {
 		};
 	},
 
-	render: function() {
-		var fields = this.props.fields || this.getInitialFields(),
+	render() {
+		const fields = this.props.fields || this.getInitialFields(),
 			allUserInputs = fields.map( this.inputsForUser );
 
 		return (
-			<div className='google-apps-dialog__users' key='google-apps-dialog__users'>
+			<div className="google-apps-dialog__users" key="google-apps-dialog__users">
 				<h4>{ this.translate( 'New Google Apps User:' ) }</h4>
 
 				{ allUserInputs }
@@ -92,29 +92,27 @@ var GoogleAppsUsers = React.createClass( {
 		);
 	},
 
-	recordInputFocus: function( index, fieldName ) {
-		var field = this.props.fields[ index ],
+	recordInputFocus( index, fieldName ) {
+		const field = this.props.fields[ index ],
 			inputValue = field ? field.value : '';
 
 		this.recordEvent( 'inputFocus', index, fieldName, inputValue );
 	},
 
-	addUser: function( event ) {
+	addUser( event ) {
 		event.preventDefault();
 
 		this.recordEvent( 'addUserClick', this.props.analyticsSection );
 
-		var updatedFields = this.props.fields.concat( [ this.getNewUserFields() ] );
+		const updatedFields = this.props.fields.concat( [ this.getNewUserFields() ] );
 		this.props.onChange( updatedFields );
 	},
 
-	updateField: function( index, fieldName, event ) {
-		var newValue, updatedFields;
+	updateField( index, fieldName, event ) {
 		event.preventDefault();
 
-		newValue = event.target.value;
-
-		updatedFields = clone( this.props.fields );
+		const newValue = event.target.value,
+			updatedFields = clone( this.props.fields );
 		updatedFields[ index ] = clone( updatedFields[ index ] );
 		updatedFields[ index ][ fieldName ] = clone( updatedFields[ index ][ fieldName ] );
 		updatedFields[ index ][ fieldName ].value = newValue;
@@ -123,4 +121,4 @@ var GoogleAppsUsers = React.createClass( {
 	}
 } );
 
-module.exports = GoogleAppsUsers;
+export default GoogleAppsUsers;
