@@ -7,7 +7,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-
 import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';

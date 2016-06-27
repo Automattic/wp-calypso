@@ -116,7 +116,11 @@ const EditorDrawer = React.createClass( {
 
 		if ( config.isEnabled( 'manage/custom-post-types' ) &&
 				! includes( [ 'post', 'page' ], this.props.type ) ) {
-			return <EditorDrawerTaxonomies />;
+			return (
+				<EditorDrawerTaxonomies
+					postTerms={ this.props.post && this.props.post.terms }
+				/>
+			);
 		}
 
 		if ( ! this.currentPostTypeSupports( 'tags' ) ) {

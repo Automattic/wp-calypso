@@ -15,8 +15,9 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';
 import Accordion from 'components/accordion';
 import Gridicon from 'components/gridicon';
+import TermTokenField from 'post-editor/term-token-field';
 
-function EditorDrawerTaxonomies( { siteId, postType, taxonomies } ) {
+function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 	return (
 		<div className="editor-drawer__taxonomies">
 			{ siteId && postType && (
@@ -28,14 +29,31 @@ function EditorDrawerTaxonomies( { siteId, postType, taxonomies } ) {
 					return;
 				}
 
-				return (
-					<Accordion
-						key={ taxonomy.name }
-						title={ taxonomy.label }
-						icon={ <Gridicon icon="tag" /> }>
-						Work in Progress
-					</Accordion>
-				);
+				if ( taxonomy.hierarchical ) {
+					return (
+						<Accordion
+							key={ taxonomy.name }
+							title={ taxonomy.label }
+							icon={ <Gridicon icon="category" /> }
+						>
+							Work in Progress
+						</Accordion>
+					);
+				} else {
+					return (
+						<Accordion
+							key={ taxonomy.name }
+							title={ taxonomy.label }
+							icon={ <Gridicon icon="tag" /> }
+						>
+							<TermTokenField
+								postTerms={ postTerms }
+								taxonomyName={ taxonomy.name }
+								taxonomyLabel={ taxonomy.label }
+							/>
+						</Accordion>
+					);
+				}
 			} ).filter( Boolean ) }
 		</div>
 	);
@@ -44,6 +62,7 @@ function EditorDrawerTaxonomies( { siteId, postType, taxonomies } ) {
 EditorDrawerTaxonomies.propTypes = {
 	siteId: PropTypes.number,
 	postType: PropTypes.string,
+	postTerms: PropTypes.object,
 	taxonomies: PropTypes.array
 };
 
