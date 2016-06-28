@@ -184,6 +184,11 @@ EXPECTED_FOO_PREFIX_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo_
 			code: 'import { render } from "react-dom"; render( <div className="quux"><div className="quux__child" /></div>, document.body );',
 			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
 			filename: '/tmp/foo/index.js'
+		},
+		{
+			code: 'export default function() { return <div className="foo__child" />; }',
+			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
+			filename: '/tmp/foo/foo-child.js'
 		}
 	],
 
@@ -360,6 +365,14 @@ EXPECTED_FOO_PREFIX_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo_
 			filename: '/tmp/foo/index.js',
 			errors: [ {
 				message: EXPECTED_FOO_ERROR
+			} ]
+		},
+		{
+			code: 'export default function() { return <div className="foo" />; }',
+			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
+			filename: '/tmp/foo/foo-child.js',
+			errors: [ {
+				message: EXPECTED_FOO_PREFIX_ERROR
 			} ]
 		}
 	]

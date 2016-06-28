@@ -13,6 +13,12 @@
 var path = require( 'path' );
 
 //------------------------------------------------------------------------------
+// Constants
+//------------------------------------------------------------------------------
+
+var REGEXP_INDEX_PATH = /\/index\.jsx?$/;
+
+//------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
 
@@ -72,9 +78,13 @@ var rule = module.exports = function( context ) {
 		return false;
 	}
 
-	function isRootRenderedElement( node ) {
+	function isRootRenderedElement( node, filename ) {
 		var parent = node.parent.parent,
 			functionExpression, functionName, isRoot;
+
+		if ( ! REGEXP_INDEX_PATH.test( filename ) ) {
+			return false;
+		}
 
 		do {
 			parent = parent.parent;
@@ -161,7 +171,7 @@ var rule = module.exports = function( context ) {
 
 	return {
 		JSXAttribute: function( node ) {
-			var rawClassName, classNames, isError, isRoot, namespace, expected;
+			var rawClassName, filename, classNames, isError, isRoot, namespace, expected;
 
 			if ( 'className' !== node.name.name ) {
 				return;
@@ -177,9 +187,10 @@ var rule = module.exports = function( context ) {
 				return;
 			}
 
+			filename = context.getFilename();
 			classNames = rawClassName.value.split( ' ' );
-			namespace = path.basename( path.dirname( context.getFilename() ) );
-			isRoot = isRootRenderedElement( node );
+			namespace = path.basename( path.dirname( filename ) );
+			isRoot = isRootRenderedElement( node, filename );
 
 			// `null` return value indicates intent to abort validation
 			if ( null === isRoot ) {
