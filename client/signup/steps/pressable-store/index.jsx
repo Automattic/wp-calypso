@@ -38,15 +38,15 @@ export default React.createClass( {
 		return {};
 	},
 
-	onEmailChange( e ) {
+	onEmailChange( event ) {
 		this.setState( {
-			email: e.target.value,
+			email: event.target.value,
 		} );
 	},
 
-	onSubmit( e ) {
+	onSubmit( event ) {
 		window.location.href = `https://my.pressable.com/signup/five-sites-yearly?email=${ encodeURIComponent( this.state.email ) }&ref=wpcom`;
-		e.preventDefault();
+		event.preventDefault();
 	},
 
 	renderStoreForm() {
