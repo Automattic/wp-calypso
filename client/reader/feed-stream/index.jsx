@@ -2,7 +2,7 @@ var React = require( 'react' ),
 	url = require( 'url' );
 
 var EmptyContent = require( './empty' ),
-	FollowingStream = require( 'reader/following-stream' ),
+	Stream = require( 'reader/stream' ),
 	FeedHeader = require( 'reader/feed-header' ),
 	FeedStore = require( 'lib/feed-store' ),
 	FeedStoreActions = require( 'lib/feed-store/actions' ),
@@ -144,10 +144,10 @@ var FeedStream = React.createClass( {
 		}
 
 		return (
-			<FollowingStream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showPostHeader={ false }>
+			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showPostHeader={ false }>
 				{ this.props.showBack && <HeaderBack /> }
 				<FeedHeader feed={ feed } site={ this.state.site } />
-			</FollowingStream>
+			</Stream>
 		);
 	}
 

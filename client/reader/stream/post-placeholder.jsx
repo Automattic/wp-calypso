@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' );
+import Card from 'components/card';
 
-var PostPlaceholder = React.createClass( {
+const PostPlaceholder = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
 
-	render: function() {
+	render() {
 		return (
 			<Card tagName="article" className="reader__card is-placeholder">
 
@@ -37,4 +37,4 @@ var PostPlaceholder = React.createClass( {
 
 } );
 
-module.exports = PostPlaceholder;
+export default PostPlaceholder;

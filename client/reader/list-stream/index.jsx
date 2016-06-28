@@ -9,7 +9,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import FollowingStream from 'reader/following-stream';
+import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import ListMissing from './missing';
 import StreamHeader from 'reader/stream-header';
@@ -65,7 +65,7 @@ const ListStream = React.createClass( {
 		}
 
 		return (
-			<FollowingStream { ...this.props } store={ this.props.postStore } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ shouldShowFollow }>
+			<Stream { ...this.props } store={ this.props.postStore } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ shouldShowFollow }>
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<StreamHeader
 					isPlaceholder={ ! list }
@@ -77,7 +77,7 @@ const ListStream = React.createClass( {
 					onFollowToggle={ this.toggleFollowing }
 					showEdit={ shouldShowEdit }
 					editUrl={ editUrl } />
-			</FollowingStream>
+			</Stream>
 		);
 	}
 

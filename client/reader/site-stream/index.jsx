@@ -5,7 +5,7 @@ var React = require( 'react' ),
 var FeedHeader = require( 'reader/feed-header' ),
 	FeedFeatured = require( './featured' ),
 	EmptyContent = require( './empty' ),
-	FollowingStream = require( 'reader/following-stream' ),
+	Stream = require( 'reader/stream' ),
 	HeaderBack = require( 'reader/header-back' ),
 	SiteStore = require( 'lib/reader-site-store' ),
 	SiteStoreActions = require( 'lib/reader-site-store/actions' ),
@@ -142,11 +142,11 @@ const SiteStream = React.createClass( {
 		}
 
 		return (
-			<FollowingStream { ...this.props } listName={ title } emptyContent={ emptyContent } showPostHeader={ false }>
+			<Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showPostHeader={ false }>
 				{ this.props.showBack && <HeaderBack /> }
 				<FeedHeader site={ this.state.site } feed={ this.state.feed }/>
 				{ featuredContent }
-			</FollowingStream>
+			</Stream>
 
 		);
 	}
