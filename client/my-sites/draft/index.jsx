@@ -157,8 +157,8 @@ module.exports = React.createClass( {
 		}
 
 		if ( post && post.canonical_image ) {
-			image = url.parse( post.canonical_image.uri, true );
-			imageUrl = '//' + image.hostname + image.pathname + '?w=680px';
+			image = true;
+			imageUrl = post.canonical_image.uri + '?w=680px';
 		}
 
 		classes = [
