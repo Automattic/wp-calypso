@@ -87,20 +87,35 @@ export default {
 	},
 
 	install( context ) {
+		const analyticsBasePath = '/jetpack/connect/install',
+			analyticsPageTitle = 'Jetpack Install';
+
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
 		jetpackConnectFirstStep( context, true );
 	},
 
 	connect( context ) {
+		const analyticsBasePath = '/jetpack/connect/:site',
+			analyticsPageTitle = 'Jetpack Connect';
+
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
 		jetpackConnectFirstStep( context, false );
 	},
 
 	authorizeForm( context ) {
+		const analyticsBasePath = 'jetpack/connect/authorize',
+			analyticsPageTitle = 'Jetpack Authorize';
+
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setSection( 'jetpackConnect', {
 			hasSidebar: false
 		} ) );
 
 		userModule.fetch();
+
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 		renderWithReduxStore(
 			React.createElement( jetpackConnectAuthorizeForm, {
@@ -114,12 +129,17 @@ export default {
 	},
 
 	sso( context ) {
+		const analyticsBasePath = '/jetpack/sso',
+			analyticsPageTitle = 'Jetpack SSO';
+
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setSection( 'jetpackConnect', {
 			hasSidebar: false
 		} ) );
 
 		userModule.fetch();
+
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 		renderWithReduxStore(
 			React.createElement( jetpackSSOForm, {
