@@ -4,10 +4,14 @@
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { getEditorPath } from 'state/ui/editor/selectors';
+import { getNormalizedPost } from 'state/posts/selectors';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
@@ -19,8 +23,10 @@ import PostTotalViews from 'my-sites/posts/post-total-views';
 import utils from 'lib/posts/utils';
 import updatePostStatus from 'lib/mixins/update-post-status';
 import analytics from 'lib/analytics';
-
+import sitesList from 'lib/sites-list';
 import Comments from 'reader/comments';
+
+const sites = sitesList();
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Posts', eventAction );
@@ -36,31 +42,13 @@ function checkPropsChange( currentProps, nextProps, propArr ) {
 	return false;
 }
 
-module.exports = React.createClass( {
-
-	displayName: 'Post',
-
-	mixins: [ updatePostStatus ],
+const PostCard = React.createClass( {
 
 	getInitialState() {
 		return {
 			showMoreOptions: false,
 			showComments: false
 		};
-	},
-
-	shouldComponentUpdate( nextProps, nextState ) {
-		const propsToCheck = [ 'ref', 'key', 'post', 'postImages', 'fullWidthPost', 'path' ];
-
-		if ( checkPropsChange( this.props, nextProps, propsToCheck ) ) {
-			return true;
-		}
-
-		if ( nextState.showMoreOptions !== this.props.showMoreOptions ) {
-			return true;
-		}
-
-		return false;
 	},
 
 	analyticsEvents: {
@@ -160,18 +148,20 @@ module.exports = React.createClass( {
 	},
 
 	getPostImage() {
-		if ( ! this.props.postImages ) {
-			if ( this.props.post.canonical_image ) {
-				return (
-					<div className="post-image is-placeholder" />
-				);
-			}
+		return <div className="post-image is-placeholder" />;
+		console.log(this.props.post.canonical_image);
+		// if ( ! this.props.postImages ) {
+		// 	if ( this.props.post.canonical_image ) {
+		// 		return (
+		// 			<div className="post-image is-placeholder" />
+		// 		);
+		// 	}
 
-			return null;
-		}
+		// 	return null;
+		// }
 
 		return (
-			<PostImage postImages={ this.props.postImages } />
+			<PostImage postImages={ this.props.post.canonical_image } />
 		);
 	},
 
@@ -201,7 +191,7 @@ module.exports = React.createClass( {
 	},
 
 	getHeader() {
-		const selectedSite = this.props.sites.getSelectedSite();
+		const selectedSite = sites.getSelectedSite();
 		const site = this.getSite();
 
 		if ( selectedSite && site.single_user_site ) {
@@ -350,7 +340,7 @@ module.exports = React.createClass( {
 	},
 
 	getSite() {
-		return this.props.sites.getSite( this.props.post.site_ID );
+		return sites.getSite( this.props.post.site_ID );
 	},
 
 	toggleComments() {
@@ -389,15 +379,18 @@ module.exports = React.createClass( {
 					onRestore={ this.restorePost }
 					site={ site }
 				/>
-				<ReactCSSTransitionGroup
-					transitionName="updated-trans"
-					transitionEnterTimeout={ 300 }
-					transitionLeaveTimeout={ 300 }>
-					{ this.buildUpdateTemplate() }
-				</ReactCSSTransitionGroup>
 				{ this.state.showComments && <Comments post={ this.props.post } onCommentsUpdate={ () => {} } /> }
 			</Card>
 		);
 	}
 
 } );
+
+export default connect( ( state, ownProps ) => {
+	const post = getNormalizedPost( state, ownProps.globalId );
+
+	return {
+		post,
+		editUrl: getEditorPath( state, state.ui.selectedSiteId, post.ID )
+	};
+} )( localize( PostCard ) );

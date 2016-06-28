@@ -24,6 +24,7 @@ import {
 import PostTypeListPost from './post';
 import PostTypeListPostPlaceholder from './post-placeholder';
 import PostTypeListEmptyContent from './empty-content';
+import PostCard from 'my-sites/posts/post';
 
 /**
  * Constants
@@ -39,7 +40,8 @@ class PostTypeList extends Component {
 		lastPage: PropTypes.number,
 		posts: PropTypes.array,
 		requestingFirstPage: PropTypes.bool,
-		requestingLastPage: PropTypes.bool
+		requestingLastPage: PropTypes.bool,
+		postComponent: PropTypes.element
 	};
 
 	constructor() {
@@ -138,6 +140,11 @@ class PostTypeList extends Component {
 		}
 
 		const { global_ID: globalId } = posts[ requestingFirstPage ? index - 1 : index ];
+
+		if ( this.props.bigCards ) {
+			return <PostCard key={ globalId } globalId={ globalId } />;
+		}
+
 		return <PostTypeListPost key={ globalId } globalId={ globalId } />;
 	}
 

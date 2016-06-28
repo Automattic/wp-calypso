@@ -48,7 +48,7 @@ var PostList = React.createClass( {
 		};
 
 		return (
-			<PostTypeList query={ query } />
+			<PostTypeList query={ query } bigCards />
 		);
 	}
 } );
