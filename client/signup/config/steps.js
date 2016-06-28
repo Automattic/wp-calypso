@@ -35,8 +35,8 @@ module.exports = {
 		providesDependencies: [ 'siteSlug' ]
 	},
 
-	store: {
-		stepName: 'store',
+	'pressable-store': {
+		stepName: 'pressable-store',
 		dependencies: [ 'designType' ],
 		providesDependencies: [ ]
 	},

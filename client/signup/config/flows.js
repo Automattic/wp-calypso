@@ -159,9 +159,9 @@ const flows = {
 	},
 
 	pressable: {
-		steps: [ 'survey', 'design-type', 'store', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'pressable-store', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
-		description: 'Signup flow for testing the online store step',
+		description: 'Signup flow for testing the pressable-store step',
 		lastModified: '2016-06-27'
 	},
 
