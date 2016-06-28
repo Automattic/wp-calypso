@@ -59,6 +59,22 @@ export function isSiteConflicting( state, siteId ) {
 }
 
 /**
+ * Returns true if site is customizable.
+ *
+ * @param  {Object}   state         Global state tree
+ * @param  {Number}   siteId        Site ID
+ * @return {?Boolean}               Whether site's plan matches supplied plan
+ */
+export function isSiteCustomizable( state, siteId ) {
+	const site = getSite( state, siteId );
+	if ( ! site ) {
+		return null;
+	}
+
+	return !! ( site.capabilities && site.capabilities.edit_theme_options );
+}
+
+/**
  * Returns true if site is a Jetpack site, false if the site is hosted on
  * WordPress.com, or null if the site is unknown.
  *
