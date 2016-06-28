@@ -15,7 +15,8 @@ import {
 	isRequestingSites,
 	getSiteByUrl,
 	getSitePlan,
-	isCurrentSitePlan
+	isCurrentSitePlan,
+	isCurrentPlanPaid
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -453,6 +454,55 @@ describe( 'selectors', () => {
 			}, 77203074, 1003 );
 
 			expect( isCurrent ).to.be.false;
+		} );
+	} );
+
+	describe( '#isCurrentPlanPaid()', () => {
+		it( 'it should return true if not free plan', () => {
+			const isPaid = isCurrentPlanPaid( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							plan: {
+								product_id: 1008
+							}
+						}
+					}
+				}
+			}, 77203074, 1003 );
+
+			expect( isPaid ).to.equal( true );
+		} );
+		it( 'it should return false if free plan', () => {
+			const isPaid = isCurrentPlanPaid( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							plan: {
+								product_id: 1
+							}
+						}
+					}
+				}
+			}, 77203074, 1003 );
+
+			expect( isPaid ).to.equal( false );
+		} );
+
+		it( 'it should return null if plan is missing', () => {
+			const isPaid = isCurrentPlanPaid( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074
+						}
+					}
+				}
+			}, 77203074, 1003 );
+
+			expect( isPaid ).to.equal( null );
 		} );
 	} );
 } );
