@@ -35,14 +35,17 @@ function PostTypeListPostActions( { translate, post, dispatchTrashPost, dispatch
 	return (
 		<div className="post-type-list__post-actions">
 			<EllipsisMenu position="bottom left">
-				<PopoverMenuItem onClick={ onTrash }>
-					<Gridicon icon="trash" size={ 18 } />
+				<PopoverMenuItem
+					onClick={ onTrash }
+					icon="trash">
 					{ post && 'trash' === post.status
 						? translate( 'Delete Permanently' )
 						: translate( 'Trash', { context: 'verb' } ) }
 				</PopoverMenuItem>
-				<PopoverMenuItem href={ post ? post.URL : '' } target="_blank">
-					<Gridicon icon="external" size={ 18 } />
+				<PopoverMenuItem
+					href={ post ? post.URL : '' }
+					icon="external"
+					target="_blank">
 					{ translate( 'View', { context: 'verb' } ) }
 				</PopoverMenuItem>
 			</EllipsisMenu>
