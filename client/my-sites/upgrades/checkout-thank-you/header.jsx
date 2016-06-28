@@ -71,15 +71,19 @@ const CheckoutThankYouHeader = React.createClass( {
 
 		if ( isGuidedTransfer( this.props.primaryPurchase ) ) {
 			if ( typeof this.props.primaryPurchase.meta === 'string' ) {
-				return this.translate( 'The guided transfer for {{strong}}%(siteName)s{{/strong}} will begin very soon. We will be in touch with you via email.', {
-					args: { siteName: this.props.primaryPurchase.meta },
-					components: { strong: <strong /> },
-				} );
+				return this.translate( 'The guided transfer for {{strong}}%(siteName)s{{/strong}} ' +
+					'will begin very soon. We will be in touch with you via email.', {
+						args: { siteName: this.props.primaryPurchase.meta },
+						components: { strong: <strong /> },
+					}
+				);
 			}
 
-			return this.translate( 'The guided transfer for your site will begin very soon. We will be in touch with you via email.', {
-				components: { strong: <strong /> },
-			} );
+			return this.translate( 'The guided transfer for your site will ' +
+				'begin very soon. We will be in touch with you via email.', {
+					components: { strong: <strong /> },
+				}
+			);
 		}
 
 		if ( isSiteRedirect( this.props.primaryPurchase ) ) {
