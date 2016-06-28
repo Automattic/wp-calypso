@@ -1,3 +1,8 @@
+#### v1.3.3 (June 28, 2016)
+
+- Fix: jsx-classname-namespace: Only consider components in index.js(x) as being eligible for root export
+- Fix: jsx-classname-namespace: Ensure child component isn't exactly equal to namespace prefix
+
 #### v1.3.2 (June 23, 2016)
 
 - Fix: jsx-classname-namespace: Skip validation on render call expressions (ReactDOM.render)
