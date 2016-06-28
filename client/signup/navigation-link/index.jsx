@@ -30,8 +30,8 @@ const NavigationLink = React.createClass( {
 			return;
 		}
 
-		if ( this.props.getBackUrl ) {
-			return this.props.getBackUrl;
+		if ( this.props.backUrl ) {
+			return this.props.backUrl;
 		}
 
 		const previousStepName = signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName ),
