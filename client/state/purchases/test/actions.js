@@ -24,16 +24,18 @@ describe( 'actions', () => {
 	const purchases = [ { id: 1 } ],
 		assembledPurchases = purchasesAssembler.createPurchasesArray( purchases ),
 		userId = 1337,
+		siteId = 1234,
 		purchaseId = 31337;
 
 	useNock();
 
-	let fetchUserPurchases, removePurchase;
+	let fetchSitePurchases, fetchUserPurchases, removePurchase;
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/olark', () => ( { } ) );
 
 		const actions = require( '../actions' );
 
+		fetchSitePurchases = actions.fetchSitePurchases;
 		fetchUserPurchases = actions.fetchUserPurchases;
 		removePurchase = actions.removePurchase;
 	} );
@@ -44,6 +46,31 @@ describe( 'actions', () => {
 		spy.reset();
 	} );
 
+	describe( '#fetchSitePurchases', () => {
+		before( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( `/rest/v1.1/sites/${ siteId }/purchases` )
+				.reply( 200, purchases );
+		} );
+
+		it( 'should dispatch fetch/complete actions', () => {
+			const promise = fetchSitePurchases( siteId )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: PURCHASES_SITE_FETCH,
+				siteId
+			} );
+
+			return promise.then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: PURCHASES_SITE_FETCH_COMPLETED,
+					siteId,
+					purchases: assembledPurchases
+				} );
+			} );
+		} );
+	} );
+
 	describe( '#fetchUserPurchases', () => {
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
@@ -52,7 +79,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fetch/complete actions', () => {
-			const promise = fetchUserPurchases( 1337 )( spy );
+			const promise = fetchUserPurchases( userId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PURCHASES_USER_FETCH
