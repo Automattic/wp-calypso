@@ -40,6 +40,12 @@ export default React.createClass( {
 		return {};
 	},
 
+	componentDidMount() {
+		if ( this._input ) {
+			this._input.focus();
+		}
+	},
+
 	onEmailChange( event ) {
 		this.setState( {
 			email: event.target.value,
@@ -63,7 +69,7 @@ export default React.createClass( {
 					<LoggedOutFormFooter>
 						<FormLabel for="email">{ this.translate( 'Enter your email address to get started:' ) }</FormLabel>
 						<div className="pressable-store__form-fields">
-							<FormTextInput onChange={ this.onEmailChange } className="pressable-store__form-email is-spaced" type="email" placeholder="Email Address" name="email" />
+							<FormTextInput ref={ ( input ) => this._input = input } onChange={ this.onEmailChange } className="pressable-store__form-email is-spaced" type="email" placeholder="Email Address" name="email" />
 							<FormButton onClick={ this.onSubmit } className="pressable-store__form-submit" disabled={ this.state.email === '' }>Create my Store on Pressable</FormButton>
 						</div>
 					</LoggedOutFormFooter>
