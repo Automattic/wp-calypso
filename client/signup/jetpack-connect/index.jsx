@@ -16,7 +16,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
-import { dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation, checkUrl } from 'state/jetpack-connect/actions';
+import { confirmJetpackInstallStatus, dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation, checkUrl } from 'state/jetpack-connect/actions';
 import { getSiteByUrl } from 'state/sites/selectors';
 import { requestSites } from 'state/sites/actions';
 import JetpackExampleInstall from './exampleComponents/jetpack-install';
@@ -55,6 +55,16 @@ const JetpackConnectMain = React.createClass( {
 
 	dismissUrl() {
 		this.props.dismissUrl( this.state.currentUrl );
+	},
+
+	confirmJetpackInstalled( event ) {
+		event.preventDefault();
+		this.props.confirmJetpackInstallStatus( true );
+	},
+
+	confirmJetpackNotInstalled( event ) {
+		event.preventDefault();
+		this.props.confirmJetpackInstallStatus( false );
 	},
 
 	isCurrentUrlFetched() {
@@ -134,6 +144,15 @@ const JetpackConnectMain = React.createClass( {
 		if ( this.state.currentUrl === '' ) {
 			return false;
 		}
+
+		if ( this.props.jetpackConnectSite.installConfirmedByUser === false ) {
+			return 'notJetpack';
+		}
+
+		if ( this.props.jetpackConnectSite.installConfirmedByUser === true ) {
+			return 'notActiveJetpack';
+		}
+
 		if ( this.state.currentUrl.toLowerCase() === 'http://wordpress.com' || this.state.currentUrl.toLowerCase() === 'https://wordpress.com' ) {
 			return 'wordpress.com';
 		}
@@ -276,6 +295,7 @@ const JetpackConnectMain = React.createClass( {
 									? this.translate( 'You will be redirected to your site\'s dashboard to install Jetpack. Click the blue "Install Now" button' )
 									: this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s dashboard to install Jetpack. Click the blue install button.' )
 								}
+							action={ this.renderAlreadyHaveJetpackButton() }
 							example={ <JetpackExampleInstall url={ this.state.currentUrl } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Activate Jetpack' ) }
 							text={ this.translate( 'Then you\'ll click the blue "Activate" link to activate Jetpack.' ) }
@@ -286,10 +306,26 @@ const JetpackConnectMain = React.createClass( {
 					</div>
 					<Button onClick={ this.installJetpack } primary>{ this.translate( 'Install Jetpack' ) }</Button>
 					<div className="jetpack-connect__navigation">
-						{ this.renderBackButton() }
+						<div>{ this.renderBackButton() }</div>
 					</div>
 				</div>
 			</Main>
+		);
+	},
+
+	renderAlreadyHaveJetpackButton() {
+		return (
+			<a className="jetpack-connect__already-installed-jetpack-button" href="#" onClick={ this.confirmJetpackInstalled }>
+				{ this.translate( 'Already have jetpack installed?' ) }
+			</a>
+		);
+	},
+
+	renderNotJetpackButton() {
+		return (
+			<a className="jetpack-connect__no-jetpack-button" href="#" onClick={ this.confirmJetpackNotInstalled }>
+				{ this.translate( 'Don\'t have jetpack installed?' ) }
+			</a>
 		);
 	},
 
@@ -315,6 +351,7 @@ const JetpackConnectMain = React.createClass( {
 					<div className="jetpack-connect__install-steps">
 						<JetpackInstallStep title={ this.translate( '1. Activate Jetpack' ) }
 							text={ this.translate( 'You will be redirected to your site\'s dashboard to activate Jetpack. Click the blue "Activate" link.' ) }
+							action={ this.renderNotJetpackButton() }
 							example={ <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ false } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Connect Jetpack' ) }
 							text={ this.translate( 'Then click the green "Connect to WordPress.com" button to finish the process.' ) }
@@ -358,5 +395,5 @@ export default connect(
 			getJetpackSiteByUrl
 		};
 	},
-	dispatch => bindActionCreators( { recordTracksEvent, checkUrl, dismissUrl, requestSites, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
+	dispatch => bindActionCreators( { recordTracksEvent, confirmJetpackInstallStatus, checkUrl, dismissUrl, requestSites, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
 )( JetpackConnectMain );
