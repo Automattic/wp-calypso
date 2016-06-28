@@ -41,7 +41,7 @@ var TokenField = React.createClass( {
 
 			forEach( value, ( item ) => {
 				if ( 'object' === typeof item ) {
-					if ( ! 'value' in item ) {
+					if ( ! ( 'value' in item ) ) {
 						return new Error(
 							"When using object for value prop, each object is expected to have a 'value' property."
 						);
