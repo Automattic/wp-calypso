@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import Gridicon from 'components/gridicon';
 
