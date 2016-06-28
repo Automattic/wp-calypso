@@ -1,4 +1,4 @@
-.themes__sheet-download {
+.theme-download-card {
 
 	text-align: center;
 
@@ -24,7 +24,7 @@
 
 @include breakpoint( ">1040px" ) {
 
-	.themes__sheet-download {
+	.theme-download-card {
 		text-align: inherit;
 
 		.gridicon {
