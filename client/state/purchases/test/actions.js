@@ -21,13 +21,21 @@ import useMockery from 'test/helpers/use-mockery';
 import purchasesAssembler from 'lib/purchases/assembler';
 
 describe( 'actions', () => {
+	const purchases = [ { id: 1 } ],
+		assembledPurchases = purchasesAssembler.createPurchasesArray( purchases ),
+		userId = 1337,
+		purchaseId = 31337;
+
 	useNock();
 
-	let fetchUserPurchases;
+	let fetchUserPurchases, removePurchase;
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/olark', () => ( { } ) );
+
 		const actions = require( '../actions' );
+
 		fetchUserPurchases = actions.fetchUserPurchases;
+		removePurchase = actions.removePurchase;
 	} );
 
 	const spy = sinon.spy();
@@ -37,16 +45,13 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchUserPurchases', () => {
-		const userId = 1337,
-			purchasesData = [ { id: 1 } ];
-
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/me/purchases' )
-				.reply( 200, purchasesData );
+				.reply( 200, purchases );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		it( 'should dispatch fetch/complete actions', () => {
 			const promise = fetchUserPurchases( 1337 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -57,7 +62,34 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASES_USER_FETCH_COMPLETED,
 					userId,
-					purchases: purchasesAssembler.createPurchasesArray( purchasesData )
+					purchases: assembledPurchases
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#removePurchase', () => {
+		const response = { purchases };
+
+		before( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.post( `/rest/v1.1/me/purchases/${ purchaseId }/delete` )
+				.reply( 200, response );
+		} );
+
+		it( 'should dispatch fetch/complete actions', () => {
+			const promise = removePurchase( purchaseId, userId )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: PURCHASE_REMOVE,
+				purchaseId
+			} );
+
+			return promise.then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: PURCHASE_REMOVE_COMPLETED,
+					purchases: assembledPurchases,
+					userId
 				} );
 			} );
 		} );
