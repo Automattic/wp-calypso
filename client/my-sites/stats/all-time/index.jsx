@@ -61,7 +61,7 @@ class StatsAllTime extends Component {
 		return (
 			<div>
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" query={ query } /> }
-				<SectionHeader label={ translate( 'All-time posts, views, and visitors' ) }></SectionHeader>
+				<SectionHeader label={ translate( 'All-time posts, views, and visitors' ) } />
 				<Card className={ classNames( 'stats-module', 'all-time', classes ) }>
 					<StatsTabs borderless>
 						<StatsTab
