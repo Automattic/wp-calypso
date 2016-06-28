@@ -63,7 +63,7 @@ const jetpackConnectFirstStep = ( context, isInstall ) => {
 export default {
 	redirectWithoutLocaleifLoggedIn( context, next ) {
 		if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
-			let urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
+			const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
 			return page.redirect( urlWithoutLocale );
 		}
 
@@ -73,13 +73,20 @@ export default {
 	saveQueryObject( context, next ) {
 		if ( ! isEmpty( context.query ) && context.query.redirect_uri ) {
 			debug( 'set initial query object', context.query );
-			context.store.dispatch( { type: JETPACK_CONNECT_QUERY_SET, queryObject: context.query } );
+			context.store.dispatch( {
+				type: JETPACK_CONNECT_QUERY_SET,
+				queryObject: context.query
+			} );
 			page.redirect( context.pathname );
 		}
 
 		if ( ! isEmpty( context.query ) && context.query.update_nonce ) {
 			debug( 'updating nonce', context.query );
-			context.store.dispatch( { type: JETPACK_CONNECT_QUERY_UPDATE, property: '_wp_nonce', value: context.query.update_nonce } );
+			context.store.dispatch( {
+				type: JETPACK_CONNECT_QUERY_UPDATE,
+				property: '_wp_nonce',
+				value: context.query.update_nonce
+			} );
 			page.redirect( context.pathname );
 		}
 
@@ -96,7 +103,7 @@ export default {
 	},
 
 	connect( context ) {
-		const analyticsBasePath = '/jetpack/connect/:site',
+		const analyticsBasePath = '/jetpack/connect',
 			analyticsPageTitle = 'Jetpack Connect';
 
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
