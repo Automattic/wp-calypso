@@ -94,10 +94,6 @@
 	}
 }
 
-.post-type-list__post-actions-srt {
-	@extend .screen-reader-text;
-}
-
 .post-type-list__post-actions .button {
 	opacity: 0.5;
 	padding-left: 8px;
