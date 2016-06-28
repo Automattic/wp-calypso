@@ -47,7 +47,7 @@ export default React.createClass( {
 	},
 
 	onSubmit( event ) {
-		window.location.href = `https://my.pressable.com/signup/five-sites-yearly?email=${ encodeURIComponent( this.state.email ) }&ref=wpcom`;
+		window.location.href = `https://my.pressable.com/signup/five-sites?email=${ encodeURIComponent( this.state.email ) }&wp-ecommerce=true`;
 		event.preventDefault();
 	},
 
