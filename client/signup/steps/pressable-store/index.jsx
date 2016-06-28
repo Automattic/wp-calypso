@@ -9,6 +9,7 @@ import React from 'react';
 import analytics from 'lib/analytics';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
+import Gridicon from 'components/gridicon';
 
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
@@ -64,6 +65,11 @@ export default React.createClass( {
 						</div>
 					</LoggedOutFormFooter>
 				</LoggedOutForm>
+				<LoggedOutFormLinks>
+					<LoggedOutFormLinkItem className="pressable-store__privacy-policy" target="__blank" href="https://pressable.com/legal/privacy-policy/">
+						Pressable Privacy Policy <Gridicon icon="external" size={ 12 } />
+					</LoggedOutFormLinkItem>
+				</LoggedOutFormLinks>
 			</div>
 		);
 	},
