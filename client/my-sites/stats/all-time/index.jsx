@@ -66,34 +66,32 @@ class StatsAllTime extends Component {
 			<div>
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" query={ query } /> }
 				<SectionHeader label={ translate( 'All-time posts, views, and visitors' ) }></SectionHeader>
-				<Card className={ classNames( 'stats-module', 'stats-all-time', classes ) }>
-					<div className="module-content">
-						<StatsTabs borderless>
-							<StatsTab
-								gridicon="posts"
-								label={ translate( 'Posts' ) }
-								loading={ isLoading }
-								value={ posts } />
-							<StatsTab
-								gridicon="visible"
-								label={ translate( 'Views' ) }
-								loading={ isLoading }
-								value={ views } />
-							<StatsTab
-								gridicon="user"
-								label={ translate( 'Visitors' ) }
-								loading={ isLoading }
-								value={ visitors } />
-							<StatsTab
-								className="is-best"
-								gridicon="trophy"
-								label={ translate( 'Best Views Ever' ) }
-								loading={ isLoading }
-								value={ viewsBestDayTotal }>
-								<span className="stats-all-time__best-day">{ bestDay }</span>
-							</StatsTab>
-						</StatsTabs>
-					</div>
+				<Card className={ classNames( 'stats-module', 'all-time', classes ) }>
+					<StatsTabs borderless>
+						<StatsTab
+							gridicon="posts"
+							label={ translate( 'Posts' ) }
+							loading={ isLoading }
+							value={ posts } />
+						<StatsTab
+							gridicon="visible"
+							label={ translate( 'Views' ) }
+							loading={ isLoading }
+							value={ views } />
+						<StatsTab
+							gridicon="user"
+							label={ translate( 'Visitors' ) }
+							loading={ isLoading }
+							value={ visitors } />
+						<StatsTab
+							className="all-time__is-best"
+							gridicon="trophy"
+							label={ translate( 'Best Views Ever' ) }
+							loading={ isLoading }
+							value={ viewsBestDayTotal }>
+							<span className="all-time__best-day">{ bestDay }</span>
+						</StatsTab>
+					</StatsTabs>
 				</Card>
 			</div>
 		);
