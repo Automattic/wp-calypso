@@ -26,7 +26,7 @@ const ReaderSidebarTags = React.createClass( {
 	},
 
 	followTag: function( tag ) {
-		let subscription = TagStore.getSubscription( TagActions.slugify( tag ) );
+		const subscription = TagStore.getSubscription( TagActions.slugify( tag ) );
 		if ( subscription ) {
 			this.props.onTagExists( subscription );
 		} else {
@@ -65,6 +65,7 @@ const ReaderSidebarTags = React.createClass( {
 				expanded={ this.props.isOpen }
 				title={ this.translate( 'Tags' ) }
 				count={ tagCount }
+				addLabel={ this.translate( 'New tag name' ) }
 				addPlaceholder={ this.translate( 'Add any tag' ) }
 				onAddSubmit={ this.followTag }
 				onAddClick={ this.handleAddClick }

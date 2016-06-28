@@ -14,6 +14,7 @@ import Button from 'components/button';
 const ExpandableSidebarAddForm = React.createClass( {
 
 	propTypes: {
+		addLabel: React.PropTypes.string,
 		addPlaceholder: React.PropTypes.string,
 		onAddSubmit: React.PropTypes.func,
 		onAddClick: React.PropTypes.func
@@ -29,7 +30,7 @@ const ExpandableSidebarAddForm = React.createClass( {
 		return {
 			onAddSubmit: noop,
 			onAddClick: noop
-		}
+		};
 	},
 
 	toggleAdd() {
@@ -58,12 +59,13 @@ const ExpandableSidebarAddForm = React.createClass( {
 			}
 		);
 
-		return(
+		return (
 			<div className={ classes }>
 				<Button compact className="sidebar__menu-add-button" onClick={ this.toggleAdd }>{ this.translate( 'Add' ) }</Button>
 
 				<div className="sidebar__menu-add">
 					<input
+						aria-label={ this.props.addLabel }
 						className="sidebar__menu-add-input"
 						type="text"
 						placeholder={ this.props.addPlaceholder }
