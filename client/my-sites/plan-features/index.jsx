@@ -27,7 +27,7 @@ import {
 	PLAN_FREE
 } from 'lib/plans/constants';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getCheckoutURL } from 'lib/plans';
+import { getPlanPath } from 'lib/plans';
 
 class PlanFeatures extends Component {
 	render() {
@@ -111,7 +111,7 @@ export default connect( ( state, ownProps ) => {
 		planConstantObj: plansList[ ownProps.plan ],
 		onUpgradeClick: ownProps.plan === PLAN_FREE ? noop : () => {
 			const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
-			page( getCheckoutURL( ownProps.plan, selectedSiteSlug ) );
+			page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( ownProps.plan ) || '' }` );
 		},
 		planObject: planObject
 	};
