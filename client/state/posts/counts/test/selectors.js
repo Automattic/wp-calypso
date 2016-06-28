@@ -11,7 +11,9 @@ import {
 	getAllPostCounts,
 	getAllPostCount,
 	getMyPostCounts,
-	getMyPostCount
+	getMyPostCount,
+	getNormalizedPostCounts,
+	getNormalizedMyPostCounts
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -89,7 +91,7 @@ describe( 'selectors', () => {
 						}
 					}
 				}
-			}, 2916284, 'post' )
+			}, 2916284, 'post' );
 
 			expect( postCounts ).to.eql( {
 				publish: 2
@@ -147,7 +149,7 @@ describe( 'selectors', () => {
 						}
 					}
 				}
-			}, 2916284, 'post' )
+			}, 2916284, 'post' );
 
 			expect( postCounts ).to.eql( {
 				publish: 1
@@ -174,6 +176,90 @@ describe( 'selectors', () => {
 			}, 2916284, 'post', 'publish' );
 
 			expect( postCounts ).to.equal( 1 );
+		} );
+	} );
+
+	describe( 'getNormalizedPostCounts()', () => {
+		it( 'should return normalized post counts using selector', () => {
+			const postCounts = getNormalizedPostCounts( {
+				posts: {
+					counts: {
+						counts: {
+							2916284: {
+								post: {
+									mine: {
+										publish: 1,
+										'private': 1,
+										draft: 2,
+										pending: 1,
+										future: 2,
+										badstatus: 10
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'post', getMyPostCounts );
+
+			expect( postCounts ).to.eql( {
+				publish: 2,
+				draft: 3,
+				future: 2,
+				trash: 0
+			} );
+		} );
+
+		it( 'should default to returning all counts', () => {
+			const postCounts = getNormalizedPostCounts( {
+				posts: {
+					counts: {
+						counts: {
+							2916284: {
+								post: {
+									all: {
+										publish: 1
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'post' );
+
+			expect( postCounts ).to.eql( {
+				publish: 1,
+				draft: 0,
+				future: 0,
+				trash: 0
+			} );
+		} );
+	} );
+
+	describe( 'getNormalizedMyPostCounts()', () => {
+		it( 'should return normalized post counts for mine counts', () => {
+			const postCounts = getNormalizedMyPostCounts( {
+				posts: {
+					counts: {
+						counts: {
+							2916284: {
+								post: {
+									mine: {
+										publish: 1
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'post' );
+
+			expect( postCounts ).to.eql( {
+				publish: 1,
+				draft: 0,
+				future: 0,
+				trash: 0
+			} );
 		} );
 	} );
 } );
