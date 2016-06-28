@@ -35,7 +35,7 @@ function PostTypeListPostActions( { translate, post, dispatchTrashPost, dispatch
 		<div className="post-type-list__post-actions">
 			<Button onClick={ onTrash } borderless>
 				<Gridicon icon="trash" />
-				<span className="screen-reader-text">
+				<span className="post-type-list__post-actions-srt">
 					{ post && 'trash' === post.status
 						? translate( 'Delete Permanently' )
 						: translate( 'Trash', { context: 'verb' } ) }
@@ -43,7 +43,7 @@ function PostTypeListPostActions( { translate, post, dispatchTrashPost, dispatch
 			</Button>
 			<Button href={ post ? post.URL : '' } target="_blank" borderless>
 				<Gridicon icon="external" />
-				<span className="screen-reader-text">
+				<span className="post-type-list__post-actions-srt">
 					{ translate( 'View', { context: 'verb' } ) }
 				</span>
 			</Button>
