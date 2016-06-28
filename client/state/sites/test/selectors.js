@@ -10,6 +10,7 @@ import {
 	getSite,
 	getSiteCollisions,
 	isSiteConflicting,
+	isSiteCustomizable,
 	isJetpackSite,
 	getSiteSlug,
 	isRequestingSites,
@@ -398,6 +399,52 @@ describe( 'selectors', () => {
 			}, 77203074, 1003 );
 
 			expect( isCurrent ).to.be.false;
+		} );
+	} );
+
+	describe( '#isSiteCustomizable()', () => {
+		it( 'should return null if the site is not known', () => {
+			const isCustomizable = isSiteCustomizable( {
+				sites: {
+					items: {}
+				}
+			}, 77203074 );
+
+			expect( isCustomizable ).to.be.null;
+		} );
+
+		it( 'it should return false if the site doesn\'t have edit_theme_options capabilities', () => {
+			const isCustomizable = isSiteCustomizable( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							capabilities: {
+								edit_theme_options: false
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( isCustomizable ).to.be.false;
+		} );
+
+		it( 'it should return true if the site has edit_theme_options capabilities', () => {
+			const isCustomizable = isSiteCustomizable( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							capabilities: {
+								edit_theme_options: true
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( isCustomizable ).to.be.true;
 		} );
 	} );
 } );
