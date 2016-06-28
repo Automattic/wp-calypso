@@ -162,7 +162,7 @@ module.exports = {
 	},
 
 	following: function( context ) {
-		var FollowingComponent = require( 'reader/following-stream' ),
+		var FollowingComponent = require( 'reader/following/main' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Following',
 			followingStore = feedStreamFactory( 'following' ),
@@ -355,7 +355,7 @@ module.exports = {
 	},
 
 	readA8C: function( context ) {
-		var FollowingComponent = require( 'reader/following-stream' ),
+		var FollowingComponent = require( 'reader/following/main' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C',
 			feedStore = feedStreamFactory( 'a8c' ),

@@ -8,7 +8,7 @@ import debounce from 'lodash/debounce';
 /**
  * Internal Dependencies
  */
-import FollowingStream from 'reader/following-stream';
+import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import StreamHeader from 'reader/stream-header';
 import HeaderBack from 'reader/header-back';
@@ -91,7 +91,7 @@ const FeedStream = React.createClass( {
 		const store = this.props.store || emptyStore;
 
 		return (
-			<FollowingStream { ...this.props } store={ store }
+			<Stream { ...this.props } store={ store }
 				listName={ this.state.title }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true } >
@@ -100,7 +100,7 @@ const FeedStream = React.createClass( {
 				<p>
 					<FormTextInput type="text" value={ undefined } defaultValue={ this.props.query } ref="searchInput" onChange={ this.debouncedUpdate } placeholder={ this.translate( 'Enter a search term' ) } />
 				</p>
-			</FollowingStream>
+			</Stream>
 		);
 	}
 } );
