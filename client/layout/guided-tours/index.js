@@ -22,6 +22,7 @@ import {
 	ActionStep,
 } from './steps';
 import wait from './wait';
+import QueryPreferences from 'components/data/query-preferences';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
@@ -69,7 +70,7 @@ class GuidedTours extends Component {
 
 		const nextTargetFound = () => {
 			if ( nextStepConfig && nextStepConfig.target ) {
-				const target = this.getTipTargets()[nextStepConfig.target];
+				const target = this.getTipTargets()[ nextStepConfig.target ];
 				return target && target.getBoundingClientRect().left >= 0;
 			}
 			return true;
@@ -121,6 +122,7 @@ class GuidedTours extends Component {
 
 		return (
 			<div className="guided-tours">
+				<QueryPreferences />
 				<StepComponent
 					{ ...stepConfig }
 					key={ stepConfig.target }
