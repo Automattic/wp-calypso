@@ -31,7 +31,7 @@ $plan-features-header-banner-height: 20px;
 .plan-features__header {
 	position: relative;
 	display: flex;
-	align-items: top;
+	align-items: flex-start;
 	padding: 12px 24px 12px 15px;
 	border-bottom: solid 2px lighten( $gray, 20% );
 	background-color: $white;
