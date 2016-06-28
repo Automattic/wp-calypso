@@ -8,6 +8,7 @@ import filter from 'lodash/filter';
 import some from 'lodash/some';
 import includes from 'lodash/includes';
 import find from 'lodash/find';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -140,6 +141,26 @@ export function getSitePlan( state, siteId ) {
 
 	if ( ! site ) {
 		return null;
+	}
+
+	if ( get( site.plan, 'expired', false ) ) {
+		if ( site.jetpack ) {
+			return {
+				product_id: 2002,
+				product_slug: 'jetpack_free',
+				product_name_short: 'Free',
+				free_trial: false,
+				expired: false
+			};
+		}
+
+		return {
+			product_id: 1,
+			product_slug: 'free_plan',
+			product_name_short: 'Free',
+			free_trial: false,
+			expired: false
+		};
 	}
 
 	return site.plan;
