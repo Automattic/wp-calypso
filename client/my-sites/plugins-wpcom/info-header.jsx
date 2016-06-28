@@ -17,7 +17,10 @@ export const InfoHeader = React.createClass( {
 			<Notice
 				status="is-info"
 				showDismiss={ false }
-				text={ translate( 'Your site comes pre-installed with a wide variety of plugins. Uploading your own plugins is not available on WordPress.com.' ) }
+				text={ translate(
+					'Your site comes pre-installed with a wide variety of plugins. ' +
+					'Uploading your own plugins is not available on WordPress.com.'
+				) }
 			>
 				<NoticeAction href="https://en.support.wordpress.com/plugins/" external={ true }>
 					{ translate( 'Learn More' ) }
