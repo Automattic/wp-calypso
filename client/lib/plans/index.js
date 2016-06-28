@@ -25,13 +25,10 @@ import {
 	featuresList,
 	plansList,
 	PLAN_PERSONAL,
-	PLAN_FREE,
-	JETPACK,
-	WPCOM
+	PLAN_FREE
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
-import { isJetpack } from 'lib/site/utils';
 
 /**
  * Module vars
@@ -70,8 +67,8 @@ export function getSitePlanSlug( siteID ) {
 }
 
 function canUpgradeToPlan( planKey, site ) {
-	const offer = isJetpack( site ) ? JETPACK : WPCOM;
-	return get( plansList, [ planKey, 'availableIn' ], () => false )( offer );
+	const plan = get( site, [ 'plan', 'expired' ], true ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
+	return get( plansList, [ planKey, 'availableFor' ], () => false )( plan );
 }
 
 export function getUpgradePlanSlugFromPath( path, siteID ) {

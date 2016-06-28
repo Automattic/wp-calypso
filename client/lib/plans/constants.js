@@ -7,9 +7,6 @@ import React from 'react';
 import i18n from 'i18n-calypso';
 import includes from 'lodash/includes';
 
-export const JETPACK = 'jetpack';
-export const WPCOM = 'wpcom';
-
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
 export const PLAN_PREMIUM = 'value_bundle';
@@ -71,7 +68,6 @@ export const plansList = {
 		getProductId: () => 1,
 		getStoreSlug: () => PLAN_FREE,
 		getPathSlug: () => 'beginner',
-		availableIn: ( offer ) => offer === WPCOM,
 		getDescription: () => i18n.translate( 'Get a free blog and be on your way to publishing your first post in less than five minutes.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_FREE_SITE,
@@ -87,7 +83,7 @@ export const plansList = {
 		getTitle: () => i18n.translate( 'Personal' ),
 		getProductId: () => 1009,
 		getStoreSlug: () => PLAN_PERSONAL,
-		availableIn: ( offer ) => offer === WPCOM,
+		availableFor: ( plan ) => includes( [ PLAN_FREE ], plan ),
 		getPathSlug: () => 'personal',
 		getDescription: () => i18n.translate( 'Use your own domain and establish your online presence without ads.' ),
 		getFeatures: () => [
@@ -107,7 +103,7 @@ export const plansList = {
 		getProductId: () => 1003,
 		getPathSlug: () => 'premium',
 		getStoreSlug: () => PLAN_PREMIUM,
-		availableIn: ( offer ) => offer === WPCOM,
+		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
 		getDescription: () => i18n.translate( 'Your own domain name, powerful customization options, lots of space for audio and video, and $100 advertising credit.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_FREE_SITE,
@@ -129,7 +125,7 @@ export const plansList = {
 		getPriceTitle: () => i18n.translate( '$299 per year' ), //TODO: DO NOT USE
 		getProductId: () => 1008,
 		getStoreSlug: () => PLAN_BUSINESS,
-		availableIn: ( offer ) => offer === WPCOM,
+		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ], plan ),
 		getPathSlug: () => 'business',
 		getDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, and Google Analytics.' ),
 		getDescriptionWithWordAdsCredit: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, Google Analytics, and $200 advertising credit.' ),
@@ -152,7 +148,6 @@ export const plansList = {
 	[ PLAN_JETPACK_FREE ]: {
 		getTitle: () => i18n.translate( 'Free' ),
 		getProductId: () => 2002,
-		availableIn: ( offer ) => offer === JETPACK,
 		getDescription: () => '',
 		getFeatures: () => [],
 		getBillingTimeFrame: () => i18n.translate( 'for life' )
@@ -160,7 +155,7 @@ export const plansList = {
 	[ PLAN_JETPACK_PREMIUM ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
 		getProductId: () => 2000,
-		availableIn: ( offer ) => offer === JETPACK,
+		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getPathSlug: () => 'premium',
 		getDescription: () => i18n.translate( 'All the features you need to keep your site’s content backed up and secure, as well as spam-free.' ),
 		getFeatures: () => [
@@ -178,7 +173,7 @@ export const plansList = {
 	[ PLAN_JETPACK_PREMIUM_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
 		getProductId: () => 2003,
-		availableIn: ( offer ) => offer === JETPACK,
+		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getDescription: () => i18n.translate( 'All the features you need to keep your site’s content backed up and secure, as well as spam-free.' ),
 		getFeatures: () => [
 			FEATURE_SPAM_AKISMET_PLUS,
@@ -195,7 +190,7 @@ export const plansList = {
 	[ PLAN_JETPACK_BUSINESS ]: {
 		getTitle: () => i18n.translate( 'Professional' ),
 		getProductId: () => 2001,
-		availableIn: ( offer ) => offer === JETPACK,
+		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ], plan ),
 		getPathSlug: () => 'professional',
 		getDescription: () => i18n.translate( 'More powerful security tools and realtime content backup for the ultimate peace of mind.' ),
 		getFeatures: () => [
@@ -216,7 +211,7 @@ export const plansList = {
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Professional' ),
 		getProductId: () => 2004,
-		availableIn: ( offer ) => offer === JETPACK,
+		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ], plan ),
 		getDescription: () => i18n.translate( 'More powerful security tools and realtime content backup for the ultimate peace of mind.' ),
 		getFeatures: () => [
 			FEATURE_SPAM_AKISMET_UNLIMITED,
