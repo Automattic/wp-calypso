@@ -302,13 +302,12 @@ const ThemeSheet = React.createClass( {
 		return <ThemesRelatedCard currentTheme={ this.props.id } />;
 	},
 
-	renderPrice(){
+	renderPrice() {
 		let price = this.props.price;
 
 		if ( this.props.selectedSite && this.props.purchased ) {
 			price = i18n.translate( 'Purchased' );
-		}
-		else if ( ! isPremium( this.props ) ) {
+		} else if ( ! isPremium( this.props ) ) {
 			price = i18n.translate( 'Free' );
 		}
 
