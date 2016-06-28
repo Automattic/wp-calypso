@@ -90,7 +90,7 @@
 
 	if ( isLocalStorageNameSupported() ) {
 		// Randomly assign 1% of users to log errors
-		if ( localStorage.getItem( 'log-errors' ) === undefined ) {
+		if ( ! localStorage.getItem( 'log-errors' ) ) {
 			if ( Math.random() <= 0.01 ) {
 				localStorage.setItem( 'log-errors', 'true' );
 			} else {
