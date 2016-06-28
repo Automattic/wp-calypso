@@ -8,15 +8,13 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var cartValues = require( 'lib/cart-values' ),
-	Notice = require( 'components/notice' ),
-	ValidationErrorList = require( 'notices/validation-error-list' ),
 	cartItems = cartValues.cartItems,
 	GoogleAppsUsers = require( './users' ),
 	GoogleAppsProductDetails = require( './product-details' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
 	abtest = require( 'lib/abtest' ).abtest,
 	googleAppsLibrary = require( 'lib/domains/google-apps-users' ),
-	validateUsers = googleAppsLibrary.validate,
+	validateGappsUsers = googleAppsLibrary.validate,
 	filterUsers = googleAppsLibrary.filter;
 
 var GoogleAppsDialog = React.createClass( {
@@ -50,16 +48,6 @@ var GoogleAppsDialog = React.createClass( {
 		this.setState( { validationErrors: null } );
 	},
 
-	validationErrors: function() {
-		if ( this.state.validationErrors ) {
-			return (
-				<Notice onDismissClick={ this.removeValidationErrors } status="is-error">
-					<ValidationErrorList messages={ this.state.validationErrors } />
-				</Notice>
-			);
-		}
-	},
-
 	render: function() {
 		var gapps = this.props.productsList && this.props.productsList.get().gapps,
 			price = gapps && gapps.cost_display,
@@ -84,7 +72,6 @@ var GoogleAppsDialog = React.createClass( {
 
 		return (
 			<form className="google-apps-dialog card" onSubmit={ this.handleFormSubmit }>
-				{ this.validationErrors() }
 				{ this.header() }
 				<GoogleAppsProductDetails
 					price={ price }
@@ -192,15 +179,11 @@ var GoogleAppsDialog = React.createClass( {
 	},
 
 	handleFormSubmit: function( event ) {
-		var validation;
 		event.preventDefault();
 
 		this.recordEvent( 'formSubmit', this.props.analyticsSection );
 
-		validation = this.validateUsers();
-		if ( validation.errors.length > 0 ) {
-			this.setState( { validationErrors: validation.errors } );
-			this.setUsers( validation.users );
+		if ( ! this.validateForm() ) {
 			return;
 		}
 
@@ -231,12 +214,19 @@ var GoogleAppsDialog = React.createClass( {
 		};
 	},
 
-	validateUsers: function() {
-		return validateUsers( {
+	validateForm: function() {
+		const validation = validateGappsUsers( {
 			users: this.state.users,
 			fields: this.getFields(),
 			domainSuffix: this.props.domain
 		} );
+
+		if ( validation.errors.length > 0 ) {
+			this.setState( { validationErrors: validation.errors } );
+			this.setUsers( validation.users );
+			return false;
+		}
+		return true;
 	},
 
 	getGoogleAppsCartItem: function() {
@@ -247,7 +237,7 @@ var GoogleAppsDialog = React.createClass( {
 
 		users = users.map( function( user ) {
 			return {
-				email: user.email.value,
+				email: `${ user.email.value }@${ this.props.domain }`,
 				firstname: user.firstName.value,
 				lastname: user.lastName.value
 			};

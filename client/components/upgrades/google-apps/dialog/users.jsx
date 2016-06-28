@@ -10,6 +10,7 @@ import clone from 'lodash/clone';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormInputValidation from 'components/forms/form-input-validation';
 import AnalyticsMixin from 'lib/mixins/analytics';
 
 const GoogleAppsUsers = React.createClass( {
@@ -49,49 +50,51 @@ const GoogleAppsUsers = React.createClass( {
 		);
 	},
 
-	fieldClasses: function( field, className ) {
-		className = 'google-apps-dialog__user-field ' + className;
-
-		if ( field.error ) {
-			className += ' is-invalid';
-		}
-
-		return className;
+	fieldClasses( fieldName ) {
+		return `google-apps-dialog__user-field google-apps-dialog__user-${ fieldName }`;
 	},
 
-	inputsForUser: function( user, index ) {
-		const contactText = this.translate( 'contact', { context: 'part of e-mail address', comment: 'As it would be part of an e-mail address contact@example.com' } ),
-			domain = this.props.domain;
+	inputsForUser( user, index ) {
+		const contactText = this.translate( 'contact', { context: 'part of e-mail address', comment: 'As it would be part of an e-mail address contact@example.com' } );
 
 		return (
 			<div className="google-apps-dialog__user-fields" key={ `google-apps-dialog-user-${ index }` }>
 				<FormFieldset>
 					<FormTextInputWithAffixes
-						className={ this.fieldClasses( user.email, 'google-apps-dialog__user-email' ) }
+						className={ this.fieldClasses( 'email' ) }
 						placeholder={ this.translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
+						name="email"
 						value={ user.email.value }
 						suffix={ '@' + this.props.domain }
-						onChange={ this.updateField.bind( this, index, 'email' ) }
+						isError={ user.email.error }
+						onChange={ this.updateField.bind( this, index ) }
 						onBlur={ this.props.onBlur }
 						onClick={ this.recordInputFocus.bind( this, index, 'Email' ) } />
+					{ user.email.error ? <FormInputValidation text={ user.email.error } isError={ true } /> : null }
 				</FormFieldset>
 
-				<FormFieldset>
+				<FormFieldset className={ this.fieldClasses( 'first-name' ) }>
 					<FormTextInput
-						className={ this.fieldClasses( user.firstName, 'google-apps-dialog__user-first-name' ) }
 						placeholder={ this.translate( 'First Name' ) }
+						name="firstName"
 						value={ user.firstName.value }
-						onChange={ this.updateField.bind( this, index, 'firstName' ) }
+						isError={ user.firstName.error }
+						onChange={ this.updateField.bind( this, index ) }
 						onBlur={ this.props.onBlur }
 						onClick={ this.recordInputFocus.bind( this, index, 'First Name' ) } />
+					{ user.firstName.error ? <FormInputValidation text={ user.firstName.error } isError={ true } /> : null }
+				</FormFieldset>
 
+				<FormFieldset className={ this.fieldClasses( 'last-name' ) }>
 					<FormTextInput
-						className={ this.fieldClasses( user.lastName, 'google-apps-dialog__user-last-name' ) }
 						placeholder={ this.translate( 'Last Name' ) }
+						name="lastName"
 						value={ user.lastName.value }
-						onChange={ this.updateField.bind( this, index, 'lastName' ) }
+						isError={ user.lastName.error }
+						onChange={ this.updateField.bind( this, index ) }
 						onBlur={ this.props.onBlur }
 						onClick={ this.recordInputFocus.bind( this, index, 'Last Name' ) } />
+					{ user.lastName.error ? <FormInputValidation text={ user.lastName.error } isError={ true } /> : null }
 				</FormFieldset>
 			</div>
 		);
@@ -113,10 +116,11 @@ const GoogleAppsUsers = React.createClass( {
 		this.props.onChange( updatedFields );
 	},
 
-	updateField( index, fieldName, event ) {
+	updateField( index, event ) {
 		event.preventDefault();
 
 		const newValue = event.target.value,
+			fieldName = event.target.name,
 			updatedFields = clone( this.props.fields );
 		updatedFields[ index ] = clone( updatedFields[ index ] );
 		updatedFields[ index ][ fieldName ] = clone( updatedFields[ index ][ fieldName ] );
