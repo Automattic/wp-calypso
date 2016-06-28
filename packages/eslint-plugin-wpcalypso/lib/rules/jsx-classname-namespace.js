@@ -171,7 +171,8 @@ var rule = module.exports = function( context ) {
 
 	return {
 		JSXAttribute: function( node ) {
-			var rawClassName, filename, classNames, isError, isRoot, namespace, expected;
+			var rawClassName, filename, isRoot, classNames, namespace, prefix,
+				isError, expected;
 
 			if ( 'className' !== node.name.name ) {
 				return;
@@ -188,8 +189,6 @@ var rule = module.exports = function( context ) {
 			}
 
 			filename = context.getFilename();
-			classNames = rawClassName.value.split( ' ' );
-			namespace = path.basename( path.dirname( filename ) );
 			isRoot = isRootRenderedElement( node, filename );
 
 			// `null` return value indicates intent to abort validation
@@ -197,12 +196,21 @@ var rule = module.exports = function( context ) {
 				return;
 			}
 
+			classNames = rawClassName.value.split( ' ' );
+			namespace = path.basename( path.dirname( filename ) );
+			prefix = namespace + '__';
+
 			isError = ! classNames.some( function( className ) {
 				if ( isRoot ) {
 					return className === namespace;
 				}
 
-				return 0 === className.indexOf( namespace + '__' );
+				// Non-root node should have class name starting with but not
+				// equal to namespace prefix
+				return (
+					0 === className.indexOf( prefix ) &&
+					className !== prefix
+				);
 			} );
 
 			if ( ! isError ) {
