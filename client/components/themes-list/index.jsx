@@ -92,14 +92,17 @@ export const ThemesList = React.createClass( {
 				/>;
 	},
 
+	// The themes-list-loaded class is used as a trigger for the e2e tests to
+	// indicate when the component is finished loading all themes
+	// -- https://github.com/Automattic/wp-e2e-tests
 	componentWillUpdate: function() {
 		var node = ReactDom.findDOMNode( this );
 		node.className = node.className.replace( / themes-list-loaded/, '' );
 	},
 
 	componentDidUpdate: function() {
-		ReactDom.findDOMNode( this ).className += " themes-list-loaded";
-	  },
+		ReactDom.findDOMNode( this ).className += ' themes-list-loaded';
+	},
 
 	render() {
 		if ( ! this.props.loading && this.props.themes.length === 0 ) {
