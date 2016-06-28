@@ -6,6 +6,8 @@ import React from 'react';
 import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
 import i18n from 'i18n-calypso';
+import config from 'config';
+import defer from 'lodash/defer';
 
 /**
  * Internal Dependencies
@@ -25,6 +27,7 @@ import {
 } from 'reader/route';
 import { recordTrack } from 'reader/stats';
 import FeedError from 'reader/feed-error';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 const analyticsPageTitle = 'Reader';
 
@@ -148,6 +151,39 @@ module.exports = {
 		next();
 	},
 
+	checkForColdStart: function( context, next ) {
+		const FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' );
+		const user = getCurrentUser( context.store.getState() );
+		const numberofTries = 3;
+
+		if ( ! user ) {
+			next();
+			return;
+		}
+
+		if ( ! user.is_new_reader ) {
+			next();
+			return;
+		}
+
+		function checkSubCount( tries ) {
+			if ( FeedSubscriptionStore.getCurrentPage() > 0 || FeedSubscriptionStore.isLastPage() ) {
+				// we have total subs now, make the decision
+				if ( FeedSubscriptionStore.getTotalSubscriptions() < config( 'reader_cold_start_graduation_threshold' ) ) {
+					defer( page.redirect.bind( page, '/read/start' ) );
+				} else {
+					defer( next );
+				}
+			} else if ( tries > -1 ) {
+				FeedSubscriptionStore.once( 'change', checkSubCount.bind( null, --tries ) );
+			} else {
+				defer( next );
+			}
+		}
+
+		checkSubCount( numberofTries );
+	},
+
 	sidebar: function( context, next ) {
 		var ReaderSidebarComponent = require( 'reader/sidebar' );
 
@@ -176,19 +212,21 @@ module.exports = {
 		setPageTitle( i18n.translate( 'Following' ) );
 
 		ReactDom.render(
-			React.createElement( FollowingComponent, {
-				key: 'following',
-				listName: i18n.translate( 'Followed Sites' ),
-				store: followingStore,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( FollowingComponent, {
+					key: 'following',
+					listName: i18n.translate( 'Followed Sites' ),
+					store: followingStore,
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						analyticsPageTitle,
+						mcKey
+					),
+					onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},
@@ -368,20 +406,22 @@ module.exports = {
 		setPageTitle( 'Automattic' );
 
 		ReactDom.render(
-			React.createElement( FollowingComponent, {
-				key: 'read-a8c',
-				className: 'is-a8c',
-				listName: 'Automattic',
-				store: feedStore,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( FollowingComponent, {
+					key: 'read-a8c',
+					className: 'is-a8c',
+					listName: 'Automattic',
+					store: feedStore,
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						analyticsPageTitle,
+						mcKey
+					),
+					onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
+				} ),
+			),
 			document.getElementById( 'primary' )
 		);
 	}
