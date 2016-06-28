@@ -305,7 +305,10 @@ const ThemeSheet = React.createClass( {
 	renderPrice(){
 		let price = this.props.price;
 
-		if ( ! isPremium( this.props ) ) {
+		if ( this.props.selectedSite && this.props.purchased ) {
+			price = i18n.translate( 'Purchased' );
+		}
+		else if ( ! isPremium( this.props ) ) {
 			price = i18n.translate( 'Free' );
 		}
 
