@@ -12,6 +12,7 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isGoogleApps,
+	isGuidedTransfer,
 	isPlan,
 	isSiteRedirect
 } from 'lib/products-values';
@@ -65,6 +66,19 @@ const CheckoutThankYouHeader = React.createClass( {
 			return this.translate( "Your domain {{strong}}%(domainName)s{{/strong}} is now set up to use Google Apps. It's doing somersaults in excitement!", {
 				args: { domainName: this.props.primaryPurchase.meta },
 				components: { strong: <strong /> }
+			} );
+		}
+
+		if ( isGuidedTransfer( this.props.primaryPurchase ) ) {
+			if ( typeof this.props.primaryPurchase.meta === 'string' ) {
+				return this.translate( 'The guided transfer for {{strong}}%(siteName)s{{/strong}} will begin very soon. We will be in touch with you via email.', {
+					args: { siteName: this.props.primaryPurchase.meta },
+					components: { strong: <strong /> },
+				} );
+			}
+
+			return this.translate( 'The guided transfer for your site will begin very soon. We will be in touch with you via email.', {
+				components: { strong: <strong /> },
 			} );
 		}
 
