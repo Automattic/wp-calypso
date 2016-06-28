@@ -19,6 +19,8 @@ import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 
+import renderHeroImage from './hero-image';
+
 export default React.createClass( {
 	displayName: 'PressableStoreStep',
 
@@ -53,7 +55,9 @@ export default React.createClass( {
 		return (
 			<div>
 				<LoggedOutForm className="pressable-store__form">
-					<FormSectionHeading>{ this.translate( 'Create your new WordPress store for as low as $20.83/Month' ) }</FormSectionHeading>
+					{ renderHeroImage() }
+
+					<FormSectionHeading className="pressable-store__heading">{ this.translate( 'Create your new WordPress store for as low as $20.83/Month' ) }</FormSectionHeading>
 					<p>{ this.translate( 'WordPress.com has partnered with hosting provider Pressable to make setting up your store on WordPress simple and fun.' ) }</p>
 
 					<LoggedOutFormFooter>
