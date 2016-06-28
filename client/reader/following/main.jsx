@@ -1,12 +1,20 @@
-// External dependencies
+/**
+ * External dependencies
+ */
 import React from 'react';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import Stream from 'reader/stream';
+import StartRedirect from 'reader/start/redirect';
 
 const FollowingStream = ( props ) => {
 	return (
-		<Stream {...props} />
+		<div>
+			<StartRedirect />
+			<Stream { ...props } />
+		</div>
 	);
 };
 
