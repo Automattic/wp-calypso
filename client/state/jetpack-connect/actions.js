@@ -13,6 +13,7 @@ import Dispatcher from 'dispatcher';
 import {
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
+	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
@@ -37,8 +38,8 @@ import addQueryArgs from 'lib/route/add-query-args';
 /**
  *  Local variables;
  */
-let _fetching = {};
-let calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
+const _fetching = {};
+const calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
 const apiBaseUrl = 'https://jetpack.wordpress.com';
 const remoteAuthPath = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
 const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
@@ -51,6 +52,15 @@ const tracksEvent = ( dispatch, eventName, props ) => {
 };
 
 export default {
+	confirmJetpackInstallStatus( status ) {
+		return ( dispatch ) => {
+			dispatch( {
+				type: JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
+				status: status
+			} );
+		};
+	},
+
 	dismissUrl( url ) {
 		return ( dispatch ) => {
 			dispatch( {
