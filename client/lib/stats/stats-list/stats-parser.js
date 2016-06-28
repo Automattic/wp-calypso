@@ -167,7 +167,7 @@ StatsParser.prototype.statsVisits = function( payload ) {
 		attributes = [ 'visits', 'likes', 'visitors', 'comments', 'posts' ];
 
 	response.data = payload.data.map( function( record ) {
-		var dataRecord = {}, date, dayOfWeek;
+		var dataRecord = {}, date, dayOfWeek, localizedDate;
 
 		record.forEach( function( value, i ) {
 			// Remove W from weeks
@@ -192,16 +192,17 @@ StatsParser.prototype.statsVisits = function( payload ) {
 		dataRecord.classNames = [];
 
 		if ( dataRecord.period ) {
-			date = i18n.moment( dataRecord.period, 'YYYY-MM-DD' );
+			date = i18n.moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
+			localizedDate = i18n.moment( dataRecord.period, 'YYYY-MM-DD' );
 			if ( date.isValid() ) {
 				dayOfWeek = date.toDate().getDay();
 				if ( ( 'day' === payload.unit ) && ( ( 6 === dayOfWeek ) || ( 0 === dayOfWeek ) ) ) {
 					dataRecord.classNames.push( 'is-weekend' );
 				}
-				dataRecord.labelDay = date.format( 'MMM D' );
-				dataRecord.labelWeek = date.format( 'MMM D' );
-				dataRecord.labelMonth = date.format( 'MMM' );
-				dataRecord.labelYear = date.format( 'YYYY' );
+				dataRecord.labelDay = localizedDate.format( 'MMM D' );
+				dataRecord.labelWeek = localizedDate.format( 'MMM D' );
+				dataRecord.labelMonth = localizedDate.format( 'MMM' );
+				dataRecord.labelYear = localizedDate.format( 'YYYY' );
 			}
 		}
 
