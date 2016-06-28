@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,7 +12,7 @@ import React from 'react';
 import Card from 'components/card';
 import i18n from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
-import { getDetailsUrl } from 'my-sites/themes/helpers';
+import { getThemeDetailsUrl } from 'state/themes/themes/selectors';
 
 const ThemesRelatedCard = React.createClass( {
 
@@ -37,8 +38,8 @@ const ThemesRelatedCard = React.createClass( {
 		themes.delete( this.props.currentTheme );
 		themes = [ ...themes ];
 
-		let randomThemeIndex = this.props.currentTheme.charCodeAt( 0 ) % themes.length;
-		let theme = themes.splice( randomThemeIndex, 1 )[ 0 ];
+		const randomThemeIndex = this.props.currentTheme.charCodeAt( 0 ) % themes.length;
+		const theme = themes.splice( randomThemeIndex, 1 )[ 0 ];
 		const selectedThemes = [ theme ];
 		selectedThemes.push( themes[ theme.charCodeAt( 0 ) % themes.length ] );
 
@@ -58,7 +59,7 @@ const ThemesRelatedCard = React.createClass( {
 					{ themes.map( theme => (
 						<li key={ theme.id }>
 							<Card className="themes__sheet-related-themes-card">
-								<a href={ getDetailsUrl( theme ) }>
+								<a href={ this.props.getDetailsUrl( theme ) }>
 									<img src={ theme.screenshot + '?w=' + '660' }/>
 								</a>
 							</Card>
@@ -70,4 +71,8 @@ const ThemesRelatedCard = React.createClass( {
 	}
 } );
 
-export default ThemesRelatedCard;
+export default connect(
+	state => ( {
+		getDetailsUrl: getThemeDetailsUrl.bind( null, state )
+	} )
+)( ThemesRelatedCard );

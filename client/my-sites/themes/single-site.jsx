@@ -21,8 +21,9 @@ import EmptyContent from 'components/empty-content';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import ThemesSelection from './themes-selection';
-import { getDetailsUrl, getSupportUrl, getHelpUrl, isPremium, addTracking } from './helpers';
+import { isPremium, addTracking } from './helpers';
 import actionLabels from './action-labels';
+import { getThemeDetailsUrl, getThemeSupportUrl, getThemeHelpUrl } from 'state/themes/themes/selectors';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import sitesFactory from 'lib/sites-list';
 import { FEATURE_CUSTOM_DESIGN } from 'lib/plans/constants';
@@ -90,17 +91,17 @@ const ThemesSingleSite = React.createClass( {
 					separator: true
 				},
 				details: {
-					getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
+					getUrl: this.props.getDetailsUrl
 				},
 				support: ! site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
 					? {
-						getUrl: theme => getSupportUrl( theme, site ),
+						getUrl: this.props.getSupportUrl,
 						hideForTheme: theme => ! isPremium( theme )
 					}
 					: {},
 				help: ! site.jetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
 					? {
-						getUrl: theme => getHelpUrl( theme, site )
+						getUrl: this.props.getHelpUrl
 					}
 					: {},
 			};
@@ -200,7 +201,10 @@ export default connect(
 	state => ( {
 		queryParams: getQueryParams( state ),
 		themesList: getThemesList( state ),
-		selectedSite: getSelectedSite( state )
+		selectedSite: getSelectedSite( state ),
+		getDetailsUrl: getThemeDetailsUrl.bind( null, state ),
+		getSupportUrl: getThemeSupportUrl.bind( null, state ),
+		getHelpUrl: getThemeHelpUrl.bind( null, state )
 	} ),
 	{
 		activate,
