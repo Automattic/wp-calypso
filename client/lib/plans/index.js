@@ -66,7 +66,7 @@ export function getSitePlanSlug( siteID ) {
 	return get( site, 'plan.product_slug' );
 }
 
-function canUpgradeToPlan( planKey, site ) {
+export function canUpgradeToPlan( planKey, site = sitesList.getSelectedSite() ) {
 	const plan = get( site, [ 'plan', 'expired' ], true ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
 	return get( plansList, [ planKey, 'availableFor' ], () => false )( plan );
 }

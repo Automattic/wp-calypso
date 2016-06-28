@@ -23,11 +23,10 @@ import {
 	plansList,
 	getPlanFeaturesObject,
 	isPopular,
-	isMonthly,
-	PLAN_FREE
+	isMonthly
 } from 'lib/plans/constants';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getPlanPath } from 'lib/plans';
+import { getPlanPath, canUpgradeToPlan } from 'lib/plans';
 
 class PlanFeatures extends Component {
 	render() {
@@ -36,6 +35,7 @@ class PlanFeatures extends Component {
 		}
 
 		const {
+			available,
 			currencyCode,
 			planName,
 			rawPrice,
@@ -71,6 +71,7 @@ class PlanFeatures extends Component {
 				</PlanFeaturesItemList>
 				<PlanFeaturesFooter
 					current={ current }
+					available = { available }
 					description={ planConstantObj.getDescription() }
 					onUpgradeClick={ onUpgradeClick }
 				/>
@@ -80,6 +81,7 @@ class PlanFeatures extends Component {
 }
 
 PlanFeatures.propTypes = {
+	available: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plan prop or isPlaceholder prop
 	plan: React.PropTypes.string,
@@ -109,7 +111,8 @@ export default connect( ( state, ownProps ) => {
 		features: getPlanFeaturesObject( ownProps.plan ),
 		rawPrice: getPlanRawPrice( state, planProductId, ! isMonthly( ownProps.plan ) ),
 		planConstantObj: plansList[ ownProps.plan ],
-		onUpgradeClick: ownProps.plan === PLAN_FREE ? noop : () => {
+		available : canUpgradeToPlan( ownProps.plan ),
+		onUpgradeClick: () => {
 			const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 			page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( ownProps.plan ) || '' }` );
 		},
