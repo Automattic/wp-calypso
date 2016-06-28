@@ -308,6 +308,39 @@ Used in releated posts settings.
 /*
 @todo this needs to become a component
 */
+body.promo {
+	margin-top: 0;
+}
+
+body.newdash div.wordpress-com-extension-promo {
+	display: none !important;
+}
+
+.design-assets {
+	@include breakpoint( "<660px" ) {
+		padding: 0 6px;
+	}
+}
+
+.design-assets__group > h2,
+.design-assets__group > h2 > a:first-child {
+	color: $gray-dark;
+	font-family: $serif;
+	font-size: 38px;
+	font-weight: bold;
+	margin: 40px 0 15px;
+}
+.design-assets__group > h3 {
+	font-weight: bold;
+	margin-bottom: 8px;
+}
+.design-assets hr {
+	background: transparent;
+	clear: both;
+	height: 2px;
+	margin: 15px 0;
+}
+
 .environment-badge {
 	padding: 16px 0;
 	position: fixed;

@@ -36,7 +36,7 @@ var LikeButtonContainer = React.createClass( {
 
 	getStateFromStores: function( props = this.props, animateLike = true ) {
 		return {
-			likeCount: LikeStore.getLikeCountForPost( props.siteId, props.postId ),
+			likeCount: LikeStore.getLikeCountForPost( props.siteId, props.postId ) || 0,
 			iLike: LikeStore.isPostLikedByCurrentUser( props.siteId, props.postId ),
 			animateLike: animateLike
 		};

@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card/compact';
 import safeImageUrl from 'lib/safe-image-url';
 import resizeImageUrl from 'lib/resize-image-url';
+import AuthorAndSite from './author-and-site';
 
 export function SmallPostCard( { translate, post, site, onPostClick = noop, onSiteClick = noop } ) {
 	const classes = classnames( 'post-card small', {
@@ -40,20 +41,7 @@ export function SmallPostCard( { translate, post, site, onPostClick = noop, onSi
 					<a className="post-card__anchor" href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` } onClick={ partial( onPostClick, post ) }>{ post.title }</a>
 				</h1>
 				<div className="post-card__site-info">
-					{
-						displayName === '' || siteName === displayName
-						? translate( 'On {{sitename/}}', {
-							components: {
-								sitename
-							}
-						} )
-						: translate( 'By {{username/}}, {{sitename/}}', {
-							components: {
-								username,
-								sitename
-							}
-						} )
-				}
+					<AuthorAndSite post={ post } site={ site } />
 				</div>
 			</div>
 			<div>
