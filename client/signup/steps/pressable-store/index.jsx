@@ -58,7 +58,7 @@ export default React.createClass( {
 					{ renderHeroImage() }
 
 					<FormSectionHeading className="pressable-store__heading">{ this.translate( 'Create your new WordPress store for as low as $20.83/Month' ) }</FormSectionHeading>
-					<p>{ this.translate( 'WordPress.com has partnered with hosting provider Pressable to make setting up your store on WordPress simple and fun.' ) }</p>
+					<p className="pressable-store__copy">{ this.translate( 'WordPress.com has partnered with hosting provider Pressable to make setting up your store on WordPress simple and fun.' ) }</p>
 
 					<LoggedOutFormFooter>
 						<FormLabel for="email">{ this.translate( 'Enter your email address to get started:' ) }</FormLabel>
