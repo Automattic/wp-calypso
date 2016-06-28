@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
 import { connect } from 'react-redux';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
@@ -31,6 +32,8 @@ const ThemesMultiSite = React.createClass( {
 		return {
 			selectedTheme: null,
 			selectedAction: null,
+			showPreview: null,
+			previewingTheme: null,
 		};
 	},
 
@@ -71,7 +74,8 @@ const ThemesMultiSite = React.createClass( {
 			separator: {
 				separator: true
 			},
-			details: {
+			info: {
+				action: theme => page( getDetailsUrl( theme ) ),
 				getUrl: theme => getDetailsUrl( theme ),
 			},
 			support: {
@@ -87,10 +91,9 @@ const ThemesMultiSite = React.createClass( {
 	},
 
 	onPreviewButtonClick( theme ) {
-		this.setState( { showPreview: false },
-			() => {
-				this.getButtonOptions().tryandcustomize.action( theme );
-			} );
+		this.setState( { showPreview: false }, () => {
+			this.getButtonOptions().tryandcustomize.action( theme );
+		} );
 	},
 
 	render() {
@@ -112,10 +115,10 @@ const ThemesMultiSite = React.createClass( {
 				<ThemesSelection search={ this.props.search }
 					selectedSite={ false }
 					onScreenshotClick={ function( theme ) {
-						buttonOptions.preview.action( theme );
+						buttonOptions.info.action( theme );
 					} }
 					getActionLabel={ function() {
-						return buttonOptions.preview.label;
+						return buttonOptions.info.label;
 					} }
 					getOptions={ function( theme ) {
 						return pickBy(

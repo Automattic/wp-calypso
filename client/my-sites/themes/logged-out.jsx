@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
 import { connect } from 'react-redux';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
@@ -22,7 +23,8 @@ const ThemesLoggedOut = React.createClass( {
 
 	getInitialState() {
 		return {
-			showPreview: false
+			showPreview: false,
+			previewingTheme: null,
 		};
 	},
 
@@ -42,7 +44,8 @@ const ThemesLoggedOut = React.createClass( {
 			separator: {
 				separator: true
 			},
-			details: {
+			info: {
+				action: theme => page( getDetailsUrl( theme ) ),
 				getUrl: theme => getDetailsUrl( theme ),
 			},
 			support: {
@@ -58,10 +61,9 @@ const ThemesLoggedOut = React.createClass( {
 	},
 
 	onPreviewButtonClick( theme ) {
-		this.setState( { showPreview: false },
-			() => {
-				this.props.signup( theme );
-			} );
+		this.setState( { showPreview: false }, () => {
+			this.props.signup( theme );
+		} );
 	},
 
 	render() {
@@ -82,10 +84,10 @@ const ThemesLoggedOut = React.createClass( {
 				<ThemesSelection search={ this.props.search }
 					selectedSite={ false }
 					onScreenshotClick={ function( theme ) {
-						buttonOptions.preview.action( theme );
+						buttonOptions.info.action( theme );
 					} }
 					getActionLabel={ function() {
-						return buttonOptions.preview.label;
+						return buttonOptions.info.label;
 					} }
 					getOptions={ function( theme ) {
 						return pickBy(
