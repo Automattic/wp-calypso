@@ -13,6 +13,18 @@ import config from 'config';
 export default React.createClass( {
 	displayName: 'StepWrapper',
 
+	renderBack: function() {
+		return (
+			<NavigationLink
+				direction="back"
+				flowName={ this.props.flowName }
+				positionInFlow={ this.props.positionInFlow }
+				stepName={ this.props.stepName }
+				backUrl={ this.props.backUrl }
+				signupProgressStore={ this.props.signupProgressStore } />
+		);
+	},
+
 	renderSkip: function() {
 		if ( this.props.goToNextStep ) {
 			return (
@@ -65,13 +77,7 @@ export default React.createClass( {
 				<div className="is-animated-content">
 					{ this.props.stepContent }
 					<div className="step-wrapper__buttons">
-						<NavigationLink
-							direction="back"
-							flowName={ this.props.flowName }
-							positionInFlow={ this.props.positionInFlow }
-							stepName={ this.props.stepName }
-							backUrl={ this.props.backUrl }
-							signupProgressStore={ this.props.signupProgressStore } />
+						{ this.renderBack() }
 						{ this.renderSkip() }
 					</div>
 				</div>
