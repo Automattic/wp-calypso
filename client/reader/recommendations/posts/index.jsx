@@ -1,6 +1,6 @@
 var React = require( 'react' );
 
-var FollowingStream = require( 'reader/following-stream' ),
+var Stream = require( 'reader/stream' ),
 	EmptyContent = require( './empty' );
 
 var RecommendationPostsStream = React.createClass( {
@@ -13,7 +13,7 @@ var RecommendationPostsStream = React.createClass( {
 			this.props.setPageTitle( title );
 		}
 		return (
-			<FollowingStream { ...this.props }
+			<Stream { ...this.props }
 				listName = { title }
 				emptyContent = { emptyContent }
 				showFollowInHeader = { true }
