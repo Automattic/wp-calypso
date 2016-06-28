@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import ReactDom from 'react-dom';
 import times from 'lodash/times';
 import isEqual from 'lodash/isEqual';
 import { localize } from 'i18n-calypso';
@@ -89,6 +90,18 @@ export const ThemesList = React.createClass( {
 				title={ this.props.translate( 'Sorry, no themes found.' ) }
 				line={ this.props.translate( 'Try a different search or more filters?' ) }
 				/>;
+	},
+
+	// The themes-list-loaded class is used as a trigger for the e2e tests to
+	// indicate when the component is finished loading all themes
+	// -- https://github.com/Automattic/wp-e2e-tests
+	componentWillUpdate: function() {
+		var node = ReactDom.findDOMNode( this );
+		node.className = node.className.replace( / themes-list-loaded/, '' );
+	},
+
+	componentDidUpdate: function() {
+		ReactDom.findDOMNode( this ).className += ' themes-list-loaded';
 	},
 
 	render() {
