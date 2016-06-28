@@ -13,7 +13,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 
-const ThemeDownloadCard = React.createClass( {
+var ThemeDownloadCard = React.createClass( {
 
 	propTypes: {
 		theme: React.PropTypes.string.isRequired,
@@ -29,7 +29,7 @@ const ThemeDownloadCard = React.createClass( {
 			}
 		} );
 		return (
-			<Card className="theme-download-card">
+			<Card className="themes__sheet-download">
 				<Gridicon icon="cloud-download" size={ 48 } />
 				<p>{ downloadText }</p>
 				<Button href={ downloadURI }>{ i18n.translate( 'Download' ) }</Button>

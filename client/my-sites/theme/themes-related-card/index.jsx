@@ -37,8 +37,8 @@ const ThemesRelatedCard = React.createClass( {
 		themes.delete( this.props.currentTheme );
 		themes = [ ...themes ];
 
-		const randomThemeIndex = this.props.currentTheme.charCodeAt( 0 ) % themes.length;
-		const theme = themes.splice( randomThemeIndex, 1 )[ 0 ];
+		let randomThemeIndex = this.props.currentTheme.charCodeAt( 0 ) % themes.length;
+		let theme = themes.splice( randomThemeIndex, 1 )[ 0 ];
 		const selectedThemes = [ theme ];
 		selectedThemes.push( themes[ theme.charCodeAt( 0 ) % themes.length ] );
 
@@ -54,10 +54,10 @@ const ThemesRelatedCard = React.createClass( {
 		return (
 			<div>
 				<SectionHeader label={ i18n.translate( 'You might also like' ) } />
-				<ul className="themes-related-card__">
+				<ul className="themes__sheet-related-themes">
 					{ themes.map( theme => (
 						<li key={ theme.id }>
-							<Card className="themes-related-card__card">
+							<Card className="themes__sheet-related-themes-card">
 								<a href={ getDetailsUrl( theme ) }>
 									<img src={ theme.screenshot + '?w=' + '660' }/>
 								</a>
