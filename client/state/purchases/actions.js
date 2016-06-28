@@ -1,8 +1,8 @@
 // External dependencies
 import i18n from 'i18n-calypso';
-import olark from 'lib/olark';
 
 // Internal dependencies
+import olark from 'lib/olark';
 import {
 	PRIVACY_PROTECTION_CANCEL,
 	PRIVACY_PROTECTION_CANCEL_COMPLETED,
