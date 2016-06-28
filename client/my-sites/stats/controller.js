@@ -351,12 +351,12 @@ module.exports = {
 			}
 			momentSiteZone = i18n.moment().utcOffset( siteOffset );
 			activeFilter = activeFilter.shift();
-			chartDate = rangeOfPeriod( activeFilter.period, momentSiteZone.clone() ).endOf;
+			chartDate = rangeOfPeriod( activeFilter.period, momentSiteZone.clone().locale( 'en' ) ).endOf;
 			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
-				date = i18n.moment( queryOptions.startDate );
+				date = i18n.moment( queryOptions.startDate ).locale( 'en' );
 				numPeriodAgo = getNumPeriodAgo( momentSiteZone, date, activeFilter.period );
 			} else {
-				date = rangeOfPeriod( activeFilter.period, momentSiteZone.clone() ).startOf;
+				date = rangeOfPeriod( activeFilter.period, momentSiteZone.clone().locale( 'en' ) ).startOf;
 			}
 
 			numPeriodAgo = parseInt( numPeriodAgo, 10 );

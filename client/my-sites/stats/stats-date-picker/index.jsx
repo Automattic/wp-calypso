@@ -3,6 +3,11 @@
  */
 import React, { PropTypes } from 'react';
 
+/**
+ * Internal dependencies
+ */
+import userUtils from 'lib/user/utils';
+
 export default React.createClass( {
 	displayName: 'StatsDatePicker',
 
@@ -16,7 +21,8 @@ export default React.createClass( {
 	},
 
 	dateForDisplay() {
-		const date = this.moment( this.props.date );
+		const locale = userUtils.getLocaleSlug();
+		const date = this.moment( this.props.date ).locale( locale );
 		let formattedDate;
 
 		switch ( this.props.period ) {
