@@ -7,7 +7,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getSerializedStatsQuery
+	getSerializedStatsQuery,
+	Parsers
 } from '../utils';
 
 describe( 'utils', () => {
@@ -33,6 +34,40 @@ describe( 'utils', () => {
 			} );
 
 			expect( serializedQuery ).to.eql( serializedQueryTwo );
+		} );
+	} );
+
+	describe( 'Parsers', () => {
+		describe( 'stats()', () => {
+			it( 'should return null if no data is passed', () => {
+				const parsedData = Parsers.stats();
+
+				expect( parsedData ).to.be.null;
+			} );
+
+			it( 'should return null if data object is missing stats attribute', () => {
+				const parsedData = Parsers.stats( { foo: false } );
+
+				expect( parsedData ).to.be.null;
+			} );
+
+			it( 'should return parsed camelCased stats object', () => {
+				const parsedData = Parsers.stats( { stats: {
+					posts: 2,
+					views: 300,
+					visitors: 400,
+					views_best_day: '2010-09-29',
+					views_best_day_total: 100
+				} } );
+
+				expect( parsedData ).to.eql( {
+					posts: 2,
+					views: 300,
+					visitors: 400,
+					viewsBestDay: '2010-09-29',
+					viewsBestDayTotal: 100
+				} );
+			} );
 		} );
 	} );
 } );

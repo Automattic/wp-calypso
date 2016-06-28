@@ -10,7 +10,8 @@ import i18n from 'i18n-calypso';
  */
 import createSelector from 'lib/create-selector';
 import {
-	getSerializedStatsQuery
+	getSerializedStatsQuery,
+	Parsers
 } from './utils';
 
 /**
@@ -119,3 +120,28 @@ export function getSiteStatsPostsCountByDay( state, siteId, query, date ) {
 	return data[ date ] || null;
 }
 
+/**
+ * Returns a parsed object of statsPublicize data for a given query, or default "empty" object
+ * if no statsStreak data has been received for that site.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {Object}  query    Stats query object
+ * @return {Array}            Parsed Data for the query
+ */
+export const getSiteStatsParsedData = createSelector(
+	( state, siteId, statType, query ) => {
+		const data = getSiteStatsForQuery( state, siteId, statType, query );
+
+		if ( 'function' === typeof Parsers[ statType ] ) {
+			return Parsers[ statType ].call( this, data );
+		}
+
+		return data;
+	},
+	( state, siteId, statType, query ) => getSiteStatsForQuery( state, siteId, statType, query ),
+	( state, siteId, statType, query ) => {
+		const serializedQuery = getSerializedStatsQuery( query );
+		return [ siteId, statType, serializedQuery ].join();
+	}
+);
