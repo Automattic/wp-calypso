@@ -31,6 +31,7 @@ import {
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
+import { isJetpack } from 'lib/site/utils';
 
 /**
  * Module vars
@@ -69,7 +70,7 @@ export function getSitePlanSlug( siteID ) {
 }
 
 function canUpgradeToPlan( planKey, site ) {
-	const offer = site.jetpack ? JETPACK : WPCOM;
+	const offer = isJetpack( site ) ? JETPACK : WPCOM;
 	return get( plansList, [ planKey, 'availableIn' ], () => false )( offer );
 }
 
