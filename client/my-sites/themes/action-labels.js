@@ -37,8 +37,10 @@ export default {
 		label: i18n.translate( 'Try & Customize' ),
 		header: i18n.translate( 'Try & Customize on:', { comment: 'label in the dialog for opening the Customizer with the theme in preview' } ),
 	},
-	details: {
-		label: i18n.translate( 'Details' ),
+	info: {
+		label: i18n.translate( 'Info', {
+			comment: 'label for displaying the theme info sheet'
+		} )
 	},
 	support: {
 		label: i18n.translate( 'Setup' ),

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
 import { connect } from 'react-redux';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
@@ -47,6 +48,8 @@ const ThemesSingleSite = React.createClass( {
 		return {
 			selectedTheme: null,
 			selectedAction: null,
+			showPreview: null,
+			previewingTheme: null,
 		};
 	},
 
@@ -89,7 +92,8 @@ const ThemesSingleSite = React.createClass( {
 				separator: {
 					separator: true
 				},
-				details: {
+				info: {
+					action: theme => page( getDetailsUrl( theme, site ) ),
 					getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
 				},
 				support: ! site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
@@ -109,10 +113,9 @@ const ThemesSingleSite = React.createClass( {
 	},
 
 	onPreviewButtonClick( theme ) {
-		this.setState( { showPreview: false },
-			() => {
-				this.props.customize( theme );
-			} );
+		this.setState( { showPreview: false }, () => {
+			this.props.customize( theme );
+		} );
 	},
 
 	renderJetpackMessage() {
@@ -133,7 +136,7 @@ const ThemesSingleSite = React.createClass( {
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
 			buttonOptions = this.getButtonOptions(),
 			getScreenshotAction = function( theme ) {
-				return buttonOptions[ theme.active ? 'customize' : 'preview' ];
+				return buttonOptions[ theme.active ? 'customize' : 'info' ];
 			};
 
 		if ( isJetpack && jetpackEnabled && ! site.hasJetpackThemes ) {
