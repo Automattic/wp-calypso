@@ -12,7 +12,7 @@ var page = require( 'page' ),
 var HeaderCake = require( 'components/header-cake' ),
 	MapDomainStep = require( 'components/domains/map-domain-step' ),
 	{ currentUserHasFlag } = require( 'state/current-user/selectors' ),
-	{ DWPO } = require( 'state/current-user/constants' ),
+	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	observe = require( 'lib/mixins/data-observe' );
@@ -122,6 +122,6 @@ var MapDomain = React.createClass( {
 
 module.exports = connect( state => (
 	{
-		domainsWithPlansOnly: currentUserHasFlag( state, DWPO )
+		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 	}
 ) )( MapDomain );
