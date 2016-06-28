@@ -16,6 +16,12 @@ import QueryPlans from 'components/data/query-plans';
 import { getPlans } from 'state/plans/selectors';
 
 class PlansFeaturesStep extends Component {
+	constructor( props ) {
+		super( props );
+
+		this.onUpgradeClick = this.onUpgradeClick.bind( this );
+	}
+
 	plansList() {
 		const {	plans, hideFreePlan } = this.props;
 
@@ -28,12 +34,13 @@ class PlansFeaturesStep extends Component {
 					site={ {} }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
-					onSelectPlan={ this.onSelectPlan } />
+					onUpgradeClick={ this.onUpgradeClick } />
 			</div>
 		);
 	}
 
-	onSelectPlan( cartItem ) {
+	onUpgradeClick( cartItem ) {
+		console.log(cartItem);
 		const {
 			translate,
 			stepName,
