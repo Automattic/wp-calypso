@@ -19,9 +19,8 @@ import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 
-
-module.exports = React.createClass( {
-	displayName: 'Store',
+export default React.createClass( {
+	displayName: 'PressableStoreStep',
 
 	propTypes: {
 		stepName: React.PropTypes.string.isRequired,
