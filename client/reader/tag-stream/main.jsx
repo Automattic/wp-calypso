@@ -7,7 +7,7 @@ import has from 'lodash/has';
 /**
  * Internal Dependencies
  */
-import FollowingStream from 'reader/following-stream';
+import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import ReaderTags from 'lib/reader-tags/tags';
 import ReaderTagActions from 'lib/reader-tags/actions';
@@ -95,7 +95,7 @@ const TagStream = React.createClass( {
 		}
 
 		return (
-			<FollowingStream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
+			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
 				{ this.props.showBack && <HeaderBack /> }
 				<StreamHeader
 					isPlaceholder={ false }
@@ -104,7 +104,7 @@ const TagStream = React.createClass( {
 					showFollow={ this.state.canFollow }
 					following={ this.state.subscribed }
 					onFollowToggle={ this.toggleFollowing } />
-			</FollowingStream>
+			</Stream>
 		);
 	}
 } );
