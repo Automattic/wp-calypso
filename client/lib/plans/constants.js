@@ -173,6 +173,7 @@ export const plansList = {
 	[ PLAN_JETPACK_PREMIUM_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
 		getProductId: () => 2003,
+		getPathSlug: () => 'premium-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getDescription: () => i18n.translate( 'All the features you need to keep your site’s content backed up and secure, as well as spam-free.' ),
 		getFeatures: () => [
@@ -211,6 +212,7 @@ export const plansList = {
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Professional' ),
 		getProductId: () => 2004,
+		getPathSlug: () => 'professional-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ], plan ),
 		getDescription: () => i18n.translate( 'More powerful security tools and realtime content backup for the ultimate peace of mind.' ),
 		getFeatures: () => [
