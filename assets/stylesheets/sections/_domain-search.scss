@@ -184,13 +184,7 @@ form.google-apps-dialog {
 		margin-bottom: 20px;
 	}
 
-	.google-apps-dialog__user-email {
-		margin-bottom: 9px;
-	}
-
 	.google-apps-dialog__user-first-name {
-		margin-bottom: 9px;
-
 		@include breakpoint( ">660px" ) {
 			display: inline-block;
 			margin: 0 4px 0 0;
