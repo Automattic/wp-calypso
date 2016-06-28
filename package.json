@@ -138,7 +138,8 @@
     "test-client": "NODE_ENV=test NODE_PATH=test:client TEST_ROOT=client test/runner.js",
     "test-server": "NODE_ENV=test NODE_PATH=test:server:client TEST_ROOT=server test/runner.js",
     "test-test": "NODE_ENV=test NODE_PATH=test:client TEST_ROOT=test test/runner.js",
-    "lint": "bin/run-lint"
+    "lint": "bin/run-lint",
+    "css-lint": "stylelint 'client/**/*.scss' --syntax scss"
   },
   "devDependencies": {
     "babel-eslint": "6.0.4",
@@ -170,6 +171,7 @@
     "sinon": "1.12.2",
     "sinon-chai": "2.7.0",
     "socket.io": "1.3.7",
+    "stylelint": "^6.5.1",
     "supertest": "^1.1.0",
     "webpack-dev-server": "1.11.0"
   }
