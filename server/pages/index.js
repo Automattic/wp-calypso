@@ -120,7 +120,7 @@ function getDefaultContext( request ) {
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
-		catchJsErrors: '/calypso/catch-js-errors-' + 'v2' + '.min.js',
+		catchJsErrors: '/calypso/catch-js-errors-' + 'v3' + '.min.js'
 	} );
 
 	context.app = {
