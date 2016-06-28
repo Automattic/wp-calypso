@@ -27,6 +27,12 @@ import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
 
+/**
+ * Module dependencies
+ */
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:purchases:survey' );
+
 const RemovePurchase = React.createClass( {
 	propTypes: {
 		selectedPurchase: React.PropTypes.object.isRequired,
@@ -106,13 +112,15 @@ const RemovePurchase = React.createClass( {
 				'what-better': { text: this.state.questionThreeText }
 			} );
 
+			debug( 'Survey responses', survey );
 			survey.submit()
 				.then( res => {
+					debug( 'Survey submit response', res );
 					if ( ! res.success ) {
 						notices.error( res.err );
 					}
 				} )
-				.catch( err => console.error( err ) ); // shouldn't get here
+				.catch( err => debug( err ) ); // shouldn't get here
 		}
 
 		removePurchase( purchase.id, user.ID, success => {
