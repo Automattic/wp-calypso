@@ -70,15 +70,13 @@ const ThemesLoggedOut = React.createClass( {
 		return (
 			<Main className="themes">
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle }/>
-				{ this.state.showPreview &&
-					<ThemePreview showPreview={ this.state.showPreview }
-						theme={ this.state.previewingTheme }
-						onClose={ this.togglePreview }
-						buttonLabel={ this.translate( 'Choose this design', {
-							comment: 'when signing up for a WordPress.com account with a selected theme'
-						} ) }
-						onButtonClick={ this.onPreviewButtonClick } />
-				}
+				<ThemePreview showPreview={ this.state.showPreview }
+					theme={ this.state.previewingTheme }
+					onClose={ this.togglePreview }
+					buttonLabel={ this.translate( 'Choose this design', {
+						comment: 'when signing up for a WordPress.com account with a selected theme'
+					} ) }
+					onButtonClick={ this.onPreviewButtonClick } />
 				<ThemesSelection search={ this.props.search }
 					selectedSite={ false }
 					getScreenshotUrl={ buttonOptions.info.getUrl }

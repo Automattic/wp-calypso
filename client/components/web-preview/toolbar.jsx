@@ -10,6 +10,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
+import { localize } from 'i18n-calypso';
 
 const PreviewToolbar = React.createClass( {
 	devices: [ 'computer', 'tablet', 'phone' ],
@@ -58,7 +59,7 @@ const PreviewToolbar = React.createClass( {
 						className="web-preview__close"
 						data-tip-target="web-preview__close"
 						onClick={ this.props.onClose }
-						aria-label={ this.translate( 'Close preview' ) }
+						aria-label={ this.props.translate( 'Close preview' ) }
 					>
 						<Gridicon icon="cross" />
 					</button>
@@ -78,4 +79,4 @@ const PreviewToolbar = React.createClass( {
 
 } );
 
-export default PreviewToolbar;
+export default localize( PreviewToolbar );

@@ -159,15 +159,13 @@ const ThemesSingleSite = React.createClass( {
 			<Main className="themes">
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle }/>
 				<SidebarNavigation />
-				{ this.state.showPreview &&
-					<ThemePreview showPreview={ this.state.showPreview }
-						theme={ this.state.previewingTheme }
-						onClose={ this.togglePreview }
-						buttonLabel={ this.translate( 'Try & Customize', {
-							context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
-						} ) }
-						onButtonClick={ this.onPreviewButtonClick } />
-				}
+				<ThemePreview showPreview={ this.state.showPreview }
+					theme={ this.state.previewingTheme }
+					onClose={ this.togglePreview }
+					buttonLabel={ this.translate( 'Try & Customize', {
+						context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
+					} ) }
+					onButtonClick={ this.onPreviewButtonClick } />
 				<ThanksModal
 					site={ site }
 					source={ 'list' }/>

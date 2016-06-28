@@ -33,7 +33,11 @@ export function getPreviewUrl( theme, site ) {
 		return site.options.admin_url + 'customize.php?theme=' + theme.id + '&return=' + encodeURIComponent( window.location );
 	}
 
-	return `${theme.demo_uri}?demo=true&iframe=true&theme_preview=true`;
+	if ( theme && theme.demo_uri ) {
+		return `${theme.demo_uri}?demo=true&iframe=true&theme_preview=true`;
+	}
+
+	return '';
 }
 
 export function getCustomizeUrl( theme, site ) {
