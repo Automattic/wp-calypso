@@ -69,3 +69,23 @@
 	max-height: 68px;
 	max-width: 96px;
 }
+
+.post-card__search {
+	&.has-thumbnail {
+		padding-left: 250px
+	}
+}
+
+.post-card__search-title {
+	font-size: 24px;
+	margin: 0;
+}
+
+.post-card__search-featured-image {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width:230px;
+	bottom: 0;
+}

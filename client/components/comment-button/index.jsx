@@ -14,7 +14,8 @@ const CommentButton = React.createClass( {
 	propTypes: {
 		onClick: React.PropTypes.func,
 		tagName: React.PropTypes.string,
-		commentCount: React.PropTypes.number
+		commentCount: React.PropTypes.number,
+		showLabel: React.PropTypes.bool
 	},
 
 	getDefaultProps() {
@@ -22,7 +23,8 @@ const CommentButton = React.createClass( {
 			onClick: noop,
 			tagName: 'li',
 			size: 24,
-			commentCount: 0
+			commentCount: 0,
+			showLabel: true
 		};
 	},
 
@@ -52,7 +54,7 @@ const CommentButton = React.createClass( {
 
 		const labelElement = ( <span className="comment-button__label">
 			{ commentCount > 0 ? <span className="comment-button__label-count">{ commentCount }</span> : null }
-			<span className="comment-button__label-status">{ label }</span>
+			{ this.props.showLabel && <span className="comment-button__label-status">{ label }</span> }
 		</span> );
 
 		return React.createElement(
