@@ -78,10 +78,13 @@ export const getSitePlan = createSelector(
  */
 export function getPlanDiscountPrice( state, siteId, productSlug, isMonthly = false ) {
 	const plan = getSitePlan( state, siteId, productSlug );
+
 	if ( get( plan, 'rawPrice', -1 ) < 0 || get( plan, 'rawDiscount', -1 ) <= 0 ) {
 		return null;
 	}
+
 	const discountPrice = plan.rawPrice;
+
 	return isMonthly ? parseFloat( ( discountPrice / 12 ).toFixed( 2 ) ) : discountPrice;
 }
 
