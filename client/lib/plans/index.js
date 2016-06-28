@@ -104,10 +104,6 @@ export function addCurrentPlanToCartAndRedirect( sitePlans, selectedSite ) {
 	page( `/checkout/${ selectedSite.slug }` );
 }
 
-export function getCheckoutURL( plan, siteSlug ) {
-	return `/checkout/${ siteSlug }/${ plan }`;
-}
-
 export function getCurrentPlan( plans ) {
 	const currentPlan = find( plans, { currentPlan: true } );
 
@@ -122,7 +118,6 @@ export function getCurrentPlan( plans ) {
 	debug( 'current plan: %o', plan );
 	return plan;
 }
-
 
 export function getCurrentTrialPeriodInDays( plan ) {
 	const { expiryMoment, subscribedDayMoment, userFacingExpiryMoment } = plan;
