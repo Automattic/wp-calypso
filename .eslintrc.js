@@ -39,7 +39,7 @@ module.exports = {
 		'jsx-quotes': [ 1, 'prefer-double' ],
 		'key-spacing': 1,
 		'keyword-spacing': 1,
-		'max-len': [ 1, { code: 100 } ],
+		'max-len': [ 1, { code: 140 } ],
 		'new-cap': [ 1, { 'capIsNew': false, 'newIsCap': true } ],
 		'no-cond-assign': 2,
 		'no-const-assign': 2,
