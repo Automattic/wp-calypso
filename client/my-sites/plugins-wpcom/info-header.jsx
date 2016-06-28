@@ -2,13 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { localize } from 'i18n-calypso';
 
 export const InfoHeader = React.createClass( {
 	render() {
