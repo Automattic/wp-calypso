@@ -6,6 +6,7 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import FoldableCard from 'components/foldable-card';
 import GuidedTransferOptions from 'my-sites/exporter/guided-transfer-options';
 import GuidedTransferDetails from 'my-sites/exporter/guided-transfer-details';
@@ -52,8 +53,16 @@ export default React.createClass( {
 		} = this.props;
 		const siteId = this.props.site.ID;
 
-		const exportAll = () => startExport( siteId );
-		const exportSelectedItems = () => startExport( siteId, { exportAll: false } );
+		const exportAll = () => {
+			analytics.tracks.recordEvent( 'calypso_export_start_click', { scope: 'all' } );
+			return startExport( siteId );
+		};
+
+		const exportSelectedItems = () => {
+			analytics.tracks.recordEvent( 'calypso_export_start_click', { scope: 'selected' } );
+			return startExport( siteId, { exportAll: false } );
+		};
+
 		const fetchStatus = () => exportStatusFetch( siteId );
 
 		const exportButton = (
