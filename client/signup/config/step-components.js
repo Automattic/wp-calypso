@@ -12,6 +12,8 @@ var config = require( 'config' ),
 	ThemeSelectionComponent = require( 'signup/steps/theme-selection' ),
 	UserSignupComponent = require( 'signup/steps/user' );
 
+import PlansFeaturesStep from 'signup/steps/plans-features';
+
 module.exports = {
 	'design-type': DesignTypeComponent,
 	domains: DomainsStepComponent,
@@ -19,6 +21,7 @@ module.exports = {
 	'domains-only': DomainsStepComponent,
 	'jetpack-user': UserSignupComponent,
 	plans: PlansStepComponent,
+	plansFeatures: PlansFeaturesStep,
 	'select-plan': PaidPlansOnly,
 	site: SiteComponent,
 	'pressable-store': PressableStoreStepComponent,
