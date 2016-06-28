@@ -16,7 +16,7 @@ function forceTeamA8C( context, next ) {
 
 module.exports = function() {
 	if ( config.isEnabled( 'reader' ) ) {
-		page( '/', controller.loadSubscriptions, controller.initAbTests, controller.updateLastRoute, controller.removePost, controller.sidebar, controller.following );
+		page( '/', controller.loadSubscriptions, controller.checkForColdStart, controller.initAbTests, controller.updateLastRoute, controller.removePost, controller.sidebar, controller.following );
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/' );

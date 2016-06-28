@@ -55,6 +55,7 @@ module.exports = {
 				'logout_URL',
 				'primary_blog_url',
 				'meta',
+				'is_new_reader'
 			],
 			decodeWhitelist = [
 				'display_name',
