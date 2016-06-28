@@ -52,15 +52,15 @@ export default React.createClass( {
 	renderStoreForm() {
 		return (
 			<div>
-				<LoggedOutForm className="pressable-store-form">
+				<LoggedOutForm className="pressable-store__form">
 					<FormSectionHeading>{ this.translate( 'Create your new WordPress store for as low as $20.83/Month' ) }</FormSectionHeading>
 					<p>{ this.translate( 'WordPress.com has partnered with hosting provider Pressable to make setting up your store on WordPress simple and fun.' ) }</p>
 
 					<LoggedOutFormFooter>
 						<FormLabel for="email">{ this.translate( 'Enter your email address to get started:' ) }</FormLabel>
-						<div className="pressable-store-form__fields">
-							<FormTextInput onChange={ this.onEmailChange } className="pressable-store-form__email is-spaced" type="email" placeholder="Email Address" name="email" />
-							<FormButton onClick={ this.onSubmit } className="pressable-store-form__submit" disabled={ this.state.email === '' }>Create my Store on Pressable</FormButton>
+						<div className="pressable-store__form-fields">
+							<FormTextInput onChange={ this.onEmailChange } className="pressable-store__form-email is-spaced" type="email" placeholder="Email Address" name="email" />
+							<FormButton onClick={ this.onSubmit } className="pressable-store__form-submit" disabled={ this.state.email === '' }>Create my Store on Pressable</FormButton>
 						</div>
 					</LoggedOutFormFooter>
 				</LoggedOutForm>
