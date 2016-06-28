@@ -12,7 +12,7 @@ var commentLike = require( './site.comment.like' );
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function Comment( cid, pid, sid, wpcom ) {
+export default function Comment( cid, pid, sid, wpcom ) {
 	if ( ! sid ) {
 		throw new Error( '`site id` is not correctly defined' );
 	}
@@ -152,8 +152,3 @@ Comment.prototype.likesList = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes';
 	return this.wpcom.req.get( path, query, fn );
 };
-
-/**
- * Expose `Comment` module
- */
-module.exports = Comment;

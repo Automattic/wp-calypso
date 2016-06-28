@@ -13,7 +13,7 @@ var debug = require('debug')('wpcom:pinghub');
  * @return {null} null
  * @api public
  */
-function Pinghub( wpcom ) {
+export default function Pinghub( wpcom ) {
 	if ( ! ( this instanceof Pinghub ) ) {
 		return new Pinghub( wpcom );
 	}
@@ -75,8 +75,3 @@ Pinghub.prototype.remove = function( path ) {
 	debug("remove", path);
 	delete this.conns[path];
 };
-
-/**
- * Expose `Pinghub` module
- */
-module.exports = Pinghub;

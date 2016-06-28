@@ -6,7 +6,7 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function CommentLike( cid, sid, wpcom ) {
+export default function CommentLike( cid, sid, wpcom ) {
 	if ( ! sid ) {
 		throw new Error( '`site id` is not correctly defined' );
 	}
@@ -61,8 +61,3 @@ CommentLike.prototype.delete = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine/delete';
 	return this.wpcom.req.del( path, query, fn );
 };
-
-/**
- * Expose `CommentLike` module
- */
-module.exports = CommentLike;

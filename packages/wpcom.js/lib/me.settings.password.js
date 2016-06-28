@@ -1,6 +1,6 @@
 const root = '/me/settings/password/';
 
-class MeSettingsPassword {
+export default class MeSettingsPassword {
 
 	/**
 	 * `MeSettingsPassword` constructor.
@@ -27,8 +27,3 @@ class MeSettingsPassword {
 		return this.wpcom.req.post( root + 'validate', query, { password: password }, fn );
 	}
 }
-
-/**
-* Expose `MeSettingsPassword` module
-*/
-module.exports = MeSettingsPassword;

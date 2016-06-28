@@ -7,7 +7,7 @@ var sendRequest = require( './send-request' );
  * Expose `Request` module
  * @param {WPCOM} wpcom - wpcom instance
  */
-function Req( wpcom ) {
+export default function Req( wpcom ) {
 	this.wpcom = wpcom;
 }
 
@@ -75,8 +75,3 @@ Req.prototype.del = function( params, query, fn ) {
 
 	return this.post( params, query, null, fn );
 };
-
-/**
- * Expose module
- */
-module.exports = Req;

@@ -22,7 +22,7 @@ import MeSettingsPassword from './me.settings.password';
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function MeSettings( wpcom ) {
+export default function MeSettings( wpcom ) {
 	if ( ! ( this instanceof MeSettings ) ) {
 		return new MeSettings( wpcom );
 	}
@@ -83,8 +83,3 @@ MeSettings.prototype.profileLinks = function() {
 MeSettings.prototype.password = function() {
 	return new MeSettingsPassword( this.wpcom );
 };
-
-/**
- * Expose `MeSettings` module
- */
-module.exports = MeSettings;

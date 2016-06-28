@@ -1,6 +1,6 @@
 const root = '/me/publicize-connections/';
 
-class PublicizeConnection {
+export default class PublicizeConnection {
 	/**
 	* `PublicizeConnection` constructor.
 	*
@@ -63,8 +63,3 @@ class PublicizeConnection {
 		return this.wpcom.req.del( root + this._id + '/delete', query, fn );
 	}
 }
-
-/**
-* Expose `PublicizeConnection` module
-*/
-module.exports = PublicizeConnection;

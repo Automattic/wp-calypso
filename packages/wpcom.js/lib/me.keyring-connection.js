@@ -1,6 +1,6 @@
 const root = '/me/keyring-connections/';
 
-class KeyringConnection {
+export default class KeyringConnection {
 
 	/**
 	 * `KeyringConnection` constructor.
@@ -40,8 +40,3 @@ class KeyringConnection {
 		return this.wpcom.req.del( root + this._id + '/delete', query, fn );
 	}
 }
-
-/**
-* Expose `KeyringConnection` module
-*/
-module.exports = KeyringConnection;

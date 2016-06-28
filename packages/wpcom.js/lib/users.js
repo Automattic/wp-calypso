@@ -4,7 +4,7 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function Users( wpcom ) {
+export default function Users( wpcom ) {
 	if ( ! ( this instanceof Users ) ) {
 		return new Users( wpcom );
 	}
@@ -22,8 +22,3 @@ function Users( wpcom ) {
 Users.prototype.suggest = function( query, fn ) {
 	return this.wpcom.req.get( '/users/suggest', query, fn );
 };
-
-/**
- * Expose `Users` module
- */
-module.exports = Users;

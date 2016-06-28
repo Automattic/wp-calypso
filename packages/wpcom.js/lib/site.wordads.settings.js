@@ -19,7 +19,7 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function SiteWordAdsSettings( sid, wpcom ) {
+export default function SiteWordAdsSettings( sid, wpcom ) {
 	if ( ! ( this instanceof SiteWordAdsSettings ) ) {
 		return new SiteWordAdsSettings( sid, wpcom );
 	}
@@ -73,8 +73,3 @@ SiteWordAdsSettings.prototype.update = function( query, body, fn ) {
 	var path = '/sites/' + this._sid + '/wordads/settings';
 	return this.wpcom.req.post( path, query, body, fn );
 };
-
-/**
- * Expose `SiteWordAdsSettings` module
- */
-module.exports = SiteWordAdsSettings;

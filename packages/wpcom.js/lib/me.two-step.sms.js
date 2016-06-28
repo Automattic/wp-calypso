@@ -1,6 +1,6 @@
 const root = '/me/two-step/sms/';
 
-class MeTwoStepSMS {
+export default class MeTwoStepSMS {
 
 	/**
 	 * `MeTwoStepSMS` constructor.
@@ -26,8 +26,3 @@ class MeTwoStepSMS {
 		return this.wpcom.req.post( root + 'new', query, fn );
 	}
 }
-
-/**
-* Expose `MeTwoStepSMS` module
-*/
-module.exports = MeTwoStepSMS;

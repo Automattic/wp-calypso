@@ -37,7 +37,7 @@ const DEFAULT_ASYNC_TIMEOUT = 30000;
  * @param {Function} [reqHandler] - function Request Handler
  * @return {WPCOM} wpcom instance
  */
-function WPCOM( token, reqHandler ) {
+export default function WPCOM( token, reqHandler ) {
 	if ( ! ( this instanceof WPCOM ) ) {
 		return new WPCOM( token, reqHandler );
 	}
@@ -214,8 +214,3 @@ if ( ! Promise.prototype.timeout ) {
 		] );
 	};
 }
-
-/**
- * Expose `WPCOM` module
- */
-module.exports = WPCOM;

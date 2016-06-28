@@ -6,7 +6,7 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function Reblog( pid, sid, wpcom ) {
+export default function Reblog( pid, sid, wpcom ) {
 	if ( ! sid ) {
 		throw new Error( '`site id` is not correctly defined' );
 	}
@@ -81,8 +81,3 @@ Reblog.prototype.to = function( dest, note, fn ) {
 
 	return this.add( { note: note, destination_site_id: dest }, fn );
 };
-
-/**
- * Expose `Reblog` module
- */
-module.exports = Reblog;

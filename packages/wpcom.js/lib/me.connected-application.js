@@ -1,6 +1,6 @@
 const root = '/me/connected-applications/';
 
-class MeConnectedApp {
+export default class MeConnectedApp {
 
 	/**
 	 * `MeConnectedApp` constructor.
@@ -40,8 +40,3 @@ class MeConnectedApp {
 		return this.wpcom.req.del( root + this._id + '/delete', query, fn );
 	}
 }
-
-/**
-* Expose `MeConnectedApp` module
-*/
-module.exports = MeConnectedApp;

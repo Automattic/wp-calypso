@@ -18,7 +18,7 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function SiteWordAdsTOS( sid, wpcom ) {
+export default function SiteWordAdsTOS( sid, wpcom ) {
 	if ( ! ( this instanceof SiteWordAdsTOS ) ) {
 		return new SiteWordAdsTOS( sid, wpcom );
 	}
@@ -92,8 +92,3 @@ SiteWordAdsTOS.prototype.sign = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/wordads/tos';
 	return this.wpcom.req.post( path, query, { tos: 'signed' }, fn );
 };
-
-/**
- * Expose `SiteWordAdsTOS` module
- */
-module.exports = SiteWordAdsTOS;

@@ -14,7 +14,7 @@ var debug_res = require( 'debug' )( 'wpcom:send-request:res' );
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
-module.exports = function( params, query, body, fn ) {
+export default function sendRequest( params, query, body, fn ) {
 	// `params` can be just the path ( String )
 	params = 'string' === typeof params ? { path: params } : params;
 

@@ -6,7 +6,7 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function Tag( slug, sid, wpcom ) {
+export default function Tag( slug, sid, wpcom ) {
 	if ( ! sid ) {
 		throw new Error( '`site id` is not correctly defined' );
 	}
@@ -78,8 +78,3 @@ Tag.prototype.delete = Tag.prototype.del = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/tags/slug:' + this._slug + '/delete';
 	return this.wpcom.req.del( path, query, fn );
 };
-
-/**
- * Expose `Tag` module
- */
-module.exports = Tag;

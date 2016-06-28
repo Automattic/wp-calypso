@@ -26,7 +26,7 @@ import SiteWordAdsTOS from './site.wordads.tos';
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function SiteWordAds( sid, wpcom ) {
+export default function SiteWordAds( sid, wpcom ) {
 	if ( ! ( this instanceof SiteWordAds ) ) {
 		return new SiteWordAds( sid, wpcom );
 	}
@@ -87,8 +87,3 @@ SiteWordAds.prototype.earnings = function() {
 SiteWordAds.prototype.tos = function() {
 	return new SiteWordAdsTOS( this._sid, this.wpcom );
 };
-
-/**
- * Expose `SiteWordAds` module
- */
-module.exports = SiteWordAds;

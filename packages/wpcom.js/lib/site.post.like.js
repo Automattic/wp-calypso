@@ -6,7 +6,7 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function Like( pid, sid, wpcom ) {
+export default function Like( pid, sid, wpcom ) {
 	if ( ! sid ) {
 		throw new Error( '`site id` is not correctly defined' );
 	}
@@ -59,8 +59,3 @@ Like.prototype.delete = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
 	return this.wpcom.req.del( path, query, fn );
 };
-
-/**
- * Expose `Like` module
- */
-module.exports = Like;

@@ -5,7 +5,7 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function Follow( site_id, wpcom ) {
+export default function Follow( site_id, wpcom ) {
 	if ( ! site_id ) {
 		throw new Error( '`site id` is not correctly defined' );
 	}
@@ -57,8 +57,3 @@ Follow.prototype.del = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/follows/mine/delete';
 	return this.wpcom.req.del( path, query, null, fn );
 };
-
-/**
- * Expose `Follow` module
- */
-module.exports = Follow;

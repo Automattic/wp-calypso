@@ -12,7 +12,7 @@ var debug = require( 'debug' )( 'wpcom:media' );
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function Media( id, sid, wpcom ) {
+export default function Media( id, sid, wpcom ) {
 	if ( ! ( this instanceof Media ) ) {
 		return new Media( id, sid, wpcom );
 	}
@@ -175,8 +175,3 @@ Media.prototype.delete = Media.prototype.del = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
 	return this.wpcom.req.del( path, query, fn );
 };
-
-/**
- * Expose `Media` module
- */
-module.exports = Media;

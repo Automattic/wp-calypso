@@ -9,7 +9,7 @@ const root = '/me/settings/profile-links';
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function ProfileLinks( wpcom ) {
+export default function ProfileLinks( wpcom ) {
 	if ( ! ( this instanceof ProfileLinks ) ) {
 		return new ProfileLinks( wpcom );
 	}
@@ -106,9 +106,3 @@ ProfileLinks.prototype.del = function( slug, query, fn ) {
 
 // Create `delete` alias
 ProfileLinks.prototype.delete = ProfileLinks.prototype.del;
-
-/**
- * Expose `ProfileLinks` module
- */
-
-module.exports = ProfileLinks;

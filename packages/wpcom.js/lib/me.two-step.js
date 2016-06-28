@@ -5,7 +5,7 @@ import MeTwoStepSMS from './me.two-step.sms';
 
 const root = '/me/two-step/';
 
-class MeTwoStep {
+export default class MeTwoStep {
 
 	/**
 	 * `MeTwoStep` constructor.
@@ -40,8 +40,3 @@ class MeTwoStep {
 		return new MeTwoStepSMS( this.wpcom );
 	};
 }
-
-/**
-* Expose `MeTwoStep` module
-*/
-module.exports = MeTwoStep;

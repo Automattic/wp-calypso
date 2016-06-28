@@ -6,7 +6,7 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function Category( slug, sid, wpcom ) {
+export default function Category( slug, sid, wpcom ) {
 	if ( ! sid ) {
 		throw new Error( '`site id` is not correctly defined' );
 	}
@@ -78,8 +78,3 @@ Category.prototype.delete = Category.prototype.del = function( query, fn ) {
 	var path = '/sites/' + this._sid + '/categories/slug:' + this._slug + '/delete';
 	return this.wpcom.req.del( path, query, fn );
 };
-
-/**
- * Expose `Category` module
- */
-module.exports = Category;

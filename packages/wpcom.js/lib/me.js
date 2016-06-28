@@ -13,7 +13,7 @@ import MeTwoStep from './me.two-step';
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */
-function Me( wpcom ) {
+export default function Me( wpcom ) {
 	if ( ! ( this instanceof Me ) ) {
 		return new Me( wpcom );
 	}
@@ -177,8 +177,3 @@ Me.prototype.twoStep = function() {
 Me.prototype.keyringConnection = function( id ) {
 	return new MeKeyringConnection( id, this.wpcom );
 };
-
-/**
- * Expose `Me` module
- */
-module.exports = Me;
