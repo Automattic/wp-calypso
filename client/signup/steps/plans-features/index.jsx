@@ -78,7 +78,7 @@ class PlansFeaturesStep extends Component {
 
 	render() {
 		return (
-			<div className="plans-features plans-step has-no-sidebar">
+			<div className="plans-features plans-features-step has-no-sidebar">
 				{ this.plansSelection() }
 			</div>
 		);
