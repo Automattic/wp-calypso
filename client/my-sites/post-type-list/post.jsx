@@ -13,7 +13,7 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import Card from 'components/card';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
-import resizeImageUrl from 'lib/resize-image-url';
+import PostTypeListPostThumbnail from './post-thumbnail';
 import PostTypeListPostActions from './post-actions';
 
 export function PostTypeListPost( { translate, globalId, post, editUrl, className } ) {
@@ -24,14 +24,6 @@ export function PostTypeListPost( { translate, globalId, post, editUrl, classNam
 	return (
 		<Card compact className={ classes }>
 			<div className="post-type-list__post-detail">
-				{ post.featured_image && (
-					<div className="post-type-list__post-thumbnail-wrapper">
-						<img
-							alt="Post thumbnail"
-							src={ resizeImageUrl( post.featured_image, { w: 80 } ) }
-							className="post-type-list__post-thumbnail" />
-					</div>
-				) }
 				<div className="post-type-list__post-title-meta">
 					<h1 className="post-type-list__post-title">
 						<a href={ editUrl }>
@@ -43,6 +35,7 @@ export function PostTypeListPost( { translate, globalId, post, editUrl, classNam
 					</div>
 				</div>
 			</div>
+			<PostTypeListPostThumbnail globalId={ globalId } />
 			<PostTypeListPostActions globalId={ globalId } />
 		</Card>
 	);

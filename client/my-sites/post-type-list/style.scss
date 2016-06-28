@@ -10,14 +10,22 @@
 }
 
 .post-type-list__post-detail {
+	position: relative;
 	display: flex;
-	min-width: 0;
+	width: 100%;
 	overflow: hidden;
+	margin-right: auto;
+
+	&::after {
+		@include long-content-fade( $size: 40px );
+		right: 0;
+	}
 }
 
 .post-type-list__post-thumbnail-wrapper {
 	position: relative;
 	width: 80px;
+	align-self: stretch;
 	margin-right: 12px;
 	overflow: hidden;
 
@@ -35,7 +43,6 @@
 
 .post-type-list__post-title-meta {
 	padding: 6px 0;
-	width: 100%;
 }
 
 .post-type-list__post-title {
@@ -83,15 +90,8 @@
 }
 
 .post-type-list__post-actions {
-	position: relative;
-	margin-left: auto;
 	margin-right: -8px;
 	flex-shrink: 0;
-
-	&::before {
-		@include long-content-fade( $size: 40px );
-		right: 100%;
-	}
 }
 
 .post-type-list__post-actions .button {
