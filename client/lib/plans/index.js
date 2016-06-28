@@ -85,11 +85,6 @@ export function getPlanPath( plan ) {
 	return get( plansList, [ plan, 'getPathSlug' ], () => undefined )();
 }
 
-export const getCartItem = ( productSlug, isFreeTrial = false ) => ( {
-	product_slug: productSlug,
-	free_trial: isFreeTrial
-} );
-
 export function planHasFeature( plan, feature ) {
 	return includes( get( featuresList, [ feature, 'plans' ] ), plan );
 }

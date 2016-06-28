@@ -30,9 +30,9 @@ var analytics = require( 'lib/analytics' ),
 
 import {
 	isValidFeatureKey,
-	getUpgradePlanSlugFromPath,
-	getCartItem
+	getUpgradePlanSlugFromPath
 } from 'lib/plans';
+import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'cards', 'productsList' ) ],
@@ -106,7 +106,7 @@ const Checkout = React.createClass( {
 			cartMeta;
 
 		if ( planSlug ) {
-			cartItem = getCartItem( planSlug );
+			cartItem = getCartItemForPlan( planSlug );
 		}
 
 		if ( this.props.product.indexOf( 'theme' ) === 0 ) {
