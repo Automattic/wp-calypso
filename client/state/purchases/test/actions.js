@@ -7,11 +7,9 @@ import sinon from 'sinon';
 import {
 	PRIVACY_PROTECTION_CANCEL,
 	PRIVACY_PROTECTION_CANCEL_COMPLETED,
-	PRIVACY_PROTECTION_CANCEL_FAILED,
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
 	PURCHASES_SITE_FETCH_COMPLETED,
-	PURCHASES_SITE_FETCH_FAILED,
 	PURCHASES_USER_FETCH,
 	PURCHASES_USER_FETCH_COMPLETED,
 	PURCHASE_REMOVE,
@@ -30,15 +28,19 @@ describe( 'actions', () => {
 	useNock();
 
 	let cancelPrivateRegistration,
+		clearPurchases,
 		fetchSitePurchases,
 		fetchUserPurchases,
 		removePurchase;
 	useMockery( mockery => {
-		mockery.registerMock( 'lib/olark', () => ( { } ) );
+		mockery.registerMock( 'lib/olark', {
+			updateOlarkGroupAndEligibility: () => {}
+		} );
 
 		const actions = require( '../actions' );
 
 		cancelPrivateRegistration = actions.cancelPrivateRegistration;
+		clearPurchases = actions.clearPurchases;
 		fetchSitePurchases = actions.fetchSitePurchases;
 		fetchUserPurchases = actions.fetchUserPurchases;
 		removePurchase = actions.removePurchase;
@@ -48,6 +50,14 @@ describe( 'actions', () => {
 
 	beforeEach( () => {
 		spy.reset();
+	} );
+
+	describe( '#clearPurchases', () => {
+		it( 'should return a `PURCHASES_REMOVE` action', () => {
+			expect( clearPurchases() ).to.be.eql( {
+				type: PURCHASES_REMOVE
+			} );
+		} );
 	} );
 
 	describe( '#cancelPrivateRegistration', () => {
