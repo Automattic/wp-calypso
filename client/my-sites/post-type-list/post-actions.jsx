@@ -9,29 +9,44 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getPost } from 'state/posts/selectors';
-import { trashPost } from 'state/posts/actions';
+import { trashPost, deletePost } from 'state/posts/actions';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 
-function PostTypeListPostActions( { translate, trash, post } ) {
-	const onTrash = () => trash( post.site_ID, post.ID );
+function PostTypeListPostActions( { translate, post, dispatchTrashPost, dispatchDeletePost } ) {
+	function onTrash() {
+		if ( ! post ) {
+			return;
+		}
+
+		let dispatchAction;
+		if ( 'trash' !== post.status ) {
+			dispatchAction = dispatchTrashPost;
+		} else if ( confirm( translate( 'Are you sure you want to permanently delete this post?' ) ) ) {
+			dispatchAction = dispatchDeletePost;
+		}
+
+		if ( dispatchAction ) {
+			dispatchAction( post.site_ID, post.ID );
+		}
+	}
 
 	return (
 		<div className="post-type-list__post-actions">
-			{ post && [
-				<Button key="trash" onClick={ onTrash } borderless>
-					<Gridicon icon="trash" />
-					<span className="screen-reader-text">
-						{ translate( 'Trash', { context: 'verb' } ) }
-					</span>
-				</Button>,
-				<Button key="view" href={ post.URL } target="_blank" borderless>
-					<Gridicon icon="external" />
-					<span className="screen-reader-text">
-						{ translate( 'View', { context: 'verb' } ) }
-					</span>
-				</Button>
-			] }
+			<Button onClick={ onTrash } borderless>
+				<Gridicon icon="trash" />
+				<span className="post-type-list__post-actions-srt">
+					{ post && 'trash' === post.status
+						? translate( 'Delete Permanently' )
+						: translate( 'Trash', { context: 'verb' } ) }
+				</span>
+			</Button>
+			<Button href={ post ? post.URL : '' } target="_blank" borderless>
+				<Gridicon icon="external" />
+				<span className="post-type-list__post-actions-srt">
+					{ translate( 'View', { context: 'verb' } ) }
+				</span>
+			</Button>
 		</div>
 	);
 }
@@ -39,8 +54,9 @@ function PostTypeListPostActions( { translate, trash, post } ) {
 PostTypeListPostActions.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func,
-	trash: PropTypes.func,
-	post: PropTypes.object
+	post: PropTypes.object,
+	trashPost: PropTypes.func,
+	deletePost: PropTypes.func
 };
 
 export default connect(
@@ -50,6 +66,7 @@ export default connect(
 		};
 	},
 	{
-		trash: trashPost
+		dispatchTrashPost: trashPost,
+		dispatchDeletePost: deletePost
 	}
 )( localize( PostTypeListPostActions ) );
