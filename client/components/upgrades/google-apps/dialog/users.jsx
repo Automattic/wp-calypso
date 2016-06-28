@@ -7,6 +7,9 @@ import clone from 'lodash/clone';
 /**
  * Internal dependencies
  */
+import FormFieldset from 'components/forms/form-fieldset';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import AnalyticsMixin from 'lib/mixins/analytics';
 
 const GoogleAppsUsers = React.createClass( {
@@ -61,34 +64,36 @@ const GoogleAppsUsers = React.createClass( {
 			domain = this.props.domain;
 
 		return (
-			<fieldset className="google-apps-dialog__user-fields" key={ index }>
-				<input
-					className={ this.fieldClasses( user.email, 'google-apps-dialog__user-email' ) }
-					type="text"
-					placeholder={ this.translate( 'e.g. %(example)s', { args: { example: contactText + '@' + domain } } ) }
-					value={ user.email.value }
-					onChange={ this.updateField.bind( this, index, 'email' ) }
-					onBlur={ this.props.onBlur }
-					onClick={ this.recordInputFocus.bind( this, index, 'Email' ) } />
+			<div className="google-apps-dialog__user-fields" key={ `google-apps-dialog-user-${ index }` }>
+				<FormFieldset>
+					<FormTextInputWithAffixes
+						className={ this.fieldClasses( user.email, 'google-apps-dialog__user-email' ) }
+						placeholder={ this.translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
+						value={ user.email.value }
+						suffix={ '@' + this.props.domain }
+						onChange={ this.updateField.bind( this, index, 'email' ) }
+						onBlur={ this.props.onBlur }
+						onClick={ this.recordInputFocus.bind( this, index, 'Email' ) } />
+				</FormFieldset>
 
-				<input
-					className={ this.fieldClasses( user.firstName, 'google-apps-dialog__user-first-name' ) }
-					type="text"
-					placeholder={ this.translate( 'First Name' ) }
-					value={ user.firstName.value }
-					onChange={ this.updateField.bind( this, index, 'firstName' ) }
-					onBlur={ this.props.onBlur }
-					onClick={ this.recordInputFocus.bind( this, index, 'First Name' ) } />
+				<FormFieldset>
+					<FormTextInput
+						className={ this.fieldClasses( user.firstName, 'google-apps-dialog__user-first-name' ) }
+						placeholder={ this.translate( 'First Name' ) }
+						value={ user.firstName.value }
+						onChange={ this.updateField.bind( this, index, 'firstName' ) }
+						onBlur={ this.props.onBlur }
+						onClick={ this.recordInputFocus.bind( this, index, 'First Name' ) } />
 
-				<input
-					className={ this.fieldClasses( user.lastName, 'google-apps-dialog__user-last-name' ) }
-					type="text"
-					placeholder={ this.translate( 'Last Name' ) }
-					value={ user.lastName.value }
-					onChange={ this.updateField.bind( this, index, 'lastName' ) }
-					onBlur={ this.props.onBlur }
-					onClick={ this.recordInputFocus.bind( this, index, 'Last Name' ) } />
-			</fieldset>
+					<FormTextInput
+						className={ this.fieldClasses( user.lastName, 'google-apps-dialog__user-last-name' ) }
+						placeholder={ this.translate( 'Last Name' ) }
+						value={ user.lastName.value }
+						onChange={ this.updateField.bind( this, index, 'lastName' ) }
+						onBlur={ this.props.onBlur }
+						onClick={ this.recordInputFocus.bind( this, index, 'Last Name' ) } />
+				</FormFieldset>
+			</div>
 		);
 	},
 
