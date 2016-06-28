@@ -10,7 +10,6 @@ import merge from 'lodash/merge';
  * Internal dependencies
  */
 import Main from 'components/main';
-import { signup } from 'state/themes/actions' ;
 import ThemePreview from './theme-preview';
 import ThemesSelection from './themes-selection';
 import { getSignupUrl, getDetailsUrl, getSupportUrl, getHelpUrl, isPremium, addTracking } from './helpers';
@@ -57,13 +56,6 @@ const ThemesLoggedOut = React.createClass( {
 		return merge( {}, buttonOptions, actionLabels );
 	},
 
-	onPreviewButtonClick( theme ) {
-		this.setState( { showPreview: false },
-			() => {
-				this.props.signup( theme );
-			} );
-	},
-
 	render() {
 		const buttonOptions = this.getButtonOptions();
 
@@ -77,7 +69,7 @@ const ThemesLoggedOut = React.createClass( {
 						buttonLabel={ this.translate( 'Choose this design', {
 							comment: 'when signing up for a WordPress.com account with a selected theme'
 						} ) }
-						onButtonClick={ this.onPreviewButtonClick } />
+						getButtonHref={ getSignupUrl } />
 				}
 				<ThemesSelection search={ this.props.search }
 					selectedSite={ false }
@@ -105,6 +97,5 @@ export default connect(
 	state => ( {
 		queryParams: getQueryParams( state ),
 		themesList: getThemesList( state )
-	} ),
-	{ signup }
+	} )
 )( ThemesLoggedOut );

@@ -10,6 +10,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 import titlecase from 'to-title-case';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -25,10 +26,10 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
-import { signup, purchase, activate, customize } from 'state/themes/actions';
+import { purchase, activate, customize } from 'state/themes/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { isPremium, getForumUrl } from 'my-sites/themes/helpers';
+import { isPremium, getForumUrl, getSignupUrl } from 'my-sites/themes/helpers';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
 import { getCurrentTheme } from 'state/themes/current-theme/selectors';
@@ -89,7 +90,7 @@ const ThemeSheet = React.createClass( {
 
 	onPrimaryClick() {
 		if ( ! this.props.isLoggedIn ) {
-			this.props.signup( this.props );
+			page( getSignupUrl( this.props ) );
 		} else if ( this.isActive() ) {
 			this.props.customize( this.props, this.props.selectedSite );
 		} else if ( this.props.price ) {
@@ -375,5 +376,5 @@ export default connect(
 		const backPath = getBackPath( state );
 		return { selectedSite, siteSlug, currentTheme, backPath };
 	},
-	{ signup, purchase, activate, customize }
+	{ purchase, activate, customize }
 )( ThemeSheet );
