@@ -19,7 +19,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
 	Notice = require( 'components/notice' ),
 	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
-	{ DWPO } = require( 'state/current-user/constants' ),
+	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
 	signupUtils = require( 'signup/utils' );
 
@@ -268,7 +268,7 @@ const DomainsStep = React.createClass( {
 
 module.exports = connect( ( state ) => {
 	return {
-		// no user = DWPO
-		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DWPO ) : true
+		// no user = DOMAINS_WITH_PLANS_ONLY
+		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true
 	};
 } ) ( DomainsStep );

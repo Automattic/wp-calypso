@@ -81,7 +81,7 @@ var DomainSearchResults = React.createClass( {
 		} else if ( this.props.suggestions && this.props.suggestions.length !== 0 && this.isDomainUnavailable() ) {
 			if ( this.props.products.domain_map && this.props.lastDomainError.code === 'not_available_but_mappable' ) {
 				const components = { a: <a href="#" onClick={ this.addMappingAndRedirect }/>, small: <small /> };
-				if ( ! this.props.domainsWithPlansOnly ) {
+				if ( this.props.domainsWithPlansOnly ) {
 					mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
 						' with WordPress.com Premium.{{/small}}', {
 							args: { domain: lastDomainSearched },

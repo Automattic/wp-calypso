@@ -38,7 +38,7 @@ import analytics from 'lib/analytics';
 import SignupProcessingScreen from 'signup/processing-screen';
 import utils from './utils';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { DWPO } from 'state/current-user/constants';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
 
 /**
@@ -373,7 +373,7 @@ const Signup = React.createClass( {
 } );
 
 export default connect(
-	state => ( { domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DWPO ) : true } ),
+	state => ( { domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true } ),
 	() => ( {} ),
 	undefined,
 	{ pure: false } )( Signup );
