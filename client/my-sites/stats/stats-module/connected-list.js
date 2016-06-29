@@ -9,6 +9,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import ErrorPanel from '../stats-error';
+import StatsModuleExpand from './expand';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import DatePicker from '../stats-date-picker';
@@ -64,20 +65,6 @@ class StatsConnectedModule extends Component {
 		return null;
 	}
 
-	renderSummaryLink() {
-		if ( ! this.props.showSummaryLink ) {
-			return null;
-		}
-
-		return (
-			<div className="module-expand">
-				<a href={ this.getHref() }>
-					{ this.translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }<span className="right"></span>
-				</a>
-			</div>
-		);
-	}
-
 	render() {
 		const {
 			className,
@@ -112,21 +99,21 @@ class StatsConnectedModule extends Component {
 			}
 		);
 
+		const summaryLink = this.getHref();
+
 		return (
 			<div>
 				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
-				<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? this.getHref() : null } />
+				<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null } />
 				<Card compact className={ cardClasses }>
 					<div className={ className }>
-						<div className="module-content">
-							{ noData && <ErrorPanel className="is-empty-message" message={ moduleStrings.empty } /> }
-							{ hasError && <ErrorPanel className="network-error" /> }
-							<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
-							<StatsModulePlaceholder isLoading={ isLoading } />
-							<StatsList moduleName={ path } data={ data } />
-						</div>
+						{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
+						{ hasError && <ErrorPanel /> }
+						<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
+						<StatsModulePlaceholder isLoading={ isLoading } />
+						<StatsList moduleName={ path } data={ data } />
 					</div>
-					{ this.renderSummaryLink() }
+					{ this.props.showSummaryLink && <StatsModuleExpand href={ summaryLink } /> }
 				</Card>
 			</div>
 
