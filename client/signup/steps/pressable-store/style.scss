@@ -4,6 +4,7 @@
 }
 
 .pressable-store__heading {
+	margin-bottom: 12px;
 	font-size: 18px;
 	font-weight: 400;
 }
@@ -19,6 +20,10 @@
 .pressable-store__form-fields {
 	display: flex;
 	flex-flow: row wrap;
+}
+
+.pressable-store__form .form-label {
+	margin-bottom: 11px;
 }
 
 .pressable-store__form-email {
