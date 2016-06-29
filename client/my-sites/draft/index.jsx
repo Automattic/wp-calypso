@@ -158,8 +158,13 @@ module.exports = React.createClass( {
 		}
 
 		if ( post && post.canonical_image ) {
-			image = true;
-			imageUrl = photon( post.canonical_image.uri, { width: 680 } );
+			image = url.parse( post.canonical_image.uri, true );
+
+			if ( image.hostname.indexOf( 'files.wordpress.com' ) > 0 ) {
+				imageUrl = '//' + image.hostname + image.pathname + '?w=680px';
+			} else {
+				imageUrl = photon( post.canonical_image.uri, { width: 680 } );
+			}
 		}
 
 		classes = [
