@@ -142,18 +142,11 @@ describe( 'items', () => {
 			purchaseId: 2
 		} );
 
-		expect( getByPurchaseId( state, 2 ) ).to.be.eql( {
-			data: {
-				id: 2,
-				error: 'Unable to fetch stored cards',
-				siteId,
-				userId
-			},
-			error: null,
-			isFetchingSitePurchases: false,
-			isFetchingUserPurchases: false,
-			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true
+		expect( getByPurchaseId( { purchases: state }, 2 ) ).to.be.eql( {
+			id: 2,
+			error: 'Unable to fetch stored cards',
+			siteId,
+			userId
 		} );
 	} );
 
@@ -182,20 +175,13 @@ describe( 'items', () => {
 			}
 		} );
 
-		expect( getByPurchaseId( state, 2 ) ).to.be.eql( {
-			data: {
-				amount: 2200,
-				error: null,
-				hasPrivateRegistration: false,
-				id: 2,
-				siteId,
-				userId
-			},
+		expect( getByPurchaseId( { purchases: state }, 2 ) ).to.be.eql( {
+			amount: 2200,
 			error: null,
-			isFetchingSitePurchases: false,
-			isFetchingUserPurchases: false,
-			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true
+			hasPrivateRegistration: false,
+			id: 2,
+			siteId,
+			userId
 		} );
 	} );
 } );
