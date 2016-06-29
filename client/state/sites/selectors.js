@@ -8,6 +8,7 @@ import filter from 'lodash/filter';
 import some from 'lodash/some';
 import includes from 'lodash/includes';
 import find from 'lodash/find';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -142,7 +143,44 @@ export function getSitePlan( state, siteId ) {
 		return null;
 	}
 
+	if ( get( site.plan, 'expired', false ) ) {
+		if ( site.jetpack ) {
+			return {
+				product_id: 2002,
+				product_slug: 'jetpack_free',
+				product_name_short: 'Free',
+				free_trial: false,
+				expired: false
+			};
+		}
+
+		return {
+			product_id: 1,
+			product_slug: 'free_plan',
+			product_name_short: 'Free',
+			free_trial: false,
+			expired: false
+		};
+	}
+
 	return site.plan;
+}
+
+/**
+ * Returns true if the current site plan is a paid one
+ *
+ * @param  {Object}   state         Global state tree
+ * @param  {Number}   siteId        Site ID
+ * @return {?Boolean}               Whether the current plan is paid
+ */
+export function isCurrentPlanPaid( state, siteId ) {
+	const sitePlan = getSitePlan( state, siteId );
+
+	if ( ! sitePlan ) {
+		return null;
+	}
+
+	return sitePlan.product_id !== 1 && sitePlan.product_id !== 2002;
 }
 
 /**

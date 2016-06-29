@@ -15,7 +15,7 @@ import PlanFeaturesItemList from './list';
 import PlanFeaturesItem from './item';
 import PlanFeaturesFooter from './footer';
 import PlanFeaturesPlaceholder from './placeholder';
-import { isCurrentSitePlan } from 'state/sites/selectors';
+import { isCurrentPlanPaid, isCurrentSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getPlanRawPrice, getPlan } from 'state/plans/selectors';
@@ -102,12 +102,13 @@ export default connect( ( state, ownProps ) => {
 	const planProductId = plansList[ ownProps.plan ].getProductId();
 	const selectedSiteId = getSelectedSiteId( state );
 	const planObject = getPlan( state, planProductId );
+	const isPaid = isCurrentPlanPaid( state, selectedSiteId );
 
 	return {
 		planName: ownProps.plan,
 		current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		popular: isPopular( ownProps.plan ),
+		popular: isPopular( ownProps.plan ) && ! isPaid,
 		features: getPlanFeaturesObject( ownProps.plan ),
 		rawPrice: getPlanRawPrice( state, planProductId, ! isMonthly( ownProps.plan ) ),
 		planConstantObj: plansList[ ownProps.plan ],

@@ -15,7 +15,8 @@ import {
 	isRequestingSites,
 	getSiteByUrl,
 	getSitePlan,
-	isCurrentSitePlan
+	isCurrentSitePlan,
+	isCurrentPlanPaid
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -336,6 +337,61 @@ describe( 'selectors', () => {
 				free_trial: false
 			} );
 		} );
+
+		it( 'it should return free plan if expired', () => {
+			const sitePlan = getSitePlan( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							plan: {
+								product_id: 1008,
+								product_slug: 'business-bundle',
+								product_name_short: 'Business',
+								free_trial: false,
+								expired: true
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( sitePlan ).to.eql( {
+				product_id: 1,
+				product_slug: 'free_plan',
+				product_name_short: 'Free',
+				free_trial: false,
+				expired: false
+			} );
+		} );
+
+		it( 'it should return jetpack free plan if expired', () => {
+			const sitePlan = getSitePlan( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							jetpack: true,
+							plan: {
+								product_id: 1234,
+								product_slug: 'fake-plan',
+								product_name_short: 'Fake Plan',
+								free_trial: false,
+								expired: true
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( sitePlan ).to.eql( {
+				product_id: 2002,
+				product_slug: 'jetpack_free',
+				product_name_short: 'Free',
+				free_trial: false,
+				expired: false
+			} );
+		} );
 	} );
 
 	describe( '#isCurrentSitePlan()', () => {
@@ -398,6 +454,55 @@ describe( 'selectors', () => {
 			}, 77203074, 1003 );
 
 			expect( isCurrent ).to.be.false;
+		} );
+	} );
+
+	describe( '#isCurrentPlanPaid()', () => {
+		it( 'it should return true if not free plan', () => {
+			const isPaid = isCurrentPlanPaid( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							plan: {
+								product_id: 1008
+							}
+						}
+					}
+				}
+			}, 77203074, 1003 );
+
+			expect( isPaid ).to.equal( true );
+		} );
+		it( 'it should return false if free plan', () => {
+			const isPaid = isCurrentPlanPaid( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							plan: {
+								product_id: 1
+							}
+						}
+					}
+				}
+			}, 77203074, 1003 );
+
+			expect( isPaid ).to.equal( false );
+		} );
+
+		it( 'it should return null if plan is missing', () => {
+			const isPaid = isCurrentPlanPaid( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074
+						}
+					}
+				}
+			}, 77203074, 1003 );
+
+			expect( isPaid ).to.equal( null );
 		} );
 	} );
 } );
