@@ -8,7 +8,7 @@ $current-theme-border: 1px solid lighten( $gray, 20% );
 	margin-bottom: 24px;
 }
 
-.current-theme__info {
+.current-theme__current {
 	@include breakpoint( ">480px" ) {
 		width: 50%;
 		float: left;
@@ -122,7 +122,7 @@ $current-theme-border: 1px solid lighten( $gray, 20% );
 		}
 }
 
-.current-theme__details {
+.current-theme__info {
 	border-left: $current-theme-border;
 	border-right: $current-theme-border;
 }
