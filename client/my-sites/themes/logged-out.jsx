@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 import { connect } from 'react-redux';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
@@ -45,7 +44,6 @@ const ThemesLoggedOut = React.createClass( {
 				separator: true
 			},
 			info: {
-				action: theme => page( getDetailsUrl( theme ) ),
 				getUrl: theme => getDetailsUrl( theme ),
 			},
 			support: {
@@ -83,9 +81,7 @@ const ThemesLoggedOut = React.createClass( {
 				}
 				<ThemesSelection search={ this.props.search }
 					selectedSite={ false }
-					onScreenshotClick={ function( theme ) {
-						buttonOptions.info.action( theme );
-					} }
+					getScreenshotUrl={ buttonOptions.info.getUrl }
 					getActionLabel={ function() {
 						return buttonOptions.info.label;
 					} }

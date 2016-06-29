@@ -90,6 +90,7 @@ const Theme = React.createClass( {
 		if ( this.props.screenshotClickUrl || this.props.onScreenshotClick ) {
 			return (
 				<a className="theme__active-focus"
+					href={ this.props.screenshotClickUrl }
 					onClick={ this.onScreenshotClick }>
 					<span>
 						{ this.props.actionLabel }

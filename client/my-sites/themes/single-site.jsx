@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 import { connect } from 'react-redux';
 import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
@@ -22,13 +21,22 @@ import EmptyContent from 'components/empty-content';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import ThemesSelection from './themes-selection';
-import { getDetailsUrl, getSupportUrl, getHelpUrl, isPremium, addTracking } from './helpers';
+import {
+	getCustomizeUrl,
+	getDetailsUrl,
+	getSupportUrl,
+	getHelpUrl,
+	isPremium,
+	addTracking
+} from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import sitesFactory from 'lib/sites-list';
 import { FEATURE_CUSTOM_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { getSelectedSite } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const sites = sitesFactory();
@@ -64,10 +72,11 @@ const ThemesSingleSite = React.createClass( {
 
 	getButtonOptions() {
 		const site = sites.getSelectedSite(),
+			{ isCustomizable, isJetpack } = this.props,
 			buttonOptions = {
-				customize: site && site.isCustomizable()
+				customize: isCustomizable
 					? {
-						action: this.props.customize,
+						getUrl: theme => getCustomizeUrl( theme, site ),
 						hideForTheme: theme => ! theme.active
 					}
 					: {},
@@ -86,23 +95,22 @@ const ThemesSingleSite = React.createClass( {
 					hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
 				},
 				tryandcustomize: {
-					action: theme => this.props.customize( theme ),
+					getUrl: theme => getCustomizeUrl( theme, site ),
 					hideForTheme: theme => theme.active
 				},
 				separator: {
 					separator: true
 				},
 				info: {
-					action: theme => page( getDetailsUrl( theme, site ) ),
 					getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
 				},
-				support: ! site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
+				support: ! isJetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
 					? {
 						getUrl: theme => getSupportUrl( theme, site ),
 						hideForTheme: theme => ! isPremium( theme )
 					}
 					: {},
-				help: ! site.jetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
+				help: ! isJetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
 					? {
 						getUrl: theme => getHelpUrl( theme, site )
 					}
@@ -178,8 +186,8 @@ const ThemesSingleSite = React.createClass( {
 						key={ site.ID }
 						siteId={ this.props.siteId }
 						selectedSite={ site }
-						onScreenshotClick={ function( theme ) {
-							getScreenshotAction( theme ).action( theme );
+						getScreenshotUrl={ function( theme ) {
+							return getScreenshotAction( theme ).getUrl( theme );
 						} }
 						getActionLabel={ function( theme ) {
 							return getScreenshotAction( theme ).label;
@@ -200,11 +208,16 @@ const ThemesSingleSite = React.createClass( {
 } );
 
 export default connect(
-	state => ( {
-		queryParams: getQueryParams( state ),
-		themesList: getThemesList( state ),
-		selectedSite: getSelectedSite( state )
-	} ),
+	state => {
+		const selectedSite = getSelectedSite( state );
+		return {
+			queryParams: getQueryParams( state ),
+			themesList: getThemesList( state ),
+			selectedSite,
+			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
+			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
+		};
+	},
 	{
 		activate,
 		customize,
