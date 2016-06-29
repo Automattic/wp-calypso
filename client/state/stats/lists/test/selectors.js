@@ -10,7 +10,6 @@ import {
 	getSiteStatsMaxPostsByDay,
 	getSiteStatsPostStreakData,
 	getSiteStatsForQuery,
-	getSiteStatsInsightsData,
 	getSiteStatsPostsCountByDay,
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery

@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,90 +15,95 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
-	getSiteStatsInsightsData
+	getSiteStatsNormalizedData
 } from 'state/stats/lists/selectors';
 
-const StatsMostPopular = React.createClass( {
-	propTypes: {
+class StatsMostPopular extends Component {
+	static propTypes = {
 		day: PropTypes.string,
 		percent: PropTypes.number,
 		hour: PropTypes.string,
-		hour_percent: PropTypes.number,
+		hourPercent: PropTypes.number,
 		requesting: PropTypes.bool,
 		siteId: PropTypes.number,
-		query: PropTypes.object
-	},
-
-	mixins: [ PureRenderMixin ],
+		query: PropTypes.object,
+		translate: PropTypes.func
+	};
 
 	render() {
 		const {
 			day,
 			percent,
 			hour,
-			hour_percent,
+			hourPercent,
 			requesting,
-			siteId
+			siteId,
+			translate,
+			statType
 		} = this.props;
-		let emptyMessage;
 
 		const classes = [
 			'stats-module',
 			'stats-most-popular',
 			'is-site-overview',
 			{
-				'is-loading': requesting,
+				'is-loading': requesting && ! percent,
 				'is-empty': ! percent
 			}
 		];
 
-		if ( ! percent && ! requesting ) {
-			// should use real notice component or custom class
-			emptyMessage = (
-				<div className="stats-popular__empty">
-					<span className="notice">
-						{ this.translate( 'No popular day and time recorded', {
-							context: 'Message on empty bar chart in Stats',
-							comment: 'Should be limited to 32 characters to prevent wrapping'
-						} ) }
-					</span>
-				</div>
-			);
-		}
-
 		return (
 			<div>
-				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsInsights" /> }
-				<SectionHeader label={ this.translate( 'Most popular day and hour' ) }></SectionHeader>
+				{ siteId && <QuerySiteStats siteId={ siteId } statType={ statType } /> }
+				<SectionHeader label={ translate( 'Most popular day and hour' ) }></SectionHeader>
 					<Card className={ classNames( classes ) }>
-						<div className="module-content">
-							<div className="stats-popular">
-								<div className="stats-popular__item">
-									<span className="stats-popular__label">{ this.translate( 'Most popular day' ) }</span>
-									<span className="stats-popular__day">{ day }</span>
-									<span className="stats-popular__percentage">{ this.translate( '%(percent)d%% of views', { args: { percent: percent || 0 }, context: 'Stats: Percentage of views' } ) }</span>
-								</div>
-								<div className="stats-popular__item">
-									<span className="stats-popular__label">{ this.translate( 'Most popular hour' ) }</span>
-									<span className="stats-popular__hour">{ hour }</span>
-									<span className="stats-popular__percentage">{ this.translate( '%(percent)d%% of views', { args: { percent: hour_percent || 0 }, context: 'Stats: Percentage of views' } ) }</span>
-								</div>
-								{ emptyMessage }
+						<div className="most-popular__wrapper">
+							<div className="most-popular__item">
+								<span className="most-popular__label">{ translate( 'Most popular day' ) }</span>
+								<span className="most-popular__day">{ day }</span>
+								<span className="most-popular__percentage">
+									{ translate( '%(percent)d%% of views', {
+										args: { percent: percent || 0 },
+										context: 'Stats: Percentage of views'
+									} ) }
+								</span>
 							</div>
+							<div className="most-popular__item">
+								<span className="most-popular__label">{ translate( 'Most popular hour' ) }</span>
+								<span className="most-popular__hour">{ hour }</span>
+								<span className="most-popular__percentage">
+									{ translate( '%(percent)d%% of views', {
+										args: { percent: hourPercent || 0 },
+										context: 'Stats: Percentage of views'
+									} ) }
+								</span>
+							</div>
+							{ ! percent && ! requesting && (
+								<div className="most-popular__empty">
+									<span className="most-popular__notice">
+										{ translate( 'No popular day and time recorded', {
+											context: 'Message on stats insights page when no most popular data exists.',
+											comment: 'Should be limited to 32 characters to prevent wrapping'
+										} ) }
+									</span>
+								</div>
+							) }
 						</div>
 					</Card>
 			</div>
 		);
 	}
-} );
+}
 
 export default connect( ( state ) => {
+	const statType = 'statsInsights';
 	const siteId = getSelectedSiteId( state );
-	const allTimeData = getSiteStatsInsightsData( state, siteId );
+	const mostPopularData = getSiteStatsNormalizedData( state, siteId, statType, {} );
 
 	return {
-		requesting: isRequestingSiteStatsForQuery( state, siteId, 'statsInsights', {} ),
+		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, {} ),
 		siteId,
-		...allTimeData
+		statType,
+		...mostPopularData
 	};
-} )( StatsMostPopular );
+} )( localize( StatsMostPopular ) );
