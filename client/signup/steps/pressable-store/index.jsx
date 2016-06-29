@@ -68,7 +68,7 @@ export default React.createClass( {
 
 		if ( ! this.state.valid ) {
 			this.setState( {
-				error: this.translate( 'Please enter a valid email address' ),
+				error: this.translate( 'Please provide a valid email address.' ),
 			} );
 			return;
 		}
@@ -89,7 +89,7 @@ export default React.createClass( {
 						<FormLabel for="email">{ this.translate( 'Start by entering your email address:' ) }</FormLabel>
 						<div className="pressable-store__form-fields">
 							<FormTextInput ref={ ( input ) => this._input = input } isError={ this.state.error } isValid={ this.state.valid } onChange={ this.onEmailChange } className="pressable-store__form-email is-spaced" type="email" placeholder="Email Address" name="email" />
-							<FormButton onClick={ this.onSubmit } className="pressable-store__form-submit">{ this.translate( 'Get started on Pressable' ) }</FormButton>
+							<FormButton onClick={ this.onSubmit } className="pressable-store__form-submit">{ this.translate( 'Get started on Pressable' ) } <Gridicon icon="external" size={ 12 } /></FormButton>
 						</div>
 						{ this.state.error && <FormInputValidation isError={ true } text={ this.state.error } /> }
 					</LoggedOutFormFooter>
