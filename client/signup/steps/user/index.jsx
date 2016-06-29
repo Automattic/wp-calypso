@@ -66,11 +66,6 @@ export default React.createClass( {
 				userData.follow_default_blogs = false;
 				userData.subscription_delivery_email_default = 'never';
 				userData.is_new_reader = true;
-
-			// User is not participating in Reader Cold Start, but is in our "never send email" experiment group
-			} else if ( abtest( 'coldStartReader' ) === 'noEmailNoColdStart' ) {
-				userData.subscription_delivery_email_default = 'never';
-			}
 		}
 
 		const formWithoutPassword = Object.assign( {}, form, {
