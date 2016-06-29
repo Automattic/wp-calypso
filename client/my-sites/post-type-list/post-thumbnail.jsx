@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 import get from 'lodash/get';
 
@@ -12,8 +13,12 @@ import resizeImageUrl from 'lib/resize-image-url';
 import { getNormalizedPost } from 'state/posts/selectors';
 
 function PostTypeListPostThumbnail( { thumbnail } ) {
+	const classes = classnames( 'post-type-list__post-thumbnail-wrapper', {
+		'has-image': !! thumbnail
+	} );
+
 	return (
-		<div className="post-type-list__post-thumbnail-wrapper">
+		<div className={ classes }>
 			{ thumbnail && (
 				<img
 					src={ resizeImageUrl( thumbnail, { w: 80 } ) }
