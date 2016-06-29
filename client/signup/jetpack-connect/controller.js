@@ -63,7 +63,7 @@ const jetpackConnectFirstStep = ( context, isInstall ) => {
 export default {
 	redirectWithoutLocaleifLoggedIn( context, next ) {
 		if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
-			let urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
+			const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
 			return page.redirect( urlWithoutLocale );
 		}
 
@@ -73,13 +73,20 @@ export default {
 	saveQueryObject( context, next ) {
 		if ( ! isEmpty( context.query ) && context.query.redirect_uri ) {
 			debug( 'set initial query object', context.query );
-			context.store.dispatch( { type: JETPACK_CONNECT_QUERY_SET, queryObject: context.query } );
+			context.store.dispatch( {
+				type: JETPACK_CONNECT_QUERY_SET,
+				queryObject: context.query
+			} );
 			page.redirect( context.pathname );
 		}
 
 		if ( ! isEmpty( context.query ) && context.query.update_nonce ) {
 			debug( 'updating nonce', context.query );
-			context.store.dispatch( { type: JETPACK_CONNECT_QUERY_UPDATE, property: '_wp_nonce', value: context.query.update_nonce } );
+			context.store.dispatch( {
+				type: JETPACK_CONNECT_QUERY_UPDATE,
+				property: '_wp_nonce',
+				value: context.query.update_nonce
+			} );
 			page.redirect( context.pathname );
 		}
 
@@ -87,20 +94,35 @@ export default {
 	},
 
 	install( context ) {
+		const analyticsBasePath = '/jetpack/connect/install',
+			analyticsPageTitle = 'Jetpack Install';
+
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
 		jetpackConnectFirstStep( context, true );
 	},
 
 	connect( context ) {
+		const analyticsBasePath = '/jetpack/connect',
+			analyticsPageTitle = 'Jetpack Connect';
+
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
 		jetpackConnectFirstStep( context, false );
 	},
 
 	authorizeForm( context ) {
+		const analyticsBasePath = 'jetpack/connect/authorize',
+			analyticsPageTitle = 'Jetpack Authorize';
+
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setSection( 'jetpackConnect', {
 			hasSidebar: false
 		} ) );
 
 		userModule.fetch();
+
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 		renderWithReduxStore(
 			React.createElement( jetpackConnectAuthorizeForm, {
@@ -114,12 +136,17 @@ export default {
 	},
 
 	sso( context ) {
+		const analyticsBasePath = '/jetpack/sso',
+			analyticsPageTitle = 'Jetpack SSO';
+
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setSection( 'jetpackConnect', {
 			hasSidebar: false
 		} ) );
 
 		userModule.fetch();
+
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 		renderWithReduxStore(
 			React.createElement( jetpackSSOForm, {
