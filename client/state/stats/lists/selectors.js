@@ -10,7 +10,8 @@ import i18n from 'i18n-calypso';
  */
 import createSelector from 'lib/create-selector';
 import {
-	getSerializedStatsQuery
+	getSerializedStatsQuery,
+	normalizers
 } from './utils';
 
 /**
@@ -119,3 +120,28 @@ export function getSiteStatsPostsCountByDay( state, siteId, query, date ) {
 	return data[ date ] || null;
 }
 
+/**
+ * Returns normalized stats data for a given query and stat type, or the un-normalized response
+ * from the API if no normalizer method for that stats type exists in ./utils
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {Object}  query    Stats query object
+ * @return {*}                Normalized Data for the query, typically an array or object
+ */
+export const getSiteStatsNormalizedData = createSelector(
+	( state, siteId, statType, query ) => {
+		const data = getSiteStatsForQuery( state, siteId, statType, query );
+
+		if ( 'function' === typeof normalizers[ statType ] ) {
+			return normalizers[ statType ].call( this, data );
+		}
+
+		return data;
+	},
+	( state, siteId, statType, query ) => getSiteStatsForQuery( state, siteId, statType, query ),
+	( state, siteId, statType, query ) => {
+		const serializedQuery = getSerializedStatsQuery( query );
+		return [ siteId, statType, serializedQuery ].join();
+	}
+);

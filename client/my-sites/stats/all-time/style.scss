@@ -1,4 +1,4 @@
-.stats-all-time {
+.all-time {
 
 	.stats-tab {
 
@@ -12,8 +12,8 @@
 			padding-bottom: 0;
 		}
 
-		&.is-best .gridicon,
-		&.is-best .label {
+		&.all-time__is-best .gridicon,
+		&.all-time__is-best .label {
 			color: $alert-yellow;
 		}
 
@@ -22,7 +22,7 @@
 			padding: 10px 0 5px;
 		}
 
-		.stats-all-time__best-day {
+		.all-time__best-day {
 			color: $gray-dark;
 			font-size: 11px;
 			letter-spacing: 0.1em;
