@@ -21,16 +21,16 @@
 	// Menu Items with Icons
 
 	.gridicon {
-		height: 24px;
-		width: 24px;
+		height: 18px;
+    	margin-top: -2px;
+		width: 18px;
+		position: relative;
+			top: 4px;
+		transition: all 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 
 	&.has-icon {
-		padding-left: 42px;
 
-		@include breakpoint( "<660px" ) {
-			padding-left: 36px;
-		}
 	}
 
 	.gridicon__following {
@@ -86,12 +86,5 @@
 				fill: $alert-green;
 			}
 		}
-	}
-
-	.gridicon {
-		position: absolute;
-			left: 18px;
-			top: 7px;
-		transition: all 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 }
