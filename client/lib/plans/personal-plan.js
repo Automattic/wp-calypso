@@ -25,7 +25,7 @@ export const personalPlan = {
 	prices: {
 		USD: 71.88,
 		EUR: 71.88,
-		GBR: 54,
+		GBP: 54,
 		JPY: 8985,
 		AUS: 97,
 		CAN: 97
