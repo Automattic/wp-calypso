@@ -81,10 +81,6 @@ $plan-features-header-banner-height: 20px;
 	}
 }
 
-.plan-features__header-timeframe.is-discounted {
-	color: $alert-green;
-}
-
 .plan-features__header-timeframe {
 	line-height: .6;
 }
@@ -103,7 +99,6 @@ $plan-features-header-banner-height: 20px;
 }
 
 .plan-features__price.is-original {
-	text-decoration: line-through;
 	color: $gray;
 }
 
@@ -113,8 +108,20 @@ $plan-features-header-banner-height: 20px;
 
 .plan-features__price.is-discounted,
 .plan-features__price.is-original {
+	position: relative;
 	align-items: stretch;
 	margin-right: 8px;
+}
+
+.plan-features__price.is-original:before {
+	position: absolute;
+	content: "";
+	left: 0;
+	top: 50%;
+	right: 0;
+	border-top: 2px solid $orange-fire;
+	transform: rotate(-16deg);
+	opacity: .9;
 }
 
 .plan-features__price-currency-symbol,
