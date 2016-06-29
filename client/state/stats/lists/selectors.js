@@ -11,7 +11,7 @@ import i18n from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 import {
 	getSerializedStatsQuery,
-	Parsers
+	normalizers
 } from './utils';
 
 /**
@@ -133,8 +133,8 @@ export const getSiteStatsParsedData = createSelector(
 	( state, siteId, statType, query ) => {
 		const data = getSiteStatsForQuery( state, siteId, statType, query );
 
-		if ( 'function' === typeof Parsers[ statType ] ) {
-			return Parsers[ statType ].call( this, data );
+		if ( 'function' === typeof normalizers[ statType ] ) {
+			return normalizers[ statType ].call( this, data );
 		}
 
 		return data;

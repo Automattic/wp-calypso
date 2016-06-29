@@ -17,23 +17,18 @@ export function getSerializedStatsQuery( query = {} ) {
 	return JSON.stringify( sortBy( toPairs( query ), ( pair ) => pair[ 0 ] ) );
 }
 
-export const Parsers = {
+export const normalizers = {
 	/**
-	 * Returns a parsed payload from `/sites/{ site }/stats`
+	 * Returns a normalized payload from `/sites/{ site }/stats`
 	 *
 	 * @param  {Object} data    Stats query
-	 * @return {Object?}        Parsed stats data
+	 * @return {Object?}        Normalized stats data
 	 */
 	stats: ( data ) => {
 		if ( ! data || ! data.stats ) {
 			return null;
 		}
 
-		const parseData = {};
-		mapKeys( data.stats, ( value, key ) => {
-			parseData[ camelCase( key ) ] = value;
-		} );
-
-		return parseData;
+		return mapKeys( data.stats, ( value, key ) => camelCase( key ) );
 	}
 };
