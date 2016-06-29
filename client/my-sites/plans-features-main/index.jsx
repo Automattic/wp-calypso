@@ -4,13 +4,13 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import times from 'lodash/times';
-import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
 import PlanFeatures from 'my-sites/plan-features';
 import {
+	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
@@ -55,7 +55,14 @@ class PlansFeaturesMain extends Component {
 		);
 	}
 
-	getPlanFeatures( site, intervalType, upgradePlan ) {
+	getPlanFeatures( params ) {
+		const {
+			site,
+			intervalType,
+			upgradePlan,
+			hideFreePlan
+		} = params;
+
 		if ( this.isJetpackSite( site ) && intervalType === 'monthly' ) {
 			return (
 				<div className="plans-features-main__group">
@@ -64,6 +71,7 @@ class PlansFeaturesMain extends Component {
 				</div>
 			);
 		}
+		
 		if ( this.isJetpackSite( site ) ) {
 			return (
 				<div className="plans-features-main__group">
@@ -72,9 +80,13 @@ class PlansFeaturesMain extends Component {
 				</div>
 			);
 		}
-		//TODO: we need to allow a free option in NUX flow
+
 		return (
 			<div className="plans-features-main__group">
+				{ ! hideFreePlan
+					? <PlanFeatures plan={ PLAN_FREE } onUpgradeClick={ upgradePlan }/>
+					: null
+				}
 				<PlanFeatures plan={ PLAN_PERSONAL } onUpgradeClick={ upgradePlan } />
 				<PlanFeatures plan={ PLAN_PREMIUM } onUpgradeClick={ upgradePlan } />
 				<PlanFeatures plan={ PLAN_BUSINESS } onUpgradeClick={ upgradePlan } />
@@ -229,7 +241,15 @@ class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { site, plans, isInSignup, sitePlans, intervalType, onUpgradeClick } = this.props;
+		const {
+			site,
+			plans,
+			isInSignup,
+			sitePlans,
+			intervalType,
+			onUpgradeClick,
+			hideFreePlan = false
+		} = this.props;
 
 		const isLoadingSitePlans = ! isInSignup && ! sitePlans.hasLoadedFromServer;
 
@@ -239,11 +259,19 @@ class PlansFeaturesMain extends Component {
 
 		return (
 			<div class="plans-features-main">
-				{ this.getPlanFeatures( site, intervalType, onUpgradeClick ) }
+				{
+					this.getPlanFeatures( {
+						site,
+						intervalType,
+						onUpgradeClick,
+						hideFreePlan
+					} )
+				}
+
 				{
 					this.isJetpackSite( site )
-					? this.getJetpackFAQ()
-					: this.getFAQ( site )
+						? this.getJetpackFAQ()
+						: this.getFAQ( site )
 				}
 			</div>
 		);
