@@ -130,6 +130,30 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledOnce;
 	} );
 
+	it( 'should accept an array of dependent selectors', () => {
+		const getPosts = ( state ) => state.posts;
+		const getSitePostsWithArrayDependants = createSelector( selector, [ getPosts ] );
+		const state = {
+			posts: {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World'
+				}
+			}
+		};
+
+		const nextState = { posts: {} };
+
+		getSitePostsWithArrayDependants( state, 2916284 );
+		getSitePostsWithArrayDependants( state, 2916284 );
+		getSitePostsWithArrayDependants( nextState, 2916284 );
+		getSitePostsWithArrayDependants( nextState, 2916284 );
+
+		expect( selector ).to.have.been.calledTwice;
+	} );
+
 	it( 'should default to watching entire state, returning cached result if no changes', () => {
 		const getSitePostsWithDefaultGetDependants = createSelector( selector );
 		const state = {
@@ -186,5 +210,16 @@ describe( 'index', () => {
 		memoizedSelector( state, 1, 2, 3 );
 
 		expect( getDeps ).to.have.been.calledWithExactly( state, 1, 2, 3 );
+	} );
+
+	it( 'should handle an array of selectors instead of a dependant state getter', () => {
+		const getPosts = sinon.spy();
+		const getQuuxs = sinon.spy();
+		const memoizedSelector = createSelector( () => null, [ getPosts, getQuuxs ] );
+		const state = {};
+
+		memoizedSelector( state, 1, 2, 3 );
+		expect( getPosts ).to.have.been.calledWithExactly( state, 1, 2, 3 );
+		expect( getQuuxs ).to.have.been.calledWithExactly( state, 1, 2, 3 );
 	} );
 } );
