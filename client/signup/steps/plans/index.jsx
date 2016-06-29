@@ -3,7 +3,8 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:steps:plans' ),
-	isEmpty = require( 'lodash/isEmpty' );
+	isEmpty = require( 'lodash/isEmpty' ),
+	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -138,7 +139,11 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		return <div className="plans plans-step has-no-sidebar">
+		const className = classNames( 'plans plans-step has-no-sidebar', {
+			'paid-plans-only': this.props.hideFreePlan
+		} );
+
+		return <div { ...{ className } }>
 			{
 				'compare' === this.props.stepSectionName
 				? this.plansCompare()
