@@ -7,6 +7,7 @@ import flowRight from 'lodash/flowRight';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import config from 'config';
 import Exporter from './exporter';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -45,7 +46,12 @@ function mapDispatchToProps( dispatch ) {
 		advancedSettingsFetch: flowRight( dispatch, advancedSettingsFetch ),
 		exportStatusFetch: flowRight( dispatch, exportStatusFetch ),
 		setPostType: flowRight( dispatch, setPostType ),
-		startExport: flowRight( dispatch, startExport ),
+		startExport: ( siteId, options ) => {
+			analytics.tracks.recordEvent( 'calypso_export_start_button_click', {
+				scope: ( options && options.exportAll === false ) ? 'selected' : 'all'
+			} );
+			dispatch( startExport( siteId, options ) );
+		}
 	};
 }
 
