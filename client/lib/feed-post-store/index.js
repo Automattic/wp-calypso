@@ -195,7 +195,7 @@ function receivePostFromPage( newPost ) {
 		return;
 	}
 
-	if ( newPost.feed_ID && newPost.ID && ! _posts[ newPost.ID ] ) {
+	if ( newPost.feed_ID && ! newPost.site_ID && newPost.ID && ! _posts[ newPost.ID ] ) {
 		// 1.3 style
 		setPost( newPost.ID, assign( {}, newPost, { _state: 'minimal' } ) );
 	} else if ( newPost.site_ID && ! _postsForBlogs[ blogKey( {
