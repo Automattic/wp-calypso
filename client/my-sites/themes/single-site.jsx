@@ -28,6 +28,8 @@ import sitesFactory from 'lib/sites-list';
 import { FEATURE_CUSTOM_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { getSelectedSite } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const sites = sitesFactory();
@@ -63,8 +65,9 @@ const ThemesSingleSite = React.createClass( {
 
 	getButtonOptions() {
 		const site = sites.getSelectedSite(),
+			{ isCustomizable, isJetpack } = this.props,
 			buttonOptions = {
-				customize: site && site.isCustomizable()
+				customize: isCustomizable
 					? {
 						getUrl: theme => getCustomizeUrl( theme, site ),
 						hideForTheme: theme => ! theme.active
@@ -94,13 +97,13 @@ const ThemesSingleSite = React.createClass( {
 				info: {
 					getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
 				},
-				support: ! site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
+				support: ! isJetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
 					? {
 						getUrl: theme => getSupportUrl( theme, site ),
 						hideForTheme: theme => ! isPremium( theme )
 					}
 					: {},
-				help: ! site.jetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
+				help: ! isJetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
 					? {
 						getUrl: theme => getHelpUrl( theme, site )
 					}
@@ -198,11 +201,16 @@ const ThemesSingleSite = React.createClass( {
 } );
 
 export default connect(
-	state => ( {
-		queryParams: getQueryParams( state ),
-		themesList: getThemesList( state ),
-		selectedSite: getSelectedSite( state )
-	} ),
+	state => {
+		const selectedSite = getSelectedSite( state );
+		return {
+			queryParams: getQueryParams( state ),
+			themesList: getThemesList( state ),
+			selectedSite,
+			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
+			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
+		};
+	},
 	{
 		activate,
 		customize,
