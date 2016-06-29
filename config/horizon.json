@@ -89,7 +89,8 @@
 		"upgrades/credit-cards": true,
 		"upgrades/in-app-purchase": false,
 		"upgrades/paypal": true,
-		"upgrades/premium-themes": true
+		"upgrades/premium-themes": true,
+		"upgrades/removal-survey": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"wpcom_signup_id": "39911",
