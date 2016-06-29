@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var MenuPanelBackButton = require( '../menu-panel-back-button' ),
-	CategorySelector = require( 'my-sites/term-tree-selector' );
+	CategorySelector = require( 'components/term-tree-selector' );
 
 // The `selected` prop item passed in from MenuEditableItem
 // Isn't a Category object, a quick transform to get the correct ID in place
@@ -77,6 +77,7 @@ module.exports = React.createClass( {
 			<div className="menu-item-options menu-item-options__term-tree-selector">
 				<MenuPanelBackButton label={ this.props.itemType.label } onClick={ this.props.onBackClick } />
 				<CategorySelector
+					siteId={ this.props.siteId }
 					analyticsPrefix="Menus"
 					onChange={ this.onChange }
 					createLink={ this.props.itemType.createLink }

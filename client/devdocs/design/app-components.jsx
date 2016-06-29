@@ -29,6 +29,7 @@ import FeatureComparison from 'my-sites/feature-comparison/docs/example';
 import DomainTip from 'my-sites/domain-tip/docs/example';
 import PostCard from 'components/post-card/docs/example';
 import PlanFeatures from 'my-sites/plan-features/docs/example';
+import TermTreeSelector from 'components/term-tree-selector/docs/example';
 
 export default React.createClass( {
 
@@ -71,6 +72,7 @@ export default React.createClass( {
 					<PostSelector />
 					<Sites />
 					<SitesDropdown />
+					<TermTreeSelector />
 					<Theme />
 					<ThemesListExample />
 					<UpgradeNudge />

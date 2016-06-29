@@ -19,7 +19,8 @@ export default React.createClass( {
 		selected: PropTypes.array,
 		createLink: PropTypes.string,
 		analyticsPrefix: PropTypes.string,
-		taxonomy: PropTypes.string
+		taxonomy: PropTypes.string,
+		siteId: PropTypes.number
 	},
 
 	getDefaultProps() {
@@ -46,7 +47,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { className, taxonomy, onChange, selected, createLink } = this.props;
+		const { className, taxonomy, onChange, selected, createLink, siteId } = this.props;
 
 		const classes = classNames( className );
 		const { search } = this.state;
@@ -64,6 +65,7 @@ export default React.createClass( {
 					query={ query }
 					selected={ selected }
 					createLink={ createLink }
+					siteId={ siteId }
 				/>
 			</div>
 		);
