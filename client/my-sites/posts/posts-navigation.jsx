@@ -146,7 +146,7 @@ export default React.createClass( {
 
 		for ( status in this.filterStatuses ) {
 			if ( 'undefined' === typeof this.state.counts[ status ] &&
-				( ! isJetpackSite ) ) {
+				( ! isJetpackSite ) && 'publish' !== status ) {
 				continue;
 			}
 
@@ -166,6 +166,10 @@ export default React.createClass( {
 				if ( ! isJetpackSite ) {
 					selectedCount = count;
 				}
+			}
+
+			if ( 'publish' === status && ! count ) {
+				count = 0;
 			}
 
 			statusItems.push(
