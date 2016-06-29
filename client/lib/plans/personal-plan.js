@@ -27,8 +27,8 @@ export const personalPlan = {
 		EUR: 71.88,
 		GBP: 54,
 		JPY: 8985,
-		AUS: 97,
-		CAN: 97
+		AUD: 97,
+		CAD: 97
 	},
 	product_name_short: translate( 'Personal' ),
 	product_slug: PLAN_PERSONAL,
