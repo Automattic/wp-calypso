@@ -34,7 +34,7 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			email: '',
-			valid: false,
+			isValid: false,
 			error: null,
 		};
 	},
@@ -47,13 +47,13 @@ export default React.createClass( {
 
 	onEmailChange( event ) {
 		const email = event.target.value;
-		const valid = EmailValidator.validate( email );
-		const error = this.state.error && valid
+		const isValid = EmailValidator.validate( email );
+		const error = this.state.error && isValid
 			? null
 			: this.state.error;
 		this.setState( {
 			email,
-			valid,
+			isValid,
 			error,
 		} );
 	},
@@ -61,7 +61,7 @@ export default React.createClass( {
 	onSubmit( event ) {
 		event.preventDefault();
 
-		if ( ! this.state.valid ) {
+		if ( ! this.state.isValid ) {
 			this.setState( {
 				error: this.translate( 'Please provide a valid email address.' ),
 			} );
@@ -87,7 +87,7 @@ export default React.createClass( {
 					<LoggedOutFormFooter>
 						<FormLabel className="pressable-store__form-label" for="email">{ this.translate( 'Start by entering your email address:' ) }</FormLabel>
 						<div className="pressable-store__form-fields">
-							<FormTextInput ref={ this.onEmailInputRef } isError={ this.state.error } isValid={ this.state.valid } onChange={ this.onEmailChange } className="pressable-store__form-email is-spaced" type="email" placeholder="Email Address" name="email" />
+							<FormTextInput ref={ this.onEmailInputRef } isError={ this.state.error } isValid={ this.state.isValid } onChange={ this.onEmailChange } className="pressable-store__form-email is-spaced" type="email" placeholder="Email Address" name="email" />
 							<FormButton onClick={ this.onSubmit } className="pressable-store__form-submit">{ this.translate( 'Get started on Pressable' ) } <Gridicon icon="external" size={ 12 } /></FormButton>
 						</div>
 						{ this.state.error && <FormInputValidation isError={ true } text={ this.state.error } /> }
