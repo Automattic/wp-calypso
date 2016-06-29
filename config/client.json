@@ -28,5 +28,6 @@
   "discover_blog_id",
   "support-user",
   "sync-handler-defaults",
-  "project"
+  "project",
+	"reader_cold_start_graduation_threshold"
 ]
