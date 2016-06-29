@@ -46,7 +46,7 @@ const CurrentTheme = React.createClass( {
 		return (
 			<Card className="current-theme">
 				{ site && <QueryCurrentTheme siteId={ site.ID }/> }
-				<div className="current-theme__info">
+				<div className="current-theme__current">
 					<span className="current-theme__label">
 						{ this.translate( 'Current Theme' ) }
 					</span>
@@ -63,8 +63,8 @@ const CurrentTheme = React.createClass( {
 						noticon="paintbrush"
 						href={ this.props.canCustomize ? getCustomizeUrl( null, site ) : null }
 						onClick={ this.trackClick } />
-					<CurrentThemeButton name="details"
-						label={ this.translate( 'Details' ) }
+					<CurrentThemeButton name="info"
+						label={ this.translate( 'Info' ) }
 						noticon="info"
 						href={ currentTheme ? getDetailsUrl( currentTheme, site ) : null }
 						onClick={ this.trackClick } />
