@@ -85,7 +85,7 @@ export default React.createClass( {
 					<p className="pressable-store__copy">{ this.translate( 'We\'ve partnered with Pressable, a top-notch WordPress hosting provider, and WooCommerce, the go-to eCommerce solution for WordPress, to make setting up your store a snap.' ) }</p>
 
 					<LoggedOutFormFooter>
-						<FormLabel for="email">{ this.translate( 'Start by entering your email address:' ) }</FormLabel>
+						<FormLabel className="pressable-store__form-label" for="email">{ this.translate( 'Start by entering your email address:' ) }</FormLabel>
 						<div className="pressable-store__form-fields">
 							<FormTextInput ref={ this.onEmailInputRef } isError={ this.state.error } isValid={ this.state.valid } onChange={ this.onEmailChange } className="pressable-store__form-email is-spaced" type="email" placeholder="Email Address" name="email" />
 							<FormButton onClick={ this.onSubmit } className="pressable-store__form-submit">{ this.translate( 'Get started on Pressable' ) } <Gridicon icon="external" size={ 12 } /></FormButton>
