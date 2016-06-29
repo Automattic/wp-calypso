@@ -48,7 +48,6 @@ class PostTypeList extends Component {
 		this.renderPostRow = this.renderPostRow.bind( this );
 		this.renderPlaceholder = this.renderPlaceholder.bind( this );
 		this.setRequestedPages = this.setRequestedPages.bind( this );
-		this.setVirtualScrollRef = this.setVirtualScrollRef.bind( this );
 
 		this.state = {
 			requestedPages: this.getInitialRequestedPages( this.props )
@@ -71,10 +70,6 @@ class PostTypeList extends Component {
 		}
 
 		return [];
-	}
-
-	setVirtualScrollRef( ref ) {
-		this.virtualScroll = ref;
 	}
 
 	getPageForIndex( index ) {
@@ -164,7 +159,6 @@ class PostTypeList extends Component {
 							<AutoSizer disableHeight>
 								{ ( { width } ) => (
 									<VirtualScroll
-										ref={ this.setVirtualScrollRef }
 										autoHeight
 										scrollTop={ scrollTop }
 										height={ height }
