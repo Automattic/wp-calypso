@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getSerializedStatsQuery,
-	Parsers
+	normalizers
 } from '../utils';
 
 describe( 'utils', () => {
@@ -37,22 +37,22 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( 'Parsers', () => {
+	describe( 'normalizers', () => {
 		describe( 'stats()', () => {
 			it( 'should return null if no data is passed', () => {
-				const parsedData = Parsers.stats();
+				const parsedData = normalizers.stats();
 
 				expect( parsedData ).to.be.null;
 			} );
 
 			it( 'should return null if data object is missing stats attribute', () => {
-				const parsedData = Parsers.stats( { foo: false } );
+				const parsedData = normalizers.stats( { foo: false } );
 
 				expect( parsedData ).to.be.null;
 			} );
 
 			it( 'should return parsed camelCased stats object', () => {
-				const parsedData = Parsers.stats( { stats: {
+				const parsedData = normalizers.stats( { stats: {
 					posts: 2,
 					views: 300,
 					visitors: 400,
