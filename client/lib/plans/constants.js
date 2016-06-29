@@ -66,6 +66,8 @@ export const plansList = {
 		getTitle: () => i18n.translate( 'Free' ),
 		getPriceTitle: () => i18n.translate( 'Free for life' ), //TODO: DO NOT USE
 		getProductId: () => 1,
+		getStoreSlug: () => PLAN_FREE,
+		getPathSlug: () => 'beginner',
 		getDescription: () => i18n.translate( 'Get a free blog and be on your way to publishing your first post in less than five minutes.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_FREE_SITE,
@@ -80,6 +82,9 @@ export const plansList = {
 	[ PLAN_PERSONAL ]: {
 		getTitle: () => i18n.translate( 'Personal' ),
 		getProductId: () => 1009,
+		getStoreSlug: () => PLAN_PERSONAL,
+		availableFor: ( plan ) => includes( [ PLAN_FREE ], plan ),
+		getPathSlug: () => 'personal',
 		getDescription: () => i18n.translate( 'Use your own domain and establish your online presence without ads.' ),
 		getFeatures: () => [
 			FEATURE_FREE_SITE,
@@ -96,6 +101,9 @@ export const plansList = {
 		getTitle: () => i18n.translate( 'Premium' ),
 		getPriceTitle: () => i18n.translate( '$99 per year' ), //TODO: DO NOT USE
 		getProductId: () => 1003,
+		getPathSlug: () => 'premium',
+		getStoreSlug: () => PLAN_PREMIUM,
+		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
 		getDescription: () => i18n.translate( 'Your own domain name, powerful customization options, lots of space for audio and video, and $100 advertising credit.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_FREE_SITE,
@@ -116,6 +124,9 @@ export const plansList = {
 		getTitle: () => i18n.translate( 'Business' ),
 		getPriceTitle: () => i18n.translate( '$299 per year' ), //TODO: DO NOT USE
 		getProductId: () => 1008,
+		getStoreSlug: () => PLAN_BUSINESS,
+		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ], plan ),
+		getPathSlug: () => 'business',
 		getDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, and Google Analytics.' ),
 		getDescriptionWithWordAdsCredit: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, Google Analytics, and $200 advertising credit.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
@@ -144,6 +155,8 @@ export const plansList = {
 	[ PLAN_JETPACK_PREMIUM ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
 		getProductId: () => 2000,
+		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
+		getPathSlug: () => 'premium',
 		getDescription: () => i18n.translate( 'All the features you need to keep your site’s content backed up and secure, as well as spam-free.' ),
 		getFeatures: () => [
 			FEATURE_SPAM_AKISMET_PLUS,
@@ -160,6 +173,8 @@ export const plansList = {
 	[ PLAN_JETPACK_PREMIUM_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
 		getProductId: () => 2003,
+		getPathSlug: () => 'premium-monthly',
+		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getDescription: () => i18n.translate( 'All the features you need to keep your site’s content backed up and secure, as well as spam-free.' ),
 		getFeatures: () => [
 			FEATURE_SPAM_AKISMET_PLUS,
@@ -176,6 +191,8 @@ export const plansList = {
 	[ PLAN_JETPACK_BUSINESS ]: {
 		getTitle: () => i18n.translate( 'Professional' ),
 		getProductId: () => 2001,
+		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ], plan ),
+		getPathSlug: () => 'professional',
 		getDescription: () => i18n.translate( 'More powerful security tools and realtime content backup for the ultimate peace of mind.' ),
 		getFeatures: () => [
 			FEATURE_SPAM_AKISMET_UNLIMITED,
@@ -195,6 +212,8 @@ export const plansList = {
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Professional' ),
 		getProductId: () => 2004,
+		getPathSlug: () => 'professional-monthly',
+		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ], plan ),
 		getDescription: () => i18n.translate( 'More powerful security tools and realtime content backup for the ultimate peace of mind.' ),
 		getFeatures: () => [
 			FEATURE_SPAM_AKISMET_UNLIMITED,
@@ -213,12 +232,14 @@ export const plansList = {
 };
 
 const allPaidPlans = [
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS
 ];
 
 const allPlans = [
 	PLAN_FREE,
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS
 ];
@@ -231,6 +252,7 @@ export const featuresList = {
 
 	[ FEATURE_UNLIMITED_STORAGE ]: {
 		getTitle: () => i18n.translate( 'Unlimited Storage' ),
+		getStoreSlug: () => 'unlimited_space',
 		plans: [ PLAN_BUSINESS ]
 	},
 
@@ -241,21 +263,25 @@ export const featuresList = {
 
 	[ FEATURE_UNLIMITED_PREMIUM_THEMES ]: {
 		getTitle: () => i18n.translate( 'Unlimited Premium Themes' ),
+		getStoreSlug: () => 'unlimited_themes',
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
 		getTitle: () => i18n.translate( 'VideoPress' ),
+		getStoreSlug: () => 'videopress',
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_CUSTOM_DESIGN ]: {
 		getTitle: () => i18n.translate( 'Custom Design' ),
+		getStoreSlug: () => FEATURE_CUSTOM_DESIGN,
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_NO_ADS ]: {
 		getTitle: () => i18n.translate( 'No Ads' ),
+		getStoreSlug: () => 'no-adverts/no-adverts.php',
 		plans: allPaidPlans
 	},
 
