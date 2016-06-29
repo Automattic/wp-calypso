@@ -24,6 +24,7 @@ import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import JetpackSite from 'lib/site/jetpack';
 import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
+import support from 'lib/url/support';
 
 // Redux actions & selectors
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -48,9 +49,9 @@ import {
 import PluginsStore from 'lib/plugins/store';
 
 const helpLinks = {
-	vaultpress: 'https://en.support.wordpress.com/setting-up-premium-services/#vaultpress',
-	akismet: 'https://en.support.wordpress.com/setting-up-premium-services/#akismet',
-	polldaddy: 'https://en.support.wordpress.com/setting-up-premium-services/#polldaddy',
+	vaultpress: support.JETPACK_SERVICE_VAULTPRESS,
+	akismet: support.JETPACK_SERVICE_AKISMET,
+	polldaddy: support.JETPACK_SERVICE_POLLDADDY,
 };
 
 const PlansSetup = React.createClass( {
