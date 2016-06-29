@@ -168,6 +168,10 @@ export default React.createClass( {
 				}
 			}
 
+			if ( 'publish' === status && ! count ) {
+				count = 0;
+			}
+
 			statusItems.push(
 				<NavItem
 					className={ 'is-' + status }
