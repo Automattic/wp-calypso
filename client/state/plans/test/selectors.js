@@ -4,6 +4,8 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import unset from 'lodash/unset';
+import indexOf from 'lodash/indexOf';
 
 /**
  * Internal dependencies
@@ -20,6 +22,7 @@ import {
  * Fixture data
  */
 import {
+	PLAN_1003,
 	PLANS,
 	getStateInstance
 } from './fixture';
@@ -117,14 +120,7 @@ describe( 'selectors', () => {
 
 	describe( '#getPlanSlug()', () => {
 		it( 'should return plan product_slug', () => {
-			const state = {
-				plans: {
-					items: [ {
-						product_id: 1003,
-						product_slug: 'value_bundle'
-					} ]
-				}
-			};
+			const state = getStateInstance();
 
 			const planSlug = getPlanSlug( state, 1003 );
 
@@ -132,14 +128,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return null if plan is missing', () => {
-			const state = {
-				plans: {
-					items: [ {
-						product_id: 1003,
-						product_slug: 'value_bundle'
-					} ]
-				}
-			};
+			const state = getStateInstance();
 
 			const planSlug = getPlanSlug( state, 1337 );
 
@@ -147,13 +136,10 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return null if plan doesn\'t have product_slug', () => {
-			const state = {
-				plans: {
-					items: [ {
-						product_id: 1003
-					} ]
-				}
-			};
+			const state = getStateInstance(),
+				premiumPlanIndex = indexOf( state.plans.items, PLAN_1003 );
+
+			unset( state, `plans.items[${ premiumPlanIndex }].product_slug` );
 
 			const planSlug = getPlanSlug( state, 1003 );
 
