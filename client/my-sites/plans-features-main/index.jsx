@@ -87,30 +87,23 @@ class PlansFeaturesMain extends Component {
 		return (
 			<FAQ>
 				<FAQItem
-					question={ translate( 'What are the hosting requirements?' ) }
+					question={ translate( 'I signed up and paid. What’s next?' ) }
 					answer={ translate(
-						'You should be running the latest version of WordPress and be using a web host that runs PHP 5 or higher. You will also need a WordPress.com account (you can register one during the connection process) and a publicly accessible site with XML-RPC enabled.'
+						'Our premium features are powered by a few of our other plugins. After purchasing you will need to install the Akismet and VaultPress plugins. If you purchase a Professional subscription, you will also need to install the Polldaddy plugin. Just follow the guide after you complete your purchase.'
 					) }
 				/>
 
 				<FAQItem
-					question={ translate( 'What is the cancellation policy?' ) }
+					question={ translate( 'What are the hosting requirements?' ) }
 					answer={ translate(
-						'You can request a cancellation within 30 days of purchase and receive a full refund.'
+						'You should be running the latest version of WordPress and be using a web host that runs PHP 5 or higher. You will also need a WordPress.com account (you can register during the connection process) and a publicly-accessible site with XML-RPC enabled.'
 					) }
 				/>
 
 				<FAQItem
 					question={ translate( 'Does this work with a multisite network?' ) }
 					answer={ translate(
-						'Yes, Jetpack and all of its premium features are compatible with WordPress Multisite networks. If you manage a Multisite network, you will need to make sure you have a subscription for each site you wish to cover with premium features.'
-					) }
-				/>
-
-				<FAQItem
-					question={ translate( 'Can I migrate my subscription to a different site?' ) }
-					answer={ translate(
-						'Absolutely. You are always free to activate your premium services on a different WordPress site.'
+						'Yes, Jetpack and all of its premium features are compatible with WordPress Multisite networks. If you manage a Multisite network you will need to make sure you have a subscription for each site you wish to cover with premium features.'
 					) }
 				/>
 
@@ -122,9 +115,16 @@ class PlansFeaturesMain extends Component {
 				/>
 
 				<FAQItem
-					question={ translate( 'I signed up and paid. What’s next?' ) }
+					question={ translate( 'Can I migrate my subscription to a different site?' ) }
 					answer={ translate(
-						'The premium features included with Jetpack subscriptions are powered by a few of our other plugins. If you purchase any subscription, you will need to install the Akismet and VaultPress plugins once you’ve completed the purchase process. If you purchase a Professional subscription, you will also need to install the Polldaddy plugin. Don’t worry - just follow the guide after you complete your purchase.'
+						'Absolutely. You are always free to activate your premium services on a different WordPress site.'
+					) }
+				/>
+
+				<FAQItem
+					question={ translate( 'What is the cancellation policy?' ) }
+					answer={ translate(
+						'You can request a cancellation within 30 days of purchase and receive a full refund.'
 					) }
 				/>
 
