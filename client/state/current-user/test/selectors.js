@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	getCurrentUserId,
 	getCurrentUser,
 	getCurrentUserLocale,
 	canCurrentUser,
@@ -14,6 +15,18 @@ import {
 } from '../selectors';
 
 describe( 'selectors', () => {
+	describe( 'getCurrentUserId()', () => {
+		it( 'should return the current user ID', () => {
+			const currentUserId = getCurrentUserId( {
+				currentUser: {
+					id: 73705554
+				}
+			} );
+
+			expect( currentUserId ).to.equal( 73705554 );
+		} );
+	} );
+
 	describe( '#getCurrentUser()', () => {
 		it( 'should return null if no current user', () => {
 			const selected = getCurrentUser( {
