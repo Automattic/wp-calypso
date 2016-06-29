@@ -2,13 +2,12 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import partialRight from 'lodash/partialRight';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { getPreviewUrl, trackClick } from './helpers';
+import { trackClick } from './helpers';
 import ThemesSearchCard from './themes-search-card';
 import ThemesData from 'components/data/themes-list-fetcher';
 import ThemesList from 'components/themes-list';
@@ -79,7 +78,7 @@ const ThemesSelection = React.createClass( {
 		if ( ! theme.active ) {
 			this.recordSearchResultsClick( theme, resultsRank );
 		}
-		this.props.onScreenshotClick( theme );
+		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
 	},
 
 	render() {
@@ -105,7 +104,7 @@ const ThemesSelection = React.createClass( {
 					<ThemesList getButtonOptions={ this.props.getOptions }
 						onMoreButtonClick={ this.onMoreButtonClick }
 						onScreenshotClick={ this.onScreenshotClick }
-						getScreenshotUrl={ site ? partialRight( getPreviewUrl, site ) : null }
+						getScreenshotUrl={ this.props.getScreenshotUrl }
 						getActionLabel={ this.props.getActionLabel } />
 				</ThemesData>
 			</div>
