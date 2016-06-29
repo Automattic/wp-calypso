@@ -66,6 +66,7 @@ export default React.createClass( {
 				userData.follow_default_blogs = false;
 				userData.subscription_delivery_email_default = 'never';
 				userData.is_new_reader = true;
+			}
 		}
 
 		const formWithoutPassword = Object.assign( {}, form, {
