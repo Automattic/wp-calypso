@@ -146,7 +146,7 @@ export default React.createClass( {
 
 		for ( status in this.filterStatuses ) {
 			if ( 'undefined' === typeof this.state.counts[ status ] &&
-				( ! isJetpackSite ) ) {
+				( ! isJetpackSite ) && 'publish' !== status ) {
 				continue;
 			}
 
