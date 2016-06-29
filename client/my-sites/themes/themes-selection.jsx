@@ -27,7 +27,7 @@ const ThemesSelection = React.createClass( {
 		] ).isRequired,
 		siteId: PropTypes.string,
 		search: PropTypes.string,
-		onScreenshotClick: PropTypes.func.isRequired,
+		onScreenshotClick: PropTypes.func,
 		getOptions: React.PropTypes.func,
 		queryParams: PropTypes.object.isRequired,
 		themesList: PropTypes.array.isRequired,
