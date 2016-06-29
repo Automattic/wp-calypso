@@ -28,6 +28,7 @@ import TokenFields from 'components/token-field/docs/example';
 import CountedTextareas from 'components/forms/counted-textarea/docs/example';
 import ProgressBar from 'components/progress-bar/docs/example';
 import Popovers from 'components/popover/docs/example';
+import EllipsisMenu from 'components/ellipsis-menu/docs/example';
 import Ranges from 'components/forms/range/docs/example';
 import Gauge from 'components/gauge/docs/example';
 import Headers from 'components/header-cake/docs/example';
@@ -107,6 +108,7 @@ let DesignAssets = React.createClass( {
 					<CountedTextareas />
 					<DatePicker />
 					<DropZones searchKeywords="drag" />
+					<EllipsisMenu />
 					<ExternalLink />
 					<FAQ />
 					<FeatureGate />

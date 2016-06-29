@@ -10,7 +10,8 @@ import { localize } from 'i18n-calypso';
  */
 import { getPost } from 'state/posts/selectors';
 import { trashPost, deletePost } from 'state/posts/actions';
-import Button from 'components/button';
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
 
 function PostTypeListPostActions( { translate, post, dispatchTrashPost, dispatchDeletePost } ) {
@@ -33,20 +34,21 @@ function PostTypeListPostActions( { translate, post, dispatchTrashPost, dispatch
 
 	return (
 		<div className="post-type-list__post-actions">
-			<Button onClick={ onTrash } borderless>
-				<Gridicon icon="trash" />
-				<span className="post-type-list__post-actions-srt">
+			<EllipsisMenu position="bottom left">
+				<PopoverMenuItem
+					onClick={ onTrash }
+					icon="trash">
 					{ post && 'trash' === post.status
 						? translate( 'Delete Permanently' )
 						: translate( 'Trash', { context: 'verb' } ) }
-				</span>
-			</Button>
-			<Button href={ post ? post.URL : '' } target="_blank" borderless>
-				<Gridicon icon="external" />
-				<span className="post-type-list__post-actions-srt">
+				</PopoverMenuItem>
+				<PopoverMenuItem
+					href={ post ? post.URL : '' }
+					icon="external"
+					target="_blank">
 					{ translate( 'View', { context: 'verb' } ) }
-				</span>
-			</Button>
+				</PopoverMenuItem>
+			</EllipsisMenu>
 		</div>
 	);
 }
