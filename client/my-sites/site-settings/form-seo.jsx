@@ -29,6 +29,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SearchPreview from 'components/seo/search-preview';
+import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const serviceIds = {
@@ -285,11 +286,15 @@ export const SeoForm = React.createClass( {
 					<form onChange={ this.markChanged } className="seo-form">
 						<FormFieldset>
 							<FormFieldset className="has-divider">
-								<FormLabel htmlFor="seo_title">{ this.translate( 'Meta Title Format' ) }</FormLabel>
-								<MetaTitleEditor />
-								<FormSettingExplanation>
-									{ this.translate( 'Control how the title for your site will be generated when sharing' ) }
-								</FormSettingExplanation>
+								{ config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
+									<div>
+										<FormLabel htmlFor="seo_title">{ this.translate( 'Meta Title Format' ) }</FormLabel>
+										<MetaTitleEditor />
+										<FormSettingExplanation>
+											{ this.translate( 'Control how the title for your site will be generated when sharing' ) }
+										</FormSettingExplanation>
+									</div>
+								}
 
 								<FormLabel htmlFor="seo_meta_description">{ this.translate( 'Front Page Meta Description' ) }</FormLabel>
 								<CountedTextarea
