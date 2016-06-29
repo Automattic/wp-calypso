@@ -23,6 +23,7 @@ var CompactCard = require( 'components/card/compact' ),
 	hasTouch = require( 'lib/touch-detect' ).hasTouch;
 
 import Gravatar from 'components/gravatar';
+import photon from 'photon';
 
 module.exports = React.createClass( {
 
@@ -158,7 +159,7 @@ module.exports = React.createClass( {
 
 		if ( post && post.canonical_image ) {
 			image = true;
-			imageUrl = post.canonical_image.uri + '?w=680px';
+			imageUrl = photon( post.canonical_image.uri, { width: 680 } );
 		}
 
 		classes = [
