@@ -121,15 +121,15 @@ export function getSiteStatsPostsCountByDay( state, siteId, query, date ) {
 }
 
 /**
- * Returns a parsed object of statsPublicize data for a given query, or default "empty" object
- * if no statsStreak data has been received for that site.
+ * Returns normalized stats data for a given query and stat type, or the un-normalized response
+ * from the API if no normalizer method for that stats type exists in ./utils
  *
  * @param  {Object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
  * @param  {Object}  query    Stats query object
- * @return {Array}            Parsed Data for the query
+ * @return {*}                Normalized Data for the query, typically an array or object
  */
-export const getSiteStatsParsedData = createSelector(
+export const getSiteStatsNormalizedData = createSelector(
 	( state, siteId, statType, query ) => {
 		const data = getSiteStatsForQuery( state, siteId, statType, query );
 

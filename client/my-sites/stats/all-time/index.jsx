@@ -18,7 +18,7 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
-	getSiteStatsParsedData
+	getSiteStatsNormalizedData
 } from 'state/stats/lists/selectors';
 
 class StatsAllTime extends Component {
@@ -97,7 +97,7 @@ class StatsAllTime extends Component {
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const query = {};
-	const allTimeData = getSiteStatsParsedData( state, siteId, 'stats', query ) || {};
+	const allTimeData = getSiteStatsNormalizedData( state, siteId, 'stats', query ) || {};
 	const allTimeStats = pick( allTimeData, [
 		'posts',
 		'views',
