@@ -12,7 +12,6 @@ var connect = require( 'react-redux' ).connect,
  * Internal dependencies
  */
 var analytics = require( 'lib/analytics' ),
-	isValidFeatureKey = require( 'lib/plans' ).isValidFeatureKey,
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	clearPurchases = require( 'lib/upgrades/actions/purchases' ).clearPurchases,
 	DomainDetailsForm = require( './domain-details-form' ),
@@ -28,6 +27,12 @@ var analytics = require( 'lib/analytics' ),
 	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
 	notices = require( 'notices' ),
 	supportPaths = require( 'lib/url/support' );
+
+import {
+	isValidFeatureKey,
+	getUpgradePlanSlugFromPath
+} from 'lib/plans';
+import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'cards', 'productsList' ) ],
@@ -96,12 +101,12 @@ const Checkout = React.createClass( {
 	},
 
 	addProductToCart: function() {
-		var planSlug = this.props.plans.getSlugFromPath( this.props.product ),
+		var planSlug = getUpgradePlanSlugFromPath( this.props.product ),
 			cartItem,
 			cartMeta;
 
 		if ( planSlug ) {
-			cartItem = cartItems.getItemForPlan( { product_slug: planSlug }, { isFreeTrial: false } );
+			cartItem = getCartItemForPlan( planSlug );
 		}
 
 		if ( this.props.product.indexOf( 'theme' ) === 0 ) {

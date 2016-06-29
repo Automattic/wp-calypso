@@ -66,6 +66,23 @@ export function getSitePlanSlug( siteID ) {
 	return get( site, 'plan.product_slug' );
 }
 
+export function canUpgradeToPlan( planKey, site = sitesList.getSelectedSite() ) {
+	const plan = get( site, [ 'plan', 'expired' ], true ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
+	return get( plansList, [ planKey, 'availableFor' ], () => false )( plan );
+}
+
+export function getUpgradePlanSlugFromPath( path, siteID ) {
+	const site = siteID ? sitesList.getSite( siteID ) : sitesList.getSelectedSite();
+	return find( Object.keys( plansList ), planKey => (
+		( planKey === path || getPlanPath( planKey ) === path ) &&
+		canUpgradeToPlan( planKey, site )
+	) );
+}
+
+export function getPlanPath( plan ) {
+	return get( plansList, [ plan, 'getPathSlug' ], () => undefined )();
+}
+
 export function planHasFeature( plan, feature ) {
 	return includes( get( featuresList, [ feature, 'plans' ] ), plan );
 }

@@ -10,12 +10,6 @@ import store from 'store';
  */
 import wpcom from 'lib/wp';
 import Emitter from 'lib/mixins/emitter';
-import {
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS
-} from 'lib/plans/constants';
 import { insertPersonalPlan } from 'lib/plans/personal-plan';
 
 /**
@@ -40,16 +34,6 @@ function PlansList() {
  * Mixins
  */
 Emitter( PlansList.prototype );
-
-/**
- * Set up a mapping from product_slug to a pretty path
- */
-const pathToSlugMapping = {
-	beginner: PLAN_FREE,
-	personal: PLAN_PERSONAL,
-	premium: PLAN_PREMIUM,
-	business: PLAN_BUSINESS
-};
 
 /**
  * Get list of plans from current object or store,
@@ -129,30 +113,6 @@ PlansList.prototype.parse = function( data ) {
  */
 PlansList.prototype.update = function( plans ) {
 	this.data = plans;
-};
-
-/**
- * Map the plan path to the product_slug
- *
- * @param {String} path - plan path
- * @return {String} plan
- */
-PlansList.prototype.getSlugFromPath = function( path ) {
-	return pathToSlugMapping[ path ];
-};
-
-/**
- * Map the product_slug to the plan path
- *
- * @param {String} slug - product path
- * @return {String} plan
- */
-PlansList.prototype.getPathFromSlug = function( slug ) {
-	return Object.keys( pathToSlugMapping ).filter( function( path ) {
-		if ( slug === pathToSlugMapping[ path ] ) {
-			return path;
-		}
-	} );
 };
 
 // Save the plans to memory to save them being fetched
