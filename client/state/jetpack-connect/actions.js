@@ -244,7 +244,8 @@ export default {
 			} )
 			.then( ( data ) => {
 				tracksEvent( dispatch, 'calypso_jpc_authorize_success', {
-					site: client_id
+					site: client_id,
+					from: queryObject && queryObject.from
 				} );
 
 				debug( 'Jetpack authorize complete. Updating sites list.', data );
