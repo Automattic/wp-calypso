@@ -130,7 +130,7 @@
     "xgettext-js": "0.3.0"
   },
   "engines": {
-    "node": "5.11.1",
+    "node": "^5.11.1",
     "npm": "3.8.6"
   },
   "scripts": {
