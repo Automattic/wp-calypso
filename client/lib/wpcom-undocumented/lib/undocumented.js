@@ -1149,8 +1149,9 @@ Undocumented.prototype.readRecommendationsStart = function( query, fn ) {
 	return this.wpcom.req.get( '/read/recommendations/start', query, fn );
 };
 
-Undocumented.prototype.graduateNewReader = function( query, fn ) {
-	return this.wpcom.req.post( '/read/graduate-new-reader', query, fn );
+Undocumented.prototype.graduateNewReader = function( fn ) {
+	const params = { apiVersion: '1.2' };
+	return this.wpcom.req.post( '/read/graduate-new-reader', params, fn );
 };
 
 Undocumented.prototype.readNewPostEmailSubscription = function( query, fn ) {
