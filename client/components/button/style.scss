@@ -159,6 +159,7 @@ button {
 
 .button.is-borderless {
 	border: none;
+	background: none;
 	color: darken( $gray, 10% );
 	padding-left: 0;
 	padding-right: 0;
@@ -200,8 +201,6 @@ button {
 	}
 
 	&.is-compact {
-		background: transparent;
-
 		.gridicon {
 			width: 18px;
 			height: 18px;
