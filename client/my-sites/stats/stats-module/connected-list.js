@@ -94,7 +94,8 @@ class StatsConnectedModule extends Component {
 				'is-loading': isLoading,
 				'has-no-data': noData,
 				'is-showing-error': noData
-			}
+			},
+			className
 		);
 
 		const summaryLink = this.getHref();
@@ -104,13 +105,11 @@ class StatsConnectedModule extends Component {
 				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null } />
 				<Card compact className={ cardClasses }>
-					<div className={ className }>
-						{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
-						{ hasError && <ErrorPanel /> }
-						<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
-						<StatsModulePlaceholder isLoading={ isLoading } />
-						<StatsList moduleName={ path } data={ data } />
-					</div>
+					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
+					{ hasError && <ErrorPanel /> }
+					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
+					<StatsModulePlaceholder isLoading={ isLoading } />
+					<StatsList moduleName={ path } data={ data } />
 					{ this.props.showSummaryLink && <StatsModuleExpand href={ summaryLink } /> }
 				</Card>
 			</div>
