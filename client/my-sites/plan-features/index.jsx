@@ -16,7 +16,6 @@ import PlanFeaturesItem from './item';
 import PlanFeaturesFooter from './footer';
 import PlanFeaturesPlaceholder from './placeholder';
 import { isCurrentPlanPaid, isCurrentSitePlan } from 'state/sites/selectors';
-import { getPlansBySiteId } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getPlanDiscountPrice } from 'state/sites/plans/selectors';
@@ -37,7 +36,7 @@ import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 
 class PlanFeatures extends Component {
 	render() {
-		if ( this.props.isPlaceholder ) {
+		if ( ! this.props.planObject || this.props.isPlaceholder ) {
 			return <PlanFeaturesPlaceholder />;
 		}
 
@@ -98,32 +97,26 @@ PlanFeatures.propTypes = {
 	available: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plan prop or isPlaceholder prop
-	plan: PropTypes.string,
-	isPlaceholder: PropTypes.bool,
-	isInSignup: PropTypes.bool
+	plan: React.PropTypes.string,
+	isPlaceholder: PropTypes.bool
 };
 
 PlanFeatures.defaultProps = {
-	onUpgradeClick: noop,
-	isInSignup: false
+	onUpgradeClick: noop
 };
 
 export default connect( ( state, ownProps ) => {
-	const planProductId = plansList[ ownProps.plan ].getProductId(),
-		isInSignup = ownProps.isInSignup,
-		selectedSiteId = isInSignup ? null : getSelectedSiteId( state ),
-		planObject = getPlan( state, planProductId ),
-		isPaid = isCurrentPlanPaid( state, selectedSiteId ),
-		sitePlans = getPlansBySiteId( state, selectedSiteId ),
-		isLoadingSitePlans = ! isInSignup && ! sitePlans.hasLoadedFromServer,
-		showMonthly = ! isMonthly( ownProps.plan ),
-		available = isInSignup ? true : canUpgradeToPlan( ownProps.plan );
-
-	if ( ownProps.placeholder || ! planObject || isLoadingSitePlans ) {
+	if ( ownProps.placeholder ) {
 		return {
 			isPlaceholder: true
 		};
 	}
+
+	const planProductId = plansList[ ownProps.plan ].getProductId();
+	const selectedSiteId = getSelectedSiteId( state );
+	const planObject = getPlan( state, planProductId );
+	const isPaid = isCurrentPlanPaid( state, selectedSiteId );
+	const showMonthly = ! isMonthly( ownProps.plan );
 
 	return {
 		planName: ownProps.plan,
@@ -133,7 +126,7 @@ export default connect( ( state, ownProps ) => {
 		features: getPlanFeaturesObject( ownProps.plan ),
 		rawPrice: getPlanRawPrice( state, planProductId, showMonthly ),
 		planConstantObj: plansList[ ownProps.plan ],
-		available: available,
+		available: canUpgradeToPlan( ownProps.plan ),
 		onUpgradeClick: ownProps.onUpgradeClick
 			? () => {
 				const planSlug = getPlanSlug( state, planProductId );
@@ -141,10 +134,6 @@ export default connect( ( state, ownProps ) => {
 				ownProps.onUpgradeClick( getCartItemForPlan( planSlug ) );
 			}
 			: () => {
-				if ( ! available ) {
-					return;
-				}
-
 				const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 				page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( ownProps.plan ) || '' }` );
 			},

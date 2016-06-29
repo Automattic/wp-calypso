@@ -40,7 +40,6 @@ class PlansFeaturesStep extends Component {
 	}
 
 	onUpgradeClick( cartItem ) {
-		console.log(cartItem);
 		const {
 			translate,
 			stepName,
