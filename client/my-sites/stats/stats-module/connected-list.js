@@ -21,7 +21,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
-	getSiteStatsParsedData
+	getSiteStatsNormalizedData
 } from 'state/stats/lists/selectors';
 
 class StatsConnectedModule extends Component {
@@ -39,12 +39,10 @@ class StatsConnectedModule extends Component {
 		showSummaryLink: PropTypes.bool
 	};
 
-	getDefaultProps() {
-		return {
-			showSummaryLink: false,
-			query: {}
-		};
-	}
+	static defaultProps = {
+		showSummaryLink: false,
+		query: {}
+	};
 
 	getModuleLabel() {
 		if ( ! this.props.summary ) {
@@ -128,7 +126,7 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
-		data: getSiteStatsParsedData( state, siteId, statType, query ),
+		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
 		siteId,
 		siteSlug
 	};
