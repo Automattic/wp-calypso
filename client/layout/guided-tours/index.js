@@ -98,6 +98,7 @@ class GuidedTours extends Component {
 		this.currentTarget && this.currentTarget.classList.remove( 'guided-tours__overlay' );
 		this.props.quitGuidedTour( Object.assign( {
 			stepName: this.props.tourState.stepName,
+			tour: this.props.tourState.tour,
 		}, options ) );
 	}
 

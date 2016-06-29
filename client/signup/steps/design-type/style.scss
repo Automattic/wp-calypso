@@ -19,7 +19,9 @@
 		color: darken( $gray, 20% );
 		padding-left: 15px;
 		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
-		line-height: 54px;
+		line-height: 1.5em;
+		padding-top: 1em;
+		padding-bottom: 1em;
 	}
 
 	&:hover {

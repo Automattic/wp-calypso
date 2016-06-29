@@ -21,7 +21,7 @@ import { getPreference } from 'state/preferences/selectors';
  * @param {Object} options Options object, see fn signature.
  * @return {Object} Action object
  */
-export function showGuidedTour( { shouldShow, shouldDelay = false, tour = 'main' } ) {
+export function showGuidedTour( { shouldShow, shouldDelay = false, tour } ) {
 	const showAction = {
 		type: GUIDED_TOUR_SHOW,
 		shouldShow,
@@ -29,6 +29,8 @@ export function showGuidedTour( { shouldShow, shouldDelay = false, tour = 'main'
 		tour,
 	};
 
+	// TODO(mcsf): track this *somewhere*, now that we'll stop relying on this
+	// action for launching tours
 	const trackEvent = recordTracksEvent( 'calypso_guided_tours_show', {
 		tour_version: guidedToursConfig.get( tour ).version,
 		tour,
@@ -37,7 +39,7 @@ export function showGuidedTour( { shouldShow, shouldDelay = false, tour = 'main'
 	return shouldDelay ? showAction : withAnalytics( trackEvent, showAction );
 }
 
-export function quitGuidedTour( { tour = 'main', stepName, finished, error } ) {
+export function quitGuidedTour( { tour, stepName, finished, error } ) {
 	const quitAction = {
 		type: GUIDED_TOUR_UPDATE,
 		shouldShow: false,
@@ -45,6 +47,7 @@ export function quitGuidedTour( { tour = 'main', stepName, finished, error } ) {
 		shouldDelay: false,
 		tour,
 		stepName,
+		finished,
 	};
 
 	const trackEvent = recordTracksEvent( `calypso_guided_tours_${ finished ? 'finished' : 'quit' }`, {
@@ -55,14 +58,15 @@ export function quitGuidedTour( { tour = 'main', stepName, finished, error } ) {
 	} );
 
 	return ( dispatch, getState ) => {
-		dispatch( withAnalytics( trackEvent, quitAction ) );
 		dispatch( addSeenGuidedTour( getState, tour, finished ) );
+		dispatch( withAnalytics( trackEvent, quitAction ) );
 	};
 }
 
-export function nextGuidedTourStep( { tour = 'main', stepName } ) {
+export function nextGuidedTourStep( { tour, stepName } ) {
 	const nextAction = {
 		type: GUIDED_TOUR_UPDATE,
+		tour,
 		stepName,
 	};
 

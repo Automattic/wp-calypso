@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -24,6 +25,8 @@ import {
 	isPopular,
 	isMonthly
 } from 'lib/plans/constants';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getPlanPath, canUpgradeToPlan } from 'lib/plans';
 
 class PlanFeatures extends Component {
 	render() {
@@ -32,6 +35,7 @@ class PlanFeatures extends Component {
 		}
 
 		const {
+			available,
 			currencyCode,
 			planName,
 			rawPrice,
@@ -67,6 +71,7 @@ class PlanFeatures extends Component {
 				</PlanFeaturesItemList>
 				<PlanFeaturesFooter
 					current={ current }
+					available = { available }
 					description={ planConstantObj.getDescription() }
 					onUpgradeClick={ onUpgradeClick }
 				/>
@@ -76,6 +81,7 @@ class PlanFeatures extends Component {
 }
 
 PlanFeatures.propTypes = {
+	available: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plan prop or isPlaceholder prop
 	plan: React.PropTypes.string,
@@ -105,6 +111,11 @@ export default connect( ( state, ownProps ) => {
 		features: getPlanFeaturesObject( ownProps.plan ),
 		rawPrice: getPlanRawPrice( state, planProductId, ! isMonthly( ownProps.plan ) ),
 		planConstantObj: plansList[ ownProps.plan ],
+		available : canUpgradeToPlan( ownProps.plan ),
+		onUpgradeClick: () => {
+			const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
+			page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( ownProps.plan ) || '' }` );
+		},
 		planObject: planObject
 	};
 } )( PlanFeatures );

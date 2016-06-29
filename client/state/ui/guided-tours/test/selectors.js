@@ -18,7 +18,13 @@ describe( 'selectors', () => {
 				ui: {
 					shouldShow: false,
 					guidedTour: false,
-				}
+					actionLog: [],
+				},
+				preferences: {
+					values: {
+						'guided-tours-history': [],
+					},
+				},
 			} );
 
 			expect( tourState ).to.deep.equal( { shouldShow: false, stepConfig: false, nextStepConfig: false } );
@@ -31,11 +37,17 @@ describe( 'selectors', () => {
 						stepName: 'sidebar',
 						shouldShow: true,
 						tour: 'main',
-					}
-				}
+					},
+					actionLog: [],
+				},
+				preferences: {
+					values: {
+						'guided-tours-history': [],
+					},
+				},
 			} );
 
-			const stepConfig = guidedToursConfig.get().sidebar;
+			const stepConfig = guidedToursConfig.get( 'main' ).sidebar;
 
 			expect( tourState ).to.deep.equal( Object.assign( {}, tourState, {
 				stepConfig

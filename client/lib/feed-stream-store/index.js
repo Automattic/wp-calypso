@@ -25,10 +25,10 @@ function siteKeyMaker( post ) {
 }
 
 function mixedKeyMaker( post ) {
-	if ( post.feed_ID ) {
+	if ( post.feed_ID && post.feed_item_ID ) {
 		return {
 			feedId: post.feed_ID,
-			postId: post.ID
+			postId: post.feed_item_ID
 		};
 	}
 

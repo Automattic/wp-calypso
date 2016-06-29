@@ -8,7 +8,7 @@ This module exports a single function which creates a memoized state selector fo
 `createSelector` accepts the following arguments:
 
 - A function which calculates the cached result given a state object and any number of variable arguments necessary to calculate the result
-- A function which returns an array of dependent state given the state and the same arguments as the selector
+- A function or array of functions which return array of dependent state, given the state and the same arguments as the selector
 - _(Optional)_ A function to customize the cache key used by the inner memoized function
 
 For example, we might consider that our state contains post objects, each of which are assigned to a particular site. Retrieving an array of posts for a specific site would require us to filter over all of the known posts. While this would normally be an expensive operation, we can use `createSelector` to create a memoized function:
@@ -47,6 +47,30 @@ When creating a memoized selector via `createSelector`, we pass a function which
 Yes! This is a very common pattern in our state selectors, and is a key differentiator from [`reselect`](https://github.com/reactjs/reselect), another popular tool which achieves a similar goal.
 
 Do note that the internal memoized function calculates its cache key by a simple [`Array.prototype.join`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join) call, so your arguments should not be complex objects.
+
+### How can I express that my new selector depends on state from multiple selectors?
+
+Let's assume your new selector depends on the state selectors `foo`, `bar`, and `baz`. You could then state that like so:
+
+```js
+createSelector(
+    state => foo( state ) && bar( state ),
+    state => [
+        foo( state ),
+        bar( state ),
+        baz( state ),
+    ]
+);
+```
+
+Since this is a reoccurring pattern, there is a shorthand for this situation. You can reduce the above to an array just the selectors:
+
+```js
+createSelector(
+    state => foo( state ) && bar( state ),
+    [ foo, bar, baz ]
+);
+```
 
 ### How can I access the internal cache?
 

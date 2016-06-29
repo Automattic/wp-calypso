@@ -63,16 +63,33 @@ const DEFAULT_GET_CACHE_KEY = ( () => {
 } )();
 
 /**
- * Returns a memoized state selector for use with the Redux global application state.
+ * Given an array of getDependants functions, returns a single function which,
+ * when called, returns an array of mapped results from those functions.
  *
- * @param  {Function} selector      Function calculating cached result
- * @param  {Function} getDependants Function describing dependent state
- * @param  {Function} getCacheKey   Function generating cache key for arguments
- * @return {Function}               Memoized selector
+ * @param  {Function[]} dependants Array of getDependants
+ * @return {Function}              Function mapping getDependants results
+ */
+const makeSelectorFromArray = ( dependants ) =>
+	( state, ...args ) => dependants.map( dependant =>
+		dependant( state, ...args ) );
+
+/**
+ * Returns a memoized state selector for use with the global application state.
+ *
+ * @param  {Function}            selector      Function calculating cached result
+ * @param  {Function|Function[]} getDependants Function(s) describing dependent
+ *                                             state, or an array of dependent
+ *                                             state selectors
+ * @param  {Function}            getCacheKey   Function generating cache key
+ * @return {Function}                          Memoized selector
  */
 export default function createSelector( selector, getDependants = DEFAULT_GET_DEPENDANTS, getCacheKey = DEFAULT_GET_CACHE_KEY ) {
 	const memoizedSelector = memoize( selector, getCacheKey );
 	let lastDependants;
+
+	if ( Array.isArray( getDependants ) ) {
+		getDependants = makeSelectorFromArray( getDependants );
+	}
 
 	return Object.assign( function( state, ...args ) {
 		let currentDependants = getDependants( state, ...args );
