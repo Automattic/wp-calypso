@@ -228,8 +228,8 @@ const GoogleAppsDialog = React.createClass( {
 		users = users.map( ( user ) => {
 			return {
 				email: `${ user.email.value }@${ this.props.domain }`,
-				firstname: user.firstName.value,
-				lastname: user.lastName.value
+				firstname: user.firstName.value.trim(),
+				lastname: user.lastName.value.trim()
 			};
 		} );
 

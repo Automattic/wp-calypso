@@ -3,6 +3,7 @@
  */
 var some = require( 'lodash/some' ),
 	mapValues = require( 'lodash/mapValues' ),
+	includes = require( 'lodash/includes' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	flatten = require( 'lodash/flatten' ),
 	compact = require( 'lodash/compact' ),
@@ -32,6 +33,10 @@ function validate( { users, fields, domainSuffix } ) {
 
 			if ( isEmpty( field.value ) ) {
 				error = i18n.translate( 'This field is required.' );
+			} else if ( includes( [ 'firstName', 'lastName' ], key ) ) {
+				if ( field.value.length > 60 ) {
+					error = i18n.translate( 'This field can\'t be longer than 60 characters.' );
+				}
 			} else if ( 'email' === key ) {
 				if ( /[^[0-9a-z_'.-]/i.test( field.value ) ) {
 					error = i18n.translate( 'Only number, letters, dashes, underscores, apostrophes and periods are allowed.' );
