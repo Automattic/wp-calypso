@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import EmailValidator from 'email-validator';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import FormTextInput from 'components/forms/form-text-input';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -32,6 +34,8 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			email: '',
+			valid: false,
+			error: null,
 		};
 	},
 
@@ -46,14 +50,30 @@ export default React.createClass( {
 	},
 
 	onEmailChange( event ) {
+		const email = event.target.value;
+		const valid = EmailValidator.validate( email );
 		this.setState( {
-			email: event.target.value,
+			email,
+			valid,
 		} );
+		if ( this.state.error && valid ) {
+			this.setState( {
+				error: null,
+			} );
+		}
 	},
 
 	onSubmit( event ) {
-		window.location.href = `https://my.pressable.com/signup/five-sites?email=${ encodeURIComponent( this.state.email ) }&wp-ecommerce=true`;
 		event.preventDefault();
+
+		if ( ! this.state.valid ) {
+			this.setState( {
+				error: this.translate( 'Please enter a valid email address' ),
+			} );
+			return;
+		}
+
+		window.location.href = `https://my.pressable.com/signup/five-sites?email=${ encodeURIComponent( this.state.email ) }&wp-ecommerce=true`;
 	},
 
 	renderStoreForm() {
@@ -68,9 +88,10 @@ export default React.createClass( {
 					<LoggedOutFormFooter>
 						<FormLabel for="email">{ this.translate( 'Start by entering your email address:' ) }</FormLabel>
 						<div className="pressable-store__form-fields">
-							<FormTextInput ref={ ( input ) => this._input = input } onChange={ this.onEmailChange } className="pressable-store__form-email is-spaced" type="email" placeholder="Email Address" name="email" />
-							<FormButton onClick={ this.onSubmit } className="pressable-store__form-submit" disabled={ this.state.email === '' }>{ this.translate( 'Get started on Pressable' ) }</FormButton>
+							<FormTextInput ref={ ( input ) => this._input = input } isError={ this.state.error } isValid={ this.state.valid } onChange={ this.onEmailChange } className="pressable-store__form-email is-spaced" type="email" placeholder="Email Address" name="email" />
+							<FormButton onClick={ this.onSubmit } className="pressable-store__form-submit">{ this.translate( 'Get started on Pressable' ) }</FormButton>
 						</div>
+						{ this.state.error && <FormInputValidation isError={ true } text={ this.state.error } /> }
 					</LoggedOutFormFooter>
 				</LoggedOutForm>
 				<LoggedOutFormLinks>
