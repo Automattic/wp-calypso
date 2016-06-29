@@ -1,7 +1,13 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import get from 'lodash/get';
 
+/**
+ * Internal dependencies
+ */
 import Card from 'components/card';
 import {
 	getSelectedSite,
@@ -13,14 +19,11 @@ import {
 	isBusiness,
 	isEnterprise
 } from 'lib/products-values';
-
 import InfoHeader from './info-header';
-
 import StandardPluginsPanel from './standard-plugins-panel';
 import PremiumPluginsPanel from './premium-plugins-panel';
 import BusinessPluginsPanel from './business-plugins-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-
 import {
 	defaultStandardPlugins,
 	defaultPremiumPlugins,
@@ -36,7 +39,7 @@ const linkInterpolator = replacements => plugin => {
 		.reduce( ( s, r ) => s.replace( new RegExp( `{${ r }}` ), replacements[ r ] ), link );
 
 	return Object.assign( {}, plugin, { descriptionLink } );
-}
+};
 
 export const PluginPanel = React.createClass( {
 	render() {
@@ -61,12 +64,10 @@ export const PluginPanel = React.createClass( {
 			<div className="wpcom-plugin-panel">
 				<PageViewTracker path="/plugins/:site" title="Plugins > WPCOM Site" />
 				<InfoHeader />
-				<StandardPluginsPanel plugins={ standardPlugins } displayCount={ 6 } />
-
+				<StandardPluginsPanel plugins={ standardPlugins } displayCount={ 9 } />
 				<Card className="wpcom-plugin-panel__panel-footer" href={ standardPluginsLink }>
 					{ this.translate( 'View all standard plugins' ) }
 				</Card>
-
 				<PremiumPluginsPanel plugins={ premiumPlugins } isActive={ hasPremium } { ...{ purchaseLink } } />
 				<BusinessPluginsPanel plugins={ businessPlugins } isActive={ hasBusiness } { ...{ purchaseLink } } />
 			</div>
