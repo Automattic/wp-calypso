@@ -11,6 +11,7 @@ import {
 	getSiteStatsPostStreakData,
 	getSiteStatsForQuery,
 	getSiteStatsPostsCountByDay,
+	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery
 } from '../selectors';
 
@@ -18,6 +19,7 @@ describe( 'selectors', () => {
 	beforeEach( () => {
 		getSiteStatsPostStreakData.memoizedSelector.cache.clear();
 		getSiteStatsMaxPostsByDay.memoizedSelector.cache.clear();
+		getSiteStatsNormalizedData.memoizedSelector.cache.clear();
 	} );
 
 	describe( 'isRequestingSiteStatsForQuery()', () => {
@@ -248,6 +250,74 @@ describe( 'selectors', () => {
 			}, 2916284, { startDate: '2015-06-01', endDate: '2016-06-01' }, '2016-05-24' );
 
 			expect( stats ).to.eql( 2 );
+		} );
+	} );
+
+	describe( 'getSiteStatsNormalizedData()', () => {
+		it( 'should return null if no matching query results exist', () => {
+			const stats = getSiteStatsNormalizedData( {
+				stats: {
+					lists: {
+						items: {}
+					}
+				}
+			}, 2916284, 'stats', {} );
+
+			expect( stats ).to.be.null;
+		} );
+
+		it( 'should return API payload data, if no normalizer exists', () => {
+			const stats = getSiteStatsNormalizedData( {
+				stats: {
+					lists: {
+						items: {
+							2916284: {
+								notReallyStats: {
+									'[]': {
+										bestPostTitleEver: 'Chicken and Ribs'
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'notReallyStats', {} );
+
+			expect( stats ).to.eql( {
+				bestPostTitleEver: 'Chicken and Ribs'
+			} );
+		} );
+
+		it( 'should return normalized data, if normalizer exists', () => {
+			const stats = getSiteStatsNormalizedData( {
+				stats: {
+					lists: {
+						items: {
+							2916284: {
+								stats: {
+									'[]': {
+										stats: {
+											posts: 2,
+											views: 300,
+											visitors: 400,
+											views_best_day: '2010-09-29',
+											views_best_day_total: 100
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'stats', {} );
+
+			expect( stats ).to.eql( {
+				posts: 2,
+				views: 300,
+				visitors: 400,
+				viewsBestDay: '2010-09-29',
+				viewsBestDayTotal: 100
+			} );
 		} );
 	} );
 } );
