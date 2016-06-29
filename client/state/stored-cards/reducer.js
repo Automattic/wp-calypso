@@ -78,30 +78,8 @@ export const isDeleting = ( state = false, action ) => {
 	return state;
 };
 
-/**
- * `Reducer` function which handles ERROR REST-API response actions
- *
- * @param {Object} state - current state
- * @param {Object} action - storedCard action
- * @return {Object} updated state
- */
-export const error = ( state = null, action ) => {
-	switch ( action.type ) {
-		case STORED_CARDS_FETCH_FAILED:
-		case STORED_CARDS_DELETE_FAILED:
-			return action.error;
-
-		case STORED_CARDS_FETCH_COMPLETED:
-		case STORED_CARDS_DELETE_COMPLETED:
-			return null;
-	}
-
-	return state;
-};
-
 export default combineReducers( {
 	items,
 	isFetching,
-	isDeleting,
-	error
+	isDeleting
 } );

@@ -8,4 +8,4 @@ export const createStoredCard = card => {
 	};
 };
 
-export const createStoredCardsArray = ( dataTransferArray = [] ) => dataTransferArray.map( createStoredCard );
+export const createStoredCardsArray = dataTransferArray => ( dataTransferArray || [] ).map( createStoredCard );

@@ -10,7 +10,6 @@ describe( 'selectors', () => {
 		it( 'should return a purchase by its ID, preserving the top-level flags', () => {
 			const state = {
 				storedCards: {
-					error: null,
 					isFetching: false,
 					isDeleting: false,
 					items: STORED_CARDS
@@ -25,14 +24,13 @@ describe( 'selectors', () => {
 		it( 'should return a purchase by its ID, preserving the top-level flags', () => {
 			const state = {
 				storedCards: {
-					error: null,
 					isFetching: false,
 					isDeleting: false,
 					items: STORED_CARDS
 				}
 			};
 
-			expect( getByCardId( state, 12345 ) ).to.be.eql( STORED_CARDS[1] );
+			expect( getByCardId( state, 12345 ) ).to.be.eql( STORED_CARDS[ 1 ] );
 		} );
 	} );
 } );
