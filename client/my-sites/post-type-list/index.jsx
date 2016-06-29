@@ -2,11 +2,13 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 import isEqual from 'lodash/isEqual';
 import includes from 'lodash/includes';
 import difference from 'lodash/difference';
 import range from 'lodash/range';
+import size from 'lodash/size';
 import AutoSizer from 'react-virtualized/AutoSizer';
 import WindowScroller from 'react-virtualized/WindowScroller';
 import VirtualScroll from 'react-virtualized/VirtualScroll';
@@ -107,41 +109,24 @@ class PostTypeList extends Component {
 		return includes( requestedPages, lastPage ) && ! requestingLastPage;
 	}
 
-	getRowCount() {
-		let count = 0;
-
-		if ( this.props.posts ) {
-			count += this.props.posts.length;
-
-			if ( ! this.isLastPage() ) {
-				count++;
-			}
-		}
-
-		return count;
-	}
-
 	renderPlaceholder() {
 		return <PostTypeListPostPlaceholder key="placeholder" />;
 	}
 
 	renderPostRow( { index } ) {
-		const { requestingFirstPage, posts } = this.props;
-		if ( ! posts || ( requestingFirstPage && 0 === index ) ||
-				( ! requestingFirstPage && index >= posts.length ) ) {
-			return this.renderPlaceholder();
-		}
-
-		const { global_ID: globalId } = posts[ requestingFirstPage ? index - 1 : index ];
+		const { global_ID: globalId } = this.props.posts[ index ];
 		return <PostTypeListPost key={ globalId } globalId={ globalId } />;
 	}
 
 	render() {
-		const { query, siteId, posts } = this.props;
+		const { query, siteId, posts, requestingFirstPage } = this.props;
 		const isEmpty = query && posts && ! posts.length && this.isLastPage();
+		const classes = classnames( 'post-type-list', {
+			'is-empty': isEmpty
+		} );
 
 		return (
-			<div className="post-type-list">
+			<div className={ classes }>
 				{ query && this.state.requestedPages.map( ( page ) => (
 					<QueryPosts
 						key={ `query-${ page }` }
@@ -153,8 +138,9 @@ class PostTypeList extends Component {
 						type={ query.type }
 						status={ query.status } />
 				) }
+				{ requestingFirstPage && this.renderPlaceholder() }
 				{ ! isEmpty && (
-					<WindowScroller>
+					<WindowScroller key={ JSON.stringify( query ) }>
 						{ ( { height, scrollTop } ) => (
 							<AutoSizer disableHeight>
 								{ ( { width } ) => (
@@ -164,16 +150,15 @@ class PostTypeList extends Component {
 										height={ height }
 										width={ width }
 										onRowsRendered={ this.setRequestedPages }
-										noRowsRenderer={ this.renderPlaceholder }
 										rowRenderer={ this.renderPostRow }
 										rowHeight={ POST_ROW_HEIGHT }
-										rowCount={ this.getRowCount() }
-										className="post-type-list__posts" />
+										rowCount={ size( this.props.posts ) } />
 								) }
 							</AutoSizer>
 						) }
 					</WindowScroller>
 				) }
+				{ ! requestingFirstPage && ! this.isLastPage() && this.renderPlaceholder() }
 			</div>
 		);
 	}
