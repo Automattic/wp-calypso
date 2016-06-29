@@ -11,6 +11,7 @@ var webpack = require( 'webpack' ),
  */
 var config = require( './server/config' ),
 	sections = require( './client/sections' ),
+	utils = require( './server/bundler/utils' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
 	PragmaCheckPlugin = require( 'server/pragma-checker' );
 
@@ -121,7 +122,7 @@ jsLoader = {
 	loaders: [ 'babel-loader?cacheDirectory' ]
 };
 
-if ( CALYPSO_ENV === 'development' ) {
+if ( utils.isDevelopment( config( 'env' ) ) ) {
 	webpackConfig.plugins.push( new PragmaCheckPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [

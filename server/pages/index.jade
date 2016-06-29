@@ -52,7 +52,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		if isRTL
 			link(rel='stylesheet', href=urls['style-rtl.css'])
 		else
-			if 'development' === env || isDebug
+			if isDevelopment || isDebug
 				link(rel='stylesheet', href=urls['style-debug.css'])
 			else
 				link(rel='stylesheet', href=urls['style.css'])
@@ -75,7 +75,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				span(class=['environment', 'is-' + badge, 'is-env'])=badge
 				a(class='bug-report', href=feedbackURL, title='Report an issue', target='_blank')
 
-		if 'development' !== env
+		if ! isDevelopment
 			script( src=catchJsErrors )
 
 		script.
@@ -122,7 +122,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			script(type='text/javascript')!='var initialReduxState = ' + sanitize.jsonStringifyForHtml( initialReduxState )
 		if i18nLocaleScript
 			script(src=i18nLocaleScript)
-		if 'development' === env || isDebug
+		if isDevelopment || isDebug
 			script(src=urls[ 'vendor' ])
 			script(src=urls[ jsFile + '-' + env ])
 			if chunk
