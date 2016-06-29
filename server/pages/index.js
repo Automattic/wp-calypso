@@ -23,7 +23,8 @@ var staticFiles = [
 	{ path: 'editor.css' },
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
-	{ path: 'style-rtl.css' }
+	{ path: 'style-rtl.css' },
+	{ path: 'catch-js-errors.js' }
 ];
 
 var sections = sectionsModule.get();
@@ -120,7 +121,7 @@ function getDefaultContext( request ) {
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
-		catchJsErrors: '/calypso/catch-js-errors-' + 'v3' + '.min.js'
+		catchJsErrors: '/calypso/catch-js-errors.js'
 	} );
 
 	context.app = {
