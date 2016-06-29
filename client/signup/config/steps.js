@@ -38,7 +38,7 @@ module.exports = {
 	'pressable-store': {
 		stepName: 'pressable-store',
 		dependencies: [ 'designType' ],
-		providesDependencies: [ ]
+		providesDependencies: []
 	},
 
 	user: {
