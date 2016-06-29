@@ -21,7 +21,14 @@ import EmptyContent from 'components/empty-content';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import ThemesSelection from './themes-selection';
-import { getCustomizeUrl, getDetailsUrl, getSupportUrl, getHelpUrl, isPremium, addTracking } from './helpers';
+import {
+	getCustomizeUrl,
+	getDetailsUrl,
+	getSupportUrl,
+	getHelpUrl,
+	isPremium,
+	addTracking
+} from './helpers';
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import sitesFactory from 'lib/sites-list';
