@@ -63,20 +63,20 @@ export default React.createClass( {
 				<LoggedOutForm className="pressable-store__form">
 					{ renderHeroImage() }
 
-					<FormSectionHeading className="pressable-store__heading">{ this.translate( 'Create your new WordPress store for as low as $20.83/Month' ) }</FormSectionHeading>
-					<p className="pressable-store__copy">{ this.translate( 'WordPress.com has partnered with hosting provider Pressable to make setting up your store on WordPress simple and fun.' ) }</p>
+					<FormSectionHeading className="pressable-store__heading">{ this.translate( 'Get your store for as low as $25 / month' ) }</FormSectionHeading>
+					<p className="pressable-store__copy">{ this.translate( 'We\'ve partnered with Pressable, a top-notch WordPress hosting provider, and WooCommerce, the go-to eCommerce solution for WordPress, to make setting up your store a snap.' ) }</p>
 
 					<LoggedOutFormFooter>
-						<FormLabel for="email">{ this.translate( 'Enter your email address to get started:' ) }</FormLabel>
+						<FormLabel for="email">{ this.translate( 'Start by entering your email address:' ) }</FormLabel>
 						<div className="pressable-store__form-fields">
 							<FormTextInput ref={ ( input ) => this._input = input } onChange={ this.onEmailChange } className="pressable-store__form-email is-spaced" type="email" placeholder="Email Address" name="email" />
-							<FormButton onClick={ this.onSubmit } className="pressable-store__form-submit" disabled={ this.state.email === '' }>Create my Store on Pressable</FormButton>
+							<FormButton onClick={ this.onSubmit } className="pressable-store__form-submit" disabled={ this.state.email === '' }>{ this.translate( 'Get started on Pressable' ) }</FormButton>
 						</div>
 					</LoggedOutFormFooter>
 				</LoggedOutForm>
 				<LoggedOutFormLinks>
 					<LoggedOutFormLinkItem className="pressable-store__privacy-policy" target="__blank" href="https://pressable.com/legal/privacy-policy/">
-						Pressable Privacy Policy <Gridicon icon="external" size={ 12 } />
+						{ this.translate( 'Pressable Privacy Policy', { comment: '“Pressable” is the name of a WordPress.org hosting provider' } ) } <Gridicon icon="external" size={ 12 } />
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
 			</div>
@@ -86,8 +86,8 @@ export default React.createClass( {
 	render() {
 		return (
 			<StepWrapper
-				fallbackHeaderText={ this.translate( 'Create a WordPress Store' ) }
-				fallbackSubHeaderText={ this.translate( 'Signup for Pressable to make an online store using WordPress' ) }
+				fallbackHeaderText={ this.translate( 'Create your WordPress Store' ) }
+				fallbackSubHeaderText={ this.translate( 'Our partners at Pressable and WooCommerce are here for you' ) }
 				subHeaderText={ this.translate( 'Baz' ) }
 				stepContent={ this.renderStoreForm() }
 				{ ...this.props }
