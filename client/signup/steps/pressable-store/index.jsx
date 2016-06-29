@@ -48,15 +48,14 @@ export default React.createClass( {
 	onEmailChange( event ) {
 		const email = event.target.value;
 		const valid = EmailValidator.validate( email );
+		const error = this.state.error && valid
+			? null
+			: this.state.error;
 		this.setState( {
 			email,
 			valid,
+			error,
 		} );
-		if ( this.state.error && valid ) {
-			this.setState( {
-				error: null,
-			} );
-		}
 	},
 
 	onSubmit( event ) {
