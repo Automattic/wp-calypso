@@ -24,6 +24,10 @@ import { abtest } from 'lib/abtest';
 
 class PlansFeaturesMain extends Component {
 
+	isJetpackSite( site ) {
+		return site.jetpack;
+	}
+
 	renderPlanPlaceholders() {
 		const { site, hideFreePlan } = this.props;
 
@@ -33,7 +37,7 @@ class PlansFeaturesMain extends Component {
 			numberOfPlaceholders = 3;
 		}
 
-		if ( site && site.jetpack ) {
+		if ( site && this.isJetpackSite( site ) ) {
 			numberOfPlaceholders = 2;
 		}
 
@@ -51,7 +55,7 @@ class PlansFeaturesMain extends Component {
 	}
 
 	getPlanFeatures( site, intervalType ) {
-		if ( site.jetpack && intervalType === 'monthly' ) {
+		if ( this.isJetpackSite( site ) && intervalType === 'monthly' ) {
 			return (
 				<div className="plans-features-main__group">
 					<PlanFeatures plan={ PLAN_JETPACK_PREMIUM_MONTHLY } /* onClick={ this.upgradePlan } */ />
@@ -59,7 +63,7 @@ class PlansFeaturesMain extends Component {
 				</div>
 			);
 		}
-		if ( site.jetpack ) {
+		if ( this.isJetpackSite( site ) ) {
 			return (
 				<div className="plans-features-main__group">
 					<PlanFeatures plan={ PLAN_JETPACK_PREMIUM } /* onClick={ this.upgradePlan } */ />
@@ -77,10 +81,68 @@ class PlansFeaturesMain extends Component {
 		);
 	}
 
+	getJetpackFAQ() {
+		const { translate } = this.props;
+
+		return (
+			<FAQ>
+				<FAQItem
+					question={ translate( 'What are the hosting requirements?' ) }
+					answer={ translate(
+						'You should be running the latest version of WordPress and be using a web host that runs PHP 5 or higher. You will also need a WordPress.com account (you can register one during the connection process) and a publicly accessible site with XML-RPC enabled.'
+					) }
+				/>
+
+				<FAQItem
+					question={ translate( 'What is the cancellation policy?' ) }
+					answer={ translate(
+						'You can request a cancellation within 30 days of purchase and receive a full refund.'
+					) }
+				/>
+
+				<FAQItem
+					question={ translate( 'Does this work with a multisite network?' ) }
+					answer={ translate(
+						'Yes, Jetpack and all of its premium features are compatible with WordPress Multisite networks. If you manage a Multisite network, you will need to make sure you have a subscription for each site you wish to cover with premium features.'
+					) }
+				/>
+
+				<FAQItem
+					question={ translate( 'Can I migrate my subscription to a different site?' ) }
+					answer={ translate(
+						'Absolutely. You are always free to activate your premium services on a different WordPress site.'
+					) }
+				/>
+
+				<FAQItem
+					question={ translate( 'Why do I need a WordPress.com account?' ) }
+					answer={ translate(
+						"Many of Jetpack’s core features make use of the WordPress.com cloud. In order to make sure everything works correctly, Jetpack requires you to connect a (free) WordPress.com account. If you don't already have an account you can easily create one during the connection process."
+					) }
+				/>
+
+				<FAQItem
+					question={ translate( 'I signed up and paid. What’s next?' ) }
+					answer={ translate(
+						'The premium features included with Jetpack subscriptions are powered by a few of our other plugins. If you purchase any subscription, you will need to install the Akismet and VaultPress plugins once you’ve completed the purchase process. If you purchase a Professional subscription, you will also need to install the Polldaddy plugin. Don’t worry - just follow the guide after you complete your purchase.'
+					) }
+				/>
+
+				<FAQItem
+					question={ translate( 'Have more questions?' ) }
+					answer={ translate(
+						'No problem! Feel free to {{a}}get in touch{{/a}} with our Happiness Engineers.',
+						{
+							components: { a: <a href="https://jetpack.com/contact-support/" target="_blank" /> }
+						}
+					) }
+				/>
+			</FAQ>
+
+		);
+	}
+
 	getFAQ( site ) {
-		if ( site.jetpack ) {
-			return null;
-		}
 		const { translate } = this.props;
 		return (
 			<FAQ>
@@ -177,7 +239,11 @@ class PlansFeaturesMain extends Component {
 		return (
 			<div class="plans-features-main">
 				{ this.getPlanFeatures( site, intervalType ) }
-				{ this.getFAQ( site ) }
+				{
+					this.isJetpackSite( site )
+					? this.getJetpackFAQ()
+					: this.getFAQ( site )
+				}
 			</div>
 		);
 	}
