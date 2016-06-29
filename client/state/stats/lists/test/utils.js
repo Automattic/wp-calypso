@@ -69,5 +69,35 @@ describe( 'utils', () => {
 				} );
 			} );
 		} );
+
+		describe( 'statsInsights()', () => {
+			it( 'should return an empty object if no data is passed', () => {
+				const stats = normalizers.statsInsights();
+
+				expect( stats ).to.eql( {} );
+			} );
+
+			it( 'should return null if data.highest_day_of_week is not numeric', () => {
+				const stats = normalizers.statsInsights( { highest_day_of_week: false } );
+
+				expect( stats ).to.eql( {} );
+			} );
+
+			it( 'should return properly formatted data if matching data exists', () => {
+				const stats = normalizers.statsInsights( {
+					highest_hour: 11,
+					highest_day_percent: 10,
+					highest_day_of_week: 6,
+					highest_hour_percent: 5
+				} );
+
+				expect( stats ).to.eql( {
+					day: 'Sunday',
+					hour: '11:00 AM',
+					hourPercent: 5,
+					percent: 10
+				} );
+			} );
+		} );
 	} );
 } );
