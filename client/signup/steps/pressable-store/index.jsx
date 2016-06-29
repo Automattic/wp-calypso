@@ -107,7 +107,6 @@ export default React.createClass( {
 			<StepWrapper
 				fallbackHeaderText={ this.translate( 'Create your WordPress Store' ) }
 				fallbackSubHeaderText={ this.translate( 'Our partners at Pressable and WooCommerce are here for you' ) }
-				subHeaderText={ this.translate( 'Baz' ) }
 				stepContent={ this.renderStoreForm() }
 				{ ...this.props }
 				goToNextStep={ undefined } />
