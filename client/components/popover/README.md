@@ -74,6 +74,7 @@ that can trigger the opening and closing of the Popover then you need to pass in
 	<PopoverMenuItem action="A">Item A</PopoverMenuItem>
 	<PopoverMenuItem action="B"
 			onClick={ this._onPopoverMenuItemBClick }>Item B</PopoverMenuItem>
+	<PopoverMenuSeparator />
 	<PopoverMenuItem action="C">Item C</PopoverMenuItem>
 </PopoverMenu>
 ```
