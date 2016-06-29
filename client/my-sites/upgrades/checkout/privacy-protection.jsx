@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+const React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-var cartItems = require( 'lib/cart-values' ).cartItems,
+const cartItems = require( 'lib/cart-values' ).cartItems,
 	PrivacyProtectionDialog = require( './privacy-protection-dialog' ),
 	Card = require( 'components/card' ),
 	Gridicon = require( 'components/gridicon' ),
@@ -38,13 +38,13 @@ module.exports = React.createClass( {
 	},
 
 	getFirstDomainToRegister: function() {
-		var domainRegistration = this.getDomainRegistrations().shift();
+		const domainRegistration = this.getDomainRegistrations().shift();
 
 		return domainRegistration.meta;
 	},
 
 	hasDomainPartOfPlan: function() {
-		var cart = this.props.cart;
+		const cart = this.props.cart;
 		return cart.has_bundle_credit || cartItems.hasPlan( cart );
 	},
 
@@ -53,37 +53,46 @@ module.exports = React.createClass( {
 	},
 
 	getPrivacyProtectionCost: function() {
-		var products = this.props.productsList.get();
+		const products = this.props.productsList.get();
 
 		return products.private_whois.cost_display;
 	},
 
 	render: function() {
-		var numberOfDomainRegistrations = this.getNumberOfDomainRegistrations(),
-			priceForPrivacyText,
+		const numberOfDomainRegistrations = this.getNumberOfDomainRegistrations(),
 			hasOneFreePrivacy = this.hasDomainPartOfPlan() && numberOfDomainRegistrations === 1;
 
-		priceForPrivacyText = this.translate(
-			'Privacy protection keeps your information hidden when this domain is searched for in the public database for an extra %(cost)s / year.',
-			'Privacy protection keeps your information hidden when these domains are searched for in the public database for an extra %(cost)s per domain / year.',
-			{
-				args: { cost: this.getPrivacyProtectionCost() },
-				count: numberOfDomainRegistrations
-			}
-		);
-
-		if ( hasOneFreePrivacy ) {
-			priceForPrivacyText = this.translate( 'Privacy protection keeps your information hidden when these domains are searched for in the public database. You can use it for no extra cost.' );
-		}
-
 		if ( abtest( 'privacyCheckbox' ) === 'checkbox' ) {
+			const privacyText = this.translate( "Privacy Protection hides your personal information in your domain's public records, to protect your identity and prevent spam." ),
+				freeWithPlan = hasOneFreePrivacy &&
+							<span className="checkout__privacy-protection-free-text">
+								{ this.translate( 'Free with your plan' ) }
+							</span>;
+
 			return (
 				<div>
 					<Card className="checkout__privacy-protection-checkbox">
 						<input type="checkbox" onChange={ this.props.onCheckboxChange } checked={ this.props.isChecked } />
 						<div className="privacy-protection-checkbox__description">
-							<strong className="checkout__privacy-protection-checkbox-heading">{ this.translate( 'Please keep my information private.', { textOnly: true } ) }</strong>
-							<p className="checkout__privacy-protection-checkbox-text">{ priceForPrivacyText }</p>
+							<strong className="checkout__privacy-protection-checkbox-heading">
+								{ this.translate( 'Please keep my information private.', { textOnly: true } ) }
+							</strong>
+							<p className={ 'checkout__privacy-protection-price-text' }>
+								<span className={ ( hasOneFreePrivacy && 'free-with-plan' ) }>
+									{
+										this.translate(
+											'%(cost)s per year',
+											'%(cost)s per domain per year',
+											{
+												args: { cost: this.getPrivacyProtectionCost() },
+												count: numberOfDomainRegistrations
+											}
+										)
+									}
+								</span>
+								{ freeWithPlan }
+							</p>
+							<p className="checkout__privacy-protection-checkbox-text">{ privacyText }</p>
 							<a href="" onClick={ this.handleDialogOpen }>Learn more about Privacy Protection.</a>
 						</div>
 						<div>
@@ -117,7 +126,16 @@ module.exports = React.createClass( {
 				<section>
 					<label>
 						<strong>{ this.translate( 'Please keep my information private.', { textOnly: true } ) }</strong>
-						<p>{ priceForPrivacyText }</p>
+						<p>{
+							this.translate(
+								'Privacy protection keeps your information hidden when this domain is searched for in the public database for an extra %(cost)s / year.',
+								'Privacy protection keeps your information hidden when these domains are searched for in the public database for an extra %(cost)s per domain / year.',
+								{
+									args: { cost: this.getPrivacyProtectionCost() },
+									count: numberOfDomainRegistrations
+								}
+							)
+						}</p>
 						<button
 							type="submit"
 							className="button is-primary"
