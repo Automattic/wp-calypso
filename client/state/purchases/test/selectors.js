@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 
 // Internal dependencies
-import { getByPurchaseId } from '../selectors';
+import { getByPurchaseId, isFetchingUserPurchases, isFetchingSitePurchases } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'getByPurchaseId', () => {
@@ -27,6 +27,40 @@ describe( 'selectors', () => {
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: true
 			} );
+		} );
+	} );
+
+	describe( 'isFetchingUserPurchases', () => {
+		it( 'should return the current state of the user purchases request', () => {
+			const state = {
+				purchases: {
+					data: [],
+					error: null,
+					isFetchingSitePurchases: false,
+					isFetchingUserPurchases: true,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: false
+				}
+			};
+
+			expect( isFetchingUserPurchases( state ) ).to.be.true;
+		} );
+	} );
+
+	describe( 'isFetchingSitePurchases', () => {
+		it( 'should return a purchase by its ID, preserving the top-level flags', () => {
+			const state = {
+				purchases: {
+					data: [],
+					error: null,
+					isFetchingSitePurchases: true,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: false
+				}
+			};
+
+			expect( isFetchingSitePurchases( state ) ).to.be.true;
 		} );
 	} );
 } );
