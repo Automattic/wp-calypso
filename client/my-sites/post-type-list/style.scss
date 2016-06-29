@@ -23,11 +23,17 @@
 }
 
 .post-type-list__post-thumbnail-wrapper {
+	display: none;
 	position: relative;
 	width: 80px;
 	align-self: stretch;
 	margin-right: 12px;
 	overflow: hidden;
+
+	&.has-image,
+	.post-type-list__post-placeholder & {
+		display: block;
+	}
 
 	.post-type-list__post-placeholder & {
 		@include placeholder;
