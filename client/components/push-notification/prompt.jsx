@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -58,7 +59,7 @@ const PushNotificationPrompt = React.createClass( {
 	},
 
 	pushUnsubscribedNotice: function() {
-		const buttonDisabled = ( [ 'disabling', 'enabling', 'unknown' ].includes( this.props.status ) );
+		const buttonDisabled = includes( [ 'disabling', 'enabling', 'unknown' ], this.props.status );
 		const noticeText = (
 			<div>
 				<p>
