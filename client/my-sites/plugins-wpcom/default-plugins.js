@@ -117,7 +117,7 @@ export const defaultStandardPlugins = [
 		description: i18n.translate( 'Pulls relevant content from your blog to display at the bottom of your posts.' )
 	},
 	{
-		name: i18n.translate( 'Polls' ),
+		name: i18n.translate( 'Polls & Surveys' ),
 		descriptionLink: 'https://support.wordpress.com/polls/',
 		icon: 'stats',
 		category: 'Misc',
