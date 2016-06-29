@@ -14,7 +14,7 @@ import { getNormalizedPost } from 'state/posts/selectors';
 import Card from 'components/card';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import PostTypeListPostThumbnail from './post-thumbnail';
-import PostTypeListPostActions from './post-actions';
+import PostActionsEllipsisMenu from './post-actions-ellipsis-menu';
 
 export function PostTypeListPost( { translate, globalId, post, editUrl, className } ) {
 	const classes = classnames( 'post-type-list__post', className, {
@@ -36,7 +36,7 @@ export function PostTypeListPost( { translate, globalId, post, editUrl, classNam
 				</div>
 			</div>
 			<PostTypeListPostThumbnail globalId={ globalId } />
-			<PostTypeListPostActions globalId={ globalId } />
+			<PostActionsEllipsisMenu globalId={ globalId } />
 		</Card>
 	);
 }
