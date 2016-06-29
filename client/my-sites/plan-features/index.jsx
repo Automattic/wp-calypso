@@ -18,9 +18,12 @@ import PlanFeaturesPlaceholder from './placeholder';
 import { isCurrentPlanPaid, isCurrentSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getPlanRawPrice, getPlan } from 'state/plans/selectors';
 import { getPlanDiscountPrice } from 'state/sites/plans/selectors';
-
+import {
+	getPlanRawPrice,
+	getPlan,
+	getPlanSlug
+} from 'state/plans/selectors';
 import {
 	plansList,
 	getPlanFeaturesObject,
@@ -29,6 +32,7 @@ import {
 } from 'lib/plans/constants';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getPlanPath, canUpgradeToPlan } from 'lib/plans';
+import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 
 class PlanFeatures extends Component {
 	render() {
@@ -123,10 +127,16 @@ export default connect( ( state, ownProps ) => {
 		rawPrice: getPlanRawPrice( state, planProductId, showMonthly ),
 		planConstantObj: plansList[ ownProps.plan ],
 		available: canUpgradeToPlan( ownProps.plan ),
-		onUpgradeClick: () => {
-			const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
-			page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( ownProps.plan ) || '' }` );
-		},
+		onUpgradeClick: ownProps.onUpgradeClick
+			? () => {
+				const planSlug = getPlanSlug( state, planProductId );
+
+				ownProps.onUpgradeClick( getCartItemForPlan( planSlug ) );
+			}
+			: () => {
+				const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
+				page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( ownProps.plan ) || '' }` );
+			},
 		planObject: planObject,
 		discountPrice: getPlanDiscountPrice( state, selectedSiteId, ownProps.plan, showMonthly )
 	};
