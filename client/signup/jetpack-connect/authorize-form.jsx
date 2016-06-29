@@ -36,6 +36,7 @@ import Site from 'my-sites/site';
 import { decodeEntities } from 'lib/formatting';
 import versionCompare from 'lib/version-compare';
 import EmptyContent from 'components/empty-content';
+import safeImageUrl from 'lib/safe-image-url';
 
 /**
  * Constants
@@ -48,7 +49,7 @@ const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 const SiteCard = React.createClass( {
 	render() {
 		const { site_icon, blogname, home_url, site_url } = this.props.queryObject;
-		const siteIcon = site_icon ? { img: site_icon } : false;
+		const siteIcon = site_icon ? { img: safeImageUrl( site_icon ) } : false;
 		const url = decodeEntities( home_url );
 		const parsedUrl = urlModule.parse( url );
 		const path = ( parsedUrl.path === '/' ) ? '' : parsedUrl.path;
