@@ -1,15 +1,18 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'wporg' ),
-	i18n = require( 'i18n-calypso' ),
-	superagent = require( 'superagent' );
+import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
+import superagent from 'superagent';
+import find from 'lodash/find';
 
 /**
  * Internal dependencies
  */
-var jsonp = require( './jsonp' ),
-	config = require( 'config' );
+import jsonp from './jsonp';
+import config from 'config';
+
+const debug = debugFactory( 'wporg' );
 
 /**
  * Constants
@@ -24,9 +27,10 @@ function getWporgLocaleCode( ) {
 		wpOrgLocaleCode;
 
 	currentLocaleCode = i18n.getLocaleSlug();
-	wpOrgLocaleCode = config( 'languages' ).find( function( language ) {
-		return language.langSlug === currentLocaleCode;
-	} ).wpLocale;
+	wpOrgLocaleCode = find(
+		config( 'languages' ),
+		{ langSlug: currentLocaleCode }
+	).wpLocale;
 
 	if ( wpOrgLocaleCode === '' ) {
 		wpOrgLocaleCode = currentLocaleCode;
