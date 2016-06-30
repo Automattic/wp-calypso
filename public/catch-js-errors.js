@@ -88,7 +88,7 @@
 
 		//Add url
 		if ( window.location && window.location.href ) {
-			error.url = window.location.href;
+			error.location = window.location.href;
 		}
 
 		handleError( error );
