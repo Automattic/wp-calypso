@@ -6,7 +6,7 @@ import { getByPurchaseId, isFetchingUserPurchases, isFetchingSitePurchases } fro
 
 describe( 'selectors', () => {
 	describe( 'getByPurchaseId', () => {
-		it( 'should return a purchase by its ID, preserving the top-level flags', () => {
+		it( 'should return a purchase by its ID', () => {
 			const state = {
 				purchases: {
 					data: [
@@ -43,7 +43,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isFetchingSitePurchases', () => {
-		it( 'should return a purchase by its ID, preserving the top-level flags', () => {
+		it( 'should return the current state of the site purchases request', () => {
 			const state = {
 				purchases: {
 					data: [],
