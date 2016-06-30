@@ -10,7 +10,7 @@ import React from 'react';
  */
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
-import { isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
+import { isCalypsoStartedConnection, getFlowType } from 'state/jetpack-connect/selectors';
 import Main from 'components/main';
 import ConnectHeader from './connect-header';
 import observe from 'lib/mixins/data-observe';
@@ -20,6 +20,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { userCan } from 'lib/site/utils';
+import { cartItems } from 'lib/cart-values';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 
@@ -38,6 +39,23 @@ const Plans = React.createClass( {
 	},
 
 	componentDidMount() {
+		if ( this.props.flowType === 'pro' ) {
+			this.props.plans.get();
+			const plan = this.props.plans.getPlanBySlug( 'jetpack_business' );
+			if ( plan ) {
+				this.selectPlan( cartItems.getItemForPlan( plan ) );
+				return;
+			}
+		}
+		if ( this.props.flowType === 'premium' ) {
+			this.props.plans.get();
+			const plan = this.props.plans.getPlanBySlug( 'jetpack_premium' );
+			if ( plan ) {
+				this.selectPlan( cartItems.getItemForPlan( plan ) );
+				return;
+			}
+		}
+
 		this.props.recordTracksEvent( 'calypso_jpc_plans_view', {
 			user: this.props.userId
 		} );
@@ -95,6 +113,10 @@ const Plans = React.createClass( {
 	},
 
 	render() {
+		if ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) {
+			return null;
+		}
+
 		const selectedSite = this.props.sites.getSelectedSite();
 
 		if ( ! this.props.canPurchasePlans || this.hasPlan( selectedSite ) ) {
@@ -139,7 +161,8 @@ export default connect(
 			sitePlans: getPlansBySite( state, selectedSite ),
 			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
 			userId: user ? user.ID : null,
-			canPurchasePlans: userCan( 'manage_options', selectedSite )
+			canPurchasePlans: userCan( 'manage_options', selectedSite ),
+			flowType: getFlowType( state.jetpackConnect.jetpackConnectSessions, selectedSite )
 		};
 	},
 	( dispatch ) => {

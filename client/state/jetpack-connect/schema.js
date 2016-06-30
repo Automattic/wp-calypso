@@ -7,7 +7,7 @@ export const jetpackConnectSessionsSchema = {
 			required: [ 'timestamp' ],
 			properties: {
 				timestamp: { type: 'number' },
-				isInstall: { type: 'boolean' }
+				flowType: { type: 'string' }
 			},
 			additionalProperties: false
 		}

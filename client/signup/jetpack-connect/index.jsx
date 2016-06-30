@@ -16,7 +16,6 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
-import { confirmJetpackInstallStatus, dismissUrl, goToRemoteAuth, goToPluginInstall, goToPluginActivation, checkUrl } from 'state/jetpack-connect/actions';
 import { getSiteByUrl } from 'state/sites/selectors';
 import { requestSites } from 'state/sites/actions';
 import JetpackExampleInstall from './exampleComponents/jetpack-install';
@@ -27,7 +26,14 @@ import versionCompare from 'lib/version-compare';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Gridicon from 'components/gridicon';
-
+import {
+	confirmJetpackInstallStatus,
+	dismissUrl,
+	goToRemoteAuth,
+	goToPluginInstall,
+	goToPluginActivation,
+	checkUrl
+} from 'state/jetpack-connect/actions';
 /**
  * Constants
  */
@@ -40,6 +46,12 @@ const JetpackConnectMain = React.createClass( {
 		let from = 'direct';
 		if ( this.props.type === 'install' ) {
 			from = 'jpdotcom';
+		}
+		if ( this.props.type === 'pro' ) {
+			from = 'ad';
+		}
+		if ( this.props.type === 'premium' ) {
+			from = 'ad';
 		}
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: from
@@ -97,7 +109,11 @@ const JetpackConnectMain = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl
 		} );
-		this.props.checkUrl( this.state.currentUrl, !! this.props.getJetpackSiteByUrl( this.state.currentUrl ) );
+		this.props.checkUrl(
+			this.state.currentUrl,
+			!! this.props.getJetpackSiteByUrl( this.state.currentUrl ),
+			this.props.type
+		);
 	},
 
 	installJetpack() {
@@ -220,11 +236,17 @@ const JetpackConnectMain = React.createClass( {
 		}
 	},
 
+	isInstall() {
+		return this.props.type === 'install' || this.props.type === 'pro' || this.props.type === 'premium';
+	},
+
 	renderFooter() {
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">{ this.translate( 'Install Jetpack Manually' ) }</LoggedOutFormLinkItem>
-				{ this.props.type === 'install'
+				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
+					{ this.translate( 'Install Jetpack Manually' ) }
+				</LoggedOutFormLinkItem>
+				{ this.isInstall()
 					? null
 					: <LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
 				}
@@ -247,7 +269,7 @@ const JetpackConnectMain = React.createClass( {
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
 					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() }
-					isInstall={ this.props.type === 'install' } />
+					isInstall={ this.isInstall() } />
 			</Card>
 		);
 	},
@@ -315,7 +337,7 @@ const JetpackConnectMain = React.createClass( {
 						steps={ 3 } />
 					<div className="jetpack-connect__install-steps">
 						<JetpackInstallStep title={ this.translate( '1. Install Jetpack' ) }
-							text={ this.props.isInstall
+							text={ this.isInstall()
 									? this.translate( 'You will be redirected to your site\'s dashboard to install Jetpack. Click the blue "Install Now" button.' )
 									: this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s dashboard to install Jetpack. Click the blue install button.' )
 								}
@@ -398,7 +420,7 @@ const JetpackConnectMain = React.createClass( {
 		if ( status === 'notActiveJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
 			return this.renderActivateInstructions();
 		}
-		if ( this.props.type === 'install' ) {
+		if ( this.isInstall() ) {
 			return this.renderSiteEntryInstall();
 		}
 		return this.renderSiteEntry();
@@ -419,5 +441,14 @@ export default connect(
 			getJetpackSiteByUrl
 		};
 	},
-	dispatch => bindActionCreators( { recordTracksEvent, confirmJetpackInstallStatus, checkUrl, dismissUrl, requestSites, goToRemoteAuth, goToPluginInstall, goToPluginActivation }, dispatch )
+	dispatch => bindActionCreators( {
+		recordTracksEvent,
+		confirmJetpackInstallStatus,
+		checkUrl,
+		dismissUrl,
+		requestSites,
+		goToRemoteAuth,
+		goToPluginInstall,
+		goToPluginActivation
+	}, dispatch )
 )( JetpackConnectMain );

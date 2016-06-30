@@ -45,11 +45,11 @@ const defaultAuthorizeState = {
 	authorizeError: false
 };
 
-function buildNoProtocolUrlObj( url, isInstall ) {
+function buildNoProtocolUrlObj( url, flowType ) {
 	const noProtocolUrl = url.replace( /.*?:\/\//g, '' );
 	const sessionValue = {
 		timestamp: Date.now(),
-		isInstall: !! isInstall
+		flowType: flowType || ''
 	};
 	return { [ noProtocolUrl ]: sessionValue };
 }
@@ -57,7 +57,7 @@ function buildNoProtocolUrlObj( url, isInstall ) {
 export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_CHECK_URL:
-			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url, action.isInstall ) );
+			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url, action.flowType ) );
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, jetpackConnectSessionsSchema ) ) {
 				return state;
