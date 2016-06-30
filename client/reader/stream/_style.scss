@@ -33,60 +33,9 @@
 
 	.follow-button {
 		position: absolute;
-			top: -8px;
+			top: -3px;
 			right: 0;
 		z-index: z-index( 'reader-card-follow-button-parent', '.reader__card.card .follow-button' );
-
-		.gridicon {
-			position: absolute;
-				left: 15px;
-				top: 10px;
-		}
-
-		.follow-button__label {
-			color: $gray-dark;
-			font-size: 16px;
-
-			@include breakpoint( "<660px" ) {
-				display: none;
-			}
-		}
-
-		&:hover {
-			background: none;
-
-			.gridicon {
-				fill: $gray-dark;
-			}
-
-			.follow-button__label {
-				cursor: pointer;
-				color: $gray-dark;
-			}
-		}
-
-		@include breakpoint( "<480px" ) {
-			right: 8px;
-		}
-	}
-
-	.follow-button.is-following {
-		.follow-button__label {
-			color: $alert-green;
-		}
-
-		&:hover {
-			background: none;
-
-			.gridicon {
-				fill: $alert-green;
-			}
-
-			.follow-button__label {
-				cursor: pointer;
-				color: $alert-green;
-			}
-		}
 	}
 
 	.reader-post-byline {
