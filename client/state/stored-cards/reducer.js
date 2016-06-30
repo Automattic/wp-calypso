@@ -18,7 +18,8 @@ import {
 } from 'state/action-types';
 
 /**
- * List all known stored cards of the current user at /me/stored-cards.
+ * `Reducer` function which handles request/response actions
+ * concerning stored cards data updates
  *
  * @param  {Array}  state  Current state
  * @param  {Object} action storeCard action
