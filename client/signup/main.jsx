@@ -49,12 +49,16 @@ const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 8000;
 const Signup = React.createClass( {
 	displayName: 'Signup',
 
+	contextTypes: {
+		store: React.PropTypes.object
+	},
+
 	getInitialState() {
 		/**
 		 * Pass the redux store to SignupDependencyStore.
 		 */
-		SignupDependencyStore.setReduxStore( this.props.reduxStore );
-		
+		SignupDependencyStore.setReduxStore( this.context.store );
+
 		return {
 			login: false,
 			progress: SignupProgressStore.get(),
