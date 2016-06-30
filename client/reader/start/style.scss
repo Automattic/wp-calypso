@@ -1,7 +1,16 @@
+.reader-start {
+
+	@include breakpoint( "<660px" ) {
+		-webkit-perspective: none;
+		perspective: none;
+	}
+}
+
 .reader-start__title {
 	color: darken( $gray, 30% );
 	font-size: 30px;
 	font-weight: 300;
+	line-height: 1.2;
 	margin-bottom: 8px;
 
 	@include breakpoint( "<960px" ) {
@@ -14,7 +23,7 @@
 }
 
 .reader-start__description {
-	color: $gray;
+	color: darken( $gray, 10% );
 	font-size: 16px;
 	font-weight: 100;
 	line-height: 1.5;
@@ -27,8 +36,6 @@
 
 .reader-start__cards {
 
-	padding-bottom: 100px;
-
 	@include breakpoint( "<480px" ) {
 		margin-top: -10px;
 	}
@@ -37,11 +44,16 @@
 		clear: both;
 		float: left;
 		margin: 4px 6px 0 0;
+
+		&.is-blank {
+			display: none;
+		}
 	}
 }
 
 .reader-start-card {
 	margin-bottom: 25px;
+	padding: 16px;
 	width: 100%;
 
 	// Loading Placeholders
@@ -96,7 +108,7 @@
 	@include breakpoint( ">960px" ) {
 		display: inline-block;
 			margin: 0px 0px 14px 0px;
-			width: 48%;
+			width: 47%;
 	}
 
 	&:first-child {
@@ -217,20 +229,22 @@
 }
 
 .reader-start-card__header {
-	height: 45px;
+	height: 40px;
+	margin-bottom: 10px;
 }
 
 .reader-start-card__site-info {
 	float: left;
-	width: 40%;
+	margin-top: 3px;
+	width: 42%;
 }
 
 .reader-start-card__site-title {
 	display: block;
-	font-weight: 500;
+	font-size: 13px;
+	font-weight: 400;
 	line-height: normal;
-	font-size: 12px;
-	margin: 3px 120px 0 0;
+	margin: 1px 120px 0 0;
 	overflow: hidden;
 	padding-bottom: 1px;
 	text-overflow: ellipsis;
@@ -254,8 +268,7 @@
 .reader-start-card__follower-count {
 	color: $gray;
 	float: left;
-	font-size: 12px;
-	font-weight: 600;
+	font-size: 11px;
 	display: block;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -290,9 +303,9 @@
 	font-weight: 600;
 	letter-spacing: .05em;
 	margin-left: 4px;
-	padding: 0 4px;
+	padding: 0 4px 0 6px;
 	position: relative;
-	top : -13px;
+	top : -14px;
 	text-transform: uppercase;
 }
 
@@ -345,7 +358,7 @@
 	}
 }
 
-/* Photo cards */
+// Photo cards
 
 .is-photo {
 
@@ -355,7 +368,7 @@
 		width: calc( 100% - 52px );
 
 		@include breakpoint( ">480px" ) {
-			width: calc( 100% - 70px );
+			width: calc( 100% - 50px );
 		}
 	}
 
@@ -505,55 +518,106 @@
 	margin-left: 4px;
 }
 
+// Graduation button
+
 .reader-start__bar {
-	animation: slideout-bar 1.5s ease-out 1 forwards;
-	background: rgba( 102, 142, 170, .9 );
-	padding: 8px;
-	position: fixed;
-		bottom: 0;
-	width: 100%;
-	z-index: 5000;
 
-    button {
+	&.is-follow,
+	&.is-following {
+		animation: slideIn 0.15s ease-in-out 1 forwards;
+		background: $blue-medium;
+		border-radius: 24px;
+		color: white;
+		font-size: 14px;
+		margin: 0;
+		opacity: 1;
+		padding: 10px 25px;
+		position: fixed;
+			left: 49%;
+			bottom: 20px;
+		text-align: center;
+		z-index: 2;
 
-    	@include breakpoint( ">660px" ) {
-    		float: right;
-    	}
-    }
+		@include breakpoint( "<960px" ) {
+			font-size: 12px;
+		}
+	}
+
+	&.is-following {
+		background: $alert-green;
+		box-sizing: border-box;
+		display: flex;
+		padding: 0;
+		position: fixed;
+			left: 47%;
+
+		@include breakpoint( "<660px" ) {
+		    bottom: 20px;
+			left: 5%;
+		    width: 90%;
+		    margin: 0 auto;
+		}
+
+		.reader-start__bar-text {
+			padding: 12px 15px;
+
+			@include breakpoint( "<660px" ) {
+				text-align: left;
+			}
+		}
+	}
+
+	&.is-follow {
+
+		@include breakpoint( "<660px" ) {
+		    bottom: 0;
+			left: 5%;
+		    width: 80%;
+		    margin: 0 auto;
+		}
+	}
+}
+
+.reader-start__manage {
+	color: darken( $gray, 10% );
+	margin: 20px 0 130px;
+	text-align: center;
+
+	a,
+	a:visited {
+		text-decoration: underline;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
 }
 
 .reader-start__bar-action {
+	background: darken( $alert-green, 15% );
+	border-top-right-radius: 23px;
+	border-bottom-right-radius: 23px;
+	border: 0;
 	color: $white;
-	margin-left: 36%;
-	width: 50%;
+	cursor: pointer;
+	margin-left: auto;
+	padding: 12px 14px 12px 13px;
 
-	@include breakpoint( "<960px" ) {
-		margin-left: 10%;
-		width: 80%;
-	}
-
-	@include breakpoint( "<660px" ) {
-		text-align: center;
-		width: 90%;
-	}
-
-	@include breakpoint( "<480px" ) {
-		margin: -10px 0 0 10px;
+	&:hover {
+		background: lighten( $alert-green, 15% );
+		color: $white;
 	}
 }
 
-.reader-start__bar-text {
-	display: inline-block;
-	font-size: 18px;
-	margin-top: 8px;
-}
+@keyframes slideIn {
 
-@keyframes slideout-bar {
     0% {
-        transform: translateY( calc( 100vh - 100px ) );
+    	opacity: 0%;
+    	transform: translateY( 80px );
     }
 
     100% {
-    	transform: translateY( 0 );
+    	opacity: 100%;
+    	transform: translateY( -20px );
     }
 }
