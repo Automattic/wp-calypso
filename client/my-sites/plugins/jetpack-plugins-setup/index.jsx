@@ -25,6 +25,7 @@ import JetpackSite from 'lib/site/jetpack';
 import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
 import support from 'lib/url/support';
+import utils from 'lib/site/utils';
 
 // Redux actions & selectors
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -173,10 +174,27 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderCantInstallPlugins() {
+		const site = this.props.selectedSite;
+		const reasons = utils.getSiteFileModDisableReason( site, 'modifyFiles' );
+		let reason;
+
+		if ( reasons && reasons.length > 0 ) {
+			reason = reasons[ 0 ];
+		} else if ( ! site.hasMinimumJetpackVersion ) {
+			reason = this.translate( 'You need to update your version of Jetpack.' );
+		} else if ( ! site.isMainNetworkSite() ) {
+			reason = this.translate( 'We can\'t install plugins on multisite sites.' );
+		} else if ( site.options.is_multi_network ) {
+			reason = this.translate( 'We can\'t install plugins on multi-network sites.' );
+		}
+
 		return (
 			<JetpackManageErrorPage
 				site={ this.props.selectedSite }
+				action={ this.translate( 'Contact Support' ) }
+				actionURL={ support.JETPACK_CONTACT_SUPPORT }
 				title={ this.translate( 'Oh no! We can\'t install plugins on this site.' ) }
+				line={ reason }
 				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' } />
 		);
 	},
