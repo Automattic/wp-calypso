@@ -25,7 +25,7 @@ class QueryUserPurchases extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.fetchingUserPurchases ||
+		if ( nextProps.requesting ||
 			! nextProps.userId ||
 			( this.props.userId === nextProps.userId ) ) {
 			return;
@@ -40,14 +40,14 @@ class QueryUserPurchases extends Component {
 
 QueryUserPurchases.propTypes = {
 	userId: PropTypes.number.isRequired,
-	fetchingUserPurchases: PropTypes.bool.isRequired,
+	requesting: PropTypes.bool.isRequired,
 	fetchUserPurchases: PropTypes.func.isRequired
 };
 
 export default connect(
 	state => {
 		return {
-			fetchingUserPurchases: isFetchingUserPurchases( state )
+			requesting: isFetchingUserPurchases( state )
 		};
 	},
 	{ fetchUserPurchases }
