@@ -31,4 +31,4 @@ module.exports = function() {
 			readerController.sidebar,
 			controller.recommendedPosts );
 	}
-}
+};

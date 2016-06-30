@@ -60,7 +60,7 @@ const Start = React.createClass( {
 	renderLoadingPlaceholders() {
 		const count = 4;
 		return times( count, function( i ) {
-			return( <CardPlaceholder key={ 'placeholder-' + i } /> );
+			return ( <CardPlaceholder key={ 'placeholder-' + i } /> );
 		} );
 	},
 
@@ -78,7 +78,7 @@ const Start = React.createClass( {
 
 				{ ! hasRecommendations && this.renderLoadingPlaceholders() }
 
-				{ hasRecommendations && <Masonry className="reader-start__cards"  updateOnEachImageLoad={ true } options={ { gutter: 14 } }>
+				{ hasRecommendations && <Masonry className="reader-start__cards" updateOnEachImageLoad={ true } options={ { gutter: 14 } }>
 					{ this.props.recommendationIds ? map( this.props.recommendationIds, ( recId ) => {
 						return (
 							<StartCard

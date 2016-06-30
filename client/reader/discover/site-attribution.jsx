@@ -32,7 +32,7 @@ var DiscoverSiteAttribution = React.createClass( {
 			<div className={ classes }>
 				{ attribution.avatar_url ? <img className="gravatar" src={ encodeURI( attribution.avatar_url ) } alt="Avatar" width="20" height="20" /> : <span className="noticon noticon-website"></span> }
 				<span>
-					<a {...siteLinkProps} className={ siteClasses } href={ encodeURI( this.props.siteUrl ) }>
+					<a { ...siteLinkProps } className={ siteClasses } href={ encodeURI( this.props.siteUrl ) }>
 						{ this.translate( 'visit' ) } <em>{ attribution.blog_name }</em>
 					</a>
 				</span>

@@ -47,7 +47,7 @@ function siteishFromSiteAndPost( site, post ) {
 	return {
 		title: '',
 		domain: ''
-	}
+	};
 }
 
 function isSpecialClick( event ) {

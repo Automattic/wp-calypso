@@ -57,7 +57,7 @@ const SubscriptionListItem = React.createClass( {
 		return {
 			site,
 			feed
-		}
+		};
 	},
 
 	smartSetState: smartSetState,

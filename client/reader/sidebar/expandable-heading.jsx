@@ -23,10 +23,10 @@ ExpandableSidebarHeading.propTypes = {
 	title: React.PropTypes.string.isRequired,
 	count: React.PropTypes.number,
 	onClick: React.PropTypes.func
-}
+};
 
 ExpandableSidebarHeading.defaultProps = {
 	onClick: noop
-}
+};
 
 export default ExpandableSidebarHeading;

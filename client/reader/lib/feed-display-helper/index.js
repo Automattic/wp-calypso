@@ -33,7 +33,7 @@ module.exports = {
 			return getFeedUrl( feedData.feed_ID );
 		}
 
-		return getSiteUrl( siteData.get( 'ID' ) )
+		return getSiteUrl( siteData.get( 'ID' ) );
 	},
 
 	getSiteUrl: function( siteData, feedData, subscription ) {

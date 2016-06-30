@@ -20,7 +20,7 @@ var DiscoverVisitLink = React.createClass( {
 
 	render: function() {
 		var siteLinkProps = DiscoverHelper.getLinkProps( this.props.siteUrl ),
-			siteName = ( <a {...siteLinkProps} onClick={ this.recordClick } href={ this.props.siteUrl }>
+			siteName = ( <a { ...siteLinkProps } onClick={ this.recordClick } href={ this.props.siteUrl }>
 				<span>{ this.props.siteName || '(untitled)' }</span>
 			</a> ),
 			classes = classnames( 'discover-visit-link' );

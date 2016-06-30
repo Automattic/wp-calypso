@@ -115,7 +115,7 @@ var PostImages = React.createClass( {
 		if ( this.state.viewing ) {
 			fullList = images.map( function( image, index ) {
 				return (
-					<li key={ 'full-image-' + index } className='reader-post-images__full-image'>
+					<li key={ 'full-image-' + index } className="reader-post-images__full-image">
 						<img
 							src={ resizeImageUrl( image.src, { h: 800, w: 800 } ) }
 							onClick={ this.ignoreClick }

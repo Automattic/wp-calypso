@@ -14,7 +14,7 @@ var FeedHeader = React.createClass( {
 	getInitialState() {
 		return {
 			siteish: this.buildSiteish( this.props.site, this.props.feed )
-		}
+		};
 	},
 
 	componentWillReceiveProps( nextProps ) {

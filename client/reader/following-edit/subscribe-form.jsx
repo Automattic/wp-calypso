@@ -27,7 +27,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 			onFollow: noop,
 			initialSearchString: '',
 			isSearchOpen: false
-		}
+		};
 	},
 
 	getInitialState: function() {
