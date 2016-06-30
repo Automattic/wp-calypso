@@ -14,3 +14,6 @@ The get request will first check for data on the object itself, and if it finds 
 
 `fetch()`
 The fetch method will call out to the `/plans` endpoint, store the results to the `PlansList` object, emit a 'change' event, and store the new data to localStorage.
+
+`getPlanBySlug( slug )`
+Returns a plan from the current list which slug matches the searched term

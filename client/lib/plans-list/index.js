@@ -115,6 +115,25 @@ PlansList.prototype.update = function( plans ) {
 	this.data = plans;
 };
 
+/**
+ * Search in the plans list for a plan with a certain slug
+ *
+ * @param {string} slug - Slug to search
+ * @return {array} a list of plans that match the search term
+ */
+PlansList.prototype.getPlanBySlug = function( slug ) {
+	if ( ! this.data ) {
+		return null;
+	}
+	const filteredPlans = this.data.filter( ( plan ) => {
+		if ( plan && plan.product_slug === slug ) {
+			return plan;
+		}
+	} );
+
+	return filteredPlans[ 0 ];
+};
+
 // Save the plans to memory to save them being fetched
 // from the store every time the user switches sites
 let _plans;
