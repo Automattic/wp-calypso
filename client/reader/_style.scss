@@ -313,3 +313,38 @@
 	}
 }
 
+/* = Foldable card (toggle arrow is opposite side in Reader)
+ --------------------------------------------------------------- */
+
+.following-edit {
+
+	.foldable-card__action {
+		width: 45px;
+		height: 100%;
+		padding: 0;
+		position: absolute;
+			left: 0;
+			top: 0;
+	}
+
+	.foldable-card.is-expanded {
+		margin-bottom: 0;
+		border-top: 0;
+
+		.foldable-card__content {
+			padding: 0;
+		}
+ 	}
+
+	.foldable-card__expand .gridicon {
+		transform: rotate( -90deg );
+	    position: absolute;
+	    	top: 24px;
+     	left: 0;
+	}
+ }
+
+ // Make sure it rotates in the right direction
+.following-edit .foldable-card.is-expanded .gridicon {
+	transform: rotate( 0deg );
+}

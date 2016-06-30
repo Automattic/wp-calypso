@@ -76,7 +76,7 @@
 .reader-list-item__actions {
 	position: absolute;
 		bottom: 0;
-		right: 0;
+		right: 20px;
 		top: 16px;
 
 	.follow-button__label {
@@ -85,8 +85,6 @@
 			display: none;
 		}
 	}
-
-
 }
 
 .foldable-card {
@@ -97,6 +95,10 @@
 
 	.reader-list-item__title,
 	.reader-list-item__description {
-		margin-left: 90px;
+		margin: 0 100px 0 90px;
+
+		@include breakpoint( "<660px" ) {
+			margin: 0 30px 0 90px;
+		}
 	}
 }
