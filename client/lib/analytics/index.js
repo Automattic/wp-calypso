@@ -5,8 +5,11 @@ var debug = require( 'debug' )( 'calypso:analytics' ),
 	assign = require( 'lodash/assign' ),
 	times = require( 'lodash/times' ),
 	omit = require( 'lodash/omit' ),
+	pickBy = require( 'lodash/pickBy' ),
 	startsWith = require( 'lodash/startsWith' ),
-	isUndefined = require( 'lodash/isUndefined' );
+	isUndefined = require( 'lodash/isUndefined' ),
+	url = require( 'url' ),
+	qs = require( 'qs' );
 
 /**
  * Internal dependencies
@@ -147,9 +150,23 @@ var analytics = {
 		},
 
 		recordPageView: function( urlPath ) {
-			analytics.tracks.recordEvent( 'calypso_page_view', {
-				'path': urlPath
-			} );
+			let eventProperties = {
+				path: urlPath
+			};
+
+			// Record all `utm` marketing parameters as event properties on the page view event
+			// so we can analyze their performance with our analytics tools
+			if ( window.location ) {
+				const parsedUrl = url.parse( window.location.href );
+				const urlParams = qs.parse( parsedUrl.query );
+				const utmParams = pickBy( urlParams, function( value, key ) {
+					return startsWith( key, 'utm_' );
+				} );
+
+				eventProperties = assign( eventProperties, utmParams );
+			}
+
+			analytics.tracks.recordEvent( 'calypso_page_view', eventProperties );
 		},
 
 		createRandomId:  function() {
