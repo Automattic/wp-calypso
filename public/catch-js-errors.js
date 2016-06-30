@@ -96,6 +96,9 @@
 			} else if ( Math.random() <= 0.02 ) {
 				localStorage.setItem( 'log-errors', 'analytics' );
 				//Prep the stage up for GA logging experiment
+			} else if ( Math.random() <= 0.03 ) {
+				localStorage.setItem( 'log-errors', 'external' );
+				//Prep the stage up for Google Stackdriver or other service experiment
 			} else {
 				localStorage.setItem( 'log-errors', 'false' );
 			}
