@@ -24,6 +24,7 @@ export default React.createClass( {
 		startExport: PropTypes.func.isRequired,
 		setPostType: PropTypes.func.isRequired,
 		advancedSettingsFetch: PropTypes.func.isRequired,
+		isGuidedTransferInProgress: PropTypes.bool,
 		showGuidedTransferOptions: PropTypes.bool,
 		shouldShowProgress: PropTypes.bool.isRequired,
 		postType: PropTypes.string,
