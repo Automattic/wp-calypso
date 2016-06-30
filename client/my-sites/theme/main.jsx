@@ -321,7 +321,7 @@ const ThemeSheet = React.createClass( {
 		if ( this.isActive() ) {
 			actionTitle = i18n.translate( 'Customize' );
 		} else if ( this.props.name ) {
-			actionTitle = i18n.translate( 'Pick this design' );
+			actionTitle = this.props.isLoggedIn ? i18n.translate( 'Activate this design' ) : i18n.translate( 'Pick this design' );
 		}
 
 		const section = this.validateSection( this.props.section );
