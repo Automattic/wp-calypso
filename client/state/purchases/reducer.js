@@ -7,6 +7,7 @@ import matches from 'lodash/matches';
 /**
  * Internal Dependencies
  */
+import { createReducer } from 'state/utils';
 import {
 	PURCHASES_REMOVE,
 	PURCHASE_REMOVE,
@@ -109,65 +110,60 @@ function updatePurchases( existingPurchases, action ) {
 	return purchases;
 }
 
-export const items = ( state = initialState, action ) => {
-	const { type } = action;
+const assignError = ( state, action ) => ( { ...state, error: action.error } );
 
-	switch ( type ) {
-		case PURCHASES_REMOVE:
-			return { ...state,
-				data: [],
-				hasLoadedSitePurchasesFromServer: false,
-				hasLoadedUserPurchasesFromServer: false
-			};
-		case PURCHASE_REMOVE:
-			return { ...state,
-				data: [],
-				isFetchingSitePurchases: false,
-				isFetchingUserPurchases: false
-			};
-		case PURCHASES_SITE_FETCH:
-			return { ...state, isFetchingSitePurchases: true };
-		case PURCHASES_USER_FETCH:
-			return { ...state, isFetchingUserPurchases: true };
+export const items = createReducer( initialState, {
+	[ PURCHASES_REMOVE ]: ( state ) => ( {
+		...state,
+		data: [],
+		hasLoadedSitePurchasesFromServer: false,
+		hasLoadedUserPurchasesFromServer: false
+	} ),
 
-		case PURCHASE_REMOVE_COMPLETED:
-			return { ...state,
-				data: updatePurchases( state.data, action ),
-				error: null,
-				isFetchingSitePurchases: false,
-				isFetchingUserPurchases: false,
-				hasLoadedSitePurchasesFromServer: true,
-				hasLoadedUserPurchasesFromServer: true
-			};
-		case PURCHASES_SITE_FETCH_COMPLETED:
-			return { ...state,
-				data: updatePurchases( state.data, action ),
-				error: null,
-				isFetchingSitePurchases: false,
-				hasLoadedSitePurchasesFromServer: true
-			};
-		case PURCHASES_USER_FETCH_COMPLETED:
-			return { ...state,
-				data: updatePurchases( state.data, action ),
-				error: null,
-				isFetchingUserPurchases: false,
-				hasLoadedUserPurchasesFromServer: true
-			};
+	[ PURCHASE_REMOVE ]: ( state ) => ( {
+		...state,
+		data: [],
+		isFetchingSitePurchases: false,
+		isFetchingUserPurchases: false
+	} ),
 
-		case PURCHASE_REMOVE_FAILED:
-		case PURCHASES_SITE_FETCH_FAILED:
-		case PURCHASES_USER_FETCH_FAILED:
-			return { ...state, error: action.error };
+	[ PURCHASES_SITE_FETCH ]: ( state ) => ( { ...state, isFetchingSitePurchases: true } ),
 
-		case PRIVACY_PROTECTION_CANCEL_COMPLETED:
-			return updatePurchaseById( state, action.purchase.id, action.purchase );
+	[ PURCHASES_USER_FETCH ]: ( state ) => ( { ...state, isFetchingUserPurchases: true } ),
 
-		case PRIVACY_PROTECTION_CANCEL_FAILED:
-			return updatePurchaseById( state, action.purchaseId, {
-				error: action.error
-			} );
+	[ PURCHASE_REMOVE_COMPLETED ]: ( state, action ) => ( {
+		...state,
+		data: updatePurchases( state.data, action ),
+		error: null,
+		isFetchingSitePurchases: false,
+		isFetchingUserPurchases: false,
+		hasLoadedSitePurchasesFromServer: true,
+		hasLoadedUserPurchasesFromServer: true
+	} ),
 
-		default:
-			return state;
-	}
-};
+	[ PURCHASES_SITE_FETCH_COMPLETED ]: ( state, action ) => ( {
+		...state,
+		data: updatePurchases( state.data, action ),
+		error: null,
+		isFetchingSitePurchases: false,
+		hasLoadedSitePurchasesFromServer: true
+	} ),
+
+	[ PURCHASES_USER_FETCH_COMPLETED ]: ( state, action ) => ( {
+		...state,
+		data: updatePurchases( state.data, action ),
+		error: null,
+		isFetchingUserPurchases: false,
+		hasLoadedUserPurchasesFromServer: true
+	} ),
+
+	[ PURCHASE_REMOVE_FAILED ]: assignError,
+	[ PURCHASES_SITE_FETCH_FAILED ]: assignError,
+	[ PURCHASES_USER_FETCH_FAILED ]: assignError,
+
+	[ PRIVACY_PROTECTION_CANCEL_COMPLETED ]: ( state, action ) => updatePurchaseById( state, action.purchase.id, action.purchase ),
+
+	[ PRIVACY_PROTECTION_CANCEL_FAILED ]: ( state, action ) => updatePurchaseById( state, action.purchaseId, {
+		error: action.error
+	} )
+} );
