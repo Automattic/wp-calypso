@@ -38,7 +38,7 @@ const JetpackConnectMain = React.createClass( {
 
 	componentDidMount() {
 		let from = 'direct';
-		if ( this.props.isInstall ) {
+		if ( this.props.type === 'install' ) {
 			from = 'jpdotcom';
 		}
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
@@ -196,11 +196,35 @@ const JetpackConnectMain = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 	},
 
+	getTexts() {
+		if ( this.props.type === 'install' ) {
+			return {
+				headerTitle: this.translate( 'Install Jetpack' ),
+				headerSubtitle: this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect ' +
+					'to your self-hosted WordPress site.' ),
+			};
+		}
+		if ( this.props.type === 'pro' ) {
+			return {
+				headerTitle: this.translate( 'Get Jetpack Pro' ),
+				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
+					'then purchase and activate your plan' ),
+			};
+		}
+		if ( this.props.type === 'premium' ) {
+			return {
+				headerTitle: this.translate( 'Get Jetpack Premium' ),
+				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
+					'then purchase and activate your plan' ),
+			};
+		}
+	},
+
 	renderFooter() {
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">{ this.translate( 'Install Jetpack Manually' ) }</LoggedOutFormLinkItem>
-				{ this.props.isInstall
+				{ this.props.type === 'install'
 					? null
 					: <LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
 				}
@@ -223,7 +247,7 @@ const JetpackConnectMain = React.createClass( {
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
 					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() }
-					isInstall={ this.props.isInstall } />
+					isInstall={ this.props.type === 'install' } />
 			</Card>
 		);
 	},
@@ -246,8 +270,8 @@ const JetpackConnectMain = React.createClass( {
 				<div className="jetpack-connect__site-url-entry-container">
 					<ConnectHeader
 						showLogo={ false }
-						headerText={ this.translate( 'Connect a self-hosted WordPress' ) }
-						subHeaderText={ this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect to your self-hosted WordPress site.' ) }
+						headerText={ this.getTexts().headerTitle }
+						subHeaderText={ this.getTexts().headerSubtitle }
 						step={ 1 }
 						steps={ 3 } />
 
@@ -266,8 +290,8 @@ const JetpackConnectMain = React.createClass( {
 				<div className="jetpack-connect__site-url-entry-container">
 					<ConnectHeader
 						showLogo={ false }
-						headerText={ this.translate( 'Install Jetpack' ) }
-						subHeaderText={ this.translate( 'Installing Jetpack is easy. Please start by typing your site address below and then click "Start Installation".' ) }
+						headerText={ this.getTexts().headerTitle }
+						subHeaderText={ this.getTexts().headerSubtitle }
 						step={ 1 }
 						steps={ 3 } />
 
@@ -374,7 +398,7 @@ const JetpackConnectMain = React.createClass( {
 		if ( status === 'notActiveJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
 			return this.renderActivateInstructions();
 		}
-		if ( this.props.isInstall ) {
+		if ( this.props.type === 'install' ) {
 			return this.renderSiteEntryInstall();
 		}
 		return this.renderSiteEntry();
