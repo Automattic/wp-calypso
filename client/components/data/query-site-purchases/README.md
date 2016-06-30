@@ -1,7 +1,7 @@
 Query Site Purchases
 ================
 
-`<QuerySitePurchases />` is a React component used in managing network requests for sites/purchases (across all users).
+`<QuerySitePurchases />` is a React component used in managing network requests for site purchases (across all users).
 
 ## Usage
 
