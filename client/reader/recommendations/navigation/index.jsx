@@ -16,12 +16,12 @@ const RecommendedNavigation = React.createClass( {
 		};
 
 		return (
-			<SectionNav selectedText={ sectionNames[ current ]}>
+			<SectionNav selectedText={ sectionNames[ current ] }>
 				<NavTabs>
-					<NavItem path="/recommendations/mine" selected={current === 'for-you'}>{ this.translate( 'For You' )}</NavItem>
-					<NavItem path="/recommendations/posts" selected={current === 'posts'}>{ this.translate( 'Posts' )}</NavItem>
-					<NavItem path="/recommendations" selected={current === 'sites'}>{ this.translate( 'Topics' )}</NavItem>
-					<NavItem path="/tags" selected={current === 'tags'}>{ this.translate( 'Tags' )}</NavItem>
+					<NavItem path="/recommendations/mine" selected={ current === 'for-you' }>{ this.translate( 'For You' ) }</NavItem>
+					<NavItem path="/recommendations/posts" selected={ current === 'posts' }>{ this.translate( 'Posts' ) }</NavItem>
+					<NavItem path="/recommendations" selected={ current === 'sites' }>{ this.translate( 'Topics' ) }</NavItem>
+					<NavItem path="/tags" selected={ current === 'tags' }>{ this.translate( 'Tags' ) }</NavItem>
 				</NavTabs>
 			</SectionNav>
 			);

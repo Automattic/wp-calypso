@@ -52,7 +52,7 @@ var DiscoverPostAttribution = React.createClass( {
 					{ this.translate( 'Originally posted by' ) }
 					<a className="discover-attribution__author" rel="external" target="_blank" onClick={ this.recordAuthorClick } href={ encodeURI( attribution.author_url ) }>{ attribution.author_name }</a>
 					{ this.translate( 'on' ) }
-					<a {...siteLinkProps} className={ siteClasses } onClick={ this.recordSiteClick } href={ encodeURI( this.props.siteUrl ) }>{ attribution.blog_name }</a>
+					<a { ...siteLinkProps } className={ siteClasses } onClick={ this.recordSiteClick } href={ encodeURI( this.props.siteUrl ) }>{ attribution.blog_name }</a>
 				</span>
 			</div>
 		);

@@ -290,7 +290,7 @@ const FollowingEdit = React.createClass( {
 	renderLoadingPlaceholders: function() {
 		var count = this.state.subscriptions.size ? 10 : initialLoadFeedCount;
 		return times( count, function( i ) {
-			return( <SubscriptionPlaceholder key={ 'placeholder-' + i } /> );
+			return ( <SubscriptionPlaceholder key={ 'placeholder-' + i } /> );
 		} );
 	},
 
@@ -468,7 +468,7 @@ const FollowingEdit = React.createClass( {
 	},
 
 	toggleAddSite: function() {
-		this.refs['feed-search'].focus();
+		this.refs[ 'feed-search' ].focus();
 	},
 
 	toggleSearching() {
@@ -477,12 +477,12 @@ const FollowingEdit = React.createClass( {
 			isSearching: isSearching
 		} );
 		if ( isSearching ) {
-			this.refs['url-search'].focus();
+			this.refs[ 'url-search' ].focus();
 		}
 	},
 
 	renderNotices() {
-		return this.state.notices.map( ( funcName ) => this[funcName]() );
+		return this.state.notices.map( ( funcName ) => this[ funcName ]() );
 	},
 
 	render: function() {

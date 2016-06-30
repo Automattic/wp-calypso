@@ -18,7 +18,7 @@ var ReadingTime = React.createClass( {
 			approxTime = ( <span className="reading-time__approx">( { this.translate( '~%d min', {
 				args: [ timeInMinutes ],
 				context: 'An approximate time to read something, in minutes'
-			} )})</span> );
+			} ) })</span> );
 		}
 
 		readingTime = this.translate(

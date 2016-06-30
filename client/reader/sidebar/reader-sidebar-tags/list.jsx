@@ -39,7 +39,7 @@ const ReaderSidebarTagsList = React.createClass( {
 			);
 		}
 
-		return(
+		return (
 			<div>{ this.renderItems() }</div>
 		);
 	}

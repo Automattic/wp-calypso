@@ -6,7 +6,7 @@ const RecommendedTags = React.createClass( {
 	render() {
 		return (
 			<Main>
-				<Navigation selected='tags' />
+				<Navigation selected="tags" />
 				Trending tags
 			</Main>
 			);
