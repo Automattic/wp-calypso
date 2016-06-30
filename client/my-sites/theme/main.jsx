@@ -360,7 +360,7 @@ const ThemeSheet = React.createClass( {
 						<div className="theme__sheet-content">
 							{ this.renderSectionNav( section ) }
 							{ this.renderSectionContent( section ) }
-							<div className="theme__footer_line"><Gridicon icon="my-sites" /></div>
+							<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
 						</div>
 					</div>
 					<div className="theme__sheet-column-right">
