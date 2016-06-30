@@ -7,9 +7,31 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
+import { preventWidows } from 'lib/formatting';
 
 export default React.createClass( {
 	displayName: 'JetpackInstallStep',
+
+	renderText() {
+		const { action } = this.props;
+		let { text } = this.props;
+
+		if ( ! action ) {
+			return (
+				<span>
+					{ preventWidows( text ) }
+				</span>
+			);
+		}
+
+		return (
+			<span>
+				{ text }
+				<span> </span>
+				{ action }
+			</span>
+		);
+	},
 
 	render() {
 		return (
@@ -18,9 +40,9 @@ export default React.createClass( {
 					{ this.props.title }
 				</div>
 				<div className="jetpack-connect__install-step-text">
-					<span>{ this.props.text }</span> <span>{ this.props.action ? this.props.action : '' }</span>
+					{ this.renderText() }
 				</div>
-					{ this.props.example }
+				{ this.props.example }
 			</Card>
 		);
 	}
