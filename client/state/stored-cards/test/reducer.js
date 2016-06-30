@@ -15,7 +15,7 @@ import {
 	STORED_CARDS_DELETE_FAILED
 } from 'state/action-types';
 import reducer from '../reducer';
-import { STORED_CARDS_FROM_API, STORED_CARDS } from './fixture';
+import { STORED_CARDS_FROM_API } from './fixture';
 
 describe( 'items', () => {
 	it( 'should return an object with the initial state', () => {
@@ -41,7 +41,7 @@ describe( 'items', () => {
 		} );
 
 		expect( state ).to.be.eql( {
-			items: STORED_CARDS,
+			items: STORED_CARDS_FROM_API,
 			isFetching: false,
 			isDeleting: false
 		} );
@@ -61,16 +61,16 @@ describe( 'items', () => {
 
 	it( 'should keep the current state and enable isDeleting when requesting a stored card deletion', () => {
 		const state = reducer( {
-			items: STORED_CARDS,
+			items: STORED_CARDS_FROM_API,
 			isFetching: false,
 			isDeleting: false
 		}, {
 			type: STORED_CARDS_DELETE,
-			card: STORED_CARDS[ 0 ]
+			card: STORED_CARDS_FROM_API[ 0 ]
 		} );
 
 		expect( state ).to.be.eql( {
-			items: STORED_CARDS,
+			items: STORED_CARDS_FROM_API,
 			isFetching: false,
 			isDeleting: true
 		} );
@@ -78,16 +78,16 @@ describe( 'items', () => {
 
 	it( 'should remove a stored card from the list if the stored card deletion request succeeded', () => {
 		const state = reducer( {
-			items: STORED_CARDS,
+			items: STORED_CARDS_FROM_API,
 			isFetching: false,
 			isDeleting: true
 		}, {
 			type: STORED_CARDS_DELETE_COMPLETED,
-			card: STORED_CARDS[ 0 ]
+			card: STORED_CARDS_FROM_API[ 0 ]
 		} );
 
 		expect( state ).to.be.eql( {
-			items: [ STORED_CARDS[ 1 ] ],
+			items: [ STORED_CARDS_FROM_API[ 1 ] ],
 			isFetching: false,
 			isDeleting: false
 		} );
@@ -95,7 +95,7 @@ describe( 'items', () => {
 
 	it( 'should not change the list of items if the stored card deletion request failed', () => {
 		const state = reducer( {
-			items: STORED_CARDS,
+			items: STORED_CARDS_FROM_API,
 			isFetching: false,
 			isDeleting: true
 		}, {
@@ -103,7 +103,7 @@ describe( 'items', () => {
 		} );
 
 		expect( state ).to.be.eql( {
-			items: STORED_CARDS,
+			items: STORED_CARDS_FROM_API,
 			isFetching: false,
 			isDeleting: false
 		} );
