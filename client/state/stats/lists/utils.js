@@ -31,7 +31,7 @@ export const normalizers = {
 	 * @param  {Object} data    Stats query
 	 * @return {Object?}        Normalized stats data
 	 */
-	stats: ( data ) => {
+	stats( data ) {
 		if ( ! data || ! data.stats ) {
 			return null;
 		}
@@ -77,7 +77,7 @@ export const normalizers = {
 	 * @param  {Object} data Stats query
 	 * @return {Array}       Parsed publicize data array
 	 */
-	statsPublicize: ( data = {} ) => {
+	statsPublicize( data = {} ) {
 		if ( ! data || ! data.services ) {
 			return [];
 		}

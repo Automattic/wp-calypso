@@ -59,8 +59,6 @@ class StatsConnectedModule extends Component {
 		if ( ! summary && period && path && siteSlug ) {
 			return '/stats/' + period.period + '/' + path + '/' + siteSlug + '?startDate=' + date;
 		}
-
-		return null;
 	}
 
 	render() {
