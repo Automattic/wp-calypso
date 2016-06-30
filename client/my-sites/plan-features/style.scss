@@ -95,6 +95,33 @@ $plan-features-header-banner-height: 20px;
 	margin: 0;
 	font-size: 28px;
 	line-height: 1.5;
+	color: $gray-dark;
+}
+
+.plan-features__price.is-original {
+	color: $gray;
+}
+
+.plan-features__price.is-discounted {
+	color: $alert-green;
+}
+
+.plan-features__price.is-discounted,
+.plan-features__price.is-original {
+	position: relative;
+	align-items: stretch;
+	margin-right: 8px;
+}
+
+.plan-features__price.is-original:before {
+	position: absolute;
+	content: "";
+	left: 0;
+	top: 50%;
+	right: 0;
+	border-top: 2px solid $orange-fire;
+	transform: rotate(-16deg);
+	opacity: .9;
 }
 
 .plan-features__price-currency-symbol,
@@ -103,13 +130,17 @@ $plan-features-header-banner-height: 20px;
 	font-size: 12px;
 }
 
-.plan-features__price-currency-symbol {
-	color: $gray;
+.plan-features__header-price-group {
+	display: flex;
+	flex-flow: row wrap;
 }
 
-.plan-features__price-integer,
-.plan-features__price-fraction {
-	color: $gray-dark;
+.plan-features__price.is-discounted .plan-features__price-currency-symbol {
+	color: $alert-green;
+}
+
+.plan-features__price-currency-symbol {
+	color: $gray;
 }
 
 .plan-features__price-integer {

@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
+import classNames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -27,14 +28,17 @@ class PlanFeaturesHeader extends Component {
 	render() {
 		const {
 			billingTimeFrame,
-			currencyCode,
 			current,
+			discountPrice,
 			planType,
 			popular,
-			rawPrice,
 			title,
 			translate
 		} = this.props;
+		const isDiscounted = !! discountPrice;
+		const timeframeClasses = classNames( 'plan-features__header-timeframe', {
+			'is-discounted': isDiscounted
+		} );
 		return (
 			<header className="plan-features__header" onClick={ this.props.onClick } >
 				{
@@ -49,12 +53,33 @@ class PlanFeaturesHeader extends Component {
 				</div>
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
-					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ rawPrice } />
-					<p className="plan-features__header-timeframe">
+					{ this.getPlanFeaturesPrices() }
+					<p className={ timeframeClasses } >
 						{ billingTimeFrame }
 					</p>
 				</div>
 			</header>
+		);
+	}
+
+	getPlanFeaturesPrices() {
+		const {
+			currencyCode,
+			discountPrice,
+			rawPrice,
+		} = this.props;
+
+		if ( discountPrice ) {
+			return (
+				<span className="plan-features__header-price-group">
+					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ rawPrice } original />
+					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ discountPrice } discounted />
+				</span>
+			);
+		}
+
+		return (
+			<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ rawPrice } />
 		);
 	}
 
@@ -399,6 +424,7 @@ PlanFeaturesHeader.propTypes = {
 	] ).isRequired,
 	popular: PropTypes.bool,
 	rawPrice: PropTypes.number,
+	discountPrice: PropTypes.number,
 	currencyCode: PropTypes.string,
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func

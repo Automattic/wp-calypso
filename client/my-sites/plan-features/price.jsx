@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -11,13 +12,17 @@ import { getCurrencyObject } from 'lib/format-currency';
 export default class PlanFeaturesPrice extends Component {
 
 	render() {
-		const { currencyCode, rawPrice } = this.props;
+		const { currencyCode, rawPrice, original, discounted } = this.props;
 		if ( ! currencyCode || ( rawPrice !== 0 && ! rawPrice ) ) {
 			return null;
 		}
 		const price = getCurrencyObject( rawPrice, currencyCode );
+		const classes = classNames( 'plan-features__price', {
+			'is-original': original,
+			'is-discounted': discounted
+		} );
 		return (
-			<h4 className="plan-features__price">
+			<h4 className={ classes }>
 				<sup className="plan-features__price-currency-symbol">
 					{ price.symbol }
 				</sup>
@@ -34,9 +39,13 @@ export default class PlanFeaturesPrice extends Component {
 
 PlanFeaturesPrice.propTypes = {
 	rawPrice: PropTypes.number,
+	original: PropTypes.bool,
+	discount: PropTypes.bool,
 	currencyCode: PropTypes.string
 };
 
 PlanFeaturesPrice.defaultProps = {
-	currencyCode: 'USD'
+	currencyCode: 'USD',
+	original: false,
+	discounted: false
 };
