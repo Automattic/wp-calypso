@@ -22,6 +22,7 @@
 
 	function sendErrorsToApi() {
 		var xhr = new XMLHttpRequest(),
+			url = ( window.location && window.location.href ) ? window.location.href + ' ' : '',
 			params;
 
 		if ( savedErrors.length > 0 ) {
@@ -30,7 +31,8 @@
 			xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
 
 			params = 'client_id=39911&client_secret=cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8&error=';
-			params += encodeURIComponent( JSON.stringify( savedErrors ) );
+			params += encodeURIComponent( url + JSON.stringify( savedErrors ) );
+			//Window.location.href is hached in here, because backend has a char limit for now.
 
 			xhr.send( params );
 
@@ -84,11 +86,6 @@
 		// Add user agent if we have it
 		if ( navigator && navigator.userAgent ) {
 			error.userAgent = navigator.userAgent;
-		}
-
-		//Add url
-		if ( window.location && window.location.href ) {
-			error.location = window.location.href;
 		}
 
 		handleError( error );
