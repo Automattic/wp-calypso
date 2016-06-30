@@ -13,6 +13,7 @@ import analytics from 'lib/analytics';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getCurrentPlan } from 'lib/plans';
 import { getPlans } from 'state/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
 import { isJpphpBundle } from 'lib/products-values';
 import Main from 'components/main';
@@ -82,7 +83,7 @@ const Plans = React.createClass( {
 
 	showMonthlyPlansLink() {
 		const selectedSite = this.props.sites.getSelectedSite();
-		if ( !selectedSite.jetpack ) {
+		if ( ! selectedSite.jetpack ) {
 			return '';
 		}
 
@@ -127,7 +128,8 @@ const Plans = React.createClass( {
 
 	render() {
 		const selectedSite = this.props.sites.getSelectedSite(),
-			mainClassNames = {};
+			mainClassNames = {},
+			siteId = this.props.siteId;
 
 		let	hasJpphpBundle,
 			currentPlan;
@@ -169,7 +171,7 @@ const Plans = React.createClass( {
 
 						{ ! hasJpphpBundle && this.showMonthlyPlansLink() }
 						<QueryPlans />
-						<QuerySitePlans />
+						<QuerySitePlans siteId={ siteId } />
 
 						{
 							showPlanFeatures
@@ -200,7 +202,8 @@ export default connect(
 	( state, props ) => {
 		return {
 			plans: getPlans( state ),
-			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() )
+			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() ),
+			siteId: getSelectedSiteId( state )
 		};
 	}
 )( Plans );
