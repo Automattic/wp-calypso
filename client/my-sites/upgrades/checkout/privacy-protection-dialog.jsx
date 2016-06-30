@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+const React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-var Dialog = require( 'components/dialog' ),
+const Dialog = require( 'components/dialog' ),
 	PrivacyProtectionExample = require( './privacy-protection-example' );
 
 module.exports = React.createClass( {
@@ -35,6 +35,14 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		let privacyPrice = this.translate( '%(cost)s per domain / year', { args: { cost: this.props.cost } } );
+		if ( this.props.isFree ) {
+			privacyPrice =
+				<span className="privacy-free-text">
+					{ this.translate( 'Free with your plan' ) }
+				</span>;
+		}
+
 		return (
 			<Dialog additionalClassNames="privacy-protection-dialog" isVisible={ this.props.isVisible } onClose={ this.props.onClose }>
 				<header>
@@ -55,7 +63,9 @@ module.exports = React.createClass( {
 				<ul className="privacy-comparison">
 					<li className="with-privacy">
 						<h3>{ this.translate( 'With Privacy Protection' ) }</h3>
-						<div className="privacy-price">{ this.translate( '%(cost)s per domain / year', { args: { cost: this.props.cost } } ) }</div>
+						<div className="privacy-price">
+							{ privacyPrice }
+						</div>
 						<PrivacyProtectionExample
 							countriesList= { this.props.countriesList }
 							fields={ this.getProtectedFields() } />

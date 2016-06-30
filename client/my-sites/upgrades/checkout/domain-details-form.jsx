@@ -21,7 +21,6 @@ import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
 import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails } from 'lib/upgrades/actions';
 import FormButton from 'components/forms/form-button';
-import { abtest } from 'lib/abtest';
 
 // Cannot convert to ES6 import
 const wpcom = require( 'lib/wp' ).undocumented(),
@@ -154,29 +153,28 @@ export default React.createClass( {
 		return cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0;
 	},
 
-	renderPrivacySection() {
-		return (
-			<PrivacyProtection
-				cart={ this.props.cart }
-				countriesList= { countriesList }
-				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
-				fields={ this.state.form }
-				isChecked={ this.allDomainRegistrationsHavePrivacy() }
-				onCheckboxChange={ this.handleCheckboxChange }
-				onButtonSelect={ this.handlePrivacyDialogButtonSelect }
-				onDialogClose={ this.closeDialog }
-				onDialogOpen={ this.openDialog }
-				onDialogSelect={ this.handlePrivacyDialogSelect }
-				isDialogVisible={ this.state.isDialogVisible }
-				productsList={ this.props.productsList } />
-		);
-	},
-
 	renderSubmitButton() {
 		return (
 			<FormButton className="checkout__domain-details-form-submit-button" onClick={ this.handleSubmitButtonClick }>
 				{ this.translate( 'Continue to Checkout' ) }
 			</FormButton>
+		);
+	},
+
+	renderPrivacySection() {
+		return (
+			<PrivacyProtection
+				cart={ this.props.cart }
+				countriesList={ countriesList }
+				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
+				fields={ this.state.form }
+				isChecked={ this.allDomainRegistrationsHavePrivacy() }
+				onCheckboxChange={ this.handleCheckboxChange }
+				onDialogClose={ this.closeDialog }
+				onDialogOpen={ this.openDialog }
+				onDialogSelect={ this.handlePrivacyDialogSelect }
+				isDialogVisible={ this.state.isDialogVisible }
+				productsList={ this.props.productsList }/>
 		);
 	},
 
@@ -244,19 +242,13 @@ export default React.createClass( {
 
 				<Input label={ this.translate( 'Postal Code', { textOnly } ) } { ...fieldProps( 'postal-code' ) }/>
 
-				{ ( abtest( 'privacyCheckbox' ) !== 'checkbox'
-					? this.renderPrivacySection()
-					: this.renderSubmitButton() ) }
+				{ this.renderSubmitButton() }
 			</div>
 		);
 	},
 
 	handleCheckboxChange() {
-		if ( this.allDomainRegistrationsHavePrivacy() ) {
-			removePrivacyFromAllDomains();
-		} else {
-			addPrivacyToAllDomains();
-		}
+		this.setPrivacyProtectionSubscriptions( ! this.allDomainRegistrationsHavePrivacy() );
 	},
 
 	closeDialog() {
@@ -299,25 +291,6 @@ export default React.createClass( {
 		} );
 	},
 
-	handlePrivacyDialogButtonSelect( options ) {
-		this.formStateController.handleSubmit( ( hasErrors ) => {
-			this.recordSubmit();
-
-			if ( hasErrors ) {
-				this.focusFirstError();
-				return;
-			}
-
-			if ( options.addPrivacy ) {
-				this.finish( { addPrivacy: true } );
-			} else if ( options.skipPrivacyDialog ) {
-				this.finish( { addPrivacy: false } );
-			} else {
-				this.openDialog();
-			}
-		} );
-	},
-
 	recordSubmit() {
 		const errors = formState.getErrorMessages( this.state.form );
 		analytics.tracks.recordEvent( 'calypso_contact_information_form_submit', {
@@ -332,7 +305,9 @@ export default React.createClass( {
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			this.recordSubmit();
 
-			if ( hasErrors ) {
+			if ( hasErrors || options.skipFinish ) {
+				this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
+				this.closeDialog();
 				return;
 			}
 
@@ -341,13 +316,17 @@ export default React.createClass( {
 	},
 
 	finish( options = {} ) {
-		if ( options.addPrivacy ) {
-			addPrivacyToAllDomains();
-		} else if ( options.addPrivacy === false ) {
-			removePrivacyFromAllDomains();
-		}
+		this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
 
 		setDomainDetails( formState.getAllFieldValues( this.state.form ) );
+	},
+
+	setPrivacyProtectionSubscriptions( enable ) {
+		if ( enable ) {
+			addPrivacyToAllDomains();
+		} else {
+			removePrivacyFromAllDomains();
+		}
 	},
 
 	render() {
@@ -358,10 +337,7 @@ export default React.createClass( {
 
 		return (
 			<div>
-				{ ( abtest( 'privacyCheckbox' ) === 'checkbox'
-					? this.renderPrivacySection()
-					: null ) }
-
+				{ this.renderPrivacySection() }
 				<PaymentBox
 					classSet={ classSet }
 					title={ this.translate(
