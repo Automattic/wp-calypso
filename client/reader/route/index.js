@@ -7,7 +7,7 @@ const PRETTY_FEED_URLS = {
 
 const PRETTY_SITE_URLS = {
 	53424024: '/discover'
-}
+};
 
 export function getPrettySiteUrl( siteID ) {
 	return PRETTY_SITE_URLS[ siteID ];
