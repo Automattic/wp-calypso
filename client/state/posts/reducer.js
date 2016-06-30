@@ -24,6 +24,8 @@ import {
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
+	POST_RESTORE,
+	POST_RESTORE_FAILURE,
 	POST_SAVE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
@@ -140,6 +142,46 @@ export function queryRequests( state = {}, action ) {
  */
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
+		case POST_RESTORE: {
+			const { siteId, postId } = action;
+			if ( ! state[ siteId ] ) {
+				return state;
+			}
+
+			const nextManager = state[ siteId ].receive( {
+				ID: postId,
+				status: '__RESTORE_PENDING'
+			}, { patch: true } );
+
+			if ( nextManager === state[ siteId ] ) {
+				return state;
+			}
+
+			return Object.assign( {}, state, {
+				[ siteId ]: nextManager
+			} );
+		}
+
+		case POST_RESTORE_FAILURE: {
+			const { siteId, postId } = action;
+			if ( ! state[ siteId ] ) {
+				return state;
+			}
+
+			const nextManager = state[ siteId ].receive( {
+				ID: postId,
+				status: 'trash'
+			}, { patch: true } );
+
+			if ( nextManager === state[ siteId ] ) {
+				return state;
+			}
+
+			return Object.assign( {}, state, {
+				[ siteId ]: nextManager
+			} );
+		}
+
 		case POSTS_REQUEST_SUCCESS: {
 			const { siteId, query, posts, found } = action;
 			const manager = state[ siteId ] ? state[ siteId ] : new PostQueryManager();
