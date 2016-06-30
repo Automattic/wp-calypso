@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -60,11 +61,11 @@ describe( 'items', () => {
 	} );
 
 	it( 'should keep the current state and enable isDeleting when requesting a stored card deletion', () => {
-		const state = reducer( {
+		const state = reducer( deepFreeze( {
 			items: STORED_CARDS_FROM_API,
 			isFetching: false,
 			isDeleting: false
-		}, {
+		} ), {
 			type: STORED_CARDS_DELETE,
 			card: STORED_CARDS_FROM_API[ 0 ]
 		} );
@@ -77,11 +78,11 @@ describe( 'items', () => {
 	} );
 
 	it( 'should remove a stored card from the list if the stored card deletion request succeeded', () => {
-		const state = reducer( {
+		const state = reducer( deepFreeze( {
 			items: STORED_CARDS_FROM_API,
 			isFetching: false,
 			isDeleting: true
-		}, {
+		} ), {
 			type: STORED_CARDS_DELETE_COMPLETED,
 			card: STORED_CARDS_FROM_API[ 0 ]
 		} );
@@ -94,11 +95,11 @@ describe( 'items', () => {
 	} );
 
 	it( 'should not change the list of items if the stored card deletion request failed', () => {
-		const state = reducer( {
+		const state = reducer( deepFreeze( {
 			items: STORED_CARDS_FROM_API,
 			isFetching: false,
 			isDeleting: true
-		}, {
+		} ), {
 			type: STORED_CARDS_DELETE_FAILED
 		} );
 
