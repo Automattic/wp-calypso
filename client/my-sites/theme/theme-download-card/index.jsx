@@ -23,11 +23,12 @@ const ThemeDownloadCard = React.createClass( {
 	render() {
 		// When we don't generate zips, it's because we have released the theme on .org.
 		const downloadURI = this.props.href || ( 'https://downloads.wordpress.org/theme/' + this.props.theme + '.zip' );
-		const downloadText = i18n.translate( 'This theme is available for download to be used on your {{a}}WordPress self-hosted{{/a}} installation.', {
-			components: {
-				a: <a href={ 'https://wordpress.org' } />
-			}
-		} );
+		const downloadText =
+			i18n.translate( 'This theme is available for download to be used on your {{a}}WordPress self-hosted{{/a}} installation.', {
+				components: {
+					a: <a href={ 'https://wordpress.org' } />
+				}
+			} );
 		return (
 			<Card className="theme-download-card">
 				<Gridicon icon="cloud-download" size={ 48 } />

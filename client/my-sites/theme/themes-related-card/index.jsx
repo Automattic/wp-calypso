@@ -54,7 +54,7 @@ const ThemesRelatedCard = React.createClass( {
 		return (
 			<div>
 				<SectionHeader label={ i18n.translate( 'You might also like' ) } />
-				<ul className="themes-related-card__">
+				<ul className="themes-related-card__themes">
 					{ themes.map( theme => (
 						<li key={ theme.id }>
 							<Card className="themes-related-card__card">
