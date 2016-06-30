@@ -36,11 +36,13 @@ import Site from 'my-sites/site';
 import { decodeEntities } from 'lib/formatting';
 import versionCompare from 'lib/version-compare';
 import EmptyContent from 'components/empty-content';
+import safeImageUrl from 'lib/safe-image-url';
+import Button from 'components/button';
 
 /**
  * Constants
  */
-let calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
+const calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
 const PLANS_PAGE = '/jetpack/connect/plans/';
 const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
@@ -48,7 +50,7 @@ const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 const SiteCard = React.createClass( {
 	render() {
 		const { site_icon, blogname, home_url, site_url } = this.props.queryObject;
-		const siteIcon = site_icon ? { img: site_icon } : false;
+		const siteIcon = site_icon ? { img: safeImageUrl( site_icon ) } : false;
 		const url = decodeEntities( home_url );
 		const parsedUrl = urlModule.parse( url );
 		const path = ( parsedUrl.path === '/' ) ? '' : parsedUrl.path;
@@ -61,7 +63,8 @@ const SiteCard = React.createClass( {
 			is_vip: false,
 			title: decodeEntities( blogname )
 		};
-		return(
+
+		return (
 			<CompactCard className="jetpack-connect__site">
 				<Site site={ site } />
 			</CompactCard>
@@ -84,7 +87,7 @@ const LoggedOutForm = React.createClass( {
 			? <SiteCard queryObject={ queryObject } />
 			: null;
 
-		return(
+		return (
 			<div>
 				<ConnectHeader
 					showLogo={ false }
@@ -197,7 +200,7 @@ const LoggedInForm = React.createClass( {
 			? <SiteCard queryObject={ queryObject } />
 			: null;
 
-		return(
+		return (
 			<div>
 				<ConnectHeader
 					showLogo={ false }
@@ -215,7 +218,15 @@ const LoggedInForm = React.createClass( {
 	},
 
 	handleSubmit() {
-		const { siteReceived, queryObject, manageActivated, activateManageSecret, plansUrl, authorizeError } = this.props.jetpackConnectAuthorize;
+		const {
+			siteReceived,
+			queryObject,
+			manageActivated,
+			activateManageSecret,
+			plansUrl,
+			authorizeError
+		} = this.props.jetpackConnectAuthorize;
+
 		if ( ! this.props.isAlreadyOnSitesList &&
 			queryObject.already_authorized ) {
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
@@ -263,7 +274,14 @@ const LoggedInForm = React.createClass( {
 	},
 
 	getButtonText() {
-		const { queryObject, isAuthorizing, authorizeSuccess, isRedirectingToWpAdmin, siteReceived, authorizeError } = this.props.jetpackConnectAuthorize;
+		const {
+			queryObject,
+			isAuthorizing,
+			authorizeSuccess,
+			isRedirectingToWpAdmin,
+			siteReceived,
+			authorizeError
+		} = this.props.jetpackConnectAuthorize;
 
 		if ( ! this.props.isAlreadyOnSitesList &&
 			queryObject.already_authorized ) {
@@ -314,7 +332,7 @@ const LoggedInForm = React.createClass( {
 
 	isWaitingForConfirmation() {
 		const { isAuthorizing, authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
-		return !( isAuthorizing || authorizeSuccess || siteReceived );
+		return ! ( isAuthorizing || authorizeSuccess || siteReceived );
 	},
 
 	getRedirectionTarget() {
@@ -330,8 +348,10 @@ const LoggedInForm = React.createClass( {
 
 	renderFooterLinks() {
 		const { queryObject, authorizeSuccess, isAuthorizing } = this.props.jetpackConnectAuthorize;
-		const loginUrl = config( 'login_url' ) + '?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) + '&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
-		let backToWpAdminLink = (
+		const loginUrl = config( 'login_url' ) +
+			'?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) +
+			'&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
+		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem icon={ true } href={ queryObject.redirect_after_auth }>
 				{ this.translate( 'Cancel and go back to my site' ) } <Gridicon size={ 18 } icon="external" />
 			</LoggedOutFormLinkItem>
@@ -352,7 +372,7 @@ const LoggedInForm = React.createClass( {
 			);
 		}
 
-		return(
+		return (
 			<LoggedOutFormLinks>
 				{ ! this.props.calypsoStartedConnection && this.isWaitingForConfirmation() ? backToWpAdminLink : null }
 				<LoggedOutFormLinkItem href={ loginUrl }>
@@ -368,14 +388,16 @@ const LoggedInForm = React.createClass( {
 	renderStateAction() {
 		const { authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
 		if ( this.isAuthorizing() || ( authorizeSuccess && ! siteReceived ) ) {
-			return ( <div className="jetpack-connect-logged-in-form__loading">
-				<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
-			</div> );
+			return (
+				<div className="jetpack-connect-logged-in-form__loading">
+					<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
+				</div>
+			);
 		}
 		return (
-			<button disabled={ this.isAuthorizing() } onClick={ this.handleSubmit } className="button is-primary">
+			<Button primary disabled={ this.isAuthorizing() } onClick={ this.handleSubmit }>
 				{ this.getButtonText() }
-			</button>
+			</Button>
 		);
 	},
 
@@ -428,11 +450,14 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 	renderForm() {
 		const { userModule } = this.props;
-		let user = userModule.get();
+		const user = userModule.get();
 		const props = Object.assign( {}, this.props, {
 			user: user
 		} );
-		const calypsoStartedConnection = isCalypsoStartedConnection( this.props.jetpackConnectSessions, this.props.jetpackConnectAuthorize.queryObject.site );
+		const calypsoStartedConnection = isCalypsoStartedConnection(
+			this.props.jetpackConnectSessions,
+			this.props.jetpackConnectAuthorize.queryObject.site
+		);
 
 		return (
 			( user )
