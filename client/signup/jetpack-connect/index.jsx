@@ -234,6 +234,11 @@ const JetpackConnectMain = React.createClass( {
 					'then purchase and activate your plan' ),
 			};
 		}
+		return {
+			headerTitle: this.translate( 'Connect a self-hosted WordPress' ),
+			headerSubtitle: this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect to ' +
+				'your self-hosted WordPress site.' ),
+		};
 	},
 
 	isInstall() {

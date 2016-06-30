@@ -25,7 +25,9 @@ module.exports = function() {
 
 	if ( config.isEnabled( 'jetpack/connect' ) ) {
 		page( '/jetpack/connect/install', jetpackConnectController.install );
+
 		page( '/jetpack/connect/premium', jetpackConnectController.premium );
+
 		page( '/jetpack/connect/pro', jetpackConnectController.pro );
 
 		page( '/jetpack/connect', jetpackConnectController.connect );
