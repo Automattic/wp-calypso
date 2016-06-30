@@ -9,5 +9,5 @@ function goBack() {
 }
 
 export default function HeaderBack() {
-	return <HeaderCake isCompact={ false } onClick={ goBack } />
+	return <HeaderCake isCompact={ false } onClick={ goBack } />;
 }

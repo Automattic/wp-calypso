@@ -45,17 +45,17 @@ module.exports = {
 	},
 
 	hasSource( post ) {
-		return post && this.isDiscoverPost( post ) && !this.isDiscoverSitePick( post );
+		return post && this.isDiscoverPost( post ) && ! this.isDiscoverSitePick( post );
 	},
 
 	getSourceData: function( post ) {
-		if ( !this.hasSource( post ) ) {
+		if ( ! this.hasSource( post ) ) {
 			return null;
 		}
 
 		const data = get( post, 'discover_metadata.featured_post_wpcom_data' );
 
-		if ( !data ) {
+		if ( ! data ) {
 			return null;
 		}
 

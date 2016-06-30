@@ -37,7 +37,7 @@ const SiteAndAuthorIcon = React.createClass( {
 		}
 		return {
 			site: site
-		}
+		};
 	},
 
 	componentDidMount() {
@@ -68,7 +68,7 @@ const SiteAndAuthorIcon = React.createClass( {
 				<SiteIcon site={ site } />
 				<Gravatar user={ this.props.user } size={ 24 } />
 			</div>
-		)
+		);
 	}
 } );
 

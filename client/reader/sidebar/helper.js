@@ -8,7 +8,7 @@ import assign from 'lodash/assign';
 
 module.exports = {
 	itemLinkClass: function( path, currentPath, additionalClasses ) {
-		const basePathLowerCase = decodeURIComponent( currentPath ).split( '?' )[0].replace( /\/edit$/, '' ).toLowerCase(),
+		const basePathLowerCase = decodeURIComponent( currentPath ).split( '?' )[ 0 ].replace( /\/edit$/, '' ).toLowerCase(),
 			pathLowerCase = decodeURIComponent( path ).replace( /\/edit$/, '' ).toLowerCase();
 
 		let selected = basePathLowerCase === pathLowerCase,
@@ -17,10 +17,10 @@ module.exports = {
 		// Following is a special case, because it can be at / or /following
 		if ( pathLowerCase === '/' && ! selected ) {
 			selected = '/following' === basePathLowerCase;
-		};
+		}
 
 		// Are we on an edit page?
-		const pathWithoutQueryString = currentPath.split( '?' )[0];
+		const pathWithoutQueryString = currentPath.split( '?' )[ 0 ];
 		if ( selected && !! pathWithoutQueryString.match( /\/edit$/ ) ) {
 			isActionButtonSelected = true;
 		}
@@ -35,7 +35,7 @@ module.exports = {
 
 	pathStartsWithOneOf: function( paths, currentPath ) {
 		return some( paths, function( path ) {
-			return startsWith( currentPath.toLowerCase(), path.toLowerCase() )
+			return startsWith( currentPath.toLowerCase(), path.toLowerCase() );
 		} );
 	}
-}
+};

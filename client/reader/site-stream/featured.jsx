@@ -39,7 +39,7 @@ export default React.createClass( {
 				post,
 				source,
 				url
-			}
+			};
 		} );
 
 		return {
@@ -74,7 +74,7 @@ export default React.createClass( {
 	getSourcePost( post ) {
 		let data = DiscoverHelper.getSourceData( post );
 
-		if ( !data ) {
+		if ( ! data ) {
 			return null;
 		}
 

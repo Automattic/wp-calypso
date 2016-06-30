@@ -525,7 +525,7 @@ FullPostContainer = React.createClass( {
 
 		return (
 
-			<FullPostDialog {...passedProps }
+			<FullPostDialog { ...passedProps }
 				isVisible={ utils.isPostNotFound( post ) ? false : this.props.isVisible }
 				post={ post }
 				site={ this.state.site }

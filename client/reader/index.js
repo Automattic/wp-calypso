@@ -52,5 +52,4 @@ module.exports = function() {
 
 	// Automattic Employee Posts
 	page( '/read/a8c', controller.updateLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
-
 };
