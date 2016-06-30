@@ -11,7 +11,8 @@ import i18n from 'i18n-calypso';
 import {
 	isDomainMapping,
 	isDomainRegistration,
-	isGoogleApps
+	isGoogleApps,
+	isGuidedTransfer,
 } from 'lib/products-values';
 
 const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases } ) => {
@@ -29,7 +30,8 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases } ) => {
 
 	const shouldHideFeaturesHeading = purchases.some( isGoogleApps ) ||
 		purchases.some( isDomainRegistration ) ||
-		purchases.some( isDomainMapping );
+		purchases.some( isDomainMapping ) ||
+		purchases.some( isGuidedTransfer );
 
 	if ( shouldHideFeaturesHeading ) {
 		return <div />;

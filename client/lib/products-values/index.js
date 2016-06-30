@@ -269,6 +269,13 @@ function isGoogleApps( product ) {
 	return 'gapps' === product.product_slug || 'gapps_unlimited' === product.product_slug || 'gapps_extra_license' === product.product_slug;
 }
 
+function isGuidedTransfer( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return 'guided_transfer' === product.product_slug;
+}
+
 function isTheme( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -344,6 +351,7 @@ module.exports = {
 	isPersonal,
 	isFreeTrial,
 	isGoogleApps,
+	isGuidedTransfer,
 	isJetpackBusiness,
 	isJetpackPlan,
 	isJetpackPremium,

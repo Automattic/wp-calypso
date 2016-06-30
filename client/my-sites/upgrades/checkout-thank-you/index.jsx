@@ -27,6 +27,7 @@ import FreeTrialNudge from './free-trial-nudge';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
 import GoogleAppsDetails from './google-apps-details';
+import GuidedTransferDetails from './guided-transfer-details';
 import HappinessSupport from 'components/happiness-support';
 import HeaderCake from 'components/header-cake';
 import {
@@ -36,6 +37,7 @@ import {
 	isDomainRedemption,
 	isDomainRegistration,
 	isGoogleApps,
+	isGuidedTransfer,
 	isJetpackPlan,
 	isPlan,
 	isPersonal,
@@ -205,6 +207,8 @@ const CheckoutThankYou = React.createClass( {
 				return [ SiteRedirectDetails, ...findPurchaseAndDomain( purchases, isSiteRedirect ) ];
 			} else if ( purchases.some( isChargeback ) ) {
 				return [ ChargebackDetails, find( purchases, isChargeback ) ];
+			} else if ( purchases.some( isGuidedTransfer ) ) {
+				return [ GuidedTransferDetails, find( purchases, isGuidedTransfer ) ];
 			}
 		}
 

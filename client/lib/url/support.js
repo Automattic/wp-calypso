@@ -31,6 +31,7 @@ export default {
 	GOOGLE_APPS_LEARNING_CENTER: 'https://apps.google.com/learning-center/',
 	GOOGLE_PLUS_EMBEDS: `${root}/google-plus-embeds`,
 	GRAVATAR_HOVERCARDS: `${root}/gravatar-hovercards`,
+	GUIDED_TRANSFER: `${root}/guided-transfer`,
 	IMPORT: `${root}/import`,
 	INSTAGRAM_WIDGET: `${root}/instagram/instagram-widget`,
 	JETPACK_SUPPORT: `${jetpackRoot}/support/`,
