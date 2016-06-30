@@ -745,6 +745,10 @@
 				text-align: center;
 			}
 
+			.privacy-free-text {
+				color: $alert-green;
+			}
+
 			p {
 				background: $gray-light;
 				font-size: 12px;
@@ -823,7 +827,7 @@
 	}
 }
 
-.privacy-protection-checkbox__description {
+.checkout__privacy-protection-checkbox__description {
 	font-size: 13px;
 	padding-left: 16px;
 

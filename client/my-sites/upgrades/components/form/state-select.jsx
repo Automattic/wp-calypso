@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	ReactDom = require( 'react-dom' ),
@@ -10,7 +10,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
+const analytics = require( 'lib/analytics' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormSelect = require( 'components/forms/form-select' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
@@ -29,19 +29,23 @@ module.exports = React.createClass( {
 	},
 
 	focus() {
-		var node = ReactDom.findDOMNode( this.refs.input );
-		node.focus();
-		scrollIntoViewport( node );
+		const node = ReactDom.findDOMNode( this.refs.input );
+		if ( node ) {
+			node.focus();
+			scrollIntoViewport( node );
+		} else {
+			this.refs.state.focus();
+		}
 	},
 
 	render: function() {
-		var classes = classNames( this.props.additionalClasses, 'state' ),
-			statesList = this.props.statesList.getByCountry( this.props.countryCode ),
-			options = [];
+		const classes = classNames( this.props.additionalClasses, 'state' ),
+			statesList = this.props.statesList.getByCountry( this.props.countryCode );
+		let options = [];
 
 		if ( isEmpty( statesList ) ) {
 			return (
-				<Input { ...this.props } />
+				<Input ref="state" { ...this.props } />
 			);
 		}
 
@@ -66,9 +70,9 @@ module.exports = React.createClass( {
 						onChange={ this.props.onChange }
 						onClick={ this.recordStateSelectClick }
 						isError={ this.props.isError } >
-					{ options.map( function( option ) {
-						return <option key={ option.key } value={ option.key } disabled={ option.disabled }>{ option.label }</option>;
-					} ) }
+						{ options.map( function( option ) {
+							return <option key={ option.key } value={ option.key } disabled={ option.disabled }>{ option.label }</option>;
+						} ) }
 					</FormSelect>
 				</div>
 				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
