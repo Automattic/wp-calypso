@@ -74,7 +74,7 @@ const Start = React.createClass( {
 				{ /* Have not followed a site yet */ }
 				{ ! canGraduate && hasRecommendations &&
 					<div className="reader-start__bar is-follow">
-						<span className="reader-start__bar-text">{ this.translate( 'Follow one or more sites to get started' ) }</span>
+						<span className="reader-start__bar-text">{ this.translate( 'Follow some sites to begin.' ) }</span>
 					</div>
 				}
 
@@ -84,8 +84,8 @@ const Start = React.createClass( {
 						<span className="reader-start__bar-text">
 							{
 								this.translate(
-									'Great! You\'re now following %(totalSubscriptionsDisplay)d site.',
-									'Great! You\'re now following %(totalSubscriptionsDisplay)d sites.',
+									'You\'re following %(totalSubscriptionsDisplay)d site.',
+									'You\'re following %(totalSubscriptionsDisplay)d sites.',
 									{
 										count: totalSubscriptionsDisplay,
 										args: {
@@ -95,14 +95,14 @@ const Start = React.createClass( {
 								)
 							}
 						</span>
-						<a onClick={ this.exitColdStart } className="reader-start__bar-action">{ this.translate( 'OK, I\'m all set!' ) }</a>
+						<a onClick={ this.exitColdStart } className="reader-start__bar-action">{ this.translate( 'Done.' ) }</a>
 					</div>
 				}
 
 				<QueryReaderStartRecommendations />
 				<header className="reader-start__intro">
-					<h1 className="reader-start__title">{ this.translate( 'Welcome to the WordPress.com Reader' ) }</h1>
-					<p className="reader-start__description">{ this.translate( 'Reader is like a customizable magazine with stories from your favorite places. Follow a few sites and their latest posts will appear here. Below are some suggestions – give it a try!' ) }</p>
+					<h1 className="reader-start__title">{ this.translate( 'This is Reader' ) }</h1>
+					<p className="reader-start__description">{ this.translate( 'Reader is a customizable magazine of stories from WordPress.com and across the web. Follow a few sites and their latest posts will appear here. Below are some suggestions. Give it a try!' ) }</p>
 				</header>
 
 				{ ! hasRecommendations && this.renderLoadingPlaceholders() }
