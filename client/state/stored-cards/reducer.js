@@ -27,9 +27,6 @@ import {
  */
 export const items = ( state = [], action ) => {
 	switch ( action.type ) {
-		case STORED_CARDS_FETCH:
-		case STORED_CARDS_FETCH_FAILED:
-			return [];
 		case STORED_CARDS_FETCH_COMPLETED:
 			return action.list;
 		case STORED_CARDS_DELETE_COMPLETED:
