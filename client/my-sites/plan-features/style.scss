@@ -243,6 +243,7 @@ $plan-features-header-banner-height: 20px;
 	margin-top: auto;
 	padding: 16px 16px 24px;
 	border-top: solid 1px lighten( $gray, 27% );
+	position: relative;
 
 	@include breakpoint( ">480px" ) {
 		padding: 16px 24px 24px;
@@ -253,12 +254,22 @@ $plan-features-header-banner-height: 20px;
 	margin: 0;
 	font-size: 14px;
 	color: $gray;
+	position: relative;
 
 	&.is-placeholder {
 		@include placeholder( 23% );
 		height: 50px;
 		margin-top: 5px;
 	}
+}
+.plan-features__footer-desc-longest {
+	visibility: hidden;
+	display: inline-block;
+}
+
+.plan-features__footer-desc-text {
+	position: absolute;
+	display: inline-block;
 }
 
 .plan-features__footer-buttons {

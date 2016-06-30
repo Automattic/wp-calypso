@@ -74,6 +74,7 @@ class PlanFeatures extends Component {
 				<PlanFeaturesFooter
 					available={ available }
 					current={ current }
+					planType={ planName }
 					description={ planConstantObj.getDescription() }
 					onUpgradeClick={ onUpgradeClick }
 				/>
