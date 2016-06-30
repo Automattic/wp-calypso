@@ -231,7 +231,12 @@ const PlansSetup = React.createClass( {
 							{ plugin.name }
 						</div>
 						{ hidden
-							? <Notice key={ 0 } isCompact={ true } showDismiss={ false } icon="plugins" text={ this.translate( 'Waiting to install' ) } />
+							? <Notice
+								key={ 0 }
+								isCompact={ true }
+								showDismiss={ false }
+								icon="plugins"
+								text={ this.translate( 'Waiting to install' ) } />
 							: this.renderStatus( plugin )
 						}
 					</span>
@@ -280,7 +285,6 @@ const PlansSetup = React.createClass( {
 							{ this.translate( 'Successfully installed & configured.' ) }
 						</div>
 					);
-					break;
 				case 'activate':
 				case 'configure':
 					statusProps.text = this.translate( 'Almost done' );
@@ -314,6 +318,7 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderSuccess() {
+		let noticeText;
 		const site = this.props.selectedSite;
 		if ( ! this.props.hasRequested || ! this.props.isFinished ) {
 			return null;
@@ -324,13 +329,15 @@ const PlansSetup = React.createClass( {
 		} );
 
 		if ( pluginsWithErrors.length ) {
+			noticeText = this.translate( 'There were some issues installing your plugins. See the links below.' );
 			return (
-				<Notice status="is-info" text={ this.translate( 'There were some issues installing your plugins. See the links below.' ) } showDismiss={ false } />
+				<Notice status="is-info" text={ noticeText } showDismiss={ false } />
 			);
 		}
 
+		noticeText = this.translate( 'We\'ve installed your plugins, your site is powered up!' );
 		return (
-			<Notice status="is-success" text={ this.translate( 'We\'ve installed your plugins, your site is powered up!' ) } showDismiss={ false }>
+			<Notice status="is-success" text={ noticeText } showDismiss={ false }>
 				<NoticeAction href={ `/stats/insights/${site.slug}` }>
 					{ this.translate( 'Continue' ) }
 				</NoticeAction>
@@ -341,8 +348,12 @@ const PlansSetup = React.createClass( {
 	renderPlaceholder() {
 		return (
 			<div className="jetpack-plugins-setup">
-				<h1 className="jetpack-plugins-setup__header is-placeholder">{ this.translate( 'Setting up your plan' ) }</h1>
-				<p className="jetpack-plugins-setup__description is-placeholder">{ this.translate( 'We need to install a few plugins for you. It won\'t take long!' ) }</p>
+				<h1 className="jetpack-plugins-setup__header is-placeholder">
+					{ this.translate( 'Setting up your plan' ) }
+				</h1>
+				<p className="jetpack-plugins-setup__description is-placeholder">
+					{ this.translate( 'We need to install a few plugins for you. It won\'t take long!' ) }
+				</p>
 				{ this.renderPluginsPlaceholders() }
 			</div>
 		);
@@ -377,21 +388,30 @@ const PlansSetup = React.createClass( {
 			turnOnManage = (
 				<Card className="jetpack-plugins-setup__need-manage">
 					<p>{
-						this.translate( '{{strong}}Jetpack Manage must be enabled for us to auto-configure your %(plan)s plan.{{/strong}} This will allow WordPress.com to communicate with your site and auto-configure the features unlocked with your new plan. Or you can opt out.', {
-							args: { plan: site.plan.product_name_short },
-							components: { strong: <strong /> }
-						} )
+						this.translate(
+							'{{strong}}Jetpack Manage must be enabled for us to auto-configure your %(plan)s plan.{{/strong}} This will allow WordPress.com to communicate with your site and auto-configure the features unlocked with your new plan. Or you can opt out.', // eslint-disable-line max-len
+							{
+								args: { plan: site.plan.product_name_short },
+								components: { strong: <strong /> }
+							}
+						)
 					}</p>
 					<Button primary href={ manageUrl }>{ this.translate( 'Enable Manage' ) }</Button>
-					<Button href="https://en.support.wordpress.com/setting-up-premium-services/">{ this.translate( 'Manual Installation' ) }</Button>
+					<Button href={ support.JETPACK_SUPPORT }>
+						{ this.translate( 'Manual Installation' ) }
+					</Button>
 				</Card>
 			);
 		}
 
 		return (
 			<div className="jetpack-plugins-setup">
-				<h1 className="jetpack-plugins-setup__header">{ this.translate( 'Setting up your %(plan)s Plan', { args: { plan: site.plan.product_name_short } } ) }</h1>
-				<p className="jetpack-plugins-setup__description">{ this.translate( 'We need to install a few plugins for you. It won\'t take long!' ) }</p>
+				<h1 className="jetpack-plugins-setup__header">
+					{ this.translate( 'Setting up your %(plan)s Plan', { args: { plan: site.plan.product_name_short } } ) }
+				</h1>
+				<p className="jetpack-plugins-setup__description">
+					{ this.translate( 'We need to install a few plugins for you. It won\'t take long!' ) }
+				</p>
 				{ turnOnManage }
 				{ ! turnOnManage && this.renderSuccess() }
 				{ turnOnManage
