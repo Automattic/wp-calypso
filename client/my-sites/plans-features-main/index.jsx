@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import times from 'lodash/times';
 
 /**
  * Internal dependencies
@@ -21,7 +20,6 @@ import {
 } from 'lib/plans/constants';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
-import { abtest } from 'lib/abtest';
 
 class PlansFeaturesMain extends Component {
 
@@ -29,39 +27,14 @@ class PlansFeaturesMain extends Component {
 		return site.jetpack;
 	}
 
-	renderPlanPlaceholders() {
-		const { site, hideFreePlan } = this.props;
-
-		let numberOfPlaceholders = abtest( 'personalPlan' ) === 'hide' ? 3 : 4;
-
-		if ( hideFreePlan ) {
-			numberOfPlaceholders = 3;
-		}
-
-		if ( site && this.isJetpackSite( site ) ) {
-			numberOfPlaceholders = 2;
-		}
-
-		const plansList = times( numberOfPlaceholders, ( n ) => {
-			return (
-				<PlanFeatures key={ n } placeholder={ true } />
-			);
-		} );
-
-		return (
-			<div className="plans-features-main__group">
-				{ plansList }
-			</div>
-		);
-	}
-
-	getPlanFeatures( params ) {
+	getPlanFeatures() {
 		const {
 			site,
 			intervalType,
 			upgradePlan,
-			hideFreePlan
-		} = params;
+			hideFreePlan,
+			isInSignup
+		} = this.props;
 
 		if ( this.isJetpackSite( site ) && intervalType === 'monthly' ) {
 			return (
@@ -84,12 +57,28 @@ class PlansFeaturesMain extends Component {
 		return (
 			<div className="plans-features-main__group">
 				{ ! hideFreePlan
-					? <PlanFeatures plan={ PLAN_FREE } onUpgradeClick={ upgradePlan }/>
+					? <PlanFeatures
+						plan={ PLAN_FREE }
+						onUpgradeClick={ upgradePlan }
+						isInSignup={ isInSignup }
+					/>
 					: null
 				}
-				<PlanFeatures plan={ PLAN_PERSONAL } onUpgradeClick={ upgradePlan } />
-				<PlanFeatures plan={ PLAN_PREMIUM } onUpgradeClick={ upgradePlan } />
-				<PlanFeatures plan={ PLAN_BUSINESS } onUpgradeClick={ upgradePlan } />
+				<PlanFeatures
+					plan={ PLAN_PERSONAL }
+					onUpgradeClick={ upgradePlan }
+					isInSignup={ isInSignup }
+				/>
+				<PlanFeatures
+					plan={ PLAN_PREMIUM }
+					onUpgradeClick={ upgradePlan }
+					isInSignup={ isInSignup }
+				/>
+				<PlanFeatures
+					plan={ PLAN_BUSINESS }
+					onUpgradeClick={ upgradePlan }
+					isInSignup={ isInSignup }
+				/>
 			</div>
 		);
 	}
@@ -155,8 +144,13 @@ class PlansFeaturesMain extends Component {
 		);
 	}
 
-	getFAQ( site ) {
-		const { translate } = this.props;
+	getFAQ() {
+		const { site, translate } = this.props;
+
+		if ( this.isJetpackSite( site ) ) {
+			return null;
+		}
+		
 		return (
 			<FAQ>
 				<FAQItem
@@ -241,32 +235,11 @@ class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const {
-			site,
-			plans,
-			isInSignup,
-			sitePlans,
-			intervalType,
-			onUpgradeClick,
-			hideFreePlan
-		} = this.props;
-
-		const isLoadingSitePlans = ! isInSignup && ! sitePlans.hasLoadedFromServer;
-
-		if ( plans.length === 0 || isLoadingSitePlans ) {
-			return this.renderPlanPlaceholders();
-		}
-
+		const { site } = this.props;
+		
 		return (
 			<div class="plans-features-main">
-				{
-					this.getPlanFeatures( {
-						site,
-						intervalType,
-						onUpgradeClick,
-						hideFreePlan
-					} )
-				}
+				{ this.getPlanFeatures() }
 
 				{
 					this.isJetpackSite( site )

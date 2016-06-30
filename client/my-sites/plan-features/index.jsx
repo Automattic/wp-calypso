@@ -16,6 +16,7 @@ import PlanFeaturesItem from './item';
 import PlanFeaturesFooter from './footer';
 import PlanFeaturesPlaceholder from './placeholder';
 import { isCurrentPlanPaid, isCurrentSitePlan } from 'state/sites/selectors';
+import { getPlansBySiteId } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getPlanDiscountPrice } from 'state/sites/plans/selectors';
@@ -36,7 +37,7 @@ import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 
 class PlanFeatures extends Component {
 	render() {
-		if ( ! this.props.planObject || this.props.isPlaceholder ) {
+		if ( this.props.isPlaceholder ) {
 			return <PlanFeaturesPlaceholder />;
 		}
 
@@ -97,26 +98,30 @@ PlanFeatures.propTypes = {
 	available: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plan prop or isPlaceholder prop
-	plan: React.PropTypes.string,
-	isPlaceholder: PropTypes.bool
+	plan: PropTypes.string,
+	isPlaceholder: PropTypes.bool,
+	isInSignup: PropTypes.bool
 };
 
 PlanFeatures.defaultProps = {
-	onUpgradeClick: noop
+	onUpgradeClick: noop,
+	isInSignup: false
 };
 
 export default connect( ( state, ownProps ) => {
-	if ( ownProps.placeholder ) {
+	const planProductId = plansList[ ownProps.plan ].getProductId(),
+		selectedSiteId = getSelectedSiteId( state ),
+		planObject = getPlan( state, planProductId ),
+		isPaid = isCurrentPlanPaid( state, selectedSiteId ),
+		sitePlans = getPlansBySiteId( state, selectedSiteId ),
+		isLoadingSitePlans = ! ownProps.isInSignup && ! sitePlans.hasLoadedFromServer,
+		showMonthly = ! isMonthly( ownProps.plan );
+
+	if ( ownProps.placeholder || ! planObject || isLoadingSitePlans ) {
 		return {
 			isPlaceholder: true
 		};
 	}
-
-	const planProductId = plansList[ ownProps.plan ].getProductId();
-	const selectedSiteId = getSelectedSiteId( state );
-	const planObject = getPlan( state, planProductId );
-	const isPaid = isCurrentPlanPaid( state, selectedSiteId );
-	const showMonthly = ! isMonthly( ownProps.plan );
 
 	return {
 		planName: ownProps.plan,
