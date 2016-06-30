@@ -44,7 +44,7 @@ class PlansFeaturesMain extends Component {
 				</div>
 			);
 		}
-		
+
 		if ( this.isJetpackSite( site ) ) {
 			return (
 				<div className="plans-features-main__group">
@@ -150,7 +150,7 @@ class PlansFeaturesMain extends Component {
 		if ( this.isJetpackSite( site ) ) {
 			return null;
 		}
-		
+
 		return (
 			<FAQ>
 				<FAQItem
@@ -236,7 +236,7 @@ class PlansFeaturesMain extends Component {
 
 	render() {
 		const { site } = this.props;
-		
+
 		return (
 			<div class="plans-features-main">
 				{ this.getPlanFeatures() }
