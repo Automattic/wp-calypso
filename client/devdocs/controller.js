@@ -7,6 +7,7 @@ import qs from 'qs';
 import debounce from 'lodash/debounce';
 import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
+import url from 'url';
 
 /**
  * Internal dependencies
@@ -132,6 +133,9 @@ const devdocs = {
 	},
 
 	pleaseLogIn: function( context ) {
+		const currentUrl = url.parse( location.href );
+		const redirectUrl = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
+
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
 		ReactDom.render(
@@ -139,7 +143,7 @@ const devdocs = {
 				title: 'Log In to start hacking',
 				line: 'Required to access the WordPress.com API',
 				action: 'Log In to WordPress.com',
-				actionURL: 'https://wordpress.com/wp-login.php?redirect_to=http%3A%2F%2Fcalypso.localhost%3A3000/devdocs/welcome',
+				actionURL: 'https://wordpress.com/wp-login.php?redirect_to=' + encodeURIComponent( redirectUrl ),
 				secondaryAction: 'Register',
 				secondaryActionURL: '/start/developer',
 				illustration: '/calypso/images/drake/drake-nosites.svg'
