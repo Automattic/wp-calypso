@@ -86,6 +86,11 @@
 			error.userAgent = navigator.userAgent;
 		}
 
+		//Add url
+		if ( window.location && window.location.href ) {
+			error.url = window.location.href;
+		}
+
 		handleError( error );
 	}
 
