@@ -291,7 +291,7 @@ export const SeoForm = React.createClass( {
 										<FormLabel htmlFor="seo_title">{ this.translate( 'Meta Title Format' ) }</FormLabel>
 										<MetaTitleEditor />
 										<FormSettingExplanation>
-											{ this.translate( 'Control how the title for your site will be generated when sharing' ) }
+											{ this.translate( 'Customize how the title for your content will appear in search engines and social media.' ) }
 										</FormSettingExplanation>
 									</div>
 								}
