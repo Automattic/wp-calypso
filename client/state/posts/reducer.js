@@ -37,7 +37,7 @@ import {
 import counts from './counts/reducer';
 import { getSerializedPostsQuery } from './utils';
 import { itemsSchema } from './schema';
-import { isValidStateWithSchema } from 'state/utils';
+import { isValidStateWithSchema, createReducer } from 'state/utils';
 
 /**
  * Tracks all known post objects, indexed by post global ID.
@@ -140,123 +140,62 @@ export function queryRequests( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function queries( state = {}, action ) {
-	switch ( action.type ) {
-		case POST_RESTORE: {
-			const { siteId, postId } = action;
-			if ( ! state[ siteId ] ) {
-				return state;
-			}
+export const queries = ( () => {
+	function applyToManager( state, siteId, method, ...args ) {
+		if ( ! state[ siteId ] ) {
+			return state;
+		}
 
-			const nextManager = state[ siteId ].receive( {
+		const nextManager = state[ siteId ][ method ]( ...args );
+		if ( nextManager === state[ siteId ] ) {
+			return state;
+		}
+
+		return {
+			...state,
+			[ siteId ]: nextManager
+		};
+	}
+
+	return createReducer( {}, {
+		[ POST_RESTORE ]: ( state, { siteId, postId } ) => {
+			return applyToManager( state, siteId, 'receive', {
 				ID: postId,
 				status: '__RESTORE_PENDING'
 			}, { patch: true } );
-
-			if ( nextManager === state[ siteId ] ) {
-				return state;
-			}
-
-			return Object.assign( {}, state, {
-				[ siteId ]: nextManager
-			} );
-		}
-
-		case POST_RESTORE_FAILURE: {
-			const { siteId, postId } = action;
-			if ( ! state[ siteId ] ) {
-				return state;
-			}
-
-			const nextManager = state[ siteId ].receive( {
+		},
+		[ POST_RESTORE_FAILURE ]: ( state, { siteId, postId } ) => {
+			return applyToManager( state, siteId, 'receive', {
 				ID: postId,
 				status: 'trash'
 			}, { patch: true } );
-
-			if ( nextManager === state[ siteId ] ) {
-				return state;
-			}
-
-			return Object.assign( {}, state, {
-				[ siteId ]: nextManager
-			} );
-		}
-
-		case POSTS_REQUEST_SUCCESS: {
-			const { siteId, query, posts, found } = action;
-			const manager = state[ siteId ] ? state[ siteId ] : new PostQueryManager();
-			const nextManager = manager.receive( posts, { query, found } );
-
-			if ( nextManager === manager ) {
-				return state;
-			}
-
-			return Object.assign( {}, state, {
-				[ siteId ]: nextManager
-			} );
-		}
-
-		case POSTS_RECEIVE:
-			return reduce( groupBy( action.posts, 'site_ID' ), ( memo, posts, siteId ) => {
-				if ( ! memo[ siteId ] ) {
-					return memo;
-				}
-
-				const nextPosts = memo[ siteId ].receive( posts );
-				if ( nextPosts === memo[ siteId ] ) {
-					return memo;
-				}
-
-				if ( memo === state ) {
-					memo = { ...memo };
-				}
-
-				memo[ siteId ] = nextPosts;
-				return memo;
-			}, state );
-
-		case POST_SAVE: {
-			const { siteId, postId, post } = action;
+		},
+		[ POSTS_REQUEST_SUCCESS ]: ( state, { siteId, query, posts, found } ) => {
 			if ( ! state[ siteId ] ) {
-				break;
+				state = {
+					...state,
+					[ siteId ]: new PostQueryManager()
+				};
 			}
 
-			const nextPosts = state[ siteId ].receive( {
+			return applyToManager( state, siteId, 'receive', posts, { query, found } );
+		},
+		[ POSTS_RECEIVE ]: ( state, { posts } ) => {
+			return reduce( groupBy( posts, 'site_ID' ), ( memo, sitePosts, siteId ) => {
+				return applyToManager( memo, siteId, 'receive', sitePosts );
+			}, state );
+		},
+		[ POST_SAVE ]: ( state, { siteId, postId, post } ) => {
+			return applyToManager( state, siteId, 'receive', {
 				ID: postId,
 				...post
 			}, { patch: true } );
-
-			if ( nextPosts === state[ siteId ] ) {
-				break;
-			}
-
-			return Object.assign( {}, state, {
-				[ siteId ]: nextPosts
-			} );
+		},
+		[ POST_DELETE ]: ( state, { siteId, postId } ) => {
+			return applyToManager( state, siteId, 'removeItem', postId );
 		}
-
-		case POST_DELETE: {
-			if ( ! state[ action.siteId ] ) {
-				break;
-			}
-
-			const nextPosts = state[ action.siteId ].removeItem( action.postId );
-			if ( nextPosts === state[ action.siteId ] ) {
-				break;
-			}
-
-			return Object.assign( {}, state, {
-				[ action.siteId ]: nextPosts
-			} );
-		}
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-	}
-
-	return state;
-}
+	} );
+} )();
 
 /**
  * Returns the updated editor posts state after an action has been dispatched.
