@@ -312,14 +312,6 @@ export const testThemes = [
 		verticals: [ 'a8c.3', 'a8c.5', 'a8c.7' ]
 	},
 	{
-		name: 'Colinear',
-		slug: 'colinear',
-		repo: 'pub',
-		fallback: false,
-		design: 'blog',
-		verticals: [ 'a8c.3', 'a8c.5', 'a8c.7' ]
-	},
-	{
 		name: 'Lyretail',
 		slug: 'lyretail',
 		repo: 'pub',
