@@ -270,9 +270,12 @@
 	.is-selected & {
 		color: $white;
 		background-color: $blue-medium;
-		.count {
-			color: $white;
-			border-color: $white;
+
+		@include breakpoint( "<480px" ) {
+			.count {
+				color: $white;
+				border-color: $white;
+			}
 		}
 	}
 
