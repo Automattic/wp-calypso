@@ -541,14 +541,6 @@
 		@include breakpoint( "<960px" ) {
 			font-size: 12px;
 		}
-
-		@include breakpoint( "<660px" ) {
-			bottom: -20px;
-			border-radius: 0;
-			font-size: 12px;
-			left: 0;
-			width: 100%;
-		}
 	}
 
 	&.is-following {
@@ -560,8 +552,10 @@
 			left: 47%;
 
 		@include breakpoint( "<660px" ) {
-			left: 0;
-			width: 100%;
+		    bottom: 20px;
+			left: 5%;
+		    width: 90%;
+		    margin: 0 auto;
 		}
 
 		.reader-start__bar-text {
@@ -576,7 +570,10 @@
 	&.is-follow {
 
 		@include breakpoint( "<660px" ) {
-			padding-left: 0;
+		    bottom: 0;
+			left: 5%;
+		    width: 80%;
+		    margin: 0 auto;
 		}
 	}
 }
@@ -609,10 +606,6 @@
 	&:hover {
 		background: lighten( $alert-green, 15% );
 		color: $white;
-	}
-
-	@include breakpoint( "<660px" ) {
-		border-radius: 0;
 	}
 }
 
