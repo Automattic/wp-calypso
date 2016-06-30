@@ -169,7 +169,8 @@ const JetpackConnectMain = React.createClass( {
 			return 'notActiveJetpack';
 		}
 
-		if ( this.state.currentUrl.toLowerCase() === 'http://wordpress.com' || this.state.currentUrl.toLowerCase() === 'https://wordpress.com' ) {
+		if ( this.state.currentUrl.toLowerCase() === 'http://wordpress.com' ||
+			this.state.currentUrl.toLowerCase() === 'https://wordpress.com' ) {
 			return 'wordpress.com';
 		}
 		if ( this.checkProperty( 'isWordPressDotCom' ) ) {
@@ -224,14 +225,14 @@ const JetpackConnectMain = React.createClass( {
 			return {
 				headerTitle: this.translate( 'Get Jetpack Pro' ),
 				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
-					'then purchase and activate your plan' ),
+					'then purchase and activate your plan.' ),
 			};
 		}
 		if ( this.props.type === 'premium' ) {
 			return {
 				headerTitle: this.translate( 'Get Jetpack Premium' ),
 				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
-					'then purchase and activate your plan' ),
+					'then purchase and activate your plan.' ),
 			};
 		}
 		return {
@@ -343,8 +344,10 @@ const JetpackConnectMain = React.createClass( {
 					<div className="jetpack-connect__install-steps">
 						<JetpackInstallStep title={ this.translate( '1. Install Jetpack' ) }
 							text={ this.isInstall()
-									? this.translate( 'You will be redirected to your site\'s dashboard to install Jetpack. Click the blue "Install Now" button.' )
-									: this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s dashboard to install Jetpack. Click the blue install button.' )
+									? this.translate( 'You will be redirected to your site\'s dashboard to install ' +
+										'Jetpack. Click the blue "Install Now" button.' )
+									: this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s ' +
+										'dashboard to install Jetpack. Click the blue install button.' )
 								}
 							action={ this.renderAlreadyHaveJetpackButton() }
 							example={ <JetpackExampleInstall url={ this.state.currentUrl } /> } />
@@ -401,7 +404,8 @@ const JetpackConnectMain = React.createClass( {
 						steps={ 3 } />
 					<div className="jetpack-connect__install-steps">
 						<JetpackInstallStep title={ this.translate( '1. Activate Jetpack' ) }
-							text={ this.translate( 'You will be redirected to your site\'s dashboard to activate Jetpack. Click the blue "Activate" link.' ) }
+							text={ this.translate( 'You will be redirected to your site\'s dashboard to activate ' +
+								'Jetpack. Click the blue "Activate" link.' ) }
 							action={ this.renderNotJetpackButton() }
 							example={ <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ false } /> } />
 						<JetpackInstallStep title={ this.translate( '2. Connect Jetpack' ) }
