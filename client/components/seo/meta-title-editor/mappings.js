@@ -3,7 +3,7 @@
 // raw is a string like: '%site_name% | %tagline%'
 //                        \_________/   \_______/
 //                             |            |
-//                             \------------\- tokens
+//                             \------------\- tags
 //
 // native is an array of plain-text strings and tokens
 //   [ { type: 'postTitle' }, { type: 'string', value: ' on ' }, { type: 'siteName' } ]
@@ -22,20 +22,26 @@
 import camelCase from 'lodash/camelCase';
 import join from 'lodash/join';
 import map from 'lodash/map';
+import matchesProperty from 'lodash/matchesProperty';
+import reject from 'lodash/reject';
 import snakeCase from 'lodash/snakeCase';
 import split from 'lodash/split';
 
-export const removeBlanks = l => l.filter( ( { value } ) => '' !== value );
+export const removeBlanks = values => reject( values, matchesProperty( 'value', '' ) );
 
-const placeholderPattern = /(%[a-zA-Z_]+%)/;
-const isPlaceholder = s => placeholderPattern.test( s );
+// %site_name%, %tagline%, etc…
+const tagPattern = /(%[a-zA-Z_]+%)/;
+const isTag = s => tagPattern.test( s );
 
-const placeholderToTag = p =>
-	isPlaceholder( p )
-		? { type: camelCase( p.slice( 1, -1 ) ) }
-		: { value: p, type: 'string' };
+const tagToToken = s =>
+	isTag( s )
+		? { type: camelCase( s.slice( 1, -1 ) ) } // %site_name% -> type: siteName
+		: { type: 'string', value: s };           // arbitrary text passes through
 
-const tagToPlaceholder = n => 'string' === n.type ? n.value : `%${ snakeCase( n.type ) }%`;
+const tokenToTag = n =>
+	'string' !== n.type
+		? `%${ snakeCase( n.type ) }%` // siteName -> %site_name%
+		: n.value;                     // arbitrary text passes through
 
-export const rawToNative = r => removeBlanks( map( split( r, placeholderPattern ), placeholderToTag ) );
-export const nativeToRaw = n => join( map( n, tagToPlaceholder ), '' );
+export const rawToNative = r => removeBlanks( map( split( r, tagPattern ), tagToToken ) );
+export const nativeToRaw = n => join( map( n, tokenToTag ), '' );
