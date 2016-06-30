@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import isEmpty from 'lodash/isEmpty';
 
@@ -13,7 +12,6 @@ import PlansFeaturesMain from 'my-sites/plans-features-main';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import QueryPlans from 'components/data/query-plans';
-import { getPlans } from 'state/plans/selectors';
 
 class PlansFeaturesStep extends Component {
 	constructor( props ) {
@@ -23,14 +21,13 @@ class PlansFeaturesStep extends Component {
 	}
 
 	plansList() {
-		const {	plans, hideFreePlan } = this.props;
+		const {	hideFreePlan } = this.props;
 
 		return (
 			<div>
 				<QueryPlans />
 
 				<PlansFeaturesMain
-					plans={ plans }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					onUpgradeClick={ this.onUpgradeClick } />
@@ -90,10 +87,4 @@ class PlansFeaturesStep extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		return {
-			plans: getPlans( state )
-		};
-	}
-)( localize( PlansFeaturesStep ) );
+export default localize( PlansFeaturesStep );

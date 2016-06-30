@@ -177,8 +177,6 @@ const Plans = React.createClass( {
 							showPlanFeatures
 								? <PlansFeaturesMain
 									site={ selectedSite }
-									plans={ this.props.plans }
-									sitePlans={ this.props.sitePlans }
 									intervalType={ this.props.intervalType } />
 								: <PlanList
 									site={ selectedSite }
