@@ -59,60 +59,10 @@
 		}
 	}
 
-	.follow-button {
+	.full-post__follow {
 		position: absolute;
-			top: -3px;
 			right: 0;
-
-		.gridicon {
-			position: absolute;
-				left: 15px;
-				top: 10px;
-		}
-
-		.follow-button__label {
-			color: $gray-dark;
-			font-size: 16px;
-		}
-
-		&:hover {
-			background: none;
-
-			.gridicon {
-				fill: $gray-dark;
-			}
-
-			.follow-button__label {
-				cursor: pointer;
-				color: $gray-dark;
-			}
-		}
-
-		@include breakpoint( "<660px" ) {
-
-			.follow-button__label {
-				display: none;
-			}
-		}
-	}
-
-	.follow-button.is-following {
-		.follow-button__label {
-			color: $alert-green;
-		}
-
-		&:hover {
-			background: none;
-
-			.gridicon {
-				fill: $alert-green;
-			}
-
-			.follow-button__label {
-				cursor: pointer;
-				color: $alert-green;
-			}
-		}
+			top: -2px;
 	}
 
 	.reader__post-time {
