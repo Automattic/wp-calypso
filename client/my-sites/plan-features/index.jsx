@@ -61,15 +61,15 @@ class PlanFeatures extends Component {
 		return (
 			<div className={ classes } >
 				<PlanFeaturesHeader
-					current={ current }
-					currencyCode={ currencyCode }
-					popular={ popular }
-					title={ planConstantObj.getTitle() }
-					planType={ planName }
-					rawPrice={ rawPrice }
-					discountPrice={ discountPrice }
 					billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
+					currencyCode={ currencyCode }
+					current={ current }
+					discountPrice={ discountPrice }
 					onClick={ onUpgradeClick }
+					planType={ planName }
+					popular={ popular }
+					rawPrice={ rawPrice }
+					title={ planConstantObj.getTitle() }
 				/>
 				<PlanFeaturesItemList>
 					{
@@ -85,8 +85,7 @@ class PlanFeatures extends Component {
 				</PlanFeaturesItemList>
 				<PlanFeaturesFooter
 					current={ current }
-					available = { available }
-					description={ planConstantObj.getDescription() }
+					available={ available }
 					onUpgradeClick={ onUpgradeClick }
 				/>
 			</div>

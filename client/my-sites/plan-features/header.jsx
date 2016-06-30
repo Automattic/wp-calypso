@@ -409,7 +409,9 @@ class PlanFeaturesHeader extends Component {
 
 PlanFeaturesHeader.propTypes = {
 	billingTimeFrame: PropTypes.string.isRequired,
+	currencyCode: PropTypes.string,
 	current: PropTypes.bool,
+	discountPrice: PropTypes.number,
 	onClick: PropTypes.func,
 	planType: React.PropTypes.oneOf( [
 		PLAN_FREE,
@@ -424,8 +426,6 @@ PlanFeaturesHeader.propTypes = {
 	] ).isRequired,
 	popular: PropTypes.bool,
 	rawPrice: PropTypes.number,
-	discountPrice: PropTypes.number,
-	currencyCode: PropTypes.string,
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func
 };
