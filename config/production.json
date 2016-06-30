@@ -21,6 +21,7 @@
 		"guided-tours": true,
 		"help": true,
 		"jetpack/connect": true,
+		"jetpack/sso": true,
 		"mailing-lists/unsubscribe": true,
 		"manage/add-people": true,
 		"manage/ads": true,
