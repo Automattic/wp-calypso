@@ -260,7 +260,8 @@ PlansFeaturesMain.PropTypes = {
 };
 
 PlansFeaturesMain.defaultProps = {
-	hideFreePlan: false
+	hideFreePlan: false,
+	site: {}
 };
 
 export default localize( PlansFeaturesMain );

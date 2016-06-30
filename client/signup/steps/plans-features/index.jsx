@@ -31,7 +31,6 @@ class PlansFeaturesStep extends Component {
 
 				<PlansFeaturesMain
 					plans={ plans }
-					site={ {} }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					onUpgradeClick={ this.onUpgradeClick } />
