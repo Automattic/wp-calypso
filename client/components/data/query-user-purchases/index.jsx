@@ -11,11 +11,6 @@ import { isFetchingUserPurchases } from 'state/purchases/selectors';
 import { fetchUserPurchases } from 'state/purchases/actions';
 
 class QueryUserPurchases extends Component {
-	constructor( props ) {
-		super( props );
-		this.requestUserPurchases = this.requestUserPurchases.bind( this );
-	}
-
 	requestUserPurchases( props = this.props ) {
 		this.props.fetchUserPurchases( props.userId );
 	}
