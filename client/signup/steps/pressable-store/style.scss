@@ -4,9 +4,14 @@
 }
 
 .pressable-store__heading {
+	margin-top: 6px;
 	margin-bottom: 12px;
 	font-size: 18px;
 	font-weight: 400;
+
+	@include breakpoint( ">480px" ) {
+		margin-top: 30px;
+	}
 }
 
 .pressable-store__copy {
