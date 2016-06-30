@@ -292,7 +292,7 @@ const JetpackConnectMain = React.createClass( {
 					<div className="jetpack-connect__install-steps">
 						<JetpackInstallStep title={ this.translate( '1. Install Jetpack' ) }
 							text={ this.props.isInstall
-									? this.translate( 'You will be redirected to your site\'s dashboard to install Jetpack. Click the blue "Install Now" button' )
+									? this.translate( 'You will be redirected to your site\'s dashboard to install Jetpack. Click the blue "Install Now" button.' )
 									: this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s dashboard to install Jetpack. Click the blue install button.' )
 								}
 							action={ this.renderAlreadyHaveJetpackButton() }
