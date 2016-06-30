@@ -69,12 +69,6 @@ function receiveTags( siteId, tags ) {
 	} );
 }
 
-TagStore._queryDefaults = {
-	number: TermsConstants.MAX_TAGS,
-	order_by: 'count',
-	order: 'DESC'
-};
-
 TagStore._tagIds = {};
 
 TagStore._siteStatus = {};
@@ -108,7 +102,7 @@ TagStore.getQueryParams = function( siteId ) {
 	ensureSiteHasStatus( siteId );
 	return assign(
 		{},
-		TagStore._queryDefaults,
+		TermsConstants.defaultNonHierarchicalQuery,
 		{ page: TagStore._siteStatus[ siteId ].page }
 	);
 };

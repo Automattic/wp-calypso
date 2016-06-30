@@ -7,7 +7,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-
 import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
@@ -20,7 +19,7 @@ import { isPage } from 'lib/posts/utils';
 import unescapeString from 'lodash/unescape';
 
 module.exports = React.createClass( {
-	displayName: 'EditorTaxonomiesAccordion',
+	displayName: 'EditorCategoriesTagsAccordion',
 
 	propTypes: {
 		site: React.PropTypes.object,

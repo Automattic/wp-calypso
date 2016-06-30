@@ -12,8 +12,8 @@ import EmptyComponent from 'test/helpers/react/empty-component';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
-describe( 'EditorTaxonomiesAccordion', function() {
-	let shallow, common, categoryStore, tagStore, i18n, TaxonomiesAccordion, accordion;
+describe( 'EditorCategoriesTagsAccordion', function() {
+	let shallow, common, categoryStore, tagStore, i18n, CategoriesTagsAccordion, accordion;
 
 	useMockery();
 	useFakeDom();
@@ -29,8 +29,8 @@ describe( 'EditorTaxonomiesAccordion', function() {
 		tagStore = require( 'lib/terms/tag-store' );
 		i18n = require( 'i18n-calypso' );
 
-		TaxonomiesAccordion = require( 'post-editor/editor-taxonomies/accordion' );
-		TaxonomiesAccordion.prototype.translate = i18n.translate;
+		CategoriesTagsAccordion = require( 'post-editor/editor-categories-tags/accordion' );
+		CategoriesTagsAccordion.prototype.translate = i18n.translate;
 
 		common.dispatchReceiveCategoryTerms();
 		common.dispatchReceiveTagTerms();
@@ -38,7 +38,7 @@ describe( 'EditorTaxonomiesAccordion', function() {
 
 	function render( postTaxonomiesProps ) {
 		accordion = shallow(
-			<TaxonomiesAccordion
+			<CategoriesTagsAccordion
 				site={ { ID: common.TEST_SITE_ID } }
 				post={ postTaxonomiesProps }
 				categories={ categoryStore.all( common.TEST_SITE_ID ) }
@@ -46,7 +46,7 @@ describe( 'EditorTaxonomiesAccordion', function() {
 		).instance();
 	}
 
-	describe( 'taxonomies subtitle', function() {
+	describe( 'categories+tags subtitle', function() {
 		it( 'should display one top-level category name', function() {
 			render( {
 				category_ids: [ 1 ],
