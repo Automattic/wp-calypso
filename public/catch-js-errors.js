@@ -95,7 +95,7 @@
 				localStorage.setItem( 'log-errors', 'atlas' );
 			} else if ( Math.random() <= 0.02 ) {
 				localStorage.setItem( 'log-errors', 'analytics' );
-				//Rep the stage up for GA logging experiment
+				//Prep the stage up for GA logging experiment
 			} else {
 				localStorage.setItem( 'log-errors', 'false' );
 			}
@@ -110,7 +110,7 @@
 				if ( savedWindowOnError ) {
 					savedWindowOnError();
 				}
-			}
+			};
 		}
 	}
 }() );
