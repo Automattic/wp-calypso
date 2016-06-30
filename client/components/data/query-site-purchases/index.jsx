@@ -25,7 +25,7 @@ class QuerySitePurchases extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.fetchingSitePurchases ||
+		if ( nextProps.requesting ||
 			! nextProps.siteId ||
 			( this.props.siteId === nextProps.siteId ) ) {
 			return;
@@ -40,14 +40,14 @@ class QuerySitePurchases extends Component {
 
 QuerySitePurchases.propTypes = {
 	siteId: PropTypes.number.isRequired,
-	fetchingSitePurchases: PropTypes.bool.isRequired,
+	requesting: PropTypes.bool.isRequired,
 	fetchSitePurchases: PropTypes.func.isRequired
 };
 
 export default connect(
 	state => {
 		return {
-			fetchingSitePurchases: isFetchingSitePurchases( state )
+			requesting: isFetchingSitePurchases( state )
 		};
 	},
 	{ fetchSitePurchases }
