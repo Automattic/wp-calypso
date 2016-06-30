@@ -105,6 +105,7 @@ export default {
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL,
 					url: url,
+					flowType: flowType
 				} );
 			}, 1 );
 			Promise.all( [
