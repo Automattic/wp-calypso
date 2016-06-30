@@ -45,7 +45,13 @@ export const normalizers = {
 			return {};
 		}
 
-		const { highest_hour, highest_day_percent, highest_day_of_week, highest_hour_percent } = data;
+		const {
+			highest_hour,
+			highest_day_percent,
+			highest_day_of_week,
+			highest_hour_percent
+		} = data;
+
 		// Adjust Day of Week from 0 = Monday to 0 = Sunday (for Moment)
 		let dayOfWeek = highest_day_of_week + 1;
 		if ( dayOfWeek > 6 ) {
