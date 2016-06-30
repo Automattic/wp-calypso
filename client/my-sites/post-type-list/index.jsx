@@ -40,7 +40,6 @@ class PostTypeList extends Component {
 		siteId: PropTypes.number,
 		lastPage: PropTypes.number,
 		posts: PropTypes.array,
-		requestingFirstPage: PropTypes.bool,
 		requestingLastPage: PropTypes.bool
 	};
 
@@ -119,7 +118,7 @@ class PostTypeList extends Component {
 	}
 
 	render() {
-		const { query, siteId, posts, requestingFirstPage } = this.props;
+		const { query, siteId, posts } = this.props;
 		const isEmpty = query && posts && ! posts.length && this.isLastPage();
 		const classes = classnames( 'post-type-list', {
 			'is-empty': isEmpty
@@ -138,7 +137,6 @@ class PostTypeList extends Component {
 						type={ query.type }
 						status={ query.status } />
 				) }
-				{ requestingFirstPage && this.renderPlaceholder() }
 				{ ! isEmpty && (
 					<WindowScroller key={ JSON.stringify( query ) }>
 						{ ( { height, scrollTop } ) => (
@@ -158,7 +156,7 @@ class PostTypeList extends Component {
 						) }
 					</WindowScroller>
 				) }
-				{ ! requestingFirstPage && ! this.isLastPage() && this.renderPlaceholder() }
+				{ ! this.isLastPage() && this.renderPlaceholder() }
 			</div>
 		);
 	}
@@ -172,7 +170,6 @@ export default connect( ( state, ownProps ) => {
 		siteId,
 		lastPage,
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
-		requestingFirstPage: isRequestingSitePostsForQuery( state, siteId, { ...ownProps.query, page: 1 } ),
 		requestingLastPage: isRequestingSitePostsForQuery( state, siteId, { ...ownProps.query, page: lastPage } )
 	};
 } )( PostTypeList );
