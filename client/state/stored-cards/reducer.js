@@ -15,8 +15,6 @@ import {
 	STORED_CARDS_DELETE_FAILED
 } from 'state/action-types';
 
-import { createStoredCardsArray } from './assembler.js';
-
 /**
  * List all known stored cards of the current user at /me/stored-cards.
  *
@@ -30,9 +28,9 @@ export const items = ( state = [], action ) => {
 		case STORED_CARDS_FETCH_FAILED:
 			return [];
 		case STORED_CARDS_FETCH_COMPLETED:
-			return createStoredCardsArray( action.list );
+			return action.list;
 		case STORED_CARDS_DELETE_COMPLETED:
-			return state.filter( item => item.id !== action.card.id );
+			return state.filter( item => item.stored_details_id !== action.card.stored_details_id );
 	}
 
 	return state;
