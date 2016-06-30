@@ -95,5 +95,6 @@ export function createReduxStore( initialState = {} ) {
 	) {
 		createStoreWithMiddleware = compose( createStoreWithMiddleware, window.devToolsExtension() );
 	}
-	return createStoreWithMiddleware( createStore )( reducer, initialState );
+	window.store = createStoreWithMiddleware( createStore )( reducer, initialState );
+	return window.store;
 }

@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import omit from 'lodash/omit';
 import debugFactory from 'debug';
+import moment from 'moment';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -13,29 +14,31 @@ import {
 	firstViewSchema
 } from './schema';
 
+import { FIRST_VIEW_START_DATES } from './constants';
+
 import {
 	DESERIALIZE,
 	SERIALIZE,
-	FIRST_VIEW_DISMISS,
-	FIRST_VIEW_EMBRACE,
+	FIRST_VIEW_DISABLE,
+	FIRST_VIEW_ENABLE,
 	FIRST_VIEW_HIDE,
 	FIRST_VIEW_SHOW,
 } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:first-view' );
 
-export function firstView( state = { dismissed: [], visible: [] }, action ) {
+export function firstView( state = { disabled: [], visible: [] }, action ) {
 	switch ( action.type ) {
 
 		case DESERIALIZE: {
-			// only 'dismissed' state is persisted, as we want first-view to reappear on init if it wasn't dismissed
+			// only 'disabled' state is persisted
 			const newState = omit( state, 'visible' );
 			if ( isValidStateWithSchema( newState, firstViewSchema ) ) {
 				return Object.assign( {}, newState, { visible: [] } );
 			}
 			debug( 'INVALID firstView state during DESERIALIZE', newState );
 			return {
-				dismissed: [],
+				disabled: [],
 				visible: [],
 			};
 		}
@@ -47,43 +50,43 @@ export function firstView( state = { dismissed: [], visible: [] }, action ) {
 			}
 			debug( 'INVALID firstView state during SERIALIZE', newState );
 			return {
-				dismissed: [],
+				disabled: [],
 				visible: [],
 			};
 		}
 
-		case FIRST_VIEW_EMBRACE:
-			return Object.assign( {}, state, { dismissed: state.dismissed.filter( view => {
+		case FIRST_VIEW_ENABLE:
+			return Object.assign( {}, state, { disabled: state.disabled.filter( view => {
 				return view !== action.view;
 			} ) } );
 
-		case FIRST_VIEW_DISMISS:
-			if ( -1 === state.dismissed.indexOf( action.view ) ) {
-				return Object.assign( {}, state, { dismissed: state.dismissed.concat( action.view ) } );
+		case FIRST_VIEW_DISABLE:
+			if ( -1 === state.disabled.indexOf( action.view ) ) {
+				return Object.assign( {}, state, { disabled: state.disabled.concat( action.view ) } );
 			}
 			return state;
 
 		case FIRST_VIEW_HIDE:
 			return Object.assign( {}, state, { visible: state.visible.filter( view => {
-				return -1 === action.views.indexOf( view );
+				return view !== action.view;
 			} ) } );
 
 		case FIRST_VIEW_SHOW:
-			const filteredViews = action.views.filter( view => {
-				const isDismissed = ( -1 !== state.dismissed.indexOf( view ) ),
-					isVisible = ( -1 !== state.visible.indexOf( view ) );
+			const isViewDisabled = ( -1 !== state.disabled.indexOf( action.view ) );
+			let isUserEligible = true;
 
-				if ( isVisible ) {
-					// We don't want duplicates. The view is already visible.
-					return false;
+			// Check user-creation date if a user is provided
+			if ( action.user ) {
+				const userCreated = moment( action.user.get().date );
+				if ( moment( FIRST_VIEW_START_DATES[ action.view ] ).isAfter( userCreated ) ) {
+					isUserEligible = false;
 				}
+			}
 
-				// If action.force is set, we show regardless of dismissed state.
-				return action.force || ! isDismissed;
-			} );
-
-			return Object.assign( {}, state, { visible: state.visible.concat( filteredViews ) } );
-
+			if ( action.force || ( ! isViewDisabled && isUserEligible ) ) {
+				return Object.assign( {}, state, { visible: state.visible.concat( action.view ) } );
+			}
+			return state;
 	}
 	return state;
 }
