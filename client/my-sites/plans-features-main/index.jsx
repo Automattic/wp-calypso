@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import times from 'lodash/times';
 
@@ -248,7 +248,7 @@ class PlansFeaturesMain extends Component {
 			sitePlans,
 			intervalType,
 			onUpgradeClick,
-			hideFreePlan = false
+			hideFreePlan
 		} = this.props;
 
 		const isLoadingSitePlans = ! isInSignup && ! sitePlans.hasLoadedFromServer;
@@ -277,5 +277,17 @@ class PlansFeaturesMain extends Component {
 		);
 	}
 }
+
+PlansFeaturesMain.PropTypes = {
+	site: PropTypes.object,
+	isInSignup: PropTypes.bool,
+	intervalType: PropTypes.string,
+	onUpgradeClick: PropTypes.func,
+	hideFreePlan: PropTypes.bool
+};
+
+PlansFeaturesMain.defaultProps = {
+	hideFreePlan: false
+};
 
 export default localize( PlansFeaturesMain );
