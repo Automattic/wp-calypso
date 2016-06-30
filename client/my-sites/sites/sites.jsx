@@ -64,7 +64,7 @@ export default React.createClass( {
 			return this.props.getSiteSelectionHeaderText();
 		}
 
-		const path = this.props.path.replace( /\//g, ' ' );
+		const path = this.props.path.split( '?' )[ 0 ].replace( /\//g, ' ' );
 
 		return this.translate( 'Please select a site to open {{strong}}%(path)s{{/strong}}', {
 			args: {
