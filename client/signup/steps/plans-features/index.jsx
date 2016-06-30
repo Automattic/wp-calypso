@@ -91,12 +91,10 @@ class PlansFeaturesStep extends Component {
 	}
 }
 
-const LocalizedPlansFeaturesStep = localize( PlansFeaturesStep );
-
 export default connect(
 	( state ) => {
 		return {
 			plans: getPlans( state )
 		};
 	}
-)( LocalizedPlansFeaturesStep );
+)( localize( PlansFeaturesStep ) );
