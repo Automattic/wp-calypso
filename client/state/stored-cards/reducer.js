@@ -7,6 +7,8 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
+	SERIALIZE,
+	DESERIALIZE,
 	STORED_CARDS_FETCH,
 	STORED_CARDS_FETCH_COMPLETED,
 	STORED_CARDS_FETCH_FAILED,
@@ -31,6 +33,10 @@ export const items = ( state = [], action ) => {
 			return action.list;
 		case STORED_CARDS_DELETE_COMPLETED:
 			return state.filter( item => item.stored_details_id !== action.card.stored_details_id );
+		// return initial state when serializing/deserializing
+		case SERIALIZE:
+		case DESERIALIZE:
+			return [];
 	}
 
 	return state;
@@ -51,6 +57,10 @@ export const isFetching = ( state = false, action ) => {
 		case STORED_CARDS_FETCH_COMPLETED:
 		case STORED_CARDS_FETCH_FAILED:
 			return false;
+		// return initial state when serializing/deserializing
+		case SERIALIZE:
+		case DESERIALIZE:
+			return false;
 	}
 
 	return state;
@@ -70,6 +80,10 @@ export const isDeleting = ( state = false, action ) => {
 			return true;
 		case STORED_CARDS_DELETE_FAILED:
 		case STORED_CARDS_DELETE_COMPLETED:
+			return false;
+		// return initial state when serializing/deserializing
+		case SERIALIZE:
+		case DESERIALIZE:
 			return false;
 	}
 
