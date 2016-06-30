@@ -94,6 +94,7 @@ var SuggestionsList = React.createClass( {
 				<li
 					className={ classes }
 					key={ suggestion }
+					onMouseDown={ this._handleMouseDown }
 					onClick={ this._handleClick( suggestion ) }
 					onMouseEnter={ this._handleHover( suggestion ) }>
 					{ match ?
@@ -124,6 +125,11 @@ var SuggestionsList = React.createClass( {
 		return function() {
 			this.props.onSelect( suggestion );
 		}.bind( this );
+	},
+
+	_handleMouseDown: function( e ) {
+		// By preventing default here, we will not lose focus of <input> when clicking a suggestion
+		e.preventDefault();
 	}
 } );
 
