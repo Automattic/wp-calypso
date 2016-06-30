@@ -104,6 +104,7 @@ class PlanFeaturesHeader extends Component {
 	}
 
 	getPersonalPlanSvg() {
+		/* eslint-disable max-len */
 		return (
 			<svg viewBox="0 0 124 127.1">
 				<ellipse cx="62" cy="63.1" rx="62" ry="62" style={ { fill: 'rgb(211, 222, 230)' } } />
@@ -117,9 +118,11 @@ class PlanFeaturesHeader extends Component {
 				</g>
 			</svg>
 		);
+		/* eslint-enable max-len */
 	}
 
 	getFreePlanSvg() {
+		/* eslint-disable max-len */
 		return (
 			<svg viewBox="0 0 200 200">
 				<path fill="#D3DEE6" d="M133.4,7.6v98.3h-0.2c-9.1,0-16.5-7.4-16.5-16.5v0.2c0,9.1-7.4,16.5-16.5,16.5h-0.3
@@ -138,9 +141,11 @@ class PlanFeaturesHeader extends Component {
 				<path fill="#485567" d="M116.7,89.4c0,9.1,7.4,16.5,16.5,16.5h0.2V7.6c-5.4-1.9-10.9-3.4-16.7-4.4V89.4z"/>
 			</svg>
 		);
+		/* eslint-enable max-len */
 	}
 
 	getPremiumPlanSvg() {
+		/* eslint-disable max-len */
 		return (
 			<svg viewBox="0 0 124 127.1" enableBackground="new 0 0 124 127.1">
 				<circle fill="#D3DEE6" cx="62" cy="63.1" r="62"/>
@@ -338,9 +343,11 @@ class PlanFeaturesHeader extends Component {
 				</g>
 			</svg>
 		);
+		/* eslint-enable max-len */
 	}
 
 	getBusinessPlanSvg() {
+		/* eslint-disable max-len */
 		return (
 			<svg viewBox="0 0 124 127.1" enableBackground="new 0 0 124 127.1">
 				<circle fill="#D3DEE6" cx="62" cy="63.1" r="62"/>
@@ -404,6 +411,7 @@ class PlanFeaturesHeader extends Component {
 				</g>
 			</svg>
 		);
+		/* eslint-enable max-len */
 	}
 }
 
