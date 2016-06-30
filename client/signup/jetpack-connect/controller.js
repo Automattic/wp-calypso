@@ -38,7 +38,7 @@ const sites = sitesFactory();
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
 const userModule = userFactory();
 
-const jetpackConnectFirstStep = ( context, isInstall ) => {
+const jetpackConnectFirstStep = ( context, type ) => {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
 	userModule.fetch();
@@ -51,7 +51,7 @@ const jetpackConnectFirstStep = ( context, isInstall ) => {
 		React.createElement( JetpackConnect, {
 			path: context.path,
 			context: context,
-			isInstall: isInstall,
+			type: type,
 			userModule: userModule,
 			locale: context.params.locale
 		} ),
@@ -93,13 +93,31 @@ export default {
 		next();
 	},
 
+	premium( context ) {
+		const analyticsBasePath = '/jetpack/connect/premium',
+			analyticsPageTitle = 'Jetpack Connect Premium';
+
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
+		jetpackConnectFirstStep( context, 'premium' );
+	},
+
+	pro( context ) {
+		const analyticsBasePath = '/jetpack/connect/pro',
+			analyticsPageTitle = 'Jetpack Install Pro';
+
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
+		jetpackConnectFirstStep( context, 'pro' );
+	},
+
 	install( context ) {
 		const analyticsBasePath = '/jetpack/connect/install',
 			analyticsPageTitle = 'Jetpack Install';
 
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-		jetpackConnectFirstStep( context, true );
+		jetpackConnectFirstStep( context, 'install' );
 	},
 
 	connect( context ) {
