@@ -14,9 +14,7 @@ import times from 'lodash/times';
 import Main from 'components/main';
 import { getRecommendationIds } from 'state/reader/start/selectors';
 import QueryReaderStartRecommendations from 'components/data/query-reader-start-recommendations';
-import Button from 'components/button';
 import StartCard from './card';
-import RootChild from 'components/root-child';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import smartSetState from 'lib/react-smart-set-state';
 import CardPlaceholder from './card-placeholder';
@@ -51,9 +49,8 @@ const Start = React.createClass( {
 		this.smartSetState( this.getStateFromStores() );
 	},
 
-	graduateColdStart() {
-		// Later, we'll store that the user has graduated Cold Start, so they won't see it again.
-		// For the moment, just redirect to the following stream.
+	exitColdStart() {
+		// Redirect to the following stream
 		page.redirect( '/' );
 	},
 
@@ -65,15 +62,47 @@ const Start = React.createClass( {
 	},
 
 	render() {
-		const canGraduate = ( this.state.totalSubscriptions > 0 );
+		const totalSubscriptions = this.state.totalSubscriptions;
+
+		// Reduce the total subscription count by one for display (exclude the user's own site)
+		const totalSubscriptionsDisplay = totalSubscriptions > 0 ? totalSubscriptions - 1 : 0;
+		const canGraduate = ( this.state.totalSubscriptions > 1 );
 		const hasRecommendations = this.props.recommendationIds.length > 0;
+
 		return (
 			<Main className="reader-start">
+				{ /* Have not followed a site yet */ }
+				{ ! canGraduate && hasRecommendations &&
+					<div className="reader-start__bar is-follow">
+						<span className="reader-start__bar-text">{ this.translate( 'Follow one or more sites to get started' ) }</span>
+					</div>
+				}
+
+				{ /* Following at least one or more sites */ }
+				{ canGraduate && hasRecommendations &&
+					<div className="reader-start__bar is-following">
+						<span className="reader-start__bar-text">
+							{
+								this.translate(
+									'Great! You\'re now following %(totalSubscriptionsDisplay)d site.',
+									'Great! You\'re now following %(totalSubscriptionsDisplay)d sites.',
+									{
+										count: totalSubscriptionsDisplay,
+										args: {
+											totalSubscriptionsDisplay: totalSubscriptionsDisplay
+										}
+									}
+								)
+							}
+						</span>
+						<a onClick={ this.exitColdStart } className="reader-start__bar-action">{ this.translate( 'OK, I\'m all set!' ) }</a>
+					</div>
+				}
+
 				<QueryReaderStartRecommendations />
 				<header className="reader-start__intro">
 					<h1 className="reader-start__title">{ this.translate( 'Welcome to the WordPress.com Reader' ) }</h1>
-					<p className="reader-start__description">{ this.translate( "Discover great stories and read your favorite sites' posts in one place. Every time there are new updates to the sites you follow, you'll be the first to know!" ) }</p>
-					<p className="reader-start__description">{ this.translate( "We've suggested some sites that you might enjoy. Follow one or more sites to get started." ) }</p>
+					<p className="reader-start__description">{ this.translate( 'Reader is like a customizable magazine with stories from your favorite places. Follow a few sites and their latest posts will appear here. Below are some suggestions – give it a try!' ) }</p>
 				</header>
 
 				{ ! hasRecommendations && this.renderLoadingPlaceholders() }
@@ -88,25 +117,10 @@ const Start = React.createClass( {
 					} ) : null }
 				</Masonry> }
 
-				{ hasRecommendations && <RootChild className="reader-start__bar">
-					<div className="reader-start__bar-action main">
-						<span className="reader-start__bar-text">
-							{ canGraduate
-								? this.translate(
-									'Great! You\'re now following %(totalSubscriptions)d site.',
-									'Great! You\'re now following %(totalSubscriptions)d sites.', {
-										count: this.state.totalSubscriptions,
-										args: {
-											totalSubscriptions: this.state.totalSubscriptions
-										}
-									}
-								)
-								: this.translate( 'Follow one or more sites to get started' )
-							}
-						</span>
-						<Button onClick={ this.graduateColdStart } disabled={ ! canGraduate }>{ this.translate( "OK, I'm all set!" ) }</Button>
-					</div>
-				</RootChild> }
+				{ hasRecommendations &&
+				<div className="reader-start__manage">{ this.translate( 'Didn\'t find a site you\'re looking for?' ) }
+					&nbsp;<a href="/following/edit">Follow by URL</a>.
+				</div> }
 			</Main>
 		);
 	}
