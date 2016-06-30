@@ -4,7 +4,8 @@
  * External dependencies
  */
 var webpack = require( 'webpack' ),
-	path = require( 'path' );
+	path = require( 'path' ),
+	config = require( 'config' );
 
 /**
  * Internal dependencies
@@ -26,6 +27,7 @@ const sectionCount = sections.length;
 webpackConfig = {
 	cache: true,
 	entry: {},
+	devtool: '#eval',
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
@@ -33,15 +35,7 @@ webpackConfig = {
 		chunkFilename: '[name].[chunkhash].js',
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]'
 	},
-	debug: true,
-	devtool: '#eval-cheap-module-source-map',
 	module: {
-		preLoaders: [
-			{
-				test: /\.jsx?$/,
-				loader: 'source-map-loader'
-			}
-		],
 		loaders: [
 			{
 				test: /sections.js$/,
@@ -132,6 +126,16 @@ if ( CALYPSO_ENV === 'development' ) {
 
 	// Add react hot loader before babel-loader
 	jsLoader.loaders = [ 'react-hot' ].concat( jsLoader.loaders );
+
+	if ( config.isEnabled( 'use-source-maps' ) ) {
+		webpackConfig.debug = true;
+		webpackConfig.devtool = '#eval-cheap-module-source-map';
+		webpackConfig.module.preLoaders = webpackConfig.module.preLoaders || [];
+		webpackConfig.module.preLoaders.push( {
+			test: /\.jsx?$/,
+			loader: 'source-map-loader'
+		} );
+	}
 } else {
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = path.join( __dirname, 'client', 'boot' );
 	webpackConfig.debug = false;
