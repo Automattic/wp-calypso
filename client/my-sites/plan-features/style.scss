@@ -195,6 +195,10 @@ $plan-features-header-banner-height: 20px;
 		border-bottom: none;
 	}
 
+	&:first-child {
+		border-top: solid 1px lighten( $gray, 27% );
+	}
+
 	&.is-placeholder {
 		padding-left: 1px;
 	}
@@ -229,6 +233,10 @@ $plan-features-header-banner-height: 20px;
 		display: block;
 		height: 19px;
 	}
+}
+
+.plan-features__footer.has-description {
+	margin-top: 0;
 }
 
 .plan-features__footer {
