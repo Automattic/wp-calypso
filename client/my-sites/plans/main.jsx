@@ -10,10 +10,10 @@ import find from 'lodash/find';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getCurrentPlan } from 'lib/plans';
 import { getPlans } from 'state/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
 import { isJpphpBundle } from 'lib/products-values';
 import Main from 'components/main';
@@ -23,11 +23,12 @@ import paths from './paths';
 import PlanList from 'components/plans/plan-list' ;
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlanOverview from './plan-overview';
-import { shouldFetchSitePlans, plansLink } from 'lib/plans';
+import { plansLink } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
+import QuerySitePlans from 'components/data/query-site-plans';
 import { PLAN_MONTHLY_PERIOD } from 'lib/plans/constants';
 import config from 'config';
 
@@ -42,7 +43,6 @@ const Plans = React.createClass( {
 		destinationType: React.PropTypes.string,
 		intervalType: React.PropTypes.string,
 		plans: React.PropTypes.array.isRequired,
-		fetchSitePlans: React.PropTypes.func.isRequired,
 		sites: React.PropTypes.object.isRequired,
 		sitePlans: React.PropTypes.object.isRequired,
 		transaction: React.PropTypes.object.isRequired
@@ -50,20 +50,6 @@ const Plans = React.createClass( {
 
 	getInitialState() {
 		return { openPlan: '' };
-	},
-
-	componentDidMount() {
-		this.updateSitePlans( this.props.sitePlans );
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		this.updateSitePlans( nextProps.sitePlans );
-	},
-
-	updateSitePlans( sitePlans ) {
-		const selectedSite = this.props.sites.getSelectedSite();
-
-		this.props.fetchSitePlans( sitePlans, selectedSite );
 	},
 
 	openPlan( planId ) {
@@ -97,7 +83,7 @@ const Plans = React.createClass( {
 
 	showMonthlyPlansLink() {
 		const selectedSite = this.props.sites.getSelectedSite();
-		if ( !selectedSite.jetpack ) {
+		if ( ! selectedSite.jetpack ) {
 			return '';
 		}
 
@@ -142,7 +128,8 @@ const Plans = React.createClass( {
 
 	render() {
 		const selectedSite = this.props.sites.getSelectedSite(),
-			mainClassNames = {};
+			mainClassNames = {},
+			siteId = this.props.siteId;
 
 		let	hasJpphpBundle,
 			currentPlan;
@@ -184,6 +171,7 @@ const Plans = React.createClass( {
 
 						{ ! hasJpphpBundle && this.showMonthlyPlansLink() }
 						<QueryPlans />
+						<QuerySitePlans siteId={ siteId } />
 
 						{
 							showPlanFeatures
@@ -214,17 +202,8 @@ export default connect(
 	( state, props ) => {
 		return {
 			plans: getPlans( state ),
-			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() )
-		};
-	},
-
-	dispatch => {
-		return {
-			fetchSitePlans( sitePlans, site ) {
-				if ( shouldFetchSitePlans( sitePlans, site ) ) {
-					dispatch( fetchSitePlans( site.ID ) );
-				}
-			}
+			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() ),
+			siteId: getSelectedSiteId( state )
 		};
 	}
 )( Plans );
