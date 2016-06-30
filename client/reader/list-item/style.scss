@@ -86,53 +86,7 @@
 		}
 	}
 
-	.follow-button {
-		font-size: 16px;
-		margin: 1px 15px 0 0;
 
-		.gridicon {
-			left: 15px;
-			top: 9px;
-			fill: $gray-dark;
-		}
-
-		.follow-button__label {
-			fill: $gray-dark;
-		}
-
-		&:hover {
-
-			.gridicon {
-				fill: $gray-dark;
-			}
-
-			.follow-button__label {
-				color: $gray-dark;
-			}
-		}
-	}
-
-	.follow-button.is-following {
-
-		.gridicon {
-			fill: $alert-green;
-		}
-
-		.follow-button__label {
-			color: $alert-green;
-		}
-
-		&:hover {
-
-			.gridicon {
-				fill: $alert-green;
-			}
-
-			.follow-button__label {
-				color: $alert-green;
-			}
-		}
-	}
 }
 
 .foldable-card {

@@ -1,4 +1,5 @@
 .feed-header {
+
 	.site__title::before {
 		font-size: 14px;
 		padding-bottom: 1px;
@@ -9,64 +10,9 @@
 	}
 
 	.follow-button__label {
-		font-family: $sans;
-		font-size: 16px;
 
 		@include breakpoint( "<660px" ) {
 			display: none;
-		}
-	}
-
-	.follow-button {
-		margin: 4px 5px 0 0;
-
-		@include breakpoint( ">480px" ) {
-			margin-right: 15px;
-		}
-
-		.follow-button__label {
-			color: $gray-dark;
-		}
-
-		.gridicon {
-
-		}
-
-		&:hover {
-			background: none;
-
-			.gridicon {
-				fill: $gray-dark;
-			}
-
-			.follow-button__label {
-				cursor: pointer;
-				color: $gray-dark;
-			}
-		}
-	}
-
-	.follow-button.is-following {
-
-		.gridicon {
-			fill: $alert-green;
-		}
-
-		.follow-button__label {
-			color: $alert-green;
-		}
-
-		&:hover {
-			background: none;
-
-			.gridicon {
-				fill: $alert-green;
-			}
-
-			.follow-button__label {
-				cursor: pointer;
-				color: $alert-green;
-			}
 		}
 	}
 }
@@ -131,16 +77,14 @@
 }
 
 .feed-header__follow {
-	.follow-button {
-		position: absolute;
-			top: 9px;
-			right: 8px;
+	position: absolute;
+		top: 13px;
+		right: 10px;
 
-		@include breakpoint( ">480px" ) {
-			position: absolute;
-				top: 17px;
-				right: 0;
-		}
+	@include breakpoint( ">480px" ) {
+		position: absolute;
+			top: 21px;
+			right: 25px;
 	}
 }
 
@@ -164,11 +108,11 @@
 }
 
 .feed-header__follow-count {
+	background-color: $gray-light;
 	color: $gray;
 	font-size: 13px;
 	font-style: italic;
+	padding: 0 8px;
 	position: relative;
 		top: 9px;
-	background-color: $gray-light;
-	padding: 0 8px;
 }

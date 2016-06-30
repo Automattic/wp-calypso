@@ -208,7 +208,9 @@ FullPostView = React.createClass( {
 							onSelect={ this.pickSite }
 							onClick={ this.handleSiteClick } />
 
-						{ feed && feed.feed_URL && <FollowButton siteUrl={ feed && feed.feed_URL } /> }
+						<div className="full-post__follow">
+							{ feed && feed.feed_URL && <FollowButton siteUrl={ feed && feed.feed_URL } /> }
+						</div>
 					</div>
 
 					{ hasFeaturedImage
