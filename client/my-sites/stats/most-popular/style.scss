@@ -13,16 +13,6 @@
 	}
 }
 
-.most-popular {
-	position: relative;
-	width: 80%;
-	margin: 0 auto;
-
-	@include breakpoint( "<480px" ) {
-		width: 100%;
-	}
-}
-
 .most-popular__item {
 	width: 50%;
 	float: left;

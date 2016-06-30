@@ -42,21 +42,21 @@ class StatsMostPopular extends Component {
 			statType
 		} = this.props;
 
-		const classes = [
+		const classes = classNames(
+			'most-popular',
 			'stats-module',
-			'stats-most-popular',
 			'is-site-overview',
 			{
 				'is-loading': requesting && ! percent,
 				'is-empty': ! percent
 			}
-		];
+		);
 
 		return (
 			<div>
 				{ siteId && <QuerySiteStats siteId={ siteId } statType={ statType } /> }
 				<SectionHeader label={ translate( 'Most popular day and hour' ) }></SectionHeader>
-					<Card className={ classNames( classes ) }>
+					<Card className={ classes }>
 						<div className="most-popular__wrapper">
 							<div className="most-popular__item">
 								<span className="most-popular__label">{ translate( 'Most popular day' ) }</span>
