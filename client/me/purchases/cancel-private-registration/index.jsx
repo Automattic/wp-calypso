@@ -19,6 +19,7 @@ import notices from 'notices';
 import Notice from 'components/notice';
 import paths from '../paths';
 import titles from 'me/purchases/titles';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const CancelPrivateRegistration = React.createClass( {
 	propTypes: {
@@ -145,7 +146,13 @@ const CancelPrivateRegistration = React.createClass( {
 		const purchase = this.props.selectedPurchase.data;
 
 		if ( purchase.error ) {
-			return <Notice status="is-error" showDismiss={ false }>{ purchase.error }</Notice>;
+			return <Notice status="is-error" showDismiss={ false }>
+				{ purchase.error }
+				{ ' ' }
+				{ this.translate( 'Please try again later or {{a}}contact support.{{/a}}', {
+					components: { a: <a href={ CALYPSO_CONTACT } /> }
+				} ) }
+			</Notice>;
 		}
 
 		return null;
