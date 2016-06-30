@@ -1,9 +1,11 @@
 import React, { Component, PropTypes } from 'react';
+import findKey from 'lodash/findKey';
 import get from 'lodash/get';
 import identity from 'lodash/identity';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
 import map from 'lodash/map';
+import matches from 'lodash/matches';
 import { connect } from 'react-redux';
 
 import SegmentedControl from 'components/segmented-control';
@@ -41,23 +43,19 @@ const tokenMap = {
 	archives: [ 'siteName', 'tagline', 'date' ]
 };
 
-const tokenize = translate => s => {
-	if ( ! isString( s ) ) {
-		return s;
+const tokenize = translate => value => {
+	if ( ! isString( value ) ) {
+		return value;
 	}
 
 	// find token key from translated label
 	// e.g. "Post Title" > postTitle: translate( 'Post Title' )
-	//           s             k             tokens[ k ]
-	const tokens = getValidTokens( translate );
-	const type = Object
-		.keys( tokens )
-		.filter( k => tokens[ k ] === s )
-		.shift();
+	//         value          type           translation
+	const type = findKey( getValidTokens( translate ), matches( value ) );
 
 	return isUndefined( type )
-		? { type: 'string', isBorderless: true, value: s }
-		: { type: type, value: s };
+		? { type: 'string', isBorderless: true, value }
+		: { type, value };
 };
 
 export class MetaTitleEditor extends Component {
