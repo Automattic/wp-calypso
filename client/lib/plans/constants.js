@@ -48,7 +48,6 @@ export const WORDADS_INSTANT = 'wordads-instant';
 
 // jetpack features constants
 export const FEATURE_SPAM_AKISMET_PLUS = 'spam-akismet-plus';
-export const FEATURE_SPAM_AKISMET_UNLIMITED = 'spam-akismet-unlimited';
 export const FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY = 'offsite-backup-vaultpress-daily';
 export const FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME = 'offsite-backup-vaultpress-realtime';
 export const FEATURE_BACKUP_ARCHIVE_30 = 'backup-archive-30';
@@ -162,7 +161,7 @@ export const plansList = {
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
-			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 			FEATURE_AUTOMATED_RESTORES,
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_MALWARE_SCANNING_DAILY,
@@ -180,7 +179,7 @@ export const plansList = {
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
-			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 			FEATURE_AUTOMATED_RESTORES,
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_MALWARE_SCANNING_DAILY,
@@ -195,7 +194,7 @@ export const plansList = {
 		getPathSlug: () => 'professional',
 		getDescription: () => i18n.translate( 'More powerful security tools and realtime content backup for the ultimate peace of mind.' ),
 		getFeatures: () => [
-			FEATURE_SPAM_AKISMET_UNLIMITED,
+			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
 			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
@@ -216,7 +215,7 @@ export const plansList = {
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ], plan ),
 		getDescription: () => i18n.translate( 'More powerful security tools and realtime content backup for the ultimate peace of mind.' ),
 		getFeatures: () => [
-			FEATURE_SPAM_AKISMET_UNLIMITED,
+			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
 			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
@@ -340,9 +339,6 @@ export const featuresList = {
 	},
 	[ FEATURE_SPAM_AKISMET_PLUS ]: {
 		getTitle: () => i18n.translate( 'Spam Protection' )
-	},
-	[ FEATURE_SPAM_AKISMET_UNLIMITED ]: {
-		getTitle: () => i18n.translate( 'Unlimited Spam Protection' )
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: {
 		getTitle: () => i18n.translate( 'Daily Offsite Backups' )
