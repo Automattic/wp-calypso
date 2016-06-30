@@ -33,7 +33,7 @@ module.exports = function( nextPageMethod ) {
 
 		checkScrollPosition: function( options ) {
 			var scrollPosition = window.pageYOffset,
-				documentHeight = document.body.clientHeight,
+				documentHeight = document.body.scrollHeight,
 				viewportHeight = window.innerHeight,
 				scrollOffset = 2 * viewportHeight,
 				triggeredByScroll = options.triggeredByScroll,
