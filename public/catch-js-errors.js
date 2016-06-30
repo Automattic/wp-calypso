@@ -1,5 +1,6 @@
 ( function() {
 	var savedWindowOnError = window.onerror,
+		assignment = 1,
 		savedErrors = [],
 		lastTimeSent = 0,
 		packTimeout = null,
@@ -89,14 +90,15 @@
 	}
 
 	if ( isLocalStorageNameSupported() ) {
+		assignment = Math.random();
 		// Randomly assign 1% of users to log errors
 		if ( ! localStorage.getItem( 'log-errors' ) ) {
-			if ( Math.random() <= 0.01 ) {
+			if ( assignment <= 0.01 ) {
 				localStorage.setItem( 'log-errors', 'atlas' );
-			} else if ( Math.random() <= 0.02 ) {
+			} else if ( assignment <= 0.02 ) {
 				localStorage.setItem( 'log-errors', 'analytics' );
 				//Prep the stage up for GA logging experiment
-			} else if ( Math.random() <= 0.03 ) {
+			} else if ( assignment <= 0.03 ) {
 				localStorage.setItem( 'log-errors', 'external' );
 				//Prep the stage up for Google Stackdriver or other service experiment
 			} else {
