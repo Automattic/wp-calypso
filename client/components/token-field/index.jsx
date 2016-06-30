@@ -95,11 +95,6 @@ var TokenField = React.createClass( {
 		}
 	},
 
-	componentWillUnmount: function() {
-		debug( 'componentWillUnmount' );
-		this._clearBlurTimeout();
-	},
-
 	render: function() {
 		var classes = classNames( 'token-field', {
 			'is-active': this.state.isActive,
@@ -116,7 +111,6 @@ var TokenField = React.createClass( {
 			tokenFieldProps = Object.assign( {}, tokenFieldProps, {
 				onKeyDown: this._onKeyDown,
 				onKeyPress: this._onKeyPress,
-				onBlur: this._onBlur,
 				onFocus: this._onFocus
 			} );
 		}
@@ -125,8 +119,9 @@ var TokenField = React.createClass( {
 			<div { ...tokenFieldProps } >
 				<div ref="tokensAndInput"
 					className="token-field__input-container"
-					onClick={ ! this.props.disabled && this._onClick }
 					tabIndex="-1"
+					onMouseDown={ this._onContainerTouched }
+					onTouchStart={ this._onContainerTouched }
 				>
 					{ this._renderTokensAndInput() }
 				</div>
@@ -178,7 +173,8 @@ var TokenField = React.createClass( {
 			ref: 'input',
 			key: 'input',
 			disabled: this.props.disabled,
-			value: this.state.incompleteTokenValue
+			value: this.state.incompleteTokenValue,
+			onBlur: this._onBlur,
 		};
 
 		if ( ! ( maxLength && value.length >= maxLength ) ) {
@@ -193,13 +189,6 @@ var TokenField = React.createClass( {
 	},
 
 	_onFocus: function( event ) {
-		if ( this._blurTimeoutID ) {
-			this._clearBlurTimeout();
-			return;
-		} else if ( this.state.isActive ) {
-			return; // already active
-		}
-
 		this.setState( { isActive: true } );
 		if ( 'function' === typeof this.props.onFocus ) {
 			this.props.onFocus( event );
@@ -207,63 +196,12 @@ var TokenField = React.createClass( {
 	},
 
 	_onBlur: function( event ) {
-		var blurSource = event.relatedTarget ||
-			event.nativeEvent.explicitOriginalTarget || // FF
-			document.activeElement; // IE11
-
-		var stillActive = this.refs.main.contains( blurSource );
-
-		if ( stillActive ) {
-			debug( '_onBlur but component still active; not doing anything' );
-			return; // we didn't leave the component, so don't do anything
-		}
-
-		debug( '_onBlur before timeout setting component inactive' );
-		this.setState( {
-			isActive: false
-		} );
-		/* When the component blurs, we need to add the current text, or
-		 * the selected suggestion (if any).
-		 *
-		 * Two reasons to set a timeout rather than do this immediately:
-		 *  - Some other user action (like tapping on a suggestion) may
-		 *    have caused this blur.  If there is another user-triggered
-		 *    event, we need to give it a chance to complete first.
-		 *  - At one point, using the right arrow key to move the text
-		 *    input was causing a blur to outside the component?! (left
-		 *    arrow key does not do this).  So, we delay the resetting of
-		 *    the state and cancel it if we get focus back quick enough.
-		 */
-		debug( '_onBlur waiting to add current token' );
-		this._blurTimeoutID = window.setTimeout( function() {
-			// Add the current token, UNLESS the text input is empty and
-			// there is a suggested token selected.  In that case, we don't
-			// want to add it, because it's easy to inadvertently hover
-			// over a suggestion.
-			if ( this._inputHasValidValue() ) {
-				debug( '_onBlur after timeout adding current token' );
-				this._addCurrentToken();
-			} else {
-				debug( '_onBlur after timeout not adding current token' );
-			}
-			debug( '_onBlur resetting component state' );
+		if ( this._inputHasValidValue() ) {
+			debug( '_onBlur adding current token' );
+			this.setState( { isActive: false }, this._addCurrentToken );
+		} else {
+			debug( '_onBlur not adding current token' );
 			this.setState( this.getInitialState() );
-			this._clearBlurTimeout();
-		}.bind( this ), 0 );
-	},
-
-	_clearBlurTimeout: function() {
-		if ( this._blurTimeoutID ) {
-			debug( '_blurTimeoutID cleared' );
-			window.clearTimeout( this._blurTimeoutID );
-			this._blurTimeoutID = null;
-		}
-	},
-
-	_onClick: function() {
-		if ( this.refs.input && ! this.refs.input.hasFocus() ) {
-			debug( '_onClick focusing input' );
-			this.refs.input.focus();
 		}
 	},
 
@@ -293,6 +231,14 @@ var TokenField = React.createClass( {
 			selectedSuggestionIndex: -1,
 			selectedSuggestionScroll: false
 		} );
+	},
+
+	_onContainerTouched: function( event ) {
+		// Prevent clicking/touching the tokensAndInput container from blurring
+		// the input and adding the current token.
+		if ( event.target === this.refs.tokensAndInput && this.state.isActive ) {
+			event.preventDefault();
+		}
 	},
 
 	_onKeyDown: function( event ) {
