@@ -324,14 +324,40 @@ const PlansSetup = React.createClass( {
 			return null;
 		}
 
-		const pluginsWithErrors = filter( this.props.plugins, ( item ) => {
+		const plugins = this.addWporgDataToPlugins( this.props.plugins );
+		const pluginsWithErrors = filter( plugins, ( item ) => {
 			return ( item.error !== null );
 		} );
 
 		if ( pluginsWithErrors.length ) {
-			noticeText = this.translate( 'There were some issues installing your plugins. See the links below.' );
+			if ( pluginsWithErrors.length === 1 ) {
+				noticeText = this.translate(
+					'There was an issue installing %(plugin)s. You can fix this by {{a}}manually installing{{/a}} the plugin.',
+					{
+						args: {
+							plugin: pluginsWithErrors[ 0 ].name,
+						},
+						components: {
+							a: <a href={ support.JETPACK_SUPPORT } />
+						}
+					}
+				);
+			} else {
+				noticeText = this.translate(
+					'There were some issues installing your plugins. You can fix this by {{a}}manually installing{{/a}} the plugins.',
+					{
+						components: {
+							a: <a href={ support.JETPACK_SUPPORT } />
+						}
+					}
+				);
+			}
 			return (
-				<Notice status="is-info" text={ noticeText } showDismiss={ false } />
+				<Notice status="is-error" text={ noticeText } showDismiss={ false }>
+					<NoticeAction href={ support.JETPACK_SUPPORT }>
+						{ this.translate( 'Contact Support' ) }
+					</NoticeAction>
+				</Notice>
 			);
 		}
 
