@@ -21,7 +21,9 @@ const StartCardHeader = ( { site } ) => {
 					<a href={ `/read/blogs/${site.ID}` }>{ subscribersCount } followers</a>
 				</div>
 			</div>
-			<FollowButton siteUrl={ site.URL } />
+			<div className="reader-start-card__follow">
+				<FollowButton siteUrl={ site.URL } />
+			</div>
 		</header>
 	);
 };
