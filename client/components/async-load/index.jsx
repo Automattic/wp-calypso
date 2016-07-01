@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import omit from 'lodash/omit';
 
-export default class CodeSplitRender extends Component {
+export default class AsyncLoad extends Component {
 	constructor() {
 		super( ...arguments );
 
@@ -33,7 +33,7 @@ export default class CodeSplitRender extends Component {
 	}
 }
 
-CodeSplitRender.propTypes = {
+AsyncLoad.propTypes = {
 	require: PropTypes.func.isRequired,
 	placeholder: PropTypes.node
 };
