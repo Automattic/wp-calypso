@@ -8,6 +8,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import Types from './main';
+import { mapPostStatus } from 'lib/route/path';
 
 export function redirect() {
 	page.redirect( '/posts' );
@@ -17,7 +18,7 @@ export function list( context, next ) {
 	context.primary = (
 		<Types query={ {
 			type: context.params.type,
-			status: context.params.status || 'publish',
+			status: mapPostStatus( context.params.status ),
 			search: context.query.s
 		} } />
 	);
