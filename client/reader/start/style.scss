@@ -148,71 +148,6 @@
 				top: 36px;
 			}
 		}
-
-		@include breakpoint
-	}
-
-	.follow-button {
-		border-color: $blue-wordpress;
-		float: right;
-		overflow: visible;
-		right: 0;
-
-		.gridicon {
-			fill: $blue-wordpress;
-			position: absolute;
-				left: 15px;
-				top: 9px;
-		}
-
-		.follow-button__label {
-			color: $blue-wordpress;
-			font-size: 16px;
-
-			@include breakpoint( "<660px" ) {
-				display: none;
-			}
-		}
-
-		&:hover {
-			border-color: $gray-dark;
-			color: $gray-dark;
-
-			.gridicon {
-				fill: $gray-dark;
-			}
-
-			.follow-button__label {
-				cursor: pointer;
-				color: $gray-dark;
-			}
-		}
-	}
-
-	.follow-button.is-following {
-
-		border-color: $alert-green;
-
-		.follow-button__label {
-			color: $alert-green;
-		}
-
-		.gridicon {
-			fill: $alert-green;
-		}
-
-		&:hover {
-			background: none;
-
-			.gridicon {
-				fill: $alert-green;
-			}
-
-			.follow-button__label {
-				cursor: pointer;
-				color: $alert-green;
-			}
-		}
 	}
 }
 
@@ -226,6 +161,7 @@
 }
 
 .reader-start-card__site-title {
+	color: $gray-dark;
 	display: block;
 	font-weight: 500;
 	line-height: normal;
@@ -236,19 +172,6 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	width: 100%;
-}
-
-.reader-start-card__site-description {
-	color: darken( $gray, 20% );
-	font-size: 12px;
-
-	.site-icon {
-		margin: auto;
-	}
-}
-
-.reader-start-card__site-title {
-	color: $gray-dark;
 }
 
 .reader-start-card__follower-count {
@@ -265,6 +188,11 @@
 	a {
 		color: inherit;
 	}
+}
+
+.reader-start-card__follow {
+	position: absolute;
+		right: 16px;
 }
 
 .reader-start-post-preview {
