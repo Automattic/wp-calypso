@@ -149,6 +149,60 @@
 			}
 		}
 	}
+
+	// Use blue Follow button (Gray dark on hover) only in CS
+
+	.follow-button {
+		border-color: $blue-wordpress;
+
+		.gridicon {
+			fill: $blue-wordpress;
+		}
+
+		.follow-button__label {
+			color: $blue-wordpress;
+		}
+
+		&:hover {
+			border-color: $gray-dark;
+			color: $gray-dark;
+
+			.gridicon {
+				fill: $gray-dark;
+			}
+
+			.follow-button__label {
+				cursor: pointer;
+				color: $gray-dark;
+			}
+		}
+	}
+
+	.follow-button.is-following {
+
+		border-color: $alert-green;
+
+		.follow-button__label {
+			color: $alert-green;
+		}
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		&:hover {
+			background: none;
+
+			.gridicon {
+				fill: $alert-green;
+			}
+
+			.follow-button__label {
+				cursor: pointer;
+				color: $alert-green;
+			}
+		}
+	}
 }
 
 .reader-start-card__header {
@@ -172,6 +226,15 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	width: 100%;
+}
+
+.reader-start-card__site-description {
+	color: darken( $gray, 20% );
+	font-size: 12px;
+
+	.site-icon {
+		margin: auto;
+	}
 }
 
 .reader-start-card__follower-count {
