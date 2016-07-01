@@ -6,7 +6,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import EditorAuthor from 'post-editor/editor-author';
 import EditorDeletePost from 'post-editor/editor-delete-post';
 import EditorPostType from 'post-editor/editor-post-type';
 import EditorSticky from 'post-editor/editor-sticky';
@@ -16,6 +15,7 @@ import utils from 'lib/posts/utils';
 import Tooltip from 'components/tooltip';
 import Button from 'components/button';
 import EditorActionBarViewLabel from './view-label';
+import AsyncLoad from 'components/async-load';
 
 export default React.createClass( {
 
@@ -58,7 +58,7 @@ export default React.createClass( {
 		};
 
 		return (
-			<EditorVisibility {...props} />
+			<EditorVisibility { ...props } />
 		);
 	},
 
@@ -68,7 +68,15 @@ export default React.createClass( {
 		return (
 			<div className="editor-action-bar">
 				<div className="editor-action-bar__first-group">
-					{ multiUserSite && <EditorAuthor post={ this.props.post } isNew={ this.props.isNew } /> }
+					{ multiUserSite &&
+						<AsyncLoad
+							require={ function( callback ) {
+								require( [ 'post-editor/editor-author' ], callback );
+							} }
+							post={ this.props.post }
+							isNew={ this.props.isNew }
+						/>
+					}
 				</div>
 				<EditorPostType />
 				<div className="editor-action-bar__last-group">
