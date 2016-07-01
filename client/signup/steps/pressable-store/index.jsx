@@ -78,7 +78,7 @@ export default React.createClass( {
 	renderStoreForm() {
 		return (
 			<div>
-				<LoggedOutForm className="pressable-store__form">
+				<LoggedOutForm className="pressable-store__form" onSubmit={ this.onSubmit }>
 					<HeroImage />
 
 					<FormSectionHeading className="pressable-store__heading">{ this.translate( 'Get your store for as low as $25 / month' ) }</FormSectionHeading>
@@ -88,7 +88,7 @@ export default React.createClass( {
 						<FormLabel className="pressable-store__form-label" for="email">{ this.translate( 'Start by entering your email address:' ) }</FormLabel>
 						<div className="pressable-store__form-fields">
 							<FormTextInput ref={ this.onEmailInputRef } isError={ this.state.error } isValid={ this.state.isValid } onChange={ this.onEmailChange } className="pressable-store__form-email is-spaced" type="email" placeholder="Email Address" name="email" />
-							<FormButton onClick={ this.onSubmit } className="pressable-store__form-submit">{ this.translate( 'Get started on Pressable' ) } <Gridicon icon="external" size={ 12 } /></FormButton>
+							<FormButton className="pressable-store__form-submit">{ this.translate( 'Get started on Pressable' ) } <Gridicon icon="external" size={ 12 } /></FormButton>
 						</div>
 						{ this.state.error && <FormInputValidation isError={ true } text={ this.state.error } /> }
 					</LoggedOutFormFooter>
