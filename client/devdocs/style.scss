@@ -144,16 +144,20 @@
 	float: right;
 }
 
-.design-assets__group {
+.design-assets__group,
+.docs__design-assets-group {
 	color: $gray-dark;
 }
 
-.design-assets__group .docs-example {
+.design-assets__group .docs-example,
+.docs__design-assets-group .docs-example {
 	margin-top: 40px;
 }
 
 .design-assets__group > .gridicon:hover,
-.design-assets__group > .social-logo:hover {
+.design-assets__group > .social-logo:hover,
+.docs__design-assets-group > .gridicon:hover,
+.docs__design-assets-group > .social-logo:hover {
 	fill: $gray;
 	cursor: pointer;
 }
