@@ -14,6 +14,7 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import BackButton from 'components/header-cake';
 import Gridicon from 'components/gridicon';
+import classNames from 'classnames';
 
 function isSurveyOneStep() {
 	return false;
@@ -67,29 +68,44 @@ export default React.createClass( {
 		}
 		return (
 			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ stepOneClickHandler }>
-				<Gridicon icon={ icon } className="survey-step__vertical__icon"/>
 				<label className="survey-step__label">{ vertical.label }</label>
 			</Card>
 		);
 	},
 
 	renderOptionList() {
-		if ( this.state.stepOne ) {
-			return (
-				<div>
-					<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne.label }</BackButton>
-					{ this.state.stepOne.stepTwo.map( this.renderStepTwoVertical ) }
-				</div>
-			);
-		}
 		const blogLabel = this.translate( 'What is your blog about?' );
 		const siteLabel = this.translate( 'What is your website about?' );
+
+		var verticalsClasses = classNames(
+				'survey-step__verticals',
+				{ 'active': !this.state.stepOne } );
+
+		var subVerticalsClasses = classNames(
+				'survey-step__sub-verticals',
+				{ 'active': this.state.stepOne } );
+
 		return (
-			<div>
-				<CompactCard className="survey-step__title">
+			<div className="survey-step__wrapper">
+				<div className="survey-step__title">
 					<label className="survey-step__label">{ this.props.surveySiteType === 'blog' ? blogLabel : siteLabel }</label>
-				</CompactCard>
-				{ this.state.verticalList.map( this.renderStepOneVertical ) }
+				</div>
+
+				<div className="survey-step__verticals-wrapper">
+					<div className={ verticalsClasses }>
+						{ this.state.verticalList.map( this.renderStepOneVertical ) }
+					</div>
+
+					<div className={ subVerticalsClasses }>
+						{ this.state.stepOne ?
+							<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne.label }</BackButton>
+							: null }
+
+						{ this.state.stepOne ?
+								this.state.stepOne.stepTwo.map( this.renderStepTwoVertical )
+							: null }
+					</div>
+				</div>
 			</div>
 		);
 	},
