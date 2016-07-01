@@ -81,6 +81,3 @@ webpack( webpackConfig, function( error, stats ) {
 
 	minify( files );
 });
-
-// Minify files outside of webpack
-cp.spawn( path.join( 'node_modules', '.bin', 'uglifyjs' ), [ '--output', 'public/catch-js-errors.js'.replace( '.js', '-v2.min.js' ), 'catch-js-errors.js' ] );

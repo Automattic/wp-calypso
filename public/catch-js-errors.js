@@ -1,5 +1,6 @@
 ( function() {
 	var savedWindowOnError = window.onerror,
+		assignment = 1,
 		savedErrors = [],
 		lastTimeSent = 0,
 		packTimeout = null,
@@ -21,6 +22,7 @@
 
 	function sendErrorsToApi() {
 		var xhr = new XMLHttpRequest(),
+			url = ( window.location && window.location.href ) ? window.location.href + ' ' : '',
 			params;
 
 		if ( savedErrors.length > 0 ) {
@@ -29,7 +31,8 @@
 			xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
 
 			params = 'client_id=39911&client_secret=cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8&error=';
-			params += encodeURIComponent( JSON.stringify( savedErrors ) );
+			params += encodeURIComponent( url + JSON.stringify( savedErrors ) );
+			//Window.location.href is hached in here, because backend has a char limit for now.
 
 			xhr.send( params );
 
@@ -89,23 +92,32 @@
 	}
 
 	if ( isLocalStorageNameSupported() ) {
+		assignment = Math.random();
 		// Randomly assign 1% of users to log errors
-		if ( localStorage.getItem( 'log-errors' ) === undefined ) {
-			if ( Math.random() <= 0.01 ) {
-				localStorage.setItem( 'log-errors', 'true' );
+		if ( ! localStorage.getItem( 'log-errors' ) ) {
+			if ( assignment <= 0.01 ) {
+				localStorage.setItem( 'log-errors', 'rest-api' );
+			} else if ( assignment <= 0.02 ) {
+				localStorage.setItem( 'log-errors', 'analytics' );
+				//Prep the stage up for GA logging experiment
+			} else if ( assignment <= 0.03 ) {
+				localStorage.setItem( 'log-errors', 'external' );
+				//Prep the stage up for Google Stackdriver or other service experiment
 			} else {
 				localStorage.setItem( 'log-errors', 'false' );
 			}
 		}
 
-		if ( localStorage.getItem( 'log-errors' ) !== undefined && localStorage.getItem( 'log-errors' ) === 'true' ) {
+		if ( localStorage.getItem( 'log-errors' ) !== undefined &&
+			( localStorage.getItem( 'log-errors' ) === 'rest-api' || localStorage.getItem( 'log-errors' ) === 'true' )
+		) {
 			// set up handler to POST errors
 			window.onerror = function( message, scriptUrl, lineNumber, columnNumber, error ) {
 				saveError( message, scriptUrl, lineNumber, columnNumber, error );
 				if ( savedWindowOnError ) {
 					savedWindowOnError();
 				}
-			}
+			};
 		}
 	}
 }() );

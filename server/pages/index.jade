@@ -76,7 +76,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				a(class='bug-report', href=feedbackURL, title='Report an issue', target='_blank')
 
 		if 'development' !== env
-			script( src=catchJsErrors )
+			script( src=urls['catch-js-errors.js'] )
 
 		script.
 			(function() {
