@@ -27,7 +27,6 @@ export default React.createClass( {
 
 	propTypes: {
 		stepName: PropTypes.string.isRequired,
-		goToNextStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object.isRequired,
 	},
 
