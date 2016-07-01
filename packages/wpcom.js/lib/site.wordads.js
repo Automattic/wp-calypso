@@ -10,18 +10,6 @@ import SiteWordAdsTOS from './site.wordads.tos';
  *
  * Use a `WPCOM#Me` instance to create a new `SiteWordAds` instance.
  *
- * *Example:*
- *    // Require `wpcom-unpublished` library
- *    import wpcomUnpublished from 'wpcom-unpublished';
- *
- *    // Create a `wpcomUnpublished` instance
- *    var wpcom = wpcomUnpublished();
- *
- *    // Create a `SiteWordAds` instance
- *    var wordAds = wpcom
- *      .site( 'my-blog.wordpress.com' )
- *      .wordAds();
- *
  * @param {String} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null

@@ -1,7 +1,7 @@
 /**
  * Module dependencies.
  */
-var sendRequest = require( './send-request' );
+import sendRequest from './send-request';
 
 /**
  * Expose `Request` module

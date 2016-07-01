@@ -1,10 +1,9 @@
-
 /**
  * Module dependencies.
  */
+import debugFactory from 'debug';
 
-var debug = require('debug')('wpcom:pinghub');
-
+const debug = debugFactory( 'wpcom:pinghub' );
 
 /**
  * Create a `Pinghub` instance
@@ -25,25 +24,25 @@ export default function Pinghub( wpcom ) {
 /**
  * Open a websocket to Pinghub
  *
- * @param {String} path
- * @param {Function} fn
+ * @param {String} path - request path
+ * @param {Function} fn - callback function
  * @api public
  */
 Pinghub.prototype.connect = function( path, fn ) {
-	debug("connect", path, fn);
-	var pinghub = this,
+	debug( 'connect', path, fn );
+	let pinghub = this,
 		params = {
 			action: 'connect',
 			path: '/pinghub' + path
 		},
 		errorCallback = function() {}, // we want an xhr, not a promise
 		xhr = this.conns[path] = this.wpcom.req.get( params, errorCallback );
-	xhr.onload = function(e) {
-		debug( "onload", path, e );
+	xhr.onload = function( e ) {
+		debug( 'onload', path, e );
 		fn( null, e );
 	};
-	xhr.onerror = xhr.onabort = xhr.onclose = function(e) {
-		debug( "onerror", path, e );
+	xhr.onerror = xhr.onabort = xhr.onclose = function( e ) {
+		debug( 'onerror', path, e );
 		pinghub.remove( path );
 		fn( e, null );
 	};
@@ -52,12 +51,12 @@ Pinghub.prototype.connect = function( path, fn ) {
 /**
  * Close a websocket connection (unsubscribe)
  *
- * @param {String} path
+ * @param {String} path - request path
  * @api public
  */
 Pinghub.prototype.disconnect = function( path ) {
-	debug("disconnect", path);
-	var params = {
+	debug( 'disconnect', path );
+	let params = {
 			action: 'disconnect',
 			path: '/pinghub' + path
 		},
@@ -72,6 +71,6 @@ Pinghub.prototype.disconnect = function( path ) {
  * @api private
  */
 Pinghub.prototype.remove = function( path ) {
-	debug("remove", path);
-	delete this.conns[path];
+	debug( 'remove', path );
+	delete this.conns[ path ];
 };

@@ -1,7 +1,7 @@
 /**
  * Module dependencies.
  */
-var commentLike = require( './site.comment.like' );
+import commentLike from './site.comment.like';
 
 /**
  * Comment methods

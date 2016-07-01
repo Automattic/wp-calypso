@@ -1,9 +1,11 @@
 /**
  * Module dependencies
  */
-var qs = require( 'qs' );
-var debug = require( 'debug' )( 'wpcom:send-request' );
-var debug_res = require( 'debug' )( 'wpcom:send-request:res' );
+import qs from 'qs';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'wpcom:send-request' );
+const debug_res = debugFactory( 'wpcom:send-request:res' );
 
 /**
  * Request to WordPress REST API

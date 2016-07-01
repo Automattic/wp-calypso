@@ -1,8 +1,10 @@
 /**
  * Module dependencies.
  */
-var fs = require( 'fs' );
-var debug = require( 'debug' )( 'wpcom:media' );
+const fs = require( 'fs' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'wpcom:media' );
 
 /**
  * Media methods

@@ -1,20 +1,6 @@
 /**
  * `SiteWordAdsSettings` constructor.
  *
- * *Example:*
- *    // Require `wpcom-unpublished` library
- *    import wpcomUnpublished from 'wpcom-unpublished';
- *
- *    // Create a `wpcomUnpublished` instance
- *    var wpcom = wpcomUnpublished();
- *
- *    // Create a `SiteWordAdsSettings` instance
- *    var wordAds = wpcom
- *      .site( 'my-blog.wordpress.com' )
- *      .wordAds()
- *      .settings();
- *
- *
  * @param {String} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null

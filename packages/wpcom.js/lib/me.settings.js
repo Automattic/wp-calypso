@@ -9,16 +9,6 @@ import MeSettingsPassword from './me.settings.password';
  *
  * Use a `WPCOM#Me` instance to create a new `MeSettings` instance.
  *
- * *Example:*
- *    // Require `wpcom-unpublished` library
- *    var wpcomUnpublished = require( 'wpcom-unpublished' );
- *
- *    // Create a `wpcomUnpublished` instance
- *    var wpcom = wpcomUnpublished();
- *
- *    // Create a `MeSettings` instance
- *    var settings = wpcom.me().settings();
- *
  * @param {WPCOM} wpcom - wpcom instance
  * @return {Null} null
  */

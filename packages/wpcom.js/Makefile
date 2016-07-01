@@ -2,6 +2,8 @@
 THIS_MAKEFILE_PATH:=$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 THIS_DIR:=$(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
+
+ROOT := lib index.js
 include $(shell node -e "require('n8-make')")
 
 # BIN directory
@@ -21,9 +23,13 @@ NPM ?= $(NODE) $(shell which npm)
 MOCHA ?= $(NODE) $(BIN)/mocha
 WEBPACK ?= $(NODE) $(BIN)/webpack
 
-standalone: build/wpcom.js
+standalone: compile build/wpcom.js
 
-build/wpcom.js: $(COMPILED_FILES)
+compile:
+	make build --jobs=8
+
+build/wpcom.js:
+	@$(WEBPACK) -p --config ./webpack.config.js
 
 install: node_modules
 
@@ -36,46 +42,24 @@ lint: node_modules/eslint node_modules/babel-eslint
 
 eslint: lint
 
-example-server:
-	cd examples/server/; $(NPM) install
-	$(NODE) examples/server/index.js
-
-test: build
+test:
 	@$(MOCHA) \
 		--timeout 120s \
 		--slow 3s \
 		--grep "$(FILTER)" \
 		--bail \
 		--reporter spec \
-		build/test
+		--compilers js:babel-register \
+		test/
 
-test-all: build
+test-all:
 	@$(MOCHA) \
 		--timeout 120s \
 		--slow 3s \
 		--bail \
 		--reporter spec \
-		build/test
-
-publish: clean standalone
-	$(NPM) publish
-
-# testing client app
-test-app: build build/test/testing-source.js
-	mkdir -p webapp/tests
-	cp test/fixture.json build/test/
-	cp test/config.json build/test/
-	cp test/util.js build/test/
-	cp ./node_modules/mocha/mocha.js $(TESTAPP_DIR)
-	cp ./node_modules/mocha/mocha.css $(TESTAPP_DIR)
-	@$(WEBPACK) -p --config ./webpack.tests.config.js
-
-run-test-app: build test-app
-	cd $(TESTAPP_DIR); serve -p $(TESTAPP_PORT)
-
-build/test/testing-source.js: ${JS_TESTING_FILES}
-	mkdir -p build/test/
-	cat > $@ $^
+		--compilers js:babel-register \
+		test
 
 webapp:
 	@$(WEBPACK) -p --config webapp/webpack.config.js
@@ -98,4 +82,5 @@ deploy: test-app webapp
 	git push origin gh-pages
 	git checkout -
 
-.PHONY: standalone example-server test test-all publish node_modules lint eslint webapp
+
+.PHONY: standalone test test-all node_modules lint eslint webapp compile

@@ -1,10 +1,10 @@
 /**
  * Module dependencies
  */
-var wpcomFactory = require( '../' );
-var qs = require( 'qs' );
-var oauthCors = require( 'wpcom-oauth-cors' );
-var fixture = require( './fixture' );
+import wpcomFactory from '../';
+import qs from 'qs';
+import oauthCors from 'wpcom-oauth-cors';
+import fixture from './fixture';
 var configFactory;
 
 try {
