@@ -96,7 +96,7 @@
 		// Randomly assign 1% of users to log errors
 		if ( ! localStorage.getItem( 'log-errors' ) ) {
 			if ( assignment <= 0.01 ) {
-				localStorage.setItem( 'log-errors', 'atlas' );
+				localStorage.setItem( 'log-errors', 'rest-api' );
 			} else if ( assignment <= 0.02 ) {
 				localStorage.setItem( 'log-errors', 'analytics' );
 				//Prep the stage up for GA logging experiment
@@ -109,7 +109,7 @@
 		}
 
 		if ( localStorage.getItem( 'log-errors' ) !== undefined &&
-			( localStorage.getItem( 'log-errors' ) === 'atlas' || localStorage.getItem( 'log-errors' ) === 'true' )
+			( localStorage.getItem( 'log-errors' ) === 'rest-api' || localStorage.getItem( 'log-errors' ) === 'true' )
 		) {
 			// set up handler to POST errors
 			window.onerror = function( message, scriptUrl, lineNumber, columnNumber, error ) {
