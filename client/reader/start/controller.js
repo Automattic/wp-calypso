@@ -15,7 +15,7 @@ const analyticsPageTitle = 'Reader';
 
 export function start( context ) {
 	const startComponent = require( 'reader/start/main' ),
-		basePath = '/read/start',
+		basePath = '/recommendations/start',
 		fullAnalyticsPageTitle = analyticsPageTitle + ' > Start',
 		mcKey = 'start';
 
