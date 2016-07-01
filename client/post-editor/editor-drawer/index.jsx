@@ -18,10 +18,7 @@ import TagListData from 'components/data/tag-list-data';
 import FormTextarea from 'components/forms/form-textarea';
 import PostFormatsData from 'components/data/post-formats-data';
 import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
-import Location from 'post-editor/editor-location';
-import Discussion from 'post-editor/editor-discussion';
 import PageParent from 'post-editor/editor-page-parent';
-import SeoAccordion from 'post-editor/editor-seo-accordion';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
 import InfoPopover from 'components/info-popover';
 import PageTemplatesData from 'components/data/page-templates-data';
@@ -39,7 +36,6 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import config from 'config';
-import EditorDrawerFeaturedImage from './featured-image';
 import EditorDrawerTaxonomies from './taxonomies';
 
 /**
@@ -180,9 +176,13 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<EditorDrawerFeaturedImage
+			<AsyncLoad
+				require={ function( callback ) {
+					require( [ './featured-image' ], callback );
+				} }
 				site={ this.props.site }
-				post={ this.props.post } />
+				post={ this.props.post }
+			/>
 		);
 	},
 
@@ -231,7 +231,12 @@ const EditorDrawer = React.createClass( {
 		return (
 			<AccordionSection>
 				<span className="editor-drawer__label-text">{ this.translate( 'Location' ) }</span>
-				<Location coordinates={ PostMetadata.geoCoordinates( this.props.post ) } />
+				<AsyncLoad
+					require={ function( callback ) {
+						require( [ 'post-editor/editor-location' ], callback );
+					} }
+					coordinates={ PostMetadata.geoCoordinates( this.props.post ) }
+				/>
 			</AccordionSection>
 		);
 	},
@@ -243,7 +248,10 @@ const EditorDrawer = React.createClass( {
 
 		return(
 			<AccordionSection>
-				<Discussion
+				<AsyncLoad
+					require={ function( callback ) {
+						require( [ 'post-editor/editor-discussion' ], callback );
+					} }
 					site={ this.props.site }
 					post={ this.props.post }
 					isNew={ this.props.isNew }
@@ -264,7 +272,12 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<SeoAccordion metaDescription={ PostMetadata.metaDescription( this.props.post ) } />
+			<AsyncLoad
+				require={ function( callback ) {
+					require( [ 'post-editor/editor-seo-accordion' ], callback );
+				} }
+				metaDescription={ PostMetadata.metaDescription( this.props.post ) }
+			/>
 		);
 	},
 
