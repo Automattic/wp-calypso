@@ -14,7 +14,7 @@ const initialTitleFormats = {
 };
 
 const titleFormats = createReducer( initialTitleFormats, {
-	[ SEO_TITLE_SET ]: ( state, { pageType, format } ) => Object.assign( {}, state, { [ pageType ]: format } )
+	[ SEO_TITLE_SET ]: ( state, { pageType, format } ) => ( { ...state, [ pageType ]: format } )
 }, titleFormatSchema );
 
 export default combineReducers( {
