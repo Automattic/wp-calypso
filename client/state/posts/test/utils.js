@@ -37,20 +37,12 @@ describe( 'utils', () => {
 			expect( serializedQuery ).to.equal( '{"type":"page"}' );
 		} );
 
-		it( 'should lowercase the result', () => {
-			const serializedQuery = getSerializedPostsQuery( {
-				search: 'HeLlO'
-			} );
-
-			expect( serializedQuery ).to.equal( '{"search":"hello"}' );
-		} );
-
 		it( 'should prefix site ID if specified', () => {
 			const serializedQuery = getSerializedPostsQuery( {
-				search: 'HeLlO'
+				search: 'Hello'
 			}, 2916284 );
 
-			expect( serializedQuery ).to.equal( '2916284:{"search":"hello"}' );
+			expect( serializedQuery ).to.equal( '2916284:{"search":"Hello"}' );
 		} );
 	} );
 
@@ -93,22 +85,13 @@ describe( 'utils', () => {
 			expect( serializedQuery ).to.equal( '{"type":"page"}' );
 		} );
 
-		it( 'should lowercase the result', () => {
-			const serializedQuery = getSerializedPostsQueryWithoutPage( {
-				search: 'HeLlO',
-				page: 2
-			} );
-
-			expect( serializedQuery ).to.equal( '{"search":"hello"}' );
-		} );
-
 		it( 'should prefix site ID if specified', () => {
 			const serializedQuery = getSerializedPostsQueryWithoutPage( {
-				search: 'HeLlO',
+				search: 'Hello',
 				page: 2
 			}, 2916284 );
 
-			expect( serializedQuery ).to.equal( '2916284:{"search":"hello"}' );
+			expect( serializedQuery ).to.equal( '2916284:{"search":"Hello"}' );
 		} );
 	} );
 } );

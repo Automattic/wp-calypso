@@ -235,7 +235,7 @@ describe( 'selectors', () => {
 			const isRequesting = isRequestingSitePostsForQuery( {
 				posts: {
 					queryRequests: {
-						'2916284:{"search":"hel"}': true
+						'2916284:{"search":"Hel"}': true
 					}
 				}
 			}, 2916284, { search: 'Hello' } );
@@ -247,7 +247,7 @@ describe( 'selectors', () => {
 			const isRequesting = isRequestingSitePostsForQuery( {
 				posts: {
 					queryRequests: {
-						'2916284:{"search":"hello"}': true
+						'2916284:{"search":"Hello"}': true
 					}
 				}
 			}, 2916284, { search: 'Hello' } );
@@ -259,7 +259,7 @@ describe( 'selectors', () => {
 			const isRequesting = isRequestingSitePostsForQuery( {
 				posts: {
 					queryRequests: {
-						'2916284:{"search":"hello"}': false
+						'2916284:{"search":"Hello"}': false
 					}
 				}
 			}, 2916284, { search: 'Hello' } );

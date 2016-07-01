@@ -173,7 +173,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': true
+				'2916284:{"search":"Hello"}': true
 			} );
 		} );
 
@@ -184,13 +184,13 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				'{"search":"hello"}': true
+				'{"search":"Hello"}': true
 			} );
 		} );
 
 		it( 'should accumulate queries', () => {
 			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': true
+				'2916284:{"search":"Hello"}': true
 			} );
 
 			const state = queryRequests( original, {
@@ -200,8 +200,8 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': true,
-				'2916284:{"search":"hello w"}': true
+				'2916284:{"search":"Hello"}': true,
+				'2916284:{"search":"Hello W"}': true
 			} );
 		} );
 
@@ -217,7 +217,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': false
+				'2916284:{"search":"Hello"}': false
 			} );
 		} );
 
@@ -230,13 +230,13 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': false
+				'2916284:{"search":"Hello"}': false
 			} );
 		} );
 
 		it( 'should never persist state', () => {
 			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': true
+				'2916284:{"search":"Hello"}': true
 			} );
 
 			const state = queryRequests( original, { type: SERIALIZE } );
@@ -246,7 +246,7 @@ describe( 'reducer', () => {
 
 		it( 'should never load persisted state', () => {
 			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': true
+				'2916284:{"search":"Hello"}': true
 			} );
 
 			const state = queryRequests( original, { type: DESERIALIZE } );
