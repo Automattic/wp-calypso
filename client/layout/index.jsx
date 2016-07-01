@@ -24,6 +24,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
 	WelcomeMessage = require( 'layout/nux-welcome/welcome-message' ),
 	GuidedTours = require( 'layout/guided-tours' ),
+	SectionFirstView = require( 'layout/section-first-view' ),
 	analytics = require( 'lib/analytics' ),
 	config = require( 'config' ),
 	abtest = require( 'lib/abtest' ).abtest,
@@ -53,6 +54,14 @@ Layout = React.createClass( {
 	mixins: [ SitesListNotices, observe( 'user', 'focus', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
 
 	_sitesPoller: null,
+
+	getInitialState() {
+		return {
+			lastSectionFirstView: null,
+			isSectionFirstViewHiding: false,
+			isSectionFirstViewHidden: false
+		};
+	},
 
 	componentWillUpdate: function( nextProps ) {
 		if ( this.props.section.group !== nextProps.section.group ) {
@@ -88,6 +97,20 @@ Layout = React.createClass( {
 
 	newestSite: function() {
 		return sortBy( this.props.sites.get(), property( 'ID' ) ).pop();
+	},
+
+	startHidingSectionFirstView() {
+		this.setState( {
+			isSectionFirstViewHiding: true,
+		} );
+	},
+
+	finishHidingSectionFirstView() {
+		this.setState( {
+			lastSectionFirstView: this.props.section,
+			isSectionFirstViewHiding: false,
+			isSectionFirstViewHidden: true
+		} );
 	},
 
 	renderPushNotificationPrompt: function() {
@@ -163,6 +186,20 @@ Layout = React.createClass( {
 		}
 	},
 
+	renderSectionFirstView() {
+		if ( config.isEnabled( 'stats/first-view' )
+				&& this.props.section.name === 'stats'
+			 	&& ! this.state.isSectionFirstViewHidden ) {
+			return (
+				<SectionFirstView
+					 	onWillHide={ this.startHidingSectionFirstView }
+						onDidHide={ this.finishHidingSectionFirstView }>
+					TODO: FIRST VIEW GOES HERE!
+				</SectionFirstView>
+			);
+		}
+	},
+
 	render: function() {
 		var sectionClass = classnames(
 				'wp',
@@ -178,6 +215,12 @@ Layout = React.createClass( {
 				'is-active': this.props.isLoading
 			} );
 
+		const sectionFirstView = this.renderSectionFirstView();
+		const primaryAndPromptsClass = classnames( {
+			'first-viewable': sectionFirstView,
+			'is-first-view-visible': sectionFirstView && ! this.state.isSectionFirstViewHiding
+		} );
+
 		return (
 			<div className={ sectionClass }>
 				{ config.isEnabled( 'guided-tours' ) && this.props.tourState.shouldShow ? <GuidedTours /> : null }
@@ -187,12 +230,15 @@ Layout = React.createClass( {
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="wp-content">
-					{ this.renderWelcome() }
-					{ this.renderPushNotificationPrompt() }
-					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
-					<div id="primary" className="wp-primary wp-section" />
+					<div className={ primaryAndPromptsClass }>
+						{ this.renderWelcome() }
+						{ this.renderPushNotificationPrompt() }
+						<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
+						<div id="primary" className="wp-primary wp-section" />
+					</div>
 					<div id="secondary" className="wp-secondary" />
 				</div>
+				{ sectionFirstView }
 				<div id="tertiary" />
 				<TranslatorLauncher
 					isEnabled={ translator.isEnabled() }
@@ -211,7 +257,7 @@ export default connect(
 			isSupportUser: state.support.isSupportUser,
 			section,
 			isOffline: isOffline( state ),
-			tourState: getGuidedTourState( state ),
+			tourState: getGuidedTourState( state )
 		};
 	}
 )( Layout );

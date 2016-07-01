@@ -12,6 +12,13 @@ var controller = require( 'my-sites/controller' ),
 
 module.exports = function() {
 	if ( config.isEnabled( 'manage/stats' ) ) {
+		page( '/stats*', statsController.firstView );
+
+		page.exit( '/stats*', function( context, next ) {
+			console.log( 'STATS EXIT context.path: ' + context.path );
+			next();
+		} );
+
 		// Stat Overview Page
 		page( '/stats', controller.siteSelection, controller.navigation, statsController.overview );
 		page( '/stats/day', controller.siteSelection, controller.navigation, statsController.overview );

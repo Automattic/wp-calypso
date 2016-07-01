@@ -22,7 +22,8 @@ var user = require( 'lib/user' )(),
 	layoutFocus = require( 'lib/layout-focus' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	enableFirstView = require( 'components/enable-first-view' ),
-	FirstView = require( './stats-first-view' );
+	FirstView = require( 'components/enable-first-view/first-view' ),
+	StatsFirstView = require( './stats-first-view' );
 
 function getVisitDates() {
 	var statsVisitDates = store.get( 'statVisits' ) || [];
@@ -136,9 +137,9 @@ module.exports = {
 			momentSiteZone = i18n.moment(),
 			StatsComponent = Insights;
 
-		if ( config.isEnabled( 'stats/first-view' ) ) {
-			StatsComponent = enableFirstView( StatsComponent, FirstView );
-		}
+		//if ( config.isEnabled( 'stats/first-view' ) ) {
+		//	StatsComponent = enableFirstView( StatsComponent, FirstView );
+		//}
 
 		followList = new FollowList();
 
@@ -729,5 +730,22 @@ module.exports = {
 				document.getElementById( 'primary' )
 			);
 		}
+	},
+
+	firstView: function ( context, next ) {
+		console.log( 'STATS context.path: ' + context.path );
+
+		if ( config.isEnabled( 'stats/first-view' ) ) {
+			ReactDom.render(
+				React.createElement( ReactRedux.Provider, { store: context.store },
+					React.createElement( FirstView, {
+						isVisible: true
+					}, StatsFirstView )
+				),
+				document.getElementById( 'primary' )
+			);
+		}
+
+		next();
 	}
 };
