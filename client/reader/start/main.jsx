@@ -37,6 +37,11 @@ const Start = React.createClass( {
 	// Remove change listeners from stores
 	componentWillUnmount() {
 		FeedSubscriptionStore.off( 'change', this.handleChange );
+		this.masonry = null;
+	},
+
+	bindMasonry( component ) {
+		this.masonry = component && component.masonry;
 	},
 
 	getStateFromStores() {
@@ -47,6 +52,11 @@ const Start = React.createClass( {
 
 	handleChange() {
 		this.smartSetState( this.getStateFromStores() );
+	},
+
+	componentDidUpdate() {
+		console.log( 'reloading masonry' );
+		this.masonry && this.masonry.layout();
 	},
 
 	exitColdStart() {
@@ -107,7 +117,7 @@ const Start = React.createClass( {
 
 				{ ! hasRecommendations && this.renderLoadingPlaceholders() }
 
-				{ hasRecommendations && <Masonry className="reader-start__cards" updateOnEachImageLoad={ true } options={ { gutter: 14 } }>
+				{ hasRecommendations && <Masonry className="reader-start__cards" updateOnEachImageLoad={ true } ref={ this.bindMasonry } options={ { gutter: 14 } }>
 					{ this.props.recommendationIds ? map( this.props.recommendationIds, ( recId ) => {
 						return (
 							<StartCard
