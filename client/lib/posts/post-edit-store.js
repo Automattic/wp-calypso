@@ -10,6 +10,7 @@ var assign = require( 'lodash/assign' ),
 	without = require( 'lodash/without' ),
 	map = require( 'lodash/map' ),
 	pickBy = require( 'lodash/pickBy' );
+import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies
@@ -93,6 +94,16 @@ function getCategoryIds( post ) {
 			return category.ID;
 		}
 		return category;
+	} );
+}
+
+function getTermIds( post ) {
+	if ( ! post || ! post.terms ) {
+		return;
+	}
+
+	return mapValues( post.terms, ( taxonomy ) => {
+		return map( taxonomy, 'ID' );
 	} );
 }
 
@@ -202,6 +213,11 @@ function normalize( post ) {
 	var categoryIds = getCategoryIds( post );
 	if ( categoryIds ) {
 		post.category_ids = categoryIds;
+	}
+
+	const termIds = getTermIds( post );
+	if ( termIds ) {
+		post.terms_by_id = termIds;
 	}
 
 	post.parent_id = getParentId( post );
