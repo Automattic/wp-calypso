@@ -31,7 +31,7 @@ class PlansFeaturesMain extends Component {
 		const {
 			site,
 			intervalType,
-			upgradePlan,
+			onUpgradeClick,
 			hideFreePlan,
 			isInSignup
 		} = this.props;
@@ -59,24 +59,24 @@ class PlansFeaturesMain extends Component {
 				{ ! hideFreePlan
 					? <PlanFeatures
 						plan={ PLAN_FREE }
-						onUpgradeClick={ upgradePlan }
+						onUpgradeClick={ onUpgradeClick }
 						isInSignup={ isInSignup }
 					/>
 					: null
 				}
 				<PlanFeatures
 					plan={ PLAN_PERSONAL }
-					onUpgradeClick={ upgradePlan }
+					onUpgradeClick={ onUpgradeClick }
 					isInSignup={ isInSignup }
 				/>
 				<PlanFeatures
 					plan={ PLAN_PREMIUM }
-					onUpgradeClick={ upgradePlan }
+					onUpgradeClick={ onUpgradeClick }
 					isInSignup={ isInSignup }
 				/>
 				<PlanFeatures
 					plan={ PLAN_BUSINESS }
-					onUpgradeClick={ upgradePlan }
+					onUpgradeClick={ onUpgradeClick }
 					isInSignup={ isInSignup }
 				/>
 			</div>
