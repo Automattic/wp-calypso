@@ -549,31 +549,26 @@
 		display: flex;
 		padding: 0;
 		position: fixed;
-			left: 47%;
+			left: 50%;
 
 		@include breakpoint( "<660px" ) {
-		    bottom: 20px;
 			left: 5%;
 		    width: 90%;
-		    margin: 0 auto;
 		}
 
 		.reader-start__bar-text {
-			padding: 12px 15px;
-
-			@include breakpoint( "<660px" ) {
-				text-align: left;
-			}
+			padding: 13px 15px;
+			text-align: center;
+			width: 75%;
 		}
 	}
 
 	&.is-follow {
 
 		@include breakpoint( "<660px" ) {
-		    bottom: 0;
-			left: 5%;
+			bottom: 0;
+			left: 3%;
 		    width: 80%;
-		    margin: 0 auto;
 		}
 	}
 }
@@ -601,7 +596,11 @@
 	color: $white;
 	cursor: pointer;
 	margin-left: auto;
-	padding: 12px 14px 12px 13px;
+	padding: 13px 25px 13px 20px;
+
+	@include breakpoint( "<660px" ) {
+		padding: 13px 35px 13px 30px;
+	}
 
 	&:hover {
 		background: lighten( $alert-green, 15% );
