@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import map from 'lodash/map';
+import reduce from 'lodash/reduce';
 import find from 'lodash/find';
 import includes from 'lodash/includes';
 
@@ -11,8 +11,9 @@ import includes from 'lodash/includes';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getAllPostCounts } from 'state/posts/counts/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { getNormalizedPostCounts } from 'state/posts/counts/selectors';
+import { mapPostStatus } from 'lib/route/path';
 import UrlSearch from 'lib/mixins/url-search';
 import QueryPostCounts from 'components/data/query-post-counts';
 import SectionNav from 'components/section-nav';
@@ -26,6 +27,8 @@ const PostTypeFilter = React.createClass( {
 	propTypes: {
 		siteId: PropTypes.number,
 		query: PropTypes.object,
+		jetpack: PropTypes.bool,
+		siteSlug: PropTypes.string,
 		counts: PropTypes.object
 	},
 
@@ -36,14 +39,14 @@ const PostTypeFilter = React.createClass( {
 	},
 
 	getNavItems() {
-		const { query, siteSlug, counts } = this.props;
+		const { query, siteSlug, jetpack, counts } = this.props;
 
-		return map( counts, ( count, status ) => {
-			if ( ! count && ! includes( [ 'publish', 'draft' ], status ) ) {
-				return;
+		return reduce( counts, ( memo, count, status ) => {
+			if ( ! jetpack && ! count && ! includes( [ 'publish', 'draft' ], status ) ) {
+				return memo;
 			}
 
-			let label;
+			let label, pathStatus;
 			switch ( status ) {
 				case 'publish':
 					label = this.translate( 'Published', {
@@ -55,40 +58,26 @@ const PostTypeFilter = React.createClass( {
 					label = this.translate( 'Drafts', {
 						context: 'Filter label for posts list'
 					} );
-					break;
-
-				case 'pending':
-					label = this.translate( 'Pending', {
-						context: 'Filter label for posts list'
-					} );
-					break;
-
-				case 'private':
-					label = this.translate( 'Private', {
-						context: 'Filter label for posts list'
-					} );
+					pathStatus = 'drafts';
 					break;
 
 				case 'future':
 					label = this.translate( 'Scheduled', {
 						context: 'Filter label for posts list'
 					} );
+					pathStatus = 'scheduled';
 					break;
 
 				case 'trash':
 					label = this.translate( 'Trashed', {
 						context: 'Filter label for posts list'
 					} );
+					pathStatus = 'trashed';
 					break;
 			}
 
-			let pathStatus;
-			if ( 'publish' !== status ) {
-				pathStatus = status;
-			}
-
-			return {
-				count,
+			return memo.concat( {
+				count: jetpack ? null : count,
 				key: `filter-${ status }`,
 				path: [
 					'/types',
@@ -96,20 +85,20 @@ const PostTypeFilter = React.createClass( {
 					pathStatus,
 					siteSlug
 				].filter( Boolean ).join( '/' ),
-				selected: query.status === status,
+				selected: mapPostStatus( pathStatus ) === query.status,
 				children: label
-			};
-		} ).filter( Boolean );
+			} );
+		}, [] );
 	},
 
 	render() {
-		const { siteId, query, counts } = this.props;
+		const { siteId, query, jetpack } = this.props;
 		const navItems = this.getNavItems();
 		const selectedItem = find( navItems, 'selected' ) || {};
 
 		return (
 			<div>
-				{ query && siteId && (
+				{ query && siteId && false === jetpack && (
 					<QueryPostCounts
 						siteId={ siteId }
 						type={ query.type } />
@@ -117,13 +106,13 @@ const PostTypeFilter = React.createClass( {
 				<SectionNav
 					selectedText={ selectedItem.children }
 					selectedCount={ selectedItem.count }>
-					{ counts && [
+					{ query && [
 						<NavTabs
 							key="tabs"
 							label={ this.translate( 'Status', { context: 'Filter group label for tabs' } ) }
 							selectedText={ selectedItem.children }
 							selectedCount={ selectedItem.count }>
-							{ map( navItems, ( props ) => <NavItem { ...props } /> ) }
+							{ navItems.map( ( props ) => <NavItem { ...props } /> ) }
 						</NavTabs>,
 						<Search
 							key="search"
@@ -143,6 +132,7 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const props = {
 		siteId,
+		jetpack: isJetpackSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId )
 	};
 
@@ -151,6 +141,6 @@ export default connect( ( state, ownProps ) => {
 	}
 
 	return Object.assign( props, {
-		counts: getAllPostCounts( state, siteId, ownProps.query.type )
+		counts: getNormalizedPostCounts( state, siteId, ownProps.query.type )
 	} );
 } )( PostTypeFilter );
