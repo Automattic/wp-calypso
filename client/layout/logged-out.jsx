@@ -29,15 +29,15 @@ const LayoutLoggedOut = ( {
 	return (
 		<div className={ classes }>
 			<MasterbarLoggedOut title={ section.title } />
-			<div id="content" className="wp-content">
-				<div id="primary" className="wp-primary wp-section">
+			<div id="content" className="layout__content">
+				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>
-				<div id="secondary" className="wp-secondary">
+				<div id="secondary" className="layout__secondary">
 					{ secondary }
 				</div>
 			</div>
-			<div id="tertiary" className="wp-overlay fade-background">
+			<div id="tertiary">
 				{ tertiary }
 			</div>
 		</div>
