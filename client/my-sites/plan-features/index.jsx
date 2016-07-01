@@ -69,7 +69,12 @@ class PlanFeatures extends Component {
 				<PlanFeaturesItemList>
 					{
 						features.map( ( feature, index ) =>
-							<PlanFeaturesItem key={ index }>{ feature.getTitle() }</PlanFeaturesItem>
+							<PlanFeaturesItem
+								key={ index }
+								description={ feature.getDescription ? feature.getDescription() : null }
+							>
+								{ feature.getTitle() }
+							</PlanFeaturesItem>
 						)
 					}
 				</PlanFeaturesItemList>
@@ -117,7 +122,7 @@ export default connect( ( state, ownProps ) => {
 		features: getPlanFeaturesObject( ownProps.plan ),
 		rawPrice: getPlanRawPrice( state, planProductId, showMonthly ),
 		planConstantObj: plansList[ ownProps.plan ],
-		available : canUpgradeToPlan( ownProps.plan ),
+		available: canUpgradeToPlan( ownProps.plan ),
 		onUpgradeClick: () => {
 			const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 			page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( ownProps.plan ) || '' }` );
