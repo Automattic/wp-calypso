@@ -10,5 +10,5 @@ import { start } from './controller';
 import readerController from 'reader/controller';
 
 export default function() {
-	page( '/read/start', readerController.updateLastRoute, readerController.removePost, readerController.sidebar, start );
+	page( '/recommendations/start', readerController.loadSubscriptions, readerController.updateLastRoute, readerController.removePost, readerController.sidebar, start );
 }

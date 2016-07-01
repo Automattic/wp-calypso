@@ -170,7 +170,7 @@ module.exports = {
 			if ( FeedSubscriptionStore.getCurrentPage() > 0 || FeedSubscriptionStore.isLastPage() ) {
 				// we have total subs now, make the decision
 				if ( FeedSubscriptionStore.getTotalSubscriptions() < config( 'reader_cold_start_graduation_threshold' ) ) {
-					defer( page.redirect.bind( page, '/read/start' ) );
+					defer( page.redirect.bind( page, '/recommendations/start' ) );
 				} else {
 					defer( next );
 				}

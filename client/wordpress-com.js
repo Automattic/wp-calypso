@@ -288,7 +288,7 @@ if ( config.isEnabled( 'reader' ) ) {
 	if ( config.isEnabled( 'reader/start' ) ) {
 		sections.push( {
 			name: 'reader-start',
-			paths: [ '/read/start' ],
+			paths: [ '/recommendations/start' ],
 			module: 'reader/start',
 			secondary: true,
 			group: 'reader'
