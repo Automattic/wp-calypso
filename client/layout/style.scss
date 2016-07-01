@@ -1,0 +1,170 @@
+.layout__content {
+	@include clear-fix;
+	position: relative;
+	margin: 47px 0 0 0;
+	padding: 32px 32px 32px ( $sidebar-width-max + 32px );
+	box-sizing: border-box;
+	overflow: hidden;
+
+	.has-no-sidebar & {
+		padding-left: 32px;
+	}
+
+	.is-section-theme & {
+		padding: 0;
+		margin: 0;
+	}
+}
+
+// Tablets
+@include breakpoint( "<960px" ) {
+	.layout__content {
+		padding: 24px;
+		padding-left: ( $sidebar-width-min + 24px );
+
+		.has-no-sidebar & {
+			padding-left: 24px;
+		}
+
+		.is-section-theme & {
+			padding: 0;
+			margin: 0;
+		}
+	}
+}
+
+// Mobile (Full Width)
+@include breakpoint( "<660px" ) {
+	.layout__content {
+		margin-left: 0;
+		padding: 0;
+
+		.has-no-sidebar & {
+			padding-left: 0;
+		}
+	}
+}
+
+.layout__primary {
+	transition: all 0.15s ease-in-out;
+}
+
+.layout__content a {
+	text-decoration: none;
+}
+
+.layout {
+	.sidebar,
+	.layout__secondary .site-selector,
+	.current-site,
+	.sidebar__menu {
+		transform: translateX( 0 );
+		transition: all 0.15s cubic-bezier(0.075, 0.820, 0.165, 1.000);
+	}
+}
+
+.layout.focus-sites {
+	.layout__primary {
+		opacity: 0.2;
+		pointer-events: none;
+	}
+
+	.layout__secondary .site-selector {
+		opacity: 1;
+		transform: translateX( 272px );
+		pointer-events: auto;
+
+		@include breakpoint( "<660px" ) {
+			transform: translateX( 100vw );
+		}
+	}
+
+	.sidebar {
+		pointer-events: none;
+	}
+
+	.current-site,
+	.sidebar__menu {
+		opacity: 0;
+		transform: translateX( 64px );
+	}
+}
+
+.layout.focus-sidebar {
+	overflow: hidden;
+}
+
+// site selector in the sidebar
+.layout__secondary .site-selector {
+	background: lighten( $gray, 30% );
+	border-right: 1px solid lighten( $gray, 25% );
+	position: fixed;
+		top: 47px;
+		bottom: 0;
+		left: -272px;
+	width: 272px;
+	overflow: hidden;
+	z-index: z-index( 'root', '.layout__secondary .site-selector' );
+	opacity: 0;
+	pointer-events: none;
+
+	.search {
+		border-bottom: 1px solid lighten( $gray, 20% );
+	}
+
+	.site,
+	.all-sites {
+		.site__title,
+		.site__domain {
+			&::after {
+				@include long-content-fade( $color: lighten( $gray, 30% ) );
+			}
+		}
+	}
+
+	@include breakpoint( "<660px" ) {
+		width: 100vw;
+		left: -100vw;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.site-selector__recent {
+		border-bottom: 1px solid lighten( $gray, 20% );
+	}
+}
+
+.layout__loader {
+	border-bottom: 1px solid darken( $blue-wordpress, 4% );
+	height: 46px;
+	margin-left: -10%;
+	position: absolute;
+		left: 50%;
+		top: 0;
+	width: 20%;
+	z-index: z-index( 'root', '.layout__loader' );
+
+	// set a delay threshold for opacity changes
+	// prevents showing loader on fast connections
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity 0.1s linear;
+	transition-delay: 0.4s;
+
+	@include breakpoint( "<480px" ) {
+		background: $blue-wordpress;
+	}
+}
+
+.layout__loader.is-active {
+	visibility: visible;
+	opacity: 1;
+}
+
+.layout__preview.web-preview.is-visible,
+.layout__preview.web-preview {
+	left: 0;
+	.web-preview__content {
+		top: 0;
+		transform: scale( 1 );
+	}
+}

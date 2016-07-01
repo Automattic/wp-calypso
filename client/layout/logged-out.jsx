@@ -18,7 +18,7 @@ const LayoutLoggedOut = ( {
 	tertiary,
 	section,
 } ) => {
-	const classes = classNames( 'wp layout', {
+	const classes = classNames( 'layout', {
 		[ 'is-group-' + section.group ]: !! section,
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
