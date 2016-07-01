@@ -44,7 +44,9 @@ import {
 const googleAdCredits = featuresList[ FEATURE_GOOGLE_AD_CREDITS ];
 const googleAdCreditsFeature = {
 	title: googleAdCredits.getTitle(),
-	compareDescription: isWordpressAdCreditsEnabled() ? googleAdCredits.getDescriptionWithWordAdsCredit() : googleAdCredits.getDescription(),
+	compareDescription: isWordpressAdCreditsEnabled()
+		? googleAdCredits.getDescriptionWithWordAdsCredit()
+		: googleAdCredits.getDescription(),
 	product_slug: FEATURE_GOOGLE_AD_CREDITS,
 	1: false,
 	1003: '$100',
@@ -454,7 +456,7 @@ const PlansCompare = React.createClass( {
 	},
 
 	renderFeatureTitle( feature ) {
-		return(
+		return (
 			<div className="plans-compare__feature-title">
 				<span className="plans-compare__feature-title__container">
 					{ feature.title }

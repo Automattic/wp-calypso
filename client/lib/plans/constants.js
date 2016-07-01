@@ -67,7 +67,9 @@ export const plansList = {
 		getProductId: () => 1,
 		getStoreSlug: () => PLAN_FREE,
 		getPathSlug: () => 'beginner',
-		getDescription: () => i18n.translate( 'Get a free blog and be on your way to publishing your first post in less than five minutes.' ),
+		getDescription: () => i18n.translate(
+			'Get a free blog and be on your way to publishing your first post in less than five minutes.'
+		),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_FREE_SITE,
 			FEATURE_WP_SUBDOMAIN,
@@ -103,7 +105,9 @@ export const plansList = {
 		getPathSlug: () => 'premium',
 		getStoreSlug: () => PLAN_PREMIUM,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
-		getDescription: () => i18n.translate( 'Your own domain name, powerful customization options, lots of space for audio and video, and $100 advertising credit.' ),
+		getDescription: () => i18n.translate(
+			'Your own domain name, powerful customization options, lots of space for audio and video, and $100 advertising credit.'
+		),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_FREE_SITE,
 			FEATURE_CUSTOM_DOMAIN,
@@ -126,8 +130,14 @@ export const plansList = {
 		getStoreSlug: () => PLAN_BUSINESS,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ], plan ),
 		getPathSlug: () => 'business',
-		getDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, and Google Analytics.' ),
-		getDescriptionWithWordAdsCredit: () => i18n.translate( 'Everything included with Premium, as well as live chat support, unlimited access to premium themes, Google Analytics, and $200 advertising credit.' ),
+		getDescription: () => i18n.translate(
+			'Everything included with Premium, as well as live chat support, ' +
+			'unlimited access to premium themes, and Google Analytics.'
+		),
+		getDescriptionWithWordAdsCredit: () => i18n.translate(
+			'Everything included with Premium, as well as live chat support, ' +
+			'unlimited access to premium themes, Google Analytics, and $200 advertising credit.'
+		),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_FREE_SITE,
 			FEATURE_CUSTOM_DOMAIN,
@@ -156,7 +166,9 @@ export const plansList = {
 		getProductId: () => 2000,
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getPathSlug: () => 'premium',
-		getDescription: () => i18n.translate( 'All the features you need to keep your site’s content backed up and secure, as well as spam-free.' ),
+		getDescription: () => i18n.translate(
+			'All the features you need to keep your site’s content backed up and secure, as well as spam-free.'
+		),
 		getFeatures: () => [
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -174,7 +186,9 @@ export const plansList = {
 		getProductId: () => 2003,
 		getPathSlug: () => 'premium-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
-		getDescription: () => i18n.translate( 'All the features you need to keep your site’s content backed up and secure, as well as spam-free.' ),
+		getDescription: () => i18n.translate(
+			'All the features you need to keep your site’s content backed up and secure, as well as spam-free.'
+		),
 		getFeatures: () => [
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -287,19 +301,23 @@ export const featuresList = {
 	[ FEATURE_GOOGLE_AD_CREDITS ]: {
 		getTitle: () => i18n.translate( 'Advertising Credit' ),
 		getDescription: () => i18n.translate( '$100 Google AdWords credit after spending the first $25. Offer valid in US and Canada.' ),
-		getDescriptionWithWordAdsCredit: () => i18n.translate( '$100 Google AdWords credit after spending the first $25. ' +
+		getDescriptionWithWordAdsCredit: () => i18n.translate(
+			'$100 Google AdWords credit after spending the first $25. ' +
 			'Offer valid in US and Canada. {{hr/}}Business also includes $100 of advertising from WordAds on WordPress.com.', {
 				components: {
 					hr: <hr className="plans-compare__info-hr"/>
 				}
-			} ),
+			}
+		),
 		order: 10,
 		plans: allPaidPlans
 	},
 
 	[ WORDADS_INSTANT ]: {
 		getTitle: () => i18n.translate( 'Monetize Your Site' ),
-		getDescription: () => i18n.translate( 'Add advertising to your site through our WordAds program and get paid.' ),
+		getDescription: () => i18n.translate(
+			'Add advertising to your site through our WordAds program and get paid.'
+		),
 		plans: allPaidPlans
 	},
 
