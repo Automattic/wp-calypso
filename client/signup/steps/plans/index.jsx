@@ -154,7 +154,7 @@ module.exports = React.createClass( {
 
 		const translate = this.translate;
 
-		const headerText = translate( 'Pick a plan that\'s right for you.' );
+		const headerText = translate( "Pick a plan that's right for you." );
 
 		return (
 			<StepWrapper
