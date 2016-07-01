@@ -158,6 +158,13 @@ const flows = {
 		lastModified: '2015-11-23'
 	},
 
+	pressable: {
+		steps: [ 'survey', 'design-type', 'pressable-store', 'themes', 'domains', 'plans', 'survey-user' ],
+		destination: getSiteDestination,
+		description: 'Signup flow for testing the pressable-store step',
+		lastModified: '2016-06-27'
+	},
+
 	jetpack: {
 		steps: [ 'jetpack-user' ],
 		destination: '/'

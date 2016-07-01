@@ -35,6 +35,12 @@ module.exports = {
 		providesDependencies: [ 'siteSlug' ]
 	},
 
+	'pressable-store': {
+		stepName: 'pressable-store',
+		dependencies: [ 'designType' ],
+		providesDependencies: []
+	},
+
 	user: {
 		stepName: 'user',
 		apiRequestFunction: stepActions.createAccount,
