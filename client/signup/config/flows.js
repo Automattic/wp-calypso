@@ -87,14 +87,7 @@ const flows = {
 	},
 
 	main: {
-		steps: [ 
-			'survey',
-			'design-type',
-			'themes',
-			'domains',
-			config.isEnabled( 'manage/plan-features' ) ? 'plansFeatures' : 'plans',
-			'survey-user'
-		],
+		steps: [ 'survey', 'design-type', 'themes',	'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
 		lastModified: '2016-05-23'

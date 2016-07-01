@@ -19,6 +19,10 @@ var productsList = require( 'lib/products-list' )(),
 	StepWrapper = require( 'signup/step-wrapper' ),
 	Gridicon = require( 'components/gridicon' );
 
+import PlansFeaturesMain from 'my-sites/plans-features-main';
+import QueryPlans from 'components/data/query-plans';
+import config from 'config';
+
 module.exports = React.createClass( {
 	displayName: 'PlansStep',
 
@@ -101,6 +105,21 @@ module.exports = React.createClass( {
 		);
 	},
 
+	plansFeaturesList: function() {
+		const {	hideFreePlan } = this.props;
+
+		return (
+			<div>
+				<QueryPlans />
+
+				<PlansFeaturesMain
+					hideFreePlan={ hideFreePlan }
+					isInSignup={ true }
+					onUpgradeClick={ this.onSelectPlan } />
+			</div>
+		);
+	},
+
 	plansSelection: function() {
 		let headerText = this.translate( 'Pick a plan that\'s right for you.' ),
 			subHeaderText = this.translate(
@@ -125,6 +144,30 @@ module.exports = React.createClass( {
 		);
 	},
 
+	plansFeaturesSelection: function() {
+		const {
+			flowName,
+			stepName,
+			positionInFlow,
+			signupProgressStore
+		} = this.props;
+
+		const translate = this.translate;
+
+		const headerText = translate( 'Pick a plan that\'s right for you.' );
+
+		return (
+			<StepWrapper
+				flowName={ flowName }
+				stepName={ stepName }
+				positionInFlow={ positionInFlow }
+				headerText={ headerText }
+				fallbackHeaderText={ headerText }
+				signupProgressStore={ signupProgressStore }
+				stepContent={ this.plansFeaturesList() } />
+		);
+	},
+
 	plansCompare: function() {
 		return <PlansCompare
 			className="plans-step__compare"
@@ -138,6 +181,17 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		const showPlanFeatures = config.isEnabled( 'manage/plan-features' );
+
+		if ( showPlanFeatures ) {
+			return (
+				/* eslint-disable wpcalypso/jsx-classname-namespace */
+				<div className="plans-features plans-features-step has-no-sidebar">
+					{ this.plansFeaturesSelection() }
+				</div>
+			);
+		}
+
 		return <div className="plans plans-step has-no-sidebar">
 			{
 				'compare' === this.props.stepSectionName
