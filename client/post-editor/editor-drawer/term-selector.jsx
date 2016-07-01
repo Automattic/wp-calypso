@@ -3,9 +3,8 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import without from 'lodash/without';
-import isEqual from 'lodash/isEqual';
-import clone from 'lodash/clone';
+import map from 'lodash/map';
+import cloneDeep from 'lodash/cloneDeep';
 
 /**
  * Internal dependencies
@@ -17,44 +16,37 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 class EditorDrawerTermSelector extends Component {
 	static propTypes = {
 		siteId: React.PropTypes.number,
-		selectedTermIds: React.PropTypes.array,
+		postTerms: React.PropTypes.object,
 		taxonomyName: React.PropTypes.string
 	};
 
 	constructor( props ) {
 		super( props );
 		this.boundOnTermsChange = this.onTermsChange.bind( this );
-
-		// This does not seem like a solid approach here
-		this.state = {
-			selectedIds: props.selectedTermIds
-		};
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual( nextProps.selectedTermIds, this.state.selectedIds ) ) {
-			this.setState( { selectedIds: nextProps.selectedTermIds } );
-		}
 	}
 
 	onTermsChange( selectedTerm ) {
-		const { taxonomyName } = this.props;
-		let termIds = clone( this.state.selectedIds ) || [];
+		const { postTerms, taxonomyName } = this.props;
+		const terms = cloneDeep( postTerms ) || {};
+		const taxonomyTerms = terms[ taxonomyName ];
 
-		if ( -1 === termIds.indexOf( selectedTerm.ID ) ) {
-			termIds.push( selectedTerm.ID );
+		if ( taxonomyTerms[ selectedTerm.name ] ) {
+			delete taxonomyTerms[ selectedTerm.name ];
 		} else {
-			termIds = without( termIds, selectedTerm.ID );
+			taxonomyTerms[ selectedTerm.name ] = selectedTerm;
 		}
+		terms[ taxonomyName ] = taxonomyTerms;
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
-			terms_by_id: {
-				[ taxonomyName ]: termIds
-			}
+			terms: terms
 		} );
+	}
 
-		this.setState( { selectedIds: termIds } );
+	getSelectedTermIds() {
+		const { postTerms, taxonomyName } = this.props;
+		const selectedTerms = postTerms ? postTerms[ taxonomyName ] : [];
+		return map( selectedTerms, 'ID' );
 	}
 
 	render() {
@@ -64,7 +56,7 @@ class EditorDrawerTermSelector extends Component {
 			<TermTreeSelector
 				analyticsPrefix="Editor"
 				onChange={ this.boundOnTermsChange }
-				selected={ this.state.selectedIds }
+				selected={ this.getSelectedTermIds() }
 				taxonomy={ taxonomyName }
 				siteId={ siteId }
 				multiple={ true }

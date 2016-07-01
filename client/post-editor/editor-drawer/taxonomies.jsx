@@ -38,7 +38,7 @@ function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 							icon={ <Gridicon icon="folder" /> }
 						>
 							<TermSelector
-								selectedTermIds={ postTerms ? map( postTerms[ taxonomy.name ], 'ID' ) : [] }
+								postTerms={ postTerms }
 								taxonomyName={ taxonomy.name }
 							/>
 						</Accordion>
