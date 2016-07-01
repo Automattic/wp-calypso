@@ -33,6 +33,7 @@ var subscriptions = clone( subscriptionsTemplate ),
 	isLastPage = false,
 	isFetching = false,
 	totalSubscriptions = 0,
+	totalSubscriptionsExcludingOwned = 0,
 	subscriptionTemplate = Immutable.Map( { // eslint-disable-line new-cap
 		state: States.SUBSCRIBED
 	} );
@@ -166,6 +167,7 @@ var FeedSubscriptionStore = {
 
 		if ( currentPage === 1 ) {
 			totalSubscriptions = data.total_subscriptions;
+			totalSubscriptionsExcludingOwned = data.total_subscriptions_excluding_owned;
 		}
 		subscriptions.count = subscriptions.list.count();
 
@@ -189,6 +191,10 @@ var FeedSubscriptionStore = {
 
 	getTotalSubscriptions: function() {
 		return totalSubscriptions;
+	},
+
+	getTotalSubscriptionsExcludingOwned() {
+		return totalSubscriptionsExcludingOwned;
 	},
 
 	getLastError: function() {
@@ -232,6 +238,7 @@ var FeedSubscriptionStore = {
 	clearSubscriptions: function() {
 		subscriptions = clone( subscriptionsTemplate );
 		totalSubscriptions = 0;
+		totalSubscriptionsExcludingOwned = 0;
 	},
 
 	isLastPage: function() {
@@ -353,6 +360,10 @@ function removeSubscription( subscription ) {
 
 	if ( totalSubscriptions > 0 ) {
 		totalSubscriptions--;
+	}
+
+	if ( totalSubscriptionsExcludingOwned > 0 ) {
+		totalSubscriptionsExcludingOwned--;
 	}
 
 	return true;
