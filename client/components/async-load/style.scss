@@ -1,0 +1,8 @@
+.async-load {
+	background: lighten( $gray, 22% );
+	content: '';
+	display: block;
+	height: 8px;
+	margin: 16px;
+	animation: pulse-light 0.8s ease-in-out infinite;
+}

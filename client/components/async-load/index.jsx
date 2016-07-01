@@ -29,7 +29,7 @@ export default class AsyncLoad extends Component {
 			return this.props.placeholder;
 		}
 
-		return null;
+		return <div className="async-load" />;
 	}
 }
 
