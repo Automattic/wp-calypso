@@ -14,15 +14,16 @@ import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
 
-const ANALYTICS_PAGE_TITLE = 'Reader';
+const analyticsPageTitle = 'Reader';
 
 export default {
 	discover( context ) {
-		var blogId = config( 'discover_blog_id' ),
+		const
+			blogId = config( 'discover_blog_id' ),
 			SiteStream = require( 'reader/site-stream' ),
 			basePath = route.sectionify( context.path ),
-			fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Site > ' + blogId,
-			feedStore = feedStreamFactory( 'site:' + blogId ),
+			fullAnalyticsPageTitle = `${analyticsPageTitle} > Site > ${blogId}`,
+			feedStore = feedStreamFactory( `site:${blogId}` ),
 			mcKey = 'discover';
 
 		titleActions.setTitle( 'Discover' );
@@ -41,7 +42,7 @@ export default {
 					null,
 					basePath,
 					fullAnalyticsPageTitle,
-					ANALYTICS_PAGE_TITLE,
+					analyticsPageTitle,
 					mcKey
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
