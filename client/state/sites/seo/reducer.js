@@ -5,7 +5,7 @@ import { SEO_TITLE_SET } from 'state/action-types';
 
 import { titleFormatSchema } from './schema';
 
-const titleFormats = createReducer( {}, {
+export const titleFormats = createReducer( {}, {
 	[ SEO_TITLE_SET ]: ( state, { siteId, pageType, format } ) => ( {
 		...state,
 		[ siteId ]: {
