@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import map from 'lodash/map';
 import without from 'lodash/without';
 import isEqual from 'lodash/isEqual';
 import clone from 'lodash/clone';
@@ -25,7 +24,7 @@ class EditorDrawerTermSelector extends Component {
 	constructor( props ) {
 		super( props );
 		this.boundOnTermsChange = this.onTermsChange.bind( this );
-		
+
 		// This does not seem like a solid approach here
 		this.state = {
 			selectedIds: props.selectedTermIds
@@ -39,7 +38,7 @@ class EditorDrawerTermSelector extends Component {
 	}
 
 	onTermsChange( selectedTerm ) {
-		const { selectedTermIds, taxonomyName } = this.props;
+		const { taxonomyName } = this.props;
 		let termIds = clone( this.state.selectedIds ) || [];
 
 		if ( -1 === termIds.indexOf( selectedTerm.ID ) ) {
