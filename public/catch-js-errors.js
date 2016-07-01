@@ -134,6 +134,9 @@
 						{ nonInteraction: true }
 					);
 				}
+				if ( savedWindowOnError ) {
+					savedWindowOnError();
+				}
 			};
 		}
 	}
