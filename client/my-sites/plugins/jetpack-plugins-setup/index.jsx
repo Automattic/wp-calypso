@@ -21,6 +21,7 @@ import Spinner from 'components/spinner';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
+import analytics from 'lib/analytics';
 import JetpackSite from 'lib/site/jetpack';
 import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
@@ -137,6 +138,7 @@ const PlansSetup = React.createClass( {
 		) {
 			return;
 		}
+		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_user_interrupt' );
 		const beforeUnloadText = this.translate( 'We haven\'t finished installing your plugins.' );
 		( event || window.event ).returnValue = beforeUnloadText;
 		return beforeUnloadText;
@@ -165,6 +167,7 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderNoJetpackSiteSelected() {
+		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_wordpresscom' );
 		return (
 			<JetpackManageErrorPage
 				site={ this.props.selectedSite }
@@ -180,12 +183,16 @@ const PlansSetup = React.createClass( {
 
 		if ( reasons && reasons.length > 0 ) {
 			reason = reasons[ 0 ];
+			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
 		} else if ( ! site.hasMinimumJetpackVersion ) {
 			reason = this.translate( 'You need to update your version of Jetpack.' );
+			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_jpversion', { jetpack_version: site.options.jetpack_version } );
 		} else if ( ! site.isMainNetworkSite() ) {
 			reason = this.translate( 'We can\'t install plugins on multisite sites.' );
+			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_multisite' );
 		} else if ( site.options.is_multi_network ) {
 			reason = this.translate( 'We can\'t install plugins on multi-network sites.' );
+			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_multinetwork' );
 		}
 
 		return (
@@ -257,13 +264,22 @@ const PlansSetup = React.createClass( {
 			statusProps.status = 'is-error';
 			switch ( plugin.status ) {
 				case 'install':
-					statusProps.text = this.translate( 'An error occured when installing %(plugin)s.', { args: { plugin: plugin.name } } );
+					statusProps.text = this.translate(
+						'An error occurred when installing %(plugin)s.',
+						{ args: { plugin: plugin.name } }
+					);
 					break;
 				case 'activate':
-					statusProps.text = this.translate( 'An error occured when activating %(plugin)s.', { args: { plugin: plugin.name } } );
+					statusProps.text = this.translate(
+						'An error occurred when activating %(plugin)s.',
+						{ args: { plugin: plugin.name } }
+					);
 					break;
 				case 'configure':
-					statusProps.text = this.translate( 'An error occured when configuring %(plugin)s.', { args: { plugin: plugin.name } } );
+					statusProps.text = this.translate(
+						'An error occurred when configuring %(plugin)s.',
+						{ args: { plugin: plugin.name } }
+					);
 					break;
 				default:
 					statusProps.text = this.translate( 'An error occured.' );
@@ -324,6 +340,12 @@ const PlansSetup = React.createClass( {
 			return ( item.error !== null );
 		} );
 
+		const tracksData = {};
+		pluginsWithErrors.map( ( item ) => {
+			tracksData[ item.slug ] = item.error.name + ': ' + item.error.message;
+		} );
+		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_plugin', tracksData );
+
 		if ( pluginsWithErrors.length === 1 ) {
 			noticeText = this.translate(
 				'There was an issue installing %(plugin)s. ' +
@@ -370,6 +392,8 @@ const PlansSetup = React.createClass( {
 		if ( pluginsWithErrors.length ) {
 			return this.renderErrorMessage( pluginsWithErrors );
 		}
+
+		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_success' );
 
 		const noticeText = this.translate( 'We\'ve installed your plugins, your site is powered up!' );
 		return (
