@@ -5,8 +5,6 @@ var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:steps:plans' ),
 	isEmpty = require( 'lodash/isEmpty' );
 
-import classNames from 'classnames';
-
 /**
  * Internal dependencies
  */
@@ -142,7 +140,6 @@ module.exports = React.createClass( {
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ subHeaderText }
 				signupProgressStore={ this.props.signupProgressStore }
-				isWideLayout={ false }
 				stepContent={ this.plansList() } />
 		);
 	},
@@ -157,7 +154,7 @@ module.exports = React.createClass( {
 
 		const translate = this.translate;
 
-		const headerText = translate( "Pick a plan that's right for you." );
+		const headerText = translate( 'Pick a plan that\'s right for you.' );
 
 		return (
 			<StepWrapper
@@ -167,7 +164,6 @@ module.exports = React.createClass( {
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
 				signupProgressStore={ signupProgressStore }
-				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() } />
 		);
 	},
@@ -187,23 +183,20 @@ module.exports = React.createClass( {
 	render: function() {
 		const showPlanFeatures = config.isEnabled( 'manage/plan-features' );
 
-		const classes = classNames( 'plans plans-step', {
-			'has-no-sidebar': true,
-			'is-wide-layout': showPlanFeatures
-		} );
+		if ( showPlanFeatures ) {
+			return (
+				/* eslint-disable wpcalypso/jsx-classname-namespace */
+				<div className="plans-features plans-features-step has-no-sidebar">
+					{ this.plansFeaturesSelection() }
+				</div>
+			);
+		}
 
-		const renderPlans = () => (
-			'compare' === this.props.stepSectionName
+		return <div className="plans plans-step has-no-sidebar">
+			{
+				'compare' === this.props.stepSectionName
 				? this.plansCompare()
 				: this.plansSelection()
-		);
-
-		const renderPlansFeatures = () => ( this.plansFeaturesSelection() );
-
-		return <div className={ classes }>
-			{ showPlanFeatures
-				? renderPlansFeatures()
-				: renderPlans()
 			}
 		</div>;
 	}
