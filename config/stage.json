@@ -82,6 +82,7 @@
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
 		"reader/tags-with-elasticsearch": true,
+		"reader/start": true,
 		"resume-editing": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
