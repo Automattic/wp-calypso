@@ -7,9 +7,12 @@ import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import range from 'lodash/range';
+import difference from 'lodash/difference';
+import isEqual from 'lodash/isEqual';
+import includes from 'lodash/includes';
 import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
 import VirtualScroll from 'react-virtualized/VirtualScroll';
-import InfiniteLoader from 'react-virtualized/InfiniteLoader';
+import AutoSizer from 'react-virtualized/AutoSizer';
 
 /**
  * Internal dependencies
@@ -21,9 +24,9 @@ import { decodeEntities } from 'lib/formatting';
 import {
 	getSitePostsForQueryIgnoringPage,
 	getSitePostsHierarchyForQueryIgnoringPage,
-	isRequestingSitePostsForQuery,
+	isRequestingSitePostsForQueryIgnoringPage,
 	getSitePostsFoundForQuery,
-	isSitePostsLastPageForQuery
+	getSitePostsLastPageForQuery
 } from 'state/posts/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
@@ -34,6 +37,8 @@ import QueryPosts from 'components/data/query-posts';
  */
 const SEARCH_DEBOUNCE_TIME_MS = 500;
 const ITEM_HEIGHT = 25;
+const DEFAULT_POSTS_PER_PAGE = 20;
+const LOAD_OFFSET = 10;
 
 const PostSelectorPosts = React.createClass( {
 	displayName: 'PostSelectorPosts',
@@ -43,22 +48,21 @@ const PostSelectorPosts = React.createClass( {
 		query: PropTypes.object,
 		posts: PropTypes.array,
 		postsHierarchy: PropTypes.array,
-		page: PropTypes.number,
-		lastPage: PropTypes.bool,
+		lastPage: PropTypes.number,
 		loading: PropTypes.bool,
 		emptyMessage: PropTypes.string,
 		createLink: PropTypes.string,
 		selected: PropTypes.number,
 		onSearch: PropTypes.func,
 		onChange: PropTypes.func,
-		onNextPage: PropTypes.func,
 		multiple: PropTypes.bool,
-		showTypeLabel: PropTypes.bool
+		showTypeLabels: PropTypes.bool
 	},
 
 	getInitialState() {
 		return {
-			searchTerm: ''
+			searchTerm: '',
+			requestedPages: [ 1 ]
 		};
 	},
 
@@ -70,8 +74,7 @@ const PostSelectorPosts = React.createClass( {
 			emptyMessage: '',
 			posts: [],
 			onSearch: () => {},
-			onChange: () => {},
-			onNextPage: () => {}
+			onChange: () => {}
 		};
 	},
 
@@ -85,6 +88,15 @@ const PostSelectorPosts = React.createClass( {
 		}, SEARCH_DEBOUNCE_TIME_MS );
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		if ( ! isEqual( this.props.query, nextProps.query ) ||
+				this.props.siteId !== nextProps.siteId ) {
+			this.setState( {
+				requestedPages: [ 1 ]
+			} );
+		}
+	},
+
 	componentDidUpdate( prevProps ) {
 		const forceUpdate = (
 			prevProps.selected !== this.props.selected ||
@@ -92,17 +104,16 @@ const PostSelectorPosts = React.createClass( {
 		);
 
 		if ( forceUpdate ) {
-			this.refs.loader._registeredChild.forceUpdate();
+			this.virtualScroll.forceUpdate();
 		}
 	},
 
 	recomputeRowHeights: function() {
-		if ( ! this.refs.loader ) {
+		if ( ! this.virtualScroll ) {
 			return;
 		}
 
-		this.refs.loader._registeredChild.recomputeRowHeights();
-		this.refs.loader._registeredChild.forceUpdate();
+		this.virtualScroll.recomputeRowHeights();
 
 		// Compact mode passes the height of the scrollable region as a derived
 		// number, and will not be updated unless our component re-renders
@@ -111,12 +122,10 @@ const PostSelectorPosts = React.createClass( {
 		}
 	},
 
-	setSelectorRef( selectorRef ) {
-		if ( ! selectorRef ) {
-			return;
-		}
-
-		this.setState( { selectorRef } );
+	setVirtualScrollRef( virtualScroll ) {
+		// Ref callback can be called with null reference, which is desirable
+		// since we'll want to know elsewhere if we can call recompute height
+		this.virtualScroll = virtualScroll;
 	},
 
 	setItemRef( item, itemRef ) {
@@ -170,8 +179,10 @@ const PostSelectorPosts = React.createClass( {
 		return 'any' === this.props.query.type;
 	},
 
-	isRowLoaded( { index } ) {
-		return this.props.lastPage || !! this.getItem( index );
+	isLastPage() {
+		const { lastPage, loading } = this.props;
+		const { requestedPages } = this.state;
+		return includes( requestedPages, lastPage ) && ! loading;
 	},
 
 	getItemHeight( item ) {
@@ -200,13 +211,12 @@ const PostSelectorPosts = React.createClass( {
 		}, 0 );
 	},
 
-	getResultsWidth() {
-		const { selectorRef } = this.state;
-		if ( selectorRef ) {
-			return selectorRef.clientWidth;
-		}
+	getPageForIndex( index ) {
+		const { query, lastPage } = this.props;
+		const perPage = query.number || DEFAULT_POSTS_PER_PAGE;
+		const page = Math.ceil( index / perPage );
 
-		return 0;
+		return Math.max( Math.min( page, lastPage || Infinity ), 1 );
 	},
 
 	getRowCount() {
@@ -216,19 +226,27 @@ const PostSelectorPosts = React.createClass( {
 			count += this.props.postsHierarchy.length;
 		}
 
-		if ( ! this.props.lastPage ) {
+		if ( ! this.isLastPage() ) {
 			count += 1;
 		}
 
 		return count;
 	},
 
-	maybeFetchNextPage() {
-		if ( this.props.loading || ! this.props.posts ) {
+	setRequestedPages( { startIndex, stopIndex } ) {
+		const { requestedPages } = this.state;
+		const pagesToRequest = difference( range(
+			this.getPageForIndex( startIndex - LOAD_OFFSET ),
+			this.getPageForIndex( stopIndex + LOAD_OFFSET ) + 1
+		), requestedPages );
+
+		if ( ! pagesToRequest.length ) {
 			return;
 		}
 
-		this.props.onNextPage();
+		this.setState( {
+			requestedPages: requestedPages.concat( pagesToRequest )
+		} );
 	},
 
 	onSearch( event ) {
@@ -340,48 +358,50 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	render() {
-		const rowCount = this.getRowCount();
+		const { className, siteId, query } = this.props;
+		const { requestedPages, searchTerm } = this.state;
 		const isCompact = this.isCompact();
 		const isTypeLabelsVisible = this.isTypeLabelsVisible();
-		const showSearch = this.state.searchTerm.length > 0 || ! isCompact;
-		const classes = classNames( 'post-selector', this.props.className, {
-			'is-loading': this.props.loading,
+		const showSearch = searchTerm.length > 0 || ! isCompact;
+		const classes = classNames( 'post-selector', className, {
 			'is-compact': isCompact,
 			'is-type-labels-visible': isTypeLabelsVisible
 		} );
 
 		return (
-			<div ref={ this.setSelectorRef } className={ classes }>
-				<QueryPosts
-					siteId={ this.props.siteId }
-					query={ this.props.query } />
+			<div className={ classes }>
+				{ requestedPages.map( ( page ) => (
+					<QueryPosts
+						key={ `page-${ page }` }
+						siteId={ siteId }
+						query={ { ...query, page } } />
+				) ) }
 				{ isTypeLabelsVisible && (
-					<QueryPostTypes siteId={ this.props.siteId } />
+					<QueryPostTypes siteId={ siteId } />
 				) }
 				{ showSearch && (
 					<Search
-						searchTerm={ this.state.searchTerm }
+						searchTerm={ searchTerm }
 						onSearch={ this.onSearch } />
 				) }
-				<InfiniteLoader
-					ref="loader"
-					isRowLoaded={ this.isRowLoaded }
-					loadMoreRows={ this.maybeFetchNextPage }
-					rowCount={ rowCount }>
-					{ ( { onRowsRendered, registerChild } ) => (
-						<VirtualScroll
-							ref={ registerChild }
-							width={ this.getResultsWidth() }
-							height={ isCompact ? this.getCompactContainerHeight() : 300 }
-							onRowsRendered={ onRowsRendered }
-							noRowsRenderer={ this.renderEmptyContent }
-							rowCount={ rowCount }
-							estimatedRowSize={ ITEM_HEIGHT }
-							rowHeight={ this.getRowHeight }
-							rowRenderer={ this.renderRow }
-							className="post-selector__results" />
-					) }
-				</InfiniteLoader>
+				<div className="post-selector__results">
+					<AutoSizer
+						key={ JSON.stringify( query ) }
+						disableHeight={ isCompact }>
+						{ ( { height, width } ) => (
+							<VirtualScroll
+								ref={ this.setVirtualScrollRef }
+								width={ width }
+								height={ isCompact ? this.getCompactContainerHeight() : height }
+								onRowsRendered={ this.setRequestedPages }
+								noRowsRenderer={ this.renderEmptyContent }
+								rowCount={ this.getRowCount() }
+								estimatedRowSize={ ITEM_HEIGHT }
+								rowHeight={ this.getRowHeight }
+								rowRenderer={ this.renderRow } />
+						) }
+					</AutoSizer>
+				</div>
 			</div>
 		);
 	}
@@ -393,8 +413,8 @@ export default connect( ( state, ownProps ) => {
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, query ),
 		postsHierarchy: getSitePostsHierarchyForQueryIgnoringPage( state, siteId, query ),
 		found: getSitePostsFoundForQuery( state, siteId, query ),
-		lastPage: isSitePostsLastPageForQuery( state, siteId, query ),
-		loading: isRequestingSitePostsForQuery( state, siteId, query ),
+		lastPage: getSitePostsLastPageForQuery( state, siteId, query ),
+		loading: isRequestingSitePostsForQueryIgnoringPage( state, siteId, query ),
 		postTypes: getPostTypes( state, siteId )
 	};
 } )( PostSelectorPosts );
