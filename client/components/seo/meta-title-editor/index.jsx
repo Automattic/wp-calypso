@@ -13,8 +13,10 @@ import { connect } from 'react-redux';
 
 import SegmentedControl from 'components/segmented-control';
 import TokenField from 'components/token-field';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getTitleFormats } from 'state/sites/seo/selectors';
 import { localize } from 'i18n-calypso';
-import { setTitleFormat } from 'state/seo/actions';
+import { setTitleFormat } from 'state/sites/seo/actions';
 
 import {
 	nativeToRaw,
@@ -77,12 +79,12 @@ export class MetaTitleEditor extends Component {
 	}
 
 	updateTitleFormat( values ) {
-		const { saveMetaTitle, translate } = this.props;
+		const { setTitleFormat, siteId, translate } = this.props;
 		const { type } = this.state;
 
 		const tokens = removeBlanks( map( values, tokenize( translate ) ) );
 
-		saveMetaTitle( type, nativeToRaw( tokens ) );
+		setTitleFormat( siteId, type, nativeToRaw( tokens ) );
 	}
 
 	render() {
@@ -131,12 +133,13 @@ MetaTitleEditor.propTypes = {
 	disabled: PropTypes.bool
 };
 
-const mapStateToProps = ( { seo: { titleFormats } } ) => ( {
-	titleFormats
+const mapStateToProps = state => ( {
+	siteId: getSelectedSiteId( state ),
+	titleFormats: getTitleFormats( getSelectedSiteId( state ), state )
 } );
 
 const mapDispatchToProps = {
-	saveMetaTitle: setTitleFormat
+	setTitleFormat
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( MetaTitleEditor ) );
