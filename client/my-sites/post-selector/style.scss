@@ -51,6 +51,14 @@ input[type=checkbox].post-selector__input {
 	margin-right: 8px;
 }
 
+.post-selector__results {
+	height: 300px;
+
+	.post-selector.is-compact & {
+		height: auto;
+	}
+}
+
 .post-selector__nested-list {
 	margin-left: 1em;
 }
