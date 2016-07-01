@@ -118,6 +118,20 @@
 					savedWindowOnError();
 				}
 			};
+		} else if ( localStorage.getItem( 'log-errors' ) === 'analytics' ) {
+			window.onerror = function( message, scriptUrl, lineNumber ) {
+				if ( typeof window.ga === 'function' ) {
+					window.ga(
+						'send',
+						'event',
+						'JS Error',
+						message,
+						'URL: ' + document.location.href + '| ' + scriptUrl + ':' + lineNumber,
+						0,
+						{ nonInteraction: true }
+					);
+				}
+			};
 		}
 	}
 }() );
