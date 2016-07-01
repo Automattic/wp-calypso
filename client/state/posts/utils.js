@@ -10,6 +10,12 @@ import omitBy from 'lodash/omitBy';
 import { DEFAULT_POST_QUERY } from './constants';
 
 /**
+ * Constants
+ */
+
+const REGEXP_SERIALIZED_QUERY = /^((\d+):)?(.*)$/;
+
+/**
  * Returns a normalized posts query, excluding any values which match the
  * default post query.
  *
@@ -36,6 +42,27 @@ export function getSerializedPostsQuery( query = {}, siteId ) {
 	}
 
 	return serializedQuery;
+}
+
+/**
+ * Returns an object with details related to the specified serialized query.
+ * The object will include siteId and/or query object, if can be parsed.
+ *
+ * @param  {String} serializedQuery Serialized posts query
+ * @return {Object}                 Deserialized posts query details
+ */
+export function getDeserializedPostsQueryDetails( serializedQuery ) {
+	let siteId, query;
+
+	const matches = serializedQuery.match( REGEXP_SERIALIZED_QUERY );
+	if ( matches ) {
+		siteId = Number( matches[ 2 ] ) || undefined;
+		try {
+			query = JSON.parse( matches[ 3 ] );
+		} catch ( error ) {}
+	}
+
+	return { siteId, query };
 }
 
 /**
