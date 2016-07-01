@@ -92,7 +92,7 @@ const PostTypeFilter = React.createClass( {
 	},
 
 	render() {
-		const { siteId, query, jetpack, counts } = this.props;
+		const { siteId, query, jetpack } = this.props;
 		const navItems = this.getNavItems();
 		const selectedItem = find( navItems, 'selected' ) || {};
 
@@ -106,7 +106,7 @@ const PostTypeFilter = React.createClass( {
 				<SectionNav
 					selectedText={ selectedItem.children }
 					selectedCount={ selectedItem.count }>
-					{ ( jetpack || counts ) && [
+					{ query && [
 						<NavTabs
 							key="tabs"
 							label={ this.translate( 'Status', { context: 'Filter group label for tabs' } ) }
