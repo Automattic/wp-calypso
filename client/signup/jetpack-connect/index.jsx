@@ -223,7 +223,7 @@ const JetpackConnectMain = React.createClass( {
 		}
 		if ( this.props.type === 'pro' ) {
 			return {
-				headerTitle: this.translate( 'Get Jetpack Pro' ),
+				headerTitle: this.translate( 'Get Jetpack Professional' ),
 				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
 			};
