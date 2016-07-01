@@ -1,6 +1,7 @@
 ( function() {
 	var savedWindowOnError = window.onerror,
 		assignment = 1,
+		localStorageAssignment = 'false',
 		savedErrors = [],
 		lastTimeSent = 0,
 		packTimeout = null,
@@ -93,13 +94,15 @@
 
 	if ( isLocalStorageNameSupported() ) {
 		assignment = Math.random();
+		localStorageAssignment = localStorage.getItem( 'log-errors' );
 		// Randomly assign 1% of users to log errors
-		if ( ! localStorage.getItem( 'log-errors' ) ) {
+		if ( ! localStorageAssignment ) {
 			if ( assignment <= 0.01 ) {
 				localStorage.setItem( 'log-errors', 'rest-api' );
+				localStorageAssignment = 'rest-api';
 			} else if ( assignment <= 0.02 ) {
 				localStorage.setItem( 'log-errors', 'analytics' );
-				//Prep the stage up for GA logging experiment
+				localStorageAssignment = 'analytics';
 			} else if ( assignment <= 0.03 ) {
 				localStorage.setItem( 'log-errors', 'external' );
 				//Prep the stage up for Google Stackdriver or other service experiment
@@ -108,8 +111,8 @@
 			}
 		}
 
-		if ( localStorage.getItem( 'log-errors' ) !== undefined &&
-			( localStorage.getItem( 'log-errors' ) === 'rest-api' || localStorage.getItem( 'log-errors' ) === 'true' )
+		if ( localStorageAssignment !== undefined &&
+			( localStorageAssignment === 'rest-api' || localStorageAssignment === 'true' )
 		) {
 			// set up handler to POST errors
 			window.onerror = function( message, scriptUrl, lineNumber, columnNumber, error ) {
@@ -118,7 +121,7 @@
 					savedWindowOnError();
 				}
 			};
-		} else if ( localStorage.getItem( 'log-errors' ) === 'analytics' ) {
+		} else if ( localStorageAssignment === 'analytics' ) {
 			window.onerror = function( message, scriptUrl, lineNumber ) {
 				if ( typeof window.ga === 'function' ) {
 					window.ga(
