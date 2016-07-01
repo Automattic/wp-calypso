@@ -16,6 +16,7 @@ import { getPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';
 import Accordion from 'components/accordion';
 import Gridicon from 'components/gridicon';
 import TermTokenField from 'post-editor/term-token-field';
+import TermSelector from './term-selector';
 
 function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 	return (
@@ -34,9 +35,12 @@ function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 						<Accordion
 							key={ taxonomy.name }
 							title={ taxonomy.label }
-							icon={ <Gridicon icon="category" /> }
+							icon={ <Gridicon icon="folder" /> }
 						>
-							Work in Progress
+							<TermSelector
+								selectedTermIds={ postTerms ? map( postTerms[ taxonomy.name ], 'ID' ) : [] }
+								taxonomyName={ taxonomy.name }
+							/>
 						</Accordion>
 					);
 				} else {
