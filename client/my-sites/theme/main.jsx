@@ -135,25 +135,27 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderBar() {
-		const placeholder = <span className="themes__sheet-placeholder">loading.....</span>;
+		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = this.props.name || placeholder;
 		const tag = this.props.author ? i18n.translate( 'by %(author)s', { args: { author: this.props.author } } ) : placeholder;
 
 		return (
-			<div className="themes__sheet-bar">
-				<span className="themes__sheet-bar-title">{ title }</span>
-				<span className="themes__sheet-bar-tag">{ tag }</span>
+			<div className="theme__sheet-bar">
+				<span className="theme__sheet-bar-title">{ title }</span>
+				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);
 	},
 
 	renderScreenshot() {
-		const img = <img className="themes__sheet-img" src={ this.props.screenshot + '?=w680' } />;
+		const img = <img className="theme__sheet-img" src={ this.props.screenshot + '?=w680' } />;
 		return (
-			<div className="themes__sheet-screenshot">
-				<a className="themes__sheet-preview-link" onClick={ this.togglePreview } >
+			<div className="theme__sheet-screenshot">
+				<a className="theme__sheet-preview-link" onClick={ this.togglePreview } >
 					<Gridicon icon="themes" size={ 18 } />
-					<span className="themes__sheet-preview-link-text">{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }</span>
+					<span className="theme__sheet-preview-link-text">
+						{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
+					</span>
 				</a>
 				{ this.props.screenshot && img }
 			</div>
@@ -183,7 +185,7 @@ const ThemeSheet = React.createClass( {
 		);
 
 		return (
-			<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[ currentSection ] }>
+			<SectionNav className="theme__sheet-section-nav" selectedText={ filterStrings[ currentSection ] }>
 				{ this.props.name && nav }
 			</SectionNav>
 		);
@@ -200,7 +202,7 @@ const ThemeSheet = React.createClass( {
 	renderOverviewTab() {
 		return (
 			<div>
-				<Card className="themes__sheet-content">
+				<Card className="theme__sheet-content">
 					<div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />
 				</Card>
 				{ this.renderFeaturesCard() }
@@ -213,7 +215,7 @@ const ThemeSheet = React.createClass( {
 	renderSetupTab() {
 		return (
 			<div>
-				<Card className="themes__sheet-content">
+				<Card className="theme__sheet-content">
 					<div dangerouslySetInnerHTML={ { __html: this.props.supportDocumentation } } />
 				</Card>
 			</div>
@@ -223,17 +225,17 @@ const ThemeSheet = React.createClass( {
 	renderSupportTab() {
 		return (
 			<div>
-				<Card className="themes__sheet-card-support">
+				<Card className="theme__sheet-card-support">
 					<Gridicon icon="comment" size={ 48 } />
-					<div className="themes__sheet-card-support-details">
+					<div className="theme__sheet-card-support-details">
 						{ i18n.translate( 'Need extra help?' ) }
 						<small>{ i18n.translate( 'Visit the theme support forum' ) }</small>
 					</div>
 					<Button primary={ true } href={ getForumUrl( this.props ) }>Visit forum</Button>
 				</Card>
-				<Card className="themes__sheet-card-support">
+				<Card className="theme__sheet-card-support">
 					<Gridicon icon="briefcase" size={ 48 } />
-					<div className="themes__sheet-card-support-details">
+					<div className="theme__sheet-card-support-details">
 						{ i18n.translate( 'Need CSS help? ' ) }
 						<small>{ i18n.translate( 'Visit the CSS customization forum' ) }</small>
 					</div>
@@ -253,7 +255,7 @@ const ThemeSheet = React.createClass( {
 			<div>
 				<SectionHeader label={ i18n.translate( 'Features' ) } />
 				<Card>
-					<ul className="themes__sheet-features-list">
+					<ul className="theme__sheet-features-list">
 						{ themeFeatures }
 					</ul>
 				</Card>
@@ -270,7 +272,7 @@ const ThemeSheet = React.createClass( {
 
 	renderPreview() {
 		const buttonLabel = this.props.isLoggedIn ? i18n.translate( 'Try & Customize' ) : i18n.translate( 'Pick this design' );
-		return(
+		return (
 			<ThemePreview showPreview={ this.state.showPreview }
 				theme={ this.props }
 				onClose={ this.togglePreview }
@@ -287,7 +289,7 @@ const ThemeSheet = React.createClass( {
 			comment: 'Message displayed when requested theme was not found',
 		} );
 
-		return(
+		return (
 			<Main>
 				<EmptyContentComponent
 					title={ emptyContentTitle }
@@ -311,11 +313,11 @@ const ThemeSheet = React.createClass( {
 			price = i18n.translate( 'Free' );
 		}
 
-		return <span className="themes__sheet-action-bar-cost">{ price }</span>;
+		return <span className="theme__sheet-action-bar-cost">{ price }</span>;
 	},
 
 	renderSheet() {
-		let actionTitle = <span className="themes__sheet-button-placeholder">loading......</span>;
+		let actionTitle = <span className="theme__sheet-button-placeholder">loading......</span>;
 		if ( this.isActive() ) {
 			actionTitle = i18n.translate( 'Customize' );
 		} else if ( this.props.name ) {
@@ -330,7 +332,7 @@ const ThemeSheet = React.createClass( {
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
 		return (
-			<Main className="themes__sheet">
+			<Main className="theme__sheet">
 			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
 				{ this.renderBar() }
 				{ siteID && <QueryCurrentTheme siteId={ siteID }/> }
@@ -347,23 +349,23 @@ const ThemeSheet = React.createClass( {
 					sourcePath={ `/theme/${ this.props.id }${ section ? '/' + section : '' }` }
 				/> }
 				{ this.state.showPreview && this.renderPreview() }
-				<HeaderCake className="themes__sheet-action-bar"
+				<HeaderCake className="theme__sheet-action-bar"
 							backHref={ this.props.backPath }
 							backText={ i18n.translate( 'All Themes' ) }>
-					<Button className="themes__sheet-primary-button" onClick={ this.onPrimaryClick }>
+					<Button className="theme__sheet-primary-button" onClick={ this.onPrimaryClick }>
 						{ actionTitle }
 						{ ! this.isActive() && priceElement }
 					</Button>
 				</HeaderCake>
-				<div className="themes__sheet-columns">
-					<div className="themes__sheet-column-left">
-						<div className="themes__sheet-content">
+				<div className="theme__sheet-columns">
+					<div className="theme__sheet-column-left">
+						<div className="theme__sheet-content">
 							{ this.renderSectionNav( section ) }
 							{ this.renderSectionContent( section ) }
-							<div className="footer__line"><Gridicon icon="my-sites" /></div>
+							<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
 						</div>
 					</div>
-					<div className="themes__sheet-column-right">
+					<div className="theme__sheet-column-right">
 						{ this.renderScreenshot() }
 					</div>
 				</div>
