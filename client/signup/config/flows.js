@@ -158,6 +158,13 @@ const flows = {
 		lastModified: '2015-11-23'
 	},
 
+	'design-store': {
+		steps: [ 'survey', 'design-store', 'themes', 'domains', 'plans', 'survey-user' ],
+		destination: getSiteDestination,
+		description: 'An AB test flow for offering Pressable to users wanting a store.',
+		lastModified: '2016-06-29'
+	},
+
 	jetpack: {
 		steps: [ 'jetpack-user' ],
 		destination: '/'
@@ -185,7 +192,9 @@ function removeUserStepFromFlow( flow ) {
 
 function filterFlowName( flowName ) {
 	const defaultFlows = [ 'main', 'website' ];
-	// do nothing. No flows to filter at the moment.
+	if ( includes( defaultFlows, flowName ) && 'enabled' === abtest( 'signupStore' ) ) {
+		return 'design-store';
+	}
 	return flowName;
 }
 

@@ -138,4 +138,13 @@ module.exports = {
 		defaultVariation: 'disabled',
 		allowExistingUsers: true,
 	},
+	signupStore: {
+		datestamp: '20160629',
+		variations: {
+			disabled: 70,
+			enabled: 30,
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true,
+	},
 };
