@@ -20,9 +20,8 @@ The display for this component is built from a segmented control (to select whic
 
 In order to make it easier for the user to edit, we are using the token field to render the token placeholders. This provides a nice visual to separate plain text from content that will be rendered from their site.
 
-Thus we have three forms of data to work with:
+Thus we have two forms of data to work with:
  - The raw string that gets passed between Calypso and the API and exists in the meta on the server
- - The _meaning_ of the raw string, which is an array of plain text elements and placeholders which identify some site or page-specific value
- - The tokenized input to be passed into the editor itself, bound by the constraints of the `TokenField`
+ - The native JavaScript representation of the raw string, which is an array of plain text elements and placeholders which identify some site or page-specific value
 
 Helper functions have been created to map between these formats.
