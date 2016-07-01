@@ -12,12 +12,17 @@ import PopoverMenuSeparator from 'components/popover/menu-separator';
 
 export default function EllipsisMenuDemo() {
 	return (
-		<EllipsisMenu position="bottom right">
-			<PopoverMenuItem icon="add">Option A</PopoverMenuItem>
-			<PopoverMenuItem icon="pencil">Option B</PopoverMenuItem>
-			<PopoverMenuSeparator />
-			<PopoverMenuItem icon="help">Option C</PopoverMenuItem>
-		</EllipsisMenu>
+		<div className="docs__design-assets-group">
+			<h2>
+				<a href="/devdocs/design/ellipsis-menu">Ellipsis Menu</a>
+			</h2>
+			<EllipsisMenu position="bottom right">
+				<PopoverMenuItem icon="add">Option A</PopoverMenuItem>
+				<PopoverMenuItem icon="pencil">Option B</PopoverMenuItem>
+				<PopoverMenuSeparator />
+				<PopoverMenuItem icon="help">Option C</PopoverMenuItem>
+			</EllipsisMenu>
+		</div>
 	);
 }
 
