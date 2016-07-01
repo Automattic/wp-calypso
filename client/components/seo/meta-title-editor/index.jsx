@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import React, { Component, PropTypes } from 'react';
 import difference from 'lodash/difference';
 import findKey from 'lodash/findKey';
@@ -11,6 +14,9 @@ import property from 'lodash/property';
 import valuesOf from 'lodash/values';
 import { connect } from 'react-redux';
 
+/**
+ * Internal dependencies
+ */
 import SegmentedControl from 'components/segmented-control';
 import TokenField from 'components/token-field';
 import { getSelectedSiteId } from 'state/ui/selectors';
