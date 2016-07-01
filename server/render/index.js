@@ -55,11 +55,15 @@ export function render( element, key = JSON.stringify( element ) ) {
 			markupCache.set( key, context );
 		}
 		const rtsTimeMs = Date.now() - startTime;
+		debug( 'Server render time (ms)', rtsTimeMs );
 
 		if ( rtsTimeMs > 15 ) {
-			// We think that renderToString should generally
-			// never take more than 15ms. We're probably wrong.
+			// legacy stat from when we only had very simple server-renders
 			bumpStat( 'calypso-ssr', 'loggedout-design-over-15ms-rendertostring' );
+		}
+		if ( rtsTimeMs > 100 ) {
+			// Server renders should probably never take longer than 100ms
+			bumpStat( 'calypso-ssr', 'over-100ms-rendertostring' );
 		}
 
 		return context;
