@@ -1978,6 +1978,17 @@ Undocumented.prototype.wordAdsApprove = function( siteId ) {
 };
 
 /**
+ * Requests the status of a guided transfer
+ *
+ * @param {int} siteId  The site ID
+ * @returns {Promise} Resolves to the API response containing the status
+ */
+Undocumented.prototype.getGuidedTransferStatus = function( siteId ) {
+	debug( '/sites/:site:/guided-transfer' );
+	return this.wpcom.req.get( '/sites/' + siteId + '/guided-transfer' );
+};
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;
