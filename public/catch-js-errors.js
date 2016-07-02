@@ -1,6 +1,7 @@
 ( function() {
 	var savedWindowOnError = window.onerror,
 		assignment = 1,
+		errorLogger = 'false',
 		savedErrors = [],
 		lastTimeSent = 0,
 		packTimeout = null,
@@ -93,13 +94,15 @@
 
 	if ( isLocalStorageNameSupported() ) {
 		assignment = Math.random();
+		errorLogger = localStorage.getItem( 'log-errors' );
 		// Randomly assign 1% of users to log errors
-		if ( ! localStorage.getItem( 'log-errors' ) ) {
+		if ( ! errorLogger ) {
 			if ( assignment <= 0.01 ) {
 				localStorage.setItem( 'log-errors', 'rest-api' );
+				errorLogger = 'rest-api';
 			} else if ( assignment <= 0.02 ) {
 				localStorage.setItem( 'log-errors', 'analytics' );
-				//Prep the stage up for GA logging experiment
+				errorLogger = 'analytics';
 			} else if ( assignment <= 0.03 ) {
 				localStorage.setItem( 'log-errors', 'external' );
 				//Prep the stage up for Google Stackdriver or other service experiment
@@ -108,12 +111,33 @@
 			}
 		}
 
-		if ( localStorage.getItem( 'log-errors' ) !== undefined &&
-			( localStorage.getItem( 'log-errors' ) === 'rest-api' || localStorage.getItem( 'log-errors' ) === 'true' )
-		) {
+		if ( errorLogger === 'true' ) {
+			//Fix up any outstanding old settings
+			localStorage.setItem( 'log-errors', 'rest-api' );
+			errorLogger = 'rest-api';
+		}
+
+		if ( errorLogger === 'rest-api' ) {
 			// set up handler to POST errors
 			window.onerror = function( message, scriptUrl, lineNumber, columnNumber, error ) {
 				saveError( message, scriptUrl, lineNumber, columnNumber, error );
+				if ( savedWindowOnError ) {
+					savedWindowOnError();
+				}
+			};
+		} else if ( errorLogger === 'analytics' ) {
+			window.onerror = function( message, scriptUrl, lineNumber ) {
+				if ( typeof window.ga === 'function' ) {
+					window.ga(
+						'send',
+						'event',
+						'JS Error',
+						message,
+						'URL: ' + document.location.href + '| ' + scriptUrl + ':' + lineNumber,
+						0,
+						{ nonInteraction: true }
+					);
+				}
 				if ( savedWindowOnError ) {
 					savedWindowOnError();
 				}
