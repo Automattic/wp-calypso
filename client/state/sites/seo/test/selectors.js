@@ -16,7 +16,7 @@ describe( 'selectors', () => {
 		} } } };
 
 		it( 'should return all title formats for a given site', () => {
-			expect( getTitleFormats( 1, state ) ).to.eql( {
+			expect( getTitleFormats( state, 1 ) ).to.eql( {
 				frontPage: '%site_name%',
 				pages: '%page_title%'
 			} );

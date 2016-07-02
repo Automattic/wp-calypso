@@ -141,7 +141,7 @@ MetaTitleEditor.propTypes = {
 
 const mapStateToProps = state => ( {
 	siteId: getSelectedSiteId( state ),
-	titleFormats: getTitleFormats( getSelectedSiteId( state ), state )
+	titleFormats: getTitleFormats( state, getSelectedSiteId( state ) )
 } );
 
 const mapDispatchToProps = {
