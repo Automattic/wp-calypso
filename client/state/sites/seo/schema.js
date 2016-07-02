@@ -1,7 +1,8 @@
 export const titleFormatSchema = {
 	type: 'object',
-	properties: {
-		id: {
+	additionalProperties: false,
+	patternProperties: {
+		'^\\d+$': {
 			type: 'object',
 			properties: {
 				frontPage: { type: 'string' },
