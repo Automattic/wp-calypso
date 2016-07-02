@@ -9,6 +9,11 @@ import isNumber from 'lodash/isNumber';
 import { moment } from 'i18n-calypso';
 
 /**
+ * Internal dependencies
+ */
+import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
+
+/**
  * Returns a serialized stats query, used as the key in the
  * `state.stats.lists.items` and `state.stats.lists.requesting` state objects.
  *
@@ -26,7 +31,7 @@ export const normalizers = {
 	 * @param  {Object} data    Stats query
 	 * @return {Object?}        Normalized stats data
 	 */
-	stats: ( data ) => {
+	stats( data ) {
 		if ( ! data || ! data.stats ) {
 			return null;
 		}
@@ -64,5 +69,22 @@ export const normalizers = {
 			hour: moment().hour( highest_hour ).startOf( 'hour' ).format( 'LT' ),
 			hourPercent: Math.round( highest_hour_percent )
 		};
+	},
+
+	/**
+	 * Returns a normalized statsPublicize array, ready for use in stats-module
+	 *
+	 * @param  {Object} data Stats query
+	 * @return {Array}       Parsed publicize data array
+	 */
+	statsPublicize( data = {} ) {
+		if ( ! data || ! data.services ) {
+			return [];
+		}
+
+		return data.services.map( ( service ) => {
+			const { label, icon } = PUBLICIZE_SERVICES_LABEL_ICON[ service.service ];
+			return { label, icon, value: service.followers };
+		} );
 	}
 };
