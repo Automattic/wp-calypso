@@ -5,6 +5,8 @@ import sortBy from 'lodash/sortBy';
 import toPairs from 'lodash/toPairs';
 import camelCase from 'lodash/camelCase';
 import mapKeys from 'lodash/mapKeys';
+import isNumber from 'lodash/isNumber';
+import { moment } from 'i18n-calypso';
 
 /**
  * Returns a serialized stats query, used as the key in the
@@ -30,5 +32,37 @@ export const normalizers = {
 		}
 
 		return mapKeys( data.stats, ( value, key ) => camelCase( key ) );
+	},
+
+	/**
+	 * Returns a normalized payload from `/sites/{ site }/stats/insights`
+	 *
+	 * @param  {Object} data    Stats query
+	 * @return {Object?}        Normalized stats data
+	 */
+	statsInsights: ( data ) => {
+		if ( ! data || ! isNumber( data.highest_day_of_week ) ) {
+			return {};
+		}
+
+		const {
+			highest_hour,
+			highest_day_percent,
+			highest_day_of_week,
+			highest_hour_percent
+		} = data;
+
+		// Adjust Day of Week from 0 = Monday to 0 = Sunday (for Moment)
+		let dayOfWeek = highest_day_of_week + 1;
+		if ( dayOfWeek > 6 ) {
+			dayOfWeek = 0;
+		}
+
+		return {
+			day: moment().day( dayOfWeek ).format( 'dddd' ),
+			percent: Math.round( highest_day_percent ),
+			hour: moment().hour( highest_hour ).startOf( 'hour' ).format( 'LT' ),
+			hourPercent: Math.round( highest_hour_percent )
+		};
 	}
 };
