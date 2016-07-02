@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
 
 /**
@@ -18,11 +19,20 @@ const postTitleSiteName = '%post_title% | %site_name%';
 
 describe( 'reducer', () => {
 	describe( '#titleFormats()', () => {
-		const prev = {
+		const prev = deepFreeze( {
 			[ siteA ]: {
 				frontPage: siteNameTagline
 			}
-		};
+		} );
+
+		it( 'should not mutate the state', () => {
+			expect( () => titleFormats( prev, {
+				type: SEO_TITLE_SET,
+				siteId: siteA,
+				pageType: 'frontPage',
+				format: siteNameTagline
+			} ) ).to.not.throw( TypeError );
+		} );
 
 		it( 'should return empty structure when initializing', () => {
 			expect( titleFormats( undefined, {} ) ).to.eql( {} );
