@@ -29,7 +29,6 @@ export default React.createClass( {
 		commentsList: PropTypes.object.isRequired,
 		emailFollowersList: PropTypes.object.isRequired,
 		followList: PropTypes.object.isRequired,
-		insightsList: PropTypes.object.isRequired,
 		publicizeList: PropTypes.object.isRequired,
 		site: React.PropTypes.oneOfType( [
 			React.PropTypes.bool,
@@ -45,7 +44,6 @@ export default React.createClass( {
 			commentsList,
 			emailFollowersList,
 			followList,
-			insightsList,
 			publicizeList,
 			site,
 			wpcomFollowersList } = this.props;
@@ -87,7 +85,7 @@ export default React.createClass( {
 						title={ this.translate( 'Today\'s Stats' ) }
 					/>
 					<AllTime />
-					<MostPopular insightsList={ insightsList } />
+					<MostPopular />
 					<DomainTip siteId={ site ? site.ID : 0 } event="stats_insights_domain" />
 					<div className="stats-nonperiodic has-recent">
 						<div className="module-list">
