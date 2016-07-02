@@ -24,9 +24,7 @@ const Start = React.createClass( {
 	smartSetState: smartSetState,
 
 	getInitialState() {
-		return {
-			totalSubscriptions: 0
-		};
+		return this.getStateFromStores();
 	},
 
 	// Add change listeners to stores
