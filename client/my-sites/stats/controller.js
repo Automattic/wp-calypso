@@ -123,7 +123,6 @@ module.exports = {
 			followList,
 			commentsList,
 			tagsList,
-			publicizeList,
 			wpcomFollowersList,
 			emailFollowersList,
 			commentFollowersList,
@@ -170,7 +169,6 @@ module.exports = {
 
 		commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: siteDomain } );
 		tagsList = new StatsList( { siteID: siteId, statType: 'statsTags', domain: siteDomain } );
-		publicizeList = new StatsList( { siteID: siteId, statType: 'statsPublicize', domain: siteDomain } );
 		wpcomFollowersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', type: 'wpcom', domain: siteDomain, max: 7 } );
 		emailFollowersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', type: 'email', domain: siteDomain, max: 7 } );
 		commentFollowersList = new StatsList( { siteID: siteId, statType: 'statsCommentFollowers', domain: siteDomain, max: 7 } );
@@ -184,7 +182,6 @@ module.exports = {
 					followList: followList,
 					commentsList: commentsList,
 					tagsList: tagsList,
-					publicizeList: publicizeList,
 					wpcomFollowersList: wpcomFollowersList,
 					emailFollowersList: emailFollowersList,
 					commentFollowersList: commentFollowersList,
@@ -301,7 +298,6 @@ module.exports = {
 			wpcomFollowersList,
 			emailFollowersList,
 			commentFollowersList,
-			publicizeList,
 			searchTermsList,
 			siteOffset = 0,
 			momentSiteZone = i18n.moment(),
@@ -436,7 +432,6 @@ module.exports = {
 			wpcomFollowersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', type: 'wpcom', domain: siteDomain, max: 7 } );
 			emailFollowersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', type: 'email', domain: siteDomain, max: 7 } );
 			commentFollowersList = new StatsList( { siteID: siteId, statType: 'statsCommentFollowers', domain: siteDomain, max: 7 } );
-			publicizeList = new StatsList( { siteID: siteId, statType: 'statsPublicize', domain: siteDomain } );
 
 			siteComponent = SiteStatsComponent;
 
@@ -465,7 +460,6 @@ module.exports = {
 					wpcomFollowersList: wpcomFollowersList,
 					emailFollowersList: emailFollowersList,
 					commentFollowersList: commentFollowersList,
-					publicizeList: publicizeList,
 					followList: followList,
 					searchTermsList: searchTermsList,
 					slug: siteDomain
