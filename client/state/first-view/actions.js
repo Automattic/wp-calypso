@@ -9,31 +9,39 @@ import {
 } from 'state/action-types';
 
 export function disableView( { view } ) {
-	return {
-		type: FIRST_VIEW_DISABLE,
-		view,
+	return dispatch => {
+		dispatch( {
+			type: FIRST_VIEW_DISABLE,
+			view,
+		} );
 	};
 }
 
 export function enableView( { view } ) {
-	return {
-		type: FIRST_VIEW_ENABLE,
-		view,
+	return dispatch => {
+		dispatch( {
+			type: FIRST_VIEW_ENABLE,
+			view,
+		} );
 	};
 }
 
 export function hideView( { view } ) {
-	return {
-		type: FIRST_VIEW_HIDE,
-		view,
+	return dispatch => {
+		dispatch( {
+			type: FIRST_VIEW_HIDE,
+			view,
+		} );
 	};
 }
 
 export function showView( { view, force, user } ) {
-	return {
-		type: FIRST_VIEW_SHOW,
-		view,
-		force,
-		user,
+	return dispatch => {
+		dispatch( {
+			type: FIRST_VIEW_SHOW,
+			view,
+			force,
+			user,
+		} );
 	};
 }
