@@ -190,7 +190,7 @@ const communityTranslatorJumpstart = {
 	toggle: function() {
 		let unregisteredHandleWarning = false;
 
-		translationDataFromPage.contentChangedCallback = function() {
+		translationDataFromPage.contentChangedCallback = () => {
 			if ( ! unregisteredHandleWarning ) {
 				debug( 'Translator notified of page change, but handler was not registered' );
 				unregisteredHandleWarning = true;
@@ -273,13 +273,13 @@ const communityTranslatorJumpstart = {
 };
 
 // wrap translations from i18n
-i18n.registerTranslateHook( function( translation, options ) {
+i18n.registerTranslateHook( ( translation, options ) => {
 	return communityTranslatorJumpstart.wrapTranslation( options.original, translation, options );
 } );
 
 // callback when translated component changes.
 // the callback is overwritten by the the translator on load/unload, so we're returning it within an anonymous function.
-i18n.registerComponentUpdateHook( function() {
+i18n.registerComponentUpdateHook( () => {
 	if ( typeof translationDataFromPage.contentChangedCallback === 'function' ) {
 		return translationDataFromPage.contentChangedCallback();
 	}
