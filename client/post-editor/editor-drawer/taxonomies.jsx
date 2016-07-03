@@ -26,7 +26,7 @@ function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 			) }
 			{ map( taxonomies, ( taxonomy ) => {
 				const { name, label, hierarchical } = taxonomy;
-				if ( 'post_format' === taxonomy.name ) {
+				if ( 'post_format' === name ) {
 					// Post format has its own dedicated accordion
 					return;
 				}
