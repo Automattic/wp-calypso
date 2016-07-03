@@ -168,12 +168,9 @@ const communityTranslatorJumpstart = {
 			translationDataFromPage.pluralForms;
 		translationDataFromPage.currentUserId = user.data.ID;
 
-		// extract the active language's name out of Calypso lanaguage data
-		for ( let i = 0; i < languages.length; i++ ) {
-			if ( languages[ i ].langSlug === localeCode ) {
-				translationDataFromPage.languageName = languages[ i ].name.replace( /^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/, '' );
-				break;
-			}
+		const currentLocale = languages.find( lang => lang.langSlug === localeCode );
+		if ( currentLocale ) {
+			translationDataFromPage.languageName = currentLocale.name.replace( /^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/, '' );
 		}
 
 		this.setInjectionURL( 'community-translator.min.js' );
