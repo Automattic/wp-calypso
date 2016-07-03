@@ -818,14 +818,7 @@ const PostEditor = React.createClass( {
 	},
 
 	onSaveSuccess: function( message, action, link ) {
-		var post = PostEditStore.get(),
-			basePath, nextState;
-
-		if ( utils.isPage( post ) ) {
-			basePath = '/page';
-		} else {
-			basePath = '/post';
-		}
+		var post = PostEditStore.get(), nextState;
 
 		if ( 'draft' === post.status ) {
 			this.props.setEditorLastDraft( post.site_ID, post.ID );
@@ -848,8 +841,9 @@ const PostEditor = React.createClass( {
 		this.props.receivePost( post );
 
 		// make sure the history entry has the post ID in it, but don't dispatch
+		const site = this.props.sites.getSite( post.site_ID );
 		page.replace(
-			basePath + '/' + this.props.sites.getSite( post.site_ID ).slug + '/' + post.ID,
+			utils.getEditURL( post, site ),
 			null, false, false
 		);
 
