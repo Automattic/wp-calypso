@@ -1,25 +1,24 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:community-translator' ),
-	i18n = require( 'i18n-calypso' ),
-	React = require( 'react' );
+import debugModule from 'debug';
+import React from 'react';
+import i18n from 'i18n-calypso';
+
+const debug = debugModule( 'calypso:community-translator' );
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	loadScript = require( 'lib/load-script' ),
-	user = require( 'lib/user' )(),
-	userSettings = require( 'lib/user-settings' ),
-	isMobile = require( 'lib/viewport' ).isMobile,
-	analytics = require( 'lib/analytics' ),
-	hasTouch = require( 'lib/touch-detect' ).hasTouch;
+import config from 'config';
+import loadScript from 'lib/load-script';
+import User from 'lib/user';
+import userSettings from 'lib/user-settings';
+import { isMobile } from 'lib/viewport';
+import analytics from 'lib/analytics';
 
-/**
- * Local variables
- */
-var communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
+const user = new User(),
+	communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
 	communityTranslatorVersion = '1.160728',
 	translationDataFromPage = {
 		localeCode: 'en',
@@ -30,8 +29,13 @@ var communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
 			url: 'https://translate.wordpress.com',
 			project: 'test'
 		}
-	},
-	communityTranslatorJumpstart, injectUrl, initialized,
+	};
+
+/**
+ * Local variables
+ */
+
+var	injectUrl, initialized,
 	previousEnabledSetting,
 	_shouldWrapTranslations = false;
 
@@ -40,15 +44,13 @@ var communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
  * "Activated" means that the translator is toggled on, and wrapTranslate()
  *     will add the data tags that the translator needs.
  */
-communityTranslatorJumpstart = {
+const communityTranslatorJumpstart = {
 	isEnabled: function() {
-		var currentUser;
-
 		if ( ! config.isEnabled( 'community-translator' ) ) {
 			return false;
 		}
 
-		currentUser = user.get();
+		const currentUser = user.get();
 
 		if ( ! currentUser || 'en' === currentUser.localeSlug || ! currentUser.localeSlug ) {
 			return false;
@@ -74,7 +76,7 @@ communityTranslatorJumpstart = {
 	},
 
 	wrapTranslation: function( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
-		var props, dataElement;
+		var props;
 
 		if ( ! this.isEnabled() || ! this.isActivated() ) {
 			return displayedTranslationFromPage;
@@ -104,12 +106,12 @@ communityTranslatorJumpstart = {
 		}
 
 		// React.DOM.data returns a frozen object, therefore we make a copy so that we can modify it below
-		dataElement = Object.assign( {}, React.DOM.data( props, displayedTranslationFromPage ) );
+		const dataElement = Object.assign( {}, React.DOM.data( props, displayedTranslationFromPage ) );
 
 		// now we can override the toString function which would otherwise return [object Object]
 		dataElement.toString = function() {
 			return displayedTranslationFromPage;
-		}
+		};
 
 		// freeze the object again to certify the same behavior as the original ReactElement object
 		Object.freeze( dataElement );
@@ -118,7 +120,7 @@ communityTranslatorJumpstart = {
 	},
 
 	init: function() {
-		var languageJson = i18n.getLocale() || { '': {} },
+		const languageJson = i18n.getLocale() || { '': {} },
 			localeCode = languageJson[ '' ].localeSlug;
 
 		if ( localeCode && languageJson ) {
@@ -150,8 +152,7 @@ communityTranslatorJumpstart = {
 	},
 
 	updateTranslationData: function( localeCode, languageJson ) {
-		var languages = config( 'languages' ),
-			i;
+		const languages = config( 'languages' );
 
 		if ( translationDataFromPage.localeCode === localeCode ) {
 			// if the locale code has already been assigned then assume it is up to date
@@ -161,11 +162,14 @@ communityTranslatorJumpstart = {
 
 		debug( 'Translator Jumpstart: loading locale file for ' + localeCode );
 		translationDataFromPage.localeCode = localeCode;
-		translationDataFromPage.pluralForms = languageJson[ '' ].plural_forms || languageJson[ '' ][ 'Plural-Forms' ] || languageJson[ '' ][ 'plural-forms' ] || translationDataFromPage.pluralForms;
+		translationDataFromPage.pluralForms = languageJson[ '' ].plural_forms ||
+			languageJson[ '' ][ 'Plural-Forms' ] ||
+			languageJson[ '' ][ 'plural-forms' ] ||
+			translationDataFromPage.pluralForms;
 		translationDataFromPage.currentUserId = user.data.ID;
 
 		// extract the active language's name out of Calypso lanaguage data
-		for ( i = 0; i < languages.length; i++ ) {
+		for ( let i = 0; i < languages.length; i++ ) {
 			if ( languages[ i ].langSlug === localeCode ) {
 				translationDataFromPage.languageName = languages[ i ].name.replace( /^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/, '' );
 				break;
@@ -187,7 +191,7 @@ communityTranslatorJumpstart = {
 	},
 
 	toggle: function() {
-		var unregisteredHandleWarning = false;
+		let unregisteredHandleWarning = false;
 
 		translationDataFromPage.contentChangedCallback = function() {
 			if ( ! unregisteredHandleWarning ) {
@@ -249,7 +253,7 @@ communityTranslatorJumpstart = {
 
 	// Merge a Community Translator TranslationPair into the i18n locale
 	updateTranslation: function( newTranslation ) {
-		var locale = i18n.getLocale(),
+		const locale = i18n.getLocale(),
 			key = newTranslation.key,
 			plural = newTranslation.plural,
 			translations = newTranslation.translations;
@@ -263,10 +267,6 @@ communityTranslatorJumpstart = {
 	},
 
 	isValidBrowser: function() {
-		if ( hasTouch() ) {
-			return false;
-		}
-
 		if ( isMobile() ) {
 			return false;
 		}
@@ -289,7 +289,7 @@ i18n.registerComponentUpdateHook( function() {
 } );
 
 function trackTranslatorStatus() {
-	var newSetting = userSettings.getOriginalSetting( 'enable_translator' ),
+	const newSetting = userSettings.getOriginalSetting( 'enable_translator' ),
 		changed = previousEnabledSetting !== newSetting,
 		tracksEvent = newSetting
 			? 'calypso_community_translator_enabled'
@@ -309,4 +309,4 @@ user.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJu
 userSettings.on( 'change', trackTranslatorStatus );
 userSettings.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
 
-module.exports = communityTranslatorJumpstart;
+export default communityTranslatorJumpstart;
