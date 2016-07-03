@@ -13,7 +13,7 @@ import TermTreeSelector from 'my-sites/term-tree-selector';
 import PostActions from 'lib/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-class EditorDrawerTermSelector extends Component {
+class EditorTermSelector extends Component {
 	static propTypes = {
 		siteId: React.PropTypes.number,
 		postTerms: React.PropTypes.object,
@@ -69,4 +69,4 @@ export default connect( ( state ) => {
 	return {
 		siteId: getSelectedSiteId( state )
 	};
-} )( EditorDrawerTermSelector );
+} )( EditorTermSelector );

@@ -16,7 +16,7 @@ import { getPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';
 import Accordion from 'components/accordion';
 import Gridicon from 'components/gridicon';
 import TermTokenField from 'post-editor/term-token-field';
-import TermSelector from './term-selector';
+import TermSelector from 'post-editor/editor-term-selector';
 
 function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 	return (
@@ -25,50 +25,24 @@ function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 				<QueryTaxonomies { ...{ siteId, postType } } />
 			) }
 			{ map( taxonomies, ( taxonomy ) => {
+				const { name, label, hierarchical } = taxonomy;
 				if ( 'post_format' === taxonomy.name ) {
 					// Post format has its own dedicated accordion
 					return;
 				}
 
-				if ( taxonomy.hierarchical ) {
-					return (
-						<Accordion
-							key={ taxonomy.name }
-							title={ taxonomy.label }
-							icon={ <Gridicon icon="folder" /> }
-						>
-							<TermSelector
-								postTerms={ postTerms }
-								taxonomyName={ taxonomy.name }
-							/>
-						</Accordion>
-					);
-				} else {
-					return (
-						<Accordion
-							key={ taxonomy.name }
-							title={ taxonomy.label }
-							icon={ <Gridicon icon="tag" /> }
-						>
-							<TermTokenField
-								postTerms={ postTerms }
-								taxonomyName={ taxonomy.name }
-							/>
-						</Accordion>
-					);
-				}
+				const icon = hierarchical ? 'folder' : 'tag';
 
 				return (
 					<Accordion
-						key={ taxonomy.name }
-						title={ taxonomy.label }
-						icon={ <Gridicon icon="tag" /> }
+						key={ name }
+						title={ label }
+						icon={ <Gridicon icon={ icon } /> }
 					>
-						<TermTokenField
-							postTerms={ postTerms }
-							taxonomyName={ taxonomy.name }
-							taxonomyLabel={ taxonomy.label }
-						/>
+					{ hierarchical
+						? <TermSelector postTerms={ postTerms } taxonomyName={ name } />
+						: <TermTokenField postTerms={ postTerms } taxonomyName={ name } taxonomyLabel={ label } />
+					}
 					</Accordion>
 				);
 			} ).filter( Boolean ) }
