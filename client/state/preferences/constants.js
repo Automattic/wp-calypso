@@ -4,6 +4,10 @@ export const DEFAULT_PREFERENCES = {
 		schema: { 'enum': [ null, 'html', 'tinymce' ] },
 		'default': null
 	},
+	firstViewDisabledViews: {
+		schema: { type: 'array', items: { type: 'string' } },
+		'default': []
+	},
 	mediaModalGalleryInstructionsDismissed: {
 		schema: { type: 'boolean' },
 		'default': false

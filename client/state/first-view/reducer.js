@@ -2,7 +2,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import moment from 'moment';
 import omit from 'lodash/omit';
 
 /**
@@ -14,15 +13,15 @@ import {
 	firstViewSchema
 } from './schema';
 
-import { FIRST_VIEW_START_DATES } from './constants';
-
 import {
 	DESERIALIZE,
 	SERIALIZE,
 	FIRST_VIEW_DISABLE,
+	FIRST_VIEW_DISABLED_SET,
 	FIRST_VIEW_ENABLE,
 	FIRST_VIEW_HIDE,
 	FIRST_VIEW_SHOW,
+	FIRST_VIEW_VISIBLE_SET,
 } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:first-view' );
@@ -55,6 +54,12 @@ export function firstView( state = { disabled: [], visible: [] }, action ) {
 			};
 		}
 
+		case FIRST_VIEW_DISABLED_SET:
+			return Object.assign( {}, state, { disabled: action.views } );
+
+		case FIRST_VIEW_VISIBLE_SET:
+			return Object.assign( {}, state, { visible: action.views } );
+
 		case FIRST_VIEW_ENABLE:
 			return Object.assign( {}, state, { disabled: state.disabled.filter( view => {
 				return view !== action.view;
@@ -72,18 +77,7 @@ export function firstView( state = { disabled: [], visible: [] }, action ) {
 			} ) } );
 
 		case FIRST_VIEW_SHOW:
-			const isViewDisabled = ( -1 !== state.disabled.indexOf( action.view ) );
-			let isUserEligible = true;
-
-			// Check user-creation date if a user is provided
-			if ( action.user ) {
-				const userCreated = moment( action.user.get().date );
-				if ( moment( FIRST_VIEW_START_DATES[ action.view ] ).isAfter( userCreated ) ) {
-					isUserEligible = false;
-				}
-			}
-
-			if ( action.force || ( ! isViewDisabled && isUserEligible ) ) {
+			if ( -1 === state.visible.indexOf( action.view ) ) {
 				return Object.assign( {}, state, { visible: state.visible.concat( action.view ) } );
 			}
 			return state;
