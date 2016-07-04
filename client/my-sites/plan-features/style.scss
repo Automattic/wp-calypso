@@ -216,6 +216,21 @@ $plan-features-header-banner-height: 20px;
 	@include placeholder( 23% );
 }
 
+.plan-features__item-tip-info {
+	position: absolute;
+	right: 0;
+	top: 50%;
+	width: 18px;
+	height: 18px;
+	margin-top: -9px;
+	color: lighten( $gray, 20% );
+
+	.info-popover {
+		display: block;
+		height: 19px;
+	}
+}
+
 .plan-features__footer {
 	margin-top: auto;
 	padding: 16px 16px 24px;
