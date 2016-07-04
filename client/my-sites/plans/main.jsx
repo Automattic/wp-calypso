@@ -170,6 +170,7 @@ const Plans = React.createClass( {
 							selectedSite={ selectedSite } />
 
 						{ ! hasJpphpBundle && this.showMonthlyPlansLink() }
+
 						<QueryPlans />
 						<QuerySitePlans siteId={ siteId } />
 
@@ -177,7 +178,10 @@ const Plans = React.createClass( {
 							showPlanFeatures
 								? <PlansFeaturesMain
 									site={ selectedSite }
-									intervalType={ this.props.intervalType } />
+									intervalType={ this.props.intervalType }
+									hideFreePlan={ true }
+								/>
+
 								: <PlanList
 									site={ selectedSite }
 									plans={ this.props.plans }
@@ -185,7 +189,8 @@ const Plans = React.createClass( {
 									onOpen={ this.openPlan }
 									cart={ this.props.cart }
 									intervalType={ this.props.intervalType }
-									isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST }/>
+									isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST }
+								/>
 						}
 
 						{ ! hasJpphpBundle && ! showPlanFeatures && this.comparePlansLink() }
