@@ -56,7 +56,11 @@
 		max-width 0.2s ease-out;
 
 	.is-computer & {
-		max-width: 1040px;
+		max-width: 1200px;
+		@include breakpoint( ">960px" ) {
+			left: 24px;
+			right: 24px;
+		}
 	}
 
 	.is-tablet & {
