@@ -20,6 +20,8 @@ import {
 } from 'lib/plans/constants';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
+import { abtest } from 'lib/abtest';
+import { isEnabled } from 'config';
 
 class PlansFeaturesMain extends Component {
 
@@ -35,6 +37,9 @@ class PlansFeaturesMain extends Component {
 			hideFreePlan,
 			isInSignup
 		} = this.props;
+
+		const personalPlanTestEnabled = abtest( 'personalPlan' ) === 'show' &&
+			isEnabled( 'plans/personal-plan' );
 
 		if ( this.isJetpackSite( site ) && intervalType === 'monthly' ) {
 			return (
@@ -64,11 +69,15 @@ class PlansFeaturesMain extends Component {
 					/>
 					: null
 				}
-				<PlanFeatures
-					plan={ PLAN_PERSONAL }
-					onUpgradeClick={ onUpgradeClick }
-					isInSignup={ isInSignup }
-				/>
+				{
+					personalPlanTestEnabled
+						? <PlanFeatures
+							plan={ PLAN_PERSONAL }
+							onUpgradeClick={ onUpgradeClick }
+							isInSignup={ isInSignup }
+						/>
+						: null
+				}
 				<PlanFeatures
 					plan={ PLAN_PREMIUM }
 					onUpgradeClick={ onUpgradeClick }
