@@ -455,7 +455,7 @@
       "version": "6.11.1"
     },
     "babylon": {
-      "version": "6.8.2"
+      "version": "6.8.3"
     },
     "backo2": {
       "version": "1.0.2"
@@ -587,7 +587,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000488"
+      "version": "1.0.30000492"
     },
     "caseless": {
       "version": "0.11.0"
@@ -644,7 +644,7 @@
       "version": "1.6.0"
     },
     "chrono-node": {
-      "version": "1.2.3"
+      "version": "1.2.4"
     },
     "classnames": {
       "version": "1.1.1"
@@ -1101,12 +1101,7 @@
       "version": "1.1.1"
     },
     "es5-ext": {
-      "version": "0.10.11",
-      "dependencies": {
-        "es6-symbol": {
-          "version": "3.0.2"
-        }
-      }
+      "version": "0.10.12"
     },
     "es6-iterator": {
       "version": "2.0.0"
@@ -1219,7 +1214,7 @@
           "version": "1.1.3"
         },
         "globals": {
-          "version": "9.8.0"
+          "version": "9.9.0"
         },
         "strip-json-comments": {
           "version": "1.0.4"
@@ -2101,7 +2096,7 @@
       }
     },
     "loud-rejection": {
-      "version": "1.5.0"
+      "version": "1.6.0"
     },
     "lower-case": {
       "version": "1.1.3"
@@ -2911,7 +2906,7 @@
       "version": "0.1.3"
     },
     "rimraf": {
-      "version": "2.5.2",
+      "version": "2.5.3",
       "dependencies": {
         "glob": {
           "version": "7.0.5"
@@ -3651,15 +3646,7 @@
       "version": "1.3.0"
     },
     "wpcom": {
-      "version": "4.9.15",
-      "dependencies": {
-        "babel-runtime": {
-          "version": "5.8.12"
-        },
-        "core-js": {
-          "version": "0.9.18"
-        }
-      }
+      "version": "5.0.0"
     },
     "wpcom-oauth": {
       "version": "0.3.3",
