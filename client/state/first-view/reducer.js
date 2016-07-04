@@ -25,21 +25,18 @@ import {
 } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:first-view' );
+const initialState = { disabled: [], visible: [] };
 
-export function firstView( state = { disabled: [], visible: [] }, action ) {
+export function firstView( state = initialState, action ) {
 	switch ( action.type ) {
 
 		case DESERIALIZE: {
-			// only 'disabled' state is persisted
 			const newState = omit( state, 'visible' );
 			if ( isValidStateWithSchema( newState, firstViewSchema ) ) {
 				return Object.assign( {}, newState, { visible: [] } );
 			}
 			debug( 'INVALID firstView state during DESERIALIZE', newState );
-			return {
-				disabled: [],
-				visible: [],
-			};
+			return initialState;
 		}
 
 		case SERIALIZE: {
@@ -48,10 +45,7 @@ export function firstView( state = { disabled: [], visible: [] }, action ) {
 				return Object.assign( {}, newState, { visible: [] } );
 			}
 			debug( 'INVALID firstView state during SERIALIZE', newState );
-			return {
-				disabled: [],
-				visible: [],
-			};
+			return initialState;
 		}
 
 		case FIRST_VIEW_DISABLED_SET:
