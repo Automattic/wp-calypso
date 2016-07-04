@@ -46,7 +46,6 @@
 	transition: filter 0.2s ease-in-out, opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
 
 	&.active {
-		min-height: 500px;
 		pointer-events: auto;
 		opacity: 1;
 		filter: blur( 0 );
