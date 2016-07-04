@@ -15,6 +15,6 @@ export default createReducer( {},
 		},
 		[ SIGNUP_DEPENDENCY_STORE_RESET ]: () => {
 			return {};
-		}
+		},
 	}
 );

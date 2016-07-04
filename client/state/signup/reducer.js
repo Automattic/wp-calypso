@@ -9,5 +9,5 @@ import { combineReducers } from 'redux';
 import dependencyStore from './dependency-store/reducers';
 
 export default combineReducers( {
-	dependencyStore
+	dependencyStore,
 } );
