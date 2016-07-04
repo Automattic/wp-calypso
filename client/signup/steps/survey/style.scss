@@ -20,7 +20,7 @@
 	opacity: 0.4;
 	filter: blur( 3px );
 	transform: translateX( -20% ) scale( 0.9 );
-	transition: all 0.15s ease-out;
+	transition: filter 0.15s ease-out, opacity 0.15s ease-out, transform 0.15s ease-out;
 
 	&.active {
 		filter: blur( 0 );
@@ -43,7 +43,7 @@
 	opacity: 0;
 	filter: blur( 3px );
 	transform: translateX( 20% );
-	transition: all 0.2s ease-in-out;
+	transition: filter 0.2s ease-in-out, opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
 
 	&.active {
 		min-height: 500px;
