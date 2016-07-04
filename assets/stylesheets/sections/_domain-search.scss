@@ -192,17 +192,12 @@ form.google-apps-dialog {
 		margin-bottom: 20px;
 	}
 
-	.google-apps-dialog__user-email {
-		margin-bottom: 9px;
-	}
-
 	.google-apps-dialog__user-first-name {
-		margin-bottom: 9px;
-
 		@include breakpoint( ">660px" ) {
 			display: inline-block;
 			margin: 0 4px 0 0;
 			width: calc( 50% - 4px );
+			vertical-align: top;
 		}
 	}
 
@@ -211,6 +206,7 @@ form.google-apps-dialog {
 			display: inline-block;
 			margin: 0 0 0 5px;
 			width: calc( 50% - 5px );
+			vertical-align: top;
 		}
 	}
 

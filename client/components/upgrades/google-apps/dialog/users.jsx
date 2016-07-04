@@ -1,26 +1,30 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	clone = require( 'lodash/clone' );
+import React from 'react';
+import clone from 'lodash/clone';
 
 /**
  * Internal dependencies
  */
-var AnalyticsMixin = require( 'lib/mixins/analytics' );
+import FormFieldset from 'components/forms/form-fieldset';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormInputValidation from 'components/forms/form-input-validation';
+import AnalyticsMixin from 'lib/mixins/analytics';
 
-var GoogleAppsUsers = React.createClass( {
+const GoogleAppsUsers = React.createClass( {
 	mixins: [ AnalyticsMixin( 'googleApps' ) ],
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.props.onChange( this.props.fields ? this.props.fields : this.getInitialFields() );
 	},
 
-	getInitialFields: function() {
+	getInitialFields() {
 		return [ this.getNewUserFields() ];
 	},
 
-	getNewUserFields: function() {
+	getNewUserFields() {
 		return {
 			email: { value: '', error: null },
 			firstName: { value: '', error: null },
@@ -28,12 +32,12 @@ var GoogleAppsUsers = React.createClass( {
 		};
 	},
 
-	render: function() {
-		var fields = this.props.fields || this.getInitialFields(),
+	render() {
+		const fields = this.props.fields || this.getInitialFields(),
 			allUserInputs = fields.map( this.inputsForUser );
 
 		return (
-			<div className='google-apps-dialog__users' key='google-apps-dialog__users'>
+			<div className="google-apps-dialog__users" key="google-apps-dialog__users">
 				<h4>{ this.translate( 'New Google Apps User:' ) }</h4>
 
 				{ allUserInputs }
@@ -46,75 +50,80 @@ var GoogleAppsUsers = React.createClass( {
 		);
 	},
 
-	fieldClasses: function( field, className ) {
-		className = 'google-apps-dialog__user-field ' + className;
-
-		if ( field.error ) {
-			className += ' is-invalid';
-		}
-
-		return className;
+	fieldClasses( fieldName ) {
+		return `google-apps-dialog__user-field google-apps-dialog__user-${ fieldName }`;
 	},
 
-	inputsForUser: function( user, index ) {
-		const contactText = this.translate( 'contact', { context: 'part of e-mail address', comment: 'As it would be part of an e-mail address contact@example.com' } ),
-			domain = this.props.domain;
+	inputsForUser( user, index ) {
+		const contactText = this.translate( 'contact', { context: 'part of e-mail address', comment: 'As it would be part of an e-mail address contact@example.com' } );
 
 		return (
-			<fieldset className="google-apps-dialog__user-fields" key={ index }>
-				<input
-					className={ this.fieldClasses( user.email, 'google-apps-dialog__user-email' ) }
-					type="text"
-					placeholder={ this.translate( 'e.g. %(example)s', { args: { example: contactText + '@' + domain } } ) }
-					value={ user.email.value }
-					onChange={ this.updateField.bind( this, index, 'email' ) }
-					onBlur={ this.props.onBlur }
-					onClick={ this.recordInputFocus.bind( this, index, 'Email' ) } />
+			<div className="google-apps-dialog__user-fields" key={ `google-apps-dialog-user-${ index }` }>
+				<FormFieldset>
+					<FormTextInputWithAffixes
+						className={ this.fieldClasses( 'email' ) }
+						placeholder={ this.translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
+						name="email"
+						value={ user.email.value }
+						suffix={ '@' + this.props.domain }
+						isError={ user.email.error }
+						onChange={ this.updateField.bind( this, index ) }
+						onBlur={ this.props.onBlur }
+						onClick={ this.recordInputFocus.bind( this, index, 'Email' ) } />
+					{ user.email.error ? <FormInputValidation text={ user.email.error } isError={ true } /> : null }
+				</FormFieldset>
 
-				<input
-					className={ this.fieldClasses( user.firstName, 'google-apps-dialog__user-first-name' ) }
-					type="text"
-					placeholder={ this.translate( 'First Name' ) }
-					value={ user.firstName.value }
-					onChange={ this.updateField.bind( this, index, 'firstName' ) }
-					onBlur={ this.props.onBlur }
-					onClick={ this.recordInputFocus.bind( this, index, 'First Name' ) } />
+				<FormFieldset className={ this.fieldClasses( 'first-name' ) }>
+					<FormTextInput
+						placeholder={ this.translate( 'First Name' ) }
+						name="firstName"
+						value={ user.firstName.value }
+						maxLength={ 60 }
+						isError={ user.firstName.error }
+						onChange={ this.updateField.bind( this, index ) }
+						onBlur={ this.props.onBlur }
+						onClick={ this.recordInputFocus.bind( this, index, 'First Name' ) } />
+					{ user.firstName.error ? <FormInputValidation text={ user.firstName.error } isError={ true } /> : null }
+				</FormFieldset>
 
-				<input
-					className={ this.fieldClasses( user.lastName, 'google-apps-dialog__user-last-name' ) }
-					type="text"
-					placeholder={ this.translate( 'Last Name' ) }
-					value={ user.lastName.value }
-					onChange={ this.updateField.bind( this, index, 'lastName' ) }
-					onBlur={ this.props.onBlur }
-					onClick={ this.recordInputFocus.bind( this, index, 'Last Name' ) } />
-			</fieldset>
+				<FormFieldset className={ this.fieldClasses( 'last-name' ) }>
+					<FormTextInput
+						placeholder={ this.translate( 'Last Name' ) }
+						name="lastName"
+						value={ user.lastName.value }
+						maxLength={ 60 }
+						isError={ user.lastName.error }
+						onChange={ this.updateField.bind( this, index ) }
+						onBlur={ this.props.onBlur }
+						onClick={ this.recordInputFocus.bind( this, index, 'Last Name' ) } />
+					{ user.lastName.error ? <FormInputValidation text={ user.lastName.error } isError={ true } /> : null }
+				</FormFieldset>
+			</div>
 		);
 	},
 
-	recordInputFocus: function( index, fieldName ) {
-		var field = this.props.fields[ index ],
+	recordInputFocus( index, fieldName ) {
+		const field = this.props.fields[ index ],
 			inputValue = field ? field.value : '';
 
 		this.recordEvent( 'inputFocus', index, fieldName, inputValue );
 	},
 
-	addUser: function( event ) {
+	addUser( event ) {
 		event.preventDefault();
 
 		this.recordEvent( 'addUserClick', this.props.analyticsSection );
 
-		var updatedFields = this.props.fields.concat( [ this.getNewUserFields() ] );
+		const updatedFields = this.props.fields.concat( [ this.getNewUserFields() ] );
 		this.props.onChange( updatedFields );
 	},
 
-	updateField: function( index, fieldName, event ) {
-		var newValue, updatedFields;
+	updateField( index, event ) {
 		event.preventDefault();
 
-		newValue = event.target.value;
-
-		updatedFields = clone( this.props.fields );
+		const newValue = event.target.value,
+			fieldName = event.target.name,
+			updatedFields = clone( this.props.fields );
 		updatedFields[ index ] = clone( updatedFields[ index ] );
 		updatedFields[ index ][ fieldName ] = clone( updatedFields[ index ][ fieldName ] );
 		updatedFields[ index ][ fieldName ].value = newValue;
@@ -123,4 +132,4 @@ var GoogleAppsUsers = React.createClass( {
 	}
 } );
 
-module.exports = GoogleAppsUsers;
+export default GoogleAppsUsers;
