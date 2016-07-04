@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-const keys = require( 'lodash/keys' ),
-	difference = require( 'lodash/difference' ),
-	isEmpty = require( 'lodash/isEmpty' );
+import keys from 'lodash/keys';
+import difference from 'lodash/difference';
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * Internal dependencies
@@ -13,8 +13,8 @@ import {
 	SIGNUP_DEPENDENCY_STORE_UPDATE_STATE,
 } from 'state/action-types';
 
-const Dispatcher = require( 'dispatcher' ),
-	steps = require( 'signup/config/steps' );
+import Dispatcher from 'dispatcher';
+import steps from 'signup/config/steps';
 
 const SignupDependencyStore = {
 	get: function() {
