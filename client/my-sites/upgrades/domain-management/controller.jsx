@@ -60,7 +60,9 @@ module.exports = {
 
 	domainManagementEdit( pageContext ) {
 		setTitle(
-			i18n.translate( 'Domain Management › Edit' ),
+			i18n.translate( 'Edit %(domain)s', {
+				args: { domain: pageContext.params.domain }
+			} ),
 			pageContext
 		);
 
@@ -83,7 +85,7 @@ module.exports = {
 
 	domainManagementPrimaryDomain: function( pageContext ) {
 		setTitle(
-			i18n.translate( 'Domain Management › Set Primary Domain' ),
+			i18n.translate( 'Set Primary Domain' ),
 			pageContext
 		);
 
@@ -105,7 +107,7 @@ module.exports = {
 
 	domainManagementContactsPrivacy( pageContext ) {
 		setTitle(
-			i18n.translate( 'Domain Management › Contacts and Privacy' ),
+			i18n.translate( 'Contacts and Privacy' ),
 			pageContext
 		);
 
@@ -128,7 +130,7 @@ module.exports = {
 
 	domainManagementEditContactInfo( pageContext ) {
 		setTitle(
-			i18n.translate( 'Domain Management › Contacts and Privacy › Edit Contact Info' ),
+			i18n.translate( 'Edit Contact Info' ),
 			pageContext
 		);
 
@@ -151,7 +153,7 @@ module.exports = {
 
 	domainManagementEmail( pageContext ) {
 		setTitle(
-			i18n.translate( 'Domain Management › Email' ),
+			i18n.translate( 'Email' ),
 			pageContext
 		);
 
@@ -174,7 +176,7 @@ module.exports = {
 
 	domainManagementEmailForwarding( pageContext ) {
 		setTitle(
-			i18n.translate( 'Domain Management › Email › Email Forwarding' ),
+			i18n.translate( 'Email Forwarding' ),
 			pageContext
 		);
 
@@ -195,7 +197,7 @@ module.exports = {
 
 	domainManagementDns( pageContext ) {
 		setTitle(
-			i18n.translate( 'Domain Management › Name Servers and DNS › DNS Records' ),
+			i18n.translate( 'DNS Records' ),
 			pageContext
 		);
 
@@ -215,7 +217,7 @@ module.exports = {
 	},
 	domainManagementNameServers( pageContext ) {
 		setTitle(
-			i18n.translate( 'Domain Management › Name Servers and DNS' ),
+			i18n.translate( 'Name Servers and DNS' ),
 			pageContext
 		);
 
@@ -236,7 +238,7 @@ module.exports = {
 
 	domainManagementPrivacyProtection( pageContext ) {
 		setTitle(
-			i18n.translate( 'Domain Management › Contacts and Privacy › Privacy Protection' ),
+			i18n.translate( 'Privacy Protection' ),
 			pageContext
 		);
 
@@ -259,7 +261,7 @@ module.exports = {
 
 	domainManagementAddGoogleApps( pageContext ) {
 		setTitle(
-			i18n.translate( 'Domain Management › Add Google Apps' ),
+			i18n.translate( 'Add Google Apps' ),
 			pageContext
 		);
 
@@ -282,7 +284,7 @@ module.exports = {
 
 	domainManagementRedirectSettings( pageContext ) {
 		setTitle(
-			i18n.translate( 'Domain Management › Redirect Settings' ),
+			i18n.translate( 'Redirect Settings' ),
 			pageContext
 		);
 
@@ -307,7 +309,7 @@ module.exports = {
 
 	domainManagementTransfer( pageContext ) {
 		setTitle(
-			i18n.translate( 'Domain Management' ) + ' › ' + i18n.translate( 'Transfer Domain' ),
+			i18n.translate( 'Transfer Domain' ),
 			pageContext
 		);
 
