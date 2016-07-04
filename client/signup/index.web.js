@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var controller = require( './controller' ),
-	jetpackConnectController = require( './jetpack-connect/controller' ),
-	adTracking = require( 'lib/analytics/ad-tracking' ),
-	config = require( 'config' ),
-	sitesController = require( 'my-sites/controller' );
+import controller from './controller';
+import jetpackConnectController from './jetpack-connect/controller';
+import adTracking from 'lib/analytics/ad-tracking';
+import config from 'config';
+import sitesController from 'my-sites/controller';
 
 module.exports = function() {
 	page(
@@ -25,6 +25,10 @@ module.exports = function() {
 
 	if ( config.isEnabled( 'jetpack/connect' ) ) {
 		page( '/jetpack/connect/install', jetpackConnectController.install );
+
+		page( '/jetpack/connect/premium', jetpackConnectController.premium );
+
+		page( '/jetpack/connect/pro', jetpackConnectController.pro );
 
 		page( '/jetpack/connect', jetpackConnectController.connect );
 
