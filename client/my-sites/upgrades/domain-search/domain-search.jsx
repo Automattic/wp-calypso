@@ -23,6 +23,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	cartItems = require( 'lib/cart-values/cart-items' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
+	{ abtest } = require( 'lib/abtest' ),
 	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
 
 var DomainSearch = React.createClass( {
@@ -75,25 +76,42 @@ var DomainSearch = React.createClass( {
 		this.setState( { domainRegistrationAvailable: isAvailable } );
 	},
 
-	handleAddDomain: function( suggestion ) {
+	handleAddRemoveDomain: function( suggestion ) {
 		if ( ! cartItems.hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
-			this.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'domains' );
-
-			if ( cartItems.shouldBundleDomainWithPlan( this.props.domainsWithPlansOnly, this.props.sites.getSelectedSite(), this.props.cart, suggestion ) ) {
-				const domain = cartItems.domainRegistration( {
-					domain: suggestion.domain_name,
-					productSlug: suggestion.product_slug
-				} );
-				const items = cartItems.bundleItemWithPlan( domain );
-				upgradesActions.addItems( items );
-			} else {
-				upgradesActions.addDomainToCart( suggestion );
-			}
-			upgradesActions.goToDomainCheckout( suggestion );
+			this.addDomain( suggestion );
 		} else {
-			this.recordEvent( 'removeDomainButtonClick', suggestion.domain_name );
-			upgradesActions.removeDomainFromCart( suggestion );
+			this.removeDomain( suggestion );
 		}
+	},
+
+	addDomain( suggestion ) {
+		this.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'domains' );
+		let items = [];
+
+		const shouldBundleDomainWithPlan = cartItems.shouldBundleDomainWithPlan( this.props.domainsWithPlansOnly, this.props.sites.getSelectedSite(), this.props.cart, suggestion );
+		if ( shouldBundleDomainWithPlan ) {
+			const domain = cartItems.domainRegistration( {
+				domain: suggestion.domain_name,
+				productSlug: suggestion.product_slug
+			} );
+			items = items.concat( cartItems.bundleItemWithPlan( domain ) );
+		} else {
+			items.push( cartItems.domainRegistration( { domain: suggestion.domain_name, productSlug: suggestion.product_slug } ) );
+		}
+
+		const shouldBundlePrivacy = cartItems.isNextDomainFree( this.props.cart ) || shouldBundleDomainWithPlan;
+		if ( abtest( 'privacyCheckbox' ) === 'checkbox' && shouldBundlePrivacy ) {
+			items.push( cartItems.domainPrivacyProtection( { domain: suggestion.domain_name } ) );
+		}
+
+		upgradesActions.addItems( items );
+		upgradesActions.goToDomainCheckout( suggestion );
+	},
+
+	removeDomain( suggestion ) {
+		this.recordEvent( 'removeDomainButtonClick', suggestion.domain_name );
+		upgradesActions.removeDomainFromCart( suggestion );
+
 	},
 
 	render: function() {
@@ -132,7 +150,7 @@ var DomainSearch = React.createClass( {
 							suggestion={ this.props.context.params.suggestion }
 							domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 							onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
-							onAddDomain={ this.handleAddDomain }
+							onAddDomain={ this.handleAddRemoveDomain }
 							cart={ this.props.cart }
 							selectedSite={ selectedSite }
 							offerMappingOption

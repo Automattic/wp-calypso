@@ -32,11 +32,13 @@ import analyticsMixin from 'lib/mixins/analytics';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { abtest } from 'lib/abtest';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
+import cartItems from 'lib/cart-values/cart-items';
 import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError
 } from 'state/domains/suggestions/selectors';
 import support from 'lib/url/support';
+import * as upgradesActions from '../../../lib/upgrades/actions/cart';
 
 const domains = wpcom.domains();
 
@@ -514,19 +516,8 @@ const RegisterDomainStep = React.createClass( {
 		event.preventDefault();
 
 		if ( this.props.onAddDomain ) {
-			return this.props.onAddDomain( suggestion, this.state );
+			return this.props.onAddDomain( suggestion );
 		}
-			if ( abtest( 'privacyCheckbox' ) === 'checkbox' &&
-				(
-					cartItems.isNextDomainFree( this.props.cart ) ||
-					cartItems.shouldBundleDomainWithPlan( domainsWithPlansOnlyTestEnabled, this.props.selectedSite, this.props.cart, suggestion )
-				)
-			) {
-				upgradesActions.addItem( cartItems.domainPrivacyProtection( {
-					domain: suggestion.domain_name
-				} ) );
-			}
-
 	},
 
 	showValidationErrorMessage: function( domain, error ) {
