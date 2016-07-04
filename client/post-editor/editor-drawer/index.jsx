@@ -16,8 +16,6 @@ import AsyncLoad from 'components/async-load';
 import CategoryListData from 'components/data/category-list-data';
 import TagListData from 'components/data/tag-list-data';
 import FormTextarea from 'components/forms/form-textarea';
-import PostFormatsData from 'components/data/post-formats-data';
-import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
 import PageParent from 'post-editor/editor-page-parent';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
 import InfoPopover from 'components/info-popover';
@@ -149,12 +147,13 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<PostFormatsData siteId={ this.props.site.ID }>
-				<PostFormatsAccordion
-					site={ this.props.site }
-					post={ this.props.post }
-					className="editor-drawer__accordion" />
-			</PostFormatsData>
+			<AsyncLoad
+				require={ function( callback ) {
+					require( [ 'post-editor/editor-drawer/post-formats' ], callback );
+				} }
+				site={ this.props.site }
+				post={ this.props.post }
+			/>
 		);
 	},
 
