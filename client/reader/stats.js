@@ -55,6 +55,9 @@ function getLocation() {
 	if ( path.indexOf( '/recommendations/mine' ) === 0 ) {
 		return 'recommended_foryou';
 	}
+	if ( path.indexOf( '/recommendations/start' ) === 0 ) {
+		return 'recommended_cold_start';
+	}
 	if ( path.indexOf( '/recommendations' ) === 0 ) {
 		return 'recommended_topics';
 	}
@@ -100,7 +103,7 @@ export function recordTrack( eventName, eventProperties ) {
 	}
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'blog_id' in eventProperties && 'post_id' in eventProperties && ! ( 'is_jetpack' in eventProperties ) ) {
-			console.warn( 'consider using recordTrackForPost...', eventName, eventProperties );
+			console.warn( 'consider using recordTrackForPost...', eventName, eventProperties ); //eslint-disable-line no-console
 		}
 	}
 	tracks.recordEvent( eventName, eventProperties );
@@ -137,7 +140,7 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 	if ( post.railcar && tracksRailcarEventWhitelist.has( eventName ) ) {
 		recordTracksRailcarInteract( eventName, post.railcar );
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
-		console.warn( 'Consider whitelisting reader track', eventName );
+		console.warn( 'Consider whitelisting reader track', eventName ); //eslint-disable-line no-console
 	}
 }
 
