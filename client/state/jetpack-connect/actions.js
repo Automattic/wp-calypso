@@ -70,7 +70,7 @@ export default {
 		};
 	},
 
-	checkUrl( url, isUrlOnSites ) {
+	checkUrl( url, isUrlOnSites, flowType ) {
 		return ( dispatch ) => {
 			if ( _fetching[ url ] ) {
 				return;
@@ -80,12 +80,21 @@ export default {
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL,
 					url: url,
+					flowType: flowType
 				} );
 				setTimeout( () => {
 					dispatch( {
 						type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
 						url: url,
-						data: { exists: true, isWordPress: true, hasJetpack: true, isJetpackActive: true, isJetpackConnected: true, isWordPressDotCom: false, userOwnsSite: true },
+						data: {
+							exists: true,
+							isWordPress: true,
+							hasJetpack: true,
+							isJetpackActive: true,
+							isJetpackConnected: true,
+							isWordPressDotCom: false,
+							userOwnsSite: true
+						},
 						error: null
 					} );
 				} );
@@ -96,6 +105,7 @@ export default {
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL,
 					url: url,
+					flowType: flowType
 				} );
 			}, 1 );
 			Promise.all( [
