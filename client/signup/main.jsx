@@ -194,13 +194,13 @@ const Signup = React.createClass( {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
-		this.sigunpListener = SignupDependencyStore.reduxStore.subscribe( this.loadDependenciesFromStore );
+		this.unsubscribeSignupDepStoreListener = SignupDependencyStore.reduxStore.subscribe( this.loadDependenciesFromStore );
 	},
 
 	componentWillUnmount() {
 		debug( 'Signup component unmounted' );
 		SignupProgressStore.off( 'change', this.loadProgressFromStore );
-		this.signupListener();
+		this.unsubscribeSignupDepStoreListener();
 	},
 
 	loginRedirectTo( path ) {
