@@ -298,6 +298,11 @@ function addSubscription( subscription, addToTop = true ) {
 	subscriptions.count++;
 	totalSubscriptions++;
 
+	// If we have information about whether the user is the owner of the blog, increment the count
+	if ( newSubscription.has( 'is_owner' ) && ! newSubscription.get( 'is_owner' ) ) {
+		totalSubscriptionsExcludingOwned++;
+	}
+
 	return true;
 }
 
@@ -344,6 +349,11 @@ function updateSubscription( url, newSubscriptionInfo ) {
 
 	if ( existingSubscription.get( 'state' ) === States.UNSUBSCRIBED && updatedSubscription.get( 'state' ) === States.SUBSCRIBED ) {
 		totalSubscriptions++;
+	}
+
+	// If we have information about whether the user is the owner of the blog, increment the count
+	if ( updatedSubscription.has( 'is_owner' ) && ! updatedSubscription.get( 'is_owner' ) ) {
+		totalSubscriptionsExcludingOwned++;
 	}
 
 	return true;
