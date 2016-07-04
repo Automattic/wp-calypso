@@ -142,6 +142,7 @@ module.exports = React.createClass( {
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ subHeaderText }
 				signupProgressStore={ this.props.signupProgressStore }
+				isWideLayout={ false }
 				stepContent={ this.plansList() } />
 		);
 	},
@@ -166,6 +167,7 @@ module.exports = React.createClass( {
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
 				signupProgressStore={ signupProgressStore }
+				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() } />
 		);
 	},

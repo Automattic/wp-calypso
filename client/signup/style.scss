@@ -1,6 +1,11 @@
 .step-wrapper {
 	max-width: 960px;
 	margin: 0 auto;
+
+
+	&.is-wide-layout {
+		max-width: 1040px;
+	}
 }
 
 .signup__step {
