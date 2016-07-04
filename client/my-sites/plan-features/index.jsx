@@ -110,11 +110,11 @@ PlanFeatures.defaultProps = {
 
 export default connect( ( state, ownProps ) => {
 	const planProductId = plansList[ ownProps.plan ].getProductId(),
-		selectedSiteId = getSelectedSiteId( state ),
+		isInSignup = ownProps.isInSignup,
+		selectedSiteId = isInSignup ? null : getSelectedSiteId( state ),
 		planObject = getPlan( state, planProductId ),
 		isPaid = isCurrentPlanPaid( state, selectedSiteId ),
 		sitePlans = getPlansBySiteId( state, selectedSiteId ),
-		isInSignup = ownProps.isInSignup,
 		isLoadingSitePlans = ! isInSignup && ! sitePlans.hasLoadedFromServer,
 		showMonthly = ! isMonthly( ownProps.plan ),
 		available = isInSignup ? true : canUpgradeToPlan( ownProps.plan );
