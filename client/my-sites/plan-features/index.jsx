@@ -115,7 +115,8 @@ export default connect( ( state, ownProps ) => {
 		isPaid = isCurrentPlanPaid( state, selectedSiteId ),
 		sitePlans = getPlansBySiteId( state, selectedSiteId ),
 		isLoadingSitePlans = ! ownProps.isInSignup && ! sitePlans.hasLoadedFromServer,
-		showMonthly = ! isMonthly( ownProps.plan );
+		showMonthly = ! isMonthly( ownProps.plan ),
+		available = canUpgradeToPlan( ownProps.plan );
 
 	if ( ownProps.placeholder || ! planObject || isLoadingSitePlans ) {
 		return {
@@ -131,7 +132,7 @@ export default connect( ( state, ownProps ) => {
 		features: getPlanFeaturesObject( ownProps.plan ),
 		rawPrice: getPlanRawPrice( state, planProductId, showMonthly ),
 		planConstantObj: plansList[ ownProps.plan ],
-		available: canUpgradeToPlan( ownProps.plan ),
+		available: available,
 		onUpgradeClick: ownProps.onUpgradeClick
 			? () => {
 				const planSlug = getPlanSlug( state, planProductId );
@@ -139,6 +140,10 @@ export default connect( ( state, ownProps ) => {
 				ownProps.onUpgradeClick( getCartItemForPlan( planSlug ) );
 			}
 			: () => {
+				if ( ! available ) {
+					return;
+				}
+
 				const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 				page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( ownProps.plan ) || '' }` );
 			},
