@@ -66,7 +66,7 @@ module.exports = {
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'cartItem' ]
 	},
-	
+
 	'select-plan': {
 		stepName: 'select-plan',
 		apiRequestFunction: stepActions.addPlanToCart,
