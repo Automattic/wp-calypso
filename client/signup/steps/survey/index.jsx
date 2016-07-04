@@ -68,6 +68,7 @@ export default React.createClass( {
 		}
 		return (
 			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ stepOneClickHandler }>
+				<Gridicon icon={ icon } className="survey-step__vertical__icon"/>
 				<label className="survey-step__label">{ vertical.label }</label>
 			</Card>
 		);
@@ -87,16 +88,15 @@ export default React.createClass( {
 
 		return (
 			<div className="survey-step__wrapper">
-				<div className="survey-step__title">
-					<label className="survey-step__label">{ this.props.surveySiteType === 'blog' ? blogLabel : siteLabel }</label>
-				</div>
-
 				<div className="survey-step__verticals-wrapper">
 					<div className={ verticalsClasses }>
+						<CompactCard className="survey-step__question">
+							<label>{ this.props.surveySiteType === 'blog' ? blogLabel : siteLabel }</label>
+						</CompactCard>
 						{ this.state.verticalList.map( this.renderStepOneVertical ) }
 					</div>
 
-					<div className={ subVerticalsClasses }>
+					<Card className={ subVerticalsClasses }>
 						{ this.state.stepOne ?
 							<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne.label }</BackButton>
 							: null }
@@ -104,7 +104,7 @@ export default React.createClass( {
 						{ this.state.stepOne ?
 								this.state.stepOne.stepTwo.map( this.renderStepTwoVertical )
 							: null }
-					</div>
+					</Card>
 				</div>
 			</div>
 		);
