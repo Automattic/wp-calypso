@@ -114,9 +114,10 @@ export default connect( ( state, ownProps ) => {
 		planObject = getPlan( state, planProductId ),
 		isPaid = isCurrentPlanPaid( state, selectedSiteId ),
 		sitePlans = getPlansBySiteId( state, selectedSiteId ),
-		isLoadingSitePlans = ! ownProps.isInSignup && ! sitePlans.hasLoadedFromServer,
+		isInSignup = ownProps.isInSignup,
+		isLoadingSitePlans = ! isInSignup && ! sitePlans.hasLoadedFromServer,
 		showMonthly = ! isMonthly( ownProps.plan ),
-		available = canUpgradeToPlan( ownProps.plan );
+		available = isInSignup ? true : canUpgradeToPlan( ownProps.plan );
 
 	if ( ownProps.placeholder || ! planObject || isLoadingSitePlans ) {
 		return {
