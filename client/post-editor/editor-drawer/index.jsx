@@ -11,10 +11,7 @@ import { connect } from 'react-redux';
 import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
-import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import AsyncLoad from 'components/async-load';
-import CategoryListData from 'components/data/category-list-data';
-import TagListData from 'components/data/tag-list-data';
 import FormTextarea from 'components/forms/form-textarea';
 import PageParent from 'post-editor/editor-page-parent';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
@@ -106,38 +103,27 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderTaxonomies: function() {
-		var element;
+		return (
+			<EditorDrawerTaxonomies
+				postTerms={ this.props.post && this.props.post.terms }
+			/>
+		);
+	},
 
-		if ( config.isEnabled( 'manage/custom-post-types' ) &&
-				! includes( [ 'post', 'page' ], this.props.type ) ) {
-			return (
-				<EditorDrawerTaxonomies
-					postTerms={ this.props.post && this.props.post.terms }
-				/>
-			);
-		}
-
+	renderCategoriesAndTags: function() {
 		if ( ! this.currentPostTypeSupports( 'tags' ) ) {
 			return;
 		}
 
-		element = (
-			<CategoriesTagsAccordion
+		return (
+			<AsyncLoad
+				require={ function( callback ) {
+					require( [ 'post-editor/editor-drawer/categories-and-tags' ], callback );
+				} }
 				site={ this.props.site }
-				post={ this.props.post } />
+				post={ this.props.post }
+			/>
 		);
-
-		if ( this.props.site ) {
-			element = (
-				<CategoryListData siteId={ this.props.site.ID }>
-					<TagListData siteId={ this.props.site.ID }>
-						{ element }
-					</TagListData>
-				</CategoryListData>
-			);
-		}
-
-		return element;
 	},
 
 	renderPostFormats: function() {
@@ -186,7 +172,7 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderExcerpt: function() {
-		var excerpt;
+		let excerpt;
 
 		if ( ! this.currentPostTypeSupports( 'excerpt' ) ) {
 			return;
@@ -245,7 +231,7 @@ const EditorDrawer = React.createClass( {
 			return;
 		}
 
-		return(
+		return (
 			<AccordionSection>
 				<AsyncLoad
 					require={ function( callback ) {
@@ -317,7 +303,7 @@ const EditorDrawer = React.createClass( {
 			<Accordion
 				title={ this.translate( 'Page Options' ) }
 				icon={ <Gridicon icon="pages" /> }>
-				{ this.props.site && this.props.post ?
+				{ this.props.site && this.props.post &&
 					<div>
 						<PageParent siteId={ this.props.site.ID }
 							postId={ this.props.post.ID }
@@ -327,7 +313,7 @@ const EditorDrawer = React.createClass( {
 							<PageTemplates post={ this.props.post } />
 						</PageTemplatesData>
 					</div>
-				: null }
+				}
 				<PageOrder menuOrder={ this.props.post ? this.props.post.menu_order : 0 } />
 			</Accordion>
 		);
@@ -341,7 +327,10 @@ const EditorDrawer = React.createClass( {
 				{ site && ! this.hasHardCodedPostTypeSupports( type ) && (
 					<QueryPostTypes siteId={ site.ID } />
 				) }
-				{ this.renderTaxonomies() }
+				{ config.isEnabled( 'manage/custom-post-types' ) &&	! includes( [ 'post', 'page' ], this.props.type )
+					? this.renderTaxonomies()
+					: this.renderCategoriesAndTags()
+				}
 				{ this.renderFeaturedImage() }
 				{ this.renderPageOptions() }
 				{ this.renderSharing() }
