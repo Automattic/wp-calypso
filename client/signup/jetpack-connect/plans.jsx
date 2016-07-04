@@ -15,12 +15,15 @@ import Main from 'components/main';
 import ConnectHeader from './connect-header';
 import observe from 'lib/mixins/data-observe';
 import PlanList from 'components/plans/plan-list' ;
+import plansFactory from 'lib/plans-list';
 import { shouldFetchSitePlans } from 'lib/plans';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { userCan } from 'lib/site/utils';
 import { cartItems } from 'lib/cart-values';
+
+const plans = plansFactory();
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 
@@ -38,28 +41,40 @@ const Plans = React.createClass( {
 		showJetpackFreePlan: React.PropTypes.bool
 	},
 
+	componentWillUnmount: function() {
+		plans.off( 'change', this.autoselectPlan );
+	},
+
 	componentDidMount() {
-		if ( this.props.flowType === 'pro' ) {
-			this.props.plans.get();
-			const plan = this.props.plans.getPlanBySlug( 'jetpack_business' );
-			if ( plan ) {
-				this.selectPlan( cartItems.getItemForPlan( plan ) );
-				return;
-			}
-		}
-		if ( this.props.flowType === 'premium' ) {
-			this.props.plans.get();
-			const plan = this.props.plans.getPlanBySlug( 'jetpack_premium' );
-			if ( plan ) {
-				this.selectPlan( cartItems.getItemForPlan( plan ) );
-				return;
-			}
+		plans.on( 'change', this.autoselectPlan );
+
+		if ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) {
+			return this.autoselectPlan();
 		}
 
 		this.props.recordTracksEvent( 'calypso_jpc_plans_view', {
 			user: this.props.userId
 		} );
 		this.updateSitePlans( this.props.sitePlans );
+	},
+
+	autoselectPlan() {
+		if ( this.props.flowType === 'pro' ) {
+			plans.get();
+			const plan = plans.getPlanBySlug( 'jetpack_business' );
+			if ( plan ) {
+				this.selectPlan( cartItems.getItemForPlan( plan ) );
+				return;
+			}
+		}
+		if ( this.props.flowType === 'premium' ) {
+			plans.get();
+			const plan = plans.getPlanBySlug( 'jetpack_premium' );
+			if ( plan ) {
+				this.selectPlan( cartItems.getItemForPlan( plan ) );
+				return;
+			}
+		}
 	},
 
 	componentWillReceiveProps( props ) {
@@ -138,7 +153,7 @@ const Plans = React.createClass( {
 							<PlanList
 								isInSignup={ true }
 								site={ selectedSite }
-								plans={ this.props.plans.get() }
+								plans={ plans.get() }
 								sitePlans={ this.props.sitePlans }
 								cart={ this.props.cart }
 								showJetpackFreePlan={ true }

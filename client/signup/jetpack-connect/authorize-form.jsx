@@ -483,7 +483,9 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 export default connect(
 	state => {
-		const site = state.jetpackConnect.jetpackConnectAuthorize && state.jetpackConnect.jetpackConnectAuthorize.queryObject
+		const site = state.jetpackConnect.jetpackConnectAuthorize &&
+			state.jetpackConnect.jetpackConnectAuthorize.queryObject &&
+			state.jetpackConnect.jetpackConnectAuthorize.queryObject.site
 			? getSiteByUrl( state, state.jetpackConnect.jetpackConnectAuthorize.queryObject.site )
 			: null;
 		return {
