@@ -42,6 +42,8 @@ var productsValues = require( 'lib/products-values' ),
 	sortProducts = require( 'lib/products-values/sort' ),
 	PLAN_PERSONAL = require( 'lib/plans/constants' ).PLAN_PERSONAL;
 
+import { PLAN_FREE } from 'lib/plans/constants';
+
 /**
  * Adds the specified item to a shopping cart.
  *
@@ -326,6 +328,11 @@ function hasRenewableSubscription( cart ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function planItem( productSlug, isFreeTrial = false ) {
+	// Free plan doesn't have shopping cart.
+	if ( productSlug === PLAN_FREE ) {
+		return null;
+	}
+
 	return {
 		product_slug: productSlug,
 		free_trial: isFreeTrial
