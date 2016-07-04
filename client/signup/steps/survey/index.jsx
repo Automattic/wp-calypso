@@ -98,11 +98,8 @@ export default React.createClass( {
 
 					<Card className={ subVerticalsClasses }>
 						{ this.state.stepOne ?
-							<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne.label }</BackButton>
-							: null }
-
-						{ this.state.stepOne ?
-								this.state.stepOne.stepTwo.map( this.renderStepTwoVertical )
+							[ <BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne.label }</BackButton>,
+								this.state.stepOne.stepTwo.map( this.renderStepTwoVertical ) ]
 							: null }
 					</Card>
 				</div>
