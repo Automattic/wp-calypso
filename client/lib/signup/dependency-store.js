@@ -1,23 +1,28 @@
 /**
  * External dependencies
  */
-var keys = require( 'lodash/keys' ),
+const keys = require( 'lodash/keys' ),
 	difference = require( 'lodash/difference' ),
 	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
+import {
+	SIGNUP_DEPENDENCY_STORE_RESET,
+	SIGNUP_DEPENDENCY_STORE_UPDATE_STATE,
+} from 'state/action-types';
+
+const Dispatcher = require( 'dispatcher' ),
 	steps = require( 'signup/config/steps' );
 
-var SignupDependencyStore = {
+const SignupDependencyStore = {
 	get: function() {
-		return SignupDependencyStore.reduxStore.getState().signup.dependencyStore.storeState || {};
+		return SignupDependencyStore.reduxStore.getState().signup.dependencyStore || {};
 	},
 	reset: function() {
 		SignupDependencyStore.reduxStore.dispatch( {
-			type: 'SIGNUP_DEPENDENCY_STORE_RESET',
+			type: SIGNUP_DEPENDENCY_STORE_RESET,
 			data: {}
 		} );
 	},
@@ -27,7 +32,7 @@ var SignupDependencyStore = {
 };
 
 function assertValidDependencies( action ) {
-	var providesDependencies = steps[ action.data.stepName ].providesDependencies || [],
+	const providesDependencies = steps[ action.data.stepName ].providesDependencies || [],
 		extraDependencies = difference( keys( action.providedDependencies ), providesDependencies );
 
 	if ( ! isEmpty( extraDependencies ) ) {
@@ -51,7 +56,7 @@ SignupDependencyStore.dispatchToken = Dispatcher.register( function( payload ) {
 			case 'SUBMIT_SIGNUP_STEP':
 				if ( assertValidDependencies( action ) ) {
 					SignupDependencyStore.reduxStore.dispatch( {
-						type: 'SIGNUP_DEPENDENCY_STORE_UPDATE_STATE',
+						type: SIGNUP_DEPENDENCY_STORE_UPDATE_STATE,
 						data: action.providedDependencies
 					} );
 				}
