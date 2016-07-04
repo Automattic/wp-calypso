@@ -1,7 +1,7 @@
 {
   "name": "wpcom",
   "description": "Official JavaScript library for the WordPress.com REST API",
-  "version": "4.9.15",
+  "version": "5.0.0",
   "main": "build/index.js",
   "author": "Automattic, Inc.",
   "scripts": {

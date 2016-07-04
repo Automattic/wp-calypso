@@ -1,4 +1,13 @@
 
+5.0.0 / 2016-07-04
+==================
+
+ * clean - ES6ify
+ * package: update "n8-make" to v1.4.0
+ * update to Babel 6
+ * package: add "prepublish" script
+ * package: update "wpcom-proxy-request" to v2
+
 4.9.15 / 2016-06-06
 ==================
 
