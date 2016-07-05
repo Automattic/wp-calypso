@@ -29,13 +29,13 @@ function FeaturedImage( { image, href } ) {
 function SearchByline( { post, site, feed } ) {
 	return (
 		<ul className="post-card__search-byline">
-			<li>
+			<li className="post-card__search-byline-item">
 				<AuthorAndSite post={ post } site={ site } feed={ feed } showGravatar={ true } />
 			</li>
-			<li>
+			<li className="post-card__search-byline-item">
 				<PostTime date={ post.date } />
 			</li>
-			<li>
+			<li className="post-card__search-byline-item">
 				<FollowButton siteUrl={ post.site_URL } />
 			</li>
 		</ul>
