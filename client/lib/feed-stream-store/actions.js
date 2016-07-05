@@ -82,7 +82,7 @@ FeedStreamActions = {
 					// 1.2 style
 					FeedPostStoreActions.receivePost( null, post, {
 						feedId: post.feed_ID,
-						postId: post.ID
+						postId: post.feed_item_ID
 					} );
 				} else if ( post && post.site_ID ) {
 					// this looks like a full post object
