@@ -159,14 +159,14 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 				if ( showJetpackFreePlan ) {
 					return isJetpackPlan( plan ) && isMonthly( plan );
 				}
-				return isJetpackPlan( plan ) && !isFreeJetpackPlan( plan ) && isMonthly( plan );
+				return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan ) && isMonthly( plan );
 			}
 
 			if ( showJetpackFreePlan ) {
-				return isJetpackPlan( plan ) && !isMonthly( plan );
+				return isJetpackPlan( plan ) && ! isMonthly( plan );
 			}
 
-			return isJetpackPlan( plan ) && !isFreeJetpackPlan( plan ) && !isMonthly( plan );
+			return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan ) && ! isMonthly( plan );
 		}
 
 		if ( hideFreePlan && PLAN_FREE === plan.product_slug ) {
@@ -180,6 +180,11 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 		return ! isJetpackPlan( plan );
 	} );
 }
+
+export const isWordadsInstantActivationEnabled = () => {
+	return isEnabled( 'manage/ads/wordads-instant' ) &&
+		abtest( 'wordadsInstantActivation' ) === 'enabled';
+};
 
 export const isGoogleVouchersEnabled = () => {
 	return ( isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' );
