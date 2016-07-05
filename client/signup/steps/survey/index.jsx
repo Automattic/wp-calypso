@@ -32,7 +32,7 @@ export default React.createClass( {
 		return {
 			surveySiteType: 'site',
 			isOneStep: isSurveyOneStep()
-		}
+		};
 	},
 
 	getInitialState() {
@@ -40,7 +40,7 @@ export default React.createClass( {
 			stepOne: null,
 			stepTwo: [],
 			verticalList: verticals.get()
-		}
+		};
 	},
 
 	renderStepTwoVertical( vertical ) {
@@ -48,7 +48,7 @@ export default React.createClass( {
 			event.preventDefault();
 			event.stopPropagation();
 			this.handleNextStep( vertical );
-		}
+		};
 		return (
 			<Card className="survey-step__vertical" key={ vertical.value } href="#" onClick={ stepTwoClickHandler }>
 				<label className="survey-step__label">{ vertical.label }</label>
@@ -62,11 +62,11 @@ export default React.createClass( {
 			event.preventDefault();
 			event.stopPropagation();
 			if ( this.props.isOneStep ) {
-				this.handleNextStep( vertical )
+				this.handleNextStep( vertical );
 				return;
 			}
 			this.showStepTwo( vertical );
-		}
+		};
 		return (
 			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ stepOneClickHandler }>
 				<Gridicon icon={ icon } className="survey-step__vertical__icon"/>
@@ -79,13 +79,13 @@ export default React.createClass( {
 		const blogLabel = this.translate( 'What is your blog about?' );
 		const siteLabel = this.translate( 'What is your website about?' );
 
-		var verticalsClasses = classNames(
+		let verticalsClasses = classNames(
 				'survey-step__verticals',
-				{ 'active': !this.state.stepOne } );
+				{ active: ! this.state.stepOne } );
 
-		var subVerticalsClasses = classNames(
+		let subVerticalsClasses = classNames(
 				'survey-step__sub-verticals',
-				{ 'active': this.state.stepOne } );
+				{ active: this.state.stepOne } );
 
 		return (
 			<div className="survey-step__wrapper">
