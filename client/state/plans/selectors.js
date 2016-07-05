@@ -53,3 +53,16 @@ export function getPlanRawPrice( state, productId, isMonthly = false ) {
 	}
 	return isMonthly ? parseFloat( ( plan.raw_price / 12 ).toFixed( 2 ) ) : plan.raw_price;
 }
+
+/**
+ * Returns a plan product_slug. Useful for getting a cartItem for a plan.
+ *
+ * @param  {Object}  state     global state
+ * @param  {Number}  productId the plan productId
+ * @return {String}  plan product_slug
+ */
+export function getPlanSlug( state, productId ) {
+	const plan = getPlan( state, productId );
+
+	return get( plan, 'product_slug', null );
+}

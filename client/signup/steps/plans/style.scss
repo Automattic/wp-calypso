@@ -1,6 +1,11 @@
 .plans-step {
 	margin: 0 auto;
 	max-width: 700px;
+
+	&.is-wide-layout {
+		margin: auto;
+		max-width: 1040px;
+	}
 }
 
 .plans-step__compare-plans-link {
