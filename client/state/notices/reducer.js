@@ -71,6 +71,18 @@ export const items = createReducer( {}, {
 					);
 				}
 				break;
+
+			case 'publish':
+				if ( 1 === count ) {
+					text = translate( 'Post successfully published' );
+				} else {
+					text = translate(
+						'%d post successfully published',
+						'%d posts successfully published',
+						{ count, args: [ count ] }
+					);
+				}
+				break;
 		}
 
 		if ( ! text ) {
