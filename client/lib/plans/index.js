@@ -28,7 +28,8 @@ import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
-	WORDADS_INSTANT
+	WORDADS_INSTANT,
+	FEATURE_GOOGLE_AD_CREDITS
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
@@ -225,18 +226,30 @@ export function applyTestFiltersToPlansList( planName, testFilters = {
 		wordpressAdCredits
 	} = testFilters;
 
-	const filteredPlansList = Object.assign( {}, plansList[ planName ] );
+	const filteredPlanConstantObj = Object.assign( {}, plansList[ planName ] );
+	let filteredPlanFeatures = filteredPlanConstantObj.getFeatures();
 
 	if ( wordadsInstantActivation ) {
 		if ( ! isWordadsInstantActivationEnabled() ) {
-			filteredPlansList.getFeatures = () => filter(
-				plansList[ planName ].getFeatures(),
+			filteredPlanFeatures = filter( filteredPlanFeatures,
 				value => value !== WORDADS_INSTANT
 			);
 		} else if ( planName === PLAN_PREMIUM ) {
-			filteredPlansList.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivation;
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivation;
 		}
 	}
 
-	return filteredPlansList;
+	if ( googleVouchers ) {
+		if ( ! isGoogleVouchersEnabled() ) {
+			filteredPlanFeatures = filter( filteredPlanFeatures,
+				value => value !== FEATURE_GOOGLE_AD_CREDITS
+			);
+		} else if ( planName === PLAN_PREMIUM ) {
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithGoogleVouchers;
+		}
+	}
+
+	filteredPlanConstantObj.getFeatures = () => filteredPlanFeatures;
+
+	return filteredPlanConstantObj;
 }

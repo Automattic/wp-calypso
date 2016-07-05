@@ -104,7 +104,9 @@ export const plansList = {
 		getPathSlug: () => 'premium',
 		getStoreSlug: () => PLAN_PREMIUM,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
-		getDescription: () => i18n.translate( 'Your own domain name, powerful customization options,' +
+		getDescription: () => i18n.translate( 'Your own domain name, powerful customization options, and' +
+			' lots of space for audio and video.' ),
+		getDescriptionWithGoogleVouchers: () => i18n.translate( 'Your own domain name, powerful customization options,' +
 			' lots of space for audio and video, and $100 advertising credit.' ),
 		getDescriptionWithWordAdsInstantActivation: () => i18n.translate( 'Your own domain name, powerful' +
 			' customization options, easy monetization with WordAds and lots of space for audio and video.' ),
