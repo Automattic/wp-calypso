@@ -102,7 +102,11 @@ const CheckoutThankYou = React.createClass( {
 	componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
 
-		if ( ! this.props.receipt.hasLoadedFromServer && nextProps.receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct( nextProps ) ) {
+		if (
+			! this.props.receipt.hasLoadedFromServer &&
+			nextProps.receipt.hasLoadedFromServer &&
+			this.hasPlanOrDomainProduct( nextProps )
+		) {
 			this.props.refreshSitePlans( this.props.selectedSite.ID );
 		}
 	},
@@ -183,7 +187,8 @@ const CheckoutThankYou = React.createClass( {
 	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
 	 * just performed by the user.
 	 *
-	 * @returns {*[]} an array of varying size with the component instance, then an optional purchase object possibly followed by a domain name
+	 * @returns {*[]} an array of varying size with the component instance,
+	 * then an optional purchase object possibly followed by a domain name
 	 */
 	getComponentAndPrimaryPurchaseAndDomain() {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
