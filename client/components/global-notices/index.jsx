@@ -12,8 +12,8 @@ import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { removeNotice } from 'state/notices/actions'
+import { removeNotice } from 'state/notices/actions';
+import { getNotices } from 'state/notices/selectors';
 
 const debug = debugModule( 'calypso:notices' );
 
@@ -103,8 +103,8 @@ const NoticesList = React.createClass( {
 export default connect(
 	state => {
 		return {
-			storeNotices: state.notices.items
+			storeNotices: getNotices( state )
 		};
 	},
-	dispatch => bindActionCreators( { removeNotice }, dispatch )
+	{ removeNotice }
 )( NoticesList );
