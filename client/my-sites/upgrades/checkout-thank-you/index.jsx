@@ -141,8 +141,11 @@ const CheckoutThankYou = React.createClass( {
 			const site = this.props.selectedSite.slug;
 
 			if ( purchases.some( isPlan ) ) {
-				page( `/plans/${ site }` );
-			} else if ( purchases.some( isDomainProduct ) || purchases.some( isDomainRedemption || purchases.some( isSiteRedirect ) ) ) {
+				page( `/plans/my-plan/${ site }` );
+			} else if (
+				purchases.some( isDomainProduct ) ||
+				purchases.some( isDomainRedemption || purchases.some( isSiteRedirect ) )
+			) {
 				page( upgradesPaths.domainManagementList( this.props.selectedSite.slug ) );
 			} else if ( purchases.some( isGoogleApps ) ) {
 				const purchase = find( purchases, isGoogleApps );
@@ -168,7 +171,10 @@ const CheckoutThankYou = React.createClass( {
 
 		return (
 			<Main className={ classes }>
-				<HeaderCake onClick={ this.goBack } isCompact backText={ this.translate( 'Back to my site' ) } />
+				<HeaderCake
+					onClick={ this.goBack }
+					isCompact
+					backText={ this.translate( 'Back to my site' ) } />
 
 				<Card className="checkout-thank-you__content">
 					{ this.productRelatedMessages() }
