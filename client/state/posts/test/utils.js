@@ -9,6 +9,7 @@ import { expect } from 'chai';
 import {
 	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
+	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage
 } from '../utils';
 
@@ -36,20 +37,41 @@ describe( 'utils', () => {
 			expect( serializedQuery ).to.equal( '{"type":"page"}' );
 		} );
 
-		it( 'should lowercase the result', () => {
-			const serializedQuery = getSerializedPostsQuery( {
-				search: 'HeLlO'
-			} );
-
-			expect( serializedQuery ).to.equal( '{"search":"hello"}' );
-		} );
-
 		it( 'should prefix site ID if specified', () => {
 			const serializedQuery = getSerializedPostsQuery( {
-				search: 'HeLlO'
+				search: 'Hello'
 			}, 2916284 );
 
-			expect( serializedQuery ).to.equal( '2916284:{"search":"hello"}' );
+			expect( serializedQuery ).to.equal( '2916284:{"search":"Hello"}' );
+		} );
+	} );
+
+	describe( 'getDeserializedPostsQueryDetails()', () => {
+		it( 'should return undefined query and site if string does not contain JSON', () => {
+			const queryDetails = getDeserializedPostsQueryDetails( 'bad' );
+
+			expect( queryDetails ).to.eql( {
+				siteId: undefined,
+				query: undefined
+			} );
+		} );
+
+		it( 'should return query but not site if string does not contain site prefix', () => {
+			const queryDetails = getDeserializedPostsQueryDetails( '{"search":"hello"}' );
+
+			expect( queryDetails ).to.eql( {
+				siteId: undefined,
+				query: { search: 'hello' }
+			} );
+		} );
+
+		it( 'should return query and site if string contains site prefix and JSON', () => {
+			const queryDetails = getDeserializedPostsQueryDetails( '2916284:{"search":"hello"}' );
+
+			expect( queryDetails ).to.eql( {
+				siteId: 2916284,
+				query: { search: 'hello' }
+			} );
 		} );
 	} );
 
@@ -63,22 +85,13 @@ describe( 'utils', () => {
 			expect( serializedQuery ).to.equal( '{"type":"page"}' );
 		} );
 
-		it( 'should lowercase the result', () => {
-			const serializedQuery = getSerializedPostsQueryWithoutPage( {
-				search: 'HeLlO',
-				page: 2
-			} );
-
-			expect( serializedQuery ).to.equal( '{"search":"hello"}' );
-		} );
-
 		it( 'should prefix site ID if specified', () => {
 			const serializedQuery = getSerializedPostsQueryWithoutPage( {
-				search: 'HeLlO',
+				search: 'Hello',
 				page: 2
 			}, 2916284 );
 
-			expect( serializedQuery ).to.equal( '2916284:{"search":"hello"}' );
+			expect( serializedQuery ).to.equal( '2916284:{"search":"Hello"}' );
 		} );
 	} );
 } );

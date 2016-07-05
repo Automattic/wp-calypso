@@ -43,7 +43,6 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			page: 1,
 			search: ''
 		};
 	},
@@ -51,7 +50,6 @@ export default React.createClass( {
 	onSearch( term ) {
 		if ( term !== this.state.search ) {
 			this.setState( {
-				page: 1,
 				search: term
 			} );
 		}
@@ -59,29 +57,9 @@ export default React.createClass( {
 
 	getQuery() {
 		const { type, status, excludeTree, orderBy, order } = this.props;
-		const { page, search } = this.state;
-		return mapKeys( { type, status, excludeTree, orderBy, order, page, search }, ( value, key ) => {
+		const { search } = this.state;
+		return mapKeys( { type, status, excludeTree, orderBy, order, search }, ( value, key ) => {
 			return snakeCase( key );
-		} );
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		const isChangingQuery = [
-			'type',
-			'status',
-			'excludeTree',
-			'orderBy',
-			'order'
-		].some( ( prop ) => nextProps[ prop ] !== this.props[ prop ] );
-
-		if ( isChangingQuery ) {
-			this.setState( { page: 1 } );
-		}
-	},
-
-	incrementPage() {
-		this.setState( {
-			page: this.state.page + 1
 		} );
 	},
 
@@ -92,7 +70,6 @@ export default React.createClass( {
 			<PostSelectorPosts
 				siteId={ siteId }
 				query={ this.getQuery() }
-				onNextPage={ this.incrementPage }
 				onSearch={ this.onSearch }
 				multiple={ multiple }
 				onChange={ onChange }
