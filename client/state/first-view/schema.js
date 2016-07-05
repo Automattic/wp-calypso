@@ -7,12 +7,6 @@ export const firstViewSchema = {
 			items: {
 				type: 'string'
 			}
-		},
-		visible: {
-			type: 'array',
-			items: {
-				type: 'string'
-			}
 		}
 	}
 };
