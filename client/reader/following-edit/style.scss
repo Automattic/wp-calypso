@@ -151,6 +151,19 @@
 			padding: 16px 24px;
 		}
 
+		// Disabled button if URL is invalid
+		.follow-button:hover {
+			border-color: lighten( $gray, 20% );
+		}
+
+		.gridicon {
+			fill: lighten( $gray, 20% );
+		}
+
+		.follow-button__label {
+			color: lighten( $gray, 20% );
+		}
+
 		&.is-valid {
 
 			.gridicon {
