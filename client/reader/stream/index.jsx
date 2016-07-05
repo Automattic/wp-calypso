@@ -36,18 +36,6 @@ var Main = require( 'components/main' ),
 const GUESSED_POST_HEIGHT = 600,
 	HEADER_OFFSET_TOP = 46;
 
-function cardClassForPost( post ) {
-	if ( post.display_type & DISPLAY_TYPES.X_POST ) {
-		return CrossPost;
-	}
-
-	if ( post.is_site_blocked ) {
-		return PostBlocked;
-	}
-
-	return Post;
-}
-
 module.exports = React.createClass( {
 	displayName: 'ReaderFollowing',
 
@@ -102,6 +90,24 @@ module.exports = React.createClass( {
 		if ( this.state.selectedIndex > -1 && history.scrollRestoration !== 'manual' ) {
 			this.scrollToSelectedPost( false );
 		}
+	},
+
+	cardClassForPost( post ) {
+		if ( this.props.cardFactory ) {
+			const externalPostClass = this.props.cardFactory( post );
+			if ( externalPostClass ) {
+				return externalPostClass;
+			}
+		}
+		if ( post.display_type & DISPLAY_TYPES.X_POST ) {
+			return CrossPost;
+		}
+
+		if ( post.is_site_blocked ) {
+			return PostBlocked;
+		}
+
+		return Post;
 	},
 
 	scrollToSelectedPost: function( animate ) {
@@ -180,7 +186,7 @@ module.exports = React.createClass( {
 			}
 			// xpost
 			let post = PostStore.get( postKey );
-			if ( cardClassForPost( post ) === CrossPost && ! options.replaceHistory ) {
+			if ( this.cardClassForPost( post ) === CrossPost && ! options.replaceHistory ) {
 				return this.showFullXPost( XPostHelper.getXPostMetadata( post ) );
 			}
 			// normal
@@ -390,7 +396,7 @@ module.exports = React.createClass( {
 				content = <PostUnavailable key={ 'feed-post-unavailable-' + itemKey } post={ post } />;
 				break;
 			default:
-				PostClass = cardClassForPost( post );
+				PostClass = this.cardClassForPost( post );
 				if ( PostClass === CrossPost ) {
 					const xMetadata = XPostHelper.getXPostMetadata( post );
 					content = React.createElement( CrossPost, {

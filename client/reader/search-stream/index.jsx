@@ -14,8 +14,37 @@ import StreamHeader from 'reader/stream-header';
 import HeaderBack from 'reader/header-back';
 import Gridicon from 'components/gridicon';
 import FormTextInput from 'components/forms/form-text-input';
+import SearchCard from 'components/post-card/search';
+import SiteStore from 'lib/reader-site-store';
+import FeedStore from 'lib/feed-store';
 
 //const stats = require( 'reader/stats' );
+//
+
+const SearchCardAdapter = React.createClass( {
+	getInitialState() {
+		return this.getStateFromStores();
+	},
+
+	getStateFromStores( props = this.props ) {
+		return {
+			site: SiteStore.get( props.post.site_ID ),
+			feed: props.post.feed_ID ? FeedStore.get( props.post.feed_ID ) : null
+		};
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		this.setState( this.getStateFromStores( nextProps ) );
+	},
+
+	render() {
+		return <SearchCard
+			post={ this.props.post }
+			site={ this.state.site }
+			feed={ this.state.feed }
+			onClick={ this.props.handleClick } />;
+	}
+} );
 
 const emptyStore = {
 	get() {
@@ -70,13 +99,15 @@ const FeedStream = React.createClass( {
 	},
 
 	updateQuery() {
-		console.log( 'checking at ', Date.now() );
 		if ( ! this.isMounted() ) {
 			return;
 		}
 		const newValue = ReactDom.findDOMNode( this.refs.searchInput ).value;
-		console.log( 'new value', newValue );
 		this.props.onQueryChange( newValue );
+	},
+
+	cardFactory( post ) {
+		return SearchCardAdapter;
 	},
 
 	render() {
@@ -94,7 +125,8 @@ const FeedStream = React.createClass( {
 			<Stream { ...this.props } store={ store }
 				listName={ this.state.title }
 				emptyContent={ emptyContent }
-				showFollowInHeader={ true } >
+				showFollowInHeader={ true }
+				cardFactory={ this.cardFactory } >
 				{ this.props.showBack && <HeaderBack /> }
 				<h2>{ this.translate( 'Search' ) }</h2>
 				<p>
