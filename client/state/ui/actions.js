@@ -5,6 +5,7 @@
  */
 import {
 	SELECTED_SITE_SET,
+	ROUTE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
 } from 'state/action-types';
@@ -33,6 +34,19 @@ export function setAllSitesSelected() {
 	return {
 		type: SELECTED_SITE_SET,
 		siteId: null
+	};
+}
+
+/**
+ * Returns an action object signalling that the current route is to be changed
+ *
+ * @param  {String} path Route path
+ * @return {Object}      Action object
+ */
+export function setRoute( path ) {
+	return {
+		type: ROUTE_SET,
+		path
 	};
 }
 
