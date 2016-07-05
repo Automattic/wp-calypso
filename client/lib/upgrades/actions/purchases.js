@@ -53,7 +53,7 @@ function cancelPrivateRegistration( purchaseId, onComplete ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PRIVACY_PROTECTION_CANCEL_FAILED,
 				purchaseId,
-				error: error.message || i18n.translate( 'There was a problem canceling this private registration. Please try again later or contact support.' )
+				error: error.message || i18n.translate( 'There was a problem canceling this private registration.' )
 			} );
 		}
 
@@ -88,7 +88,7 @@ function deleteStoredCard( card, onComplete ) {
 		} else {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.STORED_CARDS_DELETE_FAILED,
-				error: error.message || i18n.translate( 'There was a problem deleting the stored card. Please try again later or contact support.' )
+				error: error.message || i18n.translate( 'There was a problem deleting the stored card.' )
 			} );
 		}
 
@@ -136,7 +136,7 @@ function fetchStoredCards() {
 		} else if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.STORED_CARDS_FETCH_FAILED,
-				error: error.message || i18n.translate( 'There was a problem retrieving stored cards. Please try again later or contact support.' )
+				error: error.message || i18n.translate( 'There was a problem retrieving stored cards.' )
 			} );
 		}
 	} );
