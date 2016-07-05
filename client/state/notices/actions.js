@@ -8,8 +8,7 @@ import uniqueId from 'lodash/uniqueId';
  */
 import {
 	NOTICE_CREATE,
-	NOTICE_REMOVE,
-	ROUTE_SET
+	NOTICE_REMOVE
 } from 'state/action-types';
 
 export function removeNotice( noticeId ) {
@@ -33,13 +32,6 @@ export function createNotice( status, text, options = {} ) {
 	return {
 		type: NOTICE_CREATE,
 		notice: notice
-	};
-}
-
-export function setRoute( path ) {
-	return {
-		type: ROUTE_SET,
-		path: path
 	};
 }
 
