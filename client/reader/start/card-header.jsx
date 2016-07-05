@@ -6,7 +6,7 @@ import { numberFormat } from 'i18n-calypso';
 import SiteIcon from 'components/site-icon';
 import FollowButton from 'reader/follow-button';
 
-const StartCardHeader = ( { site, railcar } ) => {
+const StartCardHeader = ( { site, onFollowToggle, railcar } ) => {
 	const subscribersCount = numberFormat( site.subscribers_count );
 	return (
 		<header className="reader-start-card__header">
@@ -22,7 +22,7 @@ const StartCardHeader = ( { site, railcar } ) => {
 				</div>
 			</div>
 			<div className="reader-start-card__follow">
-				<FollowButton siteUrl={ site.URL } railcar={ railcar } />
+				<FollowButton siteUrl={ site.URL } onFollowToggle={ onFollowToggle } railcar={ railcar } />
 			</div>
 		</header>
 	);
@@ -30,7 +30,8 @@ const StartCardHeader = ( { site, railcar } ) => {
 
 StartCardHeader.propTypes = {
 	site: React.PropTypes.object.isRequired,
-	railcar: React.PropTypes.object
+	railcar: React.PropTypes.object,
+	onFollowToggle: React.PropTypes.func.isRequired
 };
 
 export default StartCardHeader;

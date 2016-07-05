@@ -100,3 +100,13 @@ export function hasGraduatedRecommendations( state ) {
 export function isRequestingGraduation( state ) {
 	return state.reader.start.isRequestingGraduation;
 }
+
+/*
+ * How many recommendations has the user followed (in this session)?
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Array} Recommendations
+ */
+export function getRecommendationFollowCount( state ) {
+	return state.reader.start.recommendationsFollowed.length;
+}

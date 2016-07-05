@@ -17,13 +17,15 @@ import {
 	READER_SITE_UPDATE,
 	READER_START_GRADUATE_REQUEST,
 	READER_START_GRADUATE_REQUEST_SUCCESS,
-	READER_START_GRADUATED
+	READER_START_GRADUATED,
+	READER_START_RECOMMENDATION_FOLLOW,
+	READER_START_RECOMMENDATION_UNFOLLOW
 } from 'state/action-types';
 
 import { sampleSuccessResponse } from '../sample_responses';
 
 describe( 'actions', () => {
-	let receiveRecommendations, requestRecommendations, requestGraduate;
+	let receiveRecommendations, requestRecommendations, requestGraduate, recordRecommendationFollow, recordRecommendationUnfollow;
 
 	useMockery( mockery => {
 		mockery.registerMock( 'state/reader/posts/actions', {
@@ -36,6 +38,8 @@ describe( 'actions', () => {
 		receiveRecommendations = actions.receiveRecommendations;
 		requestRecommendations = actions.requestRecommendations;
 		requestGraduate = actions.requestGraduate;
+		recordRecommendationFollow = actions.recordRecommendationFollow;
+		recordRecommendationUnfollow = actions.recordRecommendationUnfollow;
 	} );
 
 	const spy = sinon.spy();
@@ -117,6 +121,30 @@ describe( 'actions', () => {
 				} );
 			} ).catch( ( err ) => {
 				assert.fail( err, undefined, 'errback should not have been called' );
+			} );
+		} );
+	} );
+
+	describe( '#recordRecommendationFollow', () => {
+		it( 'should dispatch an action when a recommendation is followed', () => {
+			const dispatchSpy = sinon.stub();
+			dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
+			recordRecommendationFollow( 123 )( dispatchSpy );
+			expect( dispatchSpy ).to.have.been.calledWith( {
+				type: READER_START_RECOMMENDATION_FOLLOW,
+				recommendationId: 123
+			} );
+		} );
+	} );
+
+	describe( '#recordRecommendationUnfollow', () => {
+		it( 'should dispatch an action when a recommendation is unfollowed', () => {
+			const dispatchSpy = sinon.stub();
+			dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
+			recordRecommendationUnfollow( 123 )( dispatchSpy );
+			expect( dispatchSpy ).to.have.been.calledWith( {
+				type: READER_START_RECOMMENDATION_UNFOLLOW,
+				recommendationId: 123
 			} );
 		} );
 	} );

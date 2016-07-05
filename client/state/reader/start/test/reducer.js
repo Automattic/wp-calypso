@@ -7,10 +7,13 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	READER_START_RECOMMENDATIONS_RECEIVE
+	READER_START_RECOMMENDATIONS_RECEIVE,
+	READER_START_RECOMMENDATION_FOLLOW,
+	READER_START_RECOMMENDATION_UNFOLLOW
 } from 'state/action-types';
 import {
-	items
+	items,
+	recommendationsFollowed
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -53,7 +56,27 @@ describe( 'reducer', () => {
 				type: READER_START_RECOMMENDATIONS_RECEIVE,
 				recommendations: [ newRecommendation ]
 			} );
-			expect( state[2] ).to.eql( newRecommendation );
+			expect( state[ 2 ] ).to.eql( newRecommendation );
+		} );
+	} );
+
+	describe( '#recommendationsFollowed()', () => {
+		it( 'should insert a new recommendation when followed', () => {
+			const original = [ 123, 456 ];
+			const state = recommendationsFollowed( original, {
+				type: READER_START_RECOMMENDATION_FOLLOW,
+				recommendationId: 678
+			} );
+			expect( state[ 2 ] ).to.eql( 678 );
+		} );
+
+		it( 'should remove a recommendation when unfollowed', () => {
+			const original = [ 123, 456 ];
+			const state = recommendationsFollowed( original, {
+				type: READER_START_RECOMMENDATION_UNFOLLOW,
+				recommendationId: 456
+			} );
+			expect( state ).to.eql( [ 123 ] );
 		} );
 	} );
 } );

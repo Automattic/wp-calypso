@@ -10,7 +10,11 @@ import classnames from 'classnames';
 import Card from 'components/card';
 import StartPostPreview from './post-preview';
 import StartCardHeader from './card-header';
-import { recordRecommendationInteraction } from 'state/reader/start/actions';
+import {
+	recordRecommendationInteraction,
+	recordRecommendationFollow,
+	recordRecommendationUnfollow
+} from 'state/reader/start/actions';
 import { getRecommendationById } from 'state/reader/start/selectors';
 import { getPostBySiteAndId } from 'state/reader/posts/selectors';
 import { getSite } from 'state/reader/sites/selectors';
@@ -41,6 +45,14 @@ const StartCard = React.createClass( {
 		}
 	},
 
+	onFollowToggle( isFollowing ) {
+		if ( isFollowing ) {
+			this.props.recordRecommendationFollow( this.props.recommendationId );
+		} else {
+			this.props.recordRecommendationUnfollow( this.props.recommendationId );
+		}
+	},
+
 	render() {
 		const { post, site } = this.props;
 		const hasPost = !! post;
@@ -55,7 +67,7 @@ const StartCard = React.createClass( {
 
 		return (
 			<Card className={ cardClasses } onClick={ this.onCardInteraction }>
-				<StartCardHeader site={ site } railcar={ railcar } />
+				<StartCardHeader site={ site } onFollowToggle={ this.onFollowToggle } railcar={ railcar } />
 				{ hasPost && <StartPostPreview post={ post } /> }
 			</Card>
 		);
@@ -81,6 +93,8 @@ export default connect(
 		};
 	},
 	( dispatch ) => bindActionCreators( {
-		recordRecommendationInteraction
+		recordRecommendationInteraction,
+		recordRecommendationFollow,
+		recordRecommendationUnfollow
 	}, dispatch )
 )( StartCard );

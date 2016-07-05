@@ -20,7 +20,9 @@ import {
 	READER_START_RECOMMENDATIONS_REQUEST,
 	READER_START_RECOMMENDATIONS_REQUEST_SUCCESS,
 	READER_START_RECOMMENDATIONS_REQUEST_FAILURE,
-	READER_START_RECOMMENDATION_INTERACTION
+	READER_START_RECOMMENDATION_INTERACTION,
+	READER_START_RECOMMENDATION_FOLLOW,
+	READER_START_RECOMMENDATION_UNFOLLOW
 } from 'state/action-types';
 import { updateSites } from 'state/reader/sites/actions';
 import { receivePosts } from 'state/reader/posts/actions';
@@ -58,6 +60,38 @@ export function recordRecommendationInteraction( recommendationId, siteId, postI
 		dispatch( requestRecommendations( siteId, postId, numberOfRecommendationsToLoad ) );
 		dispatch( {
 			type: READER_START_RECOMMENDATION_INTERACTION,
+			recommendationId
+		} );
+	};
+}
+
+/**
+ * Returns an action object to signal that a recommendation has been followed.
+ *
+ * @param  {Integer} recommendationId Recommendation ID
+ * @return {Function} Action thunk
+ */
+export function recordRecommendationFollow( recommendationId ) {
+	return ( dispatch ) => {
+		debug( 'User followed recommendation ' + recommendationId );
+		dispatch( {
+			type: READER_START_RECOMMENDATION_FOLLOW,
+			recommendationId
+		} );
+	};
+}
+
+/**
+ * Returns an action object to signal that a recommendation has been unfollowed.
+ *
+ * @param  {Integer} recommendationId Recommendation ID
+ * @return {Function} Action thunk
+ */
+export function recordRecommendationUnfollow( recommendationId ) {
+	return ( dispatch ) => {
+		debug( 'User unfollowed recommendation ' + recommendationId );
+		dispatch( {
+			type: READER_START_RECOMMENDATION_UNFOLLOW,
 			recommendationId
 		} );
 	};

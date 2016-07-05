@@ -7,10 +7,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getRecommendations,
-	hasGraduatedRecommendations,
 	isRequestingRecommendations,
-	isRequestingGraduation
+	getRecommendations,
+	getRecommendationFollowCount
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -32,32 +31,6 @@ describe( 'selectors', () => {
 				reader: {
 					start: {
 						isRequestingRecommendations: true
-					}
-				}
-			} );
-
-			expect( isRequesting ).to.be.true;
-		} );
-	} );
-
-	describe( '#isRequestingGraduation()', () => {
-		it( 'should return false if not fetching', () => {
-			const isRequesting = isRequestingGraduation( {
-				reader: {
-					start: {
-						isRequestingGraduation: false
-					}
-				}
-			} );
-
-			expect( isRequesting ).to.be.false;
-		} );
-
-		it( 'should return true if fetching', () => {
-			const isRequesting = isRequestingGraduation( {
-				reader: {
-					start: {
-						isRequestingGraduation: true
 					}
 				}
 			} );
@@ -106,61 +79,29 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#hasGraduatedRecommendations()', () => {
-		it( 'should return true if graduated through API endpoint', () => {
-			const hasGraduated = hasGraduatedRecommendations( {
+	describe( '#getRecommendationFollowCount()', () => {
+		it( 'should return zero if nothing has been followed', () => {
+			const count = getRecommendationFollowCount( {
 				reader: {
 					start: {
-						hasGraduated: false
+						recommendationsFollowed: []
 					}
 				}
 			} );
 
-			expect( hasGraduated ).to.be.false;
+			expect( count ).to.eq( 0 );
 		} );
 
-		it( 'should return true if graduated through current_user', () => {
-			const hasGraduated = hasGraduatedRecommendations( {
+		it( 'should return the count if recommendations have been followed', () => {
+			const count = getRecommendationFollowCount( {
 				reader: {
 					start: {
-						hasGraduated: null
-					}
-				},
-				currentUser: {
-					id: '14782056'
-				},
-				users: {
-					items: {
-						'14782056': {
-							is_new_reader: null
-						}
+						recommendationsFollowed: [ 123, 456, 789 ]
 					}
 				}
 			} );
 
-			expect( hasGraduated ).to.be.true;
-		} );
-
-		it( 'should return false if user has `is_new_reader`', () => {
-			const hasGraduated = hasGraduatedRecommendations( {
-				reader: {
-					start: {
-						hasGraduated: null
-					}
-				},
-				currentUser: {
-					id: '14782056'
-				},
-				users: {
-					items: {
-						'14782056': {
-							is_new_reader: true
-						}
-					}
-				}
-			} );
-
-			expect( hasGraduated ).to.be.false;
+			expect( count ).to.eq( 3 );
 		} );
 	} );
 } );
