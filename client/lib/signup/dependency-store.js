@@ -62,12 +62,6 @@ SignupDependencyStore.dispatchToken = Dispatcher.register( function( payload ) {
 				}
 				break;
 		}
-	} else {
-		/**
-		 * Catch calls to the SignupDependencyStore where the redux store is not yet initialized.
-		 * This should be active only during development and removed later.
-		 */
-		throw new Error( 'No redux store instance found for the current SignupDependencyStore call!' );
 	}
 } );
 
