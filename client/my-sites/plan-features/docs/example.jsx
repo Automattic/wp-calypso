@@ -35,14 +35,18 @@ export default React.createClass( {
 
 				</h2>
 				<QueryPlans />
-				<PlanFeatures plan={ PLAN_FREE } />
-				<PlanFeatures plan={ PLAN_PERSONAL } />
-				<PlanFeatures plan={ PLAN_PREMIUM } />
-				<PlanFeatures plan={ PLAN_BUSINESS } />
-				<PlanFeatures plan={ PLAN_JETPACK_BUSINESS } />
-				<PlanFeatures plan={ PLAN_JETPACK_BUSINESS_MONTHLY } />
-				<PlanFeatures plan={ PLAN_JETPACK_PREMIUM } />
-				<PlanFeatures plan={ PLAN_JETPACK_PREMIUM_MONTHLY } />
+				<div style={ { display: 'flex' } } >
+					<PlanFeatures plan={ PLAN_FREE } />
+					<PlanFeatures plan={ PLAN_PERSONAL } />
+					<PlanFeatures plan={ PLAN_PREMIUM } />
+					<PlanFeatures plan={ PLAN_BUSINESS } />
+				</div>
+				<div style={ { display: 'flex' } }>
+					<PlanFeatures plan={ PLAN_JETPACK_BUSINESS } />
+					<PlanFeatures plan={ PLAN_JETPACK_BUSINESS_MONTHLY } />
+					<PlanFeatures plan={ PLAN_JETPACK_PREMIUM } />
+					<PlanFeatures plan={ PLAN_JETPACK_PREMIUM_MONTHLY } />
+				</div>
 			</div>
 		);
 	}
