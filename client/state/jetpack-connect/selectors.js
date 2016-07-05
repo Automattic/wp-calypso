@@ -1,6 +1,9 @@
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // an hour
 
 const isCalypsoStartedConnection = function( state, siteSlug ) {
+	if ( ! siteSlug ) {
+		return false;
+	}
 	const site = siteSlug.replace( /.*?:\/\//g, '' );
 	if ( state && state[ site ] ) {
 		const currentTime = ( new Date() ).getTime();
