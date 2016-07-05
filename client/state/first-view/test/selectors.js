@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	isViewDisabled,
+	isViewEnabled,
 	isViewVisible,
 	getDisabledViews
 } from '../selectors';
@@ -15,14 +15,14 @@ import {
 describe( 'selectors', () => {
 	describe( '#isViewEnabled()', () => {
 		it( 'should return false if the view is disabled', () => {
-			const isDisabled = isViewDisabled( {
+			const isEnabled = isViewEnabled( {
 				firstView: {
 					disabled: [ 'stats' ],
 					visible: []
 				}
 			}, 'stats' );
 
-			expect( isDisabled ).to.be.false;
+			expect( isEnabled ).to.be.false;
 		} );
 	} );
 
