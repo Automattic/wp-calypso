@@ -12,7 +12,9 @@ import React from 'react';
 import { abtest } from 'lib/abtest';
 import { getSite, getSiteSlug } from 'state/sites/selectors';
 import { getDomainsSuggestions, } from 'state/domains/suggestions/selectors';
+import { currentUserHasFlag } from 'state/current-user/selectors';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { FEATURE_CUSTOM_DOMAIN } from 'lib/plans/constants';
 import { isFreePlan } from 'lib/products-values';
@@ -33,7 +35,8 @@ const DomainTip = React.createClass( {
 	propTypes: {
 		className: React.PropTypes.string,
 		event: React.PropTypes.string.isRequired,
-		siteId: React.PropTypes.number.isRequired
+		siteId: React.PropTypes.number.isRequired,
+		domainsWithPlansOnly: React.PropTypes.bool.isRequired
 	},
 
 	getDefaultProps() {
@@ -60,7 +63,7 @@ const DomainTip = React.createClass( {
 
 	render() {
 		if ( ! this.props.site || this.props.site.jetpack || ! this.props.siteSlug ||
-				abtest( 'domainsWithPlansOnly' ) !== 'plansOnly' || ! isFreePlan( this.props.site.plan ) ) {
+				this.props.domainsWithPlansOnly || ! isFreePlan( this.props.site.plan ) ) {
 			return this.domainUpgradeNudge();
 		}
 		const classes = classNames( this.props.className, 'domain-tip' );
@@ -96,8 +99,10 @@ export default connect( ( state, ownProps ) => {
 	const site = getSite( state, ownProps.siteId );
 	const siteSlug = getSiteSlug( state, ownProps.siteId );
 	const queryObject = getQueryObject( site, siteSlug );
+
 	return {
 		suggestions: queryObject && getDomainsSuggestions( state, queryObject ),
+		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 		site: site,
 		siteSlug: siteSlug
 	};

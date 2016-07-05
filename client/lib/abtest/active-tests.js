@@ -83,16 +83,6 @@ module.exports = {
 		allowExistingUsers: true,
 		allowAnyLocale: true
 	},
-	domainsWithPlansOnly: {
-		datestamp: '20160517', // was 20160427
-		variations: {
-			original: 0,
-			plansOnly: 100
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: false,
-		allowAnyLocale: true
-	},
 	wordadsInstantActivation: {
 		datestamp: '20160607',
 		variations: {

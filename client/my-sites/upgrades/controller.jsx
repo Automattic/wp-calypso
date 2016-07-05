@@ -95,7 +95,7 @@ module.exports = {
 
 	mapDomain: function( context ) {
 		var CartData = require( 'components/data/cart' ),
-			MapDomain = require( 'components/domains/map-domain' ),
+			MapDomain = require( 'my-sites/upgrades/map-domain' ),
 			basePath = route.sectionify( context.path );
 
 		titleActions.setTitle( i18n.translate( 'Map a Domain' ), {
@@ -108,7 +108,6 @@ module.exports = {
 				<Main>
 					<CartData>
 						<MapDomain
-							withPlansOnly={ abtest( 'domainsWithPlansOnly' ) === 'plansOnly' }
 							store={ context.store }
 							productsList={ productsList }
 							initialQuery={ context.query.initialQuery }

@@ -58,3 +58,13 @@ export function getCurrentUserCurrencyCode( state ) {
 export function canCurrentUser( state, siteId, capability ) {
 	return get( state.currentUser.capabilities, [ siteId, capability ], null );
 }
+
+/**
+ * Returns true if the specified flag is enabled for the user
+ * @param  {Object}   state      Global state tree
+ * @param {String}    flagName   Flag name
+ * @returns {boolean}            Whether the flag is enabled for the user
+ */
+export function currentUserHasFlag( state, flagName ) {
+	return state.currentUser.flags.indexOf( flagName ) !== -1;
+}

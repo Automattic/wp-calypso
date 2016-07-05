@@ -23,6 +23,7 @@ var productsValues = require( 'lib/products-values' ),
 	formatProduct = productsValues.formatProduct,
 	isCustomDesign = productsValues.isCustomDesign,
 	isDependentProduct = productsValues.isDependentProduct,
+	isDomainMapping = productsValues.isDomainMapping,
 	isDomainProduct = productsValues.isDomainProduct,
 	isDomainRedemption = productsValues.isDomainRedemption,
 	isDomainRegistration = productsValues.isDomainRegistration,
@@ -37,6 +38,7 @@ var productsValues = require( 'lib/products-values' ),
 	isUnlimitedThemes = productsValues.isUnlimitedThemes,
 	isVideoPress = productsValues.isVideoPress,
 	isJetpackPlan = productsValues.isJetpackPlan,
+	isWordPressDomain = productsValues.isWordPressDomain,
 	sortProducts = require( 'lib/products-values/sort' ),
 	PLAN_PERSONAL = require( 'lib/plans/constants' ).PLAN_PERSONAL;
 
@@ -129,10 +131,11 @@ function remove( cartItemToRemove ) {
  *
  * @param {Object} cartItemToRemove - item as `CartItemValue` object
  * @param {Object} cart - cart as `CartValue` object
+ * @param {bool} domainsWithPlansOnly - Whether we should consider domains as dependents of products
  * @returns {Function} the function that removes the items from a shopping cart
  */
-function removeItemAndDependencies( cartItemToRemove, cart ) {
-	var dependencies = getDependentProducts( cartItemToRemove, cart ),
+function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPlansOnly ) {
+	var dependencies = getDependentProducts( cartItemToRemove, cart, domainsWithPlansOnly ),
 		changes = dependencies.map( remove ).concat( remove( cartItemToRemove ) );
 
 	return flow.apply( null, changes );
@@ -143,11 +146,12 @@ function removeItemAndDependencies( cartItemToRemove, cart ) {
  *
  * @param {Object} cartItem - item as `CartItemValue` object
  * @param {Object} cart - cart as `CartValue` object
+ * @param {bool} domainsWithPlansOnly - Whether we should consider domains as dependents of products
  * @returns {Object[]} the list of dependency items in the shopping cart
  */
-function getDependentProducts( cartItem, cart ) {
+function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
 	const dependentProducts = getAll( cart ).filter( function( existingCartItem ) {
-		return isDependentProduct( cartItem, existingCartItem );
+		return isDependentProduct( cartItem, existingCartItem, domainsWithPlansOnly );
 	} );
 
 	return uniq( flatten( dependentProducts.concat( dependentProducts.map( dependentProduct => getDependentProducts( dependentProduct, cart ) ) ) ) );
@@ -714,13 +718,27 @@ function isDomainBeingUsedForPlan( cart, domain ) {
 	return false;
 }
 
-function shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestion ) {
+function shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestionOrCartItem ) {
 	return withPlansOnly &&
-		( suggestion.product_slug && suggestion.cost ) && // not free
-		( ! isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) && // a plan in cart
+		// not free or a cart item
+		( isDomainRegistration( suggestionOrCartItem ) ||
+			isDomainMapping( suggestionOrCartItem ) ||
+			( suggestionOrCartItem.domain_name && ! isWordPressDomain( suggestionOrCartItem ) ) ) &&
+		( ! isDomainBeingUsedForPlan( cart, suggestionOrCartItem.domain_name ) ) && // a plan in cart
 		( ! isNextDomainFree( cart ) ) && // domain credit
 		( ! hasPlan( cart ) ) && // already a plan in cart
 		( ! selectedSite || ( selectedSite && selectedSite.plan.product_slug === 'free_plan' ) ); // site has a plan
+}
+
+function bundleItemWithPlan( cartItem, planSlug = 'value_bundle' ) {
+	return [ cartItem, planItem( planSlug, false ) ];
+}
+
+function bundleItemWithPlanIfNecessary( cartItem, withPlansOnly, selectedSite, cart, planSlug = 'value_bundle' ) {
+	if ( shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, cartItem ) ) {
+		return bundleItemWithPlan( cartItem, planSlug );
+	}
+	return [ cartItem ];
 }
 
 function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
@@ -746,6 +764,8 @@ function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
 module.exports = {
 	add,
 	addPrivacyToAllDomains,
+	bundleItemWithPlan,
+	bundleItemWithPlanIfNecessary,
 	businessPlan,
 	customDesignItem,
 	domainMapping,

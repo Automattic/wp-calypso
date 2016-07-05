@@ -14,7 +14,7 @@ var DomainMappingSuggestion = React.createClass( {
 		cart: React.PropTypes.object,
 		products: React.PropTypes.object.isRequired,
 		onButtonClick: React.PropTypes.func.isRequired,
-		withPlansOnly: React.PropTypes.bool.isRequired,
+		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] )
 	},
 	render: function() {
@@ -22,16 +22,16 @@ var DomainMappingSuggestion = React.createClass( {
 				product_slug: this.props.products.domain_map.product_slug,
 				cost: this.props.products.domain_map.cost_display
 			},
-			buttonContent = shouldBundleDomainWithPlan( this.props.withPlansOnly, this.props.selectedSite, this.props.cart, suggestion )
+			buttonContent = shouldBundleDomainWithPlan( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion )
 				? this.translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
 				: this.translate( 'Map it', { context: 'Domain mapping suggestion button' } );
 		return (
 				<DomainSuggestion
-					priceRule={ getDomainPriceRule( this.props.withPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) }
+					priceRule={ getDomainPriceRule( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) }
 					price={ this.props.products.domain_map && this.props.products.domain_map.cost_display }
 					extraClasses="is-visible domain-mapping-suggestion"
 					buttonClasses="map"
-					withPlansOnly={ this.props.withPlansOnly }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					buttonContent={ buttonContent }
 					cart={ this.props.cart }
 					onButtonClick={ this.props.onButtonClick }>

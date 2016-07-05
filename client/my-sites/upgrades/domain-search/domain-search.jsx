@@ -14,20 +14,27 @@ var observe = require( 'lib/mixins/data-observe' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
 	FreeTrialNotice = require( './free-trial-notice' ),
 	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
+	{ currentUserHasFlag } = require( 'state/current-user/selectors' ),
+	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
 	Main = require( 'components/main' ),
+	upgradesActions = require( 'lib/upgrades/actions' ),
+	cartItems = require( 'lib/cart-values/cart-items' ),
+	analyticsMixin = require( 'lib/mixins/analytics' ),
+	{ abtest } = require( 'lib/abtest' ),
 	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
 
 var DomainSearch = React.createClass( {
-	mixins: [ observe( 'productsList', 'sites' ) ],
+	mixins: [ observe( 'productsList', 'sites' ), analyticsMixin( 'registerDomain' ) ],
 
 	propTypes: {
 		sites: React.PropTypes.object.isRequired,
 		productsList: React.PropTypes.object.isRequired,
 		basePath: React.PropTypes.string.isRequired,
-		context: React.PropTypes.object.isRequired
+		context: React.PropTypes.object.isRequired,
+		domainsWithPlansOnly: React.PropTypes.bool.isRequired
 	},
 
 	getInitialState: function() {
@@ -69,6 +76,44 @@ var DomainSearch = React.createClass( {
 		this.setState( { domainRegistrationAvailable: isAvailable } );
 	},
 
+	handleAddRemoveDomain: function( suggestion ) {
+		if ( ! cartItems.hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
+			this.addDomain( suggestion );
+		} else {
+			this.removeDomain( suggestion );
+		}
+	},
+
+	addDomain( suggestion ) {
+		this.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'domains' );
+		let items = [];
+
+		const shouldBundleDomainWithPlan = cartItems.shouldBundleDomainWithPlan( this.props.domainsWithPlansOnly, this.props.sites.getSelectedSite(), this.props.cart, suggestion );
+		if ( shouldBundleDomainWithPlan ) {
+			const domain = cartItems.domainRegistration( {
+				domain: suggestion.domain_name,
+				productSlug: suggestion.product_slug
+			} );
+			items = items.concat( cartItems.bundleItemWithPlan( domain ) );
+		} else {
+			items.push( cartItems.domainRegistration( { domain: suggestion.domain_name, productSlug: suggestion.product_slug } ) );
+		}
+
+		const shouldBundlePrivacy = cartItems.isNextDomainFree( this.props.cart ) || shouldBundleDomainWithPlan;
+		if ( abtest( 'privacyCheckbox' ) === 'checkbox' && shouldBundlePrivacy ) {
+			items.push( cartItems.domainPrivacyProtection( { domain: suggestion.domain_name } ) );
+		}
+
+		upgradesActions.addItems( items );
+		upgradesActions.goToDomainCheckout( suggestion );
+	},
+
+	removeDomain( suggestion ) {
+		this.recordEvent( 'removeDomainButtonClick', suggestion.domain_name );
+		upgradesActions.removeDomainFromCart( suggestion );
+
+	},
+
 	render: function() {
 		var selectedSite = this.props.sites.getSelectedSite(),
 			classes = classnames( 'main-column', {
@@ -103,7 +148,9 @@ var DomainSearch = React.createClass( {
 						<RegisterDomainStep
 							path={ this.props.context.path }
 							suggestion={ this.props.context.params.suggestion }
+							domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 							onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
+							onAddDomain={ this.handleAddRemoveDomain }
 							cart={ this.props.cart }
 							selectedSite={ selectedSite }
 							offerMappingOption
@@ -125,7 +172,10 @@ var DomainSearch = React.createClass( {
 
 module.exports = connect(
 	function( state, props ) {
-		return { sitePlans: getPlansBySite( state, props.sites.getSelectedSite() ) };
+		return {
+			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() ),
+			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+		};
 	},
 	function( dispatch ) {
 		return {
