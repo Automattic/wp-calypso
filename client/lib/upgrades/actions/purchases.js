@@ -3,6 +3,7 @@
  */
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -12,12 +13,17 @@ import Dispatcher from 'dispatcher';
 import olark from 'lib/olark';
 import purchasesAssembler from 'lib/purchases/assembler';
 import wp from 'lib/wp';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const debug = debugFactory( 'calypso:upgrades:actions:purchases' ),
 	wpcom = wp.undocumented();
 
-const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' ),
-	PURCHASE_REMOVE_ERROR_MESSAGE = i18n.translate( 'There was an error removing the purchase.' );
+const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases. Please try again later or {{a}}contact support{{/a}}.', {
+		components: { a: <a href={ CALYPSO_CONTACT } /> }
+	} ),
+	PURCHASE_REMOVE_ERROR_MESSAGE = i18n.translate( 'There was an error removing the purchase. Please try again later or {{a}}contact support{{/a}}.', {
+		components: { a: <a href={ CALYPSO_CONTACT } /> }
+	} );
 
 function cancelPurchase( purchaseId, onComplete ) {
 	wpcom.cancelPurchase( purchaseId, ( error, data ) => {
@@ -53,7 +59,9 @@ function cancelPrivateRegistration( purchaseId, onComplete ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PRIVACY_PROTECTION_CANCEL_FAILED,
 				purchaseId,
-				error: error.message || i18n.translate( 'There was a problem canceling this private registration. Please try again later or contact support.' )
+				error: i18n.translate( 'There was a problem canceling this private registration. Please try again later or {{a}}contact support{{/a}}.', {
+					components: { a: <a href={ CALYPSO_CONTACT } /> }
+				} )
 			} );
 		}
 
@@ -88,7 +96,9 @@ function deleteStoredCard( card, onComplete ) {
 		} else {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.STORED_CARDS_DELETE_FAILED,
-				error: error.message || i18n.translate( 'There was a problem deleting the stored card. Please try again later or contact support.' )
+				error: i18n.translate( 'There was a problem deleting the stored card. Please try again later or {{a}}contact support{{/a}}.', {
+					components: { a: <a href={ CALYPSO_CONTACT } /> }
+				} )
 			} );
 		}
 
@@ -136,7 +146,9 @@ function fetchStoredCards() {
 		} else if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.STORED_CARDS_FETCH_FAILED,
-				error: error.message || i18n.translate( 'There was a problem retrieving stored cards. Please try again later or contact support.' )
+				error: i18n.translate( 'There was a problem retrieving stored cards. Please try again later or {{a}}contact support{{/a}}.', {
+					components: { a: <a href={ CALYPSO_CONTACT } /> }
+				} )
 			} );
 		}
 	} );
