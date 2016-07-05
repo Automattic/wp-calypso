@@ -11,14 +11,17 @@ var page = require( 'page' ),
  */
 var analytics = require( 'lib/analytics' ),
 	sites = require( 'lib/sites-list' )(),
+	features = require( 'lib/features-list' )(),
+	plansList = require( 'lib/plans-list' )(),
+	productsList = require( 'lib/products-list' )(),
 	route = require( 'lib/route' ),
 	Main = require( 'components/main' ),
+	PageViewTracker = require( 'lib/analytics/page-view-tracker' ).PageViewTracker,
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	setSection = require( 'state/ui/actions' ).setSection,
-	productsList = require( 'lib/products-list' )(),
-	abtest = require( 'lib/abtest' ).abtest,
-	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
+	abtest = require( 'lib/abtest' ).abtest;
 
 module.exports = {
 
@@ -123,7 +126,8 @@ module.exports = {
 
 	googleAppsWithRegistration: function( context ) {
 		var CartData = require( 'components/data/cart' ),
-			GoogleApps = require( 'components/upgrades/google-apps' );
+			GoogleApps = require( 'components/upgrades/google-apps' ),
+			CartStore = require( 'lib/cart/store' );
 
 		titleActions.setTitle(
 			i18n.translate( 'Register %(domain)s', {
@@ -134,17 +138,24 @@ module.exports = {
 			}
 		);
 
+		const goToNextStep = () => {
+			const cart = CartStore.get();
+			const freeWithPlan = cart && cart.hasLoadedFromServer && ( cart.next_domain_is_free || cart.has_bundle_credit );
+
+			if ( freeWithPlan ) {
+				page( '/checkout/' + sites.getSelectedSite().slug );
+			} else {
+				page( '/domains/add/' + context.params.registerDomain + '/plans/' + sites.getSelectedSite().slug );
+			}
+		};
+
 		const handleAddGoogleApps = function( googleAppsCartItem ) {
 			upgradesActions.addItem( googleAppsCartItem );
-			page( '/checkout/' + sites.getSelectedSite().slug );
+			goToNextStep();
 		};
 
 		const handleGoBack = function() {
 			page( '/domains/add/' + sites.getSelectedSite().slug );
-		};
-
-		const handleClickSkip = function() {
-			page( '/checkout/' + sites.getSelectedSite().slug );
 		};
 
 		analytics.pageView.record( '/domains/add/:site/google-apps', 'Domain Search > Domain Registration > Google Apps' );
@@ -158,11 +169,56 @@ module.exports = {
 							domain={ context.params.registerDomain }
 							onGoBack={ handleGoBack }
 							onAddGoogleApps={ handleAddGoogleApps }
-							onClickSkip={ handleClickSkip } />
+							onClickSkip={ goToNextStep } />
 					</CartData>
 				</Main>
 			),
 			document.getElementById( 'primary' )
+		);
+	},
+
+	selectPlan: function( context ) {
+		const basePath = route.sectionify( context.path );
+		const CartData = require( 'components/data/cart' );
+		const Plans = require( './plans' );
+		const site = sites.getSelectedSite();
+		const domain = context.params.registerDomain;
+
+		const onGoBack = () => {
+			page( '/domains/add/' + site.slug );
+		};
+
+		renderWithReduxStore(
+			(
+				<Main className="plans has-sidebar">
+					<PageViewTracker path={ basePath } title="Domain Search > Domain Registration > Select Plan" />
+					<CartData>
+						<Plans { ...{ sites, domain, onGoBack } }/>
+					</CartData>
+				</Main>
+			),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
+	comparePlans: function( context ) {
+		const basePath = route.sectionify( context.path );
+		const CartData = require( 'components/data/cart' );
+		const PlansCompare = require( './plans-compare' );
+		const domain = context.params.registerDomain;
+
+		renderWithReduxStore(
+			(
+				<Main>
+					<PageViewTracker path={ basePath } title="Domain Search > Domain Registration > Select Plan > Compare Plans" />
+					<CartData>
+						<PlansCompare { ...{ sites, domain, features, productsList } }/>
+					</CartData>
+				</Main>
+			),
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
