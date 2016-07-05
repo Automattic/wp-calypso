@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -11,8 +12,16 @@ import SignupActions from 'lib/signup/actions';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
 
+import PressableStoreStep from './pressable-store';
+
 export default React.createClass( {
-	displayName: 'DesignType',
+	displayName: 'DesignTypeWithStoreStep',
+
+	getInitialState() {
+		return {
+			showStore: false
+		};
+	},
 
 	getChoices() {
 		return [
@@ -23,10 +32,14 @@ export default React.createClass( {
 		];
 	},
 
+	onPressableStoreStepRef( pressableStoreStep ) {
+		this._pressableStore = pressableStoreStep;
+	},
+
 	renderChoice( choice ) {
 		return (
-			<Card className="design-type__choice" key={ choice.type }>
-				<a className="design-type__choice__link" href="#" onClick={ ( event ) => this.handleChoiceClick( event, choice.type ) }>
+			<Card className="design-type-with-store__choice" key={ choice.type }>
+				<a className="design-type-with-store__choice__link" href="#" onClick={ ( event ) => this.handleChoiceClick( event, choice.type ) }>
 					{ choice.image }
 					<h2>{ choice.label }</h2>
 				</a>
@@ -36,23 +49,38 @@ export default React.createClass( {
 
 	renderChoices() {
 		return (
-			<div className="design-type__list">
+			<div className="design-type-with-store__list">
 				{ this.getChoices().map( this.renderChoice ) }
 			</div>
 		);
 	},
 
 	render() {
+		let pressableWrapperClassName = classNames( {
+			'design-type-with-store__pressable-wrapper': true,
+			'is-hidden': ! this.state.showStore,
+		} );
+
+		let sectionWrapperClassName = classNames( {
+			'design-type-with-store__section-wrapper': true,
+			'is-hidden': this.state.showStore,
+		} );
+
 		return (
-			<div className="design-type__section-wrapper">
-				<StepWrapper
-					flowName={ this.props.flowName }
-					stepName={ this.props.stepName }
-					positionInFlow={ this.props.positionInFlow }
-					fallbackHeaderText={ this.translate( 'What would you like your homepage to look like?' ) }
-					fallbackSubHeaderText={ this.translate( 'This will help us figure out what kinds of designs to show you.' ) }
-					signupProgressStore={ this.props.signupProgressStore }
-					stepContent={ this.renderChoices() } />
+			<div className="design-type-with-store">
+				<div className={ pressableWrapperClassName } >
+					<PressableStoreStep { ... this.props } ref={ this.onPressableStoreStepRef }/>
+				</div>
+				<div className={ sectionWrapperClassName }>
+					<StepWrapper
+						flowName={ this.props.flowName }
+						stepName={ this.props.stepName }
+						positionInFlow={ this.props.positionInFlow }
+						fallbackHeaderText={ this.translate( 'What would you like your homepage to look like?' ) }
+						fallbackSubHeaderText={ this.translate( 'This will help us figure out what kinds of designs to show you.' ) }
+						signupProgressStore={ this.props.signupProgressStore }
+						stepContent={ this.renderChoices() } />
+				</div>
 			</div>
 		);
 	},
@@ -65,6 +93,26 @@ export default React.createClass( {
 
 	handleNextStep( designType ) {
 		analytics.tracks.recordEvent( 'calypso_triforce_select_design', { category: designType } );
+
+		if ( designType === 'store' ) {
+			this.setState( {
+				showStore: true
+			} );
+
+			this.windowScroller = setInterval( () => {
+				if ( window.pageYOffset > 0 ) {
+					window.scrollBy( 0, -10 );
+				} else {
+					clearInterval( this.windowScroller );
+				}
+			}, 1 );
+
+			if ( this._pressableStore ) {
+				this._pressableStore.focus();
+			}
+
+			return;
+		}
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
 		this.props.goToNextStep();
