@@ -24,6 +24,7 @@ import {
 	getPostEdits,
 	getEditedPostValue,
 	isEditedPostDirty,
+	getPostPreviewUrl
 } from '../selectors';
 import PostQueryManager from 'lib/query-manager/post';
 
@@ -1037,6 +1038,125 @@ describe( 'selectors', () => {
 			}, 2916284, 841 );
 
 			expect( isDirty ).to.be.true;
+		} );
+	} );
+
+	describe( 'getPostPreviewUrl()', () => {
+		it( 'should return null if the post is not known', () => {
+			const previewUrl = getPostPreviewUrl( {
+				posts: {
+					items: {}
+				},
+				sites: {
+					items: {}
+				}
+			}, 2916284, 841 );
+
+			expect( previewUrl ).to.be.null;
+		} );
+
+		it( 'should return null if the post has no URL', () => {
+			const previewUrl = getPostPreviewUrl( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64'
+						}
+					}
+				},
+				sites: {
+					items: {}
+				}
+			}, 2916284, 841 );
+
+			expect( previewUrl ).to.be.null;
+		} );
+
+		it( 'should return null if the post is trashed', () => {
+			const previewUrl = getPostPreviewUrl( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							URL: 'http://example.com/post-url',
+							status: 'trash'
+						}
+					}
+				},
+				sites: {
+					items: {}
+				}
+			}, 2916284, 841 );
+
+			expect( previewUrl ).to.be.null;
+		} );
+
+		it( 'should prefer the post preview URL if available', () => {
+			const previewUrl = getPostPreviewUrl( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							status: 'publish',
+							URL: 'http://example.com/post-url',
+							preview_URL: 'https://example.com/preview-url'
+						}
+					}
+				},
+				sites: {
+					items: {}
+				}
+			}, 2916284, 841 );
+
+			expect( previewUrl ).to.equal( 'https://example.com/preview-url' );
+		} );
+
+		it( 'should use post URL if preview URL not available', () => {
+			const previewUrl = getPostPreviewUrl( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							status: 'publish',
+							URL: 'https://example.com/post-url'
+						}
+					}
+				},
+				sites: {
+					items: {}
+				}
+			}, 2916284, 841 );
+
+			expect( previewUrl ).to.equal( 'https://example.com/post-url' );
+		} );
+
+		it( 'should append preview query argument to non-published posts', () => {
+			const previewUrl = getPostPreviewUrl( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							status: 'draft',
+							URL: 'https://example.com/post-url?other_arg=1'
+						}
+					}
+				},
+				sites: {
+					items: {}
+				}
+			}, 2916284, 841 );
+
+			expect( previewUrl ).to.equal( 'https://example.com/post-url?other_arg=1&preview=true' );
 		} );
 	} );
 } );
