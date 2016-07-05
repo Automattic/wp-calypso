@@ -1,7 +1,9 @@
+/**
+ * External dependencies
+ */
 import React, { Component, PropTypes } from 'react';
 import difference from 'lodash/difference';
 import findKey from 'lodash/findKey';
-import get from 'lodash/get';
 import identity from 'lodash/identity';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
@@ -12,9 +14,15 @@ import property from 'lodash/property';
 import valuesOf from 'lodash/values';
 import { connect } from 'react-redux';
 
+/**
+ * Internal dependencies
+ */
 import SegmentedControl from 'components/segmented-control';
 import TokenField from 'components/token-field';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getTitleFormats } from 'state/sites/seo/selectors';
 import { localize } from 'i18n-calypso';
+import { setTitleFormat } from 'state/sites/seo/actions';
 
 import {
 	nativeToRaw,
@@ -66,48 +74,41 @@ export class MetaTitleEditor extends Component {
 	constructor() {
 		super();
 
-		this.state = {
-			type: 'frontPage',
-			tokens: rawToNative( '%site_name% | %tagline%' )
-		};
+		this.state = { type: 'frontPage' };
 
 		this.switchType = this.switchType.bind( this );
 		this.updateTitleFormat = this.updateTitleFormat.bind( this );
 	}
 
 	switchType( { value: type } ) {
-		const { titleFormats } = this.props;
-		const tokens = rawToNative( get( titleFormats, type, '' ) );
-
-		this.setState( { tokens, type } );
+		this.setState( { type } );
 	}
 
 	updateTitleFormat( values ) {
-		const { saveMetaTitle, translate } = this.props;
+		const { setTitleFormat, siteId, translate } = this.props;
 		const { type } = this.state;
 
 		const tokens = removeBlanks( map( values, tokenize( translate ) ) );
 
-		saveMetaTitle( type, nativeToRaw( tokens ) );
-		this.setState( { tokens } );
+		setTitleFormat( siteId, type, nativeToRaw( tokens ) );
 	}
 
 	render() {
 		const {
 			disabled = false,
-			translate = identity
+			translate = identity,
+			titleFormats
 		} = this.props;
 		const {
-			tokens,
 			type
 		} = this.state;
 
 		const validTokens = getValidTokens( translate );
 
-		const values = tokens.map(
+		const values = removeBlanks( map( rawToNative( titleFormats[ type ] ), tokenize( translate ) ) ).map(
 			token => 'string' !== token.type
-				? { ...token, value: validTokens[ token.type ] }
-				: { ...token, isBorderless: true }
+				? { ...token, value: validTokens[ token.type ] } // use translations of token names
+				: { ...token, isBorderless: true }               // and remove the styling on plain text
 		);
 
 		const suggestions = difference(
@@ -138,18 +139,13 @@ MetaTitleEditor.propTypes = {
 	disabled: PropTypes.bool
 };
 
-const mapStateToProps = () => ( {
-	titleFormats: {
-		frontPage: '%site_name% | %tagline%',
-		posts: '%post_title% - %site_name%',
-		pages: '%page_title% - %site_name%',
-		groups: '%site_name% > %group_title%',
-		archives: '%site_name% (%date%)'
-	}
+const mapStateToProps = state => ( {
+	siteId: getSelectedSiteId( state ),
+	titleFormats: getTitleFormats( state, getSelectedSiteId( state ) )
 } );
 
-const mapDispatchToProps = () => ( {
-	saveMetaTitle: ( contentType, title ) => ( { type: 'SEO_SET_META_TITLE', contentType, title } )
-} );
+const mapDispatchToProps = {
+	setTitleFormat
+};
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( MetaTitleEditor ) );
