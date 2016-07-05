@@ -19,6 +19,7 @@ import {
 	isSitePostsLastPageForQuery,
 	getSitePostsForQueryIgnoringPage,
 	getSitePostsHierarchyForQueryIgnoringPage,
+	isRequestingSitePostsForQueryIgnoringPage,
 	isRequestingSitePost,
 	getEditedPost,
 	getEditedPostValue
@@ -30,6 +31,7 @@ describe( 'selectors', () => {
 		getSitePosts.memoizedSelector.cache.clear();
 		getSitePost.memoizedSelector.cache.clear();
 		getSitePostsHierarchyForQueryIgnoringPage.memoizedSelector.cache.clear();
+		isRequestingSitePostsForQueryIgnoringPage.memoizedSelector.cache.clear();
 		getNormalizedPost.memoizedSelector.cache.clear();
 	} );
 
@@ -233,7 +235,7 @@ describe( 'selectors', () => {
 			const isRequesting = isRequestingSitePostsForQuery( {
 				posts: {
 					queryRequests: {
-						'2916284:{"search":"hel"}': true
+						'2916284:{"search":"Hel"}': true
 					}
 				}
 			}, 2916284, { search: 'Hello' } );
@@ -245,7 +247,7 @@ describe( 'selectors', () => {
 			const isRequesting = isRequestingSitePostsForQuery( {
 				posts: {
 					queryRequests: {
-						'2916284:{"search":"hello"}': true
+						'2916284:{"search":"Hello"}': true
 					}
 				}
 			}, 2916284, { search: 'Hello' } );
@@ -257,7 +259,7 @@ describe( 'selectors', () => {
 			const isRequesting = isRequestingSitePostsForQuery( {
 				posts: {
 					queryRequests: {
-						'2916284:{"search":"hello"}': false
+						'2916284:{"search":"Hello"}': false
 					}
 				}
 			}, 2916284, { search: 'Hello' } );
@@ -556,6 +558,42 @@ describe( 'selectors', () => {
 			expect( sitePosts ).to.eql( [
 				{ ID: 1204, site_ID: 2916284, global_ID: '48b6010b559efe6a77a429773e0cbf12', title: 'Sweet & Savory' }
 			] );
+		} );
+	} );
+
+	describe( 'isRequestingSitePostsForQueryIgnoringPage()', () => {
+		it( 'should return false if not requesting for query', () => {
+			const isRequesting = isRequestingSitePostsForQueryIgnoringPage( {
+				posts: {
+					queryRequests: {}
+				}
+			}, 2916284, { search: 'hel' } );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return true requesting for query at exact page', () => {
+			const isRequesting = isRequestingSitePostsForQueryIgnoringPage( {
+				posts: {
+					queryRequests: {
+						'2916284:{"search":"hel","page":4}': true
+					}
+				}
+			}, 2916284, { search: 'hel', page: 4 } );
+
+			expect( isRequesting ).to.be.true;
+		} );
+
+		it( 'should return true requesting for query without page specified', () => {
+			const isRequesting = isRequestingSitePostsForQueryIgnoringPage( {
+				posts: {
+					queryRequests: {
+						'2916284:{"search":"hel","page":4}': true
+					}
+				}
+			}, 2916284, { search: 'hel' } );
+
+			expect( isRequesting ).to.be.true;
 		} );
 	} );
 

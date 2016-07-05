@@ -51,6 +51,14 @@ input[type=checkbox].post-selector__input {
 	margin-right: 8px;
 }
 
+.post-selector__results {
+	height: 300px;
+
+	.post-selector.is-compact & {
+		height: auto;
+	}
+}
+
 .post-selector__nested-list {
 	margin-left: 1em;
 }
@@ -96,6 +104,7 @@ input[type=checkbox].post-selector__input {
 .post-selector__label-type {
 	display: none;
 	margin-left: 8px;
+	flex-shrink: 0;
 	font-size: 11px;
 	text-transform: uppercase;
 	color: $gray;

@@ -9,13 +9,18 @@ import merge from 'lodash/merge';
 import flow from 'lodash/flow';
 import cloneDeep from 'lodash/cloneDeep';
 import includes from 'lodash/includes';
+import some from 'lodash/some';
+import omit from 'lodash/omit';
+import isEqual from 'lodash/isEqual';
 
 /**
  * Internal dependencies
  */
 import TreeConvert from 'lib/tree-convert';
 import {
+	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
+	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage
 } from './utils';
 import { DEFAULT_POST_QUERY } from './constants';
@@ -221,6 +226,38 @@ export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
 		return getNormalizedPost( state, post.global_ID );
 	} );
 }
+
+/**
+ * Returns true if currently requesting posts for the posts query, regardless
+ * of page, or false otherwise.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Object}  query  Post query object
+ * @return {Boolean}        Whether posts are being requested
+ */
+export const isRequestingSitePostsForQueryIgnoringPage = createSelector(
+	( state, siteId, query ) => {
+		const normalizedQueryWithoutPage = omit( getNormalizedPostsQuery( query ), 'page' );
+		return some( state.posts.queryRequests, ( isRequesting, serializedQuery ) => {
+			if ( ! isRequesting ) {
+				return false;
+			}
+
+			const queryDetails = getDeserializedPostsQueryDetails( serializedQuery );
+			if ( queryDetails.siteId !== siteId ) {
+				return false;
+			}
+
+			return isEqual(
+				normalizedQueryWithoutPage,
+				omit( queryDetails.query, 'page' )
+			);
+		} );
+	},
+	( state ) => state.posts.queryRequests,
+	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
+);
 
 /**
  * Returns an array of normalized posts for the posts query, including all
