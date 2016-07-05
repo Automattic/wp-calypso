@@ -13,7 +13,7 @@ export function isViewVisible( state, view ) {
 }
 
 export function isViewEnabled( state, view ) {
-	return doesViewHaveFirstView( view ) && -1 === state.firstView.disabled.indexOf( view );
+	return -1 === state.firstView.disabled.indexOf( view );
 }
 
 export function getDisabledViews( state ) {

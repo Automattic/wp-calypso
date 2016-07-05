@@ -13,8 +13,8 @@ import {
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#isViewDisabled()', () => {
-		it( 'should return true if the view is disabled', () => {
+	describe( '#isViewEnabled()', () => {
+		it( 'should return false if the view is disabled', () => {
 			const isDisabled = isViewDisabled( {
 				firstView: {
 					disabled: [ 'stats' ],
@@ -22,7 +22,7 @@ describe( 'selectors', () => {
 				}
 			}, 'stats' );
 
-			expect( isDisabled ).to.be.true;
+			expect( isDisabled ).to.be.false;
 		} );
 	} );
 
