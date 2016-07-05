@@ -27,12 +27,10 @@
 	}
 
 	.follow-button__label {
-		display: none;
-	}
 
-	.reader-list-item__title,
-	.reader-list-item__description {
-		margin-right: 20px;
+		@include breakpoint( "<660px" ) {
+			display: none;
+		}
 	}
 
 	.external-link .gridicons-external {
@@ -153,26 +151,17 @@
 			padding: 16px 24px;
 		}
 
-		.follow-button {
-			cursor: default;
+		// Disabled button if URL is invalid
+		.follow-button:hover {
+			border-color: lighten( $gray, 20% );
+		}
 
-			@include breakpoint( "<660px" ) {
-				margin-top: 7px;
-			}
+		.gridicon {
+			fill: lighten( $gray, 20% );
+		}
 
-			.gridicon {
-				cursor: default;
-				fill: lighten( $gray, 20% );
-			}
-
-			.follow-button__label {
-				color: lighten( $gray, 20% );
-				display: inline-block;
-
-				@include breakpoint( "<660px" ) {
-					display: none;
-				}
-			}
+		.follow-button__label {
+			color: lighten( $gray, 20% );
 		}
 
 		&.is-valid {
@@ -274,7 +263,8 @@
 		margin-right: 100px;
 
 		@include breakpoint( ">660px" ) {
-			padding-left: 0;
+			margin-right: 100px;
+			padding-left: 3px;
 		}
 	}
 
@@ -384,20 +374,6 @@
 
 .following-edit__notification-settings-error {
 	margin-top: 14px;
-}
-
-@include breakpoint( ">660px" ) {
-	.following-edit {
-		.follow-button__label {
-			display: block;
-		}
-
-		.reader-list-item__title,
-		.reader-list-item__description {
-			margin-right: 100px;
-			padding-left: 3px;
-		}
-	}
 }
 
 .is-section-reader .main.following-edit .empty-content {

@@ -1,65 +1,3 @@
-.stream-header {
-
-	.follow-button__label {
-		font-family: $sans;
-		font-size: 16px;
-	}
-
-	.follow-button {
-
-		margin: 2px 3px 0 0;
-
-		.gridicon {
-			fill: $gray-dark;
-		}
-
-		.follow-button__label {
-			color: $gray-dark;
-
-			@include breakpoint( "<660px" ) {
-				display: none;
-			}
-		}
-
-		&:hover {
-			background: none;
-
-			.gridicon {
-				fill: $gray-dark;
-			}
-
-			.follow-button__label {
-				cursor: pointer;
-				color: $gray-dark;
-			}
-		}
-	}
-
-	.follow-button.is-following {
-
-		.gridicon {
-			fill: $alert-green;
-		}
-
-		.follow-button__label {
-			color: $alert-green;
-		}
-
-		&:hover {
-			background: none;
-
-			.gridicon {
-				fill: $alert-green;
-			}
-
-			.follow-button__label {
-				cursor: pointer;
-				color: $alert-green;
-			}
-		}
-	}
-}
-
 .is-group-reader .card.stream-header {
 	min-height: 72px;
 	padding: 24px 144px 24px 24px;
@@ -118,6 +56,12 @@
 	color: $gray;
 }
 
+.stream-header__follow {
+	position: absolute;
+		right: 10px;
+		top: 15px;
+}
+
 .stream-header.is-placeholder {
 	pointer-events: none;
 	user-select: none;
@@ -134,23 +78,9 @@
 		margin-right: 25%;
 	}
 
-
 	.gridicon {
 		display: none;
-	}
-}
-
-.stream-header__follow {
-
-	.follow-button {
-		position: absolute;
-			top: 14px;
-			right: 8px;
-
-		.gridicon {
-			top: 10px;
-			left: 15px;
-		}
+		border: 1px solid red;
 	}
 }
 
