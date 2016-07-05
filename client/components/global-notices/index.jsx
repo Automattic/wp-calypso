@@ -12,7 +12,6 @@ import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 
@@ -107,5 +106,5 @@ export default connect(
 			storeNotices: getNotices( state )
 		};
 	},
-	dispatch => bindActionCreators( { removeNotice }, dispatch )
+	{ removeNotice }
 )( NoticesList );
