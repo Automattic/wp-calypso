@@ -32,28 +32,28 @@ module.exports = React.createClass( {
 				>
 					All
 				</ControlItem>
-				
+
 				<ControlItem
 					selected={ this.state.selected === 'unread' }
 					onClick={ this.handleFilterClick( 'unread' ) }
 				>
 					Unread
 				</ControlItem>
-				
+
 				<ControlItem
 					selected={ this.state.selected === 'comments' }
 					onClick={ this.handleFilterClick( 'comments' ) }
 				>
 					Comments
 				</ControlItem>
-				
+
 				<ControlItem
 					selected={ this.state.selected === 'follows' }
 					onClick={ this.handleFilterClick( 'follows' ) }
 				>
 					Follows
 				</ControlItem>
-				
+
 				<ControlItem
 					selected={ this.state.selected === 'likes' }
 					onClick={ this.handleFilterClick( 'likes' ) }
@@ -110,7 +110,7 @@ Optional URL to navigate to when option is clicked.
 
 `title`
 
-Optional title to show when hovering over segmented control options. Default will be the child content of the item.
+Optional title to show when hovering over segmented control options.
 
 `onClick`
 
