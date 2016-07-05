@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	{ connect } = require( 'react-redux' ),
 	defer = require( 'lodash/defer' ),
 	page = require( 'page' ),
 	i18n = require( 'i18n-calypso' );
@@ -13,16 +14,19 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	productsList = require( 'lib/products-list' )(),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	SignupActions = require( 'lib/signup/actions' ),
-	MapDomain = require( 'components/domains/map-domain' ),
+	MapDomainStep = require( 'components/domains/map-domain-step' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
 	Notice = require( 'components/notice' ),
-	abtest = require( 'lib/abtest' ).abtest,
+	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
+	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
+	analyticsMixin = require( 'lib/mixins/analytics' ),
 	signupUtils = require( 'signup/utils' );
 
-module.exports = React.createClass( {
-	displayName: 'DomainsStep',
+const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
+	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
 
+const DomainsStep = React.createClass( {
 	showGoogleApps: function() {
 		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'google', this.props.locale ) );
 	},
@@ -56,6 +60,8 @@ module.exports = React.createClass( {
 			stepName: this.props.stepName,
 			suggestion
 		};
+
+		registerDomainAnalytics.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'signup' );
 
 		if ( this.props.step.suggestion &&
 			this.props.step.suggestion.domain_name !== suggestion.domain_name ) {
@@ -134,6 +140,8 @@ module.exports = React.createClass( {
 		const domainItem = cartItems.domainMapping( { domain } );
 		const isPurchasingItem = true;
 
+		mapDomainAnalytics.recordEvent( 'addDomainButtonClick', domain, 'signup' );
+
 		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain mapping' ),
 			stepName: this.props.stepName,
@@ -174,7 +182,6 @@ module.exports = React.createClass( {
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 
-		const isPlansOnlyTest = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
 		return (
 			<RegisterDomainStep
 				path={ this.props.path }
@@ -187,7 +194,7 @@ module.exports = React.createClass( {
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
 				offerMappingOption
 				analyticsSection="signup"
-				withPlansOnly={ isPlansOnlyTest }
+				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom
 				isSignupStep
 				showExampleSuggestions
@@ -201,14 +208,14 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="domains-step__section-wrapper">
-				<MapDomain
+				<MapDomainStep
 					initialState={ initialState }
 					path={ this.props.path }
-					onAddDomain={ this.handleAddDomain }
-					onAddMapping={ this.handleAddMapping.bind( this, 'mappingForm' ) }
+					onRegisterDomain={ this.handleAddDomain }
+					onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
 					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-					productsList={ productsList }
-					withPlansOnly={ abtest( 'domainsWithPlansOnly' ) === 'plansOnly' }
+					products={ productsList.get() }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
 					analyticsSection="signup" />
 			</div>
@@ -258,3 +265,10 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+module.exports = connect( ( state ) => {
+	return {
+		// no user = DOMAINS_WITH_PLANS_ONLY
+		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true
+	};
+} ) ( DomainsStep );

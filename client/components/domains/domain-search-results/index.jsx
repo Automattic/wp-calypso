@@ -15,13 +15,27 @@ const DomainRegistrationSuggestion = require( 'components/domains/domain-registr
 	DomainMappingSuggestion = require( 'components/domains/domain-mapping-suggestion' ),
 	DomainSuggestion = require( 'components/domains/domain-suggestion' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
-	abtest = require( 'lib/abtest' ).abtest,
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	{ isNextDomainFree } = require( 'lib/cart-values/cart-items' );
 
-const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
-
 var DomainSearchResults = React.createClass( {
+	propTypes: {
+		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
+		lastDomainError: React.PropTypes.object,
+		lastDomainSearched: React.PropTypes.string,
+		cart: React.PropTypes.object,
+		products: React.PropTypes.object.isRequired,
+		selectedSite: React.PropTypes.object,
+		availableDomain: React.PropTypes.object,
+		suggestions: React.PropTypes.array,
+		placeholderQuantity: React.PropTypes.number.isRequired,
+		buttonLabel: React.PropTypes.string,
+		mappingSuggestionLabel: React.PropTypes.string,
+		offerMappingOption: React.PropTypes.bool,
+		onClickResult: React.PropTypes.func.isRequired,
+		onAddMapping: React.PropTypes.func,
+		onClickMapping: React.PropTypes.func
+	},
 	isDomainUnavailable: function() {
 		return this.props.lastDomainError &&
 			includes( [ 'not_available', 'not_available_but_mappable' ], this.props.lastDomainError.code );
@@ -58,7 +72,7 @@ var DomainSearchResults = React.createClass( {
 				<DomainRegistrationSuggestion
 					suggestion={ availableDomain }
 					key={ availableDomain.domain_name }
-					withPlansOnly={ domainsWithPlansOnlyTestEnabled }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					buttonContent={ this.props.buttonContent }
 					selectedSite={ this.props.selectedSite }
 					cart={ this.props.cart }
@@ -67,7 +81,7 @@ var DomainSearchResults = React.createClass( {
 		} else if ( this.props.suggestions && this.props.suggestions.length !== 0 && this.isDomainUnavailable() ) {
 			if ( this.props.products.domain_map && this.props.lastDomainError.code === 'not_available_but_mappable' ) {
 				const components = { a: <a href="#" onClick={ this.addMappingAndRedirect }/>, small: <small /> };
-				if ( domainsWithPlansOnlyTestEnabled ) {
+				if ( this.props.domainsWithPlansOnly ) {
 					mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
 						' with WordPress.com Premium.{{/small}}', {
 							args: { domain: lastDomainSearched },
@@ -154,7 +168,7 @@ var DomainSearchResults = React.createClass( {
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
 						selectedSite={ this.props.selectedSite }
-						withPlansOnly={ domainsWithPlansOnlyTestEnabled }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						onButtonClick={ this.props.onClickResult.bind( null, suggestion ) } />
 				);
 			}, this );
@@ -165,7 +179,7 @@ var DomainSearchResults = React.createClass( {
 						onButtonClick={ this.props.onClickMapping }
 						products={ this.props.products }
 						selectedSite={ this.props.selectedSite }
-						withPlansOnly={ domainsWithPlansOnlyTestEnabled }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						cart={ this.props.cart } />
 				);
 			}

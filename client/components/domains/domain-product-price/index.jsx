@@ -3,27 +3,31 @@
  */
 import React from 'react';
 import classnames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import PremiumPopover from 'components/plans/premium-popover';
-import { abtest } from 'lib/abtest';
+import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 
 const DomainProductPrice = React.createClass( {
 	propTypes: {
 		isLoading: React.PropTypes.bool,
 		price: React.PropTypes.string,
 		freeWithPlan: React.PropTypes.bool,
-		requiresPlan: React.PropTypes.bool
+		requiresPlan: React.PropTypes.bool,
+		domainsWithPlansOnly: React.PropTypes.bool.isRequired
 	},
 	renderFreeWithPlan() {
-		const domainsWithPlansOnlyTestEnabled = abtest( 'domainsWithPlansOnly' ) === 'plansOnly';
-
 		return (
 			<div
-				className={ classnames( 'domain-product-price', 'is-free-domain', { 'no-price': domainsWithPlansOnlyTestEnabled } ) }>
-				{ ! domainsWithPlansOnlyTestEnabled && this.renderFreeWithPlanPrice() }
+				className={ classnames(
+					'domain-product-price',
+					'is-free-domain',
+					{ 'no-price': this.props.domainsWithPlansOnly } ) }>
+				{ ! this.props.domainsWithPlansOnly && this.renderFreeWithPlanPrice() }
 				<span className="domain-product-price__free-text" ref="subMessage">
 					{ this.translate( 'Free with your plan' ) }
 				</span>
@@ -90,4 +94,9 @@ const DomainProductPrice = React.createClass( {
 	}
 } );
 
-export default DomainProductPrice;
+export default connect(
+	state => ( { domainsWithPlansOnly: getCurrentUser( state ) ?
+		currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) :
+		true
+	} )
+)( DomainProductPrice );

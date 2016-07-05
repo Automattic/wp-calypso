@@ -4,6 +4,7 @@
  * External dependencies
  */
 var assign = require( 'lodash/assign' ),
+	endsWith = require( 'lodash/endsWith' ),
 	difference = require( 'lodash/difference' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	pick = require( 'lodash/pick' );
@@ -242,7 +243,7 @@ function getDomainProductRanking( product ) {
 	}
 }
 
-function isDependentProduct( product, dependentProduct ) {
+function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
 	var slug, dependentSlug, isPlansOnlyDependent = false;
 
 	product = formatProduct( product );
@@ -251,7 +252,7 @@ function isDependentProduct( product, dependentProduct ) {
 	slug = isDomainRegistration( product ) ? 'domain' : product.product_slug;
 	dependentSlug = isDomainRegistration( dependentProduct ) ? 'domain' : dependentProduct.product_slug;
 
-	if ( ( product.extra && dependentProduct.extra ) && ( product.extra.withPlansOnly === 'yes' || dependentProduct.extra.withPlansOnly === 'yes' ) ) {
+	if ( domainsWithPlansOnly ) {
 		isPlansOnlyDependent = isPlan( product ) && ( isDomainRegistration( dependentProduct ) || isDomainMapping( dependentProduct ) );
 	}
 
@@ -318,6 +319,13 @@ function isUnlimitedThemes( product ) {
 	return 'unlimited_themes' === product.product_slug;
 }
 
+function isWordPressDomain( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return endsWith( product.domain_name, '.wordpress.com' );
+}
+
 function whitelistAttributes( product ) {
 	return pick( product, Object.keys( schema.properties ) );
 }
@@ -368,5 +376,6 @@ module.exports = {
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
+	isWordPressDomain,
 	whitelistAttributes
 };
