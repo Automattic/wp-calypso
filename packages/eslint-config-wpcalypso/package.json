@@ -1,0 +1,25 @@
+{
+  "name": "eslint-config-wpcalypso",
+  "version": "0.1.0",
+  "description": "ESLint configuration following WordPress.com's Calypso JavaScript Coding Guidelines",
+  "keywords": [
+    "eslint"
+  ],
+  "author": "Automattic",
+  "contributors": [
+    {
+      "name": "Andrew Duthie",
+      "email": "andrew.duthie@automattic.com",
+      "url": "http://andrewduthie.com"
+    }
+  ],
+  "license": "GPL-2.0+",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Automattic/eslint-config-wpcalypso.git"
+  },
+  "peerDependencies": {
+    "eslint": "^2.13.1",
+    "eslint-plugin-wpcalypso": "^1.3.2"
+  }
+}
