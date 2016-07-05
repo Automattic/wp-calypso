@@ -19,6 +19,9 @@
 //   ]
 //
 
+/**
+ * External dependencies
+ */
 import camelCase from 'lodash/camelCase';
 import join from 'lodash/join';
 import map from 'lodash/map';
