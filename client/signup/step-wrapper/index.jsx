@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -65,8 +66,12 @@ export default React.createClass( {
 	},
 
 	render: function() {
+		const classes = classNames( 'step-wrapper', {
+			'is-wide-layout': this.props.isWideLayout
+		} );
+
 		return (
-			<div className="step-wrapper">
+			<div className={ classes }>
 				<StepHeader
 					headerText={ this.headerText() }
 					subHeaderText={ this.subHeaderText() }>

@@ -12,7 +12,8 @@ import {
 	getPlans,
 	isRequestingPlans,
 	getPlan,
-	getPlanRawPrice
+	getPlanRawPrice,
+	getPlanSlug
 } from '../selectors';
 
 /**
@@ -111,6 +112,52 @@ describe( 'selectors', () => {
 			} );
 			const price = getPlanRawPrice( state, 44, true );
 			expect( price ).to.eql( null );
+		} );
+	} );
+
+	describe( '#getPlanSlug()', () => {
+		it( 'should return plan product_slug', () => {
+			const state = {
+				plans: {
+					items: [ {
+						product_id: 1003,
+						product_slug: 'value_bundle'
+					} ]
+				}
+			};
+
+			const planSlug = getPlanSlug( state, 1003 );
+
+			expect( planSlug ).to.equal( 'value_bundle' );
+		} );
+
+		it( 'should return null if plan is missing', () => {
+			const state = {
+				plans: {
+					items: [ {
+						product_id: 1003,
+						product_slug: 'value_bundle'
+					} ]
+				}
+			};
+
+			const planSlug = getPlanSlug( state, 1337 );
+
+			expect( planSlug ).to.equal( null );
+		} );
+
+		it( 'should return null if plan doesn\'t have product_slug', () => {
+			const state = {
+				plans: {
+					items: [ {
+						product_id: 1003
+					} ]
+				}
+			};
+
+			const planSlug = getPlanSlug( state, 1003 );
+
+			expect( planSlug ).to.equal( null );
 		} );
 	} );
 } );
