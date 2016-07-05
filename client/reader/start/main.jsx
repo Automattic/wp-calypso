@@ -39,7 +39,7 @@ const Start = React.createClass( {
 
 	getStateFromStores() {
 		return {
-			totalSubscriptions: FeedSubscriptionStore.getTotalSubscriptions()
+			totalSubscriptionsExcludingOwned: FeedSubscriptionStore.getTotalSubscriptionsExcludingOwned()
 		};
 	},
 
@@ -60,11 +60,8 @@ const Start = React.createClass( {
 	},
 
 	render() {
-		const totalSubscriptions = this.state.totalSubscriptions;
-
-		// Reduce the total subscription count by one for display (exclude the user's own site)
-		const totalSubscriptionsDisplay = totalSubscriptions > 0 ? totalSubscriptions - 1 : 0;
-		const canGraduate = ( this.state.totalSubscriptions > 1 );
+		const totalSubscriptionsExcludingOwned = this.state.totalSubscriptionsExcludingOwned;
+		const canGraduate = ( totalSubscriptionsExcludingOwned > 0 );
 		const hasRecommendations = this.props.recommendationIds.length > 0;
 
 		return (
@@ -82,12 +79,12 @@ const Start = React.createClass( {
 						<span className="reader-start__bar-text">
 							{
 								this.translate(
-									'You\'re following %(totalSubscriptionsDisplay)d site.',
-									'You\'re following %(totalSubscriptionsDisplay)d sites.',
+									'Great! You\'re now following %(totalSubscriptions)d site.',
+									'Great! You\'re now following %(totalSubscriptions)d sites.',
 									{
-										count: totalSubscriptionsDisplay,
+										count: totalSubscriptionsExcludingOwned,
 										args: {
-											totalSubscriptionsDisplay: totalSubscriptionsDisplay
+											totalSubscriptions: totalSubscriptionsExcludingOwned
 										}
 									}
 								)

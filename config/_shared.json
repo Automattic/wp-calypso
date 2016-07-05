@@ -143,5 +143,5 @@
 		{ "value": 452, "langSlug": "zh-tw", "name": "zh-tw - 繁體中文", "wpLocale": "zh_TW", "popular": 14 }
 	],
 	"project": "wordpress-com",
-	"reader_cold_start_graduation_threshold": 2
+	"reader_cold_start_graduation_threshold": 1
 }

@@ -333,4 +333,34 @@ describe( 'store', function() {
 		expect( FeedSubscriptionStore.getSubscriptions().list.count() ).to.eql( 3 );
 		expect( FeedSubscriptionStore.getSubscriptions().list.get( 1 ).get( 'feed_ID' ) ).to.eql( 456 );
 	} );
+
+	it( 'should not increment the totalSubscriptionsExcludingOwned count if the user is the owner of the blog', function() {
+		const siteUrl = 'http://www.tomato.com';
+
+		// The initial action from the UI
+		Dispatcher.handleViewAction( {
+			type: 'FOLLOW_READER_FEED',
+			url: siteUrl,
+			data: { url: siteUrl },
+			error: null
+		} );
+
+		// The action from the API response
+		Dispatcher.handleServerAction( {
+			type: 'RECEIVE_FOLLOW_READER_FEED',
+			url: siteUrl,
+			data: {
+				subscribed: true,
+				subscription: {
+					URL: siteUrl,
+					feed_ID: 123,
+					is_owner: true
+				}
+			}
+		} );
+
+		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.tomato.com' ) ).to.eq( true );
+		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 1 );
+		expect( FeedSubscriptionStore.getTotalSubscriptionsExcludingOwned() ).to.eq( 0 );
+	} );
 } );
