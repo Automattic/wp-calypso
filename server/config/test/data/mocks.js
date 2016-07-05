@@ -1,4 +1,8 @@
+/**
+ * External dependencies
+ */
 import path from 'path';
+import fs from 'fs';
 
 function toJSON( val ) {
 	return JSON.stringify( val );
@@ -6,11 +10,13 @@ function toJSON( val ) {
 
 export default {
 	INVALID_PATH: {
+		...fs,
 		existsSync: () => false,
 		readFileSync: () => ''
 	},
 
 	VALID_SECRETS: {
+		...fs,
 		existsSync: ( file ) => {
 			switch ( path.basename( file ) ) {
 				case 'secrets.json':
@@ -38,6 +44,7 @@ export default {
 	},
 
 	VALID_ENV_FILES: {
+		...fs,
 		existsSync: ( file ) => {
 			switch ( path.basename( file ) ) {
 				case '_shared.json':
