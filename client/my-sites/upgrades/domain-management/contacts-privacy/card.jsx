@@ -22,7 +22,8 @@ const ContactsPrivacyCard = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired
+		] ).isRequired,
+		isCurrentUserOwner: React.PropTypes.bool.isRequired
 	},
 
 	render() {
@@ -43,7 +44,7 @@ const ContactsPrivacyCard = React.createClass( {
 						) }
 					</p>
 
-					{ this.getNotice() }
+					{ this.props.isCurrentUserOwner && this.getNotice() }
 
 					<ContactDisplay
 						contactInformation={ this.props.contactInformation } />
@@ -83,7 +84,7 @@ const ContactsPrivacyCard = React.createClass( {
 						}
 					) }
 				</Notice>
-			)
+			);
 		}
 
 		return (

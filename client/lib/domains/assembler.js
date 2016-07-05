@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {type as domainTypes} from './constants';
+import { type as domainTypes } from './constants';
 
 function createDomainObjects( dataTransferObject ) {
 	let domains = [];
@@ -28,6 +28,7 @@ function createDomainObjects( dataTransferObject ) {
 			googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),
 			hasPrivacyProtection: domain.has_private_registration,
 			isAutoRenewing: domain.auto_renewing,
+			isCurrentUserOwner: domain.is_current_user_owner,
 			isPendingIcannVerification: domain.is_pending_icann_verification,
 			isPrimary: domain.primary_domain,
 			manualTransferRequired: domain.manual_transfer_required,
