@@ -7,11 +7,11 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { 
+import {
 	CONNECTION_LOST,
 	CONNECTION_RESTORED,
-	REMOVE_NOTICE,
-	NEW_NOTICE
+	NOTICE_REMOVE,
+	NOTICE_CREATE
 } from 'state/action-types';
 import { connectionLost, connectionRestored } from '../actions';
 
@@ -28,12 +28,12 @@ describe( 'state/application actions', () => {
 		} );
 
 		it( 'should remove notice with connectionRestored information', () => {
-			expect( dispatch.calledWith( { type: REMOVE_NOTICE, noticeId: 'connectionRestored' } ) ).ok;
+			expect( dispatch.calledWith( { type: NOTICE_REMOVE, noticeId: 'connectionRestored' } ) ).ok;
 		} );
 
 		it( 'should dispatch a notice with connectionLost information ', () => {
 			expect( dispatch.calledWithMatch( {
-				type: NEW_NOTICE,
+				type: NOTICE_CREATE,
 				notice: {
 					noticeId: 'connectionLost',
 					text: exampleText
@@ -55,12 +55,12 @@ describe( 'state/application actions', () => {
 		} );
 
 		it( 'should remove notice with connectionLost information', () => {
-			expect( dispatch.calledWith( { type: REMOVE_NOTICE, noticeId: 'connectionLost' } ) ).ok;
+			expect( dispatch.calledWith( { type: NOTICE_REMOVE, noticeId: 'connectionLost' } ) ).ok;
 		} );
 
 		it( 'should dispatch a notice with connectionRestored information ', () => {
 			expect( dispatch.calledWithMatch( {
-				type: NEW_NOTICE,
+				type: NOTICE_CREATE,
 				notice: {
 					noticeId: 'connectionRestored',
 					text: exampleText

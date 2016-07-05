@@ -2,12 +2,11 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { NEW_NOTICE, REMOVE_NOTICE } from 'state/action-types';
+import { NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
 import { removeNotice, successNotice, errorNotice } from '../actions';
 
 describe( 'actions', function() {
@@ -16,7 +15,7 @@ describe( 'actions', function() {
 			const action = removeNotice( 123 );
 
 			expect( action ).to.eql( {
-				type: REMOVE_NOTICE,
+				type: NOTICE_REMOVE,
 				noticeId: 123
 			} );
 		} );
@@ -27,7 +26,7 @@ describe( 'actions', function() {
 			const text = 'potato',
 				action = successNotice( text );
 
-			expect( action.type ).to.eql( NEW_NOTICE );
+			expect( action.type ).to.eql( NOTICE_CREATE );
 			expect( action.notice ).to.include( {
 				text,
 				status: 'is-success'
@@ -49,7 +48,7 @@ describe( 'actions', function() {
 			const text = 'potato',
 				action = errorNotice( text );
 
-			expect( action.type ).to.eql( NEW_NOTICE );
+			expect( action.type ).to.eql( NOTICE_CREATE );
 			expect( action.notice ).to.include( {
 				text,
 				status: 'is-error'
