@@ -20,8 +20,7 @@ import Dialog from 'components/dialog';
 
 function EditorForbidden( { translate, userCanEdit, siteSlug } ) {
 	if ( false !== userCanEdit ) {
-		// [TODO]: React 15 supports returning `null` from function components
-		return <noscript />;
+		return null;
 	}
 
 	const buttons = [
