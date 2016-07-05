@@ -94,24 +94,3 @@
 	margin-top: -3px;
 	margin-right: 6px;
 }
-
-.post-type-list__post-actions {
-	margin-right: -8px;
-	flex-shrink: 0;
-}
-
-.post-type-list__post-actions .button {
-	opacity: 0.5;
-	padding-left: 8px;
-	padding-right: 8px;
-
-	&:hover {
-		opacity: 1;
-	}
-}
-
-.post-type-list__post-actions .gridicon {
-	&.gridicons-external {
-		top: 4px;
-	}
-}
