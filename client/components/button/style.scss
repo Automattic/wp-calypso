@@ -180,7 +180,6 @@ button {
 	&[disabled],
 	&:disabled {
 		color: lighten( $gray, 30% );
-		background: $white;
 		cursor: default;
 
 		&:active {
