@@ -8,7 +8,7 @@ Under the hood, it uses [`<QueryTerms />`](../../components/data/query-terms) to
 ## Usage
 
 ```jsx
-import TermSelector from 'my-sites/term-tree-selector';
+import TermSelector from 'components/term-tree-selector';
 
 <TermTreeSelector siteId={ this.props.siteId } taxonomy="category" />
 ```
