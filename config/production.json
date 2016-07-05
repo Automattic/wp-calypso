@@ -88,7 +88,8 @@
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
 		"upgrades/paypal": true,
-		"upgrades/premium-themes": true
+		"upgrades/premium-themes": true,
+		"upgrades/removal-survey": true
 	},
 	"rtl": false,
 	"jetpack_min_version": "3.3",
