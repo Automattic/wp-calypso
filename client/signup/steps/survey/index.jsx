@@ -38,6 +38,7 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			stepOne: null,
+			stepTwo: [],
 			verticalList: verticals.get()
 		}
 	},
@@ -97,10 +98,8 @@ export default React.createClass( {
 					</div>
 
 					<Card className={ subVerticalsClasses }>
-						{ this.state.stepOne ?
-							[ <BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne.label }</BackButton>,
-								this.state.stepOne.stepTwo.map( this.renderStepTwoVertical ) ]
-							: null }
+						<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne && this.state.stepOne.label }</BackButton>
+						{ this.state.stepTwo.map( this.renderStepTwoVertical ) }
 					</Card>
 				</div>
 			</div>
@@ -139,7 +138,7 @@ export default React.createClass( {
 			category_id: value,
 			category_label: label
 		} );
-		this.setState( { stepOne } );
+		this.setState( { stepOne, stepTwo: stepOne.stepTwo } );
 	},
 
 	handleNextStep( vertical ) {
