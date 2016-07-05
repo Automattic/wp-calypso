@@ -13,10 +13,12 @@ export default React.createClass( {
 	displayName: 'PopoverMenuItem',
 
 	propTypes: {
+		href: PropTypes.string,
 		isVisible: PropTypes.bool,
 		className: PropTypes.string,
 		icon: PropTypes.string,
-		focusOnHover: PropTypes.bool
+		focusOnHover: PropTypes.bool,
+		children: PropTypes.node
 	},
 
 	getDefaultProps() {
@@ -28,20 +30,20 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { focusOnHover, className, disabled, onClick, icon, children } = this.props;
+		const { focusOnHover, className, href, icon, children } = this.props;
 		const onMouseOver = focusOnHover ? this._onMouseOver : null;
+		const Component = href ? 'a' : 'button';
 
 		return (
-			<button
-				className={ classnames( 'popover__menu-item', className ) }
+			<Component
 				role="menuitem"
-				disabled={ disabled }
-				onClick={ onClick }
 				onMouseOver={ onMouseOver }
-				tabIndex="-1">
+				tabIndex="-1"
+				{ ...this.props }
+				className={ classnames( 'popover__menu-item', className ) }>
 				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
 				{ children }
-			</button>
+			</Component>
 		);
 	},
 
