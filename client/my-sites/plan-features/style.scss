@@ -251,10 +251,23 @@ $plan-features-header-banner-height: 20px;
 	font-size: 14px;
 	color: $gray;
 
+	@include breakpoint( ">960px" ) {
+		height: 105px;
+	}
+
 	&.is-placeholder {
 		@include placeholder( 23% );
 		height: 50px;
 		margin-top: 5px;
+	}
+}
+
+.plan-features__footer-button.is-hidden {
+	display: none;
+
+	@include breakpoint( ">960px" ) {
+		visibility: hidden;
+		display: inline-block;
 	}
 }
 

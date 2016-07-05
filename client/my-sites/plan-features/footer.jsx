@@ -34,6 +34,13 @@ const PlanFeaturesFooter = ( {
 				{ translate( 'Upgrade' ) }
 			</Button>
 		);
+	} else {
+		upgradeButton = (
+			<Button className="plan-features__footer-button is-hidden" disabled>
+				<Gridicon size={ 18 } icon="checkmark" />
+				{ translate( 'Downgrade' ) }
+			</Button>
+		);
 	}
 
 	const classes = classNames( 'plan-features__footer', { 'has-description': !! description } );
