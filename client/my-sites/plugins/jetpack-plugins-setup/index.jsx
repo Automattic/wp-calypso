@@ -332,7 +332,8 @@ const PlansSetup = React.createClass( {
 		if ( pluginsWithErrors.length ) {
 			if ( pluginsWithErrors.length === 1 ) {
 				noticeText = this.translate(
-					'There was an issue installing %(plugin)s. You can fix this by {{a}}manually installing{{/a}} the plugin.',
+					'There was an issue installing %(plugin)s. ' +
+					'It may be possible to fix this by {{a}}manually installing{{/a}} the plugin.',
 					{
 						args: {
 							plugin: pluginsWithErrors[ 0 ].name,
@@ -344,7 +345,8 @@ const PlansSetup = React.createClass( {
 				);
 			} else {
 				noticeText = this.translate(
-					'There were some issues installing your plugins. You can fix this by {{a}}manually installing{{/a}} the plugins.',
+					'There were some issues installing your plugins. ' +
+					'It may be possible to fix this by {{a}}manually installing{{/a}} the plugins.',
 					{
 						components: {
 							a: <a href={ support.JETPACK_SUPPORT } />
