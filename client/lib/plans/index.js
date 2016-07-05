@@ -8,6 +8,7 @@ import get from 'lodash/get';
 import includes from 'lodash/includes';
 import invoke from 'lodash/invoke';
 import debugFactory from 'debug';
+import filter from 'lodash/filter';
 
 /**
  * Internal dependencies
@@ -24,8 +25,10 @@ import {
 import {
 	featuresList,
 	plansList,
+	PLAN_FREE,
 	PLAN_PERSONAL,
-	PLAN_FREE
+	PLAN_PREMIUM,
+	WORDADS_INSTANT
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
@@ -208,4 +211,32 @@ export function plansLink( url, site, intervalType ) {
 	}
 
 	return url;
+}
+
+export function applyTestFiltersToPlansList( planName, testFilters = {
+	wordadsInstantActivation: true,
+	googleVouchers: true,
+	wordpressAdCredits: true
+
+} ) {
+	const {
+		wordadsInstantActivation,
+		googleVouchers,
+		wordpressAdCredits
+	} = testFilters;
+
+	const filteredPlansList = Object.assign( {}, plansList[ planName ] );
+
+	if ( wordadsInstantActivation ) {
+		if ( ! isWordadsInstantActivationEnabled() ) {
+			filteredPlansList.getFeatures = () => filter(
+				plansList[ planName ].getFeatures(),
+				value => value !== WORDADS_INSTANT
+			);
+		} else if ( planName === PLAN_PREMIUM ) {
+			filteredPlansList.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivation;
+		}
+	}
+
+	return filteredPlansList;
 }
