@@ -3,35 +3,66 @@
 	max-width: 500px;
 }
 
-.survey-step__label {
-	vertical-align: top;
-	display: inline-block;
-	margin-bottom: 0;
-	font-size: 14px;
-	font-weight: 600;
+// Both Verticals Lists
+.survey-step__verticals-wrapper {
+	position: relative;
 }
 
-.survey-step__title {
-	display: block;
-	width: 100%;
-	margin-bottom: 0;
-	font-size: 14px;
-	font-weight: 600;
-}
-
-.survey-step__vertical .survey-step__label {
-	cursor: pointer;
-}
-
-.survey-step__title .survey-step__label {
-	width: 100%;
+.survey-step__question {
 	text-align: center;
-	line-height: 18px;
-	color: darken( $gray, 20% );
+	font-size: 14px;
+	font-weight: 600;
 }
 
+// Primary Verticals List
+.survey-step__verticals {
+	pointer-events: none;
+	opacity: 0.4;
+	filter: blur( 3px );
+	transform: translateX( -20% ) scale( 0.9 );
+	transition: filter 0.15s ease-out, opacity 0.15s ease-out, transform 0.15s ease-out;
+
+	&.active {
+		filter: blur( 0 );
+		pointer-events: auto;
+		opacity: 1;
+		transform: translateX( 0 ) scale( 1 );
+	}
+}
+
+// Sub Verticals List
+.survey-step__sub-verticals {
+	position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+	min-height: 500px;
+	padding: 0;
+	margin-bottom: 24px;
+	pointer-events: none;
+	opacity: 0;
+	filter: blur( 3px );
+	transform: translateX( 20% );
+	transition: filter 0.2s ease-in-out, opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+
+	&.active {
+		pointer-events: auto;
+		opacity: 1;
+		filter: blur( 0 );
+		transform: translateX( 0 );
+	}
+
+	// Override HeaderCake's margin
+	.header-cake.card {
+		margin-top: 0;
+	}
+}
+
+
+// Verticals List Item
 .survey-step__vertical {
 	margin-bottom: 0;
+	cursor: pointer;
 }
 
 .survey-step__vertical__icon {
@@ -39,8 +70,8 @@
 	margin-top: -2px;
 	margin-right: 16px;
 	color: lighten( $gray, 10% );
-}
 
-.survey-step__vertical:hover .survey-step__vertical__icon {
-	color: $gray;
+	.survey-step__vertical:hover & {
+		color: $gray;
+	}
 }

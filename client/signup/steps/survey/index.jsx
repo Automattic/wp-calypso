@@ -14,6 +14,7 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import BackButton from 'components/header-cake';
 import Gridicon from 'components/gridicon';
+import classNames from 'classnames';
 
 function isSurveyOneStep() {
 	return false;
@@ -37,6 +38,7 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			stepOne: null,
+			stepTwo: [],
 			verticalList: verticals.get()
 		};
 	},
@@ -74,22 +76,32 @@ export default React.createClass( {
 	},
 
 	renderOptionList() {
-		if ( this.state.stepOne ) {
-			return (
-				<div>
-					<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne.label }</BackButton>
-					{ this.state.stepOne.stepTwo.map( this.renderStepTwoVertical ) }
-				</div>
-			);
-		}
 		const blogLabel = this.translate( 'What is your blog about?' );
 		const siteLabel = this.translate( 'What is your website about?' );
+
+		let verticalsClasses = classNames(
+				'survey-step__verticals',
+				{ active: ! this.state.stepOne } );
+
+		let subVerticalsClasses = classNames(
+				'survey-step__sub-verticals',
+				{ active: this.state.stepOne } );
+
 		return (
-			<div>
-				<CompactCard className="survey-step__title">
-					<label className="survey-step__label">{ this.props.surveySiteType === 'blog' ? blogLabel : siteLabel }</label>
-				</CompactCard>
-				{ this.state.verticalList.map( this.renderStepOneVertical ) }
+			<div className="survey-step__wrapper">
+				<div className="survey-step__verticals-wrapper">
+					<div className={ verticalsClasses }>
+						<CompactCard className="survey-step__question">
+							<label>{ this.props.surveySiteType === 'blog' ? blogLabel : siteLabel }</label>
+						</CompactCard>
+						{ this.state.verticalList.map( this.renderStepOneVertical ) }
+					</div>
+
+					<Card className={ subVerticalsClasses }>
+						<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne && this.state.stepOne.label }</BackButton>
+						{ this.state.stepTwo.map( this.renderStepTwoVertical ) }
+					</Card>
+				</div>
 			</div>
 		);
 	},
@@ -126,7 +138,7 @@ export default React.createClass( {
 			category_id: value,
 			category_label: label
 		} );
-		this.setState( { stepOne } );
+		this.setState( { stepOne, stepTwo: stepOne.stepTwo } );
 	},
 
 	handleNextStep( vertical ) {
