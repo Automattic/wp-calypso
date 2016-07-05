@@ -24,12 +24,10 @@ import jetpackSSOForm from './sso';
 import i18nUtils from 'lib/i18n-utils';
 import analytics from 'lib/analytics';
 import config from 'config';
-import plansFactory from 'lib/plans-list';
 import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';
 import titleActions from 'lib/screen-title/actions';
 
-const plans = plansFactory();
 const sites = sitesFactory();
 
 /**
@@ -202,7 +200,6 @@ export default {
 			<CheckoutData>
 				<Plans
 					sites={ sites }
-					plans={ plans }
 					context={ context }
 					destinationType={ context.params.destinationType } />
 			</CheckoutData>,
