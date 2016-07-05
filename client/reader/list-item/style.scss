@@ -3,7 +3,7 @@
 	margin-top: 0;
 	margin-bottom: 0;
 	margin-left: 54px;
-	margin-right: 80px;
+	margin-right: 100px;
 	overflow: hidden;
 	white-space: nowrap;
 	position: relative;
@@ -76,61 +76,13 @@
 .reader-list-item__actions {
 	position: absolute;
 		bottom: 0;
-		right: 0;
-		top: 16px;
+		right: 20px;
+		top: 18px;
 
 	.follow-button__label {
 
 		@include breakpoint( "<660px" ) {
 			display: none;
-		}
-	}
-
-	.follow-button {
-		font-size: 16px;
-		margin: 1px 15px 0 0;
-
-		.gridicon {
-			left: 15px;
-			top: 9px;
-			fill: $gray-dark;
-		}
-
-		.follow-button__label {
-			fill: $gray-dark;
-		}
-
-		&:hover {
-
-			.gridicon {
-				fill: $gray-dark;
-			}
-
-			.follow-button__label {
-				color: $gray-dark;
-			}
-		}
-	}
-
-	.follow-button.is-following {
-
-		.gridicon {
-			fill: $alert-green;
-		}
-
-		.follow-button__label {
-			color: $alert-green;
-		}
-
-		&:hover {
-
-			.gridicon {
-				fill: $alert-green;
-			}
-
-			.follow-button__label {
-				color: $alert-green;
-			}
 		}
 	}
 }
@@ -143,6 +95,10 @@
 
 	.reader-list-item__title,
 	.reader-list-item__description {
-		margin-left: 90px;
+		margin: 0 100px 0 90px;
+
+		@include breakpoint( "<660px" ) {
+			margin: 0 30px 0 90px;
+		}
 	}
 }

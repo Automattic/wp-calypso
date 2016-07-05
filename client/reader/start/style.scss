@@ -160,30 +160,19 @@
 				top: 36px;
 			}
 		}
-
-		@include breakpoint
 	}
+
+	// Use blue Follow button (Gray dark on hover) only in CS
 
 	.follow-button {
 		border-color: $blue-wordpress;
-		float: right;
-		overflow: visible;
-		right: 0;
 
 		.gridicon {
 			fill: $blue-wordpress;
-			position: absolute;
-				left: 15px;
-				top: 9px;
 		}
 
 		.follow-button__label {
 			color: $blue-wordpress;
-			font-size: 16px;
-
-			@include breakpoint( "<660px" ) {
-				display: none;
-			}
 		}
 
 		&:hover {
@@ -240,6 +229,7 @@
 }
 
 .reader-start-card__site-title {
+	color: $gray-dark;
 	display: block;
 	font-size: 13px;
 	font-weight: 400;
@@ -261,10 +251,6 @@
 	}
 }
 
-.reader-start-card__site-title {
-	color: $gray-dark;
-}
-
 .reader-start-card__follower-count {
 	color: $gray;
 	float: left;
@@ -278,6 +264,11 @@
 	a {
 		color: inherit;
 	}
+}
+
+.reader-start-card__follow {
+	position: absolute;
+		right: 16px;
 }
 
 .reader-start-post-preview {
