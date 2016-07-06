@@ -74,7 +74,7 @@ const Plan = React.createClass( {
 		// override plan description during google voucher test
 		if ( isGoogleVouchersEnabled() ) {
 			if ( plan.product_id === premiumPlan.productId ) {
-				plan.description = premiumPlan.description;
+				plan.description = premiumPlan.descriptionWithGoogleVouchers;
 			} else if ( plan.product_id === businessPlan.productId ) {
 				plan.description = isWordpressAdCreditsEnabled() ? businessPlan.descriptionWithWordAdsCredit : businessPlan.description;
 			}

@@ -8,6 +8,7 @@ import get from 'lodash/get';
 import includes from 'lodash/includes';
 import invoke from 'lodash/invoke';
 import debugFactory from 'debug';
+import pickBy from 'lodash/pickBy';
 
 /**
  * Internal dependencies
@@ -24,8 +25,13 @@ import {
 import {
 	featuresList,
 	plansList,
+	PLAN_FREE,
 	PLAN_PERSONAL,
-	PLAN_FREE
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	WORDADS_INSTANT,
+	FEATURE_GOOGLE_AD_CREDITS,
+	getPlanFeaturesConstantObj
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
@@ -67,7 +73,7 @@ export function getSitePlanSlug( siteID ) {
 }
 
 export function canUpgradeToPlan( planKey, site = sitesList.getSelectedSite() ) {
-	const plan = get( site, [ 'plan', 'expired' ], false ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
+	const plan = get( site, [ 'plan', 'expired' ], true ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
 	return get( plansList, [ planKey, 'availableFor' ], () => false )( plan );
 }
 
@@ -159,14 +165,14 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 				if ( showJetpackFreePlan ) {
 					return isJetpackPlan( plan ) && isMonthly( plan );
 				}
-				return isJetpackPlan( plan ) && !isFreeJetpackPlan( plan ) && isMonthly( plan );
+				return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan ) && isMonthly( plan );
 			}
 
 			if ( showJetpackFreePlan ) {
-				return isJetpackPlan( plan ) && !isMonthly( plan );
+				return isJetpackPlan( plan ) && ! isMonthly( plan );
 			}
 
-			return isJetpackPlan( plan ) && !isFreeJetpackPlan( plan ) && !isMonthly( plan );
+			return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan ) && ! isMonthly( plan );
 		}
 
 		if ( hideFreePlan && PLAN_FREE === plan.product_slug ) {
@@ -180,6 +186,11 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 		return ! isJetpackPlan( plan );
 	} );
 }
+
+export const isWordadsInstantActivationEnabled = () => {
+	return isEnabled( 'manage/ads/wordads-instant' ) &&
+		abtest( 'wordadsInstantActivation' ) === 'enabled';
+};
 
 export const isGoogleVouchersEnabled = () => {
 	return ( isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' );
@@ -203,4 +214,34 @@ export function plansLink( url, site, intervalType ) {
 	}
 
 	return url;
+}
+
+export function applyTestFiltersToPlansList( planName ) {
+	const filteredPlanConstantObj = Object.assign( {}, plansList[ planName ] );
+	let filteredPlanFeaturesConstantObj = getPlanFeaturesConstantObj( plansList[ planName ].getFeatures() );
+
+	if ( ! isWordadsInstantActivationEnabled() ) {
+		filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
+			( _, key ) => key !== WORDADS_INSTANT
+		);
+	} else if ( planName === PLAN_PREMIUM ) {
+		filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivation;
+	}
+
+	if ( ! isGoogleVouchersEnabled() ) {
+		filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
+			( _, key ) => key !== FEATURE_GOOGLE_AD_CREDITS
+		);
+	} else if ( planName === PLAN_PREMIUM ) {
+		filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithGoogleVouchers;
+	} else if ( isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS	) {
+		filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsCredit;
+
+		filteredPlanFeaturesConstantObj[ FEATURE_GOOGLE_AD_CREDITS ].getDescription =
+			featuresList[ FEATURE_GOOGLE_AD_CREDITS ].getDescriptionWithWordAdsCredit;
+	}
+
+	filteredPlanConstantObj.getFeatures = () => filteredPlanFeaturesConstantObj;
+
+	return filteredPlanConstantObj;
 }
