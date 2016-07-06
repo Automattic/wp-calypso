@@ -26,7 +26,7 @@ const _fetching = {};
 const normalizePluginInstructions = ( data ) => {
 	const _plugins = data.keys;
 	return keys( _plugins ).map( ( slug ) => {
-		const apiKey = _plugins[slug];
+		const apiKey = _plugins[ slug ];
 		return {
 			slug: slug,
 			name: slug,
@@ -190,7 +190,7 @@ function configure( site, plugin, dispatch ) {
 			break;
 	}
 	if ( ! option || ! plugin.key ) {
-		let optionError = new Error( 'We can\'t configure this plugin.' );
+		const optionError = new Error( 'We can\'t configure this plugin.' );
 		optionError.name = 'ConfigError';
 		dispatch( {
 			type: PLUGIN_SETUP_ERROR,
@@ -200,7 +200,21 @@ function configure( site, plugin, dispatch ) {
 		} );
 		return;
 	}
-	site.setOption( { option_name: option, option_value: plugin.key }, ( error ) => {
+	let optionValue = plugin.key;
+	if ( ( 'vaultpress' === plugin.slug ) ) {
+		optionValue = JSON.stringify( {
+			key: plugin.key,
+			action: 'register',
+		} );
+	}
+	site.setOption( { option_name: option, option_value: optionValue }, ( error, data ) => {
+		if ( ( 'vaultpress' === plugin.slug ) ) {
+			const response = JSON.parse( data.option_value );
+			if ( 'response' === response.action && 'broken' === response.status ) {
+				error = new Error( response.error );
+				error.name = 'RegisterError';
+			}
+		}
 		if ( error ) {
 			dispatch( {
 				type: PLUGIN_SETUP_ERROR,
