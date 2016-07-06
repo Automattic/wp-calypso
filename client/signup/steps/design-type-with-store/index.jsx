@@ -96,7 +96,7 @@ export default React.createClass( {
 		}, 1 );
 	},
 
-	handlePressableStoreBackClick( event ) {
+	handlePressableStoreBackClick() {
 		this.setState( {
 			showStore: false
 		} );
