@@ -69,7 +69,7 @@ export default React.createClass( {
 		return (
 			<div className="design-type-with-store">
 				<div className={ pressableWrapperClassName } >
-					<PressableStoreStep { ... this.props } ref={ this.onPressableStoreStepRef }/>
+					<PressableStoreStep { ... this.props } ref={ this.onPressableStoreStepRef } onBackClick={ this.handlePressableStoreBackClick }/>
 				</div>
 				<div className={ sectionWrapperClassName }>
 					<StepWrapper
@@ -83,6 +83,25 @@ export default React.createClass( {
 				</div>
 			</div>
 		);
+	},
+
+	scrollUp() {
+		this.windowScroller = setInterval( () => {
+			if ( window.pageYOffset > 0 ) {
+				window.scrollBy( 0, -10 );
+			} else {
+				clearInterval( this.windowScroller );
+				this.windowScroller = null;
+			}
+		}, 1 );
+	},
+
+	handlePressableStoreBackClick( event ) {
+		this.setState( {
+			showStore: false
+		} );
+
+		this.scrollUp();
 	},
 
 	handleChoiceClick( event, type ) {
@@ -99,13 +118,7 @@ export default React.createClass( {
 				showStore: true
 			} );
 
-			this.windowScroller = setInterval( () => {
-				if ( window.pageYOffset > 0 ) {
-					window.scrollBy( 0, -10 );
-				} else {
-					clearInterval( this.windowScroller );
-				}
-			}, 1 );
+			this.scrollUp();
 
 			if ( this._pressableStore ) {
 				this._pressableStore.focus();
