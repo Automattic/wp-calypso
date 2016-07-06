@@ -11,7 +11,7 @@ import debug from 'debug';
  * Internal dependencies
  */
 import { isRequestingSitePostsForQuery, isRequestingSitePost } from 'state/posts/selectors';
-import { requestSitePosts, requestSitePost } from 'state/posts/actions';
+import { requestSitePosts, requestSitePost, requestPosts } from 'state/posts/actions';
 
 /**
  * Module variables
@@ -35,6 +35,7 @@ class QueryPosts extends Component {
 
 	request( props ) {
 		const single = !! props.postId;
+		const allSites = ! props.siteId;
 
 		if ( ! single && ! props.requestingPosts ) {
 			log( 'Request post list for site %d using query %o', props.siteId, props.query );
@@ -44,6 +45,11 @@ class QueryPosts extends Component {
 		if ( single && ! props.requestingPost ) {
 			log( 'Request single post for site %d post %d', props.siteId, props.postId );
 			props.requestSitePost( props.siteId, props.postId );
+		}
+
+		if ( allSites && ! props.requestingPost ) {
+			log( 'Request post list for all the user sites using query %o', props.query );
+			props.requestPosts( props.query );
 		}
 	}
 
@@ -75,7 +81,8 @@ export default connect(
 	( dispatch ) => {
 		return bindActionCreators( {
 			requestSitePosts,
-			requestSitePost
+			requestSitePost,
+			requestPosts
 		}, dispatch );
 	}
 )( QueryPosts );

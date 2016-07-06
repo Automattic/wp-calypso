@@ -23,6 +23,7 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	mapStatus = route.mapPostStatus;
 
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import PostTypeList from 'my-sites/post-type-list';
 
 var GUESSED_POST_HEIGHT = 250;
 
@@ -40,18 +41,14 @@ var PostList = React.createClass( {
 	},
 
 	render: function() {
+		const query = {
+			type: 'post',
+			status: mapStatus( this.props.statusSlug ),
+			author: this.props.author
+		};
+
 		return (
-			<PostListFetcher
-				siteID={ this.props.siteID }
-				status={ mapStatus( this.props.statusSlug ) }
-				author={ this.props.author }
-				withImages={ true }
-				withCounts={ true }
-				search={ this.props.search }>
-				<Posts
-					{ ...omit( this.props, 'children' ) }
-				/>
-			</PostListFetcher>
+			<PostTypeList query={ query } bigCards />
 		);
 	}
 } );
