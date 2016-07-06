@@ -22,6 +22,7 @@ import whoisAssembler from 'lib/domains/whois/assembler';
 import WhoisStore from 'lib/domains/whois/store';
 import wp from 'lib/wp';
 import debugFactory from 'debug';
+import { isBeingProcessed } from 'lib/domains/dns';
 
 const debug = debugFactory( 'actions:domain-management' );
 
@@ -259,6 +260,10 @@ function addDns( domainName, record, onComplete ) {
 }
 
 function deleteDns( domainName, record, onComplete ) {
+	if ( isBeingProcessed( record ) ) {
+		return;
+	}
+
 	Dispatcher.handleServerAction( {
 		type: ActionTypes.DNS_DELETE,
 		domainName,

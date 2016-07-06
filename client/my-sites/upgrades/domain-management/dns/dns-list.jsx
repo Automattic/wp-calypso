@@ -6,9 +6,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecord from './dns-record';
 import notices from 'notices';
 import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'lib/upgrades/actions';
+import { isDeletingLastMXRecord } from 'lib/domains/dns';
 
 const DnsList = React.createClass( {
 	propTypes: {
@@ -20,7 +22,44 @@ const DnsList = React.createClass( {
 		] ).isRequired
 	},
 
-	deleteDns: function( record ) {
+	getInitialState: function() {
+		return { dialog: this.noDialog() };
+	},
+
+	noDialog: function() {
+		return {
+			type: null,
+			onClose: null
+		};
+	},
+
+	openDialog( type, onClose ) {
+		this.setState( {
+			dialog: {
+				type,
+				onClose
+			}
+		} );
+	},
+
+	handleDialogClose( result ) {
+		this.state.dialog.onClose( result );
+		this.setState( { dialog: this.noDialog() } );
+	},
+
+	deleteDns: function( record, confirmed = false ) {
+		const { records } = this.props.dns;
+
+		if ( ! confirmed && isDeletingLastMXRecord( record, records ) ) {
+			this.openDialog( 'deleteEmailForwards', ( result ) => {
+				if ( result.shouldDeleteEmailForwards ) {
+					this.deleteDns( record, true );
+				}
+			} );
+
+			return;
+		}
+
 		deleteDnsAction( this.props.selectedDomainName, record, ( error ) => {
 			if ( error ) {
 				notices.error( error.message || this.translate( 'The DNS record has not been deleted.' ) );
@@ -51,19 +90,28 @@ const DnsList = React.createClass( {
 	},
 
 	render: function() {
-		const dnsRecordsList = this.props.dns.records.map( function( dnsRecord, index ) {
-			return (
-				<DnsRecord
-					key={ index }
-					dnsRecord={ dnsRecord }
-					deleteDns={ this.deleteDns }
-					selectedDomainName={ this.props.selectedDomainName }
-					selectedSite={ this.props.selectedSite } />
-			);
-		}, this );
+		const { dialog } = this.state,
+			{ dns, selectedDomainName, selectedSite } = this.props,
+			dnsRecordsList = dns.records.map( function( dnsRecord, index ) {
+				return (
+					<DnsRecord
+						key={ index }
+						dnsRecord={ dnsRecord }
+						onDeleteDns={ this.deleteDns }
+						selectedDomainName={ selectedDomainName }
+						selectedSite={ selectedSite } />
+				);
+			}, this );
 
 		return (
-			<ul className="dns__list">{ dnsRecordsList }</ul>
+			<div className="dns__list">
+				<DeleteEmailForwardsDialog
+					visible={ dialog.type === 'deleteEmailForwards' }
+					onClose={ this.handleDialogClose }
+					selectedDomainName={ selectedDomainName }
+					selectedSite={ selectedSite } />
+				<ul>{ dnsRecordsList }</ul>
+			</div>
 		);
 	}
 } );
