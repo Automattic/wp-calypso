@@ -8,7 +8,8 @@ import { expect } from 'chai';
  */
 import {
 	isRequestingPostTypeTaxonomies,
-	getPostTypeTaxonomies
+	getPostTypeTaxonomies,
+	getPostTypeTaxonomy
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -115,6 +116,98 @@ describe( 'selectors', () => {
 				{ name: 'category', label: 'Categories' },
 				{ name: 'post_tag', label: 'Tags' }
 			] );
+		} );
+	} );
+
+	describe( 'getPostTypeTaxonomy', () => {
+		it( 'should return null if taxonomies are not known', () => {
+			const taxonomy = getPostTypeTaxonomy( {
+				postTypes: {
+					taxonomies: {
+						items: {}
+					}
+				}
+			}, 2916284, 'post', 'post_tag' );
+
+			expect( taxonomy ).to.be.null;
+		} );
+
+		it( 'should return null if post type is not known', () => {
+			const taxonomy = getPostTypeTaxonomy( {
+				postTypes: {
+					taxonomies: {
+						items: {
+							2916284: {
+								post: {
+									category: {
+										name: 'category',
+										label: 'Categories'
+									},
+									post_tag: {
+										name: 'post_tag',
+										label: 'Tags'
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'page', 'post_tag' );
+
+			expect( taxonomy ).to.be.null;
+		} );
+
+		it( 'should return null if taxonomy is not known', () => {
+			const taxonomy = getPostTypeTaxonomy( {
+				postTypes: {
+					taxonomies: {
+						items: {
+							2916284: {
+								post: {
+									category: {
+										name: 'category',
+										label: 'Categories'
+									},
+									post_tag: {
+										name: 'post_tag',
+										label: 'Tags'
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'post', 'not_a_taxonomy' );
+
+			expect( taxonomy ).to.be.null;
+		} );
+
+		it( 'should return a known taxonomy', () => {
+			const taxonomy = getPostTypeTaxonomy( {
+				postTypes: {
+					taxonomies: {
+						items: {
+							2916284: {
+								post: {
+									category: {
+										name: 'category',
+										label: 'Categories'
+									},
+									post_tag: {
+										name: 'post_tag',
+										label: 'Tags'
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'post', 'post_tag' );
+
+			expect( taxonomy ).to.eql( {
+				name: 'post_tag',
+				label: 'Tags'
+			} );
 		} );
 	} );
 } );

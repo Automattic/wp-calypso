@@ -49,7 +49,6 @@ function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 							<TermTokenField
 								postTerms={ postTerms }
 								taxonomyName={ taxonomy.name }
-								taxonomyLabel={ taxonomy.label }
 							/>
 						</Accordion>
 					);
