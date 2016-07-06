@@ -85,7 +85,6 @@ module.exports = {
 		// Assumed by default with Babel
 		strict: [ 2, 'never' ],
 		'valid-jsdoc': [ 2, { requireReturn: false } ],
-		'wpcalypso/no-lodash-import': 2,
 		'wpcalypso/i18n-ellipsis': 2,
 		'wpcalypso/i18n-no-variables': 2,
 		'wpcalypso/i18n-no-placeholders-only': 2,
