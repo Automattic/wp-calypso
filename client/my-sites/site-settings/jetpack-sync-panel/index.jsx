@@ -149,11 +149,7 @@ const JetpackSyncPanel = React.createClass( {
 
 					<div className="jetpack-sync-panel__action">
 						<Button onClick={ this.onSyncRequestButtonClick } disabled={ this.shouldDisableSync() }>
-							{
-								this.shouldDisableSync()
-								? this.translate( 'Performing full sync', { context: 'Button' } )
-								: this.translate( 'Perform full sync', { context: 'Button' } )
-							}
+							{ this.translate( 'Perform full sync', { context: 'Button' } ) }
 						</Button>
 					</div>
 				</div>
