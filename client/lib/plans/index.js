@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
-import find from 'lodash/find';
 import page from 'page';
 import moment from 'moment';
-import get from 'lodash/get';
-import includes from 'lodash/includes';
-import invoke from 'lodash/invoke';
 import debugFactory from 'debug';
-import pickBy from 'lodash/pickBy';
+import {
+	pick,
+	pickBy,
+	find,
+	get,
+	includes,
+	invoke
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,8 +33,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	WORDADS_INSTANT,
-	FEATURE_GOOGLE_AD_CREDITS,
-	getPlanFeaturesConstantObj
+	FEATURE_GOOGLE_AD_CREDITS
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
@@ -73,7 +75,7 @@ export function getSitePlanSlug( siteID ) {
 }
 
 export function canUpgradeToPlan( planKey, site = sitesList.getSelectedSite() ) {
-	const plan = get( site, [ 'plan', 'expired' ], true ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
+	const plan = get( site, [ 'plan', 'expired' ], false ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
 	return get( plansList, [ planKey, 'availableFor' ], () => false )( plan );
 }
 
@@ -217,12 +219,12 @@ export function plansLink( url, site, intervalType ) {
 }
 
 export function applyTestFiltersToPlansList( planName ) {
-	const filteredPlanConstantObj = Object.assign( {}, plansList[ planName ] );
-	let filteredPlanFeaturesConstantObj = getPlanFeaturesConstantObj( plansList[ planName ].getFeatures() );
+	const filteredPlanConstantObj = { ...plansList[ planName ] };
+	let filteredPlanFeaturesConstantObj = pick( featuresList, plansList[ planName ].getFeatures() );
 
 	if ( ! isWordadsInstantActivationEnabled() ) {
 		filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
-			( _, key ) => key !== WORDADS_INSTANT
+			( value, key ) => key !== WORDADS_INSTANT
 		);
 	} else if ( planName === PLAN_PREMIUM ) {
 		filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivation;
@@ -230,7 +232,7 @@ export function applyTestFiltersToPlansList( planName ) {
 
 	if ( ! isGoogleVouchersEnabled() ) {
 		filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
-			( _, key ) => key !== FEATURE_GOOGLE_AD_CREDITS
+			( value, key ) => key !== FEATURE_GOOGLE_AD_CREDITS
 		);
 	} else if ( planName === PLAN_PREMIUM ) {
 		filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithGoogleVouchers;

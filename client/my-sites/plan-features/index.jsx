@@ -4,9 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
 import page from 'page';
-import lodashMap from 'lodash/map';
+import { map, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -76,7 +75,7 @@ class PlanFeatures extends Component {
 				/>
 				<PlanFeaturesItemList>
 					{
-						lodashMap( features, ( featureConstObj, featureConst ) =>
+						map( features, ( featureConstObj, featureConst ) =>
 							<PlanFeaturesItem
 								key={ featureConst }
 								description={ featureConstObj.getDescription

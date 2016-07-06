@@ -395,23 +395,6 @@ export const getPlanObject = planName => {
 	return objectPlan;
 };
 
-/**
- * Returns the features list object with keys as the feature constants and values as the feature objects.
- * Example: { [ FEATURE_XY ] : { getTitle: () => i18n.translate( 'Some title' ) } }
- *
- * @param   {Array}  planFeaturesConstantList List of plan features constants (ie: [ FEATURE_XY, FEATURE_Z ])
- * @returns {Object} Features list object
- */
-export const getPlanFeaturesConstantObj = ( planFeaturesConstantList ) => {
-	const planFeaturesConstantObj = {};
-
-	planFeaturesConstantList.forEach( planFeaturesConst => {
-		planFeaturesConstantObj[ planFeaturesConst ] = featuresList[ planFeaturesConst ];
-	} );
-
-	return planFeaturesConstantObj;
-};
-
 export function isMonthly( plan ) {
 	return includes( JETPACK_MONTHLY_PLANS, plan );
 }
