@@ -165,7 +165,6 @@ Layout = React.createClass( {
 
 	render: function() {
 		var sectionClass = classnames(
-				'wp',
 				'layout',
 				`is-group-${this.props.section.group}`,
 				`is-section-${this.props.section.name}`,
@@ -186,12 +185,12 @@ Layout = React.createClass( {
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
 				{ this.props.isOffline && <OfflineStatus /> }
-				<div id="content" className="wp-content">
+				<div id="content" className="layout__content">
 					{ this.renderWelcome() }
 					{ this.renderPushNotificationPrompt() }
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
-					<div id="primary" className="wp-primary wp-section" />
-					<div id="secondary" className="wp-secondary" />
+					<div id="primary" className="layout__primary" />
+					<div id="secondary" className="layout__secondary" />
 				</div>
 				<div id="tertiary" />
 				<TranslatorLauncher
