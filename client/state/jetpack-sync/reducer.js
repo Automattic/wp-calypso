@@ -2,8 +2,7 @@
  * External dependencis
  */
 import { combineReducers } from 'redux';
-import pick from 'lodash/pick';
-import get from 'lodash/get';
+import { pick, get } from 'lodash';
 
 /**
  * Internal dependencies
