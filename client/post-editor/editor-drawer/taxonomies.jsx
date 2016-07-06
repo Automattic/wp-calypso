@@ -41,7 +41,7 @@ function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 					>
 					{ hierarchical
 						? <TermSelector postTerms={ postTerms } taxonomyName={ name } />
-						: <TermTokenField postTerms={ postTerms } taxonomyName={ name } />
+						: <TermTokenField taxonomyName={ name } />
 					}
 					</Accordion>
 				);
@@ -54,7 +54,7 @@ EditorDrawerTaxonomies.propTypes = {
 	siteId: PropTypes.number,
 	postType: PropTypes.string,
 	postTerms: PropTypes.object,
-	taxonomies: PropTypes.array
+	taxonomies: PropTypes.array,
 };
 
 export default connect( ( state ) => {

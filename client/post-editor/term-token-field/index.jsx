@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import cloneDeep from 'lodash/cloneDeep';
 import { connect } from 'react-redux';
+import { cloneDeep, map } from 'lodash';
 import _debug from 'debug';
 
 /**
@@ -14,10 +14,10 @@ import { getTerms } from 'state/terms/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
+import { editPost } from 'state/posts/actions';
 import TokenField from 'components/token-field';
 import { decodeEntities } from 'lib/formatting';
 import TermsConstants from 'lib/terms/constants';
-import PostActions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import QueryTerms from 'components/data/query-terms';
 
@@ -42,11 +42,12 @@ class TermTokenField extends React.Component {
 		recordStat( termStat );
 		recordEvent( 'Changed Terms', termEventLabel );
 
-		const { postTerms, taxonomyName } = this.props;
-		const terms = cloneDeep( postTerms ) || {};
-		terms[ taxonomyName ] = selectedTerms;
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		PostActions.edit( { terms } );
+		const { siteId, postId, postTerms, taxonomyName } = this.props;
+		this.props.editPost( {
+			terms: {
+				[ taxonomyName ]: selectedTerms
+			}
+		}, siteId, postId );
 	}
 
 	getPostTerms() {
@@ -64,7 +65,7 @@ class TermTokenField extends React.Component {
 	}
 
 	render() {
-		const termNames = ( this.props.terms || [] ).map( term => term.name );
+		const termNames = map( this.props.terms, 'name' );
 
 		return (
 			<label className="editor-drawer__label">
@@ -90,22 +91,29 @@ class TermTokenField extends React.Component {
 
 TermTokenField.propTypes = {
 	siteId: React.PropTypes.number,
+	postId: React.PropTypes.number,
 	postTerms: React.PropTypes.object,
 	taxonomyName: React.PropTypes.string,
 	taxonomyLabel: React.PropTypes.string,
 	terms: React.PropTypes.arrayOf( React.PropTypes.object ),
+	editPost: React.PropTypes.func,
 };
 
-export default connect( ( state, props ) => {
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	( state, props ) => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
 
-	const postId = getEditorPostId( state );
-	const postType = getEditedPostValue( state, siteId, postId, 'type' );
-	const taxonomy = getPostTypeTaxonomy( state, siteId, postType, props.taxonomyName );
+		const postType = getEditedPostValue( state, siteId, postId, 'type' );
+		const taxonomy = getPostTypeTaxonomy( state, siteId, postType, props.taxonomyName );
 
-	return {
-		siteId,
-		taxonomyLabel: taxonomy && taxonomy.label,
-		terms: getTerms( state, siteId, props.taxonomyName ),
-	};
-} )( TermTokenField );
+		return {
+			siteId,
+			postId,
+			taxonomyLabel: taxonomy && taxonomy.label,
+			terms: getTerms( state, siteId, props.taxonomyName ),
+			postTerms: getEditedPostValue( state, siteId, postId, 'terms' ),
+		};
+	},
+	{ editPost }
+)( TermTokenField );
