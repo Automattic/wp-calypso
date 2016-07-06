@@ -10,6 +10,7 @@
 		"add-module-exports",
 		"syntax-jsx",
 		"transform-react-jsx",
-		"transform-react-display-name"
+		"transform-react-display-name",
+		"lodash"
 	]
 }
