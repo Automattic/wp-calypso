@@ -255,8 +255,8 @@ const RemovePurchase = React.createClass( {
 				next: {
 					action: 'next',
 					disabled: this.state.isRemoving ||
-						this.state.questionOneRadio == null ||
-						this.state.questionTwoRadio == null ||
+						this.state.questionOneRadio === null ||
+						this.state.questionTwoRadio === null ||
 						( this.state.questionOneRadio === 'anotherReasonOne' && this.state.questionOneText === '' ) ||
 						( this.state.questionTwoRadio === 'anotherReasonTwo' && this.state.questionTwoText === '' ),
 					label: this.translate( 'Next' ),
