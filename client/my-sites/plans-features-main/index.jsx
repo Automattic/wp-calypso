@@ -268,16 +268,20 @@ class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { site } = this.props;
+		const { site, isInSignup } = this.props;
+		const renderFAQ = () =>
+			this.isJetpackSite( site )
+				? this.getJetpackFAQ()
+				: this.getFAQ( site );
 
 		return (
 			<div class="plans-features-main">
 				{ this.getPlanFeatures() }
 
 				{
-					this.isJetpackSite( site )
-						? this.getJetpackFAQ()
-						: this.getFAQ( site )
+					! isInSignup
+						? renderFAQ()
+						: null
 				}
 			</div>
 		);
