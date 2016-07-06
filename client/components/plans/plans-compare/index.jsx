@@ -15,7 +15,13 @@ import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
 import { fetchSitePlans } from 'state/sites/plans/actions';
-import { filterPlansBySiteAndProps, shouldFetchSitePlans, isGoogleVouchersEnabled, isWordpressAdCreditsEnabled } from 'lib/plans';
+import {
+	filterPlansBySiteAndProps,
+	shouldFetchSitePlans,
+	isGoogleVouchersEnabled,
+	isWordpressAdCreditsEnabled,
+	findCurrencyFromPlans
+} from 'lib/plans';
 import { getPlans } from 'state/plans/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import Gridicon from 'components/gridicon';
@@ -44,11 +50,11 @@ import {
 const googleAdCredits = featuresList[ FEATURE_GOOGLE_AD_CREDITS ];
 const googleAdCreditsFeature = {
 	title: googleAdCredits.getTitle(),
-	compareDescription: isWordpressAdCreditsEnabled() ? googleAdCredits.getDescriptionWithWordAdsCredit() : googleAdCredits.getDescription(),
+	compareDescription: googleAdCredits.getDescription(),
 	product_slug: FEATURE_GOOGLE_AD_CREDITS,
 	1: false,
 	1003: '$100',
-	1008: isWordpressAdCreditsEnabled() ? '$200' : '$100'
+	1008: '$100'
 };
 // WordAds instant activation feature
 const wordAdsInstant = featuresList[ WORDADS_INSTANT ];
@@ -172,6 +178,12 @@ const PlansCompare = React.createClass( {
 		return 3;
 	},
 
+	isUSorCanada() {
+		const { plans } = this.props;
+		const planCurrency = findCurrencyFromPlans( plans );
+		return [ 'USD', 'CAD' ].indexOf( planCurrency ) > -1;
+	},
+
 	getFeatures() {
 		const plans = this.getPlans();
 		const { selectedSite } = this.props;
@@ -187,8 +199,14 @@ const PlansCompare = React.createClass( {
 		}
 
 		// add google-ad-credits feature
-		if ( isGoogleVouchersEnabled() ) {
+		if ( this.isUSorCanada() && isGoogleVouchersEnabled() ) {
 			features.splice( 1, 0, googleAdCreditsFeature );
+		}
+		// update the description if we are also including wordpressAdCredits
+		// this is necessary here so we don't call the abtest module outside of render
+		if ( this.isUSorCanada() && isWordpressAdCreditsEnabled() ) {
+			googleAdCreditsFeature.compareDescription = googleAdCredits.getDescriptionWithWordAdsCredit();
+			googleAdCreditsFeature[ '1008' ] = '$200';
 		}
 
 		if ( isEnabled( 'manage/ads/wordads-instant' ) && abtest( 'wordadsInstantActivation' ) === 'enabled' ) {
