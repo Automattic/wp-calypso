@@ -22,7 +22,7 @@
 	margin-bottom: 16px;
 }
 // Site sections
-.module-list {
+.stats__module-list {
 	@include clear-fix;
 }
 
@@ -98,7 +98,7 @@
 		}
 
 		@include breakpoint( ">960px" ) {
-			.module-list & {
+			.stats__module-list & {
 				font-size: 12px;
 			}
 		}
@@ -263,7 +263,7 @@ ul.module-header-actions {
 	}
 
 	@include breakpoint( ">960px" ) {
-		.module-list & {
+		.stats__module-list & {
 			font-size: 12px;
 		}
 	}
@@ -325,7 +325,7 @@ ul.module-header-actions {
 			line-height: 2em;
 
 			@include breakpoint( ">960px" ) {
-				.module-list & {
+				.stats__module-list & {
 					font-size: 12px;
 				}
 			}

@@ -25,7 +25,7 @@
 
 	// List item height shorter on 2-column modules
 	@include breakpoint( ">960px" ) {
-		.module-list & {
+		.stats__module-list & {
 			font-size: 12px;
 			line-height: 28px;
 		}
@@ -90,7 +90,7 @@
 
 	@include breakpoint( ">960px" ) {
 
-		.module-list & {
+		.stats__module-list & {
 			line-height: 28px;
 
 			span {
@@ -174,7 +174,7 @@
 
 	// List item height shorter on 2-column modules
 	@include breakpoint( ">960px" ) {
-		.module-list & {
+		.stats__module-list & {
 			height: 28px;
 		}
 	}
@@ -210,7 +210,7 @@
 		// Hide for user avatars
 		.followers &,
 		.top-authors &,
-		.authorviews & {
+		.stats__author-views & {
 			background: none;
 
 			&::before {
@@ -225,12 +225,12 @@
 
 	// Icons smaller on 2col
 	@include breakpoint( ">960px" ) {
-		.module-list & .icon {
+		.stats__module-list & .icon {
 			font-size: 20px;
 			line-height: 1.3;
 		}
 
-		.module-list & .gridicon {
+		.stats__module-list & .gridicon {
 			width: 18px;
 			height: 18px;
 		}
@@ -277,7 +277,7 @@
 
 
 	@include breakpoint( ">960px" ) {
-		.module-list & {
+		.stats__module-list & {
 			height: 28px;
 		}
 	}
@@ -400,7 +400,7 @@ ul.module-content-list-item-actions {
 	line-height: inherit;
 
 	@include breakpoint( ">960px" ) {
-		.module-list & {
+		.stats__module-list & {
 			height: 28px;
 		}
 	}
@@ -461,7 +461,7 @@ ul.module-content-list-item-action-submenu {
 
 	// So that 'View' label is moved more to the right since icon has been dropped
 	@include breakpoint( ">960px" ) {
-		.module-list & {
+		.stats__module-list & {
 			margin: 0;
 		}
 	}
@@ -493,7 +493,7 @@ ul.module-content-list-item-action-submenu {
 
 		// Hide 'View' label next to icon on 2-column modules
 		@include breakpoint( ">960px" ) {
-			.module-list & span.module-content-list-item-action-label-view {
+			.stats__module-list & span.module-content-list-item-action-label-view {
 				display: none;
 			}
 		}
@@ -599,7 +599,7 @@ ul.module-content-list-legend {
 	> .module-content-list-item-wrapper {
 		line-height: 48px;
 		@include breakpoint( ">960px" ) {
-			.module-list & {
+			.stats__module-list & {
 				line-height: 28px;
 			}
 		}
@@ -608,7 +608,7 @@ ul.module-content-list-legend {
 	> .module-content-list-item-wrapper .module-content-list-item-label {
 		height: 48px;
 		@include breakpoint( ">960px" ) {
-			.module-list & {
+			.stats__module-list & {
 				height: 28px;
 			}
 		}
@@ -625,7 +625,7 @@ ul.module-content-list-legend {
 		width: 32px;
 		height: 32px;
 		@include breakpoint( ">960px" ) {
-			.module-list & {
+			.stats__module-list & {
 				width: 24px;
 				height: 24px;
 			}
@@ -633,7 +633,7 @@ ul.module-content-list-legend {
 	}
 
 	@include breakpoint( ">960px" ) {
-		.module-list & > .module-content-list-item-wrapper .module-content-list-item-label .icon {
+		.stats__module-list & > .module-content-list-item-wrapper .module-content-list-item-label .icon {
 			margin-top: -2px; // Really couldn't figure out a better way to correctly position the avatar
 		}
 	}
@@ -642,7 +642,7 @@ ul.module-content-list-legend {
 		width: 32px;
 		height: 32px;
 		@include breakpoint( ">960px" ) {
-			.module-list & {
+			.stats__module-list & {
 				width: 24px;
 				height: 24px;
 			}

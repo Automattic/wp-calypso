@@ -125,7 +125,7 @@ module.exports = React.createClass( {
 					dataList={ this.props.summaryList }
 					period={ this.props.period }
 					followList={ this.props.followList }
-					className='authorviews'
+					className='stats__author-views'
 					summary={ true } />;
 				break;
 

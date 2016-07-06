@@ -87,8 +87,8 @@ export default React.createClass( {
 					<MostPopular />
 					<DomainTip siteId={ site ? site.ID : 0 } event="stats_insights_domain" />
 					<div className="stats-nonperiodic has-recent">
-						<div className="module-list">
-							<div className="module-column">
+						<div className="stats__module-list">
+							<div className="stats__module-column">
 								<Comments
 									path={ 'comments' }
 									site={ site }
@@ -97,7 +97,7 @@ export default React.createClass( {
 									commentFollowersList={ commentFollowersList } />
 								{ tagsList }
 							</div>
-							<div className="module-column">
+							<div className="stats__module-column">
 								<Followers
 									path={ 'followers' }
 									site={ site }
