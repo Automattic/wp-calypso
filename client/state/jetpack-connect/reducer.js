@@ -36,7 +36,7 @@ import {
 } from 'state/action-types';
 
 import { isValidStateWithSchema } from 'state/utils';
-import { jetpackConnectSessionsSchema, jetpackConnectAuthorizeSchema } from './schema';
+import { jetpackConnectSessionsSchema } from './schema';
 
 const defaultAuthorizeState = {
 	queryObject: {},
@@ -138,10 +138,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, jetpackConnectAuthorizeSchema ) ) {
-				return state;
-			}
-			return {};
+			return state;
 		case SERIALIZE:
 			return state;
 	}
