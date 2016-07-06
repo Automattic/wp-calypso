@@ -73,7 +73,7 @@ const PlanActions = React.createClass( {
 				<button className="button is-primary plan-actions__upgrade-button"
 					disabled={ this.props.isSubmitting }
 					onClick={ this.handleSelectPlan }>
-					{ this.translate( 'Select Free Plan' ) }
+					{ this.translate( 'Select Free' ) }
 				</button>
 			</div>
 		);
@@ -85,7 +85,7 @@ const PlanActions = React.createClass( {
 				<button className="button is-primary plan-actions__upgrade-button"
 					disabled={ this.props.isSubmitting }
 					onClick={ this.handleSelectJetpackFreePlan }>
-					{ this.translate( 'Select Free Plan' ) }
+					{ this.translate( 'Select Free' ) }
 				</button>
 			</div>
 		);

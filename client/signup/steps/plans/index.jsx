@@ -21,6 +21,8 @@ var productsList = require( 'lib/products-list' )(),
 	StepWrapper = require( 'signup/step-wrapper' ),
 	Gridicon = require( 'components/gridicon' );
 
+import { abtest } from 'lib/abtest';
+import { isEnabled } from 'config';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import QueryPlans from 'components/data/query-plans';
 import config from 'config';
@@ -185,11 +187,13 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		const showPlanFeatures = config.isEnabled( 'manage/plan-features' );
+		const showPlanFeatures = config.isEnabled( 'manage/plan-features' ),
+			personalPlanTestEnabled = abtest( 'personalPlan' ) === 'show' && isEnabled( 'plans/personal-plan' );
 
 		const classes = classNames( 'plans plans-step', {
 			'has-no-sidebar': true,
-			'is-wide-layout': showPlanFeatures
+			'is-wide-layout': showPlanFeatures,
+			'personal-plan-enabled': personalPlanTestEnabled
 		} );
 
 		const renderPlans = () => (

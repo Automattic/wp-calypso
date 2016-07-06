@@ -131,6 +131,13 @@
 	background-image: url('/calypso/images/plans/plan-beginner.svg');
 }
 
+.personal-plan-enabled {
+	.free_plan.plan-actions__illustration,
+	.jetpack_free.plan-actions__illustration {
+		margin-top: 23px;
+	}
+}
+
 .personal-bundle.plan-actions__illustration {
 	background-image: url('/calypso/images/plans/plan-personal.svg');
 }
