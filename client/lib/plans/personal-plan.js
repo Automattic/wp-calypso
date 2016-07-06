@@ -3,9 +3,6 @@
  */
 import { translate } from 'i18n-calypso';
 import has from 'lodash/has';
-import head from 'lodash/head';
-import property from 'lodash/property';
-import map from 'lodash/map';
 import some from 'lodash/some';
 import isEmpty from 'lodash/isEmpty';
 import findIndex from 'lodash/findIndex';
@@ -18,6 +15,7 @@ import matchesProperty from 'lodash/matchesProperty';
  */
 import formatCurrency from 'lib/format-currency';
 import { PLAN_FREE, PLAN_PERSONAL } from './constants';
+import { findCurrencyFromPlans } from 'lib/plans';
 
 export const personalPlan = {
 	product_id: 1009,
@@ -48,8 +46,6 @@ export const personalPlan = {
 	has_domain_credit: true
 };
 
-const findCurrency = plans => head( map( plans, property( 'currency_code' ) ) ) || 'USD';
-
 const pricePersonalPlan = currencyCode => {
 	const cost = personalPlan.prices[ currencyCode ];
 	const price = formatCurrency( cost, currencyCode );
@@ -64,7 +60,7 @@ const pricePersonalPlan = currencyCode => {
 	};
 };
 
-const getPricedPersonalPlan = flow( findCurrency, pricePersonalPlan );
+const getPricedPersonalPlan = flow( findCurrencyFromPlans, pricePersonalPlan );
 
 const hasCurrentPlan = partialRight( some, matchesProperty( 'current_plan', true ) );
 
