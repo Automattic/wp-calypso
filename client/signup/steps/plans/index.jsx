@@ -193,7 +193,7 @@ module.exports = React.createClass( {
 		const classes = classNames( 'plans plans-step', {
 			'has-no-sidebar': true,
 			'is-wide-layout': showPlanFeatures,
-			'personal-plan-enabled': personalPlanTestEnabled
+			'has-personal-plan': personalPlanTestEnabled
 		} );
 
 		const renderPlans = () => (

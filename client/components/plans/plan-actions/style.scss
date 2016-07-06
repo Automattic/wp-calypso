@@ -131,7 +131,7 @@
 	background-image: url('/calypso/images/plans/plan-beginner.svg');
 }
 
-.personal-plan-enabled {
+.plans.has-personal-plan, .main.has-personal-plan {
 	.free_plan.plan-actions__illustration,
 	.jetpack_free.plan-actions__illustration {
 		margin-top: 23px;
