@@ -309,16 +309,14 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderPrice() {
-		if ( ! this.isLoaded() || this.isActive() ) {
-			return '';
-		}
-
 		let price = this.props.price;
-		if ( ! isPremium( this.props ) ) {
+		if ( ! this.isLoaded() || this.isActive() ) {
+			price = '';
+		} else if ( ! isPremium( this.props ) ) {
 			price = i18n.translate( 'Free' );
 		}
 
-		return <span className="theme__sheet-action-bar-cost">{ price }</span>;
+		return price ? <span className="theme__sheet-action-bar-cost">{ price }</span> : '';
 	},
 
 	renderButton() {
