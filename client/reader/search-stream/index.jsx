@@ -4,15 +4,14 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import debounce from 'lodash/debounce';
+import closest from 'component-closest';
 
 /**
  * Internal Dependencies
  */
 import Stream from 'reader/stream';
 import EmptyContent from './empty';
-import StreamHeader from 'reader/stream-header';
 import HeaderBack from 'reader/header-back';
-import Gridicon from 'components/gridicon';
 import FormTextInput from 'components/forms/form-text-input';
 import SearchCard from 'components/post-card/search';
 import SiteStore from 'lib/reader-site-store';
@@ -37,12 +36,37 @@ const SearchCardAdapter = React.createClass( {
 		this.setState( this.getStateFromStores( nextProps ) );
 	},
 
+	onCardClick( props, event ) {
+		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
+			return;
+		}
+		const rootNode = ReactDom.findDOMNode( this );
+		const anchor = closest( event.target, 'a', true, rootNode );
+
+		if ( anchor && anchor.href.search( /\/read\/blogs\/|\/read\/feeds\// ) !== -1 ) {
+			return;
+		}
+
+		// declarative ignore
+		if ( closest( event.target, '.ignore-click, [rel=external]', true, rootNode ) ) {
+			return;
+		}
+
+		event.preventDefault();
+		this.props.handleClick( this.props.post, {} );
+	},
+
+	onCommentClick() {
+		this.props.handleClick( this.props.post, { comments: true } );
+	},
+
 	render() {
 		return <SearchCard
 			post={ this.props.post }
 			site={ this.state.site }
 			feed={ this.state.feed }
-			onClick={ this.props.handleClick } />;
+			onClick={ this.onCardClick }
+			onCommentClick={ this.onCommentClick } />;
 	}
 } );
 
@@ -86,7 +110,7 @@ const FeedStream = React.createClass( {
 	},
 
 	updateState( props = this.props ) {
-		var newState = {
+		const newState = {
 			title: this.getTitle( props )
 		};
 		if ( newState.title !== this.state.title ) {
@@ -106,7 +130,7 @@ const FeedStream = React.createClass( {
 		this.props.onQueryChange( newValue );
 	},
 
-	cardFactory( post ) {
+	cardFactory() {
 		return SearchCardAdapter;
 	},
 
@@ -130,7 +154,13 @@ const FeedStream = React.createClass( {
 				{ this.props.showBack && <HeaderBack /> }
 				<h2>{ this.translate( 'Search' ) }</h2>
 				<p>
-					<FormTextInput type="text" value={ undefined } defaultValue={ this.props.query } ref="searchInput" onChange={ this.debouncedUpdate } placeholder={ this.translate( 'Enter a search term' ) } />
+					<FormTextInput
+						type="text"
+						value={ undefined }
+						defaultValue={ this.props.query }
+						ref="searchInput"
+						onChange={ this.debouncedUpdate }
+						placeholder={ this.translate( 'Enter a search term' ) } />
 				</p>
 			</Stream>
 		);
