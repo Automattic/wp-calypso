@@ -229,7 +229,7 @@ html {
 }
 
 // Simple animation to make elements appear
-@keyframes "appear" {
+@keyframes appear {
 	0% {
 		opacity: 0;
 	}
@@ -238,17 +238,17 @@ html {
 	}
 }
 
-@keyframes "pulse-light" {
+@keyframes pulse-light {
 	50% { background-color: lighten( $gray, 30% ); }
 }
 
-@keyframes "loading-dot-pulse" {
+@keyframes loading-dot-pulse {
 	0% { opacity: 0; }
 	50% { opacity: 1; }
 	100% { opacity: 0; }
 }
 
-@keyframes "loading-fade" {
+@keyframes loading-fade {
 	0% { opacity: .5; }
 	50% { opacity: 1; }
 	100% { opacity: .5; }
