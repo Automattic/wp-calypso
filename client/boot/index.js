@@ -1,3 +1,6 @@
+// Initialize localStorage polyfill before any dependencies are loaded
+require( 'lib/local-storage' )();
+
 /**
  * External dependencies
  */
@@ -21,7 +24,6 @@ var React = require( 'react' ),
 var config = require( 'config' ),
 	abtest = require( 'lib/abtest' ).abtest,
 	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
-	localStoragePolyfill = require( 'lib/local-storage' )(), //eslint-disable-line
 	analytics = require( 'lib/analytics' ),
 	route = require( 'lib/route' ),
 	user = require( 'lib/user' )(),
