@@ -3,6 +3,8 @@
  */
 import findIndex from 'lodash/findIndex';
 import isUndefined from 'lodash/isUndefined';
+import omitBy from 'lodash/omitBy';
+import pick from 'lodash/pick';
 import reject from 'lodash/reject';
 import update from 'react-addons-update';
 
@@ -85,9 +87,9 @@ function updateDnsState( state, domainName, record, updatedFields ) {
 	return update( state, command );
 }
 
-function findDnsIndex( records, { id, data, name, type } ) {
-	const matchingFields = isUndefined( id ) ? { data, name, type } : { id, data, name, type };
-	return findIndex( records, matchingFields );
+function findDnsIndex( records, record ) {
+	const matchingFields = pick( record, [ 'id', 'data', 'name', 'type' ] );
+	return findIndex( records, omitBy( matchingFields, isUndefined ) );
 }
 
 function getInitialStateForDomain() {
