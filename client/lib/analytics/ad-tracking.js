@@ -33,8 +33,10 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
+		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
 		atlasUniveralTagId: '11187200770563'
-	};
+	},
+	JETPACK_PLANS = [ 'jetpack_premium', 'jetpack_business' ];
 
 /**
  * Globals
@@ -190,6 +192,19 @@ function recordPurchase( product ) {
 		},
 		google_remarketing_only: false
 	} );
+	if ( JETPACK_PLANS.indexOf( product.product_slug ) >= 0 ) {
+		debug( 'Recording Jetpack purchase', product );
+		window.google_trackConversion( {
+			google_conversion_id: GOOGLE_CONVERSION_ID,
+			google_conversion_label: TRACKING_IDS.googleConversionLabelJetpack,
+			google_conversion_value: product.cost,
+			google_conversion_currency: product.currency,
+			google_custom_params: {
+				product_slug: product.product_slug
+			},
+			google_remarketing_only: false
+		} );
+	}
 }
 
 /**
