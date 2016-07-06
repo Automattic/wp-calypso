@@ -9,12 +9,14 @@ import find from 'lodash/find';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getCurrentPlan } from 'lib/plans';
 import { getPlans } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
+import { isEnabled } from 'config';
 import { isJpphpBundle } from 'lib/products-values';
 import Main from 'components/main';
 import Notice from 'components/notice';
@@ -129,7 +131,8 @@ const Plans = React.createClass( {
 	render() {
 		const selectedSite = this.props.sites.getSelectedSite(),
 			mainClassNames = {},
-			siteId = this.props.siteId;
+			siteId = this.props.siteId,
+			personalPlanTestEnabled = abtest( 'personalPlan' ) === 'show' && isEnabled( 'plans/personal-plan' );
 
 		let	hasJpphpBundle,
 			currentPlan;
@@ -154,6 +157,7 @@ const Plans = React.createClass( {
 		if ( showPlanFeatures ) {
 			mainClassNames[ 'is-wide-layout' ] = true;
 		}
+		mainClassNames[ 'has-personal-plan' ] = personalPlanTestEnabled;
 
 		return (
 			<div>
