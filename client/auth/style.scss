@@ -6,7 +6,7 @@
 	background: $blue-wordpress;
 	height: 100%;
 
-	.layout__content {
+	.wp-content {
 		height: 100%;
 		margin: 0 auto;
 		overflow: hidden;
@@ -15,11 +15,11 @@
 		padding-right: 0;
 	}
 
-	.layout__content::after {
+	.wp-content:after {
 		content: none;
 	}
 
-	.layout__primary {
+	.wp-primary {
 		height: 100%;
 	}
 

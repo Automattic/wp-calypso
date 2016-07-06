@@ -1,9 +1,6 @@
 /**
- * General styles
+ * Layout Views
  */
-
-$sidebar-width-max: 272px;
-$sidebar-width-min: 228px;
 
 .wpcom-site__logo {
 	color: lighten( $gray, 20% );
@@ -15,6 +12,42 @@ $sidebar-width-min: 228px;
 
 	@include breakpoint( ">960px" ) {
 		font-size: 120px;
+	}
+}
+
+.layout__loader {
+	border-bottom: 1px solid darken( $blue-wordpress, 4% );
+	height: 46px;
+	margin-left: -10%;
+	position: absolute;
+		left: 50%;
+		top: 0;
+	width: 20%;
+	z-index: z-index( 'root', '.layout__loader' );
+
+	// set a delay threshold for opacity changes
+	// prevents showing loader on fast connections
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity 0.1s linear;
+	transition-delay: 0.4s;
+
+	@include breakpoint( "<480px" ) {
+		background: $blue-wordpress;
+	}
+}
+
+.layout__loader.is-active {
+	visibility: visible;
+	opacity: 1;
+}
+
+.layout__preview.web-preview.is-visible,
+.layout__preview.web-preview {
+	left: 0;
+	.web-preview__content {
+		top: 0;
+		transform: scale( 1 );
 	}
 }
 
@@ -274,6 +307,152 @@ img.wp-smiley {
 	vertical-align: -0.1em;
 }
 
+
+/* =General Layout
+----------------------------------------------- */
+$sidebar-width-max: 272px;
+$sidebar-width-min: 228px;
+
+.wp-content {
+	@include clear-fix;
+	position: relative;
+	margin: 47px 0 0 0;
+	padding: 32px 32px 32px ( $sidebar-width-max + 32px );
+	box-sizing: border-box;
+	overflow: hidden;
+
+	.has-no-sidebar & {
+		padding-left: 32px;
+	}
+
+	.is-section-theme & {
+		padding: 0;
+		margin: 0;
+	}
+}
+
+// Tablets
+@include breakpoint( "<960px" ) {
+	.wp-content {
+		padding: 24px;
+		padding-left: ( $sidebar-width-min + 24px );
+
+		.has-no-sidebar & {
+			padding-left: 24px;
+		}
+
+		.is-section-theme & {
+			padding: 0;
+			margin: 0;
+		}
+	}
+}
+
+// Mobile (Full Width)
+@include breakpoint( "<660px" ) {
+	.wp-content {
+		margin-left: 0;
+		padding: 0;
+
+		.has-no-sidebar & {
+			padding-left: 0;
+		}
+	}
+}
+
+
+/* =Sidebar Transitions
+----------------------------------------------- */
+.wp-primary {
+	transition: all 0.15s ease-in-out;
+}
+
+.sidebar,
+.wp-secondary .site-selector,
+.current-site,
+.sidebar__menu {
+	transform: translateX( 0 );
+	transition: all 0.15s cubic-bezier(0.075, 0.820, 0.165, 1.000);
+}
+
+.focus-sites {
+	.wp-primary {
+		opacity: 0.2;
+		pointer-events: none;
+	}
+
+	.wp-secondary .site-selector {
+		opacity: 1;
+		transform: translateX( 272px );
+		pointer-events: auto;
+
+		@include breakpoint( "<660px" ) {
+			transform: translateX( 100vw );
+		}
+	}
+
+	.sidebar {
+		pointer-events: none;
+	}
+
+	.current-site,
+	.sidebar__menu {
+		opacity: 0;
+		transform: translateX( 64px );
+	}
+}
+
+.focus-sidebar {
+	overflow: hidden;
+}
+
+// site selector in the sidebar
+.wp-secondary .site-selector {
+	background: lighten( $gray, 30% );
+	border-right: 1px solid lighten( $gray, 25% );
+	position: fixed;
+		top: 47px;
+		bottom: 0;
+		left: -272px;
+	width: 272px;
+	overflow: hidden;
+	z-index: z-index( 'root', '.wp-secondary .site-selector' );
+	opacity: 0;
+	pointer-events: none;
+
+	.search {
+		border-bottom: 1px solid lighten( $gray, 20% );
+	}
+
+	.site,
+	.all-sites {
+		.site__title,
+		.site__domain {
+			&::after {
+				@include long-content-fade( $color: lighten( $gray, 30% ) );
+			}
+		}
+	}
+
+	@include breakpoint( "<660px" ) {
+		width: 100vw;
+		left: -100vw;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.site-selector__recent {
+		border-bottom: 1px solid lighten( $gray, 20% );
+	}
+}
+
+
+/* =Content
+----------------------------------------------- */
+
+.wp-content a {
+	text-decoration: none;
+}
+
 /* =Media
 ----------------------------------------------- */
 
@@ -296,18 +475,45 @@ object {
 }
 
 
-/*
-Disabled blocks of content.
-Used in releated posts settings.
-@todo get rid of it
-*/
+/* Disabled blocks of content */
+
 .disabled-block {
 	opacity: 0.5;
 }
 
-/*
-@todo this needs to become a component
-*/
+body.promo {
+	margin-top: 0;
+}
+
+body.newdash div.wordpress-com-extension-promo {
+	display: none !important;
+}
+
+.design-assets {
+	@include breakpoint( "<660px" ) {
+		padding: 0 6px;
+	}
+}
+
+.design-assets h2,
+.design-assets h2 a:first-child {
+	color: $gray-dark;
+	font-family: $serif;
+	font-size: 38px;
+	font-weight: bold;
+	margin: 40px 0 15px;
+}
+.design-assets h3 {
+	font-weight: bold;
+	margin-bottom: 8px;
+}
+.design-assets hr {
+	background: transparent;
+	clear: both;
+	height: 2px;
+	margin: 15px 0;
+}
+
 .environment-badge {
 	padding: 16px 0;
 	position: fixed;
@@ -401,7 +607,7 @@ Used in releated posts settings.
 	}
 }
 
-// added to the html element when we don't want the background content to scroll
+//added to the html element when we don't want the background content to scroll
 html.no-scroll {
 	overflow: hidden;
 }
