@@ -38,13 +38,15 @@ export const FEATURE_13GB_STORAGE = '13gb-storage';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
-export const FEATURE_CUSTOM_DESIGN = 'custom-design';
+export const FEATURE_BASIC_DESIGN = 'basic-design';
+export const FEATURE_ADVANCED_DESIGN = 'advanced-design';
 export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
 export const FEATURE_GOOGLE_AD_CREDITS = 'google-ad-credits';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
-export const WORDADS_INSTANT = 'wordads-instant';
+export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
+export const FEATURE_NO_BRANDING = 'no-wp-branding';
 
 // jetpack features constants
 export const FEATURE_SPAM_AKISMET_PLUS = 'spam-akismet-plus';
@@ -74,7 +76,8 @@ export const plansList = {
 			FEATURE_WP_SUBDOMAIN,
 			FEATURE_FREE_THEMES,
 			FEATURE_3GB_STORAGE,
-			FEATURE_COMMUNITY_SUPPORT
+			FEATURE_COMMUNITY_SUPPORT,
+			FEATURE_BASIC_DESIGN
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' )
 	},
@@ -92,6 +95,7 @@ export const plansList = {
 			FEATURE_FREE_THEMES,
 			FEATURE_3GB_STORAGE,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_BASIC_DESIGN,
 			FEATURE_NO_ADS
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
@@ -118,11 +122,11 @@ export const plansList = {
 			FEATURE_FREE_THEMES,
 			FEATURE_13GB_STORAGE,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_ADVANCED_DESIGN,
 			FEATURE_NO_ADS,
-			FEATURE_CUSTOM_DESIGN,
 			FEATURE_VIDEO_UPLOADS,
 			FEATURE_GOOGLE_AD_CREDITS,
-			WORDADS_INSTANT
+			FEATURE_WORDADS_INSTANT
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -144,12 +148,13 @@ export const plansList = {
 			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_ADVANCED_DESIGN,
 			FEATURE_NO_ADS,
-			FEATURE_CUSTOM_DESIGN,
 			FEATURE_VIDEO_UPLOADS,
 			FEATURE_GOOGLE_AD_CREDITS,
-			WORDADS_INSTANT,
-			FEATURE_GOOGLE_ANALYTICS
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_NO_BRANDING
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -257,43 +262,73 @@ const allPlans = [
 
 export const featuresList = {
 	[ FEATURE_GOOGLE_ANALYTICS ]: {
-		getTitle: () => i18n.translate( 'Google Analytics' ),
+		getTitle: () => i18n.translate( 'Google Analytics Integration' ),
+		getDescription: () => i18n.translate( 'Track website statistics with Google Analytics for a' +
+			' deeper understanding of your website visitors and customers.' ),
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_UNLIMITED_STORAGE ]: {
-		getTitle: () => i18n.translate( 'Unlimited Storage' ),
+		getTitle: () => i18n.translate( 'Unlimited Storage Space' ),
+		getDescription: () => i18n.translate( "With increased storage space you'll be able to upload" +
+			' more images, videos, audio, and documents to your website.' ),
 		getStoreSlug: () => 'unlimited_space',
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
-		getTitle: () => i18n.translate( 'Custom Domain' ),
+		getTitle: () => i18n.translate( 'Custom Domain Name' ),
+		getDescription: () => i18n.translate( 'Get a free custom domain name (mywebsite.com) with this plan' +
+			' to use for your website.' ),
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_UNLIMITED_PREMIUM_THEMES ]: {
 		getTitle: () => i18n.translate( 'Unlimited Premium Themes' ),
+		getDescription: () => i18n.translate( 'Unlimited access to all of our advanced premium theme templates,' +
+			' including templates specifically tailored for businesses.' ),
 		getStoreSlug: () => 'unlimited_themes',
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
-		getTitle: () => i18n.translate( 'VideoPress' ),
+		getTitle: () => i18n.translate( 'VideoPress Support' ),
+		getDescription: () => i18n.translate( 'The easiest way to upload videos to your website and display them' +
+			' using a fast, unbranded, customizable player with rich stats.' ),
 		getStoreSlug: () => 'videopress',
 		plans: allPaidPlans
 	},
 
-	[ FEATURE_CUSTOM_DESIGN ]: {
-		getTitle: () => i18n.translate( 'Custom Design' ),
-		getStoreSlug: () => FEATURE_CUSTOM_DESIGN,
+	[ FEATURE_BASIC_DESIGN ]: {
+		getTitle: () => i18n.translate( 'Basic Design Customization' ),
+		getDescription: () => i18n.translate( 'Customize your selected theme template with pre-set color schemes,' +
+			' background designs, and font styles.' ),
+		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
+		plans: [ PLAN_FREE, PLAN_PERSONAL ]
+	},
+
+	[ FEATURE_ADVANCED_DESIGN ]: {
+		getTitle: () => i18n.translate( 'Advanced Design Customization' ),
+		getDescription: () => i18n.translate( 'Customize your selected theme template with extended color schemes,' +
+			' background designs, and complete control over website CSS.' ),
+		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_NO_ADS ]: {
-		getTitle: () => i18n.translate( 'No Ads' ),
+		getTitle: () => i18n.translate( 'Remove WordPress.com Ads' ),
+		getDescription: () => i18n.translate( 'Allow your visitors to visit and read your website without' +
+			' seeing any WordPress.com advertising.' ),
 		getStoreSlug: () => 'no-adverts/no-adverts.php',
 		plans: allPaidPlans
+	},
+
+	[ FEATURE_NO_BRANDING ]: {
+		getTitle: () => i18n.translate( 'Remove WordPress.com Branding' ),
+		getDescription: () => i18n.translate( 'Give your site a more professional look by removing the' +
+			' "Powered by WordPress.com" branding in the footer of your website.' ),
+		getStoreSlug: () => 'no-adverts/no-adverts.php',
+		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_GOOGLE_AD_CREDITS ]: {
@@ -308,34 +343,41 @@ export const featuresList = {
 		plans: allPaidPlans
 	},
 
-	[ WORDADS_INSTANT ]: {
+	[ FEATURE_WORDADS_INSTANT ]: {
 		getTitle: () => i18n.translate( 'Monetize Your Site' ),
-		getDescription: () => i18n.translate( 'Add advertising to your site through our WordAds program and get paid.' ),
+		getDescription: () => i18n.translate( 'Add advertising to your site through our WordAds program and' +
+			' earn money from impressions.' ),
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_FREE_SITE ]: {
-		getTitle: () => i18n.translate( 'Free site' ),
+		getTitle: () => i18n.translate( 'Free Site' ),
 		plans: allPlans
 	},
 
 	[ FEATURE_WP_SUBDOMAIN ]: {
-		getTitle: () => i18n.translate( 'WordPress.com subdomain' ),
+		getTitle: () => i18n.translate( 'WordPress.com Subdomain' ),
 		plans: [ PLAN_FREE ]
 	},
 
 	[ FEATURE_FREE_THEMES ]: {
-		getTitle: () => i18n.translate( 'Hundreds of free themes' ),
+		getTitle: () => i18n.translate( 'Hundreds of Free Themes' ),
+		getDescription: () => i18n.translate( 'Access to a wide range of professional theme templates' +
+			" for your website so you can find the exact design you're looking for." ),
 		plans: [ PLAN_FREE, PLAN_PREMIUM ]
 	},
 
 	[ FEATURE_3GB_STORAGE ]: {
-		getTitle: () => i18n.translate( '3GB of storage' ),
+		getTitle: () => i18n.translate( '3GB Storage Space' ),
+		getDescription: () => i18n.translate( "With increased storage space you'll be able to upload" +
+			' more images, videos, audio, and documents to your website.' ),
 		plans: [ PLAN_FREE ]
 	},
 
 	[ FEATURE_13GB_STORAGE ]: {
-		getTitle: () => i18n.translate( '13GB of storage' ),
+		getTitle: () => i18n.translate( '13GB Storage Space' ),
+		getDescription: () => i18n.translate( "With increased storage space you'll be able to upload" +
+			' more images, videos, audio, and documents to your website.' ),
 		plans: [ PLAN_PREMIUM ]
 	},
 
@@ -345,7 +387,9 @@ export const featuresList = {
 	},
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
-		getTitle: () => i18n.translate( 'Email and live chat support' ),
+		getTitle: () => i18n.translate( 'Email & Live Chat Support' ),
+		getDescription: () => i18n.translate( 'High quality support to help you get your website up and running' +
+			' and working how you want it.' ),
 		plans: allPaidPlans
 	},
 	[ FEATURE_SPAM_AKISMET_PLUS ]: {
