@@ -29,16 +29,15 @@ module.exports = {
 		providesDependencies: [ 'designType' ]
 	},
 
+	'design-type-with-store': {
+		stepName: 'design-type-with-store',
+		providesDependencies: [ 'designType' ]
+	},
+
 	site: {
 		stepName: 'site',
 		apiRequestFunction: stepActions.createSite,
 		providesDependencies: [ 'siteSlug' ]
-	},
-
-	'pressable-store': {
-		stepName: 'pressable-store',
-		dependencies: [ 'designType' ],
-		providesDependencies: []
 	},
 
 	user: {

@@ -38,7 +38,7 @@ export default React.createClass( {
 		};
 	},
 
-	componentDidMount() {
+	focus() {
 		if ( this._input ) {
 			this._input.focus();
 		}
