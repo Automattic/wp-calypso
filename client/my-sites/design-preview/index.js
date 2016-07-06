@@ -13,7 +13,7 @@ import url from 'url';
  */
 import config from 'config';
 import WebPreview from 'components/web-preview';
-import * as PreviewActions from 'state/preview/actions';
+import { fetchPreviewMarkup, undoCustomization, clearCustomizations } from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
 import layoutFocus from 'lib/layout-focus';
@@ -40,9 +40,11 @@ const DesignPreview = React.createClass( {
 		// These are all provided by the state
 		previewMarkup: React.PropTypes.string,
 		customizations: React.PropTypes.object,
-		actions: React.PropTypes.object,
 		isUnsaved: React.PropTypes.bool,
 		selectedSiteId: React.PropTypes.number,
+		fetchPreviewMarkup: React.PropTypes.func.isRequired,
+		undoCustomization: React.PropTypes.func.isRequired,
+		clearCustomizations: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState() {
@@ -57,7 +59,6 @@ const DesignPreview = React.createClass( {
 			defaultViewportDevice: 'tablet',
 			showClose: true,
 			customizations: {},
-			actions: {},
 			isUnsaved: false,
 			onLoad: noop,
 		};
@@ -124,16 +125,12 @@ const DesignPreview = React.createClass( {
 		if ( ! config.isEnabled( 'preview-endpoint' ) || ! this.props.selectedSite ) {
 			return;
 		}
-		if ( this.props.actions.fetchPreviewMarkup ) {
-			debug( 'loading preview with customizations', this.props.customizations );
-			this.props.actions.fetchPreviewMarkup( this.props.selectedSiteId, '', this.props.customizations );
-		}
+		debug( 'loading preview with customizations', this.props.customizations );
+		this.props.fetchPreviewMarkup( this.props.selectedSiteId, '', this.props.customizations );
 	},
 
 	undoCustomization() {
-		if ( this.props.actions.undoCustomization ) {
-			this.props.actions.undoCustomization( this.props.selectedSiteId );
-		}
+		this.props.undoCustomization( this.props.selectedSiteId );
 	},
 
 	onLoad( previewDocument ) {
@@ -146,16 +143,12 @@ const DesignPreview = React.createClass( {
 		if ( this.props.customizations && this.props.isUnsaved ) {
 			return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
 				if ( accepted ) {
-					if ( this.props.actions.clearCustomizations ) {
-						this.props.actions.clearCustomizations( this.props.selectedSiteId );
-					}
+					this.props.clearCustomizations( this.props.selectedSiteId );
 					layoutFocus.set( 'sidebar' );
 				}
 			} );
 		}
-		if ( this.props.actions.clearCustomizations ) {
-			this.props.actions.clearCustomizations( this.props.selectedSiteId );
-		}
+		this.props.clearCustomizations( this.props.selectedSiteId );
 		layoutFocus.set( 'sidebar' );
 	},
 
@@ -177,7 +170,7 @@ const DesignPreview = React.createClass( {
 		parsed.query.iframe = true;
 		parsed.query.theme_preview = true;
 		if ( site.options && site.options.frame_nonce ) {
-			parsed.query['frame-nonce'] = site.options.frame_nonce;
+			parsed.query[ 'frame-nonce' ] = site.options.frame_nonce;
 		}
 		delete parsed.search;
 		return url.format( parsed ) + '&' + this.state.previewCount;
@@ -231,9 +224,7 @@ function mapStateToProps( state ) {
 }
 
 function mapDispatchToProps( dispatch ) {
-	return {
-		actions: bindActionCreators( PreviewActions, dispatch ),
-	};
+	return bindActionCreators( { fetchPreviewMarkup, undoCustomization, clearCustomizations }, dispatch );
 }
 
 export default connect(
