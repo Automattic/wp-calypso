@@ -11,6 +11,7 @@ import observe from 'lib/mixins/data-observe';
 import Followers from '../stats-followers-page';
 import HeaderCake from 'components/header-cake';
 import analytics from 'lib/analytics';
+import Main from 'components/main';
 
 export default React.createClass( {
 	displayName: 'StatsFollows',
@@ -58,7 +59,7 @@ export default React.createClass( {
 		const site = sites.getSelectedSite();
 
 		return (
-			<div className="main main-column" role="main">
+			<Main>
 				<div id="my-stats-content" className={ 'follows-detail follows-detail-' + followType }>
 					<HeaderCake onClick={ this.goBack }>
 						{ this.translate( 'Followers' ) }
@@ -74,7 +75,7 @@ export default React.createClass( {
 						pageClick={ this.paginationHandler }
 						changeFilter={ this.changeFilter } />
 				</div>
-			</div>
+			</Main>
 		);
 	}
 } );
