@@ -54,6 +54,7 @@
 .post-type-list__post-title {
 	@extend %content-font;
 	margin-bottom: 2px;
+	font-weight: 700;
 	white-space: nowrap;
 
 	a {
@@ -70,7 +71,6 @@
 		.post-type-list__post.is-untitled & {
 			color: $gray;
 			font-style: italic;
-			font-weight: 400;
 		}
 	}
 }
