@@ -33,7 +33,7 @@ export function getPostBySiteAndId( state, siteId, postId ) {
 		 */
 		const items = state.reader.posts.items,
 			// only internal (wpcom / jetpack) posts have a valid site_ID and post ID
-			internalPosts = filter( items, item => ! item.is_external );
+			internalPosts = filter( items, post => post && post.site_ID && post.ID && ! post.is_external );
 
 		postMapBySiteAndPost = keyBy( internalPosts, post => {
 			return `${post.site_ID}-${post.ID}`;
