@@ -157,7 +157,7 @@ const Plans = React.createClass( {
 		if ( showPlanFeatures ) {
 			mainClassNames[ 'is-wide-layout' ] = true;
 		}
-		mainClassNames[ 'personal-plan-enabled' ] = personalPlanTestEnabled;
+		mainClassNames[ 'has-personal-plan' ] = personalPlanTestEnabled;
 
 		return (
 			<div>
