@@ -21,7 +21,7 @@ function PostTypeListPostThumbnail( { thumbnail } ) {
 		<div className={ classes }>
 			{ thumbnail && (
 				<img
-					src={ resizeImageUrl( thumbnail, { w: 80 } ) }
+					src={ resizeImageUrl( thumbnail, { h: 80 } ) }
 					className="post-type-list__post-thumbnail" />
 			) }
 		</div>
