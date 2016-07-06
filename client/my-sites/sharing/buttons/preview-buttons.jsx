@@ -75,7 +75,7 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 	},
 
 	detectWidgetPreviewChanges: function( event ) {
-		var data, preview, offset;
+		var preview, offset;
 
 		// Ensure this only triggers in the context of an official preview
 		if ( ! this.refs.iframe ) {
@@ -84,7 +84,10 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 		preview = ReactDom.findDOMNode( this.refs.iframe );
 
 		// Parse the JSON message data
-		data = JSON.parse( event.data );
+		let data;
+		try {
+			data = JSON.parse( event.data );
+		} catch ( error ) {}
 
 		if ( data && event.source === preview.contentWindow ) {
 			if ( 'more-show' === data.action ) {
