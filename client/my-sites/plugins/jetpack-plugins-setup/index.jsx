@@ -317,53 +317,61 @@ const PlansSetup = React.createClass( {
 		return null;
 	},
 
-	renderSuccess() {
+	renderErrorMessage() {
 		let noticeText;
-		const site = this.props.selectedSite;
-		if ( ! this.props.hasRequested || ! this.props.isFinished ) {
-			return null;
-		}
-
 		const plugins = this.addWporgDataToPlugins( this.props.plugins );
 		const pluginsWithErrors = filter( plugins, ( item ) => {
 			return ( item.error !== null );
 		} );
 
-		if ( pluginsWithErrors.length ) {
-			if ( pluginsWithErrors.length === 1 ) {
-				noticeText = this.translate(
-					'There was an issue installing %(plugin)s. ' +
-					'It may be possible to fix this by {{a}}manually installing{{/a}} the plugin.',
-					{
-						args: {
-							plugin: pluginsWithErrors[ 0 ].name,
-						},
-						components: {
-							a: <a href={ support.JETPACK_SUPPORT } />
-						}
+		if ( pluginsWithErrors.length === 1 ) {
+			noticeText = this.translate(
+				'There was an issue installing %(plugin)s. ' +
+				'It may be possible to fix this by {{a}}manually installing{{/a}} the plugin.',
+				{
+					args: {
+						plugin: pluginsWithErrors[ 0 ].name,
+					},
+					components: {
+						a: <a href={ support.JETPACK_SUPPORT } />
 					}
-				);
-			} else {
-				noticeText = this.translate(
-					'There were some issues installing your plugins. ' +
-					'It may be possible to fix this by {{a}}manually installing{{/a}} the plugins.',
-					{
-						components: {
-							a: <a href={ support.JETPACK_SUPPORT } />
-						}
+				}
+			);
+		} else {
+			noticeText = this.translate(
+				'There were some issues installing your plugins. ' +
+				'It may be possible to fix this by {{a}}manually installing{{/a}} the plugins.',
+				{
+					components: {
+						a: <a href={ support.JETPACK_SUPPORT } />
 					}
-				);
-			}
-			return (
-				<Notice status="is-error" text={ noticeText } showDismiss={ false }>
-					<NoticeAction href={ support.JETPACK_SUPPORT }>
-						{ this.translate( 'Contact Support' ) }
-					</NoticeAction>
-				</Notice>
+				}
 			);
 		}
+		return (
+			<Notice status="is-error" text={ noticeText } showDismiss={ false }>
+				<NoticeAction href={ support.JETPACK_SUPPORT }>
+					{ this.translate( 'Contact Support' ) }
+				</NoticeAction>
+			</Notice>
+		);
+	},
 
-		noticeText = this.translate( 'We\'ve installed your plugins, your site is powered up!' );
+	renderSuccess() {
+		const site = this.props.selectedSite;
+		if ( ! this.props.hasRequested || ! this.props.isFinished ) {
+			return null;
+		}
+
+		const pluginsWithErrors = filter( this.props.plugins, ( item ) => {
+			return ( item.error !== null );
+		} );
+
+		if ( pluginsWithErrors.length ) {
+			return this.renderErrorMessage( pluginsWithErrors );
+		}
+
+		const noticeText = this.translate( 'We\'ve installed your plugins, your site is powered up!' );
 		return (
 			<Notice status="is-success" text={ noticeText } showDismiss={ false }>
 				<NoticeAction href={ `/stats/insights/${site.slug}` }>
