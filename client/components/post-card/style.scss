@@ -84,6 +84,14 @@
 	margin: 0 100px 0 0;
 }
 
+.post-card__search .post-card__search-title-link {
+	color: inherit;
+	&:visited {
+		color: $gray;
+	}
+}
+
+
 .post-card__search-featured-image {
 	display: block;
 	position: absolute;
@@ -106,13 +114,13 @@
 
 .post-card__search-byline {
 	list-style: none;
-	margin: 0;
+	margin: 0 0 6px 0;
 	padding: 0;
-	font-size: 14px;
+	font-size: 12px;
 
 	.gravatar {
-		vertical-align: text-top;
-		margin: 0 4px;
+		vertical-align: text-bottom;
+		margin: 0 4px 0 0;
 	}
 }
 
@@ -124,6 +132,7 @@
 .post-card__search-excerpt {
 	@extend %content-font;
 	font-size: 14px;
+	margin: 6px 0;
 }
 
 .post-card__search .follow-button {
@@ -132,6 +141,7 @@
 	padding-bottom: 0;
 	padding-left: 24px;
 	margin: 0;
+	font-size: 12px;
 
 	.gridicon {
 		top: 2px;

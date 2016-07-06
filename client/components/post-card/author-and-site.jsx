@@ -17,8 +17,10 @@ export function AuthorAndSite( { translate, post, site, feed, showGravatar = fal
 
 	const username = (
 		<span className="post-card__author-and-site-author">
-			{ showGravatar && <Gravatar user={ post.author } size={ 18 } /> }
-			<a href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onClick, { post, site, feed } ) }>{ displayName }</a>
+			<a href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onClick, { post, site, feed } ) }>
+				{ showGravatar && <Gravatar user={ post.author } size={ 16 } /> }
+				{ displayName }
+			</a>
 		</span>
 	);
 
@@ -29,12 +31,8 @@ export function AuthorAndSite( { translate, post, site, feed, showGravatar = fal
 		<span className="post-card__author-and-site">
 			{
 				displayName === '' || siteName === displayName
-				? translate( 'On {{sitename/}}', {
-					components: {
-						sitename
-					}
-				} )
-				: translate( '{{username/}} on {{sitename/}}', {
+				? sitename
+				: translate( '{{username/}}, {{sitename/}}', {
 					components: {
 						username,
 						sitename

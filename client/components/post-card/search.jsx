@@ -28,12 +28,9 @@ function FeaturedImage( { image, href } ) {
 
 function SearchByline( { post, site, feed } ) {
 	return (
-		<ul className="post-card__search-byline">
+		<ul className="post-card__search-byline ignore-click">
 			<li className="post-card__search-byline-item">
 				<AuthorAndSite post={ post } site={ site } feed={ feed } showGravatar={ true } />
-			</li>
-			<li className="post-card__search-byline-item">
-				<PostTime date={ post.date } />
 			</li>
 			<li className="post-card__search-byline-item">
 				<FollowButton siteUrl={ post.site_URL } />
@@ -42,7 +39,7 @@ function SearchByline( { post, site, feed } ) {
 	);
 }
 
-export function SearchPostCard( { post, site, feed, onClick = noop } ) {
+export function SearchPostCard( { post, site, feed, onClick = noop, onCommentClick = noop } ) {
 	const featuredImage = post.canonical_image;
 	const classes = classnames( 'post-card__search', {
 		'has-thumbnail': !! featuredImage
@@ -50,14 +47,12 @@ export function SearchPostCard( { post, site, feed, onClick = noop } ) {
 	return (
 		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
 		{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
-		<h1 className="post-card__search-title">{ post.title }</h1>
-		<div className="post-card__search-social">
-			<CommentButton commentCount={ post.discussion.comment_count } tagName="span" showLabel={ false }/>
+		<h1 className="post-card__search-title"><a className="post-card__search-title-link" href={ post.URL }>{ post.title }</a></h1>
+		<div className="post-card__search-social ignore-click">
+			<CommentButton commentCount={ post.discussion.comment_count } tagName="span" showLabel={ false } onClick={ onCommentClick }/>
 			<LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showCount={ true } showLabel={ false } />
 		</div>
-		<div className="post-card__search-byline">
-			<SearchByline post={ post } site={ site } feed={ feed } />
-		</div>
+		<SearchByline post={ post } site={ site } feed={ feed } />
 		<div className="post-card__search-excerpt">{ post.excerpt }</div>
 		</Card>
 	);
