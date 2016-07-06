@@ -595,7 +595,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000492"
+      "version": "1.0.30000495"
     },
     "caseless": {
       "version": "0.11.0"
@@ -1234,6 +1234,9 @@
           "version": "2.0.0"
         }
       }
+    },
+    "eslint-config-wpcalypso": {
+      "version": "0.2.0"
     },
     "eslint-plugin-react": {
       "version": "5.2.2"
