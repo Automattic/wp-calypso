@@ -41,15 +41,13 @@
 	margin-bottom: 24px;
 	pointer-events: none;
 	opacity: 0;
-	filter: blur( 3px );
-	transform: translateX( 20% );
-	transition: filter 0.2s ease-in-out, opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+	transform: translateY( 100px );
+	transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
 
 	&.active {
 		pointer-events: auto;
 		opacity: 1;
-		filter: blur( 0 );
-		transform: translateX( 0 );
+		transform: translateY( 0 );
 	}
 
 	// Override HeaderCake's margin
