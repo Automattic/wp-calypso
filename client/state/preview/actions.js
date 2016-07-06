@@ -29,7 +29,7 @@ export function fetchPreviewMarkup( site, slug, customizations ) {
 		wpcom.undocumented().fetchPreviewMarkup( site, slug, postData )
 		.then( markup => dispatch( gotMarkup( site, markup ) ) );
 		// TODO: handle errors
-	}
+	};
 }
 
 export function gotMarkup( siteId, markup ) {
