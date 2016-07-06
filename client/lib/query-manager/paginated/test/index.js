@@ -262,5 +262,16 @@ describe( 'PaginatedQueryManager', () => {
 				{ ID: 544 }, { ID: 552 }, { ID: 562 }, { ID: 564 }, { ID: 565 }
 			] );
 		} );
+
+		it( 'should correct the found count if received item count does not match query number', () => {
+			// Scenario: Contributor receives first page of two items, with 4
+			// found. Upon receiving second page, only one entry is provided,
+			// presumably because they don't have access to the fourth. Thus,
+			// found should be updated to reflect this discrepency.
+			manager = manager.receive( [ { ID: 144 }, { ID: 152 } ], { query: { search: 'title', number: 2 }, found: 4 } );
+			manager = manager.receive( [ { ID: 160 } ], { query: { search: 'title', number: 2, page: 2 } } );
+
+			expect( manager.getFound( { search: 'title' } ) ).to.equal( 3 );
+		} );
 	} );
 } );

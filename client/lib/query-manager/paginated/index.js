@@ -165,6 +165,19 @@ export default class PaginatedQueryManager extends QueryManager {
 		// set of data where our assumed item set is incorrect.
 		const modifiedNextQuery = cloneDeep( nextQuery );
 
+		// Found count is not always reliable, usually in consideration of user
+		// capabilities. If we receive a set of items with a count not matching
+		// the expected number for the query, we recalculate the found value to
+		// reflect that this is the last set we can expect to receive. Found is
+		// correct only if the count of items matches expected query number.
+		if ( modifiedNextQuery.hasOwnProperty( 'found' ) && perPage !== items.length ) {
+			// Otherwise, found count should be corrected to equal the number
+			// of items received added to the summed per page total. Note that
+			// we can reach this point if receiving the last page of items, but
+			// the updated value should still be correct given this logic.
+			modifiedNextQuery.found = ( ( page - 1 ) * perPage ) + items.length;
+		}
+
 		// Replace the assumed set with the received items.
 		modifiedNextQuery.itemKeys = [
 			...range( 0, startOffset ).map( ( index ) => {
@@ -189,7 +202,7 @@ export default class PaginatedQueryManager extends QueryManager {
 
 		// If found is known from options, ensure that we fill the end of the
 		// array with undefined entries until found count
-		if ( nextQuery.hasOwnProperty( 'found' ) ) {
+		if ( modifiedNextQuery.hasOwnProperty( 'found' ) ) {
 			modifiedNextQuery.itemKeys = range( 0, modifiedNextQuery.found ).map( ( index ) => {
 				return modifiedNextQuery.itemKeys[ index ];
 			} );
