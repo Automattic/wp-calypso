@@ -138,4 +138,13 @@ module.exports = {
 		defaultVariation: 'original',
 		allowExistingUsers: false,
 	},
+	signupStore: {
+		datestamp: '20160707',
+		variations: {
+			designTypeWithoutStore: 80,
+			designTypeWithStore: 20,
+		},
+		defaultVariation: 'designTypeWithoutStore',
+		allowExistingUsers: false,
+	},
 };
