@@ -2,22 +2,24 @@
  * External dependencies
  */
 import React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 import debugFactory from 'debug';
-import url from 'url';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
 import WebPreview from 'components/web-preview';
+import { clearPreviewUrl } from 'state/ui/actions';
 import { fetchPreviewMarkup, undoCustomization, clearCustomizations } from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
 import layoutFocus from 'lib/layout-focus';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getPreviewUrl } from 'state/ui/selectors';
+import { getSiteOption } from 'state/sites/selectors';
+import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
+import addQueryArgs from 'lib/route/add-query-args';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -38,13 +40,18 @@ const DesignPreview = React.createClass( {
 		// A function to run when the preview has loaded. Will be passed a ref to the iframe document object.
 		onLoad: React.PropTypes.func,
 		// These are all provided by the state
+		selectedSiteUrl: React.PropTypes.string,
+		selectedSiteNonce: React.PropTypes.string,
+		selectedSite: React.PropTypes.object,
+		selectedSiteId: React.PropTypes.number,
+		previewUrl: React.PropTypes.string,
 		previewMarkup: React.PropTypes.string,
 		customizations: React.PropTypes.object,
 		isUnsaved: React.PropTypes.bool,
-		selectedSiteId: React.PropTypes.number,
 		fetchPreviewMarkup: React.PropTypes.func.isRequired,
 		undoCustomization: React.PropTypes.func.isRequired,
 		clearCustomizations: React.PropTypes.func.isRequired,
+		clearPreviewUrl: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState() {
@@ -61,6 +68,7 @@ const DesignPreview = React.createClass( {
 			customizations: {},
 			isUnsaved: false,
 			onLoad: noop,
+			previewUrl: null,
 		};
 	},
 
@@ -126,7 +134,7 @@ const DesignPreview = React.createClass( {
 			return;
 		}
 		debug( 'loading preview with customizations', this.props.customizations );
-		this.props.fetchPreviewMarkup( this.props.selectedSiteId, '', this.props.customizations );
+		this.props.fetchPreviewMarkup( this.props.selectedSiteId, this.props.previewUrl, this.props.customizations );
 	},
 
 	undoCustomization() {
@@ -143,11 +151,13 @@ const DesignPreview = React.createClass( {
 		if ( this.props.customizations && this.props.isUnsaved ) {
 			return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
 				if ( accepted ) {
+					this.props.clearPreviewUrl( this.props.selectedSiteId );
 					this.props.clearCustomizations( this.props.selectedSiteId );
 					layoutFocus.set( 'sidebar' );
 				}
 			} );
 		}
+		this.props.clearPreviewUrl( this.props.selectedSiteId );
 		this.props.clearCustomizations( this.props.selectedSiteId );
 		layoutFocus.set( 'sidebar' );
 	},
@@ -158,36 +168,40 @@ const DesignPreview = React.createClass( {
 			return;
 		}
 		event.preventDefault();
-		// TODO: if the href is on the current site, load the href as a preview and fetch markup for that url
 	},
 
-	getPreviewUrl( site ) {
-		if ( ! site ) {
+	getPreviewUrl() {
+		if ( ! this.props.selectedSiteUrl && ! this.props.previewUrl ) {
+			debug( 'no preview url and no site url were found for this site' );
 			return null;
 		}
+		const previewUrl = addQueryArgs( {
+			iframe: true,
+			theme_preview: true,
+			'frame-nonce': this.props.selectedSiteNonce,
+			cachebust: this.state.previewCount,
+		}, this.getBasePreviewUrl() );
+		debug( 'using this preview url', previewUrl );
+		return previewUrl;
+	},
 
-		const parsed = url.parse( site.options.unmapped_url, true );
-		parsed.query.iframe = true;
-		parsed.query.theme_preview = true;
-		if ( site.options && site.options.frame_nonce ) {
-			parsed.query[ 'frame-nonce' ] = site.options.frame_nonce;
-		}
-		delete parsed.search;
-		return url.format( parsed ) + '&' + this.state.previewCount;
+	getBasePreviewUrl() {
+		return this.props.previewUrl || this.props.selectedSiteUrl;
 	},
 
 	render() {
 		const useEndpoint = config.isEnabled( 'preview-endpoint' );
 
 		if ( ! this.props.selectedSite || ! this.props.selectedSite.is_previewable ) {
+			debug( 'a preview is not available for this site' );
 			return null;
 		}
 
 		return (
 			<WebPreview
 				className={ this.props.className }
-				previewUrl={ useEndpoint ? null : this.getPreviewUrl( this.props.selectedSite ) }
-				externalUrl={ this.props.selectedSite ? this.props.selectedSite.URL : null }
+				previewUrl={ useEndpoint ? null : this.getPreviewUrl() }
+				externalUrl={ this.getBasePreviewUrl() }
 				showExternal={ true }
 				showClose={ this.props.showClose }
 				showPreview={ this.props.showPreview }
@@ -206,28 +220,19 @@ function mapStateToProps( state ) {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 
-	if ( ! state.preview || ! state.preview[ selectedSiteId ] ) {
-		return {
-			selectedSite,
-			selectedSiteId,
-		};
-	}
-
-	const { previewMarkup, customizations, isUnsaved } = state.preview[ selectedSiteId ];
 	return {
 		selectedSite,
 		selectedSiteId,
-		previewMarkup,
-		customizations,
-		isUnsaved,
+		selectedSiteUrl: getSiteOption( state, selectedSiteId, 'unmapped_url' ),
+		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ),
+		previewUrl: getPreviewUrl( state ),
+		previewMarkup: getPreviewMarkup( state, selectedSiteId ),
+		customizations: getPreviewCustomizations( state, selectedSiteId ),
+		isUnsaved: isPreviewUnsaved( state, selectedSiteId ),
 	};
-}
-
-function mapDispatchToProps( dispatch ) {
-	return bindActionCreators( { fetchPreviewMarkup, undoCustomization, clearCustomizations }, dispatch );
 }
 
 export default connect(
 	mapStateToProps,
-	mapDispatchToProps
+	{ fetchPreviewMarkup, undoCustomization, clearCustomizations, clearPreviewUrl }
 )( DesignPreview );
