@@ -937,7 +937,7 @@ Undocumented.prototype.setPrimaryDomain = function( siteId, domain, fn ) {
  * Fetch preview markup for a site
  *
  * @param {int} siteId The site ID
- * @param {string} slug Optional. The theme slug to preview
+ * @param {string} slug Optional. The site path to preview
  * @param {object} postData Optional. The customization data to send
  * @return {Promise} A Promise to resolve when complete
  */
