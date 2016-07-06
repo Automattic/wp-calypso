@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import find from 'lodash/find';
 import get from 'lodash/get';
 import values from 'lodash/values';
 
@@ -33,4 +34,23 @@ export function getPostTypeTaxonomies( state, siteId, postType ) {
 	}
 
 	return values( taxonomies );
+}
+
+/**
+ * Returns the given taxonomy for the given post type on a site, or null if the
+ * taxonomies are not known.
+ *
+ * @param  {Object}  state        Global state tree
+ * @param  {Number}  siteId       Site ID
+ * @param  {String}  postType     Post type
+ * @param  {String}  taxonomyName Taxonomy name
+ * @return {Object?}              Post type taxonomy
+ */
+export function getPostTypeTaxonomy( state, siteId, postType, taxonomyName ) {
+	const taxonomies = getPostTypeTaxonomies( state, siteId, postType );
+	if ( ! taxonomies ) {
+		return null;
+	}
+
+	return find( taxonomies, { name: taxonomyName } ) || null;
 }

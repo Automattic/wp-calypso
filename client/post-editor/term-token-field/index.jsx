@@ -11,6 +11,9 @@ import _debug from 'debug';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getTerms } from 'state/terms/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import TokenField from 'components/token-field';
 import { decodeEntities } from 'lib/formatting';
 import TermsConstants from 'lib/terms/constants';
@@ -96,8 +99,13 @@ TermTokenField.propTypes = {
 export default connect( ( state, props ) => {
 	const siteId = getSelectedSiteId( state );
 
+	const postId = getEditorPostId( state );
+	const postType = getEditedPostValue( state, siteId, postId, 'type' );
+	const taxonomy = getPostTypeTaxonomy( state, siteId, postType, props.taxonomyName );
+
 	return {
-		siteId: siteId,
+		siteId,
+		taxonomyLabel: taxonomy && taxonomy.label,
 		terms: getTerms( state, siteId, props.taxonomyName ),
 	};
 } )( TermTokenField );
