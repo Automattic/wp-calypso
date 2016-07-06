@@ -348,7 +348,7 @@ const ThemeSheet = React.createClass( {
 					action={ this.props[ this.state.selectedAction ] }
 					sourcePath={ `/theme/${ this.props.id }${ section ? '/' + section : '' }` }
 				/> }
-				{ this.state.showPreview && this.renderPreview() }
+				{ this.renderPreview() }
 				<HeaderCake className="theme__sheet-action-bar"
 							backHref={ this.props.backPath }
 							backText={ i18n.translate( 'All Themes' ) }>

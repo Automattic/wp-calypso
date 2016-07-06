@@ -18,6 +18,7 @@ import touchDetect from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
 import Spinner from 'components/spinner';
 import { setPreviewShowing } from 'state/ui/actions';
+import { localize } from 'i18n-calypso';
 
 const debug = debugModule( 'calypso:web-preview' );
 
@@ -78,13 +79,11 @@ const WebPreview = React.createClass( {
 		};
 	},
 
-	componentWillMount() {
+	componentDidMount() {
 		// Cache touch and mobile detection for the entire lifecycle of the component
 		this._hasTouch = touchDetect.hasTouch();
 		this._isMobile = isMobile();
-	},
 
-	componentDidMount() {
 		if ( this.props.previewUrl ) {
 			this.setIframeUrl( this.props.previewUrl );
 		}
@@ -239,7 +238,7 @@ const WebPreview = React.createClass( {
 								className="web-preview__frame"
 								src="about:blank"
 								onLoad={ this.setLoaded }
-								title={ this.props.iframeTitle || this.translate( 'Preview' ) }
+								title={ this.props.iframeTitle || this.props.translate( 'Preview' ) }
 							/>
 						}
 					</div>
@@ -249,7 +248,7 @@ const WebPreview = React.createClass( {
 	}
 } );
 
-export default connect(
+export default localize( connect(
 	null,
 	{ setPreviewShowing }
-)( WebPreview );
+)( WebPreview ) );

@@ -23,6 +23,10 @@ export default React.createClass( {
 		onButtonClick: React.PropTypes.func
 	},
 
+	shouldComponentUpdate( nextProps ) {
+		return this.props.showPreview !== nextProps.showPreview;
+	},
+
 	onButtonClick() {
 		this.props.onButtonClick( this.props.theme );
 	},
@@ -34,7 +38,7 @@ export default React.createClass( {
 			<WebPreview showPreview={ this.props.showPreview }
 				onClose={ this.props.onClose }
 				previewUrl={ previewUrl }
-				externalUrl={ this.props.theme.demo_uri } >
+				externalUrl={ this.props.theme && this.props.theme.demo_uri } >
 				<Button primary
 					onClick={ this.onButtonClick }
 					>{ this.props.buttonLabel }</Button>
