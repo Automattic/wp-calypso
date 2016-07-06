@@ -4,6 +4,8 @@ wpcom.js
 Official JavaScript library for the [WordPress.com][] [REST API][].
 Compatible with Node.js and web browsers.
 
+Tests status: [![CircleCI](https://circleci.com/gh/Automattic/wpcom.js.svg?style=svg)](https://circleci.com/gh/Automattic/wpcom.js)
+
 ## How to use
 
 ### Node.js
