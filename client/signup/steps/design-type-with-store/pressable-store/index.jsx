@@ -103,7 +103,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div>
+			<div className="pressable-store">
 				<StepHeader
 					headerText={ this.translate( 'Create your WordPress Store' ) }
 					subHeaderText={ this.translate( 'Our partners at Pressable and WooCommerce are here for you' ) }
