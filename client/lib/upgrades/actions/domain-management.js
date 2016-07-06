@@ -1,8 +1,9 @@
 /**
- * Externel dependencies
+ * External dependencies
  */
-import noop from 'lodash/noop';
 import i18n from 'i18n-calypso';
+import noop from 'lodash/noop';
+import reject from 'lodash/reject';
 
 /**
  * Internal dependencies
@@ -247,7 +248,7 @@ function addDns( domainName, record, onComplete ) {
 
 	const dns = DnsStore.getByDomainName( domainName );
 
-	wpcom.updateDns( domainName, dns.records, ( error ) => {
+	wpcom.updateDns( domainName, dns.records, {}, ( error ) => {
 		const type = ! error ? ActionTypes.DNS_ADD_COMPLETED : ActionTypes.DNS_ADD_FAILED;
 		Dispatcher.handleServerAction( {
 			type,
@@ -259,7 +260,7 @@ function addDns( domainName, record, onComplete ) {
 	} );
 }
 
-function deleteDns( domainName, record, onComplete ) {
+function deleteDns( domainName, record, options, onComplete ) {
 	if ( isBeingProcessed( record ) ) {
 		return;
 	}
@@ -270,9 +271,10 @@ function deleteDns( domainName, record, onComplete ) {
 		record
 	} );
 
-	const dns = DnsStore.getByDomainName( domainName );
+	const dns = DnsStore.getByDomainName( domainName ),
+		records = reject( dns.records, 'isBeingDeleted' );
 
-	wpcom.updateDns( domainName, dns.records, ( error ) => {
+	wpcom.updateDns( domainName, dns.records, options, ( error ) => {
 		const type = ! error ? ActionTypes.DNS_DELETE_COMPLETED : ActionTypes.DNS_DELETE_FAILED;
 
 		Dispatcher.handleServerAction( {
