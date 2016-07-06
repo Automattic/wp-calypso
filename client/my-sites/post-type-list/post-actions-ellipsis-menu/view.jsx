@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -22,7 +23,9 @@ function PostActionsEllipsisMenuView( { translate, status } ) {
 
 	return (
 		<PopoverMenuItem onClick={ viewPost } icon="external">
-			{ translate( 'View', { context: 'verb' } ) }
+			{ includes( [ 'publish', 'private' ], status )
+				? translate( 'View', { context: 'verb' } )
+				: translate( 'Preview', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);
 }
