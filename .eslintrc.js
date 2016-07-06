@@ -115,7 +115,6 @@ module.exports = {
 		// Common top-of-file requires, expressions between external, interal
 		'vars-on-top': 1,
 		// Custom rules
-		'wpcalypso/no-lodash-import': 2,
 		'wpcalypso/i18n-ellipsis': 1,
 		'wpcalypso/i18n-no-variables': 1,
 		'wpcalypso/i18n-no-placeholders-only': 1,

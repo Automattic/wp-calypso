@@ -3,12 +3,7 @@
 /**
  * External dependencies
  */
-import map from 'lodash/map';
-import filter from 'lodash/filter';
-import some from 'lodash/some';
-import includes from 'lodash/includes';
-import find from 'lodash/find';
-import get from 'lodash/get';
+import { map, filter, some, includes, find, get } from 'lodash';
 
 /**
  * Internal dependencies
