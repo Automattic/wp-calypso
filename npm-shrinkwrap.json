@@ -3645,15 +3645,7 @@
       "version": "1.3.0"
     },
     "wpcom": {
-      "version": "4.9.15",
-      "dependencies": {
-        "babel-runtime": {
-          "version": "5.8.12"
-        },
-        "core-js": {
-          "version": "0.9.18"
-        }
-      }
+      "version": "5.0.0"
     },
     "wpcom-oauth": {
       "version": "0.3.3",
