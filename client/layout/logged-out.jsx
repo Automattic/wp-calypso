@@ -18,7 +18,7 @@ const LayoutLoggedOut = ( {
 	tertiary,
 	section,
 } ) => {
-	const classes = classNames( 'layout', {
+	const classes = classNames( 'wp layout', {
 		[ 'is-group-' + section.group ]: !! section,
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
@@ -29,15 +29,15 @@ const LayoutLoggedOut = ( {
 	return (
 		<div className={ classes }>
 			<MasterbarLoggedOut title={ section.title } />
-			<div id="content" className="layout__content">
-				<div id="primary" className="layout__primary">
+			<div id="content" className="wp-content">
+				<div id="primary" className="wp-primary wp-section">
 					{ primary }
 				</div>
-				<div id="secondary" className="layout__secondary">
+				<div id="secondary" className="wp-secondary">
 					{ secondary }
 				</div>
 			</div>
-			<div id="tertiary">
+			<div id="tertiary" className="wp-overlay fade-background">
 				{ tertiary }
 			</div>
 		</div>
