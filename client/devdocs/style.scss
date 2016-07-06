@@ -13,7 +13,7 @@
 	}
 }
 
-.is-section-devdocs-start .wp-primary {
+.is-section-devdocs-start .layout__primary {
 	margin-left: 0;
 }
 
@@ -138,6 +138,31 @@
 
 .devdocs__doc-content {
 	margin-top: 48px;
+}
+
+.design-assets {
+	@include breakpoint( "<660px" ) {
+		padding: 0 6px;
+	}
+}
+
+.design-assets h2,
+.design-assets h2 a:first-child {
+	color: $gray-dark;
+	font-family: $serif;
+	font-size: 38px;
+	font-weight: bold;
+	margin: 40px 0 15px;
+}
+.design-assets h3 {
+	font-weight: bold;
+	margin-bottom: 8px;
+}
+.design-assets hr {
+	background: transparent;
+	clear: both;
+	height: 2px;
+	margin: 15px 0;
 }
 
 .design-assets__toggle {

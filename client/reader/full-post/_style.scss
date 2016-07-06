@@ -558,7 +558,7 @@
 html.detail-page-active {
 	overflow: hidden; // This prevents the normal page from scrolling -shaun
 
-	.wp-primary {
+	.layout__primary {
 		transition: all 0.1s ease-in;
 	}
 }
@@ -569,7 +569,7 @@ html.detail-page-open {
 		opacity: 0;
 	}
 
-	.wp-primary {
+	.layout__primary {
 		opacity: 0;
 		transform: translateX( -100px );
 		pointer-events: none;
