@@ -209,6 +209,7 @@ function recordOrderInAtlas( cart ) {
 	const params = {
 		event: 'Purchase',
 		products: cart.products.map( product => product.product_name ).join( ', ' ),
+		product_slugs: cart.products.map( product => product.product_slug ).join( ', ' ),
 		revenue: cart.total_cost,
 		currency_code: cart.currency,
 		user_id: currentUser ? currentUser.ID : 0
