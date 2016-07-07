@@ -268,16 +268,20 @@ class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { site } = this.props;
+		const { site, showFAQ } = this.props;
+		const renderFAQ = () =>
+			this.isJetpackSite( site )
+				? this.getJetpackFAQ()
+				: this.getFAQ( site );
 
 		return (
 			<div class="plans-features-main">
 				{ this.getPlanFeatures() }
 
 				{
-					this.isJetpackSite( site )
-						? this.getJetpackFAQ()
-						: this.getFAQ( site )
+					showFAQ
+						? renderFAQ()
+						: null
 				}
 			</div>
 		);
@@ -289,12 +293,14 @@ PlansFeaturesMain.PropTypes = {
 	isInSignup: PropTypes.bool,
 	intervalType: PropTypes.string,
 	onUpgradeClick: PropTypes.func,
-	hideFreePlan: PropTypes.bool
+	hideFreePlan: PropTypes.bool,
+	showFAQ: PropTypes.bool
 };
 
 PlansFeaturesMain.defaultProps = {
 	hideFreePlan: false,
-	site: {}
+	site: {},
+	showFAQ: true
 };
 
 export default localize( PlansFeaturesMain );
