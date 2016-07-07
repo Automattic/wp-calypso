@@ -9,7 +9,8 @@ import { expect } from 'chai';
 import {
 	getRecommendations,
 	hasGraduatedRecommendations,
-	isRequestingRecommendations
+	isRequestingRecommendations,
+	isRequestingGraduation
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -31,6 +32,32 @@ describe( 'selectors', () => {
 				reader: {
 					start: {
 						isRequestingRecommendations: true
+					}
+				}
+			} );
+
+			expect( isRequesting ).to.be.true;
+		} );
+	} );
+
+	describe( '#isRequestingGraduation()', () => {
+		it( 'should return false if not fetching', () => {
+			const isRequesting = isRequestingGraduation( {
+				reader: {
+					start: {
+						isRequestingGraduation: false
+					}
+				}
+			} );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return true if fetching', () => {
+			const isRequesting = isRequestingGraduation( {
+				reader: {
+					start: {
+						isRequestingGraduation: true
 					}
 				}
 			} );
