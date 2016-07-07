@@ -122,8 +122,8 @@ module.exports = {
 		const basePath = route.sectionify( context.path );
 		const followList = new FollowList();
 		let summaryDate;
-		const	summarySites = [];
-		let	momentSiteZone = i18n.moment();
+		const summarySites = [];
+		let momentSiteZone = i18n.moment();
 		const StatsComponent = Insights;
 
 		titleActions.setTitle( i18n.translate( 'Stats', { textOnly: true } ) );
