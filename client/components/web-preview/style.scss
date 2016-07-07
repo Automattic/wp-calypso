@@ -1,18 +1,27 @@
 .web-preview {
 	position: fixed;
 		top: 0;
-		left: 0;
 		right: 0;
+		left: 0;
 	margin: 0 auto;
-	height: 0;
 	overflow: hidden;
-	z-index: z-index( 'root', '.web-preview' ); // Above TinyMCE dialogs
 	opacity: 0;
-	transition: 0s 0.2s height, 0.2s opacity cubic-bezier( 0.25, 0.5, 0.5, 0.9 );
+	z-index: z-index( 'root', '.web-preview' ); // Above TinyMCE dialogs
+	transition: opacity 0.3s ease-in-out;
+
+	&.is-visible {
+		opacity: 1;
+		bottom: 0;
+		visibility: visible;
+
+		.web-preview__content {
+			opacity: 1;
+			transform: translateY( 0 ) scale( 1 );
+		}
+	}
 }
 
 .web-preview__backdrop {
-	background: rgba( $gray, 0.9 );
 	position: absolute;
 		top: 0;
 		left: 0;
@@ -22,49 +31,45 @@
 }
 
 .web-preview__content {
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray-dark, 20% ), .5 ),
-		0 1px 2px lighten( $gray-dark, 30% );
+	box-shadow: 0 0 0 1px rgba( $gray, 0.5 );
+	background: $gray-light;
 	border-radius: 4px 4px 0 0;
 	position: absolute;
-		top: 47px;
+		top: 24px;
 		left: 0;
 		right: 0;
 		bottom: 0;
 	margin: 0 auto;
-	transform: scale( 0.96 );
-	transition: 0.1s transform cubic-bezier( 0.25, 0.5, 0.5, 0.9 );
-	background: lighten( $gray, 30% );
+	opacity: 0;
+	transform: translateY( 80vh );
+	transition: transform 0.2s ease-out,
+		opacity 0.1s ease-in-out,
+		max-width 0.2s ease-out;
 
 	.is-computer & {
-		width: 100%;
+		max-width: 1200px;
+		@include breakpoint( ">960px" ) {
+			left: 24px;
+			right: 24px;
+		}
 	}
 
 	.is-tablet & {
-		width: 783px;
+		max-width: 783px;
 	}
 
 	.is-phone & {
-		width: 460px;
+		max-width: 460px;
 	}
 }
 
 .web-preview.is-computer .web-preview__content,
 .web-preview.is-tablet .web-preview__content,
 .web-preview.is-phone .web-preview__content {
-	@include breakpoint( "<660px" ) {
-		left: 0;
-		right: 0;
+	@include breakpoint( "<960px" ) {
+		top: 0;
 		width: 100%;
-	}
-}
-
-.web-preview.is-visible {
-	height: 100%;
-	opacity: 1;
-	transition: 0s height, 0.2s opacity cubic-bezier( 0.25, 0.5, 0.5, 0.9 );
-
-	.web-preview__content {
-		transform: scale( 1 );
+		border-radius: 0;
 	}
 }
 
@@ -74,10 +79,6 @@
 	border-bottom: 1px solid lighten( $gray, 20% );
 	border-radius: 4px 4px 0 0;
 	display: flex;
-}
-
-.web-preview.is-computer .web-preview__toolbar {
-	border-radius: 0;
 }
 
 .web-preview__close,
@@ -140,7 +141,6 @@
 	height: 100%;
 	opacity: 0;
 	transition: opacity 0.2s ease-in-out;
-	background: $gray-light;
 
 	.is-loaded & {
 		opacity: 1;
