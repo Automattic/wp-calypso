@@ -12,6 +12,10 @@ import debugModule from 'debug';
  */
 import wpcom from 'lib/wp';
 import {
+	READER_START_GRADUATE_REQUEST,
+	READER_START_GRADUATED,
+	READER_START_GRADUATE_REQUEST_SUCCESS,
+	READER_START_GRADUATE_REQUEST_FAILURE,
 	READER_START_RECOMMENDATIONS_RECEIVE,
 	READER_START_RECOMMENDATIONS_REQUEST,
 	READER_START_RECOMMENDATIONS_REQUEST_SUCCESS,
@@ -24,7 +28,7 @@ import { receivePosts } from 'state/reader/posts/actions';
 /**
  * Module variables
  */
-const debug = debugModule( 'calypso:redux:reader-start-recommendations' );
+const debug = debugModule( 'calypso:redux:reader-start' );
 
 /**
  * Returns an action object to signal that recommendation objects have been received.
@@ -48,7 +52,7 @@ export function receiveRecommendations( recommendations ) {
  * @return {Function} Action thunk
  */
 export function recordRecommendationInteraction( recommendationId, siteId, postId ) {
-	return( dispatch ) => {
+	return ( dispatch ) => {
 		debug( 'User interacted with recommendation ' + recommendationId );
 		const numberOfRecommendationsToLoad = 3;
 		dispatch( requestRecommendations( siteId, postId, numberOfRecommendationsToLoad ) );
@@ -84,7 +88,8 @@ export function requestRecommendations( originSiteId, originPostId, limit ) {
 			number: limit
 		};
 
-		debug( 'Requesting recommendations for site ' + originSiteId + ' and post ' + originPostId );
+		debug( 'Requesting recommendations for site ' + originSiteId +
+				' and post ' + originPostId );
 
 		return wpcom.undocumented().readRecommendationsStart( query )
 			.then( ( data ) => {
@@ -117,6 +122,40 @@ export function requestRecommendations( originSiteId, originPostId, limit ) {
 			( error ) => {
 				dispatch( {
 					type: READER_START_RECOMMENDATIONS_REQUEST_FAILURE,
+					error
+				} );
+			}
+		);
+	};
+}
+
+/**
+ * Triggers a network request to graduate the logged in user
+ * from the Reader following recommendations page.
+ *
+ * @return {Function} Action thunk
+ */
+export function requestGraduate() {
+	return ( dispatch ) => {
+		dispatch( {
+			type: READER_START_GRADUATE_REQUEST,
+		} );
+
+		debug( 'Graduating user from cold start' );
+
+		return wpcom.undocumented().graduateNewReader()
+			.then( ( data ) => {
+				dispatch( {
+					type: READER_START_GRADUATE_REQUEST_SUCCESS,
+					data
+				} );
+				dispatch( {
+					type: READER_START_GRADUATED
+				} );
+			},
+			( error ) => {
+				dispatch( {
+					type: READER_START_GRADUATE_REQUEST_FAILURE,
 					error
 				} );
 			}
