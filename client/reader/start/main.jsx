@@ -18,6 +18,9 @@ import StartCard from './card';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import smartSetState from 'lib/react-smart-set-state';
 import CardPlaceholder from './card-placeholder';
+import { recordTrack } from 'reader/stats';
+
+const tracksSource = 'recommended_cold_start';
 
 const Start = React.createClass( {
 
@@ -57,6 +60,10 @@ const Start = React.createClass( {
 		return times( count, function( i ) {
 			return ( <CardPlaceholder key={ 'placeholder-' + i } /> );
 		} );
+	},
+
+	handleFollowByUrlClick() {
+		recordTrack( 'calypso_reader_start_follow_by_url_link', { source: tracksSource } );
 	},
 
 	render() {
@@ -117,7 +124,7 @@ const Start = React.createClass( {
 
 				{ hasRecommendations &&
 				<div className="reader-start__manage">{ this.translate( 'Didn\'t find a site you\'re looking for?' ) }
-					&nbsp;<a href="/following/edit">Follow by URL</a>.
+					&nbsp;<a href="/following/edit" onClick={ this.handleFollowByUrlClick }>Follow by URL</a>.
 				</div> }
 			</Main>
 		);

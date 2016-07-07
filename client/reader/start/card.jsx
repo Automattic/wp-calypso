@@ -17,6 +17,7 @@ import { getSite } from 'state/reader/sites/selectors';
 import { recordTrack, recordTrackForPost, recordTracksRailcarInteract } from 'reader/stats';
 
 const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-unused-vars
+const tracksSource = 'recommended_cold_start';
 
 const StartCard = React.createClass( {
 	onCardInteraction() {
@@ -27,11 +28,12 @@ const StartCard = React.createClass( {
 		);
 
 		if ( this.props.post ) {
-			recordTrackForPost( 'calypso_reader_startcard_clicked', this.props.post );
+			recordTrackForPost( 'calypso_reader_startcard_clicked', this.props.post, { source: tracksSource } );
 		} else {
 			recordTrack( 'calypso_reader_startcard_clicked', {
 				blog_id: this.props.recommendation.recommended_site_ID,
-				recommendation_id: this.props.recommendationId
+				recommendation_id: this.props.recommendationId,
+				source: tracksSource
 			} );
 			if ( this.props.recommendation.railcar ) {
 				recordTracksRailcarInteract( 'startcard_clicked', this.props.recommendation.railcar );
