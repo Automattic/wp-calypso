@@ -354,19 +354,38 @@ describe( 'index', function() {
 	describe( 'PHP with an additional textdomain parameter', function() {
 		var output;
 
-		before( function() {
-			output = i18nCalypsoCLI( {
-				projectName: 'i18nTest',
-				inputPaths: buildFiles,
-				phpArrayName: 'arrayName',
-				format: 'PHP',
-				extras: [ 'date' ],
-				textdomain: 'some_domain'
+		describe( 'that has no special symbols', function() {
+			before( function() {
+				output = i18nCalypsoCLI( {
+					projectName: 'i18nTest',
+					inputPaths: buildFiles,
+					phpArrayName: 'arrayName',
+					format: 'PHP',
+					extras: [ 'date' ],
+					textdomain: 'some_domain'
+				} );
+			} );
+
+			it( 'should create a simple __() translation', function() {
+				expect( output ).to.have.string( '__( "My hat has three corners.", "some_domain" ),' );
 			} );
 		} );
 
-		it( 'should create a simple __() translation', function() {
-			expect( output ).to.have.string( '__( "My hat has three corners.", "some_domain" ),' );
+		describe( 'that has double quotes', function() {
+			before( function() {
+				output = i18nCalypsoCLI( {
+					projectName: 'i18nTest',
+					inputPaths: buildFiles,
+					phpArrayName: 'arrayName',
+					format: 'PHP',
+					extras: [ 'date' ],
+					textdomain: '"some"weird-!=domain"'
+				} );
+			} );
+
+			it( 'should escape double quotes', function() {
+				expect( output ).to.have.string( '"\\"some\\"weird-!=domain\\""' );
+			} );
 		} );
 
 	} );
