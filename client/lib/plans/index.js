@@ -222,34 +222,41 @@ export function applyTestFiltersToPlansList( planName ) {
 	const filteredPlanConstantObj = { ...plansList[ planName ] };
 	let filteredPlanFeaturesConstantObj = pick( featuresList, plansList[ planName ].getFeatures() );
 
-	// remove disabled features from list
-	if ( ! isWordadsInstantActivationEnabled() ) {
-		filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
-			( value, key ) => key !== WORDADS_INSTANT
-		);
-	}
-	if ( ! isGoogleVouchersEnabled() ) {
-		filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
-			( value, key ) => key !== FEATURE_GOOGLE_AD_CREDITS
-		);
-	}
+	const removeDisabledFeatures = () => {
+		if ( ! isWordadsInstantActivationEnabled() ) {
+			filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
+				( value, key ) => key !== WORDADS_INSTANT
+			);
+		}
+		if ( ! isGoogleVouchersEnabled() ) {
+			filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
+				( value, key ) => key !== FEATURE_GOOGLE_AD_CREDITS
+			);
+		}
+	};
 
-	// update plan descriptions
-	if ( isWordadsInstantActivationEnabled() && isGoogleVouchersEnabled() && planName === PLAN_PREMIUM ) {
-		filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsAndGoogleVouchers;
-	} else if ( isWordadsInstantActivationEnabled() && planName === PLAN_PREMIUM ) {
-		filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivation;
-	} else if ( isGoogleVouchersEnabled() && planName === PLAN_PREMIUM ) {
-		filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithGoogleVouchers;
-	} else if ( isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS ) {
-		filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsCredit;
-	}
+	const updatePlanDescriptions = () => {
+		if ( isWordadsInstantActivationEnabled() && isGoogleVouchersEnabled() && planName === PLAN_PREMIUM ) {
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsAndGoogleVouchers;
+		} else if ( isWordadsInstantActivationEnabled() && planName === PLAN_PREMIUM ) {
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivation;
+		} else if ( isGoogleVouchersEnabled() && planName === PLAN_PREMIUM ) {
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithGoogleVouchers;
+		} else if ( isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS ) {
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsCredit;
+		}
+	};
 
-	// update info popup
-	if ( isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS	) {
-		filteredPlanFeaturesConstantObj[ FEATURE_GOOGLE_AD_CREDITS ].getDescription =
-		featuresList[ FEATURE_GOOGLE_AD_CREDITS ].getDescriptionWithWordAdsCredit;
-	}
+	const updateInfoPopups = () => {
+		if ( isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS	) {
+			filteredPlanFeaturesConstantObj[ FEATURE_GOOGLE_AD_CREDITS ].getDescription =
+			featuresList[ FEATURE_GOOGLE_AD_CREDITS ].getDescriptionWithWordAdsCredit;
+		}
+	};
+
+	removeDisabledFeatures();
+	updatePlanDescriptions();
+	updateInfoPopups();
 
 	filteredPlanConstantObj.getFeatures = () => filteredPlanFeaturesConstantObj;
 
