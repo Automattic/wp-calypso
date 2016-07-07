@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import pick from 'lodash/pick';
+import { pick, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +22,7 @@ import {
 /**
  *  Local variables;
  */
-const debug = debugModule( 'calypso:state:actions:jetpack-sync' );
+const debug = debugModule( 'calypso:state:jetpack-sync:actions' );
 
 export default {
 	getSyncStatus( siteId ) {
@@ -42,7 +42,7 @@ export default {
 					dispatch( {
 						type: JETPACK_SYNC_STATUS_SUCCESS,
 						siteId,
-						data
+						data: omit( data, '_headers' )
 					} );
 				} )
 				.catch( ( error ) => {
@@ -72,7 +72,7 @@ export default {
 					dispatch( {
 						type: JETPACK_SYNC_START_SUCCESS,
 						siteId,
-						data
+						data: omit( data, '_headers' )
 					} );
 				} )
 				.catch( ( error ) => {
