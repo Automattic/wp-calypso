@@ -91,3 +91,12 @@ export function hasGraduatedRecommendations( state ) {
 	}
 	return graduated;
 }
+
+/**
+ * Returns true if the reader is currently requesting graduation
+ * @param  {object}  state Global state tree
+ * @return {Boolean}       Is the user requesting graduation?
+ */
+export function isRequestingGraduation( state ) {
+	return state.reader.start.isRequestingGraduation;
+}

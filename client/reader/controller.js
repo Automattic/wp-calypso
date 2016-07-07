@@ -29,6 +29,7 @@ import { recordTrack } from 'reader/stats';
 import FeedError from 'reader/feed-error';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { requestGraduate } from 'state/reader/start/actions';
+import { isRequestingGraduation } from 'state/reader/start/selectors';
 
 const analyticsPageTitle = 'Reader';
 
@@ -173,7 +174,9 @@ module.exports = {
 				if ( FeedSubscriptionStore.getTotalSubscriptions() < config( 'reader_cold_start_graduation_threshold' ) ) {
 					defer( page.redirect.bind( page, '/recommendations/start' ) );
 				} else {
-					context.store.dispatch( requestGraduate() );
+					if ( ! isRequestingGraduation( context.store.getState() ) ) {
+						context.store.dispatch( requestGraduate() );
+					}
 					defer( next );
 				}
 			} else if ( tries > -1 ) {
