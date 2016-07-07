@@ -1,0 +1,281 @@
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
+
+/**
+ * Internal dependencies
+ */
+import {
+	JETPACK_SYNC_STATUS_REQUEST,
+	JETPACK_SYNC_STATUS_SUCCESS,
+	JETPACK_SYNC_STATUS_ERROR,
+	JETPACK_SYNC_START_REQUEST,
+	JETPACK_SYNC_START_SUCCESS,
+	JETPACK_SYNC_START_ERROR,
+	SERIALIZE,
+} from 'state/action-types';
+
+import reducer, {
+	syncStatus,
+	fullSyncRequest
+} from '../reducer';
+
+import { getExpectedResponseKeys } from '../utils';
+
+const successfulSyncStatusRequest = {
+	type: JETPACK_SYNC_STATUS_SUCCESS,
+	siteId: 1234567,
+	data: {
+		started: 1466010260,
+		queue_finished: 1466010260,
+		sent_started: 1466010290,
+		finished: 1466010313,
+		queue: {
+			constants: 1,
+			functions: 1,
+			options: 1,
+			terms: 3,
+			themes: 1,
+			users: 2,
+			posts: 15,
+			comments: 1,
+			updates: 6
+		},
+		sent: {
+			constants: 1,
+			functions: 1,
+			options: 1,
+			terms: 3,
+			themes: 1,
+			users: 2,
+			posts: 15,
+			comments: 1
+		},
+		is_scheduled: false,
+		_headers: {
+			Date: 'Wed, 15 Jun 2016 17:05:26 GMT',
+			'Content-Type': 'application/json'
+		}
+	}
+};
+
+const erroredSyncStatusRequest = {
+	type: JETPACK_SYNC_STATUS_ERROR,
+	siteId: 1234578,
+	error: {
+		statusCode: 400
+	}
+};
+
+const successfulFullSyncRequest = {
+	type: JETPACK_SYNC_START_SUCCESS,
+	siteId: 1234567,
+	data: {
+		scheduled: true,
+		_headers: {
+			Date: 'Wed, 15 Jun 2016 17:05:26 GMT',
+			'Content-Type': 'application/json'
+		}
+	}
+};
+
+const erroredFullSyncRequest = {
+	type: JETPACK_SYNC_START_ERROR,
+	siteId: 1234578,
+	error: {
+		statusCode: 400
+	}
+};
+
+describe( 'reducer', () => {
+	it( 'should export expected reducer keys', () => {
+		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'syncStatus',
+			'fullSyncRequest'
+		] );
+	} );
+
+	describe( '#syncStatus()', () => {
+		it( 'should default to an empty object', () => {
+			const state = syncStatus( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should not persist state', () => {
+			const original = deepFreeze( {
+				123456: {
+					isRequesting: true
+				}
+			} );
+
+			const state = syncStatus( original, { type: SERIALIZE } );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should add a property with key matching site ID', () => {
+			const state = syncStatus( undefined, { type: JETPACK_SYNC_STATUS_REQUEST, siteId: 123456 } );
+			expect( state ).to.have.property( '123456' );
+		} );
+
+		it( 'should store more than one site as separate properties', () => {
+			const state = syncStatus(
+				syncStatus( undefined, successfulSyncStatusRequest ),
+				erroredSyncStatusRequest
+			);
+			expect( state ).to.have.all.keys(
+				String( successfulSyncStatusRequest.siteId ),
+				String( erroredSyncStatusRequest.siteId )
+			);
+		} );
+
+		it( 'should set isRequesting to true when fetching for a site', () => {
+			const state = syncStatus( undefined, { type: JETPACK_SYNC_STATUS_REQUEST, siteId: 123456 } );
+			expect( state ).to.eql( {
+				123456: {
+					isRequesting: true
+				}
+			} );
+		} );
+
+		it( 'should set isRequesting to false when finished successfully fetching for a site', () => {
+			const state = syncStatus( undefined, successfulSyncStatusRequest );
+			expect( state ).to.have.property( String( successfulSyncStatusRequest.siteId ) )
+				.to.have.property( 'isRequesting' )
+				.to.be.eql( false );
+		} );
+
+		it( 'should set error to false when finished fetching for a site', () => {
+			const state = syncStatus( undefined, successfulSyncStatusRequest );
+			expect( state ).to.have.property( String( successfulSyncStatusRequest.siteId ) )
+				.to.have.property( 'error' )
+				.to.be.eql( false );
+		} );
+
+		it( 'should set lastSuccessfulStatus to current time when finished fetching for a site', () => {
+			const startTime = Date.now();
+			const state = syncStatus( undefined, successfulSyncStatusRequest );
+			expect( state ).to.have.property( String( successfulSyncStatusRequest.siteId ) )
+				.to.have.property( 'lastSuccessfulStatus' )
+				.to.be.at.least( startTime );
+		} );
+
+		it( 'should store expected response keys on success', () => {
+			const state = syncStatus( undefined, successfulSyncStatusRequest );
+			expect( state ).to.have.property( successfulSyncStatusRequest.siteId )
+				.to.have.all.keys( getExpectedResponseKeys().concat( [
+					'error',
+					'isRequesting',
+					'lastSuccessfulStatus'
+				] ) );
+		} );
+
+		it( 'should set isRequesting to false when fetching for a site errors', () => {
+			const state = syncStatus( undefined, erroredSyncStatusRequest );
+			expect( state ).to.have.property( String( erroredSyncStatusRequest.siteId ) )
+				.to.have.property( 'isRequesting' )
+				.to.be.eql( false );
+		} );
+
+		it( 'should set error when fetching for a site errors', () => {
+			const state = syncStatus( undefined, erroredSyncStatusRequest );
+			expect( state ).to.have.property( String( erroredSyncStatusRequest.siteId ) )
+				.to.have.property( 'error' )
+				.to.be.eql( erroredSyncStatusRequest.error );
+		} );
+	} );
+
+	describe( '#fullSyncRequest()', () => {
+		it( 'should default to an empty object', () => {
+			const state = fullSyncRequest( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should not persist state', () => {
+			const original = deepFreeze( {
+				123456: {
+					isRequesting: true
+				}
+			} );
+
+			const state = fullSyncRequest( original, { type: SERIALIZE } );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should add a property with key matching site ID', () => {
+			const state = fullSyncRequest( undefined, { type: JETPACK_SYNC_START_REQUEST, siteId: 123456 } );
+			expect( state ).to.have.property( '123456' );
+		} );
+
+		it( 'should set isRequesting to true when fetching for a site', () => {
+			const siteId = 123456;
+			const state = fullSyncRequest( undefined, { type: JETPACK_SYNC_START_REQUEST, siteId } );
+			expect( state ).to.have.property( String( siteId ) )
+				.to.have.property( 'isRequesting' )
+				.to.be.eql( true );
+		} );
+
+		it( 'should set lastRequest when fetching for a site', () => {
+			const siteId = 123456;
+			const startTime = Date.now();
+			const state = fullSyncRequest( undefined, { type: JETPACK_SYNC_START_REQUEST, siteId } );
+			expect( state ).to.have.property( String( siteId ) )
+				.to.have.property( 'lastRequested' )
+				.to.be.at.least( startTime );
+		} );
+
+		it( 'should store more than one site as separate properties', () => {
+			const state = fullSyncRequest(
+				fullSyncRequest( undefined, successfulFullSyncRequest ),
+				erroredFullSyncRequest
+			);
+			expect( state ).to.have.all.keys(
+				String( successfulFullSyncRequest.siteId ),
+				String( erroredFullSyncRequest.siteId )
+			);
+		} );
+
+		it( 'should set isRequesting to false after successfully scheduling sync', () => {
+			const state = fullSyncRequest( undefined, successfulFullSyncRequest );
+			expect( state ).to.have.property( String( successfulFullSyncRequest.siteId ) )
+				.to.have.property( 'isRequesting' )
+				.to.be.eql( false );
+		} );
+
+		it( 'should set error to false after successfully scheduling sync', () => {
+			const state = fullSyncRequest( undefined, successfulFullSyncRequest );
+			expect( state ).to.have.property( String( successfulFullSyncRequest.siteId ) )
+				.to.have.property( 'error' )
+				.to.be.eql( false );
+		} );
+
+		it( 'should set scheduled after successfully scheduling sync', () => {
+			const state = fullSyncRequest( undefined, successfulFullSyncRequest );
+			expect( state ).to.have.property( String( successfulFullSyncRequest.siteId ) )
+				.to.have.property( 'scheduled' )
+				.to.be.eql( successfulFullSyncRequest.data.scheduled );
+		} );
+
+		it( 'should set isRequesting to false after scheduling sync errors', () => {
+			const state = fullSyncRequest( undefined, erroredFullSyncRequest );
+			expect( state ).to.have.property( String( erroredFullSyncRequest.siteId ) )
+				.to.have.property( 'isRequesting' )
+				.to.be.eql( false );
+		} );
+
+		it( 'should set scheduled to false after scheduling sync errors', () => {
+			const state = fullSyncRequest( undefined, erroredFullSyncRequest );
+			expect( state ).to.have.property( String( erroredFullSyncRequest.siteId ) )
+				.to.have.property( 'scheduled' )
+				.to.be.eql( false );
+		} );
+
+		it( 'should set error after scheduling sync errors', () => {
+			const state = fullSyncRequest( undefined, erroredFullSyncRequest );
+			expect( state ).to.have.property( String( erroredFullSyncRequest.siteId ) )
+				.to.have.property( 'error' )
+				.to.be.eql( erroredFullSyncRequest.error );
+		} );
+	} );
+} );
