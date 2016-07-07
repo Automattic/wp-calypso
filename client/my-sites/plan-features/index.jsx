@@ -44,14 +44,14 @@ class PlanFeatures extends Component {
 		const {
 			available,
 			currencyCode,
-			planName,
-			rawPrice,
-			discountPrice,
-			popular,
 			current,
-			planConstantObj,
+			discountPrice,
 			features,
-			onUpgradeClick
+			onUpgradeClick,
+			planConstantObj,
+			planName,
+			popular,
+			rawPrice,
 		} = this.props;
 
 		const classes = classNames( 'plan-features', {
@@ -61,15 +61,22 @@ class PlanFeatures extends Component {
 		return (
 			<div className={ classes } >
 				<PlanFeaturesHeader
-					current={ current }
-					currencyCode={ currencyCode }
-					popular={ popular }
-					title={ planConstantObj.getTitle() }
-					planType={ planName }
-					rawPrice={ rawPrice }
-					discountPrice={ discountPrice }
 					billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
+					currencyCode={ currencyCode }
+					current={ current }
+					discountPrice={ discountPrice }
 					onClick={ onUpgradeClick }
+					planType={ planName }
+					popular={ popular }
+					rawPrice={ rawPrice }
+					title={ planConstantObj.getTitle() }
+				/>
+				<PlanFeaturesFooter
+					available={ available }
+					current={ current }
+					planType={ planName }
+					description={ planConstantObj.getDescription() }
+					onUpgradeClick={ onUpgradeClick }
 				/>
 				<PlanFeaturesItemList>
 					{
@@ -84,9 +91,8 @@ class PlanFeatures extends Component {
 					}
 				</PlanFeaturesItemList>
 				<PlanFeaturesFooter
+					available={ available }
 					current={ current }
-					available = { available }
-					description={ planConstantObj.getDescription() }
 					onUpgradeClick={ onUpgradeClick }
 				/>
 			</div>

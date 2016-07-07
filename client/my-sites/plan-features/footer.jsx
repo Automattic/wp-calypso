@@ -10,8 +10,15 @@ import React, { PropTypes } from 'react';
  */
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
+import classNames from 'classnames';
 
-const PlanFeaturesFooter = ( { translate, current = false, available = true, description, onUpgradeClick = noop } ) => {
+const PlanFeaturesFooter = ( {
+	available = true,
+	current = false,
+	description,
+	onUpgradeClick = noop,
+	translate
+} ) => {
 	let upgradeButton;
 
 	if ( current ) {
@@ -27,11 +34,25 @@ const PlanFeaturesFooter = ( { translate, current = false, available = true, des
 				{ translate( 'Upgrade' ) }
 			</Button>
 		);
+	} else {
+		upgradeButton = (
+			<Button className="plan-features__footer-button is-hidden" disabled>
+				<Gridicon size={ 18 } icon="checkmark" />
+				{ translate( 'Downgrade' ) }
+			</Button>
+		);
 	}
 
+	const classes = classNames( 'plan-features__footer', { 'has-description': !! description } );
 	return (
-		<footer className="plan-features__footer">
-			<p className="plan-features__footer-desc">{ description }</p>
+		<footer className={ classes }>
+			{ description &&
+				<p className="plan-features__footer-desc">
+					<span className="plan-features__footer-desc-text">
+						{ description }
+					</span>
+				</p>
+			}
 			<div className="plan-features__footer-buttons">
 				{ upgradeButton }
 			</div>
@@ -42,8 +63,8 @@ const PlanFeaturesFooter = ( { translate, current = false, available = true, des
 PlanFeaturesFooter.propTypes = {
 	current: PropTypes.bool,
 	available: PropTypes.bool,
-	description: PropTypes.string.isRequired,
-	onUpgradeClick: PropTypes.func
+	description: PropTypes.string,
+	onUpgradeClick: PropTypes.func,
 };
 
 export default localize( PlanFeaturesFooter );
