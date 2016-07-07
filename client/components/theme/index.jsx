@@ -146,9 +146,6 @@ const Theme = React.createClass( {
 						{ price && ! purchased &&
 							<span className="price">{ price }</span>
 						}
-						{ purchased && ! active &&
-							<span className="price">{ this.translate( 'Purchased' ) }</span>
-						}
 						{ ! isEmpty( this.props.buttonContents ) ? <ThemeMoreButton
 							index={ this.props.index }
 							theme={ this.props.theme }
