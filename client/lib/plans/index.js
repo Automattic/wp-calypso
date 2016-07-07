@@ -222,26 +222,41 @@ export function applyTestFiltersToPlansList( planName ) {
 	const filteredPlanConstantObj = { ...plansList[ planName ] };
 	let filteredPlanFeaturesConstantObj = pick( featuresList, plansList[ planName ].getFeatures() );
 
-	if ( ! isWordadsInstantActivationEnabled() ) {
-		filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
-			( value, key ) => key !== WORDADS_INSTANT
-		);
-	} else if ( planName === PLAN_PREMIUM ) {
-		filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivation;
-	}
+	const removeDisabledFeatures = () => {
+		if ( ! isWordadsInstantActivationEnabled() ) {
+			filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
+				( value, key ) => key !== WORDADS_INSTANT
+			);
+		}
+		if ( ! isGoogleVouchersEnabled() ) {
+			filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
+				( value, key ) => key !== FEATURE_GOOGLE_AD_CREDITS
+			);
+		}
+	};
 
-	if ( ! isGoogleVouchersEnabled() ) {
-		filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
-			( value, key ) => key !== FEATURE_GOOGLE_AD_CREDITS
-		);
-	} else if ( planName === PLAN_PREMIUM ) {
-		filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithGoogleVouchers;
-	} else if ( isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS	) {
-		filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsCredit;
+	const updatePlanDescriptions = () => {
+		if ( isWordadsInstantActivationEnabled() && isGoogleVouchersEnabled() && planName === PLAN_PREMIUM ) {
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivationAndGoogleVouchers;
+		} else if ( isWordadsInstantActivationEnabled() && planName === PLAN_PREMIUM ) {
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivation;
+		} else if ( isGoogleVouchersEnabled() && planName === PLAN_PREMIUM ) {
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithGoogleVouchers;
+		} else if ( isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS ) {
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsCredit;
+		}
+	};
 
-		filteredPlanFeaturesConstantObj[ FEATURE_GOOGLE_AD_CREDITS ].getDescription =
+	const updateInfoPopups = () => {
+		if ( isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS	) {
+			filteredPlanFeaturesConstantObj[ FEATURE_GOOGLE_AD_CREDITS ].getDescription =
 			featuresList[ FEATURE_GOOGLE_AD_CREDITS ].getDescriptionWithWordAdsCredit;
-	}
+		}
+	};
+
+	removeDisabledFeatures();
+	updatePlanDescriptions();
+	updateInfoPopups();
 
 	filteredPlanConstantObj.getFeatures = () => filteredPlanFeaturesConstantObj;
 

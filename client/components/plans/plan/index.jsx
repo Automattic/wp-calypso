@@ -52,6 +52,12 @@ const Plan = React.createClass( {
 		return this.props.comparePlansUrl ? this.props.comparePlansUrl : '/plans/compare/' + siteSuffix;
 	},
 
+	isUSorCanadaCurrency() {
+		const { plan } = this.props;
+		const planCurrency = plan.currency_code || 'USD';
+		return [ 'USD', 'CAD' ].indexOf( planCurrency ) > -1;
+	},
+
 	getDescription() {
 		const { plan, site } = this.props;
 
@@ -72,7 +78,7 @@ const Plan = React.createClass( {
 		}
 
 		// override plan description during google voucher test
-		if ( isGoogleVouchersEnabled() ) {
+		if ( this.isUSorCanadaCurrency() && isGoogleVouchersEnabled() ) {
 			if ( plan.product_id === premiumPlan.productId ) {
 				plan.description = premiumPlan.descriptionWithGoogleVouchers;
 			} else if ( plan.product_id === businessPlan.productId ) {

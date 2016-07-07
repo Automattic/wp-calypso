@@ -16,7 +16,6 @@ import { isPremium } from 'lib/products-values';
 import paths from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
-import { isGoogleVouchersEnabled } from 'lib/plans';
 
 const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/',
@@ -38,8 +37,8 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 				}
 			/>
 
-			{ isGoogleVouchersEnabled() && <QuerySiteVouchers siteId={ selectedSite.ID } /> }
-			{ isGoogleVouchersEnabled() &&
+			{ config.isEnabled( 'googleVouchers' ) && <QuerySiteVouchers siteId={ selectedSite.ID } /> }
+			{ config.isEnabled( 'googleVouchers' ) &&
 				<div>
 					<GoogleVoucherDetails selectedSite={ selectedSite } />
 				</div>

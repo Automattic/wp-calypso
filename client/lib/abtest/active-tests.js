@@ -85,7 +85,7 @@ module.exports = {
 		allowExistingUsers: true,
 	},
 	googleVouchers: {
-		datestamp: '20160615',
+		datestamp: '20160708',
 		variations: {
 			disabled: 50,
 			enabled: 50,
