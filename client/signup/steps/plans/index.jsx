@@ -119,7 +119,8 @@ module.exports = React.createClass( {
 				<PlansFeaturesMain
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
-					onUpgradeClick={ this.onSelectPlan } />
+					onUpgradeClick={ this.onSelectPlan }
+					showFAQ={ false } />
 			</div>
 		);
 	},
