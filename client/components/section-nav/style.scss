@@ -271,8 +271,8 @@
 		color: $white;
 		background-color: $blue-medium;
 
-		.count {
-			.section-nav.is-open & {
+		@include breakpoint( "<480px" ) {
+			.count {
 				color: $white;
 				border-color: $white;
 			}
