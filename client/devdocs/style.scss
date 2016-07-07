@@ -146,8 +146,10 @@
 	}
 }
 
-.design-assets h2,
-.design-assets h2 a:first-child {
+.design-assets__group > h2,
+.docs__design-assets-group > h2,
+.design-assets__group > h2 a:first-child,
+.docs__design-assets-group > h2 a:first-child {
 	color: $gray-dark;
 	font-family: $serif;
 	font-size: 38px;
