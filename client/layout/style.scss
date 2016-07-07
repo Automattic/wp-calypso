@@ -1,3 +1,12 @@
+.layout {
+	transition: all 0.4s ease-in-out;
+
+	.is-previewing & {
+		-webkit-filter: blur( 3px );
+		opacity: 0.2;
+	}
+}
+
 .layout__content {
 	@include clear-fix;
 	position: relative;

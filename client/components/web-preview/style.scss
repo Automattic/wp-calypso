@@ -21,15 +21,6 @@
 	}
 }
 
-.wp.layout {
-	transition: all 0.5s ease-in-out;
-}
-
-.is-previewing .wp.layout {
-	-webkit-filter: blur( 3px );
-	opacity: 0.2;
-}
-
 .web-preview__backdrop {
 	position: absolute;
 		top: 0;
@@ -150,7 +141,6 @@
 	height: 100%;
 	opacity: 0;
 	transition: opacity 0.2s ease-in-out;
-	//background: $gray-light;
 
 	.is-loaded & {
 		opacity: 1;
