@@ -7,9 +7,8 @@ import EmailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import Gridicon from 'components/gridicon';
 
+import Gridicon from 'components/gridicon';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -19,6 +18,8 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import StepHeader from 'signup/step-header';
+import Button from 'components/button';
 
 import HeroImage from './hero-image';
 
@@ -26,8 +27,7 @@ export default React.createClass( {
 	displayName: 'PressableStoreStep',
 
 	propTypes: {
-		stepName: PropTypes.string.isRequired,
-		signupDependencies: PropTypes.object.isRequired,
+		onBackClick: PropTypes.func.isRequired,
 	},
 
 	getInitialState() {
@@ -103,12 +103,19 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<StepWrapper
-				fallbackHeaderText={ this.translate( 'Create your WordPress Store' ) }
-				fallbackSubHeaderText={ this.translate( 'Our partners at Pressable and WooCommerce are here for you' ) }
-				stepContent={ this.renderStoreForm() }
-				{ ...this.props }
-				goToNextStep={ undefined } />
+			<div className="pressable-store">
+				<StepHeader
+					headerText={ this.translate( 'Create your WordPress Store' ) }
+					subHeaderText={ this.translate( 'Our partners at Pressable and WooCommerce are here for you' ) }
+				/>
+				{ this.renderStoreForm() }
+				<div className="pressable-store__back-button-wrapper">
+					<Button compact borderless onClick={ this.props.onBackClick }>
+						<Gridicon icon="arrow-left" size={ 18 } />
+						{ this.translate( 'Back' ) }
+					</Button>
+				</div>
+			</div>
 		);
 	}
 } );
