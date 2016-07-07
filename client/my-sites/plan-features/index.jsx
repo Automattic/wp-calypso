@@ -4,8 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
 import page from 'page';
+import { map, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,13 +26,15 @@ import {
 	getPlanSlug
 } from 'state/plans/selectors';
 import {
-	plansList,
-	getPlanFeaturesObject,
 	isPopular,
 	isMonthly
 } from 'lib/plans/constants';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getPlanPath, canUpgradeToPlan } from 'lib/plans';
+import {
+	getPlanPath,
+	canUpgradeToPlan,
+	applyTestFiltersToPlansList
+} from 'lib/plans';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 
 class PlanFeatures extends Component {
@@ -73,12 +75,15 @@ class PlanFeatures extends Component {
 				/>
 				<PlanFeaturesItemList>
 					{
-						features.map( ( feature, index ) =>
+						map( features, ( featureConstObj, featureConst ) =>
 							<PlanFeaturesItem
-								key={ index }
-								description={ feature.getDescription ? feature.getDescription() : null }
+								key={ featureConst }
+								description={ featureConstObj.getDescription
+									? featureConstObj.getDescription()
+									: null
+								}
 							>
-								{ feature.getTitle() }
+								{ featureConstObj.getTitle() }
 							</PlanFeaturesItem>
 						)
 					}
@@ -109,7 +114,9 @@ PlanFeatures.defaultProps = {
 };
 
 export default connect( ( state, ownProps ) => {
-	const planProductId = plansList[ ownProps.plan ].getProductId(),
+	const planName = ownProps.plan,
+		planConstantObj = applyTestFiltersToPlansList( planName ),
+		planProductId = planConstantObj.getProductId(),
 		isInSignup = ownProps.isInSignup,
 		selectedSiteId = isInSignup ? null : getSelectedSiteId( state ),
 		planObject = getPlan( state, planProductId ),
@@ -126,14 +133,14 @@ export default connect( ( state, ownProps ) => {
 	}
 
 	return {
-		planName: ownProps.plan,
+		planName,
+		planConstantObj,
+		available,
 		current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		popular: isPopular( ownProps.plan ) && ! isPaid,
-		features: getPlanFeaturesObject( ownProps.plan ),
+		features: planConstantObj.getFeatures(),
 		rawPrice: getPlanRawPrice( state, planProductId, showMonthly ),
-		planConstantObj: plansList[ ownProps.plan ],
-		available: available,
 		onUpgradeClick: ownProps.onUpgradeClick
 			? () => {
 				const planSlug = getPlanSlug( state, planProductId );
@@ -149,7 +156,6 @@ export default connect( ( state, ownProps ) => {
 				page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( ownProps.plan ) || '' }` );
 			},
 		planObject: planObject,
-		discountPrice: getPlanDiscountPrice( state, selectedSiteId, ownProps.plan, showMonthly )
+		discountPrice: getPlanDiscountPrice( state, selectedSiteId, planName, showMonthly )
 	};
 } )( PlanFeatures );
-
