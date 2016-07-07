@@ -10,6 +10,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import { trackPageLoad, setPageTitle } from 'reader/controller-helper';
+import { recordTrack } from 'reader/stats';
 
 const analyticsPageTitle = 'Reader';
 
@@ -22,6 +23,7 @@ export function start( context ) {
 	setPageTitle( i18n.translate( 'Start' ) );
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_recommendations_start_loaded' );
 
 	ReactDom.render(
 		React.createElement( ReduxProvider, { store: context.store },
