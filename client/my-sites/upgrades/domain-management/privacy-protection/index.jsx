@@ -44,7 +44,7 @@ const PrivacyProtection = React.createClass( {
 		}
 
 		if ( ! this.canAddPrivacyProtection() ) {
-			page( paths.domainManagementContactsPrivacy( this.props.selectedSite.domain, this.props.selectedDomainName ) );
+			page( paths.domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 		}
 	},
 
@@ -93,7 +93,7 @@ const PrivacyProtection = React.createClass( {
 		}
 
 		page( path(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.selectedDomainName
 		) );
 	}

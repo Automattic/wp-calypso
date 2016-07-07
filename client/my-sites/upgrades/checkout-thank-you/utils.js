@@ -3,16 +3,10 @@
  */
 import paths from 'my-sites/upgrades/paths';
 
-function getDomainManagementUrl( selectedSite, domain ) {
-	let url;
-
-	if ( domain ) {
-		url = paths.domainManagementEdit( selectedSite.domain, domain );
-	} else {
-		url = paths.domainManagementList( selectedSite.domain );
-	}
-
-	return url;
+function getDomainManagementUrl( { slug }, domain ) {
+	return domain
+		? paths.domainManagementEdit( slug, domain )
+		: paths.domainManagementList( slug );
 }
 
 export default {

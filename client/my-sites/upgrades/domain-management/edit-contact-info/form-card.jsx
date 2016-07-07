@@ -258,7 +258,7 @@ const EditContactInfoFormCard = React.createClass( {
 	},
 
 	goToContactsPrivacy() {
-		page( paths.domainManagementContactsPrivacy( this.props.selectedSite.domain, this.props.selectedDomainName ) );
+		page( paths.domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	},
 
 	saveContactInfo( event ) {

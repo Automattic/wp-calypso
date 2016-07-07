@@ -52,13 +52,13 @@ const ContactsPrivacy = React.createClass( {
 						privateDomain={ privateDomain } />
 
 					<VerticalNavItem
-							path={ paths.domainManagementEditContactInfo( this.props.selectedSite.domain, this.props.selectedDomainName ) }>
+							path={ paths.domainManagementEditContactInfo( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
 						{ this.translate( 'Edit Contact Info' ) }
 					</VerticalNavItem>
 
 					{ ! hasPrivacyProtection && (
 						<VerticalNavItem
-							path={ paths.domainManagementPrivacyProtection( this.props.selectedSite.domain, this.props.selectedDomainName ) }>
+							path={ paths.domainManagementPrivacyProtection( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
 							{ this.translate( 'Privacy Protection' ) }
 						</VerticalNavItem>
 					) }
@@ -72,7 +72,7 @@ const ContactsPrivacy = React.createClass( {
 	},
 
 	goToEdit() {
-		page( paths.domainManagementEdit( this.props.selectedSite.domain, this.props.selectedDomainName ) );
+		page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	}
 } );
 

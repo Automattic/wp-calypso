@@ -265,7 +265,7 @@ const AddEmailAddressesCard = React.createClass( {
 		} );
 		googleAppsCartItems.forEach( upgradesActions.addItem );
 
-		page( '/checkout/' + this.props.selectedSite.domain );
+		page( '/checkout/' + this.props.selectedSite.slug );
 	},
 
 	handleCancel( event ) {
@@ -273,7 +273,7 @@ const AddEmailAddressesCard = React.createClass( {
 
 		this.recordEvent( 'cancelClick', this.props.selectedDomainName );
 
-		page( paths.domainManagementEmail( this.props.selectedSite.domain, this.props.selectedDomainName ) );
+		page( paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	}
 } );
 
