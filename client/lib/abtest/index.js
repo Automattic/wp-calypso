@@ -136,7 +136,8 @@ ABTest.prototype.getVariation = function() {
 ABTest.prototype.isEligibleForAbTest = function() {
 	const selectedSite = sites.getSelectedSite();
 	const client = ( typeof navigator !== 'undefined' ) ? navigator : {};
-	const clientLanguage = client.language || client.userLanguage || 'en';
+	const clientLocale = client.language || client.userLanguage || 'en';
+	const localeFromSession = i18n.getLocaleSlug() || 'en';
 
 	if ( ! store.enabled ) {
 		debug( '%s: Local storage is not enabled', this.experimentId );
@@ -148,8 +149,12 @@ ABTest.prototype.isEligibleForAbTest = function() {
 			debug( '%s: User has a non-English locale', this.experimentId );
 			return false;
 		}
-		if ( ! isUserSignedIn() && ! clientLanguage.match( /^en\-?/i ) ) {
+		if ( ! isUserSignedIn() && ! clientLocale.match( /^en\-?/i ) ) {
 			debug( '%s: Logged-out user has a non-English browser locale', this.experimentId );
+			return false;
+		}
+		if ( ! isUserSignedIn() && ! localeFromSession.match( /^en\-?/i ) ) {
+			debug( '%s: Logged-out user has a non-English locale in session', this.experimentId );
 			return false;
 		}
 	}
