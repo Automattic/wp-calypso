@@ -4,6 +4,7 @@
 import assign from 'lodash/assign';
 import includes from 'lodash/includes';
 import reject from 'lodash/reject';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -190,6 +191,20 @@ function removeUserStepFromFlow( flow ) {
 	} );
 }
 
+function filterDesignTypeInFlow( flow ) {
+	if ( ! flow ) {
+		return;
+	}
+
+	if ( ! includes( flow.steps, 'design-type' ) || 'designTypeWithStore' !== abtest( 'signupStore' ) ) {
+		return flow;
+	}
+
+	return assign( {}, flow, {
+		steps: flow.steps.map( stepName => stepName === 'design-type' ? 'design-type-with-store' : stepName )
+	} );
+}
+
 function filterFlowName( flowName ) {
 	const defaultFlows = [ 'main', 'website' ];
 	// do nothing. No flows to filter at the moment.
@@ -242,6 +257,10 @@ const Flows = {
 
 		if ( user.get() ) {
 			flow = removeUserStepFromFlow( flow );
+		}
+
+		if ( ! user.get() && 'en' === i18n.getLocaleSlug() ) {
+			flow = filterDesignTypeInFlow( flow );
 		}
 
 		return flow;
