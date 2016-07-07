@@ -333,7 +333,7 @@ export const List = React.createClass( {
 	},
 
 	goToEditDomainRoot( domain ) {
-		page( paths.domainManagementEdit( this.props.selectedSite.domain, domain.name ) );
+		page( paths.domainManagementEdit( this.props.selectedSite.slug, domain.name ) );
 	}
 } );
 

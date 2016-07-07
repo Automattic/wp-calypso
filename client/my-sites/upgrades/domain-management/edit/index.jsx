@@ -61,7 +61,7 @@ const Edit = React.createClass( {
 	},
 
 	goToDomainManagement() {
-		page( paths.domainManagementList( this.props.selectedSite.domain ) );
+		page( paths.domainManagementList( this.props.selectedSite.slug ) );
 	}
 } );
 

@@ -183,7 +183,7 @@ export default React.createClass( {
 				key="unverified-domains"
 				text={ this.translate( 'Urgent! Your domain %(domain)s may be lost forever because your email address is not verified.', { args: { domain } } ) }>
 
-				<NoticeAction href={ paths.domainManagementEdit( this.props.selectedSite.domain, domain ) }>
+				<NoticeAction href={ paths.domainManagementEdit( this.props.selectedSite.slug, domain ) }>
 					{ this.translate( 'Fix now' ) }
 				</NoticeAction>
 			</Notice>
@@ -197,7 +197,7 @@ export default React.createClass( {
 				<ul>{
 					domains.map( ( domain ) => {
 						return <li key={ domain.name }>
-							{ domain.name } <a href={ paths.domainManagementEdit( this.props.selectedSite.domain, domain.name ) }>{ this.translate( 'Fix now' ) }</a>
+							{ domain.name } <a href={ paths.domainManagementEdit( this.props.selectedSite.slug, domain.name ) }>{ this.translate( 'Fix now' ) }</a>
 						</li>;
 					} )
 				}</ul>

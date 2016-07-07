@@ -31,7 +31,7 @@ const AddGoogleApps = React.createClass( {
 
 		if ( needsRedirect ) {
 			const path = paths.domainManagementEmail(
-				this.props.selectedSite.domain,
+				this.props.selectedSite.slug,
 				this.props.selectedDomainName
 			);
 
@@ -60,7 +60,7 @@ const AddGoogleApps = React.createClass( {
 
 	goToEmail() {
 		const path = paths.domainManagementEmail(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.selectedDomainName
 		);
 
