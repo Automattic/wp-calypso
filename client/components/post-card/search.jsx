@@ -47,11 +47,11 @@ export function SearchPostCard( { post, site, feed, onClick = noop, onCommentCli
 	return (
 		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
 		{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
-		<h1 className="post-card__search-title"><a className="post-card__search-title-link" href={ post.URL }>{ post.title }</a></h1>
 		<div className="post-card__search-social ignore-click">
 			<CommentButton commentCount={ post.discussion.comment_count } tagName="span" showLabel={ false } onClick={ onCommentClick }/>
 			<LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showCount={ true } showLabel={ false } />
 		</div>
+		<h1 className="post-card__search-title"><a className="post-card__search-title-link" href={ post.URL }>{ post.title }</a></h1>
 		<SearchByline post={ post } site={ site } feed={ feed } />
 		<div className="post-card__search-excerpt">{ post.excerpt }</div>
 		</Card>

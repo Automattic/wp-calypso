@@ -70,11 +70,17 @@
 	max-width: 96px;
 }
 
+// Search cards
 .post-card__search.card {
 	position: relative;
 	padding: 20px;
+
 	&.has-thumbnail {
-		padding-left: 250px
+		padding-left: 250px;
+
+		@include breakpoint( "<660px" ) {
+			display: none;
+		}
 	}
 }
 
@@ -84,10 +90,16 @@
 	line-height:28px;
 	font-weight: 700;
 	margin: 0 100px 6px 0;
+
+	@include breakpoint( "<960px" ) {
+		display: block;
+		margin-right: 0;
+	}
 }
 
 .post-card__search .post-card__search-title-link {
 	color: inherit;
+
 	&:visited {
 		color: $gray;
 	}
@@ -96,17 +108,20 @@
 .post-card__search-featured-image {
 	display: block;
 	position: absolute;
-	top: 0;
-	left: 0;
-	width:230px;
-	bottom: 0;
+		bottom: 0;
+		left: 0;
+		top: 0;
+	width: 230px;
 }
 
 .post-card__search-social {
+	float: right;
+
+	@include breakpoint( ">960px" ) {
+		float: none;
 		position: absolute;
-			top: 21px;
-			right: 16px;
-		font-size: 14px;
+			right: 10px;
+	}
 }
 
 .post-card__search .like-button .gridicon {
@@ -119,7 +134,7 @@
 
 .post-card__search-byline {
 	list-style: none;
-	margin: 0 0 6px 0;
+	margin: 0 0 6px;
 	padding: 0;
 	font-size: 13px;
 
@@ -129,31 +144,29 @@
 	}
 }
 
-.post-card__search-byline-item:nth-child(2) {
-	position: relative;
-	top: -2px;
-} 
-
 .post-card__author-and-site {
-	color: #a8bece;
+	color: lighten( $gray, 10% );
 }
 
 .post-card__search-byline-item {
 	display: inline-block;
 	margin-right: 13px;
+
+	&:nth-child(2) {
+		position: relative;
+			top: -2px;
+	}
 }
 
 .post-card__search-excerpt {
 	@extend %content-font;
 	font-size: 14px;
-	margin: 6px 0 0 0;
+	margin-top: 6px;
 }
 
 .post-card__search .follow-button {
 	border-style: none;
-	padding-top: 0;
-	padding-bottom: 0;
-	padding-left: 24px;
-	margin: 0;
 	font-size: 13px;
+	padding: 0 0 24px;
+	margin: 0;
 }
