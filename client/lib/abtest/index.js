@@ -134,17 +134,24 @@ ABTest.prototype.getVariation = function() {
 };
 
 ABTest.prototype.isEligibleForAbTest = function() {
-	var selectedSite = sites.getSelectedSite();
+	const selectedSite = sites.getSelectedSite();
+	const client = ( typeof navigator !== 'undefined' ) ? navigator : {};
+	const clientLanguage = client.language || client.userLanguage || 'en';
 
 	if ( ! store.enabled ) {
 		debug( '%s: Local storage is not enabled', this.experimentId );
 		return false;
 	}
 
-	if ( ! this.allowAnyLocale && isUserSignedIn() &&
-			user.get().localeSlug !== 'en' ) {
-		debug( '%s: User has a non-English locale', this.experimentId );
-		return false;
+	if ( ! this.allowAnyLocale ) {
+		if ( isUserSignedIn() && user.get().localeSlug !== 'en' ) {
+			debug( '%s: User has a non-English locale', this.experimentId );
+			return false;
+		}
+		if ( ! isUserSignedIn() && ! clientLanguage.match( /^en\-?/i ) ) {
+			debug( '%s: Logged-out user has a non-English browser locale', this.experimentId );
+			return false;
+		}
 	}
 
 	if ( this.excludeJetpackSites && selectedSite && selectedSite.jetpack ) {
