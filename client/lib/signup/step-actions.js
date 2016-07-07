@@ -149,7 +149,7 @@ function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
  * @param {string} username The username to get suggestions for.
  */
 function getUsernameSuggestion( username ) {
-	let fields = {
+	const fields = {
 		givesuggestions: 1,
 		username: username
 	};
@@ -157,10 +157,10 @@ function getUsernameSuggestion( username ) {
 	/**
 	 * Clear out the local storage variable before sending the call.
 	 */
-	store.set('signupSuggestedUsername', '');
+	store.set( 'signupSuggestedUsername', '' );
 
 	wpcom.undocumented().validateNewUser( fields, ( error, response ) => {
-		if ( error || !response ) {
+		if ( error || ! response ) {
 			return null;
 		}
 
@@ -173,8 +173,8 @@ function getUsernameSuggestion( username ) {
 		/**
 		 * Only start checking for suggested username if the API returns an error for the validation.
 		 */
-		if ( !response.success ) {
-			let { messages } = response;
+		if ( ! response.success ) {
+			const { messages } = response;
 
 			/**
 			 * The only case we want to update username field is when the username is already taken.
@@ -182,8 +182,8 @@ function getUsernameSuggestion( username ) {
 			 * This ensures that the validation is done
 			 *
 			 * Check for:
-			 * 	- username taken error -
-			 * 	- a valid suggested username
+			 *    - username taken error -
+			 *    - a valid suggested username
 			 */
 			if ( messages.username && messages.username.taken && messages.suggested_username ) {
 				resulting_username = messages.suggested_username.suggested_username;
@@ -193,7 +193,7 @@ function getUsernameSuggestion( username ) {
 		/**
 		 * Put the suggested username in local storage for later use
 		 */
-		store.set('signupSuggestedUsername', resulting_username);
+		store.set( 'signupSuggestedUsername', resulting_username );
 	} );
 }
 
