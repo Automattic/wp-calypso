@@ -10,6 +10,7 @@ import debugModule from 'debug';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-unused-vars
 
@@ -74,4 +75,19 @@ export function getRecommendationsInteractedWith( state ) {
  */
 export function hasInteractedWithRecommendation( state, recommendationId ) {
 	return includes( state.reader.start.recommendationsInteractedWith, recommendationId );
+}
+
+/**
+ * Has the user graduated from the Reader follow recommendations process?
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Boolean} Has user graduated from initial follow recommendations?
+ */
+export function hasGraduatedRecommendations( state ) {
+	let graduated = state.reader.start.hasGraduated;
+	if ( graduated === null ) {
+		const user = getCurrentUser( state );
+		graduated = ! user.is_new_reader;
+	}
+	return graduated;
 }
