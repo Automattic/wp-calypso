@@ -85,7 +85,7 @@ module.exports = {
 		allowExistingUsers: true,
 	},
 	googleVouchers: {
-		datestamp: '20160706',
+		datestamp: '20160708',
 		variations: {
 			disabled: 50,
 			enabled: 50,
@@ -94,7 +94,7 @@ module.exports = {
 		allowExistingUsers: false,
 	},
 	wordpressAdCredits: {
-		datestamp: '20160706',
+		datestamp: '20160613',
 		variations: {
 			disabled: 50,
 			enabled: 50,
