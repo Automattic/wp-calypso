@@ -88,7 +88,6 @@
 		"olark": true,
 		"perfmon": false,
 		"persist-redux": true,
-		"plans/personal-plan": true,
 		"post-editor-github-link": false,
 		"post-editor/media-advanced": true,
 		"press-this": true,
