@@ -12,9 +12,6 @@ import {
 	includes,
 	invoke
 } from 'lodash';
-import map from 'lodash/map';
-import head from 'lodash/head';
-import property from 'lodash/property';
 
 /**
  * Internal dependencies
@@ -208,8 +205,6 @@ export const isWordpressAdCreditsEnabled = () => {
 		abtest( 'wordpressAdCredits' ) === 'enabled'
 	);
 };
-
-export const findCurrencyFromPlans = plans => head( map( plans, property( 'currency_code' ) ) ) || 'USD';
 
 export function plansLink( url, site, intervalType ) {
 	if ( 'monthly' === intervalType ) {

@@ -15,7 +15,7 @@ import matchesProperty from 'lodash/matchesProperty';
  */
 import formatCurrency from 'lib/format-currency';
 import { PLAN_FREE, PLAN_PERSONAL } from './constants';
-import { findCurrencyFromPlans } from 'lib/plans';
+import { findCurrencyFromPlans } from 'lib/plans/utils';
 
 export const personalPlan = {
 	product_id: 1009,

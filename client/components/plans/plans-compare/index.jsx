@@ -20,8 +20,8 @@ import {
 	shouldFetchSitePlans,
 	isGoogleVouchersEnabled,
 	isWordpressAdCreditsEnabled,
-	findCurrencyFromPlans
 } from 'lib/plans';
+import { findCurrencyFromPlans } from 'lib/plans/utils';
 import { getPlans } from 'state/plans/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import Gridicon from 'components/gridicon';
