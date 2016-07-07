@@ -154,6 +154,10 @@ function recordPurchase( product ) {
 
 	debug( 'Recording purchase', product );
 
+	// record the user id as a custom parameter
+	const currentUser = user.get(),
+		userId = currentUser ? currentUser.ID : 0;
+
 	// record the purchase w/ Facebook
 	window.fbq(
 		'track',
@@ -161,7 +165,8 @@ function recordPurchase( product ) {
 		{
 			currency: product.currency,
 			product_slug: product.product_slug,
-			value: product.cost
+			value: product.cost,
+			user_id: userId
 		}
 	);
 
@@ -180,7 +185,8 @@ function recordPurchase( product ) {
 		google_conversion_value: product.cost,
 		google_conversion_currency: product.currency,
 		google_custom_params: {
-			product_slug: product.product_slug
+			product_slug: product.product_slug,
+			user_id: userId
 		},
 		google_remarketing_only: false
 	} );
