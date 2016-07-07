@@ -96,7 +96,7 @@ describe( 'actions', () => {
 		const sampleResponse = { success: true };
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/read/graduate-new-reader' )
+				.post( '/rest/v1.2/read/graduate-new-reader' )
 				.reply( 200, deepFreeze( sampleResponse ) );
 		} );
 

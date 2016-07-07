@@ -1151,7 +1151,7 @@ Undocumented.prototype.readRecommendationsStart = function( query, fn ) {
 
 Undocumented.prototype.graduateNewReader = function( fn ) {
 	const params = { apiVersion: '1.2' };
-	return this.wpcom.req.post( '/read/graduate-new-reader', params, fn );
+	return this.wpcom.req.post( '/read/graduate-new-reader', params, {}, fn );
 };
 
 Undocumented.prototype.readNewPostEmailSubscription = function( query, fn ) {
