@@ -1,86 +1,97 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	find = require( 'lodash/find' );
+import React from 'react';
+import find from 'lodash/find';
+import { localize } from 'i18n-calypso';
 
-module.exports = React.createClass( {
-	displayName: 'PrivacyProtectionExample',
+const PrivacyProtectionExample = ( { translate, fields, countriesList } ) => {
+	const {
+			firstName: { value: firstName },
+			lastName: { value: lastName },
+			organization: { value: organization },
+			email: { value: email },
+			address1: { value: address1 },
+			address2: { value: address2 },
+			city: { value: city },
+			state: { value: state },
+			postalCode: { value: postalCode },
+			countryCode: { value: countryCode },
+			phone: { value: phone }
+		} = fields,
+		country = countryCode && find( countriesList.get(), { code: countryCode } ),
+		lines = [];
+	let addressLine = '';
 
-	render: function() {
-		var countriesList = this.props.countriesList.get(),
-			country,
-			lines = [],
-			line = '';
-
-		if ( this.props.fields.firstName.value || this.props.fields.lastName.value ) {
-			lines.push( this.props.fields.firstName.value + ' ' + this.props.fields.lastName.value );
-		} else if ( ! this.props.fields.organization.value ) {
-			lines.push( this.translate( 'Your Name' ) );
-		}
-
-		if ( this.props.fields.organization.value ) {
-			lines.push( this.props.fields.organization.value );
-		}
-
-		if ( this.props.fields.email.value ) {
-			lines.push( this.props.fields.email.value );
-		} else {
-			lines.push( this.translate( 'Your Email' ) );
-		}
-
-		if ( this.props.fields.address1.value || this.props.fields.address2.value ) {
-			if ( this.props.fields.address1.value ) {
-				lines.push( this.props.fields.address1.value );
-			}
-
-			if ( this.props.fields.address2.value ) {
-				lines.push( this.props.fields.address2.value );
-			}
-		} else {
-			lines.push( this.translate( 'Your Address' ) );
-		}
-
-		if ( this.props.fields.city.value ) {
-			line += this.props.fields.city.value;
-		} else {
-			line += this.translate( 'Your City', { textOnly: true } );
-		}
-
-		if ( this.props.fields.state.value || this.props.fields.postalCode.value ) {
-			line += ', ';
-
-			if ( this.props.fields.state.value ) {
-				line += this.props.fields.state.value;
-			}
-
-			line += ' ';
-
-			if ( this.props.fields.postalCode.value ) {
-				line += this.props.fields.postalCode.value;
-			}
-		}
-
-		lines.push( line );
-
-		if ( this.props.fields.countryCode.value ) {
-			country = find( countriesList, { code: this.props.fields.countryCode.value } );
-		}
-
-		if ( country ) {
-			lines.push( country.name );
-		} else {
-			lines.push( this.translate( 'Your Country' ) );
-		}
-
-		if ( this.props.fields.phone.value ) {
-			lines.push( this.props.fields.phone.value );
-		} else {
-			lines.push( this.translate( 'Your Phone Number' ) );
-		}
-
-		return (
-			<p>{ lines.map( l => <span>{ l }</span> ) } </p>
-		);
+	if ( firstName || lastName ) {
+		lines.push( firstName + ' ' + lastName );
+	} else if ( ! organization ) {
+		lines.push( translate( 'Your Name' ) );
 	}
-} );
+
+	if ( organization ) {
+		lines.push( organization );
+	}
+
+	if ( email ) {
+		lines.push( email );
+	} else {
+		lines.push( translate( 'Your Email' ) );
+	}
+
+	if ( address1 || address2 ) {
+		if ( address1 ) {
+			lines.push( address1 );
+		}
+
+		if ( address2 ) {
+			lines.push( address2 );
+		}
+	} else {
+		lines.push( translate( 'Your Address' ) );
+	}
+
+	if ( city ) {
+		addressLine += city;
+	} else {
+		addressLine += translate( 'Your City' );
+	}
+
+	if ( state || postalCode ) {
+		addressLine += ', ';
+
+		if ( state ) {
+			addressLine += state;
+		}
+
+		addressLine += ' ';
+
+		if ( postalCode ) {
+			addressLine += postalCode;
+		}
+	}
+
+	lines.push( addressLine );
+
+	if ( country ) {
+		lines.push( country.name );
+	} else {
+		lines.push( translate( 'Your Country' ) );
+	}
+
+	if ( phone ) {
+		lines.push( phone );
+	} else {
+		lines.push( translate( 'Your Phone Number' ) );
+	}
+
+	return (
+		<p>{ lines.map(
+			( line, index ) => {
+				return <span key={ `privacy-protection-example-line-${ index }` }>{ line }</span>;
+			}
+		) } </p>
+	);
+};
+
+export default localize( PrivacyProtectionExample );

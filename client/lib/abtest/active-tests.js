@@ -47,14 +47,6 @@ module.exports = {
 		},
 		defaultVariation: 'disabled'
 	},
-	privacyCheckbox: {
-		datestamp: '20160310',
-		variations: {
-			original: 50,
-			checkbox: 50
-		},
-		defaultVariation: 'original'
-	},
 	domainSuggestionVendor: {
 		datestamp: '20160614',
 		variations: {

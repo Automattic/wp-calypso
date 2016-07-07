@@ -99,9 +99,10 @@ var DomainSearch = React.createClass( {
 			items.push( cartItems.domainRegistration( { domain: suggestion.domain_name, productSlug: suggestion.product_slug } ) );
 		}
 
-		const shouldBundlePrivacy = cartItems.isNextDomainFree( this.props.cart ) || shouldBundleDomainWithPlan;
-		if ( abtest( 'privacyCheckbox' ) === 'checkbox' && shouldBundlePrivacy ) {
-			items.push( cartItems.domainPrivacyProtection( { domain: suggestion.domain_name } ) );
+		if ( cartItems.isNextDomainFree( this.props.cart ) || shouldBundleDomainWithPlan ) {
+			upgradesActions.addItem( cartItems.domainPrivacyProtection( {
+				domain: suggestion.domain_name
+			} ) );
 		}
 
 		upgradesActions.addItems( items );
