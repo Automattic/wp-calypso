@@ -44,7 +44,7 @@ const actions = require( 'lib/posts/actions' ),
 
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
-import { isEditorDraftsVisible, getEditorPostId } from 'state/ui/editor/selectors';
+import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';
 import { receivePost, editPost, resetPostEdits } from 'state/posts/actions';
 import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
@@ -172,6 +172,7 @@ const PostEditor = React.createClass( {
 		sites: React.PropTypes.object,
 		user: React.PropTypes.object,
 		userUtils: React.PropTypes.object,
+		editPath: React.PropTypes.string
 	},
 
 	_previewWindow: null,
@@ -841,9 +842,8 @@ const PostEditor = React.createClass( {
 		this.props.receivePost( post );
 
 		// make sure the history entry has the post ID in it, but don't dispatch
-		const site = this.props.sites.getSite( post.site_ID );
 		page.replace(
-			utils.getEditURL( post, site ),
+			this.props.editPath,
 			null, false, false
 		);
 
@@ -910,11 +910,14 @@ const PostEditor = React.createClass( {
 
 export default connect(
 	( state ) => {
+		const postId = getEditorPostId( state );
+		const siteId = getSelectedSiteId( state );
 		return {
-			siteId: getSelectedSiteId( state ),
-			postId: getEditorPostId( state ),
 			showDrafts: isEditorDraftsVisible( state ),
 			editorModePreference: getPreference( state, 'editor-mode' ),
+			editPath: getEditorPath( state, siteId, postId ),
+			siteId,
+			postId
 		};
 	},
 	( dispatch ) => {
