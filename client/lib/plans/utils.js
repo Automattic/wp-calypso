@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import map from 'lodash/map';
-import head from 'lodash/head';
-import property from 'lodash/property';
+import { map, head, property } from 'lodash';
 
 export const findCurrencyFromPlans = plans => head(
 	map(
