@@ -8,6 +8,7 @@ import get from 'lodash/get';
 import includes from 'lodash/includes';
 import invoke from 'lodash/invoke';
 import debugFactory from 'debug';
+import filter from 'lodash/filter';
 
 /**
  * Internal dependencies
@@ -24,8 +25,11 @@ import {
 import {
 	featuresList,
 	plansList,
+	PLAN_FREE,
 	PLAN_PERSONAL,
-	PLAN_FREE
+	PLAN_PREMIUM,
+	WORDADS_INSTANT,
+	FEATURE_GOOGLE_AD_CREDITS
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
@@ -159,14 +163,14 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 				if ( showJetpackFreePlan ) {
 					return isJetpackPlan( plan ) && isMonthly( plan );
 				}
-				return isJetpackPlan( plan ) && !isFreeJetpackPlan( plan ) && isMonthly( plan );
+				return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan ) && isMonthly( plan );
 			}
 
 			if ( showJetpackFreePlan ) {
-				return isJetpackPlan( plan ) && !isMonthly( plan );
+				return isJetpackPlan( plan ) && ! isMonthly( plan );
 			}
 
-			return isJetpackPlan( plan ) && !isFreeJetpackPlan( plan ) && !isMonthly( plan );
+			return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan ) && ! isMonthly( plan );
 		}
 
 		if ( hideFreePlan && PLAN_FREE === plan.product_slug ) {
@@ -180,6 +184,11 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 		return ! isJetpackPlan( plan );
 	} );
 }
+
+export const isWordadsInstantActivationEnabled = () => {
+	return isEnabled( 'manage/ads/wordads-instant' ) &&
+		abtest( 'wordadsInstantActivation' ) === 'enabled';
+};
 
 export const isGoogleVouchersEnabled = () => {
 	return ( isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' );
@@ -203,4 +212,44 @@ export function plansLink( url, site, intervalType ) {
 	}
 
 	return url;
+}
+
+export function applyTestFiltersToPlansList( planName, testFilters = {
+	wordadsInstantActivation: true,
+	googleVouchers: true,
+	wordpressAdCredits: true
+
+} ) {
+	const {
+		wordadsInstantActivation,
+		googleVouchers,
+		wordpressAdCredits
+	} = testFilters;
+
+	const filteredPlanConstantObj = Object.assign( {}, plansList[ planName ] );
+	let filteredPlanFeatures = filteredPlanConstantObj.getFeatures();
+
+	if ( wordadsInstantActivation ) {
+		if ( ! isWordadsInstantActivationEnabled() ) {
+			filteredPlanFeatures = filter( filteredPlanFeatures,
+				value => value !== WORDADS_INSTANT
+			);
+		} else if ( planName === PLAN_PREMIUM ) {
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivation;
+		}
+	}
+
+	if ( googleVouchers ) {
+		if ( ! isGoogleVouchersEnabled() ) {
+			filteredPlanFeatures = filter( filteredPlanFeatures,
+				value => value !== FEATURE_GOOGLE_AD_CREDITS
+			);
+		} else if ( planName === PLAN_PREMIUM ) {
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithGoogleVouchers;
+		}
+	}
+
+	filteredPlanConstantObj.getFeatures = () => filteredPlanFeatures;
+
+	return filteredPlanConstantObj;
 }
