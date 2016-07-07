@@ -43,6 +43,7 @@ import SitesList from 'lib/sites-list';
  */
 const sitesList = SitesList();
 const debug = debugFactory( 'calypso:plans' );
+const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
 export function getPlan( plan ) {
 	return plansList[ plan ];
@@ -159,7 +160,6 @@ export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 
 export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalType, showJetpackFreePlan ) {
 	const hasPersonalPlan = site && site.plan.product_slug === PLAN_PERSONAL;
-	const personalPlanTestEnabled = abtest( 'personalPlan' ) === 'show' && isEnabled( 'plans/personal-plan' );
 
 	return plans.filter( function( plan ) {
 		if ( site && site.jetpack ) {
@@ -181,7 +181,7 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 			return false;
 		}
 
-		if ( plan.product_slug === PLAN_PERSONAL && ! ( hasPersonalPlan || personalPlanTestEnabled ) ) {
+		if ( plan.product_slug === PLAN_PERSONAL && ! ( hasPersonalPlan || isPersonalPlanEnabled ) ) {
 			return false;
 		}
 
