@@ -110,7 +110,7 @@ export const plansList = {
 			' lots of space for audio and video, and $100 advertising voucher.' ),
 		getDescriptionWithWordAdsInstantActivation: () => i18n.translate( 'Your own domain name, powerful' +
 			' customization options, easy monetization with WordAds and lots of space for audio and video.' ),
-		getDescriptionWithWordAdsAndGoogleVouchers: () => i18n.translate( 'Your own domain name, powerful' +
+		getDescriptionWithWordAdsInstantActivationAndGoogleVouchers: () => i18n.translate( 'Your own domain name, powerful' +
 			' customization options, easy monetization with WordAds, lots of space for audio and video, and $100 advertising voucher.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_FREE_SITE,

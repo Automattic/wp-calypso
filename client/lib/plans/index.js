@@ -237,7 +237,7 @@ export function applyTestFiltersToPlansList( planName ) {
 
 	const updatePlanDescriptions = () => {
 		if ( isWordadsInstantActivationEnabled() && isGoogleVouchersEnabled() && planName === PLAN_PREMIUM ) {
-			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsAndGoogleVouchers;
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivationAndGoogleVouchers;
 		} else if ( isWordadsInstantActivationEnabled() && planName === PLAN_PREMIUM ) {
 			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivation;
 		} else if ( isGoogleVouchersEnabled() && planName === PLAN_PREMIUM ) {
