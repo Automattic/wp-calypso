@@ -127,7 +127,7 @@ describe( 'reducer', () => {
 					type: POST_SAVE_SUCCESS,
 					post: {
 						title: 'Hello World',
-						status: 'publish' // [TODO]: We'll eventually want publish notice
+						status: 'invalid'
 					}
 				} );
 
@@ -180,6 +180,56 @@ describe( 'reducer', () => {
 						noticeId: 'POST_SAVE_SUCCESS',
 						count: 2,
 						text: '2 posts successfully moved to trash'
+					}
+				} );
+			} );
+
+			it( 'should return state with single publish success', () => {
+				const original = deepFreeze( {} );
+				const state = items( original, {
+					type: POST_SAVE_SUCCESS,
+					post: { status: 'publish' }
+				} );
+
+				expect( state ).to.eql( {
+					POST_SAVE_SUCCESS: {
+						showDismiss: true,
+						isPersistent: false,
+						displayOnNextPage: false,
+						status: 'is-success',
+						noticeId: 'POST_SAVE_SUCCESS',
+						count: 1,
+						text: 'Post successfully published'
+					}
+				} );
+			} );
+
+			it( 'should return state with multiple publish success', () => {
+				const original = deepFreeze( {
+					POST_SAVE_SUCCESS: {
+						showDismiss: true,
+						isPersistent: false,
+						displayOnNextPage: false,
+						status: 'is-success',
+						noticeId: 'POST_SAVE_SUCCESS',
+						count: 1,
+						text: 'Post successfully published'
+					}
+				} );
+				const state = items( original, {
+					type: POST_SAVE_SUCCESS,
+					post: { status: 'publish' }
+				} );
+
+				expect( state ).to.eql( {
+					POST_SAVE_SUCCESS: {
+						showDismiss: true,
+						isPersistent: false,
+						displayOnNextPage: false,
+						status: 'is-success',
+						noticeId: 'POST_SAVE_SUCCESS',
+						count: 2,
+						text: '2 posts successfully published'
 					}
 				} );
 			} );
