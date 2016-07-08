@@ -143,7 +143,7 @@
 	}
 
 	.site-settings__footer-credit-nudge-icon {
-	    background: #f0b849;
+		background: $alert-yellow;
 	    border-radius: 50%;
 	    margin-right: 16px;
 	    color: white;
@@ -161,7 +161,7 @@
 
 	.site-settings__footer-credit-explanation {
 		font-size: 13px;
-	    color: #87a6bc;
+		color: $gray;
 	    font-style: italic;
 	}
 }
