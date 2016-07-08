@@ -372,7 +372,7 @@ const PlansSetup = React.createClass( {
 		}
 		return (
 			<Notice status="is-error" text={ noticeText } showDismiss={ false }>
-				<NoticeAction href={ support.JETPACK_SUPPORT }>
+				<NoticeAction href={ support.JETPACK_CONTACT_SUPPORT }>
 					{ this.translate( 'Contact Support' ) }
 				</NoticeAction>
 			</Notice>
