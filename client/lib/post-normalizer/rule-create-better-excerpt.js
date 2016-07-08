@@ -58,5 +58,17 @@ export default function createBetterExcerpt( post ) {
 	post.better_excerpt = trim( dom.innerHTML );
 	dom.innerHTML = '';
 
+	// also make a shorter excerpt...
+	if ( post.excerpt ) {
+		// replace any trailing [...] with an actual ellipsis
+		let shorterExcerpt = post.excerpt.replace( /\[...\]\w*$/, '...' );
+		// limit to 160 characters
+		if ( shorterExcerpt.length > 160 ) {
+			const lastSpace = shorterExcerpt.lastIndexOf( ' ', 160 );
+			shorterExcerpt = shorterExcerpt.substring( 0, lastSpace ) + '…';
+		}
+		post.short_excerpt = shorterExcerpt;
+	}
+
 	return post;
 }
