@@ -2,10 +2,11 @@ $plan-features-header-banner-height: 20px;
 
 .plan-features {
 	overflow-x: auto;
-	margin-left: -16px;
+	margin: 0 0 0 -16px;
+	padding-top: $plan-features-header-banner-height;
 
-	@include breakpoint( ">480px" ) {
-		margin: 0 -16px;
+	@include breakpoint( ">960px" ) {
+		margin: -16px -16px 0 -16px;
 	}
 }
 
