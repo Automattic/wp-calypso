@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, reduce } from 'lodash';
 
 /**
  * Returns a sync status object by site ID.
@@ -74,9 +74,36 @@ function isFullSyncing( state, siteId ) {
 	return isStarted && ! isFinished;
 }
 
+/**
+ * Returns a rounded up percentage the amount of sync completed.
+ * @param  {Object} state    Global state tree
+ * @param  {Number} siteId   Site ID
+ * @return {Number}          The percentage of sync completed, expressed as an integer
+ */
+function getSyncProgressPercentage( state, siteId ) {
+	const syncStatus = getSyncStatus( state, siteId );
+	const queued = get( syncStatus, 'queue' );
+	const sent = get( syncStatus, 'sent' );
+
+	if ( isPendingSyncStart( state, siteId ) || ! queued || ! sent ) {
+		return 0;
+	}
+
+	const countQueued = reduce( queued, ( sum, value ) => {
+		return sum += value;
+	}, 0 );
+
+	const countSent = reduce( sent, ( sum, value ) => {
+		return sum += value;
+	}, 0 );
+
+	return Math.ceil( countSent / countQueued * 100 );
+}
+
 export default {
 	getSyncStatus,
 	getFullSyncRequest,
 	isPendingSyncStart,
-	isFullSyncing
+	isFullSyncing,
+	getSyncProgressPercentage
 };

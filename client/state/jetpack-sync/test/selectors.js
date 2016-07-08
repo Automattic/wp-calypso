@@ -10,7 +10,8 @@ import {
 	getSyncStatus,
 	getFullSyncRequest,
 	isPendingSyncStart,
-	isFullSyncing
+	isFullSyncing,
+	getSyncProgressPercentage
 } from '../selectors';
 
 const nonExistentId = '111111';
@@ -19,7 +20,8 @@ const successfulSiteId = '1234567';
 const errorSiteId = '12345678';
 const syncScheduledSiteID = '123455';
 const oldSyncSiteId = '987654321';
-const inProgressSiteId = '87654321';
+const syncStartedSiteId = '87654321';
+const syncInProgressSiteId = '7654321';
 
 const syncStatusSuccessful = {
 	isRequesting: false,
@@ -92,7 +94,7 @@ const syncStatusErrored = {
 	}
 };
 
-const syncStatusInProgress = {
+const syncStatusStarted = {
 	started: 1467998622,
 	queue_finished: 1467998622,
 	queue: {
@@ -108,6 +110,33 @@ const syncStatusInProgress = {
 	},
 	sent: [],
 	is_scheduled: false
+};
+
+const syncStatusInProgress = {
+	started: 1467998622,
+	queue_finished: 1467998622,
+	sent_started: 1467999200,
+	queue: {
+		constants: 1,
+		functions: 1,
+		options: 1,
+		terms: 1,
+		themes: 1,
+		users: 1,
+		posts: 102,
+		comments: 1,
+		updates: 1
+	},
+	sent: {
+		constants: 1,
+		functions: 1,
+		options: 1,
+		terms: 1,
+		themes: 1,
+		users: 1,
+		posts: 25
+	},
+	is_scheduled: false,
 };
 
 const fullSyncRequested = {
@@ -145,7 +174,8 @@ const testState = {
 			[ errorSiteId ]: syncStatusErrored,
 			[ syncScheduledSiteID ]: syncStatusScheduled,
 			[ oldSyncSiteId ]: syncStatusSuccessful,
-			[ inProgressSiteId ]: syncStatusInProgress
+			[ syncStartedSiteId ]: syncStatusStarted,
+			[ syncInProgressSiteId ]: syncStatusInProgress
 		},
 		fullSyncRequest: {
 			[ requestedSiteId ]: fullSyncRequested,
@@ -230,8 +260,20 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return true if sync has started and not finished', () => {
-			const test = isFullSyncing( testState, inProgressSiteId );
+			const test = isFullSyncing( testState, syncStartedSiteId );
 			expect( test ).to.be.true;
+		} );
+	} );
+
+	describe( '#getSyncProgressPercentage()', () => {
+		it( 'should return 0 if no sync status for a site', () => {
+			const test = getSyncProgressPercentage( testState, nonExistentId );
+			expect( test ).to.be.eql( 0 );
+		} );
+
+		it( 'should return a non-zero integer if site has sent data to be synced', () => {
+			const test = getSyncProgressPercentage( testState, syncInProgressSiteId );
+			expect( test ).to.be.eql( 29 )
 		} );
 	} );
 } );
