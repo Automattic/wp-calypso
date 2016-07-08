@@ -7,6 +7,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 /**
  * Internal dependencies
  */
+import noticesMiddleware from './notices/middleware';
 import application from './application/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
@@ -76,7 +77,7 @@ export const reducer = combineReducers( {
 	wordads
 } );
 
-let middleware = [ thunkMiddleware ];
+let middleware = [ thunkMiddleware, noticesMiddleware ];
 
 // Analytics middleware currently only works in the browser
 if ( typeof window === 'object' ) {
