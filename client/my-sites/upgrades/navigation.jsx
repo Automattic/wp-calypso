@@ -1,35 +1,27 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	startsWith = require( 'lodash/startsWith' ),
-	Dispatcher = require( 'dispatcher' ),
-	find = require( 'lodash/find' ),
-	propertyOf = require( 'lodash/propertyOf' ),
-	flatten = require( 'lodash/flatten' ),
-	map = require( 'lodash/map' ),
-	sortBy = require( 'lodash/sortBy' ),
-	size = require( 'lodash/size' ),
-	filter = require( 'lodash/filter' ),
-	includes = require( 'lodash/includes' ),
-	i18n = require( 'i18n-calypso' );
+import React from 'react';
+import { startsWith, find, propertyOf, flatten, map, sortBy, size, filter, includes } from 'lodash';
+import Dispatcher from 'dispatcher';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' ),
-	upgradesPaths = require( 'my-sites/upgrades/paths' ),
-	viewport = require( 'lib/viewport' ),
-	upgradesActionTypes = require( 'lib/upgrades/constants' ).action,
-	PopoverCart = require( 'my-sites/upgrades/cart/popover-cart' );
+import config from 'config';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import upgradesPaths from 'my-sites/upgrades/paths';
+import viewport from 'lib/viewport';
+import { action as upgradesActionTypes } from 'lib/upgrades/constants';
+import PopoverCart from 'my-sites/upgrades/cart/popover-cart';
 
 // The first path acts as the primary path that the button will link to. The
 // remaining paths will make the button highlighted on that page.
 
-var NAV_ITEMS = {
+const NAV_ITEMS = {
 	Addons: {
 		paths: [ '/plans' ],
 		label: i18n.translate( 'Add-ons for Jetpack sites' ),
@@ -64,7 +56,7 @@ var NAV_ITEMS = {
 	}
 };
 
-var UpgradesNavigation = React.createClass( {
+const PlansNavigation = React.createClass( {
 	propTypes: {
 		cart: React.PropTypes.object.isRequired,
 		path: React.PropTypes.string.isRequired,
@@ -75,14 +67,14 @@ var UpgradesNavigation = React.createClass( {
 		sitePlans: React.PropTypes.object.isRequired
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			cartVisible: false,
 			cartShowKeepSearching: false
 		};
 	},
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.dispatchToken = Dispatcher.register( function( payload ) {
 			if ( payload.action.type === upgradesActionTypes.CART_POPUP_OPEN ) {
 				this.setState( { cartVisible: true, cartShowKeepSearching: payload.action.options.showKeepSearching } );
@@ -92,12 +84,12 @@ var UpgradesNavigation = React.createClass( {
 		}.bind( this ) );
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		Dispatcher.unregister( this.dispatchToken );
 	},
 
-	render: function() {
-		var navItems = this.getNavItemData().map( this.navItem ),
+	render() {
+		const navItems = this.getNavItemData().map( this.navItem ),
 			selectedNavItem = this.getSelectedNavItem(),
 			selectedText = selectedNavItem && selectedNavItem.label;
 
@@ -106,7 +98,7 @@ var UpgradesNavigation = React.createClass( {
 					hasPinnedItems={ viewport.isMobile() }
 					selectedText={ selectedText }
 					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }>
-				<NavTabs label='Section' selectedText={ selectedText }>
+				<NavTabs label="Section" selectedText={ selectedText }>
 					{ navItems }
 				</NavTabs>
 				{ this.cartToggleButton() }
@@ -114,8 +106,8 @@ var UpgradesNavigation = React.createClass( {
 		);
 	},
 
-	getNavItemData: function() {
-		var items;
+	getNavItemData() {
+		let items;
 
 		if ( this.props.selectedSite.jetpack ) {
 			items = [ 'Addons' ];
@@ -126,8 +118,8 @@ var UpgradesNavigation = React.createClass( {
 		return items.map( propertyOf( NAV_ITEMS ) );
 	},
 
-	getSelectedNavItem: function() {
-		var allPaths = flatten( map( this.getNavItemData(), 'paths' ) ),
+	getSelectedNavItem() {
+		const allPaths = flatten( map( this.getNavItemData(), 'paths' ) ),
 			sortedPaths = sortBy( allPaths, function( path ) {
 				return -countSlashes( path );
 			} ),
@@ -140,7 +132,7 @@ var UpgradesNavigation = React.createClass( {
 		} );
 	},
 
-	navItem: function( itemData ) {
+	navItem( itemData ) {
 		var { paths, allSitesPath, label } = itemData,
 			slug = this.props.selectedSite ? this.props.selectedSite.slug : null,
 			selectedNavItem = this.getSelectedNavItem(),
@@ -162,7 +154,7 @@ var UpgradesNavigation = React.createClass( {
 		);
 	},
 
-	toggleCartVisibility: function( event ) {
+	toggleCartVisibility( event ) {
 		if ( event ) {
 			event.preventDefault();
 		}
@@ -170,15 +162,15 @@ var UpgradesNavigation = React.createClass( {
 		this.setState( { cartVisible: ! this.state.cartVisible } );
 	},
 
-	onMobileNavPanelOpen: function() {
+	onMobileNavPanelOpen() {
 		this.setState( { cartVisible: false } );
 	},
 
-	onKeepSearchingClick: function() {
+	onKeepSearchingClick() {
 		this.setState( { cartVisible: false } );
 	},
 
-	cartToggleButton: function() {
+	cartToggleButton() {
 		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
 			return null;
 		}
@@ -204,4 +196,4 @@ function countSlashes( path ) {
 	} ) );
 }
 
-module.exports = UpgradesNavigation;
+export default PlansNavigation;
