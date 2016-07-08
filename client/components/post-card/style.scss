@@ -181,11 +181,11 @@
 		top: -2px;
 
 	.gridicon {
-		fill: lighten( $gray, 10% );
+		fill: $blue-wordpress;
 	}
 
 	.follow-button__label {
-		color: lighten( $gray, 10% );
+		color: $blue-wordpress;
 
 		@include breakpoint( "<660px" )
 			display: inline;
@@ -194,15 +194,53 @@
 	&:hover {
 
 		.gridicon {
-			fill: $blue-wordpress;
+			fill: lighten( $gray, 10% );
 		}
 
 		.follow-button__label {
-			color: $blue-wordpress;
+			color: lighten( $gray, 10% );
 		}
 	}
 
 	&:focus {
 		border-radius: 0;
+	}
+
+	&.is-following {
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		.follow-button__label {
+			color: $alert-green;
+		}
+
+		&:hover {
+
+			.gridicon {
+				fill: $blue-wordpress;
+			}
+
+			.follow-button__label {
+				color: $blue-wordpress;
+			}
+		}
+	}
+}
+
+// Custom colors for Site and Author info
+.reader__content {
+
+	.post-card__author-and-site {
+
+		a,
+		a:visited {
+			color: lighten( $gray, 10% );
+		}
+
+		a:hover {
+			color: $blue-wordpress;
+		}
 	}
 }
