@@ -26,7 +26,7 @@ function add( newThemes, themes ) {
 	}, {} ) );
 }
 
-function setActiveTheme( themeId, themes ) {
+export function setActiveTheme( themeId, themes ) {
 	return themes
 		.map( theme => theme.delete( 'active' ) )
 		.setIn( [ themeId, 'active' ], true );
