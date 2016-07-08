@@ -282,7 +282,7 @@ const PlansSetup = React.createClass( {
 					);
 					break;
 				default:
-					statusProps.text = this.translate( 'An error occured.' );
+					statusProps.text = plugin.error.message || this.translate( 'An error occured.' );
 					break;
 			}
 			statusProps.children = (
