@@ -136,7 +136,13 @@ class PlanFeatures extends Component {
 				onUpgradeClick,
 				planName
 			} = properties;
-			const classes = classNames( 'plan-features__table-item', 'has-border-bottom' );
+
+			const classes = classNames(
+				'plan-features__table-item',
+				'has-border-bottom',
+				'is-top-buttons'
+			);
+
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
@@ -213,7 +219,11 @@ class PlanFeatures extends Component {
 				onUpgradeClick,
 				planName
 			} = properties;
-			const classes = classNames( 'plan-features__table-item', 'has-border-bottom' );
+			const classes = classNames(
+				'plan-features__table-item',
+				'has-border-bottom',
+				'is-bottom-buttons'
+			);
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions

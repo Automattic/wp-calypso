@@ -74,7 +74,7 @@ class PlanFeaturesHeader extends Component {
 
 		if ( isPlaceholder ) {
 			return (
-				<div className="plan-features__header-price is-placeholder"></div>
+				<div className="plan-features__price is-placeholder"></div>
 			);
 		}
 
