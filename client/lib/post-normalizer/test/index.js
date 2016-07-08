@@ -236,8 +236,8 @@ describe( 'index', function() {
 				assert.strictEqual( normalized.author.avatar_URL, 'http://example.com/me.jpg-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.featured_image, 'http://foo.bar/-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.featured_media.uri, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
-				assert.strictEqual( normalized.attachments['1234'].URL, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
-				assert.strictEqual( normalized.attachments['3456'].URL, 'http://example.com/media.jpg' );
+				assert.strictEqual( normalized.attachments[ '1234' ].URL, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
+				assert.strictEqual( normalized.attachments[ '3456' ].URL, 'http://example.com/media.jpg' );
 				done( err );
 			} );
 		} );

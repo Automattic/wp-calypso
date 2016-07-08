@@ -9,7 +9,7 @@ import forEach from 'lodash/forEach';
 import formatting from 'lib/formatting';
 
 export default function preventWidows( post ) {
-	forEach( [ 'title', 'excerpt' ], function( prop ) {
+	forEach( [ 'excerpt' ], function( prop ) {
 		if ( post[ prop ] ) {
 			post[ prop ] = formatting.preventWidows( post[ prop ], 2 );
 		}
