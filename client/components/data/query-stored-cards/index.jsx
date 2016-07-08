@@ -16,13 +16,13 @@ class QueryStoredCards extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.isRequesting ) {
-			this.requestStoredCards();
-		}
+		this.requestStoredCards( nextProps );
 	}
 
-	requestStoredCards() {
-		this.props.fetchStoredCards();
+	requestStoredCards( props = this.props ) {
+		if ( ! props.isRequesting ) {
+			props.fetchStoredCards();
+		}
 	}
 
 	render() {
