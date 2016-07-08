@@ -18,6 +18,7 @@ var LikeButton = React.createClass( {
 		liked: React.PropTypes.bool,
 		showCount: React.PropTypes.bool,
 		likeCount: React.PropTypes.number,
+		showLabel: React.PropTypes.bool,
 		tagName: React.PropTypes.string,
 		onLikeToggle: React.PropTypes.func,
 		likedLabel: React.PropTypes.string,
@@ -30,6 +31,7 @@ var LikeButton = React.createClass( {
 			liked: false,
 			showCount: false,
 			likeCount: 0,
+			showLabel: true,
 			isMini: false,
 			animateLike: true
 		};
@@ -51,7 +53,7 @@ var LikeButton = React.createClass( {
 				'is-mini': this.props.isMini,
 				'is-animated': this.props.animateLike
 			},
-			likeLabel = this.translate( 'Like', { comment: 'Label for a button to "like" a post.'} ),
+			likeLabel = this.translate( 'Like', { comment: 'Label for a button to "like" a post.' } ),
 			likeCount = this.props.likeCount,
 			containerTag = this.props.tagName || 'li',
 			labelElement,
@@ -82,8 +84,8 @@ var LikeButton = React.createClass( {
 		containerClasses = classnames( containerClasses );
 
 		labelElement = ( <span className="like-button__label">
-			{ likeCount > 0 ? <span className="like-button__label-count">{ likeCount }</span> : null }
-			<span className="like-button__label-status">{ likeLabel }</span>
+			{ likeCount > 0 || this.props.showCount ? <span className="like-button__label-count">{ likeCount }</span> : null }
+			{ this.props.showLabel && <span className="like-button__label-status">{ likeLabel }</span> }
 		</span> );
 
 		return (
