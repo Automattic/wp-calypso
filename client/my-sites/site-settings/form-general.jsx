@@ -511,7 +511,7 @@ const FormGeneral = React.createClass( {
 							</Card> : <UpgradeNudge
 								className="site-settings__footer-credit-nudge"
 								title="Remove WordPress.com footer credit with Business Plan"
-								message="With Business plan you can remove footes branding, add google analytics and more"
+								message="With Business plan you can remove footer branding, add google analytics and more"
 								icon="customize"
 							/>
 						}
