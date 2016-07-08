@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 const child_process = require( 'child_process' );
 const path = require( 'path' );
-var args = [ '--cache', '--quiet', '--ext=.js',  '--ext=.jsx' ];
-if ( process.argv.length > 2 ) {
-	args = args.concat( process.argv.slice( 2 ) );
-} else {
-	args = args.concat( [ '.' ] );
+var args = [ '--cache', '--quiet' ];
+if ( process.argv.length <= 2 ) {
+        process.exit( 0 );
 }
+
+args = args.concat( process.argv.slice( 2 ) );
 
 const results = child_process.spawnSync( path.join( '.', 'node_modules', '.bin', 'eslint' ), args );
 
