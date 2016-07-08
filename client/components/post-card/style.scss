@@ -77,11 +77,20 @@
 
 	&.has-thumbnail {
 		padding-left: 250px;
+
 		@include breakpoint( "660px-960px" ) {
 			padding-left: 135px;
 		}
+
 		@include breakpoint( "<480px" ) {
-			padding-left: 135px;
+			padding-left: 20px;
+		}
+
+		.post-card__search-featured-image {
+
+			@include breakpoint( "<480px" ) {
+				display: none;
+			}
 		}
 	}
 }
@@ -89,7 +98,7 @@
 .post-card__search-title {
 	@extend %content-font;
 	font-size: 24px;
-	line-height:28px;
+	line-height: 28px;
 	font-weight: 700;
 	margin: 0 100px 6px 0;
 
@@ -120,17 +129,17 @@
 	width: 230px;
 
 	@include breakpoint( "660px-960px" ) {
-		width: 115px
+		width: 115px;
 	}
 
 	@include breakpoint( "<480px" ) {
-		width: 115px
+		width: 115px;
 	}
 }
 
 .post-card__search-social {
 	float: right;
-	margin-bottom: 10px;
+	margin-bottom: 6px;
 
 	@include breakpoint( ">960px" ) {
 		float: none;
@@ -163,6 +172,7 @@
 
 .post-card__author-and-site {
 	color: lighten( $gray, 10% );
+	margin-right: 10px;
 }
 
 .post-card__search-excerpt {
@@ -171,13 +181,13 @@
 	margin-top: 6px;
 }
 
+// Custom styles for Follow button
 .post-card__search .follow-button {
 	border-style: none;
 	font-size: 13px;
 	margin: 0;
 	padding: 0;
 	position: relative;
-		left: 10px;
 		top: -2px;
 
 	.gridicon {
