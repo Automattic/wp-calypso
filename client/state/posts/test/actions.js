@@ -17,6 +17,9 @@ import {
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
+	POST_RESTORE,
+	POST_RESTORE_FAILURE,
+	POST_RESTORE_SUCCESS,
 	POST_SAVE,
 	POST_SAVE_SUCCESS,
 	POST_SAVE_FAILURE,
@@ -35,7 +38,8 @@ import {
 	resetPostEdits,
 	savePost,
 	trashPost,
-	deletePost
+	deletePost,
+	restorePost
 } from '../actions';
 
 describe( 'actions', () => {
@@ -479,6 +483,63 @@ describe( 'actions', () => {
 					siteId: 77203074,
 					postId: 102,
 					error: sinon.match( { message: 'User cannot delete posts' } )
+				} );
+			} );
+		} );
+	} );
+
+	describe( 'restorePost()', () => {
+		before( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2916284/posts/13640/restore' )
+				.reply( 200, {
+					ID: 13640,
+					status: 'draft'
+				} )
+				.post( '/rest/v1.1/sites/77203074/posts/102/restore' )
+				.reply( 403, {
+					error: 'unauthorized',
+					message: 'User cannot restore trashed posts'
+				} );
+		} );
+
+		it( 'should dispatch request action when thunk triggered', () => {
+			restorePost( 2916284, 13640 )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: POST_RESTORE,
+				siteId: 2916284,
+				postId: 13640
+			} );
+		} );
+
+		it( 'should dispatch the received post when request completes successfully', () => {
+			return restorePost( 2916284, 13640 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POSTS_RECEIVE,
+					posts: [ { ID: 13640, status: 'draft' } ]
+				} );
+			} );
+		} );
+
+		it( 'should dispatch post restore request success action when request completes', () => {
+			return restorePost( 2916284, 13640 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_RESTORE_SUCCESS,
+					siteId: 2916284,
+					postId: 13640
+				} );
+			} );
+		} );
+
+		it( 'should dispatch post restore request failure action when request fails', () => {
+			return restorePost( 77203074, 102 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_RESTORE_FAILURE,
+					siteId: 77203074,
+					postId: 102,
+					error: sinon.match( { message: 'User cannot restore trashed posts' } )
 				} );
 			} );
 		} );
