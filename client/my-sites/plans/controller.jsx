@@ -35,7 +35,7 @@ export default {
 		if ( site && site.jetpack && ! config.isEnabled( 'manage/jetpack-plans' ) ) {
 			analytics.pageView.record( basePath + '/jetpack/:site', analyticsPageTitle + ' > Jetpack Plans Not Available' );
 
-			ReactDom.render(
+			renderWithReduxStore(
 				React.createElement( MainComponent, null,
 					React.createElement( EmptyContentComponent, {
 						title: i18n.translate( 'Plans are not available for Jetpack sites yet.' ),
@@ -45,7 +45,8 @@ export default {
 						illustration: '/calypso/images/drake/drake-nomenus.svg'
 					} )
 				),
-				document.getElementById( 'primary' )
+				document.getElementById( 'primary' ),
+				context.store
 			);
 			return;
 		}
