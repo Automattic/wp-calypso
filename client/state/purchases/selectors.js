@@ -13,6 +13,16 @@ export const getPurchases = createSelector(
 );
 
 /**
+ * Returns a list of Purchases associated with a User from the state using its userId
+ * @param  {Object} state       global state
+ * @param  {Number} userId      the user id
+ * @return {Object} the matching purchases if there are some
+ */
+export const getUserPurchases = ( state, userId ) => (
+	state.purchases.hasLoadedUserPurchasesFromServer && getPurchases( state ).filter( purchase => purchase.userId === userId )
+);
+
+/**
  * Returns the server error for site or user purchases (if there is one)
  *
  * @param {Object} state - current state object
@@ -38,16 +48,6 @@ export const getByPurchaseId = ( state, purchaseId ) => (
  */
 export const getSitePurchases = ( state, siteId ) => (
 	getPurchases( state ).filter( purchase => purchase.siteId === siteId )
-);
-
-/**
- * Returns a list of Purchases associated with a User from the state using its userId
- * @param  {Object} state       global state
- * @param  {Number} userId      the user id
- * @return {Object} the matching purchases if there are some
- */
-export const getUserPurchases = ( state, userId ) => (
-	getPurchases( state ).filter( purchase => purchase.userId === userId )
 );
 
 export const isFetchingUserPurchases = state => state.purchases.isFetchingUserPurchases;

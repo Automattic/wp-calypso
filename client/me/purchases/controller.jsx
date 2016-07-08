@@ -159,10 +159,10 @@ export default {
 
 		renderPage(
 			context,
-			<PurchasesData
-				component={ PurchasesList }
+			<PurchasesList
+				sites={ sites }
 				noticeType={ context.params.noticeType }
-				sites={ sites } />
+			/>
 		);
 	},
 
