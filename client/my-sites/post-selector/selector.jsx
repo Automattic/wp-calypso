@@ -4,15 +4,21 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import debounce from 'lodash/debounce';
-import get from 'lodash/get';
-import range from 'lodash/range';
-import difference from 'lodash/difference';
-import isEqual from 'lodash/isEqual';
-import includes from 'lodash/includes';
 import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
 import VirtualScroll from 'react-virtualized/VirtualScroll';
 import AutoSizer from 'react-virtualized/AutoSizer';
+import {
+	debounce,
+	memoize,
+	get,
+	map,
+	reduce,
+	filter,
+	range,
+	difference,
+	isEqual,
+	includes
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +29,6 @@ import Search from './search';
 import { decodeEntities } from 'lib/formatting';
 import {
 	getSitePostsForQueryIgnoringPage,
-	getSitePostsHierarchyForQueryIgnoringPage,
 	isRequestingSitePostsForQueryIgnoringPage,
 	getSitePostsFoundForQuery,
 	getSitePostsLastPageForQuery
@@ -47,7 +52,6 @@ const PostSelectorPosts = React.createClass( {
 		siteId: PropTypes.number.isRequired,
 		query: PropTypes.object,
 		posts: PropTypes.array,
-		postsHierarchy: PropTypes.array,
 		lastPage: PropTypes.number,
 		loading: PropTypes.bool,
 		emptyMessage: PropTypes.string,
@@ -82,6 +86,8 @@ const PostSelectorPosts = React.createClass( {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
 
+		this.postIds = map( this.props.posts, 'ID' );
+		this.getPostChildren = memoize( this.getPostChildren );
 		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
 		this.debouncedSearch = debounce( () => {
 			this.props.onSearch( this.state.searchTerm );
@@ -95,6 +101,11 @@ const PostSelectorPosts = React.createClass( {
 				requestedPages: [ 1 ]
 			} );
 		}
+
+		if ( this.props.posts !== nextProps.posts ) {
+			this.getPostChildren.cache.clear();
+			this.postIds = map( nextProps.posts, 'ID' );
+		}
 	},
 
 	componentDidUpdate( prevProps ) {
@@ -105,6 +116,10 @@ const PostSelectorPosts = React.createClass( {
 
 		if ( forceUpdate ) {
 			this.virtualScroll.forceUpdate();
+		}
+
+		if ( this.props.posts !== prevProps.posts ) {
+			this.recomputeRowHeights();
 		}
 	},
 
@@ -158,8 +173,8 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	getItem( index ) {
-		if ( this.props.postsHierarchy ) {
-			return this.props.postsHierarchy[ index ];
+		if ( this.props.posts ) {
+			return this.props.posts[ index ];
 		}
 	},
 
@@ -185,20 +200,27 @@ const PostSelectorPosts = React.createClass( {
 		return includes( requestedPages, lastPage ) && ! loading;
 	},
 
-	getItemHeight( item ) {
-		if ( item && this.itemHeights[ item.global_ID ] ) {
+	getPostChildren( postId ) {
+		const { posts } = this.props;
+		return filter( posts, ( { parent } ) => parent && parent.ID === postId );
+	},
+
+	getItemHeight( item, _recurse = false ) {
+		if ( ! item ) {
+			return ITEM_HEIGHT;
+		}
+
+		if ( item.parent && ! _recurse && includes( this.postIds, item.parent.ID ) ) {
+			return 0;
+		}
+
+		if ( this.itemHeights[ item.global_ID ] ) {
 			return this.itemHeights[ item.global_ID ];
 		}
 
-		let height = ITEM_HEIGHT;
-
-		if ( item && item.items ) {
-			height += item.items.reduce( ( memo, nestedItem ) => {
-				return memo + this.getItemHeight( nestedItem );
-			}, 0 );
-		}
-
-		return height;
+		return reduce( this.getPostChildren( item.ID ), ( memo, nestedItem ) => {
+			return memo + this.getItemHeight( nestedItem, true );
+		}, ITEM_HEIGHT );
 	},
 
 	getRowHeight( { index } ) {
@@ -222,8 +244,8 @@ const PostSelectorPosts = React.createClass( {
 	getRowCount() {
 		let count = 0;
 
-		if ( this.props.postsHierarchy ) {
-			count += this.props.postsHierarchy.length;
+		if ( this.props.posts ) {
+			count += this.props.posts.length;
 		}
 
 		if ( ! this.isLastPage() ) {
@@ -268,9 +290,14 @@ const PostSelectorPosts = React.createClass( {
 		this.debouncedSearch();
 	},
 
-	renderItem( item ) {
+	renderItem( item, _recurse = false ) {
+		if ( item.parent && ! _recurse && includes( this.postIds, item.parent.ID ) ) {
+			return;
+		}
+
 		const onChange = ( ...args ) => this.props.onChange( item, ...args );
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
+		const children = this.getPostChildren( item.ID );
 
 		return (
 			<div
@@ -304,9 +331,9 @@ const PostSelectorPosts = React.createClass( {
 						) }
 					</span>
 				</label>
-				{ item.items && (
+				{ children.length > 0 && (
 					<div className="post-selector__nested-list">
-						{ item.items.map( this.renderItem ) }
+						{ children.map( ( child ) => this.renderItem( child, true ) ) }
 					</div>
 				) }
 			</div>
@@ -411,7 +438,6 @@ export default connect( ( state, ownProps ) => {
 	const { siteId, query } = ownProps;
 	return {
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, query ),
-		postsHierarchy: getSitePostsHierarchyForQueryIgnoringPage( state, siteId, query ),
 		found: getSitePostsFoundForQuery( state, siteId, query ),
 		lastPage: getSitePostsLastPageForQuery( state, siteId, query ),
 		loading: isRequestingSitePostsForQueryIgnoringPage( state, siteId, query ),
