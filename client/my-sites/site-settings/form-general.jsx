@@ -30,6 +30,8 @@ import Timezone from 'components/timezone';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDomainsBySite } from 'state/sites/domains/selectors';
 import JetpackSyncPanel from './jetpack-sync-panel';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { isBusiness } from 'lib/products-values';
 
 const FormGeneral = React.createClass( {
 	displayName: 'SiteSettingsFormGeneral',
@@ -495,6 +497,26 @@ const FormGeneral = React.createClass( {
 					</form>
 				</Card>
 
+				{
+					! this.props.site.jetpack && <div>
+						<SectionHeader label={ this.translate( '"WordPress.com" Footer Credit' ) } />
+						{
+							isBusiness( site.plan ) ? <Card href={ '/customize/identity/' + site.slug }>
+								<div className="">
+									<h2 className="site-settings__footer-credit-title">{ this.translate( 'Change or remove footer at the bottom of your page.' ) }</h2>
+									<p className="site-settings__footer-credit-description">
+										{ this.translate( 'Because you have Business plan, you can remove the footer credit' ) }
+									</p>
+								</div>
+							</Card> : <UpgradeNudge
+								className="site-settings__footer-credit-nudge"
+								title="Remove WordPress.com footer credit with Business Plan"
+								message="With Business plan you can remove footes branding, add google analytics and more"
+								icon="customize"
+							/>
+						}
+					</div>
+				}
 				<SectionHeader label={ this.translate( 'Related Posts' ) }>
 					<Button
 						compact={ true }

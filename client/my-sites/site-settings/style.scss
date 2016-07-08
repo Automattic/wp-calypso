@@ -122,7 +122,28 @@
 			background: $alert-yellow;
 		}
 	}
+
+	.site-settings__footer-credit-nudge.upgrade-nudge.card {
+		margin-top: 0
+	}
+
+	.site-settings__footer-credit-title {
+		margin-bottom: 16px;
+		font-size: 21px;
+		font-weight: 300;
+		line-height: 24px;
+		color: #2e4453;
+	}
+
+	.site-settings__footer-credit-description {
+		margin-bottom:0;
+	    font-size: 13px;
+	    color: #87a6bc;
+	    font-style: italic;
+	}
 }
+
+
 
 .writing-settings,
 .general-settings {
@@ -280,3 +301,4 @@
 .site-settings__jetpack-prompt-text {
 	flex: 4;
 }
+
