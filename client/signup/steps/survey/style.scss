@@ -18,15 +18,23 @@
 .survey-step__verticals {
 	pointer-events: none;
 	opacity: 0.4;
-	-webkit-filter: blur( 3px );
-	transform: translateX( -20% );
-	transition: -webkit-filter 0.15s ease-out, opacity 0.15s ease-out, transform 0.15s ease-out;
+	transform: translateX( -20% ) scale( 0.8 );
+	transition: filter 0.15s linear, opacity 0.15s ease-out, transform 0.15s ease-out;
 
 	&.active {
 		pointer-events: auto;
 		opacity: 1;
-		-webkit-filter: blur( 0 );
-		transform: translateX( 0 );
+		transform: translateX( 0 ) scale( 1 );
+	}
+
+	// This limits the blur filter to Safari, as other browsers can't handle the
+	// awesomeness of transitioning blurs.
+	@supports (overflow:-webkit-marquee) and (justify-content:inherit) {
+		filter: blur( 3px );
+
+		&.active {
+			filter: blur( 0 );
+		}
 	}
 }
 
