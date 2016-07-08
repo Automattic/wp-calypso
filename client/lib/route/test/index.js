@@ -66,6 +66,21 @@ describe( 'route', function() {
 			const url = route.addQueryArgs( { foo: 'bar' }, 'https://wordpress.com?search=test' );
 			expect( url ).to.eql( 'https://wordpress.com/?search=test&foo=bar' );
 		} );
+
+		it( 'should add an empty string for a query arg with an empty string', () => {
+			const url = route.addQueryArgs( { foo: 'bar', baz: '' }, 'https://wordpress.com?search=test' );
+			expect( url ).to.eql( 'https://wordpress.com/?search=test&foo=bar&baz=' );
+		} );
+
+		it( 'should not include a query arg with a null value', () => {
+			const url = route.addQueryArgs( { foo: 'bar', baz: null }, 'https://wordpress.com?search=test' );
+			expect( url ).to.eql( 'https://wordpress.com/?search=test&foo=bar' );
+		} );
+
+		it( 'should not include a query arg with an undefined value', () => {
+			const url = route.addQueryArgs( { foo: 'bar', baz: undefined }, 'https://wordpress.com?search=test' );
+			expect( url ).to.eql( 'https://wordpress.com/?search=test&foo=bar' );
+		} );
 	} );
 
 	describe( 'getSiteFragment', function() {
