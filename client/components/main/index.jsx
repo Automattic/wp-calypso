@@ -3,10 +3,11 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import { connect } from 'react-redux';
+import classnames from 'classnames';
 
-module.exports = React.createClass( {
+const Main = React.createClass( {
 	displayName: 'Main',
 
 	render: function() {
@@ -17,3 +18,13 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+// Note: not actually hooking anything up yet -- will do that in separate PR
+export default connect(
+	() => {
+		return {};
+	},
+	() => {
+		return {};
+	},
+)( Main );
