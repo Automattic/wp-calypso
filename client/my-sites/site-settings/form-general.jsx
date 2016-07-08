@@ -502,7 +502,7 @@ const FormGeneral = React.createClass( {
 						<SectionHeader label={ this.translate( '"WordPress.com" Footer Credit' ) } />
 						{
 							isBusiness( site.plan ) ? <Card href={ '/customize/identity/' + site.slug }>
-								<div className="">
+								<div>
 									<h2 className="site-settings__footer-credit-title">{ this.translate( 'Change or remove footer at the bottom of your page.' ) }</h2>
 									<p className="site-settings__footer-credit-description">
 										{ this.translate( 'Because you have Business plan, you can remove the footer credit' ) }
