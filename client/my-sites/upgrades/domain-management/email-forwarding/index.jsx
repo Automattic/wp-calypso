@@ -62,7 +62,7 @@ const EmailForwarding = React.createClass( {
 	},
 
 	goToEditEmail() {
-		page( paths.domainManagementEmail( this.props.selectedSite.domain, this.props.selectedDomainName ) );
+		page( paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	}
 } );
 

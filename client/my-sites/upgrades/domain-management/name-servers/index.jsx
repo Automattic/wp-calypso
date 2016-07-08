@@ -149,7 +149,7 @@ const NameServers = React.createClass( {
 	},
 
 	back() {
-		page( paths.domainManagementEdit( this.props.selectedSite.domain, this.props.selectedDomainName ) );
+		page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	},
 
 	customNameservers() {
@@ -203,7 +203,7 @@ const NameServers = React.createClass( {
 
 		return (
 			<VerticalNavItem
-				path={ paths.domainManagementDns( this.props.selectedSite.domain, this.props.selectedDomainName ) }>
+				path={ paths.domainManagementDns( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
 				{ this.translate( 'DNS Records' ) }
 			</VerticalNavItem>
 		);

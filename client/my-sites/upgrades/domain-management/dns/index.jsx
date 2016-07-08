@@ -69,7 +69,7 @@ const Dns = React.createClass( {
 		}
 
 		page( path(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.selectedDomainName
 		) );
 	}

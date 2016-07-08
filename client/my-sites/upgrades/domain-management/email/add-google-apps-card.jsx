@@ -181,7 +181,7 @@ const AddGoogleAppsCard = React.createClass( {
 	},
 
 	goToAddGoogleApps() {
-		page( paths.domainManagementAddGoogleApps( this.props.selectedSite.domain, this.props.selectedDomainName ) );
+		page( paths.domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	}
 } );
 

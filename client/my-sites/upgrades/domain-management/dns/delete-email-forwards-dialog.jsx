@@ -66,7 +66,7 @@ const DeleteEmailForwardsDialog = React.createClass( {
 
 	getEmailForwardingPath: function() {
 		return domainManagementEmailForwarding(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.selectedDomainName
 		);
 	}
