@@ -8,7 +8,7 @@ import store from 'store';
 /**
  * Internal dependencies
  */
-import activeTests from './active-tests';
+import activeTests from 'lib/abtest/active-tests';
 import analytics from 'lib/analytics';
 import i18n from 'i18n-calypso';
 import userFactory from 'lib/user';
@@ -137,6 +137,7 @@ ABTest.prototype.isEligibleForAbTest = function() {
 	const selectedSite = sites.getSelectedSite();
 	const client = ( typeof navigator !== 'undefined' ) ? navigator : {};
 	const clientLocale = client.language || client.userLanguage || 'en';
+	const browserLocale = ( client.languages && client.languages.length ) ? client.languages[ 0 ] : 'en';
 	const localeFromSession = i18n.getLocaleSlug() || 'en';
 
 	if ( ! store.enabled ) {
@@ -150,6 +151,10 @@ ABTest.prototype.isEligibleForAbTest = function() {
 			return false;
 		}
 		if ( ! isUserSignedIn() && ! clientLocale.match( /^en\-?/i ) ) {
+			debug( '%s: Logged-out user has a non-English OS locale', this.experimentId );
+			return false;
+		}
+		if ( ! isUserSignedIn() && ! browserLocale.match( /^en\-?/i ) ) {
 			debug( '%s: Logged-out user has a non-English browser locale', this.experimentId );
 			return false;
 		}
