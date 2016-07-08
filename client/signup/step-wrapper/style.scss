@@ -1,6 +1,7 @@
 .step-wrapper__buttons {
 	text-align: center;
 }
+
 .step-wrapper__buttons.is-wide-navigation {
 	display: flex;
 	justify-content: space-around;
@@ -25,5 +26,13 @@
 	.gridicon {
 		margin: -2px 3px 0 0;
 		vertical-align: middle;
+	}
+}
+
+.step-wrapper__buttons .button.is-borderless {
+	color: darken( $gray, 20 );
+
+	&:hover {
+		color: $gray-dark;
 	}
 }
