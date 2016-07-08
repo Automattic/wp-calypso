@@ -15,3 +15,5 @@ export const getCards = state => state.storedCards.items;
 export const getByCardId = ( state, cardId ) => (
 	getCards( state ).filter( card => card.stored_details_id === cardId ).shift()
 );
+
+export const isFetchingStoredCards = state => state.storedCards.isFetching;
