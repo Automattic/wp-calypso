@@ -5,6 +5,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import i18n from 'i18n-calypso';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Internal dependencies
@@ -23,9 +24,10 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Help' );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( Help ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
