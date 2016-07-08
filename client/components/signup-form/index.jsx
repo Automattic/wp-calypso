@@ -10,7 +10,6 @@ import keys from 'lodash/keys';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
-import store from 'store';
 
 /**
  * Internal dependencies
