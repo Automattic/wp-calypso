@@ -10,7 +10,6 @@ import keys from 'lodash/keys';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
-import store from 'store';
 
 /**
  * Internal dependencies
@@ -50,6 +49,10 @@ export default React.createClass( {
 
 	displayName: 'SignupForm',
 
+	contextTypes: {
+		store: React.PropTypes.object
+	},
+
 	getInitialState() {
 		return {
 			notice: null,
@@ -69,15 +72,13 @@ export default React.createClass( {
 	},
 
 	autoFillUsername( form ) {
-		/**
-		 * Fetch the suggested username from local storage
-		 */
-		let suggestedUsername = store.get( 'signupSuggestedUsername' );
+		// Fetch the suggested username from local storage
+		const suggestedUsername = this.context.store.getState().signup.optionalDependencies.suggestedUsername;
 
 		return mergeFormWithValue( {
 			form,
 			fieldName: 'username',
-			fieldValue: suggestedUsername || null
+			fieldValue: suggestedUsername || undefined
 		} );
 	},
 

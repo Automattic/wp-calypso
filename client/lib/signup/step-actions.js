@@ -5,7 +5,6 @@ import assign from 'lodash/assign';
 import defer from 'lodash/defer';
 import isEmpty from 'lodash/isEmpty';
 import async from 'async';
-import store from 'store';
 
 /**
  * Internal dependencies
@@ -18,6 +17,10 @@ import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import { startFreeTrial } from 'lib/upgrades/actions';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
+
+import {
+	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME,
+} from 'state/action-types';
 
 function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeSlugWithRepo, themeItem } ) {
 	wpcom.undocumented().sitesNew( {
@@ -147,17 +150,19 @@ function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
  * If there is no error from the API, then the username is free.
  *
  * @param {string} username The username to get suggestions for.
+ * @param {object} reduxState The Redux state object
  */
-function getUsernameSuggestion( username ) {
+function getUsernameSuggestion( username, reduxState ) {
 	const fields = {
 		givesuggestions: 1,
 		username: username
 	};
 
-	/**
-	 * Clear out the local storage variable before sending the call.
-	 */
-	store.set( 'signupSuggestedUsername', '' );
+	// Clear out the local storage variable before sending the call.
+	reduxState.dispatch( {
+		type: SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME,
+		data: ''
+	} );
 
 	wpcom.undocumented().validateNewUser( fields, ( error, response ) => {
 		if ( error || ! response ) {
@@ -190,10 +195,11 @@ function getUsernameSuggestion( username ) {
 			}
 		}
 
-		/**
-		 * Put the suggested username in local storage for later use
-		 */
-		store.set( 'signupSuggestedUsername', resulting_username );
+		// Save the suggested username for later use
+		reduxState.dispatch( {
+			type: SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME,
+			data: resulting_username
+		} );
 	} );
 }
 
