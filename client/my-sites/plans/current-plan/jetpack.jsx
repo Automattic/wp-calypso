@@ -20,9 +20,11 @@ const JetpackPlanDetails = ( { selectedSite } ) => {
 		<div className="current-plan__details">
 			{ isPaid && <PurchaseDetail
 				icon="flag"
-				title={ 'Backups & Security' }
+				title={ i18n.translate( 'Backups & Security' ) }
 				description={ i18n.translate(
-					'VaultPress makes it easy to keep an up-to-date backup of your site with both daily and real-time syncing of all your WordPress content. To ensure your site stays safe, VaultPress performs security scans daily and makes it easy to review and fix threats.'
+					'VaultPress makes it easy to keep an up-to-date backup of your site with both daily and real-time syncing of all ' +
+					'your WordPress content. To ensure your site stays safe, VaultPress performs security scans daily and makes it ' +
+					'easy to review and fix threats.'
 				) }
 				buttonText={ i18n.translate( 'View your backups' ) }
 				href="https://dashboard.vaultpress.com/" />
@@ -30,7 +32,7 @@ const JetpackPlanDetails = ( { selectedSite } ) => {
 
 			{ isPaid && <PurchaseDetail
 				icon="comment"
-				title={ 'Anti-Spam' }
+				title={ i18n.translate( 'Anti-Spam' ) }
 				description={ i18n.translate(
 					'Akismet filters out comment and other forms of spam, so you can focus on more important things.'
 				) } />
@@ -38,9 +40,10 @@ const JetpackPlanDetails = ( { selectedSite } ) => {
 
 			{ isBusiness && <PurchaseDetail
 				icon="list-checkmark"
-				title={ 'Surveys & Polls' }
+				title={ i18n.translate( 'Surveys & Polls' ) }
 				description={ i18n.translate(
-					'Unlimited surveys, unlimited responses. Use the survey editor to create surveys quickly and easily. Collect responses via your website, e-mail or on your iPad or iPhone'
+					'Unlimited surveys, unlimited responses. Use the survey editor to create surveys quickly and easily. Collect ' +
+					'responses via your website, e-mail or on your iPad or iPhone'
 				) }
 				buttonText={ i18n.translate( 'Create a new poll' ) }
 				href="https://polldaddy.com/dashboard/" />
@@ -48,7 +51,7 @@ const JetpackPlanDetails = ( { selectedSite } ) => {
 
 			{ isBusiness && <PurchaseDetail
 				icon="add-outline"
-				title={ 'Add additional sites' }
+				title={ i18n.translate( 'Add additional sites' ) }
 				description={ i18n.translate(
 					'You can add an additional 2 sites to this plan.'
 				) }
@@ -58,9 +61,10 @@ const JetpackPlanDetails = ( { selectedSite } ) => {
 
 			<PurchaseDetail
 				icon="plugins"
-				title={ 'Get the most from WordPress.com' }
+				title={ i18n.translate( 'Get the most from WordPress.com' ) }
 				description={ i18n.translate(
-					'Enable plugin auto-updates, browse your stats, try the improved WordPress.com editor, {{a}}Download WordPress.com apps{{/a}}.',
+					'Enable plugin auto-updates, browse your stats, try the improved WordPress.com editor, ' +
+					'{{a}}Download WordPress.com apps{{/a}}.',
 					{
 						components: {
 							a: <a href="https://apps.wordpress.com/" />
@@ -72,7 +76,7 @@ const JetpackPlanDetails = ( { selectedSite } ) => {
 
 			<PurchaseDetail
 				icon="house"
-				title={ 'Return to your site\'s dashboard' }
+				title={ i18n.translate( 'Return to your site\'s dashboard' ) }
 				buttonText={ i18n.translate( 'Go back to %(site)s', { args: { site: selectedSite.name } } ) }
 				href={ `${selectedSite.URL}/wp-admin/` } />
 		</div>
