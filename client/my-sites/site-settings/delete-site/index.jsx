@@ -1,34 +1,40 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	debug = require( 'debug' )( 'calypso:my-sites:site-settings' ),
-	page = require( 'page' ),
-	property = require( 'lodash/property' );
-
+import React from 'react';
+import { connect } from 'react-redux';
+import debugFactory from 'debug';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import page from 'page';
+import property from 'lodash/property';
 /**
  * Internal dependencies
  */
-var HeaderCake = require( 'components/header-cake' ),
-	Notice = require( 'components/notice' ),
-	ActionPanel = require( 'my-sites/site-settings/action-panel' ),
-	ActionPanelTitle = require( 'my-sites/site-settings/action-panel/title' ),
-	ActionPanelBody = require( 'my-sites/site-settings/action-panel/body' ),
-	ActionPanelFigure = require( 'my-sites/site-settings/action-panel/figure' ),
-	ActionPanelFooter = require( 'my-sites/site-settings/action-panel/footer' ),
-	Button = require( 'components/button' ),
-	Dialog = require( 'components/dialog' ),
-	DeleteSiteWarningDialog = require( 'my-sites/site-settings/delete-site-warning-dialog' ),
-	config = require( 'config' ),
-	Gridicon = require( 'components/gridicon' ),
-	notices = require( 'notices' ),
-	SiteListActions = require( 'lib/sites-list/actions' ),
-	purchasesPaths = require( 'me/purchases/paths' );
+import HeaderCake from 'components/header-cake';
+import ActionPanel from 'my-sites/site-settings/action-panel';
+import ActionPanelTitle from 'my-sites/site-settings/action-panel/title';
+import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
+import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
+import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
+import Button from 'components/button';
+import config from 'config';
+import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
+import Dialog from 'components/dialog';
+import { getSitePurchases, hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import Gridicon from 'components/gridicon';
+import Notice from 'components/notice';
+import notices from 'notices';
+import purchasesPaths from 'me/purchases/paths';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import SiteListActions from 'lib/sites-list/actions';
 
-module.exports = React.createClass( {
+/**
+ * Module vars
+ */
+const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
-	displayName: 'DeleteSite',
+export const DeleteSite = React.createClass( {
 
 	mixins: [ LinkedStateMixin ],
 
@@ -51,7 +57,7 @@ module.exports = React.createClass( {
 	},
 
 	renderNotice: function() {
-		var site = this.state.site;
+		const site = this.state.site;
 
 		if ( ! site ) {
 			return null;
@@ -72,14 +78,13 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var site = this.state.site,
+		const site = this.state.site,
 			adminURL = site.options && site.options.admin_url ? site.options.admin_url : '',
 			exportLink = config.isEnabled( 'manage/export' ) ? '/settings/export/' + site.slug : adminURL + 'tools.php?page=export-choices',
 			exportTarget = config.isEnabled( 'manage/export' ) ? undefined : '_blank',
-			deleteDisabled = ( typeof this.state.confirmDomain !== 'string' || this.state.confirmDomain.replace( /\s/g, '' ) !== site.domain ),
-			deleteButtons, strings;
+			deleteDisabled = ( typeof this.state.confirmDomain !== 'string' || this.state.confirmDomain.replace( /\s/g, '' ) !== site.domain );
 
-		deleteButtons = [
+		const deleteButtons = [
 			<Button
 				onClick={ this.closeConfirmDialog }>{
 					this.translate( 'Cancel' )
@@ -93,7 +98,7 @@ module.exports = React.createClass( {
 			}</Button>
 		];
 
-		strings = {
+		const strings = {
 			deleteSite: this.translate( 'Delete Site' ),
 			confirmDeleteSite: this.translate( 'Confirm Delete Site' ),
 			exportContentFirst: this.translate( 'Export Content First' ),
@@ -103,6 +108,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="main main-column" role="main">
+				{ site && <QuerySitePurchases siteId={ site.ID } /> }
 				<HeaderCake onClick={ this._goBack }><h1>{ strings.deleteSite }</h1></HeaderCake>
 				<ActionPanel>
 					<ActionPanelBody>
@@ -168,7 +174,7 @@ module.exports = React.createClass( {
 					<ActionPanelFooter>
 						<Button
 							scary
-							disabled={ ! this.state.site || this.props.purchases.isFetchingSitePurchases }
+							disabled={ ! this.state.site || ! this.props.hasLoadedSitePurchasesFromServer }
 							onClick={ this.handleDeleteSiteClick }>
 							<Gridicon icon="trash" />
 							{ strings.deleteSite }
@@ -201,11 +207,11 @@ module.exports = React.createClass( {
 
 		event.preventDefault();
 
-		if ( ! this.props.purchases.hasLoadedSitePurchasesFromServer ) {
+		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
 			return;
 		}
 
-		hasActiveSubscriptions = this.props.purchases.data.filter( property( 'active' ) ).length > 0;
+		hasActiveSubscriptions = this.props.sitePurchases.filter( property( 'active' ) ).length > 0;
 
 		if ( hasActiveSubscriptions ) {
 			this.setState( { showWarningDialog: true } );
@@ -279,3 +285,12 @@ module.exports = React.createClass( {
 	}
 
 } );
+
+export default connect(
+	( state ) => {
+		return {
+			sitePurchases: getSitePurchases( state, getSelectedSiteId( state ) ),
+			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state )
+		};
+	}
+)( DeleteSite );
