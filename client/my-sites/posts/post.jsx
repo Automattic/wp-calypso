@@ -50,7 +50,7 @@ module.exports = React.createClass( {
 	},
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		const propsToCheck = [ 'ref', 'key', 'post', 'postImages', 'fullWidthPost', 'path' ];
+		const propsToCheck = [ 'post', 'postImages', 'fullWidthPost', 'path' ];
 
 		if ( checkPropsChange( this.props, nextProps, propsToCheck ) ) {
 			return true;
