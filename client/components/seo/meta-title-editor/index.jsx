@@ -67,8 +67,10 @@ const tokenize = translate => value => {
 };
 
 export class MetaTitleEditor extends Component {
-	constructor( { titleFormats } ) {
-		super();
+	constructor( props ) {
+		super( props );
+
+		const { titleFormats } = props;
 
 		this.state = {
 			titleFormats,
