@@ -28,7 +28,7 @@ class EditorTermSelector extends Component {
 	onTermsChange( selectedTerm ) {
 		const { postTerms, taxonomyName } = this.props;
 		const terms = cloneDeep( postTerms ) || {};
-		const taxonomyTerms = terms[ taxonomyName ];
+		const taxonomyTerms = terms[ taxonomyName ] || {};
 
 		if ( taxonomyTerms[ selectedTerm.name ] ) {
 			delete taxonomyTerms[ selectedTerm.name ];

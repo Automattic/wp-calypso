@@ -41,7 +41,7 @@ function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 					>
 					{ hierarchical
 						? <TermSelector postTerms={ postTerms } taxonomyName={ name } />
-						: <TermTokenField postTerms={ postTerms } taxonomyName={ name } taxonomyLabel={ label } />
+						: <TermTokenField postTerms={ postTerms } taxonomyName={ name } />
 					}
 					</Accordion>
 				);
