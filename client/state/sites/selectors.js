@@ -107,6 +107,22 @@ export function getSiteSlug( state, siteId ) {
 }
 
 /**
+ * Returns a site option for a site
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {String}  optionName The option key
+ * @return {*}  The value of that option or null
+ */
+export function getSiteOption( state, siteId, optionName ) {
+	const site = getSite( state, siteId );
+	if ( ! site || ! site.options ) {
+		return null;
+	}
+	return site.options[ optionName ];
+}
+
+/**
  * Returns true if we are requesting all sites.
  * @param {Object}    state  Global state tree
  * @return {Boolean}        Request State
