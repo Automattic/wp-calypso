@@ -52,7 +52,7 @@ const PlansNavigation = React.createClass( {
 		const site = this.props.selectedSite;
 		const isJetpack = site && site.jetpack;
 		const path = sectionify( this.props.path );
-		const hasPlan = site && site.plan.product_slug !== 'free_plan';
+		const hasPlan = site && site.plan && site.plan.product_slug !== 'free_plan';
 
 		return (
 			<SectionNav

@@ -89,7 +89,7 @@ const PlanDetailsComponent = React.createClass( {
 				/>
 			</div> );
 		}
-		console.log(this.props);
+
 		return (
 			<Main className="current-plan">
 				<PlansNavigation
