@@ -842,10 +842,7 @@ const PostEditor = React.createClass( {
 		this.props.receivePost( post );
 
 		// make sure the history entry has the post ID in it, but don't dispatch
-		page.replace(
-			this.props.editPath,
-			null, false, false
-		);
+		page.replace( this.props.editPath, null, false, false );
 
 		nextState = {
 			isSaving: false,
