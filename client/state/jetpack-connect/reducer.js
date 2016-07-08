@@ -112,9 +112,9 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
 			if ( isEmpty( action.error ) && action.data ) {
 				const { plans_url, activate_manage } = action.data;
-				return Object.assign( {}, state, { authorizeError: false, authorizeSuccess: true, autoAuthorize: false, plansUrl: plans_url, siteReceived: false, activateManageSecret: activate_manage } );
+				return Object.assign( {}, state, { authorizeError: false, authorizeSuccess: true, plansUrl: plans_url, siteReceived: false, activateManageSecret: activate_manage } );
 			}
-			return Object.assign( {}, state, { isAuthorizing: false, authorizeError: action.error, authorizeSuccess: false, autoAuthorize: false } );
+			return Object.assign( {}, state, { isAuthorizing: false, authorizeError: action.error, authorizeSuccess: false } );
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST:
 			const updateQueryObject = omit( state.queryObject, '_wp_nonce', 'secret', 'scope' );
 			return Object.assign( {}, omit( state, 'queryObject' ), { siteReceived: true, isAuthorizing: false, queryObject: updateQueryObject } );
@@ -129,12 +129,12 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_QUERY_UPDATE:
 			return Object.assign( {}, state, { queryObject: Object.assign( {}, state.queryObject, { [ action.property ]: action.value } ) } );
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
-			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, autoAuthorize: true } );
+			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false } );
 		case JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE:
 			if ( ! isEmpty( action.error ) ) {
-				return Object.assign( {}, state, { isAuthorizing: false, authorizeSuccess: false, authorizeError: true, autoAuthorize: false } );
+				return Object.assign( {}, state, { isAuthorizing: false, authorizeSuccess: false, authorizeError: true } );
 			}
-			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, autoAuthorize: true, userData: action.userData, bearerToken: action.data.bearer_token } );
+			return Object.assign( {}, state, { isAuthorizing: true, authorizeSuccess: false, authorizeError: false, userData: action.userData, bearerToken: action.data.bearer_token } );
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case DESERIALIZE:

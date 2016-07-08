@@ -20,7 +20,6 @@ import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import config from 'config';
 import { createAccount, authorize, goBackToWpAdmin, activateManage } from 'state/jetpack-connect/actions';
-import { isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
@@ -164,26 +163,17 @@ const LoggedInForm = React.createClass( {
 	displayName: 'LoggedInForm',
 
 	componentWillMount() {
-		const { autoAuthorize, queryObject } = this.props.jetpackConnectAuthorize;
-		debug( 'Checking for auto-auth on mount', autoAuthorize );
+		const { queryObject } = this.props.jetpackConnectAuthorize;
 		this.props.recordTracksEvent( 'calypso_jpc_auth_view' );
-		if ( ! this.props.isAlreadyOnSitesList &&
-			! queryObject.already_authorized &&
-			( autoAuthorize || this.props.calypsoStartedConnection || this.props.isSSO ) ) {
+		if ( ! this.props.isAlreadyOnSitesList && ! queryObject.already_authorized ) {
+			debug( 'Authorizing automatically on component mount' );
 			this.props.authorize( queryObject );
 		}
 	},
 
 	componentWillReceiveProps( props ) {
-		const { queryObject, authorizeSuccess, siteReceived, isActivating, isRedirectingToWpAdmin } = props.jetpackConnectAuthorize;
-		if ( authorizeSuccess &&
-			! isRedirectingToWpAdmin &&
-			! props.calypsoStartedConnection &&
-			queryObject.redirect_after_auth ) {
-			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
-		} else if ( siteReceived &&
-			props.calypsoStartedConnection &&
-			! isActivating ) {
+		const { siteReceived, isActivating } = props.jetpackConnectAuthorize;
+		if ( siteReceived && ! isActivating ) {
 			this.activateManage();
 		}
 	},
@@ -337,13 +327,9 @@ const LoggedInForm = React.createClass( {
 
 	getRedirectionTarget() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
-		if ( this.props.calypsoStartedConnection ) {
-			const site = this.props.jetpackConnectAuthorize.queryObject.site;
-			const siteSlug = site.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
-			return PLANS_PAGE + siteSlug;
-		}
-
-		return queryObject.redirect_after_auth;
+		const site = queryObject.site;
+		const siteSlug = site.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+		return PLANS_PAGE + siteSlug;
 	},
 
 	renderFooterLinks() {
@@ -364,7 +350,7 @@ const LoggedInForm = React.createClass( {
 		if ( authorizeSuccess ) {
 			return (
 				<LoggedOutFormLinks>
-					{ ! this.props.calypsoStartedConnection && this.isWaitingForConfirmation() ? backToWpAdminLink : null }
+					{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
 					<LoggedOutFormLinkItem href={ this.getRedirectionTarget() }>
 						{ this.translate( 'I\'m not interested in upgrades' ) }
 					</LoggedOutFormLinkItem>
@@ -374,7 +360,7 @@ const LoggedInForm = React.createClass( {
 
 		return (
 			<LoggedOutFormLinks>
-				{ ! this.props.calypsoStartedConnection && this.isWaitingForConfirmation() ? backToWpAdminLink : null }
+				{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
 				<LoggedOutFormLinkItem href={ loginUrl }>
 					{ this.translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
@@ -454,15 +440,11 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		const props = Object.assign( {}, this.props, {
 			user: user
 		} );
-		const calypsoStartedConnection = isCalypsoStartedConnection(
-			this.props.jetpackConnectSessions,
-			this.props.jetpackConnectAuthorize.queryObject.site
-		);
 
 		return (
 			( user )
-				? <LoggedInForm { ...props } calypsoStartedConnection={ calypsoStartedConnection } isSSO={ this.isSSO() } />
-				: <LoggedOutForm { ...props } calypsoStartedConnection={ calypsoStartedConnection } isSSO={ this.isSSO() } />
+				? <LoggedInForm { ...props } isSSO={ this.isSSO() } />
+				: <LoggedOutForm { ...props } isSSO={ this.isSSO() } />
 		);
 	},
 	render() {
