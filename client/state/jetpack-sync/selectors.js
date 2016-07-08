@@ -56,8 +56,27 @@ function isPendingSyncStart( state, siteId ) {
 	return parseInt( lastRequested, 10 ) > parseInt( lastSuccessfulStatus, 10 );
 }
 
+/**
+ * Returns a boolean for whether a site is in the process of a full sync.
+ * @param  {Object} state    Global state tree
+ * @param  {Number} siteId   Site ID
+ * @return {Boolean}         Whether a sync is in the process of syncing
+ */
+function isFullSyncing( state, siteId ) {
+	const syncStatus = getSyncStatus( state, siteId );
+	if ( ! syncStatus ) {
+		return false;
+	}
+
+	const isStarted = get( syncStatus, 'started' );
+	const isFinished = get( syncStatus, 'finished' );
+
+	return isStarted && ! isFinished;
+}
+
 export default {
 	getSyncStatus,
 	getFullSyncRequest,
-	isPendingSyncStart
+	isPendingSyncStart,
+	isFullSyncing
 };
