@@ -123,10 +123,6 @@
 		}
 	}
 
-	.site-settings__footer-credit-nudge.upgrade-nudge.card {
-		margin-top: 0
-	}
-
 	.site-settings__footer-credit-title {
 		margin-bottom: 16px;
 		font-size: 21px;
@@ -137,7 +133,34 @@
 
 	.site-settings__footer-credit-description {
 		margin-bottom:0;
-	    font-size: 13px;
+	    color: #87a6bc;
+	    font-style: italic;
+	}
+
+	.site-settings__footer-credit-nudge {
+		display: flex;
+		flex-direction: row;
+	}
+
+	.site-settings__footer-credit-nudge-icon {
+	    background: #f0b849;
+	    border-radius: 50%;
+	    margin-right: 16px;
+	    color: white;
+	    padding: 6px;
+	    -webkit-align-self: center;
+	    -ms-flex-item-align: center;
+	    align-self: center;
+	}
+
+	.site-settings__footer-credit-nudge-title {
+	    font-weight: 500;
+	    color: black;
+	    margin-top: 4px;
+	}
+
+	.site-settings__footer-credit-explanation {
+		font-size: 13px;
 	    color: #87a6bc;
 	    font-style: italic;
 	}
