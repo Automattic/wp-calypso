@@ -18,7 +18,7 @@ import PopoverCart from 'my-sites/upgrades/cart/popover-cart';
 
 const PlansNavigation = React.createClass( {
 	propTypes: {
-		cart: React.PropTypes.object.isRequired,
+		cart: React.PropTypes.object,
 		path: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
@@ -61,7 +61,7 @@ const PlansNavigation = React.createClass( {
 					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }>
 				<NavTabs label="Section" selectedText={ path }>
 					{ ! isJetpack && hasPlan &&
-						<NavItem path={ `/plans/my-plan/${ site.slug }` } key="myPlan" selected={ path === '/my-plan' }>
+						<NavItem path={ `/plans/my-plan/${ site.slug }` } key="myPlan" selected={ path === '/plans/my-plan' }>
 							{ this.translate( 'My Plan' ) }
 						</NavItem>
 					}
@@ -103,7 +103,7 @@ const PlansNavigation = React.createClass( {
 	},
 
 	cartToggleButton() {
-		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
+		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.cart ) {
 			return null;
 		}
 
