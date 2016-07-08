@@ -54,6 +54,7 @@ import EditorForbidden from 'post-editor/editor-forbidden';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
+import SidebarFooter from 'layout/sidebar/footer';
 
 const messages = {
 	post: {
@@ -421,6 +422,7 @@ const PostEditor = React.createClass( {
 							/>
 
 						</div> }
+						<SidebarFooter />
 					</div>
 				</div>
 				{ isTrashed
