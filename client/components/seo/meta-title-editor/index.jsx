@@ -2,33 +2,31 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import difference from 'lodash/difference';
-import findKey from 'lodash/findKey';
-import identity from 'lodash/identity';
-import isString from 'lodash/isString';
-import isUndefined from 'lodash/isUndefined';
-import map from 'lodash/map';
-import matches from 'lodash/matches';
-import pick from 'lodash/pick';
-import property from 'lodash/property';
-import valuesOf from 'lodash/values';
 import { connect } from 'react-redux';
+import {
+	difference,
+	findKey,
+	get,
+	identity,
+	isString,
+	isUndefined,
+	map,
+	matches,
+	pick,
+	property,
+	values as valuesOf
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
 import SegmentedControl from 'components/segmented-control';
 import TokenField from 'components/token-field';
+import { getSeoTitleFormats } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getTitleFormats } from 'state/sites/seo/selectors';
 import { localize } from 'i18n-calypso';
-import { setTitleFormat } from 'state/sites/seo/actions';
 
-import {
-	nativeToRaw,
-	rawToNative,
-	removeBlanks
-} from './mappings';
+import { removeBlanks } from './mappings';
 
 const titleTypes = translate => [
 	{ value: 'frontPage', label: translate( 'Front Page' ) },
@@ -71,13 +69,29 @@ const tokenize = translate => value => {
 };
 
 export class MetaTitleEditor extends Component {
-	constructor() {
-		super();
+	constructor( props ) {
+		super( props );
 
-		this.state = { type: 'frontPage' };
+		const { titleFormats } = props;
+
+		this.state = {
+			titleFormats,
+			type: 'frontPage'
+		};
 
 		this.switchType = this.switchType.bind( this );
 		this.updateTitleFormat = this.updateTitleFormat.bind( this );
+	}
+
+	componentWillUpdate( nextProps ) {
+		const { siteId: prevSiteId } = this.props;
+		const { siteId: nextSiteId, titleFormats } = nextProps;
+
+		if ( nextSiteId !== prevSiteId ) {
+			// Clear all local changes when switching
+			// sites to get the new site's data
+			this.setState( { titleFormats } );
+		}
 	}
 
 	switchType( { value: type } ) {
@@ -85,27 +99,25 @@ export class MetaTitleEditor extends Component {
 	}
 
 	updateTitleFormat( values ) {
-		const { setTitleFormat, siteId, translate } = this.props;
+		const { translate } = this.props;
 		const { type } = this.state;
 
 		const tokens = removeBlanks( map( values, tokenize( translate ) ) );
 
-		setTitleFormat( siteId, type, nativeToRaw( tokens ) );
+		this.setState( { titleFormats: {
+			...this.state.titleFormats,
+			[ type ]: tokens
+		} } );
 	}
 
 	render() {
-		const {
-			disabled = false,
-			translate = identity,
-			titleFormats
-		} = this.props;
-		const {
-			type
-		} = this.state;
+		const { disabled, translate } = this.props;
+		const { type, titleFormats } = this.state;
 
 		const validTokens = getValidTokens( translate );
 
-		const values = removeBlanks( map( rawToNative( titleFormats[ type ] ), tokenize( translate ) ) ).map(
+		const values = map(
+			get( titleFormats, type, [] ),
 			token => 'string' !== token.type
 				? { ...token, value: validTokens[ token.type ] } // use translations of token names
 				: { ...token, isBorderless: true }               // and remove the styling on plain text
@@ -139,13 +151,14 @@ MetaTitleEditor.propTypes = {
 	disabled: PropTypes.bool
 };
 
-const mapStateToProps = state => ( {
-	siteId: getSelectedSiteId( state ),
-	titleFormats: getTitleFormats( state, getSelectedSiteId( state ) )
-} );
-
-const mapDispatchToProps = {
-	setTitleFormat
+MetaTitleEditor.defaultProps = {
+	disabled: false,
+	translate: identity
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( MetaTitleEditor ) );
+const mapStateToProps = state => ( {
+	siteId: getSelectedSiteId( state ),
+	titleFormats: getSeoTitleFormats( state, getSelectedSiteId( state ) )
+} );
+
+export default connect( mapStateToProps )( localize( MetaTitleEditor ) );

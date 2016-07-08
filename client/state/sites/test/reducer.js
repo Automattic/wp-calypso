@@ -35,7 +35,6 @@ describe( 'reducer', () => {
 			'items',
 			'mediaStorage',
 			'plans',
-			'seo',
 			'vouchers'
 		] );
 	} );
@@ -200,7 +199,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', options: { foo: 'bar', wordads: true} }
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', options: { foo: 'bar', wordads: true } }
 			} );
 		} );
 
