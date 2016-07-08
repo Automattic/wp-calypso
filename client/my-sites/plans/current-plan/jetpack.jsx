@@ -49,16 +49,6 @@ const JetpackPlanDetails = ( { selectedSite } ) => {
 				href="https://polldaddy.com/dashboard/" />
 			}
 
-			{ isBusiness && <PurchaseDetail
-				icon="add-outline"
-				title={ i18n.translate( 'Add additional sites' ) }
-				description={ i18n.translate(
-					'You can add an additional 2 sites to this plan.'
-				) }
-				buttonText={ i18n.translate( 'Add another site' ) }
-				href="#" />
-			}
-
 			<PurchaseDetail
 				icon="plugins"
 				title={ i18n.translate( 'Get the most from WordPress.com' ) }
