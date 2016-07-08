@@ -5,6 +5,7 @@ test:
   override:
     - git --version
     - git log --pretty=format:%H --reverse|head -1 # first commit in repo
+    - git log master --pretty=format:%H --reverse|tail -1 # to which commit master is pointing
     - git diff --name-only HEAD..master *js *jsx
     - git diff --name-only --exit-code HEAD..master *js *jsx
     - git diff --name-only add/eslint-branch-files-circleci-testcase-gitdiff..master *js *jsx
