@@ -16,6 +16,7 @@ import { getPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';
 import Accordion from 'components/accordion';
 import Gridicon from 'components/gridicon';
 import TermTokenField from 'post-editor/term-token-field';
+import TermSelector from 'post-editor/editor-term-selector';
 
 function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 	return (
@@ -24,35 +25,26 @@ function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 				<QueryTaxonomies { ...{ siteId, postType } } />
 			) }
 			{ map( taxonomies, ( taxonomy ) => {
-				if ( 'post_format' === taxonomy.name ) {
+				const { name, label, hierarchical } = taxonomy;
+				if ( 'post_format' === name ) {
 					// Post format has its own dedicated accordion
 					return;
 				}
 
-				if ( taxonomy.hierarchical ) {
-					return (
-						<Accordion
-							key={ taxonomy.name }
-							title={ taxonomy.label }
-							icon={ <Gridicon icon="category" /> }
-						>
-							Work in Progress
-						</Accordion>
-					);
-				} else {
-					return (
-						<Accordion
-							key={ taxonomy.name }
-							title={ taxonomy.label }
-							icon={ <Gridicon icon="tag" /> }
-						>
-							<TermTokenField
-								postTerms={ postTerms }
-								taxonomyName={ taxonomy.name }
-							/>
-						</Accordion>
-					);
-				}
+				const icon = hierarchical ? 'folder' : 'tag';
+
+				return (
+					<Accordion
+						key={ name }
+						title={ label }
+						icon={ <Gridicon icon={ icon } /> }
+					>
+					{ hierarchical
+						? <TermSelector postTerms={ postTerms } taxonomyName={ name } />
+						: <TermTokenField postTerms={ postTerms } taxonomyName={ name } />
+					}
+					</Accordion>
+				);
 			} ).filter( Boolean ) }
 		</div>
 	);

@@ -46,7 +46,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { className, taxonomy, onChange, selected, createLink } = this.props;
+		const { className, taxonomy, onChange, selected, createLink, multiple } = this.props;
 
 		const classes = classNames( className );
 		const { search } = this.state;
@@ -64,6 +64,7 @@ export default React.createClass( {
 					query={ query }
 					selected={ selected }
 					createLink={ createLink }
+					multiple={ multiple }
 				/>
 			</div>
 		);
