@@ -3,12 +3,27 @@
 /**
  * External dependencies
  */
-import { map, filter, some, includes, find, get } from 'lodash';
+import {
+	camelCase,
+	chain,
+	filter,
+	find,
+	flowRight as compose,
+	get,
+	map,
+	mapKeys,
+	mapValues,
+	partialRight,
+	rearg,
+	some,
+	includes,
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+import { rawToNative as seoTitleFromRaw } from 'components/seo/meta-title-editor/mappings';
 
 /**
  * Returns a site object by its ID.
@@ -99,6 +114,23 @@ export function getSiteSlug( state, siteId ) {
 export function isRequestingSites( state ) {
 	return !! state.sites.fetchingItems.all;
 }
+
+/**
+ * Returns object describing custom title format
+ * strings for SEO.
+ *
+ * @see client/components/seo/meta-title-editor
+ *
+ * @param  {Object} state  Global app state
+ * @param  {Number} siteId Selected site
+ * @return {Object} Formats by type e.g. { frontPage: { type: 'siteName' } }
+ */
+export const getSeoTitleFormats = compose(
+	partialRight( mapValues, seoTitleFromRaw ), // raw strings to native objects
+	partialRight( mapKeys, rearg( camelCase, 1 ) ), // 1 -> key from ( value, key )
+	partialRight( get, 'options.advanced_seo_title_formats', {} ),
+	getSite
+);
 
 /**
  * Returns a site object by its URL.

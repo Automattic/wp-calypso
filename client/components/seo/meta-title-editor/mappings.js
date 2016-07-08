@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 // Maps between different title format formats
 //
 // raw is a string like: '%site_name% | %tagline%'
