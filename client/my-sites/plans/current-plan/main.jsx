@@ -27,6 +27,7 @@ import {
 } from 'lib/products-values';
 import Gridicon from 'components/gridicon';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import PlansNavigation from 'my-sites/upgrades/navigation';
 
 const PlanDetailsComponent = React.createClass( {
 	PropTypes: {
@@ -88,9 +89,14 @@ const PlanDetailsComponent = React.createClass( {
 				/>
 			</div> );
 		}
-
+		console.log(this.props);
 		return (
 			<Main className="current-plan">
+				<PlansNavigation
+					sitePlans={ this.props.sitePlans }
+					path={ this.props.context.path }
+					selectedSite={ selectedSite }
+				/>
 				<Card>
 					<div className="current-plan__header">
 						<div className="current-plan__header-content">
@@ -127,11 +133,11 @@ const PlanDetailsComponent = React.createClass( {
 	}
 } );
 
-export default connect(
-	( state ) => {
+export default connect( ( state, ownProps ) => {
 		return {
 			selectedSite: getSelectedSite( state ),
-			sitePlans: getPlansBySite( state, getSelectedSite( state ) )
+			sitePlans: getPlansBySite( state, getSelectedSite( state ) ),
+			context: ownProps.context
 		};
 	},
 	dispatch => ( {
