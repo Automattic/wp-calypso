@@ -32,11 +32,18 @@ const ARecord = React.createClass( {
 		const classes = classnames( { 'is-hidden': ! this.props.show } ),
 			{ fieldValues, isValid, onChange, selectedDomainName } = this.props,
 			isNameValid = isValid( 'name' ),
-			isDataValid = isValid( 'data' );
-		let placeholder = this.translate( 'e.g. %(example)s', { args: { example: '123.45.78.9' } } );
+			isDataValid = isValid( 'data' ),
+			isAaaaRecord = this.props.fieldValues.type === 'AAAA';
+		let namePlaceholder = this.translate( 'Enter subdomain (optional)', {
+				context: 'Placeholder shown when entering the optional subdomain part of a new DNS record'
+			} ),
+			dataPlaceholder = this.translate( 'e.g. %(example)s', { args: { example: '123.45.78.9' } } );
 
-		if ( this.props.fieldValues.type === 'AAAA' ) {
-			placeholder = this.translate( 'e.g. %(example)s', { args: { example: '2001:500:84::b' } } );
+		if ( isAaaaRecord ) {
+			namePlaceholder = this.translate( 'Enter subdomain (required)', {
+				context: 'Placeholder shown when entering the required subdomain part of a new DNS record'
+			} ),
+			dataPlaceholder = this.translate( 'e.g. %(example)s', { args: { example: '2001:500:84::b' } } );
 		}
 
 		return (
@@ -45,7 +52,7 @@ const ARecord = React.createClass( {
 					<FormLabel>{ this.translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
-						placeholder={ this.translate( 'Enter subdomain (optional)', { context: 'Placeholder shown when entering the required subdomain part of a new DNS record' } ) }
+						placeholder={ namePlaceholder }
 						isError={ ! isNameValid }
 						onChange={ onChange }
 						value={ fieldValues.name }
@@ -60,7 +67,7 @@ const ARecord = React.createClass( {
 						isError={ ! isDataValid }
 						onChange={ onChange }
 						value={ fieldValues.data }
-						placeholder={ placeholder } />
+						placeholder={ dataPlaceholder } />
 					{ ! isDataValid ? <FormInputValidation text={ this.translate( 'Invalid IP' ) } isError={ true } /> : null }
 				</FormFieldset>
 			</div>
