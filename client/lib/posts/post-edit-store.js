@@ -11,6 +11,7 @@ var assign = require( 'lodash/assign' ),
 	map = require( 'lodash/map' ),
 	pickBy = require( 'lodash/pickBy' );
 import mapValues from 'lodash/mapValues';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -102,8 +103,14 @@ function getTermIds( post ) {
 		return;
 	}
 
-	return mapValues( post.terms, ( taxonomy ) => {
-		return map( taxonomy, 'ID' );
+	// Skip "default" taxonomies
+	const taxonomies = omit( post.terms, [ 'post_tag', 'category' ] );
+	return mapValues( taxonomies, ( taxonomy ) => {
+		const termIds = map( taxonomy, 'ID' );
+
+		// Hack: qs omits empty arrays in wpcom.js request, which prevents
+		// removing all terms for a given taxonomy since the empty array is not sent to the API
+		return termIds.length ? termIds : [ 0 ];
 	} );
 }
 
