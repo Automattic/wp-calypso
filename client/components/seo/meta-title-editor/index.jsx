@@ -2,18 +2,20 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import difference from 'lodash/difference';
-import findKey from 'lodash/findKey';
-import get from 'lodash/get';
-import identity from 'lodash/identity';
-import isString from 'lodash/isString';
-import isUndefined from 'lodash/isUndefined';
-import map from 'lodash/map';
-import matches from 'lodash/matches';
-import pick from 'lodash/pick';
-import property from 'lodash/property';
-import valuesOf from 'lodash/values';
 import { connect } from 'react-redux';
+import {
+	difference,
+	findKey,
+	get,
+	identity,
+	isString,
+	isUndefined,
+	map,
+	matches,
+	pick,
+	property,
+	values as valuesOf
+} from 'lodash';
 
 /**
  * Internal dependencies
