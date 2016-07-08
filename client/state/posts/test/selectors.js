@@ -18,7 +18,6 @@ import {
 	getSitePostsLastPageForQuery,
 	isSitePostsLastPageForQuery,
 	getSitePostsForQueryIgnoringPage,
-	getSitePostsHierarchyForQueryIgnoringPage,
 	isRequestingSitePostsForQueryIgnoringPage,
 	isRequestingSitePost,
 	getEditedPost,
@@ -30,7 +29,7 @@ describe( 'selectors', () => {
 	beforeEach( () => {
 		getSitePosts.memoizedSelector.cache.clear();
 		getSitePost.memoizedSelector.cache.clear();
-		getSitePostsHierarchyForQueryIgnoringPage.memoizedSelector.cache.clear();
+		getSitePostsForQueryIgnoringPage.memoizedSelector.cache.clear();
 		isRequestingSitePostsForQueryIgnoringPage.memoizedSelector.cache.clear();
 		getNormalizedPost.memoizedSelector.cache.clear();
 	} );
@@ -594,88 +593,6 @@ describe( 'selectors', () => {
 			}, 2916284, { search: 'hel' } );
 
 			expect( isRequesting ).to.be.true;
-		} );
-	} );
-
-	describe( '#getSitePostsHierarchyForQueryIgnoringPage()', () => {
-		it( 'should return a concatenated array of all site posts ignoring page, preserving hierarchy', () => {
-			const sitePosts = getSitePostsHierarchyForQueryIgnoringPage( {
-				posts: {
-					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs &amp; Chicken' },
-						f0cb4eb16f493c19b627438fdc18d57c: { ID: 120, site_ID: 2916284, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak &amp; Eggs', parent: { ID: 413 } }
-					},
-					queries: {
-						2916284: new PostQueryManager( {
-							items: {
-								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-								413: { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs &amp; Chicken' },
-								120: { ID: 120, site_ID: 2916284, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak &amp; Eggs', parent: { ID: 413 } }
-							},
-							queries: {
-								'[]': {
-									itemKeys: [ 841, 413, 120 ]
-								}
-							}
-						} )
-					}
-				}
-			}, 2916284, { search: '', number: 1 } );
-
-			expect( sitePosts ).to.eql( [
-				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', parent: 0 },
-				{
-					ID: 413,
-					site_ID: 2916284,
-					global_ID: '6c831c187ffef321eb43a67761a525a3',
-					title: 'Ribs & Chicken',
-					parent: 0,
-					items: [
-						{ ID: 120, site_ID: 2916284, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak & Eggs', parent: 413 }
-					]
-				}
-			] );
-		} );
-	} );
-
-	describe( '#isRequestingSitePost()', () => {
-		it( 'should return false if no request has been made', () => {
-			const isRequesting = isRequestingSitePost( {
-				posts: {
-					siteRequests: {}
-				}
-			}, 2916284, 841 );
-
-			expect( isRequesting ).to.be.false;
-		} );
-
-		it( 'should return true if a request is in progress', () => {
-			const isRequesting = isRequestingSitePost( {
-				posts: {
-					siteRequests: {
-						2916284: {
-							841: true
-						}
-					}
-				}
-			}, 2916284, 841 );
-
-			expect( isRequesting ).to.be.true;
-		} );
-
-		it( 'should return false if a request has finished', () => {
-			const isRequesting = isRequestingSitePost( {
-				posts: {
-					siteRequests: {
-						2916284: {
-							841: false
-						}
-					}
-				}
-			}, 2916284, 841 );
-
-			expect( isRequesting ).to.be.false;
 		} );
 	} );
 
