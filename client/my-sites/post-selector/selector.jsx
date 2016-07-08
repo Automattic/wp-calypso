@@ -4,15 +4,21 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import debounce from 'lodash/debounce';
-import get from 'lodash/get';
-import range from 'lodash/range';
-import difference from 'lodash/difference';
-import isEqual from 'lodash/isEqual';
-import includes from 'lodash/includes';
 import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
 import VirtualScroll from 'react-virtualized/VirtualScroll';
 import AutoSizer from 'react-virtualized/AutoSizer';
+import {
+	memoize,
+	findIndex,
+	min,
+	max,
+	debounce,
+	get,
+	range,
+	difference,
+	isEqual,
+	includes
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -82,6 +88,7 @@ const PostSelectorPosts = React.createClass( {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
 
+		this.getFlattenedIndexExtreme = memoize( this.getFlattenedIndexExtreme, ( ...args ) => args.join() );
 		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
 		this.debouncedSearch = debounce( () => {
 			this.props.onSearch( this.state.searchTerm );
@@ -94,6 +101,11 @@ const PostSelectorPosts = React.createClass( {
 			this.setState( {
 				requestedPages: [ 1 ]
 			} );
+		}
+
+		if ( this.props.posts !== nextProps.posts ||
+				this.props.postsHierarchy !== nextProps.postsHierarchy ) {
+			this.getFlattenedIndexExtreme.cache.clear();
 		}
 	},
 
@@ -211,6 +223,39 @@ const PostSelectorPosts = React.createClass( {
 		}, 0 );
 	},
 
+	getFlattenedItemIndexExtreme( item, extreme ) {
+		const { posts } = this.props;
+		const { items: children, global_ID: globalId } = item;
+
+		const flattenedIndex = findIndex( posts, { global_ID: globalId } );
+		if ( ! children ) {
+			return flattenedIndex;
+		}
+
+		return ( 'min' === extreme ? min : max )( children.map( ( child ) => {
+			return this.getFlattenedItemIndexExtreme( child, extreme );
+		} ) );
+	},
+
+	/**
+	 * Given an index of a rendered row, returns the index of that index's item
+	 * or its descendant in the flattened array of posts corresponding to the
+	 * given extreme function as a string ("min" or "max"). If an item cannot
+	 * be found at the specified index, the original value is returned.
+	 *
+	 * @param  {Number} index   Rendered row index
+	 * @param  {String} extreme Extreme function, as a string ("min", "max")
+	 * @return {Number}         Flattened index extreme
+	 */
+	getFlattenedIndexExtreme( index, extreme ) {
+		const item = get( this.props.postsHierarchy, index );
+		if ( ! item ) {
+			return index;
+		}
+
+		return this.getFlattenedItemIndexExtreme( item, extreme );
+	},
+
 	getPageForIndex( index ) {
 		const { query, lastPage } = this.props;
 		const perPage = query.number || DEFAULT_POSTS_PER_PAGE;
@@ -236,8 +281,8 @@ const PostSelectorPosts = React.createClass( {
 	setRequestedPages( { startIndex, stopIndex } ) {
 		const { requestedPages } = this.state;
 		const pagesToRequest = difference( range(
-			this.getPageForIndex( startIndex - LOAD_OFFSET ),
-			this.getPageForIndex( stopIndex + LOAD_OFFSET ) + 1
+			this.getPageForIndex( this.getFlattenedIndexExtreme( startIndex, 'min' ) - LOAD_OFFSET ),
+			this.getPageForIndex( this.getFlattenedIndexExtreme( stopIndex, 'max' ) + LOAD_OFFSET ) + 1
 		), requestedPages );
 
 		if ( ! pagesToRequest.length ) {
