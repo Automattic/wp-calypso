@@ -16,7 +16,6 @@ import isEqual from 'lodash/isEqual';
 /**
  * Internal dependencies
  */
-import TreeConvert from 'lib/tree-convert';
 import {
 	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
@@ -261,41 +260,6 @@ export const isRequestingSitePostsForQueryIgnoringPage = createSelector(
 	},
 	( state ) => state.posts.queryRequests,
 	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
-);
-
-/**
- * Returns an array of normalized posts for the posts query, including all
- * known queried pages, preserving hierarchy. Returns null if no posts have
- * been received. Hierarchy is represented by `parent` and `items` properties
- * on each post.
- *
- * @see getNormalizedPost
- *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @param  {Object} query  Post query object
- * @return {?Array}        Hierarchical posts for the post query
- */
-export const getSitePostsHierarchyForQueryIgnoringPage = createSelector(
-	( state, siteId, query ) => {
-		let sitePosts = getSitePostsForQueryIgnoringPage( state, siteId, query );
-		if ( ! sitePosts ) {
-			return sitePosts;
-		}
-
-		// For each site post object, add `parent` and `order` properties.
-		// These are used by the TreeConvert library to build the hierarchy.
-		const treeReadySitePosts = sitePosts.map( ( post, i ) => {
-			return Object.assign( {}, post, {
-				parent: post.parent ? post.parent.ID : 0,
-				order: i
-			} );
-		} );
-
-		return ( new TreeConvert( 'ID' ) ).treeify( treeReadySitePosts );
-	},
-	( state ) => [ state.posts.queries ],
-	( state, siteId, query ) => getSerializedPostsQueryWithoutPage( query, siteId )
 );
 
 /**
