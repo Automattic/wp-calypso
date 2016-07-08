@@ -57,7 +57,8 @@ class EllipsisMenu extends Component {
 					ref={ this.setPopoverContext }
 					onClick={ isMenuVisible ? this.hideMenu : this.showMenu }
 					title={ toggleTitle || translate( 'Toggle menu' ) }
-					borderless>
+					borderless
+					className="ellipsis-menu__toggle">
 					<Gridicon
 						icon="ellipsis"
 						className="ellipsis-menu__toggle-icon" />

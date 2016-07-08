@@ -19,9 +19,9 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 
 	if ( includeDefaultActions ) {
 		actions.push(
+			<PostActionsEllipsisMenuEdit key="edit" />,
 			<PostActionsEllipsisMenuView key="view" />,
 			<PostActionsEllipsisMenuPublish key="publish" />,
-			<PostActionsEllipsisMenuEdit key="edit" />,
 			<PostActionsEllipsisMenuRestore key="restore" />,
 			<PostActionsEllipsisMenuTrash key="trash" />
 		);
