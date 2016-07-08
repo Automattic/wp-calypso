@@ -30,6 +30,7 @@ describe( 'selectors', () => {
 	beforeEach( () => {
 		getSitePosts.memoizedSelector.cache.clear();
 		getSitePost.memoizedSelector.cache.clear();
+		getSitePostsForQueryIgnoringPage.memoizedSelector.cache.clear();
 		getSitePostsHierarchyForQueryIgnoringPage.memoizedSelector.cache.clear();
 		isRequestingSitePostsForQueryIgnoringPage.memoizedSelector.cache.clear();
 		getNormalizedPost.memoizedSelector.cache.clear();
