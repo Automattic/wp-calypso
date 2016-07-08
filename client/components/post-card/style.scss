@@ -100,6 +100,10 @@
 .post-card__search .post-card__search-title-link {
 	color: inherit;
 
+	&:hover {
+		color: darken( $gray, 20% );
+	}
+
 	&:visited {
 		color: $gray;
 	}
@@ -116,11 +120,14 @@
 
 .post-card__search-social {
 	float: right;
+	margin-bottom: 10px;
 
 	@include breakpoint( ">960px" ) {
 		float: none;
+		margin-bottom: 0;
 		position: absolute;
 			right: 10px;
+			top: 18px;
 	}
 }
 
@@ -148,16 +155,6 @@
 	color: lighten( $gray, 10% );
 }
 
-.post-card__search-byline-item {
-	display: inline-block;
-	margin-right: 13px;
-
-	&:nth-child(2) {
-		position: relative;
-			top: -2px;
-	}
-}
-
 .post-card__search-excerpt {
 	@extend %content-font;
 	font-size: 14px;
@@ -167,6 +164,35 @@
 .post-card__search .follow-button {
 	border-style: none;
 	font-size: 13px;
-	padding: 0 0 24px;
 	margin: 0;
+	padding: 0;
+	position: relative;
+		left: 10px;
+		top: -2px;
+
+	.gridicon {
+		fill: lighten( $gray, 10% );
+	}
+
+	.follow-button__label {
+		color: lighten( $gray, 10% );
+
+		@include breakpoint( "<660px" )
+			display: inline;
+	}
+
+	&:hover {
+
+		.gridicon {
+			fill: $blue-wordpress;
+		}
+
+		.follow-button__label {
+			color: $blue-wordpress;
+		}
+	}
+
+	&:focus {
+		border-radius: 0;
+	}
 }
