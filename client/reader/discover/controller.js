@@ -63,11 +63,9 @@ export default {
 			key = 'discover';
 
 		setPageTitle( i18n.translate( 'Discover' ) );
-	//	ensureStoreLoading( feedStore, context );
-
 		trackPageLoad( basePath, fullAnalyticsPageTitle, key );
 		recordTrack( 'calypso_reader_discover_viewed' );
-		console.log('context.store:', context.store );
+
 		ReactDom.render(
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( discoverComponent, { key } )
