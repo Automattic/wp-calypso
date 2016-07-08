@@ -154,7 +154,13 @@ function recordPurchase( product ) {
 		return loadTrackingScripts( recordPurchase.bind( null, product ) );
 	}
 
-	debug( 'Recording purchase', product );
+	const isJetpackPlan = JETPACK_PLANS.indexOf( product.product_slug ) >= 0;
+
+	if ( isJetpackPlan ) {
+		debug( 'Recording Jetpack purchase', product );
+	} else {
+		debug( 'Recording purchase', product );
+	}
 
 	// record the user id as a custom parameter
 	const currentUser = user.get(),
@@ -183,7 +189,9 @@ function recordPurchase( product ) {
 	// record the purchase w/ Google
 	window.google_trackConversion( {
 		google_conversion_id: GOOGLE_CONVERSION_ID,
-		google_conversion_label: TRACKING_IDS.googleConversionLabel,
+		google_conversion_label: isJetpackPlan
+			? TRACKING_IDS.googleConversionLabelJetpack
+			: TRACKING_IDS.googleConversionLabel,
 		google_conversion_value: product.cost,
 		google_conversion_currency: product.currency,
 		google_custom_params: {
@@ -192,19 +200,6 @@ function recordPurchase( product ) {
 		},
 		google_remarketing_only: false
 	} );
-	if ( JETPACK_PLANS.indexOf( product.product_slug ) >= 0 ) {
-		debug( 'Recording Jetpack purchase', product );
-		window.google_trackConversion( {
-			google_conversion_id: GOOGLE_CONVERSION_ID,
-			google_conversion_label: TRACKING_IDS.googleConversionLabelJetpack,
-			google_conversion_value: product.cost,
-			google_conversion_currency: product.currency,
-			google_custom_params: {
-				product_slug: product.product_slug
-			},
-			google_remarketing_only: false
-		} );
-	}
 }
 
 /**
