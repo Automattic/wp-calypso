@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+ import pickBy from 'lodash/pickBy'
+
+/**
  * Internal dependencies
  */
 import config from 'config';
@@ -9,6 +14,7 @@ import {
 	READER_DISCOVER_POSTS_REQUEST_FAILURE,
 	READER_DISCOVER_POSTS_REQUEST_SUCCESS
 } from 'state/action-types';
+import { receivePosts } from 'state/reader/posts/actions';
 
 const discoverBlogId = config( 'discover_blog_id' );
 
@@ -18,35 +24,39 @@ export function receiveDiscoverPosts( discoverPosts ) {
 		discoverPosts
 	};
 }
-export function requestDiscoverPosts( originalPostId, limit = 20 ) {
+export function requestDiscoverPosts( number = 10, before, after ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: READER_DISCOVER_POSTS_REQUEST,
 		} );
 
-		const
-			source = wpcom.site( discoverBlogId ),
-			query = {
-				meta: 'site,post',
-				origin_site_id: discoverBlogId,
-				origin_post_id: originalPostId,
-				number: limit
-			};
+		const query = {
+			meta: 'post,discover_original_post',
+			orderBy: 'date',
+			site: discoverBlogId,
+			number,
+			before,
+			after
+		};
 
-		return source.postsList( query ).then( ( { found, posts } ) => {
-			dispatch( receiveDiscoverPosts( posts ) );
-			dispatch( {
-				type: READER_DISCOVER_POSTS_REQUEST_SUCCESS,
-				query,
-				found,
-				posts
-			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: READER_DISCOVER_POSTS_REQUEST_FAILURE,
-				query,
-				error
-			} );
-		} );
+		wpcom.undocumented()
+				.readSitePosts( pickBy( query ) )
+					.then( ( { found, posts } ) => {
+						dispatch( receivePosts( posts ) );
+						dispatch( receiveDiscoverPosts( posts ) );
+						dispatch( {
+							type: READER_DISCOVER_POSTS_REQUEST_SUCCESS,
+							query,
+							found,
+							posts
+						} );
+					} )
+					.catch( ( error ) => {
+						dispatch( {
+							type: READER_DISCOVER_POSTS_REQUEST_FAILURE,
+							query,
+							error
+						} );
+					} );
 	};
 }
