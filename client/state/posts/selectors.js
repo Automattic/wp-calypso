@@ -211,21 +211,25 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  * @param  {Object}  query  Post query object
  * @return {?Array}         Posts for the post query
  */
-export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
-	const posts = state.posts.queries[ siteId ];
-	if ( ! posts ) {
-		return null;
-	}
+export const getSitePostsForQueryIgnoringPage = createSelector(
+	( state, siteId, query ) => {
+		const posts = state.posts.queries[ siteId ];
+		if ( ! posts ) {
+			return null;
+		}
 
-	const itemsIgnoringPage = posts.getItemsIgnoringPage( query );
-	if ( ! itemsIgnoringPage ) {
-		return null;
-	}
+		const itemsIgnoringPage = posts.getItemsIgnoringPage( query );
+		if ( ! itemsIgnoringPage ) {
+			return null;
+		}
 
-	return itemsIgnoringPage.map( ( post ) => {
-		return getNormalizedPost( state, post.global_ID );
-	} );
-}
+		return itemsIgnoringPage.map( ( post ) => {
+			return getNormalizedPost( state, post.global_ID );
+		} );
+	},
+	( state ) => state.posts.queries,
+	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
+);
 
 /**
  * Returns true if currently requesting posts for the posts query, regardless
