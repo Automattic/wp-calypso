@@ -83,14 +83,7 @@
 		}
 
 		@include breakpoint( "<480px" ) {
-			padding-left: 20px;
-		}
-
-		.post-card__search-featured-image {
-
-			@include breakpoint( "<480px" ) {
-				display: none;
-			}
+			padding-left: 108px;
 		}
 	}
 }
@@ -98,9 +91,14 @@
 .post-card__search-title {
 	@extend %content-font;
 	display: inline;
-	font-size: 24px;
-	line-height: 28px;
+	font-size: 20px;
+	line-height: 20px;
 	font-weight: 700;
+
+	@include breakpoint( ">480px" ) {
+		font-size: 24px;
+		line-height: 28px;
+	}
 }
 
 .post-card__search .post-card__search-title-link {
@@ -128,7 +126,7 @@
 	}
 
 	@include breakpoint( "<480px" ) {
-		width: 115px;
+		width: 90px;
 	}
 }
 
@@ -156,6 +154,10 @@
 		vertical-align: text-bottom;
 		margin: 0 4px 0 0;
 	}
+}
+
+.post-card__search-byline-item {
+	display: inline-block;
 }
 
 .post-card__author-and-site {
