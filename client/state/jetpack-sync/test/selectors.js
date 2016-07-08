@@ -9,7 +9,8 @@ import { expect } from 'chai';
 import {
 	getSyncStatus,
 	getFullSyncRequest,
-	isPendingSyncStart
+	isPendingSyncStart,
+	isFullSyncing
 } from '../selectors';
 
 const nonExistentId = '111111';
@@ -18,6 +19,7 @@ const successfulSiteId = '1234567';
 const errorSiteId = '12345678';
 const syncScheduledSiteID = '123455';
 const oldSyncSiteId = '987654321';
+const inProgressSiteId = '87654321';
 
 const syncStatusSuccessful = {
 	isRequesting: false,
@@ -90,6 +92,24 @@ const syncStatusErrored = {
 	}
 };
 
+const syncStatusInProgress = {
+	started: 1467998622,
+	queue_finished: 1467998622,
+	queue: {
+		constants: 1,
+		functions: 1,
+		options: 1,
+		terms: 1,
+		themes: 1,
+		users: 1,
+		posts: 102,
+		comments: 1,
+		updates: 1
+	},
+	sent: [],
+	is_scheduled: false
+};
+
 const fullSyncRequested = {
 	isRequesting: true,
 	lastRequested: 1467944517955
@@ -124,7 +144,8 @@ const testState = {
 			[ successfulSiteId ]: syncStatusSuccessful,
 			[ errorSiteId ]: syncStatusErrored,
 			[ syncScheduledSiteID ]: syncStatusScheduled,
-			[ oldSyncSiteId ]: syncStatusSuccessful
+			[ oldSyncSiteId ]: syncStatusSuccessful,
+			[ inProgressSiteId ]: syncStatusInProgress
 		},
 		fullSyncRequest: {
 			[ requestedSiteId ]: fullSyncRequested,
@@ -189,6 +210,28 @@ describe( 'selectors', () => {
 		it( 'should be false if a sync has been requested, but sync has already finished', () => {
 			const test = isPendingSyncStart( testState, oldSyncSiteId );
 			expect( test ).to.be.false;
+		} );
+	} );
+
+	describe( '#isFullSyncing()', () => {
+		it( 'should return false if no sync status for a site', () => {
+			const test = isFullSyncing( testState, nonExistentId );
+			expect( test ).to.be.false;
+		} );
+
+		it( 'should return false if syncing is has finished', () => {
+			const test = isFullSyncing( testState, successfulSiteId );
+			expect( test ).to.be.false;
+		} );
+
+		it( 'should return false if syncing is scheduled but not started', () => {
+			const test = isFullSyncing( testState, syncScheduledSiteID );
+			expect( test ).to.be.false;
+		} );
+
+		it( 'should return true if sync has started and not finished', () => {
+			const test = isFullSyncing( testState, inProgressSiteId );
+			expect( test ).to.be.true;
 		} );
 	} );
 } );
