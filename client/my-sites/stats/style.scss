@@ -2,7 +2,7 @@
 // Module container
 
 @include breakpoint( ">960px" ) {
-	.module-column {
+	.stats__module-column {
 		float: left;
 		width: 48.8%;
 		width: calc(50% - 0.5em);
