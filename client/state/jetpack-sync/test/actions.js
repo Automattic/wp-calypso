@@ -16,20 +16,17 @@ import {
 	JETPACK_SYNC_STATUS_ERROR,
 } from 'state/action-types';
 
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let actions, sandbox, spy;
-
-	useFakeDom();
 
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
 	} );
 
-	beforeEach( function() {
+	beforeEach( () => {
 		actions = require( '../actions' );
 	} );
 
