@@ -8,6 +8,7 @@ import debounce from 'lodash/debounce';
 import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
 import url from 'url';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Internal dependencies
@@ -65,14 +66,15 @@ const devdocs = {
 				false );
 		}
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( DocsComponent, {
 				term: context.query.term,
 				// we debounce with wait time of 0, so that the search doesn’t happen
 				// in the same tick as the keyUp event and possibly cause typing lag
 				onSearchChange: debounce( onSearchChange, 0 )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store,
 		);
 	},
 
@@ -115,11 +117,12 @@ const devdocs = {
 	},
 
 	typography: function( context ) {
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( Typography, {
 				component: context.params.component
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
