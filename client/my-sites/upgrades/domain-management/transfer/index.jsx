@@ -65,7 +65,7 @@ const Transfer = React.createClass( {
 
 	goToEdit() {
 		page( paths.domainManagementEdit(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.selectedDomainName
 		) );
 	},

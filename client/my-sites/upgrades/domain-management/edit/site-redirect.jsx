@@ -67,7 +67,7 @@ const SiteRedirect = React.createClass( {
 
 	siteRedirectNavItem() {
 		return (
-			<VerticalNavItem path={ paths.domainManagementRedirectSettings( this.props.selectedSite.domain, this.props.domain.name ) }>
+			<VerticalNavItem path={ paths.domainManagementRedirectSettings( this.props.selectedSite.slug, this.props.domain.name ) }>
 				{ this.translate( 'Redirect Settings' ) }
 			</VerticalNavItem>
 		);
