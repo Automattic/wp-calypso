@@ -28,8 +28,8 @@ const StandardPick = ( post ) => {
 			<div className="reader-discover-card__featured-image " style={ heroStyle }></div>
 			<div className="reader-discover-card__post-content">
 				<h1>
-	   			<a href="/">{ post.title }</a>
-	   		</h1>
+					<a href="/">{ post.title }</a>
+				</h1>
 				<p>{ post.excerpt }</p>
 			</div>
 		</article>

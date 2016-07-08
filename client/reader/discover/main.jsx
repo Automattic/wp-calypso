@@ -1,7 +1,7 @@
 /**
 * External dependencies
 */
-import React  from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import Masonary from 'react-masonry-component';
 import map from 'lodash/map';
@@ -11,7 +11,6 @@ import map from 'lodash/map';
 */
 import Main from 'components/main';
 import DiscoverCard from './card';
-//import DiscoverCard from './card';
 import QueryReaderDiscoverPosts from 'components/data/query-reader-discover';
 import { getDiscoverPostIds } from 'state/reader/discover/selectors';
 

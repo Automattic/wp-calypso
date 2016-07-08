@@ -34,7 +34,7 @@ function cardFactory( sourceData ) {
 		postFormats = map( get( sourceData, 'discover_fp_post_formats' ), 'slug' ),
 		pickFormat = find( postFormats, format => format.match( /-pick/ ) );
 
-	return StandardPick; //get( pickCardClasses, pickFormat, StandardPick );
+	return get( pickCardClasses, pickFormat, StandardPick );
 }
 
 class DiscoverCard extends Component {
@@ -42,7 +42,6 @@ class DiscoverCard extends Component {
 	static propTypes = {
 		postId: PropTypes.number.isRequired
 	}
-
 
 	render() {
 		const

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import get from 'lodash/get';
-import isEmpty from 'lodash/isEmpty'
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * Internal dependencies
@@ -29,8 +29,7 @@ function renderSiteInfo( site ) {
 }
 
 const DiscoverCardFooter = ( props ) => {
-
-	const { site, categories } = props;
+	const { site } = props;
 
 	return (
 		<footer className="reader-discover-card__footer">
