@@ -27,7 +27,7 @@
 	position: relative;
 	width: 80px;
 	align-self: stretch;
-	margin-right: 12px;
+	margin: -8px 0;
 	overflow: hidden;
 
 	&.has-image,
@@ -45,6 +45,8 @@
 		top: 50%;
 		left: 50%;
 	transform: translate( -50%, -50% );
+	max-height: 100%;
+	max-width: none;
 }
 
 .post-type-list__post-title-meta {
