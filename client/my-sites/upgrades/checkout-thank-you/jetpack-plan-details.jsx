@@ -9,30 +9,51 @@ import i18n from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 import userFactory from 'lib/user';
+import analytics from 'lib/analytics';
+import utils from 'lib/site/utils';
 
-var config = require( 'config' );
-
+const config = require( 'config' );
 const user = userFactory();
 
-var JetpackPlanDetails = ( { selectedSite } ) => {
+const JetpackPlanDetails = ( { selectedSite } ) => {
 	const props = {
 		icon: 'cog',
 		title: i18n.translate( 'Set up your VaultPress and Akismet accounts' ),
 		description: i18n.translate(
-			'We emailed you at %(email)s with information for setting up Akismet and VaultPress on your site. Follow the instructions in the email to get started.',
+			'We emailed you at %(email)s with information for setting up Akismet and VaultPress on your site. ' +
+			'Follow the instructions in the email to get started.',
 			{ args: { email: user.get().email } }
 		),
 	};
 
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
+		const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
+		if ( reasons && reasons.length > 0 ) {
+			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_filemod', { error: reasons[ 0 ] } );
+		} else if ( ! selectedSite.hasMinimumJetpackVersion ) {
+			analytics.tracks.recordEvent(
+				'calypso_plans_autoconfig_error_jpversion',
+				{ jetpack_version: selectedSite.options.jetpack_version }
+			);
+		} else if ( ! selectedSite.isMainNetworkSite() ) {
+			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_multisite' );
+		} else if ( selectedSite.options.is_multi_network ) {
+			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_multinetwork' );
+		}
+
 		props.title = null;
 		if ( ! selectedSite.canUpdateFiles ) {
-			props.description = i18n.translate( 'You can now install Akismet and VaultPress, which will automatically protect your site from spam and data loss. If you have any questions along the way, we\'re here to help!' );
+			props.description = i18n.translate(
+				'You can now install Akismet and VaultPress, which will automatically protect your site from spam and data loss. ' +
+				'If you have any questions along the way, we\'re here to help!'
+			);
 			props.buttonText = i18n.translate( 'Installation Instructions' );
 			props.href = 'https://en.support.wordpress.com/setting-up-premium-services/';
 		} else {
 			props.description = i18n.translate(
-				'We are about to install Akismet and VaultPress for your site, which will automatically protect your site from spam and data loss. If you have any questions along the way, we\'re here to help! You can also perform a manual installation by following {{a}}these instructions{{/a}}.',
+				'We are about to install Akismet and VaultPress for your site, which will automatically protect your site from spam ' +
+				'and data loss. If you have any questions along the way, we\'re here to help! You can also perform a manual ' +
+				'installation by following {{a}}these instructions{{/a}}.',
 				{ components: {
 					a: <a target="_blank" href="https://en.support.wordpress.com/setting-up-premium-services/" />
 				} }

@@ -149,8 +149,11 @@ function renderPluginsBrowser( context, siteUrl ) {
 
 function renderProvisionPlugins( context ) {
 	const section = context.store.getState().ui.section;
+	const site = sites.getSelectedSite();
 	context.store.dispatch( setSection( Object.assign( {}, section, { secondary: false } ) ) );
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+
+	analytics.pageView.record( context.pathname.replace( site.domain, ':site' ), 'Jetpack Plugins Setup' );
 
 	renderWithReduxStore(
 		React.createElement( PlanSetup, {} ),
