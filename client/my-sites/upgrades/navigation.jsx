@@ -2,59 +2,19 @@
  * External dependencies
  */
 import React from 'react';
-import { startsWith, find, propertyOf, flatten, map, sortBy, size, filter, includes } from 'lodash';
 import Dispatcher from 'dispatcher';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
+import { sectionify } from 'lib/route/path';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import upgradesPaths from 'my-sites/upgrades/paths';
 import viewport from 'lib/viewport';
 import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 import PopoverCart from 'my-sites/upgrades/cart/popover-cart';
-
-// The first path acts as the primary path that the button will link to. The
-// remaining paths will make the button highlighted on that page.
-
-const NAV_ITEMS = {
-	Addons: {
-		paths: [ '/plans' ],
-		label: i18n.translate( 'Add-ons for Jetpack sites' ),
-		allSitesPath: false
-	},
-
-	Plans: {
-		paths: [ '/plans' ],
-		label: i18n.translate( 'Plans' ),
-		allSitesPath: false
-	},
-
-	Email: {
-		paths: [ upgradesPaths.domainManagementEmail() ],
-		label: i18n.translate( 'Google Apps' ),
-		allSitesPath: false
-	},
-
-	Domains: {
-		paths: [
-			upgradesPaths.domainManagementRoot(),
-			'/domains/add'
-		],
-		label: i18n.translate( 'Domains' ),
-		allSitesPath: false
-	},
-
-	'Add a Domain': {
-		paths: [ '/domains/add' ],
-		label: i18n.translate( 'Add a Domain' ),
-		allSitesPath: false
-	}
-};
 
 const PlansNavigation = React.createClass( {
 	propTypes: {
@@ -89,68 +49,40 @@ const PlansNavigation = React.createClass( {
 	},
 
 	render() {
-		const navItems = this.getNavItemData().map( this.navItem ),
-			selectedNavItem = this.getSelectedNavItem(),
-			selectedText = selectedNavItem && selectedNavItem.label;
+		const site = this.props.selectedSite;
+		const isJetpack = site && site.jetpack;
+		const path = sectionify( this.props.path );
+		const hasPlan = site && site.plan.product_slug !== 'free_plan';
 
 		return (
 			<SectionNav
 					hasPinnedItems={ viewport.isMobile() }
-					selectedText={ selectedText }
+					selectedText={ path }
 					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }>
-				<NavTabs label="Section" selectedText={ selectedText }>
-					{ navItems }
+				<NavTabs label="Section" selectedText={ path }>
+					{ ! isJetpack && hasPlan &&
+						<NavItem path={ `/plans/my-plan/${ site.slug }` } key="myPlan" selected={ path === '/my-plan' }>
+							{ this.translate( 'My Plan' ) }
+						</NavItem>
+					}
+					<NavItem path={ `/plans/${ site.slug }` } key="plans" selected={ path === '/plans' }>
+						{ this.translate( 'Plans' ) }
+					</NavItem>
+					{ ! isJetpack &&
+						<NavItem path={ `/domains/manage/${ site.slug }` } key="domains"
+							selected={ path === '/domains/manage' || path === '/domains/add' }>
+							{ this.translate( 'Domains' ) }
+						</NavItem>
+					}
+					{ ! isJetpack &&
+						<NavItem path={ `/domains/manage/email/${ site.slug }` } key="googleApps"
+							selected={ path === '/domains/manage/email' }>
+							{ this.translate( 'Google Apps' ) }
+						</NavItem>
+					}
 				</NavTabs>
 				{ this.cartToggleButton() }
 			</SectionNav>
-		);
-	},
-
-	getNavItemData() {
-		let items;
-
-		if ( this.props.selectedSite.jetpack ) {
-			items = [ 'Addons' ];
-		} else {
-			items = [ 'Plans', 'Domains', 'Email' ];
-		}
-
-		return items.map( propertyOf( NAV_ITEMS ) );
-	},
-
-	getSelectedNavItem() {
-		const allPaths = flatten( map( this.getNavItemData(), 'paths' ) ),
-			sortedPaths = sortBy( allPaths, function( path ) {
-				return -countSlashes( path );
-			} ),
-			selectedPath = find( sortedPaths, function( path ) {
-				return startsWith( this.props.path, path );
-			}.bind( this ) );
-
-		return find( this.getNavItemData(), function( itemData ) {
-			return includes( itemData.paths, selectedPath );
-		} );
-	},
-
-	navItem( itemData ) {
-		var { paths, allSitesPath, label } = itemData,
-			slug = this.props.selectedSite ? this.props.selectedSite.slug : null,
-			selectedNavItem = this.getSelectedNavItem(),
-			primaryPath = paths[ 0 ],
-			fullPath;
-
-		if ( allSitesPath ) {
-			fullPath = primaryPath;
-		} else {
-			fullPath = slug ? `${ primaryPath }/${ slug }` : primaryPath;
-		}
-
-		return (
-			<NavItem path={ fullPath }
-					key={ fullPath }
-					selected={ selectedNavItem && ( selectedNavItem.label === label ) }>
-				{ label }
-			</NavItem>
 		);
 	},
 
@@ -189,11 +121,5 @@ const PlansNavigation = React.createClass( {
 		);
 	}
 } );
-
-function countSlashes( path ) {
-	return size( filter( path, function( character ) {
-		return character === '/';
-	} ) );
-}
 
 export default PlansNavigation;
