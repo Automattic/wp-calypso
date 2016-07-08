@@ -110,7 +110,7 @@ function getTermIds( post ) {
 
 		// Hack: qs omits empty arrays in wpcom.js request, which prevents
 		// removing all terms for a given taxonomy since the empty array is not sent to the API
-		return termIds.length ? termIds : [ 0 ];
+		return termIds.length ? termIds : null;
 	} );
 }
 
