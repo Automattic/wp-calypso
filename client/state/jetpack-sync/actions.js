@@ -10,11 +10,9 @@ import { pick, omit } from 'lodash';
 import wpcom from 'lib/wp';
 import {
 	JETPACK_SYNC_START_REQUEST,
-	JETPACK_SYNC_START_RECEIVED,
 	JETPACK_SYNC_START_SUCCESS,
 	JETPACK_SYNC_START_ERROR,
 	JETPACK_SYNC_STATUS_REQUEST,
-	JETPACK_SYNC_STATUS_RECEIVED,
 	JETPACK_SYNC_STATUS_SUCCESS,
 	JETPACK_SYNC_STATUS_ERROR,
 } from 'state/action-types';
@@ -35,10 +33,6 @@ export default {
 
 			return wpcom.undocumented().getJetpackSyncStatus( siteId )
 				.then( ( data ) => {
-					dispatch( {
-						type: JETPACK_SYNC_STATUS_RECEIVED,
-						siteId
-					} );
 					dispatch( {
 						type: JETPACK_SYNC_STATUS_SUCCESS,
 						siteId,
@@ -65,10 +59,6 @@ export default {
 
 			return wpcom.undocumented().scheduleJetpackFullysync( siteId )
 				.then( ( data ) => {
-					dispatch( {
-						type: JETPACK_SYNC_START_RECEIVED,
-						siteId
-					} );
 					dispatch( {
 						type: JETPACK_SYNC_START_SUCCESS,
 						siteId,
