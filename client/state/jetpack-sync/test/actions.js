@@ -9,11 +9,9 @@ import nock from 'nock';
  */
 import {
 	JETPACK_SYNC_START_REQUEST,
-	JETPACK_SYNC_START_RECEIVED,
 	JETPACK_SYNC_START_SUCCESS,
 	JETPACK_SYNC_START_ERROR,
 	JETPACK_SYNC_STATUS_REQUEST,
-	JETPACK_SYNC_STATUS_RECEIVED,
 	JETPACK_SYNC_STATUS_SUCCESS,
 	JETPACK_SYNC_STATUS_ERROR,
 } from 'state/action-types';
@@ -99,17 +97,6 @@ describe( 'actions', () => {
 				return getSyncStatus( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						siteId: siteId,
-						type: JETPACK_SYNC_STATUS_RECEIVED
-					} );
-				} );
-			} );
-
-			it( 'should dispatch success action when request completes', () => {
-				const { getSyncStatus } = actions;
-
-				return getSyncStatus( siteId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						siteId: siteId,
 						type: JETPACK_SYNC_STATUS_SUCCESS,
 						data: data
 					} );
@@ -183,17 +170,6 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					siteId: siteId,
 					type: JETPACK_SYNC_START_REQUEST
-				} );
-			} );
-
-			it( 'should dispatch success action when request completes', () => {
-				const { scheduleJetpackFullysync } = actions;
-
-				return scheduleJetpackFullysync( siteId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						siteId: siteId,
-						type: JETPACK_SYNC_START_RECEIVED
-					} );
 				} );
 			} );
 
