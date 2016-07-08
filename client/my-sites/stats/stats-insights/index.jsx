@@ -21,6 +21,7 @@ import statsStrings from '../stats-strings';
 import MostPopular from 'my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
+import Main from 'components/main';
 
 export default React.createClass( {
 	displayName: 'StatsInsights',
@@ -69,8 +70,10 @@ export default React.createClass( {
 							beforeNavigate={ this.updateScrollPosition } />;
 		}
 
+		// TODO: should be refactored into separate components
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className="main main-column" role="main">
+			<Main>
 				<SidebarNavigation />
 				<StatsNavigation section="insights" site={ site } />
 				<div id="my-stats-content">
@@ -86,9 +89,9 @@ export default React.createClass( {
 					<AllTime />
 					<MostPopular />
 					<DomainTip siteId={ site ? site.ID : 0 } event="stats_insights_domain" />
-					<div className="stats-nonperiodic has-recent">
-						<div className="module-list">
-							<div className="module-column">
+					<div className="stats-insights__nonperiodic has-recent">
+						<div className="stats__module-list">
+							<div className="stats__module-column">
 								<Comments
 									path={ 'comments' }
 									site={ site }
@@ -97,7 +100,7 @@ export default React.createClass( {
 									commentFollowersList={ commentFollowersList } />
 								{ tagsList }
 							</div>
-							<div className="module-column">
+							<div className="stats__module-column">
 								<Followers
 									path={ 'followers' }
 									site={ site }
@@ -112,7 +115,8 @@ export default React.createClass( {
 						</div>
 					</div>
 				</div>
-			</div>
+			</Main>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 } );

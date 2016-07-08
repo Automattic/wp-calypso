@@ -34,7 +34,7 @@
 		}
 
 		@include breakpoint( ">960px" ) {
-			.module-list & {
+			.stats__module-list & {
 				font-size: 12px;
 			}
 		}
