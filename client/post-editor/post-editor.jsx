@@ -253,6 +253,13 @@ const PostEditor = React.createClass( {
 		this.hideDrafts();
 	},
 
+	componentWillReceiveProps: function( nextProps ) {
+		if ( nextProps.editPath !== this.props.editPath ) {
+			// make sure the history entry has the post ID in it, but don't dispatch
+			page.replace( nextProps.editPath, null, false, false );
+		}
+	},
+
 	renderNotice: function() {
 		var arrowLink;
 
@@ -840,9 +847,6 @@ const PostEditor = React.createClass( {
 
 		// Receive updated post into state
 		this.props.receivePost( post );
-
-		// make sure the history entry has the post ID in it, but don't dispatch
-		page.replace( this.props.editPath, null, false, false );
 
 		nextState = {
 			isSaving: false,
