@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import omit from 'lodash/omit';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
@@ -11,6 +16,9 @@ import {
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
+	POST_RESTORE,
+	POST_RESTORE_FAILURE,
+	POST_RESTORE_SUCCESS,
 	POST_SAVE,
 	POST_SAVE_SUCCESS,
 	POST_SAVE_FAILURE,
@@ -247,6 +255,40 @@ export function deletePost( siteId, postId ) {
 		} ).catch( ( error ) => {
 			dispatch( {
 				type: POST_DELETE_FAILURE,
+				siteId,
+				postId,
+				error
+			} );
+		} );
+	};
+}
+
+/**
+ * Returns an action thunk which, when dispatched, triggers a network request
+ * to restore the specified post.
+ *
+ * @param  {Number}   siteId Site ID
+ * @param  {Number}   postId Post ID
+ * @return {Function}        Action thunk
+ */
+export function restorePost( siteId, postId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: POST_RESTORE,
+			siteId,
+			postId
+		} );
+
+		return wpcom.site( siteId ).post( postId ).restore().then( ( restoredPost ) => {
+			dispatch( {
+				type: POST_RESTORE_SUCCESS,
+				siteId,
+				postId
+			} );
+			dispatch( receivePost( omit( restoredPost, '_headers' ) ) );
+		} ).catch( ( error ) => {
+			dispatch( {
+				type: POST_RESTORE_FAILURE,
 				siteId,
 				postId,
 				error

@@ -15,6 +15,8 @@ import {
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
+	POST_RESTORE,
+	POST_RESTORE_FAILURE,
 	POST_SAVE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
@@ -343,6 +345,66 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItem( 841 ) ).to.eql(
 				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'draft', type: 'post' }
 			);
+		} );
+
+		it( 'should apply pending restore status on restore actions', () => {
+			let original = deepFreeze( {} );
+			original = queries( original, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { status: 'trash' },
+				found: 1,
+				posts: [ {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '48b6010b559efe6a77a429773e0cbf12',
+					title: 'Trashed',
+					status: 'trash',
+					type: 'post'
+				} ]
+			} );
+
+			const state = queries( original, {
+				type: POST_RESTORE,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( '__RESTORE_PENDING' );
+			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
+		} );
+
+		it( 'should apply pending trash status on restore failure actions', () => {
+			let original = deepFreeze( {} );
+			original = queries( original, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { status: 'trash' },
+				found: 1,
+				posts: [ {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '48b6010b559efe6a77a429773e0cbf12',
+					title: 'Trashed',
+					status: 'trash',
+					type: 'post'
+				} ]
+			} );
+
+			original = queries( original, {
+				type: POST_RESTORE,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			const state = queries( original, {
+				type: POST_RESTORE_FAILURE,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( 'trash' );
+			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 1 );
 		} );
 
 		it( 'should apply save actions as partial received posts', () => {
