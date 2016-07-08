@@ -3,7 +3,21 @@
 /**
  * External dependencies
  */
-import { camelCase, map, mapKeys, mapValues, filter, some, includes, find, get } from 'lodash';
+import {
+	camelCase,
+	chain,
+	filter,
+	find,
+	flowRight as compose,
+	get,
+	map,
+	mapKeys,
+	mapValues,
+	partialRight,
+	rearg,
+	some,
+	includes,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -109,18 +123,14 @@ export function isRequestingSites( state ) {
  *
  * @param  {Object} state  Global app state
  * @param  {Number} siteId Selected site
- * @return {Object} Formats by type { frontPage: '%site_name%', posts: '%post_title%' }
+ * @return {Object} Formats by type e.g. { frontPage: { type: 'siteName' } }
  */
-export const getSeoTitleFormats = ( state, siteId ) => {
-	const site = getSite( state, siteId );
-	const rawFormats = mapKeys(
-		get( site, 'options.advanced_seo_title_formats', {} ),
-		( _, key ) => camelCase( key )
-	);
-	const nativeFormats = mapValues( rawFormats, seoTitleFromRaw );
-
-	return nativeFormats;
-};
+export const getSeoTitleFormats = compose(
+	partialRight( mapValues, seoTitleFromRaw ), // raw strings to native objects
+	partialRight( mapKeys, rearg( camelCase, 1 ) ), // 1 -> key from ( value, key )
+	partialRight( get, 'options.advanced_seo_title_formats', {} ),
+	getSite
+);
 
 /**
  * Returns a site object by its URL.
