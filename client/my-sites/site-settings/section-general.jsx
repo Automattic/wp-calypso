@@ -26,7 +26,8 @@ module.exports = React.createClass({
 				{ ( config.isEnabled( 'manage/site-settings/delete-site' ) && ! site.jetpack && ! site.is_vip ) ?
 				<DeleteSiteOptions
 					site={ this.props.site }
-					purchases={ this.props.purchases } />
+					sitePurchases={ this.props.sitePurchases }
+					hasLoadedSitePurchasesFromServer={ this.props.hasLoadedSitePurchasesFromServer } />
 				: null }
 			</div>
 		);
