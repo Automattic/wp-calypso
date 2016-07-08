@@ -24,6 +24,7 @@ import postTypes from './post-types/reducer';
 import preferences from './preferences/reducer';
 import preview from './preview/reducer';
 import pushNotifications from './push-notifications/reducer';
+import purchases from './purchases/reducer';
 import reader from './reader/reducer';
 import receipts from './receipts/reducer';
 import sharing from './sharing/reducer';
@@ -59,6 +60,7 @@ export const reducer = combineReducers( {
 	posts,
 	postTypes,
 	pushNotifications,
+	purchases,
 	reader,
 	receipts,
 	sharing,
