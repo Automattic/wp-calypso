@@ -77,9 +77,11 @@
 
 	&.has-thumbnail {
 		padding-left: 250px;
-
-		@include breakpoint( "<660px" ) {
-			display: none;
+		@include breakpoint( "660px-960px" ) {
+			padding-left: 135px;
+		}
+		@include breakpoint( "<480px" ) {
+			padding-left: 135px;
 		}
 	}
 }
@@ -116,6 +118,14 @@
 		left: 0;
 		top: 0;
 	width: 230px;
+
+	@include breakpoint( "660px-960px" ) {
+		width: 115px
+	}
+
+	@include breakpoint( "<480px" ) {
+		width: 115px
+	}
 }
 
 .post-card__search-social {
