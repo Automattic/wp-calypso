@@ -12,6 +12,7 @@ const debug = debugFactory( 'calypso:ad-tracking' );
  */
 import loadScript from 'lib/load-script';
 import config from 'config';
+import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
 
 /**
@@ -35,8 +36,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
 		atlasUniveralTagId: '11187200770563'
-	},
-	JETPACK_PLANS = [ 'jetpack_premium', 'jetpack_business' ];
+	};
 
 /**
  * Globals
@@ -154,7 +154,7 @@ function recordPurchase( product ) {
 		return loadTrackingScripts( recordPurchase.bind( null, product ) );
 	}
 
-	const isJetpackPlan = JETPACK_PLANS.indexOf( product.product_slug ) >= 0;
+	const isJetpackPlan = productsValues.isJetpackPlan( product );
 
 	if ( isJetpackPlan ) {
 		debug( 'Recording Jetpack purchase', product );
