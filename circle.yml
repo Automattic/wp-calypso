@@ -6,13 +6,7 @@ test:
     - NODE_ENV=test make client/config/index.js:
         parallel: true
   override:
-    - bin/run-lint :
-        parallel: true
-        files:
-          - client/**/*.js
-          - client/**/*.jsx
-          - server/**/*.js
-          - server/**/*.jsx
+    - bin/run-lint $(git diff --name-only $(git merge-base $(git rev-parse --abbrev-ref HEAD) master)..HEAD *js *jsx)
     - MOCHA_FILE=./test-results-client.xml npm run test-client -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
         parallel: true
     - MOCHA_FILE=./test-results-server.xml npm run test-server -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
