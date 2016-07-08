@@ -14,14 +14,14 @@ import {
 	PRIVACY_PROTECTION_CANCEL_FAILED
 } from 'state/action-types';
 import { getByPurchaseId } from '../selectors';
-import { items } from '../reducer';
+import reducer from '../reducer';
 
-describe( 'items', () => {
+describe( 'reducer', () => {
 	const userId = 1337,
 		siteId = 2701;
 
 	it( 'should return an object with the initial state', () => {
-		expect( items( undefined, { type: 'UNRELATED' } ) ).to.be.eql( {
+		expect( reducer( undefined, { type: 'UNRELATED' } ) ).to.be.eql( {
 			data: [],
 			error: null,
 			isFetchingSitePurchases: false,
@@ -32,7 +32,7 @@ describe( 'items', () => {
 	} );
 
 	it( 'should return an object with an empty list and fetching enabled when fetching is triggered', () => {
-		expect( items( undefined, { type: PURCHASES_USER_FETCH } ) ).to.be.eql( {
+		expect( reducer( undefined, { type: PURCHASES_USER_FETCH } ) ).to.be.eql( {
 			data: [],
 			error: null,
 			isFetchingSitePurchases: false,
@@ -43,12 +43,12 @@ describe( 'items', () => {
 	} );
 
 	it( 'should return an object with the list of purchases when fetching completed', () => {
-		let state = items( undefined, {
+		let state = reducer( undefined, {
 			type: PURCHASES_USER_FETCH_COMPLETED,
 			purchases: [ { id: 1, siteId, userId }, { id: 2, siteId, userId } ]
 		} );
 
-		state = items( state, {
+		state = reducer( state, {
 			type: PURCHASES_SITE_FETCH_COMPLETED,
 			purchases: [ { id: 2, siteId, userId }, { id: 3, siteId, userId } ]
 		} );
@@ -81,7 +81,7 @@ describe( 'items', () => {
 
 		const newPurchase = { id: 4, siteId: 2702, userId };
 
-		state = items( state, {
+		state = reducer( state, {
 			type: PURCHASES_USER_FETCH_COMPLETED,
 			purchases: [
 				{ id: 1, siteId, userId },
@@ -104,7 +104,7 @@ describe( 'items', () => {
 			hasLoadedUserPurchasesFromServer: true
 		} );
 
-		state = items( state, {
+		state = reducer( state, {
 			type: PURCHASES_SITE_FETCH_COMPLETED,
 			purchases: [ { id: 2, siteId, userId } ],
 			siteId
@@ -136,7 +136,7 @@ describe( 'items', () => {
 			hasLoadedUserPurchasesFromServer: true
 		};
 
-		state = items( state, {
+		state = reducer( state, {
 			type: PRIVACY_PROTECTION_CANCEL_FAILED,
 			error: 'Unable to fetch stored cards',
 			purchaseId: 2
@@ -163,7 +163,7 @@ describe( 'items', () => {
 			hasLoadedUserPurchasesFromServer: true
 		};
 
-		state = items( state, {
+		state = reducer( state, {
 			type: PRIVACY_PROTECTION_CANCEL_COMPLETED,
 			purchase: {
 				amount: 2200,

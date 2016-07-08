@@ -112,7 +112,7 @@ function updatePurchases( existingPurchases, action ) {
 
 const assignError = ( state, action ) => ( { ...state, error: action.error } );
 
-export const items = createReducer( initialState, {
+export default createReducer( initialState, {
 	[ PURCHASES_REMOVE ]: ( state ) => ( {
 		...state,
 		data: [],
