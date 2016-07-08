@@ -10,7 +10,7 @@ import React from 'react';
  */
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
-import { isCalypsoStartedConnection, getFlowType } from 'state/jetpack-connect/selectors';
+import { getFlowType } from 'state/jetpack-connect/selectors';
 import Main from 'components/main';
 import ConnectHeader from './connect-header';
 import observe from 'lib/mixins/data-observe';
@@ -97,9 +97,7 @@ const Plans = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
 			user: this.props.userId
 		} );
-		if ( isCalypsoStartedConnection( this.props.jetpackConnectSessions, selectedSite.slug ) ) {
-			page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
-		}
+		page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
 	},
 
 	hasPlan( site ) {
