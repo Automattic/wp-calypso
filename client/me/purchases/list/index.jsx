@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { connect } from 'react-redux';
 import React from 'react';
 
 /**
@@ -8,21 +9,28 @@ import React from 'react';
  */
 import CompactCard from 'components/card';
 import EmptyContent from 'components/empty-content';
+import { getUserPurchases, hasLoadedUserPurchasesFromServer, isFetchingUserPurchases } from 'state/purchases/selectors';
 import { getPurchasesBySite } from 'lib/purchases';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PurchasesHeader from './header';
 import PurchasesSite from './site';
+import QueryUserPurchases from 'components/data/query-user-purchases';
+import userFactory from 'lib/user';
+const user = userFactory();
 
 const PurchasesList = React.createClass( {
 	propTypes: {
 		noticeType: React.PropTypes.string,
-		purchases: React.PropTypes.object.isRequired,
+		purchases: React.PropTypes.oneOfType( [
+			React.PropTypes.array,
+			React.PropTypes.bool
+		] ),
 		sites: React.PropTypes.object.isRequired
 	},
 
 	isDataLoading() {
-		if ( this.props.purchases.isFetchingUserPurchases && ! this.props.purchases.hasLoadedUserPurchasesFromServer ) {
+		if ( this.props.isFetchingUserPurchases && ! this.props.hasLoadedUserPurchasesFromServer ) {
 			return true;
 		}
 
@@ -36,8 +44,8 @@ const PurchasesList = React.createClass( {
 			content = <PurchasesSite isPlaceholder />;
 		}
 
-		if ( this.props.purchases.hasLoadedUserPurchasesFromServer && this.props.purchases.data.length ) {
-			content = getPurchasesBySite( this.props.purchases.data, this.props.sites.get() ).map(
+		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
+			content = getPurchasesBySite( this.props.purchases, this.props.sites.get() ).map(
 				site => (
 					<PurchasesSite
 						key={ site.id }
@@ -48,7 +56,7 @@ const PurchasesList = React.createClass( {
 			);
 		}
 
-		if ( this.props.purchases.hasLoadedUserPurchasesFromServer && ! this.props.purchases.data.length ) {
+		if ( this.props.hasLoadedUserPurchasesFromServer && ! this.props.purchases.length ) {
 			content = (
 				<CompactCard className="purchases-list__no-content">
 					<EmptyContent
@@ -68,6 +76,7 @@ const PurchasesList = React.createClass( {
 				<Main className="purchases-list">
 					<MeSidebarNavigation />
 					<PurchasesHeader section={ 'purchases' } />
+					<QueryUserPurchases userId={ user.get().ID } />
 					{ content }
 				</Main>
 			</span>
@@ -75,4 +84,11 @@ const PurchasesList = React.createClass( {
 	}
 } );
 
-export default PurchasesList;
+export default connect(
+	state => ( {
+		purchases: getUserPurchases( state, user.get().ID ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		isFetchingUserPurchases: isFetchingUserPurchases( state )
+	} ),
+	undefined
+)( PurchasesList );
