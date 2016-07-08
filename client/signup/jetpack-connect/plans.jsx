@@ -93,9 +93,11 @@ const Plans = React.createClass( {
 	},
 
 	selectFreeJetpackPlan() {
+		const selectedSite = this.props.sites.getSelectedSite();
 		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
 			user: this.props.userId
 		} );
+		page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
 	},
 
 	hasPlan( site ) {
