@@ -39,8 +39,10 @@ function SearchByline( { post, site, feed } ) {
 
 export function SearchPostCard( { post, site, feed, onClick = noop, onCommentClick = noop } ) {
 	const featuredImage = post.canonical_image;
+	const hasPost = !! post;
 	const classes = classnames( 'post-card__search', {
-		'has-thumbnail': !! featuredImage
+		'has-thumbnail': !! featuredImage,
+		'is-photo': hasPost && post.excerpt.length < 1
 	} );
 	return (
 		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>

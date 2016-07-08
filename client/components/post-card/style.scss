@@ -86,6 +86,13 @@
 			padding-left: 108px;
 		}
 	}
+
+	&.is-photo {
+
+		.post-card__search-featured-image {
+			width: 100%;
+		}
+	}
 }
 
 .post-card__search-title {
