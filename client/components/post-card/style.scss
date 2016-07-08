@@ -83,28 +83,21 @@
 		}
 
 		@include breakpoint( "<480px" ) {
-			padding-left: 20px;
-		}
-
-		.post-card__search-featured-image {
-
-			@include breakpoint( "<480px" ) {
-				display: none;
-			}
+			padding-left: 108px;
 		}
 	}
 }
 
 .post-card__search-title {
 	@extend %content-font;
-	font-size: 24px;
-	line-height: 28px;
+	display: inline;
+	font-size: 20px;
+	line-height: 20px;
 	font-weight: 700;
-	margin: 0 100px 6px 0;
 
-	@include breakpoint( "<960px" ) {
-		display: block;
-		margin-right: 0;
+	@include breakpoint( ">480px" ) {
+		font-size: 24px;
+		line-height: 28px;
 	}
 }
 
@@ -133,21 +126,14 @@
 	}
 
 	@include breakpoint( "<480px" ) {
-		width: 115px;
+		width: 90px;
 	}
 }
 
 .post-card__search-social {
 	float: right;
 	margin-bottom: 6px;
-
-	@include breakpoint( ">960px" ) {
-		float: none;
-		margin-bottom: 0;
-		position: absolute;
-			right: 10px;
-			top: 18px;
-	}
+	padding-left: 20px;
 }
 
 .post-card__search .like-button .gridicon {
@@ -160,7 +146,7 @@
 
 .post-card__search-byline {
 	list-style: none;
-	margin: 0 0 6px;
+	margin: 6px 0;
 	padding: 0;
 	font-size: 13px;
 
@@ -168,6 +154,10 @@
 		vertical-align: text-bottom;
 		margin: 0 4px 0 0;
 	}
+}
+
+.post-card__search-byline-item {
+	display: inline-block;
 }
 
 .post-card__author-and-site {
@@ -191,11 +181,11 @@
 		top: -2px;
 
 	.gridicon {
-		fill: lighten( $gray, 10% );
+		fill: $blue-wordpress;
 	}
 
 	.follow-button__label {
-		color: lighten( $gray, 10% );
+		color: $blue-wordpress;
 
 		@include breakpoint( "<660px" )
 			display: inline;
@@ -204,15 +194,53 @@
 	&:hover {
 
 		.gridicon {
-			fill: $blue-wordpress;
+			fill: lighten( $gray, 10% );
 		}
 
 		.follow-button__label {
-			color: $blue-wordpress;
+			color: lighten( $gray, 10% );
 		}
 	}
 
 	&:focus {
 		border-radius: 0;
+	}
+
+	&.is-following {
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		.follow-button__label {
+			color: $alert-green;
+		}
+
+		&:hover {
+
+			.gridicon {
+				fill: $blue-wordpress;
+			}
+
+			.follow-button__label {
+				color: $blue-wordpress;
+			}
+		}
+	}
+}
+
+// Custom colors for Site and Author info
+.reader__content {
+
+	.post-card__author-and-site {
+
+		a,
+		a:visited {
+			color: lighten( $gray, 10% );
+		}
+
+		a:hover {
+			color: $blue-wordpress;
+		}
 	}
 }
