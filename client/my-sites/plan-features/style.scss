@@ -49,6 +49,15 @@ $plan-features-header-banner-height: 20px;
 	border-top: solid 1px lighten( $gray, 27% );
 }
 
+.plan-features__table-item.is-placeholder {
+	.spinner-line {
+		margin: 0;
+		position: absolute;
+		top: -3px;
+		width: 100%;
+	}
+}
+
 .plan-features__header {
 	position: relative;
 	display: flex;
@@ -65,11 +74,6 @@ $plan-features-header-banner-height: 20px;
 	margin-right: 15px;
 	border: solid 6px $gray-light;
 	border-radius: 50%;
-
-	&.is-placeholder {
-		@include placeholder( 23% );
-	}
-
 }
 
 .plan-features__header-checkmark {
@@ -85,20 +89,20 @@ $plan-features-header-banner-height: 20px;
 	padding: 6px 0;
 }
 
-.plan-features__header-title,
-.plan-features__header-price,
 .plan-features__header-timeframe {
-	line-height: 1;
-	margin: 0;
+	&.is-placeholder {
+		@include placeholder( 23% );
+		width: 100px;
+		height: 12px;
+	}
+}
 
+.plan-features__header-price {
 	&.is-placeholder {
 		@include placeholder( 23% );
 		width: 60px;
-		margin-bottom: 15px;
-
-		&:last-child {
-			margin-bottom: 0;
-		}
+		margin: 10px 0;
+		height: 21px;
 	}
 }
 
@@ -211,10 +215,6 @@ $plan-features-header-banner-height: 20px;
 	font-size: 14px;
 	color: $gray-dark;
 
-	&.is-placeholder {
-		padding-left: 1px;
-	}
-
 	@include breakpoint( "<480px" ) {
 		margin: 0 16px;
 	}
@@ -269,10 +269,6 @@ $plan-features-header-banner-height: 20px;
 			fill: $alert-green;
 			margin-right: 8px;
 		}
-	}
-
-	&.is-placeholder {
-		@include placeholder( 23% );
 	}
 
 	@media

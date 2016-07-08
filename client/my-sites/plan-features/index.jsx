@@ -35,17 +35,11 @@ import {
 	applyTestFiltersToPlansList
 } from 'lib/plans';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
+import SpinnerLine from 'components/spinner-line';
 
 class PlanFeatures extends Component {
 
 	render() {
-		const { isPlaceholder } = this.props;
-
-		if ( isPlaceholder ) {
-			//TODO: update placeholder
-			return null;
-		}
-
 		return (
 			<div className="plan-features">
 				<table className="plan-features__table">
@@ -70,7 +64,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { planProperties } = this.props;
+		const { planProperties, isPlaceholder } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -96,6 +90,7 @@ class PlanFeatures extends Component {
 						discountPrice={ discountPrice }
 						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
 						onClick={ onUpgradeClick }
+						isPlaceholder={ isPlaceholder }
 					/>
 				</td>
 			);
@@ -103,16 +98,26 @@ class PlanFeatures extends Component {
 	}
 
 	renderPlanDescriptions() {
-		const { planProperties } = this.props;
+		const { planProperties, isPlaceholder } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
 				planName,
 				planConstantObj
 			} = properties;
-			const classes = classNames( 'plan-features__table-item' );
+
+			const classes = classNames( 'plan-features__table-item', {
+				'is-placeholder': isPlaceholder
+			} );
+
 			return (
 				<td key={ planName } className={ classes }>
+					{
+						isPlaceholder
+							? <SpinnerLine />
+							: null
+					}
+
 					<p className="plan-features__description">
 						{ planConstantObj.getDescription() }
 					</p>
@@ -122,7 +127,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderTopButtons() {
-		const { planProperties } = this.props;
+		const { planProperties, isPlaceholder } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -139,6 +144,7 @@ class PlanFeatures extends Component {
 						available = { available }
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ planName === PLAN_FREE }
+						isPlaceholder={ isPlaceholder }
 					/>
 				</td>
 			);
@@ -198,7 +204,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderBottomButtons() {
-		const { planProperties } = this.props;
+		const { planProperties, isPlaceholder } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -215,6 +221,7 @@ class PlanFeatures extends Component {
 						available = { available }
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ planName === PLAN_FREE }
+						isPlaceholder={ isPlaceholder }
 					/>
 				</td>
 			);
@@ -252,9 +259,6 @@ export default connect( ( state, ownProps ) => {
 
 		if ( placeholder || ! planObject || isLoadingSitePlans ) {
 			isPlaceholder = true;
-			return {
-				isPlaceholder: true
-			};
 		}
 
 		return {

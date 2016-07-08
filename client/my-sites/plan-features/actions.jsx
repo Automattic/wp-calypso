@@ -16,6 +16,7 @@ const PlanFeaturesActions = ( {
 	current = false,
 	freePlan = false,
 	onUpgradeClick = noop,
+	isPlaceholder = false,
 	translate
 } ) => {
 	let upgradeButton;
@@ -27,9 +28,14 @@ const PlanFeaturesActions = ( {
 				{ translate( 'Your plan' ) }
 			</Button>
 		);
-	} else if ( available ) {
+	} else if ( available || isPlaceholder ) {
 		upgradeButton = (
-			<Button className="plan-features__actions-button" onClick={ onUpgradeClick } primary>
+			<Button
+				className="plan-features__actions-button"
+				onClick={ isPlaceholder ? noop : onUpgradeClick }
+				primary={ ! isPlaceholder }
+				disabled={ isPlaceholder }
+			>
 				{
 					freePlan
 						? translate( 'Select Free' )
@@ -52,7 +58,8 @@ PlanFeaturesActions.propTypes = {
 	current: PropTypes.bool,
 	available: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
-	freePlan: PropTypes.bool
+	freePlan: PropTypes.bool,
+	isPlaceholder: PropTypes.bool
 };
 
 export default localize( PlanFeaturesActions );
