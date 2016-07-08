@@ -114,7 +114,8 @@ export class MetaTitleEditor extends Component {
 
 		const validTokens = getValidTokens( translate );
 
-		const values = get( titleFormats, type, [] ).map(
+		const values = map(
+			get( titleFormats, type, [] ),
 			token => 'string' !== token.type
 				? { ...token, value: validTokens[ token.type ] } // use translations of token names
 				: { ...token, isBorderless: true }               // and remove the styling on plain text
