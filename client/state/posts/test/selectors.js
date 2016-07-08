@@ -21,7 +21,9 @@ import {
 	isRequestingSitePostsForQueryIgnoringPage,
 	isRequestingSitePost,
 	getEditedPost,
-	getEditedPostValue
+	getPostEdits,
+	getEditedPostValue,
+	isEditedPostDirty
 } from '../selectors';
 import PostQueryManager from 'lib/query-manager/post';
 
@@ -685,6 +687,64 @@ describe( 'selectors', () => {
 		} );
 	} );
 
+	describe( 'getPostEdits()', () => {
+		it( 'should return null if no edits exist for a new post', () => {
+			const postEdits = getPostEdits( {
+				posts: {
+					edits: {}
+				}
+			}, 2916284 );
+
+			expect( postEdits ).to.be.null;
+		} );
+
+		it( 'should return null if no edits exist for an existing post', () => {
+			const postEdits = getPostEdits( {
+				posts: {
+					edits: {}
+				}
+			}, 2916284, 841 );
+
+			expect( postEdits ).to.be.null;
+		} );
+
+		it( 'should return the edited attributes for a new post', () => {
+			const postEdits = getPostEdits( {
+				posts: {
+					edits: {
+						2916284: {
+							'': {
+								title: 'Hello World!'
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( postEdits ).to.eql( {
+				title: 'Hello World!'
+			} );
+		} );
+
+		it( 'should return the edited attributes for an existing post', () => {
+			const postEdits = getPostEdits( {
+				posts: {
+					edits: {
+						2916284: {
+							841: {
+								title: 'Hello World!'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( postEdits ).to.eql( {
+				title: 'Hello World!'
+			} );
+		} );
+	} );
+
 	describe( 'getEditedPostValue()', () => {
 		it( 'should return undefined if the post does not exist', () => {
 			const editedPostValue = getEditedPostValue( {
@@ -735,6 +795,133 @@ describe( 'selectors', () => {
 			}, 2916284, 841, 'discussion.pings_open' );
 
 			expect( editedPostValue ).to.be.true;
+		} );
+	} );
+
+	describe( 'isEditedPostDirty()', () => {
+		beforeEach( () => {
+			isEditedPostDirty.memoizedSelector.cache.clear();
+		} );
+
+		it( 'should return false if there are no edits for the post', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64' }
+					},
+					edits: {}
+				}
+			}, 2916284, 841 );
+
+			expect( isDirty ).to.be.false;
+		} );
+
+		it( 'should return false if edited with a type', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64' }
+					},
+					edits: {
+						2916284: {
+							841: {
+								type: 'post'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isDirty ).to.be.false;
+		} );
+
+		it( 'should return false if no saved post and value matches default for new post', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {},
+					edits: {
+						2916284: {
+							'': {
+								status: 'draft'
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isDirty ).to.be.false;
+		} );
+
+		it( 'should return true if no saved post and value does not match default for new post', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {},
+					edits: {
+						2916284: {
+							'': {
+								status: 'publish'
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isDirty ).to.be.true;
+		} );
+
+		it( 'should return true if no saved post and no default exists for key', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {},
+					edits: {
+						2916284: {
+							'': {
+								author: 'testonesite2014'
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isDirty ).to.be.true;
+		} );
+
+		it( 'should return false if saved post value equals edited post value', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					},
+					edits: {
+						2916284: {
+							841: {
+								title: 'Hello World'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isDirty ).to.be.false;
+		} );
+
+		it( 'should return true if saved post value does not equal edited post value', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					},
+					edits: {
+						2916284: {
+							841: {
+								title: 'Hello World!'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isDirty ).to.be.true;
 		} );
 	} );
 } );

@@ -670,6 +670,25 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.hasContent() === true );
 		} );
 
+		it( 'accepts an array of fields to check', function() {
+			dispatcherCallback( {
+				action: {
+					type: 'DRAFT_NEW_POST',
+					siteId: 1
+				}
+			} );
+
+			dispatcherCallback( {
+				action: {
+					type: 'EDIT_POST',
+					siteId: 1,
+					post: { title: 'Draft' }
+				}
+			} );
+
+			assert( PostEditStore.hasContent( [ 'excerpt' ] ) === false );
+		} );
+
 		it( 'returns false if title is whitespace', function() {
 			dispatcherCallback( {
 				action: {
