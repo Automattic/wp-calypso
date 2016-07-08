@@ -8,6 +8,7 @@ import keys from 'lodash/keys';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
+import versionCompare from 'lib/version-compare';
 import {
 	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 	PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
@@ -201,14 +202,15 @@ function configure( site, plugin, dispatch ) {
 		return;
 	}
 	let optionValue = plugin.key;
-	if ( ( 'vaultpress' === plugin.slug ) ) {
+	// VP 1.8.4+ expects a different format for this option.
+	if ( ( 'vaultpress' === plugin.slug ) && versionCompare( plugin.version, '1.8.3', '>' ) ) {
 		optionValue = JSON.stringify( {
 			key: plugin.key,
 			action: 'register',
 		} );
 	}
 	site.setOption( { option_name: option, option_value: optionValue }, ( error, data ) => {
-		if ( ( 'vaultpress' === plugin.slug ) ) {
+		if ( ( 'vaultpress' === plugin.slug ) && versionCompare( plugin.version, '1.8.3', '>' ) ) {
 			const response = JSON.parse( data.option_value );
 			if ( 'response' === response.action && 'broken' === response.status ) {
 				error = new Error( response.error );
