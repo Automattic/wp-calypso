@@ -224,7 +224,7 @@ Undocumented.prototype.getJetpackSyncStatus = function( siteId, fn ) {
 Undocumented.prototype.scheduleJetpackFullysync = function( siteId, fn ) {
 	debug( '/sites/:site_id:/sync query' );
 	const endpointPath = '/sites/' + siteId + '/sync';
-	return this.wpcom.req.post( { path: endpointPath }, fn );
+	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
 };
 
 Undocumented.prototype.activateManage = function( siteId, state, secret ) {
