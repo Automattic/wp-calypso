@@ -140,13 +140,11 @@ describe( 'index', function() {
 
 	it( 'can prevent widows', function( done ) {
 		var post = {
-			title: 'title',
 			excerpt: 'this is a longer excerpt bar'
 		};
 
 		normalizer( post, [ normalizer.preventWidows ], function( err, normalized ) {
 			assert.deepEqual( normalized, {
-				title: 'title',
 				excerpt: 'this is a longer excerpt\xA0bar'
 			} );
 			done( err );
@@ -155,13 +153,11 @@ describe( 'index', function() {
 
 	it( 'can prevent widows in empty strings', function( done ) {
 		var post = {
-			title: ' ',
 			excerpt: '   '
 		};
 
 		normalizer( post, [ normalizer.preventWidows ], function( err, normalized ) {
 			assert.deepEqual( normalized, {
-				title: '',
 				excerpt: ''
 			} );
 			done( err );
