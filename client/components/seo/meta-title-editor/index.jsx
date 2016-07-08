@@ -109,14 +109,8 @@ export class MetaTitleEditor extends Component {
 	}
 
 	render() {
-		const {
-			disabled = false,
-			translate = identity
-		} = this.props;
-		const {
-			type,
-			titleFormats
-		} = this.state;
+		const { disabled, translate } = this.props;
+		const { type, titleFormats } = this.state;
 
 		const validTokens = getValidTokens( translate );
 
@@ -152,6 +146,11 @@ export class MetaTitleEditor extends Component {
 
 MetaTitleEditor.propTypes = {
 	disabled: PropTypes.bool
+};
+
+MetaTitleEditor.defaultProps = {
+	disabled: false,
+	translate: identity
 };
 
 const mapStateToProps = state => ( {
