@@ -201,6 +201,32 @@ Undocumented.prototype.jetpackAuthorizeSSONonce = function( siteId, ssoNonce, fn
 	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
 };
 
+/**
+ * Gets the current status of a full sync for a Jetpack site.
+ *
+ * @param {int|string} siteId The site ID
+ * @param {Function} fn The callback function
+ * @api public
+ */
+Undocumented.prototype.getJetpackSyncStatus = function( siteId, fn ) {
+	debug( '/sites/:site_id:/sync/status query' );
+	const endpointPath = '/sites/' + siteId + '/sync/status';
+	return this.wpcom.req.get( { path: endpointPath }, fn );
+};
+
+/**
+ * Schedules a full sync for a Jetpack site.
+ *
+ * @param {int|string} siteId The site ID
+ * @param {Function} fn The callback function
+ * @api public
+ */
+Undocumented.prototype.scheduleJetpackFullysync = function( siteId, fn ) {
+	debug( '/sites/:site_id:/sync query' );
+	const endpointPath = '/sites/' + siteId + '/sync';
+	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
+};
+
 Undocumented.prototype.activateManage = function( siteId, state, secret ) {
 	debug( '/jetpack-blogs/:site_id:/activate-manage query' );
 	const endpointUrl = '/jetpack-blogs/' + siteId + '/activate-manage';
