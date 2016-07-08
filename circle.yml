@@ -3,8 +3,4 @@ machine:
     version: 5.11.1
 test:
   override:
-    - git log --pretty=format:%H --reverse|head -1 # first commit before unshallow
-    - git merge-base $(git rev-parse --abbrev-ref HEAD) master # ancestor before unshallow
-    - git fetch --unshallow
-    - git log --pretty=format:%H --reverse|head -1 # first commit after unshallow
-    - git merge-base $(git rev-parse --abbrev-ref HEAD) master # ancestor after unshallow
+    - bin/eslint-branch-files-circleci-testcase-gitfetch
