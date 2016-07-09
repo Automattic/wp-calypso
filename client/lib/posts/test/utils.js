@@ -17,6 +17,23 @@ describe( 'utils', function() {
 		postUtils = require( '../utils' );
 	} );
 
+	describe( '#getEditURL', function() {
+		it( 'should return correct path type=post is supplied', function() {
+			const url = postUtils.getEditURL( { ID: 123, type: 'post' }, { slug: 'en.blog.wordpress.com' } );
+			assert( url === '/post/en.blog.wordpress.com/123' );
+		} );
+
+		it( 'should return correct path type=page is supplied', function() {
+			const url = postUtils.getEditURL( { ID: 123, type: 'page' }, { slug: 'en.blog.wordpress.com' } );
+			assert( url === '/page/en.blog.wordpress.com/123' );
+		} );
+
+		it( 'should return correct path when custom post type is supplied', function() {
+			const url = postUtils.getEditURL( { ID: 123, type: 'jetpack-portfolio' }, { slug: 'en.blog.wordpress.com' } );
+			assert( url === '/edit/jetpack-portfolio/en.blog.wordpress.com/123' );
+		} );
+	} );
+
 	describe( '#getVisibility', function() {
 		it( 'should return undefined when no post is supplied', function() {
 			assert( postUtils.getVisibility() === undefined );

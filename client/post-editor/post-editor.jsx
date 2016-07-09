@@ -44,7 +44,7 @@ const actions = require( 'lib/posts/actions' ),
 
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
-import { isEditorDraftsVisible, getEditorPostId } from 'state/ui/editor/selectors';
+import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';
 import { receivePost, editPost, resetPostEdits } from 'state/posts/actions';
 import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
@@ -172,6 +172,7 @@ const PostEditor = React.createClass( {
 		sites: React.PropTypes.object,
 		user: React.PropTypes.object,
 		userUtils: React.PropTypes.object,
+		editPath: React.PropTypes.string
 	},
 
 	_previewWindow: null,
@@ -250,6 +251,13 @@ const PostEditor = React.createClass( {
 		this._previewWindow = null;
 		clearTimeout( this._switchEditorTimeout );
 		this.hideDrafts();
+	},
+
+	componentWillReceiveProps: function( nextProps ) {
+		if ( nextProps.editPath !== this.props.editPath ) {
+			// make sure the history entry has the post ID in it, but don't dispatch
+			page.replace( nextProps.editPath, null, false, false );
+		}
 	},
 
 	renderNotice: function() {
@@ -818,14 +826,7 @@ const PostEditor = React.createClass( {
 	},
 
 	onSaveSuccess: function( message, action, link ) {
-		var post = PostEditStore.get(),
-			basePath, nextState;
-
-		if ( utils.isPage( post ) ) {
-			basePath = '/page';
-		} else {
-			basePath = '/post';
-		}
+		var post = PostEditStore.get(), nextState;
 
 		if ( 'draft' === post.status ) {
 			this.props.setEditorLastDraft( post.site_ID, post.ID );
@@ -846,12 +847,6 @@ const PostEditor = React.createClass( {
 
 		// Receive updated post into state
 		this.props.receivePost( post );
-
-		// make sure the history entry has the post ID in it, but don't dispatch
-		page.replace(
-			basePath + '/' + this.props.sites.getSite( post.site_ID ).slug + '/' + post.ID,
-			null, false, false
-		);
 
 		nextState = {
 			isSaving: false,
@@ -916,11 +911,14 @@ const PostEditor = React.createClass( {
 
 export default connect(
 	( state ) => {
+		const postId = getEditorPostId( state );
+		const siteId = getSelectedSiteId( state );
 		return {
-			siteId: getSelectedSiteId( state ),
-			postId: getEditorPostId( state ),
 			showDrafts: isEditorDraftsVisible( state ),
 			editorModePreference: getPreference( state, 'editor-mode' ),
+			editPath: getEditorPath( state, siteId, postId ),
+			siteId,
+			postId
 		};
 	},
 	( dispatch ) => {

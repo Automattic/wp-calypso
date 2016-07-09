@@ -4,6 +4,7 @@
 var url = require( 'url' ),
 	i18n = require( 'i18n-calypso' ),
 	moment = require( 'moment-timezone' );
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -14,7 +15,13 @@ var postNormalizer = require( 'lib/post-normalizer' ),
 var utils = {
 
 	getEditURL: function( post, site ) {
-		return `/${post.type}/${site.slug}/${post.ID}`;
+		let basePath = '';
+
+		if ( ! includes( [ 'post', 'page' ], post.type ) ) {
+			basePath = '/edit';
+		}
+
+		return `${basePath}/${post.type}/${site.slug}/${post.ID}`;
 	},
 
 	getPreviewURL: function( post ) {
