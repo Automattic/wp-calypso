@@ -388,9 +388,7 @@ const PostEditor = React.createClass( {
 							toggleSidebar={ this.toggleSidebar } />
 						{ this.props.showDrafts
 							? <AsyncLoad
-								require={ function( callback ) {
-									require( [ 'my-sites/drafts/draft-list' ], callback );
-								} }
+								require="my-sites/drafts/draft-list"
 								{ ...this.props }
 								onTitleClick={ this.toggleSidebar }
 								showAllActionsMenu={ false }

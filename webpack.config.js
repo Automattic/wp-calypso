@@ -1,10 +1,14 @@
 /***** WARNING: ES5 code only here. Not transpiled! *****/
 
+/* eslint-disable no-var */
+
 /**
  * External dependencies
  */
 var webpack = require( 'webpack' ),
 	path = require( 'path' ),
+	// The following is required but the variable is later overwriten. Can we
+	// safely remove this?
 	config = require( 'config' );
 
 /**
@@ -20,6 +24,7 @@ var config = require( './server/config' ),
  */
 var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
 	jsLoader,
+	asyncLoader,
 	webpackConfig;
 
 const sectionCount = sections.length;
@@ -115,6 +120,12 @@ jsLoader = {
 	loaders: [ 'babel-loader?cacheDirectory' ]
 };
 
+asyncLoader = {
+	test: /post-editor\/post-editor/,
+	exclude: 'node_modules',
+	loader: path.join( __dirname, 'server', 'bundler', 'async-loader' )
+};
+
 if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.plugins.push( new PragmaCheckPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
@@ -143,6 +154,6 @@ if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.devtool = false;
 }
 
-webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );
+webpackConfig.module.loaders = [ asyncLoader, jsLoader ].concat( webpackConfig.module.loaders );
 
 module.exports = webpackConfig;
