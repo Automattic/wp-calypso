@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const child_process = require( 'child_process' );
 const path = require( 'path' );
-var args = [ '--cache', '--quiet' ];
+var args = [ '--cache', '--quiet', '--ext=.js', '--ext=.jsx' ];
 if ( process.argv.length <= 2 ) {
         process.exit( 0 );
 }
