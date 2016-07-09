@@ -95,11 +95,12 @@
 			background: $gray-dark;
 			content: '';
 			height: 100%;
-			opacity: .2;
+			opacity: .4;
 			position: absolute;
 				left: 0;
 				top: 0;
 			width: 100%;
+			z-index: 1;
 		}
 
 		.post-card__search-featured-image {
@@ -111,6 +112,7 @@
 			padding-right: 20px;
 			position: absolute;
 				bottom: 43px;
+			z-index: 2;
 
 			&:hover {
 				opacity: .8;
