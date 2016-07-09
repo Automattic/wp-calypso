@@ -4,17 +4,12 @@
  * External dependencies
  */
 import {
-	camelCase,
-	chain,
 	filter,
 	find,
 	flowRight as compose,
 	get,
 	map,
-	mapKeys,
-	mapValues,
 	partialRight,
-	rearg,
 	some,
 	includes,
 } from 'lodash';
@@ -23,7 +18,7 @@ import {
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { rawToNative as seoTitleFromRaw } from 'components/seo/meta-title-editor/mappings';
+import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
 
 /**
@@ -177,6 +172,20 @@ export function isRequestingSites( state ) {
 
 /**
  * Returns object describing custom title format
+ * strings for SEO given a site object.
+ *
+ * @see client/components/seo/meta-title-editor
+ *
+ * @param  {Object} site Selected site
+ * @return {Object} Formats by type e.g. { frontPage: { type: 'siteName' } }
+ */
+export const getSeoTitleFormatsForSite = compose(
+	seoTitleFromApi,
+	partialRight( get, 'options.advanced_seo_title_formats', {} )
+);
+
+/**
+ * Returns object describing custom title format
  * strings for SEO.
  *
  * @see client/components/seo/meta-title-editor
@@ -186,9 +195,7 @@ export function isRequestingSites( state ) {
  * @return {Object} Formats by type e.g. { frontPage: { type: 'siteName' } }
  */
 export const getSeoTitleFormats = compose(
-	partialRight( mapValues, seoTitleFromRaw ), // raw strings to native objects
-	partialRight( mapKeys, rearg( camelCase, 1 ) ), // 1 -> key from ( value, key )
-	partialRight( get, 'options.advanced_seo_title_formats', {} ),
+	getSeoTitleFormatsForSite,
 	getSite
 );
 

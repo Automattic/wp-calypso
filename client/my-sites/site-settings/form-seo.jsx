@@ -30,6 +30,8 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SearchPreview from 'components/seo/search-preview';
 import config from 'config';
+import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
+import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const serviceIds = {
@@ -50,6 +52,7 @@ function getGeneralTabUrl( slug ) {
 function stateForSite( site ) {
 	return {
 		seoMetaDescription: get( site, 'options.seo_meta_description', '' ),
+		seoTitleFormats: getSeoTitleFormatsForSite( site ),
 		googleCode: get( site, 'options.verification_services_codes.google', '' ),
 		bingCode: get( site, 'options.verification_services_codes.bing', '' ),
 		pinterestCode: get( site, 'options.verification_services_codes.pinterest', '' ),
@@ -145,6 +148,10 @@ export const SeoForm = React.createClass( {
 		} );
 	},
 
+	updateTitleFormats( seoTitleFormats ) {
+		this.setState( { seoTitleFormats } );
+	},
+
 	submitSeoForm( event ) {
 		const { site, trackSubmission } = this.props;
 
@@ -178,6 +185,7 @@ export const SeoForm = React.createClass( {
 		this.setState( { isSubmittingForm: true } );
 
 		const updatedOptions = {
+			advanced_seo_title_formats: seoTitleToApi( this.state.seoTitleFormats ),
 			seo_meta_description: this.state.seoMetaDescription,
 			verification_services_codes: filteredCodes
 		};
@@ -289,7 +297,7 @@ export const SeoForm = React.createClass( {
 								{ config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
 									<div>
 										<FormLabel htmlFor="seo_title">{ this.translate( 'Meta Title Format' ) }</FormLabel>
-										<MetaTitleEditor />
+										<MetaTitleEditor onChange={ this.updateTitleFormats } />
 										<FormSettingExplanation>
 											{ this.translate( 'Customize how the title for your content will appear in search engines and social media.' ) }
 										</FormSettingExplanation>
