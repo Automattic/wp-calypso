@@ -142,7 +142,7 @@
     "test-client:watch": "nodemon -e js,jsx --exec npm run test-client",
     "test-server:watch": "nodemon -e js,jsx --exec npm run test-server",
     "test-test:watch": "nodemon -e js,jsx --exec npm run test-test",
-    "lint": "bin/run-lint",
+    "lint": "bin/run-lint .",
     "css-lint": "stylelint 'client/**/*.scss' --syntax scss"
   },
   "devDependencies": {
