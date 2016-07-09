@@ -5,15 +5,16 @@ test:
   override:
     - git --version
     - git log --pretty=format:%H --reverse|head -1 # first commit in repo
-    - git log master --pretty=format:%H --reverse|tail -1 # to which commit master is pointing
-    - git diff --name-only HEAD..master *js *jsx
-    - git diff --name-only --exit-code HEAD..master *js *jsx
-    - git diff --name-only add/eslint-branch-files-circleci-testcase-gitdiff..master *js *jsx
-    - git diff --name-only --exit-code add/eslint-branch-files-circleci-testcase-gitdiff..master *js *jsx
-    - git diff --name-only $CIRCLE_BRANCH..master *js *jsx
-    - git diff --name-only --exit-code $CIRCLE_BRANCH..master *js *jsx
+    - git rev-parse origin/master # to which commit origin/master is pointing
+    - git rev-parse master # to which commit master is pointing
+    - git diff --name-only HEAD..origin/master *js *jsx
+    - git diff --name-only --exit-code HEAD..origin/master *js *jsx
+    - git diff --name-only add/eslint-branch-files-circleci-testcase-gitdiff..origin/master *js *jsx
+    - git diff --name-only --exit-code add/eslint-branch-files-circleci-testcase-gitdiff..origin/master *js *jsx
+    - git diff --name-only $CIRCLE_BRANCH..origin/master *js *jsx
+    - git diff --name-only --exit-code $CIRCLE_BRANCH..origin/master *js *jsx
     - git diff --name-only e0beb1debba7953a1bee92aafcf5a5e81939dabe..HEAD *js *jsx
     - git diff --name-only --exit-code e0beb1debba7953a1bee92aafcf5a5e81939dabe..HEAD *js *jsx
-    - git merge-base $(git rev-parse --abbrev-ref HEAD) master # shared ancestor between topic branch and master
-    - git diff --name-only $(git merge-base $(git rev-parse --abbrev-ref HEAD) master)..HEAD *js *jsx
-    - git diff --name-only --exit-code $(git merge-base $(git rev-parse --abbrev-ref HEAD) master)..HEAD *js *jsx
+    - git merge-base $(git rev-parse --abbrev-ref HEAD) origin/master # shared ancestor between topic branch and master
+    - git diff --name-only $(git merge-base $(git rev-parse --abbrev-ref HEAD) origin/master)..HEAD *js *jsx
+    - git diff --name-only --exit-code $(git merge-base $(git rev-parse --abbrev-ref HEAD) origin/master)..HEAD *js *jsx
