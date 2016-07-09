@@ -4,13 +4,13 @@
 import debugFactory from 'debug';
 import { includes, keys, reduce, some } from 'lodash';
 import store from 'store';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import activeTests from 'lib/abtest/active-tests';
 import analytics from 'lib/analytics';
-import i18n from 'i18n-calypso';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import sitesList from 'lib/sites-list';
