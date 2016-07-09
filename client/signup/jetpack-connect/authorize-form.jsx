@@ -172,7 +172,19 @@ const LoggedInForm = React.createClass( {
 	},
 
 	componentWillReceiveProps( props ) {
-		const { siteReceived, isActivating } = props.jetpackConnectAuthorize;
+		const {
+			siteReceived,
+			isActivating,
+			queryObject,
+			isRedirectingToWpAdmin,
+			authorizeSuccess
+		} = props.jetpackConnectAuthorize;
+
+		// Always and forever redirect SSO to wp-admin.
+		if ( ! isRedirectingToWpAdmin && props.isSSO && authorizeSuccess ) {
+			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+		}
+
 		if ( siteReceived && ! isActivating ) {
 			this.activateManage();
 		}
