@@ -88,9 +88,71 @@
 	}
 
 	&.is-photo {
+		height: 168px;
+		padding: 20px;
+
+		&:before{
+			background: $gray-dark;
+			content: '';
+			height: 100%;
+			opacity: .2;
+			position: absolute;
+				left: 0;
+				top: 0;
+			width: 100%;
+		}
 
 		.post-card__search-featured-image {
 			width: 100%;
+		}
+
+		.post-card__search-title-link {
+			color: $white;
+			padding-right: 20px;
+			position: absolute;
+				bottom: 43px;
+
+			&:hover {
+				opacity: .8;
+			}
+		}
+
+		.post-card__search-byline {
+			position: absolute;
+				bottom: 10px;
+
+			a,
+			a:visited {
+				color: $white;
+			}
+
+			.gravatar {
+				border: 1px solid rgba( 255, 255, 255, 0.4 );
+			}
+		}
+
+		.post-card__author-and-site {
+			color: $white;
+		}
+
+		.post-card__search-social {
+			position: relative;
+		}
+
+		.gridicon {
+			fill: $white;
+		}
+
+		.comment-button__label-count,
+		.like-button__label-count {
+			color: $white;
+		}
+
+		.post-card__search-title,
+		.post-card__search-byline,
+		.post-card__search-social {
+			text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
+			z-index: 2;
 		}
 	}
 }
@@ -152,10 +214,10 @@
 }
 
 .post-card__search-byline {
+	font-size: 13px;
 	list-style: none;
 	margin: 6px 0;
 	padding: 0;
-	font-size: 13px;
 
 	.gravatar {
 		vertical-align: text-bottom;
@@ -180,6 +242,7 @@
 
 // Custom styles for Follow button
 .post-card__search .follow-button {
+	background: none;
 	border-style: none;
 	font-size: 13px;
 	margin: 0;
