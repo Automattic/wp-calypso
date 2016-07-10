@@ -11,17 +11,9 @@ import { connect } from 'react-redux';
 import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
-import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
-import CategoryListData from 'components/data/category-list-data';
-import TagListData from 'components/data/tag-list-data';
-import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
+import AsyncLoad from 'components/async-load';
 import FormTextarea from 'components/forms/form-textarea';
-import PostFormatsData from 'components/data/post-formats-data';
-import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
-import Location from 'post-editor/editor-location';
-import Discussion from 'post-editor/editor-discussion';
 import PageParent from 'post-editor/editor-page-parent';
-import SeoAccordion from 'post-editor/editor-seo-accordion';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
 import InfoPopover from 'components/info-popover';
 import PageTemplatesData from 'components/data/page-templates-data';
@@ -39,7 +31,6 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import config from 'config';
-import EditorDrawerFeaturedImage from './featured-image';
 import EditorDrawerTaxonomies from './taxonomies';
 
 /**
@@ -112,38 +103,27 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderTaxonomies: function() {
-		var element;
+		return (
+			<EditorDrawerTaxonomies
+				postTerms={ this.props.post && this.props.post.terms }
+			/>
+		);
+	},
 
-		if ( config.isEnabled( 'manage/custom-post-types' ) &&
-				! includes( [ 'post', 'page' ], this.props.type ) ) {
-			return (
-				<EditorDrawerTaxonomies
-					postTerms={ this.props.post && this.props.post.terms }
-				/>
-			);
-		}
-
+	renderCategoriesAndTags: function() {
 		if ( ! this.currentPostTypeSupports( 'tags' ) ) {
 			return;
 		}
 
-		element = (
-			<CategoriesTagsAccordion
+		return (
+			<AsyncLoad
+				require={ function( callback ) {
+					require( [ 'post-editor/editor-drawer/categories-and-tags' ], callback );
+				} }
 				site={ this.props.site }
-				post={ this.props.post } />
+				post={ this.props.post }
+			/>
 		);
-
-		if ( this.props.site ) {
-			element = (
-				<CategoryListData siteId={ this.props.site.ID }>
-					<TagListData siteId={ this.props.site.ID }>
-						{ element }
-					</TagListData>
-				</CategoryListData>
-			);
-		}
-
-		return element;
 	},
 
 	renderPostFormats: function() {
@@ -153,18 +133,22 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<PostFormatsData siteId={ this.props.site.ID }>
-				<PostFormatsAccordion
-					site={ this.props.site }
-					post={ this.props.post }
-					className="editor-drawer__accordion" />
-			</PostFormatsData>
+			<AsyncLoad
+				require={ function( callback ) {
+					require( [ 'post-editor/editor-drawer/post-formats' ], callback );
+				} }
+				site={ this.props.site }
+				post={ this.props.post }
+			/>
 		);
 	},
 
 	renderSharing: function() {
 		return (
-			<EditorSharingAccordion
+			<AsyncLoad
+				require={ function( callback ) {
+					require( [ 'post-editor/editor-sharing/accordion' ], callback );
+				} }
 				site={ this.props.site }
 				post={ this.props.post }
 				isNew={ this.props.isNew } />
@@ -177,14 +161,18 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<EditorDrawerFeaturedImage
+			<AsyncLoad
+				require={ function( callback ) {
+					require( [ './featured-image' ], callback );
+				} }
 				site={ this.props.site }
-				post={ this.props.post } />
+				post={ this.props.post }
+			/>
 		);
 	},
 
 	renderExcerpt: function() {
-		var excerpt;
+		let excerpt;
 
 		if ( ! this.currentPostTypeSupports( 'excerpt' ) ) {
 			return;
@@ -228,7 +216,12 @@ const EditorDrawer = React.createClass( {
 		return (
 			<AccordionSection>
 				<span className="editor-drawer__label-text">{ this.translate( 'Location' ) }</span>
-				<Location coordinates={ PostMetadata.geoCoordinates( this.props.post ) } />
+				<AsyncLoad
+					require={ function( callback ) {
+						require( [ 'post-editor/editor-location' ], callback );
+					} }
+					coordinates={ PostMetadata.geoCoordinates( this.props.post ) }
+				/>
 			</AccordionSection>
 		);
 	},
@@ -238,9 +231,12 @@ const EditorDrawer = React.createClass( {
 			return;
 		}
 
-		return(
+		return (
 			<AccordionSection>
-				<Discussion
+				<AsyncLoad
+					require={ function( callback ) {
+						require( [ 'post-editor/editor-discussion' ], callback );
+					} }
 					site={ this.props.site }
 					post={ this.props.post }
 					isNew={ this.props.isNew }
@@ -261,7 +257,12 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<SeoAccordion metaDescription={ PostMetadata.metaDescription( this.props.post ) } />
+			<AsyncLoad
+				require={ function( callback ) {
+					require( [ 'post-editor/editor-seo-accordion' ], callback );
+				} }
+				metaDescription={ PostMetadata.metaDescription( this.props.post ) }
+			/>
 		);
 	},
 
@@ -302,7 +303,7 @@ const EditorDrawer = React.createClass( {
 			<Accordion
 				title={ this.translate( 'Page Options' ) }
 				icon={ <Gridicon icon="pages" /> }>
-				{ this.props.site && this.props.post ?
+				{ this.props.site && this.props.post &&
 					<div>
 						<PageParent siteId={ this.props.site.ID }
 							postId={ this.props.post.ID }
@@ -312,7 +313,7 @@ const EditorDrawer = React.createClass( {
 							<PageTemplates post={ this.props.post } />
 						</PageTemplatesData>
 					</div>
-				: null }
+				}
 				<PageOrder menuOrder={ this.props.post ? this.props.post.menu_order : 0 } />
 			</Accordion>
 		);
@@ -326,7 +327,10 @@ const EditorDrawer = React.createClass( {
 				{ site && ! this.hasHardCodedPostTypeSupports( type ) && (
 					<QueryPostTypes siteId={ site.ID } />
 				) }
-				{ this.renderTaxonomies() }
+				{ config.isEnabled( 'manage/custom-post-types' ) &&	! includes( [ 'post', 'page' ], this.props.type )
+					? this.renderTaxonomies()
+					: this.renderCategoriesAndTags()
+				}
 				{ this.renderFeaturedImage() }
 				{ this.renderPageOptions() }
 				{ this.renderSharing() }
