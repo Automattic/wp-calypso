@@ -3,11 +3,11 @@ import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
 
 // Internal dependencies
-import { getCards, getByCardId } from '../selectors';
+import { getStoredCardById, getStoredCards } from '../selectors';
 import { STORED_CARDS_FROM_API } from './fixture';
 
 describe( 'selectors', () => {
-	describe( 'getCards', () => {
+	describe( 'getStoredCards', () => {
 		it( 'should return a purchase by its ID, preserving the top-level flags', () => {
 			const state = deepFreeze( {
 				storedCards: {
@@ -17,11 +17,11 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( getCards( state ) ).to.be.eql( STORED_CARDS_FROM_API );
+			expect( getStoredCards( state ) ).to.be.eql( STORED_CARDS_FROM_API );
 		} );
 	} );
 
-	describe( 'getByCardId', () => {
+	describe( 'getStoredCardById', () => {
 		it( 'should return a purchase by its ID, preserving the top-level flags', () => {
 			const state = deepFreeze( {
 				storedCards: {
@@ -31,7 +31,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( getByCardId( state, 12345 ) ).to.be.eql( STORED_CARDS_FROM_API[ 1 ] );
+			expect( getStoredCardById( state, 12345 ) ).to.be.eql( STORED_CARDS_FROM_API[ 1 ] );
 		} );
 	} );
 } );
