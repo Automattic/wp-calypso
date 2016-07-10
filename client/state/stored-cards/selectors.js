@@ -16,4 +16,6 @@ export const getStoredCardById = ( state, cardId ) => (
 	getStoredCards( state ).filter( card => card.stored_details_id === cardId ).shift()
 );
 
+export const hasLoadedStoredCardsFromServer = state => state.storedCards.hasLoadedFromServer;
+
 export const isFetchingStoredCards = state => state.storedCards.isFetching;
