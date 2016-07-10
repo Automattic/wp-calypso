@@ -43,9 +43,6 @@ const CreditCardDelete = React.createClass( {
 		if ( response ) {
 			debug( 'Card deleted sucessfully' );
 			this.props.successNotice( this.translate( 'Card deleted successfully' ) );
-
-			// Update the list of cards
-			this.props.cards.fetch();
 		}
 	},
 

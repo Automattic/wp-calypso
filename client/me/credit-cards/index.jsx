@@ -35,7 +35,7 @@ var CreditCards = React.createClass( {
 		return this.props.cards.map( function( card ) {
 			return (
 				<div className="credit-cards_single-card" key={ card.stored_details_id }>
-					<CreditCardDelete card={ card } cards={ this.props.cards } />
+					<CreditCardDelete card={ card } />
 				</div>
 			);
 		}, this );
