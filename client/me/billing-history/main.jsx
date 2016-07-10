@@ -12,7 +12,6 @@ var observe = require( 'lib/mixins/data-observe' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	config = require( 'config' ),
 	CreditCards = require( 'me/credit-cards' ),
-	storedCards = require( 'lib/stored-cards' )(),
 	eventRecorder = require( 'me/event-recorder' ),
 	PurchasesHeader = require( '../purchases/list/header' ),
 	BillingHistoryTable = require( './billing-history-table' ),
@@ -49,7 +48,7 @@ module.exports = React.createClass( {
 						</Card>
 					</div> }
 				{ config.isEnabled( 'upgrades/credit-cards' ) &&
-					<CreditCards cards={ storedCards } /> }
+					<CreditCards /> }
 			</Main>
 		);
 	}
