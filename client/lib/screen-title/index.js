@@ -19,26 +19,24 @@ const TITLE_UPDATING_ACTIONS = [
 ];
 
 /**
- * Given a Redux store instance, subscribes to the store, updating the page
+ * A middleware that updating the page
  * when the title state changes. Currently, this dispatches through the legacy
  * Flux actions used elsewhere in the codebase.
  *
  * @param {Object} store Redux store instance
+ * @returns {Function} A configured middleware with store
  */
-export function subscribeToStore( store ) {
-	const dispatch = store.dispatch;
-	store.dispatch = function( action ) {
-		dispatch( ...arguments );
+export const screenTitleMiddleware = store => next => action => {
+	if ( action && includes( TITLE_UPDATING_ACTIONS, action.type ) ) {
+		const state = store.getState();
+		const { title, unreadCount } = state.documentHead;
+		const siteId = getSelectedSiteId( state );
 
-		if ( action && includes( TITLE_UPDATING_ACTIONS, action.type ) ) {
-			const state = store.getState();
-			const { title, unreadCount } = state.documentHead;
-			const siteId = getSelectedSiteId( state );
+		legacySetTitle( title, {
+			siteID: siteId,
+			count: unreadCount
+		} );
+	}
 
-			legacySetTitle( title, {
-				siteID: siteId,
-				count: unreadCount
-			} );
-		}
-	};
-}
+	return next( action );
+};

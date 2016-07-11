@@ -46,7 +46,6 @@ var config = require( 'config' ),
 	setRouteAction = require( 'state/ui/actions' ).setRoute,
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
-	bindTitleToStore = require( 'lib/screen-title' ).subscribeToStore,
 	syncHandler = require( 'lib/wp/sync-handler' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
@@ -196,7 +195,6 @@ function reduxStoreReady( reduxStore ) {
 		isIsomorphic = isSectionIsomorphic( reduxStore.getState() );
 
 	bindWpLocaleState( reduxStore );
-	bindTitleToStore( reduxStore );
 
 	supportUser.setReduxStore( reduxStore );
 
