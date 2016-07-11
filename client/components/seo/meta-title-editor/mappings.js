@@ -58,6 +58,16 @@ const tokenToTag = n =>
 export const rawToNative = r => removeBlanks( map( split( r, tagPattern ), tagToToken ) );
 export const nativeToRaw = n => join( map( n, tokenToTag ), '' );
 
+// Not only are the format strings themselves stored differently
+// than on the server, but the API expects a different structure
+// for the data mapping the types to the formats, so we additionally
+// need to perform a mapping stage when talking with it, iterating
+// over the full data structure and not just focusing on individual
+// title format strings.
+//
+//  - Rename keys: `front_page` -> `frontPage`
+//  - Translate formats: `%page_title%` -> [ { type: 'pageTitle' } ]
+
 export const toApi = compose(
 	partialRight( mapKeys, rearg( snakeCase, 1 ) ), // 1 -> key from ( value, key )
 	partialRight( mapValues, nativeToRaw )          // native objects to raw strings
