@@ -11,7 +11,9 @@ import CurrentPlanOverview from './main';
 
 export default function( context ) {
 	renderWithReduxStore(
-		<CurrentPlanOverview/>,
+		React.createElement( CurrentPlanOverview, {
+			context: context
+		} ),
 		document.getElementById( 'primary' ),
 		context.store
 	);
