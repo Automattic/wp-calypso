@@ -72,10 +72,10 @@ export const plansList = {
 			' in less than five minutes.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_WP_SUBDOMAIN,
-			FEATURE_FREE_THEMES,
-			FEATURE_3GB_STORAGE,
 			FEATURE_COMMUNITY_SUPPORT,
-			FEATURE_BASIC_DESIGN
+			FEATURE_FREE_THEMES,
+			FEATURE_BASIC_DESIGN,
+			FEATURE_3GB_STORAGE
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' )
 	},
@@ -89,10 +89,10 @@ export const plansList = {
 		getDescription: () => i18n.translate( 'Use your own domain and establish your online presence without ads.' ),
 		getFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_FREE_THEMES,
-			FEATURE_3GB_STORAGE,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_FREE_THEMES,
 			FEATURE_BASIC_DESIGN,
+			FEATURE_3GB_STORAGE,
 			FEATURE_NO_ADS
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
@@ -115,14 +115,14 @@ export const plansList = {
 			' customization options, easy monetization with WordAds, lots of space for audio and video, and $100 advertising voucher.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_FREE_THEMES,
-			FEATURE_13GB_STORAGE,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_FREE_THEMES,
 			FEATURE_ADVANCED_DESIGN,
+			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
-			FEATURE_VIDEO_UPLOADS,
 			FEATURE_GOOGLE_AD_CREDITS,
-			FEATURE_WORDADS_INSTANT
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -140,14 +140,14 @@ export const plansList = {
 			' live chat support, unlimited access to premium themes, Google Analytics, and $200 advertising vouchers.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
-			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ADVANCED_DESIGN,
+			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_NO_ADS,
-			FEATURE_VIDEO_UPLOADS,
 			FEATURE_GOOGLE_AD_CREDITS,
 			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING
 		],
@@ -248,13 +248,6 @@ const allPaidPlans = [
 	PLAN_BUSINESS
 ];
 
-const allPlans = [
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS
-];
-
 export const featuresList = {
 	[ FEATURE_GOOGLE_ANALYTICS ]: {
 		getTitle: () => i18n.translate( 'Google Analytics Integration' ),
@@ -264,7 +257,11 @@ export const featuresList = {
 	},
 
 	[ FEATURE_UNLIMITED_STORAGE ]: {
-		getTitle: () => i18n.translate( 'Unlimited Storage Space' ),
+		getTitle: () => i18n.translate( '{{strong}}Unlimited{{/strong}} Storage Space', {
+			components: {
+				strong: <strong />
+			}
+		} ),
 		getDescription: () => i18n.translate( "With increased storage space you'll be able to upload" +
 			' more images, videos, audio, and documents to your website.' ),
 		getStoreSlug: () => 'unlimited_space',
@@ -279,7 +276,11 @@ export const featuresList = {
 	},
 
 	[ FEATURE_UNLIMITED_PREMIUM_THEMES ]: {
-		getTitle: () => i18n.translate( 'Unlimited Premium Themes' ),
+		getTitle: () => i18n.translate( '{{strong}}Unlimited{{/strong}} Premium Themes', {
+			components: {
+				strong: <strong />
+			}
+		} ),
 		getDescription: () => i18n.translate( 'Unlimited access to all of our advanced premium theme templates,' +
 			' including templates specifically tailored for businesses.' ),
 		getStoreSlug: () => 'unlimited_themes',
@@ -303,7 +304,11 @@ export const featuresList = {
 	},
 
 	[ FEATURE_ADVANCED_DESIGN ]: {
-		getTitle: () => i18n.translate( 'Advanced Design Customization' ),
+		getTitle: () => i18n.translate( '{{strong}}Advanced{{/strong}} Design Customization', {
+			components: {
+				strong: <strong />
+			}
+		} ),
 		getDescription: () => i18n.translate( 'Customize your selected theme template with extended color schemes,' +
 			' background designs, and complete control over website CSS.' ),
 		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
@@ -332,7 +337,7 @@ export const featuresList = {
 		getDescriptionWithWordAdsCredit: () => i18n.translate( '$100 Google AdWords voucher after spending the first $25. ' +
 			'Offer valid in US and Canada. {{hr/}}Business also includes $100 of advertising from WordAds on WordPress.com.', {
 				components: {
-					hr: <hr className="plans-compare__info-hr"/>
+					hr: <hr className="plans__const-info-hr"/>
 				}
 			} ),
 		plans: allPaidPlans
@@ -365,7 +370,11 @@ export const featuresList = {
 	},
 
 	[ FEATURE_13GB_STORAGE ]: {
-		getTitle: () => i18n.translate( '13GB Storage Space' ),
+		getTitle: () => i18n.translate( '{{strong}}13GB{{/strong}} Storage Space', {
+			components: {
+				strong: <strong />
+			}
+		} ),
 		getDescription: () => i18n.translate( "With increased storage space you'll be able to upload" +
 			' more images, videos, audio, and documents to your website.' ),
 		plans: [ PLAN_PREMIUM ]
