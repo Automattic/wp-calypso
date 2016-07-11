@@ -11,7 +11,6 @@ import partial from 'lodash/partial';
  */
 import Card from 'components/card';
 import AuthorAndSite from './author-and-site';
-import PostTime from 'reader/post-time';
 import FollowButton from 'reader/follow-button';
 import LikeButton from 'reader/like-button';
 import CommentButton from 'components/comment-button';
