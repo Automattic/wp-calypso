@@ -26,6 +26,9 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
+import userFactory from 'lib/user';
+
+const user = userFactory();
 
 /**
  * Module dependencies
@@ -40,8 +43,7 @@ const RemovePurchase = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool,
 			React.PropTypes.undefined
-		] ),
-		user: React.PropTypes.object.isRequired
+		] )
 	},
 
 	getInitialState() {
@@ -96,7 +98,7 @@ const RemovePurchase = React.createClass( {
 		this.setState( { isRemoving: true } );
 
 		const purchase = getPurchase( this.props ),
-			{ selectedSite, user } = this.props;
+			{ selectedSite } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
 			const survey = wpcom.marketing().survey( 'calypso-remove-purchase', this.props.selectedSite.ID );
@@ -123,7 +125,7 @@ const RemovePurchase = React.createClass( {
 				.catch( err => debug( err ) ); // shouldn't get here
 		}
 
-		removePurchase( purchase.id, user.ID, success => {
+		removePurchase( purchase.id, user.get().ID, success => {
 			if ( success ) {
 				const productName = getName( purchase );
 
