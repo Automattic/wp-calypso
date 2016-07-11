@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -9,7 +10,7 @@ import React from 'react';
 import Gridicon from 'components/gridicon';
 import InfoPopover from 'components/info-popover';
 
-export default function PlanFeaturesItem( { description, children } ) {
+export default function PlanFeaturesItem( { description, children, className } ) {
 	const renderTipinfo = () => {
 		if ( ! description ) {
 			return null;
@@ -26,11 +27,13 @@ export default function PlanFeaturesItem( { description, children } ) {
 		);
 	};
 
+	const classes = classNames( 'plan-features__item', className );
+
 	return (
-		<li className="plan-features__item">
+		<div className={ classes }>
 			<Gridicon className="plan-features__item-checkmark" size={ 18 } icon="checkmark" />
 			{ children }
 			{ renderTipinfo() }
-		</li>
+		</div>
 	);
 }

@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,8 +45,7 @@ class PlansFeaturesMain extends Component {
 		if ( this.isJetpackSite( site ) && intervalType === 'monthly' ) {
 			return (
 				<div className="plans-features-main__group">
-					<PlanFeatures plan={ PLAN_JETPACK_PREMIUM_MONTHLY } /* onClick={ this.upgradePlan } */ />
-					<PlanFeatures plan={ PLAN_JETPACK_BUSINESS_MONTHLY } /* onClick={ this.upgradePlan } */ />
+					<PlanFeatures plans={ [ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ] } />
 				</div>
 			);
 		}
@@ -53,38 +53,25 @@ class PlansFeaturesMain extends Component {
 		if ( this.isJetpackSite( site ) ) {
 			return (
 				<div className="plans-features-main__group">
-					<PlanFeatures plan={ PLAN_JETPACK_PREMIUM } /* onClick={ this.upgradePlan } */ />
-					<PlanFeatures plan={ PLAN_JETPACK_BUSINESS } /* onClick={ this.upgradePlan } */ />
+					<PlanFeatures plans={ [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ] } />
 				</div>
 			);
 		}
 
+		const plans = filter(
+			[
+				hideFreePlan ? null : PLAN_FREE,
+				personalPlanTestEnabled ? PLAN_PERSONAL : null,
+				PLAN_PREMIUM,
+				PLAN_BUSINESS
+			],
+			value => !! value
+		);
+
 		return (
 			<div className="plans-features-main__group">
-				{ ! hideFreePlan
-					? <PlanFeatures
-						plan={ PLAN_FREE }
-						onUpgradeClick={ onUpgradeClick }
-						isInSignup={ isInSignup }
-					/>
-					: null
-				}
-				{
-					personalPlanTestEnabled
-						? <PlanFeatures
-							plan={ PLAN_PERSONAL }
-							onUpgradeClick={ onUpgradeClick }
-							isInSignup={ isInSignup }
-						/>
-						: null
-				}
 				<PlanFeatures
-					plan={ PLAN_PREMIUM }
-					onUpgradeClick={ onUpgradeClick }
-					isInSignup={ isInSignup }
-				/>
-				<PlanFeatures
-					plan={ PLAN_BUSINESS }
+					plans={ plans }
 					onUpgradeClick={ onUpgradeClick }
 					isInSignup={ isInSignup }
 				/>
