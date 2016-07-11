@@ -58,6 +58,14 @@ const helpLinks = {
 
 const PlansSetup = React.createClass( {
 	displayName: 'PlanSetup',
+	sentTracks: false,
+
+	sendTracks( eventName, options = null ) {
+		if ( ! this.sentTracks ) {
+			analytics.tracks.recordEvent( eventName, options );
+		}
+		this.sentTracks = true;
+	},
 
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
@@ -167,7 +175,7 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderNoJetpackSiteSelected() {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_wordpresscom' );
+		this.sendTracks( 'calypso_plans_autoconfig_error_wordpresscom' );
 		return (
 			<JetpackManageErrorPage
 				site={ this.props.selectedSite }
@@ -183,16 +191,16 @@ const PlansSetup = React.createClass( {
 
 		if ( reasons && reasons.length > 0 ) {
 			reason = reasons[ 0 ];
-			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
+			this.sendTracks( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
 		} else if ( ! site.hasMinimumJetpackVersion ) {
 			reason = this.translate( 'You need to update your version of Jetpack.' );
-			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_jpversion', { jetpack_version: site.options.jetpack_version } );
+			this.sendTracks( 'calypso_plans_autoconfig_error_jpversion', { jetpack_version: site.options.jetpack_version } );
 		} else if ( ! site.isMainNetworkSite() ) {
 			reason = this.translate( 'We can\'t install plugins on multisite sites.' );
-			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_multisite' );
+			this.sendTracks( 'calypso_plans_autoconfig_error_multisite' );
 		} else if ( site.options.is_multi_network ) {
 			reason = this.translate( 'We can\'t install plugins on multi-network sites.' );
-			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_multinetwork' );
+			this.sendTracks( 'calypso_plans_autoconfig_error_multinetwork' );
 		}
 
 		return (
@@ -344,7 +352,8 @@ const PlansSetup = React.createClass( {
 		pluginsWithErrors.map( ( item ) => {
 			tracksData[ item.slug ] = item.error.name + ': ' + item.error.message;
 		} );
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_plugin', tracksData );
+
+		this.sendTracks( 'calypso_plans_autoconfig_error_plugin', tracksData );
 
 		if ( pluginsWithErrors.length === 1 ) {
 			noticeText = this.translate(
@@ -393,7 +402,7 @@ const PlansSetup = React.createClass( {
 			return this.renderErrorMessage( pluginsWithErrors );
 		}
 
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_success' );
+		this.sendTracks( 'calypso_plans_autoconfig_success' );
 
 		const noticeText = this.translate( 'We\'ve installed your plugins, your site is powered up!' );
 		return (
