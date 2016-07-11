@@ -46,7 +46,7 @@ const FormGeneral = React.createClass( {
 		};
 
 		if ( site.settings ) {
-			settings.lang_id = site.settings.lang_id;
+			settings.locale = site.settings.locale;
 			settings.blog_public = site.settings.blog_public;
 			settings.admin_url = site.settings.admin_url;
 			settings.timezone_string = site.settings.timezone_string;
@@ -93,8 +93,8 @@ const FormGeneral = React.createClass( {
 			fetchingSettings: true,
 			blogname: '',
 			blogdescription: '',
-			lang_id: '',
 			timezone_string: '',
+			locale: '',
 			blog_public: '',
 			admin_url: '',
 			jetpack_relatedposts_allowed: false,
@@ -207,12 +207,13 @@ const FormGeneral = React.createClass( {
 		}
 		return (
 			<FormFieldset>
-				<FormLabel htmlFor="lang_id">{ this.translate( 'Language' ) }</FormLabel>
+				<FormLabel htmlFor="locale">{ this.translate( 'Language' ) }</FormLabel>
 				<LanguageSelector
-					name="lang_id"
-					id="lang_id"
+					name="locale"
+					id="locale"
 					languages={ config( 'languages' ) }
-					valueLink={ this.linkState( 'lang_id' ) }
+					valueKey="langSlug"
+					valueLink={ this.linkState( 'locale' ) }
 					disabled={ this.state.fetchingSettings }
 					onClick={ this.onRecordEvent( 'Clicked Language Field' ) } />
 				<FormSettingExplanation>
