@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
+import { throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +16,11 @@ import Button from 'components/button';
 import Notice from 'components/notice';
 import ProgressBar from 'components/progress-bar';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import syncSelectors from 'state/jetpack-sync/selectors';
+import {
+	getSyncStatus,
+	scheduleJetpackFullysync
+} from 'state/jetpack-sync/actions';
 
 /*
  * Module variables
@@ -24,13 +30,33 @@ const debug = debugModule( 'calypso:site-settings:jetpack-sync-panel' );
 const JetpackSyncPanel = React.createClass( {
 	displayName: 'JetpackSyncPanel',
 
+	componentWillMount() {
+		// Created a throttled fetch function that will run a maximum of once for every 4 seconds.
+		this.throttledPoller = throttle( this.fetchSyncStatus, 4000 );
+		this.fetchSyncStatus();
+	},
+
+	componentWillUnmount() {
+		this.throttledPoller.cancel();
+	},
+
+	componentWillReceiveProps() {
+		// Since the polling is throttled, let's trigger every time that we get props.
+		this.throttledPoller();
+	},
+
+	fetchSyncStatus() {
+		this.props.getSyncStatus( this.props.siteId );
+	},
+
 	shouldDisableSync() {
-		return true;
+		return !! ( this.props.isFullSyncing || this.props.isPendingSyncStart );
 	},
 
 	onSyncRequestButtonClick( event ) {
 		event.preventDefault();
 		debug( 'Perform full sync button clicked' );
+		this.props.scheduleJetpackFullysync( this.props.siteId );
 	},
 
 	renderStatusNotice() {
@@ -43,8 +69,12 @@ const JetpackSyncPanel = React.createClass( {
 	},
 
 	renderProgressBar() {
+		if ( ! this.shouldDisableSync() ) {
+			return null;
+		}
+
 		return (
-			<ProgressBar value={ 0 } />
+			<ProgressBar value={ this.props.syncProgress || 0 } />
 		);
 	},
 
@@ -83,8 +113,13 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		return {
-			siteId
+			siteId,
+			syncStatus: syncSelectors.getSyncStatus( state, siteId ),
+			fullSyncRequest: syncSelectors.getFullSyncRequest( state, siteId ),
+			isPendingSyncStart: syncSelectors.isPendingSyncStart( state, siteId ),
+			isFullSyncing: syncSelectors.isFullSyncing( state, siteId ),
+			syncProgress: syncSelectors.getSyncProgressPercentage( state, siteId )
 		};
 	},
-	dispatch => bindActionCreators( {}, dispatch )
+	dispatch => bindActionCreators( { getSyncStatus, scheduleJetpackFullysync }, dispatch )
 )( JetpackSyncPanel );
