@@ -13,7 +13,7 @@ export const getCards = state => state.storedCards.items;
  * @return {Object} the matching card if there is one
  */
 export const getByCardId = ( state, cardId ) => (
-	getCards( state ).filter( card => card.stored_details_id === cardId ).shift()
+	getCards( state ).filter( card => card.id === cardId ).shift()
 );
 
 export const isFetchingStoredCards = state => state.storedCards.isFetching;
