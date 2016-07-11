@@ -155,6 +155,18 @@
 			text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
 			z-index: 2;
 		}
+
+		.follow-button.is-following {
+
+			.gridicon {
+				fill: $white;
+			}
+
+			.follow-button__label {
+				color: $white;
+			}
+
+		}
 	}
 }
 
