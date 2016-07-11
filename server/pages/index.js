@@ -23,8 +23,7 @@ var staticFiles = [
 	{ path: 'editor.css' },
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
-	{ path: 'style-rtl.css' },
-	{ path: 'catch-js-errors.js' }
+	{ path: 'style-rtl.css' }
 ];
 
 var sections = sectionsModule.get();
