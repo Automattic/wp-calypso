@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -10,42 +10,65 @@ import { localize } from 'i18n-calypso';
  */
 import PopoverMenuItem from 'components/popover/menu-item';
 import { getPost } from 'state/posts/selectors';
+import { restorePost } from 'state/posts/actions';
 import { getCurrentUserId, canCurrentUser } from 'state/current-user/selectors';
 
-function PostActionsEllipsisMenuRestore( { translate, canRestore, status } ) {
-	if ( 'trash' !== status || ! canRestore ) {
-		return null;
+class PostActionsEllipsisMenuRestore extends Component {
+	static propTypes = {
+		globalId: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
+		canRestore: PropTypes.bool,
+		status: PropTypes.string,
+		restorePost: PropTypes.func.isRequired
+	};
+
+	constructor() {
+		super( ...arguments );
+
+		this.restorePost = this.restorePost.bind( this );
 	}
 
-	function restorePost() {
-		alert( 'Not Yet Implemented' );
+	restorePost() {
+		const { siteId, postId } = this.props;
+		if ( ! siteId || ! postId ) {
+			return;
+		}
+
+		this.props.restorePost( siteId, postId );
 	}
 
-	return (
-		<PopoverMenuItem onClick={ restorePost } icon="undo">
-			{ translate( 'Restore' ) }
-		</PopoverMenuItem>
-	);
+	render() {
+		const { translate, canRestore, status } = this.props;
+		if ( 'trash' !== status || ! canRestore ) {
+			return null;
+		}
+
+		return (
+			<PopoverMenuItem onClick={ this.restorePost } icon="undo">
+				{ translate( 'Restore' ) }
+			</PopoverMenuItem>
+		);
+	}
 }
 
-PostActionsEllipsisMenuRestore.propTypes = {
-	globalId: PropTypes.string,
-	translate: PropTypes.func.isRequired,
-	canRestore: PropTypes.bool,
-	status: PropTypes.string
-};
+export default connect(
+	( state, ownProps ) => {
+		const post = getPost( state, ownProps.globalId );
+		if ( ! post ) {
+			return {};
+		}
 
-export default connect( ( state, ownProps ) => {
-	const post = getPost( state, ownProps.globalId );
-	if ( ! post ) {
-		return {};
-	}
+		const userId = getCurrentUserId( state );
+		const isAuthor = post.author && post.author.ID === userId;
 
-	const userId = getCurrentUserId( state );
-	const isAuthor = post.author && post.author.ID === userId;
-
-	return {
-		status: post.status,
-		canRestore: canCurrentUser( state, post.site_ID, isAuthor ? 'delete_posts' : 'delete_others_posts' )
-	};
-} )( localize( PostActionsEllipsisMenuRestore ) );
+		return {
+			siteId: post.site_ID,
+			postId: post.ID,
+			status: post.status,
+			canRestore: canCurrentUser( state, post.site_ID, isAuthor ? 'delete_posts' : 'delete_others_posts' )
+		};
+	},
+	{ restorePost }
+)( localize( PostActionsEllipsisMenuRestore ) );
