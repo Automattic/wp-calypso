@@ -30,7 +30,6 @@ import utils from 'lib/site/utils';
 
 // Redux actions & selectors
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { requestSites } from 'state/sites/actions';
@@ -431,7 +430,7 @@ const PlansSetup = React.createClass( {
 	render() {
 		const site = this.props.selectedSite;
 
-		if ( ! site && ! this.props.isRequestingSites ) {
+		if ( ! site && sites.fetching ) {
 			return this.renderPlaceholder();
 		}
 
@@ -444,7 +443,7 @@ const PlansSetup = React.createClass( {
 		}
 
 		if ( site &&
-			! this.props.isRequestingSites &&
+			! sites.fetching &&
 			! this.props.isRequesting &&
 			! PluginsStore.isFetchingSite( site ) &&
 			! this.props.plugins.length ) {
@@ -506,7 +505,6 @@ export default connect(
 			activePlugin: getActivePlugin( state, siteId ),
 			nextPlugin: getNextPlugin( state, siteId ),
 			selectedSite: site && site.jetpack ? JetpackSite( site ) : site,
-			isRequestingSites: isRequestingSites( state ),
 			siteId
 		};
 	},
