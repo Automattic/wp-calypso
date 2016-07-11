@@ -26,7 +26,9 @@ import paths from './paths';
 import PurchasesData from 'components/data/purchases';
 import PurchasesHeader from './list/header';
 import PurchasesList from './list';
+import { receiveSite } from 'state/sites/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import { setAllSitesSelected, setSelectedSiteId } from 'state/ui/actions';
 import sitesFactory from 'lib/sites-list';
 import supportPaths from 'lib/url/support';
 import titleActions from 'lib/screen-title/actions';
@@ -60,6 +62,32 @@ function setTitle( ...title ) {
 		concatTitle( titles.purchases, ...title )
 	);
 }
+
+/**
+ * Populates `state.sites` and `state.ui` with the currently selected site.
+ * TODO: Remove this once `sites-list` is removed from Calypso.
+ *
+ * @param {String} siteSlug - The slug of a site.
+ * @param {Function} dispatch - Redux dispatcher
+ */
+const setSelectedSite = ( siteSlug, dispatch ) => {
+	const setSelectedSiteCalls = () => {
+		sites.setSelectedSite( siteSlug );
+		const selectedSite = sites.getSelectedSite();
+		dispatch( receiveSite( selectedSite ) );
+		dispatch( setSelectedSiteId( selectedSite.ID ) );
+	};
+
+	if ( sites.select( siteSlug ) ) {
+		setSelectedSiteCalls();
+	} else if ( ! sites.initialized ) {
+		sites.once( 'change', setSelectedSiteCalls );
+	} else {
+		// this is an edge case where the user has a purchase on a site they no
+		// longer have access to.
+		dispatch( setAllSitesSelected() );
+	}
+};
 
 export default {
 	cancelPrivateRegistration( context ) {
@@ -201,7 +229,7 @@ export default {
 			'Manage Purchase'
 		);
 
-		sites.setSelectedSite( context.params.site );
+		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
