@@ -143,12 +143,12 @@ describe( 'abtest', () => {
 				abtest( 'mockedTest' );
 				expect( setSpy ).to.have.been.calledOnce;
 			} );
-			it( 'show return default and skip store.set for non-English OS setting', () => {
+			it( 'show return default and skip store.set for non-English navigator.language', () => {
 				navigator.language = 'de';
 				expect( abtest( 'mockedTest' ) ).to.equal( 'hide' );
 				expect( setSpy ).not.to.have.been.called;
 			} );
-			it( 'should return default and skip store.set for non-English browser setting', () => {
+			it( 'should return default and skip store.set for non-English navigator.languages primary preference', () => {
 				navigator.languages = [ 'de' ];
 				expect( abtest( 'mockedTest' ) ).to.equal( 'hide' );
 				expect( setSpy ).not.to.have.been.called;
