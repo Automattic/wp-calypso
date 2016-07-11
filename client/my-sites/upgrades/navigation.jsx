@@ -53,13 +53,14 @@ const PlansNavigation = React.createClass( {
 		const isJetpack = site && site.jetpack;
 		const path = sectionify( this.props.path );
 		const hasPlan = site && site.plan && site.plan.product_slug !== 'free_plan';
+		const sectionTitle = path.split( '?' )[ 0 ].replace( /\//g, ' ' );
 
 		return (
 			<SectionNav
 					hasPinnedItems={ viewport.isMobile() }
-					selectedText={ path }
+					selectedText={ sectionTitle }
 					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }>
-				<NavTabs label="Section" selectedText={ path }>
+				<NavTabs label="Section" selectedText={ sectionTitle }>
 					{ ! isJetpack && hasPlan &&
 						<NavItem path={ `/plans/my-plan/${ site.slug }` } key="myPlan" selected={ path === '/plans/my-plan' }>
 							{ this.translate( 'My Plan' ) }
