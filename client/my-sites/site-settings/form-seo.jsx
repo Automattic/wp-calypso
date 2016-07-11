@@ -462,9 +462,9 @@ const mapStateToProps = state => ( {
 	storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) )
 } );
 
-const mapDispatchToProps = dispatch => ( {
-	trackSubmission: () => dispatch( recordTracksEvent( 'calypso_seo_settings_form_submit', {} ) )
-} );
+const mapDispatchToProps = {
+	trackSubmission: recordTracksEvent( 'calypso_seo_settings_form_submit', {} )
+};
 
 export default connect(
 	mapStateToProps,
