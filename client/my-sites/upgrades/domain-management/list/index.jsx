@@ -6,7 +6,6 @@ import React from 'react';
 import times from 'lodash/times';
 import findIndex from 'lodash/findIndex';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -93,16 +92,12 @@ export const List = React.createClass( {
 
 		const showPlanFeatures = config.isEnabled( 'manage/plan-features' );
 
-		const classes = classNames( 'domain-management-list', {
-			'is-wide-layout': showPlanFeatures
-		} );
-
 		if ( ! this.props.domains ) {
 			return null;
 		}
 
 		return (
-			<Main className={ classes }>
+			<Main wideLayout={ !! showPlanFeatures }>
 				<SidebarNavigation />
 				<UpgradesNavigation
 					path={ this.props.context.path }
