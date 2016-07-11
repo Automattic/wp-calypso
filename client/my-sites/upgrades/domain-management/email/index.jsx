@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import page from 'page';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -45,12 +44,11 @@ const Email = React.createClass( {
 	render() {
 		const showPlanFeatures = config.isEnabled( 'manage/plan-features' );
 
-		const classes = classNames( 'domain-management-email', {
-			'is-wide-layout': showPlanFeatures
-		} );
-
 		return (
-			<Main className={ classes }>
+			<Main
+				className="domain-management-email"
+				wideLayout={ !! showPlanFeatures }
+			>
 				<SidebarNavigation />
 				{ this.headerOrUpgradesNavigation() }
 				{ this.content() }

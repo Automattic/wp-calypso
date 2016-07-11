@@ -3,17 +3,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
-module.exports = React.createClass( {
-	displayName: 'Main',
+export default function Main( {
+	className,
+	children,
+	wideLayout = false
+} ) {
+	const classes = classNames( className, 'main', {
+		'is-wide-layout': wideLayout
+	} );
 
-	render: function() {
-		return (
-			<main className={ classnames( this.props.className, 'main' ) } role="main">
-				{ this.props.children }
-			</main>
-		);
-	}
-} );
+	return (
+		<main className={ classes } role="main">
+			{ children }
+		</main>
+	);
+}
+
