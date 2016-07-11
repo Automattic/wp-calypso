@@ -18,6 +18,7 @@ import Button from 'components/button';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';
+import QueryPluginKeys from 'components/data/query-plugin-keys';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
@@ -34,7 +35,6 @@ import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { requestSites } from 'state/sites/actions';
 import {
-	fetchInstallInstructions,
 	installPlugin,
 } from 'state/plugins/premium/actions';
 import {
@@ -90,19 +90,9 @@ const PlansSetup = React.createClass( {
 		return ( plugins.length === filter( plugins, { wporg: true } ).length );
 	},
 
-	fetchInstallInstructions( props ) {
-		props = props || this.props;
-		if ( props.siteId && ! props.hasRequested ) {
-			props.fetchInstallInstructions( props.siteId );
-		}
-	},
-
 	componentDidMount() {
 		window.addEventListener( 'beforeunload', this.warnIfNotFinished );
 		this.props.requestSites();
-		if ( this.props.siteId ) {
-			this.fetchInstallInstructions();
-		}
 
 		page.exit( '/plugins/setup/*', ( context, next ) => {
 			const confirmText = this.warnIfNotFinished( {} );
@@ -123,10 +113,6 @@ const PlansSetup = React.createClass( {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'beforeunload', this.warnIfNotFinished );
-	},
-
-	componentWillReceiveProps( props ) {
-		this.fetchInstallInstructions( props );
 	},
 
 	componentDidUpdate() {
@@ -482,6 +468,7 @@ const PlansSetup = React.createClass( {
 
 		return (
 			<div className="jetpack-plugins-setup">
+				<QueryPluginKeys siteId={ site.ID } />
 				<h1 className="jetpack-plugins-setup__header">
 					{ this.translate( 'Setting up your %(plan)s Plan', { args: { plan: site.plan.product_name_short } } ) }
 				</h1>
@@ -516,5 +503,5 @@ export default connect(
 			siteId
 		};
 	},
-	dispatch => bindActionCreators( { requestSites, fetchPluginData, fetchInstallInstructions, installPlugin }, dispatch )
+	dispatch => bindActionCreators( { requestSites, fetchPluginData, installPlugin }, dispatch )
 )( PlansSetup );
