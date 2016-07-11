@@ -383,40 +383,52 @@ export const featuresList = {
 		plans: allPaidPlans
 	},
 	[ FEATURE_SPAM_AKISMET_PLUS ]: {
-		getTitle: () => i18n.translate( 'Spam Protection' )
+		getTitle: () => i18n.translate( 'Spam Protection' ),
+		getDescription: () => i18n.translate( 'State-of-the-art spam defense powered by Akismet.' )
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: {
-		getTitle: () => i18n.translate( 'Daily Offsite Backups' )
+		getTitle: () => i18n.translate( 'Daily Offsite Backups' ),
+		getDescription: () => i18n.translate( 'Automatic daily backups of every single aspect of your site. Stored safely and optimized for WordPress.' )
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME ]: {
-		getTitle: () => i18n.translate( 'Realtime offsite backups' )
+		getTitle: () => i18n.translate( 'Realtime offsite backups' ),
+		getDescription: () => i18n.translate( 'Automatic realtime backups of every single aspect of your site. Stored safely and optimized for WordPress.' )
 	},
 	[ FEATURE_BACKUP_ARCHIVE_30 ]: {
-		getTitle: () => i18n.translate( '30-day Backup Archive' )
+		getTitle: () => i18n.translate( '30-day Backup Archive' ),
+		getDescription: () => i18n.translate( 'Browse or restore any backup made within the past 30 days.' )
 	},
 	[ FEATURE_BACKUP_ARCHIVE_UNLIMITED ]: {
-		getTitle: () => i18n.translate( 'Unlimited Backup Archive' )
+		getTitle: () => i18n.translate( 'Unlimited Backup Archive' ),
+		getDescription: () => i18n.translate( 'Browse or restore any backup made since you activated the service.' )
 	},
 	[ FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED ]: {
-		getTitle: () => i18n.translate( 'Unlimited Backup Storage Space' )
+		getTitle: () => i18n.translate( 'Unlimited Backup Storage Space' ),
+		getDescription: () => i18n.translate( 'Absolutely no limits on storage space for your backups.' )
 	},
 	[ FEATURE_AUTOMATED_RESTORES ]: {
-		getTitle: () => i18n.translate( 'Automated Restores' )
+		getTitle: () => i18n.translate( 'Automated Restores' ),
+		getDescription: () => i18n.translate( 'Restore your site from any available backup with a single click.' )
 	},
 	[ FEATURE_EASY_SITE_MIGRATION ]: {
-		getTitle: () => i18n.translate( 'Easy Site Migration' )
+		getTitle: () => i18n.translate( 'Easy Site Migration' ),
+		getDescription: () => i18n.translate( 'Easily and quickly move or duplicate your site to any location.' )
 	},
 	[ FEATURE_MALWARE_SCANNING_DAILY ]: {
-		getTitle: () => i18n.translate( 'Daily Malware Scanning' )
+		getTitle: () => i18n.translate( 'Daily Malware Scanning' ),
+		getDescription: () => i18n.translate( 'Comprehensive and automated scanning for any security vulnerabilities or threats on your site.' )
 	},
 	[ FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND ]: {
-		getTitle: () => i18n.translate( 'Daily and On-demand Malware Scanning' )
+		getTitle: () => i18n.translate( 'Daily and On-demand Malware Scanning' ),
+		getDescription: () => i18n.translate( 'Automated security scanning with the option to run complete site scans at any time.' )
 	},
 	[ FEATURE_ONE_CLICK_THREAT_RESOLUTION ]: {
-		getTitle: () => i18n.translate( 'One-Click Threat Resolution' )
+		getTitle: () => i18n.translate( 'One-Click Threat Resolution' ),
+		getDescription: () => i18n.translate( 'Repair any security issues found on your site with just a single click.' )
 	},
 	[ FEATURE_POLLS_PRO ]: {
-		getTitle: () => i18n.translate( 'Advanced Polls and Ratings' )
+		getTitle: () => i18n.translate( 'Advanced Polls and Ratings' ),
+		getDescription: () => i18n.translate( 'Custom polls, surveys, ratings, and quizzes for the ultimate in customer and reader engagement.' )
 	}
 };
 
