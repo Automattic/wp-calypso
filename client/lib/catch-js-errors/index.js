@@ -1,6 +1,5 @@
 ( function() {
-	var savedWindowOnError = window.onerror,
-		assignment = 1,
+	var assignment = 1,
 		errorLogger = 'false',
 		savedErrors = [],
 		lastTimeSent = 0,
@@ -92,7 +91,7 @@
 		handleError( error );
 	}
 
-	if ( isLocalStorageNameSupported() ) {
+	if ( isLocalStorageNameSupported() && ! window.onerror ) {
 		assignment = Math.random();
 		errorLogger = localStorage.getItem( 'log-errors' );
 		// Randomly assign 1% of users to log errors
@@ -121,9 +120,6 @@
 			// set up handler to POST errors
 			window.onerror = function( message, scriptUrl, lineNumber, columnNumber, error ) {
 				saveError( message, scriptUrl, lineNumber, columnNumber, error );
-				if ( savedWindowOnError ) {
-					savedWindowOnError();
-				}
 			};
 		} else if ( errorLogger === 'analytics' ) {
 			window.onerror = function( message, scriptUrl, lineNumber ) {
@@ -137,9 +133,6 @@
 						0,
 						{ nonInteraction: true }
 					);
-				}
-				if ( savedWindowOnError ) {
-					savedWindowOnError();
 				}
 			};
 		}
