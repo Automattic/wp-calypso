@@ -139,6 +139,7 @@ ABTest.prototype.isEligibleForAbTest = function() {
 	const clientLocale = client.language || client.userLanguage || 'en';
 	const browserLocale = ( client.languages && client.languages.length ) ? client.languages[ 0 ] : 'en';
 	const localeFromSession = i18n.getLocaleSlug() || 'en';
+	const englishMatcher = /^en-?/i;
 
 	if ( ! store.enabled ) {
 		debug( '%s: Local storage is not enabled', this.experimentId );
@@ -150,15 +151,15 @@ ABTest.prototype.isEligibleForAbTest = function() {
 			debug( '%s: User has a non-English locale', this.experimentId );
 			return false;
 		}
-		if ( ! isUserSignedIn() && ! clientLocale.match( /^en\-?/i ) ) {
+		if ( ! isUserSignedIn() && ! clientLocale.match( englishMatcher ) ) {
 			debug( '%s: Logged-out user has a non-English OS locale', this.experimentId );
 			return false;
 		}
-		if ( ! isUserSignedIn() && ! browserLocale.match( /^en\-?/i ) ) {
+		if ( ! isUserSignedIn() && ! browserLocale.match( englishMatcher ) ) {
 			debug( '%s: Logged-out user has a non-English browser locale', this.experimentId );
 			return false;
 		}
-		if ( ! isUserSignedIn() && ! localeFromSession.match( /^en\-?/i ) ) {
+		if ( ! isUserSignedIn() && ! localeFromSession.match( englishMatcher ) ) {
 			debug( '%s: Logged-out user has a non-English locale in session', this.experimentId );
 			return false;
 		}
