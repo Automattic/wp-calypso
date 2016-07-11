@@ -10,6 +10,8 @@ import deepFreeze from 'deep-freeze';
 import {
 	NOTICE_CREATE,
 	NOTICE_REMOVE,
+	POST_DELETE_FAILURE,
+	POST_DELETE_SUCCESS,
 	POST_SAVE_SUCCESS,
 	ROUTE_SET
 } from 'state/action-types';
@@ -230,6 +232,76 @@ describe( 'reducer', () => {
 						noticeId: 'POST_SAVE_SUCCESS',
 						count: 2,
 						text: '2 posts successfully published'
+					}
+				} );
+			} );
+		} );
+
+		context( 'POST_DELETE_SUCCESS', () => {
+			it( 'should return state with single delete success', () => {
+				const original = deepFreeze( {} );
+				const state = items( original, {
+					type: POST_DELETE_SUCCESS
+				} );
+
+				expect( state ).to.eql( {
+					POST_DELETE_SUCCESS: {
+						showDismiss: true,
+						isPersistent: false,
+						displayOnNextPage: false,
+						status: 'is-success',
+						noticeId: 'POST_DELETE_SUCCESS',
+						count: 1,
+						text: 'Post successfully deleted'
+					}
+				} );
+			} );
+
+			it( 'should return state with multiple delete success', () => {
+				const original = deepFreeze( {
+					POST_DELETE_SUCCESS: {
+						showDismiss: true,
+						isPersistent: false,
+						displayOnNextPage: false,
+						status: 'is-success',
+						noticeId: 'POST_DELETE_SUCCESS',
+						count: 1,
+						text: 'Post successfully deleted'
+					}
+				} );
+				const state = items( original, {
+					type: POST_DELETE_SUCCESS
+				} );
+
+				expect( state ).to.eql( {
+					POST_DELETE_SUCCESS: {
+						showDismiss: true,
+						isPersistent: false,
+						displayOnNextPage: false,
+						status: 'is-success',
+						noticeId: 'POST_DELETE_SUCCESS',
+						count: 2,
+						text: '2 posts successfully deleted'
+					}
+				} );
+			} );
+		} );
+
+		context( 'POST_DELETE_FAILURE', () => {
+			it( 'should return state with delete failure notice', () => {
+				const original = deepFreeze( {} );
+				const state = items( original, {
+					type: POST_DELETE_FAILURE
+				} );
+
+				expect( state ).to.eql( {
+					POST_DELETE_FAILURE: {
+						showDismiss: true,
+						isPersistent: false,
+						displayOnNextPage: false,
+						status: 'is-error',
+						noticeId: 'POST_DELETE_FAILURE',
+						text: 'An error occurred while deleting the post'
 					}
 				} );
 			} );

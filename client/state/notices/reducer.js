@@ -13,6 +13,8 @@ import { translate } from 'i18n-calypso';
 import {
 	NOTICE_CREATE,
 	NOTICE_REMOVE,
+	POST_DELETE_FAILURE,
+	POST_DELETE_SUCCESS,
 	POST_SAVE_SUCCESS,
 	ROUTE_SET
 } from 'state/action-types';
@@ -99,6 +101,48 @@ export const items = createReducer( {}, {
 				noticeId,
 				count,
 				text
+			}
+		};
+	},
+	[ POST_DELETE_SUCCESS ]: ( state, action ) => {
+		// A request to permanently delete a post has completed successfully
+		const count = get( state, [ action.type, 'count' ], 0 ) + 1;
+
+		let text;
+		if ( 1 === count ) {
+			text = translate( 'Post successfully deleted' );
+		} else {
+			text = translate(
+				'%d post successfully deleted',
+				'%d posts successfully deleted',
+				{ count, args: [ count ] }
+			);
+		}
+
+		return {
+			...state,
+			[ action.type ]: {
+				showDismiss: true,
+				isPersistent: false,
+				displayOnNextPage: false,
+				status: 'is-success',
+				noticeId: action.type,
+				count,
+				text
+			}
+		};
+	},
+	[ POST_DELETE_FAILURE ]: ( state, action ) => {
+		// A request to permanently delete a post has failed
+		return {
+			...state,
+			[ action.type ]: {
+				showDismiss: true,
+				isPersistent: false,
+				displayOnNextPage: false,
+				status: 'is-error',
+				noticeId: action.type,
+				text: translate( 'An error occurred while deleting the post' )
 			}
 		};
 	}
