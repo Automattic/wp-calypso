@@ -12,6 +12,7 @@ const debug = debugFactory( 'calypso:ad-tracking' );
  */
 import loadScript from 'lib/load-script';
 import config from 'config';
+import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
 
 /**
@@ -33,6 +34,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
+		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
 		atlasUniveralTagId: '11187200770563'
 	};
 
@@ -152,7 +154,13 @@ function recordPurchase( product ) {
 		return loadTrackingScripts( recordPurchase.bind( null, product ) );
 	}
 
-	debug( 'Recording purchase', product );
+	const isJetpackPlan = productsValues.isJetpackPlan( product );
+
+	if ( isJetpackPlan ) {
+		debug( 'Recording Jetpack purchase', product );
+	} else {
+		debug( 'Recording purchase', product );
+	}
 
 	// record the user id as a custom parameter
 	const currentUser = user.get(),
@@ -181,7 +189,9 @@ function recordPurchase( product ) {
 	// record the purchase w/ Google
 	window.google_trackConversion( {
 		google_conversion_id: GOOGLE_CONVERSION_ID,
-		google_conversion_label: TRACKING_IDS.googleConversionLabel,
+		google_conversion_label: isJetpackPlan
+			? TRACKING_IDS.googleConversionLabelJetpack
+			: TRACKING_IDS.googleConversionLabel,
 		google_conversion_value: product.cost,
 		google_conversion_currency: product.currency,
 		google_custom_params: {
