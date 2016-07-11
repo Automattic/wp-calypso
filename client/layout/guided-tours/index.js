@@ -23,6 +23,7 @@ import {
 } from './steps';
 import wait from './wait';
 import QueryPreferences from 'components/data/query-preferences';
+import RootChild from 'components/root-child';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
@@ -121,16 +122,18 @@ class GuidedTours extends Component {
 		}[ stepConfig.type ] || BasicStep;
 
 		return (
-			<div className="guided-tours">
-				<QueryPreferences />
-				<StepComponent
-					{ ...stepConfig }
-					key={ stepConfig.target }
-					targetSlug={ stepConfig.target }
-					onNext={ this.next }
-					onQuit={ this.quit }
-					onFinish={ this.finish } />
-			</div>
+			<RootChild>
+				<div className="guided-tours">
+					<QueryPreferences />
+					<StepComponent
+						{ ...stepConfig }
+						key={ stepConfig.target }
+						targetSlug={ stepConfig.target }
+						onNext={ this.next }
+						onQuit={ this.quit }
+						onFinish={ this.finish } />
+				</div>
+			</RootChild>
 		);
 	}
 }
