@@ -4,7 +4,6 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
-import { Provider as ReduxProvider } from 'react-redux';
 import i18n from 'i18n-calypso';
 import config from 'config';
 import defer from 'lodash/defer';
@@ -30,6 +29,7 @@ import FeedError from 'reader/feed-error';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { requestGraduate } from 'state/reader/start/actions';
 import { isRequestingGraduation } from 'state/reader/start/selectors';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
@@ -59,9 +59,10 @@ function renderPostNotFound() {
 
 	setPageTitle( sidebarAndPageTitle );
 
-	ReactDom.render(
+	renderWithReduxStore(
 		<FeedError sidebarTitle={ sidebarAndPageTitle } message={ i18n.translate( 'Post Not Found' ) } />,
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -70,9 +71,10 @@ function userHasHistory( context ) {
 }
 
 function renderFeedError() {
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( FeedError ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -192,11 +194,10 @@ module.exports = {
 	sidebar: function( context, next ) {
 		var ReaderSidebarComponent = require( 'reader/sidebar' );
 
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( ReaderSidebarComponent, { path: context.path } )
-			),
-			document.getElementById( 'secondary' )
+		renderWithReduxStore(
+			React.createElement( ReaderSidebarComponent, { path: context.path } ),
+			document.getElementById( 'secondary' ),
+			context.store
 		);
 
 		next();
@@ -216,23 +217,22 @@ module.exports = {
 
 		setPageTitle( i18n.translate( 'Following' ) );
 
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( FollowingComponent, {
-					key: 'following',
-					listName: i18n.translate( 'Followed Sites' ),
-					store: followingStore,
-					trackScrollPage: trackScrollPage.bind(
-						null,
-						basePath,
-						fullAnalyticsPageTitle,
-						analyticsPageTitle,
-						mcKey
-					),
-					onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
-				} )
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			React.createElement( FollowingComponent, {
+				key: 'following',
+				listName: i18n.translate( 'Followed Sites' ),
+				store: followingStore,
+				trackScrollPage: trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				),
+				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
+			} ),
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -266,7 +266,7 @@ module.exports = {
 			feed_id: context.params.feed_id
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( FeedStream, {
 				key: 'feed-' + context.params.feed_id,
 				store: feedStore,
@@ -283,7 +283,8 @@ module.exports = {
 				suppressSiteNameLink: true,
 				showBack: userHasHistory( context )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -301,7 +302,7 @@ module.exports = {
 			blog_id: context.params.blog_id
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( SiteStream, {
 				key: 'site-' + context.params.blog_id,
 				store: feedStore,
@@ -318,7 +319,8 @@ module.exports = {
 				suppressSiteNameLink: true,
 				showBack: userHasHistory( context )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -336,20 +338,19 @@ module.exports = {
 		// this will automatically unmount anything that was already mounted
 		// in #tertiary, so we don't have to check the current state of
 		// __fullPostInstance before making another
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( FullPostDialog, {
-					feedId: feedId,
-					postId: postId,
-					setPageTitle: setPageTitle,
-					onClose: function() {
-						page.back( context.lastRoute || '/' );
-					},
-					onClosed: removeFullPostDialog,
-					onPostNotFound: renderPostNotFound
-				} )
-			),
-			document.getElementById( 'tertiary' )
+		renderWithReduxStore(
+			React.createElement( FullPostDialog, {
+				feedId: feedId,
+				postId: postId,
+				setPageTitle: setPageTitle,
+				onClose: function() {
+					page.back( context.lastRoute || '/' );
+				},
+				onClosed: removeFullPostDialog,
+				onPostNotFound: renderPostNotFound
+			} ),
+			document.getElementById( 'tertiary' ),
+			context.store
 		);
 	},
 
@@ -374,21 +375,20 @@ module.exports = {
 
 		// this will automatically unmount anything that was already mounted
 		// in #tertiary, so we don't have to check the current state
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( FullPostDialog, {
-					blogId: blogId,
-					postId: postId,
-					context: context,
-					setPageTitle: setPageTitle,
-					onClose: function() {
-						page.back( context.lastRoute || '/' );
-					},
-					onClosed: removeFullPostDialog,
-					onPostNotFound: renderPostNotFound
-				} )
-			),
-			document.getElementById( 'tertiary' )
+		renderWithReduxStore(
+			React.createElement( FullPostDialog, {
+				blogId: blogId,
+				postId: postId,
+				context: context,
+				setPageTitle: setPageTitle,
+				onClose: function() {
+					page.back( context.lastRoute || '/' );
+				},
+				onClosed: removeFullPostDialog,
+				onPostNotFound: renderPostNotFound
+			} ),
+			document.getElementById( 'tertiary' ),
+			context.store
 		);
 	},
 
@@ -410,24 +410,23 @@ module.exports = {
 
 		setPageTitle( 'Automattic' );
 
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( FollowingComponent, {
-					key: 'read-a8c',
-					className: 'is-a8c',
-					listName: 'Automattic',
-					store: feedStore,
-					trackScrollPage: trackScrollPage.bind(
-						null,
-						basePath,
-						fullAnalyticsPageTitle,
-						analyticsPageTitle,
-						mcKey
-					),
-					onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
-				} ),
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			React.createElement( FollowingComponent, {
+				key: 'read-a8c',
+				className: 'is-a8c',
+				listName: 'Automattic',
+				store: feedStore,
+				trackScrollPage: trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				),
+				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
+			} ),
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };
