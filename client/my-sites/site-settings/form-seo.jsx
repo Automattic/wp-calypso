@@ -3,11 +3,14 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import get from 'lodash/get';
-import includes from 'lodash/includes';
-import isString from 'lodash/isString';
-import omit from 'lodash/omit';
-import pickBy from 'lodash/pickBy';
+import {
+	get,
+	includes,
+	isEqual,
+	isString,
+	omit,
+	pickBy
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +34,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SearchPreview from 'components/seo/search-preview';
 import config from 'config';
 import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -148,8 +152,28 @@ export const SeoForm = React.createClass( {
 		} );
 	},
 
+	/**
+	 * Tracks updates to the title formats
+	 *
+	 * We need to be careful here and only
+	 * send _changes_ to the API instead of
+	 * sending all of the title formats.
+	 * There is a race condition here after
+	 * sending the changes and before updating
+	 * from the SitesList wherein we could
+	 * accidentally overwrite new changes.
+	 *
+	 * @param {object} seoTitleFormats SEO title formats e.g. { frontPage: '%site_name%' }
+	 */
 	updateTitleFormats( seoTitleFormats ) {
-		this.setState( { seoTitleFormats } );
+		const { storedTitleFormats } = this.props;
+
+		const hasChanges = ( format, type ) =>
+			! isEqual( format, storedTitleFormats[ type ] );
+
+		this.setState( {
+			seoTitleFormats: pickBy( seoTitleFormats, hasChanges )
+		} );
 	},
 
 	submitSeoForm( event ) {
@@ -434,8 +458,17 @@ export const SeoForm = React.createClass( {
 	}
 } );
 
+const mapStateToProps = state => ( {
+	storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) )
+} );
+
 const mapDispatchToProps = dispatch => ( {
 	trackSubmission: () => dispatch( recordTracksEvent( 'calypso_seo_settings_form_submit', {} ) )
 } );
 
-export default connect( null, mapDispatchToProps, null, { pure: false } )( SeoForm );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	undefined,
+	{ pure: false } // defaults to true, but this component has internal state
+)( SeoForm );
