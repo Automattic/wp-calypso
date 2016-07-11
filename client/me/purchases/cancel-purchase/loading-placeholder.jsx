@@ -39,7 +39,7 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {
 };
 
 CancelPurchaseLoadingPlaceholder.propTypes = {
-	purchaseId: React.PropTypes.string.isRequired,
+	purchaseId: React.PropTypes.number.isRequired,
 	selectedSite: React.PropTypes.oneOfType( [
 		React.PropTypes.bool,
 		React.PropTypes.object
