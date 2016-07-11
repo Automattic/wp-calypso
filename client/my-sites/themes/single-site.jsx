@@ -32,7 +32,7 @@ import {
 import actionLabels from './action-labels';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import sitesFactory from 'lib/sites-list';
-import { FEATURE_CUSTOM_DESIGN } from 'lib/plans/constants';
+import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -177,7 +177,7 @@ const ThemesSingleSite = React.createClass( {
 				<UpgradeNudge
 					title={ this.translate( 'Get Custom Design with Premium' ) }
 					message={ this.translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
-					feature={ FEATURE_CUSTOM_DESIGN }
+					feature={ FEATURE_ADVANCED_DESIGN }
 					event="themes_custom_design"
 				/>
 				{ isJetpack && ! jetpackEnabled

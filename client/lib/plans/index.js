@@ -32,7 +32,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
-	WORDADS_INSTANT,
+	FEATURE_WORDADS_INSTANT,
 	FEATURE_GOOGLE_AD_CREDITS
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
@@ -225,7 +225,7 @@ export function applyTestFiltersToPlansList( planName ) {
 	const removeDisabledFeatures = () => {
 		if ( ! isWordadsInstantActivationEnabled() ) {
 			filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
-				( value, key ) => key !== WORDADS_INSTANT
+				( value, key ) => key !== FEATURE_WORDADS_INSTANT
 			);
 		}
 		if ( ! isGoogleVouchersEnabled() ) {

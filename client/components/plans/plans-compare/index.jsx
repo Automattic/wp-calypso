@@ -43,7 +43,7 @@ import { isJetpack } from 'lib/site/utils';
 import {
 	featuresList,
 	FEATURE_GOOGLE_AD_CREDITS,
-	WORDADS_INSTANT,
+	FEATURE_WORDADS_INSTANT,
 } from 'lib/plans/constants';
 
 // google ad credits feature
@@ -57,14 +57,14 @@ const googleAdCreditsFeature = {
 	1008: '$100'
 };
 // WordAds instant activation feature
-const wordAdsInstant = featuresList[ WORDADS_INSTANT ];
+const wordAdsInstant = featuresList[ FEATURE_WORDADS_INSTANT ];
 const wordAdsFeature = {
 	title: wordAdsInstant.getTitle(),
 	compareDescription: wordAdsInstant.getDescription(),
 	1: false,
 	1003: true,
 	1008: true,
-	product_slug: WORDADS_INSTANT,
+	product_slug: FEATURE_WORDADS_INSTANT,
 };
 
 const PlansCompare = React.createClass( {
@@ -472,7 +472,7 @@ const PlansCompare = React.createClass( {
 	},
 
 	renderFeatureTitle( feature ) {
-		return(
+		return (
 			<div className="plans-compare__feature-title">
 				<span className="plans-compare__feature-title__container">
 					{ feature.title }
