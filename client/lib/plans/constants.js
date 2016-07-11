@@ -257,7 +257,11 @@ export const featuresList = {
 	},
 
 	[ FEATURE_UNLIMITED_STORAGE ]: {
-		getTitle: () => i18n.translate( 'Unlimited Storage Space' ),
+		getTitle: () => i18n.translate( '{{strong}}Unlimited{{/strong}} Storage Space', {
+			components: {
+				strong: <strong />
+			}
+		} ),
 		getDescription: () => i18n.translate( "With increased storage space you'll be able to upload" +
 			' more images, videos, audio, and documents to your website.' ),
 		getStoreSlug: () => 'unlimited_space',
@@ -272,7 +276,11 @@ export const featuresList = {
 	},
 
 	[ FEATURE_UNLIMITED_PREMIUM_THEMES ]: {
-		getTitle: () => i18n.translate( 'Unlimited Premium Themes' ),
+		getTitle: () => i18n.translate( '{{strong}}Unlimited{{/strong}} Premium Themes', {
+			components: {
+				strong: <strong />
+			}
+		} ),
 		getDescription: () => i18n.translate( 'Unlimited access to all of our advanced premium theme templates,' +
 			' including templates specifically tailored for businesses.' ),
 		getStoreSlug: () => 'unlimited_themes',
@@ -296,7 +304,11 @@ export const featuresList = {
 	},
 
 	[ FEATURE_ADVANCED_DESIGN ]: {
-		getTitle: () => i18n.translate( 'Advanced Design Customization' ),
+		getTitle: () => i18n.translate( '{{strong}}Advanced{{/strong}} Design Customization', {
+			components: {
+				strong: <strong />
+			}
+		} ),
 		getDescription: () => i18n.translate( 'Customize your selected theme template with extended color schemes,' +
 			' background designs, and complete control over website CSS.' ),
 		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
@@ -358,7 +370,11 @@ export const featuresList = {
 	},
 
 	[ FEATURE_13GB_STORAGE ]: {
-		getTitle: () => i18n.translate( '13GB Storage Space' ),
+		getTitle: () => i18n.translate( '{{strong}}13GB{{/strong}} Storage Space', {
+			components: {
+				strong: <strong />
+			}
+		} ),
 		getDescription: () => i18n.translate( "With increased storage space you'll be able to upload" +
 			' more images, videos, audio, and documents to your website.' ),
 		plans: [ PLAN_PREMIUM ]
