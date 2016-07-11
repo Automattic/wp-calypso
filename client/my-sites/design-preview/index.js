@@ -11,11 +11,10 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import WebPreview from 'components/web-preview';
-import { clearPreviewUrl } from 'state/ui/actions';
+import { clearPreviewUrl, setPreviewShowing } from 'state/ui/actions';
 import { fetchPreviewMarkup, undoCustomization, clearCustomizations } from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
-import layoutFocus from 'lib/layout-focus';
 import { getSelectedSite, getSelectedSiteId, getPreviewUrl, isPreviewShowing } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
@@ -42,6 +41,7 @@ const DesignPreview = React.createClass( {
 		selectedSiteNonce: React.PropTypes.string,
 		selectedSite: React.PropTypes.object,
 		selectedSiteId: React.PropTypes.number,
+		showPreview: React.PropTypes.bool,
 		previewUrl: React.PropTypes.string,
 		previewMarkup: React.PropTypes.string,
 		customizations: React.PropTypes.object,
@@ -50,8 +50,7 @@ const DesignPreview = React.createClass( {
 		undoCustomization: React.PropTypes.func.isRequired,
 		clearCustomizations: React.PropTypes.func.isRequired,
 		clearPreviewUrl: React.PropTypes.func.isRequired,
-		// True to show the preview; same as WebPreview.
-		showPreview: React.PropTypes.bool,
+		setPreviewShowing: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState() {
@@ -153,13 +152,13 @@ const DesignPreview = React.createClass( {
 				if ( accepted ) {
 					this.props.clearPreviewUrl( this.props.selectedSiteId );
 					this.props.clearCustomizations( this.props.selectedSiteId );
-					layoutFocus.set( 'sidebar' );
+					this.props.setPreviewShowing( false );
 				}
 			} );
 		}
 		this.props.clearPreviewUrl( this.props.selectedSiteId );
 		this.props.clearCustomizations( this.props.selectedSiteId );
-		layoutFocus.set( 'sidebar' );
+		this.props.setPreviewShowing( false );
 	},
 
 	onPreviewClick( event ) {
@@ -235,5 +234,5 @@ function mapStateToProps( state ) {
 
 export default connect(
 	mapStateToProps,
-	{ fetchPreviewMarkup, undoCustomization, clearCustomizations, clearPreviewUrl }
+	{ fetchPreviewMarkup, undoCustomization, clearCustomizations, clearPreviewUrl, setPreviewShowing }
 )( DesignPreview );
