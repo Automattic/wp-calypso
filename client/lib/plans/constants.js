@@ -72,10 +72,10 @@ export const plansList = {
 			' in less than five minutes.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_WP_SUBDOMAIN,
-			FEATURE_FREE_THEMES,
-			FEATURE_3GB_STORAGE,
 			FEATURE_COMMUNITY_SUPPORT,
-			FEATURE_BASIC_DESIGN
+			FEATURE_FREE_THEMES,
+			FEATURE_BASIC_DESIGN,
+			FEATURE_3GB_STORAGE
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' )
 	},
@@ -89,10 +89,10 @@ export const plansList = {
 		getDescription: () => i18n.translate( 'Use your own domain and establish your online presence without ads.' ),
 		getFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_FREE_THEMES,
-			FEATURE_3GB_STORAGE,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_FREE_THEMES,
 			FEATURE_BASIC_DESIGN,
+			FEATURE_3GB_STORAGE,
 			FEATURE_NO_ADS
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
@@ -115,14 +115,14 @@ export const plansList = {
 			' customization options, easy monetization with WordAds, lots of space for audio and video, and $100 advertising voucher.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_FREE_THEMES,
-			FEATURE_13GB_STORAGE,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_FREE_THEMES,
 			FEATURE_ADVANCED_DESIGN,
+			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
-			FEATURE_VIDEO_UPLOADS,
 			FEATURE_GOOGLE_AD_CREDITS,
-			FEATURE_WORDADS_INSTANT
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -140,14 +140,14 @@ export const plansList = {
 			' live chat support, unlimited access to premium themes, Google Analytics, and $200 advertising vouchers.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
-			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ADVANCED_DESIGN,
+			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_NO_ADS,
-			FEATURE_VIDEO_UPLOADS,
 			FEATURE_GOOGLE_AD_CREDITS,
 			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING
 		],
