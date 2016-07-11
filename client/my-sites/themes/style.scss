@@ -24,6 +24,10 @@
 	ul {
 		display: block;
 		margin-left: 10px;
+
+		a {
+			white-space: nowrap;
+		}
 	}
 }
 
