@@ -35,6 +35,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	Layout,
 	SupportUser;
 
+import layoutFocus from 'lib/layout-focus';
 import { isOffline } from 'state/application/selectors';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import DesignPreview from 'my-sites/design-preview';
@@ -55,6 +56,7 @@ Layout = React.createClass( {
 	_sitesPoller: null,
 
 	componentWillUpdate: function( nextProps ) {
+		this.updateLayoutFocus();
 		if ( this.props.section.group !== nextProps.section.group ) {
 			if ( nextProps.section.group === 'sites' ) {
 				setTimeout( function() {
@@ -151,12 +153,18 @@ Layout = React.createClass( {
 		);
 	},
 
+	updateLayoutFocus() {
+		if ( this.props.isPreviewShowing ) {
+			return layoutFocus.set( 'preview' );
+		}
+		return layoutFocus.set( 'content' );
+	},
+
 	renderPreview() {
 		if ( config.isEnabled( 'preview-layout' ) && this.props.section.group === 'sites' ) {
 			return (
 				<DesignPreview
 					className="layout__preview"
-					showPreview={ this.props.focus.getCurrent() === 'preview' }
 					defaultViewportDevice="computer"
 				/>
 			);
@@ -204,9 +212,10 @@ Layout = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const { isLoading, section } = state.ui;
+		const { isLoading, section, isPreviewShowing } = state.ui;
 		return {
 			isLoading,
+			isPreviewShowing,
 			isSupportUser: state.support.isSupportUser,
 			section,
 			isOffline: isOffline( state ),
