@@ -64,9 +64,10 @@ class PostTypeList extends Component {
 	}
 
 	getInitialRequestedPages( props ) {
-		// If we have no posts, start by requesting the first page, since
-		// setRequestedPages won't be called if row count is 0
-		if ( ! props.posts ) {
+		// If we have no posts or we're otherwise not expecting any posts to be
+		// rendered, request the first page, since setRequestedPages won't be
+		// called if row count is 0.
+		if ( 0 === size( props.posts ) ) {
 			return [ 1 ];
 		}
 
