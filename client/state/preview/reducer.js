@@ -31,7 +31,7 @@ function siteReducer( newState = siteInitialState, action ) {
 				customizations: Object.assign( {}, state.customizations, action.customizations )
 			} );
 		case ActionTypes.PREVIEW_CUSTOMIZATIONS_UNDO:
-			const undoneCustomizations = state.previousCustomizations.length > 0 ? state.previousCustomizations.slice( -1 )[0] : {};
+			const undoneCustomizations = state.previousCustomizations.length > 0 ? state.previousCustomizations.slice( -1 )[ 0 ] : {};
 			return Object.assign( {}, state, {
 				isUnsaved: true,
 				previousCustomizations: state.previousCustomizations.slice( 0, -1 ),
