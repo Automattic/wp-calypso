@@ -248,13 +248,6 @@ const allPaidPlans = [
 	PLAN_BUSINESS
 ];
 
-const allPlans = [
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS
-];
-
 export const featuresList = {
 	[ FEATURE_GOOGLE_ANALYTICS ]: {
 		getTitle: () => i18n.translate( 'Google Analytics Integration' ),
@@ -332,7 +325,7 @@ export const featuresList = {
 		getDescriptionWithWordAdsCredit: () => i18n.translate( '$100 Google AdWords voucher after spending the first $25. ' +
 			'Offer valid in US and Canada. {{hr/}}Business also includes $100 of advertising from WordAds on WordPress.com.', {
 				components: {
-					hr: <hr className="plans-compare__info-hr"/>
+					hr: <hr className="plans__const-info-hr"/>
 				}
 			} ),
 		plans: allPaidPlans
