@@ -19,9 +19,9 @@ const TITLE_UPDATING_ACTIONS = [
 ];
 
 /**
- * A middleware that updating the page
- * when the title state changes. Currently, this dispatches through the legacy
- * Flux actions used elsewhere in the codebase.
+ * Middleware that updates the screen title when a title updating action is
+ * dispatched. Currently, this dispatches through the legacy Flux actions used
+ * elsewhere in the codebase.
  *
  * @param {Object} store Redux store instance
  * @returns {Function} A configured middleware with store
