@@ -15,6 +15,7 @@ import Card from 'components/card';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import PostTypeListPostThumbnail from './post-thumbnail';
 import PostActionsEllipsisMenu from './post-actions-ellipsis-menu';
+import PostTypePostAuthor from './post-type-post-author';
 
 export function PostTypeListPost( { translate, globalId, post, editUrl, className } ) {
 	const classes = classnames( 'post-type-list__post', className, {
@@ -32,6 +33,7 @@ export function PostTypeListPost( { translate, globalId, post, editUrl, classNam
 					</h1>
 					<div className="post-type-list__post-meta">
 						<PostRelativeTimeStatus post={ post } />
+						<PostTypePostAuthor globalId={ globalId } />
 					</div>
 				</div>
 			</div>
