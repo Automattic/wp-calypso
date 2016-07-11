@@ -16,7 +16,7 @@ import { fetchPreviewMarkup, undoCustomization, clearCustomizations } from 'stat
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
 import layoutFocus from 'lib/layout-focus';
-import { getSelectedSite, getSelectedSiteId, getPreviewUrl } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getPreviewUrl, isPreviewShowing } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
@@ -29,8 +29,6 @@ const DesignPreview = React.createClass( {
 	propTypes: {
 		// Any additional classNames to set on this wrapper
 		className: React.PropTypes.string,
-		// True to show the preview; same as WebPreview.
-		showPreview: React.PropTypes.bool,
 		// The viewport device to show initially; same as WebPreview but defaults to 'tablet'.
 		defaultViewportDevice: React.PropTypes.string,
 		// Show close button; same as WebPreview.
@@ -52,6 +50,8 @@ const DesignPreview = React.createClass( {
 		undoCustomization: React.PropTypes.func.isRequired,
 		clearCustomizations: React.PropTypes.func.isRequired,
 		clearPreviewUrl: React.PropTypes.func.isRequired,
+		// True to show the preview; same as WebPreview.
+		showPreview: React.PropTypes.bool,
 	},
 
 	getInitialState() {
@@ -221,6 +221,7 @@ function mapStateToProps( state ) {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {
+		showPreview: isPreviewShowing( state ),
 		selectedSite,
 		selectedSiteId,
 		selectedSiteUrl: getSiteOption( state, selectedSiteId, 'unmapped_url' ),
