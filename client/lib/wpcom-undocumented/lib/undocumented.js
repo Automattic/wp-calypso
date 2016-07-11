@@ -289,7 +289,7 @@ Undocumented.prototype.settings = function( siteId, method, data, fn ) {
 	}
 
 	const path = `/sites/${ siteId }/settings`;
-	const params = { apiVersion: '1.2' };
+	const params = { apiVersion: '1.1' };
 
 	if ( 'get' === method ) {
 		this.wpcom.req.get( path , params, fn );
