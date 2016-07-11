@@ -33,7 +33,6 @@ const actions = require( 'lib/posts/actions' ),
 	EditorMobileNavigation = require( 'post-editor/editor-mobile-navigation' ),
 	layoutFocus = require( 'lib/layout-focus' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	DraftList = require( 'my-sites/drafts/draft-list' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
 	VerifyEmailDialog = require( 'post-editor/verify-email-dialog' ),
@@ -54,6 +53,7 @@ import EditorForbidden from 'post-editor/editor-forbidden';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
+import AsyncLoad from 'components/async-load';
 
 const messages = {
 	post: {
@@ -395,7 +395,9 @@ const PostEditor = React.createClass( {
 							allPostsUrl={ this.getAllPostsUrl() }
 							toggleSidebar={ this.toggleSidebar } />
 						{ this.props.showDrafts
-							? <DraftList { ...this.props }
+							? <AsyncLoad
+								require="my-sites/drafts/draft-list"
+								{ ...this.props }
 								onTitleClick={ this.toggleSidebar }
 								showAllActionsMenu={ false }
 								siteID={ site ? site.ID : null }

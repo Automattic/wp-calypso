@@ -16,10 +16,11 @@ const actions = require( 'lib/posts/actions' ),
 	Popover = require( 'components/popover' ),
 	InfoPopover = require( 'components/info-popover' ),
 	Tooltip = require( 'components/tooltip' ),
-	PostSchedule = require( 'components/post-schedule' ),
 	postScheduleUtils = require( 'components/post-schedule/utils' ),
 	siteUtils = require( 'lib/site/utils' ),
 	stats = require( 'lib/posts/stats' );
+
+import AsyncLoad from 'components/async-load';
 
 export default React.createClass( {
 	displayName: 'EditPostStatus',
@@ -190,12 +191,15 @@ export default React.createClass( {
 				onClose={ this.togglePostSchedulePopover }
 			>
 				<div className="edit-post-status__post-schedule">
-					<PostSchedule
+					<AsyncLoad
+						require={ function( callback ) {
+							require( [ 'components/post-schedule' ], callback );
+						} }
 						selectedDay={ selectedDay }
 						timezone={ tz }
 						gmtOffset={ gmt }
-						onDateChange={ this.props.onDateChange }>
-					</PostSchedule>
+						onDateChange={ this.props.onDateChange }
+					/>
 				</div>
 			</Popover>
 		);

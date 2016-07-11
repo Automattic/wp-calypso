@@ -17,11 +17,12 @@ const Card = require( 'components/card' ),
 	StatusLabel = require( 'post-editor/editor-status-label' ),
 	postUtils = require( 'lib/posts/utils' ),
 	siteUtils = require( 'lib/site/utils' ),
-	PostSchedule = require( 'components/post-schedule' ),
 	postActions = require( 'lib/posts/actions' ),
 	Tooltip = require( 'components/tooltip' ),
 	PostListFetcher = require( 'components/post-list-fetcher' ),
 	stats = require( 'lib/posts/stats' );
+
+import AsyncLoad from 'components/async-load';
 
 export default React.createClass( {
 	displayName: 'EditorGroundControl',
@@ -247,13 +248,16 @@ export default React.createClass( {
 				: null;
 
 		return (
-			<PostSchedule
+			<AsyncLoad
+				require={ function( callback ) {
+					require( [ 'components/post-schedule' ], callback );
+				} }
 				selectedDay={ postDate }
 				timezone={ tz }
 				gmtOffset={ gmtOffset }
 				onDateChange={ this.setPostDate }
-				onMonthChange={ this.setCurrentMonth }>
-			</PostSchedule>
+				onMonthChange={ this.setCurrentMonth }
+			/>
 		);
 	},
 
