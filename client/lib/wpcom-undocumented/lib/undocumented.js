@@ -937,15 +937,15 @@ Undocumented.prototype.setPrimaryDomain = function( siteId, domain, fn ) {
  * Fetch preview markup for a site
  *
  * @param {int} siteId The site ID
- * @param {string} slug Optional. The theme slug to preview
+ * @param {string} path Optional. The site path to preview
  * @param {object} postData Optional. The customization data to send
  * @return {Promise} A Promise to resolve when complete
  */
-Undocumented.prototype.fetchPreviewMarkup = function( siteId, slug, postData ) {
+Undocumented.prototype.fetchPreviewMarkup = function( siteId, path, postData ) {
 	debug( '/sites/:site_id/previews/mine' );
 	return new Promise( ( resolve, reject ) => {
 		const endpoint = `/sites/${siteId}/previews/mine`;
-		const query = { path: slug };
+		const query = { path };
 		const isPreviewCustomized = ( postData && Object.keys( postData ).length > 0 );
 		const request = isPreviewCustomized ? this.wpcom.req.post( endpoint, query, { customized: postData } ) : this.wpcom.req.get( endpoint, query );
 		request
