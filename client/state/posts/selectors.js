@@ -381,29 +381,14 @@ export function getPostPreviewUrl( state, siteId, postId ) {
 		return null;
 	}
 
-	let previewUrl = post.preview_URL;
-	if ( ! previewUrl ) {
-		previewUrl = url;
-
-		if ( 'publish' !== status ) {
-			previewUrl = addQueryArgs( {
-				preview: true
-			}, previewUrl );
-		}
+	if ( post.preview_URL ) {
+		return post.preview_URL;
 	}
 
-	const site = getSite( state, siteId );
-	if ( ! site || ! site.options ) {
-		return previewUrl;
-	}
-
-	if ( site.options.is_mapped_domain ) {
-		previewUrl = previewUrl.replace( site.URL, site.options.unmapped_url );
-	}
-
-	if ( site.options.frame_nonce ) {
+	let previewUrl = url;
+	if ( 'publish' !== status ) {
 		previewUrl = addQueryArgs( {
-			'frame-nonce': site.options.frame_nonce
+			preview: true
 		}, previewUrl );
 	}
 

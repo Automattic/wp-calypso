@@ -10,32 +10,28 @@ import includes from 'lodash/includes';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
-import WebPreview from 'components/web-preview';
 import { getPost, getPostPreviewUrl } from 'state/posts/selectors';
+import { setPreviewUrl } from 'state/ui/actions';
+import layoutFocus from 'lib/layout-focus';
 
 class PostActionsEllipsisMenuView extends Component {
 	static propTypes = {
 		globalId: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		status: PropTypes.string,
-		previewUrl: PropTypes.string
+		previewUrl: PropTypes.string,
+		setPreviewUrl: PropTypes.func.isRequired
 	};
 
 	constructor() {
 		super( ...arguments );
 
 		this.previewPost = this.previewPost.bind( this );
-		this.showPreview = this.togglePreview.bind( this, true );
-		this.hidePreview = this.togglePreview.bind( this, false );
-		this.state = { isPreviewing: false };
-	}
-
-	togglePreview( isPreviewing ) {
-		this.setState( { isPreviewing } );
 	}
 
 	previewPost( event ) {
-		this.showPreview();
+		this.props.setPreviewUrl( this.props.previewUrl );
+		layoutFocus.set( 'preview' );
 		event.preventDefault();
 	}
 
@@ -54,19 +50,18 @@ class PostActionsEllipsisMenuView extends Component {
 				{ includes( [ 'publish', 'private' ], status )
 					? translate( 'View', { context: 'verb' } )
 					: translate( 'Preview', { context: 'verb' } ) }
-				<WebPreview
-					showPreview={ this.state.isPreviewing }
-					previewUrl={ previewUrl }
-					onClose={ this.hidePreview } />
 			</PopoverMenuItem>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const post = getPost( state, ownProps.globalId );
-	return {
-		status: post ? post.status : null,
-		previewUrl: post ? getPostPreviewUrl( state, post.site_ID, post.ID ) : null
-	};
-} )( localize( PostActionsEllipsisMenuView ) );
+export default connect(
+	( state, ownProps ) => {
+		const post = getPost( state, ownProps.globalId );
+		return {
+			status: post ? post.status : null,
+			previewUrl: post ? getPostPreviewUrl( state, post.site_ID, post.ID ) : null
+		};
+	},
+	{ setPreviewUrl }
+)( localize( PostActionsEllipsisMenuView ) );
