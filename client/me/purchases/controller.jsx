@@ -120,16 +120,13 @@ export default {
 			'Cancel Purchase'
 		);
 
-		sites.setSelectedSite( context.params.site );
+		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
-			<ManagePurchaseData
-				component={ CancelPurchase }
-				isDataLoading={ isDataLoading }
-				loadingPlaceholder={ CancelPurchaseLoadingPlaceholder }
-				purchaseId={ context.params.purchaseId }
-				sites={ sites } />
+			<CancelPurchase
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			/>
 		);
 	},
 
