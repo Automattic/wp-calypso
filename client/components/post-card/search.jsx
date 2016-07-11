@@ -15,6 +15,7 @@ import PostTime from 'reader/post-time';
 import FollowButton from 'reader/follow-button';
 import LikeButton from 'reader/like-button';
 import CommentButton from 'components/comment-button';
+import DisplayTypes from 'state/reader/posts/display-types';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -42,7 +43,7 @@ export function SearchPostCard( { post, site, feed, onClick = noop, onCommentCli
 	const hasPost = !! post;
 	const classes = classnames( 'post-card__search', {
 		'has-thumbnail': !! featuredImage,
-		'is-photo': hasPost && post.excerpt.length < 1
+		'is-photo': hasPost && ( post.display_type & DisplayTypes.PHOTO_ONLY )
 	} );
 	return (
 		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
