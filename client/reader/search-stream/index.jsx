@@ -12,7 +12,7 @@ import closest from 'component-closest';
 import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import HeaderBack from 'reader/header-back';
-import FormTextInput from 'components/forms/form-text-input';
+import SearchInput from 'components/search';
 import SearchCard from 'components/post-card/search';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
@@ -122,12 +122,9 @@ const FeedStream = React.createClass( {
 		return props.query;
 	},
 
-	updateQuery() {
-		if ( ! this.isMounted() ) {
-			return;
-		}
-		const newValue = trim( ReactDom.findDOMNode( this.refs.searchInput ).value );
-		if ( newValue && newValue !== this.props.query ) {
+	updateQuery( newValue ) {
+		const trimmedValue = trim( newValue );
+		if ( trimmedValue && trimmedValue.length > 1 && trimmedValue !== this.props.query ) {
 			this.props.onQueryChange( newValue );
 		}
 	},
@@ -149,21 +146,16 @@ const FeedStream = React.createClass( {
 
 		return (
 			<Stream { ...this.props } store={ store }
-				listName={ this.state.title }
+				listName={ this.translate( 'Search' ) }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
 				cardFactory={ this.cardFactory } >
 				{ this.props.showBack && <HeaderBack /> }
-				<h2>{ this.translate( 'Search' ) }</h2>
-				<p>
-					<FormTextInput
-						type="text"
-						value={ undefined }
-						defaultValue={ this.props.query }
-						ref="searchInput"
-						onChange={ this.debouncedUpdate }
-						placeholder={ this.translate( 'Enter a search term' ) } />
-				</p>
+				<SearchInput
+					initialValue={ this.props.query }
+					onSearch={ this.updateQuery }
+					delaySearch={ true }
+					placeholder={ this.translate( 'Search billions of posts across WordPress.com…' ) } />
 			</Stream>
 		);
 	}
