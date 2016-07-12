@@ -19,15 +19,10 @@ export function firstView( state = initialState, action ) {
 
 		case FIRST_VIEW_HIDE:
 			const hidden = union( state.hidden, [ action.view ] );
-
-			return Object.assign( {}, state, {
-				hidden,
-			} );
+			return { ...state, hidden };
 
 		case ROUTE_SET:
-			return Object.assign( {}, state, {
-				hidden: []
-			} );
+			return { ...state, hidden: [] };
 
 	}
 	return state;
