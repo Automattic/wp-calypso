@@ -398,7 +398,7 @@ const PlansSetup = React.createClass( {
 		const noticeText = this.translate( 'We\'ve installed your plugins, your site is powered up!' );
 		return (
 			<Notice status="is-success" text={ noticeText } showDismiss={ false }>
-				<NoticeAction href={ `/stats/insights/${site.slug}` }>
+				<NoticeAction href={ `/plans/my-plan/${site.slug}` }>
 					{ this.translate( 'Continue' ) }
 				</NoticeAction>
 			</Notice>
