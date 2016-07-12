@@ -32,7 +32,7 @@ export function wasViewHidden( state, view ) {
 	return -1 !== state.ui.firstView.hidden.indexOf( view );
 }
 
-export function switchedToDifferentSection( state ) {
+export function switchedFromDifferentSection( state ) {
 	const section = state.ui.section;
 	const routeSets = filter( getActionLog( state ), entry => entry.type === 'ROUTE_SET' );
 	const lastRouteSetsForSection = takeRightWhile( routeSets,
@@ -46,5 +46,5 @@ export function shouldViewBeVisible( state ) {
 	return isEnabled( 'ui/first-view' ) &&
 		isViewEnabled( state, sectionName ) &&
 		! wasViewHidden( state, sectionName ) &&
-		switchedToDifferentSection( state );
+		switchedFromDifferentSection( state );
 }

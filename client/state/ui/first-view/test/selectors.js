@@ -10,7 +10,7 @@ import {
 	doesViewHaveFirstView,
 	isViewEnabled,
 	wasViewHidden,
-	switchedToDifferentSection
+	switchedFromDifferentSection
 } from '../selectors';
 import {
 	ROUTE_SET
@@ -119,20 +119,20 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#switchedToDifferentSection()', () => {
-		it( 'should return true if the user navigated to a different section', () => {
+	describe( '#switchedFromDifferentSection()', () => {
+		it( 'should return true if the user navigated from a different section', () => {
 			const actions = [
+				{
+					type: ROUTE_SET,
+					path: '/devdocs',
+				},
 				{
 					type: ROUTE_SET,
 					path: '/stats',
 				},
-				{
-					type: ROUTE_SET,
-					path: '/devdocs',
-				}
 			];
 
-			const hasSwitchedSections = switchedToDifferentSection( {
+			const hasSwitchedSections = switchedFromDifferentSection( {
 				ui: {
 					section: {
 						paths: [ '/stats' ]
@@ -144,15 +144,19 @@ describe( 'selectors', () => {
 			expect( hasSwitchedSections ).to.be.true;
 		} );
 
-		it( 'should return false if the user has not navigated to a different section', () => {
+		it( 'should return false if the user has not navigated from a different section', () => {
 			const actions = [
+				{
+					type: ROUTE_SET,
+					path: '/stats/insights',
+				},
 				{
 					type: ROUTE_SET,
 					path: '/stats',
 				}
 			];
 
-			const hasSwitchedSections = switchedToDifferentSection( {
+			const hasSwitchedSections = switchedFromDifferentSection( {
 				ui: {
 					section: {
 						paths: [ '/stats' ]
