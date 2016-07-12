@@ -8,6 +8,7 @@ import {
 	deleteStoredCard,
 	fetchStoredCards
 } from '../actions';
+import { STORED_CARDS, STORED_CARDS_FROM_API } from './fixture';
 import {
 	STORED_CARDS_DELETE,
 	STORED_CARDS_DELETE_COMPLETED,
@@ -32,16 +33,11 @@ describe( 'actions', () => {
 	};
 
 	describe( '#fetchStoredCards', () => {
-		const cards = [
-			{ stored_details_id: 1 },
-			{ stored_details_id: 2 }
-		];
-
 		describe( 'success', () => {
 			before( () => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.get( '/rest/v1.1/me/stored-cards' )
-					.reply( 200, cards );
+					.reply( 200, STORED_CARDS_FROM_API );
 			} );
 
 			it( 'should dispatch fetch/complete actions', () => {
@@ -54,7 +50,7 @@ describe( 'actions', () => {
 				return promise.then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: STORED_CARDS_FETCH_COMPLETED,
-						list: cards
+						list: STORED_CARDS
 					} );
 				} );
 			} );
@@ -85,14 +81,12 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#deleteStoredCard', () => {
-		const card = {
-			stored_details_id: 1337
-		};
+		const card = STORED_CARDS[ 0 ];
 
 		describe( 'success', () => {
 			before( () => {
 				nock( 'https://public-api.wordpress.com:443' )
-					.post( `/rest/v1.1/me/stored-cards/${ card.stored_details_id }/delete` )
+					.post( `/rest/v1.1/me/stored-cards/${ card.id }/delete` )
 					.reply( 200, { success: true } );
 			} );
 
@@ -115,7 +109,7 @@ describe( 'actions', () => {
 		describe( 'fail', () => {
 			before( () => {
 				nock( 'https://public-api.wordpress.com:443' )
-					.post( `/rest/v1.1/me/stored-cards/${ card.stored_details_id }/delete` )
+					.post( `/rest/v1.1/me/stored-cards/${ card.id }/delete` )
 					.reply( 403, error );
 			} );
 

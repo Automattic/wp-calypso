@@ -30,7 +30,7 @@ export const items = ( state = [], action ) => {
 		case STORED_CARDS_FETCH_COMPLETED:
 			return action.list;
 		case STORED_CARDS_DELETE_COMPLETED:
-			return state.filter( item => item.stored_details_id !== action.card.stored_details_id );
+			return state.filter( item => item.id !== action.card.id );
 		// return initial state when serializing/deserializing
 		case SERIALIZE:
 		case DESERIALIZE:

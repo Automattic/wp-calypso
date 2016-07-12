@@ -30,3 +30,20 @@ export const STORED_CARDS_FROM_API = [
 		last_used: '2015-10-22 11:10:10'
 	}
 ];
+
+export const STORED_CARDS = [
+	{
+		id: 1234567,
+		expiry: '2016-01-31',
+		number: 1234,
+		type: 'visa',
+		name: 'John Doe'
+	},
+	{
+		id: 12345,
+		expiry: '2016-11-30',
+		number: 2596,
+		type: 'amex',
+		name: 'Jane Doe'
+	}
+];

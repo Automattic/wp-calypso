@@ -16,7 +16,7 @@ import {
 	STORED_CARDS_DELETE_FAILED
 } from 'state/action-types';
 import reducer from '../reducer';
-import { STORED_CARDS_FROM_API } from './fixture';
+import { STORED_CARDS } from './fixture';
 
 describe( 'items', () => {
 	it( 'should return an object with the initial state', () => {
@@ -38,11 +38,11 @@ describe( 'items', () => {
 	it( 'should return an object with the list of stored cards when fetching completed', () => {
 		const state = reducer( undefined, {
 			type: STORED_CARDS_FETCH_COMPLETED,
-			list: STORED_CARDS_FROM_API
+			list: STORED_CARDS
 		} );
 
 		expect( state ).to.be.eql( {
-			items: STORED_CARDS_FROM_API,
+			items: STORED_CARDS,
 			isFetching: false,
 			isDeleting: false
 		} );
@@ -62,16 +62,16 @@ describe( 'items', () => {
 
 	it( 'should keep the current state and enable isDeleting when requesting a stored card deletion', () => {
 		const state = reducer( deepFreeze( {
-			items: STORED_CARDS_FROM_API,
+			items: STORED_CARDS,
 			isFetching: false,
 			isDeleting: false
 		} ), {
 			type: STORED_CARDS_DELETE,
-			card: STORED_CARDS_FROM_API[ 0 ]
+			card: STORED_CARDS[ 0 ]
 		} );
 
 		expect( state ).to.be.eql( {
-			items: STORED_CARDS_FROM_API,
+			items: STORED_CARDS,
 			isFetching: false,
 			isDeleting: true
 		} );
@@ -79,16 +79,16 @@ describe( 'items', () => {
 
 	it( 'should remove a stored card from the list if the stored card deletion request succeeded', () => {
 		const state = reducer( deepFreeze( {
-			items: STORED_CARDS_FROM_API,
+			items: STORED_CARDS,
 			isFetching: false,
 			isDeleting: true
 		} ), {
 			type: STORED_CARDS_DELETE_COMPLETED,
-			card: STORED_CARDS_FROM_API[ 0 ]
+			card: STORED_CARDS[ 0 ]
 		} );
 
 		expect( state ).to.be.eql( {
-			items: [ STORED_CARDS_FROM_API[ 1 ] ],
+			items: [ STORED_CARDS[ 1 ] ],
 			isFetching: false,
 			isDeleting: false
 		} );
@@ -96,7 +96,7 @@ describe( 'items', () => {
 
 	it( 'should not change the list of items if the stored card deletion request failed', () => {
 		const state = reducer( deepFreeze( {
-			items: STORED_CARDS_FROM_API,
+			items: STORED_CARDS,
 			isFetching: false,
 			isDeleting: true
 		} ), {
@@ -104,7 +104,7 @@ describe( 'items', () => {
 		} );
 
 		expect( state ).to.be.eql( {
-			items: STORED_CARDS_FROM_API,
+			items: STORED_CARDS,
 			isFetching: false,
 			isDeleting: false
 		} );
