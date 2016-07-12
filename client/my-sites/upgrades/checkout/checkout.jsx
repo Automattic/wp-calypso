@@ -14,19 +14,21 @@ var connect = require( 'react-redux' ).connect,
 var analytics = require( 'lib/analytics' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	clearPurchases = require( 'lib/upgrades/actions/purchases' ).clearPurchases,
-	DomainDetailsForm = require( './domain-details-form' ),
-	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails,
-	observe = require( 'lib/mixins/data-observe' ),
-	fetchReceiptCompleted = require( 'state/receipts/actions' ).fetchReceiptCompleted,
 	clearSitePlans = require( 'state/sites/plans/actions' ).clearSitePlans,
-	purchasePaths = require( 'me/purchases/paths' ),
-	SecurePaymentForm = require( './secure-payment-form' ),
+	DomainDetailsForm = require( './domain-details-form' ),
+	fetchReceiptCompleted = require( 'state/receipts/actions' ).fetchReceiptCompleted,
 	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
-	upgradesActions = require( 'lib/upgrades/actions' ),
+	getStoredCards = require( 'state/stored-cards/selectors' ).getStoredCards,
+	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails,
+	notices = require( 'notices' ),
+	observe = require( 'lib/mixins/data-observe' ),
+	purchasePaths = require( 'me/purchases/paths' ),
+	QueryStoredCards = require( 'components/data/query-stored-cards' ),
+	SecurePaymentForm = require( './secure-payment-form' ),
+	supportPaths = require( 'lib/url/support' ),
 	themeItem = require( 'lib/cart-values/cart-items' ).themeItem,
 	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
-	notices = require( 'notices' ),
-	supportPaths = require( 'lib/url/support' );
+	upgradesActions = require( 'lib/upgrades/actions' );
 
 import {
 	isValidFeatureKey,
@@ -35,9 +37,10 @@ import {
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 
 const Checkout = React.createClass( {
-	mixins: [ observe( 'sites', 'cards', 'productsList' ) ],
+	mixins: [ observe( 'sites', 'productsList' ) ],
 
 	propTypes: {
+		cards: React.PropTypes.array.isRequired,
 		selectedFeature: React.PropTypes.string
 	},
 
@@ -95,7 +98,7 @@ const Checkout = React.createClass( {
 		props = props || this.props;
 
 		analytics.tracks.recordEvent( 'calypso_checkout_page_view', {
-			saved_cards: props.cards.get().length,
+			saved_cards: props.cards.length,
 			is_renewal: cartItems.hasRenewalItem( props.cart )
 		} );
 	},
@@ -249,6 +252,8 @@ const Checkout = React.createClass( {
 		return (
 			<div className="main main-column" role="main">
 				<div className="checkout">
+					<QueryStoredCards />
+
 					{ this.content() }
 				</div>
 			</div>
@@ -257,7 +262,11 @@ const Checkout = React.createClass( {
 } );
 
 module.exports = connect(
-	undefined,
+	function( state ) {
+		return {
+			cards: getStoredCards( state )
+		}
+	},
 	function( dispatch ) {
 		return {
 			clearSitePlans: function( siteId ) {
