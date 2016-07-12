@@ -23,7 +23,7 @@ import makeEmbedsSecure from 'lib/post-normalizer/rule-content-make-embeds-secur
 import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
 import safeImages from 'lib/post-normalizer/rule-content-safe-images';
 import wordCount from 'lib/post-normalizer/rule-content-word-count';
-import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds} from 'lib/post-normalizer/rule-content-disable-autoplay';
+import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from 'lib/post-normalizer/rule-content-disable-autoplay';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import firstPassCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
 import makeSiteIdSafeForApi from 'lib/post-normalizer/rule-make-site-id-safe-for-api';
@@ -34,6 +34,7 @@ import stripHtml from 'lib/post-normalizer/rule-strip-html';
 import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
+import detectLuminosity from 'lib/post-normalizer/rule-detect-luminosity';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
 
 /**
@@ -50,7 +51,7 @@ function discoverFullBleedImages( post, dom ) {
 		const images = dom.querySelectorAll( '.fullbleed img, img.fullbleed' );
 		forEach( images, function( image ) {
 			const newSrc = resizeImageUrl( image.src, { w: DISCOVER_FULL_BLEED_WIDTH } );
-			let oldImageObject = find( post.content_images, { src: image.src } );
+			const oldImageObject = find( post.content_images, { src: image.src } );
 			oldImageObject.src = newSrc;
 			image.src = newSrc;
 		} );
@@ -64,11 +65,10 @@ function discoverFullBleedImages( post, dom ) {
  * @return {object}            The classified post
  */
 function classifyPost( post ) {
-	var displayType = DISPLAY_TYPES.UNCLASSIFIED,
-		canonicalImage = post.canonical_image,
-		canonicalAspect;
+	let displayType = DISPLAY_TYPES.UNCLASSIFIED;
+	const canonicalImage = post.canonical_image;
 
-	if ( post.images && post.images.length === 1 && post.images[0].naturalWidth >= PHOTO_ONLY_MIN_WIDTH && post.word_count < 100 ) {
+	if ( post.images && post.images.length === 1 && post.images[ 0 ].naturalWidth >= PHOTO_ONLY_MIN_WIDTH && post.word_count < 100 ) {
 		displayType ^= DISPLAY_TYPES.PHOTO_ONLY;
 	}
 
@@ -78,7 +78,7 @@ function classifyPost( post ) {
 		}
 
 		if ( canonicalImage.height && canonicalImage.width ) {
-			canonicalAspect = canonicalImage.width / canonicalImage.height;
+			const canonicalAspect = canonicalImage.width / canonicalImage.height;
 
 			if ( canonicalAspect >= 2 && canonicalImage.width >= 600 ) {
 				displayType ^= DISPLAY_TYPES.LANDSCAPE_BANNER;
@@ -164,6 +164,7 @@ export function runFastRules( post ) {
 const slowSyncRules = flow( [
 	keepValidImages( 144, 72 ),
 	pickCanonicalImage,
+	detectLuminosity,
 	classifyPost
 ] );
 
