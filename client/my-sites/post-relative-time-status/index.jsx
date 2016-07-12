@@ -31,27 +31,32 @@ module.exports = React.createClass( {
 	},
 
 	getRelativeTimeText: function() {
-		var status = this.props.post.status,
-			time, timeReference;
+		const status = this.props.post.status;
 
+		let time;
 		if ( status === 'draft' || status === 'pending' ) {
 			time = this.props.post.modified;
-			timeReference = ( <small>{ this.translate( ' (last-modified)' ) }</small> );
 		} else if ( status !== 'new' ) {
 			time = this.props.post.date;
-			timeReference = null;
 		}
 
 		if ( ! time ) {
-			return null;
+			return;
 		}
 
-		return ( <span className="time"><Gridicon icon="time" size={ 18 } /><span className="time-text">{ this.moment( time ).fromNow() }</span>{ timeReference }</span> );
+		return (
+			<span className="post-relative-time-status__time">
+				<Gridicon icon="time" size={ 18 } />
+				<span className="post-relative-time-status__time-text">
+					{ this.moment( time ).fromNow() }
+				</span>
+			</span>
+		);
 	},
 
 	getStatusText: function() {
 		var status = this.props.post.status,
-			statusClassName = 'status',
+			statusClassName = 'post-relative-time-status__status',
 			statusIcon = 'aside',
 			statusText;
 
@@ -81,7 +86,14 @@ module.exports = React.createClass( {
 		}
 
 		if ( statusText ) {
-			return ( <span className={ statusClassName }><Gridicon icon={ statusIcon } size={ 18 } /><span className="status-text">{ statusText }</span></span> );
+			return (
+				<span className={ statusClassName }>
+					<Gridicon icon={ statusIcon } size={ 18 } />
+					<span className="post-relative-time-status__status-text">
+						{ statusText }
+					</span>
+				</span>
+			);
 		}
 	},
 
