@@ -17,6 +17,8 @@ import { isValidFeatureKey } from 'lib/plans';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { abtest } from 'lib/abtest';
 
+const inSkipPlansTest = () => ( abtest( 'personalPlan' ) === 'show' && abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree' );
+
 const PlanActions = React.createClass( {
 	propTypes: {
 		plan: React.PropTypes.object,
@@ -111,7 +113,7 @@ const PlanActions = React.createClass( {
 			label = this.translate( 'Purchase Now' );
 		}
 
-		if ( this.props.isInSignup && abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree' ) {
+		if ( this.props.isInSignup && inSkipPlansTest() ) {
 			label = this.translate( 'Select %(plan)s', {
 				args: {
 					plan: this.props.plan.product_name_short
