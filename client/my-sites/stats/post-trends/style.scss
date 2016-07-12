@@ -3,6 +3,9 @@
 	user-select: none;
 	position: relative;
 	width: 100%;
+	@include breakpoint( "<480px" ) {
+		display: none;
+	}
 }
 
 .post-trends__title {
