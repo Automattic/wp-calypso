@@ -13,7 +13,7 @@ $plan-features-header-banner-height: 20px;
 	margin: 0 16px;
 	display: block;
 
-	@include breakpoint( ">660px" ) {
+	@media ( min-width: 840px ) {
 		display: none;
 	}
 
@@ -61,7 +61,7 @@ $plan-features-header-banner-height: 20px;
 	margin-top: -16px;
 	display: none;
 
-	@include breakpoint( ">660px" ) {
+	@media ( min-width: 840px ) {
 		display: table;
 	}
 
