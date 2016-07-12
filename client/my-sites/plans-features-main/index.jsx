@@ -59,7 +59,7 @@ class PlansFeaturesMain extends Component {
 		const plans = filter(
 			[
 				hideFreePlan ? null : PLAN_FREE,
-				personalPlanTestEnabled ? PLAN_PERSONAL : null,
+				isPersonalPlanEnabled ? PLAN_PERSONAL : null,
 				PLAN_PREMIUM,
 				PLAN_BUSINESS
 			],
