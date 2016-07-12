@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React from 'react';
-import { connect }	from 'react-redux';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 
 /**
@@ -13,21 +13,17 @@ import classnames from 'classnames';
 import Main from 'components/main';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 
-const StatsMain = React.createClass( {
-	displayName: 'StatsMain',
+const StatsMain = ( { isFirstViewVisible, children } ) => {
+	const classes = classnames( {
+		'is-first-view-visible': isFirstViewVisible
+	} );
 
-	render: function() {
-		const classes = classnames( {
-			'is-first-view-visible': this.props.isFirstViewVisible
-		} );
-
-		return (
-			<Main className={ classes }>
-				{ this.props.children }
-			</Main>
-		);
-	}
-} );
+	return (
+		<Main className={ classes }>
+			{ children }
+		</Main>
+	);
+};
 
 export default connect(
 	( state ) => {
