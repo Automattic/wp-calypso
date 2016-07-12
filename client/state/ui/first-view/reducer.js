@@ -8,8 +8,6 @@ import union from 'lodash/union';
  */
 
 import {
-	DESERIALIZE,
-	SERIALIZE,
 	FIRST_VIEW_HIDE,
 	ROUTE_SET,
 } from 'state/action-types';
