@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import includes from 'lodash/includes';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -44,6 +45,8 @@ const SECTION_NAME_WHITELIST = [
 	'upgrades'
 ];
 
+const NEW_USER_CUT_OFF_AGE_IN_DAYS = 7;
+
 const PushNotificationPrompt = React.createClass( {
 	displayName: 'PushNotificationPrompt',
 
@@ -79,6 +82,13 @@ const PushNotificationPrompt = React.createClass( {
 		return <Notice className="push-notification__notice" text={ noticeText } icon="bell" onDismissClick={ this.props.dismissNotice } />;
 	},
 
+	isNewUser: function( user ) {
+		const userCreated = moment.utc( user.date );
+		const now = moment().utc();
+
+		return userCreated.isAfter( now.subtract( NEW_USER_CUT_OFF_AGE_IN_DAYS, 'days' ) );
+	},
+
 	render: function() {
 		if (
 			! this.props.isAuthorizationLoaded ||
@@ -91,7 +101,7 @@ const PushNotificationPrompt = React.createClass( {
 		}
 		const user = this.props.user.get();
 
-		if ( ! user || ! user.email_verified ) {
+		if ( ! user || ! user.email_verified || this.isNewUser( user ) ) {
 			return null;
 		}
 
