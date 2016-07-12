@@ -7,6 +7,7 @@ var Dispatcher = require( 'dispatcher' ),
 	ActionType = require( './constants' ).action,
 	FeedPostStoreActions = require( 'lib/feed-post-store/actions' ),
 	feedPostListCache = require( './feed-stream-cache' ),
+	SiteStoreActions = require( 'lib/reader-site-store/actions' ),
 	FeedStreamActions;
 
 function getNextPageParams( store ) {
@@ -71,6 +72,10 @@ FeedStreamActions = {
 						blogId: post.meta.data.discover_original_post.site_ID,
 						postId: post.meta.data.discover_original_post.ID
 					} );
+				}
+
+				if ( get( post, 'meta.data.site' ) ) {
+					SiteStoreActions.receiveFetch( post.site_ID, null, post.meta.data.site );
 				}
 
 				if ( post && get( post, 'meta.data.post' ) ) {

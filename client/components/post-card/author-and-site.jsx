@@ -5,6 +5,7 @@ import React from 'react';
 import partial from 'lodash/partial';
 import noop from 'lodash/noop';
 import { localize } from 'i18n-calypso';
+import Immutable from 'immutable';
 
 /**
  * Internal Dependencies
@@ -13,6 +14,9 @@ import Gravatar from 'components/gravatar';
 
 export function AuthorAndSite( { translate, post, site, feed, showGravatar = false, onClick = noop } ) {
 	const displayName = post.author && post.author.name;
+	if ( Immutable.Iterable.isIterable( site ) ) {
+		site = site.toJS();
+	}
 	const siteName = site && site.title || post.site_name;
 
 	const username = (
