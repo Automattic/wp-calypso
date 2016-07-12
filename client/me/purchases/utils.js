@@ -28,13 +28,6 @@ function goToList() {
 	page( paths.list() );
 }
 
-function goToEditCardDetails( props ) {
-	const { id, payment: { creditCard } } = getPurchase( props ),
-		{ slug } = getSelectedSite( props );
-
-	page( paths.editCardDetails( slug, id, creditCard.id ) );
-}
-
 function goToManagePurchase( props ) {
 	const { id } = getPurchase( props ),
 		{ slug } = getSelectedSite( props );
@@ -72,7 +65,6 @@ export {
 	getPurchase,
 	getSelectedSite,
 	goToCancelPurchase,
-	goToEditCardDetails,
 	goToList,
 	goToManagePurchase,
 	isDataLoading,
