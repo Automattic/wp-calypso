@@ -29,12 +29,6 @@ $plan-features-header-banner-height: 20px;
 		padding: 0;
 	}
 
-	.plan-features__header .plan-features__header-figure {
-		display: block;
-		width: 50px;
-		height: 50px;
-	}
-
 	.plan-features__header-banner {
 		display: none;
 	}
@@ -47,6 +41,14 @@ $plan-features-header-banner-height: 20px;
 	.plan-features__item:last-child {
 		border-bottom: none;
 	}
+}
+
+.plan-features__mobile .plan-features__header .plan-features__header-figure,
+.plan-features__table.has-1-cols .plan-features__header-figure,
+.plan-features__table.has-2-cols .plan-features__header-figure {
+	display: block;
+	width: 50px;
+	height: 50px;
 }
 
 .plan-features__mobile-plan {

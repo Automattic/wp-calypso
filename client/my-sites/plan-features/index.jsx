@@ -42,12 +42,17 @@ import FoldableCard from 'components/foldable-card';
 class PlanFeatures extends Component {
 
 	render() {
+		const { planProperties } = this.props;
+
+		const tableClasses = classNames( 'plan-features__table',
+			`has-${ planProperties.length }-cols` );
+
 		return (
 			<div className="plan-features">
 				<div className="plan-features__mobile">
 					{ this.renderMobileView() }
 				</div>
-				<table className="plan-features__table">
+				<table className={ tableClasses }>
 					<tbody>
 						<tr>
 							{ this.renderPlanHeaders() }
