@@ -491,6 +491,7 @@
 	padding:0;
 	margin: 8px 0 0 0;
 	overflow:visible;
+	text-indent: 0px !important;
 }
 
 #habla_window_div .habla_conversation_person1 {
@@ -842,7 +843,7 @@
 	display: block;
 }
 
-#habla_conversation_div .habla_conversation_text_span {
+#habla_conversation_div .habla_conversation_text_span.hbl_pal_main_fg {
 	display: block;
 	margin-left: 48px;
 }
@@ -855,11 +856,6 @@
 	text-transform: capitalize;
 	display: inline-block;
 	white-space: nowrap;
-}
-
-#habla_conversation_div .habla_conversation_p_item:not(:first-child) .hbl_pal_local_fg,
-#habla_conversation_div .habla_conversation_p_item:not(:first-child) .hbl_pal_remote_fg {
-	margin-top: 16px;
 }
 
 #habla_conversation_div .olrk_avatar {

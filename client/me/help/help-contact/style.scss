@@ -36,6 +36,7 @@
 
 		#habla_chatform_form {
 			margin-top: 0px;
+			padding-left: 0px;
 		}
 
 		#habla_input_div {
@@ -47,7 +48,7 @@
 
 		#habla_wcsend_input {
 			border: none;
-			resize: none;
+			resize: none !important;
 		}
 
 		#habla_middle_div {
@@ -57,6 +58,7 @@
 		#habla_conversation_div .habla_conversation_p_item {
 			margin-left: 14px;
 			margin-right: 10px;
+			margin-top: 8px;
 		}
 	}
 }
