@@ -3,23 +3,21 @@
  */
 
 import {
-	FIRST_VIEW_DISABLE,
-	FIRST_VIEW_ENABLE,
 	FIRST_VIEW_HIDE,
-	FIRST_VIEW_SHOW,
 } from 'state/action-types';
 
+import { savePreference } from 'state/preferences/actions';
+import { getPreference } from 'state/preferences/selectors';
+
 export function disableView( { view } ) {
-	return {
-		type: FIRST_VIEW_DISABLE,
-		view,
+	return ( dispatch, getState ) => {
+		dispatch( persistToPreferences( { getState, view, disabled: true } ) );
 	};
 }
 
 export function enableView( { view } ) {
-	return {
-		type: FIRST_VIEW_ENABLE,
-		view,
+	return ( dispatch, getState ) => {
+		dispatch( persistToPreferences( { getState, view, disabled: false } ) );
 	};
 }
 
@@ -30,9 +28,12 @@ export function hideView( { view } ) {
 	};
 }
 
-export function showView( { view } ) {
-	return {
-		type: FIRST_VIEW_SHOW,
-		view,
-	};
+function persistToPreferences( { getState, view, disabled } ) {
+	return savePreference( 'firstViewHistory', [
+		...getPreference( getState(), 'firstViewHistory' ), {
+			view,
+			timestamp: Date.now(),
+			disabled,
+		}
+	] );
 }

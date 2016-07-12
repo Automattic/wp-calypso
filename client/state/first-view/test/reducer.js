@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
+/*import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
+/*import {
 	FIRST_VIEW_DISABLE,
 	FIRST_VIEW_DISABLED_SET,
 	FIRST_VIEW_ENABLE,
@@ -149,3 +149,4 @@ describe( 'reducer', () => {
 		} );
 	} );
 } );
+*/

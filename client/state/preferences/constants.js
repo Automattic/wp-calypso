@@ -4,9 +4,20 @@ export const DEFAULT_PREFERENCES = {
 		schema: { 'enum': [ null, 'html', 'tinymce' ] },
 		'default': null
 	},
-	firstViewDisabledViews: {
-		schema: { type: 'array', items: { type: 'string' } },
-		'default': []
+	firstViewHistory: {
+		schema: {
+			type: 'array',
+			items: {
+				type: 'object',
+				properties: {
+					view: { type: 'string' },
+					timestamp: { type: 'number', minimum: 0 },
+					disabled: { type: 'boolean' }
+				},
+				required: [ 'view', 'timestamp', 'disabled' ],
+			},
+		},
+		'default': [],
 	},
 	mediaModalGalleryInstructionsDismissed: {
 		schema: { type: 'boolean' },
