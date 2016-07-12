@@ -13,7 +13,7 @@ export default class extends Component {
 	render() {
 		return (
 			<Provider store={ this.props.store }>
-				<GuidedTransfer />
+				<GuidedTransfer hostSlug={ this.props.hostSlug } />
 			</Provider>
 		);
 	}
