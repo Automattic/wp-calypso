@@ -27,7 +27,6 @@ import userUtilities from 'lib/user/utils';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
-import Gridicon from 'components/gridicon';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSiteByUrl } from 'state/sites/selectors';
@@ -356,12 +355,15 @@ const LoggedInForm = React.createClass( {
 
 	renderFooterLinks() {
 		const { queryObject, authorizeSuccess, isAuthorizing } = this.props.jetpackConnectAuthorize;
+		const { blogname, redirect_after_auth, _wp_nonce } = queryObject;
 		const loginUrl = config( 'login_url' ) +
 			'?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) +
-			'&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
+			'&_wp_nonce=' + encodeURIComponent( _wp_nonce );
 		const backToWpAdminLink = (
-			<LoggedOutFormLinkItem icon={ true } href={ queryObject.redirect_after_auth }>
-				{ this.translate( 'Cancel and go back to my site' ) } <Gridicon size={ 18 } icon="external" />
+			<LoggedOutFormLinkItem icon={ true } href={ redirect_after_auth }>
+				{ this.translate( 'Return to %(sitename)s', {
+					args: { sitename: decodeEntities( blogname ) }
+				} ) }
 			</LoggedOutFormLinkItem>
 		);
 
@@ -507,5 +509,10 @@ export default connect(
 			isFetchingSites
 		};
 	},
-	dispatch => bindActionCreators( { requestSites, recordTracksEvent, authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )
+	dispatch => bindActionCreators( { requestSites,
+		recordTracksEvent,
+		authorize,
+		createAccount,
+		activateManage,
+		goBackToWpAdmin }, dispatch )
 )( JetpackConnectAuthorizeForm );
