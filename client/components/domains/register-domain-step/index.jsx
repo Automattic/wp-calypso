@@ -605,7 +605,7 @@ const RegisterDomainStep = React.createClass( {
 				break;
 
 			case 'mappable_but_recently_mapped':
-				message = this.translate( 'This domain cannot currently be mapped' );
+				message = this.translate( 'This domain cannot currently be mapped.' );
 				break;
 
 			default:
