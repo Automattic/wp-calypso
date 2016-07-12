@@ -8,6 +8,7 @@ import React from 'react';
  */
 import SmallPostCard from 'components/post-card/small';
 import SearchPostCard from 'components/post-card/search';
+import DisplayTypes from 'state/reader/posts/display-types';
 
 const smallItems = [
 	{
@@ -87,7 +88,7 @@ const searchItems = [
 	{
 		post: {
 			ID: 1,
-			title: 'A first post',
+			title: 'A regular post',
 			content: 'Look, I have content!',
 			site_ID: 1,
 			site_URL: 'http://example.com',
@@ -116,6 +117,40 @@ const searchItems = [
 		feed: {
 			feed_ID: 1
 		}
+	},
+	{
+		post: {
+			ID: 2,
+			title: 'A photo post',
+			content: 'Look, I have content!',
+			site_ID: 2,
+			site_URL: 'http://example.com',
+			feed_ID: 2,
+			feed_item_ID: 2,
+			display_type: DisplayTypes.PHOTO_ONLY,
+			author: {
+				name: 'Sue Smith',
+				email: 'sue@example.com'
+			},
+			discussion: {
+				comment_count: 80
+			},
+			canonical_image: {
+				uri: 'https://placekitten.com/600/400',
+				width: 300,
+				height: 200
+			},
+			date: '1976-09-15T10:12:00Z',
+
+			excerpt: 'Amazing cat photos updated daily. Come back at three for tabbies.'
+		},
+		site: {
+			ID: 2,
+			title: 'My Site'
+		},
+		feed: {
+			feed_ID: 2
+		}
 	}
 ];
 
@@ -128,14 +163,18 @@ const PostCards = React.createClass( {
 				<h2>
 					<a href="/devdocs/app-components/post-card">Post Cards</a>
 				</h2>
+
 				<h3>Small Post Cards</h3>
 				<div>
 					{ smallItems.map( item => <SmallPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
 				</div>
 
-				<h3>Search Cards</h3>
+				<h2>
+					<a href="/devdocs/app-components/post-card">Search Cards</a>
+				</h2>
+
 				<div>
-					{ searchItems.map( item => <SearchPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
+					{ searchItems.map( item => <SearchPostCard key={ item.post.site_ID } post={ item.post } site={ item.site } /> ) }
 				</div>
 			</div>
 		);
