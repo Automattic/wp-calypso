@@ -31,7 +31,6 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { isPremium, getForumUrl } from 'my-sites/themes/helpers';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
-import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import actionLabels from 'my-sites/themes/action-labels';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
@@ -60,7 +59,6 @@ const ThemeSheet = React.createClass( {
 		// Connected props
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
-		currentTheme: React.PropTypes.object,
 		backPath: React.PropTypes.string,
 	},
 
@@ -86,15 +84,10 @@ const ThemeSheet = React.createClass( {
 		this.setState( { selectedAction: null } );
 	},
 
-	isActive() {
-		const { id, currentTheme } = this.props;
-		return currentTheme && currentTheme.id === id;
-	},
-
 	onPrimaryClick() {
 		if ( ! this.props.isLoggedIn ) {
 			this.props.signup( this.props );
-		} else if ( this.isActive() ) {
+		} else if ( this.props.active ) {
 			this.props.customize( this.props, this.props.selectedSite );
 		} else if ( this.props.price ) {
 			this.selectSiteAndDispatch( 'purchase' );
@@ -140,7 +133,7 @@ const ThemeSheet = React.createClass( {
 
 	renderBar() {
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
-		const title = this.props.name || placeholder;
+		const title = this.isLoaded() || placeholder;
 		const tag = this.props.author ? i18n.translate( 'by %(author)s', { args: { author: this.props.author } } ) : placeholder;
 
 		return (
@@ -310,7 +303,7 @@ const ThemeSheet = React.createClass( {
 
 	renderPrice() {
 		let price = this.props.price;
-		if ( ! this.isLoaded() || this.isActive() ) {
+		if ( ! this.isLoaded() || this.props.active ) {
 			price = '';
 		} else if ( ! isPremium( this.props ) ) {
 			price = i18n.translate( 'Free' );
@@ -324,7 +317,7 @@ const ThemeSheet = React.createClass( {
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 
 		let actionTitle;
-		if ( this.isActive() ) {
+		if ( this.props.active ) {
 			actionTitle = i18n.translate( 'Customize' );
 		} else if ( isLoggedIn && ! price ) {
 			actionTitle = i18n.translate( 'Activate this design' );
@@ -398,9 +391,8 @@ export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
-		const currentTheme = getCurrentTheme( state, selectedSite && selectedSite.ID );
 		const backPath = getBackPath( state );
-		return { selectedSite, siteSlug, currentTheme, backPath };
+		return { selectedSite, siteSlug, backPath };
 	},
 	{ signup, purchase, activate, customize }
 )( ThemeSheet );
