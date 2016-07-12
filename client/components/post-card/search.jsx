@@ -11,10 +11,10 @@ import partial from 'lodash/partial';
  */
 import Card from 'components/card';
 import AuthorAndSite from './author-and-site';
-import PostTime from 'reader/post-time';
 import FollowButton from 'reader/follow-button';
 import LikeButton from 'reader/like-button';
 import CommentButton from 'components/comment-button';
+import DisplayTypes from 'state/reader/posts/display-types';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -39,8 +39,10 @@ function SearchByline( { post, site, feed } ) {
 
 export function SearchPostCard( { post, site, feed, onClick = noop, onCommentClick = noop } ) {
 	const featuredImage = post.canonical_image;
+	const hasPost = !! post;
 	const classes = classnames( 'post-card__search', {
-		'has-thumbnail': !! featuredImage
+		'has-thumbnail': !! featuredImage,
+		'is-photo': hasPost && ( post.display_type & DisplayTypes.PHOTO_ONLY )
 	} );
 	return (
 		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
