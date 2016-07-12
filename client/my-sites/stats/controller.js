@@ -1,12 +1,10 @@
 /**
  * External Dependencies
  */
-import ReactDom from 'react-dom';
 import React from 'react';
 import store from 'store';
 import page from 'page';
 import i18n from 'i18n-calypso';
-import { Provider } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -18,6 +16,7 @@ import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import layoutFocus from 'lib/layout-focus';
 import titleActions from 'lib/screen-title/actions';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const user = userFactory();
 const sites = sitesFactory();
@@ -171,20 +170,19 @@ module.exports = {
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
-		ReactDom.render(
-			React.createElement( Provider, { store: context.store },
-				React.createElement( StatsComponent, {
-					site: site,
-					followList: followList,
-					commentsList: commentsList,
-					tagsList: tagsList,
-					wpcomFollowersList: wpcomFollowersList,
-					emailFollowersList: emailFollowersList,
-					commentFollowersList: commentFollowersList,
-					summaryDate: summaryDate
-				} )
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			React.createElement( StatsComponent, {
+				site: site,
+				followList: followList,
+				commentsList: commentsList,
+				tagsList: tagsList,
+				wpcomFollowersList: wpcomFollowersList,
+				emailFollowersList: emailFollowersList,
+				commentFollowersList: commentFollowersList,
+				summaryDate: summaryDate
+			} ),
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -225,16 +223,15 @@ module.exports = {
 
 			recordVisitDate();
 
-			ReactDom.render(
-				React.createElement( Provider, { store: context.store },
-					React.createElement( StatsComponent, {
-						period: activeFilter.period,
-						sites: sites,
-						path: context.pathname,
-						user: user
-					} )
-				),
-				document.getElementById( 'primary' )
+			renderWithReduxStore(
+				React.createElement( StatsComponent, {
+					period: activeFilter.period,
+					sites: sites,
+					path: context.pathname,
+					user: user
+				} ),
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 	},
@@ -414,7 +411,7 @@ module.exports = {
 
 			siteComponent = SiteStatsComponent;
 
-			ReactDom.render(
+			renderWithReduxStore(
 				React.createElement( siteComponent, {
 					date: date,
 					charts: charts,
@@ -443,7 +440,8 @@ module.exports = {
 					searchTermsList: searchTermsList,
 					slug: siteDomain
 				} ),
-				document.getElementById( 'primary' )
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 	},
@@ -572,7 +570,7 @@ module.exports = {
 				analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) + ' > ' + titlecase( context.params.module )
 			);
 
-			ReactDom.render(
+			renderWithReduxStore(
 				React.createElement( StatsSummaryComponent, {
 					date: date,
 					context: context,
@@ -585,7 +583,8 @@ module.exports = {
 					siteId: siteId,
 					period: period
 				} ),
-				document.getElementById( 'primary' )
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 	},
@@ -623,7 +622,7 @@ module.exports = {
 			analytics.pageView.record( '/stats/' + postOrPage + '/:post_id/:site',
 				analyticsPageTitle + ' > Single ' + titlecase( postOrPage ) );
 
-			ReactDom.render(
+			renderWithReduxStore(
 				React.createElement( StatsPostComponent, {
 					siteId: siteId,
 					postId: postId,
@@ -632,7 +631,8 @@ module.exports = {
 					path: context.path,
 					postViewsList: postViewsList
 				} ),
-				document.getElementById( 'primary' )
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 	},
@@ -694,7 +694,7 @@ module.exports = {
 				analyticsPageTitle + ' > Followers > ' + titlecase( followType )
 			);
 
-			ReactDom.render(
+			renderWithReduxStore(
 				React.createElement( FollowsComponent, {
 					path: context.path,
 					sites: sites,
@@ -707,7 +707,8 @@ module.exports = {
 					followList: followList,
 					domain: siteDomain
 				} ),
-				document.getElementById( 'primary' )
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 	}

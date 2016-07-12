@@ -14,7 +14,8 @@ import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
 import HeaderCake from 'components/header-cake';
 import { decodeEntities } from 'lib/formatting';
-import Main from 'components/main';
+import StatsMain from '../stats-main';
+import StatsFirstView from '../stats-first-view';
 
 export default React.createClass( {
 	displayName: 'StatsPostDetail',
@@ -55,7 +56,9 @@ export default React.createClass( {
 		}
 
 		return (
-			<Main>
+			<StatsMain>
+				<StatsFirstView />
+
 				<HeaderCake onClick={ this.goBack }>
 					{ title }
 				</HeaderCake>
@@ -84,7 +87,7 @@ export default React.createClass( {
 					postViewsList={ this.props.postViewsList } />
 
 				<PostWeeks postViewsList={ this.props.postViewsList } />
-			</Main>
+			</StatsMain>
 		);
 	}
 } );

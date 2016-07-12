@@ -22,7 +22,8 @@ import touchDetect from 'lib/touch-detect';
 import MostPopular from 'my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
-import Main from 'components/main';
+import StatsMain from '../stats-main';
+import StatsFirstView from '../stats-first-view';
 
 export default React.createClass( {
 	displayName: 'StatsInsights',
@@ -74,7 +75,8 @@ export default React.createClass( {
 		// TODO: should be refactored into separate components
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Main>
+			<StatsMain>
+				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation section="insights" site={ site } />
 				<div id="my-stats-content">
@@ -116,7 +118,7 @@ export default React.createClass( {
 						</div>
 					</div>
 				</div>
-			</Main>
+			</StatsMain>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}

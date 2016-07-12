@@ -71,6 +71,7 @@
 		"resume-editing": true,
 		"rubberband-scroll-disable": true,
 		"settings/security/monitor": true,
+		"stats/first-view": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
