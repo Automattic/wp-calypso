@@ -86,7 +86,7 @@ export default React.createClass( {
 		}
 
 		const selectedSite = sites.getSelectedSite();
-		const url = plansLink( '/plans/compare', selectedSite );
+		const url = plansLink( '/start/plans/compare', selectedSite );
 		const compareString = this.translate( 'Compare Plan Features' );
 
 		return (
