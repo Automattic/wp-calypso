@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import page from'page';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -10,6 +10,7 @@ import page from'page';
 import DomainMainPlaceholder from 'my-sites/upgrades/domain-management/components/domain/main-placeholder';
 import EditContactInfoFormCard from './form-card';
 import EditContactInfoPrivacyEnabledCard from './privacy-enabled-card';
+import NonOwnerCard from 'my-sites/upgrades/domain-management/components/domain/non-owner-card';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import Main from 'components/main';
 import paths from 'my-sites/upgrades/paths';
@@ -39,8 +40,6 @@ const EditContactInfo = React.createClass( {
 					selectedDomainName={ this.props.selectedDomainName }>
 					{ this.translate( 'Edit Contact Info' ) }
 				</Header>
-
-				<SectionHeader label={ this.translate( 'Edit Contact Info' ) } />
 				{ this.getCard() }
 			</Main>
 		);
@@ -53,15 +52,22 @@ const EditContactInfo = React.createClass( {
 	getCard() {
 		const domain = getSelectedDomain( this.props );
 
+		if ( ! domain.isCurrentUserOwner ) {
+			return <NonOwnerCard selectedDomainName={ this.props.selectedDomainName } />;
+		}
+
 		if ( domain.hasPrivacyProtection ) {
 			return <EditContactInfoPrivacyEnabledCard />;
 		}
 
 		return (
-			<EditContactInfoFormCard
-				contactInformation={ this.props.whois.data }
-				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.selectedSite } />
+			<div>
+				<SectionHeader label={ this.translate( 'Edit Contact Info' ) } />
+				<EditContactInfoFormCard
+					contactInformation={ this.props.whois.data }
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSite={ this.props.selectedSite } />
+			</div>
 		);
 	},
 

@@ -39,6 +39,7 @@ describe( 'assembler', () => {
 			googleAppsSubscription: undefined,
 			hasPrivacyProtection: undefined,
 			isAutoRenewing: undefined,
+			isCurrentUserOwner: undefined,
 			isPendingIcannVerification: undefined,
 			isPrimary: false,
 			name: DOMAIN_NAME,
