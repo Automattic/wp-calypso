@@ -237,7 +237,9 @@ const PlanActions = React.createClass( {
 			const link = purchasesPaths.managePurchase( this.props.site.slug, this.props.sitePlan.id );
 
 			return (
-				<a href={ link } className="button plan-actions__upgrade-button">{ this.translate( 'Manage Plan', { context: 'Link to current plan from /plans/' } ) }</a>
+				<a href={ link } className="button plan-actions__upgrade-button">{
+						this.translate( 'Manage Plan', { context: 'Link to current plan from /plans/' } )
+				}</a>
 			);
 		}
 	},
