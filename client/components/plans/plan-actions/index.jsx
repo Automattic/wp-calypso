@@ -118,6 +118,7 @@ const PlanActions = React.createClass( {
 				args: {
 					plan: this.props.plan.product_name_short
 				},
+				context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
 			} );
 		}
 
