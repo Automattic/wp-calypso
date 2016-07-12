@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { throttle } from 'lodash';
+import { get,throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -60,10 +60,26 @@ const JetpackSyncPanel = React.createClass( {
 	},
 
 	renderStatusNotice() {
-		const classes = classNames( 'jetpack-sync-panel__notice' );
+		const finished = get( this.props, 'syncStatus.finished' );
+		const finishedTimestamp = this.moment( parseInt( finished, 10 ) * 1000 );
+		let text = '';
+		if ( this.shouldDisableSync() ) {
+			text = this.translate( 'Full sync in progress' );
+		} else if ( finishedTimestamp.isValid() ) {
+			text = this.translate( 'Last syned %(ago)s', {
+				args: {
+					ago: finishedTimestamp.fromNow()
+				}
+			} );
+		}
+
+		if ( ! text ) {
+			return null;
+		}
+
 		return (
-			<Notice isCompact className={ classes }>
-				Placeholder text
+			<Notice isCompact className={ classNames( 'jetpack-sync-panel__notice' ) }>
+				{ text }
 			</Notice>
 		);
 	},
