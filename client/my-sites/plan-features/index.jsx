@@ -42,6 +42,9 @@ class PlanFeatures extends Component {
 	render() {
 		return (
 			<div className="plan-features">
+				<div className="plan-features__mobile">
+					{ this.renderMobileView() }
+				</div>
 				<table className="plan-features__table">
 					<tbody>
 						<tr>
@@ -61,6 +64,56 @@ class PlanFeatures extends Component {
 				</table>
 			</div>
 		);
+	}
+
+	renderMobileView() {
+		const { planProperties, isPlaceholder } = this.props;
+
+		return map( planProperties, ( properties ) => {
+			const {
+				available,
+				currencyCode,
+				current,
+				discountPrice,
+				onUpgradeClick,
+				planConstantObj,
+				planName,
+				popular,
+				rawPrice
+			} = properties;
+
+			return (
+				<div className="plan-features__mobile-plan">
+					<PlanFeaturesHeader
+						current={ current }
+						currencyCode={ currencyCode }
+						popular={ popular }
+						title={ planConstantObj.getTitle() }
+						planType={ planName }
+						rawPrice={ rawPrice }
+						discountPrice={ discountPrice }
+						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
+						onClick={ onUpgradeClick }
+						isPlaceholder={ isPlaceholder }
+					/>
+					{
+						isPlaceholder
+							? <SpinnerLine />
+							: null
+					}
+					<p className="plan-features__description">
+						{ planConstantObj.getDescription() }
+					</p>
+					<PlanFeaturesActions
+						current={ current }
+						available = { available }
+						onUpgradeClick={ onUpgradeClick }
+						freePlan={ planName === PLAN_FREE }
+						isPlaceholder={ isPlaceholder }
+					/>
+				</div>
+			);
+		} );
 	}
 
 	renderPlanHeaders() {

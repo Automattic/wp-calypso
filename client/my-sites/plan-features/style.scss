@@ -8,11 +8,40 @@ $plan-features-header-banner-height: 20px;
 	padding-top: $plan-features-header-banner-height;
 }
 
+.plan-features__mobile {
+	color: $gray;
+	margin: 0 16px;
+	display: block;
+
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
+
+	.plan-features__header-figure {
+		display: block;
+	}
+
+	.plan-features__header-banner {
+		display: none;
+	}
+}
+
+.plan-features__mobile-plan {
+	border: solid 1px lighten( $gray, 27% );
+	background-color: lighten( $gray, 35% );
+	margin-bottom: 24px;
+}
+
 .plan-features__table {
 	font-size: 14px;
 	color: $gray;
 	border-spacing: 16px 0;
 	margin-top: -16px;
+	display: none;
+
+	@include breakpoint( ">660px" ) {
+		display: table;
+	}
 
 	@include breakpoint( "<1040px" ) {
 		border-spacing: 0;
@@ -89,6 +118,7 @@ $plan-features-header-banner-height: 20px;
 	}
 }
 
+.plan-features__mobile .plan-features__header-figure,
 .plan-features__header-figure {
 	position: relative;
 	width: 50px;
@@ -96,20 +126,18 @@ $plan-features-header-banner-height: 20px;
 	margin-right: 15px;
 	border: solid 6px $gray-light;
 	border-radius: 50%;
+}
+
+.plan-features__header-figure {
+	@include breakpoint( "<1280px" ) {
+		width: 20px;
+		height: 20px;
+		border: solid 2px $gray-light;
+		margin-right: 10px;
+	}
 
 	@include breakpoint( "<1040px" ) {
 		display: none;
-	}
-}
-
-.is-section-plans {
-	.plan-features__header-figure {
-		@include breakpoint( "<1280px" ) {
-			width: 20px;
-			height: 20px;
-			border: solid 2px $gray-light;
-			margin-right: 10px;
-		}
 	}
 }
 
