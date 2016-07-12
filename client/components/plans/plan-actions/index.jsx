@@ -15,6 +15,7 @@ import { isBusiness, isEnterprise, isFreePlan, isFreeJetpackPlan } from 'lib/pro
 import purchasesPaths from 'me/purchases/paths';
 import { isValidFeatureKey } from 'lib/plans';
 import * as upgradesActions from 'lib/upgrades/actions';
+import { abtest } from 'lib/abtest';
 
 const PlanActions = React.createClass( {
 	propTypes: {
@@ -108,6 +109,14 @@ const PlanActions = React.createClass( {
 
 		if ( this.props.sitePlan && this.props.sitePlan.freeTrial ) {
 			label = this.translate( 'Purchase Now' );
+		}
+
+		if ( this.props.isInSignup && abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree' ) {
+			label = this.translate( 'Select %(plan)s', {
+				args: {
+					plan: this.props.plan.product_name_short
+				},
+			} );
 		}
 
 		return (

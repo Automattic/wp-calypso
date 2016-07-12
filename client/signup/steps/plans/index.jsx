@@ -90,12 +90,13 @@ module.exports = React.createClass( {
 	},
 
 	plansList: function() {
+		const hideFreePlan = this.props.hideFreePlan || abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree';
 		return (
 			<div>
 				<PlanList
 					plans={ this.state.plans }
 					comparePlansUrl={ this.comparePlansUrl() }
-					hideFreePlan={ this.props.hideFreePlan }
+					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					onSelectPlan={ this.onSelectPlan } />
 				<a
@@ -138,6 +139,7 @@ module.exports = React.createClass( {
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
+				goToNextStep={ abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree' ? this.onSelectPlan : null }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ headerText }
@@ -176,9 +178,10 @@ module.exports = React.createClass( {
 	},
 
 	plansCompare: function() {
+		const hideFreePlan = this.props.hideFreePlan || abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree';
 		return <PlansCompare
 			className="plans-step__compare"
-			hideFreePlan={ this.props.hideFreePlan }
+			hideFreePlan={ hideFreePlan }
 			onSelectPlan={ this.onSelectPlan }
 			isInSignup={ true }
 			backUrl={ this.props.path.replace( '/compare', '' ) }
