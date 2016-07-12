@@ -27,6 +27,7 @@ import userUtilities from 'lib/user/utils';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
+import Gridicon from 'components/gridicon';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSiteByUrl } from 'state/sites/selectors';
@@ -361,6 +362,7 @@ const LoggedInForm = React.createClass( {
 			'&_wp_nonce=' + encodeURIComponent( _wp_nonce );
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem icon={ true } href={ redirect_after_auth }>
+				<Gridicon size={ 18 } icon="arrow-left" />
 				{ this.translate( 'Return to %(sitename)s', {
 					args: { sitename: decodeEntities( blogname ) }
 				} ) }
