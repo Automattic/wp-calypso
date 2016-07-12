@@ -140,13 +140,11 @@ describe( 'index', function() {
 
 	it( 'can prevent widows', function( done ) {
 		var post = {
-			title: 'title',
 			excerpt: 'this is a longer excerpt bar'
 		};
 
 		normalizer( post, [ normalizer.preventWidows ], function( err, normalized ) {
 			assert.deepEqual( normalized, {
-				title: 'title',
 				excerpt: 'this is a longer excerpt\xA0bar'
 			} );
 			done( err );
@@ -155,13 +153,11 @@ describe( 'index', function() {
 
 	it( 'can prevent widows in empty strings', function( done ) {
 		var post = {
-			title: ' ',
 			excerpt: '   '
 		};
 
 		normalizer( post, [ normalizer.preventWidows ], function( err, normalized ) {
 			assert.deepEqual( normalized, {
-				title: '',
 				excerpt: ''
 			} );
 			done( err );
@@ -236,8 +232,8 @@ describe( 'index', function() {
 				assert.strictEqual( normalized.author.avatar_URL, 'http://example.com/me.jpg-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.featured_image, 'http://foo.bar/-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.featured_media.uri, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
-				assert.strictEqual( normalized.attachments['1234'].URL, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
-				assert.strictEqual( normalized.attachments['3456'].URL, 'http://example.com/media.jpg' );
+				assert.strictEqual( normalized.attachments[ '1234' ].URL, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
+				assert.strictEqual( normalized.attachments[ '3456' ].URL, 'http://example.com/media.jpg' );
 				done( err );
 			} );
 		} );
