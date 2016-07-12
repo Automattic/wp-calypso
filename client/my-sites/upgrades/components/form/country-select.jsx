@@ -38,10 +38,10 @@ export default React.createClass( {
 		const countriesList = this.props.countriesList.get();
 		let options = [];
 		let { value } = this.props;
+		value = value || '';
 
 		if ( isEmpty( countriesList ) ) {
 			options.push( { key: 'loading', label: this.translate( 'Loading…' ), disabled: 'disabled' } );
-			value = '';
 		} else {
 			options = options.concat( [
 				{ key: 'select-country', label: this.translate( 'Select Country' ) },
