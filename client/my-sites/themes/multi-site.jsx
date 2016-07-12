@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { wrapThemeOptionsWithSiteSelector } from './themes-site-selector-modal';
+import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import {
 	preview,
 	purchase,
@@ -22,11 +22,13 @@ import {
 } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 
-const ThemesMultiSite = wrapThemeOptionsWithSiteSelector( '/design' )( props => (
-	<ThemeShowcase { ...props }>
-		<SidebarNavigation />
-	</ThemeShowcase>
-) );
+const ThemesMultiSite = props => (
+	<ThemesSiteSelectorModal { ...props } sourcePath="/design">
+		<ThemeShowcase { ...props }>
+			<SidebarNavigation />
+		</ThemeShowcase>
+	</ThemesSiteSelectorModal>
+);
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => Object.assign(
 	{},
