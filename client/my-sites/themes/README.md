@@ -3,10 +3,9 @@ Themes
 
 Displays the Theme Showcase, which currently resides on `/design` and handles multi-site, single-site and Jetpack-site views.
 
-### `action-labels.js`
+### `theme-options.js`
 
-Contains labels for individual Theme actions ('Activate', 'Customize' etc), as
-well as headers shown in the site selector modal ('Activate on' etc).
+Contains definitions for individual Theme options ('Activate', 'Customize' etc).
 
 ### `main.jsx`
 
