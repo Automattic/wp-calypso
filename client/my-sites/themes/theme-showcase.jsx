@@ -17,7 +17,7 @@ import { getQueryParams, getThemesList } from 'state/themes/themes-list/selector
 import { addTracking } from './helpers';
 
 const optionShape = PropTypes.shape( {
-	label: PropTypes.string.isRequired,
+	label: PropTypes.string,
 	header: PropTypes.string,
 	getUrl: PropTypes.func,
 	action: PropTypes.func
