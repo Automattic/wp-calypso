@@ -139,7 +139,7 @@ const FeedStream = React.createClass( {
 	render() {
 		const emptyContent = this.props.query
 			? <EmptyContent query={ this.props.query } />
-			: <div>{ this.translate( 'What would you like to find?' ) }</div>;
+			: <p className="search-stream__intro">{ this.translate( 'What would you like to find?' ) }</p>;
 
 		if ( this.props.setPageTitle ) {
 			this.props.setPageTitle( this.state.title || this.translate( 'Search' ) );

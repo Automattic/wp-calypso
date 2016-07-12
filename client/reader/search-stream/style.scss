@@ -1,0 +1,5 @@
+.search-stream__intro {
+	@include breakpoint( "<660px" ) {
+		margin-left: 16px;
+	}
+}
