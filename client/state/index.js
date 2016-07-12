@@ -77,6 +77,7 @@ let middleware = [ thunkMiddleware ];
 // Analytics middleware currently only works in the browser
 if ( typeof window === 'object' ) {
 	middleware = [
+		require( 'lib/screen-title' ).screenTitleMiddleware,
 		...middleware,
 		require( './analytics/middleware.js' ).analyticsMiddleware
 	];
