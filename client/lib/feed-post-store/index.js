@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-var assign = require( 'lodash/assign' ),
+const assign = require( 'lodash/assign' ),
 	config = require( 'config' ),
 	debug = require( 'debug' )( 'calypso:feed-post-store' ),
 	forEach = require( 'lodash/forEach' ),
@@ -12,9 +12,9 @@ var assign = require( 'lodash/assign' ),
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
+const Dispatcher = require( 'dispatcher' ),
 	emitter = require( 'lib/mixins/emitter' ),
-	{ runFastRules, runSlowRules } = require( './normalization-rules' ),
+	{ runFastRules, runSlowRules } = require( 'state/reader/posts/normalization-rules' ),
 	FeedPostActionType = require( './constants' ).action,
 	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
 	ReaderSiteBlockActionType = require( 'lib/reader-site-blocks/constants' ).action,
@@ -22,15 +22,14 @@ var Dispatcher = require( 'dispatcher' ),
 	SiteState = require( 'lib/reader-site-store/constants' ).state,
 	stats = require( 'reader/stats' );
 
-var _posts = {},
-	_postsForBlogs = {},
-	FeedPostStore;
+let _posts = {},
+	_postsForBlogs = {};
 
 function blogKey( postKey ) {
 	return postKey.blogId + '-' + postKey.postId;
 }
 
-FeedPostStore = {
+const FeedPostStore = {
 	get: function( postKey ) {
 		if ( ! postKey ) {
 			return;
@@ -61,8 +60,7 @@ if ( config( 'env' ) === 'development' ) {
 emitter( FeedPostStore );
 
 FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload && payload.action,
-		error;
+	const action = payload && payload.action;
 
 	if ( ! action ) {
 		return;
@@ -83,7 +81,7 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 		case FeedPostActionType.RECEIVE_FEED_POST:
 			if ( action.error ) {
-				error = {
+				const error = {
 					status_code: -1,
 					errorCode: '-',
 					message: action.error.toString()
@@ -123,12 +121,11 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 } );
 
 function _setFeedPost( id, post ) {
-	var cachedPost;
 	if ( ! id ) {
 		return false;
 	}
 
-	cachedPost = _posts[ id ];
+	const cachedPost = _posts[ id ];
 
 	post.feed_item_ID = id;
 
@@ -141,16 +138,16 @@ function _setFeedPost( id, post ) {
 }
 
 function _setBlogPost( post ) {
-	var key, cachedPost;
 	if ( ! post || ! post.site_ID || post.is_external ) {
 		return false;
 	}
 
-	key = blogKey( {
+	const key = blogKey( {
 		blogId: post.site_ID,
 		postId: post.ID
 	} );
-	cachedPost = _postsForBlogs[ key ];
+
+	const cachedPost = _postsForBlogs[ key ];
 
 	if ( cachedPost && isEqual( post, cachedPost ) ) {
 		return false;
@@ -161,7 +158,7 @@ function _setBlogPost( post ) {
 }
 
 function setPost( id, post ) {
-	var changedFeed = _setFeedPost( id, post ),
+	const changedFeed = _setFeedPost( id, post ),
 		changedBlog = _setBlogPost( post ),
 		changed = changedFeed || changedBlog;
 	if ( changed ) {
@@ -170,21 +167,20 @@ function setPost( id, post ) {
 }
 
 function receivePending( action ) {
-	var post, currentPost;
 	if ( action.blogId ) {
-		post = {
+		let post = {
 			site_ID: action.blogId,
 			ID: action.postId
 		};
-		currentPost = _postsForBlogs[ blogKey( action.blogId, action.postId ) ];
+		const currentPost = _postsForBlogs[ blogKey( action.blogId, action.postId ) ];
 		post = assign( post, currentPost, { _state: 'pending' } );
 		setPost( null, post );
 	} else {
-		post = {
+		let post = {
 			feed_ID: action.feedId,
 			feed_item_ID: action.postId
 		};
-		currentPost = _posts[ action.postId ];
+		const currentPost = _posts[ action.postId ];
 		post = assign( post, currentPost, { _state: 'pending' } );
 		setPost( action.postId, post );
 	}
@@ -234,7 +230,7 @@ function receiveBlogPost( blogId, postId, post ) {
 }
 
 function receiveError( feedId, postId, error ) {
-	var statusCode, errorCode, message;
+	let statusCode, errorCode, message;
 	if ( error.status_code ) {
 		statusCode = error.status_code;
 
@@ -313,9 +309,8 @@ function markPostSeen( post ) {
 
 function markBlockedSitePosts( siteId, isSiteBlocked ) {
 	forOwn( _postsForBlogs, function( post ) {
-		var newPost;
 		if ( post.site_ID === siteId && post.is_site_blocked !== isSiteBlocked ) {
-			newPost = clone( post );
+			const newPost = clone( post );
 			newPost.is_site_blocked = isSiteBlocked;
 			setPost( newPost.feed_item_ID, newPost );
 		}
