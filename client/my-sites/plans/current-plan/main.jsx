@@ -31,6 +31,7 @@ import {
 import Gridicon from 'components/gridicon';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/upgrades/navigation';
+import config from 'config';
 
 const PlanDetailsComponent = React.createClass( {
 	PropTypes: {
@@ -47,6 +48,7 @@ const PlanDetailsComponent = React.createClass( {
 	render: function() {
 		const { selectedSite } = this.props;
 		const { hasLoadedFromServer } = this.props.sitePlans;
+		const showPlanFeatures = config.isEnabled( 'manage/plan-features' );
 		let title;
 		let tagLine;
 		let featuresList;
@@ -140,7 +142,11 @@ const PlanDetailsComponent = React.createClass( {
 						isPlaceholder={ false } />
 				</Card>
 				{ selectedSite &&
-					<Card href={ '/plans/compare/' + selectedSite.slug }>
+					<Card
+						href={
+							( showPlanFeatures ? '/plans/' : '/plans/compare/' ) + selectedSite.slug
+						}
+					>
 						{ this.translate( 'Missing some features? Compare our different plans' ) }
 					</Card>
 				}
