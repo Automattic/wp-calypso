@@ -371,10 +371,4 @@ $plan-features-header-banner-height: 20px;
 			margin-right: 8px;
 		}
 	}
-
-	@media
-		(min-width: 480px) and (max-width: 660px),
-		(min-width: 800px) and (max-width: 1040px) {
-			max-width: 260px;
-	}
 }
