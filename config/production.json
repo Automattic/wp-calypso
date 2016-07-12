@@ -43,7 +43,7 @@
 		"manage/plugins": true,
 		"manage/plugins/browser": true,
 		"manage/plugins/cache": false,
-		"manage/plugins/setup": false,
+		"manage/plugins/setup": true,
 		"manage/posts": true,
 		"manage/security": true,
 		"manage/seo": true,
