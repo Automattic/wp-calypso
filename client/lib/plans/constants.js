@@ -336,7 +336,8 @@ export const featuresList = {
 		getTitle: () => i18n.translate( '$100 Advertising Voucher' ),
 		getDescription: () => i18n.translate( '$100 Google AdWords credit after spending the first $25.' +
 			' Offer valid in US and Canada.' ),
-		plans: [ PLAN_PREMIUM ]
+		plans: [ PLAN_PREMIUM, PLAN_BUSINESS ] // Business too because when wordpressAdCredits is disabled,
+												// you get only $100 vouchers (this feature) in Business plan.
 	},
 
 	[ FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200 ]: {
@@ -453,6 +454,12 @@ export const getPlanObject = planName => {
 	} );
 
 	return objectPlan;
+};
+
+export const getPlanFeaturesObject = planFeaturesList => {
+	return planFeaturesList.map( featuresConst =>
+		featuresList[ featuresConst ]
+	);
 };
 
 export function isMonthly( plan ) {

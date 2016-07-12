@@ -5,8 +5,7 @@ import page from 'page';
 import moment from 'moment';
 import debugFactory from 'debug';
 import {
-	pick,
-	pickBy,
+	filter,
 	find,
 	get,
 	includes,
@@ -221,27 +220,29 @@ export function plansLink( url, site, intervalType ) {
 
 export function applyTestFiltersToPlansList( planName ) {
 	const filteredPlanConstantObj = { ...plansList[ planName ] };
-	let filteredPlanFeaturesConstantObj = pick( featuresList, plansList[ planName ].getFeatures() );
+	let filteredPlanFeaturesConstantList = plansList[ planName ].getFeatures();
 
 	const removeDisabledFeatures = () => {
 		if ( ! isWordadsInstantActivationEnabled() ) {
-			filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
-				( value, key ) => key !== FEATURE_WORDADS_INSTANT
+			filteredPlanFeaturesConstantList = filter( filteredPlanFeaturesConstantList,
+				( value ) => value !== FEATURE_WORDADS_INSTANT
 			);
 		}
 
 		if ( ! isGoogleVouchersEnabled() ) {
-			filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
-				( value, key ) => key !== FEATURE_GOOGLE_AD_VOUCHERS_100 ||
-					key !== FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200
+			filteredPlanFeaturesConstantList = filter( filteredPlanFeaturesConstantList,
+				( value ) => value !== FEATURE_GOOGLE_AD_VOUCHERS_100 &&
+					value !== FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200
 			);
 		}
 
-		// TODO: use mapKeys/mapValues to replace with ad_vouchers_100
 		if ( ! isWordpressAdCreditsEnabled() ) {
-			filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
-				( value, key ) => key !== FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200
-			);
+			const wordpressAdCreditsFeatureIndex = filteredPlanFeaturesConstantList.
+				indexOf( FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200 );
+
+			if ( wordpressAdCreditsFeatureIndex !== -1 ) {
+				filteredPlanFeaturesConstantList[ wordpressAdCreditsFeatureIndex ] = FEATURE_GOOGLE_AD_VOUCHERS_100;
+			}
 		}
 	};
 
@@ -260,7 +261,7 @@ export function applyTestFiltersToPlansList( planName ) {
 	removeDisabledFeatures();
 	updatePlanDescriptions();
 
-	filteredPlanConstantObj.getFeatures = () => filteredPlanFeaturesConstantObj;
+	filteredPlanConstantObj.getFeatures = () => filteredPlanFeaturesConstantList;
 
 	return filteredPlanConstantObj;
 }
