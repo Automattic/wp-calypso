@@ -29,8 +29,10 @@ $plan-features-header-banner-height: 20px;
 		padding: 0;
 	}
 
-	.plan-features__header-figure {
+	.plan-features__header .plan-features__header-figure {
 		display: block;
+		width: 50px;
+		height: 50px;
 	}
 
 	.plan-features__header-banner {
@@ -140,7 +142,6 @@ $plan-features-header-banner-height: 20px;
 	}
 }
 
-.plan-features__mobile .plan-features__header-figure,
 .plan-features__header-figure {
 	position: relative;
 	width: 50px;
@@ -150,7 +151,8 @@ $plan-features-header-banner-height: 20px;
 	border-radius: 50%;
 }
 
-.plan-features__header-figure {
+//We only need this for /plans since nux has no sidebar
+.is-section-plans .plan-features__header-figure {
 	@include breakpoint( "<1280px" ) {
 		width: 20px;
 		height: 20px;
