@@ -122,27 +122,26 @@
 			background: $alert-yellow;
 		}
 	}
-
-	.site-settings__footer-credit-container {
-		margin-bottom: 16px;
-	}
-
-	.site-settings__footer-credit-nudge.card {
-		margin: 0;
-	}
-
-	.site-settings__footer-credit-change {
-		width: 175px;
-		text-align:center;
-	}
-
-	.site-settings__footer-credit-explanation {
-		display:flex;
-	    flex-direction: row;
-	    justify-content: space-between;
-	}
 }
 
+.site-settings__footer-credit-container {
+	margin-bottom: 16px;
+}
+
+.site-settings__footer-credit-nudge.card.upgrade-nudge {
+	margin: 0;
+}
+
+.site-settings__footer-credit-change {
+	width: 175px;
+	text-align:center;
+}
+
+.site-settings__footer-credit-explanation {
+	display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
 
 
 .writing-settings,
