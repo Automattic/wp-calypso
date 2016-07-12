@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { get,throttle } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,7 @@ import {
 	getSyncStatus,
 	scheduleJetpackFullysync
 } from 'state/jetpack-sync/actions';
+import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 
 /*
  * Module variables
@@ -31,18 +32,7 @@ const JetpackSyncPanel = React.createClass( {
 	displayName: 'JetpackSyncPanel',
 
 	componentWillMount() {
-		// Created a throttled fetch function that will run a maximum of once for every 4 seconds.
-		this.throttledPoller = throttle( this.fetchSyncStatus, 4000 );
 		this.fetchSyncStatus();
-	},
-
-	componentWillUnmount() {
-		this.throttledPoller.cancel();
-	},
-
-	componentWillReceiveProps() {
-		// Since the polling is throttled, let's trigger every time that we get props.
-		this.throttledPoller();
 	},
 
 	fetchSyncStatus() {
@@ -120,6 +110,7 @@ const JetpackSyncPanel = React.createClass( {
 
 				{ this.renderStatusNotice() }
 				{ this.renderProgressBar() }
+				{ this.shouldDisableSync() && <Interval onTick={ this.fetchSyncStatus } period={ EVERY_FIVE_SECONDS } /> }
 			</Card>
 		);
 	}
