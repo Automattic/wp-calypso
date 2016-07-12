@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * Returns a log of actions from certain types that have previously been
  * dispatched for the current user.
@@ -12,4 +14,3 @@
 export function getActionLog( state ) {
 	return state.ui.actionLog;
 }
-

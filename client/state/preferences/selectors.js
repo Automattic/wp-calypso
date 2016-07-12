@@ -1,3 +1,4 @@
+/** @ssr-ready **/
 
 export const fetchingPreferences = state => ( !! state.preferences.fetching );
 
