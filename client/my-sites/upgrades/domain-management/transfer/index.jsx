@@ -10,6 +10,7 @@ import React from 'react';
 import DomainMainPlaceholder from 'my-sites/upgrades/domain-management/components/domain/main-placeholder';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import Main from 'components/main';
+import NonOwnerCard from 'my-sites/upgrades/domain-management/components/domain/non-owner-card';
 import paths from 'my-sites/upgrades/paths';
 import { getSelectedDomain } from 'lib/domains';
 import IcannVerification from 'my-sites/upgrades/domain-management/transfer/icann-verification';
@@ -31,10 +32,12 @@ const Transfer = React.createClass( {
 
 	renderSection() {
 		const { locked, transferProhibited } = this.props.wapiDomainInfo.data,
-			{ isPendingIcannVerification } = getSelectedDomain( this.props );
+			{ isPendingIcannVerification, isCurrentUserOwner } = getSelectedDomain( this.props );
 		let section = null;
 
-		if ( transferProhibited ) {
+		if ( ! isCurrentUserOwner ) {
+			section = NonOwnerCard;
+		} else if ( transferProhibited ) {
 			section = TransferProhibited;
 		} else if ( isPendingIcannVerification ) {
 			section = IcannVerification;
@@ -43,6 +46,7 @@ const Transfer = React.createClass( {
 		} else {
 			section = Unlocked;
 		}
+
 		return React.createElement( section, omit( this.props, [ 'children' ] ) );
 	},
 

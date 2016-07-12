@@ -37,7 +37,7 @@ export default React.createClass( {
 	},
 
 	renewLink( count ) {
-		return(
+		return (
 			<a href={ purchasesPaths.list() }>
 				{ this.translate(
 					'Renew it now.',
@@ -52,19 +52,20 @@ export default React.createClass( {
 	},
 
 	getPipe() {
-		let allRules = [ this.expiredDomains, this.expiringDomains, this.newDomains, this.unverifiedDomains, this.pendingGappsTosAcceptanceDomains ],
-			rules;
+		const allRules = [ this.expiredDomains, this.expiringDomains, this.newDomains, this.unverifiedDomains, this.pendingGappsTosAcceptanceDomains ];
+		let rules;
+
 		if ( ! this.props.ruleWhiteList ) {
 			rules = allRules;
 		} else {
-			let validRules = this.props.ruleWhiteList.map( ruleName => this[ ruleName ] );
+			const validRules = this.props.ruleWhiteList.map( ruleName => this[ ruleName ] );
 			rules = intersection( allRules, validRules ); // avoid leaking other functions
 		}
 		return rules;
 	},
 
 	getDomains() {
-		return this.props.domains || [ this.props.domain ];
+		return ( this.props.domains || [ this.props.domain ] ).filter( domain => domain.isCurrentUserOwner );
 	},
 
 	expiredDomains() {
@@ -111,10 +112,10 @@ export default React.createClass( {
 	},
 
 	newDomains() {
-		let newDomains = this.getDomains().filter( ( domain ) =>
+		const newDomains = this.getDomains().filter( ( domain ) =>
 				domain.registrationMoment && moment( domain.registrationMoment ).add( 3, 'days' ).isAfter( moment() ) && domain.type === domainTypes.REGISTERED ),
-			hasNewPrimaryDomain = newDomains.some( ( domain ) => this.props.selectedSite.domain === domain.name ),
-			text;
+			hasNewPrimaryDomain = newDomains.some( ( domain ) => this.props.selectedSite.domain === domain.name );
+		let text;
 
 		if ( newDomains.length === 0 ) {
 			return null;
@@ -206,7 +207,7 @@ export default React.createClass( {
 	},
 
 	unverifiedDomains() {
-		let domains = this.getDomains().filter( domain => domain.isPendingIcannVerification );
+		const domains = this.getDomains().filter( domain => domain.isPendingIcannVerification );
 
 		if ( domains.length === 1 ) {
 			return this.unverifiedDomainNotice( domains[0].name );
