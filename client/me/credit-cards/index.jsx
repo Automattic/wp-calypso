@@ -10,13 +10,14 @@ var connect = require( 'react-redux' ).connect,
 var CreditCardDelete = require( './credit-card-delete' ),
 	Card = require( 'components/card' ),
 	getStoredCards = require( 'state/stored-cards/selectors' ).getStoredCards,
+	hasLoadedStoredCardsFromServer = require( 'state/stored-cards/selectors' ).hasLoadedStoredCardsFromServer,
 	isFetchingStoredCards = require( 'state/stored-cards/selectors' ).isFetchingStoredCards,
 	QueryStoredCards = require( 'components/data/query-stored-cards' ),
 	SectionHeader = require( 'components/section-header' );
 
 var CreditCards = React.createClass( {
 	renderCards: function() {
-		if ( this.props.isFetchingStoredCards ) {
+		if ( this.props.isFetching && ! this.props.hasLoadedFromServer ) {
 			return (
 				<div className="credit-cards__no-results">
 					{ this.translate( 'Loading…' ) }
@@ -61,6 +62,7 @@ var CreditCards = React.createClass( {
 module.exports = connect(
 	state => ( {
 		cards: getStoredCards( state ),
-		isFetchingStoredCards: isFetchingStoredCards( state )
+		hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
+		isFetching: isFetchingStoredCards( state )
 	} )
 )( CreditCards );
