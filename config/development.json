@@ -111,6 +111,7 @@
 		"press-this": true,
 		"push-notifications": true,
 		"reader": true,
+		"reader/expanded-discover": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
 		"reader/recommendations/posts": true,
