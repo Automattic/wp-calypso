@@ -139,4 +139,13 @@ module.exports = {
 		defaultVariation: 'designTypeWithoutStore',
 		allowExistingUsers: false,
 	},
+	skipPlansLinkForFree: {
+		datestamp: '20160711',
+		variations: {
+			showFreePlan: 50,
+			skipPlansForFree: 50
+		},
+		defaultVariation: 'showFreePlan',
+		allowExistingUsers: false,
+	}
 };
