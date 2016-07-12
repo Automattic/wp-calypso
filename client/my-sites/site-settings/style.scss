@@ -1,7 +1,11 @@
 .site-settings {
 	fieldset {
 		clear: both;
-		margin-bottom: 20px;
+		margin-bottom: 24px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	label {
@@ -203,26 +207,13 @@
 
 .jp-relatedposts {
 	position: relative;
-	margin: 1em 0;
-	padding: 1em 1em .5em;
+	margin-top: 8px;
+	padding: 16px 8px;
 	width: 100%;
 	background: $gray-light;
 	box-sizing: border-box;
 
-	&:after {
-		content: '';
-		display: block;
-		clear: both;
-	}
-
-	.jp-relatedposts-headline {
-		margin: 0 0 1em 0;
-		display: inline-block;
-		float: left;
-		font-size: 10px;
-		font-weight: 600;
-		font-family: inherit;
-	}
+	@include clear-fix;
 
 	.jp-relatedposts-items {
 		clear: left;
@@ -238,8 +229,8 @@
 		float: left;
 		width: 33%;
 		box-sizing: border-box;
-		margin: 0 0 1em;
-		padding: 0 5px;
+		margin: 0;
+		padding: 0 8px;
 
 		@include breakpoint( "<660px" ) {
 			width: 50%;
