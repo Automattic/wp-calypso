@@ -18,7 +18,7 @@ export default React.createClass( {
 	},
 
 	purchaseGuidedTransfer() {
-		page( `/settings/export/${this.props.siteSlug}/guided` );
+		page( `/settings/export/guided/${this.props.siteSlug}` );
 	},
 
 	render() {
