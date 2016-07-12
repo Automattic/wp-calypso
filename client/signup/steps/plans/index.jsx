@@ -129,8 +129,9 @@ module.exports = React.createClass( {
 	},
 
 	plansSelection: function() {
-		let headerText = this.translate( 'Pick a plan that\'s right for you.' ),
-			subHeaderText = this.translate(
+		const headerText = this.translate( 'Pick a plan that\'s right for you.' );
+		const hideSubHeader = abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree';
+		const subHeaderText = hideSubHeader ? null : this.translate(
 				'Not sure which plan to choose? Take a look at our {{a}}plan comparison chart{{/a}}.', {
 					components: { a: <a
 						href={ this.comparePlansUrl() }
