@@ -18,9 +18,10 @@ import PurchaseDetail from 'components/purchase-detail';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 
 const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
-	const adminUrl = selectedSite.URL + '/wp-admin/',
-		customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + selectedSite.slug : adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href ),
-		plan = find( sitePlans.data, isPremium );
+	const adminUrl = selectedSite.URL + '/wp-admin/';
+	const customizerInAdmin = adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
+	const customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + selectedSite.slug : customizerInAdmin;
+	const plan = find( sitePlans.data, isPremium );
 
 	return (
 		<div>
@@ -37,8 +38,8 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 				}
 			/>
 
-			{ config.isEnabled( 'googleVouchers' ) && <QuerySiteVouchers siteId={ selectedSite.ID } /> }
-			{ config.isEnabled( 'googleVouchers' ) &&
+			{ config.isEnabled( 'google-voucher' ) && <QuerySiteVouchers siteId={ selectedSite.ID } /> }
+			{ config.isEnabled( 'google-voucher' ) &&
 				<div>
 					<GoogleVoucherDetails selectedSite={ selectedSite } />
 				</div>
