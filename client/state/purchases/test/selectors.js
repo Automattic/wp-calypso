@@ -10,8 +10,8 @@ describe( 'selectors', () => {
 			const state = {
 				purchases: {
 					data: [
-						{ id: 1, name: 'domain registration' },
-						{ id: 2, name: 'premium plan' }
+						{ ID: 1, product_name: 'domain registration', blog_id: 1337 },
+						{ ID: 2, product_name: 'premium plan', blog_id: 1337 }
 					],
 					error: null,
 					isFetchingSitePurchases: false,
@@ -21,7 +21,48 @@ describe( 'selectors', () => {
 				}
 			};
 
-			expect( getByPurchaseId( state, 2 ) ).to.be.eql( { id: 2, name: 'premium plan' } );
+			expect( getByPurchaseId( state, 2 ) ).to.be.eql( {
+				id: 2,
+				productName: 'premium plan',
+				siteId: 1337,
+				active: false,
+				amount: NaN,
+				attachedToPurchaseId: NaN,
+				canDisableAutoRenew: false,
+				currencyCode: undefined,
+				currencySymbol: undefined,
+				domain: undefined,
+				error: null,
+				expiryDate: undefined,
+				expiryMoment: null,
+				expiryStatus: '',
+				hasPrivateRegistration: false,
+				includedDomain: undefined,
+				isCancelable: false,
+				isDomainRegistration: false,
+				isRedeemable: false,
+				isRefundable: false,
+				isRenewable: false,
+				meta: undefined,
+				payment: {
+					countryCode: undefined,
+					countryName: undefined,
+					name: undefined,
+					type: undefined
+				},
+				priceText: 'undefinedundefined',
+				productId: NaN,
+				productSlug: undefined,
+				refundPeriodInDays: undefined,
+				refundText: 'undefinedundefined',
+				renewDate: undefined,
+				renewMoment: null,
+				siteName: undefined,
+				subscribedDate: undefined,
+				subscriptionStatus: undefined,
+				tagLine: undefined,
+				userId: NaN
+			} );
 		} );
 	} );
 
