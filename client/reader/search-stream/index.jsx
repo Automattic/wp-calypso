@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
-import debounce from 'lodash/debounce';
+import { debounce, trim } from 'lodash';
 import closest from 'component-closest';
 
 /**
@@ -126,8 +126,10 @@ const FeedStream = React.createClass( {
 		if ( ! this.isMounted() ) {
 			return;
 		}
-		const newValue = ReactDom.findDOMNode( this.refs.searchInput ).value;
-		this.props.onQueryChange( newValue );
+		const newValue = trim( ReactDom.findDOMNode( this.refs.searchInput ).value );
+		if ( newValue && newValue !== this.props.query ) {
+			this.props.onQueryChange( newValue );
+		}
 	},
 
 	cardFactory() {
