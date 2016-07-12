@@ -11,7 +11,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Main from 'components/main';
-import { shouldViewBeVisible } from 'state/first-view/selectors';
+import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 
 const StatsMain = React.createClass( {
 	displayName: 'StatsMain',

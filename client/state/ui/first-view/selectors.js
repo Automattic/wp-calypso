@@ -28,7 +28,7 @@ export function isViewEnabled( state, view ) {
 }
 
 export function wasViewHidden( state, view ) {
-	return -1 !== state.firstView.hidden.indexOf( view );
+	return -1 !== state.ui.firstView.hidden.indexOf( view );
 }
 
 export function switchedToDifferentSection( state ) {
