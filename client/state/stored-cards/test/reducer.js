@@ -23,7 +23,8 @@ describe( 'items', () => {
 		expect( reducer( undefined, { type: 'UNRELATED' } ) ).to.be.eql( {
 			items: [],
 			isFetching: false,
-			isDeleting: false
+			isDeleting: false,
+			hasLoadedFromServer: false
 		} );
 	} );
 
@@ -31,7 +32,8 @@ describe( 'items', () => {
 		expect( reducer( undefined, { type: STORED_CARDS_FETCH } ) ).to.be.eql( {
 			items: [],
 			isFetching: true,
-			isDeleting: false
+			isDeleting: false,
+			hasLoadedFromServer: false
 		} );
 	} );
 
@@ -44,7 +46,8 @@ describe( 'items', () => {
 		expect( state ).to.be.eql( {
 			items: STORED_CARDS_FROM_API,
 			isFetching: false,
-			isDeleting: false
+			isDeleting: false,
+			hasLoadedFromServer: true
 		} );
 	} );
 
@@ -56,7 +59,8 @@ describe( 'items', () => {
 		expect( state ).to.be.eql( {
 			items: [],
 			isFetching: false,
-			isDeleting: false
+			isDeleting: false,
+			hasLoadedFromServer: false
 		} );
 	} );
 
@@ -64,7 +68,8 @@ describe( 'items', () => {
 		const state = reducer( deepFreeze( {
 			items: STORED_CARDS_FROM_API,
 			isFetching: false,
-			isDeleting: false
+			isDeleting: false,
+			hasLoadedFromServer: true
 		} ), {
 			type: STORED_CARDS_DELETE,
 			card: STORED_CARDS_FROM_API[ 0 ]
@@ -73,7 +78,8 @@ describe( 'items', () => {
 		expect( state ).to.be.eql( {
 			items: STORED_CARDS_FROM_API,
 			isFetching: false,
-			isDeleting: true
+			isDeleting: true,
+			hasLoadedFromServer: true
 		} );
 	} );
 
@@ -81,7 +87,8 @@ describe( 'items', () => {
 		const state = reducer( deepFreeze( {
 			items: STORED_CARDS_FROM_API,
 			isFetching: false,
-			isDeleting: true
+			isDeleting: true,
+			hasLoadedFromServer: true
 		} ), {
 			type: STORED_CARDS_DELETE_COMPLETED,
 			card: STORED_CARDS_FROM_API[ 0 ]
@@ -90,7 +97,8 @@ describe( 'items', () => {
 		expect( state ).to.be.eql( {
 			items: [ STORED_CARDS_FROM_API[ 1 ] ],
 			isFetching: false,
-			isDeleting: false
+			isDeleting: false,
+			hasLoadedFromServer: true
 		} );
 	} );
 
@@ -98,7 +106,8 @@ describe( 'items', () => {
 		const state = reducer( deepFreeze( {
 			items: STORED_CARDS_FROM_API,
 			isFetching: false,
-			isDeleting: true
+			isDeleting: true,
+			hasLoadedFromServer: true
 		} ), {
 			type: STORED_CARDS_DELETE_FAILED
 		} );
@@ -106,7 +115,8 @@ describe( 'items', () => {
 		expect( state ).to.be.eql( {
 			items: STORED_CARDS_FROM_API,
 			isFetching: false,
-			isDeleting: false
+			isDeleting: false,
+			hasLoadedFromServer: true
 		} );
 	} );
 } );

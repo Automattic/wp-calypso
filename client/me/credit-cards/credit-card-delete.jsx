@@ -2,64 +2,40 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:credit-card-delete' ),
-	bindActionCreators = require( 'redux' ).bindActionCreators,
 	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
  */
 var StoredCard = require( 'my-sites/upgrades/checkout/stored-card' ),
-	wpcom = require( 'lib/wp' ),
 	successNotice = require( 'state/notices/actions' ).successNotice,
-	errorNotice = require( 'state/notices/actions' ).errorNotice;
+	errorNotice = require( 'state/notices/actions' ).errorNotice,
+	deleteStoredCard = require( 'state/stored-cards/actions' ).deleteStoredCard,
+	isDeletingStoredCard = require( 'state/stored-cards/selectors' ).isDeletingStoredCard;
 
 const CreditCardDelete = React.createClass( {
-
-	displayName: 'CreditCardDelete',
-
-	getInitialState: function() {
-		return {
-			deleting: false
-		};
-	},
-
 	handleClick: function() {
-		this.setState( {
-			deleting: true
-		} );
-		wpcom.undocumented().me().storedCardDelete( this.props.card, this.handleDeleteCard );
-	},
-
-	handleDeleteCard: function( error, response ) {
-		if ( error && error.error ) {
-			debug( error.error, error.message );
-			this.props.errorNotice( error.message );
-			this.setState( {
-				deleting: false
-			} );
-		}
-
-		if ( response ) {
-			debug( 'Card deleted sucessfully' );
+		this.props.deleteStoredCard( this.props.card ).then( () => {
 			this.props.successNotice( this.translate( 'Card deleted successfully' ) );
-
-			// Update the list of cards
-			this.props.cards.fetch();
-		}
+		} ).catch( error => {
+			this.props.errorNotice( error.message );
+		} )
 	},
 
-	deleteButton: function() {
-		var disabled = false,
-			text = this.translate( 'Delete' );
+	renderDeleteButton: function() {
+		var text = this.translate( 'Delete' );
 
-		if ( this.state.deleting ) {
-			disabled = true;
+		if ( this.props.isDeleting ) {
 			text = this.translate( 'Deleting ' );
 		}
 
 		return (
-			<button className="button credit-card-delete__button" disabled={ disabled } onClick={ this.handleClick }>{ text }</button>
+			<button
+				className="button credit-card-delete__button"
+				disabled={ this.props.isDeleting }
+				onClick={ this.handleClick }>
+				{ text }
+			</button>
 		);
 	},
 
@@ -67,13 +43,22 @@ const CreditCardDelete = React.createClass( {
 		return (
 			<div className="credit-card-delete" key={ this.props.card.stored_details_id }>
 				<StoredCard card={ this.props.card } />
-				{ this.deleteButton() }
+
+				{ this.renderDeleteButton() }
 			</div>
 		);
 	}
 } );
 
 export default connect(
-	null,
-	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
+	state => {
+		return {
+			isDeleting: isDeletingStoredCard( state )
+		};
+	},
+	{
+		deleteStoredCard,
+		errorNotice,
+		successNotice
+	}
 )( CreditCardDelete );

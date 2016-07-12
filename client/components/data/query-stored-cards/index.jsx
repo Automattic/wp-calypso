@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isFetchingStoredCards } from 'state/stored-cards/selectors';
+import { hasLoadedStoredCardsFromServer, isFetchingStoredCards } from 'state/stored-cards/selectors';
 import { fetchStoredCards } from 'state/stored-cards/actions';
 
 class QueryStoredCards extends Component {
@@ -20,7 +20,7 @@ class QueryStoredCards extends Component {
 	}
 
 	requestStoredCards( props = this.props ) {
-		if ( ! props.isRequesting ) {
+		if ( ! props.isRequesting && ! props.hasLoadedFromServer ) {
 			props.fetchStoredCards();
 		}
 	}
@@ -38,6 +38,7 @@ QueryStoredCards.propTypes = {
 export default connect(
 	state => {
 		return {
+			hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
 			isRequesting: isFetchingStoredCards( state )
 		};
 	},
