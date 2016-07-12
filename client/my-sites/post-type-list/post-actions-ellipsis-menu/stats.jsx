@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
 import { getPost } from 'state/posts/selectors';
 
 function PostActionsEllipsisMenuStats( { translate, siteSlug, postId, status, isStatsActive } ) {
@@ -43,6 +43,6 @@ export default connect( ( state, ownProps ) => {
 		siteSlug: getSiteSlug( state, post.site_ID ),
 		postId: post.ID,
 		status: post.status,
-		isStatsActive: true // [TODO]: This should be made accurate by detecting active status of Jetpack "stats" module
+		isStatsActive: false !== isJetpackModuleActive( state, post.site_ID, 'stats' )
 	};
 } )( localize( PostActionsEllipsisMenuStats ) );
