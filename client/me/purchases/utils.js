@@ -9,7 +9,7 @@ import page from 'page';
 import analytics from 'lib/analytics';
 import paths from './paths';
 
-// TODO: Remove these property-masking functions in favor of selectors
+// TODO: Remove these property-masking functions in favor of accessing the props directly
 function getPurchase( props ) {
 	return props.selectedPurchase;
 }

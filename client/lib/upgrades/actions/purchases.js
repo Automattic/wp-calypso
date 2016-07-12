@@ -9,13 +9,10 @@ import i18n from 'i18n-calypso';
  */
 import { action as ActionTypes } from '../constants';
 import Dispatcher from 'dispatcher';
-import purchasesAssembler from 'lib/purchases/assembler';
 import wp from 'lib/wp';
 
 const debug = debugFactory( 'calypso:upgrades:actions:purchases' ),
 	wpcom = wp.undocumented();
-
-const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
 
 function cancelPurchase( purchaseId, onComplete ) {
 	wpcom.cancelPurchase( purchaseId, ( error, data ) => {
@@ -76,29 +73,6 @@ function fetchStoredCards() {
 	} );
 }
 
-function fetchUserPurchases( userId ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.PURCHASES_USER_FETCH
-	} );
-
-	wpcom.me().purchases( ( error, data ) => {
-		debug( error, data );
-
-		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PURCHASES_USER_FETCH_FAILED,
-				error: PURCHASES_FETCH_ERROR_MESSAGE
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PURCHASES_USER_FETCH_COMPLETED,
-				purchases: purchasesAssembler.createPurchasesArray( data ),
-				userId
-			} );
-		}
-	} );
-}
-
 function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
 	wpcom.cancelAndRefundPurchase( purchaseId, data, onComplete );
 }
@@ -107,6 +81,5 @@ export {
 	cancelAndRefundPurchase,
 	cancelPurchase,
 	deleteStoredCard,
-	fetchStoredCards,
-	fetchUserPurchases
+	fetchStoredCards
 };
