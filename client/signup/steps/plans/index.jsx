@@ -101,13 +101,13 @@ module.exports = React.createClass( {
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					onSelectPlan={ this.onSelectPlan } />
-				<a
+				{ abtest( 'skipPlansLinkForFree' ) !== 'skipPlansForFree' && <a
 					href={ this.comparePlansUrl() }
 					className="plans-step__compare-plans-link"
 					onClick={ this.handleComparePlansLinkClick.bind( null, 'footer' ) }>
 						<Gridicon icon="clipboard" size={ 18 } />
 						{ this.translate( 'Compare Plans' ) }
-				</a>
+				</a> }
 			</div>
 		);
 	},
