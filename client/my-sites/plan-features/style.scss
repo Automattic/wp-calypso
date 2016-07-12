@@ -303,6 +303,10 @@ $plan-features-header-banner-height: 20px;
 	@include breakpoint( "<1040px" ) {
 		padding: 12px 12px 0 12px;
 	}
+
+	@include breakpoint( "<660px" ) {
+		padding: 20px 20px 0 20px;
+	}
 }
 
 .plan-features__item {
@@ -349,6 +353,11 @@ $plan-features-header-banner-height: 20px;
 	@include breakpoint( "<1040px" ) {
 		padding: 0 12px 12px 12px;
 	}
+
+	@include breakpoint( "<660px" ) {
+		padding: 0 20px 20px 20px;
+		border-bottom: solid 1px $gray-light;
+	}
 }
 
 .plan-features__actions-buttons {
@@ -370,5 +379,9 @@ $plan-features-header-banner-height: 20px;
 			fill: $alert-green;
 			margin-right: 8px;
 		}
+	}
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 20px;
 	}
 }
