@@ -140,18 +140,10 @@
 	margin: 0;
 	color: $gray;
 
-	.time {
+	.post-relative-time-status__time {
 		line-height: 1;
-	}
-
-	.time-text {
 		font-size: 10px;
-		color: $gray;
 		text-transform: uppercase;
-	}
-
-	small {
-		display: none;
 	}
 
 	.is-pending {
