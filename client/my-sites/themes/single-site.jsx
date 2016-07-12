@@ -5,7 +5,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import pickBy from 'lodash/pickBy';
-import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies
@@ -28,7 +27,8 @@ import {
 	info,
 	support,
 	help,
-	bindOptionsToDispatch
+	bindOptionsToDispatch,
+	bindOptionsToSite
 } from './theme-options';
 import sitesFactory from 'lib/sites-list';
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
@@ -118,16 +118,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		! ( option.hideForSite && option.hideForSite( stateProps ) )
 	);
 
-	const boundOptions = mapValues( filteredOptions, option => Object.assign(
-		{},
-		option,
-		option.action
-			? { action: theme => option.action( theme, site ) }
-			: {},
-		option.getUrl
-			? { getUrl: theme => option.getUrl( theme, site ) }
-			: {}
-	) );
+	const boundOptions = bindOptionsToSite( filteredOptions, site );
 
 	return Object.assign(
 		{},

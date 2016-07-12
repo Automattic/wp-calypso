@@ -121,3 +121,21 @@ export function bindOptionToDispatch( option, source ) {
 export function bindOptionsToDispatch( options, source ) {
 	return dispatch => mapValues( options, option => bindOptionToDispatch( option, source )( dispatch ) );
 }
+
+// Ideally: same sig as mergeProps. stateProps, dispatchProps, ownProps
+function bindOptionToSite( option, site ) {
+	return Object.assign(
+		{},
+		option,
+		option.action
+			? { action: theme => option.action( theme, site ) }
+			: {},
+		option.getUrl
+			? { getUrl: theme => option.getUrl( theme, site ) }
+			: {}
+	);
+}
+
+export function bindOptionsToSite( options, site ) {
+	return mapValues( options, option => bindOptionToSite( option, site ) );
+}

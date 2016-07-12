@@ -10,7 +10,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 import titlecase from 'to-title-case';
-import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies
@@ -37,7 +36,8 @@ import {
 	purchase,
 	activate,
 	customize,
-	bindOptionToDispatch
+	bindOptionToDispatch,
+	bindOptionsToSite
 } from 'my-sites/themes/theme-options';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
@@ -395,26 +395,12 @@ const bindDefaultOptionToDispatch = ( dispatch, ownProps ) => {
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const { selectedSite: site } = stateProps;
-	let options = dispatchProps;
-
-	if ( site ) {
-		options = mapValues( options, option => Object.assign(
-			{},
-			option,
-			option.action
-				? { action: theme => option.action( theme, site ) }
-				: {},
-			option.getUrl
-				? { getUrl: theme => option.getUrl( theme, site ) }
-				: {}
-		) );
-	}
 
 	return Object.assign(
 		{},
 		ownProps,
 		stateProps,
-		options
+		site ? bindOptionsToSite( dispatchProps, site ) : dispatchProps
 	);
 };
 
