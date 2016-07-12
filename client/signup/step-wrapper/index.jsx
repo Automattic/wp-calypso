@@ -10,6 +10,16 @@ import classNames from 'classnames';
 import StepHeader from 'signup/step-header';
 import NavigationLink from 'signup/navigation-link';
 import config from 'config';
+import sitesList from 'lib/sites-list';
+import { plansLink } from 'lib/plans';
+import Gridicon from 'components/gridicon';
+import analytics from 'lib/analytics';
+import { abtest } from 'lib/abtest';
+
+/**
+ * Module variables
+ */
+const sites = sitesList();
 
 export default React.createClass( {
 	displayName: 'StepWrapper',
@@ -65,10 +75,48 @@ export default React.createClass( {
 		}
 	},
 
+	recordComparePlansClick() {
+		analytics.ga.recordEvent( 'Upgrades', 'Clicked Compare Plans Link' );
+	},
+
+	renderComparePlans() {
+		const { stepName } = this.props;
+		if ( stepName !== 'plans' || abtest( 'skipPlansLinkForFree' ) !== 'skipPlansForFree' ) {
+			return null;
+		}
+
+		const selectedSite = sites.getSelectedSite();
+		const url = plansLink( '/plans/compare', selectedSite );
+		const compareString = this.translate( 'Compare Plan Features' );
+
+		return (
+			<a href={ url } className="step-wrapper__compare-plans" onClick={ this.recordComparePlansClick }>
+				<Gridicon icon="clipboard" size={ 18 } />
+				{ compareString }
+			</a>
+		);
+	},
+
+	renderNavigation() {
+		const { stepName } = this.props;
+		const classes = classNames( 'step-wrapper__buttons', {
+			'is-wide-navigation': stepName === 'plans' && abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree'
+		} );
+		return (
+			<div className={ classes }>
+				{ this.renderBack() }
+				{ this.renderComparePlans() }
+				{ this.renderSkip() }
+			</div>
+		);
+	},
+
 	render: function() {
+		const { stepName, stepContent, headerButton } = this.props;
 		const classes = classNames( 'step-wrapper', {
 			'is-wide-layout': this.props.isWideLayout
 		} );
+		const showTopNavigation = stepName === 'plans' && abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree';
 
 		return (
 			<div className={ classes }>
@@ -76,15 +124,13 @@ export default React.createClass( {
 					headerText={ this.headerText() }
 					subHeaderText={ this.subHeaderText() }>
 					{ config.isEnabled( 'jetpack/connect' )
-						? ( this.props.headerButton )
+						? ( headerButton )
 						: null }
 				</StepHeader>
 				<div className="is-animated-content">
-					{ this.props.stepContent }
-					<div className="step-wrapper__buttons">
-						{ this.renderBack() }
-						{ this.renderSkip() }
-					</div>
+					{ showTopNavigation && this.renderNavigation() }
+					{ stepContent }
+					{ this.renderNavigation() }
 				</div>
 			</div>
 		);
