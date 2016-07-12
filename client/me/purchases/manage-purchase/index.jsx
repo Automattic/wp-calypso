@@ -120,15 +120,18 @@ const ManagePurchase = React.createClass( {
 
 		return (
 			<div className="manage-purchase__contact-support">
-				{ this.translate( '{{strong}}Looking to renew?{{/strong}} Please {{contactSupportLink}}contact support{{/contactSupportLink}} to renew %(purchaseName)s.', {
-					args: {
-						purchaseName: getName( purchase )
-					},
-					components: {
-						strong: <strong />,
-						contactSupportLink: <a href={ support.CALYPSO_CONTACT } />
-					}
-				} ) }
+				{ this.translate( 'You are the owner of %(purchaseName)s but because you are no longer a user on %(siteSlug)s, ' +
+				'renewing it will require staff assistance. Please {{contactSupportLink}}contact support{{/contactSupportLink}}, ' +
+				'and consider transferring this purchase to another active user on %(siteSlug)s to avoid this issue in the future.',
+					{
+						args: {
+							purchaseName: getName( purchase ),
+							siteSlug: this.props.selectedSite.slug
+						},
+						components: {
+							contactSupportLink: <a href={ support.CALYPSO_CONTACT } />
+						}
+					} ) }
 			</div>
 		);
 	},
