@@ -140,7 +140,7 @@ const ThemeSheet = React.createClass( {
 
 	renderBar() {
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
-		const title = this.props.name || placeholder;
+		const title = this.isLoaded() || placeholder;
 		const tag = this.props.author ? i18n.translate( 'by %(author)s', { args: { author: this.props.author } } ) : placeholder;
 
 		return (
