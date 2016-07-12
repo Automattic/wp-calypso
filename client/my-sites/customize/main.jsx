@@ -163,6 +163,7 @@ var Customize = React.createClass( {
 		const panels = {
 			widgets: { panel: 'widgets' },
 			fonts: { section: 'jetpack_fonts' },
+			identity: { section: 'title_tagline' },
 			'custom-css': { section: 'jetpack_custom_css' },
 		};
 
