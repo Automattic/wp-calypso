@@ -1,5 +1,5 @@
 $plan-features-header-banner-height: 20px;
-
+$plan-features-sidebar-width: 272px;
 
 /* Breakpoints 1150px, */
 
@@ -8,12 +8,19 @@ $plan-features-header-banner-height: 20px;
 	padding-top: $plan-features-header-banner-height;
 }
 
+.is-section-plans .plan-features__mobile {
+	display: block;
+	@media ( min-width: $plan-features-sidebar-width + 480px ) {
+		display: none;
+	}
+}
+
 .plan-features__mobile {
 	color: $gray;
 	margin: 0 16px;
 	display: block;
 
-	@media ( min-width: 840px ) {
+	@include breakpoint( ">480px" ) {
 		display: none;
 	}
 
@@ -58,6 +65,13 @@ $plan-features-header-banner-height: 20px;
 	margin-bottom: 24px;
 }
 
+.is-section-plans .plan-features__table {
+	display: none;
+	@media ( min-width: $plan-features-sidebar-width + 480px ) {
+		display: table;
+	}
+}
+
 .plan-features__table {
 	font-size: 14px;
 	color: $gray;
@@ -65,7 +79,7 @@ $plan-features-header-banner-height: 20px;
 	margin-top: -16px;
 	display: none;
 
-	@media ( min-width: 840px ) {
+	@include breakpoint( ">480px" ) {
 		display: table;
 	}
 
@@ -153,7 +167,6 @@ $plan-features-header-banner-height: 20px;
 	border-radius: 50%;
 }
 
-//We only need this for /plans since nux has no sidebar
 .is-section-plans .plan-features__header-figure {
 	@include breakpoint( "<1280px" ) {
 		width: 20px;
@@ -161,11 +174,16 @@ $plan-features-header-banner-height: 20px;
 		border: solid 2px $gray-light;
 		margin-right: 10px;
 	}
+}
 
+.plan-features__header-figure,
+.plan-features__table.has-1-cols .plan-features__header-figure,
+.plan-features__table.has-2-cols .plan-features__header-figure {
 	@include breakpoint( "<1040px" ) {
 		display: none;
 	}
 }
+
 
 .plan-features__header-checkmark {
 	position: absolute;
