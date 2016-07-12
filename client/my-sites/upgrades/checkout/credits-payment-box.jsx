@@ -1,52 +1,51 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var PayButton = require( './pay-button' ),
-	PaymentBox = require( './payment-box' ),
-	TermsOfService = require( './terms-of-service' );
+import PayButton from './pay-button';
+import PaymentBox from './payment-box';
+import TermsOfService from './terms-of-service';
 
-var CreditsPaymentBox = React.createClass( {
-	content: function() {
-		var cart = this.props.cart;
+const CreditsPaymentBox = React.createClass( {
+	content() {
+		const { cart, onSubmit, transactionStep } = this.props;
 
 		return (
-			<form onSubmit={ this.props.onSubmit }>
-				<div className="payment-box-section">
+			<form onSubmit={ onSubmit }>
+				<div className="checkout__payment-box-section">
 					<h6>{ this.translate( 'WordPress.com Credits' ) }</h6>
 
 					<span>
-						{ this.translate( 'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
-							{
-								args: {
-									credits: cart.credits,
-									currency: cart.currency
-								},
-								components: {
-									strong: <strong />
-								}
-							} )
-						}
+						{ this.translate( 'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.', {
+							args: {
+								credits: cart.credits,
+								currency: cart.currency
+							},
+							components: {
+								strong: <strong />
+							}
+						} ) }
 					</span>
 				</div>
 
 				<TermsOfService />
-				<div className="payment-box-actions">
+
+				<div className="checkout__payment-box-actions">
 					<PayButton
-						cart={ this.props.cart }
-						transactionStep={ this.props.transactionStep } />
+						cart={ cart }
+						transactionStep={ transactionStep } />
 				</div>
 			</form>
 		);
 	},
 
-	render: function() {
-		var classSet = classNames( {
+	render() {
+		const classSet = classNames( {
 			'credits-payment-box': true,
 			selected: this.props.selected === true
 		} );
@@ -61,4 +60,4 @@ var CreditsPaymentBox = React.createClass( {
 	}
 } );
 
-module.exports = CreditsPaymentBox;
+export default CreditsPaymentBox;

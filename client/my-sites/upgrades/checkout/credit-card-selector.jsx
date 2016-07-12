@@ -51,7 +51,7 @@ var CreditCardSelector = React.createClass({
 	},
 
 	section: function( name, content ) {
-		var classes = classNames( 'payment-box-section', {
+		var classes = classNames( 'checkout__payment-box-section', {
 			'selected': this.state.section === name,
 			'no-stored-cards' : name === 'new-card' && this.props.cards.get().length === 0
 		} );

@@ -27,7 +27,7 @@
 		}
 
 		&.is-empty {
-			.payment-box-section {
+			.checkout__payment-box-section {
 				border: 1px solid lighten( $gray, 30% );
 				margin: 5px 0;
 				display: flex;
@@ -247,7 +247,7 @@
 		}
 	}
 
-	.payment-box-actions {
+	.checkout__payment-box-actions {
 		@include breakpoint( ">660px" ) {
 			margin: 20px -30px 0px -30px;
 			padding: 20px 30px 0 30px;
@@ -266,7 +266,7 @@
 			}
 		}
 
-		.payment-box-section {
+		.checkout__payment-box-section {
 			cursor: pointer;
 			border-bottom: 1px solid lighten( $gray, 30% );
 
@@ -287,12 +287,12 @@
 			min-height: 50px;
 		}
 
-		.payment-box-section.selected .payment-box-section-inner {
+		.checkout__payment-box-section.selected .payment-box-section-inner {
 			background-color: #fafdf6;
 			padding-left: 0;
 		}
 
-		.payment-box-section.selected:not( .no-stored-cards ) {
+		.checkout__payment-box-section.selected:not( .no-stored-cards ) {
 			.payment-box-section-inner {
 				border-left: 3px solid $alert-green;
 			}
@@ -305,14 +305,14 @@
 			margin-top: 0;
 		}
 
-		.payment-box-section .new-card-toggle {
+		.checkout__payment-box-section .new-card-toggle {
 			box-shadow: none;
 			cursor: pointer;
 			font-size: 13px;
 			position: absolute;
 		}
 
-		.payment-box-section .new-card-fields {
+		.checkout__payment-box-section .new-card-fields {
 			background-color: $white;
 			max-height: 0;
 			overflow: hidden;
@@ -321,7 +321,7 @@
 			transition: all 0.5s ease-in-out;
 		}
 
-		.payment-box-section.selected .new-card-fields {
+		.checkout__payment-box-section.selected .new-card-fields {
 			max-height: 500px;
 			margin-bottom: 0;
 			padding-top: 15px;
@@ -366,7 +366,7 @@
 
 	.paypal-payment-box,
 	.credits-payment-box {
-		.payment-box-section {
+		.checkout__payment-box-section {
 			background-color: $white;
 			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
 
@@ -378,7 +378,7 @@
 	}
 
 	.paypal-payment-box {
-		.payment-box-section {
+		.checkout__payment-box-section {
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: space-between;
@@ -416,7 +416,7 @@
 	// Credits Payment Box
 	// -----------------------------------
 	.credits-payment-box {
-		.payment-box-section {
+		.checkout__payment-box-section {
 			box-sizing: border-box;
 			min-height: 91px;
 			padding: 20px 20px 20px 80px;
@@ -780,7 +780,7 @@
 }
 
 @include breakpoint( ">660px" ) {
-	.pay-button {
+	.checkout__pay-button {
 		float: left;
 	}
 }

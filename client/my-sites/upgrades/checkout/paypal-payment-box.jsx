@@ -125,7 +125,7 @@ module.exports = React.createClass( {
 	content: function() {
 		return (
 			<form onSubmit={ this.redirectToPayPal }>
-				<div className="payment-box-section">
+				<div className="checkout__payment-box-section">
 					<CountrySelect
 						additionalClasses="checkout-field"
 						name="country"
@@ -147,8 +147,8 @@ module.exports = React.createClass( {
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />
 
-				<div className="payment-box-actions">
-					<div className="pay-button">
+				<div className="checkout__payment-box-actions">
+					<div className="checkout__pay-button">
 						<button type="submit" className="button is-primary button-pay" disabled={ this.state.formDisabled }>
 							{ this.renderButtonText() }
 						</button>
