@@ -16,8 +16,7 @@ import wp from 'lib/wp';
 const debug = debugFactory( 'calypso:upgrades:actions:purchases' ),
 	wpcom = wp.undocumented();
 
-const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' ),
-	PURCHASE_REMOVE_ERROR_MESSAGE = i18n.translate( 'There was an error removing the purchase.' );
+const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
 
 function cancelPurchase( purchaseId, onComplete ) {
 	wpcom.cancelPurchase( purchaseId, ( error, data ) => {
@@ -27,34 +26,6 @@ function cancelPurchase( purchaseId, onComplete ) {
 
 		if ( success ) {
 			clearPurchases();
-		}
-
-		onComplete( success );
-	} );
-}
-
-function cancelPrivateRegistration( purchaseId, onComplete ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.PRIVACY_PROTECTION_CANCEL,
-		purchaseId
-	} );
-
-	wpcom.cancelPrivateRegistration( purchaseId, ( error, data ) => {
-		debug( error, data );
-
-		const success = ! error && data.success;
-
-		if ( success ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PRIVACY_PROTECTION_CANCEL_COMPLETED,
-				purchase: purchasesAssembler.createPurchaseObject( data.upgrade )
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PRIVACY_PROTECTION_CANCEL_FAILED,
-				purchaseId,
-				error: error.message || i18n.translate( 'There was a problem canceling this private registration.' )
-			} );
 		}
 
 		onComplete( success );
@@ -154,7 +125,6 @@ function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
 export {
 	cancelAndRefundPurchase,
 	cancelPurchase,
-	cancelPrivateRegistration,
 	clearPurchases,
 	deleteStoredCard,
 	fetchStoredCards,

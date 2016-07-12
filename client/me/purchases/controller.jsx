@@ -11,7 +11,6 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import CancelPrivateRegistration from './cancel-private-registration';
 import CancelPurchase from './cancel-purchase';
-import CancelPurchaseLoadingPlaceholder from './cancel-purchase/loading-placeholder';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import EditCardDetails from './payment/edit-card-details';
 import EditCardDetailsData from 'components/data/purchases/edit-card-details';
@@ -99,14 +98,13 @@ export default {
 			'Cancel Private Registration'
 		);
 
-		sites.setSelectedSite( context.params.site );
+		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
-			<ManagePurchaseData
-				component={ CancelPrivateRegistration }
-				purchaseId={ context.params.purchaseId }
-				sites={ sites } />
+			<CancelPrivateRegistration
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			/>
 		);
 	},
 
