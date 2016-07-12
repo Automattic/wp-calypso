@@ -15,6 +15,7 @@ import { FIRST_VIEW_START_DATES } from './constants';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference } from 'state/preferences/selectors';
 import { getSectionName } from 'state/ui/selectors';
+import { isEnabled } from 'config';
 
 export function doesViewHaveFirstView( view ) {
 	return !! ( FIRST_VIEW_START_DATES[ view ] );
@@ -42,7 +43,8 @@ export function switchedToDifferentSection( state ) {
 export function shouldViewBeVisible( state ) {
 	const sectionName = getSectionName( state );
 
-	return isViewEnabled( state, sectionName ) &&
+	return isEnabled( 'ui/first-view' ) &&
+		isViewEnabled( state, sectionName ) &&
 		! wasViewHidden( state, sectionName ) &&
 		switchedToDifferentSection( state );
 }
