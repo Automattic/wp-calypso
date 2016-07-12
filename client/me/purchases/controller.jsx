@@ -138,14 +138,13 @@ export default {
 			'Confirm Cancel Domain'
 		);
 
-		sites.setSelectedSite( context.params.site );
+		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
-			<ManagePurchaseData
-				component={ ConfirmCancelDomain }
-				purchaseId={ context.params.purchaseId }
-				sites={ sites } />
+			<ConfirmCancelDomain
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			/>
 		);
 	},
 
