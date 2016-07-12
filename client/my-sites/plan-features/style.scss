@@ -17,6 +17,18 @@ $plan-features-header-banner-height: 20px;
 		display: none;
 	}
 
+	.foldable-card {
+		box-shadow: none;
+	}
+
+	.foldable-card.card.is-expanded { //original rule has this specificity
+		margin-bottom: 0;
+	}
+
+	.foldable-card.is-expanded .foldable-card__content { //original rule has this specificity
+		padding: 0;
+	}
+
 	.plan-features__header-figure {
 		display: block;
 	}
@@ -24,9 +36,19 @@ $plan-features-header-banner-height: 20px;
 	.plan-features__header-banner {
 		display: none;
 	}
+
+	.plan-features__item {
+		border-bottom: solid 1px lighten( $gray, 27% );
+		font-size: 14px;
+	}
+
+	.plan-features__item:last-child {
+		border-bottom: none;
+	}
 }
 
 .plan-features__mobile-plan {
+	font-size: 14px;
 	border: solid 1px lighten( $gray, 27% );
 	background-color: lighten( $gray, 35% );
 	margin-bottom: 24px;

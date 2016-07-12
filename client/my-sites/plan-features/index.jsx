@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { map, reduce, noop } from 'lodash';
 import page from 'page';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -36,6 +37,7 @@ import {
 } from 'lib/plans';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import SpinnerLine from 'components/spinner-line';
+import FoldableCard from 'components/foldable-card';
 
 class PlanFeatures extends Component {
 
@@ -67,13 +69,14 @@ class PlanFeatures extends Component {
 	}
 
 	renderMobileView() {
-		const { planProperties, isPlaceholder } = this.props;
+		const { planProperties, isPlaceholder, translate } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
 				available,
 				currencyCode,
 				current,
+				features,
 				discountPrice,
 				onUpgradeClick,
 				planConstantObj,
@@ -83,7 +86,7 @@ class PlanFeatures extends Component {
 			} = properties;
 
 			return (
-				<div className="plan-features__mobile-plan">
+				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
 						current={ current }
 						currencyCode={ currencyCode }
@@ -96,11 +99,6 @@ class PlanFeatures extends Component {
 						onClick={ onUpgradeClick }
 						isPlaceholder={ isPlaceholder }
 					/>
-					{
-						isPlaceholder
-							? <SpinnerLine />
-							: null
-					}
 					<p className="plan-features__description">
 						{ planConstantObj.getDescription() }
 					</p>
@@ -111,7 +109,26 @@ class PlanFeatures extends Component {
 						freePlan={ planName === PLAN_FREE }
 						isPlaceholder={ isPlaceholder }
 					/>
+					<FoldableCard
+						summary={ translate( 'Show included features' ) }
+						compact>
+						{ this.renderMobileFeatures( features ) }
+					</FoldableCard>
 				</div>
+			);
+		} );
+	}
+
+	renderMobileFeatures( features ) {
+		return map( features, ( currentFeature, index ) => {
+			return (
+				<PlanFeaturesItem key={ index } description={
+					currentFeature.getDescription
+						? currentFeature.getDescription()
+						: null
+				}>
+					{ currentFeature.getTitle() }
+				</PlanFeaturesItem>
 			);
 		} );
 	}
@@ -356,4 +373,4 @@ export default connect( ( state, ownProps ) => {
 		isPlaceholder,
 		planProperties: planProperties
 	};
-} )( PlanFeatures );
+} )( localize( PlanFeatures ) );
