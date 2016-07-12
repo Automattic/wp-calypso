@@ -21,7 +21,6 @@ describe( 'store', () => {
 
 	it( 'should return an object with the initial state', () => {
 		expect( StoredCardsStore.get() ).to.be.eql( {
-			isDeleting: false,
 			isFetching: false,
 			list: []
 		} );
@@ -33,7 +32,6 @@ describe( 'store', () => {
 		} );
 
 		expect( StoredCardsStore.get() ).to.be.eql( {
-			isDeleting: false,
 			isFetching: true,
 			list: []
 		} );
@@ -46,7 +44,6 @@ describe( 'store', () => {
 		} );
 
 		expect( StoredCardsStore.get() ).to.be.eql( {
-			isDeleting: false,
 			isFetching: false,
 			list: []
 		} );
@@ -59,7 +56,6 @@ describe( 'store', () => {
 		} );
 
 		expect( StoredCardsStore.get() ).to.be.eql( {
-			isDeleting: false,
 			isFetching: false,
 			list: STORED_CARDS
 		} );
@@ -82,61 +78,8 @@ describe( 'store', () => {
 		} );
 
 		expect( StoredCardsStore.get() ).to.be.eql( {
-			isDeleting: false,
 			isFetching: false,
 			list: STORED_CARDS
-		} );
-	} );
-
-	it( 'should return an object with the previous list of cards and deleting enabled when deleting is triggered', () => {
-		Dispatcher.handleViewAction( {
-			type: ActionTypes.STORED_CARDS_DELETE,
-			card: head( STORED_CARDS )
-		} );
-
-		expect( StoredCardsStore.get() ).to.be.eql( {
-			isDeleting: true,
-			isFetching: false,
-			list: STORED_CARDS
-		} );
-	} );
-
-	it( 'should return an object with the previous list of cards and deleting disabled when deleting failed', () => {
-		Dispatcher.handleViewAction( {
-			type: ActionTypes.STORED_CARDS_DELETE_FAILED,
-			card: head( STORED_CARDS )
-		} );
-
-		expect( StoredCardsStore.get() ).to.be.eql( {
-			isDeleting: false,
-			isFetching: false,
-			list: STORED_CARDS
-		} );
-	} );
-
-	it( 'should return an object with a new list of cards and deleting disabled when deleting completed', () => {
-		Dispatcher.handleViewAction( {
-			type: ActionTypes.STORED_CARDS_DELETE_COMPLETED,
-			card: head( STORED_CARDS )
-		} );
-
-		expect( StoredCardsStore.get() ).to.be.eql( {
-			isDeleting: false,
-			isFetching: false,
-			list: tail( STORED_CARDS )
-		} );
-	} );
-
-	it( 'should return an object with an empty list of cards and deleting disabled when deleting completed', () => {
-		Dispatcher.handleViewAction( {
-			type: ActionTypes.STORED_CARDS_DELETE_COMPLETED,
-			card: last( STORED_CARDS )
-		} );
-
-		expect( StoredCardsStore.get() ).to.be.eql( {
-			isDeleting: false,
-			isFetching: false,
-			list: []
 		} );
 	} );
 } );
