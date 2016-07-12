@@ -11,10 +11,9 @@ import StepHeader from 'signup/step-header';
 import NavigationLink from 'signup/navigation-link';
 import config from 'config';
 import sitesList from 'lib/sites-list';
-import { plansLink } from 'lib/plans';
+import { plansLink, isSkipPlansTestEnabled } from 'lib/plans';
 import Gridicon from 'components/gridicon';
 import analytics from 'lib/analytics';
-import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
@@ -81,7 +80,7 @@ export default React.createClass( {
 
 	renderComparePlans() {
 		const { stepName } = this.props;
-		if ( stepName !== 'plans' || abtest( 'skipPlansLinkForFree' ) !== 'skipPlansForFree' ) {
+		if ( stepName !== 'plans' || ! isSkipPlansTestEnabled() ) {
 			return null;
 		}
 
@@ -100,7 +99,7 @@ export default React.createClass( {
 	renderNavigation() {
 		const { stepName } = this.props;
 		const classes = classNames( 'step-wrapper__buttons', {
-			'is-wide-navigation': stepName === 'plans' && abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree'
+			'is-wide-navigation': stepName === 'plans' && isSkipPlansTestEnabled()
 		} );
 		return (
 			<div className={ classes }>
@@ -116,7 +115,7 @@ export default React.createClass( {
 		const classes = classNames( 'step-wrapper', {
 			'is-wide-layout': this.props.isWideLayout
 		} );
-		const showTopNavigation = stepName === 'plans' && abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree';
+		const showTopNavigation = stepName === 'plans' && isSkipPlansTestEnabled();
 
 		return (
 			<div className={ classes }>

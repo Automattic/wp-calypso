@@ -26,8 +26,7 @@ import { isEnabled } from 'config';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import QueryPlans from 'components/data/query-plans';
 import config from 'config';
-
-const inSkipPlansTest = () => ( abtest( 'personalPlan' ) === 'show' && abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree' );
+import { isSkipPlansTestEnabled } from 'lib/plans';
 
 module.exports = React.createClass( {
 	displayName: 'PlansStep',
@@ -92,7 +91,7 @@ module.exports = React.createClass( {
 	},
 
 	plansList: function() {
-		const hideFreePlan = this.props.hideFreePlan || inSkipPlansTest();
+		const hideFreePlan = this.props.hideFreePlan || isSkipPlansTestEnabled();
 		return (
 			<div>
 				<PlanList
@@ -142,7 +141,7 @@ module.exports = React.createClass( {
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
-				goToNextStep={ inSkipPlansTest() ? this.onSelectPlan : null }
+				goToNextStep={ isSkipPlansTestEnabled() ? this.onSelectPlan : null }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ headerText }
@@ -181,7 +180,7 @@ module.exports = React.createClass( {
 	},
 
 	plansCompare: function() {
-		const hideFreePlan = this.props.hideFreePlan || inSkipPlansTest();
+		const hideFreePlan = this.props.hideFreePlan || isSkipPlansTestEnabled();
 		return <PlansCompare
 			className="plans-step__compare"
 			hideFreePlan={ hideFreePlan }

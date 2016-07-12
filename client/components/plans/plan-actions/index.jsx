@@ -13,11 +13,8 @@ import { cartItems } from 'lib/cart-values';
 import config from 'config';
 import { isBusiness, isEnterprise, isFreePlan, isFreeJetpackPlan } from 'lib/products-values';
 import purchasesPaths from 'me/purchases/paths';
-import { isValidFeatureKey } from 'lib/plans';
+import { isValidFeatureKey, isSkipPlansTestEnabled } from 'lib/plans';
 import * as upgradesActions from 'lib/upgrades/actions';
-import { abtest } from 'lib/abtest';
-
-const inSkipPlansTest = () => ( abtest( 'personalPlan' ) === 'show' && abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree' );
 
 const PlanActions = React.createClass( {
 	propTypes: {
@@ -113,7 +110,7 @@ const PlanActions = React.createClass( {
 			label = this.translate( 'Purchase Now' );
 		}
 
-		if ( this.props.isInSignup && inSkipPlansTest() ) {
+		if ( this.props.isInSignup && isSkipPlansTestEnabled() ) {
 			label = this.translate( 'Select %(plan)s', {
 				args: {
 					plan: this.props.plan.product_name_short
