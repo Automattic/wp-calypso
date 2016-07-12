@@ -21,6 +21,8 @@ import FormLabel from 'components/forms/form-label';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Button from 'components/button';
+import { isJetpackMinimumVersion } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
 
@@ -39,7 +41,7 @@ const SiteSettingsFormWriting = React.createClass( {
 
 		site = site || this.props.site;
 
-		if ( ! site.jetpack && config.isEnabled( 'manage/custom-post-types' ) ) {
+		if ( this.isCustomPostTypesSettingsEnabled() ) {
 			writingAttributes = writingAttributes.concat( [
 				'jetpack_testimonial',
 				'jetpack_portfolio'
@@ -57,6 +59,13 @@ const SiteSettingsFormWriting = React.createClass( {
 		return settings;
 	},
 
+	isCustomPostTypesSettingsEnabled() {
+		return (
+			config.isEnabled( 'manage/custom-post-types' ) &&
+			false !== this.props.jetpackVersionSupportsCustomTypes
+		);
+	},
+
 	resetState: function() {
 		this.replaceState( {
 			fetchingSettings: true,
@@ -67,12 +76,9 @@ const SiteSettingsFormWriting = React.createClass( {
 	},
 
 	onSaveComplete() {
-		const { site } = this.props;
-		if ( ! site || site.jetpack || ! config.isEnabled( 'manage/custom-post-types' ) ) {
-			return;
+		if ( this.isCustomPostTypesSettingsEnabled() ) {
+			this.props.requestPostTypes( this.props.site.ID );
 		}
-
-		this.props.requestPostTypes( this.props.site.ID );
 	},
 
 	setCustomPostTypeSetting( revision ) {
@@ -135,7 +141,7 @@ const SiteSettingsFormWriting = React.createClass( {
 						</FormSelect>
 					</FormFieldset>
 
-					{ config.isEnabled( 'manage/custom-post-types' ) && ( ! this.props.site || ! this.props.site.jetpack ) && (
+					{ this.isCustomPostTypesSettingsEnabled() && (
 						<CustomPostTypeFieldset
 							requestingSettings={ this.state.fetchingSettings }
 							value={ pick( this.state, 'jetpack_testimonial', 'jetpack_portfolio' ) }
@@ -189,8 +195,15 @@ const SiteSettingsFormWriting = React.createClass( {
 	}
 } );
 
-export default connect( null, {
-	requestPostTypes
-}, null, {
-	pure: false
-} )( SiteSettingsFormWriting );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			jetpackVersionSupportsCustomTypes: isJetpackMinimumVersion( state, siteId, '4.2.0' )
+		};
+	},
+	{ requestPostTypes },
+	null,
+	{ pure: false }
+)( SiteSettingsFormWriting );
