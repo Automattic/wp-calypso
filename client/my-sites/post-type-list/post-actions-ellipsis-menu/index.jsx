@@ -9,6 +9,7 @@ import React, { PropTypes, Children, cloneElement } from 'react';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
 import PostActionsEllipsisMenuEdit from './edit';
+import PostActionsEllipsisMenuStats from './stats';
 import PostActionsEllipsisMenuPublish from './publish';
 import PostActionsEllipsisMenuTrash from './trash';
 import PostActionsEllipsisMenuView from './view';
@@ -21,6 +22,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 		actions.push(
 			<PostActionsEllipsisMenuEdit key="edit" />,
 			<PostActionsEllipsisMenuView key="view" />,
+			<PostActionsEllipsisMenuStats key="stats" />,
 			<PostActionsEllipsisMenuPublish key="publish" />,
 			<PostActionsEllipsisMenuRestore key="restore" />,
 			<PostActionsEllipsisMenuTrash key="trash" />
