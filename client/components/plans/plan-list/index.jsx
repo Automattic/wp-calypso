@@ -99,7 +99,6 @@ const PlanList = React.createClass( {
 						plan={ plan }
 						sitePlans={ this.props.sitePlans }
 						comparePlansUrl={ this.props.comparePlansUrl }
-						hideDiscountMessage={ hideFreePlan }
 						isInSignup={ this.props.isInSignup }
 						key={ plan.product_id }
 						open={ plan.product_id === this.state.openPlan }
