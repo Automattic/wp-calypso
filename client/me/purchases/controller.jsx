@@ -158,14 +158,14 @@ export default {
 			'Edit Card Details'
 		);
 
-		sites.setSelectedSite( context.params.site );
+		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
 			<EditCardDetailsData
 				cardId={ context.params.cardId }
 				component={ EditCardDetails }
-				purchaseId={ context.params.purchaseId }
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				loadingPlaceholder={ EditCardDetailsLoadingPlaceholder }
 				sites={ sites } />
 		);
