@@ -1,19 +1,19 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+import util from './util';
+import assert from 'assert';
 
 /**
  * site.settings
  */
-describe( 'wpcom.site.settings', function() {
+describe( 'wpcom.site.settings', () => {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
-	var settings = site.settings();
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
+	const settings = site.settings();
 
-	describe( 'wpcom.site.get', function() {
+	describe( 'wpcom.site.get', () => {
 		it( 'should get site settings data', done => {
 			settings.get()
 				.then( data => {

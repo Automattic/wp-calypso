@@ -2,6 +2,12 @@ general:
   branches:
     ignore:
       - gh-pages
+dependencies:
+  pre:
+    - npm install -g npm@3.8.6
 machine:
   node:
-    version: 0.12.7
+    version: 5.11.1
+test:
+  override:
+    - DEBUG=wpcom* make test
