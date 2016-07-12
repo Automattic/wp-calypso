@@ -3,10 +3,7 @@
  */
 import get from 'lodash/get';
 import createSelector from 'lib/create-selector';
-import filter from 'lodash/filter';
 import find from 'lodash/find';
-import flow from 'lodash/flow';
-import cloneDeep from 'lodash/cloneDeep';
 import includes from 'lodash/includes';
 import some from 'lodash/some';
 import omit from 'lodash/omit';
@@ -21,13 +18,10 @@ import {
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
 	mergeIgnoringArrays,
-	normalizeEditedPost
+	normalizeEditedPost,
+	normalizePost
 } from './utils';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
-import firstPassCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
-import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
-import stripHtml from 'lib/post-normalizer/rule-strip-html';
-import { getSite } from 'state/sites/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
 
 /**
@@ -38,7 +32,18 @@ import addQueryArgs from 'lib/route/add-query-args';
  * @return {Object}          Post object
  */
 export function getPost( state, globalId ) {
-	return state.posts.items[ globalId ];
+	const path = state.posts.items[ globalId ];
+	if ( ! path ) {
+		return null;
+	}
+
+	const [ siteId, postId ] = path;
+	const manager = state.posts.queries[ siteId ];
+	if ( ! manager ) {
+		return null;
+	}
+
+	return manager.getItem( postId );
 }
 
 /**
@@ -51,25 +56,8 @@ export function getPost( state, globalId ) {
  * @return {?Object}          Post object
  */
 export const getNormalizedPost = createSelector(
-	( () => {
-		// Cache normalize flow in immediately-invoked closure to avoid
-		// regenerating same flow on each call to this selector
-		const normalize = flow( [
-			firstPassCanonicalImage,
-			decodeEntities,
-			stripHtml
-		] );
-
-		return ( state, globalId ) => {
-			const post = getPost( state, globalId );
-			if ( ! post ) {
-				return null;
-			}
-
-			return normalize( cloneDeep( post ) );
-		};
-	} )(),
-	( state ) => state.posts.items
+	( state, globalId ) => normalizePost( getPost( state, globalId ) ),
+	( state ) => [ state.posts.items, state.posts.queries ]
 );
 
 /**
@@ -80,8 +68,15 @@ export const getNormalizedPost = createSelector(
  * @return {Array}         Site posts
  */
 export const getSitePosts = createSelector(
-	( state, siteId ) => filter( state.posts.items, { site_ID: siteId } ),
-	( state ) => [ state.posts.items ]
+	( state, siteId ) => {
+		const manager = state.posts.queries[ siteId ];
+		if ( ! manager ) {
+			return [];
+		}
+
+		return manager.getItems();
+	},
+	( state ) => state.posts.queries
 );
 
 /**
@@ -93,43 +88,52 @@ export const getSitePosts = createSelector(
  * @return {?Object}        Post object
  */
 export const getSitePost = createSelector(
-	( state, siteId, postId ) => find( getSitePosts( state, siteId ), { ID: postId } ) || null,
-	( state, siteId ) => getSitePosts( state, siteId )
+	( state, siteId, postId ) => {
+		const manager = state.posts.queries[ siteId ];
+		if ( ! manager ) {
+			return null;
+		}
+
+		return manager.getItem( postId );
+	},
+	( state ) => state.posts.queries
 );
 
 /**
  * Returns an array of normalized posts for the posts query, or null if no
  * posts have been received.
  *
- * @see getNormalizedPost
- *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @param  {Object}  query  Post query object
  * @return {?Array}         Posts for the post query
  */
-export function getSitePostsForQuery( state, siteId, query ) {
-	const manager = state.posts.queries[ siteId ];
-	if ( ! manager ) {
-		return null;
-	}
+export const getSitePostsForQuery = createSelector(
+	( state, siteId, query ) => {
+		const manager = state.posts.queries[ siteId ];
+		if ( ! manager ) {
+			return null;
+		}
 
-	const posts = manager.getItems( query );
-	if ( ! posts ) {
-		return null;
-	}
+		const posts = manager.getItems( query );
+		if ( ! posts ) {
+			return null;
+		}
 
-	// PostQueryManager is smart enough to return an array including undefined
-	// entries if it knows that a page of results exists for the query (via a
-	// previous request's `found` value) but the items haven't been received.
-	// While we could impose this on the developer to accommodate, instead we
-	// simply return null when any `undefined` entries exist in the set.
-	if ( includes( posts, undefined ) ) {
-		return null;
-	}
+		// PostQueryManager will return an array including undefined entries if
+		// it knows that a page of results exists for the query (via a previous
+		// request's `found` value) but the items haven't been received. While
+		// we could impose this on the developer to accommodate, instead we
+		// simply return null when any `undefined` entries exist in the set.
+		if ( includes( posts, undefined ) ) {
+			return null;
+		}
 
-	return posts.map( ( post ) => getNormalizedPost( state, post.global_ID ) );
-}
+		return posts.map( normalizePost );
+	},
+	( state ) => state.posts.queries,
+	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
+);
 
 /**
  * Returns true if currently requesting posts for the posts query, or false
@@ -206,8 +210,6 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  * Returns an array of normalized posts for the posts query, including all
  * known queried pages, or null if the posts for the query are not known.
  *
- * @see getNormalizedPost
- *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @param  {Object}  query  Post query object
@@ -225,11 +227,9 @@ export const getSitePostsForQueryIgnoringPage = createSelector(
 			return null;
 		}
 
-		return itemsIgnoringPage.map( ( post ) => {
-			return getNormalizedPost( state, post.global_ID );
-		} );
+		return itemsIgnoringPage.map( normalizePost );
 	},
-	( state ) => [ state.posts.queries, state.posts.items ],
+	( state ) => state.posts.queries,
 	( state, siteId, query ) => getSerializedPostsQueryWithoutPage( query, siteId )
 );
 
