@@ -1,4 +1,15 @@
 
+5.1.0 / 2016-07-12
+==================
+
+ * fix `Request` reference
+ * re-export the Classes
+ * override `test` rule for CI adding DEBUG var
+ * circleci: set `node` and `npm` version
+ * make: remove line break
+ * remove `test-all` and add `make-watch` rule
+ * add CircleCI badge
+
 5.0.0 / 2016-07-04
 ==================
 
