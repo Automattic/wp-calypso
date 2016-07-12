@@ -97,15 +97,19 @@ $plan-features-header-banner-height: 20px;
 	border: solid 6px $gray-light;
 	border-radius: 50%;
 
-	@include breakpoint( "<1280px" ) {
-		width: 20px;
-		height: 20px;
-		border: solid 2px $gray-light;
-		margin-right: 10px;
-	}
-
 	@include breakpoint( "<1040px" ) {
 		display: none;
+	}
+}
+
+.is-section-plans {
+	.plan-features__header-figure {
+		@include breakpoint( "<1280px" ) {
+			width: 20px;
+			height: 20px;
+			border: solid 2px $gray-light;
+			margin-right: 10px;
+		}
 	}
 }
 
