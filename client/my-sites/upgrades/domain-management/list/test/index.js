@@ -27,6 +27,9 @@ describe( 'index', function() {
 	useMockery( mockery => {
 		require( 'test/helpers/mocks/component-tip' )( mockery );
 		require( 'test/helpers/mocks/data-poller' )( mockery );
+		mockery.registerMock( 'react-redux', {
+			connect: () => ( c ) => c
+		} );
 		mockery.registerMock( 'components/section-nav', EmptyComponent );
 	} );
 
