@@ -1,28 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:credit-cards' );
+var connect = require( 'react-redux' ).connect,
+	React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 var CreditCardDelete = require( './credit-card-delete' ),
-	observe = require( 'lib/mixins/data-observe' ),
 	Card = require( 'components/card' ),
+	getStoredCards = require( 'state/stored-cards/selectors' ).getStoredCards,
+	isFetchingStoredCards = require( 'state/stored-cards/selectors' ).isFetchingStoredCards,
+	QueryStoredCards = require( 'components/data/query-stored-cards' ),
 	SectionHeader = require( 'components/section-header' );
 
-module.exports = React.createClass( {
-
-	displayName: 'CreditCards',
-
-	mixins: [ observe( 'cards' ) ],
-
+var CreditCards = React.createClass( {
 	renderCards: function() {
-		var cards = this.props.cards.get();
-
-		// Loading state
-		if ( ! this.props.cards.initialized ) {
+		if ( this.props.isFetchingStoredCards ) {
 			return (
 				<div className="credit-cards__no-results">
 					{ this.translate( 'Loading…' ) }
@@ -30,8 +24,7 @@ module.exports = React.createClass( {
 			);
 		}
 
-		// No cards
-		if ( ! cards.length ) {
+		if ( ! this.props.cards.length ) {
 			return (
 				<div className="credit-cards__no-results">
 					{ this.translate( 'You have no saved cards.' ) }
@@ -39,21 +32,22 @@ module.exports = React.createClass( {
 			);
 		}
 
-		// Show cards
-		return cards.map( function( card ) {
+		return this.props.cards.map( function( card ) {
 			return (
 				<div className="credit-cards_single-card" key={ card.stored_details_id }>
-					<CreditCardDelete card={ card } cards={ this.props.cards } />
+					<CreditCardDelete card={ card } />
 				</div>
 			);
 		}, this );
 	},
 
 	render: function() {
-		debug( 'Render credit cards' );
 		return (
 			<div>
+				<QueryStoredCards />
+
 				<SectionHeader label={ this.translate( 'Manage Your Credit Cards' ) } />
+
 				<Card>
 					<div className="credit-cards">
 						{ this.renderCards() }
@@ -63,3 +57,10 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+module.exports = connect(
+	state => ( {
+		cards: getStoredCards( state ),
+		isFetchingStoredCards: isFetchingStoredCards( state )
+	} )
+)( CreditCards );

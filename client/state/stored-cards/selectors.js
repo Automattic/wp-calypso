@@ -4,7 +4,7 @@
  * @param {Object} state - current state object
  * @return {Array} Stored Cards
  */
-export const getCards = state => state.storedCards.items;
+export const getStoredCards = state => state.storedCards.items;
 
 /**
  * Returns a Stored Card
@@ -12,8 +12,10 @@ export const getCards = state => state.storedCards.items;
  * @param  {Number} cardId  the card id
  * @return {Object} the matching card if there is one
  */
-export const getByCardId = ( state, cardId ) => (
-	getCards( state ).filter( card => card.stored_details_id === cardId ).shift()
+export const getStoredCardById = ( state, cardId ) => (
+	getStoredCards( state ).filter( card => card.stored_details_id === cardId ).shift()
 );
+
+export const hasLoadedStoredCardsFromServer = state => state.storedCards.hasLoadedFromServer;
 
 export const isFetchingStoredCards = state => state.storedCards.isFetching;
