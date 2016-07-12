@@ -16,11 +16,9 @@ import {
 	PURCHASE_REMOVE_COMPLETED,
 } from 'state/action-types';
 import useMockery from 'test/helpers/use-mockery';
-import purchasesAssembler from 'lib/purchases/assembler';
 
 describe( 'actions', () => {
-	const purchases = [ { id: 1 } ],
-		assembledPurchases = purchasesAssembler.createPurchasesArray( purchases ),
+	const purchases = [ { ID: 1 } ],
 		userId = 1337,
 		siteId = 1234,
 		purchaseId = 31337;
@@ -78,7 +76,7 @@ describe( 'actions', () => {
 			return promise.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PRIVACY_PROTECTION_CANCEL_COMPLETED,
-					purchase: assembledPurchases[ 0 ]
+					purchase: purchases[ 0 ]
 				} );
 			} );
 		} );
@@ -103,7 +101,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASES_SITE_FETCH_COMPLETED,
 					siteId,
-					purchases: assembledPurchases
+					purchases
 				} );
 			} );
 		} );
@@ -127,7 +125,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASES_USER_FETCH_COMPLETED,
 					userId,
-					purchases: assembledPurchases
+					purchases
 				} );
 			} );
 		} );
@@ -153,7 +151,7 @@ describe( 'actions', () => {
 			return promise.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASE_REMOVE_COMPLETED,
-					purchases: assembledPurchases,
+					purchases,
 					userId
 				} );
 			} );
