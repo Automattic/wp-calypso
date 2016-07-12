@@ -2,24 +2,19 @@ machine:
   node:
     version: 5.11.1
 test:
-  pre:
-    - NODE_ENV=test make client/config/index.js:
-        parallel: true
   override:
-    - bin/run-lint :
-        parallel: true
-        files:
-          - client/**/*.js
-          - client/**/*.jsx
-          - server/**/*.js
-          - server/**/*.jsx
-    - MOCHA_FILE=./test-results-client.xml npm run test-client -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
-        parallel: true
-    - MOCHA_FILE=./test-results-server.xml npm run test-server -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
-        parallel: true
-    - MOCHA_FILE=./test-results-test.xml npm run test-test -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
-        parallel: true
-  post:
-    - mkdir -p $CIRCLE_TEST_REPORTS/junit/ && find . -type f -regex  "./test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;:
-        parallel: true
-    - if [[ $CIRCLE_BRANCH == "master" ]]; then make translate; mkdir $CIRCLE_ARTIFACTS/translate; cp calypso-strings.php $CIRCLE_ARTIFACTS/translate/calypso-strings.php; fi;
+    - git --version
+    - git log --pretty=format:%H --reverse|head -1 # first commit in repo
+    - git rev-parse origin/master # to which commit origin/master is pointing
+    - git rev-parse master # to which commit master is pointing
+    - git diff --name-only HEAD..origin/master *js *jsx
+    - git diff --name-only --exit-code HEAD..origin/master *js *jsx
+    - git diff --name-only add/eslint-branch-files-circleci-testcase-gitdiff..origin/master *js *jsx
+    - git diff --name-only --exit-code add/eslint-branch-files-circleci-testcase-gitdiff..origin/master *js *jsx
+    - git diff --name-only $CIRCLE_BRANCH..origin/master *js *jsx
+    - git diff --name-only --exit-code $CIRCLE_BRANCH..origin/master *js *jsx
+    - git diff --name-only e0beb1debba7953a1bee92aafcf5a5e81939dabe..HEAD *js *jsx
+    - git diff --name-only --exit-code e0beb1debba7953a1bee92aafcf5a5e81939dabe..HEAD *js *jsx
+    - git merge-base $(git rev-parse --abbrev-ref HEAD) origin/master # shared ancestor between topic branch and master
+    - git diff --name-only $(git merge-base $(git rev-parse --abbrev-ref HEAD) origin/master)..HEAD *js *jsx
+    - git diff --name-only --exit-code $(git merge-base $(git rev-parse --abbrev-ref HEAD) origin/master)..HEAD *js *jsx
