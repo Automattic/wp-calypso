@@ -498,30 +498,24 @@ const FormGeneral = React.createClass( {
 					</form>
 				</Card>
 				{
-					! this.props.site.jetpack && <div>
+					! this.props.site.jetpack && <div className="site-settings__footer-credit-container">
 						<SectionHeader label={ this.translate( 'Footer Credit' ) } />
 						<CompactCard className="site-settings__footer-credit-explanation">
-							{ this.translate( `All WordPress.com users can choose among several options for the footer credit,
-								from a minimalist WordPress.com logo to text options like 
-								“A WordPress.com Website” or “Powered by WordPress.com.”` ) }
-						</CompactCard>
-						<Card href={ ( isBusiness( site.plan ) ? '/customize/identity/' : '/plans/' ) + site.slug }>
+							<p>
+								{ this.translate( 'You can customize your website by changing the footer credit in customizer.' ) }
+							</p>
 							<div>
-								<h2 className="site-settings__footer-credit-title">
-									{ this.translate( 'Change or remove footer at the bottom of your page.' ) }
-								</h2>
-								{
-									isBusiness( site.plan ) ? <p className="site-settings__footer-credit-description">
-										{ this.translate( 'Because you have Business plan, you can remove the footer credit' ) }
-									</p> : <div className="site-settings__footer-credit-nudge">
-										<Gridicon className="site-settings__footer-credit-nudge-icon" icon="customize" size={ 18 } />
-										<div className="site-settings__footer-credit-nudge-title">
-											{ this.translate( 'Available with a businesss plan' ) }
-										</div>
-									</div>
-								}
+								<Button className="site-settings__footer-credit-change" href={ '/customize/identity/' + site.slug }>
+									{ this.translate( 'Change footer credit' ) }
+								</Button>
 							</div>
-						</Card>
+						</CompactCard>
+						{ ! isBusiness( site.plan ) && <UpgradeNudge
+							className="site-settings__footer-credit-nudge"
+							title="Remove the footer credit entirely with Business Plan"
+							message="Upgrade to remove the footer credit, add google analytics and more"
+							icon="customize"
+						/> }
 					</div>
 				}
 				<SectionHeader label={ this.translate( 'Related Posts' ) }>

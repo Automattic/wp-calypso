@@ -123,44 +123,23 @@
 		}
 	}
 
-	.site-settings__footer-credit-title {
+	.site-settings__footer-credit-container {
 		margin-bottom: 16px;
-		font-size: 21px;
-		font-weight: 300;
-		line-height: 24px;
-		color: #2e4453;
 	}
 
-	.site-settings__footer-credit-description {
-		margin-bottom:0;
-	    color: #87a6bc;
-	    font-style: italic;
+	.site-settings__footer-credit-nudge.card {
+		margin: 0;
 	}
 
-	.site-settings__footer-credit-nudge {
-		display: flex;
-		flex-direction: row;
-	}
-
-	.site-settings__footer-credit-nudge-icon {
-		background: $alert-yellow;
-	    border-radius: 50%;
-	    margin-right: 16px;
-	    color: white;
-	    padding: 6px;
-	    align-self: center;
-	}
-
-	.site-settings__footer-credit-nudge-title {
-	    font-weight: 500;
-	    color: black;
-	    margin-top: 4px;
+	.site-settings__footer-credit-change {
+		width: 175px;
+		text-align:center;
 	}
 
 	.site-settings__footer-credit-explanation {
-		font-size: 13px;
-		color: $gray;
-	    font-style: italic;
+		display:flex;
+	    flex-direction: row;
+	    justify-content: space-between;
 	}
 }
 
