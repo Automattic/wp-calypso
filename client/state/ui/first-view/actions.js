@@ -23,7 +23,7 @@ export function hideView( { view, enabled } ) {
 
 function persistToPreferences( { getState, view, disabled } ) {
 	return savePreference( 'firstViewHistory', [
-		...getPreference( getState(), 'firstViewHistory' ), {
+		...getPreference( getState(), 'firstViewHistory' ).filter( item => item.view !== view ), {
 			view,
 			timestamp: Date.now(),
 			disabled,
