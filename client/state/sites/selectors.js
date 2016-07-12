@@ -87,6 +87,25 @@ export function isJetpackSite( state, siteId ) {
 }
 
 /**
+ * Returns true if the site is a Jetpack site with the specified module active,
+ * or false if the module is not active. Returns null if the site is not known
+ * or is not a Jetpack site.
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @param  {String}   slug   Module slug
+ * @return {?Boolean}        Whether site has Jetpack module active
+ */
+export function isJetpackModuleActive( state, siteId, slug ) {
+	const site = getSite( state, siteId );
+	if ( ! site || ! site.jetpack_modules ) {
+		return null;
+	}
+
+	return includes( site.jetpack_modules, slug );
+}
+
+/**
  * Returns the slug for a site, or null if the site is unknown.
  *
  * @param  {Object}  state  Global state tree
