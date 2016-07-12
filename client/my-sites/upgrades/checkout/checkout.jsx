@@ -13,8 +13,8 @@ var connect = require( 'react-redux' ).connect,
  */
 var analytics = require( 'lib/analytics' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
-	clearPurchases = require( 'lib/upgrades/actions/purchases' ).clearPurchases,
 	clearSitePlans = require( 'state/sites/plans/actions' ).clearSitePlans,
+	clearPurchases = require( 'state/purchases/actions' ).clearPurchases,
 	DomainDetailsForm = require( './domain-details-form' ),
 	fetchReceiptCompleted = require( 'state/receipts/actions' ).fetchReceiptCompleted,
 	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
@@ -164,7 +164,7 @@ const Checkout = React.createClass( {
 		var renewalItem,
 			receiptId = ':receiptId';
 
-		clearPurchases();
+		this.props.clearPurchases();
 
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			renewalItem = cartItems.getRenewalItems( this.props.cart )[ 0 ];
@@ -265,16 +265,11 @@ module.exports = connect(
 	function( state ) {
 		return {
 			cards: getStoredCards( state )
-		}
-	},
-	function( dispatch ) {
-		return {
-			clearSitePlans: function( siteId ) {
-				dispatch( clearSitePlans( siteId ) );
-			},
-			fetchReceiptCompleted: function( receiptId, data ) {
-				dispatch( fetchReceiptCompleted( receiptId, data ) );
-			}
 		};
+	},
+	{
+		clearPurchases,
+		clearSitePlans,
+		fetchReceiptCompleted
 	}
 )( Checkout );

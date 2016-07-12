@@ -9,7 +9,6 @@ import i18n from 'i18n-calypso';
  */
 import { action as ActionTypes } from '../constants';
 import Dispatcher from 'dispatcher';
-import olark from 'lib/olark';
 import purchasesAssembler from 'lib/purchases/assembler';
 import wp from 'lib/wp';
 
@@ -24,20 +23,8 @@ function cancelPurchase( purchaseId, onComplete ) {
 
 		const success = ! error && data.success;
 
-		if ( success ) {
-			clearPurchases();
-		}
-
 		onComplete( success );
 	} );
-}
-
-function clearPurchases() {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.PURCHASES_REMOVE
-	} );
-
-	olark.updateOlarkGroupAndEligibility();
 }
 
 function deleteStoredCard( card, onComplete ) {
@@ -113,19 +100,12 @@ function fetchUserPurchases( userId ) {
 }
 
 function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
-	wpcom.cancelAndRefundPurchase( purchaseId, data, function( error, response ) {
-		if ( ! error ) {
-			clearPurchases();
-		}
-
-		onComplete( error, response );
-	} );
+	wpcom.cancelAndRefundPurchase( purchaseId, data, onComplete );
 }
 
 export {
 	cancelAndRefundPurchase,
 	cancelPurchase,
-	clearPurchases,
 	deleteStoredCard,
 	fetchStoredCards,
 	fetchUserPurchases
