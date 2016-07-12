@@ -13,7 +13,8 @@ export function isUnsupportedChromeVersion() {
 }
 
 export function getChromeVersion() {
-	return window.navigator.appVersion.match( /Chrome\/(\d+)/ )[ 1 ];
+	const match = window.navigator.appVersion.match( /Chrome\/(\d+)/ );
+	return match ? match[ 1 ] : -1;
 }
 
 export function isPushNotificationsSupported() {
