@@ -124,7 +124,7 @@ const FeedStream = React.createClass( {
 
 	updateQuery( newValue ) {
 		const trimmedValue = trim( newValue );
-		if ( trimmedValue && trimmedValue.length > 1 && trimmedValue !== this.props.query ) {
+		if ( trimmedValue === '' || trimmedValue.length > 1 && trimmedValue !== this.props.query ) {
 			this.props.onQueryChange( newValue );
 		}
 	},
