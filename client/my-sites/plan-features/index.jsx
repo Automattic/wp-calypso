@@ -109,7 +109,7 @@ class PlanFeatures extends Component {
 						isPlaceholder={ isPlaceholder }
 					/>
 					<FoldableCard
-						header={ translate( 'Show included features' ) }
+						header={ translate( 'Show features' ) }
 						clickableHeader
 						compact>
 						{ this.renderMobileFeatures( features ) }
