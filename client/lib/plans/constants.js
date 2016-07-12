@@ -334,6 +334,7 @@ export const featuresList = {
 
 	[ FEATURE_GOOGLE_AD_VOUCHERS_100 ]: {
 		getTitle: () => i18n.translate( '$100 Advertising Voucher' ),
+		getTitleForOldPlans: () => i18n.translate( 'Advertising Vouchers' ),
 		getDescription: () => i18n.translate( '$100 Google AdWords credit after spending the first $25.' +
 			' Offer valid in US and Canada.' ),
 		plans: [ PLAN_PREMIUM, PLAN_BUSINESS ] // Business too because when wordpressAdCredits is disabled,
