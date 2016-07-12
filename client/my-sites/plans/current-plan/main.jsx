@@ -31,6 +31,7 @@ import {
 import Gridicon from 'components/gridicon';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/upgrades/navigation';
+import config from 'config';
 
 const PlanDetailsComponent = React.createClass( {
 	PropTypes: {
@@ -47,6 +48,7 @@ const PlanDetailsComponent = React.createClass( {
 	render: function() {
 		const { selectedSite } = this.props;
 		const { hasLoadedFromServer } = this.props.sitePlans;
+		const showPlanFeatures = config.isEnabled( 'manage/plan-features' );
 		let title;
 		let tagLine;
 		let featuresList;
@@ -94,7 +96,8 @@ const PlanDetailsComponent = React.createClass( {
 			);
 		} else if ( isBusiness( selectedSite.plan ) ) {
 			title = this.translate( 'Your site is on a Business plan' );
-			tagLine = this.translate( 'Learn more about everything included with Business and take advantage of its professional features.' );
+			tagLine = this.translate( 'Learn more about everything included with Business and take advantage of' +
+				' its professional features.' );
 			featuresList = ( <div>
 				<BusinessPlanDetails
 					selectedSite={ selectedSite }
@@ -108,7 +111,10 @@ const PlanDetailsComponent = React.createClass( {
 		}
 
 		return (
-			<Main className="current-plan">
+			<Main
+				className="current-plan"
+				wideLayout={ !! showPlanFeatures }
+			>
 				<PlansNavigation
 					sitePlans={ this.props.sitePlans }
 					path={ this.props.context.path }
@@ -122,11 +128,17 @@ const PlanDetailsComponent = React.createClass( {
 							</span>
 
 							<div className="current-plan__header-copy">
-								<h1 className={ classNames( { 'current-plan__header-heading': true, 'is-placeholder': ! hasLoadedFromServer } ) }>
+								<h1 className={ classNames( {
+									'current-plan__header-heading': true,
+									'is-placeholder': ! hasLoadedFromServer
+								} ) }>
 									{ title }
 								</h1>
 
-								<h2 className={ classNames( { 'current-plan__header-text': true, 'is-placeholder': ! hasLoadedFromServer } ) }>
+								<h2 className={ classNames( {
+									'current-plan__header-text': true,
+									'is-placeholder': ! hasLoadedFromServer
+								} ) }>
 									{ tagLine }
 								</h2>
 							</div>
@@ -150,16 +162,19 @@ const PlanDetailsComponent = React.createClass( {
 	}
 } );
 
-export default connect( ( state, ownProps ) => {
+export default connect(
+	( state, ownProps ) => {
 		return {
 			selectedSite: getSelectedSite( state ),
 			sitePlans: getPlansBySite( state, getSelectedSite( state ) ),
 			context: ownProps.context
 		};
 	},
+
 	dispatch => ( {
 		fetchSitePlans: siteId => dispatch( fetchSitePlans( siteId ) )
 	} ),
+
 	( stateProps, dispatchProps ) => {
 		function fetchPlans( props = stateProps ) {
 			if (
