@@ -18,6 +18,7 @@ import TodaysStats from '../stats-site-overview';
 import StatsModule from '../stats-module';
 import StatsConnectedModule from '../stats-module/connected-list';
 import statsStrings from '../stats-strings';
+import touchDetect from 'lib/touch-detect';
 import MostPopular from 'my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
@@ -77,7 +78,7 @@ export default React.createClass( {
 				<SidebarNavigation />
 				<StatsNavigation section="insights" site={ site } />
 				<div id="my-stats-content">
-					<PostingActivity />
+					{ touchDetect.hasTouch() && <PostingActivity /> }
 					<LatestPostSummary site={ site } />
 					<TodaysStats
 						siteId={ site ? site.ID : 0 }
