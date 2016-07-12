@@ -103,9 +103,7 @@ export default React.createClass( {
 		const limit = Math.min( this.props.user.get().visible_site_count, 10 );
 
 		// TODO: a separate StatsSectionTitle component should be created
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		items.push( <h3 className="stats-section-title">&nbsp;</h3> );
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		items.push( <h3 className="stats-section-title">&nbsp;</h3> ); // eslint-disable-line wpcalypso/jsx-classname-namespace
 
 		for ( let i = 0; i < limit; i++ ) {
 			items.push( <SiteOverviewPlaceholder key={ i } /> );
