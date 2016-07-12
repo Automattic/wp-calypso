@@ -96,7 +96,6 @@ class PlanFeatures extends Component {
 						rawPrice={ rawPrice }
 						discountPrice={ discountPrice }
 						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
-						onClick={ onUpgradeClick }
 						isPlaceholder={ isPlaceholder }
 					/>
 					<p className="plan-features__description">
@@ -141,7 +140,6 @@ class PlanFeatures extends Component {
 				currencyCode,
 				current,
 				discountPrice,
-				onUpgradeClick,
 				planConstantObj,
 				planName,
 				popular,
@@ -159,7 +157,6 @@ class PlanFeatures extends Component {
 						rawPrice={ rawPrice }
 						discountPrice={ discountPrice }
 						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
-						onClick={ onUpgradeClick }
 						isPlaceholder={ isPlaceholder }
 					/>
 				</td>
