@@ -34,7 +34,7 @@ import {
 	PLAN_BUSINESS,
 	FEATURE_WORDADS_INSTANT,
 	FEATURE_GOOGLE_AD_VOUCHERS_100,
-	FEATURE_GOOGLE_AD_VOUCHERS_200
+	FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
@@ -233,14 +233,14 @@ export function applyTestFiltersToPlansList( planName ) {
 		if ( ! isGoogleVouchersEnabled() ) {
 			filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
 				( value, key ) => key !== FEATURE_GOOGLE_AD_VOUCHERS_100 ||
-					key !== FEATURE_GOOGLE_AD_VOUCHERS_200
+					key !== FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200
 			);
 		}
 
 		// TODO: use mapKeys/mapValues to replace with ad_vouchers_100
 		if ( ! isWordpressAdCreditsEnabled() ) {
 			filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
-				( value, key ) => key !== FEATURE_GOOGLE_AD_VOUCHERS_200
+				( value, key ) => key !== FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200
 			);
 		}
 	};
