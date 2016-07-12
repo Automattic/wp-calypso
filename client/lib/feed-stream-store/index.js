@@ -6,7 +6,7 @@ var config = require( 'config' ),
 	FeedStream = require( './feed-stream' ),
 	PagedStream = require( './paged-stream' ),
 	FeedStreamCache = require( './feed-stream-cache' ),
-	analytics = require( 'lib/analytics'),
+	analytics = require( 'lib/analytics' ),
 	forEach = require( 'lodash/forEach' ),
 	wpcomUndoc = require( 'lib/wp' ).undocumented();
 
@@ -92,6 +92,7 @@ function getStoreForSearch( storeId ) {
 	const slug = storeId.split( ':' )[ 1 ];
 	const fetcher = function( query, callback ) {
 		query.q = slug;
+		query.meta = 'site';
 		wpcomUndoc.readSearch( query, callback );
 	};
 
@@ -230,7 +231,7 @@ function feedStoreFactory( storeId ) {
 		store = getStoreForFeatured( storeId );
 	} else if ( storeId.indexOf( 'search:' ) === 0 ) {
 		store = getStoreForSearch( storeId );
-	}else {
+	} else {
 		throw new Error( 'Unknown feed store ID' );
 	}
 

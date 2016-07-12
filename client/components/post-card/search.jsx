@@ -44,6 +44,7 @@ export function SearchPostCard( { post, site, feed, onClick = noop, onCommentCli
 		'has-thumbnail': !! featuredImage,
 		'is-photo': hasPost && ( post.display_type & DisplayTypes.PHOTO_ONLY )
 	} );
+
 	return (
 		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
 		{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
