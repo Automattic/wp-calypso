@@ -25,7 +25,11 @@ module.exports = function( i18n ) {
 			},
 
 			componentWillUnmount: function() {
-				i18n.stateObserver.removeListener( 'change', this.boundForceUpdate );
+				// in some cases, componentWillUnmount is called before componentDidMount
+				// Supposedly fixed in React 15.1.0: https://github.com/facebook/react/issues/2410
+				if ( this.boundForceUpdate ) {
+					i18n.stateObserver.removeListener( 'change', this.boundForceUpdate );
+				}
 			},
 
 			render: function() {
