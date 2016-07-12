@@ -11,8 +11,7 @@ const controller = require( 'my-sites/controller' ),
 	domainManagementController = require( './domain-management/controller' ),
 	SiftScience = require( 'lib/siftscience' ),
 	config = require( 'config' ),
-	paths = require( './paths' ),
-	adTracking = require( 'lib/analytics/ad-tracking' );
+	paths = require( './paths' );
 
 function registerMultiPage( { paths, handlers } ) {
 	paths.forEach( path => page( path, ...handlers ) );
@@ -141,7 +140,6 @@ module.exports = function() {
 	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 		page(
 			'/domains/add',
-			adTracking.retarget,
 			controller.siteSelection,
 			upgradesController.domainsAddHeader,
 			controller.jetPackWarning,
@@ -150,7 +148,6 @@ module.exports = function() {
 
 		page(
 			'/domains/add/mapping',
-			adTracking.retarget,
 			controller.siteSelection,
 			upgradesController.domainsAddHeader,
 			controller.jetPackWarning,
@@ -159,7 +156,6 @@ module.exports = function() {
 
 		page(
 			'/domains/add/site-redirect',
-			adTracking.retarget,
 			controller.siteSelection,
 			upgradesController.domainsAddRedirectHeader,
 			controller.jetPackWarning,
@@ -167,7 +163,6 @@ module.exports = function() {
 		);
 
 		page( '/domains/add/:domain',
-			adTracking.retarget,
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add' ),
@@ -176,7 +171,6 @@ module.exports = function() {
 		);
 
 		page( '/domains/add/suggestion/:suggestion/:domain',
-			adTracking.retarget,
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add' ),
@@ -185,7 +179,6 @@ module.exports = function() {
 		);
 
 		page( '/domains/add/:registerDomain/google-apps/:domain',
-			adTracking.retarget,
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add' ),
@@ -194,7 +187,6 @@ module.exports = function() {
 		);
 
 		page( '/domains/add/mapping/:domain',
-			adTracking.retarget,
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add/mapping' ),
@@ -203,7 +195,6 @@ module.exports = function() {
 		);
 
 		page( '/domains/add/site-redirect/:domain',
-			adTracking.retarget,
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add/site-redirect' ),
@@ -235,7 +226,6 @@ module.exports = function() {
 
 		page(
 			'/checkout/features/:feature/:domain/:plan_name?',
-			adTracking.retarget,
 			controller.siteSelection,
 			upgradesController.checkout
 		);
@@ -248,7 +238,6 @@ module.exports = function() {
 
 		page(
 			'/checkout/:domain/:product?',
-			adTracking.retarget,
 			controller.siteSelection,
 			upgradesController.checkout
 		);
