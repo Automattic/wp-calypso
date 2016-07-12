@@ -23,9 +23,19 @@
 }
 
 .jetpack-sync-panel .progress-bar {
-	margin-top: 16px;
+	margin-top: 8px;
 }
 
 .jetpack-sync-panel .notice {
+	background: none;
+	color: $gray;
 	margin-top: 16px;
+}
+
+.jetpack-sync-panel .notice .notice__text {
+	padding-left: 0;
+}
+
+.jetpack-sync-panel .notice .notice__icon {
+	display: none;
 }
