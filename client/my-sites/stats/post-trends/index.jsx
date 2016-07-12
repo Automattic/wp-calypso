@@ -5,7 +5,6 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import throttle from 'lodash/throttle';
-import touchDetect from 'lib/touch-detect';
 import i18n from 'i18n-calypso';
 
 /**
@@ -148,10 +147,6 @@ const PostTrends = React.createClass( {
 		containerClass = classNames( 'post-trends', {
 			'is-loading': requesting
 		} );
-
-		if ( touchDetect.hasTouch() ) {
-			return null;
-		}
 
 		return (
 
