@@ -65,7 +65,7 @@ module.exports = {
 		'react/jsx-curly-spacing': [ 1, 'always' ],
 		semi: 1,
 		'semi-spacing': 1,
-		'space-before-blocks': [ 1, 'always' ],
+		'space-before-blocks': [ 2, 'always' ],
 		'space-before-function-paren': [ 1, 'never' ],
 		'space-in-parens': [ 1, 'always' ],
 		'space-infix-ops': [ 1, { int32Hint: false } ],

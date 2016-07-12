@@ -2,24 +2,9 @@ machine:
   node:
     version: 5.11.1
 test:
-  pre:
-    - NODE_ENV=test make client/config/index.js:
-        parallel: true
   override:
-    - bin/run-lint :
-        parallel: true
-        files:
-          - client/**/*.js
-          - client/**/*.jsx
-          - server/**/*.js
-          - server/**/*.jsx
-    - MOCHA_FILE=./test-results-client.xml npm run test-client -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
-        parallel: true
-    - MOCHA_FILE=./test-results-server.xml npm run test-server -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
-        parallel: true
-    - MOCHA_FILE=./test-results-test.xml npm run test-test -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
-        parallel: true
-  post:
-    - mkdir -p $CIRCLE_TEST_REPORTS/junit/ && find . -type f -regex  "./test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;:
-        parallel: true
-    - if [[ $CIRCLE_BRANCH == "master" ]]; then make translate; mkdir $CIRCLE_ARTIFACTS/translate; cp calypso-strings.php $CIRCLE_ARTIFACTS/translate/calypso-strings.php; fi;
+    - git log --pretty=format:%H --reverse|head -1 # first commit before unshallow
+    - git merge-base $(git rev-parse --abbrev-ref HEAD) master # ancestor before unshallow
+    - git fetch --unshallow
+    - git log --pretty=format:%H --reverse|head -1 # first commit after unshallow
+    - git merge-base $(git rev-parse --abbrev-ref HEAD) master # ancestor after unshallow
