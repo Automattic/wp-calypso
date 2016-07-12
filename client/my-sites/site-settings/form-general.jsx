@@ -513,7 +513,7 @@ const FormGeneral = React.createClass( {
 						{ ! isBusiness( site.plan ) && <UpgradeNudge
 							className="site-settings__footer-credit-nudge"
 							title="Remove the footer credit entirely with Business Plan"
-							message="Upgrade to remove the footer credit, add google analytics and more"
+							message="Upgrade to remove the footer credit, add Google Analytics and more"
 							icon="customize"
 						/> }
 					</div>
