@@ -66,6 +66,14 @@ export default React.createClass( {
 		this.props.onChange( event );
 	},
 
+	resizeAfterNewlineInput( event ) {
+		const title = event.target.value;
+		if ( REGEXP_NEWLINES.test( title ) ) {
+			event.target.value = title.replace( REGEXP_NEWLINES, ' ' );
+			this.refs.titleInput.resize();
+		}
+	},
+
 	recordChangeStats() {
 		const isPage = PostUtils.isPage( this.props.post );
 		stats.recordStat( isPage ? 'page_title_changed' : 'post_title_changed' );
@@ -74,12 +82,6 @@ export default React.createClass( {
 
 	onBlur( event ) {
 		this.onChange( event );
-	},
-
-	preventEnterKeyPress( event ) {
-		if ( 'Enter' === event.key || 13 === event.charCode ) {
-			event.preventDefault();
-		}
 	},
 
 	render() {
@@ -104,8 +106,8 @@ export default React.createClass( {
 						className="editor-title__input"
 						placeholder={ this.translate( 'Title' ) }
 						onChange={ this.onChange }
+						onInput={ this.resizeAfterNewlineInput }
 						onBlur={ this.onBlur }
-						onKeyPress={ this.preventEnterKeyPress }
 						autoFocus={ isNew && ! isMobile() }
 						value={ post ? post.title : '' }
 						aria-label={ this.translate( 'Edit title' ) }

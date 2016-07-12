@@ -20,8 +20,12 @@ export default class TextareaAutosize extends Component {
 
 	componentDidUpdate( prevProps ) {
 		if ( this.props.value !== prevProps.value ) {
-			autosize.update( this.refs.textarea );
+			this.resize();
 		}
+	}
+
+	resize() {
+		autosize.update( this.refs.textarea );
 	}
 
 	render() {
