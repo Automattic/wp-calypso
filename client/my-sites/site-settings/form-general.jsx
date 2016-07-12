@@ -30,6 +30,9 @@ import Timezone from 'components/timezone';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDomainsBySite } from 'state/sites/domains/selectors';
 import JetpackSyncPanel from './jetpack-sync-panel';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { isBusiness } from 'lib/products-values';
+import CompactCard from 'components/card/compact';
 
 const FormGeneral = React.createClass( {
 	displayName: 'SiteSettingsFormGeneral',
@@ -494,7 +497,27 @@ const FormGeneral = React.createClass( {
 						{ this.visibilityOptions() }
 					</form>
 				</Card>
-
+				{
+					! this.props.site.jetpack && <div className="site-settings__footer-credit-container">
+						<SectionHeader label={ this.translate( 'Footer Credit' ) } />
+						<CompactCard className="site-settings__footer-credit-explanation">
+							<p>
+								{ this.translate( 'You can customize your website by changing the footer credit in customizer.' ) }
+							</p>
+							<div>
+								<Button className="site-settings__footer-credit-change" href={ '/customize/identity/' + site.slug }>
+									{ this.translate( 'Change footer credit' ) }
+								</Button>
+							</div>
+						</CompactCard>
+						{ ! isBusiness( site.plan ) && <UpgradeNudge
+							className="site-settings__footer-credit-nudge"
+							title="Remove the footer credit entirely with Business Plan"
+							message="Upgrade to remove the footer credit, add google analytics and more"
+							icon="customize"
+						/> }
+					</div>
+				}
 				<SectionHeader label={ this.translate( 'Related Posts' ) }>
 					<Button
 						compact={ true }
