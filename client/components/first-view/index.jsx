@@ -115,7 +115,7 @@ export default connect(
 			isVisible: shouldViewBeVisible( state ),
 		};
 	},
-	dispatch => bindActionCreators( {
+	{
 		hideView
-	}, dispatch )
+	}
 )( FirstView );
