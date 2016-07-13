@@ -141,7 +141,7 @@ module.exports = React.createClass( {
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
-				goToNextStep={ isSkipPlansTestEnabled() ? this.onSelectPlan : null }
+				goToNextStep={ isSkipPlansTestEnabled() ? this.onSelectPlan : undefined }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ headerText }
