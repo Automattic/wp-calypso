@@ -18,7 +18,7 @@ import { trackClick } from './helpers';
 const ThemesSiteSelectorModal = React.createClass( {
 	propTypes: {
 		options: React.PropTypes.objectOf( React.PropTypes.shape( {
-			label: React.PropTypes.string.isRequired,
+			label: React.PropTypes.string,
 			header: React.PropTypes.string,
 			action: React.PropTypes.func
 		} ) ),
