@@ -3,16 +3,13 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import pickBy from 'lodash/pickBy';
-import merge from 'lodash/merge';
-import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
-import { customize, purchase, activate } from 'state/themes/actions';
-import ThemePreview from './theme-preview';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -20,17 +17,19 @@ import config from 'config';
 import EmptyContent from 'components/empty-content';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
-import ThemesSelection from './themes-selection';
 import {
-	getCustomizeUrl,
-	getDetailsUrl,
-	getSupportUrl,
-	getHelpUrl,
-	isPremium,
-	addTracking
-} from './helpers';
-import actionLabels from './action-labels';
-import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
+	customize,
+	preview,
+	purchase,
+	activate,
+	tryandcustomize,
+	separator,
+	info,
+	support,
+	help,
+	bindOptionsToDispatch,
+	bindOptionsToSite
+} from './theme-options';
 import sitesFactory from 'lib/sites-list';
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
@@ -38,198 +37,120 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import ThemeShowcase from './theme-showcase';
 
 const sites = sitesFactory();
 
-const ThemesSingleSite = React.createClass( {
-	propTypes: {
-		siteId: React.PropTypes.string,
-		tier: React.PropTypes.string,
-		search: React.PropTypes.string,
-		trackScrollPage: React.PropTypes.func,
-		// Connected Props
-		queryParams: React.PropTypes.object,
-		themesList: React.PropTypes.array
-	},
-
-	getInitialState() {
-		return {
-			selectedTheme: null,
-			selectedAction: null,
-			showPreview: null,
-			previewingTheme: null,
-		};
-	},
-
-	togglePreview( theme ) {
-		const site = sites.getSelectedSite();
-		if ( site.jetpack ) {
-			this.props.customize( theme );
-		} else {
-			this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
-		}
-	},
-
-	getButtonOptions() {
-		const site = sites.getSelectedSite(),
-			{ isCustomizable, isJetpack } = this.props,
-			buttonOptions = {
-				customize: isCustomizable
-					? {
-						getUrl: theme => getCustomizeUrl( theme, site ),
-						hideForTheme: theme => ! theme.active
-					}
-					: {},
-				preview: {
-					action: theme => this.togglePreview( theme ),
-					hideForTheme: theme => theme.active
-				},
-				purchase: config.isEnabled( 'upgrades/checkout' )
-					? {
-						action: this.props.purchase,
-						hideForTheme: theme => theme.active || theme.purchased || ! theme.price
-					}
-					: {},
-				activate: {
-					action: this.props.activate,
-					hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
-				},
-				tryandcustomize: {
-					getUrl: theme => getCustomizeUrl( theme, site ),
-					hideForTheme: theme => theme.active
-				},
-				separator: {
-					separator: true
-				},
-				info: {
-					getUrl: theme => getDetailsUrl( theme, site ), // TODO: Make this a selector
-				},
-				support: ! isJetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
-					? {
-						getUrl: theme => getSupportUrl( theme, site ),
-						hideForTheme: theme => ! isPremium( theme )
-					}
-					: {},
-				help: ! isJetpack // We don't know where support forums for a given theme on a self-hosted WP install are.
-					? {
-						getUrl: theme => getHelpUrl( theme, site )
-					}
-					: {},
-			};
-
-		return merge( {}, buttonOptions, actionLabels );
-	},
-
-	onPreviewButtonClick( theme ) {
-		this.setState( { showPreview: false }, () => {
-			this.props.customize( theme );
-		} );
-	},
-
-	renderJetpackMessage() {
-		const site = sites.getSelectedSite();
-		return (
-			<EmptyContent title={ this.translate( 'Changing Themes?' ) }
-				line={ this.translate( 'Use your site theme browser to manage themes.' ) }
-				action={ this.translate( 'Open Site Theme Browser' ) }
+const JetpackThemeReferrerPage = localize(
+	( { translate, site, analyticsPath, analyticsPageTitle } ) => (
+		<Main className="themes">
+			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
+			<SidebarNavigation />
+			<CurrentTheme
+				site={ site }
+				canCustomize={ site && site.isCustomizable() } />
+			<EmptyContent title={ translate( 'Changing Themes?' ) }
+				line={ translate( 'Use your site theme browser to manage themes.' ) }
+				action={ translate( 'Open Site Theme Browser' ) }
 				actionURL={ site.options.admin_url + 'themes.php' }
 				actionTarget="_blank"
 				illustration="/calypso/images/drake/drake-jetpack.svg" />
-		);
-	},
+		</Main>
+	)
+);
 
-	render() {
-		const site = sites.getSelectedSite(),
-			isJetpack = site.jetpack,
-			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
-			buttonOptions = this.getButtonOptions(),
-			getScreenshotAction = function( theme ) {
-				return buttonOptions[ theme.active ? 'customize' : 'info' ];
-			};
+const ThemesSingleSite = ( props ) => {
+	const site = sites.getSelectedSite(),
+		{ analyticsPath, analyticsPageTitle, isJetpack, translate } = props,
+		jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
-		if ( isJetpack && jetpackEnabled && ! site.hasJetpackThemes ) {
+	// If we've only just switched from single to multi-site, there's a chance
+	// this component is still being rendered with site unset, so we need to guard
+	// against that case.
+	if ( ! site ) {
+		return <Main className="themes" />;
+	}
+
+	if ( isJetpack ) {
+		if ( ! jetpackEnabled ) {
+			return (
+				<JetpackThemeReferrerPage site={ site }
+					analyticsPath={ analyticsPath }
+					analyticsPageTitle={ analyticsPageTitle }/>
+			);
+		}
+		if ( ! site.hasJetpackThemes ) {
 			return <JetpackUpgradeMessage site={ site } />;
 		}
-
-		if ( isJetpack && jetpackEnabled && ! site.canManage() ) {
+		if ( ! site.canManage() ) {
 			return <JetpackManageDisabledMessage site={ site } />;
 		}
-
-		return (
-			<Main className="themes">
-				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle }/>
-				<SidebarNavigation />
-				{ this.state.showPreview &&
-					<ThemePreview showPreview={ this.state.showPreview }
-						theme={ this.state.previewingTheme }
-						onClose={ this.togglePreview }
-						buttonLabel={ this.translate( 'Try & Customize', {
-							context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
-						} ) }
-						onButtonClick={ this.onPreviewButtonClick } />
-				}
-				<ThanksModal
-					site={ site }
-					source={ 'list' }/>
-				<CurrentTheme
-					site={ site }
-					canCustomize={ site && site.isCustomizable() } />
-				<UpgradeNudge
-					title={ this.translate( 'Get Custom Design with Premium' ) }
-					message={ this.translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
-					feature={ FEATURE_ADVANCED_DESIGN }
-					event="themes_custom_design"
-				/>
-				{ isJetpack && ! jetpackEnabled
-				? this.renderJetpackMessage()
-				: <ThemesSelection search={ this.props.search }
-						key={ site.ID }
-						siteId={ this.props.siteId }
-						selectedSite={ site }
-						getScreenshotUrl={ function( theme ) {
-							return getScreenshotAction( theme ).getUrl( theme );
-						} }
-						getActionLabel={ function( theme ) {
-							return getScreenshotAction( theme ).label;
-						} }
-						getOptions={ function( theme ) {
-							return pickBy(
-								addTracking( buttonOptions ),
-								option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
-							); } }
-						trackScrollPage={ this.props.trackScrollPage }
-						tier={ this.props.tier }
-						queryParams={ this.props.queryParams }
-						themesList={ this.props.themesList } />
-				}
-			</Main>
-		);
 	}
-} );
+
+	return (
+		<ThemeShowcase { ...props }>
+			<SidebarNavigation />
+			<ThanksModal
+				site={ site }
+				source={ 'list' }/>
+			<CurrentTheme
+				site={ site }
+				canCustomize={ site && site.isCustomizable() } />
+			<UpgradeNudge
+				title={ translate( 'Get Custom Design with Premium' ) }
+				message={ translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
+				feature={ FEATURE_ADVANCED_DESIGN }
+				event="themes_custom_design"
+			/>
+		</ThemeShowcase>
+	);
+};
+
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const { selectedSite: site, isJetpack } = stateProps;
+	const options = dispatchProps;
+
+	if ( isJetpack ) {
+		options.preview.action = theme => dispatchProps.customize.action( theme, site, 'showcase' );
+	}
+
+	const filteredOptions = pickBy( options, option =>
+		! ( option.hideForSite && option.hideForSite( stateProps ) )
+	);
+
+	const boundOptions = bindOptionsToSite( filteredOptions, site );
+
+	return Object.assign(
+		{},
+		ownProps,
+		stateProps,
+		{
+			options: boundOptions,
+			defaultOption: boundOptions.tryandcustomize,
+			getScreenshotOption: theme => theme.active ? boundOptions.customize : boundOptions.info
+		}
+	);
+};
 
 export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
 		return {
-			queryParams: getQueryParams( state ),
-			themesList: getThemesList( state ),
 			selectedSite,
 			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
 			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
 		};
 	},
-	{
-		activate,
+	bindOptionsToDispatch( {
 		customize,
-		purchase
-	},
-	( stateProps, dispatchProps, ownProps ) => Object.assign(
-		{},
-		ownProps,
-		stateProps,
-		mapValues(
-			dispatchProps,
-			action => theme => action( theme, stateProps.selectedSite, 'showcase' )
-		)
-	)
-)( ThemesSingleSite );
+		preview,
+		purchase,
+		activate,
+		tryandcustomize,
+		separator,
+		info,
+		support,
+		help
+	}, 'showcase' ),
+	mergeProps
+)( localize( ThemesSingleSite ) );
