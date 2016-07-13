@@ -7,6 +7,7 @@ import find from 'lodash/find';
 import includes from 'lodash/includes';
 import mapValues from 'lodash/mapValues';
 import startsWith from 'lodash/startsWith';
+import trimStart from 'lodash/trimStart';
 import without from 'lodash/without';
 import matches from 'lodash/matches';
 import negate from 'lodash/negate';
@@ -87,6 +88,11 @@ function getNormalizedData( record, selectedDomainName ) {
 	if ( record.target ) {
 		normalizedRecord.target = getFieldWithDot( record.target );
 	}
+	// The leading '_' in SRV's service field is a convention
+	// The record itself should not contain it
+	if ( record.service ) {
+		normalizedRecord.service = trimStart( record.service, '_' );
+	}
 
 	return normalizedRecord;
 }
@@ -99,18 +105,10 @@ function getNormalizedName( name, type, selectedDomainName ) {
 	}
 
 	if ( endsWithDomain ) {
-		if ( isIpRecord( type ) ) {
-			return name.replace( new RegExp( '\\.+' + selectedDomainName + '\\.?$', 'i' ), '' );
-		}
-		return getFieldWithDot( name );
-	} else if ( ! isIpRecord( type ) ) {
-		return name + '.' + selectedDomainName + '.';
+		return name.replace( new RegExp( '\\.+' + selectedDomainName + '\\.?$', 'i' ), '' );
 	}
-	return name;
-}
 
-function isIpRecord( type ) {
-	return includes( [ 'A', 'AAAA' ], type );
+	return name;
 }
 
 function isRootDomain( name, domainName ) {
