@@ -31,7 +31,6 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
-	FEATURE_WORDADS_INSTANT,
 	FEATURE_GOOGLE_AD_VOUCHERS_100,
 	FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200
 } from 'lib/plans/constants';
@@ -189,11 +188,6 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 	} );
 }
 
-export const isWordadsInstantActivationEnabled = () => {
-	return isEnabled( 'manage/ads/wordads-instant' ) &&
-		abtest( 'wordadsInstantActivation' ) === 'enabled';
-};
-
 export const isGoogleVouchersEnabled = () => {
 	return ( isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' );
 };
@@ -223,12 +217,6 @@ export function applyTestFiltersToPlansList( planName ) {
 	let filteredPlanFeaturesConstantList = plansList[ planName ].getFeatures();
 
 	const removeDisabledFeatures = () => {
-		if ( ! isWordadsInstantActivationEnabled() ) {
-			filteredPlanFeaturesConstantList = filter( filteredPlanFeaturesConstantList,
-				( value ) => value !== FEATURE_WORDADS_INSTANT
-			);
-		}
-
 		if ( ! isGoogleVouchersEnabled() ) {
 			filteredPlanFeaturesConstantList = filter( filteredPlanFeaturesConstantList,
 				( value ) => value !== FEATURE_GOOGLE_AD_VOUCHERS_100 &&
@@ -238,11 +226,7 @@ export function applyTestFiltersToPlansList( planName ) {
 	};
 
 	const updatePlanDescriptions = () => {
-		if ( isWordadsInstantActivationEnabled() && isGoogleVouchersEnabled() && planName === PLAN_PREMIUM ) {
-			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivationAndGoogleVouchers;
-		} else if ( isWordadsInstantActivationEnabled() && planName === PLAN_PREMIUM ) {
-			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsInstantActivation;
-		} else if ( isGoogleVouchersEnabled() && planName === PLAN_PREMIUM ) {
+		if ( isGoogleVouchersEnabled() && planName === PLAN_PREMIUM ) {
 			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithGoogleVouchers;
 		} else if ( isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS ) {
 			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsCredit;
