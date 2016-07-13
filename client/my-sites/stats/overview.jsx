@@ -13,6 +13,7 @@ import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import DatePicker from './stats-date-picker';
 import StatsNavigation from './stats-navigation';
 import StatsMain from './stats-main';
+import StatsFirstView from './stats-first-view';
 
 export default React.createClass( {
 	displayName: 'StatsOverview',
@@ -91,6 +92,7 @@ export default React.createClass( {
 
 		return (
 			<StatsMain>
+				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation section={ this.props.period } />
 				{ sites.length !== 0 ? sitesList : this.placeholders() }
