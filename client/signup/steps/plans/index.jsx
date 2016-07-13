@@ -100,7 +100,7 @@ module.exports = React.createClass( {
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					onSelectPlan={ this.onSelectPlan } />
-				{ abtest( 'skipPlansLinkForFree' ) !== 'skipPlansForFree' && <a
+				{ ! isSkipPlansTestEnabled() && <a
 					href={ this.comparePlansUrl() }
 					className="plans-step__compare-plans-link"
 					onClick={ this.handleComparePlansLinkClick.bind( null, 'footer' ) }>
@@ -129,7 +129,7 @@ module.exports = React.createClass( {
 
 	plansSelection: function() {
 		const headerText = this.translate( 'Pick a plan that\'s right for you.' );
-		const hideSubHeader = abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree';
+		const hideSubHeader = isSkipPlansTestEnabled();
 		const subHeaderText = hideSubHeader ? null : this.translate(
 				'Not sure which plan to choose? Take a look at our {{a}}plan comparison chart{{/a}}.', {
 					components: { a: <a
