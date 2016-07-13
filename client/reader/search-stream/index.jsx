@@ -154,6 +154,7 @@ const FeedStream = React.createClass( {
 				<SearchInput
 					initialValue={ this.props.query }
 					onSearch={ this.updateQuery }
+					autoFocus={ true }
 					delaySearch={ true }
 					placeholder={ this.translate( 'Search billions of posts across WordPress.com…' ) } />
 			</Stream>
