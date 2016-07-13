@@ -19,6 +19,10 @@
 			transform: translateY( 0 ) scale( 1 );
 		}
 	}
+
+	&.is-with-sidebar {
+		left: 273px;
+	}
 }
 
 .web-preview__backdrop {

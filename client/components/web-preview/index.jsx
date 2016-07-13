@@ -184,6 +184,7 @@ export class WebPreview extends Component {
 
 		const className = classNames( this.props.className, 'web-preview', {
 			'is-touch': this._hasTouch,
+			'is-with-sidebar': this.props.hasSidebar,
 			'is-visible': this.props.showPreview,
 			'is-computer': this.state.device === 'computer',
 			'is-tablet': this.state.device === 'tablet',
@@ -263,7 +264,9 @@ WebPreview.propTypes = {
 	// Optional loading message to display during loading
 	loadingMessage: PropTypes.string,
 	// The iframe's title element, used for accessibility purposes
-	iframeTitle: PropTypes.string
+	iframeTitle: PropTypes.string,
+	// Makes room for a sidebar if desired
+	hasSidebar: React.PropTypes.bool,
 };
 
 WebPreview.defaultProps = {
@@ -273,7 +276,8 @@ WebPreview.defaultProps = {
 	previewUrl: null,
 	previewMarkup: null,
 	onLoad: noop,
-	onClose: noop
+	onClose: noop,
+	hasSidebar: false,
 };
 
 export default connect( null, { setPreviewShowing } )( localize( WebPreview ) );
