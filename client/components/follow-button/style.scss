@@ -1,3 +1,5 @@
+$follow-button-gray-disabled: lighten( $gray, 20% );
+
 .follow-button {
 
 	.gridicon__follow {
@@ -69,6 +71,31 @@
 			.gridicon {
 				fill: $alert-green;
 			}
+		}
+	}
+
+	&.is-disabled {
+		color: $follow-button-gray-disabled;
+		border-color: $follow-button-gray-disabled;
+		pointer-events: none;
+
+		@include no-select();
+
+		.gridicon {
+			fill: $follow-button-gray-disabled;
+		}
+
+		&:hover {
+			color: $follow-button-gray-disabled;
+			cursor: default;
+
+			.gridicon {
+				fill: $follow-button-gray-disabled;
+			}
+		}
+
+		&:active {
+			border-width: 1px 1px 2px;
 		}
 	}
 }
