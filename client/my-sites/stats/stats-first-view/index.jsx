@@ -17,7 +17,7 @@ export default React.createClass( {
 			<FirstView>
 				<div>
 					{ this.renderIcon() }
-					<h1>{ this.translate( 'Keep track of who\'s viewing your site…' ) }</h1>
+					<h1>{ this.translate( 'Keep track of who\'s viewing your site' ) }</h1>
 					<p>{ this.translate( 'Stats show a bunch of fun numbers, charts, and graphs that detail how many visits your site gets, what posts and pages are popular, and much more.' ) }</p>
 				</div>
 			</FirstView>
