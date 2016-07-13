@@ -25,6 +25,7 @@ export default React.createClass( {
 
 	onButtonClick() {
 		this.props.onButtonClick( this.props.theme );
+		this.props.onClose();
 	},
 
 	render() {
