@@ -108,10 +108,8 @@ const FirstView = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const sectionName = getSectionName( state );
-
 		return {
-			sectionName: sectionName,
+			sectionName: getSectionName( state ),
 			isVisible: shouldViewBeVisible( state ),
 		};
 	},
