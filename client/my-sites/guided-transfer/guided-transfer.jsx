@@ -9,15 +9,21 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import HeaderCake from 'components/header-cake';
 import AccountInfo from './account-info';
+import HostSelect from './host-select';
 
 const guidedTransferHosts = {
 	bluehost: {
 		label: i18n.translate( 'Bluehost' ),
+		logo: '/calypso/images/guided-transfer/bluehost-logo.png',
 		url: '#bluehost',
 	},
+	siteground: {
+		logo: '/calypso/images/guided-transfer/siteground-logo.png',
+		label: i18n.translate( 'SiteGround' ),
+		url: '#siteground'
+	}
 };
 
 export default React.createClass( {
@@ -36,8 +42,8 @@ export default React.createClass( {
 		page( `/settings/export/guided/${this.props.siteSlug}` );
 	},
 
-	showBluehostAccountInfo() {
-		page( `/settings/export/guided/bluehost/${this.props.siteSlug}` );
+	showHost( hostSlug ) {
+		page( `/settings/export/guided/${hostSlug}/${this.props.siteSlug}` );
 	},
 
 	goBack() {
@@ -50,19 +56,28 @@ export default React.createClass( {
 
 	render: function() {
 		const hostInfo = get( guidedTransferHosts, this.props.hostSlug );
+		const hosts = Object.keys( guidedTransferHosts ).map( hostSlug => {
+			return {
+				...guidedTransferHosts[ hostSlug ],
+				showHost: () => this.showHost( hostSlug )
+			};
+		} );
 
 		return (
 			<div className="guided-transfer">
 				<div className="guided-transfer__header-nav">
-					<HeaderCake onClick={ this.goBack }>
-						{ this.translate( 'Guided Transfer' ) }
+					<HeaderCake
+						onClick={ this.goBack }
+						isCompact={ true }
+					>
+							{ this.translate( 'Guided Transfer' ) }
 					</HeaderCake>
 				</div>
 
 				<div className="guided-transfer__content">
 					{ hostInfo
 						? <AccountInfo hostInfo={ hostInfo } />
-						: <Button onClick={ this.showBluehostAccountInfo }>Bluehost</Button>
+						: <HostSelect hosts={ hosts } />
 					}
 				</div>
 			</div>
