@@ -205,6 +205,10 @@
 	}
 }
 
+#settings-reading-relatedposts-preview .form-label {
+	font-weight: 600;
+}
+
 .jp-relatedposts {
 	position: relative;
 	margin-top: 8px;
@@ -215,8 +219,26 @@
 
 	@include clear-fix;
 
+	.jp-relatedposts-headline {
+ 		margin: 0 0 1em 8px;
+ 		font-size: 10px;
+ 		font-weight: 600;
+ 	}
+
 	.jp-relatedposts-items {
-		clear: left;
+
+
+		@include breakpoint( ">480px" ) {
+			display: flex;
+			flex-wrap: wrap;
+			.jp-relatedposts-post {
+				width: 50%;
+			}
+		}
+
+		@include breakpoint( ">960px" ) {
+			flex-wrap: nowrap;
+		}
 	}
 
 	.jp-relatedposts-post .jp-relatedposts-post-title a {
@@ -226,22 +248,11 @@
 	}
 
 	.jp-relatedposts-post {
-		float: left;
-		width: 33%;
 		box-sizing: border-box;
 		margin: 0;
 		padding: 0 8px;
-
-		@include breakpoint( "<660px" ) {
-			width: 50%;
-		}
-
-		@include breakpoint( "<480px" ) {
-			width: 100%;
-		}
 	}
 
-	.jp-relatedposts-post img,
 	.jp-relatedposts-post span {
 		display: block;
 		max-width: 90%;
