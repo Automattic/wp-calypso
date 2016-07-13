@@ -19,6 +19,12 @@
 			transform: translateY( 0 ) scale( 1 );
 		}
 	}
+
+	&.is-with-sidebar {
+		@include breakpoint( ">660px" ) {
+			left: 273px;
+		}
+	}
 }
 
 .web-preview__backdrop {
