@@ -30,6 +30,5 @@ export default connect(
 		return {
 			isFirstViewVisible: shouldViewBeVisible( state ),
 		};
-	},
-	null
+	}
 )( StatsMain );
