@@ -23,11 +23,7 @@ function cancelPrivateRegistration( siteName, purchaseId ) {
 }
 
 function editCardDetails( siteName, purchaseId ) {
-	return editPaymentMethod( siteName, purchaseId ) + `/edit`;
-}
-
-function editPaymentMethod( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/payment';
+	return managePurchase( siteName, purchaseId ) + '/payment/edit';
 }
 
 export default {
@@ -35,7 +31,6 @@ export default {
 	cancelPurchase,
 	confirmCancelDomain,
 	editCardDetails,
-	editPaymentMethod,
 	list,
 	listNotice,
 	managePurchase
