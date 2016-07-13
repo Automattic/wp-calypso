@@ -67,10 +67,7 @@ export const plansList = {
 		getProductId: () => 1,
 		getStoreSlug: () => PLAN_FREE,
 		getPathSlug: () => 'beginner',
-		getDescription: () => i18n.translate(
-			'Get a free blog and be on your way to publishing your first post' +
-			' in less than five minutes.'
-		),
+		getDescription: () => i18n.translate( 'Get a free website and be on your way to publishing your first post in less than five minutes.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_WP_SUBDOMAIN,
 			FEATURE_COMMUNITY_SUPPORT,
@@ -87,7 +84,11 @@ export const plansList = {
 		getStoreSlug: () => PLAN_PERSONAL,
 		availableFor: ( plan ) => includes( [ PLAN_FREE ], plan ),
 		getPathSlug: () => 'personal',
-		getDescription: () => i18n.translate( 'Use your own domain and establish your online presence without ads.' ),
+		getDescription: () => i18n.translate( '{{strong}}Best for Personal Use:{{/strong}} Get your own custom domain name and establish your website free of any WordPress.com advertising. Get access to high quality email and live chat support.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
 		getFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -106,9 +107,26 @@ export const plansList = {
 		getPathSlug: () => 'premium',
 		getStoreSlug: () => PLAN_PREMIUM,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
-		getDescription: () => i18n.translate( 'Your own domain name, powerful' +
-			' customization options, easy monetization with WordAds, and lots of space for audio and video.'
-		),
+		getDescription: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Advanced design customization tools including CSS editing, with lots of space for images, video, and audio.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescriptionWithGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Advanced design customization tools including CSS editing, lots of space for audio and video, and a {{strong}}$100{{/strong}} advertising voucher.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescriptionWithWordAdsInstantActivation: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Advanced design customization tools including CSS editing, lots of space for audio and video, and run your own advertising.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescriptionWithWordAdsInstantActivationAndGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Advanced design customization tools including CSS editing, lots of space for audio and video, and run your own advertising including a {{strong}}$100{{/strong}} advertising voucher.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -129,10 +147,16 @@ export const plansList = {
 		getStoreSlug: () => PLAN_BUSINESS,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ], plan ),
 		getPathSlug: () => 'business',
-		getDescription: () => i18n.translate(
-			'Everything included with Premium, as well as live chat support,' +
-			' unlimited access to premium themes, and Google Analytics.'
-		),
+		getDescription: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Google Analytics support, unlimited premium theme templates, unlimited storage, and the ability to remove WordPress.com branding.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescriptionWithWordAdsCredit: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Google Analytics support, unlimited premium theme templates, unlimited storage, a {{strong}}$200{{/strong}} advertising voucher, and the ability to remove WordPress.com branding.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
