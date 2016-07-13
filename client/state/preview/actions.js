@@ -66,7 +66,7 @@ export function saveCustomizations() {
 		debug( 'saving customizations', customizations );
 		Object.keys( customizations ).map( id => saveCustomizationsFor( id, customizations[ id ], siteId, dispatch ) );
 		dispatch( customizationsSaved( siteId ) );
-	}
+	};
 }
 
 function saveCustomizationsFor( id, customizations, siteId, dispatch ) {
@@ -96,5 +96,5 @@ export function createHomePage() {
 			debug( 'refreshing page list for new home page' );
 			dispatch( requestSitePosts( siteId, { type: 'page' } ) );
 		} );
-	}
+	};
 }

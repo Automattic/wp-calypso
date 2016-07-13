@@ -107,3 +107,7 @@ export function hasSidebar( state ) {
 	}
 	return get( state.ui.section, 'secondary', true );
 }
+
+export function isPreviewSidebarShowing( state ) {
+	return state.ui.isPreviewSidebarShowing;
+}
