@@ -1,27 +1,26 @@
-const React = require( 'react' );
+import React from 'react';
+import { localize } from 'i18n-calypso'
 
-const BlankContent = React.createClass( {
-
-	propTypes: {
-		suggestions: React.PropTypes.array
-	},
-
-	shouldComponentUpdate: function() {
-		return false;
-	},
-
-	render: function() {
-		const suggest = this.props.suggestions
-			? <p>{this.translate( 'Staff Suggestions:')} { this.props.suggestions }.</p>
-			: null;
-		const img_path = '/calypso/images/drake/drake-404.svg';
-		return (
-			<div className="search-blank-content">
-				{ suggest }
-				<img src={ img_path } width="500" className="empty-content__illustration" />
-			</div>
-		);
+export function BlankContent( { translate, suggestions } ) {
+	var suggest = null;
+	if ( suggestions ) {
+		var sug_list = suggestions.map( function( query ) {
+			return <a href={ '/read/search?q=' + encodeURIComponent( query ) } >{ query }</a>;
+		} );
+		//join the link elements into a comma separated list
+		sug_list = sug_list.slice(1).reduce(function(xs, x, i) {
+			return xs.concat([', ', x]);
+		}, [ sug_list[0] ] );
+		suggest = <p>{translate( 'Staff Suggestions: {{suggestions /}}.', { components: { suggestions: sug_list } })}</p>;
 	}
-} );
 
-module.exports = BlankContent;
+	const img_path = '/calypso/images/drake/drake-404.svg';
+	return (
+		<div className="search-blank-content">
+			{ suggest }
+			<img src={ img_path } width="500" className="empty-content__illustration" />
+		</div>
+	);
+}
+
+export default localize( BlankContent );
