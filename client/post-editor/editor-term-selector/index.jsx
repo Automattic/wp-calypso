@@ -10,13 +10,17 @@ import cloneDeep from 'lodash/cloneDeep';
  * Internal dependencies
  */
 import TermTreeSelector from 'my-sites/term-tree-selector';
+import AddTerm from 'my-sites/term-tree-selector/add-term';
 import PostActions from 'lib/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
 
 class EditorTermSelector extends Component {
 	static propTypes = {
 		siteId: React.PropTypes.number,
 		postTerms: React.PropTypes.object,
+		postType: React.PropTypes.string,
 		taxonomyName: React.PropTypes.string
 	};
 
@@ -50,23 +54,29 @@ class EditorTermSelector extends Component {
 	}
 
 	render() {
-		const { siteId, taxonomyName } = this.props;
+		const { postType, siteId, taxonomyName } = this.props;
 
 		return (
-			<TermTreeSelector
-				analyticsPrefix="Editor"
-				onChange={ this.boundOnTermsChange }
-				selected={ this.getSelectedTermIds() }
-				taxonomy={ taxonomyName }
-				siteId={ siteId }
-				multiple={ true }
-			/>
+			<div>
+				<TermTreeSelector
+					analyticsPrefix="Editor"
+					onChange={ this.boundOnTermsChange }
+					selected={ this.getSelectedTermIds() }
+					taxonomy={ taxonomyName }
+					siteId={ siteId }
+					multiple={ true }
+				/>
+				<AddTerm taxonomy={ taxonomyName } postType={ postType } />
+			</div>
 		);
 	}
 }
 
 export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+
 	return {
-		siteId: getSelectedSiteId( state )
+		postType: getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' ),
+		siteId
 	};
 } )( EditorTermSelector );
