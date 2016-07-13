@@ -2,10 +2,10 @@ module.exports = {
 	personalPlan: {
 		datestamp: '20160627',
 		variations: {
-			hide: 50,
-			show: 50
+			hide: 0,
+			show: 100
 		},
-		defaultVariation: 'hide',
+		defaultVariation: 'show',
 		allowExistingUsers: false
 	},
 	multiDomainRegistrationV1: {
@@ -139,4 +139,13 @@ module.exports = {
 		defaultVariation: 'designTypeWithoutStore',
 		allowExistingUsers: false,
 	},
+	skipPlansLinkForFree: {
+		datestamp: '20160711',
+		variations: {
+			showFreePlan: 50,
+			skipPlansForFree: 50
+		},
+		defaultVariation: 'showFreePlan',
+		allowExistingUsers: false,
+	}
 };

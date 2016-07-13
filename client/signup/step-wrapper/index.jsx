@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,8 +11,17 @@ import classNames from 'classnames';
 import StepHeader from 'signup/step-header';
 import NavigationLink from 'signup/navigation-link';
 import config from 'config';
+import sitesList from 'lib/sites-list';
+import { plansLink, isSkipPlansTestEnabled } from 'lib/plans';
+import Gridicon from 'components/gridicon';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-export default React.createClass( {
+/**
+ * Module variables
+ */
+const sites = sitesList();
+
+const StepWrapper = React.createClass( {
 	displayName: 'StepWrapper',
 
 	renderBack: function() {
@@ -65,10 +75,48 @@ export default React.createClass( {
 		}
 	},
 
+	recordComparePlansClick() {
+		this.props.trackCompareClick();
+	},
+
+	renderComparePlans() {
+		const { stepName } = this.props;
+		if ( stepName !== 'plans' || ! isSkipPlansTestEnabled() ) {
+			return null;
+		}
+
+		const selectedSite = sites.getSelectedSite();
+		const url = plansLink( '/start/plans/compare', selectedSite );
+		const compareString = this.translate( 'Compare Plan Features' );
+
+		return (
+			<a href={ url } className="step-wrapper__compare-plans" onClick={ this.recordComparePlansClick }>
+				<Gridicon icon="clipboard" size={ 18 } />
+				{ compareString }
+			</a>
+		);
+	},
+
+	renderNavigation() {
+		const { stepName } = this.props;
+		const classes = classNames( 'step-wrapper__buttons', {
+			'is-wide-navigation': stepName === 'plans' && isSkipPlansTestEnabled()
+		} );
+		return (
+			<div className={ classes }>
+				{ this.renderBack() }
+				{ this.renderComparePlans() }
+				{ this.renderSkip() }
+			</div>
+		);
+	},
+
 	render: function() {
+		const { stepName, stepContent, headerButton } = this.props;
 		const classes = classNames( 'step-wrapper', {
 			'is-wide-layout': this.props.isWideLayout
 		} );
+		const showTopNavigation = stepName === 'plans' && isSkipPlansTestEnabled();
 
 		return (
 			<div className={ classes }>
@@ -76,17 +124,21 @@ export default React.createClass( {
 					headerText={ this.headerText() }
 					subHeaderText={ this.subHeaderText() }>
 					{ config.isEnabled( 'jetpack/connect' )
-						? ( this.props.headerButton )
+						? ( headerButton )
 						: null }
 				</StepHeader>
-				<div className="is-animated-content">
-					{ this.props.stepContent }
-					<div className="step-wrapper__buttons">
-						{ this.renderBack() }
-						{ this.renderSkip() }
-					</div>
+				<div className="step-wrapper__content is-animated-content">
+					{ showTopNavigation && this.renderNavigation() }
+					{ stepContent }
+					{ this.renderNavigation() }
 				</div>
 			</div>
 		);
 	}
 } );
+
+const mapDispatchToProps = dispatch => ( {
+	trackCompareClick: () => dispatch( recordGoogleEvent( 'Upgrades', 'Clicked Compare Plans Link' ) )
+} );
+
+export default connect( null, mapDispatchToProps )( StepWrapper );

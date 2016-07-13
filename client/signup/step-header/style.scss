@@ -4,6 +4,10 @@
 
 	@include breakpoint( ">960px" ) {
 		margin-bottom: 35px;
+
+		&.is-without-subhead {
+			margin-bottom: 24px;
+		}
 	}
 }
 

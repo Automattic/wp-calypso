@@ -86,7 +86,8 @@ const PlanList = React.createClass( {
 			) {
 				filteredPlans = filteredPlans.map( plan => {
 					if ( plan.product_id === 1003 ) {
-						plan.description = this.translate( 'Your own domain name, powerful customization options, easy monetization with WordAds and lots of space for audio and video.' );
+						plan.description = this.translate( 'Your own domain name, powerful customization options, ' +
+							'easy monetization with WordAds and lots of space for audio and video.' );
 					}
 					return plan;
 				} );
@@ -98,7 +99,6 @@ const PlanList = React.createClass( {
 						plan={ plan }
 						sitePlans={ this.props.sitePlans }
 						comparePlansUrl={ this.props.comparePlansUrl }
-						hideDiscountMessage={ hideFreePlan }
 						isInSignup={ this.props.isInSignup }
 						key={ plan.product_id }
 						open={ plan.product_id === this.state.openPlan }

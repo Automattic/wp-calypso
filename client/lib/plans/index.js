@@ -262,3 +262,10 @@ export function applyTestFiltersToPlansList( planName ) {
 
 	return filteredPlanConstantObj;
 }
+
+export const isSkipPlansTestEnabled = () => {
+	return isEnabled( 'plans/skip-plans-for-free' ) &&
+		isEnabled( 'plans/personal-plan' ) &&
+		abtest( 'personalPlan' ) === 'show' &&
+		abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree';
+};
