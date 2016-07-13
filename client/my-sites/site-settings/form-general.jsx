@@ -195,9 +195,9 @@ const FormGeneral = React.createClass( {
 		}
 
 		return (
-			<FormFieldset className="has-divider">
+			<FormFieldset className="site-settings__has-divider">
 				<FormLabel htmlFor="blogaddress">{ this.translate( 'Site Address' ) }</FormLabel>
-				<div className="blogaddress-settings">
+				<div className="site-settings__blogaddress-settings">
 					<FormInput
 						name="blogaddress"
 						type="text"
@@ -260,7 +260,7 @@ const FormGeneral = React.createClass( {
 
 				<FormLabel>
 					<FormRadio
-						name="blog_public"
+						name="blog_public"Ï
 						value="0"
 						checked={ 0 === parseInt( this.state.blog_public, 10 ) }
 						onChange={ this.handleRadio }
