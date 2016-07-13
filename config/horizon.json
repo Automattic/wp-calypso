@@ -82,6 +82,7 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/security/scan": false,
+		"stats/first-view": false,
 		"support-user": true,
 		"sync-handler": true,
 		"upgrades/checkout": true,
