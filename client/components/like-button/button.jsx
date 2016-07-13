@@ -83,8 +83,14 @@ var LikeButton = React.createClass( {
 
 		containerClasses = classnames( containerClasses );
 
+		if ( likeCount === 0 && ! this.props.showCount ) {
+			likeCount = '';
+		} else {
+			likeCount = likeCount + ' ';
+		}
+
 		labelElement = ( <span className="like-button__label">
-			{ likeCount > 0 || this.props.showCount ? <span className="like-button__label-count">{ likeCount }</span> : null }
+			<span className="like-button__label-count">{ likeCount }</span>
 			{ this.props.showLabel && <span className="like-button__label-status">{ likeLabel }</span> }
 		</span> );
 
