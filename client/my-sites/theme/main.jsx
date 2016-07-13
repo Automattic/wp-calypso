@@ -88,11 +88,7 @@ const ThemeSheet = React.createClass( {
 		return !! this.props.name;
 	},
 
-	onPrimaryClick() {
-		this.props.defaultOption.action( this.props );
-	},
-
-	onPreviewButtonClick() {
+	onButtonClick() {
 		this.props.defaultOption.action( this.props );
 	},
 
@@ -257,7 +253,7 @@ const ThemeSheet = React.createClass( {
 				theme={ this.props }
 				onClose={ this.togglePreview }
 				buttonLabel= { this.props.defaultOption.label }
-				onButtonClick={ this.onPreviewButtonClick } />
+				onButtonClick={ this.onButtonClick } />
 		);
 	},
 
@@ -300,7 +296,7 @@ const ThemeSheet = React.createClass( {
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 
 		return (
-			<Button className="theme__sheet-primary-button" onClick={ this.onPrimaryClick }>
+			<Button className="theme__sheet-primary-button" onClick={ this.onButtonClick }>
 				{ this.isLoaded() ? label : placeholder }
 				{ this.renderPrice() }
 			</Button>
