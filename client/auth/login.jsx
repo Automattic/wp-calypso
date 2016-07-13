@@ -74,24 +74,24 @@ module.exports = React.createClass( {
 		this.setState( AuthStore.get() );
 	},
 
+	verifyPushToken: function( token ) {
+		const POLL_INTERVAL = 6000;
+
+		if ( ! this.pollTimeout ) {
+			this.pollTimeout = setTimeout( () => {
+				this.pollTimeout = null;
+				AuthActions.checkToken( token );
+			}, POLL_INTERVAL );
+		}
+	},
+
 	componentDidUpdate() {
-		if ( this.state.requires2fa === "code" && this.state.inProgress === false ) {
+		if ( this.state.requires2fa === 'code' && this.state.inProgress === false ) {
 			ReactDom.findDOMNode( this.refs.auth_code ).focus();
 		}
 
-		if ( this.state.requires2fa === "push-verification" ) {
-			if ( ! this.pollTimeout ) {
-				const POLL_INTERVAL = 6000;
-				const token = this.state.pushauth_token;
-				const pollTokenInfo = ( token, interval ) => {
-					this.pollTimeout = setTimeout( () => {
-						this.pollTimeout = null;
-						AuthActions.checkToken( token );
-					}, interval );
-				};
-
-				pollTokenInfo( token, POLL_INTERVAL );
-			}
+		if ( this.state.requires2fa === 'push-verification' ) {
+			this.verifyPushToken( this.state.pushauth_token );
 		} else {
 			clearTimeout( this.pollTimeout );
 		}
@@ -135,9 +135,9 @@ module.exports = React.createClass( {
 		return this.hasLoginDetails();
 	},
 
-	toggleSelfHostedInstructions: function () {
-	    var isShowing = !this.state.showInstructions;
-	    this.setState( { showInstructions: isShowing } );
+	toggleSelfHostedInstructions: function() {
+		const isShowing = ! this.state.showInstructions;
+		this.setState( { showInstructions: isShowing } );
 	},
 
 	useAuthCode: function() {
@@ -177,7 +177,7 @@ module.exports = React.createClass( {
 								submitting={ inProgress }
 								valueLink={ this.linkState( 'password' ) } />
 						</div>
-						{ (requires2fa === "code") &&
+						{ ( requires2fa === 'code' ) &&
 							<FormFieldset>
 								<FormTextInput
 									name="auth_code"
@@ -192,21 +192,23 @@ module.exports = React.createClass( {
 					</FormFieldset>
 					<FormButtonsBar>
 						<FormButton disabled={ ! this.canSubmitForm() } onClick={ this.recordClickEvent( 'Sign in' ) } >
-							{ requires2fa === "code" ? this.translate( 'Verify' ) : this.translate( 'Sign in' ) }
+							{ requires2fa === 'code' ? this.translate( 'Verify' ) : this.translate( 'Sign in' ) }
 						</FormButton>
 					</FormButtonsBar>
 					{ ! requires2fa && <LostPassword /> }
 					{ errorMessage && <Notice text={ errorMessage } status={ errorLevel } showDismiss={ false } /> }
-					{ requires2fa === "push-verification" &&
+					{ requires2fa === 'push-verification' &&
 					<FormButtonsBar>
 						<FormButton onClick={ this.useAuthCode } >
 							{ this.translate( 'Verify with code instead' ) }
 						</FormButton>
 					</FormButtonsBar>
 					}
-					{ (requires2fa === "code") && <AuthCodeButton username={ this.state.login } password={ this.state.password } /> }
+					{ ( requires2fa === 'code' ) && <AuthCodeButton username={ this.state.login } password={ this.state.password } /> }
 				</form>
-				<a className="auth__help" target="_blank" title={ this.translate( 'Visit the WordPress.com support site for help' ) } href="https://en.support.wordpress.com/">
+				<a className="auth__help" target="_blank" title={
+					this.translate( 'Visit the WordPress.com support site for help' )
+				} href="https://en.support.wordpress.com/">
 					<Gridicon icon="help" />
 				</a>
 				<div className="auth__links">

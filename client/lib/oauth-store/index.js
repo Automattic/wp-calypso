@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:auth:store' );
+const debug = require( 'debug' )( 'calypso:auth:store' );
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ import * as OAuthToken from 'lib/oauth-token';
 const initialState = {
 	requires2fa: false,
 	pollCount: 0,
-	unverified_token: null,
+	pushauth_token: null,
 	inProgress: false,
 	errorLevel: false,
 	errorMessage: false
@@ -41,7 +41,7 @@ function handleAuthError( error, data ) {
 			if ( data.body.error_info && data.body.error_info.type === 'push-verification-sent' ) {
 				stateChanges.requires2fa = 'push-verification';
 				stateChanges.pushauth_token = {
-					token: data.body.error_info.unverified_token,
+					token: data.body.error_info.push_token,
 					user_id: data.body.error_info.user_id
 				};
 			} else {
@@ -85,10 +85,9 @@ const AuthStore = createReducerStore( function( state, payload ) {
 				handleLogin( action.data.body.access_token );
 			}
 			break;
-		case ActionTypes.RECEIVE_AUTH_TOKEN_INFO:
+		case ActionTypes.RECEIVE_PUSH_TOKEN_STATUS:
 			if ( action.error ) {
-				// XXX: this triggers component update, which in turn triggers polling
-				//      too much indirection :(
+				// trigger component update to continue polling
 				stateChanges = { pollCount: state.pollCount + 1 };
 			} else {
 				handleLogin( action.data.body.access_token );

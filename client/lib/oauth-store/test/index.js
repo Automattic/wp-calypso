@@ -27,6 +27,8 @@ describe( 'oAuthStore', function() {
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: true,
 			requires2fa: false,
+			pushauth_token: null,
+			pollCount: 0,
 			errorMessage: false,
 			errorLevel: false
 		} );
@@ -43,6 +45,8 @@ describe( 'oAuthStore', function() {
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
 			requires2fa: false,
+			pushauth_token: null,
+			pollCount: 0,
 			errorMessage: 'error',
 			errorLevel: 'is-error'
 		} );
@@ -63,7 +67,9 @@ describe( 'oAuthStore', function() {
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
-			requires2fa: true,
+			requires2fa: 'code',
+			pushauth_token: null,
+			pollCount: 0,
 			errorMessage: 'error',
 			errorLevel: 'is-info'
 		} );
@@ -84,7 +90,9 @@ describe( 'oAuthStore', function() {
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
-			requires2fa: true,
+			requires2fa: 'code',
+			pushauth_token: null,
+			pollCount: 0,
 			errorMessage: 'error',
 			errorLevel: 'is-error'
 		} );
@@ -112,7 +120,9 @@ describe( 'oAuthStore', function() {
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: true,
-			requires2fa: true,
+			requires2fa: 'code',
+			pushauth_token: null,
+			pollCount: 0,
 			errorMessage: false,
 			errorLevel: false
 		} );

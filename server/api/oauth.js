@@ -41,12 +41,11 @@ function proxyOAuth( request, response ) {
 		.send( data )
 		.end( validateOauthResponse( response, function( error, res ) {
 			// Return the token as a response
-			console.log( res.body );
 			response.json( res.body );
 		} ) );
 }
 
-function proxyTokenInfo( request, response ) {
+function proxyVerifyPushToken( request, response ) {
 	var data = Object.assign( {}, {
 		client_id: oauth().client_id,
 		user_id: request.body.user_id,
@@ -114,7 +113,7 @@ module.exports = function( app ) {
 	return app
 		.use( bodyParser.json() )
 		.post( '/oauth', proxyOAuth )
-		.post( '/token-info', proxyTokenInfo )
+		.post( '/verify-push-token', proxyVerifyPushToken )
 		.get( '/logout', logout )
 		.post( '/sms', sms );
 }

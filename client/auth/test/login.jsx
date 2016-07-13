@@ -40,7 +40,7 @@ describe( 'LoginTest', function() {
 	} );
 
 	it( 'cannot submit until login details entered', function( done ) {
-		var submit = TestUtils.findRenderedDOMComponentWithTag( page, 'button' );
+		const submit = TestUtils.findRenderedDOMComponentWithTag( page, 'button' );
 
 		page.setState( { login: 'test', password: 'test', inProgress: false }, function() {
 			expect( submit.disabled ).to.be.false;
@@ -49,7 +49,7 @@ describe( 'LoginTest', function() {
 	} );
 
 	it( 'shows OTP box with valid login', function( done ) {
-		page.setState( { login: 'test', password: 'test', requires2fa: true }, function() {
+		page.setState( { login: 'test', password: 'test', requires2fa: 'code' }, function() {
 			expect( page.refs.auth_code ).to.not.be.undefined;
 			done();
 		} );
@@ -64,7 +64,7 @@ describe( 'LoginTest', function() {
 	} );
 
 	it( 'submits login form', function( done ) {
-		var submit = TestUtils.findRenderedDOMComponentWithTag( page, 'form' );
+		const submit = TestUtils.findRenderedDOMComponentWithTag( page, 'form' );
 
 		page.setState( { login: 'user', password: 'pass', auth_code: 'otp' }, function() {
 			TestUtils.Simulate.submit( submit );

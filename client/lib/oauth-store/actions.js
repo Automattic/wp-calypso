@@ -30,13 +30,13 @@ export function login( username, password, auth_code ) {
 }
 
 export function checkToken( tokenInfo ) {
-	request.post( '/token-info' )
+	request.post( '/verify-push-token' )
 		.send( tokenInfo )
 		.end( ( error, data ) => {
 			// XXX: bump stats?
 
 			Dispatcher.handleServerAction( {
-				type: actions.RECEIVE_AUTH_TOKEN_INFO,
+				type: actions.RECEIVE_PUSH_TOKEN_STATUS,
 				data,
 				error
 			} );
