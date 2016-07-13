@@ -91,24 +91,32 @@ export class SiteSettingsComponent extends Component {
 		};
 	}
 
-	getSections() {
+	getSection() {
 		const { site } = this.state;
+		const { section, hostSlug } = this.props;
 
-		return {
-			general: (
-				<GeneralSettings site={ site }
+		switch ( section ) {
+			case 'general':
+				return <GeneralSettings site={ site }
 					sitePurchases={ this.props.sitePurchases }
-					hasLoadedSitePurchasesFromServer={ this.props.hasLoadedSitePurchasesFromServer } />
-			),
-			writing: <WritingSettings site={ site } />,
-			discussion: <DiscussionSettings site={ site } />,
-			security: <SiteSecurity site={ site } />,
-			analytics: <AnalyticsSettings site={ site } />,
-			seo: <SeoSettings site={ site } />,
-			'import': <ImportSettings site={ site } />,
-			'export': <ExportSettings site={ site } />,
-			guidedTransfer: <GuidedTransfer hostSlug={ context.params.host_slug } />
-		};
+					hasLoadedSitePurchasesFromServer={ this.props.hasLoadedSitePurchasesFromServer } />;
+			case 'writing':
+				return <WritingSettings site={ site } />;
+			case 'discussion':
+				return <DiscussionSettings site={ site } />;
+			case 'security':
+				return <SiteSecurity site={ site } />;
+			case 'analytics':
+				return <AnalyticsSettings site={ site } />;
+			case 'seo':
+				return <SeoSettings site={ site } />;
+			case 'import':
+				return <ImportSettings site={ site } />;
+			case 'export':
+				return <ExportSettings site={ site }/>;
+			case 'guidedTransfer':
+				return <GuidedTransfer hostSlug={ hostSlug } />;
+		}
 	}
 
 	renderSectioNav() {
@@ -196,8 +204,6 @@ export class SiteSettingsComponent extends Component {
 
 	render() {
 		const { site } = this.state;
-		const { section } = this.props;
-		const settingsSection = this.getSections();
 
 		return (
 			<section className="site-settings">
@@ -206,7 +212,7 @@ export class SiteSettingsComponent extends Component {
 
 					{ this.renderSectioNav( site ) }
 					{ site && <QuerySitePurchases siteId={ site.ID } /> }
-					{ site && settingsSection[ this.props.section ] }
+					{ site && this.getSection() }
 				</div>
 			</section>
 		);

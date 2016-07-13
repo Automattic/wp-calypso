@@ -126,7 +126,7 @@ module.exports = {
 	guidedTransfer( context ) {
 		renderPage(
 			context,
-			<SiteSettingsComponent sites={ sites } section="guidedTransfer" />
+			<SiteSettingsComponent sites={ sites } section="guidedTransfer" hostSlug={ context.params.host_slug } />
 		);
 	},
 
