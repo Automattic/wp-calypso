@@ -69,7 +69,7 @@ const FirstView = React.createClass( {
 									<input type="checkbox"
 											checked={ ! this.state.isEnabled }
 											onChange={ this.enableOrDisableNextTime } />
-									{ this.translate( 'Don\'t show this again' ) }
+									{ this.translate( "Don't show this again" ) }
 								</label>
 							</div>
 						</div>
