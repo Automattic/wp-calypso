@@ -61,6 +61,41 @@ const successfulSyncStatusRequest = {
 	}
 };
 
+const inProgressSyncStatusRequest = {
+	type: JETPACK_SYNC_STATUS_SUCCESS,
+	siteId: 1234567,
+	data: {
+		started: 1467998622,
+		queue_finished: 1467998622,
+		sent_started: 1467999200,
+		queue: {
+			constants: 1,
+			functions: 1,
+			options: 1,
+			terms: 1,
+			themes: 1,
+			users: 1,
+			posts: 102,
+			comments: 1,
+			updates: 1
+		},
+		sent: {
+			constants: 1,
+			functions: 1,
+			options: 1,
+			terms: 1,
+			themes: 1,
+			users: 1,
+			posts: 25
+		},
+		is_scheduled: false,
+		_headers: {
+			Date: 'Wed, 15 Jun 2016 17:05:26 GMT',
+			'Content-Type': 'application/json'
+		}
+	}
+};
+
 const erroredSyncStatusRequest = {
 	type: JETPACK_SYNC_STATUS_ERROR,
 	siteId: 1234578,
@@ -155,8 +190,8 @@ describe( 'reducer', () => {
 
 		it( 'should set lastSuccessfulStatus to current time when finished fetching for a site', () => {
 			const startTime = Date.now();
-			const state = syncStatus( undefined, successfulSyncStatusRequest );
-			expect( state ).to.have.property( String( successfulSyncStatusRequest.siteId ) )
+			const state = syncStatus( undefined, inProgressSyncStatusRequest );
+			expect( state ).to.have.property( String( inProgressSyncStatusRequest.siteId ) )
 				.to.have.property( 'lastSuccessfulStatus' )
 				.to.be.at.least( startTime );
 		} );
