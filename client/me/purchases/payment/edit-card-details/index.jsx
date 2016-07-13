@@ -43,11 +43,10 @@ const wpcom = wpcomFactory.undocumented();
 
 const EditCardDetails = React.createClass( {
 	propTypes: {
-		card: React.PropTypes.object.isRequired,
+		card: React.PropTypes.object,
 		countriesList: React.PropTypes.object.isRequired,
 		hasLoadedSites: React.PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
-		isEditingSpecificCard: React.PropTypes.bool.isRequired,
 		selectedPurchase: React.PropTypes.object,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
@@ -235,10 +234,9 @@ const EditCardDetails = React.createClass( {
 		}
 
 		const purchase = getPurchase( props ),
-			{ selectedSite } = props,
-			card = props.isEditingSpecificCard ? props.card.data : true;
+			{ selectedSite } = props;
 
-		return purchase && card && selectedSite;
+		return purchase && selectedSite;
 	},
 
 	isFieldInvalid( name ) {
