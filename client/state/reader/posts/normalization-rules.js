@@ -23,7 +23,7 @@ import makeEmbedsSecure from 'lib/post-normalizer/rule-content-make-embeds-secur
 import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
 import safeImages from 'lib/post-normalizer/rule-content-safe-images';
 import wordCount from 'lib/post-normalizer/rule-content-word-count';
-import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds} from 'lib/post-normalizer/rule-content-disable-autoplay';
+import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from 'lib/post-normalizer/rule-content-disable-autoplay';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import firstPassCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
 import makeSiteIdSafeForApi from 'lib/post-normalizer/rule-make-site-id-safe-for-api';
@@ -50,7 +50,7 @@ function discoverFullBleedImages( post, dom ) {
 		const images = dom.querySelectorAll( '.fullbleed img, img.fullbleed' );
 		forEach( images, function( image ) {
 			const newSrc = resizeImageUrl( image.src, { w: DISCOVER_FULL_BLEED_WIDTH } );
-			let oldImageObject = find( post.content_images, { src: image.src } );
+			const oldImageObject = find( post.content_images, { src: image.src } );
 			oldImageObject.src = newSrc;
 			image.src = newSrc;
 		} );
@@ -64,11 +64,14 @@ function discoverFullBleedImages( post, dom ) {
  * @return {object}            The classified post
  */
 function classifyPost( post ) {
-	var displayType = DISPLAY_TYPES.UNCLASSIFIED,
-		canonicalImage = post.canonical_image,
+	const canonicalImage = post.canonical_image;
+	let displayType = DISPLAY_TYPES.UNCLASSIFIED,
 		canonicalAspect;
 
-	if ( post.images && post.images.length === 1 && post.images[0].naturalWidth >= PHOTO_ONLY_MIN_WIDTH && post.word_count < 100 ) {
+	if ( post.images &&
+			post.images.length >= 1 &&
+			canonicalImage && canonicalImage.width >= PHOTO_ONLY_MIN_WIDTH &&
+			post.word_count < 100 ) {
 		displayType ^= DISPLAY_TYPES.PHOTO_ONLY;
 	}
 
