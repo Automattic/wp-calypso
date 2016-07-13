@@ -337,6 +337,12 @@ const FormGeneral = React.createClass( {
 		if ( ! config.isEnabled( 'manage/option_sync_non_public_post_stati' ) ) {
 			return null;
 		}
+
+		const { site } = this.props;
+		if ( site.jetpack && site.versionCompare( '4.1.1', '>' ) ) {
+			return null;
+		}
+
 		return (
 			<Card className="is-compact">
 				<form onChange={ this.markChanged }>
