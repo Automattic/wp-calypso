@@ -17,6 +17,7 @@ import titlecase from 'to-title-case';
 import layoutFocus from 'lib/layout-focus';
 import titleActions from 'lib/screen-title/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import { savePreference } from 'state/preferences/actions';
 
 const user = userFactory();
 const sites = sitesFactory();
@@ -99,6 +100,9 @@ function getSiteFilters( siteId ) {
 }
 
 module.exports = {
+	resetFirstView( context ) {
+		context.store.dispatch( savePreference( 'firstViewHistory', [] ) );
+	},
 
 	redirectToDefaultSitePage: function( context, next ) {
 		const siteFragment = route.getSiteFragment( context.path );
