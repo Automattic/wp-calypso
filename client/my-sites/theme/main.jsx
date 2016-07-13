@@ -297,21 +297,12 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderButton() {
-		const { active: isActive, isLoggedIn, price } = this.props;
+		const { label } = this.props.defaultOption;
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
-
-		let actionTitle;
-		if ( isActive ) {
-			actionTitle = i18n.translate( 'Customize' );
-		} else if ( isLoggedIn && ! price ) {
-			actionTitle = i18n.translate( 'Activate this design' );
-		} else {
-			actionTitle = i18n.translate( 'Pick this design' );
-		}
 
 		return (
 			<Button className="theme__sheet-primary-button" onClick={ this.onPrimaryClick }>
-				{ this.isLoaded() ? actionTitle : placeholder }
+				{ this.isLoaded() ? label : placeholder }
 				{ this.renderPrice() }
 			</Button>
 		);
@@ -386,8 +377,10 @@ const bindDefaultOptionToDispatch = ( dispatch, ownProps ) => {
 		defaultOption = customize;
 	} else if ( price ) {
 		defaultOption = purchase;
+		defaultOption.label = i18n.translate( 'Pick this design' );
 	} else {
 		defaultOption = activate;
+		defaultOption.label = i18n.translate( 'Activate this design' );
 	}
 
 	return { defaultOption: bindOptionToDispatch( defaultOption, 'showcase-sheet' )( dispatch ) };
