@@ -1,18 +1,31 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	omit = require( 'lodash/omit' );
 
-module.exports = React.createClass( {
+import React from 'react';
+import classNames from 'classnames';
+import { omit } from 'lodash';
+
+export default React.createClass( {
 
 	displayName: 'FormSettingExplanation',
 
-	render: function() {
+	getDefaultProps() {
+		return {
+			noValidate: false,
+			isIndented: false
+		};
+	},
+
+	render() {
+		const classes = classNames( this.props.className, 'form-setting-explanation', {
+			'no-validate': this.props.noValidate,
+			'is-indented': this.props.isIndented
+		} );
+
 		return (
 			<p { ...omit( this.props, 'className' ) }
-				className={ classnames( this.props.className, 'form-setting-explanation', { 'no-validate': this.props.noValidate } ) } >
+				className={ classes } >
 				{ this.props.children }
 			</p>
 		);
