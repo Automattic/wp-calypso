@@ -17,7 +17,6 @@ import SearchInput from 'components/search';
 import SearchCard from 'components/post-card/search';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
-import recordTrackForPost from 'reader/stats';
 
 //const stats = require( 'reader/stats' );
 //
@@ -53,8 +52,6 @@ const SearchCardAdapter = React.createClass( {
 		if ( closest( event.target, '.ignore-click, [rel=external]', true, rootNode ) ) {
 			return;
 		}
-
-		recordTrackForPost( 'calypso_reader_search_clicked', this.props.post );
 
 		event.preventDefault();
 		this.props.handleClick( this.props.post, {} );
