@@ -92,8 +92,7 @@ export function details( context, next ) {
 		description: decodeEntities( themeDetails.description ),
 		canonicalUrl: `https://wordpress.com/theme/${ slug }`, // TODO: use getDetailsUrl() When it becomes availavle
 		image: themeDetails.screenshot,
-		isLoggedIn: !! user,
-		path: context.pathname
+		isLoggedIn: !! user
 	};
 
 	if ( startsWith( context.prevPath, '/design' ) ) {
