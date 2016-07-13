@@ -106,13 +106,9 @@ export const plansList = {
 		getPathSlug: () => 'premium',
 		getStoreSlug: () => PLAN_PREMIUM,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
-		getDescription: () => i18n.translate( 'Your own domain name, powerful customization options, and' +
-			' lots of space for audio and video.' ),
-		getDescriptionWithGoogleVouchers: () => i18n.translate( 'Your own domain name, powerful customization options,' +
-			' lots of space for audio and video, and $100 advertising voucher.' ),
-		getDescriptionWithWordAdsInstantActivation: () => i18n.translate( 'Your own domain name, powerful' +
+		getDescription: () => i18n.translate( 'Your own domain name, powerful' +
 			' customization options, easy monetization with WordAds and lots of space for audio and video.' ),
-		getDescriptionWithWordAdsInstantActivationAndGoogleVouchers: () => i18n.translate( 'Your own domain name, powerful' +
+		getDescriptionWithGoogleVouchers: () => i18n.translate( 'Your own domain name, powerful' +
 			' customization options, easy monetization with WordAds, lots of space for audio and video, and $100 advertising voucher.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
