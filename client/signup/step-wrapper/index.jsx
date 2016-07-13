@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,14 +14,14 @@ import config from 'config';
 import sitesList from 'lib/sites-list';
 import { plansLink, isSkipPlansTestEnabled } from 'lib/plans';
 import Gridicon from 'components/gridicon';
-import analytics from 'lib/analytics';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 /**
  * Module variables
  */
 const sites = sitesList();
 
-export default React.createClass( {
+const StepWrapper = React.createClass( {
 	displayName: 'StepWrapper',
 
 	renderBack: function() {
@@ -75,7 +76,7 @@ export default React.createClass( {
 	},
 
 	recordComparePlansClick() {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Compare Plans Link' );
+		this.props.trackCompareClick();
 	},
 
 	renderComparePlans() {
@@ -135,3 +136,9 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapDispatchToProps = dispatch => ( {
+	trackCompareClick: dispatch( recordGoogleEvent( 'Upgrades', 'Clicked Compare Plans Link' ) )
+} );
+
+export default connect( null, mapDispatchToProps )( StepWrapper );
