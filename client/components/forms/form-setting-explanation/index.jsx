@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import classNames from 'classnames';
 import { omit } from 'lodash';
@@ -10,10 +9,16 @@ export default React.createClass( {
 
 	displayName: 'FormSettingExplanation',
 
+	propTypes: {
+		noValidate: React.PropTypes.bool,
+		isIndented: React.PropTypes.bool,
+		className: React.PropTypes.string
+	},
+
 	getDefaultProps() {
 		return {
 			noValidate: false,
-			isIndented: false
+			isIndented: false,
 		};
 	},
 
