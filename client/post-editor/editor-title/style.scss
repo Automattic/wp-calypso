@@ -1,10 +1,6 @@
 .editor-title {
 	position: relative;
 
-	&:not( .is-focused ):not( .is-loading )::after {
-		@include long-content-fade( $color: $white );
-	}
-
 	&.is-loading::before {
 		content: '';
 		position: absolute;
@@ -36,7 +32,8 @@
 	}
 }
 
-.editor-title__input[type="text"] {
+.editor-title__input {
+	min-height: 0;
 	padding-left: 10px; /* Intentionally non-standard to align editor body margin (10px) */
 	padding-right: 10px;
 	border: none;
@@ -44,6 +41,8 @@
 	font-size: 28px;
 	color: $gray-dark;
 	font-weight: 600;
+	resize: none;
+	-ms-overflow-y: hidden !important;
 
 	&:focus {
 		box-shadow: none;
@@ -54,6 +53,6 @@
 	}
 }
 
-.editor-title.is-loading .editor-title__input[type="text"] {
+.editor-title.is-loading .editor-title__input {
 	color: transparent;
 }

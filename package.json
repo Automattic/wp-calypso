@@ -13,7 +13,7 @@
     "async": "0.9.0",
     "atob": "1.1.2",
     "autoprefixer": "6.3.5",
-    "autosize": "3.0.7",
+    "autosize": "3.0.15",
     "babel-core": "6.9.1",
     "babel-loader": "6.2.4",
     "babel-plugin-add-module-exports": "0.2.1",
