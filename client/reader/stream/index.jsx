@@ -429,10 +429,11 @@ module.exports = React.createClass( {
 	render: function() {
 		var store = this.props.store,
 			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 ),
-			body;
+			body, showingStream;
 
 		if ( hasNoPosts || store.hasRecentError( 'invalid_tag' ) ) {
 			body = this.props.emptyContent || ( <EmptyContent /> );
+			showingStream = false;
 		} else {
 			body = ( <InfiniteList
 			ref={ ( c ) => this._list = c }
@@ -446,6 +447,7 @@ module.exports = React.createClass( {
 			renderItem={ this.renderPost }
 			selectedIndex={ this.props.store.getSelectedIndex() }
 			renderLoadingPlaceholders={ this.renderLoadingPlaceholders } /> );
+			showingStream = true;
 		}
 
 		return (
@@ -457,6 +459,10 @@ module.exports = React.createClass( {
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />
 				{ this.props.children }
 				{ body }
+				{ showingStream && this.props.store.isLastPage() && this.state.posts.length
+					? <div className="infinite-scroll-end" />
+					: null
+				}
 			</Main>
 		);
 	}
