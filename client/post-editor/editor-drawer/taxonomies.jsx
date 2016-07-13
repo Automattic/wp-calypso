@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import map from 'lodash/map';
+import { reduce, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,22 +18,34 @@ import Gridicon from 'components/gridicon';
 import TermTokenField from 'post-editor/term-token-field';
 import TermSelector from 'post-editor/editor-term-selector';
 
+function isSkippedTaxonomy( postType, taxonomy ) {
+	if ( includes( [ 'post_format', 'mentions' ], taxonomy ) ) {
+		return true;
+	}
+
+	if ( 'post' === postType ) {
+		return includes( [ 'category', 'post_tag' ], taxonomy );
+	}
+
+	return false;
+}
+
 function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 	return (
 		<div className="editor-drawer__taxonomies">
 			{ siteId && postType && (
 				<QueryTaxonomies { ...{ siteId, postType } } />
 			) }
-			{ map( taxonomies, ( taxonomy ) => {
+			{ reduce( taxonomies, ( memo, taxonomy ) => {
 				const { name, label, hierarchical } = taxonomy;
-				if ( 'post_format' === name ) {
-					// Post format has its own dedicated accordion
-					return;
+
+				if ( isSkippedTaxonomy( postType, name ) ) {
+					return memo;
 				}
 
 				const icon = hierarchical ? 'folder' : 'tag';
 
-				return (
+				return memo.concat(
 					<Accordion
 						key={ name }
 						title={ label }
@@ -45,7 +57,7 @@ function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 					}
 					</Accordion>
 				);
-			} ).filter( Boolean ) }
+			}, [] ) }
 		</div>
 	);
 }
