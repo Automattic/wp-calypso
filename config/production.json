@@ -71,7 +71,7 @@
 		"press-this": true,
 		"preview-layout": true,
 		"preview-endpoint": false,
-		"push-notifications-ab-test": false,
+		"push-notifications-ab-test": true,
 		"reader": true,
 		"reader/full-errors": false,
 		"reader/start": true,
