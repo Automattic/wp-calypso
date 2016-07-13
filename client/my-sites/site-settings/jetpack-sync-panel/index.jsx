@@ -11,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import Button from 'components/button';
 import Notice from 'components/notice';
 import ProgressBar from 'components/progress-bar';
@@ -86,7 +86,7 @@ const JetpackSyncPanel = React.createClass( {
 
 	render() {
 		return (
-			<Card className="jetpack-sync-panel">
+			<CompactCard className="jetpack-sync-panel">
 				<div className="jetpack-sync-panel__action-group">
 					<div className="jetpack-sync-panel__description">
 						{ this.translate(
@@ -111,7 +111,7 @@ const JetpackSyncPanel = React.createClass( {
 				{ this.renderStatusNotice() }
 				{ this.renderProgressBar() }
 				{ this.shouldDisableSync() && <Interval onTick={ this.fetchSyncStatus } period={ EVERY_FIVE_SECONDS } /> }
-			</Card>
+			</CompactCard>
 		);
 	}
 } );

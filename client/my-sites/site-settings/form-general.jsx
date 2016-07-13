@@ -515,8 +515,6 @@ const FormGeneral = React.createClass( {
 					</form>
 				</Card>
 
-				{ this.renderJetpackSyncPanel() }
-
 				{ this.props.site.jetpack
 					? <div>
 						<SectionHeader label={ this.translate( 'Jetpack' ) }>
@@ -537,6 +535,7 @@ const FormGeneral = React.createClass( {
 							}
 						</SectionHeader>
 
+						{ this.renderJetpackSyncPanel() }
 						{ this.syncNonPublicPostTypes() }
 
 						<Card href={ '../security/' + site.slug } className="is-compact">
