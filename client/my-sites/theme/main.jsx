@@ -252,12 +252,11 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderPreview() {
-		const buttonLabel = this.props.defaultOption.label;
 		return (
 			<ThemePreview showPreview={ this.state.showPreview }
 				theme={ this.props }
 				onClose={ this.togglePreview }
-				buttonLabel= { buttonLabel }
+				buttonLabel= { this.props.defaultOption.label }
 				onButtonClick={ this.onPreviewButtonClick } />
 		);
 	},
