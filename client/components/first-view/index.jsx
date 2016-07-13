@@ -10,6 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import Button from 'components/button';
 import RootChild from 'components/root-child';
 import { getSectionName } from 'state/ui/selectors';
@@ -58,7 +59,7 @@ const FirstView = React.createClass( {
 						transitionEnter={ false } transitionEnterTimeout={ 0 }
 						transitionLeaveTimeout={ 250 }>
 					{ this.props.isVisible && (
-						<div key="content" className={ firstViewContentClasses }>
+						<Card key="content" className={ firstViewContentClasses }>
 							{ this.props.children }
 
 							<Button primary onClick={ this.hide }>
@@ -73,7 +74,7 @@ const FirstView = React.createClass( {
 									{ this.translate( "Don't show this again" ) }
 								</label>
 							</div>
-						</div>
+						</Card>
 					) }
 				</ReactCSSTransitionGroup>
 			</RootChild>
