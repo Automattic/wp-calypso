@@ -153,9 +153,12 @@ module.exports = React.createClass( {
 
 	pluginMeta( pluginData ) {
 		if ( this.props.progress.length ) {
-			return (
-				<Notice isCompact status="is-info" text={ this.doing() } inline={ true }/>
-			);
+			const message = this.doing();
+			if ( message ) {
+				return (
+					<Notice isCompact status="is-info" text={ message } inline={ true }/>
+				);
+			}
 		}
 		if ( this.hasUpdate() ) {
 			return this.renderUpdateFlag();
