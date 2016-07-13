@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -22,6 +23,8 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { userCan } from 'lib/site/utils';
 import { cartItems } from 'lib/cart-values';
+import { isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
+import { goBackToWpAdmin } from 'state/jetpack-connect/actions';
 
 const plans = plansFactory();
 
@@ -97,7 +100,12 @@ const Plans = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
 			user: this.props.userId
 		} );
-		page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
+		if ( isCalypsoStartedConnection( this.props.jetpackConnectSessions, selectedSite.slug ) ) {
+			page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
+		} else {
+			const { queryObject } = this.props.jetpackConnectAuthorize;
+			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+		}
 	},
 
 	hasPlan( site ) {
@@ -173,21 +181,25 @@ export default connect(
 		return {
 			sitePlans: getPlansBySite( state, selectedSite ),
 			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
+			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
 			userId: user ? user.ID : null,
 			canPurchasePlans: userCan( 'manage_options', selectedSite ),
 			flowType: getFlowType( state.jetpackConnect.jetpackConnectSessions, selectedSite )
 		};
 	},
 	( dispatch ) => {
-		return {
-			fetchSitePlans( sitePlans, site ) {
-				if ( shouldFetchSitePlans( sitePlans, site ) ) {
-					dispatch( fetchSitePlans( site.ID ) );
+		return Object.assign( {},
+			bindActionCreators( { goBackToWpAdmin }, dispatch ),
+			{
+				fetchSitePlans( sitePlans, site ) {
+					if ( shouldFetchSitePlans( sitePlans, site ) ) {
+						dispatch( fetchSitePlans( site.ID ) );
+					}
+				},
+				recordTracksEvent( eventName, props ) {
+					dispatch( recordTracksEvent( eventName, props ) );
 				}
-			},
-			recordTracksEvent( eventName, props ) {
-				dispatch( recordTracksEvent( eventName, props ) );
 			}
-		};
+		);
 	}
 )( Plans );

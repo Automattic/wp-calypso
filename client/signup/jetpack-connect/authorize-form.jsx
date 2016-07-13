@@ -20,6 +20,7 @@ import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import config from 'config';
 import { createAccount, authorize, goBackToWpAdmin, activateManage } from 'state/jetpack-connect/actions';
+import { isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
@@ -37,6 +38,8 @@ import versionCompare from 'lib/version-compare';
 import EmptyContent from 'components/empty-content';
 import safeImageUrl from 'lib/safe-image-url';
 import Button from 'components/button';
+import { requestSites } from 'state/sites/actions';
+import { isRequestingSites } from 'state/sites/selectors';
 
 /**
  * Constants
@@ -165,9 +168,12 @@ const LoggedInForm = React.createClass( {
 	componentWillMount() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		this.props.recordTracksEvent( 'calypso_jpc_auth_view' );
-		if ( ! this.props.isAlreadyOnSitesList && ! queryObject.already_authorized ) {
+		if ( ! this.props.isAlreadyOnSitesList &&
+			! queryObject.already_authorized &&
+			( this.props.calypsoStartedConnection || this.props.isSSO )
+		) {
 			debug( 'Authorizing automatically on component mount' );
-			this.props.authorize( queryObject );
+			return this.props.authorize( queryObject );
 		}
 	},
 
@@ -294,6 +300,10 @@ const LoggedInForm = React.createClass( {
 			return this.translate( 'Try again' );
 		}
 
+		if ( this.props.isFetchingSites() ) {
+			return this.translate( 'Preparing authorization' );
+		}
+
 		if ( this.props.isAlreadyOnSitesList || siteReceived ) {
 			return this.translate( 'Browse Available Upgrades' );
 		}
@@ -346,12 +356,16 @@ const LoggedInForm = React.createClass( {
 
 	renderFooterLinks() {
 		const { queryObject, authorizeSuccess, isAuthorizing } = this.props.jetpackConnectAuthorize;
+		const { blogname, redirect_after_auth, _wp_nonce } = queryObject;
 		const loginUrl = config( 'login_url' ) +
 			'?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) +
-			'&_wp_nonce=' + encodeURIComponent( queryObject._wp_nonce );
+			'&_wp_nonce=' + encodeURIComponent( _wp_nonce );
 		const backToWpAdminLink = (
-			<LoggedOutFormLinkItem icon={ true } href={ queryObject.redirect_after_auth }>
-				{ this.translate( 'Cancel and go back to my site' ) } <Gridicon size={ 18 } icon="external" />
+			<LoggedOutFormLinkItem icon={ true } href={ redirect_after_auth }>
+				<Gridicon size={ 18 } icon="arrow-left" />
+				{ this.translate( 'Return to %(sitename)s', {
+					args: { sitename: decodeEntities( blogname ) }
+				} ) }
 			</LoggedOutFormLinkItem>
 		);
 
@@ -385,7 +399,7 @@ const LoggedInForm = React.createClass( {
 
 	renderStateAction() {
 		const { authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
-		if ( this.isAuthorizing() || ( authorizeSuccess && ! siteReceived ) ) {
+		if ( this.props.isFetchingSites() || this.isAuthorizing() || ( authorizeSuccess && ! siteReceived ) ) {
 			return (
 				<div className="jetpack-connect-logged-in-form__loading">
 					<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
@@ -452,10 +466,14 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		const props = Object.assign( {}, this.props, {
 			user: user
 		} );
+		const calypsoStartedConnection = isCalypsoStartedConnection(
+			this.props.jetpackConnectSessions,
+			this.props.jetpackConnectAuthorize.queryObject.site
+		);
 
 		return (
 			( user )
-				? <LoggedInForm { ...props } isSSO={ this.isSSO() } />
+				? <LoggedInForm { ...props } calypsoStartedConnection={ calypsoStartedConnection } isSSO={ this.isSSO() } />
 				: <LoggedOutForm { ...props } isSSO={ this.isSSO() } />
 		);
 	},
@@ -478,16 +496,25 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 export default connect(
 	state => {
 		const site = state.jetpackConnect.jetpackConnectAuthorize &&
-			state.jetpackConnect.jetpackConnectAuthorize.queryObject &&
-			state.jetpackConnect.jetpackConnectAuthorize.queryObject.site
+				state.jetpackConnect.jetpackConnectAuthorize.queryObject &&
+				state.jetpackConnect.jetpackConnectAuthorize.queryObject.site
 			? getSiteByUrl( state, state.jetpackConnect.jetpackConnectAuthorize.queryObject.site )
 			: null;
+		const isFetchingSites = () => {
+			return isRequestingSites( state );
+		};
 		return {
 			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
 			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
 			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
-			isAlreadyOnSitesList: !! site
+			isAlreadyOnSitesList: !! site,
+			isFetchingSites
 		};
 	},
-	dispatch => bindActionCreators( { recordTracksEvent, authorize, createAccount, activateManage, goBackToWpAdmin }, dispatch )
+	dispatch => bindActionCreators( { requestSites,
+		recordTracksEvent,
+		authorize,
+		createAccount,
+		activateManage,
+		goBackToWpAdmin }, dispatch )
 )( JetpackConnectAuthorizeForm );
