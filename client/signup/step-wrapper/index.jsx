@@ -138,7 +138,7 @@ const StepWrapper = React.createClass( {
 } );
 
 const mapDispatchToProps = dispatch => ( {
-	trackCompareClick: dispatch( recordGoogleEvent( 'Upgrades', 'Clicked Compare Plans Link' ) )
+	trackCompareClick: () => dispatch( recordGoogleEvent( 'Upgrades', 'Clicked Compare Plans Link' ) )
 } );
 
 export default connect( null, mapDispatchToProps )( StepWrapper );
