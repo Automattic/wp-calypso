@@ -16,7 +16,7 @@ import SearchInput from 'components/search';
 import SearchCard from 'components/post-card/search';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
-import recordTrackForPost from 'reader/stats';
+import { recordTrackForPost } from 'reader/stats';
 
 //const stats = require( 'reader/stats' );
 //
