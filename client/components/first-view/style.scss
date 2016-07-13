@@ -4,13 +4,18 @@
 	opacity: 1;
 	pointer-events: auto;
 	transform: scale( 1 );
-	transition: transform 0.25s ease-in-out;
+	transition: all 0.2s ease-in-out;
 
 	&.is-first-view-visible {
-		filter: blur( 4px );
-		opacity: 0.2;
+		opacity: 0.1;
 		pointer-events: none;
 		transform: scale( 0.9 );
+		
+		// This limits the blur filter to Safari, as other browsers can't handle the
+		// awesomeness of transitioning blurs.
+		@supports (overflow:-webkit-marquee) and (justify-content:inherit) {
+			filter: blur( 4px );
+		}
 	}
 }
 
@@ -50,21 +55,22 @@
 	overflow: auto;
 	padding: 32px;
 	pointer-events: auto;
-	transform: scale( 1.6 );
-	transition: all 0.25s ease-in-out;
+	transform: scale( 1.3 );
+	transition: all 0.2s ease-in;
 
 	@include breakpoint( ">660px" ) {
 		padding: 0;
 	}
 
 	h1 {
-		font-size: 2em;
-		font-weight: bold;
-		margin: 0 0 8px 0;
+		font-size: 24px;
+		font-weight: 500;
+		color: $gray-dark;
+		margin: 0 0 16px 0;
 	}
 
 	p {
-		margin: 16px 0;
+		margin: 0 0 24px 0;
 		line-height: 1.5;
 	}
 
@@ -88,9 +94,13 @@
 
 	margin-top: 32px;
 
+	label {
+		cursor: pointer;
+	}
+
 	input[type='checkbox'] {
 		float: none;
-		margin-right: 4px;
+		margin-right: 8px;
 		margin-top: -2px;
 	}
 }
