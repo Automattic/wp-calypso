@@ -6,6 +6,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,6 +25,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import viewport from 'lib/viewport';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
+import { getTerms } from 'state/terms/selectors';
 import { addTerm } from 'state/terms/actions';
 
 class TermSelectorAddTerm extends Component {
@@ -41,6 +43,7 @@ class TermSelectorAddTerm extends Component {
 		labels: PropTypes.object,
 		postType: PropTypes.string,
 		siteId: PropTypes.number,
+		terms: PropTypes.array,
 		taxonomy: PropTypes.string,
 		translate: PropTypes.func
 	};
@@ -78,14 +81,14 @@ class TermSelectorAddTerm extends Component {
 		this.setState( {
 			selectedParent: [ item.ID ],
 			isTopLevel: false
-		} );
+		}, this.isValid );
 	}
 
 	onTopLevelChange() {
 		this.setState( {
 			isTopLevel: ! this.state.isTopLevel,
 			selectedParent: []
-		} );
+		}, this.isValid );
 	}
 
 	getSelectedValues() {
@@ -103,20 +106,16 @@ class TermSelectorAddTerm extends Component {
 
 		const values = this.getSelectedValues();
 
-		const newTermNameLowerCased = values.name.toLowerCase();
-
 		if ( ! values.name.length ) {
 			error = true;
 		}
 
-		// TODO: Check for duplicate term name
-
-		//if ( existingMatches ) {
-		//	error = this.translate( 'Name already exists', {
-		//		context: 'Terms: Add term error message - duplicate term name exists',
-		//		textOnly: true
-		//	} );
-		//}
+		if ( find( this.props.terms, values ) ) {
+			error = this.props.translate( 'Name already exists', {
+				context: 'Terms: Add term error message - duplicate term name exists',
+				textOnly: true
+			} );
+		}
 
 		if ( error !== this.state.error ) {
 			this.setState( {
@@ -215,10 +214,12 @@ class TermSelectorAddTerm extends Component {
 
 export default connect(
 	( state, ownProps ) => {
+		const { taxonomy } = ownProps;
 		const siteId = getSelectedSiteId( state );
-		const taxonomyDetails = getPostTypeTaxonomy( state, siteId, ownProps.postType, ownProps.taxonomy ) || {};
+		const taxonomyDetails = getPostTypeTaxonomy( state, siteId, ownProps.postType, taxonomy ) || {};
 
 		return {
+			terms: getTerms( state, siteId, taxonomy ),
 			labels: taxonomyDetails.labels,
 			siteId
 		};
