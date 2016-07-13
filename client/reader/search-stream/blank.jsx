@@ -1,20 +1,5 @@
-const React = require( 'react' );
+import React from 'react';
 
-const EmptyContent = require( 'components/empty-content' );
-
-const SearchBlankContent = React.createClass( {
-
-	shouldComponentUpdate: function() {
-		return false;
-	},
-
-	render: function() {
-		return ( <EmptyContent
-			title={ '' }
-			illustration={ '/calypso/images/drake/drake-empty-results.svg' }
-			illustrationWidth={ 500 }
-			/> );
-	}
-} );
-
-module.exports = SearchBlankContent;
+export default function BlankContent() {
+	return <p />;
+}
