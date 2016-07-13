@@ -56,7 +56,7 @@ const JetpackSyncPanel = React.createClass( {
 		if ( this.shouldDisableSync() ) {
 			text = this.translate( 'Full sync in progress' );
 		} else if ( finishedTimestamp.isValid() ) {
-			text = this.translate( 'Last syned %(ago)s', {
+			text = this.translate( 'Last synced %(ago)s', {
 				args: {
 					ago: finishedTimestamp.fromNow()
 				}
