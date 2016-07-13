@@ -157,7 +157,7 @@ const FeedStream = React.createClass( {
 					onSearch={ this.updateQuery }
 					autoFocus={ true }
 					delaySearch={ true }
-					placeholder={ this.translate( 'Search billions of posts across WordPress.com…' ) } />
+					placeholder={ this.translate( 'Search billions of WordPress.com posts…' ) } />
 			</Stream>
 		);
 	}
