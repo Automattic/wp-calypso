@@ -11,6 +11,7 @@ import closest from 'component-closest';
  */
 import Stream from 'reader/stream';
 import EmptyContent from './empty';
+import BlankContent from './blank';
 import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
 import SearchCard from 'components/post-card/search';
@@ -136,7 +137,7 @@ const FeedStream = React.createClass( {
 	render() {
 		const emptyContent = this.props.query
 			? <EmptyContent query={ this.props.query } />
-			: null;
+			: <BlankContent />;
 
 		if ( this.props.setPageTitle ) {
 			this.props.setPageTitle( this.state.title || this.translate( 'Search' ) );
