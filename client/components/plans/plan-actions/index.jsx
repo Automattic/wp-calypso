@@ -13,7 +13,7 @@ import { cartItems } from 'lib/cart-values';
 import config from 'config';
 import { isBusiness, isEnterprise, isFreePlan, isFreeJetpackPlan } from 'lib/products-values';
 import purchasesPaths from 'me/purchases/paths';
-import { isValidFeatureKey } from 'lib/plans';
+import { isValidFeatureKey, isSkipPlansTestEnabled } from 'lib/plans';
 import * as upgradesActions from 'lib/upgrades/actions';
 
 const PlanActions = React.createClass( {
@@ -108,6 +108,15 @@ const PlanActions = React.createClass( {
 
 		if ( this.props.sitePlan && this.props.sitePlan.freeTrial ) {
 			label = this.translate( 'Purchase Now' );
+		}
+
+		if ( this.props.isInSignup && isSkipPlansTestEnabled() ) {
+			label = this.translate( 'Select %(plan)s', {
+				args: {
+					plan: this.props.plan.product_name_short
+				},
+				context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
+			} );
 		}
 
 		return (
@@ -225,7 +234,9 @@ const PlanActions = React.createClass( {
 			const link = purchasesPaths.managePurchase( this.props.site.slug, this.props.sitePlan.id );
 
 			return (
-				<a href={ link } className="button plan-actions__upgrade-button">{ this.translate( 'Manage Plan', { context: 'Link to current plan from /plans/' } ) }</a>
+				<a href={ link } className="button plan-actions__upgrade-button">
+					{ this.translate( 'Manage Plan', { context: 'Link to current plan from /plans/' } ) }
+				</a>
 			);
 		}
 	},
