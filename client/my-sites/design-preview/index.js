@@ -11,15 +11,16 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import WebPreview from 'components/web-preview';
-import { clearPreviewUrl } from 'state/ui/actions';
+import { clearPreviewUrl, hidePreviewSidebar } from 'state/ui/actions';
 import { fetchPreviewMarkup, undoCustomization, clearCustomizations } from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
-import { getSelectedSite, getSelectedSiteId, getPreviewUrl } from 'state/ui/selectors';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSite, getSelectedSiteId, getPreviewUrl, isPreviewSidebarShowing } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import DesignMenu from 'my-sites/design-menu';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -48,6 +49,7 @@ const DesignPreview = React.createClass( {
 		previewMarkup: React.PropTypes.string,
 		customizations: React.PropTypes.object,
 		isUnsaved: React.PropTypes.bool,
+		showSidebar: React.PropTypes.bool,
 		fetchPreviewMarkup: React.PropTypes.func.isRequired,
 		undoCustomization: React.PropTypes.func.isRequired,
 		clearCustomizations: React.PropTypes.func.isRequired,
@@ -65,6 +67,7 @@ const DesignPreview = React.createClass( {
 			showPreview: false,
 			defaultViewportDevice: 'tablet',
 			showClose: true,
+			showSidebar: false,
 			customizations: {},
 			isUnsaved: false,
 			onLoad: noop,
@@ -136,7 +139,8 @@ const DesignPreview = React.createClass( {
 	},
 
 	shouldReloadPreview( prevProps ) {
-		if ( this.props.customizations.homePage && JSON.stringify( this.props.customizations.homePage ) !== JSON.stringify( prevProps.customizations.homePage ) ) {
+		if ( this.props.customizations.homePage &&
+				JSON.stringify( this.props.customizations.homePage ) !== JSON.stringify( prevProps.customizations.homePage ) ) {
 			return true;
 		}
 		return false;
@@ -166,12 +170,14 @@ const DesignPreview = React.createClass( {
 				if ( accepted ) {
 					this.props.clearPreviewUrl( this.props.selectedSiteId );
 					this.props.clearCustomizations( this.props.selectedSiteId );
+					this.props.hidePreviewSidebar();
 					this.props.setLayoutFocus( 'sidebar' );
 				}
 			} );
 		}
 		this.props.clearPreviewUrl( this.props.selectedSiteId );
 		this.props.clearCustomizations( this.props.selectedSiteId );
+		this.props.hidePreviewSidebar();
 		this.props.setLayoutFocus( 'sidebar' );
 	},
 
@@ -211,20 +217,24 @@ const DesignPreview = React.createClass( {
 		}
 
 		return (
-			<WebPreview
-				className={ this.props.className }
-				previewUrl={ useEndpoint ? null : this.getPreviewUrl() }
-				externalUrl={ this.getBasePreviewUrl() }
-				showExternal={ true }
-				showClose={ this.props.showClose }
-				showPreview={ this.props.showPreview }
-				defaultViewportDevice={ this.props.defaultViewportDevice }
-				previewMarkup={ useEndpoint ? this.props.previewMarkup : null }
-				onClose={ this.onClosePreview }
-				onLoad={ useEndpoint ? this.onLoad : noop }
-			>
-				{ this.props.children }
-			</WebPreview>
+			<span>
+				<DesignMenu isVisible={ this.props.showSidebar } />
+				<WebPreview
+					className={ this.props.className }
+					previewUrl={ useEndpoint ? null : this.getPreviewUrl() }
+					externalUrl={ this.getBasePreviewUrl() }
+					showExternal={ true }
+					showClose={ this.props.showClose }
+					showPreview={ this.props.showPreview }
+					hasSidebar={ this.props.showSidebar }
+					defaultViewportDevice={ this.props.defaultViewportDevice }
+					previewMarkup={ useEndpoint ? this.props.previewMarkup : null }
+					onClose={ this.onClosePreview }
+					onLoad={ useEndpoint ? this.onLoad : noop }
+				>
+					{ this.props.children }
+				</WebPreview>
+			</span>
 		);
 	}
 } );
@@ -240,6 +250,7 @@ function mapStateToProps( state ) {
 		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ),
 		previewUrl: getPreviewUrl( state ),
 		previewMarkup: getPreviewMarkup( state, selectedSiteId ),
+		showSidebar: isPreviewSidebarShowing( state ),
 		customizations: getPreviewCustomizations( state, selectedSiteId ),
 		isUnsaved: isPreviewUnsaved( state, selectedSiteId ),
 	};
@@ -247,5 +258,5 @@ function mapStateToProps( state ) {
 
 export default connect(
 	mapStateToProps,
-	{ fetchPreviewMarkup, undoCustomization, clearCustomizations, clearPreviewUrl, setLayoutFocus }
+	{ fetchPreviewMarkup, undoCustomization, clearCustomizations, clearPreviewUrl, setLayoutFocus, hidePreviewSidebar }
 )( DesignPreview );
