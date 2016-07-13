@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import includes from 'lodash/includes';
+import createFragment from 'react-addons-create-fragment';
+import { get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -112,38 +113,38 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderTaxonomies: function() {
-		var element;
+		const { type, post, site } = this.props;
 
-		if ( config.isEnabled( 'manage/custom-post-types' ) &&
-				! includes( [ 'post', 'page' ], this.props.type ) ) {
-			return (
+		// Categories & Tags
+		let categories;
+		if ( 'post' === type ) {
+			categories = (
+				<CategoriesTagsAccordion
+					site={ site }
+					post={ post } />
+			);
+
+			if ( site ) {
+				categories = (
+					<CategoryListData siteId={ site.ID }>
+						<TagListData siteId={ site.ID }>
+							{ categories }
+						</TagListData>
+					</CategoryListData>
+				);
+			}
+		}
+
+		// Custom Taxonomies
+		let taxonomies;
+		if ( config.isEnabled( 'manage/custom-post-types' ) ) {
+			taxonomies = (
 				<EditorDrawerTaxonomies
-					postTerms={ this.props.post && this.props.post.terms }
-				/>
+					postTerms={ get( post, 'terms' ) } />
 			);
 		}
 
-		if ( ! this.currentPostTypeSupports( 'tags' ) ) {
-			return;
-		}
-
-		element = (
-			<CategoriesTagsAccordion
-				site={ this.props.site }
-				post={ this.props.post } />
-		);
-
-		if ( this.props.site ) {
-			element = (
-				<CategoryListData siteId={ this.props.site.ID }>
-					<TagListData siteId={ this.props.site.ID }>
-						{ element }
-					</TagListData>
-				</CategoryListData>
-			);
-		}
-
-		return element;
+		return createFragment( { categories, taxonomies } );
 	},
 
 	renderPostFormats: function() {
