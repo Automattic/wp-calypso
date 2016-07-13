@@ -112,7 +112,7 @@ export const plansList = {
 				strong: <strong />
 			}
 		} ),
-		getDescriptionWithGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Advanced design customization tools including CSS editing, lots of space for audio and video, and a {{strong}}$100{{/strong}} advertising voucher.', {
+		getDescriptionWithGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Advanced design customization tools including CSS editing, lots of space for images, video, and audio.', {
 			components: {
 				strong: <strong />
 			}
@@ -122,7 +122,7 @@ export const plansList = {
 				strong: <strong />
 			}
 		} ),
-		getDescriptionWithWordAdsInstantActivationAndGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Advanced design customization tools including CSS editing, lots of space for audio and video, and run your own advertising including a {{strong}}$100{{/strong}} advertising voucher.', {
+		getDescriptionWithWordAdsInstantActivationAndGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Advanced design customization tools including CSS editing, lots of space for audio and video, and run your own advertising.', {
 			components: {
 				strong: <strong />
 			}
@@ -152,7 +152,7 @@ export const plansList = {
 				strong: <strong />
 			}
 		} ),
-		getDescriptionWithWordAdsCredit: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Google Analytics support, unlimited premium theme templates, unlimited storage, a {{strong}}$200{{/strong}} advertising voucher, and the ability to remove WordPress.com branding.', {
+		getDescriptionWithWordAdsCredit: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Google Analytics support, unlimited premium theme templates, unlimited storage, and the ability to remove WordPress.com branding.', {
 			components: {
 				strong: <strong />
 			}
