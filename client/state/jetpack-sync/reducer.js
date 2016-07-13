@@ -63,12 +63,20 @@ export function syncStatus( state = {}, action ) {
 				)
 			} );
 		case JETPACK_SYNC_STATUS_SUCCESS:
+			const thisState = get( state, [ action.siteId ], {} );
+
+			// lastSuccessfulStatus is any status after we have started sycing
+			let lastSuccessfulStatus = get( thisState, 'lastSuccessfulStatus', false );
+			const isFullSyncing = ( get( action, 'data.started' ) && ! get( action, 'data.finished' ) );
+			if ( lastSuccessfulStatus || isFullSyncing ) {
+				lastSuccessfulStatus = Date.now();
+			}
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign(
 					{
 						isRequesting: false,
 						error: false,
-						lastSuccessfulStatus: Date.now()
+						lastSuccessfulStatus
 					},
 					pick( action.data, getExpectedResponseKeys() )
 				)
