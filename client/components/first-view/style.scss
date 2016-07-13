@@ -1,7 +1,7 @@
 .first-view {
 	box-sizing: border-box;
 	margin: 47px 0 0 0;
-	padding: 32px 32px 32px ( $sidebar-width-max + 32px );
+	padding: 32px 32px 32px 32px;
 	pointer-events: none;
 	position: fixed;
 		bottom: 0;
@@ -16,8 +16,12 @@
 		}
 	}
 
-	.has-no-sidebar & {
-		padding-left: 32px;
+	@include breakpoint( ">660px" ) {
+		padding-left: ( $sidebar-width-min + 32px );
+	}
+
+	@include breakpoint( ">960px" ) {
+		padding-left: ( $sidebar-width-max + 32px );
 	}
 }
 
@@ -28,12 +32,13 @@
 	max-width: 600px;
 	opacity: 0;
 	overflow: auto;
+	padding: 32px;
 	pointer-events: auto;
 	transform: scale( 1.6 );
 	transition: all 0.25s ease-in-out;
 
-	@include breakpoint( "<660px" ) {
-		padding: 32px;
+	@include breakpoint( ">660px" ) {
+		padding: 0;
 	}
 
 	h1 {
@@ -54,7 +59,7 @@
 }
 
 .first-view__hide-preference {
-	@media ( min-height: 550px ) {
+	@media ( min-width: "660px" ) and ( min-height: "660px" ) {
 		position: absolute;
 			bottom: 24px;
 			left: 0;
