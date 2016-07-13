@@ -55,7 +55,6 @@ const Start = React.createClass( {
 	},
 
 	componentDidUpdate() {
-		console.log( 'reloading masonry' );
 		this.masonry && this.masonry.layout();
 	},
 
