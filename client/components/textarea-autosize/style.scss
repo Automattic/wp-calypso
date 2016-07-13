@@ -1,0 +1,4 @@
+.textarea-autosize {
+	// Important because otherwise autosize height calculation is incorrect in Safari
+	transition: none !important;
+}
