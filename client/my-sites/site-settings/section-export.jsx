@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { Provider } from 'react-redux';
 import i18n from 'i18n-calypso';
 
 /**
@@ -26,10 +25,6 @@ export default class SiteSettingsExport extends Component {
 			);
 		}
 
-		return (
-			<Provider store={ this.props.store }>
-				<ExporterContainer site={ this.props.site } />
-			</Provider>
-		);
+		return <ExporterContainer site={ this.props.site } />;
 	}
 }

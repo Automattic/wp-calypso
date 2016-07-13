@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 
@@ -12,6 +13,10 @@ import config from 'config';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
+import notices from 'notices';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import GeneralSettings from './section-general';
 import WritingSettings from './form-writing';
 import DiscussionSettings from './section-discussion';
@@ -19,7 +24,7 @@ import AnalyticsSettings from './section-analytics';
 import SeoSettings from './section-seo';
 import ImportSettings from './section-import';
 import ExportSettings from './section-export';
-import GuidedTransfer from './section-guided-transfer';
+import GuidedTransfer from 'my-sites/guided-transfer';
 import SiteSecurity from './section-security';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
@@ -49,9 +54,15 @@ export class SiteSettingsComponent extends Component {
 		this.props.sites.off( 'change', this.updateSite );
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.purchasesError ) {
+			notices.error( nextProps.purchasesError );
+		}
+	}
+
 	getImportPath() {
-		var { site } = this.state;
-		let path = '/settings/import';
+		const { site } = this.state,
+			path = '/settings/import';
 
 		if ( site.jetpack ) {
 			return `${ site.options.admin_url }import.php`;
@@ -61,7 +72,7 @@ export class SiteSettingsComponent extends Component {
 	}
 
 	getExportPath() {
-		var { site } = this.state;
+		const { site } = this.state;
 		return site.jetpack
 			? `${ site.options.admin_url }export.php`
 			: `/settings/export/${ site.slug }`;
@@ -80,25 +91,32 @@ export class SiteSettingsComponent extends Component {
 		};
 	}
 
-	getSections() {
+	getSection() {
 		const { site } = this.state;
-		const { purchases, context } = this.props;
+		const { section, hostSlug } = this.props;
 
-		return {
-			general: (
-				<GeneralSettings
-					site={ site }
-					purchases={ purchases } />
-			),
-			writing: <WritingSettings site={ site } />,
-			discussion: <DiscussionSettings site={ site } />,
-			security: <SiteSecurity site={ site } />,
-			analytics: <AnalyticsSettings site={ site } />,
-			seo: <SeoSettings site={ site } />,
-			'import': <ImportSettings site={ site } />,
-			'export': <ExportSettings site={ site } store={ context.store } />,
-			guidedTransfer: <GuidedTransfer store={ context.store } hostSlug={ context.params.host_slug } />
-		};
+		switch ( section ) {
+			case 'general':
+				return <GeneralSettings site={ site }
+					sitePurchases={ this.props.sitePurchases }
+					hasLoadedSitePurchasesFromServer={ this.props.hasLoadedSitePurchasesFromServer } />;
+			case 'writing':
+				return <WritingSettings site={ site } />;
+			case 'discussion':
+				return <DiscussionSettings site={ site } />;
+			case 'security':
+				return <SiteSecurity site={ site } />;
+			case 'analytics':
+				return <AnalyticsSettings site={ site } />;
+			case 'seo':
+				return <SeoSettings site={ site } />;
+			case 'import':
+				return <ImportSettings site={ site } />;
+			case 'export':
+				return <ExportSettings site={ site }/>;
+			case 'guidedTransfer':
+				return <GuidedTransfer hostSlug={ hostSlug } />;
+		}
 	}
 
 	renderSectioNav() {
@@ -186,8 +204,6 @@ export class SiteSettingsComponent extends Component {
 
 	render() {
 		const { site } = this.state;
-		const { section } = this.props;
-		const settingsSection = this.getSections();
 
 		return (
 			<section className="site-settings">
@@ -195,7 +211,8 @@ export class SiteSettingsComponent extends Component {
 					<SidebarNavigation />
 
 					{ this.renderSectioNav( site ) }
-					{ site && settingsSection[ this.props.section ] }
+					{ site && <QuerySitePurchases siteId={ site.ID } /> }
+					{ site && this.getSection() }
 				</div>
 			</section>
 		);
@@ -207,11 +224,23 @@ export class SiteSettingsComponent extends Component {
 }
 
 SiteSettingsComponent.propTypes = {
+	hasLoadedSitePurchasesFromServer: PropTypes.bool.isRequired,
+	purchasesError: PropTypes.object,
 	section: PropTypes.string,
-	site: PropTypes.object,
-	sites: PropTypes.object
+	sitePurchases: PropTypes.array.isRequired,
+	sites: PropTypes.object.isRequired
 };
 
 SiteSettingsComponent.defaultProps = {
-	posts: 'general'
+	section: 'general'
 };
+
+export default connect(
+	( state ) => {
+		return {
+			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
+			purchasesError: getPurchasesError( state ),
+			sitePurchases: getSitePurchases( state, getSelectedSiteId( state ) )
+		};
+	}
+)( SiteSettingsComponent );

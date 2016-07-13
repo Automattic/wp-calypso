@@ -9,8 +9,6 @@ import filter from 'lodash/filter';
  */
 import CompactCard from 'components/card/compact';
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
-import PurchasesStore from 'lib/purchases/store';
-import notices from 'notices';
 import config from 'config';
 import { tracks } from 'lib/analytics';
 
@@ -24,22 +22,16 @@ module.exports = React.createClass( {
 	displayName: 'DeleteSite',
 
 	propTypes: {
-		purchases: React.PropTypes.object.isRequired,
+		sitePurchases: React.PropTypes.array.isRequired,
+		hasLoadedSitePurchasesFromServer: React.PropTypes.bool.isRequired,
 		site: React.PropTypes.object.isRequired
 	},
 
 	getInitialState() {
 		return {
 			showDialog: false,
-			showStartOverDialog: false,
-			sitePurchases: PurchasesStore.getBySite( this.props.site.ID )
+			showStartOverDialog: false
 		};
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.purchases.error ) {
-			notices.error( nextProps.purchases.error );
-		}
 	},
 
 	render() {
@@ -54,7 +46,7 @@ module.exports = React.createClass( {
 			deleteSite: this.translate( 'Delete Site' )
 		};
 
-		if ( this.props.purchases.isFetchingSitePurchases ) {
+		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
 			return null;
 		}
 
@@ -71,11 +63,13 @@ module.exports = React.createClass( {
 					<div className="delete-site-options__content">
 						<h2 className="delete-site-options__section-title">{ strings.changeSiteAddress }</h2>
 						<p className="delete-site-options__section-desc">{ changeAddressLinkText }</p>
-						<p className="delete-site-options__section-footnote">{ this.translate( 'Your current site address is "%(siteAddress)s."', {
-							args: {
-								siteAddress: selectedSite.slug
-							}
-						} ) }</p>
+						<p className="delete-site-options__section-footnote">
+							{ this.translate( 'Your current site address is "%(siteAddress)s."', {
+								args: {
+									siteAddress: selectedSite.slug
+								}
+							} ) }
+						</p>
 					</div>
 				</CompactCard>
 				<CompactCard
@@ -84,7 +78,9 @@ module.exports = React.createClass( {
 					className="delete-site-options__link">
 					<div className="delete-site-options__content">
 						<h2 className="delete-site-options__section-title">{ strings.startOver }</h2>
-						<p className="delete-site-options__section-desc">{ this.translate( 'Keep your URL and site active, but remove the content.' ) }</p>
+						<p className="delete-site-options__section-desc">
+							{ this.translate( 'Keep your URL and site active, but remove the content.' ) }
+						</p>
 					</div>
 				</CompactCard>
 				<CompactCard
@@ -93,14 +89,18 @@ module.exports = React.createClass( {
 					className="delete-site-options__link">
 					<div className="delete-site-options__content">
 						<h2 className="delete-site-options__section-title">{ strings.deleteSite }</h2>
-						<p className="delete-site-options__section-desc">{ this.translate( 'All your posts, images, data, and this site\'s address ({{siteAddress /}}) will be gone forever.', {
-							components: {
-								siteAddress: <strong>{ selectedSite.slug }</strong>
+						<p className="delete-site-options__section-desc">
+							{ this.translate( 'All your posts, images, data, and this site\'s address ({{siteAddress /}}) will be gone forever.', {
+								components: {
+									siteAddress: <strong>{ selectedSite.slug }</strong>
+								}
+							} ) }
+						</p>
+						<p className="delete-site-options__section-footnote">
+							{
+								this.translate( 'Be careful! Once a site is deleted, it cannot be recovered. Please be sure before you proceed.' )
 							}
-						} ) }</p>
-						<p className="delete-site-options__section-footnote">{
-							this.translate( 'Be careful! Once a site is deleted, it cannot be recovered. Please be sure before you proceed.' )
-						}</p>
+						</p>
 					</div>
 				</CompactCard>
 				<DeleteSiteWarningDialog
@@ -120,7 +120,7 @@ module.exports = React.createClass( {
 
 	checkForSubscriptions( event ) {
 		trackDeleteSiteOption( 'delete-site' );
-		const activeSubscriptions = filter( this.props.purchases.data, 'active' );
+		const activeSubscriptions = filter( this.props.sitePurchases, 'active' );
 
 		if ( ! activeSubscriptions.length ) {
 			return true;
