@@ -210,7 +210,7 @@ const ManagePurchase = React.createClass( {
 								},
 								components: {
 									a: canEditPaymentDetails( purchase )
-										? <a href={ paths.editCardDetails( this.props.selectedSite.slug, id ) } />
+										? <a href={ paths.editCardDetails( this.props.selectedSite.slug, id, creditCard.id ) } />
 										: <span />
 								}
 							}
@@ -347,9 +347,11 @@ const ManagePurchase = React.createClass( {
 			);
 		}
 
+		const { payment: { creditCard } } = purchase;
+
 		return (
 			<li>
-				<a href={ paths.editCardDetails( this.props.selectedSite.slug, purchase.id ) }>
+				<a href={ paths.editCardDetails( this.props.selectedSite.slug, purchase.id, creditCard.id ) }>
 					{ paymentDetails }
 				</a>
 			</li>
@@ -475,7 +477,9 @@ const ManagePurchase = React.createClass( {
 		const purchase = getPurchase( this.props );
 
 		if ( canEditPaymentDetails( purchase ) ) {
-			const path = paths.editCardDetails( this.props.selectedSite.slug, purchase.id );
+			const { payment: { creditCard } } = purchase;
+
+			const path = paths.editCardDetails( this.props.selectedSite.slug, purchase.id, creditCard.id );
 
 			const text = isRenewing( purchase )
 				? this.translate( 'Edit Payment Method' )
