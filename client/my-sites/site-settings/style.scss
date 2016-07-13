@@ -1,7 +1,11 @@
 .site-settings {
 	fieldset {
 		clear: both;
-		margin-bottom: 20px;
+		margin-bottom: 24px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	label {
@@ -201,31 +205,41 @@
 	}
 }
 
+#settings-reading-relatedposts-preview .form-label {
+	font-weight: 600;
+	margin-top: 16px;
+}
+
 .jp-relatedposts {
 	position: relative;
-	margin: 1em 0;
-	padding: 1em 1em .5em;
+	margin-top: 8px;
+	padding: 16px 8px;
 	width: 100%;
 	background: $gray-light;
 	box-sizing: border-box;
 
-	&:after {
-		content: '';
-		display: block;
-		clear: both;
-	}
+	@include clear-fix;
 
 	.jp-relatedposts-headline {
-		margin: 0 0 1em 0;
-		display: inline-block;
-		float: left;
-		font-size: 10px;
-		font-weight: 600;
-		font-family: inherit;
-	}
+ 		margin: 0 0 1em 8px;
+ 		font-size: 11px;
+ 		font-weight: 600;
+ 	}
 
 	.jp-relatedposts-items {
-		clear: left;
+
+
+		@include breakpoint( ">480px" ) {
+			display: flex;
+			flex-wrap: wrap;
+			.jp-relatedposts-post {
+				width: 50%;
+			}
+		}
+
+		@include breakpoint( ">960px" ) {
+			flex-wrap: nowrap;
+		}
 	}
 
 	.jp-relatedposts-post .jp-relatedposts-post-title a {
@@ -235,22 +249,11 @@
 	}
 
 	.jp-relatedposts-post {
-		float: left;
-		width: 33%;
 		box-sizing: border-box;
-		margin: 0 0 1em;
-		padding: 0 5px;
-
-		@include breakpoint( "<660px" ) {
-			width: 50%;
-		}
-
-		@include breakpoint( "<480px" ) {
-			width: 100%;
-		}
+		margin: 0;
+		padding: 0 8px;
 	}
 
-	.jp-relatedposts-post img,
 	.jp-relatedposts-post span {
 		display: block;
 		max-width: 90%;
