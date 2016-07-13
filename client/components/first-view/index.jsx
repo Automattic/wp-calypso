@@ -5,7 +5,6 @@ import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 
 /**
@@ -62,7 +61,9 @@ const FirstView = React.createClass( {
 						<div key="content" className={ firstViewContentClasses }>
 							{ this.props.children }
 
-							<Button primary onClick={ this.hide }>{ this.translate( 'Got it!', { context: 'Button that dismisses the introduction overlay.' } ) }</Button>
+							<Button primary onClick={ this.hide }>
+								{ this.translate( 'Got it!', { context: 'Button that dismisses the introduction overlay.' } ) }
+							</Button>
 
 							<div className={ firstViewHidePreferenceClasses }>
 								<label>
@@ -85,7 +86,7 @@ const FirstView = React.createClass( {
 
 	enableOrDisableNextTime( event ) {
 		this.setState( {
-			isEnabled: event.target.value
+			isEnabled: ! event.target.checked
 		} );
 	},
 
