@@ -96,30 +96,6 @@ function deleteStoredCard( card, onComplete ) {
 	} );
 }
 
-function fetchSitePurchases( siteId ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.PURCHASES_SITE_FETCH,
-		siteId
-	} );
-
-	wpcom.sitePurchases( siteId, ( error, data ) => {
-		debug( error, data );
-
-		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PURCHASES_SITE_FETCH_FAILED,
-				error: PURCHASES_FETCH_ERROR_MESSAGE
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PURCHASES_SITE_FETCH_COMPLETED,
-				siteId,
-				purchases: purchasesAssembler.createPurchasesArray( data )
-			} );
-		}
-	} );
-}
-
 function fetchStoredCards() {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.STORED_CARDS_FETCH
@@ -207,7 +183,6 @@ export {
 	cancelPrivateRegistration,
 	clearPurchases,
 	deleteStoredCard,
-	fetchSitePurchases,
 	fetchStoredCards,
 	fetchUserPurchases,
 	removePurchase
