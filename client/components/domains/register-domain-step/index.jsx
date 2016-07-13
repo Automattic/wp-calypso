@@ -604,6 +604,10 @@ const RegisterDomainStep = React.createClass( {
 				message = this.translate( 'Sorry but there was a problem processing your request. Please try again in a few minutes.' );
 				break;
 
+			case 'mappable_but_recently_mapped':
+				message = this.translate( 'This domain cannot currently be mapped.' );
+				break;
+
 			default:
 				throw new Error( 'Unrecognized error code: ' + error.code );
 		}
