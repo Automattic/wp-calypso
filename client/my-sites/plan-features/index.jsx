@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { map, reduce, noop } from 'lodash';
 import page from 'page';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -36,13 +37,22 @@ import {
 } from 'lib/plans';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import SpinnerLine from 'components/spinner-line';
+import FoldableCard from 'components/foldable-card';
 
 class PlanFeatures extends Component {
 
 	render() {
+		const { planProperties } = this.props;
+
+		const tableClasses = classNames( 'plan-features__table',
+			`has-${ planProperties.length }-cols` );
+
 		return (
 			<div className="plan-features">
-				<table className="plan-features__table">
+				<div className="plan-features__mobile">
+					{ this.renderMobileView() }
+				</div>
+				<table className={ tableClasses }>
 					<tbody>
 						<tr>
 							{ this.renderPlanHeaders() }
@@ -63,6 +73,71 @@ class PlanFeatures extends Component {
 		);
 	}
 
+	renderMobileView() {
+		const { planProperties, isPlaceholder, translate } = this.props;
+
+		return map( planProperties, ( properties ) => {
+			const {
+				available,
+				currencyCode,
+				current,
+				features,
+				discountPrice,
+				onUpgradeClick,
+				planConstantObj,
+				planName,
+				popular,
+				rawPrice
+			} = properties;
+
+			return (
+				<div className="plan-features__mobile-plan" key={ planName }>
+					<PlanFeaturesHeader
+						current={ current }
+						currencyCode={ currencyCode }
+						popular={ popular }
+						title={ planConstantObj.getTitle() }
+						planType={ planName }
+						rawPrice={ rawPrice }
+						discountPrice={ discountPrice }
+						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
+						isPlaceholder={ isPlaceholder }
+					/>
+					<p className="plan-features__description">
+						{ planConstantObj.getDescription() }
+					</p>
+					<PlanFeaturesActions
+						current={ current }
+						available = { available }
+						onUpgradeClick={ onUpgradeClick }
+						freePlan={ planName === PLAN_FREE }
+						isPlaceholder={ isPlaceholder }
+					/>
+					<FoldableCard
+						header={ translate( 'Show features' ) }
+						clickableHeader
+						compact>
+						{ this.renderMobileFeatures( features ) }
+					</FoldableCard>
+				</div>
+			);
+		} );
+	}
+
+	renderMobileFeatures( features ) {
+		return map( features, ( currentFeature, index ) => {
+			return (
+				<PlanFeaturesItem key={ index } description={
+					currentFeature.getDescription
+						? currentFeature.getDescription()
+						: null
+				}>
+					{ currentFeature.getTitle() }
+				</PlanFeaturesItem>
+			);
+		} );
+	}
+
 	renderPlanHeaders() {
 		const { planProperties, isPlaceholder } = this.props;
 
@@ -71,7 +146,6 @@ class PlanFeatures extends Component {
 				currencyCode,
 				current,
 				discountPrice,
-				onUpgradeClick,
 				planConstantObj,
 				planName,
 				popular,
@@ -89,7 +163,6 @@ class PlanFeatures extends Component {
 						rawPrice={ rawPrice }
 						discountPrice={ discountPrice }
 						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
-						onClick={ onUpgradeClick }
 						isPlaceholder={ isPlaceholder }
 					/>
 				</td>
@@ -303,4 +376,4 @@ export default connect( ( state, ownProps ) => {
 		isPlaceholder,
 		planProperties: planProperties
 	};
-} )( PlanFeatures );
+} )( localize( PlanFeatures ) );
