@@ -20,6 +20,9 @@ describe( 'LoginTest', function() {
 		mockery.registerMock( 'lib/oauth-store/actions', {
 			login: loginStub
 		} );
+		mockery.registerMock( 'react-redux', {
+			connect: () => ( component ) => component
+		} );
 	} );
 
 	before( () => {

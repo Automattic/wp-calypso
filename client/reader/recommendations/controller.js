@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import ReactDom from 'react-dom';
 import i18n from 'i18n-calypso';
 
 /**
@@ -13,17 +12,18 @@ import titleActions from 'lib/screen-title/actions';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, setPageTitle, userHasHistory } from 'reader/controller-helper';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
 export default {
-	recommendedForYou() {
+	recommendedForYou( context ) {
 		const RecommendedForYou = require( 'reader/recommendations/for-you' ),
 			basePath = '/recommendations',
 			fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Recommended Sites For You',
 			mcKey = 'recommendations_for_you';
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( RecommendedForYou, {
 				trackScrollPage: trackScrollPage.bind(
 					null,
@@ -33,7 +33,8 @@ export default {
 					mcKey
 				)
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -52,7 +53,7 @@ export default {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( RecommendedPostsStream, {
 				key: 'recommendations_posts',
 				store: RecommendedPostsStore,
@@ -67,7 +68,8 @@ export default {
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				showBack: userHasHistory( context )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import ReactDom from 'react-dom';
 import page from 'page';
 import qs from 'qs';
 
@@ -12,6 +11,7 @@ import qs from 'qs';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from 'reader/controller-helper';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
@@ -34,7 +34,7 @@ export default {
 			query: searchSlug
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( SearchStream, {
 				key: 'search',
 				store: store,
@@ -57,7 +57,8 @@ export default {
 					page.replace( searchUrl );
 				}
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

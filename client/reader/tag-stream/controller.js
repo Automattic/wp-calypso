@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import ReactDom from 'react-dom';
 import trim from 'lodash/trim';
 
 /**
@@ -11,6 +10,7 @@ import trim from 'lodash/trim';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from 'reader/controller-helper';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
@@ -34,7 +34,7 @@ export default {
 			tag: tagSlug
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( TagStream, {
 				key: 'tag-' + encodedTag,
 				store: tagStore,
@@ -50,7 +50,8 @@ export default {
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				showBack: !! context.lastRoute
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

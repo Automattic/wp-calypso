@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
@@ -13,6 +12,7 @@ import titleActions from 'lib/screen-title/actions';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -32,7 +32,7 @@ export default {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_discover_viewed' );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( SiteStream, {
 				key: 'site-' + blogId,
 				store: feedStore,
@@ -48,7 +48,8 @@ export default {
 				suppressSiteNameLink: true,
 				showBack: false
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

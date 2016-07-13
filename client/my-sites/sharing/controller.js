@@ -16,7 +16,8 @@ var sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
 	analytics = require( 'lib/analytics' ),
 	titleActions = require( 'lib/screen-title/actions' ),
-	analyticsPageTitle = 'Sharing';
+	analyticsPageTitle = 'Sharing',
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
 
 module.exports = {
 	layout: function( context ) {
@@ -30,12 +31,13 @@ module.exports = {
 			site.fetchSettings();
 		}
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( Sharing, {
 				path: context.path,
 				contentComponent: context.contentComponent
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
