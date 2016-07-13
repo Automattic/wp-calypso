@@ -126,7 +126,7 @@ export default React.createClass( {
 						? ( headerButton )
 						: null }
 				</StepHeader>
-				<div className="is-animated-content">
+				<div className="step-wrapper__content is-animated-content">
 					{ showTopNavigation && this.renderNavigation() }
 					{ stepContent }
 					{ this.renderNavigation() }
