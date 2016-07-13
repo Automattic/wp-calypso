@@ -31,7 +31,7 @@ export default React.createClass( {
 	render() {
 		const previewUrl = getPreviewUrl( this.props.theme );
 
-		return(
+		return (
 			<WebPreview showPreview={ this.props.showPreview }
 				onClose={ this.props.onClose }
 				previewUrl={ previewUrl }
