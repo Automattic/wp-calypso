@@ -68,3 +68,8 @@
 		}
 	}
 }
+
+.like-button__label {
+	// this keeps the label from collapsing and making the icon drop down
+	margin-left: 1px;
+}
