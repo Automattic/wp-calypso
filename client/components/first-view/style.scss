@@ -1,3 +1,19 @@
+// Setting up the .main div to accept the transitions for
+// the First View component.
+.main {
+	opacity: 1;
+	pointer-events: auto;
+	transform: scale( 1 );
+	transition: transform 0.25s ease-in-out;
+
+	&.is-first-view-visible {
+		filter: blur( 4px );
+		opacity: 0.2;
+		pointer-events: none;
+		transform: scale( 0.9 );
+	}
+}
+
 .first-view {
 	box-sizing: border-box;
 	margin: 47px 0 0 0;

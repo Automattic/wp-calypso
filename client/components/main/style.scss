@@ -1,18 +1,7 @@
 .main {
 	margin: auto;
 	max-width: 720px;
-	opacity: 1;
-	pointer-events: auto;
-	transform: scale( 1 );
-	transition: transform 0.25s ease-in-out;
 	z-index: z-index( 'root', '.main' );
-
-	&.is-first-view-visible {
-		filter: blur( 4px );
-		opacity: 0.2;
-		pointer-events: none;
-		transform: scale( 0.9 );
-	}
 
 	// Themes is a great example of using all this new space ;)
 	&.themes {
