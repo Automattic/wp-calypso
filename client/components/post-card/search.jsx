@@ -39,7 +39,10 @@ function SearchByline( { post, site, feed } ) {
 export function SearchPostCard( { post, site, feed, onClick = noop, onCommentClick = noop } ) {
 	const featuredImage = post.canonical_image;
 	const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
-	const title = isPhotoOnly ? truncate( post.title, { length: 50, separator: /,? +/ } ) : post.title;
+	const title = truncate( post.title, {
+		length: isPhotoOnly ? 50 : 140,
+		separator: /,? +/
+	} );
 	const classes = classnames( 'post-card__search', {
 		'has-thumbnail': !! featuredImage,
 		'is-photo': isPhotoOnly
