@@ -235,15 +235,6 @@ export function applyTestFiltersToPlansList( planName ) {
 					value !== FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200
 			);
 		}
-
-		if ( ! isWordpressAdCreditsEnabled() ) {
-			const wordpressAdCreditsFeatureIndex = filteredPlanFeaturesConstantList.
-				indexOf( FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200 );
-
-			if ( wordpressAdCreditsFeatureIndex !== -1 ) {
-				filteredPlanFeaturesConstantList[ wordpressAdCreditsFeatureIndex ] = FEATURE_GOOGLE_AD_VOUCHERS_100;
-			}
-		}
 	};
 
 	const updatePlanDescriptions = () => {
@@ -258,8 +249,20 @@ export function applyTestFiltersToPlansList( planName ) {
 		}
 	};
 
+	const updatePlanFeatures = () => {
+		if ( ! isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS ) {
+			const wordpressAdCreditsFeatureIndex = filteredPlanFeaturesConstantList.
+				indexOf( FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200 );
+
+			if ( wordpressAdCreditsFeatureIndex !== -1 ) {
+				filteredPlanFeaturesConstantList[ wordpressAdCreditsFeatureIndex ] = FEATURE_GOOGLE_AD_VOUCHERS_100;
+			}
+		}
+	};
+
 	removeDisabledFeatures();
 	updatePlanDescriptions();
+	updatePlanFeatures();
 
 	filteredPlanConstantObj.getFeatures = () => filteredPlanFeaturesConstantList;
 
