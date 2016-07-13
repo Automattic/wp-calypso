@@ -8,6 +8,7 @@ import React from 'react';
  */
 import { connect } from 'react-redux';
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import Button from 'components/button';
 import formBase from './form-base';
 import RelatedContentPreview from 'my-sites/site-settings/related-content-preview';
@@ -338,7 +339,7 @@ const FormGeneral = React.createClass( {
 			return null;
 		}
 		return (
-			<Card className="is-compact">
+			<CompactCard>
 				<form onChange={ this.markChanged }>
 					<ul id="settings-jetpack" className="settings-jetpack">
 						<li>
@@ -352,7 +353,7 @@ const FormGeneral = React.createClass( {
 						</li>
 					</ul>
 				</form>
-			</Card>
+			</CompactCard>
 		);
 	},
 
@@ -561,12 +562,12 @@ const FormGeneral = React.createClass( {
 						{ this.renderJetpackSyncPanel() }
 						{ this.syncNonPublicPostTypes() }
 
-						<Card href={ '../security/' + site.slug } className="is-compact">
+						<CompactCard href={ '../security/' + site.slug }>
 							{ this.translate( 'View Jetpack Monitor Settings' ) }
-						</Card>
-						<Card href={ 'https://wordpress.com/manage/' + site.ID } className="is-compact">
+						</CompactCard>
+						<CompactCard href={ 'https://wordpress.com/manage/' + site.ID }>
 							{ this.translate( 'Migrate followers from another WordPress.com blog' ) }
-						</Card>
+						</CompactCard>
 					</div>
 					: null }
 			</div>
