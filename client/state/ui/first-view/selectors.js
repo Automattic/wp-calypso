@@ -14,7 +14,7 @@ import takeRightWhile from 'lodash/takeRightWhile';
 import { FIRST_VIEW_START_DATES } from './constants';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference } from 'state/preferences/selectors';
-import { getSectionName } from 'state/ui/selectors';
+import { getSectionName, isSectionLoading } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 
 export function doesViewHaveFirstView( view ) {
@@ -23,7 +23,7 @@ export function doesViewHaveFirstView( view ) {
 
 export function isViewEnabled( state, view ) {
 	const firstViewHistory = getPreference( state, 'firstViewHistory' ).filter( entry => entry.view === view );
-	const latestFirstViewHistory = [...firstViewHistory].pop();
+	const latestFirstViewHistory = [ ...firstViewHistory ].pop();
 	const isViewDisabled = latestFirstViewHistory ? ( !! latestFirstViewHistory.disabled ) : false;
 	return doesViewHaveFirstView( view ) && ! isViewDisabled;
 }
@@ -46,5 +46,6 @@ export function shouldViewBeVisible( state ) {
 	return isEnabled( 'ui/first-view' ) &&
 		isViewEnabled( state, sectionName ) &&
 		! wasViewHidden( state, sectionName ) &&
-		switchedFromDifferentSection( state );
+		switchedFromDifferentSection( state ) &&
+		! isSectionLoading( state );
 }
