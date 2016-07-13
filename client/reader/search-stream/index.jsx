@@ -53,7 +53,7 @@ const SearchCardAdapter = React.createClass( {
 			return;
 		}
 
-		recordTrackForPost( 'calypso_reader_search_clicked', this.props.post );
+		recordTrackForPost( 'calypso_reader_searchcard_clicked', this.props.post );
 
 		event.preventDefault();
 		this.props.handleClick( this.props.post, {} );

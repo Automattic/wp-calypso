@@ -70,6 +70,9 @@ function getLocation() {
 	if ( path.indexOf( '/read/recommendations/posts' ) === 0 ) {
 		return 'recommended_posts';
 	}
+	if ( path.indexOf( '/read/search' ) === 0 ) {
+		return 'search';
+	}
 	return 'unknown';
 }
 
@@ -117,7 +120,7 @@ tracksRailcarEventWhitelist
 	.add( 'calypso_reader_article_commented_on' )
 	.add( 'calypso_reader_article_opened' )
 	.add( 'calypso_reader_startcard_clicked' )
-	.add( 'calypso_reader_search_clicked' )
+	.add( 'calypso_reader_searchcard_clicked' )
 ;
 
 export function recordTracksRailcar( action, eventName, railcar ) {
