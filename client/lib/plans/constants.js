@@ -342,7 +342,11 @@ export const featuresList = {
 	},
 
 	[ FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200 ]: {
-		getTitle: () => i18n.translate( '$200 Advertising Voucher' ),
+		getTitle: () => i18n.translate( '{{strong}}$200{{/strong}} Advertising Voucher', {
+			components: {
+				strong: <strong />
+			}
+		} ),
 		getDescription: () => i18n.translate( '$100 Google AdWords credit after spending the first $25' +
 			' (valid in US & Canada), plus a $100 WordAds advertising credit (valid worldwide).' ),
 		plans: [ PLAN_BUSINESS ]
