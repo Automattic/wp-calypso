@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import keys from 'lodash/keys';
-import difference from 'lodash/difference';
-import isEmpty from 'lodash/isEmpty';
+import { keys, difference, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
