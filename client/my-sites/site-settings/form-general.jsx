@@ -6,7 +6,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { connect } from 'react-redux';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
@@ -28,8 +27,6 @@ import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import { getDomainsBySite } from 'state/sites/domains/selectors';
 import JetpackSyncPanel from './jetpack-sync-panel';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { isBusiness } from 'lib/products-values';
@@ -484,7 +481,6 @@ const FormGeneral = React.createClass( {
 
 		return (
 			<div className={ this.state.fetchingSettings ? 'is-loading' : '' }>
-				{ site && <QuerySiteDomains siteId={ site.ID } /> }
 				<SectionHeader label={ this.translate( 'Site Profile' ) }>
 					<Button
 						compact={ true }
@@ -622,11 +618,4 @@ const FormGeneral = React.createClass( {
 	}
 } );
 
-// connect exposing `domains` props
-export default connect( ( state, ownProps ) => {
-	const { site } = ownProps;
-
-	return {
-		domains: getDomainsBySite( state, site )
-	};
-} )( FormGeneral );
+export default FormGeneral;
