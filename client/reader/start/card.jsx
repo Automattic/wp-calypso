@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
-import get from 'lodash/get';
+import { get } from 'lodash';
 import classnames from 'classnames';
 
 // Internal dependencies
@@ -51,10 +51,11 @@ const StartCard = React.createClass( {
 				'is-photo': hasPost && post.excerpt.length < 1
 			}
 		);
+		const railcar = get( this.props.recommendation, 'railcar' );
 
 		return (
 			<Card className={ cardClasses } onClick={ this.onCardInteraction }>
-				<StartCardHeader site={ site } />
+				<StartCardHeader site={ site } railcar={ railcar } />
 				{ hasPost && <StartPostPreview post={ post } /> }
 			</Card>
 		);
