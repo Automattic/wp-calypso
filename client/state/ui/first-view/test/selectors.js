@@ -15,6 +15,9 @@ import {
 import {
 	ROUTE_SET
 } from 'state/action-types';
+import localStorageFactory from 'lib/local-storage';
+
+localStorageFactory( global );
 
 describe( 'selectors', () => {
 	describe( '#doesViewHaveFirstView()', () => {
