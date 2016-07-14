@@ -23,15 +23,6 @@ export function doesViewHaveFirstView( view ) {
 }
 
 export function isViewEnabled( state, view ) {
-	if ( isLikelyInSafariPrivateMode() ) {
-		// Don't enable the view in Safari Private Mode... otherwise, Safari will flash the
-		// First View in Private Mode until it has loaded the preferences from the
-		// server (and we are also currently not reading the preferences from the server)
-		// even if the user has disabled it, since it doesn't have any local
-		// cache of the preferences (since IndexedDB is not available in Private Mode)
-		return false;
-	}
-
 	const firstViewHistory = getPreference( state, 'firstViewHistory' ).filter( entry => entry.view === view );
 	const latestFirstViewHistory = [ ...firstViewHistory ].pop();
 	const isViewDisabled = latestFirstViewHistory ? ( !! latestFirstViewHistory.disabled ) : false;
@@ -58,19 +49,4 @@ export function shouldViewBeVisible( state ) {
 		! wasViewHidden( state, sectionName ) &&
 		switchedFromDifferentSection( state ) &&
 		! isSectionLoading( state );
-}
-
-function isLikelyInSafariPrivateMode() {
-	// Safari doesn't allow access to Local Storage when in Private Mode;
-	// We will use this check as a proxy to determine whether or not Safari
-	// is in Private Mode
-	let isAbleToAccessLocalStorage = true;
-
-	try {
-		localStorage.checkIfFirstViewPreferencesCanBeCached = null;
-	} catch ( ex ) {
-		isAbleToAccessLocalStorage = false;
-	}
-
-	return ! isAbleToAccessLocalStorage;
 }
