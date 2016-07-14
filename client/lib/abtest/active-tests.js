@@ -1,4 +1,13 @@
 module.exports = {
+	planFeatures: {
+		datestamp: '20160714',
+		variations: {
+			original: 50,
+			show: 50
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: false
+	},
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
 		variations: {
