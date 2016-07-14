@@ -210,7 +210,7 @@ const PlansCompare = React.createClass( {
 		// this is necessary here so we don't call the abtest module outside of render
 		if ( this.isUSorCanada() && isWordpressAdCreditsEnabled() ) {
 			googleAdVouchersFeature.compareDescription = googleWordAdsAdVouchers.getDescription();
-			googleAdVouchersFeature[ '1008' ] = '$200';
+			googleAdVouchersFeature[ '1008' ] = '$200'; // Google AdWords $100 voucher + WordAds $100 voucher
 		}
 
 		if ( isEnabled( 'manage/ads/wordads-instant' ) && abtest( 'wordadsInstantActivation' ) === 'enabled' ) {
