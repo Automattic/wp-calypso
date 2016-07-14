@@ -57,6 +57,7 @@ import FilePickers from 'components/file-picker/docs/example';
 import Collection from 'devdocs/design/search-collection';
 import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import FAQ from 'components/faq/docs/example';
+import PlanIcon from 'components/plans/plan-icon/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -123,6 +124,7 @@ let DesignAssets = React.createClass( {
 					<InputChrono />
 					<Notices />
 					<PaymentLogo />
+					<PlanIcon />
 					<Popovers />
 					<ProgressBar />
 					<Ranges />
