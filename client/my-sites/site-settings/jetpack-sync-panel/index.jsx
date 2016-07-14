@@ -21,6 +21,7 @@ import {
 	scheduleJetpackFullysync
 } from 'state/jetpack-sync/actions';
 import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
+import NoticeAction from 'components/notice/notice-action';
 
 /*
  * Module variables
@@ -38,6 +39,11 @@ const JetpackSyncPanel = React.createClass( {
 		this.props.getSyncStatus( this.props.siteId );
 	},
 
+	isErrored() {
+		const isErrored = get( this.props, 'syncStatus.error' ) || get( this.props, 'fullSyncRequest.error' );
+		return !! isErrored;
+	},
+
 	shouldDisableSync() {
 		return !! ( this.props.isFullSyncing || this.props.isPendingSyncStart );
 	},
@@ -45,6 +51,12 @@ const JetpackSyncPanel = React.createClass( {
 	onSyncRequestButtonClick( event ) {
 		event.preventDefault();
 		debug( 'Perform full sync button clicked' );
+		this.props.scheduleJetpackFullysync( this.props.siteId );
+	},
+
+	onTryAgainClick( event ) {
+		event.preventDefault();
+		debug( 'Try again button clicked' );
 		this.props.scheduleJetpackFullysync( this.props.siteId );
 	},
 
@@ -59,15 +71,25 @@ const JetpackSyncPanel = React.createClass( {
 				{
 					syncRequestError.message
 					? syncRequestError.message
-					: this.translate( 'There was an error scheduling a full sync. Please try again later.' )
+					: this.translate( 'There was an error scheduling a full sync.' )
+				}
+				{
+					// We show a Try again action for a generic error on the assumption
+					// that the error was a network issue.
+					//
+					// If an error message was returned from the API, then there's likely
+					// a good reason the request failed, such as an unauthorized user.
+					! syncRequestError.message &&
+					<NoticeAction onClick={ this.onTryAgainClick }>
+						{ this.translate( 'Try again' ) }
+					</NoticeAction>
 				}
 			</Notice>
 		);
 	},
 
 	renderStatusNotice() {
-		const isErrored = get( this.props, 'syncStatus.error' ) || get( this.props, 'fullSyncRequest.error' );
-		if ( isErrored ) {
+		if ( this.isErrored() ) {
 			return null;
 		}
 
@@ -96,7 +118,7 @@ const JetpackSyncPanel = React.createClass( {
 	},
 
 	renderProgressBar() {
-		if ( ! this.shouldDisableSync() ) {
+		if ( ! this.shouldDisableSync() || this.isErrored() ) {
 			return null;
 		}
 

@@ -23,7 +23,11 @@ export function fullSyncRequest( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_SYNC_START_REQUEST:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: { isRequesting: true, lastRequested: Date.now() }
+				[ action.siteId ]: Object.assign(
+					{},
+					get( state, [ action.siteId ], {} ),
+					{ isRequesting: true, scheduled: false, lastRequested: Date.now() },
+				)
 			} );
 		case JETPACK_SYNC_START_SUCCESS:
 			return Object.assign( {}, state, {
