@@ -107,7 +107,11 @@ const Plans = React.createClass( {
 		}
 
 		return (
-			<a href={ plansLink( '/plans', selectedSite, intervalType ) } className="show-monthly-plans-link" onClick={ this.recordComparePlansClick }>
+			<a 
+				href={ plansLink( '/plans', selectedSite, intervalType ) }
+				className="show-monthly-plans-link"
+				onClick={ this.recordComparePlansClick }
+			>
 				<Gridicon icon="refresh" size={ 18 } />
 				{ showString }
 			</a>
@@ -154,16 +158,16 @@ const Plans = React.createClass( {
 			);
 		}
 
-		if ( showPlanFeatures ) {
-			mainClassNames[ 'is-wide-layout' ] = true;
-		}
-		mainClassNames[ 'has-personal-plan' ] = personalPlanTestEnabled;
+		mainClassNames[ 'has-personal-plan' ] = ! showPlanFeatures && personalPlanTestEnabled;
 
 		return (
 			<div>
 				{ this.renderNotice() }
 
-				<Main className={ mainClassNames }>
+				<Main
+					className={ mainClassNames }
+					wideLayout={ !! showPlanFeatures }
+				>
 					<SidebarNavigation />
 
 					<div id="plans" className="plans has-sidebar">
