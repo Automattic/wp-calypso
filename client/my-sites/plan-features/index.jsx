@@ -109,6 +109,7 @@ class PlanFeatures extends Component {
 					</p>
 					<PlanFeaturesActions
 						current={ current }
+						popular={ popular }
 						available = { available }
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ planName === PLAN_FREE }
