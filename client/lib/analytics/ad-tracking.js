@@ -145,13 +145,20 @@ function recordAddToCart( cartItem ) {
 	);
 }
 
-function recordPurchase( product ) {
+/**
+ * Recorders an individual product purchase conversion
+ *
+ * @param {Object} product - the product
+ * @param {Number} orderId - the order id
+ * @returns {void}
+ */
+function recordPurchase( product, orderId ) {
 	if ( ! config.isEnabled( 'ad-tracking' ) ) {
 		return;
 	}
 
 	if ( ! hasStartedFetchingScripts ) {
-		return loadTrackingScripts( recordPurchase.bind( null, product ) );
+		return loadTrackingScripts( recordPurchase.bind( null, product, orderId ) );
 	}
 
 	const isJetpackPlan = productsValues.isJetpackPlan( product );
@@ -174,7 +181,8 @@ function recordPurchase( product ) {
 			currency: product.currency,
 			product_slug: product.product_slug,
 			value: product.cost,
-			user_id: userId
+			user_id: userId,
+			order_id: orderId
 		}
 	);
 
@@ -196,7 +204,8 @@ function recordPurchase( product ) {
 		google_conversion_currency: product.currency,
 		google_custom_params: {
 			product_slug: product.product_slug,
-			user_id: userId
+			user_id: userId,
+			order_id: orderId
 		},
 		google_remarketing_only: false
 	} );
@@ -208,8 +217,9 @@ function recordPurchase( product ) {
  * @see https://app.atlassolutions.com/help/atlashelp/727514814019823/ (Atlas account required)
  *
  * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
  */
-function recordOrderInAtlas( cart ) {
+function recordOrderInAtlas( cart, orderId ) {
 	if ( ! config.isEnabled( 'ad-tracking' ) ) {
 		return;
 	}
@@ -222,7 +232,8 @@ function recordOrderInAtlas( cart ) {
 		product_slugs: cart.products.map( product => product.product_slug ).join( ', ' ),
 		revenue: cart.total_cost,
 		currency_code: cart.currency,
-		user_id: currentUser ? currentUser.ID : 0
+		user_id: currentUser ? currentUser.ID : 0,
+		order_id: orderId
 	};
 
 	const urlParams = Object.keys( params ).map( function( key ) {
