@@ -15,7 +15,13 @@ const ReaderFollowButton = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
 
-	recordFollowToggle: function( isFollowing ) {
+	propTypes: {
+		following: React.PropTypes.bool.isRequired,
+		onFollowToggle: React.PropTypes.func,
+		railcar: React.PropTypes.string
+	},
+
+	recordFollowToggle( isFollowing ) {
 		stats[ isFollowing ? 'recordFollow' : 'recordUnfollow' ]( this.props.siteUrl, this.props.railcar );
 
 		if ( this.props.onFollowToggle ) {
@@ -23,7 +29,7 @@ const ReaderFollowButton = React.createClass( {
 		}
 	},
 
-	render: function() {
+	render() {
 		if ( this.props.isButtonOnly ) {
 			return (
 				<FollowButton { ...this.props } onFollowToggle={ this.recordFollowToggle } />
