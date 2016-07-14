@@ -42,20 +42,24 @@ import InfoPopover from 'components/info-popover';
 import { isJetpack } from 'lib/site/utils';
 import {
 	featuresList,
-	FEATURE_GOOGLE_AD_CREDITS,
+	FEATURE_GOOGLE_AD_VOUCHERS_100,
+	FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200,
 	FEATURE_WORDADS_INSTANT,
 } from 'lib/plans/constants';
 
 // google ad credits feature
-const googleAdCredits = featuresList[ FEATURE_GOOGLE_AD_CREDITS ];
-const googleAdCreditsFeature = {
-	title: googleAdCredits.getTitle(),
-	compareDescription: googleAdCredits.getDescription(),
-	product_slug: FEATURE_GOOGLE_AD_CREDITS,
+const googleAdVouchers = featuresList[ FEATURE_GOOGLE_AD_VOUCHERS_100 ];
+const googleAdVouchersFeature = {
+	title: googleAdVouchers.getTitleForOldPlans(),
+	compareDescription: googleAdVouchers.getDescription(),
+	product_slug: FEATURE_GOOGLE_AD_VOUCHERS_100,
 	1: false,
 	1003: '$100',
 	1008: '$100'
 };
+
+const googleWordAdsAdVouchers = featuresList[ FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200 ];
+
 // WordAds instant activation feature
 const wordAdsInstant = featuresList[ FEATURE_WORDADS_INSTANT ];
 const wordAdsFeature = {
@@ -64,7 +68,7 @@ const wordAdsFeature = {
 	1: false,
 	1003: true,
 	1008: true,
-	product_slug: FEATURE_WORDADS_INSTANT,
+	product_slug: FEATURE_WORDADS_INSTANT
 };
 
 const PlansCompare = React.createClass( {
@@ -200,13 +204,13 @@ const PlansCompare = React.createClass( {
 
 		// add google-ad-credits feature
 		if ( this.isUSorCanada() && isGoogleVouchersEnabled() ) {
-			features.splice( 1, 0, googleAdCreditsFeature );
+			features.splice( 1, 0, googleAdVouchersFeature );
 		}
 		// update the description if we are also including wordpressAdCredits
 		// this is necessary here so we don't call the abtest module outside of render
 		if ( this.isUSorCanada() && isWordpressAdCreditsEnabled() ) {
-			googleAdCreditsFeature.compareDescription = googleAdCredits.getDescriptionWithWordAdsCredit();
-			googleAdCreditsFeature[ '1008' ] = '$200';
+			googleAdVouchersFeature.compareDescription = googleWordAdsAdVouchers.getDescription();
+			googleAdVouchersFeature[ '1008' ] = '$200'; // Google AdWords $100 voucher + WordAds $100 voucher
 		}
 
 		if ( isEnabled( 'manage/ads/wordads-instant' ) && abtest( 'wordadsInstantActivation' ) === 'enabled' ) {

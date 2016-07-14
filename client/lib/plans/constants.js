@@ -40,7 +40,8 @@ export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
 export const FEATURE_BASIC_DESIGN = 'basic-design';
 export const FEATURE_ADVANCED_DESIGN = 'advanced-design';
 export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
-export const FEATURE_GOOGLE_AD_CREDITS = 'google-ad-credits';
+export const FEATURE_GOOGLE_AD_VOUCHERS_100 = 'google-ad-vouchers-100';
+export const FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200 = 'google-ad-vouchers-200';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
@@ -120,7 +121,7 @@ export const plansList = {
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
-			FEATURE_GOOGLE_AD_CREDITS,
+			FEATURE_GOOGLE_AD_VOUCHERS_100,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS
 		],
@@ -145,7 +146,7 @@ export const plansList = {
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_NO_ADS,
-			FEATURE_GOOGLE_AD_CREDITS,
+			FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
 			FEATURE_GOOGLE_ANALYTICS,
@@ -331,23 +332,31 @@ export const featuresList = {
 		plans: [ PLAN_BUSINESS ]
 	},
 
-	[ FEATURE_GOOGLE_AD_CREDITS ]: {
-		getTitle: () => i18n.translate( 'Advertising Vouchers' ),
-		getDescription: () => i18n.translate( '$100 Google AdWords voucher after spending the first $25. Offer valid in US and Canada.' ),
-		getDescriptionWithWordAdsCredit: () => i18n.translate( '$100 Google AdWords voucher after spending the first $25. ' +
-			'Offer valid in US and Canada. {{hr/}}Business also includes $100 of advertising from WordAds on WordPress.com.', {
-				components: {
-					hr: <hr className="plans__const-info-hr"/>
-				}
-			} ),
-		plans: allPaidPlans
+	[ FEATURE_GOOGLE_AD_VOUCHERS_100 ]: {
+		getTitle: () => i18n.translate( '$100 Advertising Voucher' ),
+		getTitleForOldPlans: () => i18n.translate( 'Advertising Vouchers' ),
+		getDescription: () => i18n.translate( '$100 Google AdWords credit after spending the first $25.' +
+			' Offer valid in US and Canada.' ),
+		plans: [ PLAN_PREMIUM, PLAN_BUSINESS ] // Business too because when wordpressAdCredits is disabled,
+												// you get only $100 vouchers (this feature) in Business plan.
+	},
+
+	[ FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200 ]: {
+		getTitle: () => i18n.translate( '{{strong}}$200{{/strong}} Advertising Voucher', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescription: () => i18n.translate( '$100 Google AdWords credit after spending the first $25' +
+			' (valid in US & Canada), plus a $100 WordAds advertising credit (valid worldwide).' ),
+		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_WORDADS_INSTANT ]: {
 		getTitle: () => i18n.translate( 'Monetize Your Site' ),
 		getDescription: () => i18n.translate( 'Add advertising to your site through our WordAds program and' +
 			' earn money from impressions.' ),
-		plans: allPaidPlans
+		plans: [ PLAN_PREMIUM, PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_WP_SUBDOMAIN ]: {
@@ -450,6 +459,12 @@ export const getPlanObject = planName => {
 	} );
 
 	return objectPlan;
+};
+
+export const getPlanFeaturesObject = planFeaturesList => {
+	return planFeaturesList.map( featuresConst =>
+		featuresList[ featuresConst ]
+	);
 };
 
 export function isMonthly( plan ) {
