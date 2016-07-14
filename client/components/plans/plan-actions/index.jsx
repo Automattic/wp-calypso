@@ -11,7 +11,14 @@ import React from 'react';
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
 import config from 'config';
-import { isBusiness, isEnterprise, isFreePlan, isFreeJetpackPlan } from 'lib/products-values';
+import {
+	isPersonal,
+	isPremium,
+	isBusiness,
+	isEnterprise,
+	isFreePlan,
+	isFreeJetpackPlan
+} from 'lib/products-values';
 import purchasesPaths from 'me/purchases/paths';
 import { isValidFeatureKey } from 'lib/plans';
 import * as upgradesActions from 'lib/upgrades/actions';
@@ -190,7 +197,11 @@ const PlanActions = React.createClass( {
 				return false;
 			}
 
-			return this.planHasCost() && ! isBusiness( this.props.site.plan );
+			const upgradeFromFree = isFreePlan( this.props.site.plan );
+			const upgradeFromPersonal = isPersonal( this.props.site.plan ) && ! isFreePlan( this.props.plan );
+			const upgradeFromPremium = isBusiness( this.props.plan );
+
+			return this.planHasCost() && ( upgradeFromFree || upgradeFromPersonal || upgradeFromPremium );
 		}
 
 		return true;
