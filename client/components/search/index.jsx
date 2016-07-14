@@ -112,7 +112,7 @@ const Search = React.createClass( {
 
 		if ( nextProps.initialValue !== this.props.initialValue &&
 				( this.state.keyword === this.props.initialValue || this.state.keyword === '' ) ) {
-			this.setState( { keyword: nextProps.initialValue } );
+			this.setState( { keyword: nextProps.initialValue || '' } );
 		}
 	},
 
