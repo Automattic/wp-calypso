@@ -47,11 +47,14 @@ var LikeButton = React.createClass( {
 	},
 
 	render: function() {
+		const showLikeCount = ! ( this.props.likeCount === 0 && ! this.props.showCount );
 		var containerClasses = {
 				'like-button': true,
 				'ignore-click': true,
 				'is-mini': this.props.isMini,
-				'is-animated': this.props.animateLike
+				'is-animated': this.props.animateLike,
+				'has-count': showLikeCount,
+				'has-label': this.props.showLabel
 			},
 			likeLabel = this.translate( 'Like', { comment: 'Label for a button to "like" a post.' } ),
 			likeCount = this.props.likeCount,
@@ -84,8 +87,7 @@ var LikeButton = React.createClass( {
 		containerClasses = classnames( containerClasses );
 
 		labelElement = ( <span className="like-button__label">
-			<span className="like-button__label-count">{ likeCount === 0 && ! this.props.showCount ? '' : likeCount }</span>
-			{ this.props.showLabel && ' ' }
+			<span className="like-button__label-count">{ showLikeCount ? likeCount : '' }</span>
 			{ this.props.showLabel && <span className="like-button__label-status">{ likeLabel }</span> }
 		</span> );
 
