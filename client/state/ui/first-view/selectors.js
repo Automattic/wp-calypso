@@ -14,7 +14,7 @@ import takeRightWhile from 'lodash/takeRightWhile';
  */
 import { FIRST_VIEW_START_DATES } from './constants';
 import { getActionLog } from 'state/ui/action-log/selectors';
-import { getPreference } from 'state/preferences/selectors';
+import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
 import { getSectionName, isSectionLoading } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
@@ -24,6 +24,13 @@ export function doesViewHaveFirstView( view ) {
 }
 
 export function isViewEnabled( state, view ) {
+	// in order to avoid using an out-of-date preference for whether a
+	// FV should be enabled or not, wait until we have fetched the
+	// preferences from the API
+	if ( ! preferencesLastFetchedTimestamp( state ) ) {
+		return false;
+	}
+
 	const firstViewHistory = getPreference( state, 'firstViewHistory' ).filter( entry => entry.view === view );
 	const latestFirstViewHistory = [ ...firstViewHistory ].pop();
 	const isViewDisabled = latestFirstViewHistory ? ( !! latestFirstViewHistory.disabled ) : false;
