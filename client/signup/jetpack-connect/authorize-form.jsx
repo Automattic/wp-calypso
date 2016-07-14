@@ -170,7 +170,7 @@ const LoggedInForm = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_auth_view' );
 		if ( ! this.props.isAlreadyOnSitesList &&
 			! queryObject.already_authorized &&
-			( this.props.calypsoStartedConnection || this.props.isSSO )
+			( this.props.calypsoStartedConnection || this.props.isSSO || queryObject.new_user_started_connection )
 		) {
 			debug( 'Authorizing automatically on component mount' );
 			return this.props.authorize( queryObject );

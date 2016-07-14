@@ -40,6 +40,7 @@ export const jetpackConnectAuthorizeSchema = {
 						from: { type: 'string' },
 						home_url: { type: 'string' },
 						jp_version: { type: 'string' },
+						new_user_started_connection: { type: 'boolean' },
 						redirect_after_auth: { type: 'string' },
 						redirect_uri: { type: 'string' },
 						scope: { type: 'string' },
