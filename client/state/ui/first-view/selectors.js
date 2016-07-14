@@ -16,6 +16,7 @@ import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference } from 'state/preferences/selectors';
 import { getSectionName, isSectionLoading } from 'state/ui/selectors';
 import { isEnabled } from 'config';
+import { ROUTE_SET } from 'state/action-types';
 
 export function doesViewHaveFirstView( view ) {
 	return !! ( FIRST_VIEW_START_DATES[ view ] );
@@ -43,7 +44,7 @@ export function wasViewHidden( state, view ) {
 
 export function switchedFromDifferentSection( state ) {
 	const section = state.ui.section;
-	const routeSets = filter( getActionLog( state ), entry => entry.type === 'ROUTE_SET' );
+	const routeSets = filter( getActionLog( state ), entry => entry.type === ROUTE_SET );
 	const lastRouteSetsForSection = takeRightWhile( routeSets,
 		routeSet => some( section.paths, path => startsWith( routeSet.path, path ) ) );
 	return lastRouteSetsForSection.length === 1;
