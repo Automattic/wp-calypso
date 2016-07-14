@@ -19,6 +19,8 @@ var config = require( 'config' ),
 	_superProps,
 	_user;
 
+import { retarget } from 'lib/analytics/ad-tracking';
+
 // Load tracking scripts
 window._tkq = window._tkq || [];
 window.ga = window.ga || function() {
@@ -167,6 +169,9 @@ var analytics = {
 			}
 
 			analytics.tracks.recordEvent( 'calypso_page_view', eventProperties );
+
+			// Ensure every Calypso user is added to our retargeting audience via the AdWords retargeting tag
+			retarget();
 		},
 
 		createRandomId:  function() {

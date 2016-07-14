@@ -18,6 +18,7 @@ describe( 'WPcom Data Actions', () => {
 
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/wp', mockedWpcom );
+		mockery.registerMock( 'lib/analytics', { mc: { bumpStat: noop }, tracks: { recordEvent: noop } } );
 	} );
 
 	beforeEach( () => {
