@@ -76,28 +76,6 @@ function getLocation() {
 	return 'unknown';
 }
 
-export function recordFollow( url ) {
-	const source = getLocation();
-	mc.bumpStat( 'reader_follows', source );
-	recordAction( 'followed_blog' );
-	recordGaEvent( 'Clicked Follow Blog', source );
-	recordTrack( 'calypso_reader_site_followed', {
-		url,
-		source
-	} );
-}
-
-export function recordUnfollow( url ) {
-	const source = getLocation();
-	mc.bumpStat( 'reader_unfollows', source );
-	recordAction( 'unfollowed_blog' );
-	recordGaEvent( 'Clicked Unfollow Blog', source );
-	recordTrack( 'calypso_reader_site_unfollowed', {
-		url,
-		source
-	} );
-}
-
 export function recordTrack( eventName, eventProperties ) {
 	debug( 'reader track', ...arguments );
 	const subCount = SubscriptionStore.getTotalSubscriptions();
@@ -161,4 +139,32 @@ export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 	}
 	debug( 'reader page view for post', params );
 	mc.bumpStatWithPageView( params );
+}
+
+export function recordFollow( url, railcar ) {
+	const source = getLocation();
+	mc.bumpStat( 'reader_follows', source );
+	recordAction( 'followed_blog' );
+	recordGaEvent( 'Clicked Follow Blog', source );
+	recordTrack( 'calypso_reader_site_followed', {
+		url,
+		source
+	} );
+	if ( railcar ) {
+		recordTracksRailcarInteract( 'site_followed', railcar );
+	}
+}
+
+export function recordUnfollow( url, railcar ) {
+	const source = getLocation();
+	mc.bumpStat( 'reader_unfollows', source );
+	recordAction( 'unfollowed_blog' );
+	recordGaEvent( 'Clicked Unfollow Blog', source );
+	recordTrack( 'calypso_reader_site_unfollowed', {
+		url,
+		source
+	} );
+	if ( railcar ) {
+		recordTracksRailcarInteract( 'site_unfollowed', railcar );
+	}
 }

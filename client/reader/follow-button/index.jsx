@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var FollowButtonContainer = require( 'components/follow-button' ),
-	FollowButton = require( 'components/follow-button/button' ),
-	stats = require( 'reader/stats' );
+import FollowButtonContainer from 'components/follow-button';
+import FollowButton from 'components/follow-button/button';
+import * as stats from 'reader/stats';
 
-var ReaderFollowButton = React.createClass( {
+const ReaderFollowButton = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
 
 	recordFollowToggle: function( isFollowing ) {
-		stats[ isFollowing ? 'recordFollow' : 'recordUnfollow' ]( this.props.siteUrl );
+		stats[ isFollowing ? 'recordFollow' : 'recordUnfollow' ]( this.props.siteUrl, this.props.railcar );
 
 		if ( this.props.onFollowToggle ) {
 			this.props.onFollowToggle();
@@ -37,4 +37,4 @@ var ReaderFollowButton = React.createClass( {
 
 } );
 
-module.exports = ReaderFollowButton;
+export default ReaderFollowButton;
