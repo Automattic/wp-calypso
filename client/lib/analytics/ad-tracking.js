@@ -119,8 +119,16 @@ function retarget() {
 	if ( ! retargetingInitialized ) {
 		debug( 'Retargeting initialized' );
 
-		window.fbq( 'track', 'PageView' );
 		retargetingInitialized = true;
+
+		// Facebook
+		window.fbq( 'track', 'PageView' );
+
+		// AdWords
+		window.google_trackConversion( {
+			google_conversion_id: GOOGLE_CONVERSION_ID,
+			google_remarketing_only: true
+		} );
 	}
 }
 

@@ -8,14 +8,12 @@ import page from 'page';
  */
 import controller from './controller';
 import jetpackConnectController from './jetpack-connect/controller';
-import adTracking from 'lib/analytics/ad-tracking';
 import config from 'config';
 import sitesController from 'my-sites/controller';
 
 module.exports = function() {
 	page(
 		'/start/:flowName?/:stepName?/:stepSectionName?/:lang?',
-		adTracking.retarget,
 		controller.saveRefParameter,
 		controller.saveQueryObject,
 		controller.redirectWithoutLocaleIfLoggedIn,
