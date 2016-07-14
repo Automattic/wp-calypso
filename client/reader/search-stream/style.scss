@@ -13,14 +13,14 @@
 	padding: 0;
 }
 
-.search-blank-content {
+.search-stream__blank {
 	margin-top: 0;
 	text-align:center;
 }
 
-.search-blank-content p {
+.search-stream__blank-suggestions {
 	font-size: 13px;
-	color: #87a6bc;
+	color: $gray;
 	margin-top: 0;
 	text-align:left;
 }
