@@ -88,7 +88,7 @@
 		padding-top: 20px;
 	}
 
-	.blogaddress-settings {
+	.site-settings__blogaddress-settings {
 		@include breakpoint( ">660px" ) {
 			display: flex;
 		}
@@ -278,7 +278,8 @@
 	margin-right: 8px;
 }
 
-.has-divider {
+// @TODO: Remove has-divider once all instances have been replaced with .site-settings__has-divider
+.has-divider, .site-settings__has-divider {
 	margin: 0 -24px;
 	padding: 24px 24px 16px 24px;
 	border: 1px lighten( $gray, 30% ) solid;
