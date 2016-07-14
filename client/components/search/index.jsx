@@ -97,6 +97,12 @@ const Search = React.createClass( {
 		if ( nextProps.isOpen ) {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
+
+		if ( nextProps.initialValue !== this.props.initialValue &&
+				( this.state.keyword === this.props.initialValue || this.state.keyword === '' )
+		 ) {
+			this.setState( { keyword: nextProps.initialValue } );
+		}
 	},
 
 	componentDidUpdate: function( prevProps, prevState ) {
@@ -295,7 +301,7 @@ const Search = React.createClass( {
 					aria-hidden={ ! isOpenUnpinnedOrQueried }
 					autoCapitalize="none"
 					dir={ this.props.dir }
-					{...autocorrect } />
+					{ ...autocorrect } />
 				{ ( searchValue || this.state.isOpen ) ? this.closeButton() : null }
 			</div>
 		);
