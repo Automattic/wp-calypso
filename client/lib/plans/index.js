@@ -5,8 +5,7 @@ import page from 'page';
 import moment from 'moment';
 import debugFactory from 'debug';
 import {
-	pick,
-	pickBy,
+	filter,
 	find,
 	get,
 	includes,
@@ -33,7 +32,8 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	FEATURE_WORDADS_INSTANT,
-	FEATURE_GOOGLE_AD_CREDITS
+	FEATURE_GOOGLE_AD_VOUCHERS_100,
+	FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
@@ -220,17 +220,19 @@ export function plansLink( url, site, intervalType ) {
 
 export function applyTestFiltersToPlansList( planName ) {
 	const filteredPlanConstantObj = { ...plansList[ planName ] };
-	let filteredPlanFeaturesConstantObj = pick( featuresList, plansList[ planName ].getFeatures() );
+	let filteredPlanFeaturesConstantList = plansList[ planName ].getFeatures();
 
 	const removeDisabledFeatures = () => {
 		if ( ! isWordadsInstantActivationEnabled() ) {
-			filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
-				( value, key ) => key !== FEATURE_WORDADS_INSTANT
+			filteredPlanFeaturesConstantList = filter( filteredPlanFeaturesConstantList,
+				( value ) => value !== FEATURE_WORDADS_INSTANT
 			);
 		}
+
 		if ( ! isGoogleVouchersEnabled() ) {
-			filteredPlanFeaturesConstantObj = pickBy( filteredPlanFeaturesConstantObj,
-				( value, key ) => key !== FEATURE_GOOGLE_AD_CREDITS
+			filteredPlanFeaturesConstantList = filter( filteredPlanFeaturesConstantList,
+				( value ) => value !== FEATURE_GOOGLE_AD_VOUCHERS_100 &&
+					value !== FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200
 			);
 		}
 	};
@@ -247,18 +249,22 @@ export function applyTestFiltersToPlansList( planName ) {
 		}
 	};
 
-	const updateInfoPopups = () => {
-		if ( isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS	) {
-			filteredPlanFeaturesConstantObj[ FEATURE_GOOGLE_AD_CREDITS ].getDescription =
-			featuresList[ FEATURE_GOOGLE_AD_CREDITS ].getDescriptionWithWordAdsCredit;
+	const updatePlanFeatures = () => {
+		if ( ! isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS ) {
+			const wordpressAdCreditsFeatureIndex = filteredPlanFeaturesConstantList.
+				indexOf( FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200 );
+
+			if ( wordpressAdCreditsFeatureIndex !== -1 ) {
+				filteredPlanFeaturesConstantList[ wordpressAdCreditsFeatureIndex ] = FEATURE_GOOGLE_AD_VOUCHERS_100;
+			}
 		}
 	};
 
 	removeDisabledFeatures();
 	updatePlanDescriptions();
-	updateInfoPopups();
+	updatePlanFeatures();
 
-	filteredPlanConstantObj.getFeatures = () => filteredPlanFeaturesConstantObj;
+	filteredPlanConstantObj.getFeatures = () => filteredPlanFeaturesConstantList;
 
 	return filteredPlanConstantObj;
 }
