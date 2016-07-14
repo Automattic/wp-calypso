@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
-import { debounce, trim } from 'lodash';
+import { trim } from 'lodash';
 import closest from 'component-closest';
 
 /**
@@ -154,7 +154,7 @@ const FeedStream = React.createClass( {
 	},
 
 	getInitialState() {
-		var suggestions = null;
+		let suggestions = null;
 		const lang = i18nUtils.getLocaleSlug();
 		if ( this.searchSuggestions[ lang ] ) {
 			suggestions = sampleSize( this.searchSuggestions[ lang ], 3 );
@@ -163,10 +163,6 @@ const FeedStream = React.createClass( {
 			suggestions: suggestions,
 			title: this.getTitle()
 		};
-	},
-
-	componentWillMount() {
-		this.debouncedUpdate = debounce( this.updateQuery, 300 );
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -189,7 +185,7 @@ const FeedStream = React.createClass( {
 	},
 
 	updateQuery( newValue ) {
-		const trimmedValue = trim( newValue );
+		const trimmedValue = trim( newValue ).substring( 0, 1024 );
 		if ( trimmedValue === '' || trimmedValue.length > 1 && trimmedValue !== this.props.query ) {
 			this.props.onQueryChange( newValue );
 		}
