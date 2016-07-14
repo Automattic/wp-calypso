@@ -464,7 +464,7 @@ const FormGeneral = React.createClass( {
 		}
 
 		const site = this.props.site;
-		if ( ! site.jetpack || this.props.site.versionCompare( '4.2.0-alpha', '<' ) ) {
+		if ( ! site.jetpack || this.props.site.versionCompare( '4.2-alpha', '<' ) ) {
 			return null;
 		}
 
