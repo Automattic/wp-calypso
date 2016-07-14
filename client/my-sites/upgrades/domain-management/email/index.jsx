@@ -24,6 +24,7 @@ import {
 	getSelectedDomain,
 	hasMappedDomain
 } from 'lib/domains';
+import config from 'config';
 
 const Email = React.createClass( {
 	propTypes: {
@@ -41,8 +42,13 @@ const Email = React.createClass( {
 	},
 
 	render() {
+		const showPlanFeatures = config.isEnabled( 'manage/plan-features' );
+
 		return (
-			<Main className="domain-management-email">
+			<Main
+				className="domain-management-email"
+				wideLayout={ !! showPlanFeatures }
+			>
 				<SidebarNavigation />
 				{ this.headerOrUpgradesNavigation() }
 				{ this.content() }
@@ -74,7 +80,7 @@ const Email = React.createClass( {
 			return <Placeholder />;
 		}
 
-		let domainList = this.props.selectedDomainName
+		const domainList = this.props.selectedDomainName
 			? [ getSelectedDomain( this.props ) ]
 			: this.props.domains.list;
 
@@ -100,7 +106,7 @@ const Email = React.createClass( {
 				line: this.translate( 'Only domains registered with WordPress.com are eligible for Google Apps.' ),
 				secondaryAction: this.translate( 'Add Email Forwarding' ),
 				secondaryActionURL: paths.domainManagementEmailForwarding( selectedSite.slug, selectedDomainName )
-			}
+			};
 		} else if ( hasMappedDomain( domains.list ) ) {
 			emptyContentProps = {
 				title: this.translate( 'Google Apps is not supported on mapped domains' ),
@@ -123,7 +129,7 @@ const Email = React.createClass( {
 		} );
 
 		return (
-			<EmptyContent {...emptyContentProps } />
+			<EmptyContent { ...emptyContentProps } />
 		);
 	},
 

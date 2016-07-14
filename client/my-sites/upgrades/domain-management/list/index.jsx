@@ -88,14 +88,16 @@ export const List = React.createClass( {
 	},
 
 	render() {
-		var headerText = this.translate( 'Domains', { context: 'A navigation label.' } );
+		const headerText = this.translate( 'Domains', { context: 'A navigation label.' } );
+
+		const showPlanFeatures = config.isEnabled( 'manage/plan-features' );
 
 		if ( ! this.props.domains ) {
 			return null;
 		}
 
 		return (
-			<Main className="domain-management-list">
+			<Main wideLayout={ !! showPlanFeatures }>
 				<SidebarNavigation />
 				<UpgradesNavigation
 					path={ this.props.context.path }
