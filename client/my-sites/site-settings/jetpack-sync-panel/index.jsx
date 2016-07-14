@@ -58,7 +58,7 @@ const JetpackSyncPanel = React.createClass( {
 			<Notice isCompact status="is-error" className="jetpack-sync-panel__error-notice">
 				{
 					syncRequestError.message
-					? syncRequestError
+					? syncRequestError.message
 					: this.translate( 'There was an error scheduling a full sync. Please try again later.' )
 				}
 			</Notice>
