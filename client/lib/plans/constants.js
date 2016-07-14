@@ -84,7 +84,7 @@ export const plansList = {
 		getStoreSlug: () => PLAN_PERSONAL,
 		availableFor: ( plan ) => includes( [ PLAN_FREE ], plan ),
 		getPathSlug: () => 'personal',
-		getDescription: () => i18n.translate( '{{strong}}Best for Personal Use:{{/strong}} Get your own custom domain name and establish your website free of any WordPress.com advertising. Get access to high quality email and live chat support.', {
+		getDescription: () => i18n.translate( '{{strong}}Best for Personal Use:{{/strong}} Boost your website with a custom domain name, and remove all WordPress.com advertising. Get access to high quality email and live chat support.', {
 			components: {
 				strong: <strong />
 			}
@@ -107,22 +107,22 @@ export const plansList = {
 		getPathSlug: () => 'premium',
 		getStoreSlug: () => PLAN_PREMIUM,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
-		getDescription: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Advanced design customization tools including CSS editing, with lots of space for images, video, and audio.', {
+		getDescription: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, plus the ability to monetize your site with ads.', {
 			components: {
 				strong: <strong />
 			}
 		} ),
-		getDescriptionWithGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Advanced design customization tools including CSS editing, lots of space for images, video, and audio.', {
+		getDescriptionWithGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, plus the ability to monetize your site with ads.', {
 			components: {
 				strong: <strong />
 			}
 		} ),
-		getDescriptionWithWordAdsInstantActivation: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Advanced design customization tools including CSS editing, lots of space for audio and video, and run your own advertising.', {
+		getDescriptionWithWordAdsInstantActivation: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, plus the ability to monetize your site with ads.', {
 			components: {
 				strong: <strong />
 			}
 		} ),
-		getDescriptionWithWordAdsInstantActivationAndGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Advanced design customization tools including CSS editing, lots of space for audio and video, and run your own advertising.', {
+		getDescriptionWithWordAdsInstantActivationAndGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, plus the ability to monetize your site with ads.', {
 			components: {
 				strong: <strong />
 			}
@@ -147,12 +147,12 @@ export const plansList = {
 		getStoreSlug: () => PLAN_BUSINESS,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ], plan ),
 		getPathSlug: () => 'business',
-		getDescription: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Google Analytics support, unlimited premium theme templates, unlimited storage, and the ability to remove WordPress.com branding.', {
+		getDescription: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your business website with unlimited premium and business theme templates, Google Analytics support, unlimited storage, and the ability to remove WordPress.com branding.', {
 			components: {
 				strong: <strong />
 			}
 		} ),
-		getDescriptionWithWordAdsCredit: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Google Analytics support, unlimited premium theme templates, unlimited storage, and the ability to remove WordPress.com branding.', {
+		getDescriptionWithWordAdsCredit: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your business website with unlimited premium and business theme templates, Google Analytics support, unlimited storage, and the ability to remove WordPress.com branding.', {
 			components: {
 				strong: <strong />
 			}
