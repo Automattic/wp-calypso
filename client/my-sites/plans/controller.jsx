@@ -63,6 +63,11 @@ export default {
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
+		// Scroll to the top
+		if ( typeof window !== 'undefined' ) {
+			window.scrollTo( 0, 0 );
+		}
+
 		renderWithReduxStore(
 			<CheckoutData>
 				<Plans
