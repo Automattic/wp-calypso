@@ -170,7 +170,6 @@ module.exports = {
 			CheckoutData = require( 'components/data/checkout' ),
 			CartData = require( 'components/data/cart' ),
 			SecondaryCart = require( './cart/secondary-cart' ),
-			storedCards = require( 'lib/stored-cards' )(),
 			basePath = route.sectionify( context.path ),
 			product = context.params.product,
 			selectedFeature = context.params.feature;
@@ -189,7 +188,6 @@ module.exports = {
 			(
 				<CheckoutData>
 					<Checkout
-						cards={ storedCards }
 						product={ product }
 						productsList={ productsList }
 						selectedFeature={ selectedFeature }

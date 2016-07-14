@@ -33,7 +33,7 @@ var CreditCardSelector = React.createClass({
 	},
 
 	storedCards: function() {
-		return this.props.cards.get().map( function( card ) {
+		return this.props.cards.map( function( card ) {
 			var storedCard = <StoredCard card={ card } />;
 			return this.section( card.stored_details_id, storedCard );
 		}, this );
@@ -44,7 +44,7 @@ var CreditCardSelector = React.createClass({
 			<NewCardForm
 				countriesList={ this.props.countriesList }
 				transaction={ this.props.transaction }
-				hasStoredCards={ this.props.cards.get().length > 0 } />
+				hasStoredCards={ this.props.cards.length > 0 } />
 		);
 
 		return this.section( 'new-card', cardForm );
@@ -53,7 +53,7 @@ var CreditCardSelector = React.createClass({
 	section: function( name, content ) {
 		var classes = classNames( 'payment-box-section', {
 			'selected': this.state.section === name,
-			'no-stored-cards' : name === 'new-card' && this.props.cards.get().length === 0
+			'no-stored-cards': name === 'new-card' && this.props.cards.length === 0
 		} );
 
 		return (
@@ -86,10 +86,8 @@ var CreditCardSelector = React.createClass({
 	},
 
 	getStoredCardDetails: function( section ) {
-		var cards = this.props.cards.get();
-		return filter( cards, { stored_details_id: section } )[ 0 ];
+		return filter( this.props.cards, { stored_details_id: section } )[ 0 ];
 	}
-
 } );
 
 module.exports = CreditCardSelector;

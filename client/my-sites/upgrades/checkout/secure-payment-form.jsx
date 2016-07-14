@@ -117,7 +117,7 @@ var SecurePaymentForm = React.createClass( {
 					transaction={ this.props.transaction }
 					cart={ this.props.cart }
 					countriesList={ countriesList }
-					initialCard={ this.initialCard() }
+					initialCard={ this.getInitialCard() }
 					selected={ this.state.visiblePaymentBox === 'credit-card' }
 					selectedSite={ this.props.selectedSite }
 					onToggle={ this.selectPaymentBox }
@@ -137,8 +137,8 @@ var SecurePaymentForm = React.createClass( {
 		);
 	},
 
-	initialCard: function() {
-		return this.props.cards.get()[ 0 ];
+	getInitialCard: function() {
+		return this.props.cards[ 0 ];
 	},
 
 	componentWillMount: function() {
@@ -165,8 +165,8 @@ var SecurePaymentForm = React.createClass( {
 				break;
 
 			case 'credit-card':
-				if ( this.initialCard() ) {
-					newPayment = storeTransactions.storedCardPayment( this.initialCard() );
+				if ( this.getInitialCard() ) {
+					newPayment = storeTransactions.storedCardPayment( this.getInitialCard() );
 				} else {
 					newPayment = storeTransactions.newCardPayment();
 				}
