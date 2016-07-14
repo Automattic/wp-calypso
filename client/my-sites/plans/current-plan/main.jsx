@@ -144,7 +144,9 @@ const PlanDetailsComponent = React.createClass( {
 				{ selectedSite &&
 					<Card
 						href={
-							( showPlanFeatures ? '/plans/' : '/plans/compare/' ) + selectedSite.slug
+							showPlanFeatures
+								? `/plans/${ selectedSite.slug }`
+								: `/plans/compare/${ selectedSite.slug }`
 						}
 					>
 						{ this.translate( 'Missing some features? Compare our different plans' ) }
