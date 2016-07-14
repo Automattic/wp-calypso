@@ -32,7 +32,7 @@ const titleTypes = translate => [
 	{ value: 'frontPage', label: translate( 'Front Page' ) },
 	{ value: 'posts', label: translate( 'Posts' ) },
 	{ value: 'pages', label: translate( 'Pages' ) },
-	{ value: 'groups', label: translate( 'Categories & Tags' ) },
+	{ value: 'groups', label: translate( 'Tags' ) },
 	{ value: 'archives', label: translate( 'Archives' ) }
 ];
 
@@ -129,7 +129,7 @@ export class MetaTitleEditor extends Component {
 		);
 
 		return (
-			<div>
+			<div className="meta-title-editor">
 				<SegmentedControl
 					initialSelected={ type }
 					options={ titleTypes( translate ) }
