@@ -2,9 +2,8 @@
  * External Dependencies
  */
 import React from 'react';
-import noop from 'lodash/noop';
+import { partial, noop, truncate } from 'lodash';
 import classnames from 'classnames';
-import partial from 'lodash/partial';
 
 /**
  * Internal Dependencies
@@ -39,10 +38,14 @@ function SearchByline( { post, site, feed } ) {
 
 export function SearchPostCard( { post, site, feed, onClick = noop, onCommentClick = noop } ) {
 	const featuredImage = post.canonical_image;
-	const hasPost = !! post;
+	const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
+	const title = truncate( post.title, {
+		length: isPhotoOnly ? 50 : 140,
+		separator: /,? +/
+	} );
 	const classes = classnames( 'post-card__search', {
 		'has-thumbnail': !! featuredImage,
-		'is-photo': hasPost && ( post.display_type & DisplayTypes.PHOTO_ONLY )
+		'is-photo': isPhotoOnly
 	} );
 
 	return (
@@ -56,7 +59,7 @@ export function SearchPostCard( { post, site, feed, onClick = noop, onCommentCli
 				<LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showCount={ true } showLabel={ false } />
 			</div>
 			<h1 className="post-card__search-title">
-				<a className="post-card__search-title-link" href={ post.URL }>{ post.title }</a>
+				<a className="post-card__search-title-link" href={ post.URL }>{ title }</a>
 			</h1>
 			<SearchByline post={ post } site={ site } feed={ feed } />
 			<div className="post-card__search-excerpt">{ post.short_excerpt }</div>
