@@ -1,0 +1,22 @@
+.plan-icon {
+	width: inherit;
+	height: inherit;
+	background-repeat: no-repeat;
+
+	&.is-free-plan {
+		background-image: url('/calypso/images/plans/plan-beginner.svg');
+	}
+
+	&.is-personal-plan {
+		background-image: url('/calypso/images/plans/plan-personal.svg');
+	}
+
+	&.is-premium-plan {
+		background-image: url('/calypso/images/plans/plan-premium.svg');
+	}
+
+	&.is-business-plan {
+		background-image: url('/calypso/images/plans/plan-business.svg');
+	}
+}
+
