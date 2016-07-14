@@ -271,7 +271,6 @@ export function applyTestFiltersToPlansList( planName ) {
 
 export const isSkipPlansTestEnabled = () => {
 	return isEnabled( 'plans/skip-plans-for-free' ) &&
-		isEnabled( 'plans/personal-plan' ) &&
-		abtest( 'personalPlan' ) === 'show' &&
-		abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree';
+		abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree' &&
+		isPersonalPlanEnabled;
 };
