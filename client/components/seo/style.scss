@@ -50,3 +50,15 @@
 	line-height: 1.4;
 	max-width: 616px;
 }
+
+.meta-title-editor .segmented-control__link {
+	font-size: 12px;
+	line-height: 16px;
+	padding: 4px 2px;
+
+	@include breakpoint( ">660px" ) {
+		font-size: 14px;
+		line-height: 18px;
+		padding: 8px 12px;
+	}
+}
