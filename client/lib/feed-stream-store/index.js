@@ -48,6 +48,21 @@ function limitSiteParamsForLikes( params ) {
 	params.fields += ',date_liked';
 }
 
+function trainTracksProxyForStream( stream, callback ) {
+	return function( err, response ) {
+		const eventName = 'calypso_traintracks_render';
+		if ( response && response.algorithm ) {
+			stream.algorithm = response.algorithm;
+		}
+		forEach( response && response.posts, ( post ) => {
+			if ( post.railcar ) {
+				analytics.tracks.recordEvent( eventName, post.railcar );
+			}
+		} );
+		callback( err, response );
+	};
+}
+
 function getStoreForFeed( storeId ) {
 	var feedId = storeId.split( ':' )[ 1 ],
 		fetcher = function fetchFeedById( query, callback ) {
@@ -90,18 +105,20 @@ function getStoreForTag( storeId ) {
 
 function getStoreForSearch( storeId ) {
 	const slug = storeId.split( ':' )[ 1 ];
-	const fetcher = function( query, callback ) {
-		query.q = slug;
-		query.meta = 'site';
-		wpcomUndoc.readSearch( query, callback );
-	};
-
-	return new PagedStream( {
+	const stream = new PagedStream( {
 		id: storeId,
 		fetcher: fetcher,
 		keyMaker: siteKeyMaker,
 		perPage: 5
 	} );
+
+	function fetcher( query, callback ) {
+		query.q = slug;
+		query.meta = 'site';
+		wpcomUndoc.readSearch( query, trainTracksProxyForStream( stream, callback ) );
+	}
+
+	return stream;
 }
 
 function getStoreForList( storeId ) {
@@ -162,20 +179,7 @@ function getStoreForRecommendedPosts( storeId ) {
 	} );
 
 	function fetcher( query, callback ) {
-		function trainTracksProxy( err, response ) {
-			var eventName = 'calypso_traintracks_render',
-				eventProperties = {};
-			if ( response && response.algorithm ) {
-				stream.algorithm = response.algorithm;
-			}
-			forEach( response && response.posts, ( post, index ) => {
-				if ( post.railcar ) {
-					analytics.tracks.recordEvent( eventName, post.railcar );
-				}
-			} );
-			callback( err, response );
-		}
-		wpcomUndoc.readRecommendedPosts( query, trainTracksProxy );
+		wpcomUndoc.readRecommendedPosts( query, trainTracksProxyForStream( stream, callback ) );
 	}
 
 	const oldNextPageFetch = stream.onNextPageFetch;
