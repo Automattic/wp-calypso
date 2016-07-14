@@ -4,6 +4,7 @@
 import { localize } from 'i18n-calypso';
 import noop from 'lodash/noop';
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import Gridicon from 'components/gridicon';
 const PlanFeaturesActions = ( {
 	available = true,
 	current = false,
+	popular = false,
 	freePlan = false,
 	onUpgradeClick = noop,
 	isPlaceholder = false,
@@ -23,7 +25,13 @@ const PlanFeaturesActions = ( {
 
 	if ( current ) {
 		upgradeButton = (
-			<Button className="plan-features__actions-button is-current" disabled>
+			<Button
+				className={ classNames( {
+					'plan-features__actions-button': true,
+					'is-current': true,
+					'is-popular': popular
+				} ) }
+				disabled>
 				<Gridicon size={ 18 } icon="checkmark" />
 				{ translate( 'Your plan' ) }
 			</Button>
@@ -31,7 +39,10 @@ const PlanFeaturesActions = ( {
 	} else if ( available || isPlaceholder ) {
 		upgradeButton = (
 			<Button
-				className="plan-features__actions-button"
+				className={ classNames( {
+					'plan-features__actions-button': true,
+					'is-popular': popular
+				} ) }
 				onClick={ isPlaceholder ? noop : onUpgradeClick }
 				primary={ ! isPlaceholder }
 				disabled={ isPlaceholder }
@@ -55,6 +66,7 @@ const PlanFeaturesActions = ( {
 };
 
 PlanFeaturesActions.propTypes = {
+	popular: PropTypes.bool,
 	current: PropTypes.bool,
 	available: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,

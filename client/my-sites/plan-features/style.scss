@@ -386,6 +386,10 @@ $plan-features-sidebar-width: 272px;
 	text-align: center;
 }
 
+.ribbon__wrapper.plan-features__ribbon .ribbon__title {
+	background-color: $alert-green
+}
+
 .plan-features__actions-button {
 	width: 100%;
 	margin-top: 8px;
@@ -401,6 +405,10 @@ $plan-features-sidebar-width: 272px;
 			fill: $alert-green;
 			margin-right: 8px;
 		}
+	}
+
+	&.is-popular {
+		background-color: $alert-green
 	}
 
 	@include breakpoint( "<660px" ) {
