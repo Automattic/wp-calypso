@@ -9,6 +9,7 @@ import closest from 'component-closest';
 /**
  * Internal Dependencies
  */
+import CompactCard from 'components/card/compact';
 import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import BlankContent from './blank';
@@ -150,14 +151,17 @@ const FeedStream = React.createClass( {
 				listName={ this.translate( 'Search' ) }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
-				cardFactory={ this.cardFactory } >
+				cardFactory={ this.cardFactory }
+				className="search-stream" >
 				{ this.props.showBack && <HeaderBack /> }
-				<SearchInput
-					initialValue={ this.props.query }
-					onSearch={ this.updateQuery }
-					autoFocus={ true }
-					delaySearch={ true }
-					placeholder={ this.translate( 'Search billions of WordPress.com posts…' ) } />
+				<CompactCard className="search-stream__input-card">
+					<SearchInput
+						initialValue={ this.props.query }
+						onSearch={ this.updateQuery }
+						autoFocus={ true }
+						delaySearch={ true }
+						placeholder={ this.translate( 'Search billions of WordPress.com posts…' ) } />
+				</CompactCard>
 			</Stream>
 		);
 	}
