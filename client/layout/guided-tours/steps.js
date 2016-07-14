@@ -35,8 +35,8 @@ class BasicStep extends Component {
 			<Card className={ classNames( ...classes ) } style={ stepCoords } >
 				<p className="guided-tours__step-text">{ text }</p>
 				<div className="guided-tours__choice-button-row">
-					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
-					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
+					<Button onClick={ onNext } primary>{ this.props.translate( 'Next' ) }</Button>
+					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Exit tour' ) }</Button>
 				</div>
 			</Card>
 		);
@@ -97,8 +97,8 @@ class LinkStep extends Component {
 			<Card className="guided-tours__step" style={ stepCoords } >
 				<p className="guided-tours__step-text">{ text }</p>
 				<div className="guided-tours__choice-button-row">
-					<Button onClick={ onNext } primary>{ this.props.translate( 'Continue' ) }</Button>
-					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Do this later' ) }</Button>
+					<Button onClick={ onNext } primary>{ this.props.translate( 'Next' ) }</Button>
+					<Button onClick={ onQuit } borderless>{ this.props.translate( 'Exit tour' ) }</Button>
 				</div>
 				<div className="guided-tours__external-link">
 					<ExternalLink target="_blank" icon={ true } href={ linkUrl }>{ linkLabel }</ExternalLink>
