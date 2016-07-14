@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import classNames from 'classnames';
 import debugModule from 'debug';
 import { get } from 'lodash';
 
@@ -49,7 +48,29 @@ const JetpackSyncPanel = React.createClass( {
 		this.props.scheduleJetpackFullysync( this.props.siteId );
 	},
 
+	renderErrorNotice() {
+		const syncRequestError = get( this.props, 'fullSyncRequest.error' );
+		if ( ! syncRequestError ) {
+			return null;
+		}
+
+		return (
+			<Notice isCompact status="is-error" className="jetpack-sync-panel__error-notice">
+				{
+					syncRequestError.message
+					? syncRequestError
+					: this.translate( 'There was an error scheduling a full sync. Please try again later.' )
+				}
+			</Notice>
+		);
+	},
+
 	renderStatusNotice() {
+		const isErrored = get( this.props, 'syncStatus.error' ) || get( this.props, 'fullSyncRequest.error' );
+		if ( isErrored ) {
+			return null;
+		}
+
 		const finished = get( this.props, 'syncStatus.finished' );
 		const finishedTimestamp = this.moment( parseInt( finished, 10 ) * 1000 );
 		let text = '';
@@ -68,7 +89,7 @@ const JetpackSyncPanel = React.createClass( {
 		}
 
 		return (
-			<Notice isCompact className={ classNames( 'jetpack-sync-panel__notice' ) }>
+			<Notice isCompact className="jetpack-sync-panel__status-notice">
 				{ text }
 			</Notice>
 		);
@@ -108,6 +129,7 @@ const JetpackSyncPanel = React.createClass( {
 					</div>
 				</div>
 
+				{ this.renderErrorNotice() }
 				{ this.renderStatusNotice() }
 				{ this.renderProgressBar() }
 				{ this.shouldDisableSync() && <Interval onTick={ this.fetchSyncStatus } period={ EVERY_FIVE_SECONDS } /> }
