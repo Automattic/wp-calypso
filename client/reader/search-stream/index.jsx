@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
-import { debounce, trim } from 'lodash';
+import { trim } from 'lodash';
 import closest from 'component-closest';
 
 /**
@@ -19,9 +19,8 @@ import SearchCard from 'components/post-card/search';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import { recordTrackForPost } from 'reader/stats';
-
-//const stats = require( 'reader/stats' );
-//
+import sampleSize from 'lodash/sampleSize';
+import i18nUtils from 'lib/i18n-utils';
 
 const SearchCardAdapter = React.createClass( {
 	getInitialState() {
@@ -94,18 +93,76 @@ const emptyStore = {
 
 const FeedStream = React.createClass( {
 
+	searchSuggestions: {
+		en: [
+			'2016 Election',
+			'Astrology',
+			'Batman',
+			'Beach',
+			'Beautiful',
+			'Bloom',
+			'Chickens',
+			'Clinton',
+			'Cocktails',
+			'Colorado',
+			'Craft Beer',
+			'Cute',
+			'DIY',
+			'Delicious',
+			'Dogs',
+			'Elasticsearch',
+			'Fabulous',
+			'Farm',
+			'Flowers',
+			'Funny',
+			'Garden',
+			'Groovy',
+			'Happy Place',
+			'Hiking',
+			'Homesteading',
+			'Iceland',
+			'Inspiration',
+			'Juno',
+			'Mathematics',
+			'Michigan',
+			'Monkeys',
+			'Mountain Biking',
+			'Obama',
+			'Overwatch',
+			'Pokemon GO',
+			'Pride',
+			'Recipe',
+			'Red Sox',
+			'Robots',
+			'Scenic',
+			'Sharks',
+			'Sous vide',
+			'Sunday Brunch',
+			'Tibet',
+			'Toddlers',
+			'Travel Backpacks',
+			'Travel',
+			'Trump',
+			'Woodworking',
+			'WordPress',
+			'Zombies'
+		]
+	},
+
 	propTypes: {
 		query: React.PropTypes.string
 	},
 
 	getInitialState() {
+		let suggestions = null;
+		const lang = i18nUtils.getLocaleSlug();
+		if ( this.searchSuggestions[ lang ] ) {
+			suggestions = sampleSize( this.searchSuggestions[ lang ], 3 );
+		}
 		return {
+			suggestions: suggestions,
 			title: this.getTitle()
 		};
-	},
-
-	componentWillMount() {
-		this.debouncedUpdate = debounce( this.updateQuery, 300 );
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -128,7 +185,7 @@ const FeedStream = React.createClass( {
 	},
 
 	updateQuery( newValue ) {
-		const trimmedValue = trim( newValue );
+		const trimmedValue = trim( newValue ).substring( 0, 1024 );
 		if ( trimmedValue === '' || trimmedValue.length > 1 && trimmedValue !== this.props.query ) {
 			this.props.onQueryChange( newValue );
 		}
@@ -141,7 +198,7 @@ const FeedStream = React.createClass( {
 	render() {
 		const emptyContent = this.props.query
 			? <EmptyContent query={ this.props.query } />
-			: <BlankContent />;
+			: <BlankContent suggestions={ this.state.suggestions }/>;
 
 		if ( this.props.setPageTitle ) {
 			this.props.setPageTitle( this.state.title || this.translate( 'Search' ) );
