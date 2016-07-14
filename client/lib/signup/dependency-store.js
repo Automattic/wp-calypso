@@ -11,12 +11,14 @@ import {
 	SIGNUP_DEPENDENCY_STORE_UPDATE_STATE,
 } from 'state/action-types';
 
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+
 import Dispatcher from 'dispatcher';
 import steps from 'signup/config/steps';
 
 const SignupDependencyStore = {
 	get: function() {
-		return SignupDependencyStore.reduxStore.getState().signup.dependencyStore || {};
+		return getSignupDependencyStore( SignupDependencyStore.reduxStore.getState() );
 	},
 	reset: function() {
 		SignupDependencyStore.reduxStore.dispatch( {
