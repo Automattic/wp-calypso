@@ -121,7 +121,7 @@
 	z-index: z-index( '.search', '.search__input' );
 	top: 0;
 	padding: 0 50px 0 60px;
-	border: 1px solid #87a6bc;
+	border: none;
 	background: $white;
 	height: 51px;
 	appearance: none;
@@ -148,6 +148,7 @@
 
 	&:focus {
 		box-shadow: none;
+		border: none;
 	}
 }
 
