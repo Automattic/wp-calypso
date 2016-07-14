@@ -93,8 +93,10 @@ var TransactionStepsMixin = {
 					// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
 					// zero-value cost and would thus lead to a wrong computation of conversions
 					if ( ! cartItems.hasFreeTrial( cartValue ) ) {
-						cartValue.products.map( adTracking.recordPurchase );
-						adTracking.recordOrderInAtlas( cartValue );
+						cartValue.products.forEach( product => {
+							adTracking.recordPurchase( product, step.data.receipt_id );
+						} );
+						adTracking.recordOrderInAtlas( cartValue, step.data.receipt_id );
 					}
 
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
