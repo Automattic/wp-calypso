@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import StatsMain from './stats-main';
 import StatsNavigation from './stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import DatePicker from './stats-date-picker';
@@ -19,6 +19,7 @@ import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import analytics from 'lib/analytics';
+import StatsFirstView from './stats-first-view';
 
 const debug = debugFactory( 'calypso:stats:site' );
 
@@ -132,7 +133,8 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<Main>
+			<StatsMain>
+				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
 					section={ period }
@@ -207,7 +209,7 @@ module.exports = React.createClass( {
 					</div>
 					{ nonPeriodicModules }
 				</div>
-			</Main>
+			</StatsMain>
 		);
 	}
 } );
