@@ -44,7 +44,7 @@ export function wasViewHidden( state, view ) {
 
 export function switchedFromDifferentSection( state ) {
 	const section = state.ui.section;
-	const routeSets = filter( getActionLog( state ), entry => entry.type === ROUTE_SET );
+	const routeSets = filter( getActionLog( state ), { type: ROUTE_SET } );
 	const lastRouteSetsForSection = takeRightWhile( routeSets,
 		routeSet => some( section.paths, path => startsWith( routeSet.path, path ) ) );
 	return lastRouteSetsForSection.length === 1;
