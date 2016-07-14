@@ -30,7 +30,7 @@ function SearchByline( { post, site, feed } ) {
 		<div className="post-card__search-byline ignore-click">
 			<span className="post-card__search-byline-item">
 				<AuthorAndSite post={ post } site={ site } feed={ feed } showGravatar={ true } />
-				<FollowButton siteUrl={ post.site_URL } />
+				<FollowButton siteUrl={ post.site_URL } railcar={ post.railcar } />
 			</span>
 		</div>
 	);
