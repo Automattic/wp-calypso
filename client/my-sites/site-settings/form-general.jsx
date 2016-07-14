@@ -352,13 +352,21 @@ const FormGeneral = React.createClass( {
 		);
 	},
 
-	syncNonPublicPostTypes() {
+	showPublicPostTypesCheckbox() {
 		if ( ! config.isEnabled( 'manage/option_sync_non_public_post_stati' ) ) {
-			return null;
+			return false;
 		}
 
 		const { site } = this.props;
 		if ( site.jetpack && site.versionCompare( '4.1.1', '>' ) ) {
+			return false;
+		}
+
+		return true;
+	},
+
+	syncNonPublicPostTypes() {
+		if ( ! this.showPublicPostTypesCheckbox() ) {
 			return null;
 		}
 
@@ -569,7 +577,7 @@ const FormGeneral = React.createClass( {
 					? <div>
 						<SectionHeader label={ this.translate( 'Jetpack' ) }>
 							{ this.jetpackDisconnectOption() }
-							{ config.isEnabled( 'manage/option_sync_non_public_post_stati' )
+							{ this.showPublicPostTypesCheckbox()
 								? <Button
 									compact={ true }
 									onClick={ this.submitForm }
