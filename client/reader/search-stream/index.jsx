@@ -220,6 +220,7 @@ const FeedStream = React.createClass( {
 						onSearch={ this.updateQuery }
 						autoFocus={ true }
 						delaySearch={ true }
+						delayTimeout={ 750 }
 						placeholder={ this.translate( 'Search billions of WordPress.com posts…' ) } />
 				</CompactCard>
 			</Stream>
