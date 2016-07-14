@@ -21,7 +21,16 @@ import { isMobile } from 'lib/viewport';
 /**
  * Internal variables
  */
-var SEARCH_DEBOUNCE_MS = 300;
+const SEARCH_DEBOUNCE_MS = 300;
+
+function keyListener( methodToCall, event ) {
+	switch ( event.key ) {
+		case ' ':
+		case 'Enter':
+			this[ methodToCall ]( event );
+			break;
+	}
+}
 
 const Search = React.createClass( {
 
@@ -82,6 +91,9 @@ const Search = React.createClass( {
 		this.setState( {
 			instanceId: ++Search.instances
 		} );
+
+		this.closeListener = keyListener.bind( this, 'closeSearch' );
+		this.openListener = keyListener.bind( this, 'openSearch' );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -96,6 +108,11 @@ const Search = React.createClass( {
 
 		if ( nextProps.isOpen ) {
 			this.setState( { isOpen: nextProps.isOpen } );
+		}
+
+		if ( nextProps.initialValue !== this.props.initialValue &&
+				( this.state.keyword === this.props.initialValue || this.state.keyword === '' ) ) {
+			this.setState( { keyword: nextProps.initialValue || '' } );
 		}
 	},
 
@@ -227,7 +244,7 @@ const Search = React.createClass( {
 	// Puts the cursor at end of the text when starting
 	// with `initialValue` set.
 	onFocus: function() {
-		var input = ReactDom.findDOMNode( this.refs.searchInput ),
+		const input = ReactDom.findDOMNode( this.refs.searchInput ),
 			setValue = input.value;
 
 		if ( setValue ) {
@@ -238,13 +255,13 @@ const Search = React.createClass( {
 	},
 
 	render: function() {
-		var searchClass,
+		let searchClass,
 			searchValue = this.state.keyword,
 			placeholder = this.props.placeholder ||
-				i18n.translate( 'Search…', { textOnly: true } ),
+				i18n.translate( 'Search…', { textOnly: true } );
 
-			enableOpenIcon = this.props.pinned && ! this.state.isOpen,
-			isOpenUnpinnedOrQueried = this.state.isOpen ||
+		const enableOpenIcon = this.props.pinned && ! this.state.isOpen;
+		const isOpenUnpinnedOrQueried = this.state.isOpen ||
 				! this.props.pinned ||
 				this.props.initialValue;
 
@@ -271,7 +288,7 @@ const Search = React.createClass( {
 					onTouchTap={ enableOpenIcon ? this.openSearch : this.focus }
 					tabIndex={ enableOpenIcon ? '0' : null }
 					onKeyDown={ enableOpenIcon
-						? this._keyListener.bind( this, 'openSearch' )
+						? this.openListener
 						: null
 					}
 					aria-controls={ 'search-component-' + this.state.instanceId }
@@ -295,7 +312,7 @@ const Search = React.createClass( {
 					aria-hidden={ ! isOpenUnpinnedOrQueried }
 					autoCapitalize="none"
 					dir={ this.props.dir }
-					{...autocorrect } />
+					{ ...autocorrect } />
 				{ ( searchValue || this.state.isOpen ) ? this.closeButton() : null }
 			</div>
 		);
@@ -306,21 +323,12 @@ const Search = React.createClass( {
 			<span
 				onTouchTap={ this.closeSearch }
 				tabIndex="0"
-				onKeyDown={ this._keyListener.bind( this, 'closeSearch' ) }
+				onKeyDown={ this.closeListener }
 				aria-controls={ 'search-component-' + this.state.instanceId }
 				aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
 			<Gridicon icon="cross" className={ 'search-close__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) } />
 			</span>
 		);
-	},
-
-	_keyListener: function( methodToCall, event ) {
-		switch ( event.key ) {
-			case ' ':
-			case 'Enter':
-				this[ methodToCall ]( event );
-				break;
-		}
 	}
 } );
 
