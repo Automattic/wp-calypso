@@ -12,7 +12,8 @@ import SiteOverview from './stats-site-overview';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import DatePicker from './stats-date-picker';
 import StatsNavigation from './stats-navigation';
-import Main from 'components/main';
+import StatsMain from './stats-main';
+import StatsFirstView from './stats-first-view';
 
 export default React.createClass( {
 	displayName: 'StatsOverview',
@@ -29,7 +30,7 @@ export default React.createClass( {
 		const statsPath = ( path === '/stats' ) ? '/stats/day' : path;
 
 		const sitesSorted = sites.map( function( site ) {
-			var momentSiteZone = this.moment();
+			let momentSiteZone = this.moment();
 
 			if ( 'object' === typeof ( site.options ) && 'undefined' !== typeof ( site.options.gmt_offset ) ) {
 				momentSiteZone = this.moment().utcOffset( site.options.gmt_offset );
@@ -90,11 +91,12 @@ export default React.createClass( {
 		}, this );
 
 		return (
-			<Main>
+			<StatsMain>
+				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation section={ this.props.period } />
 				{ sites.length !== 0 ? sitesList : this.placeholders() }
-			</Main>
+			</StatsMain>
 		);
 	},
 
@@ -102,7 +104,8 @@ export default React.createClass( {
 		const items = [];
 		const limit = Math.min( this.props.user.get().visible_site_count, 10 );
 
-		items.push( <h3 className="stats-section-title">&nbsp;</h3> );
+		// TODO: a separate StatsSectionTitle component should be created
+		items.push( <h3 className="stats-section-title">&nbsp;</h3> ); // eslint-disable-line wpcalypso/jsx-classname-namespace
 
 		for ( let i = 0; i < limit; i++ ) {
 			items.push( <SiteOverviewPlaceholder key={ i } /> );

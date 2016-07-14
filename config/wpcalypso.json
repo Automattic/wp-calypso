@@ -100,6 +100,8 @@
 		"settings/security/scan": true,
 		"support-user": true,
 		"sync-handler": true,
+		"ui/first-view": true,
+		"ui/first-view/reset-route": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,

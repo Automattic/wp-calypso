@@ -41,7 +41,6 @@ const SECTION_NAME_WHITELIST = [
 	'reader-tags',
 	'settings',
 	'sharing',
-	'stats',
 	'upgrades'
 ];
 

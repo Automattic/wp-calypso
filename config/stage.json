@@ -92,6 +92,7 @@
 		"settings/security/scan": true,
 		"support-user": true,
 		"sync-handler": true,
+		"ui/first-view": false,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
