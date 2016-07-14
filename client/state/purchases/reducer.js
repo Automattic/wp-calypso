@@ -10,7 +10,6 @@ import matches from 'lodash/matches';
 import { createReducer } from 'state/utils';
 import {
 	PURCHASES_REMOVE,
-	PURCHASE_REMOVE,
 	PURCHASES_SITE_FETCH,
 	PURCHASES_USER_FETCH,
 	PURCHASE_REMOVE_COMPLETED,
@@ -118,13 +117,6 @@ export default createReducer( initialState, {
 		data: [],
 		hasLoadedSitePurchasesFromServer: false,
 		hasLoadedUserPurchasesFromServer: false
-	} ),
-
-	[ PURCHASE_REMOVE ]: ( state ) => ( {
-		...state,
-		data: [],
-		isFetchingSitePurchases: false,
-		isFetchingUserPurchases: false
 	} ),
 
 	[ PURCHASES_SITE_FETCH ]: ( state ) => ( { ...state, isFetchingSitePurchases: true } ),

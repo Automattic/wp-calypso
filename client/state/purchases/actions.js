@@ -15,7 +15,6 @@ import {
 	PURCHASES_USER_FETCH,
 	PURCHASES_USER_FETCH_COMPLETED,
 	PURCHASES_USER_FETCH_FAILED,
-	PURCHASE_REMOVE,
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED
 } from 'state/action-types';
@@ -120,11 +119,6 @@ export const fetchUserPurchases = userId => dispatch => {
 };
 
 export const removePurchase = ( purchaseId, userId ) => dispatch => {
-	dispatch( {
-		type: PURCHASE_REMOVE,
-		purchaseId
-	} );
-
 	return new Promise( ( resolve, reject ) => {
 		wpcom.me().deletePurchase( purchaseId, ( error, data ) => {
 			error ? reject( error ) : resolve( data );
