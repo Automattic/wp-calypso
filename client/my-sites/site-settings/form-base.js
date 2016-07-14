@@ -89,13 +89,11 @@ module.exports = {
 	 */
 	recordEventOnce( key, eventAction ) {
 		debug( 'record event once: %o - %o', key, eventAction );
-		let newSetting = {};
 		if ( this.state[ 'recordEventOnce-' + key ] ) {
 			return;
 		}
 		this.recordEvent( eventAction );
-		newSetting[ 'recordEventOnce-' + key ] = true;
-		this.setState( newSetting );
+		this.setState( { [ 'recordEventOnce-' + key ]: true } );
 	},
 
 	getInitialState() {
@@ -103,16 +101,14 @@ module.exports = {
 	},
 
 	handleRadio( event ) {
-		var name = event.currentTarget.name,
-			value = event.currentTarget.value,
-			updateObj = {};
+		const name = event.currentTarget.name,
+			value = event.currentTarget.value;
 
-		updateObj[ name ] = value;
-		this.setState( updateObj );
+		this.setState( { [ name ]: value } );
 	},
 
 	toggleJetpackModule( module ) {
-		var event = this.props.site.isModuleActive( module ) ? 'deactivate' : 'activate';
+		const event = this.props.site.isModuleActive( module ) ? 'deactivate' : 'activate';
 		notices.clearNotices( 'notices' );
 		this.setState( { togglingModule: true } );
 		this.props.site.toggleModule( module, error => {
@@ -138,7 +134,7 @@ module.exports = {
 	},
 
 	submitForm( event ) {
-		var site = this.props.site;
+		const { site } = this.props;
 
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
 			event.preventDefault();
