@@ -39,7 +39,7 @@ function updatePurchaseById( state, id, properties ) {
 	return {
 		...state,
 		data: state.data.map( purchase => {
-			if ( id === purchase.id ) {
+			if ( id === purchase.ID ) {
 				return { ...purchase, ...properties };
 			}
 			return purchase;
@@ -59,7 +59,7 @@ function overwriteExistingPurchases( existingPurchases, newPurchases ) {
 	let purchases = newPurchases;
 
 	existingPurchases.forEach( purchase => {
-		if ( ! find( purchases, { id: purchase.id } ) ) {
+		if ( ! find( purchases, { ID: purchase.ID } ) ) {
 			purchases = purchases.concat( purchase );
 		}
 	} );
@@ -77,7 +77,7 @@ function overwriteExistingPurchases( existingPurchases, newPurchases ) {
  */
 function removeMissingPurchasesByPredicate( existingPurchases, newPurchases, predicate ) {
 	return existingPurchases.filter( purchase => {
-		if ( matches( predicate )( purchase ) && find( newPurchases, { id: purchase.id } ) ) {
+		if ( matches( predicate )( purchase ) && find( newPurchases, { ID: purchase.ID } ) ) {
 			// this purchase is present in the new array
 			return true;
 		}
@@ -96,12 +96,12 @@ function updatePurchases( existingPurchases, action ) {
 	let purchases, predicate;
 
 	if ( PURCHASES_SITE_FETCH_COMPLETED === action.type ) {
-		predicate = { siteId: action.siteId };
+		predicate = { blog_id: action.siteId };
 	}
 
 	if ( PURCHASES_USER_FETCH_COMPLETED === action.type ||
 		PURCHASE_REMOVE_COMPLETED === action.type ) {
-		predicate = { userId: action.userId };
+		predicate = { user_id: action.userId };
 	}
 
 	purchases = removeMissingPurchasesByPredicate( existingPurchases, action.purchases, predicate );
@@ -161,7 +161,7 @@ export default createReducer( initialState, {
 	[ PURCHASES_SITE_FETCH_FAILED ]: assignError,
 	[ PURCHASES_USER_FETCH_FAILED ]: assignError,
 
-	[ PRIVACY_PROTECTION_CANCEL_COMPLETED ]: ( state, action ) => updatePurchaseById( state, action.purchase.id, action.purchase ),
+	[ PRIVACY_PROTECTION_CANCEL_COMPLETED ]: ( state, action ) => updatePurchaseById( state, action.purchase.ID, action.purchase ),
 
 	[ PRIVACY_PROTECTION_CANCEL_FAILED ]: ( state, action ) => updatePurchaseById( state, action.purchaseId, {
 		error: action.error
