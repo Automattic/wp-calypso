@@ -25,7 +25,7 @@ import config from 'config';
 import { decodeEntities } from 'lib/formatting';
 
 const debug = debugFactory( 'calypso:themes' );
-let themeDetailsCache = new Map();
+const themeDetailsCache = new Map();
 
 export function makeElement( ThemesComponent, Head, store, props ) {
 	return (
