@@ -80,15 +80,21 @@ export function syncStatus( state = {}, action ) {
 					{
 						isRequesting: false,
 						error: false,
-						lastSuccessfulStatus
+						lastSuccessfulStatus,
+						errorCounter: 0
 					},
 					pick( action.data, getExpectedResponseKeys() )
 				)
 			} );
 		case JETPACK_SYNC_STATUS_ERROR:
+			const errorCounter = get( state, [ action.siteId, 'errorCounter' ], 0 );
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign(
-					{ isRequesting: false, error: action.error },
+					{
+						isRequesting: false,
+						error: action.error,
+						errorCounter: errorCounter + 1
+					},
 					pick( action.data, getExpectedResponseKeys() )
 				)
 			} );
