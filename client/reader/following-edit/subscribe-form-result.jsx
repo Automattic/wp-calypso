@@ -1,44 +1,43 @@
-//const debug = require( 'debug' )( 'calypso:reader:following:edit' );
+/**
+* External dependencies
+*/
+import React from 'react';
+import classNames from 'classnames';
 
-// External dependencies
-const React = require( 'react' ),
-	classNames = require( 'classnames' );
+/**
+* Internal dependencies
+*/
+import { localize } from 'i18n-calypso';
+import ListItem from 'reader/list-item';
+import Icon from 'reader/list-item/icon';
+import Title from 'reader/list-item/title';
+import Description from 'reader/list-item/description';
+import Actions from 'reader/list-item/actions';
+import FollowButton from 'components/follow-button/button';
+import SiteIcon from 'components/site-icon';
 
-// Internal dependencies
-const ListItem = require( 'reader/list-item' ),
-	Icon = require( 'reader/list-item/icon' ),
-	Title = require( 'reader/list-item/title' ),
-	Description = require( 'reader/list-item/description' ),
-	Actions = require( 'reader/list-item/actions' ),
-	FollowButton = require( 'components/follow-button/button' ),
-	SiteIcon = require( 'components/site-icon' );
+const FollowingEditSubscribeFormResult = ( { url, isValid, onFollowToggle, translate } ) => {
+	const message = ! isValid
+		? translate( 'Not a valid URL' )
+		: translate( 'Follow this site' );
+	const classes = classNames( 'is-search-result', { 'is-valid': isValid } );
 
-var FollowingEditSubscribeFormResult = React.createClass( {
+	return (
+		<ListItem className={ classes }>
+			<Icon><SiteIcon size={ 48 } /></Icon>
+			<Title>{ url }</Title>
+			<Description>{ message }</Description>
+			<Actions>
+				<FollowButton disabled={ ! isValid } following={ false } onFollowToggle={ onFollowToggle } />
+			</Actions>
+		</ListItem>
+	);
+};
 
-	propTypes: {
-		url: React.PropTypes.string.isRequired,
-		isValid: React.PropTypes.bool.isRequired,
-		onFollowToggle: React.PropTypes.func.isRequired
-	},
+FollowingEditSubscribeFormResult.propTypes = {
+	url: React.PropTypes.string.isRequired,
+	isValid: React.PropTypes.bool.isRequired,
+	onFollowToggle: React.PropTypes.func.isRequired
+};
 
-	render: function() {
-		const message = ! this.props.isValid
-			? this.translate( 'Not a valid URL' )
-			: this.translate( 'Follow this site' );
-		const classes = classNames( 'is-search-result', { 'is-valid': this.props.isValid } );
-
-		return (
-			<ListItem className={ classes }>
-				<Icon><SiteIcon size={ 48 } /></Icon>
-				<Title>{ this.props.url }</Title>
-				<Description>{ message }</Description>
-				<Actions>
-					<FollowButton following={ false } onFollowToggle={ this.props.onFollowToggle } />
-				</Actions>
-			</ListItem>
-			);
-	}
-
-} );
-
-module.exports = FollowingEditSubscribeFormResult;
+export default localize( FollowingEditSubscribeFormResult );
