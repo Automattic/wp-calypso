@@ -126,6 +126,15 @@
 		border-top: 2px solid lighten( $gray, 20% );
 		float: left;
 	}
+
+	.plan .plan-actions {
+		float:left;
+		position: static;
+	}
+
+	.plan__plan-expand {
+		padding-bottom: 0;
+	}
 }
 
 @mixin plans-in-three-columns() {
