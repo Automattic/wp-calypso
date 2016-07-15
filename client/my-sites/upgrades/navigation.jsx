@@ -66,7 +66,7 @@ const PlansNavigation = React.createClass( {
 							{ this.translate( 'My Plan' ) }
 						</NavItem>
 					}
-					<NavItem path={ `/plans/${ site.slug }` } key="plans" selected={ path === '/plans' }>
+					<NavItem path={ `/plans/${ site.slug }` } key="plans" selected={ path === '/plans' || path === '/plans/monthly' }>
 						{ this.translate( 'Plans' ) }
 					</NavItem>
 					{ ! isJetpack &&
