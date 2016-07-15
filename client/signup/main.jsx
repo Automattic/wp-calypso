@@ -24,6 +24,7 @@ import reject from 'lodash/reject';
  */
 import config from 'config';
 import SignupDependencyStore from 'lib/signup/dependency-store';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import SignupProgressStore from 'lib/signup/progress-store';
 import SignupFlowController from 'lib/signup/flow-controller';
 import LocaleSuggestions from './locale-suggestions';
@@ -59,23 +60,12 @@ const Signup = React.createClass( {
 		return {
 			login: false,
 			progress: SignupProgressStore.get(),
-			dependencies: SignupDependencyStore.get(),
+			dependencies: this.props.signupDependencies,
 			loadingScreenStartTime: undefined,
 			resumingStep: undefined,
 			user: user.get(),
 			loginHandler: null
 		};
-	},
-
-	loadDependenciesFromStore() {
-		const newDependencies = SignupDependencyStore.get();
-
-		// only update the state if the dependencies are updated
-		// this saves extra re-renders when the global state changes
-		if ( this.cachedDependencies !== newDependencies ) {
-			this.setState( { dependencies: newDependencies } );
-			this.cachedDependencies = newDependencies;
-		}
 	},
 
 	loadProgressFromStore() {
@@ -198,13 +188,11 @@ const Signup = React.createClass( {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
-		this.unsubscribeSignupDepStoreListener = SignupDependencyStore.reduxStore.subscribe( this.loadDependenciesFromStore );
 	},
 
 	componentWillUnmount() {
 		debug( 'Signup component unmounted' );
 		SignupProgressStore.off( 'change', this.loadProgressFromStore );
-		this.unsubscribeSignupDepStoreListener();
 	},
 
 	loginRedirectTo( path ) {
@@ -328,7 +316,12 @@ const Signup = React.createClass( {
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
 			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
 			flow = flows.getFlow( this.props.flowName ),
-			hideFreePlan = !! ( this.state.dependencies && this.state.dependencies.domainItem && this.state.dependencies.domainItem.is_domain_registration && this.props.domainsWithPlansOnly );
+			hideFreePlan = ! ! (
+				this.props.signupDependencies &&
+				this.props.signupDependencies.domainItem &&
+				this.props.signupDependencies.domainItem.is_domain_registration &&
+				this.props.domainsWithPlansOnly
+			);
 
 		return (
 			<div className="signup__step" key={ stepKey }>
@@ -346,7 +339,7 @@ const Signup = React.createClass( {
 						goToStep={ this.goToStep }
 						flowName={ this.props.flowName }
 						signupProgressStore={ this.state.progress }
-						signupDependencies={ this.state.dependencies }
+						signupDependencies={ this.props.signupDependencies }
 						stepSectionName={ this.props.stepSectionName }
 						positionInFlow={ this.positionInFlow() }
 						hideFreePlan={ hideFreePlan }
@@ -386,7 +379,10 @@ const Signup = React.createClass( {
 } );
 
 export default connect(
-	state => ( { domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true } ),
+	state => ( {
+		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
+		signupDependencies: getSignupDependencyStore( state ),
+	} ),
 	() => ( {} ),
 	undefined,
 	{ pure: false } )( Signup );
