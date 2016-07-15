@@ -7,12 +7,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isFetchingUserPurchases } from 'state/purchases/selectors';
+import { hasLoadedUserPurchasesFromServer, isFetchingUserPurchases } from 'state/purchases/selectors';
 import { fetchUserPurchases } from 'state/purchases/actions';
 
 class QueryUserPurchases extends Component {
-	requestUserPurchases( props = this.props ) {
-		this.props.fetchUserPurchases( props.userId );
+	requestUserPurchases( nextProps ) {
+		const userChanged = nextProps && this.props.userId !== nextProps.userId,
+			props = nextProps || this.props;
+
+		if ( ( ! props.isFetchingUserPurchases && ! props.hasLoadedUserPurchasesFromServer ) || userChanged ) {
+			this.props.fetchUserPurchases( props.userId );
+		}
 	}
 
 	componentWillMount() {
@@ -20,11 +25,6 @@ class QueryUserPurchases extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requesting ||
-			! nextProps.userId ||
-			( this.props.userId === nextProps.userId ) ) {
-			return;
-		}
 		this.requestUserPurchases( nextProps );
 	}
 
@@ -35,14 +35,16 @@ class QueryUserPurchases extends Component {
 
 QueryUserPurchases.propTypes = {
 	userId: PropTypes.number.isRequired,
-	requesting: PropTypes.bool.isRequired,
+	hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+	isFetchingUserPurchases: PropTypes.bool.isRequired,
 	fetchUserPurchases: PropTypes.func.isRequired
 };
 
 export default connect(
 	state => {
 		return {
-			requesting: isFetchingUserPurchases( state )
+			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+			isFetchingUserPurchases: isFetchingUserPurchases( state )
 		};
 	},
 	{ fetchUserPurchases }
