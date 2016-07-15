@@ -127,6 +127,8 @@ export const plansList = {
 				strong: <strong />
 			}
 		} ),
+		getOldDescriptionWithGoogleVouchers: () => i18n.translate( 'Your own domain name, powerful customization options,' +
+			' lots of space for audio and video, and $100 advertising voucher.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -157,6 +159,10 @@ export const plansList = {
 				strong: <strong />
 			}
 		} ),
+		getOldDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support,' +
+			' unlimited access to premium themes, and Google Analytics.' ),
+		getOldDescriptionWithWordAdsCredit: () => i18n.translate( 'Everything included with Premium, as well as' +
+			' live chat support, unlimited access to premium themes, Google Analytics, and $200 advertising vouchers.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
