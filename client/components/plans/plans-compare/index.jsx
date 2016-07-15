@@ -3,10 +3,9 @@
  */
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import find from 'lodash/find';
 import page from 'page';
 import React from 'react';
-import times from 'lodash/times';
+import { find, times, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -107,7 +106,9 @@ const PlansCompare = React.createClass( {
 	},
 
 	isDataLoading() {
-		if ( ! this.props.features.get() ) {
+		const planFeatures = this.props.features.get();
+
+		if ( ! planFeatures || isEmpty( planFeatures ) ) {
 			return true;
 		}
 
