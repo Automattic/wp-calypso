@@ -10,12 +10,15 @@ var page = require( 'page' ),
  * Internal dependencies
  */
 var HeaderCake = require( 'components/header-cake' ),
+	Notice = require( 'components/notice' ),
 	MapDomainStep = require( 'components/domains/map-domain-step' ),
 	{ currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	upgradesActions = require( 'lib/upgrades/actions' ),
-	observe = require( 'lib/mixins/data-observe' );
+	observe = require( 'lib/mixins/data-observe' ),
+	wpcom = require( 'lib/wp' ).undocumented(),
+	paths = require( 'my-sites/upgrades/paths' );
 
 var MapDomain = React.createClass( {
 	mixins: [ observe( 'productsList', 'sites' ) ],
@@ -24,6 +27,12 @@ var MapDomain = React.createClass( {
 		query: React.PropTypes.string,
 		productsList: React.PropTypes.object.isRequired,
 		domainsWithPlansOnly: React.PropTypes.bool.isRequired
+	},
+
+	getInitialState: function() {
+		return {
+			errorMessage: null
+		};
 	},
 
 	componentWillMount: function() {
@@ -80,17 +89,31 @@ var MapDomain = React.createClass( {
 	},
 
 	handleMapDomain( domain ) {
+		const selectedSite = this.props.sites.getSelectedSite();
+
+		this.setState( { errorMessage: null } );
+
+		// For VIP sites we handle domain mappings differently
+		// We don't go through the usual checkout process
+		// Instead, we add the mapping directly
+		if ( selectedSite.is_vip ) {
+			wpcom.addVipDomainMapping( selectedSite.ID, domain ).then( () => {
+				page( paths.domainManagementList( selectedSite.slug ) );
+			}, error => this.setState( { errorMessage: error.message } ) );
+			return;
+		}
+
 		const items = cartItems.bundleItemWithPlanIfNecessary(
 			cartItems.domainMapping( { domain } ),
 			this.props.domainsWithPlansOnly,
-			this.props.sites.getSelectedSite(),
+			selectedSite,
 			this.props.cart
 		);
 
 		upgradesActions.addItems( items );
 
 		if ( this.isMounted() ) {
-			page( '/checkout/' + this.props.sites.getSelectedSite().slug );
+			page( '/checkout/' + selectedSite.slug );
 		}
 	},
 
@@ -106,6 +129,8 @@ var MapDomain = React.createClass( {
 				<HeaderCake onClick={ this.goBack }>
 					{ this.translate( 'Map a Domain' ) }
 				</HeaderCake>
+
+				{ this.state.errorMessage && <Notice status="is-error" text={ this.state.errorMessage }/> }
 
 				<MapDomainStep
 					{ ...omit( this.props, [ 'children', 'productsList', 'sites' ] ) }
