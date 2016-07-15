@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
 import shuffle from 'lodash/shuffle';
@@ -18,7 +19,7 @@ import Gridicon from 'components/gridicon';
 import { isDomainRegistration, isPlan, isGoogleApps } from 'lib/products-values';
 import notices from 'notices';
 import purchasePaths from '../paths';
-import { removePurchase } from 'lib/upgrades/actions';
+import { removePurchase } from 'state/purchases/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
@@ -26,6 +27,9 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
+import userFactory from 'lib/user';
+
+const user = userFactory();
 
 /**
  * Module dependencies
@@ -35,13 +39,13 @@ const debug = debugFactory( 'calypso:purchases:survey' );
 
 const RemovePurchase = React.createClass( {
 	propTypes: {
-		selectedPurchase: React.PropTypes.object.isRequired,
+		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
+		selectedPurchase: React.PropTypes.object,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool,
 			React.PropTypes.undefined
-		] ),
-		user: React.PropTypes.object.isRequired
+		] )
 	},
 
 	getInitialState() {
@@ -96,7 +100,7 @@ const RemovePurchase = React.createClass( {
 		this.setState( { isRemoving: true } );
 
 		const purchase = getPurchase( this.props ),
-			{ selectedSite, user } = this.props;
+			{ selectedSite } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
 			const survey = wpcom.marketing().survey( 'calypso-remove-purchase', this.props.selectedSite.ID );
@@ -123,35 +127,33 @@ const RemovePurchase = React.createClass( {
 				.catch( err => debug( err ) ); // shouldn't get here
 		}
 
-		removePurchase( purchase.id, user.ID, success => {
-			if ( success ) {
-				const productName = getName( purchase );
+		this.props.removePurchase( purchase.id, user.get().ID ).then( () => {
+			const productName = getName( purchase );
 
-				if ( isDomainRegistration( purchase ) ) {
-					notices.success(
-						this.translate( 'The domain {{domain/}} was removed from your account.', {
-							components: { domain: <em>{ productName }</em> }
-						} ),
-						{ persistent: true }
-					);
-				} else {
-					notices.success(
-						this.translate( '%(productName)s was removed from {{siteName/}}.', {
-							args: { productName },
-							components: { siteName: <em>{ selectedSite.slug }</em> }
-						} ),
-						{ persistent: true }
-					);
-				}
-
-				page( purchasePaths.list() );
+			if ( isDomainRegistration( purchase ) ) {
+				notices.success(
+					this.translate( 'The domain {{domain/}} was removed from your account.', {
+						components: { domain: <em>{ productName }</em> }
+					} ),
+					{ persistent: true }
+				);
 			} else {
-				this.setState( { isRemoving: false } );
-
-				closeDialog();
-
-				notices.error( this.props.selectedPurchase.error );
+				notices.success(
+					this.translate( '%(productName)s was removed from {{siteName/}}.', {
+						args: { productName },
+						components: { siteName: <em>{ selectedSite.slug }</em> }
+					} ),
+					{ persistent: true }
+				);
 			}
+
+			page( purchasePaths.list() );
+		} ).catch( () => {
+			this.setState( { isRemoving: false } );
+
+			closeDialog();
+
+			notices.error( this.props.selectedPurchase.error );
 		} );
 	},
 
@@ -626,4 +628,7 @@ const RemovePurchase = React.createClass( {
 	}
 } );
 
-export default RemovePurchase;
+export default connect(
+	null,
+	{ removePurchase }
+)( RemovePurchase );

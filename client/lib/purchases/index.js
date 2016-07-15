@@ -224,10 +224,6 @@ function purchaseType( purchase ) {
 	return null;
 }
 
-function shouldFetchUserPurchases( purchases ) {
-	return ! purchases.hasLoadedUserPurchasesFromServer && ! purchases.isFetchingUserPurchases;
-}
-
 function showCreditCardExpiringWarning( purchase ) {
 	return ! isIncludedWithPlan( purchase ) &&
 		isPaidWithCreditCard( purchase ) &&
@@ -259,6 +255,5 @@ export {
 	isSubscription,
 	paymentLogoType,
 	purchaseType,
-	shouldFetchUserPurchases,
 	showCreditCardExpiringWarning,
 }

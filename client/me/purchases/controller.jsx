@@ -11,22 +11,20 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import CancelPrivateRegistration from './cancel-private-registration';
 import CancelPurchase from './cancel-purchase';
-import CancelPurchaseLoadingPlaceholder from './cancel-purchase/loading-placeholder';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import EditCardDetails from './payment/edit-card-details';
 import EditCardDetailsData from 'components/data/purchases/edit-card-details';
 import EditCardDetailsLoadingPlaceholder from './payment/edit-card-details/loading-placeholder';
-import { isDataLoading } from './utils';
 import Main from 'components/main';
 import ManagePurchase from './manage-purchase';
-import ManagePurchaseData from 'components/data/purchases/manage-purchase';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
 import notices from 'notices';
 import paths from './paths';
-import PurchasesData from 'components/data/purchases';
 import PurchasesHeader from './list/header';
 import PurchasesList from './list';
+import { receiveSite } from 'state/sites/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import { setAllSitesSelected, setSelectedSiteId } from 'state/ui/actions';
 import sitesFactory from 'lib/sites-list';
 import supportPaths from 'lib/url/support';
 import titleActions from 'lib/screen-title/actions';
@@ -61,6 +59,32 @@ function setTitle( ...title ) {
 	);
 }
 
+/**
+ * Populates `state.sites` and `state.ui` with the currently selected site.
+ * TODO: Remove this once `sites-list` is removed from Calypso.
+ *
+ * @param {String} siteSlug - The slug of a site.
+ * @param {Function} dispatch - Redux dispatcher
+ */
+const setSelectedSite = ( siteSlug, dispatch ) => {
+	const setSelectedSiteCalls = () => {
+		sites.setSelectedSite( siteSlug );
+		const selectedSite = sites.getSelectedSite();
+		dispatch( receiveSite( selectedSite ) );
+		dispatch( setSelectedSiteId( selectedSite.ID ) );
+	};
+
+	if ( sites.select( siteSlug ) ) {
+		setSelectedSiteCalls();
+	} else if ( ! sites.initialized ) {
+		sites.once( 'change', setSelectedSiteCalls );
+	} else {
+		// this is an edge case where the user has a purchase on a site they no
+		// longer have access to.
+		dispatch( setAllSitesSelected() );
+	}
+};
+
 export default {
 	cancelPrivateRegistration( context ) {
 		setTitle(
@@ -72,14 +96,13 @@ export default {
 			'Cancel Private Registration'
 		);
 
-		sites.setSelectedSite( context.params.site );
+		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
-			<ManagePurchaseData
-				component={ CancelPrivateRegistration }
-				purchaseId={ context.params.purchaseId }
-				sites={ sites } />
+			<CancelPrivateRegistration
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			/>
 		);
 	},
 
@@ -93,16 +116,13 @@ export default {
 			'Cancel Purchase'
 		);
 
-		sites.setSelectedSite( context.params.site );
+		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
-			<ManagePurchaseData
-				component={ CancelPurchase }
-				isDataLoading={ isDataLoading }
-				loadingPlaceholder={ CancelPurchaseLoadingPlaceholder }
-				purchaseId={ context.params.purchaseId }
-				sites={ sites } />
+			<CancelPurchase
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			/>
 		);
 	},
 
@@ -116,14 +136,13 @@ export default {
 			'Confirm Cancel Domain'
 		);
 
-		sites.setSelectedSite( context.params.site );
+		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
-			<ManagePurchaseData
-				component={ ConfirmCancelDomain }
-				purchaseId={ context.params.purchaseId }
-				sites={ sites } />
+			<ConfirmCancelDomain
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			/>
 		);
 	},
 
@@ -137,14 +156,14 @@ export default {
 			'Edit Card Details'
 		);
 
-		sites.setSelectedSite( context.params.site );
+		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
 			<EditCardDetailsData
 				cardId={ context.params.cardId }
 				component={ EditCardDetails }
-				purchaseId={ context.params.purchaseId }
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				loadingPlaceholder={ EditCardDetailsLoadingPlaceholder }
 				sites={ sites } />
 		);
@@ -159,10 +178,10 @@ export default {
 
 		renderPage(
 			context,
-			<PurchasesData
-				component={ PurchasesList }
+			<PurchasesList
+				sites={ sites }
 				noticeType={ context.params.noticeType }
-				sites={ sites } />
+			/>
 		);
 	},
 
@@ -201,15 +220,14 @@ export default {
 			'Manage Purchase'
 		);
 
-		sites.setSelectedSite( context.params.site );
+		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
-			<ManagePurchaseData
-				component={ ManagePurchase }
-				purchaseId={ context.params.purchaseId }
+			<ManagePurchase
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				destinationType={ context.params.destinationType }
-				sites={ sites } />
+			/>
 		);
 	},
 

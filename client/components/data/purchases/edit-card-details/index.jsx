@@ -7,47 +7,34 @@ import React from 'react';
  * Internal dependencies
  */
 import CountriesList from 'lib/countries-list';
-import { fetchStoredCards, fetchUserPurchases } from 'lib/upgrades/actions';
+import { fetchStoredCards } from 'lib/upgrades/actions';
 import observe from 'lib/mixins/data-observe';
-import PurchasesStore from 'lib/purchases/store';
-import { shouldFetchUserPurchases } from 'lib/purchases';
 import StoreConnection from 'components/data/store-connection';
 import StoredCardsStore from 'lib/purchases/stored-cards/store';
-import userFactory from 'lib/user';
 
 /**
  * Module variables
  */
 const stores = [
-		PurchasesStore,
-		StoredCardsStore
-	],
-	user = userFactory();
+	StoredCardsStore
+];
 
 function getStateFromStores( props ) {
 	return {
 		card: StoredCardsStore.getByCardId( parseInt( props.cardId, 10 ) ),
 		isEditingSpecificCard: Boolean( props.cardId ),
 		countriesList: CountriesList.forPayments(),
-		hasLoadedSites: props.hasLoadedSites,
-		selectedPurchase: PurchasesStore.getByPurchaseId( parseInt( props.purchaseId, 10 ) ),
-		selectedSite: props.selectedSite
+		purchaseId: props.purchaseId
 	};
 }
 
-function isDataLoading( state ) {
-	return (
-		state.card.isFetching ||
-		! state.selectedPurchase.hasLoadedUserPurchasesFromServer ||
-		! state.hasLoadedSites
-	);
-}
+const isDataLoading = state => state.card.isFetching;
 
 const EditCardDetailsData = React.createClass( {
 	propTypes: {
 		cardId: React.PropTypes.string,
 		component: React.PropTypes.func.isRequired,
-		purchaseId: React.PropTypes.string.isRequired,
+		purchaseId: React.PropTypes.number.isRequired,
 		loadingPlaceholder: React.PropTypes.func.isRequired,
 		sites: React.PropTypes.object.isRequired
 	},
@@ -56,9 +43,6 @@ const EditCardDetailsData = React.createClass( {
 
 	componentWillMount() {
 		fetchStoredCards();
-		if ( shouldFetchUserPurchases( PurchasesStore.get() ) ) {
-			fetchUserPurchases( user.get().ID );
-		}
 	},
 
 	render() {

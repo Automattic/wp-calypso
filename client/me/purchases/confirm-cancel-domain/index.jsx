@@ -11,6 +11,7 @@ import analytics from 'lib/analytics';
 import cancellationReasons from './cancellation-reasons';
 import { cancelAndRefundPurchase } from 'lib/upgrades/actions';
 import Card from 'components/card';
+import { clearPurchases } from 'state/purchases/actions';
 import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
 import { connect } from 'react-redux';
 import FormButton from 'components/forms/form-button';
@@ -19,20 +20,28 @@ import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
-import { isDomainRegistration } from 'lib/products-values';
-import { getPurchase, goToCancelPurchase, isDataLoading, recordPageView } from '../utils';
+import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getName as getDomainName } from 'lib/purchases';
+import { getPurchase, goToCancelPurchase, isDataLoading, recordPageView } from '../utils';
+import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import { isDomainRegistration } from 'lib/products-values';
+import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
+import QueryUserPurchases from 'components/data/query-user-purchases';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import SelectDropdown from 'components/select-dropdown';
 import titles from 'me/purchases/titles';
+import userFactory from 'lib/user';
+
+const user = userFactory();
 
 const ConfirmCancelDomain = React.createClass( {
 	propTypes: {
-		purchaseId: React.PropTypes.string.isRequired,
-		selectedPurchase: React.PropTypes.object.isRequired,
+		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
+		purchaseId: React.PropTypes.number.isRequired,
+		selectedPurchase: React.PropTypes.object,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.bool,
 			React.PropTypes.object
@@ -120,6 +129,8 @@ const ConfirmCancelDomain = React.createClass( {
 			);
 
 			this.props.refreshSitePlans( purchase.siteId );
+
+			this.props.clearPurchases();
 
 			analytics.tracks.recordEvent(
 				'calypso_domain_cancel_form_submit',
@@ -218,9 +229,14 @@ const ConfirmCancelDomain = React.createClass( {
 
 	render() {
 		if ( isDataLoading( this.props ) ) {
-			return <ConfirmCancelDomainLoadingPlaceholder
-				purchaseId={ this.props.purchaseId }
-				selectedSite={ this.props.selectedSite } />;
+			return (
+				<div>
+					<QueryUserPurchases userId={ user.get().ID } />
+					<ConfirmCancelDomainLoadingPlaceholder
+						purchaseId={ this.props.purchaseId }
+						selectedSite={ this.props.selectedSite } />;
+				</div>
+			);
 		}
 
 		const purchase = getPurchase( this.props ),
@@ -262,12 +278,14 @@ const ConfirmCancelDomain = React.createClass( {
 } );
 
 export default connect(
-	null,
-	( dispatch ) => {
-		return {
-			refreshSitePlans( siteId ) {
-				dispatch( refreshSitePlans( siteId ) );
-			}
-		};
+	( state, props ) => ( {
+		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
+		selectedSite: getSelectedSiteSelector( state )
+	} ),
+	{
+		clearPurchases,
+		refreshSitePlans
 	}
 )( ConfirmCancelDomain );

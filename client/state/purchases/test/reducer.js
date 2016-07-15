@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	PURCHASE_REMOVE_COMPLETED,
 	PURCHASES_USER_FETCH,
 	PURCHASES_SITE_FETCH_COMPLETED,
 	PURCHASES_USER_FETCH_COMPLETED,
@@ -113,6 +114,23 @@ describe( 'reducer', () => {
 			data: [
 				{ ID: '2', blog_id: siteId, user_id: userId },
 				{ ID: '4', blog_id: 2702, user_id: userId } // the new purchase was not removed because it has a different `blog_id`
+			],
+			error: null,
+			isFetchingSitePurchases: false,
+			isFetchingUserPurchases: false,
+			hasLoadedSitePurchasesFromServer: true,
+			hasLoadedUserPurchasesFromServer: true
+		} );
+
+		state = reducer( state, {
+			type: PURCHASE_REMOVE_COMPLETED,
+			purchases: [ state.data[ 0 ] ],
+			userId
+		} );
+
+		expect( state ).to.be.eql( {
+			data: [
+				{ ID: '2', blog_id: siteId, user_id: userId }
 			],
 			error: null,
 			isFetchingSitePurchases: false,
