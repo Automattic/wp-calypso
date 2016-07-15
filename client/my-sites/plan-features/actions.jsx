@@ -22,16 +22,15 @@ const PlanFeaturesActions = ( {
 	translate
 } ) => {
 	let upgradeButton;
+	const className = classNames( {
+		'plan-features__actions-button': true,
+		'is-current': current,
+		'is-popular': popular
+	} );
 
 	if ( current ) {
 		upgradeButton = (
-			<Button
-				className={ classNames( {
-					'plan-features__actions-button': true,
-					'is-current': true,
-					'is-popular': popular
-				} ) }
-				disabled>
+			<Button className={ className } disabled>
 				<Gridicon size={ 18 } icon="checkmark" />
 				{ translate( 'Your plan' ) }
 			</Button>
@@ -39,10 +38,7 @@ const PlanFeaturesActions = ( {
 	} else if ( available || isPlaceholder ) {
 		upgradeButton = (
 			<Button
-				className={ classNames( {
-					'plan-features__actions-button': true,
-					'is-popular': popular
-				} ) }
+				className={ className }
 				onClick={ isPlaceholder ? noop : onUpgradeClick }
 				primary={ ! isPlaceholder }
 				disabled={ isPlaceholder }
