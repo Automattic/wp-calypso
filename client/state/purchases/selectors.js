@@ -7,7 +7,10 @@ import purchasesAssembler from 'lib/purchases/assembler';
  * @param {Object} state - current state object
  * @return {Array} Purchases
  */
-export const getPurchases = state => state.purchases.data;
+export const getPurchases = createSelector(
+	state => purchasesAssembler.createPurchasesArray( state.purchases.data ),
+	state => [ state.purchases.data ]
+);
 
 /**
  * Returns the server error for site or user purchases (if there is one)
@@ -24,7 +27,7 @@ export const getPurchasesError = state => state.purchases.error;
  * @return {Object} the matching purchase if there is one
  */
 export const getByPurchaseId = ( state, purchaseId ) => (
-	purchasesAssembler.createPurchasesArray( getPurchases( state ).filter( purchase => purchase.ID === purchaseId ) ).shift()
+	getPurchases( state ).filter( purchase => purchase.id === purchaseId ).shift()
 );
 
 /**
