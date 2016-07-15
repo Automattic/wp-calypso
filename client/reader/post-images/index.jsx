@@ -4,13 +4,13 @@
 const React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	resizeImageUrl = require( 'lib/resize-image-url' );
+import { uniqBy } from 'lodash';
 
 const PostImages = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render: function() {
-		const images = this.props.postImages,
-			count = images.length;
+		const images = uniqBy( this.props.postImages, 'src' );
 
 		return (
 			<div className="post-images">
@@ -30,7 +30,7 @@ const PostImageThumbList = React.createClass( {
 			thumbList = images.map( function( image, index ) {
 				return (
 					<li key={ 'thumb-image-' + index } className="post-images__item">
-						<img className="post-images__image" src={ resizeImageUrl( image.src, { resize: '640,130' } ) } />
+						<img className="post-images__image" src={ resizeImageUrl( image.src, { resize: '640,240' } ) } />
 					</li>
 				);
 			} );

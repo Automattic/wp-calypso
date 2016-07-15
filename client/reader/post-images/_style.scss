@@ -8,7 +8,7 @@
 .post-images__list {
 	list-style: none;
 	margin: 0;
-	height: 130px;
+	height: 240px;
 	display: flex;
 }
 
@@ -20,11 +20,11 @@
 }
 
 .post-images__item:first-child {
-	flex: 3
+	flex: 2
 }
 
 .post-images__image {
-	height: 130px;
+	height: 240px;
 	width: 100%;
 	object-fit: cover;
 }
