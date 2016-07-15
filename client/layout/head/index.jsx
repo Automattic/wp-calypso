@@ -41,4 +41,6 @@ Head.propTypes = {
 	children: React.PropTypes.node,
 };
 
+Head.defaultProps = { siteName: 'WordPress.com' };
+
 export default Head;
