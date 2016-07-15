@@ -101,10 +101,10 @@ module.exports = {
 	},
 
 	handleRadio( event ) {
-		const name = event.currentTarget.name,
-			value = event.currentTarget.value;
+		const currentTargetName = event.currentTarget.name,
+			currentTargetValue = event.currentTarget.value;
 
-		this.setState( { [ name ]: value } );
+		this.setState( { [ currentTargetName ]: currentTargetValue } );
 	},
 
 	toggleJetpackModule( module ) {
