@@ -18,6 +18,11 @@ const GoogleAppsUserItem = React.createClass( {
 		return this.props.user !== nextProps.user || this.props.onClick !== nextProps.onClick;
 	},
 
+	getLoginLink() {
+		const { email, domain } = this.props.user;
+		return `https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel&continue=https://admin.google.com/a/${ domain }`;
+	},
+
 	render() {
 		return (
 			<li>
@@ -28,7 +33,7 @@ const GoogleAppsUserItem = React.createClass( {
 				<ExternalLink
 					icon
 					className="google-apps-user-item__manage-link"
-					href={ `https://admin.google.com/a/${ this.props.user.domain }` }
+					href={ this.getLoginLink() }
 					onClick={ this.props.onClick }
 					target="_blank">
 					{ this.translate( 'Manage', { context: 'Google Apps user item' } ) }
