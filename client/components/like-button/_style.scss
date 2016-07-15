@@ -62,6 +62,14 @@
 		}
 	}
 
+	&.has-count {
+		&.has-label {
+			.like-button__label-status:before {
+				content: ' ';
+			}
+		}
+	}
+
 	@include breakpoint( "<480px" ) {
 		.like-button__label-status {
 			display: none;
