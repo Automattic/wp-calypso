@@ -2,33 +2,32 @@
 	color: $gray;
 	margin: -24px -24px 0 -24px;
 	padding: 0;
-	@include clear-fix;
+	cursor: pointer;
 }
 
 .post-images__list {
 	list-style: none;
-	float: left;
 	margin: 0;
-	overflow: hidden;
 	height: 80px;
-	@include clear-fix;
+	display: flex;
 }
 
 .post-images__item {
+	display: block;
+	flex: 1;
 	margin: 0;
-	float: left;
 	border-right: 1px solid #fff;
 }
 
 .post-images__image {
 	height: 80px;
-	width: 79px;
-	float: left;
+	max-width: 79px;
+	object-fit: cover;
 }
 
-.post-images__item,:last-child {
+.post-images__item:last-child {
 	border-right: none;
 	.post-images__image {
-		width: 80px;
+		max-width: 80px;
 	}
 }
