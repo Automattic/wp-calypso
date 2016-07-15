@@ -123,5 +123,14 @@ module.exports = {
 			hideVerticalScreenshots: 50,
 		},
 		defaultVariation: 'hideVerticalScreenshots',
-	}
+	},
+	jetpackConnectPlansFirst: {
+		datestamp: '20160715',
+		variations: {
+			showPlansBeforeAuth: 50,
+			showPlansAfterAuth: 50
+		},
+		defaultVariation: 'showPlansAfterAuth',
+		allowExistingUsers: true
+	},
 };

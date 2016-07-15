@@ -31,6 +31,11 @@ module.exports = function() {
 		page( '/jetpack/connect', jetpackConnectController.connect );
 
 		page(
+			'/jetpack/connect/choose/:site',
+			jetpackConnectController.plansPreSelection
+		);
+
+		page(
 			'/jetpack/connect/authorize/:locale?',
 			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
 			jetpackConnectController.saveQueryObject,

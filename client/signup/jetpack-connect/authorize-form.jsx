@@ -26,7 +26,7 @@ import {
 	activateManage,
 	goToXmlrpcErrorFallbackUrl
 } from 'state/jetpack-connect/actions';
-import { isCalypsoStartedConnection, hasXmlrpcError } from 'state/jetpack-connect/selectors';
+import { isCalypsoStartedConnection, hasXmlrpcError, getJetpackPlanSelected } from 'state/jetpack-connect/selectors';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
@@ -54,6 +54,9 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import Plans from './plans';
+import CheckoutData from 'components/data/checkout';
+import { abtest } from 'lib/abtest';
 
 /**
  * Constants
@@ -570,6 +573,12 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 	displayName: 'JetpackConnectAuthorizeForm',
 	mixins: [ observe( 'userModule' ) ],
 
+	getInitialState: function() {
+		return {
+			plan: null
+		};
+	},
+
 	isSSO() {
 		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
 		if ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] ) {
@@ -616,12 +625,18 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 				: <LoggedOutForm { ...props } isSSO={ this.isSSO() } />
 		);
 	},
-	render() {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
-		if ( typeof queryObject === 'undefined' ) {
-			return this.renderNoQueryArgsError();
-		}
 
+	renderPlansSelector() {
+		return (
+				<div>
+					<CheckoutData>
+						<Plans plans={ this.props.plans } showFirst={ true } siteSlug={ this.props.siteSlug } />
+					</CheckoutData>
+				</div>
+		);
+	},
+
+	renderMainForm() {
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">
@@ -629,6 +644,24 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 				</div>
 			</MainWrapper>
 		);
+	},
+
+	render() {
+		const { queryObject } = this.props.jetpackConnectAuthorize;
+
+		if ( queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
+			this.renderMainForm();
+		}
+
+		if ( this.props.plansFirst && ! this.props.hasJetpackPlanSelected ) {
+			return this.renderPlansSelector();
+		}
+
+		if ( typeof queryObject === 'undefined' ) {
+			return this.renderNoQueryArgsError();
+		}
+
+		return this.renderMainForm();
 	}
 } );
 
@@ -646,6 +679,12 @@ export default connect(
 			return isRequestingSites( state );
 		};
 		return {
+			siteSlug: state.jetpackConnect.jetpackConnectAuthorize.queryObject.site,
+			hasJetpackPlanSelected: !! getJetpackPlanSelected(
+				state.jetpackConnect.jetpackConnectSelectedPlans,
+				state.jetpackConnect.jetpackConnectAuthorize.queryObject.site
+			),
+			plansFirst: abtest( 'jetpackConnectPlansFirst' ) === 'showPlansBeforeAuth',
 			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
 			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
 			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
