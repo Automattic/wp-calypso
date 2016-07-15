@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import assign from 'lodash/assign';
+import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
 
@@ -11,34 +12,43 @@ import React from 'react';
 import analytics from 'lib/analytics';
 import camelCase from 'lodash/camelCase';
 import Card from 'components/card';
-import { clearPurchases } from 'lib/upgrades/actions/purchases';
+import { clearPurchases } from 'state/purchases/actions';
 import CompactCard from 'components/card/compact';
 import { createPaygateToken } from 'lib/store-transactions';
 import CreditCardForm from 'components/upgrades/credit-card-form';
+import EditCardDetailsLoadingPlaceholder from './loading-placeholder';
 import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
 import forOwn from 'lodash/forOwn';
 import HeaderCake from 'components/header-cake' ;
+import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
+import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { isRenewing } from 'lib/purchases';
+import { isRequestingSites } from 'state/sites/selectors';
 import kebabCase from 'lodash/kebabCase';
 import Main from 'components/main';
 import mapKeys from 'lodash/mapKeys';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
+import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
+import userFactory from 'lib/user';
 import { validateCardDetails } from 'lib/credit-card-details';
 import ValidationErrorList from 'notices/validation-error-list';
 import wpcomFactory from 'lib/wp';
 
+const user = userFactory();
 const wpcom = wpcomFactory.undocumented();
 
 const EditCardDetails = React.createClass( {
 	propTypes: {
 		card: React.PropTypes.object.isRequired,
 		countriesList: React.PropTypes.object.isRequired,
+		hasLoadedSites: React.PropTypes.bool.isRequired,
+		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
 		isEditingSpecificCard: React.PropTypes.bool.isRequired,
-		selectedPurchase: React.PropTypes.object.isRequired,
+		selectedPurchase: React.PropTypes.object,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
@@ -190,9 +200,9 @@ const EditCardDetails = React.createClass( {
 					persistent: true
 				} );
 
-				clearPurchases();
-
 				const { id } = getPurchase( this.props );
+
+				this.props.clearPurchases();
 
 				page( paths.managePurchase( this.props.selectedSite.slug, id ) );
 			} );
@@ -209,7 +219,7 @@ const EditCardDetails = React.createClass( {
 			year: cardDetails[ 'expiration-date' ].split( '/' )[ 1 ],
 			name: cardDetails.name,
 			paygateToken: token,
-			purchaseId: this.props.selectedPurchase.data.id
+			purchaseId: getPurchase( this.props ).id
 		};
 	},
 
@@ -255,7 +265,8 @@ const EditCardDetails = React.createClass( {
 		if ( isDataLoading( this.props ) ) {
 			return (
 				<Main className="edit-card-details">
-					{ this.translate( 'Loading…' ) }
+					<QueryUserPurchases userId={ user.get().ID } />
+					<EditCardDetailsLoadingPlaceholder />
 				</Main>
 			);
 		}
@@ -293,4 +304,12 @@ const EditCardDetails = React.createClass( {
 	}
 } );
 
-export default EditCardDetails;
+export default connect(
+	( state, props ) => ( {
+		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
+		selectedSite: getSelectedSiteSelector( state )
+	} ),
+	{ clearPurchases }
+)( EditCardDetails );

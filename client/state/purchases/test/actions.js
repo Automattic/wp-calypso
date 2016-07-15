@@ -141,14 +141,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fetch/complete actions', () => {
-			const promise = removePurchase( purchaseId, userId )( spy );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: PURCHASE_REMOVE,
-				purchaseId
-			} );
-
-			return promise.then( () => {
+			return removePurchase( purchaseId, userId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASE_REMOVE_COMPLETED,
 					purchases,

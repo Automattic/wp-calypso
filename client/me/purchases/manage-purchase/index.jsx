@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
 
@@ -35,19 +36,26 @@ import {
 	showCreditCardExpiringWarning
 } from 'lib/purchases';
 import { getPurchase, getSelectedSite, goToList, recordPageView } from '../utils';
+import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
 import { isDomainRegistration } from 'lib/products-values';
+import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import paths from '../paths';
 import PaymentLogo from 'components/payment-logo';
 import ProductLink from 'me/purchases/product-link';
+import QueryUserPurchases from 'components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
+import VerticalNavItem from 'components/vertical-nav/item';
+import paths from '../paths';
 import support from 'lib/url/support';
 import titles from 'me/purchases/titles';
-import VerticalNavItem from 'components/vertical-nav/item';
+import userFactory from 'lib/user';
 import * as upgradesActions from 'lib/upgrades/actions';
+
+const user = userFactory();
 
 function canEditPaymentDetails( purchase ) {
 	return config.isEnabled( 'upgrades/credit-cards' ) && ! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase );
@@ -61,20 +69,20 @@ function canEditPaymentDetails( purchase ) {
  * @return {boolean} Whether or not the data is loading
  */
 function isDataLoading( props ) {
-	return ! props.hasLoadedSites || ! props.selectedPurchase.hasLoadedUserPurchasesFromServer;
+	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
 }
 
 const ManagePurchase = React.createClass( {
 	propTypes: {
 		destinationType: React.PropTypes.string,
 		hasLoadedSites: React.PropTypes.bool.isRequired,
-		selectedPurchase: React.PropTypes.object.isRequired,
+		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
+		selectedPurchase: React.PropTypes.object,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool,
 			React.PropTypes.undefined
-		] ),
-		user: React.PropTypes.object.isRequired
+		] )
 	},
 
 	componentWillMount() {
@@ -126,7 +134,7 @@ const ManagePurchase = React.createClass( {
 					{
 						args: {
 							purchaseName: getName( purchase ),
-							siteSlug: this.props.selectedSite.slug
+							siteSlug: this.props.selectedPurchase.domain
 						},
 						components: {
 							contactSupportLink: <a href={ support.CALYPSO_CONTACT } />
@@ -622,9 +630,10 @@ const ManagePurchase = React.createClass( {
 
 				<RemovePurchase
 					hasLoadedSites={ this.props.hasLoadedSites }
+					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
 					selectedSite={ this.props.selectedSite }
 					selectedPurchase={ this.props.selectedPurchase }
-					user={ this.props.user } />
+				/>
 			</div>
 		);
 	},
@@ -636,6 +645,7 @@ const ManagePurchase = React.createClass( {
 
 		return (
 			<span>
+				<QueryUserPurchases userId={ user.get().ID } />
 				<Main className="manage-purchase">
 					<HeaderCake onClick={ goToList }>
 						{ titles.managePurchase }
@@ -648,4 +658,11 @@ const ManagePurchase = React.createClass( {
 	}
 } );
 
-export default ManagePurchase;
+export default connect(
+	( state, props ) => ( {
+		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
+		selectedSite: getSelectedSiteSelector( state )
+	} )
+)( ManagePurchase );
