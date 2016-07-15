@@ -202,8 +202,16 @@ describe( 'reducer', () => {
 				.to.have.all.keys( getExpectedResponseKeys().concat( [
 					'error',
 					'isRequesting',
-					'lastSuccessfulStatus'
+					'lastSuccessfulStatus',
+					'errorCounter'
 				] ) );
+		} );
+
+		it( 'should set errorCounter to 0 after a successful request', () => {
+			const state = syncStatus( undefined, successfulSyncStatusRequest );
+			expect( state ).to.have.property( String( successfulSyncStatusRequest.siteId ) )
+				.to.have.property( 'errorCounter' )
+				.to.be.eql( 0 );
 		} );
 
 		it( 'should set isRequesting to false when fetching for a site errors', () => {
@@ -218,6 +226,24 @@ describe( 'reducer', () => {
 			expect( state ).to.have.property( String( erroredSyncStatusRequest.siteId ) )
 				.to.have.property( 'error' )
 				.to.be.eql( erroredSyncStatusRequest.error );
+		} );
+
+		it( 'should set errorCounter to 1 when errorCounter previously undefined', () => {
+			const state = syncStatus( undefined, erroredSyncStatusRequest );
+			expect( state ).to.have.property( String( erroredSyncStatusRequest.siteId ) )
+				.to.have.property( 'errorCounter' )
+				.to.be.eql( 1 );
+		} );
+
+		it( 'should increment errorCounter when multiple errors occur', () => {
+			const state = syncStatus(
+				syncStatus( undefined, erroredSyncStatusRequest ),
+				erroredSyncStatusRequest
+			);
+
+			expect( state ).to.have.property( String( erroredSyncStatusRequest.siteId ) )
+				.to.have.property( 'errorCounter' )
+				.to.be.eql( 2 );
 		} );
 	} );
 
