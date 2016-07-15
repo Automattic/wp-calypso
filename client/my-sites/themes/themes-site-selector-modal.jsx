@@ -66,14 +66,11 @@ const ThemesSiteSelectorModal = React.createClass( {
 	},
 
 	render() {
-		const wrappedDefaultOption = this.wrapOption( this.props.defaultOption );
-		const wrappedOptions = mapValues( this.props.options, this.wrapOption );
-
 		const children = React.cloneElement(
 			this.props.children,
 			Object.assign( {}, omit( this.props, [ 'children', 'options', 'defaultOption' ] ), {
-				options: wrappedOptions,
-				defaultOption: wrappedDefaultOption
+				options: mapValues( this.props.options, this.wrapOption ),
+				defaultOption: this.wrapOption( this.props.defaultOption )
 			} )
 		);
 
