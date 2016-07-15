@@ -105,10 +105,10 @@ const FirstView = React.createClass( {
 
 	updateDocumentStylesForHiddenFirstView() {
 		document.documentElement.classList.remove( 'no-scroll', 'is-first-view-visible' );
-		// wait until next tick so that we trigger the CSS transition
-		process.nextTick( () => {
+		// wait a bit so that we trigger the CSS transition
+		setTimeout( () => {
 			document.documentElement.classList.remove( 'is-first-view-active' );
-		} );
+		}, 200 );
 	}
 } );
 
