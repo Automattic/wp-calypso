@@ -5,7 +5,6 @@ import React, { PropTypes } from 'react';
 import page from 'page';
 import defer from 'lodash/defer';
 import omit from 'lodash/omit';
-import isEmpty from 'lodash/isEmpty';
 import mapValues from 'lodash/mapValues';
 
 /**
@@ -29,8 +28,8 @@ const ThemesSiteSelectorModal = React.createClass( {
 
 	getInitialState() {
 		return {
-			selectedTheme: {},
-			selectedOption: {},
+			selectedTheme: null,
+			selectedOption: null,
 		};
 	},
 
@@ -53,11 +52,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 	},
 
 	hideSiteSelectorModal() {
-		this.showSiteSelectorModal( {}, {} );
-	},
-
-	isThemeOrActionSet() {
-		return ! isEmpty( this.state.selectedTheme ) || ! isEmpty( this.state.selectedOption );
+		this.showSiteSelectorModal( null, null );
 	},
 
 	wrapOption( option ) {
@@ -82,25 +77,20 @@ const ThemesSiteSelectorModal = React.createClass( {
 			} )
 		);
 
-		const {
-			label,
-			header
-		} = this.state.selectedOption;
-
 		return (
 			<div>
 				{ children }
-				{ this.isThemeOrActionSet() && <SiteSelectorModal className="themes__site-selector-modal"
+				{ this.state.selectedOption && <SiteSelectorModal className="themes__site-selector-modal"
 					isVisible={ true }
 					filter={ function( site ) {
 						return ! site.jetpack;
 					} /* No Jetpack sites for now. */ }
 					hide={ this.hideSiteSelectorModal }
 					mainAction={ this.redirectAndCallAction }
-					mainActionLabel={ label }>
+					mainActionLabel={ this.state.selectedOption.label }>
 
 					<Theme isActionable={ false } theme={ this.state.selectedTheme } />
-					<h1>{ header }</h1>
+					<h1>{ this.state.selectedOption.header }</h1>
 				</SiteSelectorModal> }
 			</div>
 		);
