@@ -118,7 +118,8 @@ const PlansCompare = React.createClass( {
 
 	goBack() {
 		this.recordViewAllPlansClick();
-		return page.back( this.props.backUrl || this.getPlanURL() );
+
+		page.show( this.props.backUrl || this.getPlanURL() );
 	},
 
 	isDataLoading() {
