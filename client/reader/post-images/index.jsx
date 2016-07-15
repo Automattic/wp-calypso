@@ -18,7 +18,7 @@ const PostImages = React.createClass( {
 
 		return (
 			<div className="post-images">
-				<PostImageThumbList postImages={ images } />
+				<PostImageThumbList postImages={ images.slice( 0, 9 ) } />
 			</div>
 		);
 	}
