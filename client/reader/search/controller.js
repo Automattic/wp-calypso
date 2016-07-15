@@ -30,9 +30,13 @@ export default {
 		}
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		recordTrack( 'calypso_reader_search_loaded', searchSlug && {
-			query: searchSlug
-		} );
+		if ( searchSlug ) {
+			recordTrack( 'calypso_reader_search_performed', {
+				query: searchSlug
+			} );
+		} else {
+			recordTrack( 'calypso_reader_search_loaded' );
+		}
 
 		ReactDom.render(
 			React.createElement( SearchStream, {
