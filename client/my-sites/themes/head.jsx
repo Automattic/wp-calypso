@@ -16,7 +16,7 @@ const ThemesHead = ( { title, description, canonicalUrl, type, image, tier, chil
 		description={ description ? description : get( 'description', tier ) }
 		canonicalUrl={ canonicalUrl ? canonicalUrl : get( 'canonicalUrl', tier ) }
 		type={ type ? type : 'website' }
-		site_name={ 'WordPress.com' }
+		siteName={ 'WordPress.com' }
 		image={ image ? image : {} } >
 		{ children }
 	</Head>
