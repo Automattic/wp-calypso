@@ -138,6 +138,12 @@ function hasGoogleAppsSupportedDomain( domains ) {
 	return getGoogleAppsSupportedDomains( domains ).length > 0;
 }
 
+function hasPendingGoogleAppsUsers( domain ) {
+	return domain.googleAppsSubscription &&
+		domain.googleAppsSubscription.pendingUsers &&
+		domain.googleAppsSubscription.pendingUsers.length !== 0;
+}
+
 function getSelectedDomain( { domains, selectedDomainName } ) {
 	return find( domains.list, { name: selectedDomainName } );
 }
@@ -159,7 +165,6 @@ function hasMappedDomain( domains ) {
 }
 
 export {
-	hasGoogleAppsSupportedDomain,
 	canAddGoogleApps,
 	canMap,
 	canRedirect,
@@ -171,7 +176,9 @@ export {
 	getRegisteredDomains,
 	getMappedDomains,
 	hasGoogleApps,
+	hasGoogleAppsSupportedDomain,
 	hasMappedDomain,
+	hasPendingGoogleAppsUsers,
 	isInitialized,
 	isRegisteredDomain,
 	isSubdomain
