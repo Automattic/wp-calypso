@@ -35,6 +35,9 @@ Head.propTypes = {
 	title: React.PropTypes.string,
 	description: React.PropTypes.string,
 	canonicalUrl: React.PropTypes.string,
+	type: React.PropTypes.string,
+	siteName: React.PropTypes.string,
+	image: React.PropTypes.string,
 	children: React.PropTypes.node,
 };
 
