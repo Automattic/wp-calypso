@@ -72,7 +72,6 @@
 		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,
-		"plans/skip-plans-for-free": true,
 		"post-editor/insert-menu": true,
 		"press-this": true,
 		"preview-layout": true,
