@@ -34,15 +34,15 @@ const FirstView = React.createClass( {
 	},
 
 	componentDidMount() {
-		this.updatePageScrolling();
+		this.updateDocumentStyles();
 	},
 
 	componentDidUpdate() {
-		this.updatePageScrolling();
+		this.updateDocumentStyles();
 	},
 
 	componentWillUnmount() {
-		this.allowPageScrolling();
+		this.updateDocumentStylesForHiddenFirstView();
 	},
 
 	render() {
@@ -91,20 +91,24 @@ const FirstView = React.createClass( {
 		} );
 	},
 
-	updatePageScrolling() {
+	updateDocumentStyles() {
 		if ( this.props.isVisible ) {
-			this.preventPageScrolling();
+			this.updateDocumentStylesForVisibleFirstView();
 		} else {
-			this.allowPageScrolling();
+			this.updateDocumentStylesForHiddenFirstView();
 		}
 	},
 
-	preventPageScrolling() {
-		document.documentElement.classList.add( 'no-scroll' );
+	updateDocumentStylesForVisibleFirstView() {
+		document.documentElement.classList.add( 'no-scroll', 'is-first-view-visible', 'is-first-view-active' );
 	},
 
-	allowPageScrolling() {
-		document.documentElement.classList.remove( 'no-scroll' );
+	updateDocumentStylesForHiddenFirstView() {
+		document.documentElement.classList.remove( 'no-scroll', 'is-first-view-visible' );
+		// wait until next tick so that we trigger the CSS transition
+		process.nextTick( () => {
+			document.documentElement.classList.remove( 'is-first-view-active' );
+		} );
 	}
 } );
 
