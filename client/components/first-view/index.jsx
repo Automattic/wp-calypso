@@ -108,7 +108,7 @@ const FirstView = React.createClass( {
 		// wait a bit so that we trigger the CSS transition
 		setTimeout( () => {
 			document.documentElement.classList.remove( 'is-first-view-active' );
-		}, 200 );
+		}, 600 );
 	}
 } );
 
