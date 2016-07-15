@@ -1,21 +1,21 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var FollowButton = require( 'components/follow-button/button' ),
-	Card = require( 'components/card/compact' );
+import FollowButton from 'components/follow-button/button';
+import Card from 'components/card/compact';
 
-var FollowButtons = React.createClass( {
+const FollowButtons = React.createClass( {
 	displayName: 'FollowButtons',
 
 	mixins: [ PureRenderMixin ],
 
-	render: function() {
+	render() {
 		return (
 			<div className="design-assets__group">
 				<h2>
@@ -27,9 +27,12 @@ var FollowButtons = React.createClass( {
 				<Card compact>
 					<FollowButton following={ true } />
 				</Card>
+				<Card compact>
+					<FollowButton disabled={ true } />
+				</Card>
 			</div>
 		);
 	}
 } );
 
-module.exports = FollowButtons;
+export default FollowButtons;

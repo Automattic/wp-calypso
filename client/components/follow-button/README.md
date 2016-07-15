@@ -38,4 +38,5 @@ render: function() {
 
 #### Props
 
-* `following`: (default: false ) a boolean indicating if the current user is currently following the site URL
+* `following`: (default: false) a boolean indicating if the current user is currently following the site URL
+* `disabled`: (default: false) a boolean indicating if the button is currently disabled
