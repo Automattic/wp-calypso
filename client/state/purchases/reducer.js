@@ -96,12 +96,12 @@ function updatePurchases( existingPurchases, action ) {
 	let purchases, predicate;
 
 	if ( PURCHASES_SITE_FETCH_COMPLETED === action.type ) {
-		predicate = { blog_id: action.siteId };
+		predicate = { blog_id: String( action.siteId ) };
 	}
 
 	if ( PURCHASES_USER_FETCH_COMPLETED === action.type ||
 		PURCHASE_REMOVE_COMPLETED === action.type ) {
-		predicate = { user_id: action.userId };
+		predicate = { user_id: String( action.userId ) };
 	}
 
 	purchases = removeMissingPurchasesByPredicate( existingPurchases, action.purchases, predicate );

@@ -2,9 +2,42 @@
 import { expect } from 'chai';
 
 // Internal dependencies
-import { getByPurchaseId, isFetchingUserPurchases, isFetchingSitePurchases } from '../selectors';
+import { getPurchases, getByPurchaseId, isFetchingUserPurchases, isFetchingSitePurchases } from '../selectors';
+import purchasesAssembler from 'lib/purchases/assembler';
 
 describe( 'selectors', () => {
+	describe( 'getPurchases', () => {
+		it( 'should return different purchases when the purchase data changes', () => {
+			const initialPurchases = Object.freeze( [
+				{ ID: 1, product_name: 'domain registration', blog_id: 1337 },
+				{ ID: 2, product_name: 'premium plan', blog_id: 1337 }
+			] );
+
+			const state = {
+				purchases: {
+					data: initialPurchases,
+					error: null,
+					isFetchingSitePurchases: false,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: true
+				}
+			};
+
+			expect( getPurchases( state ) ).to.deep.equal( purchasesAssembler.createPurchasesArray( initialPurchases ) );
+
+			const newPurchases = Object.freeze( [
+				{ ID: 3, product_name: 'business plan', blog_id: 3117 }
+			] );
+
+			expect( getPurchases( Object.assign( state, {
+				purchases: {
+					data: newPurchases
+				}
+			} ) ) ).to.deep.equal( purchasesAssembler.createPurchasesArray( newPurchases ) );
+		} );
+	} );
+
 	describe( 'getByPurchaseId', () => {
 		it( 'should return a purchase by its ID', () => {
 			const state = {
