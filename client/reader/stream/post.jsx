@@ -178,7 +178,7 @@ const Post = React.createClass( {
 			featuredEmbed = null;
 		}
 
-		if ( ! ( featuredImage || featuredEmbed ) ) {
+		if ( ! ( featuredEmbed ) ) {
 			return null;
 		}
 
@@ -203,24 +203,11 @@ const Post = React.createClass( {
 			featuredSize = this.getFeaturedSize( maxWidth );
 		}
 
-		return useFeaturedEmbed
-			? <div
+		return <div
 					ref="featuredEmbed"
 					className="reader__post-featured-video"
 					key="featuredVideo"
-					dangerouslySetInnerHTML={ { __html: featuredEmbed.iframe } } />  //eslint-disable-line react/no-danger
-			: <div
-					className="reader__post-featured-image"
-					onClick={ this.handlePermalinkClick }>
-				{ featuredSize
-					? <img className="reader__post-featured-image-image"
-							ref="featuredImage"
-							src={ featuredImage }
-							style={ featuredSize }
-						/>
-					: <img className="reader__post-featured-image-image" src={ featuredImage } />
-				}
-			</div>;
+					dangerouslySetInnerHTML={ { __html: featuredEmbed.iframe } } />;  //eslint-disable-line react/no-danger
 	},
 
 	updateFeatureSize: function() {
@@ -416,11 +403,9 @@ const Post = React.createClass( {
 				{ this.props.showPostHeader ? <PostHeader site={ site } siteUrl={ post.site_URL } showFollow={ this.props.showFollowInHeader } onSiteSelect={ this.pickSite } onSiteClick={ this.handleSiteClick } /> : null }
 
 				{ featuredImage }
-				{ ! shouldShowExcerptOnly
-					? <PostImages postImages={ ( post.content_images || [] ).filter( img => {
-						return post.canonical_image && img.src !== post.canonical_image.uri;
-					} ) } />
-					: null }
+				{ ! featuredImage && post.images && <PostImages postImages={ post.images.filter( image => {
+					return image.naturalWidth > 320 && image.naturalHeight > 320;
+				} ) } /> }
 
 				{ post.title ? <h1 className="reader__post-title"><a className="reader__post-title-link" href={ post.URL } target="_blank">{ post.title }</a></h1> : null }
 

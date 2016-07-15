@@ -1,6 +1,6 @@
 .post-images {
 	color: $gray;
-	margin: -24px -24px 0 -24px;
+	margin: 0 -24px 0 -24px;
 	padding: 0;
 	cursor: pointer;
 }
@@ -8,7 +8,7 @@
 .post-images__list {
 	list-style: none;
 	margin: 0;
-	height: 80px;
+	height: 130px;
 	display: flex;
 }
 
@@ -19,8 +19,12 @@
 	border-right: 1px solid #fff;
 }
 
+.post-images__item:first-child {
+	flex: 3
+}
+
 .post-images__image {
-	height: 80px;
+	height: 130px;
 	width: 100%;
 	object-fit: cover;
 }
