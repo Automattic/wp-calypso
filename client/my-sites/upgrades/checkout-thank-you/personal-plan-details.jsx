@@ -21,11 +21,10 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 
 			<PurchaseDetail
 				icon="speaker"
-				title={ translate( 'No Ads' ) }
+				title={ translate( 'Advertising Removed' ) }
 				description={ translate(
-					'Personal plan automatically removes all Ads from your site. ' +
-					'Now your visitors can enjoy your great content without distractions!'
-				)	}
+					'With your plan, all WordPress.com advertising has been removed from your site.'
+				) }
 			/>
 		</div>
 	);

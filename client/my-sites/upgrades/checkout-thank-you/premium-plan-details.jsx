@@ -29,13 +29,10 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 
 			<PurchaseDetail
 				icon="speaker"
-				title={ i18n.translate( 'No Ads' ) }
-				description={
-					i18n.translate(
-						'Your plan removes advertising from your site so ' +
-						'your visitors can enjoy your content without distractions!'
-					)
-				}
+				title={ i18n.translate( 'Advertising Removed' ) }
+				description={ i18n.translate(
+					'With your plan, all WordPress.com advertising has been removed from your site.'
+				) }
 			/>
 
 			<QuerySiteVouchers siteId={ selectedSite.ID } />
