@@ -12,7 +12,7 @@ const PostImages = React.createClass( {
 		const images = this.props.postImages,
 			count = images.length;
 
-		if ( count < 5 ) {
+		if ( count < 2 ) {
 			return null;
 		}
 
@@ -34,7 +34,7 @@ const PostImageThumbList = React.createClass( {
 			thumbList = images.map( function( image, index ) {
 				return (
 					<li key={ 'thumb-image-' + index } className="post-images__item">
-						<img className="post-images__image" src={ resizeImageUrl( image.src, { resize: '80,80' } ) } />
+						<img className="post-images__image" src={ resizeImageUrl( image.src, { resize: '240,240' } ) } />
 					</li>
 				);
 			} );

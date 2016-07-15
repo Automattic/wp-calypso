@@ -21,13 +21,10 @@
 
 .post-images__image {
 	height: 80px;
-	max-width: 79px;
+	width: 100%;
 	object-fit: cover;
 }
 
 .post-images__item:last-child {
 	border-right: none;
-	.post-images__image {
-		max-width: 80px;
-	}
 }
