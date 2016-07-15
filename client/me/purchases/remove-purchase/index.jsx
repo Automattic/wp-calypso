@@ -114,7 +114,7 @@ const RemovePurchase = React.createClass( {
 					text: this.state.questionTwoText
 				},
 				'what-better': { text: this.state.questionThreeText },
-				purchase: purchase,
+				purchase: purchase.productSlug,
 				type: 'cancel'
 			} );
 
