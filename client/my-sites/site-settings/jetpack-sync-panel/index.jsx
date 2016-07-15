@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import classNames from 'classnames';
 import debugModule from 'debug';
 import { get } from 'lodash';
 
@@ -22,6 +21,7 @@ import {
 	scheduleJetpackFullysync
 } from 'state/jetpack-sync/actions';
 import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
+import NoticeAction from 'components/notice/notice-action';
 
 /*
  * Module variables
@@ -39,6 +39,11 @@ const JetpackSyncPanel = React.createClass( {
 		this.props.getSyncStatus( this.props.siteId );
 	},
 
+	isErrored() {
+		const isErrored = get( this.props, 'syncStatus.error' ) || get( this.props, 'fullSyncRequest.error' );
+		return !! isErrored;
+	},
+
 	shouldDisableSync() {
 		return !! ( this.props.isFullSyncing || this.props.isPendingSyncStart );
 	},
@@ -49,7 +54,45 @@ const JetpackSyncPanel = React.createClass( {
 		this.props.scheduleJetpackFullysync( this.props.siteId );
 	},
 
+	onTryAgainClick( event ) {
+		event.preventDefault();
+		debug( 'Try again button clicked' );
+		this.props.scheduleJetpackFullysync( this.props.siteId );
+	},
+
+	renderErrorNotice() {
+		const syncRequestError = get( this.props, 'fullSyncRequest.error' );
+		if ( ! syncRequestError ) {
+			return null;
+		}
+
+		return (
+			<Notice isCompact status="is-error" className="jetpack-sync-panel__error-notice">
+				{
+					syncRequestError.message
+					? syncRequestError.message
+					: this.translate( 'There was an error scheduling a full sync.' )
+				}
+				{
+					// We show a Try again action for a generic error on the assumption
+					// that the error was a network issue.
+					//
+					// If an error message was returned from the API, then there's likely
+					// a good reason the request failed, such as an unauthorized user.
+					! syncRequestError.message &&
+					<NoticeAction onClick={ this.onTryAgainClick }>
+						{ this.translate( 'Try again' ) }
+					</NoticeAction>
+				}
+			</Notice>
+		);
+	},
+
 	renderStatusNotice() {
+		if ( this.isErrored() ) {
+			return null;
+		}
+
 		const finished = get( this.props, 'syncStatus.finished' );
 		const finishedTimestamp = this.moment( parseInt( finished, 10 ) * 1000 );
 		let text = '';
@@ -68,14 +111,14 @@ const JetpackSyncPanel = React.createClass( {
 		}
 
 		return (
-			<Notice isCompact className={ classNames( 'jetpack-sync-panel__notice' ) }>
+			<Notice isCompact className="jetpack-sync-panel__status-notice">
 				{ text }
 			</Notice>
 		);
 	},
 
 	renderProgressBar() {
-		if ( ! this.shouldDisableSync() ) {
+		if ( ! this.shouldDisableSync() || this.isErrored() ) {
 			return null;
 		}
 
@@ -108,6 +151,7 @@ const JetpackSyncPanel = React.createClass( {
 					</div>
 				</div>
 
+				{ this.renderErrorNotice() }
 				{ this.renderStatusNotice() }
 				{ this.renderProgressBar() }
 				{ this.shouldDisableSync() && <Interval onTick={ this.fetchSyncStatus } period={ EVERY_FIVE_SECONDS } /> }

@@ -27,15 +27,18 @@
 }
 
 .jetpack-sync-panel .notice {
-	background: none;
-	color: $gray;
 	margin-top: 16px;
 }
 
-.jetpack-sync-panel .notice .notice__text {
+.jetpack-sync-panel__status-notice {
+	background: none;
+	color: $gray;
+}
+
+.jetpack-sync-panel .jetpack-sync-panel__status-notice .notice__text {
 	padding-left: 0;
 }
 
-.jetpack-sync-panel .notice .notice__icon {
+.jetpack-sync-panel__status-notice .notice__icon {
 	display: none;
 }
