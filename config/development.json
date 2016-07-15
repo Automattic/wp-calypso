@@ -103,7 +103,6 @@
 		"perfmon": false,
 		"persist-redux": true,
 		"plans/personal-plan": true,
-		"plans/skip-plans-for-free": true,
 		"plans/wordpress-ad-credits": true,
 		"post-editor-github-link": false,
 		"post-editor/image-editor": false,
