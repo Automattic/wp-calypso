@@ -416,6 +416,11 @@ const Post = React.createClass( {
 				{ this.props.showPostHeader ? <PostHeader site={ site } siteUrl={ post.site_URL } showFollow={ this.props.showFollowInHeader } onSiteSelect={ this.pickSite } onSiteClick={ this.handleSiteClick } /> : null }
 
 				{ featuredImage }
+				{ ! shouldShowExcerptOnly
+					? <PostImages postImages={ ( post.content_images || [] ).filter( img => {
+						return post.canonical_image && img.src !== post.canonical_image.uri;
+					} ) } />
+					: null }
 
 				{ post.title ? <h1 className="reader__post-title"><a className="reader__post-title-link" href={ post.URL } target="_blank">{ post.title }</a></h1> : null }
 
@@ -431,10 +436,6 @@ const Post = React.createClass( {
 						</EmbedContainer>
 					: <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 				}
-
-				{ ! shouldShowExcerptOnly
-					? <PostImages postImages={ post.content_images || [] } />
-					: null }
 
 				{ ( isDiscoverPost && post.discover_metadata && ! isDiscoverSitePick ) ? <DiscoverPostAttribution attribution={ post.discover_metadata.attribution } siteUrl={ discoverSiteUrl } /> : null }
 				{ ( isDiscoverSitePick ) ? <DiscoverSiteAttribution attribution={ post.discover_metadata.attribution } siteUrl={ discoverSiteUrl } /> : null }
