@@ -14,7 +14,7 @@ import CompactCard from 'components/card/compact';
 import Button from 'components/button';
 import Notice from 'components/notice';
 import ProgressBar from 'components/progress-bar';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import syncSelectors from 'state/jetpack-sync/selectors';
 import {
 	getSyncStatus,
@@ -27,6 +27,7 @@ import NoticeAction from 'components/notice/notice-action';
  * Module variables
  */
 const debug = debugModule( 'calypso:site-settings:jetpack-sync-panel' );
+const SYNC_STATUS_ERROR_NOTICE_THRESHOLD = 3; // Only show sync status error notice if >= this number
 
 const JetpackSyncPanel = React.createClass( {
 	displayName: 'JetpackSyncPanel',
@@ -40,8 +41,9 @@ const JetpackSyncPanel = React.createClass( {
 	},
 
 	isErrored() {
-		const isErrored = get( this.props, 'syncStatus.error' ) || get( this.props, 'fullSyncRequest.error' );
-		return !! isErrored;
+		const syncRequestError = get( this.props, 'fullSyncRequest.error' );
+		const syncStatusErrorCount = get( this.props, 'syncStatus.errorCounter', 0 );
+		return !! ( syncRequestError || ( syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD ) );
 	},
 
 	shouldDisableSync() {
@@ -60,32 +62,56 @@ const JetpackSyncPanel = React.createClass( {
 		this.props.scheduleJetpackFullysync( this.props.siteId );
 	},
 
+	onClickDebug() {
+		debug( 'Clicked check connection button' );
+	},
+
 	renderErrorNotice() {
-		const syncRequestError = get( this.props, 'fullSyncRequest.error' );
-		if ( ! syncRequestError ) {
-			return null;
+		const syncRequestError = get( this.props, 'fullSyncRequest.error' ),
+			syncStatusErrorCount = get( this.props, 'syncStatus.errorCounter', 0 );
+
+		let errorNotice = null;
+		if ( syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD ) {
+			const adminUrl = get( this.props, 'site.options.admin_url' );
+			errorNotice = (
+				<Notice isCompact status="is-error" className="jetpack-sync-panel__error-notice">
+					{ this.translate( '%(site)s is unresponsive.', {
+						args: {
+							site: get( this.props, 'site.name' )
+						}
+					} ) }
+					{
+						adminUrl &&
+						<NoticeAction onClick={ this.onClickDebug } href={ adminUrl + 'admin.php?page=jetpack-debugger' }>
+							{ this.translate( 'Check connection' ) }
+						</NoticeAction>
+					}
+				</Notice>
+			);
+		} else if ( syncRequestError ) {
+			errorNotice = (
+				<Notice isCompact status="is-error" className="jetpack-sync-panel__error-notice">
+					{
+						syncRequestError.message
+						? syncRequestError.message
+						: this.translate( 'There was an error scheduling a full sync.' )
+					}
+					{
+						// We show a Try again action for a generic error on the assumption
+						// that the error was a network issue.
+						//
+						// If an error message was returned from the API, then there's likely
+						// a good reason the request failed, such as an unauthorized user.
+						! syncRequestError.message &&
+						<NoticeAction onClick={ this.onTryAgainClick }>
+							{ this.translate( 'Try again' ) }
+						</NoticeAction>
+					}
+				</Notice>
+			);
 		}
 
-		return (
-			<Notice isCompact status="is-error" className="jetpack-sync-panel__error-notice">
-				{
-					syncRequestError.message
-					? syncRequestError.message
-					: this.translate( 'There was an error scheduling a full sync.' )
-				}
-				{
-					// We show a Try again action for a generic error on the assumption
-					// that the error was a network issue.
-					//
-					// If an error message was returned from the API, then there's likely
-					// a good reason the request failed, such as an unauthorized user.
-					! syncRequestError.message &&
-					<NoticeAction onClick={ this.onTryAgainClick }>
-						{ this.translate( 'Try again' ) }
-					</NoticeAction>
-				}
-			</Notice>
-		);
+		return errorNotice;
 	},
 
 	renderStatusNotice() {
@@ -162,8 +188,10 @@ const JetpackSyncPanel = React.createClass( {
 
 export default connect(
 	state => {
-		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state ),
+			siteId = site.ID;
 		return {
+			site,
 			siteId,
 			syncStatus: syncSelectors.getSyncStatus( state, siteId ),
 			fullSyncRequest: syncSelectors.getFullSyncRequest( state, siteId ),

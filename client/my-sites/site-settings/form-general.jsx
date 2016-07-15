@@ -471,13 +471,13 @@ const FormGeneral = React.createClass( {
 			return null;
 		}
 
-		const site = this.props.site;
+		const { site } = this.props;
 		if ( ! site.jetpack || this.props.site.versionCompare( '4.2-alpha', '<' ) ) {
 			return null;
 		}
 
 		return (
-			<JetpackSyncPanel siteId={ site.ID } />
+			<JetpackSyncPanel />
 		);
 	},
 
