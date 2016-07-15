@@ -1,22 +1,22 @@
 // Setting up the .main div to accept the transitions for
 // the First View component.
-.main {
+.is-first-view-active .main {
 	opacity: 1;
 	pointer-events: auto;
 	transform: scale( 1 );
 	transition: all 0.2s ease-in-out;
+}
 
-	&.is-first-view-visible {
-		opacity: 0.4;
-		pointer-events: none;
-		-webkit-filter: blur( 3px );
-		transform: scale( 0.9 );
-		
-		// This limits the blur filter to Safari, as other browsers can't handle the
-		// awesomeness of transitioning blurs.
-		@supports (overflow:-webkit-marquee) and (justify-content:inherit) {
-			filter: blur( 3px );
-		}
+.is-first-view-visible .main {
+	opacity: 0.4;
+	pointer-events: none;
+	-webkit-filter: blur( 3px );
+	transform: scale( 0.9 );
+
+	// This limits the blur filter to Safari, as other browsers can't handle the
+	// awesomeness of transitioning blurs.
+	@supports (overflow:-webkit-marquee) and (justify-content:inherit) {
+		filter: blur( 3px );
 	}
 }
 
