@@ -1,12 +1,12 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import LikeIcons from './icons';
 

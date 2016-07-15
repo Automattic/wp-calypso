@@ -1,5 +1,5 @@
 Like Button
-=========
+===========
 
 This component is used to display a like button.
 It has two parts, the actual button and a container that works with the LikeStore.
@@ -48,3 +48,4 @@ handleLikeToggle: function( newState ) {
 * `liked`: (default: false ) a boolean indicating if the current user has liked whatever is being liked
 * `tagName`: (default: 'li' ) string, the tag to use for the button.
 * `onLikeToggle`: a callback that is invoked when the like button toggles. It is called with the new state.
+* `isMini`: show a smaller version of the button. Used on comment likes.

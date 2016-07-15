@@ -1,12 +1,12 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { omit, noop } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import LikeActions from 'lib/like-store/actions';
 import LikeButton from './button';
