@@ -75,9 +75,6 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				span(class=['environment', 'is-' + badge, 'is-env'])=badge
 				a(class='bug-report', href=feedbackURL, title='Report an issue', target='_blank')
 
-		if 'development' !== env
-			script( src=urls['catch-js-errors.js'] )
-
 		script.
 			(function() {
 				function isSupported() {
@@ -131,6 +128,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		else
 			script(src=urls[ 'vendor-min' ])
 			script(src=urls[ jsFile + '-' + env + '-min' ])
+			script(src=urls[ 'logger' ])
 			if chunk
 				script(src=urls[ '_commons-min' ])
 				script(src=urls[ chunk + '-min' ])
