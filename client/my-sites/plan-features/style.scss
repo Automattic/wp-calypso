@@ -386,10 +386,19 @@ $plan-features-sidebar-width: 272px;
 	text-align: center;
 }
 
-.ribbon__wrapper.plan-features__header-ribbon .ribbon__title {
-	background-color: $alert-green
+.ribbon__wrapper.plan-features__header-ribbon {
+	.ribbon__title {
+		background-color: $alert-green
+	}
+	.ribbon__title::before {
+		border-left-color: darken( $alert-green, 20% );
+		border-top-color: darken( $alert-green, 20% );
+	}
+	.ribbon__title::after {
+		border-right-color: darken( $alert-green, 20% );
+		border-top-color: darken( $alert-green, 20% );
+	}
 }
-
 .plan-features__actions-button {
 	width: 100%;
 	margin-top: 8px;
@@ -408,7 +417,8 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	&.is-popular {
-		background-color: $alert-green
+		background-color: $alert-green;
+		border-color: darken( $alert-green, 20% );
 	}
 
 	@include breakpoint( "<660px" ) {
