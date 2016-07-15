@@ -108,22 +108,22 @@ export const plansList = {
 		getPathSlug: () => 'premium',
 		getStoreSlug: () => PLAN_PREMIUM,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
-		getDescription: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, plus the ability to monetize your site with ads.', {
+		getDescription: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, and the ability to monetize your site with ads.', {
 			components: {
 				strong: <strong />
 			}
 		} ),
-		getDescriptionWithGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, plus the ability to monetize your site with ads.', {
+		getDescriptionWithGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, and the ability to monetize your site with ads.', {
 			components: {
 				strong: <strong />
 			}
 		} ),
-		getDescriptionWithWordAdsInstantActivation: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, plus the ability to monetize your site with ads.', {
+		getDescriptionWithWordAdsInstantActivation: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, and the ability to monetize your site with ads.', {
 			components: {
 				strong: <strong />
 			}
 		} ),
-		getDescriptionWithWordAdsInstantActivationAndGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, plus the ability to monetize your site with ads.', {
+		getDescriptionWithWordAdsInstantActivationAndGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, and the ability to monetize your site with ads.', {
 			components: {
 				strong: <strong />
 			}
