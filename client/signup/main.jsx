@@ -68,7 +68,14 @@ const Signup = React.createClass( {
 	},
 
 	loadDependenciesFromStore() {
-		this.setState( { dependencies: SignupDependencyStore.get() } );
+		const newDependencies = SignupDependencyStore.get();
+
+		// only update the state if the dependencies are updated
+		// this saves extra re-renders when the global state changes
+		if ( this.cachedDependencies !== newDependencies ) {
+			this.setState( { dependencies: newDependencies } );
+			this.cachedDependencies = newDependencies;
+		}
 	},
 
 	loadProgressFromStore() {
