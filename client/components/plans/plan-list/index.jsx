@@ -15,6 +15,8 @@ import { isJpphpBundle } from 'lib/products-values';
 import Plan from 'components/plans/plan';
 import { isEnabled } from 'config';
 
+const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
+
 const PlanList = React.createClass( {
 	getInitialState() {
 		return { openPlan: '' };
@@ -25,12 +27,11 @@ const PlanList = React.createClass( {
 	},
 
 	render() {
-		const personalPlanTestEnabled = abtest( 'personalPlan' ) === 'show' && isEnabled( 'plans/personal-plan' );
 		const isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer;
 		const { site, hideFreePlan, plans, intervalType, showJetpackFreePlan } = this.props;
 
 		let className = '',
-			numberOfPlaceholders = personalPlanTestEnabled ? 4 : 3;
+			numberOfPlaceholders = isPersonalPlanEnabled ? 4 : 3;
 
 		if ( hideFreePlan || ( site && site.jetpack ) ) {
 			numberOfPlaceholders = showJetpackFreePlan ? 3 : 2;

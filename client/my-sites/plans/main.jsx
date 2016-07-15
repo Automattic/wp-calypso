@@ -9,7 +9,6 @@ import find from 'lodash/find';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getCurrentPlan } from 'lib/plans';
@@ -107,7 +106,7 @@ const Plans = React.createClass( {
 		}
 
 		return (
-			<a 
+			<a
 				href={ plansLink( '/plans', selectedSite, intervalType ) }
 				className="show-monthly-plans-link"
 				onClick={ this.recordComparePlansClick }
@@ -136,7 +135,7 @@ const Plans = React.createClass( {
 		const selectedSite = this.props.sites.getSelectedSite(),
 			mainClassNames = {},
 			siteId = this.props.siteId,
-			personalPlanTestEnabled = abtest( 'personalPlan' ) === 'show' && isEnabled( 'plans/personal-plan' );
+			isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
 		let	hasJpphpBundle,
 			currentPlan;
@@ -158,7 +157,7 @@ const Plans = React.createClass( {
 			);
 		}
 
-		mainClassNames[ 'has-personal-plan' ] = ! showPlanFeatures && personalPlanTestEnabled;
+		mainClassNames[ 'has-personal-plan' ] = ! showPlanFeatures && isPersonalPlanEnabled;
 
 		return (
 			<div>
