@@ -51,7 +51,7 @@ const ThemeShowcase = React.createClass( {
 	onPreviewButtonClick( theme ) {
 		const { defaultOption } = this.props;
 		this.setState( { showPreview: false }, () => {
-			defaultOption.action( theme );
+			defaultOption.action && defaultOption.action( theme );
 		} );
 	},
 
@@ -72,6 +72,7 @@ const ThemeShowcase = React.createClass( {
 						theme={ this.state.previewingTheme }
 						onClose={ this.togglePreview }
 						buttonLabel={ defaultOption.label }
+						getButtonHref={ defaultOption.getUrl }
 						onButtonClick={ this.onPreviewButtonClick } />
 				}
 				<ThemesSelection search={ this.props.search }
