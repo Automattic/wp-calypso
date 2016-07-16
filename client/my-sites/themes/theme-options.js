@@ -14,8 +14,7 @@ import config from 'config';
 import {
 	customize as customizeAction,
 	purchase as purchaseAction,
-	activate as activateAction,
-	signup as signupAction
+	activate as activateAction
 } from 'state/themes/actions';
 import {
 	getSignupUrl,
@@ -75,7 +74,6 @@ export const signup = {
 	label: i18n.translate( 'Pick this design', {
 		comment: 'when signing up for a WordPress.com account with a selected theme'
 	} ),
-	action: signupAction,
 	getUrl: theme => getSignupUrl( theme )
 };
 

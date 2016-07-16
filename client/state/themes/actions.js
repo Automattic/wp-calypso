@@ -25,13 +25,12 @@ import {
 	THEME_RECEIVE_CURRENT,
 	THEME_REQUEST_CURRENT,
 	THEME_REQUEST_CURRENT_FAILURE,
-	THEME_SIGNUP_WITH,
 	THEMES_INCREMENT_PAGE,
 	THEMES_QUERY,
 	THEMES_RECEIVE,
 	THEMES_RECEIVE_SERVER_ERROR,
 } from '../action-types';
-import { getSignupUrl, getCustomizeUrl, navigateTo } from 'my-sites/themes/helpers';
+import { getCustomizeUrl, navigateTo } from 'my-sites/themes/helpers';
 import { getCurrentTheme } from './current-theme/selectors';
 import {
 	recordTracksEvent,
@@ -244,21 +243,6 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 export function clearActivated() {
 	return {
 		type: THEME_CLEAR_ACTIVATED
-	};
-}
-
-export function signup( theme ) {
-	return dispatch => {
-		const signupUrl = getSignupUrl( theme );
-
-		dispatch( {
-			type: THEME_SIGNUP_WITH,
-			theme
-		} );
-
-		// `navigateTo` uses `page()` here, which messes with `pushState`,
-		// which we don't want here, since we're navigating away from Calypso.
-		window.location = signupUrl;
 	};
 }
 
