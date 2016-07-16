@@ -358,19 +358,3 @@ export const isEditedPostDirty = createSelector(
 	},
 	( state ) => [ state.posts.items, state.posts.edits ]
 );
-
-/**
- * Returns true if the edited post has sufficient content to be saved, which is
- * determined by the presence of a title, content, or excerpt.
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  postId Post ID
- * @return {Boolean}        Whether content exists
- */
-export function isEditedPostContentEmpty( state, siteId, postId ) {
-	return ! some( [ 'title', 'content', 'excerpt' ], ( field ) => {
-		const value = getEditedPostValue( state, siteId, postId, field );
-		return value && value.trim().length;
-	} );
-}
