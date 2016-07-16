@@ -10,6 +10,7 @@ import sinon from 'sinon';
  */
 import {
 	POST_DELETE,
+	POST_DELETE_SUCCESS,
 	POST_EDIT,
 	POST_EDITS_RESET,
 	POST_REQUEST,
@@ -107,10 +108,15 @@ describe( 'reducer', () => {
 
 		it( 'should remove an item when delete action is dispatched', () => {
 			const original = deepFreeze( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+				'3d097cb7c5473c169bba0eb8e3c6cb64': {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World'
+				}
 			} );
 			const state = items( original, {
-				type: POST_DELETE,
+				type: POST_DELETE_SUCCESS,
 				siteId: 2916284,
 				postId: 841
 			} );

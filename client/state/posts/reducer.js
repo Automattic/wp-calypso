@@ -19,6 +19,7 @@ import findKey from 'lodash/findKey';
 import PostQueryManager from 'lib/query-manager/post';
 import {
 	POST_DELETE,
+	POST_DELETE_SUCCESS,
 	POST_EDIT,
 	POST_EDITS_RESET,
 	POST_REQUEST,
@@ -51,7 +52,7 @@ export function items( state = {}, action ) {
 		case POSTS_RECEIVE:
 			return Object.assign( {}, state, keyBy( action.posts, 'global_ID' ) );
 
-		case POST_DELETE:
+		case POST_DELETE_SUCCESS:
 			const globalId = findKey( state, {
 				ID: action.postId,
 				site_ID: action.siteId
