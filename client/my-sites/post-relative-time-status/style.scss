@@ -1,21 +1,4 @@
 .post-relative-time-status {
-	.time,
-	.status {
-		display: inline-block;
-		margin-right: (11 / 12) * 1em;
-	}
-
-	.time .time-text {
-		display: inline-block;
-		&::first-letter {
-			text-transform: capitalize;
-		}
-	}
-
-	.status .status-text {
-		text-transform: capitalize;
-	}
-
 	.gridicon {
 		display: inline-block;
 		margin: -4px 8px 0 0;
@@ -37,4 +20,23 @@
 			color: $alert-red;
 		}
 	}
+}
+
+.post-relative-time-status__time,
+.post-relative-time-status__status {
+	display: inline-block;
+	margin-right: ( 11 / 12 ) * 1em;
+}
+
+
+.post-relative-time-status__time-text {
+	display: inline-block;
+
+	&::first-letter {
+		text-transform: capitalize;
+	}
+}
+
+.post-relative-time-status__status-text {
+	text-transform: capitalize;
 }
