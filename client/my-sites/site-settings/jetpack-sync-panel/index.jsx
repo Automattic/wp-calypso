@@ -22,6 +22,7 @@ import {
 } from 'state/jetpack-sync/actions';
 import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import NoticeAction from 'components/notice/notice-action';
+import analytics from 'lib/analytics';
 
 /*
  * Module variables
@@ -53,17 +54,26 @@ const JetpackSyncPanel = React.createClass( {
 	onSyncRequestButtonClick( event ) {
 		event.preventDefault();
 		debug( 'Perform full sync button clicked' );
+		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_request_button_clicked' );
 		this.props.scheduleJetpackFullysync( this.props.siteId );
 	},
 
 	onTryAgainClick( event ) {
 		event.preventDefault();
 		debug( 'Try again button clicked' );
+		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_try_again_button_clicked', {
+			errorCode: get( this.props, 'fullSyncRequest.error.error', '' ),
+			errorMsg: get( this.props, 'fullSyncRequest.error.message', '' )
+		} );
 		this.props.scheduleJetpackFullysync( this.props.siteId );
 	},
 
 	onClickDebug() {
 		debug( 'Clicked check connection button' );
+		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_check_connection_button_clicked', {
+			errorCode: get( this.props, 'syncStatus.error.error', '' ),
+			errorMsg: get( this.props, 'syncStatus.error.message', '' )
+		} );
 	},
 
 	renderErrorNotice() {
