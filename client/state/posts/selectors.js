@@ -5,7 +5,6 @@ import get from 'lodash/get';
 import createSelector from 'lib/create-selector';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
-import merge from 'lodash/merge';
 import flow from 'lodash/flow';
 import cloneDeep from 'lodash/cloneDeep';
 import includes from 'lodash/includes';
@@ -20,7 +19,8 @@ import {
 	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
-	getSerializedPostsQueryWithoutPage
+	getSerializedPostsQueryWithoutPage,
+	mergeIgnoringArrays,
 } from './utils';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import firstPassCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
@@ -298,7 +298,7 @@ export function getEditedPost( state, siteId, postId ) {
 		return edits;
 	}
 
-	return merge( {}, post, edits );
+	return mergeIgnoringArrays( {}, post, edits );
 }
 
 /**
