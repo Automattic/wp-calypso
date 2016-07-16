@@ -84,7 +84,8 @@ const ThemesSiteSelectorModal = React.createClass( {
 					} /* No Jetpack sites for now. */ }
 					hide={ this.hideSiteSelectorModal }
 					mainAction={ this.redirectAndCallAction }
-					mainActionLabel={ this.state.selectedOption.label }>
+					mainActionLabel={ this.state.selectedOption.label }
+					getMainUrl={ this.state.selectedOption.getUrl }>
 
 					<Theme isActionable={ false } theme={ this.state.selectedTheme } />
 					<h1>{ this.state.selectedOption.header }</h1>
