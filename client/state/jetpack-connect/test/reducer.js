@@ -282,7 +282,7 @@ describe( 'reducer', () => {
 
 			const state = jetpackSSO( undefined, action );
 
-			expect( state ).to.have.property( 'ssoUrl', action.sso_url );
+			expect( state ).to.have.property( 'ssoUrl', action.ssoUrl );
 		} );
 	} );
 } );
