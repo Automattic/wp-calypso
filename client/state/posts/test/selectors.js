@@ -685,6 +685,99 @@ describe( 'selectors', () => {
 
 			expect( editedPost ).to.eql( { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', discussion: { comments_open: true, pings_open: true } } );
 		} );
+
+		it( 'should return revisions with array properties overwriting objects', () => {
+			// This tests the initial edit of a non-hierarchical taxonomy
+			// TODO avoid changing the shape of the `terms` state - see:
+			// https://github.com/Automattic/wp-calypso/pull/6548#issuecomment-233148766
+			const editedPost = getEditedPost( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							terms: {
+								post_tag: {
+									tag1: { ID: 1 },
+									tag2: { ID: 2 }
+								},
+								category: {
+									category3: { ID: 3 },
+									category4: { ID: 4 }
+								}
+							}
+						}
+					},
+					edits: {
+						2916284: {
+							841: {
+								terms: {
+									post_tag: [ 'tag2', 'tag3' ]
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( editedPost ).to.eql( {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				terms: {
+					post_tag: [ 'tag2', 'tag3' ],
+					category: {
+						category3: { ID: 3 },
+						category4: { ID: 4 }
+					}
+				}
+			} );
+		} );
+
+		it( 'should return revisions with array properties overwriting previous versions', () => {
+			// This tests removal of a term from a non-hierarchical taxonomy
+			const editedPost = getEditedPost( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							terms: {
+								post_tag: [ 'tag1', 'tag2' ],
+								category: {
+									category3: { ID: 3 },
+									category4: { ID: 4 }
+								}
+							}
+						}
+					},
+					edits: {
+						2916284: {
+							841: {
+								terms: {
+									post_tag: [ 'tag1' ]
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( editedPost ).to.eql( {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				terms: {
+					post_tag: [ 'tag1' ],
+					category: {
+						category3: { ID: 3 },
+						category4: { ID: 4 }
+					}
+				}
+			} );
+		} );
 	} );
 
 	describe( 'getPostEdits()', () => {
