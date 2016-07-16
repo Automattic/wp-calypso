@@ -294,11 +294,13 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderButton() {
-		const { label } = this.props.defaultOption;
+		const { label, getUrl } = this.props.defaultOption;
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 
 		return (
-			<Button className="theme__sheet-primary-button" onClick={ this.onButtonClick }>
+			<Button className="theme__sheet-primary-button"
+				href={ getUrl ? getUrl( this.props ) : null }
+				onClick={ this.onButtonClick }>
 				{ this.isLoaded() ? label : placeholder }
 				{ this.renderPrice() }
 			</Button>
