@@ -10,7 +10,8 @@ import {
 	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
-	getSerializedPostsQueryWithoutPage
+	getSerializedPostsQueryWithoutPage,
+	mergeIgnoringArrays
 } from '../utils';
 
 describe( 'utils', () => {
@@ -92,6 +93,52 @@ describe( 'utils', () => {
 			}, 2916284 );
 
 			expect( serializedQuery ).to.equal( '2916284:{"search":"Hello"}' );
+		} );
+	} );
+
+	describe( 'mergeIgnoringArrays()', () => {
+		it( 'should merge into an empty object', () => {
+			const merged = mergeIgnoringArrays( {}, {
+				tags_by_id: [ 4, 5, 6 ]
+			} );
+
+			expect( merged ).to.eql( {
+				tags_by_id: [ 4, 5, 6 ]
+			} );
+		} );
+
+		it( 'should not modify array properties in the original object', () => {
+			const merged = mergeIgnoringArrays( {
+				tags_by_id: [ 4, 5, 6 ]
+			}, {} );
+
+			expect( merged ).to.eql( {
+				tags_by_id: [ 4, 5, 6 ]
+			} );
+		} );
+
+		it( 'should allow removing array items', () => {
+			const merged = mergeIgnoringArrays( {}, {
+				tags_by_id: [ 4, 5, 6 ]
+			}, {
+				tags_by_id: [ 4, 6 ]
+			} );
+
+			expect( merged ).to.eql( {
+				tags_by_id: [ 4, 6 ]
+			} );
+		} );
+
+		it( 'should replace arrays with the new value', () => {
+			const merged = mergeIgnoringArrays( {}, {
+				tags_by_id: [ 4, 5, 6 ]
+			}, {
+				tags_by_id: [ 1, 2, 3, 4 ]
+			} );
+
+			expect( merged ).to.eql( {
+				tags_by_id: [ 1, 2, 3, 4 ]
+			} );
 		} );
 	} );
 } );

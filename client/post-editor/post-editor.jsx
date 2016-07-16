@@ -8,7 +8,6 @@ const ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	debounce = require( 'lodash/debounce' ),
 	throttle = require( 'lodash/throttle' );
-import merge from 'lodash/merge';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -573,9 +572,10 @@ const PostEditor = React.createClass( {
 
 		this.saveRawContent();
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		const edits = merge( {}, this.props.edits, {
+		const edits = {
+			...this.props.edits,
 			content: this.refs.editor.getContent()
-		} );
+		};
 		actions.edit( edits );
 
 		// Make sure that after TinyMCE processing that the post is still dirty
@@ -657,7 +657,7 @@ const PostEditor = React.createClass( {
 	},
 
 	onSave: function( status, callback ) {
-		const edits = merge( {}, this.props.edits );
+		const edits = { ...this.props.edits };
 		if ( status ) {
 			edits.status = status;
 		}
@@ -775,9 +775,10 @@ const PostEditor = React.createClass( {
 	},
 
 	onPublish: function() {
-		const edits = merge( {}, this.props.edits, {
+		const edits = {
+			...this.props.edits,
 			status: 'publish'
-		} );
+		};
 
 		// determine if this is a private publish
 		if ( utils.isPrivate( this.state.post ) ) {
