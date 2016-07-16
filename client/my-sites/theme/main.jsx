@@ -89,7 +89,8 @@ const ThemeSheet = React.createClass( {
 	},
 
 	onButtonClick() {
-		this.props.defaultOption.action( this.props );
+		const { defaultOption } = this.props;
+		defaultOption.action && defaultOption.action( this.props );
 	},
 
 	getValidSections() {
@@ -253,6 +254,7 @@ const ThemeSheet = React.createClass( {
 				theme={ this.props }
 				onClose={ this.togglePreview }
 				buttonLabel= { this.props.defaultOption.label }
+				getButtonHref={ this.props.defaultOption.getUrl }
 				onButtonClick={ this.onButtonClick } />
 		);
 	},
