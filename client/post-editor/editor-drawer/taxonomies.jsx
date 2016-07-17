@@ -30,7 +30,7 @@ function isSkippedTaxonomy( postType, taxonomy ) {
 	return false;
 }
 
-function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
+function EditorDrawerTaxonomies( { siteId, postType, taxonomies } ) {
 	return (
 		<div className="editor-drawer__taxonomies">
 			{ siteId && postType && (
