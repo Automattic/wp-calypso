@@ -21,7 +21,9 @@ import {
 	isRequestingSitePostsForQueryIgnoringPage,
 	isRequestingSitePost,
 	getEditedPost,
-	getEditedPostValue
+	getPostEdits,
+	getEditedPostValue,
+	isEditedPostDirty,
 } from '../selectors';
 import PostQueryManager from 'lib/query-manager/post';
 
@@ -683,6 +685,157 @@ describe( 'selectors', () => {
 
 			expect( editedPost ).to.eql( { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', discussion: { comments_open: true, pings_open: true } } );
 		} );
+
+		it( 'should return revisions with array properties overwriting objects', () => {
+			// This tests the initial edit of a non-hierarchical taxonomy
+			// TODO avoid changing the shape of the `terms` state - see:
+			// https://github.com/Automattic/wp-calypso/pull/6548#issuecomment-233148766
+			const editedPost = getEditedPost( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							terms: {
+								post_tag: {
+									tag1: { ID: 1 },
+									tag2: { ID: 2 }
+								},
+								category: {
+									category3: { ID: 3 },
+									category4: { ID: 4 }
+								}
+							}
+						}
+					},
+					edits: {
+						2916284: {
+							841: {
+								terms: {
+									post_tag: [ 'tag2', 'tag3' ]
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( editedPost ).to.eql( {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				terms: {
+					post_tag: [ 'tag2', 'tag3' ],
+					category: {
+						category3: { ID: 3 },
+						category4: { ID: 4 }
+					}
+				}
+			} );
+		} );
+
+		it( 'should return revisions with array properties overwriting previous versions', () => {
+			// This tests removal of a term from a non-hierarchical taxonomy
+			const editedPost = getEditedPost( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							terms: {
+								post_tag: [ 'tag1', 'tag2' ],
+								category: {
+									category3: { ID: 3 },
+									category4: { ID: 4 }
+								}
+							}
+						}
+					},
+					edits: {
+						2916284: {
+							841: {
+								terms: {
+									post_tag: [ 'tag1' ]
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( editedPost ).to.eql( {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				terms: {
+					post_tag: [ 'tag1' ],
+					category: {
+						category3: { ID: 3 },
+						category4: { ID: 4 }
+					}
+				}
+			} );
+		} );
+	} );
+
+	describe( 'getPostEdits()', () => {
+		it( 'should return null if no edits exist for a new post', () => {
+			const postEdits = getPostEdits( {
+				posts: {
+					edits: {}
+				}
+			}, 2916284 );
+
+			expect( postEdits ).to.be.null;
+		} );
+
+		it( 'should return null if no edits exist for an existing post', () => {
+			const postEdits = getPostEdits( {
+				posts: {
+					edits: {}
+				}
+			}, 2916284, 841 );
+
+			expect( postEdits ).to.be.null;
+		} );
+
+		it( 'should return the edited attributes for a new post', () => {
+			const postEdits = getPostEdits( {
+				posts: {
+					edits: {
+						2916284: {
+							'': {
+								title: 'Hello World!'
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( postEdits ).to.eql( {
+				title: 'Hello World!'
+			} );
+		} );
+
+		it( 'should return the edited attributes for an existing post', () => {
+			const postEdits = getPostEdits( {
+				posts: {
+					edits: {
+						2916284: {
+							841: {
+								title: 'Hello World!'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( postEdits ).to.eql( {
+				title: 'Hello World!'
+			} );
+		} );
 	} );
 
 	describe( 'getEditedPostValue()', () => {
@@ -735,6 +888,155 @@ describe( 'selectors', () => {
 			}, 2916284, 841, 'discussion.pings_open' );
 
 			expect( editedPostValue ).to.be.true;
+		} );
+	} );
+
+	describe( 'isEditedPostDirty()', () => {
+		beforeEach( () => {
+			isEditedPostDirty.memoizedSelector.cache.clear();
+		} );
+
+		it( 'should return false if there are no edits for the post', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64' }
+					},
+					edits: {}
+				}
+			}, 2916284, 841 );
+
+			expect( isDirty ).to.be.false;
+		} );
+
+		it( 'should return false if edited with a type', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							type: 'post'
+						}
+					},
+					edits: {
+						2916284: {
+							841: {
+								type: 'post'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isDirty ).to.be.false;
+		} );
+
+		it( 'should return true if newly edited with custom type', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {},
+					edits: {
+						2916284: {
+							'': {
+								type: 'jetpack-portfolio'
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isDirty ).to.be.true;
+		} );
+
+		it( 'should return false if no saved post and value matches default for new post', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {},
+					edits: {
+						2916284: {
+							'': {
+								status: 'draft'
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isDirty ).to.be.false;
+		} );
+
+		it( 'should return true if no saved post and value does not match default for new post', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {},
+					edits: {
+						2916284: {
+							'': {
+								status: 'publish'
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isDirty ).to.be.true;
+		} );
+
+		it( 'should return true if no saved post and no default exists for key', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {},
+					edits: {
+						2916284: {
+							'': {
+								author: 'testonesite2014'
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isDirty ).to.be.true;
+		} );
+
+		it( 'should return false if saved post value equals edited post value', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					},
+					edits: {
+						2916284: {
+							841: {
+								title: 'Hello World'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isDirty ).to.be.false;
+		} );
+
+		it( 'should return true if saved post value does not equal edited post value', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					},
+					edits: {
+						2916284: {
+							841: {
+								title: 'Hello World!'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isDirty ).to.be.true;
 		} );
 	} );
 } );
