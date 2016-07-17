@@ -19,7 +19,7 @@ import SitesList from 'lib/sites-list';
 const debug = debugModule( 'calypso:posts:stats' );
 const sites = new SitesList();
 
-function recordUsageStats( action ) {
+function recordUsageStats( action, postType ) {
 	let source;
 	const site = sites.getSelectedSite();
 
@@ -28,6 +28,10 @@ function recordUsageStats( action ) {
 	if ( site ) {
 		source = site.jetpack ? 'jetpack' : 'wpcom';
 		analytics.mc.bumpStat( 'editor_usage_' + source, action );
+
+		if ( postType ) {
+			analytics.mc.bumpStat( 'editor_cpt_usage_' + source, postType + '_' + action );
+		}
 	}
 }
 
@@ -73,7 +77,7 @@ export function recordSaveEvent() {
 	}
 
 	if ( usageAction ) {
-		recordUsageStats( usageAction );
+		recordUsageStats( usageAction, post.type );
 	}
 
 	// if this action has an mc stat name, record it
