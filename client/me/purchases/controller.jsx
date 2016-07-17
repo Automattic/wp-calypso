@@ -13,8 +13,6 @@ import CancelPrivateRegistration from './cancel-private-registration';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import EditCardDetails from './payment/edit-card-details';
-import EditCardDetailsData from 'components/data/purchases/edit-card-details';
-import EditCardDetailsLoadingPlaceholder from './payment/edit-card-details/loading-placeholder';
 import Main from 'components/main';
 import ManagePurchase from './manage-purchase';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
@@ -160,12 +158,9 @@ export default {
 
 		renderPage(
 			context,
-			<EditCardDetailsData
+			<EditCardDetails
 				cardId={ context.params.cardId }
-				component={ EditCardDetails }
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-				loadingPlaceholder={ EditCardDetailsLoadingPlaceholder }
-				sites={ sites } />
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
 		);
 	},
 
