@@ -36,7 +36,10 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 import counts from './counts/reducer';
-import { getSerializedPostsQuery } from './utils';
+import {
+	getSerializedPostsQuery,
+	mergeIgnoringArrays,
+} from './utils';
 import { itemsSchema } from './schema';
 import { isValidStateWithSchema, createReducer } from 'state/utils';
 
@@ -224,7 +227,7 @@ export function edits( state = {}, action ) {
 			}, state );
 
 		case POST_EDIT:
-			return merge( {}, state, {
+			return mergeIgnoringArrays( {}, state, {
 				[ action.siteId ]: {
 					[ action.postId || '' ]: action.post
 				}
