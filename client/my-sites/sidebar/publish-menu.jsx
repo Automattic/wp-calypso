@@ -157,7 +157,7 @@ const PublishMenu = React.createClass( {
 		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page' ] );
 		return map( customPostTypes, ( postType, postTypeSlug ) => {
 			let buttonLink;
-			if ( config.isEnabled( 'manage/custom-post-types' ) ) {
+			if ( config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable ) {
 				buttonLink = this.props.postTypeLinks[ postTypeSlug ];
 			}
 
