@@ -11,13 +11,9 @@ import { actions } from './constants';
 import { errors as errorTypes } from './constants';
 import analytics from 'lib/analytics';
 
-export function login( username, password, auth_code ) {
-	Dispatcher.handleViewAction( {
-		type: actions.AUTH_LOGIN
-	} );
-
+function oauthLogin( username, password, secondFactor ) {
 	request.post( '/oauth' )
-		.send( { username, password, auth_code } )
+		.send( { username, password, ...secondFactor } )
 		.end( ( error, data ) => {
 			bumpStats( error, data );
 
@@ -29,18 +25,20 @@ export function login( username, password, auth_code ) {
 		} );
 }
 
-export function checkToken( tokenInfo ) {
-	request.post( '/verify-push-token' )
-		.send( tokenInfo )
-		.end( ( error, data ) => {
-			// XXX: bump stats?
+export function pushAuthLogin( username, password, secondFactor ) {
+	Dispatcher.handleViewAction( {
+		type: actions.PUSH_AUTH_LOGIN
+	} );
 
-			Dispatcher.handleServerAction( {
-				type: actions.RECEIVE_PUSH_TOKEN_STATUS,
-				data,
-				error
-			} );
-		} );
+	oauthLogin( username, password, secondFactor );
+}
+
+export function login( username, password, secondFactor ) {
+	Dispatcher.handleViewAction( {
+		type: actions.AUTH_LOGIN
+	} );
+
+	oauthLogin( username, password, secondFactor );
 }
 
 function bumpStats( error, data ) {
@@ -54,7 +52,8 @@ function bumpStats( error, data ) {
 		}
 	}
 
-	if ( errorType === errorTypes.ERROR_REQUIRES_2FA ) {
+	if ( errorType === errorTypes.ERROR_REQUIRES_2FA ||
+		errorType === errorTypes.ERROR_REQUIRES_2FA_PUSH_VERIFICATION ) {
 		analytics.tracks.recordEvent( 'calypso_oauth_login_needs2fa' );
 		analytics.mc.bumpStat( 'calypso_oauth_login', 'success-needs-2fa' );
 	} else if ( errorType ) {

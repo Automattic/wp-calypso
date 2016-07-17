@@ -68,19 +68,20 @@ module.exports = React.createClass( {
 	componentWillUnmount: function() {
 		AuthStore.off( 'change', this.refreshData );
 		clearTimeout( this.pollTimeout );
+		this.pollTimeout = null;
 	},
 
 	refreshData: function() {
 		this.setState( AuthStore.get() );
 	},
 
-	verifyPushToken: function( token ) {
+	verifyPushAuthentication: function( pushauth ) {
 		const POLL_INTERVAL = 6000;
 
 		if ( ! this.pollTimeout ) {
 			this.pollTimeout = setTimeout( () => {
 				this.pollTimeout = null;
-				AuthActions.checkToken( token );
+				AuthActions.pushAuthLogin( this.state.login, this.state.password, pushauth );
 			}, POLL_INTERVAL );
 		}
 	},
@@ -91,9 +92,10 @@ module.exports = React.createClass( {
 		}
 
 		if ( this.state.requires2fa === 'push-verification' ) {
-			this.verifyPushToken( this.state.pushauth_token );
+			this.verifyPushAuthentication( this.state.pushauth );
 		} else {
 			clearTimeout( this.pollTimeout );
+			this.pollTimeout = null;
 		}
 	},
 
@@ -109,7 +111,7 @@ module.exports = React.createClass( {
 		event.preventDefault();
 		event.stopPropagation();
 
-		AuthActions.login( this.state.login, this.state.password, this.state.auth_code );
+		AuthActions.login( this.state.login, this.state.password, { auth_code: this.state.auth_code } );
 	},
 
 	hasLoginDetails: function() {
@@ -160,7 +162,7 @@ module.exports = React.createClass( {
 							<FormTextInput
 								name="login"
 								ref="login"
-								disabled={ requires2fa || inProgress }
+								disabled={ Boolean( requires2fa ) || inProgress }
 								placeholder={ this.translate( 'Username or email address' ) }
 								onFocus={ this.recordFocusEvent( 'Username or email address' ) }
 								valueLink={ this.linkState( 'login' ) } />
@@ -170,7 +172,7 @@ module.exports = React.createClass( {
 							<FormPasswordInput
 								name="password"
 								ref="password"
-								disabled={ requires2fa || inProgress }
+								disabled={ Boolean( requires2fa ) || inProgress }
 								placeholder={ this.translate( 'Password' ) }
 								onFocus={ this.recordFocusEvent( 'Password' ) }
 								hideToggle={ requires2fa }
@@ -199,7 +201,7 @@ module.exports = React.createClass( {
 					{ errorMessage && <Notice text={ errorMessage } status={ errorLevel } showDismiss={ false } /> }
 					{ requires2fa === 'push-verification' &&
 					<FormButtonsBar>
-						<FormButton onClick={ this.useAuthCode } >
+						<FormButton ref="useAuthCode" onClick={ this.useAuthCode } >
 							{ this.translate( 'Verify with code instead' ) }
 						</FormButton>
 					</FormButtonsBar>

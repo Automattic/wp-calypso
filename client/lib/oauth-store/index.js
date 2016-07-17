@@ -16,18 +16,17 @@ import * as OAuthToken from 'lib/oauth-token';
  */
 const initialState = {
 	requires2fa: false,
-	pollCount: 0,
-	pushauth_token: null,
+	pushauth: null,
 	inProgress: false,
 	errorLevel: false,
 	errorMessage: false
 };
 
 function handleAuthError( error, data ) {
-	let stateChanges = {
+	const stateChanges = {
 		errorLevel: 'is-error',
 		requires2fa: false,
-		pushauth_token: null,
+		pushauth: null,
 		inProgress: false
 	};
 
@@ -38,15 +37,15 @@ function handleAuthError( error, data ) {
 	if ( data && data.body ) {
 		if ( data.body.error === errorTypes.ERROR_REQUIRES_2FA ) {
 			stateChanges.errorLevel = 'is-info';
-			if ( data.body.error_info && data.body.error_info.type === 'push-verification-sent' ) {
-				stateChanges.requires2fa = 'push-verification';
-				stateChanges.pushauth_token = {
-					token: data.body.error_info.push_token,
-					user_id: data.body.error_info.user_id
-				};
-			} else {
-				stateChanges.requires2fa = 'code';
-			}
+			stateChanges.requires2fa = 'code';
+		} else if ( data.body.error === errorTypes.ERROR_REQUIRES_2FA_PUSH_VERIFICATION ) {
+			stateChanges.errorLevel = 'is-info';
+			stateChanges.requires2fa = 'push-verification';
+			stateChanges.pushauth = data.body.error_info;
+		} else if ( data.body.error === errorTypes.ERROR_INVALID_PUSH_TOKEN ) {
+			stateChanges.errorLevel = 'is-info';
+			stateChanges.requires2fa = 'push-verification';
+			delete stateChanges.pushauth; // keep push token / user id
 		} else if ( data.body.error === errorTypes.ERROR_INVALID_OTP ) {
 			stateChanges.requires2fa = 'code';
 		}
@@ -59,10 +58,10 @@ function goToLogin() {
 	document.location.replace( '/' );
 }
 
-function handleLogin( token ) {
+function handleLogin( response ) {
 	debug( 'Access token received' );
 
-	OAuthToken.setToken( token );
+	OAuthToken.setToken( response.body.access_token );
 
 	goToLogin();
 }
@@ -78,19 +77,14 @@ const AuthStore = createReducerStore( function( state, payload ) {
 		case ActionTypes.AUTH_LOGIN:
 			stateChanges = { inProgress: true, errorLevel: false, errorMessage: false };
 			break;
+		case ActionTypes.PUSH_AUTH_LOGIN:
+			stateChanges = { };
+			break;
 		case ActionTypes.RECEIVE_AUTH_LOGIN:
 			if ( action.error ) {
 				stateChanges = handleAuthError( action.error, action.data );
 			} else {
-				handleLogin( action.data.body.access_token );
-			}
-			break;
-		case ActionTypes.RECEIVE_PUSH_TOKEN_STATUS:
-			if ( action.error ) {
-				// trigger component update to continue polling
-				stateChanges = { pollCount: state.pollCount + 1 };
-			} else {
-				handleLogin( action.data.body.access_token );
+				handleLogin( action.data );
 			}
 			break;
 	}

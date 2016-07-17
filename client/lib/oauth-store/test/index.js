@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
+const Dispatcher = require( 'dispatcher' ),
 	expect = require( 'chai' ).expect,
 	sinon = require( 'sinon' );
 
 /**
  * Internal dependencies
  */
-import { actions } from '../constants';
+import { actions, errors } from '../constants';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'oAuthStore', function() {
@@ -27,8 +27,7 @@ describe( 'oAuthStore', function() {
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: true,
 			requires2fa: false,
-			pushauth_token: null,
-			pollCount: 0,
+			pushauth: null,
 			errorMessage: false,
 			errorLevel: false
 		} );
@@ -45,8 +44,7 @@ describe( 'oAuthStore', function() {
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
 			requires2fa: false,
-			pushauth_token: null,
-			pollCount: 0,
+			pushauth: null,
 			errorMessage: 'error',
 			errorLevel: 'is-error'
 		} );
@@ -59,7 +57,7 @@ describe( 'oAuthStore', function() {
 			error: true,
 			data: {
 				body: {
-					error: 'needs_2fa',
+					error: errors.ERROR_REQUIRES_2FA,
 					error_description: 'error'
 				}
 			}
@@ -68,8 +66,7 @@ describe( 'oAuthStore', function() {
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
 			requires2fa: 'code',
-			pushauth_token: null,
-			pollCount: 0,
+			pushauth: null,
 			errorMessage: 'error',
 			errorLevel: 'is-info'
 		} );
@@ -82,7 +79,7 @@ describe( 'oAuthStore', function() {
 			error: true,
 			data: {
 				body: {
-					error: 'invalid_otp',
+					error: errors.ERROR_INVALID_OTP,
 					error_description: 'error'
 				}
 			}
@@ -91,8 +88,7 @@ describe( 'oAuthStore', function() {
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
 			requires2fa: 'code',
-			pushauth_token: null,
-			pollCount: 0,
+			pushauth: null,
 			errorMessage: 'error',
 			errorLevel: 'is-error'
 		} );
@@ -121,10 +117,77 @@ describe( 'oAuthStore', function() {
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: true,
 			requires2fa: 'code',
-			pushauth_token: null,
-			pollCount: 0,
+			pushauth: null,
 			errorMessage: false,
 			errorLevel: false
 		} );
 	} ) );
+
+	it( 'requires a push verification for a 2FA account that supports it', function() {
+		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
+		Dispatcher.handleViewAction( {
+			type: actions.RECEIVE_AUTH_LOGIN,
+			error: true,
+			data: {
+				body: {
+					error: errors.ERROR_REQUIRES_2FA_PUSH_VERIFICATION,
+					error_description: 'error',
+					error_info: {
+						push_token: 'abcd',
+						user_id: 1234
+					}
+				}
+			}
+		} );
+
+		expect( oAuthStore.get() ).to.deep.equal( {
+			inProgress: false,
+			requires2fa: 'push-verification',
+			pushauth: {
+				push_token: 'abcd',
+				user_id: 1234
+			},
+			errorMessage: 'error',
+			errorLevel: 'is-info'
+		} );
+	} );
+
+	it( 'does not change state when the push token verification fails', function() {
+		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
+		Dispatcher.handleViewAction( {
+			type: actions.RECEIVE_AUTH_LOGIN,
+			error: true,
+			data: {
+				body: {
+					error: errors.ERROR_REQUIRES_2FA_PUSH_VERIFICATION,
+					error_description: 'error',
+					error_info: {
+						push_token: 'abcd',
+						user_id: 1234
+					}
+				}
+			}
+		} );
+		Dispatcher.handleViewAction( {
+			type: actions.RECEIVE_AUTH_LOGIN,
+			error: true,
+			data: {
+				body: {
+					error: errors.ERROR_INVALID_PUSH_TOKEN,
+					error_description: 'error'
+				}
+			}
+		} );
+
+		expect( oAuthStore.get() ).to.deep.equal( {
+			inProgress: false,
+			requires2fa: 'push-verification',
+			pushauth: {
+				push_token: 'abcd',
+				user_id: 1234
+			},
+			errorMessage: 'error',
+			errorLevel: 'is-info'
+		} );
+	} );
 } );

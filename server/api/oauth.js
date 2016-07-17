@@ -36,24 +36,13 @@ function proxyOAuth( request, response ) {
 		data.wpcom_otp = request.body.auth_code;
 	}
 
+	if ( request.body.push_token ) {
+		// Pass along the push verification info
+		data.wpcom_push_token = request.body.push_token;
+		data.wpcom_user_id = request.body.user_id;
+	}
+
 	req.post( config( 'desktop_oauth_token_endpoint' ) )
-		.type( 'form' )
-		.send( data )
-		.end( validateOauthResponse( response, function( error, res ) {
-			// Return the token as a response
-			response.json( res.body );
-		} ) );
-}
-
-function proxyVerifyPushToken( request, response ) {
-	var data = Object.assign( {}, {
-		client_id: oauth().client_id,
-		user_id: request.body.user_id,
-		verify: "true", // XXX: can be removed by using a different end-point
-		push_token: request.body.token
-	} );
-
-	req.post( config( 'desktop_oauth_push_token_verify_endpoint' ) )
 		.type( 'form' )
 		.send( data )
 		.end( validateOauthResponse( response, function( error, res ) {
@@ -113,7 +102,6 @@ module.exports = function( app ) {
 	return app
 		.use( bodyParser.json() )
 		.post( '/oauth', proxyOAuth )
-		.post( '/verify-push-token', proxyVerifyPushToken )
 		.get( '/logout', logout )
 		.post( '/sms', sms );
 }
