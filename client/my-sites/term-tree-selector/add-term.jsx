@@ -4,7 +4,6 @@
 import React, { PropTypes, Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 
@@ -29,14 +28,12 @@ import { getTerms } from 'state/terms/selectors';
 import { addTerm } from 'state/terms/actions';
 
 class TermSelectorAddTerm extends Component {
-	static initialState = () => {
-		return Object.assign( {}, {
-			showDialog: false,
-			selectedParent: [],
-			isTopLevel: true,
-			isValid: false,
-			error: null
-		} );
+	static initialState = {
+		showDialog: false,
+		selectedParent: [],
+		isTopLevel: true,
+		isValid: false,
+		error: null
 	};
 
 	static propTypes = {
@@ -50,7 +47,7 @@ class TermSelectorAddTerm extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.state = this.constructor.initialState();
+		this.state = this.constructor.initialState;
 		this.boundCloseDialog = this.closeDialog.bind( this );
 		this.boundOpenDialog = this.openDialog.bind( this );
 		this.boundOnParentChange = this.onParentChange.bind( this );
@@ -74,7 +71,7 @@ class TermSelectorAddTerm extends Component {
 	}
 
 	closeDialog() {
-		this.setState( this.constructor.initialState() );
+		this.setState( this.constructor.initialState );
 	}
 
 	onParentChange( item ) {
@@ -91,26 +88,29 @@ class TermSelectorAddTerm extends Component {
 		}, this.isValid );
 	}
 
-	getSelectedValues() {
-		const termName = ReactDom.findDOMNode( this.refs.termName ).value.trim();
+	getFormValues() {
+		const name = ReactDom.findDOMNode( this.refs.termName ).value.trim();
 		const parent = this.state.selectedParent.length ? this.state.selectedParent[ 0 ] : 0;
 
-		return {
-			name: termName,
-			parent: parent
-		};
+		return { name, parent };
 	}
 
 	isValid() {
 		let error;
 
-		const values = this.getSelectedValues();
+		const values = this.getFormValues();
 
 		if ( ! values.name.length ) {
 			error = true;
 		}
 
-		if ( find( this.props.terms, values ) ) {
+		const lowerCasedTermName = values.name.toLowerCase();
+		const matchingTerm = find( this.props.terms, ( term ) => {
+			return ( term.name.toLowerCase() === lowerCasedTermName ) &&
+				( term.parent === values.parent );
+		} );
+
+		if ( matchingTerm ) {
 			error = this.props.translate( 'Name already exists', {
 				context: 'Terms: Add term error message - duplicate term name exists',
 				textOnly: true
@@ -136,14 +136,14 @@ class TermSelectorAddTerm extends Component {
 	}
 
 	saveTerm() {
-		const values = this.getSelectedValues();
+		const term = this.getFormValues();
 		if ( ! this.isValid() ) {
 			return;
 		}
 
 		const { siteId, taxonomy } = this.props;
 
-		this.props.addTerm( siteId, taxonomy, values );
+		this.props.addTerm( siteId, taxonomy, term );
 		this.closeDialog();
 	}
 
@@ -187,7 +187,7 @@ class TermSelectorAddTerm extends Component {
 							ref="termName"
 							isError={ isError }
 							onKeyUp={ this.boundValidateInput } />
-						{ isError ? <FormInputValidation isError={ true } text={ this.state.error } /> : null }
+						{ isError && <FormInputValidation isError text={ this.state.error } /> }
 					</FormFieldset>
 					<FormFieldset>
 						<FormLegend>
@@ -214,19 +214,15 @@ class TermSelectorAddTerm extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const { taxonomy } = ownProps;
+		const { taxonomy, postType } = ownProps;
 		const siteId = getSelectedSiteId( state );
-		const taxonomyDetails = getPostTypeTaxonomy( state, siteId, ownProps.postType, taxonomy ) || {};
+		const { labels } = getPostTypeTaxonomy( state, siteId, postType, taxonomy ) || {};
 
 		return {
 			terms: getTerms( state, siteId, taxonomy ),
-			labels: taxonomyDetails.labels,
+			labels,
 			siteId
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			addTerm
-		}, dispatch );
-	}
+	{ addTerm }
 )( localize( TermSelectorAddTerm ) );
