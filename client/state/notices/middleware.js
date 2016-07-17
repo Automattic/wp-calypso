@@ -12,6 +12,8 @@ import { getSitePost } from 'state/posts/selectors';
 import {
 	POST_DELETE_FAILURE,
 	POST_DELETE_SUCCESS,
+	POST_RESTORE_FAILURE,
+	POST_RESTORE_SUCCESS,
 	POST_SAVE_SUCCESS
 } from 'state/action-types';
 
@@ -42,6 +44,21 @@ export function onPostDeleteFailure( dispatch, action, getState ) {
 	dispatch( errorNotice( message ) );
 }
 
+export function onPostRestoreFailure( dispatch, action, getState ) {
+	const post = getSitePost( getState(), action.siteId, action.postId );
+
+	let message;
+	if ( post ) {
+		message = translate( 'An error occurred while restoring "%s"', {
+			args: [ truncate( post.title, { length: 24 } ) ]
+		} );
+	} else {
+		message = translate( 'An error occurred while restoring the post' );
+	}
+
+	dispatch( errorNotice( message ) );
+}
+
 export function onPostSaveSuccess( dispatch, action ) {
 	let text;
 	switch ( action.post.status ) {
@@ -66,6 +83,8 @@ export function onPostSaveSuccess( dispatch, action ) {
 export const handlers = {
 	[ POST_DELETE_FAILURE ]: onPostDeleteFailure,
 	[ POST_DELETE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully deleted' ) ),
+	[ POST_RESTORE_FAILURE ]: onPostRestoreFailure,
+	[ POST_RESTORE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully restored' ) ),
 	[ POST_SAVE_SUCCESS ]: onPostSaveSuccess
 };
 
