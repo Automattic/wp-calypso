@@ -913,7 +913,12 @@ describe( 'selectors', () => {
 			const isDirty = isEditedPostDirty( {
 				posts: {
 					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64' }
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							type: 'post'
+						}
 					},
 					edits: {
 						2916284: {
@@ -926,6 +931,23 @@ describe( 'selectors', () => {
 			}, 2916284, 841 );
 
 			expect( isDirty ).to.be.false;
+		} );
+
+		it( 'should return true if newly edited with custom type', () => {
+			const isDirty = isEditedPostDirty( {
+				posts: {
+					items: {},
+					edits: {
+						2916284: {
+							'': {
+								type: 'jetpack-portfolio'
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isDirty ).to.be.true;
 		} );
 
 		it( 'should return false if no saved post and value matches default for new post', () => {
