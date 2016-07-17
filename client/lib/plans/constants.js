@@ -117,7 +117,7 @@ export const plansList = {
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
-			FEATURE_GOOGLE_AD_VOUCHERS_100,
+			// FEATURE_GOOGLE_AD_VOUCHERS_100,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS
 		],
@@ -146,7 +146,7 @@ export const plansList = {
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_NO_ADS,
-			FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200,
+			// FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
 			FEATURE_GOOGLE_ANALYTICS,
@@ -265,7 +265,7 @@ export const featuresList = {
 			'Track website statistics with Google Analytics for a ' +
 			'deeper understanding of your website visitors and customers.'
 		),
-		plans: [ PLAN_BUSINESS ]
+		//plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_UNLIMITED_STORAGE ]: {
