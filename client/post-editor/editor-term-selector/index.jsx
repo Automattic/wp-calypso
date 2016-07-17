@@ -3,15 +3,14 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import map from 'lodash/map';
-import cloneDeep from 'lodash/cloneDeep';
+import { includes, cloneDeep, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import TermTreeSelector from 'my-sites/term-tree-selector';
 import AddTerm from 'my-sites/term-tree-selector/add-term';
-import PostActions from 'lib/posts/actions';
+import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
@@ -19,6 +18,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 class EditorTermSelector extends Component {
 	static propTypes = {
 		siteId: React.PropTypes.number,
+		postId: React.PropTypes.number,
 		postTerms: React.PropTypes.object,
 		postType: React.PropTypes.string,
 		taxonomyName: React.PropTypes.string
@@ -30,21 +30,34 @@ class EditorTermSelector extends Component {
 	}
 
 	onTermsChange( selectedTerm ) {
-		const { postTerms, taxonomyName } = this.props;
+		const { postTerms, taxonomyName, siteId, postId } = this.props;
 		const terms = cloneDeep( postTerms ) || {};
-		const taxonomyTerms = terms[ taxonomyName ] || {};
+		let taxonomyTerms = map( terms[ taxonomyName ] );
+		const termIds = map( taxonomyTerms, 'ID' );
 
-		if ( taxonomyTerms[ selectedTerm.name ] ) {
-			delete taxonomyTerms[ selectedTerm.name ];
+		if ( includes( termIds, selectedTerm.ID ) ) {
+			taxonomyTerms = taxonomyTerms.reduce( ( prev, term ) => {
+				if ( term.ID === selectedTerm.ID ) {
+					return prev;
+				}
+
+				prev.push( term );
+				return prev;
+			}, [] );
 		} else {
-			taxonomyTerms[ selectedTerm.name ] = selectedTerm;
+			taxonomyTerms.push( selectedTerm );
 		}
-		terms[ taxonomyName ] = taxonomyTerms;
 
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		PostActions.edit( {
-			terms: terms
-		} );
+		const taxonomyTermIds = map( taxonomyTerms, 'ID' );
+
+		this.props.editPost( {
+			terms: {
+				[ taxonomyName ]: taxonomyTerms
+			},
+			terms_by_id: {
+				[ taxonomyName ]: taxonomyTermIds.length ? taxonomyTermIds : null
+			}
+		}, siteId, postId );
 	}
 
 	getSelectedTermIds() {
@@ -72,11 +85,17 @@ class EditorTermSelector extends Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
 
-	return {
-		postType: getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' ),
-		siteId
-	};
-} )( EditorTermSelector );
+		return {
+			postType: getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' ),
+			postTerms: getEditedPostValue( state, siteId, postId, 'terms' ),
+			siteId,
+			postId
+		};
+	},
+	{ editPost }
+)( EditorTermSelector );
