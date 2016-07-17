@@ -82,6 +82,11 @@
 	color: lighten( $gray, 10% );
 }
 
+.post-type-list__post-meta .post-relative-time-status,
+.post-type-list__post-meta .post-type-post-author {
+	float: left;
+}
+
 .post-type-list__post-meta .post-relative-time-status {
 	margin-bottom: 0;
 
