@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import createFragment from 'react-addons-create-fragment';
-import { get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -141,7 +140,7 @@ const EditorDrawer = React.createClass( {
 		// Custom Taxonomies
 		let taxonomies;
 		if ( isCustomTypesEnabled && false !== canJetpackUseTaxonomies ) {
-			taxonomies = <EditorDrawerTaxonomies postTerms={ get( post, 'terms' ) } />;
+			taxonomies = <EditorDrawerTaxonomies />;
 		}
 
 		return createFragment( { categories, taxonomies } );
