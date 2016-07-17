@@ -17,7 +17,6 @@ import { fetchSitePlans } from 'state/sites/plans/actions';
 import {
 	filterPlansBySiteAndProps,
 	shouldFetchSitePlans,
-	isGoogleVouchersEnabled,
 	isWordpressAdCreditsEnabled,
 } from 'lib/plans';
 import { findCurrencyFromPlans } from 'lib/plans/utils';
@@ -201,7 +200,7 @@ const PlansCompare = React.createClass( {
 		}
 
 		// add google-ad-credits feature
-		if ( this.isUSorCanada() && isGoogleVouchersEnabled() ) {
+		if ( this.isUSorCanada() ) {
 			features.splice( 1, 0, googleAdVouchersFeature );
 		}
 		// update the description if we are also including wordpressAdCredits

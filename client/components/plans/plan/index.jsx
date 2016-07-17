@@ -23,7 +23,7 @@ import {
 	PLAN_BUSINESS,
 	getPlanObject,
 } from 'lib/plans/constants';
-import { isGoogleVouchersEnabled, isWordpressAdCreditsEnabled } from 'lib/plans';
+import { isWordpressAdCreditsEnabled } from 'lib/plans';
 
 const premiumPlan = getPlanObject( PLAN_PREMIUM );
 const businessPlan = getPlanObject( PLAN_BUSINESS );
@@ -78,7 +78,7 @@ const Plan = React.createClass( {
 		}
 
 		// override plan description during google voucher test
-		if ( this.isUSorCanadaCurrency() && isGoogleVouchersEnabled() ) {
+		if ( this.isUSorCanadaCurrency() ) {
 			if ( plan.product_id === premiumPlan.productId ) {
 				plan.description = premiumPlan.descriptionWithGoogleVouchers;
 			} else if ( plan.product_id === businessPlan.productId ) {
