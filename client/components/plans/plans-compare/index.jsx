@@ -17,7 +17,6 @@ import { fetchSitePlans } from 'state/sites/plans/actions';
 import {
 	filterPlansBySiteAndProps,
 	shouldFetchSitePlans,
-	isWordpressAdCreditsEnabled,
 } from 'lib/plans';
 import { findCurrencyFromPlans } from 'lib/plans/utils';
 import { getPlans } from 'state/plans/selectors';
