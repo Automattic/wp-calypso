@@ -11,7 +11,6 @@ import times from 'lodash/times';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
 import { fetchSitePlans } from 'state/sites/plans/actions';
@@ -212,9 +211,7 @@ const PlansCompare = React.createClass( {
 			googleAdVouchersFeature[ '1008' ] = '$200'; // Google AdWords $100 voucher + WordAds $100 voucher
 		}
 
-		if ( isEnabled( 'manage/ads/wordads-instant' ) && abtest( 'wordadsInstantActivation' ) === 'enabled' ) {
-			features.splice( 6, 0, wordAdsFeature );
-		}
+		features.splice( 6, 0, wordAdsFeature );
 
 		return features;
 	},

@@ -56,15 +56,6 @@ module.exports = {
 		allowExistingUsers: true,
 		allowAnyLocale: true
 	},
-	wordadsInstantActivation: {
-		datestamp: '20160607',
-		variations: {
-			disabled: 50,
-			enabled: 50,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
 	googleVouchers: {
 		datestamp: '20160708',
 		variations: {
