@@ -58,7 +58,7 @@ export const tryandcustomize = {
 	header: i18n.translate( 'Try & Customize on:', {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
-	action: getCustomizeUrl(),
+	getUrl: ( theme, site ) => getCustomizeUrl( theme, site ),
 	hideForSite: ( { isCustomizable = false } = {} ) => ! isCustomizable,
 	hideForTheme: theme => theme.active
 };
