@@ -202,26 +202,16 @@ FullPostView = React.createClass( {
 
 					<PostErrors post={ post } />
 
-					<div className="full-post__header">
-						<Site site={ siteish }
-							href={ post.site_URL }
-							onSelect={ this.pickSite }
-							onClick={ this.handleSiteClick } />
-
-						<div className="full-post__follow">
-							{ feed && feed.feed_URL && <FollowButton siteUrl={ feed && feed.feed_URL } /> }
-						</div>
-					</div>
-
 					{ hasFeaturedImage
 						? <div className="full-post__featured-image">
 								<img src={ this.props.post.canonical_image.uri } height={ this.props.post.canonical_image.height } width={ 	this.props.post.canonical_image.width } />
 							</div>
 						: null }
 
-					{ post.title ? <h1 className="reader__post-title" onClick={ this.handlePermalinkClick }><ExternalLink className="reader__post-title-link" href={ post.URL } target="_blank" icon={ false }>{ post.title }</ExternalLink></h1> : null }
-
-					<PostByline post={ post } site={ site } icon={ true }/>
+					{ post.title ?
+						<h1 className="reader__post-title" onClick={ this.handlePermalinkClick }>
+							<ExternalLink className="reader__post-title-link" href={ post.URL } target="_blank" icon={ false }>{ post.title }</ExternalLink>
+						</h1> : null }
 
 					{ post && post.use_excerpt
 						? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
