@@ -12,6 +12,7 @@ import noticesMiddleware, {
 	handlers,
 	dispatchSuccess,
 	onPostDeleteFailure,
+	onPostRestoreFailure,
 	onPostSaveSuccess
 } from '../middleware';
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -19,6 +20,7 @@ import { successNotice } from 'state/notices/actions';
 import {
 	NOTICE_CREATE,
 	POST_DELETE_FAILURE,
+	POST_RESTORE_FAILURE,
 	POST_SAVE_SUCCESS
 } from 'state/action-types';
 
@@ -123,6 +125,55 @@ describe( 'middleware', () => {
 					notice: {
 						status: 'is-error',
 						text: 'An error occurred while deleting the post'
+					}
+				} );
+			} );
+		} );
+
+		describe( 'onPostRestoreFailure()', () => {
+			it( 'should dispatch error notice with truncated title if known', () => {
+				onPostRestoreFailure( dispatch, {
+					type: POST_RESTORE_FAILURE,
+					siteId: 2916284,
+					postId: 841
+				}, () => ( {
+					posts: {
+						items: {
+							'3d097cb7c5473c169bba0eb8e3c6cb64': {
+								ID: 841,
+								site_ID: 2916284,
+								global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+								title: 'Hello World, This Should Be Truncated'
+							}
+						}
+					}
+				} ) );
+
+				expect( dispatch ).to.have.been.calledWithMatch( {
+					type: NOTICE_CREATE,
+					notice: {
+						status: 'is-error',
+						text: 'An error occurred while restoring "Hello World, This Sho..."'
+					}
+				} );
+			} );
+
+			it( 'should dispatch error notice with unknown title', () => {
+				onPostRestoreFailure( dispatch, {
+					type: POST_RESTORE_FAILURE,
+					siteId: 2916284,
+					postId: 841
+				}, () => ( {
+					posts: {
+						items: {}
+					}
+				} ) );
+
+				expect( dispatch ).to.have.been.calledWithMatch( {
+					type: NOTICE_CREATE,
+					notice: {
+						status: 'is-error',
+						text: 'An error occurred while restoring the post'
 					}
 				} );
 			} );
