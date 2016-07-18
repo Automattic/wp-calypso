@@ -80,7 +80,6 @@ const PlanList = React.createClass( {
 		if ( plans.length > 0 ) {
 			let filteredPlans = filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalType, showJetpackFreePlan );
 
-
 			filteredPlans = filteredPlans.map( plan => {
 				if ( plan.product_id === 1003 ) {
 					plan.description = this.translate( 'Your own domain name, powerful customization options, ' +
