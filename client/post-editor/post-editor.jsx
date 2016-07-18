@@ -4,7 +4,6 @@
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:post-editor' ),
-	i18n = require( 'i18n-calypso' ),
 	page = require( 'page' ),
 	debounce = require( 'lodash/debounce' ),
 	throttle = require( 'lodash/throttle' );
@@ -23,8 +22,6 @@ const actions = require( 'lib/posts/actions' ),
 	EditorGroundControl = require( 'post-editor/editor-ground-control' ),
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
-	NoticeAction = require( 'components/notice/notice-action' ),
-	Notice = require( 'components/notice' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	TinyMCE = require( 'components/tinymce' ),
 	EditorWordCount = require( 'post-editor/editor-word-count' ),
@@ -52,119 +49,11 @@ import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
+import EditorNotice from 'post-editor/editor-notice';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 import SidebarFooter from 'layout/sidebar/footer';
-
-const messages = {
-	post: {
-		publishFailure: function() {
-			return i18n.translate( 'Publishing of post failed.' );
-		},
-		trashFailure: function() {
-			return i18n.translate( 'Trashing of post failed.' );
-		},
-		published: function() {
-			var site = this.props.sites.getSelectedSite();
-
-			if ( ! site ) {
-				return i18n.translate( 'Post published!' );
-			}
-
-			return i18n.translate( 'Post published on {{siteLink/}}!', {
-				components: {
-					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
-				},
-				comment: 'Editor: Message displayed when a post is published, with a link to the site it was published on.'
-			} );
-		},
-		publishedPrivately: function() {
-			var site = this.props.sites.getSelectedSite();
-
-			if ( ! site ) {
-				return i18n.translate( 'Post privately published!' );
-			}
-
-			return i18n.translate( 'Post privately published on {{siteLink/}}!', {
-				components: {
-					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
-				},
-				comment: 'Editor: Message displayed when a post is published privately, with a link to the site it was published on.'
-			} );
-		},
-		view: function() {
-			return i18n.translate( 'View Post' );
-		},
-		updated: function() {
-			var site = this.props.sites.getSelectedSite();
-
-			if ( ! site ) {
-				return i18n.translate( 'Post updated!' );
-			}
-
-			return i18n.translate( 'Post updated on {{siteLink/}}!', {
-				components: {
-					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
-				},
-				comment: 'Editor: Message displayed when a post is updated, with a link to the site it was updated on.'
-			} );
-		}
-	},
-	page: {
-		publishFailure: function() {
-			return i18n.translate( 'Publishing of page failed.' );
-		},
-		trashFailure: function() {
-			return i18n.translate( 'Trashing of page failed.' );
-		},
-		published: function() {
-			var site = this.props.sites.getSelectedSite();
-
-			if ( ! site ) {
-				return i18n.translate( 'Page published!' );
-			}
-
-			return i18n.translate( 'Page published on {{siteLink/}}!', {
-				components: {
-					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
-				},
-				comment: 'Editor: Message displayed when a page is published, with a link to the site it was published on.'
-			} );
-		},
-		publishedPrivately: function() {
-			var site = this.props.sites.getSelectedSite();
-
-			if ( ! site ) {
-				return i18n.translate( 'Page privately published!' );
-			}
-
-			return i18n.translate( 'Page privately published on {{siteLink/}}!', {
-				components: {
-					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
-				},
-				comment: 'Editor: Message displayed when a page is published privately, with a link to the site it was published on.'
-			} );
-		},
-		view: function() {
-			return i18n.translate( 'View Page' );
-		},
-		updated: function() {
-			var site = this.props.sites.getSelectedSite();
-
-			if ( ! site ) {
-				return i18n.translate( 'Page updated!' );
-			}
-
-			return i18n.translate( 'Page updated on {{siteLink/}}!', {
-				components: {
-					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
-				},
-				comment: 'Editor: Message displayed when a page is updated, with a link to the site it was updated on.'
-			} );
-		}
-	}
-};
 
 const PostEditor = React.createClass( {
 	propTypes: {
@@ -190,7 +79,7 @@ const PostEditor = React.createClass( {
 			...this.getPostEditState(),
 			isSaving: false,
 			isPublishing: false,
-			notice: false,
+			notice: null,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
@@ -269,33 +158,6 @@ const PostEditor = React.createClass( {
 		}
 	},
 
-	renderNotice: function() {
-		var arrowLink;
-
-		if ( ! this.state.notice || ! this.state.notice.text ) {
-			return;
-		}
-
-		if ( this.state.notice.link ) {
-			arrowLink = (
-				<NoticeAction href={ this.state.notice.link } external={ true }>
-					{ this.state.notice.action }
-				</NoticeAction>
-			);
-		}
-
-		return (
-			<Notice
-				status={ 'is-' + this.state.notice.type }
-				showDismiss={ this.state.notice.type === 'success' ? false : true }
-				onDismissClick={ this.onNoticeClick }
-				className="post-editor__notice"
-				text={ this.state.notice.text }>
-				{ arrowLink }
-			</Notice>
-		);
-	},
-
 	toggleSidebar: function() {
 		this.hideDrafts();
 		layoutFocus.set( 'content' );
@@ -340,7 +202,9 @@ const PostEditor = React.createClass( {
 								site={ site }
 								type={ this.props.type }
 							/>
-							{ this.renderNotice() }
+							<EditorNotice
+								{ ...this.state.notice }
+								onDismissClick={ this.onNoticeClick } />
 							<FeaturedImage
 								site={ site }
 								post={ this.state.post }
@@ -496,14 +360,9 @@ const PostEditor = React.createClass( {
 		this.setState( { showVerifyEmailDialog: false } );
 	},
 
-	getMessage: function( name ) {
-		var type = this.props.type === 'page' ? 'page' : 'post';
-		return typeof messages[ type ][ name ] === 'function' ? messages[ type ][ name ].apply( this ) : null;
-	},
-
 	onNoticeClick: function( event ) {
 		event.preventDefault();
-		this.setState( { notice: false } );
+		this.setState( { notice: null } );
 	},
 
 	onEditedPostChange: function() {
@@ -639,8 +498,8 @@ const PostEditor = React.createClass( {
 		if ( error ) {
 			this.setState( {
 				notice: {
-					type: 'error',
-					text: this.getMessage( 'trashFailure' )
+					status: 'is-error',
+					message: 'trashFailure'
 				}
 			} );
 		} else {
@@ -745,30 +604,14 @@ const PostEditor = React.createClass( {
 		this.setState( { showPreview: false } );
 	},
 
-	getFailureMessage: function( error ) {
-		var message;
-
-		switch ( error.message ) {
-			case 'NO_CONTENT':
-				message = this.translate( 'You haven\'t written anything yet!' );
-				break;
-		}
-
-		return message;
-	},
-
 	onSaveDraftFailure: function( error ) {
-		var message = this.getFailureMessage( error ) || this.translate( 'Saving of draft failed.' );
-		this.onSaveFailure( message );
+		this.onSaveFailure( error, 'saveFailure' );
 	},
 
 	onSaveDraftSuccess: function() {
-		if ( utils.isPublished( this.state.post ) ) {
-			this.onSaveSuccess(
-				this.getMessage( 'updated' ),
-				this.getMessage( 'view' ),
-				this.state.post.URL
-			);
+		const { post } = this.state;
+		if ( utils.isPublished( post ) ) {
+			this.onSaveSuccess( 'updated', 'view', post.URL );
 		} else {
 			this.onSaveSuccess();
 		}
@@ -804,32 +647,26 @@ const PostEditor = React.createClass( {
 	},
 
 	onPublishFailure: function( error ) {
-		var message = this.getFailureMessage( error ) || this.getMessage( 'publishFailure' );
-		this.onSaveFailure( message );
+		this.onSaveFailure( error, 'publishFailure' );
 		this.toggleSidebar();
 	},
 
 	onPublishSuccess: function() {
-		const publishedMessage = utils.isPrivate( this.state.savedPost )
-			? this.getMessage( 'publishedPrivately' )
-			: this.getMessage( 'published' );
+		const { savedPost, post } = this.state;
+		const message = utils.isPrivate( savedPost ) ? 'publishedPrivately' : 'published';
 
-		this.onSaveSuccess(
-			publishedMessage,
-			this.getMessage( 'view' ),
-			this.state.post.URL
-		);
-
+		this.onSaveSuccess( message, 'view', post.URL );
 		this.toggleSidebar();
 	},
 
-	onSaveFailure: function( message ) {
+	onSaveFailure: function( error, message ) {
 		this.setState( {
 			isSaving: false,
 			isPublishing: false,
 			notice: {
-				type: 'error',
-				text: message
+				status: 'is-error',
+				error,
+				message
 			}
 		} );
 
@@ -866,10 +703,10 @@ const PostEditor = React.createClass( {
 
 		if ( message ) {
 			nextState.notice = {
-				type: 'success',
-				text: message,
-				action: action,
-				link: link || null
+				status: 'is-success',
+				message,
+				action,
+				link
 			};
 
 			window.scrollTo( 0, 0 );
