@@ -26,6 +26,8 @@ import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import firstPassCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
+import { getSite } from 'state/sites/selectors';
+import addQueryArgs from 'lib/route/add-query-args';
 
 /**
  * Returns a post object by its global ID.
@@ -358,3 +360,37 @@ export const isEditedPostDirty = createSelector(
 	},
 	( state ) => [ state.posts.items, state.posts.edits ]
 );
+
+/**
+ * Returns the most reliable preview URL for the post by site ID, post ID pair,
+ * or null if a preview URL cannot be determined.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Number}  postId Post ID
+ * @return {?String}        Post preview URL
+ */
+export function getPostPreviewUrl( state, siteId, postId ) {
+	const post = getSitePost( state, siteId, postId );
+	if ( ! post ) {
+		return null;
+	}
+
+	const { URL: url, status } = post;
+	if ( ! url || status === 'trash' ) {
+		return null;
+	}
+
+	if ( post.preview_URL ) {
+		return post.preview_URL;
+	}
+
+	let previewUrl = url;
+	if ( 'publish' !== status ) {
+		previewUrl = addQueryArgs( {
+			preview: true
+		}, previewUrl );
+	}
+
+	return previewUrl;
+}
