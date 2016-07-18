@@ -14,11 +14,8 @@ import ThemesList from 'components/themes-list';
 import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
-import urlSearch from 'lib/mixins/url-search';
 
 const ThemesSelection = React.createClass( {
-	mixins: [ urlSearch ],
-
 	propTypes: {
 		selectedSite: PropTypes.oneOfType( [
 			PropTypes.object,
@@ -32,6 +29,16 @@ const ThemesSelection = React.createClass( {
 		themesList: PropTypes.array.isRequired,
 		getActionLabel: React.PropTypes.func,
 		tier: React.PropTypes.string,
+	},
+
+	doSearch( keywords ) {
+		const searchURL = buildUrl( window.location.href, keywords );
+
+		if ( this.props.search && keywords ) {
+			page.replace( searchURL );
+		} else {
+			page( searchURL );
+		}
 	},
 
 	onMoreButtonClick( theme, resultsRank ) {
