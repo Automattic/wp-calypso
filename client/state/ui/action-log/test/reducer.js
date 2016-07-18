@@ -9,6 +9,7 @@ import { expect } from 'chai';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 import {
 	ROUTE_SET,
+	COMMENTS_LIKE,
 } from 'state/action-types';
 import reducer from '../reducer';
 
@@ -25,11 +26,11 @@ describe( 'reducer', () => {
 		const actions = [
 			{
 				type: ROUTE_SET,
-				path: '/menus/77203074',
+				path: '/design/77203074',
 			},
 			{
 				type: ROUTE_SET,
-				path: '/menus/foobar',
+				path: '/design/foobar',
 			},
 		];
 		const state = actions.reduce( reducer, undefined );
@@ -38,5 +39,21 @@ describe( 'reducer', () => {
 			{ ...actions[ 0 ], timestamp: 1337 },
 			{ ...actions[ 1 ], timestamp: 1337 },
 		] );
+	} );
+
+	it( 'should discard them if payload is irrelevant', () => {
+		const actions = [
+			{
+				type: COMMENTS_LIKE,
+				path: '/menus/77203074',
+			},
+			{
+				type: COMMENTS_LIKE,
+				path: '/menus/foobar',
+			},
+		];
+		const state = actions.reduce( reducer, undefined );
+
+		expect( state ).to.eql( [] );
 	} );
 } );

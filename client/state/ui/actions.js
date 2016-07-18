@@ -42,13 +42,15 @@ export function setAllSitesSelected() {
 /**
  * Returns an action object signalling that the current route is to be changed
  *
- * @param  {String} path Route path
- * @return {Object}      Action object
+ * @param  {String} path    Route path
+ * @param  {Object} [query] Query arguments
+ * @return {Object}         Action object
  */
-export function setRoute( path ) {
+export function setRoute( path, query = {} ) {
 	return {
 		type: ROUTE_SET,
-		path
+		path,
+		query,
 	};
 }
 
