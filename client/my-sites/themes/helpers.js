@@ -7,7 +7,6 @@ import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import page from 'page';
 import startsWith from 'lodash/startsWith';
-import assign from 'lodash/assign';
 import mapValues from 'lodash/mapValues';
 
 /**
@@ -130,13 +129,9 @@ export function addTracking( options ) {
 function appendActionTracking( option, name ) {
 	const { action } = option;
 
-	if ( ! action ) {
-		return option;
-	}
-
-	return assign( {}, option, {
+	return Object.assign( {}, option, {
 		action: t => {
-			action( t );
+			action && action( t );
 			trackClick( 'more button', name );
 		}
 	} );
