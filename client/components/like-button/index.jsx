@@ -1,40 +1,39 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	omit = require( 'lodash/omit' ),
-	noop = require( 'lodash/noop' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import { omit, noop } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-var LikeActions = require( 'lib/like-store/actions' ),
-	LikeButton = require( './button' ),
-	LikeStore = require( 'lib/like-store/like-store' );
+import LikeActions from 'lib/like-store/actions';
+import LikeButton from './button';
+import LikeStore from 'lib/like-store/like-store';
 
-var LikeButtonContainer = React.createClass( {
+const LikeButtonContainer = React.createClass( {
 	propTypes: {
 		siteId: React.PropTypes.number.isRequired,
 		postId: React.PropTypes.number.isRequired,
-		showCount: React.PropTypes.bool,
+		showZeroCount: React.PropTypes.bool,
 		tagName: React.PropTypes.string,
 		onLikeToggle: React.PropTypes.func
 	},
 
 	mixins: [ PureRenderMixin ],
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			onLikeToggle: noop
 		};
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return this.getStateFromStores();
 	},
 
-	getStateFromStores: function( props = this.props, animateLike = true ) {
+	getStateFromStores( props = this.props, animateLike = true ) {
 		return {
 			likeCount: LikeStore.getLikeCountForPost( props.siteId, props.postId ) || 0,
 			iLike: LikeStore.isPostLikedByCurrentUser( props.siteId, props.postId ),
@@ -42,7 +41,7 @@ var LikeButtonContainer = React.createClass( {
 		};
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ||
 				this.props.postId !== nextProps.postId ) {
 			const newState = this.getStateFromStores( nextProps, false );
@@ -50,29 +49,29 @@ var LikeButtonContainer = React.createClass( {
 		}
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		LikeStore.on( 'change', this.onStoreChange );
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		LikeStore.off( 'change', this.onStoreChange );
 	},
 
-	onStoreChange: function() {
-		var newState = this.getStateFromStores();
+	onStoreChange() {
+		const newState = this.getStateFromStores();
 		if ( newState.likeCount !== this.state.likeCount ||
 				newState.iLike !== this.state.iLike ) {
 			this.setState( newState );
 		}
 	},
 
-	handleLikeToggle: function( liked ) {
+	handleLikeToggle( liked ) {
 		LikeActions[ liked ? 'likePost' : 'unlikePost' ]( this.props.siteId, this.props.postId );
 		this.props.onLikeToggle( liked );
 	},
 
-	render: function() {
-		var props = omit( this.props, [ 'siteId', 'postId' ] );
+	render() {
+		const props = omit( this.props, [ 'siteId', 'postId' ] );
 		return <LikeButton { ...props }
 				likeCount={ this.state.likeCount }
 				liked={ this.state.iLike }
@@ -81,4 +80,4 @@ var LikeButtonContainer = React.createClass( {
 	}
 } );
 
-module.exports = LikeButtonContainer;
+export default LikeButtonContainer;

@@ -40,7 +40,7 @@ class CommentLikeButtonContainer extends React.Component {
 	}
 
 	render() {
-		const props = pick( this.props, [ 'showCount', 'tagName' ] );
+		const props = pick( this.props, [ 'showZeroCount', 'tagName' ] );
 		const likeCount = this.props.commentLike.get( 'like_count' );
 		const iLike = this.props.commentLike.get( 'i_like' );
 		const likedLabel = translate( 'Liked' );
@@ -58,7 +58,7 @@ CommentLikeButtonContainer.propTypes = {
 	siteId: React.PropTypes.number.isRequired,
 	postId: React.PropTypes.number.isRequired,
 	commentId: React.PropTypes.number.isRequired,
-	showCount: React.PropTypes.bool,
+	showZeroCount: React.PropTypes.bool,
 	tagName: React.PropTypes.string,
 
 	// connected props:
