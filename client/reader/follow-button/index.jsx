@@ -16,9 +16,8 @@ const ReaderFollowButton = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		following: React.PropTypes.bool.isRequired,
 		onFollowToggle: React.PropTypes.func,
-		railcar: React.PropTypes.string
+		railcar: React.PropTypes.object
 	},
 
 	recordFollowToggle( isFollowing ) {
