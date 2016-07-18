@@ -24,55 +24,6 @@ function cancelPurchase( purchaseId, onComplete ) {
 	} );
 }
 
-function deleteStoredCard( card, onComplete ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.STORED_CARDS_DELETE,
-		card
-	} );
-
-	wpcom.me().storedCardDelete( card, ( error, data ) => {
-		debug( error, data );
-
-		const success = Boolean( data );
-
-		if ( success ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.STORED_CARDS_DELETE_COMPLETED,
-				card
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.STORED_CARDS_DELETE_FAILED,
-				error: error.message || i18n.translate( 'There was a problem deleting the stored card.' )
-			} );
-		}
-
-		onComplete( success );
-	} );
-}
-
-function fetchStoredCards() {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.STORED_CARDS_FETCH
-	} );
-
-	wpcom.getStoredCards( ( error, data ) => {
-		debug( error, data );
-
-		if ( data ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.STORED_CARDS_FETCH_COMPLETED,
-				list: data
-			} );
-		} else if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.STORED_CARDS_FETCH_FAILED,
-				error: error.message || i18n.translate( 'There was a problem retrieving stored cards.' )
-			} );
-		}
-	} );
-}
-
 function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
 	wpcom.cancelAndRefundPurchase( purchaseId, data, onComplete );
 }
@@ -80,6 +31,4 @@ function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
 export {
 	cancelAndRefundPurchase,
 	cancelPurchase,
-	deleteStoredCard,
-	fetchStoredCards
 };

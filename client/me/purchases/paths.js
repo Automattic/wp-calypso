@@ -22,11 +22,16 @@ function cancelPrivateRegistration( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/cancel-private-registration';
 }
 
-function editCardDetails( siteName, purchaseId ) {
+function addCardDetails( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/payment/edit';
 }
 
+function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
+	return addCardDetails( siteName, purchaseId ) + `/${ cardId }`;
+}
+
 export default {
+	addCardDetails,
 	cancelPrivateRegistration,
 	cancelPurchase,
 	confirmCancelDomain,
