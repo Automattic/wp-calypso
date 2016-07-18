@@ -570,6 +570,56 @@ describe( 'post-edit-store', function() {
 
 			assert( PostEditStore.isDirty() );
 		} );
+
+		it( 'returns false if content changes from empty to <p><br></p>', function() {
+			dispatcherCallback( {
+				action: {
+					type: 'RECEIVE_POST_TO_EDIT',
+					post: {}
+				}
+			} );
+
+			dispatcherCallback( {
+				action: {
+					type: 'EDIT_POST_RAW_CONTENT',
+					content: ''
+				}
+			} );
+
+			dispatcherCallback( {
+				action: {
+					type: 'EDIT_POST_RAW_CONTENT',
+					content: '<p><br data-mce-bogus="1"></p>'
+				}
+			} );
+
+			assert( ! PostEditStore.isDirty() );
+		} );
+
+		it( 'returns false if content changes from <p><br></p> to empty', function() {
+			dispatcherCallback( {
+				action: {
+					type: 'RECEIVE_POST_TO_EDIT',
+					post: {}
+				}
+			} );
+
+			dispatcherCallback( {
+				action: {
+					type: 'EDIT_POST_RAW_CONTENT',
+					content: '<p><br data-mce-bogus="1"></p>'
+				}
+			} );
+
+			dispatcherCallback( {
+				action: {
+					type: 'EDIT_POST_RAW_CONTENT',
+					content: ''
+				}
+			} );
+
+			assert( ! PostEditStore.isDirty() );
+		} );
 	} );
 
 	describe( '#isSaveBlocked()', function() {

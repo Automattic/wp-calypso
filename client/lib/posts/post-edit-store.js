@@ -471,7 +471,23 @@ PostEditStore = {
 	},
 
 	isDirty: function() {
-		return _post !== _savedPost || _rawContent !== _initialRawContent;
+		debug(
+			'isDirty post?%s rawContent?%s initial=%s content=%s',
+			_post !== _savedPost,
+			_rawContent !== _initialRawContent,
+			_initialRawContent,
+			_rawContent
+		);
+		if ( _post !== _savedPost ) {
+			return true;
+		}
+		if ( _rawContent !== _initialRawContent ) {
+			return (
+				! isContentEmpty( _rawContent ) ||
+				! isContentEmpty( _initialRawContent )
+			);
+		}
+		return false;
 	},
 
 	isNew: function() {
