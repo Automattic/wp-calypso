@@ -50,7 +50,7 @@ communityTranslatorJumpstart = {
 
 		currentUser = user.get();
 
-		if ( 'en' === currentUser.localeSlug || ! currentUser.localeSlug ) {
+		if ( ! currentUser || 'en' === currentUser.localeSlug || ! currentUser.localeSlug ) {
 			return false;
 		}
 
