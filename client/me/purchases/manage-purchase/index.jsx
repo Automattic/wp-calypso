@@ -61,6 +61,16 @@ function canEditPaymentDetails( purchase ) {
 	return config.isEnabled( 'upgrades/credit-cards' ) && ! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase );
 }
 
+function getEditCardDetailsPath( site, purchase ) {
+	if ( isPaidWithCreditCard( purchase ) ) {
+		const { payment: { creditCard } } = purchase;
+
+		return paths.editCardDetails( site.slug, purchase.id, creditCard.id );
+	} else {
+		return paths.addCardDetails( site.slug, purchase.id );
+	}
+}
+
 /**
  * Determines if data is being fetched. This is different than `isDataLoading` in `PurchasesUtils`
  * because this page can be rendered without a selected site.
@@ -210,7 +220,7 @@ const ManagePurchase = React.createClass( {
 								},
 								components: {
 									a: canEditPaymentDetails( purchase )
-										? <a href={ paths.editCardDetails( this.props.selectedSite.slug, id, creditCard.id ) } />
+										? <a href={ getEditCardDetailsPath( this.props.selectedSite, purchase ) } />
 										: <span />
 								}
 							}
@@ -347,11 +357,9 @@ const ManagePurchase = React.createClass( {
 			);
 		}
 
-		const { payment: { creditCard } } = purchase;
-
 		return (
 			<li>
-				<a href={ paths.editCardDetails( this.props.selectedSite.slug, purchase.id, creditCard.id ) }>
+				<a href={ getEditCardDetailsPath( this.props.selectedSite, purchase ) }>
 					{ paymentDetails }
 				</a>
 			</li>
@@ -477,9 +485,7 @@ const ManagePurchase = React.createClass( {
 		const purchase = getPurchase( this.props );
 
 		if ( canEditPaymentDetails( purchase ) ) {
-			const { payment: { creditCard } } = purchase;
-
-			const path = paths.editCardDetails( this.props.selectedSite.slug, purchase.id, creditCard.id );
+			const path = getEditCardDetailsPath( this.props.selectedSite, purchase );
 
 			const text = isRenewing( purchase )
 				? this.translate( 'Edit Payment Method' )

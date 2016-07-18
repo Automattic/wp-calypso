@@ -33,6 +33,13 @@ export default function() {
 	);
 
 	page(
+		paths.addCardDetails(),
+		meController.sidebar,
+		controller.noSitesMessage,
+		controller.editCardDetails
+	);
+
+	page(
 		paths.editCardDetails(),
 		meController.sidebar,
 		controller.noSitesMessage,
