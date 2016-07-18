@@ -83,7 +83,7 @@ const PlanList = React.createClass( {
 			filteredPlans = filteredPlans.map( plan => {
 				if ( plan.product_id === 1003 ) {
 					plan.description = this.translate( 'Your own domain name, powerful customization options, ' +
-						'easy monetization with WordAds and lots of space for audio and video.' );
+						'easy monetization with WordAds, and lots of space for audio and video.' );
 				}
 				return plan;
 			} );

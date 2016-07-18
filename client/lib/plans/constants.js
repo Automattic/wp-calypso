@@ -107,7 +107,7 @@ export const plansList = {
 		getStoreSlug: () => PLAN_PREMIUM,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
 		getDescription: () => i18n.translate( 'Your own domain name, powerful' +
-			' customization options, easy monetization with WordAds and lots of space for audio and video.' ),
+			' customization options, easy monetization with WordAds, and lots of space for audio and video.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
