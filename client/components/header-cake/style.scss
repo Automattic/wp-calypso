@@ -39,7 +39,7 @@
 
 .header-cake__title {
 	flex: 1 1 auto;
-	color: $gray;
+	color: darken( $gray, 20 );
 	text-align: center;
 	word-break: break-word;
 	white-space: nowrap;

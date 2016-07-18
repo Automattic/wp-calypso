@@ -17,9 +17,10 @@
 		display: none;
 	}
 }
+
 .example-domain-suggestions__premium-price {
-	font-size: 11pt;
 	cursor: pointer;
+	border-bottom: 1px dotted $gray;
 }
 
 .example-domain-suggestions__information {
@@ -37,20 +38,19 @@
 }
 
 .example-domain-suggestions__header {
-	color: darken( $gray, 20% );
-	font-size: 22px;
-	font-weight: 200;
-	margin: 15px 20px;
+	color: darken( $gray, 30% );
+	font-size: 16px;
+	margin: 16px 24px;
 }
 
 .example-domain-suggestions__list {
 	list-style: none;
-	margin: 0 20px;
+	margin: 0 24px;
 
 	li {
-		background-color: $gray-light;
-		padding: 15px;
-		margin: 2px 0;
+		background: $gray-light;
+		margin-bottom: 1px;
+		padding: 16px;
 
 		@include clear-fix;
 
@@ -61,7 +61,7 @@
 }
 
 .example-domain-suggestions__price {
-	color: $gray;
+	color: darken( $gray, 10 );
 	font-size: 14px;
 
 	@include breakpoint( ">660px" ) {
@@ -80,7 +80,7 @@
 
 .example-domain-suggestions__mapping-information {
 	color: darken( $gray, 20% );
-	margin: 15px 20px;
+	margin: 16px 24px;
 
 	a {
 		text-decoration: underline;
