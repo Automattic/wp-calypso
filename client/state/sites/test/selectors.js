@@ -11,6 +11,7 @@ import {
 	getSiteCollisions,
 	isSiteConflicting,
 	isJetpackSite,
+	isJetpackModuleActive,
 	getSiteSlug,
 	isRequestingSites,
 	getSiteByUrl,
@@ -154,6 +155,73 @@ describe( 'selectors', () => {
 			}, 77203074 );
 
 			expect( jetpackSite ).to.be.false;
+		} );
+	} );
+
+	describe( 'isJetpackModuleActive()', () => {
+		it( 'should return null if the site is not known', () => {
+			const isActive = isJetpackModuleActive( {
+				sites: {
+					items: {}
+				}
+			}, 77203074, 'custom-content-types' );
+
+			expect( isActive ).to.be.null;
+		} );
+
+		it( 'should return null if the site is known and not a Jetpack site', () => {
+			const isActive = isJetpackModuleActive( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.wordpress.com',
+							jetpack: false,
+							options: {}
+						}
+					}
+				}
+			}, 77203074, 'custom-content-types' );
+
+			expect( isActive ).to.be.null;
+		} );
+
+		it( 'should return false if the site is a Jetpack site without the module active', () => {
+			const isActive = isJetpackModuleActive( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								active_modules: []
+							}
+						}
+					}
+				}
+			}, 77203074, 'custom-content-types' );
+
+			expect( isActive ).to.be.false;
+		} );
+
+		it( 'should return true if the site is a Jetpack site and the module is active', () => {
+			const isActive = isJetpackModuleActive( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								active_modules: [ 'custom-content-types' ]
+							}
+						}
+					}
+				}
+			}, 77203074, 'custom-content-types' );
+
+			expect( isActive ).to.be.true;
 		} );
 	} );
 
