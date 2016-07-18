@@ -10,6 +10,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 import titlecase from 'to-title-case';
+import pickBy from 'lodash/pickBy';
 
 /**
  * Internal dependencies
@@ -36,6 +37,7 @@ import {
 	purchase,
 	activate,
 	customize,
+	tryandcustomize,
 	bindOptionToDispatch,
 	bindOptionsToSite
 } from 'my-sites/themes/theme-options';
@@ -66,6 +68,16 @@ const ThemeSheet = React.createClass( {
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
 		backPath: React.PropTypes.string,
+		defaultOption: React.PropTypes.shape( {
+			label: React.PropTypes.string.isRequired,
+			action: React.PropTypes.func,
+			getUrl: React.PropTypes.func,
+		} ).isRequired,
+		secondaryOption: React.PropTypes.shape( {
+			label: React.PropTypes.string.isRequired,
+			action: React.PropTypes.func,
+			getUrl: React.PropTypes.func,
+		} ),
 	},
 
 	getDefaultProps() {
@@ -91,6 +103,11 @@ const ThemeSheet = React.createClass( {
 	onButtonClick() {
 		const { defaultOption } = this.props;
 		defaultOption.action && defaultOption.action( this.props );
+	},
+
+	onSecondaryButtonClick() {
+		const { secondaryOption } = this.props;
+		secondaryOption && secondaryOption.action && secondaryOption.action( this.props );
 	},
 
 	getValidSections() {
@@ -249,13 +266,19 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderPreview() {
+		const { secondaryOption, active, isLoggedIn, defaultOption } = this.props;
+		const showSecondaryButton = secondaryOption && ! active && isLoggedIn;
 		return (
 			<ThemePreview showPreview={ this.state.showPreview }
 				theme={ this.props }
 				onClose={ this.togglePreview }
-				buttonLabel= { this.props.defaultOption.label }
-				getButtonHref={ this.props.defaultOption.getUrl }
-				onButtonClick={ this.onButtonClick } />
+				primaryButtonLabel={ defaultOption.label }
+				getPrimaryButtonHref={ defaultOption.getUrl }
+				onPrimaryButtonClick={ this.onButtonClick }
+				secondaryButtonLabel={ showSecondaryButton ? secondaryOption.label : null }
+				onSecondaryButtonClick={ this.onSecondaryButtonClick }
+				getSecondaryButtonHref={ showSecondaryButton ? secondaryOption.getUrl : null }
+				/>
 		);
 	},
 
@@ -382,17 +405,22 @@ const bindDefaultOptionToDispatch = ( dispatch, ownProps ) => {
 		defaultOption.label = i18n.translate( 'Activate this design' );
 	}
 
-	return { defaultOption: bindOptionToDispatch( defaultOption, 'showcase-sheet' )( dispatch ) };
+	return {
+		defaultOption: bindOptionToDispatch( defaultOption, 'showcase-sheet' )( dispatch ),
+		secondaryOption: bindOptionToDispatch( tryandcustomize, 'showcase-sheet' )( dispatch ),
+	};
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const { selectedSite: site } = stateProps;
-
+	const filteredOptions = pickBy( dispatchProps, option =>
+		option.hideForSite ? option.hideForSite( stateProps ) : true
+	);
 	return Object.assign(
 		{},
 		ownProps,
 		stateProps,
-		site ? bindOptionsToSite( dispatchProps, site ) : dispatchProps
+		site ? bindOptionsToSite( filteredOptions, site ) : dispatchProps
 	);
 };
 
