@@ -31,7 +31,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 		};
 	},
 
-	redirectAndCallAction( site ) {
+	trackAndCallAction( site ) {
 		const action = this.state.selectedOption.action;
 
 		trackClick( 'site selector', this.props.name );
@@ -97,7 +97,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 						return ! site.jetpack;
 					} /* No Jetpack sites for now. */ }
 					hide={ this.hideSiteSelectorModal }
-					mainAction={ this.redirectAndCallAction }
+					mainAction={ this.trackAndCallAction }
 					mainActionLabel={ selectedOption.label }
 					getMainUrl={ this.getUrl } >
 
