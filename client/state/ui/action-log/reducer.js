@@ -8,7 +8,6 @@ import takeRight from 'lodash/takeRight';
  * Internal dependencies
  */
 import {
-	GUIDED_TOUR_SHOW,
 	GUIDED_TOUR_UPDATE,
 	THEMES_RECEIVE,
 	PREVIEW_IS_SHOWING,
@@ -16,7 +15,6 @@ import {
 } from 'state/action-types';
 
 const isRelevantActionType = includes.bind( null, [
-	GUIDED_TOUR_SHOW,
 	GUIDED_TOUR_UPDATE,
 	THEMES_RECEIVE,
 	PREVIEW_IS_SHOWING,
