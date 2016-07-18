@@ -52,6 +52,8 @@ User.prototype.initialize = function() {
 	this.on( 'change', this.checkVerification.bind( this ) );
 
 	if ( isSupportUserSession() ) {
+		this.data = false;
+
 		supportUserBoot();
 		this.fetch();
 
