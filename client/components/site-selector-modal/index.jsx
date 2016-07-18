@@ -64,15 +64,11 @@ var SiteSelectorModal = React.createClass( {
 		this.props.hide();
 	},
 
-	onButtonClick: function() {
-		this.props.mainAction( this.state.site );
-	},
-
 	getMainLink: function() {
 		var url = this.props.getMainUrl && this.props.getMainUrl( this.state.site );
 
 		return url
-			? <Button primary href={ url } onClick={ this.onButtonClick } >{ this.props.mainActionLabel }</Button>
+			? <Button primary href={ url }>{ this.props.mainActionLabel }</Button>
 			: { action: 'mainAction', label: this.props.mainActionLabel, isPrimary: true };
 	},
 
