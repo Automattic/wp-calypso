@@ -22,13 +22,16 @@ function cancelPrivateRegistration( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/cancel-private-registration';
 }
 
-function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
-	const suffix = cardId ? '/' + cardId : '';
+function addCardDetails( siteName, purchaseId ) {
+	return managePurchase( siteName, purchaseId ) + '/payment/edit';
+}
 
-	return managePurchase( siteName, purchaseId ) + '/payment/edit' + suffix;
+function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
+	return addCardDetails( siteName, purchaseId ) + `/${ cardId }`;
 }
 
 export default {
+	addCardDetails,
 	cancelPrivateRegistration,
 	cancelPurchase,
 	confirmCancelDomain,
