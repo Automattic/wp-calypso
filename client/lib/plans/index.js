@@ -183,13 +183,6 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 	} );
 }
 
-export const isWordpressAdCreditsEnabled = () => {
-	return (
-		isEnabled( 'plans/wordpress-ad-credits' ) &&
-		abtest( 'wordpressAdCredits' ) === 'enabled'
-	);
-};
-
 export function plansLink( url, site, intervalType ) {
 	if ( 'monthly' === intervalType ) {
 		url += '/monthly';
