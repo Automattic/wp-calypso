@@ -36,15 +36,19 @@ const ThemesSiteSelectorModal = React.createClass( {
 	trackAndCallAction( site ) {
 		const action = this.state.selectedOption.action;
 		const theme = this.state.selectedTheme;
+
+		trackClick( 'site selector', this.props.name );
+		page( this.props.sourcePath + '/' + site.slug );
+
 		/**
 		 * Since this implies a route change, defer it in case other state
 		 * changes are enqueued, e.g. setSelectedTheme.
 		 */
-		defer( () => {
-			trackClick( 'site selector', this.props.name );
-			page( this.props.sourcePath + '/' + site.slug );
-			action( theme, site );
-		} );
+		if ( action ) {
+			defer( () => {
+				action( theme, site );
+			} );
+		}
 	},
 
 	showSiteSelectorModal( option, theme ) {
