@@ -150,6 +150,19 @@ a.notice__action {
 	text-decoration: none;
 	white-space: nowrap;
 
+	.gridicon {
+		margin-left: 8px;
+		opacity: 0.7;
+	}
+
+	@include breakpoint( "<480px" ) {
+		margin: 0;
+		justify-content: flex-end;
+	}
+}
+
+a.notice__action,
+.notice__content + .ellipsis-menu {
 	.is-success &,
 	.is-error &,
 	.is-warning &,
@@ -162,19 +175,9 @@ a.notice__action {
 	.is-warning & { background: darken( $alert-yellow, 15 ); }
 	.is-info & { background: darken( $blue-wordpress, 15 ); }
 
-	.gridicon {
-		margin-left: 8px;
-		opacity: 0.7;
-	}
-
 	&:hover,
 	&:focus {
 		background: rgba( 255, 255, 255, 0.2 );
-	}
-
-	@include breakpoint( "<480px" ) {
-		margin: 0;
-		justify-content: flex-end;
 	}
 }
 
@@ -243,4 +246,10 @@ a.notice__action {
 			opacity: 1;
 		}
 	}
+}
+
+.notice .ellipsis-menu__toggle {
+	color: currentColor;
+	padding-left: 13px;
+	padding-right: 13px;
 }

@@ -9,6 +9,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
+import EmptyComponent from 'test/helpers/react/empty-component';
 
 /**
  * Module variables
@@ -26,6 +28,9 @@ describe( 'PublicizeConnection', function() {
 	let PublicizeConnection;
 
 	useFakeDom();
+	useMockery( ( mockery ) => {
+		mockery.registerMock( 'components/notice', EmptyComponent );
+	} );
 
 	before( () => {
 		PublicizeConnection = require( '../publicize-connection' );

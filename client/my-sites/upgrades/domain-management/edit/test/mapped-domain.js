@@ -9,6 +9,7 @@ import sinon from 'sinon';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import EmptyComponent from 'test/helpers/react/empty-component';
 
 describe( 'mapped-domain', () => {
 	let React,
@@ -31,7 +32,9 @@ describe( 'mapped-domain', () => {
 	} );
 
 	useFakeDom.withContainer();
-	useMockery();
+	useMockery( ( mockery ) => {
+		mockery.registerMock( 'components/notice', EmptyComponent );
+	} );
 
 	before( () => {
 		React = require( 'react' );

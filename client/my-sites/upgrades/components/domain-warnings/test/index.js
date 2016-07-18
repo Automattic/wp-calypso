@@ -11,19 +11,21 @@ import TestUtils from 'react-addons-test-utils';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import EmptyComponent from 'test/helpers/react/empty-component';
 
 describe( 'index', () => {
-	let DomainWarnings;
+	let DomainWarnings, Notice;
 
 	useFakeDom();
 
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/analytics', {} );
+		mockery.registerMock( 'components/ellipsis-menu', EmptyComponent );
 		DomainWarnings = require( '../' );
+		Notice = require( 'components/notice' );
 	} );
 
 	beforeEach( () => {

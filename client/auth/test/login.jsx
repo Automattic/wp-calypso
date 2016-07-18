@@ -10,6 +10,7 @@ import { stub } from 'sinon';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import EmptyComponent from 'test/helpers/react/empty-component';
 
 describe( 'LoginTest', function() {
 	let Login, loginStub, page, React, ReactDom, ReactInjection, TestUtils;
@@ -17,6 +18,7 @@ describe( 'LoginTest', function() {
 	useFakeDom.withContainer();
 	useMockery( ( mockery ) => {
 		loginStub = stub();
+		mockery.registerMock( 'components/notice', EmptyComponent );
 		mockery.registerMock( 'lib/oauth-store/actions', {
 			login: loginStub
 		} );

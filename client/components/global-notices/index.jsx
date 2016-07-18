@@ -75,18 +75,12 @@ const NoticesList = React.createClass( {
 		//This is an interim solution for displaying both notices from redux store
 		//and from the old component. When all notices are moved to redux store, this component
 		//needs to be updated.
-		noticesList = noticesList.concat( this.props.storeNotices.map( function( notice, index ) {
-			return (
-				<Notice
-					key={ 'notice-' + index }
-					status={ notice.status }
-					duration = { notice.duration || null }
-					showDismiss={ notice.showDismiss }
-					onDismissClick={ this.props.removeNotice.bind( this, notice.noticeId ) }
-					text={ notice.text }>
-				</Notice>
-			);
-		}, this ) );
+		noticesList = noticesList.concat( this.props.storeNotices.map( ( notice, index ) => (
+			<Notice
+				key={ 'notice-' + index }
+				onDismissClick={ this.props.removeNotice.bind( this, notice.noticeId ) }
+				{ ...notice } />
+		) ) );
 
 		if ( ! noticesList.length ) {
 			return null;
