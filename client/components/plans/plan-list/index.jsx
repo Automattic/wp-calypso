@@ -7,7 +7,6 @@ import times from 'lodash/times';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import Card from 'components/card';
 import { filterPlansBySiteAndProps } from 'lib/plans';
 import { getCurrentPlan } from 'lib/plans';
@@ -81,18 +80,14 @@ const PlanList = React.createClass( {
 		if ( plans.length > 0 ) {
 			let filteredPlans = filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalType, showJetpackFreePlan );
 
-			if (
-				isEnabled( 'manage/ads/wordads-instant' ) &&
-				abtest( 'wordadsInstantActivation' ) === 'enabled'
-			) {
-				filteredPlans = filteredPlans.map( plan => {
-					if ( plan.product_id === 1003 ) {
-						plan.description = this.translate( 'Your own domain name, powerful customization options, ' +
-							'easy monetization with WordAds and lots of space for audio and video.' );
-					}
-					return plan;
-				} );
-			}
+
+			filteredPlans = filteredPlans.map( plan => {
+				if ( plan.product_id === 1003 ) {
+					plan.description = this.translate( 'Your own domain name, powerful customization options, ' +
+						'easy monetization with WordAds and lots of space for audio and video.' );
+				}
+				return plan;
+			} );
 
 			plansList = filteredPlans.map( plan => {
 				return (
