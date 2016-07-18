@@ -43,7 +43,6 @@
 		"manage/add-people": true,
 		"manage/ads": true,
 		"manage/ads/jetpack": true,
-		"manage/ads/wordads-instant": true,
 		"manage/customize": true,
 		"manage/drafts": true,
 		"manage/edit-user": true,
