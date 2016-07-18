@@ -92,4 +92,13 @@ module.exports = {
 		defaultVariation: 'noNotice',
 		allowAnyLocale: true
 	},
+	firstView: {
+		datestamp: '20160728',
+		variations: {
+			disabled: 95,
+			enabled: 5,
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: false,
+	}
 };
