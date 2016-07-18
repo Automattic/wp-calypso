@@ -280,15 +280,6 @@ function reduxStoreReady( reduxStore ) {
 			nuxWelcome.clearTempWelcome();
 		}
 
-		// If `?tour` is present, show the guided tour
-		if ( config.isEnabled( 'guided-tours' ) && context.query.tour ) {
-			context.store.dispatch( showGuidedTour( {
-				shouldShow: true,
-				shouldDelay: /^\/(checkout|plans\/select)/.test( path ),
-				tour: context.query.tour,
-			} ) );
-		}
-
 		// Bump general stat tracking overall Newdash usage
 		analytics.mc.bumpStat( { newdash_pageviews: 'route' } );
 
