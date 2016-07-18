@@ -20,7 +20,7 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/ribbon">Ribbon</a>
+					<a href="/devdocs/design/ribbon">Ribbon</a>
 				</h2>
 				<Card>
 					<Ribbon>Default</Ribbon>
