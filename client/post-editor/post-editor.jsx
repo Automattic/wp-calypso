@@ -44,7 +44,7 @@ import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-d
 import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';
 import { receivePost, editPost, resetPostEdits } from 'state/posts/actions';
-import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
+import { getNormalizedPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
@@ -768,7 +768,7 @@ export default connect(
 			showDrafts: isEditorDraftsVisible( state ),
 			editorModePreference: getPreference( state, 'editor-mode' ),
 			editPath: getEditorPath( state, siteId, postId ),
-			edits: getPostEdits( state, siteId, postId ),
+			edits: getNormalizedPostEdits( state, siteId, postId ),
 			dirty: isEditedPostDirty( state, siteId, postId ),
 		};
 	},

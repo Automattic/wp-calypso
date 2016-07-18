@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { includes, cloneDeep, map } from 'lodash';
+import { cloneDeep, find, reject, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,30 +32,19 @@ class EditorTermSelector extends Component {
 	onTermsChange( selectedTerm ) {
 		const { postTerms, taxonomyName, siteId, postId } = this.props;
 		const terms = cloneDeep( postTerms ) || {};
-		let taxonomyTerms = map( terms[ taxonomyName ] );
-		const termIds = map( taxonomyTerms, 'ID' );
 
-		if ( includes( termIds, selectedTerm.ID ) ) {
-			taxonomyTerms = taxonomyTerms.reduce( ( prev, term ) => {
-				if ( term.ID === selectedTerm.ID ) {
-					return prev;
-				}
+		// map call transforms object returned by API into an array
+		let taxonomyTerms = map( terms[ taxonomyName ] ) || [];
 
-				prev.push( term );
-				return prev;
-			}, [] );
+		if ( find( taxonomyTerms, { ID: selectedTerm.ID } ) ) {
+			taxonomyTerms = reject( taxonomyTerms, { ID: selectedTerm.ID } );
 		} else {
 			taxonomyTerms.push( selectedTerm );
 		}
 
-		const taxonomyTermIds = map( taxonomyTerms, 'ID' );
-
 		this.props.editPost( {
 			terms: {
 				[ taxonomyName ]: taxonomyTerms
-			},
-			terms_by_id: {
-				[ taxonomyName ]: taxonomyTermIds.length ? taxonomyTermIds : null
 			}
 		}, siteId, postId );
 	}
