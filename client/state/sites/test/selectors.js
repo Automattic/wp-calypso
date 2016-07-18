@@ -175,8 +175,9 @@ describe( 'selectors', () => {
 					items: {
 						77203074: {
 							ID: 77203074,
-							URL: 'https://example.worpdress.com',
-							jetpack: false
+							URL: 'https://example.wordpress.com',
+							jetpack: false,
+							options: {}
 						}
 					}
 				}
@@ -191,9 +192,11 @@ describe( 'selectors', () => {
 					items: {
 						77203074: {
 							ID: 77203074,
-							URL: 'https://example.worpdress.com',
+							URL: 'https://example.com',
 							jetpack: true,
-							jetpack_modules: []
+							options: {
+								active_modules: []
+							}
 						}
 					}
 				}
@@ -208,9 +211,11 @@ describe( 'selectors', () => {
 					items: {
 						77203074: {
 							ID: 77203074,
-							URL: 'https://example.worpdress.com',
+							URL: 'https://example.com',
 							jetpack: true,
-							jetpack_modules: [ 'custom-content-types' ]
+							options: {
+								active_modules: [ 'custom-content-types' ]
+							}
 						}
 					}
 				}
