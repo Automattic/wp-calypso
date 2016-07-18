@@ -39,6 +39,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
+import { isJetpackMinimumVersion } from 'state/sites/selectors';
 import config from 'config';
 import EditorDrawerFeaturedImage from './featured-image';
 import EditorDrawerTaxonomies from './taxonomies';
@@ -77,6 +78,7 @@ const EditorDrawer = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
+		canJetpackUseTaxonomies: React.PropTypes.bool,
 		typeObject: React.PropTypes.object,
 		isNew: React.PropTypes.bool,
 		type: React.PropTypes.string
@@ -113,7 +115,7 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderTaxonomies: function() {
-		const { type, post, site } = this.props;
+		const { type, post, site, canJetpackUseTaxonomies } = this.props;
 
 		// Categories & Tags
 		let categories;
@@ -137,11 +139,9 @@ const EditorDrawer = React.createClass( {
 
 		// Custom Taxonomies
 		let taxonomies;
-		if ( config.isEnabled( 'manage/custom-post-types' ) ) {
-			taxonomies = (
-				<EditorDrawerTaxonomies
-					postTerms={ get( post, 'terms' ) } />
-			);
+		if ( config.isEnabled( 'manage/custom-post-types' ) &&
+				false !== canJetpackUseTaxonomies ) {
+			taxonomies = <EditorDrawerTaxonomies postTerms={ get( post, 'terms' ) } />;
 		}
 
 		return createFragment( { categories, taxonomies } );
@@ -345,6 +345,7 @@ export default connect(
 		const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
 
 		return {
+			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
 			typeObject: getPostType( state, siteId, type )
 		};
 	},
