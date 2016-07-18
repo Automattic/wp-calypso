@@ -23,7 +23,7 @@ const GuidedTransferInProgress = ( { translate } ) =>
 		<p>
 		{ translate(
 			'A Guided Transfer occurs over a 24 hour period. A Happiness Engineer ' +
-			'will work with you to set up a day to perform the transfer'
+			'will work with you to set up a day to perform the transfer.'
 		) }
 		</p>
 		<Button href={ supportUrls.GUIDED_TRANSFER }>
