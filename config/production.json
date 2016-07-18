@@ -17,7 +17,6 @@
 		"code-splitting": true,
 		"community-translator": true,
 		"desktop-promo": true,
-		"google-voucher": true,
 		"guided-tours": true,
 		"help": true,
 		"jetpack/connect": true,
