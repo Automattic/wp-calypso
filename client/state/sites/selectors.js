@@ -97,12 +97,12 @@ export function isJetpackSite( state, siteId ) {
  * @return {?Boolean}        Whether site has Jetpack module active
  */
 export function isJetpackModuleActive( state, siteId, slug ) {
-	const site = getSite( state, siteId );
-	if ( ! site || ! site.jetpack_modules ) {
+	const modules = getSiteOption( state, siteId, 'active_modules' );
+	if ( ! modules ) {
 		return null;
 	}
 
-	return includes( site.jetpack_modules, slug );
+	return includes( modules, slug );
 }
 
 /**
