@@ -29,6 +29,7 @@
 		bottom: 0;
 		top: 0;
 	width: 100%;
+	z-index: z-index( 'root', '.first-view' );
 
 	&.is-visible {
 		.first-view__content {
