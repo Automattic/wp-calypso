@@ -18,6 +18,7 @@ import {
 import { createReducer } from 'state/utils';
 import editor from './editor/reducer';
 import guidedTour from './guided-tours/reducer';
+import queryArguments from './query-arguments/reducer';
 import reader from './reader/reducer';
 import olark from './olark/reducer';
 import actionLog from './action-log/reducer';
@@ -105,6 +106,7 @@ const reducer = combineReducers( {
 	hasSidebar,
 	isPreviewShowing,
 	currentPreviewUrl,
+	queryArguments,
 	selectedSiteId,
 	recentlySelectedSiteIds,
 	guidedTour,
