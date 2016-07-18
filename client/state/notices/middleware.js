@@ -59,20 +59,25 @@ export function onPostRestoreFailure( dispatch, action, getState ) {
 	dispatch( errorNotice( message ) );
 }
 
-export function onPostSaveSuccess( dispatch, action ) {
-	let text;
-	switch ( action.post.status ) {
+export function onPostSaveSuccess( dispatch, { post, savedPost } ) {
+	let text, actions;
+	switch ( post.status ) {
 		case 'trash':
 			text = translate( 'Post successfully moved to trash' );
 			break;
 
 		case 'publish':
 			text = translate( 'Post successfully published' );
+			actions = [ {
+				href: savedPost.URL,
+				text: translate( 'View', { context: 'verb' } ),
+				external: true
+			} ];
 			break;
 	}
 
 	if ( text ) {
-		dispatch( successNotice( text ) );
+		dispatch( successNotice( text, { actions } ) );
 	}
 }
 

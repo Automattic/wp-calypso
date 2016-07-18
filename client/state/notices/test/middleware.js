@@ -212,14 +212,22 @@ describe( 'middleware', () => {
 			it( 'should dispatch success notice for publish', () => {
 				onPostSaveSuccess( dispatch, {
 					type: POST_SAVE_SUCCESS,
-					post: { status: 'publish' }
+					post: { status: 'publish' },
+					savedPost: {
+						URL: 'https://example.com/example-post'
+					}
 				} );
 
 				expect( dispatch ).to.have.been.calledWithMatch( {
 					type: NOTICE_CREATE,
 					notice: {
 						status: 'is-success',
-						text: 'Post successfully published'
+						text: 'Post successfully published',
+						actions: [ {
+							href: 'https://example.com/example-post',
+							text: 'View',
+							external: true
+						} ]
 					}
 				} );
 			} );
