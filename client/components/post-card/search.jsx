@@ -56,7 +56,7 @@ export function SearchPostCard( { post, site, feed, onClick = noop, onCommentCli
 					commentCount={ post.discussion.comment_count }
 					tagName="span" showLabel={ false }
 					onClick={ onCommentClick }/>
-				<LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showCount={ false } showLabel={ false } />
+				<LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showZeroCount={ false } showLabel={ false } />
 			</div>
 			<h1 className="post-card__search-title">
 				<a className="post-card__search-title-link" href={ post.URL }>{ title }</a>

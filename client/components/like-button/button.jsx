@@ -1,22 +1,22 @@
 /**
- * Exeternal Dependencies
+ * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import classNames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-var LikeIcons = require( './icons' );
+import LikeIcons from './icons';
 
-var LikeButton = React.createClass( {
+const LikeButton = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		liked: React.PropTypes.bool,
-		showCount: React.PropTypes.bool,
+		showZeroCount: React.PropTypes.bool,
 		likeCount: React.PropTypes.number,
 		showLabel: React.PropTypes.bool,
 		tagName: React.PropTypes.string,
@@ -26,10 +26,10 @@ var LikeButton = React.createClass( {
 		animateLike: React.PropTypes.bool
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			liked: false,
-			showCount: false,
+			showZeroCount: false,
 			likeCount: 0,
 			showLabel: true,
 			isMini: false,
@@ -37,7 +37,7 @@ var LikeButton = React.createClass( {
 		};
 	},
 
-	toggleLiked: function( event ) {
+	toggleLiked( event ) {
 		if ( event ) {
 			event.preventDefault();
 		}
@@ -46,21 +46,20 @@ var LikeButton = React.createClass( {
 		}
 	},
 
-	render: function() {
-		const showLikeCount = ! ( this.props.likeCount === 0 && ! this.props.showCount );
-		var containerClasses = {
-				'like-button': true,
-				'ignore-click': true,
-				'is-mini': this.props.isMini,
-				'is-animated': this.props.animateLike,
-				'has-count': showLikeCount,
-				'has-label': this.props.showLabel
-			},
-			likeLabel = this.translate( 'Like', { comment: 'Label for a button to "like" a post.' } ),
-			likeCount = this.props.likeCount,
-			containerTag = this.props.tagName || 'li',
-			labelElement,
-			iconSize = 24;
+	render() {
+		const showLikeCount = this.props.likeCount > 0 || this.props.showZeroCount;
+		const likeCount = this.props.likeCount;
+		const containerTag = this.props.tagName || 'li';
+		const containerClasses = {
+			'like-button': true,
+			'ignore-click': true,
+			'is-mini': this.props.isMini,
+			'is-animated': this.props.animateLike,
+			'has-count': showLikeCount,
+			'has-label': this.props.showLabel
+		};
+		let likeLabel = this.translate( 'Like', { comment: 'Label for a button to "like" a post.' } );
+		let iconSize = 24;
 
 		if ( this.props.liked ) {
 			containerClasses[ 'is-liked' ] = true;
@@ -73,7 +72,7 @@ var LikeButton = React.createClass( {
 		}
 
 		// Override the label with a counter
-		if ( likeCount > 0 || this.props.showCount ) {
+		if ( showLikeCount ) {
 			likeLabel = this.translate( 'Like', 'Likes', {
 				count: likeCount,
 				comment: 'Displayed when a person "likes" a post.'
@@ -84,24 +83,22 @@ var LikeButton = React.createClass( {
 			iconSize = 18;
 		}
 
-		containerClasses = classnames( containerClasses );
-
-		labelElement = ( <span className="like-button__label">
+		const labelElement = ( <span className="like-button__label">
 			<span className="like-button__label-count">{ showLikeCount ? likeCount : '' }</span>
 			{ this.props.showLabel && <span className="like-button__label-status">{ likeLabel }</span> }
 		</span> );
 
 		return (
-		React.createElement(
-			containerTag,
-			{
-				className: containerClasses,
-				onTouchTap: this.toggleLiked
-			},
-			<LikeIcons size={ iconSize } />, labelElement
-		)
+			React.createElement(
+				containerTag,
+				{
+					className: classNames( containerClasses ),
+					onTouchTap: this.toggleLiked
+				},
+				<LikeIcons size={ iconSize } />, labelElement
+			)
 		);
 	}
 } );
 
-module.exports = LikeButton;
+export default LikeButton;
