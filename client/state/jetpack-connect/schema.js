@@ -25,6 +25,7 @@ export const jetpackConnectAuthorizeSchema = {
 				activateManageSecret: { type: 'string' },
 				authorizeError: { type: 'boolean' },
 				authorizeSuccess: { type: 'boolean' },
+				autoAuthorize: { type: 'boolean' },
 				isActivating: { type: 'boolean' },
 				isAuthorizing: { type: 'boolean' },
 				isRedirectingToWpAdmin: { type: 'boolean' },
