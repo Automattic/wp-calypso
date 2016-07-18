@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   </head>
   <body>
-    <script src="../dist/wpcom-proxy-request.js"></script>
+    <script src="./dist/wpcom-proxy-request.js"></script>
     <script>
 
       // the WordPress.com API send back HTML entities in the `title`
@@ -17,7 +17,7 @@
       }
 
       // initiate an API request for the "Freshly Pressed" blog posts
-      WPCOM.proxy('/freshly-pressed', function(err, data){
+      WPCOMProxyRequest('/freshly-pressed', function(err, data){
         if (err) throw err;
         console.log('Freshly Pressed Posts:');
         data.posts.forEach(function (post) {

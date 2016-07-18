@@ -2,31 +2,22 @@
 /**
  * Module dependencies.
  */
-
-var uid = require('uid');
-var WPError = require('wp-error');
-var event = require('component-event');
-var ProgressEvent = require('progress-event');
-var debug = require('debug')('wpcom-proxy-request');
-
-/**
- * Export `request` function.
- */
-
-module.exports = request;
+import uid from 'uid';
+import WPError from 'wp-error';
+import event from 'component-event';
+import ProgressEvent from 'progress-event';
+import debugFactory from 'debug';
+const debug = debugFactory( 'wpcom-proxy-request' );
 
 /**
  * WordPress.com REST API base endpoint.
  */
-
-var proxyOrigin = 'https://public-api.wordpress.com';
+const proxyOrigin = 'https://public-api.wordpress.com';
 
 /**
  * "Origin" of the current HTML page.
  */
-
-var origin = window.location.protocol + '//' + window.location.host;
-debug('using "origin": %o', origin);
+const origin = window.location.protocol + '//' + window.location.host;
 
 /**
  * Detecting support for the structured clone algorithm. IE8 and 9, and Firefox
@@ -38,38 +29,35 @@ debug('using "origin": %o', origin);
  * https://github.com/Modernizr/Modernizr/issues/388#issuecomment-31127462
  */
 
-var postStrings = (function (){
-  var r = false;
-  try {
-    window.postMessage({
-      toString: function () {
-        r = true;
-      }
-    },"*");
-  } catch (e) {}
-  return r;
-})();
+const postStrings = ( () => {
+	let r = false;
+	try {
+		window.postMessage( {
+			toString: function() {
+				r = true;
+			}
+		}, '*' );
+	} catch ( e ) { /* empty */ }
+	return r;
+} )();
 
 /**
  * Reference to the <iframe> DOM element.
  * Gets set in the install() function.
  */
-
-var iframe = null;
+let iframe = null;
 
 /**
  * Set to `true` upon the iframe's "load" event.
  */
-
-var loaded = false;
+let loaded = false;
 
 /**
  * Array of buffered API requests. Added to when API requests are done before the
  * proxy <iframe> is "loaded", and fulfilled once the "load" DOM event on the
  * iframe occurs.
  */
-
-var buffered;
+let buffered;
 
 /**
  * Firefox apparently doesn't like sending `File` instances cross-domain.
@@ -80,21 +68,21 @@ var buffered;
  *
  * See: https://bugzilla.mozilla.org/show_bug.cgi?id=722126#c8
  */
-
-var hasFileSerializationBug = false;
+let hasFileSerializationBug = false;
 
 /**
  * In-flight API request XMLHttpRequest dummy "proxy" instances.
  */
-
-var requests = {};
+const requests = {};
 
 /**
  * Are HTML5 XMLHttpRequest2 "progress" events supported?
  * See: http://goo.gl/xxYf6D
  */
 
-var supportsProgress = !!window.ProgressEvent && !!window.FormData;
+const supportsProgress = !! window.ProgressEvent && !! window.FormData;
+
+debug( 'using "origin": %o', origin );
 
 /**
  * Performs a "proxied REST API request". This happens by calling
@@ -102,66 +90,75 @@ var supportsProgress = !!window.ProgressEvent && !!window.FormData;
  * takes care of WordPress.com user authentication (via the currently
  * logged-in user's cookies).
  *
- * @param {Object|String} params
- * @param {Function} [callback]
+ * @param {Object|String} params - request parameters
+ * @param {Function} [fn] - callback response
+ * @return {XMLHttpRequest} XMLHttpRequest instance
  * @api public
  */
+const request = ( params, fn ) => {
+	debug( 'request(%o)', params );
 
-function request (params, fn) {
-  debug('request(%o)', params);
+	// inject the <iframe> upon the first proxied API request
+	if ( ! iframe ) {
+		install();
+	}
 
-  if ('string' == typeof params) {
-    params = { path: params };
-  }
+	if ( 'string' === typeof params ) {
+		params = { path: params };
+	}
 
-  // inject the <iframe> upon the first proxied API request
-  if (!iframe) install();
+	// generate a uid for this API request
+	const id = uid();
+	params.callback = id;
+	params.supports_args = true; // supports receiving variable amount of arguments
+	params.supports_error_obj = true; // better Error object info
+	params.supports_progress = supportsProgress; // supports receiving XHR "progress" events
 
-  // generate a uid for this API request
-  var id = uid();
-  params.callback = id;
-  params.supports_args = true; // supports receiving variable amount of arguments
-  params.supports_error_obj = true; // better Error object info
-  params.supports_progress = supportsProgress; // supports receiving XHR "progress" events
+	// force uppercase "method" since that's what the <iframe> is expecting
+	params.method = String( params.method || 'GET' ).toUpperCase();
 
-  // force uppercase "method" since that's what the <iframe> is expecting
-  params.method = String(params.method || 'GET').toUpperCase();
+	debug( 'params object: %o', params );
 
-  debug('params object: %o', params);
+	const xhr = new XMLHttpRequest();
+	xhr.params = params;
 
-  var xhr = new XMLHttpRequest();
-  xhr.params = params;
+	// store the `XMLHttpRequest` instance so that "onmessage" can access it again
+	requests[ id ] = xhr;
 
-  // store the `XMLHttpRequest` instance so that "onmessage" can access it again
-  requests[id] = xhr;
+	if ( 'function' === typeof fn ) {
+		// a callback function was provided
+		let called = false;
+		function xhrOnLoad( e ) {
+			if ( called ) {
+				return;
+			}
 
-  if ('function' === typeof fn) {
-    // a callback function was provided
-    var called = false;
-    function onload (e) {
-      if (called) return;
-      called = true;
-      fn(null, e.response || xhr.response);
-    }
-    function onerror (e) {
-      if (called) return;
-      called = true;
-      fn(e.error || e.err || e);
-    }
-    event.bind(xhr, 'load', onload);
-    event.bind(xhr, 'abort', onerror);
-    event.bind(xhr, 'error', onerror);
-  }
+			called = true;
+			fn( null, e.response || xhr.response );
+		}
+		function xhrOnError( e ) {
+			if ( called ) {
+				return;
+			}
 
-  if (loaded) {
-    submitRequest(params);
-  } else {
-    debug('buffering API request since proxying <iframe> is not yet loaded');
-    buffered.push(params);
-  }
+			called = true;
+			fn( e.error || e.err || e );
+		}
 
-  return xhr;
-}
+		event.bind( xhr, 'load', xhrOnLoad );
+		event.bind( xhr, 'abort', xhrOnError );
+		event.bind( xhr, 'error', xhrOnError );
+	}
+
+	if ( loaded ) {
+		submitRequest( params );
+	} else {
+		debug( 'buffering API request since proxying <iframe> is not yet loaded' );
+		buffered.push( params );
+	}
+
+	return xhr;
+};
 
 /**
  * Calls the `postMessage()` function on the <iframe>.
@@ -170,27 +167,27 @@ function request (params, fn) {
  * @api private
  */
 
-function submitRequest (params) {
-  debug('sending API request to proxy <iframe> %o', params);
+function submitRequest( params ) {
+	debug( 'sending API request to proxy <iframe> %o', params );
 
-  if (hasFileSerializationBug && hasFile(params)) {
-    postAsArrayBuffer(params);
-  } else {
-    try {
-      iframe.contentWindow.postMessage(postStrings ? JSON.stringify(params) : params, proxyOrigin);
-    } catch (e) {
-      // were we trying to serialize a `File`?
-      if (hasFile(params)) {
-        debug('this browser has the File serialization bug');
-        // cache this check for the next API request
-        hasFileSerializationBug = true;
-        postAsArrayBuffer(params);
-      } else {
-        // not interested, rethrow
-        throw e;
-      }
-    }
-  }
+	if ( hasFileSerializationBug && hasFile( params ) ) {
+		postAsArrayBuffer( params );
+	} else {
+		try {
+			iframe.contentWindow.postMessage( postStrings ? JSON.stringify( params ) : params, proxyOrigin );
+		} catch ( e ) {
+			// were we trying to serialize a `File`?
+			if ( hasFile( params ) ) {
+				debug( 'this browser has the File serialization bug' );
+				// cache this check for the next API request
+				hasFileSerializationBug = true;
+				postAsArrayBuffer( params );
+			} else {
+				// not interested, rethrow
+				throw e;
+			}
+		}
+	}
 }
 
 /**
@@ -202,14 +199,16 @@ function submitRequest (params) {
  * @private
  */
 
-function hasFile (params) {
-  var formData = params.formData;
-  if (formData && formData.length > 0) {
-    for (var i = 0; i < formData.length; i++) {
-      if (isFile(formData[i][1])) return true;
-    }
-  }
-  return false;
+function hasFile( params ) {
+	const formData = params.formData;
+	if ( formData && formData.length > 0 ) {
+		for ( let i = 0; i < formData.length; i++ ) {
+			if ( isFile( formData[ i ][ 1 ] ) ) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 /**
@@ -220,8 +219,8 @@ function hasFile (params) {
  * @private
  */
 
-function isFile (v) {
-  return v && Object.prototype.toString.call(v) === '[object File]';
+function isFile( v ) {
+	return v && Object.prototype.toString.call( v ) === '[object File]';
 }
 
 /**
@@ -232,40 +231,47 @@ function isFile (v) {
  * @private
  */
 
-function postAsArrayBuffer (params) {
-  debug('converting File instances to ArrayBuffer before invoking postMessage()');
+function postAsArrayBuffer( params ) {
+	debug( 'converting File instances to ArrayBuffer before invoking postMessage()' );
 
-  var count = 0;
-  var called = false;
-  var formData = params.formData;
-  for (var i = 0; i < formData.length; i++) {
-    var val = formData[i][1];
-    if (isFile(val)) {
-      count++;
-      fileToArrayBuffer(val, i, onload);
-    }
-  }
+	const formData = params.formData;
+	let count = 0;
+	let called = false;
+	for ( let i = 0; i < formData.length; i++ ) {
+		const val = formData[ i ][ 1 ];
+		if ( isFile( val ) ) {
+			count++;
+			fileToArrayBuffer( val, i, onLoadFile );
+		}
+	}
 
-  if (0 === count) postMessage();
+	if ( 0 === count ) {
+		postMessage();
+	}
 
-  function onload (err, file, i) {
-    if (called) return;
-    if (err) {
-      called = true;
-      reject(err);
-      return;
-    }
+	function onLoadFile( err, file, j ) {
+		if ( called ) {
+			return;
+		}
 
-    formData[i][1] = file;
+		if ( err ) {
+			called = true;
+			reject( err );
+			return;
+		}
 
-    count--;
-    if (0 === count) postMessage();
-  }
+		formData[ j ][ 1 ] = file;
 
-  function postMessage () {
-    debug('finished reading all Files');
-    iframe.contentWindow.postMessage(params, proxyOrigin);
-  }
+		count--;
+		if ( 0 === count ) {
+			postMessage();
+		}
+	}
+
+	function postMessage() {
+		debug( 'finished reading all Files' );
+		iframe.contentWindow.postMessage( params, proxyOrigin );
+	}
 }
 
 /**
@@ -278,22 +284,26 @@ function postAsArrayBuffer (params) {
  * @private
  */
 
-function fileToArrayBuffer (file, index, fn) {
-  var reader = new FileReader();
-  reader.onload = function (e) {
-    var arrayBuffer = e.target.result;
-    debug('finished reading file %o (%o bytes)', file.name, arrayBuffer.byteLength);
-    fn(null, {
-      fileContents: arrayBuffer,
-      fileName: file.name,
-      mimeType: file.type
-    }, index);
-  };
-  reader.onerror = function (err) {
-    debug('got error reading file %o (%o bytes)', file.name, err);
-    fn(err);
-  };
-  reader.readAsArrayBuffer(file);
+function fileToArrayBuffer( file, index, fn ) {
+	const reader = new FileReader();
+
+	reader.onload = function( e ) {
+		const arrayBuffer = e.target.result;
+		debug( 'finished reading file %o (%o bytes)', file.name, arrayBuffer.byteLength );
+
+		fn( null, {
+			fileContents: arrayBuffer,
+			fileName: file.name,
+			mimeType: file.type
+		}, index );
+	};
+
+	reader.onerror = function( err ) {
+		debug( 'got error reading file %o (%o bytes)', file.name, err );
+		fn( err );
+	};
+
+	reader.readAsArrayBuffer( file );
 }
 
 /**
@@ -303,27 +313,29 @@ function fileToArrayBuffer (file, index, fn) {
  * @api private
  */
 
-function install () {
-  debug('install()');
-  if (iframe) uninstall();
+function install() {
+	debug( 'install()' );
+	if ( iframe ) {
+		uninstall();
+	}
 
-  buffered = [];
+	buffered = [];
 
-  // listen to messages sent to `window`
-  event.bind(window, 'message', onmessage);
+	// listen to messages sent to `window`
+	event.bind( window, 'message', onmessage );
 
-  // create the <iframe>
-  iframe = document.createElement('iframe');
+	// create the <iframe>
+	iframe = document.createElement( 'iframe' );
 
-  // set `loaded` to true once the "load" event happens
-  event.bind(iframe, 'load', onload);
+	// set `loaded` to true once the "load" event happens
+	event.bind( iframe, 'load', onload );
 
-  // set `src` and hide the iframe
-  iframe.src = proxyOrigin + '/wp-admin/rest-proxy/#' + origin;
-  iframe.style.display = 'none';
+	// set `src` and hide the iframe
+	iframe.src = proxyOrigin + '/wp-admin/rest-proxy/#' + origin;
+	iframe.style.display = 'none';
 
-  // inject the <iframe> into the <body>
-  document.body.appendChild(iframe);
+	// inject the <iframe> into the <body>
+	document.body.appendChild( iframe );
 }
 
 /**
@@ -331,32 +343,29 @@ function install () {
  *
  * @api private
  */
-
-
-function uninstall () {
-  debug('uninstall()');
-  document.body.removeChild(iframe);
-  iframe = null;
+function uninstall() {
+	debug( 'uninstall()' );
+	document.body.removeChild( iframe );
+	iframe = null;
 }
 
 /**
  * The proxy <iframe> instance's "load" event callback function.
  *
- * @param {Event} e
  * @api private
  */
 
-function onload (e) {
-  debug('proxy <iframe> "load" event');
-  loaded = true;
+function onload() {
+	debug( 'proxy <iframe> "load" event' );
+	loaded = true;
 
-  // flush any buffered API calls
-  if (buffered) {
-    for (var i = 0; i < buffered.length; i++) {
-      submitRequest(buffered[i]);
-    }
-    buffered = null;
-  }
+	// flush any buffered API calls
+	if ( buffered ) {
+		for ( let i = 0; i < buffered.length; i++ ) {
+			submitRequest( buffered[ i ] );
+		}
+		buffered = null;
+	}
 }
 
 /**
@@ -366,68 +375,70 @@ function onload (e) {
  * @api private
  */
 
-function onmessage (e) {
-  debug('onmessage');
+function onmessage( e ) {
+	debug( 'onmessage' );
 
-  // safeguard...
-  if (e.origin !== proxyOrigin) {
-    debug('ignoring message... %o !== %o', e.origin, proxyOrigin);
-    return;
-  }
+	// safeguard...
+	if ( e.origin !== proxyOrigin ) {
+		debug( 'ignoring message... %o !== %o', e.origin, proxyOrigin );
+		return;
+	}
 
-  var data = e.data;
-  if (!data) return debug('no `data`, bailing');
+	let data = e.data;
+	if ( ! data ) {
+		return debug( 'no `data`, bailing' );
+	}
 
-  if (postStrings && 'string' === typeof data) {
-    data = JSON.parse(data);
-  }
+	if ( postStrings && 'string' === typeof data ) {
+		data = JSON.parse( data );
+	}
 
-  // check if we're receiving a "progress" event
-  if (data.upload || data.download) {
-    return onprogress(data);
-  }
+	// check if we're receiving a "progress" event
+	if ( data.upload || data.download ) {
+		return onprogress( data );
+	}
 
-  if (!data.length) {
-    return debug('`e.data` doesn\'t appear to be an Array, bailing...');
-  }
+	if ( ! data.length ) {
+		return debug( '`e.data` doesn\'t appear to be an Array, bailing...' );
+	}
 
-  // first get the `xhr` instance that we're interested in
-  var id = data[data.length - 1];
-  if (!(id in requests)) {
-    return debug('bailing, no matching request with callback: %o', id);
-  }
+	// first get the `xhr` instance that we're interested in
+	const id = data[ data.length - 1 ];
+	if ( ! ( id in requests ) ) {
+		return debug( 'bailing, no matching request with callback: %o', id );
+	}
 
-  var xhr = requests[id];
+	const xhr = requests[ id ];
 
-  var body = data[0];
-  var statusCode = data[1];
-  var headers = data[2];
+	const body = data[ 0 ];
+	const statusCode = data[ 1 ];
+	const headers = data[ 2 ];
 
-  if ( statusCode == 207 ) {
-    // 207 is a signal from rest-proxy. It means, "this isn't the final
-    // response to the query." The proxy supports WebSocket connections
-    // by invoking the original success callback for each message received.
-  } else {
-    // this is the final response to this query
-    delete requests[id];
-  }
+	if ( statusCode === 207 ) {
+		// 207 is a signal from rest-proxy. It means, "this isn't the final
+		// response to the query." The proxy supports WebSocket connections
+		// by invoking the original success callback for each message received.
+	} else {
+		// this is the final response to this query
+		delete requests[ id ];
+	}
 
-  if (!xhr.params.metaAPI) {
-    debug('got %o status code for URL: %o', statusCode, xhr.params.path);
-  }
+	if ( ! xhr.params.metaAPI ) {
+		debug( 'got %o status code for URL: %o', statusCode, xhr.params.path );
+	}
 
-  if (typeof body === 'object' && headers) {
-    body._headers = headers;
-  }
+	if ( typeof body === 'object' && headers ) {
+		body._headers = headers;
+	}
 
-  if (null == statusCode || 2 === Math.floor(statusCode / 100)) {
-    // 2xx status code, success
-    resolve(xhr, body);
-  } else {
-    // any other status code is a failure
-    var wpe = WPError(xhr.params, statusCode, body);
-    reject(xhr, wpe);
-  }
+	if ( null == statusCode || 2 === Math.floor( statusCode / 100 ) ) {
+		// 2xx status code, success
+		resolve( xhr, body );
+	} else {
+		// any other status code is a failure
+		const wpe = WPError( xhr.params, statusCode, body );
+		reject( xhr, wpe );
+	}
 }
 
 /**
@@ -437,14 +448,14 @@ function onmessage (e) {
  * @private
  */
 
-function onprogress (data) {
-  debug('got "progress" event: %o', data);
-  var xhr = requests[data.callbackId];
-  if (xhr) {
-    var prog = new ProgressEvent('progress', data);
-    var target = data.upload ? xhr.upload : xhr;
-    target.dispatchEvent(prog);
-  }
+function onprogress( data ) {
+	debug( 'got "progress" event: %o', data );
+	const xhr = requests[ data.callbackId ];
+	if ( xhr ) {
+		const prog = new ProgressEvent( 'progress', data );
+		const target = data.upload ? xhr.upload : xhr;
+		target.dispatchEvent( prog );
+	}
 }
 
 /**
@@ -455,10 +466,10 @@ function onprogress (data) {
  * @private
  */
 
-function resolve (xhr, body) {
-  var e = new ProgressEvent('load');
-  e.data = e.body = e.response = body;
-  xhr.dispatchEvent(e);
+function resolve( xhr, body ) {
+	const e = new ProgressEvent( 'load' );
+	e.data = e.body = e.response = body;
+	xhr.dispatchEvent( e );
 }
 
 /**
@@ -469,8 +480,14 @@ function resolve (xhr, body) {
  * @private
  */
 
-function reject (xhr, err) {
-  var e = new ProgressEvent('error');
-  e.error = e.err = err;
-  xhr.dispatchEvent(e);
+function reject( xhr, err ) {
+	const e = new ProgressEvent( 'error' );
+	e.error = e.err = err;
+	xhr.dispatchEvent( e );
 }
+
+/**
+ * Export `request` function.
+ */
+export default request;
+

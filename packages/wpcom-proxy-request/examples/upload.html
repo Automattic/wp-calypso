@@ -7,9 +7,9 @@
   <body>
     <div>Select one or more files to upload media library (site_id=<strong id="site"></strong>):</div>
     <div><input type="file" id="file" multiple disabled></div>
-    <script src="../dist/wpcom-proxy-request.js"></script>
+    <script src="./dist/wpcom-proxy-request.js"></script>
     <script>
-      WPCOM.proxy({
+      WPCOMProxyRequest({
         metaAPI: { accessAllUsersBlogs: true }
       }, function(err) {
         if (err) throw err;
@@ -19,7 +19,7 @@
       var site;
       var input = document.getElementById('file');
 
-      WPCOM.proxy('/me', function (err, data) {
+      WPCOMProxyRequest('/me', function (err, data) {
         if (err) throw err;
         site = data.primary_blog;
         document.getElementById('site').innerHTML = site;
@@ -36,7 +36,7 @@
         }
 
         // do the API request through the iframe proxy
-        var req = WPCOM.proxy({
+        var req = WPCOMProxyRequest({
           path: '/sites/' + site + '/media/new',
           method: 'POST',
           formData: formData

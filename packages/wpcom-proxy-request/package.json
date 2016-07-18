@@ -9,6 +9,9 @@
     "api",
     "cookie"
   ],
+  "scripts": {
+    "prepublish": "make build"
+  },
   "version": "2.0.0",
   "author": "Automattic, Inc.",
   "contributors": [
@@ -16,17 +19,25 @@
     "Nathan Rajlich <nathan@automattic.com>",
     "Andy Skelton <andy@automattic.com>"
   ],
+  "files": [
+    "build",
+    "History.md",
+    "README.md"
+  ],
   "repository": "git://github.com/Automattic/wpcom-proxy-request.git",
   "license": "MIT",
-  "main": "index.js",
-  "devDependencies": {
-    "browserify": "9.0.3"
-  },
+  "main": "build/index.js",
   "dependencies": {
     "component-event": "0.1.4",
     "debug": "~2.2.0",
     "progress-event": "~1.0.0",
     "uid": "0.0.2",
     "wp-error": "^1.3.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^6.1.0",
+    "eslint": "^3.0.0",
+    "n8-make": "^1.4.0",
+    "webpack": "^1.13.1"
   }
 }

@@ -3,30 +3,25 @@
 THIS_MAKEFILE_PATH:=$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 THIS_DIR:=$(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
+ROOT := index.js
+include $(shell node -e "require('n8-make')")
+
 # BIN directory
 BIN := $(THIS_DIR)/node_modules/.bin
 
 # applications
 NODE ?= node
 NPM ?= $(NODE) $(shell which npm)
-BROWSERIFY ?= $(NODE) $(BIN)/browserify
+WEBPACK ?= $(NODE) $(BIN)/webpack
 
-standalone: dist/wpcom-proxy-request.js
+# create standalone bundle for testing purpose
+standalone: build build/wpcom-proxy-request.js
 
-install: node_modules
-
-clean:
-	@rm -rf node_modules dist
-
-dist:
-	@mkdir -p $@
-
-dist/wpcom-proxy-request.js: node_modules index.js dist
-	@$(BROWSERIFY) -s WPCOM.proxy index.js > $@
+build/wpcom-proxy-request.js:
+	@$(WEBPACK) -p --config ./examples/webpack.config.js
 
 node_modules: package.json
 	@NODE_ENV= $(NPM) install
 	@touch node_modules
 
-
-.PHONY: standalone install clean
+.PHONY: standalone
