@@ -12,6 +12,7 @@ import {
 	isSiteConflicting,
 	isJetpackSite,
 	isJetpackModuleActive,
+	isJetpackMinimumVersion,
 	getSiteSlug,
 	isRequestingSites,
 	getSiteByUrl,
@@ -222,6 +223,88 @@ describe( 'selectors', () => {
 			}, 77203074, 'custom-content-types' );
 
 			expect( isActive ).to.be.true;
+		} );
+	} );
+
+	describe( 'isJetpackMinimumVersion()', () => {
+		it( 'should return null if the site is not known', () => {
+			const isMeetingMinimum = isJetpackMinimumVersion( {
+				sites: {
+					items: {}
+				}
+			}, 77203074, '4.1.0' );
+
+			expect( isMeetingMinimum ).to.be.null;
+		} );
+
+		it( 'should return null if the site is not a Jetpack site', () => {
+			const isMeetingMinimum = isJetpackMinimumVersion( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.wordpress.com',
+							jetpack: false
+						}
+					}
+				}
+			}, 77203074, '4.1.0' );
+
+			expect( isMeetingMinimum ).to.be.null;
+		} );
+
+		it( 'should return null if the site option is not known', () => {
+			const isMeetingMinimum = isJetpackMinimumVersion( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true
+						}
+					}
+				}
+			}, 77203074, '4.1.0' );
+
+			expect( isMeetingMinimum ).to.be.null;
+		} );
+
+		it( 'should return true if meeting the minimum version', () => {
+			const isMeetingMinimum = isJetpackMinimumVersion( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								jetpack_version: '4.1.0'
+							}
+						}
+					}
+				}
+			}, 77203074, '4.1.0' );
+
+			expect( isMeetingMinimum ).to.be.true;
+		} );
+
+		it( 'should return false if not meeting the minimum version', () => {
+			const isMeetingMinimum = isJetpackMinimumVersion( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								jetpack_version: '4.0.1'
+							}
+						}
+					}
+				}
+			}, 77203074, '4.1.0' );
+
+			expect( isMeetingMinimum ).to.be.false;
 		} );
 	} );
 
