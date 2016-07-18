@@ -2,8 +2,6 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import page from 'page';
-import defer from 'lodash/defer';
 import omit from 'lodash/omit';
 import mapValues from 'lodash/mapValues';
 
@@ -35,16 +33,21 @@ const ThemesSiteSelectorModal = React.createClass( {
 
 	redirectAndCallAction( site ) {
 		const action = this.state.selectedOption.action;
-		const theme = this.state.selectedTheme;
-		/**
-		 * Since this implies a route change, defer it in case other state
-		 * changes are enqueued, e.g. setSelectedTheme.
-		 */
-		defer( () => {
-			trackClick( 'site selector', this.props.name );
-			page( this.props.sourcePath + '/' + site.slug );
-			action( theme, site );
-		} );
+
+		trackClick( 'site selector', this.props.name );
+
+		if ( action ) {
+			action( this.state.selectedTheme, site );
+		}
+	},
+
+	getUrl( site ) {
+		const { selectedOption, selectedTheme } = this.state;
+
+		if ( selectedOption.getUrl ) {
+			return selectedOption.getUrl( selectedTheme, site );
+		}
+		return this.props.sourcePath + '/' + site.slug;
 	},
 
 	showSiteSelectorModal( option, theme ) {
@@ -96,9 +99,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 					hide={ this.hideSiteSelectorModal }
 					mainAction={ this.redirectAndCallAction }
 					mainActionLabel={ selectedOption.label }
-					getMainUrl={ selectedOption.getUrl ? function( site ) {
-						return selectedOption.getUrl( selectedTheme, site );
-					} : null } >
+					getMainUrl={ this.getUrl } >
 
 					<Theme isActionable={ false } theme={ selectedTheme } />
 					<h1>{ selectedOption.header }</h1>
