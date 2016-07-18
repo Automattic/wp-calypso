@@ -132,10 +132,6 @@ export const plansList = {
 			'Everything included with Premium, as well as live chat support,' +
 			' unlimited access to premium themes, and Google Analytics.'
 		),
-		getDescriptionWithWordAdsCredit: () => i18n.translate(
-			'Everything included with Premium, as well as live chat support, ' +
-			'unlimited access to premium themes, Google Analytics, and $200 advertising vouchers.'
-		),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
