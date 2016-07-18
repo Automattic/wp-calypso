@@ -30,7 +30,6 @@ var config = require( 'config' ),
 	receiveUser = require( 'state/users/actions' ).receiveUser,
 	setCurrentUserId = require( 'state/current-user/actions' ).setCurrentUserId,
 	setCurrentUserFlags = require( 'state/current-user/actions' ).setCurrentUserFlags,
-	showGuidedTour = require( 'state/ui/guided-tours/actions' ).showGuidedTour,
 	sites = require( 'lib/sites-list' )(),
 	superProps = require( 'lib/analytics/super-props' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
@@ -278,15 +277,6 @@ function reduxStoreReady( reduxStore ) {
 			nuxWelcome.setWelcome( viewport.isDesktop() );
 		} else {
 			nuxWelcome.clearTempWelcome();
-		}
-
-		// If `?tour` is present, show the guided tour
-		if ( config.isEnabled( 'guided-tours' ) && context.query.tour ) {
-			context.store.dispatch( showGuidedTour( {
-				shouldShow: true,
-				shouldDelay: /^\/(checkout|plans\/select)/.test( path ),
-				tour: context.query.tour,
-			} ) );
 		}
 
 		// Bump general stat tracking overall Newdash usage

@@ -46,16 +46,6 @@ module.exports = {
 		},
 		defaultVariation: 'namegen'
 	},
-	guidedTours: {
-		datestamp: '20160603',
-		variations: {
-			original: 34,
-			guided: 50,
-			calypsoOnly: 16
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true
-	},
 	domainCreditsInfoNotice: {
 		datestamp: '20160420',
 		variations: {

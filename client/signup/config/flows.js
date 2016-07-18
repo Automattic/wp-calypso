@@ -212,38 +212,7 @@ function filterFlowName( flowName ) {
 }
 
 function filterDestination( destination, dependencies, flowName ) {
-	if ( config.isEnabled( 'guided-tours' ) ) {
-		return getGuidedToursDestination( destination, dependencies, flowName );
-	}
-
 	return destination;
-}
-
-function getGuidedToursDestination( destination, dependencies, flowName ) {
-	const guidedToursVariant = abtest( 'guidedTours' );
-	const tourName = 'main';
-	const disabledFlows = [ 'account', 'jetpack' ];
-	const siteSlug = dependencies.siteSlug;
-	const baseUrl = `/stats/${ siteSlug }`;
-
-	// TODO(ehg): Build the query arg properly, so we don't have problems with
-	// destinations that already have query strings in
-	function getVariantUrl( variant ) {
-		const external = isOutsideCalypso( destination );
-		const variantUrls = {
-			original: destination,
-			guided: external ? `${ baseUrl }?tour=${ tourName }` : `${ destination }?tour=${ tourName }`,
-			calypsoOnly: external ? baseUrl : destination,
-		};
-
-		return variantUrls[ variant ] || variantUrls.original;
-	}
-
-	if ( includes( disabledFlows, flowName ) || ! siteSlug ) {
-		return destination;
-	}
-
-	return getVariantUrl( guidedToursVariant );
 }
 
 const Flows = {
