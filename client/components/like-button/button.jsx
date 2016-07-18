@@ -16,7 +16,7 @@ const LikeButton = React.createClass( {
 
 	propTypes: {
 		liked: React.PropTypes.bool,
-		showCount: React.PropTypes.bool,
+		showZeroCount: React.PropTypes.bool,
 		likeCount: React.PropTypes.number,
 		showLabel: React.PropTypes.bool,
 		tagName: React.PropTypes.string,
@@ -29,7 +29,7 @@ const LikeButton = React.createClass( {
 	getDefaultProps() {
 		return {
 			liked: false,
-			showCount: false,
+			showZeroCount: false,
 			likeCount: 0,
 			showLabel: true,
 			isMini: false,
@@ -47,10 +47,10 @@ const LikeButton = React.createClass( {
 	},
 
 	render() {
-		const showLikeCount = ! ( this.props.likeCount === 0 && ! this.props.showCount );
+		const showLikeCount = this.props.likeCount > 0 || this.props.showZeroCount;
 		const likeCount = this.props.likeCount;
 		const containerTag = this.props.tagName || 'li';
-		let containerClasses = {
+		const containerClasses = {
 			'like-button': true,
 			'ignore-click': true,
 			'is-mini': this.props.isMini,
@@ -72,7 +72,7 @@ const LikeButton = React.createClass( {
 		}
 
 		// Override the label with a counter
-		if ( likeCount > 0 || this.props.showCount ) {
+		if ( showLikeCount ) {
 			likeLabel = this.translate( 'Like', 'Likes', {
 				count: likeCount,
 				comment: 'Displayed when a person "likes" a post.'

@@ -16,7 +16,7 @@ const LikeButtonContainer = React.createClass( {
 	propTypes: {
 		siteId: React.PropTypes.number.isRequired,
 		postId: React.PropTypes.number.isRequired,
-		showCount: React.PropTypes.bool,
+		showZeroCount: React.PropTypes.bool,
 		tagName: React.PropTypes.string,
 		onLikeToggle: React.PropTypes.func
 	},
