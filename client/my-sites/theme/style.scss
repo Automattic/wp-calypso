@@ -382,3 +382,9 @@
 		background: $gray-light;
 	}
 }
+
+.theme__sheet-content-presentation-image {
+	// This is used in conjunction with the theme content output.
+	// NOT to be used anywhere in Calypso UI.
+  display: none;
+}
