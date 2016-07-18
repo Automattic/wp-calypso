@@ -39,7 +39,7 @@ export default React.createClass( {
 
 	render() {
 		const previewUrl = getPreviewUrl( this.props.theme ),
-			buttonHref = this.props.getButtonHref( this.props.theme );
+			buttonHref = this.props.getButtonHref ? this.props.getButtonHref( this.props.theme ) : null;
 
 		return (
 			<WebPreview showPreview={ this.props.showPreview }
