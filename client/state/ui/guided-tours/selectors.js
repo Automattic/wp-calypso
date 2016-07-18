@@ -134,7 +134,7 @@ const findTriggeredTour = state => {
 	] );
 
 	const newTours = difference( toursFromTriggers, toursToDismiss );
-	return newTours.find( tour => {
+	return find( newTours, tour => {
 		const { context = noop } = find( relevantFeatures, { tour } );
 		return context( state );
 	} );
