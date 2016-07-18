@@ -342,6 +342,10 @@ export const isEditedPostDirty = createSelector(
 		const edits = getPostEdits( state, siteId, postId );
 
 		return some( edits, ( value, key ) => {
+			if ( key === 'type' ) {
+				return false;
+			}
+
 			if ( post ) {
 				return post[ key ] !== value;
 			}
