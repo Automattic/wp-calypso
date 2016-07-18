@@ -933,7 +933,7 @@ describe( 'selectors', () => {
 			expect( isDirty ).to.be.false;
 		} );
 
-		it( 'should return true if newly edited with custom type', () => {
+		it( 'should return false if newly edited with custom type', () => {
 			const isDirty = isEditedPostDirty( {
 				posts: {
 					items: {},
@@ -947,7 +947,7 @@ describe( 'selectors', () => {
 				}
 			}, 2916284 );
 
-			expect( isDirty ).to.be.true;
+			expect( isDirty ).to.be.false;
 		} );
 
 		it( 'should return false if no saved post and value matches default for new post', () => {
