@@ -3,15 +3,12 @@
 .is-first-view-active .main {
 	opacity: 1;
 	pointer-events: auto;
-	transform: scale( 1 );
-	transition: all 0.2s ease-in-out;
+	transition: all .6s ease-in-out;
 }
 
 .is-first-view-visible .main {
-	opacity: 0.4;
+	opacity: 0.3;
 	pointer-events: none;
-	-webkit-filter: blur( 3px );
-	transform: scale( 0.9 );
 
 	// This limits the blur filter to Safari, as other browsers can't handle the
 	// awesomeness of transitioning blurs.
@@ -22,7 +19,7 @@
 
 .first-view {
 	box-sizing: border-box;
-	margin: ( 47px + 120px ) 0 0 0;
+	margin: calc( 47px + 10vh ) 0 0 0;
 	padding: 32px 32px 32px 32px;
 	pointer-events: none;
 	position: fixed;
@@ -32,8 +29,8 @@
 
 	&.is-visible {
 		.first-view__content {
-			opacity: 0.9;
-			transform: scale( 1 );
+			opacity: 1;
+			transform: scale( 1 ) translateY( 0 );
 		}
 	}
 
@@ -56,10 +53,12 @@
 	max-width: 575px;
 	opacity: 0;
 	padding: 20px 24px 20px ( 128px + 4px + 24px );
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), 0.5 ),
+		0 8px 30px rgba( $gray, 0.2 );
 	position: relative;
 	pointer-events: auto;
-	transform: scale( 1.3 );
-	transition: all 0.2s ease-in;
+	transform: scale( 0.98 ) translateY( 32px );
+	transition: all 0.25s ease-in;
 
 	@include breakpoint( "<480px" ) {
 		height: 100%;
