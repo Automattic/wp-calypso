@@ -98,22 +98,6 @@ function getCategoryIds( post ) {
 	} );
 }
 
-function getTermIds( post ) {
-	if ( ! post || ! post.terms ) {
-		return;
-	}
-
-	// Skip "default" taxonomies
-	const taxonomies = omit( post.terms, [ 'post_tag', 'category' ] );
-	return mapValues( taxonomies, ( taxonomy ) => {
-		const termIds = map( taxonomy, 'ID' );
-
-		// Hack: qs omits empty arrays in wpcom.js request, which prevents
-		// removing all terms for a given taxonomy since the empty array is not sent to the API
-		return termIds.length ? termIds : null;
-	} );
-}
-
 function getParentId( post ) {
 	if ( ! post || ! post.parent ) {
 		return null;
@@ -220,11 +204,6 @@ function normalize( post ) {
 	var categoryIds = getCategoryIds( post );
 	if ( categoryIds ) {
 		post.category_ids = categoryIds;
-	}
-
-	const termIds = getTermIds( post );
-	if ( termIds ) {
-		post.terms_by_id = termIds;
 	}
 
 	post.parent_id = getParentId( post );

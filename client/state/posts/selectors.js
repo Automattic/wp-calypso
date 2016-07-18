@@ -21,6 +21,7 @@ import {
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
 	mergeIgnoringArrays,
+	getTermIdsFromEdits
 } from './utils';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import firstPassCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
@@ -314,6 +315,23 @@ export function getEditedPost( state, siteId, postId ) {
 export function getPostEdits( state, siteId, postId ) {
 	const { edits } = state.posts;
 	return get( edits, [ siteId, postId || '' ], null );
+}
+
+/**
+ * Returns an object of normalized edited post attributes for the site ID post ID pairing.
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @param  {Number} postId Post ID
+ * @return {Object}        Normalized Post revisions
+ */
+export function getNormalizedPostEdits( state, siteId, postId ) {
+	const edits = getPostEdits( state, siteId, postId );
+	const normalize = flow( [
+		getTermIdsFromEdits
+	] );
+
+	return normalize( edits );
 }
 
 /**
