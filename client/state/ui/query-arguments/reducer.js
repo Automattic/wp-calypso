@@ -14,13 +14,13 @@ import {
 
 const timestamped = ( query ) => ( {
 	...query,
-	timestamp: Date.now(),
+	_timestamp: Date.now(),
 } );
 
 const isEqualQuery = ( a, b ) =>
 	isEqual(
-		omit( a, 'timestamp' ),
-		omit( b, 'timestamp' ) );
+		omit( a, '_timestamp' ),
+		omit( b, '_timestamp' ) );
 
 const initial = createReducer( false, {
 	[ ROUTE_SET ]: ( state, { query } ) =>
