@@ -30,6 +30,7 @@ import {
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
+import { abtest } from 'lib/abtest';
 
 /**
  * Module vars
@@ -181,6 +182,10 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 		return ! isJetpackPlan( plan );
 	} );
 }
+
+export const isPlanFeaturesEnabled = () => {
+	return isEnabled( 'manage/plan-features' ) && abtest( 'planFeatures' ) === 'show';
+};
 
 export function plansLink( url, site, intervalType ) {
 	if ( 'monthly' === intervalType ) {

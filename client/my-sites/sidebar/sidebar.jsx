@@ -8,8 +8,6 @@ var analytics = require( 'lib/analytics' ),
 	includes = require( 'lodash/includes' ),
 	React = require( 'react' );
 
-import page from 'page';
-
 /**
  * Internal dependencies
  */
@@ -145,7 +143,7 @@ module.exports = React.createClass( {
 		var site = this.getSelectedSite(),
 			adsLink = '/ads/earnings' + this.siteSuffix();
 
-		if ( !site || ! site.options.wordads ) {
+		if ( ! site || ! site.options.wordads ) {
 			return null;
 		}
 
@@ -335,10 +333,6 @@ module.exports = React.createClass( {
 
 		let planLink = '/plans' + this.siteSuffix();
 
-		if ( config.isEnabled( 'manage/plan-features' ) ) {
-			planLink = '/plans/features' + this.siteSuffix();
-		}
-
 		// Show plan details for upgraded sites
 		if (
 			site &&
@@ -387,7 +381,11 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		if ( site.jetpack && ! site.isModuleActive( 'publicize' ) && ( ! site.isModuleActive( 'sharedaddy' ) || site.versionCompare( '3.4-dev', '<' ) ) ) {
+		if (
+			site.jetpack &&
+			! site.isModuleActive( 'publicize' ) &&
+			( ! site.isModuleActive( 'sharedaddy' ) || site.versionCompare( '3.4-dev', '<' ) )
+		) {
 			return null;
 		}
 
