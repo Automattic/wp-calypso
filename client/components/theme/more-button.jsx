@@ -66,7 +66,7 @@ class ThemeMoreButton extends React.Component {
 							return (
 								<a className="theme__more-button-menu-item popover__menu-item"
 									onMouseOver={ this.focus }
-									onClick={ option.action ? option.action : null }
+									onClick={ option.action }
 									key={ option.label }
 									href={ url }
 									target={ isOutsideCalypso( url ) ? '_blank' : null }>
