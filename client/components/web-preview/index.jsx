@@ -16,6 +16,7 @@ import shallowCompare from 'react-addons-shallow-compare';
 import Toolbar from './toolbar';
 import touchDetect from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
+import { localize } from 'i18n-calypso';
 import Spinner from 'components/spinner';
 import RootChild from 'components/root-child';
 import { setPreviewShowing } from 'state/ui/actions';
@@ -165,6 +166,8 @@ export class WebPreview extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
+
 		const className = classNames( this.props.className, 'web-preview', {
 			'is-touch': this._hasTouch,
 			'is-visible': this.props.showPreview,
@@ -202,7 +205,7 @@ export class WebPreview extends Component {
 									className="web-preview__frame"
 									src="about:blank"
 									onLoad={ this.setLoaded }
-									title={ this.props.iframeTitle || this.translate( 'Preview' ) }
+									title={ this.props.iframeTitle || translate( 'Preview' ) }
 								/>
 							}
 						</div>
@@ -253,7 +256,4 @@ WebPreview.defaultProps = {
 	onClose: noop
 };
 
-export default connect(
-	null,
-	{ setPreviewShowing }
-)( WebPreview );
+export default connect( null, { setPreviewShowing } )( localize( WebPreview ) );
