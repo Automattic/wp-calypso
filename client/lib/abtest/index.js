@@ -110,7 +110,7 @@ ABTest.prototype.getVariationAndSetAsNeeded = function() {
 
 	if ( ! this.hasTestStartedYet() ) {
 		debug( '%s: Test will start on %s.', this.experimentId, this.datestamp );
-		return this.defaultVariation;
+		return savedVariation || this.defaultVariation;
 	}
 
 	if ( savedVariation && includes( this.variationNames, savedVariation ) ) {
