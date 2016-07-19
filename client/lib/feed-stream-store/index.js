@@ -179,7 +179,7 @@ function getStoreForRecommendedPosts( storeId ) {
 	} );
 
 	function fetcher( query, callback ) {
-		if ( 'coldstart_posts' == storeId ) {
+		if ( 'coldstart_posts' === storeId ) {
 			query.algorithm = 'read:recommendations:posts/es/2';
 		} else {
 			query.algorithm = 'read:recommendations:posts/es/1';

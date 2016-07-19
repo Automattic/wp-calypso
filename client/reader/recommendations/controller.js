@@ -45,7 +45,7 @@ export default {
 		var RecommendedPostsStream = require( 'reader/recommendations/posts' ),
 			basePath = route.sectionify( context.path );
 
-		if ( '/recommendations/posts' == basePath ) {
+		if ( '/recommendations/posts' === basePath ) {
 			var	fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Recommended Posts',
 				RecommendedPostsStore = feedStreamFactory( 'recommendations_posts' ),
 				mcKey = 'recommendations_posts';
