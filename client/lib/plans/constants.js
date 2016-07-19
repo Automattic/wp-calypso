@@ -40,8 +40,6 @@ export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
 export const FEATURE_BASIC_DESIGN = 'basic-design';
 export const FEATURE_ADVANCED_DESIGN = 'advanced-design';
 export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
-export const FEATURE_GOOGLE_AD_VOUCHERS_100 = 'google-ad-vouchers-100';
-export const FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200 = 'google-ad-vouchers-200';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
@@ -69,8 +67,10 @@ export const plansList = {
 		getProductId: () => 1,
 		getStoreSlug: () => PLAN_FREE,
 		getPathSlug: () => 'beginner',
-		getDescription: () => i18n.translate( 'Get a free blog and be on your way to publishing your first post' +
-			' in less than five minutes.' ),
+		getDescription: () => i18n.translate(
+			'Get a free blog and be on your way to publishing your first post' +
+			' in less than five minutes.'
+		),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_WP_SUBDOMAIN,
 			FEATURE_COMMUNITY_SUPPORT,
@@ -107,9 +107,8 @@ export const plansList = {
 		getStoreSlug: () => PLAN_PREMIUM,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
 		getDescription: () => i18n.translate( 'Your own domain name, powerful' +
-			' customization options, easy monetization with WordAds and lots of space for audio and video.' ),
-		getDescriptionWithGoogleVouchers: () => i18n.translate( 'Your own domain name, powerful' +
-			' customization options, easy monetization with WordAds, lots of space for audio and video, and $100 advertising voucher.' ),
+			' customization options, easy monetization with WordAds, and lots of space for audio and video.'
+		),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -117,7 +116,6 @@ export const plansList = {
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
-			FEATURE_GOOGLE_AD_VOUCHERS_100,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS
 		],
@@ -131,10 +129,10 @@ export const plansList = {
 		getStoreSlug: () => PLAN_BUSINESS,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ], plan ),
 		getPathSlug: () => 'business',
-		getDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support,' +
-			' unlimited access to premium themes, and Google Analytics.' ),
-		getDescriptionWithWordAdsCredit: () => i18n.translate( 'Everything included with Premium, as well as' +
-			' live chat support, unlimited access to premium themes, Google Analytics, and $200 advertising vouchers.' ),
+		getDescription: () => i18n.translate(
+			'Everything included with Premium, as well as live chat support,' +
+			' unlimited access to premium themes, and Google Analytics.'
+		),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -142,7 +140,6 @@ export const plansList = {
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_NO_ADS,
-			FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
 			FEATURE_GOOGLE_ANALYTICS,
@@ -163,8 +160,10 @@ export const plansList = {
 		getProductId: () => 2000,
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getPathSlug: () => 'premium',
-		getDescription: () => i18n.translate( 'All the features you need to keep your site’s content backed up' +
-			' and secure, as well as spam-free.' ),
+		getDescription: () => i18n.translate(
+			'All the features you need to keep your site’s content backed up' +
+			' and secure, as well as spam-free.'
+		),
 		getFeatures: () => [
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -182,8 +181,10 @@ export const plansList = {
 		getProductId: () => 2003,
 		getPathSlug: () => 'premium-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
-		getDescription: () => i18n.translate( 'All the features you need to keep your site’s content backed' +
-			' up and secure, as well as spam-free.' ),
+		getDescription: () => i18n.translate(
+			'All the features you need to keep your site’s content backed' +
+			' up and secure, as well as spam-free.'
+		),
 		getFeatures: () => [
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -201,7 +202,10 @@ export const plansList = {
 		getProductId: () => 2001,
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ], plan ),
 		getPathSlug: () => 'professional',
-		getDescription: () => i18n.translate( 'More powerful security tools and realtime content backup for the ultimate peace of mind.' ),
+		getDescription: () => i18n.translate(
+			'More powerful security tools and realtime content backup for ' +
+			'the ultimate peace of mind.'
+		),
 		getFeatures: () => [
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -222,7 +226,9 @@ export const plansList = {
 		getProductId: () => 2004,
 		getPathSlug: () => 'professional-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ], plan ),
-		getDescription: () => i18n.translate( 'More powerful security tools and realtime content backup for the ultimate peace of mind.' ),
+		getDescription: () => i18n.translate(
+			'More powerful security tools and realtime content backup for the ultimate peace of mind.'
+		),
 		getFeatures: () => [
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -248,9 +254,11 @@ const allPaidPlans = [
 export const featuresList = {
 	[ FEATURE_GOOGLE_ANALYTICS ]: {
 		getTitle: () => i18n.translate( 'Google Analytics Integration' ),
-		getDescription: () => i18n.translate( 'Track website statistics with Google Analytics for a' +
-			' deeper understanding of your website visitors and customers.' ),
-		plans: [ PLAN_BUSINESS ]
+		getDescription: () => i18n.translate(
+			'Track website statistics with Google Analytics for a ' +
+			'deeper understanding of your website visitors and customers.'
+		),
+		//plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_UNLIMITED_STORAGE ]: {
@@ -259,16 +267,20 @@ export const featuresList = {
 				strong: <strong />
 			}
 		} ),
-		getDescription: () => i18n.translate( "With increased storage space you'll be able to upload" +
-			' more images, videos, audio, and documents to your website.' ),
+		getDescription: () => i18n.translate(
+			"With increased storage space you'll be able to upload " +
+			'more images, videos, audio, and documents to your website.'
+		),
 		getStoreSlug: () => 'unlimited_space',
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
 		getTitle: () => i18n.translate( 'Custom Domain Name' ),
-		getDescription: () => i18n.translate( 'Get a free custom domain name (mywebsite.com) with this plan' +
-			' to use for your website.' ),
+		getDescription: () => i18n.translate(
+			'Get a free custom domain name (mywebsite.com) with this plan ' +
+			'to use for your website.'
+		),
 		plans: allPaidPlans
 	},
 
@@ -278,24 +290,30 @@ export const featuresList = {
 				strong: <strong />
 			}
 		} ),
-		getDescription: () => i18n.translate( 'Unlimited access to all of our advanced premium theme templates,' +
-			' including templates specifically tailored for businesses.' ),
+		getDescription: () => i18n.translate(
+			'Unlimited access to all of our advanced premium theme templates, ' +
+			'including templates specifically tailored for businesses.'
+		),
 		getStoreSlug: () => 'unlimited_themes',
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
 		getTitle: () => i18n.translate( 'VideoPress Support' ),
-		getDescription: () => i18n.translate( 'The easiest way to upload videos to your website and display them' +
-			' using a fast, unbranded, customizable player with rich stats.' ),
+		getDescription: () => i18n.translate(
+			'The easiest way to upload videos to your website and display them ' +
+			'using a fast, unbranded, customizable player with rich stats.'
+		),
 		getStoreSlug: () => 'videopress',
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_BASIC_DESIGN ]: {
 		getTitle: () => i18n.translate( 'Basic Design Customization' ),
-		getDescription: () => i18n.translate( 'Customize your selected theme template with pre-set color schemes,' +
-			' background designs, and font styles.' ),
+		getDescription: () => i18n.translate(
+			'Customize your selected theme template with pre-set color schemes, ' +
+			'background designs, and font styles.'
+		),
 		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
 		plans: [ PLAN_FREE, PLAN_PERSONAL ]
 	},
@@ -306,52 +324,38 @@ export const featuresList = {
 				strong: <strong />
 			}
 		} ),
-		getDescription: () => i18n.translate( 'Customize your selected theme template with extended color schemes,' +
-			' background designs, and complete control over website CSS.' ),
+		getDescription: () => i18n.translate(
+			'Customize your selected theme template with extended color schemes, ' +
+			'background designs, and complete control over website CSS.'
+		),
 		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_NO_ADS ]: {
 		getTitle: () => i18n.translate( 'Remove WordPress.com Ads' ),
-		getDescription: () => i18n.translate( 'Allow your visitors to visit and read your website without' +
-			' seeing any WordPress.com advertising.' ),
+		getDescription: () => i18n.translate(
+			'Allow your visitors to visit and read your website without ' +
+			'seeing any WordPress.com advertising.'
+		),
 		getStoreSlug: () => 'no-adverts/no-adverts.php',
 		plans: allPaidPlans
 	},
 
 	[ FEATURE_NO_BRANDING ]: {
 		getTitle: () => i18n.translate( 'Remove WordPress.com Branding' ),
-		getDescription: () => i18n.translate( "Keep the focus on your site's brand by removing the WordPress.com" +
-			' footer branding.' ),
+		getDescription: () => i18n.translate(
+			"Keep the focus on your site's brand by removing the WordPress.com footer branding."
+		),
 		getStoreSlug: () => 'no-adverts/no-adverts.php',
-		plans: [ PLAN_BUSINESS ]
-	},
-
-	[ FEATURE_GOOGLE_AD_VOUCHERS_100 ]: {
-		getTitle: () => i18n.translate( '$100 Advertising Voucher' ),
-		getTitleForOldPlans: () => i18n.translate( 'Advertising Vouchers' ),
-		getDescription: () => i18n.translate( '$100 Google AdWords credit after spending the first $25.' +
-			' Offer valid in US and Canada.' ),
-		plans: [ PLAN_PREMIUM, PLAN_BUSINESS ] // Business too because when wordpressAdCredits is disabled,
-												// you get only $100 vouchers (this feature) in Business plan.
-	},
-
-	[ FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200 ]: {
-		getTitle: () => i18n.translate( '{{strong}}$200{{/strong}} Advertising Voucher', {
-			components: {
-				strong: <strong />
-			}
-		} ),
-		getDescription: () => i18n.translate( '$100 Google AdWords credit after spending the first $25' +
-			' (valid in US & Canada), plus a $100 WordAds advertising credit (valid worldwide).' ),
 		plans: [ PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_WORDADS_INSTANT ]: {
 		getTitle: () => i18n.translate( 'Monetize Your Site' ),
-		getDescription: () => i18n.translate( 'Add advertising to your site through our WordAds program and' +
-			' earn money from impressions.' ),
+		getDescription: () => i18n.translate(
+			'Add advertising to your site through our WordAds program and earn money from impressions.'
+		),
 		plans: [ PLAN_PREMIUM, PLAN_BUSINESS ]
 	},
 
@@ -362,15 +366,19 @@ export const featuresList = {
 
 	[ FEATURE_FREE_THEMES ]: {
 		getTitle: () => i18n.translate( 'Hundreds of Free Themes' ),
-		getDescription: () => i18n.translate( 'Access to a wide range of professional theme templates' +
-			" for your website so you can find the exact design you're looking for." ),
+		getDescription: () => i18n.translate(
+			'Access to a wide range of professional theme templates ' +
+			"for your website so you can find the exact design you're looking for."
+		),
 		plans: [ PLAN_FREE, PLAN_PREMIUM ]
 	},
 
 	[ FEATURE_3GB_STORAGE ]: {
 		getTitle: () => i18n.translate( '3GB Storage Space' ),
-		getDescription: () => i18n.translate( "With increased storage space you'll be able to upload" +
-			' more images, videos, audio, and documents to your website.' ),
+		getDescription: () => i18n.translate(
+			"With increased storage space you'll be able to upload " +
+			'more images, videos, audio, and documents to your website.'
+		),
 		plans: [ PLAN_FREE ]
 	},
 
@@ -380,8 +388,10 @@ export const featuresList = {
 				strong: <strong />
 			}
 		} ),
-		getDescription: () => i18n.translate( "With increased storage space you'll be able to upload" +
-			' more images, videos, audio, and documents to your website.' ),
+		getDescription: () => i18n.translate(
+			"With increased storage space you'll be able to upload " +
+			'more images, videos, audio, and documents to your website.'
+		),
 		plans: [ PLAN_PREMIUM ]
 	},
 
@@ -392,8 +402,10 @@ export const featuresList = {
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
 		getTitle: () => i18n.translate( 'Email & Live Chat Support' ),
-		getDescription: () => i18n.translate( 'High quality support to help you get your website up and running' +
-			' and working how you want it.' ),
+		getDescription: () => i18n.translate(
+			'High quality support to help you get your website up ' +
+			'and running and working how you want it.'
+		),
 		plans: allPaidPlans
 	},
 	[ FEATURE_SPAM_AKISMET_PLUS ]: {
@@ -402,11 +414,17 @@ export const featuresList = {
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: {
 		getTitle: () => i18n.translate( 'Daily Offsite Backups' ),
-		getDescription: () => i18n.translate( 'Automatic daily backups of every single aspect of your site. Stored safely and optimized for WordPress.' )
+		getDescription: () => i18n.translate(
+			'Automatic daily backups of every single aspect of your site. ' +
+			'Stored safely and optimized for WordPress.'
+		)
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME ]: {
 		getTitle: () => i18n.translate( 'Realtime offsite backups' ),
-		getDescription: () => i18n.translate( 'Automatic realtime backups of every single aspect of your site. Stored safely and optimized for WordPress.' )
+		getDescription: () => i18n.translate(
+			'Automatic realtime backups of every single aspect of your site. ' +
+			'Stored safely and optimized for WordPress.'
+		)
 	},
 	[ FEATURE_BACKUP_ARCHIVE_30 ]: {
 		getTitle: () => i18n.translate( '30-day Backup Archive' ),
@@ -414,7 +432,9 @@ export const featuresList = {
 	},
 	[ FEATURE_BACKUP_ARCHIVE_UNLIMITED ]: {
 		getTitle: () => i18n.translate( 'Unlimited Backup Archive' ),
-		getDescription: () => i18n.translate( 'Browse or restore any backup made since you activated the service.' )
+		getDescription: () => i18n.translate(
+			'Browse or restore any backup made since you activated the service.'
+		)
 	},
 	[ FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED ]: {
 		getTitle: () => i18n.translate( 'Unlimited Backup Storage Space' ),
@@ -430,19 +450,27 @@ export const featuresList = {
 	},
 	[ FEATURE_MALWARE_SCANNING_DAILY ]: {
 		getTitle: () => i18n.translate( 'Daily Malware Scanning' ),
-		getDescription: () => i18n.translate( 'Comprehensive and automated scanning for any security vulnerabilities or threats on your site.' )
+		getDescription: () => i18n.translate(
+			'Comprehensive and automated scanning for any security vulnerabilities or threats on your site.'
+		)
 	},
 	[ FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND ]: {
 		getTitle: () => i18n.translate( 'Daily and On-demand Malware Scanning' ),
-		getDescription: () => i18n.translate( 'Automated security scanning with the option to run complete site scans at any time.' )
+		getDescription: () => i18n.translate(
+			'Automated security scanning with the option to run complete site scans at any time.'
+		)
 	},
 	[ FEATURE_ONE_CLICK_THREAT_RESOLUTION ]: {
 		getTitle: () => i18n.translate( 'One-Click Threat Resolution' ),
-		getDescription: () => i18n.translate( 'Repair any security issues found on your site with just a single click.' )
+		getDescription: () => i18n.translate(
+			'Repair any security issues found on your site with just a single click.'
+		)
 	},
 	[ FEATURE_POLLS_PRO ]: {
 		getTitle: () => i18n.translate( 'Advanced Polls and Ratings' ),
-		getDescription: () => i18n.translate( 'Custom polls, surveys, ratings, and quizzes for the ultimate in customer and reader engagement.' )
+		getDescription: () => i18n.translate(
+			'Custom polls, surveys, ratings, and quizzes for the ultimate in customer and reader engagement.'
+		)
 	}
 };
 
