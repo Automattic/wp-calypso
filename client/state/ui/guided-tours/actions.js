@@ -26,7 +26,7 @@ export function quitGuidedTour( { tour, stepName, finished, error } ) {
 
 	const trackEvent = recordTracksEvent( `calypso_guided_tours_${ finished ? 'finished' : 'quit' }`, {
 		step: stepName,
-		tour_version: guidedToursConfig.get( tour ).version,
+		tour_version: guidedToursConfig.get( tour ).meta.version,
 		tour,
 		error,
 	} );
@@ -46,7 +46,7 @@ export function nextGuidedTourStep( { tour, stepName } ) {
 
 	const trackEvent = recordTracksEvent( 'calypso_guided_tours_next_step', {
 		step: stepName,
-		tour_version: guidedToursConfig.get( tour ).version,
+		tour_version: guidedToursConfig.get( tour ).meta.version,
 		tour,
 	} );
 
