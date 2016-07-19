@@ -72,7 +72,7 @@ const CurrentTheme = React.createClass( {
 					{ map( this.props.options, ( option, name ) => (
 						<CurrentThemeButton name={ name }
 							label={ option.label }
-							noticon={ option.noticon }
+							icon={ option.icon }
 							href={ currentTheme && option.getUrl( currentTheme ) }
 							onClick={ this.trackClick } />
 					) ) }
