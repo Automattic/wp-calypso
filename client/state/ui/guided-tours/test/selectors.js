@@ -149,7 +149,7 @@ describe( 'selectors', () => {
 			const state = makeState( {
 				actionLog: [ navigateToThemes ],
 				toursHistory: [ themesTourSeen, mainTourJustSeen ],
-				queryArguments: { tour: 'main', timestamp: 0 }
+				queryArguments: { tour: 'main', _timestamp: 0 }
 			} );
 			const tour = findEligibleTour( state );
 
@@ -164,7 +164,7 @@ describe( 'selectors', () => {
 			const state = makeState( {
 				actionLog: times( 50, constant( navigateToTest ) ),
 				toursHistory: [ testTourSeen, themesTourSeen ],
-				queryArguments: { tour: 'themes', timestamp: 0 }
+				queryArguments: { tour: 'themes', _timestamp: 0 }
 			} );
 			const tour = findEligibleTour( state );
 

@@ -94,10 +94,10 @@ const getTourFromQuery = createSelector(
  */
 const hasJustSeenTour = createSelector(
 	( state, tourName ) => {
-		const { timestamp } = getInitialQueryArguments( state );
+		const { _timestamp } = getInitialQueryArguments( state );
 		return getToursHistory( state ).some( entry =>
 			entry.tourName === tourName &&
-			entry.timestamp > timestamp
+			entry.timestamp > _timestamp
 		);
 	},
 	[ getInitialQueryArguments, getToursHistory ]
