@@ -37,6 +37,7 @@ export class WebPreview extends Component {
 		};
 
 		this.keyDown = this.keyDown.bind( this );
+		this.setDeviceViewport = this.setDeviceViewport.bind( this );
 		this.setIframeMarkup = this.setIframeMarkup.bind( this );
 		this.setIframeUrl = this.setIframeUrl.bind( this );
 		this.shouldRenderIframe = this.shouldRenderIframe.bind( this );
