@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import map from 'lodash/map';
+import pickBy from 'lodash/pickBy';
 
 /**
  * Internal dependencies
@@ -11,12 +13,15 @@ import { connect } from 'react-redux';
 import Card from 'components/card';
 import CurrentThemeButton from './button';
 import {
-	getCustomizeUrl,
-	getDetailsUrl,
-	getSupportUrl,
-	isPremium,
-	trackClick
-} from '../helpers';
+	customize,
+	info,
+	support,
+	bindOptionsToDispatch,
+	bindOptionsToSite
+} from '../theme-options';
+import { trackClick } from '../helpers';
+import { isJetpackSite } from 'state/sites/selectors';
+import { canCurrentUser } from 'state/current-user/selectors';
 import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 import QueryCurrentTheme from 'components/data/query-current-theme';
 
@@ -27,12 +32,19 @@ import QueryCurrentTheme from 'components/data/query-current-theme';
 const CurrentTheme = React.createClass( {
 
 	propTypes: {
-		currentTheme: React.PropTypes.object,
-		site: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		options: PropTypes.objectOf( PropTypes.shape( {
+			label: PropTypes.string.isRequired,
+			icon: PropTypes.string.isRequired,
+			getUrl: PropTypes.func.isRequired
+		} ) ),
+		site: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
-		canCustomize: React.PropTypes.bool.isRequired
+		// connected props
+		isCustomizable: PropTypes.bool.isRequired,
+		isJetpack: PropTypes.bool.isRequired,
+		currentTheme: PropTypes.object
 	},
 
 	trackClick: trackClick.bind( null, 'current theme' ),
@@ -40,8 +52,7 @@ const CurrentTheme = React.createClass( {
 	render() {
 		const { currentTheme, site } = this.props,
 			placeholderText = <span className="current-theme__placeholder">loading...</span>,
-			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText,
-			displaySupportButton = isPremium( currentTheme ) && ! site.jetpack;
+			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText;
 
 		return (
 			<Card className="current-theme">
@@ -56,31 +67,54 @@ const CurrentTheme = React.createClass( {
 				</div>
 				<div className={ classNames(
 					'current-theme__actions',
-					{ 'two-buttons': ! displaySupportButton }
+					{ 'two-buttons': Object.keys( this.props.options ).length === 2 }
 					) } >
-					<CurrentThemeButton name="customize"
-						label={ this.translate( 'Customize' ) }
-						noticon="paintbrush"
-						href={ this.props.canCustomize ? getCustomizeUrl( null, site ) : null }
-						onClick={ this.trackClick } />
-					<CurrentThemeButton name="info"
-						label={ this.translate( 'Info' ) }
-						noticon="info"
-						href={ currentTheme ? getDetailsUrl( currentTheme, site ) : null }
-						onClick={ this.trackClick } />
-					{ displaySupportButton && <CurrentThemeButton name="support"
-						label={ this.translate( 'Setup' ) }
-						noticon="help"
-						href={ currentTheme ? getSupportUrl( currentTheme, site ) : null }
-						onClick={ this.trackClick } /> }
+					{ map( this.props.options, ( option, name ) => (
+						<CurrentThemeButton name={ name }
+							label={ option.label }
+							noticon={ option.noticon }
+							href={ currentTheme && option.getUrl( currentTheme ) }
+							onClick={ this.trackClick } />
+					) ) }
 				</div>
 			</Card>
 		);
 	}
 } );
 
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const { site } = ownProps;
+	// FIXME (ockham): Remove this ugly hack. Currently required since the endpoint doesn't return an `active` attr
+	const theme = Object.assign( {}, stateProps.currentTheme, { active: true } );
+
+	const filteredOptions = pickBy( dispatchProps, option =>
+		! ( option.hideForSite && option.hideForSite( stateProps ) ) &&
+		! ( option.hideForTheme && option.hideForTheme( theme ) )
+	);
+
+	return Object.assign(
+		{},
+		ownProps,
+		stateProps,
+		{
+			options: bindOptionsToSite( filteredOptions, site )
+		}
+	);
+};
+
 export default connect(
-	( state, props ) => (
-		{ currentTheme: getCurrentTheme( state, props.site && props.site.ID ) }
-	)
+	( state, props ) => {
+		const { site: selectedSite } = props;
+		return {
+			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
+			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
+			currentTheme: selectedSite && getCurrentTheme( state, selectedSite.ID )
+		};
+	},
+	bindOptionsToDispatch( {
+		customize,
+		info,
+		support
+	}, 'current theme' ),
+	mergeProps
 )( CurrentTheme );
