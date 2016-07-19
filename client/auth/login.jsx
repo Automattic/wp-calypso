@@ -162,7 +162,7 @@ module.exports = React.createClass( {
 							<FormTextInput
 								name="login"
 								ref="login"
-								disabled={ Boolean( requires2fa ) || inProgress }
+								disabled={ !! requires2fa || inProgress }
 								placeholder={ this.translate( 'Username or email address' ) }
 								onFocus={ this.recordFocusEvent( 'Username or email address' ) }
 								valueLink={ this.linkState( 'login' ) } />
@@ -172,7 +172,7 @@ module.exports = React.createClass( {
 							<FormPasswordInput
 								name="password"
 								ref="password"
-								disabled={ Boolean( requires2fa ) || inProgress }
+								disabled={ !! requires2fa || inProgress }
 								placeholder={ this.translate( 'Password' ) }
 								onFocus={ this.recordFocusEvent( 'Password' ) }
 								hideToggle={ requires2fa }
@@ -198,19 +198,26 @@ module.exports = React.createClass( {
 						</FormButton>
 					</FormButtonsBar>
 					{ ! requires2fa && <LostPassword /> }
-					{ errorMessage && <Notice text={ errorMessage } status={ errorLevel } showDismiss={ false } /> }
-					{ requires2fa === 'push-verification' &&
-					<FormButtonsBar>
-						<FormButton ref="useAuthCode" onClick={ this.useAuthCode } >
-							{ this.translate( 'Verify with code instead' ) }
-						</FormButton>
-					</FormButtonsBar>
+					{ errorMessage &&
+						<Notice text={ errorMessage } status={ errorLevel } showDismiss={ false } />
 					}
-					{ ( requires2fa === 'code' ) && <AuthCodeButton username={ this.state.login } password={ this.state.password } /> }
+					{ ( requires2fa === 'push-verification' ) &&
+						<FormButtonsBar>
+							<FormButton ref="useAuthCode" onClick={ this.useAuthCode } >
+								{ this.translate( 'Verify with code instead' ) }
+							</FormButton>
+						</FormButtonsBar>
+					}
+					{ ( requires2fa === 'code' ) &&
+						<AuthCodeButton username={ this.state.login } password={ this.state.password } />
+					}
 				</form>
-				<a className="auth__help" target="_blank" title={
-					this.translate( 'Visit the WordPress.com support site for help' )
-				} href="https://en.support.wordpress.com/">
+				<a
+					className="auth__help"
+					target="_blank"
+					title={ this.translate( 'Visit the WordPress.com support site for help' ) }
+					href="https://en.support.wordpress.com/"
+				>
 					<Gridicon icon="help" />
 				</a>
 				<div className="auth__links">
