@@ -3,12 +3,12 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
+import classNames from 'classnames';
 import debugModule from 'debug';
 import noop from 'lodash/noop';
+import shallowCompare from 'react-addons-shallow-compare';
 
 /**
  * Internal dependencies
@@ -22,68 +22,25 @@ import { setPreviewShowing } from 'state/ui/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
 
-const WebPreview = React.createClass( {
+export class WebPreview extends Component {
+	constructor( props ) {
+		super( props );
 
-	_hasTouch: false,
-	_isMobile: false,
+		this._hasTouch = false;
+		this._isMobile = false;
 
-	propTypes: {
-		// Display the preview
-		showPreview: React.PropTypes.bool,
-		// Show external link button (only if there is a previewUrl)
-		showExternal: React.PropTypes.bool,
-		// Show close button
-		showClose: React.PropTypes.bool,
-		// Show device viewport switcher
-		showDeviceSwitcher: React.PropTypes.bool,
-		// The URL that should be displayed in the iframe
-		previewUrl: React.PropTypes.string,
-		// The URL for the external link button
-		externalUrl: React.PropTypes.string,
-		// The markup to display in the iframe
-		previewMarkup: React.PropTypes.string,
-		// The viewport device to show initially
-		defaultViewportDevice: React.PropTypes.string,
-		// Elements to render on the right side of the toolbar
-		children: React.PropTypes.node,
-		// The function to call when the iframe is loaded. Will be passed the iframe document object.
-		// Only called if using previewMarkup.
-		onLoad: React.PropTypes.func,
-		// Called when the preview is closed, either via the 'X' button or the escape key
-		onClose: React.PropTypes.func,
-		// Optional loading message to display during loading
-		loadingMessage: React.PropTypes.string,
-		// The iframe's title element, used for accessibility purposes
-		iframeTitle: React.PropTypes.string
-	},
-
-	mixins: [ PureRenderMixin ],
-
-	getDefaultProps() {
-		return {
-			showExternal: true,
-			showClose: true,
-			showDeviceSwitcher: true,
-			previewUrl: null,
-			previewMarkup: null,
-			onLoad: noop,
-			onClose: noop,
-		};
-	},
-
-	getInitialState() {
-		return {
+		this.state = {
 			iframeUrl: null,
-			device: this.props.defaultViewportDevice || 'computer',
+			device: props.defaultViewportDevice || 'computer',
 			loaded: false
 		};
-	},
+	}
 
 	componentWillMount() {
 		// Cache touch and mobile detection for the entire lifecycle of the component
 		this._hasTouch = touchDetect.hasTouch();
 		this._isMobile = isMobile();
-	},
+	}
 
 	componentDidMount() {
 		if ( this.props.previewUrl ) {
@@ -96,7 +53,11 @@ const WebPreview = React.createClass( {
 			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
 		}
 		this.props.setPreviewShowing( this.props.showPreview );
-	},
+	}
+
+	shouldComponentUpdate( nextProps, nextState ) {
+		return shallowCompare( this, nextProps, nextState );
+	}
 
 	componentDidUpdate( prevProps ) {
 		const { showPreview, previewUrl } = this.props;
@@ -134,20 +95,20 @@ const WebPreview = React.createClass( {
 			window.removeEventListener( 'keydown', this.keyDown );
 			document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
 		}
-	},
+	}
 
 	componentWillUnmount() {
 		this.props.setPreviewShowing( false );
 		window.removeEventListener( 'keydown', this.keyDown );
 		document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
-	},
+	}
 
 	keyDown( event ) {
 		if ( event.keyCode === 27 ) {
 			this.props.onClose();
 			event.preventDefault();
 		}
-	},
+	}
 
 	setIframeMarkup( content ) {
 		if ( ! this.refs.iframe ) {
@@ -158,7 +119,7 @@ const WebPreview = React.createClass( {
 		this.refs.iframe.contentDocument.open();
 		this.refs.iframe.contentDocument.write( content );
 		this.refs.iframe.contentDocument.close();
-	},
+	}
 
 	setIframeUrl( iframeUrl ) {
 		// Bail if iframe isn't rendered
@@ -177,17 +138,17 @@ const WebPreview = React.createClass( {
 			loaded: false,
 			iframeUrl: iframeUrl,
 		} );
-	},
+	}
 
 	shouldRenderIframe() {
 		// Don't preload iframe on mobile devices as bandwidth is typically more limited and
 		// the preview causes weird issues
 		return ! this._isMobile || this.props.showPreview;
-	},
+	}
 
 	setDeviceViewport( device = 'computer' ) {
 		this.setState( { device } );
-	},
+	}
 
 	setLoaded() {
 		if ( ! this.state.iframeUrl && ! this.props.previewMarkup ) {
@@ -201,10 +162,10 @@ const WebPreview = React.createClass( {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
 		this.setState( { loaded: true } );
-	},
+	}
 
 	render() {
-		const className = classnames( this.props.className, 'web-preview', {
+		const className = classNames( this.props.className, 'web-preview', {
 			'is-touch': this._hasTouch,
 			'is-visible': this.props.showPreview,
 			'is-computer': this.state.device === 'computer',
@@ -250,7 +211,47 @@ const WebPreview = React.createClass( {
 			</RootChild>
 		);
 	}
-} );
+}
+
+WebPreview.propTypes = {
+	// Display the preview
+	showPreview: PropTypes.bool,
+	// Show external link button (only if there is a previewUrl)
+	showExternal: PropTypes.bool,
+	// Show close button
+	showClose: PropTypes.bool,
+	// Show device viewport switcher
+	showDeviceSwitcher: PropTypes.bool,
+	// The URL that should be displayed in the iframe
+	previewUrl: PropTypes.string,
+	// The URL for the external link button
+	externalUrl: PropTypes.string,
+	// The markup to display in the iframe
+	previewMarkup: PropTypes.string,
+	// The viewport device to show initially
+	defaultViewportDevice: PropTypes.string,
+	// Elements to render on the right side of the toolbar
+	children: PropTypes.node,
+	// The function to call when the iframe is loaded. Will be passed the iframe document object.
+	// Only called if using previewMarkup.
+	onLoad: PropTypes.func,
+	// Called when the preview is closed, either via the 'X' button or the escape key
+	onClose: PropTypes.func,
+	// Optional loading message to display during loading
+	loadingMessage: PropTypes.string,
+	// The iframe's title element, used for accessibility purposes
+	iframeTitle: PropTypes.string
+};
+
+WebPreview.defaultProps = {
+	showExternal: true,
+	showClose: true,
+	showDeviceSwitcher: true,
+	previewUrl: null,
+	previewMarkup: null,
+	onLoad: noop,
+	onClose: noop
+};
 
 export default connect(
 	null,
