@@ -36,12 +36,12 @@ const themesMeta = {
 	free: {
 		title: 'Free WordPress Themes — WordPress.com',
 		description: 'Discover Free WordPress Themes on the WordPress.com Theme Showcase.',
-		canonicalUrl: 'https://wordpress.com/design/type/free',
+		canonicalUrl: 'https://wordpress.com/design/free',
 	},
 	premium: {
 		title: 'Premium WordPress Themes — WordPress.com',
 		description: 'Discover Premium WordPress Themes on the WordPress.com Theme Showcase.',
-		canonicalUrl: 'https://wordpress.com/design/type/premium',
+		canonicalUrl: 'https://wordpress.com/design/premium',
 	}
 };
 
