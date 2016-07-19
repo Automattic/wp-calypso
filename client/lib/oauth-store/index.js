@@ -73,9 +73,6 @@ const AuthStore = createReducerStore( function( state, payload ) {
 		case ActionTypes.AUTH_LOGIN:
 			stateChanges = { inProgress: true, errorLevel: false, errorMessage: false };
 			break;
-		case ActionTypes.PUSH_AUTH_LOGIN:
-			stateChanges = { };
-			break;
 		case ActionTypes.RECEIVE_AUTH_LOGIN:
 			if ( action.error ) {
 				stateChanges = handleAuthError( action.error, action.data );

@@ -26,10 +26,6 @@ function oauthLogin( username, password, secondFactor ) {
 }
 
 export function pushAuthLogin( username, password, secondFactor ) {
-	Dispatcher.handleViewAction( {
-		type: actions.PUSH_AUTH_LOGIN
-	} );
-
 	oauthLogin( username, password, secondFactor );
 }
 

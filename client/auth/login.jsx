@@ -22,6 +22,7 @@ import eventRecorder from 'me/event-recorder';
 import Gridicon from 'components/gridicon';
 import WordPressLogo from 'components/wordpress-logo';
 import AuthCodeButton from './auth-code-button';
+import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 
 const LostPassword = React.createClass( {
 	render: function() {
@@ -75,27 +76,13 @@ module.exports = React.createClass( {
 		this.setState( AuthStore.get() );
 	},
 
-	verifyPushAuthentication: function( pushauth ) {
-		const POLL_INTERVAL = 6000;
-
-		if ( ! this.pollTimeout ) {
-			this.pollTimeout = setTimeout( () => {
-				this.pollTimeout = null;
-				AuthActions.pushAuthLogin( this.state.login, this.state.password, pushauth );
-			}, POLL_INTERVAL );
-		}
+	verifyPushAuthentication: function() {
+		AuthActions.pushAuthLogin( this.state.login, this.state.password, this.state.pushauth );
 	},
 
 	componentDidUpdate() {
 		if ( this.state.requires2fa === 'code' && this.state.inProgress === false ) {
 			ReactDom.findDOMNode( this.refs.auth_code ).focus();
-		}
-
-		if ( this.state.requires2fa === 'push-verification' ) {
-			this.verifyPushAuthentication( this.state.pushauth );
-		} else {
-			clearTimeout( this.pollTimeout );
-			this.pollTimeout = null;
 		}
 	},
 
@@ -202,11 +189,13 @@ module.exports = React.createClass( {
 						<Notice text={ errorMessage } status={ errorLevel } showDismiss={ false } />
 					}
 					{ ( requires2fa === 'push-verification' ) &&
-						<FormButtonsBar>
-							<FormButton ref="useAuthCode" onClick={ this.useAuthCode } >
-								{ this.translate( 'Verify with code instead' ) }
-							</FormButton>
-						</FormButtonsBar>
+						<Interval onTick={ this.verifyPushAuthentication } period={ EVERY_FIVE_SECONDS }>
+							<FormButtonsBar>
+								<FormButton ref="useAuthCode" onClick={ this.useAuthCode } >
+									{ this.translate( 'Verify with code instead' ) }
+								</FormButton>
+							</FormButtonsBar>
+						</Interval>
 					}
 					{ ( requires2fa === 'code' ) &&
 						<AuthCodeButton username={ this.state.login } password={ this.state.password } />
