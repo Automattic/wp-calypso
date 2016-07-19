@@ -29,16 +29,16 @@ const JetpackPlanDetails = ( { selectedSite } ) => {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
 		const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
 		if ( reasons && reasons.length > 0 ) {
-			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_filemod', { error: reasons[ 0 ] } );
+			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_halt_filemod', { error: reasons[ 0 ] } );
 		} else if ( ! selectedSite.hasMinimumJetpackVersion ) {
 			analytics.tracks.recordEvent(
-				'calypso_plans_autoconfig_error_jpversion',
+				'calypso_plans_autoconfig_halt_jpversion',
 				{ jetpack_version: selectedSite.options.jetpack_version }
 			);
-		} else if ( ! selectedSite.isMainNetworkSite() ) {
-			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_multisite' );
+		} else if ( selectedSite.is_multisite && ! selectedSite.isMainNetworkSite() ) {
+			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_halt_multisite' );
 		} else if ( selectedSite.options.is_multi_network ) {
-			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_error_multinetwork' );
+			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_halt_multinetwork' );
 		}
 
 		props.title = null;
