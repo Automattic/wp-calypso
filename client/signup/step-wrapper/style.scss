@@ -2,33 +2,6 @@
 	text-align: center;
 }
 
-.step-wrapper__buttons.is-wide-navigation {
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-}
-.step-wrapper__buttons.is-wide-navigation .navigation-link {
-	width: 30%;
-	text-align: left;
-	white-space: nowrap;
-	margin: 24px 0;
-}
-.step-wrapper__buttons.is-wide-navigation .navigation-link:last-child {
-	text-align: right;
-}
-.step-wrapper__compare-plans {
-	display: block;
-	font-size: 12px;
-	margin: 20px 0 20px 0;
-	text-align: center;
-	flex-grow: 2;
-
-	.gridicon {
-		margin: -2px 3px 0 0;
-		vertical-align: middle;
-	}
-}
-
 .step-wrapper__buttons .button.is-borderless {
 	color: darken( $gray, 20 );
 
