@@ -30,6 +30,7 @@ import Timezone from 'components/timezone';
 import JetpackSyncPanel from './jetpack-sync-panel';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { isBusiness } from 'lib/products-values';
+import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 
 const FormGeneral = React.createClass( {
 	displayName: 'SiteSettingsFormGeneral',
@@ -547,8 +548,9 @@ const FormGeneral = React.createClass( {
 						</CompactCard>
 						{ ! isBusiness( site.plan ) && <UpgradeNudge
 							className="site-settings__footer-credit-nudge"
-							title="Remove the footer credit entirely with Business Plan"
-							message="Upgrade to remove the footer credit, add Google Analytics and more"
+							feature={ FEATURE_NO_BRANDING }
+							title={ this.translate( 'Remove the footer credit entirely with Business Plan' ) }
+							message={ this.translate( 'Upgrade to remove the footer credit, add Google Analytics and more' ) }
 							icon="customize"
 						/> }
 					</div>

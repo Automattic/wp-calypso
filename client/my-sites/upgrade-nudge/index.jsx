@@ -67,7 +67,7 @@ export default React.createClass( {
 		if ( ! site ) {
 			return false;
 		}
-		if ( feature && hasFeature( feature, site.siteID ) ) {
+		if ( feature && hasFeature( feature, site.ID ) ) {
 			return false;
 		}
 		if ( ! feature && ! isFreePlan( site.plan ) ) {
