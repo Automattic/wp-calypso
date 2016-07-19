@@ -27,6 +27,12 @@ const JetpackPlanDetails = ( { selectedSite } ) => {
 	};
 
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
+		const trackManualInstall = ( eventName ) => {
+			return () => {
+				analytics.tracks.recordEvent( eventName );
+			};
+		};
+
 		const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
 		if ( reasons && reasons.length > 0 ) {
 			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_halt_filemod', { error: reasons[ 0 ] } );
@@ -49,13 +55,17 @@ const JetpackPlanDetails = ( { selectedSite } ) => {
 			);
 			props.buttonText = i18n.translate( 'Installation Instructions' );
 			props.href = 'https://en.support.wordpress.com/setting-up-premium-services/';
+			props.onClick = trackManualInstall( 'calypso_plans_autoconfig_click_manual_install' );
 		} else {
 			props.description = i18n.translate(
 				'We are about to install Akismet and VaultPress for your site, which will automatically protect your site from spam ' +
 				'and data loss. If you have any questions along the way, we\'re here to help! You can also perform a manual ' +
 				'installation by following {{a}}these instructions{{/a}}.',
 				{ components: {
-					a: <a target="_blank" href="https://en.support.wordpress.com/setting-up-premium-services/" />
+					a: <a
+						target="_blank"
+						href="https://en.support.wordpress.com/setting-up-premium-services/"
+						onClick={ trackManualInstall( 'calypso_plans_autoconfig_click_opt_out' ) } />
 				} }
 			);
 			props.buttonText = i18n.translate( 'Set up your plan' );
