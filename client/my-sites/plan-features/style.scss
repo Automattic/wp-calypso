@@ -291,6 +291,7 @@ $plan-features-sidebar-width: 272px;
 	font-weight: 400;
 	color: $gray;
 	line-height: .6;
+	white-space: nowrap;
 
 	&.is-placeholder {
 		@include placeholder( 23% );
