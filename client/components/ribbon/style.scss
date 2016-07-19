@@ -1,9 +1,11 @@
 .ribbon__wrapper {
 	position: absolute;
-	right: -5px; top: -5px;
+	right: -5px;
+	top: -5px;
 	z-index: z-index( 'root', '.ribbon__wrapper' );
 	overflow: hidden;
-	width: 75px; height: 75px;
+	width: 75px;
+	height: 75px;
 	text-align: right;
 }
 .ribbon__wrapper .ribbon__title {
@@ -24,7 +26,9 @@
 }
 .ribbon__wrapper .ribbon__title::before {
 	content: "";
-	position: absolute; left: 0px; top: 100%;
+	position: absolute;
+	left: 0px;
+	top: 100%;
 	z-index: z-index( '.ribbon__wrapper', '.ribbon__title::before' );
 	border-left: 3px solid $blue-dark;
 	border-right: 3px solid transparent;
