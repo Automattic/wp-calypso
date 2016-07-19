@@ -122,13 +122,13 @@ let DesignAssets = React.createClass( {
 					<Headers />
 					<InfoPopover />
 					<InputChrono />
-					<Ribbon />
 					<Notices />
 					<PaymentLogo />
 					<Popovers />
 					<ProgressBar />
 					<Ranges />
 					<Rating />
+					<Ribbon />
 					<SearchDemo />
 					<SectionHeader />
 					<SectionNav />
