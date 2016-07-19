@@ -10,13 +10,13 @@ import i18n from 'i18n-calypso';
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
-import config from 'config';
+import { isEnabled } from 'config';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';
 import titleActions from 'lib/screen-title/actions';
 import get from 'lodash/get';
-import { isValidFeatureKey } from 'lib/plans';
+import { isValidFeatureKey, isPlanFeaturesEnabled } from 'lib/plans';
 
 const sites = sitesFactory();
 
@@ -32,7 +32,7 @@ export default {
 		let analyticsBasePath;
 
 		// Don't show plans for Jetpack sites
-		if ( site && site.jetpack && ! config.isEnabled( 'manage/jetpack-plans' ) ) {
+		if ( site && site.jetpack && ! isEnabled( 'manage/jetpack-plans' ) ) {
 			analytics.pageView.record( basePath + '/jetpack/:site', analyticsPageTitle + ' > Jetpack Plans Not Available' );
 
 			ReactDom.render(
@@ -93,7 +93,7 @@ export default {
 			basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
 
-		if ( config.isEnabled( 'manage/plan-features' ) ) {
+		if ( isPlanFeaturesEnabled() ) {
 			return page.redirect( `/plans/features/${ siteDomain }` );
 		}
 
