@@ -134,6 +134,10 @@ export class WebPreview extends Component {
 			return;
 		}
 
+		if ( ! this.iframe ) {
+			return;
+		}
+
 		// Bail if we've already set this url
 		if ( iframeUrl === this.state.iframeUrl ) {
 			return;
