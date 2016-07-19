@@ -171,7 +171,7 @@ assign( PagedStream.prototype, {
 
 	onNextPageFetch: function( params ) {
 		params.offset = ( this.page - 1 ) * this.perPage;
-		params.before = undefined;
+		params.before = this.startDate || undefined;
 		params.after = undefined;
 		params.number = this.perPage;
 	},
