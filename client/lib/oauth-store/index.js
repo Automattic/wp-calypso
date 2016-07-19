@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { get } from 'lodash/object';
 const debug = require( 'debug' )( 'calypso:auth:store' );
 
 /**
@@ -8,7 +9,7 @@ const debug = require( 'debug' )( 'calypso:auth:store' );
  */
 import { createReducerStore } from 'lib/store';
 import { actions as ActionTypes } from './constants';
-import { errors as errorTypes } from './constants';
+import { errors } from './constants';
 import * as OAuthToken from 'lib/oauth-token';
 
 /**
@@ -23,35 +24,30 @@ const initialState = {
 };
 
 function handleAuthError( error, data ) {
+	const errorMessage = get( data, 'body.error_description', error.message );
 	const stateChanges = {
+		errorMessage,
 		errorLevel: 'is-error',
 		requires2fa: false,
-		pushauth: null,
 		inProgress: false
 	};
 
-	stateChanges.errorMessage = data && data.body ? data.body.error_description : error.message;
-
 	debug( 'Error processing login: ' + stateChanges.errorMessage );
 
-	if ( data && data.body ) {
-		if ( data.body.error === errorTypes.ERROR_REQUIRES_2FA ) {
-			stateChanges.errorLevel = 'is-info';
-			stateChanges.requires2fa = 'code';
-		} else if ( data.body.error === errorTypes.ERROR_REQUIRES_2FA_PUSH_VERIFICATION ) {
-			stateChanges.errorLevel = 'is-info';
-			stateChanges.requires2fa = 'push-verification';
-			stateChanges.pushauth = data.body.error_info;
-		} else if ( data.body.error === errorTypes.ERROR_INVALID_PUSH_TOKEN ) {
-			stateChanges.errorLevel = 'is-info';
-			stateChanges.requires2fa = 'push-verification';
-			delete stateChanges.pushauth; // keep push token / user id
-		} else if ( data.body.error === errorTypes.ERROR_INVALID_OTP ) {
-			stateChanges.requires2fa = 'code';
-		}
-	}
+	const errorCode = get( data, 'body.error', null );
+	const errorInfo = get( data, 'body.error_info', null );
+	const errorChanges = get( {
+		[ errors.ERROR_REQUIRES_2FA ]:
+			{ errorLevel: 'is-info', requires2fa: 'code' },
+		[ errors.ERROR_REQUIRES_2FA_PUSH_VERIFICATION ]:
+			{ errorLevel: 'is-info', requires2fa: 'push-verification', pushauth: errorInfo },
+		[ errors.ERROR_INVALID_PUSH_TOKEN ]:
+			{ errorLevel: 'is-info', requires2fa: 'push-verification' },
+		[ errors.ERROR_INVALID_OTP ]:
+			{ requires2fa: 'code' }
+	}, errorCode, {} );
 
-	return stateChanges;
+	return { ...stateChanges, ...errorChanges };
 }
 
 function goToLogin() {
