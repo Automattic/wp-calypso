@@ -66,6 +66,14 @@ const PlansSetup = React.createClass( {
 		this.sentTracks = true;
 	},
 
+	trackManualInstall() {
+		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_manual_error' );
+	},
+
+	trackContactSupport() {
+		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_contact_support' );
+	},
+
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( plugin => {
@@ -293,7 +301,7 @@ const PlansSetup = React.createClass( {
 					break;
 			}
 			statusProps.children = (
-				<NoticeAction key="notice_action" href={ helpLinks[ plugin.slug ] }>
+				<NoticeAction key="notice_action" href={ helpLinks[ plugin.slug ] } onClick={ this.trackManualInstall }>
 					{ this.translate( 'Manual Installation' ) }
 				</NoticeAction>
 			);
@@ -363,7 +371,7 @@ const PlansSetup = React.createClass( {
 						plugin: pluginsWithErrors[ 0 ].name,
 					},
 					components: {
-						a: <a href={ support.JETPACK_SUPPORT } />
+						a: <a href={ support.JETPACK_SUPPORT } onClick={ this.trackManualInstall } />
 					}
 				}
 			);
@@ -373,14 +381,14 @@ const PlansSetup = React.createClass( {
 				'It may be possible to fix this by {{a}}manually installing{{/a}} the plugins.',
 				{
 					components: {
-						a: <a href={ support.JETPACK_SUPPORT } />
+						a: <a href={ support.JETPACK_SUPPORT } onClick={ this.trackManualInstall } />
 					}
 				}
 			);
 		}
 		return (
 			<Notice status="is-error" text={ noticeText } showDismiss={ false }>
-				<NoticeAction href={ support.JETPACK_CONTACT_SUPPORT }>
+				<NoticeAction href={ support.JETPACK_CONTACT_SUPPORT } onClick={ this.trackContactSupport }>
 					{ this.translate( 'Contact Support' ) }
 				</NoticeAction>
 			</Notice>
