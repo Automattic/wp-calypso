@@ -89,12 +89,12 @@ export default {
 			productsList = require( 'lib/products-list' )(),
 			analyticsPageTitle = 'Plans > Compare',
 			site = sites.getSelectedSite(),
-			siteDomain = context.params.domain,
+			siteDomain = context.params.domain || '',
 			basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
 
 		if ( config.isEnabled( 'manage/plan-features' ) ) {
-			return page.redirect( `/plans/features/${ siteDomain || '' }` );
+			return page.redirect( `/plans/features/${ siteDomain }` );
 		}
 
 		if ( site && ! site.isUpgradeable() ) {
