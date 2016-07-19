@@ -51,8 +51,7 @@ var abtest = require( 'lib/abtest' ).abtest,
 	showReaderFullPost = require( 'state/ui/reader/fullpost/actions' ).showReaderFullPost,
 	smartSetState = require( 'lib/react-smart-set-state' ),
 	scrollTo = require( 'lib/scroll-to' ),
-	AuthorLink = require( 'reader/author-link' ),
-	SiteLink = require( 'reader/site-link' );
+	StoryHeader = require( 'reader/story-header' );
 
 import PostExcerpt from 'components/post-excerpt';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
@@ -210,15 +209,7 @@ FullPostView = React.createClass( {
 							</div>
 						: null }
 
-					{ post.title ?
-						<h1 className="reader__post-title" onClick={ this.handlePermalinkClick }>
-							<ExternalLink className="reader__post-title-link" href={ post.URL } target="_blank" icon={ false }>{ post.title }</ExternalLink>
-						</h1> : null }
-
-					<ul className="reader-post-byline">
-						<li><AuthorLink post={ post } />,</li>
-						<li><SiteLink post={ post }>{ siteName }</SiteLink></li>
-					</ul>
+					<StoryHeader post={ post } onTitleClick={ this.onPermalinkClick } siteName={ siteName } />
 
 					{ post && post.use_excerpt
 						? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
