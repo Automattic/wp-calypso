@@ -165,6 +165,12 @@ const LoggedOutForm = React.createClass( {
 const LoggedInForm = React.createClass( {
 	displayName: 'LoggedInForm',
 
+	getInitialState() {
+		return {
+			hasRefetchedSites: false
+		};
+	},
+
 	componentWillMount() {
 		const { queryObject, autoAuthorize } = this.props.jetpackConnectAuthorize;
 		this.props.recordTracksEvent( 'calypso_jpc_auth_view' );
@@ -179,6 +185,10 @@ const LoggedInForm = React.createClass( {
 		) {
 			debug( 'Authorizing automatically on component mount' );
 			return this.props.authorize( queryObject );
+		}
+		if ( this.props.isAlreadyOnSitesList && ! this.state.hasRefetchedSites && ! this.props.isFetchingSites() ) {
+			this.props.requestSites();
+			this.setState( { hasRefetchedSites: true } );
 		}
 	},
 
