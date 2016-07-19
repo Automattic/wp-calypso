@@ -12,13 +12,12 @@ import mapValues from 'lodash/mapValues';
  */
 import config from 'config';
 import {
-	customize as customizeAction,
 	purchase as purchaseAction,
-	activate as activateAction,
-	signup as signupAction
+	activate as activateAction
 } from 'state/themes/actions';
 import {
 	getSignupUrl,
+	getCustomizeUrl,
 	getDetailsUrl,
 	getSupportUrl,
 	getHelpUrl,
@@ -49,7 +48,7 @@ export const activate = {
 export const customize = {
 	label: i18n.translate( 'Customize' ),
 	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
-	action: customizeAction,
+	getUrl: ( theme, site ) => getCustomizeUrl( theme, site ),
 	hideForSite: ( { isCustomizable = false } = {} ) => ! isCustomizable,
 	hideForTheme: theme => ! theme.active
 };
@@ -59,7 +58,7 @@ export const tryandcustomize = {
 	header: i18n.translate( 'Try & Customize on:', {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
-	action: customizeAction,
+	getUrl: ( theme, site ) => getCustomizeUrl( theme, site ),
 	hideForSite: ( { isCustomizable = false } = {} ) => ! isCustomizable,
 	hideForTheme: theme => theme.active
 };
@@ -75,7 +74,6 @@ export const signup = {
 	label: i18n.translate( 'Pick this design', {
 		comment: 'when signing up for a WordPress.com account with a selected theme'
 	} ),
-	action: signupAction,
 	getUrl: theme => getSignupUrl( theme )
 };
 

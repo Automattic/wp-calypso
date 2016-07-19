@@ -18,20 +18,17 @@ import {
 	THEME_ACTIVATED,
 	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
-	THEME_CUSTOMIZE,
 	THEME_DETAILS_RECEIVE,
 	THEME_DETAILS_RECEIVE_FAILURE,
 	THEME_PURCHASE,
 	THEME_RECEIVE_CURRENT,
 	THEME_REQUEST_CURRENT,
 	THEME_REQUEST_CURRENT_FAILURE,
-	THEME_SIGNUP_WITH,
 	THEMES_INCREMENT_PAGE,
 	THEMES_QUERY,
 	THEMES_RECEIVE,
 	THEMES_RECEIVE_SERVER_ERROR,
 } from '../action-types';
-import { getSignupUrl, getCustomizeUrl, navigateTo } from 'my-sites/themes/helpers';
 import { getCurrentTheme } from './current-theme/selectors';
 import {
 	recordTracksEvent,
@@ -218,60 +215,30 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 			theme = getThemeById( getState(), theme );
 		}
 
-		defer( () => {
-			const action = {
-				type: THEME_ACTIVATED,
-				theme,
-				site
-			};
+		const action = {
+			type: THEME_ACTIVATED,
+			theme,
+			site
+		};
 
-			const trackThemeActivation = recordTracksEvent(
-				'calypso_themeshowcase_theme_activate',
-				{
-					theme: theme.id,
-					previous_theme: previousTheme.id,
-					source: source,
-					purchased: purchased,
-					search_term: queryParams.get( 'search' ) || null
-				}
-			);
+		const trackThemeActivation = recordTracksEvent(
+			'calypso_themeshowcase_theme_activate',
+			{
+				theme: theme.id,
+				previous_theme: previousTheme.id,
+				source: source,
+				purchased: purchased,
+				search_term: queryParams.get( 'search' ) || null
+			}
+		);
 
-			dispatch( withAnalytics( trackThemeActivation, action ) );
-		} );
+		dispatch( withAnalytics( trackThemeActivation, action ) );
 	};
 }
 
 export function clearActivated() {
 	return {
 		type: THEME_CLEAR_ACTIVATED
-	};
-}
-
-export function signup( theme ) {
-	return dispatch => {
-		const signupUrl = getSignupUrl( theme );
-
-		dispatch( {
-			type: THEME_SIGNUP_WITH,
-			theme
-		} );
-
-		// `navigateTo` uses `page()` here, which messes with `pushState`,
-		// which we don't want here, since we're navigating away from Calypso.
-		window.location = signupUrl;
-	};
-}
-
-export function customize( theme, site ) {
-	return dispatch => {
-		const customizeUrl = getCustomizeUrl( theme, site );
-
-		dispatch( {
-			type: THEME_CUSTOMIZE,
-			site: site.id
-		} );
-
-		navigateTo( customizeUrl, site.jetpack );
 	};
 }
 

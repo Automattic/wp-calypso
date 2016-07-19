@@ -89,7 +89,8 @@ const ThemeSheet = React.createClass( {
 	},
 
 	onButtonClick() {
-		this.props.defaultOption.action( this.props );
+		const { defaultOption } = this.props;
+		defaultOption.action && defaultOption.action( this.props );
 	},
 
 	getValidSections() {
@@ -253,6 +254,7 @@ const ThemeSheet = React.createClass( {
 				theme={ this.props }
 				onClose={ this.togglePreview }
 				buttonLabel= { this.props.defaultOption.label }
+				getButtonHref={ this.props.defaultOption.getUrl }
 				onButtonClick={ this.onButtonClick } />
 		);
 	},
@@ -292,11 +294,13 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderButton() {
-		const { label } = this.props.defaultOption;
+		const { label, getUrl } = this.props.defaultOption;
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 
 		return (
-			<Button className="theme__sheet-primary-button" onClick={ this.onButtonClick }>
+			<Button className="theme__sheet-primary-button"
+				href={ getUrl ? getUrl( this.props ) : null }
+				onClick={ this.onButtonClick }>
 				{ this.isLoaded() ? label : placeholder }
 				{ this.renderPrice() }
 			</Button>

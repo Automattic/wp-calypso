@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React from 'react';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -20,7 +21,15 @@ export default React.createClass( {
 		showPreview: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
 		buttonLabel: React.PropTypes.string,
-		onButtonClick: React.PropTypes.func
+		onButtonClick: React.PropTypes.func,
+		getButtonHref: React.PropTypes.func
+	},
+
+	getDefaultProps() {
+		return {
+			onButtonClick: noop,
+			getButtonHref: () => null
+		};
 	},
 
 	onButtonClick() {
@@ -29,7 +38,8 @@ export default React.createClass( {
 	},
 
 	render() {
-		const previewUrl = getPreviewUrl( this.props.theme );
+		const previewUrl = getPreviewUrl( this.props.theme ),
+			buttonHref = this.props.getButtonHref ? this.props.getButtonHref( this.props.theme ) : null;
 
 		return (
 			<WebPreview showPreview={ this.props.showPreview }
@@ -38,6 +48,7 @@ export default React.createClass( {
 				externalUrl={ this.props.theme.demo_uri } >
 				<Button primary
 					onClick={ this.onButtonClick }
+					href={ buttonHref }
 					>{ this.props.buttonLabel }</Button>
 			</WebPreview>
 		);
