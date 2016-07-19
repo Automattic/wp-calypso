@@ -31,7 +31,7 @@ import {
 import Gridicon from 'components/gridicon';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/upgrades/navigation';
-import { isPlanFeaturesShown } from 'lib/plans';
+import { isPlanFeaturesEnabled } from 'lib/plans';
 
 const PlanDetailsComponent = React.createClass( {
 	PropTypes: {
@@ -112,7 +112,7 @@ const PlanDetailsComponent = React.createClass( {
 		return (
 			<Main
 				className="current-plan"
-				wideLayout={ !! isPlanFeaturesShown() }
+				wideLayout={ !! isPlanFeaturesEnabled() }
 			>
 				<PlansNavigation
 					sitePlans={ this.props.sitePlans }
@@ -153,7 +153,7 @@ const PlanDetailsComponent = React.createClass( {
 				{ selectedSite &&
 					<Card
 						href={
-							isPlanFeaturesShown()
+							isPlanFeaturesEnabled()
 								? `/plans/${ selectedSite.slug }`
 								: `/plans/compare/${ selectedSite.slug }`
 						}

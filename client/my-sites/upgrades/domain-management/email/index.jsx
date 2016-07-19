@@ -24,7 +24,7 @@ import {
 	getSelectedDomain,
 	hasMappedDomain
 } from 'lib/domains';
-import { isPlanFeaturesShown } from 'lib/plans';
+import { isPlanFeaturesEnabled } from 'lib/plans';
 
 const Email = React.createClass( {
 	propTypes: {
@@ -45,7 +45,7 @@ const Email = React.createClass( {
 		return (
 			<Main
 				className="domain-management-email"
-				wideLayout={ !! isPlanFeaturesShown() }
+				wideLayout={ !! isPlanFeaturesEnabled() }
 			>
 				<SidebarNavigation />
 				{ this.headerOrUpgradesNavigation() }

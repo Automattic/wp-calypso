@@ -24,7 +24,7 @@ var productsList = require( 'lib/products-list' )(),
 import { isEnabled } from 'config';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import QueryPlans from 'components/data/query-plans';
-import { isPlanFeaturesShown } from 'lib/plans';
+import { isPlanFeaturesEnabled } from 'lib/plans';
 
 module.exports = React.createClass( {
 	displayName: 'PlansStep',
@@ -191,7 +191,7 @@ module.exports = React.createClass( {
 
 		const classes = classNames( 'plans plans-step', {
 			'has-no-sidebar': true,
-			'is-wide-layout': isPlanFeaturesShown(),
+			'is-wide-layout': isPlanFeaturesEnabled(),
 			'has-personal-plan': personalPlanTestEnabled
 		} );
 
@@ -204,7 +204,7 @@ module.exports = React.createClass( {
 		const renderPlansFeatures = () => ( this.plansFeaturesSelection() );
 
 		return <div className={ classes }>
-			{ isPlanFeaturesShown()
+			{ isPlanFeaturesEnabled()
 				? renderPlansFeatures()
 				: renderPlans()
 			}

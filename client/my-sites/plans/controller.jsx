@@ -16,7 +16,7 @@ import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';
 import titleActions from 'lib/screen-title/actions';
 import get from 'lodash/get';
-import { isValidFeatureKey, isPlanFeaturesShown } from 'lib/plans';
+import { isValidFeatureKey, isPlanFeaturesEnabled } from 'lib/plans';
 
 const sites = sitesFactory();
 
@@ -93,7 +93,7 @@ export default {
 			basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
 
-		if ( isPlanFeaturesShown() ) {
+		if ( isPlanFeaturesEnabled() ) {
 			return page.redirect( `/plans/features/${ siteDomain }` );
 		}
 

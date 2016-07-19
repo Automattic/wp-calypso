@@ -183,7 +183,7 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 	} );
 }
 
-export const isPlanFeaturesShown = () => {
+export const isPlanFeaturesEnabled = () => {
 	return isEnabled( 'manage/plan-features' ) && abtest( 'planFeatures' ) === 'show';
 };
 

@@ -36,7 +36,7 @@ import { hasDomainCredit } from 'state/sites/plans/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { abtest } from 'lib/abtest';
-import { isPlanFeaturesShown } from 'lib/plans';
+import { isPlanFeaturesEnabled } from 'lib/plans';
 
 export const List = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'list' ) ],
@@ -96,7 +96,7 @@ export const List = React.createClass( {
 		}
 
 		return (
-			<Main wideLayout={ !! isPlanFeaturesShown() }>
+			<Main wideLayout={ !! isPlanFeaturesEnabled() }>
 				<SidebarNavigation />
 				<UpgradesNavigation
 					path={ this.props.context.path }

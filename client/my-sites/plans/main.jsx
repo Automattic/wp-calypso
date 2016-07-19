@@ -24,7 +24,7 @@ import paths from './paths';
 import PlanList from 'components/plans/plan-list' ;
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlanOverview from './plan-overview';
-import { plansLink, isPlanFeaturesShown } from 'lib/plans';
+import { plansLink, isPlanFeaturesEnabled } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
@@ -154,7 +154,7 @@ const Plans = React.createClass( {
 			);
 		}
 
-		mainClassNames[ 'has-personal-plan' ] = ! isPlanFeaturesShown() && isPersonalPlanEnabled;
+		mainClassNames[ 'has-personal-plan' ] = ! isPlanFeaturesEnabled() && isPersonalPlanEnabled;
 
 		return (
 			<div>
@@ -162,7 +162,7 @@ const Plans = React.createClass( {
 
 				<Main
 					className={ mainClassNames }
-					wideLayout={ !! isPlanFeaturesShown() }
+					wideLayout={ !! isPlanFeaturesEnabled() }
 				>
 					<SidebarNavigation />
 
@@ -179,7 +179,7 @@ const Plans = React.createClass( {
 						<QuerySitePlans siteId={ siteId } />
 
 						{
-							isPlanFeaturesShown()
+							isPlanFeaturesEnabled()
 								? <PlansFeaturesMain
 									site={ selectedSite }
 									intervalType={ this.props.intervalType }
@@ -197,7 +197,7 @@ const Plans = React.createClass( {
 								/>
 						}
 
-						{ ! hasJpphpBundle && ! isPlanFeaturesShown() && this.comparePlansLink() }
+						{ ! hasJpphpBundle && ! isPlanFeaturesEnabled() && this.comparePlansLink() }
 					</div>
 				</Main>
 			</div>
