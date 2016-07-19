@@ -325,7 +325,7 @@ const PluginsMain = React.createClass( {
 
 		if ( ! getOr( selectedSite, 'jetpack', true ) ) {
 			return (
-				<Main wideLayout>
+				<Main>
 					<SidebarNavigation />
 					<WpcomPluginPanel />
 				</Main>

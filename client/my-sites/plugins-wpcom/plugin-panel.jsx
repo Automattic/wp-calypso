@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import get from 'lodash/get';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -63,6 +64,12 @@ export const PluginPanel = React.createClass( {
 			<div className="wpcom-plugin-panel">
 				<PageViewTracker path="/plugins/:site" title="Plugins > WPCOM Site" />
 				<Card compact className="plugins-wpcom__header">
+					<div className="plugins-wpcom__header-text">
+						<span className="plugins-wpcom__header-title">{ this.translate( 'Included Plugins' ) }</span>
+						<span className="plugins-wpcom__header-subtitle">
+							{ this.translate( 'Every plan includes a set of plugins specially tailored to supercharge your site.' ) }
+						</span>
+					</div>
 					<img className="plugins-wpcom__header-image" src="/calypso/images/plugins/plugins_hero.svg" />
 				</Card>
 				<StandardPluginsPanel plugins={ standardPlugins } displayCount={ 9 } />
@@ -81,4 +88,4 @@ const mapStateToProps = state => ( {
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
 } );
 
-export default connect( mapStateToProps )( PluginPanel );
+export default connect( mapStateToProps )( localize( PluginPanel ) );
