@@ -20,6 +20,17 @@ const DomainProductPrice = React.createClass( {
 		requiresPlan: React.PropTypes.bool,
 		domainsWithPlansOnly: React.PropTypes.bool.isRequired
 	},
+
+	getInitialState() {
+		return {
+			premiumPopoverReference: undefined
+		};
+	},
+	componentDidMount() {
+		this.setState( {
+			premiumPopoverReference: this.refs && this.refs.subMessage
+		} );
+	},
 	renderFreeWithPlan() {
 		return (
 			<div
@@ -56,7 +67,7 @@ const DomainProductPrice = React.createClass( {
 				<small className="domain-product-price__premium-text" ref="subMessage">
 					{ this.translate( 'Included in WordPress.com Premium' ) }
 					<PremiumPopover
-						context={ this.refs && this.refs.subMessage }
+						context={ this.state.premiumPopoverReference }
 						bindContextEvents
 						position="bottom left"/>
 				</small>
