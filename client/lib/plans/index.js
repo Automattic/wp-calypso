@@ -5,7 +5,6 @@ import page from 'page';
 import moment from 'moment';
 import debugFactory from 'debug';
 import {
-	filter,
 	find,
 	get,
 	includes,
@@ -29,10 +28,6 @@ import {
 	plansList,
 	PLAN_FREE,
 	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	FEATURE_GOOGLE_AD_VOUCHERS_100,
-	FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
@@ -188,18 +183,6 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 	} );
 }
 
-export const isGoogleVouchersEnabled = () => {
-	return ( isEnabled( 'google-voucher' ) && abtest( 'googleVouchers' ) === 'enabled' );
-};
-
-export const isWordpressAdCreditsEnabled = () => {
-	return (
-		isGoogleVouchersEnabled() &&
-		isEnabled( 'plans/wordpress-ad-credits' ) &&
-		abtest( 'wordpressAdCredits' ) === 'enabled'
-	);
-};
-
 export function plansLink( url, site, intervalType ) {
 	if ( 'monthly' === intervalType ) {
 		url += '/monthly';
@@ -214,35 +197,13 @@ export function plansLink( url, site, intervalType ) {
 
 export function applyTestFiltersToPlansList( planName ) {
 	const filteredPlanConstantObj = { ...plansList[ planName ] };
-	let filteredPlanFeaturesConstantList = plansList[ planName ].getFeatures();
+	const filteredPlanFeaturesConstantList = plansList[ planName ].getFeatures();
 
-	const removeDisabledFeatures = () => {
-		if ( ! isGoogleVouchersEnabled() ) {
-			filteredPlanFeaturesConstantList = filter( filteredPlanFeaturesConstantList,
-				( value ) => value !== FEATURE_GOOGLE_AD_VOUCHERS_100 &&
-					value !== FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200
-			);
-		}
-	};
-
-	const updatePlanDescriptions = () => {
-		if ( isGoogleVouchersEnabled() && planName === PLAN_PREMIUM ) {
-			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithGoogleVouchers;
-		} else if ( isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS ) {
-			filteredPlanConstantObj.getDescription = plansList[ planName ].getDescriptionWithWordAdsCredit;
-		}
-	};
-
-	const updatePlanFeatures = () => {
-		if ( ! isWordpressAdCreditsEnabled() && planName === PLAN_BUSINESS ) {
-			const wordpressAdCreditsFeatureIndex = filteredPlanFeaturesConstantList.
-				indexOf( FEATURE_GOOGLE_WORDADS_AD_VOUCHERS_200 );
-
-			if ( wordpressAdCreditsFeatureIndex !== -1 ) {
-				filteredPlanFeaturesConstantList[ wordpressAdCreditsFeatureIndex ] = FEATURE_GOOGLE_AD_VOUCHERS_100;
-			}
-		}
-	};
+	// these becomes no-ops when we removed some of the abtest overrides, but
+	// we're leaving the code in place for future tests
+	const removeDisabledFeatures = () => {};
+	const updatePlanDescriptions = () => {};
+	const updatePlanFeatures = () => {};
 
 	removeDisabledFeatures();
 	updatePlanDescriptions();

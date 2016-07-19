@@ -38,12 +38,10 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 				}
 			/>
 
-			{ config.isEnabled( 'google-voucher' ) && <QuerySiteVouchers siteId={ selectedSite.ID } /> }
-			{ config.isEnabled( 'google-voucher' ) &&
-				<div>
-					<GoogleVoucherDetails selectedSite={ selectedSite } />
-				</div>
-			}
+			<QuerySiteVouchers siteId={ selectedSite.ID } />
+			<div>
+				<GoogleVoucherDetails selectedSite={ selectedSite } />
+			</div>
 
 			{ ! selectedFeature &&
 				<PurchaseDetail
