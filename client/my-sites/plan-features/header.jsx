@@ -10,6 +10,7 @@ import classNames from 'classnames';
  **/
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
+import Ribbon from 'components/ribbon';
 import PlanFeaturesPrice from './price';
 import {
 	PLAN_FREE,
@@ -45,10 +46,7 @@ class PlanFeaturesHeader extends Component {
 		return (
 			<header className="plan-features__header" onClick={ this.props.onClick } >
 				{
-					popular &&
-						<div className="plan-features__header-banner">
-							{ translate( 'Our most popular plan' ) }
-						</div>
+					popular && <Ribbon color="green">{ translate( 'Popular' ) }</Ribbon>
 				}
 				<div className="plan-features__header-figure" >
 					<PlanIcon plan={ planType } />
