@@ -7,7 +7,8 @@ const assign = require( 'lodash/assign' ),
 	forEach = require( 'lodash/forEach' ),
 	isEqual = require( 'lodash/isEqual' ),
 	forOwn = require( 'lodash/forOwn' ),
-	clone = require( 'lodash/clone' );
+	clone = require( 'lodash/clone' ),
+	defer = require( 'lodash/defer' );
 
 /**
  * Internal dependencies
@@ -276,7 +277,7 @@ function normalizePost( feedId, postId, post ) {
 	const normalizedPost = runFastRules( post );
 	setPost( postId, normalizedPost );
 
-	process.nextTick( () => {
+	defer( function() {
 		runSlowRules( normalizedPost ).then( setPost.bind( null, postId ) );
 	} );
 }
