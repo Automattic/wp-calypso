@@ -9,6 +9,8 @@ var analytics = require( 'lib/analytics' ),
 	React = require( 'react' );
 
 import page from 'page';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -30,8 +32,10 @@ import Button from 'components/button';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
+import { setPreviewShowing } from 'state/ui/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
-module.exports = React.createClass( {
+const MySitesSidebar = React.createClass( {
 	displayName: 'MySitesSidebar',
 
 	componentDidMount: function() {
@@ -47,7 +51,8 @@ module.exports = React.createClass( {
 		const site = this.getSelectedSite();
 		if ( site.is_previewable && ! event.metaKey && ! event.ctrlKey ) {
 			event.preventDefault();
-			this.props.layoutFocus.set( 'preview' );
+			this.props.setPreviewShowing( true );
+			//this.props.layoutFocus.set( 'preview' );
 		}
 	},
 
@@ -750,3 +755,16 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+function mapStateToProps( state ) {
+	const selectedSiteId = getSelectedSiteId( state );
+	return {
+		selectedSiteId,
+	};
+}
+
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators( { setPreviewShowing }, dispatch );
+}
+
+module.exports = connect( mapStateToProps, mapDispatchToProps )( MySitesSidebar );

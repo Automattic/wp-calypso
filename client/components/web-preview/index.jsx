@@ -18,7 +18,6 @@ import touchDetect from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
 import Spinner from 'components/spinner';
 import RootChild from 'components/root-child';
-import { setPreviewShowing } from 'state/ui/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
 
@@ -95,17 +94,12 @@ const WebPreview = React.createClass( {
 		if ( this.props.showPreview ) {
 			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
 		}
-		this.props.setPreviewShowing( this.props.showPreview );
 	},
 
 	componentDidUpdate( prevProps ) {
 		const { showPreview, previewUrl } = this.props;
 
 		this.setIframeUrl( previewUrl );
-
-		if ( prevProps.showPreview !== showPreview ) {
-			this.props.setPreviewShowing( showPreview );
-		}
 
 		if ( ! this.shouldRenderIframe() ) {
 			this.setState( {
@@ -137,7 +131,6 @@ const WebPreview = React.createClass( {
 	},
 
 	componentWillUnmount() {
-		this.props.setPreviewShowing( false );
 		window.removeEventListener( 'keydown', this.keyDown );
 		document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
 	},
@@ -252,7 +245,4 @@ const WebPreview = React.createClass( {
 	}
 } );
 
-export default connect(
-	null,
-	{ setPreviewShowing }
-)( WebPreview );
+export default WebPreview;
