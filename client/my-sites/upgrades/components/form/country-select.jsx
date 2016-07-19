@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	ReactDom = require( 'react-dom' ),
-	observe = require( 'lib/mixins/data-observe' );
+import React from 'react';
+import classNames from 'classnames';
+import isEmpty from 'lodash/isEmpty';
+import ReactDom from 'react-dom';
+import observe from 'lib/mixins/data-observe';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormInputValidation = require( 'components/forms/form-input-validation' ),
-	scrollIntoViewport = require( 'lib/scroll-into-viewport' ),
-	FormSelect = require( 'components/forms/form-select' );
+import analytics from 'lib/analytics';
+import FormLabel from 'components/forms/form-label';
+import FormInputValidation from 'components/forms/form-input-validation';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
+import FormSelect from 'components/forms/form-select';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'CountrySelect',
 
 	mixins: [ observe( 'countriesList' ) ],
@@ -28,33 +28,32 @@ module.exports = React.createClass( {
 	},
 
 	focus() {
-		var node = ReactDom.findDOMNode( this.refs.input );
+		const node = ReactDom.findDOMNode( this.refs.input );
 		node.focus();
 		scrollIntoViewport( node );
 	},
 
 	render() {
-		var classes = classNames( this.props.additionalClasses, 'country' ),
-			countriesList = this.props.countriesList.get(),
-			options = [],
-			value = this.props.value;
+		const classes = classNames( this.props.additionalClasses, 'country' );
+		const countriesList = this.props.countriesList.get();
+		let options = [];
+		let { value } = this.props;
+		value = value || '';
 
 		if ( isEmpty( countriesList ) ) {
 			options.push( { key: 'loading', label: this.translate( 'Loading…' ), disabled: 'disabled' } );
-
-			value = '';
 		} else {
 			options = options.concat( [
 				{ key: 'select-country', label: this.translate( 'Select Country' ) },
 				{ key: 'divider1', label: '', disabled: 'disabled' }
 			] );
 
-			options = options.concat( countriesList.map( function( country ) {
+			options = options.concat( countriesList.map( country => {
 				if ( isEmpty( country.code ) ) {
 					return { key: 'divider2', label: '', disabled: 'disabled' };
-				} else {
-					return { key: country.code, label: country.name, value: country.code };
 				}
+
+				return { key: country.code, label: country.name, value: country.code };
 			} ) );
 		}
 
@@ -62,6 +61,7 @@ module.exports = React.createClass( {
 			<div className={ classes }>
 				<div>
 					<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
+
 					<FormSelect
 						name={ this.props.name }
 						value={ value }
@@ -70,11 +70,18 @@ module.exports = React.createClass( {
 						onChange={ this.props.onChange }
 						onClick={ this.recordCountrySelectClick }
 						isError={ this.props.isError } >
-						{ options.map( function( option ) {
-							return <option key={ option.key } value={ option.value || '' } disabled={ option.disabled }>{ option.label }</option>;
-						} ) }
+						{ options.map( option => (
+							<option
+								key={ option.key }
+								value={ option.value }
+								disabled={ option.disabled }
+							>
+								{ option.label }
+							</option>
+						) ) }
 					</FormSelect>
 				</div>
+
 				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
 			</div>
 		);
