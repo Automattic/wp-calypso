@@ -7,7 +7,7 @@ import page from 'page';
 import url from 'url';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import startsWith from 'lodash/startsWith';
+import { defer, startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -99,7 +99,7 @@ const ReaderSidebar = React.createClass( {
 	},
 
 	highlightNewTag( tag ) {
-		process.nextTick( function() {
+		defer( function() {
 			page( '/tag/' + tag.slug );
 			window.scrollTo( 0, 0 );
 		} );

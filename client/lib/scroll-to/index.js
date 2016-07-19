@@ -2,6 +2,7 @@
  * External dependencies
  */
 import TWEEN from 'tween.js';
+import { defer } from 'lodash';
 
 function getCurrentScroll( container ) {
 	if ( container && container.scrollTop !== undefined ) {
@@ -11,7 +12,7 @@ function getCurrentScroll( container ) {
 		};
 	}
 
-	let x = window.pageXOffset || document.documentElement.scrollLeft,
+	const x = window.pageXOffset || document.documentElement.scrollLeft,
 		y = window.pageYOffset || document.documentElement.scrollTop;
 	return { x: x, y: y };
 }
@@ -39,7 +40,7 @@ function animate() {
 	if ( 'undefined' !== typeof window && window.requestAnimationFrame ) {
 		window.requestAnimationFrame( animate );
 	} else {
-		process.nextTick( animate );
+		defer( animate );
 	}
 
 	TWEEN.update();
@@ -57,7 +58,7 @@ function animate() {
  * @param {HTMLElement} options.container - the container to scroll instead of window, if any
  */
 function scrollTo( options ) {
-	var currentScroll = getCurrentScroll( options.container ),
+	const currentScroll = getCurrentScroll( options.container ),
 		tween = new TWEEN.Tween( currentScroll )
 		.easing( options.easing || TWEEN.Easing.Circular.Out )
 		.to( { x: options.x, y: options.y }, options.duration || 500 )
