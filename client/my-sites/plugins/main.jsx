@@ -14,7 +14,6 @@ import isEmpty from 'lodash/isEmpty';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import pluginsAccessControl from 'my-sites/plugins/access-control';
@@ -33,7 +32,6 @@ import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import FeatureExample from 'components/feature-example';
 import PluginsList from './plugins-list';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-
 import WpcomPluginPanel from 'my-sites/plugins-wpcom';
 
 /**
@@ -327,7 +325,7 @@ const PluginsMain = React.createClass( {
 
 		if ( ! getOr( selectedSite, 'jetpack', true ) ) {
 			return (
-				<Main>
+				<Main wideLayout>
 					<SidebarNavigation />
 					<WpcomPluginPanel />
 				</Main>
