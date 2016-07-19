@@ -179,6 +179,11 @@ function getStoreForRecommendedPosts( storeId ) {
 	} );
 
 	function fetcher( query, callback ) {
+		if ( 'coldstart_posts' == storeId ) {
+			query.algorithm = 'read:recommendations:posts/es/2';
+		} else {
+			query.algorithm = 'read:recommendations:posts/es/1';
+		}
 		wpcomUndoc.readRecommendedPosts( query, trainTracksProxyForStream( stream, callback ) );
 	}
 
@@ -222,6 +227,8 @@ function feedStoreFactory( storeId ) {
 			dateProperty: 'date_liked'
 		} );
 	} else if ( storeId === 'recommendations_posts' ) {
+		store = getStoreForRecommendedPosts( storeId );
+	} else if ( storeId === 'coldstart_posts' ) {
 		store = getStoreForRecommendedPosts( storeId );
 	} else if ( storeId.indexOf( 'feed:' ) === 0 ) {
 		store = getStoreForFeed( storeId );

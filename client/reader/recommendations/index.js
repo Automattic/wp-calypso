@@ -30,5 +30,11 @@ module.exports = function() {
 			readerController.removePost,
 			readerController.sidebar,
 			controller.recommendedPosts );
+		page( '/recommendations/cold',
+			readerController.loadSubscriptions,
+			readerController.updateLastRoute,
+			readerController.removePost,
+			readerController.sidebar,
+			controller.recommendedPosts );
 	}
 };

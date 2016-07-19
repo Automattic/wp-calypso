@@ -43,10 +43,17 @@ export default {
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
 	recommendedPosts( context ) {
 		var RecommendedPostsStream = require( 'reader/recommendations/posts' ),
-			basePath = route.sectionify( context.path ),
-			fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Recommended Posts',
-			RecommendedPostsStore = feedStreamFactory( 'recommendations_posts' ),
-			mcKey = 'recommendations_posts';
+			basePath = route.sectionify( context.path );
+
+		if ( '/recommendations/posts' == basePath ) {
+			var	fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Recommended Posts',
+				RecommendedPostsStore = feedStreamFactory( 'recommendations_posts' ),
+				mcKey = 'recommendations_posts';
+		} else {
+			var	fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Coldstart Posts',
+				RecommendedPostsStore = feedStreamFactory( 'coldstart_posts' ),
+				mcKey = 'coldstart_posts';
+		}
 
 		ensureStoreLoading( RecommendedPostsStore, context );
 
