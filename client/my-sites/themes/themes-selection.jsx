@@ -67,7 +67,7 @@ const ThemesSelection = React.createClass( {
 
 	onTierSelect( { value: tier } ) {
 		const siteId = this.props.siteId ? `/${this.props.siteId}` : '';
-		const url = `/design/type/${tier}${siteId}`;
+		const url = `/design${ tier === 'all' ? '' : '/' + tier }${siteId}`;
 		this.setState( { tier } );
 		trackClick( 'search bar filter', tier );
 		page( buildUrl( url, this.props.search ) );
