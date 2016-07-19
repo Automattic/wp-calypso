@@ -45,7 +45,7 @@ const Email = React.createClass( {
 		return (
 			<Main
 				className="domain-management-email"
-				wideLayout={ !! isPlanFeaturesEnabled() }
+				wideLayout={ isPlanFeaturesEnabled() }
 			>
 				<SidebarNavigation />
 				{ this.headerOrUpgradesNavigation() }

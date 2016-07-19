@@ -162,7 +162,7 @@ const Plans = React.createClass( {
 
 				<Main
 					className={ mainClassNames }
-					wideLayout={ !! isPlanFeaturesEnabled() }
+					wideLayout={ isPlanFeaturesEnabled() }
 				>
 					<SidebarNavigation />
 

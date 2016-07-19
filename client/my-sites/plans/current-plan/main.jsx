@@ -112,7 +112,7 @@ const PlanDetailsComponent = React.createClass( {
 		return (
 			<Main
 				className="current-plan"
-				wideLayout={ !! isPlanFeaturesEnabled() }
+				wideLayout={ isPlanFeaturesEnabled() }
 			>
 				<PlansNavigation
 					sitePlans={ this.props.sitePlans }

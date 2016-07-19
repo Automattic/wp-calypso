@@ -96,7 +96,7 @@ export const List = React.createClass( {
 		}
 
 		return (
-			<Main wideLayout={ !! isPlanFeaturesEnabled() }>
+			<Main wideLayout={ isPlanFeaturesEnabled() }>
 				<SidebarNavigation />
 				<UpgradesNavigation
 					path={ this.props.context.path }
