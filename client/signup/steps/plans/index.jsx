@@ -25,7 +25,6 @@ import { isEnabled } from 'config';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import QueryPlans from 'components/data/query-plans';
 import config from 'config';
-import { isSkipPlansTestEnabled } from 'lib/plans';
 
 module.exports = React.createClass( {
 	displayName: 'PlansStep',
@@ -90,22 +89,21 @@ module.exports = React.createClass( {
 	},
 
 	plansList: function() {
-		const hideFreePlan = this.props.hideFreePlan || isSkipPlansTestEnabled();
 		return (
 			<div>
 				<PlanList
 					plans={ this.state.plans }
 					comparePlansUrl={ this.comparePlansUrl() }
-					hideFreePlan={ hideFreePlan }
+					hideFreePlan={ this.props.hideFreePlan }
 					isInSignup={ true }
 					onSelectPlan={ this.onSelectPlan } />
-				{ ! isSkipPlansTestEnabled() && <a
+				<a
 					href={ this.comparePlansUrl() }
 					className="plans-step__compare-plans-link"
 					onClick={ this.handleComparePlansLinkClick.bind( null, 'footer' ) }>
 						<Gridicon icon="clipboard" size={ 18 } />
 						{ this.translate( 'Compare Plans' ) }
-				</a> }
+				</a>
 			</div>
 		);
 	},
@@ -128,8 +126,7 @@ module.exports = React.createClass( {
 
 	plansSelection: function() {
 		const headerText = this.translate( 'Pick a plan that\'s right for you.' );
-		const hideSubHeader = isSkipPlansTestEnabled();
-		const subHeaderText = hideSubHeader ? null : this.translate(
+		const subHeaderText = this.translate(
 				'Not sure which plan to choose? Take a look at our {{a}}plan comparison chart{{/a}}.', {
 					components: { a: <a
 						href={ this.comparePlansUrl() }
@@ -140,7 +137,6 @@ module.exports = React.createClass( {
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
-				goToNextStep={ isSkipPlansTestEnabled() ? this.onSelectPlan : undefined }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ headerText }
@@ -179,10 +175,9 @@ module.exports = React.createClass( {
 	},
 
 	plansCompare: function() {
-		const hideFreePlan = this.props.hideFreePlan || isSkipPlansTestEnabled();
 		return <PlansCompare
 			className="plans-step__compare"
-			hideFreePlan={ hideFreePlan }
+			hideFreePlan={ this.props.hideFreePlan }
 			onSelectPlan={ this.onSelectPlan }
 			isInSignup={ true }
 			backUrl={ this.props.path.replace( '/compare', '' ) }

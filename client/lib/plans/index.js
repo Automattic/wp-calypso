@@ -14,7 +14,6 @@ import {
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { isEnabled } from 'config';
 import { addItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
@@ -213,9 +212,3 @@ export function applyTestFiltersToPlansList( planName ) {
 
 	return filteredPlanConstantObj;
 }
-
-export const isSkipPlansTestEnabled = () => {
-	return isEnabled( 'plans/skip-plans-for-free' ) &&
-		abtest( 'skipPlansLinkForFree' ) === 'skipPlansForFree' &&
-		isPersonalPlanEnabled;
-};
