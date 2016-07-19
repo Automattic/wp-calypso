@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
-import config from 'config';
+import { isEnabled } from 'config';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';
@@ -32,7 +32,7 @@ export default {
 		let analyticsBasePath;
 
 		// Don't show plans for Jetpack sites
-		if ( site && site.jetpack && ! config.isEnabled( 'manage/jetpack-plans' ) ) {
+		if ( site && site.jetpack && ! isEnabled( 'manage/jetpack-plans' ) ) {
 			analytics.pageView.record( basePath + '/jetpack/:site', analyticsPageTitle + ' > Jetpack Plans Not Available' );
 
 			ReactDom.render(
