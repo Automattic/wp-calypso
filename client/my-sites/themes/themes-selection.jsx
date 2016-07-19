@@ -31,10 +31,24 @@ const ThemesSelection = React.createClass( {
 		tier: React.PropTypes.string,
 	},
 
-	doSearch( keywords ) {
-		const searchURL = buildUrl( window.location.href, keywords );
+	doSearch( searchString ) {
+		const filterRegex = /[a-zA-Z0-9]+\:\s*([a-zA-Z0-9-_]+)/g;
 
-		if ( this.props.search && keywords ) {
+		let matches;
+		const filterStrings = [];
+		while ( ( matches = filterRegex.exec( searchString ) ) !== null ) {
+			if ( matches[ 1 ] ) {
+				filterStrings.push( matches[ 1 ] );
+			}
+		}
+		filterStrings.sort();
+		console.log( filterStrings );
+
+		searchString = searchString.replace( filterRegex, '' ).trim();
+
+		const searchURL = buildUrl( window.location.href, searchString );
+
+		if ( this.props.search && searchString ) {
 			page.replace( searchURL );
 		} else {
 			page( searchURL );
