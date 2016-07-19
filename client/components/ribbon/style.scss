@@ -46,3 +46,17 @@
 	border-bottom: 3px solid transparent;
 	border-top: 3px solid $blue-dark;
 }
+
+.ribbon__wrapper.is-green {
+	.ribbon__title {
+		background-color: $alert-green
+	}
+	.ribbon__title::before {
+		border-left-color: darken( $alert-green, 20% );
+		border-top-color: darken( $alert-green, 20% );
+	}
+	.ribbon__title::after {
+		border-right-color: darken( $alert-green, 20% );
+		border-top-color: darken( $alert-green, 20% );
+	}
+}

@@ -45,7 +45,7 @@ class PlanFeaturesHeader extends Component {
 		return (
 			<header className="plan-features__header" onClick={ this.props.onClick } >
 				{
-					popular && <Ribbon className="plan-features__header-ribbon">{ translate( 'popular' ) }</Ribbon>
+					popular && <Ribbon color="green">{ translate( 'Popular' ) }</Ribbon>
 				}
 				<div className="plan-features__header-figure" >
 					{ this.getFigure( planType ) }
