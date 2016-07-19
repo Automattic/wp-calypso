@@ -111,14 +111,14 @@ export class WebPreview extends Component {
 	}
 
 	setIframeMarkup( content ) {
-		if ( ! this.refs.iframe ) {
+		if ( ! this.iframe ) {
 			debug( 'no iframe to update' );
 			return;
 		}
 		debug( 'adding markup to iframe', content.length );
-		this.refs.iframe.contentDocument.open();
-		this.refs.iframe.contentDocument.write( content );
-		this.refs.iframe.contentDocument.close();
+		this.iframe.contentDocument.open();
+		this.iframe.contentDocument.write( content );
+		this.iframe.contentDocument.close();
 	}
 
 	setIframeUrl( iframeUrl ) {
@@ -133,7 +133,7 @@ export class WebPreview extends Component {
 		}
 
 		debug( 'setIframeUrl', iframeUrl );
-		this.refs.iframe.contentWindow.location.replace( iframeUrl );
+		this.iframe.contentWindow.location.replace( iframeUrl );
 		this.setState( {
 			loaded: false,
 			iframeUrl: iframeUrl,
@@ -157,7 +157,7 @@ export class WebPreview extends Component {
 		}
 		if ( this.props.previewMarkup ) {
 			debug( 'preview loaded with markup' );
-			this.props.onLoad( this.refs.iframe.contentDocument );
+			this.props.onLoad( this.iframe.contentDocument );
 		} else {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
@@ -198,7 +198,7 @@ export class WebPreview extends Component {
 							}
 							{ this.shouldRenderIframe() &&
 								<iframe
-									ref="iframe"
+									ref={ r => this.iframe = r }
 									className="web-preview__frame"
 									src="about:blank"
 									onLoad={ this.setLoaded }
