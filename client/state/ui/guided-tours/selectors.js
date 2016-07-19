@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, difference, find, memoize, noop, startsWith, uniq } from 'lodash';
+import { get, difference, find, map, memoize, noop, startsWith, uniq } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -17,27 +17,13 @@ import guidedToursConfig from 'layout/guided-tours/config';
 const getToursConfig = memoize( ( tour ) => guidedToursConfig.get( tour ) );
 const getToursHistory = state => getPreference( state, 'guided-tours-history' );
 const debug = debugFactory( 'calypso:guided-tours' );
-
-/*
- * This would/will be part of the existing config for tours.
- */
-const relevantFeatures = [
-	{
-		path: '/',
-		tour: 'main',
-		context: () => false,
-	},
-	{
-		path: '/design',
-		tour: 'themes',
-		context: () => true,
-	},
-	{
-		path: '/test',
-		tour: 'test',
-		context: () => true,
-	},
-];
+const relevantFeatures = map( guidedToursConfig.getAll(), ( tour, key ) => {
+	return {
+		tour: key,
+		path: tour.meta.path,
+		context: tour.meta.context,
+	};
+} );
 
 /*
  * Returns a collection of tour names. These tours are selected if the user has
