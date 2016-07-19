@@ -9,6 +9,7 @@ import classNames from 'classnames';
  */
 
 import { isOutsideCalypso } from 'lib/url';
+import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 	displayName: 'CurrentThemeButton',
@@ -16,7 +17,7 @@ export default React.createClass( {
 	propTypes: {
 		name: PropTypes.string.isRequired,
 		label: PropTypes.string.isRequired,
-		noticon: PropTypes.string.isRequired,
+		icon: PropTypes.string.isRequired,
 		href: PropTypes.string,
 		onClick: PropTypes.func
 	},
@@ -32,10 +33,7 @@ export default React.createClass( {
 				onClick={ this.props.onClick.bind( null, this.props.name ) }
 				href={ this.props.href }
 				target={ isOutsideCalypso( this.props.href ) ? '_blank' : null } >
-				<span className={ classNames(
-					'noticon',
-					'noticon-' + this.props.noticon
-				) } />
+				<Gridicon icon={ this.props.icon } size={ 18 } />
 				<span className="current-theme__button-label">
 					{ this.props.label }
 				</span>
