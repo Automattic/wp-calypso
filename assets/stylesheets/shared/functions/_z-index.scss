@@ -38,7 +38,7 @@ $z-layers: (
 		'.site-icon.is-blank .gridicon': 0,
 		'.chart__bar-section.is-spacer': 0,
 		'.gear-dropdown:after': 0,
-		'.plan-compare-card__ribbon': 1,
+		'.ribbon': 1,
 		'.reader__featured-post-title': 1,
 		'.reader-list-gap__button': 1,
 		'.post-trends__title': 1,
@@ -133,9 +133,9 @@ $z-layers: (
 		'.guided-tours__step': 201000,
 		'#habla_window_div.habla_window_div_base': 99999999 //olark
 	),
-	'.plan-compare-card__ribbon': (
-		'.plan-compare-card__ribbon-title::before': -1,
-		'.plan-compare-card__ribbon-title::after': -1
+	'.ribbon': (
+		'.ribbon__title::before': -1,
+		'.ribbon__title::after': -1
 	),
 	'.environment-badge': (
 		'.environment-badge .environment::before': -1,

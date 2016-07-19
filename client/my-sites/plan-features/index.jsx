@@ -109,6 +109,7 @@ class PlanFeatures extends Component {
 					</p>
 					<PlanFeaturesActions
 						current={ current }
+						popular={ popular }
 						available = { available }
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ planName === PLAN_FREE }
@@ -208,7 +209,8 @@ class PlanFeatures extends Component {
 				available,
 				current,
 				onUpgradeClick,
-				planName
+				planName,
+				popular
 			} = properties;
 
 			const classes = classNames(
@@ -222,6 +224,7 @@ class PlanFeatures extends Component {
 					<PlanFeaturesActions
 						current={ current }
 						available = { available }
+						popular={ popular }
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ planName === PLAN_FREE }
 						isPlaceholder={ isPlaceholder }
@@ -291,7 +294,8 @@ class PlanFeatures extends Component {
 				available,
 				current,
 				onUpgradeClick,
-				planName
+				planName,
+				popular
 			} = properties;
 			const classes = classNames(
 				'plan-features__table-item',
@@ -303,6 +307,7 @@ class PlanFeatures extends Component {
 					<PlanFeaturesActions
 						current={ current }
 						available = { available }
+						popular={ popular }
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ planName === PLAN_FREE }
 						isPlaceholder={ isPlaceholder }

@@ -12,6 +12,7 @@ import noop from 'lodash/noop';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
+import Ribbon from 'components/ribbon';
 
 export default React.createClass( {
 
@@ -48,9 +49,7 @@ export default React.createClass( {
 		} );
 		return (
 			<div className={ classes } >
-				{ this.props.popularRibbon && <div className="plan-compare-card__ribbon">
-					<span className="plan-compare-card__ribbon-title">{ this.translate( 'popular' ) }</span>
-				</div> }
+				{ this.props.popularRibbon && <Ribbon>{ this.translate( 'popular' ) }</Ribbon> }
 				<Card className="plan-compare-card__header">
 					<div className="plan-compare-card__title">{ this.props.title }</div>
 					<div className="plan-compare-card__line">{ this.props.line }</div>

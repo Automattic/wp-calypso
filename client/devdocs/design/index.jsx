@@ -40,6 +40,7 @@ import SpinnerLine from 'components/spinner-line/docs/example';
 import Rating from 'components/rating/docs/example';
 import DatePicker from 'components/date-picker/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
+import Ribbon from 'components/ribbon/docs/example';
 import Timezone from 'components/timezone/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
@@ -121,6 +122,7 @@ let DesignAssets = React.createClass( {
 					<Headers />
 					<InfoPopover />
 					<InputChrono />
+					<Ribbon />
 					<Notices />
 					<PaymentLogo />
 					<Popovers />
