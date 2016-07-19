@@ -113,7 +113,9 @@ const RemovePurchase = React.createClass( {
 					response: this.state.questionTwoRadio,
 					text: this.state.questionTwoText
 				},
-				'what-better': { text: this.state.questionThreeText }
+				'what-better': { text: this.state.questionThreeText },
+				purchase: purchase.productSlug,
+				type: 'cancel'
 			} );
 
 			debug( 'Survey responses', survey );
