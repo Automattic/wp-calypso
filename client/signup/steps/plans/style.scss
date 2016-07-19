@@ -4,11 +4,17 @@
 
 	&.is-wide-layout {
 		margin: auto;
-		max-width: 1040px;
+		max-width: 1200px;
 	}
 
 	.step-header.is-without-subhead {
 		margin-bottom: 0;
+	}
+
+	.step-wrapper {
+		&.is-wide-layout {
+			max-width: 1200px;
+		}
 	}
 }
 
