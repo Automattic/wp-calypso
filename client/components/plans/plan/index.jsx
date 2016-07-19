@@ -68,17 +68,6 @@ const Plan = React.createClass( {
 			);
 		}
 
-		// override plan description during google voucher test
-		if ( this.isUSorCanadaCurrency() && isGoogleVouchersEnabled() ) {
-			if ( plan.product_id === premiumPlan.productId ) {
-				plan.description = premiumPlan.oldDescriptionWithGoogleVouchers;
-			} else if ( plan.product_id === businessPlan.productId ) {
-				plan.description = isWordpressAdCreditsEnabled()
-					? businessPlan.oldDescriptionWithWordAdsCredit
-					: businessPlan.oldDescription;
-			}
-		}
-
 		return (
 			<WpcomPlanDetails
 				comparePlansUrl={ this.getComparePlansUrl() }
