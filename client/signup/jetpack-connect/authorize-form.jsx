@@ -166,11 +166,16 @@ const LoggedInForm = React.createClass( {
 	displayName: 'LoggedInForm',
 
 	componentWillMount() {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
+		const { queryObject, autoAuthorize } = this.props.jetpackConnectAuthorize;
 		this.props.recordTracksEvent( 'calypso_jpc_auth_view' );
 		if ( ! this.props.isAlreadyOnSitesList &&
 			! queryObject.already_authorized &&
-			( this.props.calypsoStartedConnection || this.props.isSSO || queryObject.new_user_started_connection )
+			(
+				this.props.calypsoStartedConnection ||
+				this.props.isSSO ||
+				queryObject.new_user_started_connection ||
+				autoAuthorize
+			)
 		) {
 			debug( 'Authorizing automatically on component mount' );
 			return this.props.authorize( queryObject );
