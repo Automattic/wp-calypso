@@ -80,6 +80,7 @@ export const requestPlans = () => {
 		dispatch( plansRequestAction() );
 
 		return wpcom
+			.withLocale()
 			.plans()
 			.list( { apiVersion: '1.2' } )
 			.then( data => {
