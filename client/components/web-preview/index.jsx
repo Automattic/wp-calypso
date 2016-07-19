@@ -35,6 +35,12 @@ export class WebPreview extends Component {
 			device: props.defaultViewportDevice || 'computer',
 			loaded: false
 		};
+
+		this.keyDown = this.keyDown.bind( this );
+		this.setIframeMarkup = this.setIframeMarkup.bind( this );
+		this.setIframeUrl = this.setIframeUrl.bind( this );
+		this.shouldRenderIframe = this.shouldRenderIframe.bind( this );
+		this.setLoaded = this.setLoaded.bind( this );
 	}
 
 	componentWillMount() {
