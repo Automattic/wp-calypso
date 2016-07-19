@@ -30,7 +30,7 @@ export const StandardPluginsPanel = React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.translate( 'Included Plugins' ) }>
+				<SectionHeader label={ this.translate( 'Plugins' ) }>
 					<Button className="is-active-plugin" compact borderless>
 						<Gridicon icon="checkmark" />{ this.translate( 'Active' ) }
 					</Button>
