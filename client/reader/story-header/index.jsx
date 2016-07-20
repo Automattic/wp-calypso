@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-
+import { get } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -22,7 +22,7 @@ const StoryHeader = ( { post, onTitleClick, siteName } ) => {
 				: null }
 
 			<ul className="reader-post-byline">
-				<li><AuthorLink post={ post } />,</li>
+				<li><AuthorLink post={ post }>{ get( post, 'author.name' ) }</AuthorLink>, </li>
 				<li><SiteLink post={ post }>{ siteName }</SiteLink></li>
 			</ul>
 		</div>
