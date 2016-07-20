@@ -95,7 +95,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		let examples, mappingInformation;
+		let mappingInformation;
 
 		if ( ! isEmpty( this.props.products ) ) {
 			const components = {
@@ -123,7 +123,7 @@ module.exports = React.createClass( {
 			mappingInformation = this.translate( 'Loading…' );
 		}
 
-		examples = (
+		return (
 			<Card className="example-domain-suggestions">
 				<div className="example-domain-suggestions__illustration" />
 				<div className="example-domain-suggestions__information">
@@ -139,7 +139,5 @@ module.exports = React.createClass( {
 				</div>
 			</Card>
 		);
-
-		return examples;
 	}
 } );
