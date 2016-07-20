@@ -117,9 +117,14 @@ const EditorDrawer = React.createClass( {
 	renderTaxonomies: function() {
 		const { type, post, site, canJetpackUseTaxonomies } = this.props;
 
+		// Compatibility: Allow Tags for pages when supported prior to launch
+		// of custom post types feature (#6934). [TODO]: Remove after launch.
+		const isCustomTypesEnabled = config.isEnabled( 'manage/custom-post-types' );
+		const typeSupportsTags = ! isCustomTypesEnabled && this.currentPostTypeSupports( 'tags' );
+
 		// Categories & Tags
 		let categories;
-		if ( 'post' === type ) {
+		if ( 'post' === type || typeSupportsTags ) {
 			categories = (
 				<CategoriesTagsAccordion
 					site={ site }
@@ -139,8 +144,7 @@ const EditorDrawer = React.createClass( {
 
 		// Custom Taxonomies
 		let taxonomies;
-		if ( config.isEnabled( 'manage/custom-post-types' ) &&
-				false !== canJetpackUseTaxonomies ) {
+		if ( isCustomTypesEnabled && false !== canJetpackUseTaxonomies ) {
 			taxonomies = <EditorDrawerTaxonomies postTerms={ get( post, 'terms' ) } />;
 		}
 
