@@ -7,6 +7,7 @@ import { map, reduce, noop } from 'lodash';
 import page from 'page';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,6 +29,9 @@ import {
 	isPopular,
 	isMonthly,
 	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
 	getPlanFeaturesObject
 } from 'lib/plans/constants';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -75,7 +79,15 @@ class PlanFeatures extends Component {
 	}
 
 	renderMobileView() {
-		const { planProperties, isPlaceholder, translate } = this.props;
+		const { isPlaceholder, translate } = this.props;
+		const planProperties = [];
+
+		[ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_FREE ].forEach( planName => {
+			const planObject = find( this.props.planProperties, plan => plan.planName === planName );
+			if ( planObject ) {
+				planProperties.push( planObject );
+			}
+		} );
 
 		return map( planProperties, ( properties ) => {
 			const {
