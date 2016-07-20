@@ -77,6 +77,7 @@ module.exports = React.createClass( {
 			<div className="menu-item-options menu-item-options__term-tree-selector">
 				<MenuPanelBackButton label={ this.props.itemType.label } onClick={ this.props.onBackClick } />
 				<CategorySelector
+					siteId={ this.props.siteId }
 					analyticsPrefix="Menus"
 					onChange={ this.onChange }
 					createLink={ this.props.itemType.createLink }
