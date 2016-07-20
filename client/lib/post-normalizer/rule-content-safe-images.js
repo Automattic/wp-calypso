@@ -50,7 +50,10 @@ function imageShouldBeRemovedFromContent( imageUrl ) {
 	} );
 }
 
-const excludedContentImageUrlParts = [ 'gravatar.com' ];
+const excludedContentImageUrlParts = [
+	'gravatar.com',
+	'/wpcom-smileys/'
+];
 
 function isCandidateForContentImage( imageUrl ) {
 	return ! imageShouldBeRemovedFromContent( imageUrl ) && every( excludedContentImageUrlParts, function( part ) {
