@@ -68,6 +68,7 @@ export const preview = {
 	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website'
 	} ),
+	hideForSite: ( { isJetpack = false } = {} ) => isJetpack,
 	hideForTheme: theme => theme.active
 };
 

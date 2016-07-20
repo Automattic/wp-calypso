@@ -5,7 +5,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import pickBy from 'lodash/pickBy';
-import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -108,13 +107,8 @@ const ThemesSingleSite = ( props ) => {
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { selectedSite: site, isJetpack } = stateProps;
+	const { selectedSite: site } = stateProps;
 	const options = dispatchProps;
-
-	if ( isJetpack ) {
-		options.preview.getUrl = theme => dispatchProps.customize.getUrl( theme, site );
-		options.preview.action = noop;
-	}
 
 	const filteredOptions = pickBy( options, option =>
 		! ( option.hideForSite && option.hideForSite( stateProps ) )
