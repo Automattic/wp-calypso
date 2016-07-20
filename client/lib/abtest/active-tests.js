@@ -62,7 +62,7 @@ module.exports = {
 		defaultVariation: 'singlePurchaseFlow'
 	},
 	planFeatures: {
-		datestamp: '20160801',
+		datestamp: '20160720',
 		variations: {
 			original: 50,
 			show: 50
