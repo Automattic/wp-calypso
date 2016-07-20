@@ -97,7 +97,11 @@ module.exports = React.createClass( {
 			<Main className="help">
 				<MeSidebarNavigation />
 				<HelpSearch />
-				{ ! user.get().email_verified && <HelpUnverifiedWarning /> }
+				{ ! user.get().email_verified &&
+					<HelpUnverifiedWarning
+						sendVerificationEmail={ user.sendVerificationEmail }
+					/>
+				}
 				{ this.getHelpfulArticles() }
 				{ this.getSupportLinks() }
 				<HappinessEngineers />

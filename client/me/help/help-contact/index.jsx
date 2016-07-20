@@ -439,7 +439,11 @@ const HelpContact = React.createClass( {
 		return (
 			<Main className="help-contact">
 				<HeaderCake onClick={ this.backToHelp } isCompact={ true }>{ this.translate( 'Contact Us' ) }</HeaderCake>
-				{ ! user().get().email_verified && <HelpUnverifiedWarning /> }
+				{ ! user().get().email_verified &&
+					<HelpUnverifiedWarning
+						sendVerificationEmail={ user().sendVerificationEmail }
+					/>
+				}
 				<Card className={ this.canShowChatbox() ? 'help-contact__chat-form' : 'help-contact__form' }>
 					{ this.getView() }
 				</Card>
