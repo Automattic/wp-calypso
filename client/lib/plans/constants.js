@@ -361,6 +361,9 @@ export const featuresList = {
 
 	[ FEATURE_WP_SUBDOMAIN ]: {
 		getTitle: () => i18n.translate( 'WordPress.com Subdomain' ),
+		getDescription: () => i18n.translate(
+			'Recognizeable name.wordpress.com domain (if it`s available).'
+		),
 		plans: [ PLAN_FREE ]
 	},
 
@@ -397,6 +400,10 @@ export const featuresList = {
 
 	[ FEATURE_COMMUNITY_SUPPORT ]: {
 		getTitle: () => i18n.translate( 'Community support' ),
+		getDescription: () => i18n.translate(
+			'Support and advice provided by ' +
+			'user community of forums.wordpress.com.'
+		),
 		plans: [ PLAN_FREE ]
 	},
 
