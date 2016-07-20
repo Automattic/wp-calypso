@@ -198,7 +198,13 @@ FullPostView = React.createClass( {
 
 		let storyHeader;
 		if ( config.isEnabled( 'reader/full-post-redesign' ) ) {
-			storyHeader = ( <StoryHeader post={ post } onTitleClick={ this.onPermalinkClick } siteName={ siteName } /> );
+			storyHeader = (
+				<StoryHeader
+					post={ post }
+					onTitleClick={ this.onPermalinkClick }
+					onDateClick={ this.onDateClick }
+					siteName={ siteName } />
+			);
 		} else {
 			storyHeader = (
 				<div>
@@ -210,6 +216,14 @@ FullPostView = React.createClass( {
 			);
 		}
 
+		let featuredImage = null;
+		if ( hasFeaturedImage ) {
+			featuredImage = (
+				<div className="full-post__featured-image">
+					<img src={ this.props.post.canonical_image.uri } height={ this.props.post.canonical_image.height } width={ 	this.props.post.canonical_image.width } />
+				</div>
+			);
+		}
 		/*eslint-disable react/no-danger*/
 		return (
 			<div>
@@ -231,13 +245,11 @@ FullPostView = React.createClass( {
 	 					</div>
 	 					: null }
 
-					{ hasFeaturedImage
-						? <div className="full-post__featured-image">
-								<img src={ this.props.post.canonical_image.uri } height={ this.props.post.canonical_image.height } width={ 	this.props.post.canonical_image.width } />
-							</div>
-						: null }
+	 				{ ! config.isEnabled( 'reader/full-post-redesign' ) ? featuredImage : null }
 
 					{ storyHeader }
+
+					{ config.isEnabled( 'reader/full-post-redesign' ) ? featuredImage : null }
 
 					{ post && post.use_excerpt
 						? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
