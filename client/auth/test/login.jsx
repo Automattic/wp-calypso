@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { shallow } from 'enzyme';
 import identity from 'lodash/identity';
 import { stub, useFakeTimers } from 'sinon';
 
@@ -12,7 +13,7 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'LoginTest', function() {
-	let Login, loginStub, pushAuthLoginStub, page, React, ReactDom, ReactInjection, TestUtils;
+	let Login, loginStub, pushAuthLoginStub, page, React, ReactInjection;
 
 	useFakeDom.withContainer();
 	useMockery( ( mockery ) => {
@@ -35,63 +36,52 @@ describe( 'LoginTest', function() {
 
 	before( () => {
 		React = require( 'react' );
-		ReactDom = require( 'react-dom' );
 		ReactInjection = require( 'react/lib/ReactInjection' );
-		TestUtils = require( 'react-addons-test-utils' );
 		ReactInjection.Class.injectMixin( { translate: identity } );
 		Login = require( '../login.jsx' );
-		page = ReactDom.render( <Login />, useFakeDom.getContainer() );
+		page = shallow( <Login /> );
 	} );
 
-	it( 'OTP is not present on first render', function( done ) {
-		page.setState( { auth: { required2faType: null } }, function() {
-			expect( page.refs.auth_code ).to.be.undefined;
-			done();
-		} );
+	it( 'OTP is not present on first render', function() {
+		page = page.setState( { auth: { required2faType: null } } );
+
+		expect( page.find( { name: 'auth_code' } ).length ).to.equal( 0 );
 	} );
 
-	it( 'cannot submit until login details entered', function( done ) {
-		const submit = TestUtils.findRenderedDOMComponentWithTag( page, 'button' );
+	it( 'cannot submit until login details entered', function() {
+		page.setState( { login: 'test', password: 'test', inProgress: false } );
 
-		page.setState( { login: 'test', password: 'test', inProgress: false }, function() {
-			expect( submit.disabled ).to.be.false;
-			done();
-		} );
+		expect( page.find( 'FormsButton' ).props().disabled ).to.be.false;
 	} );
 
-	it( 'shows OTP box with valid login', function( done ) {
-		page.setState( { login: 'test', password: 'test', auth: { required2faType: 'code' } }, function() {
-			expect( page.refs.auth_code ).to.not.be.undefined;
-			done();
-		} );
+	it( 'shows OTP box with valid login', function() {
+		page.setState( { login: 'test', password: 'test', auth: { required2faType: 'code' } } );
+
+		expect( page.find( { name: 'auth_code' } ).length ).to.equal( 1 );
 	} );
 
-	it( 'prevents change of login when asking for OTP', function( done ) {
-		page.setState( { login: 'test', password: 'test', auth: { required2faType: 'code' } }, function() {
-			expect( page.refs.login.props.disabled ).to.be.true;
-			expect( page.refs.password.props.disabled ).to.be.true;
-			done();
-		} );
+	it( 'prevents change of login when asking for OTP', function() {
+		page.setState( { login: 'test', password: 'test', auth: { required2faType: 'code' } } );
+
+		expect( page.find( { name: 'login' } ).props().disabled ).to.be.true;
+		expect( page.find( { name: 'password' } ).props().disabled ).to.be.true;
 	} );
 
-	it( 'submits login form', function( done ) {
-		const submit = TestUtils.findRenderedDOMComponentWithTag( page, 'form' );
+	it( 'submits login form', function() {
+		page.setState( { login: 'user', password: 'pass', auth_code: 'otp' } );
 
-		page.setState( { login: 'user', password: 'pass', auth_code: 'otp' }, function() {
-			TestUtils.Simulate.submit( submit );
+		const noop = () => {};
+		page.find( 'form' ).simulate( 'submit', { preventDefault: noop, stopPropagation: noop } );
 
-			expect( loginStub ).to.have.been.calledOnce;
-			expect( loginStub.calledWith( 'user', 'pass', { auth_code: 'otp' } ) ).to.be.true;
-			done();
-		} );
+		expect( loginStub ).to.have.been.calledOnce;
+		expect( loginStub.calledWith( 'user', 'pass', { auth_code: 'otp' } ) ).to.be.true;
 	} );
 
-	it( 'allows user to switch to the OTP form while waiting for push auth', function( done ) {
-		page.setState( { login: 'test', password: 'test', auth: { required2faType: 'push-verification' } }, function() {
-			expect( page.refs.login.props.disabled ).to.be.true;
-			expect( page.refs.password.props.disabled ).to.be.true;
-			expect( page.refs.useAuthCode ).to.not.be.undefined;
-			done();
-		} );
+	it( 'allows user to switch to the OTP form while waiting for push auth', function() {
+		page.setState( { login: 'test', password: 'test', auth: { required2faType: 'push-verification' } } );
+
+		expect( page.find( { name: 'login' } ).props().disabled ).to.be.true;
+		expect( page.find( { name: 'password' } ).props().disabled ).to.be.true;
+		expect( page.find( { name: 'use_auth_code' } ).length ).to.equal( 1 );
 	} );
 } );

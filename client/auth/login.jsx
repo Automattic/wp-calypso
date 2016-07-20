@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
 import React from 'react';
 
 /**
@@ -77,14 +76,6 @@ module.exports = React.createClass( {
 		AuthActions.pushAuthLogin( this.state.login, this.state.password, this.state.auth.pushauth );
 	},
 
-	componentDidUpdate() {
-		const auth = this.state.auth;
-
-		if ( auth.required2faType === 'code' && auth.inProgress === false ) {
-			ReactDom.findDOMNode( this.refs.auth_code ).focus();
-		}
-	},
-
 	getInitialState: function() {
 		return {
 			auth: AuthStore.get(),
@@ -137,6 +128,12 @@ module.exports = React.createClass( {
 		);
 	},
 
+	focusWhenIdle: function( ref ) {
+		if ( this.state.auth.inProgress === false ) {
+			ref.focus();
+		}
+	},
+
 	updateLogin: function( e ) {
 		this.setState( { login: e.target.value } );
 	},
@@ -166,7 +163,6 @@ module.exports = React.createClass( {
 							<Gridicon icon="user"/>
 							<FormTextInput
 								name="login"
-								ref="login"
 								disabled={ requires2fa || inProgress }
 								placeholder={ this.translate( 'Username or email address' ) }
 								onFocus={ this.recordFocusEvent( 'Username or email address' ) }
@@ -177,7 +173,6 @@ module.exports = React.createClass( {
 							<Gridicon icon="lock" />
 							<FormPasswordInput
 								name="password"
-								ref="password"
 								disabled={ requires2fa || inProgress }
 								placeholder={ this.translate( 'Password' ) }
 								onFocus={ this.recordFocusEvent( 'Password' ) }
@@ -191,7 +186,7 @@ module.exports = React.createClass( {
 								<FormTextInput
 									name="auth_code"
 									type="number"
-									ref="auth_code"
+									ref={ this.focusWhenIdle }
 									disabled={ inProgress }
 									placeholder={ this.translate( 'Verification code' ) }
 									onFocus={ this.recordFocusEvent( 'Verification code' ) }
@@ -212,7 +207,7 @@ module.exports = React.createClass( {
 					{ ( required2faType === 'push-verification' ) &&
 						<Interval onTick={ this.verifyPushAuthentication } period={ EVERY_FIVE_SECONDS }>
 							<FormButtonsBar>
-								<FormButton ref="useAuthCode" onClick={ this.useAuthCode }>
+								<FormButton name="use_auth_code" onClick={ this.useAuthCode }>
 									{ this.translate( 'Verify with code instead' ) }
 								</FormButton>
 							</FormButtonsBar>
