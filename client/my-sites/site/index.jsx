@@ -291,8 +291,6 @@ export default React.createClass( {
 					: <div className="site__content">
 							{ this.renderEditIcon() }
 							<div className="site__actions">
-								{ this.renderStar() }
-								{ this.renderCog() }
 							</div>
 						</div>
 				}
