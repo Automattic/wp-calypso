@@ -21,6 +21,9 @@ describe( 'actions', () => {
 			values: {
 				firstViewHistory: []
 			}
+		},
+		ui: {
+			actionLog: []
 		}
 	} );
 
