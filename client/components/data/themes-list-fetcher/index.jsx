@@ -16,6 +16,7 @@ import { hasSiteChanged, isJetpack } from 'state/themes/themes-last-query/select
 import { isLastPage, isFetchingNextPage, getThemesList, isFetchError } from 'state/themes/themes-list/selectors';
 import { getThemeById } from 'state/themes/themes/selectors';
 import { errorNotice } from 'state/notices/actions';
+import config from 'config';
 
 const ThemesListFetcher = React.createClass( {
 	propTypes: {
@@ -73,10 +74,11 @@ const ThemesListFetcher = React.createClass( {
 			onLastPage,
 			site,
 			search,
-			tier,
 		} = props;
 
 		this.onLastPage = onLastPage ? once( onLastPage ) : null;
+
+		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
 		this.props.query( {
 			search,
