@@ -266,11 +266,13 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderPreview() {
+		const showSecondaryButton = this.props.secondaryOption && ! this.props.isSiteUnmodified &&
+			! this.props.active && this.props.isLoggedIn;
 		return (
 			<ThemePreview showPreview={ this.state.showPreview }
 				theme={ this.props }
 				onClose={ this.togglePreview }
-				showSecondaryButton={ this.props.secondaryOption && ! this.props.isSiteUnmodified && ! this.props.active }
+				showSecondaryButton={ showSecondaryButton }
 				primaryButtonLabel={ this.props.defaultOption.label }
 				getPrimaryButtonHref={ this.props.defaultOption.getUrl }
 				onPrimaryButtonClick={ this.onButtonClick }
