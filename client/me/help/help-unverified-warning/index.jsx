@@ -27,8 +27,25 @@ class HelpUnverifiedWarning extends Component {
 	render() {
 		const { sendVerificationEmail } = this.props;
 
+		const { resendState } = this.state;
+
 		const resendEmail = () => {
+			this.setState( {
+				resendState: RESEND_IN_PROGRESS,
+			} );
+
 			sendVerificationEmail( ( error, response ) => {
+				if ( error ) {
+					this.setState( {
+						resendState: RESEND_ERROR,
+					} );
+
+					return;
+				}
+
+				this.setState( {
+					resendState: RESEND_SUCCESS,
+				} );
 			} );
 		};
 
@@ -47,14 +64,31 @@ class HelpUnverifiedWarning extends Component {
 			}
 		};
 
+		const resendStateToNoticeType = ( resendState ) => {
+			switch ( resendState ) {
+				case RESEND_IDLE:
+					return 'is-warning';
+				case RESEND_IN_PROGRESS:
+					return 'is-info';
+				case RESEND_SUCCESS:
+					return 'is-success';
+				case RESEND_ERROR:
+					return 'is-error';
+				default:
+					return 'is-error';
+			}
+		};
+
 		return (
 			<Notice
-				status="is-warning"
+				status={ resendStateToNoticeType( resendState ) }
 				showDismiss={ false }
-				text={ resendStateToMessage( this.state.resendState ) }>
-				<NoticeAction href="#" onClick={ resendEmail } >
-					{ this.props.translate( "Resend Email" ) }
-				</NoticeAction>
+				text={ resendStateToMessage( resendState ) }>
+				{ RESEND_IDLE === resendState &&
+					<NoticeAction href="#" onClick={ resendEmail } >
+						{ this.props.translate( "Resend Email" ) }
+					</NoticeAction>
+				}
 			</Notice>
 		);
 	}
