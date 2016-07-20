@@ -89,10 +89,6 @@ const EditorDrawer = React.createClass( {
 		actions.edit( { excerpt: event.target.value } );
 	},
 
-	hasHardCodedPostTypeSupports( type ) {
-		return POST_TYPE_SUPPORTS.hasOwnProperty( type );
-	},
-
 	currentPostTypeSupports: function( feature ) {
 		const { typeObject, type } = this.props;
 
@@ -101,7 +97,7 @@ const EditorDrawer = React.createClass( {
 		}
 
 		// Fall back to hard-coded settings if known for type
-		if ( this.hasHardCodedPostTypeSupports( type ) ) {
+		if ( POST_TYPE_SUPPORTS.hasOwnProperty( type ) ) {
 			return !! POST_TYPE_SUPPORTS[ type ][ feature ];
 		}
 
@@ -328,7 +324,7 @@ const EditorDrawer = React.createClass( {
 
 		return (
 			<div className="editor-drawer">
-				{ site && ! this.hasHardCodedPostTypeSupports( type ) && (
+				{ site && (
 					<QueryPostTypes siteId={ site.ID } />
 				) }
 				{ this.renderTaxonomies() }
