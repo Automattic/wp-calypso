@@ -48,6 +48,7 @@ export const activate = {
 export const customize = {
 	label: i18n.translate( 'Customize' ),
 	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
+	icon: 'customize',
 	getUrl: ( theme, site ) => getCustomizeUrl( theme, site ),
 	hideForSite: ( { isCustomizable = false } = {} ) => ! isCustomizable,
 	hideForTheme: theme => ! theme.active
@@ -85,11 +86,13 @@ export const info = {
 	label: i18n.translate( 'Info', {
 		comment: 'label for displaying the theme info sheet'
 	} ),
+	icon: 'info',
 	getUrl: ( theme, site ) => getDetailsUrl( theme, site ), // TODO: Make this a selector
 };
 
 export const support = {
 	label: i18n.translate( 'Setup' ),
+	icon: 'help',
 	getUrl: ( theme, site ) => getSupportUrl( theme, site ),
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
 	hideForSite: ( { isJetpack = false } = {} ) => isJetpack,

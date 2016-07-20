@@ -70,7 +70,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 			{},
 			option,
 			option.action || ( option.getUrl && option.header )
-				? { action: theme => this.showSiteSelectorModal( option, theme ) } // prevent default?
+				? { action: theme => this.showSiteSelectorModal( option, theme ) }
 				: {},
 			option.getUrl && option.header
 				? { getUrl: null }
