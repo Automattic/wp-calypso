@@ -157,15 +157,15 @@ $plan-features-sidebar-width: 272px;
 		padding: 12px 12px 0 12px;
 	}
 
-	&.plan-features__type-personal-bundle {
+	&.is-personal {
 		border-bottom: solid 2px $alert-yellow;
 	}
 
-	&.plan-features__type-value_bundle {
+	&.is-premium {
 		border-bottom: solid 2px $alert-green;
 	}
 
-	&.plan-features__type-business-bundle {
+	&.is-business {
 		border-bottom: solid 2px $business-plan-purple;
 	}
 }
