@@ -68,8 +68,6 @@ module.exports = React.createClass( {
 
 	componentWillUnmount: function() {
 		AuthStore.off( 'change', this.refreshData );
-		clearTimeout( this.pollTimeout );
-		this.pollTimeout = null;
 	},
 
 	refreshData: function() {
