@@ -25,16 +25,14 @@ let exclusiveViewLock = null;
 
 const PremiumPopover = React.createClass( {
 	propTypes: {
-		context: React.PropTypes.object,
 		className: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.object, React.PropTypes.array ] ),
 		onClose: React.PropTypes.func,
 		isVisible: React.PropTypes.bool,
 		position: React.PropTypes.string.isRequired,
-		bindContextEvents: React.PropTypes.bool
+		textLabel: React.PropTypes.string
 	},
 	getInitialState() {
 		return {
-			shouldBindEvents: !! this.props.bindContextEvents,
 			visibleByClick: false,
 			visibleByHover: false
 		};
@@ -60,17 +58,7 @@ const PremiumPopover = React.createClass( {
 	getSitePlan() {
 		return find( ( this.props.sitePlans.data || [] ), ( plan => plan.product_slug === 'value_bundle' ) );
 	},
-	componentDidUpdate( oldProps ) {
-		if ( oldProps.context !== this.props.context ) {
-			this.unbindContextEvents( oldProps.context );
-		}
-
-		if ( this.state.shouldBindEvents ) {
-			this.bindContextEvents();
-		}
-	},
 	componentWillUnmount() {
-		this.unbindContextEvents();
 		if ( exclusiveViewLock === this ) {
 			exclusiveViewLock = null;
 		}
@@ -84,22 +72,6 @@ const PremiumPopover = React.createClass( {
 	},
 	handleMouseLeave() {
 		this.setState( { visibleByHover: false } );
-	},
-	unbindContextEvents( elm = this.props.context ) {
-		if ( elm ) {
-			elm.removeEventListener( 'click', this.handleClick );
-			elm.removeEventListener( 'mouseenter', this.handleMouseEnter );
-			elm.removeEventListener( 'mouseleave', this.handleMouseLeave );
-		}
-	},
-	bindContextEvents() {
-		const elm = this.props.context;
-		if ( elm ) {
-			elm.addEventListener( 'click', this.handleClick );
-			elm.addEventListener( 'mouseenter', this.handleMouseEnter );
-			elm.addEventListener( 'mouseleave', this.handleMouseLeave );
-			this.setState( { shouldBindEvents: false } );
-		}
 	},
 	onClose( event ) {
 		if ( exclusiveViewLock === this ) {
@@ -118,28 +90,38 @@ const PremiumPopover = React.createClass( {
 	render() {
 		const premiumPlan = find( this.props.plans, ( plan => plan.product_slug === 'value_bundle' ) );
 		return (
-			<Popover
-				{ ...omit( this.props, [ 'children', 'className', 'bindContextEvents' ] ) }
-				onClose={ this.onClose }
-				isVisible={ this.isVisible() }
-				className={ classNames( this.props.className, 'premium-popover popover' ) }>
-				<div className="premium-popover__content">
-					<div className="premium-popover__header">
-						<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
-						{ premiumPlan ? <PlanPrice plan={ premiumPlan } sitePlan={ this.getSitePlan() }/> : <h5>Loading</h5> }
+			<span
+				onClick={ this.handleClick }
+				onMouseEnter={ this.handleMouseEnter }
+				onMouseLeave={ this.handleMouseLeave }>
+				{ this.props.textLabel }
+				<Popover
+					{ ...omit( this.props, [ 'children', 'className', 'textLabel' ] ) }
+					onClose={ this.onClose }
+					context={ this }
+					isVisible={ this.isVisible() }
+					className={ classNames( this.props.className, 'premium-popover popover' ) }>
+					<div className="premium-popover__content">
+						<div className="premium-popover__header">
+							<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
+							{ premiumPlan
+								? <PlanPrice plan={ premiumPlan } sitePlan={ this.getSitePlan() }/>
+								: <h5>Loading</h5> }
+						</div>
+						<ul className="premium-popover__items">
+							{ [
+								this.translate( 'A custom domain' ),
+								this.translate( 'Advanced design customization' ),
+								this.translate( '13GB of space for file and media' ),
+								this.translate( 'Video Uploads' ),
+								this.translate( 'No Ads' ),
+								this.translate( 'Email and live chat support' )
+							].map( ( message, i ) => <li key={ i }><Gridicon icon="checkmark" size={ 18 }/> { message }
+							</li> ) }
+						</ul>
 					</div>
-					<ul className="premium-popover__items">
-						{ [
-							this.translate( 'A custom domain' ),
-							this.translate( 'Advanced design customization' ),
-							this.translate( '13GB of space for file and media' ),
-							this.translate( 'Video Uploads' ),
-							this.translate( 'No Ads' ),
-							this.translate( 'Email and live chat support' )
-						].map( ( message, i ) => <li key={ i }><Gridicon icon="checkmark" size={ 18 }/> { message }</li> ) }
-					</ul>
-				</div>
-			</Popover>
+				</Popover>
+			</span>
 		);
 	}
 } );
