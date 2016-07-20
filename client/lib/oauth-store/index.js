@@ -73,6 +73,14 @@ const AuthStore = createReducerStore( function( state, payload ) {
 		case ActionTypes.AUTH_LOGIN:
 			stateChanges = { inProgress: true, errorLevel: false, errorMessage: false };
 			break;
+		case ActionTypes.USE_AUTH_CODE:
+			stateChanges = {
+				requires2fa: 'code',
+				pushauth: null,
+				errorLevel: 'is-info',
+				errorMessage: action.data.message
+			};
+			break;
 		case ActionTypes.RECEIVE_AUTH_LOGIN:
 			if ( action.error ) {
 				stateChanges = handleAuthError( action.error, action.data );

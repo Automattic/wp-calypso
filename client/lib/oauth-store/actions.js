@@ -25,6 +25,15 @@ function oauthLogin( username, password, secondFactor ) {
 		} );
 }
 
+export function useAuthCode( message ) {
+	Dispatcher.handleViewAction( {
+		type: actions.USE_AUTH_CODE,
+		data: {
+			message
+		}
+	} );
+}
+
 export function pushAuthLogin( username, password, secondFactor ) {
 	oauthLogin( username, password, secondFactor );
 }

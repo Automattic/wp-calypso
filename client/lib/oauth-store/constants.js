@@ -7,6 +7,7 @@ module.exports = {
 	actions: keyMirror( {
 		AUTH_LOGIN: null,
 		RECEIVE_AUTH_LOGIN: null,
+		USE_AUTH_CODE: null,
 		AUTH_RESET: null
 	} ),
 	errors: {

@@ -190,4 +190,37 @@ describe( 'oAuthStore', function() {
 			errorLevel: 'is-info'
 		} );
 	} );
+
+	it( 'changes 2fa type to use code', function() {
+		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
+		Dispatcher.handleViewAction( {
+			type: actions.RECEIVE_AUTH_LOGIN,
+			error: true,
+			data: {
+				body: {
+					error: errors.ERROR_REQUIRES_2FA_PUSH_VERIFICATION,
+					error_description: 'error',
+					error_info: {
+						push_token: 'abcd',
+						user_id: 1234
+					}
+				}
+			}
+		} );
+
+		Dispatcher.handleViewAction( {
+			type: actions.USE_AUTH_CODE,
+			data: {
+				message: 'Enter verification code'
+			}
+		} );
+
+		expect( oAuthStore.get() ).to.deep.equal( {
+			inProgress: false,
+			requires2fa: 'code',
+			pushauth: null,
+			errorMessage: 'Enter verification code',
+			errorLevel: 'is-info'
+		} );
+	} );
 } );
