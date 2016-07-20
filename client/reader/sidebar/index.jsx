@@ -186,6 +186,19 @@ const ReaderSidebar = React.createClass( {
 						}
 
 						{
+							// Post Recommendations Cold Start - Used by the Data team to test cold start algorithms
+							config.isEnabled( 'reader/recommendations/posts' ) &&
+							(
+								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/cold', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
+									<a href="/recommendations/cold">
+										<Gridicon icon="star" size={ 24 } />
+										<span className="menu-link-text">{ this.translate( 'Coldstart (Alpha)' ) }</span>
+									</a>
+								</li>
+							)
+						}
+
+						{
 							discoverHelper.isEnabled()
 							? (
 									<li className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, { 'sidebar-streams__discover': true } ) }>
