@@ -11,11 +11,15 @@ import AuthorLink from 'reader/author-link';
 import SiteLink from 'reader/site-link';
 import Gravatar from 'components/gravatar';
 import PostTime from 'reader/post-time';
+import Gridicon from 'components/gridicon';
 
-const StoryHeader = ( { post, onTitleClick, onDateClick, siteName } ) => {
+const StoryHeader = ( { post, onTitleClick, onDateClick, onTagClick, siteName } ) => {
 	if ( ! post ) {
 		return null;
 	}
+
+	const primaryTag = post && post.primary_tag;
+
 	return (
 		<div className="story-header">
 			<Gravatar user={ post.author } size={ 96 } />
@@ -43,6 +47,10 @@ const StoryHeader = ( { post, onTitleClick, onDateClick, siteName } ) => {
 							</a>
 						</li>
 					: null }
+					{ primaryTag /* @todo move to separate component; class names need fixing; need to port recordTagClick from post byline */
+						? <li className="reader-post-byline__tag">
+							<a href={ '/tag/' + primaryTag.slug } className="ignore-click"><Gridicon icon="tag" size={ 16 } /> { primaryTag.display_name }</a>
+						</li> : null }
 				</ul>
 			</div>
 		</div>
