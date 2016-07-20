@@ -354,7 +354,7 @@ export const featuresList = {
 	[ FEATURE_WORDADS_INSTANT ]: {
 		getTitle: () => i18n.translate( 'Monetize Your Site' ),
 		getDescription: () => i18n.translate(
-			'Add advertising to your site through our WordAds program and earn money from impressions.'
+			'Add your own advertising to your site through our WordAds program and earn money from impressions.'
 		),
 		plans: [ PLAN_PREMIUM, PLAN_BUSINESS ]
 	},
