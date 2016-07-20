@@ -16,7 +16,7 @@ import * as OAuthToken from 'lib/oauth-token';
  * Module variables
  */
 const initialState = {
-	requires2fa: false,
+	required2faType: null,
 	pushauth: null,
 	inProgress: false,
 	errorLevel: false,
@@ -28,7 +28,7 @@ function handleAuthError( error, data ) {
 	const stateChanges = {
 		errorMessage,
 		errorLevel: 'is-error',
-		requires2fa: false,
+		required2faType: null,
 		inProgress: false
 	};
 
@@ -38,13 +38,13 @@ function handleAuthError( error, data ) {
 	const errorInfo = get( data, 'body.error_info', null );
 	const errorChanges = get( {
 		[ errors.ERROR_REQUIRES_2FA ]:
-			{ errorLevel: 'is-info', requires2fa: 'code' },
+			{ errorLevel: 'is-info', required2faType: 'code' },
 		[ errors.ERROR_REQUIRES_2FA_PUSH_VERIFICATION ]:
-			{ errorLevel: 'is-info', requires2fa: 'push-verification', pushauth: errorInfo },
+			{ errorLevel: 'is-info', required2faType: 'push-verification', pushauth: errorInfo },
 		[ errors.ERROR_INVALID_PUSH_TOKEN ]:
-			{ errorLevel: 'is-info', requires2fa: 'push-verification' },
+			{ errorLevel: 'is-info', required2faType: 'push-verification' },
 		[ errors.ERROR_INVALID_OTP ]:
-			{ requires2fa: 'code' }
+			{ required2faType: 'code' }
 	}, errorCode, {} );
 
 	return { ...stateChanges, ...errorChanges };
@@ -75,7 +75,7 @@ const AuthStore = createReducerStore( function( state, payload ) {
 			break;
 		case ActionTypes.USE_AUTH_CODE:
 			stateChanges = {
-				requires2fa: 'code',
+				required2faType: 'code',
 				pushauth: null,
 				errorLevel: 'is-info',
 				errorMessage: action.data.message

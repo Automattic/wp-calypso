@@ -81,7 +81,7 @@ module.exports = React.createClass( {
 	componentDidUpdate() {
 		const auth = this.state.auth;
 
-		if ( auth.requires2fa === 'code' && auth.inProgress === false ) {
+		if ( auth.required2faType === 'code' && auth.inProgress === false ) {
 			ReactDom.findDOMNode( this.refs.auth_code ).focus();
 		}
 	},
@@ -119,7 +119,7 @@ module.exports = React.createClass( {
 		}
 
 		// If we have 2fa set then don't allow submission until a code is entered
-		if ( auth.requires2fa ) {
+		if ( auth.required2faType ) {
 			return parseInt( this.state.auth_code, 10 ) > 0;
 		}
 
@@ -140,9 +140,11 @@ module.exports = React.createClass( {
 
 	render: function() {
 		const {
-			auth: { requires2fa, inProgress, errorMessage, errorLevel },
+			auth: { required2faType, inProgress, errorMessage, errorLevel },
 			showInstructions
 		} = this.state;
+
+		const requires2fa = !! required2faType;
 
 		return (
 			<Main className="auth">
@@ -154,7 +156,7 @@ module.exports = React.createClass( {
 							<FormTextInput
 								name="login"
 								ref="login"
-								disabled={ !! requires2fa || inProgress }
+								disabled={ requires2fa || inProgress }
 								placeholder={ this.translate( 'Username or email address' ) }
 								onFocus={ this.recordFocusEvent( 'Username or email address' ) }
 								valueLink={ this.linkState( 'login' ) } />
@@ -164,14 +166,14 @@ module.exports = React.createClass( {
 							<FormPasswordInput
 								name="password"
 								ref="password"
-								disabled={ !! requires2fa || inProgress }
+								disabled={ requires2fa || inProgress }
 								placeholder={ this.translate( 'Password' ) }
 								onFocus={ this.recordFocusEvent( 'Password' ) }
 								hideToggle={ requires2fa }
 								submitting={ inProgress }
 								valueLink={ this.linkState( 'password' ) } />
 						</div>
-						{ ( requires2fa === 'code' ) &&
+						{ ( required2faType === 'code' ) &&
 							<FormFieldset>
 								<FormTextInput
 									name="auth_code"
@@ -186,14 +188,14 @@ module.exports = React.createClass( {
 					</FormFieldset>
 					<FormButtonsBar>
 						<FormButton disabled={ ! this.canSubmitForm() } onClick={ this.recordClickEvent( 'Sign in' ) } >
-							{ requires2fa === 'code' ? this.translate( 'Verify' ) : this.translate( 'Sign in' ) }
+							{ required2faType === 'code' ? this.translate( 'Verify' ) : this.translate( 'Sign in' ) }
 						</FormButton>
 					</FormButtonsBar>
 					{ ! requires2fa && <LostPassword /> }
 					{ errorMessage &&
 						<Notice text={ errorMessage } status={ errorLevel } showDismiss={ false } />
 					}
-					{ ( requires2fa === 'push-verification' ) &&
+					{ ( required2faType === 'push-verification' ) &&
 						<Interval onTick={ this.verifyPushAuthentication } period={ EVERY_FIVE_SECONDS }>
 							<FormButtonsBar>
 								<FormButton ref="useAuthCode" onClick={ this.useAuthCode }>
@@ -202,7 +204,7 @@ module.exports = React.createClass( {
 							</FormButtonsBar>
 						</Interval>
 					}
-					{ ( requires2fa === 'code' ) &&
+					{ ( required2faType === 'code' ) &&
 						<AuthCodeButton username={ this.state.login } password={ this.state.password } />
 					}
 				</form>

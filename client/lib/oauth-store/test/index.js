@@ -26,7 +26,7 @@ describe( 'oAuthStore', function() {
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: true,
-			requires2fa: false,
+			required2faType: null,
 			pushauth: null,
 			errorMessage: false,
 			errorLevel: false
@@ -43,7 +43,7 @@ describe( 'oAuthStore', function() {
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
-			requires2fa: false,
+			required2faType: null,
 			pushauth: null,
 			errorMessage: 'error',
 			errorLevel: 'is-error'
@@ -65,7 +65,7 @@ describe( 'oAuthStore', function() {
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
-			requires2fa: 'code',
+			required2faType: 'code',
 			pushauth: null,
 			errorMessage: 'error',
 			errorLevel: 'is-info'
@@ -87,7 +87,7 @@ describe( 'oAuthStore', function() {
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
-			requires2fa: 'code',
+			required2faType: 'code',
 			pushauth: null,
 			errorMessage: 'error',
 			errorLevel: 'is-error'
@@ -116,7 +116,7 @@ describe( 'oAuthStore', function() {
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: true,
-			requires2fa: 'code',
+			required2faType: 'code',
 			pushauth: null,
 			errorMessage: false,
 			errorLevel: false
@@ -142,7 +142,7 @@ describe( 'oAuthStore', function() {
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
-			requires2fa: 'push-verification',
+			required2faType: 'push-verification',
 			pushauth: {
 				push_token: 'abcd',
 				user_id: 1234
@@ -181,7 +181,7 @@ describe( 'oAuthStore', function() {
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
-			requires2fa: 'push-verification',
+			required2faType: 'push-verification',
 			pushauth: {
 				push_token: 'abcd',
 				user_id: 1234
@@ -217,7 +217,7 @@ describe( 'oAuthStore', function() {
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
-			requires2fa: 'code',
+			required2faType: 'code',
 			pushauth: null,
 			errorMessage: 'Enter verification code',
 			errorLevel: 'is-info'

@@ -44,7 +44,7 @@ describe( 'LoginTest', function() {
 	} );
 
 	it( 'OTP is not present on first render', function( done ) {
-		page.setState( { auth: { requires2fa: false } }, function() {
+		page.setState( { auth: { required2faType: null } }, function() {
 			expect( page.refs.auth_code ).to.be.undefined;
 			done();
 		} );
@@ -60,14 +60,14 @@ describe( 'LoginTest', function() {
 	} );
 
 	it( 'shows OTP box with valid login', function( done ) {
-		page.setState( { login: 'test', password: 'test', auth: { requires2fa: 'code' } }, function() {
+		page.setState( { login: 'test', password: 'test', auth: { required2faType: 'code' } }, function() {
 			expect( page.refs.auth_code ).to.not.be.undefined;
 			done();
 		} );
 	} );
 
 	it( 'prevents change of login when asking for OTP', function( done ) {
-		page.setState( { login: 'test', password: 'test', auth: { requires2fa: 'code' } }, function() {
+		page.setState( { login: 'test', password: 'test', auth: { required2faType: 'code' } }, function() {
 			expect( page.refs.login.props.disabled ).to.be.true;
 			expect( page.refs.password.props.disabled ).to.be.true;
 			done();
@@ -87,7 +87,7 @@ describe( 'LoginTest', function() {
 	} );
 
 	it( 'allows user to switch to the OTP form while waiting for push auth', function( done ) {
-		page.setState( { login: 'test', password: 'test', auth: { requires2fa: 'push-verification' } }, function() {
+		page.setState( { login: 'test', password: 'test', auth: { required2faType: 'push-verification' } }, function() {
 			expect( page.refs.login.props.disabled ).to.be.true;
 			expect( page.refs.password.props.disabled ).to.be.true;
 			expect( page.refs.useAuthCode ).to.not.be.undefined;
