@@ -25,7 +25,7 @@ const PlanFeaturesActions = ( {
 	const className = classNames( {
 		'plan-features__actions-button': true,
 		'is-current': current,
-		'is-popular': popular
+		'is-primary': popular && ! isPlaceholder,
 	} );
 
 	if ( current ) {
@@ -40,7 +40,6 @@ const PlanFeaturesActions = ( {
 			<Button
 				className={ className }
 				onClick={ isPlaceholder ? noop : onUpgradeClick }
-				primary={ ! isPlaceholder }
 				disabled={ isPlaceholder }
 			>
 				{
