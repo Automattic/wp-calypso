@@ -156,6 +156,18 @@ $plan-features-sidebar-width: 272px;
 	@include breakpoint( "<960px" ) {
 		padding: 12px 12px 0 12px;
 	}
+
+	&.plan-features__type-personal-bundle {
+		border-bottom: solid 2px $alert-yellow;
+	}
+
+	&.plan-features__type-value_bundle {
+		border-bottom: solid 2px $alert-green;
+	}
+
+	&.plan-features__type-business-bundle {
+		border-bottom: solid 2px $alert-purple;
+	}
 }
 
 .plan-features__header-figure {
