@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
- import ExternalLink from 'components/external-link';
- import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
+import ExternalLink from 'components/external-link';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 
 const AuthorLink = ( { post, children } ) => {
 	const recordAuthorClick = ( { post } ) => {
