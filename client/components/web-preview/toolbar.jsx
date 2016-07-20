@@ -25,10 +25,12 @@ export const PreviewToolbar = props => {
 		externalUrl,
 		onClose,
 		previewUrl,
+		selectSeoPreview,
 		setDeviceViewport,
 		showClose,
 		showDeviceSwitcher,
 		showExternal,
+		showSeo,
 		translate
 	} = props;
 
@@ -66,6 +68,19 @@ export const PreviewToolbar = props => {
 						<Gridicon icon={ device } />
 					</button>
 				) )
+			}
+			{ showSeo &&
+				<button
+					aria-label={ translate( 'Show SEO and search previews' ) }
+					className={ classNames(
+						'web-preview__seo-button',
+						'web-preview__device-button', {
+						'is-active': 'seo' === currentDevice
+					} ) }
+					onClick={ selectSeoPreview }
+				>
+					<Gridicon icon="share" />
+				</button>
 			}
 			<div className="web-preview__toolbar-tray">
 				{ props.children }

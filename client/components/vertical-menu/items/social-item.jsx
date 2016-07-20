@@ -53,12 +53,13 @@ SocialItem.propTypes = {
 	isSelected: PropTypes.bool,
 	onClick: PropTypes.func,
 	service: PropTypes.oneOf( Object.keys( services( identity ) ) ).isRequired,
-	translate: PropTypes.func.isRequired
+	translate: PropTypes.func
 };
 
 SocialItem.defaultProps = {
 	isSelected: false,
-	onClick: identity
+	onClick: identity,
+	translate: identity
 };
 
 export default localize( SocialItem );
