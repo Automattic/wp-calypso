@@ -28,6 +28,7 @@ const ThemesListFetcher = React.createClass( {
 		isMultisite: React.PropTypes.bool,
 		search: React.PropTypes.string,
 		tier: React.PropTypes.string,
+		filter: React.PropTypes.string,
 		onRealScroll: React.PropTypes.func,
 		onLastPage: React.PropTypes.func,
 		// Connected props
@@ -52,6 +53,7 @@ const ThemesListFetcher = React.createClass( {
 			this.props.errorNotice( this.translate( 'There was a problem fetching the themes' ) );
 		}
 		if (
+			nextProps.filter !== this.props.filter ||
 				nextProps.tier !== this.props.tier || (
 					nextProps.search !== this.props.search && (
 						! nextProps.lastQuery.isJetpack ||
@@ -83,6 +85,7 @@ const ThemesListFetcher = React.createClass( {
 		this.props.query( {
 			search,
 			tier,
+			filter: props.filter,
 			page: 0,
 			perPage: PER_PAGE,
 		} );

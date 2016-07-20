@@ -31,6 +31,10 @@ const ThemesSelection = React.createClass( {
 		tier: React.PropTypes.string,
 	},
 
+	getInitialState() {
+		return { filter: '' };
+	},
+
 	doSearch( searchString ) {
 		const filterRegex = /[a-zA-Z0-9]+\:\s*([a-zA-Z0-9-_]+)/g;
 
@@ -42,7 +46,10 @@ const ThemesSelection = React.createClass( {
 			}
 		}
 		filterStrings.sort();
-		console.log( filterStrings );
+		const filter = filterStrings.reduce(
+			( prev, current ) => `${ prev }${ prev && ' ' }${ current }`, ''
+		);
+		this.setState( { filter } );
 
 		searchString = searchString.replace( filterRegex, '' ).trim();
 
@@ -114,6 +121,7 @@ const ThemesSelection = React.createClass( {
 						isMultisite={ ! this.props.siteId } // Not the same as `! site` !
 						search={ this.props.search }
 						tier={ this.props.tier }
+						filter={ this.state.filter }
 						onRealScroll={ this.trackScrollPage }
 						onLastPage={ this.trackLastPage } >
 					<ThemesList getButtonOptions={ this.props.getOptions }

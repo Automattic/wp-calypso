@@ -1429,6 +1429,7 @@ Undocumented.prototype.themes = function( site, query, fn ) {
 	return this.wpcom.req.get( path, {
 		search: query.search,
 		tier: query.tier,
+		filter: query.filter,
 		page: query.page,
 		number: query.perPage,
 		apiVersion: site.jetpack ? '1' : '1.2'
