@@ -20,7 +20,7 @@ $plan-features-sidebar-width: 272px;
 	margin: 0 16px;
 	display: block;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( ">660px" ) {
 		display: none;
 	}
 
@@ -80,7 +80,7 @@ $plan-features-sidebar-width: 272px;
 	display: none;
 	table-layout: fixed;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( ">660px" ) {
 		display: table;
 	}
 
