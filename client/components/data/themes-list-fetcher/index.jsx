@@ -78,7 +78,7 @@ const ThemesListFetcher = React.createClass( {
 
 		this.onLastPage = onLastPage ? once( onLastPage ) : null;
 
-		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
+		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? props.tier : 'free';
 
 		this.props.query( {
 			search,
