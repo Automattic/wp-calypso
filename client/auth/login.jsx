@@ -3,7 +3,6 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 /**
  * Internal dependencies
@@ -60,7 +59,7 @@ const SelfHostedInstructions = React.createClass( {
 module.exports = React.createClass( {
 	displayName: 'Auth',
 
-	mixins: [ LinkedStateMixin, eventRecorder ],
+	mixins: [ eventRecorder ],
 
 	componentDidMount: function() {
 		AuthStore.on( 'change', this.refreshData );
@@ -138,6 +137,18 @@ module.exports = React.createClass( {
 		);
 	},
 
+	updateLogin: function( e ) {
+		this.setState( { login: e.target.value } );
+	},
+
+	updatePassword: function( e ) {
+		this.setState( { password: e.target.value } );
+	},
+
+	updateAuthCode: function( e ) {
+		this.setState( { auth_code: e.target.value } );
+	},
+
 	render: function() {
 		const {
 			auth: { required2faType, inProgress, errorMessage, errorLevel },
@@ -159,7 +170,8 @@ module.exports = React.createClass( {
 								disabled={ requires2fa || inProgress }
 								placeholder={ this.translate( 'Username or email address' ) }
 								onFocus={ this.recordFocusEvent( 'Username or email address' ) }
-								valueLink={ this.linkState( 'login' ) } />
+								value={ this.state.login }
+								onChange={ this.updateLogin } />
 						</div>
 						<div className="auth__input-wrapper">
 							<Gridicon icon="lock" />
@@ -171,7 +183,8 @@ module.exports = React.createClass( {
 								onFocus={ this.recordFocusEvent( 'Password' ) }
 								hideToggle={ requires2fa }
 								submitting={ inProgress }
-								valueLink={ this.linkState( 'password' ) } />
+								value={ this.state.password }
+								onChange={ this.updatePassword } />
 						</div>
 						{ ( required2faType === 'code' ) &&
 							<FormFieldset>
@@ -182,7 +195,8 @@ module.exports = React.createClass( {
 									disabled={ inProgress }
 									placeholder={ this.translate( 'Verification code' ) }
 									onFocus={ this.recordFocusEvent( 'Verification code' ) }
-									valueLink={ this.linkState( 'auth_code' ) } />
+									value={ this.state.auth_code }
+									onChange={ this.updateAuthCode } />
 							</FormFieldset>
 						}
 					</FormFieldset>
