@@ -78,6 +78,7 @@ $plan-features-sidebar-width: 272px;
 	border-spacing: 16px 0;
 	margin-top: -16px;
 	display: none;
+	table-layout: fixed;
 
 	@include breakpoint( ">480px" ) {
 		display: table;
@@ -95,7 +96,7 @@ $plan-features-sidebar-width: 272px;
 	border-left: solid 1px lighten( $gray, 27% );
 	background-color: lighten( $gray, 35% );
 	position: relative;
-	width: 300px;
+	width: 25%;
 }
 
 .plan-features__table-item.is-selected {
