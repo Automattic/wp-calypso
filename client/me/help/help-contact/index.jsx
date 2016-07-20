@@ -23,8 +23,10 @@ import notices from 'notices';
 import siteList from 'lib/sites-list';
 import analytics from 'lib/analytics';
 import i18n from 'lib/i18n-utils';
+import user from 'lib/user';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import QueryOlark from 'components/data/query-olark';
+import HelpUnverifiedWarning from '../help-unverified-warning';
 
 /**
  * Module variables
@@ -437,6 +439,7 @@ const HelpContact = React.createClass( {
 		return (
 			<Main className="help-contact">
 				<HeaderCake onClick={ this.backToHelp } isCompact={ true }>{ this.translate( 'Contact Us' ) }</HeaderCake>
+				{ ! user().get().email_verified && <HelpUnverifiedWarning /> }
 				<Card className={ this.canShowChatbox() ? 'help-contact__chat-form' : 'help-contact__form' }>
 					{ this.getView() }
 				</Card>

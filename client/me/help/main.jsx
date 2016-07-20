@@ -9,13 +9,15 @@ var React = require( 'react' ),
  */
 var Main = require( 'components/main' ),
 	analytics = require( 'lib/analytics' ),
+	user = require( 'lib/user' )(),
 	HappinessEngineers = require( 'me/help/help-happiness-engineers' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	HelpSearch = require( './help-search' ),
 	CompactCard = require( 'components/card/compact' ),
 	Button = require( 'components/button' ),
 	SectionHeader = require( 'components/section-header' ),
-	HelpResult = require( './help-results/item' );
+	HelpResult = require( './help-results/item' ),
+	HelpUnverifiedWarning = require( './help-unverified-warning' );
 
 module.exports = React.createClass( {
 	displayName: 'Help',
@@ -95,6 +97,7 @@ module.exports = React.createClass( {
 			<Main className="help">
 				<MeSidebarNavigation />
 				<HelpSearch />
+				{ ! user.get().email_verified && <HelpUnverifiedWarning /> }
 				{ this.getHelpfulArticles() }
 				{ this.getSupportLinks() }
 				<HappinessEngineers />
