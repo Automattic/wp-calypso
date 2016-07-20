@@ -156,6 +156,18 @@ $plan-features-sidebar-width: 272px;
 	@include breakpoint( "<960px" ) {
 		padding: 12px 12px 0 12px;
 	}
+
+	&.is-personal {
+		border-bottom: solid 2px $alert-yellow;
+	}
+
+	&.is-premium {
+		border-bottom: solid 2px $alert-green;
+	}
+
+	&.is-business {
+		border-bottom: solid 2px $alert-purple;
+	}
 }
 
 .plan-features__header-figure {

@@ -43,8 +43,14 @@ class PlanFeaturesHeader extends Component {
 			'is-discounted': isDiscounted,
 			'is-placeholder': isPlaceholder
 		} );
+		const headerClasses = classNames( 'plan-features__header', {
+			'is-personal': planType === 'personal-bundle',
+			'is-premium': planType === 'value_bundle',
+			'is-business': planType === 'business-bundle'
+		} );
+
 		return (
-			<header className="plan-features__header" onClick={ this.props.onClick } >
+			<header className={ headerClasses } onClick={ this.props.onClick } >
 				{
 					popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon>
 				}
