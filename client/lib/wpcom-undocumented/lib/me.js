@@ -1,7 +1,7 @@
 /**
  * Module dependencies.
  */
-import Me from 'wpcom/dist/lib/me';
+import { Me } from 'wpcom';
 import inherits from 'inherits';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:wpcom-undocumented:me' );
