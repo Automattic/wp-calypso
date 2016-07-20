@@ -64,6 +64,8 @@ export const tryandcustomize = {
 	hideForTheme: theme => theme.active
 };
 
+// This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
+// respectively. TODO: Replace with a real action once we're able to use `DesignPreview`.
 export const preview = {
 	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website'
