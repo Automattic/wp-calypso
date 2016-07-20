@@ -43,7 +43,7 @@ export function getCustomizeUrl( theme, site ) {
 		return site.options.admin_url + 'customize.php?return=' + encodeURIComponent( window.location ) + ( theme ? '&theme=' + theme.id : '' );
 	}
 
-	return '/customize/' + site.slug + ( theme ? '?theme=' + theme.stylesheet : '' );
+	return '/customize/' + site.slug + ( theme && theme.stylesheet ? '?theme=' + theme.stylesheet : '' );
 }
 
 export function getDetailsUrl( theme, site ) {
