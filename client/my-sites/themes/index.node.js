@@ -10,7 +10,6 @@ import { makeLayout } from 'controller';
 
 export default function( router ) {
 	if ( config.isEnabled( 'manage/themes' ) ) {
-		router( '/design', makeLayout );
 		router( '/design/:tier(free|premium)?', makeLayout );
 		router( '/design/*', makeLayout ); // Needed so direct hits don't result in a 404.
 	}
