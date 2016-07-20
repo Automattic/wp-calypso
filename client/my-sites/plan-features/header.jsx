@@ -43,7 +43,7 @@ class PlanFeaturesHeader extends Component {
 			'is-discounted': isDiscounted,
 			'is-placeholder': isPlaceholder
 		} );
-		const headerClasses = classNames( 'plan-features__header', 'plan-features__type-' + planType );
+		const headerClasses = classNames( 'plan-features__header', `plan-features__type-${ planType }` );
 
 		return (
 			<header className={ headerClasses } onClick={ this.props.onClick } >
