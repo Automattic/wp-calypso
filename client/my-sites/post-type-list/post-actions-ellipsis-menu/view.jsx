@@ -45,7 +45,7 @@ class PostActionsEllipsisMenuView extends Component {
 			<PopoverMenuItem
 				href={ previewUrl }
 				onClick={ this.previewPost }
-				icon="external"
+				icon="visible"
 				target="_blank">
 				{ includes( [ 'publish', 'private' ], status )
 					? translate( 'View', { context: 'verb' } )
