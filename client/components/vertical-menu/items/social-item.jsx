@@ -8,8 +8,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import {
 	get,
-	identity,
-	partial
+	identity
 } from 'lodash';
 
 /**
@@ -41,7 +40,7 @@ export const SocialItem = props => {
 	);
 
 	return (
-		<div className={ classes } onClick={ partial( onClick, service ) }>
+		<div className={ classes } onClick={ () => onClick( service ) }>
 			<div className="vertical-menu__items__social-icon">
 				<SocialLogo icon={ icon } size={ 24 } />
 			</div>

@@ -58,6 +58,7 @@ import FilePickers from 'components/file-picker/docs/example';
 import Collection from 'devdocs/design/search-collection';
 import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import FAQ from 'components/faq/docs/example';
+import VerticalMenu from 'components/vertical-menu/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -139,6 +140,7 @@ let DesignAssets = React.createClass( {
 					<SpinnerLine searchKeywords="loading" />
 					<Timezone />
 					<TokenFields />
+					<VerticalMenu />
 					<Version />
 				</Collection>
 			</div>

@@ -21,8 +21,10 @@ export class VerticalMenu extends PureComponent {
 		this.select = this.select.bind( this );
 	}
 
-	select( selectedIndex ) {
-		this.setState( { selectedIndex } );
+	select( selectedIndex, ...args ) {
+		const { onClick } = this.props;
+
+		this.setState( { selectedIndex }, onClick( ...args ) );
 	}
 
 	render() {
