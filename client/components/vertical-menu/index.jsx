@@ -4,11 +4,12 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import PureComponent from 'react-pure-render/component';
 import {
 	partial
 } from 'lodash';
 
-export class VerticalMenu extends Component {
+export class VerticalMenu extends PureComponent {
 	constructor( props ) {
 		super( props );
 
