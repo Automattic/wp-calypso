@@ -22,7 +22,7 @@ import RootChild from 'components/root-child';
 import { setPreviewShowing } from 'state/ui/actions';
 
 import VerticalMenu from 'components/vertical-menu';
-import { SocialItem } from 'components/vertical-menu/items/social-item';
+import { SocialItem } from 'components/vertical-menu/items';
 
 const debug = debugModule( 'calypso:web-preview' );
 
