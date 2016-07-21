@@ -34,14 +34,14 @@ export const SocialItem = props => {
 
 	const { icon, label } = get( services( translate ), service );
 	const classes = classNames(
-		'vertical-selector__social-item',
-		'vertical-selector__items',
+		'vertical-menu__social-item',
+		'vertical-menu__items',
 		{ 'is-selected': isSelected }
 	);
 
 	return (
 		<div className={ classes } onClick={ onClick }>
-			<div className="vertical-selector__items__social-icon">
+			<div className="vertical-menu__items__social-icon">
 				<SocialLogo icon={ icon } size={ 24 } />
 			</div> { label }
 		</div>

@@ -8,7 +8,7 @@ import {
 	partial
 } from 'lodash';
 
-export class VerticalSelector extends Component {
+export class VerticalMenu extends Component {
 	constructor( props ) {
 		super( props );
 
@@ -28,7 +28,7 @@ export class VerticalSelector extends Component {
 		const { selectedIndex } = this.state;
 
 		return (
-			<div className="vertical-selector">
+			<div className="vertical-menu">
 				{ React.Children.map( children, ( Item, index ) => (
 					React.cloneElement( Item, {
 						isSelected: index === selectedIndex,
@@ -40,10 +40,10 @@ export class VerticalSelector extends Component {
 	}
 }
 
-VerticalSelector.propTypes = {
+VerticalMenu.propTypes = {
 	children: PropTypes.arrayOf(
 		PropTypes.element
 	)
 };
 
-export default VerticalSelector;
+export default VerticalMenu;

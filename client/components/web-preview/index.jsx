@@ -21,8 +21,8 @@ import Spinner from 'components/spinner';
 import RootChild from 'components/root-child';
 import { setPreviewShowing } from 'state/ui/actions';
 
-import VerticalSelector from 'components/vertical-selector';
-import SocialItem from 'components/vertical-selector/items/social-item';
+import VerticalMenu from 'components/vertical-menu';
+import SocialItem from 'components/vertical-menu/items/social-item';
 
 const debug = debugModule( 'calypso:web-preview' );
 
@@ -222,13 +222,13 @@ export class WebPreview extends Component {
 									title={ this.props.iframeTitle || translate( 'Preview' ) }
 								/>
 							}
-							<VerticalSelector>
+							<VerticalMenu>
 								<SocialItem service="google" />
 								<SocialItem service="facebook" />
 								<SocialItem service="wordpress" />
 								<SocialItem service="linkedin" />
 								<SocialItem service="twitter" />
-							</VerticalSelector>
+							</VerticalMenu>
 						</div>
 					</div>
 				</div>

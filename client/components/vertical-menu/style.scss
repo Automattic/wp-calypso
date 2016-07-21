@@ -1,10 +1,10 @@
-.vertical-selector {
+.vertical-menu {
 	display: flex;
 	flex-direction: column;
 	max-width: 280px;
 }
 
-.vertical-selector__items {
+.vertical-menu__items {
 	@extend %content-font;
 
 	display: flex;
@@ -25,7 +25,7 @@
 	}
 }
 
-.vertical-selector__items__social-icon {
+.vertical-menu__items__social-icon {
 	margin-left: 8px;
 	margin-right: 8px;
 	margin-bottom: -4px;
