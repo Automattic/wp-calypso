@@ -20,7 +20,6 @@ export class VerticalSelector extends Component {
 	}
 
 	select( selectedIndex ) {
-		console.log( `Selecting ${ selectedIndex }` );
 		this.setState( { selectedIndex } );
 	}
 

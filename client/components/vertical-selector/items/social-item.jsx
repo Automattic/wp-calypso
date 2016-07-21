@@ -33,13 +33,17 @@ export const SocialItem = props => {
 	} = props;
 
 	const { icon, label } = get( services( translate ), service );
-	const classes = classNames( 'vertical-selector__social-item', {
-		'is-selected': isSelected
-	} );
+	const classes = classNames(
+		'vertical-selector__social-item',
+		'vertical-selector__items',
+		{ 'is-selected': isSelected }
+	);
 
 	return (
 		<div className={ classes } onClick={ onClick }>
-			<SocialLogo icon={ icon } /> { label }
+			<div className="vertical-selector__items__social-icon">
+				<SocialLogo icon={ icon } size={ 24 } />
+			</div> { label }
 		</div>
 	);
 };
