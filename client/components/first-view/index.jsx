@@ -63,7 +63,7 @@ const FirstView = React.createClass( {
 							{ this.props.children }
 
 							<Button primary onClick={ this.hide }>
-								{ this.translate( 'Got it!', { context: 'Button that dismisses the introduction overlay.' } ) }
+								{ this.translate( 'Got It!', { context: 'Button that dismisses the introduction overlay.' } ) }
 							</Button>
 
 							<div className={ firstViewHidePreferenceClasses }>

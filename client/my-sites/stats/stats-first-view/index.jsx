@@ -17,8 +17,10 @@ export default React.createClass( {
 			<FirstView>
 				<div>
 					{ this.renderIcon() }
-					<h1>{ this.translate( 'Keep track of who\'s viewing your site' ) }</h1>
-					<p>{ this.translate( 'Stats show a bunch of fun numbers, charts, and graphs that detail how many visits your site gets, what posts and pages are popular, and much more.' ) }</p>
+					<h1>{ this.translate( 'See How Your Site Is Performing' ) }</h1>
+					{ /* eslint-disable max-len */ }
+					<p>{ this.translate( 'The Stats page tells you everything you need to know about your site\'s traffic and visitors — which of your posts are taking off, where your audience is coming from, and who\'s now following you.' ) }</p>
+					{ /* eslint-enable max-len */ }
 				</div>
 			</FirstView>
 		);
@@ -26,6 +28,7 @@ export default React.createClass( {
 
 	renderIcon() {
 		// embedded; original file: /public/images/stats/illustration-stats.svg
+		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="first-view__icon">
 				<svg x="0px" y="0px" viewBox="0 0 792 612" enable-background="new 0 0 792 612">
@@ -70,5 +73,6 @@ export default React.createClass( {
 				</svg>
 			</div>
 		);
+		/* eslint-enable max-len, wpcalypso/jsx-classname-namespace */
 	}
 } );
