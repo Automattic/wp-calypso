@@ -3,6 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import ReactDom from 'react-dom';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -148,7 +149,7 @@ class TermSelectorAddTerm extends Component {
 	}
 
 	render() {
-		const { labels, siteId, taxonomy, translate } = this.props;
+		const { labels, siteId, taxonomy, translate, terms } = this.props;
 		const buttons = [ {
 			action: 'cancel',
 			label: translate( 'Cancel' )
@@ -167,9 +168,10 @@ class TermSelectorAddTerm extends Component {
 		}
 
 		const isError = this.state.error && this.state.error.length;
+		const classes = classNames( 'term-tree-selector__add-term', { 'is-compact': terms.length < 8 } );
 
 		return (
-			<div className="term-tree-selector__add-term">
+			<div className={ classes }>
 				<Button borderless compact={ true } onClick={ this.boundOpenDialog }>
 					<Gridicon icon="folder" /> { labels.add_new_item }
 				</Button>
