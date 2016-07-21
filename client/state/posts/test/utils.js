@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -155,7 +156,7 @@ describe( 'utils', () => {
 		} );
 
 		it( 'should return the add terms_by_id if terms have been edited', () => {
-			const normalizedPostEdits = getTermIdsFromEdits( {
+			const originalPost = deepFreeze( {
 				title: 'Chewbacca Saves',
 				terms: {
 					wookie_post_types: {
@@ -166,6 +167,8 @@ describe( 'utils', () => {
 					}
 				}
 			} );
+
+			const normalizedPostEdits = getTermIdsFromEdits( originalPost );
 
 			expect( normalizedPostEdits ).to.eql( {
 				title: 'Chewbacca Saves',

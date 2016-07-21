@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { cloneDeep, find, reject, map } from 'lodash';
+import { cloneDeep, findIndex, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,10 +34,10 @@ class EditorTermSelector extends Component {
 		const terms = cloneDeep( postTerms ) || {};
 
 		// map call transforms object returned by API into an array
-		let taxonomyTerms = map( terms[ taxonomyName ] ) || [];
-
-		if ( find( taxonomyTerms, { ID: selectedTerm.ID } ) ) {
-			taxonomyTerms = reject( taxonomyTerms, { ID: selectedTerm.ID } );
+		const taxonomyTerms = map( terms[ taxonomyName ] ) || [];
+		const existingSelectionIndex = findIndex( taxonomyTerms, { ID: selectedTerm.ID } );
+		if ( existingSelectionIndex !== -1 ) {
+			taxonomyTerms.splice( existingSelectionIndex, 1 );
 		} else {
 			taxonomyTerms.push( selectedTerm );
 		}
