@@ -6,7 +6,7 @@ This component does not dictate the content of the link, only the href and click
 
 ## Example
 
-The `ReaderSiteStreamLink` component can be used in much the same way that you would use an `<ExternalLink>` component. The link wraps whatever is placed between the ReaderSiteStreamLink elements.
+The `ReaderSiteStreamLink` component can be used in much the same way that you would use an `<a>` element. The link wraps whatever is placed between the ReaderSiteStreamLink elements.
 
 ```html
 <ReaderSiteStreamLink post={ post }>Your link text here</ReaderSiteStreamLink>
