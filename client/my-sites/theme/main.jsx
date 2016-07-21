@@ -52,6 +52,7 @@ const ThemeSheet = React.createClass( {
 		name: React.PropTypes.string,
 		author: React.PropTypes.string,
 		screenshot: React.PropTypes.string,
+		screenshots: React.PropTypes.array,
 		price: React.PropTypes.string,
 		description: React.PropTypes.string,
 		descriptionLong: React.PropTypes.string,
@@ -126,7 +127,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderScreenshot() {
-		const img = <img className="theme__sheet-img" src={ this.props.screenshot + '?=w680' } />;
+		const img = <img className="theme__sheet-img" src={ this.props.screenshots[0] + '?=w680' } />;
 		return (
 			<div className="theme__sheet-screenshot">
 				<a className="theme__sheet-preview-link" onClick={ this.togglePreview } >
@@ -135,7 +136,7 @@ const ThemeSheet = React.createClass( {
 						{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
 					</span>
 				</a>
-				{ this.props.screenshot && img }
+				{ this.props.screenshots[0] && img }
 			</div>
 		);
 	},

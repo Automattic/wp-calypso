@@ -124,6 +124,7 @@ export function receiveThemeDetails( theme ) {
 		themeAuthor: theme.author,
 		themePrice: theme.price,
 		themeScreenshot: theme.screenshot,
+		themeScreenshots: theme.screenshots,
 		themeDescription: theme.description,
 		themeDescriptionLong: theme.description_long,
 		themeSupportDocumentation: theme.support_documentation || undefined,

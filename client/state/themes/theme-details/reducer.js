@@ -25,6 +25,7 @@ export default ( state = Map(), action ) => {
 					author: action.themeAuthor,
 					price: action.themePrice,
 					screenshot: action.themeScreenshot,
+					screenshots: action.themeScreenshots,
 					description: action.themeDescription,
 					descriptionLong: action.themeDescriptionLong,
 					supportDocumentation: action.themeSupportDocumentation,

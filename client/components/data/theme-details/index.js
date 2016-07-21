@@ -27,6 +27,7 @@ const ThemeDetailsData = React.createClass( {
 		name: React.PropTypes.string,
 		author: React.PropTypes.string,
 		screenshot: React.PropTypes.string,
+		screenshots: React.PropTypes.array,
 		description: React.PropTypes.string,
 		descriptionLong: React.PropTypes.string,
 		supportDocumentation: React.PropTypes.string,
