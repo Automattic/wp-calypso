@@ -66,9 +66,6 @@ describe( 'actions', () => {
 					.persist()
 					.get( '/rest/v1.1/me/sites?site_visibility=all' )
 					.reply( 200, {
-						_headers: {
-							'Content-Type': 'application/json'
-						},
 						sites: [
 							{ ID: 2916284, name: 'WordPress.com Example Blog' },
 							{ ID: 77203074, name: 'WordPress.com Example Blog 2' }

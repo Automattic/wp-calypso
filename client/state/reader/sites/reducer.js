@@ -54,7 +54,7 @@ function handleRequestFailure( state, action ) {
 
 function adaptSite( attributes ) {
 	// this also ends up cloning attributes, which is important since we mutate it
-	attributes = omit( attributes, [ 'meta', '_headers' ] );
+	attributes = omit( attributes, [ 'meta' ] );
 
 	if ( attributes.URL ) {
 		attributes.domain = attributes.URL.replace( /^https?:\/\//, '' );
@@ -101,11 +101,9 @@ export function queuedRequests( state = {}, action ) {
 			return assign( {}, state, {
 				[ action.payload.ID ]: true
 			} );
-			break;
 		case READER_SITE_REQUEST_SUCCESS:
 		case READER_SITE_REQUEST_FAILURE:
 			return omit( state, action.payload.ID );
-			break;
 		// we intentionally don't update state on READER_SITE_UPDATE because those can't affect inflight requests
 	}
 	return state;

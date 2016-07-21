@@ -2,7 +2,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import reject from 'lodash/reject';
 import store from 'store';
 
 /**
@@ -64,13 +63,11 @@ PlansList.prototype.fetch = function() {
 	debug( 'getting PlansList from api' );
 	wpcom
 	.plans()
-	.list( { apiVersion: '1.2' }, function( error, data ) {
+	.list( { apiVersion: '1.2' }, function( error, plans ) {
 		if ( error ) {
 			debug( 'error fetching PlansList from api', error );
 			return;
 		}
-
-		const plans = this.parse( data );
 
 		debug( 'PlansList fetched from api:', plans );
 
@@ -93,16 +90,6 @@ PlansList.prototype.fetch = function() {
 PlansList.prototype.initialize = function( plans ) {
 	this.data = plans;
 	this.initialized = true;
-};
-
-/**
- * Parses data retrieved from the API and extracts the list of plans.
- *
- * @param {array} data - raw data
- * @return {array} a list of plans
- **/
-PlansList.prototype.parse = function( data ) {
-	return reject( data, '_headers' );
 };
 
 /**

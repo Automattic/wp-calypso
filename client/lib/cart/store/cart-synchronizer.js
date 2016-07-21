@@ -4,7 +4,6 @@
 import assign from 'lodash/assign';
 import i18n from 'i18n-calypso';
 import pick from 'lodash/pick';
-import omit from 'lodash/omit';
 import flowRight from 'lodash/flowRight';
 import Dispatcher from 'dispatcher';
 import { action as upgradesActionTypes } from 'lib/upgrades/constants';
@@ -21,13 +20,10 @@ import Emitter from 'lib/mixins/emitter';
 const debug = debugFactory( 'calypso:cart-data:cart-synchronizer' );
 
 function preprocessCartFromServer( cart ) {
-	const newCart = assign( {}, cart, {
+	return assign( {}, cart, {
 		client_metadata: createClientMetadata(),
 		products: castProductIDsToNumbers( cart.products )
 	} );
-
-	// Gets rid of headers returned by the API
-	return omit( newCart, '_headers' );
 }
 
 // Add a server response date so we can distinguish between carts with the

@@ -54,26 +54,10 @@ export const plansRequestFailureAction = error => {
 };
 
 /**
- * Get valid and useful data from endpoint response
- * Cleaning some fields, etc
- *
- * @param {Object} response - endpoint response
- * @return {Array} plans list
- */
-
-export const getValidDataFromResponse = response => {
-	// remove _header field
-	delete response._headers;
-
-	return response;
-};
-
-/**
  * Fetch WordPress.com plans
  *
  * @return {Promise} Promise
  */
-
 export const requestPlans = () => {
 	return dispatch => {
 		dispatch( plansRequestAction() );
@@ -84,7 +68,7 @@ export const requestPlans = () => {
 			.list( { apiVersion: '1.4' } )
 			.then( data => {
 				dispatch( plansRequestSuccessAction() );
-				dispatch( plansReceiveAction( getValidDataFromResponse( data ) ) );
+				dispatch( plansReceiveAction( data ) );
 			} )
 			.catch( ( error ) => {
 				const message = error instanceof Error

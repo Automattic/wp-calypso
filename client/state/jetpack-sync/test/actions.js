@@ -60,11 +60,7 @@ describe( 'actions', () => {
 			},
 			is_scheduled: false
 		};
-		const reply = Object.assign( {}, data, {
-			_headers: {
-				'Content-Type': 'application/json'
-			}
-		} );
+		const reply = Object.assign( {}, data );
 
 		describe( 'success', () => {
 			before( () => {
@@ -107,11 +103,10 @@ describe( 'actions', () => {
 					.persist()
 					.get( '/rest/v1.1/sites/' + siteId + '/sync/status' )
 					.reply( 403, {
-						_headers: {
-							'Content-Type': 'application/json'
-						},
 						error: 'unauthorized',
 						message: 'User cannot access this restricted blog'
+					}, {
+						'Content-Type': 'application/json'
 					} );
 			} );
 
@@ -142,11 +137,7 @@ describe( 'actions', () => {
 		const data = {
 			scheduled: true
 		};
-		const reply = Object.assign( {}, data, {
-			_headers: {
-				'Content-Type': 'application/json'
-			}
-		} );
+		const reply = Object.assign( {}, data );
 
 		describe( 'success', () => {
 			before( () => {
@@ -189,11 +180,10 @@ describe( 'actions', () => {
 					.persist()
 					.post( '/rest/v1.1/sites/' + siteId + '/sync' )
 					.reply( 403, {
-						_headers: {
-							'Content-Type': 'application/json'
-						},
 						error: 'unauthorized',
 						message: 'User cannot access this restricted blog'
+					}, {
+						'Content-Type': 'application/json'
 					} );
 			} );
 
