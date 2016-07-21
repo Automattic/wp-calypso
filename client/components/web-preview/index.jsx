@@ -21,7 +21,6 @@ import Spinner from 'components/spinner';
 import RootChild from 'components/root-child';
 import { setPreviewShowing } from 'state/ui/actions';
 
-
 const debug = debugModule( 'calypso:web-preview' );
 
 export class WebPreview extends Component {
