@@ -43,7 +43,8 @@ export const SocialItem = props => {
 		<div className={ classes } onClick={ onClick }>
 			<div className="vertical-menu__items__social-icon">
 				<SocialLogo icon={ icon } size={ 24 } />
-			</div> { label }
+			</div>
+			{ label }
 		</div>
 	);
 };
