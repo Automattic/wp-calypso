@@ -47,15 +47,16 @@ export class ReaderSidebarTags extends Component {
 	}
 
 	unfollowTag = ( event ) => {
-		const node = closest( event.target, '[data-tag-slug]', true );
 		event.preventDefault();
-		if ( node && node.dataset.tagSlug ) {
+		const node = closest( event.target, '[data-tag-slug]', true );
+		const slug = node && node.dataset.tagSlug;
+		if ( slug ) {
 			stats.recordAction( 'unfollowed_topic' );
-			stats.recordGaEvent( 'Clicked Unfollow Topic', node.dataset.tagSlug );
+			stats.recordGaEvent( 'Clicked Unfollow Topic', slug );
 			stats.recordTrack( 'calypso_reader_reader_tag_unfollowed', {
-				tag: node.dataset.tagSlug
+				tag: slug
 			} );
-			TagActions.unfollow( { slug: node.dataset.tagSlug } );
+			TagActions.unfollow( { slug } );
 		}
 	}
 

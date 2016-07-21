@@ -5,8 +5,8 @@ import React from 'react';
 import closest from 'component-closest';
 import page from 'page';
 import url from 'url';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { defer, startsWith, identity, every } from 'lodash';
 import store from 'store';
 import Gridicon from 'gridicons';
@@ -31,6 +31,7 @@ import ReaderSidebarHelper from './helper';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 import { getSubscribedLists } from 'state/reader/lists/selectors';
 import { getReaderTeams } from 'state/selectors';
+import { getSubscribedTags } from 'state/reader/tags/selectors';
 import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
 import observe from 'lib/mixins/data-observe';
@@ -258,6 +259,7 @@ export default connect(
 			subscribedLists: getSubscribedLists( state ),
 			shouldRenderAppPromo: shouldRenderAppPromo(),
 			teams: getReaderTeams( state ),
+			subscribedTags: getSubscribedTags( state ),
 		};
 	},
 	( dispatch ) => {
