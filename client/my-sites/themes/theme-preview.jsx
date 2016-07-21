@@ -19,37 +19,60 @@ export default React.createClass( {
 	propTypes: {
 		theme: React.PropTypes.object,
 		showPreview: React.PropTypes.bool,
+		showSecondaryButton: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
-		buttonLabel: React.PropTypes.string,
-		onButtonClick: React.PropTypes.func,
-		getButtonHref: React.PropTypes.func
+		primaryButtonLabel: React.PropTypes.string.isRequired,
+		onPrimaryButtonClick: React.PropTypes.func,
+		getPrimaryButtonHref: React.PropTypes.func,
+		secondaryButtonLabel: React.PropTypes.string,
+		onSecondaryButtonClick: React.PropTypes.func,
+		getSecondaryButtonHref: React.PropTypes.func,
 	},
 
 	getDefaultProps() {
 		return {
-			onButtonClick: noop,
-			getButtonHref: () => null
+			onPrimaryButtonClick: noop,
+			getPrimaryButtonHref: () => null,
+			onSecondaryButtonClick: noop,
+			getSecondaryButtonHref: () => null,
 		};
 	},
 
-	onButtonClick() {
-		this.props.onButtonClick( this.props.theme );
+	onPrimaryButtonClick() {
+		this.props.onPrimaryButtonClick( this.props.theme );
 		this.props.onClose();
 	},
 
+	onSecondaryButtonClick() {
+		this.props.onSecondaryButtonClick( this.props.theme );
+		this.props.onClose();
+	},
+
+	renderSecondaryButton() {
+		if ( ! this.props.showSecondaryButton ) {
+			return;
+		}
+		const buttonHref = this.props.getSecondaryButtonHref ? this.props.getSecondaryButtonHref( this.props.theme ) : null;
+		return (
+			<Button onClick={ this.onSecondaryButtonClick } href={ buttonHref } >
+				{ this.props.secondaryButtonLabel }
+			</Button>
+		);
+	},
+
 	render() {
-		const previewUrl = getPreviewUrl( this.props.theme ),
-			buttonHref = this.props.getButtonHref ? this.props.getButtonHref( this.props.theme ) : null;
+		const previewUrl = getPreviewUrl( this.props.theme );
+		const buttonHref = this.props.getPrimaryButtonHref ? this.props.getPrimaryButtonHref( this.props.theme ) : null;
 
 		return (
 			<WebPreview showPreview={ this.props.showPreview }
 				onClose={ this.props.onClose }
 				previewUrl={ previewUrl }
 				externalUrl={ this.props.theme.demo_uri } >
-				<Button primary
-					onClick={ this.onButtonClick }
-					href={ buttonHref }
-					>{ this.props.buttonLabel }</Button>
+				{ this.renderSecondaryButton() }
+				<Button onClick={ this.onPrimaryButtonClick } href={ buttonHref } >
+					{ this.props.primaryButtonLabel }
+				</Button>
 			</WebPreview>
 		);
 	}

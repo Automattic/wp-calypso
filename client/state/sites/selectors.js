@@ -5,7 +5,6 @@
  */
 import {
 	camelCase,
-	chain,
 	filter,
 	find,
 	flowRight as compose,
@@ -290,4 +289,15 @@ export function isCurrentSitePlan( state, siteId, planProductId ) {
 	}
 
 	return sitePlan.product_id === planProductId;
+}
+
+/**
+ * Returns true if the site has unmodified Headstart content
+ *
+ * @param  {Object}   state         Global state tree
+ * @param  {Number}   siteId        Site ID
+ * @return {?Boolean}               True if the site has unmodified content
+ */
+export function isSiteContentUnmodified( state, siteId ) {
+	return getSiteOption( state, siteId, 'headstart_is_fresh' );
 }
