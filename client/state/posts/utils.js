@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, isObject, map, mapValues, mergeWith, omit, omitBy, reduce } from 'lodash';
+import { cloneDeep, isEmpty, isPlainObject, flow, map, mapValues, mergeWith, omit, omitBy, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,13 @@ import { DEFAULT_POST_QUERY } from './constants';
  */
 
 const REGEXP_SERIALIZED_QUERY = /^((\d+):)?(.*)$/;
+
+/**
+ * Utility
+ */
+const normalizeFlow = flow( [
+	getTermIdsFromEdits
+] );
 
 /**
  * Returns a normalized posts query, excluding any values which match the
@@ -93,6 +100,20 @@ export function mergeIgnoringArrays( object, ...sources ) {
 }
 
 /**
+ * Given a post object, returns a normalized post object
+ *
+ * @param  {Ojbect} post Raw edited post object
+ * @return {Object}      Normalized post object
+ */
+export function normalizePost( post ) {
+	if ( ! post ) {
+		return null;
+	}
+
+	return normalizeFlow( post );
+}
+
+/**
  * Takes existing term post edits and updates the `terms_by_id` attribute
  *
  * @param  {Object}    post  object of post edits
@@ -102,6 +123,7 @@ export function getTermIdsFromEdits( post ) {
 	if ( ! post || ! post.terms ) {
 		return post;
 	}
+	const normalizedPost = cloneDeep( post );
 
 	// Skip "default" taxonomies until legacy token-field and category-selector are removed
 	let taxonomies = omit( post.terms, [ 'post_tag', 'category' ] );
@@ -111,7 +133,7 @@ export function getTermIdsFromEdits( post ) {
 	taxonomies = reduce( taxonomies, ( prev, taxonomyTerms, taxonomyName ) => {
 		// Ensures we are working with an array
 		const termsArray = map( taxonomyTerms );
-		if ( termsArray && termsArray.length && ! isObject( termsArray[ 0 ] ) ) {
+		if ( termsArray && termsArray.length && ! isPlainObject( termsArray[ 0 ] ) ) {
 			return prev;
 		}
 
@@ -123,7 +145,7 @@ export function getTermIdsFromEdits( post ) {
 		return post;
 	}
 
-	post.terms_by_id = mapValues( taxonomies, ( taxonomy ) => {
+	normalizedPost.terms_by_id = mapValues( taxonomies, ( taxonomy ) => {
 		const termIds = map( taxonomy, 'ID' );
 
 		// Hack: qs omits empty arrays in wpcom.js request, which prevents
@@ -131,5 +153,5 @@ export function getTermIdsFromEdits( post ) {
 		return termIds.length ? termIds : null;
 	} );
 
-	return post;
+	return normalizedPost;
 }
