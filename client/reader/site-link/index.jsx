@@ -1,18 +1,23 @@
-var React = require( 'react' );
+/**
+ * External dependencies
+ */
+import React from 'react';
 
-var stats = require( 'reader/stats' ),
-	readerRoute = require( 'reader/route' );
+/**
+ * Internal dependencies
+ */
+import { getStreamUrlFromPost } from 'reader/route';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 
-var SiteLink = React.createClass( {
-
-	recordClick: function() {
-		stats.recordAction( 'visit_blog_feed' );
-		stats.recordGaEvent( 'Clicked Feed Link' );
-		stats.recordTrackForPost( 'calypso_reader_feed_link_clicked', this.props.post );
+const SiteLink = React.createClass( {
+	recordClick() {
+		recordAction( 'visit_blog_feed' );
+		recordGaEvent( 'Clicked Feed Link' );
+		recordTrackForPost( 'calypso_reader_feed_link_clicked', this.props.post );
 	},
 
-	render: function() {
-		var link = readerRoute.getStreamUrlFromPost( this.props.post );
+	render() {
+		const link = getStreamUrlFromPost( this.props.post );
 
 		return (
 			<a { ...this.props } href={ link } onClick={ this.recordClick }>{ this.props.children }</a>
@@ -21,4 +26,4 @@ var SiteLink = React.createClass( {
 
 } );
 
-module.exports = SiteLink;
+export default SiteLink;

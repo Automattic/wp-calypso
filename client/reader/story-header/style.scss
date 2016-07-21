@@ -1,0 +1,42 @@
+.story-header {
+	.gravatar {
+		float: left;
+	}
+
+	.story-header__main {
+		margin-left: 120px;
+	}
+
+	.story-header__byline {
+		list-style: none;
+		margin: 0;
+		padding: 16px 0 8px 0;
+
+		li {
+			margin: 0 16px 0 0;
+			display: inline-block;
+			color: $gray;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: 440px;
+
+			@include breakpoint( "<480px" ) {
+				max-width: 180px;
+			}
+
+			&:last-child {
+				margin: 0;
+			}
+
+			a {
+				text-decoration: none;
+				color: $gray;
+			}
+
+			&.story-header__byline-author a {
+				color: $blue-wordpress;
+			}
+		}
+	}
+}

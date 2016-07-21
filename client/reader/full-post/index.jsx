@@ -4,21 +4,20 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	defer = require( 'lodash/defer' ),
 	closest = require( 'component-closest' ),
 	debug = require( 'debug' )( 'calypso:reader-full-post' ), //eslint-disable-line no-unused-vars
 	moment = require( 'moment' ),
-	omit = require( 'lodash/omit' ),
 	twemoji = require( 'twemoji' ),
 	page = require( 'page' ),
 	bindActionCreators = require( 'redux' ).bindActionCreators,
 	connect = require( 'react-redux' ).connect;
 
+import { defer, omit } from 'lodash';
+
 /**
  * Internal Dependencies
  */
 var abtest = require( 'lib/abtest' ).abtest,
-	config = require( 'config' ),
 	CommentButton = require( 'components/comment-button' ),
 	Dialog = require( 'components/dialog' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
@@ -50,11 +49,13 @@ var abtest = require( 'lib/abtest' ).abtest,
 	readerRoute = require( 'reader/route' ),
 	showReaderFullPost = require( 'state/ui/reader/fullpost/actions' ).showReaderFullPost,
 	smartSetState = require( 'lib/react-smart-set-state' ),
-	scrollTo = require( 'lib/scroll-to' );
+	scrollTo = require( 'lib/scroll-to' ),
+	StoryHeader = require( 'reader/story-header' );
 
 import PostExcerpt from 'components/post-excerpt';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
 import RelatedPosts from 'components/related-posts';
+import config from 'config';
 
 let loadingPost = {
 		URL: '',
@@ -195,6 +196,34 @@ FullPostView = React.createClass( {
 
 		articleClasses = articleClasses.join( ' ' );
 
+		let storyHeader;
+		if ( config.isEnabled( 'reader/full-post-redesign' ) ) {
+			storyHeader = (
+				<StoryHeader
+					post={ post }
+					onTitleClick={ this.onPermalinkClick }
+					onDateClick={ this.onDateClick }
+					siteName={ siteName } />
+			);
+		} else {
+			storyHeader = (
+				<div>
+					{ post.title ? <h1 className="reader__post-title" onClick={ this.handlePermalinkClick }>
+						<ExternalLink className="reader__post-title-link" href={ post.URL } target="_blank" icon={ false }>{ post.title }</ExternalLink>
+					</h1> : null }
+					<PostByline post={ post } site={ site } icon={ true }/>
+				</div>
+			);
+		}
+
+		let featuredImage = null;
+		if ( hasFeaturedImage ) {
+			featuredImage = (
+				<div className="full-post__featured-image">
+					<img src={ this.props.post.canonical_image.uri } height={ this.props.post.canonical_image.height } width={ 	this.props.post.canonical_image.width } />
+				</div>
+			);
+		}
 		/*eslint-disable react/no-danger*/
 		return (
 			<div>
@@ -202,26 +231,25 @@ FullPostView = React.createClass( {
 
 					<PostErrors post={ post } />
 
-					<div className="full-post__header">
-						<Site site={ siteish }
-							href={ post.site_URL }
-							onSelect={ this.pickSite }
-							onClick={ this.handleSiteClick } />
+					{ ! config.isEnabled( 'reader/full-post-redesign' )
+						?
+						<div className="full-post__header">
+	 						<Site site={ siteish }
+	 							href={ post.site_URL }
+	 							onSelect={ this.pickSite }
+	 							onClick={ this.handleSiteClick } />
 
-						<div className="full-post__follow">
-							{ feed && feed.feed_URL && <FollowButton siteUrl={ feed && feed.feed_URL } /> }
-						</div>
-					</div>
+	 						<div className="full-post__follow">
+	 							{ feed && feed.feed_URL && <FollowButton siteUrl={ feed && feed.feed_URL } /> }
+	 						</div>
+	 					</div>
+	 					: null }
 
-					{ hasFeaturedImage
-						? <div className="full-post__featured-image">
-								<img src={ this.props.post.canonical_image.uri } height={ this.props.post.canonical_image.height } width={ 	this.props.post.canonical_image.width } />
-							</div>
-						: null }
+	 				{ ! config.isEnabled( 'reader/full-post-redesign' ) ? featuredImage : null }
 
-					{ post.title ? <h1 className="reader__post-title" onClick={ this.handlePermalinkClick }><ExternalLink className="reader__post-title-link" href={ post.URL } target="_blank" icon={ false }>{ post.title }</ExternalLink></h1> : null }
+					{ storyHeader }
 
-					<PostByline post={ post } site={ site } icon={ true }/>
+					{ config.isEnabled( 'reader/full-post-redesign' ) ? featuredImage : null }
 
 					{ post && post.use_excerpt
 						? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />

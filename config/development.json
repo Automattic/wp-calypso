@@ -109,6 +109,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": true,
+		"reader/full-post-redesign": true,
 		"reader/list-management": true,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
