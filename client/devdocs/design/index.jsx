@@ -58,7 +58,7 @@ import FilePickers from 'components/file-picker/docs/example';
 import Collection from 'devdocs/design/search-collection';
 import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import FAQ from 'components/faq/docs/example';
-import VerticalMenu from 'components/vertical-menu/example';
+import VerticalMenu from 'components/vertical-menu/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',

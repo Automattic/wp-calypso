@@ -8,8 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import VerticalMenu from './index';
-import { SocialItem } from './items';
+import VerticalMenu from '../index';
+import { SocialItem } from '../items';
 
 const announceIt = console.log.bind( console );
 
@@ -29,5 +29,7 @@ export const VerticalMenuExample = () => (
 		</VerticalMenu>
 	</div>
 );
+
+VerticalMenuExample.displayName = 'VerticalMenu';
 
 export default VerticalMenuExample;
