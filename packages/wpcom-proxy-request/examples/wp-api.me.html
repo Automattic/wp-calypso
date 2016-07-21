@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>WordPress.com REST API Proxy Me Test Page</title>
+		<title>WP-API users `Me` request</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	</head>
 	<body>
@@ -22,9 +22,12 @@
 				console.log( 'proxy now running in "access all user\'s blogs" mode' );
 			} );
 
-			WPCOMProxyRequest( '/me', function( err, res ) {
+			WPCOMProxyRequest( {
+				path: '/sites/en.blog.wordpress.com/users/me',
+				apiNamespace: 'wp/v2'
+			}, function( err, res ) {
 				if ( err ) {
-					throw err;
+					return console.error( err );
 				}
 
 				console.log( res );

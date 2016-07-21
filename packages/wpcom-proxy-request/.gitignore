@@ -1,3 +1,5 @@
 /node_modules
 /build
 /examples/dist
+/client-test-app/mocha*
+/client-test-app/bundle.js

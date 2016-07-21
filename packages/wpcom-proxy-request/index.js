@@ -7,6 +7,10 @@ import WPError from 'wp-error';
 import event from 'component-event';
 import ProgressEvent from 'progress-event';
 import debugFactory from 'debug';
+
+/**
+ * debug instance
+ */
 const debug = debugFactory( 'wpcom-proxy-request' );
 
 /**
@@ -28,7 +32,6 @@ const origin = window.location.protocol + '//' + window.location.host;
  * https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/The_structured_clone_algorithm
  * https://github.com/Modernizr/Modernizr/issues/388#issuecomment-31127462
  */
-
 const postStrings = ( () => {
 	let r = false;
 	try {
@@ -79,7 +82,6 @@ const requests = {};
  * Are HTML5 XMLHttpRequest2 "progress" events supported?
  * See: http://goo.gl/xxYf6D
  */
-
 const supportsProgress = !! window.ProgressEvent && !! window.FormData;
 
 debug( 'using "origin": %o', origin );
@@ -134,7 +136,10 @@ const request = ( params, fn ) => {
 			}
 
 			called = true;
-			fn( null, e.response || xhr.response );
+			const body = e.response || xhr.response;
+			debug( 'body: ', body );
+			debug( 'headers: ', e.headers );
+			fn( null, body, e.headers );
 		}
 		function xhrOnError( e ) {
 			if ( called ) {
@@ -142,7 +147,10 @@ const request = ( params, fn ) => {
 			}
 
 			called = true;
-			fn( e.error || e.err || e );
+			const error = e.error || e.err || e;
+			debug( 'error: ', error );
+			debug( 'headers: ', e.headers );
+			fn( error, null, e.headers );
 		}
 
 		event.bind( xhr, 'load', xhrOnLoad );
@@ -194,11 +202,10 @@ function submitRequest( params ) {
  * Returns `true` if there's a `File` instance in the `params`, or `false`
  * otherwise.
  *
- * @param {Object} params
- * @return {Boolean}
+ * @param {Object} params - request parameter
+ * @return {Boolean} `true` if there's a `File`
  * @private
  */
-
 function hasFile( params ) {
 	const formData = params.formData;
 	if ( formData && formData.length > 0 ) {
@@ -214,11 +221,10 @@ function hasFile( params ) {
 /**
  * Returns `true` if `v` is a DOM File instance, `false` otherwise.
  *
- * @param {Mixed} v
- * @return {Boolean}
+ * @param {Mixed} v - instance to analize
+ * @return {Boolean} `true` if `v` is a DOM File instance
  * @private
  */
-
 function isFile( v ) {
 	return v && Object.prototype.toString.call( v ) === '[object File]';
 }
@@ -384,7 +390,7 @@ function onmessage( e ) {
 		return;
 	}
 
-	let data = e.data;
+	let { data } = e;
 	if ( ! data ) {
 		return debug( 'no `data`, bailing' );
 	}
@@ -410,9 +416,39 @@ function onmessage( e ) {
 
 	const xhr = requests[ id ];
 
-	const body = data[ 0 ];
-	const statusCode = data[ 1 ];
-	const headers = data[ 2 ];
+	// Build `error` and `body` object from the `data` object
+	const { params } = xhr;
+	let body, statusCode, headers;
+
+	// apiNamespace (WP-API)
+	const { apiNamespace } = params;
+
+	// is REST-API api?
+	const isRestAPI = apiNamespace === undefined;
+
+	if ( isRestAPI ) {
+		debug( 'REST-API detected' );
+		body = data[ 0 ];
+		statusCode = data[ 1 ];
+		headers = data[ 2 ];
+	} else {
+		debug( 'WP-API detected' );
+		body = data[ 0 ];
+		headers = data[ 2 ];
+
+		// Identify error response in `envelope` mode in function of the response fields
+		// and try to make the same error structure for both APIs
+		if (
+			body.code &&
+			( body.data && body.data.status ) &&
+			body.message
+		) {
+			body.error = body.code;
+			statusCode = body.data.status;
+			delete body.code;
+			delete body.data;
+		}
+	}
 
 	if ( statusCode === 207 ) {
 		// 207 is a signal from rest-proxy. It means, "this isn't the final
@@ -423,21 +459,22 @@ function onmessage( e ) {
 		delete requests[ id ];
 	}
 
-	if ( ! xhr.params.metaAPI ) {
-		debug( 'got %o status code for URL: %o', statusCode, xhr.params.path );
+	if ( ! params.metaAPI ) {
+		debug( 'got %o status code for URL: %o', statusCode, params.path );
 	}
 
-	if ( typeof body === 'object' && headers ) {
-		body._headers = headers;
+	// add statusCode into headers object
+	if ( typeof headers === 'object' ) {
+		headers.status = statusCode;
 	}
 
 	if ( null == statusCode || 2 === Math.floor( statusCode / 100 ) ) {
 		// 2xx status code, success
-		resolve( xhr, body );
+		resolve( xhr, body, headers );
 	} else {
 		// any other status code is a failure
-		const wpe = WPError( xhr.params, statusCode, body );
-		reject( xhr, wpe );
+		const wpe = WPError( params, statusCode, body );
+		reject( xhr, wpe, headers );
 	}
 }
 
@@ -466,9 +503,10 @@ function onprogress( data ) {
  * @private
  */
 
-function resolve( xhr, body ) {
+function resolve( xhr, body, headers ) {
 	const e = new ProgressEvent( 'load' );
 	e.data = e.body = e.response = body;
+	e.headers = headers;
 	xhr.dispatchEvent( e );
 }
 
@@ -480,9 +518,10 @@ function resolve( xhr, body ) {
  * @private
  */
 
-function reject( xhr, err ) {
+function reject( xhr, err, headers ) {
 	const e = new ProgressEvent( 'error' );
 	e.error = e.err = err;
+	e.headers = headers;
 	xhr.dispatchEvent( e );
 }
 

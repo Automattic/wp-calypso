@@ -27,17 +27,31 @@ $ npm install wpcom-proxy-request
   <body>
     <script src="wpcom-proxy-request.js"></script>
     <script>
-      WPCOM.proxy('/me', function(err, res){
+      WPCOM.proxy( '/me', function( err, body, headers ) {
         if (err) throw err;
 
-        var div = document.createElement('div');
+        var div = document.createElement( 'div' );
         div.innerHTML = 'Your WordPress.com "username" is: <b>@' + res.username + '<\/b>';
-        document.body.appendChild(div);
+        document.body.appendChild( div );
       });
     </script>
   </body>
 </html>
 ```
+
+### Running tests
+
+Compile and `watch` client-test application
+```cli
+make watch-test-app
+```
+
+Run server
+```
+make run-test-app
+```
+
+Open a tab pointing to `http://calypso.localhost:3001/`
 
 ### License
 
