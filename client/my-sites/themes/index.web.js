@@ -21,13 +21,10 @@ export default function( router ) {
 
 	if ( config.isEnabled( 'manage/themes' ) ) {
 		if ( isLoggedIn ) {
-			router( '/design', multiSite, navigation, siteSelection );
-			router( '/design/:site_id', singleSite, navigation, siteSelection );
-			router( '/design/type/:tier', multiSite, navigation, siteSelection );
-			router( '/design/type/:tier/:site_id', singleSite, navigation, siteSelection );
+			router( '/design/:tier(free|premium)?', multiSite, navigation, siteSelection );
+			router( '/design/:tier(free|premium)?/:site_id', singleSite, navigation, siteSelection );
 		} else {
-			router( '/design', loggedOut, makeLayout );
-			router( '/design/type/:tier', loggedOut, makeLayout );
+			router( '/design/:tier(free|premium)?', loggedOut, makeLayout );
 		}
 	}
 }

@@ -19,7 +19,7 @@ import { isMobile } from 'lib/viewport';
 
 const ThemesSearchCard = React.createClass( {
 	propTypes: {
-		tier: React.PropTypes.string.isRequired,
+		tier: React.PropTypes.string,
 		select: React.PropTypes.func.isRequired,
 		site: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
@@ -47,6 +47,10 @@ const ThemesSearchCard = React.createClass( {
 
 	getInitialState() {
 		return { isMobile: isMobile() };
+	},
+
+	getDefaultProps() {
+		return { tier: 'all' };
 	},
 
 	getSelectedTierFormatted( tiers ) {

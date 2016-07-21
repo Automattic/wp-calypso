@@ -15,7 +15,6 @@ import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import urlSearch from 'lib/mixins/url-search';
-import config from 'config';
 
 const ThemesSelection = React.createClass( {
 	mixins: [ urlSearch ],
@@ -31,13 +30,8 @@ const ThemesSelection = React.createClass( {
 		getOptions: React.PropTypes.func,
 		queryParams: PropTypes.object.isRequired,
 		themesList: PropTypes.array.isRequired,
-		getActionLabel: React.PropTypes.func
-	},
-
-	getInitialState: function() {
-		return {
-			tier: this.props.tier || ( config.isEnabled( 'upgrades/premium-themes' ) ? 'all' : 'free' )
-		};
+		getActionLabel: React.PropTypes.func,
+		tier: React.PropTypes.string,
 	},
 
 	onMoreButtonClick( theme, resultsRank ) {
@@ -67,8 +61,8 @@ const ThemesSelection = React.createClass( {
 
 	onTierSelect( { value: tier } ) {
 		const siteId = this.props.siteId ? `/${this.props.siteId}` : '';
-		const url = `/design/type/${tier}${siteId}`;
-		this.setState( { tier } );
+		const url = `/design${ tier === 'all' ? '' : '/' + tier }${siteId}`;
+
 		trackClick( 'search bar filter', tier );
 		page( buildUrl( url, this.props.search ) );
 	},
@@ -91,14 +85,14 @@ const ThemesSelection = React.createClass( {
 							site={ site }
 							onSearch={ this.doSearch }
 							search={ this.props.search }
-							tier={ this.state.tier }
+							tier={ this.props.tier }
 							select={ this.onTierSelect } />
 				</StickyPanel>
 				<ThemesData
 						site={ site }
 						isMultisite={ ! this.props.siteId } // Not the same as `! site` !
 						search={ this.props.search }
-						tier={ this.state.tier }
+						tier={ this.props.tier }
 						onRealScroll={ this.trackScrollPage }
 						onLastPage={ this.trackLastPage } >
 					<ThemesList getButtonOptions={ this.props.getOptions }
