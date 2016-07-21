@@ -153,4 +153,38 @@
 .exporter__guided-transfer-feature-text {
 	color: $gray;
 }
+
+.exporter__guided-transfer-in-progress {
+	padding-top: 32px;
+	padding-bottom: 32px;
+	font-size: 16px;
+	text-align: center;
+
+	@include breakpoint( ">660px" ) {
+		padding-left: 128px;
+		text-align: left;
+	}
+}
+
+.exporter__guided-transfer-in-progress-icon {
+	margin: 16px auto;
+	width: 48px;
+	height: 48px;
+	padding: 14px;
+	border-radius: 50%;
+	background-color: darken( $gray, 20% );
+	color: $gray-light;
+
+	@include breakpoint( ">660px" ) {
+		position: absolute;
+		margin-left: -96px;
+		margin-top: 16px;
+	}
+}
+
+.exporter__guided-transfer-in-progress-title {
+	font-size: 24px;
+	font-weight: 300;
+	color: $gray-dark;
+}
 // END GUIDED TRANSFER

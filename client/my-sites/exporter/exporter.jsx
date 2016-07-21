@@ -7,6 +7,7 @@ import React, { PropTypes } from 'react';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
+import GuidedTransferInProgress from './guided-transfer-in-progress';
 import GuidedTransferOptions from 'my-sites/exporter/guided-transfer-options';
 import GuidedTransferDetails from 'my-sites/exporter/guided-transfer-details';
 import AdvancedSettings from 'my-sites/exporter/advanced-settings';
@@ -23,6 +24,7 @@ export default React.createClass( {
 		startExport: PropTypes.func.isRequired,
 		setPostType: PropTypes.func.isRequired,
 		advancedSettingsFetch: PropTypes.func.isRequired,
+		isGuidedTransferInProgress: PropTypes.bool,
 		showGuidedTransferOptions: PropTypes.bool,
 		shouldShowProgress: PropTypes.bool.isRequired,
 		postType: PropTypes.string,
@@ -48,6 +50,7 @@ export default React.createClass( {
 			postType,
 			shouldShowProgress,
 			isExporting,
+			isGuidedTransferInProgress,
 			showGuidedTransferOptions,
 		} = this.props;
 		const siteId = this.props.site.ID;
@@ -97,6 +100,7 @@ export default React.createClass( {
 		return (
 			<div className="exporter">
 				{ notice }
+				{ isGuidedTransferInProgress && <GuidedTransferInProgress /> }
 				<FoldableCard
 					actionButtonIcon="cog"
 					header={
