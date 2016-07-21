@@ -62,7 +62,9 @@ export function init() {
 		if ( isUnsupportedChromeVersion() ) {
 			debug( 'Push Notifications are not supported in Chrome 49 and below' );
 			const chromeVersion = getChromeVersion();
-			dispatch( bumpStat( 'calypso_push_notif_unsup_chrome', ( chromeVersion > 39 && chromeVersion < 50 ) ? chromeVersion : 'other') );
+			dispatch( bumpStat( 'calypso_push_notif_unsup_chrome',
+				( chromeVersion > 39 && chromeVersion < 50 ) ? chromeVersion : 'other' )
+			);
 			dispatch( apiNotReady() );
 			return;
 		}
@@ -225,10 +227,13 @@ export function sendSubscriptionToWPCOM( pushSubscription ) {
 		}
 
 		debug( 'Sending subscription to WPCOM', pushSubscription );
-		return wpcom.undocumented().registerDevice( JSON.stringify( pushSubscription ), 'browser', 'Browser' )
-			.then( data => dispatch( {
+		return wpcom
+			.undocumented()
+			.registerDevice( JSON.stringify( pushSubscription ), 'browser', 'Browser' )
+			.then( ( data, headers ) => dispatch( {
 				type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
-				data
+				data,
+				headers
 			} ) )
 			.catch( err => debug( 'Couldn\'t register device', err ) )
 		;

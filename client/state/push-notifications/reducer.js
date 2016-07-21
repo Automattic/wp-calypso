@@ -101,7 +101,7 @@ function system( state = {}, action ) {
 
 		case PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE: {
 			let lastUpdated;
-			const { data } = action;
+			const { data, headers } = action;
 
 			debug( 'Received WPCOM device registration results', data );
 
@@ -109,8 +109,9 @@ function system( state = {}, action ) {
 				return state;
 			}
 
-			if ( data._headers && data._headers.Date ) {
-				lastUpdated = new Date( data._headers.Date );
+			if ( headers && headers.Date ) {
+				lastUpdated = new Date( headers.Date );
+
 				if ( lastUpdated.getTime() ) {
 					// Calling moment with non-ISO date strings is deprecated
 					// see: https://github.com/moment/moment/issues/1407
