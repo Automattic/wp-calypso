@@ -8,7 +8,6 @@ const debug = debugFactory( 'calypso:sync-handler:whitelist' );
 const whitelist = [
 	/^\/wpcom\/v\d\/timezones/,
 	/^\/me\/posts$/,
-	/^\/me\/settings/,
 	/^\/sites\/[\w.]+\/posts$/
 ];
 
