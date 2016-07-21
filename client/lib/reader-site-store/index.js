@@ -32,7 +32,7 @@ function adaptSite( attributes ) {
 
 	attributes.has_featured = has( attributes, 'meta.links.featured' );
 
-	attributes = omit( attributes, [ 'meta', '_headers' ] );
+	attributes = omit( attributes, [ 'meta' ] );
 
 	if ( attributes.URL ) {
 		attributes.domain = attributes.URL.replace( /^https?:\/\//, '' );

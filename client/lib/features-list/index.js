@@ -2,7 +2,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import reject from 'lodash/reject';
 import store from 'store';
 
 /**
@@ -42,7 +41,7 @@ Emitter( FeaturesList.prototype );
  * @return {Array} array of list of features
  */
 FeaturesList.prototype.get = function() {
-	var data;
+	let data;
 	if ( ! this.data ) {
 		debug( 'First time loading FeaturesList, check store' );
 		data = store.get( 'FeaturesList' );
@@ -63,13 +62,11 @@ FeaturesList.prototype.get = function() {
  */
 FeaturesList.prototype.fetch = function() {
 	debug( 'getting FeaturesList from api' );
-	wpcom.plans().features( ( error, data ) => {
+	wpcom.plans().features( ( error, features ) => {
 		if ( error ) {
 			debug( 'error fetching FeaturesList from api', error );
 			return;
 		}
-
-		let features = this.parse( data );
 
 		debug( 'FeaturesList fetched from api:', features );
 
@@ -92,16 +89,6 @@ FeaturesList.prototype.fetch = function() {
 FeaturesList.prototype.initialize = function( features ) {
 	this.data = features;
 	this.initialized = true;
-};
-
-/**
- * Parses data retrieved from the API and extracts the list of features.
- *
- * @param {array} data - raw data
- * @return {array} a list of features
- */
-FeaturesList.prototype.parse = function( data ) {
-	return reject( data, '_headers' );
 };
 
 /**
