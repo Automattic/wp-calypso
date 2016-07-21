@@ -163,13 +163,13 @@ Layout = React.createClass( {
 	},
 
 	render: function() {
-		var sectionClass = classnames(
+		const sectionClass = classnames(
 				'layout',
 				`is-group-${this.props.section.group}`,
 				`is-section-${this.props.section.name}`,
 				`focus-${this.props.focus.getCurrent()}`,
 				{ 'is-support-user': this.props.isSupportUser },
-				{ 'has-no-sidebar': ! this.props.section.secondary }
+				{ 'has-no-sidebar': ! this.props.hasSidebar }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -203,11 +203,12 @@ Layout = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const { isLoading, section } = state.ui;
+		const { isLoading, section, hasSidebar } = state.ui;
 		return {
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
 			section,
+			hasSidebar,
 			isOffline: isOffline( state ),
 		};
 	}
