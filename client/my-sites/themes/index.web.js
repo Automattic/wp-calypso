@@ -23,8 +23,11 @@ export default function( router ) {
 		if ( isLoggedIn ) {
 			router( '/design/:tier(free|premium)?', multiSite, navigation, siteSelection );
 			router( '/design/:tier(free|premium)?/:site_id', singleSite, navigation, siteSelection );
+			router( '/design/:tier(free|premium)?/filter/:filter', multiSite, navigation, siteSelection );
+			router( '/design/:tier(free|premium)?/filter/:filter/:site_id', singleSite, navigation, siteSelection );
 		} else {
 			router( '/design/:tier(free|premium)?', loggedOut, makeLayout );
+			router( '/design/:tier(free|premium)?/filter/:filter', loggedOut, makeLayout );
 		}
 	}
 }
