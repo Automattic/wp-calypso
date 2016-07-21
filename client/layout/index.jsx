@@ -36,7 +36,6 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
-import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import DesignPreview from 'my-sites/design-preview';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
@@ -179,7 +178,7 @@ Layout = React.createClass( {
 
 		return (
 			<div className={ sectionClass }>
-				{ config.isEnabled( 'guided-tours' ) && this.props.tourState.shouldShow ? <GuidedTours /> : null }
+				{ config.isEnabled( 'guided-tours' ) ? <GuidedTours /> : null }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
@@ -210,7 +209,6 @@ export default connect(
 			isSupportUser: state.support.isSupportUser,
 			section,
 			isOffline: isOffline( state ),
-			tourState: getGuidedTourState( state ),
 		};
 	}
 )( Layout );

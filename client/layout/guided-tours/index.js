@@ -111,12 +111,13 @@ class GuidedTours extends Component {
 	}
 
 	render() {
-		const { stepConfig } = this.props.tourState;
-		debug( 'GuidedTours#render() tourState', this.props.tourState );
+		const { stepConfig, shouldShow } = this.props.tourState;
 
-		if ( ! stepConfig ) {
+		if ( ! shouldShow || ! stepConfig ) {
 			return null;
 		}
+
+		debug( 'GuidedTours#render() tourState', this.props.tourState );
 
 		const StepComponent = {
 			FirstStep,
