@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import get from 'lodash/get';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,7 +20,6 @@ import {
 	isBusiness,
 	isEnterprise
 } from 'lib/products-values';
-import InfoHeader from './info-header';
 import StandardPluginsPanel from './standard-plugins-panel';
 import PremiumPluginsPanel from './premium-plugins-panel';
 import BusinessPluginsPanel from './business-plugins-panel';
@@ -63,7 +63,15 @@ export const PluginPanel = React.createClass( {
 		return (
 			<div className="wpcom-plugin-panel">
 				<PageViewTracker path="/plugins/:site" title="Plugins > WPCOM Site" />
-				<InfoHeader />
+				<Card compact className="plugins-wpcom__header">
+					<div className="plugins-wpcom__header-text">
+						<span className="plugins-wpcom__header-title">{ this.translate( 'Included Plugins' ) }</span>
+						<span className="plugins-wpcom__header-subtitle">
+							{ this.translate( 'Every plan includes a set of plugins specially tailored to supercharge your site.' ) }
+						</span>
+					</div>
+					<img className="plugins-wpcom__header-image" src="/calypso/images/plugins/plugins_hero.svg" />
+				</Card>
 				<StandardPluginsPanel plugins={ standardPlugins } displayCount={ 9 } />
 				<Card className="wpcom-plugin-panel__panel-footer" href={ standardPluginsLink }>
 					{ this.translate( 'View all standard plugins' ) }
@@ -80,4 +88,4 @@ const mapStateToProps = state => ( {
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
 } );
 
-export default connect( mapStateToProps )( PluginPanel );
+export default connect( mapStateToProps )( localize( PluginPanel ) );
