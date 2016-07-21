@@ -25,7 +25,7 @@ const ReaderSidebarTags = React.createClass( {
 		onTagExists: React.PropTypes.func
 	},
 
-	followTag: function( tag ) {
+	followTag( tag ) {
 		const subscription = TagStore.getSubscription( TagActions.slugify( tag ) );
 		if ( subscription ) {
 			this.props.onTagExists( subscription );
@@ -40,15 +40,16 @@ const ReaderSidebarTags = React.createClass( {
 	},
 
 	unfollowTag( event ) {
-		const node = closest( event.target, '[data-tag-slug]', true );
 		event.preventDefault();
-		if ( node && node.dataset.tagSlug ) {
+		const node = closest( event.target, '[data-tag-slug]', true );
+		const slug = node && node.dataset.tagSlug;
+		if ( slug ) {
 			stats.recordAction( 'unfollowed_topic' );
-			stats.recordGaEvent( 'Clicked Unfollow Topic', node.dataset.tagSlug );
+			stats.recordGaEvent( 'Clicked Unfollow Topic', slug );
 			stats.recordTrack( 'calypso_reader_reader_tag_unfollowed', {
-				tag: node.dataset.tagSlug
+				tag: slug
 			} );
-			TagActions.unfollow( { slug: node.dataset.tagSlug } );
+			TagActions.unfollow( { slug } );
 		}
 	},
 
