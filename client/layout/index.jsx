@@ -36,6 +36,8 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
+import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
+import { hasSidebar } from 'state/ui/selectors';
 import DesignPreview from 'my-sites/design-preview';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
@@ -90,7 +92,7 @@ Layout = React.createClass( {
 	},
 
 	renderPushNotificationPrompt: function() {
-		const participantInAbTest = config.isEnabled('push-notifications-ab-test') && abtest('browserNotifications') === 'enabled';
+		const participantInAbTest = config.isEnabled( 'push-notifications-ab-test' ) && abtest( 'browserNotifications' ) === 'enabled';
 		if ( ! config.isEnabled( 'push-notifications' ) && ! participantInAbTest ) {
 			return null;
 		}
@@ -120,22 +122,18 @@ Layout = React.createClass( {
 	},
 
 	renderWelcome: function() {
-		var translatorInvitation = this.props.translatorInvitation,
-			showInvitation,
-			showWelcome,
-			newestSite,
-			disablePollInvitation;
+		const translatorInvitation = this.props.translatorInvitation;
 
 		if ( ! this.props.user ) {
 			return null;
 		}
 
-		showWelcome = this.props.nuxWelcome.getWelcome();
-		newestSite = this.newestSite();
-		showInvitation = ! showWelcome &&
+		const showWelcome = this.props.nuxWelcome.getWelcome();
+		const newestSite = this.newestSite();
+		const showInvitation = ! showWelcome &&
 				translatorInvitation.isPending() &&
 				translatorInvitation.isValidSection( this.props.section.name );
-		disablePollInvitation = showWelcome || showInvitation;
+		const disablePollInvitation = showWelcome || showInvitation;
 
 		return (
 			<span>
@@ -203,12 +201,12 @@ Layout = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const { isLoading, section, hasSidebar } = state.ui;
+		const { isLoading, section } = state.ui;
 		return {
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
 			section,
-			hasSidebar,
+			hasSidebar: hasSidebar( state ),
 			isOffline: isOffline( state ),
 		};
 	}
