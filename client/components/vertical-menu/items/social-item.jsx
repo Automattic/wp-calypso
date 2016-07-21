@@ -8,7 +8,8 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import {
 	get,
-	identity
+	identity,
+	partial
 } from 'lodash';
 
 /**
@@ -40,7 +41,7 @@ export const SocialItem = props => {
 	);
 
 	return (
-		<div className={ classes } onClick={ onClick }>
+		<div className={ classes } onClick={ partial( onClick, service ) }>
 			<div className="vertical-menu__items__social-icon">
 				<SocialLogo icon={ icon } size={ 24 } />
 			</div>
@@ -50,8 +51,15 @@ export const SocialItem = props => {
 };
 
 SocialItem.propTypes = {
+	isSelected: PropTypes.bool,
+	onClick: PropTypes.func,
 	service: PropTypes.oneOf( Object.keys( services( identity ) ) ).isRequired,
 	translate: PropTypes.func.isRequired
+};
+
+SocialItem.defaultProps = {
+	isSelected: false,
+	onClick: identity
 };
 
 export default localize( SocialItem );
