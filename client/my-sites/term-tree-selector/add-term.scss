@@ -3,6 +3,10 @@
 	border-top: 0px;
 	margin: 0 0 8px;
 	padding: 8px;
+
+	&.is-compact {
+		border: 0;
+	}
 }
 
 // Dialog
