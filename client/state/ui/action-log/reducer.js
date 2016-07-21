@@ -7,6 +7,7 @@ import { takeRight } from 'lodash';
  * Internal dependencies
  */
 import {
+	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
 	THEMES_RECEIVE,
 	PREVIEW_IS_SHOWING,
@@ -14,6 +15,7 @@ import {
 } from 'state/action-types';
 
 const relevantTypes = {
+	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
 	THEMES_RECEIVE,
 	PREVIEW_IS_SHOWING,
