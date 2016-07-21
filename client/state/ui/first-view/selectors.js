@@ -4,6 +4,7 @@
  * External dependencies
  */
 import filter from 'lodash/filter';
+import last from 'lodash/last';
 import some from 'lodash/some';
 import startsWith from 'lodash/startsWith';
 import takeRightWhile from 'lodash/takeRightWhile';
@@ -49,4 +50,40 @@ export function shouldViewBeVisible( state ) {
 		! wasViewHidden( state, sectionName ) &&
 		switchedFromDifferentSection( state ) &&
 		! isSectionLoading( state );
+}
+
+export function secondsSpentOnCurrentView( state, now = Date.now() ) {
+	const routeSets = filter( getActionLog( state ), { type: ROUTE_SET } );
+	const currentRoute = last( routeSets );
+	return currentRoute ? ( now - currentRoute.timestamp ) / 1000 : -1;
+}
+
+export function bucketedTimeSpentOnCurrentView( state, now = Date.now() ) {
+	const timeSpent = secondsSpentOnCurrentView( state, now );
+
+	if ( -1 === timeSpent ) {
+		return 'unknown';
+	}
+
+	if ( timeSpent < 2 ) {
+		return 'under2';
+	}
+
+	if ( timeSpent < 5 ) {
+		return '2-5';
+	}
+
+	if ( timeSpent < 10 ) {
+		return '5-10';
+	}
+
+	if ( timeSpent < 20 ) {
+		return '10-20';
+	}
+
+	if ( timeSpent < 60 ) {
+		return '20-60';
+	}
+
+	return '60plus';
 }
