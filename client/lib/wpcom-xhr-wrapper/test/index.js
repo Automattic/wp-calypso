@@ -3,8 +3,8 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	mockery = require( 'mockery' );
+import { expect } from 'chai';
+import mockery from 'mockery';
 
 /**
  * Internal dependencies
@@ -13,9 +13,13 @@ import useMockery from 'test/helpers/use-mockery';
 
 describe( 'index', function() {
 	let testError, testResponse, xhr;
+	const testHeaders = {
+		Date: 'Fri, 21 Aug 2015 02:48:06 GMT',
+		'Content-Type': 'application/json'
+	};
 
 	function testRequest( params, callback ) {
-		callback( testError, testResponse );
+		callback( testError, testResponse, testHeaders );
 	}
 
 	useMockery();
@@ -29,18 +33,23 @@ describe( 'index', function() {
 		testError = false;
 		testResponse = 'response';
 
-		xhr( '/test', function( error, response ) {
+		xhr( '/test', function( error, response, headers ) {
 			expect( error ).to.be.false;
 			expect( response ).to.be.equals( 'response' );
+			expect( headers ).to.be.ok;
 			done();
 		} );
 	} );
 
 	it( 'should return proxified error details', function( done ) {
-		var response = {
+		const response = {
 			body: {
 				error: 'code',
 				message: 'response text'
+			},
+			headers: {
+				Date: 'Fri, 21 Aug 2015 02:48:06 GMT',
+				'Content-Type': 'application/json'
 			}
 		};
 
