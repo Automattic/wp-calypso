@@ -1,15 +1,15 @@
 # wpcom-proxy-request
 
-**Proxied cookie-authenticated REST API requests to WordPress.com**
+**Proxied cookie-authenticated REST-API and WP-API requests to WordPress.com**
 
 You likely want to use the high-level APIs in [`wpcom.js`][wpcom.js]
 instead of using this module directly.
 
-This module offers access to the WordPress.com REST API via a proxying `<iframe>`
+This module offers access to the WordPress.com REST-API and WP-API via a proxying `<iframe>`
 pointing to a special URL that proxies API requests on the host page's behalf.
 
 It is intended to be used in the browser (client-side) via a bundler like
-browserify.
+browserify or webpack.
 
 
 ### Installation
@@ -22,21 +22,19 @@ $ npm install wpcom-proxy-request
 
 ### Example
 
-``` html
-<html>
-  <body>
-    <script src="wpcom-proxy-request.js"></script>
-    <script>
-      WPCOM.proxy( '/me', function( err, body, headers ) {
-        if (err) throw err;
+```es6
+// Import wpcom-proxy-request handler
+import proxy from 'wpcom-proxy-request';
 
-        var div = document.createElement( 'div' );
-        div.innerHTML = 'Your WordPress.com "username" is: <b>@' + res.username + '<\/b>';
-        document.body.appendChild( div );
-      });
-    </script>
-  </body>
-</html>
+proxy( '/me', function( err, body, headers ) {
+  if (err) {
+    throw err;
+  }
+
+  var div = document.createElement( 'div' );
+  div.innerHTML = 'Your WordPress.com "username" is: <b>@' + res.username + '<\/b>';
+  document.body.appendChild( div );
+} );
 ```
 
 ### Running tests
