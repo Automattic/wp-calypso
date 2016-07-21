@@ -61,7 +61,7 @@ const PlansNavigation = React.createClass( {
 					selectedText={ sectionTitle }
 					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }>
 				<NavTabs label="Section" selectedText={ sectionTitle }>
-					{ ! isJetpack && hasPlan &&
+					{ hasPlan &&
 						<NavItem path={ `/plans/my-plan/${ site.slug }` } key="myPlan" selected={ path === '/plans/my-plan' }>
 							{ this.translate( 'My Plan' ) }
 						</NavItem>
