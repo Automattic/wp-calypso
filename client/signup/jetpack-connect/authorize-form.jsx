@@ -200,7 +200,7 @@ const LoggedInForm = React.createClass( {
 			isRedirectingToWpAdmin,
 			authorizeSuccess
 		} = props.jetpackConnectAuthorize;
-		
+
 		if ( isRedirectingToWpAdmin ) {
 			return;
 		}
@@ -319,10 +319,6 @@ const LoggedInForm = React.createClass( {
 
 		if ( this.props.isFetchingSites() ) {
 			return this.translate( 'Preparing authorization' );
-		}
-
-		if ( this.props.isAlreadyOnSitesList || siteReceived ) {
-			return this.translate( 'Browse Available Upgrades' );
 		}
 
 		if ( authorizeSuccess && isRedirectingToWpAdmin ) {
