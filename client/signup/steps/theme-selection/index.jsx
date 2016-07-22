@@ -28,7 +28,8 @@ module.exports = React.createClass( {
 
 	getInitialState() {
 		return {
-			previewTheme: null,
+			previewTheme: {},
+			isPreviewVisible: false,
 		};
 	},
 
@@ -57,6 +58,7 @@ module.exports = React.createClass( {
 	showPreview( theme ) {
 		this.setState( {
 			previewTheme: theme,
+			isPreviewVisible: true,
 		} );
 	},
 
@@ -66,7 +68,8 @@ module.exports = React.createClass( {
 
 	handleThemePreviewCloseClick() {
 		this.setState( {
-			previewTheme: null,
+			previewTheme: {},
+			isPreviewVisible: false,
 		} );
 	},
 
@@ -93,18 +96,16 @@ module.exports = React.createClass( {
 	},
 
 	renderThemePreview() {
-		if ( this.state.previewTheme ) {
-			return (
-				<ThemePreview
-					showPreview={ true }
-					showExternal={ false }
-					theme={ this.state.previewTheme }
-					buttonLabel={ this.translate( 'Pick this Theme' ) }
-					onClose={ this.handleThemePreviewCloseClick }
-					onButtonClick={ this.handleThemePreviewButtonClick }>
-				</ThemePreview>
-			);
-		}
+		return (
+			<ThemePreview
+				showPreview={ this.state.isPreviewVisible }
+				showExternal={ false }
+				theme={ this.state.previewTheme }
+				buttonLabel={ this.translate( 'Pick this Theme' ) }
+				onClose={ this.handleThemePreviewCloseClick }
+				onButtonClick={ this.handleThemePreviewButtonClick }>
+			</ThemePreview>
+		);
 	},
 
 	renderStepContent() {
