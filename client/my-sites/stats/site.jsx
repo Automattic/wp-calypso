@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import StatsMain from './stats-main';
+import Main from 'components/main';
 import StatsNavigation from './stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import DatePicker from './stats-date-picker';
@@ -133,7 +133,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<StatsMain>
+			<Main>
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
@@ -209,7 +209,7 @@ module.exports = React.createClass( {
 					</div>
 					{ nonPeriodicModules }
 				</div>
-			</StatsMain>
+			</Main>
 		);
 	}
 } );

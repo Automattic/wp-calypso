@@ -15,7 +15,7 @@ import statsStringsFactory from '../stats-strings';
 import Countries from '../stats-countries';
 import SummaryChart from '../stats-summary-chart';
 import VideoPlayDetails from '../stats-video-details';
-import StatsMain from '../stats-main';
+import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
 
 const debug = debugFactory( 'calypso:stats:site' );
@@ -201,7 +201,7 @@ module.exports = React.createClass( {
 		summaryViews.push( summaryView );
 
 		return (
-			<StatsMain>
+			<Main>
 				<StatsFirstView />
 				<div id="my-stats-content">
 					<HeaderCake onClick={ this.goBack }>
@@ -209,7 +209,7 @@ module.exports = React.createClass( {
 					</HeaderCake>
 					{ summaryViews }
 				</div>
-			</StatsMain>
+			</Main>
 		);
 	}
 } );
