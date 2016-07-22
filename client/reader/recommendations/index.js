@@ -8,12 +8,12 @@ import page from 'page';
  */
 import controller from './controller';
 import readerController from 'reader/controller';
+import config from 'config';
 
-var config = require( 'config' );
-
-module.exports = function() {
+export default function() {
 	// Blog Recommendations
 	page( '/recommendations',
+		readerController.preloadFullPost,
 		readerController.loadSubscriptions,
 		readerController.initAbTests,
 		readerController.updateLastRoute,
@@ -25,16 +25,18 @@ module.exports = function() {
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
 	if ( config.isEnabled( 'reader/recommendations/posts' ) ) {
 		page( '/recommendations/posts',
+			readerController.preloadFullPost,
 			readerController.loadSubscriptions,
 			readerController.updateLastRoute,
 			readerController.removePost,
 			readerController.sidebar,
 			controller.recommendedPosts );
 		page( '/recommendations/cold',
+			readerController.preloadFullPost,
 			readerController.loadSubscriptions,
 			readerController.updateLastRoute,
 			readerController.removePost,
 			readerController.sidebar,
 			controller.recommendedPosts );
 	}
-};
+}

@@ -11,6 +11,7 @@ import readerController from 'reader/controller';
 
 export default function() {
 	page( '/discover',
+		readerController.preloadFullPost,
 		readerController.updateLastRoute,
 		readerController.loadSubscriptions,
 		readerController.initAbTests,

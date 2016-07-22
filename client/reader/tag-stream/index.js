@@ -10,7 +10,11 @@ import controller from './controller';
 import readerController from 'reader/controller';
 
 export default function() {
-	page( '/tag/*', readerController.loadSubscriptions, readerController.initAbTests );
+	page( '/tag/*',
+		readerController.preloadFullPost,
+		readerController.loadSubscriptions,
+		readerController.initAbTests
+	);
 	page( '/tag/:tag',
 		readerController.updateLastRoute,
 		readerController.removePost,

@@ -12,7 +12,12 @@ import readerController from 'reader/controller';
 
 export default function() {
 	if ( config.isEnabled( 'reader/search' ) ) {
-		page( '/read/search', readerController.updateLastRoute, readerController.removePost, readerController.sidebar, controller.search );
+		page( '/read/search',
+			readerController.preloadFullPost,
+			readerController.updateLastRoute,
+			readerController.removePost,
+			readerController.sidebar,
+			controller.search );
 	} else {
 		// redirect search to the root
 		page.redirect( '/read/search', '/' );

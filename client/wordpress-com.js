@@ -7,8 +7,7 @@ var config = require( 'config' );
  * Module variables
  */
 var sections,
-	editorPaths,
-	readerPaths;
+	editorPaths;
 
 sections = [
 	{
@@ -208,16 +207,11 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 }
 
 if ( config.isEnabled( 'reader' ) ) {
-	readerPaths = [
-		'/',
-		'/read'
-	];
-
 	sections.push( {
-		name: 'reader',
-		paths: readerPaths,
-		module: 'reader',
-		secondary: true,
+		name: 'reader-full-post',
+		paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
+		module: 'reader/full-post',
+		secondary: config.isEnabled( 'reader/refresh-2016-07' ) ? false : true,
 		group: 'reader'
 	} );
 
@@ -294,6 +288,14 @@ if ( config.isEnabled( 'reader' ) ) {
 			group: 'reader'
 		} );
 	}
+
+	sections.push( {
+		name: 'reader',
+		paths: [ '/', '/read' ],
+		module: 'reader',
+		secondary: true,
+		group: 'reader'
+	} );
 }
 
 if ( config.isEnabled( 'vip' ) ) {

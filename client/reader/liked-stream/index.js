@@ -11,6 +11,7 @@ import readerController from 'reader/controller';
 
 export default function() {
 	page( '/activities/likes',
+		readerController.preloadFullPost,
 		readerController.loadSubscriptions,
 		readerController.initAbTests,
 		readerController.updateLastRoute,
