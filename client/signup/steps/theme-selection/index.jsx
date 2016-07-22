@@ -39,7 +39,7 @@ module.exports = React.createClass( {
 	},
 
 	pickTheme( theme ) {
-		let themeSlug = theme.id;
+		const themeSlug = theme.id;
 
 		analytics.tracks.recordEvent( 'calypso_signup_theme_select', { theme: themeSlug, headstart: true } );
 
