@@ -56,7 +56,7 @@ const EditContactInfo = React.createClass( {
 			return <NonOwnerCard selectedDomainName={ this.props.selectedDomainName } />;
 		}
 
-		if ( domain.hasPrivacyProtection ) {
+		if ( ! domain.isWhoisEditable ) {
 			return <EditContactInfoPrivacyEnabledCard />;
 		}
 
