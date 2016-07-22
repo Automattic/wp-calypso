@@ -97,6 +97,7 @@ module.exports = React.createClass( {
 			return (
 				<ThemePreview
 					showPreview={ true }
+					showExternal={ false }
 					theme={ this.state.previewTheme }
 					buttonLabel={ this.translate( 'Pick this Theme' ) }
 					onClose={ this.handleThemePreviewCloseClick }
