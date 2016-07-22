@@ -20,7 +20,7 @@ var config = require( 'config' ),
  * Local variables
  */
 var communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
-	communityTranslatorVersion = '1.160628',
+	communityTranslatorVersion = '1.160723',
 	translationDataFromPage = {
 		localeCode: 'en',
 		languageName: 'English',
