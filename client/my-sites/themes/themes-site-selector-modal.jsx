@@ -83,7 +83,8 @@ const ThemesSiteSelectorModal = React.createClass( {
 			this.props.children,
 			Object.assign( {}, omit( this.props, [ 'children', 'options', 'defaultOption' ] ), {
 				options: mapValues( this.props.options, this.wrapOption ),
-				defaultOption: this.wrapOption( this.props.defaultOption )
+				defaultOption: this.wrapOption( this.props.defaultOption ),
+				secondaryOption: this.props.secondaryOption ? this.wrapOption( this.props.secondaryOption ) : null,
 			} )
 		);
 
