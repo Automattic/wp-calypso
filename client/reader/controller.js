@@ -14,7 +14,6 @@ import defer from 'lodash/defer';
  */
 import abtest from 'lib/abtest';
 import route from 'lib/route';
-
 import feedStreamFactory from 'lib/feed-stream-store';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from './controller-helper';
 import FeedError from 'reader/feed-error';
