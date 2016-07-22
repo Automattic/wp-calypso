@@ -11,6 +11,9 @@ import SignupActions from 'lib/signup/actions';
 import SignupThemesList from './signup-themes-list';
 import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
+import config from 'config';
+
+const themeDemosEnabled = config.isEnabled( 'signup/theme-demos' );
 
 module.exports = React.createClass( {
 	displayName: 'ThemeSelection',
@@ -28,7 +31,7 @@ module.exports = React.createClass( {
 		};
 	},
 
-	handleScreenshotClick( theme ) {
+	pickTheme( theme ) {
 		var themeSlug = theme.id;
 
 		analytics.tracks.recordEvent( 'calypso_signup_theme_select', { theme: themeSlug, headstart: true } );
@@ -42,6 +45,18 @@ module.exports = React.createClass( {
 		} );
 
 		this.props.goToNextStep();
+	},
+
+	showPreview( theme ) {
+		// TODO: add preview implementation
+	},
+
+	handleScreenshotClick( theme ) {
+		if ( themeDemosEnabled ) {
+			this.showPreview( theme );
+		} else {
+			this.pickTheme( theme );
+		}
 	},
 
 	renderThemesList() {
