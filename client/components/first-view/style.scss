@@ -28,13 +28,6 @@
 	width: 100%;
 	z-index: z-index( 'root', '.first-view' );
 
-	&.is-visible {
-		.first-view__content {
-			opacity: 1;
-			transform: scale( 1 ) translateY( 0 );
-		}
-	}
-
 	@include breakpoint( "<480px" ) {
 		padding: 0;
 		margin-top: 47px;
@@ -126,6 +119,11 @@
 			min-width: 200px;
 		}
 	}
+}
+
+.is-first-view-visible .first-view__content {
+	opacity: 1;
+	transform: scale( 1 ) translateY( 0 );
 }
 
 .first-view__hide-preference {
