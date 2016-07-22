@@ -10,6 +10,7 @@ import analytics from 'lib/analytics';
 import SignupActions from 'lib/signup/actions';
 import SignupThemesList from './signup-themes-list';
 import StepWrapper from 'signup/step-wrapper';
+import ThemePreview from 'my-sites/themes/theme-preview';
 import Button from 'components/button';
 import config from 'config';
 
@@ -23,6 +24,12 @@ module.exports = React.createClass( {
 		stepName: React.PropTypes.string.isRequired,
 		goToNextStep: React.PropTypes.func.isRequired,
 		signupDependencies: React.PropTypes.object.isRequired,
+	},
+
+	getInitialState() {
+		return {
+			previewTheme: null,
+		};
 	},
 
 	getDefaultProps() {
@@ -48,7 +55,19 @@ module.exports = React.createClass( {
 	},
 
 	showPreview( theme ) {
-		// TODO: add preview implementation
+		this.setState( {
+			previewTheme: theme,
+		} );
+	},
+
+	handleThemePreviewButtonClick() {
+		this.pickTheme( this.state.previewTheme );
+	},
+
+	handleThemePreviewCloseClick() {
+		this.setState( {
+			previewTheme: null,
+		} );
 	},
 
 	handleScreenshotClick( theme ) {
@@ -73,6 +92,23 @@ module.exports = React.createClass( {
 		);
 	},
 
+	renderThemePreview() {
+		if ( this.state.previewTheme ) {
+			return (
+				<ThemePreview showPreview={ true } theme={ this.state.previewTheme } buttonLabel={ this.translate( 'Pick' ) } onClose={ this.handleThemePreviewCloseClick } onButtonClick={ this.handleThemePreviewButtonClick }></ThemePreview>
+			);
+		}
+	},
+
+	renderStepContent() {
+		return (
+			<div>
+				{ this.renderThemesList() }
+				{ this.renderThemePreview() }
+			</div>
+		);
+	},
+
 	render() {
 		const defaultDependencies = this.props.useHeadstart ? { theme: 'pub/twentysixteen' } : undefined;
 		return (
@@ -80,7 +116,7 @@ module.exports = React.createClass( {
 				fallbackHeaderText={ this.translate( 'Choose a theme.' ) }
 				fallbackSubHeaderText={ this.translate( 'No need to overthink it. You can always switch to a different theme later.' ) }
 				subHeaderText={ this.translate( 'Choose a theme. You can always switch to a different theme later.' ) }
-				stepContent={ this.renderThemesList() }
+				stepContent={ this.renderStepContent() }
 				defaultDependencies={ defaultDependencies }
 				headerButton={ this.renderJetpackButton() }
 				{ ...this.props } />
