@@ -139,6 +139,5 @@
 		"vip/deploys": true,
 		"vip/logs": true,
 		"vip/support": true
-	},
-	"signup_theme_demos": true
+	}
 }
