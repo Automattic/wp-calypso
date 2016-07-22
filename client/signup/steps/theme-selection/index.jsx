@@ -39,7 +39,7 @@ module.exports = React.createClass( {
 	},
 
 	pickTheme( theme ) {
-		var themeSlug = theme.id;
+		let themeSlug = theme.id;
 
 		analytics.tracks.recordEvent( 'calypso_signup_theme_select', { theme: themeSlug, headstart: true } );
 
@@ -95,7 +95,13 @@ module.exports = React.createClass( {
 	renderThemePreview() {
 		if ( this.state.previewTheme ) {
 			return (
-				<ThemePreview showPreview={ true } theme={ this.state.previewTheme } buttonLabel={ this.translate( 'Pick' ) } onClose={ this.handleThemePreviewCloseClick } onButtonClick={ this.handleThemePreviewButtonClick }></ThemePreview>
+				<ThemePreview
+					showPreview={ true }
+					theme={ this.state.previewTheme }
+					buttonLabel={ this.translate( 'Pick' ) }
+					onClose={ this.handleThemePreviewCloseClick }
+					onButtonClick={ this.handleThemePreviewButtonClick }>
+				</ThemePreview>
 			);
 		}
 	},
