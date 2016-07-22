@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from './controller';
+import { resetTitle, blogPost, feedPost } from './controller';
 import readerController from 'reader/controller';
 import pageNotifier from 'lib/route/page-notifier';
 import { hideReaderFullPost } from 'state/ui/reader/fullpost/actions';
@@ -28,14 +28,14 @@ export default function() {
 	page( '/read/feeds/:feed/posts/:post',
 		readerController.updateLastRoute,
 		readerController.sidebar,
-		controller.feedPost );
-	page.exit( '/read/feeds/:feed/posts/:post', controller.resetTitle );
+		feedPost );
+	page.exit( '/read/feeds/:feed/posts/:post', resetTitle );
 
 	// Blog full post
 	page( '/read/post/id/:blog_id/:post_id', readerController.legacyRedirects );
 	page( '/read/blogs/:blog/posts/:post',
 		readerController.updateLastRoute,
 		readerController.sidebar,
-		controller.blogPost );
-	page.exit( '/read/blogs/:blog/posts/:post', controller.resetTitle );
+		blogPost );
+	page.exit( '/read/blogs/:blog/posts/:post', resetTitle );
 }
