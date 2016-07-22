@@ -57,20 +57,10 @@
 .popover__menu .follow-button {
 
 	.gridicon {
-		height: 24px;
-		width: 24px;
 		position: absolute;
-			left: 12px;
-			top: 10px;
-
-		&.gridicon__edit {
-			left: 12px;
-			top: 5px;
-		}
+			left: 14px;
+			top: 11px;
 	}
-}
-
-.popover__menu .follow-button {
 
 	&:hover,
 	&:focus {
@@ -83,6 +73,7 @@
 	}
 
 	&.is-following {
+
 		&:hover,
 		&:focus {
 			color: $white;
@@ -93,4 +84,8 @@
 			}
 		}
 	}
+}
+
+.popover__menu .follow-button__label {
+	display: inline-block;
 }
