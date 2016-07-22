@@ -10,7 +10,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, isPreviewShowing } from 'state/ui/selectors';
 
 const tours = {
 	main: {
@@ -75,6 +75,7 @@ const tours = {
 			type: 'BasicStep',
 			placement: 'center',
 			showInContext: state => getSelectedSite( state ) && getSelectedSite( state ).is_previewable,
+			continueIf: state => ! isPreviewShowing( state ),
 			next: 'close-preview',
 		},
 		'close-preview': {
@@ -85,6 +86,7 @@ const tours = {
 			icon: 'cross-small',
 			text: i18n.translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ),
 			showInContext: state => getSelectedSite( state ) && getSelectedSite( state ).is_previewable,
+			continueIf: state => ! isPreviewShowing( state ),
 			next: 'themes',
 		},
 		themes: {

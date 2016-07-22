@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
+import { defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,6 +43,13 @@ class GuidedTours extends Component {
 		this.updateTarget( stepConfig );
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		const { stepConfig } = nextProps.tourState;
+
+		stepConfig.continueIf &&
+			stepConfig.continueIf( nextProps.state ) &&
+			this.next();
+	}
 	shouldComponentUpdate( nextProps ) {
 		return this.props.tourState !== nextProps.tourState;
 	}
@@ -91,7 +99,7 @@ class GuidedTours extends Component {
 			);
 			this.quit( { error: ERROR_WAITED_TOO_LONG } );
 		};
-		wait( { condition: nextTargetFound, consequence: proceedToNextStep, onError: abortTour } );
+		defer( () => wait( { condition: nextTargetFound, consequence: proceedToNextStep, onError: abortTour } ) );
 	}
 
 	quit( options = {} ) {
@@ -144,6 +152,7 @@ class GuidedTours extends Component {
 
 export default connect( ( state ) => ( {
 	tourState: getGuidedTourState( state ),
+	state,
 } ), {
 	nextGuidedTourStep,
 	quitGuidedTour,
