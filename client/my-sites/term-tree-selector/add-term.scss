@@ -1,0 +1,29 @@
+.term-tree-selector__add-term {
+	border: 1px solid lighten( $gray, 20% );
+	border-top: 0px;
+	margin: 0 0 8px;
+	padding: 8px;
+
+	&.is-compact {
+		border: 0;
+	}
+}
+
+// Dialog
+.term-tree-selector__add-term-dialog .dialog__content {
+	min-width: 40vw;
+}
+
+.term-tree-selector__add-term-dialog .form-input-validation {
+	padding-bottom: 0;
+}
+
+@include breakpoint( "<660px" ) {
+	.term-tree-selector__add-term-dialog {
+		width: 90%;
+	}
+
+	.term-tree-selector__add-term-dialog .dialog__content {
+		min-width: none;
+	}
+}

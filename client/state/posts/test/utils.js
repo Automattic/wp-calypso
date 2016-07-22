@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -11,6 +12,7 @@ import {
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
+	getTermIdsFromEdits,
 	mergeIgnoringArrays
 } from '../utils';
 
@@ -138,6 +140,84 @@ describe( 'utils', () => {
 
 			expect( merged ).to.eql( {
 				tags_by_id: [ 1, 2, 3, 4 ]
+			} );
+		} );
+	} );
+
+	describe( '#getTermIdsFromEdits()', () => {
+		it( 'should return the same post edit object if no term edits have been made', () => {
+			const normalizedPostEdits = getTermIdsFromEdits( {
+				title: 'Chewbacca Saves'
+			} );
+
+			expect( normalizedPostEdits ).to.eql( {
+				title: 'Chewbacca Saves'
+			} );
+		} );
+
+		it( 'should return the add terms_by_id if terms have been edited', () => {
+			const originalPost = deepFreeze( {
+				title: 'Chewbacca Saves',
+				terms: {
+					wookie_post_types: {
+						awesomesauce: {
+							ID: 777,
+							name: 'Awesomesauce'
+						}
+					}
+				}
+			} );
+
+			const normalizedPostEdits = getTermIdsFromEdits( originalPost );
+
+			expect( normalizedPostEdits ).to.eql( {
+				title: 'Chewbacca Saves',
+				terms: {
+					wookie_post_types: {
+						awesomesauce: {
+							ID: 777,
+							name: 'Awesomesauce'
+						}
+					}
+				},
+				terms_by_id: {
+					wookie_post_types: [ 777 ]
+				}
+			} );
+		} );
+
+		it( 'should taxonomy terms_by_id to null if object is empty', () => {
+			const normalizedPostEdits = getTermIdsFromEdits( {
+				title: 'Chewbacca Saves',
+				terms: {
+					wookie_post_types: {}
+				}
+			} );
+
+			expect( normalizedPostEdits ).to.eql( {
+				title: 'Chewbacca Saves',
+				terms: {
+					wookie_post_types: {}
+				},
+				terms_by_id: {
+					wookie_post_types: null
+				}
+			} );
+		} );
+
+		it( 'should not set terms_by_id for taxonomies that set an array on terms', () => {
+			const normalizedPostEdits = getTermIdsFromEdits( {
+				title: 'Chewbacca Saves',
+				terms: {
+					wookie_post_tags: [ 'raaar', 'uggggaaarr' ]
+				}
+			} );
+
+			expect( normalizedPostEdits ).to.eql( {
+				title: 'Chewbacca Saves',
+				terms: {
+					wookie_post_tags: [ 'raaar', 'uggggaaarr' ]
+				}
 			} );
 		} );
 	} );

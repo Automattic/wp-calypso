@@ -4,13 +4,15 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import includes from 'lodash/includes';
 import { localize } from 'i18n-calypso';
-import debounce from 'lodash/debounce';
-import range from 'lodash/range';
 import VirtualScroll from 'react-virtualized/VirtualScroll';
-import difference from 'lodash/difference';
-import isEqual from 'lodash/isEqual';
+import {
+	debounce,
+	difference,
+	includes,
+	isEqual,
+	range
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -99,6 +101,10 @@ const TermTreeSelectorList = React.createClass( {
 
 		if ( forceUpdate ) {
 			this.virtualScroll.forceUpdate();
+		}
+
+		if ( this.props.terms !== prevProps.terms ) {
+			this.recomputeRowHeights();
 		}
 	},
 
