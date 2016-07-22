@@ -101,7 +101,7 @@ module.exports = React.createClass( {
 	},
 
 	canSubmitForm: function() {
-		const auth = this.state.auth;
+		const { auth } = this.state;
 
 		// No submission until the ajax has finished
 		if ( auth.inProgress ) {
@@ -128,22 +128,16 @@ module.exports = React.createClass( {
 		);
 	},
 
-	focusWhenIdle: function( ref ) {
+	focusOnShow: function( ref ) {
 		if ( this.state.auth.inProgress === false ) {
 			ref.focus();
 		}
 	},
 
-	updateLogin: function( e ) {
-		this.setState( { login: e.target.value } );
-	},
-
-	updatePassword: function( e ) {
-		this.setState( { password: e.target.value } );
-	},
-
-	updateAuthCode: function( e ) {
-		this.setState( { auth_code: e.target.value } );
+	storeEventValueIn: function( stateKey ) {
+		return ( { target: { value } } ) => {
+			this.setState( { [ stateKey ]: value } );
+		};
 	},
 
 	render: function() {
@@ -167,7 +161,7 @@ module.exports = React.createClass( {
 								placeholder={ this.translate( 'Username or email address' ) }
 								onFocus={ this.recordFocusEvent( 'Username or email address' ) }
 								value={ this.state.login }
-								onChange={ this.updateLogin } />
+								onChange={ this.storeEventValueIn( 'login' ) } />
 						</div>
 						<div className="auth__input-wrapper">
 							<Gridicon icon="lock" />
@@ -179,19 +173,19 @@ module.exports = React.createClass( {
 								hideToggle={ requires2fa }
 								submitting={ inProgress }
 								value={ this.state.password }
-								onChange={ this.updatePassword } />
+								onChange={ this.storeEventValueIn( 'password' ) } />
 						</div>
 						{ ( required2faType === 'code' ) &&
 							<FormFieldset>
 								<FormTextInput
 									name="auth_code"
 									type="number"
-									ref={ this.focusWhenIdle }
+									ref={ this.focusOnShow }
 									disabled={ inProgress }
 									placeholder={ this.translate( 'Verification code' ) }
 									onFocus={ this.recordFocusEvent( 'Verification code' ) }
 									value={ this.state.auth_code }
-									onChange={ this.updateAuthCode } />
+									onChange={ this.storeEventValueIn( 'auth_code' ) } />
 							</FormFieldset>
 						}
 					</FormFieldset>
