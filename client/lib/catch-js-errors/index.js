@@ -1,5 +1,29 @@
 import TraceKit from 'tracekit';
-( function() {
+const diagnosticData = {};
+const diagnosticReducers = [];
+let initialized = false;
+
+export function saveDiagnosticData( data ) {
+	if ( typeof data === 'function' ) {
+		diagnosticReducers.push( data );
+	} else if ( typeof data === 'object' ) {
+		Object.assign( diagnosticData, data );
+	}
+}
+
+function diagnose() {
+	diagnosticReducers.forEach( diagnosticReducer => {
+		try {
+			Object.assign( diagnosticData, diagnosticReducer() );
+		} catch ( e ) {
+			console.warn( 'diagnostic', diagnosticData );
+		}
+	} );
+	return diagnosticData;
+}
+
+function init() {
+	window.d = diagnose;
 	// Props http://stackoverflow.com/a/17604754/379063
 	function isLocalStorageNameSupported() {
 		var testKey = 'test',
@@ -60,7 +84,8 @@ import TraceKit from 'tracekit';
 					error.browser = window.navigator.userAgent;
 				}
 
-				sendToApi( error );
+				diagnose();
+				sendToApi( Object.assign( error, diagnosticData ) );
 			} );
 		} else if ( errorLogger === 'analytics' ) {
 			TraceKit.report.subscribe( function gaApiLogger( errorReport ) {
@@ -78,4 +103,9 @@ import TraceKit from 'tracekit';
 			} );
 		}
 	}
-}() );
+}
+
+if ( ! initialized ) {
+	initialized = true;
+	init();
+}

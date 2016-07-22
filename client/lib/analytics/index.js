@@ -20,6 +20,7 @@ var config = require( 'config' ),
 	_user;
 
 import { retarget } from 'lib/analytics/ad-tracking';
+import { saveDiagnosticData } from 'lib/catch-js-errors/';
 
 // Load tracking scripts
 window._tkq = window._tkq || [];
@@ -112,6 +113,7 @@ var analytics = {
 			mostRecentUrlPath = urlPath;
 			analytics.tracks.recordPageView( urlPath );
 			analytics.ga.recordPageView( urlPath, pageTitle );
+			saveDiagnosticData( { path: urlPath } );
 		}
 	},
 
@@ -149,6 +151,7 @@ var analytics = {
 			debug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
 			window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
+			saveDiagnosticData( { lastTracksEvent: Object.assign( { eventName }, eventProperties ) } );
 		},
 
 		recordPageView: function( urlPath ) {

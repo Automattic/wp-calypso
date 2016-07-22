@@ -54,6 +54,9 @@ var config = require( 'config' ),
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
+import { saveDiagnosticData } from 'lib/catch-js-errors/';
+import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
+
 function init() {
 	var i18nLocaleStringsObject = null;
 
@@ -228,6 +231,16 @@ function reduxStoreReady( reduxStore ) {
 	// Layout themselves when logged in.
 	if ( ! isIsomorphic || user.get() ) {
 		renderLayout( reduxStore );
+
+		//Save data to JS error logger
+		saveDiagnosticData( { user_id: user.get().ID } );
+		saveDiagnosticData( function() {
+			const state = reduxStore.getState();
+			return {
+				blog_id: getSelectedSiteId( state ),
+				section: getSectionName( state )
+			};
+		} );
 	}
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
