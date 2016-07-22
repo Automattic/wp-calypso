@@ -1,4 +1,13 @@
 // Reader-specific tweaks to components
+
+.following {
+
+	@include breakpoint( "<660px" ) {
+		-webkit-perspective: none;
+		perspective: none;
+	}
+}
+
 .reader__card.card {
 	padding: 16px;
 	transition: all 0.1s ease-in-out;
