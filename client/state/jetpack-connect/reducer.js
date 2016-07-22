@@ -175,8 +175,7 @@ export function jetpackSSO( state = {}, action ) {
 export function jetpackSSOSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
-			const parsedUrl = urlModule.parse( action.ssoUrl );
-			return Object.assign( {}, state, buildNoProtocolUrlObj( parsedUrl.hostname ) );
+			return Object.assign( {}, state, buildNoProtocolUrlObj( action.siteUrl ) );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return state;

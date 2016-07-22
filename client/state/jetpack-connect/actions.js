@@ -338,12 +338,14 @@ export default {
 				tracksEvent( dispatch, 'calypso_jpc_authorize_sso_success' );
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
-					ssoUrl: data.sso_url
+					ssoUrl: data.sso_url,
+					siteUrl: data.site_url
 				} );
 			} ).catch( ( error ) => {
 				tracksEvent( dispatch, 'calypso_jpc_authorize_sso_error', {
 					error: error
 				} );
+				debug( 'sso error', error );
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 					error: pick( error, [ 'error', 'status', 'message' ] )
