@@ -36,7 +36,8 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => Object.assign(
 	stateProps,
 	{
 		options: dispatchProps,
-		defaultOption: dispatchProps.tryandcustomize,
+		defaultOption: dispatchProps.activate,
+		secondaryOption: dispatchProps.tryandcustomize,
 		getScreenshotOption: () => dispatchProps.info
 	}
 );

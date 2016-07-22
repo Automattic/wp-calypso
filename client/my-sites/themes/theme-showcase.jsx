@@ -28,6 +28,7 @@ const ThemeShowcase = React.createClass( {
 		// Connected props
 		options: PropTypes.objectOf( optionShape ),
 		defaultOption: optionShape,
+		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func
 	},
 
@@ -48,15 +49,41 @@ const ThemeShowcase = React.createClass( {
 		this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
 	},
 
-	onPreviewButtonClick( theme ) {
-		const { defaultOption } = this.props;
+	onPrimaryPreviewButtonClick( theme ) {
+		const option = this.getPrimaryOption();
 		this.setState( { showPreview: false }, () => {
-			defaultOption.action && defaultOption.action( theme );
+			option.action && option.action( theme );
 		} );
 	},
 
+	onSecondaryPreviewButtonClick( theme ) {
+		const { secondaryOption } = this.props;
+		this.setState( { showPreview: false }, () => {
+			secondaryOption && secondaryOption.action ? secondaryOption.action( theme ) : null;
+		} );
+	},
+
+	getPrimaryOption() {
+		if ( ! this.state.showPreview ) {
+			return this.props.defaultOption;
+		}
+		const { translate } = this.props;
+		const { purchase, activate } = this.props.options;
+		const { price } = this.state.previewingTheme;
+		let primaryOption = this.props.defaultOption;
+		if ( price && purchase ) {
+			primaryOption = purchase;
+			primaryOption.label = translate( 'Pick this design' );
+		} else if ( activate ) {
+			primaryOption = activate;
+			primaryOption.label = translate( 'Activate this design' );
+		}
+		return primaryOption;
+	},
+
 	render() {
-		const { options, defaultOption, getScreenshotOption } = this.props;
+		const { options, getScreenshotOption, secondaryOption } = this.props;
+		const primaryOption = this.getPrimaryOption();
 
 		// If a preview action is passed, use that. Otherwise, use our own.
 		if ( options.preview && ! options.preview.action ) {
@@ -71,9 +98,13 @@ const ThemeShowcase = React.createClass( {
 					<ThemePreview showPreview={ this.state.showPreview }
 						theme={ this.state.previewingTheme }
 						onClose={ this.togglePreview }
-						buttonLabel={ defaultOption.label }
-						getButtonHref={ defaultOption.getUrl }
-						onButtonClick={ this.onPreviewButtonClick } />
+						primaryButtonLabel={ primaryOption.label }
+						getPrimaryButtonHref={ primaryOption.getUrl }
+						onPrimaryButtonClick={ this.onPrimaryPreviewButtonClick }
+						secondaryButtonLabel={ secondaryOption ? secondaryOption.label : null }
+						getSecondaryButtonHref={ secondaryOption ? secondaryOption.getUrl : null }
+						onSecondaryButtonClick={ this.onSecondaryPreviewButtonClick }
+					/>
 				}
 				<ThemesSelection search={ this.props.search }
 					siteId={ this.props.siteId }
