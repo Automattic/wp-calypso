@@ -94,7 +94,8 @@ const TermTreeSelectorList = React.createClass( {
 		const forceUpdate = (
 			! isEqual( prevProps.selected, this.props.selected ) ||
 			prevProps.loading && ! this.props.loading ||
-			( ! prevProps.terms && this.props.terms )
+			( ! prevProps.terms && this.props.terms ) ||
+			( ( prevProps.terms && this.props.terms ) && ( prevProps.terms.length !== this.props.terms.length ) )
 		);
 
 		if ( forceUpdate ) {
