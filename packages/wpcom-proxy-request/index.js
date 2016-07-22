@@ -92,12 +92,14 @@ debug( 'using "origin": %o', origin );
  * takes care of WordPress.com user authentication (via the currently
  * logged-in user's cookies).
  *
- * @param {Object|String} params - request parameters
+ * @param {Object|String} originalParams - request parameters
  * @param {Function} [fn] - callback response
  * @return {XMLHttpRequest} XMLHttpRequest instance
  * @api public
  */
-const request = ( params, fn ) => {
+const request = ( originalParams, fn ) => {
+	let params = Object.assign( {}, originalParams );
+
 	debug( 'request(%o)', params );
 
 	// inject the <iframe> upon the first proxied API request
