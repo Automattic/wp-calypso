@@ -463,7 +463,7 @@ const mapStateToProps = state => ( {
 } );
 
 const mapDispatchToProps = {
-	trackSubmission: recordTracksEvent( 'calypso_seo_settings_form_submit', {} )
+	trackSubmission: () => recordTracksEvent( 'calypso_seo_settings_form_submit', {} )
 };
 
 export default connect(
