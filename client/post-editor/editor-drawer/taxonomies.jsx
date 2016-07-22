@@ -30,7 +30,7 @@ function isSkippedTaxonomy( postType, taxonomy ) {
 	return false;
 }
 
-function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
+function EditorDrawerTaxonomies( { siteId, postType, taxonomies } ) {
 	return (
 		<div className="editor-drawer__taxonomies">
 			{ siteId && postType && (
@@ -52,7 +52,7 @@ function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 						icon={ <Gridicon icon={ icon } /> }
 					>
 					{ hierarchical
-						? <TermSelector postTerms={ postTerms } taxonomyName={ name } />
+						? <TermSelector taxonomyName={ name } />
 						: <TermTokenField taxonomyName={ name } />
 					}
 					</Accordion>
@@ -65,7 +65,6 @@ function EditorDrawerTaxonomies( { siteId, postType, postTerms, taxonomies } ) {
 EditorDrawerTaxonomies.propTypes = {
 	siteId: PropTypes.number,
 	postType: PropTypes.string,
-	postTerms: PropTypes.object,
 	taxonomies: PropTypes.array,
 };
 
