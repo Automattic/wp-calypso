@@ -168,7 +168,8 @@ class TermSelectorAddTerm extends Component {
 		}
 
 		const isError = this.state.error && this.state.error.length;
-		const classes = classNames( 'term-tree-selector__add-term', { 'is-compact': terms.length < 8 } );
+		const totalTerms = terms ? terms.length : 0;
+		const classes = classNames( 'term-tree-selector__add-term', { 'is-compact': totalTerms < 8 } );
 
 		return (
 			<div className={ classes }>
