@@ -11,8 +11,7 @@ import {
 	difference,
 	includes,
 	isEqual,
-	range,
-	size
+	range
 } from 'lodash';
 
 /**
@@ -97,12 +96,15 @@ const TermTreeSelectorList = React.createClass( {
 		const forceUpdate = (
 			! isEqual( prevProps.selected, this.props.selected ) ||
 			prevProps.loading && ! this.props.loading ||
-			( ! prevProps.terms && this.props.terms ) ||
-			size( prevProps.terms ) !== size( this.props.terms )
+			( ! prevProps.terms && this.props.terms )
 		);
 
 		if ( forceUpdate ) {
 			this.virtualScroll.forceUpdate();
+		}
+
+		if ( this.props.terms !== prevProps.terms ) {
+			this.recomputeRowHeights();
 		}
 	},
 
