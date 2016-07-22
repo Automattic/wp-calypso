@@ -132,6 +132,11 @@
 
 	.button {
 		margin: 4px;
+		&:not(:last-child) {
+			@include breakpoint( "<660px" ) {
+				display: none;
+			}
+		}
 	}
 }
 
