@@ -33,19 +33,9 @@ class HelpUnverifiedWarning extends Component {
 				resendState: RESEND_IN_PROGRESS,
 			} );
 
-			userFactory().sendVerificationEmail( ( error, response ) => {
-				if ( error ) {
-					this.setState( {
-						resendState: RESEND_ERROR,
-					} );
-
-					return;
-				}
-
-				this.setState( {
-					resendState: RESEND_SUCCESS,
-				} );
-			} );
+			userFactory().sendVerificationEmail()
+				.then( () => this.setState( { resendState: RESEND_SUCCESS } ) )
+				.catch( () => this.setState( { resendState: RESEND_ERROR } ) );
 		};
 
 		const resendStateToMessage = ( resendState ) => {
