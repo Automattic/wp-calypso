@@ -208,7 +208,7 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 
 if ( config.isEnabled( 'reader' ) ) {
 	sections.push( {
-		name: 'reader-full-post',
+		name: 'reader',
 		paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
 		module: 'reader/full-post',
 		secondary: config.isEnabled( 'reader/refresh-2016-07' ) ? false : true,
