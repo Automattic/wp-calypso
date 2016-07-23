@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import userFactory from 'lib/user';
 
@@ -11,6 +12,8 @@ import userFactory from 'lib/user';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
+
+const user = userFactory();
 
 const RESEND_IDLE = 0,
 	RESEND_IN_PROGRESS = 1,
@@ -49,7 +52,7 @@ class HelpUnverifiedWarning extends Component {
 				resendState: RESEND_IN_PROGRESS,
 			} );
 
-			userFactory().sendVerificationEmail()
+			this.props.sendVerificationEmail()
 				.then( () => {
 					const nextResendState = RESEND_SUCCESS;
 
@@ -79,4 +82,9 @@ class HelpUnverifiedWarning extends Component {
 	}
 }
 
-export default localize( HelpUnverifiedWarning );
+export default connect(
+	( state ) => {
+		return {
+			sendVerificationEmail: user.sendVerificationEmail,
+		};
+} )( localize( HelpUnverifiedWarning ) );
