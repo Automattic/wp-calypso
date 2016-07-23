@@ -65,7 +65,7 @@ export default React.createClass( {
 	},
 
 	getDomains() {
-		return ( this.props.domains || [ this.props.domain ] ).filter( domain => domain.isCurrentUserOwner );
+		return ( this.props.domains || [ this.props.domain ] ).filter( domain => domain.currentUserCanManage );
 	},
 
 	expiredDomains() {
