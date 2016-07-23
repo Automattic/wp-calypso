@@ -11,7 +11,7 @@ import isEqual from 'lodash/isEqual';
  * Internal dependencies
  */
 import Card from 'components/card';
-import ThemeMoreButton from './more-button';
+import { tracked as ThemeMoreButton } from './more-button';
 import Gridicon from 'components/gridicon';
 
 /**

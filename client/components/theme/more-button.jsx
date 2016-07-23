@@ -109,6 +109,8 @@ ThemeMoreButton.propTypes = {
 	active: React.PropTypes.bool
 };
 
-export default trackClicks(
+export const tracked = trackClicks(
 	( props ) => ( { themeId: props.theme.id } )
 )( ThemeMoreButton );
+
+export default ThemeMoreButton;
