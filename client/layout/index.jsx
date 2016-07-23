@@ -36,7 +36,6 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
-import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { hasSidebar } from 'state/ui/selectors';
 import DesignPreview from 'my-sites/design-preview';
 
