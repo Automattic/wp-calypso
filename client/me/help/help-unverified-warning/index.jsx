@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import userFactory from 'lib/user';
 
 /**
  * Internal dependencies
@@ -25,8 +26,6 @@ class HelpUnverifiedWarning extends Component {
 	}
 
 	render() {
-		const { sendVerificationEmail } = this.props;
-
 		const { resendState } = this.state;
 
 		const resendEmail = () => {
@@ -34,7 +33,7 @@ class HelpUnverifiedWarning extends Component {
 				resendState: RESEND_IN_PROGRESS,
 			} );
 
-			sendVerificationEmail( ( error, response ) => {
+			userFactory().sendVerificationEmail( ( error, response ) => {
 				if ( error ) {
 					this.setState( {
 						resendState: RESEND_ERROR,
