@@ -10,6 +10,7 @@ import userFactory from 'lib/user';
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import notices from 'notices';
 
 const RESEND_IDLE = 0,
 	RESEND_IN_PROGRESS = 1,
@@ -28,24 +29,14 @@ class HelpUnverifiedWarning extends Component {
 	render() {
 		const { resendState } = this.state;
 
-		const resendEmail = () => {
-			this.setState( {
-				resendState: RESEND_IN_PROGRESS,
-			} );
-
-			userFactory().sendVerificationEmail()
-				.then( () => this.setState( { resendState: RESEND_SUCCESS } ) )
-				.catch( () => this.setState( { resendState: RESEND_ERROR } ) );
-		};
-
 		const resendStateToMessage = ( resendState ) => {
 			switch ( resendState ) {
 				case RESEND_IDLE:
 					return this.props.translate( "Trouble activating your account? Just click this button and we'll resend the activation for you." );
 				case RESEND_IN_PROGRESS:
-					return this.props.translate( 'Sending…' );
+					return '';
 				case RESEND_SUCCESS:
-					return this.props.translate( "Please check your email for an activation email and click the link to finish your signup. If you don't receive the email within a few minutes, please be sure to check your spam folders." );
+					return this.props.translate( "Please check your email for an activation email and click the link to finish your signup." );
 				case RESEND_ERROR:
 					return this.props.translate( "Sorry that we've encountered an error on sending you an activation email. Please try again later." );
 				default:
@@ -53,32 +44,37 @@ class HelpUnverifiedWarning extends Component {
 			}
 		};
 
-		const resendStateToNoticeType = ( resendState ) => {
-			switch ( resendState ) {
-				case RESEND_IDLE:
-					return 'is-warning';
-				case RESEND_IN_PROGRESS:
-					return 'is-info';
-				case RESEND_SUCCESS:
-					return 'is-success';
-				case RESEND_ERROR:
-					return 'is-error';
-				default:
-					return 'is-error';
-			}
+		const resendEmail = () => {
+			this.setState( {
+				resendState: RESEND_IN_PROGRESS,
+			} );
+
+			userFactory().sendVerificationEmail()
+				.then( () => {
+					const nextResendState = RESEND_SUCCESS;
+
+					this.setState( { resendState: nextResendState } )
+					notices[ 'success' ]( resendStateToMessage( nextResendState ) );
+				} )
+				.catch( () => {
+					const nextResendState = RESEND_ERROR;
+
+					this.setState( { resendState: nextResendState } )
+					notices[ 'error' ]( resendStateToMessage( nextResendState ) );
+				} );
 		};
 
 		return (
-			<Notice
-				status={ resendStateToNoticeType( resendState ) }
-				showDismiss={ false }
-				text={ resendStateToMessage( resendState ) }>
-				{ RESEND_IDLE === resendState &&
-					<NoticeAction href="#" onClick={ resendEmail } >
-						{ this.props.translate( "Resend Email" ) }
-					</NoticeAction>
-				}
-			</Notice>
+			RESEND_IDLE === resendState &&
+				<Notice
+					className='help-unverified-warning__notice'
+					status='is-warning'
+					showDismiss={ false }
+					text={ resendStateToMessage( resendState ) } >
+						<NoticeAction href="#" onClick={ resendEmail } >
+							{ this.props.translate( "Resend Email" ) }
+						</NoticeAction>
+				</Notice>
 		);
 	}
 }
