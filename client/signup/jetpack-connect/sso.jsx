@@ -63,7 +63,7 @@ const JetpackSSOForm = React.createClass( {
 			//
 			// Note: We add `calypso_env` so that when we are redirected back to Calypso,
 			// we land in the same development environment.
-			let configEnv = config( 'env_id' ) || process.env.NODE_ENV;
+			const configEnv = config( 'env_id' ) || process.env.NODE_ENV;
 			const redirect = addQueryArgs( { calypso_env: configEnv }, nextProps.ssoUrl );
 			debug( 'Redirecting to: ' + redirect );
 			window.location.href = redirect;
@@ -340,8 +340,8 @@ const JetpackSSOForm = React.createClass( {
 				buttons={ buttons }
 				onClose={ this.closeTermsDialog }
 				isVisible={ this.state.showTermsDialog }
-				className="jetpack-connect_sso_terms-dialog">
-				<div className="jetpack-connect_sso_terms-dialog-content">
+				className="jetpack-connect__sso_terms-dialog">
+				<div className="jetpack-connect__sso_terms-dialog-content">
 					<p className="jetpack-connect__sso_shared-details-intro">
 						{
 							this.translate(
