@@ -224,7 +224,13 @@ export default {
 				userData,
 				( error, data ) => {
 					if ( error ) {
-						tracksEvent( dispatch, 'calypso_jpc_create_account_error', { error_code: error.code, error: JSON.stringify( error ) } );
+						tracksEvent( dispatch,
+							'calypso_jpc_create_account_error',
+							{
+								error_code: error.code,
+								error: JSON.stringify( error )
+							}
+						);
 					} else {
 						tracksEvent( dispatch, 'calypso_jpc_create_account_success', {} );
 					}
