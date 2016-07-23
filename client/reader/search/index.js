@@ -13,7 +13,7 @@ import readerController from 'reader/controller';
 export default function() {
 	if ( config.isEnabled( 'reader/search' ) ) {
 		page( '/read/search',
-			readerController.preloadFullPost,
+			readerController.preloadReaderBundle,
 			readerController.updateLastRoute,
 			readerController.removePost,
 			readerController.sidebar,

@@ -11,7 +11,7 @@ import readerController from 'reader/controller';
 
 export default function() {
 	page( '/tag/*',
-		readerController.preloadFullPost,
+		readerController.preloadReaderBundle,
 		readerController.loadSubscriptions,
 		readerController.initAbTests
 	);

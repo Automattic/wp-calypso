@@ -17,7 +17,7 @@ function forceTeamA8C( context, next ) {
 module.exports = function() {
 	if ( config.isEnabled( 'reader' ) ) {
 		page( '/',
-			controller.preloadFullPost,
+			controller.preloadReaderBundle,
 			controller.loadSubscriptions,
 			controller.checkForColdStart,
 			controller.initAbTests,
@@ -36,7 +36,7 @@ module.exports = function() {
 		page( '/read/feed', '/' );
 
 		// Feed stream
-		page( '/read/*', controller.preloadFullPost, controller.loadSubscriptions, controller.initAbTests );
+		page( '/read/*', controller.preloadReaderBundle, controller.loadSubscriptions, controller.initAbTests );
 		page( '/read/blog/feed/:feed_id', controller.legacyRedirects );
 		page( '/read/feeds/:feed_id/posts', controller.incompleteUrlRedirects );
 		page( '/read/feeds/:feed_id',

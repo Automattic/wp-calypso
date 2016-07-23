@@ -115,8 +115,8 @@ module.exports = {
 		next();
 	},
 
-	preloadFullPost: function( context, next ) {
-		preload( 'reader-full-post' );
+	preloadMainReaderBundle: function( context, next ) {
+		preload( 'reader' );
 		next();
 	},
 

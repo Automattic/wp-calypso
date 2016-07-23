@@ -11,7 +11,7 @@ import readerController from 'reader/controller';
 
 export default function() {
 	page( '/recommendations/start',
-	readerController.preloadFullPost,
+	readerController.preloadReaderBundle,
 	readerController.loadSubscriptions,
 	readerController.updateLastRoute,
 	readerController.removePost,

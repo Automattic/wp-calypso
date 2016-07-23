@@ -13,7 +13,7 @@ import config from 'config';
 export default function() {
 	// Blog Recommendations
 	page( '/recommendations',
-		readerController.preloadFullPost,
+		readerController.preloadReaderBundle,
 		readerController.loadSubscriptions,
 		readerController.initAbTests,
 		readerController.updateLastRoute,
@@ -25,14 +25,14 @@ export default function() {
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
 	if ( config.isEnabled( 'reader/recommendations/posts' ) ) {
 		page( '/recommendations/posts',
-			readerController.preloadFullPost,
+			readerController.preloadReaderBundle,
 			readerController.loadSubscriptions,
 			readerController.updateLastRoute,
 			readerController.removePost,
 			readerController.sidebar,
 			controller.recommendedPosts );
 		page( '/recommendations/cold',
-			readerController.preloadFullPost,
+			readerController.preloadReaderBundle,
 			readerController.loadSubscriptions,
 			readerController.updateLastRoute,
 			readerController.removePost,
