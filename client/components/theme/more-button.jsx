@@ -11,6 +11,7 @@ import map from 'lodash/map';
  */
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import trackClicks from 'lib/track-clicks';
 import { isOutsideCalypso } from 'lib/url';
 
 /**
@@ -108,4 +109,6 @@ ThemeMoreButton.propTypes = {
 	active: React.PropTypes.bool
 };
 
-export default ThemeMoreButton;
+export default trackClicks(
+	( props ) => ( { themeId: props.theme.id } )
+)( ThemeMoreButton );
