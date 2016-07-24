@@ -75,8 +75,9 @@ const JetpackSSOForm = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_log_in_button_click' );
 
 		const { siteId, ssoNonce } = this.props;
+		const siteUrl = get( this.props, 'blogDetails.URL' );
 		debug( 'Approving sso' );
-		this.props.authorizeSSO( siteId, ssoNonce );
+		this.props.authorizeSSO( siteId, ssoNonce, siteUrl );
 	},
 
 	onCancelClick( event ) {
