@@ -170,7 +170,7 @@ describe( 'actions', () => {
 			it( 'should dispatch validate action when thunk triggered', () => {
 				const { authorizeSSO } = actions;
 
-				authorizeSSO( siteId, ssoNonce )( spy );
+				authorizeSSO( siteId, ssoNonce, ssoUrl )( spy );
 				expect( spy ).to.have.been.calledWith( {
 					siteId: siteId,
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST
@@ -180,9 +180,10 @@ describe( 'actions', () => {
 			it( 'should dispatch receive action when request completes', () => {
 				const { authorizeSSO } = actions;
 
-				return authorizeSSO( siteId, ssoNonce )( spy ).then( () => {
+				return authorizeSSO( siteId, ssoNonce, ssoUrl )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						ssoUrl,
+						siteUrl: ssoUrl,
 						type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS
 					} );
 				} );
@@ -212,7 +213,7 @@ describe( 'actions', () => {
 			it( 'should dispatch receive action when request completes', () => {
 				const { authorizeSSO } = actions;
 
-				return authorizeSSO( siteId, ssoNonce )( spy ).then( () => {
+				return authorizeSSO( siteId, ssoNonce, ssoUrl )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						error: {
 							error: 'invalid_input',
