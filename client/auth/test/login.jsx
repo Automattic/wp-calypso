@@ -4,7 +4,8 @@
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import identity from 'lodash/identity';
-import { stub, useFakeTimers } from 'sinon';
+import { stub } from 'sinon';
+import { EVERY_FIVE_SECONDS } from 'lib/interval';
 
 /**
  * Internal dependencies
@@ -24,10 +25,6 @@ describe( 'LoginTest', function() {
 			pushAuthLogin: pushAuthLoginStub
 		} );
 	} );
-
-	let clock;
-	before( () => clock = useFakeTimers() );
-	after( () => clock.restore() );
 
 	beforeEach( () => {
 		loginStub.reset();
@@ -83,5 +80,34 @@ describe( 'LoginTest', function() {
 		expect( page.find( { name: 'login' } ).props().disabled ).to.be.true;
 		expect( page.find( { name: 'password' } ).props().disabled ).to.be.true;
 		expect( page.find( { name: 'use_auth_code' } ).length ).to.equal( 1 );
+	} );
+
+	it( 'verifying of push authentication calls push auth login', function() {
+		const pushauth = { push_token: 'foo', user_id: 1234 };
+		page.setState( { login: 'test', password: 'pass', auth: { required2faType: 'push-verification', pushauth } } );
+
+		page.instance().verifyPushAuthentication();
+
+		expect( pushAuthLoginStub ).to.have.been.calledOnce;
+		expect( pushAuthLoginStub.calledWith( 'test', 'pass', pushauth ) ).to.be.true;
+	} );
+
+	it( 'polls for push token validation', function() {
+		const pushauth = { push_token: 'foo', user_id: 1234 };
+		page.setState( { login: 'test', password: 'pass', auth: { required2faType: 'push-verification', pushauth } } );
+
+		const interval = page.find( 'Interval' );
+		expect( interval ).to.have.length( 1 );
+		expect( interval.props().onTick ).to.equal( page.instance().verifyPushAuthentication );
+		expect( interval.props().period ).to.equal( EVERY_FIVE_SECONDS );
+	} );
+
+	it( 'stops polling upon switch to OTP code mode', function() {
+		const pushauth = { push_token: 'foo', user_id: 1234 };
+		page.setState( { login: 'test', password: 'pass', auth: { required2faType: 'push-verification', pushauth } } );
+
+		page.setState( { auth: { required2faType: 'code' } } );
+
+		expect( page.find( 'Interval' ) ).to.have.length( 0 );
 	} );
 } );
