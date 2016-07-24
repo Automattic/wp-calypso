@@ -33,6 +33,7 @@ import Gridicon from 'components/gridicon';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
+import MainWrapper from './main-wrapper';
 
 /*
  * Module variables
@@ -388,7 +389,7 @@ const JetpackSSOForm = React.createClass( {
 		}
 
 		return (
-			<Main className="jetpack-connect">
+			<MainWrapper>
 				<div className="jetpack-connect__sso">
 					<ConnectHeader
 						showLogo={ false }
@@ -446,7 +447,7 @@ const JetpackSSOForm = React.createClass( {
 				</div>
 
 				{ this.renderSharedDetailsDialog() }
-			</Main>
+			</MainWrapper>
 		);
 	}
 } );

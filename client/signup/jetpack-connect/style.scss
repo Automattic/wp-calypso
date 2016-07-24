@@ -1,4 +1,6 @@
-.jetpack-connect {
+// @TODO: Remove .jetpack-connect once we cleared out all instances
+.jetpack-connect,
+.jetpack-connect__main {
 	max-width: 400px;
 
 	.logged-out-form__links {
@@ -12,7 +14,6 @@
 		}
 
 	}
-
 }
 
 .jetpack-connect-wide {
