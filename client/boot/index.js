@@ -238,18 +238,18 @@ function reduxStoreReady( reduxStore ) {
 			//Save data to JS error logger
 			errorLogger.saveDiagnosticData( {
 				user_id: user.get().ID,
-				env: config( 'env_id' )
+				calypso_env: config( 'env_id' )
 			} );
-			errorLogger.saveDiagnosticData( function() {
+			errorLogger.saveDiagnosticReducer( function() {
 				const state = reduxStore.getState();
 				return {
 					blog_id: getSelectedSiteId( state ),
-					section: getSectionName( state )
+					calypso_section: getSectionName( state )
 				};
 			} );
-			errorLogger.saveDiagnosticData( () => ( { tests: getSavedVariations() } ) );
-			analytics.on( 'record-event', ( eventName, eventProperties ) => errorLogger.saveDiagnosticData( { lastTracksEvent: eventProperties } ) );
-			analytics.on( 'page-view', ( urlPath ) => errorLogger.saveDiagnosticData( { path: urlPath } ) );
+			errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
+			analytics.on( 'record-event', ( eventName, eventProperties ) => errorLogger.saveExtraData( { lastTracksEvent: eventProperties } ) );
+			analytics.on( 'page-view', ( urlPath ) => errorLogger.saveDiagnosticData( { calypso_path: urlPath } ) );
 		}
 	}
 

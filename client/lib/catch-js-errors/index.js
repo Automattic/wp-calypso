@@ -15,7 +15,9 @@ function isLocalStorageNameSupported() {
 
 export default class ErrorLogger {
 	constructor() {
-		this.diagnosticData = {};
+		this.diagnosticData = {
+			extra: {}
+		};
 		this.diagnosticReducers = [];
 		if ( isLocalStorageNameSupported() && ! window.onerror ) {
 			const assignment = Math.random();
@@ -51,10 +53,6 @@ export default class ErrorLogger {
 						trace: errorReport.stack,
 					};
 
-					if ( window.navigator && window.navigator.userAgent ) {
-						error.browser = window.navigator.userAgent;
-					}
-
 					this.diagnose();
 					this.sendToApi( Object.assign( error, this.diagnosticData ) );
 				} );
@@ -76,22 +74,31 @@ export default class ErrorLogger {
 		}
 	}
 
+	saveDiagnosticReducer( data ) {
+		this.diagnosticReducers.push( data );
+	}
+
 	saveDiagnosticData( data ) {
-		if ( typeof data === 'function' ) {
-			this.diagnosticReducers.push( data );
-		} else if ( typeof data === 'object' ) {
+		if ( typeof data.extra === 'object' ) {
+			this.saveExtraData( data );
+		} else {
 			Object.assign( this.diagnosticData, data );
 		}
+	}
+
+	saveExtraData( data ) {
+		Object.assign( this.diagnosticData.extra, data );
 	}
 
 	diagnose() {
 		this.diagnosticReducers.forEach( diagnosticReducer => {
 			try {
-				Object.assign( this.diagnosticData, diagnosticReducer() );
+				this.saveDiagnosticData( diagnosticReducer() );
 			} catch ( e ) {
 				console.warn( 'diagnostic', this.diagnosticData );
 			}
 		} );
+
 		return this.diagnosticData;
 	}
 
