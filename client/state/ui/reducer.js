@@ -22,7 +22,6 @@ import queryArguments from './query-arguments/reducer';
 import reader from './reader/reducer';
 import olark from './olark/reducer';
 import actionLog from './action-log/reducer';
-import firstView from './first-view/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -114,7 +113,6 @@ const reducer = combineReducers( {
 	reader,
 	olark,
 	actionLog,
-	firstView,
 } );
 
 export default function( state, action ) {
