@@ -7,11 +7,17 @@ import React from 'react';
  * Internal dependencies
  */
 import ExternalLink from 'components/external-link';
-import { recordPermalinkClick } from 'reader/stats';
+import { recordPermalinkClick, recordGaEvent } from 'reader/stats';
+import PostTime from 'reader/post-time';
 
 const ReaderFullPostHeader = ( { post } ) => {
 	const handlePermalinkClick = ( { } ) => {
 		recordPermalinkClick( 'full_post_title' );
+	};
+
+	const recordDateClick = ( { } ) => {
+		recordPermalinkClick( 'timestamp' );
+		recordGaEvent( 'Clicked Post Permalink', 'timestamp' );
 	};
 
 	return (
@@ -23,6 +29,17 @@ const ReaderFullPostHeader = ( { post } ) => {
 					</ExternalLink>
 				</h1>
 				: null }
+			<ul className="reader-full-post-header__meta">
+				{ post.date && post.URL
+					? <li className="reader-full-post-header__date">
+						<a className="reader-full-post-header__date-link"
+							onClick={ recordDateClick }
+							href={ post.URL }
+							target="_blank">
+							<PostTime date={ post.date } />
+						</a>
+					</li> : null }
+			</ul>
 		</div>
 	);
 };

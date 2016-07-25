@@ -21,3 +21,35 @@
 		color: $gray-dark;
 	}
 }
+
+.reader-full-post-header__meta {
+	list-style: none;
+	margin: 0;
+
+	li {
+		margin: 0 16px 0 0;
+		display: inline-block;
+		color: $gray;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 440px;
+
+		@include breakpoint( "<480px" ) {
+			max-width: 180px;
+		}
+
+		a {
+			text-decoration: none;
+			color: $gray;
+
+			&:hover {
+				color: $gray-dark;
+			}
+		}
+
+		&:last-child {
+			margin: 0;
+		}
+	}
+}

@@ -17,7 +17,8 @@ module.exports = React.createClass( {
 	render() {
 		const post = {
 			title: 'Spring Harvest 2016',
-			URL: 'http://wordpress.com'
+			URL: 'http://wordpress.com',
+			date: '2016-07-25T00:00:00+02:00'
 		};
 
 		return (
