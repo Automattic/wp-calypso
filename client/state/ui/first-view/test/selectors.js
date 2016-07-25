@@ -34,7 +34,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isViewEnabled()', () => {
-		it( 'should return true if the view has a first view and it is not disabled', () => {
+		it( 'should return true if the preferences have been fetched, the view has a first view, and it is not disabled', () => {
 			const viewEnabled = isViewEnabled( {
 				preferences: {
 					values: {
@@ -45,19 +45,21 @@ describe( 'selectors', () => {
 								disabled: false
 							}
 						]
-					}
+					},
+					lastFetchedTimestamp: 123456,
 				}
 			}, 'stats' );
 
 			expect( viewEnabled ).to.be.true;
 		} );
 
-		it( 'should return true if the history is empty', () => {
+		it( 'should return true if preferences have been fetched and the history is empty', () => {
 			const viewEnabled = isViewEnabled( {
 				preferences: {
 					values: {
 						firstViewHistory: []
-					}
+					},
+					lastFetchedTimestamp: 123456,
 				}
 			}, 'stats' );
 
@@ -75,7 +77,8 @@ describe( 'selectors', () => {
 								disabled: true
 							}
 						]
-					}
+					},
+					lastFetchedTimestamp: 123456,
 				}
 			}, 'stats' );
 
@@ -87,12 +90,26 @@ describe( 'selectors', () => {
 				preferences: {
 					values: {
 						firstViewHistory: []
-					}
+					},
+					lastFetchedTimestamp: 123456,
 				}
 			}, 'devdocs' );
 
 			expect( viewEnabled ).to.be.false;
 		} );
+
+		it( 'should return false if the preferences haven\'t been fetched', () => {
+			const viewEnabled = isViewEnabled( {
+				preferences: {
+					values: {
+						firstViewHistory: []
+					},
+					lastFetchedTimestamp: false,
+				}
+			}, 'stats' );
+
+			expect( viewEnabled ).to.be.false;
+		} )
 	} );
 
 	describe( '#wasFirstViewHiddenSinceEnteringCurrentSection()', () => {

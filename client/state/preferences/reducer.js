@@ -34,8 +34,12 @@ export const fetching = createReducer( false, {
 	[ PREFERENCES_FETCH_FAILURE ]: () => false,
 	[ PREFERENCES_FETCH ]: () => true,
 } );
+const lastFetchedTimestamp = createReducer( false, {
+	[ PREFERENCES_FETCH_SUCCESS ]: () => Date.now(),
+} );
 
 export default combineReducers( {
 	values,
-	fetching
+	fetching,
+	lastFetchedTimestamp,
 } );
