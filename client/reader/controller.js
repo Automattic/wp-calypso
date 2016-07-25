@@ -115,7 +115,7 @@ module.exports = {
 		next();
 	},
 
-	preloadMainReaderBundle: function( context, next ) {
+	preloadReaderBundle: function( context, next ) {
 		preload( 'reader' );
 		next();
 	},
