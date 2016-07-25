@@ -15,7 +15,8 @@ var React = require( 'react' ),
 	qs = require( 'querystring' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
 	i18n = require( 'i18n-calypso' ),
-	isEmpty = require( 'lodash/isEmpty' );
+	isEmpty = require( 'lodash/isEmpty' ),
+	includes = require( 'lodash/includes' );
 
 /**
  * Internal dependencies
@@ -51,6 +52,7 @@ var config = require( 'config' ),
 	supportUser = require( 'lib/user/support-user-interop' ),
 	isSectionIsomorphic = require( 'state/ui/selectors' ).isSectionIsomorphic,
 	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
+	getSectionName = require( 'state/ui/selectors' ).getSectionName,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
@@ -383,15 +385,13 @@ function reduxStoreReady( reduxStore ) {
 	 * Layouts with differing React mount-points will not reconcile correctly,
 	 * so remove an existing single-tree layout by re-rendering if necessary.
 	 *
-	 * TODO (@seear): React 15's new reconciliation algo may make this unnecessary
+	 * TODO (@seear): Calypso-wide single tree rendering make this unnecessary
 	 */
 	page( '*', function( context, next ) {
-		const sectionNotIsomorphic = ! isSectionIsomorphic( context.store.getState() );
-		const previousLayoutIsSingleTree = ! isEmpty(
-			document.getElementsByClassName( 'wp-singletree-layout' )
-		);
+		const singleTreeSections = [ 'theme', 'themes' ];
+		const sectionName = getSectionName( context.store.getState() );
 
-		if ( sectionNotIsomorphic && previousLayoutIsSingleTree ) {
+		if ( includes( singleTreeSections, sectionName ) ) {
 			debug( 'Re-rendering multi-tree layout' );
 			renderLayout( context.store );
 		}
