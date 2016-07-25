@@ -177,7 +177,7 @@ Layout = React.createClass( {
 			} );
 
 		return (
-			<div className={ sectionClass }>
+			<div className={ sectionClass } key={ this.props.section.name }>
 				{ config.isEnabled( 'guided-tours' ) ? <GuidedTours /> : null }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
