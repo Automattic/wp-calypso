@@ -21,7 +21,7 @@ import FormLabel from 'components/forms/form-label';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Button from 'components/button';
-import { isJetpackMinimumVersion } from 'state/sites/selectors';
+import { isJetpackModuleActive, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
@@ -62,7 +62,8 @@ const SiteSettingsFormWriting = React.createClass( {
 	isCustomPostTypesSettingsEnabled() {
 		return (
 			config.isEnabled( 'manage/custom-post-types' ) &&
-			false !== this.props.jetpackVersionSupportsCustomTypes
+			false !== this.props.jetpackVersionSupportsCustomTypes &&
+			false !== this.props.jetpackCustomTypesModuleActive
 		);
 	},
 
@@ -200,6 +201,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			jetpackCustomTypesModuleActive: isJetpackModuleActive( state, siteId, 'custom-content-types' ),
 			jetpackVersionSupportsCustomTypes: isJetpackMinimumVersion( state, siteId, '4.2.0' )
 		};
 	},
