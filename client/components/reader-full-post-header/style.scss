@@ -1,0 +1,23 @@
+.reader-full-post-header__title {
+	clear: none;
+	font-family: $serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-weight: 700;
+	font-size: 28px;
+	line-height: 1.416;
+	color: $gray-dark;
+	margin: 24px 0 8px 0;
+	max-width: 750px;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+
+	@include breakpoint( "<480px" ) {
+		font-size: 18px;
+		line-height: 1.3;
+	}
+
+	.reader-full-post-header__title-link, .reader-full-post-header__title-link:hover {
+		color: $gray-dark;
+	}
+}
