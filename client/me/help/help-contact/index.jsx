@@ -24,7 +24,9 @@ import siteList from 'lib/sites-list';
 import analytics from 'lib/analytics';
 import i18n from 'lib/i18n-utils';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
+import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import QueryOlark from 'components/data/query-olark';
+import HelpUnverifiedWarning from '../help-unverified-warning';
 
 /**
  * Module variables
@@ -437,6 +439,7 @@ const HelpContact = React.createClass( {
 		return (
 			<Main className="help-contact">
 				<HeaderCake onClick={ this.backToHelp } isCompact={ true }>{ this.translate( 'Contact Us' ) }</HeaderCake>
+				{ ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
 				<Card className={ this.canShowChatbox() ? 'help-contact__chat-form' : 'help-contact__form' }>
 					{ this.getView() }
 				</Card>
@@ -449,7 +452,8 @@ const HelpContact = React.createClass( {
 export default connect(
 	( state ) => {
 		return {
-			olarkTimedOut: isOlarkTimedOut( state )
+			olarkTimedOut: isOlarkTimedOut( state ),
+			isEmailVerified: isCurrentUserEmailVerified( state ),
 		};
 	}
 )( HelpContact );

@@ -103,3 +103,13 @@ export function canCurrentUser( state, siteId, capability ) {
 export function currentUserHasFlag( state, flagName ) {
 	return state.currentUser.flags.indexOf( flagName ) !== -1;
 }
+
+/**
+ * Returns true if the current user is email-verified.
+ *
+ * @param {Object} state Global state tree
+ * @returns {boolean Whether the current user is email-verified.
+ */
+export function isCurrentUserEmailVerified( state ) {
+	return state.currentUser.email_verified;
+}
