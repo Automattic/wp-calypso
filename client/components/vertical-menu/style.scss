@@ -15,6 +15,8 @@
 	font-size: 13px;
 	font-weight: 200;
 
+	cursor: pointer;
+
 	justify-content: flex-start;
 	align-items: center;
 
@@ -26,6 +28,10 @@
 
 	&:last-child {
 		border-bottom: 1px solid lighten( $gray, 20% );
+	}
+
+	&:not(.is-selected):hover {
+		color: $blue-medium;
 	}
 }
 
