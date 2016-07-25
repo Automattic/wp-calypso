@@ -31,6 +31,7 @@
 		"ad-tracking": false,
 		"brazil-survey-invitation": false,
 		"code-splitting": true,
+		"catch-js-errors": true,
 		"community-translator": true,
 		"desktop-promo": true,
 		"devdocs": true,

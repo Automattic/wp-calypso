@@ -54,8 +54,8 @@ var config = require( 'config' ),
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
-import { saveDiagnosticData } from 'lib/catch-js-errors/';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
+import { getSavedVariations } from 'lib/abtest';
 
 function init() {
 	var i18nLocaleStringsObject = null;
@@ -232,15 +232,25 @@ function reduxStoreReady( reduxStore ) {
 	if ( ! isIsomorphic || user.get() ) {
 		renderLayout( reduxStore );
 
-		//Save data to JS error logger
-		saveDiagnosticData( { user_id: user.get().ID } );
-		saveDiagnosticData( function() {
-			const state = reduxStore.getState();
-			return {
-				blog_id: getSelectedSiteId( state ),
-				section: getSectionName( state )
-			};
-		} );
+		if ( config.isEnabled( 'catch-js-errors' ) ) {
+			const Logger = require( 'lib/catch-js-errors' );
+			const errorLogger = new Logger();
+			//Save data to JS error logger
+			errorLogger.saveDiagnosticData( {
+				user_id: user.get().ID,
+				env: config( 'env_id' )
+			} );
+			errorLogger.saveDiagnosticData( function() {
+				const state = reduxStore.getState();
+				return {
+					blog_id: getSelectedSiteId( state ),
+					section: getSectionName( state )
+				};
+			} );
+			errorLogger.saveDiagnosticData( () => ( { tests: getSavedVariations() } ) );
+			analytics.on( 'record-event', ( eventName, eventProperties ) => errorLogger.saveDiagnosticData( { lastTracksEvent: eventProperties } ) );
+			analytics.on( 'page-view', ( urlPath ) => errorLogger.saveDiagnosticData( { path: urlPath } ) );
+		}
 	}
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
