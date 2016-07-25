@@ -11,7 +11,6 @@ import {
 	getGuidedTourState,
 	findEligibleTour,
 } from '../selectors';
-import guidedToursConfig from 'layout/guided-tours/config';
 
 describe( 'selectors', () => {
 	describe( '#getGuidedTourState()', () => {
@@ -34,38 +33,13 @@ describe( 'selectors', () => {
 
 			expect( tourState ).to.deep.equal( { shouldShow: false, stepConfig: false, nextStepConfig: false } );
 		} );
-
-		// disabled because tours are now selected via `findEligibleTour`,
-		// rather than direct guidedTour state
-		xit( 'should include the config of the current tour step', () => {
-			const tourState = getGuidedTourState( {
-				ui: {
-					guidedTour: {
-						stepName: 'sidebar',
-						shouldShow: true,
-						tour: 'main',
-					},
-					actionLog: [],
-				},
-				preferences: {
-					values: {
-						'guided-tours-history': [],
-					},
-				},
-			} );
-
-			const stepConfig = guidedToursConfig.get( 'main' ).sidebar;
-
-			expect( tourState ).to.deep.equal( Object.assign( {}, tourState, {
-				stepConfig
-			} ) );
-		} );
 	} );
 	describe( '#findEligibleTour()', () => {
 		const makeState = ( {
 			actionLog = [],
 			toursHistory = [],
 			queryArguments = {},
+			userData = {},
 		} ) => ( {
 			ui: {
 				actionLog,
@@ -76,6 +50,15 @@ describe( 'selectors', () => {
 			preferences: {
 				values: {
 					'guided-tours-history': toursHistory,
+				},
+			},
+			currentUser: { id: 1337 },
+			users: {
+				items: {
+					1337: {
+						date: '2015-11-20T00:00:00+00:00',
+						...userData,
+					},
 				},
 			},
 		} );
@@ -154,6 +137,19 @@ describe( 'selectors', () => {
 			const tour = findEligibleTour( state );
 
 			expect( tour ).to.equal( undefined );
+		} );
+		it( 'should respect tour contexts', () => {
+			const state = makeState( {
+				actionLog: [ navigateToThemes ],
+				userData: { date: ( new Date() ).toJSON() }, // user was created just now
+			} );
+			const tour = findEligibleTour( state );
+
+			// Even though we navigated to `/themes`, this counts as navigating
+			// to `/`, and `state` satisfies `main`'s context that the user
+			// should be a new user. In our config, `main` is declared before
+			// `themes`, so the selector should prefer the former.
+			expect( tour ).to.equal( 'main' );
 		} );
 		it( 'shouldn\'t show a requested tour twice', () => {
 			/*

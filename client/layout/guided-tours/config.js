@@ -11,13 +11,15 @@ import config from 'config';
  * Internal dependencies
  */
 import { getSelectedSite, isPreviewShowing } from 'state/ui/selectors';
+import { isNewUser } from 'state/ui/guided-tours/selectors';
 
 const tours = {
 	main: {
 		meta: {
 			version: '20160601',
 			path: '/',
-			context: () => false,
+			// don't enable this in production (yet)
+			context: ( state ) => 'production' !== config( 'env' ) && isNewUser( state ),
 		},
 		init: {
 			text: i18n.translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place, and give you some ideas for what to do next.", {
