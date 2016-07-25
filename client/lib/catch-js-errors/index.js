@@ -20,7 +20,6 @@ export default class ErrorLogger {
 				previousPaths: []
 			}
 		};
-		window.d = () => this.diagnose();
 		this.diagnosticReducers = [];
 		if ( isLocalStorageNameSupported() && ! window.onerror ) {
 			const assignment = Math.random();
