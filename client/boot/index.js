@@ -14,8 +14,7 @@ var React = require( 'react' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
-	i18n = require( 'i18n-calypso' ),
-	isEmpty = require( 'lodash/isEmpty' );
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
@@ -173,7 +172,7 @@ function boot() {
 }
 
 function renderLayout( reduxStore ) {
-	let props = { focus: layoutFocus };
+	const props = { focus: layoutFocus };
 
 	if ( user.get() ) {
 		Object.assign( props, { user, sites, nuxWelcome, translatorInvitation } );
@@ -190,8 +189,8 @@ function renderLayout( reduxStore ) {
 }
 
 function reduxStoreReady( reduxStore ) {
-	let layoutSection, validSections = [],
-		isIsomorphic = isSectionIsomorphic( reduxStore.getState() );
+	const isIsomorphic = isSectionIsomorphic( reduxStore.getState() );
+	let layoutSection, validSections = [];
 
 	bindWpLocaleState( reduxStore );
 
@@ -206,7 +205,6 @@ function reduxStoreReady( reduxStore ) {
 		reduxStore.dispatch( receiveUser( user.get() ) );
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
 		reduxStore.dispatch( setCurrentUserFlags( user.get().meta.data.flags.active_flags ) );
-
 
 		const participantInPushNotificationsAbTest = config.isEnabled('push-notifications-ab-test') && abtest('browserNotifications') === 'enabled';
 		if ( config.isEnabled( 'push-notifications' ) || participantInPushNotificationsAbTest ) {
@@ -378,25 +376,6 @@ function reduxStoreReady( reduxStore ) {
 	if ( config.isEnabled( 'dev/test-helper' ) && document.querySelector( '.environment.is-tests' ) ) {
 		require( 'lib/abtest/test-helper' )( document.querySelector( '.environment.is-tests' ) );
 	}
-
-	/*
-	 * Layouts with differing React mount-points will not reconcile correctly,
-	 * so remove an existing single-tree layout by re-rendering if necessary.
-	 *
-	 * TODO (@seear): React 15's new reconciliation algo may make this unnecessary
-	 */
-	page( '*', function( context, next ) {
-		const sectionNotIsomorphic = ! isSectionIsomorphic( context.store.getState() );
-		const previousLayoutIsSingleTree = ! isEmpty(
-			document.getElementsByClassName( 'wp-singletree-layout' )
-		);
-
-		if ( sectionNotIsomorphic && previousLayoutIsSingleTree ) {
-			debug( 'Re-rendering multi-tree layout' );
-			renderLayout( context.store );
-		}
-		next();
-	} );
 
 	detectHistoryNavigation.start();
 	page.start();

@@ -23,11 +23,10 @@ const LayoutLoggedOut = ( {
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
 		'has-no-sidebar': true, // Logged-out never has a sidebar
-		'wp-singletree-layout': !! primary,
 	} );
 
 	return (
-		<div className={ classes }>
+		<div className={ classes } key={ section.name }>
 			<MasterbarLoggedOut title={ section.title } />
 			<div id="content" className="layout__content">
 				<div id="primary" className="layout__primary">
