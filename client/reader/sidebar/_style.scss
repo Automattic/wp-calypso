@@ -11,10 +11,6 @@
 			.sidebar__menu-action .gridicon,
 			.sidebar-dynamic-menu-action-icon {
 				fill: $gray;
-
-				@include breakpoint( ">480px" ) {
-					fill: $white;
-				}
 			}
 
 			.sidebar-streams__edit-icon {
