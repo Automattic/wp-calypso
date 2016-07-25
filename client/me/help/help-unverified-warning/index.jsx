@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import userFactory from 'lib/user';
 
@@ -52,7 +51,7 @@ class HelpUnverifiedWarning extends Component {
 				resendState: RESEND_IN_PROGRESS,
 			} );
 
-			this.props.sendVerificationEmail()
+			user.sendVerificationEmail()
 				.then( () => {
 					const nextResendState = RESEND_SUCCESS;
 
@@ -82,9 +81,4 @@ class HelpUnverifiedWarning extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		return {
-			sendVerificationEmail: user.sendVerificationEmail,
-		};
-} )( localize( HelpUnverifiedWarning ) );
+export default localize( HelpUnverifiedWarning );
