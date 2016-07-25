@@ -40,6 +40,11 @@
 	@include breakpoint( ">960px" ) {
 		padding-left: ( $sidebar-width-max + 32px );
 	}
+
+	@include breakpoint-height( "<480px" ) {
+		padding: 0;
+		margin: 47px 0;
+	}
 }
 
 .first-view__content {
@@ -81,6 +86,16 @@
 			border-bottom: 1px solid lighten( $gray, 30 );
 			padding: 16px 0;
 			margin: -20px -24px 24px -24px;
+
+			@include breakpoint-height( "<480px" ) {
+				display: none;
+			}
+
+			@include breakpoint-height( "<660px" ) {
+				width: calc( 100% + 80px );
+				margin: -34px -40px 40px -40px;
+				zoom: 0.6;
+			}
 		}
 
 		svg {
