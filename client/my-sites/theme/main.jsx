@@ -127,11 +127,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getFullLengthScreenshot() {
-		/**
-		 * Location of full length theme screenshot in screenshots array
-		 * depends on themes API v1.2 screenshots field
-		 */
-		if( this.isLoaded() ) {
+		if ( this.isLoaded() ) {
 			return this.props.screenshots[ 0 ];
 		}
 		return '';
