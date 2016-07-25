@@ -15,7 +15,6 @@ var React = require( 'react' ),
 	qs = require( 'querystring' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
 	i18n = require( 'i18n-calypso' ),
-	isEmpty = require( 'lodash/isEmpty' ),
 	includes = require( 'lodash/includes' );
 
 /**
