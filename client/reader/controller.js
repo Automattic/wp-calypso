@@ -14,56 +14,27 @@ import defer from 'lodash/defer';
  */
 import abtest from 'lib/abtest';
 import route from 'lib/route';
-import pageNotifier from 'lib/route/page-notifier';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from './controller-helper';
-import TitleStore from 'lib/screen-title/store';
-import titleActions from 'lib/screen-title/actions';
-import { hideReaderFullPost } from 'state/ui/reader/fullpost/actions';
+import FeedError from 'reader/feed-error';
 import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
 import {
 	getPrettyFeedUrl,
 	getPrettySiteUrl
 } from 'reader/route';
 import { recordTrack } from 'reader/stats';
-import FeedError from 'reader/feed-error';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { requestGraduate } from 'state/reader/start/actions';
 import { isRequestingGraduation } from 'state/reader/start/selectors';
+import { hideReaderFullPost } from 'state/ui/reader/fullpost/actions';
+import { preload } from 'sections-preload';
 
 const analyticsPageTitle = 'Reader';
 
-// This holds the last title set on the page. Removing the overlay doesn't trigger a re-render, so we need a way to
-// reset it
-let __lastTitle = null;
 const activeAbTests = [
 	// active tests would go here
 ];
 let lastRoute = null;
-
-// Listen for route changes and remove the full post dialog when we navigate away from it
-pageNotifier( function removeFullPostOnLeave( newContext, oldContext ) {
-	const fullPostViewRegex = /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i;
-
-	if ( ( ! oldContext || oldContext.path.match( fullPostViewRegex ) ) && ! newContext.path.match( fullPostViewRegex ) ) {
-		newContext.store.dispatch( hideReaderFullPost() );
-	}
-} );
-
-function removeFullPostDialog() {
-	ReactDom.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
-}
-
-function renderPostNotFound() {
-	var sidebarAndPageTitle = i18n.translate( 'Post not found' );
-
-	setPageTitle( sidebarAndPageTitle );
-
-	ReactDom.render(
-		<FeedError sidebarTitle={ sidebarAndPageTitle } message={ i18n.translate( 'Post Not Found' ) } />,
-		document.getElementById( 'primary' )
-	);
-}
 
 function userHasHistory( context ) {
 	return !! context.lastRoute;
@@ -141,6 +112,11 @@ module.exports = {
 			return page.redirect( redirect );
 		}
 
+		next();
+	},
+
+	preloadReaderBundle: function( context, next ) {
+		preload( 'reader' );
 		next();
 	},
 
@@ -319,76 +295,6 @@ module.exports = {
 				showBack: userHasHistory( context )
 			} ),
 			document.getElementById( 'primary' )
-		);
-	},
-
-	feedPost: function( context ) {
-		var FullPostDialog = require( 'reader/full-post' ),
-			feedId = context.params.feed,
-			postId = context.params.post,
-			basePath = '/read/feeds/:feed_id/posts/:feed_item_id',
-			fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
-
-		__lastTitle = TitleStore.getState().title;
-
-		trackPageLoad( basePath, fullPageTitle, 'full_post' );
-
-		// this will automatically unmount anything that was already mounted
-		// in #tertiary, so we don't have to check the current state of
-		// __fullPostInstance before making another
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( FullPostDialog, {
-					feedId: feedId,
-					postId: postId,
-					setPageTitle: setPageTitle,
-					onClose: function() {
-						page.back( context.lastRoute || '/' );
-					},
-					onClosed: removeFullPostDialog,
-					onPostNotFound: renderPostNotFound
-				} )
-			),
-			document.getElementById( 'tertiary' )
-		);
-	},
-
-	resetTitle: function( context, next ) {
-		if ( __lastTitle ) {
-			titleActions.setTitle( __lastTitle );
-			__lastTitle = null;
-		}
-		next();
-	},
-
-	blogPost: function( context ) {
-		var FullPostDialog = require( 'reader/full-post' ),
-			blogId = context.params.blog,
-			postId = context.params.post,
-			basePath = '/read/blogs/:blog_id/posts/:post_id',
-			fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
-
-		__lastTitle = TitleStore.getState().title;
-
-		trackPageLoad( basePath, fullPageTitle, 'full_post' );
-
-		// this will automatically unmount anything that was already mounted
-		// in #tertiary, so we don't have to check the current state
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( FullPostDialog, {
-					blogId: blogId,
-					postId: postId,
-					context: context,
-					setPageTitle: setPageTitle,
-					onClose: function() {
-						page.back( context.lastRoute || '/' );
-					},
-					onClosed: removeFullPostDialog,
-					onPostNotFound: renderPostNotFound
-				} )
-			),
-			document.getElementById( 'tertiary' )
 		);
 	},
 
