@@ -11,6 +11,7 @@ import i18n from 'i18n-calypso';
 import { getName, isRefundable, isSubscription, isOneTimePurchase } from 'lib/purchases';
 import { isDomainRegistration, isDomainMapping } from 'lib/products-values';
 import { getIncludedDomainPurchase } from 'state/purchases/selectors';
+import support from 'lib/url/support';
 
 const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } ) => {
 	const { refundPeriodInDays } = purchase;
@@ -34,13 +35,16 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 					'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ' +
 					'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan minus ' +
 					'%(mappingCost)s for the domain mapping. To cancel the domain mapping with the ' +
-					'plan and ask for a full refund, please contact support.',
+					'plan and ask for a full refund, please {{contactLink}}contact support{{/contactLink}}.',
 					{
 						args: {
 							mappedDomain: includedDomainPurchase.meta,
 							mappingCost: includedDomainPurchase.priceText,
 							planCost: purchase.priceText,
 							refundAmount: purchase.refundText
+						},
+						components: {
+							contactLink: <a href={ support.CALYPSO_CONTACT } />
 						}
 					}
 				);
@@ -50,13 +54,16 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 					'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ' +
 					'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
 					'minus %(domainCost)s for the domain.  To cancel the domain with the plan and ask for a full ' +
-					'refund, please contact support.',
+					'refund, please {{contactLink}}contact support{{/contactLink}}.',
 					{
 						args: {
 							domain: includedDomainPurchase.meta,
 							domainCost: includedDomainPurchase.priceText,
 							planCost: purchase.priceText,
 							refundAmount: purchase.refundText
+						},
+						components: {
+							contactLink: <a href={ support.CALYPSO_CONTACT } />
 						}
 					}
 				);
