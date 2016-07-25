@@ -8,7 +8,6 @@ const debug = debugFactory( 'calypso:sync-handler:whitelist' );
 const whitelist = [
 	/^\/wpcom\/v\d\/timezones/,
 	/^\/me\/posts$/,
-	/^\/me\/settings/,
 	/^\/sites\/[\w.]+\/posts$/
 ];
 
@@ -18,7 +17,7 @@ export const isWhitelisted = params => {
 	if ( params.method && 'get' !== params.method.toLowerCase() ) {
 		debug( 'Do not allow %o request', params.method, params );
 		return false;
-	};
+	}
 
 	for ( let i = 0; i < whitelist.length; i++ ) {
 		if ( whitelist[ i ].test( path ) ) {
@@ -30,4 +29,4 @@ export const isWhitelisted = params => {
 	debug( '%o is not whitelisted', path );
 
 	return false;
-}
+};
