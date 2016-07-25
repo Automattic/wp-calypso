@@ -36,6 +36,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
+import { hasSidebar } from 'state/ui/selectors';
 import DesignPreview from 'my-sites/design-preview';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
@@ -90,7 +91,7 @@ Layout = React.createClass( {
 	},
 
 	renderPushNotificationPrompt: function() {
-		const participantInAbTest = config.isEnabled('push-notifications-ab-test') && abtest('browserNotifications') === 'enabled';
+		const participantInAbTest = config.isEnabled( 'push-notifications-ab-test' ) && abtest( 'browserNotifications' ) === 'enabled';
 		if ( ! config.isEnabled( 'push-notifications' ) && ! participantInAbTest ) {
 			return null;
 		}
@@ -120,22 +121,18 @@ Layout = React.createClass( {
 	},
 
 	renderWelcome: function() {
-		var translatorInvitation = this.props.translatorInvitation,
-			showInvitation,
-			showWelcome,
-			newestSite,
-			disablePollInvitation;
+		const translatorInvitation = this.props.translatorInvitation;
 
 		if ( ! this.props.user ) {
 			return null;
 		}
 
-		showWelcome = this.props.nuxWelcome.getWelcome();
-		newestSite = this.newestSite();
-		showInvitation = ! showWelcome &&
+		const showWelcome = this.props.nuxWelcome.getWelcome();
+		const newestSite = this.newestSite();
+		const showInvitation = ! showWelcome &&
 				translatorInvitation.isPending() &&
 				translatorInvitation.isValidSection( this.props.section.name );
-		disablePollInvitation = showWelcome || showInvitation;
+		const disablePollInvitation = showWelcome || showInvitation;
 
 		return (
 			<span>
@@ -163,13 +160,13 @@ Layout = React.createClass( {
 	},
 
 	render: function() {
-		var sectionClass = classnames(
+		const sectionClass = classnames(
 				'layout',
 				`is-group-${this.props.section.group}`,
 				`is-section-${this.props.section.name}`,
 				`focus-${this.props.focus.getCurrent()}`,
 				{ 'is-support-user': this.props.isSupportUser },
-				{ 'has-no-sidebar': ! this.props.section.secondary }
+				{ 'has-no-sidebar': ! this.props.hasSidebar }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -208,6 +205,7 @@ export default connect(
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
 			section,
+			hasSidebar: hasSidebar( state ),
 			isOffline: isOffline( state ),
 		};
 	}
