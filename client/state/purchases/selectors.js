@@ -1,5 +1,7 @@
 import createSelector from 'lib/create-selector';
 import purchasesAssembler from 'lib/purchases/assembler';
+import { isSubscription } from 'lib/purchases';
+import { isDomainRegistration, isDomainMapping } from 'lib/products-values';
 
 /**
  * Return the list of purchases from state object
@@ -49,6 +51,18 @@ export const getByPurchaseId = ( state, purchaseId ) => (
 export const getSitePurchases = ( state, siteId ) => (
 	getPurchases( state ).filter( purchase => purchase.siteId === siteId )
 );
+
+export const getIncludedDomainPurchase = ( state, purchase ) => {
+	if ( ! purchase || ! isSubscription( purchase ) ) {
+		return null;
+	}
+
+	const { includedDomain } = purchase;
+	const sitePurchases = getSitePurchases( state, purchase.siteId );
+	const domainPurchase = sitePurchases.find( p => ( isDomainMapping( p ) || isDomainRegistration( p ) ) && includedDomain === p.meta );
+
+	return domainPurchase;
+};
 
 export const isFetchingUserPurchases = state => state.purchases.isFetchingUserPurchases;
 export const isFetchingSitePurchases = state => state.purchases.isFetchingSitePurchases;
