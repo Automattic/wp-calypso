@@ -21,7 +21,7 @@ import statsStrings from '../stats-strings';
 import MostPopular from 'my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
-import StatsMain from '../stats-main';
+import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
 
 export default React.createClass( {
@@ -74,7 +74,7 @@ export default React.createClass( {
 		// TODO: should be refactored into separate components
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<StatsMain>
+			<Main>
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation section="insights" site={ site } />
@@ -117,7 +117,7 @@ export default React.createClass( {
 						</div>
 					</div>
 				</div>
-			</StatsMain>
+			</Main>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
