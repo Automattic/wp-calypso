@@ -9,12 +9,12 @@ import { expect } from 'chai';
 import {
 	doesViewHaveFirstView,
 	isViewEnabled,
-	wasViewHidden,
-	switchedFromDifferentSection,
+	wasFirstViewHiddenSinceEnteringCurrentSection,
 	secondsSpentOnCurrentView,
 	bucketedTimeSpentOnCurrentView,
 } from '../selectors';
 import {
+	FIRST_VIEW_HIDE,
 	ROUTE_SET
 } from 'state/action-types';
 
@@ -95,34 +95,8 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#wasViewHidden()', () => {
-		it( 'should return true if the view was hidden', () => {
-			const wasHidden = wasViewHidden( {
-				ui: {
-					firstView: {
-						hidden: [ 'stats' ]
-					}
-				}
-			}, 'stats' );
-
-			expect( wasHidden ).to.be.true;
-		} );
-
-		it( 'should return false if the view was not hidden', () => {
-			const wasHidden = wasViewHidden( {
-				ui: {
-					firstView: {
-						hidden: [ 'stats' ]
-					}
-				}
-			}, 'devdocs' );
-
-			expect( wasHidden ).to.be.false;
-		} );
-	} );
-
-	describe( '#switchedFromDifferentSection()', () => {
-		it( 'should return true if the user navigated from a different section', () => {
+	describe( '#wasFirstViewHiddenSinceEnteringCurrentSection()', () => {
+		it( 'should return true if the first view was hidden since entering the current section', () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -132,42 +106,60 @@ describe( 'selectors', () => {
 					type: ROUTE_SET,
 					path: '/stats',
 				},
-			];
-
-			const hasSwitchedSections = switchedFromDifferentSection( {
-				ui: {
-					section: {
-						paths: [ '/stats' ]
-					},
-					actionLog: actions
-				}
-			}, 'stats' );
-
-			expect( hasSwitchedSections ).to.be.true;
-		} );
-
-		it( 'should return false if the user has not navigated from a different section', () => {
-			const actions = [
+				{
+					type: FIRST_VIEW_HIDE,
+					view: 'stats',
+				},
 				{
 					type: ROUTE_SET,
 					path: '/stats/insights',
 				},
-				{
-					type: ROUTE_SET,
-					path: '/stats',
-				}
 			];
 
-			const hasSwitchedSections = switchedFromDifferentSection( {
+			const wasFirstViewHidden = wasFirstViewHiddenSinceEnteringCurrentSection( {
 				ui: {
 					section: {
+						name: 'stats',
 						paths: [ '/stats' ]
 					},
 					actionLog: actions
 				}
-			}, 'stats' );
+			} );
 
-			expect( hasSwitchedSections ).to.be.false;
+			expect( wasFirstViewHidden ).to.be.true;
+		} );
+
+		it( 'should return false if the first view was not hidden since entering current section', () => {
+			const actions = [
+				{
+					type: ROUTE_SET,
+					path: '/devdocs',
+				},
+				{
+					type: FIRST_VIEW_HIDE,
+					view: 'devdocs',
+				},
+				{
+					type: ROUTE_SET,
+					path: '/stats',
+				},
+				{
+					type: ROUTE_SET,
+					path: '/stats/insights',
+				},
+			];
+
+			const wasFirstViewHidden = wasFirstViewHiddenSinceEnteringCurrentSection( {
+				ui: {
+					section: {
+						name: 'stats',
+						paths: [ '/stats' ]
+					},
+					actionLog: actions
+				}
+			} );
+
+			expect( wasFirstViewHidden ).to.be.false;
 		} );
 	} );
 

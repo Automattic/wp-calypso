@@ -17,7 +17,7 @@ import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference } from 'state/preferences/selectors';
 import { getSectionName, isSectionLoading } from 'state/ui/selectors';
 import { isEnabled } from 'config';
-import { ROUTE_SET } from 'state/action-types';
+import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 
 export function doesViewHaveFirstView( view ) {
 	return !! ( FIRST_VIEW_START_DATES[ view ] );
@@ -30,16 +30,19 @@ export function isViewEnabled( state, view ) {
 	return doesViewHaveFirstView( view ) && ! isViewDisabled;
 }
 
-export function wasViewHidden( state, view ) {
-	return -1 !== state.ui.firstView.hidden.indexOf( view );
+export function wasFirstViewHiddenSinceEnteringCurrentSection( state ) {
+	const sectionName = getSectionName( state );
+	const actionsSinceEnteringCurrentSection = takeRightWhile( getActionLog( state ), ( action ) => {
+		return ( action.type !== ROUTE_SET ) || ( action.type === ROUTE_SET && routeSetIsInCurrentSection( state, action ) );
+	} );
+
+	return some( actionsSinceEnteringCurrentSection,
+		action => action.type === FIRST_VIEW_HIDE && action.view === sectionName );
 }
 
-export function switchedFromDifferentSection( state ) {
+function routeSetIsInCurrentSection( state, routeSet ) {
 	const section = state.ui.section;
-	const routeSets = filter( getActionLog( state ), { type: ROUTE_SET } );
-	const lastRouteSetsForSection = takeRightWhile( routeSets,
-		routeSet => some( section.paths, path => startsWith( routeSet.path, path ) ) );
-	return lastRouteSetsForSection.length === 1;
+	return some( section.paths, path => startsWith( routeSet.path, path ) );
 }
 
 export function shouldViewBeVisible( state ) {
@@ -47,8 +50,7 @@ export function shouldViewBeVisible( state ) {
 
 	return isEnabled( 'ui/first-view' ) &&
 		isViewEnabled( state, sectionName ) &&
-		! wasViewHidden( state, sectionName ) &&
-		switchedFromDifferentSection( state ) &&
+		! wasFirstViewHiddenSinceEnteringCurrentSection( state ) &&
 		! isSectionLoading( state );
 }
 
