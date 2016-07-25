@@ -172,7 +172,7 @@ function boot() {
 }
 
 function renderLayout( reduxStore ) {
-	let props = { focus: layoutFocus };
+	const props = { focus: layoutFocus };
 
 	if ( user.get() ) {
 		Object.assign( props, { user, sites, nuxWelcome, translatorInvitation } );
@@ -189,8 +189,8 @@ function renderLayout( reduxStore ) {
 }
 
 function reduxStoreReady( reduxStore ) {
-	let layoutSection, validSections = [],
-		isIsomorphic = isSectionIsomorphic( reduxStore.getState() );
+	const isIsomorphic = isSectionIsomorphic( reduxStore.getState() );
+	let layoutSection, validSections = [];
 
 	bindWpLocaleState( reduxStore );
 
@@ -205,7 +205,6 @@ function reduxStoreReady( reduxStore ) {
 		reduxStore.dispatch( receiveUser( user.get() ) );
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
 		reduxStore.dispatch( setCurrentUserFlags( user.get().meta.data.flags.active_flags ) );
-
 
 		const participantInPushNotificationsAbTest = config.isEnabled('push-notifications-ab-test') && abtest('browserNotifications') === 'enabled';
 		if ( config.isEnabled( 'push-notifications' ) || participantInPushNotificationsAbTest ) {
