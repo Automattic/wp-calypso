@@ -23,7 +23,8 @@ describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'values',
-			'fetching'
+			'fetching',
+			'lastFetchedTimestamp'
 		] );
 	} );
 

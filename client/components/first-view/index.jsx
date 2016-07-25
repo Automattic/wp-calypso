@@ -100,14 +100,21 @@ const FirstView = React.createClass( {
 	},
 
 	updateDocumentStylesForVisibleFirstView() {
-		document.documentElement.classList.add( 'no-scroll', 'is-first-view-visible', 'is-first-view-active' );
+		document.documentElement.classList.add( 'no-scroll', 'is-first-view-active' );
+		process.nextTick( () => {
+			if ( this.props.isVisible ) {
+				document.documentElement.classList.add( 'is-first-view-visible' );
+			}
+		} );
 	},
 
 	updateDocumentStylesForHiddenFirstView() {
 		document.documentElement.classList.remove( 'no-scroll', 'is-first-view-visible' );
 		// wait a bit so that we trigger the CSS transition
 		setTimeout( () => {
-			document.documentElement.classList.remove( 'is-first-view-active' );
+			if ( ! this.props.isVisible ) {
+				document.documentElement.classList.remove( 'is-first-view-active' );
+			}
 		}, 600 );
 	}
 } );
