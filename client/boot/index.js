@@ -249,7 +249,13 @@ function reduxStoreReady( reduxStore ) {
 			} );
 			errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
 			analytics.on( 'record-event', ( eventName, eventProperties ) => errorLogger.saveExtraData( { lastTracksEvent: eventProperties } ) );
-			analytics.on( 'page-view', ( urlPath ) => errorLogger.saveDiagnosticData( { calypso_path: urlPath } ) );
+			page( '*', function( context, next ) {
+				errorLogger.saveNewPath( context.canonicalPath.replace(
+					new RegExp( route.getSiteFragment( context.canonicalPath ), 'g' ),
+					':siteId'
+				) );
+				next();
+			} );
 		}
 	}
 
