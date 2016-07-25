@@ -18,7 +18,13 @@ module.exports = React.createClass( {
 		const post = {
 			title: 'Spring Harvest 2016',
 			URL: 'http://wordpress.com',
-			date: '2016-07-25T00:00:00+02:00'
+			date: '2016-07-25T00:00:00+02:00',
+			tags: {
+				'banana': {
+					name: 'Banana',
+					slug: 'banana'
+				}
+			}
 		};
 
 		return (

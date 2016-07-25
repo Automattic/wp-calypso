@@ -9,6 +9,7 @@ import React from 'react';
 import ExternalLink from 'components/external-link';
 import { recordPermalinkClick, recordGaEvent } from 'reader/stats';
 import PostTime from 'reader/post-time';
+import ReaderFullPostHeaderTags from './tags';
 
 const ReaderFullPostHeader = ( { post } ) => {
 	const handlePermalinkClick = ( { } ) => {
@@ -38,6 +39,11 @@ const ReaderFullPostHeader = ( { post } ) => {
 							target="_blank">
 							<PostTime date={ post.date } />
 						</a>
+					</li> : null }
+
+				{ post.tags
+					? <li className="reader-full-post-header__tags">
+						<ReaderFullPostHeaderTags tags={ post.tags } />
 					</li> : null }
 			</ul>
 		</div>
