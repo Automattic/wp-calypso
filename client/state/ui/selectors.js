@@ -98,3 +98,12 @@ export function getInitialQueryArguments( state ) {
 export function getCurrentQueryArguments( state ) {
 	return state.ui.queryArguments.current;
 }
+
+export function hasSidebar( state ) {
+	// this one is weird. defaults to true, so if true, fall through to the secondary prop on the section
+	const val = state.ui.hasSidebar;
+	if ( val === false ) {
+		return false;
+	}
+	return get( state.ui.section, 'secondary', true );
+}

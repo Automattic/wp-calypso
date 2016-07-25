@@ -11,6 +11,7 @@ import {
 	getSelectedSiteId,
 	getSectionName,
 	isSectionIsomorphic,
+	hasSidebar
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -118,6 +119,32 @@ describe( 'selectors', () => {
 			} );
 
 			expect( selected ).to.be.true;
+		} );
+	} );
+
+	describe( '#hasSidebar()', () => {
+		it( 'should return false if set', () => {
+			expect( hasSidebar( { ui: { hasSidebar: false } } ) ).to.be.false;
+		} );
+
+		it( 'should be true if true and secondary does not override it', () => {
+			expect( hasSidebar( {
+				ui: {
+					hasSidebar: true,
+					section: {}
+				}
+			} ) ).to.be.true;
+		} );
+
+		it( 'should fall back to the secondary prop on the current section when hasSidebar is true', () => {
+			expect( hasSidebar( {
+				ui: {
+					hasSidebar: true,
+					section: {
+						secondary: false
+					}
+				}
+			} ) ).to.be.false;
 		} );
 	} );
 } );
