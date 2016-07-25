@@ -335,7 +335,7 @@ const PushNotificationSettings = React.createClass( {
 					<small className={ classNames( 'notification-settings-push-notification-settings__settings-state', stateClass ) }>{ stateText }</small>
 				</h2>
 
-				<p className="notification-settings-push-notification-settings__settings-description">{ this.translate( 'Get notifications for new comments, likes, and more instantly, even when your browser is closed.' ) }</p>
+				<p className="notification-settings-push-notification-settings__settings-description">{ this.translate( 'Get notifications for new comments, likes, and more instantly, even when you are not actively using WordPress.com.' ) }</p>
 
 				<Button className={ classNames( 'notification-settings-push-notification-settings__settings-button', buttonClass ) } disabled={ buttonDisabled } onClick={ this.clickHandler } >{ buttonText }</Button>
 
