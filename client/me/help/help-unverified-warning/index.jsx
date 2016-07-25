@@ -31,16 +31,17 @@ class HelpUnverifiedWarning extends Component {
 	render() {
 		const { resendState } = this.state;
 
-		const resendStateToMessage = ( resendState ) => {
-			switch ( resendState ) {
+		const resendStateToMessage = ( val ) => {
+			switch ( val ) {
 				case RESEND_IDLE:
-					return this.props.translate( "Trouble activating your account? Just click this button and we'll resend the activation for you." );
+					return this.props.translate( 'Trouble activating your account?\
+							Just click this button and we\'ll resend the activation for you.' );
 				case RESEND_IN_PROGRESS:
 					return '';
 				case RESEND_SUCCESS:
-					return this.props.translate( "Please check your email for an activation email and click the link to finish your signup." );
+					return this.props.translate( 'Activation email sent. Please check your inbox.' );
 				case RESEND_ERROR:
-					return this.props.translate( "Sorry that we've encountered an error on sending you an activation email. Please try again later." );
+					return this.props.translate( 'There\'s been an error. Please try again later.' );
 				default:
 					return 'Unknown activation email resending state.';
 			}
@@ -55,26 +56,26 @@ class HelpUnverifiedWarning extends Component {
 				.then( () => {
 					const nextResendState = RESEND_SUCCESS;
 
-					this.setState( { resendState: nextResendState } )
-					notices[ 'success' ]( resendStateToMessage( nextResendState ) );
+					this.setState( { resendState: nextResendState } );
+					notices.success( resendStateToMessage( nextResendState ) );
 				} )
 				.catch( () => {
 					const nextResendState = RESEND_ERROR;
 
-					this.setState( { resendState: nextResendState } )
-					notices[ 'error' ]( resendStateToMessage( nextResendState ) );
+					this.setState( { resendState: nextResendState } );
+					notices.error( resendStateToMessage( nextResendState ) );
 				} );
 		};
 
 		return (
 			RESEND_IDLE === resendState &&
 				<Notice
-					className='help-unverified-warning__notice'
-					status='is-warning'
+					className="help-unverified-warning"
+					status="is-warning"
 					showDismiss={ false }
 					text={ resendStateToMessage( resendState ) } >
 						<NoticeAction href="#" onClick={ resendEmail } >
-							{ this.props.translate( "Resend Email" ) }
+							{ this.props.translate( 'Resend Email' ) }
 						</NoticeAction>
 				</Notice>
 		);
