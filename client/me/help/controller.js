@@ -24,9 +24,7 @@ module.exports = {
 		analytics.pageView.record( basePath, 'Help' );
 
 		ReactDom.render(
-			<ReduxProvider store={ context.store } >
-				<Help />
-			</ReduxProvider>,
+			React.createElement( Help ),
 			document.getElementById( 'primary' )
 		);
 	},
