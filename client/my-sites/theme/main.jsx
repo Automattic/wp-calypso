@@ -126,8 +126,16 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
+	getFullLengthScreenshot() {
+		/**
+		 * Location of full length theme screenshot in screenshots array
+		 * depends on themes API v1.2 screenshots field
+		 */
+		return this.props.screenshots[ 0 ];
+	},
+
 	renderScreenshot() {
-		const img = <img className="theme__sheet-img" src={ this.props.screenshots[0] + '?=w680' } />;
+		const img = <img className="theme__sheet-img" src={ this.getFullLengthScreenshot() + '?=w680' } />;
 		return (
 			<div className="theme__sheet-screenshot">
 				<a className="theme__sheet-preview-link" onClick={ this.togglePreview } >
@@ -136,7 +144,7 @@ const ThemeSheet = React.createClass( {
 						{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
 					</span>
 				</a>
-				{ this.props.screenshots[0] && img }
+				{ this.getFullLengthScreenshot() && img }
 			</div>
 		);
 	},
