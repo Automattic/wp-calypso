@@ -96,7 +96,6 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.output.filename = '[name].js';
 } else {
 	webpackConfig.entry.vendor = [ 'react', 'store', 'page', 'wpcom', 'jed', 'debug' ];
-	webpackConfig.entry.logger = [ 'lib/catch-js-errors' ];
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
 		children: true,
