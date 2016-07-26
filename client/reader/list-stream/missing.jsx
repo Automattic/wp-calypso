@@ -32,7 +32,7 @@ const ListMissing = React.createClass( {
 	},
 
 	render() {
-		var action = ( <a
+		const action = ( <a
 			className="empty-content__action button is-primary"
 			onClick={ this.recordAction }
 			href="/">{ this.translate( 'Back to Followed Sites' ) }</a> ),
