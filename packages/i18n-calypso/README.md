@@ -29,10 +29,10 @@ It also provides 2 utility methods for your React application:
 
 The following attributes can be set in the options object to alter the translation type. The attributes can be combined as needed for a particular case.
 
-* **options.context** [string] provides the ability for the translator to provide a different translation for the same text in two locations (_dependent on context_). Usually context should only be used after a string has been discovered to require different translations. If you want to provide help on how to translate (which is highly appreciated!), please us a comment.
-* **options.comment** [string] comment that will be shown to the translator for anything that may need to be explained about the translation.
 * **options.args** [string, array, or object] arguments you would pass into sprintf to be run against the text for string substitution. [See docs](http://www.diveintojavascript.com/projects/javascript-sprintf)
 * **options.components** [object] markup must be added as React components and not with string substitution. See [mixing strings and markup](#mixing-strings-and-markup).
+* **options.comment** [string] comment that will be shown to the translator for anything that may need to be explained about the translation.
+* **options.context** [string] provides the ability for the translator to provide a different translation for the same text in two locations (_dependent on context_). Usually context should only be used after a string has been discovered to require different translations. If you want to provide help on how to translate (which is highly appreciated!), please us a comment.
 
 ## Usage
 
@@ -174,16 +174,6 @@ var numDays = daysUntilExpiration(), // returns integer
 // simplest case... just a translation, no special options
 var content = i18n.translate( 'My hat has three corners.' );
 
-// providing context
-var content = i18n.translate( 'post', {
-        context: 'verb'
-    } );
-
-// add a comment to the translator
-var content = i18n.translate( 'g:i:s a', {
-        comment: 'draft saved date format, see http://php.net/date'
-    } );
-
 // sprintf-style string substitution
 var city = getCity(), // returns string
     zip = getZip(), // returns string
@@ -208,6 +198,17 @@ var component = i18n.translate( 'My hat has {{link}}three{{/link}} corners', {
             link: <a href="#three" />
         }
     } );
+
+// add a comment to the translator
+var content = i18n.translate( 'g:i:s a', {
+        comment: 'draft saved date format, see http://php.net/date'
+    } );
+
+// providing context
+var content = i18n.translate( 'post', {
+        context: 'verb'
+    } );
+
 ```
 
 See the [test cases](test/test.jsx) for more example usage.
