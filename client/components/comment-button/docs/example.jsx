@@ -16,7 +16,7 @@ export default React.createClass( {
 		return(
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/comment-button">Comment Buttons</a>
+					<a href="/devdocs/blocks/comment-button">Comment Buttons</a>
 				</h2>
 				<Card>
 					<span>No comments:</span>

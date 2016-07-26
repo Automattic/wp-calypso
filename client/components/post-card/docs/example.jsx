@@ -161,7 +161,7 @@ const PostCards = React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/post-card">Post Cards</a>
+					<a href="/devdocs/blocks/post-card">Post Cards</a>
 				</h2>
 
 				<h3>Small Post Cards</h3>
@@ -170,7 +170,7 @@ const PostCards = React.createClass( {
 				</div>
 
 				<h2>
-					<a href="/devdocs/app-components/post-card">Search Cards</a>
+					<a href="/devdocs/blocks/post-card">Search Cards</a>
 				</h2>
 
 				<div>
