@@ -30,7 +30,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 					</ExternalLink>
 				</h1>
 				: null }
-			<span className="reader-full-post-header__meta">
+			<div className="reader-full-post-header__meta">
 				{ post.date && post.URL
 					? <span className="reader-full-post-header__date">
 						<a className="reader-full-post-header__date-link"
@@ -44,7 +44,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 			{ post.tags
 				? <ReaderFullPostHeaderTags tags={ post.tags } />
 			 	: null }
-			</span>
+			</div>
 		</div>
 	);
 };

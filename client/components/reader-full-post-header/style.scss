@@ -45,7 +45,7 @@
 
 .reader-full-post-header__tags {
 	display: inline-block;
-    width: 75%;
+    width: calc(100% - 120px);
 
 	.gridicon {
 		fill: $gray;
