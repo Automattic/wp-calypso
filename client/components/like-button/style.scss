@@ -1,6 +1,6 @@
 .like-button {
 	display: inline-block;
-	padding: 4px 4px 4px 27px;
+	padding: 3px 4px 4px 27px;
 	color: lighten( $gray, 10 );;
 	position: relative;
 	box-sizing: border-box;
@@ -80,4 +80,5 @@
 .like-button__label {
 	// this keeps the label from collapsing and making the icon drop down
 	margin-left: 1px;
+	font-size: 14px;
 }
