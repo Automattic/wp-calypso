@@ -385,7 +385,8 @@ function reduxStoreReady( reduxStore ) {
 	 * Layouts with differing React mount-points will not reconcile correctly,
 	 * so remove an existing single-tree layout by re-rendering if necessary.
 	 *
-	 * TODO (@seear): React 15's new reconciliation algo may make this unnecessary
+	 * TODO (@seear): Converting all of Calypso to single-tree layout will
+	 * make this unnecessary.
 	 */
 	page( '*', function( context, next ) {
 
@@ -394,8 +395,9 @@ function reduxStoreReady( reduxStore ) {
 		);
 		const singleTreeSections = [ 'theme', 'themes' ];
 		const sectionName = getSectionName( context.store.getState() );
+		const isMultiTreeLayout = ! includes( singleTreeSections, sectionName );
 		
-		if ( ! includes( singleTreeSections, sectionName) && previousLayoutIsSingleTree ) {
+		if ( isMultiTreeLayout && previousLayoutIsSingleTree ) {
 			debug( 'Re-rendering multi-tree layout' );
 			renderLayout( context.store );
 		}
