@@ -50,12 +50,11 @@ var config = require( 'config' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
-	isSectionIsomorphic = require( 'state/ui/selectors' ).isSectionIsomorphic,
 	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
-import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
+import { getSelectedSiteId, getSectionName, isSectionIsomorphic } from 'state/ui/selectors';
 import { getSavedVariations } from 'lib/abtest';
 
 function init() {
