@@ -179,6 +179,13 @@ export function getTerms( state, siteId, taxonomy ) {
  * @return {?Object}          Term object
  */
 export const getTerm = createSelector(
-	( state, siteId, taxonomy, termId ) => find( getTerms( state, siteId, taxonomy ), { ID: termId } ) || null,
+	( state, siteId, taxonomy, termId ) => {
+		const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+		if ( ! manager ) {
+			return null;
+		}
+
+		return manager.getItem( termId );
+	},
 	( state, siteId, taxonomy ) => getTerms( state, siteId, taxonomy )
 );

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { cloneDeep, findIndex, map } from 'lodash';
 
@@ -19,11 +19,14 @@ import { getEditorTermAdded } from 'state/ui/editor/terms/selectors';
 
 class EditorTermSelector extends Component {
 	static propTypes = {
-		siteId: React.PropTypes.number,
-		postId: React.PropTypes.number,
-		postTerms: React.PropTypes.object,
-		postType: React.PropTypes.string,
-		taxonomyName: React.PropTypes.string
+		siteId: PropTypes.number,
+		postId: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.string
+		] ),
+		postTerms: PropTypes.object,
+		postType: PropTypes.string,
+		taxonomyName: PropTypes.string
 	};
 
 	constructor( props ) {
@@ -33,9 +36,9 @@ class EditorTermSelector extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.addedTerm && ( nextProps.addedTerm !== this.props.addedTerm ) ) {
-			const { siteId, postId, taxonomyName } = this.props;
-			this.onTermsChange( nextProps.addedTerm );
-			this.props.resetEditorTermAdded( siteId, postId, taxonomyName );
+			const { siteId, postId, taxonomyName, addedTerm } = nextProps;
+			this.onTermsChange( addedTerm );
+			nextProps.resetEditorTermAdded( siteId, postId, taxonomyName );
 		}
 	}
 

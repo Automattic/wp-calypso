@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import merge from 'lodash/merge';
+import { merge } from 'lodash';
 
 /**
  * Internal dependencies
