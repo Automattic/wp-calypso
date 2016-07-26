@@ -43,7 +43,7 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/plan-storage">Plan Storage</a>
+					<a href="/devdocs/blocks/plan-storage">Plan Storage</a>
 				</h2>
 				<div style={ { marginBottom: 16 } }>
 					<PlanStorage siteId={ siteId } />

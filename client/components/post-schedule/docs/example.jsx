@@ -93,7 +93,7 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/post-schedule">PostSchedule</a>
+					<a href="/devdocs/blocks/post-schedule">PostSchedule</a>
 				</h2>
 
 				<Card style={ {
