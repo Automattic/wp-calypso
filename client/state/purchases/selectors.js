@@ -52,14 +52,22 @@ export const getSitePurchases = ( state, siteId ) => (
 	getPurchases( state ).filter( purchase => purchase.siteId === siteId )
 );
 
-export const getIncludedDomainPurchase = ( state, purchase ) => {
-	if ( ! purchase || ! isSubscription( purchase ) ) {
+/***
+ * Returns a purchase object that corresponds to that subscription's included domain
+ * @param  {Object} state					global state
+ * @param  {Object} subscriptionPurchase	subscription purchase object
+ * @return {Object} domain purchase if there is one, null if none found or not a subscription object passed
+ */
+export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
+	if ( ! subscriptionPurchase || ! isSubscription( subscriptionPurchase ) ) {
 		return null;
 	}
 
-	const { includedDomain } = purchase;
-	const sitePurchases = getSitePurchases( state, purchase.siteId );
-	const domainPurchase = sitePurchases.find( p => ( isDomainMapping( p ) || isDomainRegistration( p ) ) && includedDomain === p.meta );
+	const { includedDomain } = subscriptionPurchase;
+	const sitePurchases = getSitePurchases( state, subscriptionPurchase.siteId );
+	const domainPurchase = sitePurchases.find( purchase => ( isDomainMapping( purchase ) ||
+															isDomainRegistration( purchase ) ) &&
+															includedDomain === purchase.meta );
 
 	return domainPurchase;
 };
