@@ -45,6 +45,7 @@ import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { decodeEntities } from 'lib/formatting';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -345,33 +346,53 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
+		const Head = this.props.isLoggedIn
+			? require( 'layout/head' )
+			: require( 'my-sites/themes/head' );
+
+		const themeName =  this.props.name ;
+		const title = i18n.translate( '%(themeName)s Theme', {
+			args: { themeName }
+		} )
+
+		const canonicalUrl = `https://wordpress.com/theme/${ this.props.id }`; // TODO: use getDetailsUrl() When it becomes availavle
+
 		return (
-			<Main className="theme__sheet">
-			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
-				{ this.renderBar() }
-				{ siteID && <QueryCurrentTheme siteId={ siteID }/> }
-				<ThanksModal
-					site={ this.props.selectedSite }
-					source={ 'details' }/>
-				{ this.state.showPreview && this.renderPreview() }
-				<HeaderCake className="theme__sheet-action-bar"
-							backHref={ this.props.backPath }
-							backText={ i18n.translate( 'All Themes' ) }>
-					{ this.renderButton() }
-				</HeaderCake>
-				<div className="theme__sheet-columns">
-					<div className="theme__sheet-column-left">
-						<div className="theme__sheet-content">
-							{ this.renderSectionNav( section ) }
-							{ this.renderSectionContent( section ) }
-							<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
+
+			<Head
+				title= { decodeEntities( title || '' ) + ' — WordPress.com' }
+				description={ decodeEntities( this.props.description || '' ) }
+				type={ 'website' }
+			 	canonicalUrl={ canonicalUrl }
+				image={ this.props.screenshot }
+				tier={ this.props.tier || 'all' }>
+				<Main className="theme__sheet">
+					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
+						{ this.renderBar() }
+						{ siteID && <QueryCurrentTheme siteId={ siteID }/> }
+					<ThanksModal
+						site={ this.props.selectedSite }
+						source={ 'details' }/>
+					{ this.state.showPreview && this.renderPreview() }
+					<HeaderCake className="theme__sheet-action-bar"
+								backHref={ this.props.backPath }
+								backText={ i18n.translate( 'All Themes' ) }>
+						{ this.renderButton() }
+					</HeaderCake>
+					<div className="theme__sheet-columns">
+						<div className="theme__sheet-column-left">
+							<div className="theme__sheet-content">
+								{ this.renderSectionNav( section ) }
+								{ this.renderSectionContent( section ) }
+								<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
+							</div>
+						</div>
+						<div className="theme__sheet-column-right">
+							{ this.renderScreenshot() }
 						</div>
 					</div>
-					<div className="theme__sheet-column-right">
-						{ this.renderScreenshot() }
-					</div>
-				</div>
-			</Main>
+				</Main>
+			</Head>
 		);
 	},
 
@@ -384,40 +405,16 @@ const ThemeSheet = React.createClass( {
 } );
 
 const WrappedThemeSheet = ( props ) => {
-	const Head = props.isLoggedIn
-		? require( 'layout/head' )
-		: require( 'my-sites/themes/head' );
-
-	let sheet;
 	if ( ! props.isLoggedIn || props.selectedSite ) {
-		sheet = <ThemeSheet { ...props } />;
-	} else {
-		sheet = (
-			<ThemesSiteSelectorModal { ...props }
-				sourcePath={ `/theme/${ props.id }${ props.section ? '/' + props.section : '' }` }>
-				<ThemeSheet />
-			</ThemesSiteSelectorModal>
-		);
+		return <ThemeSheet { ...props } />;
 	}
 
-	const themeName = `${ props.name }s Theme`;
-	const title = themeName + ' — WordPress.com';
-
-	const canonicalUrl = `https://wordpress.com/theme/${ props.id }`; // TODO: use getDetailsUrl() When it becomes availavle
-
 	return (
-		<Head
-			title= { title }
-			description={ props.description }
-			type={ 'website' }
-		 	canonicalUrl={ canonicalUrl }
-			image={ props.screenshot }
-			tier={ props.tier || 'all' } >
-			{ sheet }
-		</Head>
-		//sheet
-	)
-
+		<ThemesSiteSelectorModal { ...props }
+			sourcePath={ `/theme/${ props.id }${ props.section ? '/' + props.section : '' }` }>
+			<ThemeSheet />
+		</ThemesSiteSelectorModal>
+	);
 };
 
 const bindDefaultOptionToDispatch = ( dispatch, ownProps ) => {
