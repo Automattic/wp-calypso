@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, range, find } from 'lodash';
+import { get, range } from 'lodash';
 
 /**
  * Internal dependencies

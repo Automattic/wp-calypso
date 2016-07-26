@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import omit from 'lodash/omit';
-import uniqueId from 'lodash/uniqueId';
+import { omit, uniqueId, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,7 +41,7 @@ export function addTerm( siteId, taxonomy, term, postId ) {
 				dispatch( receiveTerm( siteId, taxonomy, newTerm ) );
 
 				// if a postId is set dispatch action to select term
-				if ( postId !== null ) {
+				if ( ! isUndefined( postId ) ) {
 					dispatch( setEditorAddedTerm( siteId, postId, taxonomy, newTerm.ID ) );
 				}
 			},
