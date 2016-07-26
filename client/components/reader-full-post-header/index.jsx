@@ -10,6 +10,7 @@ import ExternalLink from 'components/external-link';
 import { recordPermalinkClick, recordGaEvent } from 'reader/stats';
 import PostTime from 'reader/post-time';
 import ReaderFullPostHeaderTags from './tags';
+import Gridicon from 'components/gridicon';
 
 const ReaderFullPostHeader = ( { post } ) => {
 	const handlePermalinkClick = ( { } ) => {
@@ -41,9 +42,12 @@ const ReaderFullPostHeader = ( { post } ) => {
 						</a>
 					</span> : null }
 
-			{ post.tags
-				? <ReaderFullPostHeaderTags tags={ post.tags } />
-			 	: null }
+				<div className="reader-full-post-header__tags">
+					<Gridicon icon="tag" size={ 18 } />
+					{ post.tags
+					? <ReaderFullPostHeaderTags tags={ post.tags } />
+				 	: null }
+				</div>
 			</div>
 		</div>
 	);
