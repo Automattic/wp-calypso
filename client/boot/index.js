@@ -219,12 +219,9 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/network-connection' ).init( reduxStore );
 	}
 
-	// Render Layout only for non-isomorphic sections, unless logged-in.
-	// Isomorphic sections will take care of rendering their Layout last themselves,
-	// unless in logged-in mode, where we can't do that yet.
-	// TODO: Remove the ! user.get() check once isomorphic sections render their
-	// Layout themselves when logged in.
-	if ( ! isIsomorphic || user.get() ) {
+	// Render Layout only for non-isomorphic sections.
+	// Isomorphic sections will take care of rendering their Layout last themselves.
+	if ( ! isIsomorphic ) {
 		renderLayout( reduxStore );
 
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
