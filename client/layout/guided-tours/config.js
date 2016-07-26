@@ -21,7 +21,7 @@ const tours = {
 			version: '20160601',
 			path: '/',
 			// don't enable this in production (yet)
-			context: ( state ) => 'production' !== config( 'env' ) && isNewUser( state ),
+			context: ( state ) => config.isEnabled( 'guided-tours/main' ) && isNewUser( state ),
 		},
 		init: {
 			text: i18n.translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place, and give you some ideas for what to do next.", {
