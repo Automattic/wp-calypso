@@ -4,13 +4,11 @@
 	font-family: $serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	font-size: 18px;
+	font-size: 20px;
 	font-weight: 700;
 	line-height: 1.3;
 	margin: 24px 0 8px;
 	max-width: 750px;
-	overflow-wrap: break-word;
-	word-wrap: break-word;
 
 	@include breakpoint( ">480px" ) {
 		font-size: 28px;
@@ -46,12 +44,13 @@
 }
 
 .reader-full-post-header__tags {
-	float: left;
-	width: 70%;
+	display: inline-block;
+    width: 75%;
 
 	.gridicon {
 		fill: $gray;
 		float: left;
+		margin-right: 5px;
 		position: relative;
 			top: 4px;
 	}
@@ -60,11 +59,9 @@
 .reader-full-post-header__tag-list {
 	color: $gray;
 	list-style: none;
-	margin: 0;
+	margin-left: 20px;
 	padding: 0;
 	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 
 	li {
 		color: $gray;
@@ -75,22 +72,11 @@
 			content: ',';
 		}
 
-		&:first-child {
-			margin-left: 5px;
-		}
-
 		&:last-child {
 			margin-right: 0;
 
-
 			&:after {
 				content: '';
-			}
-
-			a {
-				text-overflow: ellipsis;
-			    overflow: hidden;
-			    white-space: nowrap;
 			}
 		}
 	}

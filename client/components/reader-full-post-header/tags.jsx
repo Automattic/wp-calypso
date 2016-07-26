@@ -17,11 +17,11 @@ const ReaderFullPostHeaderTags = ( { tags } ) => {
 		<div className="reader-full-post-header__tags">
 			<Gridicon icon="tag" size={ 18 } />
 			<ul className="reader-full-post-header__tag-list">
-				<li><a href="">tag 1</a></li>
-				<li><a href="">tag 2</a></li>
-				<li><a href="">tag 3</a></li>
-				<li><a href="">tag 4</a></li>
-				<li><a href="">tag 5</a></li>
+				<li><a href="">Tag 1</a></li>
+				<li><a href="">Tag 2</a></li>
+				<li><a href="">Tag 3</a></li>
+				<li><a href="">Tag 4</a></li>
+				<li><a href="">Tag 5</a></li>
 			</ul>
 		</div>
 	);
