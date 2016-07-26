@@ -26,7 +26,8 @@ import {
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
-	POSTS_REQUEST_FAILURE
+	POSTS_REQUEST_FAILURE,
+	TERMS_RECEIVE
 } from 'state/action-types';
 import {
 	receivePost,
@@ -39,7 +40,8 @@ import {
 	savePost,
 	trashPost,
 	deletePost,
-	restorePost
+	restorePost,
+	addTermForPost
 } from '../actions';
 
 describe( 'actions', () => {
@@ -540,6 +542,39 @@ describe( 'actions', () => {
 					siteId: 77203074,
 					postId: 102,
 					error: sinon.match( { message: 'User cannot restore trashed posts' } )
+				} );
+			} );
+		} );
+	} );
+
+	describe( 'addTermForPost', () => {
+		before( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2916284/taxonomies/jetpack-portfolio/terms/new' )
+				.reply( 200, {
+					ID: 123,
+					name: 'ribs',
+					description: ''
+				} );
+		} );
+
+		it( 'should dispatch a TERMS_RECEIVE event on success with post meta', () => {
+			return addTermForPost( 2916284, 'jetpack-portfolio', { name: 'ribs' }, 13640 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: TERMS_RECEIVE,
+					siteId: 2916284,
+					taxonomy: 'jetpack-portfolio',
+					terms: [ {
+						ID: 123,
+						name: 'ribs',
+						description: ''
+					} ],
+					query: undefined,
+					found: undefined,
+					meta: {
+						postId: 13640
+					}
 				} );
 			} );
 		} );
