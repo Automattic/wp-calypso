@@ -82,8 +82,8 @@ export default class ErrorLogger {
 		this.diagnosticData.path = newPath;
 	}
 
-	saveDiagnosticReducer( data ) {
-		this.diagnosticReducers.push( data );
+	saveDiagnosticReducer( fn ) {
+		this.diagnosticReducers.push( fn );
 	}
 
 	saveDiagnosticData( data ) {
@@ -103,6 +103,7 @@ export default class ErrorLogger {
 			try {
 				this.saveDiagnosticData( diagnosticReducer() );
 			} catch ( e ) {
+				this.saveDiagnosticData( { diagnosticError: e.message } );
 				console.warn( 'diagnostic', this.diagnosticData );
 			}
 		} );
