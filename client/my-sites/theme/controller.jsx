@@ -21,7 +21,6 @@ import {
 } from 'state/themes/actions';
 import wpcom from 'lib/wp';
 import config from 'config';
-import { decodeEntities } from 'lib/formatting';
 
 const debug = debugFactory( 'calypso:themes' );
 let themeDetailsCache = new Map();
