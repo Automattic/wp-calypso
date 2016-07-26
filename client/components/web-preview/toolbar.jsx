@@ -5,6 +5,7 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import config from 'config';
 import { partial } from 'lodash';
 
 /**
@@ -69,7 +70,7 @@ export const PreviewToolbar = props => {
 					</button>
 				) )
 			}
-			{ showSeo &&
+			{ showSeo && config.isEnabled( 'manage/advanced-seo' ) &&
 				<button
 					aria-label={ translate( 'Show SEO and search previews' ) }
 					className={ classNames(
