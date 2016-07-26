@@ -32,7 +32,7 @@ import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSiteByUrl } from 'state/sites/selectors';
 import Spinner from 'components/spinner';
-import Site from 'my-sites/site';
+import Site from 'blocks/site';
 import { decodeEntities } from 'lib/formatting';
 import versionCompare from 'lib/version-compare';
 import EmptyContent from 'components/empty-content';

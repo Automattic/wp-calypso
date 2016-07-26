@@ -6,7 +6,7 @@ const React = require( 'react' );
 /**
  * Internal dependencies
  */
-const Site = require( 'my-sites/site' ),
+const Site = require( 'blocks/site' ),
 	Gridicon = require( 'components/gridicon' ),
 	layoutFocus = require( 'lib/layout-focus' );
 

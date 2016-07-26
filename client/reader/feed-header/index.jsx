@@ -6,7 +6,7 @@ var Card = require( 'components/card' ),
 	ReaderFollowButton = require( 'reader/follow-button' ),
 	resizeImageUrl = require( 'lib/resize-image-url' ),
 	safeImageUrl = require( 'lib/safe-image-url' ),
-	Site = require( 'my-sites/site' ),
+	Site = require( 'blocks/site' ),
 	feedState = require( 'lib/feed-store/constants' ).state;
 
 var FeedHeader = React.createClass( {

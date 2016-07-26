@@ -15,7 +15,7 @@ import url from 'url';
 import DocsComponent from './main';
 import SingleDocComponent from './doc';
 import DesignAssetsComponent from './design';
-import AppComponents from './design/app-components';
+import Blocks from './design/blocks';
 import Typography from './design/typography';
 import DevWelcome from './welcome';
 import Sidebar from './sidebar';
@@ -102,11 +102,11 @@ const devdocs = {
 		);
 	},
 
-	// App components
-	appComponents: function( context ) {
+	// App Blocks
+	blocks: function( context ) {
 		ReactDom.render(
 			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( AppComponents, {
+				React.createElement( Blocks, {
 					component: context.params.component
 				} )
 			),

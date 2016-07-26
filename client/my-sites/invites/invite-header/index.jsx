@@ -9,8 +9,8 @@ import get from 'lodash/get';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Site from 'my-sites/site';
-import SitePlaceholder from 'my-sites/site/placeholder';
+import Site from 'blocks/site';
+import SitePlaceholder from 'blocks/site/placeholder';
 import Gravatar from 'components/gravatar';
 
 export default React.createClass( {

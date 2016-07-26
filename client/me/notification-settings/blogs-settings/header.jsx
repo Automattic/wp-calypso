@@ -11,7 +11,7 @@ import includes from 'lodash/includes';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import SiteInfo from 'my-sites/site';
+import SiteInfo from 'blocks/site';
 
 export default React.createClass( {
 	displayName: 'BlogSettingsHeader',

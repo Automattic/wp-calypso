@@ -44,7 +44,7 @@ describe( 'EditorGroundControl', function() {
 
 		mockery.registerMock( 'components/card', EmptyComponent );
 		mockery.registerMock( 'components/popover', EmptyComponent );
-		mockery.registerMock( 'my-sites/site', EmptyComponent );
+		mockery.registerMock( 'blocks/site', EmptyComponent );
 		mockery.registerMock( 'post-editor/edit-post-status', EmptyComponent );
 		mockery.registerMock( 'post-editor/editor-status-label', EmptyComponent );
 		mockery.registerMock( 'components/sticky-panel', EmptyComponent );
