@@ -35,7 +35,6 @@ import NoticeAction from 'components/notice/notice-action';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { abtest } from 'lib/abtest';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 
 export const List = React.createClass( {
@@ -63,29 +62,21 @@ export const List = React.createClass( {
 			return null;
 		}
 
-		if ( abtest( 'domainCreditsInfoNotice' ) === 'showNotice' ) {
-			const eventName = 'calypso_domain_credit_reminder_impression';
-			const eventProperties = { cta_name: 'domain_info_notice' };
-			return (
-				<Notice
-					status="is-info"
-					showDismiss={ false }
-					text={ this.translate( 'Free domain available' ) }
-					icon="globe">
-					<NoticeAction onClick={ this.props.clickClaimDomainNotice } href={ `/domains/add/${ this.props.selectedSite.slug }` }>
-						{ this.translate( 'Claim Free Domain' ) }
-						<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
-					</NoticeAction>
-				</Notice>
-			);
-		}
-
-		//otherwise still track what happens when we don't show a notice
-		const eventName = 'calypso_domain_credit_reminder_no_impression';
+		const eventName = 'calypso_domain_credit_reminder_impression';
 		const eventProperties = { cta_name: 'domain_info_notice' };
 		return (
-			<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+			<Notice
+				status="is-info"
+				showDismiss={ false }
+				text={ this.translate( 'Free domain available' ) }
+				icon="globe">
+				<NoticeAction onClick={ this.props.clickClaimDomainNotice } href={ `/domains/add/${ this.props.selectedSite.slug }` }>
+					{ this.translate( 'Claim Free Domain' ) }
+					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+				</NoticeAction>
+			</Notice>
 		);
+
 	},
 
 	render() {

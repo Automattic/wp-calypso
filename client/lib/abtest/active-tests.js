@@ -17,16 +17,6 @@ module.exports = {
 		defaultVariation: 'noChanges',
 		allowExistingUsers: false,
 	},
-	domainCreditsInfoNotice: {
-		datestamp: '20160420',
-		variations: {
-			showNotice: 90,
-			original: 10
-		},
-		defaultVariation: 'showNotice',
-		allowExistingUsers: true,
-		allowAnyLocale: true
-	},
 	domainSuggestionVendor: {
 		datestamp: '20160614',
 		variations: {
