@@ -16,20 +16,45 @@ const MASTERBAR_HEIGHT = 47;
 
 const middle = ( a, b ) => Math.abs( b - a ) / 2;
 
-const wouldBeOffscreen = pos =>
-	pos < 0 || ( pos + DIALOG_PADDING + DIALOG_WIDTH ) >
+const wouldBeOffscreen = ( pos ) => {
+	return pos < 0 || ( pos + DIALOG_PADDING + DIALOG_WIDTH ) >
 		document.documentElement.clientWidth;
+};
 
-const fitOnScreen = pos =>
-	Math.max( 0, pos - DIALOG_PADDING - DIALOG_WIDTH ) / 2;
+const fitOnScreen = ( pos ) => {
+	return Math.max( 0, pos - DIALOG_PADDING - DIALOG_WIDTH );
+};
+
+const helpers = {
+	yAbove: ( top ) => {
+		return top - DIALOG_HEIGHT;
+	},
+	yBelow: ( bottom ) => {
+		return bottom + DIALOG_PADDING;
+	},
+	xAboveBelow: ( left, right ) => {
+		if ( ( left + DIALOG_WIDTH + DIALOG_PADDING ) < document.documentElement.clientWidth ) {
+			return left + DIALOG_PADDING;
+		} else if ( right - DIALOG_WIDTH - DIALOG_PADDING > 0 ) {
+			return right - DIALOG_WIDTH - DIALOG_PADDING;
+		}
+		return DIALOG_PADDING;
+	},
+};
 
 const dialogPositioners = {
-	below: ( { left, bottom } ) => ( {
-		x: wouldBeOffscreen( left )
-			? fitOnScreen( document.documentElement.clientWidth )
-			: left + DIALOG_PADDING,
-		y: bottom + DIALOG_PADDING,
-	} ),
+	below: ( rect ) => {
+		const x = helpers.xAboveBelow( rect.left, rect.right );
+		const y = helpers.yBelow( rect.bottom );
+
+		return { x, y };
+	},
+	above: ( rect ) => {
+		const x = helpers.xAboveBelow( rect.left, rect.right );
+		const y = helpers.yAbove( rect.top );
+
+		return { x, y };
+	},
 	beside: ( { left, right, top } ) => ( {
 		x: wouldBeOffscreen( right )
 			? fitOnScreen( left )
@@ -38,7 +63,7 @@ const dialogPositioners = {
 	} ),
 	center: ( { left, right } ) => ( {
 		x: Math.max( 0, middle( left, right ) - DIALOG_WIDTH / 2 ),
-		y: MASTERBAR_HEIGHT / 2,
+		y: 0.2 * document.documentElement.clientHeight,
 	} ),
 	middle: ( { left, right } ) => ( {
 		x: Math.max( 0, middle( left, right ) - DIALOG_WIDTH / 2 ),
@@ -59,6 +84,15 @@ export const posToCss = ( { x, y } ) => ( {
 } );
 
 export function targetForSlug( targetSlug ) {
+	if ( ! targetSlug ) {
+		return null;
+	}
+	if ( targetSlug.indexOf( '.' ) !== -1 || targetSlug.indexOf( ' ' ) !== -1 ) {
+		// a sort of hacky way to discern tip targets and regular css for now
+		// (e.g. misses #ids, ...)
+		// TODO(lsinger): fix this
+		return query( targetSlug )[ 0 ];
+	}
 	return query( '[data-tip-target="' + targetSlug + '"]' )[ 0 ];
 }
 
@@ -85,7 +119,7 @@ export function getValidatedArrowPosition( { targetSlug, arrow, stepPos } ) {
 		return 'top-left';
 	}
 
-	return arrow;
+	return arrow || 'none';
 }
 
 export function getStepPosition( { placement = 'center', targetSlug } ) {
