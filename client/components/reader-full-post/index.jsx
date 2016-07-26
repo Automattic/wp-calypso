@@ -13,14 +13,15 @@ import Main from 'components/main';
 import StickyPanel from 'components/sticky-panel';
 import Gridicon from 'components/gridicon';
 import { setSection } from 'state/ui/actions';
+import smartSetState from 'lib/react-smart-set-state';
+import PostStore from 'lib/feed-post-store';
+import SiteStore from 'lib/reader-site-store';
+import FeedStore from 'lib/feed-store';
+import { fetchPost } from 'lib/feed-post-store/actions';
 
 export class FullPostView extends React.Component {
-
-	componentWillMount() {
-
-	}
-
 	render() {
+		/*eslint-disable react/no-danger*/
 		return (
 			<Main className="reader-full-post">
 				<StickyPanel>
@@ -29,7 +30,8 @@ export class FullPostView extends React.Component {
 					{ translate( 'Back' ) }
 					</div>
 				</StickyPanel>
-				Reader full post
+				<h1 className="reader-full-post__title">{ this.props.post.title }</h1>
+				<div dangerouslySetInnerHTML={ { __html: this.props.post.content } } />
 			</Main>
 		);
 	}
@@ -42,42 +44,69 @@ export class FullPostFluxContainer extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.state = this.getStateFromStores( props );
+		this.updateState = this.updateState.bind( this );
+		this.smartSetState = smartSetState;
 	}
 
 	getStateFromStores( props = this.props ) {
+		const postKey = {
+			blogId: props.blogId,
+			feedId: props.feedId,
+			postId: props.postId
+		};
+
+		const post = PostStore.get( postKey );
+
+		if ( ! post ) {
+			fetchPost( postKey );
+		}
+
+		let feed, site;
+
+		if ( post && post.feed_ID ) {
+			feed = FeedStore.get( post.feed_ID );
+		}
+		if ( post && post.site_ID ) {
+			site = SiteStore.get( post.site_ID );
+		}
+
 		return {
-			post: null,
-			site: null,
-			feed: null
+			post,
+			site,
+			feed
 		};
 	}
 
+	updateState() {
+		this.smartSetState( this.getStateFromStores() );
+	}
+
 	componentWillMount() {
-		// false won't change the section, we just want to remove the sidebar
-		// We can't remove the sidebar the usual way, by using a section in the section config,
-		// because full post lives at a dynamic path whose prefix is shared by sections that may want a sidebar
-		//
-		// if we decide to remove the sidebar on site / feed listings, then we _can_ use a section, but we'll have
-		// to make secondary dependant on the feature flag...
-		this.props.setSection( false, { hasSidebar: false } );
+		PostStore.on( 'change', this.updateState );
+		SiteStore.on( 'change', this.updateState );
+		FeedStore.on( 'change', this.updateState );
 	}
 
 	componentWillReceiveProps( nextProps ) {
-
+		this.updateState( this.getStateFromStores( nextProps ) );
 	}
 
 	componentWillUnmount() {
-
+		PostStore.off( 'change', this.updateState );
+		SiteStore.off( 'change', this.updateState );
+		FeedStore.off( 'change', this.updateState );
 	}
 
 	render() {
-		return <FullPostView post={ this.state.post } site={ this.state.site } feed={ this.state.feed } />;
+		return this.state.post
+			? <FullPostView post={ this.state.post } site={ this.state.site } feed={ this.state.feed } />
+			: null;
 	}
 }
 
 export default connect(
 	state => {
-		return { post: { ID: 1 } };
+		return { };
 	},
 	dispatch => {
 		return bindActionCreators( {
