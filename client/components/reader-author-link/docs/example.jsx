@@ -18,7 +18,7 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/design/reader-author-link">Reader Author Link</a>
+					<a href="/devdocs/blocks/reader-author-link">Reader Author Link</a>
 				</h2>
 				<Card>
 					<ReaderAuthorLink post={ post }>Author site</ReaderAuthorLink>

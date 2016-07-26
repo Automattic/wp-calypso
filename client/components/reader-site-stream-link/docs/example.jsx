@@ -18,7 +18,7 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/design/reader-site-stream-link">Reader Site Stream Link</a>
+					<a href="/devdocs/blocks/reader-site-stream-link">Reader Site Stream Link</a>
 				</h2>
 				<Card>
 					<ReaderSiteStreamLink post={ post }>futonbleu</ReaderSiteStreamLink>
