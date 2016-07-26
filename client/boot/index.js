@@ -250,10 +250,7 @@ function reduxStoreReady( reduxStore ) {
 			errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
 			analytics.on( 'record-event', ( eventName, eventProperties ) => errorLogger.saveExtraData( { lastTracksEvent: eventProperties } ) );
 			page( '*', function( context, next ) {
-				errorLogger.saveNewPath( context.canonicalPath.replace(
-					new RegExp( route.getSiteFragment( context.canonicalPath ), 'g' ),
-					':siteId'
-				) );
+				errorLogger.saveNewPath( context.canonicalPath.replace( route.getSiteFragment( context.canonicalPath ), ':siteId' ) );
 				next();
 			} );
 		}
