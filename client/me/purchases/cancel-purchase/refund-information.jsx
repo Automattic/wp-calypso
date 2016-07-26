@@ -115,6 +115,28 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 			'When you cancel your domain, it will remain registered and active until the registration expires, ' +
 			'at which point it will be automatically removed from your site.'
 		);
+	} else if ( isSubscription( purchase ) && includedDomainPurchase && isDomainMapping( includedDomainPurchase ) ) {
+		text = i18n.translate(
+			'This plan includes the custom domain mapping for %(mappedDomain)s. ' +
+			'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
+			{
+				args: {
+					mappedDomain: includedDomainPurchase.meta,
+					mappingCost: includedDomainPurchase.priceText
+				}
+			}
+		);
+	} else if ( isSubscription( purchase ) && includedDomainPurchase && isDomainRegistration( includedDomainPurchase ) ) {
+		text = i18n.translate(
+			'This plan includes the custom domain, %(domain)s. ' +
+			'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
+			{
+				args: {
+					domain: includedDomainPurchase.meta,
+					domainCost: includedDomainPurchase.priceText,
+				}
+			}
+		);
 	} else {
 		text = i18n.translate(
 			"When you cancel your subscription, you'll be able to use %(productName)s until your subscription expires. " +
