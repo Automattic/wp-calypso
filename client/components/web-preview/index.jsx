@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import noop from 'lodash/noop';
-import PureComponent from 'react-pure-render/component';
 
 /**
  * Internal dependencies
@@ -23,7 +22,7 @@ import { setPreviewShowing } from 'state/ui/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
 
-export class WebPreview extends PureComponent {
+export class WebPreview extends Component {
 	constructor( props ) {
 		super( props );
 
