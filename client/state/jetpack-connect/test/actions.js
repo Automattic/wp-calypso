@@ -147,6 +147,7 @@ describe( 'actions', () => {
 		const siteId = '123456';
 		const ssoNonce = '123456789';
 		const ssoUrl = 'http://website.com';
+		const siteUrl = 'http://website.com';
 
 		describe( 'success', () => {
 			before( () => {
@@ -159,7 +160,8 @@ describe( 'actions', () => {
 						_headers: {
 							'Content-Type': 'application/json'
 						},
-						sso_url: ssoUrl
+						sso_url: ssoUrl,
+						site_url: siteUrl
 					} );
 			} );
 
@@ -183,6 +185,7 @@ describe( 'actions', () => {
 				return authorizeSSO( siteId, ssoNonce )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						ssoUrl,
+						siteUrl,
 						type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS
 					} );
 				} );

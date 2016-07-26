@@ -201,11 +201,13 @@ const LoggedInForm = React.createClass( {
 			authorizeSuccess
 		} = props.jetpackConnectAuthorize;
 
+		if ( isRedirectingToWpAdmin ) {
+			return;
+		}
 		// Always and forever redirect SSO to wp-admin.
 		if ( ! isRedirectingToWpAdmin && props.isSSO && authorizeSuccess ) {
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		}
-
 		if ( siteReceived && ! isActivating ) {
 			this.activateManage();
 		}
@@ -317,10 +319,6 @@ const LoggedInForm = React.createClass( {
 
 		if ( this.props.isFetchingSites() ) {
 			return this.translate( 'Preparing authorization' );
-		}
-
-		if ( this.props.isAlreadyOnSitesList || siteReceived ) {
-			return this.translate( 'Browse Available Upgrades' );
 		}
 
 		if ( authorizeSuccess && isRedirectingToWpAdmin ) {
