@@ -12,6 +12,7 @@ import reducer, { postId, showDrafts } from '../reducer';
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'terms',
 			'postId',
 			'showDrafts',
 			'lastDraft',

@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import get from 'lodash/get';
-import range from 'lodash/range';
+import { get, range, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -169,3 +168,17 @@ export function getTerms( state, siteId, taxonomy ) {
 
 	return manager.getItems();
 }
+
+/**
+ * Returns a term object by site ID, taxonomy, and termId
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  taxonomy Taxonomy slug
+ * @param  {Number}  termId   Term ID
+ * @return {?Object}          Term object
+ */
+export const getTerm = createSelector(
+	( state, siteId, taxonomy, termId ) => find( getTerms( state, siteId, taxonomy ), { ID: termId } ) || null,
+	( state, siteId, taxonomy ) => getTerms( state, siteId, taxonomy )
+);

@@ -41,6 +41,10 @@ class TermSelectorAddTerm extends Component {
 		labels: PropTypes.object,
 		postType: PropTypes.string,
 		siteId: PropTypes.number,
+		postId: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.string
+		] ),
 		terms: PropTypes.array,
 		taxonomy: PropTypes.string,
 		translate: PropTypes.func
@@ -142,9 +146,9 @@ class TermSelectorAddTerm extends Component {
 			return;
 		}
 
-		const { siteId, taxonomy } = this.props;
+		const { postId, siteId, taxonomy } = this.props;
 
-		this.props.addTerm( siteId, taxonomy, term );
+		this.props.addTerm( siteId, taxonomy, term, postId );
 		this.closeDialog();
 	}
 

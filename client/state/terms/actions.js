@@ -15,6 +15,7 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	TERMS_REQUEST_FAILURE
 } from 'state/action-types';
+import { setEditorAddedTerm } from 'state/ui/editor/terms/actions';
 
 /**
  * Returns an action thunk, dispatching progress of a request to add a new term
@@ -23,9 +24,10 @@ import {
  * @param  {Number} siteId   Site ID
  * @param  {String} taxonomy Taxonomy Slug
  * @param  {Object} term     Object of new term attributes
+ * @param  {Number} postId   Post ID
  * @return {Object}          Action object
  */
-export function addTerm( siteId, taxonomy, term ) {
+export function addTerm( siteId, taxonomy, term, postId ) {
 	return ( dispatch ) => {
 		const temporaryId = uniqueId( 'temporary' );
 
@@ -35,7 +37,15 @@ export function addTerm( siteId, taxonomy, term ) {
 		} ) );
 
 		return wpcom.site( siteId ).taxonomy( taxonomy ).term().add( term ).then(
-			( data ) => dispatch( receiveTerm( siteId, taxonomy, omit( data, '_headers' ) ) ),
+			( data ) => {
+				const newTerm = omit( data, '_headers' );
+				dispatch( receiveTerm( siteId, taxonomy, newTerm ) );
+
+				// if a postId is set dispatch action to select term
+				if ( postId !== null ) {
+					dispatch( setEditorAddedTerm( siteId, postId, taxonomy, newTerm.ID ) );
+				}
+			},
 			() => Promise.resolve() // Silently ignore failure so we can proceed to remove temporary
 		).then( () => dispatch( removeTerm( siteId, taxonomy, temporaryId ) ) );
 	};
