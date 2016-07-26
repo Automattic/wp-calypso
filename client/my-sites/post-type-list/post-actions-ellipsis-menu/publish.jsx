@@ -1,46 +1,60 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import includes from 'lodash/includes';
+import { partial, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
+import { mc } from 'lib/analytics';
 import { getPost } from 'state/posts/selectors';
 import { savePost } from 'state/posts/actions';
 import { canCurrentUser } from 'state/current-user/selectors';
 
-function PostActionsEllipsisMenuPublish( { translate, status, siteId, postId, canPublish, dispatchSavePost } ) {
-	if ( ! canPublish || ! includes( [ 'pending', 'draft' ], status ) ) {
-		return null;
+class PostActionsEllipsisMenuPublish extends Component {
+	static propTypes = {
+		globalId: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+		status: PropTypes.string,
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
+		canPublish: PropTypes.bool,
+		savePost: PropTypes.func
+	};
+
+	constructor() {
+		super( ...arguments );
+
+		this.publishPost = this.publishPost.bind( this );
 	}
 
-	function publishPost() {
-		if ( siteId && postId ) {
-			dispatchSavePost( { status: 'publish' }, siteId, postId );
+	publishPost() {
+		const { siteId, postId, publishPost } = this.props;
+		if ( ! siteId || ! postId ) {
+			return;
 		}
+
+		mc.bumpStat( 'calypso_cpt_actions', 'publish' );
+		publishPost( siteId, postId );
 	}
 
-	return (
-		<PopoverMenuItem onClick={ publishPost } icon="reader">
-			{ translate( 'Publish' ) }
-		</PopoverMenuItem>
-	);
-}
+	render() {
+		const { translate, status, canPublish } = this.props;
+		if ( ! canPublish || ! includes( [ 'pending', 'draft' ], status ) ) {
+			return null;
+		}
 
-PostActionsEllipsisMenuPublish.propTypes = {
-	globalId: PropTypes.string,
-	translate: PropTypes.func.isRequired,
-	status: PropTypes.string,
-	siteId: PropTypes.number,
-	postId: PropTypes.number,
-	canPublish: PropTypes.bool,
-	dispatchSavePost: PropTypes.func
-};
+		return (
+			<PopoverMenuItem onClick={ this.publishPost } icon="reader">
+				{ translate( 'Publish' ) }
+			</PopoverMenuItem>
+		);
+	}
+}
 
 export default connect(
 	( state, ownProps ) => {
@@ -56,5 +70,5 @@ export default connect(
 			canPublish: canCurrentUser( state, post.site_ID, 'publish_posts' )
 		};
 	},
-	{ dispatchSavePost: savePost }
+	{ publishPost: partial( savePost, { status: 'publish' } ) }
 )( localize( PostActionsEllipsisMenuPublish ) );
