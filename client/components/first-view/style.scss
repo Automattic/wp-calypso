@@ -41,7 +41,7 @@
 		padding-left: ( $sidebar-width-max + 32px );
 	}
 
-	@include breakpoint-height( "<480px" ) {
+	@media (max-height: 480px) {
 		padding: 0;
 		margin: 47px 0;
 	}
@@ -87,11 +87,11 @@
 			padding: 16px 0;
 			margin: -20px -24px 24px -24px;
 
-			@include breakpoint-height( "<480px" ) {
+			@media (max-height: 480px) {
 				display: none;
 			}
 
-			@include breakpoint-height( "<660px" ) {
+			@media (max-height: 660px) {
 				width: calc( 100% + 80px );
 				margin: -34px -40px 40px -40px;
 				zoom: 0.6;
