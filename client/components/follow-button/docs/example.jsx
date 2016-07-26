@@ -19,7 +19,7 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/follow-button">Follow Button</a>
+					<a href="/devdocs/blocks/follow-button">Follow Button</a>
 				</h2>
 				<Card compact>
 					<FollowButton following={ false } />
