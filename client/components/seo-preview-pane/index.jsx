@@ -13,6 +13,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import FacebookPreview from 'components/seo/facebook-preview';
+import TwitterPreview from 'components/seo/twitter-preview';
 import SearchPreview from 'components/seo/search-preview';
 import VerticalMenu from 'components/vertical-menu';
 import { SocialItem } from 'components/vertical-menu/items';
@@ -45,6 +46,26 @@ const PreviewFacebook = site => (
 			title={ site.name }
 			url={ site.URL }
 			type="article"
+			description={ site.description }
+			image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		/>
+	</div>
+);
+
+const PreviewTwitter = site => (
+	<div>
+		<TwitterPreview
+			title={ site.name }
+			url={ site.URL }
+			type="summary"
+			description={ site.description }
+			image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		/>
+		<div style={ { marginBottom: '2em' } } />
+		<TwitterPreview
+			title={ site.name }
+			url={ site.URL }
+			type="large_image_summary"
 			description={ site.description }
 			image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
 		/>
@@ -99,7 +120,8 @@ export class SeoPreviewPane extends PureComponent {
 					<div className="seo-preview-pane__preview">
 						{ get( {
 							facebook: PreviewFacebook( site ),
-							google: GooglePreview( site )
+							google: GooglePreview( site ),
+							twitter: PreviewTwitter( site )
 						}, selectedService, ComingSoonMessage( translate ) ) }
 					</div>
 					<div className="seo-preview-pane__preview-spacer" />
