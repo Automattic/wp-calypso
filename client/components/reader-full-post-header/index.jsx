@@ -30,22 +30,21 @@ const ReaderFullPostHeader = ( { post } ) => {
 					</ExternalLink>
 				</h1>
 				: null }
-			<ul className="reader-full-post-header__meta">
+			<span className="reader-full-post-header__meta">
 				{ post.date && post.URL
-					? <li className="reader-full-post-header__date">
+					? <span className="reader-full-post-header__date">
 						<a className="reader-full-post-header__date-link"
 							onClick={ recordDateClick }
 							href={ post.URL }
 							target="_blank">
 							<PostTime date={ post.date } />
 						</a>
-					</li> : null }
+					</span> : null }
 
-				{ post.tags
-					? <li className="reader-full-post-header__tags">
-						<ReaderFullPostHeaderTags tags={ post.tags } />
-					</li> : null }
-			</ul>
+			{ post.tags
+				? <ReaderFullPostHeaderTags tags={ post.tags } />
+			 	: null }
+			</span>
 		</div>
 	);
 };

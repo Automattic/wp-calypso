@@ -1,55 +1,106 @@
 .reader-full-post-header__title {
 	clear: none;
+	color: $gray-dark;
 	font-family: $serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	font-size: 18px;
 	font-weight: 700;
-	font-size: 28px;
-	line-height: 1.416;
-	color: $gray-dark;
-	margin: 24px 0 8px 0;
+	line-height: 1.3;
+	margin: 24px 0 8px;
 	max-width: 750px;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 
-	@include breakpoint( "<480px" ) {
-		font-size: 18px;
-		line-height: 1.3;
+	@include breakpoint( ">480px" ) {
+		font-size: 28px;
+		line-height: 1.4;
 	}
 
-	.reader-full-post-header__title-link, .reader-full-post-header__title-link:hover {
+	.reader-full-post-header__title-link,
+	.reader-full-post-header__title-link:hover {
 		color: $gray-dark;
 	}
 }
 
 .reader-full-post-header__meta {
+	font-size: 15px;
+	max-width: 750px;
+}
+
+.reader-full-post-header__date {
+	float: left;
+}
+
+.reader-full-post-header__date-link {
+	margin-right: 25px;
+}
+
+.reader-full-post-header__date-link,
+.reader-full-post-header__date-link:visited {
+	color: $gray;
+}
+
+.reader-full-post-header__date-link:hover {
+	color: darken( $gray, 20% );
+}
+
+.reader-full-post-header__tags {
+	float: left;
+	width: 70%;
+
+	.gridicon {
+		fill: $gray;
+		float: left;
+		position: relative;
+			top: 4px;
+	}
+}
+
+.reader-full-post-header__tag-list {
+	color: $gray;
 	list-style: none;
 	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 
 	li {
-		margin: 0 16px 0 0;
-		display: inline-block;
 		color: $gray;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		max-width: 440px;
+		display: inline;
+		margin-right: 5px;
 
-		@include breakpoint( "<480px" ) {
-			max-width: 180px;
+		&:after {
+			content: ',';
 		}
 
-		a {
-			text-decoration: none;
-			color: $gray;
-
-			&:hover {
-				color: $gray-dark;
-			}
+		&:first-child {
+			margin-left: 5px;
 		}
 
 		&:last-child {
-			margin: 0;
+			margin-right: 0;
+
+
+			&:after {
+				content: '';
+			}
+
+			a {
+				text-overflow: ellipsis;
+			    overflow: hidden;
+			    white-space: nowrap;
+			}
 		}
+	}
+
+	a,
+	a:visited {
+		color: $gray;
+	}
+
+	a:hover {
+		color: darken( $gray, 20% );
 	}
 }

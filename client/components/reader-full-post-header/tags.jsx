@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { take } from 'lodash';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -13,13 +14,16 @@ const ReaderFullPostHeaderTags = ( { tags } ) => {
 	const tagsToDisplay = take( tags, numberOfTagsToDisplay );
 
 	return (
-		<ul className="reader-full-post-header__tags">
-			<li>tag 1</li>
-			<li>tag 2</li>
-			<li>tag 3</li>
-			<li>tag 4</li>
-			<li>tag 5</li>
-		</ul>
+		<div className="reader-full-post-header__tags">
+			<Gridicon icon="tag" size={ 18 } />
+			<ul className="reader-full-post-header__tag-list">
+				<li><a href="">tag 1</a></li>
+				<li><a href="">tag 2</a></li>
+				<li><a href="">tag 3</a></li>
+				<li><a href="">tag 4</a></li>
+				<li><a href="">tag 5</a></li>
+			</ul>
+		</div>
 	);
 };
 
