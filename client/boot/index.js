@@ -389,14 +389,14 @@ function reduxStoreReady( reduxStore ) {
 	 * make this unnecessary.
 	 */
 	page( '*', function( context, next ) {
-
 		const previousLayoutIsSingleTree = ! isEmpty(
 			document.getElementsByClassName( 'wp-singletree-layout' )
 		);
+
 		const singleTreeSections = [ 'theme', 'themes' ];
 		const sectionName = getSectionName( context.store.getState() );
 		const isMultiTreeLayout = ! includes( singleTreeSections, sectionName );
-		
+
 		if ( isMultiTreeLayout && previousLayoutIsSingleTree ) {
 			debug( 'Re-rendering multi-tree layout' );
 			renderLayout( context.store );
