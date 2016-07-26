@@ -13,6 +13,7 @@
 	"features": {
 		"ad-tracking": true,
 		"always_use_logout_url": true,
+		"catch-js-errors": false,
 		"code-splitting": false,
 		"community-translator": true,
 		"desktop": true,
