@@ -4,7 +4,7 @@
 import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
 import noop from 'lodash/noop';
-import { stub } from 'sinon';
+import { stub, spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -22,12 +22,43 @@ describe( 'utils', () => {
 		} ),
 		actionSerialize = { type: SERIALIZE },
 		actionDeserialize = { type: DESERIALIZE };
-	let createReducer, reducer;
+	let dispatchWithMeta, createReducer, reducer;
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/warn', noop );
 
-		createReducer = require( 'state/utils' ).createReducer;
+		( { dispatchWithMeta, createReducer } = require( 'state/utils' ) );
+	} );
+
+	describe( 'dispatchWithMeta()', () => {
+		it( 'should return an updated action object', () => {
+			const action = dispatchWithMeta( {
+				type: 'ACTION_TEST'
+			}, { ok: true } );
+
+			expect( action ).to.eql( {
+				type: 'ACTION_TEST',
+				meta: {
+					ok: true
+				}
+			} );
+		} );
+
+		it( 'should return an updated action thunk', () => {
+			const dispatch = spy();
+			const action = dispatchWithMeta(
+				( thunkDispatch ) => thunkDispatch( { type: 'ACTION_TEST' } ),
+				{ ok: true }
+			);
+
+			action( dispatch );
+			expect( dispatch ).to.have.been.calledWithExactly( {
+				type: 'ACTION_TEST',
+				meta: {
+					ok: true
+				}
+			} );
+		} );
 	} );
 
 	describe( '#createReducer()', () => {

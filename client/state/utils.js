@@ -25,6 +25,22 @@ export function isValidStateWithSchema( state, schema, checkForCycles = false, b
 }
 
 /**
+ * Given an action object or thunk, returns an updated object or thunk which
+ * will include additional meta in the action (as provided) when dispatched.
+ *
+ * @param  {(Function|Object)} action Action object or thunk
+ * @param  {Object}            meta   Additional meta to include in action
+ * @return {(Function|Object)}        Augmented action object or thunk
+ */
+export function dispatchWithMeta( action, meta ) {
+	if ( 'function' !== typeof action ) {
+		return { ...action, meta };
+	}
+
+	return ( dispatch ) => action( ( thunkAction ) => dispatch( { ...thunkAction, meta } ) );
+}
+
+/**
  * Returns a reducer function with state calculation determined by the result
  * of invoking the handler key corresponding with the dispatched action type,
  * passing both the current state and action object. Defines default
