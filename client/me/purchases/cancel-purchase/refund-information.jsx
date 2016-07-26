@@ -16,6 +16,7 @@ import support from 'lib/url/support';
 const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } ) => {
 	const { refundPeriodInDays } = purchase;
 	let text;
+	let showSupportLink = true;
 
 	if ( isRefundable( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
@@ -30,43 +31,65 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 
 		if ( isSubscription( purchase ) ) {
 			if ( includedDomainPurchase && isDomainMapping( includedDomainPurchase ) ) {
-				text = i18n.translate(
-					'This plan includes the custom domain mapping for %(mappedDomain)s, normally a %(mappingCost)s purchase. ' +
-					'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ' +
-					'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan minus ' +
-					'%(mappingCost)s for the domain mapping. To cancel the domain mapping with the ' +
-					'plan and ask for a full refund, please {{contactLink}}contact support{{/contactLink}}.',
-					{
-						args: {
-							mappedDomain: includedDomainPurchase.meta,
-							mappingCost: includedDomainPurchase.priceText,
-							planCost: purchase.priceText,
-							refundAmount: purchase.refundText
-						},
-						components: {
-							contactLink: <a href={ support.CALYPSO_CONTACT } />
+				text = [
+					i18n.translate(
+						'This plan includes the custom domain mapping for %(mappedDomain)s, normally a %(mappingCost)s purchase. ' +
+						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
+						{
+							args: {
+								mappedDomain: includedDomainPurchase.meta,
+								mappingCost: includedDomainPurchase.priceText
+							}
 						}
-					}
-				);
+					),
+					i18n.translate(
+						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan minus ' +
+						'%(mappingCost)s for the domain mapping. To cancel the domain mapping with the ' +
+						'plan and ask for a full refund, please {{contactLink}}contact support{{/contactLink}}.',
+						{
+							args: {
+								planCost: purchase.priceText,
+								mappingCost: includedDomainPurchase.priceText,
+								refundAmount: purchase.refundText
+							},
+							components: {
+								contactLink: <a href={ support.CALYPSO_CONTACT } />
+							}
+						}
+					)
+				];
+
+				showSupportLink = false;
 			} else if ( includedDomainPurchase && isDomainRegistration( includedDomainPurchase ) ) {
-				text = i18n.translate(
-					'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
-					'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ' +
-					'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
-					'minus %(domainCost)s for the domain.  To cancel the domain with the plan and ask for a full ' +
-					'refund, please {{contactLink}}contact support{{/contactLink}}.',
-					{
-						args: {
-							domain: includedDomainPurchase.meta,
-							domainCost: includedDomainPurchase.priceText,
-							planCost: purchase.priceText,
-							refundAmount: purchase.refundText
-						},
-						components: {
-							contactLink: <a href={ support.CALYPSO_CONTACT } />
+				text = [
+					i18n.translate(
+						'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
+						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
+						{
+							args: {
+								domain: includedDomainPurchase.meta,
+								domainCost: includedDomainPurchase.priceText,
+							}
 						}
-					}
-				);
+					),
+					i18n.translate(
+						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
+						'minus %(domainCost)s for the domain.  To cancel the domain with the plan and ask for a full ' +
+						'refund, please {{contactLink}}contact support{{/contactLink}}.',
+						{
+							args: {
+								domainCost: includedDomainPurchase.priceText,
+								planCost: purchase.priceText,
+								refundAmount: purchase.refundText
+							},
+							components: {
+								contactLink: <a href={ support.CALYPSO_CONTACT } />
+							}
+						}
+					)
+				];
+
+				showSupportLink = false;
 			} else {
 				text = i18n.translate(
 					'When you cancel your subscription within %(refundPeriodInDays)d days of purchasing, ' +
@@ -105,7 +128,27 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 	}
 
 	return (
-		<p className="cancel-purchase__refund-information">{ text }</p>
+		<div className="cancel-purchase__info">
+			{ Array.isArray( text )
+				? text.map( ( paragraph, index ) =>
+					<p key={ purchase.id + '_refund_p_' + index } className="cancel-purchase__refund-information">
+						{ paragraph }
+					</p>
+					)
+				: <p className="cancel-purchase__refund-information">{ text }</p>
+			}
+
+			{ showSupportLink
+				? <strong className="cancel-purchase__support-information">
+					{ i18n.translate( 'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}', {
+						components: {
+							contactLink: <a href={ support.CALYPSO_CONTACT }/>
+						}
+					} ) }
+				</strong>
+				: null
+			}
+		</div>
 	);
 };
 

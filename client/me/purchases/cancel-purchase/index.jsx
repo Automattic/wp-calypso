@@ -25,7 +25,6 @@ import Main from 'components/main';
 import paths from '../paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ProductLink from 'me/purchases/product-link';
-import support from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 
@@ -153,17 +152,7 @@ const CancelPurchase = React.createClass( {
 						{ heading }
 					</h2>
 
-					<div className="cancel-purchase__info">
-						<CancelPurchaseRefundInformation purchase={ purchase } />
-
-						<strong className="cancel-purchase__support-information">
-							{ this.translate( 'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}', {
-								components: {
-									contactLink: <a href={ support.CALYPSO_CONTACT } />
-								}
-							} ) }
-						</strong>
-					</div>
+					<CancelPurchaseRefundInformation purchase={ purchase } />
 				</Card>
 
 				<CompactCard className="cancel-purchase__product-information">
