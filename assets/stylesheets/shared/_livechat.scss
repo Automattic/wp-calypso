@@ -435,10 +435,10 @@
 
 #habla_window_div.olrk-fixed-bottom #habla_topbar_div,
 #habla_window_div.olrk-fixed-bottom .habla_panel_border {
-	// -moz-border-radius-topleft:5px;
-	// -moz-border-radius-topright:5px;
-	// border-top-left-radius:5px;
-	// border-top-right-radius:5px;
+	-moz-border-radius-topleft: 0 !important;
+	-moz-border-radius-topright: 0 !important;
+	border-top-left-radius: 0 !important;
+	border-top-right-radius: 0 !important;
 }
 
 #habla_window_div.olrk-fixed-top .habla_panel_border {
@@ -615,6 +615,7 @@
 	height:16px;
 	cursor:pointer!important;
 	overflow:hidden;
+	background-image: none !important;
 }
 
 #habla_window_div .habla_button:hover {
@@ -624,7 +625,7 @@
 #habla_window_div #habla_sizebutton_a {
 
 	&:before {
-		display: inline-block;
+		display: block;
 		width: 16px;
 		height: 16px;
 		font: 16px/1 Noticons;
@@ -635,7 +636,7 @@
 .olrk-state-expanded #habla_window_div #habla_sizebutton_a {
 
 	&:before {
-		display: inline-block;
+		display: block;
 		width: 16px;
 		height: 16px;
 		font: 16px/1 Noticons;
@@ -658,6 +659,7 @@
 		height: 16px;
 		font: 16px/1 Noticons;
 		content: '\f442';
+		display: block;
 	}
 }
 
@@ -1028,6 +1030,9 @@ div.hbl_pal_main_width {
 .olrk-state-compressed #habla_window_div #habla_topbar_div {
 	margin-right: -10px;
 	background: transparent;
+	padding: 0;
+	width: 26px;
+	height: 26px;
 }
 
 .olrk-state-compressed #habla_panel_div {
@@ -1036,8 +1041,10 @@ div.hbl_pal_main_width {
 
 .olrk-state-compressed #habla_window_div #habla_sizebutton_a {
 	background-color: $blue-medium;
-	padding: 5px 5px 3px 5px;
+	padding: 5px 5px 5px 5px;
 	text-decoration: none;
+	margin: 0 !important;
+	border-radius: 0 !important;
 }
 
 .olrk-state-compressed #habla_window_div #habla_closebutton_a {
