@@ -27,7 +27,7 @@ const PostSelectorExample = React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/post-selector">Post Selector</a>
+					<a href="/devdocs/blocks/post-selector">Post Selector</a>
 				</h2>
 				<div style={ { width: 300 } }>
 					<FormLabel>
