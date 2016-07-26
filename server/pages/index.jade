@@ -68,7 +68,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				if abTestHelper
 					div(class=['environment', 'is-tests'])
 				if branchName && branchName !== 'master'
-					span(class=['environment', 'branch-name'], title='Commit ' + commitChecksum)=branchName
+					span(class=['environment', 'branch-name'], title='Commit ' + app.commitChecksum)=branchName
 				if devDocs
 					span(class=['environment', 'is-docs'])
 						a(href=devDocsURL title='DevDocs') docs

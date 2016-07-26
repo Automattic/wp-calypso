@@ -127,7 +127,8 @@ function getDefaultContext( request ) {
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
 		isDebug: context.env === 'development' || context.isDebug,
 		tinymceWpSkin: context.urls[ 'tinymce/skins/wordpress/wp-content.css' ],
-		tinymceEditorCss: context.urls[ 'editor.css' ]
+		tinymceEditorCss: context.urls[ 'editor.css' ],
+		commitChecksum: getCurrentCommitShortChecksum()
 	};
 
 	if ( CALYPSO_ENV === 'wpcalypso' ) {
@@ -155,7 +156,6 @@ function getDefaultContext( request ) {
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
 		context.branchName = getCurrentBranchName();
-		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
 	return context;
