@@ -20,13 +20,9 @@ import PostFormatsData from 'components/data/post-formats-data';
 import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
 import Location from 'post-editor/editor-location';
 import Discussion from 'post-editor/editor-discussion';
-import PageParent from 'post-editor/editor-page-parent';
 import SeoAccordion from 'post-editor/editor-seo-accordion';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
 import InfoPopover from 'components/info-popover';
-import PageTemplatesData from 'components/data/page-templates-data';
-import PageTemplates from 'post-editor/editor-page-templates';
-import PageOrder from 'post-editor/editor-page-order';
 import PostMetadata from 'lib/post-metadata';
 import TrackInputChanges from 'components/track-input-changes';
 import actions from 'lib/posts/actions';
@@ -42,6 +38,7 @@ import { isJetpackMinimumVersion } from 'state/sites/selectors';
 import config from 'config';
 import EditorDrawerFeaturedImage from './featured-image';
 import EditorDrawerTaxonomies from './taxonomies';
+import EditorDrawerPageOptions from './page-options';
 
 /**
  * Constants
@@ -298,24 +295,7 @@ const EditorDrawer = React.createClass( {
 			return;
 		}
 
-		return (
-			<Accordion
-				title={ this.translate( 'Page Options' ) }
-				icon={ <Gridicon icon="pages" /> }>
-				{ this.props.site && this.props.post ?
-					<div>
-						<PageParent siteId={ this.props.site.ID }
-							postId={ this.props.post.ID }
-							parent={ this.props.post.parent_id ? this.props.post.parent_id : 0 }
-						/>
-						<PageTemplatesData siteId={ this.props.site.ID } >
-							<PageTemplates post={ this.props.post } />
-						</PageTemplatesData>
-					</div>
-				: null }
-				<PageOrder menuOrder={ this.props.post ? this.props.post.menu_order : 0 } />
-			</Accordion>
-		);
+		return <EditorDrawerPageOptions />;
 	},
 
 	render: function() {
