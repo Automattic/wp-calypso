@@ -1,7 +1,8 @@
-export function getSignupDependencyStore( state ) {
-	if ( state && state.signup && state.signup.dependencyStore ) {
-		return state.signup.dependencyStore;
-	}
+/**
+ * External dependencies
+ */
+import get from 'lodash/get';
 
-	return {};
+export function getSignupDependencyStore( state ) {
+	return get( state, 'signup.dependencyStore', {} );
 }
