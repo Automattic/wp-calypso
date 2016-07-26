@@ -7,6 +7,8 @@ import omit from 'lodash/omit';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+import { dispatchWithMeta } from 'state/utils';
+import { addTerm } from 'state/terms/actions';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -295,4 +297,19 @@ export function restorePost( siteId, postId ) {
 			} );
 		} );
 	};
+}
+
+/**
+ * Returns an action thunk which, when dispatched, triggers a network request
+ * to create a new term. All actions dispatched by the thunk will include meta
+ * to associate it with the specified post ID.
+ *
+ * @param  {Number}   siteId   Site ID
+ * @param  {String}   taxonomy Taxonomy Slug
+ * @param  {Object}   term     Object of new term attributes
+ * @param  {Number}   postId   ID of post to which term is associated
+ * @return {Function}          Action thunk
+ */
+export function addTermForPost( siteId, taxonomy, term, postId ) {
+	return dispatchWithMeta( addTerm( siteId, taxonomy, term ), { postId } );
 }
