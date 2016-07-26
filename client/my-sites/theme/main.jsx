@@ -384,16 +384,40 @@ const ThemeSheet = React.createClass( {
 } );
 
 const WrappedThemeSheet = ( props ) => {
+	const Head = props.isLoggedIn
+		? require( 'layout/head' )
+		: require( 'my-sites/themes/head' );
+
+	let sheet;
 	if ( ! props.isLoggedIn || props.selectedSite ) {
-		return <ThemeSheet { ...props } />;
+		sheet = <ThemeSheet { ...props } />;
+	} else {
+		sheet = (
+			<ThemesSiteSelectorModal { ...props }
+				sourcePath={ `/theme/${ props.id }${ props.section ? '/' + props.section : '' }` }>
+				<ThemeSheet />
+			</ThemesSiteSelectorModal>
+		);
 	}
 
+	const themeName = `${ props.name }s Theme`;
+	const title = themeName + ' — WordPress.com';
+
+	const canonicalUrl = `https://wordpress.com/theme/${ props.id }`; // TODO: use getDetailsUrl() When it becomes availavle
+
 	return (
-		<ThemesSiteSelectorModal { ...props }
-			sourcePath={ `/theme/${ props.id }${ props.section ? '/' + props.section : '' }` }>
-			<ThemeSheet />
-		</ThemesSiteSelectorModal>
-	);
+		<Head
+			title= { title }
+			description={ props.description }
+			type={ 'website' }
+		 	canonicalUrl={ canonicalUrl }
+			image={ props.screenshot }
+			tier={ props.tier || 'all' } >
+			{ sheet }
+		</Head>
+		//sheet
+	)
+
 };
 
 const bindDefaultOptionToDispatch = ( dispatch, ownProps ) => {

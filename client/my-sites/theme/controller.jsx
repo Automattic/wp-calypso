@@ -26,20 +26,6 @@ import { decodeEntities } from 'lib/formatting';
 const debug = debugFactory( 'calypso:themes' );
 let themeDetailsCache = new Map();
 
-export function makeElement( ThemesComponent, Head, store, props ) {
-	return (
-		<Head
-			title={ props.title }
-			description={ props.description }
-			type={ 'website' }
-			canonicalUrl={ props.canonicalUrl }
-			image={ props.image }
-			tier={ props.tier || 'all' }>
-			<ThemesComponent { ...omit( props, [ 'title' ] ) } />
-		</Head>
-	);
-}
-
 export function fetchThemeDetailsData( context, next ) {
 	if ( ! config.isEnabled( 'manage/themes/details' ) || ! context.isServerSide ) {
 		return next();
@@ -81,19 +67,6 @@ export function details( context, next ) {
 	const title = i18n.translate( '%(themeName)s Theme', {
 		args: { themeName }
 	} );
-	const Head = user
-		? require( 'layout/head' )
-		: require( 'my-sites/themes/head' );
-
-	const props = {
-		themeSlug: slug,
-		contentSection: context.params.section,
-		title: title ? decodeEntities( title ) + ' — WordPress.com' : '', // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
-		description: themeDetails.description ? decodeEntities( themeDetails.description ) : '',
-		canonicalUrl: `https://wordpress.com/theme/${ slug }`, // TODO: use getDetailsUrl() When it becomes availavle
-		image: themeDetails.screenshot,
-		isLoggedIn: !! user
-	};
 
 	if ( startsWith( context.prevPath, '/design' ) ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
@@ -105,7 +78,7 @@ export function details( context, next ) {
 		</ThemeDetailsComponent>
 	);
 
-	context.primary = makeElement( ConnectedComponent, Head, context.store, props );
+	context.primary = ConnectedComponent( { themeSlug : slug, contentSection: context.params.section, isLoggedIn: !! user } );
 	context.secondary = null; // When we're logged in, we need to remove the sidebar.
 	next();
 }
