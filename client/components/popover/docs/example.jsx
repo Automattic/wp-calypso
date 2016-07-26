@@ -48,7 +48,7 @@ var Popovers = React.createClass( {
 						onClose={ this._closePopover }
 						position={ this.state.popoverPosition }
 						context={ this.refs && this.refs.popoverButton }>
-					Lorem ipsum dolor sit amet.
+					<div style={ { padding: '16px' } }>Your popover content.</div>
 				</Popover>
 
 				&nbsp;
