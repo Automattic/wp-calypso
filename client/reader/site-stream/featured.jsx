@@ -11,7 +11,7 @@ import Card from 'components/card';
 import page from 'page';
 import FeedPostStore from 'lib/feed-post-store';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
-import DiscoverHelper from 'reader/discover/helper';
+import { getSourceData as getDiscoverSourceData } from 'reader/discover/helper';
 import * as stats from 'reader/stats';
 
 export default React.createClass( {
@@ -72,7 +72,7 @@ export default React.createClass( {
 	},
 
 	getSourcePost( post ) {
-		let data = DiscoverHelper.getSourceData( post );
+		const data = getDiscoverSourceData( post );
 
 		if ( ! data ) {
 			return null;
