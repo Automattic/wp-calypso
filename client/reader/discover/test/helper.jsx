@@ -41,8 +41,8 @@ describe( 'helper', () => {
 			assert.isFalse( helper.isDiscoverPost( fixtures.nonDiscoverPost ) );
 		} );
 
-		it( 'returns undefinded if the post is undefined', () => {
-			assert.isUndefined( helper.isDiscoverPost( ) );
+		it( 'returns false if the post is undefined', () => {
+			assert.isFalse( helper.isDiscoverPost( ) );
 		} );
 	} );
 
@@ -55,8 +55,8 @@ describe( 'helper', () => {
 			assert.isFalse( helper.isDiscoverSitePick( discoverPost ) );
 		} );
 
-		it( 'returns undefined if the post is undefined', () => {
-			assert.isUndefined( helper.isDiscoverSitePick( ) );
+		it( 'returns false if the post is undefined', () => {
+			assert.isFalse( helper.isDiscoverSitePick( ) );
 		} );
 	} );
 
@@ -80,8 +80,8 @@ describe( 'helper', () => {
 			assert.equal( permalink, helper.getSiteUrl( fixtures.externalDiscoverPost ) );
 		}	);
 
-		it( 'returns false if the post is not a discover post', () => {
-			assert.isFalse( helper.getSiteUrl( fixtures.nonDiscoverPost ) );
+		it( 'returns undefined if the post is not a discover post', () => {
+			assert.isUndefined( helper.getSiteUrl( fixtures.nonDiscoverPost ) );
 		} );
 	} );
 
@@ -94,8 +94,8 @@ describe( 'helper', () => {
 			assert.isFalse( helper.hasSource( fixtures.discoverSiteFormat ) );
 		} );
 
-		it( 'returns undefined if the post is undefined', () => {
-			assert.isUndefined( helper.hasSource( ) );
+		it( 'returns false if the post is undefined', () => {
+			assert.isFalse( helper.hasSource( ) );
 		}	);
 	} );
 
@@ -106,6 +106,10 @@ describe( 'helper', () => {
 
 		it( 'returns null if the post is external', () => {
 			assert.isNull( helper.getSourceData( fixtures.externalDiscoverPost ) );
+		} );
+
+		it( 'returns null if the post is a discover site pick', () => {
+			assert.isNull( helper.getSourceData( fixtures.discoverSiteFormat ) );
 		} );
 
 		it( 'returns the post and blog id', () => {
