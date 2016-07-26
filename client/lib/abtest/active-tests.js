@@ -93,7 +93,7 @@ module.exports = {
 		allowAnyLocale: true
 	},
 	firstView: {
-		datestamp: '20160728',
+		datestamp: '20160726',
 		variations: {
 			disabled: 95,
 			enabled: 5,
